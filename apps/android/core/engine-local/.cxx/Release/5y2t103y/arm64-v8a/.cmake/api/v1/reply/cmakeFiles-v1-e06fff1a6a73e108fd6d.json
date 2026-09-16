@@ -6,7 +6,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
+			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake"
 		},
 		{
 			"isExternal" : true,
@@ -40,11 +40,11 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
+			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake"
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
+			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -239,7 +239,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/CMakeFiles/3.22.1-g37088a8/CMakeASMCompiler.cmake"
+			"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/CMakeFiles/3.22.1-g37088a8/CMakeASMCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -367,6 +367,11 @@
 		},
 		{
 			"path" : "third_party/llama.cpp/ggml/src/ggml-version.h.in"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXSourceCompiles.cmake"
 		},
 		{
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt"
@@ -499,12 +504,108 @@
 		},
 		{
 			"path" : "../../../../../../../.git/modules/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/index"
+		},
+		{
+			"path" : "third_party/whisper.cpp/CMakeLists.txt"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFileCXX.cmake"
+		},
+		{
+			"path" : "third_party/whisper.cpp/cmake/build-info.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindGit.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageMessage.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/GNUInstallDirs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake"
+		},
+		{
+			"path" : "third_party/whisper.cpp/cmake/whisper-config.cmake.in"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/BasicConfigVersion-SameMajorVersion.cmake.in"
+		},
+		{
+			"path" : "third_party/whisper.cpp/cmake/whisper.pc.in"
+		},
+		{
+			"path" : "third_party/whisper.cpp/cmake/parakeet-config.cmake.in"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/BasicConfigVersion-SameMajorVersion.cmake.in"
+		},
+		{
+			"path" : "third_party/whisper.cpp/cmake/parakeet.pc.in"
+		},
+		{
+			"path" : "third_party/whisper.cpp/src/CMakeLists.txt"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindThreads.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckLibraryExists.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFile.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCSourceCompiles.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageMessage.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64",
+		"build" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a",
 		"source" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp"
 	},
 	"version" : 

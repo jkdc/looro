@@ -1,0 +1,251 @@
+package chat.mural.core.voice
+
+import android.content.Context
+import chat.mural.engines.local.AudioFrameSource
+import chat.mural.engines.local.SpeechSink
+import chat.mural.engines.local.MicRecorder
+import chat.mural.engines.local.WhisperStt
+import chat.mural.network.LiveSessionProvider
+import chat.mural.network.TeachingClient
+import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
+
+/**
+ * On-device voice pipeline behind the [VoiceTransport] contract: mic → Whisper
+ * STT → the selected [TeachingClient] → TTS. Emits the same JSON event
+ * vocabulary the WebRTC transport produces, so MuralViewModel needs no
+ * engine-specific branches.
+ *
+ * Turn-taking (v1): continuous listening with an energy VAD — a turn ends
+ * after [SILENCE_END_MS] of trailing silence once [SPEECH_START_MS] of speech
+ * accumulated, capped at [MAX_TURN_MS]. The mic is suppressed while TTS speaks.
+ */
+class LocalVoiceTransport(
+    @Suppress("UNUSED_PARAMETER") context: Context?,
+    private val scope: CoroutineScope,
+    private val stt: WhisperStt,
+    private val engine: TeachingClient,
+    private val tts: SpeechSink,
+    private val frameSourceProvider: () -> AudioFrameSource = { MicRecorder() },
+    private val frameDelayMs: Long = 128, // real-time pacing; tests pass 0
+) : VoiceTransport {
+
+    override var onEvent: ((JsonObject) -> Unit)? = null
+    override var onFailure: ((String) -> Unit)? = null
+    override var onLevels: ((Double, Double) -> Unit)? = null
+
+    @Volatile private var running = false
+    @Volatile private var muted = false
+    @Volatile private var speaking = false
+    @Volatile private var listenJob: Job? = null
+    @Volatile private var sessionStartedAtMs = 0L
+
+    private var baseInstructions = ""
+    private val appendedContext = ArrayDeque<String>()
+    private var sessionLanguage = "en"
+
+    val started: Boolean get() = running
+    val isMuted: Boolean get() = muted
+
+    override suspend fun connect(
+        api: LiveSessionProvider,
+        instructions: String,
+        history: JsonArray,
+        language: String?,
+    ) {
+        baseInstructions = instructions
+        appendedContext.clear()
+        sessionLanguage = language?.take(2)?.lowercase() ?: "en"
+        sessionStartedAtMs = System.currentTimeMillis()
+        running = true
+
+        emit(buildJsonObject {
+            put("type", "mural.session.created")
+            put("session", buildJsonObject { put("id", UUID.randomUUID().toString()) })
+        })
+        emit(buildJsonObject { put("type", "session.started") })
+        tts.initialize()
+        startListening()
+    }
+
+    private fun startListening() {
+        listenJob = scope.launch(Dispatchers.IO) {
+            val recorder = frameSourceProvider()
+            if (!recorder.start()) {
+                onFailure?.invoke("Microphone unavailable")
+                return@launch
+            }
+            try {
+                var speech: MutableList<FloatArray> = ArrayList()
+                var speechMs = 0
+                var trailingSilenceMs = 0
+                var turnMs = 0
+                var lastUsageEmit = System.currentTimeMillis()
+                while (coroutineContext.isActive && running) {
+                    if (frameDelayMs > 0) delay(frameDelayMs)
+                    val frame = recorder.readFrame()
+                    if (frame == null) {
+                        delay(10)
+                        continue
+                    }
+                    val rms = MicRecorder.rms(frame)
+                    onLevels?.invoke(rms.toDouble(), 0.0)
+
+                    if (muted || speaking) { // suppressed: drop audio, keep levels alive
+                        speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                        continue
+                    }
+
+                    val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE // real audio duration
+                    if (rms >= VAD_SPEECH_RMS) {
+                        speechMs += frameMs
+                        trailingSilenceMs = 0
+                    } else if (speechMs > 0) {
+                        trailingSilenceMs += frameMs
+                    }
+                    if (speechMs > 0) {
+                        speech.add(frame)
+                        turnMs += frameMs
+                    }
+
+                    val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= SILENCE_END_MS
+                    val turnCapped = turnMs >= MAX_TURN_MS
+                    if (turnComplete || turnCapped) {
+                        val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
+                        speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                        processTurn(samples)
+                        lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                    }
+                    if (System.currentTimeMillis() - lastUsageEmit >= 15_000) {
+                        lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                    }
+                }
+            } finally {
+                recorder.stop()
+            }
+        }
+    }
+
+    private suspend fun processTurn(samples: FloatArray) {
+        val trimmed = MicRecorder.trimSilence(samples)
+        val durationMs = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
+        if (durationMs < 250) return // noise blip, not a turn
+        val stt = runCatching { stt.transcribe(trimmed, sessionLanguage) }.getOrElse {
+            onFailure?.invoke(it.message ?: "STT failed"); return
+        }
+        if (stt.isEmpty) return // silence/hallucination guard: no fragments, no LLM call
+
+        val turnStart = relativeMs()
+        emit(transcriptEvent(isInput = true, text = stt.text, startMs = turnStart, endMs = turnStart + durationMs))
+
+        val system = buildString {
+            append(baseInstructions)
+            synchronized(appendedContext) {
+                while (appendedContext.isNotEmpty()) append("\n").append(appendedContext.removeFirst())
+            }
+        }
+        val result = runCatching { engine.respond(system, stt.text, null, false, null) }.getOrElse {
+            onFailure?.invoke(it.message ?: "generation failed"); return
+        }
+        if (result.text.isBlank()) return
+
+        val replyStart = relativeMs()
+        emit(transcriptEvent(isInput = false, text = result.text, startMs = replyStart, endMs = replyStart + 500))
+
+        speaking = true
+        runCatching { tts.speak(result.text) }
+        speaking = false
+    }
+
+    /**
+     * Appends from the ViewModel:
+     *  - instructions/thinking → stored, prepended to the next turn's context;
+     *  - commentary → spoken via TTS and emitted as assistant transcript
+     *    (keeps typed input working during a voice session).
+     */
+    override fun send(event: JsonObject): Boolean {
+        val type = event["type"]?.jsonPrimitive?.contentOrNull ?: return false
+        val content = event["content"]?.jsonPrimitive?.contentOrNull ?: return false
+        when {
+            type.startsWith("session.instructions.append") || type.startsWith("session.thinking.append") -> {
+                synchronized(appendedContext) { appendedContext.addLast(content) }
+                return true
+            }
+            type.startsWith("session.commentary.append") -> {
+                val start = relativeMs()
+                emit(transcriptEvent(isInput = false, text = content, startMs = start, endMs = start + 500))
+                scope.launch(Dispatchers.IO) {
+                    speaking = true
+                    runCatching { tts.speak(content) }
+                    speaking = false
+                }
+                return true
+            }
+            else -> return false
+        }
+    }
+
+    private fun maybeEmitUsage(lastEmit: Long): Long {
+        val now = System.currentTimeMillis()
+        if (now - lastEmit >= 15_000) {
+            emit(buildJsonObject {
+                put("type", "session.usage.updated")
+                put("usage", buildJsonObject { put("seconds", (now - sessionStartedAtMs) / 1000.0) })
+            })
+            return now
+        }
+        return lastEmit
+    }
+
+    private fun transcriptEvent(isInput: Boolean, text: String, startMs: Long, endMs: Long) = buildJsonObject {
+        put("type", if (isInput) "session.input_transcript.delta" else "session.output_transcript.delta")
+        put("event_id", UUID.randomUUID().toString())
+        put("delta", text)
+        put("start_ms", startMs)
+        put("end_ms", endMs)
+    }
+
+    private fun emit(event: JsonObject) {
+        onEvent?.invoke(event)
+    }
+
+    private fun relativeMs(): Long = System.currentTimeMillis() - sessionStartedAtMs
+
+    override fun mute(muted: Boolean) {
+        this.muted = muted
+    }
+
+    override fun close() {
+        stopLoop()
+        emit(buildJsonObject { put("type", "session.closed") })
+    }
+
+    override fun disconnect() {
+        stopLoop()
+    }
+
+    private fun stopLoop() {
+        running = false
+        listenJob?.cancel()
+        listenJob = null
+        tts.stop()
+    }
+
+    companion object {
+        const val VAD_SPEECH_RMS = 0.012f
+        const val SPEECH_START_MS = 300
+        const val SILENCE_END_MS = 1_200
+        const val MAX_TURN_MS = 30_000
+    }
+}

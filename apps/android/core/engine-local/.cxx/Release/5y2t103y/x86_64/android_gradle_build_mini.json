@@ -20,7 +20,12 @@
     "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/miniaudio/CMakeLists.txt",
     "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/CMakeLists.txt",
     "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/CMakeLists.txt",
-    "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/stb/CMakeLists.txt"
+    "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/stb/CMakeLists.txt",
+    "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/CMakeLists.txt",
+    "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/build-info.cmake",
+    "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/parakeet-config.cmake.in",
+    "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/whisper-config.cmake.in",
+    "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
@@ -69,6 +74,7 @@
       "output": "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so",
       "runtimeFiles": [
         "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libllama-common.so",
+        "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libwhisper.so",
         "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libllama.so",
         "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml.so",
         "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml-cpu.so",
@@ -80,6 +86,16 @@
       "abi": "x86_64",
       "output": "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp/vendor/hash/libvendor-hash.a",
       "runtimeFiles": []
+    },
+    "whisper::@aff2e38b0d1f915335d8": {
+      "artifactName": "whisper",
+      "abi": "x86_64",
+      "output": "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libwhisper.so",
+      "runtimeFiles": [
+        "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml.so",
+        "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml-cpu.so",
+        "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml-base.so"
+      ]
     },
     "llama::@bf716c64e9230b199072": {
       "artifactName": "llama",
@@ -110,6 +126,16 @@
       "abi": "x86_64",
       "output": "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp/vendor/cpp-httplib/libcpp-httplib.a",
       "runtimeFiles": []
+    },
+    "parakeet::@aff2e38b0d1f915335d8": {
+      "artifactName": "parakeet",
+      "abi": "x86_64",
+      "output": "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libparakeet.so",
+      "runtimeFiles": [
+        "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml.so",
+        "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml-cpu.so",
+        "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/bin/libggml-base.so"
+      ]
     }
   }
 }

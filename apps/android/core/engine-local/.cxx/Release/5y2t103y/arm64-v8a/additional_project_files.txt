@@ -58,4 +58,8 @@
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/jinja/value.h
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/jinja/string.h
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/jinja/caps.h
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/include/parakeet.h
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/parakeet-arch.h
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/hash/hash.h
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/include/whisper.h
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/whisper-arch.h

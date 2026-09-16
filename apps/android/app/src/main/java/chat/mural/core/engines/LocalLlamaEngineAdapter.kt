@@ -43,5 +43,9 @@ class LocalLlamaEngineAdapter(private val engine: LocalLlamaEngine) : TeachingCl
         /** Model directory (app external files) expected by the local engine. */
         fun defaultModelsDir(context: android.content.Context) =
             java.io.File(context.getExternalFilesDir(null) ?: context.filesDir, "models/llm")
+
+        /** Whisper model directory for the local voice pipeline. */
+        fun defaultWhisperModelsDir(context: android.content.Context) =
+            java.io.File(context.getExternalFilesDir(null) ?: context.filesDir, "models/whisper")
     }
 }

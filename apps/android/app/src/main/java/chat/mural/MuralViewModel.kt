@@ -10,6 +10,8 @@ import androidx.lifecycle.viewModelScope
 import chat.mural.core.*
 import chat.mural.core.engines.ConversationEngineDeps
 import chat.mural.core.engines.ConversationEngineFactory
+import chat.mural.core.voice.LocalVoiceTransport
+import chat.mural.core.voice.VoiceTransport
 import chat.mural.network.*
 import java.util.UUID
 import kotlinx.coroutines.*
@@ -126,7 +128,19 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         BuildConfig.CONVERSATION_ENGINE,
         ConversationEngineDeps(application, api, ConversationEngineDeps.defaultKeyLookup(), json),
     )
-    private val transport = LiveTransport(application, viewModelScope)
+    private val transport: VoiceTransport = if (BuildConfig.CONVERSATION_ENGINE == "openai") {
+        LiveTransport(application, viewModelScope)
+    } else {
+        LocalVoiceTransport(
+            context = application,
+            scope = viewModelScope,
+            stt = chat.mural.engines.local.WhisperStt(
+                chat.mural.core.engines.LocalLlamaEngineAdapter.defaultWhisperModelsDir(application),
+            ),
+            engine = conversationEngine,
+            tts = chat.mural.engines.local.LocalTtsEngine(application),
+        )
+    }
     private val providerStore = ConversationProviderStore(application)
     private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
     private val accountConfiguration = ManagedAccountConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN, BuildConfig.GOOGLE_SERVER_CLIENT_ID)
@@ -345,6 +359,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         error = message; errorNeedsKeySetup = needsKeySetup; errorNeedsAccountSignIn = false
     }
     private fun presentError(e: Throwable, @StringRes fallback: Int) {
+        android.util.Log.e("MuralLocalEngine", "voice/teaching failure: ${e.javaClass.simpleName}: ${e.message}", e)
         presentError(resolveMessage(e, fallback), errorNeedsKeySetup(e))
         errorNeedsAccountSignIn = needsAccountRecovery(e)
     }
@@ -477,6 +492,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun teaching(localID: String?, purpose: HelperPurpose, logicalID: String,
         instructions: String, input: String, schema: JsonObject? = null, search: Boolean = false): APIResult {
         if (archive.preferences.aiConsentVersion != 1) throw HostedFailure.Unavailable
+        if (BuildConfig.CONVERSATION_ENGINE != "openai") {
+            return conversationEngine.respond(instructions, input, schema, search, purpose)
+        }
         if (localID != null && localID in hostedSessionIDs) {
             return hostedBindings.respond(localID, purpose, logicalID, instructions, input, schema, search)
         }
@@ -660,19 +678,22 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         session = record; save(record)
     }
     fun start() {
-        if (isRunning || !cloudReady()) return
-        if (BuildConfig.CONVERSATION_ENGINE != "openai") {
-            // Voice rides the WebRTC path (OpenAI-only today). Non-OpenAI engines
-            // start a typed conversation: teaching helpers run on the selected engine.
-            newSession(false); state = "active"; startDurationChecks()
-            return
+        if (isRunning || !storageReady) return
+        if (archive.preferences.aiConsentVersion != 1) {
+            presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return
+        }
+        val localVoice = BuildConfig.CONVERSATION_ENGINE != "openai"
+        if (!localVoice) {
+            if (!cloudReady()) return
+        } else {
+            // On-device voice: no OpenAI gates; LocalVoiceTransport runs mic->STT->LLM->TTS.
         }
         val choice = conversationProvider
-        if (choice == ConversationProvider.HOSTED_MINUTES && accountChangeBlocked) {
+        if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES && accountChangeBlocked) {
             presentError(getApplication<Application>().getString(R.string.hosted_checking_previous))
             reconcileHostedSessions(); return
         }
-        if (!ConversationProviderPolicy.canStart(choice, hasKey, hostedReadiness)) {
+        if (!localVoice && !ConversationProviderPolicy.canStart(choice, hasKey, hostedReadiness)) {
             if (choice == ConversationProvider.HOSTED_MINUTES) {
                 showMinuteAccess = true; refreshHostedReadiness()
             } else presentError(getApplication<Application>().getString(R.string.error_missing_key), true)
@@ -683,10 +704,10 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         val module = language
         val instructions = TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage)
         val history = ConversationHistory.messages(session)
-        if (choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
+        if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {
             try {
-                val provider: LiveSessionProvider = if (choice == ConversationProvider.PERSONAL_KEY) api else {
+                val provider: LiveSessionProvider = if (localVoice || choice == ConversationProvider.PERSONAL_KEY) api else {
                     val owner = requireHostedOwner()
                     if (selectedAccount.busy || owner.accountID != hostedReadiness.accountID) throw HostedFailure.SignInRequired
                     val hosted = hostedClient(owner.accountID)

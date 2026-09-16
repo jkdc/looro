@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -55,7 +55,7 @@
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : "ggml: build shared libraries"
+					"value" : "build shared libraries"
 				}
 			],
 			"type" : "BOOL",
@@ -87,7 +87,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -279,7 +279,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -1115,7 +1115,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -1251,7 +1251,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "14"
+			"value" : "16"
 		},
 		{
 			"name" : "CMAKE_OBJCOPY",
@@ -1387,7 +1387,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1960,6 +1960,18 @@
 			],
 			"type" : "FILEPATH",
 			"value" : "GGML_CCACHE_FOUND-NOTFOUND"
+		},
+		{
+			"name" : "GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
 		},
 		{
 			"name" : "GGML_CPU",
@@ -3170,6 +3182,78 @@
 			"value" : "/usr/bin/git"
 		},
 		{
+			"name" : "HAVE_DOTPROD",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_DOTPROD"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_FMA",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_FMA"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "HAVE_FP16_VECTOR_ARITHMETIC",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_FP16_VECTOR_ARITHMETIC"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_MATMUL_INT8",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_MATMUL_INT8"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_SME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_SME"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_SVE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_SVE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
 			"name" : "LLAMA_ALL_WARNINGS",
 			"properties" : 
 			[
@@ -3542,6 +3626,42 @@
 			"value" : "OPENSSL_SSL_LIBRARY-NOTFOUND"
 		},
 		{
+			"name" : "PARAKEET_BIN_INSTALL_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Location of binary  files"
+				}
+			],
+			"type" : "PATH",
+			"value" : "bin"
+		},
+		{
+			"name" : "PARAKEET_INCLUDE_INSTALL_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Location of header  files"
+				}
+			],
+			"type" : "PATH",
+			"value" : "include"
+		},
+		{
+			"name" : "PARAKEET_LIB_INSTALL_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Location of library files"
+				}
+			],
+			"type" : "PATH",
+			"value" : "lib"
+		},
+		{
 			"name" : "PKG_CONFIG_ARGN",
 			"properties" : 
 			[
@@ -3584,6 +3704,258 @@
 			],
 			"type" : "INTERNAL",
 			"value" : "TRUE"
+		},
+		{
+			"name" : "WHISPER_ALL_WARNINGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: enable all compiler warnings"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "ON"
+		},
+		{
+			"name" : "WHISPER_ALL_WARNINGS_3RD_PARTY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: enable all compiler warnings in 3rd party libs"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_BIN_INSTALL_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Location of binary  files"
+				}
+			],
+			"type" : "PATH",
+			"value" : "bin"
+		},
+		{
+			"name" : "WHISPER_BUILD_EXAMPLES",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: build examples"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_BUILD_IS_DEV",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: dev build"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "ON"
+		},
+		{
+			"name" : "WHISPER_BUILD_SERVER",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: build server example"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_BUILD_TESTS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: build tests"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_COREML",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: enable Core ML framework"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_COREML_ALLOW_FALLBACK",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: allow non-CoreML fallback"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_CURL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: use libcurl to download model from an URL"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_FATAL_WARNINGS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: enable -Werror flag"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_INCLUDE_INSTALL_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Location of header  files"
+				}
+			],
+			"type" : "PATH",
+			"value" : "include"
+		},
+		{
+			"name" : "WHISPER_LIB_INSTALL_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Location of library files"
+				}
+			],
+			"type" : "PATH",
+			"value" : "lib"
+		},
+		{
+			"name" : "WHISPER_OPENVINO",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: support for OpenVINO"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_SANITIZE_ADDRESS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: enable address sanitizer"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_SANITIZE_THREAD",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: enable thread sanitizer"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_SANITIZE_UNDEFINED",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: enable undefined sanitizer"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_SDL2",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: support for libSDL2"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_USE_SYSTEM_GGML",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: use system-installed GGML library"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_USE_SYSTEM_LLAMA",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: use system-installed llama.cpp library"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
+		},
+		{
+			"name" : "WHISPER_VITISAI",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "whisper: support for AMD Vitis AI"
+				}
+			],
+			"type" : "BOOL",
+			"value" : "OFF"
 		},
 		{
 			"name" : "ZENDNN_ROOT",
@@ -4063,7 +4435,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp/ggml"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/third_party/llama.cpp/ggml"
 		},
 		{
 			"name" : "ggml_IS_TOP_LEVEL",
@@ -4099,7 +4471,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/third_party/llama.cpp"
 		},
 		{
 			"name" : "llama.cpp_IS_TOP_LEVEL",
@@ -4135,7 +4507,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/26/liblog.so"
+			"value" : "/home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/26/liblog.so"
 		},
 		{
 			"name" : "mural_llama_BINARY_DIR",
@@ -4147,7 +4519,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a"
 		},
 		{
 			"name" : "mural_llama_IS_TOP_LEVEL",
@@ -4172,6 +4544,18 @@
 			],
 			"type" : "STATIC",
 			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp"
+		},
+		{
+			"name" : "parakeet_LIB_DEPENDS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Dependencies for the target"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "general;ggml;general;Threads::Threads;"
 		},
 		{
 			"name" : "pkgcfg_lib__OPENSSL_crypto",
@@ -4216,6 +4600,54 @@
 			],
 			"type" : "INTERNAL",
 			"value" : "/usr/lib/x86_64-linux-gnu"
+		},
+		{
+			"name" : "whisper.cpp_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/third_party/whisper.cpp"
+		},
+		{
+			"name" : "whisper.cpp_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "OFF"
+		},
+		{
+			"name" : "whisper.cpp_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp"
+		},
+		{
+			"name" : "whisper_LIB_DEPENDS",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Dependencies for the target"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "general;ggml;"
 		}
 	],
 	"kind" : "cache",

@@ -47,13 +47,21 @@ cmake_ninja_workdir = /home/joaquin/Proyectos/looro-test/looro/apps/android/core
 #############################################
 # Order-only phony target for mural_llama
 
-build cmake_object_order_depends_target_mural_llama: phony || cmake_object_order_depends_target_ggml cmake_object_order_depends_target_ggml-base cmake_object_order_depends_target_ggml-cpu cmake_object_order_depends_target_llama cmake_object_order_depends_target_llama-common cmake_object_order_depends_target_llama-common-base
+build cmake_object_order_depends_target_mural_llama: phony || cmake_object_order_depends_target_ggml cmake_object_order_depends_target_ggml-base cmake_object_order_depends_target_ggml-cpu cmake_object_order_depends_target_llama cmake_object_order_depends_target_llama-common cmake_object_order_depends_target_llama-common-base cmake_object_order_depends_target_whisper
 
 build CMakeFiles/mural_llama.dir/llama_jni.cpp.o: CXX_COMPILER__mural_llama_Release /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/llama_jni.cpp || cmake_object_order_depends_target_mural_llama
   DEFINES = -DGGML_BACKEND_SHARED -DGGML_SHARED -DGGML_USE_CPU -DLLAMA_SHARED -Dmural_llama_EXPORTS
   DEP_FILE = CMakeFiles/mural_llama.dir/llama_jni.cpp.o.d
   FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -frtti -fexceptions -O3 -DNDEBUG  -fPIC -pthread -std=c++17
-  INCLUDES = -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/.. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/..
+  INCLUDES = -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/.. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/.. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/../include
+  OBJECT_DIR = CMakeFiles/mural_llama.dir
+  OBJECT_FILE_DIR = CMakeFiles/mural_llama.dir
+
+build CMakeFiles/mural_llama.dir/whisper_jni.cpp.o: CXX_COMPILER__mural_llama_Release /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/whisper_jni.cpp || cmake_object_order_depends_target_mural_llama
+  DEFINES = -DGGML_BACKEND_SHARED -DGGML_SHARED -DGGML_USE_CPU -DLLAMA_SHARED -Dmural_llama_EXPORTS
+  DEP_FILE = CMakeFiles/mural_llama.dir/whisper_jni.cpp.o.d
+  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -frtti -fexceptions -O3 -DNDEBUG  -fPIC -pthread -std=c++17
+  INCLUDES = -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/.. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/.. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/../include
   OBJECT_DIR = CMakeFiles/mural_llama.dir
   OBJECT_FILE_DIR = CMakeFiles/mural_llama.dir
 
@@ -65,10 +73,10 @@ build CMakeFiles/mural_llama.dir/llama_jni.cpp.o: CXX_COMPILER__mural_llama_Rele
 #############################################
 # Link the shared library /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so
 
-build /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so: CXX_SHARED_LIBRARY_LINKER__mural_llama_Release CMakeFiles/mural_llama.dir/llama_jni.cpp.o | bin/libllama-common.so third_party/llama.cpp/common/libllama-common-base.a /home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/26/liblog.so bin/libllama.so bin/libggml.so bin/libggml-cpu.so bin/libggml-base.so || bin/libggml-base.so bin/libggml-cpu.so bin/libggml.so bin/libllama-common.so bin/libllama.so third_party/llama.cpp/common/libllama-common-base.a
+build /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so: CXX_SHARED_LIBRARY_LINKER__mural_llama_Release CMakeFiles/mural_llama.dir/llama_jni.cpp.o CMakeFiles/mural_llama.dir/whisper_jni.cpp.o | bin/libllama-common.so third_party/llama.cpp/common/libllama-common-base.a bin/libwhisper.so /home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/26/liblog.so bin/libllama.so bin/libggml.so bin/libggml-cpu.so bin/libggml-base.so || bin/libggml-base.so bin/libggml-cpu.so bin/libggml.so bin/libllama-common.so bin/libllama.so bin/libwhisper.so third_party/llama.cpp/common/libllama-common-base.a
   LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -frtti -fexceptions -O3 -DNDEBUG
   LINK_FLAGS = -static-libstdc++ -Wl,-z,max-page-size=16384 -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments  -Wl,--gc-sections
-  LINK_LIBRARIES = bin/libllama-common.so  third_party/llama.cpp/common/libllama-common-base.a  /home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/26/liblog.so  bin/libllama.so  bin/libggml.so  bin/libggml-cpu.so  bin/libggml-base.so  -pthread  -latomic -lm
+  LINK_LIBRARIES = bin/libllama-common.so  third_party/llama.cpp/common/libllama-common-base.a  bin/libwhisper.so  /home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/26/liblog.so  bin/libllama.so  bin/libggml.so  bin/libggml-cpu.so  bin/libggml-base.so  -pthread  -latomic -lm
   OBJECT_DIR = CMakeFiles/mural_llama.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -2267,6 +2275,220 @@ build third_party/llama.cpp/common/CMakeFiles/install/strip.util: CUSTOM_COMMAND
 build third_party/llama.cpp/common/install/strip: phony third_party/llama.cpp/common/CMakeFiles/install/strip.util
 
 # =============================================================================
+# Write statements declared in CMakeLists.txt:
+# /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/CMakeLists.txt
+# =============================================================================
+
+
+#############################################
+# Utility command for edit_cache
+
+build third_party/whisper.cpp/CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  DESC = No interactive CMake dialog available...
+  restat = 1
+
+build third_party/whisper.cpp/edit_cache: phony third_party/whisper.cpp/CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build third_party/whisper.cpp/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp -B/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/rebuild_cache: phony third_party/whisper.cpp/CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Utility command for list_install_components
+
+build third_party/whisper.cpp/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build third_party/whisper.cpp/CMakeFiles/install.util: CUSTOM_COMMAND third_party/whisper.cpp/all
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -P cmake_install.cmake
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/install: phony third_party/whisper.cpp/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build third_party/whisper.cpp/CMakeFiles/install/local.util: CUSTOM_COMMAND third_party/whisper.cpp/all
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/install/local: phony third_party/whisper.cpp/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build third_party/whisper.cpp/CMakeFiles/install/strip.util: CUSTOM_COMMAND third_party/whisper.cpp/all
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/install/strip: phony third_party/whisper.cpp/CMakeFiles/install/strip.util
+
+# =============================================================================
+# Write statements declared in CMakeLists.txt:
+# /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/CMakeLists.txt
+# =============================================================================
+
+# =============================================================================
+# Object build statements for SHARED_LIBRARY target whisper
+
+
+#############################################
+# Order-only phony target for whisper
+
+build cmake_object_order_depends_target_whisper: phony || cmake_object_order_depends_target_ggml cmake_object_order_depends_target_ggml-base cmake_object_order_depends_target_ggml-cpu
+
+build third_party/whisper.cpp/src/CMakeFiles/whisper.dir/whisper.cpp.o: CXX_COMPILER__whisper_Release /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/whisper.cpp || cmake_object_order_depends_target_whisper
+  DEFINES = -DGGML_BACKEND_SHARED -DGGML_SHARED -DGGML_USE_CPU -DWHISPER_BUILD -DWHISPER_SHARED -DWHISPER_VERSION=\"1.9.4-dev\" -Dwhisper_EXPORTS
+  DEP_FILE = third_party/whisper.cpp/src/CMakeFiles/whisper.dir/whisper.cpp.o.d
+  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -frtti -fexceptions -O3 -DNDEBUG  -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -pthread -std=gnu++17
+  INCLUDES = -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/../include
+  OBJECT_DIR = third_party/whisper.cpp/src/CMakeFiles/whisper.dir
+  OBJECT_FILE_DIR = third_party/whisper.cpp/src/CMakeFiles/whisper.dir
+
+
+# =============================================================================
+# Link build statements for SHARED_LIBRARY target whisper
+
+
+#############################################
+# Link the shared library bin/libwhisper.so
+
+build bin/libwhisper.so: CXX_SHARED_LIBRARY_LINKER__whisper_Release third_party/whisper.cpp/src/CMakeFiles/whisper.dir/whisper.cpp.o | bin/libggml.so bin/libggml-cpu.so bin/libggml-base.so || bin/libggml-base.so bin/libggml-cpu.so bin/libggml.so
+  LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -frtti -fexceptions -O3 -DNDEBUG
+  LINK_FLAGS = -static-libstdc++ -Wl,-z,max-page-size=16384 -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments  -Wl,--gc-sections
+  LINK_LIBRARIES = bin/libggml.so  bin/libggml-cpu.so  bin/libggml-base.so  -pthread  -latomic -lm
+  OBJECT_DIR = third_party/whisper.cpp/src/CMakeFiles/whisper.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  SONAME = libwhisper.so
+  SONAME_FLAG = -Wl,-soname,
+  TARGET_FILE = bin/libwhisper.so
+  TARGET_PDB = whisper.so.dbg
+
+# =============================================================================
+# Object build statements for SHARED_LIBRARY target parakeet
+
+
+#############################################
+# Order-only phony target for parakeet
+
+build cmake_object_order_depends_target_parakeet: phony || cmake_object_order_depends_target_ggml cmake_object_order_depends_target_ggml-base cmake_object_order_depends_target_ggml-cpu
+
+build third_party/whisper.cpp/src/CMakeFiles/parakeet.dir/parakeet.cpp.o: CXX_COMPILER__parakeet_Release /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/parakeet.cpp || cmake_object_order_depends_target_parakeet
+  DEFINES = -DGGML_BACKEND_SHARED -DGGML_SHARED -DGGML_USE_CPU -DPARAKEET_BUILD -DPARAKEET_SHARED -DPARAKEET_VERSION=\"1.9.4-dev\" -Dparakeet_EXPORTS
+  DEP_FILE = third_party/whisper.cpp/src/CMakeFiles/parakeet.dir/parakeet.cpp.o.d
+  FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -frtti -fexceptions -O3 -DNDEBUG  -fPIC -Wmissing-declarations -Wmissing-noreturn -Wall -Wextra -Wpedantic -Wcast-qual -Wno-unused-function -pthread -std=gnu++17
+  INCLUDES = -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/. -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/../include -I/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/../include
+  OBJECT_DIR = third_party/whisper.cpp/src/CMakeFiles/parakeet.dir
+  OBJECT_FILE_DIR = third_party/whisper.cpp/src/CMakeFiles/parakeet.dir
+
+
+# =============================================================================
+# Link build statements for SHARED_LIBRARY target parakeet
+
+
+#############################################
+# Link the shared library bin/libparakeet.so
+
+build bin/libparakeet.so: CXX_SHARED_LIBRARY_LINKER__parakeet_Release third_party/whisper.cpp/src/CMakeFiles/parakeet.dir/parakeet.cpp.o | bin/libggml.so bin/libggml-cpu.so bin/libggml-base.so || bin/libggml-base.so bin/libggml-cpu.so bin/libggml.so
+  LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -std=c++17 -frtti -fexceptions -O3 -DNDEBUG
+  LINK_FLAGS = -static-libstdc++ -Wl,-z,max-page-size=16384 -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments  -Wl,--gc-sections
+  LINK_LIBRARIES = bin/libggml.so  bin/libggml-cpu.so  bin/libggml-base.so  -pthread  -latomic -lm
+  OBJECT_DIR = third_party/whisper.cpp/src/CMakeFiles/parakeet.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  SONAME = libparakeet.so
+  SONAME_FLAG = -Wl,-soname,
+  TARGET_FILE = bin/libparakeet.so
+  TARGET_PDB = parakeet.so.dbg
+
+
+#############################################
+# Utility command for edit_cache
+
+build third_party/whisper.cpp/src/CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  DESC = No interactive CMake dialog available...
+  restat = 1
+
+build third_party/whisper.cpp/src/edit_cache: phony third_party/whisper.cpp/src/CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build third_party/whisper.cpp/src/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake --regenerate-during-build -S/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp -B/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/src/rebuild_cache: phony third_party/whisper.cpp/src/CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Utility command for list_install_components
+
+build third_party/whisper.cpp/src/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build third_party/whisper.cpp/src/CMakeFiles/install.util: CUSTOM_COMMAND third_party/whisper.cpp/src/all
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -P cmake_install.cmake
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/src/install: phony third_party/whisper.cpp/src/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build third_party/whisper.cpp/src/CMakeFiles/install/local.util: CUSTOM_COMMAND third_party/whisper.cpp/src/all
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/src/install/local: phony third_party/whisper.cpp/src/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build third_party/whisper.cpp/src/CMakeFiles/install/strip.util: CUSTOM_COMMAND third_party/whisper.cpp/src/all
+  COMMAND = cd /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src && /home/joaquin/Android/Sdk/cmake/3.22.1/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build third_party/whisper.cpp/src/install/strip: phony third_party/whisper.cpp/src/CMakeFiles/install/strip.util
+
+# =============================================================================
 # Target aliases.
 
 build cpp-httplib: phony third_party/llama.cpp/vendor/cpp-httplib/libcpp-httplib.a
@@ -2293,7 +2515,11 @@ build libllama.so: phony bin/libllama.so
 
 build libmural_llama.so: phony /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so
 
+build libparakeet.so: phony bin/libparakeet.so
+
 build libvendor-hash.a: phony third_party/llama.cpp/vendor/hash/libvendor-hash.a
+
+build libwhisper.so: phony bin/libwhisper.so
 
 build llama: phony bin/libllama.so
 
@@ -2303,7 +2529,11 @@ build llama-common-base: phony third_party/llama.cpp/common/libllama-common-base
 
 build mural_llama: phony /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so
 
+build parakeet: phony bin/libparakeet.so
+
 build vendor-hash: phony third_party/llama.cpp/vendor/hash/libvendor-hash.a
+
+build whisper: phony bin/libwhisper.so
 
 # =============================================================================
 # Folder targets.
@@ -2313,7 +2543,7 @@ build vendor-hash: phony third_party/llama.cpp/vendor/hash/libvendor-hash.a
 #############################################
 # Folder: /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64
 
-build all: phony /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so third_party/llama.cpp/all
+build all: phony /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64/libmural_llama.so third_party/llama.cpp/all third_party/whisper.cpp/all
 
 # =============================================================================
 
@@ -2407,20 +2637,34 @@ build third_party/llama.cpp/vendor/sheredom/all: phony
 build third_party/llama.cpp/vendor/stb/all: phony
 
 # =============================================================================
+
+#############################################
+# Folder: /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp
+
+build third_party/whisper.cpp/all: phony third_party/whisper.cpp/src/all
+
+# =============================================================================
+
+#############################################
+# Folder: /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src
+
+build third_party/whisper.cpp/src/all: phony bin/libwhisper.so bin/libparakeet.so
+
+# =============================================================================
 # Built-in targets
 
 
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/BasicConfigVersion-SameMajorVersion.cmake.in /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeASMInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFile.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFileCXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckLibraryExists.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/GNU.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindGit.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindOpenSSL.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageMessage.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPkgConfig.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindThreads.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/GNUInstallDirs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Initialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Linux.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/abis.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android-legacy.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/flags.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Clang.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Initialize.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/platforms.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/../../../../../../../../../.git/modules/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/index /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/build-info.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/license.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/build-info.cpp.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/parsers/sources.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/ggml-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/llama-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/cpp-httplib/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/hash/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/miniaudio/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/stb/CMakeLists.txt CMakeCache.txt CMakeFiles/3.22.1-g37088a8/CMakeASMCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake
+build build.ninja: RERUN_CMAKE | /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/BasicConfigVersion-SameMajorVersion.cmake.in /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeASMInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFile.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFileCXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckLibraryExists.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/GNU.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindGit.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindOpenSSL.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageMessage.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPkgConfig.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindThreads.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/GNUInstallDirs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Initialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Linux.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/abis.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android-legacy.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/flags.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Clang.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Initialize.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/platforms.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/../../../../../../../../../.git/modules/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/index /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/build-info.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/license.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/build-info.cpp.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/parsers/sources.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/ggml-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/llama-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/cpp-httplib/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/hash/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/miniaudio/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/stb/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/build-info.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/parakeet-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/parakeet.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/whisper-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/whisper.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/CMakeLists.txt CMakeCache.txt CMakeFiles/3.22.1-g37088a8/CMakeASMCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/BasicConfigVersion-SameMajorVersion.cmake.in /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeASMInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFile.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFileCXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckLibraryExists.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/GNU.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindGit.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindOpenSSL.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageMessage.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPkgConfig.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindThreads.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/GNUInstallDirs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Initialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Linux.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/abis.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android-legacy.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/flags.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Clang.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Initialize.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/platforms.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/../../../../../../../../../.git/modules/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/index /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/build-info.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/license.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/build-info.cpp.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/parsers/sources.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/ggml-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/llama-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/cpp-httplib/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/hash/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/miniaudio/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/stb/CMakeLists.txt CMakeCache.txt CMakeFiles/3.22.1-g37088a8/CMakeASMCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake: phony
+build /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/BasicConfigVersion-SameMajorVersion.cmake.in /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeASMInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCXXInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeGenericSystem.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakePackageConfigHelpers.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckCXXSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFile.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckIncludeFileCXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/CheckLibraryExists.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Compiler/GNU.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindGit.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindOpenSSL.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPackageMessage.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindPkgConfig.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/FindThreads.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/GNUInstallDirs.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckCompilerFlag.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Internal/CheckSourceCompiles.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-ASM.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-C.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang-CXX.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Clang.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android-Initialize.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Android.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/Linux.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/Platform/UnixPaths.cmake /home/joaquin/Android/Sdk/cmake/3.22.1/share/cmake-3.22/Modules/WriteBasicConfigVersionFile.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/abis.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android-legacy.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/flags.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Clang.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android-Initialize.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/hooks/pre/Android.cmake /home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/platforms.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/../../../../../../../../../.git/modules/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/index /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/build-info.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/license.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/cmake/llama.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/build-info.cpp.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/common/parsers/sources.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/common.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/cmake/ggml-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-cpu/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/src/llama-version.h.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/cpp-httplib/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/hash/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/miniaudio/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/stb/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/CMakeLists.txt /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/build-info.cmake /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/parakeet-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/parakeet.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/whisper-config.cmake.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/whisper.pc.in /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/CMakeLists.txt CMakeCache.txt CMakeFiles/3.22.1-g37088a8/CMakeASMCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeCXXCompiler.cmake CMakeFiles/3.22.1-g37088a8/CMakeSystem.cmake: phony
 
 
 #############################################

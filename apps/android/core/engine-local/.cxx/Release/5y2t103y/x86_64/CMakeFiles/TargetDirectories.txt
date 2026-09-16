@@ -91,3 +91,17 @@
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp/common/CMakeFiles/install.dir
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp/common/CMakeFiles/install/local.dir
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp/common/CMakeFiles/install/strip.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/CMakeFiles/edit_cache.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/CMakeFiles/rebuild_cache.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/CMakeFiles/list_install_components.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/CMakeFiles/install.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/CMakeFiles/install/local.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/CMakeFiles/install/strip.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/whisper.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/parakeet.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/edit_cache.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/rebuild_cache.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/list_install_components.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/install.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/install/local.dir
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp/src/CMakeFiles/install/strip.dir

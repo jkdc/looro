@@ -19,3 +19,8 @@
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/nlohmann/CMakeLists.txt
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/sheredom/CMakeLists.txt
 /home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/vendor/stb/CMakeLists.txt
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/CMakeLists.txt
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/build-info.cmake
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/parakeet-config.cmake.in
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/cmake/whisper-config.cmake.in
+/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp/src/CMakeLists.txt

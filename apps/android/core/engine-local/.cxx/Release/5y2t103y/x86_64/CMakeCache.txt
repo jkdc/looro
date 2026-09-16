@@ -26,7 +26,7 @@ ANDROID_PLATFORM:UNINITIALIZED=android-26
 //No help, variable specified on the command line.
 ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES:UNINITIALIZED=ON
 
-//ggml: build shared libraries
+//build shared libraries
 BUILD_SHARED_LIBS:BOOL=ON
 
 //Path to a program.
@@ -765,11 +765,83 @@ OPENSSL_NO_ASM:BOOL=ON
 //Path to a library.
 OPENSSL_SSL_LIBRARY:FILEPATH=OPENSSL_SSL_LIBRARY-NOTFOUND
 
+//Location of binary  files
+PARAKEET_BIN_INSTALL_DIR:PATH=bin
+
+//Location of header  files
+PARAKEET_INCLUDE_INSTALL_DIR:PATH=include
+
+//Location of library files
+PARAKEET_LIB_INSTALL_DIR:PATH=lib
+
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
 
 //pkg-config executable
 PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
+
+//whisper: enable all compiler warnings
+WHISPER_ALL_WARNINGS:BOOL=ON
+
+//whisper: enable all compiler warnings in 3rd party libs
+WHISPER_ALL_WARNINGS_3RD_PARTY:BOOL=OFF
+
+//Location of binary  files
+WHISPER_BIN_INSTALL_DIR:PATH=bin
+
+//whisper: build examples
+WHISPER_BUILD_EXAMPLES:BOOL=OFF
+
+//whisper: dev build
+WHISPER_BUILD_IS_DEV:BOOL=ON
+
+//whisper: build server example
+WHISPER_BUILD_SERVER:BOOL=OFF
+
+//whisper: build tests
+WHISPER_BUILD_TESTS:BOOL=OFF
+
+//whisper: enable Core ML framework
+WHISPER_COREML:BOOL=OFF
+
+//whisper: allow non-CoreML fallback
+WHISPER_COREML_ALLOW_FALLBACK:BOOL=OFF
+
+//whisper: use libcurl to download model from an URL
+WHISPER_CURL:BOOL=OFF
+
+//whisper: enable -Werror flag
+WHISPER_FATAL_WARNINGS:BOOL=OFF
+
+//Location of header  files
+WHISPER_INCLUDE_INSTALL_DIR:PATH=include
+
+//Location of library files
+WHISPER_LIB_INSTALL_DIR:PATH=lib
+
+//whisper: support for OpenVINO
+WHISPER_OPENVINO:BOOL=OFF
+
+//whisper: enable address sanitizer
+WHISPER_SANITIZE_ADDRESS:BOOL=OFF
+
+//whisper: enable thread sanitizer
+WHISPER_SANITIZE_THREAD:BOOL=OFF
+
+//whisper: enable undefined sanitizer
+WHISPER_SANITIZE_UNDEFINED:BOOL=OFF
+
+//whisper: support for libSDL2
+WHISPER_SDL2:BOOL=OFF
+
+//whisper: use system-installed GGML library
+WHISPER_USE_SYSTEM_GGML:BOOL=OFF
+
+//whisper: use system-installed llama.cpp library
+WHISPER_USE_SYSTEM_LLAMA:BOOL=OFF
+
+//whisper: support for AMD Vitis AI
+WHISPER_VITISAI:BOOL=OFF
 
 //ggml: path to ZenDNN installation
 ZENDNN_ROOT:BOOL=OFF
@@ -804,11 +876,26 @@ mural_llama_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 mural_llama_SOURCE_DIR:STATIC=/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp
 
+//Dependencies for the target
+parakeet_LIB_DEPENDS:STATIC=general;ggml;general;Threads::Threads;
+
 //Path to a library.
 pkgcfg_lib__OPENSSL_crypto:FILEPATH=pkgcfg_lib__OPENSSL_crypto-NOTFOUND
 
 //Path to a library.
 pkgcfg_lib__OPENSSL_ssl:FILEPATH=pkgcfg_lib__OPENSSL_ssl-NOTFOUND
+
+//Value Computed by CMake
+whisper.cpp_BINARY_DIR:STATIC=/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/whisper.cpp
+
+//Value Computed by CMake
+whisper.cpp_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+whisper.cpp_SOURCE_DIR:STATIC=/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/whisper.cpp
+
+//Dependencies for the target
+whisper_LIB_DEPENDS:STATIC=general;ggml;
 
 
 ########################
@@ -962,7 +1049,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=14
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=16
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

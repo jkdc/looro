@@ -58,12 +58,11 @@ class ConversationEnginesInstrumentedTest {
      */
     @Test(timeout = 60_000)
     fun setupLocalModelDir() {
-        val dir = java.io.File(
-            context.getExternalFilesDir(null) ?: context.filesDir,
-            "models/llm",
-        )
-        val created = dir.mkdirs() || dir.isDirectory
-        assertTrue("could not create ${dir.absolutePath}", created)
+        val base = java.io.File(context.getExternalFilesDir(null) ?: context.filesDir, "models")
+        for (dir in listOf(java.io.File(base, "llm"), java.io.File(base, "whisper"))) {
+            val created = dir.mkdirs() || dir.isDirectory
+            assertTrue("could not create ${dir.absolutePath}", created)
+        }
     }
 
 
@@ -125,6 +124,28 @@ class ConversationEnginesInstrumentedTest {
         } catch (e: chat.mural.core.engines.EngineException) {
             assertTrue(e.message!!.contains("ZHIPUAI_API_KEY"))
         }
+    }
+
+    // ---- local voice: STT leg with the REAL whisper model (TTS round-trip) ----
+
+    @Test(timeout = 900_000)
+    fun whisperTranscribesTtsAudioOnDevice() = runBlocking {
+        val tts = chat.mural.engines.local.LocalTtsEngine(context)
+        assertTrue(tts.initialize())
+        val wav = java.io.File(context.cacheDir, "stt-test.wav")
+        wav.delete()
+        assertTrue(tts.synthesizeToFile("Yesterday I go to the beach. It was amazing.", wav))
+
+        val pcm = chat.mural.engines.local.WavReader.read16bitMono(wav)
+        val resampled = chat.mural.engines.local.WavReader.resample(pcm.samples, pcm.sampleRate)
+
+        val sttDir = chat.mural.core.engines.LocalLlamaEngineAdapter.defaultWhisperModelsDir(context)
+        val stt = chat.mural.engines.local.WhisperStt(sttDir)
+        val result = stt.transcribe(resampled, "en")
+        assertTrue("expected transcription, got: ''", result.text.isNotBlank())
+        assertTrue("expected 'beach' in: ${result.text}", result.text.lowercase().contains("beach"))
+        assertTrue(result.processingMs > 0)
+        tts.release()
     }
 
     // ---- local: missing model gives an actionable error (no crash) ----

@@ -8,7 +8,8 @@
 					"build" : ".",
 					"childIndexes" : 
 					[
-						1
+						1,
+						14
 					],
 					"hasInstallRule" : true,
 					"jsonFile" : "directory-.-Release-f5ebdc15457944623624.json",
@@ -33,7 +34,7 @@
 						13
 					],
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-third_party.llama.cpp-Release-e9c5ccbf54ff5bb2c20b.json",
+					"jsonFile" : "directory-third_party.llama.cpp-Release-c887b8789333aa7c994a.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.14"
@@ -49,7 +50,7 @@
 						3
 					],
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-third_party.llama.cpp.ggml-Release-cdfe973067b1cd6f7ea7.json",
+					"jsonFile" : "directory-third_party.llama.cpp.ggml-Release-9500bdd0bbed71b21973.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.14"
@@ -138,7 +139,7 @@
 					"source" : "third_party/llama.cpp/vendor/hash",
 					"targetIndexes" : 
 					[
-						8
+						9
 					]
 				},
 				{
@@ -215,6 +216,38 @@
 						5,
 						6
 					]
+				},
+				{
+					"build" : "third_party/whisper.cpp",
+					"childIndexes" : 
+					[
+						15
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-third_party.whisper.cpp-Release-4afbb6054fefa952406b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "third_party/whisper.cpp"
+				},
+				{
+					"build" : "third_party/whisper.cpp/src",
+					"jsonFile" : "directory-third_party.whisper.cpp.src-Release-46e328a3ca46b1ad5f17.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 14,
+					"projectIndex" : 3,
+					"source" : "third_party/whisper.cpp/src",
+					"targetIndexes" : 
+					[
+						8,
+						10
+					]
 				}
 			],
 			"name" : "Release",
@@ -223,7 +256,8 @@
 				{
 					"childIndexes" : 
 					[
-						1
+						1,
+						3
 					],
 					"directoryIndexes" : 
 					[
@@ -261,7 +295,7 @@
 						4,
 						5,
 						6,
-						8
+						9
 					]
 				},
 				{
@@ -278,6 +312,20 @@
 						1,
 						2,
 						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						14,
+						15
+					],
+					"name" : "whisper.cpp",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						8,
+						10
 					]
 				}
 			],
@@ -300,21 +348,21 @@
 				{
 					"directoryIndex" : 3,
 					"id" : "ggml-base::@6fb243c56d1be69d9933",
-					"jsonFile" : "target-ggml-base-Release-2450be1214cfe694e143.json",
+					"jsonFile" : "target-ggml-base-Release-2f9618860f05bd676f17.json",
 					"name" : "ggml-base",
 					"projectIndex" : 2
 				},
 				{
 					"directoryIndex" : 3,
 					"id" : "ggml-cpu::@6fb243c56d1be69d9933",
-					"jsonFile" : "target-ggml-cpu-Release-05fd9933f196836b9fa6.json",
+					"jsonFile" : "target-ggml-cpu-Release-796a956075bfc3bf0fde.json",
 					"name" : "ggml-cpu",
 					"projectIndex" : 2
 				},
 				{
 					"directoryIndex" : 5,
 					"id" : "llama::@bf716c64e9230b199072",
-					"jsonFile" : "target-llama-Release-f2565e26b35f5e7fec0d.json",
+					"jsonFile" : "target-llama-Release-19ed50bb1d83d987b053.json",
 					"name" : "llama",
 					"projectIndex" : 1
 				},
@@ -328,16 +376,23 @@
 				{
 					"directoryIndex" : 13,
 					"id" : "llama-common-base::@430b077c762759e3094a",
-					"jsonFile" : "target-llama-common-base-Release-7807c6a1757b3f677431.json",
+					"jsonFile" : "target-llama-common-base-Release-3a917f851ec0eb4ed95e.json",
 					"name" : "llama-common-base",
 					"projectIndex" : 1
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "mural_llama::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-mural_llama-Release-94844bcf72124b9d6f29.json",
+					"jsonFile" : "target-mural_llama-Release-e7beb461bf2efdc3fc9c.json",
 					"name" : "mural_llama",
 					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 15,
+					"id" : "parakeet::@aff2e38b0d1f915335d8",
+					"jsonFile" : "target-parakeet-Release-74913dbe62bdd9907eda.json",
+					"name" : "parakeet",
+					"projectIndex" : 3
 				},
 				{
 					"directoryIndex" : 7,
@@ -345,6 +400,13 @@
 					"jsonFile" : "target-vendor-hash-Release-295829c1060b39cd6bd0.json",
 					"name" : "vendor-hash",
 					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 15,
+					"id" : "whisper::@aff2e38b0d1f915335d8",
+					"jsonFile" : "target-whisper-Release-f4b24c9cde3812bc3c13.json",
+					"name" : "whisper",
+					"projectIndex" : 3
 				}
 			]
 		}
@@ -352,7 +414,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64",
+		"build" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a",
 		"source" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp"
 	},
 	"version" : 

@@ -62,9 +62,13 @@ make deploy-fast ENGINE=local  # reuse the last APK (no Gradle)
   ```
 
   Files land on device under
-  `/sdcard/Android/data/chat.mural.android/files/models/llm/` and are only
-  re-pushed when their size changes. Model selection prefers known conversation
-  models by name (see `LocalModelManager`); inference is CPU-only, ~2 GB RAM.
+  `/sdcard/Android/data/chat.mural.android/files/models/{llm,whisper}/` and are
+  only re-pushed when their size changes. The LLM manager prefers known
+  conversation models by name; the Whisper manager prefers multilingual base
+  over English-only (see `LocalModelManager`/`LocalWhisperModelManager`).
+  LLM inference is CPU-only, ~2 GB RAM; Whisper adds ~300 MB while loaded.
+  Note: the model dirs must be created by the app (it does so on launch);
+  `make deploy` handles the launch-before-push ordering automatically.
 - First build compiles llama.cpp with the NDK (10–20 min once, then cached).
 
 ### Runtime requirements (local)
@@ -74,10 +78,15 @@ make deploy-fast ENGINE=local  # reuse the last APK (no Gradle)
 
 ### Known limitations (this phase)
 
-- **Voice is OpenAI-only**: live voice rides the WebRTC path (`LiveTransport`);
-  starting voice with a non-`openai` engine shows
-  "Voice conversation needs the OpenAI engine…". Typed helpers work fully
-  offline. On-device voice (STT→LLM→TTS) is the next phase.
+- **Voice on-device** (Phase 6): with `ENGINE=local`, starting a conversation
+  now opens an on-device voice session: mic → Whisper STT (multilingual
+  `ggml-base-q5_1.bin`, language hint from the session) → local LLM → Android
+  TTS, driven by `LocalVoiceTransport` behind the same `VoiceTransport`
+  contract as the WebRTC path. Turn-taking uses an energy VAD (speech ≥ 0.3 s,
+  end-of-turn after 1.2 s silence, 30 s cap); the mic is suppressed while TTS
+  speaks; typed input during a voice session is spoken and shown as assistant
+  transcript. Voice for `deepseek`/`glm` also uses the local STT/TTS with the
+  remote LLM.
 - `search=true` requests are answered without web search by non-OpenAI engines
   (degradation, not an error).
 - The `aiConsent` gate still applies before any engine call (product decision,
