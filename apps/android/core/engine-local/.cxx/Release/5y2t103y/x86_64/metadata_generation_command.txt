@@ -1,0 +1,27 @@
+                        -H/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=26
+-DANDROID_PLATFORM=android-26
+-DANDROID_ABI=x86_64
+-DCMAKE_ANDROID_ARCH_ABI=x86_64
+-DANDROID_NDK=/home/joaquin/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_ANDROID_NDK=/home/joaquin/Android/Sdk/ndk/27.0.12077973
+-DCMAKE_TOOLCHAIN_FILE=/home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/home/joaquin/Android/Sdk/cmake/3.22.1/bin/ninja
+-DCMAKE_CXX_FLAGS=-std=c++17 -frtti -fexceptions
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64
+-B/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64
+-GNinja
+-DCMAKE_BUILD_TYPE=Release
+-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON
+-DGGML_NATIVE=OFF
+-DGGML_OPENMP=OFF
+-DLLAMA_BUILD_COMMON=ON
+-DLLAMA_BUILD_EXAMPLES=OFF
+-DLLAMA_BUILD_TESTS=OFF
+-DLLAMA_BUILD_TOOLS=OFF
+-DLLAMA_BUILD_SERVER=OFF
+                        Build command args: []
+                        Version: 2

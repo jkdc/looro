@@ -41,3 +41,8 @@ apps/android/local.properties
 apps/android/.idea/
 *.jks
 *.keystore
+
+# Local conversation-engine models (never commit model weights)
+apps/android/local-models/
+*.gguf
+*.bin

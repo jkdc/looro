@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "third_party/llama.cpp/vendor/stb",
+		"source" : "third_party/llama.cpp/vendor/stb"
+	}
+}
