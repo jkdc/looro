@@ -64,7 +64,7 @@ bool isAborted(JNIEnv * env, jobject abortFlag, jmethodID getMethod) {
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_chat_mural_engines_local_LlamaNative_nativeInit(
+Java_chat_mural_engines_local_JniLlamaRuntime_init(
         JNIEnv * env, jclass, jstring jModelPath,
         jint nCtx, jint nThreads, jint nBatch) {
     const char * path = env->GetStringUTFChars(jModelPath, nullptr);
@@ -109,7 +109,7 @@ Java_chat_mural_engines_local_LlamaNative_nativeInit(
 }
 
 JNIEXPORT void JNICALL
-Java_chat_mural_engines_local_LlamaNative_nativeFree(JNIEnv *, jclass, jlong handle) {
+Java_chat_mural_engines_local_JniLlamaRuntime_free(JNIEnv *, jclass, jlong handle) {
     auto * session = reinterpret_cast<LlamaSession *>(handle);
     if (session == nullptr) {
         return;
@@ -127,7 +127,7 @@ Java_chat_mural_engines_local_LlamaNative_nativeFree(JNIEnv *, jclass, jlong han
 // {promptTokens, generatedTokens}. Returns 0 on success, negative on error:
 //  -1 generic failure, -2 prompt too large for context, -3 aborted by caller.
 JNIEXPORT jint JNICALL
-Java_chat_mural_engines_local_LlamaNative_nativeGenerate(
+Java_chat_mural_engines_local_JniLlamaRuntime_generate(
         JNIEnv * env, jclass, jlong handle,
         jobjectArray jRoles, jobjectArray jContents,
         jstring jSchema, jboolean jUseGrammar,
@@ -254,7 +254,7 @@ Java_chat_mural_engines_local_LlamaNative_nativeGenerate(
 
         char piece_buf[256];
         const int n_piece = llama_token_to_piece(
-            session->vocab, new_token_id, piece_buf, sizeof(piece_buf), 0, true);
+            session->vocab, new_token_id, piece_buf, sizeof(piece_buf), 0, false);
         if (n_piece > 0) {
             if (!emitToken(std::string(piece_buf, (size_t) n_piece))) {
                 status = -1;

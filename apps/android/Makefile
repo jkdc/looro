@@ -27,7 +27,13 @@ ifndef DEPLOY_NO_BUILD
 endif
 	$(ADB) install -r -t app/build/outputs/apk/debug/app-debug.apk
 	$(ADB) shell pm grant $(PKG) android.permission.RECORD_AUDIO 2>/dev/null || true
-	@if [ "$(ENGINE)" = "local" ]; then SERIAL=$(SERIAL) ./scripts/push-local-models.sh; fi
+ifeq ($(ENGINE),local)
+	@echo "First launch so the app creates its model dir (FUSE requires app-owned dirs)…"
+	$(ADB) shell am start -n $(PKG)/chat.mural.MainActivity >/dev/null
+	@sleep 6
+	$(ADB) shell am force-stop $(PKG)
+	SERIAL=$(SERIAL) ./scripts/push-local-models.sh
+endif
 	$(ADB) shell am force-stop $(PKG)
 	$(ADB) shell am start -n $(PKG)/chat.mural.MainActivity
 	@echo "Deployed with ENGINE=$(ENGINE)."

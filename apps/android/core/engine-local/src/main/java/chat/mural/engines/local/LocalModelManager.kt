@@ -33,6 +33,13 @@ class LocalModelManager(private val modelsDir: File) {
 
     val dir: File get() = modelsDir
 
+    /**
+     * Creates the model directory as the app (must not be done by adb shell:
+     * FUSE/MediaProvider denies the app read access to dirs created by other
+     * uids under Android/data). Returns true when the dir exists afterwards.
+     */
+    fun ensureDirs(): Boolean = modelsDir.mkdirs() || modelsDir.isDirectory
+
     companion object {
         // Lower = preferred. Kept in sync with the POC's validated models.
         private val PREFERENCE = listOf(

@@ -51,6 +51,11 @@ class LocalLlamaEngine(
     private val mutex = Mutex()
     private var handle: Long = 0L
 
+    init {
+        // Claim the model dir as this app's uid so adb-pushed models are readable.
+        modelManager.ensureDirs()
+    }
+
     val loadedModelName: String?
         get() = synchronized(this) { if (handle == 0L) null else loadedName }
 
@@ -82,7 +87,7 @@ class LocalLlamaEngine(
 
         when (status) {
             0 -> LocalResult(
-                text = raw.toString().trim(),
+                text = sanitizeCompletion(raw.toString()),
                 raw = raw.toString(),
                 promptTokens = outStats[0],
                 generatedTokens = outStats[1],
@@ -104,6 +109,35 @@ class LocalLlamaEngine(
                 loadedName = null
             }
         }
+    }
+
+    /**
+     * Some models echo the chat template's generation header as their first
+     * tokens (Qwen emits `<|im_start|>assistant\n` because its GGUF template
+     * omits it from the prompt). Strip any leading special-token renders and
+     * assistant header so callers always see the model's actual content.
+     */
+    internal fun sanitizeCompletion(raw: String): String {
+        var i = 0
+        val n = raw.length
+        while (i < n) {
+            when {
+                raw[i].isWhitespace() -> i++
+                raw.startsWith("<|", i) -> {
+                    val close = raw.indexOf("|>", i + 2)
+                    if (close < 0) return "" // only special markers: no content
+                    i = close + 2
+                }
+                else -> break
+            }
+        }
+        var rest = raw.substring(i)
+        // A bare header word left after the markers (e.g. "assistant\n").
+        val headerEnd = rest.indexOf('\n')
+        if (headerEnd in 0..24 && rest.take(headerEnd).matches(Regex("[A-Za-z ]+"))) {
+            rest = rest.substring(headerEnd + 1)
+        }
+        return rest.trim()
     }
 
     private suspend fun ensureLoaded() {

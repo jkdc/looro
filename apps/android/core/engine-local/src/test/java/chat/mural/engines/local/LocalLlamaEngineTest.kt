@@ -127,6 +127,18 @@ class LocalLlamaEngineTest {
     }
 
     @Test
+    fun `sanitizer strips template header echo`() {
+        val engine = engineWithModel(FakeRuntime())
+        val qwen = "<|im_start|>assistant\n{\"reply\":\"hi\"}"
+        assertEquals("{\"reply\":\"hi\"}", engine.sanitizeCompletion(qwen))
+        assertEquals("plain text", engine.sanitizeCompletion("  plain text"))
+        // non-ChatML output passes through untouched
+        assertEquals("Just text.", engine.sanitizeCompletion("Just text."))
+        // header markers only
+        assertEquals("", engine.sanitizeCompletion("<|im_start|>assistant\n"))
+    }
+
+    @Test
     fun `model manager prefers known conversation models`() {
         val dir = tmp.newFolder("prefs").resolve("llm").apply { mkdirs() }
         File(dir, "tiny-random.gguf").writeBytes(ByteArray(100))

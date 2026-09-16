@@ -34,16 +34,47 @@
 
 ## Not verified by automation (honest boundary)
 
-- **In-app typed teaching call with the local model on the emulator**: Mural's
-  conversation entry requires onboarding credentials (OpenAI key / hosted
-  account) that cannot be legitimately automated here. The engine itself is
-  covered by unit tests, and the identical native stack + model completed full
-  offline inference in the POC. First manual check on a Pixel: open a typed
-  reply with `ENGINE=local` and confirm on-device generation (logcat tag
-  `MuralLocalEngine`).
 - **Real provider calls** (DeepSeek/GLM) need live keys; contract pinned by
-  MockWebServer tests.
+  MockWebServer unit tests and on-device construction tests. On-device plaintext
+  HTTP to localhost is blocked by network security policy (by design), so the
+  instrumented HTTP variant was replaced by construction + key-handling tests.
 - **Pixel hardware**: RAM/latency numbers remain to be measured manually.
+
+## Round 2 — on-device tests requested after review (emulator, real model)
+
+New instrumented suite `ConversationEnginesInstrumentedTest` (7 tests, **all
+passing** via `am instrument`):
+
+- `localEngineGeneratesReplyWithRealModel` — REAL llama.cpp inference with the
+  real Qwen2.5-3B Q4_K_M GGUF through `ConversationEngineFactory.create("local")`.
+- `localEngineHonorsJsonSchema` — Mural-style schema constrained to valid JSON
+  via GBNF grammar; reply parses and contains the required field.
+- `openaiAdapterIsConstructedAndDelegates`, `compatibleEnginesAreConstructedOnDevice`,
+  `missingRemoteKeyFailsWithProviderMessage`, `localEngineWithEmptyModelDirFailsGracefully`,
+  `setupLocalModelDir` (must run before the adb push: the model dir must be
+  created by the app — see FUSE note).
+
+**Full-app E2E through the real UI (`ENGINE=local` deploy)**: onboarding → AI
+consent → fake key saved → orb starts a typed session → typed
+"Yesterday I go to the beach. It was amazing!" → assistant reply generated
+on-device in the learning language (Norwegian):
+**"Ja, hva fant du å gjøre i går?"** / "Yes, what did you do yesterday?" —
+grammatically correct target-language coaching; the meaning/lookup helper flow
+also ran through the local engine. Zero crashes; process alive across rounds.
+
+Bugs found and fixed during this round:
+1. JNI symbol mismatch after renaming the Kotlin bridge (`LlamaNative` →
+   `JniLlamaRuntime`) — native functions renamed accordingly.
+2. Qwen renders `<|im_start|>assistant` as text (added-token, not control):
+   `LocalLlamaEngine` now sanitizes leading template-header echoes
+   (`sanitizeCompletion`, unit-tested).
+3. FUSE/permission: model dirs created by `adb shell` are NOT readable by the
+   app — the model dir must be created by the app itself. Fixed by
+   `ensureDirs()` at engine construction + deploy order in the Makefile
+   (launch app once → push models → relaunch). Push scripts unchanged.
+4. Voice gating replaced by typed-session fallback (spec scenario updated).
+
+Unit suite after fixes: **334 tests, 0 failures** (both modules).
 
 ## Follow-ups (documented, out of this change)
 

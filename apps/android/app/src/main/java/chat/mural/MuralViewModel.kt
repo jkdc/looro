@@ -662,8 +662,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     fun start() {
         if (isRunning || !cloudReady()) return
         if (BuildConfig.CONVERSATION_ENGINE != "openai") {
-            // Voice still rides the WebRTC path; non-OpenAI engines cover typed helpers in this phase.
-            presentError(getApplication<Application>().getString(R.string.error_local_engine_voice_unavailable))
+            // Voice rides the WebRTC path (OpenAI-only today). Non-OpenAI engines
+            // start a typed conversation: teaching helpers run on the selected engine.
+            newSession(false); state = "active"; startDurationChecks()
             return
         }
         val choice = conversationProvider

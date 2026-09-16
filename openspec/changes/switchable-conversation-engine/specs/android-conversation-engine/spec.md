@@ -29,6 +29,12 @@ with a clear message.
 - **THEN** teaching/typed AI calls resolve to the on-device engine and no OpenAI
   network call is performed for them.
 
+#### Scenario: non-OpenAI engines start typed conversations
+
+- **WHEN** the user starts a conversation with engine != `openai`
+- **THEN** the app opens a typed (text) session instead of a WebRTC voice
+  session; live voice remains OpenAI-only until the on-device voice phase.
+
 ### Requirement: Engine factory and adapter registry
 
 A `ConversationEngineFactory` SHALL be the only place that constructs engine

@@ -11,7 +11,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "ANDROID_NDK",
@@ -87,7 +87,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "x86_64"
+			"value" : "arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_ANDROID_NDK",
@@ -279,7 +279,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -1115,7 +1115,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -1387,7 +1387,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/build/intermediates/cxx/Release/5y2t103y/obj/arm64-v8a"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1627,10 +1627,10 @@
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : "The CMake toolchain file"
+					"value" : "No help, variable specified on the command line."
 				}
 			],
-			"type" : "FILEPATH",
+			"type" : "UNINITIALIZED",
 			"value" : "/home/joaquin/Android/Sdk/ndk/27.0.12077973/build/cmake/android.toolchain.cmake"
 		},
 		{
@@ -1960,6 +1960,18 @@
 			],
 			"type" : "FILEPATH",
 			"value" : "GGML_CCACHE_FOUND-NOTFOUND"
+		},
+		{
+			"name" : "GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test GGML_COMPILER_SUPPORTS_FP16_FORMAT_I3E"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
 		},
 		{
 			"name" : "GGML_CPU",
@@ -3170,6 +3182,78 @@
 			"value" : "/usr/bin/git"
 		},
 		{
+			"name" : "HAVE_DOTPROD",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_DOTPROD"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_FMA",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_FMA"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "1"
+		},
+		{
+			"name" : "HAVE_FP16_VECTOR_ARITHMETIC",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_FP16_VECTOR_ARITHMETIC"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_MATMUL_INT8",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_MATMUL_INT8"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_SME",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_SME"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
+			"name" : "HAVE_SVE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Test HAVE_SVE"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : ""
+		},
+		{
 			"name" : "LLAMA_ALL_WARNINGS",
 			"properties" : 
 			[
@@ -4063,7 +4147,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp/ggml"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/third_party/llama.cpp/ggml"
 		},
 		{
 			"name" : "ggml_IS_TOP_LEVEL",
@@ -4099,7 +4183,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64/third_party/llama.cpp"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a/third_party/llama.cpp"
 		},
 		{
 			"name" : "llama.cpp_IS_TOP_LEVEL",
@@ -4135,7 +4219,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/x86_64-linux-android/26/liblog.so"
+			"value" : "/home/joaquin/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/26/liblog.so"
 		},
 		{
 			"name" : "mural_llama_BINARY_DIR",
@@ -4147,7 +4231,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64"
+			"value" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a"
 		},
 		{
 			"name" : "mural_llama_IS_TOP_LEVEL",
