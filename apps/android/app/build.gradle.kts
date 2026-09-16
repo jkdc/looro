@@ -17,6 +17,18 @@ require(muralPurchaseChannel in listOf("play", "stripe")) { "mural.purchaseChann
 val muralMinuteEnvironment = muralConfiguration("mural.minutePurchaseEnvironment").ifBlank { "test" }
 require(muralMinutePurchases in listOf("false", "true")) { "mural.minutePurchasesEnabled must be false or true" }
 require(muralMinuteEnvironment in listOf("test", "live")) { "mural.minutePurchaseEnvironment must be test or live" }
+
+// Conversation engine selection: -Pmural.conversationEngine > local.properties > MURAL_CONVERSATION_ENGINE env > openai.
+val muralConversationEngine = (
+    providers.gradleProperty("mural.conversationEngine").orNull
+        ?: muralLocal.getProperty("mural.conversationEngine")
+        ?: System.getenv("MURAL_CONVERSATION_ENGINE")
+        ?: "openai"
+    ).trim().lowercase()
+val validConversationEngines = listOf("openai", "local", "deepseek", "glm")
+require(muralConversationEngine in validConversationEngines) {
+    "mural.conversationEngine must be one of $validConversationEngines (got '$muralConversationEngine')"
+}
 android {
     namespace = "chat.mural"
     compileSdk = 36
@@ -32,6 +44,7 @@ android {
         buildConfigField("boolean", "MINUTE_PURCHASES_ENABLED", muralMinutePurchases)
         buildConfigField("String", "PURCHASE_CHANNEL", buildString(muralPurchaseChannel))
         buildConfigField("String", "MINUTE_PURCHASE_ENVIRONMENT", buildString(muralMinuteEnvironment))
+        buildConfigField("String", "CONVERSATION_ENGINE", buildString(muralConversationEngine))
     }
     // A personal installation can preserve its local signing identity across SDK resets.
     // This file is ignored by Git; clean checkouts use Android's standard debug key.
@@ -66,6 +79,7 @@ tasks.withType<Test>().configureEach {
 }
 dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
+    implementation(project(":core:engine-local"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.0")

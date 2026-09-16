@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import chat.mural.core.*
+import chat.mural.core.engines.ConversationEngineDeps
+import chat.mural.core.engines.ConversationEngineFactory
 import chat.mural.network.*
 import java.util.UUID
 import kotlinx.coroutines.*
@@ -119,6 +121,11 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = LearningRepository(application)
     private val credentials = CredentialStore(application)
     private val api = APIClient(credentials)
+    /** Selected at build time (see ConversationEngineFactory); default "openai" keeps today's behavior. */
+    private val conversationEngine: TeachingClient = ConversationEngineFactory.create(
+        BuildConfig.CONVERSATION_ENGINE,
+        ConversationEngineDeps(application, api, ConversationEngineDeps.defaultKeyLookup(), json),
+    )
     private val transport = LiveTransport(application, viewModelScope)
     private val providerStore = ConversationProviderStore(application)
     private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
@@ -474,7 +481,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             return hostedBindings.respond(localID, purpose, logicalID, instructions, input, schema, search)
         }
         if (localID == null && conversationProvider == ConversationProvider.HOSTED_MINUTES) throw HostedFailure.Unavailable
-        return api.respond(instructions, input, schema, search, purpose)
+        return conversationEngine.respond(instructions, input, schema, search, purpose)
     }
     private fun helperContext(snapshot: SessionRecord, passage: Passage? = null): String =
         if (snapshot.id in hostedSessionIDs) ConversationHistory.helperContext(snapshot, passage)
@@ -654,6 +661,11 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun start() {
         if (isRunning || !cloudReady()) return
+        if (BuildConfig.CONVERSATION_ENGINE != "openai") {
+            // Voice still rides the WebRTC path; non-OpenAI engines cover typed helpers in this phase.
+            presentError(getApplication<Application>().getString(R.string.error_local_engine_voice_unavailable))
+            return
+        }
         val choice = conversationProvider
         if (choice == ConversationProvider.HOSTED_MINUTES && accountChangeBlocked) {
             presentError(getApplication<Application>().getString(R.string.hosted_checking_previous))
