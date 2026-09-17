@@ -17,7 +17,17 @@ class VoiceManualTurnStore(context: Context) {
         prefs.edit().putBoolean(KEY, enabled).apply()
     }
 
+    /** Milisegundos de silencio que cierran el turno (modo automático). */
+    fun getSilenceEndMs(): Long =
+        prefs.getLong(KEY_SILENCE_MS, DEFAULT_SILENCE_MS)
+
+    fun setSilenceEndMs(ms: Long) {
+        prefs.edit().putLong(KEY_SILENCE_MS, ms.coerceIn(600, 3_000)).apply()
+    }
+
     companion object {
         private const val KEY = "voice_manual_turn"
+        private const val KEY_SILENCE_MS = "silence_end_ms"
+        const val DEFAULT_SILENCE_MS = 1_200L
     }
 }

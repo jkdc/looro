@@ -43,7 +43,12 @@ class LocalVoiceTransport(
     private val tts: SpeechSink,
     private val frameSourceProvider: () -> AudioFrameSource = { MicRecorder() },
     private val frameDelayMs: Long = 128, // real-time pacing; tests pass 0
+    /** Generates the themed opening utterance when the session starts. */
+    var openOnStart: Boolean = false,
 ) : VoiceTransport {
+
+    /** Miliseconds of trailing silence that close an automatic turn (live-adjustable). */
+    @Volatile var silenceEndMs: Long = 1_200
 
     override var onEvent: ((JsonObject) -> Unit)? = null
     override var onFailure: ((String) -> Unit)? = null
@@ -98,6 +103,38 @@ class LocalVoiceTransport(
         log("voice session started (language='$sessionLanguage')")
         tts.initialize()
         startListening()
+        if (openOnStart) {
+            scope.launch(Dispatchers.Default) {
+                // The ViewModel appends the greeting instruction on session.started
+                // (synchronously during emit), so the context carries it by now.
+                delay(200)
+                try {
+                    val system = buildString {
+                        append(baseInstructions)
+                        synchronized(appendedContext) {
+                            while (appendedContext.isNotEmpty()) append("\n").append(appendedContext.removeFirst())
+                        }
+                    }
+                    val result = engine.respond(
+                        system,
+                        "(Begin the conversation now as instructed: greet the learner and open the theme.)",
+                        null, false, null,
+                    )
+                    if (result.text.isNotBlank()) {
+                        val start = relativeMs()
+                        emit(transcriptEvent(isInput = false, text = result.text, startMs = start, endMs = start + 500))
+                        speaking = true
+                        runCatching { tts.speak(result.text) }
+                        speaking = false
+                        log("opening spoken (${result.text.length} chars)")
+                    }
+                } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                    throw cancelled
+                } catch (e: Exception) {
+                    log("opening failed: ${e.message}") // degrades quietly
+                }
+            }
+        }
     }
 
     private fun startListening() {
@@ -151,7 +188,7 @@ class LocalVoiceTransport(
                         } else if (speechMs > 0) {
                             trailingSilenceMs += frameMs
                         }
-                        val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= SILENCE_END_MS
+                        val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= silenceEndMs
                         if (turnComplete || turnMs + frameMs >= MAX_TURN_MS) {
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()

@@ -241,6 +241,8 @@
     <string name="consent_local_storage_note">Your learning record is stored on this device. Mural does not save raw audio. You can keep browsing your saved words and conversations without agreeing.</string>
     <string name="consent_privacy_policy_link">Privacy policy</string>
     <string name="consent_agree_button">Agree and continue</string>
+    <string name="settings_silence_label">Silence before the coach replies (on-device voice)</string>
+    <string name="settings_silence_hint">Extra time to think: the turn is sent after this silence.</string>
     <string name="consent_decline_button">Not now</string>
     <string name="settings_voice_manual_turn">Beginner voice mode: end your turn with a button</string>
     <string name="error_guest_secure_storage_unavailable">Mural couldn\'t restore your saved trial details. Your learning history is still available. Restart the app to try again.</string>

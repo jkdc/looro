@@ -241,6 +241,8 @@
     <string name="consent_local_storage_note">Tu historial de aprendizaje se guarda en este dispositivo. Mural no guarda audio sin procesar. Puedes consultar tus palabras y conversaciones sin aceptar.</string>
     <string name="consent_privacy_policy_link">Ver política de privacidad</string>
     <string name="consent_agree_button">Aceptar y continuar</string>
+    <string name="settings_silence_label">Silencio antes de que responda el coach (voz en el dispositivo)</string>
+    <string name="settings_silence_hint">Tiempo extra para pensar: el turno se envía tras este silencio.</string>
     <string name="consent_decline_button">Ahora no</string>
     <string name="settings_voice_manual_turn">Modo principiante: botón para terminar de hablar</string>
     <string name="error_guest_secure_storage_unavailable">Mural no pudo restaurar los datos guardados de tu prueba gratuita. Tu historial de aprendizaje sigue disponible. Reinicia la aplicación para intentarlo de nuevo.</string>

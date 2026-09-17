@@ -65,6 +65,7 @@ import chat.mural.core.Passage
 import chat.mural.core.SessionRecord
 import chat.mural.core.Speaker
 import chat.mural.core.UsageSummary
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 
 @Composable
@@ -109,6 +110,20 @@ fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Uni
                             style = MaterialTheme.typography.bodyLarge, color = MuralColors.Ink,
                             modifier = Modifier.weight(1f).padding(end = 12.dp))
                         Switch(checked = vm.voiceManualTurn, onCheckedChange = { vm.setVoiceManualTurn(it) })
+                    }
+                    SettingsDivider()
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.settings_silence_label),
+                                style = MaterialTheme.typography.bodyLarge, color = MuralColors.Ink)
+                            Text(String.format(java.util.Locale.US, "%.1f s", vm.silenceEndMs / 1000f),
+                                style = MaterialTheme.typography.bodyLarge, color = MuralColors.Secondary)
+                        }
+                        Slider(value = vm.silenceEndMs.toFloat(),
+                            onValueChange = { vm.updateSilenceEndMs(((it / 100).toLong() * 100)) },
+                            valueRange = 600f..3000f)
+                        Text(stringResource(R.string.settings_silence_hint),
+                            style = MaterialTheme.typography.bodySmall, color = MuralColors.Secondary)
                     }
                     SettingsDivider()
                     SettingsRow(stringResource(R.string.settings_corrections_label), stringResource(R.string.settings_corrections_value))

@@ -122,6 +122,10 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
     private val repository = LearningRepository(application)
     private val credentials = CredentialStore(application)
+
+    private val voiceManualTurnStore by lazy {
+        chat.mural.core.voice.VoiceManualTurnStore(getApplication())
+    }
     private val api = APIClient(credentials)
     /** Selected at build time (see ConversationEngineFactory); default "openai" keeps today's behavior. */
     private val conversationEngine: TeachingClient = ConversationEngineFactory.create(
@@ -156,6 +160,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         LocalVoiceTransport(
             context = application,
             scope = viewModelScope,
+            openOnStart = true,
             stt = chat.mural.engines.local.WhisperStt(
                 chat.mural.core.engines.LocalLlamaEngineAdapter.defaultWhisperModelsDir(application),
             ),
@@ -691,13 +696,21 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         (transport as? chat.mural.core.voice.LocalVoiceTransport)?.manualTurn = enabled
     }
 
+    /** Ventana de silencio que cierra el turno (solo pipeline de voz on-device). */
+    var silenceEndMs by androidx.compose.runtime.mutableStateOf(voiceManualTurnStore.getSilenceEndMs())
+        private set
+
+    fun updateSilenceEndMs(ms: Long) {
+        val clamped = ms.coerceIn(600, 3_000)
+        voiceManualTurnStore.setSilenceEndMs(clamped)
+        silenceEndMs = clamped
+        (transport as? chat.mural.core.voice.LocalVoiceTransport)?.silenceEndMs = clamped
+    }
+
     fun endVoiceTurn() {
         (transport as? chat.mural.core.voice.LocalVoiceTransport)?.endTurn()
     }
 
-    private val voiceManualTurnStore by lazy {
-        chat.mural.core.voice.VoiceManualTurnStore(getApplication())
-    }
     fun help() {
         if (state != "active") return
         if (voiceSession) { command("instructions", TeachingPolicy.help(language)); notice = getApplication<Application>().getString(R.string.notice_help_simpler) }
@@ -753,8 +766,10 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             } else presentError(getApplication<Application>().getString(R.string.error_missing_key), true)
             return
         }
-        (transport as? chat.mural.core.voice.LocalVoiceTransport)?.manualTurn =
-            voiceManualTurnStore.get()
+        (transport as? chat.mural.core.voice.LocalVoiceTransport)?.apply {
+            manualTurn = voiceManualTurnStore.get()
+            silenceEndMs = voiceManualTurnStore.getSilenceEndMs()
+        }
         newSession(true); state = "connecting"
         val id = session!!.id
         val module = language

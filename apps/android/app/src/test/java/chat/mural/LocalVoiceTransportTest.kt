@@ -332,6 +332,32 @@ class LocalVoiceTransportTest {
         assertTrue(events.any { (it["type"]?.jsonPrimitive?.content ?: "") == "session.input_transcript.delta" })
     }
 
+    @Test
+    fun `custom silence window gates the auto turn`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime().apply { transcription = "Lenta" }), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.silenceEndMs = 3_000
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // habla + 1,3 s de silencio: con la ventana por defecto (1,2 s) cerraría; con 3 s no
+        repeat(4) { source.queue.add(speech()) }
+        repeat(12) { source.queue.add(silence()) }
+        Thread.sleep(500)
+        assertEquals(0, engine.received.size)
+
+        // superar los 3 s de silencio cierra el turno
+        repeat(14) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals(1, engine.received.size)
+    }
+
     private fun buildAppend(type: String, content: String): JsonObject = kotlinx.serialization.json.buildJsonObject {
         put("type", type)
         put("content", kotlinx.serialization.json.JsonPrimitive(content))
