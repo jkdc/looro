@@ -40,22 +40,32 @@ make deploy                    # ENGINE=openai by default (unchanged behavior)
 make deploy ENGINE=local       # on-device llama.cpp
 make deploy ENGINE=deepseek    # remote, needs DEEPSEEK_API_KEY in the environment at runtime
 make deploy ENGINE=glm         # remote, needs ZHIPUAI_API_KEY at runtime
+MURAL_CONVERSATION_ENGINE=local make deploy ENGINE=   # env-var form
+make deploy-fast ENGINE=local  # reuse the last APK (no Gradle)
+```
 
-Las claves de los motores remotos se leen de un fichero de propiedades pushable por adb (las apps no pueden leer variables de entorno en runtime):
+Las claves de los motores remotos se leen de un fichero de propiedades
+pushable por adb (las apps no pueden leer variables de entorno en runtime).
+`api-keys.properties` está **fuera del control de versiones** (gitignored,
+nunca se commitea). Créalo copiando el ejemplo que vive en el repo:
 
 ```bash
-# apps/android/api-keys.properties (gitignored):
-ZHIPUAI_API_KEY=<tu clave de z.ai / bigmodel>
-DEEPSEEK_API_KEY=<tu clave>
+cd apps/android
+cp api-keys.properties.example api-keys.properties
+# edita api-keys.properties con tus claves reales:
+#   ZHIPUAI_API_KEY=<tu clave de z.ai / bigmodel>
+#   DEEPSEEK_API_KEY=<tu clave>
 
 adb push api-keys.properties \
   /sdcard/Android/data/chat.mural.android/files/api_keys.properties
 ```
 
+**Rotación de claves**: edita tu `api-keys.properties` local, vuelve a hacer
+el push y revoca la clave antigua en el portal del proveedor. El fichero solo
+existe en tu disco y en el dispositivo; si una clave se filtra, revócala
+primero en el portal y genera una nueva.
+
 `ApiKeysStore` resuelve `keyEnvVar → entrada del fichero`. GLM verificado en vivo contra api.z.ai con glm-4.5-flash (thinking desactivado por provider config): TTFT 1,2-2,0 s y respuesta completa en 1,2-2,0 s — frente a 27-110 s del motor local en el mismo Pixel 9.
-MURAL_CONVERSATION_ENGINE=local make deploy ENGINE=   # env-var form
-make deploy-fast ENGINE=local  # reuse the last APK (no Gradle)
-```
 
 `make deploy` chains: build with the selected engine → `adb install` → grant mic →
 (for `local`) push models → restart app. With several devices: `SERIAL=<serial>`.

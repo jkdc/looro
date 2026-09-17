@@ -6,6 +6,9 @@
 #   ENGINE            openai (default) | local | deepseek | glm
 #   SERIAL            optional device serial (validated; auto-picked when only one)
 #   DEPLOY_NO_BUILD   1 = reuse the existing APK
+#
+# API keys: remote engines read keys from api-keys.properties (untracked).
+# Copy api-keys.properties.example and fill in your key before deploying.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -54,8 +57,8 @@ else
     ok "api_keys.properties pushed ($(awk -F= 'NF>1{print $1}' "$KEYS_LOCAL" | paste -sd,))"
   else
     echo "  NOTE: $KEYS_LOCAL not found. Remote engines need their key at runtime;"
-    echo "        create it (ZHIPUAI_API_KEY=... / DEEPSEEK_API_KEY=...) and push:"
-    echo "        ${ADB} push $KEYS_LOCAL $KEYS_REMOTE"
+    echo "        copy api-keys.properties.example, fill in your key (ZHIPUAI_API_KEY=... /"
+    echo "        DEEPSEEK_API_KEY=...) and push: ${ADB} push $KEYS_LOCAL $KEYS_REMOTE"
   fi
 fi
 
