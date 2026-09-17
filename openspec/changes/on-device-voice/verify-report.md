@@ -72,6 +72,21 @@ in `LocalVoiceTransportTest` was also fixed and the suite re-run 3x green
   no need to kill sessions mid-turn); the session-minutes cap still applies.
 - Unit suite re-run 3x green after both fixes.
 
+## Pixel 9 benchmark final (Tensor G4, thermal status 1-2, Android 17)
+
+Suite instrumentada completa en el dispositivo: **9/9 tests PASS** (motor
+compartido por clase + liberación nativa en @AfterClass — la versión anterior
+acumulaba contextos nativos y crasheaba por OOM en el último test).
+
+Generación LLM (Qwen2.5-3B Q4_K_M, prompt 379 tok, 21 tok de respuesta,
+pesos en caliente, 3 rondas): **0,3-0,8 tok/s**, 27-61 s por generación.
+STT (whisper base q5_1, ~3,5 s de audio): 7,3-9,5 s. TTS: ~4,3 s.
+
+Conclusión clave para la decisión: en CPU (con throttling térmico del Tensor),
+**un turno de voz completo lleva 45-110 s** — no es conversación fluida con el
+3B actual. Opciones: modelo 1,5B (~2×), kernels KleidiAI, GPU (Vulkan/AI Edge)
+o LLM híbrido servidor. Detalle en docs/local-engine-impact.md §6-§9.
+
 ## Not verified by automation (honest boundary)
 
 - Live microphone → STT on real hardware (emulator mic is silent): the

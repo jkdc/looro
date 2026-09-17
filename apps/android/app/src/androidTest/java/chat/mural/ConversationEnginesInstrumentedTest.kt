@@ -19,6 +19,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import java.io.File
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -40,6 +42,31 @@ class ConversationEnginesInstrumentedTest {
         keyLookup = keyLookup,
         json = Json,
     )
+
+    companion object {
+        // One engine for the whole class: loading the 2GB model per test leaks
+        // native contexts (handle-based) and crashes the process by the last test.
+        private lateinit var sharedLocalAdapter: chat.mural.core.engines.LocalLlamaEngineAdapter
+
+        @BeforeClass
+        @JvmStatic
+        fun createSharedEngine() {
+            val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+            val deps = ConversationEngineDeps(ctx, APIClient(null, OkHttpClient(), "https://api.openai.com/v1/".toHttpUrl()), { null }, Json)
+            sharedLocalAdapter = chat.mural.core.engines.LocalLlamaEngineAdapter(
+                chat.mural.engines.local.LocalLlamaEngine(
+                    chat.mural.core.engines.LocalLlamaEngineAdapter.defaultModelsDir(ctx),
+                ),
+            )
+            runBlocking { sharedLocalAdapter.warmup() }
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun releaseSharedEngine() {
+            sharedLocalAdapter.release()
+        }
+    }
 
     // ---- openai (adapter construction only: no network in this suite) ----
 
@@ -88,7 +115,7 @@ class ConversationEnginesInstrumentedTest {
         val schema = Json.parseToJsonElement(
             """{"type":"object","properties":{"reply":{"type":"string"}},"required":["reply"]}""",
         ).jsonObject
-        val result = engine.respond(
+        val result = sharedLocalAdapter.respond(
             instructions = "You are a coach.",
             input = "Greet the student warmly.",
             schema = schema,
@@ -131,18 +158,13 @@ class ConversationEnginesInstrumentedTest {
 
     @Test(timeout = 1_800_000)
     fun llmSpeedBenchmarkWithRealisticPrompt() = runBlocking {
-        val engine = chat.mural.core.engines.ConversationEngineFactory.create("local", deps())
-        // warm-up (page-in) — timed separately from the measured turns
-        val warmT0 = System.currentTimeMillis()
-        (engine as? chat.mural.core.engines.LocalLlamaEngineAdapter)?.warmup()
-        android.util.Log.i("BENCH", "warmup total ${System.currentTimeMillis() - warmT0} ms")
+        // The shared engine was warmed during createSharedEngine().
+        val client: chat.mural.network.TeachingClient = sharedLocalAdapter
 
         // ~600-token realistic system prompt (same ballpark as TeachingPolicy.voice)
         val filler = ("You are a friendly language coach. Keep replies short and natural. " +
             "Ask one follow-up question at a time. Be encouraging. ").repeat(14)
         val instructions = "You are a friendly English speaking coach. " + filler
-
-        val client = engine as chat.mural.network.TeachingClient
         val report = File(context.getExternalFilesDir(null), "bench.txt")
         val lines = mutableListOf<String>()
         lines.add("bench start ${java.util.Date()}")
