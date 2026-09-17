@@ -202,12 +202,26 @@ class AndroidReleaseTests(unittest.TestCase):
             with self.assertRaises(release.InvalidRelease):
                 release.check_aab(path, ["LICENSE.txt"])
 
+    def test_zai_style_keys_are_rejected_without_printing_the_value(self):
+        secret = b"0123456789abcdef0123456789abcdef.Zx9pQ2mK"
+        self.assertIsNotNone(release.SECRET_PATTERNS["z.ai API key"].search(secret))
+        for benign in (b"1.2.3", b"abc123.def456", b"0123456789abcdef0123456789abcdef.Zx9pQ2m"):
+            self.assertIsNone(release.SECRET_PATTERNS["z.ai API key"].search(benign))
+        path = self.bundle()
+        with zipfile.ZipFile(path, "a") as archive:
+            archive.writestr("base/assets/config.txt", secret)
+        with self.assertRaises(release.InvalidRelease) as raised:
+            release.check_aab(path, ["LICENSE.txt"])
+        self.assertNotIn(secret.decode(), str(raised.exception))
+        self.assertIn("inspect privately", str(raised.exception))
+
     def test_public_oauth_id_is_allowed_but_credential_files_are_not(self):
         path = self.bundle()
         with zipfile.ZipFile(path, "a") as archive:
             archive.writestr("base/assets/public-config.json", "{\"clientID\":\"123-public.apps.googleusercontent.com\",\"origin\":\"https://api.example.test\"}")
         self.assertEqual(release.check_aab(path, ["LICENSE.txt"])["embeddedSecretScan"]["findings"], 0)
-        for name in ("base/assets/.env.production", "base/assets/upload.jks", "base/assets/service-account.json"):
+        for name in ("base/assets/.env.production", "base/assets/upload.jks", "base/assets/service-account.json",
+                     "base/assets/api-keys.properties"):
             with self.subTest(name=name), self.assertRaisesRegex(release.InvalidRelease, "Credential-shaped"):
                 release.check_aab(self.bundle(extra=name), ["LICENSE.txt"])
 

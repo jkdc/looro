@@ -24,9 +24,10 @@ SECRET_PATTERNS = {
     "Stripe secret or restricted key": re.compile(rb"(?:sk|rk)_(?:live|test)_[A-Za-z0-9]{20,}"),
     "Google OAuth client secret": re.compile(rb"GOCSPX-[A-Za-z0-9_-]{20,}"),
     "GitHub token": re.compile(rb"(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})"),
+    "z.ai API key": re.compile(rb"(?i)[0-9a-f]{32}\.[A-Za-z0-9]{8}"),
     "private key material": re.compile(rb"-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----[\r\n]+[A-Za-z0-9+/=\r\n]{80,}"),
 }
-CREDENTIAL_FILE = re.compile(r"(?:^|/)(?:\.env(?:\.[^/]*)?|[^/]+\.(?:jks|keystore|p12|p8)|service-account(?:-[^/]*)?\.json)$", re.I)
+CREDENTIAL_FILE = re.compile(r"(?:^|/)(?:\.env(?:\.[^/]*)?|[^/]+\.(?:jks|keystore|p12|p8|properties)|service-account(?:-[^/]*)?\.json)$", re.I)
 PLACEHOLDER = re.compile(r"\[(?:REQUIRED|TODO|TBD)\b|\b(?:TODO|TBD|CHANGEME)\b|<insert\b", re.I)
 
 
