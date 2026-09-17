@@ -84,6 +84,7 @@ gratuito, etc. — y aun así: privacidad, límites y dependencia de terceros).
 | 0.5B local | 9-13,6 s + STT + TTS | básica | 0 | **medido** |
 | Vulkan GPU (futuro) | potencial 5-15 s | = modelo | 0 | bloqueado toolchain |
 | API gratuita (Union Alpha y similares) | ~1-3 s | alta | 0 pero **no accesible desde fuera del cliente OpenCode** | **no viable** |
+| **GLM-4.5-Flash vía api.z.ai (gratis con cuenta Zhipu)** | **1,2-2,0 s** | alta (modelo real, thinking off) | 0 | **verificado con clave real — recomendado para escritura** |
 
 ## 6. Recomendaciones
 
