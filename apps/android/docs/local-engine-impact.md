@@ -1,5 +1,9 @@
 # Análisis de impacto: motor de conversación local vs OpenAI
 
+> **Superseded 2026-09-17:** the on-device LLM was discarded by product
+> decision (too slow for voice turns); this analysis is preserved for
+> reference. See `docs/conversation-engines.md` ("Local engine (removed)").
+
 > Alcance: qué cambia, qué se degrada, qué se pierde y qué riesgos aparecen en la
 > app Android cuando `mural.conversationEngine != openai` (en particular `local`).
 > Basado en el código de `feature/switchable-conversation-engine` (incluye fixes de

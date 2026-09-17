@@ -1,4 +1,4 @@
-# Conversation Engines (OpenAI / local / DeepSeek / GLM)
+# Conversation Engines (OpenAI / DeepSeek / GLM)
 
 The app's AI teaching calls (typed replies, meanings, assessments, topics) run
 through a single contract, `chat.mural.network.TeachingClient`, and a single
@@ -9,7 +9,6 @@ construction point, `chat.mural.core.engines.ConversationEngineFactory`.
 MuralViewModel.teaching()
         └── ConversationEngineFactory  ← the only construction point
               ├── "openai"   (default) OpenAIEngineAdapter → existing APIClient
-              ├── "local"             LocalLlamaEngineAdapter → :core:engine-local (llama.cpp, offline)
               ├── "deepseek"          OpenAICompatibleEngine → api.deepseek.com
               └── "glm"               OpenAICompatibleEngine → open.bigmodel.cn
 ```
@@ -18,11 +17,29 @@ Adding a provider in the future = one registry row in `ConversationEngineFactory
 (+ one adapter class only if the API is not OpenAI-compatible). No ViewModel, UI,
 or prompt changes.
 
+## Local engine (removed 2026-09-17)
+
+The former `"local"` engine (on-device llama.cpp LLM) was removed by product
+decision: on-device LLM inference was too slow for voice turns (45-110 s per
+turn on a Pixel 9, even with tuned GGML kernels). Two things were kept:
+
+- The **whisper.cpp STT + system TTS pipeline** in `:core:engine-local`
+  (`WhisperStt`, `WhisperRuntime`, `LocalTtsEngine`, `LocalVoiceTransport`):
+  `deepseek`/`glm` voice sessions still run speech-to-text and text-to-speech
+  on device, with the LLM call going to the remote API.
+- The engine-selection architecture (registry + `BuildConfig.CONVERSATION_ENGINE`).
+
+To re-add an on-device LLM: the implementation (llama.cpp submodule, JNI,
+`LocalLlamaEngine`/`LlamaRuntime`/`LocalModelManager`, adapter, tests,
+`ENGINE=local` tooling) is preserved in git history before the 2026-09-17
+rewrite — see the commit that removed it. Benchmarks that motivated the
+decision: `docs/benchmarks-local.md`.
+
 ## Selecting the engine
 
 Precedence (highest first):
 
-1. Gradle property: `./gradlew :app:assembleDebug -Pmural.conversationEngine=local`
+1. Gradle property: `./gradlew :app:assembleDebug -Pmural.conversationEngine=deepseek`
 2. `local.properties` key `mural.conversationEngine`
 3. Environment variable `MURAL_CONVERSATION_ENGINE`
 4. Default: `openai` (byte-for-byte today's behavior)
@@ -37,11 +54,9 @@ so the whole pipeline follows the variable.
 ```bash
 cd apps/android
 make deploy                    # ENGINE=openai by default (unchanged behavior)
-make deploy ENGINE=local       # on-device llama.cpp
 make deploy ENGINE=deepseek    # remote, needs DEEPSEEK_API_KEY in the environment at runtime
 make deploy ENGINE=glm         # remote, needs ZHIPUAI_API_KEY at runtime
-MURAL_CONVERSATION_ENGINE=local make deploy ENGINE=   # env-var form
-make deploy-fast ENGINE=local  # reuse the last APK (no Gradle)
+make deploy-fast ENGINE=glm    # reuse the last APK (no Gradle)
 ```
 
 Las claves de los motores remotos se leen de un fichero de propiedades
@@ -65,61 +80,41 @@ el push y revoca la clave antigua en el portal del proveedor. El fichero solo
 existe en tu disco y en el dispositivo; si una clave se filtra, revócala
 primero en el portal y genera una nueva.
 
-`ApiKeysStore` resuelve `keyEnvVar → entrada del fichero`. GLM verificado en vivo contra api.z.ai con glm-4.5-flash (thinking desactivado por provider config): TTFT 1,2-2,0 s y respuesta completa en 1,2-2,0 s — frente a 27-110 s del motor local en el mismo Pixel 9.
+`ApiKeysStore` resuelve `keyEnvVar → entrada del fichero`. GLM verificado en vivo contra api.z.ai con glm-4.5-flash (thinking desactivado por provider config): TTFT 1,2-2,0 s y respuesta completa en 1,2-2,0 s.
 
 `make deploy` chains: build with the selected engine → `adb install` → grant mic →
-(for `local`) push models → restart app. With several devices: `SERIAL=<serial>`.
+(for `deepseek`/`glm`) push the whisper model → restart app. With several
+devices: `SERIAL=<serial>`.
 
-## Local engine (`ENGINE=local`)
+## Voice pipeline (deepseek / glm)
 
-- Module: `core/engine-local` (Android library) wrapping llama.cpp @ b10988 via a
-  small JNI bridge (`mural_llama` .so). Port of the validated
-  `local-speaking-poc` (kept out of the monorepo on purpose).
-- Prompting uses the GGUF's own chat template; Mural's JSON schemas become
-  llama.cpp GBNF grammars (structured output) when provided.
-- Models: put one `.gguf` in `apps/android/local-models/` before deploying, e.g.
+With a remote engine, starting a conversation opens a voice session:
+mic → whisper STT on device (multilingual `ggml-base-q5_1.bin`, language hint
+from the session) → remote LLM → Android TTS, driven by `LocalVoiceTransport`
+behind the same `VoiceTransport` contract as the WebRTC path. Turn-taking uses
+an energy VAD (speech ≥ 0.3 s, end-of-turn after 1.2 s silence, 30 s cap); the
+mic is suppressed while TTS speaks; typed input during a voice session is
+spoken and shown as assistant transcript.
 
-  ```bash
-  curl -L -o apps/android/local-models/qwen2.5-3b-instruct-q4_k_m.gguf \
-    https://huggingface.co/Qwen/Qwen2.5-3B-Instruct-GGUF/resolve/main/qwen2.5-3b-instruct-q4_k_m.gguf
-  ```
+The whisper model is pushed to
+`/sdcard/Android/data/chat.mural.android/files/models/whisper/` by
+`make deploy` (or `make models-push`) and is only re-pushed when its size
+changes. Note: the model dir must be created by the app (it does so on
+launch); the deploy script handles the launch-before-push ordering
+automatically. Whisper adds ~300 MB while loaded.
 
-  Files land on device under
-  `/sdcard/Android/data/chat.mural.android/files/models/{llm,whisper}/` and are
-  only re-pushed when their size changes. The LLM manager prefers known
-  conversation models by name; the Whisper manager prefers multilingual base
-  over English-only (see `LocalModelManager`/`LocalWhisperModelManager`).
-  LLM inference is CPU-only, ~2 GB RAM; Whisper adds ~300 MB while loaded.
-  Note: the model dirs must be created by the app (it does so on launch);
-  `make deploy` handles the launch-before-push ordering automatically.
-- First build compiles llama.cpp with the NDK (10–20 min once, then cached).
+### Known limitations
 
-### Runtime requirements (local)
-
-~2.5 GB free RAM for the process (device total ≥ 6 GB, 8 GB comfortable),
-~2.5 GB storage, arm64-v8a. Works in airplane mode.
-
-### Known limitations (this phase)
-
-- **Voice on-device** (Phase 6): with `ENGINE=local`, starting a conversation
-  now opens an on-device voice session: mic → Whisper STT (multilingual
-  `ggml-base-q5_1.bin`, language hint from the session) → local LLM → Android
-  TTS, driven by `LocalVoiceTransport` behind the same `VoiceTransport`
-  contract as the WebRTC path. Turn-taking uses an energy VAD (speech ≥ 0.3 s,
-  end-of-turn after 1.2 s silence, 30 s cap); the mic is suppressed while TTS
-  speaks; typed input during a voice session is spoken and shown as assistant
-  transcript. Voice for `deepseek`/`glm` also uses the local STT/TTS with the
-  remote LLM.
 - `search=true` requests are answered without web search by non-OpenAI engines
   (degradation, not an error).
 - The `aiConsent` gate still applies before any engine call (product decision,
   unchanged here).
-- The native `.so` ships in every build of this branch even with
-  `ENGINE=openai` (~12 MB/arm64, unused). Conditional module inclusion is the
-  documented follow-up before merging to `main`.
+- The native `.so` (whisper-only since the local LLM removal) ships in every
+  build of this branch even with `ENGINE=openai` (unused there). Conditional
+  module inclusion is the documented follow-up before merging to `main`.
 - Remote engines never receive key material at build time: keys are read from
   the environment at runtime (`DEEPSEEK_API_KEY`, `ZHIPUAI_API_KEY`) on the
- *device* that runs the app — for real deployments a thin proxy (the existing
+  *device* that runs the app — for real deployments a thin proxy (the existing
   `services/api` hosted path) remains the recommended way to keep keys off
   devices; these adapters target experimentation.
 - Structured output on `deepseek`/`glm` uses JSON mode + schema-in-prompt
@@ -133,7 +128,8 @@ make test   # :app unit tests + :core:engine-local tests
 ```
 
 Covers: factory validation/selection, OpenAI-compatible adapter against
-MockWebServer (success/HTTP errors/missing key/schema mode), local engine over a
-fake runtime (usage mapping, model-missing error, schema forwarding), model
-preference order, and the pre-existing regression suites (which pin the default
-`openai` behavior).
+MockWebServer (success/HTTP errors/missing key/schema mode), and the
+pre-existing regression suites (which pin the default `openai` behavior). The
+whisper STT leg is exercised on device by
+`ConversationEnginesInstrumentedTest` (needs `:app:assembleDebugAndroidTest`
+plus a device/emulator).

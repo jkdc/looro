@@ -1,5 +1,9 @@
 # Benchmarks: motor local en Pixel 9 (y alternativas)
 
+> **Superseded 2026-09-17:** the on-device LLM was discarded by product
+> decision (too slow for voice turns); these benchmarks are preserved for
+> reference. See `docs/conversation-engines.md` ("Local engine (removed)").
+
 > Dispositivo de referencia: **Pixel 9 (Tensor G4, 12 GB, Android 17)**, estado
 > térmico 1-2 persistente (big cores limitados a ~1,0-1,95 GHz de 3,3), batería
 > sin ahorro de energía. Medición: 2026-09-17, rama
