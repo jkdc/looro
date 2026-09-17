@@ -866,6 +866,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         s.searchCalls = (s.searchCalls.toLong() + usage.searches).coerceAtMost(1_000_000_000).toInt()
     }
     private fun scheduleTranslation(utteranceComplete: Boolean = state == "ended") {
+        // Local LLM: translating every assistant line would queue a full
+        // generation behind the conversation; meanings stay on-demand (Meaning button).
+        if (BuildConfig.CONVERSATION_ENGINE != "openai") return
         if (!archive.preferences.meaningVisible || archive.preferences.aiConsentVersion != 1) return
         val current = session ?: return
         val passage = current.passages.lastOrNull { it.speaker == Speaker.assistant } ?: return
@@ -941,6 +944,10 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun scheduleAssessment() {
+        // Local LLM: per-turn assessments are full generations; running them
+        // after every user turn starves the conversation. Final assessments
+        // (on session end) still run so learning stats keep working.
+        if (BuildConfig.CONVERSATION_ENGINE != "openai" && state == "active") return
         assessmentJob?.cancel()
         assessmentJob = viewModelScope.launch {
             delay(3000)

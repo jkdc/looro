@@ -18,6 +18,7 @@ import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
+import java.io.File
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -124,6 +125,41 @@ class ConversationEnginesInstrumentedTest {
         } catch (e: chat.mural.core.engines.EngineException) {
             assertTrue(e.message!!.contains("ZHIPUAI_API_KEY"))
         }
+    }
+
+    // ---- local LLM benchmark: prefill + generation speed on THIS device ----
+
+    @Test(timeout = 1_800_000)
+    fun llmSpeedBenchmarkWithRealisticPrompt() = runBlocking {
+        val engine = chat.mural.core.engines.ConversationEngineFactory.create("local", deps())
+        // warm-up (page-in) — timed separately from the measured turns
+        val warmT0 = System.currentTimeMillis()
+        (engine as? chat.mural.core.engines.LocalLlamaEngineAdapter)?.warmup()
+        android.util.Log.i("BENCH", "warmup total ${System.currentTimeMillis() - warmT0} ms")
+
+        // ~600-token realistic system prompt (same ballpark as TeachingPolicy.voice)
+        val filler = ("You are a friendly language coach. Keep replies short and natural. " +
+            "Ask one follow-up question at a time. Be encouraging. ").repeat(14)
+        val instructions = "You are a friendly English speaking coach. " + filler
+
+        val client = engine as chat.mural.network.TeachingClient
+        val report = File(context.getExternalFilesDir(null), "bench.txt")
+        val lines = mutableListOf<String>()
+        lines.add("bench start ${java.util.Date()}")
+        for (round in 1..3) {
+            val t0 = System.currentTimeMillis()
+            val result = client.respond(instructions, "Hello! How are you today?", null, false, null)
+            val total = System.currentTimeMillis() - t0
+            val out = result.usage.output
+            val line = "round $round: total=${total}ms tokens=$out " +
+                "tok/s=${"%.1f".format(java.util.Locale.US, out * 1000.0 / total.coerceAtLeast(1))} " +
+                "replyLen=${result.text.length} prompt=${result.usage.input}"
+            lines.add(line)
+            android.util.Log.i("BENCH", line)
+            File(context.getExternalFilesDir(null), "bench.txt").writeText(lines.joinToString("\n"))
+        }
+        lines.add("bench end")
+        File(context.getExternalFilesDir(null), "bench.txt").writeText(lines.joinToString("\n"))
     }
 
     // ---- local voice: STT leg with the REAL whisper model (TTS round-trip) ----

@@ -2003,11 +2003,11 @@
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : "ggml: CPU architecture for ARM"
+					"value" : ""
 				}
 			],
 			"type" : "STRING",
-			"value" : ""
+			"value" : "armv8.2-a+dotprod+i8mm"
 		},
 		{
 			"name" : "GGML_CPU_HBM",

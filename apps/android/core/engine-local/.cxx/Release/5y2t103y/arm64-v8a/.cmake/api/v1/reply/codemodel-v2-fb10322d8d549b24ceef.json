@@ -34,7 +34,7 @@
 						13
 					],
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-third_party.llama.cpp-Release-e9c5ccbf54ff5bb2c20b.json",
+					"jsonFile" : "directory-third_party.llama.cpp-Release-c887b8789333aa7c994a.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.14"
@@ -50,7 +50,7 @@
 						3
 					],
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-third_party.llama.cpp.ggml-Release-cdfe973067b1cd6f7ea7.json",
+					"jsonFile" : "directory-third_party.llama.cpp.ggml-Release-9500bdd0bbed71b21973.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.14"
@@ -224,7 +224,7 @@
 						15
 					],
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-third_party.whisper.cpp-Release-5e917729419300935a32.json",
+					"jsonFile" : "directory-third_party.whisper.cpp-Release-4afbb6054fefa952406b.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.5"
@@ -348,21 +348,21 @@
 				{
 					"directoryIndex" : 3,
 					"id" : "ggml-base::@6fb243c56d1be69d9933",
-					"jsonFile" : "target-ggml-base-Release-2450be1214cfe694e143.json",
+					"jsonFile" : "target-ggml-base-Release-2f9618860f05bd676f17.json",
 					"name" : "ggml-base",
 					"projectIndex" : 2
 				},
 				{
 					"directoryIndex" : 3,
 					"id" : "ggml-cpu::@6fb243c56d1be69d9933",
-					"jsonFile" : "target-ggml-cpu-Release-05fd9933f196836b9fa6.json",
+					"jsonFile" : "target-ggml-cpu-Release-7e4d01e2c7716cb305ee.json",
 					"name" : "ggml-cpu",
 					"projectIndex" : 2
 				},
 				{
 					"directoryIndex" : 5,
 					"id" : "llama::@bf716c64e9230b199072",
-					"jsonFile" : "target-llama-Release-f2565e26b35f5e7fec0d.json",
+					"jsonFile" : "target-llama-Release-19ed50bb1d83d987b053.json",
 					"name" : "llama",
 					"projectIndex" : 1
 				},
@@ -376,14 +376,14 @@
 				{
 					"directoryIndex" : 13,
 					"id" : "llama-common-base::@430b077c762759e3094a",
-					"jsonFile" : "target-llama-common-base-Release-7807c6a1757b3f677431.json",
+					"jsonFile" : "target-llama-common-base-Release-3a917f851ec0eb4ed95e.json",
 					"name" : "llama-common-base",
 					"projectIndex" : 1
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "mural_llama::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-mural_llama-Release-02d4387e7027395c84b4.json",
+					"jsonFile" : "target-mural_llama-Release-a2bbb874a41f2c3957e1.json",
 					"name" : "mural_llama",
 					"projectIndex" : 0
 				},
@@ -414,7 +414,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/x86_64",
+		"build" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/.cxx/Release/5y2t103y/arm64-v8a",
 		"source" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp"
 	},
 	"version" : 

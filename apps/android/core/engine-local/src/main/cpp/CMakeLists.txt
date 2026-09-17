@@ -19,6 +19,14 @@ set(WHISPER_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(WHISPER_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(WHISPER_BUILD_SERVER OFF CACHE BOOL "" FORCE)
 
+# CRITICAL for performance: without explicit march flags ggml compiles the
+# CPU backend with reference (scalar) quant kernels — measured 0.2 tok/s for
+# a 3B Q4 on a Pixel 9. dotprod+i8mm are present on every ARMv8.2+ core
+# (Pixel 4 and newer). This is the single biggest local-inference knob.
+if(ANDROID_ABI STREQUAL "arm64-v8a")
+    set(GGML_CPU_ARM_ARCH "armv8.2-a+dotprod+i8mm" CACHE STRING "" FORCE)
+endif()
+
 add_subdirectory(third_party/llama.cpp)
 add_subdirectory(third_party/whisper.cpp)
 

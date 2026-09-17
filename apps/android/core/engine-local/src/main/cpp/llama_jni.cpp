@@ -71,6 +71,10 @@ Java_chat_mural_engines_local_JniLlamaRuntime_init(
 
     llama_model_params mparams = llama_model_default_params();
     mparams.n_gpu_layers = 0; // CPU-only: stable and measurable on every device.
+    // Pin the mapped weights in RAM: without this, memory pressure evicts the
+    // pages and every generated token re-reads gigabytes from UFS (measured
+    // 0.2-0.3 tok/s on a Pixel 9 under thermal pressure).
+
 
     llama_model * model = llama_model_load_from_file(path, mparams);
     env->ReleaseStringUTFChars(jModelPath, path);

@@ -380,8 +380,7 @@ GGML_CPU:BOOL=ON
 //ggml: build all variants of the CPU backend (requires GGML_BACKEND_DL)
 GGML_CPU_ALL_VARIANTS:BOOL=OFF
 
-//ggml: CPU architecture for ARM
-GGML_CPU_ARM_ARCH:STRING=
+GGML_CPU_ARM_ARCH:STRING=armv8.2-a+dotprod+i8mm
 
 //ggml: use memkind for CPU HBM
 GGML_CPU_HBM:BOOL=OFF

@@ -16,6 +16,7 @@
 			"install",
 			"target_link_libraries",
 			"add_compile_options",
+			"target_compile_options",
 			"target_compile_definitions",
 			"add_compile_definitions",
 			"target_include_directories",
@@ -80,66 +81,72 @@
 			},
 			{
 				"command" : 6,
+				"file" : 1,
+				"line" : 675,
+				"parent" : 1
+			},
+			{
+				"command" : 7,
 				"file" : 0,
 				"line" : 403,
 				"parent" : 2
 			},
 			{
-				"command" : 6,
+				"command" : 7,
 				"file" : 0,
 				"line" : 404,
 				"parent" : 2
 			},
 			{
-				"command" : 7,
+				"command" : 8,
 				"file" : 0,
 				"line" : 4,
 				"parent" : 0
 			},
 			{
-				"command" : 6,
+				"command" : 7,
 				"file" : 1,
 				"line" : 583,
 				"parent" : 1
 			},
 			{
-				"command" : 6,
+				"command" : 7,
 				"file" : 1,
 				"line" : 83,
 				"parent" : 1
 			},
 			{
-				"command" : 7,
+				"command" : 8,
 				"file" : 0,
 				"line" : 154,
 				"parent" : 0
 			},
 			{
-				"command" : 7,
+				"command" : 8,
 				"file" : 0,
 				"line" : 148,
 				"parent" : 0
 			},
 			{
-				"command" : 8,
+				"command" : 9,
 				"file" : 0,
 				"line" : 400,
 				"parent" : 2
 			},
 			{
-				"command" : 8,
+				"command" : 9,
 				"file" : 1,
 				"line" : 60,
 				"parent" : 1
 			},
 			{
-				"command" : 9,
+				"command" : 10,
 				"file" : 1,
 				"line" : 59,
 				"parent" : 1
 			},
 			{
-				"command" : 10,
+				"command" : 11,
 				"file" : 1,
 				"line" : 674,
 				"parent" : 1
@@ -219,21 +226,25 @@
 					"fragment" : "-Wdouble-promotion"
 				},
 				{
+					"backtrace" : 9,
+					"fragment" : "-march=armv8.2-a+dotprod+i8mm"
+				},
+				{
 					"fragment" : "-std=gnu11"
 				}
 			],
 			"defines" : 
 			[
 				{
-					"backtrace" : 9,
+					"backtrace" : 10,
 					"define" : "GGML_BACKEND_BUILD"
 				},
 				{
-					"backtrace" : 10,
+					"backtrace" : 11,
 					"define" : "GGML_BACKEND_SHARED"
 				},
 				{
-					"backtrace" : 11,
+					"backtrace" : 12,
 					"define" : "GGML_SCHED_MAX_COPIES=4"
 				},
 				{
@@ -241,19 +252,19 @@
 					"define" : "GGML_SHARED"
 				},
 				{
-					"backtrace" : 12,
+					"backtrace" : 13,
 					"define" : "GGML_USE_CPU_REPACK"
 				},
 				{
-					"backtrace" : 13,
+					"backtrace" : 14,
 					"define" : "GGML_USE_LLAMAFILE"
 				},
 				{
-					"backtrace" : 14,
+					"backtrace" : 15,
 					"define" : "_GNU_SOURCE"
 				},
 				{
-					"backtrace" : 15,
+					"backtrace" : 16,
 					"define" : "_XOPEN_SOURCE=600"
 				},
 				{
@@ -263,15 +274,15 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 16,
+					"backtrace" : 17,
 					"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/.."
 				},
 				{
-					"backtrace" : 17,
+					"backtrace" : 18,
 					"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/."
 				},
 				{
-					"backtrace" : 17,
+					"backtrace" : 18,
 					"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-cpu"
 				},
 				{
@@ -284,7 +295,7 @@
 			{
 				"backtraces" : 
 				[
-					18
+					19
 				],
 				"standard" : "11"
 			},
@@ -358,21 +369,25 @@
 					"fragment" : "-Wextra-semi"
 				},
 				{
+					"backtrace" : 9,
+					"fragment" : "-march=armv8.2-a+dotprod+i8mm"
+				},
+				{
 					"fragment" : "-std=c++17"
 				}
 			],
 			"defines" : 
 			[
 				{
-					"backtrace" : 9,
+					"backtrace" : 10,
 					"define" : "GGML_BACKEND_BUILD"
 				},
 				{
-					"backtrace" : 10,
+					"backtrace" : 11,
 					"define" : "GGML_BACKEND_SHARED"
 				},
 				{
-					"backtrace" : 11,
+					"backtrace" : 12,
 					"define" : "GGML_SCHED_MAX_COPIES=4"
 				},
 				{
@@ -380,19 +395,19 @@
 					"define" : "GGML_SHARED"
 				},
 				{
-					"backtrace" : 12,
+					"backtrace" : 13,
 					"define" : "GGML_USE_CPU_REPACK"
 				},
 				{
-					"backtrace" : 13,
+					"backtrace" : 14,
 					"define" : "GGML_USE_LLAMAFILE"
 				},
 				{
-					"backtrace" : 14,
+					"backtrace" : 15,
 					"define" : "_GNU_SOURCE"
 				},
 				{
-					"backtrace" : 15,
+					"backtrace" : 16,
 					"define" : "_XOPEN_SOURCE=600"
 				},
 				{
@@ -402,15 +417,15 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 16,
+					"backtrace" : 17,
 					"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/.."
 				},
 				{
-					"backtrace" : 17,
+					"backtrace" : 18,
 					"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/."
 				},
 				{
-					"backtrace" : 17,
+					"backtrace" : 18,
 					"path" : "/home/joaquin/Proyectos/looro-test/looro/apps/android/core/engine-local/src/main/cpp/third_party/llama.cpp/ggml/src/ggml-cpu"
 				},
 				{
@@ -423,7 +438,7 @@
 			{
 				"backtraces" : 
 				[
-					18
+					19
 				],
 				"standard" : "17"
 			},
@@ -555,172 +570,172 @@
 	"sources" : 
 	[
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 0,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/ggml-cpu.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/ggml-cpu.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/repack.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/repack.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/iqp.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/iqp.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/hbm.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/hbm.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 0,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/quants.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/quants.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/traits.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/traits.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/amx/amx.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/amx/amx.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/amx/mmq.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/amx/mmq.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/ggml-cpu-impl.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/common.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/binary-ops.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/binary-ops.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/unary-ops.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/unary-ops.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/simd-mappings.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/vec.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/vec.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/ops.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/ops.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/llamafile/sgemm.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/llamafile/sgemm.h",
 			"sourceGroupIndex" : 1
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 0,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/arch/arm/quants.c",
 			"sourceGroupIndex" : 0
 		},
 		{
-			"backtrace" : 19,
+			"backtrace" : 20,
 			"compileGroupIndex" : 1,
 			"path" : "third_party/llama.cpp/ggml/src/ggml-cpu/arch/arm/repack.cpp",
 			"sourceGroupIndex" : 0
