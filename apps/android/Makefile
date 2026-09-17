@@ -8,14 +8,14 @@
 #   make deploy-fast         Same as deploy, reusing the existing APK (no Gradle build)
 #   make build / test / run / logs / models-push / clean
 #
-# With several devices connected:  make deploy SERIAL=<serial>
+# With several devices connected the deploy aborts and lists them:
+#   make deploy SERIAL=47270DLAQ0008U
 
 ENGINE ?= $(if $(MURAL_CONVERSATION_ENGINE),$(MURAL_CONVERSATION_ENGINE),openai)
 SERIAL ?=
-# Auto-selects the only connected device; errors with the list when ambiguous.
-ADB := adb -s $$(./scripts/adb-device.sh "$(SERIAL)")
-GRADLE_FLAGS := -Pmural.conversationEngine=$(ENGINE)
 PKG := chat.mural.android
+GRADLE_FLAGS := -Pmural.conversationEngine=$(ENGINE)
+RESOLVE := ./scripts/adb-device.sh $(if $(SERIAL),"$(SERIAL)")
 
 .PHONY: help deploy deploy-fast build test run logs models-push clean
 
@@ -23,24 +23,10 @@ help:
 	@grep -E '^#   (make|MURAL)' Makefile | sed 's/^#   //'
 
 deploy:
-ifndef DEPLOY_NO_BUILD
-	./gradlew :app:assembleDebug $(GRADLE_FLAGS)
-endif
-	$(ADB) install -r -t app/build/outputs/apk/debug/app-debug.apk
-	$(ADB) shell pm grant $(PKG) android.permission.RECORD_AUDIO 2>/dev/null || true
-ifeq ($(ENGINE),local)
-	@echo "First launch so the app creates its model dir (FUSE requires app-owned dirs)…"
-	$(ADB) shell am start -n $(PKG)/chat.mural.MainActivity >/dev/null
-	@sleep 6
-	$(ADB) shell am force-stop $(PKG)
-	SERIAL=$(SERIAL) ./scripts/push-local-models.sh
-endif
-	$(ADB) shell am force-stop $(PKG)
-	$(ADB) shell am start -n $(PKG)/chat.mural.MainActivity
-	@echo "Deployed with ENGINE=$(ENGINE)."
+	ENGINE=$(ENGINE) SERIAL=$(SERIAL) ./scripts/deploy-local.sh
 
 deploy-fast:
-	$(MAKE) DEPLOY_NO_BUILD=1 deploy
+	DEPLOY_NO_BUILD=1 ENGINE=$(ENGINE) SERIAL=$(SERIAL) ./scripts/deploy-local.sh
 
 build:
 	./gradlew :app:assembleDebug $(GRADLE_FLAGS)
@@ -52,10 +38,10 @@ models-push:
 	SERIAL=$(SERIAL) ./scripts/push-local-models.sh
 
 run:
-	$(ADB) shell am start -n $(PKG)/chat.mural.MainActivity
+	@serial=$$( $(RESOLVE) ) && adb -s $$serial shell am start -n $(PKG)/chat.mural.MainActivity
 
 logs:
-	$(ADB) logcat -s MuralLocalEngine
+	@serial=$$( $(RESOLVE) ) && adb -s $$serial logcat -s MuralLocalEngine
 
 clean:
 	./gradlew clean
