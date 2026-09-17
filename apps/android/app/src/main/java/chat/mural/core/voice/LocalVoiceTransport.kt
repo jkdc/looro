@@ -15,6 +15,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
@@ -52,6 +55,8 @@ class LocalVoiceTransport(
     @Volatile private var sessionStartedAtMs = 0L
 
     private var baseInstructions = ""
+    private var historyContext = ""
+    private val rollingTurns = ArrayDeque<String>()
     private val appendedContext = ArrayDeque<String>()
     private var sessionLanguage = "en"
 
@@ -66,6 +71,8 @@ class LocalVoiceTransport(
     ) {
         baseInstructions = instructions
         appendedContext.clear()
+        rollingTurns.clear()
+        historyContext = renderHistory(history)
         sessionLanguage = language?.take(2)?.lowercase() ?: "en"
         sessionStartedAtMs = System.currentTimeMillis()
         running = true
@@ -149,16 +156,27 @@ class LocalVoiceTransport(
         val turnStart = relativeMs()
         emit(transcriptEvent(isInput = true, text = stt.text, startMs = turnStart, endMs = turnStart + durationMs))
 
+        val conversationSoFar = synchronized(rollingTurns) { rollingTurns.joinToString("\n") }
         val system = buildString {
             append(baseInstructions)
             synchronized(appendedContext) {
                 while (appendedContext.isNotEmpty()) append("\n").append(appendedContext.removeFirst())
+            }
+            if (historyContext.isNotBlank() || conversationSoFar.isNotBlank()) {
+                append("\n\nConversation so far (most recent last):")
+                if (historyContext.isNotBlank()) append("\n").append(historyContext)
+                if (conversationSoFar.isNotBlank()) append("\n").append(conversationSoFar)
             }
         }
         val result = runCatching { engine.respond(system, stt.text, null, false, null) }.getOrElse {
             onFailure?.invoke(it.message ?: "generation failed"); return
         }
         if (result.text.isBlank()) return
+        synchronized(rollingTurns) {
+            rollingTurns.addLast("User: ${stt.text}")
+            rollingTurns.addLast("Assistant: ${result.text}")
+            while (rollingTurns.size > MAX_ROLLING_TURNS) rollingTurns.removeFirst()
+        }
 
         val replyStart = relativeMs()
         emit(transcriptEvent(isInput = false, text = result.text, startMs = replyStart, endMs = replyStart + 500))
@@ -222,6 +240,19 @@ class LocalVoiceTransport(
 
     private fun relativeMs(): Long = System.currentTimeMillis() - sessionStartedAtMs
 
+    /** Renders the session-history JSON (OpenAI-style messages) as transcript lines. */
+    internal fun renderHistory(history: JsonArray): String = buildString {
+        for (element in history) {
+            val obj = runCatching { element.jsonObject }.getOrNull() ?: continue
+            val role = obj["role"]?.jsonPrimitive?.contentOrNull ?: continue
+            val content = obj["content"]?.jsonPrimitive?.contentOrNull ?: continue
+            if (content.isBlank()) continue
+            append(role.replaceFirstChar { it.uppercase() }).append(": ").append(content).append("\n")
+        }
+    }.trim()
+
+
+
     override fun mute(muted: Boolean) {
         this.muted = muted
     }
@@ -247,5 +278,8 @@ class LocalVoiceTransport(
         const val SPEECH_START_MS = 300
         const val SILENCE_END_MS = 1_200
         const val MAX_TURN_MS = 30_000
+
+        /** Rolling in-session turns kept as context (limits prompt growth). */
+        const val MAX_ROLLING_TURNS = 16
     }
 }

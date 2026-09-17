@@ -963,10 +963,12 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
     fun sendTyped(text: String) {
+        val localOnly = BuildConfig.CONVERSATION_ENGINE != "openai"
         val clean = text.trim().take(2000)
-        if (clean.isEmpty() || working || state in listOf("connecting", "closing") || !cloudReady()) return
+        if (clean.isEmpty() || working || state in listOf("connecting", "closing")) return
+        if (!localOnly && !cloudReady()) return
         if (state != "active") {
-            if (conversationProvider == ConversationProvider.HOSTED_MINUTES) {
+            if (!localOnly && conversationProvider == ConversationProvider.HOSTED_MINUTES) {
                 presentError(getApplication<Application>().getString(R.string.hosted_typed_start)); return
             }
             newSession(false); state = "active"; startDurationChecks()

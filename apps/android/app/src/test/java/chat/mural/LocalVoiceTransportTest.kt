@@ -16,6 +16,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
@@ -199,6 +202,61 @@ class LocalVoiceTransportTest {
         repeat(25) { source.queue.add(speech()) }
         Thread.sleep(900)
         assertEquals(0, engine.received.size)
+    }
+
+    @Test
+    fun `rolling context carries previous turns into the next prompt`() {
+        val source = FakeFrameSource()
+        val sttRuntime = FakeWhisperRuntime()
+        sttRuntime.transcription = "First sentence"
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), sttRuntime), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        // Turn 1
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val turn1 = CountDownLatch(1)
+        transport.onEvent = { e ->
+            if ((e["type"]?.jsonPrimitive?.content ?: "") == "session.output_transcript.delta") turn1.countDown()
+        }
+        // re-arm: latch above set after connect; wait manually for turn1 output instead
+        Thread.sleep(300)
+        val deadline1 = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 1 && System.currentTimeMillis() < deadline1) Thread.sleep(25)
+
+        // Turn 2 with different transcription
+        sttRuntime.transcription = "Second sentence"
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val deadline2 = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < deadline2) Thread.sleep(25)
+
+        assertTrue(engine.received.size >= 2)
+        val system2 = engine.received[1].first
+        assertTrue("system prompt must contain turn 1 user text", system2.contains("User: First sentence"))
+        assertTrue("system prompt must contain turn 1 reply", system2.contains("Assistant: Nice! Tell me more about it."))
+    }
+
+    @Test
+    fun `renderHistory formats openai style messages`() {
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), FakeTeachingClient(), FakeTts(),
+            frameSourceProvider = { FakeFrameSource() }, frameDelayMs = 0,
+        )
+        val history = JsonArray(listOf(
+            buildJsonObject { put("role", JsonPrimitive("user")); put("content", JsonPrimitive("Hi")) },
+            buildJsonObject { put("role", JsonPrimitive("assistant")); put("content", JsonPrimitive("Hello")) },
+        ))
+        val rendered = transport.renderHistory(history)
+        assertTrue(rendered.contains("User: Hi"))
+        assertTrue(rendered.contains("Assistant: Hello"))
     }
 
     private fun buildAppend(type: String, content: String): JsonObject = kotlinx.serialization.json.buildJsonObject {
