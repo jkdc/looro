@@ -242,6 +242,8 @@
     <string name="consent_privacy_policy_link">Ver política de privacidad</string>
     <string name="consent_agree_button">Aceptar y continuar</string>
     <string name="consent_decline_button">Ahora no</string>
+    <string name="settings_voice_manual_turn">Modo principiante: botón para terminar de hablar</string>
     <string name="error_guest_secure_storage_unavailable">Mural no pudo restaurar los datos guardados de tu prueba gratuita. Tu historial de aprendizaje sigue disponible. Reinicia la aplicación para intentarlo de nuevo.</string>
+    <string name="talk_end_turn_button">He terminado de hablar</string>
     <string name="error_sign_in_finishing_startup">Mural aún está guardando tu conversación. Intenta iniciar sesión de nuevo dentro de unos instantes.</string>
 </resources>

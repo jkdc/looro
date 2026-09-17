@@ -9,6 +9,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,12 +21,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -65,6 +65,7 @@ import chat.mural.core.Passage
 import chat.mural.core.SessionRecord
 import chat.mural.core.Speaker
 import chat.mural.core.UsageSummary
+import androidx.compose.material3.Switch
 
 @Composable
 fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Unit, onReviewConsent: () -> Unit,
@@ -100,6 +101,14 @@ fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Uni
                     SettingsChoiceRow(stringResource(R.string.settings_meaning_language), prefs.meaningLanguage, prefs.meaningLanguage,
                         MeaningLanguages.all.map { it to it }, "settings-meaning-language", !vm.isRunning) {
                         vm.updatePreferences(prefs.copy(meaningLanguage = it))
+                    }
+                    SettingsDivider()
+                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Text(stringResource(R.string.settings_voice_manual_turn),
+                            style = MaterialTheme.typography.bodyLarge, color = MuralColors.Ink,
+                            modifier = Modifier.weight(1f).padding(end = 12.dp))
+                        Switch(checked = vm.voiceManualTurn, onCheckedChange = { vm.setVoiceManualTurn(it) })
                     }
                     SettingsDivider()
                     SettingsRow(stringResource(R.string.settings_corrections_label), stringResource(R.string.settings_corrections_value))

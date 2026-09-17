@@ -297,6 +297,41 @@ class LocalVoiceTransportTest {
         scope.cancel()
     }
 
+    @Test
+    fun `manual mode holds the turn until endTurn is requested`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val tts = FakeTts()
+        val events = mutableListOf<JsonObject>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime().apply { transcription = "Habla lenta" }), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // habla + silencio muy por encima del umbral automático: NO debe cerrar el turno
+        repeat(4) { source.queue.add(speech()) }
+        repeat(30) { source.queue.add(silence()) }
+        Thread.sleep(700)
+        assertEquals(0, engine.received.size)
+        assertTrue(events.none { (it["type"]?.jsonPrimitive?.content ?: "").contains("transcript") })
+
+        // el usuario pulsa "He terminado"
+        transport.endTurn()
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+
+        assertEquals(1, engine.received.size)
+        assertEquals("Habla lenta", engine.received[0].second)
+        val ttsDeadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < ttsDeadline) Thread.sleep(25)
+        assertEquals("Nice! Tell me more about it.", tts.spoken.single())
+        assertTrue(events.any { (it["type"]?.jsonPrimitive?.content ?: "") == "session.input_transcript.delta" })
+    }
+
     private fun buildAppend(type: String, content: String): JsonObject = kotlinx.serialization.json.buildJsonObject {
         put("type", type)
         put("content", kotlinx.serialization.json.JsonPrimitive(content))

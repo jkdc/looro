@@ -52,6 +52,18 @@ class LocalVoiceTransport(
     @Volatile private var running = false
     @Volatile private var muted = false
     @Volatile private var speaking = false
+
+    /**
+     * Beginner mode: when true the VAD never auto-ends the turn; the turn is
+     * processed only when [endTurn] is called (or at the 30 s safety cap).
+     */
+    @Volatile var manualTurn = false
+    @Volatile private var turnEndRequested = false
+
+    /** Requested by the UI ("He terminado"): close and process the current turn. */
+    fun endTurn() {
+        turnEndRequested = true
+    }
     @Volatile private var listenJob: Job? = null
     @Volatile private var sessionStartedAtMs = 0L
 
@@ -103,6 +115,17 @@ class LocalVoiceTransport(
                 var lastUsageEmit = System.currentTimeMillis()
                 while (coroutineContext.isActive && running) {
                     if (frameDelayMs > 0) delay(frameDelayMs)
+
+                    // Manual mode: the user asked to close and process the turn now.
+                    if (manualTurn && turnEndRequested) {
+                        turnEndRequested = false
+                        val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
+                        speech = ArrayList(); speechMs = 0
+                        log("manual end of turn (${samples.size} frames buffered)")
+                        if (samples.isNotEmpty()) processTurn(samples)
+                        continue
+                    }
+
                     val frame = recorder.readFrame()
                     if (frame == null) {
                         delay(10)
@@ -116,27 +139,26 @@ class LocalVoiceTransport(
                         continue
                     }
 
-                    val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE // real audio duration
-                    if (rms >= VAD_SPEECH_RMS) {
-                        if (speechMs == 0) log("speech detected (rms=$rms)")
-                        speechMs += frameMs
-                        trailingSilenceMs = 0
-                    } else if (speechMs > 0) {
-                        trailingSilenceMs += frameMs
-                    }
-                    if (speechMs > 0) {
-                        speech.add(frame)
-                        turnMs += frameMs
-                    }
+                    speech.add(frame)
 
-                    val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= SILENCE_END_MS
-                    if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
-                    val turnCapped = turnMs >= MAX_TURN_MS
-                    if (turnComplete || turnCapped) {
-                        val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
-                        speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
-                        processTurn(samples)
-                        lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                    if (!manualTurn) {
+                        // Auto VAD (only in automatic mode).
+                        val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
+                        if (rms >= VAD_SPEECH_RMS) {
+                            if (speechMs == 0) log("speech detected (rms=$rms)")
+                            speechMs += frameMs
+                            trailingSilenceMs = 0
+                        } else if (speechMs > 0) {
+                            trailingSilenceMs += frameMs
+                        }
+                        val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= SILENCE_END_MS
+                        if (turnComplete || turnMs + frameMs >= MAX_TURN_MS) {
+                            if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
+                            val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
+                            speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                            processTurn(samples)
+                            lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                        }
                     }
                     if (System.currentTimeMillis() - lastUsageEmit >= 15_000) {
                         lastUsageEmit = maybeEmitUsage(lastUsageEmit)

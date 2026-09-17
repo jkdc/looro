@@ -681,6 +681,23 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         if (archive.preferences.meaningVisible) scheduleTranslation()
     }
     fun toggleMute() { if (state == "active" && voiceSession) { isMuted = !isMuted; transport.mute(isMuted) } }
+
+    /** Beginner voice mode: the turn ends only when the user presses the button. */
+    val voiceManualTurn: Boolean
+        get() = BuildConfig.CONVERSATION_ENGINE != "openai" && voiceManualTurnStore.get()
+
+    fun setVoiceManualTurn(enabled: Boolean) {
+        voiceManualTurnStore.set(enabled)
+        (transport as? chat.mural.core.voice.LocalVoiceTransport)?.manualTurn = enabled
+    }
+
+    fun endVoiceTurn() {
+        (transport as? chat.mural.core.voice.LocalVoiceTransport)?.endTurn()
+    }
+
+    private val voiceManualTurnStore by lazy {
+        chat.mural.core.voice.VoiceManualTurnStore(getApplication())
+    }
     fun help() {
         if (state != "active") return
         if (voiceSession) { command("instructions", TeachingPolicy.help(language)); notice = getApplication<Application>().getString(R.string.notice_help_simpler) }
@@ -736,6 +753,8 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             } else presentError(getApplication<Application>().getString(R.string.error_missing_key), true)
             return
         }
+        (transport as? chat.mural.core.voice.LocalVoiceTransport)?.manualTurn =
+            voiceManualTurnStore.get()
         newSession(true); state = "connecting"
         val id = session!!.id
         val module = language
@@ -869,7 +888,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
                 if (current.id in hostedSessionIDs && hostedBindings.reachedDeadline(current.id)) {
                     updateSession { it.endReason = "Reserved conversation time ended" }; finish(false); break
                 }
-                if (nowSeconds() - current.startedAt > archive.preferences.sessionMinutes * 60) {
+                // Cost-free engines: sessions only end when the user ends them —
+                // a slow reply must never cost them the conversation.
+                if (!localVoiceSession && nowSeconds() - current.startedAt > archive.preferences.sessionMinutes * 60) {
                     notice = getApplication<Application>().getString(R.string.notice_time_limit_reached); end("Time limit"); break
                 }
                 // Local voice is cost-free and turns can outlast the inactivity window

@@ -244,6 +244,11 @@ fun TalkScreen(
             style = MaterialTheme.typography.bodySmall, color = MuralColors.Secondary, modifier = Modifier.padding(top = 6.dp))
         if (vm.state == "active" || microphoneMessage != null) {
             Row(horizontalArrangement = Arrangement.spacedBy(18.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (vm.voiceManualTurn) {
+                    MuralTextButton(onClick = vm::endVoiceTurn, enabled = !vm.working) {
+                        Text(stringResource(R.string.talk_end_turn_button), style = MaterialTheme.typography.bodySmall, color = MuralColors.Ink)
+                    }
+                }
                 MuralTextButton(onClick = { typing = true }, enabled = !busy && !vm.working) {
                     MuralIcon(MuralSymbol.Keyboard, Modifier.size(15.dp)); Spacer(Modifier.width(6.dp))
                     Text(stringResource(R.string.talk_type_button), style = MaterialTheme.typography.bodySmall, color = MuralColors.Ink)
