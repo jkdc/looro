@@ -126,7 +126,15 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     /** Selected at build time (see ConversationEngineFactory); default "openai" keeps today's behavior. */
     private val conversationEngine: TeachingClient = ConversationEngineFactory.create(
         BuildConfig.CONVERSATION_ENGINE,
-        ConversationEngineDeps(application, api, ConversationEngineDeps.defaultKeyLookup(), json),
+        ConversationEngineDeps(
+            application,
+            api,
+            keyLookup = { name ->
+                System.getenv(name)
+                    ?: chat.mural.core.engines.ApiKeysStore.get(application, name)
+            },
+            json = json,
+        ),
     )
 
     init {

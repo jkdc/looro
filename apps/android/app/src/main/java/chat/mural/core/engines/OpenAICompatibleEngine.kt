@@ -27,10 +27,19 @@ data class RemoteEngineConfig(
     val defaultModel: String,
     /** Environment variable holding the provider key (resolved at runtime, never stored in the build). */
     val keyEnvVar: String,
+    /** Provider-specific body fields merged into every request (e.g. Zhipu thinking switch). */
+    val extraBody: JsonObject? = null,
 ) {
     companion object {
         val DEEPSEEK = RemoteEngineConfig("deepseek", "https://api.deepseek.com/v1/", "deepseek-chat", "DEEPSEEK_API_KEY")
-        val GLM = RemoteEngineConfig("glm", "https://open.bigmodel.cn/api/paas/v4/", "glm-4-flash", "ZHIPUAI_API_KEY")
+        // Zhipu z.ai (international) platform; glm-4.5-flash is their free flash model.
+        val GLM = RemoteEngineConfig(
+            id = "glm",
+            defaultBaseUrl = "https://api.z.ai/api/paas/v4/",
+            defaultModel = "glm-4.5-flash",
+            keyEnvVar = "ZHIPUAI_API_KEY",
+            extraBody = buildJsonObject { put("thinking", buildJsonObject { put("type", "disabled") }) },
+        )
     }
 }
 
@@ -76,6 +85,7 @@ class OpenAICompatibleEngine(
             if (schema != null) {
                 put("response_format", buildJsonObject { put("type", "json_object") })
             }
+            config.extraBody?.let { extra -> extra.forEach { (k, v) -> put(k, v) } }
             put("stream", false)
         }.toString()
 
