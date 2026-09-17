@@ -58,6 +58,20 @@ non-`openai` engine (same rule as `teaching()` and `start()`). A TTS-wait race
 in `LocalVoiceTransportTest` was also fixed and the suite re-run 3x green
 (339 unit tests).
 
+## Follow-up from Pixel session #1 (fixed)
+
+- Symptom: dialog "Una pequeña interrupción — StandaloneCoroutine was
+  cancelled" after a spoken turn. Cause: `runCatching` in `processTurn`
+  swallowed the job's `CancellationException` (raised when End/timeout closed
+  the transport mid-generation) and surfaced it via `onFailure`.
+  Fix: cancellation now propagates for STT/LLM/TTS; regression test
+  `cancelling mid-turn does not surface a cancellation failure` added.
+- Symptom 2: sessions auto-closed "Inactivity" while a long on-device turn was
+  still generating (120 s idle window counts from the last transcript event).
+  Fix: the inactivity auto-close is skipped for non-OpenAI engines (cost-free,
+  no need to kill sessions mid-turn); the session-minutes cap still applies.
+- Unit suite re-run 3x green after both fixes.
+
 ## Not verified by automation (honest boundary)
 
 - Live microphone → STT on real hardware (emulator mic is silent): the

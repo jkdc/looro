@@ -148,8 +148,12 @@ class LocalVoiceTransport(
         val trimmed = MicRecorder.trimSilence(samples)
         val durationMs = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
         if (durationMs < 250) return // noise blip, not a turn
-        val stt = runCatching { stt.transcribe(trimmed, sessionLanguage) }.getOrElse {
-            onFailure?.invoke(it.message ?: "STT failed"); return
+        val stt = try {
+            stt.transcribe(trimmed, sessionLanguage)
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (e: Exception) {
+            onFailure?.invoke(e.message ?: "STT failed"); return
         }
         if (stt.isEmpty) return // silence/hallucination guard: no fragments, no LLM call
 
@@ -168,8 +172,12 @@ class LocalVoiceTransport(
                 if (conversationSoFar.isNotBlank()) append("\n").append(conversationSoFar)
             }
         }
-        val result = runCatching { engine.respond(system, stt.text, null, false, null) }.getOrElse {
-            onFailure?.invoke(it.message ?: "generation failed"); return
+        val result = try {
+            engine.respond(system, stt.text, null, false, null)
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            throw cancelled
+        } catch (e: Exception) {
+            onFailure?.invoke(e.message ?: "generation failed"); return
         }
         if (result.text.isBlank()) return
         synchronized(rollingTurns) {
@@ -182,7 +190,14 @@ class LocalVoiceTransport(
         emit(transcriptEvent(isInput = false, text = result.text, startMs = replyStart, endMs = replyStart + 500))
 
         speaking = true
-        runCatching { tts.speak(result.text) }
+        try {
+            tts.speak(result.text)
+        } catch (cancelled: kotlinx.coroutines.CancellationException) {
+            speaking = false
+            throw cancelled
+        } catch (e: Exception) {
+            onFailure?.invoke(e.message ?: "TTS failed")
+        }
         speaking = false
     }
 

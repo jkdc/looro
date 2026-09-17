@@ -12,6 +12,7 @@ import java.util.concurrent.CountDownLatch
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonObject
@@ -47,8 +48,10 @@ class LocalVoiceTransportTest {
     private class FakeTeachingClient : TeachingClient {
         val received = mutableListOf<Pair<String, String>>() // system to user
         val reply = "Nice! Tell me more about it."
+        var gate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
         override suspend fun respond(instructions: String, input: String, schema: kotlinx.serialization.json.JsonObject?, search: Boolean, purpose: chat.mural.network.HelperPurpose?): chat.mural.network.APIResult {
             received.add(instructions to input)
+            gate?.await()
             return chat.mural.network.APIResult(text = reply, sources = emptyList(), usage = chat.mural.network.APIUsage(10, 5))
         }
     }
@@ -257,6 +260,41 @@ class LocalVoiceTransportTest {
         val rendered = transport.renderHistory(history)
         assertTrue(rendered.contains("User: Hi"))
         assertTrue(rendered.contains("Assistant: Hello"))
+    }
+
+
+    @Test
+    fun `cancelling mid-turn does not surface a cancellation failure`() {
+        val source = FakeFrameSource()
+        val sttRuntime = FakeWhisperRuntime()
+        val engine = FakeTeachingClient()
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = gate
+        val tts = FakeTts()
+        val failures = mutableListOf<String>()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), sttRuntime), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onFailure = { failures.add(it) }
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+
+        // End/timeout mid-generation cancels the transport job.
+        transport.close()
+        val releaseDeadline = System.currentTimeMillis() + 5_000
+        gate.complete(Unit)
+        while (failures.isEmpty() && System.currentTimeMillis() < releaseDeadline) Thread.sleep(25)
+
+        assertTrue("cancellation must not be reported as failure: $failures", failures.isEmpty())
+        scope.cancel()
     }
 
     private fun buildAppend(type: String, content: String): JsonObject = kotlinx.serialization.json.buildJsonObject {

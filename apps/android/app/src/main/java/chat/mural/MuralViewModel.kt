@@ -826,6 +826,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     }
     private fun startDurationChecks() {
         durationJob?.cancel()
+        val localVoiceSession = BuildConfig.CONVERSATION_ENGINE != "openai"
         durationJob = viewModelScope.launch {
             while (state == "active") {
                 delay(5000)
@@ -836,7 +837,11 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
                 if (nowSeconds() - current.startedAt > archive.preferences.sessionMinutes * 60) {
                     notice = getApplication<Application>().getString(R.string.notice_time_limit_reached); end("Time limit"); break
                 }
-                if (SessionLimits.endsForInactivity(voiceSession, nowSeconds() - lastActivity)) { notice = getApplication<Application>().getString(R.string.notice_ended_inactivity); end("Inactivity"); break }
+                // Local voice is cost-free and turns can outlast the inactivity window
+                // (slow devices); only WebRTC sessions auto-close on idle.
+                if (!localVoiceSession && SessionLimits.endsForInactivity(voiceSession, nowSeconds() - lastActivity)) {
+                    notice = getApplication<Application>().getString(R.string.notice_ended_inactivity); end("Inactivity"); break
+                }
             }
         }
     }
