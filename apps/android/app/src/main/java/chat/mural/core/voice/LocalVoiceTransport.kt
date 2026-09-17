@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
@@ -34,6 +33,8 @@ import kotlinx.serialization.json.put
  * after [SILENCE_END_MS] of trailing silence once [SPEECH_START_MS] of speech
  * accumulated, capped at [MAX_TURN_MS]. The mic is suppressed while TTS speaks.
  */
+private const val LOG_TAG = "MuralLocalEngine"
+
 class LocalVoiceTransport(
     @Suppress("UNUSED_PARAMETER") context: Context?,
     private val scope: CoroutineScope,
@@ -82,6 +83,7 @@ class LocalVoiceTransport(
             put("session", buildJsonObject { put("id", UUID.randomUUID().toString()) })
         })
         emit(buildJsonObject { put("type", "session.started") })
+        log("voice session started (language='$sessionLanguage')")
         tts.initialize()
         startListening()
     }
@@ -116,6 +118,7 @@ class LocalVoiceTransport(
 
                     val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE // real audio duration
                     if (rms >= VAD_SPEECH_RMS) {
+                        if (speechMs == 0) log("speech detected (rms=$rms)")
                         speechMs += frameMs
                         trailingSilenceMs = 0
                     } else if (speechMs > 0) {
@@ -127,6 +130,7 @@ class LocalVoiceTransport(
                     }
 
                     val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= SILENCE_END_MS
+                    if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
                     val turnCapped = turnMs >= MAX_TURN_MS
                     if (turnComplete || turnCapped) {
                         val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
@@ -145,17 +149,28 @@ class LocalVoiceTransport(
     }
 
     private suspend fun processTurn(samples: FloatArray) {
+        log("turn end: captured ${samples.size * 1000L / MicRecorder.SAMPLE_RATE} ms of audio")
+        val t0 = System.currentTimeMillis()
         val trimmed = MicRecorder.trimSilence(samples)
         val durationMs = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
-        if (durationMs < 250) return // noise blip, not a turn
+        if (durationMs < 250) {
+            log("turn discarded: only ${durationMs} ms of usable audio (noise blip)")
+            return
+        }
+        log("STT start (${durationMs} ms of audio, language='$sessionLanguage')")
         val stt = try {
             stt.transcribe(trimmed, sessionLanguage)
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
             throw cancelled
         } catch (e: Exception) {
+            log("STT failed after ${System.currentTimeMillis() - t0} ms: ${e.message}")
             onFailure?.invoke(e.message ?: "STT failed"); return
         }
-        if (stt.isEmpty) return // silence/hallucination guard: no fragments, no LLM call
+        log("STT done in ${stt.processingMs} ms: \"${stt.text}\"")
+        if (stt.isEmpty) {
+            log("empty transcription: resuming listening (no LLM call)")
+            return // silence/hallucination guard: no fragments, no LLM call
+        }
 
         val turnStart = relativeMs()
         emit(transcriptEvent(isInput = true, text = stt.text, startMs = turnStart, endMs = turnStart + durationMs))
@@ -172,13 +187,17 @@ class LocalVoiceTransport(
                 if (conversationSoFar.isNotBlank()) append("\n").append(conversationSoFar)
             }
         }
+        log("LLM start")
+        val llmT0 = System.currentTimeMillis()
         val result = try {
             engine.respond(system, stt.text, null, false, null)
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
             throw cancelled
         } catch (e: Exception) {
+            log("LLM failed after ${System.currentTimeMillis() - llmT0} ms: ${e.message}")
             onFailure?.invoke(e.message ?: "generation failed"); return
         }
+        log("LLM done in ${System.currentTimeMillis() - llmT0} ms (${result.usage.input}+${result.usage.output} tok): \"${result.text.take(120)}\"")
         if (result.text.isBlank()) return
         synchronized(rollingTurns) {
             rollingTurns.addLast("User: ${stt.text}")
@@ -190,15 +209,21 @@ class LocalVoiceTransport(
         emit(transcriptEvent(isInput = false, text = result.text, startMs = replyStart, endMs = replyStart + 500))
 
         speaking = true
+        log("TTS start")
+        val ttsT0 = System.currentTimeMillis()
         try {
             tts.speak(result.text)
+            log("TTS done in ${System.currentTimeMillis() - ttsT0} ms")
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
             speaking = false
+            log("TTS cancelled after ${System.currentTimeMillis() - ttsT0} ms")
             throw cancelled
         } catch (e: Exception) {
+            log("TTS failed: ${e.message}")
             onFailure?.invoke(e.message ?: "TTS failed")
         }
         speaking = false
+        log("turn complete in ${System.currentTimeMillis() - t0} ms total")
     }
 
     /**
@@ -251,6 +276,10 @@ class LocalVoiceTransport(
 
     private fun emit(event: JsonObject) {
         onEvent?.invoke(event)
+    }
+
+    private fun log(message: String) {
+        android.util.Log.i(LOG_TAG, message)
     }
 
     private fun relativeMs(): Long = System.currentTimeMillis() - sessionStartedAtMs

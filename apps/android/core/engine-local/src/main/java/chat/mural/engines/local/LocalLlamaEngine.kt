@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 /** Failure raised by the local engine; [retryable] mirrors remote-engine semantics. */
 class LocalEngineException(message: String, val retryable: Boolean = false) : IOException(message)
 
+private const val LOG_TAG = "MuralLocalEngine"
+
 /**
  * On-device conversation engine: llama.cpp over a GGUF model, fully offline.
  *
@@ -30,7 +32,7 @@ class LocalLlamaEngine(
         val contextSize: Int = 2048,
         val threads: Int = 4,
         val batchSize: Int = 256,
-        val maxOutputTokens: Int = 400,
+        val maxOutputTokens: Int = 120,
         val temperature: Float = 0.7f,
         val useJsonGrammar: Boolean = true,
         val seed: Int = 42, // fixed: stability over variety
@@ -68,6 +70,7 @@ class LocalLlamaEngine(
         val abort = AtomicBoolean(false)
         val raw = StringBuilder()
 
+        var firstTokenAtNs = 0L
         val status = withContext(Dispatchers.Default) {
             runtime.generate(
                 handle,
@@ -78,12 +81,27 @@ class LocalLlamaEngine(
                 config.maxOutputTokens,
                 config.temperature,
                 config.seed,
-                { piece -> raw.append(piece) },
+                { piece ->
+                    if (firstTokenAtNs == 0L) {
+                        firstTokenAtNs = System.nanoTime()
+                        android.util.Log.i(
+                            LOG_TAG,
+                            "LLM first token in ${(firstTokenAtNs - startNs) / 1_000_000} ms " +
+                                "(prompt ${outStats[0]} tok)",
+                        )
+                    }
+                    raw.append(piece)
+                },
                 abort,
                 outStats,
             )
         }
         val generationMs = (System.nanoTime() - startNs) / 1_000_000
+        android.util.Log.i(
+            LOG_TAG,
+            "LLM done: total=${generationMs}ms ttft=${if (firstTokenAtNs > 0) (firstTokenAtNs - startNs) / 1_000_000 else -1}ms " +
+                "tokens=${outStats[1]} tok/s=${"%.1f".format(java.util.Locale.US, outStats[1] * 1000.0 / generationMs.coerceAtLeast(1))}",
+        )
 
         when (status) {
             0 -> LocalResult(
@@ -153,5 +171,6 @@ class LocalLlamaEngine(
             throw LocalEngineException("Local model failed to load: ${model.name}")
         }
         loadedName = model.name
+        android.util.Log.i(LOG_TAG, "model loaded: ${model.name}")
     }
 }
