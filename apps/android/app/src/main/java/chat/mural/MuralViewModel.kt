@@ -128,15 +128,16 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     }
     private val api = APIClient(credentials)
     /** Selected at build time (see ConversationEngineFactory); default "openai" keeps today's behavior. */
+    private val engineKeyLookup: (String) -> String? = { name ->
+        System.getenv(name)
+            ?: chat.mural.core.engines.ApiKeysStore.get(application, name)
+    }
     private val conversationEngine: TeachingClient = ConversationEngineFactory.create(
         BuildConfig.CONVERSATION_ENGINE,
         ConversationEngineDeps(
             application,
             api,
-            keyLookup = { name ->
-                System.getenv(name)
-                    ?: chat.mural.core.engines.ApiKeysStore.get(application, name)
-            },
+            keyLookup = engineKeyLookup,
             json = json,
         ),
     )
@@ -406,6 +407,17 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         if (!storageReady) { presentError(getApplication<Application>().getString(R.string.error_resolve_local_history_first)); return false }
         if (archive.preferences.aiConsentVersion != 1) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return false
+        }
+        if (BuildConfig.CONVERSATION_ENGINE != "openai") {
+            // Remote-compatible engines (deepseek/glm) never use the OpenAI
+            // credential or hosted minutes: they are ready when their own
+            // provider key is available (key-free engines are always ready).
+            val envVar = conversationEngine.keyEnvVar
+            if (envVar != null && engineKeyLookup(envVar) == null) {
+                presentError(getApplication<Application>().getString(R.string.error_missing_engine_key, envVar))
+                return false
+            }
+            return true
         }
         val currentHosted = session?.id in hostedSessionIDs
         if (!currentHosted && conversationProvider == ConversationProvider.PERSONAL_KEY && !hasKey) {
@@ -935,9 +947,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         s.searchCalls = (s.searchCalls.toLong() + usage.searches).coerceAtMost(1_000_000_000).toInt()
     }
     private fun scheduleTranslation(utteranceComplete: Boolean = state == "ended") {
-        // Local LLM: translating every assistant line would queue a full
-        // generation behind the conversation; meanings stay on-demand (Meaning button).
-        if (BuildConfig.CONVERSATION_ENGINE != "openai") return
+        // Meanings are a plain chat completion on every engine (the conversation
+        // never queues behind them on remote engines), so the learning loop works
+        // identically with openai, deepseek and glm.
         if (!archive.preferences.meaningVisible || archive.preferences.aiConsentVersion != 1) return
         val current = session ?: return
         val passage = current.passages.lastOrNull { it.speaker == Speaker.assistant } ?: return
@@ -1117,7 +1129,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val result = teaching(session?.id, HelperPurpose.TOPIC, UUID.randomUUID().toString(), TeachingPolicy.currentTopic(module), query.trim().take(500), search = true)
                 if (token != generation) return@launch
-                if (result.sources.isEmpty()) { presentError(getApplication<Application>().getString(R.string.error_topic_unsourced)); return@launch }
+                // Engines without web search (deepseek/glm) return no sources:
+                // present the topic without the sources UI instead of failing.
+                // Only genuine engine failures (exceptions) surface as errors.
                 val brief = TopicBrief(languageID = module.id, query = query.trim().take(500), text = result.text, sources = result.sources)
                 topicResult = brief
                 if (isRunning) updateSession { it.topics += brief; addUsage(it, result.usage) }

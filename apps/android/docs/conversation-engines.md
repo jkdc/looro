@@ -9,8 +9,8 @@ construction point, `chat.mural.core.engines.ConversationEngineFactory`.
 MuralViewModel.teaching()
         └── ConversationEngineFactory  ← the only construction point
               ├── "openai"   (default) OpenAIEngineAdapter → existing APIClient
-              ├── "deepseek"          OpenAICompatibleEngine → api.deepseek.com
-              └── "glm"               OpenAICompatibleEngine → open.bigmodel.cn
+              ├── "deepseek"          OpenAICompatibleEngine → api.deepseek.com/v1
+              └── "glm"               OpenAICompatibleEngine → api.z.ai/api/paas/v4
 ```
 
 Adding a provider in the future = one registry row in `ConversationEngineFactory`
@@ -106,9 +106,15 @@ automatically. Whisper adds ~300 MB while loaded.
 ### Known limitations
 
 - `search=true` requests are answered without web search by non-OpenAI engines
-  (degradation, not an error).
-- The `aiConsent` gate still applies before any engine call (product decision,
-  unchanged here).
+  (degradation, not an error). Topic requests still succeed on `deepseek`/`glm`:
+  they are presented without the sources UI (the UI hides the sources section
+  when a brief has none) instead of failing with `error_topic_unsourced`.
+- The learning loop (meanings panel, word lookup, written-session help, topic
+  requests) is engine-agnostic: the same `teaching()`/`TeachingClient.respond`
+  path serves every engine, and readiness gates accept the active engine's own
+  key (`DEEPSEEK_API_KEY`/`ZHIPUAI_API_KEY` via environment or
+  `api-keys.properties`) instead of demanding an OpenAI key. The `aiConsent`
+  gate still applies before any engine call (product decision, unchanged here).
 - The native `.so` (whisper-only since the local LLM removal) ships in every
   build of this branch even with `ENGINE=openai` (unused there). Conditional
   module inclusion is the documented follow-up before merging to `main`.

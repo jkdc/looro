@@ -19,6 +19,7 @@
     <string name="error_resolve_local_history_first">Resolve the local history error first.</string>
     <string name="error_accept_ai_consent">Accept OpenAI use in Settings before you begin.</string>
     <string name="error_missing_key">Add your OpenAI key in Settings to begin.</string>
+    <string name="error_missing_engine_key">The selected conversation engine needs the %1$s API key. Add it to the engine key store (api-keys.properties) or environment and restart the app.</string>
     <string name="error_key_invalid">Enter a valid OpenAI API key.</string>
     <string name="error_key_save">The key couldn\'t be saved securely on this device.</string>
     <string name="error_key_save_failed">The key couldn\'t be saved.</string>

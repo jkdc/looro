@@ -67,6 +67,9 @@ class OpenAICompatibleEngine(
 
     private val json = Json { ignoreUnknownKeys = true }
 
+    /** Lets callers (e.g. readiness gates) check this engine's key without a network round trip. */
+    override val keyEnvVar: String? get() = config.keyEnvVar
+
     override suspend fun respond(
         instructions: String,
         input: String,

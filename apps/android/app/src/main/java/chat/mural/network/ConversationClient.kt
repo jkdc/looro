@@ -13,6 +13,15 @@ enum class HelperPurpose(val wireValue: String) {
 }
 
 interface TeachingClient {
+    /**
+     * Environment/system property this engine resolves its provider key from,
+     * or null when key handling lives outside the engine (the OpenAI
+     * credential store behind the hosted-provider gates). Gates like
+     * `MuralViewModel.cloudReady` use it to decide whether the active engine
+     * is usable without an OpenAI key.
+     */
+    val keyEnvVar: String? get() = null
+
     suspend fun respond(instructions: String, input: String, schema: JsonObject? = null,
         search: Boolean = false, purpose: HelperPurpose? = null): APIResult
 }

@@ -3,6 +3,15 @@
 > **Superseded 2026-09-17:** the on-device LLM was discarded by product
 > decision (too slow for voice turns); this analysis is preserved for
 > reference. See `docs/conversation-engines.md` ("Local engine (removed)").
+>
+> **Update (same day, engine-parity fix):** with the local engine gone, the
+> remaining non-OpenAI engines are `deepseek`/`glm` (remote, OpenAI-compatible).
+> The learning loop now works on them without an OpenAI key: meanings,
+> word lookup, written-session help and topic requests run through the active
+> engine (`TeachingClient.respond`); topics returned without sources are
+> presented without the sources UI (degradation) instead of
+> `error_topic_unsourced`, because compatible engines never search the web.
+> Sections below describe the *removed* local engine and are kept as history.
 
 > Alcance: qué cambia, qué se degrada, qué se pierde y qué riesgos aparecen en la
 > app Android cuando `mural.conversationEngine != openai` (en particular `local`).
@@ -42,7 +51,9 @@ decisiones de producto, no de código.
   presentadas con la misma confianza que las de OpenAI.
 - **`search=true` se ignora**: los propósitos que usaban búsqueda web
   (LOOKUP/HELP/temas desde conversación) responden sin fuentes;
-  `APIResult.sources` llega siempre vacío.
+  `APIResult.sources` llega siempre vacío. *(Actualizado: en los motores
+  remotos actuales esto ya no es un error — los temas sin fuentes se muestran
+  sin la sección de fuentes en lugar de fallar con `error_topic_unsourced`).*
 - **Latencia de typed reply**: en emulator medimos minutos; en Pixel esperamos
   5–20 s. Durante `working=true` la UI bloquea acciones simultáneas.
 - **Coste por token**: `addUsage` sigue contando tokens (honesto), pero no hay
@@ -103,7 +114,7 @@ decisiones de producto, no de código.
 ## 8. Qué NO cambia
 
 Onboarding, temas, vocabulario, motor de aprendizaje, persistencia de sesiones,
-traducciones de significado (ahora vía motor local), flujos de cuenta Google/Apple,
+traducciones de significado (ahora vía el motor remoto activo), flujos de cuenta Google/Apple,
 compras, y todo el backend `services/api` (hosted sigue OpenAI; su propia capa
 multi-proveedor es un cambio futuro independiente).
 

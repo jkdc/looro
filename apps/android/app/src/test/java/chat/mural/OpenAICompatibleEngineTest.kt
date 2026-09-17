@@ -3,6 +3,7 @@ package chat.mural
 import chat.mural.core.engines.ConversationEngineDeps
 import chat.mural.core.engines.EngineException
 import chat.mural.core.engines.OpenAICompatibleEngine
+import chat.mural.core.engines.OpenAIEngineAdapter
 import chat.mural.core.engines.RemoteEngineConfig
 import chat.mural.network.APIClient
 import chat.mural.network.HelperPurpose
@@ -137,5 +138,41 @@ class OpenAICompatibleEngineTest {
         } catch (e: EngineException) {
             assertTrue(e.message!!.contains("choices"))
         }
+    }
+
+    @Test
+    fun `meanings translation request is a plain chat completion parsed into the meanings model`() = runTest {
+        server.enqueue(MockResponse().setBody(
+            """{"choices":[{"message":{"role":"assistant","content":"the radio"}}],
+               "usage":{"prompt_tokens":148,"completion_tokens":3}}""",
+        ))
+        val instructions = "Translate the supplied Spanish transcript faithfully into English. Return only the translation."
+        val transcript = "la radio que oímos ayer"
+
+        val result = engine.respond(instructions, transcript, purpose = HelperPurpose.MEANING)
+
+        // Same shape the OpenAI meanings path produces: plain text reply + token usage.
+        assertEquals("the radio", result.text)
+        assertEquals(148, result.usage.input)
+        assertEquals(3, result.usage.output)
+
+        val recorded = server.takeRequest()
+        assertEquals("/v1/chat/completions", recorded.path)
+        val body = Json.parseToJsonElement(recorded.body.readUtf8()).jsonObject
+        val messages = body["messages"]!!.jsonArray
+        assertEquals(2, messages.size)
+        assertEquals(instructions, messages[0].jsonObject["content"]!!.jsonPrimitive.content)
+        assertEquals(transcript, messages[1].jsonObject["content"]!!.jsonPrimitive.content)
+        // Meanings never request structured output or schema embedding.
+        assertTrue(body["response_format"] == null)
+    }
+
+    @Test
+    fun `keyEnvVar exposes the provider variable so gates can skip the OpenAI key`() {
+        assertEquals("DEEPSEEK_API_KEY", engine.keyEnvVar)
+        assertEquals("ZHIPUAI_API_KEY",
+            OpenAICompatibleEngine(RemoteEngineConfig.GLM, deps(), client = OkHttpClient()).keyEnvVar)
+        // The OpenAI engine keeps credential-store gating, so it exposes no environment variable.
+        assertEquals(null, OpenAIEngineAdapter(APIClient(null, OkHttpClient(), server.url("/"))).keyEnvVar)
     }
 }
