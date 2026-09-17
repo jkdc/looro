@@ -46,3 +46,4 @@ apps/android/.idea/
 apps/android/local-models/
 *.gguf
 *.bin
+apps/android/core/engine-local/.cxx/
