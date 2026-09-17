@@ -9,6 +9,7 @@ import chat.mural.engines.local.WhisperStt
 import chat.mural.network.LiveSessionProvider
 import chat.mural.network.TeachingClient
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -61,6 +62,13 @@ class LocalVoiceTransport(
     @Volatile private var running = false
     @Volatile private var muted = false
     @Volatile private var speaking = false
+    /**
+     * Depth of concurrent [speakSuppressed] callers (turn reply, opening
+     * greeting, typed commentary run on different coroutines). The mic only
+     * resumes when the depth reaches zero, so one speaker finishing can never
+     * reopen capture while another is still playing.
+     */
+    private val speakingDepth = AtomicInteger(0)
     /** The live frame source; paused while TTS plays back so it never captures speaker audio. */
     @Volatile private var recorder: AudioFrameSource? = null
 
@@ -99,16 +107,15 @@ class LocalVoiceTransport(
         historyContext = renderHistory(history)
         sessionLanguage = language?.take(2)?.lowercase() ?: "en"
         sessionStartedAtMs = System.currentTimeMillis()
-        running = true
 
         // Fail the session loudly before announcing it: without TTS the pipeline
         // would silently degrade to text-only turns.
         if (!tts.initialize()) {
-            running = false
             log("TTS initialization failed: failing the session")
             onFailure?.invoke(TTS_UNAVAILABLE)
             return
         }
+        running = true
 
         emit(buildJsonObject {
             put("type", "mural.session.created")
@@ -119,8 +126,11 @@ class LocalVoiceTransport(
         startListening()
         if (openOnStart) {
             scope.launch(Dispatchers.Default) {
-                // The ViewModel appends the greeting instruction on session.started
-                // (synchronously during emit), so the context carries it by now.
+                // The ViewModel appends the greeting instruction when it handles
+                // the session.started event (transport callbacks are funneled
+                // through a channel, so that happens asynchronously after
+                // connect returns); this delay lets that handling land before
+                // the greeting prompt is built.
                 delay(200)
                 try {
                     val system = buildString {
@@ -203,7 +213,8 @@ class LocalVoiceTransport(
                             trailingSilenceMs += frameMs
                         }
                         val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= silenceEndMs
-                        if (turnComplete || turnMs >= MAX_TURN_MS) {
+                        val capReached = speechMs > 0 && turnMs >= MAX_TURN_MS
+                        if (turnComplete || capReached) {
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
                             else log("turn cap reached (${turnMs} ms): closing the turn")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
@@ -224,23 +235,34 @@ class LocalVoiceTransport(
     }
 
     /**
-     * Speaks [text] with the microphone paused: capture is stopped before
-     * playback and restarted afterwards, discarding everything buffered in
-     * between. Without this, the mic audio captured while the speaker was
-     * playing is replayed into the VAD as a phantom turn once [speaking]
-     * clears. Resume failure surfaces through [onFailure] (the mic is gone).
+     * Speaks [text] with the microphone paused: capture stops before playback
+     * and restarts afterwards, with the audio retained across the pause
+     * discarded first — without this, pre-playback mic audio is replayed into
+     * the VAD as a phantom turn once speaking clears.
+     *
+     * Reentrancy-safe: concurrent callers each hold a [speakingDepth] slot;
+     * mic resume, stale-audio discard and clearing [speaking] happen only when
+     * the LAST caller finishes, so one speaker's QUEUE_FLUSH of another never
+     * reopens the capture window mid-playback.
      */
     private suspend fun speakSuppressed(text: String) {
         val source = recorder
         source?.pause()
+        speakingDepth.incrementAndGet()
         speaking = true
         try {
             tts.speak(text)
         } finally {
-            speaking = false
-            if (running && source != null && !source.resume()) {
-                log("mic could not be resumed after playback")
-                onFailure?.invoke("Microphone unavailable")
+            val remaining = speakingDepth.decrementAndGet()
+            speaking = remaining > 0
+            if (remaining == 0 && running && source != null) {
+                // Capture is stopped, so the drain is a bounded sweep over the
+                // samples retained across pause() — never fresh audio.
+                source.drainStale()
+                if (!source.resume()) {
+                    log("mic could not be resumed after playback")
+                    onFailure?.invoke("Microphone unavailable")
+                }
             }
         }
     }

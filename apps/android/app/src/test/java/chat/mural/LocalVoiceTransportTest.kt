@@ -36,17 +36,26 @@ import kotlin.math.sin
 
 class LocalVoiceTransportTest {
 
+    /**
+     * Models a recording source honestly: [readFrame] is non-blocking and a
+     * null means "nothing buffered right now", never "end of audio". The
+     * stale-audio discard is the explicit [drainStale] contract, not a
+     * read-until-null loop — a loop the real (non-blocking) source cannot
+     * express and this fake could not disprove.
+     */
     private class FakeFrameSource : AudioFrameSource {
         val queue = ArrayDeque<FloatArray>()
         var started = false
         var stopped = false
         var paused = false
         var resumeCount = 0
+        var drainedFrames = 0
         override fun start(): Boolean { started = true; return true }
         override fun readFrame(): FloatArray? { if (paused) return null; return queue.removeFirstOrNull() }
         override fun stop() { stopped = true }
         override fun pause() { paused = true }
-        override fun resume(): Boolean { paused = false; resumeCount++; queue.clear(); return true } // discard stale
+        override fun drainStale() { drainedFrames += queue.size; queue.clear() }
+        override fun resume(): Boolean { paused = false; resumeCount++; return true }
     }
 
     private class FakeWhisperRuntime : WhisperRuntime {
@@ -353,6 +362,28 @@ class LocalVoiceTransportTest {
         Thread.sleep(1_500)
         assertEquals("no phantom turn may start from stale buffered audio", 1, engine.received.size)
         assertTrue("the recorder must be paused around playback", source.resumeCount >= 1)
+        assertEquals("exactly the 18 frames captured during playback must be drained",
+            18, source.drainedFrames)
+    }
+
+    @Test
+    fun `pure idle silence never trips the turn cap into a phantom stt pass`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // 250 frames = 32 s of pure silence: past the 30 s cap, but with no
+        // speech buffered the cap must not open an STT pass (trimSilence keeps
+        // all-silence audio whole, so an unguarded cap would reach the LLM).
+        repeat(250) { source.queue.add(silence()) }
+        Thread.sleep(1_500)
+        assertEquals(0, engine.received.size)
     }
 
     @Test

@@ -12,43 +12,63 @@ data class RecordedAudio(val samples: FloatArray, val durationMs: Long)
 /** Frame source seam so pipelines are testable without hardware. */
 interface AudioFrameSource {
     fun start(): Boolean
+
+    /**
+     * Non-blocking read; returns null when the source is unavailable or no
+     * frame is buffered yet. Never waits for audio to arrive, and a null is
+     * "nothing buffered right now", never "end of audio".
+     */
     fun readFrame(): FloatArray?
+
+    /** Terminal: releases the source. Anything still buffered is discarded. */
     fun stop()
 
     /**
-     * Stops capture temporarily while keeping the source resumable: [readFrame]
-     * returns null until [resume]. Used so a voice pipeline never captures its
-     * own TTS playback.
+     * Stops capture temporarily while keeping the source resumable: audio
+     * captured up to this point stays buffered, [readFrame] returns null, and
+     * [drainStale] can discard it. Lets a voice pipeline avoid re-capturing its
+     * own TTS playback without ever releasing the hardware mid-read.
      */
     fun pause()
 
     /**
-     * Restarts capture after [pause], discarding any audio buffered while
-     * paused. Returns false when the source is no longer available.
+     * Discards the audio retained across [pause]. Bounded and non-blocking by
+     * contract: implementations must account for the finite retained samples
+     * instead of looping until [readFrame] runs dry (a live recording source
+     * never runs dry on its own).
      */
+    fun drainStale()
+
+    /** Restarts capture after [pause]/[drainStale]. False when unavailable. */
     fun resume(): Boolean
 }
 
 /**
  * Microphone capture for the local voice pipeline: mono 16 kHz PCM16 from
- * VOICE_RECOGNITION. The pipeline reads [readFrame] on its own loop and calls
- * [stop] when the turn ends; the mic is released immediately.
+ * VOICE_RECOGNITION. The pipeline reads [readFrame] (non-blocking) on its own
+ * loop, [pause]s capture while TTS plays back — discarding the audio retained
+ * across the pause via [drainStale], so speaker output is never re-captured —
+ * and calls [stop] when the session ends; the mic is released immediately then.
  */
 class MicRecorder : AudioFrameSource {
 
     private var audioRecord: AudioRecord? = null
 
+    /** Short capacity of the live AudioRecord's buffer, as allocated in [start]; 0 when stopped. */
+    private var bufferShortsCapacity = 0
+
     @SuppressLint("MissingPermission") // gated by the app's permission flow
     override fun start(): Boolean {
         val minBuffer = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL, ENCODING)
         if (minBuffer <= 0) return false
+        val capacity = maxOf(minBuffer, READ_CHUNK * 4)
         val record = try {
             AudioRecord(
                 MediaRecorder.AudioSource.VOICE_RECOGNITION,
                 SAMPLE_RATE,
                 CHANNEL,
                 ENCODING,
-                maxOf(minBuffer, READ_CHUNK * 4),
+                capacity,
             )
         } catch (_: SecurityException) {
             return false
@@ -60,15 +80,16 @@ class MicRecorder : AudioFrameSource {
             return false
         }
         audioRecord = record
+        bufferShortsCapacity = capacity
         record.startRecording()
         return true
     }
 
-    /** Non-blocking read; returns null when the recorder is unavailable. */
+    /** Non-blocking read; returns null when no frame is buffered yet or the recorder is unavailable. */
     override fun readFrame(): FloatArray? {
         val record = audioRecord ?: return null
         val buffer = ShortArray(READ_CHUNK)
-        val read = runCatching { record.read(buffer, 0, READ_CHUNK) }.getOrDefault(0)
+        val read = runCatching { record.read(buffer, 0, READ_CHUNK, AudioRecord.READ_NON_BLOCKING) }.getOrDefault(0)
         if (read <= 0) return null
         return FloatArray(read) { buffer[it] / 32768.0f }
     }
@@ -76,6 +97,7 @@ class MicRecorder : AudioFrameSource {
     override fun stop() {
         val record = audioRecord ?: return
         audioRecord = null
+        bufferShortsCapacity = 0
         runCatching {
             if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
         }
@@ -83,27 +105,43 @@ class MicRecorder : AudioFrameSource {
     }
 
     /**
-     * Fully releases the microphone: nothing is captured while TTS plays back.
-     * Idempotent (a no-op when already paused or stopped).
+     * Stops capture but keeps this instance: never releases the AudioRecord
+     * here, because release during an in-flight read is platform-dependent.
+     * Samples captured before the pause stay buffered until [drainStale]
+     * discards them. Idempotent.
      */
     override fun pause() {
-        stop()
+        val record = audioRecord ?: return
+        runCatching {
+            if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
+        }
     }
 
     /**
-     * Re-acquires the microphone after [pause] and drains whatever is already
-     * buffered, so no stale audio reaches the VAD. Returns false when the mic
-     * is unavailable (e.g. permission revoked mid-session).
+     * Bounded, non-blocking discard of the samples retained across [pause]:
+     * at most the allocated buffer capacity can be retained, and each sweep
+     * read is non-blocking, so this always terminates.
      */
-    override fun resume(): Boolean {
-        if (audioRecord == null && !start()) return false
-        drainStale()
-        return true
+    override fun drainStale() {
+        val record = audioRecord ?: return
+        val chunk = ShortArray(READ_CHUNK)
+        var remaining = bufferShortsCapacity // explicit accounting: nothing beyond this can be retained
+        while (remaining > 0) {
+            val read = runCatching { record.read(chunk, 0, READ_CHUNK, AudioRecord.READ_NON_BLOCKING) }.getOrDefault(0)
+            if (read <= 0) break
+            remaining -= read
+        }
     }
 
-    /** Reads and discards everything currently buffered. */
-    private fun drainStale() {
-        while (readFrame() != null) { /* drop */ }
+    /**
+     * Restarts capture after [pause]/[drainStale]. Returns false when the
+     * source was terminally stopped or the hardware refuses to record again.
+     */
+    override fun resume(): Boolean {
+        val record = audioRecord ?: return false
+        if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) return true
+        val restarted = runCatching { record.startRecording() }.isSuccess
+        return restarted && record.recordingState == AudioRecord.RECORDSTATE_RECORDING
     }
 
     companion object {
