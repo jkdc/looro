@@ -86,8 +86,7 @@ class LocalLlamaEngine(
                         firstTokenAtNs = System.nanoTime()
                         android.util.Log.i(
                             LOG_TAG,
-                            "LLM first token in ${(firstTokenAtNs - startNs) / 1_000_000} ms " +
-                                "(prompt ${outStats[0]} tok)",
+                            "LLM first token in ${(firstTokenAtNs - startNs) / 1_000_000} ms",
                         )
                     }
                     raw.append(piece)
@@ -156,6 +155,37 @@ class LocalLlamaEngine(
             rest = rest.substring(headerEnd + 1)
         }
         return rest.trim()
+    }
+
+    /**
+     * Loads the model and runs a tiny generation to page the weights in.
+     * Without this, the FIRST real turn pays the full flash->RAM page-in
+     * (~60-90 s for a 2 GB Q4 model). Call from a background scope at app start.
+     */
+    suspend fun warmup() {
+        mutex.withLock {
+            ensureLoaded()
+            val t0 = System.nanoTime()
+            val outStats = LongArray(2)
+            runtime.generate(
+                handle,
+                arrayOf("system", "user"),
+                arrayOf("You are a coach.", "Hi."),
+                "",
+                false,
+                1, // a single token forces every layer through memory
+                0.0f,
+                42,
+                null,
+                AtomicBoolean(false),
+                outStats,
+            )
+            android.util.Log.i(
+                LOG_TAG,
+                "warmup done in ${(System.nanoTime() - t0) / 1_000_000} ms " +
+                    "(prompt ${outStats[0]} tok, generated ${outStats[1]} tok) — weights paged in",
+            )
+        }
     }
 
     private suspend fun ensureLoaded() {

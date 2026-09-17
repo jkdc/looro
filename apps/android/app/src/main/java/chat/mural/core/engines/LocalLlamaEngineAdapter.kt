@@ -39,6 +39,9 @@ class LocalLlamaEngineAdapter(private val engine: LocalLlamaEngine) : TeachingCl
         )
     }
 
+    /** Background weight page-in so the first real turn is fast. */
+    suspend fun warmup() = engine.warmup()
+
     companion object {
         /** Model directory (app external files) expected by the local engine. */
         fun defaultModelsDir(context: android.content.Context) =

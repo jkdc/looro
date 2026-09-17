@@ -128,6 +128,20 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         BuildConfig.CONVERSATION_ENGINE,
         ConversationEngineDeps(application, api, ConversationEngineDeps.defaultKeyLookup(), json),
     )
+
+    init {
+        // With a local engine, page the weights in while the user is still on the
+        // start screen so the first spoken turn does not pay the flash load.
+        if (BuildConfig.CONVERSATION_ENGINE == "local") {
+            viewModelScope.launch {
+                runCatching {
+                    (conversationEngine as? chat.mural.core.engines.LocalLlamaEngineAdapter)?.warmup()
+                }.onFailure {
+                    android.util.Log.w("MuralLocalEngine", "warmup skipped: ${it.message}")
+                }
+            }
+        }
+    }
     private val transport: VoiceTransport = if (BuildConfig.CONVERSATION_ENGINE == "openai") {
         LiveTransport(application, viewModelScope)
     } else {

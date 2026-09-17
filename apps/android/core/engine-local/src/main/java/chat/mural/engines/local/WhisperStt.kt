@@ -62,6 +62,7 @@ class WhisperStt(
             throw LocalEngineException("Whisper model failed to load: ${model.name}")
         }
         loadedName = model.name
+        android.util.Log.i("MuralLocalEngine", "whisper model loaded: ${model.name}")
     }
 }
 
