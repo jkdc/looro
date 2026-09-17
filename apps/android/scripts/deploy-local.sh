@@ -45,7 +45,18 @@ if [ "$ENGINE" = "local" ]; then
   ${ADB} shell am force-stop "$PKG"
   SERIAL="$DEVICE" bash "$ROOT/scripts/push-local-models.sh"
 else
-  ok "Skipped (engine=$ENGINE)"
+  ok "No local models needed (engine=$ENGINE)"
+  # Remote engines: push the API keys file if it exists locally.
+  KEYS_LOCAL="$ROOT/api-keys.properties"
+  KEYS_REMOTE="/sdcard/Android/data/$PKG/files/api_keys.properties"
+  if [ -f "$KEYS_LOCAL" ]; then
+    ${ADB} push "$KEYS_LOCAL" "$KEYS_REMOTE" >/dev/null
+    ok "api_keys.properties pushed ($(awk -F= 'NF>1{print $1}' "$KEYS_LOCAL" | paste -sd,))"
+  else
+    echo "  NOTE: $KEYS_LOCAL not found. Remote engines need their key at runtime;"
+    echo "        create it (ZHIPUAI_API_KEY=... / DEEPSEEK_API_KEY=...) and push:"
+    echo "        ${ADB} push $KEYS_LOCAL $KEYS_REMOTE"
+  fi
 fi
 
 bold "[4/4] Launching"

@@ -638,7 +638,20 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         finally { hasKey = credentials.hasKey }
     }
     fun updatePreferences(preferences: Preferences) {
-        if (isRunning || !storageReady) return
+        val localEngine = BuildConfig.CONVERSATION_ENGINE != "openai"
+        if (!storageReady) return
+        if (isRunning) {
+            // OpenAI voice sessions keep server-side state and stay gated (original behavior).
+            // Local/remote-compatible sessions are cost-free: end them and apply right after.
+            if (!localEngine) return
+            end("Preferences changed")
+            viewModelScope.launch {
+                var waited = 0
+                while (isRunning && waited < 6_000) { delay(100); waited += 100 }
+                updatePreferences(preferences)
+            }
+            return
+        }
         if (LanguageRegistry.get(preferences.learningLanguageID) == null || preferences.meaningLanguage !in MeaningLanguages.all || preferences.sessionMinutes !in 1..60) return
         val languageChanged = preferences.learningLanguageID != language.id
         actionJob?.cancel(); clearLookup(); working = false

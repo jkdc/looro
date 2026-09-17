@@ -55,7 +55,13 @@ data class RemoteEngineConfig(
 class OpenAICompatibleEngine(
     private val config: RemoteEngineConfig,
     private val deps: ConversationEngineDeps,
-    private val client: OkHttpClient = OkHttpClient(),
+    // Streaming replies can take minutes on slow providers/networks: the default
+    // OkHttp 10 s read timeout aborts them mid-flight (seen on Pixel over WiFi).
+    private val client: OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(20, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .build(),
     private val baseUrl: HttpUrl? = null,
 ) : TeachingClient {
 
