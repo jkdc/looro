@@ -237,6 +237,21 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     private var lastActivity = nowSeconds()
     private var generation = 0
 
+    /**
+     * Transport callbacks arrive from arbitrary threads (the Main connect flow,
+     * the IO listen loop, the Default greeting/commentary coroutines) and mutate
+     * session state. Funneling every signal through this single-consumer channel
+     * makes handling effectively serial and confines those mutations to
+     * viewModelScope (Main), so plain vars like [lastActivity] and [generation]
+     * are never raced.
+     */
+    private sealed interface TransportSignal {
+        class Event(val json: JsonObject) : TransportSignal
+        class Failure(val message: String) : TransportSignal
+        class Levels(val input: Double, val output: Double) : TransportSignal
+    }
+    private val transportSignals = Channel<TransportSignal>(Channel.UNLIMITED)
+
     init {
         guests?.let { controller -> viewModelScope.launch { controller.state.collect { guestState = it } } }
         viewModelScope.launch {
@@ -283,16 +298,24 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
-        transport.onEvent = { event ->
-            try { handle(event) }
-            catch (_: IllegalArgumentException) { notice = getApplication<Application>().getString(R.string.notice_invalid_voice_update) }
-            catch (_: IllegalStateException) { notice = getApplication<Application>().getString(R.string.notice_invalid_voice_update) }
+        viewModelScope.launch {
+            for (signal in transportSignals) {
+                when (signal) {
+                    is TransportSignal.Event ->
+                        try { handle(signal.json) }
+                        catch (_: IllegalArgumentException) { notice = getApplication<Application>().getString(R.string.notice_invalid_voice_update) }
+                        catch (_: IllegalStateException) { notice = getApplication<Application>().getString(R.string.notice_invalid_voice_update) }
+                    is TransportSignal.Failure -> fail(signal.message)
+                    is TransportSignal.Levels -> {
+                        inputLevel = signal.input; outputLevel = signal.output
+                        if (signal.input > 0.03 || signal.output > 0.03) lastActivity = nowSeconds()
+                    }
+                }
+            }
         }
-        transport.onFailure = { fail(it) }
-        transport.onLevels = { input, output ->
-            inputLevel = input; outputLevel = output
-            if (input > 0.03 || output > 0.03) lastActivity = nowSeconds()
-        }
+        transport.onEvent = { event -> transportSignals.trySend(TransportSignal.Event(event)) }
+        transport.onFailure = { message -> transportSignals.trySend(TransportSignal.Failure(message)) }
+        transport.onLevels = { input, output -> transportSignals.trySend(TransportSignal.Levels(input, output)) }
         meanings.onChange = { meaning = meanings.text; translating = meanings.isLoading; meaningFailed = meanings.error != null }
         meanings.onResult = { request, result ->
             if (session?.id == request.sessionID) updateSession {

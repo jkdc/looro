@@ -7,6 +7,13 @@ import kotlinx.serialization.json.JsonObject
  * [chat.mural.network.LiveTransport] (WebRTC/OpenAI) and
  * [chat.mural.core.voice.LocalVoiceTransport] (on-device pipeline), so the
  * ViewModel and UI carry no engine-specific branches.
+ *
+ * Threading contract: implementations may invoke [onEvent], [onFailure] and
+ * [onLevels] from any thread and concurrently (the local transport emits from
+ * the Main connect flow, the IO listen loop and Default greeting/commentary
+ * coroutines). Consumers must therefore serialize handling themselves;
+ * MuralViewModel funnels every callback through a single-consumer channel and
+ * performs all session-state mutation on that one coroutine.
  */
 interface VoiceTransport {
     var onEvent: ((JsonObject) -> Unit)?
