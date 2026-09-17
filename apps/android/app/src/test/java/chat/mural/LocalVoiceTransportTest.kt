@@ -1,5 +1,9 @@
 package chat.mural
 
+import chat.mural.core.ConversationHistory
+import chat.mural.core.Fragment
+import chat.mural.core.SessionRecord
+import chat.mural.core.Speaker
 import chat.mural.core.voice.LocalVoiceTransport
 import chat.mural.engines.local.AudioFrameSource
 import chat.mural.engines.local.SpeechSink
@@ -16,13 +20,16 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.add
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
 import okhttp3.OkHttpClient
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.sin
@@ -33,9 +40,13 @@ class LocalVoiceTransportTest {
         val queue = ArrayDeque<FloatArray>()
         var started = false
         var stopped = false
+        var paused = false
+        var resumeCount = 0
         override fun start(): Boolean { started = true; return true }
-        override fun readFrame(): FloatArray? = queue.removeFirstOrNull()
+        override fun readFrame(): FloatArray? { if (paused) return null; return queue.removeFirstOrNull() }
         override fun stop() { stopped = true }
+        override fun pause() { paused = true }
+        override fun resume(): Boolean { paused = false; resumeCount++; queue.clear(); return true } // discard stale
     }
 
     private class FakeWhisperRuntime : WhisperRuntime {
@@ -56,11 +67,12 @@ class LocalVoiceTransportTest {
         }
     }
 
-    private class FakeTts : SpeechSink {
+    private class FakeTts(private val usable: Boolean = true) : SpeechSink {
         val spoken = mutableListOf<String>()
         var initialized = false
-        override suspend fun initialize(): Boolean { initialized = true; return true }
-        override suspend fun speak(text: String): TtsStats? { spoken.add(text); return TtsStats(1, 1) }
+        var onSpeak: (() -> Unit)? = null
+        override suspend fun initialize(): Boolean { initialized = true; return usable }
+        override suspend fun speak(text: String): TtsStats? { spoken.add(text); onSpeak?.invoke(); return TtsStats(1, 1) }
         override fun stop() {}
     }
 
@@ -247,19 +259,127 @@ class LocalVoiceTransportTest {
     }
 
     @Test
-    fun `renderHistory formats openai style messages`() {
+    fun `renderHistory reads text parts from ConversationHistory messages`() {
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), FakeTeachingClient(), FakeTts(),
+            frameSourceProvider = { FakeFrameSource() }, frameDelayMs = 0,
+        )
+        val session = SessionRecord(languageID = "es").apply {
+            append(Fragment(speaker = Speaker.user, text = "Hi", startMS = 0, endMS = 1))
+            append(Fragment(speaker = Speaker.assistant, text = "Hello", startMS = 2, endMS = 3))
+        }
+        val rendered = transport.renderHistory(ConversationHistory.messages(session))
+        assertTrue(rendered.contains("User: Hi"))
+        assertTrue(rendered.contains("Assistant: Hello"))
+    }
+
+    @Test
+    fun `renderHistory skips non text parts and still reads plain string content`() {
         val transport = LocalVoiceTransport(
             null as android.content.Context?, CoroutineScope(Dispatchers.IO),
             stt(createTempDir(), FakeWhisperRuntime()), FakeTeachingClient(), FakeTts(),
             frameSourceProvider = { FakeFrameSource() }, frameDelayMs = 0,
         )
         val history = JsonArray(listOf(
-            buildJsonObject { put("role", JsonPrimitive("user")); put("content", JsonPrimitive("Hi")) },
-            buildJsonObject { put("role", JsonPrimitive("assistant")); put("content", JsonPrimitive("Hello")) },
+            // ConversationHistory.messages() shape: content is an array of typed parts
+            buildJsonObject {
+                put("type", "message"); put("role", "user")
+                putJsonArray("content") {
+                    add(buildJsonObject { put("type", "input_audio"); put("audio", "audio-id") }) // no text: skipped
+                    add(buildJsonObject { put("type", "input_text"); put("text", "Hi") })
+                }
+            },
+            // tolerate legacy/hand-built plain string content
+            buildJsonObject { put("role", "assistant"); put("content", JsonPrimitive("Hello")) },
         ))
         val rendered = transport.renderHistory(history)
         assertTrue(rendered.contains("User: Hi"))
+        assertFalse("non-text parts must not leak into the transcript", rendered.contains("audio-id"))
         assertTrue(rendered.contains("Assistant: Hello"))
+    }
+
+    @Test
+    fun `continuous speech past the 30 second cap is processed without manual end`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // 250 frames of continuous speech = 32 s. The VAD alone cannot close the
+        // turn (no trailing silence); the 30 s cap must.
+        repeat(250) { source.queue.add(speech()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals("the turn cap must end the turn without manual end-of-turn", 1, engine.received.size)
+        assertEquals("Hello there", engine.received.single().second)
+    }
+
+    @Test
+    fun `audio buffered while speaking does not become a phantom turn`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val staleQueued = CountDownLatch(1)
+        val tts = FakeTts()
+        tts.onSpeak = {
+            // the mic "captures" while TTS plays: loud speech plus enough trailing
+            // silence (12 x 128 ms) that the VAD would close a phantom turn
+            repeat(6) { source.queue.add(speech()) }
+            repeat(12) { source.queue.add(silence()) }
+            staleQueued.countDown()
+        }
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // a normal spoken turn first
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals(1, engine.received.size)
+        assertTrue("stale frames must be queued during (fake) playback", staleQueued.await(5, TimeUnit.SECONDS))
+
+        // audio buffered while speaking must be discarded on resume: no second turn
+        Thread.sleep(1_500)
+        assertEquals("no phantom turn may start from stale buffered audio", 1, engine.received.size)
+        assertTrue("the recorder must be paused around playback", source.resumeCount >= 1)
+    }
+
+    @Test
+    fun `tts init failure fails the session loudly instead of text-only turns`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val tts = FakeTts(usable = false)
+        val events = mutableListOf<JsonObject>()
+        val failures = mutableListOf<String>()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onFailure = { failures.add(it) }
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        assertTrue("TTS init failure must surface a failure with a reason", failures.isNotEmpty() && failures[0].isNotBlank())
+        assertFalse("the session must not start listening", source.started)
+        assertFalse("the session must not be marked started", transport.started)
+        assertTrue(events.none { it["type"]?.jsonPrimitive?.content == "session.started" })
+
+        // frames arriving afterwards never produce turns
+        repeat(10) { source.queue.add(speech()) }
+        Thread.sleep(400)
+        assertEquals(0, engine.received.size)
     }
 
 

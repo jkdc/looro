@@ -14,6 +14,19 @@ interface AudioFrameSource {
     fun start(): Boolean
     fun readFrame(): FloatArray?
     fun stop()
+
+    /**
+     * Stops capture temporarily while keeping the source resumable: [readFrame]
+     * returns null until [resume]. Used so a voice pipeline never captures its
+     * own TTS playback.
+     */
+    fun pause()
+
+    /**
+     * Restarts capture after [pause], discarding any audio buffered while
+     * paused. Returns false when the source is no longer available.
+     */
+    fun resume(): Boolean
 }
 
 /**
@@ -67,6 +80,30 @@ class MicRecorder : AudioFrameSource {
             if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
         }
         record.release()
+    }
+
+    /**
+     * Fully releases the microphone: nothing is captured while TTS plays back.
+     * Idempotent (a no-op when already paused or stopped).
+     */
+    override fun pause() {
+        stop()
+    }
+
+    /**
+     * Re-acquires the microphone after [pause] and drains whatever is already
+     * buffered, so no stale audio reaches the VAD. Returns false when the mic
+     * is unavailable (e.g. permission revoked mid-session).
+     */
+    override fun resume(): Boolean {
+        if (audioRecord == null && !start()) return false
+        drainStale()
+        return true
+    }
+
+    /** Reads and discards everything currently buffered. */
+    private fun drainStale() {
+        while (readFrame() != null) { /* drop */ }
     }
 
     companion object {

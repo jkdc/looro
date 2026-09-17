@@ -1,6 +1,7 @@
 package chat.mural.core.voice
 
 import android.content.Context
+import chat.mural.BuildConfig
 import chat.mural.engines.local.AudioFrameSource
 import chat.mural.engines.local.SpeechSink
 import chat.mural.engines.local.MicRecorder
@@ -15,12 +16,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 
 /**
@@ -31,7 +32,10 @@ import kotlinx.serialization.json.put
  *
  * Turn-taking (v1): continuous listening with an energy VAD — a turn ends
  * after [SILENCE_END_MS] of trailing silence once [SPEECH_START_MS] of speech
- * accumulated, capped at [MAX_TURN_MS]. The mic is suppressed while TTS speaks.
+ * accumulated, capped at [MAX_TURN_MS]. While TTS speaks the microphone is
+ * paused entirely ([AudioFrameSource.pause]) and restarted afterwards with the
+ * stale buffered audio discarded, so speaker output is never re-captured as a
+ * phantom turn. Levels may go quiet during playback for the same reason.
  */
 private const val LOG_TAG = "MuralLocalEngine"
 
@@ -57,6 +61,8 @@ class LocalVoiceTransport(
     @Volatile private var running = false
     @Volatile private var muted = false
     @Volatile private var speaking = false
+    /** The live frame source; paused while TTS plays back so it never captures speaker audio. */
+    @Volatile private var recorder: AudioFrameSource? = null
 
     /**
      * Beginner mode: when true the VAD never auto-ends the turn; the turn is
@@ -95,13 +101,21 @@ class LocalVoiceTransport(
         sessionStartedAtMs = System.currentTimeMillis()
         running = true
 
+        // Fail the session loudly before announcing it: without TTS the pipeline
+        // would silently degrade to text-only turns.
+        if (!tts.initialize()) {
+            running = false
+            log("TTS initialization failed: failing the session")
+            onFailure?.invoke(TTS_UNAVAILABLE)
+            return
+        }
+
         emit(buildJsonObject {
             put("type", "mural.session.created")
             put("session", buildJsonObject { put("id", UUID.randomUUID().toString()) })
         })
         emit(buildJsonObject { put("type", "session.started") })
         log("voice session started (language='$sessionLanguage')")
-        tts.initialize()
         startListening()
         if (openOnStart) {
             scope.launch(Dispatchers.Default) {
@@ -123,9 +137,7 @@ class LocalVoiceTransport(
                     if (result.text.isNotBlank()) {
                         val start = relativeMs()
                         emit(transcriptEvent(isInput = false, text = result.text, startMs = start, endMs = start + 500))
-                        speaking = true
-                        runCatching { tts.speak(result.text) }
-                        speaking = false
+                        runCatching { speakSuppressed(result.text) }
                         log("opening spoken (${result.text.length} chars)")
                     }
                 } catch (cancelled: kotlinx.coroutines.CancellationException) {
@@ -139,11 +151,12 @@ class LocalVoiceTransport(
 
     private fun startListening() {
         listenJob = scope.launch(Dispatchers.IO) {
-            val recorder = frameSourceProvider()
-            if (!recorder.start()) {
+            val source = frameSourceProvider()
+            if (!source.start()) {
                 onFailure?.invoke("Microphone unavailable")
                 return@launch
             }
+            recorder = source
             try {
                 var speech: MutableList<FloatArray> = ArrayList()
                 var speechMs = 0
@@ -163,7 +176,7 @@ class LocalVoiceTransport(
                         continue
                     }
 
-                    val frame = recorder.readFrame()
+                    val frame = source.readFrame()
                     if (frame == null) {
                         delay(10)
                         continue
@@ -181,6 +194,7 @@ class LocalVoiceTransport(
                     if (!manualTurn) {
                         // Auto VAD (only in automatic mode).
                         val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
+                        turnMs += frameMs
                         if (rms >= VAD_SPEECH_RMS) {
                             if (speechMs == 0) log("speech detected (rms=$rms)")
                             speechMs += frameMs
@@ -189,8 +203,9 @@ class LocalVoiceTransport(
                             trailingSilenceMs += frameMs
                         }
                         val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= silenceEndMs
-                        if (turnComplete || turnMs + frameMs >= MAX_TURN_MS) {
+                        if (turnComplete || turnMs >= MAX_TURN_MS) {
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
+                            else log("turn cap reached (${turnMs} ms): closing the turn")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                             speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
                             processTurn(samples)
@@ -202,7 +217,30 @@ class LocalVoiceTransport(
                     }
                 }
             } finally {
-                recorder.stop()
+                recorder = null
+                source.stop()
+            }
+        }
+    }
+
+    /**
+     * Speaks [text] with the microphone paused: capture is stopped before
+     * playback and restarted afterwards, discarding everything buffered in
+     * between. Without this, the mic audio captured while the speaker was
+     * playing is replayed into the VAD as a phantom turn once [speaking]
+     * clears. Resume failure surfaces through [onFailure] (the mic is gone).
+     */
+    private suspend fun speakSuppressed(text: String) {
+        val source = recorder
+        source?.pause()
+        speaking = true
+        try {
+            tts.speak(text)
+        } finally {
+            speaking = false
+            if (running && source != null && !source.resume()) {
+                log("mic could not be resumed after playback")
+                onFailure?.invoke("Microphone unavailable")
             }
         }
     }
@@ -225,7 +263,7 @@ class LocalVoiceTransport(
             log("STT failed after ${System.currentTimeMillis() - t0} ms: ${e.message}")
             onFailure?.invoke(e.message ?: "STT failed"); return
         }
-        log("STT done in ${stt.processingMs} ms: \"${stt.text}\"")
+        logContent("STT done in ${stt.processingMs} ms: \"${stt.text}\"")
         if (stt.isEmpty) {
             log("empty transcription: resuming listening (no LLM call)")
             return // silence/hallucination guard: no fragments, no LLM call
@@ -256,7 +294,7 @@ class LocalVoiceTransport(
             log("LLM failed after ${System.currentTimeMillis() - llmT0} ms: ${e.message}")
             onFailure?.invoke(e.message ?: "generation failed"); return
         }
-        log("LLM done in ${System.currentTimeMillis() - llmT0} ms (${result.usage.input}+${result.usage.output} tok): \"${result.text.take(120)}\"")
+        logContent("LLM done in ${System.currentTimeMillis() - llmT0} ms (${result.usage.input}+${result.usage.output} tok): \"${result.text.take(120)}\"")
         if (result.text.isBlank()) return
         synchronized(rollingTurns) {
             rollingTurns.addLast("User: ${stt.text}")
@@ -267,21 +305,18 @@ class LocalVoiceTransport(
         val replyStart = relativeMs()
         emit(transcriptEvent(isInput = false, text = result.text, startMs = replyStart, endMs = replyStart + 500))
 
-        speaking = true
         log("TTS start")
         val ttsT0 = System.currentTimeMillis()
         try {
-            tts.speak(result.text)
+            speakSuppressed(result.text)
             log("TTS done in ${System.currentTimeMillis() - ttsT0} ms")
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
-            speaking = false
             log("TTS cancelled after ${System.currentTimeMillis() - ttsT0} ms")
             throw cancelled
         } catch (e: Exception) {
             log("TTS failed: ${e.message}")
             onFailure?.invoke(e.message ?: "TTS failed")
         }
-        speaking = false
         log("turn complete in ${System.currentTimeMillis() - t0} ms total")
     }
 
@@ -303,9 +338,7 @@ class LocalVoiceTransport(
                 val start = relativeMs()
                 emit(transcriptEvent(isInput = false, text = content, startMs = start, endMs = start + 500))
                 scope.launch(Dispatchers.IO) {
-                    speaking = true
-                    runCatching { tts.speak(content) }
-                    speaking = false
+                    runCatching { speakSuppressed(content) }
                 }
                 return true
             }
@@ -341,16 +374,35 @@ class LocalVoiceTransport(
         android.util.Log.i(LOG_TAG, message)
     }
 
+    /**
+     * Debug-only variant for anything embedding conversation content: STT and
+     * LLM transcripts must never reach release logcat.
+     */
+    private fun logContent(message: String) {
+        if (BuildConfig.DEBUG) log(message)
+    }
+
     private fun relativeMs(): Long = System.currentTimeMillis() - sessionStartedAtMs
 
-    /** Renders the session-history JSON (OpenAI-style messages) as transcript lines. */
+    /**
+     * Renders the session-history JSON as transcript lines. [chat.mural.core.ConversationHistory.messages]
+     * emits `content` as a JSON array of typed parts (`{"type":"input_text"|"output_text","text":...}`);
+     * non-text parts carry no `text` and are skipped. A plain string `content`
+     * is tolerated for hand-built or legacy payloads.
+     */
     internal fun renderHistory(history: JsonArray): String = buildString {
         for (element in history) {
             val obj = runCatching { element.jsonObject }.getOrNull() ?: continue
             val role = obj["role"]?.jsonPrimitive?.contentOrNull ?: continue
-            val content = obj["content"]?.jsonPrimitive?.contentOrNull ?: continue
-            if (content.isBlank()) continue
-            append(role.replaceFirstChar { it.uppercase() }).append(": ").append(content).append("\n")
+            val text = when (val content = obj["content"]) {
+                is JsonPrimitive -> content.contentOrNull
+                is JsonArray -> content.mapNotNull { part ->
+                    runCatching { part.jsonObject["text"]?.jsonPrimitive?.contentOrNull }.getOrNull()
+                }.joinToString(" ").ifBlank { null }
+                else -> null
+            } ?: continue
+            if (text.isBlank()) continue
+            append(role.replaceFirstChar { it.uppercase() }).append(": ").append(text).append("\n")
         }
     }.trim()
 
@@ -381,6 +433,9 @@ class LocalVoiceTransport(
         const val SPEECH_START_MS = 300
         const val SILENCE_END_MS = 1_200
         const val MAX_TURN_MS = 30_000
+
+        /** Surfaced through [onFailure] when the device has no usable TTS. */
+        const val TTS_UNAVAILABLE = "Speech output is unavailable on this device"
 
         /** Rolling in-session turns kept as context (limits prompt growth). */
         const val MAX_ROLLING_TURNS = 16
