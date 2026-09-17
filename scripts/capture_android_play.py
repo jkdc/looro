@@ -20,7 +20,12 @@ output_root = args.output or root/'release/android'
 app_apk, test_apk = args.app_apk.resolve(), args.test_apk.resolve()
 work = Path(tempfile.mkdtemp(prefix='mural-play-capture-'))
 adb = str(Path(sdk)/'platform-tools/adb')
-aapt2 = Path(sdk)/'build-tools/36.0.0/aapt2'
+build_tools_dir = Path(sdk)/'build-tools'
+with_aapt2 = sorted((d for d in build_tools_dir.glob('*') if (d/'aapt2').is_file()),
+                    key=lambda d: [int(n) for n in re.findall(r'\d+', d.name)] or [0])
+if not with_aapt2:
+    parser.error('No aapt2 under ' + str(build_tools_dir) + '; install Android build-tools.')
+aapt2 = with_aapt2[-1]/'aapt2'
 for apk, expected in [(app_apk, 'chat.mural.android.uitest'), (test_apk, 'chat.mural.android.uitest.test')]:
     if not apk.is_file():
         parser.error('A supplied APK is missing.')

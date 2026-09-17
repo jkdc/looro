@@ -137,5 +137,5 @@ Covers: factory validation/selection, OpenAI-compatible adapter against
 MockWebServer (success/HTTP errors/missing key/schema mode), and the
 pre-existing regression suites (which pin the default `openai` behavior). The
 whisper STT leg is exercised on device by
-`ConversationEnginesInstrumentedTest` (needs `:app:assembleDebugAndroidTest`
+`ConversationEnginesInstrumentedTest` (needs `:app:assembleUiTestAndroidTest`
 plus a device/emulator).
