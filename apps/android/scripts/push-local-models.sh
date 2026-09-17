@@ -18,12 +18,12 @@ SERIAL="${SERIAL:-}"
 WHISPER_NAME="ggml-base-q5_1.bin"
 WHISPER_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/$WHISPER_NAME"
 
-ADB="adb"
-[ -n "$SERIAL" ] && ADB="adb -s $SERIAL"
+command -v adb >/dev/null || { echo "adb not found"; exit 1; }
+DEVICE="$(bash "$(dirname "$0")/adb-device.sh" "$SERIAL")"
+ADB="adb -s $DEVICE"
 
 mkdir -p "$SRC"
-command -v "$ADB" >/dev/null || { echo "adb not found"; exit 1; }
-"$ADB" shell mkdir -p "$DEST/llm" "$DEST/whisper"
+${ADB} shell mkdir -p "$DEST/llm" "$DEST/whisper"
 
 if [ ! -f "$SRC/$WHISPER_NAME" ]; then
   echo "[down] $WHISPER_NAME (multilingual Whisper, ~60 MB)"
@@ -36,12 +36,12 @@ push_one() { # $1 local file, $2 remote subdir
   local name local_size remote_size
   name="$(basename "$f")"
   local_size="$(stat -c %s "$f")"
-  remote_size="$("$ADB" shell stat -c %s "$DEST/$sub/$name" 2>/dev/null | tr -d '\r')" || remote_size=""
+  remote_size="$(${ADB} shell stat -c %s "$DEST/$sub/$name" 2>/dev/null | tr -d '\r')" || remote_size=""
   if [[ "$remote_size" == "$local_size" ]]; then
     echo "[skip] $name already on device"
   else
     echo "[push] $name ($(du -h "$f" | cut -f1))..."
-    "$ADB" push "$f" "$DEST/$sub/" >/dev/null
+    ${ADB} push "$f" "$DEST/$sub/" >/dev/null
     echo "[ok]   $name pushed"
     pushed=$((pushed+1))
   fi

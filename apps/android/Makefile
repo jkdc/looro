@@ -12,7 +12,8 @@
 
 ENGINE ?= $(if $(MURAL_CONVERSATION_ENGINE),$(MURAL_CONVERSATION_ENGINE),openai)
 SERIAL ?=
-ADB := adb $(if $(SERIAL),-s $(SERIAL),)
+# Auto-selects the only connected device; errors with the list when ambiguous.
+ADB := adb -s $$(./scripts/adb-device.sh "$(SERIAL)")
 GRADLE_FLAGS := -Pmural.conversationEngine=$(ENGINE)
 PKG := chat.mural.android
 
