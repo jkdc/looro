@@ -21,7 +21,12 @@ if [ -n "$serial" ]; then
 fi
 
 if [ "${#devs[@]}" -eq 1 ]; then
-  echo "${devs[0]}"
+  selected="${devs[0]}"
+  echo "Using device: $selected" >&2
+  if [[ "$selected" == emulator-* ]]; then
+    echo "NOTE: this is an emulator. To target a physical phone: make deploy SERIAL=<serial>" >&2
+  fi
+  echo "$selected"
   exit 0
 fi
 
