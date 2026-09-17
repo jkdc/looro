@@ -32,7 +32,7 @@ import MuralCore
     private var closeTask: Task<Void, Never>?
     private var durationTask: Task<Void, Never>?
     private var saveTask: Task<Void, Never>?
-    private var observers: [NSObjectProtocol] = []
+    @ObservationIgnored private var observers: [NSObjectProtocol] = []
     private var lastActivity = Date()
     private var lastLanguageCheck = ""
     private var pendingCommands: [String: Date] = [:]
@@ -81,9 +81,11 @@ import MuralCore
         })
     }
     deinit {
-        // deinit is nonisolated: removing observers is thread-safe, but the MainActor-isolated
-        // transport.disconnect() cannot be called synchronously here, so a session still alive at
-        // deallocation is released by the WebRTC layer without the audio-session deactivation.
+        // deinit is nonisolated: observers is @ObservationIgnored so it stays a plain stored property
+        // (observable state would expose a MainActor-isolated accessor the deinit cannot call), and
+        // NotificationCenter removal is thread-safe. The MainActor-isolated transport.disconnect()
+        // still cannot be called synchronously here, so a session alive at deallocation is released
+        // by the WebRTC layer without the audio-session deactivation.
         observers.forEach { NotificationCenter.default.removeObserver($0) }
     }
     var isRunning: Bool { state == .active || state == .connecting || state == .closing }
