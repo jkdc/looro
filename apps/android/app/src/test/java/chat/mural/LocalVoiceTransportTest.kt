@@ -134,7 +134,9 @@ class LocalVoiceTransportTest {
         assertEquals("Hello there", input["delta"]!!.jsonPrimitive.content)
         val output = events.first { it["type"]?.jsonPrimitive?.content == "session.output_transcript.delta" }
         assertEquals("Nice! Tell me more about it.", output["delta"]!!.jsonPrimitive.content)
-        assertEquals("Nice! Tell me more about it.", tts.spoken.single())
+        val ttsDeadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < ttsDeadline) Thread.sleep(50)
+        assertEquals(listOf("Nice! Tell me more about it."), tts.spoken)
         assertEquals("Hello there", engine.received.single().second)
         assertTrue(engine.received.single().first.contains("Be a coach"))
     }

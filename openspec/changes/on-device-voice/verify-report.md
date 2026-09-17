@@ -48,6 +48,16 @@ AudioRecord API proven in local-speaking-poc)
    `-Pmural.conversationEngine` silently rebuilds as `openai`; always deploy
    through `make deploy ENGINE=…`.
 
+## Follow-up found on real device (fixed)
+
+On a Pixel with `mural.apiOrigin` configured, pressing the mic still opened the
+"free minutes" view: the UI-level gate `MuralViewModel.needsMinuteAccess()`
+fires before `start()` when the persisted provider is `HOSTED_MINUTES` and the
+hosted backend is unreachable. Fixed: it now returns false for any
+non-`openai` engine (same rule as `teaching()` and `start()`). A TTS-wait race
+in `LocalVoiceTransportTest` was also fixed and the suite re-run 3x green
+(339 unit tests).
+
 ## Not verified by automation (honest boundary)
 
 - Live microphone → STT on real hardware (emulator mic is silent): the

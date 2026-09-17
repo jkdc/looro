@@ -423,6 +423,8 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun dismissMinuteAccess() { showMinuteAccess = false }
     fun needsMinuteAccess(): Boolean {
+        // On-device/remote-compatible engines never use hosted minutes.
+        if (BuildConfig.CONVERSATION_ENGINE != "openai") return false
         if (conversationProvider != ConversationProvider.HOSTED_MINUTES || isRunning) return false
         if (hostedReadiness.ready && !selectedAccount.busy) return false
         showMinuteAccess = true; refreshHostedReadiness(); return true
