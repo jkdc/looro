@@ -21,11 +21,6 @@ android {
                     "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
                     "-DGGML_NATIVE=OFF",
                     "-DGGML_OPENMP=OFF",
-                    "-DLLAMA_BUILD_COMMON=ON",
-                    "-DLLAMA_BUILD_EXAMPLES=OFF",
-                    "-DLLAMA_BUILD_TESTS=OFF",
-                    "-DLLAMA_BUILD_TOOLS=OFF",
-                    "-DLLAMA_BUILD_SERVER=OFF",
                 )
             }
         }

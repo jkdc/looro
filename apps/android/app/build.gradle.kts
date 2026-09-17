@@ -25,7 +25,7 @@ val muralConversationEngine = (
         ?: System.getenv("MURAL_CONVERSATION_ENGINE")
         ?: "openai"
     ).trim().lowercase()
-val validConversationEngines = listOf("openai", "local", "deepseek", "glm")
+val validConversationEngines = listOf("openai", "deepseek", "glm")
 require(muralConversationEngine in validConversationEngines) {
     "mural.conversationEngine must be one of $validConversationEngines (got '$muralConversationEngine')"
 }

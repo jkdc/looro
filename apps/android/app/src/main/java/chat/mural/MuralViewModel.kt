@@ -141,19 +141,6 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         ),
     )
 
-    init {
-        // With a local engine, page the weights in while the user is still on the
-        // start screen so the first spoken turn does not pay the flash load.
-        if (BuildConfig.CONVERSATION_ENGINE == "local") {
-            viewModelScope.launch {
-                runCatching {
-                    (conversationEngine as? chat.mural.core.engines.LocalLlamaEngineAdapter)?.warmup()
-                }.onFailure {
-                    android.util.Log.w("MuralLocalEngine", "warmup skipped: ${it.message}")
-                }
-            }
-        }
-    }
     private val transport: VoiceTransport = if (BuildConfig.CONVERSATION_ENGINE == "openai") {
         LiveTransport(application, viewModelScope)
     } else {
@@ -162,7 +149,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             scope = viewModelScope,
             openOnStart = true,
             stt = chat.mural.engines.local.WhisperStt(
-                chat.mural.core.engines.LocalLlamaEngineAdapter.defaultWhisperModelsDir(application),
+                // models/whisper under the app's external files dir — same layout
+                // the local voice pipeline has always used (see docs/conversation-engines.md).
+                java.io.File(application.getExternalFilesDir(null) ?: application.filesDir, "models/whisper"),
             ),
             engine = conversationEngine,
             tts = chat.mural.engines.local.LocalTtsEngine(application),

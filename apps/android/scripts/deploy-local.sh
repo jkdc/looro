@@ -3,9 +3,12 @@
 # Called by the Makefile; prefer `make deploy ENGINE=… SERIAL=…`.
 #
 # Env:
-#   ENGINE            openai (default) | local | deepseek | glm
+#   ENGINE            openai (default) | deepseek | glm
 #   SERIAL            optional device serial (validated; auto-picked when only one)
 #   DEPLOY_NO_BUILD   1 = reuse the existing APK
+#
+# The on-device llama.cpp engine (ENGINE=local) was removed on 2026-09-17.
+# deepseek/glm voice sessions still run whisper STT + system TTS on device.
 #
 # API keys: remote engines read keys from api-keys.properties (untracked).
 # Copy api-keys.properties.example and fill in your key before deploying.
@@ -41,25 +44,26 @@ ${ADB} shell pm grant "$PKG" android.permission.RECORD_AUDIO >/dev/null 2>&1 || 
 ok "Installed on $DEVICE + RECORD_AUDIO granted"
 
 bold "[3/4] Models"
-if [ "$ENGINE" = "local" ]; then
-  # The model dirs must be created by the app itself (FUSE), so launch once first.
+if [ "$ENGINE" = "openai" ]; then
+  ok "No on-device models needed (engine=$ENGINE uses WebRTC voice)"
+else
+  # deepseek/glm voice runs whisper STT on device. The model dirs must be
+  # created by the app itself (FUSE), so launch once first.
   ${ADB} shell am start -n "$PKG/chat.mural.MainActivity" >/dev/null
   sleep 6
   ${ADB} shell am force-stop "$PKG"
   SERIAL="$DEVICE" bash "$ROOT/scripts/push-local-models.sh"
+fi
+# Remote engines: push the API keys file if it exists locally.
+KEYS_LOCAL="$ROOT/api-keys.properties"
+KEYS_REMOTE="/sdcard/Android/data/$PKG/files/api_keys.properties"
+if [ -f "$KEYS_LOCAL" ]; then
+  ${ADB} push "$KEYS_LOCAL" "$KEYS_REMOTE" >/dev/null
+  ok "api_keys.properties pushed ($(awk -F= 'NF>1{print $1}' "$KEYS_LOCAL" | paste -sd,))"
 else
-  ok "No local models needed (engine=$ENGINE)"
-  # Remote engines: push the API keys file if it exists locally.
-  KEYS_LOCAL="$ROOT/api-keys.properties"
-  KEYS_REMOTE="/sdcard/Android/data/$PKG/files/api_keys.properties"
-  if [ -f "$KEYS_LOCAL" ]; then
-    ${ADB} push "$KEYS_LOCAL" "$KEYS_REMOTE" >/dev/null
-    ok "api_keys.properties pushed ($(awk -F= 'NF>1{print $1}' "$KEYS_LOCAL" | paste -sd,))"
-  else
-    echo "  NOTE: $KEYS_LOCAL not found. Remote engines need their key at runtime;"
-    echo "        copy api-keys.properties.example, fill in your key (ZHIPUAI_API_KEY=... /"
-    echo "        DEEPSEEK_API_KEY=...) and push: ${ADB} push $KEYS_LOCAL $KEYS_REMOTE"
-  fi
+  echo "  NOTE: $KEYS_LOCAL not found. Remote engines need their key at runtime;"
+  echo "        copy api-keys.properties.example, fill in your key (ZHIPUAI_API_KEY=... /"
+  echo "        DEEPSEEK_API_KEY=...) and push: ${ADB} push $KEYS_LOCAL $KEYS_REMOTE"
 fi
 
 bold "[4/4] Launching"

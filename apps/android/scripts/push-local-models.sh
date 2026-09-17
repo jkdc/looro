@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-# Pushes local GGUF models to the Mural app's private external storage.
+# Pushes the whisper STT model to the Mural app's private external storage.
+#
+# The on-device LLM (.gguf) push was removed on 2026-09-17 together with the
+# local llama.cpp engine; this script is now whisper-only (deepseek/glm voice
+# runs STT on device, the LLM remotely).
 #
 # Target layout (app-private, writable by adb):
-#   /sdcard/Android/data/chat.mural.android/files/models/llm/<file>.gguf
+#   /sdcard/Android/data/chat.mural.android/files/models/whisper/<file>.bin
 #
 # Files are taken from apps/android/local-models/ (gitignored).
 # Only changed files (size differs) are pushed, so re-deploys are cheap.
@@ -23,7 +27,7 @@ DEVICE="$(bash "$(dirname "$0")/adb-device.sh" "$SERIAL")"
 ADB="adb -s $DEVICE"
 
 mkdir -p "$SRC"
-${ADB} shell mkdir -p "$DEST/llm" "$DEST/whisper"
+${ADB} shell mkdir -p "$DEST/whisper"
 
 if [ ! -f "$SRC/$WHISPER_NAME" ]; then
   echo "[down] $WHISPER_NAME (multilingual Whisper, ~60 MB)"
@@ -46,11 +50,6 @@ push_one() { # $1 local file, $2 remote subdir
     pushed=$((pushed+1))
   fi
 }
-
-for f in "$SRC"/*.gguf; do
-  [ -e "$f" ] || { echo "No .gguf files in $SRC"; echo "Place your model there first (e.g. qwen2.5-3b-instruct-q4_k_m.gguf, ~2 GB)."; exit 1; }
-  push_one "$f" "llm"
-done
 
 # STT model
 push_one "$SRC/$WHISPER_NAME" "whisper"

@@ -5,9 +5,19 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 
 data class SttResult(val text: String, val processingMs: Long) {
     val isEmpty: Boolean get() = text.isBlank()
+}
+
+/** Failure raised by the local voice engine; [retryable] mirrors remote-engine semantics. */
+class LocalEngineException(message: String, val retryable: Boolean = false) : IOException(message)
+
+/** A model file discovered on device (see [LocalWhisperModelManager]). */
+data class LocalModelFile(val file: File) {
+    val sizeBytes: Long get() = file.length()
+    val name: String get() = file.name
 }
 
 /**
@@ -66,7 +76,7 @@ class WhisperStt(
     }
 }
 
-/** Same preference idea as the LLM manager, for STT .bin models. */
+/** Finds whisper .bin models on device; prefers multilingual base over English-only. */
 class LocalWhisperModelManager(private val modelsDir: File) {
 
     fun models(): List<LocalModelFile> =

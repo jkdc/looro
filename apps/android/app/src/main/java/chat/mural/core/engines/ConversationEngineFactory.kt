@@ -1,6 +1,5 @@
 package chat.mural.core.engines
 
-import chat.mural.engines.local.LocalLlamaEngine
 import chat.mural.network.TeachingClient
 
 /**
@@ -9,6 +8,12 @@ import chat.mural.network.TeachingClient
  * The engine id comes from `BuildConfig.CONVERSATION_ENGINE`, resolved at build
  * time from (highest first): `-Pmural.conversationEngine`, `local.properties`,
  * `MURAL_CONVERSATION_ENGINE`, default `openai`.
+ *
+ * The former `local` (on-device llama.cpp) engine was removed on 2026-09-17:
+ * on-device LLM inference proved too slow for voice turns (45-110 s/turn on a
+ * Pixel 9). The whisper STT + system TTS voice pipeline in `:core:engine-local`
+ * is retained — `deepseek`/`glm` still run STT/TTS on device and the LLM
+ * remotely.
  *
  * Adding a provider = add one registry row + (only when not OpenAI-compatible)
  * one adapter class. Nothing else in the app changes.
@@ -20,20 +25,12 @@ object ConversationEngineFactory {
     /** Rows that are available in this build. Kept explicit for discoverability. */
     private val registry: Map<String, (ConversationEngineDeps) -> TeachingClient> = mapOf(
         "openai" to { deps -> OpenAIEngineAdapter(deps.openai) },
-        "local" to { deps ->
-            LocalLlamaEngineAdapter(
-                LocalLlamaEngine(
-                    LocalLlamaEngineAdapter.defaultModelsDir(deps.appContext!!),
-                ),
-            )
-        },
         "deepseek" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.DEEPSEEK, deps) },
         "glm" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM, deps) },
     )
 
     val available: List<EngineInfo> = listOf(
         EngineInfo("openai", "OpenAI (personal key)"),
-        EngineInfo("local", "Local on-device model"),
         EngineInfo("deepseek", "DeepSeek API"),
         EngineInfo("glm", "Zhipu GLM API"),
     )

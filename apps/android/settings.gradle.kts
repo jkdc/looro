@@ -5,6 +5,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Mural"
 include(":app")
-// On-device conversation engine (llama.cpp). Only exercises native code when selected via
-// mural.conversationEngine=local; the default "openai" build ships it unused.
+// Local voice native layer (whisper.cpp STT): used by the remote conversation
+// engines (deepseek/glm), which run STT/TTS on device and the LLM remotely.
+// The on-device llama.cpp LLM engine was removed on 2026-09-17.
 include(":core:engine-local")

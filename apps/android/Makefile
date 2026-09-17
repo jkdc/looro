@@ -1,12 +1,14 @@
 # Mural Android — build & deployment shortcuts.
 #
-#   make deploy              Build + install + (ENGINE=local: push models) + launch
-#   make deploy ENGINE=local On-device llama.cpp engine (offline inference)
+#   make deploy               Build + install + push whisper model + launch
 #   make deploy ENGINE=deepseek   OpenAI-compatible remote (needs DEEPSEEK_API_KEY at runtime)
 #   make deploy ENGINE=glm        OpenAI-compatible remote (needs ZHIPUAI_API_KEY at runtime)
-#   MURAL_CONVERSATION_ENGINE=local make deploy    (environment-variable form)
-#   make deploy-fast         Same as deploy, reusing the existing APK (no Gradle build)
+#   make deploy-fast          Same as deploy, reusing the existing APK (no Gradle build)
 #   make build / test / run / logs / models-push / clean
+#
+# The on-device llama.cpp engine (ENGINE=local) was removed on 2026-09-17.
+# The whisper STT model is still pushed: deepseek/glm voice runs STT/TTS on
+# device and the LLM remotely.
 #
 # With several devices connected the deploy aborts and lists them:
 #   make deploy SERIAL=47270DLAQ0008U
