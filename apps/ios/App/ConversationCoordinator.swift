@@ -80,6 +80,12 @@ import MuralCore
             Task { @MainActor in self?.end(reason: "Audio interrupted") }
         })
     }
+    deinit {
+        // deinit is nonisolated: removing observers is thread-safe, but the MainActor-isolated
+        // transport.disconnect() cannot be called synchronously here, so a session still alive at
+        // deallocation is released by the WebRTC layer without the audio-session deactivation.
+        observers.forEach { NotificationCenter.default.removeObserver($0) }
+    }
     var isRunning: Bool { state == .active || state == .connecting || state == .closing }
     var language: LanguageModule { store.language }
     var assistantPassage: Passage? { session?.passages.last(where: { $0.speaker == .assistant }) }
@@ -254,12 +260,13 @@ import MuralCore
         guard let type = event["type"] as? String, session != nil else { return }
         switch type {
         case "mural.session.created":
-            session?.providerID = (event["session"] as? [String: Any])?["id"] as? String
-            session?.voiceSeconds = 15; save()
+            session?.providerID = (event["session"] as? [String: Any])?["id"] as? String; save()
         case "session.started":
             guard state == .connecting else { return }
             state = .active; lastActivity = .now
             session?.providerID = (event["session"] as? [String: Any])?["id"] as? String
+            // The usage estimate is recorded only once the session truly starts, so aborted connects don't log phantom voice time.
+            session?.voiceSeconds = 15
             append("instructions", TeachingPolicy.greeting(language: language))
             startDurationChecks(); save()
         case "session.input_transcript.delta", "session.output_transcript.delta":
@@ -442,7 +449,10 @@ import MuralCore
         save(); working = true
         defer { if session?.id == snapshot.id { working = false } }
         do {
-            let result = try await api.respond(instructions: TeachingPolicy.typedReply(language: language), input: TeachingPolicy.context(session!))
+            // Captured after the append and before the await: the reply must see the typed fragment,
+            // and a local avoids the force unwrap across suspension.
+            guard let current = session else { return }
+            let result = try await api.respond(instructions: TeachingPolicy.typedReply(language: language), input: TeachingPolicy.context(current))
             guard session?.id == snapshot.id, state == .active else { return }
             addUsage(result.usage)
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
@@ -459,6 +469,8 @@ import MuralCore
     }
     func currentTopic(_ query: String) async throws -> TopicBrief {
         let targetLanguage = language, generation = languageGeneration
+        // Titles come from this query; bound it so locally saved sessions always pass Archive validation.
+        let query = String(query.prefix(Archive.maximumTitleCharacters))
         if let cached = store.learningSessions.flatMap(\.topics).first(where: { $0.languageID == targetLanguage.id && $0.query.lowercased() == query.lowercased() && $0.isFresh }) { return cached }
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }
         let result = try await api.respond(instructions: TeachingPolicy.currentTopic(language: targetLanguage), input: String(query.prefix(500)), search: true)

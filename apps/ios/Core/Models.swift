@@ -162,6 +162,10 @@ public struct Preferences: Codable, Sendable {
 public struct Archive: Codable, Sendable {
     public static let maximumEncodedBytes = 30_000_000
     private static let maximumSessions = 10_000
+    // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
+    public static let maximumTitleCharacters = 200
+    private static let maximumTopicTextCharacters = 20_000
+    private static let maximumTranslationCharacters = 10_000
     public var schemaVersion = 2
     public var sessions: [SessionRecord] = []
     public var preferences = Preferences()
@@ -216,11 +220,13 @@ public struct Archive: Codable, Sendable {
             guard s.voiceSeconds.isFinite, (0...31_536_000).contains(s.voiceSeconds),
                   [s.inputTokens, s.outputTokens, s.searchCalls].allSatisfy({ (0...1_000_000_000).contains($0) }),
                   validDate(s.startedAt), s.endedAt.map(validDate) ?? true,
-                  s.assessments.allSatisfy({ validDate($0.createdAt) }) else { throw ArchiveError.invalid }
+                  s.assessments.allSatisfy({ validDate($0.createdAt) }),
+                  s.title.count <= Self.maximumTitleCharacters,
+                  s.translations.values.allSatisfy({ $0.count <= Self.maximumTranslationCharacters }) else { throw ArchiveError.invalid }
             guard Set(s.fragments.map(\.id)).count == s.fragments.count,
                   s.fragments.allSatisfy({ $0.startMS >= 0 && $0.endMS >= $0.startMS && $0.text.count <= 50_000 &&
                       (0...1_000_000).contains($0.revision) && validDate($0.receivedAt) }),
-                  s.topics.allSatisfy({ $0.languageID == s.languageID && validDate($0.retrievedAt) }) else { throw ArchiveError.invalid }
+                  s.topics.allSatisfy({ $0.languageID == s.languageID && $0.text.count <= Self.maximumTopicTextCharacters && validDate($0.retrievedAt) }) else { throw ArchiveError.invalid }
         }
     }
     /// Version 1 was Norwegian-only. Migration assigns that provenance once;

@@ -80,6 +80,16 @@ import MuralCore
         archive.sessions.forEach { onSessionInvalidation?($0.id) }
         archive.sessions = []; archive.preferences.hiddenWords = []; persist()
     }
+    /// Removes the on-disk SwiftData store (the default store plus its write-ahead files) and the
+    /// migration backup, so the next init starts from an empty record. Only for the startup failure
+    /// screen, behind the user’s explicit confirmation.
+    static func eraseStore() throws {
+        let base = URL.applicationSupportDirectory
+        for path in ["default.store", "default.store-shm", "default.store-wal", "Mural/before-language-modules.json"] {
+            do { try FileManager.default.removeItem(at: base.appendingPathComponent(path)) }
+            catch CocoaError.fileNoSuchFile { /* Fresh installations have no store yet. */ }
+        }
+    }
     func exportData() throws -> Data { try archive.encoded() }
     func importData(_ data: Data) throws {
         let imported = try Archive.decode(data)
@@ -87,7 +97,25 @@ import MuralCore
         persist()
     }
     private func persist() {
-        do { document.payload = try archive.encoded(); try container.mainContext.save(); error = nil }
+        do {
+            var payload = try archive.encoded()
+            if payload.count > Archive.maximumEncodedBytes {
+                // The importer refuses records beyond this cap on read; on write, drop the oldest
+                // conversations (their evidence is stored inside them) until the record fits again.
+                var trimmed = archive
+                var pruned: [UUID] = []
+                for session in trimmed.sessions.sorted(by: { $0.startedAt < $1.startedAt }) {
+                    guard payload.count > Archive.maximumEncodedBytes else { break }
+                    trimmed.sessions.removeAll { $0.id == session.id }
+                    pruned.append(session.id)
+                    payload = try trimmed.encoded()
+                }
+                guard payload.count <= Archive.maximumEncodedBytes else { throw ArchiveError.tooLarge }
+                pruned.forEach { onSessionInvalidation?($0) }
+                archive = trimmed
+            }
+            document.payload = payload; try container.mainContext.save(); error = nil
+        }
         catch { self.error = "Mural couldn’t save your progress. Please export a backup and try again." }
     }
 }
