@@ -38,6 +38,7 @@ apps/android/.gradle/
 apps/android/.kotlin/
 apps/android/**/build/
 apps/android/local.properties
+apps/android/api-keys.properties
 apps/android/.idea/
 *.jks
 *.keystore
