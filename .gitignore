@@ -28,6 +28,9 @@ plan/
 verification/*.json
 marketing/screenshots/*.zip
 marketing/demo/
+# Controller-local analysis artifacts, untracked by design.
+/informe-analisis-*.md
+/docs/plans/
 .swiftpm/
 node_modules/
 __pycache__/

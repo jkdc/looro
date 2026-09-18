@@ -18,6 +18,10 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PKG="chat.mural.android"
 APK="$ROOT/app/build/outputs/apk/debug/app-debug.apk"
 ENGINE="${ENGINE:-${MURAL_CONVERSATION_ENGINE:-openai}}"
+case "$ENGINE" in
+  openai|deepseek|glm) ;;
+  *) echo "unknown ENGINE '$ENGINE' (valid: openai, deepseek, glm)" >&2; exit 2 ;;
+esac
 SERIAL="${SERIAL:-}"
 DEPLOY_NO_BUILD="${DEPLOY_NO_BUILD:-0}"
 
