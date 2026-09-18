@@ -403,22 +403,26 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         presentError(resolveMessage(e, fallback), errorNeedsKeySetup(e))
         errorNeedsAccountSignIn = needsAccountRecovery(e)
     }
+    /**
+     * Remote-compatible engines (deepseek/glm) never use the OpenAI credential
+     * or hosted minutes: they are ready when their own provider key is
+     * available (key-free engines are always ready). Surfaces the actionable
+     * error and returns false otherwise.
+     */
+    private fun engineKeyReady(): Boolean {
+        val envVar = conversationEngine.keyEnvVar
+        if (envVar != null && engineKeyLookup(envVar) == null) {
+            presentError(getApplication<Application>().getString(R.string.error_missing_engine_key, envVar))
+            return false
+        }
+        return true
+    }
     private fun cloudReady(): Boolean {
         if (!storageReady) { presentError(getApplication<Application>().getString(R.string.error_resolve_local_history_first)); return false }
         if (archive.preferences.aiConsentVersion != 1) {
             presentError(getApplication<Application>().getString(R.string.error_accept_ai_consent)); return false
         }
-        if (BuildConfig.CONVERSATION_ENGINE != "openai") {
-            // Remote-compatible engines (deepseek/glm) never use the OpenAI
-            // credential or hosted minutes: they are ready when their own
-            // provider key is available (key-free engines are always ready).
-            val envVar = conversationEngine.keyEnvVar
-            if (envVar != null && engineKeyLookup(envVar) == null) {
-                presentError(getApplication<Application>().getString(R.string.error_missing_engine_key, envVar))
-                return false
-            }
-            return true
-        }
+        if (BuildConfig.CONVERSATION_ENGINE != "openai") return engineKeyReady()
         val currentHosted = session?.id in hostedSessionIDs
         if (!currentHosted && conversationProvider == ConversationProvider.PERSONAL_KEY && !hasKey) {
             presentError(getApplication<Application>().getString(R.string.error_missing_key), needsKeySetup = true); return false
@@ -777,7 +781,10 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         if (!localVoice) {
             if (!cloudReady()) return
         } else {
-            // On-device voice: no OpenAI gates; LocalVoiceTransport runs mic->STT->LLM->TTS.
+            // On-device voice needs no OpenAI gates, but a missing engine key
+            // must fail before the session is created: the greeting would die
+            // silently and the first spoken turn would surface the key error.
+            if (!engineKeyReady()) return
         }
         val choice = conversationProvider
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES && accountChangeBlocked) {
