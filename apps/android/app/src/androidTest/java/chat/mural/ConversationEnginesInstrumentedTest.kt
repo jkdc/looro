@@ -7,6 +7,7 @@ import chat.mural.core.engines.ConversationEngineDeps
 import chat.mural.core.engines.ConversationEngineFactory
 import chat.mural.core.engines.OpenAICompatibleEngine
 import chat.mural.core.engines.RemoteEngineConfig
+import chat.mural.engines.local.LocalWhisperModelManager
 import chat.mural.network.APIClient
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -14,6 +15,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -23,6 +25,12 @@ import org.junit.runner.RunWith
  * The former `local` (on-device llama.cpp LLM) tests were removed on
  * 2026-09-17 together with the engine. The whisper STT leg of the local voice
  * pipeline is retained (deepseek/glm use it) and still covered on device.
+ *
+ * Manual setup for the whisper leg: install the app -> run
+ * [setupWhisperModelDir] (the model dir must be created BY THE APP) -> push
+ * the model with `scripts/push-local-models.sh` -> run the whisper tests.
+ * Without a pushed model those tests skip via org.junit.Assume (e.g. CI,
+ * which never pushes one).
  */
 @RunWith(AndroidJUnit4::class)
 class ConversationEnginesInstrumentedTest {
@@ -92,6 +100,16 @@ class ConversationEnginesInstrumentedTest {
 
     @Test(timeout = 900_000)
     fun whisperTranscribesTtsAudioOnDevice() = runBlocking {
+        // Same predicate the STT runtime uses in LocalWhisperModelManager.pick():
+        // without a .bin in the model dir, stt.transcribe would throw
+        // LocalEngineException("Whisper model not found…"). Skip instead (CI
+        // runs every androidTest class but never pushes a model).
+        val modelExists = LocalWhisperModelManager(defaultWhisperModelsDir()).models().isNotEmpty()
+        assumeTrue(
+            "Whisper model not pushed; run scripts/push-local-models.sh — see class KDoc",
+            modelExists,
+        )
+
         val tts = chat.mural.engines.local.LocalTtsEngine(context)
         assertTrue(tts.initialize())
         val wav = java.io.File(context.cacheDir, "stt-test.wav")
