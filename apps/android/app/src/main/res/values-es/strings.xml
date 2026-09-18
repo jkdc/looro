@@ -263,6 +263,16 @@
     <string name="progress_bar_steady">Consolidadas</string>
     <string name="progress_last14">Últimos 14 días</string>
     <string name="progress_capabilities">Hitos de expresión: %1$d</string>
+    <string name="practice_button">Practicar escritura (%1$d pendientes)</string>
+    <string name="practice_title">Práctica de escritura</string>
+    <string name="practice_no_due_words">No hay palabras pendientes ahora. Ten una conversación y volverán cuando toque repasarlas.</string>
+    <string name="practice_prompt">Escribe la palabra que significa:</string>
+    <string name="practice_progress">Palabra %1$d de %2$d</string>
+    <string name="practice_your_answer">Tu respuesta</string>
+    <string name="practice_check">Comprobar</string>
+    <string name="practice_miss">Se escribe: %1$s</string>
+    <string name="practice_next">Palabra siguiente</string>
+    <string name="practice_summary">Practicaste %1$d palabras y escribiste bien %2$d.</string>
     <string name="settings_voice_manual_turn">Modo principiante: botón para terminar de hablar</string>
     <string name="error_guest_secure_storage_unavailable">Mural no pudo restaurar los datos guardados de tu prueba gratuita. Tu historial de aprendizaje sigue disponible. Reinicia la aplicación para intentarlo de nuevo.</string>
     <string name="talk_end_turn_button">He terminado de hablar</string>

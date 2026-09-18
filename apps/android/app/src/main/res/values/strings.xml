@@ -263,6 +263,16 @@
     <string name="progress_bar_steady">Steady</string>
     <string name="progress_last14">Last 14 days</string>
     <string name="progress_capabilities">Can-do milestones: %1$d</string>
+    <string name="practice_button">Practise writing (%1$d due)</string>
+    <string name="practice_title">Writing practice</string>
+    <string name="practice_no_due_words">No words are due right now. Have a conversation, and the words will come back when they are ready.</string>
+    <string name="practice_prompt">Write the word that means:</string>
+    <string name="practice_progress">Word %1$d of %2$d</string>
+    <string name="practice_your_answer">Your answer</string>
+    <string name="practice_check">Check</string>
+    <string name="practice_miss">It is written: %1$s</string>
+    <string name="practice_next">Next word</string>
+    <string name="practice_summary">You practised %1$d words and wrote %2$d correctly.</string>
     <string name="settings_voice_manual_turn">Beginner voice mode: end your turn with a button</string>
     <string name="error_guest_secure_storage_unavailable">Mural couldn\'t restore your saved trial details. Your learning history is still available. Restart the app to try again.</string>
     <string name="talk_end_turn_button">I\'m done speaking</string>

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +20,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -59,6 +63,7 @@ import chat.mural.MuralViewModel
 import chat.mural.R
 import chat.mural.core.ConversationTheme
 import chat.mural.core.TopicBrief
+import chat.mural.core.WordPractice
 import chat.mural.core.WordState
 import java.time.Instant
 import java.time.ZoneId
@@ -199,12 +204,21 @@ private fun CurrentTopicDialog(
 fun WordsScreen(vm: MuralViewModel) {
     var search by rememberSaveable { mutableStateOf("") }
     var selected by remember { mutableStateOf<WordState?>(null) }
+    var practising by rememberSaveable { mutableStateOf(false) }
     val words = vm.learner.words.filter { search.isBlank() || it.lemma.contains(search, true) || it.meaning.contains(search, true) }
+    val dueCount = vm.learner.words.count { it.dueAt < chat.mural.core.nowSeconds() }
     LazyColumn(
         Modifier.fillMaxSize().testTag("words-screen").padding(horizontal = 22.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp), contentPadding = PaddingValues(bottom = 120.dp),
     ) {
         item { PageHeading(stringResource(R.string.words_eyebrow, vm.language.name), stringResource(R.string.words_title), stringResource(R.string.words_subtitle), Modifier.padding(top = 20.dp)) }
+        item {
+            Button(onClick = { practising = true }, enabled = dueCount > 0,
+                modifier = Modifier.fillMaxWidth().testTag("words-practice"),
+                colors = ButtonDefaults.buttonColors(containerColor = MuralColors.Sage, contentColor = MuralColors.Ink)) {
+                Text(stringResource(R.string.practice_button, dueCount))
+            }
+        }
         item {
             MuralSearchField(search, { search = it.take(80) }, stringResource(R.string.words_search_placeholder))
         }
@@ -248,6 +262,63 @@ fun WordsScreen(vm: MuralViewModel) {
         item { Spacer(Modifier.height(24.dp)) }
     }
     selected?.let { word -> WordDialog(word, onRemove = { vm.hideWord(word.id); selected = null }, onDismiss = { selected = null }) }
+    if (practising) WritingPracticeSheet(vm, onDismiss = { practising = false })
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun WritingPracticeSheet(vm: MuralViewModel, onDismiss: () -> Unit) {
+    // Due words, earliest first, capped per drill; attempts are not stored in this change.
+    val due = remember { vm.learner.words.filter { it.dueAt < chat.mural.core.nowSeconds() }.sortedBy { it.dueAt }.take(10) }
+    var index by rememberSaveable { mutableStateOf(0) }
+    var answer by rememberSaveable { mutableStateOf("") }
+    var missed by rememberSaveable { mutableStateOf(false) }
+    var correctCount by rememberSaveable { mutableStateOf(0) }
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MuralColors.Cream,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(Modifier.fillMaxHeight(.9f).testTag("writing-practice")) {
+            SettingsSheetHeader(stringResource(R.string.practice_title), onDismiss)
+            when {
+                due.isEmpty() -> Text(stringResource(R.string.practice_no_due_words),
+                    Modifier.padding(20.dp), color = MuralColors.Secondary)
+                index >= due.size -> Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text(stringResource(R.string.practice_summary, due.size, correctCount), style = MaterialTheme.typography.titleLarge)
+                    MuralTextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.common_close)) }
+                }
+                else -> {
+                    val word = due[index]
+                    val masked = remember(word) { WordPractice.maskedExample(word.example, word.form) }
+                    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                        Text(stringResource(R.string.practice_progress, index + 1, due.size),
+                            style = MaterialTheme.typography.labelSmall, color = MuralColors.Secondary)
+                        Text(stringResource(R.string.practice_prompt), style = MaterialTheme.typography.titleMedium)
+                        Text(word.meaning, style = MaterialTheme.typography.headlineMedium)
+                        if (masked.isNotBlank()) Text(masked, color = MuralColors.Secondary)
+                        if (!missed) {
+                            MuralTextField(answer, { answer = it.take(80) }, singleLine = true,
+                                modifier = Modifier.fillMaxWidth().testTag("practice-answer"),
+                                label = { Text(stringResource(R.string.practice_your_answer)) })
+                            Button(onClick = {
+                                if (WordPractice.isCorrect(answer, word.form, word.lemma)) {
+                                    correctCount++; index++; answer = ""
+                                } else missed = true
+                            }, enabled = answer.isNotBlank(), modifier = Modifier.fillMaxWidth().testTag("practice-check"),
+                                colors = ButtonDefaults.buttonColors(containerColor = MuralColors.Orange, contentColor = MuralColors.Ink)) {
+                                Text(stringResource(R.string.practice_check))
+                            }
+                        } else {
+                            Text(stringResource(R.string.practice_miss, word.form), style = MaterialTheme.typography.titleMedium, color = MuralColors.Red)
+                            Button(onClick = { index++; answer = ""; missed = false },
+                                modifier = Modifier.fillMaxWidth().testTag("practice-next"),
+                                colors = ButtonDefaults.buttonColors(containerColor = MuralColors.Orange, contentColor = MuralColors.Ink)) {
+                                Text(stringResource(R.string.practice_next))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

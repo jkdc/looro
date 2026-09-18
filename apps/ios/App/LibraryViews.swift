@@ -93,12 +93,20 @@ struct WordsView: View {
     @State private var search = ""
     @State private var selected: WordState?
     @State private var sessions = false
+    @State private var practising = false
     private var learner: LearnerState { coordinator.store.learner }
     private var words: [WordState] { learner.words.filter { search.isEmpty || $0.lemma.localizedCaseInsensitiveContains(search) || $0.meaning.localizedCaseInsensitiveContains(search) } }
+    private var dueCount: Int { learner.words.filter { $0.dueAt < .now }.count }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 PageHeading(eyebrow: "Little by little · \(coordinator.language.name)", title: "Your words.", subtitle: "Familiar words, ready for another conversation.")
+                if dueCount > 0 {
+                    Button { practising = true } label: {
+                        Text("Practise writing (\(dueCount) due)").frame(maxWidth: .infinity)
+                    }.buttonStyle(.borderedProminent).tint(MuralColor.sage).foregroundStyle(MuralColor.ink)
+                        .accessibilityIdentifier("words-practice")
+                }
                 if words.isEmpty {
                     VStack(alignment: .leading, spacing: 18) {
                         Image(systemName: "leaf").font(.system(size: 34, weight: .light))
@@ -136,6 +144,7 @@ struct WordsView: View {
         }.foregroundStyle(MuralColor.ink).searchable(text: $search, prompt: "Find a word")
             .sheet(item: $selected) { word in WordDetailView(word: word, store: coordinator.store) }
             .sheet(isPresented: $sessions) { SessionHistoryView(store: coordinator.store) }
+            .sheet(isPresented: $practising) { WritingPracticeView(store: coordinator.store) }
     }
 }
 
