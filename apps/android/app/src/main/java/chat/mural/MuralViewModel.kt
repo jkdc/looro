@@ -774,7 +774,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         dismissError(); notice = null; isMuted = false
         voiceSession = voice; lastActivity = nowSeconds()
         val record = SessionRecord(id = id, languageID = language.id, themeID = selectedTheme?.id, title = selectedTheme?.title ?: language.defaultTitle,
-            mode = if (archive.preferences.listeningPractice == true) "listening" else null)
+            mode = if (voice && archive.preferences.listeningPractice == true) "listening" else null)
         topicResult?.takeIf { it.languageID == language.id && selectedTheme?.id == "current" }?.let { record.topics += it }
         session = record; save(record)
     }
