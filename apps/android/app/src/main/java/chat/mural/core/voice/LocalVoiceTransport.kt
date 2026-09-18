@@ -57,6 +57,9 @@ class LocalVoiceTransport(
     /** Miliseconds of trailing silence that close an automatic turn (live-adjustable). */
     @Volatile var silenceEndMs: Long = 1_200
 
+    /** Learner-facing pace preference: slows the system TTS (the prompt carries the instruction for realtime engines). */
+    @Volatile var slowSpeech: Boolean = false
+
     override var onEvent: ((JsonObject) -> Unit)? = null
     override var onFailure: ((String) -> Unit)? = null
     override var onLevels: ((Double, Double) -> Unit)? = null
@@ -138,6 +141,7 @@ class LocalVoiceTransport(
             onFailure?.invoke(TTS_UNAVAILABLE)
             return
         }
+        tts.setSpeechRate(if (slowSpeech) TTS_SLOW_RATE else TTS_NORMAL_RATE)
         running = true
 
         emit(buildJsonObject {
@@ -510,6 +514,10 @@ class LocalVoiceTransport(
         const val SPEECH_START_MS = 300
         const val SILENCE_END_MS = 1_200
         const val MAX_TURN_MS = 30_000
+
+        /** System-TTS speech rates for the learner-facing pace preference. */
+        const val TTS_NORMAL_RATE = 1.0f
+        const val TTS_SLOW_RATE = 0.8f
 
         /** Surfaced through [onFailure] when the device has no usable TTS. */
         const val TTS_UNAVAILABLE = "Speech output is unavailable on this device"

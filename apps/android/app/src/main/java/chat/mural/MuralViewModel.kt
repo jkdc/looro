@@ -800,11 +800,12 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         (transport as? chat.mural.core.voice.LocalVoiceTransport)?.apply {
             manualTurn = voiceManualTurnStore.get()
             silenceEndMs = voiceManualTurnStore.getSilenceEndMs()
+            slowSpeech = archive.preferences.slowSpeech == true
         }
         newSession(true); state = "connecting"
         val id = session!!.id
         val module = language
-        val instructions = TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage)
+        val instructions = TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.slowSpeech == true)
         val history = ConversationHistory.messages(session)
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {

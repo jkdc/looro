@@ -17,6 +17,9 @@ interface SpeechSink {
     suspend fun initialize(): Boolean
     suspend fun speak(text: String): TtsStats?
     fun stop()
+
+    /** 1.0 = normal rate; a no-op for sinks without a rate control. */
+    fun setSpeechRate(rate: Float) {}
 }
 
 /**
@@ -152,6 +155,10 @@ class LocalTtsEngine(context: Context) : SpeechSink {
 
     override fun stop() {
         runCatching { tts?.stop() }
+    }
+
+    override fun setSpeechRate(rate: Float) {
+        runCatching { tts?.setSpeechRate(rate) }
     }
 
     fun release() {

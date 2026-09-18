@@ -307,9 +307,17 @@ struct SettingsView: View {
                     Picker("Meaning language", selection: Binding(get: { store.preferences.meaningLanguage }, set: { coordinator.selectMeaningLanguage($0) })) {
                         ForEach(MeaningLanguages.all, id: \.self) { Text($0) }
                     }
+                    Toggle("Slower speech", isOn: Binding(get: { store.preferences.slowSpeech == true }, set: { value in
+                        store.updatePreferences { $0.slowSpeech = value ? true : nil }
+                    }))
+                    .disabled(coordinator.isRunning)
+                    Toggle("Listening practice", isOn: Binding(get: { store.preferences.listeningPractice == true }, set: { value in
+                        store.updatePreferences { $0.listeningPractice = value ? true : nil }
+                    }))
+                    .disabled(coordinator.isRunning)
                     LabeledContent("Corrections", value: "Gently, as we talk")
                     TextField("A few things you enjoy", text: Binding(get: { store.preferences.interests }, set: { value in store.updatePreferences { $0.interests = String(value.prefix(500)) } }), axis: .vertical)
-                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Mural finds your pace through conversation.") }
+                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Mural finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — look a word up only if you need it.") }
                 if ManagedAccountConfiguration.load() != nil {
                     Section {
                         NavigationLink { ManagedAccountView() } label: {

@@ -80,11 +80,13 @@ class LocalVoiceTransportTest {
 
     private class FakeTts(private val usable: Boolean = true) : SpeechSink {
         val spoken = mutableListOf<String>()
+        val rates = mutableListOf<Float>()
         var initialized = false
         var onSpeak: (() -> Unit)? = null
         override suspend fun initialize(): Boolean { initialized = true; return usable }
         override suspend fun speak(text: String): TtsStats? { spoken.add(text); onSpeak?.invoke(); return TtsStats(1, 1) }
         override fun stop() {}
+        override fun setSpeechRate(rate: Float) { rates.add(rate) }
     }
 
     private fun stt(tempDir: File, runtime: FakeWhisperRuntime): WhisperStt {
@@ -115,6 +117,43 @@ class LocalVoiceTransportTest {
         runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
         runs(transport)
         return events to tts
+    }
+
+    @Test
+    fun slowSpeechPreferenceConfiguresTheTtsRate() {
+        val source = FakeFrameSource()
+        val tts = FakeTts()
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = FakeTeachingClient(),
+            tts = tts,
+            frameSourceProvider = { source },
+            frameDelayMs = 0,
+        )
+        transport.slowSpeech = true
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        assertEquals(listOf(LocalVoiceTransport.TTS_SLOW_RATE), tts.rates)
+        transport.close()
+    }
+
+    @Test
+    fun defaultPaceConfiguresNormalTtsRate() {
+        val source = FakeFrameSource()
+        val tts = FakeTts()
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = FakeTeachingClient(),
+            tts = tts,
+            frameSourceProvider = { source },
+            frameDelayMs = 0,
+        )
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        assertEquals(listOf(LocalVoiceTransport.TTS_NORMAL_RATE), tts.rates)
+        transport.close()
     }
 
     class FakeProvider : chat.mural.network.LiveSessionProvider {

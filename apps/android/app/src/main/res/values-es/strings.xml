@@ -245,6 +245,9 @@
     <string name="settings_silence_label">Silencio antes de que responda el coach (voz en el dispositivo)</string>
     <string name="settings_silence_hint">Tiempo extra para pensar: el turno se envía tras este silencio.</string>
     <string name="consent_decline_button">Ahora no</string>
+    <string name="settings_slow_speech">Voz más lenta</string>
+    <string name="settings_listening_practice">Práctica de comprensión auditiva</string>
+    <string name="settings_listening_practice_hint">Las conversaciones nuevas cuentan una historia corta sin subtítulos de significado. Busca una palabra solo si la necesitas.</string>
     <string name="settings_voice_manual_turn">Modo principiante: botón para terminar de hablar</string>
     <string name="error_guest_secure_storage_unavailable">Mural no pudo restaurar los datos guardados de tu prueba gratuita. Tu historial de aprendizaje sigue disponible. Reinicia la aplicación para intentarlo de nuevo.</string>
     <string name="talk_end_turn_button">He terminado de hablar</string>

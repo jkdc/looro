@@ -104,6 +104,21 @@ fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Uni
                         vm.updatePreferences(prefs.copy(meaningLanguage = it))
                     }
                     SettingsDivider()
+                    SettingsSwitchRow(stringResource(R.string.settings_slow_speech), "settings-slow-speech",
+                        prefs.slowSpeech == true, !vm.isRunning) {
+                        vm.updatePreferences(prefs.copy(slowSpeech = if (it) true else null))
+                    }
+                    SettingsDivider()
+                    Column(Modifier.fillMaxWidth()) {
+                        SettingsSwitchRow(stringResource(R.string.settings_listening_practice), "settings-listening-practice",
+                            prefs.listeningPractice == true, !vm.isRunning) {
+                            vm.updatePreferences(prefs.copy(listeningPractice = if (it) true else null))
+                        }
+                        Text(stringResource(R.string.settings_listening_practice_hint),
+                            style = MaterialTheme.typography.bodySmall, color = MuralColors.Secondary,
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp))
+                    }
+                    SettingsDivider()
                     Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                         horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Text(stringResource(R.string.settings_voice_manual_turn),

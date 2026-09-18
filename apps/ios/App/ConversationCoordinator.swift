@@ -129,7 +129,7 @@ import MuralCore
         let learner = store.learner
         // Each new conversation starts fresh; learned vocabulary and difficulty still carry forward.
         let history: [[String: Any]] = []
-        let instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage)
+        let instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.slowSpeech == true)
         connectionTask = Task { [weak self] in
             guard let self else { return }
             do { try await self.transport.connect(api: self.api, instructions: instructions, history: history) }

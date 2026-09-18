@@ -86,11 +86,17 @@ internal fun SettingsChoiceRow(title: String, value: String, selected: String, o
 
 @Composable
 internal fun SettingsMeaningSwitch(checked: Boolean, onChange: () -> Unit) {
-    Row(Modifier.fillMaxWidth().testTag("settings-meaning-visible")
-        .toggleable(checked, role = Role.Switch, onValueChange = { onChange() }).heightIn(min = 52.dp)
+    SettingsSwitchRow(stringResource(R.string.settings_meaning_subtitles), "settings-meaning-visible", checked, true) { onChange() }
+}
+
+@Composable
+internal fun SettingsSwitchRow(label: String, tag: String, checked: Boolean, enabled: Boolean, onChange: (Boolean) -> Unit) {
+    Row(Modifier.fillMaxWidth().testTag(tag)
+        .toggleable(checked, enabled = enabled, role = Role.Switch, onValueChange = onChange).heightIn(min = 52.dp)
         .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(stringResource(R.string.settings_meaning_subtitles), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-        Switch(checked, onCheckedChange = null, colors = SwitchDefaults.colors(
+        Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge,
+            color = if (enabled) MuralColors.Ink else MuralColors.Secondary.copy(alpha = .55f))
+        Switch(checked, onCheckedChange = null, enabled = enabled, colors = SwitchDefaults.colors(
             checkedThumbColor = Color.White, checkedTrackColor = MuralColors.Secondary,
             uncheckedThumbColor = Color.White, uncheckedTrackColor = MuralColors.Secondary.copy(alpha = .18f),
             uncheckedBorderColor = Color.Transparent))

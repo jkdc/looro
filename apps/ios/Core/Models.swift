@@ -156,6 +156,8 @@ public struct Preferences: Codable, Sendable {
     public var interests = ""
     public var hasOnboarded = false
     public var aiConsentVersion: Int?
+    public var slowSpeech: Bool?
+    public var listeningPractice: Bool?
     public init() {}
 }
 
