@@ -83,6 +83,15 @@ test('webhooks and public routes answer without proxy headers while client route
       const response = await app.inject({ method: 'POST', url: STRIPE_MINUTES_WEBHOOK_PATH, payload: {} });
       assert.equal(response.statusCode, 503); assert.equal(response.json().error.code, 'minute_purchases_unavailable');
     }
+    // Proxy-exempt public routes share the proxy's single socket address, so a storm past the
+    // 120/minute boundary on one of them must not 429 them or the other exempt routes.
+    for (let count = 0; count < 150; count++) {
+      const response = await app.inject({ url: '/v1/pricing' });
+      assert.equal(response.statusCode, 200);
+    }
+    assert.equal((await app.inject({ url: '/readyz' })).statusCode, 200);
+    assert.equal((await app.inject({ url: '/v1/minutes/products?provider=stripe' })).statusCode, 200);
+    assert.equal((await app.inject({ url: '/payment-return' })).statusCode, 200);
   } finally { await app.close(); }
 });
 test('the webhook routes admit payloads up to the provider signature ceiling instead of failing transport first', async () => {

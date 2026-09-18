@@ -29,7 +29,8 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity } }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover']);
-// These routes carry no client network identity: requiring trusted-proxy headers would 503 them.
+// These routes carry no client network identity: requiring trusted-proxy headers would 503 them,
+// and behind a proxy they all share one socket address, so they also skip the shared limiter.
 const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products']);
 const objectBody = (request: FastifyRequest): Record<string, unknown> => {
   if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body) || Buffer.isBuffer(request.body)) throw new ServiceError('invalid_request');
@@ -99,9 +100,12 @@ export function createApp(services: Services) {
     // headers, and proxy headers would 503 them. They also stay outside the shared in-memory
     // limiter so a client 429 storm cannot delay payment confirmation.
     if (path === STRIPE_WEBHOOK_PATH || path === STRIPE_MINUTES_WEBHOOK_PATH) return;
+    // Proxy-exempt public routes share the proxy's single socket address, so they stay outside
+    // the shared limiter too: readiness probes, the catalog and payment return must not be
+    // strangled by one abusive client. A durable per-client limiter remains follow-up work.
+    if (proxyExemptPaths.has(path)) return;
     let networkKey = request.ip;
-    const proxy = proxyExemptPaths.has(path) ? undefined :
-      (services.accounts?.admission.config ?? services.accessRequests?.config);
+    const proxy = services.accounts?.admission.config ?? services.accessRequests?.config;
     if (proxy) {
       let network: string;
       try { network = trustedClientNetwork(request.headers, request.raw.socket.remoteAddress ?? request.ip, proxy.proxyToken); }
