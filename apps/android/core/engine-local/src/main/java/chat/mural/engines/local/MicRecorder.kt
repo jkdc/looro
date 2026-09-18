@@ -49,10 +49,26 @@ interface AudioFrameSource {
  * loop, [pause]s capture while TTS plays back — discarding the audio retained
  * across the pause via [drainStale], so speaker output is never re-captured —
  * and calls [stop] when the session ends; the mic is released immediately then.
+ *
+ * Thread-safety contract: [stop] may be invoked from the caller's thread while
+ * the loop is inside [readFrame] (the transport's prompt session-end path).
+ * Every capture-state method is serialized on [captureLock], so a stop can
+ * never release the AudioRecord while a native read is in flight — the same
+ * platform-dependent hazard [pause] avoids by never releasing. Contention is
+ * bounded: each locked region performs only non-blocking audio work, so a
+ * stopper waits out at most one in-flight read.
  */
 class MicRecorder : AudioFrameSource {
 
     private var audioRecord: AudioRecord? = null
+
+    /**
+     * Serializes [stop]/[pause]/[resume]/[drainStale] against in-flight
+     * [readFrame] native reads: release during a read is platform-dependent,
+     * so the stopper waits out at most one non-blocking read instead of
+     * racing it.
+     */
+    private val captureLock = Any()
 
     /** Short capacity of the live AudioRecord's buffer, as allocated in [start]; 0 when stopped. */
     private var bufferShortsCapacity = 0
@@ -86,22 +102,24 @@ class MicRecorder : AudioFrameSource {
     }
 
     /** Non-blocking read; returns null when no frame is buffered yet or the recorder is unavailable. */
-    override fun readFrame(): FloatArray? {
+    override fun readFrame(): FloatArray? = synchronized(captureLock) {
         val record = audioRecord ?: return null
         val buffer = ShortArray(READ_CHUNK)
         val read = runCatching { record.read(buffer, 0, READ_CHUNK, AudioRecord.READ_NON_BLOCKING) }.getOrDefault(0)
         if (read <= 0) return null
-        return FloatArray(read) { buffer[it] / 32768.0f }
+        FloatArray(read) { buffer[it] / 32768.0f }
     }
 
     override fun stop() {
-        val record = audioRecord ?: return
-        audioRecord = null
-        bufferShortsCapacity = 0
-        runCatching {
-            if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
+        synchronized(captureLock) {
+            val record = audioRecord ?: return
+            audioRecord = null
+            bufferShortsCapacity = 0
+            runCatching {
+                if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
+            }
+            record.release()
         }
-        record.release()
     }
 
     /**
@@ -111,9 +129,11 @@ class MicRecorder : AudioFrameSource {
      * discards them. Idempotent.
      */
     override fun pause() {
-        val record = audioRecord ?: return
-        runCatching {
-            if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
+        synchronized(captureLock) {
+            val record = audioRecord ?: return
+            runCatching {
+                if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
+            }
         }
     }
 
@@ -123,13 +143,15 @@ class MicRecorder : AudioFrameSource {
      * read is non-blocking, so this always terminates.
      */
     override fun drainStale() {
-        val record = audioRecord ?: return
-        val chunk = ShortArray(READ_CHUNK)
-        var remaining = bufferShortsCapacity // explicit accounting: nothing beyond this can be retained
-        while (remaining > 0) {
-            val read = runCatching { record.read(chunk, 0, READ_CHUNK, AudioRecord.READ_NON_BLOCKING) }.getOrDefault(0)
-            if (read <= 0) break
-            remaining -= read
+        synchronized(captureLock) {
+            val record = audioRecord ?: return
+            val chunk = ShortArray(READ_CHUNK)
+            var remaining = bufferShortsCapacity // explicit accounting: nothing beyond this can be retained
+            while (remaining > 0) {
+                val read = runCatching { record.read(chunk, 0, READ_CHUNK, AudioRecord.READ_NON_BLOCKING) }.getOrDefault(0)
+                if (read <= 0) break
+                remaining -= read
+            }
         }
     }
 
@@ -137,11 +159,11 @@ class MicRecorder : AudioFrameSource {
      * Restarts capture after [pause]/[drainStale]. Returns false when the
      * source was terminally stopped or the hardware refuses to record again.
      */
-    override fun resume(): Boolean {
+    override fun resume(): Boolean = synchronized(captureLock) {
         val record = audioRecord ?: return false
         if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) return true
         val restarted = runCatching { record.startRecording() }.isSuccess
-        return restarted && record.recordingState == AudioRecord.RECORDSTATE_RECORDING
+        restarted && record.recordingState == AudioRecord.RECORDSTATE_RECORDING
     }
 
     companion object {

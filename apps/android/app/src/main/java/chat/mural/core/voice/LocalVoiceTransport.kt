@@ -483,6 +483,12 @@ class LocalVoiceTransport(
         // the listen loop (and its finally) far past session end, and only the
         // recorder stop reliably releases the microphone and the OS recording
         // indicator. The listen-loop finally stays as a safety net.
+        //
+        // Concurrency contract: this stop runs on the caller's thread and can
+        // land while the loop is inside source.readFrame(). The source owns
+        // the serialization — MicRecorder holds a lock across its non-blocking
+        // native calls — so the release never races an in-flight read, and the
+        // stopper waits at most one read before the mic is released.
         recorder?.stop()
         recorder = null
         // Side jobs (opening greeting, typed commentary) must not outlive the
