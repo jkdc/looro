@@ -349,6 +349,9 @@ struct SettingsView: View {
                     if !hasKey { Text("This version uses your OpenAI API key to start a conversation.") }
                 }
                 Section {
+                    NavigationLink { LearningProgressView(store: store) } label: {
+                        Label("Your progress", systemImage: "chart.bar")
+                    }.disabled(coordinator.isRunning).accessibilityIdentifier("settings-progress")
                     Picker("Conversation limit", selection: Binding(get: { store.preferences.sessionMinutes }, set: { value in store.updatePreferences { $0.sessionMinutes = value } })) {
                         ForEach([5, 10, 15, 20, 30, 60], id: \.self) { Text("\($0) minutes").tag($0) }
                     }

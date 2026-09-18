@@ -14,6 +14,13 @@ data class LearnerState(val challenge:Int,val observationCount:Int,val nextGoal:
     val levelLabel get() = if (observationCount < 4) "Getting to know you" else "Finding your pace"
 }
 
+/** Practice summary shown in the Progress screen; a pure projection, never stored. */
+data class LearningStats(
+    val totalSessions:Int, val totalVoiceMinutes:Int, val wordsByBars:List<Int>,
+    val activeStreakDays:Int, val longestStreakDays:Int, val last14DaysMinutes:List<Double>,
+    val capabilityCount:Int, val latestCapability:String?,
+)
+
 object LearningEngine {
     fun validate(proposal:Assessment, session:SessionRecord):Assessment? {
         if (LanguageRegistry.get(session.languageID)==null) return null
@@ -78,4 +85,26 @@ object LearningEngine {
         return LearnerState(level,count,nextGoal,caps.filterValues { it.size>=3 }.keys.sorted(),words)
     }
     private fun dayKey(seconds:Double):String = java.time.Instant.ofEpochSecond((seconds + APPLE_EPOCH_UNIX_SECONDS).toLong()).atZone(java.time.ZoneId.systemDefault()).toLocalDate().toString()
+
+    /** Read-only practice summary projected from the archive; never stored. */
+    fun stats(sessions:List<SessionRecord>,learner:LearnerState,zone:java.time.ZoneId = java.time.ZoneId.systemDefault(),now:Double=nowSeconds()):LearningStats {
+        fun epochDay(seconds:Double):Long = java.time.Instant.ofEpochSecond((seconds + APPLE_EPOCH_UNIX_SECONDS).toLong()).atZone(zone).toLocalDate().toEpochDay()
+        val minutesByDay=HashMap<Long,Double>()
+        sessions.forEach { minutesByDay.merge(epochDay(it.startedAt),it.voiceSeconds/60.0,Double::plus) }
+        val today=epochDay(now)
+        var active=0
+        var cursor=if(minutesByDay.containsKey(today)) today else today-1
+        while(minutesByDay.containsKey(cursor)) { active++; cursor-- }
+        var longest=0; var run=0; var previous=Long.MIN_VALUE
+        for (day in minutesByDay.keys.sorted()) { run=if(day==previous+1) run+1 else 1; if(run>longest) longest=run; previous=day }
+        val bars=IntArray(4); learner.words.forEach { bars[it.bars.coerceIn(0,3)]++ }
+        return LearningStats(
+            totalSessions=sessions.size,
+            totalVoiceMinutes=(sessions.sumOf { it.voiceSeconds }/60.0).toInt(),
+            wordsByBars=bars.toList(),
+            activeStreakDays=active, longestStreakDays=longest,
+            last14DaysMinutes=(13 downTo 0).map { offset -> minutesByDay[today-offset] ?: 0.0 },
+            capabilityCount=learner.capabilities.size, latestCapability=learner.capabilities.lastOrNull(),
+        )
+    }
 }

@@ -1,0 +1,57 @@
+import SwiftUI
+import MuralCore
+
+/// Read-only practice summary, projected from the local archive each time it opens.
+struct LearningProgressView: View {
+    let store: LearningStore
+    private var stats: LearningStats { LearningEngine.stats(sessions: store.sessions, learner: store.learner) }
+
+    var body: some View {
+        Form {
+            if stats.totalSessions == 0 {
+                Section {
+                    Text("Start a conversation to see your progress.")
+                        .foregroundStyle(MuralColor.secondary)
+                }
+            } else {
+                Section {
+                    row("Conversations", "\(stats.totalSessions)")
+                    row("Practice time", timeText)
+                    row("Day streak", "\(stats.activeStreakDays)")
+                    row("Longest streak", "\(stats.longestStreakDays)")
+                } header: { Text("Practice") }
+                Section {
+                    ForEach(0..<4, id: \.self) { bars in
+                        row(["New", "Fragile", "Growing", "Steady"][bars], "\(stats.wordsByBars[bars])")
+                    }
+                } header: { Text("Words by recall") } footer: { Text("Recall bars summarise repeated retrieval over time; three bars need spaced evidence across days and contexts.") }
+                Section {
+                    HStack(alignment: .bottom, spacing: 4) {
+                        let peak = max(stats.last14DaysMinutes.max() ?? 1, 1)
+                        ForEach(stats.last14DaysMinutes.indices, id: \.self) { index in
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(Color.accentColor.opacity(index == stats.last14DaysMinutes.count - 1 ? 1 : 0.35))
+                                .frame(height: max(6, 52 * stats.last14DaysMinutes[index] / peak))
+                                .frame(maxHeight: 58, alignment: .bottom)
+                        }
+                    }
+                    .frame(height: 64)
+                } header: { Text("Last 14 days") }
+                if stats.capabilityCount > 0 {
+                    Section("Can-do milestones: \(stats.capabilityCount)") {
+                        if let latest = stats.latestCapability { Text(latest) }
+                    }
+                }
+            }
+        }
+        .navigationTitle("Your progress")
+    }
+
+    private var timeText: String {
+        stats.totalVoiceMinutes >= 60 ? "\(stats.totalVoiceMinutes / 60) h \(stats.totalVoiceMinutes % 60) min" : "\(stats.totalVoiceMinutes) min"
+    }
+
+    private func row(_ label: String, _ value: String) -> some View {
+        LabeledContent(label, value: value)
+    }
+}

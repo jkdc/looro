@@ -29,6 +29,18 @@ public struct LearnerState: Sendable {
     public var levelLabel: String { observationCount < 4 ? "Getting to know you" : "Finding your pace" }
 }
 
+/// Practice summary shown in the Progress screen; a pure projection, never stored.
+public struct LearningStats: Sendable {
+    public var totalSessions: Int
+    public var totalVoiceMinutes: Int
+    public var wordsByBars: [Int]
+    public var activeStreakDays: Int
+    public var longestStreakDays: Int
+    public var last14DaysMinutes: [Double]
+    public var capabilityCount: Int
+    public var latestCapability: String?
+}
+
 public enum LearningEngine {
     public static func validate(_ proposal: Assessment, session: SessionRecord) -> Assessment? {
         guard LanguageRegistry.module(for: session.languageID) != nil,
@@ -108,5 +120,35 @@ public enum LearningEngine {
         }.sorted { $0.lastSeen > $1.lastSeen }
         return LearnerState(challenge: level, observationCount: count, nextGoal: nextGoal,
                             capabilities: capabilityEvidence.filter { $0.value.count >= 3 }.keys.sorted(), words: words)
+    }
+
+    /// Read-only practice summary projected from the archive; never stored.
+    /// Day boundaries follow the local calendar on both platforms (tests pin UTC).
+    public static func stats(sessions: [SessionRecord], learner: LearnerState, calendar: Calendar = .current, now: Date = .now) -> LearningStats {
+        func epochDay(_ date: Date) -> Int {
+            let epoch = calendar.startOfDay(for: Date(timeIntervalSinceReferenceDate: 0))
+            return calendar.dateComponents([.day], from: epoch, to: calendar.startOfDay(for: date)).day ?? 0
+        }
+        var minutesByDay: [Int: Double] = [:]
+        for session in sessions { minutesByDay[epochDay(session.startedAt), default: 0] += session.voiceSeconds / 60 }
+        let today = epochDay(now)
+        var active = 0
+        var cursor = minutesByDay[today] != nil ? today : today - 1
+        while minutesByDay[cursor] != nil { active += 1; cursor -= 1 }
+        var longest = 0, run = 0, previous = Int.min
+        for day in minutesByDay.keys.sorted() {
+            run = day == previous + 1 ? run + 1 : 1
+            longest = max(longest, run)
+            previous = day
+        }
+        var bars = [0, 0, 0, 0]
+        for word in learner.words { bars[min(3, max(0, word.bars))] += 1 }
+        return LearningStats(
+            totalSessions: sessions.count,
+            totalVoiceMinutes: Int(sessions.reduce(0) { $0 + $1.voiceSeconds } / 60),
+            wordsByBars: bars,
+            activeStreakDays: active, longestStreakDays: longest,
+            last14DaysMinutes: stride(from: 13, through: 0, by: -1).map { offset in minutesByDay[today - offset] ?? 0 },
+            capabilityCount: learner.capabilities.count, latestCapability: learner.capabilities.last)
     }
 }

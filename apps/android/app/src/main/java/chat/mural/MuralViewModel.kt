@@ -116,6 +116,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     var hasKey by mutableStateOf(false); private set
     val language get() = LanguageRegistry.get(archive.preferences.learningLanguageID)!!
     val learner get() = LearningEngine.project(archive.sessions, language.id, archive.preferences.hiddenWords)
+
+    /** Progress-screen summary recomputed on demand (never stored). */
+    fun stats(): LearningStats = LearningEngine.stats(archive.sessions, learner)
     val isRunning get() = state in listOf("connecting", "active", "closing")
     val isVoiceSession get() = voiceSession
 

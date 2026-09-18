@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -79,6 +80,7 @@ fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Uni
     var revokeConsent by rememberSaveable { mutableStateOf(false) }
     var notices by rememberSaveable { mutableStateOf(false) }
     var history by rememberSaveable { mutableStateOf(false) }
+    var progress by rememberSaveable { mutableStateOf(false) }
     var transcript by remember { mutableStateOf<SessionRecord?>(null) }
     var deleteSession by remember { mutableStateOf<SessionRecord?>(null) }
     val prefs = vm.archive.preferences
@@ -212,6 +214,9 @@ fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Uni
                     SettingsRow(stringResource(R.string.settings_import_backup), enabled = !vm.isRunning, symbol = SettingsSymbol.IMPORT,
                         tint = MuralColors.Secondary, onClick = onImport)
                     SettingsDivider()
+                    SettingsRow(stringResource(R.string.progress_section_title), chevron = true,
+                        modifier = Modifier.testTag("settings-progress"), onClick = { progress = true })
+                    SettingsDivider()
                     SettingsRow(stringResource(R.string.history_section_title), symbol = SettingsSymbol.HISTORY, chevron = true,
                         modifier = Modifier.testTag("settings-history"), onClick = { history = true })
                     SettingsDivider()
@@ -255,6 +260,7 @@ fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Uni
     if (keyDialog) KeyDialog(vm, onDismiss = { keyDialog = false })
     if (notices) NoticesDialog(onDismiss = { notices = false })
     if (history) SettingsHistorySheet(vm, onDismiss = { history = false }, onSelect = { transcript = it }, onDelete = { deleteSession = it })
+    if (progress) SettingsProgressSheet(vm, onDismiss = { progress = false })
     if (permissionDetails) AlertDialog(onDismissRequest = { permissionDetails = false },
         title = { Text(stringResource(R.string.settings_section_ai_permission)) },
         text = { Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -311,6 +317,80 @@ private fun SettingsHistorySheet(vm: MuralViewModel, onDismiss: () -> Unit, onSe
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SettingsProgressSheet(vm: MuralViewModel, onDismiss: () -> Unit) {
+    // Computed once per open: a read-only projection of the local archive.
+    val stats = remember { vm.stats() }
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = MuralColors.Cream,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        Column(Modifier.fillMaxHeight(.9f)) {
+            SettingsSheetHeader(stringResource(R.string.progress_section_title), onDismiss)
+            LazyColumn(Modifier.weight(1f).testTag("settings-progress-list"), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                if (stats.totalSessions == 0) item {
+                    Text(stringResource(R.string.progress_empty), style = MaterialTheme.typography.bodyLarge, color = MuralColors.Secondary,
+                        modifier = Modifier.padding(16.dp))
+                } else {
+                    item {
+                        SettingsGroup {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                ProgressRow(stringResource(R.string.progress_conversations), stats.totalSessions.toString())
+                                val hours = stats.totalVoiceMinutes / 60
+                                val minutes = stats.totalVoiceMinutes % 60
+                                ProgressRow(stringResource(R.string.progress_practice_time),
+                                    if (hours > 0) stringResource(R.string.progress_time_hm, hours, minutes)
+                                    else stringResource(R.string.progress_time_m, minutes))
+                                ProgressRow(stringResource(R.string.progress_day_streak), stats.activeStreakDays.toString())
+                                ProgressRow(stringResource(R.string.progress_longest_streak), stats.longestStreakDays.toString())
+                            }
+                        }
+                    }
+                    item {
+                        SettingsGroup(stringResource(R.string.progress_words_by_recall)) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                val labels = listOf(R.string.progress_bar_new, R.string.progress_bar_fragile,
+                                    R.string.progress_bar_growing, R.string.progress_bar_steady)
+                                labels.forEachIndexed { bars, label ->
+                                    ProgressRow(stringResource(label), stats.wordsByBars[bars].toString())
+                                }
+                            }
+                        }
+                    }
+                    item {
+                        SettingsGroup(stringResource(R.string.progress_last14)) {
+                            val peak = (stats.last14DaysMinutes.maxOrNull() ?: 0.0).coerceAtLeast(1.0)
+                            Row(Modifier.fillMaxWidth().padding(16.dp).height(64.dp),
+                                horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.Bottom) {
+                                stats.last14DaysMinutes.forEachIndexed { index, minutes ->
+                                    Box(Modifier.weight(1f).height((6 + 52 * minutes / peak).dp)
+                                        .background(if (index == stats.last14DaysMinutes.lastIndex) MuralColors.Secondary
+                                            else MuralColors.Secondary.copy(alpha = .35f), RoundedCornerShape(3.dp)))
+                                }
+                            }
+                        }
+                    }
+                    if (stats.capabilityCount > 0) item {
+                        SettingsGroup(stringResource(R.string.progress_capabilities, stats.capabilityCount)) {
+                            stats.latestCapability?.let {
+                                Text(it, Modifier.padding(16.dp), style = MaterialTheme.typography.bodyLarge)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProgressRow(label: String, value: String) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(label, style = MaterialTheme.typography.bodyLarge)
+        Text(value, style = MaterialTheme.typography.bodyLarge, color = MuralColors.Secondary)
     }
 }
 
