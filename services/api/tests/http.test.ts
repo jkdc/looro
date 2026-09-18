@@ -1,8 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createApp } from '../src/app.js';
-import { connectDatabase } from '../src/db.js';
-import { SandboxPayments } from '../src/payments.js';
+import { connectDatabase, type Database } from '../src/db.js';
+import { SandboxPayments, STRIPE_WEBHOOK_PATH } from '../src/payments.js';
+import { AuthAdmission } from '../src/auth-admission.js';
+import { STRIPE_MINUTES_WEBHOOK_PATH, STRIPE_WEBHOOK_BODY_LIMIT } from '../src/stripe-minute-provider.js';
 
 test('unconfigured trial and hosted voice fail closed without database or provider access', async () => {
   const db = connectDatabase('postgresql://unused@127.0.0.1:1/unused');
@@ -41,4 +43,59 @@ test('webhook route verifies raw bytes before doing any database work', async ()
     assert.deepEqual(response.json(), { error: { code: 'invalid_webhook_signature' } });
     assert.equal(response.body.includes('privateData'), false);
   } finally { await app.close(); await db.end(); }
+});
+test('webhooks and public routes answer without proxy headers while client routes stay gated and limited', async () => {
+  const db = { query: async (text: string) => {
+    if (text.startsWith('SELECT 1')) return { rows: [{ ok: 1 }], rowCount: 1 };
+    if (text.includes('ai_pricing_policy')) return { rows: [{ version: 1, service_fee_basis_points: 1500 }], rowCount: 1 };
+    throw new Error('Unexpected database query');
+  } } as unknown as Database;
+  const proxy = { hmacKey: 'a'.repeat(64), proxyToken: 'b'.repeat(64), allowLocalLoopback: false };
+  const payments = new SandboxPayments('sk_test_example_not_a_real_key', 'whsec_example_not_a_real_secret', new Map(), 'http://localhost:8080');
+  const app = createApp({ db, auth: {}, payments, accounts: { admission: new AuthAdmission(db, proxy) } });
+  try {
+    // Stripe delivers webhooks server-to-server, without trusted-proxy headers: commerce
+    // availability and signature checks decide, never the proxy gate.
+    const minutes = await app.inject({ method: 'POST', url: STRIPE_MINUTES_WEBHOOK_PATH, payload: {} });
+    assert.equal(minutes.statusCode, 503); assert.equal(minutes.json().error.code, 'minute_purchases_unavailable');
+    const legacy = await app.inject({ method: 'POST', url: STRIPE_WEBHOOK_PATH, payload: { id: 'untrusted' }, headers: { 'stripe-signature': 'invalid' } });
+    assert.equal(legacy.statusCode, 400); assert.equal(legacy.json().error.code, 'invalid_webhook_signature');
+    // Public catalog, pricing, readiness and the payment return page are reachable without proxy headers.
+    assert.equal((await app.inject({ url: '/v1/minutes/products?provider=stripe' })).statusCode, 200);
+    const pricing = await app.inject({ url: '/v1/pricing' });
+    assert.equal(pricing.statusCode, 200); assert.equal(pricing.json().serviceFeePercent, 15);
+    const ready = await app.inject({ url: '/readyz' });
+    assert.equal(ready.statusCode, 200); assert.equal(ready.json().database, true);
+    assert.equal((await app.inject({ url: '/payment-return' })).statusCode, 200);
+    // Client routes without proxy headers still fail closed...
+    const gated = await app.inject({ url: '/v1/live/capabilities' });
+    assert.equal(gated.statusCode, 503); assert.equal(gated.json().error.code, 'trusted_proxy_required');
+    // ...and keep their shared per-network limiter bucket at 120 requests per minute.
+    const trusted = { 'x-mural-client-ip': '192.0.2.7', 'x-mural-proxy-token': proxy.proxyToken };
+    for (let count = 0; count < 120; count++) {
+      const response = await app.inject({ url: '/v1/live/capabilities', headers: trusted });
+      assert.equal(response.statusCode, 200);
+    }
+    const limited = await app.inject({ url: '/v1/live/capabilities', headers: trusted });
+    assert.equal(limited.statusCode, 429); assert.equal(limited.json().error.code, 'rate_limit');
+    // Webhook delivery never consumes a limiter bucket, so a client 429 storm cannot delay payments.
+    for (let count = 0; count < 150; count++) {
+      const response = await app.inject({ method: 'POST', url: STRIPE_MINUTES_WEBHOOK_PATH, payload: {} });
+      assert.equal(response.statusCode, 503); assert.equal(response.json().error.code, 'minute_purchases_unavailable');
+    }
+  } finally { await app.close(); }
+});
+test('the webhook routes admit payloads up to the provider signature ceiling instead of failing transport first', async () => {
+  const db = { query: async () => { throw new Error('Unexpected database query'); } } as unknown as Database;
+  const app = createApp({ db, auth: {} });
+  try {
+    for (const size of [STRIPE_WEBHOOK_BODY_LIMIT - 1, STRIPE_WEBHOOK_BODY_LIMIT]) {
+      const response = await app.inject({ method: 'POST', url: STRIPE_MINUTES_WEBHOOK_PATH,
+        headers: { 'content-type': 'application/json' }, payload: 'x'.repeat(size) });
+      assert.equal(response.statusCode, 503); assert.equal(response.json().error.code, 'minute_purchases_unavailable');
+    }
+    const oversized = await app.inject({ method: 'POST', url: STRIPE_MINUTES_WEBHOOK_PATH,
+      headers: { 'content-type': 'application/json' }, payload: 'x'.repeat(STRIPE_WEBHOOK_BODY_LIMIT + 1) });
+    assert.equal(oversized.statusCode, 413);
+  } finally { await app.close(); }
 });

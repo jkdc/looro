@@ -3,7 +3,7 @@ import { createHmac, randomUUID } from 'node:crypto';
 import type { Database } from './db.js';
 import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, type verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
 import { HelperSessionLimitError, ServiceError } from './errors.js';
-import { applyStripeEvent, type SandboxPayments } from './payments.js';
+import { applyStripeEvent, STRIPE_WEBHOOK_PATH, type SandboxPayments } from './payments.js';
 import { RATE_VERSION } from './pricing.js';
 import { aiPricingPolicy } from './ai-top-up-pricing.js';
 import { conversationBalance } from './conversation-balance.js';
@@ -16,7 +16,7 @@ import { startGuestMinutes, linkGuestMinutes, UnconfiguredGuestMinuteAttestor, t
 import { AI_REPORT_BODY_LIMIT, AI_REPORT_PATH, reportNetwork, type AIReports } from './feedback.js';
 import { stripeOrderByKey, type MinutePurchases } from './minute-purchases.js';
 import type { AIValuePurchases, PurchaseFulfillmentRouter } from './ai-value-purchases.js';
-import type { StripeMinuteProvider } from './stripe-minute-provider.js';
+import { STRIPE_MINUTES_WEBHOOK_PATH, STRIPE_WEBHOOK_BODY_LIMIT, type StripeMinuteProvider } from './stripe-minute-provider.js';
 import type { PlayMinuteProvider } from './play-minute-provider.js';
 import { HOSTED_HELPER_BODY_LIMIT, type HostedHelpers } from './hosted-helpers.js';
 import { startupDiagnostic, type StartupDiagnostic } from './startup-diagnostics.js';
@@ -29,6 +29,8 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity } }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover']);
+// These routes carry no client network identity: requiring trusted-proxy headers would 503 them.
+const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products']);
 const objectBody = (request: FastifyRequest): Record<string, unknown> => {
   if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body) || Buffer.isBuffer(request.body)) throw new ServiceError('invalid_request');
   return request.body as Record<string, unknown>;
@@ -48,7 +50,10 @@ export function createApp(services: Services) {
   const orderStatus = async (account: string, id: string) => {
     const commerce = services.minuteCommerce;
     if (!commerce) throw new ServiceError('minute_purchases_unavailable', 503);
-    const kind = (await db.query('SELECT entitlement_kind FROM minute_purchase_orders WHERE id=$1 AND account_id=$2', [id, account])).rows[0]?.entitlement_kind;
+    // Same pre-lookup filter as MinutePurchases.status()/AIValuePurchases.status(): a soft-deleted
+    // account's orders must not route, so lookups report purchase_not_found instead.
+    const kind = (await db.query(`SELECT o.entitlement_kind FROM minute_purchase_orders o JOIN accounts a ON a.id=o.account_id
+      WHERE o.id=$1 AND o.account_id=$2 AND a.deleted_at IS NULL`, [id, account])).rows[0]?.entitlement_kind;
     if (kind === 'ai_value') {
       if (!commerce.aiPurchases) throw new ServiceError('ai_value_purchases_unavailable', 503);
       return commerce.aiPurchases.status(account, id);
@@ -60,7 +65,7 @@ export function createApp(services: Services) {
   // No request bodies, Authorization headers, tokens, transcripts, or Stripe payloads are logged.
   app.removeContentTypeParser('application/json');
   app.addContentTypeParser('application/json', { parseAs: 'buffer' }, (request, body, done) => {
-    if (['/v1/webhooks/stripe', '/v1/webhooks/stripe/minutes'].includes(request.routeOptions.url ?? '')) return done(null, body);
+    if ([STRIPE_WEBHOOK_PATH, STRIPE_MINUTES_WEBHOOK_PATH].includes(request.routeOptions.url ?? '')) return done(null, body);
     try { done(null, JSON.parse(body.toString())); } catch { done(new ServiceError('invalid_json')); }
   });
   const windows = new Map<string, { until: number; count: number }>();
@@ -90,8 +95,13 @@ export function createApp(services: Services) {
     }
     // This endpoint has separate durable admission limits; Caddy's shared address is not its visitor identity.
     if (path === ACCESS_REQUEST_PATH || path === AI_REPORT_PATH || path === '/healthz') return;
+    // Signature-authenticated provider webhooks are delivered server-to-server without trusted-proxy
+    // headers, and proxy headers would 503 them. They also stay outside the shared in-memory
+    // limiter so a client 429 storm cannot delay payment confirmation.
+    if (path === STRIPE_WEBHOOK_PATH || path === STRIPE_MINUTES_WEBHOOK_PATH) return;
     let networkKey = request.ip;
-    const proxy = services.accounts?.admission.config ?? services.accessRequests?.config;
+    const proxy = proxyExemptPaths.has(path) ? undefined :
+      (services.accounts?.admission.config ?? services.accessRequests?.config);
     if (proxy) {
       let network: string;
       try { network = trustedClientNetwork(request.headers, request.raw.socket.remoteAddress ?? request.ip, proxy.proxyToken); }
@@ -286,7 +296,7 @@ export function createApp(services: Services) {
     return (services.minuteCommerce.fulfillment ?? services.minuteCommerce.purchases).reconcile('play', { kind: 'client', accountID: account,
       orderID, purchaseToken });
   });
-  app.post('/v1/webhooks/stripe/minutes', async request => {
+  app.post(STRIPE_MINUTES_WEBHOOK_PATH, { bodyLimit: STRIPE_WEBHOOK_BODY_LIMIT }, async request => {
     if (!services.minuteCommerce?.stripe) throw new ServiceError('minute_purchases_unavailable', 503);
     const signature = request.headers['stripe-signature'];
     if (!Buffer.isBuffer(request.body) || typeof signature !== 'string') throw new ServiceError('invalid_webhook_signature');
@@ -329,7 +339,7 @@ export function createApp(services: Services) {
     if (typeof key !== 'string' || key.length < 8 || key.length > 128) throw new ServiceError('idempotency_key_required');
     return services.payments.checkout(db, account, stringField(objectBody(request), 'product', 64), key);
   });
-  app.post('/v1/webhooks/stripe', async request => {
+  app.post(STRIPE_WEBHOOK_PATH, { bodyLimit: STRIPE_WEBHOOK_BODY_LIMIT }, async request => {
     if (!services.payments) throw new ServiceError('checkout_not_configured', 503);
     const signature = request.headers['stripe-signature'];
     if (!Buffer.isBuffer(request.body) || typeof signature !== 'string') throw new ServiceError('invalid_webhook_signature');

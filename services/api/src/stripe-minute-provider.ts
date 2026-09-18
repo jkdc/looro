@@ -4,6 +4,10 @@ import { ServiceError } from './errors.js';
 import type { PurchaseEnvironment, VerifiedMinutePurchase } from './minute-purchases.js';
 import { loadProviderOrder, MinuteReceiptVault, providerHash, type MinuteDeliveryAdapter } from './minute-provider-delivery.js';
 
+export const STRIPE_MINUTES_WEBHOOK_PATH = '/v1/webhooks/stripe/minutes';
+/** Routes admit up to this ceiling so the signed-bytes verifier, not transport, rejects beyond it. */
+export const STRIPE_WEBHOOK_BODY_LIMIT = 524_288;
+
 /** Narrow transport boundary keeps contract tests offline while production uses the official SDK. */
 export interface StripeMinuteTransport {
   account(): Promise<{ id: string }>;
@@ -162,7 +166,7 @@ export class StripeMinuteProvider implements MinuteDeliveryAdapter {
     return { orderID: order.id, checkoutURL: url.href };
   }
   async #webhookSession(input: any): Promise<string> {
-    if (!Buffer.isBuffer(input.raw) || input.raw.length > 524_288 || typeof input.signature !== 'string' || input.signature.length > 1024)
+    if (!Buffer.isBuffer(input.raw) || input.raw.length > STRIPE_WEBHOOK_BODY_LIMIT || typeof input.signature !== 'string' || input.signature.length > 1024)
       throw new ServiceError('invalid_webhook_signature');
     let event: Stripe.Event;
     try { event = this.transport.verifyEvent(input.raw, input.signature); } catch { throw new ServiceError('invalid_webhook_signature'); }

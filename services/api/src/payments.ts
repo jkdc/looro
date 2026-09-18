@@ -5,6 +5,8 @@ import { appendEntry, lockWallet } from './ledger.js';
 import { ServiceError } from './errors.js';
 import { NANO_USD } from './pricing.js';
 
+export const STRIPE_WEBHOOK_PATH = '/v1/webhooks/stripe';
+
 export interface TopUp { id: string; priceID: string; aiMinor: number; serviceFeeMinor: number; paymentFeeMinor: number }
 export type Catalog = ReadonlyMap<string, TopUp>;
 export function catalogFromEnvironment(env: NodeJS.ProcessEnv): Catalog {
