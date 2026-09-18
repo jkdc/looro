@@ -22,6 +22,13 @@ interface TeachingClient {
      */
     val keyEnvVar: String? get() = null
 
+    /**
+     * Best-effort interruption of the engine's in-flight work so ending a
+     * session is not held by a hung network call. Defaulted no-op: engines
+     * without blocking calls need nothing.
+     */
+    fun cancelInFlight() {}
+
     suspend fun respond(instructions: String, input: String, schema: JsonObject? = null,
         search: Boolean = false, purpose: HelperPurpose? = null): APIResult
 }

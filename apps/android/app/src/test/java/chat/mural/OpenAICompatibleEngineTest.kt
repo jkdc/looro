@@ -17,12 +17,14 @@ import kotlinx.serialization.json.put
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import okhttp3.mockwebserver.SocketPolicy
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 class OpenAICompatibleEngineTest {
 
@@ -165,6 +167,35 @@ class OpenAICompatibleEngineTest {
         assertEquals(transcript, messages[1].jsonObject["content"]!!.jsonPrimitive.content)
         // Meanings never request structured output or schema embedding.
         assertTrue(body["response_format"] == null)
+    }
+
+    @Test
+    fun `cancelInFlight aborts a hung in-flight call so teardown is not blocked`() {
+        // NO_RESPONSE parks execute() until the 30 s read timeout unless the
+        // call is cancelled — the situation a user pressing End runs into.
+        server.enqueue(MockResponse().setSocketPolicy(SocketPolicy.NO_RESPONSE))
+        val hung = OpenAICompatibleEngine(
+            config = RemoteEngineConfig.DEEPSEEK,
+            deps = deps(mapOf("DEEPSEEK_API_KEY" to "test-key-123")),
+            client = OkHttpClient.Builder().readTimeout(30, TimeUnit.SECONDS).build(),
+            baseUrl = server.url("/v1/"),
+        )
+        val failure = java.util.concurrent.atomic.AtomicReference<Throwable?>()
+        val thread = Thread {
+            try {
+                kotlinx.coroutines.runBlocking { hung.respond("i", "in") }
+            } catch (t: Throwable) {
+                failure.set(t)
+            }
+        }
+        thread.start()
+        val deadline = System.currentTimeMillis() + 5_000
+        while (server.requestCount == 0 && System.currentTimeMillis() < deadline) Thread.sleep(10)
+        Thread.sleep(100) // execute() is now parked waiting for the absent response
+        hung.cancelInFlight()
+        thread.join(5_000)
+        assertTrue("cancelInFlight must abort the hung call, got: ${failure.get()}", failure.get() is EngineException)
+        assertTrue(failure.get()!!.message!!.contains("unreachable"))
     }
 
     @Test

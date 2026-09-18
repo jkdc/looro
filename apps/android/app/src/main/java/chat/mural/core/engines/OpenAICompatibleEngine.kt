@@ -5,6 +5,7 @@ import chat.mural.network.APIUsage
 import chat.mural.network.HelperPurpose
 import chat.mural.network.TeachingClient
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -15,10 +16,12 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.Call
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.concurrent.atomic.AtomicReference
 
 /** Per-provider constants for any OpenAI-compatible /chat/completions backend. */
 data class RemoteEngineConfig(
@@ -67,8 +70,16 @@ class OpenAICompatibleEngine(
 
     private val json = Json { ignoreUnknownKeys = true }
 
+    /** The in-flight HTTP call, tracked so [cancelInFlight] can abort a hung request. */
+    private val inFlight = AtomicReference<Call?>()
+
     /** Lets callers (e.g. readiness gates) check this engine's key without a network round trip. */
     override val keyEnvVar: String? get() = config.keyEnvVar
+
+    /** Cancels the in-flight HTTP call, if any, so session teardown is not held by a hung request. */
+    override fun cancelInFlight() {
+        inFlight.getAndSet(null)?.cancel()
+    }
 
     override suspend fun respond(
         instructions: String,
@@ -106,8 +117,18 @@ class OpenAICompatibleEngine(
             .post(body.toRequestBody("application/json".toMediaType()))
             .build()
 
-        val result = runCatching { client.newCall(request).execute() }
-            .getOrElse { throw EngineException("${config.id} engine unreachable: ${it.message}", retryable = true) }
+        val call = client.newCall(request)
+        inFlight.set(call)
+        val result = try {
+            call.execute()
+        } catch (e: java.io.IOException) {
+            // A cancel() from cancelInFlight() usually means the session ended:
+            // let cancellation win over an "unreachable" engine failure.
+            ensureActive()
+            throw EngineException("${config.id} engine unreachable: ${e.message}", retryable = true)
+        } finally {
+            inFlight.compareAndSet(call, null)
+        }
         result.use { response ->
             val payload = response.body?.string().orEmpty()
             if (!response.isSuccessful) {

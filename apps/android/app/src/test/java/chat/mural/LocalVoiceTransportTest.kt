@@ -69,6 +69,8 @@ class LocalVoiceTransportTest {
         val received = mutableListOf<Pair<String, String>>() // system to user
         val reply = "Nice! Tell me more about it."
         var gate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+        var cancelCalls = 0
+        override fun cancelInFlight() { cancelCalls++ }
         override suspend fun respond(instructions: String, input: String, schema: kotlinx.serialization.json.JsonObject?, search: Boolean, purpose: chat.mural.network.HelperPurpose?): chat.mural.network.APIResult {
             received.add(instructions to input)
             gate?.await()
@@ -504,6 +506,141 @@ class LocalVoiceTransportTest {
 
         // superar los 3 s de silencio cierra el turno
         repeat(14) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals(1, engine.received.size)
+    }
+
+    @Test
+    fun `ending during an in-flight greeting leaves no stale output in the restarted session`() {
+        val source = FakeFrameSource()
+        val sttRuntime = FakeWhisperRuntime()
+        val engine = FakeTeachingClient()
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = gate
+        val tts = FakeTts()
+        val events = java.util.concurrent.CopyOnWriteArrayList<JsonObject>()
+        val scope = CoroutineScope(Dispatchers.IO)
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), sttRuntime), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+            openOnStart = true,
+        )
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        // The greeting is parked inside engine.respond when the user ends the
+        // session; the cancellation must land while it is still suspended.
+        transport.close()
+        Thread.sleep(200)
+        gate.complete(Unit)
+        Thread.sleep(200)
+
+        // Restart on the same instance: exactly one greeting (the new one) may
+        // emit and speak — a ghost of the cancelled one must not leak through.
+        events.clear()
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        Thread.sleep(300) // give a hypothetical ghost greeting time to leak
+        val outputDeltas = events.filter {
+            (it["type"]?.jsonPrimitive?.content ?: "") == "session.output_transcript.delta"
+        }
+        assertEquals("only the restarted session's greeting may emit an output delta", 1, outputDeltas.size)
+        assertEquals("the ghost greeting must not speak into the new session", 1, tts.spoken.size)
+        scope.cancel()
+    }
+
+    @Test
+    fun `manual mode still enforces the 30 second turn cap`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // 250 frames of loud speech = 32 s with no endTurn() call: the safety
+        // cap, not the user, must close the turn, keeping the buffer bounded
+        // (~30 s) instead of growing for minutes.
+        repeat(250) { source.queue.add(speech()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertEquals("the manual-mode cap must auto-process the turn", 1, engine.received.size)
+
+        // The cap re-arms: the next 30 s form a second bounded turn. Wait for
+        // the post-turn mic resume first — frames queued during the (fake)
+        // playback are stale TTS-guard audio and get drained.
+        val resumed = System.currentTimeMillis() + 5_000
+        while (source.resumeCount < 1 && System.currentTimeMillis() < resumed) Thread.sleep(25)
+        repeat(250) { source.queue.add(speech()) }
+        val deadline2 = System.currentTimeMillis() + 5_000
+        while (engine.received.size < 2 && System.currentTimeMillis() < deadline2) Thread.sleep(25)
+        assertEquals(2, engine.received.size)
+    }
+
+    @Test
+    fun `disconnect cancels in-flight engine work and stops the recorder promptly`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = gate
+        val scope = CoroutineScope(Dispatchers.IO)
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, scope,
+            stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // A turn parked in a (blocking) LLM call when the user ends the session.
+        repeat(4) { source.queue.add(speech()) }
+        repeat(10) { source.queue.add(silence()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        Thread.sleep(100) // let the turn reach the gated engine.respond
+
+        transport.close()
+
+        assertEquals("end must cancel in-flight engine work", 1, engine.cancelCalls)
+        assertTrue("the recorder must be stopped without waiting for the call to return", source.stopped)
+        gate.complete(Unit)
+        scope.cancel()
+    }
+
+    @Test
+    fun `an endTurn pressed during an automatic session does not arm a later manual session`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime().apply { transcription = "Lenta" }), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+
+        // "He terminado" pressed during the automatic session is ignored there…
+        transport.endTurn()
+        Thread.sleep(100)
+        transport.close()
+
+        // …but it must not instantly close the first turn of the next session.
+        transport.manualTurn = true
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+        repeat(4) { source.queue.add(speech()) }
+        repeat(12) { source.queue.add(silence()) }
+        Thread.sleep(700)
+        assertEquals("a stale endTurn must not close the first manual turn", 0, engine.received.size)
+
+        // A fresh "He terminado" closes the turn normally.
+        transport.endTurn()
         val deadline = System.currentTimeMillis() + 5_000
         while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
         assertEquals(1, engine.received.size)

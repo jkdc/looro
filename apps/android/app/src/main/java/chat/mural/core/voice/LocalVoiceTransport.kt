@@ -9,7 +9,9 @@ import chat.mural.engines.local.WhisperStt
 import chat.mural.network.LiveSessionProvider
 import chat.mural.network.TeachingClient
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -74,7 +76,9 @@ class LocalVoiceTransport(
 
     /**
      * Beginner mode: when true the VAD never auto-ends the turn; the turn is
-     * processed only when [endTurn] is called (or at the 30 s safety cap).
+     * processed only when [endTurn] is called — or at the [MAX_TURN_MS] safety
+     * cap, which applies in both modes so a forgotten open turn can never
+     * buffer audio unbounded.
      */
     @Volatile var manualTurn = false
     @Volatile private var turnEndRequested = false
@@ -85,6 +89,22 @@ class LocalVoiceTransport(
     }
     @Volatile private var listenJob: Job? = null
     @Volatile private var sessionStartedAtMs = 0L
+
+    /**
+     * Side jobs launched outside the listen loop (the opening greeting, typed
+     * commentary): each is tied to the live session and cancelled by
+     * [stopLoop], so a slow in-flight reply can never outlive its session and
+     * speak into — or steal context from — the next one.
+     */
+    private val sessionJobs: MutableSet<Job> = ConcurrentHashMap.newKeySet()
+
+    /** Launches session-scoped work; [stopLoop] cancels everything tracked here. */
+    private fun launchSessionJob(dispatcher: CoroutineDispatcher, block: suspend CoroutineScope.() -> Unit): Job {
+        val job = scope.launch(dispatcher, block = block)
+        sessionJobs.add(job)
+        job.invokeOnCompletion { sessionJobs.remove(job) }
+        return job
+    }
 
     private var baseInstructions = ""
     private var historyContext = ""
@@ -104,6 +124,9 @@ class LocalVoiceTransport(
         baseInstructions = instructions
         appendedContext.clear()
         rollingTurns.clear()
+        // A "He terminado" armed by a previous session must not close the first
+        // turn of this one.
+        turnEndRequested = false
         historyContext = renderHistory(history)
         sessionLanguage = language?.take(2)?.lowercase() ?: "en"
         sessionStartedAtMs = System.currentTimeMillis()
@@ -125,7 +148,7 @@ class LocalVoiceTransport(
         log("voice session started (language='$sessionLanguage')")
         startListening()
         if (openOnStart) {
-            scope.launch(Dispatchers.Default) {
+            launchSessionJob(Dispatchers.Default) {
                 // The ViewModel appends the greeting instruction when it handles
                 // the session.started event (transport callbacks are funneled
                 // through a channel, so that happens asynchronously after
@@ -173,16 +196,21 @@ class LocalVoiceTransport(
                 var trailingSilenceMs = 0
                 var turnMs = 0
                 var lastUsageEmit = System.currentTimeMillis()
+                // Close and process whatever the current turn buffered (shared
+                // by the manual end request and the manual-mode safety cap).
+                suspend fun endBufferedTurn(reason: String) {
+                    val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
+                    speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                    log(reason)
+                    if (samples.isNotEmpty()) processTurn(samples)
+                }
                 while (coroutineContext.isActive && running) {
                     if (frameDelayMs > 0) delay(frameDelayMs)
 
                     // Manual mode: the user asked to close and process the turn now.
                     if (manualTurn && turnEndRequested) {
                         turnEndRequested = false
-                        val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
-                        speech = ArrayList(); speechMs = 0
-                        log("manual end of turn (${samples.size} frames buffered)")
-                        if (samples.isNotEmpty()) processTurn(samples)
+                        endBufferedTurn("manual end of turn")
                         continue
                     }
 
@@ -200,11 +228,11 @@ class LocalVoiceTransport(
                     }
 
                     speech.add(frame)
+                    val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
+                    turnMs += frameMs
 
                     if (!manualTurn) {
                         // Auto VAD (only in automatic mode).
-                        val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
-                        turnMs += frameMs
                         if (rms >= VAD_SPEECH_RMS) {
                             if (speechMs == 0) log("speech detected (rms=$rms)")
                             speechMs += frameMs
@@ -222,6 +250,10 @@ class LocalVoiceTransport(
                             processTurn(samples)
                             lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                         }
+                    } else if (turnMs >= MAX_TURN_MS) {
+                        // Safety cap (both modes): a forgotten open manual turn
+                        // must not buffer audio unbounded.
+                        endBufferedTurn("turn cap reached in manual mode (${turnMs} ms): closing the turn")
                     }
                     if (System.currentTimeMillis() - lastUsageEmit >= 15_000) {
                         lastUsageEmit = maybeEmitUsage(lastUsageEmit)
@@ -277,6 +309,8 @@ class LocalVoiceTransport(
             return
         }
         log("STT start (${durationMs} ms of audio, language='$sessionLanguage')")
+        // Note: the whisper JNI call cannot be interrupted on cancellation; the
+        // recorder stop in stopLoop() is what protects the microphone here.
         val stt = try {
             stt.transcribe(trimmed, sessionLanguage)
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
@@ -359,7 +393,7 @@ class LocalVoiceTransport(
             type.startsWith("session.commentary.append") -> {
                 val start = relativeMs()
                 emit(transcriptEvent(isInput = false, text = content, startMs = start, endMs = start + 500))
-                scope.launch(Dispatchers.IO) {
+                launchSessionJob(Dispatchers.IO) {
                     runCatching { speakSuppressed(content) }
                 }
                 return true
@@ -445,9 +479,24 @@ class LocalVoiceTransport(
 
     private fun stopLoop() {
         running = false
+        // Stop capture FIRST, synchronously: a blocking LLM/STT call can hold
+        // the listen loop (and its finally) far past session end, and only the
+        // recorder stop reliably releases the microphone and the OS recording
+        // indicator. The listen-loop finally stays as a safety net.
+        recorder?.stop()
+        recorder = null
+        // Side jobs (opening greeting, typed commentary) must not outlive the
+        // session; cancels an in-flight greeting/commentary before it can emit
+        // or speak into a restarted session.
+        sessionJobs.forEach { it.cancel() }
+        sessionJobs.clear()
         listenJob?.cancel()
         listenJob = null
         tts.stop()
+        // Best-effort abort of a hung network call (no-op for engines without
+        // one). The whisper JNI call cannot be interrupted; the recorder stop
+        // above is what actually protects the microphone.
+        engine.cancelInFlight()
     }
 
     companion object {
