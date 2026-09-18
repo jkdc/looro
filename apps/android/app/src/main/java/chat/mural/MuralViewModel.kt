@@ -106,6 +106,8 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     var isMuted by mutableStateOf(false); private set
     var inputLevel by mutableStateOf(0.0); private set
     var outputLevel by mutableStateOf(0.0); private set
+    /** Provisional on-device transcription while the user speaks; never stored as a fragment. */
+    var partialUserTranscript by mutableStateOf<String?>(null); private set
     var selectedTheme by mutableStateOf<ConversationTheme?>(null); private set
     var lookupResult by mutableStateOf<String?>(null); private set
     var lookupError by mutableStateOf<String?>(null); private set
@@ -870,6 +872,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         actionJob?.cancel(); clearLookup(); languageCheckJob?.cancel()
         delegations.values.toList().forEach { it.cancel() }; delegations.clear()
         transport.disconnect(); inputLevel = 0.0; outputLevel = 0.0; working = false; isMuted = false
+        partialUserTranscript = null
         updateSession { it.endedAt = nowSeconds(); it.usageFinal = final }
         state = "ended"
         session?.let {
@@ -890,6 +893,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         generation++; resetJob?.cancel(); actionJob?.cancel(); clearLookup(); assessmentJob?.cancel(); languageCheckJob?.cancel(); meanings.reset()
         session = null; selectedTheme = null; topicResult = null
         notice = null; working = false; state = "idle"; voiceSession = false
+        partialUserTranscript = null
     }
     private fun command(kind: String, content: String, delegationID: String? = null): Boolean {
         if (state != "active" || !voiceSession) return false
@@ -907,6 +911,12 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
                 updateSession { it.providerID = (event["session"] as? JsonObject)?.get("id")?.jsonPrimitive?.content ?: it.providerID }
                 command("instructions", if (session?.isListening == true) TeachingPolicy.listeningStory(language) else TeachingPolicy.greeting(language)); startDurationChecks()
             }
+            "session.input_transcript.partial" -> {
+                val text = event["delta"]?.jsonPrimitive?.contentOrNull ?: return
+                if (text.isBlank() || text.length > 50000) return
+                partialUserTranscript = text
+                lastActivity = nowSeconds()
+            }
             "session.input_transcript.delta", "session.output_transcript.delta" -> {
                 val text = event["delta"]?.jsonPrimitive?.contentOrNull ?: return
                 val start = event["start_ms"]?.jsonPrimitive?.intOrNull ?: return
@@ -915,6 +925,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
                 val speaker = if (event["type"]?.jsonPrimitive?.content == "session.input_transcript.delta") Speaker.user else Speaker.assistant
                 updateSession { it.append(Fragment(id = event["event_id"]?.jsonPrimitive?.content ?: UUID.randomUUID().toString(), speaker = speaker, text = text, startMS = start, endMS = end, meaningVisible = archive.preferences.meaningVisible)) }
                 lastActivity = nowSeconds()
+                if (speaker == Speaker.user) partialUserTranscript = null
                 if (speaker == Speaker.assistant) { scheduleTranslation(); if (state == "active") checkLanguage() } else scheduleAssessment()
             }
             "session.delegation.created" -> {

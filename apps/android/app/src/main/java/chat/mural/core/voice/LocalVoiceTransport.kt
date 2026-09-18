@@ -33,12 +33,15 @@ import kotlinx.serialization.json.put
  * vocabulary the WebRTC transport produces, so MuralViewModel needs no
  * engine-specific branches.
  *
- * Turn-taking (v1): continuous listening with an energy VAD — a turn ends
- * after [SILENCE_END_MS] of trailing silence once [SPEECH_START_MS] of speech
- * accumulated, capped at [MAX_TURN_MS]. While TTS speaks the microphone is
- * paused entirely ([AudioFrameSource.pause]) and restarted afterwards with the
- * stale buffered audio discarded, so speaker output is never re-captured as a
- * phantom turn. Levels may go quiet during playback for the same reason.
+ * Turn-taking: continuous listening with a noise-floor-tracked energy VAD
+ * ([AdaptiveVad]) — a turn ends after [SILENCE_END_MS] of trailing silence
+ * once [SPEECH_START_MS] of speech accumulated, capped at [MAX_TURN_MS].
+ * While TTS speaks the microphone is paused entirely ([AudioFrameSource.pause])
+ * and restarted afterwards with the stale buffered audio discarded, so speaker
+ * output is never re-captured as a phantom turn; with barge-in enabled (AEC
+ * devices) the mic stays live instead, the loop drops playback-period frames,
+ * and sustained voice energy stops the playback. Levels may go quiet during
+ * playback for the same reason.
  */
 private const val LOG_TAG = "MuralLocalEngine"
 
@@ -59,6 +62,15 @@ class LocalVoiceTransport(
 
     /** Learner-facing pace preference: slows the system TTS (the prompt carries the instruction for realtime engines). */
     @Volatile var slowSpeech: Boolean = false
+
+    /**
+     * Voice barge-in while the assistant speaks. Gated on the device's AEC
+     * capability: without it, loudspeaker echo could self-trigger. Frames
+     * captured during playback NEVER enter a turn buffer, so even a
+     * mis-trigger only interrupts the utterance — it can never create a
+     * phantom turn.
+     */
+    @Volatile var bargeIn: Boolean = AecAvailability.isSupported()
 
     override var onEvent: ((JsonObject) -> Unit)? = null
     override var onFailure: ((String) -> Unit)? = null
@@ -115,6 +127,11 @@ class LocalVoiceTransport(
     private val appendedContext = ArrayDeque<String>()
     private var sessionLanguage = "en"
 
+    /** In-flight partial transcription; superseded or cancelled at each new partial / turn end. */
+    private var partialJob: Job? = null
+    private var lastPartialClockMs = 0
+    private var lastPartialText: String? = null
+
     val started: Boolean get() = running
     val isMuted: Boolean get() = muted
 
@@ -127,6 +144,8 @@ class LocalVoiceTransport(
         baseInstructions = instructions
         appendedContext.clear()
         rollingTurns.clear()
+        partialJob?.cancel(); partialJob = null
+        lastPartialClockMs = 0; lastPartialText = null
         // A "He terminado" armed by a previous session must not close the first
         // turn of this one.
         turnEndRequested = false
@@ -194,17 +213,21 @@ class LocalVoiceTransport(
                 return@launch
             }
             recorder = source
+            val vad = AdaptiveVad()
             try {
                 var speech: MutableList<FloatArray> = ArrayList()
                 var speechMs = 0
                 var trailingSilenceMs = 0
                 var turnMs = 0
+                var partialClockMs = 0
+                var bargeMs = 0
                 var lastUsageEmit = System.currentTimeMillis()
                 // Close and process whatever the current turn buffered (shared
                 // by the manual end request and the manual-mode safety cap).
                 suspend fun endBufferedTurn(reason: String) {
                     val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
-                    speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                    speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
+                    lastPartialClockMs = 0; lastPartialText = null
                     log(reason)
                     if (samples.isNotEmpty()) processTurn(samples)
                 }
@@ -225,20 +248,35 @@ class LocalVoiceTransport(
                     }
                     val rms = MicRecorder.rms(frame)
                     onLevels?.invoke(rms.toDouble(), 0.0)
+                    val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
 
-                    if (muted || speaking) { // suppressed: drop audio, keep levels alive
-                        speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                    if (muted) { // suppressed: drop audio, keep levels alive
+                        speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
                         continue
                     }
+                    if (speaking) {
+                        // Barge-in: detect sustained voice energy over the
+                        // playback, but never buffer this audio (echo guard).
+                        if (bargeIn && rms >= BARGE_RMS) {
+                            bargeMs += frameMs
+                            if (bargeMs >= BARGE_TRIGGER_MS) {
+                                log("barge-in detected ($bargeMs ms over $BARGE_RMS): stopping playback")
+                                bargeMs = 0
+                                tts.stop()
+                            }
+                        } else bargeMs = 0
+                        continue
+                    }
+                    bargeMs = 0
 
                     speech.add(frame)
-                    val frameMs = frame.size * 1000 / MicRecorder.SAMPLE_RATE
                     turnMs += frameMs
 
                     if (!manualTurn) {
-                        // Auto VAD (only in automatic mode).
-                        if (rms >= VAD_SPEECH_RMS) {
-                            if (speechMs == 0) log("speech detected (rms=$rms)")
+                        // Auto VAD: noise-floor-tracked with hysteresis.
+                        val isSpeech = vad.observe(rms, speechMs > 0)
+                        if (isSpeech) {
+                            if (speechMs == 0) log("speech detected (rms=$rms, floor=${vad.floor})")
                             speechMs += frameMs
                             trailingSilenceMs = 0
                         } else if (speechMs > 0) {
@@ -250,15 +288,23 @@ class LocalVoiceTransport(
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
                             else log("turn cap reached (${turnMs} ms): closing the turn")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
-                            speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                            speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
+                            lastPartialClockMs = 0; lastPartialText = null
                             processTurn(samples)
                             lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                            continue
                         }
-                    } else if (turnMs >= MAX_TURN_MS) {
-                        // Safety cap (both modes): a forgotten open manual turn
-                        // must not buffer audio unbounded.
-                        endBufferedTurn("turn cap reached in manual mode (${turnMs} ms): closing the turn")
+                        partialClockMs = speechMs
+                    } else {
+                        partialClockMs = turnMs
+                        if (turnMs >= MAX_TURN_MS) {
+                            // Safety cap (both modes): a forgotten open manual turn
+                            // must not buffer audio unbounded.
+                            endBufferedTurn("turn cap reached in manual mode (${turnMs} ms): closing the turn")
+                            continue
+                        }
                     }
+                    maybeEmitPartial(speech, partialClockMs)
                     if (System.currentTimeMillis() - lastUsageEmit >= 15_000) {
                         lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                     }
@@ -271,10 +317,46 @@ class LocalVoiceTransport(
     }
 
     /**
-     * Speaks [text] with the microphone paused: capture stops before playback
-     * and restarts afterwards, with the audio retained across the pause
-     * discarded first — without this, pre-playback mic audio is replayed into
-     * the VAD as a phantom turn once speaking clears.
+     * While a turn is open, every [PARTIAL_EVERY_MS] of spoken audio runs a
+     * bounded whisper pass over a snapshot of the buffer and emits
+     * `session.input_transcript.partial` — provisional UI text only; the
+     * turn-final transcription still produces the stored fragment.
+     */
+    private fun maybeEmitPartial(speech: List<FloatArray>, clockMs: Int) {
+        if (clockMs < PARTIAL_MIN_SPEECH_MS || clockMs - lastPartialClockMs < PARTIAL_EVERY_MS) return
+        lastPartialClockMs = clockMs
+        partialJob?.cancel()
+        val snapshot = speech.flatMap { it.asSequence() }.toList()
+        val maxSamples = MAX_PARTIAL_AUDIO_MS * MicRecorder.SAMPLE_RATE / 1000
+        val tail = if (snapshot.size > maxSamples) snapshot.subList(snapshot.size - maxSamples, snapshot.size) else snapshot
+        val samples = tail.toFloatArray()
+        partialJob = launchSessionJob(Dispatchers.Default) {
+            runCatching {
+                val stt = stt.transcribe(MicRecorder.trimSilence(samples), sessionLanguage)
+                if (stt.isEmpty) return@runCatching
+                if (stt.text == lastPartialText) return@runCatching
+                lastPartialText = stt.text
+                logContent("partial: \"${stt.text}\"")
+                emit(buildJsonObject {
+                    put("type", "session.input_transcript.partial")
+                    put("event_id", UUID.randomUUID().toString())
+                    put("delta", stt.text)
+                })
+            }
+        }
+    }
+
+    /**
+     * Speaks [text] with capture suppressed. Without barge-in the mic is
+     * paused before playback and restarted afterwards, with the audio retained
+     * across the pause discarded first — without this, pre-playback mic audio
+     * is replayed into the VAD as a phantom turn once speaking clears.
+     *
+     * With barge-in enabled the mic stays live instead: the listen loop keeps
+     * receiving frames, discards them for turn buffering, and watches for
+     * sustained voice energy ([BARGE_RMS] for [BARGE_TRIGGER_MS]) — which stops
+     * this playback through [SpeechSink.stop], whose interrupted-utterance
+     * completion unwinds us here through the normal depth accounting.
      *
      * Reentrancy-safe: concurrent callers each hold a [speakingDepth] slot;
      * mic resume, stale-audio discard and clearing [speaking] happen only when
@@ -283,7 +365,8 @@ class LocalVoiceTransport(
      */
     private suspend fun speakSuppressed(text: String) {
         val source = recorder
-        source?.pause()
+        val suppressMic = !bargeIn
+        if (source != null && suppressMic) source.pause()
         speakingDepth.incrementAndGet()
         speaking = true
         try {
@@ -291,7 +374,7 @@ class LocalVoiceTransport(
         } finally {
             val remaining = speakingDepth.decrementAndGet()
             speaking = remaining > 0
-            if (remaining == 0 && running && source != null) {
+            if (remaining == 0 && running && source != null && suppressMic) {
                 // Capture is stopped, so the drain is a bounded sweep over the
                 // samples retained across pause() — never fresh audio.
                 source.drainStale()
@@ -304,6 +387,8 @@ class LocalVoiceTransport(
     }
 
     private suspend fun processTurn(samples: FloatArray) {
+        partialJob?.cancel()
+        partialJob = null
         log("turn end: captured ${samples.size * 1000L / MicRecorder.SAMPLE_RATE} ms of audio")
         val t0 = System.currentTimeMillis()
         val trimmed = MicRecorder.trimSilence(samples)
@@ -519,10 +604,27 @@ class LocalVoiceTransport(
         const val TTS_NORMAL_RATE = 1.0f
         const val TTS_SLOW_RATE = 0.8f
 
+        /** Partial transcription cadence and bounds (spoken-audio clock). */
+        const val PARTIAL_MIN_SPEECH_MS = 1_000
+        const val PARTIAL_EVERY_MS = 2_000
+        const val MAX_PARTIAL_AUDIO_MS = 8_000
+
+        /** Barge-in: loud, sustained energy during playback stops the TTS. */
+        const val BARGE_RMS = 0.06f
+        const val BARGE_TRIGGER_MS = 250
+
         /** Surfaced through [onFailure] when the device has no usable TTS. */
         const val TTS_UNAVAILABLE = "Speech output is unavailable on this device"
 
         /** Rolling in-session turns kept as context (limits prompt growth). */
         const val MAX_ROLLING_TURNS = 16
     }
+}
+
+/**
+ * Reports the device's hardware echo-cancellation capability without letting
+ * the missing android.media.audiofx runtime (JVM unit tests) fail the call.
+ */
+object AecAvailability {
+    fun isSupported(): Boolean = runCatching { android.media.audiofx.AcousticEchoCanceler.isAvailable() }.getOrDefault(false)
 }

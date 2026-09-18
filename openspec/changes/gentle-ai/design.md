@@ -96,15 +96,20 @@
   the event to provisional UI state only — **partials never create fragments**
   — and clears it on the final input delta, session end, or a new partial.
   Talk UI renders it as an interim line (secondary style).
-- **Barge-in.** Only when `AcousticEchoCanceler.isAvailable()` (the recorder's
-  `VOICE_COMMUNICATION` source then suppresses loudspeaker echo). While TTS
-  plays, frames are still read but discarded for turn buffering; energy above
-  `VAD_BARGE_RMS` sustained ≥ 250 ms stops playback (`tts.stop()`, whose
-  interrupted-utterance completion was fixed in `post-analysis-remediation`
-  Task 3.4), so `speakSuppressed` unwinds through its normal depth-accounting
-  path. A mis-trigger costs one interrupted utterance — never a phantom turn,
-  because frames captured during playback never enter a turn buffer. Without
-  AEC the behavior is unchanged (drop frames while speaking).
+- **Barge-in.** Only when `AcousticEchoCanceler.isAvailable()` (device
+  capability; `AecAvailability` tolerates the JVM's missing audiofx runtime).
+  With barge-in armed, `speakSuppressed` does **not** pause the mic — the
+  listen loop keeps receiving frames, discards them for turn buffering, and
+  stops playback when energy ≥ `BARGE_RMS` (0.06) sustains ≥ 250 ms
+  (`tts.stop()`, whose interrupted-utterance completion was fixed in
+  `post-analysis-remediation` Task 3.4), so `speakSuppressed` unwinds through
+  its normal depth-accounting path. Because playback-period frames never enter
+  a turn buffer, a mis-trigger costs one interrupted utterance — never a
+  phantom turn. Without AEC (or `bargeIn = false`) the pre-existing pause/
+  drain/resume behavior is unchanged. Note: `MicRecorder` uses the
+  `VOICE_RECOGNITION` source, so hardware AEC may not be active even where
+  `isAvailable()` reports true; live-device verification of the barge
+  thresholds stays a parked gate (as with the rest of the voice pipeline).
 - All D3 constants live in `LocalVoiceTransport`/`AdaptiveVad` companions;
   none enter the cross-platform CONSTANTS table (no iOS counterpart).
 

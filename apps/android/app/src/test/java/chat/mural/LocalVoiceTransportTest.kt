@@ -81,11 +81,12 @@ class LocalVoiceTransportTest {
     private class FakeTts(private val usable: Boolean = true) : SpeechSink {
         val spoken = mutableListOf<String>()
         val rates = mutableListOf<Float>()
+        var stopCalls = 0
         var initialized = false
         var onSpeak: (() -> Unit)? = null
         override suspend fun initialize(): Boolean { initialized = true; return usable }
         override suspend fun speak(text: String): TtsStats? { spoken.add(text); onSpeak?.invoke(); return TtsStats(1, 1) }
-        override fun stop() {}
+        override fun stop() { stopCalls++ }
         override fun setSpeechRate(rate: Float) { rates.add(rate) }
     }
 
@@ -509,7 +510,8 @@ class LocalVoiceTransportTest {
         repeat(30) { source.queue.add(silence()) }
         Thread.sleep(700)
         assertEquals(0, engine.received.size)
-        assertTrue(events.none { (it["type"]?.jsonPrimitive?.content ?: "").contains("transcript") })
+        // Provisional partials may stream, but the stored transcript waits for "He terminado".
+        assertTrue(events.none { (it["type"]?.jsonPrimitive?.content ?: "") == "session.input_transcript.delta" })
 
         // el usuario pulsa "He terminado"
         transport.endTurn()
@@ -688,5 +690,109 @@ class LocalVoiceTransportTest {
     private fun buildAppend(type: String, content: String): JsonObject = kotlinx.serialization.json.buildJsonObject {
         put("type", type)
         put("content", kotlinx.serialization.json.JsonPrimitive(content))
+    }
+
+    @Test
+    fun `partial transcripts stream while the turn is open and stay provisional`() {
+        val events = mutableListOf<JsonObject>()
+        val source = FakeFrameSource()
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = FakeTeachingClient(),
+            tts = FakeTts(),
+            frameSourceProvider = { source },
+            frameDelayMs = 0,
+        )
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        // ~5 s of speech: crosses the 1 s minimum and one 2 s cadence step.
+        repeat(40) { source.queue.add(speech()) }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (events.none { it["type"]?.jsonPrimitive?.content == "session.input_transcript.partial" } &&
+            System.currentTimeMillis() < deadline) Thread.sleep(25)
+        val partials = events.filter { it["type"]?.jsonPrimitive?.content == "session.input_transcript.partial" }
+        assertTrue("at least one partial", partials.isNotEmpty())
+        assertEquals("Hello there", partials.first()["delta"]?.jsonPrimitive?.content)
+
+        // Silence closes the turn; the final transcription arrives as a normal input delta.
+        repeat(14) { source.queue.add(silence()) }
+        val finalDeadline = System.currentTimeMillis() + 5_000
+        while (events.none { it["type"]?.jsonPrimitive?.content == "session.input_transcript.delta" } &&
+            System.currentTimeMillis() < finalDeadline) Thread.sleep(25)
+        assertTrue(events.any { it["type"]?.jsonPrimitive?.content == "session.input_transcript.delta" })
+        transport.close()
+    }
+
+    @Test
+    fun `barge-in stops playback and never buffers the interrupted speech as a turn`() {
+        val events = mutableListOf<JsonObject>()
+        val source = FakeFrameSource()
+        val tts = FakeTts()
+        val engine = FakeTeachingClient()
+        val playback = CountDownLatch(1)
+        tts.onSpeak = { playback.await() } // speak() blocks: the transport stays "speaking"
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = engine,
+            tts = tts,
+            frameSourceProvider = { source },
+            frameDelayMs = 0,
+        )
+        transport.bargeIn = true
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        // Typed commentary starts playback through speakSuppressed.
+        transport.send(buildAppend("session.commentary.append", "Claro, te cuento"))
+        val spokenDeadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < spokenDeadline) Thread.sleep(25)
+        assertEquals(1, tts.spoken.size)
+
+        // Sustained loud energy during playback (barge window) must stop the TTS.
+        repeat(8) { source.queue.add(speech()) }
+        val stopDeadline = System.currentTimeMillis() + 5_000
+        while (tts.stopCalls == 0 && System.currentTimeMillis() < stopDeadline) Thread.sleep(25)
+        assertTrue("barge-in stops the playback", tts.stopCalls >= 1)
+        playback.countDown()
+
+        // The frames captured during playback were dropped, never buffered.
+        repeat(14) { source.queue.add(silence()) }
+        Thread.sleep(400)
+        assertTrue(events.none { it["type"]?.jsonPrimitive?.content == "session.input_transcript.delta" })
+        assertEquals("no turn reached the engine", 0, engine.received.size)
+        transport.close()
+    }
+
+    @Test
+    fun `without barge-in the mic is paused during playback like before`() {
+        val source = FakeFrameSource()
+        val tts = FakeTts()
+        val playback = CountDownLatch(1)
+        tts.onSpeak = { playback.await() }
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = FakeTeachingClient(),
+            tts = tts,
+            frameSourceProvider = { source },
+            frameDelayMs = 0,
+        )
+        transport.bargeIn = false
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        transport.send(buildAppend("session.commentary.append", "Claro"))
+        val spokenDeadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < spokenDeadline) Thread.sleep(25)
+        assertTrue("capture paused during playback", source.paused)
+        playback.countDown()
+        val resumeDeadline = System.currentTimeMillis() + 5_000
+        while (source.resumeCount == 0 && System.currentTimeMillis() < resumeDeadline) Thread.sleep(25)
+        assertEquals(1, source.resumeCount)
+        transport.close()
     }
 }

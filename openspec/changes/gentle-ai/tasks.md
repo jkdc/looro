@@ -2,78 +2,78 @@
 
 ## Task 1 — K10: tutor speech pace
 
-- [ ] 1.1 `Preferences.slowSpeech: Bool?` / `slowSpeech: Boolean? = null` on both
+- [x] 1.1 `Preferences.slowSpeech: Bool?` / `slowSpeech: Boolean? = null` on both
       platforms; old archives and cross-platform fixtures still decode.
-- [ ] 1.2 `TeachingPolicy.voice` gains `slowSpeech: Bool` + the pace line;
+- [x] 1.2 `TeachingPolicy.voice` gains `slowSpeech: Bool` + the pace line;
       `paceSlow()`/`paceNormal()` prompts added on both platforms with
       identical wording; `check_cross_platform.py` green.
-- [ ] 1.3 Session start passes the preference on both platforms; the Android
+- [x] 1.3 Session start passes the preference on both platforms; the Android
       local pipeline applies the system-TTS speech rate.
-- [ ] 1.4 Settings toggle on both apps (Android EN/ES strings); applies to new
+- [x] 1.4 Settings toggle on both apps (Android EN/ES strings); applies to new
       sessions only.
-- [ ] 1.5 Unit tests: pace line present/absent in the voice prompt (JVM);
+- [x] 1.5 Unit tests: pace line present/absent in the voice prompt (JVM);
       local transport configures TTS rate (fake-based).
 
 ## Task 2 — K9: listening comprehension mode
 
-- [ ] 2.1 `Preferences.listeningPractice: Bool?` and `SessionRecord.mode:
+- [x] 2.1 `Preferences.listeningPractice: Bool?` and `SessionRecord.mode:
       String?` on both platforms; fixtures still decode.
-- [ ] 2.2 `TeachingPolicy.listeningStory(language:)` prompt on both platforms,
+- [x] 2.2 `TeachingPolicy.listeningStory(language:)` prompt on both platforms,
       checker-enforced; sent instead of `greeting` when the session mode is
       listening.
-- [ ] 2.3 Sessions created with mode `"listening"` when the preference is on;
+- [x] 2.3 Sessions created with mode `"listening"` when the preference is on;
       `scheduleTranslation` suppressed for listening sessions on both
       platforms (word lookup unaffected).
-- [ ] 2.4 Settings toggle on both apps (Android EN/ES strings) with a caption
+- [x] 2.4 Settings toggle on both apps (Android EN/ES strings) with a caption
       explaining the exercise.
-- [ ] 2.5 Unit tests: listening prompt replaces greeting (JVM + fake);
+- [x] 2.5 Unit tests: listening prompt replaces greeting (JVM + fake);
       meanings not scheduled for a listening session; mode persisted.
 
 ## Task 3 — K3: progress and streaks
 
-- [ ] 3.1 `LearningStats` + `LearningEngine.stats` on both platforms: totals,
+- [x] 3.1 `LearningStats` + `LearningEngine.stats` on both platforms: totals,
       words per bar, active/longest streak (local-day boundary), last-14-days
       voice minutes, capabilities count and latest descriptor.
-- [ ] 3.2 JVM tests with fixed archives (streak across month boundary, gap day,
+- [x] 3.2 JVM tests with fixed archives (streak across month boundary, gap day,
       same-day multiple sessions, empty archive); equivalent Swift core tests.
-- [ ] 3.3 Progress screen on both apps reached from Settings; read-only,
+- [x] 3.3 Progress screen on both apps reached from Settings; read-only,
       recomputed on open; Android strings EN/ES.
 
 ## Task 4 — K12: directed writing practice
 
-- [ ] 4.1 `WordPractice` core on both platforms: normalization (trim, NFC,
+- [x] 4.1 `WordPractice` core on both platforms: normalization (trim, NFC,
       casefold, whitespace collapse, surrounding punctuation) and acceptance
       of `form` or `lemma`.
-- [ ] 4.2 Unit tests both platforms: exact, case/punctuation-insensitive,
+- [x] 4.2 Unit tests both platforms: exact, case/punctuation-insensitive,
       lemma acceptance, diacritic mismatch rejected, empty answer rejected.
-- [ ] 4.3 Drill screen on the Words tab of both apps: up to 10 due words,
+- [x] 4.3 Drill screen on the Words tab of both apps: up to 10 due words,
       masked example hint, correct/incorrect feedback with the right spelling,
       end summary; Android strings EN/ES.
 
 ## Task 5 — D3: partials, barge-in, adaptive VAD (Android local path)
 
-- [ ] 5.1 `AdaptiveVad`: noise-floor tracking + hysteresis; unit tests with
+- [x] 5.1 `AdaptiveVad`: noise-floor tracking + hysteresis; unit tests with
       synthetic frames (quiet-room floor drop, speech detection, soft trailing
       syllable kept, sustained noise floor rise).
-- [ ] 5.2 `LocalVoiceTransport` uses `AdaptiveVad` in auto mode; manual mode
+- [x] 5.2 `LocalVoiceTransport` uses `AdaptiveVad` in auto mode; manual mode
       semantics unchanged; silence-window setting still honored.
-- [ ] 5.3 Partial transcription: bounded snapshot (≤ 8 s), 2 s cadence, 1 s
+- [x] 5.3 Partial transcription: bounded snapshot (≤ 8 s), 2 s cadence, 1 s
       minimum, supersede/cancel of stale jobs, dedup of unchanged text,
       `session.input_transcript.partial` event; fake-based tests.
-- [ ] 5.4 ViewModel maps partials to provisional UI state only (never a
+- [x] 5.4 ViewModel maps partials to provisional UI state only (never a
       fragment) and clears on final input delta/end; Talk screen renders the
       interim line.
-- [ ] 5.5 Barge-in gated on AEC availability: sustained ≥ `VAD_BARGE_RMS` for
+- [x] 5.5 Barge-in gated on AEC availability: sustained ≥ `VAD_BARGE_RMS` for
       250 ms during playback stops TTS through the depth-accounted path; frames
       during playback never enter the turn buffer; fake-based tests; disabled
       without AEC.
-- [ ] 5.6 `:app` + `:core:engine-local` suites green; instrumented tests still
+- [x] 5.6 `:app` + `:core:engine-local` suites green; instrumented tests still
       compile.
 
 ## Task 6 — Record and verification
 
-- [ ] 6.1 Full Android suites (`:app:testDebugUnitTest`,
+- [x] 6.1 Full Android suites (`:app:testDebugUnitTest`,
       `:core:engine-local:testDebugUnitTest`) + `check_cross_platform.py` +
       scripts tests green.
-- [ ] 6.2 Spec delta and this record finalized; verify-report.md written with
+- [x] 6.2 Spec delta and this record finalized; verify-report.md written with
       the macOS/iOS gate restated.

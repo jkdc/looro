@@ -145,6 +145,11 @@ fun TalkScreen(
             }
         }
         Spacer(Modifier.height(if (compact) 12.dp else 20.dp - 8.dp * readingSpace))
+        vm.partialUserTranscript?.let { partial ->
+            Text(partial, style = MaterialTheme.typography.bodySmall, color = MuralColors.Secondary,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().testTag("partial-transcript"))
+            Spacer(Modifier.height(4.dp))
+        }
         Column(
             // Each language keeps a share of the available space. A single scroller let
             // long target-language replies push their meaning entirely below the viewport.
