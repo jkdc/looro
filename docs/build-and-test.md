@@ -27,7 +27,7 @@ The core suite covers evidence validation, transcript revisions, language isolat
 ## Check the Android port and the cross-platform contracts
 
 ```sh
-(cd apps/android && ./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug)
+(cd apps/android && ./gradlew :app:testDebugUnitTest :core:engine-local:testDebugUnitTest :app:lintDebug :app:assembleDebug)
 ```
 
 From the repository root, run the same checks CI runs on every pull request:

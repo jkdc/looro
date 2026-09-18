@@ -25,7 +25,8 @@ Pinyin uses the MIT-licensed [phrase-pinyin-data](https://github.com/mozillazg/p
 ## Components
 
 - `core/`: serializable models, the v1/v2 archive, language modules, evidence rules, teaching policy, `MeaningController`, `FinalAssessmentQueue`, session limits and usage summary. No Android dependencies, so it runs in JVM tests.
-- `network/`: direct HTTPS client for OpenAI, AES-GCM credentials protected by Android Keystore, native WebRTC transport and the platform language detector.
+- `network/`: direct HTTPS client for OpenAI, AES-GCM credentials protected by Android Keystore (the OpenAI key, via `CredentialStore`), native WebRTC transport and the platform language detector.
+- `core/engines/`: the build-time conversation-engine factory and its adapters (OpenAI through `network/`, plus OpenAI-compatible DeepSeek and GLM). `ApiKeysStore` reads the DeepSeek/GLM keys from a plaintext `api_keys.properties` file in the app's external files directory.
 - `LearningRepository`: private `learning.json` written with `AtomicFile`. It never contains the API key.
 - `MuralViewModel`: conversation state, duration and inactivity limits, cancellation, assessments, meanings and persistence. Isolated copies prevent a late response from changing another conversation.
 - `ui/` and `MainActivity`: Compose screens, explicit consent, system permissions, export and import through the Android document picker, and accessibility. Copy lives in `res/values` (English) and `res/values-es` (Spanish).
@@ -36,7 +37,7 @@ Pinyin uses the MIT-licensed [phrase-pinyin-data](https://github.com/mozillazg/p
 | --- | --- |
 | SwiftUI / Observation | Compose / view model state |
 | SwiftData with one logical archive | Private JSON with atomic writes |
-| Keychain | Android Keystore AES-GCM and private encrypted preferences |
+| Keychain | Android Keystore AES-GCM for the OpenAI key (`CredentialStore`) and private encrypted preferences; DeepSeek/GLM keys are plaintext properties in the app's external files dir (`ApiKeysStore`) |
 | AVAudioSession | AudioManager and audio focus |
 | stasel/WebRTC | webrtc-sdk for Android |
 | iOS recording permission | Runtime `RECORD_AUDIO` |

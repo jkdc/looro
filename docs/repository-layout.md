@@ -5,12 +5,13 @@ Mural keeps both native apps and their API in one repository. Each has its own b
 | Location | Responsibility |
 | --- | --- |
 | `apps/ios/` | Xcode project, SwiftUI app, Swift package, signing configuration and iPhone tests |
-| `apps/android/` | Gradle project, Compose app, Android resources and Android tests |
+| `apps/android/` | Gradle project, Compose app, Android resources and Android tests, the `core/engine-local` whisper STT/TTS module, local deploy scripts and the `Makefile` |
 | `services/api/` | Account verification, minute ledger, operator tools, PostgreSQL migrations and server deployment |
 | `shared/contracts/` | Public request and response formats |
 | `shared/fixtures/` | Learning archives and expected outcomes checked by both native clients |
 | `scripts/` | Content generation, project generation and compatibility checks |
 | `release/` | Store submission material and release requirements |
+| `openspec/` | Change proposals, task records and verification reports for completed engineering changes |
 
 Run repository scripts from the root. Run Gradle from `apps/android/` and server commands from `services/api/`. Swift commands use `--package-path apps/ios`. Open `apps/ios/Mural.xcodeproj` in Xcode. The [build guide](build-and-test.md) gives the commands.
 
