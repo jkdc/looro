@@ -5,9 +5,16 @@
 **pass** (with documented boundaries — iOS not compiled, live-device and macOS
 verification runs pending; see "Not verified by automation")
 
-Per-task implementer/reviewer reports live in
-`.zuperpowers/sdd/2026-09-17-post-analysis-remediation/task-{1..7}-report.md`;
-review rounds and deferred minors are ledgered in the sibling `progress.md`.
+The per-task implementer/reviewer reports (and the sibling `progress.md`
+ledger) were controller-session artifacts under
+`.zuperpowers/sdd/2026-09-17-post-analysis-remediation/` and are **not
+preserved in this repository**. The durable evidence is:
+
+1. the commit list in the table below (each hash verifiable with
+   `git log --oneline -1 <hash>`),
+2. the runnable suites (Android unit tests green — 353 on the final state of
+   this change; `scripts/tests` 54; backend 358/358 with PostgreSQL), and
+3. this document.
 
 ## Evidence
 

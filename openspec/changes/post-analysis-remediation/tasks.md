@@ -59,6 +59,7 @@
 - Meanings keyless-failure UX: use `error_missing_engine_key` instead of the generic meanings failure for keyless remote engines.
 - Remove or annotate the now-dead `error_topic_unsourced` string.
 - aapt2 version sort: filter build-tools directories with `fullmatch(r'\d+(?:\.\d+)*')` so preview/rc dirs cannot outrank stable.
+- Conditional inclusion of the native `:core:engine-local` module before merging to `main`: the whisper `.so` currently ships in every build (unused with `ENGINE=openai`), as documented in `apps/android/docs/conversation-engines.md`.
 - iOS: nonisolated transport teardown so `deinit` can disconnect a still-active session; clamp-on-load tolerance for pre-existing over-cap titles; reset `confirmingErase` after erase-and-restart.
 - Whisper dotprod/i8mm flag re-tuning: measure STT latency after the llama-flag removal and re-scope flags to whisper if warranted.
 - Live-device verification of the voice pipeline (mic echo suppression, TTS `onStop`) and a real CI run confirming the 25-minute timeout with the whisper native compile.

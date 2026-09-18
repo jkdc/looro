@@ -3,7 +3,8 @@
 ## Intent
 
 Remediate the concrete defects found by the 2026-09-17 deep analysis of
-`feature/switchable-conversation-engine` (`informe-analisis-2026-09-17.md`),
+`feature/switchable-conversation-engine` (a local working-analysis document,
+`informe-analisis-2026-09-17.md`, not tracked in this repository),
 across Android, iOS, CI, and the backend, and record one product decision: the
 on-device llama.cpp conversation engine is discarded while the whisper STT +
 TTS voice pipeline is retained for the remote engines.
