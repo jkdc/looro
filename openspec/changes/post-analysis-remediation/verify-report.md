@@ -20,7 +20,7 @@ preserved in this repository**. The durable evidence is:
 
 | Task | Commits (8f87596..HEAD) | Evidence | Result |
 |---|---|---|---|
-| 1 — key purge | `cfb5ff4`, `b7cf3be` (history rewritten under them) | `git log --all --oneline -- apps/android/api-keys.properties` empty; key prefix absent from every revision; working-tree file SHA unchanged (`377ab3b0…`), ignored; scanner unittest: **Ran 54 tests … OK** | pass |
+| 1 — key purge | `cfb5ff4`, `b7cf3be` (history rewritten under them) | `git log --all --oneline -- apps/android/api-keys.properties` empty; key prefix absent from every revision; working-tree file local, untracked, and gitignored (contents intentionally not verified in-repo); scanner unittest: **Ran 54 tests … OK** | pass |
 | 2 — engine removal | `3aad5d0`, `5829d8b` | `grep -rni llama` (excluding build dirs/docs notes) clean; `./gradlew :app:testDebugUnitTest :core:engine-local:testDebugUnitTest` → **341 tests, 0 failures**; whisper CMake builds `libmural_whisper.so` (arm64-v8a, x86_64) | pass |
 | 3 — voice fixes | `c8661d7`, `be996b1`, `888fb21` | `:app` **tests=345 failures=0** (LocalVoiceTransportTest 14, MuralViewModelTest 8) + `:core:engine-local` tests=5 (new UtteranceSignalRouterTest); `assembleUiTestAndroidTest` successful | pass |
 | 4 — engine parity | `8eb2b79` | `:app` **tests=348 failures=0**; new OpenAICompatibleEngine-style meanings request/parse tests; keyless gate + sourceless-topic degradation covered | pass |
