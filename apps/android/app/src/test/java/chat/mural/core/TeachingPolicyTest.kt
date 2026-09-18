@@ -22,4 +22,23 @@ class TeachingPolicyTest {
         assertTrue(prompt.contains(TeachingPolicy.paceSlow()))
         assertFalse(prompt.contains(TeachingPolicy.paceNormal()))
     }
+
+    @Test
+    fun `listening story opens the exercise instead of the greeting`() {
+        val story = TeachingPolicy.listeningStory(language)
+        assertTrue(story.contains("listening comprehension"))
+        assertTrue(story.contains(language.name))
+        assertTrue(story != TeachingPolicy.greeting(language))
+    }
+
+    @Test
+    fun `session mode records the listening exercise`() {
+        assertFalse(SessionRecord().isListening)
+        val listening = SessionRecord(mode = "listening")
+        assertTrue(listening.isListening)
+        // The mode survives a backup round trip like every stored session field.
+        val archive = Archive(sessions = mutableListOf(listening))
+        val restored = ArchiveCodec.decode(ArchiveCodec.encode(archive))
+        assertTrue(restored.sessions.single().isListening)
+    }
 }

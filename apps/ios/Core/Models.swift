@@ -125,10 +125,12 @@ public struct SessionRecord: Codable, Identifiable, Sendable {
     public var outputTokens = 0
     public var searchCalls = 0
     public var endReason: String?
+    public var mode: String?
     public init(languageID: String = LanguageRegistry.defaultID, themeID: String? = nil, title: String? = nil) {
         self.languageID = languageID; self.themeID = themeID
         self.title = title ?? LanguageRegistry.module(for: languageID)?.defaultTitle ?? "A conversation"
     }
+    public var isListening: Bool { mode == "listening" }
     public var passages: [Passage] { Transcript.passages(fragments) }
     public mutating func append(_ fragment: Fragment) {
         guard !fragments.contains(where: { $0.id == fragment.id }) else { return }

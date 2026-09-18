@@ -768,7 +768,8 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
         generation++; resetJob?.cancel(); assessmentJob?.cancel(); actionJob?.cancel(); clearLookup(); working = false; meanings.reset()
         dismissError(); notice = null; isMuted = false
         voiceSession = voice; lastActivity = nowSeconds()
-        val record = SessionRecord(id = id, languageID = language.id, themeID = selectedTheme?.id, title = selectedTheme?.title ?: language.defaultTitle)
+        val record = SessionRecord(id = id, languageID = language.id, themeID = selectedTheme?.id, title = selectedTheme?.title ?: language.defaultTitle,
+            mode = if (archive.preferences.listeningPractice == true) "listening" else null)
         topicResult?.takeIf { it.languageID == language.id && selectedTheme?.id == "current" }?.let { record.topics += it }
         session = record; save(record)
     }
@@ -901,7 +902,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             "session.started" -> if (state == "connecting") {
                 state = "active"; lastActivity = nowSeconds()
                 updateSession { it.providerID = (event["session"] as? JsonObject)?.get("id")?.jsonPrimitive?.content ?: it.providerID }
-                command("instructions", TeachingPolicy.greeting(language)); startDurationChecks()
+                command("instructions", if (session?.isListening == true) TeachingPolicy.listeningStory(language) else TeachingPolicy.greeting(language)); startDurationChecks()
             }
             "session.input_transcript.delta", "session.output_transcript.delta" -> {
                 val text = event["delta"]?.jsonPrimitive?.contentOrNull ?: return
@@ -957,9 +958,11 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
     private fun scheduleTranslation(utteranceComplete: Boolean = state == "ended") {
         // Meanings are a plain chat completion on every engine (the conversation
         // never queues behind them on remote engines), so the learning loop works
-        // identically with openai, deepseek and glm.
+        // identically with openai, deepseek and glm. Listening-practice sessions
+        // hide subtitles for the whole exercise; word lookup stays available.
         if (!archive.preferences.meaningVisible || archive.preferences.aiConsentVersion != 1) return
         val current = session ?: return
+        if (current.isListening) return
         val passage = current.passages.lastOrNull { it.speaker == Speaker.assistant } ?: return
         val request = MeaningRequest(current.id, passage, current.languageID, archive.preferences.meaningLanguage)
         meanings.update(request, current.translations[request.cacheKey], utteranceComplete, conversationEnded = state == "ended")

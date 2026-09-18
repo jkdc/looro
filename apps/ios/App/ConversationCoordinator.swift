@@ -123,6 +123,7 @@ import MuralCore
         lastLanguageCheck = ""; pendingCommands = [:]
         state = .connecting; isMuted = false
         var record = SessionRecord(languageID: language.id, themeID: selectedTheme?.id, title: selectedTheme?.title)
+        if store.preferences.listeningPractice == true { record.mode = "listening" }
         if let pendingTopic { record.topics = [pendingTopic] }
         session = record; store.save(record)
         let generation = record.id
@@ -270,7 +271,7 @@ import MuralCore
             session?.providerID = (event["session"] as? [String: Any])?["id"] as? String
             // The usage estimate is recorded only once the session truly starts, so aborted connects don't log phantom voice time.
             session?.voiceSeconds = 15
-            append("instructions", TeachingPolicy.greeting(language: language))
+            append("instructions", session?.isListening == true ? TeachingPolicy.listeningStory(language: language) : TeachingPolicy.greeting(language: language))
             startDurationChecks(); save()
         case "session.input_transcript.delta", "session.output_transcript.delta":
             guard state == .active || state == .closing, let delta = event["delta"] as? String,
@@ -313,7 +314,7 @@ import MuralCore
         }
     }
     private func scheduleTranslation() {
-        guard store.preferences.meaningVisible, let session, let passage = assistantPassage else { return }
+        guard store.preferences.meaningVisible, let session, let passage = assistantPassage, !session.isListening else { return }
         let request = MeaningRequest(sessionID: session.id, passage: passage, learningLanguageID: session.languageID, meaningLanguage: store.preferences.meaningLanguage)
         meanings.update(request, cached: session.translations[request.cacheKey])
     }

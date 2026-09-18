@@ -85,8 +85,9 @@ data class SessionRecord(
     var fragments: MutableList<Fragment> = mutableListOf(), var assessments: MutableList<Assessment> = mutableListOf(),
     var translations: MutableMap<String,String> = mutableMapOf(), var topics: MutableList<TopicBrief> = mutableListOf(),
     var voiceSeconds: Double = 0.0, var usageFinal: Boolean = false, var inputTokens: Int = 0,
-    var outputTokens: Int = 0, var searchCalls: Int = 0, var endReason: String? = null
+    var outputTokens: Int = 0, var searchCalls: Int = 0, var endReason: String? = null, var mode: String? = null
 ) {
+    val isListening get() = mode == "listening"
     val passages get() = Transcript.passages(fragments)
     fun append(f: Fragment) { if (fragments.none { it.id == f.id }) { fragments += f; invalidateChangedAssessments() } }
     fun invalidateChangedAssessments() { val current = passages.associate { it.id to it.revisionKey }; assessments.removeAll { current[it.passageID] != it.revisionKey } }

@@ -38,6 +38,9 @@ public enum TeachingPolicy {
     public static func greeting(language: LanguageModule) -> String {
         "Begin this new conversation now, without waiting for the learner to speak. Say ‘\(language.greeting)’ in \(language.name) and ask one short, natural question. Then pause and listen. All speech must be in \(language.name)."
     }
+    public static func listeningStory(language: LanguageModule) -> String {
+        "Run a listening comprehension exercise now, without waiting for the learner to speak. Tell one very short, simple story in \(language.name), about 90 words, suited to the learner's level. Narrate it naturally without pausing for replies and without translating. Then ask one short question about the story and wait. Ask further questions one at a time. If the learner answers in another language, gently invite a \(language.name) answer. Keep all your speech in \(language.name)."
+    }
     public static func help(language: LanguageModule) -> String {
         "The learner asks for help. Restate the last idea more simply and slowly in \(language.name), with one concrete example. Then wait for a reply."
     }
