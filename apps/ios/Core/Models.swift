@@ -163,9 +163,10 @@ public struct Archive: Codable, Sendable {
     public static let maximumEncodedBytes = 30_000_000
     private static let maximumSessions = 10_000
     // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
+    // Write sites clamp to these too, so a long model reply can never make a saved session fail validation here.
     public static let maximumTitleCharacters = 200
-    private static let maximumTopicTextCharacters = 20_000
-    private static let maximumTranslationCharacters = 10_000
+    public static let maximumTopicTextCharacters = 20_000
+    public static let maximumTranslationCharacters = 10_000
     public var schemaVersion = 2
     public var sessions: [SessionRecord] = []
     public var preferences = Preferences()

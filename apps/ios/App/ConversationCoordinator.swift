@@ -58,7 +58,8 @@ import MuralCore
         }
         meanings.onResult = { [weak self] request, result in
             guard let self, self.session?.id == request.sessionID else { return }
-            self.session?.translations[request.cacheKey] = result.text
+            // Bound replies so saved sessions always pass Archive validation.
+            self.session?.translations[request.cacheKey] = String(result.text.prefix(Archive.maximumTranslationCharacters))
             self.session?.inputTokens += result.inputTokens; self.session?.outputTokens += result.outputTokens
             self.save()
         }
@@ -431,7 +432,8 @@ import MuralCore
                 guard self.session?.id == snapshot.id, self.state == .active else { return }
                 self.addUsage(result.usage)
                 if !result.sources.isEmpty {
-                    self.session?.topics.append(TopicBrief(languageID: targetLanguage.id, query: "From our conversation", text: result.text, sources: result.sources))
+                    // Bound lookups so saved sessions always pass Archive validation.
+                    self.session?.topics.append(TopicBrief(languageID: targetLanguage.id, query: "From our conversation", text: String(result.text.prefix(Archive.maximumTopicTextCharacters)), sources: result.sources))
                 }
                 self.append("commentary", result.text, delegationID: id); self.save()
             } catch is CancellationError { }
@@ -478,7 +480,8 @@ import MuralCore
         let result = try await api.respond(instructions: TeachingPolicy.currentTopic(language: targetLanguage), input: String(query.prefix(500)), search: true)
         guard generation == languageGeneration else { throw CancellationError() }
         guard !result.sources.isEmpty else { throw TopicError.unsourced }
-        let brief = TopicBrief(languageID: targetLanguage.id, query: query, text: result.text, sources: result.sources)
+        // Bound topic text so saved sessions always pass Archive validation.
+        let brief = TopicBrief(languageID: targetLanguage.id, query: query, text: String(result.text.prefix(Archive.maximumTopicTextCharacters)), sources: result.sources)
         if session == nil || !isRunning {
             var saved = SessionRecord(languageID: targetLanguage.id, title: query); saved.endedAt = .now; saved.topics = [brief]
             saved.inputTokens = result.usage.input; saved.outputTokens = result.usage.output; saved.searchCalls = result.usage.searches; store.save(saved)
