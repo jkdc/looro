@@ -109,6 +109,10 @@ automatically. Whisper adds ~300 MB while loaded.
   (degradation, not an error). Topic requests still succeed on `deepseek`/`glm`:
   they are presented without the sources UI (the UI hides the sources section
   when a brief has none) instead of failing with `error_topic_unsourced`.
+- Mid-conversation voice delegation (the tutor asking the client to fetch a
+  sourced current topic) is an OpenAI Realtime server capability: only that
+  server emits `session.delegation.created`. `deepseek`/`glm` voice sessions
+  never delegate; the Themes tab's topic request is the supported path there.
 - The learning loop (meanings panel, word lookup, written-session help, topic
   requests) is engine-agnostic: the same `teaching()`/`TeachingClient.respond`
   path serves every engine, and readiness gates accept the active engine's own

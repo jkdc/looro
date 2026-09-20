@@ -17,7 +17,7 @@ Built with SwiftUI and Liquid Glass on iPhone, and Jetpack Compose on Android. L
 
 A native Android client is available in [`apps/android/`](apps/android/README.md), with voice and written conversation, the same eight language modules, local learning records and iPhone-compatible JSON backups. Its interface is English, and Spanish on a phone set to Spanish. It runs on Android 8.0 or later and uses your own API key for the engine you build in: the OpenAI key is stored with Android Keystore, while DeepSeek and GLM keys live in the Git-ignored `api-keys.properties` pushed as `api_keys.properties` to the app's external files directory (see [conversation engines](apps/android/docs/conversation-engines.md)). The iPhone client remains available below.
 
-See the [Android installation/build guide](docs/run-on-android.md) and [Android verification record](verification/android-validation.md). Build a personal-install APK with Java 17 and Android SDK 36:
+See the [Android installation/build guide](docs/run-on-android.md) and the (historical, 12 September) [Android verification record](verification/android-validation.md). Build a personal-install APK with Java 17 and Android SDK 36:
 
 ```sh
 cd apps/android
@@ -77,7 +77,9 @@ A free Personal Team can run the app on your own phone; TestFlight and App Store
 
 - **A warm welcome:** choose a learning language and a subtitle language in two short screens, with a greeting that changes languages.
 - **Conversation practice:** live voice, gentle corrections, optional meaning subtitles, word lookup, mute, and a typed reply when speaking is inconvenient.
-- **Themes:** 24 conversation settings, with cultural details supplied by each language module. You can also request a current topic; web search supplies source links.
+- **Tuned to you:** a slower-speech setting for new conversations, and a listening-practice mode: a short story without meaning subtitles (the written story stays on screen, and word lookup remains).
+- **Practice between conversations:** a Progress screen with totals, day streaks and your last two weeks, plus a writing drill over due words on the Words tab.
+- **Themes:** 24 conversation settings, with cultural details supplied by each language module. You can also request a current topic; on the OpenAI engine web search supplies source links, while the DeepSeek and GLM engines answer without web sources.
 - **Adaptive practice:** vocabulary and provisional ability observations come from validated conversation evidence. Each learning language keeps separate progress.
 - **Recall bars:** one to three bars summarise repeated retrieval over time. Three bars require spaced evidence in different contexts. These are product heuristics, not calibrated forgetting probabilities or a language certificate.
 - **A fresh start:** the Talk screen returns to its greeting 15 seconds after a conversation ends. Tap **New conversation** to reset immediately. Your saved conversations and learning remain.
@@ -117,7 +119,7 @@ xcodebuild -project apps/ios/Mural.xcodeproj -scheme Mural \
 
 For UI tests, create or select an iPhone 17 simulator in Xcode, then run **Product → Test**. The tests use in-memory fixtures and do not require an API key. More commands and preview options are in [the build guide](docs/build-and-test.md).
 
-The iPhone language release recorded on 13 September 2026 passed **70 core tests and 20 native UI tests**, including Mandarin pinyin, all four new onboarding choices and the largest accessibility text size. **79 backend tests** passed with an isolated PostgreSQL database and no skips. German, Italian, Brazilian Portuguese and Mandarin each passed a live iPhone check using synthetic typed replies and real voice output, meanings and word lookup. These checks do not establish human speech-recognition, pronunciation or correction quality. [Verification record](verification/validation.md)
+The iPhone language release recorded on 13 September 2026 passed **70 core tests and 20 native UI tests** — a historical record; the iOS core suite now holds **88 tests**. On 20 September 2026 the backend suite passed **358 tests with an isolated PostgreSQL 17 database and no skips** (Node 22), and the Android branch runs **390 unit tests** across the app and on-device engine modules with no skips. German, Italian, Brazilian Portuguese and Mandarin each passed a live iPhone check using synthetic typed replies and real voice output, meanings and word lookup. These checks do not establish human speech-recognition, pronunciation or correction quality. [Verification record](verification/validation.md)
 
 The Android release branch is being prepared separately. See [release progress](verification/android-release-progress.md) for its checks and remaining gates.
 

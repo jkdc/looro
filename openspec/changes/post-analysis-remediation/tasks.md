@@ -56,8 +56,8 @@
 ## Future work (parked, out of this change)
 
 - Durable per-client rate limiting generalization in `services/api` (replacing the per-proxy-IP in-memory bucket) — README documents the current contract.
-- Meanings keyless-failure UX: use `error_missing_engine_key` instead of the generic meanings failure for keyless remote engines.
-- Remove or annotate the now-dead `error_topic_unsourced` string.
+- Meanings keyless-failure UX (now mostly moot: sessions cannot start without the engine key — `MuralViewModel.engineKeyReady`): use `error_missing_engine_key` instead of the generic meanings failure for keyless remote engines.
+- Remove or annotate the now-dead `error_topic_unsourced` string. (Done 2026-09-20: the string was removed in `cabling-remediation`.)
 - aapt2 version sort: filter build-tools directories with `fullmatch(r'\d+(?:\.\d+)*')` so preview/rc dirs cannot outrank stable.
 - Conditional inclusion of the native `:core:engine-local` module before merging to `main`: the whisper `.so` currently ships in every build (unused with `ENGINE=openai`), as documented in `apps/android/docs/conversation-engines.md`.
 - iOS: nonisolated transport teardown so `deinit` can disconnect a still-active session; clamp-on-load tolerance for pre-existing over-cap titles; reset `confirmingErase` after erase-and-restart.
