@@ -44,8 +44,10 @@
 - [x] 4.1 `WordPractice` core on both platforms: normalization (trim, NFC,
       casefold, whitespace collapse, surrounding punctuation) and acceptance
       of `form` or `lemma`.
-- [x] 4.2 Unit tests both platforms: exact, case/punctuation-insensitive,
-      lemma acceptance, diacritic mismatch rejected, empty answer rejected.
+- [x] 4.2 Unit tests: Android `WordPracticeTest` (7 JVM cases: exact, case/
+      punctuation, lemma, diacritics, empty, normalization, masking). iOS:
+      the Swift core is reasoning-verified only — its tests land with the
+      macOS gate (no Swift toolchain on the dev machine).
 - [x] 4.3 Drill screen on the Words tab of both apps: up to 10 due words,
       masked example hint, correct/incorrect feedback with the right spelling,
       end summary; Android strings EN/ES.

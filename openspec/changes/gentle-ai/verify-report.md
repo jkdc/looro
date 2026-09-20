@@ -70,8 +70,9 @@
    partial latency on low-end hardware, and barge-in false-trigger behavior
    with real loudspeaker volume ( MicRecorder uses `VOICE_RECOGNITION`, so
    hardware AEC may not be active even where `isAvailable()` reports true).
-3. The branch-level human gates from `informe-verificacion-2026-09-18.md`
-   (z.ai key rotation, first CI run, push/PR decision) still apply.
+3. The branch-level human gates recorded in `informe-verificacion-2026-09-18.md`
+   (a local working-analysis document, not tracked in this repository):
+   z.ai key rotation, first CI run, push/PR decision — still apply.
 
 ## Parked follow-ups (documented, out of this change)
 

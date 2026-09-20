@@ -65,7 +65,8 @@
 
 ## K12 — Directed writing practice
 
-- `WordPractice` core (both platforms, unit-tested): normalization = trim →
+- `WordPractice` core (both platforms; unit-tested on Android, iOS under the
+  macOS gate): normalization = trim →
   NFC → casefold → collapse whitespace → strip surrounding punctuation;
   accepted when the normalized answer equals the normalized `form` **or**
   `lemma`. Deliberately strict on purpose (spelling practice); diacritics are
