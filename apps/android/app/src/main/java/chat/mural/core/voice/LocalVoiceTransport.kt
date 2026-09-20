@@ -34,7 +34,7 @@ import kotlinx.serialization.json.put
  * engine-specific branches.
  *
  * Turn-taking: continuous listening with a noise-floor-tracked energy VAD
- * ([AdaptiveVad]) — a turn ends after [SILENCE_END_MS] of trailing silence
+ * ([AdaptiveVad]) — a turn ends after [silenceEndMs] of trailing silence
  * once [SPEECH_START_MS] of speech accumulated, capped at [MAX_TURN_MS].
  * While TTS speaks the microphone is paused entirely ([AudioFrameSource.pause])
  * and restarted afterwards with the stale buffered audio discarded, so speaker
@@ -161,6 +161,11 @@ class LocalVoiceTransport(
             return
         }
         tts.setSpeechRate(if (slowSpeech) TTS_SLOW_RATE else TTS_NORMAL_RATE)
+        // Synthesize in the session language; a missing system voice degrades
+        // to whatever the engine had (logged) rather than failing the session.
+        if (!tts.setLanguage(sessionLanguage)) {
+            log("no system voice for '$sessionLanguage': keeping the previous TTS language")
+        }
         running = true
 
         emit(buildJsonObject {
@@ -199,7 +204,10 @@ class LocalVoiceTransport(
                 } catch (cancelled: kotlinx.coroutines.CancellationException) {
                     throw cancelled
                 } catch (e: Exception) {
-                    log("opening failed: ${e.message}") // degrades quietly
+                    // A silent assistant with an "active" session is worse than
+                    // a failed session: surface the greeting failure loudly.
+                    log("opening failed: ${e.message}")
+                    onFailure?.invoke("The opening greeting failed: ${e.message ?: "unknown error"}")
                 }
             }
         }
@@ -227,7 +235,7 @@ class LocalVoiceTransport(
                 suspend fun endBufferedTurn(reason: String) {
                     val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                     speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
-                    lastPartialClockMs = 0; lastPartialText = null
+                    lastPartialClockMs = 0
                     log(reason)
                     if (samples.isNotEmpty()) processTurn(samples)
                 }
@@ -289,7 +297,7 @@ class LocalVoiceTransport(
                             else log("turn cap reached (${turnMs} ms): closing the turn")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                             speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
-                            lastPartialClockMs = 0; lastPartialText = null
+                            lastPartialClockMs = 0
                             processTurn(samples)
                             lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                             continue
@@ -395,6 +403,7 @@ class LocalVoiceTransport(
         val durationMs = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
         if (durationMs < 250) {
             log("turn discarded: only ${durationMs} ms of usable audio (noise blip)")
+            clearPartial()
             return
         }
         log("STT start (${durationMs} ms of audio, language='$sessionLanguage')")
@@ -411,8 +420,12 @@ class LocalVoiceTransport(
         logContent("STT done in ${stt.processingMs} ms: \"${stt.text}\"")
         if (stt.isEmpty) {
             log("empty transcription: resuming listening (no LLM call)")
+            clearPartial()
+            lastPartialText = null
             return // silence/hallucination guard: no fragments, no LLM call
         }
+        // The final transcription supersedes any partial, emitted or not.
+        lastPartialText = null
 
         val turnStart = relativeMs()
         emit(transcriptEvent(isInput = true, text = stt.text, startMs = turnStart, endMs = turnStart + durationMs))
@@ -515,6 +528,20 @@ class LocalVoiceTransport(
         onEvent?.invoke(event)
     }
 
+    /**
+     * A turn discarded without a final transcription must retract any
+     * provisional caption: the empty delta tells the ViewModel to clear it.
+     */
+    private fun clearPartial() {
+        if (lastPartialText == null) return
+        lastPartialText = null
+        emit(buildJsonObject {
+            put("type", "session.input_transcript.partial")
+            put("event_id", UUID.randomUUID().toString())
+            put("delta", "")
+        })
+    }
+
     private fun log(message: String) {
         android.util.Log.i(LOG_TAG, message)
     }
@@ -595,9 +622,7 @@ class LocalVoiceTransport(
     }
 
     companion object {
-        const val VAD_SPEECH_RMS = 0.012f
         const val SPEECH_START_MS = 300
-        const val SILENCE_END_MS = 1_200
         const val MAX_TURN_MS = 30_000
 
         /** System-TTS speech rates for the learner-facing pace preference. */

@@ -30,7 +30,6 @@
     <string name="error_send_message_failed">No se pudo enviar el mensaje.</string>
     <string name="error_lookup_word_failed">No se pudo consultar la palabra.</string>
     <string name="error_find_topic_failed">No se pudo buscar el tema.</string>
-    <string name="error_topic_unsourced">La búsqueda no devolvió fuentes verificables. Prueba un tema más específico.</string>
     <string name="error_import_failed">No se pudo importar: verifica el formato de Mural, los idiomas y el límite de 30 MB.</string>
     <string name="error_incomplete_response">OpenAI devolvió una respuesta incompleta. Inténtalo de nuevo.</string>
     <string name="error_request_refused">Mural no pudo completar esa solicitud. Prueba con otro tema.</string>
@@ -78,7 +77,6 @@
     <string name="talk_transcript_label">Texto</string>
     <string name="talk_type_button">Escribir</string>
     <string name="talk_help_button">Una pista</string>
-    <string name="talk_lookup_button">Buscar palabra</string>
     <string name="talk_open_phone_settings">Abrir ajustes del teléfono</string>
     <string name="talk_new_conversation_button">Nueva conversación</string>
     <string name="talk_typed_reply_title">Dilo a tu manera.</string>
@@ -88,8 +86,6 @@
     <string name="talk_lookup_dialog_title">Un pequeño significado</string>
     <string name="talk_pinyin_show">Mostrar pinyin</string>
     <string name="talk_pinyin_hide">Ocultar pinyin</string>
-    <string name="talk_lookup_field_label">Palabra o expresión</string>
-    <string name="talk_lookup_button_action">Buscar</string>
     <string name="talk_status_connecting">Preparando la conversación…</string>
     <string name="talk_status_muted">Micrófono en pausa</string>
     <string name="talk_status_listening">Te escucho</string>
@@ -157,23 +153,14 @@
 
     <!-- Settings screen -->
     <string name="settings_tab_title">Ajustes</string>
-    <string name="settings_eyebrow">Tu espacio</string>
-    <string name="settings_title">Ajustes</string>
-    <string name="settings_subtitle">Haz que Mural se sienta cómodo para ti.</string>
-    <string name="settings_section_conversation">Conversación</string>
     <string name="settings_learning_language">Idioma que practicas</string>
     <string name="settings_conversation_limit">Duración orientativa</string>
-    <string name="settings_minutes_value">%1$d min</string>
     <string name="settings_meaning_language">Idioma de los significados</string>
     <string name="settings_interests_label">Tus intereses</string>
-    <string name="settings_interests_support">Ayudan a proponer conversaciones que te importan.</string>
-    <string name="settings_section_openai_account">Cuenta de OpenAI</string>
     <string name="settings_key_saved_notice">Hay una clave guardada de forma segura en este dispositivo.</string>
-    <string name="settings_key_missing_notice">Añade una clave para conversar, buscar significados y consultar temas actuales.</string>
     <string name="settings_save_key">Guardar clave</string>
     <string name="settings_replace_key">Reemplazar clave</string>
     <string name="settings_remove_key">Eliminar clave</string>
-    <string name="settings_section_usage">Uso</string>
     <string name="settings_voice_time_label">Tiempo de voz registrado</string>
     <string name="settings_voice_estimate_label">Estimación de voz</string>
     <string name="settings_search_calls_label">Búsquedas registradas</string>
@@ -247,7 +234,7 @@
     <string name="consent_decline_button">Ahora no</string>
     <string name="settings_slow_speech">Voz más lenta</string>
     <string name="settings_listening_practice">Práctica de comprensión auditiva</string>
-    <string name="settings_listening_practice_hint">Las conversaciones nuevas cuentan una historia corta sin subtítulos de significado. Busca una palabra solo si la necesitas.</string>
+    <string name="settings_listening_practice_hint">Las conversaciones nuevas cuentan una historia corta sin subtítulos de significado — la historia escrita permanece en pantalla. Busca una palabra solo si la necesitas.</string>
     <string name="progress_section_title">Tu progreso</string>
     <string name="progress_empty">Empieza una conversación para ver tu progreso.</string>
     <string name="progress_conversations">Conversaciones</string>
@@ -273,6 +260,9 @@
     <string name="practice_miss">Se escribe: %1$s</string>
     <string name="practice_next">Palabra siguiente</string>
     <string name="practice_summary">Practicaste %1$d palabras y escribiste bien %2$d.</string>
+    <string name="guest_link_member_deleted_title">Esa cuenta ya no existe</string>
+    <string name="guest_link_member_deleted_detail">La cuenta que ibas a vincular se eliminó, así que tus minutos de prueba se quedan en este dispositivo. Puedes seguir practicando o iniciar sesión con otra cuenta.</string>
+    <string name="progress_scope_note">Los totales y las rachas cubren todos los idiomas que practicas. Las palabras y los hitos son del idioma actual.</string>
     <string name="settings_voice_manual_turn">Modo principiante: botón para terminar de hablar</string>
     <string name="error_guest_secure_storage_unavailable">Mural no pudo restaurar los datos guardados de tu prueba gratuita. Tu historial de aprendizaje sigue disponible. Reinicia la aplicación para intentarlo de nuevo.</string>
     <string name="talk_end_turn_button">He terminado de hablar</string>

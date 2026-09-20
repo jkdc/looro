@@ -67,7 +67,7 @@ final class LearningStatsTests: XCTestCase {
         XCTAssertEqual(result.last14DaysMinutes.count, 14)
         XCTAssertEqual(result.last14DaysMinutes.first ?? -1, 7.5, accuracy: 0.0001)
         XCTAssertEqual(result.last14DaysMinutes.last ?? -1, 2, accuracy: 0.0001)
-        XCTAssertEqual(result.last14DaysMinutes[1] ?? -1, 0, accuracy: 0.0001)
+        XCTAssertEqual(result.last14DaysMinutes[1], 0, accuracy: 0.0001)
     }
 
     func testWordBarsAndCapabilitiesComeFromTheLearnerProjection() {

@@ -81,6 +81,8 @@ class LocalVoiceTransportTest {
     private class FakeTts(private val usable: Boolean = true) : SpeechSink {
         val spoken = mutableListOf<String>()
         val rates = mutableListOf<Float>()
+        val languages = mutableListOf<String>()
+        var languageResult = true
         var stopCalls = 0
         var initialized = false
         var onSpeak: (() -> Unit)? = null
@@ -88,6 +90,7 @@ class LocalVoiceTransportTest {
         override suspend fun speak(text: String): TtsStats? { spoken.add(text); onSpeak?.invoke(); return TtsStats(1, 1) }
         override fun stop() { stopCalls++ }
         override fun setSpeechRate(rate: Float) { rates.add(rate) }
+        override fun setLanguage(languageTag: String): Boolean { languages.add(languageTag); return languageResult }
     }
 
     private fun stt(tempDir: File, runtime: FakeWhisperRuntime): WhisperStt {
@@ -793,6 +796,116 @@ class LocalVoiceTransportTest {
         val resumeDeadline = System.currentTimeMillis() + 5_000
         while (source.resumeCount == 0 && System.currentTimeMillis() < resumeDeadline) Thread.sleep(25)
         assertEquals(1, source.resumeCount)
+        transport.close()
+    }
+
+    @Test
+    fun `connect feeds the session language to the TTS`() {
+        val tts = FakeTts()
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = FakeTeachingClient(),
+            tts = tts,
+            frameSourceProvider = { FakeFrameSource() },
+            frameDelayMs = 0,
+        )
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "es") }
+        assertEquals(listOf("es"), tts.languages)
+        transport.close()
+    }
+
+    @Test
+    fun `a missing TTS voice degrades instead of failing the session`() {
+        val events = mutableListOf<JsonObject>()
+        val tts = FakeTts().apply { languageResult = false }
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = FakeTeachingClient(),
+            tts = tts,
+            frameSourceProvider = { FakeFrameSource() },
+            frameDelayMs = 0,
+        )
+        val failures = mutableListOf<String>()
+        transport.onEvent = { events.add(it) }
+        transport.onFailure = { failures.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "nb") }
+        assertTrue(tts.languages.contains("nb"))
+        assertTrue("session still starts", events.any { it["type"]?.jsonPrimitive?.content == "session.started" })
+        assertTrue("no failure surfaced", failures.isEmpty())
+        transport.close()
+    }
+
+    @Test
+    fun `a discarded turn retracts the provisional caption`() {
+        val events = mutableListOf<JsonObject>()
+        val source = FakeFrameSource()
+        val runtime = FakeWhisperRuntime().apply { transcription = "Hola" }
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = runtime),
+            engine = FakeTeachingClient(),
+            tts = FakeTts(),
+            frameSourceProvider = { source },
+            frameDelayMs = 0,
+        )
+        transport.onEvent = { events.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+
+        // Enough speech for a partial…
+        repeat(20) { source.queue.add(speech()) }
+        val partialDeadline = System.currentTimeMillis() + 5_000
+        while (events.none { it["type"]?.jsonPrimitive?.content == "session.input_transcript.partial" } &&
+            System.currentTimeMillis() < partialDeadline) Thread.sleep(25)
+
+        // …then the turn ends with an empty transcription: the partial must be retracted.
+        runtime.transcription = ""
+        repeat(14) { source.queue.add(silence()) }
+        val clearedDeadline = System.currentTimeMillis() + 5_000
+        while (System.currentTimeMillis() < clearedDeadline) {
+            val last = events.lastOrNull { it["type"]?.jsonPrimitive?.content == "session.input_transcript.partial" }
+            if (last != null && last["delta"]?.jsonPrimitive?.content?.isEmpty() == true) break
+            Thread.sleep(25)
+        }
+        val partials = events.filter { it["type"]?.jsonPrimitive?.content == "session.input_transcript.partial" }
+        assertTrue("a clearing empty partial was emitted", partials.isNotEmpty() &&
+            partials.last()["delta"]?.jsonPrimitive?.content?.isEmpty() == true)
+        assertTrue("no final fragment for the discarded turn",
+            events.none { it["type"]?.jsonPrimitive?.content == "session.input_transcript.delta" })
+        transport.close()
+    }
+
+    @Test
+    fun `a failed opening greeting fails the session loudly`() {
+        val events = mutableListOf<JsonObject>()
+        val failures = mutableListOf<String>()
+        val failingEngine = object : TeachingClient {
+            override fun cancelInFlight() {}
+            override suspend fun respond(instructions: String, input: String, schema: kotlinx.serialization.json.JsonObject?, search: Boolean, purpose: chat.mural.network.HelperPurpose?): chat.mural.network.APIResult {
+                throw IllegalStateException("engine offline")
+            }
+        }
+        val transport = LocalVoiceTransport(
+            context = null as android.content.Context?,
+            scope = CoroutineScope(Dispatchers.IO),
+            stt = stt(tempDir = createTempDir(), runtime = FakeWhisperRuntime()),
+            engine = failingEngine,
+            tts = FakeTts(),
+            frameSourceProvider = { FakeFrameSource() },
+            frameDelayMs = 0,
+        )
+        transport.openOnStart = true
+        transport.onEvent = { events.add(it) }
+        transport.onFailure = { failures.add(it) }
+        runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
+        val deadline = System.currentTimeMillis() + 5_000
+        while (failures.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        assertTrue(failures.single().contains("opening greeting failed"))
+        assertTrue(failures.single().contains("engine offline"))
         transport.close()
     }
 }

@@ -49,7 +49,7 @@ sealed interface GuestGrant {
 data class GuestLinkResult(val transferredMilliseconds: Long, val alreadyLinked: Boolean, val outcome: String, val pending: Boolean = false) {
     init {
         require(transferredMilliseconds in 0..9_007_199_254_740_991L)
-        require(outcome in setOf("transferred", "member_trial_already_claimed", "pending"))
+        require(outcome in setOf("transferred", "member_trial_already_claimed", "pending", "member_deleted"))
         require(outcome != "member_trial_already_claimed" || transferredMilliseconds == 0L)
         require(pending == (outcome == "pending"))
         require(!pending || (transferredMilliseconds == 0L && !alreadyLinked))
@@ -63,7 +63,7 @@ interface GuestMinuteService {
     suspend fun deferLink(member: AccountSession, guestAccessToken: String?, guestAccountID: String): GuestLinkResult = throw AccountFailure.Unavailable
 }
 
-enum class GuestMinuteStatus { IDLE, CHECKING, READY, UNAVAILABLE, SIGN_IN_REQUIRED, RETRY, LINKING, DEFERRED, MEMBER_TRIAL_USED }
+enum class GuestMinuteStatus { IDLE, CHECKING, READY, UNAVAILABLE, SIGN_IN_REQUIRED, RETRY, LINKING, DEFERRED, MEMBER_TRIAL_USED, MEMBER_DELETED }
 data class GuestMinuteState(
     val status: GuestMinuteStatus = GuestMinuteStatus.IDLE,
     val accountID: String? = null,
@@ -207,6 +207,14 @@ class GuestMinuteController(
                 withContext(NonCancellable) { storage.save(stored.copy(serverDeferred = true)) }
                 mutableState.value = GuestMinuteState(GuestMinuteStatus.DEFERRED)
                 return@withLock true
+            }
+            if (result.outcome == "member_deleted") {
+                // The member account was deleted server-side: this intent can
+                // never complete. Terminal — keep the guest session and their
+                // minutes, clear the pending intent, never retry.
+                withContext(NonCancellable) { storage.save(stored.copy(pendingMemberID = null, serverDeferred = false)) }
+                mutableState.value = GuestMinuteState(GuestMinuteStatus.MEMBER_DELETED)
+                return@withLock false
             }
             withContext(NonCancellable) {
                 storage.save(stored.copy(acknowledgedGuestID = stored.session!!.accountID, session = null, pendingMemberID = null, linkedMemberID = member.accountID, serverDeferred = false,

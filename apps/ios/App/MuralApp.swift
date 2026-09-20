@@ -9,7 +9,11 @@ import SwiftUI
         catch { _startupError = State(initialValue: "Mural couldn’t open its learning record. Your existing data has not been replaced.") }
     }
     private func makeStore() throws -> LearningStore {
-        try LearningStore(inMemory: ProcessInfo.processInfo.arguments.contains("--preview") || AudioVerification.requested)
+        #if DEBUG
+        return try LearningStore(inMemory: ProcessInfo.processInfo.arguments.contains("--preview") || AudioVerification.requested)
+        #else
+        return try LearningStore(inMemory: false)
+        #endif
     }
     /// Reachable only through the confirmation dialog below; the damaged record is the one thing erased.
     private func eraseAndRestart() {

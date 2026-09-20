@@ -31,6 +31,7 @@ fun GuestMinutesSheet(
     val title = when {
         ready -> R.string.guest_ready_title
         state.status == GuestMinuteStatus.LINKING -> R.string.guest_link_title
+        state.status == GuestMinuteStatus.MEMBER_DELETED -> R.string.guest_link_member_deleted_title
         checking -> R.string.guest_checking_title
         state.status == GuestMinuteStatus.RETRY -> R.string.guest_retry_title
         state.status == GuestMinuteStatus.SIGN_IN_REQUIRED && !signedIn -> R.string.guest_sign_in_title
@@ -43,6 +44,7 @@ fun GuestMinutesSheet(
     val detail = when (title) {
         R.string.guest_ready_title -> R.string.guest_ready_detail
         R.string.guest_link_title -> R.string.guest_link_detail
+        R.string.guest_link_member_deleted_title -> R.string.guest_link_member_deleted_detail
         R.string.guest_checking_title -> R.string.guest_checking_detail
         R.string.guest_retry_title -> R.string.guest_retry_detail
         R.string.guest_sign_in_title -> R.string.guest_sign_in_detail

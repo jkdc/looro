@@ -173,13 +173,15 @@ fun SoftAnimatedBackground(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MuralOrb(energy: Float = 0f, listening: Boolean = false, active: Boolean = true, modifier: Modifier = Modifier) {
+fun MuralOrb(energy: Float = 0f, listening: Boolean = false, active: Boolean = true, modifier: Modifier = Modifier,
+    contentDescription: String? = null) {
     val phase = muralPhase(active)
     val power = if (android.animation.ValueAnimator.areAnimatorsEnabled()) energy.coerceIn(0f, 1f) else 0f
     val shader = androidx.compose.runtime.remember {
         if (android.os.Build.VERSION.SDK_INT >= 33) OrbMesh() else null
     }
-    Canvas(modifier) {
+    val described = if (contentDescription != null) modifier.semantics { this.contentDescription = contentDescription } else modifier
+    Canvas(described) {
         val side = minOf(size.width, size.height)
         val center = Offset(size.width / 2, size.height / 2 - 5.dp.toPx() + sin(phase * 1.25f) * 4.dp.toPx())
         // A broad feathered shadow, with no hard ellipse underneath the orb.

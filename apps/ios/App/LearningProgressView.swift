@@ -42,6 +42,10 @@ struct LearningProgressView: View {
                         if let latest = stats.latestCapability { Text(latest) }
                     }
                 }
+                Section {
+                    Text("Totals and streaks span every language you practise. Words and milestones are for the current language.")
+                        .font(.footnote).foregroundStyle(MuralColor.secondary)
+                }
             }
         }
         .navigationTitle("Your progress")

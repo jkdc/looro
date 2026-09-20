@@ -132,6 +132,9 @@ fun TalkScreen(
             listening = vm.state == "active" && vm.isVoiceSession && !vm.isMuted,
             active = vm.state != "closing",
             modifier = Modifier.size(orbSize),
+            contentDescription = stringResource(
+                if (vm.state == "active" && vm.isVoiceSession && !vm.isMuted) R.string.talk_orb_listening_desc
+                else R.string.talk_orb_idle_desc),
         )
         Box(Modifier.fillMaxWidth().padding(top = if (compact) 8.dp else 12.dp), contentAlignment = Alignment.Center) {
             Text(statusText(vm.state, vm.isMuted, vm.isVoiceSession), style = MaterialTheme.typography.bodySmall,

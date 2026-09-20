@@ -913,7 +913,9 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             }
             "session.input_transcript.partial" -> {
                 val text = event["delta"]?.jsonPrimitive?.contentOrNull ?: return
-                if (text.isBlank() || text.length > 50000) return
+                if (text.length > 50000) return
+                // An empty delta is the transport retracting a discarded turn.
+                if (text.isEmpty()) { partialUserTranscript = null; return }
                 partialUserTranscript = text
                 lastActivity = nowSeconds()
             }

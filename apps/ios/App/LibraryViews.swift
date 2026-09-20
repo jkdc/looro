@@ -326,7 +326,7 @@ struct SettingsView: View {
                     .disabled(coordinator.isRunning)
                     LabeledContent("Corrections", value: "Gently, as we talk")
                     TextField("A few things you enjoy", text: Binding(get: { store.preferences.interests }, set: { value in store.updatePreferences { $0.interests = String(value.prefix(500)) } }), axis: .vertical)
-                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Mural finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — look a word up only if you need it.") }
+                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Mural finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — the written story stays on screen, and you can still look words up.") }
                 if ManagedAccountConfiguration.load() != nil {
                     Section {
                         NavigationLink { ManagedAccountView() } label: {
@@ -378,7 +378,7 @@ struct SettingsView: View {
                     Button("Import learning backup", systemImage: "square.and.arrow.down") { importing = true }.disabled(coordinator.isRunning)
                     Button("Delete all conversations and learning", role: .destructive) { deleting = true }.disabled(coordinator.isRunning)
                 } header: { Text("Your words belong to you") } footer: {
-                    Text("Backups include transcripts and learning evidence, never your API key. Import adds conversations with new IDs. Existing conversations stay unchanged. There is no cloud sync.")
+                    Text("Backups include transcripts and learning evidence, never your API key. Import adds only conversations this iPhone doesn’t have, keeping their original IDs; existing conversations stay unchanged. There is no cloud sync.")
                 }
                 Section {
                     Link("Privacy policy", destination: URL(string: "https://mural.chat/privacy/")!)

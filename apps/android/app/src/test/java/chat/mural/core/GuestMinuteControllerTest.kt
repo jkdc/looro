@@ -270,6 +270,27 @@ class GuestMinuteControllerTest {
         assertTrue(store.saved!!.memberAlreadyClaimedTrial)
         assertTrue(subject.linkTo(member)); assertEquals(1, calls)
     }
+    @Test fun deletedMemberOutcomeEndsLinkingTerminallyAndKeepsTheGuestSession() = runTest {
+        val store = Store(GuestInstallation("i".repeat(43), guest)); var calls = 0
+        val api = object : GuestMinuteService {
+            override suspend fun start(installationToken: String) = error("must not grant another trial")
+            override suspend fun balance(session: AccountSession) = error("unused")
+            override suspend fun link(member: AccountSession, guestAccessToken: String): GuestLinkResult {
+                calls++
+                return GuestLinkResult(0, false, "member_deleted")
+            }
+        }
+        val subject = GuestMinuteController(store, api, { error("must not replace identity") }, { now })
+        // Server-side member deletion is terminal: the intent clears, the guest
+        // keeps their session and minutes, and the state is a distinct dead end.
+        assertFalse(subject.linkTo(member))
+        assertEquals(GuestMinuteStatus.MEMBER_DELETED, subject.state.value.status)
+        assertNull(subject.expectedMemberID())
+        assertEquals(guest.accountID, subject.session()?.accountID)
+        assertNull(store.saved!!.pendingMemberID)
+        // The controller never schedules a retry; only a new sign-in links again.
+        assertEquals(1, calls)
+    }
     @Test fun pendingServerAcknowledgmentAllowsOnlyTheBoundMembersOwnMinutesAcrossRestart() = runTest {
         val store = Store(GuestInstallation("i".repeat(43), guest)); val requests = mutableListOf<String?>()
         var final = false

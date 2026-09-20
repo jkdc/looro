@@ -58,6 +58,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogWindowProvider
+import chat.mural.BuildConfig
 import chat.mural.MuralViewModel
 import chat.mural.R
 import chat.mural.core.LanguageRegistry
@@ -121,28 +122,32 @@ fun SettingsScreen(vm: MuralViewModel, onExport: () -> Unit, onImport: () -> Uni
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp))
                     }
                     SettingsDivider()
-                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.settings_voice_manual_turn),
-                            style = MaterialTheme.typography.bodyLarge, color = MuralColors.Ink,
-                            modifier = Modifier.weight(1f).padding(end = 12.dp))
-                        Switch(checked = vm.voiceManualTurn, onCheckedChange = { vm.setVoiceManualTurn(it) })
-                    }
-                    SettingsDivider()
-                    Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                            Text(stringResource(R.string.settings_silence_label),
-                                style = MaterialTheme.typography.bodyLarge, color = MuralColors.Ink)
-                            Text(String.format(java.util.Locale.US, "%.1f s", vm.silenceEndMs / 1000f),
-                                style = MaterialTheme.typography.bodyLarge, color = MuralColors.Secondary)
+                    // On-device voice controls: inert in the WebRTC build, where
+                    // turn-taking is server-side — never render them there.
+                    if (BuildConfig.CONVERSATION_ENGINE != "openai") {
+                        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.settings_voice_manual_turn),
+                                style = MaterialTheme.typography.bodyLarge, color = MuralColors.Ink,
+                                modifier = Modifier.weight(1f).padding(end = 12.dp))
+                            Switch(checked = vm.voiceManualTurn, onCheckedChange = { vm.setVoiceManualTurn(it) })
                         }
-                        Slider(value = vm.silenceEndMs.toFloat(),
-                            onValueChange = { vm.updateSilenceEndMs(((it / 100).toLong() * 100)) },
-                            valueRange = 600f..3000f)
-                        Text(stringResource(R.string.settings_silence_hint),
-                            style = MaterialTheme.typography.bodySmall, color = MuralColors.Secondary)
+                        SettingsDivider()
+                        Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                                Text(stringResource(R.string.settings_silence_label),
+                                    style = MaterialTheme.typography.bodyLarge, color = MuralColors.Ink)
+                                Text(String.format(java.util.Locale.US, "%.1f s", vm.silenceEndMs / 1000f),
+                                    style = MaterialTheme.typography.bodyLarge, color = MuralColors.Secondary)
+                            }
+                            Slider(value = vm.silenceEndMs.toFloat(),
+                                onValueChange = { vm.updateSilenceEndMs(((it / 100).toLong() * 100)) },
+                                valueRange = 600f..3000f)
+                            Text(stringResource(R.string.settings_silence_hint),
+                                style = MaterialTheme.typography.bodySmall, color = MuralColors.Secondary)
+                        }
+                        SettingsDivider()
                     }
-                    SettingsDivider()
                     SettingsRow(stringResource(R.string.settings_corrections_label), stringResource(R.string.settings_corrections_value))
                     SettingsDivider()
                     BasicTextField(value = prefs.interests, onValueChange = { vm.updatePreferences(prefs.copy(interests = it.take(500))) },
@@ -379,6 +384,11 @@ private fun SettingsProgressSheet(vm: MuralViewModel, onDismiss: () -> Unit) {
                                 Text(it, Modifier.padding(16.dp), style = MaterialTheme.typography.bodyLarge)
                             }
                         }
+                    }
+                    item {
+                        Text(stringResource(R.string.progress_scope_note),
+                            style = MaterialTheme.typography.bodySmall, color = MuralColors.Secondary,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
                     }
                 }
             }

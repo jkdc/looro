@@ -76,9 +76,6 @@ class LiveTransport(
     @Volatile private var startedState = false
     @Volatile private var mutedState = false
 
-    val started: Boolean get() = startedState
-    val isMuted: Boolean get() = mutedState
-
     override suspend fun connect(
         api: LiveSessionProvider,
         instructions: String,

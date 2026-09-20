@@ -20,6 +20,9 @@ interface SpeechSink {
 
     /** 1.0 = normal rate; a no-op for sinks without a rate control. */
     fun setSpeechRate(rate: Float) {}
+
+    /** Selects the synthesis voice by BCP-47 tag; false when unavailable or unsupported. */
+    fun setLanguage(languageTag: String): Boolean = false
 }
 
 /**
@@ -159,6 +162,16 @@ class LocalTtsEngine(context: Context) : SpeechSink {
 
     override fun setSpeechRate(rate: Float) {
         runCatching { tts?.setSpeechRate(rate) }
+    }
+
+    override fun setLanguage(languageTag: String): Boolean {
+        val engine = tts ?: return false
+        val locale = runCatching { Locale.forLanguageTag(languageTag) }.getOrNull() ?: return false
+        val result = runCatching { engine.setLanguage(locale) }.getOrNull()
+            ?: return false
+        // Keep the previous voice on a failed switch: a device without a
+        // voice for one language must not lose the one it had.
+        return result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED
     }
 
     fun release() {
