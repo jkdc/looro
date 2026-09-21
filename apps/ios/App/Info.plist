@@ -17,6 +17,7 @@
 <key>ITSAppUsesNonExemptEncryption</key><false/>
 <key>AppManagedAccountsEnabled</key><string>$(APP_MANAGED_ACCOUNTS_ENABLED)</string>
 <key>AppManagedAPIURL</key><string>$(APP_MANAGED_API_URL)</string>
+<key>AppHostedMinutesEnabled</key><string>$(APP_HOSTED_MINUTES_ENABLED)</string>
 <key>AppGoogleSignInEnabled</key><string>$(APP_GOOGLE_SIGN_IN_ENABLED)</string>
 <key>AppGoogleClientID</key><string>$(APP_GOOGLE_CLIENT_ID)</string>
 <key>AppAppleSignInEnabled</key><string>$(APP_APPLE_SIGN_IN_ENABLED)</string>

@@ -1,6 +1,7 @@
 // Public app configuration. Enable only providers available on the configured server.
 // Local.xcconfig can override these values without changing personal signing.
 APP_MANAGED_ACCOUNTS_ENABLED = NO
+APP_HOSTED_MINUTES_ENABLED = NO
 APP_MANAGED_API_URL =
 APP_GOOGLE_SIGN_IN_ENABLED = NO
 APP_GOOGLE_CLIENT_ID =

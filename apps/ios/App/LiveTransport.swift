@@ -20,7 +20,10 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
     private var ownsAudioActivation = false
     private var lastInput = 0.0, lastOutput = 0.0
 
-    func connect(api: APIClient, instructions: String, history: [[String: Any]]) async throws {
+    /// The caller owns how the realtime session is created: personal OpenAI key
+    /// or hosted minutes. The transport only needs the session descriptor and the
+    /// answer SDP; audio always connects phone-to-provider directly.
+    func connect(establish: @escaping (_ offerSDP: String) async throws -> (session: [String: Any], answer: String)) async throws {
         disconnect()
         closing = false
         let token = UUID(); attempt = token
@@ -73,14 +76,10 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
             guard Date() < deadline else { throw TransportError.timeout }
         }
         guard let sdp = peer.localDescription?.sdp else { throw TransportError.connection }
-        let result = try await api.post("live/sessions", body: [
-            "session": ["model": "gpt-live-1", "instructions": instructions, "input": history,
-                        "store": false, "delegation": ["type": "client"], "audio": ["output": ["voice": "marin"]]],
-            "transport": ["type": "webrtc", "sdp": sdp]
-        ])
+        let established = try await establish(sdp)
         guard attempt == token else { throw CancellationError() }
-        guard let transport = result["transport"] as? [String: Any], let answer = transport["sdp"] as? String else { throw TransportError.connection }
-        if let session = result["session"] as? [String: Any] { onEvent?(["type": "app.session.created", "session": session]) }
+        let answer = established.answer
+        if !established.session.isEmpty { onEvent?(["type": "app.session.created", "session": established.session]) }
         try await withCheckedThrowingContinuation { (c: CheckedContinuation<Void, Error>) in
             peer.setRemoteDescription(RTCSessionDescription(type: .answer, sdp: answer)) { error in
                 if let error { c.resume(throwing: error) } else { c.resume() }

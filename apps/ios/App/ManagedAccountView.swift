@@ -28,7 +28,9 @@ struct ManagedAccountView: View {
                             Text(email).font(.body).textSelection(.enabled)
                                 .accessibilityIdentifier("managed-account-email")
                         }
-                        Text("Purchases and hosted conversations aren’t available in this build.")
+                        Text(HostedPreferenceStore.hostedFlagEnabled
+                             ? "Purchases aren’t available in this build."
+                             : "Purchases and hosted conversations aren’t available in this build.")
                             .font(.footnote).foregroundStyle(AppColor.secondary)
                         Button("Refresh account", action: store.refresh).buttonStyle(.bordered)
                         Button("Sign out on all devices", action: store.signOut).buttonStyle(.bordered)

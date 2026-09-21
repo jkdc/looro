@@ -11,6 +11,18 @@ import LearningCore
     private(set) var session: SessionRecord?
     var selectedTheme: ConversationTheme?
     var selectedLesson: Lesson?
+    enum ConversationProvider { case personalKey, hostedMinutes }
+    private(set) var activeProvider: ConversationProvider = .personalKey
+    private var hostedSessionID: String?
+    private var hostedSessionToken: ManagedAccountSession?
+    private var managed: (client: ManagedAccountClient, configuration: ManagedAccountConfiguration)?
+    private let hostedPreferences = HostedPreferenceStore()
+    private(set) var hostedBalance: HostedMinuteBalance?
+    var hostedUIAvailable: Bool { HostedPreferenceStore.hostedFlagEnabled && managed != nil }
+    /// Hosted minutes are an explicit opt-in; the default stays the personal key.
+    var prefersHostedMinutes: Bool {
+        didSet { hostedPreferences.prefersHostedMinutes = prefersHostedMinutes }
+    }
     private(set) var inputLevel = 0.0
     private(set) var outputLevel = 0.0
     private(set) var isMuted = false
@@ -26,6 +38,7 @@ import LearningCore
     var showAIConsent = false
     private var startAfterConsent = false
     private let api: APIClient
+    private let helperRouter: HelperRouter
     private let transport = LiveTransport()
     private var connectionTask: Task<Void, Never>?
     private var assessmentTask: Task<Void, Never>?
@@ -47,14 +60,17 @@ import LearningCore
     init(store: LearningStore) {
         self.store = store
         let api = APIClient(); self.api = api
+        let router = HelperRouter(api: api); self.helperRouter = router
+        managed = ManagedAccountConfiguration.load().map { (ManagedAccountClient(configuration: $0), $0) }
+        prefersHostedMinutes = hostedPreferences.prefersHostedMinutes
         finalAssessments = FinalAssessmentQueue { snapshot, passage in
             guard store.preferences.aiConsentVersion == AIProcessingConsent.version || AudioVerification.requested else { throw AIProcessingConsent.ConsentError.required }
-            return try await Self.assess(api: api, snapshot: snapshot, passage: passage)
+            return try await Self.assess(router: router, snapshot: snapshot, passage: passage)
         }
         meanings = MeaningController { request in
             guard store.preferences.aiConsentVersion == AIProcessingConsent.version || AudioVerification.requested else { throw AIProcessingConsent.ConsentError.required }
             guard let language = LanguageRegistry.module(for: request.learningLanguageID) else { throw ArchiveError.unsupportedLanguage }
-            let result = try await api.respond(instructions: TeachingPolicy.translation(language: language, meaningLanguage: request.meaningLanguage), input: String(request.text.suffix(2200)))
+            let result = try await router.respond(purpose: .meaning, instructions: TeachingPolicy.translation(language: language, meaningLanguage: request.meaningLanguage), input: String(request.text.suffix(2200)))
             return MeaningResult(text: result.text, inputTokens: result.usage.input, outputTokens: result.usage.output)
         }
         meanings.onResult = { [weak self] request, result in
@@ -118,7 +134,8 @@ import LearningCore
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--preview") { showSettings = true; return }
         #endif
-        guard CredentialStore.hasKey else { showSettings = true; return }
+        let prefersHosted = hostedUIAvailable && hostedPreferences.prefersHostedMinutes
+        if !prefersHosted, !CredentialStore.hasKey { showSettings = true; return }
         cancelReset(); meanings.reset()
         error = nil; notice = nil; lastAssessmentKey = ""
         lastLanguageCheck = ""; pendingCommands = [:]
@@ -138,15 +155,83 @@ import LearningCore
         } else {
             instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.slowSpeech == true)
         }
+        let requestedMilliseconds = store.preferences.sessionMinutes * 60_000
         connectionTask = Task { [weak self] in
             guard let self else { return }
-            do { try await self.transport.connect(api: self.api, instructions: instructions, history: history) }
+            do {
+                let provider = try await self.beginProvider(prefersHosted: prefersHosted)
+                try await self.transport.connect(establish: self.establishment(provider: provider, language: self.language,
+                    instructions: instructions, history: history, requestedMilliseconds: requestedMilliseconds))
+            }
             catch is CancellationError { return }
             catch {
                 guard self.session?.id == generation, self.state == .connecting || self.state == .active else { return }
                 self.fail(error.localizedDescription)
             }
         }
+    }
+    /// Resolves the conversation provider: hosted minutes when explicitly
+    /// preferred (and available), the personal key otherwise.
+    private func beginProvider(prefersHosted: Bool) async throws -> ConversationProvider {
+        guard prefersHosted, let (client, configuration) = managed else {
+            activeProvider = .personalKey; helperRouter.clearHosted(); hostedSessionID = nil; hostedSessionToken = nil
+            return .personalKey
+        }
+        guard let token = try? ManagedAccountKeychain(scope: configuration.storageScope).load() else { throw HostedFailure.signInRequired }
+        // Settle an orphaned session from a crashed conversation before opening a new one.
+        if let orphan = try? await client.hostedCurrent(session: token), let orphan, !orphan.isClosed {
+            _ = try? await client.hostedClose(sessionID: orphan.sessionID, session: token)
+        }
+        let capabilities = try await client.hostedCapabilities(session: token)
+        guard capabilities.available else { throw HostedFailure.unavailable }
+        let balance = try await client.minutesBalance(session: token)
+        guard balance.canStartConversation else { throw HostedFailure.insufficientMinutes }
+        activeProvider = .hostedMinutes
+        hostedSessionToken = token
+        return .hostedMinutes
+    }
+    private func establishment(provider: ConversationProvider, language: LanguageModule, instructions: String,
+                               history: [[String: Any]], requestedMilliseconds: Int?)
+        -> (_ offerSDP: String) async throws -> (session: [String: Any], answer: String) {
+        guard provider == .hostedMinutes, let (client, _) = managed, let token = hostedSessionToken else {
+            activeProvider = .personalKey
+            let api = self.api
+            return { offer in
+                let result = try await api.post("live/sessions", body: [
+                    "session": ["model": "gpt-live-1", "instructions": instructions, "input": history,
+                                "store": false, "delegation": ["type": "client"], "audio": ["output": ["voice": "marin"]]],
+                    "transport": ["type": "webrtc", "sdp": offer]])
+                guard let transport = result["transport"] as? [String: Any], let answer = transport["sdp"] as? String
+                else { throw LiveTransport.TransportError.connection }
+                return (session: (result["session"] as? [String: Any]) ?? [:], answer: answer)
+            }
+        }
+        return { [weak self] offer in
+            let created = try await client.hostedCreate(sdp: offer, language: language.locale, instructions: instructions,
+                                                        history: history, requestedMilliseconds: requestedMilliseconds, session: token)
+            self?.hostedSessionID = created.sessionID
+            self?.helperRouter.useHosted(sessionID: created.sessionID, client: client, session: token)
+            return (session: ["id": created.sessionID], answer: created.answerSDP)
+        }
+    }
+    /// Close + confirm so reserved minutes are released even if the provider lags.
+    private func closeHostedSession() {
+        guard let (client, _) = managed, let token = hostedSessionToken, let sessionID = hostedSessionID else { return }
+        hostedSessionID = nil; hostedSessionToken = nil; helperRouter.clearHosted()
+        Task {
+            _ = try? await client.hostedClose(sessionID: sessionID, session: token)
+            let deadline = Date().addingTimeInterval(8)
+            while Date() < deadline {
+                guard let status = try? await client.hostedStatus(sessionID: sessionID, session: token), !status.isClosed else { break }
+                try? await Task.sleep(for: .milliseconds(500))
+            }
+        }
+    }
+    func refreshHostedBalance() async {
+        guard hostedUIAvailable, let (client, configuration) = managed,
+              let token = try? ManagedAccountKeychain(scope: configuration.storageScope).load()
+        else { hostedBalance = nil; return }
+        hostedBalance = try? await client.minutesBalance(session: token)
     }
     private var hasAIConsent: Bool {
         store.preferences.aiConsentVersion == AIProcessingConsent.version || AudioVerification.requested
@@ -251,6 +336,7 @@ import LearningCore
         session?.endedAt = .now; session?.usageFinal = final
         save(); state = .ended
         if session?.isLesson == true, let lessonID = session?.lessonID { store.recordLessonAttempt(lessonID) }
+        if hostedSessionID != nil { closeHostedSession() }
         if let session { finalAssessments.submit(session) }
         scheduleTranslation(); scheduleReset()
         if !final, session?.providerID != nil { notice = "Conversation saved. Final voice usage is unconfirmed." }
@@ -396,9 +482,9 @@ import LearningCore
     }
     #endif
     private struct AssessmentResult: Decodable { var outcome: Outcome; var suggestedLevel: Int; var nextGoal: String; var capability: String; var words: [WordProposal] }
-    private static func assess(api: APIClient, snapshot: SessionRecord, passage: Passage) async throws -> FinalAssessmentResult {
+    private static func assess(router: HelperRouter, snapshot: SessionRecord, passage: Passage) async throws -> FinalAssessmentResult {
         guard let language = LanguageRegistry.module(for: snapshot.languageID) else { throw ArchiveError.unsupportedLanguage }
-        let result = try await api.respond(instructions: TeachingPolicy.assessment(language: language), input: TeachingPolicy.context(snapshot, passage: passage), schema: APIClient.assessmentSchema(language: language))
+        let result = try await router.respond(purpose: .assessment, instructions: TeachingPolicy.assessment(language: language), input: TeachingPolicy.context(snapshot, passage: passage), schema: APIClient.assessmentSchema(language: language))
         let decoded = try JSONDecoder().decode(AssessmentResult.self, from: Data(result.text.utf8))
         let proposed = Assessment(passageID: passage.id, revisionKey: passage.revisionKey, outcome: decoded.outcome, suggestedLevel: decoded.suggestedLevel,
                                   nextGoal: decoded.nextGoal, capability: decoded.capability, words: decoded.words, context: snapshot.themeID ?? "free")
@@ -413,7 +499,7 @@ import LearningCore
                 guard let self, let snapshot = self.session, let p = snapshot.passages.last(where: { $0.speaker == .user }), p.text.count >= 3,
                       p.revisionKey != self.lastAssessmentKey, self.state == .active else { return }
                 guard let targetLanguage = LanguageRegistry.module(for: snapshot.languageID) else { return }
-                let result = try await Self.assess(api: self.api, snapshot: snapshot, passage: p)
+                let result = try await Self.assess(router: self.helperRouter, snapshot: snapshot, passage: p)
                 guard !Task.isCancelled, self.state == .active, self.session?.id == snapshot.id, self.userPassage?.revisionKey == p.revisionKey,
                       let current = self.session else { return }
                 guard let validated = LearningEngine.validate(result.assessment, session: current) else { return }
@@ -453,7 +539,7 @@ import LearningCore
                 try await Task.sleep(for: .milliseconds(500))
                 guard self.session?.id == snapshot.id, self.state == .active, let current = self.session else { return }
                 guard let targetLanguage = LanguageRegistry.module(for: current.languageID) else { return }
-                let result = try await self.api.respond(instructions: TeachingPolicy.delegation(language: targetLanguage), input: TeachingPolicy.context(current), search: current.searchCalls < 3)
+                let result = try await self.helperRouter.respond(purpose: .delegation, instructions: TeachingPolicy.delegation(language: targetLanguage), input: TeachingPolicy.context(current), search: current.searchCalls < 3)
                 guard self.session?.id == snapshot.id, self.state == .active else { return }
                 self.addUsage(result.usage)
                 if !result.sources.isEmpty {
@@ -482,7 +568,7 @@ import LearningCore
             // and a local avoids the force unwrap across suspension.
             guard let current = session else { return }
             let lesson = session?.lessonID.flatMap { CourseRegistry.lesson(id: $0) }
-            let result = try await api.respond(instructions: TeachingPolicy.typedReply(language: language, lesson: lesson), input: TeachingPolicy.context(current))
+            let result = try await helperRouter.respond(purpose: .typedReply, instructions: TeachingPolicy.typedReply(language: language, lesson: lesson), input: TeachingPolicy.context(current))
             guard session?.id == snapshot.id, state == .active else { return }
             addUsage(result.usage)
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
@@ -492,7 +578,7 @@ import LearningCore
     func lookup(word: String, sentence: String) async throws -> String {
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }
         let generation = languageGeneration, sessionID = session?.id
-        let result = try await api.respond(instructions: TeachingPolicy.lookup(language: language, meaningLanguage: store.preferences.meaningLanguage), input: "Selected: \(word)\nSentence: \(sentence)")
+        let result = try await helperRouter.respond(purpose: .lookup, instructions: TeachingPolicy.lookup(language: language, meaningLanguage: store.preferences.meaningLanguage), input: "Selected: \(word)\nSentence: \(sentence)")
         guard generation == languageGeneration else { throw CancellationError() }
         if session?.id == sessionID { addUsage(result.usage); scheduleSave() }
         return result.text
@@ -503,7 +589,7 @@ import LearningCore
         let query = String(query.prefix(Archive.maximumTitleCharacters))
         if let cached = store.learningSessions.flatMap(\.topics).first(where: { $0.languageID == targetLanguage.id && $0.query.lowercased() == query.lowercased() && $0.isFresh }) { return cached }
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }
-        let result = try await api.respond(instructions: TeachingPolicy.currentTopic(language: targetLanguage), input: String(query.prefix(500)), search: true)
+        let result = try await helperRouter.respond(purpose: .topic, instructions: TeachingPolicy.currentTopic(language: targetLanguage), input: String(query.prefix(500)), search: true)
         guard generation == languageGeneration else { throw CancellationError() }
         guard !result.sources.isEmpty else { throw TopicError.unsourced }
         // Bound topic text so saved sessions always pass Archive validation.

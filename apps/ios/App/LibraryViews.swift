@@ -252,6 +252,7 @@ struct EditableTranscriptView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var editingID: String?
     @State private var editedText = ""
+    @State private var reporting: Passage?
     private var session: SessionRecord? { store.sessions.first { $0.id == sessionID } }
     var body: some View {
         NavigationStack {
@@ -264,6 +265,10 @@ struct EditableTranscriptView: View {
                                 Spacer()
                                 if passage.speaker == .user && session?.endedAt != nil {
                                     Button("Edit") { editedText = passage.text; editingID = passage.id }.font(.caption)
+                                }
+                                if passage.speaker == .assistant {
+                                    Button { reporting = passage } label: { Image(systemName: "flag") }
+                                        .font(.caption).accessibilityLabel("Report this reply")
                                 }
                             }.foregroundStyle(AppColor.secondary)
                             Text(passage.text).font(.system(.title3, design: .rounded)).textSelection(.enabled)
@@ -287,6 +292,9 @@ struct EditableTranscriptView: View {
                         ToolbarItem(placement: .confirmationAction) { Button("Save") { if let id = editingID { store.correctPassage(sessionID: sessionID, passageID: id, text: editedText) }; editingID = nil } }
                     }
             }.presentationDetents([.medium, .large])
+        }
+        .sheet(item: $reporting) { passage in
+            ReportSheet(languageID: session?.languageID ?? "en", passage: passage)
         }
     }
 }
@@ -332,6 +340,20 @@ struct SettingsView: View {
                         NavigationLink { ManagedAccountView() } label: {
                             Label("Account", systemImage: "person.crop.circle")
                         }.disabled(coordinator.isRunning).accessibilityIdentifier("managed-account-settings")
+                        if coordinator.hostedUIAvailable {
+                            Picker("Conversation", selection: Binding(get: { coordinator.prefersHostedMinutes },
+                                                                      set: { coordinator.prefersHostedMinutes = $0 })) {
+                                Text("Your OpenAI key").tag(false)
+                                Text("Included minutes").tag(true)
+                            }.disabled(coordinator.isRunning).accessibilityIdentifier("conversation-provider")
+                            if coordinator.prefersHostedMinutes {
+                                let balance = coordinator.hostedBalance
+                                Text(balance == nil ? "Included minutes: sign in to check your balance."
+                                     : balance!.canStartConversation ? "Included minutes available."
+                                     : "No included minutes left.")
+                                    .font(.footnote).foregroundStyle(AppColor.secondary)
+                            }
+                        }
                     }
                 }
                 Section {
