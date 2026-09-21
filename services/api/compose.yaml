@@ -36,6 +36,13 @@ services:
       STRIPE_TEST_PRICE_25_USD: ${STRIPE_TEST_PRICE_25_USD:-}
       STRIPE_TEST_PAYMENT_FEE_10_MINOR: ${STRIPE_TEST_PAYMENT_FEE_10_MINOR:-}
       STRIPE_TEST_PAYMENT_FEE_25_MINOR: ${STRIPE_TEST_PAYMENT_FEE_25_MINOR:-}
+      # Admin panel (docs/admin-panel.md): disabled unless every variable is supplied.
+      GOOGLE_ADMIN_CLIENT_ID: ${GOOGLE_ADMIN_CLIENT_ID:-}
+      GOOGLE_ADMIN_CLIENT_SECRET: ${GOOGLE_ADMIN_CLIENT_SECRET:-}
+      ADMIN_HMAC_KEY: ${ADMIN_HMAC_KEY:-}
+      ADMIN_PROXY_TOKEN: ${ADMIN_PROXY_TOKEN:-}
+      ADMIN_PUBLIC_ORIGIN: ${ADMIN_PUBLIC_ORIGIN:-}
+      ADMIN_ALLOW_LOCAL_LOOPBACK: ${ADMIN_ALLOW_LOCAL_LOOPBACK:-false}
     depends_on:
       migrate:
         condition: service_completed_successfully
