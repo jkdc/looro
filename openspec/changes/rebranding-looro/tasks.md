@@ -19,6 +19,6 @@
       `SECURITY.md`, README, live docs, top-level release metadata
       (`[REQUIRED]` for publisher-only data); upstream repo links →
       `jkdc/looro`.
-- [ ] **T6 — Cross-check + close**: case-insensitive sweep of the live tree
+- [x] **T6 — Cross-check + close**: case-insensitive sweep of the live tree
       shows only documented exemptions; all runnable suites green; verify
       report written; macOS gate recorded as pending.
