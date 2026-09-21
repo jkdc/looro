@@ -361,7 +361,7 @@ export class HostedVoice {
     const row = (await this.db.query('SELECT provider_session_id,state FROM hosted_sessions WHERE id=$1', [id]).catch(() => ({ rows: [] }))).rows[0];
     if (row?.provider_session_id && row.state !== 'closed') await this.provider.hangup(row.provider_session_id).catch(() => {});
   }
-  async requestClose(id: string, reason: 'user_requested' | 'worker_recovery' | 'usage_limit' | 'deadline' | 'funding_reversed' | 'worker_shutdown' | 'sign_out') {
+  async requestClose(id: string, reason: 'user_requested' | 'worker_recovery' | 'usage_limit' | 'deadline' | 'funding_reversed' | 'worker_shutdown' | 'sign_out' | 'operator_close') {
     await this.db.query(`UPDATE hosted_sessions SET state=CASE WHEN state='incomplete' THEN state ELSE 'closing' END,
       close_requested_at=COALESCE(close_requested_at,$2),close_reason=COALESCE(close_reason,$3) WHERE id=$1 AND state<>'closed'`, [id, new Date(this.now()), reason]);
     try { this.slots.get(id)?.connection?.closeSession(); } catch { await this.connectionLost(id); }
@@ -397,6 +397,14 @@ export class HostedVoice {
     return { session: row ? await this.status(account, row.id) : null };
   }
   async close(account: string, id: string) { await this.status(account, id); await this.requestClose(id, 'user_requested'); return this.status(account, id); }
+  /** Panel operator force close: the worker reconciliation settles funds exactly like a user close. */
+  async adminClose(id: string) {
+    const row = (await this.db.query('SELECT id FROM hosted_sessions WHERE id=$1', [id])).rows[0];
+    if (!row) throw new ServiceError('live_session_not_found', 404);
+    await this.requestClose(id, 'operator_close');
+    const after = (await this.db.query('SELECT state,close_reason FROM hosted_sessions WHERE id=$1', [id])).rows[0];
+    return { sessionID: id, state: after?.state ?? null, closeReason: after?.close_reason ?? null };
+  }
   async tick(): Promise<void> {
     if (this.ticking || !this.leader) return; this.ticking = true;
     try {

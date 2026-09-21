@@ -1,6 +1,7 @@
 import Fastify, { type FastifyRequest } from 'fastify';
 import { createHmac, randomUUID } from 'node:crypto';
-import type { Database } from './db.js';
+import type { PoolClient } from 'pg';
+import { transaction, type Database } from './db.js';
 import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
 import { HelperSessionLimitError, ServiceError } from './errors.js';
 import { applyStripeEvent, STRIPE_WEBHOOK_PATH, type SandboxPayments } from './payments.js';
@@ -24,6 +25,10 @@ import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdm
   exchangeAdminIdentity, exchangeSessionToken, adminSignOut, type AdminAuthServices } from './admin-auth.js';
 import { BROWSE_TABLES, buildBrowseQuery, browseSchema } from './admin-browse.js';
 import { snapshot as adminSnapshot, timeseries, TIMESERIES_SETS } from './admin-metrics.js';
+import { recordAdminAction } from './admins-admin.js';
+import { welcomePolicy, updateWelcomePolicy, prepareMinuteCampaign, applyMinuteCampaign } from './minutes-admin.js';
+import { accountCloseoutReport } from './account-closeout-admin.js';
+import { normalizeAccessEmail } from './access-requests.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
   onStartupDiagnostic?: (diagnostic: StartupDiagnostic) => void | Promise<void>;
@@ -257,6 +262,10 @@ export function createApp(services: Services) {
     await adminOnly(request);
     return { tables: browseSchema() };
   });
+  app.get('/v1/admin/accounts/:id', async request => {
+    await adminOnly(request);
+    return accountCloseoutReport(db, uuid((request.params as { id: string }).id));
+  });
   const browseSchemaCache = browseSchema();
   app.get('/v1/admin/browse/:table', async request => {
     await adminOnly(request);
@@ -281,6 +290,77 @@ export function createApp(services: Services) {
     if (!(TIMESERIES_SETS as readonly string[]).includes(set)) throw new ServiceError('invalid_request');
     const days = query.days === undefined ? 30 : Number(query.days);
     return timeseries(db, set, days);
+  });
+  // ---- Audited panel actions (every mutation writes admin_actions) ----
+  const adminActor = (admin: { adminID: string; email: string | null }) => `admin:${admin.email ?? admin.adminID}`;
+  app.get('/v1/admin/policy/welcome', async request => {
+    await adminOnly(request);
+    return welcomePolicy(db);
+  });
+  app.put('/v1/admin/policy/welcome', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['version', 'welcomeEnabled', 'welcomeMinutes', 'reason'].includes(key)))
+      throw new ServiceError('invalid_request');
+    const reason = stringField(body, 'reason', 500);
+    const policy = { version: body.version, welcomeEnabled: body.welcomeEnabled, welcomeMinutes: body.welcomeMinutes } as
+      Parameters<typeof updateWelcomePolicy>[1];
+    const after = await updateWelcomePolicy(db, policy, adminActor(admin), reason,
+      (sql: PoolClient) => recordAdminAction(sql, admin.adminID, 'policy.update', 'minute_policy', reason,
+        { welcomeEnabled: policy.welcomeEnabled, welcomeMinutes: policy.welcomeMinutes }));
+    return reply.send(after);
+  });
+  app.post('/v1/admin/campaigns', { bodyLimit: 1_048_576 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['audience', 'minutesPerUser', 'maxTotalMinutes', 'reason'].includes(key)))
+      throw new ServiceError('invalid_request');
+    const reason = stringField(body, 'reason', 500);
+    const audience = body.audience;
+    const campaignID = randomUUID();
+    const summary = await prepareMinuteCampaign(db, {
+      id: campaignID, actor: adminActor(admin), reason,
+      minutesPerUser: body.minutesPerUser as number, maxTotalMinutes: body.maxTotalMinutes as number, audience: audience as 'all-current-users' | string[]
+    }, (sql: PoolClient) => recordAdminAction(sql, admin.adminID, 'campaign.prepare', campaignID, reason,
+      { minutesPerUser: body.minutesPerUser, maxTotalMinutes: body.maxTotalMinutes,
+        audienceSize: Array.isArray(audience) ? audience.length : 'all-current-users' }));
+    return reply.code(201).send(summary);
+  });
+  app.post('/v1/admin/campaigns/:id/apply', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    const confirmation = stringField(body, 'confirmation', 64), reason = stringField(body, 'reason', 500);
+    if (!/^[a-f0-9]{64}$/.test(confirmation)) throw new ServiceError('campaign_confirmation_required');
+    let outcome;
+    do { outcome = await applyMinuteCampaign(db, uuid((request.params as { id: string }).id), confirmation); }
+    while (outcome.pending > 0);
+    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'campaign.apply',
+      (request.params as { id: string }).id, reason, outcome));
+    return reply.send(outcome);
+  });
+  app.delete('/v1/admin/access-requests', { bodyLimit: 4096 }, async request => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['email', 'reason'].includes(key))) throw new ServiceError('invalid_request');
+    const email = normalizeAccessEmail(body.email);
+    const reason = stringField(body, 'reason', 500);
+    return transaction(db, async sql => {
+      const deleted = await sql.query('DELETE FROM access_requests WHERE email=$1', [email]);
+      if (!deleted.rowCount) throw new ServiceError('access_request_not_found', 404);
+      await recordAdminAction(sql, admin.adminID, 'access_request.delete', email, reason, { email });
+      return { deleted: true };
+    });
+  });
+  app.post('/v1/admin/hosted-sessions/:id/close', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request);
+    if (!services.hosted) throw new ServiceError('hosted_voice_not_ready', 503);
+    const reason = stringField(objectBody(request), 'reason', 500);
+    const sessionID = uuid((request.params as { id: string }).id);
+    const outcome = await services.hosted.adminClose(sessionID);
+    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'hosted_session.close', sessionID, reason,
+      { state: outcome.state }));
+    return reply.send(outcome);
   });
   app.get('/v1/feedback/capabilities', async () => ({ aiReports: Boolean(services.aiReports?.config) }));
   app.post(AI_REPORT_PATH, { bodyLimit: AI_REPORT_BODY_LIMIT }, async (request, reply) => {

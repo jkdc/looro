@@ -1,5 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import type { PoolClient } from 'pg';
 import { connectDatabase, transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
 import { appendMinuteEntry, millisecondsForMinutes, MS_PER_MINUTE } from './minutes.js';
@@ -27,7 +28,8 @@ const policyFromRow = (row: any): WelcomePolicy => ({ version: row.version, welc
 export async function welcomePolicy(db: Database): Promise<WelcomePolicy> {
   return policyFromRow((await db.query('SELECT * FROM minute_policy WHERE singleton')).rows[0]);
 }
-export async function updateWelcomePolicy(db: Database, policy: WelcomePolicy, actor: string, reason: string) {
+export async function updateWelcomePolicy(db: Database, policy: WelcomePolicy, actor: string, reason: string,
+  extraAudit?: (sql: PoolClient) => Promise<void>) {
   auditText(actor); auditText(reason);
   if (typeof policy.welcomeEnabled !== 'boolean' || !Number.isSafeInteger(policy.version) || policy.version < 1 ||
     (policy.dailyWelcomeBudgetMinutes!==undefined && !budget(policy.dailyWelcomeBudgetMinutes)) ||
@@ -43,6 +45,7 @@ export async function updateWelcomePolicy(db: Database, policy: WelcomePolicy, a
       [after.version,after.welcomeEnabled,amount]);
     await sql.query('INSERT INTO minute_policy_audit(id,actor,reason,previous_policy,next_policy) VALUES($1,$2,$3,$4,$5)',
       [randomUUID(), actor, reason, JSON.stringify(before), JSON.stringify(after)]);
+    if (extraAudit) await extraAudit(sql);
     return after;
   });
 }
@@ -71,7 +74,8 @@ function campaignSummary(row: any) {
     minutesPerUser: Number(row.minutes_per_user), totalMinutes: Number(row.recipient_count) * Number(row.minutes_per_user),
     confirmation: row.target_digest as string };
 }
-export async function prepareMinuteCampaign(db: Database, request: CampaignRequest) {
+export async function prepareMinuteCampaign(db: Database, request: CampaignRequest,
+  extraAudit?: (sql: PoolClient) => Promise<void>) {
   if (!isUUID(request.id)) throw new ServiceError('invalid_campaign_id');
   auditText(request.actor); auditText(request.reason);
   if (!request.minutesPerUser) throw new ServiceError('invalid_minutes');
@@ -103,6 +107,7 @@ export async function prepareMinuteCampaign(db: Database, request: CampaignReque
       VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`, [request.id, request.actor, request.reason, request.minutesPerUser,
       request.maxTotalMinutes, targets.length, digest, confirmation])).rows[0];
     await sql.query('INSERT INTO minute_campaign_recipients(campaign_id,account_id) SELECT $1,unnest($2::uuid[])', [request.id, targets]);
+    if (extraAudit) await extraAudit(sql);
     return campaignSummary(row);
   });
 }
