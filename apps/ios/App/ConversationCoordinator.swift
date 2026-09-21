@@ -271,7 +271,7 @@ import MuralCore
             session?.providerID = (event["session"] as? [String: Any])?["id"] as? String
             // The usage estimate is recorded only once the session truly starts, so aborted connects don't log phantom voice time.
             session?.voiceSeconds = 15
-            append("instructions", session?.isListening == true ? TeachingPolicy.listeningStory(language: language) : TeachingPolicy.greeting(language: language))
+            append("instructions", session?.isListening == true ? TeachingPolicy.listeningStory(language: language) : TeachingPolicy.greeting(language: language, theme: selectedTheme))
             startDurationChecks(); save()
         case "session.input_transcript.delta", "session.output_transcript.delta":
             guard state == .active || state == .closing, let delta = event["delta"] as? String,
