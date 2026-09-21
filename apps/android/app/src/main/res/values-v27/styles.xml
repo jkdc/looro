@@ -1,6 +1,6 @@
 <resources>
-    <style name="Theme.Looro" parent="Theme.Looro.Base">
+    <style name="Theme.App" parent="Theme.App.Base">
         <item name="android:windowLightNavigationBar">true</item>
-        <item name="android:navigationBarColor">@color/looro_cream</item>
+        <item name="android:navigationBarColor">@color/app_cream</item>
     </style>
 </resources>

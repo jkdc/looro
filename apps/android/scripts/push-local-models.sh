@@ -6,7 +6,7 @@
 # runs STT on device, the LLM remotely).
 #
 # Target layout (app-private, writable by adb):
-#   /sdcard/Android/data/com.jkdc.looro.android/files/models/whisper/<file>.bin
+#   /sdcard/Android/data/com.jkdc.app.android/files/models/whisper/<file>.bin
 #
 # Files are taken from apps/android/local-models/ (gitignored).
 # Only changed files (size differs) are pushed, so re-deploys are cheap.
@@ -14,7 +14,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"   # apps/android
 SRC="$ROOT/local-models"
-PKG="com.jkdc.looro.android"
+PKG="com.jkdc.app.android"
 DEST="/sdcard/Android/data/$PKG/files/models"
 SERIAL="${SERIAL:-}"
 

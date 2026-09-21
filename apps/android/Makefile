@@ -13,7 +13,7 @@
 # With several devices connected the deploy aborts and lists them:
 #   make deploy SERIAL=47270DLAQ0008U
 
-ENGINE ?= $(if $(LOORO_CONVERSATION_ENGINE),$(LOORO_CONVERSATION_ENGINE),openai)
+ENGINE ?= $(if $(APP_CONVERSATION_ENGINE),$(APP_CONVERSATION_ENGINE),openai)
 SERIAL ?=
 ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 PKG := $(shell sed -n 's/^ANDROID_APPLICATION_ID=//p' $(ROOT)../../branding.properties)
@@ -44,7 +44,7 @@ run:
 	@serial=$$( $(RESOLVE) ) && adb -s $$serial shell am start -n $(PKG)/com.jkdc.app.MainActivity
 
 logs:
-	@serial=$$( $(RESOLVE) ) && adb -s $$serial logcat -s LooroLocalEngine
+	@serial=$$( $(RESOLVE) ) && adb -s $$serial logcat -s AppLocalEngine
 
 clean:
 	./gradlew clean

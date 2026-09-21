@@ -17,7 +17,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PKG="$(sed -n 's/^ANDROID_APPLICATION_ID=//p' "$ROOT/../../branding.properties")"
 APK="$ROOT/app/build/outputs/apk/debug/app-debug.apk"
-ENGINE="${ENGINE:-${LOORO_CONVERSATION_ENGINE:-openai}}"
+ENGINE="${ENGINE:-${APP_CONVERSATION_ENGINE:-openai}}"
 case "$ENGINE" in
   openai|deepseek|glm) ;;
   *) echo "unknown ENGINE '$ENGINE' (valid: openai, deepseek, glm)" >&2; exit 2 ;;
@@ -76,4 +76,4 @@ ${ADB} shell am start -n "$PKG/com.jkdc.app.MainActivity" >/dev/null
 ok "App started with ENGINE=$ENGINE"
 
 echo
-echo "Metrics:  $ADB logcat -s LooroLocalEngine"
+echo "Metrics:  $ADB logcat -s AppLocalEngine"

@@ -1,11 +1,11 @@
 <resources>
-    <style name="Theme.Looro.Base" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="Theme.App.Base" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:statusBarColor">@color/looro_cream</item>
+        <item name="android:statusBarColor">@color/app_cream</item>
         <item name="android:navigationBarColor">#362A22</item>
-        <item name="android:windowBackground">@drawable/looro_launch_background</item>
+        <item name="android:windowBackground">@drawable/app_launch_background</item>
         <item name="android:colorAccent">#FF8A4D</item>
     </style>
-    <style name="Theme.Looro" parent="Theme.Looro.Base" />
+    <style name="Theme.App" parent="Theme.App.Base" />
 </resources>

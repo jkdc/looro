@@ -3,7 +3,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories { google(); mavenCentral() }
 }
-rootProject.name = "Looro"
+rootProject.name = "app"
 include(":app")
 // Local voice native layer (whisper.cpp STT): used by the remote conversation
 // engines (deepseek/glm), which run STT/TTS on device and the LLM remotely.

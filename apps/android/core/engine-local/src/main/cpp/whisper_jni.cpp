@@ -8,7 +8,7 @@
 
 #include "whisper.h"
 
-#define JNI_LOG_TAG "LooroLocalEngine"
+#define JNI_LOG_TAG "AppLocalEngine"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, JNI_LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, JNI_LOG_TAG, __VA_ARGS__)
 
@@ -30,7 +30,7 @@ void whisper_log_to_logcat(ggml_log_level level, const char * text, void * /*use
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_com_jkdc_looro_engines_local_JniWhisperRuntime_init(JNIEnv * env, jclass, jstring jModelPath) {
+Java_com_jkdc_app_engines_local_JniWhisperRuntime_init(JNIEnv * env, jclass, jstring jModelPath) {
     const char * path = env->GetStringUTFChars(jModelPath, nullptr);
     whisper_context_params cparams = whisper_context_default_params();
     cparams.use_gpu = false;   // CPU-only: stable and measurable.
@@ -46,7 +46,7 @@ Java_com_jkdc_looro_engines_local_JniWhisperRuntime_init(JNIEnv * env, jclass, j
 }
 
 JNIEXPORT void JNICALL
-Java_com_jkdc_looro_engines_local_JniWhisperRuntime_free(JNIEnv *, jclass, jlong handle) {
+Java_com_jkdc_app_engines_local_JniWhisperRuntime_free(JNIEnv *, jclass, jlong handle) {
     if (handle != 0) {
         whisper_free(reinterpret_cast<whisper_context *>(handle));
     }
@@ -54,7 +54,7 @@ Java_com_jkdc_looro_engines_local_JniWhisperRuntime_free(JNIEnv *, jclass, jlong
 
 // Returns the transcribed text (segments joined). Empty string on silence/failure.
 JNIEXPORT jstring JNICALL
-Java_com_jkdc_looro_engines_local_JniWhisperRuntime_transcribe(
+Java_com_jkdc_app_engines_local_JniWhisperRuntime_transcribe(
         JNIEnv * env, jclass, jlong handle, jfloatArray jSamples, jint numSamples,
         jint threads, jstring jLanguage) {
     auto * ctx = reinterpret_cast<whisper_context *>(handle);

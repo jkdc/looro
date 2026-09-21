@@ -14,7 +14,7 @@
 > Sections below describe the *removed* local engine and are kept as history.
 
 > Alcance: qué cambia, qué se degrada, qué se pierde y qué riesgos aparecen en la
-> app Android cuando `looro.conversationEngine != openai` (en particular `local`).
+> app Android cuando `app.conversationEngine != openai` (en particular `local`).
 > Basado en el código de `feature/switchable-conversation-engine` (incluye fixes de
 > las rondas de verificación). Fecha: 2026-09-17.
 
@@ -73,7 +73,7 @@ decisiones de producto, no de código.
   corresponden a nada. Pendiente de producto: ocultar la sección o etiquetarla
   "estimación si usaras OpenAI".
 - **Contenido guest/welcome**: `GuestMinuteController` sigue activo si
-  `looro.apiOrigin` está configurado (su UI de estado puede mencionar minutos);
+  `app.apiOrigin` está configurado (su UI de estado puede mencionar minutos);
   no bloquea el flujo local, pero conviene silenciar sus avisos en local.
 
 ## 5. Consentimiento, privacidad y legal

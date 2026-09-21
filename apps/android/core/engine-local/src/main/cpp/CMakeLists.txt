@@ -3,7 +3,7 @@
 # voice turns); the whisper STT leg remains because the remote conversation
 # engines (deepseek/glm) still run speech-to-text on device.
 cmake_minimum_required(VERSION 3.22)
-project(looro_whisper LANGUAGES C CXX)
+project(app_whisper LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,14 +20,14 @@ add_subdirectory(third_party/whisper.cpp)
 
 find_library(log-lib log)
 
-add_library(looro_whisper SHARED whisper_jni.cpp)
+add_library(app_whisper SHARED whisper_jni.cpp)
 
-target_include_directories(looro_whisper
+target_include_directories(app_whisper
     PRIVATE
     third_party/whisper.cpp/include
 )
 
-target_link_libraries(looro_whisper
+target_link_libraries(app_whisper
     PRIVATE
     whisper
     ${log-lib}
