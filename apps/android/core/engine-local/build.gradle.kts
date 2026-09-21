@@ -4,8 +4,11 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
 }
+val branding = Properties().apply {
+    rootProject.file("../../branding.properties").inputStream().use { load(it) }
+}
 android {
-    namespace = "com.jkdc.looro.engines.local"
+    namespace = branding.getProperty("ANDROID_NAMESPACE") + ".engines.local"
     compileSdk = 36
     defaultConfig {
         minSdk = 26

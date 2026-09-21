@@ -15,8 +15,9 @@
 
 ENGINE ?= $(if $(LOORO_CONVERSATION_ENGINE),$(LOORO_CONVERSATION_ENGINE),openai)
 SERIAL ?=
-PKG := com.jkdc.looro.android
-GRADLE_FLAGS := -Plooro.conversationEngine=$(ENGINE)
+ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+PKG := $(shell sed -n 's/^ANDROID_APPLICATION_ID=//p' $(ROOT)../../branding.properties)
+GRADLE_FLAGS := -Papp.conversationEngine=$(ENGINE)
 RESOLVE := ./scripts/adb-device.sh $(if $(SERIAL),"$(SERIAL)")
 
 .PHONY: help deploy deploy-fast build test run logs models-push clean
@@ -40,7 +41,7 @@ models-push:
 	SERIAL=$(SERIAL) ./scripts/push-local-models.sh
 
 run:
-	@serial=$$( $(RESOLVE) ) && adb -s $$serial shell am start -n $(PKG)/com.jkdc.looro.MainActivity
+	@serial=$$( $(RESOLVE) ) && adb -s $$serial shell am start -n $(PKG)/com.jkdc.app.MainActivity
 
 logs:
 	@serial=$$( $(RESOLVE) ) && adb -s $$serial logcat -s LooroLocalEngine

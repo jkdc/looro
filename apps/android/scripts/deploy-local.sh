@@ -15,7 +15,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PKG="com.jkdc.looro.android"
+PKG="$(sed -n 's/^ANDROID_APPLICATION_ID=//p' "$ROOT/../../branding.properties")"
 APK="$ROOT/app/build/outputs/apk/debug/app-debug.apk"
 ENGINE="${ENGINE:-${LOORO_CONVERSATION_ENGINE:-openai}}"
 case "$ENGINE" in
@@ -34,7 +34,7 @@ ok()   { printf '  \033[32m✔\033[0m %s\n' "$*"; }
 
 bold "[1/4] Building (ENGINE=$ENGINE)"
 if [ "$DEPLOY_NO_BUILD" != "1" ]; then
-  (cd "$ROOT" && ./gradlew -q :app:assembleDebug -Plooro.conversationEngine="$ENGINE") \
+  (cd "$ROOT" && ./gradlew -q :app:assembleDebug -Papp.conversationEngine="$ENGINE") \
     || { echo "Build failed"; exit 1; }
   ok "Built $(basename "$APK")"
 else
@@ -53,7 +53,7 @@ if [ "$ENGINE" = "openai" ]; then
 else
   # deepseek/glm voice runs whisper STT on device. The model dirs must be
   # created by the app itself (FUSE), so launch once first.
-  ${ADB} shell am start -n "$PKG/com.jkdc.looro.MainActivity" >/dev/null
+  ${ADB} shell am start -n "$PKG/com.jkdc.app.MainActivity" >/dev/null
   sleep 6
   ${ADB} shell am force-stop "$PKG"
   SERIAL="$DEVICE" bash "$ROOT/scripts/push-local-models.sh"
@@ -72,7 +72,7 @@ fi
 
 bold "[4/4] Launching"
 ${ADB} shell am force-stop "$PKG"
-${ADB} shell am start -n "$PKG/com.jkdc.looro.MainActivity" >/dev/null
+${ADB} shell am start -n "$PKG/com.jkdc.app.MainActivity" >/dev/null
 ok "App started with ENGINE=$ENGINE"
 
 echo

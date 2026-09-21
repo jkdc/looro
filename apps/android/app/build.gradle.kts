@@ -6,45 +6,49 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
-val looroLocal = Properties().apply {
+val appLocal = Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
-fun looroConfiguration(name: String): String = providers.gradleProperty(name).orNull ?: looroLocal.getProperty(name, "")
+// Single source of brand identity: branding.properties at the repo root.
+val branding = Properties().apply {
+    rootProject.file("../../branding.properties").inputStream().use { load(it) }
+}
+fun appConfiguration(name: String): String = providers.gradleProperty(name).orNull ?: appLocal.getProperty(name, "")
 fun buildString(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "").replace("\r", "") + "\""
-val looroMinutePurchases = looroConfiguration("looro.minutePurchasesEnabled").ifBlank { "false" }
-val looroPurchaseChannel = looroConfiguration("looro.purchaseChannel").ifBlank { "play" }
-require(looroPurchaseChannel in listOf("play", "stripe")) { "looro.purchaseChannel must be play or stripe" }
-val looroMinuteEnvironment = looroConfiguration("looro.minutePurchaseEnvironment").ifBlank { "test" }
-require(looroMinutePurchases in listOf("false", "true")) { "looro.minutePurchasesEnabled must be false or true" }
-require(looroMinuteEnvironment in listOf("test", "live")) { "looro.minutePurchaseEnvironment must be test or live" }
+val appMinutePurchases = appConfiguration("app.minutePurchasesEnabled").ifBlank { "false" }
+val appPurchaseChannel = appConfiguration("app.purchaseChannel").ifBlank { "play" }
+require(appPurchaseChannel in listOf("play", "stripe")) { "app.purchaseChannel must be play or stripe" }
+val appMinuteEnvironment = appConfiguration("app.minutePurchaseEnvironment").ifBlank { "test" }
+require(appMinutePurchases in listOf("false", "true")) { "app.minutePurchasesEnabled must be false or true" }
+require(appMinuteEnvironment in listOf("test", "live")) { "app.minutePurchaseEnvironment must be test or live" }
 
-// Conversation engine selection: -Plooro.conversationEngine > local.properties > LOORO_CONVERSATION_ENGINE env > openai.
-val looroConversationEngine = (
-    providers.gradleProperty("looro.conversationEngine").orNull
-        ?: looroLocal.getProperty("looro.conversationEngine")
-        ?: System.getenv("LOORO_CONVERSATION_ENGINE")
+// Conversation engine selection: -Papp.conversationEngine > local.properties > APP_CONVERSATION_ENGINE env > openai.
+val appConversationEngine = (
+    providers.gradleProperty("app.conversationEngine").orNull
+        ?: appLocal.getProperty("app.conversationEngine")
+        ?: System.getenv("APP_CONVERSATION_ENGINE")
         ?: "openai"
     ).trim().lowercase()
 val validConversationEngines = listOf("openai", "deepseek", "glm")
-require(looroConversationEngine in validConversationEngines) {
-    "looro.conversationEngine must be one of $validConversationEngines (got '$looroConversationEngine')"
+require(appConversationEngine in validConversationEngines) {
+    "app.conversationEngine must be one of $validConversationEngines (got '$appConversationEngine')"
 }
 android {
-    namespace = "com.jkdc.looro"
+    namespace = branding.getProperty("ANDROID_NAMESPACE")
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.jkdc.looro.android"
+        applicationId = branding.getProperty("ANDROID_APPLICATION_ID")
         minSdk = 26
         targetSdk = 36
         versionCode = 7
         versionName = "0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "MANAGED_API_ORIGIN", buildString(looroConfiguration("looro.apiOrigin")))
-        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", buildString(looroConfiguration("looro.googleServerClientID")))
-        buildConfigField("boolean", "MINUTE_PURCHASES_ENABLED", looroMinutePurchases)
-        buildConfigField("String", "PURCHASE_CHANNEL", buildString(looroPurchaseChannel))
-        buildConfigField("String", "MINUTE_PURCHASE_ENVIRONMENT", buildString(looroMinuteEnvironment))
-        buildConfigField("String", "CONVERSATION_ENGINE", buildString(looroConversationEngine))
+        buildConfigField("String", "MANAGED_API_ORIGIN", buildString(appConfiguration("app.apiOrigin")))
+        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", buildString(appConfiguration("app.googleServerClientID")))
+        buildConfigField("boolean", "MINUTE_PURCHASES_ENABLED", appMinutePurchases)
+        buildConfigField("String", "PURCHASE_CHANNEL", buildString(appPurchaseChannel))
+        buildConfigField("String", "MINUTE_PURCHASE_ENVIRONMENT", buildString(appMinuteEnvironment))
+        buildConfigField("String", "CONVERSATION_ENGINE", buildString(appConversationEngine))
     }
     // A personal installation can preserve its local signing identity across SDK resets.
     // This file is ignored by Git; clean checkouts use Android's standard debug key.
