@@ -1,9 +1,9 @@
-# Mural local voice native layer: whisper.cpp (STT) via a minimal JNI surface.
+# Looro local voice native layer: whisper.cpp (STT) via a minimal JNI surface.
 # The on-device llama.cpp (LLM) engine was removed on 2026-09-17 (too slow for
 # voice turns); the whisper STT leg remains because the remote conversation
 # engines (deepseek/glm) still run speech-to-text on device.
 cmake_minimum_required(VERSION 3.22)
-project(mural_whisper LANGUAGES C CXX)
+project(looro_whisper LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,14 +20,14 @@ add_subdirectory(third_party/whisper.cpp)
 
 find_library(log-lib log)
 
-add_library(mural_whisper SHARED whisper_jni.cpp)
+add_library(looro_whisper SHARED whisper_jni.cpp)
 
-target_include_directories(mural_whisper
+target_include_directories(looro_whisper
     PRIVATE
     third_party/whisper.cpp/include
 )
 
-target_link_libraries(mural_whisper
+target_link_libraries(looro_whisper
     PRIVATE
     whisper
     ${log-lib}

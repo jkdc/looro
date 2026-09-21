@@ -1,4 +1,4 @@
-# Mural Android — build & deployment shortcuts.
+# Looro Android — build & deployment shortcuts.
 #
 #   make deploy               Build + install + push whisper model + launch
 #   make deploy ENGINE=deepseek   OpenAI-compatible remote (needs DEEPSEEK_API_KEY at runtime)
@@ -13,16 +13,16 @@
 # With several devices connected the deploy aborts and lists them:
 #   make deploy SERIAL=47270DLAQ0008U
 
-ENGINE ?= $(if $(MURAL_CONVERSATION_ENGINE),$(MURAL_CONVERSATION_ENGINE),openai)
+ENGINE ?= $(if $(LOORO_CONVERSATION_ENGINE),$(LOORO_CONVERSATION_ENGINE),openai)
 SERIAL ?=
-PKG := chat.mural.android
-GRADLE_FLAGS := -Pmural.conversationEngine=$(ENGINE)
+PKG := com.jkdc.looro.android
+GRADLE_FLAGS := -Plooro.conversationEngine=$(ENGINE)
 RESOLVE := ./scripts/adb-device.sh $(if $(SERIAL),"$(SERIAL)")
 
 .PHONY: help deploy deploy-fast build test run logs models-push clean
 
 help:
-	@grep -E '^#   (make|MURAL)' Makefile | sed 's/^#   //'
+	@grep -E '^#   (make|LOORO)' Makefile | sed 's/^#   //'
 
 deploy:
 	ENGINE=$(ENGINE) SERIAL=$(SERIAL) ./scripts/deploy-local.sh
@@ -40,10 +40,10 @@ models-push:
 	SERIAL=$(SERIAL) ./scripts/push-local-models.sh
 
 run:
-	@serial=$$( $(RESOLVE) ) && adb -s $$serial shell am start -n $(PKG)/chat.mural.MainActivity
+	@serial=$$( $(RESOLVE) ) && adb -s $$serial shell am start -n $(PKG)/com.jkdc.looro.MainActivity
 
 logs:
-	@serial=$$( $(RESOLVE) ) && adb -s $$serial logcat -s MuralLocalEngine
+	@serial=$$( $(RESOLVE) ) && adb -s $$serial logcat -s LooroLocalEngine
 
 clean:
 	./gradlew clean

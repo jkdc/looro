@@ -5,7 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 android {
-    namespace = "chat.mural.engines.local"
+    namespace = "com.jkdc.looro.engines.local"
     compileSdk = 36
     defaultConfig {
         minSdk = 26

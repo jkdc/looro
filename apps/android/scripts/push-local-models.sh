@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Pushes the whisper STT model to the Mural app's private external storage.
+# Pushes the whisper STT model to the Looro app's private external storage.
 #
 # The on-device LLM (.gguf) push was removed on 2026-09-17 together with the
 # local llama.cpp engine; this script is now whisper-only (deepseek/glm voice
 # runs STT on device, the LLM remotely).
 #
 # Target layout (app-private, writable by adb):
-#   /sdcard/Android/data/chat.mural.android/files/models/whisper/<file>.bin
+#   /sdcard/Android/data/com.jkdc.looro.android/files/models/whisper/<file>.bin
 #
 # Files are taken from apps/android/local-models/ (gitignored).
 # Only changed files (size differs) are pushed, so re-deploys are cheap.
@@ -14,7 +14,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"   # apps/android
 SRC="$ROOT/local-models"
-PKG="chat.mural.android"
+PKG="com.jkdc.looro.android"
 DEST="/sdcard/Android/data/$PKG/files/models"
 SERIAL="${SERIAL:-}"
 

@@ -4,7 +4,7 @@
       `scripts/*` (generator, icon tool, cross-platform checker); rename
       `MuralApp.swift`; regenerate project as `Looro.xcodeproj`; remove
       `Mural.xcodeproj`; generator runs clean.
-- [ ] **T2 — Android identity**: move `java/chat/mural` trees to
+- [x] **T2 — Android identity**: move `java/chat/mural` trees to
       `java/com/jkdc/looro`; rename namespaces, applicationId, resources,
       branded files; JNI `chat_mural` symbols; `:app:testDebugUnitTest`,
       `:core:engine-local:testDebugUnitTest`, `:app:lintDebug` green.

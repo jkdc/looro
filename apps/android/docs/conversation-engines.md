@@ -1,12 +1,12 @@
 # Conversation Engines (OpenAI / DeepSeek / GLM)
 
 The app's AI teaching calls (typed replies, meanings, assessments, topics) run
-through a single contract, `chat.mural.network.TeachingClient`, and a single
-construction point, `chat.mural.core.engines.ConversationEngineFactory`.
+through a single contract, `com.jkdc.looro.network.TeachingClient`, and a single
+construction point, `com.jkdc.looro.core.engines.ConversationEngineFactory`.
 **Which engine is used is a build/deploy-time decision**, not a code change.
 
 ```
-MuralViewModel.teaching()
+LooroViewModel.teaching()
         └── ConversationEngineFactory  ← the only construction point
               ├── "openai"   (default) OpenAIEngineAdapter → existing APIClient
               ├── "deepseek"          OpenAICompatibleEngine → api.deepseek.com/v1
@@ -39,9 +39,9 @@ decision: `docs/benchmarks-local.md`.
 
 Precedence (highest first):
 
-1. Gradle property: `./gradlew :app:assembleDebug -Pmural.conversationEngine=deepseek`
-2. `local.properties` key `mural.conversationEngine`
-3. Environment variable `MURAL_CONVERSATION_ENGINE`
+1. Gradle property: `./gradlew :app:assembleDebug -Plooro.conversationEngine=deepseek`
+2. `local.properties` key `looro.conversationEngine`
+3. Environment variable `LOORO_CONVERSATION_ENGINE`
 4. Default: `openai` (byte-for-byte today's behavior)
 
 Invalid values fail the build immediately.
@@ -72,7 +72,7 @@ cp api-keys.properties.example api-keys.properties
 #   DEEPSEEK_API_KEY=<tu clave>
 
 adb push api-keys.properties \
-  /sdcard/Android/data/chat.mural.android/files/api_keys.properties
+  /sdcard/Android/data/com.jkdc.looro.android/files/api_keys.properties
 ```
 
 **Rotación de claves**: edita tu `api-keys.properties` local, vuelve a hacer
@@ -97,7 +97,7 @@ mic is suppressed while TTS speaks; typed input during a voice session is
 spoken and shown as assistant transcript.
 
 The whisper model is pushed to
-`/sdcard/Android/data/chat.mural.android/files/models/whisper/` by
+`/sdcard/Android/data/com.jkdc.looro.android/files/models/whisper/` by
 `make deploy` (or `make models-push`) and is only re-pushed when its size
 changes. Note: the model dir must be created by the app (it does so on
 launch); the deploy script handles the launch-before-push ordering
