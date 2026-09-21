@@ -1,7 +1,7 @@
 import Fastify, { type FastifyRequest } from 'fastify';
 import { createHmac, randomUUID } from 'node:crypto';
 import type { Database } from './db.js';
-import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, type verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
+import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
 import { HelperSessionLimitError, ServiceError } from './errors.js';
 import { applyStripeEvent, STRIPE_WEBHOOK_PATH, type SandboxPayments } from './payments.js';
 import { RATE_VERSION } from './pricing.js';
@@ -20,13 +20,16 @@ import { STRIPE_MINUTES_WEBHOOK_PATH, STRIPE_WEBHOOK_BODY_LIMIT, type StripeMinu
 import type { PlayMinuteProvider } from './play-minute-provider.js';
 import { HOSTED_HELPER_BODY_LIMIT, type HostedHelpers } from './hosted-helpers.js';
 import { startupDiagnostic, type StartupDiagnostic } from './startup-diagnostics.js';
+import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdminOrigin,
+  exchangeAdminIdentity, exchangeSessionToken, adminSignOut, type AdminAuthServices } from './admin-auth.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
   onStartupDiagnostic?: (diagnostic: StartupDiagnostic) => void | Promise<void>;
   hostedHelpers?: HostedHelpers;
   minuteCommerce?: { purchases: MinutePurchases; aiPurchases?: AIValuePurchases; fulfillment?: PurchaseFulfillmentRouter;
     stripe?: StripeMinuteProvider; play?: PlayMinuteProvider };
-  accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity } }
+  accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
+  admin?: { services: AdminAuthServices; admission: AuthAdmission } }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover']);
 // These routes carry no client network identity: requiring trusted-proxy headers would 503 them,
@@ -91,6 +94,18 @@ export function createApp(services: Services) {
       } catch (error) {
         if (error instanceof ServiceError) { if (error.status === 429) reply.header('Retry-After', '3600'); throw error; }
         throw new ServiceError('accounts_unavailable', 503);
+      }
+      return;
+    }
+    // Admin routes carry their own admission caps and never fall through to the shared limiter.
+    if (path.startsWith('/v1/admin/')) {
+      if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+      const operation = path === '/v1/admin/auth/challenge' || path === '/v1/admin/auth/exchange' || path === '/v1/admin/auth/session' ? 'admin' : 'admin-api';
+      try {
+        await services.admin.admission.enter(operation, request.headers, request.raw.socket.remoteAddress ?? request.ip);
+      } catch (error) {
+        if (error instanceof ServiceError) { if (error.status === 429) reply.header('Retry-After', '3600'); throw error; }
+        throw new ServiceError('admin_panel_unavailable', 503);
       }
       return;
     }
@@ -191,6 +206,51 @@ export function createApp(services: Services) {
   app.get('/v1/auth/providers', async () => ({ google: Boolean(services.accounts && services.auth.googleClientID),
     googleAndroid: Boolean(services.accounts && services.auth.googleAndroidServerClientID && services.auth.googleAndroidClientIDs?.length),
     apple: Boolean(services.accounts && services.auth.appleClientID && services.appleRevoker) }));
+  // ---- Admin panel ----
+  const adminOnly = async (request: FastifyRequest) => {
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    return adminAuthenticate(services.admin.services.db, request.headers);
+  };
+  const assertAdminCsrf = (request: FastifyRequest) => {
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    assertAdminOrigin(request.headers, services.admin.services.config.allowedOrigin, request.method);
+  };
+  app.post('/v1/admin/auth/challenge', { bodyLimit: 1024 }, async request => {
+    assertAdminCsrf(request);
+    if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
+    return createChallenge(db);
+  });
+  app.post('/v1/admin/auth/exchange', { bodyLimit: 20_000 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    const body = objectBody(request), provider = stringField(body, 'provider', 10);
+    if (Object.keys(body).some(key => !['provider', 'idToken', 'challengeID'].includes(key))) throw new ServiceError('invalid_request');
+    if (provider !== 'google' && provider !== 'apple') throw new ServiceError('invalid_identity_provider');
+    const result = await exchangeAdminIdentity(services.admin.services, provider,
+      stringField(body, 'idToken', 16_384), uuid(stringField(body, 'challengeID', 36)),
+      services.admin.services.identityVerifier ?? verifyIdentity);
+    reply.header('Set-Cookie', adminCookieHeader(result.token));
+    return { adminID: result.adminID };
+  });
+  app.post('/v1/admin/auth/session', { bodyLimit: 1024 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    const result = await exchangeSessionToken(services.admin.services, stringField(objectBody(request), 'bearer', 128));
+    reply.header('Set-Cookie', adminCookieHeader(result.token));
+    return { adminID: result.adminID };
+  });
+  app.post('/v1/admin/auth/sign-out', { bodyLimit: 1024 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
+    await adminSignOut(services.admin.services, request.headers);
+    reply.header('Set-Cookie', adminClearCookieHeader());
+    return { signedOut: true };
+  });
+  app.get('/v1/admin/me', async request => {
+    const admin = await adminOnly(request);
+    return { adminID: admin.adminID, email: admin.email };
+  });
   app.get('/v1/feedback/capabilities', async () => ({ aiReports: Boolean(services.aiReports?.config) }));
   app.post(AI_REPORT_PATH, { bodyLimit: AI_REPORT_BODY_LIMIT }, async (request, reply) => {
     const reports = services.aiReports;

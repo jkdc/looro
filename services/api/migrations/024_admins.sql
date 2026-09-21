@@ -1,5 +1,8 @@
 -- Administrators are a separate principal from app users. Nothing here joins,
 -- references or shares storage with accounts, identities or auth_sessions.
+ALTER TABLE auth_rate_limits DROP CONSTRAINT auth_rate_limits_operation_check;
+ALTER TABLE auth_rate_limits ADD CONSTRAINT auth_rate_limits_operation_check
+  CHECK (operation IN ('challenge','exchange','account','guest','admin','admin-api'));
 CREATE TABLE admins (
   id uuid PRIMARY KEY,
   email text,
