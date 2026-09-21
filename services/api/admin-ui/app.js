@@ -35,18 +35,24 @@ const toast = (message, kind = 'success') => {
   document.body.append(element);
   setTimeout(() => element.remove(), 4_000);
 };
+const openModal = id => { const element = $(id); element.classList.add('show'); element.style.display = 'block';
+  document.body.classList.add('modal-open'); };
+const closeModal = id => { const element = $(id); element.classList.remove('show'); element.style.display = '';
+  document.body.classList.remove('modal-open'); };
 const detail = (title, body) => {
   $('#detail-title').textContent = title;
   $('#detail-body').textContent = typeof body === 'string' ? body : JSON.stringify(body, null, 2);
-  window.bootstrap ? new window.bootstrap.Modal('#detail-modal').show() : $('#detail-modal').classList.add('show');
+  openModal('#detail-modal');
 };
+$('#detail-modal .btn-close').addEventListener('click', () => closeModal('#detail-modal'));
+$('#detail-modal .modal-footer .btn').addEventListener('click', () => closeModal('#detail-modal'));
 const ask = (title, placeholder, defaultValue = '') => new Promise(resolve => {
   $('#reason-title').textContent = title;
   $('#reason-input').value = defaultValue;
   $('#reason-text').value = '';
-  const modal = new window.bootstrap.Modal('#reason-modal');
-  $('#reason-ok').onclick = () => { modal.hide(); resolve({ target: $('#reason-input').value, reason: $('#reason-text').value }); };
-  modal.show();
+  openModal('#reason-modal');
+  $('#reason-ok').onclick = () => { closeModal('#reason-modal'); resolve({ target: $('#reason-input').value, reason: $('#reason-text').value }); };
+  $('#reason-cancel').onclick = () => { closeModal('#reason-modal'); resolve({ target: $('#reason-input').value, reason: '' }); };
 });
 
 /* ---- dashboards ---- */
@@ -93,12 +99,6 @@ async function renderDashboard(setName, container) {
 }
 
 /* ---- browse ---- */
-const FILTER_FOR = {
-  text: op => op.includes('contains') ? 'input' : 'input',
-  uuid: () => 'input', integer: () => 'input', bigint: () => 'input',
-  boolean: () => { return { headerFilter: 'select', headerFilterParams: { values: { '': 'Todos', true: 'Sí', false: 'No' } } }; },
-  timestamptz: () => 'input', jsonb: () => undefined
-};
 async function renderBrowse(container, fixedTable) {
   const catalog = await api('/v1/admin/browse');
   const tables = Object.keys(catalog.tables);
@@ -106,46 +106,79 @@ async function renderBrowse(container, fixedTable) {
   container.innerHTML = `${fixedTable ? '' : `<div class="mb-3"><select id="browse-table" class="form-select w-auto">
       ${tables.map(name => `<option value="${name}"${name === current ? ' selected' : ''}>${name}</option>`).join('')}
     </select> <span class="text-secondary ms-2" id="browse-desc"></span></div>`}
-    <div id="browse-grid"></div>`;
-  if (!fixedTable) {
-    $('#browse-table').onchange = event => { localStorage.setItem('browse.table', event.target.value); mountTable(); };
-    $('#browse-desc').textContent = catalog.tables[current].description;
-  }
+    <div id="browse-grid"></div>
+    <div class="d-flex align-items-center justify-content-between mt-2">
+      <span class="text-secondary" id="browse-total"></span>
+      <div class="btn-group" id="browse-pager">
+        <button class="btn btn-sm" id="page-prev">‹ Anterior</button>
+        <span class="btn btn-sm disabled" id="page-info"></span>
+        <button class="btn btn-sm" id="page-next">Siguiente ›</button>
+      </div>
+    </div>`;
+  const state = { page: 1, size: 25, sort: null, dir: null, filters: [] };
+  let table;
   const mountTable = async () => {
     const name = fixedTable ?? $('#browse-table').value;
-    if (!fixedTable && $('#browse-desc')) $('#browse-desc').textContent = catalog.tables[name].description;
+    if (!fixedTable) { localStorage.setItem('browse.table', name); $('#browse-desc').textContent = catalog.tables[name].description; }
     const schema = catalog.tables[name];
+    state.page = 1; state.sort = schema.defaultOrder.column; state.dir = schema.defaultOrder.direction; state.filters = [];
     const columns = Object.entries(schema.columns).map(([field, spec]) => {
-      const base = { title: field.replaceAll('_', ' '), field, formatter: spec.type === 'timestamptz' ? dateCell : undefined,
-        sorter: 'remote', headerFilter: undefined, width: spec.type === 'timestamptz' ? 150 : undefined };
-      if (spec.type === 'boolean') Object.assign(base, FILTER_FOR.boolean());
-      else if (spec.type !== 'jsonb') base.headerFilter = 'input';
+      const base = { title: field.replaceAll('_', ' '), field,
+        sorter: spec.type === 'jsonb' ? undefined : 'local',
+        formatter: spec.type === 'timestamptz' ? dateCell : undefined,
+        width: spec.type === 'timestamptz' ? 150 : undefined };
+      if (spec.type === 'boolean') Object.assign(base, { headerFilter: 'select',
+        headerFilterParams: { values: { '': 'Todos', true: 'Sí', false: 'No' } }, headerFilterFunc: '=' });
+      else if (spec.type === 'text') Object.assign(base, { headerFilter: 'input', headerFilterFunc: 'like' });
+      else if (spec.type === 'timestamptz') Object.assign(base, { headerFilter: 'input', headerFilterPlaceholder: '≥ AAAA-MM-DD', headerFilterFunc: '>=' });
+      else if (spec.type !== 'jsonb') Object.assign(base, { headerFilter: 'input', headerFilterFunc: '=' });
       return base;
     });
-    charts.push(new Tabulator('#browse-grid', {
-      columns, index: Object.keys(schema.columns)[0],
-      pagination: 'remote', paginationSize: 25, paginationSizeSelector: [10, 25, 50, 100],
-      sortRemote: true, filterRemote: true, dataRemote: true,
-      rowContextMenu: contextMenu(name),
-      ajaxURL: `/v1/admin/browse/${name}`,
-      ajaxURLGenerator: (url, config, params) => {
-        const query = new URLSearchParams();
-        query.set('limit', String(params.size ?? 25));
-        query.set('offset', String(((params.page ?? 1) - 1) * (params.size ?? 25)));
-        for (const sorter of params.sorters ?? []) { query.set('sort', sorter.field); query.set('dir', sorter.dir); }
-        for (const filter of params.filters ?? []) {
-          const spec = schema.columns[filter.field];
-          if (!spec || filter.value === '' || filter.value === undefined) continue;
-          const operator = spec.type === 'text' ? 'contains' : spec.type === 'timestamptz' ? 'gte' : 'eq';
-          query.set(`q_${filter.field}`, `${operator}:${filter.value}`);
-        }
-        return `${url}?${query}`;
-      },
-      ajaxResponse: (url, config, response) => ({ data: response.rows, last_row: response.total }),
-      ajaxError: () => toast('Error cargando la tabla', 'danger'),
-      layout: 'fitDataFill', placeholder: 'Sin filas'
-    }));
+    table?.destroy();
+    table = new Tabulator('#browse-grid', {
+      columns, layout: 'fitDataFill', placeholder: 'Sin filas', rowContextMenu: contextMenu(name)
+    });
+    table.on('dataSorting', sorters => {
+      if (!sorters.length) return;
+      state.sort = sorters[0].field; state.dir = sorters[0].dir; state.page = 1; void load();
+    });
+    // dataFiltered fires when a header filter is applied; the key guard prevents the
+    // reload loop that setData would otherwise cause by re-applying local filters.
+    let lastFilterKey = '';
+    table.on('dataFiltered', () => {
+      const filters = table.getFilters(true).filter(entry => entry.value !== '' && entry.value !== undefined);
+      const key = JSON.stringify(filters);
+      if (key === lastFilterKey) return;
+      lastFilterKey = key;
+      state.filters = filters; state.page = 1; void load();
+    });
+    await load();
   };
+  const load = async () => {
+    const name = fixedTable ?? $('#browse-table').value;
+    const query = new URLSearchParams({ limit: String(state.size), offset: String((state.page - 1) * state.size),
+      sort: state.sort, dir: state.dir });
+    for (const entry of state.filters) {
+      const spec = catalog.tables[name].columns[entry.field];
+      const operator = spec.type === 'text' ? 'contains' : spec.type === 'timestamptz' ? 'gte' : 'eq';
+      query.set(`q_${entry.field}`, `${operator}:${String(entry.value)}`);
+    }
+    try {
+      const body = await api(`/v1/admin/browse/${name}?${query}`);
+      table.setData(body.rows);
+      const maxPage = Math.max(1, Math.ceil(body.total / state.size));
+      state.page = Math.min(state.page, maxPage);
+      $('#browse-total').textContent = `${number(body.total)} filas`;
+      $('#page-info').textContent = `${state.page} / ${maxPage}`;
+      $('#page-prev').disabled = state.page <= 1;
+      $('#page-next').disabled = state.page >= maxPage;
+    } catch (error) {
+      if (error.message !== 'unauthenticated') toast(`Error: ${error.code ?? error.message}`, 'danger');
+    }
+  };
+  $('#page-prev').onclick = () => { if (state.page > 1) { state.page--; void load(); } };
+  $('#page-next').onclick = () => { state.page++; void load(); };
+  if (!fixedTable) $('#browse-table').onchange = mountTable;
   await mountTable();
 }
 

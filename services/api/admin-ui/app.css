@@ -4,3 +4,8 @@
 .tabulator-row:hover { background: var(--tblr-active-bg, rgba(0,0,0,.03)); }
 .navbar-vertical .navbar-brand { font-weight: 600; }
 pre#detail-body { white-space: pre-wrap; }
+/* Keep the vertical sidebar in flow so the content wrapper never slides under it. */
+.page { display: flex; }
+.page > .navbar-vertical { position: sticky; top: 0; height: 100vh; flex: 0 0 260px; }
+.page > .content-wrapper { flex: 1 1 auto; min-width: 0; }
+@media (max-width: 991px) { .page { display: block; } .page > .navbar-vertical { position: static; height: auto; } }
