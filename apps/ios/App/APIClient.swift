@@ -1,5 +1,5 @@
 import Foundation
-import MuralCore
+import LooroCore
 
 final class NoRedirect: NSObject, URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) { completionHandler(nil) }
@@ -33,7 +33,7 @@ struct APIResult { var text: String; var sources: [SourceLink]; var usage: APIUs
         var body: [String: Any] = ["model": "gpt-5.6-luna", "store": false, "instructions": instructions,
                                   "input": [["role": "user", "content": input]], "max_output_tokens": schema == nil ? 1400 : 2200,
                                   "reasoning": ["effort": "low"]]
-        if let schema { body["text"] = ["format": ["type": "json_schema", "name": "mural_result", "strict": true, "schema": schema]] }
+        if let schema { body["text"] = ["format": ["type": "json_schema", "name": "looro_result", "strict": true, "schema": schema]] }
         if search { body["tools"] = [["type": "web_search"]]; body["tool_choice"] = "auto"; body["max_tool_calls"] = 1 }
         let json = try await post("responses", body: body)
         guard json["status"] as? String == "completed" else { throw APIError.incomplete }
@@ -71,7 +71,7 @@ struct APIResult { var text: String; var sources: [SourceLink]; var usage: APIUs
             switch self {
             case .missingKey: "Add your OpenAI key in Settings to begin."
             case .invalidResponse, .incomplete: "OpenAI returned an incomplete response. Please try again."
-            case .refused: "Mural couldn’t complete that request. Try a different topic."
+            case .refused: "Looro couldn’t complete that request. Try a different topic."
             case .http(401): "Your OpenAI key wasn’t accepted. Check it in Settings."
             case .http(403), .http(404): "This API key may not have access to the requested model. Check your OpenAI project."
             case .http(429): "OpenAI’s usage or rate limit was reached. Check your project’s billing and limits."

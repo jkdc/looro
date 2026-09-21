@@ -3,7 +3,7 @@ import Observation
 import NaturalLanguage
 import AVFoundation
 import UIKit
-import MuralCore
+import LooroCore
 
 @MainActor @Observable final class ConversationCoordinator {
     let store: LearningStore
@@ -98,7 +98,7 @@ import MuralCore
         switch state {
         case .idle: "Ready when you are"
         case .connecting: "Getting comfortable…"
-        case .active: outputLevel > 0.02 ? "Mural is speaking" : inputLevel > 0.02 ? "I’m listening" : "Take your time"
+        case .active: outputLevel > 0.02 ? "Looro is speaking" : inputLevel > 0.02 ? "I’m listening" : "Take your time"
         case .closing: "Saving our conversation…"
         case .ended: "Until next time"
         case .failed: "Let’s try again"
@@ -200,7 +200,7 @@ import MuralCore
     func help() {
         guard state == .active else { return }
         append("instructions", TeachingPolicy.help(language: language))
-        notice = "Mural will make that a little simpler."
+        notice = "Looro will make that a little simpler."
     }
     func end(reason: String = "Ended by you") {
         guard state == .active || state == .connecting else { return }
@@ -220,7 +220,7 @@ import MuralCore
     }
     func background() {
         guard isRunning else { return }
-        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Close Mural conversation") { [weak self] in
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Close Looro conversation") { [weak self] in
             Task { @MainActor in self?.finish(final: false) }
         }
         end(reason: "App moved to background")
@@ -263,7 +263,7 @@ import MuralCore
     private func handle(_ event: [String: Any]) {
         guard let type = event["type"] as? String, session != nil else { return }
         switch type {
-        case "mural.session.created":
+        case "looro.session.created":
             session?.providerID = (event["session"] as? [String: Any])?["id"] as? String; save()
         case "session.started":
             guard state == .connecting else { return }
@@ -292,7 +292,7 @@ import MuralCore
         case "error":
             let details = event["error"] as? [String: Any]
             if let id = details?["client_event_id"] as? String { pendingCommands.removeValue(forKey: id) }
-            notice = "A voice update was rejected. If Mural stops responding, end this conversation and start again."
+            notice = "A voice update was rejected. If Looro stops responding, end this conversation and start again."
         default:
             if type.hasSuffix(".appended"), let id = event["client_event_id"] as? String { pendingCommands.removeValue(forKey: id) }
         }
@@ -307,7 +307,7 @@ import MuralCore
                     self.notice = "You’ve reached your conversation time limit."; self.end(reason: "Time limit"); return
                 }
                 if Date().timeIntervalSince(self.lastActivity) > 120 {
-                    self.notice = "Mural ended this quiet session to avoid running up usage."; self.end(reason: "Inactivity"); return
+                    self.notice = "Looro ended this quiet session to avoid running up usage."; self.end(reason: "Inactivity"); return
                 }
                 self.pendingCommands = self.pendingCommands.filter { Date().timeIntervalSince($0.value) <= 20 }
             }

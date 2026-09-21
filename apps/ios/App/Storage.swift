@@ -2,12 +2,12 @@ import Foundation
 import SwiftData
 import Security
 import Observation
-import MuralCore
+import LooroCore
 
 @Model final class StoredArchive {
     @Attribute(.unique) var key: String
     var payload: Data
-    init(payload: Data) { key = "mural-v1"; self.payload = payload }
+    init(payload: Data) { key = "looro-v1"; self.payload = payload }
 }
 
 @MainActor @Observable final class LearningStore {
@@ -19,7 +19,7 @@ import MuralCore
     private let migrationBackupURL: URL?
     init(inMemory: Bool = false) throws {
         migrationBackupURL = inMemory ? nil : URL.applicationSupportDirectory
-            .appendingPathComponent("Mural", isDirectory: true)
+            .appendingPathComponent("Looro", isDirectory: true)
             .appendingPathComponent("before-language-modules.json")
         container = try ModelContainer(for: StoredArchive.self, configurations: ModelConfiguration(isStoredInMemoryOnly: inMemory, cloudKitDatabase: .none))
         let context = container.mainContext
@@ -73,7 +73,7 @@ import MuralCore
             do { try FileManager.default.removeItem(at: migrationBackupURL) }
             catch CocoaError.fileNoSuchFile { /* Most installations have no migration backup. */ }
             catch {
-                self.error = "Mural couldn’t delete the older learning backup. Your conversations are still here. Please try again."
+                self.error = "Looro couldn’t delete the older learning backup. Your conversations are still here. Please try again."
                 return
             }
         }
@@ -85,7 +85,7 @@ import MuralCore
     /// screen, behind the user’s explicit confirmation.
     static func eraseStore() throws {
         let base = URL.applicationSupportDirectory
-        for path in ["default.store", "default.store-shm", "default.store-wal", "Mural/before-language-modules.json"] {
+        for path in ["default.store", "default.store-shm", "default.store-wal", "Looro/before-language-modules.json"] {
             do { try FileManager.default.removeItem(at: base.appendingPathComponent(path)) }
             catch CocoaError.fileNoSuchFile { /* Fresh installations have no store yet. */ }
         }
@@ -116,12 +116,12 @@ import MuralCore
             }
             document.payload = payload; try container.mainContext.save(); error = nil
         }
-        catch { self.error = "Mural couldn’t save your progress. Please export a backup and try again." }
+        catch { self.error = "Looro couldn’t save your progress. Please export a backup and try again." }
     }
 }
 
 enum CredentialStore {
-    private static let service = "no.william.mural.openai"
+    private static let service = "com.jkdc.looro.openai"
     private static var query: [String: Any] { [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: "owner", kSecAttrSynchronizable as String: false] }
     static func read() -> String? {
         var q = query; q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne

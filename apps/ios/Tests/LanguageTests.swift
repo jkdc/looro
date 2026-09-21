@@ -1,5 +1,5 @@
 import XCTest
-@testable import MuralCore
+@testable import LooroCore
 
 final class LanguageTests: XCTestCase {
     func testExistingArchivesRequireConsentAndAcceptedVersionRoundTrips() throws {

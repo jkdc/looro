@@ -1,5 +1,5 @@
 import SwiftUI
-import MuralCore
+import LooroCore
 
 struct RootView: View {
     @State private var coordinator: ConversationCoordinator
@@ -26,7 +26,7 @@ struct RootView: View {
             }
             Tab("Words", systemImage: "book", value: 2) { shell { WordsView(coordinator: coordinator) } }
         }
-        .tint(MuralColor.ink)
+        .tint(LooroColor.ink)
         .sheet(isPresented: $coordinator.showSettings) { SettingsView(coordinator: coordinator) }
         .sheet(isPresented: $coordinator.showAIConsent, onDismiss: { coordinator.resumeAfterAIConsent() }) {
             AIConsentView(agree: { coordinator.acceptAIConsent() }, decline: { coordinator.declineAIConsent() })
@@ -62,13 +62,13 @@ struct RootView: View {
     }
     private func shell<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         NavigationStack {
-            content().background(MuralColor.cream).toolbar {
+            content().background(LooroColor.cream).toolbar {
                 ToolbarItem(placement: .topBarLeading) { Brand().fixedSize() }.sharedBackgroundVisibility(.hidden)
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { coordinator.showSettings = true } label: { Image(systemName: "slider.horizontal.3") }
                         .accessibilityLabel("Settings")
                 }
-            }.toolbarBackground(MuralColor.cream, for: .navigationBar)
+            }.toolbarBackground(LooroColor.cream, for: .navigationBar)
         }
     }
 }
@@ -84,32 +84,32 @@ struct TalkView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     Text(coordinator.selectedTheme?.title ?? coordinator.language.talkTitle)
-                        .font(.system(.caption, design: .rounded, weight: .medium)).foregroundStyle(MuralColor.secondary)
-                        .padding(.horizontal, 14).padding(.vertical, 9).background(MuralColor.butter.opacity(0.58), in: Capsule()).padding(.top, 12)
+                        .font(.system(.caption, design: .rounded, weight: .medium)).foregroundStyle(LooroColor.secondary)
+                        .padding(.horizontal, 14).padding(.vertical, 9).background(LooroColor.butter.opacity(0.58), in: Capsule()).padding(.top, 12)
                     Spacer(minLength: 8)
-                    MuralOrb(energy: max(coordinator.outputLevel, coordinator.inputLevel * 0.45), listening: coordinator.state == .active && !coordinator.isMuted, active: coordinator.state != .closing)
+                    LooroOrb(energy: max(coordinator.outputLevel, coordinator.inputLevel * 0.45), listening: coordinator.state == .active && !coordinator.isMuted, active: coordinator.state != .closing)
                         .frame(width: typeSize.isAccessibilitySize ? 170 : 220, height: typeSize.isAccessibilitySize ? 180 : 222).padding(.vertical, 8)
-                    Text(coordinator.status).font(.system(.caption, design: .rounded)).foregroundStyle(MuralColor.secondary)
+                    Text(coordinator.status).font(.system(.caption, design: .rounded)).foregroundStyle(LooroColor.secondary)
                         .contentTransition(.numericText()).padding(.top, 6).padding(.bottom, 16).accessibilityAddTraits(.updatesFrequently)
                         .accessibilityIdentifier("conversation-status")
                     captionArea
                     Spacer(minLength: 12)
                     controls
-                    Text(coordinator.microphoneLabel).font(.caption2).foregroundStyle(MuralColor.secondary).padding(.top, 10)
+                    Text(coordinator.microphoneLabel).font(.caption2).foregroundStyle(LooroColor.secondary).padding(.top, 10)
                         .accessibilityIdentifier("microphone-status")
                     HStack(spacing: 24) {
                         if coordinator.state == .active {
                             Button("Type instead", systemImage: "keyboard") { typing = true }
                             Button("A little help", systemImage: "sparkles") { coordinator.help() }
                         } else if coordinator.session == nil {
-                            Text("Reply in whichever language comes to you.").foregroundStyle(MuralColor.secondary)
+                            Text("Reply in whichever language comes to you.").foregroundStyle(LooroColor.secondary)
                         } else if !coordinator.isRunning {
                             Button("New conversation", systemImage: "arrow.counterclockwise") { coordinator.resetConversation() }
                                 .accessibilityIdentifier("new-conversation")
                         }
                     }.font(.caption).padding(.top, 6).padding(.bottom, 12)
                     if let notice = coordinator.notice {
-                        Text(notice).font(.footnote).foregroundStyle(MuralColor.secondary).multilineTextAlignment(.center).padding(.bottom, 12)
+                        Text(notice).font(.footnote).foregroundStyle(LooroColor.secondary).multilineTextAlignment(.center).padding(.bottom, 12)
                     }
                 }.padding(.horizontal, 30).frame(maxWidth: .infinity).frame(minHeight: geometry.size.height)
             }.scrollIndicators(.hidden)
@@ -124,19 +124,19 @@ struct TalkView: View {
     private var captionArea: some View {
         VStack(spacing: 12) {
             Text(linkedCaption).font(.system(coordinator.assistantPassage == nil ? .largeTitle : .title2, design: .rounded, weight: .medium))
-                .tracking(-0.5).multilineTextAlignment(.center).tint(MuralColor.ink)
+                .tracking(-0.5).multilineTextAlignment(.center).tint(LooroColor.ink)
                 .environment(\.openURL, OpenURLAction { url in
-                    guard url.scheme == "mural-word", let components = URLComponents(url: url, resolvingAgainstBaseURL: false), let word = components.queryItems?.first?.value else { return .discarded }
+                    guard url.scheme == "looro-word", let components = URLComponents(url: url, resolvingAgainstBaseURL: false), let word = components.queryItems?.first?.value else { return .discarded }
                     lookup = WordLookup(word: word, sentence: coordinator.caption); return .handled
                 }).accessibilityIdentifier("target-caption")
             if coordinator.language.id == "zh" { PinyinHelp(text: coordinator.caption) }
             if coordinator.store.preferences.meaningVisible {
                 Text(coordinator.assistantPassage == nil ? MeaningLanguages.greeting(in: coordinator.store.preferences.meaningLanguage) : !coordinator.meaning.isEmpty ? coordinator.meaning : coordinator.translating ? "Finding the meaning…" : "")
-                    .font(.subheadline).foregroundStyle(MuralColor.secondary).multilineTextAlignment(.center)
+                    .font(.subheadline).foregroundStyle(LooroColor.secondary).multilineTextAlignment(.center)
                     .accessibilityIdentifier("meaning-caption")
                 if let error = coordinator.meaningError {
                     VStack(spacing: 6) {
-                        Text(error).foregroundStyle(MuralColor.secondary)
+                        Text(error).foregroundStyle(LooroColor.secondary)
                         Button("Try meaning again") { coordinator.retryMeaning() }
                     }.font(.caption).multilineTextAlignment(.center)
                 }
@@ -145,9 +145,9 @@ struct TalkView: View {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Text("YOU").font(.system(.caption2, design: .rounded, weight: .medium))
                     Text(String(user.text.suffix(160))).font(.caption)
-                }.foregroundStyle(MuralColor.secondary).multilineTextAlignment(.center).padding(.top, 3)
+                }.foregroundStyle(LooroColor.secondary).multilineTextAlignment(.center).padding(.top, 3)
             }
-            if coordinator.working { ProgressView("Checking that for you…").font(.caption).tint(MuralColor.secondary) }
+            if coordinator.working { ProgressView("Checking that for you…").font(.caption).tint(LooroColor.secondary) }
             if let sources = coordinator.session?.topics.last?.sources, !sources.isEmpty {
                 Button("Sources", systemImage: "link") { transcript = coordinator.session }.font(.caption)
             }
@@ -158,11 +158,11 @@ struct TalkView: View {
         for segment in CaptionWords.segments(coordinator.caption, languageID: coordinator.language.id) {
             var part = AttributedString(segment.text)
             if coordinator.assistantPassage != nil, let word = segment.lookup {
-                var components = URLComponents(); components.scheme = "mural-word"; components.host = "lookup"
+                var components = URLComponents(); components.scheme = "looro-word"; components.host = "lookup"
                 components.queryItems = [URLQueryItem(name: "word", value: word)]
                 part.link = components.url
             }
-            part.foregroundColor = MuralColor.ink; result.append(part)
+            part.foregroundColor = LooroColor.ink; result.append(part)
         }
         return result
     }
@@ -171,7 +171,7 @@ struct TalkView: View {
             Button { coordinator.toggleMeaning() } label: {
                 VStack(spacing: 6) {
                     Image(systemName: coordinator.store.preferences.meaningVisible ? "captions.bubble.fill" : "captions.bubble")
-                        .frame(width: 48, height: 48).modifier(SoftGlass(tint: coordinator.store.preferences.meaningVisible ? MuralColor.butter.opacity(0.7) : .white.opacity(0.4)))
+                        .frame(width: 48, height: 48).modifier(SoftGlass(tint: coordinator.store.preferences.meaningVisible ? LooroColor.butter.opacity(0.7) : .white.opacity(0.4)))
                     Text("Meaning").font(.caption2)
                 }.contentShape(Rectangle())
             }.buttonStyle(.plain)
@@ -182,10 +182,10 @@ struct TalkView: View {
                 else if !coordinator.isRunning { coordinator.start() }
             } label: {
                 ZStack {
-                    Circle().fill(LinearGradient(colors: [Color(red: 1, green: 0.73, blue: 0.48), MuralColor.orange], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    if coordinator.state == .connecting || coordinator.state == .closing { ProgressView().tint(MuralColor.ink) }
+                    Circle().fill(LinearGradient(colors: [Color(red: 1, green: 0.73, blue: 0.48), LooroColor.orange], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    if coordinator.state == .connecting || coordinator.state == .closing { ProgressView().tint(LooroColor.ink) }
                     else { Image(systemName: coordinator.isMuted && coordinator.state == .active ? "mic.slash" : "mic").font(.system(size: 28, weight: .regular)).contentTransition(.symbolEffect(.replace)) }
-                }.frame(width: 76, height: 76).shadow(color: MuralColor.orange.opacity(0.25), radius: 10, y: 6)
+                }.frame(width: 76, height: 76).shadow(color: LooroColor.orange.opacity(0.25), radius: 10, y: 6)
             }.buttonStyle(.plain).padding(.bottom, 18)
                 .disabled(coordinator.state == .connecting || coordinator.state == .closing)
                 .accessibilityLabel(coordinator.state == .active ? (coordinator.isMuted ? "Unmute microphone" : "Mute microphone") : "Start conversation")
@@ -197,7 +197,7 @@ struct TalkView: View {
                 }.contentShape(Rectangle())
             }.buttonStyle(.plain).accessibilityLabel(coordinator.isRunning ? "End conversation" : "Conversation transcript")
                 .disabled(coordinator.session == nil)
-        }.foregroundStyle(MuralColor.ink)
+        }.foregroundStyle(LooroColor.ink)
     }
 }
 
@@ -212,12 +212,12 @@ struct LookupView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text(item.word).font(.system(.largeTitle, design: .rounded, weight: .medium))
                 if coordinator.language.id == "zh" { PinyinHelp(text: item.word) }
-                Text(item.sentence).font(.title3).foregroundStyle(MuralColor.secondary)
+                Text(item.sentence).font(.title3).foregroundStyle(LooroColor.secondary)
                 if let explanation { Text(explanation).font(.body).textSelection(.enabled) }
-                else if let error { Text(error).foregroundStyle(MuralColor.secondary) }
+                else if let error { Text(error).foregroundStyle(LooroColor.secondary) }
                 else { ProgressView("Finding the meaning…") }
                 Spacer()
-            }.padding(28).frame(maxWidth: .infinity, alignment: .leading).background(MuralColor.cream)
+            }.padding(28).frame(maxWidth: .infinity, alignment: .leading).background(LooroColor.cream)
                 .navigationTitle("A little meaning").navigationBarTitleDisplayMode(.inline)
         }.presentationDetents([.medium, .large])
             .task { do { explanation = try await coordinator.lookup(word: item.word, sentence: item.sentence) } catch { self.error = error.localizedDescription } }
@@ -236,10 +236,10 @@ struct TypedReplyView: View {
                 Text("Say it your way.").font(.system(.title, design: .rounded, weight: .semibold))
                 TextField("Reply in \(coordinator.language.name) or another language", text: $text, axis: .vertical).lineLimit(3...6).focused($focused).padding(18).background(.white, in: RoundedRectangle(cornerRadius: 22))
                 Button { sending = true; Task { await coordinator.sendTyped(text); sending = false; dismiss() } } label: {
-                    HStack { Text(sending ? "Sending…" : "Send reply"); Spacer(); Image(systemName: "arrow.up") }.padding(18).background(MuralColor.orange, in: Capsule())
+                    HStack { Text(sending ? "Sending…" : "Send reply"); Spacer(); Image(systemName: "arrow.up") }.padding(18).background(LooroColor.orange, in: Capsule())
                 }.disabled(sending || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 Spacer()
-            }.padding(26).foregroundStyle(MuralColor.ink).background(MuralColor.cream)
+            }.padding(26).foregroundStyle(LooroColor.ink).background(LooroColor.cream)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
         }.presentationDetents([.medium, .large]).onAppear { focused = true }
     }

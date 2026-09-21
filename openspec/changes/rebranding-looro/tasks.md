@@ -1,6 +1,6 @@
 # Tasks: rebranding-looro
 
-- [ ] **T1 — iOS identity**: ordered rename over `apps/ios/**` +
+- [x] **T1 — iOS identity**: ordered rename over `apps/ios/**` +
       `scripts/*` (generator, icon tool, cross-platform checker); rename
       `MuralApp.swift`; regenerate project as `Looro.xcodeproj`; remove
       `Mural.xcodeproj`; generator runs clean.

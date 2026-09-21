@@ -1,12 +1,12 @@
 import Foundation
 import Security
 import CryptoKit
-import MuralCore
+import LooroCore
 
 extension ManagedAccountConfiguration {
-    /// These keys contain public client IDs, never OAuth secrets or Mural bearer tokens.
+    /// These keys contain public client IDs, never OAuth secrets or Looro bearer tokens.
     static func load(bundle: Bundle = .main) -> Self? {
-        #if MURAL_SIGN_IN_WITH_APPLE
+        #if LOORO_SIGN_IN_WITH_APPLE
         let appleCapabilityEnabled = true
         #else
         let appleCapabilityEnabled = false
@@ -15,13 +15,13 @@ extension ManagedAccountConfiguration {
             let value = bundle.object(forInfoDictionaryKey: key)
             return value as? Bool == true || (value as? String)?.uppercased() == "YES"
         }
-        guard enabled("MuralManagedAccountsEnabled"),
-              let api = bundle.object(forInfoDictionaryKey: "MuralManagedAPIURL") as? String,
+        guard enabled("LooroManagedAccountsEnabled"),
+              let api = bundle.object(forInfoDictionaryKey: "LooroManagedAPIURL") as? String,
               let bundleID = bundle.bundleIdentifier else { return nil }
-        let google = enabled("MuralGoogleSignInEnabled")
-            ? bundle.object(forInfoDictionaryKey: "MuralGoogleClientID") as? String : nil
-        let apple = enabled("MuralAppleSignInEnabled") && appleCapabilityEnabled
-            ? bundle.object(forInfoDictionaryKey: "MuralAppleClientID") as? String : nil
+        let google = enabled("LooroGoogleSignInEnabled")
+            ? bundle.object(forInfoDictionaryKey: "LooroGoogleClientID") as? String : nil
+        let apple = enabled("LooroAppleSignInEnabled") && appleCapabilityEnabled
+            ? bundle.object(forInfoDictionaryKey: "LooroAppleClientID") as? String : nil
         let schemes = (bundle.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]] ?? [])
             .flatMap { $0["CFBundleURLSchemes"] as? [String] ?? [] }
         return try? Self(apiURL: api, googleClientID: google, appleClientID: apple,
@@ -132,7 +132,7 @@ struct ManagedAccountKeychain {
     init(scope: String) { self.scope = scope }
     private var query: [String: Any] {
         [kSecClass as String: kSecClassGenericPassword,
-         kSecAttrService as String: "chat.mural.managed-account",
+         kSecAttrService as String: "com.jkdc.looro.managed-account",
          kSecAttrAccount as String: Data(SHA256.hash(data: Data(scope.utf8))).base64EncodedString(),
          kSecAttrSynchronizable as String: false]
     }

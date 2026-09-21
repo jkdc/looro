@@ -18,7 +18,7 @@ if not sdk:
 root = Path(__file__).resolve().parents[1]
 output_root = args.output or root/'release/android'
 app_apk, test_apk = args.app_apk.resolve(), args.test_apk.resolve()
-work = Path(tempfile.mkdtemp(prefix='mural-play-capture-'))
+work = Path(tempfile.mkdtemp(prefix='looro-play-capture-'))
 adb = str(Path(sdk)/'platform-tools/adb')
 build_tools_dir = Path(sdk)/'build-tools'
 with_aapt2 = sorted((d for d in build_tools_dir.glob('*') if (d/'aapt2').is_file()),
@@ -26,7 +26,7 @@ with_aapt2 = sorted((d for d in build_tools_dir.glob('*') if (d/'aapt2').is_file
 if not with_aapt2:
     parser.error('No aapt2 under ' + str(build_tools_dir) + '; install Android build-tools.')
 aapt2 = with_aapt2[-1]/'aapt2'
-for apk, expected in [(app_apk, 'chat.mural.android.uitest'), (test_apk, 'chat.mural.android.uitest.test')]:
+for apk, expected in [(app_apk, 'com.jkdc.looro.android.uitest'), (test_apk, 'com.jkdc.looro.android.uitest.test')]:
     if not apk.is_file():
         parser.error('A supplied APK is missing.')
     badging = subprocess.check_output([str(aapt2), 'dump', 'badging', str(apk)], text=True)
@@ -50,8 +50,8 @@ evidence = {'recordedAtUTC': datetime.datetime.now(datetime.timezone.utc).isofor
             'serial': args.serial, 'originalDeviceSettings': original,
             'uiTestAPK': {'sha256': digest(app_apk)},
             'testAPK': {'sha256': digest(test_apk)},
-            'fixture': {'path': 'apps/android/app/src/androidTest/java/chat/mural/PlayStoreCaptureTest.kt',
-                        'sha256': digest(root/'apps/android/app/src/androidTest/java/chat/mural/PlayStoreCaptureTest.kt'),
+            'fixture': {'path': 'apps/android/app/src/androidTest/java/com/jkdc/looro/PlayStoreCaptureTest.kt',
+                        'sha256': digest(root/'apps/android/app/src/androidTest/java/com/jkdc/looro/PlayStoreCaptureTest.kt'),
                         'syntheticConversationAndVocabulary': True, 'providerCalls': False, 'purchaseCalls': False},
             'sourceBaseline': subprocess.check_output(['git','rev-parse','HEAD'],cwd=root).decode().strip(),
             'cleanSourceBuildClaimed': False,
@@ -68,15 +68,15 @@ try:
     shell('am','broadcast','-a','com.android.systemui.demo','--es','command','battery','--es','level','100','--es','plugged','false')
     shell('am','broadcast','-a','com.android.systemui.demo','--es','command','notifications','--es','visible','false')
     result = device('shell','am','instrument','-w','-e','class',
-        'chat.mural.PlayStoreCaptureTest,chat.mural.PlayFeatureGraphicTest,chat.mural.LargeTypeOnboardingTest',
-        'chat.mural.android.uitest.test/androidx.test.runner.AndroidJUnitRunner', check=False, timeout=120)
+        'com.jkdc.looro.PlayStoreCaptureTest,com.jkdc.looro.PlayFeatureGraphicTest,com.jkdc.looro.LargeTypeOnboardingTest',
+        'com.jkdc.looro.android.uitest.test/androidx.test.runner.AndroidJUnitRunner', check=False, timeout=120)
     (work/'capture-test.log').write_bytes(result.stdout + result.stderr)
     print(result.stdout.decode(), flush=True)
     assert b'OK (5 tests)' in result.stdout, 'Capture and layout tests did not all pass.'
     for name in ['01-greeting.png','02-conversation.png','03-themes.png','04-words.png','05-languages.png','06-settings.png','feature-graphic.png']:
         output = output_root/'assets'/('' if name=='feature-graphic.png' else 'en-US')/name
         output.parent.mkdir(parents=True,exist_ok=True)
-        png = device('exec-out','run-as','chat.mural.android.uitest','cat','files/play-store/'+name).stdout
+        png = device('exec-out','run-as','com.jkdc.looro.android.uitest','cat','files/play-store/'+name).stdout
         assert png.startswith(b'\x89PNG\r\n\x1a\n')
         output.write_bytes(png)
         evidence['assets'].append({'path':str(output.relative_to(output_root)),'sha256':digest(output),'bytes':len(png)})
@@ -88,7 +88,7 @@ finally:
         device('shell','settings','put','global','sysui_demo_allowed',original['demoAllowed'],check=False)
     device('shell','wm','size','reset',check=False)
     device('shell','wm','density','reset',check=False)
-    device('shell','am','start','--user','0','-n','chat.mural.android/chat.mural.MainActivity',check=False)
+    device('shell','am','start','--user','0','-n','com.jkdc.looro.android/com.jkdc.looro.MainActivity',check=False)
     evidence['restoredDeviceSettings']={'size':shell('wm','size'),'density':shell('wm','density'),
         'user':shell('am','get-current-user'),'fontScale':shell('settings','get','system','font_scale'),
         'demoAllowed':shell('settings','get','global','sysui_demo_allowed')}

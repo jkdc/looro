@@ -1,7 +1,7 @@
 import AuthenticationServices
 import Security
 import UIKit
-import MuralCore
+import LooroCore
 
 @MainActor
 final class ManagedAccountIdentity: NSObject, ASWebAuthenticationPresentationContextProviding,

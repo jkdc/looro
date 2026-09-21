@@ -1,6 +1,6 @@
 import XCTest
 
-final class MuralUITests: XCTestCase {
+final class LooroUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     private func reveal(_ element: XCUIElement, in app: XCUIApplication) {

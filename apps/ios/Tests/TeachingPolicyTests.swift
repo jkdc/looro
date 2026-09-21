@@ -1,5 +1,5 @@
 import XCTest
-@testable import MuralCore
+@testable import LooroCore
 
 /// Mirrors the JVM `TeachingPolicyTest`; runs under the macOS gate.
 final class TeachingPolicyTests: XCTestCase {

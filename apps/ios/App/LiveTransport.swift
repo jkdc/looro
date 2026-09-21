@@ -52,9 +52,9 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         guard let peer = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { throw TransportError.connection }
         self.peer = peer
         let source = factory.audioSource(with: RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["googEchoCancellation": "true", "googNoiseSuppression": "true", "googAutoGainControl": "true"]))
-        let track = factory.audioTrack(with: source, trackId: "mural-microphone")
+        let track = factory.audioTrack(with: source, trackId: "looro-microphone")
         localTrack = track; isMuted = false
-        peer.add(track, streamIds: ["mural-audio"])
+        peer.add(track, streamIds: ["looro-audio"])
         let dataConfig = RTCDataChannelConfiguration(); dataConfig.isOrdered = true
         guard let channel = peer.dataChannel(forLabel: "oai-events", configuration: dataConfig) else { throw TransportError.connection }
         self.channel = channel; channel.delegate = self
@@ -80,7 +80,7 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         ])
         guard attempt == token else { throw CancellationError() }
         guard let transport = result["transport"] as? [String: Any], let answer = transport["sdp"] as? String else { throw TransportError.connection }
-        if let session = result["session"] as? [String: Any] { onEvent?(["type": "mural.session.created", "session": session]) }
+        if let session = result["session"] as? [String: Any] { onEvent?(["type": "looro.session.created", "session": session]) }
         try await withCheckedThrowingContinuation { (c: CheckedContinuation<Void, Error>) in
             peer.setRemoteDescription(RTCSessionDescription(type: .answer, sdp: answer)) { error in
                 if let error { c.resume(throwing: error) } else { c.resume() }
@@ -147,7 +147,7 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         case microphone, connection, timeout
         var errorDescription: String? {
             switch self {
-            case .microphone: "Allow microphone access in iPhone Settings → Mural to start a conversation."
+            case .microphone: "Allow microphone access in iPhone Settings → Looro to start a conversation."
             case .connection: "The voice connection couldn’t be established. Check your connection and try again."
             case .timeout: "The voice connection took too long. Please try again."
             }
