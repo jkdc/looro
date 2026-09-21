@@ -36,4 +36,29 @@ final class CoursesTests: XCTestCase {
             }
         }
     }
+
+    func testArchivesWithoutLessonProgressStillDecode() throws {
+        let directory = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+            .appendingPathComponent("../../../shared/fixtures/cross-platform")
+        let data = try Data(contentsOf: directory.appendingPathComponent("archive.json"))
+        let archive = try Archive.decode(data)
+        XCTAssertEqual(archive.lessons?.first?.lessonID, "en-foundations-u1-to-be")
+        XCTAssertEqual(archive.lessons?.first?.attempts, 1)
+
+        var legacy = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+        legacy.removeValue(forKey: "lessons")
+        let decoded = try Archive.decode(try JSONSerialization.data(withJSONObject: legacy))
+        XCTAssertNil(decoded.lessons)
+    }
+
+    func testLessonSessionsRoundTrip() throws {
+        var record = SessionRecord(languageID: "en", title: "The verb “to be”")
+        record.mode = "lesson"
+        record.lessonID = "en-foundations-u1-to-be"
+        XCTAssertTrue(record.isLesson)
+        XCTAssertFalse(record.isListening)
+        let restored = try JSONDecoder().decode(SessionRecord.self, from: try JSONEncoder().encode(record))
+        XCTAssertEqual(restored.lessonID, "en-foundations-u1-to-be")
+        XCTAssertTrue(restored.isLesson)
+    }
 }

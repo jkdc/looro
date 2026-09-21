@@ -24,7 +24,10 @@ struct RootView: View {
             Tab("Themes", systemImage: "square.grid.2x2", value: 1) {
                 shell { ThemesView(coordinator: coordinator) { theme in coordinator.chooseTheme(theme); tab = 0 } }
             }
-            Tab("Words", systemImage: "book", value: 2) { shell { WordsView(coordinator: coordinator) } }
+            Tab("Learn", systemImage: "graduationcap", value: 2) {
+                shell { CoursesView(coordinator: coordinator) { tab = 0 } }
+            }
+            Tab("Words", systemImage: "book", value: 3) { shell { WordsView(coordinator: coordinator) } }
         }
         .tint(LooroColor.ink)
         .sheet(isPresented: $coordinator.showSettings) { SettingsView(coordinator: coordinator) }

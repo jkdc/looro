@@ -10,6 +10,7 @@ import LooroCore
     private(set) var state: ConnectionState = .idle
     private(set) var session: SessionRecord?
     var selectedTheme: ConversationTheme?
+    var selectedLesson: Lesson?
     private(set) var inputLevel = 0.0
     private(set) var outputLevel = 0.0
     private(set) var isMuted = false
@@ -122,15 +123,21 @@ import LooroCore
         error = nil; notice = nil; lastAssessmentKey = ""
         lastLanguageCheck = ""; pendingCommands = [:]
         state = .connecting; isMuted = false
-        var record = SessionRecord(languageID: language.id, themeID: selectedTheme?.id, title: selectedTheme?.title)
-        if store.preferences.listeningPractice == true { record.mode = "listening" }
+        var record = SessionRecord(languageID: language.id, themeID: selectedTheme?.id, title: selectedLesson?.title ?? selectedTheme?.title, lessonID: selectedLesson?.id)
+        if selectedLesson != nil { record.mode = "lesson" }
+        else if store.preferences.listeningPractice == true { record.mode = "listening" }
         if let pendingTopic { record.topics = [pendingTopic] }
         session = record; store.save(record)
         let generation = record.id
         let learner = store.learner
         // Each new conversation starts fresh; learned vocabulary and difficulty still carry forward.
         let history: [[String: Any]] = []
-        let instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.slowSpeech == true)
+        let instructions: String
+        if let selectedLesson {
+            instructions = TeachingPolicy.lessonPractice(lesson: selectedLesson, language: language)
+        } else {
+            instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.slowSpeech == true)
+        }
         connectionTask = Task { [weak self] in
             guard let self else { return }
             do { try await self.transport.connect(api: self.api, instructions: instructions, history: history) }
@@ -160,7 +167,7 @@ import LooroCore
         connectionTask?.cancel(); closeTask?.cancel(); durationTask?.cancel()
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
         delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
-        session = nil; selectedTheme = nil; pendingTopic = nil
+        session = nil; selectedTheme = nil; selectedLesson = nil; pendingTopic = nil
         working = false; notice = nil; error = nil
         lastAssessmentKey = ""; lastLanguageCheck = ""; pendingCommands = [:]
         inputLevel = 0; outputLevel = 0; state = .idle; isMuted = false
@@ -172,9 +179,19 @@ import LooroCore
         store.updatePreferences { $0.meaningLanguage = value }
         scheduleTranslation()
     }
+    /// Marks an authored lesson as the next conversation; consent is handled by start().
+    func selectLesson(_ id: String) {
+        guard !isRunning else { return }
+        guard let lesson = CourseRegistry.forLanguage(language.id).flatMap(\.units).flatMap(\.lessons)
+            .first(where: { $0.id == id }) else { return }
+        if !isRunning, session != nil { resetConversation() }
+        selectedTheme = nil; pendingTopic = nil
+        selectedLesson = lesson
+    }
     func chooseTheme(_ theme: ConversationTheme?) {
         if !isRunning, session != nil { resetConversation() }
         selectedTheme = theme
+        selectedLesson = nil
         if theme?.id != "current" { pendingTopic = nil }
         if state == .active {
             session?.themeID = theme?.id; session?.title = theme?.title ?? language.defaultTitle
@@ -233,6 +250,7 @@ import LooroCore
         transport.disconnect(); pendingCommands = [:]; working = false
         session?.endedAt = .now; session?.usageFinal = final
         save(); state = .ended
+        if session?.isLesson == true, let lessonID = session?.lessonID { store.recordLessonAttempt(lessonID) }
         if let session { finalAssessments.submit(session) }
         scheduleTranslation(); scheduleReset()
         if !final, session?.providerID != nil { notice = "Conversation saved. Final voice usage is unconfirmed." }
@@ -271,7 +289,13 @@ import LooroCore
             session?.providerID = (event["session"] as? [String: Any])?["id"] as? String
             // The usage estimate is recorded only once the session truly starts, so aborted connects don't log phantom voice time.
             session?.voiceSeconds = 15
-            append("instructions", session?.isListening == true ? TeachingPolicy.listeningStory(language: language) : TeachingPolicy.greeting(language: language, theme: selectedTheme))
+            if let lessonID = session?.lessonID, let lesson = CourseRegistry.lesson(id: lessonID) {
+                append("instructions", TeachingPolicy.lessonOpening(lesson: lesson, language: language))
+            } else if session?.isListening == true {
+                append("instructions", TeachingPolicy.listeningStory(language: language))
+            } else {
+                append("instructions", TeachingPolicy.greeting(language: language, theme: selectedTheme))
+            }
             startDurationChecks(); save()
         case "session.input_transcript.delta", "session.output_transcript.delta":
             guard state == .active || state == .closing, let delta = event["delta"] as? String,
@@ -323,7 +347,7 @@ import LooroCore
         guard !isRunning else { return }
         cancelReset(); meanings.reset(); saveTask?.cancel(); saveTask = nil
         languageGeneration = UUID()
-        session = nil; selectedTheme = nil; pendingTopic = nil
+        session = nil; selectedTheme = nil; selectedLesson = nil; pendingTopic = nil
         notice = nil; error = nil; working = false; isMuted = false
         inputLevel = 0; outputLevel = 0; state = .idle
     }
@@ -457,7 +481,8 @@ import LooroCore
             // Captured after the append and before the await: the reply must see the typed fragment,
             // and a local avoids the force unwrap across suspension.
             guard let current = session else { return }
-            let result = try await api.respond(instructions: TeachingPolicy.typedReply(language: language), input: TeachingPolicy.context(current))
+            let lesson = session?.lessonID.flatMap { CourseRegistry.lesson(id: $0) }
+            let result = try await api.respond(instructions: TeachingPolicy.typedReply(language: language, lesson: lesson), input: TeachingPolicy.context(current))
             guard session?.id == snapshot.id, state == .active else { return }
             addUsage(result.usage)
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")

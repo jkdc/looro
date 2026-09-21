@@ -58,6 +58,18 @@ import LooroCore
         persist()
     }
     func deleteSession(_ id: UUID) { onSessionInvalidation?(id); archive.sessions.removeAll { $0.id == id }; persist() }
+    /// One attempt per finished practice session; mastery is never claimed here.
+    func recordLessonAttempt(_ lessonID: String) {
+        var lessons = archive.lessons ?? []
+        if let index = lessons.firstIndex(where: { $0.lessonID == lessonID }) {
+            lessons[index].attempts += 1
+            lessons[index].lastSeen = Date.now.timeIntervalSince1970
+        } else {
+            lessons.append(LessonState(lessonID: lessonID, attempts: 1, lastSeen: Date.now.timeIntervalSince1970))
+        }
+        archive.lessons = lessons
+        persist()
+    }
     func hideWord(_ id: String) { archive.preferences.hiddenWords.append(id); persist() }
     func correctPassage(sessionID: UUID, passageID: String, text: String) {
         guard let index = archive.sessions.firstIndex(where: { $0.id == sessionID }),

@@ -40,4 +40,33 @@ final class TeachingPolicyTests: XCTestCase {
         XCTAssertTrue(instruction.contains(theme.situation))
         XCTAssertFalse(TeachingPolicy.theme(nil, language: language).contains(theme.situation))
     }
+
+    private let lesson = CourseRegistry.lesson(id: "en-foundations-u1-to-be")!
+
+    func testPracticePromptCarriesTheRigorPolicyAndEveryQuestion() {
+        let prompt = TeachingPolicy.lessonPractice(lesson: lesson, language: language)
+        XCTAssertTrue(prompt.contains("IN ORDER, one at a time"))
+        XCTAssertTrue(prompt.contains("say explicitly whether it was correct"))
+        XCTAssertTrue(prompt.contains("recast the correct form"))
+        XCTAssertTrue(prompt.contains(lesson.title))
+        XCTAssertTrue(prompt.contains(lesson.goal))
+        for question in lesson.practice.questions {
+            XCTAssertTrue(prompt.contains(question.prompt), lesson.id)
+            XCTAssertTrue(prompt.contains(question.focus), lesson.id)
+            XCTAssertTrue(prompt.contains(question.watch), lesson.id)
+        }
+    }
+
+    func testLessonOpeningIntroducesTheLesson() {
+        let opening = TeachingPolicy.lessonOpening(lesson: lesson, language: language)
+        XCTAssertTrue(opening.contains(lesson.title))
+        XCTAssertTrue(opening.contains("first practice question"))
+        XCTAssertTrue(opening.contains(language.name))
+    }
+
+    func testTypedReplyReferencesTheLessonOnlyWhenOneIsSet() {
+        XCTAssertTrue(TeachingPolicy.typedReply(language: language, lesson: lesson).contains(lesson.title))
+        XCTAssertTrue(TeachingPolicy.typedReply(language: language, lesson: lesson).contains(lesson.goal))
+        XCTAssertFalse(TeachingPolicy.typedReply(language: language).contains("lesson"))
+    }
 }
