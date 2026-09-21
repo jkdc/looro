@@ -133,20 +133,32 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         com.jkdc.app.core.voice.VoiceManualTurnStore(getApplication())
     }
     private val api = APIClient(credentials)
-    /** Selected at build time (see ConversationEngineFactory); default "openai" keeps today's behavior. */
+    private val engineOverrides = com.jkdc.app.core.engines.EngineOverridesStore(application)
+    private val engineSelection = com.jkdc.app.core.engines.LocalEngineSelectionStore(application)
+
+    /** User override first, then environment, then the deployed bundled key. */
     private val engineKeyLookup: (String) -> String? = { name ->
-        System.getenv(name)
+        val engineId = com.jkdc.app.core.engines.localEngineIdForKeyEnv(name)
+        engineId?.let { engineOverrides.customKey(it) }
+            ?: System.getenv(name)
             ?: com.jkdc.app.core.engines.ApiKeysStore.get(application, name)
     }
-    private val conversationEngine: TeachingClient = ConversationEngineFactory.create(
-        BuildConfig.CONVERSATION_ENGINE,
-        ConversationEngineDeps(
-            application,
-            api,
-            keyLookup = engineKeyLookup,
-            json = json,
-        ),
+    private val engineDeps = ConversationEngineDeps(
+        application,
+        api,
+        keyLookup = engineKeyLookup,
+        json = json,
     )
+    private val conversationEngine: TeachingClient =
+        if (BuildConfig.CONVERSATION_ENGINE == "openai") {
+            ConversationEngineFactory.create(BuildConfig.CONVERSATION_ENGINE, engineDeps)
+        } else {
+            // Runtime-selectable among the bundled local engines; the build-time
+            // engine remains the default.
+            com.jkdc.app.core.engines.LocalEngineSwitcher(engineDeps) {
+                engineSelection.selected(BuildConfig.CONVERSATION_ENGINE)
+            }
+        }
 
     private val transport: VoiceTransport = if (BuildConfig.CONVERSATION_ENGINE == "openai") {
         LiveTransport(application, viewModelScope)
@@ -415,6 +427,40 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      * available (key-free engines are always ready). Surfaces the actionable
      * error and returns false otherwise.
      */
+    data class LocalEngineStatus(val id: String, val label: String, val selected: Boolean,
+                                 val hasCustomKey: Boolean, val hasKey: Boolean)
+
+    private var enginesVersion by mutableStateOf(0)
+
+    /** Local engines for the Settings selector; recomputed after each mutation. */
+    val localEngines: List<LocalEngineStatus>
+        get() {
+            @Suppress("UNUSED_EXPRESSION") enginesVersion
+            val selected = engineSelection.selected(BuildConfig.CONVERSATION_ENGINE)
+            return ConversationEngineFactory.available.filter { it.id != "openai" }.map { info ->
+                val hasCustom = engineOverrides.hasCustomKey(info.id)
+                val env = com.jkdc.app.core.engines.localEngineKeyEnv(info.id)
+                LocalEngineStatus(info.id, info.label, selected = selected == info.id,
+                    hasCustomKey = hasCustom, hasKey = hasCustom || (env != null && engineKeyLookup(env) != null))
+            }
+        }
+
+    /** Applies to new conversations; rejected while a conversation runs. */
+    fun selectLocalEngine(id: String) {
+        if (isRunning || BuildConfig.CONVERSATION_ENGINE == "openai") return
+        runCatching { engineSelection.select(id) }.onSuccess { enginesVersion++ }
+    }
+
+    fun saveEngineKey(id: String, key: String): Boolean {
+        if (isRunning) return false
+        return engineOverrides.saveCustomKey(id, key).also { enginesVersion++ }
+    }
+
+    fun removeEngineKey(id: String) {
+        if (isRunning) return
+        engineOverrides.removeCustomKey(id); enginesVersion++
+    }
+
     private fun engineKeyReady(): Boolean {
         val envVar = conversationEngine.keyEnvVar
         if (envVar != null && engineKeyLookup(envVar) == null) {

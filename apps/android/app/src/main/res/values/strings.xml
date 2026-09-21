@@ -283,4 +283,11 @@
     <string name="lesson_themes_heading">Extra conversation themes</string>
     <string name="lesson_practice_button">Practise speaking</string>
     <string name="common_back">Back</string>
+    <string name="settings_conversation_provider">Conversation provider</string>
+    <string name="engine_key_included">Included key</string>
+    <string name="engine_key_custom">Your own key</string>
+    <string name="engine_key_missing">No key yet — add one below</string>
+    <string name="engine_key_hint">Custom API key for the selected provider</string>
+    <string name="engine_key_save">Save key</string>
+    <string name="engine_key_remove">Use included key again</string>
 </resources>

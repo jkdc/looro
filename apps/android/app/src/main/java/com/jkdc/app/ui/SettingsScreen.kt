@@ -37,7 +37,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -145,6 +149,57 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                                 valueRange = 600f..3000f)
                             Text(stringResource(R.string.settings_silence_hint),
                                 style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        }
+                        SettingsDivider()
+                        // Runtime provider selection + per-provider keys.
+                        Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text(stringResource(R.string.settings_conversation_provider),
+                                style = MaterialTheme.typography.bodyLarge, color = AppColors.Ink)
+                            vm.localEngines.forEach { engine ->
+                                Row(Modifier.fillMaxWidth().clickable(enabled = !vm.isRunning) { vm.selectLocalEngine(engine.id) }
+                                        .padding(vertical = 4.dp).testTag("engine-" + engine.id),
+                                    verticalAlignment = Alignment.CenterVertically) {
+                                    RadioButton(selected = engine.selected, onClick = { vm.selectLocalEngine(engine.id) },
+                                        enabled = !vm.isRunning)
+                                    Column {
+                                        Text(engine.label, style = MaterialTheme.typography.bodyMedium, color = AppColors.Ink)
+                                        Text(stringResource(when {
+                                            engine.hasCustomKey -> R.string.engine_key_custom
+                                            engine.hasKey -> R.string.engine_key_included
+                                            else -> R.string.engine_key_missing
+                                        }), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                    }
+                                }
+                            }
+                            var engineKey by remember { mutableStateOf("") }
+                            val selected = vm.localEngines.firstOrNull { it.selected }
+                            if (selected != null) {
+                                BasicTextField(value = engineKey,
+                                    onValueChange = { engineKey = it.take(512) },
+                                    enabled = !vm.isRunning,
+                                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = AppColors.Ink),
+                                    cursorBrush = SolidColor(AppColors.Secondary), minLines = 1, maxLines = 1,
+                                    visualTransformation = PasswordVisualTransformation(),
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).testTag("engine-key"),
+                                    decorationBox = { field ->
+                                        if (engineKey.isEmpty()) Text(stringResource(R.string.engine_key_hint),
+                                            style = MaterialTheme.typography.bodyLarge, color = AppColors.Secondary.copy(alpha = .7f))
+                                        field
+                                    })
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    TextButton(enabled = !vm.isRunning && engineKey.isNotBlank(),
+                                        onClick = { if (vm.saveEngineKey(selected.id, engineKey)) engineKey = "" }) {
+                                        Text(stringResource(R.string.engine_key_save), color = AppColors.Ink)
+                                    }
+                                    if (selected.hasCustomKey) {
+                                        TextButton(enabled = !vm.isRunning,
+                                            onClick = { vm.removeEngineKey(selected.id) }) {
+                                            Text(stringResource(R.string.engine_key_remove), color = AppColors.Secondary)
+                                        }
+                                    }
+                                }
+                            }
                         }
                         SettingsDivider()
                     }

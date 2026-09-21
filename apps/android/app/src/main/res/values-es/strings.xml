@@ -283,4 +283,11 @@
     <string name="lesson_themes_heading">Temas de conversación extra</string>
     <string name="lesson_practice_button">Practicar hablando</string>
     <string name="common_back">Atrás</string>
+    <string name="settings_conversation_provider">Proveedor de conversación</string>
+    <string name="engine_key_included">Clave incluida</string>
+    <string name="engine_key_custom">Tu propia clave</string>
+    <string name="engine_key_missing">Aún sin clave — añade una abajo</string>
+    <string name="engine_key_hint">Clave API propia del proveedor seleccionado</string>
+    <string name="engine_key_save">Guardar clave</string>
+    <string name="engine_key_remove">Volver a la clave incluida</string>
 </resources>
