@@ -58,6 +58,8 @@ services:
       # Without the panel's DNS record the site binds admin.localhost with an internal cert,
       # so the deployment still boots; set ADMIN_DOMAIN to enable the panel for real.
       ADMIN_DOMAIN: ${ADMIN_DOMAIN:-admin.localhost}
+      # Trusted-proxy secret for /v1/admin/* (header_up); empty keeps the API failing closed.
+      ADMIN_PROXY_TOKEN: ${ADMIN_PROXY_TOKEN:-}
     ports: ["80:80", "443:443", "443:443/udp"]
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
