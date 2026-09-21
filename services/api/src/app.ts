@@ -129,7 +129,7 @@ export function createApp(services: Services) {
     const code = purchaseReconciliation ? 'minute_purchase_reconciliation_required' : error instanceof ServiceError ? error.code : status < 500 ? 'invalid_request' : 'service_unavailable';
     const diagnostic = startupDiagnostic(request.method, request.routeOptions.url, request.id, status, code, error);
     if (diagnostic) {
-      reply.header('X-Mural-Error-Reference', diagnostic.reference);
+      reply.header('X-Looro-Error-Reference', diagnostic.reference);
       try { void Promise.resolve(services.onStartupDiagnostic?.(diagnostic)).catch(() => {}); } catch { /* Diagnostics cannot change a request's outcome. */ }
     }
     if (error instanceof HelperSessionLimitError) {
@@ -390,6 +390,6 @@ export function createApp(services: Services) {
     const account = await authenticate(db, request.headers.authorization, true);
     return services.hostedHelpers.request(account, uuid((request.params as { id: string }).id), request.body);
   });
-  app.get('/payment-return', async (_request, reply) => reply.type('text/html').send('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Mural sandbox</title><body><h1>Return to Mural</h1><p>This is a sandbox payment test. The app checks payment confirmation independently.</p></body></html>'));
+  app.get('/payment-return', async (_request, reply) => reply.type('text/html').send('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Looro sandbox</title><body><h1>Return to Looro</h1><p>This is a sandbox payment test. The app checks payment confirmation independently.</p></body></html>'));
   return app;
 }

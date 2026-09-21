@@ -71,7 +71,7 @@ test('webhooks and public routes answer without proxy headers while client route
     const gated = await app.inject({ url: '/v1/live/capabilities' });
     assert.equal(gated.statusCode, 503); assert.equal(gated.json().error.code, 'trusted_proxy_required');
     // ...and keep their shared per-network limiter bucket at 120 requests per minute.
-    const trusted = { 'x-mural-client-ip': '192.0.2.7', 'x-mural-proxy-token': proxy.proxyToken };
+    const trusted = { 'x-looro-client-ip': '192.0.2.7', 'x-looro-proxy-token': proxy.proxyToken };
     for (let count = 0; count < 120; count++) {
       const response = await app.inject({ url: '/v1/live/capabilities', headers: trusted });
       assert.equal(response.statusCode, 200);

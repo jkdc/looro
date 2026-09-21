@@ -112,8 +112,8 @@ try {
   process.on('SIGTERM', close); process.on('SIGINT', close);
   await app.listen({ port: Number(process.env.PORT ?? 8080), host: '0.0.0.0' });
   minuteCommerce?.runner.start();
-  console.info('Mural API is running.');
+  console.info('Looro API is running.');
 } catch {
-  console.error('Mural could not start. Check configuration; no secret values are logged.');
+  console.error('Looro could not start. Check configuration; no secret values are logged.');
   await hosted?.stop(); await minuteCommerce?.runner.stop(); await db.end(); process.exitCode = 1;
 }
