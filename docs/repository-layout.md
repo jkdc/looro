@@ -1,6 +1,6 @@
 # Repository layout
 
-Mural keeps both native apps and their API in one repository. Each has its own build, dependencies and release process. The website remains in [Chuloo/mural-website](https://github.com/Chuloo/mural-website).
+Looro keeps both native apps and their API in one repository. Each has its own build, dependencies and release process. The website remains in [jkdc/looro-website](https://github.com/jkdc/looro-website).
 
 | Location | Responsibility |
 | --- | --- |
@@ -13,7 +13,7 @@ Mural keeps both native apps and their API in one repository. Each has its own b
 | `release/` | Store submission material and release requirements |
 | `openspec/` | Change proposals, task records and verification reports for completed engineering changes |
 
-Run repository scripts from the root. Run Gradle from `apps/android/` and server commands from `services/api/`. Swift commands use `--package-path apps/ios`. Open `apps/ios/Mural.xcodeproj` in Xcode. The [build guide](build-and-test.md) gives the commands.
+Run repository scripts from the root. Run Gradle from `apps/android/` and server commands from `services/api/`. Swift commands use `--package-path apps/ios`. Open `apps/ios/Looro.xcodeproj` in Xcode. The [build guide](build-and-test.md) gives the commands.
 
 Language definitions currently originate in `apps/ios/Core/Languages/`. The exporter generates Android's language content from those definitions. Teaching logic runs natively in Swift and Kotlin; the compatibility checker and shared fixtures detect differences in prompts, thresholds and archive fields. They do not prove equivalent speech quality or native behavior. A future web client should consume a versioned language-content package rather than parse either app's source at runtime.
 

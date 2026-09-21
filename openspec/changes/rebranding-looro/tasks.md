@@ -11,10 +11,10 @@
 - [ ] **T3 — Backend + CI**: rename package, databases, role, locks, HMAC
       domains, headers, compose project, workflow artifacts; full backend
       docker suite green.
-- [ ] **T4 — Strings parity**: Android `values/` + `values-es/` renamed in
+- [x] **T4 — Strings parity**: Android `values/` + `values-es/` renamed in
       lockstep; `check_cross_platform.py` green; TeachingPolicy wording
       identical on both platforms.
-- [ ] **T5 — Support contact + live docs**: centralized placeholder email
+- [x] **T5 — Support contact + live docs**: centralized placeholder email
       with TODO, refactor second hardcoded mailto, fix its test;
       `SECURITY.md`, README, live docs, top-level release metadata
       (`[REQUIRED]` for publisher-only data); upstream repo links →

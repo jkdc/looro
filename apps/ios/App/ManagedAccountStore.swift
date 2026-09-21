@@ -120,8 +120,10 @@ final class ManagedAccountStore {
     }
     private static func message(for error: Error) -> String {
         switch error as? ManagedAccountError {
+            // TODO(rebrand): support@looro.example is a placeholder; replace it with the
+            // publisher's real support address before any store submission.
         case .secureStorage: "Looro couldn’t update this iPhone’s secure account storage. Unlock the iPhone and try again."
-        case .server("unresolved_billing"): "Your account has a balance, pending payment or active usage. Contact hi@hackmamba.io to resolve it before deleting your account."
+        case .server("unresolved_billing"): "Your account has a balance, pending payment or active usage. Contact support@looro.example to resolve it before deleting your account."
         case .server("sign_in_required"): "Please sign in again. Your learning history is still on this iPhone."
         case .server("rate_limit"): "Please try again later."
         case .server("apple_sign_in_not_ready"), .server("apple_revocation_not_configured"):

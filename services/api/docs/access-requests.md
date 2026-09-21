@@ -17,7 +17,7 @@ Send `POST https://api.looro.example/v1/access-requests` with `Content-Type: app
 
 `website` is an optional hidden honeypot. Leave it empty and exclude it from keyboard navigation and assistive technology. The other three fields are required. Unknown fields are rejected. Bodies are limited to 1,024 bytes. Email validation supports ordinary ASCII addresses, including plus addressing and punycode domains; it does not verify mailbox ownership or accept internationalized local parts. Addresses are trimmed and lowercased without removing dots or plus tags.
 
-Use clear consent text near the submit button: “Email me about Looro access. No marketing. I can withdraw at hi@hackmamba.io.” Link the current privacy policy. Submitting `waitlist-v1` records acceptance of this purpose; changing that purpose requires a new consent flow.
+Use clear consent text near the submit button: “Email me about Looro access. No marketing. I can withdraw at support@looro.example.” Link the current privacy policy. Submitting `waitlist-v1` records acceptance of this purpose; changing that purpose requires a new consent flow.
 
 | Response | Meaning |
 | --- | --- |

@@ -4,7 +4,7 @@ This procedure enables native Google sign-in independently of payments, free tri
 
 ## Configure the identity provider
 
-Create a Google **iOS** OAuth client for the app's bundle ID and use that same client ID as `GOOGLE_CLIENT_ID` on the server and as the native authorization audience. The current Looro app uses bundle ID `com.jkdc.looro`; its public client ID is `1034240936303-gernpir75rp4uvc8m5imrhrs18npma5n.apps.googleusercontent.com`, in project `looro-508413`. This installed-app PKCE flow needs no Google client secret on the backend. [Google iOS backend authentication](https://developers.google.com/identity/sign-in/ios/backend-auth)
+Create a Google **iOS** OAuth client for the app's bundle ID and use that same client ID as `GOOGLE_CLIENT_ID` on the server and as the native authorization audience. The current Looro app uses bundle ID `com.jkdc.looro`. [REQUIRED: create a Google Cloud project owned by the publisher and an iOS OAuth client for `com.jkdc.looro`; the upstream client and project must not be reused.] This installed-app PKCE flow needs no Google client secret on the backend. [Google iOS backend authentication](https://developers.google.com/identity/sign-in/ios/backend-auth)
 
 Looro's Google project is External/In production as of September 12, 2026, with verified and published branding. It requests only `openid` and `email`. For a separate development project, note that Testing is not an invitation-only gate for these basic identity scopes. Workspace policies can still block authorization. [Google OAuth app states](https://developers.google.com/identity/protocols/oauth2/production-readiness/overview)
 
