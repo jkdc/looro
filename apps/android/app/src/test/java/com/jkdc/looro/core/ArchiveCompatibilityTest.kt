@@ -45,6 +45,44 @@ class ArchiveCompatibilityTest {
         assertEquals(1, ArchiveCodec.merge(current, Archive(sessions = mutableListOf(same))).sessions.size)
         invalid(ArchiveCodec.encode(Archive(sessions = mutableListOf(current.sessions[0], same))))
     }
+    @Test fun archivesWithoutLessonProgressStillDecode() {
+        val root = Json.parseToJsonElement(ArchiveCodec.encode(archive())).jsonObject.toMutableMap()
+        root.remove("lessons")
+        val restored = ArchiveCodec.decode(JsonObject(root).toString())
+        assertEquals(0, restored.lessons.size)
+    }
+    @Test fun lessonStateRoundTripsAndMergesByMaximum() {
+        val current = archive()
+        current.lessons += LessonState("en-foundations-u1-to-be", attempts = 2, lastSeen = 100.0)
+        val incoming = archive()
+        incoming.lessons += LessonState("en-foundations-u1-to-be", attempts = 5, lastSeen = 200.0)
+        incoming.lessons += LessonState("en-foundations-u1-introductions", attempts = 1, lastSeen = 50.0)
+        val merged = ArchiveCodec.merge(current, incoming)
+        val mergedState = merged.lessons.single { it.lessonID == "en-foundations-u1-to-be" }
+        assertEquals(5, mergedState.attempts)
+        assertEquals(200.0, mergedState.lastSeen, 0.0)
+        assertEquals(2, merged.lessons.size)
+    }
+    @Test fun invalidLessonProgressIsRejected() {
+        invalid(changed { root ->
+            root["lessons"] = JsonArray(listOf(JsonObject(buildJsonObject {
+                put("lessonID", "")
+                put("bars", JsonPrimitive(9))
+                put("attempts", JsonPrimitive(-1))
+                put("lastSeen", JsonPrimitive(0.0))
+                put("dueAt", JsonPrimitive(0.0))
+            })))
+        })
+    }
+    @Test fun lessonSessionsRoundTrip() {
+        val record = SessionRecord(languageID = "en", startedAt = 0.0, endedAt = 1.0,
+            title = "The verb “to be”", mode = "lesson", lessonID = "en-foundations-u1-to-be")
+        val restored = ArchiveCodec.decode(ArchiveCodec.encode(Archive(sessions = mutableListOf(record))))
+        val session = restored.sessions.single()
+        assertTrue(session.isLesson)
+        assertFalse(session.isListening)
+        assertEquals("en-foundations-u1-to-be", session.lessonID)
+    }
     @Test fun invalidFragmentTimingAndDuplicateIdsAreRejected() {
         val a = archive()
         a.sessions[0].fragments += Fragment(id = "a", speaker = Speaker.user, text = "hola", startMS = 10, endMS = 1)

@@ -126,11 +126,14 @@ public struct SessionRecord: Codable, Identifiable, Sendable {
     public var searchCalls = 0
     public var endReason: String?
     public var mode: String?
-    public init(languageID: String = LanguageRegistry.defaultID, themeID: String? = nil, title: String? = nil) {
+    public var lessonID: String?
+    public init(languageID: String = LanguageRegistry.defaultID, themeID: String? = nil, title: String? = nil, lessonID: String? = nil) {
         self.languageID = languageID; self.themeID = themeID
         self.title = title ?? LanguageRegistry.module(for: languageID)?.defaultTitle ?? "A conversation"
+        self.lessonID = lessonID
     }
     public var isListening: Bool { mode == "listening" }
+    public var isLesson: Bool { mode == "lesson" }
     public var passages: [Passage] { Transcript.passages(fragments) }
     public mutating func append(_ fragment: Fragment) {
         guard !fragments.contains(where: { $0.id == fragment.id }) else { return }
@@ -163,9 +166,24 @@ public struct Preferences: Codable, Sendable {
     public init() {}
 }
 
+/// Per-lesson practice progress. v1 records attempts only; bars/dueAt stay at zero
+/// until the evidence-based progress change claims them.
+public struct LessonState: Codable, Hashable, Sendable {
+    public var lessonID: String
+    public var bars: Int
+    public var attempts: Int
+    public var lastSeen: Double
+    public var dueAt: Double
+    public init(lessonID: String, bars: Int = 0, attempts: Int = 0, lastSeen: Double = 0, dueAt: Double = 0) {
+        self.lessonID = lessonID; self.bars = bars; self.attempts = attempts
+        self.lastSeen = lastSeen; self.dueAt = dueAt
+    }
+}
+
 public struct Archive: Codable, Sendable {
     public static let maximumEncodedBytes = 30_000_000
     private static let maximumSessions = 10_000
+    private static let maximumLessons = 1_000
     // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
     // Write sites clamp to these too, so a long model reply can never make a saved session fail validation here.
     public static let maximumTitleCharacters = 200
@@ -174,6 +192,7 @@ public struct Archive: Codable, Sendable {
     public var schemaVersion = 2
     public var sessions: [SessionRecord] = []
     public var preferences = Preferences()
+    public var lessons: [LessonState]?
     public init() {}
     public static func decode(_ data: Data) throws -> Archive {
         guard data.count <= maximumEncodedBytes else { throw ArchiveError.tooLarge }
@@ -209,6 +228,17 @@ public struct Archive: Codable, Sendable {
             session.assessments = session.assessments.compactMap { LearningEngine.validate($0, session: session) }
             candidate.sessions.append(session)
         }
+        var lessonsByID: [String: LessonState] = Dictionary(uniqueKeysWithValues: (candidate.lessons ?? []).map { ($0.lessonID, $0) })
+        for lesson in incoming.lessons ?? [] {
+            let current = lessonsByID[lesson.lessonID]
+            lessonsByID[lesson.lessonID] = LessonState(
+                lessonID: lesson.lessonID,
+                bars: max(current?.bars ?? 0, lesson.bars),
+                attempts: max(current?.attempts ?? 0, lesson.attempts),
+                lastSeen: max(current?.lastSeen ?? 0, lesson.lastSeen),
+                dueAt: max(current?.dueAt ?? 0, lesson.dueAt))
+        }
+        candidate.lessons = lessonsByID.isEmpty ? nil : lessonsByID.values.sorted { $0.lessonID < $1.lessonID }
         try candidate.validate()
         guard try candidate.encoded().count <= Self.maximumEncodedBytes else { throw ArchiveError.tooLarge }
         return candidate
@@ -233,6 +263,11 @@ public struct Archive: Codable, Sendable {
                       (0...1_000_000).contains($0.revision) && validDate($0.receivedAt) }),
                   s.topics.allSatisfy({ $0.languageID == s.languageID && $0.text.count <= Self.maximumTopicTextCharacters && validDate($0.retrievedAt) }) else { throw ArchiveError.invalid }
         }
+        let lessons = lessons ?? []
+        guard lessons.count <= Self.maximumLessons, Set(lessons.map(\.lessonID)).count == lessons.count,
+              lessons.allSatisfy({ !$0.lessonID.isEmpty && $0.lessonID.count <= 200 && (0...3).contains($0.bars) &&
+                  (0...1_000_000).contains($0.attempts) && $0.lastSeen.isFinite && $0.dueAt.isFinite })
+        else { throw ArchiveError.invalid }
     }
     /// Version 1 was Norwegian-only. Migration assigns that provenance once;
     /// version 2 records must explicitly declare their language.

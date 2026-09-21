@@ -77,6 +77,14 @@ data class TopicBrief(
     var text: String, var sources: List<SourceLink>, val retrievedAt: Double = nowSeconds()
 ) { val isFresh get() = nowSeconds() - retrievedAt < 6 * 3600 }
 
+/** Per-lesson practice progress. v1 records attempts only; bars/dueAt stay at zero
+    until the evidence-based progress change claims them. */
+@Serializable
+data class LessonState(
+    val lessonID: String, var bars: Int = 0, var attempts: Int = 0,
+    var lastSeen: Double = 0.0, var dueAt: Double = 0.0
+)
+
 @Serializable
 data class SessionRecord(
     val id: String = UUID.randomUUID().toString(), val languageID: String = LanguageRegistry.defaultID,
@@ -85,9 +93,11 @@ data class SessionRecord(
     var fragments: MutableList<Fragment> = mutableListOf(), var assessments: MutableList<Assessment> = mutableListOf(),
     var translations: MutableMap<String,String> = mutableMapOf(), var topics: MutableList<TopicBrief> = mutableListOf(),
     var voiceSeconds: Double = 0.0, var usageFinal: Boolean = false, var inputTokens: Int = 0,
-    var outputTokens: Int = 0, var searchCalls: Int = 0, var endReason: String? = null, var mode: String? = null
+    var outputTokens: Int = 0, var searchCalls: Int = 0, var endReason: String? = null, var mode: String? = null,
+    var lessonID: String? = null
 ) {
     val isListening get() = mode == "listening"
+    val isLesson get() = mode == "lesson"
     val passages get() = Transcript.passages(fragments)
     fun append(f: Fragment) { if (fragments.none { it.id == f.id }) { fragments += f; invalidateChangedAssessments() } }
     fun invalidateChangedAssessments() { val current = passages.associate { it.id to it.revisionKey }; assessments.removeAll { current[it.passageID] != it.revisionKey } }
@@ -104,7 +114,7 @@ data class Preferences(
     var interests: String = "", var hasOnboarded: Boolean = false, var aiConsentVersion: Int? = null,
     var slowSpeech: Boolean? = null, var listeningPractice: Boolean? = null
 )
-@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences())
+@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf())
 class ArchiveError private constructor(val kind: Kind) : Exception() {
     enum class Kind { TOO_LARGE, UNSUPPORTED_VERSION, UNSUPPORTED_LANGUAGE, INVALID }
     companion object {
@@ -118,6 +128,7 @@ class ArchiveError private constructor(val kind: Kind) : Exception() {
 object ArchiveCodec {
     const val MAXIMUM_ENCODED_BYTES = 30_000_000
     private const val MAXIMUM_SESSIONS = 10_000
+    private const val MAXIMUM_LESSONS = 1_000
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true; prettyPrint = true }
     fun encode(a: Archive): String = json.encodeToString(Archive.serializer(), a)
     fun decode(data: String): Archive {
@@ -140,6 +151,13 @@ object ArchiveCodec {
             val s = source.copy(fragments=source.fragments.toMutableList(), assessments=source.assessments.toMutableList(), translations=source.translations.toMutableMap(), topics=source.topics.toMutableList())
             s.invalidateChangedAssessments(); s.assessments = s.assessments.mapNotNull { LearningEngine.validate(it,s) }.toMutableList(); out.sessions += s
         }
+        val byLesson = out.lessons.associateBy { it.lessonID }.toMutableMap()
+        incoming.lessons.forEach { inc ->
+            val cur = byLesson[inc.lessonID]
+            byLesson[inc.lessonID] = if (cur == null) inc else LessonState(lessonID = cur.lessonID, bars = maxOf(cur.bars, inc.bars),
+                attempts = maxOf(cur.attempts, inc.attempts), lastSeen = maxOf(cur.lastSeen, inc.lastSeen), dueAt = maxOf(cur.dueAt, inc.dueAt))
+        }
+        out.lessons = byLesson.values.toMutableList()
         validate(out); if (encode(out).toByteArray().size > MAXIMUM_ENCODED_BYTES) throw ArchiveError.TOO_LARGE
         return out
     }
@@ -199,5 +217,7 @@ object ArchiveCodec {
             if (s.fragments.map { it.id }.toSet().size != s.fragments.size || s.fragments.any { it.startMS < 0 || it.endMS < it.startMS || it.text.length > 50000 || it.revision !in 0..1_000_000 || !validDate(it.receivedAt) }) throw ArchiveError.INVALID
             if (s.assessments.any { !validDate(it.createdAt) } || s.topics.any { !validUUID(it.id) || it.languageID != s.languageID || !validDate(it.retrievedAt) }) throw ArchiveError.INVALID
         }
+        if (a.lessons.size > MAXIMUM_LESSONS || a.lessons.map { it.lessonID }.toSet().size != a.lessons.size ||
+            a.lessons.any { it.lessonID.isBlank() || it.lessonID.length > 200 || it.bars !in 0..3 || it.attempts !in 0..1_000_000 || !it.lastSeen.isFinite() || !it.dueAt.isFinite() }) throw ArchiveError.INVALID
     }
 }
