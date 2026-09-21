@@ -1,4 +1,13 @@
 {
+  "lessons" : [
+    {
+      "attempts" : 1,
+      "bars" : 0,
+      "dueAt" : 0.0,
+      "lastSeen" : 1700000000.0,
+      "lessonID" : "en-foundations-u1-to-be"
+    }
+  ],
   "preferences" : {
     "aiConsentVersion" : 1,
     "hasOnboarded" : true,

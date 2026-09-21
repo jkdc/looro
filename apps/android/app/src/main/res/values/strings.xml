@@ -267,4 +267,20 @@
     <string name="error_guest_secure_storage_unavailable">Looro couldn\'t restore your saved trial details. Your learning history is still available. Restart the app to try again.</string>
     <string name="talk_end_turn_button">I\'m done speaking</string>
     <string name="error_sign_in_finishing_startup">Looro is still saving your conversation. Please try signing in again shortly.</string>
+    <!-- Courses and lessons -->
+    <string name="learn_tab_title">Learn</string>
+    <string name="learn_eyebrow">Your course</string>
+    <string name="learn_title">Learn it step by step</string>
+    <string name="learn_subtitle">Read a short lesson, then practise it in a real conversation.</string>
+    <string name="learn_empty_title">No courses yet</string>
+    <string name="learn_empty_body">Courses for this language are on the way. Meanwhile, Themes is the place to practise.</string>
+    <string name="lesson_new">New</string>
+    <string name="lesson_attempts">Practised %1$d×</string>
+    <string name="lesson_read_aloud">Read aloud</string>
+    <string name="lesson_examples_heading">Examples</string>
+    <string name="lesson_expressions_heading">Target expressions</string>
+    <string name="lesson_situation_heading">Practice situation</string>
+    <string name="lesson_themes_heading">Extra conversation themes</string>
+    <string name="lesson_practice_button">Practise speaking</string>
+    <string name="common_back">Back</string>
 </resources>

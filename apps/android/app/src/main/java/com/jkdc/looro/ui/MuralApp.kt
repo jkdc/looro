@@ -83,6 +83,10 @@ fun LooroApp(
             is CloudAction.SendTyped -> vm.sendTyped(action.text)
             is CloudAction.Lookup -> vm.lookup(action.word, action.sentence)
             is CloudAction.CurrentTopic -> vm.currentTopic(action.query)
+            is CloudAction.StartLesson -> {
+                vm.selectLesson(action.lessonID)
+                if (!vm.needsMinuteAccess()) onRequestMicrophone()
+            }
             CloudAction.Help -> vm.help()
         }
     }
@@ -151,6 +155,10 @@ fun LooroApp(
                                 onCurrentTopic = { query -> withConsent(CloudAction.CurrentTopic(query)) },
                             )
                             2 -> WordsScreen(vm)
+                            3 -> LearnScreen(vm,
+                                onPractice = { lessonID -> withConsent(CloudAction.StartLesson(lessonID)) },
+                                onThemeChosen = { tab = 0 },
+                            )
                         }
                     }
                     Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(108.dp)

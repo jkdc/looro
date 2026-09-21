@@ -52,13 +52,14 @@ fun SoftRoundButton(symbol: LooroSymbol, description: String, onClick: () -> Uni
 fun FloatingNavigation(selected: Int, onSelect: (Int) -> Unit) {
     val items = listOf(Triple(R.string.talk_tab_title, LooroSymbol.Wave, "tab-talk"),
         Triple(R.string.topics_tab_title, LooroSymbol.Themes, "tab-topics"),
+        Triple(R.string.learn_tab_title, LooroSymbol.Sparkles, "tab-learn"),
         Triple(R.string.words_tab_title, LooroSymbol.Words, "tab-words"))
     Box(Modifier.fillMaxWidth().navigationBarsPadding().padding(top = 8.dp, bottom = 12.dp), contentAlignment = Alignment.Center) {
-        BoxWithConstraints(Modifier.widthIn(max = 304.dp).fillMaxWidth().height(66.dp).testTag("floating-navigation")
+        BoxWithConstraints(Modifier.widthIn(max = 400.dp).fillMaxWidth().height(66.dp).testTag("floating-navigation")
             .shadow(25.dp, CircleShape, ambientColor = LooroColors.Secondary.copy(alpha = .08f), spotColor = LooroColors.Secondary.copy(alpha = .10f))
             .background(Color(0xFFFDFCF3).copy(alpha = .94f), CircleShape)
             .border(1.5.dp, Color.White.copy(alpha = .85f), CircleShape).padding(4.dp).selectableGroup()) {
-            val width = maxWidth / 3
+            val width = maxWidth / items.size
             val offset by animateDpAsState(width * selected, spring(dampingRatio = .88f, stiffness = 350f), label = "tab position")
             Box(Modifier.offset(x = offset).width(width).fillMaxHeight().background(Color(0xFFEDEBDD), CircleShape))
             Row(Modifier.fillMaxSize()) {

@@ -6,5 +6,6 @@ sealed interface CloudAction {
     data class SendTyped(val text: String) : CloudAction
     data class Lookup(val word: String, val sentence: String) : CloudAction
     data class CurrentTopic(val query: String) : CloudAction
+    data class StartLesson(val lessonID: String) : CloudAction
     data object Help : CloudAction
 }

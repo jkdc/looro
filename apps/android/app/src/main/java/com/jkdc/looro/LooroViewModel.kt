@@ -109,6 +109,7 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
     /** Provisional on-device transcription while the user speaks; never stored as a fragment. */
     var partialUserTranscript by mutableStateOf<String?>(null); private set
     var selectedTheme by mutableStateOf<ConversationTheme?>(null); private set
+    var selectedLesson by mutableStateOf<Lesson?>(null); private set
     var lookupResult by mutableStateOf<String?>(null); private set
     var lookupError by mutableStateOf<String?>(null); private set
     var lookupLoading by mutableStateOf(false); private set
@@ -708,10 +709,48 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
     fun chooseTheme(theme: ConversationTheme?) {
         if (!isRunning && session != null) resetConversation()
         selectedTheme = theme
+        selectedLesson = null
         if (state == "active") {
             updateSession { it.themeID = theme?.id; it.title = theme?.title ?: language.defaultTitle }
             command("instructions", TeachingPolicy.theme(theme, language))
         }
+    }
+    /** Marks an authored lesson as the next conversation; consent and microphone are handled by the caller. */
+    fun selectLesson(lessonID: String) {
+        if (isRunning) return
+        val lesson = CourseRegistry.forLanguage(language.id).flatMap { it.units }.flatMap { it.lessons }
+            .firstOrNull { it.id == lessonID } ?: return
+        if (!isRunning && session != null) resetConversation()
+        selectedTheme = null; topicResult = null
+        selectedLesson = lesson
+    }
+    fun lessonAttempts(lessonID: String): Int = archive.lessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: 0
+
+    /** Study-card read-aloud: local synthesis in the course language, independent of the conversation engine. */
+    var lessonAudioOn by mutableStateOf(true); private set
+    var lessonReading by mutableStateOf(false); private set
+    private var lessonReadJob: Job? = null
+    private val lessonReader by lazy { com.jkdc.looro.engines.local.LocalTtsEngine(getApplication()) }
+    fun setLessonAudio(on: Boolean) {
+        lessonAudioOn = on
+        if (!on) stopLessonReading()
+    }
+    fun readLessonCard(vararg parts: String) {
+        if (!lessonAudioOn || lessonReading) return
+        val text = parts.filter { it.isNotBlank() }.joinToString("   ")
+        lessonReadJob = viewModelScope.launch {
+            // A missing course-language voice degrades to silent reading (same rule as session TTS).
+            if (!lessonReader.initialize() || !lessonReader.setLanguage(language.locale)) {
+                lessonReading = false; return@launch
+            }
+            lessonReading = true
+            try { lessonReader.speak(text) } finally { lessonReading = false }
+        }
+    }
+    fun stopLessonReading() {
+        lessonReadJob?.cancel()
+        lessonReader.stop()
+        lessonReading = false
     }
     fun toggleMeaning() {
         archive = archive.copy(preferences = archive.preferences.copy(meaningVisible = !archive.preferences.meaningVisible)); persist()
@@ -773,8 +812,9 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
         generation++; resetJob?.cancel(); assessmentJob?.cancel(); actionJob?.cancel(); clearLookup(); working = false; meanings.reset()
         dismissError(); notice = null; isMuted = false
         voiceSession = voice; lastActivity = nowSeconds()
-        val record = SessionRecord(id = id, languageID = language.id, themeID = selectedTheme?.id, title = selectedTheme?.title ?: language.defaultTitle,
-            mode = if (voice && archive.preferences.listeningPractice == true) "listening" else null)
+        val record = SessionRecord(id = id, languageID = language.id, themeID = selectedTheme?.id, title = selectedLesson?.title ?: selectedTheme?.title ?: language.defaultTitle,
+            mode = if (selectedLesson != null) "lesson" else if (voice && archive.preferences.listeningPractice == true) "listening" else null,
+            lessonID = selectedLesson?.id)
         topicResult?.takeIf { it.languageID == language.id && selectedTheme?.id == "current" }?.let { record.topics += it }
         session = record; save(record)
     }
@@ -811,7 +851,7 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
         newSession(true); state = "connecting"
         val id = session!!.id
         val module = language
-        val instructions = TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.slowSpeech == true)
+        val instructions = selectedLesson?.let { TeachingPolicy.lessonPractice(it, module) } ?: TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.slowSpeech == true)
         val history = ConversationHistory.messages(session)
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {
@@ -874,6 +914,7 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
         transport.disconnect(); inputLevel = 0.0; outputLevel = 0.0; working = false; isMuted = false
         partialUserTranscript = null
         updateSession { it.endedAt = nowSeconds(); it.usageFinal = final }
+        session?.takeIf { s -> s.isLesson }?.lessonID?.let(::recordLessonAttempt)
         state = "ended"
         session?.let {
             if (it.id in hostedSessionIDs) {
@@ -883,6 +924,14 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
         scheduleTranslation(utteranceComplete = true)
         resetJob = viewModelScope.launch { delay(15000); if (state == "ended") resetConversation() }
     }
+    /** One attempt per finished practice session; mastery is never claimed here. */
+    private fun recordLessonAttempt(lessonID: String) {
+        val lessons = archive.lessons.toMutableList()
+        val i = lessons.indexOfFirst { it.lessonID == lessonID }
+        if (i >= 0) lessons[i] = lessons[i].copy(attempts = lessons[i].attempts + 1, lastSeen = nowSeconds())
+        else lessons += LessonState(lessonID = lessonID, attempts = 1, lastSeen = nowSeconds())
+        archive = archive.copy(lessons = lessons); persist()
+    }
     private fun fail(message: String, needsKeySetup: Boolean = false) { finish(false); resetJob?.cancel(); state = "failed"; presentError(message, needsKeySetup) }
     private fun fail(e: Throwable, @StringRes fallback: Int) {
         fail(resolveMessage(e, fallback), errorNeedsKeySetup(e))
@@ -891,7 +940,7 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
     fun resetConversation() {
         if (isRunning) return
         generation++; resetJob?.cancel(); actionJob?.cancel(); clearLookup(); assessmentJob?.cancel(); languageCheckJob?.cancel(); meanings.reset()
-        session = null; selectedTheme = null; topicResult = null
+        session = null; selectedTheme = null; selectedLesson = null; topicResult = null
         notice = null; working = false; state = "idle"; voiceSession = false
         partialUserTranscript = null
     }
@@ -909,7 +958,12 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
             "session.started" -> if (state == "connecting") {
                 state = "active"; lastActivity = nowSeconds()
                 updateSession { it.providerID = (event["session"] as? JsonObject)?.get("id")?.jsonPrimitive?.content ?: it.providerID }
-                command("instructions", if (session?.isListening == true) TeachingPolicy.listeningStory(language) else TeachingPolicy.greeting(language, selectedTheme)); startDurationChecks()
+                val lesson = session?.lessonID?.let { CourseRegistry.lesson(it) }
+                command("instructions", when {
+                    lesson != null -> TeachingPolicy.lessonOpening(lesson, language)
+                    session?.isListening == true -> TeachingPolicy.listeningStory(language)
+                    else -> TeachingPolicy.greeting(language, selectedTheme)
+                }); startDurationChecks()
             }
             "session.input_transcript.partial" -> {
                 val text = event["delta"]?.jsonPrimitive?.contentOrNull ?: return
@@ -1113,7 +1167,8 @@ class LooroViewModel(application: Application) : AndroidViewModel(application) {
         lastActivity = nowSeconds(); working = true
         actionJob = viewModelScope.launch {
             try {
-                val instructions = if (voiceSession) TeachingPolicy.typedReply(language) else TeachingPolicy.voice(language, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage) + "\n" + TeachingPolicy.typedReply(language)
+                val lesson = session?.lessonID?.let { CourseRegistry.lesson(it) }
+                val instructions = if (voiceSession) TeachingPolicy.typedReply(language, lesson) else TeachingPolicy.voice(language, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage) + "\n" + TeachingPolicy.typedReply(language, lesson)
                 val result = teaching(id, HelperPurpose.TYPED_REPLY, UUID.randomUUID().toString(), instructions, helperContext(session!!))
                 if (token != generation || session?.id != id || state != "active") return@launch
                 updateSession { addUsage(it, result.usage) }
