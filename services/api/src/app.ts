@@ -22,6 +22,8 @@ import { HOSTED_HELPER_BODY_LIMIT, type HostedHelpers } from './hosted-helpers.j
 import { startupDiagnostic, type StartupDiagnostic } from './startup-diagnostics.js';
 import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdminOrigin,
   exchangeAdminIdentity, exchangeSessionToken, adminSignOut, type AdminAuthServices } from './admin-auth.js';
+import { BROWSE_TABLES, buildBrowseQuery, browseSchema } from './admin-browse.js';
+import { snapshot as adminSnapshot, timeseries, TIMESERIES_SETS } from './admin-metrics.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
   onStartupDiagnostic?: (diagnostic: StartupDiagnostic) => void | Promise<void>;
@@ -250,6 +252,35 @@ export function createApp(services: Services) {
   app.get('/v1/admin/me', async request => {
     const admin = await adminOnly(request);
     return { adminID: admin.adminID, email: admin.email };
+  });
+  app.get('/v1/admin/browse', async request => {
+    await adminOnly(request);
+    return { tables: browseSchema() };
+  });
+  const browseSchemaCache = browseSchema();
+  app.get('/v1/admin/browse/:table', async request => {
+    await adminOnly(request);
+    const tableName = (request.params as { table: string }).table;
+    if (!(tableName in BROWSE_TABLES)) throw new ServiceError('table_not_browsable', 404);
+    const built = buildBrowseQuery(tableName, request.query as Record<string, unknown>);
+    const admin = services.admin!;
+    const [rows, totals] = await Promise.all([
+      admin.services.db.query(built.sql, built.values), admin.services.db.query(built.countSql, built.values)
+    ]);
+    return { table: tableName, total: Number(totals.rows[0]!.total), limit: built.limit, offset: built.offset,
+      columns: browseSchemaCache[tableName], rows: rows.rows };
+  });
+  app.get('/v1/admin/metrics', async request => {
+    await adminOnly(request);
+    return adminSnapshot(db);
+  });
+  app.get('/v1/admin/metrics/timeseries', async request => {
+    await adminOnly(request);
+    const query = request.query as Record<string, unknown>;
+    const set = typeof query.set === 'string' ? query.set : 'overview';
+    if (!(TIMESERIES_SETS as readonly string[]).includes(set)) throw new ServiceError('invalid_request');
+    const days = query.days === undefined ? 30 : Number(query.days);
+    return timeseries(db, set, days);
   });
   app.get('/v1/feedback/capabilities', async () => ({ aiReports: Boolean(services.aiReports?.config) }));
   app.post(AI_REPORT_PATH, { bodyLimit: AI_REPORT_BODY_LIMIT }, async (request, reply) => {
