@@ -152,7 +152,7 @@ class APIClient private constructor(
         data object MissingKey : APIException("Add your OpenAI key in Settings to begin.")
         data object InvalidResponse : APIException("OpenAI returned an incomplete response. Please try again.")
         data object Incomplete : APIException("OpenAI returned an incomplete response. Please try again.")
-        data object Refused : APIException("Looro couldn't complete that request. Try a different topic.")
+        data object Refused : APIException("Palique couldn't complete that request. Try a different topic.")
         class Http(val status: Int) : APIException(messageFor(status))
 
         companion object {

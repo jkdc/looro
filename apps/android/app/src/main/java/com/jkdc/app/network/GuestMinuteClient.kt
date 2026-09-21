@@ -13,7 +13,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.Buffer
 
-/** Installation identity and guest bearers stay on the configured Looro origin. No identity in URLs. */
+/** Installation identity and guest bearers stay on the configured Palique origin. No identity in URLs. */
 class GuestMinuteClient internal constructor(private val origin: HttpUrl, transport: OkHttpClient,
     private val now: () -> Long = System::currentTimeMillis) : GuestMinuteService {
     constructor(config: HostedConfiguration) : this(config.origin, OkHttpClient())
@@ -90,7 +90,7 @@ class GuestMinuteClient internal constructor(private val origin: HttpUrl, transp
                             if (!it.isSuccessful) {
                                 val code = ((parsed?.get("error") as? JsonObject)?.get("code") as? JsonPrimitive)?.contentOrNull
                                     ?.takeIf { value -> value.length <= 80 && Regex("[a-z_]+").matches(value) }
-                                throw AccountFailure.Http(it.code, code, safeRequestErrorReference(it.header("X-Looro-Error-Reference")))
+                                throw AccountFailure.Http(it.code, code, safeRequestErrorReference(it.header("X-Palique-Error-Reference")))
                             }
                             parsed ?: throw AccountFailure.InvalidResponse
                         }

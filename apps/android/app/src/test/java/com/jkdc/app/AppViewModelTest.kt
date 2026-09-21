@@ -14,7 +14,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class LooroViewModelTest {
+class AppViewModelTest {
     @Test fun importedUnfinishedHistoryCannotLookLikeALocalInterruptedSession() {
         val partial = SessionRecord(languageID = "es", startedAt = 800_000_000.0).apply {
             append(Fragment(speaker = Speaker.user, text = "la radio", startMS = 0, endMS = 1_000))

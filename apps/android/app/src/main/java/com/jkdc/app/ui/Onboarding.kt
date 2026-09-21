@@ -75,7 +75,7 @@ fun OnboardingScreen(
     var languageId by rememberSaveable(initialLanguageId) { mutableStateOf(initialLanguageId) }
     var meaningLanguage by rememberSaveable(initialMeaningLanguage) { mutableStateOf(initialMeaningLanguage) }
     val language = LanguageRegistry.get(languageId) ?: LanguageRegistry.all.first()
-    val phase = looroPhase()
+    val phase = splashPhase()
     val greetingIndex = ((phase / 2.736f).toInt()) % LanguageRegistry.all.size
     val greeting = if (phase == 0f) language.greeting else LanguageRegistry.all[greetingIndex].greeting
     Box(Modifier.fillMaxSize()) {

@@ -440,7 +440,7 @@ integration('lost create responses remain recoverable after the Stripe idempoten
   try {
     const member = await f.account(), key = randomUUID();
     const order = await f.aiPurchases!.createOrder(member.id, 'stripe', 'fixture-ai', key);
-    // An old request may have reached Stripe without its response reaching Looro. Never recreate it blindly.
+    // An old request may have reached Stripe without its response reaching Palique. Never recreate it blindly.
     await f.db.query("INSERT INTO minute_stripe_checkout_attempts(order_id,started_at) VALUES($1,now()-interval '25 hours')", [order.orderID]);
     await assert.rejects(f.stripe.checkout(member.id, order.orderID), { code: 'checkout_reconciliation_required' });
     disabled = createApp({ db: f.db, auth: { googleClientID: 'synthetic-google-client' }, accounts: { admission: new AuthAdmission(f.db, proxy) },

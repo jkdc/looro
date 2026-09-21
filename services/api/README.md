@@ -1,4 +1,4 @@
-# Run Looro's commercial backend foundation
+# Run Palique's commercial backend foundation
 
 This backend prepares accounts, a credit ledger, and **Stripe sandbox** payments. Public funded conversations and free trials remain unavailable; live Stripe keys are rejected. A disabled, operator-allowlisted voice experiment now has a real network adapter and durable accounting, tested entirely against a local fake provider. The existing iPhone BYOK build continues to operate independently.
 
@@ -15,7 +15,7 @@ npm ci
 cp .env.example .env
 ```
 
-Set `DATABASE_URL` in `.env` to a database reserved for Looro. Keep `.env` private and excluded from Git. The example password is only for a local development database.
+Set `DATABASE_URL` in `.env` to a database reserved for Palique. Keep `.env` private and excluded from Git. The example password is only for a local development database.
 
 Apply the schema and start the development server:
 
@@ -70,7 +70,7 @@ Set `GOOGLE_CLIENT_ID` to the exact audience issued to the native app. Request a
 
 Apple sign-in requires `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY_PATH`, pointing to a private Sign in with Apple `.p8` file. The adapter exchanges a fresh native authorization code, verifies the returned ID token against the authenticated account’s Apple subject, and revokes its refresh/access token. Provider tokens stay in memory. Supplying `APPLE_CLIENT_ID` alone does not enable Apple sign-in. The adapter has cryptographic tests using fake responses; real Apple configuration and device verification remain pending. Mount the private key read-only through a deployment override; never add it to the image or repository.
 
-For payment testing, supply the `STRIPE_TEST_*` variables in `.env`. Only `sk_test_` secrets are accepted. Create one-time USD sandbox Prices whose totals equal AI value + 15% Looro fee + the configured payment fee. Configure the exact `price_…` IDs and payment-fee amounts in cents. The server retrieves the Price and verifies its amount, currency, and test mode before creating Checkout. Taxes and live processor fees are not calculated by this foundation.
+For payment testing, supply the `STRIPE_TEST_*` variables in `.env`. Only `sk_test_` secrets are accepted. Create one-time USD sandbox Prices whose totals equal AI value + 15% Palique fee + the configured payment fee. Configure the exact `price_…` IDs and payment-fee amounts in cents. The server retrieves the Price and verifies its amount, currency, and test mode before creating Checkout. Taxes and live processor fees are not calculated by this foundation.
 
 Point a Stripe sandbox webhook to `/v1/webhooks/stripe`, with the webhook signing secret, for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `charge.refunded`, and `charge.dispute.created`. The handler verifies the signature on the original bytes. Credit comes from a confirmed payment mapped to a server-created order, never the return URL or client metadata. Retries retrieve the stored Checkout session, including after Stripe’s idempotency-key retention window. An expired Checkout needs a new order; an uncertain create older than 23 hours needs reconciliation. A session whose database mapping fails is expired and its URL is never returned. Resolved disputes still require operator reconciliation; do not activate real payments before that workflow exists. Account deletion returns `409 unresolved_billing` while any pending checkout, balance, or reservation remains. New purchases and reservations lock the account against deletion, so a payment cannot be stranded on a deleted account. This temporary restriction requires a supported refund/expiry/deletion workflow before commercial release.
 
@@ -87,7 +87,7 @@ All monetary strings are integer **nanoUSD**: 1 USD = 1,000,000,000 nanoUSD. A d
 | `POST /v1/guest/minutes` | Verified guest attestation proof | Guest session and remaining allowance; disabled without a verified adapter |
 | `POST /v1/minutes/welcome` | Member token and account-bound attestation proof | Claims the signup offer once within allocation budgets |
 | `POST /v1/minutes/link-guest` | Member token; `guestAccessToken`, optional `deferPending` and `guestAccountID` | Transfers settled guest time; opted-in clients can retain an unsettled transfer without blocking member funds |
-| `POST /v1/auth/sign-out` | Bearer token | Revokes this account's Looro sessions |
+| `POST /v1/auth/sign-out` | Bearer token | Revokes this account's Palique sessions |
 | `DELETE /v1/account` | Bearer token; Apple additionally needs a fresh authorization code | Removes identity/email/session data; retains required financial records under an opaque ID |
 | `GET /v1/pricing` | None | Dated provider rates, money units, and separate-fee policy |
 | `POST /v1/checkout` | Bearer token; `Idempotency-Key`; `product` = `ai-10-usd` or `ai-25-usd` | `checkoutURL`, `orderID`, `sandbox: true`, itemized `quote` |

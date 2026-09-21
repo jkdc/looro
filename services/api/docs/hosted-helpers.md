@@ -37,7 +37,7 @@ Only provider-returned usage can settle a reservation. Cost calculations include
 
 All configuration is explicit: account allowlist, aggregate funding cap, helper budget per reserved minute, requests per minute, searches per session, session/global concurrency, post-conversation window, input framing allowance, search input allowance and provider timeout. There is no launch-price default.
 
-Migrations 012 and 014 store the session's budget, charging policy and limits as immutable snapshots. Per-call records contain IDs, purpose, limits, timestamps and trusted billing totals. They never contain instructions, input, output, schema, transcripts or hashes of that content. Helpers consume Looro's reserved funding; they do not debit extra learner minutes.
+Migrations 012 and 014 store the session's budget, charging policy and limits as immutable snapshots. Per-call records contain IDs, purpose, limits, timestamps and trusted billing totals. They never contain instructions, input, output, schema, transcripts or hashes of that content. Helpers consume Palique's reserved funding; they do not debit extra learner minutes.
 
 Voice and helper admission must share the `app-hosted-funding-cap` transaction lock and include both voice exposure and `hostedHelperExposure(sql)` in their aggregate check. Helper admission alone cannot enforce a cap on a voice path that omits helper liabilities. Welcome-grant reserves, pricing, refunds, daily funding controls and provider invoice reconciliation still need a joint review before public activation.
 

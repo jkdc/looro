@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Full Looro Android deployment: build -> install -> grant mic -> models -> launch.
+# Full Palique Android deployment: build -> install -> grant mic -> models -> launch.
 # Called by the Makefile; prefer `make deploy ENGINE=… SERIAL=…`.
 #
 # Env:

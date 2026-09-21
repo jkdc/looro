@@ -25,7 +25,7 @@ internal const val DELETION_SUPPORT_EMAIL = "support@app.example"
 internal const val DELETION_SUPPORT_URL = "https://app.example/support/#delete-account"
 // The draft intentionally includes no account identifiers, credentials or learning data.
 internal const val DELETION_SUPPORT_MAILTO =
-    "mailto:$DELETION_SUPPORT_EMAIL?subject=Looro%20account%20deletion%20request"
+    "mailto:$DELETION_SUPPORT_EMAIL?subject=Palique%20account%20deletion%20request"
 
 @Composable
 internal fun AccountDeletionSupportDialog(onDismiss: () -> Unit) {

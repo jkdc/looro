@@ -39,7 +39,7 @@ export async function migrate(db: Database): Promise<void> {
 }
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const db = connectDatabase(process.env.DATABASE_URL ?? '');
-  try { await migrate(db); console.info('Looro schema ready.'); }
-  catch { console.error('Looro migration failed. Check database configuration.'); process.exitCode = 1; }
+  try { await migrate(db); console.info('Palique schema ready.'); }
+  catch { console.error('Palique migration failed. Check database configuration.'); process.exitCode = 1; }
   finally { await db.end(); }
 }

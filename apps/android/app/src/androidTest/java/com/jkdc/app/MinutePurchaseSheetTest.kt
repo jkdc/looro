@@ -57,7 +57,7 @@ class MinutePurchaseSheetTest {
                 true, { purchases += it }, {}, {}, {})
         } }
         compose.onNodeWithText("About 20 minutes", useUnmergedTree = true).performScrollTo().assertIsDisplayed()
-        for (label in listOf("For AI usage", "Looro fee (15%)", "Estimated payment fee", "Payment cost buffer")) {
+        for (label in listOf("For AI usage", "Palique fee (15%)", "Estimated payment fee", "Payment cost buffer")) {
             compose.onNodeWithText(label, useUnmergedTree = true).performScrollTo().assertIsDisplayed()
         }
         compose.onNodeWithTag("minute-purchase-pack-synthetic-value").performScrollTo().performClick()

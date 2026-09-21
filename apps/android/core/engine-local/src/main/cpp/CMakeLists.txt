@@ -1,4 +1,4 @@
-# Looro local voice native layer: whisper.cpp (STT) via a minimal JNI surface.
+# Palique local voice native layer: whisper.cpp (STT) via a minimal JNI surface.
 # The on-device llama.cpp (LLM) engine was removed on 2026-09-17 (too slow for
 # voice turns); the whisper STT leg remains because the remote conversation
 # engines (deepseek/glm) still run speech-to-text on device.

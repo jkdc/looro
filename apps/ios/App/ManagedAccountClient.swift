@@ -4,7 +4,7 @@ import CryptoKit
 import LearningCore
 
 extension ManagedAccountConfiguration {
-    /// These keys contain public client IDs, never OAuth secrets or Looro bearer tokens.
+    /// These keys contain public client IDs, never OAuth secrets or Palique bearer tokens.
     static func load(bundle: Bundle = .main) -> Self? {
         #if APP_SIGN_IN_WITH_APPLE
         let appleCapabilityEnabled = true
@@ -15,13 +15,13 @@ extension ManagedAccountConfiguration {
             let value = bundle.object(forInfoDictionaryKey: key)
             return value as? Bool == true || (value as? String)?.uppercased() == "YES"
         }
-        guard enabled("LooroManagedAccountsEnabled"),
-              let api = bundle.object(forInfoDictionaryKey: "LooroManagedAPIURL") as? String,
+        guard enabled("AppManagedAccountsEnabled"),
+              let api = bundle.object(forInfoDictionaryKey: "AppManagedAPIURL") as? String,
               let bundleID = bundle.bundleIdentifier else { return nil }
-        let google = enabled("LooroGoogleSignInEnabled")
-            ? bundle.object(forInfoDictionaryKey: "LooroGoogleClientID") as? String : nil
-        let apple = enabled("LooroAppleSignInEnabled") && appleCapabilityEnabled
-            ? bundle.object(forInfoDictionaryKey: "LooroAppleClientID") as? String : nil
+        let google = enabled("AppGoogleSignInEnabled")
+            ? bundle.object(forInfoDictionaryKey: "AppGoogleClientID") as? String : nil
+        let apple = enabled("AppAppleSignInEnabled") && appleCapabilityEnabled
+            ? bundle.object(forInfoDictionaryKey: "AppAppleClientID") as? String : nil
         let schemes = (bundle.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]] ?? [])
             .flatMap { $0["CFBundleURLSchemes"] as? [String] ?? [] }
         return try? Self(apiURL: api, googleClientID: google, appleClientID: apple,

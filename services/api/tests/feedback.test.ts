@@ -56,7 +56,7 @@ test('reports accept only bounded selected text, known reasons and explicit cons
   }
 });
 
-test('common provider, bearer, JWT and Looro token shapes are rejected without reflecting them', () => {
+test('common provider, bearer, JWT and Palique token shapes are rejected without reflecting them', () => {
   const samples = ['sk-' + 'example-not-a-key'.repeat(3), 'Bearer ' + 'z'.repeat(43), 'z'.repeat(43),
     'eyJ' + 'a'.repeat(15) + '.' + 'b'.repeat(20) + '.' + 'c'.repeat(20)];
   for (const excerpt of samples) {

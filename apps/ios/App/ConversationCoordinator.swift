@@ -99,7 +99,7 @@ import LearningCore
         switch state {
         case .idle: "Ready when you are"
         case .connecting: "Getting comfortable…"
-        case .active: outputLevel > 0.02 ? "Looro is speaking" : inputLevel > 0.02 ? "I’m listening" : "Take your time"
+        case .active: outputLevel > 0.02 ? "Palique is speaking" : inputLevel > 0.02 ? "I’m listening" : "Take your time"
         case .closing: "Saving our conversation…"
         case .ended: "Until next time"
         case .failed: "Let’s try again"
@@ -217,7 +217,7 @@ import LearningCore
     func help() {
         guard state == .active else { return }
         append("instructions", TeachingPolicy.help(language: language))
-        notice = "Looro will make that a little simpler."
+        notice = "Palique will make that a little simpler."
     }
     func end(reason: String = "Ended by you") {
         guard state == .active || state == .connecting else { return }
@@ -237,7 +237,7 @@ import LearningCore
     }
     func background() {
         guard isRunning else { return }
-        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Close Looro conversation") { [weak self] in
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Close Palique conversation") { [weak self] in
             Task { @MainActor in self?.finish(final: false) }
         }
         end(reason: "App moved to background")
@@ -316,7 +316,7 @@ import LearningCore
         case "error":
             let details = event["error"] as? [String: Any]
             if let id = details?["client_event_id"] as? String { pendingCommands.removeValue(forKey: id) }
-            notice = "A voice update was rejected. If Looro stops responding, end this conversation and start again."
+            notice = "A voice update was rejected. If Palique stops responding, end this conversation and start again."
         default:
             if type.hasSuffix(".appended"), let id = event["client_event_id"] as? String { pendingCommands.removeValue(forKey: id) }
         }
@@ -331,7 +331,7 @@ import LearningCore
                     self.notice = "You’ve reached your conversation time limit."; self.end(reason: "Time limit"); return
                 }
                 if Date().timeIntervalSince(self.lastActivity) > 120 {
-                    self.notice = "Looro ended this quiet session to avoid running up usage."; self.end(reason: "Inactivity"); return
+                    self.notice = "Palique ended this quiet session to avoid running up usage."; self.end(reason: "Inactivity"); return
                 }
                 self.pendingCommands = self.pendingCommands.filter { Date().timeIntervalSince($0.value) <= 20 }
             }

@@ -192,7 +192,7 @@ struct TranscriptView: View {
                     if let session {
                         ForEach(session.passages) { passage in
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(passage.speaker == .assistant ? "LOORO" : "YOU").font(.caption).tracking(1).foregroundStyle(AppColor.secondary)
+                                Text(passage.speaker == .assistant ? "PALIQUE" : "YOU").font(.caption).tracking(1).foregroundStyle(AppColor.secondary)
                                 Text(passage.text).font(.system(.title3, design: .rounded)).textSelection(.enabled)
                                 if session.languageID == "zh" { PinyinHelp(text: passage.text) }
                                 if let translation = session.translations[MeaningRequest.cacheKey(revisionKey: passage.revisionKey, language: meaningLanguage)] ?? session.translations[passage.revisionKey] {
@@ -260,7 +260,7 @@ struct EditableTranscriptView: View {
                     ForEach(session?.passages ?? []) { passage in
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(passage.speaker == .user ? "YOU" : "LOORO").font(.caption).tracking(1)
+                                Text(passage.speaker == .user ? "YOU" : "PALIQUE").font(.caption).tracking(1)
                                 Spacer()
                                 if passage.speaker == .user && session?.endedAt != nil {
                                     Button("Edit") { editedText = passage.text; editingID = passage.id }.font(.caption)
@@ -326,7 +326,7 @@ struct SettingsView: View {
                     .disabled(coordinator.isRunning)
                     LabeledContent("Corrections", value: "Gently, as we talk")
                     TextField("A few things you enjoy", text: Binding(get: { store.preferences.interests }, set: { value in store.updatePreferences { $0.interests = String(value.prefix(500)) } }), axis: .vertical)
-                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Looro finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — the written story stays on screen, and you can still look words up.") }
+                } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Palique finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — the written story stays on screen, and you can still look words up.") }
                 if ManagedAccountConfiguration.load() != nil {
                     Section {
                         NavigationLink { ManagedAccountView() } label: {
@@ -389,17 +389,17 @@ struct SettingsView: View {
                         .accessibilityIdentifier("settings-support")
                 } header: { Text("Help and privacy") }
                 Section {
-                    Text("Looro 0.1 · Personal build").font(.footnote)
+                    Text("Palique 0.1 · Personal build").font(.footnote)
                     Text("Voice: GPT-Live-1 · Teacher: GPT-5.6 Luna").font(.footnote)
                     Link("OpenAI data controls", destination: URL(string: "https://developers.openai.com/api/docs/guides/your-data")!)
-                    Text("Audio and selected text go to OpenAI while you practise. Requests disable provider storage where supported; abuse-monitoring retention may still apply. Raw audio is not saved by Looro.").font(.footnote)
+                    Text("Audio and selected text go to OpenAI while you practise. Requests disable provider storage where supported; abuse-monitoring retention may still apply. Raw audio is not saved by Palique.").font(.footnote)
                     Button("Open-source notices") { notices = true }
                 }
             }.scrollContentBackground(.hidden).background(AppColor.cream).tint(AppColor.secondary)
                 .navigationTitle("Make yourself comfortable").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { key = ""; dismiss() } } }
         }
-        .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "Looro-learning-backup") { result in if case .failure(let error) = result { message = error.localizedDescription } }
+        .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "Palique-learning-backup") { result in if case .failure(let error) = result { message = error.localizedDescription } }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             do {
                 let url = try result.get(); let granted = url.startAccessingSecurityScopedResource(); defer { if granted { url.stopAccessingSecurityScopedResource() } }

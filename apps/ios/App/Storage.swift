@@ -19,7 +19,7 @@ import LearningCore
     private let migrationBackupURL: URL?
     init(inMemory: Bool = false) throws {
         migrationBackupURL = inMemory ? nil : URL.applicationSupportDirectory
-            .appendingPathComponent("Looro", isDirectory: true)
+            .appendingPathComponent("Palique", isDirectory: true)
             .appendingPathComponent("before-language-modules.json")
         container = try ModelContainer(for: StoredArchive.self, configurations: ModelConfiguration(isStoredInMemoryOnly: inMemory, cloudKitDatabase: .none))
         let context = container.mainContext
@@ -85,7 +85,7 @@ import LearningCore
             do { try FileManager.default.removeItem(at: migrationBackupURL) }
             catch CocoaError.fileNoSuchFile { /* Most installations have no migration backup. */ }
             catch {
-                self.error = "Looro couldn’t delete the older learning backup. Your conversations are still here. Please try again."
+                self.error = "Palique couldn’t delete the older learning backup. Your conversations are still here. Please try again."
                 return
             }
         }
@@ -97,7 +97,7 @@ import LearningCore
     /// screen, behind the user’s explicit confirmation.
     static func eraseStore() throws {
         let base = URL.applicationSupportDirectory
-        for path in ["default.store", "default.store-shm", "default.store-wal", "Looro/before-language-modules.json"] {
+        for path in ["default.store", "default.store-shm", "default.store-wal", "Palique/before-language-modules.json"] {
             do { try FileManager.default.removeItem(at: base.appendingPathComponent(path)) }
             catch CocoaError.fileNoSuchFile { /* Fresh installations have no store yet. */ }
         }
@@ -128,7 +128,7 @@ import LearningCore
             }
             document.payload = payload; try container.mainContext.save(); error = nil
         }
-        catch { self.error = "Looro couldn’t save your progress. Please export a backup and try again." }
+        catch { self.error = "Palique couldn’t save your progress. Please export a backup and try again." }
     }
 }
 

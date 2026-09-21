@@ -6,7 +6,7 @@ import kotlinx.coroutines.CancellationException
 
 /** Local debug metadata only. Never accepts request bodies, credentials, URLs or account identifiers. */
 internal object HostedHelperDiagnostics {
-    const val TAG = "LooroHostedHelper"
+    const val TAG = "AppHostedHelper"
 
     fun report(purpose: HelperPurpose, failure: Throwable) {
         if (!BuildConfig.DEBUG) return

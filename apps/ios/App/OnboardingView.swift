@@ -52,7 +52,7 @@ struct OnboardingView: View {
                             .transition(.opacity)
                             .frame(height: step == 0 ? 76 : 60)
                             .accessibilityIdentifier("onboarding-greeting")
-                    }.padding(.top, step == 0 ? 8 : 0).accessibilityElement(children: .ignore).accessibilityLabel("Welcome to Looro")
+                    }.padding(.top, step == 0 ? 8 : 0).accessibilityElement(children: .ignore).accessibilityLabel("Welcome to Palique")
 
                     Group {
                         if step == 0 { languageStep }
@@ -137,7 +137,7 @@ struct OnboardingView: View {
             VStack(spacing: 10) {
                 Text("A little help,\nin your language.")
                     .font(.system(.title2, design: .rounded, weight: .semibold)).tracking(-0.5)
-                Text("Looro speaks \(target.name). Choose the language you read most easily for meanings.")
+                Text("Palique speaks \(target.name). Choose the language you read most easily for meanings.")
                     .font(.subheadline).foregroundStyle(AppColor.secondary)
             }.multilineTextAlignment(.center).accessibilityIdentifier("onboarding-meaning-title")
             Picker("Subtitle language", selection: Binding(get: { meaningLanguage }, set: { meaningLanguage = $0; hasChosenMeaning = true })) {
@@ -185,7 +185,7 @@ struct OnboardingView: View {
 
 enum AIProcessingConsent {
     static let version = 1
-    static let summary = "With your permission, Looro sends audio and selected text to OpenAI to provide conversations and meanings. Provider retention rules apply."
+    static let summary = "With your permission, Palique sends audio and selected text to OpenAI to provide conversations and meanings. Provider retention rules apply."
     enum ConsentError: LocalizedError {
         case required
         var errorDescription: String? { "Before using AI features, open Talk and tap the microphone to review how OpenAI processes your audio and text." }
@@ -201,7 +201,7 @@ struct AIConsentView: View {
             Text("Before we talk.").font(.system(.title, design: .rounded, weight: .semibold))
                 .accessibilityIdentifier("ai-consent-title")
             Text(AIProcessingConsent.summary).font(.body)
-            Text("Your learning record is stored on this iPhone. Looro does not save raw audio. You can keep browsing your saved words and conversations without agreeing.")
+            Text("Your learning record is stored on this iPhone. Palique does not save raw audio. You can keep browsing your saved words and conversations without agreeing.")
                 .font(.subheadline).foregroundStyle(AppColor.secondary)
             Link("Privacy policy", destination: URL(string: "https://app.example/privacy/")!).font(.subheadline).underline()
             Button("Agree and continue", action: agree).font(.headline).frame(maxWidth: .infinity).padding(18)

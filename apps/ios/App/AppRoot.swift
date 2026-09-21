@@ -6,7 +6,7 @@ import SwiftUI
     @State private var confirmingErase = false
     init() {
         do { _store = State(initialValue: try makeStore()) }
-        catch { _startupError = State(initialValue: "Looro couldn’t open its learning record. Your existing data has not been replaced.") }
+        catch { _startupError = State(initialValue: "Palique couldn’t open its learning record. Your existing data has not been replaced.") }
     }
     private func makeStore() throws -> LearningStore {
         #if DEBUG
@@ -18,9 +18,9 @@ import SwiftUI
     /// Reachable only through the confirmation dialog below; the damaged record is the one thing erased.
     private func eraseAndRestart() {
         do { try LearningStore.eraseStore() }
-        catch { startupError = "Looro couldn’t erase its learning data. Please try again."; return }
+        catch { startupError = "Palique couldn’t erase its learning data. Please try again."; return }
         do { store = try makeStore(); startupError = nil }
-        catch { startupError = "Looro couldn’t open a fresh learning record. Please try again." }
+        catch { startupError = "Palique couldn’t open a fresh learning record. Please try again." }
     }
     var body: some Scene {
         WindowGroup {

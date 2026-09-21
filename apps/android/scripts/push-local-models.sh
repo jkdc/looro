@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Pushes the whisper STT model to the Looro app's private external storage.
+# Pushes the whisper STT model to the Palique app's private external storage.
 #
 # The on-device LLM (.gguf) push was removed on 2026-09-17 together with the
 # local llama.cpp engine; this script is now whisper-only (deepseek/glm voice

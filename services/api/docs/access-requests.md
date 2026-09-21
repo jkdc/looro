@@ -1,6 +1,6 @@
 # Website access requests
 
-This endpoint stores a request to hear when Looro is available. It sends no email, creates no account, and grants no trial or paid usage. Auth, billing, and hosted-voice gates remain separate.
+This endpoint stores a request to hear when Palique is available. It sends no email, creates no account, and grants no trial or paid usage. Auth, billing, and hosted-voice gates remain separate.
 
 ## Website contract
 
@@ -17,7 +17,7 @@ Send `POST https://api.app.example/v1/access-requests` with `Content-Type: appli
 
 `website` is an optional hidden honeypot. Leave it empty and exclude it from keyboard navigation and assistive technology. The other three fields are required. Unknown fields are rejected. Bodies are limited to 1,024 bytes. Email validation supports ordinary ASCII addresses, including plus addressing and punycode domains; it does not verify mailbox ownership or accept internationalized local parts. Addresses are trimmed and lowercased without removing dots or plus tags.
 
-Use clear consent text near the submit button: “Email me about Looro access. No marketing. I can withdraw at support@app.example.” Link the current privacy policy. Submitting `waitlist-v1` records acceptance of this purpose; changing that purpose requires a new consent flow.
+Use clear consent text near the submit button: “Email me about Palique access. No marketing. I can withdraw at support@app.example.” Link the current privacy policy. Submitting `waitlist-v1` records acceptance of this purpose; changing that purpose requires a new consent flow.
 
 | Response | Meaning |
 | --- | --- |
@@ -57,8 +57,8 @@ The origin currently connects directly to Caddy through a DNS-only API record. E
 }
 handle @accessRequests {
   reverse_proxy api:8080 {
-    header_up X-Looro-Client-IP {remote_host}
-    header_up X-Looro-Proxy-Token {$ACCESS_REQUEST_PROXY_TOKEN}
+    header_up X-Palique-Client-IP {remote_host}
+    header_up X-Palique-Proxy-Token {$ACCESS_REQUEST_PROXY_TOKEN}
   }
 }
 ```

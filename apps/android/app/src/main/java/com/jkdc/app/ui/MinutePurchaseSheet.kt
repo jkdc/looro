@@ -141,7 +141,7 @@ private fun MinutePackCard(pack: MinutePack, enabled: Boolean, onBuy: () -> Unit
                 val feePercent = NumberFormat.getNumberInstance().apply { maximumFractionDigits = 2 }
                     .format(quote.serviceFeeBasisPoints / 100.0)
                 val lines = listOf(stringResource(R.string.paid_ai_allocation) to quote.aiValueMinor,
-                    stringResource(R.string.paid_looro_fee, feePercent) to quote.serviceFeeMinor,
+                    stringResource(R.string.paid_app_fee, feePercent) to quote.serviceFeeMinor,
                     stringResource(R.string.paid_processing_fee) to quote.processingEstimateMinor,
                     stringResource(R.string.paid_processing_buffer) to quote.processingBufferMinor)
                 lines.forEach { (label, amount) ->

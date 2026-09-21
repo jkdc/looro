@@ -50,6 +50,6 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
         if (state.value.signedIn) return
         try { CredentialManager.create(getApplication<Application>()).clearCredentialState(ClearCredentialStateRequest()) }
         catch (error: CancellationException) { throw error }
-        catch (_: Exception) { /* The Looro session has already been removed. */ }
+        catch (_: Exception) { /* The Palique session has already been removed. */ }
     }
 }

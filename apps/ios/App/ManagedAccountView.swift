@@ -11,7 +11,7 @@ struct ManagedAccountView: View {
             VStack(spacing: 24) {
                 AppOrb(active: !store.isBusy).frame(width: 112, height: 112).padding(.top, 16)
                 VStack(spacing: 8) {
-                    Text(store.session == nil ? "Welcome to Looro" : "Your Looro account")
+                    Text(store.session == nil ? "Welcome to Palique" : "Your Palique account")
                         .font(.system(.title, design: .rounded, weight: .semibold)).multilineTextAlignment(.center)
                     Text("Your conversations and learning history stay on this iPhone.")
                         .font(.subheadline).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center)
@@ -37,7 +37,7 @@ struct ManagedAccountView: View {
                         .disabled(store.isBusy)
                 } else {
                     VStack(spacing: 14) {
-                        Text("Looro stores your sign-in details and account sessions. You can practise with your own API key without an account.")
+                        Text("Palique stores your sign-in details and account sessions. You can practise with your own API key without an account.")
                             .font(.footnote).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center)
                         Text("By signing in, you agree to the [Terms of use](https://app.example/terms/) and acknowledge the [Privacy policy](https://app.example/privacy/).")
                             .font(.footnote).multilineTextAlignment(.center).tint(AppColor.ink)
@@ -69,7 +69,7 @@ struct ManagedAccountView: View {
         .navigationTitle("Account").navigationBarTitleDisplayMode(.inline)
         .task { store.refresh() }
         .onDisappear { store.cancelSignIn() }
-        .confirmationDialog("Delete your Looro account?", isPresented: $confirmDeletion, titleVisibility: .visible) {
+        .confirmationDialog("Delete your Palique account?", isPresented: $confirmDeletion, titleVisibility: .visible) {
             Button("Delete account", role: .destructive, action: store.deleteAccount)
             Button("Keep account", role: .cancel) {}
         } message: {

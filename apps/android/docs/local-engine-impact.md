@@ -78,7 +78,7 @@ decisiones de producto, no de código.
 
 ## 5. Consentimiento, privacidad y legal
 
-- **Texto de consentimiento desalineado**: dice "Looro envía audio y texto
+- **Texto de consentimiento desalineado**: dice "Palique envía audio y texto
   seleccionados a OpenAI". Con motor local eso es falso (mejora de privacidad
   real: cero red), pero hoy el gate exige aceptar ESE texto igualmente.
   Pendiente de producto: variante de consentimiento por motor.

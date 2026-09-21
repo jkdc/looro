@@ -471,7 +471,7 @@ fun TranscriptDialog(vm: AppViewModel, session: SessionRecord, onDismiss: () -> 
                         verticalArrangement = Arrangement.spacedBy(7.dp),
                     ) {
                         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                            Text(stringResource(if (passage.speaker == Speaker.user) R.string.history_speaker_you else R.string.history_speaker_looro),
+                            Text(stringResource(if (passage.speaker == Speaker.user) R.string.history_speaker_you else R.string.history_speaker_app),
                                 style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary, modifier = Modifier.weight(1f))
                             if (passage.speaker == Speaker.assistant && passage.text.isNotBlank()) {
                                 ReportUtteranceAction(onClick = {

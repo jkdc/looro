@@ -46,9 +46,9 @@ class AndroidReleaseTests(unittest.TestCase):
 
     def test_metadata_handles_non_ascii_and_rejects_long_or_unfinished_copy(self):
         path = self.root / "title.txt"
-        path.write_text("Looro: Bokmål\n")
+        path.write_text("Palique: Bokmål\n")
         self.assertEqual(release.check_text(path, 30, True)["characters"], 13)
-        for text in ("x" * 31, "Looro\nPractice", "Looro [REQUIRED: title]", " Looro", "Looro\t"):
+        for text in ("x" * 31, "Palique\nPractice", "Palique [REQUIRED: title]", " Palique", "Palique\t"):
             path.write_text(text)
             with self.subTest(text=text), self.assertRaises(release.InvalidRelease):
                 release.check_text(path, 30, True)
@@ -70,14 +70,14 @@ class AndroidReleaseTests(unittest.TestCase):
         android_icon.parent.mkdir()
         android_icon.write_bytes((icon_set / "AppIcon.png").read_bytes())
         namespace = 'xmlns:android="http://schemas.android.com/apk/res/android"'
-        (self.root / "android/AndroidManifest.xml").write_text(f'<manifest {namespace}><application android:icon="@mipmap/ic_looro" android:roundIcon="@mipmap/ic_looro"/></manifest>')
-        (self.root / "android/ic_looro.xml").write_text(f'<adaptive-icon {namespace}><foreground android:drawable="@drawable/ic_looro_foreground"/></adaptive-icon>')
-        (self.root / "android/ic_looro_foreground.xml").write_text(f'<inset {namespace} android:inset="10%"><bitmap android:src="@drawable/app_icon"/></inset>')
+        (self.root / "android/AndroidManifest.xml").write_text(f'<manifest {namespace}><application android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher"/></manifest>')
+        (self.root / "android/ic_launcher.xml").write_text(f'<adaptive-icon {namespace}><foreground android:drawable="@drawable/ic_launcher_foreground"/></adaptive-icon>')
+        (self.root / "android/ic_launcher_foreground.xml").write_text(f'<inset {namespace} android:inset="10%"><bitmap android:src="@drawable/app_icon"/></inset>')
         (self.root / "ios/Design.swift").write_text("struct Brand {}")
         (self.root / "android/Design.kt").write_text("fun Brand() {}")
         return {"branding": {"iosIconSet": "ios/AppIcon.appiconset", "iosIconFile": "AppIcon.png",
                 "androidIconFile": "android/app_icon.png", "androidManifest": "android/AndroidManifest.xml",
-                "androidAdaptiveIcon": "android/ic_looro.xml", "androidForeground": "android/ic_looro_foreground.xml",
+                "androidAdaptiveIcon": "android/ic_launcher.xml", "androidForeground": "android/ic_launcher_foreground.xml",
                 "iosDesignSource": "ios/Design.swift", "androidDesignSource": "android/Design.kt"}}
 
     def test_branding_requires_exact_ios_artwork_and_records_mask_review(self):
@@ -94,9 +94,9 @@ class AndroidReleaseTests(unittest.TestCase):
         spec = self.branding()
         paths_and_replacements = [
             ("ios/AppIcon.appiconset/Contents.json", "AppIcon.png", "OtherIcon.png"),
-            ("android/AndroidManifest.xml", "@mipmap/ic_looro", "@mipmap/other"),
-            ("android/ic_looro.xml", "@drawable/ic_looro_foreground", "@drawable/other"),
-            ("android/ic_looro_foreground.xml", "@drawable/app_icon", "@drawable/other")
+            ("android/AndroidManifest.xml", "@mipmap/ic_launcher", "@mipmap/other"),
+            ("android/ic_launcher.xml", "@drawable/ic_launcher_foreground", "@drawable/other"),
+            ("android/ic_launcher_foreground.xml", "@drawable/app_icon", "@drawable/other")
         ]
         for relative, old, new in paths_and_replacements:
             path = self.root / relative
@@ -165,7 +165,7 @@ class AndroidReleaseTests(unittest.TestCase):
             archive.writestr("BundleConfig.pb", b"config")
             archive.writestr("base/manifest/AndroidManifest.xml", b"protobuf")
             archive.writestr("base/dex/classes.dex", b"dex")
-            archive.writestr("base/lib/arm64-v8a/liblooro.so", native or elf())
+            archive.writestr("base/lib/arm64-v8a/libapp_whisper.so", native or elf())
             if notices:
                 archive.writestr("base/assets/LICENSE.txt", "MIT")
             if extra:
@@ -176,7 +176,7 @@ class AndroidReleaseTests(unittest.TestCase):
         result = release.check_aab(self.bundle(), ["LICENSE.txt"])
         self.assertEqual(result["abis"], ["arm64-v8a"])
         self.assertEqual(len(result["nativeLibraries"]), 1)
-        self.assertEqual(result["nativeLibraries"]["base/lib/arm64-v8a/liblooro.so"]["sha256"], release.hashlib.sha256(elf()).hexdigest())
+        self.assertEqual(result["nativeLibraries"]["base/lib/arm64-v8a/libapp_whisper.so"]["sha256"], release.hashlib.sha256(elf()).hexdigest())
         with self.assertRaisesRegex(release.InvalidRelease, "Missing bundled notice"):
             release.check_aab(self.bundle(notices=False), ["LICENSE.txt"])
         with self.assertRaisesRegex(release.InvalidRelease, "GNU_RELRO"):
@@ -294,7 +294,7 @@ class AndroidReleaseTests(unittest.TestCase):
         metadata = directory / "metadata/en-US"
         metadata.mkdir(parents=True)
         for name in release.TEXT_LIMITS:
-            (metadata / f"{name}.txt").write_text("Looro preview\n")
+            (metadata / f"{name}.txt").write_text("Palique preview\n")
         assets = directory / "assets"
         assets.mkdir()
         for name, width, height, color in [("icon", 512, 512, 6), ("feature", 1024, 500, 2),

@@ -16,8 +16,8 @@ struct Brand: View {
     var body: some View {
         HStack(spacing: 8) {
             Circle().fill(RadialGradient(colors: [AppColor.butter, AppColor.orange], center: .topLeading, startRadius: 0, endRadius: 18)).frame(width: 17, height: 17)
-            Text("looro").font(.system(size: 30, weight: .bold, design: .rounded)).tracking(-1.6)
-        }.foregroundStyle(AppColor.ink).accessibilityLabel("Looro")
+            Text("palique").font(.system(size: 30, weight: .bold, design: .rounded)).tracking(-1.6)
+        }.foregroundStyle(AppColor.ink).accessibilityLabel("Palique")
     }
 }
 

@@ -1,4 +1,4 @@
-// Thin JNI bridge for whisper.cpp (Looro local voice: STT leg).
+// Thin JNI bridge for whisper.cpp (Palique local voice: STT leg).
 // Port of local-speaking-poc's proven whisper_jni.cpp with a language hint so
 // the multilingual model follows the session's learning language.
 #include <jni.h>

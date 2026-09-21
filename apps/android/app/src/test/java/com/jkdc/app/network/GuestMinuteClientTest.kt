@@ -110,7 +110,7 @@ class GuestMinuteClientTest {
         }
     }
     @Test fun rejectedBalancePreservesSafeReferenceWithoutRetrying() = runBlocking {
-        server.enqueue(MockResponse().setResponseCode(401).setHeader("X-Looro-Error-Reference", "0123abcdef45")
+        server.enqueue(MockResponse().setResponseCode(401).setHeader("X-Palique-Error-Reference", "0123abcdef45")
             .setBody("""{"error":{"code":"sign_in_required"}}"""))
         try { api.balance(guest); fail("expected sign-in rejection") }
         catch (error: AccountFailure.Http) {

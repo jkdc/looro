@@ -57,21 +57,21 @@ fun AppStartup(
         targetState = complete,
         modifier = Modifier.fillMaxSize().background(AppColors.Cream),
         transitionSpec = { fadeIn(tween(duration)) togetherWith fadeOut(tween(duration)) },
-        label = "Looro startup",
+        label = "Palique startup",
     ) { ready ->
         if (ready) content() else AppSplash()
     }
 }
 
-/** Uses the conversation orb directly, so startup cannot drift into a second Looro identity. */
+/** Uses the conversation orb directly, so startup cannot drift into a second Palique identity. */
 @Composable
 fun AppSplash(modifier: Modifier = Modifier, phaseOverride: Float? = null) {
-    val phase = phaseOverride ?: looroPhase()
+    val phase = phaseOverride ?: splashPhase()
     val pulse = 1f + sin(phase * 2.5f) * .032f
     BoxWithConstraints(
         modifier.fillMaxSize().background(AppColors.Cream).testTag("app-splash")
             .semantics(mergeDescendants = true) {
-                contentDescription = "Looro"
+                contentDescription = "Palique"
                 progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
             },
         contentAlignment = Alignment.Center,

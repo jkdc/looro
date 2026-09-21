@@ -227,7 +227,7 @@ class HostedAPIClient internal constructor(
                                 val wait = (error?.get("retryAfterMilliseconds") as? JsonPrimitive)?.takeUnless { value -> value.isString }
                                     ?.longOrNull?.takeIf { value -> value in 1000..60_000 }
                                 throw HostedFailure.Http(it.code, code, retryable, wait,
-                                    safeRequestErrorReference(it.header("X-Looro-Error-Reference")))
+                                    safeRequestErrorReference(it.header("X-Palique-Error-Reference")))
                             }
                             transform(json.parseToJsonElement(readBounded(it)).jsonObject)
                         }

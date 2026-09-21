@@ -34,7 +34,7 @@ test('access requests require explicit activation and separate secrets; local or
   assert.throws(() => accessRequestConfig({ ...env, ACCESS_REQUEST_PROXY_TOKEN: config.hmacKey }));
 });
 test('email normalization accepts ordinary plus addresses and rejects unsafe or unsupported forms', () => {
-  assert.equal(normalizeAccessEmail('  Learner+Looro@Example.COM  '), 'learner+app@example.com');
+  assert.equal(normalizeAccessEmail('  Learner+Palique@Example.COM  '), 'learner+palique@example.com');
   for (const email of ['a@localhost', 'a..b@example.com', '.a@example.com', 'a.@example.com', 'a@-example.com',
     'a@example-.com', 'a@example..com', 'a@b@c.com', 'a\nb@example.com', 'é@example.com', 'x'.repeat(65) + '@example.com', 'a@' + 'b'.repeat(64) + '.com'])
     assert.throws(() => normalizeAccessEmail(email));

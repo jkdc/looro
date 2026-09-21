@@ -6,7 +6,7 @@ import com.jkdc.app.network.TeachingClient
  * Single construction point for conversation engine adapters.
  *
  * The engine id comes from `BuildConfig.CONVERSATION_ENGINE`, resolved at build
- * time from (highest first): `-Plooro.conversationEngine`, `local.properties`,
+ * time from (highest first): `-Papp.conversationEngine`, `local.properties`,
  * `APP_CONVERSATION_ENGINE`, default `openai`.
  *
  * The former `local` (on-device llama.cpp) engine was removed on 2026-09-17:

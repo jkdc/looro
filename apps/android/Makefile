@@ -1,4 +1,4 @@
-# Looro Android — build & deployment shortcuts.
+# Palique Android — build & deployment shortcuts.
 #
 #   make deploy               Build + install + push whisper model + launch
 #   make deploy ENGINE=deepseek   OpenAI-compatible remote (needs DEEPSEEK_API_KEY at runtime)
@@ -23,7 +23,7 @@ RESOLVE := ./scripts/adb-device.sh $(if $(SERIAL),"$(SERIAL)")
 .PHONY: help deploy deploy-fast build test run logs models-push clean
 
 help:
-	@grep -E '^#   (make|LOORO)' Makefile | sed 's/^#   //'
+	@grep -E '^#   (make|PALIQUE)' Makefile | sed 's/^#   //'
 
 deploy:
 	ENGINE=$(ENGINE) SERIAL=$(SERIAL) ./scripts/deploy-local.sh

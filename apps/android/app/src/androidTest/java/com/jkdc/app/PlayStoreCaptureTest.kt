@@ -252,11 +252,11 @@ class PlayFeatureGraphicTest {
                             Brand()
                             Spacer(Modifier.height(35.dp))
                             Text("It starts with\na hello.", color = AppColors.Ink,
-                                style = TextStyle(fontFamily = LooroRounded, fontSize = 57.sp, lineHeight = 65.sp,
+                                style = TextStyle(fontFamily = AppRoundedFont, fontSize = 57.sp, lineHeight = 65.sp,
                                     fontWeight = FontWeight.SemiBold, letterSpacing = (-1.5).sp))
                             Spacer(Modifier.height(22.dp))
                             Text("Learn by talking.", color = AppColors.Secondary,
-                                style = TextStyle(fontFamily = LooroRounded, fontSize = 23.sp))
+                                style = TextStyle(fontFamily = AppRoundedFont, fontSize = 23.sp))
                         }
                         AppOrb(modifier = Modifier.offset(634.dp, 110.dp).size(280.dp))
                     }

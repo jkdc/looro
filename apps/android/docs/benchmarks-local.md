@@ -75,7 +75,7 @@ consumir los modelos gratuitos del catálogo:
 | Modelos de pago (p. ej. `gpt-5.4-nano`) | `CreditsError: Insufficient balance` |
 
 Conclusión: el "gratuito" de esta pasarela es un subsidio **dentro de su app**,
-no un acceso API reutilizable. Para Looro, un modelo gratuito vía API exige un
+no un acceso API reutilizable. Para Palique, un modelo gratuito vía API exige un
 proveedor con acceso API real (OpenRouter `:free` con clave propia, Groq tier
 gratuito, etc. — y aun así: privacidad, límites y dependencia de terceros).
 

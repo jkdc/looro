@@ -288,7 +288,7 @@ class HostedAPIClientTest {
 
     @Test fun failedStartCarriesOnlySafeErrorReferenceAndNeverRetries() = runBlocking {
         for ((index, reference) in listOf("0123abcdef45", "person@example.com", "0123ABCDEF45").withIndex()) {
-            server.enqueue(MockResponse().setResponseCode(401).setHeader("X-Looro-Error-Reference", reference)
+            server.enqueue(MockResponse().setResponseCode(401).setHeader("X-Palique-Error-Reference", reference)
                 .setBody("""{"error":{"code":"sign_in_required"}}"""))
             try { api.createLiveSession(create); fail("expected rejected start") }
             catch (error: HostedFailure.Http) {

@@ -39,7 +39,7 @@ decision: `docs/benchmarks-local.md`.
 
 Precedence (highest first):
 
-1. Gradle property: `./gradlew :app:assembleDebug -Plooro.conversationEngine=deepseek`
+1. Gradle property: `./gradlew :app:assembleDebug -Papp.conversationEngine=deepseek`
 2. `local.properties` key `app.conversationEngine`
 3. Environment variable `APP_CONVERSATION_ENGINE`
 4. Default: `openai` (byte-for-byte today's behavior)

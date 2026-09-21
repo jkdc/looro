@@ -94,10 +94,10 @@ fun AccountSheet(state: AccountState, onDismiss: () -> Unit, onSignIn: () -> Uni
                     SettingsGroup(title = stringResource(R.string.account_conversation_source),
                         footer = if (provider == ConversationProvider.HOSTED_MINUTES) stringResource(R.string.hosted_minimum_charge_disclosure) else null) {
                         SettingsChoiceRow(title = stringResource(R.string.account_use),
-                            value = stringResource(if (provider == ConversationProvider.HOSTED_MINUTES) R.string.account_looro_minutes else R.string.account_personal_key),
+                            value = stringResource(if (provider == ConversationProvider.HOSTED_MINUTES) R.string.account_app_minutes else R.string.account_personal_key),
                             selected = provider.name, options = listOf(
                                 ConversationProvider.PERSONAL_KEY.name to stringResource(R.string.account_personal_key),
-                                ConversationProvider.HOSTED_MINUTES.name to stringResource(R.string.account_looro_minutes)),
+                                ConversationProvider.HOSTED_MINUTES.name to stringResource(R.string.account_app_minutes)),
                             tag = "account-conversation-source", enabled = !busy && !conversationRunning,
                             onSelect = { onSelectProvider(ConversationProvider.valueOf(it)) })
                     }

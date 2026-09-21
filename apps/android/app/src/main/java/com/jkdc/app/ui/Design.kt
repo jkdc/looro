@@ -60,7 +60,7 @@ object AppColors {
     val Panels = listOf(Peach, Lilac, Sage, Butter)
 }
 
-private val LooroScheme = lightColorScheme(
+private val AppColorScheme = lightColorScheme(
     primary = AppColors.Orange,
     onPrimary = AppColors.Ink,
     primaryContainer = AppColors.Peach,
@@ -76,7 +76,7 @@ private val LooroScheme = lightColorScheme(
 )
 
 @OptIn(androidx.compose.ui.text.ExperimentalTextApi::class)
-val LooroRounded = FontFamily(
+val AppRoundedFont = FontFamily(
     *listOf(400, 500, 600, 700, 800).map { weight ->
         androidx.compose.ui.text.font.Font(R.font.nunito, FontWeight(weight),
             variationSettings = androidx.compose.ui.text.font.FontVariation.Settings(
@@ -85,7 +85,7 @@ val LooroRounded = FontFamily(
 )
 
 private fun rounded(size: Int, height: Int, weight: FontWeight = FontWeight.Normal, tracking: Float = 0f) =
-    TextStyle(fontFamily = LooroRounded, fontSize = size.sp, lineHeight = height.sp, fontWeight = weight, letterSpacing = tracking.sp)
+    TextStyle(fontFamily = AppRoundedFont, fontSize = size.sp, lineHeight = height.sp, fontWeight = weight, letterSpacing = tracking.sp)
 
 private val AppTypography = Typography(
     displayLarge = rounded(60, 72, FontWeight.Medium, -2f),
@@ -107,7 +107,7 @@ private val AppTypography = Typography(
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = LooroScheme, typography = AppTypography,
+    MaterialTheme(colorScheme = AppColorScheme, typography = AppTypography,
         shapes = androidx.compose.material3.Shapes(
             extraSmall = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
             small = androidx.compose.foundation.shape.RoundedCornerShape(18.dp),
@@ -118,11 +118,11 @@ fun AppTheme(content: @Composable () -> Unit) {
 
 @Composable
 fun Brand(modifier: Modifier = Modifier) {
-    Row(modifier = modifier.semantics(mergeDescendants = true) { contentDescription = "Looro" },
+    Row(modifier = modifier.semantics(mergeDescendants = true) { contentDescription = "Palique" },
         horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(17.dp).background(Brush.radialGradient(
             listOf(AppColors.Butter, AppColors.Orange), center = Offset.Zero, radius = 48f), CircleShape))
-        Text("looro", style = rounded(30, 38, FontWeight.ExtraBold, -1.6f), color = AppColors.Ink)
+        Text("palique", style = rounded(30, 38, FontWeight.ExtraBold, -1.6f), color = AppColors.Ink)
     }
 }
 
@@ -137,7 +137,7 @@ fun PageHeading(eyebrow: String, title: String, subtitle: String = "", modifier:
 
 /** Motion follows the app lifecycle and Android's system animation setting. */
 @Composable
-internal fun looroPhase(active: Boolean = true, slow: Boolean = false): Float {
+internal fun splashPhase(active: Boolean = true, slow: Boolean = false): Float {
     val owner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var foreground by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(
         owner.lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)) }
@@ -151,16 +151,16 @@ internal fun looroPhase(active: Boolean = true, slow: Boolean = false): Float {
         onDispose { owner.lifecycle.removeObserver(observer) }
     }
     if (!active || !foreground || !animations || com.jkdc.app.BuildConfig.BUILD_TYPE == "uiTest") return 0f
-    val phase by rememberInfiniteTransition(label = "Looro motion").animateFloat(
+    val phase by rememberInfiniteTransition(label = "Palique motion").animateFloat(
         initialValue = 0f, targetValue = (PI * 40).toFloat(),
         animationSpec = infiniteRepeatable(tween(if (slow) 897_597 else 174_533,
-            easing = androidx.compose.animation.core.LinearEasing), RepeatMode.Restart), label = "Looro phase")
+            easing = androidx.compose.animation.core.LinearEasing), RepeatMode.Restart), label = "Palique phase")
     return phase
 }
 
 @Composable
 fun SoftAnimatedBackground(modifier: Modifier = Modifier) {
-    val phase = looroPhase(slow = true)
+    val phase = splashPhase(slow = true)
     Canvas(modifier) {
         drawRect(AppColors.Cream)
         drawRect(Brush.radialGradient(listOf(AppColors.Butter.copy(alpha = .55f), AppColors.Butter.copy(alpha = 0f)),
@@ -175,7 +175,7 @@ fun SoftAnimatedBackground(modifier: Modifier = Modifier) {
 @Composable
 fun AppOrb(energy: Float = 0f, listening: Boolean = false, active: Boolean = true, modifier: Modifier = Modifier,
     contentDescription: String? = null) {
-    val phase = looroPhase(active)
+    val phase = splashPhase(active)
     val power = if (android.animation.ValueAnimator.areAnimatorsEnabled()) energy.coerceIn(0f, 1f) else 0f
     val shader = androidx.compose.runtime.remember {
         if (android.os.Build.VERSION.SDK_INT >= 33) OrbMesh() else null
