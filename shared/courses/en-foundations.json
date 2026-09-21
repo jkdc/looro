@@ -1,0 +1,106 @@
+{
+  "id": "en-foundations",
+  "languageID": "en",
+  "title": "Foundations",
+  "subtitle": "Start from zero",
+  "symbol": "graduationcap",
+  "description": "Your first real English: the structures every sentence uses, practised out loud in small conversations.",
+  "units": [
+    {
+      "id": "en-foundations-u1",
+      "title": "First sentences",
+      "subtitle": "Say who you are",
+      "themes": [
+        {
+          "id": "lang-exchange",
+          "title": "Language-exchange café",
+          "subtitle": "Meet and greet",
+          "symbol": "person.2",
+          "category": "Course",
+          "situation": "You are at a friendly language-exchange café. Meet the learner, exchange names, countries and jobs using the verb to be.",
+          "colorIndex": 0
+        },
+        {
+          "id": "introductions",
+          "title": "Nice to meet you",
+          "subtitle": "Start somewhere small",
+          "symbol": "hand.wave",
+          "category": "Connection",
+          "situation": "Meet the learner for the first time. Learn their interests through natural introductions.",
+          "colorIndex": 0
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-u1-to-be",
+          "title": "The verb “to be”",
+          "goal": "Introduce yourself and ask simple questions with am/is/are.",
+          "intro": {
+            "explanation": [
+              "Every English sentence needs a subject and a verb. The most important verb is “to be”. It tells you what someone is, how someone feels, or where something is.",
+              "One verb, three present forms. With I use am: “I am Ana.” With you, we and they use are: “You are my friend.” With he, she and it use is: “She is a doctor.”",
+              "In everyday talk, English shortens it: I'm, you're, he's, she's, it's, we're, they're. When you chat, say “I'm Ana”, not “I am Ana”."
+            ],
+            "examples": [
+              { "text": "I'm Ana. I'm from Spain.", "meaning": "Your name and country." },
+              { "text": "You are my best friend.", "meaning": "A close bond with someone." },
+              { "text": "She is a doctor.", "meaning": "Someone's profession." },
+              { "text": "We are very happy today.", "meaning": "A feeling right now." },
+              { "text": "The café is near the station.", "meaning": "Where a place is." },
+              { "text": "They are at work.", "meaning": "Someone's location." }
+            ]
+          },
+          "expressions": [
+            { "text": "I'm …", "meaning": "Introduce yourself.", "note": "With your name, age or feeling: I'm Ana. I'm tired." },
+            { "text": "I'm from …", "meaning": "Say where you come from.", "note": "Never “I from …” — the am is obligatory." },
+            { "text": "Are you …?", "meaning": "Ask about the other person.", "note": "Are you a student? Are you tired?" },
+            { "text": "Yes, I am. / No, I'm not.", "meaning": "Short answers to an Are-you question.", "note": "Repeat the verb: never “Yes, I”." },
+            { "text": "He's / She's a …", "meaning": "Talk about other people's jobs.", "note": "He's a teacher — the a matters with professions." },
+            { "text": "Nice to meet you.", "meaning": "The fixed phrase when you meet someone.", "note": "Answer with the same phrase." }
+          ],
+          "situation": "You meet someone new at a friendly language-exchange café. Introduce yourselves and ask simple questions with the verb to be.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Hello! I'm Ana. What's your name?",
+                "expected": ["I'm <name>.", "My name is <name>."],
+                "focus": "I am / My name is",
+                "watch": "Answering only the name without the verb: accept it, then recast with “I'm …”."
+              },
+              {
+                "prompt": "Where are you from?",
+                "expected": ["I'm from <country>.", "I am from <country>."],
+                "focus": "are + from",
+                "watch": "“I from Spain” — recast “I am FROM Spain”, stress am."
+              },
+              {
+                "prompt": "Are you a student?",
+                "expected": ["Yes, I am.", "No, I'm not. I'm a <job>."],
+                "focus": "short answers with am",
+                "watch": "“Yes, I student” — the short answer needs am."
+              },
+              {
+                "prompt": "How are you today?",
+                "expected": ["I'm fine.", "I'm good.", "I'm tired."],
+                "focus": "I'm + feeling",
+                "watch": "“I fine” — recast “I'm fine”."
+              },
+              {
+                "prompt": "Is your city big or small?",
+                "expected": ["It's big.", "It's small.", "My city is …"],
+                "focus": "is with things and places",
+                "watch": "“My city big” — recast “My city IS big”."
+              },
+              {
+                "prompt": "We're friends now! Where is your family from?",
+                "expected": ["They're from <country>.", "My family is from <country>."],
+                "focus": "they are / a group is",
+                "watch": "“My family from …” — recast with is."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
