@@ -1,5 +1,5 @@
 import SwiftUI
-import LooroCore
+import LearningCore
 
 /// Read-only practice summary, projected from the local archive each time it opens.
 struct LearningProgressView: View {
@@ -11,7 +11,7 @@ struct LearningProgressView: View {
             if stats.totalSessions == 0 {
                 Section {
                     Text("Start a conversation to see your progress.")
-                        .foregroundStyle(LooroColor.secondary)
+                        .foregroundStyle(AppColor.secondary)
                 }
             } else {
                 Section {
@@ -44,7 +44,7 @@ struct LearningProgressView: View {
                 }
                 Section {
                     Text("Totals and streaks span every language you practise. Words and milestones are for the current language.")
-                        .font(.footnote).foregroundStyle(LooroColor.secondary)
+                        .font(.footnote).foregroundStyle(AppColor.secondary)
                 }
             }
         }

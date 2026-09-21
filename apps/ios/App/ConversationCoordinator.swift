@@ -3,7 +3,7 @@ import Observation
 import NaturalLanguage
 import AVFoundation
 import UIKit
-import LooroCore
+import LearningCore
 
 @MainActor @Observable final class ConversationCoordinator {
     let store: LearningStore
@@ -281,7 +281,7 @@ import LooroCore
     private func handle(_ event: [String: Any]) {
         guard let type = event["type"] as? String, session != nil else { return }
         switch type {
-        case "looro.session.created":
+        case "app.session.created":
             session?.providerID = (event["session"] as? [String: Any])?["id"] as? String; save()
         case "session.started":
             guard state == .connecting else { return }

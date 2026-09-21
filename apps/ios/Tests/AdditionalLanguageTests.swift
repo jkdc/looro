@@ -1,5 +1,5 @@
 import XCTest
-@testable import LooroCore
+@testable import LearningCore
 
 final class AdditionalLanguageTests: XCTestCase {
     private let ids = ["de", "it", "pt", "zh"]

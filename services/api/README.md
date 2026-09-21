@@ -44,7 +44,7 @@ npm test
 For the full suite, set `TEST_DATABASE_URL` to an **isolated test database whose name ends in `_test`**, then run `npm test`. The integration suite applies migrations and adds synthetic test accounts, purchases, and usage. It never invokes OpenAI, Google, Apple, or Stripe servers. Ledger tests retain synthetic rows; voice tests create and remove isolated PostgreSQL schemas.
 
 ```sh
-TEST_DATABASE_URL=postgresql://looro_test@127.0.0.1:55434/looro_billing_test npm test
+TEST_DATABASE_URL=postgresql://app_test@127.0.0.1:55434/app_billing_test npm test
 ```
 
 The URL above is an example for an already-running local test database. Do not use a production database. Without `TEST_DATABASE_URL`, PostgreSQL tests are explicitly skipped.
@@ -120,15 +120,15 @@ A 600-second wall-clock closure request is **not an absolute provider spending g
 An isolated smoke stack uses PostgreSQL 17, no Caddy, and an ephemeral localhost-only API port:
 
 ```sh
-docker compose -p looro-foundation-smoke -f tests/compose.smoke.yaml up --build -d api
-docker compose -p looro-foundation-smoke -f tests/compose.smoke.yaml run --rm tests
-docker compose -p looro-foundation-smoke -f tests/compose.smoke.yaml port api 8080
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml up --build -d api
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml run --rm tests
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml port api 8080
 ```
 
 Only this disposable test project may be removed with:
 
 ```sh
-docker compose -p looro-foundation-smoke -f tests/compose.smoke.yaml down --volumes
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml down --volumes
 ```
 
 ## Complete before commercial activation

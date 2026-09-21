@@ -1,5 +1,5 @@
 import XCTest
-@testable import LooroCore
+@testable import LearningCore
 
 /// Mirrors the JVM `WordPracticeTest`; runs under the macOS gate.
 final class WordPracticeTests: XCTestCase {

@@ -1,6 +1,6 @@
 import SwiftUI
 
-@main struct LooroApp: App {
+@main struct AppRoot: App {
     @State private var store: LearningStore?
     @State private var startupError: String?
     @State private var confirmingErase = false

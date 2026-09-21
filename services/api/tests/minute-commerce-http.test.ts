@@ -20,7 +20,7 @@ const databaseURL = process.env.TEST_DATABASE_URL;
 if (databaseURL && !new URL(databaseURL).pathname.endsWith('_test')) throw new Error('Use an isolated test database.');
 const integration = (name: string, fn: () => Promise<void>) => test(name, { skip: !databaseURL && 'Set TEST_DATABASE_URL.' }, fn);
 const proxy = { hmacKey: 'a'.repeat(64), proxyToken: 'b'.repeat(64), allowLocalLoopback: false };
-const network = { 'x-looro-client-ip': '192.0.2.112', 'x-looro-proxy-token': proxy.proxyToken };
+const network = { 'x-app-client-ip': '192.0.2.112', 'x-app-proxy-token': proxy.proxyToken };
 const stripeSecret = 'whsec_' + 'syntheticfixture'.repeat(3);
 const stripeKey = 'sk_test_' + 'syntheticfixture'.repeat(3);
 const clone = <T>(value: T): T => structuredClone(value);
@@ -40,7 +40,7 @@ async function fixture(options: { enabled?: boolean; salesEnabled?: boolean; aiV
       createCount++; const orderID = params.client_reference_id!, id = `cs_test_${orderID.replaceAll('-', '')}`;
       const existing = sessions.get(id); if (existing) return clone(existing);
       const session = { id, status: 'open', mode: 'payment', livemode: false, payment_status: 'unpaid',
-        client_reference_id: orderID, metadata: { looro_minute_order: orderID }, currency: 'usd', amount_total: 997,
+        client_reference_id: orderID, metadata: { app_minute_order: orderID }, currency: 'usd', amount_total: 997,
         payment_intent: `pi_${orderID}`, url: `https://checkout.stripe.com/c/pay/${id}` };
       // Provider IDs are alphanumeric; retain the UUID only in the server metadata.
       session.payment_intent = `pi_${orderID.replaceAll('-', '')}`;
@@ -57,8 +57,8 @@ async function fixture(options: { enabled?: boolean; salesEnabled?: boolean; aiV
     verifyEvent: (raw, signature) => stripeSDK.webhooks.constructEvent(raw, signature, stripeSecret),
   };
   const stripe = new StripeMinuteProvider(db, vault, { secretKey: stripeKey, webhookSecret: stripeSecret, accountID: 'acct_httpfixture',
-    webOrigin: 'https://looro.example.test', checkoutEnabled: true }, transport);
-  const play = new PlayMinuteProvider(db, vault, { packageName: 'com.jkdc.looro.httpfixture', bindingKey: Buffer.alloc(32, 8),
+    webOrigin: 'https://app.example.test', checkoutEnabled: true }, transport);
+  const play = new PlayMinuteProvider(db, vault, { packageName: 'com.jkdc.app.httpfixture', bindingKey: Buffer.alloc(32, 8),
     currencyExponents: { usd: 2 }, purchasesEnabled: true }, {
     purchase: async () => clone(playFacts),
     order: async () => ({ orderId: 'GPA.1234-5678-9012-34567', purchaseToken: playFacts.token, state: 'PROCESSED',

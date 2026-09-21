@@ -2,12 +2,12 @@ import Foundation
 import SwiftData
 import Security
 import Observation
-import LooroCore
+import LearningCore
 
 @Model final class StoredArchive {
     @Attribute(.unique) var key: String
     var payload: Data
-    init(payload: Data) { key = "looro-v1"; self.payload = payload }
+    init(payload: Data) { key = "app-v1"; self.payload = payload }
 }
 
 @MainActor @Observable final class LearningStore {
@@ -133,7 +133,7 @@ import LooroCore
 }
 
 enum CredentialStore {
-    private static let service = "com.jkdc.looro.openai"
+    private static let service = "com.jkdc.app.openai"
     private static var query: [String: Any] { [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: "owner", kSecAttrSynchronizable as String: false] }
     static func read() -> String? {
         var q = query; q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne

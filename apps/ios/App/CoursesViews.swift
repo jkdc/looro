@@ -1,6 +1,6 @@
 import SwiftUI
 import AVFoundation
-import LooroCore
+import LearningCore
 
 /// Learn tab: the course for the current language, its lessons and focused themes.
 /// Read-aloud uses local speech synthesis; a missing course-language voice degrades
@@ -28,7 +28,7 @@ struct CoursesView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("No courses yet").font(.headline)
                     Text("Courses for this language are on the way. Meanwhile, Themes is the place to practise.")
-                        .font(.subheadline).foregroundStyle(LooroColor.secondary)
+                        .font(.subheadline).foregroundStyle(AppColor.secondary)
                 }.padding(24)
             } else {
                 ScrollView {
@@ -39,10 +39,10 @@ struct CoursesView: View {
                             VStack(alignment: .leading, spacing: 14) {
                                 HStack(spacing: 12) {
                                     Image(systemName: "graduationcap")
-                                        .font(.system(size: 26, weight: .light)).foregroundStyle(LooroColor.secondary)
+                                        .font(.system(size: 26, weight: .light)).foregroundStyle(AppColor.secondary)
                                     VStack(alignment: .leading) {
                                         Text(course.title).font(.headline)
-                                        Text(course.subtitle).font(.caption).foregroundStyle(LooroColor.secondary)
+                                        Text(course.subtitle).font(.caption).foregroundStyle(AppColor.secondary)
                                     }
                                 }
                                 Text(course.description).font(.subheadline)
@@ -55,7 +55,7 @@ struct CoursesView: View {
                     }.padding(.horizontal, 24).padding(.bottom, 110)
                 }.scrollIndicators(.hidden)
             }
-        }.foregroundStyle(LooroColor.ink)
+        }.foregroundStyle(AppColor.ink)
     }
 }
 
@@ -72,11 +72,11 @@ private struct UnitSection: View {
                     HStack {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(lesson.title).font(.subheadline.weight(.semibold))
-                            Text(lesson.goal).font(.caption).foregroundStyle(LooroColor.secondary)
+                            Text(lesson.goal).font(.caption).foregroundStyle(AppColor.secondary)
                         }
                         Spacer()
-                        Text(attemptLabel(lesson.id)).font(.caption2).foregroundStyle(LooroColor.secondary)
-                    }.padding(16).background(LooroColor.cream, in: RoundedRectangle(cornerRadius: 18))
+                        Text(attemptLabel(lesson.id)).font(.caption2).foregroundStyle(AppColor.secondary)
+                    }.padding(16).background(AppColor.cream, in: RoundedRectangle(cornerRadius: 18))
                 }.buttonStyle(.plain)
             }
         }
@@ -110,14 +110,14 @@ private struct LessonDetailView: View {
                             .padding(12).background(.white.opacity(0.8), in: Circle())
                     }.buttonStyle(.plain).accessibilityLabel("Back to lessons")
                     Spacer()
-                    Toggle(isOn: $audioOn) { Text("Read aloud").font(.caption).foregroundStyle(LooroColor.secondary) }
+                    Toggle(isOn: $audioOn) { Text("Read aloud").font(.caption).foregroundStyle(AppColor.secondary) }
                         .toggleStyle(.switch).labelsHidden()
                         .accessibilityLabel("Read aloud")
                         .onChange(of: audioOn) { _, on in if !on { reader.stop() } }
                 }
                 VStack(alignment: .leading, spacing: 6) {
                     Text(lesson.title).font(.largeTitle.weight(.semibold))
-                    Text(lesson.goal).font(.subheadline).foregroundStyle(LooroColor.secondary)
+                    Text(lesson.goal).font(.subheadline).foregroundStyle(AppColor.secondary)
                 }
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(Array(lesson.intro.explanation.enumerated()), id: \.offset) { _, paragraph in
@@ -129,7 +129,7 @@ private struct LessonDetailView: View {
                     ForEach(Array(lesson.intro.examples.enumerated()), id: \.offset) { _, example in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(example.text).font(.subheadline.weight(.semibold))
-                            Text(example.meaning).font(.caption).foregroundStyle(LooroColor.secondary)
+                            Text(example.meaning).font(.caption).foregroundStyle(AppColor.secondary)
                         }
                     }
                 }
@@ -138,7 +138,7 @@ private struct LessonDetailView: View {
                     ForEach(Array(lesson.expressions.enumerated()), id: \.offset) { _, expression in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(expression.text + "  —  " + expression.meaning).font(.subheadline.weight(.semibold))
-                            Text(expression.note).font(.caption).foregroundStyle(LooroColor.secondary)
+                            Text(expression.note).font(.caption).foregroundStyle(AppColor.secondary)
                         }
                     }
                 }
@@ -153,7 +153,7 @@ private struct LessonDetailView: View {
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text(theme.title).font(.subheadline.weight(.semibold))
                                         Text(theme.subtitle).font(.caption)
-                                    }.padding(14).background(LooroColor.panels[theme.colorIndex],
+                                    }.padding(14).background(AppColor.panels[theme.colorIndex],
                                         in: RoundedRectangle(cornerRadius: 20))
                                 }.buttonStyle(.plain)
                             }
@@ -162,7 +162,7 @@ private struct LessonDetailView: View {
                 }
                 Button { onPractice(lesson.id) } label: {
                     Text("Practise speaking").font(.headline).frame(maxWidth: .infinity).padding(18)
-                        .background(LooroColor.orange, in: Capsule())
+                        .background(AppColor.orange, in: Capsule())
                 }.buttonStyle(.plain).padding(.top, 6)
             }.padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 110)
         }.scrollIndicators(.hidden)
@@ -177,7 +177,7 @@ private struct LessonDetailView: View {
     }
 
     private func sectionHeading(_ text: String) -> some View {
-        Text(text).font(.subheadline.weight(.semibold)).foregroundStyle(LooroColor.secondary)
+        Text(text).font(.subheadline.weight(.semibold)).foregroundStyle(AppColor.secondary)
     }
 }
 

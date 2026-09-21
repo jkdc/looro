@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "LooroCore",
+    name: "LearningCore",
     platforms: [.macOS(.v14), .iOS(.v17)],
-    products: [.library(name: "LooroCore", targets: ["LooroCore"])],
+    products: [.library(name: "LearningCore", targets: ["LearningCore"])],
     targets: [
-        .target(name: "LooroCore", path: "Core"),
-        .testTarget(name: "LooroCoreTests", dependencies: ["LooroCore"], path: "Tests")
+        .target(name: "LearningCore", path: "Core"),
+        .testTarget(name: "LearningCoreTests", dependencies: ["LearningCore"], path: "Tests")
     ]
 )

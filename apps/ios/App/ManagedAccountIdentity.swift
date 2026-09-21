@@ -1,7 +1,7 @@
 import AuthenticationServices
 import Security
 import UIKit
-import LooroCore
+import LearningCore
 
 @MainActor
 final class ManagedAccountIdentity: NSObject, ASWebAuthenticationPresentationContextProviding,

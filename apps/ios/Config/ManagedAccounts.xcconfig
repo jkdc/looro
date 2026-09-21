@@ -1,10 +1,10 @@
 // Public app configuration. Enable only providers available on the configured server.
 // Local.xcconfig can override these values without changing personal signing.
-LOORO_MANAGED_ACCOUNTS_ENABLED = NO
-LOORO_MANAGED_API_URL =
-LOORO_GOOGLE_SIGN_IN_ENABLED = NO
-LOORO_GOOGLE_CLIENT_ID =
-LOORO_GOOGLE_CALLBACK_SCHEME = com.jkdc.looro.accounts-disabled
-LOORO_APPLE_SIGN_IN_ENABLED = NO
-LOORO_APPLE_SWIFT_FLAGS =
-LOORO_APPLE_ENTITLEMENTS =
+APP_MANAGED_ACCOUNTS_ENABLED = NO
+APP_MANAGED_API_URL =
+APP_GOOGLE_SIGN_IN_ENABLED = NO
+APP_GOOGLE_CLIENT_ID =
+APP_GOOGLE_CALLBACK_SCHEME = com.jkdc.app.accounts-disabled
+APP_APPLE_SIGN_IN_ENABLED = NO
+APP_APPLE_SWIFT_FLAGS =
+APP_APPLE_ENTITLEMENTS =

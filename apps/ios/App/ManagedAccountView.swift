@@ -1,6 +1,6 @@
 import SwiftUI
 import AuthenticationServices
-import LooroCore
+import LearningCore
 
 /// Ready for a Settings navigation destination when managed accounts are configured.
 struct ManagedAccountView: View {
@@ -9,12 +9,12 @@ struct ManagedAccountView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                LooroOrb(active: !store.isBusy).frame(width: 112, height: 112).padding(.top, 16)
+                AppOrb(active: !store.isBusy).frame(width: 112, height: 112).padding(.top, 16)
                 VStack(spacing: 8) {
                     Text(store.session == nil ? "Welcome to Looro" : "Your Looro account")
                         .font(.system(.title, design: .rounded, weight: .semibold)).multilineTextAlignment(.center)
                     Text("Your conversations and learning history stay on this iPhone.")
-                        .font(.subheadline).foregroundStyle(LooroColor.secondary).multilineTextAlignment(.center)
+                        .font(.subheadline).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center)
                 }
                 if store.configuration == nil {
                     Text("Accounts aren’t available in this build yet. You can keep practising with your own OpenAI API key in Settings.")
@@ -29,7 +29,7 @@ struct ManagedAccountView: View {
                                 .accessibilityIdentifier("managed-account-email")
                         }
                         Text("Purchases and hosted conversations aren’t available in this build.")
-                            .font(.footnote).foregroundStyle(LooroColor.secondary)
+                            .font(.footnote).foregroundStyle(AppColor.secondary)
                         Button("Refresh account", action: store.refresh).buttonStyle(.bordered)
                         Button("Sign out on all devices", action: store.signOut).buttonStyle(.bordered)
                         Button("Delete account", role: .destructive) { confirmDeletion = true }
@@ -38,9 +38,9 @@ struct ManagedAccountView: View {
                 } else {
                     VStack(spacing: 14) {
                         Text("Looro stores your sign-in details and account sessions. You can practise with your own API key without an account.")
-                            .font(.footnote).foregroundStyle(LooroColor.secondary).multilineTextAlignment(.center)
-                        Text("By signing in, you agree to the [Terms of use](https://looro.example/terms/) and acknowledge the [Privacy policy](https://looro.example/privacy/).")
-                            .font(.footnote).multilineTextAlignment(.center).tint(LooroColor.ink)
+                            .font(.footnote).foregroundStyle(AppColor.secondary).multilineTextAlignment(.center)
+                        Text("By signing in, you agree to the [Terms of use](https://app.example/terms/) and acknowledge the [Privacy policy](https://app.example/privacy/).")
+                            .font(.footnote).multilineTextAlignment(.center).tint(AppColor.ink)
                             .accessibilityIdentifier("managed-sign-in-agreement")
                         if store.configuration?.providers.contains(.google) == true {
                             Button { store.signIn(.google) } label: {
@@ -60,12 +60,12 @@ struct ManagedAccountView: View {
                         .accessibilityIdentifier("managedAccountMessage")
                 }
                 HStack(spacing: 24) {
-                    Link("Privacy policy", destination: URL(string: "https://looro.example/privacy/")!)
-                    Link("Terms", destination: URL(string: "https://looro.example/terms/")!)
-                }.font(.footnote).tint(LooroColor.ink)
+                    Link("Privacy policy", destination: URL(string: "https://app.example/privacy/")!)
+                    Link("Terms", destination: URL(string: "https://app.example/terms/")!)
+                }.font(.footnote).tint(AppColor.ink)
             }.padding(24).frame(maxWidth: 520).frame(maxWidth: .infinity)
         }
-        .background(LooroColor.cream).foregroundStyle(LooroColor.ink)
+        .background(AppColor.cream).foregroundStyle(AppColor.ink)
         .navigationTitle("Account").navigationBarTitleDisplayMode(.inline)
         .task { store.refresh() }
         .onDisappear { store.cancelSignIn() }

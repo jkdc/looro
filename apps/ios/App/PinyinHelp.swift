@@ -1,5 +1,5 @@
 import SwiftUI
-import LooroCore
+import LearningCore
 
 /// Keeps Han text selectable and word links intact, with an optional reading below it.
 struct PinyinHelp: View {
@@ -17,7 +17,7 @@ struct PinyinHelp: View {
                     Text(reading).font(.callout).textSelection(.enabled)
                         .accessibilityIdentifier("pinyin-reading")
                 }
-            }.foregroundStyle(LooroColor.secondary)
+            }.foregroundStyle(AppColor.secondary)
         }
     }
 }

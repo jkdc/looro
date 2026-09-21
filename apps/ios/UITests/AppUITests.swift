@@ -1,6 +1,6 @@
 import XCTest
 
-final class LooroUITests: XCTestCase {
+final class AppUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     private func reveal(_ element: XCUIElement, in app: XCUIApplication) {

@@ -1,12 +1,12 @@
 import Foundation
 import Security
 import CryptoKit
-import LooroCore
+import LearningCore
 
 extension ManagedAccountConfiguration {
     /// These keys contain public client IDs, never OAuth secrets or Looro bearer tokens.
     static func load(bundle: Bundle = .main) -> Self? {
-        #if LOORO_SIGN_IN_WITH_APPLE
+        #if APP_SIGN_IN_WITH_APPLE
         let appleCapabilityEnabled = true
         #else
         let appleCapabilityEnabled = false
@@ -132,7 +132,7 @@ struct ManagedAccountKeychain {
     init(scope: String) { self.scope = scope }
     private var query: [String: Any] {
         [kSecClass as String: kSecClassGenericPassword,
-         kSecAttrService as String: "com.jkdc.looro.managed-account",
+         kSecAttrService as String: "com.jkdc.app.managed-account",
          kSecAttrAccount as String: Data(SHA256.hash(data: Data(scope.utf8))).base64EncodedString(),
          kSecAttrSynchronizable as String: false]
     }

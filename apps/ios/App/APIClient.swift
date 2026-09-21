@@ -1,5 +1,5 @@
 import Foundation
-import LooroCore
+import LearningCore
 
 final class NoRedirect: NSObject, URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) { completionHandler(nil) }
@@ -33,7 +33,7 @@ struct APIResult { var text: String; var sources: [SourceLink]; var usage: APIUs
         var body: [String: Any] = ["model": "gpt-5.6-luna", "store": false, "instructions": instructions,
                                   "input": [["role": "user", "content": input]], "max_output_tokens": schema == nil ? 1400 : 2200,
                                   "reasoning": ["effort": "low"]]
-        if let schema { body["text"] = ["format": ["type": "json_schema", "name": "looro_result", "strict": true, "schema": schema]] }
+        if let schema { body["text"] = ["format": ["type": "json_schema", "name": "app_result", "strict": true, "schema": schema]] }
         if search { body["tools"] = [["type": "web_search"]]; body["tool_choice"] = "auto"; body["max_tool_calls"] = 1 }
         let json = try await post("responses", body: body)
         guard json["status"] as? String == "completed" else { throw APIError.incomplete }

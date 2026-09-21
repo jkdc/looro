@@ -1,5 +1,5 @@
 import SwiftUI
-import LooroCore
+import LearningCore
 
 /// Typed drill over due words (up to 10, earliest due first). Attempts are not
 /// stored in this change; recall evidence stays conversation-derived.
@@ -17,18 +17,18 @@ struct WritingPracticeView: View {
             VStack(alignment: .leading, spacing: 22) {
                 if due.isEmpty {
                     Text("No words are due right now. Have a conversation, and the words will come back when they are ready.")
-                        .font(.subheadline).foregroundStyle(LooroColor.secondary)
+                        .font(.subheadline).foregroundStyle(AppColor.secondary)
                 } else if index >= due.count {
                     Text("You practised \(due.count) words and wrote \(correctCount) correctly.")
                         .font(.system(.title3, design: .rounded, weight: .medium))
                 } else {
                     let word = due[index]
-                    Text("Word \(index + 1) of \(due.count)").font(.footnote).foregroundStyle(LooroColor.secondary)
+                    Text("Word \(index + 1) of \(due.count)").font(.footnote).foregroundStyle(AppColor.secondary)
                     Text("Write the word that means:").font(.subheadline)
                     Text(word.meaning).font(.system(.title, design: .rounded, weight: .medium))
                     if !WordPractice.maskedExample(word.example, form: word.form).isEmpty {
                         Text(WordPractice.maskedExample(word.example, form: word.form))
-                            .font(.subheadline).foregroundStyle(LooroColor.secondary)
+                            .font(.subheadline).foregroundStyle(AppColor.secondary)
                     }
                     TextField("Your answer", text: $answer)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
@@ -38,7 +38,7 @@ struct WritingPracticeView: View {
                         Text("It is written: \(word.form)").font(.system(.title3, design: .rounded, weight: .medium))
                         Button { advance() } label: {
                             Text("Next word").frame(maxWidth: .infinity)
-                        }.buttonStyle(.borderedProminent).tint(LooroColor.orange)
+                        }.buttonStyle(.borderedProminent).tint(AppColor.orange)
                     } else {
                         Button {
                             if WordPractice.isCorrect(answer: answer, form: word.form, lemma: word.lemma) {
@@ -46,12 +46,12 @@ struct WritingPracticeView: View {
                             } else { missed = true }
                         } label: {
                             Text("Check").frame(maxWidth: .infinity)
-                        }.buttonStyle(.borderedProminent).tint(LooroColor.orange).disabled(answer.trimmingCharacters(in: .whitespaces).isEmpty)
+                        }.buttonStyle(.borderedProminent).tint(AppColor.orange).disabled(answer.trimmingCharacters(in: .whitespaces).isEmpty)
                             .accessibilityIdentifier("practice-check")
                     }
                 }
                 Spacer()
-            }.padding(28).frame(maxWidth: .infinity, alignment: .leading).background(LooroColor.cream).foregroundStyle(LooroColor.ink)
+            }.padding(28).frame(maxWidth: .infinity, alignment: .leading).background(AppColor.cream).foregroundStyle(AppColor.ink)
                 .navigationTitle("Writing practice")
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
                 .onAppear {

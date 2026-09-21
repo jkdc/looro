@@ -2,13 +2,13 @@ services:
   database:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: looro
-      POSTGRES_USER: looro
+      POSTGRES_DB: app
+      POSTGRES_USER: app
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a unique database password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U looro -d looro"]
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -16,7 +16,7 @@ services:
   migrate:
     build: .
     environment:
-      DATABASE_URL: postgresql://looro:${POSTGRES_PASSWORD}@database:5432/looro
+      DATABASE_URL: postgresql://app:${POSTGRES_PASSWORD}@database:5432/app
     command: ["node", "dist/src/migrate.js"]
     depends_on:
       database:
@@ -24,7 +24,7 @@ services:
   api:
     build: .
     environment:
-      DATABASE_URL: postgresql://looro:${POSTGRES_PASSWORD}@database:5432/looro
+      DATABASE_URL: postgresql://app:${POSTGRES_PASSWORD}@database:5432/app
       PUBLIC_ORIGIN: https://${API_DOMAIN:?Set the API domain}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_ANDROID_SERVER_CLIENT_ID: ${GOOGLE_ANDROID_SERVER_CLIENT_ID:-}

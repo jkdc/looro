@@ -1,6 +1,6 @@
 # Manual refund and account-deletion support
 
-Users can ask `support@looro.example` to delete their Looro account. Support must verify the account, resolve its financial obligations and then remove identifying account data. This is a manual request path; it does not waive refund rights, prove that an unpaid-looking order cannot charge later, or authorize forfeiting prepaid value. Google permits a customer-service email as part of an accessible external deletion path; the linked page must clearly identify Looro and explain how to make the request. An in-app path is also required. [Google account-deletion requirements](https://support.google.com/googleplay/android-developer/answer/13327111?hl=en)
+Users can ask `support@app.example` to delete their Looro account. Support must verify the account, resolve its financial obligations and then remove identifying account data. This is a manual request path; it does not waive refund rights, prove that an unpaid-looking order cannot charge later, or authorize forfeiting prepaid value. Google permits a customer-service email as part of an accessible external deletion path; the linked page must clearly identify Looro and explain how to make the request. An in-app path is also required. [Google account-deletion requirements](https://support.google.com/googleplay/android-developer/answer/13327111?hl=en)
 
 ## Inspect a verified support case
 

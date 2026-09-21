@@ -1,5 +1,5 @@
 import XCTest
-@testable import LooroCore
+@testable import LearningCore
 
 /// Runs the same archive fixture as Android's CrossPlatformFixtureTest so both cores stay interchangeable.
 final class CrossPlatformFixtureTests: XCTestCase {

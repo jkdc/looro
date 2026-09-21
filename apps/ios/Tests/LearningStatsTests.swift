@@ -1,5 +1,5 @@
 import XCTest
-@testable import LooroCore
+@testable import LearningCore
 
 /// Day boundaries are pinned to UTC on both platforms (see the Kotlin LearningStatsTest).
 final class LearningStatsTests: XCTestCase {

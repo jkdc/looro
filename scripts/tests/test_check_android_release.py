@@ -64,19 +64,19 @@ class AndroidReleaseTests(unittest.TestCase):
     def branding(self):
         icon_set = self.root / "ios/AppIcon.appiconset"
         icon_set.mkdir(parents=True)
-        (icon_set / "Contents.json").write_text(json.dumps({"images": [{"filename": "LooroIcon.png"}]}))
-        png(icon_set / "LooroIcon.png", 1024, 1024, 6)
-        android_icon = self.root / "android/looro_icon.png"
+        (icon_set / "Contents.json").write_text(json.dumps({"images": [{"filename": "AppIcon.png"}]}))
+        png(icon_set / "AppIcon.png", 1024, 1024, 6)
+        android_icon = self.root / "android/app_icon.png"
         android_icon.parent.mkdir()
-        android_icon.write_bytes((icon_set / "LooroIcon.png").read_bytes())
+        android_icon.write_bytes((icon_set / "AppIcon.png").read_bytes())
         namespace = 'xmlns:android="http://schemas.android.com/apk/res/android"'
         (self.root / "android/AndroidManifest.xml").write_text(f'<manifest {namespace}><application android:icon="@mipmap/ic_looro" android:roundIcon="@mipmap/ic_looro"/></manifest>')
         (self.root / "android/ic_looro.xml").write_text(f'<adaptive-icon {namespace}><foreground android:drawable="@drawable/ic_looro_foreground"/></adaptive-icon>')
-        (self.root / "android/ic_looro_foreground.xml").write_text(f'<inset {namespace} android:inset="10%"><bitmap android:src="@drawable/looro_icon"/></inset>')
+        (self.root / "android/ic_looro_foreground.xml").write_text(f'<inset {namespace} android:inset="10%"><bitmap android:src="@drawable/app_icon"/></inset>')
         (self.root / "ios/Design.swift").write_text("struct Brand {}")
         (self.root / "android/Design.kt").write_text("fun Brand() {}")
-        return {"branding": {"iosIconSet": "ios/AppIcon.appiconset", "iosIconFile": "LooroIcon.png",
-                "androidIconFile": "android/looro_icon.png", "androidManifest": "android/AndroidManifest.xml",
+        return {"branding": {"iosIconSet": "ios/AppIcon.appiconset", "iosIconFile": "AppIcon.png",
+                "androidIconFile": "android/app_icon.png", "androidManifest": "android/AndroidManifest.xml",
                 "androidAdaptiveIcon": "android/ic_looro.xml", "androidForeground": "android/ic_looro_foreground.xml",
                 "iosDesignSource": "ios/Design.swift", "androidDesignSource": "android/Design.kt"}}
 
@@ -84,19 +84,19 @@ class AndroidReleaseTests(unittest.TestCase):
         spec = self.branding()
         result = release.check_branding(self.root, spec)
         self.assertEqual(result["androidForegroundInset"], "10%")
-        self.assertEqual(result["identicalIconSHA256"], release.sha256(self.root / "android/looro_icon.png"))
+        self.assertEqual(result["identicalIconSHA256"], release.sha256(self.root / "android/app_icon.png"))
         self.assertEqual(len(result["designSources"]), 2)
-        png(self.root / "android/looro_icon.png", 1024, 1024, 2)
+        png(self.root / "android/app_icon.png", 1024, 1024, 2)
         with self.assertRaisesRegex(release.InvalidRelease, "differs from the exact iOS"):
             release.check_branding(self.root, spec)
 
     def test_branding_rejects_reference_changes_that_bypass_the_inspected_artwork(self):
         spec = self.branding()
         paths_and_replacements = [
-            ("ios/AppIcon.appiconset/Contents.json", "LooroIcon.png", "OtherIcon.png"),
+            ("ios/AppIcon.appiconset/Contents.json", "AppIcon.png", "OtherIcon.png"),
             ("android/AndroidManifest.xml", "@mipmap/ic_looro", "@mipmap/other"),
             ("android/ic_looro.xml", "@drawable/ic_looro_foreground", "@drawable/other"),
-            ("android/ic_looro_foreground.xml", "@drawable/looro_icon", "@drawable/other")
+            ("android/ic_looro_foreground.xml", "@drawable/app_icon", "@drawable/other")
         ]
         for relative, old, new in paths_and_replacements:
             path = self.root / relative
@@ -263,8 +263,8 @@ class AndroidReleaseTests(unittest.TestCase):
             release.below(self.root, "link/outside")
 
     def test_bundle_manifest_rejects_debug_test_backup_and_wrong_candidate(self):
-        spec = {"packageName": "com.jkdc.looro.android", "versionCode": 1, "versionName": "0.1", "minSdk": 26, "targetSdk": 36}
-        xml = '''<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.jkdc.looro.android" android:versionCode="1" android:versionName="0.1">
+        spec = {"packageName": "com.jkdc.app.android", "versionCode": 1, "versionName": "0.1", "minSdk": 26, "targetSdk": 36}
+        xml = '''<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.jkdc.app.android" android:versionCode="1" android:versionName="0.1">
           <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36"/>
           <uses-permission android:name="android.permission.RECORD_AUDIO"/>
           <application android:allowBackup="false" android:usesCleartextTraffic="false" />
@@ -274,7 +274,7 @@ class AndroidReleaseTests(unittest.TestCase):
                           xml.replace("<application ", '<application android:testOnly="true" '),
                           xml.replace('allowBackup="false"', 'allowBackup="true"'),
                           xml.replace('versionCode="1"', 'versionCode="2"'),
-                          xml.replace("com.jkdc.looro.android", "com.jkdc.looro.android.uitest")):
+                          xml.replace("com.jkdc.app.android", "com.jkdc.app.android.uitest")):
             with self.assertRaises(release.InvalidRelease):
                 release.check_bundle_manifest(malformed, spec)
 
@@ -286,7 +286,7 @@ class AndroidReleaseTests(unittest.TestCase):
 
     def cli_fixture(self):
         spec = self.branding() | {"schemaVersion": 1, "scope": "hosted-guest-preview",
-            "packageName": "com.jkdc.looro.android", "versionCode": 5, "versionName": "0.1",
+            "packageName": "com.jkdc.app.android", "versionCode": 5, "versionName": "0.1",
             "minSdk": 26, "targetSdk": 36, "metadataLocale": "en-US", "requiredLicenses": ["LICENSE.txt"],
             "assets": {"icon": "assets/icon.png", "featureGraphic": "assets/feature.png",
                        "phoneScreenshots": ["assets/one.png", "assets/two.png"]}}
@@ -312,7 +312,7 @@ class AndroidReleaseTests(unittest.TestCase):
         def execute(command, **kwargs):
             config = {"optimizations": {"uncompressNativeLibraries": {"alignment": "PAGE_ALIGNMENT_16K"}}}
             manifest = f'''<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-                package="com.jkdc.looro.android" android:versionCode="{manifest_version}" android:versionName="0.1">
+                package="com.jkdc.app.android" android:versionCode="{manifest_version}" android:versionName="0.1">
                 <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36"/>
                 <application android:allowBackup="false" android:usesCleartextTraffic="false"/>
             </manifest>'''

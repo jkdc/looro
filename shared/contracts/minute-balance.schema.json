@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://looro.example/contracts/minute-balance-v1.json",
+  "$id": "https://app.example/contracts/minute-balance-v1.json",
   "title": "Looro free time and estimated paid balance",
   "type": "object",
   "required": [

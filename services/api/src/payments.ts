@@ -73,9 +73,9 @@ export class SandboxPayments {
       mode: 'payment', client_reference_id: order.id, line_items: [{ price: order.stripe_price_id, quantity: 1 }],
       adaptive_pricing: { enabled: false },
       success_url: `${this.origin}/payment-return?status=success`, cancel_url: `${this.origin}/payment-return?status=cancelled`,
-      metadata: { looro_order_id: order.id }, allow_promotion_codes: false,
+      metadata: { app_order_id: order.id }, allow_promotion_codes: false,
       custom_text: { submit: { message: `AI usage: $${(aiMinor / 100).toFixed(2)}. Looro fee (15%): $${(serviceFeeMinor / 100).toFixed(2)}. Payment fee: $${(paymentFeeMinor / 100).toFixed(2)}. USD. Sandbox only.` } }
-    }, { idempotencyKey: `looro-checkout-${order.id}` });
+    }, { idempotencyKey: `app-checkout-${order.id}` });
     try {
       const response = result(session);
       await transaction(db, async sql => {

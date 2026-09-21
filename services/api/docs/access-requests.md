@@ -4,7 +4,7 @@ This endpoint stores a request to hear when Looro is available. It sends no emai
 
 ## Website contract
 
-Send `POST https://api.looro.example/v1/access-requests` with `Content-Type: application/json`, no cookies or authorization, and this body:
+Send `POST https://api.app.example/v1/access-requests` with `Content-Type: application/json`, no cookies or authorization, and this body:
 
 ```json
 {
@@ -17,7 +17,7 @@ Send `POST https://api.looro.example/v1/access-requests` with `Content-Type: app
 
 `website` is an optional hidden honeypot. Leave it empty and exclude it from keyboard navigation and assistive technology. The other three fields are required. Unknown fields are rejected. Bodies are limited to 1,024 bytes. Email validation supports ordinary ASCII addresses, including plus addressing and punycode domains; it does not verify mailbox ownership or accept internationalized local parts. Addresses are trimmed and lowercased without removing dots or plus tags.
 
-Use clear consent text near the submit button: “Email me about Looro access. No marketing. I can withdraw at support@looro.example.” Link the current privacy policy. Submitting `waitlist-v1` records acceptance of this purpose; changing that purpose requires a new consent flow.
+Use clear consent text near the submit button: “Email me about Looro access. No marketing. I can withdraw at support@app.example.” Link the current privacy policy. Submitting `waitlist-v1` records acceptance of this purpose; changing that purpose requires a new consent flow.
 
 | Response | Meaning |
 | --- | --- |
@@ -28,14 +28,14 @@ Use clear consent text near the submit button: “Email me about Looro access. N
 | `429` | Rate limit; `Retry-After: 3600`. |
 | `503` | Disabled, unavailable, proxy configuration missing, or admission capacity reached. Keep the form retryable. |
 
-Only the exact origin `https://looro.example` is allowed by default. `OPTIONS` preflight for POST with Content-Type returns 204 before parsing a body or contacting PostgreSQL. CORS does not grant permission to call other API routes or authenticate a visitor. It also does not stop non-browser bots from forging an Origin header.
+Only the exact origin `https://app.example` is allowed by default. `OPTIONS` preflight for POST with Content-Type returns 204 before parsing a body or contacting PostgreSQL. CORS does not grant permission to call other API routes or authenticate a visitor. It also does not stop non-browser bots from forging an Origin header.
 
 ## Private server configuration
 
 Run migration `004_access_requests.sql` before starting the updated API. Keep the existing financial-table grants intact and grant the runtime role only these new table permissions:
 
 ```sql
-GRANT SELECT, INSERT, UPDATE, DELETE ON access_requests, access_request_limits TO looro_runtime;
+GRANT SELECT, INSERT, UPDATE, DELETE ON access_requests, access_request_limits TO app_runtime;
 ```
 
 The API requires these environment values:

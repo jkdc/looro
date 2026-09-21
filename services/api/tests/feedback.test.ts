@@ -7,7 +7,7 @@ import { AIReports, AI_REPORT_CONSENT_VERSION, AI_REPORT_LIMITS as limits, aiRep
   containsReportCredential, parseAIReport, pruneAIReports, reportNetwork, type TrustedFeedbackNetwork } from '../src/feedback.js';
 
 const config = { hmacKey: 'a'.repeat(64), proxyToken: 'b'.repeat(64), allowLocalLoopback: false };
-const headers = (address = '203.0.113.19') => ({ 'x-looro-client-ip': address, 'x-looro-proxy-token': config.proxyToken });
+const headers = (address = '203.0.113.19') => ({ 'x-app-client-ip': address, 'x-app-proxy-token': config.proxyToken });
 const network = (address = '203.0.113.19') => reportNetwork(headers(address), '127.0.0.1', config);
 const body = () => ({ reportID: randomUUID(), languageID: 'es', reason: 'incorrect', excerpt: 'Una frase de prueba.', consentVersion: AI_REPORT_CONSENT_VERSION });
 const url = process.env.TEST_DATABASE_URL;
@@ -72,7 +72,7 @@ test('network reference comes from a trusted proxy and rotates daily without sto
   const same = reportNetwork(headers('2001:db8:1:2::4'), '127.0.0.1', config, now);
   const tomorrow = reportNetwork(headers('2001:db8:1:2::3'), '127.0.0.1', config, new Date('2026-09-14T12:00:00Z'));
   assert.match(one, /^[a-f0-9]{64}$/); assert.equal(one, same); assert.notEqual(one, tomorrow);
-  assert.throws(() => reportNetwork({ ...headers(), 'x-looro-proxy-token': 'wrong', 'x-forwarded-for': '198.51.100.4' }, '127.0.0.1', config), { code: 'ai_reports_unavailable' });
+  assert.throws(() => reportNetwork({ ...headers(), 'x-app-proxy-token': 'wrong', 'x-forwarded-for': '198.51.100.4' }, '127.0.0.1', config), { code: 'ai_reports_unavailable' });
   assert.throws(() => reportNetwork({}, '127.0.0.1', config), { code: 'ai_reports_unavailable' });
 });
 
@@ -147,7 +147,7 @@ integration('runtime submits without reading reports and can only prune expired 
   const role = `feedback_runtime_${suffix}`;
   await db!.query(`CREATE ROLE ${role}; GRANT USAGE ON SCHEMA ${schema} TO ${role}`);
   const grants = await readFile(new URL('../operations/feedback-runtime-grants.sql', import.meta.url), 'utf8');
-  await db!.query(grants.replaceAll('looro_runtime', role));
+  await db!.query(grants.replaceAll('app_runtime', role));
   const runtimeURL = new URL(url!); runtimeURL.searchParams.set('options', `-c search_path=${schema} -c role=${role}`);
   const runtime = connectDatabase(runtimeURL.toString());
   try {
@@ -172,7 +172,7 @@ integration('review view stays inaccessible after default privileges and broad g
   const role = `feedback_view_runtime_${suffix}`;
   await db!.query(`CREATE ROLE ${role}; GRANT USAGE ON SCHEMA ${schema} TO ${role}`);
   const grants = (await readFile(new URL('../operations/feedback-runtime-grants.sql', import.meta.url), 'utf8'))
-    .replaceAll('looro_runtime', role);
+    .replaceAll('app_runtime', role);
   const runtimeURL = new URL(url!); runtimeURL.searchParams.set('options', `-c search_path=${schema} -c role=${role}`);
   const runtime = connectDatabase(runtimeURL.toString());
   try {

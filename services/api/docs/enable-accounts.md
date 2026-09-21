@@ -4,7 +4,7 @@ This procedure enables native Google sign-in independently of payments, free tri
 
 ## Configure the identity provider
 
-Create a Google **iOS** OAuth client for the app's bundle ID and use that same client ID as `GOOGLE_CLIENT_ID` on the server and as the native authorization audience. The current Looro app uses bundle ID `com.jkdc.looro`. [REQUIRED: create a Google Cloud project owned by the publisher and an iOS OAuth client for `com.jkdc.looro`; the upstream client and project must not be reused.] This installed-app PKCE flow needs no Google client secret on the backend. [Google iOS backend authentication](https://developers.google.com/identity/sign-in/ios/backend-auth)
+Create a Google **iOS** OAuth client for the app's bundle ID and use that same client ID as `GOOGLE_CLIENT_ID` on the server and as the native authorization audience. The current Looro app uses bundle ID `com.jkdc.app`. [REQUIRED: create a Google Cloud project owned by the publisher and an iOS OAuth client for `com.jkdc.app`; the upstream client and project must not be reused.] This installed-app PKCE flow needs no Google client secret on the backend. [Google iOS backend authentication](https://developers.google.com/identity/sign-in/ios/backend-auth)
 
 Looro's Google project is External/In production as of September 12, 2026, with verified and published branding. It requests only `openid` and `email`. For a separate development project, note that Testing is not an invitation-only gate for these basic identity scopes. Workspace policies can still block authorization. [Google OAuth app states](https://developers.google.com/identity/protocols/oauth2/production-readiness/overview)
 
@@ -17,8 +17,8 @@ Build the reviewed source, take the normal encrypted backup, and run migrations 
 Preserve the runtime role's existing table permissions and grant:
 
 ```sql
-GRANT SELECT, INSERT, UPDATE, DELETE ON auth_rate_limits TO looro_runtime;
-GRANT DELETE ON accounts, wallets TO looro_runtime;
+GRANT SELECT, INSERT, UPDATE, DELETE ON auth_rate_limits TO app_runtime;
+GRANT DELETE ON accounts, wallets TO app_runtime;
 ```
 
 The runtime role also needs its existing SELECT/INSERT/UPDATE privileges on accounts, wallets, identities, auth_challenges and auth_sessions; DELETE on identities, auth_challenges and auth_sessions; and SELECT on ledger, reservations, checkout_orders, usage_records and hosted_sessions for safe deletion checks. Do not grant modification or deletion of the ledger. The migration role retains schema ownership.

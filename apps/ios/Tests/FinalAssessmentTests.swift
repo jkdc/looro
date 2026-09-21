@@ -1,5 +1,5 @@
 import XCTest
-@testable import LooroCore
+@testable import LearningCore
 
 @MainActor final class FinalAssessmentTests: XCTestCase {
     @MainActor private final class Provider {
