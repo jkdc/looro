@@ -1,0 +1,6 @@
+/* Tabulator needs a little help fitting Tabler cards; everything else is stock Tabler. */
+.tabulator { background: transparent; }
+.tabulator .tabulator-header { border-bottom: 1px solid var(--tblr-border-color); }
+.tabulator-row:hover { background: var(--tblr-active-bg, rgba(0,0,0,.03)); }
+.navbar-vertical .navbar-brand { font-weight: 600; }
+pre#detail-body { white-space: pre-wrap; }

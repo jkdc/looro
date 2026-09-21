@@ -48,9 +48,13 @@ services:
     image: caddy:2-alpine
     environment:
       API_DOMAIN: ${API_DOMAIN}
+      # Without the panel's DNS record the site binds admin.localhost with an internal cert,
+      # so the deployment still boots; set ADMIN_DOMAIN to enable the panel for real.
+      ADMIN_DOMAIN: ${ADMIN_DOMAIN:-admin.localhost}
     ports: ["80:80", "443:443", "443:443/udp"]
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./admin-ui:/srv/admin-ui:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on: [api]

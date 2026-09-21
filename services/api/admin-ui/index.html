@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'">
+<title>Palique · Administración</title>
+<link rel="stylesheet" href="/vendor/tabler.min.css">
+<link rel="stylesheet" href="/vendor/tabulator.min.css">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body class="theme-light">
+<div class="page">
+  <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+    <div class="container-fluid">
+      <h1 class="navbar-brand mb-0"><span id="brand">Palique</span> · Admin</h1>
+      <div class="navbar-nav flex-row d-lg-none"></div>
+      <div class="collapse navbar-collapse" id="sidebar-menu">
+        <ul class="navbar-nav pt-lg-3" id="nav"></ul>
+      </div>
+      <div class="mt-auto p-3">
+        <span class="text-secondary" id="whoami"></span><br>
+        <button class="btn btn-sm btn-outline-secondary mt-2" id="signout">Salir</button>
+      </div>
+    </div>
+  </aside>
+  <div class="content-wrapper">
+    <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
+      <div class="container-xl">
+        <h2 class="page-title" id="page-title">Resumen</h2>
+      </div>
+    </header>
+    <div class="page-body">
+      <div class="container-xl" id="view"></div>
+    </div>
+  </div>
+</div>
+<div class="modal modal-blur fade" id="detail-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="detail-title">Detalle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button></div>
+      <div class="modal-body"><pre id="detail-body" class="small text-wrap"></pre></div>
+      <div class="modal-footer"><button class="btn" data-bs-dismiss="modal">Cerrar</button></div>
+    </div>
+  </div>
+</div>
+<div class="modal modal-blur fade" id="reason-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="reason-title">Motivo</h5></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Objetivo</label><input class="form-control" id="reason-input" readonly></div>
+        <label class="form-label">Motivo (obligatorio, auditado)</label>
+        <textarea class="form-control" id="reason-text" rows="3" maxlength="500"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-primary" id="reason-ok">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/vendor/tabler.min.js"></script>
+<script src="/vendor/tabulator.min.js"></script>
+<script src="/vendor/chart.umd.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
