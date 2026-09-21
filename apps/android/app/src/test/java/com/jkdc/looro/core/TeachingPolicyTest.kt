@@ -10,6 +10,37 @@ class TeachingPolicyTest {
         capabilities = emptyList(), words = emptyList())
     private val theme = ConversationTheme("coffee", "A coffee?", "Something warm, please", "cup",
         "Everyday", "You work in a cosy café. Help the learner order, then chat naturally.", 0)
+    private val lesson = CourseRegistry.lesson("en-foundations-u1-to-be")!!
+
+    @Test
+    fun `practice prompt carries the rigor policy and every question`() {
+        val prompt = TeachingPolicy.lessonPractice(lesson, language)
+        assertTrue(prompt.contains("IN ORDER, one at a time"))
+        assertTrue(prompt.contains("say explicitly whether it was correct"))
+        assertTrue(prompt.contains("recast the correct form"))
+        assertTrue(prompt.contains(lesson.title))
+        assertTrue(prompt.contains(lesson.goal))
+        for (question in lesson.practice.questions) {
+            assertTrue(lesson.id, prompt.contains(question.prompt))
+            assertTrue(lesson.id, prompt.contains(question.focus))
+            assertTrue(lesson.id, prompt.contains(question.watch))
+        }
+    }
+
+    @Test
+    fun `lesson opening introduces the lesson`() {
+        val opening = TeachingPolicy.lessonOpening(lesson, language)
+        assertTrue(opening.contains(lesson.title))
+        assertTrue(opening.contains("first practice question"))
+        assertTrue(opening.contains(language.name))
+    }
+
+    @Test
+    fun `typed reply references the lesson only when one is set`() {
+        assertTrue(TeachingPolicy.typedReply(language, lesson).contains(lesson.title))
+        assertTrue(TeachingPolicy.typedReply(language, lesson).contains(lesson.goal))
+        assertFalse(TeachingPolicy.typedReply(language).contains("lesson"))
+    }
 
     @Test
     fun `natural pace line appears by default`() {
