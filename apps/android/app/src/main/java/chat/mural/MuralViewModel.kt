@@ -909,7 +909,7 @@ class MuralViewModel(application: Application) : AndroidViewModel(application) {
             "session.started" -> if (state == "connecting") {
                 state = "active"; lastActivity = nowSeconds()
                 updateSession { it.providerID = (event["session"] as? JsonObject)?.get("id")?.jsonPrimitive?.content ?: it.providerID }
-                command("instructions", if (session?.isListening == true) TeachingPolicy.listeningStory(language) else TeachingPolicy.greeting(language)); startDurationChecks()
+                command("instructions", if (session?.isListening == true) TeachingPolicy.listeningStory(language) else TeachingPolicy.greeting(language, selectedTheme)); startDurationChecks()
             }
             "session.input_transcript.partial" -> {
                 val text = event["delta"]?.jsonPrimitive?.contentOrNull ?: return
