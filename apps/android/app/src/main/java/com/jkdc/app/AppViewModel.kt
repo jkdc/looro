@@ -771,7 +771,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         selectedLesson = lesson
     }
     fun lessonAttempts(lessonID: String): Int = archive.lessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: 0
-
     /** Study-card read-aloud: local synthesis in the course language, independent of the conversation engine. */
     var lessonAudioOn by mutableStateOf(true); private set
     var lessonReading by mutableStateOf(false); private set
@@ -976,8 +975,23 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val i = lessons.indexOfFirst { it.lessonID == lessonID }
         if (i >= 0) lessons[i] = lessons[i].copy(attempts = lessons[i].attempts + 1, lastSeen = nowSeconds())
         else lessons += LessonState(lessonID = lessonID, attempts = 1, lastSeen = nowSeconds())
-        archive = archive.copy(lessons = lessons); persist()
+        archive = archive.copy(lessons = lessons)
+        CourseRegistry.lesson(lessonID)?.let { RecallEngine.seedFromLesson(archive, it, nowSeconds()) }
+        persist()
     }
+
+    // Spaced recall (spaced-recall-notebook): expressions seeded from lessons and
+    // saved lookups, scheduled by RecallEngine on the word-bar ladder.
+    fun dueRecallCount(): Int = RecallEngine.dueCount(archive, nowSeconds())
+    fun recallQueue(): List<ExpressionState> = RecallEngine.due(archive, nowSeconds())
+    fun notebookExpressions(): List<ExpressionState> = archive.expressions.sortedByDescending { it.lastSeen }
+    fun saveLookupExpression(text: String, meaning: String): Boolean {
+        val saved = RecallEngine.saveLookup(archive, text, meaning, nowSeconds())
+        if (saved) persist()
+        return saved
+    }
+    fun removeExpression(text: String) { RecallEngine.remove(archive, text); persist() }
+    fun gradeRecall(text: String, correct: Boolean) { RecallEngine.grade(archive, text, correct, nowSeconds()); persist() }
     private fun fail(message: String, needsKeySetup: Boolean = false) { finish(false); resetJob?.cancel(); state = "failed"; presentError(message, needsKeySetup) }
     private fun fail(e: Throwable, @StringRes fallback: Int) {
         fail(resolveMessage(e, fallback), errorNeedsKeySetup(e))

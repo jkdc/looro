@@ -17,7 +17,8 @@ import com.jkdc.app.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun WordLookupSheet(word: String, sentence: String, languageID: String,
-    explanation: String?, error: String?, loading: Boolean, onDismiss: () -> Unit) {
+    explanation: String?, error: String?, loading: Boolean, onDismiss: () -> Unit,
+    onSave: (() -> Unit)? = null, saved: Boolean = false) {
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = AppColors.Cream,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxWidth().testTag("word-lookup-sheet")) {
@@ -44,6 +45,13 @@ internal fun WordLookupSheet(word: String, sentence: String, languageID: String,
                     loading -> Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
                         CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                         Text(stringResource(R.string.talk_meaning_loading), color = AppColors.Secondary)
+                    }
+                }
+                if (onSave != null && explanation != null) {
+                    androidx.compose.material3.Button(onClick = onSave, enabled = !saved,
+                        modifier = Modifier.fillMaxWidth().testTag("word-lookup-save"),
+                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {
+                        Text(stringResource(if (saved) R.string.lookup_saved else R.string.lookup_save))
                     }
                 }
             }

@@ -52,6 +52,9 @@ final class CoursesTests: XCTestCase {
         let archive = try Archive.decode(data)
         XCTAssertEqual(archive.lessons?.first?.lessonID, "en-foundations-u1-to-be")
         XCTAssertEqual(archive.lessons?.first?.attempts, 1)
+        XCTAssertEqual(archive.expressions?.count, 2)
+        XCTAssertEqual(archive.expressions?.first { $0.source == "lesson" }.lessonID, "en-foundations-u1-to-be")
+        XCTAssertEqual(archive.expressions?.first { $0.source == "lookup" }.text, "grandmother")
 
         var legacy = try XCTUnwrap(try JSONSerialization.jsonObject(with: data) as? [String: Any])
         legacy.removeValue(forKey: "lessons")

@@ -284,8 +284,13 @@ fun TalkScreen(
     }
 
     if (typing) TypedReplySheet(vm.language.name, vm.working, onSendTyped, onDismiss = { typing = false })
-    if (lookup) WordLookupSheet(lookupWord, lookupSentence, vm.language.id, vm.lookupResult, vm.lookupError, vm.lookupLoading,
-        onDismiss = { vm.clearLookup(); lookup = false; lookupWord = "" })
+    if (lookup) {
+        var lookupSaved by remember(lookupWord) { mutableStateOf(false) }
+        WordLookupSheet(lookupWord, lookupSentence, vm.language.id, vm.lookupResult, vm.lookupError, vm.lookupLoading,
+            onDismiss = { vm.clearLookup(); lookup = false; lookupWord = "" },
+            onSave = { if (vm.saveLookupExpression(lookupWord, vm.lookupResult.orEmpty())) lookupSaved = true },
+            saved = lookupSaved)
+    }
     transcript?.let { TranscriptDialog(vm, it, onDismiss = { transcript = null }) }
 }
 

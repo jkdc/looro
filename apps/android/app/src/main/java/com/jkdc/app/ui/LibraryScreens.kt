@@ -250,6 +250,30 @@ fun WordsScreen(vm: AppViewModel) {
         item {
             Text(stringResource(R.string.words_recall_note), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
         }
+        item {
+            Text(stringResource(R.string.words_expressions_heading), style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.semantics { heading() })
+        }
+        val expressions = vm.notebookExpressions()
+        if (expressions.isEmpty()) item {
+            Text(stringResource(R.string.words_expressions_empty), style = MaterialTheme.typography.bodyMedium, color = AppColors.Secondary)
+        } else items(expressions, key = { it.text }) { expression ->
+            Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), color = AppColors.Butter) {
+                Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(expression.text, style = MaterialTheme.typography.titleLarge)
+                        Text(expression.meaning, color = AppColors.Secondary)
+                    }
+                    Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                        RecallBars(expression.bars)
+                        androidx.compose.material3.TextButton(onClick = { vm.removeExpression(expression.text) },
+                            modifier = Modifier.testTag("expression-remove-" + expression.text)) {
+                            Text(stringResource(R.string.words_expression_remove))
+                        }
+                    }
+                }
+            }
+        }
         if (vm.learner.capabilities.isNotEmpty()) item {
             Surface(shape = RoundedCornerShape(24.dp), color = AppColors.Butter) {
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {

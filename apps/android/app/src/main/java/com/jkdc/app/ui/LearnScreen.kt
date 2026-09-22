@@ -50,9 +50,12 @@ import com.jkdc.app.core.Lesson
 fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: () -> Unit) {
     val courses = CourseRegistry.forLanguage(vm.language.id)
     var openLessonID by rememberSaveable { mutableStateOf<String?>(null) }
+    var recallOpen by rememberSaveable { mutableStateOf(false) }
     DisposableEffect(Unit) { onDispose { vm.stopLessonReading() } }
     val openLesson = openLessonID?.let { CourseRegistry.lesson(it) }
-    if (openLesson != null) {
+    if (recallOpen) {
+        RecallScreen(vm, onBack = { recallOpen = false })
+    } else if (openLesson != null) {
         LessonDetail(vm, openLesson,
             onBack = { openLessonID = null; vm.stopLessonReading() },
             onPractice = { id -> vm.stopLessonReading(); onPractice(id) },
@@ -68,6 +71,19 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.learn_eyebrow), stringResource(R.string.learn_title),
                 stringResource(R.string.learn_subtitle), Modifier.padding(top = 20.dp, bottom = 6.dp)) }
+            if (vm.dueRecallCount() > 0) item {
+                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { recallOpen = true }.testTag("recall-card"),
+                    shape = RoundedCornerShape(26.dp), color = AppColors.Sage) {
+                    Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        AppIcon(AppSymbol.Words, Modifier.size(28.dp), color = AppColors.Secondary)
+                        Column {
+                            Text(stringResource(R.string.learn_recall_title), style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(R.string.learn_recall_card, vm.dueRecallCount()),
+                                style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        }
+                    }
+                }
+            }
             items(courses.size, key = { courses[it].id }) { index ->
                 CourseCard(vm, courses[index], onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
             }

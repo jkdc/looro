@@ -290,4 +290,21 @@
     <string name="engine_key_hint">Clave API propia del proveedor seleccionado</string>
     <string name="engine_key_save">Guardar clave</string>
     <string name="engine_key_remove">Volver a la clave incluida</string>
+    <string name="learn_recall_title">Repasar</string>
+    <string name="learn_recall_card">%1$d expresiones listas para repasar</string>
+    <string name="recall_title">Repasar</string>
+    <string name="recall_counter">%1$d de %2$d</string>
+    <string name="recall_prompt_label">Recuerda la expresión con este significado</string>
+    <string name="recall_answer_label">Tu respuesta</string>
+    <string name="recall_check">Comprobar</string>
+    <string name="recall_correct">¡Correcto!</string>
+    <string name="recall_answer_was">Era: %1$s</string>
+    <string name="recall_continue">Continuar</string>
+    <string name="recall_empty_title">Nada para repasar ahora mismo.</string>
+    <string name="recall_empty_body">Las expresiones que guardes vuelven aquí cuando toca.</string>
+    <string name="words_expressions_heading">Expresiones guardadas</string>
+    <string name="words_expressions_empty">Guarda expresiones desde una lección o el diccionario y volverán para repasar.</string>
+    <string name="words_expression_remove">Quitar</string>
+    <string name="lookup_save">Guardar para repasar</string>
+    <string name="lookup_saved">Guardada</string>
 </resources>

@@ -180,10 +180,29 @@ public struct LessonState: Codable, Hashable, Sendable {
     }
 }
 
+/// Saved expression for the recall queue. `source` is "lesson" or "lookup";
+/// scheduled by RecallEngine on the same ladder as word bars.
+public struct ExpressionState: Codable, Hashable, Sendable {
+    public var text: String
+    public var meaning: String
+    public var source: String
+    public var lessonID: String?
+    public var bars: Int
+    public var attempts: Int
+    public var lastSeen: Double
+    public var dueAt: Double
+    public init(text: String, meaning: String, source: String, lessonID: String? = nil,
+                bars: Int = 0, attempts: Int = 0, lastSeen: Double = 0, dueAt: Double = 0) {
+        self.text = text; self.meaning = meaning; self.source = source; self.lessonID = lessonID
+        self.bars = bars; self.attempts = attempts; self.lastSeen = lastSeen; self.dueAt = dueAt
+    }
+}
+
 public struct Archive: Codable, Sendable {
     public static let maximumEncodedBytes = 30_000_000
     private static let maximumSessions = 10_000
     private static let maximumLessons = 1_000
+    private static let maximumExpressions = 2_000
     // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
     // Write sites clamp to these too, so a long model reply can never make a saved session fail validation here.
     public static let maximumTitleCharacters = 200
@@ -193,6 +212,7 @@ public struct Archive: Codable, Sendable {
     public var sessions: [SessionRecord] = []
     public var preferences = Preferences()
     public var lessons: [LessonState]?
+    public var expressions: [ExpressionState]?
     public init() {}
     public static func decode(_ data: Data) throws -> Archive {
         guard data.count <= maximumEncodedBytes else { throw ArchiveError.tooLarge }
@@ -239,6 +259,21 @@ public struct Archive: Codable, Sendable {
                 dueAt: max(current?.dueAt ?? 0, lesson.dueAt))
         }
         candidate.lessons = lessonsByID.isEmpty ? nil : lessonsByID.values.sorted { $0.lessonID < $1.lessonID }
+        var expressionsByKey: [String: ExpressionState] = Dictionary(uniqueKeysWithValues: (candidate.expressions ?? []).map { (RecallEngine.normalizeKey($0.text), $0) })
+        for expression in incoming.expressions ?? [] {
+            let key = RecallEngine.normalizeKey(expression.text)
+            let current = expressionsByKey[key]
+            expressionsByKey[key] = ExpressionState(
+                text: current?.text ?? expression.text,
+                meaning: (current?.meaning.isEmpty == false) ? current!.meaning : expression.meaning,
+                source: current?.source ?? expression.source,
+                lessonID: current?.lessonID ?? expression.lessonID,
+                bars: max(current?.bars ?? 0, expression.bars),
+                attempts: max(current?.attempts ?? 0, expression.attempts),
+                lastSeen: max(current?.lastSeen ?? 0, expression.lastSeen),
+                dueAt: max(current?.dueAt ?? 0, expression.dueAt))
+        }
+        candidate.expressions = expressionsByKey.isEmpty ? nil : expressionsByKey.values.sorted { $0.text < $1.text }
         try candidate.validate()
         guard try candidate.encoded().count <= Self.maximumEncodedBytes else { throw ArchiveError.tooLarge }
         return candidate
@@ -267,6 +302,15 @@ public struct Archive: Codable, Sendable {
         guard lessons.count <= Self.maximumLessons, Set(lessons.map(\.lessonID)).count == lessons.count,
               lessons.allSatisfy({ !$0.lessonID.isEmpty && $0.lessonID.count <= 200 && (0...3).contains($0.bars) &&
                   (0...1_000_000).contains($0.attempts) && $0.lastSeen.isFinite && $0.dueAt.isFinite })
+        else { throw ArchiveError.invalid }
+        let expressions = expressions ?? []
+        guard expressions.count <= Self.maximumExpressions,
+              Set(expressions.map { RecallEngine.normalizeKey($0.text) }).count == expressions.count,
+              expressions.allSatisfy({ !$0.text.isEmpty && $0.text.count <= 300 && !$0.meaning.isEmpty && $0.meaning.count <= 300 &&
+                  ["lesson", "lookup"].contains($0.source) &&
+                  ($0.source != "lesson" || !($0.lessonID ?? "").isEmpty) &&
+                  (0...3).contains($0.bars) && (0...1_000_000).contains($0.attempts) &&
+                  $0.lastSeen.isFinite && $0.dueAt.isFinite })
         else { throw ArchiveError.invalid }
     }
     /// Version 1 was Norwegian-only. Migration assigns that provenance once;

@@ -85,6 +85,14 @@ data class LessonState(
     var lastSeen: Double = 0.0, var dueAt: Double = 0.0
 )
 
+/** Saved expression for the recall queue. `source` is "lesson" or "lookup";
+    scheduled by RecallEngine on the same ladder as word bars. */
+@Serializable
+data class ExpressionState(
+    val text: String, val meaning: String, val source: String, val lessonID: String? = null,
+    var bars: Int = 0, var attempts: Int = 0, var lastSeen: Double = 0.0, var dueAt: Double = 0.0
+)
+
 @Serializable
 data class SessionRecord(
     val id: String = UUID.randomUUID().toString(), val languageID: String = LanguageRegistry.defaultID,
@@ -114,7 +122,7 @@ data class Preferences(
     var interests: String = "", var hasOnboarded: Boolean = false, var aiConsentVersion: Int? = null,
     var slowSpeech: Boolean? = null, var listeningPractice: Boolean? = null
 )
-@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf())
+@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf())
 class ArchiveError private constructor(val kind: Kind) : Exception() {
     enum class Kind { TOO_LARGE, UNSUPPORTED_VERSION, UNSUPPORTED_LANGUAGE, INVALID }
     companion object {
@@ -129,6 +137,7 @@ object ArchiveCodec {
     const val MAXIMUM_ENCODED_BYTES = 30_000_000
     private const val MAXIMUM_SESSIONS = 10_000
     private const val MAXIMUM_LESSONS = 1_000
+    private const val MAXIMUM_EXPRESSIONS = 2_000
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true; prettyPrint = true }
     fun encode(a: Archive): String = json.encodeToString(Archive.serializer(), a)
     fun decode(data: String): Archive {
@@ -158,6 +167,17 @@ object ArchiveCodec {
                 attempts = maxOf(cur.attempts, inc.attempts), lastSeen = maxOf(cur.lastSeen, inc.lastSeen), dueAt = maxOf(cur.dueAt, inc.dueAt))
         }
         out.lessons = byLesson.values.toMutableList()
+        val byExpression = out.expressions.associateBy { RecallEngine.normalizeKey(it.text) }.toMutableMap()
+        incoming.expressions.forEach { inc ->
+            val key = RecallEngine.normalizeKey(inc.text)
+            val cur = byExpression[key]
+            byExpression[key] = if (cur == null) inc else ExpressionState(
+                text = cur.text, meaning = if (cur.meaning.isNotBlank()) cur.meaning else inc.meaning,
+                source = cur.source, lessonID = cur.lessonID ?: inc.lessonID, bars = maxOf(cur.bars, inc.bars),
+                attempts = maxOf(cur.attempts, inc.attempts), lastSeen = maxOf(cur.lastSeen, inc.lastSeen),
+                dueAt = maxOf(cur.dueAt, inc.dueAt))
+        }
+        out.expressions = byExpression.values.toMutableList()
         validate(out); if (encode(out).toByteArray().size > MAXIMUM_ENCODED_BYTES) throw ArchiveError.TOO_LARGE
         return out
     }
@@ -219,5 +239,9 @@ object ArchiveCodec {
         }
         if (a.lessons.size > MAXIMUM_LESSONS || a.lessons.map { it.lessonID }.toSet().size != a.lessons.size ||
             a.lessons.any { it.lessonID.isBlank() || it.lessonID.length > 200 || it.bars !in 0..3 || it.attempts !in 0..1_000_000 || !it.lastSeen.isFinite() || !it.dueAt.isFinite() }) throw ArchiveError.INVALID
+        if (a.expressions.size > MAXIMUM_EXPRESSIONS || a.expressions.map { RecallEngine.normalizeKey(it.text) }.toSet().size != a.expressions.size ||
+            a.expressions.any { it.text.isBlank() || it.text.length > 300 || it.meaning.isBlank() || it.meaning.length > 300 ||
+                it.source !in listOf("lesson", "lookup") || (it.source == "lesson" && (it.lessonID.isNullOrBlank() || it.lessonID.length > 200)) ||
+                it.bars !in 0..3 || it.attempts !in 0..1_000_000 || !it.lastSeen.isFinite() || !it.dueAt.isFinite() }) throw ArchiveError.INVALID
     }
 }

@@ -290,4 +290,21 @@
     <string name="engine_key_hint">Custom API key for the selected provider</string>
     <string name="engine_key_save">Save key</string>
     <string name="engine_key_remove">Use included key again</string>
+    <string name="learn_recall_title">Recall</string>
+    <string name="learn_recall_card">%1$d expressions ready for review</string>
+    <string name="recall_title">Recall</string>
+    <string name="recall_counter">%1$d of %2$d</string>
+    <string name="recall_prompt_label">Recall the expression for this meaning</string>
+    <string name="recall_answer_label">Your answer</string>
+    <string name="recall_check">Check</string>
+    <string name="recall_correct">Correct!</string>
+    <string name="recall_answer_was">It was: %1$s</string>
+    <string name="recall_continue">Continue</string>
+    <string name="recall_empty_title">Nothing due right now.</string>
+    <string name="recall_empty_body">Expressions you save come back here when it matters.</string>
+    <string name="words_expressions_heading">Saved expressions</string>
+    <string name="words_expressions_empty">Save expressions from a lesson or the dictionary and they will return for recall.</string>
+    <string name="words_expression_remove">Remove</string>
+    <string name="lookup_save">Save for recall</string>
+    <string name="lookup_saved">Saved</string>
 </resources>

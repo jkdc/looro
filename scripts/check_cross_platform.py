@@ -345,7 +345,7 @@ def check_constants(root, constants=CONSTANTS):
 # archive-fields
 
 ARCHIVE_STRUCTS = ['Archive', 'SessionRecord', 'Fragment', 'Preferences', 'Assessment',
-                   'WordProposal', 'TopicBrief', 'SourceLink', 'LessonState']
+                   'WordProposal', 'TopicBrief', 'SourceLink', 'LessonState', 'ExpressionState']
 
 # `Models.kt`'s `requireFields()` validates each JSON object under a differently named
 # local variable; this maps a struct to that variable so its `fields(...)` call can be
