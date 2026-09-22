@@ -154,11 +154,13 @@ fun AppRoot(
                                 onChoose = { tab = 0 },
                                 onCurrentTopic = { query -> withConsent(CloudAction.CurrentTopic(query)) },
                             )
-                            2 -> WordsScreen(vm)
-                            3 -> LearnScreen(vm,
-                                onPractice = { lessonID -> withConsent(CloudAction.StartLesson(lessonID)) },
+                            2 -> LearnScreen(vm,
+                                onPractice = { lessonID ->
+                                    withConsent(CloudAction.StartLesson(lessonID)); tab = 0
+                                },
                                 onThemeChosen = { tab = 0 },
                             )
+                            3 -> WordsScreen(vm)
                         }
                     }
                     Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(108.dp)

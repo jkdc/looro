@@ -129,7 +129,8 @@ private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
             Switch(checked = vm.lessonAudioOn, onCheckedChange = { vm.setLessonAudio(it) },
                 modifier = Modifier.padding(start = 8.dp).testTag("lesson-audio"))
         }
-        LazyColumn(contentPadding = PaddingValues(bottom = 40.dp), verticalArrangement = Arrangement.spacedBy(16.dp),
+        // Bottom padding clears the floating navigation so the practice CTA is reachable.
+        LazyColumn(contentPadding = PaddingValues(bottom = 180.dp), verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize()) {
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
