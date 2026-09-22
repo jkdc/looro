@@ -23,10 +23,12 @@ public struct CourseUnit: Identifiable, Hashable, Sendable {
     public var id: String
     public var title: String
     public var subtitle: String
+    public var level: String
     public var themes: [ConversationTheme]
     public var lessons: [Lesson]
-    public init(id: String, title: String, subtitle: String, themes: [ConversationTheme], lessons: [Lesson]) {
-        self.id = id; self.title = title; self.subtitle = subtitle; self.themes = themes; self.lessons = lessons
+    public init(id: String, title: String, subtitle: String, level: String, themes: [ConversationTheme], lessons: [Lesson]) {
+        self.id = id; self.title = title; self.subtitle = subtitle; self.level = level
+        self.themes = themes; self.lessons = lessons
     }
 }
 

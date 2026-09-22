@@ -10,6 +10,7 @@
       "id": "en-foundations-u1",
       "title": "First sentences",
       "subtitle": "Say who you are",
+      "level": "A1",
       "themes": [
         {
           "id": "lang-exchange",
@@ -96,6 +97,1319 @@
                 "expected": ["They're from <country>.", "My family is from <country>."],
                 "focus": "they are / a group is",
                 "watch": "“My family from …” — recast with is."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u1-questions",
+          "title": "Questions & negatives with “to be”",
+          "goal": "Ask yes/no and wh- questions, and say what is not true, with am/is/are.",
+          "intro": {
+            "explanation": [
+              "To ask a yes/no question, put the verb first. “You are tired.” becomes “Are you tired?” “She is a teacher.” becomes “Is she a teacher?”",
+              "To say something is not true, add not. “I am not late.” In talk we shorten: is not → isn't, are not → aren't. And I'm not is already short.",
+              "Real questions add question words: what, where, who, how. They go before the verb: “Where are you from?” Short forms: what's = what is, where's = where is."
+            ],
+            "examples": [
+              { "text": "Are you hungry?", "meaning": "A yes/no question with are." },
+              { "text": "Is she your sister?", "meaning": "Asking about another person." },
+              { "text": "I'm not tired.", "meaning": "A negative with I." },
+              { "text": "He isn't at work today.", "meaning": "is not, shortened." },
+              { "text": "Where are the keys?", "meaning": "Question word + are." },
+              { "text": "What's your phone number?", "meaning": "what's = what is." }
+            ]
+          },
+          "expressions": [
+            { "text": "Are you …?", "meaning": "Ask a yes/no question.", "note": "Are you OK? Are you new here?" },
+            { "text": "I'm not …", "meaning": "Say what is not true about you.", "note": "I'm not from Madrid — I'm from Seville." },
+            { "text": "isn't / aren't", "meaning": "Say what is not true about others.", "note": "She isn't here. They aren't at home." },
+            { "text": "Where is / are …?", "meaning": "Ask about a place.", "note": "Where's the station? Where are my keys?" },
+            { "text": "What's …?", "meaning": "Ask what something is.", "note": "What's this? What's your number?" },
+            { "text": "How old are you?", "meaning": "Ask about age.", "note": "The answer: I'm twenty-five." }
+          ],
+          "situation": "You chat with a new neighbour in the lift. Ask simple questions and say what is and isn't true for you.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Hi! Are you new in the building?",
+                "expected": ["Yes, I am.", "No, I'm not. I'm on the third floor."],
+                "focus": "short answers with am",
+                "watch": "“Yes, I new” — short answers repeat am."
+              },
+              {
+                "prompt": "Is your flat big?",
+                "expected": ["Yes, it is.", "No, it isn't."],
+                "focus": "short answers with is",
+                "watch": "“No, it not big” — the negative is isn't."
+              },
+              {
+                "prompt": "I'm Marta, by the way. What's your name?",
+                "expected": ["I'm <name>.", "My name is <name>."],
+                "focus": "what's + name",
+                "watch": "“What you name?” — the question needs is: “What's your name?”."
+              },
+              {
+                "prompt": "Where are you from?",
+                "expected": ["I'm from <country>.", "I am from <country>."],
+                "focus": "where + are",
+                "watch": "“Where you from?” — don't drop are."
+              },
+              {
+                "prompt": "Are your neighbours friendly?",
+                "expected": ["Yes, they are.", "No, they aren't."],
+                "focus": "short answers with are",
+                "watch": "“Yes, they friendly” — repeat are."
+              },
+              {
+                "prompt": "I'm not from this city — I'm from Valencia. And you?",
+                "expected": ["I'm from <city>.", "I'm not from here either."],
+                "focus": "negative with I'm",
+                "watch": "“I no from …” — the negative is “I'm not from …”."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u1-introduce",
+          "title": "Introducing yourself",
+          "goal": "Give a complete self-introduction: name, age, country, nationality and job.",
+          "intro": {
+            "explanation": [
+              "A good introduction answers five small questions: your name, your age, your country or city, your nationality, and your job.",
+              "In English, age and nationality use the verb to be. “I'm 30.” “I'm Mexican.” Say “I'm 30”, never “I have 30”.",
+              "With jobs we say a/an: “I'm a nurse.” “He's an engineer.” Nationality words are adjectives: from Spain → I'm Spanish; from Mexico → I'm Mexican."
+            ],
+            "examples": [
+              { "text": "I'm Elena. I'm twenty-eight.", "meaning": "Name and age." },
+              { "text": "I'm from Peru.", "meaning": "Country with from." },
+              { "text": "I'm Peruvian.", "meaning": "Nationality with be." },
+              { "text": "I'm a nurse.", "meaning": "Job with a." },
+              { "text": "He's an engineer.", "meaning": "an before a vowel sound." },
+              { "text": "We're students.", "meaning": "Plural with are." }
+            ]
+          },
+          "expressions": [
+            { "text": "I'm <name>.", "meaning": "Your name.", "note": "The simplest way to start." },
+            { "text": "I'm … years old.", "meaning": "Your age.", "note": "I'm 25 = I'm twenty-five years old." },
+            { "text": "I'm from …", "meaning": "Your country or city.", "note": "I'm from Colombia." },
+            { "text": "I'm <nationality>.", "meaning": "Adjective with be: Spanish, Turkish, Brazilian.", "note": "From Japan → I'm Japanese." },
+            { "text": "I'm a/an <job>.", "meaning": "Your job. Use an before a vowel sound.", "note": "an artist, a teacher" },
+            { "text": "Nice to meet you too.", "meaning": "The polite answer to “Nice to meet you”.", "note": "Same smile, one extra word: too." }
+          ],
+          "situation": "First day in class: the teacher asks everyone to stand up and introduce themselves to two classmates.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Good morning! Please introduce yourself.",
+                "expected": ["I'm <name>.", "My name is <name>."],
+                "focus": "opening a self-introduction",
+                "watch": "One line is fine — the tutor will ask for more."
+              },
+              {
+                "prompt": "Lovely to meet you. How old are you?",
+                "expected": ["I'm <number>.", "I'm <number> years old."],
+                "focus": "age with be",
+                "watch": "“I have 25” — age uses be: “I'm 25”."
+              },
+              {
+                "prompt": "Where are you from?",
+                "expected": ["I'm from <country>.", "I'm from <city>, in <country>."],
+                "focus": "origin",
+                "watch": "“I'm Spanish from Spain” — keep it simple: “I'm from …”."
+              },
+              {
+                "prompt": "So you're from Italy — you're Italian, right?",
+                "expected": ["Yes, I'm Italian.", "That's right."],
+                "focus": "nationality adjectives",
+                "watch": "“I'm Italy” — the country is Italy, the person is Italian."
+              },
+              {
+                "prompt": "What's your job?",
+                "expected": ["I'm a <job>.", "I'm an <job>."],
+                "focus": "a/an with jobs",
+                "watch": "“I'm teacher” — jobs need a/an: “I'm a teacher”."
+              },
+              {
+                "prompt": "Great! Now introduce your friend: this is Carlos.",
+                "expected": ["He's a <job>. He's from <country>.", "This is Carlos. He's …"],
+                "focus": "talking about a third person with is",
+                "watch": "“Carlos is teacher” — add a: “a teacher”."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-u2",
+      "title": "People & things",
+      "subtitle": "Name your world",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "photo-album",
+          "title": "Family photo album",
+          "subtitle": "Who's who",
+          "symbol": "photo.on.rectangle.angled",
+          "category": "Course",
+          "situation": "You show the learner a family photo album. Name the people, ask about each other's families and say who has what.",
+          "colorIndex": 0
+        },
+        {
+          "id": "lost-jumper",
+          "title": "The lost jumper",
+          "subtitle": "Whose is it?",
+          "symbol": "tshirt",
+          "category": "Course",
+          "situation": "A jumper appeared in the classroom. Help find its owner: ask what things are, whose they are and what they look like.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-u2-articles",
+          "title": "a/an, the & plurals",
+          "goal": "Talk about one thing, a specific thing and many things.",
+          "intro": {
+            "explanation": [
+              "Use a or an for one of many — any one. Use an before a vowel sound: a book, an apple, an hour.",
+              "Use the when the listener knows exactly which one. First we introduce with a/an (“I have a cat”), then we talk about it with the (“The cat is old”).",
+              "For more than one, most words take -s: book → books. After -s, -sh, -ch, -x we add -es: bus → buses, watch → watches. A few are special: person → people, child → children."
+            ],
+            "examples": [
+              { "text": "I have a question.", "meaning": "One of many." },
+              { "text": "She's an artist.", "meaning": "an before a vowel sound." },
+              { "text": "Open the window, please.", "meaning": "Both people know which one." },
+              { "text": "I have two brothers.", "meaning": "Plural with -s." },
+              { "text": "The buses are slow.", "meaning": "Plural + the." },
+              { "text": "The children are at school.", "meaning": "Irregular plural: child → children." }
+            ]
+          },
+          "expressions": [
+            { "text": "a/an + thing", "meaning": "One of many; an before a vowel sound.", "note": "a key, an umbrella" },
+            { "text": "the + thing", "meaning": "The one we both know.", "note": "Close the door, please." },
+            { "text": "two/three + plural", "meaning": "Most words take -s.", "note": "three books, ten days" },
+            { "text": "-es after s/sh/ch/x", "meaning": "bus → buses, watch → watches.", "note": "Listen for the extra syllable." },
+            { "text": "people / children", "meaning": "Special plurals: person → people, child → children.", "note": "Never “two persons” in everyday talk." },
+            { "text": "Can I have a …, please?", "meaning": "Ask for one thing politely.", "note": "a coffee, a minute" }
+          ],
+          "situation": "You help at a small shop on market day: count things, name things and ask for one specific item.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Welcome! Can I help you?",
+                "expected": ["Can I have a <thing>, please?", "I want a <thing>, please."],
+                "focus": "a + first mention",
+                "watch": "The first time you name a thing: a/an, not the."
+              },
+              {
+                "prompt": "This one here on the shelf? The blue one?",
+                "expected": ["Yes, the blue one, please.", "No, the red one."],
+                "focus": "the + known thing",
+                "watch": "“Yes, blue one” — keep the: “the blue one”."
+              },
+              {
+                "prompt": "How many bags do you need?",
+                "expected": ["I need two bags.", "Three, please."],
+                "focus": "plurals",
+                "watch": "“two bag” — plural needs -s: “two bags”."
+              },
+              {
+                "prompt": "Do you want apples or oranges?",
+                "expected": ["I want two apples.", "Three oranges, please."],
+                "focus": "plural -s with food",
+                "watch": "“three orange” — add -s."
+              },
+              {
+                "prompt": "The watches are over there. How many do you need?",
+                "expected": ["One watch, please.", "Two watches."],
+                "focus": "-es spelling",
+                "watch": "“two watchs” — after ch it's “watches”."
+              },
+              {
+                "prompt": "Is your family big?",
+                "expected": ["Yes — four people at home.", "No, we are two."],
+                "focus": "people",
+                "watch": "“four persons” — say “people”."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u2-this-that",
+          "title": "This / that & my / your",
+          "goal": "Point at things near and far, and say who they belong to.",
+          "intro": {
+            "explanation": [
+              "Use this for something near you, that for something far from you both. Plurals: these (near) and those (far).",
+              "Possessive words go before the thing: my, your, his, her. “This is my bag.” “That's your coat.” “Her name is Ana.”",
+              "To ask about the owner: “Is this your …?” or “Whose is this?” The answer repeats the owner: “It's mine.” / “No, it's his.”"
+            ],
+            "examples": [
+              { "text": "This is my desk.", "meaning": "Near me." },
+              { "text": "That's our teacher.", "meaning": "Far from us." },
+              { "text": "Is this your phone?", "meaning": "Asking the owner." },
+              { "text": "These are my keys.", "meaning": "Plural, near." },
+              { "text": "Those are her children.", "meaning": "Plural, far." },
+              { "text": "Whose umbrella is this?", "meaning": "Asking whose it is." }
+            ]
+          },
+          "expressions": [
+            { "text": "This is …", "meaning": "Near me.", "note": "This is my friend Ana." },
+            { "text": "That's …", "meaning": "Far from us.", "note": "That's the bus!" },
+            { "text": "Is this your …?", "meaning": "Ask if it belongs to the listener.", "note": "Is this your seat?" },
+            { "text": "my / your / his / her", "meaning": "Belonging, before the noun.", "note": "his car, her house" },
+            { "text": "these / those", "meaning": "Plurals: these near, those far.", "note": "These shoes, those mountains." },
+            { "text": "Whose is this?", "meaning": "Ask about the owner.", "note": "Answer: “It's mine”." }
+          ],
+          "situation": "You and the learner arrive early to class and find bags, phones and coats on the tables: identify what's near, what's far, and who owns what.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Good morning! Is this your bag on the chair?",
+                "expected": ["Yes, it's my bag.", "Yes, it's mine.", "No, it isn't."],
+                "focus": "this + my",
+                "watch": "“Yes, is my bag” — English needs it: “Yes, it's my bag”."
+              },
+              {
+                "prompt": "And this phone? Whose is it?",
+                "expected": ["It's mine.", "It's my phone.", "I don't know."],
+                "focus": "whose",
+                "watch": "“It's of Ana” — no of: “It's mine”."
+              },
+              {
+                "prompt": "Look at the board — do you see those words?",
+                "expected": ["Yes, I see those words.", "Which words?"],
+                "focus": "that/those for far things",
+                "watch": "“this words” for far things — use “those”."
+              },
+              {
+                "prompt": "I'm holding two keys. Are these your keys?",
+                "expected": ["Yes, they're my keys.", "No, they aren't mine."],
+                "focus": "these + plural",
+                "watch": "“this keys” — plural near is “these keys”."
+              },
+              {
+                "prompt": "Is that your bike outside?",
+                "expected": ["Yes, it's my bike.", "No, it isn't."],
+                "focus": "that + far",
+                "watch": "Far away: that, not this."
+              },
+              {
+                "prompt": "Whose gloves are those on the floor?",
+                "expected": ["They're mine!", "I don't know. They aren't mine."],
+                "focus": "those + whose",
+                "watch": "“They is mine” — plural: “they're mine”."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u2-have-got",
+          "title": "“Have got”: family",
+          "goal": "Say who is in your family and what you have, with have got.",
+          "intro": {
+            "explanation": [
+              "have got = have. Use it for family, pets and things: “I've got two sisters.” “She's got a dog.” With he/she/it use has got.",
+              "Questions flip it: “Have you got any brothers?” Negatives add not: “I haven't got a car.” “He hasn't got time.”",
+              "Family words: mother and father (parents), brother, sister, son, daughter, grandmother and grandfather (grandparents). In talk: mum, dad, grandma, grandpa."
+            ],
+            "examples": [
+              { "text": "I've got one brother.", "meaning": "have got with I." },
+              { "text": "She's got three cousins.", "meaning": "has got with she." },
+              { "text": "Have you got any pets?", "meaning": "Question with have." },
+              { "text": "I haven't got a sister.", "meaning": "Negative with not." },
+              { "text": "My parents have got a small dog.", "meaning": "Plural have." },
+              { "text": "We've got the same phone!", "meaning": "Shared possession." }
+            ]
+          },
+          "expressions": [
+            { "text": "I've got …", "meaning": "I have: family, pets, things.", "note": "I've got two brothers." },
+            { "text": "She's / He's got …", "meaning": "has got with one person.", "note": "He's got a beard." },
+            { "text": "Have you got …?", "meaning": "Ask about family or things.", "note": "Have you got any pets?" },
+            { "text": "haven't got / hasn't got", "meaning": "Say what you don't have.", "note": "I haven't got siblings." },
+            { "text": "any", "meaning": "With questions and negatives.", "note": "Have you got any cousins?" },
+            { "text": "the youngest / the oldest", "meaning": "Order in the family.", "note": "I'm the youngest of three." }
+          ],
+          "situation": "You swap family photos: describe your family, ask about the learner's, and compare what you both have.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Tell me about your family — have you got brothers or sisters?",
+                "expected": ["I've got <number> brother(s).", "I haven't got any siblings.", "I'm an only child."],
+                "focus": "have got + family",
+                "watch": "“I have two brother” — plural -s and got: “I've got two brothers”."
+              },
+              {
+                "prompt": "Have you got any pets?",
+                "expected": ["Yes, I've got a <pet>.", "No, I haven't got any pets."],
+                "focus": "any with questions",
+                "watch": "“Have you got some pets?” — questions use any."
+              },
+              {
+                "prompt": "Has your mum got a car?",
+                "expected": ["Yes, she has.", "No, she hasn't."],
+                "focus": "has short answers",
+                "watch": "“Yes, she got” — short answers repeat has."
+              },
+              {
+                "prompt": "Are you the oldest, the youngest or in the middle?",
+                "expected": ["I'm the oldest of three.", "I'm in the middle.", "I'm an only child."],
+                "focus": "family position",
+                "watch": "“I am more old” — “the oldest”."
+              },
+              {
+                "prompt": "Have your parents got a garden?",
+                "expected": ["Yes, they have. They've got flowers.", "No, they haven't."],
+                "focus": "they + have got",
+                "watch": "“They has got” — plural takes have."
+              },
+              {
+                "prompt": "I've got a big family — six of us! And you?",
+                "expected": ["We are <number>.", "There are <number> of us."],
+                "focus": "saying family size",
+                "watch": "“We is five” — “we are five”."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-u3",
+      "title": "Everyday actions",
+      "subtitle": "Your week, out loud",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "morning-rush",
+          "title": "The morning rush",
+          "subtitle": "Against the clock",
+          "symbol": "sunrise",
+          "category": "Course",
+          "situation": "It's 7:40 and you both have somewhere to be. Describe your morning routine while the clock runs.",
+          "colorIndex": 0
+        },
+        {
+          "id": "evening-wind-down",
+          "title": "After work",
+          "subtitle": "The quiet hours",
+          "symbol": "moon.stars",
+          "category": "Course",
+          "situation": "It's the end of the day. Tell each other what you do in the evening and how you unwind.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-u3-present",
+          "title": "Present simple: I / you / we / they",
+          "goal": "Talk about routines and facts with I/you/we/they, and ask with do.",
+          "intro": {
+            "explanation": [
+              "The present simple is for habits and facts: “I work in a bank.” “We live near the park.” With I, you, we and they the verb has no ending.",
+              "Questions and negatives use do: “Do you like coffee?” “I don't eat meat.” The main verb goes back to its simple form.",
+              "Short answers repeat do: “Do you speak English?” — “Yes, I do.” / “No, I don't.”"
+            ],
+            "examples": [
+              { "text": "I work from home.", "meaning": "Habit, no ending." },
+              { "text": "Do you live alone?", "meaning": "Question with do." },
+              { "text": "We don't watch TV.", "meaning": "Negative with don't." },
+              { "text": "They play football on Saturdays.", "meaning": "Routine + plural." },
+              { "text": "Yes, I do.", "meaning": "Short answer." },
+              { "text": "You know the answer.", "meaning": "Fact with you." }
+            ]
+          },
+          "expressions": [
+            { "text": "I work / live / study …", "meaning": "Habits with no ending.", "note": "I live with two friends." },
+            { "text": "Do you …?", "meaning": "Ask about routines.", "note": "Do you work nearby?" },
+            { "text": "I don't …", "meaning": "Negative habits.", "note": "I don't drink coffee." },
+            { "text": "Yes, I do. / No, I don't.", "meaning": "Short answers with do.", "note": "Repeat do, not the verb." },
+            { "text": "on Mondays / at weekends", "meaning": "When habits happen.", "note": "I play tennis on Sundays." },
+            { "text": "What do you do?", "meaning": "Ask about someone's job.", "note": "Answer: “I'm a …”." }
+          ],
+          "situation": "Two neighbours chat in the square about their week: jobs, habits and what they never do.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "So, what do you do?",
+                "expected": ["I'm a <job>.", "I work as a <job>.", "I'm a student."],
+                "focus": "asking about jobs",
+                "watch": "“What you do?” — questions need do."
+              },
+              {
+                "prompt": "Do you like your job?",
+                "expected": ["Yes, I do.", "No, I don't.", "It's OK."],
+                "focus": "like + do short answers",
+                "watch": "“Yes, I like” — short answer is “Yes, I do”."
+              },
+              {
+                "prompt": "Where do you work?",
+                "expected": ["I work <place>.", "I work from home.", "I don't work — I study."],
+                "focus": "where + do",
+                "watch": "“I work in home” — “from home”."
+              },
+              {
+                "prompt": "Do you speak any other languages?",
+                "expected": ["Yes, I do. I speak <language>.", "No, I don't."],
+                "focus": "do + language verbs",
+                "watch": "“I no speak” — “I don't speak”."
+              },
+              {
+                "prompt": "What do you and your friends do at weekends?",
+                "expected": ["We play …", "We go …", "We don't go out much."],
+                "focus": "we habits",
+                "watch": "“We plays” — with we there's no -s."
+              },
+              {
+                "prompt": "I don't watch much TV. Do you?",
+                "expected": ["No, I don't.", "Yes, I do. I watch …"],
+                "focus": "echo questions with do",
+                "watch": "Short answers use do, not the verb."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u3-third-person",
+          "title": "He / she / it + -s & frequency",
+          "goal": "Describe another person's routines with the -s ending and say how often things happen.",
+          "intro": {
+            "explanation": [
+              "With he, she and it the present simple verb takes -s: “She works at night.” “He likes jazz.” This -s is small but very important.",
+              "Questions and negatives use does: “Does she live here?” “He doesn't drive.” After does the verb loses its -s: not “Does she works?”",
+              "Frequency words say how often: always, usually, often, sometimes, never. They go before the verb: “I always walk to work.” But after be: “He is never late.”"
+            ],
+            "examples": [
+              { "text": "She works in a hospital.", "meaning": "Third person -s." },
+              { "text": "He watches TV after dinner.", "meaning": "-es after ch." },
+              { "text": "Does she speak French?", "meaning": "Question with does." },
+              { "text": "It doesn't open on Sundays.", "meaning": "Negative with doesn't." },
+              { "text": "I never drink energy drinks.", "meaning": "never + verb." },
+              { "text": "He's always on time.", "meaning": "Frequency after be." }
+            ]
+          },
+          "expressions": [
+            { "text": "She + verb-s", "meaning": "Third person needs -s.", "note": "She plays the guitar." },
+            { "text": "Does he …?", "meaning": "Ask about another person.", "note": "Does he live alone?" },
+            { "text": "doesn't + verb", "meaning": "He/she/it negative, no -s.", "note": "It doesn't matter." },
+            { "text": "always / usually / sometimes / never", "meaning": "How often, before the verb.", "note": "I usually cook at home." },
+            { "text": "-es after ch/sh/s", "meaning": "watches, washes, misses.", "note": "She watches the news." },
+            { "text": "How often …?", "meaning": "Ask about frequency.", "note": "How often do you swim?" }
+          ],
+          "situation": "You catch up about a mutual friend: describe her routines, how often she does things and what she never does.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Tell me about your best friend — where does she live?",
+                "expected": ["She lives <place>.", "He lives <place>."],
+                "focus": "does + lives",
+                "watch": "“Where does she lives?” — after does, no -s."
+              },
+              {
+                "prompt": "What does he do at weekends?",
+                "expected": ["He plays …", "He goes …", "He watches …"],
+                "focus": "third person -s",
+                "watch": "“He play” — he needs -s: “He plays”."
+              },
+              {
+                "prompt": "Does she like football?",
+                "expected": ["Yes, she does.", "No, she doesn't."],
+                "focus": "does short answers",
+                "watch": "“Yes, she likes” — short answer: “Yes, she does”."
+              },
+              {
+                "prompt": "How often do you cook?",
+                "expected": ["Every day.", "Twice a week.", "I never cook."],
+                "focus": "frequency answers",
+                "watch": "“I cook two times week” — “twice a week”."
+              },
+              {
+                "prompt": "Is your brother always late?",
+                "expected": ["Yes, he's always late.", "No, he's never late."],
+                "focus": "always/never after be",
+                "watch": "“He always is late” — after be: “He's always late”."
+              },
+              {
+                "prompt": "My sister never drinks coffee — she hates it. And your family?",
+                "expected": ["My <relative> never …", "They always …"],
+                "focus": "frequency with family",
+                "watch": "“My mum never drink” — keep the -s after never."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u3-time",
+          "title": "Time & daily routine",
+          "goal": "Tell the time and describe your day in order.",
+          "intro": {
+            "explanation": [
+              "Ask with “What time is it?” Answer with o'clock for exact hours: “It's seven o'clock.” For halves say half past: “It's half past seven” (7:30).",
+              "Use at for clock times (“at eight”), in the morning/afternoon/evening, and at night.",
+              "Order your day with first, then, after that and finally. They make a story out of your routine."
+            ],
+            "examples": [
+              { "text": "What time is it?", "meaning": "Asking the time." },
+              { "text": "It's half past six.", "meaning": "6:30." },
+              { "text": "I get up at six thirty.", "meaning": "at + clock time." },
+              { "text": "I run in the morning.", "meaning": "Part of the day." },
+              { "text": "First I shower, then I dress.", "meaning": "Order words." },
+              { "text": "Finally, I go to bed at eleven.", "meaning": "The last step." }
+            ]
+          },
+          "expressions": [
+            { "text": "What time is it?", "meaning": "The time question.", "note": "Answer: “It's …”." },
+            { "text": "It's … o'clock / half past …", "meaning": "Exact hours and halves.", "note": "It's four o'clock." },
+            { "text": "at + time", "meaning": "Clock times take at.", "note": "The film starts at nine." },
+            { "text": "in the morning / at night", "meaning": "Parts of the day.", "note": "in the evening, at night" },
+            { "text": "I get up at …", "meaning": "Start your day.", "note": "Opposite: I go to bed at …" },
+            { "text": "first / then / after that / finally", "meaning": "Put actions in order.", "note": "First coffee, then email." }
+          ],
+          "situation": "The learner's first day at a new job: plan the morning together, minute by minute, from waking up to the first meeting.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Quick — what time is it?",
+                "expected": ["It's <time>.", "It's half past <hour>.", "It's <hour> o'clock."],
+                "focus": "telling the time",
+                "watch": "“Is seven o'clock” — statements need it's."
+              },
+              {
+                "prompt": "What time do you get up?",
+                "expected": ["I get up at <time>."],
+                "focus": "at + time",
+                "watch": "“I get up in seven” — clock times take at."
+              },
+              {
+                "prompt": "Do you have breakfast before or after your shower?",
+                "expected": ["Before. First I …, then I …", "After — first I …"],
+                "focus": "first/then",
+                "watch": "Answer in order: first …, then …"
+              },
+              {
+                "prompt": "What do you do in the evening?",
+                "expected": ["In the evening I …", "I usually …"],
+                "focus": "in the evening",
+                "watch": "“in the night” — evening or “at night”."
+              },
+              {
+                "prompt": "When do you go to bed?",
+                "expected": ["I go to bed at <time>.", "Around <time>."],
+                "focus": "go to bed",
+                "watch": "“I go to the bed” — no the: “go to bed”."
+              },
+              {
+                "prompt": "Describe your morning in order — first, then, after that.",
+                "expected": ["First I …, then I …, after that I …"],
+                "focus": "sequencing",
+                "watch": "Use the order words — don't list with “and, and, and”."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-u4",
+      "title": "Getting around",
+      "subtitle": "Out in the city",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "neighbourhood",
+          "title": "A new neighbourhood",
+          "subtitle": "Find your way",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "The learner just moved to the area. Walk the streets together and describe what there is on every corner.",
+          "colorIndex": 0
+        },
+        {
+          "id": "lost-in-town",
+          "title": "Lost in town",
+          "subtitle": "Ask for help",
+          "symbol": "location",
+          "category": "Course",
+          "situation": "Your phone died and you are lost. Stop people, ask for directions and follow them.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-u4-can",
+          "title": "Can / can't",
+          "goal": "Say what you are able to do, ask others for help and give permission.",
+          "intro": {
+            "explanation": [
+              "can never changes: “I can swim.” “She can swim.” No -s, no to. The negative is can't (or cannot in writing).",
+              "Questions flip it: “Can you swim?” For polite requests: “Can you help me?” For permission: “Can I sit here?”",
+              "Short answers repeat can: “Yes, I can.” / “No, I can't.”"
+            ],
+            "examples": [
+              { "text": "I can ride a bike.", "meaning": "Ability." },
+              { "text": "She can speak three languages.", "meaning": "No -s after she." },
+              { "text": "Sorry, I can't come.", "meaning": "Negative." },
+              { "text": "Can you repeat that, please?", "meaning": "Polite request." },
+              { "text": "Can I pay by card?", "meaning": "Permission." },
+              { "text": "Yes, you can.", "meaning": "Short answer." }
+            ]
+          },
+          "expressions": [
+            { "text": "I can / can't …", "meaning": "Ability, no changes.", "note": "I can drive, but I can't park!" },
+            { "text": "Can you …, please?", "meaning": "Polite request.", "note": "Can you help me, please?" },
+            { "text": "Can I …?", "meaning": "Ask permission.", "note": "Can I open the window?" },
+            { "text": "Yes, of course.", "meaning": "Warm yes to a request.", "note": "Better than a plain yes." },
+            { "text": "Sorry, I can't.", "meaning": "Soft no.", "note": "Add a reason: I'm busy." },
+            { "text": "Can you say that again?", "meaning": "Ask for a repeat.", "note": "Add: “Slower, please”." }
+          ],
+          "situation": "You organise a small trip with the learner: who can drive, who can cook, and what you can't do without asking.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Can you drive?",
+                "expected": ["Yes, I can.", "No, I can't."],
+                "focus": "can short answers",
+                "watch": "“Yes, I drive” — repeat can: “Yes, I can”."
+              },
+              {
+                "prompt": "What can you cook?",
+                "expected": ["I can make <dish>.", "I can't cook at all!"],
+                "focus": "can + verb",
+                "watch": "“I can to cook” — no to after can."
+              },
+              {
+                "prompt": "Can your sister swim?",
+                "expected": ["Yes, she can.", "No, she can't."],
+                "focus": "can with he/she",
+                "watch": "“She cans swim” — can never takes -s."
+              },
+              {
+                "prompt": "Can I borrow your pen, please?",
+                "expected": ["Yes, of course.", "Sure, here you are."],
+                "focus": "permission + polite reply",
+                "watch": "Answer a request warmly: “Of course”."
+              },
+              {
+                "prompt": "Sorry, can you speak more slowly?",
+                "expected": ["No problem.", "Of course. Is this better?"],
+                "focus": "polite repeat request",
+                "watch": "Practise your “Sorry, can you …?” — it opens every repair."
+              },
+              {
+                "prompt": "What's one thing you can't do but want to learn?",
+                "expected": ["I can't <skill>, but I want to learn."],
+                "focus": "can't + wish",
+                "watch": "“I can't to play” — no to after can't."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u4-there-is",
+          "title": "There is / there are",
+          "goal": "Say what exists in a place, and ask about it.",
+          "intro": {
+            "explanation": [
+              "To say something exists, start with there: “There's a pharmacy on the corner.” Singular: there is (there's). Plural: “There are two parks.”",
+              "Negatives: “There isn't a lift.” “There aren't any shops.” Questions: “Is there a bank near here?” “Are there any tickets left?”",
+              "Say where with prepositions: next to, opposite, behind. “The café is next to the bank.”"
+            ],
+            "examples": [
+              { "text": "There's a market on Saturdays.", "meaning": "Singular exists." },
+              { "text": "There are two lifts.", "meaning": "Plural exists." },
+              { "text": "There isn't a car park.", "meaning": "Singular negative." },
+              { "text": "There aren't any bikes left.", "meaning": "Plural negative + any." },
+              { "text": "Is there wifi here?", "meaning": "Existence question." },
+              { "text": "The bank is opposite the school.", "meaning": "Where exactly." }
+            ]
+          },
+          "expressions": [
+            { "text": "There's a/n …", "meaning": "One thing exists.", "note": "There's a bakery downstairs." },
+            { "text": "There are (+ number) …", "meaning": "Plural things exist.", "note": "There are four rooms." },
+            { "text": "Is there … near here?", "meaning": "Ask for a place.", "note": "Is there a toilet here?" },
+            { "text": "There isn't / aren't any …", "meaning": "What's missing.", "note": "There aren't any chairs." },
+            { "text": "next to / opposite / behind", "meaning": "Pin things to places.", "note": "The bar is opposite us." },
+            { "text": "How many … are there?", "meaning": "Ask for a number of things.", "note": "How many stops are there?" }
+          ],
+          "situation": "You show a visitor around the office building: what's on each floor, what's missing, and where exactly things are.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Is there a supermarket near your flat?",
+                "expected": ["Yes, there's one <where>.", "No, there isn't."],
+                "focus": "is there questions",
+                "watch": "“Is a supermarket?” — start with there."
+              },
+              {
+                "prompt": "How many rooms are there in your home?",
+                "expected": ["There are <number> rooms.", "There are three: …"],
+                "focus": "how many are there",
+                "watch": "“How many rooms has?” — with there: “are there”."
+              },
+              {
+                "prompt": "Is there a lift in the building?",
+                "expected": ["Yes, there is.", "No, there isn't. It's an old building."],
+                "focus": "short answers with there",
+                "watch": "“Yes, has lift” — repeat there is."
+              },
+              {
+                "prompt": "What's in your neighbourhood?",
+                "expected": ["There's a <place> and there are <things>."],
+                "focus": "mixing is/are",
+                "watch": "One thing → there's; more → there are."
+              },
+              {
+                "prompt": "Are there any good cafés around?",
+                "expected": ["Yes, there are two.", "No, there aren't any."],
+                "focus": "any in questions/negatives",
+                "watch": "“There aren't some cafés” — negatives take any."
+              },
+              {
+                "prompt": "Where exactly is the pharmacy?",
+                "expected": ["It's next to the bank.", "It's opposite the park."],
+                "focus": "location prepositions",
+                "watch": "“It's in front the bank” — “opposite” or “in front of”."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u4-directions",
+          "title": "Directions & place",
+          "goal": "Give and follow simple directions from A to B.",
+          "intro": {
+            "explanation": [
+              "Start with go straight on, then turn left or turn right. “Go straight on and turn left at the lights.”",
+              "Say where the place is: on the left, on the right, on the corner, at the end of the street.",
+              "Ask for directions with “How do I get to …?” or “Is it far?” Answers: “Five minutes on foot.”"
+            ],
+            "examples": [
+              { "text": "How do I get to the station?", "meaning": "The directions question." },
+              { "text": "Go straight on for two streets.", "meaning": "Distance first." },
+              { "text": "Turn right at the bank.", "meaning": "Turn + where." },
+              { "text": "It's on the corner.", "meaning": "Corner position." },
+              { "text": "Is it far from here?", "meaning": "Ask about distance." },
+              { "text": "About five minutes on foot.", "meaning": "Time as distance." }
+            ]
+          },
+          "expressions": [
+            { "text": "How do I get to …?", "meaning": "Ask for directions.", "note": "…to the museum?" },
+            { "text": "Go straight on.", "meaning": "Keep walking.", "note": "For two blocks." },
+            { "text": "Turn left / right at …", "meaning": "Where to change direction.", "note": "at the traffic lights" },
+            { "text": "on the left / on the right", "meaning": "Which side it's on.", "note": "The pharmacy is on your left." },
+            { "text": "Is it far?", "meaning": "Ask about distance.", "note": "Answer: “Ten minutes on foot”." },
+            { "text": "Excuse me, …", "meaning": "Open every street question.", "note": "Excuse me, where's the metro?" }
+          ],
+          "situation": "The learner's phone has died at a crossroads: ask passers-by for the museum, understand the directions and repeat them back.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "You look lost — can I help?",
+                "expected": ["Yes, please. How do I get to <place>?", "Excuse me, where is <place>?"],
+                "focus": "opening a directions ask",
+                "watch": "Start with “Excuse me” — it buys goodwill."
+              },
+              {
+                "prompt": "OK: go straight on and turn left at the lights. Got it?",
+                "expected": ["Straight on, then left at the lights.", "Got it, thanks!"],
+                "focus": "repeating directions",
+                "watch": "Repeat the route back to check it."
+              },
+              {
+                "prompt": "Is the museum far from here?",
+                "expected": ["About <number> minutes on foot.", "No, it's very close."],
+                "focus": "distance answers",
+                "watch": "“It has five minutes” — “it's five minutes”."
+              },
+              {
+                "prompt": "When you leave, the pharmacy is on your right.",
+                "expected": ["On the right. Got it.", "Thank you very much."],
+                "focus": "on the left/right",
+                "watch": "“in the right” — sides take on."
+              },
+              {
+                "prompt": "Where's the nearest metro station?",
+                "expected": ["Go straight on and it's on the corner.", "Turn right at the bank."],
+                "focus": "giving directions",
+                "watch": "Give order words: straight, then turn."
+              },
+              {
+                "prompt": "Perfect. One last thing — is there a toilet in the museum?",
+                "expected": ["Yes, there is, on the left.", "I don't know."],
+                "focus": "combining there is + location",
+                "watch": "Tie it together: there is + place word."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-u5",
+      "title": "Food & likes",
+      "subtitle": "Eat, drink, enjoy",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "sunday-market",
+          "title": "The Sunday market",
+          "subtitle": "Baskets and barrows",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "You meet at the Sunday food market: count what's in the baskets, ask what's missing and choose what to cook.",
+          "colorIndex": 0
+        },
+        {
+          "id": "restaurant",
+          "title": "Dinner out",
+          "subtitle": "A table for two",
+          "symbol": "fork.knife",
+          "category": "Course",
+          "situation": "You book and enjoy a dinner out: order dishes, say what you love and hate, and ask for the bill.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-u5-some-any",
+          "title": "Some / any & countables",
+          "goal": "Talk about food quantities: what you have, what you need and how much.",
+          "intro": {
+            "explanation": [
+              "Countable things have a plural: one apple, two apples. Uncountable things have no plural: water, rice, milk, bread.",
+              "Use some in affirmative sentences (“We've got some rice”) and any in questions and negatives (“Have we got any milk?” “There isn't any bread.”).",
+              "To count uncountables, add a container: a bottle of water, a kilo of rice, a loaf of bread."
+            ],
+            "examples": [
+              { "text": "We need some onions.", "meaning": "Affirmative some." },
+              { "text": "Do we have any eggs?", "meaning": "Question any." },
+              { "text": "There isn't any sugar.", "meaning": "Negative any." },
+              { "text": "Can I have a bottle of water?", "meaning": "Counting water." },
+              { "text": "How much rice do we need?", "meaning": "much for uncountables." },
+              { "text": "How many tomatoes are left?", "meaning": "many for countables." }
+            ]
+          },
+          "expressions": [
+            { "text": "some + plural/uncountable", "meaning": "An unstated amount.", "note": "some apples, some water" },
+            { "text": "any in questions/negatives", "meaning": "Do we have any…? We don't have any…", "note": "any eggs, any time" },
+            { "text": "a bottle/kilo/loaf of …", "meaning": "Count the uncountable.", "note": "two bottles of milk" },
+            { "text": "How much …?", "meaning": "Uncountables.", "note": "How much butter is left?" },
+            { "text": "How many …?", "meaning": "Countables.", "note": "How many peppers do we need?" },
+            { "text": "a little / a few", "meaning": "Small amounts: a little + uncountable, a few + plural.", "note": "a little salt, a few olives" }
+          ],
+          "situation": "You cook together from what's in the fridge: list what you have, find out what's missing and write the shopping list.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Let's cook paella! What have we got?",
+                "expected": ["We've got some <ingredients>.", "We've got rice and some tomatoes."],
+                "focus": "some in affirmatives",
+                "watch": "“We've got any rice” — affirmative takes some."
+              },
+              {
+                "prompt": "Do we have any saffron?",
+                "expected": ["Yes, we have some.", "No, we don't have any."],
+                "focus": "any in questions",
+                "watch": "“Do we have some…?” — questions prefer any."
+              },
+              {
+                "prompt": "How much rice do we need?",
+                "expected": ["About half a kilo.", "Two cups."],
+                "focus": "much with uncountables",
+                "watch": "“How many rice?” — rice is uncountable: how much."
+              },
+              {
+                "prompt": "And how many people are coming?",
+                "expected": ["Six people.", "There are six of us."],
+                "focus": "many with countables",
+                "watch": "“How much people?” — people is countable here: how many."
+              },
+              {
+                "prompt": "We need milk. Can you get some?",
+                "expected": ["Sure. A litre?", "Yes, a bottle."],
+                "focus": "responding to a request",
+                "watch": "“Yes, I get milk” — confirm the amount: “A litre?”"
+              },
+              {
+                "prompt": "We only need a little salt and a few olives.",
+                "expected": ["Got it: a little salt, a few olives."],
+                "focus": "a little vs a few",
+                "watch": "Countable? a few. Uncountable? a little."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u5-likes",
+          "title": "Like / love / hate + -ing",
+          "goal": "Talk about what you love, like and hate doing.",
+          "intro": {
+            "explanation": [
+              "After like, love, hate and don't like, the next verb takes -ing: “I love cooking.” “She hates waiting.”",
+              "Questions use do: “Do you like dancing?” Short answers: “Yes, I do.”",
+              "To soften, add really or quite: “I really love singing.” “I don't really like getting up early.”"
+            ],
+            "examples": [
+              { "text": "I love reading.", "meaning": "love + -ing." },
+              { "text": "She likes walking to work.", "meaning": "like + -ing." },
+              { "text": "He hates getting up early.", "meaning": "hate + -ing." },
+              { "text": "Do you like dancing?", "meaning": "Question with do." },
+              { "text": "I don't like waiting.", "meaning": "Negative + -ing." },
+              { "text": "We really love travelling.", "meaning": "Softener really." }
+            ]
+          },
+          "expressions": [
+            { "text": "I love + -ing", "meaning": "Strong like.", "note": "I love swimming." },
+            { "text": "I like + -ing", "meaning": "Mild like.", "note": "I like cycling on Sundays." },
+            { "text": "I hate + -ing", "meaning": "Strong dislike.", "note": "I hate queueing." },
+            { "text": "I don't mind + -ing", "meaning": "It's OK, neutral.", "note": "I don't mind cooking." },
+            { "text": "Do you like + -ing?", "meaning": "Ask about tastes.", "note": "Do you like hiking?" },
+            { "text": "really / quite", "meaning": "Turn the volume up or down.", "note": "I quite like it." }
+          ],
+          "situation": "You plan a free Sunday together: propose activities and react with love, like, don't mind or hate until you agree on a plan.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "What do you love doing at weekends?",
+                "expected": ["I love <verb>ing."],
+                "focus": "love + -ing",
+                "watch": "“I love to swim” — with love, -ing is the everyday choice."
+              },
+              {
+                "prompt": "Do you like cooking?",
+                "expected": ["Yes, I do.", "No, I don't. I hate cooking."],
+                "focus": "like questions",
+                "watch": "“Do you like cook?” — verb+ing after like."
+              },
+              {
+                "prompt": "What's something you hate doing?",
+                "expected": ["I hate <verb>ing."],
+                "focus": "hate + -ing",
+                "watch": "“I hate get up” — “hate getting up”."
+              },
+              {
+                "prompt": "Do you mind waiting?",
+                "expected": ["No, I don't mind waiting.", "Yes, I hate waiting."],
+                "focus": "don't mind",
+                "watch": "“I don't mind wait” — keep -ing."
+              },
+              {
+                "prompt": "How much do you like films — a bit or a lot?",
+                "expected": ["I really like films.", "I quite like them."],
+                "focus": "softeners",
+                "watch": "“I like very much films” — “I really like films”."
+              },
+              {
+                "prompt": "Your friend loves dancing but you don't. What do you say?",
+                "expected": ["I don't really like dancing.", "I don't like dancing, but thanks!"],
+                "focus": "polite dislike",
+                "watch": "Soften with really: “I don't really like…”."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u5-cafe",
+          "title": "Ordering at a café",
+          "goal": "Order food and drink, ask for things and pay, in real café English.",
+          "intro": {
+            "explanation": [
+              "The magic order phrase is “I'd like …” (I would like) — polite and universal. “Can I have …, please?” works everywhere too.",
+              "The server asks: “Anything else?” Answer: “That's all, thanks.” Pay with: “The bill, please.”",
+              "Choices come fast: “Large or small?” “For here or to go?” Answer with a full mini-sentence: “Small, to go, please.”"
+            ],
+            "examples": [
+              { "text": "I'd like a cappuccino, please.", "meaning": "The polite order." },
+              { "text": "Can I have a glass of water?", "meaning": "Alternative order." },
+              { "text": "Anything else?", "meaning": "The server asks for more." },
+              { "text": "That's all, thanks.", "meaning": "Close the order." },
+              { "text": "For here or to go?", "meaning": "The classic choice." },
+              { "text": "Can I have the bill, please?", "meaning": "Ask to pay." }
+            ]
+          },
+          "expressions": [
+            { "text": "I'd like …, please.", "meaning": "Polite order — would like.", "note": "I'd like the soup." },
+            { "text": "Can I have …, please?", "meaning": "Order or ask for anything.", "note": "Can I have a spoon?" },
+            { "text": "Anything else?", "meaning": "Server asks for more.", "note": "Answer: “No, that's all”." },
+            { "text": "For here or to go?", "meaning": "Eat in or take away.", "note": "To go, please." },
+            { "text": "The bill, please.", "meaning": "Ask to pay.", "note": "Also: “Could we pay, please?”" },
+            { "text": "Keep the change.", "meaning": "Generous close.", "note": "Small tip, big smile." }
+          ],
+          "situation": "A busy café at breakfast time: order for you and the learner, handle the server's questions and settle the bill.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Good morning! What can I get you?",
+                "expected": ["I'd like a <drink>, please.", "Can I have a <drink>, please?"],
+                "focus": "opening an order",
+                "watch": "“I want a coffee” — understandable, but “I'd like” is politer."
+              },
+              {
+                "prompt": "Anything else?",
+                "expected": ["That's all, thanks.", "Yes, also a <item>, please."],
+                "focus": "closing the order",
+                "watch": "“Nothing more” — natural is “That's all, thanks”."
+              },
+              {
+                "prompt": "For here or to go?",
+                "expected": ["For here, please.", "To go, please."],
+                "focus": "the classic choice",
+                "watch": "Answer the part they asked: here/to go."
+              },
+              {
+                "prompt": "Large or small?",
+                "expected": ["Large, please.", "Small is fine."],
+                "focus": "size answers",
+                "watch": "“I take large” — “Large, please” is the café norm."
+              },
+              {
+                "prompt": "Here you are — anything else for you two?",
+                "expected": ["Yes — the bill, please.", "No, thanks. Keep the change."],
+                "focus": "paying phrases",
+                "watch": "“Give me the bill” — “The bill, please” is polite."
+              },
+              {
+                "prompt": "How was everything?",
+                "expected": ["Delicious, thank you!", "Very good, thanks."],
+                "focus": "polite close",
+                "watch": "One warm sentence closes the visit."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-u6",
+      "title": "The past begins",
+      "subtitle": "Tell what happened",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "weekend",
+          "title": "The weekend",
+          "subtitle": "What happened",
+          "symbol": "sun.max",
+          "category": "Course",
+          "situation": "Monday catch-up: tell each other what you really did at the weekend, moment by moment.",
+          "colorIndex": 0
+        },
+        {
+          "id": "last-trip",
+          "title": "A trip to remember",
+          "subtitle": "Tell the story",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "You swap stories of a memorable trip: where you were, what you did and how it ended.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-u6-was-were",
+          "title": "Was / were",
+          "goal": "Describe people, places and feelings in the past with was and were.",
+          "intro": {
+            "explanation": [
+              "Was and were are the past of to be. I/he/she/it → was. You/we/they → were. “I was at home.” “They were at the beach.”",
+              "Negatives: wasn't, weren't. Questions flip: “Was it good?” “Where were you?”",
+              "Anchor the story in time: yesterday, last night, last week, in 2020, this morning."
+            ],
+            "examples": [
+              { "text": "I was tired yesterday.", "meaning": "was with I." },
+              { "text": "The film was great.", "meaning": "was with it." },
+              { "text": "We were at Ana's party.", "meaning": "were with we." },
+              { "text": "The streets weren't empty.", "meaning": "Plural negative." },
+              { "text": "Was the weather good?", "meaning": "Past question." },
+              { "text": "Where were you last night?", "meaning": "Question word + were." }
+            ]
+          },
+          "expressions": [
+            { "text": "I was / he was …", "meaning": "Past of be, singular.", "note": "She was delighted." },
+            { "text": "you were / they were", "meaning": "Past of be, plural.", "note": "They were neighbours." },
+            { "text": "wasn't / weren't", "meaning": "Past negatives.", "note": "It wasn't my fault." },
+            { "text": "Was it …? / Were you …?", "meaning": "Past yes/no questions.", "note": "Was it far?" },
+            { "text": "yesterday / last night / last week", "meaning": "Anchor the story in time.", "note": "last weekend" },
+            { "text": "It was amazing / awful.", "meaning": "Give your verdict of the past.", "note": "The concert? It was amazing." }
+          ],
+          "situation": "You bump into a friend who missed the neighbourhood party on Saturday: recount who was there, how it was and what wasn't good.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Where were you on Saturday?",
+                "expected": ["I was <place>.", "I was at home."],
+                "focus": "were with you",
+                "watch": "“I were at home” — with I use was."
+              },
+              {
+                "prompt": "Was the party fun?",
+                "expected": ["Yes, it was.", "No, it wasn't."],
+                "focus": "was short answers",
+                "watch": "“Yes, was fun” — keep it: “Yes, it was”."
+              },
+              {
+                "prompt": "Were there many people?",
+                "expected": ["Yes, there were lots.", "No, there weren't many."],
+                "focus": "were + there",
+                "watch": "“There was many” — plural: “there were”."
+              },
+              {
+                "prompt": "How was the music?",
+                "expected": ["It was great.", "It was terrible!"],
+                "focus": "verdict with was",
+                "watch": "“It were good” — it takes was."
+              },
+              {
+                "prompt": "I was so tired on Sunday. And you?",
+                "expected": ["I was tired too.", "I wasn't tired — I was full of energy."],
+                "focus": "wasn't",
+                "watch": "“I not tired” — past negative: “I wasn't tired”."
+              },
+              {
+                "prompt": "Who was there from your class?",
+                "expected": ["<Name> was there.", "Nobody was there."],
+                "focus": "who + was",
+                "watch": "“Who were there” — who takes was here."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u6-past",
+          "title": "Past simple: -ed",
+          "goal": "Tell what you and others did, with regular past forms and didn't.",
+          "intro": {
+            "explanation": [
+              "For finished actions, regular verbs add -ed: work → worked, play → played, watch → watched. The same form works for every person.",
+              "Questions and negatives use did + plain verb: “Did you walk?” “I didn't walk.” After did, no -ed: not “Did you walked?”",
+              "Spelling: love → loved (no e), study → studied (y→ied), stop → stopped (double p)."
+            ],
+            "examples": [
+              { "text": "I worked late yesterday.", "meaning": "-ed, all persons." },
+              { "text": "She played tennis on Saturday.", "meaning": "Same -ed with she." },
+              { "text": "Did you watch the match?", "meaning": "did + plain verb." },
+              { "text": "We didn't stay long.", "meaning": "didn't + plain verb." },
+              { "text": "They studied all night.", "meaning": "y → ied." },
+              { "text": "It stopped suddenly.", "meaning": "Double consonant." }
+            ]
+          },
+          "expressions": [
+            { "text": "verb + -ed", "meaning": "Regular past, every person.", "note": "I called you twice." },
+            { "text": "Did you …?", "meaning": "Past question, plain verb.", "note": "Did you enjoy it?" },
+            { "text": "I didn't …", "meaning": "Past negative, plain verb.", "note": "I didn't sleep well." },
+            { "text": "Yes, I did. / No, I didn't.", "meaning": "Short answers.", "note": "Repeat did." },
+            { "text": "y → ied", "meaning": "study → studied, try → tried.", "note": "We tried the new café." },
+            { "text": "yesterday evening / last Friday", "meaning": "Past time anchors.", "note": "last Friday night" }
+          ],
+          "situation": "You compare diaries from a chaotic Tuesday: what you did, what you didn't do, and what the other did first.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "What did you do yesterday evening?",
+                "expected": ["I <verb>ed …", "I watched TV and cooked dinner."],
+                "focus": "did + past answer",
+                "watch": "“I watch TV” — past answer needs -ed: “I watched”."
+              },
+              {
+                "prompt": "Did you sleep well?",
+                "expected": ["Yes, I did.", "No, I didn't."],
+                "focus": "did short answers",
+                "watch": "The short answer repeats did: “Yes, I did”."
+              },
+              {
+                "prompt": "Did you walk to work?",
+                "expected": ["No, I didn't. I cycled.", "Yes, I did."],
+                "focus": "didn't + plain verb",
+                "watch": "“I didn't walked” — after didn't, plain verb."
+              },
+              {
+                "prompt": "What time did you finish work?",
+                "expected": ["I finished at <time>.", "I didn't finish until <time>."],
+                "focus": "past + time",
+                "watch": "“What time did you finished?” — after did, plain finish."
+              },
+              {
+                "prompt": "Did you study English last week?",
+                "expected": ["Yes, I did. I studied on …", "No, I didn't study."],
+                "focus": "y→ied spelling",
+                "watch": "“I studyed” — study → studied."
+              },
+              {
+                "prompt": "Your colleague — did she call you?",
+                "expected": ["Yes, she did.", "No, she didn't call."],
+                "focus": "third person past",
+                "watch": "“Did she called” — after did, plain call."
+              }
+            ]
+          }
+        },
+        {
+          "id": "en-foundations-u6-weekend",
+          "title": "Your weekend (repaso)",
+          "goal": "Tell the story of your weekend in order — past be, past verbs, time anchors — and ask about someone else's.",
+          "intro": {
+            "explanation": [
+              "A weekend story has three parts: where you were (was/were), what you did (past -ed), and how it was (was + opinion).",
+              "Order it with time anchors: on Saturday morning, then, in the evening, later, finally.",
+              "Keep the conversation alive: ask back with “What about you?” or “Did you …?”"
+            ],
+            "examples": [
+              { "text": "On Friday I was at home — I was exhausted.", "meaning": "Part 1: where + how." },
+              { "text": "On Saturday I visited my parents.", "meaning": "Part 2: past action." },
+              { "text": "We walked in the park and talked for hours.", "meaning": "Two past verbs, one story." },
+              { "text": "In the evening I watched a film.", "meaning": "Time anchor + past." },
+              { "text": "It was a really good weekend.", "meaning": "Part 3: the verdict." },
+              { "text": "What about you? What did you do?", "meaning": "Ask it back." }
+            ]
+          },
+          "expressions": [
+            { "text": "On Saturday morning, …", "meaning": "Open the story with a time.", "note": "…I played padel." },
+            { "text": "First …, then …, later …", "meaning": "Sequence the actions.", "note": "Then we had lunch." },
+            { "text": "I visited / called / watched …", "meaning": "Regular past actions.", "note": "I called my brother." },
+            { "text": "It was really + adjective", "meaning": "Give your verdict.", "note": "It was really relaxing." },
+            { "text": "What about you?", "meaning": "Return the question.", "note": "The conversation keeps flowing." },
+            { "text": "That sounds + adjective", "meaning": "React to the other's story.", "note": "That sounds fun!" }
+          ],
+          "situation": "Monday coffee with a friend: take turns telling your weekends, react, and ask at least two questions back.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "So — how was your weekend?",
+                "expected": ["It was <adjective>. On Saturday I …", "Really good, thanks!"],
+                "focus": "verdict + story opener",
+                "watch": "Start with the verdict, then the story."
+              },
+              {
+                "prompt": "What did you do on Saturday?",
+                "expected": ["I <verb>ed … First …, then …"],
+                "focus": "past actions in order",
+                "watch": "Use -ed for regular verbs and an order word."
+              },
+              {
+                "prompt": "Were you with friends or alone?",
+                "expected": ["I was with <people>.", "I was on my own."],
+                "focus": "was/were recap",
+                "watch": "“I was with” — was works with I."
+              },
+              {
+                "prompt": "That sounds nice! Did you eat out?",
+                "expected": ["Yes, we did — we tried a new place.", "No, we didn't. We cooked at home."],
+                "focus": "did questions about the story",
+                "watch": "“Yes, we eat out” — past short answer: “Yes, we did”."
+              },
+              {
+                "prompt": "What about Sunday?",
+                "expected": ["On Sunday I …", "Sunday was quieter — I …"],
+                "focus": "extending the story",
+                "watch": "Another time anchor, another scene."
+              },
+              {
+                "prompt": "OK, your turn — ask me about my weekend.",
+                "expected": ["What did you do?", "How was your weekend?"],
+                "focus": "asking back",
+                "watch": "A conversation needs a return serve: ask one question."
               }
             ]
           }

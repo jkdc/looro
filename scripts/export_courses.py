@@ -21,6 +21,7 @@ COURSES_DIR = ROOT / 'shared' / 'courses'
 SWIFT_DEST = ROOT / 'apps/ios/Core/CoursesData.swift'
 
 REQUIRED_COURSE = ('id', 'languageID', 'title', 'subtitle', 'symbol', 'description')
+REQUIRED_UNIT = ('id', 'title', 'subtitle', 'level')
 REQUIRED_QUESTION = ('prompt', 'expected', 'focus', 'watch')
 REQUIRED_THEME = ('id', 'title', 'subtitle', 'symbol', 'category', 'situation', 'colorIndex')
 
@@ -61,7 +62,7 @@ def validate(course, known_languages, seen_ids):
     seen_ids.add(course['id'])
     need(isinstance(course.get('units'), list) and course['units'], 'course needs at least one unit.')
     for unit in course['units']:
-        for key in ('id', 'title', 'subtitle'):
+        for key in REQUIRED_UNIT:
             need(isinstance(unit.get(key), str) and unit[key].strip(), f'missing unit field {key}.')
         need(unit['id'] not in seen_ids, f'duplicate unit id {unit["id"]!r}.')
         seen_ids.add(unit['id'])
@@ -132,7 +133,8 @@ def emit_swift(courses):
                     + questions + ']))')
             unit_blocks.append(
                 '            CourseUnit(id: ' + q(unit['id']) + ', title: ' + q(unit['title'])
-                + ', subtitle: ' + q(unit['subtitle']) + ', themes: [\n                    ' + theme_args
+                + ', subtitle: ' + q(unit['subtitle']) + ', level: ' + q(unit['level'])
+                + ', themes: [\n                    ' + theme_args
                 + '], lessons: [\n' + ',\n'.join(lesson_blocks) + '])')
         blocks.append(
             '        Course(id: ' + q(course['id']) + ', languageID: ' + q(course['languageID'])
@@ -173,7 +175,8 @@ def emit_kotlin(courses, package_line):
                     + ', practice = LessonPractice(questions = listOf(' + questions + ')))')
             unit_blocks.append(
                 '        CourseUnit(id = ' + q(unit['id']) + ', title = ' + q(unit['title'])
-                + ', subtitle = ' + q(unit['subtitle']) + ', themes = listOf(' + theme_args
+                + ', subtitle = ' + q(unit['subtitle']) + ', level = ' + q(unit['level'])
+                + ', themes = listOf(' + theme_args
                 + '), lessons = listOf(' + ', '.join(lesson_blocks) + '))')
         blocks.append(
             '    Course(id = ' + q(course['id']) + ', languageID = ' + q(course['languageID'])

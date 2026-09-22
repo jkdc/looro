@@ -1,24 +1,32 @@
 import XCTest
-@testable import MuralCore
+@testable import LearningCore
 
 /// Mirrors the JVM `CoursesTest`; runs under the macOS gate.
 final class CoursesTests: XCTestCase {
-    func testRegistryPilotCourseIsWellFormed() {
+    func testRegistryFoundationsCourseIsWellFormed() {
         let courses = CourseRegistry.forLanguage("en")
         XCTAssertEqual(courses.count, 1)
         let course = courses[0]
         XCTAssertEqual(course.id, "en-foundations")
-        XCTAssertEqual(course.units.count, 1)
-        let unit = course.units[0]
-        XCTAssertEqual(unit.lessons.count, 1)
-        XCTAssertGreaterThanOrEqual(unit.themes.count, 2)
+        XCTAssertEqual(course.units.count, 6)
+        for unit in course.units {
+            XCTAssertEqual(unit.lessons.count, 3, unit.id)
+        }
+        XCTAssertEqual(course.units.reduce(0) { $0 + $1.lessons.count }, 18)
+        XCTAssertGreaterThanOrEqual(course.units[0].themes.count, 2)
+    }
+
+    func testEveryUnitCarriesItsLevelLabel() {
+        let units = CourseRegistry.forLanguage("en")[0].units
+        XCTAssertTrue(units.allSatisfy { !$0.level.isEmpty })
+        XCTAssertEqual(units.map(\.level), ["A1", "A1", "A1", "A1", "A2", "A2"])
     }
 
     func testLessonLookup() {
-        let lesson = CourseRegistry.lesson(id: "en-foundations-u1-to-be")
-        XCTAssertEqual(lesson?.title, "The verb “to be”")
-        XCTAssertFalse(lesson!.intro.explanation.isEmpty)
-        XCTAssertFalse(lesson!.practice.questions.isEmpty)
+        XCTAssertEqual(CourseRegistry.lesson(id: "en-foundations-u1-to-be")?.title, "The verb “to be”")
+        for unit in CourseRegistry.forLanguage("en")[0].units {
+            XCTAssertNotNil(CourseRegistry.lesson(id: unit.lessons[0].id), unit.id)
+        }
         XCTAssertNil(CourseRegistry.lesson(id: "missing"))
     }
 

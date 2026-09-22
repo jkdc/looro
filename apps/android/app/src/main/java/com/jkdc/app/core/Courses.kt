@@ -6,7 +6,7 @@ package com.jkdc.app.core
 
 data class Course(val id: String, val languageID: String, val title: String, val subtitle: String,
                   val symbol: String, val description: String, val units: List<CourseUnit>)
-data class CourseUnit(val id: String, val title: String, val subtitle: String,
+data class CourseUnit(val id: String, val title: String, val subtitle: String, val level: String,
                       val themes: List<ConversationTheme>, val lessons: List<Lesson>)
 data class Lesson(val id: String, val title: String, val goal: String, val intro: LessonIntro,
                   val expressions: List<TargetExpression>, val situation: String, val practice: LessonPractice)
