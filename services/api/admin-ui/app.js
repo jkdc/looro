@@ -3,16 +3,19 @@
 
 const $ = selector => document.querySelector(selector);
 const NAV = [
-  { id: 'overview', label: 'Resumen' },
-  { id: 'growth', label: 'Crecimiento' },
-  { id: 'voice', label: 'Voz' },
-  { id: 'economy', label: 'Economía' },
-  { id: 'browse', label: 'Tablas' },
-  { id: 'policy', label: 'Política bienvenida' },
-  { id: 'campaigns', label: 'Campañas' },
-  { id: 'audit', label: 'Auditoría' }
+  { id: 'overview', label: 'Resumen', icon: 'ti-chart-bar' },
+  { id: 'growth', label: 'Crecimiento', icon: 'ti-trending-up' },
+  { id: 'voice', label: 'Voz', icon: 'ti-microphone' },
+  { id: 'economy', label: 'Economía', icon: 'ti-coins' },
+  { id: 'browse', label: 'Tablas', icon: 'ti-table' },
+  { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings' },
+  { id: 'campaigns', label: 'Campañas', icon: 'ti-gift' },
+  { id: 'audit', label: 'Auditoría', icon: 'ti-shield-check' }
 ];
+const PALETTE = ['#206bc4', '#2fb344', '#f76707', '#a55aad', '#d63939', '#429ade'];
+const CHART_TYPE = { orders: 'bar', revenue_minor: 'bar', minutes_granted_ms: 'bar', minutes_consumed_ms: 'bar' };
 const charts = [];
+let tables = [];
 const api = async (path, options = {}) => {
   const response = await fetch(path, { headers: { 'content-type': 'application/json' }, credentials: 'same-origin', ...options });
   if (response.status === 401) { location.href = '/login.html'; throw new Error('unauthenticated'); }
@@ -22,12 +25,46 @@ const api = async (path, options = {}) => {
 };
 const number = value => new Intl.NumberFormat('es').format(Number(value));
 const msHuman = value => {
-  const total = Math.round(Number(value) / 60000);
-  return `${Math.floor(total / 60)} h ${total % 60} min`;
+  const minutes = Math.round(Number(value) / 60000);
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 72) return `${hours} h ${minutes % 60} min`;
+  return `${Math.round(hours / 24)} días`;
 };
-const usdNano = value => `$${(Number(value) / 1e9).toFixed(2)}`;
-const usdMinor = value => `$${(Number(value) / 100).toFixed(2)}`;
-const dateCell = cell => { const raw = cell.getValue(); return raw ? new Date(raw).toISOString().slice(0, 16).replace('T', ' ') : '—'; };
+const usdNano = value => `$${(Number(value) / 1e9).toLocaleString('es', { maximumFractionDigits: 2 })}`;
+const usdMinor = value => `$${(Number(value) / 100).toLocaleString('es', { minimumFractionDigits: 2 })}`;
+const escapeHtml = value => String(value).replace(/[&<>"']/g, character =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+const dateCell = cell => {
+  const raw = cell.getValue();
+  if (!raw) return '<span class="text-secondary">—</span>';
+  return `<span title="${escapeHtml(raw)}">${new Date(raw).toISOString().slice(0, 16).replace('T', ' ')}</span>`;
+};
+const moneyCell = cell => cell.getValue() === null ? '<span class="text-secondary">—</span>' : usdMinor(cell.getValue());
+const nanoCell = cell => cell.getValue() === null ? '<span class="text-secondary">—</span>' : usdNano(cell.getValue());
+const durationCell = cell => cell.getValue() === null ? '<span class="text-secondary">—</span>' : msHuman(cell.getValue());
+const BADGE_COLORS = {
+  active: 'success', closing: 'warning', closed: 'secondary', creating: 'info', incomplete: 'danger',
+  prepared: 'info', applied: 'success', test: 'warning', live: 'success', pending: 'info', settled: 'success',
+  open: 'info', granted: 'success', skipped: 'secondary', account_deleted: 'secondary', operator_close: 'danger',
+  user_requested: 'secondary', cancelled_before_provider: 'secondary', minutes: 'azure', ai_value: 'purple',
+  stripe: 'indigo', play: 'green', welcome: 'teal', gift: 'orange', purchase: 'azure', reserve: 'secondary',
+  settle: 'secondary', release: 'secondary', forfeit: 'danger', transfer: 'secondary'
+};
+const badgeCell = cell => {
+  const raw = cell.getValue();
+  if (raw === null || raw === undefined || raw === '') return '<span class="text-secondary">—</span>';
+  const tone = BADGE_COLORS[String(raw)] ?? 'secondary';
+  return `<span class="badge badge-${tone}">${escapeHtml(String(raw))}</span>`;
+};
+const BADGED_COLUMNS = new Set(['state', 'kind', 'close_reason', 'environment', 'entitlement_kind', 'purpose',
+  'provider', 'reason', 'funding_mode', 'outcome']);
+const uuidCell = cell => {
+  const raw = cell.getValue();
+  if (!raw) return '<span class="text-secondary">—</span>';
+  const text = String(raw);
+  return `<span class="cell-mono" title="${escapeHtml(text)}">${escapeHtml(text.slice(0, 8))}…</span>`;
+};
 const toast = (message, kind = 'success') => {
   const element = document.createElement('div');
   element.className = `alert alert-${kind} position-fixed top-1 end-1 m-3 shadow`;
@@ -44,22 +81,59 @@ const detail = (title, body) => {
   $('#detail-body').textContent = typeof body === 'string' ? body : JSON.stringify(body, null, 2);
   openModal('#detail-modal');
 };
-$('#detail-modal .btn-close').addEventListener('click', () => closeModal('#detail-modal'));
-$('#detail-modal .modal-footer .btn').addEventListener('click', () => closeModal('#detail-modal'));
-const ask = (title, placeholder, defaultValue = '') => new Promise(resolve => {
+$('#detail-close').addEventListener('click', () => closeModal('#detail-modal'));
+$('#detail-dismiss').addEventListener('click', () => closeModal('#detail-modal'));
+const ask = (title, target) => new Promise(resolve => {
   $('#reason-title').textContent = title;
-  $('#reason-input').value = defaultValue;
+  $('#reason-input').value = target;
   $('#reason-text').value = '';
   openModal('#reason-modal');
-  $('#reason-ok').onclick = () => { closeModal('#reason-modal'); resolve({ target: $('#reason-input').value, reason: $('#reason-text').value }); };
-  $('#reason-cancel').onclick = () => { closeModal('#reason-modal'); resolve({ target: $('#reason-input').value, reason: '' }); };
+  $('#reason-ok').onclick = () => { closeModal('#reason-modal'); resolve({ reason: $('#reason-text').value }); };
+  $('#reason-cancel').onclick = () => { closeModal('#reason-modal'); resolve({ reason: '' }); };
 });
 
 /* ---- dashboards ---- */
-const kpi = (label, value) => `<div class="col-sm-6 col-lg-3"><div class="card card-sm"><div class="card-body">
-  <div class="subheader">${label}</div><div class="h1 mb-0">${value}</div></div></div></div>`;
-const chartCard = (title, tall = false) => `<div class="col-lg-6"><div class="card"><div class="card-body">
-  <h3 class="card-title">${title}</h3><div style="height:${tall ? 260 : 200}px"><canvas></canvas></div></div></div></div>`;
+const KPI_ICONS = {
+  'Cuentas': ['ti-users', 'bg-blue-lt text-blue'], 'Invitados': ['ti-user-question', 'bg-purple-lt text-purple'],
+  'Sesiones app vivas': ['ti-plug-connected', 'bg-azure-lt text-azure'], 'Activos 30 días': ['ti-activity', 'bg-green-lt text-green'],
+  'Minutos en wallets': ['ti-clock-hour-4', 'bg-orange-lt text-orange'], 'Minutos reservados': ['ti-clock-pause', 'bg-yellow-lt text-yellow'],
+  'Órdenes / volumen': ['ti-shopping-cart', 'bg-indigo-lt text-indigo'], 'Coste helpers 30d': ['ti-lifebuoy', 'bg-pink-lt text-pink'],
+  'Waitlist': ['ti-mail', 'bg-teal-lt text-teal'], 'Sesiones voz activas': ['ti-phone-outgoing', 'bg-red-lt text-red'],
+  'Acciones admin': ['ti-shield-check', 'bg-lime-lt text-lime'], 'Informes IA 30d': ['ti-message-report', 'bg-cyan-lt text-cyan']
+};
+const kpi = (label, value) => {
+  const [icon, tone] = KPI_ICONS[label] ?? ['ti-dots', 'bg-secondary-lt text-secondary'];
+  return `<div class="col-sm-6 col-lg-3"><div class="card card-sm"><div class="card-body">
+    <div class="row align-items-center g-0">
+      <div class="col-auto"><span class="kpi-icon ${tone}"><i class="ti ${icon}"></i></span></div>
+      <div class="col ps-3"><div class="subheader text-secondary">${label}</div>
+      <div class="h2 mb-0 mt-1">${value}</div></div>
+    </div></div></div></div>`;
+};
+const chartCard = (title, type) => `<div class="col-lg-6"><div class="card chart-card"><div class="card-body">
+  <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ${type === 'bar' ? 'ti-chart-column' : 'ti-chart-line'} text-secondary"></i>${title}</h3>
+  <div class="chart-box"><canvas></canvas></div></div></div></div>`;
+
+function mountChart(canvas, serie) {
+  const color = PALETTE[charts.length % PALETTE.length];
+  const context = canvas.getContext('2d');
+  const gradient = context.createLinearGradient(0, 0, 0, 220);
+  gradient.addColorStop(0, color + '33'); gradient.addColorStop(1, color + '05');
+  const type = CHART_TYPE[serie.name] ?? 'line';
+  charts.push(new Chart(canvas, {
+    type,
+    data: { labels: serie.points.map(point => point.day.slice(5)),
+      datasets: [{ label: serie.label, data: serie.points.map(point => point.value), tension: .35,
+        fill: type === 'line', backgroundColor: type === 'bar' ? color + 'cc' : gradient,
+        borderColor: color, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4,
+        borderRadius: type === 'bar' ? 3 : undefined, maxBarThickness: 28 }] },
+    options: { maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: false },
+        tooltip: { backgroundColor: '#1d273b', padding: 10, displayColors: false } },
+      scales: { x: { grid: { display: false }, ticks: { font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } },
+        y: { beginAtZero: true, grid: { color: 'rgba(160,170,180,.15)' }, ticks: { font: { size: 10 }, maxTicksLimit: 6 } } } }
+  }));
+}
 
 async function renderDashboard(setName, container) {
   const [snapshot, series] = await Promise.all([
@@ -70,7 +144,7 @@ async function renderDashboard(setName, container) {
   if (setName === 'overview' && snapshot) {
     const revenue = snapshot.orders.reduce((total, row) => total + row.totalMinor, 0);
     const orders = snapshot.orders.reduce((total, row) => total + row.count, 0);
-    head = `<div class="row mb-3">
+    head = `<div class="row mb-3 g-3">
       ${kpi('Cuentas', number(snapshot.accounts.total))}
       ${kpi('Invitados', number(snapshot.accounts.guests))}
       ${kpi('Sesiones app vivas', number(snapshot.liveAppSessions))}
@@ -85,36 +159,60 @@ async function renderDashboard(setName, container) {
       ${kpi('Informes IA 30d', number(snapshot.aiReports.last30d))}
     </div>`;
   }
-  container.innerHTML = head + `<div class="row row-cards">${series.series.map(serie => chartCard(serie.label)).join('')}</div>`;
-  series.series.forEach(serie => {
-    const canvas = [...container.querySelectorAll('canvas')][series.series.indexOf(serie)];
-    charts.push(new Chart(canvas, {
-      type: 'line',
-      data: { labels: serie.points.map(point => point.day.slice(5)),
-        datasets: [{ label: serie.label, data: serie.points.map(point => point.value), tension: .3, fill: false, pointRadius: 2, borderWidth: 2 }] },
-      options: { maintainAspectRatio: false, plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true } } }
-    }));
-  });
+  container.innerHTML = head + `<div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label, CHART_TYPE[serie.name] ?? 'line')).join('')}</div>`;
+  container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => mountChart(canvas, series.series[index]));
+  // Charts are created while the grid is still settling; re-measure once it has laid out.
+  requestAnimationFrame(() => { for (const chart of charts) chart.resize(); });
 }
 
 /* ---- browse ---- */
+function columnFormatter(name, spec) {
+  if (spec.type === 'timestamptz') return dateCell;
+  if (spec.type === 'jsonb') return cell => {
+    const raw = cell.getValue();
+    if (raw === null || raw === undefined) return '<span class="text-secondary">—</span>';
+    const text = JSON.stringify(raw);
+    return `<span class="cell-mono" title="${escapeHtml(text)}">${escapeHtml(text.slice(0, 24))}${text.length > 24 ? '…' : ''}</span>`;
+  };
+  if (spec.type === 'boolean') return cell => cell.getValue() ? '<i class="ti ti-circle-check text-success"></i>' :
+    '<i class="ti ti-circle-minus text-secondary"></i>';
+  if (spec.type === 'uuid') return uuidCell;
+  if (/_minor$/.test(name)) return moneyCell;
+  if (/_nano$/.test(name)) return nanoCell;
+  if (/_ms$/.test(name)) return durationCell;
+  if (BADGED_COLUMNS.has(name)) return badgeCell;
+  return undefined;
+}
 async function renderBrowse(container, fixedTable) {
   const catalog = await api('/v1/admin/browse');
   const tables = Object.keys(catalog.tables);
   const current = fixedTable ?? localStorage.getItem('browse.table') ?? tables[0];
-  container.innerHTML = `${fixedTable ? '' : `<div class="mb-3"><select id="browse-table" class="form-select w-auto">
-      ${tables.map(name => `<option value="${name}"${name === current ? ' selected' : ''}>${name}</option>`).join('')}
-    </select> <span class="text-secondary ms-2" id="browse-desc"></span></div>`}
-    <div id="browse-grid"></div>
-    <div class="d-flex align-items-center justify-content-between mt-2">
-      <span class="text-secondary" id="browse-total"></span>
-      <div class="btn-group" id="browse-pager">
-        <button class="btn btn-sm" id="page-prev">‹ Anterior</button>
-        <span class="btn btn-sm disabled" id="page-info"></span>
-        <button class="btn btn-sm" id="page-next">Siguiente ›</button>
+  container.innerHTML = `
+    ${fixedTable ? '' : `<div class="mb-3 d-flex align-items-center gap-3">
+      <select id="browse-table" class="form-select w-auto" data-icon="table"></select>
+      <span class="text-secondary" id="browse-desc"></span>
+    </div>`}
+    <div class="card table-card">
+      <div class="card-header py-2 d-flex align-items-center justify-content-between">
+        <span class="text-secondary small"><i class="ti ti-database me-1"></i>${escapeHtml(fixedTable ?? current)}</span>
+        <span class="text-secondary small" id="browse-total"></span>
+      </div>
+      <div class="card-body"><div id="browse-grid"></div></div>
+      <div class="card-footer py-2 pager-bar">
+        <div class="btn-group">
+          <button class="btn btn-sm" id="page-prev"><i class="ti ti-chevron-left"></i></button>
+          <span class="btn btn-sm disabled" id="page-info"></span>
+          <button class="btn btn-sm" id="page-next"><i class="ti ti-chevron-right"></i></button>
+        </div>
+        <select class="form-select form-select-sm w-auto" id="page-size">
+          ${[10, 25, 50, 100].map(size => `<option${size === 25 ? ' selected' : ''}>${size}</option>`).join('')}
+        </select>
       </div>
     </div>`;
+  if (!fixedTable) {
+    $('#browse-table').innerHTML = tables.map(name => `<option value="${name}"${name === current ? ' selected' : ''}>${name}</option>`).join('');
+    $('#browse-desc').textContent = catalog.tables[current].description;
+  }
   const state = { page: 1, size: 25, sort: null, dir: null, filters: [] };
   let table;
   const mountTable = async () => {
@@ -125,25 +223,23 @@ async function renderBrowse(container, fixedTable) {
     const columns = Object.entries(schema.columns).map(([field, spec]) => {
       const base = { title: field.replaceAll('_', ' '), field,
         sorter: spec.type === 'jsonb' ? undefined : 'local',
-        formatter: spec.type === 'timestamptz' ? dateCell : undefined,
-        width: spec.type === 'timestamptz' ? 150 : undefined };
-      if (spec.type === 'boolean') Object.assign(base, { headerFilter: 'select',
-        headerFilterParams: { values: { '': 'Todos', true: 'Sí', false: 'No' } }, headerFilterFunc: '=' });
+        formatter: columnFormatter(field, spec),
+        width: spec.type === 'timestamptz' ? 140 : spec.type === 'uuid' ? 110 : undefined };
+      if (spec.type === 'boolean') Object.assign(base, { headerFilter: 'select', headerFilterFunc: '=',
+        headerFilterParams: { values: { '': 'todos', true: 'sí', false: 'no' } } });
       else if (spec.type === 'text') Object.assign(base, { headerFilter: 'input', headerFilterFunc: 'like' });
-      else if (spec.type === 'timestamptz') Object.assign(base, { headerFilter: 'input', headerFilterPlaceholder: '≥ AAAA-MM-DD', headerFilterFunc: '>=' });
+      else if (spec.type === 'timestamptz') Object.assign(base, { headerFilter: 'input', headerFilterFunc: '>=',
+        headerFilterPlaceholder: '≥ AAAA-MM-DD' });
       else if (spec.type !== 'jsonb') Object.assign(base, { headerFilter: 'input', headerFilterFunc: '=' });
       return base;
     });
     table?.destroy();
     table = new Tabulator('#browse-grid', {
-      columns, layout: 'fitDataFill', placeholder: 'Sin filas', rowContextMenu: contextMenu(name)
+      columns, layout: 'fitDataFill', placeholder: `<div class="empty p-3"><div class="empty-icon"><i class="ti ti-database-off"></i></div>
+        <p class="empty-title">Sin filas</p><p class="empty-subtitle text-secondary">Ajusta los filtros o cambia de tabla.</p></div>`,
+      rowContextMenu: contextMenu(name)
     });
-    table.on('dataSorting', sorters => {
-      if (!sorters.length) return;
-      state.sort = sorters[0].field; state.dir = sorters[0].dir; state.page = 1; void load();
-    });
-    // dataFiltered fires when a header filter is applied; the key guard prevents the
-    // reload loop that setData would otherwise cause by re-applying local filters.
+    tables.push(table);
     let lastFilterKey = '';
     table.on('dataFiltered', () => {
       const filters = table.getFilters(true).filter(entry => entry.value !== '' && entry.value !== undefined);
@@ -151,6 +247,10 @@ async function renderBrowse(container, fixedTable) {
       if (key === lastFilterKey) return;
       lastFilterKey = key;
       state.filters = filters; state.page = 1; void load();
+    });
+    table.on('dataSorting', sorters => {
+      if (!sorters.length) return;
+      state.sort = sorters[0].field; state.dir = sorters[0].dir; state.page = 1; void load();
     });
     await load();
   };
@@ -178,6 +278,7 @@ async function renderBrowse(container, fixedTable) {
   };
   $('#page-prev').onclick = () => { if (state.page > 1) { state.page--; void load(); } };
   $('#page-next').onclick = () => { state.page++; void load(); };
+  $('#page-size').onchange = event => { state.size = Number(event.target.value); state.page = 1; void load(); };
   if (!fixedTable) $('#browse-table').onchange = mountTable;
   await mountTable();
 }
@@ -186,15 +287,16 @@ async function renderBrowse(container, fixedTable) {
 async function renderPolicy(container) {
   const policy = await api('/v1/admin/policy/welcome');
   container.innerHTML = `<div class="row"><div class="col-lg-6"><div class="card"><div class="card-body">
-    <h3 class="card-title">Minutos de bienvenida</h3>
+    <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ti-settings text-secondary"></i>Minutos de bienvenida</h3>
     <div class="mb-3"><label class="form-check form-switch">
       <input class="form-check-input" type="checkbox" id="pol-enabled" ${policy.welcomeEnabled ? 'checked' : ''}>
-      <span class="form-check-label">Conceder minutos de bienvenida</span></label></div>
+      <span class="form-check-label">Conceder minutos de bienvenida al registrarse</span></label></div>
     <div class="mb-3"><label class="form-label">Minutos</label>
       <input type="number" min="0" max="1440" class="form-control" id="pol-minutes" value="${policy.welcomeMinutes}"></div>
     <div class="mb-3"><label class="form-label">Motivo (obligatorio, queda auditado)</label>
       <textarea class="form-control" id="pol-reason" rows="2" maxlength="500"></textarea></div>
-    <button class="btn btn-primary" id="pol-save">Guardar</button>
+    <button class="btn btn-primary" id="pol-save"><i class="ti ti-device-floppy me-1"></i>Guardar</button>
+    <span class="text-secondary ms-2">versión actual ${policy.version}</span>
   </div></div></div></div>`;
   $('#pol-save').onclick = async () => {
     try {
@@ -208,7 +310,7 @@ async function renderPolicy(container) {
 
 async function renderCampaigns(container) {
   container.innerHTML = `<div class="row"><div class="col-lg-8"><div class="card"><div class="card-body">
-    <h3 class="card-title">Campaña de minutos</h3>
+    <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ti-gift text-secondary"></i>Campaña de minutos</h3>
     <div class="mb-3"><label class="form-check">
       <input class="form-check-input" type="radio" name="aud" id="aud-one" checked> <span class="form-check-label">Un único usuario (UUID)</span></label>
       <label class="form-check"><input class="form-check-input" type="radio" name="aud" id="aud-all"> <span class="form-check-label">Todos los usuarios actuales</span></label></div>
@@ -220,7 +322,7 @@ async function renderCampaigns(container) {
       <input type="number" min="1" class="form-control" id="camp-cap" value="5000"></div></div>
     <div class="mb-3 mt-3"><label class="form-label">Motivo (obligatorio)</label>
       <textarea class="form-control" id="camp-reason" rows="2" maxlength="500"></textarea></div>
-    <button class="btn btn-primary" id="camp-prepare">Preparar</button>
+    <button class="btn btn-primary" id="camp-prepare"><i class="ti ti-checklist me-1"></i>Preparar</button>
     <div id="camp-result" class="mt-3"></div>
   </div></div></div></div>`;
   for (const radio of ['#aud-one', '#aud-all']) $(radio).onchange = () => { $('#aud-account-wrap').style.display = $('#aud-one').checked ? '' : 'none'; };
@@ -230,15 +332,17 @@ async function renderCampaigns(container) {
         audience: $('#aud-one').checked ? [$('#camp-account').value.trim()] : 'all-current-users',
         minutesPerUser: Number($('#camp-minutes').value), maxTotalMinutes: Number($('#camp-cap').value),
         reason: $('#camp-reason').value }) });
-      $('#camp-result').innerHTML = `<div class="alert alert-info">Preparada: ${summary.recipients} destinatarios,
-        ${summary.minutesPerUser} min/usuario. Confirmación <code class="small">${summary.confirmation}</code></div>
-        <button class="btn btn-warning" id="camp-apply">Aplicar (irreversible)</button>`;
+      $('#camp-result').innerHTML = `<div class="alert alert-info d-flex align-items-center gap-2">
+        <i class="ti ti-info-circle"></i><span>Preparada: <strong>${summary.recipients}</strong> destinatarios,
+        ${summary.minutesPerUser} min/usuario. Confirmación <code class="small">${summary.confirmation}</code></span></div>
+        <button class="btn btn-warning" id="camp-apply"><i class="ti ti-alert-triangle me-1"></i>Aplicar (irreversible)</button>`;
       $('#camp-apply').onclick = async () => {
         try {
           const outcome = await api(`/v1/admin/campaigns/${summary.campaignID}/apply`, { method: 'POST',
             body: JSON.stringify({ confirmation: summary.confirmation, reason: $('#camp-reason').value }) });
-          $('#camp-result').innerHTML += `<div class="alert alert-success mt-2">Aplicada: concedidos ${outcome.granted},
-            omitidos ${outcome.skipped}.</div>`;
+          $('#camp-result').innerHTML += `<div class="alert alert-success d-flex align-items-center gap-2">
+            <i class="ti ti-circle-check"></i><span>Aplicada: concedidos <strong>${outcome.granted}</strong>,
+            omitidos ${outcome.skipped}.</span></div>`;
         } catch (error) { toast(`Error: ${error.code}`, 'danger'); }
       };
     } catch (error) { toast(`Error: ${error.code}`, 'danger'); }
@@ -248,10 +352,11 @@ async function renderCampaigns(container) {
 /* ---- row actions ---- */
 function contextMenu(tableName) {
   if (tableName === 'accounts') return [
-    { label: 'Detalle de cuenta', action: (event, row) => api(`/v1/admin/accounts/${row.getData().id}`)
-        .then(report => detail(`Cuenta ${row.getData().id}`, report)).catch(error => toast(`Error: ${error.code}`, 'danger')) },
-    { label: 'Regalar minutos…', action: async (event, row) => {
-        const asked = await ask('Campaña de minutos', 'Motivo');
+    { label: '<i class="ti ti-id-badge me-2"></i>Detalle de cuenta', action: (event, row) => api(`/v1/admin/accounts/${row.getData().id}`)
+        .then(report => detail(`Cuenta ${row.getData().email ?? row.getData().id}`, report)).catch(error => toast(`Error: ${error.code}`, 'danger')) },
+    { separator: true },
+    { label: '<i class="ti ti-gift me-2"></i>Regalar minutos…', action: async (event, row) => {
+        const asked = await ask('Campaña de minutos', row.getData().email ?? row.getData().id);
         if (!asked.reason || asked.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
         try { const summary = await api('/v1/admin/campaigns', { method: 'POST', body: JSON.stringify({
             audience: [row.getData().id], minutesPerUser: 5, maxTotalMinutes: 60, reason: asked.reason }) });
@@ -261,18 +366,18 @@ function contextMenu(tableName) {
         } catch (error) { toast(`Error: ${error.code}`, 'danger'); } } }
   ];
   if (tableName === 'hosted_sessions') return [
-    { label: 'Forzar cierre…', action: async (event, row) => {
+    { label: '<i class="ti ti-phone-off me-2"></i>Forzar cierre…', action: async (event, row) => {
         const data = row.getData();
         if (data.state === 'closed') return toast('Ya está cerrada', 'warning');
-        const asked = await ask('Forzar cierre de sesión', 'Motivo');
+        const asked = await ask('Forzar cierre de sesión', data.id);
         if (!asked.reason || asked.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
         try { await api(`/v1/admin/hosted-sessions/${data.id}/close`, { method: 'POST',
           body: JSON.stringify({ reason: asked.reason }) }); toast('Cierre solicitado'); row.update({ state: 'closing' }); }
         catch (error) { toast(`Error: ${error.code}`, 'danger'); } } }
   ];
   if (tableName === 'access_requests') return [
-    { label: 'Eliminar de la waitlist…', action: async (event, row) => {
-        const asked = await ask('Eliminar de la waitlist', 'Motivo');
+    { label: '<i class="ti ti-trash me-2"></i>Eliminar de la waitlist…', action: async (event, row) => {
+        const asked = await ask('Eliminar de la waitlist', row.getData().email);
         if (!asked.reason || asked.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
         try { await api('/v1/admin/access-requests', { method: 'DELETE',
           body: JSON.stringify({ email: row.getData().email, reason: asked.reason }) });
@@ -288,7 +393,7 @@ const VIEWS = {
   growth: { title: 'Crecimiento', render: container => renderDashboard('growth', container) },
   voice: { title: 'Voz', render: container => renderDashboard('voice', container) },
   economy: { title: 'Economía', render: container => renderDashboard('economy', container) },
-  browse: { title: 'Tablas', render: container => renderBrowse(container, null) },
+  browse: { title: 'Explorador de tablas', render: container => renderBrowse(container, null) },
   policy: { title: 'Política de bienvenida', render: renderPolicy },
   campaigns: { title: 'Campañas', render: renderCampaigns },
   audit: { title: 'Auditoría de acciones', render: container => renderBrowse(container, 'admin_actions') }
@@ -297,17 +402,25 @@ async function route() {
   const viewName = (location.hash.slice(1) || 'overview').split('?')[0];
   const view = VIEWS[viewName] ?? VIEWS.overview;
   $('#page-title').textContent = view.title;
-  for (const chart of charts) { if (chart instanceof Chart) chart.destroy(); else chart.destroy(); }
+  document.title = `${view.title} · Palique Admin`;
+  for (const link of document.querySelectorAll('#nav .nav-link')) link.classList.toggle('active', link.hash === `#${viewName}`);
+  for (const chart of charts) chart.destroy();
   charts.length = 0;
+  for (const table of tables) table.destroy();
+  tables = [];
   const container = $('#view');
-  container.innerHTML = '<div class="progress progress-sm"><div class="progress-bar progress-bar-indeterminate"></div></div>';
+  container.innerHTML = '<div class="mt-3 progress progress-sm"><div class="progress-bar progress-bar-indeterminate"></div></div>';
   try { await view.render(container); }
-  catch (error) { if (error.message !== 'unauthenticated') container.innerHTML = `<div class="alert alert-danger">${error.code ?? error.message}</div>`; }
+  catch (error) { if (error.message !== 'unauthenticated') container.innerHTML = `<div class="alert alert-danger mt-3"><i class="ti ti-alert-triangle me-2"></i>${error.code ?? error.message}</div>`; }
 }
 (function boot() {
-  $('#nav').innerHTML = NAV.map(item => `<li class="nav-item"><a class="nav-link" href="#${item.id}">${item.label}</a></li>`).join('');
-  api('/v1/admin/me').then(me => { $('#whoami').textContent = me.email ?? me.adminID; })
-    .catch(() => {});
+  $('#nav').innerHTML = NAV.map(item => `<li class="nav-item"><a class="nav-link" href="#${item.id}">
+    <span class="nav-link-icon"><i class="ti ${item.icon}"></i></span><span class="nav-link-title">${item.label}</span></a></li>`).join('');
+  api('/v1/admin/me').then(me => {
+    const name = me.email ?? me.adminID;
+    $('#whoami').textContent = name;
+    $('#avatar').textContent = (me.email ?? 'A')[0].toUpperCase();
+  }).catch(() => {});
   $('#signout').onclick = async () => { try { await api('/v1/admin/auth/sign-out', { method: 'POST', body: '{}' }); } catch {} location.href = '/login.html'; };
   window.addEventListener('hashchange', route);
   route();

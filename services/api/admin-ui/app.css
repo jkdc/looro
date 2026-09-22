@@ -1,11 +1,70 @@
-/* Tabulator needs a little help fitting Tabler cards; everything else is stock Tabler. */
-.tabulator { background: transparent; }
-.tabulator .tabulator-header { border-bottom: 1px solid var(--tblr-border-color); }
-.tabulator-row:hover { background: var(--tblr-active-bg, rgba(0,0,0,.03)); }
-.navbar-vertical .navbar-brand { font-weight: 600; }
-pre#detail-body { white-space: pre-wrap; }
-/* Keep the vertical sidebar in flow so the content wrapper never slides under it. */
-.page { display: flex; }
-.page > .navbar-vertical { position: sticky; top: 0; height: 100vh; flex: 0 0 260px; }
-.page > .content-wrapper { flex: 1 1 auto; min-width: 0; }
-@media (max-width: 991px) { .page { display: block; } .page > .navbar-vertical { position: static; height: auto; } }
+/* Palique Admin — Tabler base + Tabulator skin. Everything else is stock Tabler. */
+
+/* ---- Tabulator skinned to match Tabler cards ---- */
+.tabulator {
+  width: 100%;
+  border: 1px solid var(--tblr-border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--tblr-bg-surface, #fff);
+  font-size: .875rem;
+}
+.tabulator .tabulator-header {
+  background: var(--tblr-bg-surface-secondary, #f6f8fb);
+  border-bottom: 1px solid var(--tblr-border-color);
+  font-weight: 600;
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--tblr-secondary, #626976);
+}
+.tabulator .tabulator-header .tabulator-col { border-right: 1px solid var(--tblr-border-color); }
+.tabulator .tabulator-row { border-bottom: 1px solid var(--tblr-border-color); background: transparent; }
+.tabulator .tabulator-row:nth-child(even) { background: var(--tblr-bg-surface-secondary, #f6f8fb); }
+.tabulator .tabulator-row:hover { background: var(--tblr-active-bg, rgba(32,107,196,.06)); }
+.tabulator .tabulator-cell { padding: .5rem .75rem; border-right: 1px solid var(--tblr-border-color); white-space: nowrap; }
+.tabulator .tabulator-row .tabulator-cell:last-child { border-right: none; }
+.tabulator .tabulator-header .tabulator-col input,
+.tabulator .tabulator-header .tabulator-col select {
+  border: 1px solid var(--tblr-border-color);
+  border-radius: 4px;
+  padding: .15rem .4rem;
+  font-size: .75rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  background: #fff;
+  color: inherit;
+  width: 100%;
+  margin-top: .25rem;
+}
+.tabulator .tabulator-header .tabulator-col input::placeholder { color: var(--tblr-secondary, #626976); }
+
+/* ---- table card wrapper ---- */
+.table-card .card-body { padding: 0; }
+.table-card .tabulator { border: none; border-top: 1px solid var(--tblr-border-color); border-radius: 0; }
+
+/* ---- KPI tiles ---- */
+.kpi-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem; border-radius: 50%; font-size: 1.25rem;
+}
+
+/* ---- chart cards ---- */
+.chart-card .card-body { padding: .75rem 1rem 1rem; }
+.chart-box { position: relative; height: 220px; }
+
+/* ---- uuid cells ---- */
+.cell-mono { font-family: var(--tblr-font-monospace); font-size: .8125em; }
+
+/* ---- context menu (Tabulator) ---- */
+.tabulator-menu {
+  background: #fff; border: 1px solid var(--tblr-border-color); border-radius: 8px;
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.12); padding: .25rem; min-width: 12rem;
+}
+.tabulator-menu .tabulator-menu-item { padding: .45rem .65rem; border-radius: 4px; font-size: .875rem; cursor: pointer; }
+.tabulator-menu .tabulator-menu-item:hover { background: var(--tblr-active-bg, rgba(32,107,196,.08)); }
+
+/* ---- login ---- */
+.login-brand { font-weight: 700; letter-spacing: -.02em; }
+.chart-box canvas { max-width: 100%; }

@@ -24,7 +24,7 @@ const boolFilters: FilterOperator[] = ['eq'];
 export const BROWSE_TABLES: Record<string, BrowseTable> = {
   accounts: {
     table: 'accounts',
-    description: 'Registered app accounts, including guests and soft deletions.',
+    description: 'Cuentas registradas de la app, incluidos invitados y borrados lógicos.',
     columns: {
       id: column('uuid', uuidFilters), email: column('text', textFilters),
       created_at: column('timestamptz', timeFilters), deleted_at: column('timestamptz', timeFilters),
@@ -34,7 +34,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   auth_sessions: {
     table: 'auth_sessions',
-    description: 'App session metadata. Token hashes are never exposed.',
+    description: 'Metadatos de sesiones de la app. Los hashes de token nunca se exponen.',
     columns: {
       id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
       created_at: column('timestamptz', timeFilters), expires_at: column('timestamptz', timeFilters),
@@ -44,7 +44,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   wallets: {
     table: 'wallets',
-    description: 'Cash (nanoUSD) wallets with reserves.',
+    description: 'Carteras de dinero (nanoUSD) con reservas.',
     columns: {
       account_id: column('uuid', uuidFilters), balance_nano: column('bigint', numberFilters),
       reserved_nano: column('bigint', numberFilters), sandbox_balance_nano: column('bigint', numberFilters),
@@ -54,7 +54,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   minute_wallets: {
     table: 'minute_wallets',
-    description: 'Conversation-minute wallets (milliseconds).',
+    description: 'Carteras de minutos de conversación (milisegundos).',
     columns: {
       account_id: column('uuid', uuidFilters), balance_ms: column('bigint', numberFilters),
       reserved_ms: column('bigint', numberFilters), sandbox_balance_ms: column('bigint', numberFilters),
@@ -64,7 +64,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   minute_entries: {
     table: 'minute_entries',
-    description: 'Immutable conversation-minute ledger entries.',
+    description: 'Asientos inmutables del ledger de minutos.',
     columns: {
       id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
       reference: column('text', textFilters), kind: column('text', ['eq', 'in']),
@@ -75,7 +75,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   hosted_sessions: {
     table: 'hosted_sessions',
-    description: 'Hosted voice sessions with funding and close state.',
+    description: 'Sesiones de voz alojadas con su financiación y cierre.',
     columns: {
       id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
       state: column('text', ['eq']), created_at: column('timestamptz', timeFilters),
@@ -89,7 +89,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   hosted_helper_requests: {
     table: 'hosted_helper_requests',
-    description: 'Teaching-helper requests attached to hosted sessions.',
+    description: 'Peticiones de helpers de enseñanza de las sesiones de voz.',
     columns: {
       request_id: column('uuid', uuidFilters), session_id: column('uuid', uuidFilters),
       purpose: column('text', ['eq']), state: column('text', ['eq']),
@@ -101,7 +101,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   minute_purchase_orders: {
     table: 'minute_purchase_orders',
-    description: 'Minute and AI-value purchase orders across providers.',
+    description: 'Órdenes de compra de minutos y valor IA por proveedor.',
     columns: {
       id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
       provider: column('text', ['eq']), environment: column('text', ['eq']),
@@ -113,7 +113,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   checkout_orders: {
     table: 'checkout_orders',
-    description: 'Legacy sandbox checkout orders.',
+    description: 'Órdenes sandbox antiguas de checkout.',
     columns: {
       id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
       product: column('text', ['eq']), state: column('text', ['eq']),
@@ -125,7 +125,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   access_requests: {
     table: 'access_requests',
-    description: 'Waitlist entries with consent version.',
+    description: 'Entradas de la waitlist con su versión de consentimiento.',
     columns: {
       email: column('text', textFilters), requested_at: column('timestamptz', timeFilters),
       consent_version: column('text', ['eq']), source: column('text', ['eq'])
@@ -134,7 +134,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   usage_records: {
     table: 'usage_records',
-    description: 'Provider usage accounting per session.',
+    description: 'Contabilidad de uso del proveedor por sesión.',
     columns: {
       account_id: column('uuid', uuidFilters), device_reference: column('text', textFilters),
       observed_ms: column('bigint', numberFilters), input_tokens: column('bigint', numberFilters),
@@ -146,7 +146,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   minute_campaigns: {
     table: 'minute_campaigns',
-    description: 'Audited minute grant campaigns.',
+    description: 'Campañas de minutos auditadas.',
     columns: {
       id: column('uuid', uuidFilters), actor: column('text', textFilters),
       state: column('text', ['eq']), minutes_per_user: column('integer', numberFilters),
@@ -157,7 +157,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   ai_feedback_reports: {
     table: 'ai_feedback_reports',
-    description: 'Learner AI reports (offensive/incorrect/wrong_language/other).',
+    description: 'Informes de IA del alumnado (ofensivo/incorrecto/idioma/otro).',
     columns: {
       id: column('uuid', uuidFilters), language_id: column('text', ['eq']),
       reason: column('text', ['eq']), excerpt: column('text', ['contains']),
@@ -167,7 +167,7 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   admin_actions: {
     table: 'admin_actions',
-    description: 'Append-only audit of every panel-originated mutation.',
+    description: 'Auditoría inmutable de cada mutación hecha desde el panel.',
     columns: {
       id: column('uuid', uuidFilters), admin_id: column('uuid', uuidFilters),
       action: column('text', ['eq']), target: column('text', textFilters),

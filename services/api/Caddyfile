@@ -30,6 +30,9 @@
 	}
 	handle {
 		root * /srv/admin-ui
+		# Never cache HTML: the entry documents carry the asset versions.
+		@html path *.html
+		header @html Cache-Control "no-cache"
 		try_files {path} /index.html
 		file_server
 	}
