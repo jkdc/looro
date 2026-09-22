@@ -47,7 +47,7 @@ class AndroidReleaseTests(unittest.TestCase):
     def test_metadata_handles_non_ascii_and_rejects_long_or_unfinished_copy(self):
         path = self.root / "title.txt"
         path.write_text("Palique: Bokmål\n")
-        self.assertEqual(release.check_text(path, 30, True)["characters"], 13)
+        self.assertEqual(release.check_text(path, 30, True)["characters"], 15)
         for text in ("x" * 31, "Palique\nPractice", "Palique [REQUIRED: title]", " Palique", "Palique\t"):
             path.write_text(text)
             with self.subTest(text=text), self.assertRaises(release.InvalidRelease):
