@@ -9,6 +9,7 @@ import { HostedVoice } from './hosted-voice.js';
 import { OpenAILiveProvider } from './live-provider.js';
 import { AccessRequests, accessRequestConfig, pruneAccessRequests } from './access-requests.js';
 import { AuthAdmission, accountAdmissionConfig } from './auth-admission.js';
+import { TokenProxy, tokenProxyConfig } from './token-proxy.js';
 import { adminAuthConfig, pruneAdminRecords, type AdminAuthServices } from './admin-auth.js';
 import { AIReports, aiReportConfig, pruneAIReports } from './feedback.js';
 import { configuredMinuteCommerce } from './minute-commerce-config.js';
@@ -102,6 +103,7 @@ try {
   const app = createApp({ db, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
     googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
     minuteCommerce, accessRequests, accounts, admin, aiReports,guestMinuteAttestor,
+    tokenProxy: tokenProxyConfig(process.env) && new TokenProxy(db, tokenProxyConfig(process.env)!),
     onStartupDiagnostic: diagnostic => console.warn(JSON.stringify({ event: 'conversation_request_failed', ...diagnostic })) });
   const cleanup = setInterval(() => {
     void pruneAuthenticationRecords(db).catch(() => { console.error('Account retention cleanup failed.'); });

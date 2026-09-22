@@ -30,6 +30,10 @@ services:
       # Accounts admission (trusted-proxy caps for sign-in and account routes).
       ACCOUNTS_HMAC_KEY: ${ACCOUNTS_HMAC_KEY:-}
       ACCOUNTS_PROXY_TOKEN: ${ACCOUNTS_PROXY_TOKEN:-}
+      # Token billing proxy (token-billing F2): disabled unless a provider is set.
+      PROXY_PROVIDER_URL: ${PROXY_PROVIDER_URL:-}
+      PROXY_PROVIDER_KEY: ${PROXY_PROVIDER_KEY:-}
+      PROXY_MAX_TOKENS: ${PROXY_MAX_TOKENS:-}
       GOOGLE_ANDROID_SERVER_CLIENT_ID: ${GOOGLE_ANDROID_SERVER_CLIENT_ID:-}
       GOOGLE_ANDROID_CLIENT_IDS: ${GOOGLE_ANDROID_CLIENT_IDS:-}
       APPLE_CLIENT_ID: ${APPLE_CLIENT_ID:-}

@@ -11,6 +11,7 @@ import { conversationBalance } from './conversation-balance.js';
 import { trialEligibility, UnconfiguredAttestor, type TrialAttestor } from './trial.js';
 import type { HostedVoice } from './hosted-voice.js';
 import { ACCESS_REQUEST_PATH, trustedClientNetwork, type AccessRequests } from './access-requests.js';
+import { TokenProxy } from './token-proxy.js';
 import type { AuthAdmission } from './auth-admission.js';
 import { claimWelcomeMinutes, minuteBalance, UnconfiguredMinuteAttestor, type MinuteAttestor } from './minutes.js';
 import { startGuestMinutes, linkGuestMinutes, UnconfiguredGuestMinuteAttestor, type GuestMinuteAttestor } from './guest-minutes.js';
@@ -36,6 +37,7 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
   minuteCommerce?: { purchases: MinutePurchases; aiPurchases?: AIValuePurchases; fulfillment?: PurchaseFulfillmentRouter;
     stripe?: StripeMinuteProvider; play?: PlayMinuteProvider };
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
+  tokenProxy?: TokenProxy,
   admin?: { services: AdminAuthServices; admission: AuthAdmission } }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover']);
@@ -393,6 +395,17 @@ export function createApp(services: Services) {
     return exchangeIdentity(db, provider, stringField(body, 'idToken', 16_384), uuid(stringField(body, 'challengeID', 36)), services.auth, services.accounts?.identityVerifier, expectedAccountID);
   });
   app.get('/v1/account', async request => accountProfile(db, request.headers.authorization));
+  app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async request => {
+    const proxy = services.tokenProxy;
+    if (!proxy) throw new ServiceError('proxy_unavailable', 503);
+    const account = await authenticate(db, request.headers.authorization);
+    const unlock = (await db.query(`SELECT unlocked_at FROM entitlements WHERE account_id=$1`, [account])).rows[0]?.unlocked_at;
+    if (!unlock) throw new ServiceError('unlock_required', 403);
+    const body = objectBody(request);
+    const { status, payload } = await proxy.relay(account, body);
+    reply.code(status);
+    return payload;
+  });
   app.get('/v1/minutes', async request => conversationBalance(db, await authenticate(db, request.headers.authorization, true),
     services.hosted?.publicMinuteAccess===true, services.hosted?.publicPaidAccess ? { enabled: true,
       estimatedNanoUSDPerMinute: services.hosted.estimatedNanoUSDPerMinute, minimumSessionNanoUSD: services.hosted.minimumPaidSessionNanoUSD } : undefined));
