@@ -8,9 +8,16 @@
       `java/com/jkdc/looro`; rename namespaces, applicationId, resources,
       branded files; JNI `chat_mural` symbols; `:app:testDebugUnitTest`,
       `:core:engine-local:testDebugUnitTest`, `:app:lintDebug` green.
-- [ ] **T3 — Backend + CI**: rename package, databases, role, locks, HMAC
+- [x] **T3 — Backend + CI**: rename package, databases, role, locks, HMAC
       domains, headers, compose project, workflow artifacts; full backend
-      docker suite green.
+      docker suite green. *(Executed as `looro-*` in 6ee7750; superseded by
+      `brand-constants` T3, which went further and made all backend/CI
+      identifiers brand-free (`app-server`, `app`, `app-*`) so renames never
+      touch them. 2026-09-22: end state re-verified — zero old-brand
+      references in `services/api` + CI, one live leak fixed
+      (TeachingPolicy lesson prompt persona, both platforms), full backend
+      docker suite re-run green on a fresh trust-auth postgres. See
+      verify-report addendum.)*
 - [x] **T4 — Strings parity**: Android `values/` + `values-es/` renamed in
       lockstep; `check_cross_platform.py` green; TeachingPolicy wording
       identical on both platforms.

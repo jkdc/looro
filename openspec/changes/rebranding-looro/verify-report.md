@@ -74,3 +74,36 @@ record).
 - `6ee7750` chore(rebrand): rename backend and CI identity to Looro (T3)
 - `0468831` chore(rebrand): publisher support contact and live docs (T4/T5)
 - (this commit) docs(openspec): verify rebranding-looro (T6)
+
+## Addendum 2026-09-22 — T3 closed
+
+T3 was executed as designed (`6ee7750`: `looro-server`, `looro*` databases,
+`x-looro-*` headers) and then **superseded by `brand-constants` T3**
+(`89d6e55`), which went one step further and made every backend/CI
+identifier brand-free — package `app-server`, database/role `app`,
+advisory-lock and HMAC domains `app-*`, headers `x-app-proxy-token` /
+`x-app-client-ip`, receipt domain `app-minute-receipt-v1`, compose project
+`api`, brand-free workflow artifacts — so future renames never touch backend
+identifiers again. The T3 checkbox had remained unticked through that
+supersede; this addendum closes it against the end state.
+
+Re-verified on 2026-09-22:
+
+- Case-insensitive `mural|looro` sweep over `services/api` (sans
+  `node_modules`) and `.github/workflows/`: **0 hits**.
+- The sweep did catch one **live leak outside the backend**: the
+  `lessonPractice` prompt added by `courses-and-lessons` still introduced
+  the tutor as "You are Mural" on BOTH platforms (it postdated the brand
+  content pass). Fixed to "You are Palique" with identical wording; parity
+  checker green; `TeachingPolicyTest` 11/11 green. The earlier claim
+  "TeachingPolicy carries no brand text" is now true again.
+- Full backend docker suite re-run (fresh `postgres:17` with trust auth on
+  55434, `node:22 npm test`, repo-root mount): **385/385 pass, 0 fail,
+  0 skipped** (exit 0).
+- Operational note: the SCRAM "client password must be a string" failure
+  mode occurs when the disposable postgres volume was initialised without
+  `POSTGRES_HOST_AUTH_METHOD=trust`; recreate the container rather than
+  reusing a stale one.
+
+Remaining gates unchanged: macOS `swift test` + xcodebuild, device/simulator
+capture re-runs, publisher `[REQUIRED]` data before store submission.
