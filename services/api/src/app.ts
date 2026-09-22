@@ -225,17 +225,23 @@ export function createApp(services: Services) {
   app.post('/v1/admin/auth/challenge', { bodyLimit: 1024 }, async request => {
     assertAdminCsrf(request);
     if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
-    return createChallenge(db);
+    const challenge = await createChallenge(db);
+    // The web client ID is public (it appears in the authorization URL anyway).
+    return { ...challenge, googleClientID: services.admin?.services.config.googleClientID };
   });
   app.post('/v1/admin/auth/exchange', { bodyLimit: 20_000 }, async (request, reply) => {
     assertAdminCsrf(request);
     if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
     const body = objectBody(request), provider = stringField(body, 'provider', 10);
-    if (Object.keys(body).some(key => !['provider', 'idToken', 'challengeID'].includes(key))) throw new ServiceError('invalid_request');
+    if (Object.keys(body).some(key => !['provider', 'idToken', 'code', 'redirectUri', 'challengeID'].includes(key)))
+      throw new ServiceError('invalid_request');
     if (provider !== 'google' && provider !== 'apple') throw new ServiceError('invalid_identity_provider');
-    const result = await exchangeAdminIdentity(services.admin.services, provider,
-      stringField(body, 'idToken', 16_384), uuid(stringField(body, 'challengeID', 36)),
-      services.admin.services.identityVerifier ?? verifyIdentity);
+    const hasToken = typeof body.idToken === 'string', hasCode = body.code !== undefined;
+    if (hasToken === hasCode) throw new ServiceError('invalid_request');
+    const credentials = hasToken ? { idToken: stringField(body, 'idToken', 16_384) } :
+      { code: stringField(body, 'code', 2_048), redirectUri: stringField(body, 'redirectUri', 512) };
+    const result = await exchangeAdminIdentity(services.admin.services, provider, credentials,
+      uuid(stringField(body, 'challengeID', 36)), services.admin.services.identityVerifier ?? verifyIdentity);
     reply.header('Set-Cookie', adminCookieHeader(result.token));
     return { adminID: result.adminID };
   });

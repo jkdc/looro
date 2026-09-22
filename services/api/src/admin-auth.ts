@@ -4,10 +4,10 @@ import { digest, verifyIdentity, type Provider } from './auth.js';
 import { transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
 
-export interface AdminAuthConfig { googleClientID?: string; appleClientID?: string; hmacKey: string;
-  proxyToken: string; allowedOrigin: string; allowLocalLoopback: boolean }
+export interface AdminAuthConfig { googleClientID?: string; appleClientID?: string; googleClientSecret?: string;
+  hmacKey: string; proxyToken: string; allowedOrigin: string; allowLocalLoopback: boolean }
 export interface AdminAuthServices { db: Database; config: AdminAuthConfig;
-  identityVerifier?: typeof verifyIdentity }
+  identityVerifier?: typeof verifyIdentity; tokenFetcher?: typeof fetch }
 
 export const ADMIN_COOKIE = 'admin_session';
 export const ADMIN_SESSION_SECONDS = 8 * 3_600;
@@ -26,7 +26,10 @@ export function adminAuthConfig(env: NodeJS.ProcessEnv): AdminAuthConfig | undef
   const allowLocalLoopback = env.ADMIN_ALLOW_LOCAL_LOOPBACK === 'true';
   if (!httpsOrigin && !(loopbackOrigin && allowLocalLoopback))
     throw new Error('ADMIN_PUBLIC_ORIGIN must be an exact https origin (or loopback with local loopback allowed).');
-  return { googleClientID, appleClientID, hmacKey, proxyToken, allowedOrigin, allowLocalLoopback };
+  const googleClientSecret = env.GOOGLE_ADMIN_CLIENT_SECRET;
+  if (googleClientID && googleClientSecret !== undefined && !googleClientSecret)
+    throw new Error('GOOGLE_ADMIN_CLIENT_SECRET cannot be empty.');
+  return { googleClientID, appleClientID, googleClientSecret, hmacKey, proxyToken, allowedOrigin, allowLocalLoopback };
 }
 
 export function adminCookieHeader(token: string, maxAgeSeconds = ADMIN_SESSION_SECONDS): string {
@@ -51,12 +54,16 @@ export function assertAdminOrigin(headers: IncomingHttpHeaders, allowedOrigin: s
   if (headers.origin !== undefined && headers.origin !== allowedOrigin) throw new ServiceError('admin_origin_required', 403);
 }
 
-export async function exchangeAdminIdentity(services: AdminAuthServices, provider: Provider, token: string,
-  challengeID: string, verify: NonNullable<AdminAuthServices['identityVerifier']>): Promise<{ adminID: string; token: string }> {
+export async function exchangeAdminIdentity(services: AdminAuthServices, provider: Provider,
+  credentials: { idToken?: string; code?: string; redirectUri?: string }, challengeID: string,
+  verify: NonNullable<AdminAuthServices['identityVerifier']>): Promise<{ adminID: string; token: string }> {
   const nonce = (await services.db.query('SELECT nonce_hash FROM auth_challenges WHERE id=$1 AND expires_at>now() AND used_at IS NULL',
     [challengeID])).rows[0];
   if (!nonce) throw new ServiceError('invalid_challenge', 401);
-  const identity = await verify(provider, token, nonce.nonce_hash as string, services.config);
+  const identity = credentials.idToken !== undefined ?
+    await verify(provider, credentials.idToken, nonce.nonce_hash as string, services.config) :
+    provider === 'google' ? await verifyGoogleAuthorizationCode(services, credentials, nonce.nonce_hash as string, verify) :
+      (() => { throw new ServiceError('invalid_request'); })();
   const row = (await services.db.query('SELECT id, disabled_at FROM admins WHERE provider=$1 AND subject=$2',
     [identity.provider, identity.subject])).rows[0];
   // Generic refusal: no oracle about whether an identity exists or why it cannot enter.
@@ -75,6 +82,29 @@ export async function exchangeAdminIdentity(services: AdminAuthServices, provide
       VALUES($1,$2,$3,now()+interval '${ADMIN_SESSION_SECONDS} seconds')`, [randomUUID(), row.id, digest(adminToken)]);
   });
   return { adminID: row.id as string, token: adminToken };
+}
+
+/** Web panel login: exchange an OAuth authorization code at Google's token endpoint.
+ *  The id_token echoes the challenge nonce, so proof-of-possession stays server-bound. */
+export async function verifyGoogleAuthorizationCode(services: AdminAuthServices,
+  credentials: { code?: string; redirectUri?: string }, nonceHash: string,
+  verify: NonNullable<AdminAuthServices['identityVerifier']>) {
+  if (!services.config.googleClientID || services.config.googleClientSecret === undefined ||
+      typeof credentials.code !== 'string' || typeof credentials.redirectUri !== 'string')
+    throw new ServiceError('invalid_request');
+  const fetcher = services.tokenFetcher ?? fetch;
+  let idToken: string;
+  try {
+    const response = await fetcher('https://oauth2.googleapis.com/token', { method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ code: credentials.code, client_id: services.config.googleClientID,
+        client_secret: services.config.googleClientSecret, redirect_uri: credentials.redirectUri,
+        grant_type: 'authorization_code' }) });
+    const payload = await response.json() as { id_token?: string };
+    if (!response.ok || typeof payload.id_token !== 'string') throw new Error();
+    idToken = payload.id_token;
+  } catch { throw new ServiceError('invalid_identity_token', 401); }
+  return verify('google', idToken, nonceHash, services.config);
 }
 
 export async function exchangeSessionToken(services: AdminAuthServices, bearer: string): Promise<{ adminID: string; token: string }> {
