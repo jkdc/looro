@@ -153,7 +153,7 @@ import LearningCore
         if let selectedLesson {
             instructions = TeachingPolicy.lessonPractice(lesson: selectedLesson, language: language)
         } else {
-            instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.slowSpeech == true)
+            instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.effectiveSpeechRate() < 1.0)
         }
         let requestedMilliseconds = store.preferences.sessionMinutes * 60_000
         connectionTask = Task { [weak self] in

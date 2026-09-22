@@ -162,6 +162,7 @@ public struct Preferences: Codable, Sendable {
     public var hasOnboarded = false
     public var aiConsentVersion: Int?
     public var slowSpeech: Bool?
+    public var speechRate: Double?
     public var listeningPractice: Bool?
     public init() {}
 }
@@ -353,5 +354,13 @@ public enum ArchiveError: Error, LocalizedError {
         case .unsupportedLanguage: "This backup contains a language module that this version of Palique does not support."
         case .invalid: "This backup has invalid or duplicate records."
         }
+    }
+}
+
+/// Effective TTS multiplier: the explicit rate choice wins; legacy archives fall
+/// back to 0.8 when the old "slower speech" flag is set, otherwise normal.
+public extension Preferences {
+    func effectiveSpeechRate() -> Double {
+        speechRate ?? (slowSpeech == true ? 0.8 : 1.0)
     }
 }

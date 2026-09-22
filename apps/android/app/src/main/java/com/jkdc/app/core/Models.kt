@@ -120,8 +120,14 @@ data class Preferences(
     var learningLanguageID: String = LanguageRegistry.defaultID, var meaningVisible: Boolean = true,
     var meaningLanguage: String = "English", var sessionMinutes: Int = 15, var hiddenWords: List<String> = emptyList(),
     var interests: String = "", var hasOnboarded: Boolean = false, var aiConsentVersion: Int? = null,
-    var slowSpeech: Boolean? = null, var listeningPractice: Boolean? = null
+    var slowSpeech: Boolean? = null, var listeningPractice: Boolean? = null,
+    var speechRate: Double? = null
 )
+
+/** Effective TTS multiplier: the explicit rate choice wins; legacy archives fall
+    back to 0.8 when the old "slower speech" flag is set, otherwise normal. */
+fun Preferences.effectiveSpeechRate(): Double =
+    speechRate ?: if (slowSpeech == true) 0.8 else 1.0
 @Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf())
 class ArchiveError private constructor(val kind: Kind) : Exception() {
     enum class Kind { TOO_LARGE, UNSUPPORTED_VERSION, UNSUPPORTED_LANGUAGE, INVALID }

@@ -173,7 +173,8 @@ private struct LessonDetailView: View {
     private func read() {
         reader.read(lesson.title + "   " + lesson.intro.explanation.joined(separator: "   ")
             + "   " + lesson.intro.examples.map(\.text).joined(separator: "   "),
-            locale: coordinator.language.locale)
+            locale: coordinator.language.locale,
+            rate: Float(coordinator.store.preferences.effectiveSpeechRate()))
     }
 
     private func sectionHeading(_ text: String) -> some View {
@@ -186,11 +187,12 @@ private struct LessonDetailView: View {
 @Observable final class LessonReader {
     private let synthesizer = AVSpeechSynthesizer()
 
-    func read(_ text: String, locale: String) {
+    func read(_ text: String, locale: String, rate: Float = 1) {
         stop()
         guard AVSpeechSynthesisVoice(language: locale) != nil else { return }
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: locale)
+        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * rate
         synthesizer.speak(utterance)
     }
 

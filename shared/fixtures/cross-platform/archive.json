@@ -40,7 +40,8 @@
     "learningLanguageID": "en",
     "meaningLanguage": "Spanish",
     "meaningVisible": true,
-    "sessionMinutes": 15
+    "sessionMinutes": 15,
+    "speechRate": 0.8
   },
   "schemaVersion": 2,
   "sessions": [

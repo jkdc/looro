@@ -324,9 +324,16 @@ struct SettingsView: View {
                     Picker("Meaning language", selection: Binding(get: { store.preferences.meaningLanguage }, set: { coordinator.selectMeaningLanguage($0) })) {
                         ForEach(MeaningLanguages.all, id: \.self) { Text($0) }
                     }
-                    Toggle("Slower speech", isOn: Binding(get: { store.preferences.slowSpeech == true }, set: { value in
-                        store.updatePreferences { $0.slowSpeech = value ? true : nil }
-                    }))
+                    Picker("Speech rate", selection: Binding(get: {
+                        store.preferences.effectiveSpeechRate().description
+                    }, set: { value in
+                        if let rate = Double(value) { store.updatePreferences { $0.speechRate = rate } }
+                    })) {
+                        Text("Very slow").tag(0.6.description)
+                        Text("Slow").tag(0.8.description)
+                        Text("Normal").tag(1.0.description)
+                        Text("Fast").tag(1.2.description)
+                    }
                     .disabled(coordinator.isRunning)
                     Toggle("Listening practice", isOn: Binding(get: { store.preferences.listeningPractice == true }, set: { value in
                         store.updatePreferences { $0.listeningPractice = value ? true : nil }

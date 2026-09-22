@@ -111,9 +111,20 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                         vm.updatePreferences(prefs.copy(meaningLanguage = it))
                     }
                     SettingsDivider()
-                    SettingsSwitchRow(stringResource(R.string.settings_slow_speech), "settings-slow-speech",
-                        prefs.slowSpeech == true, !vm.isRunning) {
-                        vm.updatePreferences(prefs.copy(slowSpeech = if (it) true else null))
+                    val rate = prefs.speechRate ?: 1.0
+                    SettingsChoiceRow(stringResource(R.string.settings_speech_rate),
+                        stringResource(when (rate) {
+                            0.6 -> R.string.speech_rate_very_slow
+                            0.8 -> R.string.speech_rate_slow
+                            1.2 -> R.string.speech_rate_fast
+                            else -> R.string.speech_rate_normal
+                        }), com.jkdc.app.core.SpeechRates.idOf(prefs.speechRate),
+                        listOf("0.6" to stringResource(R.string.speech_rate_very_slow),
+                            "0.8" to stringResource(R.string.speech_rate_slow),
+                            "1.0" to stringResource(R.string.speech_rate_normal),
+                            "1.2" to stringResource(R.string.speech_rate_fast)),
+                        "settings-speech-rate", !vm.isRunning) {
+                        vm.updatePreferences(prefs.copy(speechRate = it.toDoubleOrNull()))
                     }
                     SettingsDivider()
                     Column(Modifier.fillMaxWidth()) {

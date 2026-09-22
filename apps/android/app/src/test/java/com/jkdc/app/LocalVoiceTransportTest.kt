@@ -136,7 +136,7 @@ class LocalVoiceTransportTest {
             frameSourceProvider = { source },
             frameDelayMs = 0,
         )
-        transport.slowSpeech = true
+        transport.speechRate = LocalVoiceTransport.TTS_SLOW_RATE
         runBlocking { transport.connect(FakeProvider(), "Be a coach", language = "en") }
         assertEquals(listOf(LocalVoiceTransport.TTS_SLOW_RATE), tts.rates)
         transport.close()

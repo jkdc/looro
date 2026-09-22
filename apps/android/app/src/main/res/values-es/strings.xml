@@ -232,7 +232,11 @@
     <string name="settings_silence_label">Silencio antes de que responda el coach (voz en el dispositivo)</string>
     <string name="settings_silence_hint">Tiempo extra para pensar: el turno se envía tras este silencio.</string>
     <string name="consent_decline_button">Ahora no</string>
-    <string name="settings_slow_speech">Voz más lenta</string>
+    <string name="settings_speech_rate">Velocidad de voz</string>
+    <string name="speech_rate_very_slow">Muy lenta</string>
+    <string name="speech_rate_slow">Lenta</string>
+    <string name="speech_rate_normal">Normal</string>
+    <string name="speech_rate_fast">Rápida</string>
     <string name="settings_listening_practice">Práctica de comprensión auditiva</string>
     <string name="settings_listening_practice_hint">Las conversaciones nuevas cuentan una historia corta sin subtítulos de significado — la historia escrita permanece en pantalla. Busca una palabra solo si la necesitas.</string>
     <string name="progress_section_title">Tu progreso</string>

@@ -788,6 +788,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             if (!lessonReader.initialize() || !lessonReader.setLanguage(language.locale)) {
                 lessonReading = false; return@launch
             }
+            lessonReader.setSpeechRate(archive.preferences.effectiveSpeechRate().toFloat())
             lessonReading = true
             try { lessonReader.speak(text) } finally { lessonReading = false }
         }
@@ -891,12 +892,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         (transport as? com.jkdc.app.core.voice.LocalVoiceTransport)?.apply {
             manualTurn = voiceManualTurnStore.get()
             silenceEndMs = voiceManualTurnStore.getSilenceEndMs()
-            slowSpeech = archive.preferences.slowSpeech == true
+            speechRate = archive.preferences.effectiveSpeechRate().toFloat()
         }
         newSession(true); state = "connecting"
         val id = session!!.id
         val module = language
-        val instructions = selectedLesson?.let { TeachingPolicy.lessonPractice(it, module) } ?: TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.slowSpeech == true)
+        val instructions = selectedLesson?.let { TeachingPolicy.lessonPractice(it, module) } ?: TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0)
         val history = ConversationHistory.messages(session)
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {

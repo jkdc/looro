@@ -60,8 +60,8 @@ class LocalVoiceTransport(
     /** Miliseconds of trailing silence that close an automatic turn (live-adjustable). */
     @Volatile var silenceEndMs: Long = 1_200
 
-    /** Learner-facing pace preference: slows the system TTS (the prompt carries the instruction for realtime engines). */
-    @Volatile var slowSpeech: Boolean = false
+    /** Learner-facing pace preference: multiplies the system TTS rate (the prompt carries the instruction for realtime engines). */
+    @Volatile var speechRate: Float = 1.0f
 
     /**
      * Voice barge-in while the assistant speaks. Gated on the device's AEC
@@ -160,7 +160,7 @@ class LocalVoiceTransport(
             onFailure?.invoke(TTS_UNAVAILABLE)
             return
         }
-        tts.setSpeechRate(if (slowSpeech) TTS_SLOW_RATE else TTS_NORMAL_RATE)
+        tts.setSpeechRate(speechRate)
         // Synthesize in the session language; a missing system voice degrades
         // to whatever the engine had (logged) rather than failing the session.
         if (!tts.setLanguage(sessionLanguage)) {
@@ -628,6 +628,8 @@ class LocalVoiceTransport(
         /** System-TTS speech rates for the learner-facing pace preference. */
         const val TTS_NORMAL_RATE = 1.0f
         const val TTS_SLOW_RATE = 0.8f
+        const val TTS_FAST_RATE = 1.2f
+        const val TTS_VERY_SLOW_RATE = 0.6f
 
         /** Partial transcription cadence and bounds (spoken-audio clock). */
         const val PARTIAL_MIN_SPEECH_MS = 1_000
