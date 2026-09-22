@@ -27,6 +27,9 @@ services:
       DATABASE_URL: postgresql://app:${POSTGRES_PASSWORD}@database:5432/app
       PUBLIC_ORIGIN: https://${API_DOMAIN:?Set the API domain}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      # Accounts admission (trusted-proxy caps for sign-in and account routes).
+      ACCOUNTS_HMAC_KEY: ${ACCOUNTS_HMAC_KEY:-}
+      ACCOUNTS_PROXY_TOKEN: ${ACCOUNTS_PROXY_TOKEN:-}
       GOOGLE_ANDROID_SERVER_CLIENT_ID: ${GOOGLE_ANDROID_SERVER_CLIENT_ID:-}
       GOOGLE_ANDROID_CLIENT_IDS: ${GOOGLE_ANDROID_CLIENT_IDS:-}
       APPLE_CLIENT_ID: ${APPLE_CLIENT_ID:-}
