@@ -14,7 +14,7 @@ const integration = (name: string, fn: () => Promise<void>) => test(name, { skip
 
 const CONFIG = { providerURL: 'http://provider.internal/v1/chat/completions', providerKey: 'server-key', maxTokens: 128 };
 
-integration('tokenProxyConfig requires both URL and key', () => {
+integration('tokenProxyConfig requires both URL and key', async () => {
   assert.equal(tokenProxyConfig({}), undefined);
   assert.throws(() => tokenProxyConfig({ PROXY_PROVIDER_URL: 'not a url', PROXY_PROVIDER_KEY: 'k' }), /absolute URL/);
   assert.equal(tokenProxyConfig({ PROXY_PROVIDER_URL: 'http://p/v1', PROXY_PROVIDER_KEY: 'k' })?.providerKey, 'k');
@@ -44,9 +44,10 @@ integration('relay meters provider usage at the active rate version and debits t
   const proxy = new TokenProxy(db, { ...CONFIG, providerURL: `http://127.0.0.1:${port}/v1/chat/completions` });
 
   const result = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi' }] });
+  const metering = result.payload.metering as { rateVersion: string; nanoUSDSettled: string };
   assert.equal(result.status, 200);
-  assert.equal(result.payload.metering.rateVersion, '2026-09-minimax-m');
-  assert.equal(result.payload.metering.nanoUSDSettled, '1500000');
+  assert.equal(metering.rateVersion, '2026-09-minimax-m');
+  assert.equal(metering.nanoUSDSettled, '1500000');
   const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
   assert.equal(BigInt(balance.balance_nano), 8_500_000n);
   const ledger = (await db.query('SELECT kind,balance_delta_nano FROM ledger WHERE account_id=$1 ORDER BY id', [account])).rows;
@@ -55,7 +56,8 @@ integration('relay meters provider usage at the active rate version and debits t
 
   // Balance floor: a call costing more than the balance settles at the balance (bounded grace), never negative.
   const second = await proxy.relay(account, { messages: [{ role: 'user', content: 'Hi again' }] });
-  assert.equal(second.payload.metering.nanoUSDSettled, '8500000');
+  const secondMetering = second.payload.metering as { nanoUSDSettled: string };
+  assert.equal(secondMetering.nanoUSDSettled, '8500000');
   const after = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
   assert.equal(BigInt(after.balance_nano), 0n);
 

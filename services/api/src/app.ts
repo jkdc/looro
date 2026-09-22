@@ -395,7 +395,7 @@ export function createApp(services: Services) {
     return exchangeIdentity(db, provider, stringField(body, 'idToken', 16_384), uuid(stringField(body, 'challengeID', 36)), services.auth, services.accounts?.identityVerifier, expectedAccountID);
   });
   app.get('/v1/account', async request => accountProfile(db, request.headers.authorization));
-  app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async request => {
+  app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async (request, reply) => {
     const proxy = services.tokenProxy;
     if (!proxy) throw new ServiceError('proxy_unavailable', 503);
     const account = await authenticate(db, request.headers.authorization);

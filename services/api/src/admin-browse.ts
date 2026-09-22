@@ -56,8 +56,8 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
     table: 'entitlements',
     description: 'Desbloqueo BYOK y origen de la compra (token-billing).',
     columns: {
-      account_id: column('uuid', uuidFilters), unlocked_at: column('timestamptz'),
-      unlock_source: column('text'), created_at: column('timestamptz')
+      account_id: column('uuid', uuidFilters), unlocked_at: column('timestamptz', []),
+      unlock_source: column('text', []), created_at: column('timestamptz', [])
     },
     orderable: ['created_at', 'account_id'], defaultOrder: { column: 'created_at', direction: 'desc' }
   },
@@ -65,8 +65,8 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
     table: 'rate_versions',
     description: 'Versiones de tarifa nanoUSD por millón de tokens (entrada/salida).',
     columns: {
-      id: column('text'), nano_per_million_input: column('bigint', numberFilters),
-      nano_per_million_output: column('bigint', numberFilters), valid_from: column('timestamptz')
+      id: column('text', []), nano_per_million_input: column('bigint', numberFilters),
+      nano_per_million_output: column('bigint', numberFilters), valid_from: column('timestamptz', [])
     },
     orderable: ['valid_from'], defaultOrder: { column: 'valid_from', direction: 'desc' }
   },
