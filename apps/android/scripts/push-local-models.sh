@@ -14,7 +14,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"   # apps/android
 SRC="$ROOT/local-models"
-PKG="com.jkdc.app.android"
+    # Derive the on-device application id from the canonical branding file (same
+    # source as deploy-local.sh), so the model always lands in the app's own
+    # external files directory.
+    PKG="$(sed -n 's/^ANDROID_APPLICATION_ID=//p' "$ROOT/../../branding.properties")"
 DEST="/sdcard/Android/data/$PKG/files/models"
 SERIAL="${SERIAL:-}"
 
