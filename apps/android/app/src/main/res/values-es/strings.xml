@@ -71,6 +71,7 @@
     <string name="talk_meaning_label">Significado</string>
     <string name="talk_status_written">Conversación escrita</string>
     <string name="talk_mic_start_desc">Iniciar conversación con micrófono</string>
+    <string name="talk_replay_button">Repetir en voz alta</string>
     <string name="talk_pause_label">Pausar</string>
     <string name="talk_resume_label">Reanudar</string>
     <string name="talk_mic_unmute_desc">Activar micrófono</string>

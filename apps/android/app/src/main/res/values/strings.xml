@@ -71,6 +71,7 @@
     <string name="talk_meaning_label">Meaning</string>
     <string name="talk_status_written">Written conversation</string>
     <string name="talk_mic_start_desc">Start conversation</string>
+    <string name="talk_replay_button">Repeat aloud</string>
     <string name="talk_pause_label">Pause</string>
     <string name="talk_resume_label">Resume</string>
     <string name="talk_mic_unmute_desc">Unmute microphone</string>

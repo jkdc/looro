@@ -189,6 +189,16 @@ fun TalkScreen(
                 modifier = Modifier.fillMaxWidth().testTag("target-caption"),
             )
             if (vm.language.id == "zh") PinyinHelp(caption)
+            if (assistantPassage != null && !replyPending && passage?.isNotBlank() == true) {
+                AppTextButton(onClick = { vm.replayReply(passage) },
+                    enabled = !vm.replaying && !vm.working && !vm.lessonReading,
+                    modifier = Modifier.padding(top = 2.dp).testTag("replay-reply")) {
+                    if (vm.replaying) CircularProgressIndicator(Modifier.size(14.dp), strokeWidth = 2.dp, color = AppColors.Ink)
+                    else AppIcon(AppSymbol.Wave, Modifier.size(15.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(stringResource(R.string.talk_replay_button), style = MaterialTheme.typography.bodySmall, color = AppColors.Ink)
+                }
+            }
         }
         if (vm.archive.preferences.meaningVisible && !replyPending &&
             vm.archive.preferences.meaningLanguage != vm.language.name) {

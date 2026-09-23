@@ -386,6 +386,12 @@ class LocalVoiceTransport(
         tts.stop()
     }
 
+    /** Speak a passage through the session TTS with the same mic suppression as
+        a reply, so the replay cannot feed the microphone. */
+    suspend fun replay(text: String) {
+        speakSuppressed(text)
+    }
+
     private suspend fun speakSuppressed(text: String): com.jkdc.app.engines.local.TtsStats? {
         val source = recorder
         val suppressMic = !bargeIn

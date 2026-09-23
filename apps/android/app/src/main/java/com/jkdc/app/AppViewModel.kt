@@ -771,6 +771,27 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         selectedLesson = lesson
     }
     fun lessonAttempts(lessonID: String): Int = archive.lessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: 0
+
+    /** Replay the tutor's last spoken passage. In a voice session it goes through
+        the transport (which pauses the mic, like a normal reply); otherwise the
+        card reader speaks it — no microphone is live in typed sessions. */
+    var replaying by mutableStateOf(false); private set
+    private var replayJob: Job? = null
+    fun replayReply(text: String) {
+        if (replaying || working || lessonReading || text.isBlank()) return
+        replaying = true
+        replayJob = viewModelScope.launch {
+            try {
+                if (state == "active" && isVoiceSession) {
+                    (transport as? com.jkdc.app.core.voice.LocalVoiceTransport)?.replay(text)
+                } else if (lessonReader.initialize() && lessonReader.setLanguage(language.locale)) {
+                    lessonReader.setSpeechRate(archive.preferences.effectiveSpeechRate().toFloat())
+                    lessonReader.speak(text)
+                }
+            } catch (_: CancellationException) {
+            } finally { replaying = false }
+        }
+    }
     /** Study-card read-aloud: local synthesis in the course language, independent of the conversation engine. */
     var lessonAudioOn by mutableStateOf(true); private set
     var lessonReading by mutableStateOf(false); private set
@@ -985,7 +1006,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private fun finish(final: Boolean) {
         if (!isRunning) return
         connectionJob?.cancel(); durationJob?.cancel(); closeJob?.cancel(); assessmentJob?.cancel()
-        actionJob?.cancel(); clearLookup(); languageCheckJob?.cancel()
+        actionJob?.cancel(); replayJob?.cancel(); clearLookup(); languageCheckJob?.cancel()
         delegations.values.toList().forEach { it.cancel() }; delegations.clear()
         transport.disconnect(); inputLevel = 0.0; outputLevel = 0.0; working = false; isMuted = false
         partialUserTranscript = null
