@@ -119,6 +119,7 @@ fun TalkScreen(
         compact -> minOf(150.dp, maxHeight * .24f) - 26.dp * readingSpace
         else -> 220.dp - 64.dp * readingSpace
     }
+    Box(Modifier.fillMaxSize()) {
     Column(
         Modifier
             .fillMaxSize()
@@ -233,34 +234,14 @@ fun TalkScreen(
             }
         }
         Spacer(Modifier.height(when { scrollPage -> 28.dp; compact -> 10.dp; else -> 24.dp }))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             RoundAction(AppSymbol.Captions, stringResource(R.string.talk_meaning_label),
                 selected = vm.archive.preferences.meaningVisible, onClick = vm::toggleMeaning)
-            Spacer(Modifier.width(when { scrollPage -> 12.dp; compact -> 20.dp; else -> 27.dp }))
-            val micDescription = stringResource(when {
-                vm.state == "active" && !vm.isVoiceSession -> R.string.talk_status_written
-                vm.state != "active" -> R.string.talk_mic_start_desc
-                vm.isMuted -> R.string.talk_mic_unmute_desc
-                else -> R.string.talk_mic_mute_desc
-            })
-            val micEnabled = !busy && (vm.state != "active" || vm.isVoiceSession)
-            Box(Modifier.padding(bottom = if (compact) 15.dp else 19.dp).size(if (compact) 66.dp else 76.dp)
-                .shadow(18.dp, CircleShape, ambientColor = AppColors.Orange.copy(alpha = .15f), spotColor = AppColors.Orange.copy(alpha = .25f))
-                .background(Brush.linearGradient(listOf(Color(0xFFFFBA7A), AppColors.Orange)), CircleShape).clip(CircleShape)
-                .testTag("start-conversation").semantics { contentDescription = micDescription }
-                .clickable(enabled = micEnabled, role = Role.Button) {
-                    if (vm.state == "active" && vm.isVoiceSession) vm.toggleMute() else onMicrophone()
-                }, contentAlignment = Alignment.Center) {
-                if (busy) CircularProgressIndicator(Modifier.size(25.dp), color = AppColors.Ink, strokeWidth = 2.dp)
-                else AppIcon(if (vm.isMuted && vm.state == "active") AppSymbol.MicOff else AppSymbol.Mic,
-                    modifier = Modifier.size(30.dp))
-            }
+            // Beginner mode: the check takes the centre slot the mic vacated.
             if (vm.voiceManualTurn && vm.isRunning && vm.isVoiceSession) {
-                Spacer(Modifier.width(when { scrollPage -> 12.dp; compact -> 20.dp; else -> 27.dp }))
                 RoundAction(AppSymbol.Check, stringResource(R.string.talk_end_turn_button),
                     enabled = !vm.working, onClick = vm::endVoiceTurn)
             }
-            Spacer(Modifier.width(when { scrollPage -> 12.dp; compact -> 20.dp; else -> 27.dp }))
             RoundAction(if (vm.isRunning) AppSymbol.End else AppSymbol.Transcript,
                 stringResource(if (vm.isRunning) R.string.talk_end_label else R.string.talk_transcript_label),
                 enabled = vm.session != null, onClick = { if (vm.isRunning) vm.end() else transcript = vm.session })
@@ -292,6 +273,38 @@ fun TalkScreen(
             AppTextButton(onClick = vm::resetConversation) { Text(stringResource(R.string.talk_new_conversation_button)) }
         }
         Spacer(Modifier.height(if (compact) 8.dp else 16.dp))
+    }
+    }
+    // Talk control: floats above the navigation bar with three readable modes —
+    // idle (orange mic), listening (green wave), paused (neutral, struck mic).
+    val talkActive = vm.state == "active" && vm.isVoiceSession
+    val listening = talkActive && !vm.isMuted
+    val micDescription = stringResource(when {
+        talkActive && vm.isMuted -> R.string.talk_mic_unmute_desc
+        talkActive -> R.string.talk_mic_mute_desc
+        else -> R.string.talk_mic_start_desc
+    })
+    val micEnabled = !busy && (vm.state != "active" || vm.isVoiceSession)
+    if (!(vm.state == "active" && !vm.isVoiceSession)) {
+        Box(Modifier.align(Alignment.BottomEnd).padding(end = 22.dp, bottom = 124.dp).size(64.dp)
+            .shadow(16.dp, CircleShape, ambientColor = AppColors.Orange.copy(alpha = .12f), spotColor = AppColors.Orange.copy(alpha = .2f))
+            .background(when {
+                listening -> Brush.linearGradient(listOf(AppColors.Sage, AppColors.Sage))
+                talkActive -> Brush.linearGradient(listOf(AppColors.Cream, AppColors.Cream))
+                else -> Brush.linearGradient(listOf(Color(0xFFFFBA7A), AppColors.Orange))
+            }, CircleShape).clip(CircleShape)
+            .testTag("start-conversation").semantics { contentDescription = micDescription }
+            .clickable(enabled = micEnabled, role = Role.Button) {
+                if (talkActive) vm.toggleMute() else onMicrophone()
+            }, contentAlignment = Alignment.Center) {
+            if (busy) CircularProgressIndicator(Modifier.size(25.dp), color = AppColors.Ink, strokeWidth = 2.dp)
+            else AppIcon(when {
+                listening -> AppSymbol.Wave
+                talkActive -> AppSymbol.MicOff
+                else -> AppSymbol.Mic
+            }, modifier = Modifier.size(28.dp),
+                color = if (talkActive && !listening) AppColors.Secondary else AppColors.Ink)
+        }
     }
     }
 
