@@ -63,6 +63,9 @@ class LocalVoiceTransport(
     /** Learner-facing pace preference: multiplies the system TTS rate (the prompt carries the instruction for realtime engines). */
     @Volatile var speechRate: Float = 1.0f
 
+    /** When the current turn's speech ended (or the turn was force-ended), for perceived-latency logs. */
+    @Volatile private var endOfSpeechAtMs = 0L
+
     /**
      * Voice barge-in while the assistant speaks. Gated on the device's AEC
      * capability: without it, loudspeaker echo could self-trigger. Frames
@@ -293,6 +296,7 @@ class LocalVoiceTransport(
                         val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= silenceEndMs
                         val capReached = speechMs > 0 && turnMs >= MAX_TURN_MS
                         if (turnComplete || capReached) {
+                            endOfSpeechAtMs = System.currentTimeMillis()
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
                             else log("turn cap reached (${turnMs} ms): closing the turn")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
@@ -371,14 +375,14 @@ class LocalVoiceTransport(
      * the LAST caller finishes, so one speaker's QUEUE_FLUSH of another never
      * reopens the capture window mid-playback.
      */
-    private suspend fun speakSuppressed(text: String) {
+    private suspend fun speakSuppressed(text: String): com.jkdc.app.engines.local.TtsStats? {
         val source = recorder
         val suppressMic = !bargeIn
         if (source != null && suppressMic) source.pause()
         speakingDepth.incrementAndGet()
         speaking = true
         try {
-            tts.speak(text)
+            return tts.speak(text)
         } finally {
             val remaining = speakingDepth.decrementAndGet()
             speaking = remaining > 0
@@ -397,6 +401,7 @@ class LocalVoiceTransport(
     private suspend fun processTurn(samples: FloatArray) {
         partialJob?.cancel()
         partialJob = null
+        endOfSpeechAtMs = System.currentTimeMillis()
         log("turn end: captured ${samples.size * 1000L / MicRecorder.SAMPLE_RATE} ms of audio")
         val t0 = System.currentTimeMillis()
         val trimmed = MicRecorder.trimSilence(samples)
@@ -466,7 +471,8 @@ class LocalVoiceTransport(
         log("TTS start")
         val ttsT0 = System.currentTimeMillis()
         try {
-            speakSuppressed(result.text)
+            val stats = speakSuppressed(result.text)
+            if (stats != null) log("TTS speaking in ${stats.startLatencyMs} ms — first audio ${System.currentTimeMillis() - endOfSpeechAtMs} ms after end of speech")
             log("TTS done in ${System.currentTimeMillis() - ttsT0} ms")
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
             log("TTS cancelled after ${System.currentTimeMillis() - ttsT0} ms")

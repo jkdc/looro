@@ -1094,6 +1094,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (!archive.preferences.meaningVisible || archive.preferences.aiConsentVersion != 1) return
         val current = session ?: return
         if (current.isListening) return
+        // A meaning in the learning language just repeats the passage on screen.
+        if (archive.preferences.meaningLanguage == language.name) { meaning = ""; translating = false; return }
         val passage = current.passages.lastOrNull { it.speaker == Speaker.assistant } ?: return
         val request = MeaningRequest(current.id, passage, current.languageID, archive.preferences.meaningLanguage)
         meanings.update(request, current.translations[request.cacheKey], utteranceComplete, conversationEnded = state == "ended")

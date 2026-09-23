@@ -178,7 +178,7 @@ fun TalkScreen(
             )
             if (vm.language.id == "zh") PinyinHelp(caption)
         }
-        if (vm.archive.preferences.meaningVisible) {
+        if (vm.archive.preferences.meaningVisible && vm.archive.preferences.meaningLanguage != vm.language.name) {
             Spacer(Modifier.height(10.dp))
             Column(
                 modifier = (if (scrollPage) Modifier else Modifier.weight(.72f, fill = false).passageScroll(meaningScroll))
