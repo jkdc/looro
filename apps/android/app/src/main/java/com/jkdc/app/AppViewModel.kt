@@ -806,10 +806,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun toggleMute() { if (state == "active" && voiceSession) { isMuted = !isMuted; transport.mute(isMuted) } }
 
     /** Beginner voice mode: the turn ends only when the user presses the button. */
-    val voiceManualTurn: Boolean
-        get() = BuildConfig.CONVERSATION_ENGINE != "openai" && voiceManualTurnStore.get()
+    var voiceManualTurn by androidx.compose.runtime.mutableStateOf(
+        BuildConfig.CONVERSATION_ENGINE != "openai" && voiceManualTurnStore.get())
+        private set
 
-    fun setVoiceManualTurn(enabled: Boolean) {
+    fun updateVoiceManualTurn(enabled: Boolean) {
+        voiceManualTurn = enabled
         voiceManualTurnStore.set(enabled)
         (transport as? com.jkdc.app.core.voice.LocalVoiceTransport)?.manualTurn = enabled
     }

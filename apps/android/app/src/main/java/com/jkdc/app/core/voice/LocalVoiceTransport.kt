@@ -405,7 +405,13 @@ class LocalVoiceTransport(
         log("turn end: captured ${samples.size * 1000L / MicRecorder.SAMPLE_RATE} ms of audio")
         val t0 = System.currentTimeMillis()
         val trimmed = MicRecorder.trimSilence(samples)
-        val durationMs = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
+        val maxSamples = MAX_STT_INPUT_MS * MicRecorder.SAMPLE_RATE / 1000
+        val capped = if (trimmed.size > maxSamples) {
+            val duration = trimmed.size * 1000L / MicRecorder.SAMPLE_RATE
+            log("STT input capped to the last $MAX_STT_INPUT_MS ms of $duration ms")
+            trimmed.copyOfRange(trimmed.size - maxSamples, trimmed.size)
+        } else trimmed
+        val durationMs = capped.size * 1000L / MicRecorder.SAMPLE_RATE
         if (durationMs < 250) {
             log("turn discarded: only ${durationMs} ms of usable audio (noise blip)")
             clearPartial()
@@ -415,7 +421,7 @@ class LocalVoiceTransport(
         // Note: the whisper JNI call cannot be interrupted on cancellation; the
         // recorder stop in stopLoop() is what protects the microphone here.
         val stt = try {
-            stt.transcribe(trimmed, sessionLanguage)
+            stt.transcribe(capped, sessionLanguage)
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
             throw cancelled
         } catch (e: Exception) {
@@ -629,7 +635,10 @@ class LocalVoiceTransport(
 
     companion object {
         const val SPEECH_START_MS = 300
-        const val MAX_TURN_MS = 30_000
+        const val MAX_TURN_MS = 20_000
+        /** Whisper's cost scales with input length; a capped turn is mostly
+            trailing noise, so STT never sees more than this trailing window. */
+        private const val MAX_STT_INPUT_MS = 18_000
 
         /** System-TTS speech rates for the learner-facing pace preference. */
         const val TTS_NORMAL_RATE = 1.0f

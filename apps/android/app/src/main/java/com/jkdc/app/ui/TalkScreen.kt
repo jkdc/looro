@@ -112,8 +112,10 @@ fun TalkScreen(
         if (longPassage || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
             vm.language.id == "zh" && com.jkdc.app.core.MandarinPinyin.containsHan(caption))) 1f else 0f, spring(dampingRatio = 1f, stiffness = 260f), label = "passage reading space",
     )
+    val conversing = vm.session?.passages?.isNotEmpty() == true
     val orbSize = when {
         scrollPage -> 170.dp
+        conversing -> minOf(104.dp, maxHeight * .14f)
         compact -> minOf(150.dp, maxHeight * .24f) - 26.dp * readingSpace
         else -> 220.dp - 64.dp * readingSpace
     }
@@ -171,6 +173,10 @@ fun TalkScreen(
                 .fillMaxWidth().testTag("target-passage-scroll"),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            if (replyPending) {
+                Text(stringResource(R.string.history_speaker_you), style = MaterialTheme.typography.labelSmall,
+                    color = AppColors.Secondary, modifier = Modifier.padding(bottom = 4.dp))
+            }
             Text(
                 if (passage == null) AnnotatedString(caption)
                 else captionLinks(caption, vm.language.id) { word ->
@@ -249,6 +255,11 @@ fun TalkScreen(
                 else AppIcon(if (vm.isMuted && vm.state == "active") AppSymbol.MicOff else AppSymbol.Mic,
                     modifier = Modifier.size(30.dp))
             }
+            if (vm.voiceManualTurn && vm.isRunning && vm.isVoiceSession) {
+                Spacer(Modifier.width(when { scrollPage -> 12.dp; compact -> 20.dp; else -> 27.dp }))
+                RoundAction(AppSymbol.Check, stringResource(R.string.talk_end_turn_button),
+                    enabled = !vm.working, onClick = vm::endVoiceTurn)
+            }
             Spacer(Modifier.width(when { scrollPage -> 12.dp; compact -> 20.dp; else -> 27.dp }))
             RoundAction(if (vm.isRunning) AppSymbol.End else AppSymbol.Transcript,
                 stringResource(if (vm.isRunning) R.string.talk_end_label else R.string.talk_transcript_label),
@@ -258,11 +269,6 @@ fun TalkScreen(
             style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary, modifier = Modifier.padding(top = 6.dp))
         if (vm.state == "active" || microphoneMessage != null) {
             Row(horizontalArrangement = Arrangement.spacedBy(18.dp), verticalAlignment = Alignment.CenterVertically) {
-                if (vm.voiceManualTurn) {
-                    AppTextButton(onClick = vm::endVoiceTurn, enabled = !vm.working) {
-                        Text(stringResource(R.string.talk_end_turn_button), style = MaterialTheme.typography.bodySmall, color = AppColors.Ink)
-                    }
-                }
                 AppTextButton(onClick = { typing = true }, enabled = !busy && !vm.working) {
                     AppIcon(AppSymbol.Keyboard, Modifier.size(15.dp)); Spacer(Modifier.width(6.dp))
                     Text(stringResource(R.string.talk_type_button), style = MaterialTheme.typography.bodySmall, color = AppColors.Ink)

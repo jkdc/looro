@@ -145,7 +145,7 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                             Text(stringResource(R.string.settings_voice_manual_turn),
                                 style = MaterialTheme.typography.bodyLarge, color = AppColors.Ink,
                                 modifier = Modifier.weight(1f).padding(end = 12.dp))
-                            Switch(checked = vm.voiceManualTurn, onCheckedChange = { vm.setVoiceManualTurn(it) })
+                            Switch(checked = vm.voiceManualTurn, onCheckedChange = { vm.updateVoiceManualTurn(it) })
                         }
                         SettingsDivider()
                         Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
