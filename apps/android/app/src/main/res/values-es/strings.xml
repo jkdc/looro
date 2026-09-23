@@ -202,6 +202,11 @@
     <string name="settings_backup_imported_toast">Copia importada</string>
 
     <!-- History -->
+    <string name="theme_switch_title">¿Terminar la conversación actual?</string>
+    <string name="theme_switch_body">Se guardará en tu historial y empezará «%1$s».</string>
+    <string name="theme_switch_confirm">Terminar y cambiar</string>
+    <string name="theme_switch_keep">Seguir con la actual</string>
+    <string name="conversations_continue">Continuar</string>
     <string name="history_section_title">Historial</string>
     <string name="history_empty">Tus conversaciones aparecerán aquí.</string>
     <string name="history_delete_session_confirm_title">¿Eliminar esta conversación?</string>

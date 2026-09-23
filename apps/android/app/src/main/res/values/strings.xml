@@ -202,6 +202,11 @@
     <string name="settings_backup_imported_toast">Backup imported</string>
 
     <!-- History -->
+    <string name="theme_switch_title">End the current conversation?</string>
+    <string name="theme_switch_body">It will be saved in your history and “%1$s” will start.</string>
+    <string name="theme_switch_confirm">End and switch</string>
+    <string name="theme_switch_keep">Keep the current one</string>
+    <string name="conversations_continue">Continue</string>
     <string name="history_section_title">Past conversations</string>
     <string name="history_empty">Your conversations will appear here.</string>
     <string name="history_delete_session_confirm_title">Delete this conversation and its learning evidence?</string>

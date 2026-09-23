@@ -75,6 +75,7 @@ fun AppRoot(
     var showConsent by rememberSaveable { mutableStateOf(false) }
     var showAccount by rememberSaveable { mutableStateOf(false) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
+    var pendingThemeSwitch by remember { mutableStateOf(false) }
     var showMinutes by rememberSaveable { mutableStateOf(false) }
     BackHandler(enabled = tab != 0 && !showSettings && !showAccount && !showMinutes) { tab = 0 }
     fun perform(action: CloudAction) {
@@ -151,14 +152,22 @@ fun AppRoot(
                             )
                             1 -> TopicsScreen(
                                 vm,
-                                onChoose = { tab = 0 },
+                                onChoose = {
+                                    if (vm.isRunning) pendingThemeSwitch = true
+                                    else withConsent(CloudAction.StartVoice)
+                                    tab = 0
+                                },
                                 onCurrentTopic = { query -> withConsent(CloudAction.CurrentTopic(query)) },
                             )
                             2 -> LearnScreen(vm,
                                 onPractice = { lessonID ->
                                     withConsent(CloudAction.StartLesson(lessonID)); tab = 0
                                 },
-                                onThemeChosen = { tab = 0 },
+                                onThemeChosen = {
+                                    if (vm.isRunning) pendingThemeSwitch = true
+                                    else withConsent(CloudAction.StartVoice)
+                                    tab = 0
+                                },
                             )
                             3 -> WordsScreen(vm)
                         }
@@ -170,6 +179,26 @@ fun AppRoot(
                 }
             }
 
+            if (pendingThemeSwitch) {
+                androidx.compose.material3.AlertDialog(
+                    onDismissRequest = { pendingThemeSwitch = false },
+                    title = { Text(stringResource(R.string.theme_switch_title)) },
+                    text = { Text(stringResource(R.string.theme_switch_body, vm.selectedTheme?.title ?: "")) },
+                    confirmButton = {
+                        androidx.compose.material3.TextButton(onClick = {
+                            pendingThemeSwitch = false
+                            vm.end()
+                            withConsent(CloudAction.StartVoice)
+                        }) { Text(stringResource(R.string.theme_switch_confirm)) }
+                    },
+                    dismissButton = {
+                        androidx.compose.material3.TextButton(onClick = { pendingThemeSwitch = false }) {
+                            Text(stringResource(R.string.theme_switch_keep))
+                        }
+                    },
+                )
+            }
+
             if (showSettings) {
                 ModalBottomSheet(onDismissRequest = { showSettings = false }, containerColor = AppColors.Cream,
                     sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
@@ -178,7 +207,9 @@ fun AppRoot(
                             vm.pendingCloudAction = null; showConsent = true
                         }, onAccount = if (account?.configuration != null) ({
                             account.refresh(); showAccount = true
-                        }) else null, onDismiss = { showSettings = false })
+                        }) else null, onResume = { id ->
+                            vm.resumeSession(id); showSettings = false; tab = 0
+                        }, onDismiss = { showSettings = false })
                     }
                 }
             }

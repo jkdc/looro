@@ -805,6 +805,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun toggleMute() { if (state == "active" && voiceSession) { isMuted = !isMuted; transport.mute(isMuted) } }
 
+    /** Reopen a past conversation as the active session. Continuation is typed
+        (voice always starts a fresh conversation); new turns append to the same
+        saved session, so its history keeps growing. */
+    fun resumeSession(id: String) {
+        if (isRunning || state == "connecting") return
+        val saved = archive.sessions.firstOrNull { it.id == id } ?: return
+        resetConversation()
+        selectedTheme = null; selectedLesson = null; topicResult = null
+        session = saved.copy(
+            fragments = saved.fragments.toMutableList(),
+            assessments = saved.assessments.toMutableList(),
+            translations = saved.translations.toMutableMap(),
+            topics = saved.topics.toMutableList())
+        voiceSession = false
+        state = "active"
+        lastActivity = nowSeconds()
+        scheduleTranslation()
+    }
+
     /** Conversation pause: stop the tutor's audio and stop listening, so the
         learner can hold a side conversation without the app processing it. */
     fun toggleVoicePause() {

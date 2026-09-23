@@ -76,7 +76,7 @@ import androidx.compose.material3.Switch
 
 @Composable
 fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit, onReviewConsent: () -> Unit,
-                   onAccount: (() -> Unit)? = null, onDismiss: () -> Unit = {}) {
+                   onAccount: (() -> Unit)? = null, onResume: (String) -> Unit = {}, onDismiss: () -> Unit = {}) {
     var advanced by rememberSaveable { mutableStateOf(false) }
     var keyDialog by rememberSaveable { mutableStateOf(false) }
     var deleteKey by rememberSaveable { mutableStateOf(false) }
@@ -330,7 +330,8 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
 
     if (keyDialog) KeyDialog(vm, onDismiss = { keyDialog = false })
     if (notices) NoticesDialog(onDismiss = { notices = false })
-    if (history) SettingsHistorySheet(vm, onDismiss = { history = false }, onSelect = { transcript = it }, onDelete = { deleteSession = it })
+    if (history) SettingsHistorySheet(vm, onDismiss = { history = false }, onSelect = { transcript = it }, onDelete = { deleteSession = it },
+                        onResume = { id -> history = false; onResume(id) })
     if (progress) SettingsProgressSheet(vm, onDismiss = { progress = false })
     if (permissionDetails) AlertDialog(onDismissRequest = { permissionDetails = false },
         title = { Text(stringResource(R.string.settings_section_ai_permission)) },
@@ -364,7 +365,7 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SettingsHistorySheet(vm: AppViewModel, onDismiss: () -> Unit, onSelect: (SessionRecord) -> Unit, onDelete: (SessionRecord) -> Unit) {
+private fun SettingsHistorySheet(vm: AppViewModel, onDismiss: () -> Unit, onSelect: (SessionRecord) -> Unit, onDelete: (SessionRecord) -> Unit, onResume: (String) -> Unit = {}) {
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = AppColors.Cream,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxHeight(.9f)) {
@@ -382,6 +383,8 @@ private fun SettingsHistorySheet(vm: AppViewModel, onDismiss: () -> Unit, onSele
                             Text("${LanguageRegistry.get(session.languageID)?.name ?: session.languageID} · ${formatDate(session.startedAt)}",
                                 color = AppColors.Secondary, style = MaterialTheme.typography.bodySmall)
                         }
+                        SettingsDivider()
+                        SettingsRow(stringResource(R.string.conversations_continue), enabled = !vm.isRunning, onClick = { onResume(session.id) })
                         SettingsDivider()
                         SettingsRow(stringResource(R.string.common_delete), enabled = !vm.isRunning, tint = AppColors.Red, onClick = { onDelete(session) })
                     }
