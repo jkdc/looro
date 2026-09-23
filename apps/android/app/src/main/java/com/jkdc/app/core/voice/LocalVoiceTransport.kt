@@ -472,7 +472,7 @@ class LocalVoiceTransport(
         val ttsT0 = System.currentTimeMillis()
         try {
             val stats = speakSuppressed(result.text)
-            if (stats != null) log("TTS speaking in ${stats.startLatencyMs} ms — first audio ${System.currentTimeMillis() - endOfSpeechAtMs} ms after end of speech")
+            if (stats != null) log("TTS speaking in ${stats.startLatencyMs} ms — first audio ${(ttsT0 + stats.startLatencyMs) - endOfSpeechAtMs} ms after end of speech")
             log("TTS done in ${System.currentTimeMillis() - ttsT0} ms")
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
             log("TTS cancelled after ${System.currentTimeMillis() - ttsT0} ms")

@@ -88,7 +88,12 @@ fun TalkScreen(
     var lookupSentence by rememberSaveable { mutableStateOf("") }
     var transcript by remember { mutableStateOf<SessionRecord?>(null) }
     val assistantPassage = vm.session?.passages?.lastOrNull { it.speaker == Speaker.assistant }
-    val passage = assistantPassage?.text
+    val userPassage = vm.session?.passages?.lastOrNull { it.speaker == Speaker.user }
+    // While the tutor's reply is pending, the learner's own transcription takes
+    // the big caption: confirmation the turn was heard beats a stale reply.
+    val replyPending = userPassage != null &&
+        (assistantPassage == null || userPassage.startMS > assistantPassage.startMS)
+    val passage = if (replyPending) userPassage?.text else assistantPassage?.text
     val caption = passage?.takeIf { it.isNotBlank() } ?: vm.language.greeting
     val busy = vm.state == "connecting" || vm.state == "closing"
     val targetScroll = remember(assistantPassage?.id) { ScrollState(0) }
@@ -139,7 +144,7 @@ fun TalkScreen(
         Box(Modifier.fillMaxWidth().padding(top = if (compact) 8.dp else 12.dp), contentAlignment = Alignment.Center) {
             Text(statusText(vm.state, vm.isMuted, vm.isVoiceSession), style = MaterialTheme.typography.bodySmall,
                 color = AppColors.Secondary, modifier = Modifier.testTag("conversation-status"))
-            if (assistantPassage != null && passage?.isNotBlank() == true) {
+            if (assistantPassage != null && !replyPending && passage?.isNotBlank() == true) {
                 Box(Modifier.matchParentSize(), contentAlignment = Alignment.CenterEnd) {
                     ReportUtteranceAction(onClick = {
                         vm.session?.id?.let { vm.reportUtterance(it, assistantPassage.id) }
@@ -178,7 +183,8 @@ fun TalkScreen(
             )
             if (vm.language.id == "zh") PinyinHelp(caption)
         }
-        if (vm.archive.preferences.meaningVisible && vm.archive.preferences.meaningLanguage != vm.language.name) {
+        if (vm.archive.preferences.meaningVisible && !replyPending &&
+            vm.archive.preferences.meaningLanguage != vm.language.name) {
             Spacer(Modifier.height(10.dp))
             Column(
                 modifier = (if (scrollPage) Modifier else Modifier.weight(.72f, fill = false).passageScroll(meaningScroll))
@@ -202,7 +208,7 @@ fun TalkScreen(
             }
             }
         }
-        vm.session?.passages?.lastOrNull { it.speaker == Speaker.user }?.let { user ->
+        if (!replyPending) vm.session?.passages?.lastOrNull { it.speaker == Speaker.user }?.let { user ->
             Row(Modifier.padding(top = 3.dp).testTag("user-caption"), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.history_speaker_you), style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                 Text(user.text.takeLast(160), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary,
