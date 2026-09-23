@@ -805,6 +805,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun toggleMute() { if (state == "active" && voiceSession) { isMuted = !isMuted; transport.mute(isMuted) } }
 
+    /** Conversation pause: stop the tutor's audio and stop listening, so the
+        learner can hold a side conversation without the app processing it. */
+    fun toggleVoicePause() {
+        if (state != "active" || !isVoiceSession) return
+        val pausing = !isMuted
+        if (pausing) (transport as? com.jkdc.app.core.voice.LocalVoiceTransport)?.stopPlayback()
+        toggleMute()
+    }
+
     /** Beginner voice mode: the turn ends only when the user presses the button. */
     var voiceManualTurn by androidx.compose.runtime.mutableStateOf(
         BuildConfig.CONVERSATION_ENGINE != "openai" && voiceManualTurnStore.get())

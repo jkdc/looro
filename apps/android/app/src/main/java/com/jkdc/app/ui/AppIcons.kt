@@ -18,7 +18,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 enum class AppSymbol { Wave, Themes, Words, Settings, Mic, MicOff, Captions, Transcript, End,
-    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music }
+    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music, Pause, Play }
 
 /** Original, consistently weighted artwork; no platform-dependent text glyphs. */
 @Composable
@@ -27,6 +27,7 @@ fun AppIcon(symbol: AppSymbol, modifier: Modifier = Modifier, color: Color = App
     Canvas(modifier.size(24.dp).then(if (description == null) Modifier else Modifier.semantics { contentDescription = description })) {
         withTransform({ scale(size.width / 24f, size.height / 24f, Offset.Zero) }) {
             val stroke = Stroke(1.65f, cap = StrokeCap.Round, join = StrokeJoin.Round)
+            fun drawSymbol(symbol: AppSymbol) {}
             fun line(x1: Float, y1: Float, x2: Float, y2: Float) = drawLine(color, Offset(x1,y1), Offset(x2,y2), stroke.width, StrokeCap.Round)
             fun path(block: Path.() -> Unit) = drawPath(Path().apply(block), color, style = stroke)
             when (symbol) {
@@ -88,6 +89,8 @@ fun AppIcon(symbol: AppSymbol, modifier: Modifier = Modifier, color: Color = App
                     path { moveTo(3f,8f); quadraticTo(6f,13f,9f,8f) }; path { moveTo(19f,21f); lineTo(19f,3f); cubicTo(12f,8f,14f,14f,19f,14f) } }
                 AppSymbol.Music -> { path { moveTo(9f,18f); lineTo(9f,5f); lineTo(21f,2f); lineTo(21f,15f) }
                     drawOval(color,Offset(3f,16f),Size(6f,5f)); drawOval(color,Offset(15f,13f),Size(6f,5f)); line(9f,9f,21f,6f) }
+                AppSymbol.Pause -> { line(9f,6f,9f,18f); line(15f,6f,15f,18f) }
+                AppSymbol.Play -> path { moveTo(8f,5f); lineTo(19f,12f); lineTo(8f,19f); close() }
             }
         }
     }

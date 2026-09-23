@@ -134,7 +134,9 @@ private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
                          onPractice: (String) -> Unit, onTheme: (ConversationTheme) -> Unit) {
     val unit = CourseRegistry.all.flatMap { it.units }.firstOrNull { u -> u.lessons.any { it.id == lesson.id } }
     LaunchedEffect(lesson.id, vm.lessonAudioOn) {
-        if (vm.lessonAudioOn) vm.readLessonCard(lesson.title, *lesson.intro.explanation.toTypedArray(),
+        // A live practice session is listening: reading the card aloud would feed
+        // the microphone and loop the conversation.
+        if (vm.lessonAudioOn && !vm.isRunning) vm.readLessonCard(lesson.title, *lesson.intro.explanation.toTypedArray(),
             *lesson.intro.examples.map { it.text }.toTypedArray())
     }
     Column(Modifier.fillMaxSize().testTag("lesson-screen").padding(horizontal = 24.dp)) {

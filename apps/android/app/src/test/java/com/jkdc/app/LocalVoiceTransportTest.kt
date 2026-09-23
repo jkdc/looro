@@ -597,11 +597,12 @@ class LocalVoiceTransportTest {
     }
 
     @Test
-    fun `manual mode still enforces the 30 second turn cap`() {
+    fun `manual mode never auto-processes and only the button ends a turn`() {
         val source = FakeFrameSource()
         val engine = FakeTeachingClient()
+        val scope = CoroutineScope(Dispatchers.IO)
         val transport = LocalVoiceTransport(
-            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            null as android.content.Context?, scope,
             stt(createTempDir(), FakeWhisperRuntime()), engine, FakeTts(),
             frameSourceProvider = { source }, frameDelayMs = 0,
         )
@@ -609,23 +610,27 @@ class LocalVoiceTransportTest {
         transport.onEvent = { }
         runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
 
-        // 250 frames of loud speech = 32 s with no endTurn() call: the safety
-        // cap, not the user, must close the turn, keeping the buffer bounded
-        // (~30 s) instead of growing for minutes.
+        // 250 loud frames = 32 s of speech: below the 60 s manual safety cap the
+        // turn must NOT auto-process — previously ambient noise rode the cap and
+        // re-processed the app's own voice in a loop.
         repeat(250) { source.queue.add(speech()) }
-        val deadline = System.currentTimeMillis() + 5_000
-        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
-        assertEquals("the manual-mode cap must auto-process the turn", 1, engine.received.size)
+        Thread.sleep(500)
+        assertEquals("manual mode must not auto-process below the safety cap", 0, engine.received.size)
 
-        // The cap re-arms: the next 30 s form a second bounded turn. Wait for
-        // the post-turn mic resume first — frames queued during the (fake)
-        // playback are stale TTS-guard audio and get drained.
+        // Only the end-turn button (the beginner-mode contract) closes the turn.
+        transport.endTurn()
+        val deadline2 = System.currentTimeMillis() + 5_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < deadline2) Thread.sleep(25)
+        assertEquals("endTurn must process the open turn", 1, engine.received.size)
+
+        // The idle window after the turn resets silently: silence must not
+        // produce a ghost turn.
         val resumed = System.currentTimeMillis() + 5_000
         while (source.resumeCount < 1 && System.currentTimeMillis() < resumed) Thread.sleep(25)
-        repeat(250) { source.queue.add(speech()) }
-        val deadline2 = System.currentTimeMillis() + 5_000
-        while (engine.received.size < 2 && System.currentTimeMillis() < deadline2) Thread.sleep(25)
-        assertEquals(2, engine.received.size)
+        repeat(170) { source.queue.add(silence()) }
+        Thread.sleep(1_500)
+        assertEquals("an idle manual window must reset without processing", 1, engine.received.size)
+        scope.cancel()
     }
 
     @Test

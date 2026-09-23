@@ -294,11 +294,15 @@ class LocalVoiceTransport(
                             trailingSilenceMs += frameMs
                         }
                         val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= silenceEndMs
-                        val capReached = speechMs > 0 && turnMs >= MAX_TURN_MS
-                        if (turnComplete || capReached) {
+                        // Manual mode never auto-closes: ambient noise kept riding the
+                        // cap and re-processing the app's own voice in a loop.
+                        val capReached = !manualTurn && speechMs > 0 && turnMs >= MAX_TURN_MS
+                        val manualSafety = manualTurn && turnMs >= MANUAL_SAFETY_TURN_MS
+                        if (turnComplete || capReached || manualSafety) {
                             endOfSpeechAtMs = System.currentTimeMillis()
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
-                            else log("turn cap reached (${turnMs} ms): closing the turn")
+                            else if (capReached) log("turn cap reached (${turnMs} ms): closing the turn")
+                            else log("manual safety cap (${turnMs} ms): closing the turn")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                             speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
                             lastPartialClockMs = 0
@@ -310,10 +314,12 @@ class LocalVoiceTransport(
                     } else {
                         partialClockMs = turnMs
                         if (turnMs >= MAX_TURN_MS) {
-                            // Safety cap (both modes): a forgotten open manual turn
-                            // must not buffer audio unbounded.
-                            endBufferedTurn("turn cap reached in manual mode (${turnMs} ms): closing the turn")
-                            continue
+                            // Manual mode never auto-processes: idle noise rode the
+                            // cap and looped the conversation. Reset the window —
+                            // the end-turn button is what closes a manual turn.
+                            speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                            lastPartialClockMs = 0
+                            log("manual turn window reset (idle) — press the button to end a turn")
                         }
                     }
                     maybeEmitPartial(speech, partialClockMs)
@@ -375,6 +381,11 @@ class LocalVoiceTransport(
      * the LAST caller finishes, so one speaker's QUEUE_FLUSH of another never
      * reopens the capture window mid-playback.
      */
+    /** Pause: stop any in-flight TTS playback (the mic pause is mute's job). */
+    fun stopPlayback() {
+        tts.stop()
+    }
+
     private suspend fun speakSuppressed(text: String): com.jkdc.app.engines.local.TtsStats? {
         val source = recorder
         val suppressMic = !bargeIn
@@ -639,6 +650,8 @@ class LocalVoiceTransport(
         /** Whisper's cost scales with input length; a capped turn is mostly
             trailing noise, so STT never sees more than this trailing window. */
         private const val MAX_STT_INPUT_MS = 18_000
+        /** Manual-mode safety: even a real open turn must eventually close. */
+        private const val MANUAL_SAFETY_TURN_MS = 60_000
 
         /** System-TTS speech rates for the learner-facing pace preference. */
         const val TTS_NORMAL_RATE = 1.0f
