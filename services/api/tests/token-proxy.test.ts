@@ -50,7 +50,8 @@ integration('relay meters provider usage at the active rate version and debits t
   assert.equal(metering.nanoUSDSettled, '1500000');
   const balance = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
   assert.equal(BigInt(balance.balance_nano), 8_500_000n);
-  const ledger = (await db.query('SELECT kind,balance_delta_nano FROM ledger WHERE account_id=$1 ORDER BY id', [account])).rows;
+  // ledger.id is a random UUID: order chronologically, never by id.
+  const ledger = (await db.query('SELECT kind,balance_delta_nano FROM ledger WHERE account_id=$1 ORDER BY created_at, id', [account])).rows;
   assert.equal(ledger.at(-1).kind, 'settle');
   assert.equal(BigInt(ledger.at(-1).balance_delta_nano), -1_500_000n);
 
