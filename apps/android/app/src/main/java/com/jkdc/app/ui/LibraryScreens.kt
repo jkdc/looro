@@ -201,7 +201,7 @@ private fun CurrentTopicDialog(
 }
 
 @Composable
-fun WordsScreen(vm: AppViewModel) {
+fun WordsScreen(vm: AppViewModel, onOpenLessons: () -> Unit = {}, onOpenTalk: () -> Unit = {}, onLookupTerm: (String) -> Unit = {}) {
     var search by rememberSaveable { mutableStateOf("") }
     var selected by remember { mutableStateOf<WordState?>(null) }
     var practising by rememberSaveable { mutableStateOf(false) }
@@ -213,10 +213,10 @@ fun WordsScreen(vm: AppViewModel) {
     ) {
         item { PageHeading(stringResource(R.string.words_eyebrow, vm.language.name), stringResource(R.string.words_title), stringResource(R.string.words_subtitle), Modifier.padding(top = 20.dp)) }
         item {
-            Button(onClick = { practising = true }, enabled = dueCount > 0,
+            Button(onClick = { practising = true }, enabled = vm.learner.words.isNotEmpty(),
                 modifier = Modifier.fillMaxWidth().testTag("words-practice"),
                 colors = ButtonDefaults.buttonColors(containerColor = AppColors.Sage, contentColor = AppColors.Ink)) {
-                Text(stringResource(R.string.practice_button, dueCount))
+                Text(stringResource(if (dueCount > 0) R.string.practice_button else R.string.practice_button_extra, dueCount))
             }
         }
         item {
@@ -250,30 +250,6 @@ fun WordsScreen(vm: AppViewModel) {
         item {
             Text(stringResource(R.string.words_recall_note), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
         }
-        item {
-            Text(stringResource(R.string.words_expressions_heading), style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.semantics { heading() })
-        }
-        val expressions = vm.notebookExpressions()
-        if (expressions.isEmpty()) item {
-            Text(stringResource(R.string.words_expressions_empty), style = MaterialTheme.typography.bodyMedium, color = AppColors.Secondary)
-        } else items(expressions, key = { it.text }) { expression ->
-            Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), color = AppColors.Butter) {
-                Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(expression.text, style = MaterialTheme.typography.titleLarge)
-                        Text(expression.meaning, color = AppColors.Secondary)
-                    }
-                    Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(7.dp)) {
-                        RecallBars(expression.bars)
-                        androidx.compose.material3.TextButton(onClick = { vm.removeExpression(expression.text) },
-                            modifier = Modifier.testTag("expression-remove-" + expression.text)) {
-                            Text(stringResource(R.string.words_expression_remove))
-                        }
-                    }
-                }
-            }
-        }
         if (vm.learner.capabilities.isNotEmpty()) item {
             Surface(shape = RoundedCornerShape(24.dp), color = AppColors.Butter) {
                 Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(9.dp)) {
@@ -292,8 +268,14 @@ fun WordsScreen(vm: AppViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun WritingPracticeSheet(vm: AppViewModel, onDismiss: () -> Unit) {
-    // Due words, earliest first, capped per drill; attempts are not stored in this change.
-    val due = remember { vm.learner.words.filter { it.dueAt < com.jkdc.app.core.nowSeconds() }.sortedBy { it.dueAt }.take(10) }
+    // Due words first (earliest first, capped per drill); with nothing due the
+    // "extra practice" mode drills the whole collection instead. Attempts are
+    // not stored in this change.
+    val due = remember {
+        val now = com.jkdc.app.core.nowSeconds()
+        val pending = vm.learner.words.filter { it.dueAt < now }.sortedBy { it.dueAt }
+        (if (pending.isNotEmpty()) pending else vm.learner.words.sortedBy { it.dueAt }).take(10)
+    }
     var index by rememberSaveable { mutableStateOf(0) }
     var answer by rememberSaveable { mutableStateOf("") }
     var missed by rememberSaveable { mutableStateOf(false) }

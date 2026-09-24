@@ -100,6 +100,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var errorNeedsAccountSignIn by mutableStateOf(false); private set
     var notice by mutableStateOf<String?>(null); private set
     var meaning by mutableStateOf(""); private set
+    var pendingLookupOpen by mutableStateOf(false)
     var translating by mutableStateOf(false); private set
     var meaningFailed by mutableStateOf(false); private set
     var working by mutableStateOf(false); private set
@@ -1300,6 +1301,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun lookup(word: String, sentence: String) {
         if (!cloudReady() || word.isBlank()) return
+        pendingLookupOpen = true
         clearLookup()
         val token = generation; val id = session?.id; val request = lookupGeneration
         lookupLoading = true

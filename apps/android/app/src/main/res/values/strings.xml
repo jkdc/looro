@@ -262,6 +262,12 @@
     <string name="progress_bar_steady">Steady</string>
     <string name="progress_last14">Last 14 days</string>
     <string name="progress_capabilities">Can-do milestones: %1$d</string>
+    <string name="practice_button_extra">Practise writing (extra — nothing due)</string>
+    <string name="words_lookup_cta">Look up “%1$s” with AI</string>
+    <string name="words_source_lesson">From a lesson</string>
+    <string name="words_source_lookup">Saved by you</string>
+    <string name="words_empty_cta_lessons">Practise a lesson</string>
+    <string name="words_empty_cta_talk">Start talking</string>
     <string name="practice_button">Practise writing (%1$d due)</string>
     <string name="practice_title">Writing practice</string>
     <string name="practice_no_due_words">No words are due right now. Have a conversation, and the words will come back when they are ready.</string>

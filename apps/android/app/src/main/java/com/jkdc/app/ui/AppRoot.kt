@@ -169,7 +169,11 @@ fun AppRoot(
                                     tab = 0
                                 },
                             )
-                            3 -> WordsScreen(vm)
+                            3 -> WordsScreen(vm,
+                                onOpenLessons = { tab = 2 },
+                                onOpenTalk = { tab = 0 },
+                                onLookupTerm = { term -> withConsent(CloudAction.Lookup(term, "")); tab = 0 },
+                            )
                         }
                     }
                     Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(108.dp)

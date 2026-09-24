@@ -319,6 +319,9 @@ fun TalkScreen(
     }
 
     if (typing) TypedReplySheet(vm.language.name, vm.working, onSendTyped, onDismiss = { typing = false })
+    androidx.compose.runtime.LaunchedEffect(vm.pendingLookupOpen) {
+        if (vm.pendingLookupOpen && !lookup) { lookup = true; vm.pendingLookupOpen = false }
+    }
     if (lookup) {
         var lookupSaved by remember(lookupWord) { mutableStateOf(false) }
         WordLookupSheet(lookupWord, lookupSentence, vm.language.id, vm.lookupResult, vm.lookupError, vm.lookupLoading,
