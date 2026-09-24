@@ -1,22 +1,21 @@
-import { randomBytes, randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from 'node:crypto';
 import type { IncomingHttpHeaders } from 'node:http';
-import { digest, verifyIdentity, type Provider } from './auth.js';
+import { digest } from './auth.js';
 import { transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
 
-export interface AdminAuthConfig { googleClientID?: string; appleClientID?: string; googleClientSecret?: string;
-  hmacKey: string; proxyToken: string; allowedOrigin: string; allowLocalLoopback: boolean }
-export interface AdminAuthServices { db: Database; config: AdminAuthConfig;
-  identityVerifier?: typeof verifyIdentity; tokenFetcher?: typeof fetch }
+export interface AdminAuthConfig { hmacKey: string; proxyToken: string; allowedOrigin: string; allowLocalLoopback: boolean }
+export interface AdminAuthServices { db: Database; config: AdminAuthConfig }
 
 export const ADMIN_COOKIE = 'admin_session';
 export const ADMIN_SESSION_SECONDS = 8 * 3_600;
 const MAX_LIVE_SESSIONS = 3;
 
 export function adminAuthConfig(env: NodeJS.ProcessEnv): AdminAuthConfig | undefined {
-  const googleClientID = env.GOOGLE_ADMIN_CLIENT_ID, appleClientID = env.APPLE_ADMIN_CLIENT_ID;
-  if (!googleClientID && !appleClientID) return undefined;
   const hmacKey = env.ADMIN_HMAC_KEY ?? '', proxyToken = env.ADMIN_PROXY_TOKEN ?? '';
+  // The panel only exists when its operator secrets are provisioned; identity
+  // providers play no part — operators are accounts created locally via the CLI.
+  if (!hmacKey && !proxyToken && !env.ADMIN_PUBLIC_ORIGIN) return undefined;
   if (!/^[a-f0-9]{64}$/.test(hmacKey) || !/^[a-f0-9]{64}$/.test(proxyToken) || hmacKey === proxyToken)
     throw new Error('Admin auth requires separate random 32-byte hex secrets.');
   // The panel origin is the CSRF anchor: every mutating admin route compares Origin against it.
@@ -26,10 +25,7 @@ export function adminAuthConfig(env: NodeJS.ProcessEnv): AdminAuthConfig | undef
   const allowLocalLoopback = env.ADMIN_ALLOW_LOCAL_LOOPBACK === 'true';
   if (!httpsOrigin && !(loopbackOrigin && allowLocalLoopback))
     throw new Error('ADMIN_PUBLIC_ORIGIN must be an exact https origin (or loopback with local loopback allowed).');
-  const googleClientSecret = env.GOOGLE_ADMIN_CLIENT_SECRET;
-  if (googleClientID && googleClientSecret !== undefined && !googleClientSecret)
-    throw new Error('GOOGLE_ADMIN_CLIENT_SECRET cannot be empty.');
-  return { googleClientID, appleClientID, googleClientSecret, hmacKey, proxyToken, allowedOrigin, allowLocalLoopback };
+  return { hmacKey, proxyToken, allowedOrigin, allowLocalLoopback };
 }
 
 export function adminCookieHeader(token: string, maxAgeSeconds = ADMIN_SESSION_SECONDS): string {
@@ -54,26 +50,46 @@ export function assertAdminOrigin(headers: IncomingHttpHeaders, allowedOrigin: s
   if (headers.origin !== undefined && headers.origin !== allowedOrigin) throw new ServiceError('admin_origin_required', 403);
 }
 
-export async function exchangeAdminIdentity(services: AdminAuthServices, provider: Provider,
-  credentials: { idToken?: string; code?: string; redirectUri?: string }, challengeID: string,
-  verify: NonNullable<AdminAuthServices['identityVerifier']>): Promise<{ adminID: string; token: string }> {
+/* ---- local operator credentials (the only web login) ---- */
+
+const SCRYPT_PARAMS = 'scrypt$N=16384,r=8,p=1';
+
+export function hashAdminPassword(password: string): string {
+  const salt = randomBytes(16);
+  const key = scryptSync(password, salt, 32, { N: 16384, r: 8, p: 1 });
+  return `${SCRYPT_PARAMS}$${salt.toString('hex')}$${key.toString('hex')}`;
+}
+
+export function verifyAdminPassword(password: string, stored: string): boolean {
+  const parts = stored.split('$');
+  if (parts.length !== 4 || parts[0] !== 'scrypt' || parts[1] !== 'N=16384,r=8,p=1') return false;
+  const salt = Buffer.from(parts[2] ?? '', 'hex'), key = Buffer.from(parts[3] ?? '', 'hex');
+  if (salt.length !== 16 || key.length !== 32) return false;
+  return timingSafeEqual(key, scryptSync(password, salt, 32, { N: 16384, r: 8, p: 1 }));
+}
+
+/** Web panel login with locally provisioned credentials. The challenge stays
+ *  single-use, and unknown users burn a dummy verification so response timing
+ *  does not reveal whether the operator account exists. */
+export async function localAdminLogin(services: AdminAuthServices,
+  credentials: { username?: string; password?: string }, challengeID: string): Promise<{ adminID: string; token: string }> {
+  const username = credentials.username, password = credentials.password;
+  if (typeof username !== 'string' || !/^[a-z0-9._-]{3,64}$/.test(username) ||
+      typeof password !== 'string' || !password || password.length > 1024)
+    throw new ServiceError('invalid_credentials', 401);
   const nonce = (await services.db.query('SELECT nonce_hash FROM auth_challenges WHERE id=$1 AND expires_at>now() AND used_at IS NULL',
     [challengeID])).rows[0];
   if (!nonce) throw new ServiceError('invalid_challenge', 401);
-  const identity = credentials.idToken !== undefined ?
-    await verify(provider, credentials.idToken, nonce.nonce_hash as string, services.config) :
-    provider === 'google' ? await verifyGoogleAuthorizationCode(services, credentials, nonce.nonce_hash as string, verify) :
-      (() => { throw new ServiceError('invalid_request'); })();
-  const row = (await services.db.query('SELECT id, disabled_at FROM admins WHERE provider=$1 AND subject=$2',
-    [identity.provider, identity.subject])).rows[0];
-  // Generic refusal: no oracle about whether an identity exists or why it cannot enter.
-  if (!row) throw new ServiceError('not_admin', 403);
+  const row = (await services.db.query(`SELECT id, disabled_at, password_hash FROM admins
+    WHERE provider='local' AND subject=$1`, [username])).rows[0];
+  const ok = row?.password_hash ? verifyAdminPassword(password, row.password_hash as string) :
+    (verifyAdminPassword(password, hashAdminPassword(password === '' ? '-' : 'x')), false);
+  if (!ok) throw new ServiceError('invalid_credentials', 401);
   if (row.disabled_at) throw new ServiceError('admin_disabled', 403);
   const adminToken = randomBytes(32).toString('base64url');
   await transaction(services.db, async sql => {
     const claimed = await sql.query('UPDATE auth_challenges SET used_at=now() WHERE id=$1 AND used_at IS NULL AND expires_at>now() RETURNING id', [challengeID]);
     if (!claimed.rowCount) throw new ServiceError('invalid_challenge', 401);
-    if (identity.email !== null) await sql.query('UPDATE admins SET email=$2 WHERE id=$1', [row.id, identity.email]);
     // Keep only the newest sessions; a lost device cannot accumulate silent access.
     await sql.query(`DELETE FROM admin_sessions WHERE admin_id=$1 AND (expires_at<=now() OR revoked_at IS NOT NULL OR id IN
       (SELECT id FROM admin_sessions WHERE admin_id=$1 AND expires_at>now() AND revoked_at IS NULL
@@ -84,31 +100,8 @@ export async function exchangeAdminIdentity(services: AdminAuthServices, provide
   return { adminID: row.id as string, token: adminToken };
 }
 
-/** Web panel login: exchange an OAuth authorization code at Google's token endpoint.
- *  The id_token echoes the challenge nonce, so proof-of-possession stays server-bound. */
-export async function verifyGoogleAuthorizationCode(services: AdminAuthServices,
-  credentials: { code?: string; redirectUri?: string }, nonceHash: string,
-  verify: NonNullable<AdminAuthServices['identityVerifier']>) {
-  if (!services.config.googleClientID || services.config.googleClientSecret === undefined ||
-      typeof credentials.code !== 'string' || typeof credentials.redirectUri !== 'string')
-    throw new ServiceError('invalid_request');
-  const fetcher = services.tokenFetcher ?? fetch;
-  let idToken: string;
-  try {
-    const response = await fetcher('https://oauth2.googleapis.com/token', { method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ code: credentials.code, client_id: services.config.googleClientID,
-        client_secret: services.config.googleClientSecret, redirect_uri: credentials.redirectUri,
-        grant_type: 'authorization_code' }) });
-    const payload = await response.json() as { id_token?: string };
-    if (!response.ok || typeof payload.id_token !== 'string') throw new Error();
-    idToken = payload.id_token;
-  } catch { throw new ServiceError('invalid_identity_token', 401); }
-  return verify('google', idToken, nonceHash, services.config);
-}
-
 export async function exchangeSessionToken(services: AdminAuthServices, bearer: string): Promise<{ adminID: string; token: string }> {
-  // Browser-free clients authenticate with the bearer minted at exchange and may
+  // Browser-free clients authenticate with the bearer minted at login and may
   // convert it to the cookie form; the token's authority is unchanged.
   const row = (await services.db.query(`SELECT s.admin_id FROM admin_sessions s JOIN admins a ON a.id=s.admin_id
     WHERE s.token_hash=$1 AND s.expires_at>now() AND s.revoked_at IS NULL AND a.disabled_at IS NULL`,

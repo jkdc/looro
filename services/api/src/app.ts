@@ -23,7 +23,7 @@ import type { PlayMinuteProvider } from './play-minute-provider.js';
 import { HOSTED_HELPER_BODY_LIMIT, type HostedHelpers } from './hosted-helpers.js';
 import { startupDiagnostic, type StartupDiagnostic } from './startup-diagnostics.js';
 import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdminOrigin,
-  exchangeAdminIdentity, exchangeSessionToken, adminSignOut, type AdminAuthServices } from './admin-auth.js';
+  exchangeSessionToken, adminSignOut, localAdminLogin, type AdminAuthServices } from './admin-auth.js';
 import { BROWSE_TABLES, buildBrowseQuery, browseSchema } from './admin-browse.js';
 import { snapshot as adminSnapshot, timeseries, TIMESERIES_SETS } from './admin-metrics.js';
 import { recordAdminAction } from './admins-admin.js';
@@ -227,23 +227,19 @@ export function createApp(services: Services) {
   app.post('/v1/admin/auth/challenge', { bodyLimit: 1024 }, async request => {
     assertAdminCsrf(request);
     if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
-    const challenge = await createChallenge(db);
-    // The web client ID is public (it appears in the authorization URL anyway).
-    return { ...challenge, googleClientID: services.admin?.services.config.googleClientID };
+    // The challenge stays a single-use gate even for password login: it is
+    // rate-limited per operator IP and burned on success.
+    return createChallenge(db);
   });
-  app.post('/v1/admin/auth/exchange', { bodyLimit: 20_000 }, async (request, reply) => {
+  app.post('/v1/admin/auth/login', { bodyLimit: 4_096 }, async (request, reply) => {
     assertAdminCsrf(request);
     if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
-    const body = objectBody(request), provider = stringField(body, 'provider', 10);
-    if (Object.keys(body).some(key => !['provider', 'idToken', 'code', 'redirectUri', 'challengeID'].includes(key)))
+    const body = objectBody(request);
+    if (Object.keys(body).some(key => !['username', 'password', 'challengeID'].includes(key)))
       throw new ServiceError('invalid_request');
-    if (provider !== 'google' && provider !== 'apple') throw new ServiceError('invalid_identity_provider');
-    const hasToken = typeof body.idToken === 'string', hasCode = body.code !== undefined;
-    if (hasToken === hasCode) throw new ServiceError('invalid_request');
-    const credentials = hasToken ? { idToken: stringField(body, 'idToken', 16_384) } :
-      { code: stringField(body, 'code', 2_048), redirectUri: stringField(body, 'redirectUri', 512) };
-    const result = await exchangeAdminIdentity(services.admin.services, provider, credentials,
-      uuid(stringField(body, 'challengeID', 36)), services.admin.services.identityVerifier ?? verifyIdentity);
+    const result = await localAdminLogin(services.admin.services,
+      { username: stringField(body, 'username', 64), password: stringField(body, 'password', 1024) },
+      uuid(stringField(body, 'challengeID', 36)));
     reply.header('Set-Cookie', adminCookieHeader(result.token));
     return { adminID: result.adminID };
   });

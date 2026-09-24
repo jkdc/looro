@@ -3,9 +3,11 @@ import { fileURLToPath } from 'node:url';
 import type { PoolClient } from 'pg';
 import { connectDatabase, transaction, type Database } from './db.js';
 import { ServiceError } from './errors.js';
+import { hashAdminPassword } from './admin-auth.js';
 
 const uuidPattern = /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
-export type AdminProvider = 'google' | 'apple';
+const localUsernamePattern = /^[a-z0-9._-]{3,64}$/;
+export type AdminProvider = 'google' | 'apple' | 'local';
 export interface AdminRecord { id: string; email: string | null; provider: AdminProvider; subject: string;
   createdAt: string; disabledAt: string | null; liveSessions?: number }
 
@@ -13,8 +15,9 @@ export interface AdminRecord { id: string; email: string | null; provider: Admin
 // The panel never grants or revokes admin status; see docs/admin-panel.md.
 export async function addAdmin(db: Database, provider: string, subject: string, email?: string):
   Promise<AdminRecord> {
-  if (provider !== 'google' && provider !== 'apple') throw new ServiceError('invalid_admin_provider');
+  if (provider !== 'google' && provider !== 'apple' && provider !== 'local') throw new ServiceError('invalid_admin_provider');
   if (typeof subject !== 'string' || !subject || subject.length > 255) throw new ServiceError('invalid_admin_subject');
+  if (provider === 'local' && !localUsernamePattern.test(subject)) throw new ServiceError('invalid_admin_username');
   if (email !== undefined && (typeof email !== 'string' || email.length > 254)) throw new ServiceError('invalid_admin_email');
   return transaction(db, async sql => {
     await sql.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`admin:${provider}:${subject}`]);
@@ -23,6 +26,21 @@ export async function addAdmin(db: Database, provider: string, subject: string, 
     const id = randomUUID();
     await sql.query('INSERT INTO admins(id,email,provider,subject) VALUES($1,$2,$3,$4)', [id, email ?? null, provider, subject]);
     return { id, email: email ?? null, provider: provider as AdminProvider, subject, createdAt: new Date().toISOString(), disabledAt: null };
+  });
+}
+
+/** Set or replace the password of a local operator account. Federated rows are
+ *  rejected: they authenticate through their provider, not this panel. */
+export async function setAdminPassword(db: Database, id: string, password: string): Promise<void> {
+  if (typeof id !== 'string' || !uuidPattern.test(id)) throw new ServiceError('invalid_admin_id');
+  if (typeof password !== 'string' || password.length < 12 || password.length > 1024)
+    throw new ServiceError('invalid_admin_password');
+  return transaction(db, async sql => {
+    const row = (await sql.query(`SELECT id FROM admins WHERE id=$1 AND provider='local' AND disabled_at IS NULL FOR UPDATE`, [id])).rows[0];
+    if (!row) throw new ServiceError('admin_not_found', 404);
+    await sql.query('UPDATE admins SET password_hash=$2 WHERE id=$1', [id, hashAdminPassword(password)]);
+    // A new password must not leave old cookies standing.
+    await sql.query('UPDATE admin_sessions SET revoked_at=now() WHERE admin_id=$1 AND revoked_at IS NULL', [id]);
   });
 }
 
@@ -57,8 +75,8 @@ export async function recordAdminAction(sql: PoolClient, adminID: string,
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const databaseURL = process.env.DATABASE_URL, command = process.argv[2];
-  if (!databaseURL || !['add', 'list', 'disable'].includes(command ?? '')) {
-    console.error('Use DATABASE_URL and admins-admin.js add <google|apple> <subject> [email] | list | disable <admin-id>.');
+  if (!databaseURL || !['add', 'list', 'disable', 'passwd'].includes(command ?? '')) {
+    console.error('Use DATABASE_URL and admins-admin.js add <local|google|apple> <subject> [email] | list | disable <admin-id> | passwd <admin-id> (password on stdin).');
     process.exitCode = 1;
   } else {
     const db = connectDatabase(databaseURL);
@@ -67,6 +85,14 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
         const [provider, subject, email] = process.argv.slice(3);
         if (!provider || !subject || process.argv.length > 6) throw new Error();
         console.info(JSON.stringify(await addAdmin(db, provider, subject, email)));
+      } else if (command === 'passwd') {
+        if (process.argv.length !== 4) throw new Error();
+        const chunks: Buffer[] = [];
+        for await (const chunk of process.stdin) chunks.push(chunk as Buffer);
+        const password = Buffer.concat(chunks).toString('utf8').replace(/[\r\n]+$/, '');
+        if (!password) throw new Error('empty password on stdin');
+        await setAdminPassword(db, process.argv[3]!, password);
+        console.info('Password set; live sessions revoked.');
       } else if (command === 'list') {
         if (process.argv.length !== 3) throw new Error();
         for (const admin of await listAdmins(db))

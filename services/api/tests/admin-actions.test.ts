@@ -26,7 +26,7 @@ beforeEach(async () => {
 after(async () => { if (db) await db.end(); });
 const integration = (name: string, fn: () => Promise<void>) => test(name, { skip: !db && 'Set TEST_DATABASE_URL for PostgreSQL tests.' }, fn);
 
-const config = { ...adminAuthConfig({ GOOGLE_ADMIN_CLIENT_ID: 'admin-test-client', ADMIN_HMAC_KEY: hmacKey,
+const config = { ...adminAuthConfig({ ADMIN_HMAC_KEY: hmacKey,
   ADMIN_PROXY_TOKEN: proxyToken, ADMIN_PUBLIC_ORIGIN: 'https://admin.example' })! };
 const adminServices = { db: db!, config } as AdminAuthServices;
 const hosted = db ? new HostedVoice(db, {} as never, { accountAllowlist: new Set(), billingUnit: 'milliseconds',

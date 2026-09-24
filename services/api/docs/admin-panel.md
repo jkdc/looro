@@ -6,6 +6,10 @@ identities live in the dedicated `admins` table — never in the app-user
 `accounts`/`identities` tables — and the panel can never manage
 administrators; that stays a local CLI (`npm run admins-admin`).
 
+Sign-in is **local only**: there is no federated identity provider. Operator
+accounts are created by the CLI with a username and a scrypt password hash,
+so the panel's attack surface never depends on an external IdP.
+
 ## Capabilities
 
 - **Dashboards** (`#overview`, `#growth`, `#voice`, `#economy`): KPI cards and
@@ -27,44 +31,41 @@ administrators; that stays a local CLI (`npm run admins-admin`).
    `ADMIN_DOMAIN` in the deployment environment; compose passes it to Caddy.
    Without it the site binds `admin.localhost` with an internal certificate
    and the panel is effectively unreachable.
-2. Create a **Google OAuth web client** (type *Web application*) with the
-   authorized redirect URI `https://admin.$API_DOMAIN/oauth2/callback.html`.
-   This client is for the panel only; do not reuse the Android clients.
-3. Add the environment entries (see `.env.example`):
-   `GOOGLE_ADMIN_CLIENT_ID`, `GOOGLE_ADMIN_CLIENT_SECRET`,
+2. Add the environment entries (see `.env.example`):
    `ADMIN_HMAC_KEY`, `ADMIN_PROXY_TOKEN`, `ADMIN_PUBLIC_ORIGIN=https://admin.$API_DOMAIN`.
    The two secrets are separate random 32-byte lowercase hex values, stored
    in the mode-600 environment file next to the other secrets. Startup fails
    fast on missing, malformed, or identical values.
-4. Apply the schema (`npm run migrate` runs migration `024_admins.sql`)
-   and grant the runtime role:
+3. Apply the schema (`npm run migrate` runs `024_admins.sql` and
+   `026_admin_local_auth.sql`) and grant the runtime role:
 
    ```sql
    GRANT SELECT, INSERT, UPDATE, DELETE ON admins, admin_sessions TO app_runtime;
    GRANT SELECT, INSERT ON admin_actions TO app_runtime;
    ```
 
-5. Register yourself as an administrator. Discover your Google subject once
-   (decode any Google ID token issued to you, or use
-   `https://openidconnect.googleapis.com/v1/userinfo`), then:
+4. Register yourself as an administrator and set your password (12–1024
+   characters, read from stdin so it never lands in shell history):
 
    ```sh
-   npm run admins-admin -- add google <your-subject> you@example.test
+   npm run admins-admin -- add local <username> you@example.test
+   npm run admins-admin -- passwd <admin-id> <<< 'your-long-passphrase'
    npm run admins-admin -- list
    npm run admins-admin -- disable <admin-id>   # also revokes live sessions
    ```
 
 ## Authentication model
 
-- Sign-in is federated. The web flow is the Google **authorization-code**
-  flow bound to a single-use challenge: the panel fetches a challenge
-  (nonce), sends you to Google with `nonce` and `state=challengeID`, and the
-  backend exchanges the code (server secret) and verifies the returned
-  `id_token` against the challenge's nonce hash. Native id-tokens with a
-  nonce are accepted on the same endpoint.
+- Sign-in is local: the panel posts `username` + `password` +
+  `challengeID` to `/v1/admin/auth/login`. Passwords are verified against a
+  scrypt hash (N=16384, r=8, p=1, per-user salt) stored on the `local` admin
+  row; unknown users burn an equivalent verification so response timing does
+  not reveal account existence, and every refusal is the same generic error.
+- The challenge stays single-use and is burned on success; sign-in
+  operations are admission-limited (30/hour per network).
 - Sessions are opaque 43-character tokens; only their SHA-256 is stored,
   they live 8 hours, at most 3 live sessions per admin, and sign-out (or a
-  CLI disable) revokes immediately. The `admin_session` cookie is
+  CLI disable or `passwd`) revokes immediately. The `admin_session` cookie is
   HttpOnly, Secure, SameSite=Strict and scoped to the admin domain.
 - Mutating admin routes reject requests whose `Origin` differs from
   `ADMIN_PUBLIC_ORIGIN`. There is no CORS on `/v1/admin/*`.
@@ -82,5 +83,5 @@ administrators; that stays a local CLI (`npm run admins-admin`).
   bind as parameters, and identifiers come from configuration only.
 - Vendored UI assets (Tabler, Tabulator, Chart.js) are pinned files under
   `admin-ui/vendor/`; refresh them deliberately and re-review. CSP restricts
-  the panel to same-origin assets; only the login document may contact
-  `accounts.google.com`.
+  the panel to same-origin assets; no external origin is contacted, including
+  on the login page.

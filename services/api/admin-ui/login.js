@@ -10,14 +10,20 @@ const $ = selector => document.querySelector(selector);
     challenge = await (await fetch('/v1/admin/auth/challenge', { method: 'POST', credentials: 'same-origin',
       headers: { 'content-type': 'application/json' }, body: '{}' })).json();
   } catch { $('#error').textContent = 'No se pudo iniciar el reto de autenticación.'; return; }
-  if (challenge.googleClientID) {
-    const redirectUri = `${location.origin}/oauth2/callback.html`;
-    $('#google-btn').href = 'https://accounts.google.com/o/oauth2/v2/auth?' + new URLSearchParams({
-      client_id: challenge.googleClientID, redirect_uri: redirectUri, response_type: 'code',
-      scope: 'openid email', state: challenge.challengeID, nonce: challenge.nonce });
-  } else {
-    $('#google-flow').remove();
-  }
+  $('#login-form').onsubmit = async event => {
+    event.preventDefault();
+    $('#error').textContent = '';
+    const username = $('#username').value.trim(), password = $('#password').value;
+    if (!/^[a-z0-9._-]{3,64}$/.test(username) || !password) { $('#error').textContent = 'Usuario o contraseña no válidos.'; return; }
+    let response;
+    try {
+      response = await fetch('/v1/admin/auth/login', { method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ username, password, challengeID: challenge.challengeID }) });
+    } catch { $('#error').textContent = 'No se pudo contactar con el servidor.'; return; }
+    if (response.ok) location.href = '/';
+    else $('#error').textContent = response.status === 403 ? 'Cuenta deshabilitada.' : 'Credenciales no válidas.';
+  };
   $('#bearer-btn').onclick = async () => {
     const bearer = $('#bearer').value.trim();
     if (!/^[A-Za-z0-9_-]{43}$/.test(bearer)) { $('#error').textContent = 'El token debe tener 43 caracteres [A-Za-z0-9_-].'; return; }
