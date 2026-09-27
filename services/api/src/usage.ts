@@ -30,7 +30,7 @@ export const USAGE_CATALOG = {
   theme_selected: { themeID: slug },
   lesson_started: { courseID: slug, lessonID: slug },
   lesson_completed: { courseID: slug, lessonID: slug },
-  assessment_completed: { courseID: slug, passed: { kind: 'flag' } },
+  assessment_completed: { courseID: optional(slug), passed: { kind: 'flag' } },
   practice_completed: { mode: { kind: 'enum', values: ['recall', 'word'] }, scoreBucket: buckets(4) },
   word_lookup: { source: { kind: 'enum', values: ['talk', 'words', 'lesson'] } },
   replay_used: {},
