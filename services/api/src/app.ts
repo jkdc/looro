@@ -30,6 +30,9 @@ import { recordAdminAction } from './admins-admin.js';
 import { welcomePolicy, updateWelcomePolicy, prepareMinuteCampaign, applyMinuteCampaign } from './minutes-admin.js';
 import { accountCloseoutReport } from './account-closeout-admin.js';
 import { normalizeAccessEmail } from './access-requests.js';
+import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForAccount, activeSubscription,
+  updateSubscriptionConfig } from './subscriptions.js';
+import type { SubscriptionBilling } from './subscription-billing.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
   onStartupDiagnostic?: (diagnostic: StartupDiagnostic) => void | Promise<void>;
@@ -38,9 +41,11 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
     stripe?: StripeMinuteProvider; play?: PlayMinuteProvider };
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
   tokenProxy?: TokenProxy,
+  subscriptions?: SubscriptionBilling,
   admin?: { services: AdminAuthServices; admission: AuthAdmission } }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
-  '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover']);
+  '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover',
+  '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
 // These routes carry no client network identity: requiring trusted-proxy headers would 503 them,
 // and behind a proxy they all share one socket address, so they also skip the shared limiter.
 const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products']);
@@ -301,6 +306,20 @@ export function createApp(services: Services) {
     await adminOnly(request);
     return welcomePolicy(db);
   });
+  app.get('/v1/admin/plans', async request => {
+    await adminOnly(request);
+    return { config: await subscriptionConfig(db), tiers: await subscriptionTiers(db) };
+  });
+  app.put('/v1/admin/plans', { bodyLimit: 8192 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    const allowed = ['version', 'reason', 'freeDripEnabled', 'freeDripMinutes', 'freeDripRolloverCapMinutes',
+      'trialDays', 'lifetimeDripBudgetMinutes', 'tiers'];
+    if (Object.keys(body).some(key => !allowed.includes(key))) throw new ServiceError('invalid_request');
+    const reason = stringField(body, 'reason', 500);
+    const result = await updateSubscriptionConfig(db, admin.adminID, body as unknown as Parameters<typeof updateSubscriptionConfig>[2]);
+    return reply.send(result);
+  });
   app.put('/v1/admin/policy/welcome', { bodyLimit: 4096 }, async (request, reply) => {
     assertAdminCsrf(request);
     const admin = await adminOnly(request), body = objectBody(request);
@@ -402,9 +421,37 @@ export function createApp(services: Services) {
     reply.code(status);
     return payload;
   });
-  app.get('/v1/minutes', async request => conversationBalance(db, await authenticate(db, request.headers.authorization, true),
-    services.hosted?.publicMinuteAccess===true, services.hosted?.publicPaidAccess ? { enabled: true,
-      estimatedNanoUSDPerMinute: services.hosted.estimatedNanoUSDPerMinute, minimumSessionNanoUSD: services.hosted.minimumPaidSessionNanoUSD } : undefined));
+  app.get('/v1/minutes', async request => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    // Opportunistic free drip: idempotent per period, cheap, never blocks the read.
+    await runDripForAccount(db, account).catch(() => undefined);
+    const balance = conversationBalance(db, account,
+      services.hosted?.publicMinuteAccess===true, services.hosted?.publicPaidAccess ? { enabled: true,
+        estimatedNanoUSDPerMinute: services.hosted.estimatedNanoUSDPerMinute, minimumSessionNanoUSD: services.hosted.minimumPaidSessionNanoUSD } : undefined);
+    const [subscription, catalog] = await Promise.all([activeSubscription(db, account), subscriptionCatalog(db)]);
+    const tier = subscription ? subscription.tier : 'free';
+    const features = subscription ? catalog.tiers.find(entry => entry.tier === subscription.tier)?.features ?? {} : {};
+    return { ...balance, subscription: { tier, status: subscription?.status ?? 'none',
+      trialing: subscription?.status === 'trialing', periodEnd: subscription?.periodEnd ?? null,
+      features, drip: { enabled: catalog.config.freeDripEnabled, minutesPerMonth: catalog.config.freeDripMinutes } } };
+  });
+  app.get('/v1/subscriptions/plans', async () => subscriptionCatalog(db));
+  app.get('/v1/subscriptions/mine', async request => {
+    const account = await authenticate(db, request.headers.authorization);
+    const subscription = await activeSubscription(db, account);
+    return { subscription: subscription ? { tier: subscription.tier, status: subscription.status,
+      store: subscription.store, periodStart: subscription.periodStart, periodEnd: subscription.periodEnd,
+      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd } : null };
+  });
+  app.post('/v1/subscriptions/checkout', { bodyLimit: 1024 }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization);
+    if (!services.subscriptions) throw new ServiceError('subscription_unavailable', 503);
+    const key = request.headers['idempotency-key'];
+    if (typeof key !== 'string' || key.length < 8 || key.length > 128) throw new ServiceError('idempotency_key_required');
+    const result = await services.subscriptions.checkout(account, stringField(objectBody(request), 'tier', 16), key);
+    reply.header('cache-control', 'no-store');
+    return result;
+  });
   app.post('/v1/guest/minutes', { bodyLimit: 1024 }, async request => {
     const proof = objectBody(request);
     try { return { available: true, ...await startGuestMinutes(db, proof, services.guestMinuteAttestor ?? new UnconfiguredGuestMinuteAttestor()) }; }
@@ -490,6 +537,12 @@ export function createApp(services: Services) {
     if (!services.minuteCommerce?.stripe) throw new ServiceError('minute_purchases_unavailable', 503);
     const signature = request.headers['stripe-signature'];
     if (!Buffer.isBuffer(request.body) || typeof signature !== 'string') throw new ServiceError('invalid_webhook_signature');
+    // Subscription events share the endpoint and secret; anything they don't
+    // claim falls through to the minutes reconcile path unchanged.
+    if (services.subscriptions) {
+      const event = services.subscriptions.transport.verifyEvent(request.body, signature);
+      if (await services.subscriptions.handleEvent(event)) return { received: true };
+    }
     await (services.minuteCommerce.fulfillment ?? services.minuteCommerce.purchases).reconcile('stripe', { kind: 'webhook', raw: request.body, signature });
     return { received: true };
   });

@@ -9,6 +9,7 @@ const NAV = [
   { id: 'economy', label: 'Economía', icon: 'ti-coins' },
   { id: 'browse', label: 'Tablas', icon: 'ti-table' },
   { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings' },
+  { id: 'plans', label: 'Planes', icon: 'ti-crown' },
   { id: 'campaigns', label: 'Campañas', icon: 'ti-gift' },
   { id: 'audit', label: 'Auditoría', icon: 'ti-shield-check' }
 ];
@@ -99,7 +100,8 @@ const KPI_ICONS = {
   'Minutos en wallets': ['ti-clock-hour-4', 'bg-orange-lt text-orange'], 'Minutos reservados': ['ti-clock-pause', 'bg-yellow-lt text-yellow'],
   'Órdenes / volumen': ['ti-shopping-cart', 'bg-indigo-lt text-indigo'], 'Coste helpers 30d': ['ti-lifebuoy', 'bg-pink-lt text-pink'],
   'Waitlist': ['ti-mail', 'bg-teal-lt text-teal'], 'Sesiones voz activas': ['ti-phone-outgoing', 'bg-red-lt text-red'],
-  'Acciones admin': ['ti-shield-check', 'bg-lime-lt text-lime'], 'Informes IA 30d': ['ti-message-report', 'bg-cyan-lt text-cyan']
+  'Acciones admin': ['ti-shield-check', 'bg-lime-lt text-lime'], 'Informes IA 30d': ['ti-message-report', 'bg-cyan-lt text-cyan'],
+  'Suscripciones activas': ['ti-crown', 'bg-yellow-lt text-yellow'], 'En prueba': ['ti-flask', 'bg-indigo-lt text-indigo']
 };
 const kpi = (label, value) => {
   const [icon, tone] = KPI_ICONS[label] ?? ['ti-dots', 'bg-secondary-lt text-secondary'];
@@ -155,6 +157,8 @@ async function renderDashboard(setName, container) {
       ${kpi('Coste helpers 30d', usdNano(snapshot.helperRequests.cost30dNano))}
       ${kpi('Waitlist', number(snapshot.waitlist))}
       ${kpi('Sesiones voz activas', number(snapshot.hostedSessions['active'] ?? 0))}
+      ${kpi('Suscripciones activas', number(snapshot.subscriptions.active + snapshot.subscriptions.trialing))}
+      ${kpi('En prueba', number(snapshot.subscriptions.trialing))}
       ${kpi('Acciones admin', number(snapshot.adminActions))}
       ${kpi('Informes IA 30d', number(snapshot.aiReports.last30d))}
     </div>`;
@@ -308,6 +312,62 @@ async function renderPolicy(container) {
   };
 }
 
+async function renderPlans(container) {
+  const { config, tiers } = await api('/v1/admin/plans');
+  const tierRows = tiers.map((tier, index) => `<div class="card-body border-top py-3">
+    <h4 class="text-uppercase small text-secondary mb-2">Plan ${tier.tier}</h4>
+    <div class="row">
+      <div class="col"><label class="form-label">Minutos/mes</label>
+        <input type="number" min="15" max="100000" class="form-control" data-tier="${index}" data-field="monthlyMinutes" value="${tier.monthlyMinutes}"></div>
+      <div class="col"><label class="form-label">Tope de rollover (min)</label>
+        <input type="number" min="15" max="144000" class="form-control" data-tier="${index}" data-field="rolloverCapMinutes" value="${tier.rolloverCapMinutes}"></div>
+      <div class="col"><label class="form-label">Precio Stripe (price ID)</label>
+        <input class="form-control font-monospace" data-tier="${index}" data-field="stripePriceID" value="${tier.stripePriceID ?? ''}" placeholder="price_..."></div>
+      <div class="col"><label class="form-label">Producto Play</label>
+        <input class="form-control font-monospace" data-tier="${index}" data-field="playProductID" value="${tier.playProductID ?? ''}" placeholder="subscripción.producto"></div>
+    </div></div>`).join('');
+  container.innerHTML = `<div class="row"><div class="col-lg-8"><div class="card"><div class="card-body">
+    <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ti-crown text-secondary"></i>Suscripciones y planes</h3>
+    <div class="row">
+      <div class="col"><label class="form-check form-switch mt-2">
+        <input class="form-check-input" type="checkbox" id="plans-drip" ${config.freeDripEnabled ? 'checked' : ''}>
+        <span class="form-check-label">Goteo gratuito mensual</span></label></div>
+      <div class="col"><label class="form-label">Minutos/mes del goteo</label>
+        <input type="number" min="0" max="60" class="form-control" id="plans-drip-minutes" value="${config.freeDripMinutes}"></div>
+      <div class="col"><label class="form-label">Tope de goteo (min)</label>
+        <input type="number" min="0" max="1440" class="form-control" id="plans-drip-cap" value="${config.freeDripRolloverCapMinutes}"></div>
+      <div class="col"><label class="form-label">Días de prueba</label>
+        <input type="number" min="0" max="30" class="form-control" id="plans-trial" value="${config.trialDays}"></div>
+      <div class="col"><label class="form-label">Presupuesto vitalicio del goteo (0=sin tope)</label>
+        <input type="number" min="0" class="form-control" id="plans-budget" value="${config.lifetimeDripBudgetMinutes}"></div>
+    </div></div>${tierRows}
+    <div class="card-body border-top">
+      <div class="mb-3"><label class="form-label">Motivo (obligatorio, queda auditado)</label>
+        <textarea class="form-control" id="plans-reason" rows="2" maxlength="500"></textarea></div>
+      <button class="btn btn-primary" id="plans-save"><i class="ti ti-device-floppy me-1"></i>Guardar planes</button>
+      <span class="text-secondary ms-2">versión actual ${config.version}</span>
+      <div id="plans-error" class="text-danger mt-2"></div>
+    </div></div></div></div>`;
+  $('#plans-save').onclick = async () => {
+    const tierInputs = [...container.querySelectorAll('[data-tier]')];
+    const payload = { version: config.version, reason: $('#plans-reason').value,
+      freeDripEnabled: $('#plans-drip').checked, freeDripMinutes: Number($('#plans-drip-minutes').value),
+      freeDripRolloverCapMinutes: Number($('#plans-drip-cap').value), trialDays: Number($('#plans-trial').value),
+      lifetimeDripBudgetMinutes: Number($('#plans-budget').value),
+      tiers: tiers.map((tier, index) => ({ tier: tier.tier,
+        monthlyMinutes: Number(tierInputs.find(i => +i.dataset.tier === index && i.dataset.field === 'monthlyMinutes').value),
+        rolloverCapMinutes: Number(tierInputs.find(i => +i.dataset.tier === index && i.dataset.field === 'rolloverCapMinutes').value),
+        features: tier.features,
+        stripePriceID: tierInputs.find(i => +i.dataset.tier === index && i.dataset.field === 'stripePriceID').value || null,
+        playProductID: tierInputs.find(i => +i.dataset.tier === index && i.dataset.field === 'playProductID').value || null })) };
+    try {
+      await api('/v1/admin/plans', { method: 'PUT', body: JSON.stringify(payload) });
+      toast('Planes actualizados'); renderPlans(container);
+    } catch (error) { $('#plans-error').textContent = error.code === 'subscription_version_conflict' ?
+      'Conflicto de versión: recarga y reintenta.' : `Error: ${error.code}`; }
+  };
+}
+
 async function renderCampaigns(container) {
   container.innerHTML = `<div class="row"><div class="col-lg-8"><div class="card"><div class="card-body">
     <h3 class="card-title d-flex align-items-center gap-2"><i class="ti ti-gift text-secondary"></i>Campaña de minutos</h3>
@@ -395,6 +455,7 @@ const VIEWS = {
   economy: { title: 'Economía', render: container => renderDashboard('economy', container) },
   browse: { title: 'Explorador de tablas', render: container => renderBrowse(container, null) },
   policy: { title: 'Política de bienvenida', render: renderPolicy },
+  plans: { title: 'Planes y suscripciones', render: renderPlans },
   campaigns: { title: 'Campañas', render: renderCampaigns },
   audit: { title: 'Auditoría de acciones', render: container => renderBrowse(container, 'admin_actions') }
 };

@@ -162,6 +162,18 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
     },
     orderable: ['deadline', 'observed_ms'], defaultOrder: { column: 'deadline', direction: 'desc' }
   },
+  subscriptions: {
+    table: 'subscriptions',
+    description: 'Suscripciones por cuenta (estado y periodo de tienda).',
+    columns: {
+      id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
+      tier: column('text', ['eq']), status: column('text', ['eq']), store: column('text', ['eq']),
+      store_reference: column('text', textFilters), period_start: column('timestamptz', timeFilters),
+      period_end: column('timestamptz', timeFilters), cancel_at_period_end: column('boolean', boolFilters),
+      created_at: column('timestamptz', timeFilters)
+    },
+    orderable: ['created_at', 'period_end', 'status'], defaultOrder: { column: 'created_at', direction: 'desc' }
+  },
   minute_campaigns: {
     table: 'minute_campaigns',
     description: 'Campañas de minutos auditadas.',

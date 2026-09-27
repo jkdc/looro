@@ -63,7 +63,11 @@ const SERIES: Record<TimeseriesSet, SeriesMetric[]> = {
     { name: 'minutes_consumed_ms', label: 'Minutos consumidos (ms)', unit: 'milliseconds',
       sql: daily(`created_at::date AS day, COALESCE(-sum(balance_delta_ms), 0)::bigint AS value FROM minute_entries WHERE balance_delta_ms < 0 AND created_at >= now()::date - ($1::int - 1)`) },
     { name: 'sandbox_grants_ms', label: 'Concesiones sandbox antiguas (ms)', unit: 'milliseconds',
-      sql: daily(`created_at::date AS day, COALESCE(sum(sandbox_delta_ms), 0)::bigint AS value FROM minute_entries WHERE sandbox_delta_ms > 0 AND created_at >= now()::date - ($1::int - 1)`) }
+      sql: daily(`created_at::date AS day, COALESCE(sum(sandbox_delta_ms), 0)::bigint AS value FROM minute_entries WHERE sandbox_delta_ms > 0 AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'subscription_granted_ms', label: 'Minutos de suscripción concedidos (ms)', unit: 'milliseconds',
+      sql: daily(`created_at::date AS day, COALESCE(sum(balance_delta_ms), 0)::bigint AS value FROM minute_entries WHERE kind = 'subscription' AND balance_delta_ms > 0 AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'new_subscriptions', label: 'Nuevas suscripciones', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM subscriptions WHERE created_at >= now()::date - ($1::int - 1)`) }
   ]
 };
 
@@ -87,10 +91,11 @@ export interface AdminSnapshot { generatedAt: string; accounts: { total: number;
   activeAccounts30d: number; hostedSessions: Record<string, number>; helperRequests: { total: number; cost30dNano: number };
   orders: Array<{ provider: string; environment: string; entitlementKind: string; count: number; totalMinor: number }>;
   waitlist: number; aiReports: { total: number; last30d: number }; campaigns: { applied: number; prepared: number };
+  subscriptions: { active: number; trialing: number; pastDue: number; canceled: number; grantsTotal: number };
   adminActions: number }
 
 export async function snapshot(db: Database): Promise<AdminSnapshot> {
-  const [accounts, sessions, minutes, active, hosted, helpers, orders, waitlist, reports, campaigns, actions] =
+  const [accounts, sessions, minutes, active, hosted, helpers, orders, waitlist, reports, campaigns, actions, subscriptions] =
     await Promise.all([
       db.query(`SELECT count(*) AS total, count(*) FILTER (WHERE is_guest) AS guests,
         count(*) FILTER (WHERE deleted_at IS NOT NULL) AS deleted FROM accounts`),
@@ -107,7 +112,10 @@ export async function snapshot(db: Database): Promise<AdminSnapshot> {
         FROM ai_feedback_reports`),
       db.query(`SELECT count(*) FILTER (WHERE state = 'applied') AS applied,
         count(*) FILTER (WHERE state <> 'applied') AS prepared FROM minute_campaigns`),
-      db.query('SELECT count(*) AS count FROM admin_actions')
+      db.query('SELECT count(*) AS count FROM admin_actions'),
+      db.query(`SELECT count(*) FILTER (WHERE status='active') AS active, count(*) FILTER (WHERE status='trialing') AS trialing,
+        count(*) FILTER (WHERE status='past_due') AS past_due, count(*) FILTER (WHERE status='canceled') AS canceled,
+        (SELECT count(*) FROM subscription_grants) AS grants_total FROM subscriptions`)
     ]);
   const hostedStates: Record<string, number> = {};
   for (const row of hosted.rows) hostedStates[String(row.state)] = Number(row.count);
@@ -124,6 +132,9 @@ export async function snapshot(db: Database): Promise<AdminSnapshot> {
     waitlist: Number(waitlist.rows[0]!.count),
     aiReports: { total: Number(reports.rows[0]!.total), last30d: Number(reports.rows[0]!.last30) },
     campaigns: { applied: Number(campaigns.rows[0]!.applied), prepared: Number(campaigns.rows[0]!.prepared) },
+    subscriptions: { active: Number(subscriptions.rows[0]!.active), trialing: Number(subscriptions.rows[0]!.trialing),
+      pastDue: Number(subscriptions.rows[0]!.past_due), canceled: Number(subscriptions.rows[0]!.canceled),
+      grantsTotal: Number(subscriptions.rows[0]!.grants_total) },
     adminActions: Number(actions.rows[0]!.count)
   };
 }

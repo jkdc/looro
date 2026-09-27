@@ -17,7 +17,7 @@ export function millisecondsForMinutes(minutes: number): number {
   if (!Number.isSafeInteger(minutes) || minutes < 0 || minutes > 1440) throw new ServiceError('invalid_minutes');
   return minutes * MS_PER_MINUTE;
 }
-type EntryKind = 'welcome' | 'gift' | 'purchase' | 'reserve' | 'settle' | 'release' | 'forfeit' | 'transfer';
+export type EntryKind = 'welcome' | 'gift' | 'purchase' | 'reserve' | 'settle' | 'release' | 'forfeit' | 'transfer' | 'subscription';
 const validAmount = (value: number) => Number.isSafeInteger(value) && value >= 0;
 
 export async function lockMinuteWallet(sql: PoolClient, account: string, active = true) {
