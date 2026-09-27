@@ -162,6 +162,18 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
     },
     orderable: ['deadline', 'observed_ms'], defaultOrder: { column: 'deadline', direction: 'desc' }
   },
+  usage_events: {
+    table: 'usage_events',
+    description: 'Métricas de uso sin contenido enviadas por las apps (catálogo cerrado, inmutables, 180 días).',
+    columns: {
+      id: column('uuid', uuidFilters), client_event_id: column('uuid', uuidFilters),
+      account_id: column('uuid', uuidFilters), name: column('text', ['eq']),
+      platform: column('text', ['eq']), app_version: column('text', textFilters),
+      props: column('jsonb', []), client_at: column('timestamptz', timeFilters),
+      created_at: column('timestamptz', timeFilters)
+    },
+    orderable: ['created_at', 'client_at', 'name'], defaultOrder: { column: 'created_at', direction: 'desc' }
+  },
   subscriptions: {
     table: 'subscriptions',
     description: 'Suscripciones por cuenta (estado y periodo de tienda).',

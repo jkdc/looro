@@ -7,6 +7,7 @@ const NAV = [
   { id: 'growth', label: 'Crecimiento', icon: 'ti-trending-up' },
   { id: 'voice', label: 'Voz', icon: 'ti-microphone' },
   { id: 'economy', label: 'Economía', icon: 'ti-coins' },
+  { id: 'usage', label: 'Uso', icon: 'ti-activity' },
   { id: 'browse', label: 'Tablas', icon: 'ti-table' },
   { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings' },
   { id: 'plans', label: 'Planes', icon: 'ti-crown' },
@@ -101,7 +102,9 @@ const KPI_ICONS = {
   'Órdenes / volumen': ['ti-shopping-cart', 'bg-indigo-lt text-indigo'], 'Coste helpers 30d': ['ti-lifebuoy', 'bg-pink-lt text-pink'],
   'Waitlist': ['ti-mail', 'bg-teal-lt text-teal'], 'Sesiones voz activas': ['ti-phone-outgoing', 'bg-red-lt text-red'],
   'Acciones admin': ['ti-shield-check', 'bg-lime-lt text-lime'], 'Informes IA 30d': ['ti-message-report', 'bg-cyan-lt text-cyan'],
-  'Suscripciones activas': ['ti-crown', 'bg-yellow-lt text-yellow'], 'En prueba': ['ti-flask', 'bg-indigo-lt text-indigo']
+  'Suscripciones activas': ['ti-crown', 'bg-yellow-lt text-yellow'], 'En prueba': ['ti-flask', 'bg-indigo-lt text-indigo'],
+  'DAU (hoy)': ['ti-user-check', 'bg-green-lt text-green'], 'WAU': ['ti-users-group', 'bg-blue-lt text-blue'],
+  'MAU': ['ti-users-plus', 'bg-azure-lt text-azure'], 'Eventos 7 días': ['ti-chart-dots', 'bg-lime-lt text-lime']
 };
 const kpi = (label, value) => {
   const [icon, tone] = KPI_ICONS[label] ?? ['ti-dots', 'bg-secondary-lt text-secondary'];
@@ -409,6 +412,48 @@ async function renderCampaigns(container) {
   };
 }
 
+/* ---- usage (in-app feature metrics) ---- */
+async function renderUsage(container) {
+  const [overview, series] = await Promise.all([
+    api('/v1/admin/metrics/usage?days=30'),
+    api('/v1/admin/metrics/timeseries?set=usage&days=30')
+  ]);
+  const percent = (value, size) => size > 0 ? `${Math.round(value * 100 / size)} %` : '—';
+  const featureLabel = { app_open: 'Apertura de app', session_started: 'Sesión iniciada', session_ended: 'Sesión terminada',
+    session_resumed: 'Sesión reanudada', theme_selected: 'Tema elegido', lesson_started: 'Lección iniciada',
+    lesson_completed: 'Lección completada', assessment_completed: 'Evaluación final', practice_completed: 'Ronda de repaso',
+    word_lookup: 'Búsqueda de palabra', replay_used: 'Repetición en voz alta', tts_speed_changed: 'Velocidad TTS cambiada',
+    help_requested: 'Más fácil, por favor', report_requested: 'Informe de conversación', paywall_viewed: 'Pantalla de minutos' };
+  const retentionRows = overview.retention.slice(-14).reverse().map(row => `<tr>
+    <td>${escapeHtml(row.day)}</td><td>${number(row.size)}</td>
+    <td>${percent(row.d1, row.size)}</td><td>${percent(row.d7, row.size)}</td><td>${percent(row.d30, row.size)}</td></tr>`).join('');
+  container.innerHTML = `<div class="row mb-3 g-3">
+      ${kpi('DAU (hoy)', number(overview.dau))}
+      ${kpi('WAU', number(overview.wau))}
+      ${kpi('MAU', number(overview.mau))}
+      ${kpi('Eventos 7 días', number(overview.events7d))}
+    </div>
+    <div class="row row-cards g-3">${series.series.map(serie => chartCard(serie.label)).join('')}</div>
+    <div class="row row-cards g-3 mt-1">
+      <div class="col-lg-5"><div class="card"><div class="card-body">
+        <h3 class="card-title"><i class="ti ti-flame text-secondary"></i>Funciones más usadas (7 días)</h3>
+        ${overview.topFeatures.length ? overview.topFeatures.map(feature => `<div class="d-flex align-items-center justify-content-between border-bottom py-2">
+          <span>${escapeHtml(featureLabel[feature.name] ?? feature.name)}</span>
+          <strong>${number(feature.count)}</strong></div>`).join('')
+          : '<div class="text-secondary py-2">Sin eventos todavía.</div>'}
+      </div></div></div>
+      <div class="col-lg-7"><div class="card"><div class="card-body">
+        <h3 class="card-title"><i class="ti ti-chart-arcs text-secondary"></i>Retención por cohorte de registro (últimas 2 semanas)</h3>
+        <div class="table-responsive"><table class="table table-sm table-vcenter card-table">
+          <thead><tr><th>Día de registro</th><th>Cohorte</th><th>D1</th><th>D7</th><th>D30</th></tr></thead>
+          <tbody>${retentionRows || '<tr><td colspan="5" class="text-secondary">Sin cohortes todavía.</td></tr>'}</tbody>
+        </table></div>
+      </div></div></div>
+    </div>`;
+  container.querySelectorAll('.chart-box canvas').forEach((canvas, index) => mountChart(canvas, series.series[index]));
+  requestAnimationFrame(() => { for (const chart of charts) chart.resize(); });
+}
+
 /* ---- row actions ---- */
 function contextMenu(tableName) {
   if (tableName === 'accounts') return [
@@ -453,6 +498,7 @@ const VIEWS = {
   growth: { title: 'Crecimiento', render: container => renderDashboard('growth', container) },
   voice: { title: 'Voz', render: container => renderDashboard('voice', container) },
   economy: { title: 'Economía', render: container => renderDashboard('economy', container) },
+  usage: { title: 'Uso de la app', render: renderUsage },
   browse: { title: 'Explorador de tablas', render: container => renderBrowse(container, null) },
   policy: { title: 'Política de bienvenida', render: renderPolicy },
   plans: { title: 'Planes y suscripciones', render: renderPlans },

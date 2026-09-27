@@ -95,6 +95,13 @@ integration('ingest stores the batch once and replays are idempotent', async () 
   assert.equal(rows.every(row => row.account_id === id), true);
 });
 
+integration('a completed account deletion takes its usage events with it', async () => {
+  const id = await account();
+  await ingestUsageEvents(db!, id, { platform: 'android', appVersion: '1.0', events: [event()] });
+  await db!.query('DELETE FROM accounts WHERE id=$1', [id]);
+  assert.equal(Number((await db!.query('SELECT count(*) AS total FROM usage_events WHERE account_id=$1', [id])).rows[0].total), 0);
+});
+
 integration('stored events cannot be rewritten but the retention prune deletes old ones', async () => {
   const id = await account();
   await ingestUsageEvents(db!, id, { platform: 'android', appVersion: '1.0', events: [event()] });

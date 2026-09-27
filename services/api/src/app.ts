@@ -25,7 +25,7 @@ import { startupDiagnostic, type StartupDiagnostic } from './startup-diagnostics
 import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdminOrigin,
   exchangeSessionToken, adminSignOut, localAdminLogin, type AdminAuthServices } from './admin-auth.js';
 import { BROWSE_TABLES, buildBrowseQuery, browseSchema } from './admin-browse.js';
-import { snapshot as adminSnapshot, timeseries, TIMESERIES_SETS } from './admin-metrics.js';
+import { snapshot as adminSnapshot, timeseries, usageOverview, TIMESERIES_SETS } from './admin-metrics.js';
 import { recordAdminAction } from './admins-admin.js';
 import { welcomePolicy, updateWelcomePolicy, prepareMinuteCampaign, applyMinuteCampaign } from './minutes-admin.js';
 import { accountCloseoutReport } from './account-closeout-admin.js';
@@ -300,6 +300,11 @@ export function createApp(services: Services) {
     if (!(TIMESERIES_SETS as readonly string[]).includes(set)) throw new ServiceError('invalid_request');
     const days = query.days === undefined ? 30 : Number(query.days);
     return timeseries(db, set, days);
+  });
+  app.get('/v1/admin/metrics/usage', async request => {
+    await adminOnly(request);
+    const query = request.query as Record<string, unknown>;
+    return usageOverview(db, query.days === undefined ? 30 : Number(query.days));
   });
   // ---- Audited panel actions (every mutation writes admin_actions) ----
   const adminActor = (admin: { adminID: string; email: string | null }) => `admin:${admin.email ?? admin.adminID}`;

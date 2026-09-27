@@ -3,7 +3,7 @@ import { ServiceError } from './errors.js';
 
 // Fixed read-only analytics. No client text ever becomes SQL: only the set name
 // (validated) and the clamped day count reach the queries.
-export const TIMESERIES_SETS = ['overview', 'growth', 'voice', 'economy'] as const;
+export const TIMESERIES_SETS = ['overview', 'growth', 'voice', 'economy', 'usage'] as const;
 export type TimeseriesSet = (typeof TIMESERIES_SETS)[number];
 
 interface SeriesMetric { name: string; label: string; unit: 'count' | 'minor' | 'milliseconds' | 'nano'; sql: string }
@@ -68,6 +68,20 @@ const SERIES: Record<TimeseriesSet, SeriesMetric[]> = {
       sql: daily(`created_at::date AS day, COALESCE(sum(balance_delta_ms), 0)::bigint AS value FROM minute_entries WHERE kind = 'subscription' AND balance_delta_ms > 0 AND created_at >= now()::date - ($1::int - 1)`) },
     { name: 'new_subscriptions', label: 'Nuevas suscripciones', unit: 'count',
       sql: daily(`created_at::date AS day, count(*)::int AS value FROM subscriptions WHERE created_at >= now()::date - ($1::int - 1)`) }
+  ],
+  usage: [
+    { name: 'dau', label: 'Usuarios activos (DAU)', unit: 'count',
+      sql: daily(`created_at::date AS day, count(DISTINCT account_id)::int AS value FROM usage_events WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'sessions', label: 'Sesiones iniciadas', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'session_started' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'lessons', label: 'Lecciones completadas', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'lesson_completed' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'practice', label: 'Rondas de repaso', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'practice_completed' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'lookups', label: 'Búsquedas de palabras', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'word_lookup' AND created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'replays', label: 'Repeticiones en voz alta', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'replay_used' AND created_at >= now()::date - ($1::int - 1)`) }
   ]
 };
 
@@ -86,8 +100,7 @@ export async function timeseries(db: Database, set: string, requestedDays: numbe
   return { set: set as TimeseriesSet, days, series: results.map(({ name, label, unit, points }) => ({ name, label, unit, points })) };
 }
 
-export interface AdminSnapshot { generatedAt: string; accounts: { total: number; guests: number; deleted: number };
-  liveAppSessions: number; minuteWallets: { balanceMs: number; reservedMs: number };
+export interface AdminSnapshot { generatedAt: string; accounts: { total: number; guests: number; deleted: number };  liveAppSessions: number; minuteWallets: { balanceMs: number; reservedMs: number };
   activeAccounts30d: number; hostedSessions: Record<string, number>; helperRequests: { total: number; cost30dNano: number };
   orders: Array<{ provider: string; environment: string; entitlementKind: string; count: number; totalMinor: number }>;
   waitlist: number; aiReports: { total: number; last30d: number }; campaigns: { applied: number; prepared: number };
@@ -136,5 +149,41 @@ export async function snapshot(db: Database): Promise<AdminSnapshot> {
       pastDue: Number(subscriptions.rows[0]!.past_due), canceled: Number(subscriptions.rows[0]!.canceled),
       grantsTotal: Number(subscriptions.rows[0]!.grants_total) },
     adminActions: Number(actions.rows[0]!.count)
+  };
+}
+
+export interface UsageRetentionRow { day: string; size: number; d1: number; d7: number; d30: number }
+export interface UsageOverview { generatedAt: string; dau: number; wau: number; mau: number; events7d: number;
+  topFeatures: Array<{ name: string; count: number }>; retention: UsageRetentionRow[] }
+
+// Retention cohorts: accounts grouped by signup day, active = any usage event in
+// the window after signup (D1 = day 1, D7 = days 1..7, D30 = days 1..30).
+export async function usageOverview(db: Database, requestedDays: number): Promise<UsageOverview> {
+  const days = Number.isSafeInteger(requestedDays) ? Math.min(Math.max(requestedDays, 7), 90) : 30;
+  const [kpis, features, retention] = await Promise.all([
+    db.query(`SELECT count(DISTINCT account_id) FILTER (WHERE created_at >= now() - interval '1 day') AS dau,
+      count(DISTINCT account_id) FILTER (WHERE created_at >= now() - interval '7 days') AS wau,
+      count(DISTINCT account_id) FILTER (WHERE created_at >= now() - interval '30 days') AS mau,
+      count(*) FILTER (WHERE created_at >= now() - interval '7 days') AS events7d FROM usage_events`),
+    db.query(`SELECT name, count(*)::int AS count FROM usage_events
+      WHERE created_at >= now() - interval '7 days' GROUP BY name ORDER BY count DESC`),
+    db.query(`WITH cohorts AS (
+        SELECT id, created_at::date AS signup FROM accounts WHERE created_at >= now()::date - ($1::int - 1))
+      SELECT c.signup::text AS day, count(*)::int AS size,
+        count(*) FILTER (WHERE EXISTS (SELECT 1 FROM usage_events e WHERE e.account_id = c.id
+          AND e.created_at >= c.signup + interval '1 day' AND e.created_at < c.signup + interval '2 day'))::int AS d1,
+        count(*) FILTER (WHERE EXISTS (SELECT 1 FROM usage_events e WHERE e.account_id = c.id
+          AND e.created_at >= c.signup + interval '1 day' AND e.created_at < c.signup + interval '8 day'))::int AS d7,
+        count(*) FILTER (WHERE EXISTS (SELECT 1 FROM usage_events e WHERE e.account_id = c.id
+          AND e.created_at >= c.signup + interval '1 day' AND e.created_at < c.signup + interval '31 day'))::int AS d30
+      FROM cohorts c GROUP BY c.signup ORDER BY c.signup`, [days])
+  ]);
+  return {
+    generatedAt: new Date().toISOString(),
+    dau: Number(kpis.rows[0]!.dau), wau: Number(kpis.rows[0]!.wau), mau: Number(kpis.rows[0]!.mau),
+    events7d: Number(kpis.rows[0]!.events7d),
+    topFeatures: features.rows.map(row => ({ name: String(row.name), count: Number(row.count) })),
+    retention: retention.rows.map(row => ({ day: String(row.day), size: Number(row.size),
+      d1: Number(row.d1), d7: Number(row.d7), d30: Number(row.d30) }))
   };
 }
