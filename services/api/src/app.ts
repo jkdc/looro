@@ -32,6 +32,7 @@ import { accountCloseoutReport } from './account-closeout-admin.js';
 import { normalizeAccessEmail } from './access-requests.js';
 import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForAccount, activeSubscription,
   updateSubscriptionConfig } from './subscriptions.js';
+import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
@@ -410,6 +411,12 @@ export function createApp(services: Services) {
     return exchangeIdentity(db, provider, stringField(body, 'idToken', 16_384), uuid(stringField(body, 'challengeID', 36)), services.auth, services.accounts?.identityVerifier, expectedAccountID);
   });
   app.get('/v1/account', async request => accountProfile(db, request.headers.authorization));
+  // Content-free usage telemetry from the apps. Guests are included on purpose:
+  // onboarding is where the funnel matters. The catalog is closed server-side.
+  app.post(USAGE_EVENTS_PATH, { bodyLimit: USAGE_EVENTS_BODY_LIMIT }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    return reply.code(202).send(await ingestUsageEvents(db, account, objectBody(request)));
+  });
   app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async (request, reply) => {
     const proxy = services.tokenProxy;
     if (!proxy) throw new ServiceError('proxy_unavailable', 503);

@@ -12,6 +12,7 @@ import { AuthAdmission, accountAdmissionConfig } from './auth-admission.js';
 import { TokenProxy, tokenProxyConfig } from './token-proxy.js';
 import { adminAuthConfig, pruneAdminRecords, type AdminAuthServices } from './admin-auth.js';
 import { AIReports, aiReportConfig, pruneAIReports } from './feedback.js';
+import { pruneUsageEvents } from './usage.js';
 import { configuredMinuteCommerce } from './minute-commerce-config.js';
 import { HostedHelpers } from './hosted-helpers.js';
 import { OpenAIHostedResponses } from './hosted-responses-transport.js';
@@ -93,6 +94,7 @@ try {
   await pruneAccessRequests(db);
   await pruneAuthenticationRecords(db);
   await pruneAIReports(db);
+  await pruneUsageEvents(db);
   await pruneAdminRecords(db);
   const googleAndroidClientIDs = (process.env.GOOGLE_ANDROID_CLIENT_IDS ?? '').split(',').map(id => id.trim()).filter(Boolean);
   const googleAndroidServerClientID = process.env.GOOGLE_ANDROID_SERVER_CLIENT_ID;
@@ -112,6 +114,7 @@ try {
     void pruneAuthenticationRecords(db).catch(() => { console.error('Account retention cleanup failed.'); });
     void pruneAccessRequests(db).catch(() => { console.error('Access request retention cleanup failed.'); });
     void pruneAIReports(db).catch(() => { console.error('AI report retention cleanup failed.'); });
+    void pruneUsageEvents(db).catch(() => { console.error('Usage retention cleanup failed.'); });
     void pruneAdminRecords(db).catch(() => { console.error('Admin retention cleanup failed.'); });
     void hostedHelpers?.expireBudgets().catch(() => { console.error('Hosted helper budget cleanup failed.'); });
   }, 15 * 60_000);
