@@ -14,4 +14,14 @@
     <string name="hosted_start_rejected">El servicio de voz no ha podido iniciar esta conversación. Vuelve a intentarlo en unos instantes.</string>
     <string name="hosted_error_reference">Referencia del error: %1$s</string>
     <string name="hosted_minimum_charge_disclosure">Mínimo de 15 segundos por conversación. Las conversaciones más largas consumen el tiempo de conexión. Nunca se cobra más que tu saldo restante.</string>
+    <string name="sub_plan_label">Plan %1$s %2$s</string>
+    <string name="sub_tier_free">Gratis</string>
+    <string name="sub_tier_standard">Estándar</string>
+    <string name="sub_tier_pro">Pro</string>
+    <string name="sub_trial_active">(prueba)</string>
+    <string name="sub_drip_note">Tu plan gratuito suma %1$d min cada mes.</string>
+    <string name="minutes_remaining_estimate">Te quedan ≈ %1$s min</string>
+    <string name="minutes_low_warning">Te quedan menos de 5 minutos de conversación.</string>
+    <string name="minutes_critical_warning">Te quedan menos de 2 minutos de conversación.</string>
+    <string name="minutes_exhausted_upsell">Recarga minutos o mejora tu plan para seguir hablando.</string>
 </resources>

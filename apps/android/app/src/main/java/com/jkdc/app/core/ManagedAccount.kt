@@ -46,6 +46,21 @@ data class AccountProfile(val accountID: String, val email: String?, val provide
     override fun toString() = "AccountProfile(redacted)"
 }
 
+/** Server-driven subscription state attached to the minutes balance. The tier
+ *  and every commercial number come from the backend; the client only paints. */
+@Serializable
+data class SubscriptionInfo(
+    val tier: String = "free",
+    val status: String = "none",
+    val trialing: Boolean = false,
+    val periodEnd: String? = null,
+    val features: Map<String, Boolean> = emptyMap(),
+    val drip: Drip? = null,
+) {
+    @Serializable
+    data class Drip(val enabled: Boolean = false, val minutesPerMonth: Int = 0)
+}
+
 @Serializable
 data class MinuteBalance(
     val unit: String,
@@ -54,6 +69,7 @@ data class MinuteBalance(
     val reservedMilliseconds: Long,
     val availableMilliseconds: Long,
     val paid: PaidConversationBalance? = null,
+    val subscription: SubscriptionInfo? = null,
 ) {
     init {
         require(unit == "milliseconds" && billingBasis == "connected-conversation-time")
@@ -64,6 +80,16 @@ data class MinuteBalance(
     val canStartConversation get() = availableMilliseconds > 0 || paid?.available == true
     val readinessMilliseconds get() = if (availableMilliseconds > 0) availableMilliseconds
         else paid?.takeIf { it.available }?.estimatedMilliseconds ?: 0L
+
+    /** Advisory, server-independent warning ladder: 0 ok, 1 low (≤5 min),
+     *  2 critical (≤2 min), 3 exhausted. Enforcement stays server-side. */
+    val warningLevel: Int
+        get() = when {
+            availableMilliseconds <= 0L -> 3
+            availableMilliseconds <= 2L * 60_000L -> 2
+            availableMilliseconds <= 5L * 60_000L -> 1
+            else -> 0
+        }
 }
 
 interface AccountService {

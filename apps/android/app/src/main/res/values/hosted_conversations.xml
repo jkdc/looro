@@ -14,4 +14,14 @@
     <string name="hosted_start_rejected">The voice service could not start this conversation. Please try again shortly.</string>
     <string name="hosted_error_reference">Error reference: %1$s</string>
     <string name="hosted_minimum_charge_disclosure">15-second minimum per conversation. Longer conversations use the time you are connected. Your remaining balance caps the charge.</string>
+    <string name="sub_plan_label">Plan %1$s %2$s</string>
+    <string name="sub_tier_free">Free</string>
+    <string name="sub_tier_standard">Standard</string>
+    <string name="sub_tier_pro">Pro</string>
+    <string name="sub_trial_active">(trial)</string>
+    <string name="sub_drip_note">Your free plan adds %1$d min every month.</string>
+    <string name="minutes_remaining_estimate">About %1$s min left</string>
+    <string name="minutes_low_warning">Fewer than 5 conversation minutes remain.</string>
+    <string name="minutes_critical_warning">Fewer than 2 conversation minutes remain.</string>
+    <string name="minutes_exhausted_upsell">Top up minutes or upgrade your plan to keep talking.</string>
 </resources>
