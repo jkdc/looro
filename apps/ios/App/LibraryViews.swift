@@ -339,6 +339,9 @@ struct SettingsView: View {
                         store.updatePreferences { $0.listeningPractice = value ? true : nil }
                     }))
                     .disabled(coordinator.isRunning)
+                    Toggle("Share anonymous usage metrics", isOn: Binding(get: { store.preferences.usageMetricsEnabled != false }, set: { value in
+                        coordinator.setUsageMetrics(enabled: value)
+                    }))
                     LabeledContent("Corrections", value: "Gently, as we talk")
                     TextField("A few things you enjoy", text: Binding(get: { store.preferences.interests }, set: { value in store.updatePreferences { $0.interests = String(value.prefix(500)) } }), axis: .vertical)
                 } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Palique finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — the written story stays on screen, and you can still look words up.") }

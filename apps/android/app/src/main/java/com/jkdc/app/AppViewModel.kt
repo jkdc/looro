@@ -225,8 +225,42 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             ?: archive.sessions.firstOrNull { it.id == sessionID } ?: return
         ReportSelection.from(selectedSession, passageID)?.let(reports::open)
     }
-    fun submitReport(report: AIReportSubmission) = reports.submit(report)
+    fun submitReport(report: AIReportSubmission) {
+        usageReporter.record(UsageEvents.REPORT_REQUESTED)
+        reports.submit(report)
+    }
     fun dismissReport() = reports.dismiss()
+
+    // Content-free usage telemetry (core/UsageMetrics.kt). Members' bearer first,
+    // then the guest grant's; without either, events simply stay queued.
+    private val usageClient = accountConfiguration?.let(::UsageClient)
+    private val usageReporter = UsageReporter(platform = "android", appVersion = appVersionName(),
+        send = { batch, _ -> sendUsage(batch) })
+
+    private fun appVersionName(): String = runCatching {
+        val context = getApplication<Application>()
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName.orEmpty()
+    }.getOrDefault("")
+
+    private suspend fun sendUsage(batch: String): Boolean {
+        val client = usageClient ?: return false
+        val session = memberSessions?.read() ?: guests?.availableSession() ?: return false
+        return try { client.send(session, batch) } catch (_: Exception) { false }
+    }
+
+    private fun lessonCourseID(lessonID: String?): String? {
+        if (lessonID == null) return null
+        return CourseRegistry.forLanguage(language.id).firstOrNull { course ->
+            course.units.any { unit -> unit.lessons.any { it.id == lessonID } }
+        }?.id
+    }
+
+    fun practiceRoundCompleted(correct: Int, total: Int) {
+        if (total <= 0) return
+        usageReporter.record(UsageEvents.PRACTICE_COMPLETED) {
+            put("mode", "recall"); put("scoreBucket", UsageBuckets.score(correct * 100 / total))
+        }
+    }
 
     private data class SaveRequest(val snapshot: LearningSnapshot, val completion: CompletableDeferred<Unit>? = null)
     private val writes = Channel<SaveRequest>(Channel.UNLIMITED)
@@ -289,6 +323,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.first.finalAssessments, hostedSessionIDs)
                 hasKey = loaded.second
                 storageReady = true
+                usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
+                usageReporter.record(UsageEvents.APP_OPEN)
+                viewModelScope.launch { usageReporter.flush() }
                 recoverFinalAssessments()
                 refreshHostedReadiness()
                 if (accountChangeBlocked) reconcileHostedSessions()
@@ -359,6 +396,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         finalAssessments.onResult = { result ->
             result.applying(archive.sessions.firstOrNull { it.id == result.sessionID })?.let { updated ->
+                usageReporter.record(UsageEvents.ASSESSMENT_COMPLETED) {
+                    put("passed", true); lessonCourseID(updated.lessonID)?.let { put("courseID", it) }
+                }
                 save(updated)
                 if (session?.id == updated.id) session = clone(updated)
                 persistAndWait()
@@ -747,8 +787,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         generation++; meanings.reset()
         if (languageChanged) resetConversation()
+        val previousPreferences = archive.preferences
         archive = archive.copy(preferences = preferences.copy(interests = preferences.interests.take(500)))
         persist(); scheduleTranslation(); recoverFinalAssessments(); refreshHostedReadiness()
+        if (previousPreferences.speechRate != preferences.speechRate) usageReporter.record(UsageEvents.TTS_SPEED_CHANGED) {
+            put("rate", SpeechRates.idOf(preferences.speechRate))
+        }
+        usageReporter.enabled = preferences.usageMetricsEnabled != false && usageClient != null
     }
     fun selectLanguage(id: String) {
         if (!isRunning && LanguageRegistry.get(id) != null) updatePreferences(archive.preferences.copy(learningLanguageID = id))
@@ -757,6 +802,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (!isRunning && session != null) resetConversation()
         selectedTheme = theme
         selectedLesson = null
+        if (theme != null) usageReporter.record(UsageEvents.THEME_SELECTED) { put("themeID", theme.id) }
         if (state == "active") {
             updateSession { it.themeID = theme?.id; it.title = theme?.title ?: language.defaultTitle }
             command("instructions", TeachingPolicy.theme(theme, language))
@@ -780,6 +826,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private var replayJob: Job? = null
     fun replayReply(text: String) {
         if (replaying || working || lessonReading || text.isBlank()) return
+        usageReporter.record(UsageEvents.REPLAY_USED)
         replaying = true
         replayJob = viewModelScope.launch {
             try {
@@ -843,6 +890,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         voiceSession = false
         state = "active"
         lastActivity = nowSeconds()
+        usageReporter.record(UsageEvents.SESSION_RESUMED)
         scheduleTranslation()
     }
 
@@ -883,6 +931,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun help() {
         if (state != "active") return
+        usageReporter.record(UsageEvents.HELP_REQUESTED)
         if (voiceSession) { command("instructions", TeachingPolicy.help(language)); notice = getApplication<Application>().getString(R.string.notice_help_simpler) }
         else {
             if (working || !cloudReady()) return
@@ -937,6 +986,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         if (!localVoice && !ConversationProviderPolicy.canStart(choice, hasKey, hostedReadiness)) {
             if (choice == ConversationProvider.HOSTED_MINUTES) {
+                usageReporter.record(UsageEvents.PAYWALL_VIEWED) { put("surface", "talk") }
                 showMinuteAccess = true; refreshHostedReadiness()
             } else presentError(getApplication<Application>().getString(R.string.error_missing_key), true)
             return
@@ -947,6 +997,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             speechRate = archive.preferences.effectiveSpeechRate().toFloat()
         }
         newSession(true); state = "connecting"
+        usageReporter.record(UsageEvents.SESSION_STARTED) {
+            put("input", "voice")
+            put("provider", if (localVoice || choice == ConversationProvider.PERSONAL_KEY) "byok" else "hosted")
+            if (localVoice) put("engine", BuildConfig.CONVERSATION_ENGINE)
+        }
+        session?.takeIf { it.isLesson }?.lessonID?.let { lessonID ->
+            usageReporter.record(UsageEvents.LESSON_STARTED) {
+                put("lessonID", lessonID); lessonCourseID(lessonID)?.let { put("courseID", it) }
+            }
+        }
         val id = session!!.id
         val module = language
         val instructions = selectedLesson?.let { TeachingPolicy.lessonPractice(it, module) } ?: TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0)
@@ -1013,7 +1073,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         partialUserTranscript = null
         updateSession { it.endedAt = nowSeconds(); it.usageFinal = final }
         session?.takeIf { s -> s.isLesson }?.lessonID?.let(::recordLessonAttempt)
+        session?.let { ended ->
+            val seconds = ((ended.endedAt ?: nowSeconds()) - ended.startedAt).toInt().coerceAtLeast(0)
+            usageReporter.record(UsageEvents.SESSION_ENDED) {
+                put("durationBucket", UsageBuckets.duration(seconds))
+                put("turnsBucket", UsageBuckets.turns(ended.passages.count { it.speaker == Speaker.user }))
+                ended.themeID?.let { put("themeID", it) }
+            }
+            ended.lessonID?.let { lessonID ->
+                usageReporter.record(UsageEvents.LESSON_COMPLETED) {
+                    put("lessonID", lessonID); lessonCourseID(lessonID)?.let { put("courseID", it) }
+                }
+            }
+        }
         state = "ended"
+        viewModelScope.launch { usageReporter.flush() }
         session?.let {
             if (it.id in hostedSessionIDs) {
                 hostedBindings.ended(it.id); reconcileHostedSessions(); finishHostedAssessment(clone(it))
@@ -1275,6 +1349,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 presentError(getApplication<Application>().getString(R.string.hosted_typed_start)); return
             }
             newSession(false); state = "active"; startDurationChecks()
+            usageReporter.record(UsageEvents.SESSION_STARTED) {
+                put("input", "typed")
+                put("provider", if (BuildConfig.CONVERSATION_ENGINE != "openai" ||
+                    conversationProvider == ConversationProvider.PERSONAL_KEY) "byok" else "hosted")
+                if (BuildConfig.CONVERSATION_ENGINE != "openai") put("engine", BuildConfig.CONVERSATION_ENGINE)
+            }
         }
         val id = session!!.id; val token = generation
         val offset = ((nowSeconds() - session!!.startedAt) * 1000).toInt().coerceAtLeast(0)
@@ -1301,6 +1381,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun lookup(word: String, sentence: String) {
         if (!cloudReady() || word.isBlank()) return
+        // No term is ever recorded — only that a lookup happened, and from where.
+        usageReporter.record(UsageEvents.WORD_LOOKUP) { put("source", if (sentence.isBlank()) "words" else "talk") }
         pendingLookupOpen = true
         clearLookup()
         val token = generation; val id = session?.id; val request = lookupGeneration

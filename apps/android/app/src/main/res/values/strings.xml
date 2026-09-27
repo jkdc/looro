@@ -247,6 +247,8 @@
     <string name="speech_rate_fast">Fast</string>
     <string name="settings_listening_practice">Listening practice</string>
     <string name="settings_listening_practice_hint">New conversations tell a short story without meaning subtitles — the written story stays on screen. Look a word up only if you need to.</string>
+    <string name="usage_metrics_title">Share anonymous usage metrics</string>
+    <string name="usage_metrics_hint">Conversation content, transcripts and searched words never leave your device. Only anonymous counters reach us, to help improve the app.</string>
     <string name="progress_section_title">Your progress</string>
     <string name="progress_empty">Start a conversation to see your progress.</string>
     <string name="progress_conversations">Conversations</string>

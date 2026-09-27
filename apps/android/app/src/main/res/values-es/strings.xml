@@ -247,6 +247,8 @@
     <string name="speech_rate_fast">Rápida</string>
     <string name="settings_listening_practice">Práctica de comprensión auditiva</string>
     <string name="settings_listening_practice_hint">Las conversaciones nuevas cuentan una historia corta sin subtítulos de significado — la historia escrita permanece en pantalla. Busca una palabra solo si la necesitas.</string>
+    <string name="usage_metrics_title">Compartir métricas de uso anónimas</string>
+    <string name="usage_metrics_hint">El contenido de las conversaciones, los transcritos y las palabras buscadas nunca salen de tu dispositivo. Solo llegan contadores anónimos para ayudarnos a mejorar la app.</string>
     <string name="progress_section_title">Tu progreso</string>
     <string name="progress_empty">Empieza una conversación para ver tu progreso.</string>
     <string name="progress_conversations">Conversaciones</string>

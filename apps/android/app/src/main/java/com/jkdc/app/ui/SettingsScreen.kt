@@ -137,6 +137,16 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp))
                     }
                     SettingsDivider()
+                    Column(Modifier.fillMaxWidth()) {
+                        SettingsSwitchRow(stringResource(R.string.usage_metrics_title), "settings-usage-metrics",
+                            prefs.usageMetricsEnabled != false, true) {
+                            vm.updatePreferences(prefs.copy(usageMetricsEnabled = if (it) null else false))
+                        }
+                        Text(stringResource(R.string.usage_metrics_hint),
+                            style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary,
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp))
+                    }
+                    SettingsDivider()
                     // On-device voice controls: inert in the WebRTC build, where
                     // turn-taking is server-side — never render them there.
                     if (BuildConfig.CONVERSATION_ENGINE != "openai") {

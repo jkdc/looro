@@ -44,6 +44,7 @@ fun RecallScreen(vm: AppViewModel, onBack: () -> Unit) {
     var index by rememberSaveable { mutableStateOf(0) }
     var answer by rememberSaveable { mutableStateOf("") }
     var correct by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var correctCount by rememberSaveable { mutableStateOf(0) }
 
     Column(Modifier.fillMaxSize().testTag("recall-screen").padding(horizontal = 24.dp)) {
         Row(Modifier.fillMaxWidth().padding(top = 14.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -84,19 +85,26 @@ fun RecallScreen(vm: AppViewModel, onBack: () -> Unit) {
                                 val ok = RecallEngine.normalizeKey(answer) == RecallEngine.normalizeKey(item.text)
                                 vm.gradeRecall(item.text, ok)
                                 correct = ok
+                                if (ok) correctCount += 1
                             }, enabled = answer.isNotBlank(), modifier = Modifier.fillMaxWidth().testTag("recall-check"),
                             colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {
                             Text(stringResource(R.string.recall_check))
                         }
                         true -> RecallVerdict(stringResource(R.string.recall_correct), item,
-                            onContinue = { index += 1; answer = ""; correct = null })
+                            onContinue = { index += 1; finishRound(correct, index, queue.size, correctCount, vm) })
                         false -> RecallVerdict(stringResource(R.string.recall_answer_was, item.text), item,
-                            onContinue = { index += 1; answer = ""; correct = null })
+                            onContinue = { index += 1; finishRound(correct, index, queue.size, correctCount, vm) })
                     }
                 }
             }
         }
     }
+}
+
+/** Reports the finished round once; the empty state itself must stay event-free. */
+private fun finishRound(correct: Boolean?, index: Int, total: Int, correctCount: Int, vm: AppViewModel) {
+    if (correct == null || index < total) return
+    vm.practiceRoundCompleted(correctCount, total)
 }
 
 @Composable

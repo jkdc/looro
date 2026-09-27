@@ -41,7 +41,8 @@
     "meaningLanguage": "Spanish",
     "meaningVisible": true,
     "sessionMinutes": 15,
-    "speechRate": 0.8
+    "speechRate": 0.8,
+    "usageMetricsEnabled": false
   },
   "schemaVersion": 2,
   "sessions": [

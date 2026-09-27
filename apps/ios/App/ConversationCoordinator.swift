@@ -16,6 +16,27 @@ import LearningCore
     private var hostedSessionID: String?
     private var hostedSessionToken: ManagedAccountSession?
     private var managed: (client: ManagedAccountClient, configuration: ManagedAccountConfiguration)?
+    /// Content-free usage telemetry (LearningCore.UsageMetrics). Sends only with a
+    /// live managed bearer; otherwise events stay queued until the next flush.
+    private lazy var usageReporter = UsageReporter(platform: "ios",
+        appVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "",
+        send: { [weak self] batch, _ in
+            guard let configuration = self?.managed?.configuration,
+                  let client = UsageClient(configuration: configuration),
+                  let bearer = try? ManagedAccountKeychain(scope: configuration.storageScope).load()?.accessToken
+            else { return false }
+            return await client.send(batch, bearer: bearer)
+        })
+
+    /// Recomputes the metrics switch after every preferences change.
+    private func refreshUsageEnabled() {
+        usageReporter.enabled = store.preferences.usageMetricsEnabled != false && managed != nil
+    }
+    private func lessonCourse(_ lessonID: String) -> Course? {
+        CourseRegistry.forLanguage(language.id).first { course in
+            course.units.contains { unit in unit.lessons.contains { $0.id == lessonID } }
+        }
+    }
     private let hostedPreferences = HostedPreferenceStore()
     private(set) var hostedBalance: HostedMinuteBalance?
     var hostedUIAvailable: Bool { HostedPreferenceStore.hostedFlagEnabled && managed != nil }
@@ -97,6 +118,9 @@ import LearningCore
             guard let raw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt, raw == AVAudioSession.InterruptionType.began.rawValue else { return }
             Task { @MainActor in self?.end(reason: "Audio interrupted") }
         })
+        refreshUsageEnabled()
+        usageReporter.record(UsageEvents.appOpen)
+        Task { await usageReporter.flush() }
     }
     deinit {
         // deinit is nonisolated: observers is @ObservationIgnored so it stays a plain stored property
@@ -145,6 +169,13 @@ import LearningCore
         else if store.preferences.listeningPractice == true { record.mode = "listening" }
         if let pendingTopic { record.topics = [pendingTopic] }
         session = record; store.save(record)
+        usageReporter.record(UsageEvents.sessionStarted, props: [
+            "input": .string("voice"), "provider": .string(prefersHosted ? "hosted" : "byok")])
+        if let lesson = selectedLesson {
+            var lessonProps = ["lessonID": UsageProp.string(lesson.id)]
+            if let course = lessonCourse(lesson.id) { lessonProps["courseID"] = .string(course.id) }
+            usageReporter.record(UsageEvents.lessonStarted, props: lessonProps)
+        }
         let generation = record.id
         let learner = store.learner
         // Each new conversation starts fresh; learned vocabulary and difficulty still carry forward.
@@ -277,6 +308,7 @@ import LearningCore
         if !isRunning, session != nil { resetConversation() }
         selectedTheme = theme
         selectedLesson = nil
+        if let theme { usageReporter.record(UsageEvents.themeSelected, props: ["themeID": .string(theme.id)]) }
         if theme?.id != "current" { pendingTopic = nil }
         if state == .active {
             session?.themeID = theme?.id; session?.title = theme?.title ?? language.defaultTitle
@@ -299,8 +331,14 @@ import LearningCore
         if store.preferences.meaningVisible { scheduleTranslation() }
         else { meanings.reset() }
     }
+    /// The metrics switch: nil means opted-in (default), false is the explicit opt-out.
+    func setUsageMetrics(enabled: Bool) {
+        store.updatePreferences { $0.usageMetricsEnabled = enabled ? nil : false }
+        refreshUsageEnabled()
+    }
     func help() {
         guard state == .active else { return }
+        usageReporter.record(UsageEvents.helpRequested)
         append("instructions", TeachingPolicy.help(language: language))
         notice = "Palique will make that a little simpler."
     }
@@ -336,6 +374,21 @@ import LearningCore
         session?.endedAt = .now; session?.usageFinal = final
         save(); state = .ended
         if session?.isLesson == true, let lessonID = session?.lessonID { store.recordLessonAttempt(lessonID) }
+        if let ended = session {
+            var endedProps = [
+                "durationBucket": UsageProp.int(UsageBuckets.duration(seconds: Int(
+                    (ended.endedAt?.timeIntervalSince(ended.startedAt) ?? 0).rounded()))),
+                "turnsBucket": UsageProp.int(UsageBuckets.turns(
+                    userTurns: ended.passages.filter { $0.speaker == .user }.count))]
+            if let themeID = ended.themeID { endedProps["themeID"] = .string(themeID) }
+            usageReporter.record(UsageEvents.sessionEnded, props: endedProps)
+            if let lessonID = ended.lessonID {
+                var lessonProps = ["lessonID": UsageProp.string(lessonID)]
+                if let course = lessonCourse(lessonID) { lessonProps["courseID"] = .string(course.id) }
+                usageReporter.record(UsageEvents.lessonCompleted, props: lessonProps)
+            }
+        }
+        Task { [weak self] in await self?.usageReporter.flush() }
         if hostedSessionID != nil { closeHostedSession() }
         if let session { finalAssessments.submit(session) }
         scheduleTranslation(); scheduleReset()
@@ -577,6 +630,8 @@ import LearningCore
     }
     func lookup(word: String, sentence: String) async throws -> String {
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }
+        // No term is ever recorded — only that a lookup happened, and from where.
+        usageReporter.record(UsageEvents.wordLookup, props: ["source": .string(sentence.isEmpty ? "words" : "talk")])
         let generation = languageGeneration, sessionID = session?.id
         let result = try await helperRouter.respond(purpose: .lookup, instructions: TeachingPolicy.lookup(language: language, meaningLanguage: store.preferences.meaningLanguage), input: "Selected: \(word)\nSentence: \(sentence)")
         guard generation == languageGeneration else { throw CancellationError() }

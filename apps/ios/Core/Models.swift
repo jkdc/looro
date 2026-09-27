@@ -164,6 +164,7 @@ public struct Preferences: Codable, Sendable {
     public var slowSpeech: Bool?
     public var speechRate: Double?
     public var listeningPractice: Bool?
+    public var usageMetricsEnabled: Bool?
     public init() {}
 }
 
