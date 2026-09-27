@@ -174,6 +174,16 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
     },
     orderable: ['created_at', 'client_at', 'name'], defaultOrder: { column: 'created_at', direction: 'desc' }
   },
+  user_progress: {
+    table: 'user_progress',
+    description: 'Progreso de aprendizaje por cuenta: lecciones, temas, ejercicios, listening y prácticas.',
+    columns: {
+      account_id: column('uuid', uuidFilters), kind: column('text', ['eq']), item_id: column('text', textFilters),
+      first_at: column('timestamptz', timeFilters), last_at: column('timestamptz', timeFilters),
+      attempts: column('integer', numberFilters), best_score: column('integer', numberFilters)
+    },
+    orderable: ['last_at', 'first_at', 'kind'], defaultOrder: { column: 'last_at', direction: 'desc' }
+  },
   subscriptions: {
     table: 'subscriptions',
     description: 'Suscripciones por cuenta (estado y periodo de tienda).',

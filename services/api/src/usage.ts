@@ -32,6 +32,8 @@ export const USAGE_CATALOG = {
   lesson_completed: { courseID: slug, lessonID: slug },
   assessment_completed: { courseID: optional(slug), passed: { kind: 'flag' } },
   practice_completed: { mode: { kind: 'enum', values: ['recall', 'word'] }, scoreBucket: buckets(4) },
+  exercise_completed: { courseID: slug, lessonID: slug, scoreBucket: buckets(4) },
+  listening_completed: { itemID: slug, scoreBucket: buckets(4) },
   word_lookup: { source: { kind: 'enum', values: ['talk', 'words', 'lesson'] } },
   replay_used: {},
   tts_speed_changed: { rate: { kind: 'enum', values: ['0.6', '0.8', '1.0', '1.2'] } },

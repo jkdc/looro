@@ -33,6 +33,7 @@ import { normalizeAccessEmail } from './access-requests.js';
 import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForAccount, activeSubscription,
   updateSubscriptionConfig } from './subscriptions.js';
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
+import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
@@ -421,6 +422,16 @@ export function createApp(services: Services) {
   app.post(USAGE_EVENTS_PATH, { bodyLimit: USAGE_EVENTS_BODY_LIMIT }, async (request, reply) => {
     const account = await authenticate(db, request.headers.authorization, true);
     return reply.code(202).send(await ingestUsageEvents(db, account, objectBody(request)));
+  });
+  // Per-user learning progress (lessons, themes, exercises, listening). Carries
+  // content slugs on purpose; the merge is monotonic so replays are harmless.
+  app.post(PROGRESS_PATH, { bodyLimit: PROGRESS_BODY_LIMIT }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    return reply.code(202).send(await mergeProgress(db, account, objectBody(request)));
+  });
+  app.get(PROGRESS_PATH, async request => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    return listProgress(db, account);
   });
   app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async (request, reply) => {
     const proxy = services.tokenProxy;
