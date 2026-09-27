@@ -425,7 +425,7 @@ export function createApp(services: Services) {
     const account = await authenticate(db, request.headers.authorization, true);
     // Opportunistic free drip: idempotent per period, cheap, never blocks the read.
     await runDripForAccount(db, account).catch(() => undefined);
-    const balance = conversationBalance(db, account,
+    const balance = await conversationBalance(db, account,
       services.hosted?.publicMinuteAccess===true, services.hosted?.publicPaidAccess ? { enabled: true,
         estimatedNanoUSDPerMinute: services.hosted.estimatedNanoUSDPerMinute, minimumSessionNanoUSD: services.hosted.minimumPaidSessionNanoUSD } : undefined);
     const [subscription, catalog] = await Promise.all([activeSubscription(db, account), subscriptionCatalog(db)]);

@@ -129,11 +129,13 @@ export async function grantSubscriptionPeriod(db: Database, subscription: Subscr
   });
 }
 
-/** One free drip per period for accounts without a live subscription. */
+/** One free drip per period for registered free accounts. Guests already
+ *  received their attested welcome grant and stay out of the drip. */
 export async function runDripForAccount(db: Database, account: string, now = new Date()): Promise<number> {
   const config = await subscriptionConfig(db);
   const key = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
   return transaction(db, async sql => {
+    if ((await sql.query('SELECT 1 FROM accounts WHERE id=$1 AND is_guest', [account])).rowCount) return 0;
     if ((await sql.query(`SELECT 1 FROM subscriptions WHERE account_id=$1 AND status IN ('trialing','active') LIMIT 1`, [account])).rowCount)
       return 0;
     if (!config.freeDripEnabled || config.freeDripMinutes === 0) return 0;
