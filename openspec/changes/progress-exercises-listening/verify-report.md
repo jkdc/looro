@@ -79,3 +79,23 @@ The repo previously stated "learning records local-only (no cloud sync
 planned)". This change deliberately revises that: completions (content slugs
 + coarse scores only, never user text) sync to the user's own ledger at
 `/v1/progress` with guests included. Documented here and in the memory index.
+
+## Second manual battery (2026-09-28, post-lesson-levels + multilanguage)
+
+Full regression pass on the emulator (evidence 28–44 in the same folder):
+
+- Exercises on a second lesson with a deliberate wrong answer ("Not yet —
+  here is why:" + explanation) then 3/4 summary; the LazyColumn crash fix
+  held again on the finish path.
+- **Typed lesson practice** (keyboard, no mic): StartLesson → tutor replied in
+  the lesson script ("Hello Pedro! …") → session ended from background →
+  `recordLessonAttempt` + stamped lesson mark landed in the ledger; course
+  moved to 11% / unit 66%.
+- Full recall round (12 expressions): "Nothing due right now." at the end and
+  a `recall_round` mark with languageID in the ledger.
+- Second listening text 4/4 → two ★ Best 100% medals.
+- Progress sheet live: Level row, 2/18 lessons, 2 exercises, 2 listening,
+  2 medals, activity streak; persistence intact after force-stop; **0 FATAL
+  in logcat** across the whole battery.
+- Not covered: audio speech (no mic) and full words-practice (the typed
+  session produced no word proposals — expected for a one-turn session).

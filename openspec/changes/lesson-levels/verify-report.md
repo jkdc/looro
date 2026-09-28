@@ -38,3 +38,14 @@
 - Device pass on the Pixel (level card and stars with real history).
 - Threshold tuning (60/90/80, ladder) may be revisited with real telemetry
   once `exercise_completed` scores accumulate.
+
+## Live level-up verified (2026-09-28, second battery)
+
+- Completed lesson 2's exercises at 75% (3/4, one deliberate miss) and then
+  its **typed oral practice** (keyboard session — the oral tier opener works
+  without a mic). Result on the Learn tab: **Level 1 → Level 2 · "Finding the
+  rhythm", 3 points to Level 3**, course 11%, unit 66%, lesson 1 ★★★ and
+  lesson 2 ★★ — exactly the ladder math (5 points over thresholds [1,4,…]).
+- After force-stop + relaunch the level persisted and the recall queue
+  reflected the ladder (12 due → 11 after the lapsed item scheduled for
+  tomorrow). Evidence 28–33, 43.

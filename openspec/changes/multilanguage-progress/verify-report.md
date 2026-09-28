@@ -45,3 +45,11 @@
 - Pixel pass: switching languages with real history on both.
 - Second-language temario content: separate authoring project (pipeline ready;
   name the language and it can be piloted).
+
+## Second battery additions (2026-09-28)
+
+- Progress sheet re-verified fully per language: Level 2 row, 2/18 lessons,
+  2 exercises, 2 listening, 2 medals, activity streak — all English-scoped.
+- Spanish: no recall card (notebook scoped), empty history ("Your
+  conversations will appear here"), empty course state with the switcher;
+  back to English everything intact. Evidence 38–41, 43.
