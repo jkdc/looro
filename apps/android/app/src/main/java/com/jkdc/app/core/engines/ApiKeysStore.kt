@@ -27,5 +27,9 @@ object ApiKeysStore {
         val props = Properties()
         file.inputStream().use { props.load(it) }
         props.getProperty(name)?.trim()?.takeIf { it.isNotEmpty() }
+    }.onFailure {
+        // A corrupt/unreadable file must not masquerade as "no key deployed" —
+        // that silently degrades every feature that reads a key from here.
+        android.util.Log.w("ApiKeysStore", "failed reading ${file.name}: $it")
     }.getOrNull()
 }

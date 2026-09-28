@@ -34,8 +34,11 @@ Java_com_jkdc_app_engines_local_JniWhisperRuntime_init(JNIEnv * env, jclass, jst
     const char * path = env->GetStringUTFChars(jModelPath, nullptr);
     whisper_context_params cparams = whisper_context_default_params();
     cparams.use_gpu = false;   // CPU-only: stable and measurable.
-    // Flash attention measurably speeds up the decoder on mobile CPU; the V
-    // cache stays f16 even for quantized models, so this is safe.
+    // Flash attention on — the same as this vendored whisper.cpp default (the
+    // explicit line only guards against a future default flip; it used to be
+    // explicitly disabled here). KV caches are f16 unconditionally in this
+    // build (no quantized-KV option), so no flash-attn/V-cache conflict can
+    // arise through this API.
     cparams.flash_attn = true;
     whisper_log_set(whisper_log_to_logcat, nullptr);
     whisper_context * ctx = whisper_init_from_file_with_params(path, cparams);

@@ -94,30 +94,41 @@ class LocalVoiceTransport(
     @Volatile private var recorder: AudioFrameSource? = null
 
     /**
-     * Beginner mode: when true the VAD never auto-ends the turn; the turn is
-     * processed only when [endTurn] is called — or at the [MAX_TURN_MS] safety
-     * cap, which applies in both modes so a forgotten open turn can never
-     * buffer audio unbounded.
+     * Beginner mode: the VAD never auto-ends the turn. The turn is processed
+     * when [endTurn] is called — or the buffer is DISCARDED (not processed) at
+     * the [MAX_TURN_MS] idle cap so a forgotten open turn can never grow
+     * unbounded. An [endTurn] press with no voice buffered stays armed and
+     * captures the next spoken phrase (see the listen loop).
      */
     @Volatile var manualTurn = false
     @Volatile private var turnEndRequested = false
 
     /**
-     * True from the moment an end-turn is requested (or a turn auto-closes)
-     * until the whole turn pipeline — STT → LLM → TTS — completes. The UI uses
-     * it to give the end-turn button immediate feedback: the transcript itself
-     * only lands seconds after the press, and the button must react at once.
+     * True from the moment the listen loop CLOSES a turn (manual close,
+     * armed-phrase close, or auto-VAD close) until the whole turn pipeline —
+     * STT → LLM → TTS — completes. An end-turn press held armed during silence
+     * does NOT set it: the flag tracks processing, not the request, so the
+     * button's pending state starts when the post-press phrase closes, not at
+     * the press itself. Changes are mirrored to [onTurnInFlight] so the UI can
+     * hold Compose-observable state (a plain getter would never recompose).
      */
     @Volatile var turnInFlight = false
         private set
+
+    /** Mirrors every [turnInFlight] change; called from the IO loop thread. */
+    var onTurnInFlight: ((Boolean) -> Unit)? = null
+
+    private fun setTurnInFlight(value: Boolean) {
+        turnInFlight = value
+        onTurnInFlight?.invoke(value)
+    }
 
     /**
      * Cloud transcription providers by id ("openai", "groq", …) for FINAL turns
      * when the user selects one in settings. Read at transcription time through
      * [cloudSttSelection], so changing the setting applies on the next turn
      * without restarting the session. Failures (no key, offline, provider
-     * error) fall back to the local pass. Partial transcriptions never go to
-     * the cloud — they run every couple of seconds and are provisional UI text.
+     * error) fall back to the local pass.
      */
     var cloudStts: Map<String, com.jkdc.app.network.CloudStt> = emptyMap()
     @Volatile var cloudSttSelection: () -> String? = { null }
@@ -261,8 +272,8 @@ class LocalVoiceTransport(
                 var voicedInBuffer = 0
                 var armedPhraseEnd = false
                 var armedTrailingMs = 0
-                // Close and process whatever the current turn buffered (shared
-                // by the manual end request and the manual-mode safety cap).
+                // Close and process whatever the current turn buffered (the
+                // manual end request: immediate close and armed-phrase close).
                 suspend fun endBufferedTurn(reason: String) {
                     val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                     speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
@@ -270,11 +281,11 @@ class LocalVoiceTransport(
                     lastPartialClockMs = 0
                     log(reason)
                     if (samples.isNotEmpty()) {
-                        turnInFlight = true
+                        setTurnInFlight(true)
                         try {
                             processTurn(samples)
                         } finally {
-                            turnInFlight = false
+                            setTurnInFlight(false)
                         }
                     }
                 }
@@ -285,9 +296,9 @@ class LocalVoiceTransport(
                     // but only when the buffer already carries VOICE (the user
                     // spoke, then pressed). A press during silence stays ARMED:
                     // never consumed by quiet air, and the next spoken phrase
-                    // is captured whole (see the armed-phrase logic below), so
-                    // a press is never lost to silence nor truncates the
-                    // speech that follows it.
+                    // is captured whole (see the armed-phrase logic below) —
+                    // within the 20 s window the press is never lost nor
+                    // truncates the speech that follows it.
                     if (manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd) {
                         turnEndRequested = false
                         endOfSpeechAtMs = System.currentTimeMillis()
@@ -343,21 +354,23 @@ class LocalVoiceTransport(
                         val turnComplete = speechMs >= SPEECH_START_MS && trailingSilenceMs >= silenceEndMs
                         // Manual mode never auto-closes: ambient noise kept riding the
                         // cap and re-processing the app's own voice in a loop.
-                        val capReached = !manualTurn && speechMs > 0 && turnMs >= MAX_TURN_MS
-                        val manualSafety = manualTurn && turnMs >= MANUAL_SAFETY_TURN_MS
-                        if (turnComplete || capReached || manualSafety) {
+                        val capReached = speechMs > 0 && turnMs >= MAX_TURN_MS
+                        if (turnComplete || capReached) {
                             endOfSpeechAtMs = System.currentTimeMillis()
                             if (turnComplete) log("end of speech detected (${speechMs} ms spoken, ${trailingSilenceMs} ms silent)")
-                            else if (capReached) log("turn cap reached (${turnMs} ms): closing the turn")
-                            else log("manual safety cap (${turnMs} ms): closing the turn")
+                            else log("turn cap reached (${turnMs} ms): closing the turn")
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                             speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
+                            // Reset the armed state too: stale voiced count from an
+                            // auto-mode turn must not let a later manual press close
+                            // a silence-only buffer (the beginner toggle is live).
+                            voicedInBuffer = 0; armedPhraseEnd = false; armedTrailingMs = 0
                             lastPartialClockMs = 0
-                            turnInFlight = true
+                            setTurnInFlight(true)
                             try {
                                 processTurn(samples)
                             } finally {
-                                turnInFlight = false
+                                setTurnInFlight(false)
                             }
                             lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                             continue
@@ -384,6 +397,8 @@ class LocalVoiceTransport(
                             }
                         }
                         if (turnMs >= MAX_TURN_MS) {
+                            // A stale armed press expires here too: 20 s of
+                            // silence after a press means the intent is dead.
                             if (turnEndRequested) turnEndRequested = false
                             armedPhraseEnd = false; armedTrailingMs = 0
                             // Manual mode never auto-processes (real speech
@@ -423,10 +438,10 @@ class LocalVoiceTransport(
         val tail = if (snapshot.size > maxSamples) snapshot.subList(snapshot.size - maxSamples, snapshot.size) else snapshot
         val samples = tail.toFloatArray()
         partialJob = launchSessionJob(Dispatchers.Default) {
-            runCatching {
+            try {
                 val stt = stt.transcribe(MicRecorder.trimSilence(samples), sessionLanguage)
-                if (stt.isEmpty) return@runCatching
-                if (stt.text == lastPartialText) return@runCatching
+                if (stt.isEmpty) return@launchSessionJob
+                if (stt.text == lastPartialText) return@launchSessionJob
                 lastPartialText = stt.text
                 logContent("partial: \"${stt.text}\"")
                 emit(buildJsonObject {
@@ -434,6 +449,13 @@ class LocalVoiceTransport(
                     put("event_id", UUID.randomUUID().toString())
                     put("delta", stt.text)
                 })
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (e: Exception) {
+                // Partials are provisional UI text; a failure must not fail the
+                // turn — but it must be discoverable (e.g. a missing whisper
+                // model otherwise just looks like "captions never appear").
+                log("partial STT failed: ${e.message}")
             }
         }
     }
@@ -506,7 +528,7 @@ class LocalVoiceTransport(
             } catch (cancelled: kotlinx.coroutines.CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
-                log("cloud[$selected] STT failed, falling back to local: ${e.message}")
+                android.util.Log.w(LOG_TAG, "cloud[$selected] STT failed (${e.javaClass.simpleName}), falling back to local: ${e.message}")
             }
         }
         return stt.transcribe(samples, language)
@@ -622,7 +644,16 @@ class LocalVoiceTransport(
                 val start = relativeMs()
                 emit(transcriptEvent(isInput = false, text = content, startMs = start, endMs = start + 500))
                 launchSessionJob(Dispatchers.IO) {
-                    runCatching { speakSuppressed(content) }
+                    try {
+                        speakSuppressed(content)
+                    } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                        throw cancelled
+                    } catch (e: Exception) {
+                        // A silent assistant is worse than a failed one: the
+                        // user typed commentary and heard nothing.
+                        log("commentary speech failed: ${e.message}")
+                        onFailure?.invoke("Could not speak the commentary: ${e.message ?: "unknown error"}")
+                    }
                 }
                 return true
             }
@@ -755,8 +786,6 @@ class LocalVoiceTransport(
         /** Whisper's cost scales with input length; a capped turn is mostly
             trailing noise, so STT never sees more than this trailing window. */
         private const val MAX_STT_INPUT_MS = 18_000
-        /** Manual-mode safety: even a real open turn must eventually close. */
-        private const val MANUAL_SAFETY_TURN_MS = 60_000
         /** Armed press: silence this long after the post-press phrase's voice
             closes the turn — the phrase is captured whole, not on its first
             voiced frame (which trims to <250 ms and would be discarded). */

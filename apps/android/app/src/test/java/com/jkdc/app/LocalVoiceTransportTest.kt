@@ -27,7 +27,11 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
+import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -564,6 +568,187 @@ class LocalVoiceTransportTest {
         val ttsDeadline = System.currentTimeMillis() + 5_000
         while (tts.spoken.isEmpty() && System.currentTimeMillis() < ttsDeadline) Thread.sleep(25)
         assertEquals("Nice! Tell me more about it.", tts.spoken.single())
+        transport.close()
+    }
+
+    // ---- Cloud STT selection: per-turn dispatch with local fallback ----
+
+    /** Canned OpenAI-style response, answered WITHOUT touching the network. */
+    private fun cloudChain(chain: Interceptor.Chain, code: Int, body: String): Response =
+        Response.Builder()
+            .request(chain.request())
+            .protocol(okhttp3.Protocol.HTTP_1_1)
+            .code(code).message("OK")
+            .body(body.toResponseBody("application/json".toMediaType()))
+            .build()
+
+    private class CloudCounter {
+        val hits = java.util.concurrent.atomic.AtomicInteger(0)
+        fun client(answer: (Interceptor.Chain) -> Response): OkHttpClient =
+            OkHttpClient.Builder().addInterceptor { chain -> hits.incrementAndGet(); answer(chain) }.build()
+    }
+
+    private fun manualTransport(localText: String): kotlin.Triple<LocalVoiceTransport, FakeFrameSource, FakeTeachingClient> {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime().apply { transcription = localText }), engine, FakeTts(),
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+        return Triple(transport, source, engine)
+    }
+
+    /** Speak a phrase and close it: 4 voiced + 8 silent frames (128 ms each). */
+    private fun speakPhrase(source: FakeFrameSource) {
+        repeat(4) { source.queue.add(speech()) }
+        repeat(8) { source.queue.add(silence()) }
+    }
+
+    private fun awaitTurns(engine: FakeTeachingClient, count: Int, timeoutMs: Long = 5_000): Boolean {
+        val deadline = System.currentTimeMillis() + timeoutMs
+        while (engine.received.size < count && System.currentTimeMillis() < deadline) Thread.sleep(25)
+        return engine.received.size >= count
+    }
+
+    @Test
+    fun `a selected cloud provider transcribes the final turn instead of the local pass`() {
+        val cloud = CloudCounter()
+        val (transport, source, engine) = manualTransport("LOCAL TEXT")
+        transport.cloudStts = mapOf("openai" to com.jkdc.app.network.CloudStt(
+            apiKey = { "sk-test" },
+            client = cloud.client { chain -> cloudChain(chain, 200, """{"text": "CLOUD TEXT"}""") },
+        ))
+        transport.cloudSttSelection = { "openai" }
+
+        speakPhrase(source)
+        transport.endTurn()
+        assertTrue("cloud turn processed", awaitTurns(engine, 1))
+        assertEquals("CLOUD TEXT", engine.received.single().second)
+        assertEquals("cloud called exactly once", 1, cloud.hits.get())
+        transport.close()
+    }
+
+    @Test
+    fun `cloud provider failure falls back to the local transcription without failing the turn`() {
+        val cloud = CloudCounter()
+        val (transport, source, engine) = manualTransport("LOCAL TEXT")
+        transport.cloudStts = mapOf("openai" to com.jkdc.app.network.CloudStt(
+            apiKey = { "sk-test" },
+            client = cloud.client { chain -> cloudChain(chain, 500, """{"error": "boom"}""") },
+        ))
+        transport.cloudSttSelection = { "openai" }
+
+        speakPhrase(source)
+        transport.endTurn()
+        assertTrue("the turn still completes", awaitTurns(engine, 1))
+        assertEquals("LOCAL TEXT", engine.received.single().second)
+        assertEquals("the cloud attempt was made", 1, cloud.hits.get())
+        transport.close()
+    }
+
+    @Test
+    fun `an unknown stt engine selection silently uses the local pass`() {
+        val cloud = CloudCounter()
+        val (transport, source, engine) = manualTransport("LOCAL TEXT")
+        transport.cloudStts = mapOf("openai" to com.jkdc.app.network.CloudStt(
+            apiKey = { "sk-test" },
+            client = cloud.client { chain -> cloudChain(chain, 200, """{"text": "CLOUD TEXT"}""") },
+        ))
+        transport.cloudSttSelection = { "stale-preference-value" }
+
+        speakPhrase(source)
+        transport.endTurn()
+        assertTrue("the turn still completes", awaitTurns(engine, 1))
+        assertEquals("LOCAL TEXT", engine.received.single().second)
+        assertEquals("no cloud call for an unknown id", 0, cloud.hits.get())
+        transport.close()
+    }
+
+    @Test
+    fun `an armed press shows turnInFlight through the gated reply`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = gate
+        val tts = FakeTts()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime().apply { transcription = "Al final hablo" }), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+        assertFalse("idle: no turn in flight", transport.turnInFlight)
+
+        // Armed press → phrase → trailing silence closes and processes: the
+        // armed close must drive turnInFlight exactly like the immediate one.
+        transport.endTurn()
+        repeat(10) { source.queue.add(silence()) }
+        Thread.sleep(300)
+        speakPhrase(source)
+        val inFlightDeadline = System.currentTimeMillis() + 5_000
+        while (!transport.turnInFlight && System.currentTimeMillis() < inFlightDeadline) Thread.sleep(25)
+        assertTrue("in flight during the gated reply", transport.turnInFlight)
+        assertTrue("no reply spoken yet", tts.spoken.isEmpty())
+
+        gate.complete(Unit)
+        val doneDeadline = System.currentTimeMillis() + 5_000
+        while (transport.turnInFlight && System.currentTimeMillis() < doneDeadline) Thread.sleep(25)
+        assertFalse("in flight must clear after the reply is spoken", transport.turnInFlight)
+        transport.close()
+    }
+
+    @Test
+    fun `a stale armed press is consumed by the manual window reset`() {
+        val (transport, source, engine) = manualTransport("late")
+        transport.endTurn()
+        repeat(160) { source.queue.add(silence()) } // 20.5 s: crosses the idle cap
+        Thread.sleep(500)
+        assertEquals("the cap reset must not process anything", 0, engine.received.size)
+        // The press is dead: a full phrase afterwards must NOT auto-close.
+        speakPhrase(source)
+        val negativeDeadline = System.currentTimeMillis() + 2_000
+        while (engine.received.isEmpty() && System.currentTimeMillis() < negativeDeadline) Thread.sleep(25)
+        assertEquals("a stale armed press must not close a later phrase", 0, engine.received.size)
+        // A fresh press closes the buffered phrase immediately.
+        transport.endTurn()
+        assertTrue("fresh press processes the open turn", awaitTurns(engine, 1))
+        transport.close()
+    }
+
+    @Test
+    fun `an armed press survives mute and captures the next phrase whole`() {
+        val (transport, source, engine) = manualTransport("after mute")
+        transport.endTurn()
+        repeat(10) { source.queue.add(silence()) }
+        Thread.sleep(300)
+        transport.mute(true)
+        repeat(5) { source.queue.add(silence()) }
+        transport.mute(false)
+        speakPhrase(source)
+        assertTrue("the press survives mute and closes the phrase", awaitTurns(engine, 1))
+        transport.close()
+    }
+
+    @Test
+    fun `a pause longer than the armed window ends the press's reach`() {
+        val (transport, source, engine) = manualTransport("two phrases")
+        transport.endTurn()
+        repeat(10) { source.queue.add(silence()) }
+        Thread.sleep(300)
+        speakPhrase(source) // phrase 1 closes at its trailing silence
+        assertTrue("phrase one processed", awaitTurns(engine, 1))
+        speakPhrase(source) // phrase 2: the press is spent, must NOT auto-close
+        val negativeDeadline = System.currentTimeMillis() + 2_000
+        while (engine.received.size > 1 && System.currentTimeMillis() < negativeDeadline) Thread.sleep(25)
+        assertEquals("one press covers exactly one phrase", 1, engine.received.size)
+        transport.endTurn()
+        assertTrue("a fresh press closes phrase two", awaitTurns(engine, 2))
         transport.close()
     }
 

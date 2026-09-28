@@ -22,7 +22,7 @@ class CloudStt(
     private val apiKey: () -> String?,
     private val endpoint: String = DEFAULT_ENDPOINT,
     private val model: String = DEFAULT_MODEL,
-    private val client: OkHttpClient = OkHttpClient(),
+    private val client: OkHttpClient = defaultClient(),
 ) {
 
     suspend fun transcribe(samples: FloatArray, language: String): com.jkdc.app.engines.local.SttResult {
@@ -42,7 +42,7 @@ class CloudStt(
             client.newCall(request).execute().use { response ->
                 val payload = response.body?.string().orEmpty()
                 if (!response.isSuccessful) throw IOException("cloud STT http ${response.code}: ${payload.take(160)}")
-                parseText(payload) ?: throw IOException("cloud STT: malformed response")
+                parseText(payload) ?: throw IOException("cloud STT: malformed response: ${payload.take(160)}")
             }
         }
         return com.jkdc.app.engines.local.SttResult(
@@ -54,6 +54,12 @@ class CloudStt(
     companion object {
         const val DEFAULT_ENDPOINT = "https://api.openai.com/v1/audio/transcriptions"
         const val DEFAULT_MODEL = "whisper-1"
+
+        /** A hung provider must not stall the turn past the 18 s STT window the
+            local pass would have used; the caller falls back to local on throw. */
+        private fun defaultClient(): OkHttpClient = OkHttpClient.Builder()
+            .callTimeout(java.time.Duration.ofSeconds(20))
+            .build()
 
         /** `{"text": "…"}` with a tolerant string extraction for provider quirks. */
         private val lenientJson: Json = Json { ignoreUnknownKeys = true }

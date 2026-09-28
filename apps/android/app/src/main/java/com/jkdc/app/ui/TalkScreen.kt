@@ -253,13 +253,15 @@ fun TalkScreen(
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             RoundAction(AppSymbol.Captions, stringResource(R.string.talk_meaning_label),
                 selected = vm.archive.preferences.meaningVisible, onClick = vm::toggleMeaning)
-            // Beginner mode: the check takes the centre slot the mic vacated. The
-            // moment it is pressed it switches to a clearly distinct pending
-            // state (sage background, filled icon, pulsing, replying label) and
-            // holds it until the whole turn — STT → tutor → speech — completes,
-            // then restores for the next turn.
+            // Beginner mode: the check takes the centre slot the mic vacated.
+            // While a turn is processing it holds a clearly distinct pending
+            // state (sage background, filled icon, pulsing, replying label)
+            // until the whole turn — STT → tutor → speech — completes, then
+            // restores for the next turn. A press with nothing spoken yet stays
+            // ARMED instead (no pending state): the turn starts when the
+            // post-press phrase closes.
             if (vm.voiceManualTurn && vm.isRunning && vm.isVoiceSession) {
-                val turnPending = vm.turnInFlight || vm.working || replyPending
+                val turnPending = vm.turnInFlightUi || vm.working || replyPending
                 val pulse = rememberInfiniteTransition(label = "end-turn-pulse")
                 val pendingAlpha by pulse.animateFloat(
                     initialValue = 1f, targetValue = 0.55f,

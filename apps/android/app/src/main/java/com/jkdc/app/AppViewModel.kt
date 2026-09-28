@@ -161,6 +161,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
+    /** Compose-observable mirror of the transport's turnInFlight: the flag
+        flips from the IO loop, so a plain getter would never recompose the
+        end-turn button's pending state. */
+    var turnInFlightUi by androidx.compose.runtime.mutableStateOf(false)
+        private set
+
     private val localTransport = LocalVoiceTransport(
             context = application,
             scope = viewModelScope,
@@ -184,12 +190,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 ),
             )
             cloudSttSelection = { archive.preferences.sttEngine?.takeUnless { it == "local" } }
+            onTurnInFlight = { turnInFlightUi = it }
         }
     private val liveTransport by lazy { LiveTransport(application, viewModelScope) }
-
-    /** True while a voice turn is being processed (STT → LLM → TTS): the
-        end-turn button shows its pending state for exactly this window. */
-    val turnInFlight: Boolean get() = localTransport.turnInFlight
 
     private val transport: VoiceTransport
         get() = if (BuildConfig.CONVERSATION_ENGINE == "openai") liveTransport else localTransport
