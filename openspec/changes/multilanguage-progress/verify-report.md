@@ -53,3 +53,18 @@
 - Spanish: no recall card (notebook scoped), empty history ("Your
   conversations will appear here"), empty course state with the switcher;
   back to English everything intact. Evidence 38–41, 43.
+
+## Second-language content shipped (2026-09-28, commit 0842f87)
+
+- Foundations Unit 1 (3 lessons, 12 exercises) + 3 listening texts authored
+  for **es, fr, it, de and pt-BR** in the exact en-foundations shape
+  (explanations/glosses in English, teaching the target language).
+- Exporters validated all files first pass; generated cores regenerated;
+  per-language count tests pinned (1 course per language, 3 texts each;
+  nb/zh remain empty by design).
+- Android 453/453 green; emulator: Español and Français show their course
+  with Level 0 · Newcomer (per-language isolation), a Spanish exercise
+  grades live with its explanation, and English stays Level 2 intact.
+  Evidence 45–48.
+- Remaining per language: units 2–6 of the temario (same mold), and
+  exercises/listening review by a proficient speaker before public claims.
