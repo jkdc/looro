@@ -289,7 +289,7 @@
     <string name="practice_summary">Practicaste %1$d palabras y escribiste bien %2$d.</string>
     <string name="guest_link_member_deleted_title">Esa cuenta ya no existe</string>
     <string name="guest_link_member_deleted_detail">La cuenta que ibas a vincular se eliminó, así que tus minutos de prueba se quedan en este dispositivo. Puedes seguir practicando o iniciar sesión con otra cuenta.</string>
-    <string name="progress_scope_note">Los totales y las rachas cubren todos los idiomas que practicas. Las palabras y los hitos son del idioma actual.</string>
+    <string name="progress_scope_note">Todo aquí corresponde al idioma que estás aprendiendo. Cambia de idioma para ver su progreso.</string>
     <string name="settings_voice_manual_turn">Modo principiante: botón para terminar de hablar</string>
     <string name="error_guest_secure_storage_unavailable">Palique no pudo restaurar los datos guardados de tu prueba gratuita. Tu historial de aprendizaje sigue disponible. Reinicia la aplicación para intentarlo de nuevo.</string>
     <string name="talk_end_turn_button">He terminado de hablar</string>

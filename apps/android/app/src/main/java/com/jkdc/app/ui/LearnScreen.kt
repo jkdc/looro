@@ -47,6 +47,7 @@ import com.jkdc.app.core.Course
 import com.jkdc.app.core.CourseProgress
 import com.jkdc.app.core.CourseRegistry
 import com.jkdc.app.core.CourseUnit
+import com.jkdc.app.core.LanguageRegistry
 import com.jkdc.app.core.Lesson
 import com.jkdc.app.core.LevelStats
 
@@ -83,6 +84,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.learn_eyebrow), stringResource(R.string.learn_title),
                 stringResource(R.string.learn_subtitle), Modifier.padding(top = 20.dp, bottom = 6.dp)) }
+            item { LanguageSwitcher(vm) }
             if (vm.dueRecallCount() > 0) item {
                 Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { recallOpen = true }.testTag("recall-card"),
                     shape = RoundedCornerShape(26.dp), color = AppColors.Sage) {
@@ -99,6 +101,24 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             items(courses.size, key = { courses[it].id }) { index ->
                 CourseCard(vm, courses[index], progress.first.courses.firstOrNull { it.courseID == courses[index].id },
                     progress.second, onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
+            }
+        }
+    }
+}
+
+@Composable
+private fun LanguageSwitcher(vm: AppViewModel) {
+    val languages = LanguageRegistry.all
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        items(languages.size, key = { languages[it].id }) { index ->
+            val module = languages[index]
+            val selected = module.id == vm.language.id
+            Surface(Modifier.clickable(role = Role.Button, enabled = !vm.isRunning) { vm.selectLanguage(module.id) }
+                .testTag("language-" + module.id),
+                shape = RoundedCornerShape(16.dp), color = if (selected) AppColors.Sage else AppColors.Surface.copy(alpha = .85f)) {
+                Text(module.nativeName, Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (selected) AppColors.Ink else AppColors.Secondary)
             }
         }
     }

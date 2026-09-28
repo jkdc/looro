@@ -39,6 +39,7 @@ struct CoursesView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         PageHeading(eyebrow: "Your course", title: "Learn it step by step",
                                     subtitle: "Read a short lesson, then practise it in a real conversation.")
+                        LanguageSwitcher(coordinator: coordinator)
                         ForEach(courses) { course in
                             VStack(alignment: .leading, spacing: 14) {
                                 HStack(spacing: 12) {
@@ -77,6 +78,30 @@ struct CoursesView: View {
 func levelTitle(_ level: Int) -> String {
     ["Newcomer", "First steps", "Finding the rhythm", "On the move", "Steady pace",
      "Halfway up", "Getting good", "High ground", "Almost there", "The summit", "Foundations champion"][min(max(level, 0), 10)]
+}
+
+/// Quick learning-language switcher: every language keeps its own progress.
+private struct LanguageSwitcher: View {
+    let coordinator: ConversationCoordinator
+
+    var body: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: 8) {
+                ForEach(LanguageRegistry.all, id: \.id) { module in
+                    let selected = module.id == coordinator.language.id
+                    Button {
+                        coordinator.selectLanguage(module.id)
+                    } label: {
+                        Text(module.nativeName).font(.caption.weight(selected ? .semibold : .regular))
+                            .padding(.horizontal, 14).padding(.vertical, 8)
+                            .background(selected ? AppColor.sage : .white.opacity(0.8), in: Capsule())
+                            .foregroundStyle(selected ? AppColor.ink : AppColor.secondary)
+                    }.buttonStyle(.plain).disabled(coordinator.isRunning)
+                        .accessibilityIdentifier("language-" + module.id)
+                }
+            }.scrollIndicators(.hidden)
+        }
+    }
 }
 
 private struct LevelCardView: View {

@@ -84,7 +84,7 @@ struct LearningProgressView: View {
                     }
                 }
                 Section {
-                    Text("Totals and streaks span every language you practise. Words and milestones are for the current language.")
+                    Text("Everything here is for your current learning language. Switch languages to see their own progress.")
                         .font(.footnote).foregroundStyle(AppColor.secondary)
                 }
             }
