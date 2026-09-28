@@ -183,7 +183,8 @@ public struct LessonState: Codable, Hashable, Sendable {
 }
 
 /// Saved expression for the recall queue. `source` is "lesson" or "lookup";
-/// scheduled by RecallEngine on the same ladder as word bars.
+/// scheduled by RecallEngine on the same ladder as word bars. `languageID` is
+/// nil only on legacy entries, which stay visible in every language.
 public struct ExpressionState: Codable, Hashable, Sendable {
     public var text: String
     public var meaning: String
@@ -193,24 +194,30 @@ public struct ExpressionState: Codable, Hashable, Sendable {
     public var attempts: Int
     public var lastSeen: Double
     public var dueAt: Double
+    public var languageID: String?
     public init(text: String, meaning: String, source: String, lessonID: String? = nil,
-                bars: Int = 0, attempts: Int = 0, lastSeen: Double = 0, dueAt: Double = 0) {
+                bars: Int = 0, attempts: Int = 0, lastSeen: Double = 0, dueAt: Double = 0,
+                languageID: String? = nil) {
         self.text = text; self.meaning = meaning; self.source = source; self.lessonID = lessonID
         self.bars = bars; self.attempts = attempts; self.lastSeen = lastSeen; self.dueAt = dueAt
+        self.languageID = languageID
     }
 }
 
 /// One completed learning event in the append-only progress ledger. `kind` is the
 /// closed catalog shared with the server ledger (`user_progress.kind`); itemID is
 /// a content slug, or its hashed key when the raw item (a word lemma) is not one.
-/// Optional array so pre-ledger archives and backups keep decoding untouched.
+/// `languageID` is nil only on legacy marks, which count as global activity.
+/// Optional fields so pre-ledger archives and backups keep decoding untouched.
 public struct CompletionMark: Codable, Hashable, Sendable {
     public var kind: String
     public var itemID: String
     public var at: Double
     public var bestScore: Int
-    public init(kind: String, itemID: String, at: Double, bestScore: Int = 0) {
+    public var languageID: String?
+    public init(kind: String, itemID: String, at: Double, bestScore: Int = 0, languageID: String? = nil) {
         self.kind = kind; self.itemID = itemID; self.at = at; self.bestScore = bestScore
+        self.languageID = languageID
     }
 }
 
@@ -280,9 +287,9 @@ public struct Archive: Codable, Sendable {
                 dueAt: max(current?.dueAt ?? 0, lesson.dueAt))
         }
         candidate.lessons = lessonsByID.isEmpty ? nil : lessonsByID.values.sorted { $0.lessonID < $1.lessonID }
-        var expressionsByKey: [String: ExpressionState] = Dictionary(uniqueKeysWithValues: (candidate.expressions ?? []).map { (RecallEngine.normalizeKey($0.text), $0) })
+        var expressionsByKey: [String: ExpressionState] = Dictionary(uniqueKeysWithValues: (candidate.expressions ?? []).map { (RecallEngine.expressionKey($0.text, $0.languageID), $0) })
         for expression in incoming.expressions ?? [] {
-            let key = RecallEngine.normalizeKey(expression.text)
+            let key = RecallEngine.expressionKey(expression.text, expression.languageID)
             let current = expressionsByKey[key]
             expressionsByKey[key] = ExpressionState(
                 text: current?.text ?? expression.text,
@@ -306,7 +313,7 @@ public struct Archive: Codable, Sendable {
         guard try candidate.encoded().count <= Self.maximumEncodedBytes else { throw ArchiveError.tooLarge }
         return candidate
     }
-    private static func markKey(_ mark: CompletionMark) -> String { "\(mark.kind)|\(mark.itemID)|\(mark.at)" }
+    private static func markKey(_ mark: CompletionMark) -> String { "\(mark.kind)|\(mark.itemID)|\(mark.at)|\(mark.languageID ?? "")" }
     private func validate() throws {
         guard LanguageRegistry.module(for: preferences.learningLanguageID) != nil else { throw ArchiveError.unsupportedLanguage }
         guard Set(sessions.map(\.id)).count == sessions.count,
@@ -334,7 +341,7 @@ public struct Archive: Codable, Sendable {
         else { throw ArchiveError.invalid }
         let expressions = expressions ?? []
         guard expressions.count <= Self.maximumExpressions,
-              Set(expressions.map { RecallEngine.normalizeKey($0.text) }).count == expressions.count,
+              Set(expressions.map { RecallEngine.expressionKey($0.text, $0.languageID) }).count == expressions.count,
               expressions.allSatisfy({ !$0.text.isEmpty && $0.text.count <= 300 && !$0.meaning.isEmpty && $0.meaning.count <= 300 &&
                   ["lesson", "lookup"].contains($0.source) &&
                   ($0.source != "lesson" || !($0.lessonID ?? "").isEmpty) &&
@@ -345,6 +352,7 @@ public struct Archive: Codable, Sendable {
         guard completions.count <= Self.maximumCompletions,
               Set(completions.map(Self.markKey)).count == completions.count,
               completions.allSatisfy({ Self.completionKinds.contains($0.kind) && !$0.itemID.isEmpty && $0.itemID.count <= 200 &&
+                  ($0.languageID ?? "").count <= 16 &&
                   $0.at.isFinite && (0...100).contains($0.bestScore) })
         else { throw ArchiveError.invalid }
     }

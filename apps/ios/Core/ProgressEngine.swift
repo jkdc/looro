@@ -1,5 +1,4 @@
 import Foundation
-import CryptoKit
 
 /// Progress metrics projected from the completion ledger; a pure projection, never stored.
 public struct CourseProgress: Hashable, Sendable {
@@ -46,12 +45,23 @@ public enum ProgressEngine {
     }
 
     /// Day boundaries follow the local calendar on both platforms (tests pin UTC).
+    /// Content ids (lessons, exercises, listening, course ids) embed the language,
+    /// so legacy nil-language marks inside them stay unambiguous; ambiguous kinds
+    /// (themes, recall rounds, word hashes, "free" assessments) need the stamp.
     public static func stats(sessions: [SessionRecord], lessons: [LessonState], completions: [CompletionMark],
-                             courses: [Course], calendar: Calendar = .current, now: Date = .now) -> ProgressStats {
+                             courses: [Course], listeningIDs: Set<String>, languageID: String,
+                             calendar: Calendar = .current, now: Date = .now) -> ProgressStats {
         func epochDay(_ date: Date) -> Int {
             let epoch = calendar.startOfDay(for: Date(timeIntervalSinceReferenceDate: 0))
             return calendar.dateComponents([.day], from: epoch, to: calendar.startOfDay(for: date)).day ?? 0
         }
+        let contentIDs = Set(courses.flatMap { $0.units.flatMap { $0.lessons.map(\.id) } })
+            .union(courses.map(\.id)).union(listeningIDs)
+        func scoped(_ mark: CompletionMark) -> Bool {
+            mark.languageID == languageID || (mark.languageID == nil && contentIDs.contains(mark.itemID))
+        }
+        let languageSessions = sessions.filter { $0.languageID == languageID }
+        let languageMarks = completions.filter { $0.languageID == nil || $0.languageID == languageID }
         let done = Set(lessons.filter { $0.attempts > 0 }.map(\.lessonID))
         let courseProgress = courses.map { course -> CourseProgress in
             let all = course.units.flatMap(\.lessons)
@@ -59,8 +69,8 @@ public enum ProgressEngine {
                                   lessonsDone: all.filter { done.contains($0.id) }.count, lessonsTotal: all.count)
         }
         let today = epochDay(now)
-        var activeDays = Set(completions.map { epochDay(Date(timeIntervalSinceReferenceDate: $0.at)) })
-        for session in sessions where session.voiceSeconds > 0 { activeDays.insert(epochDay(session.startedAt)) }
+        var activeDays = Set(languageMarks.map { epochDay(Date(timeIntervalSinceReferenceDate: $0.at)) })
+        for session in languageSessions where session.voiceSeconds > 0 { activeDays.insert(epochDay(session.startedAt)) }
         var active = 0
         var cursor = activeDays.contains(today) ? today : today - 1
         while activeDays.contains(cursor) { active += 1; cursor -= 1 }
@@ -71,7 +81,7 @@ public enum ProgressEngine {
             previous = day
         }
         func distinctItems(_ kind: String) -> Int {
-            Set(completions.filter { $0.kind == kind }.map(\.itemID)).count
+            Set(completions.filter { $0.kind == kind && scoped($0) }.map(\.itemID)).count
         }
         return ProgressStats(
             courses: courseProgress,
@@ -79,12 +89,14 @@ public enum ProgressEngine {
             lessonsTotal: courseProgress.reduce(0) { $0 + $1.lessonsTotal },
             activeStreakDays: active, longestStreakDays: longest,
             last30DaysActivities: stride(from: 29, through: 0, by: -1).map { offset in
-                completions.filter { epochDay(Date(timeIntervalSinceReferenceDate: $0.at)) == today - offset }.count
+                languageMarks.filter { epochDay(Date(timeIntervalSinceReferenceDate: $0.at)) == today - offset }.count
             },
-            themesPractised: distinctItems(conversationTheme), exercisesCompleted: distinctItems(exerciseSet),
-            listeningCompleted: distinctItems(listening), practiceRounds: completions.filter { $0.kind == recallRound }.count,
+            themesPractised: Set(completions.filter { $0.kind == conversationTheme && $0.languageID == languageID }.map(\.itemID)).count,
+            exercisesCompleted: distinctItems(exerciseSet),
+            listeningCompleted: distinctItems(listening),
+            practiceRounds: completions.filter { $0.kind == recallRound && $0.languageID == languageID }.count,
             wordsPracticeItems: distinctItems(wordsPractice),
-            assessmentsPassed: Set(completions.filter { $0.kind == assessment && $0.bestScore >= 100 }.map(\.itemID)).count)
+            assessmentsPassed: Set(completions.filter { $0.kind == assessment && scoped($0) && $0.bestScore >= 100 }.map(\.itemID)).count)
     }
 }
 
@@ -96,6 +108,7 @@ public struct ProgressSyncEntry: Sendable {
     public var atMilliseconds: Int64
     public var attempts: Int
     public var bestScore: Int
+    public var language: String
 }
 
 public struct RemoteProgress: Sendable {
@@ -105,14 +118,23 @@ public struct RemoteProgress: Sendable {
     public var lastAt: Double
     public var attempts: Int
     public var bestScore: Int
+    public var language: String?
 }
 
 public enum ProgressSync {
     public static let maximumEntries = 200
 
-    /// Cumulative rollups from marks + lesson counters, newest first, wire-capped.
-    /// Lesson counters outrank the (capped) mark ledger so attempts never regress.
-    public static func entries(lessons: [LessonState], completions: [CompletionMark]) -> [ProgressSyncEntry] {
+    /// Cumulative rollups for one language, from that language's marks + lesson
+    /// counters, newest first, wire-capped. Lesson counters outrank the (capped)
+    /// mark ledger so attempts never regress.
+    public static func entries(lessons: [LessonState], completions: [CompletionMark], courses: [Course],
+                               listeningIDs: Set<String>, languageID: String) -> [ProgressSyncEntry] {
+        let contentIDs = Set(courses.flatMap { $0.units.flatMap { $0.lessons.map(\.id) } })
+            .union(courses.map(\.id)).union(listeningIDs)
+        func scoped(_ mark: CompletionMark) -> Bool {
+            mark.languageID == languageID || (mark.languageID == nil && contentIDs.contains(mark.itemID))
+        }
+        let languageLessons = lessons.filter { $0.attempts > 0 && contentIDs.contains($0.lessonID) }
         struct Rollup { var attempts = 0; var firstAt = 0.0; var lastAt = 0.0; var bestScore = 0 }
         var rollups: [String: Rollup] = [:]
         func rollup(_ kind: String, _ item: String, _ at: Double, _ score: Int) -> Rollup {
@@ -124,8 +146,8 @@ public enum ProgressSync {
             rollups["\(kind)|\(item)"] = entry
             return entry
         }
-        for mark in completions { _ = rollup(mark.kind, mark.itemID, mark.at, mark.bestScore) }
-        for lesson in lessons where lesson.attempts > 0 {
+        for mark in completions where scoped(mark) { _ = rollup(mark.kind, mark.itemID, mark.at, mark.bestScore) }
+        for lesson in languageLessons {
             var mark = rollup(ProgressEngine.lesson, lesson.lessonID, lesson.lastSeen, 0)
             mark.attempts = max(mark.attempts, lesson.attempts)
             mark.lastAt = max(mark.lastAt, lesson.lastSeen)
@@ -134,20 +156,22 @@ public enum ProgressSync {
         return rollups
             .map { key, value in ProgressSyncEntry(kind: String(key.split(separator: "|")[0]),
                 itemID: String(key.split(separator: "|", maxSplits: 1)[1]),
-                atMilliseconds: Int64((value.lastAt + 978_307_200) * 1000), attempts: value.attempts, bestScore: value.bestScore) }
+                atMilliseconds: Int64((value.lastAt + 978_307_200) * 1000), attempts: value.attempts,
+                bestScore: value.bestScore, language: languageID) }
             .sorted { $0.atMilliseconds > $1.atMilliseconds }
             .prefix(maximumEntries)
             .map { $0 }
     }
 
-    /// Applies a server pull: lessons merge counter-wise; exercise/listening items the
-    /// device has never seen come back as one restored mark (per-day history does not
+    /// Applies a server pull for the current language: rows of other languages are
+    /// ignored, lessons merge counter-wise, and exercise/listening items the device
+    /// has never seen come back as one restored mark (per-day history does not
     /// survive a reinstall — accepted v1 limit).
-    public static func mergeRemote(archive: Archive, rows: [RemoteProgress]) -> Archive {
+    public static func mergeRemote(archive: Archive, rows: [RemoteProgress], languageID: String) -> Archive {
         var candidate = archive
         var lessons = candidate.lessons ?? []
         var marks = candidate.completions ?? []
-        for row in rows {
+        for row in rows where row.language == nil || row.language == languageID {
             switch row.kind {
             case ProgressEngine.lesson:
                 if let index = lessons.firstIndex(where: { $0.lessonID == row.itemID }) {
@@ -158,7 +182,8 @@ public enum ProgressSync {
                 }
             case ProgressEngine.exerciseSet, ProgressEngine.listening:
                 if !marks.contains(where: { $0.kind == row.kind && $0.itemID == row.itemID }) {
-                    marks.append(CompletionMark(kind: row.kind, itemID: row.itemID, at: row.lastAt, bestScore: row.bestScore))
+                    marks.append(CompletionMark(kind: row.kind, itemID: row.itemID, at: row.lastAt,
+                                                bestScore: row.bestScore, languageID: languageID))
                 }
             default: break
             }

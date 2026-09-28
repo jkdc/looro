@@ -4,7 +4,7 @@ import LearningCore
 /// Read-only practice summary, projected from the local archive each time it opens.
 struct LearningProgressView: View {
     let store: LearningStore
-    private var stats: LearningStats { LearningEngine.stats(sessions: store.sessions, learner: store.learner) }
+    private var stats: LearningStats { LearningEngine.stats(sessions: store.learningSessions, learner: store.learner) }
     private var progress: ProgressStats { store.progressStats }
     private var level: LevelStats? {
         guard let course = CourseRegistry.forLanguage(store.language.id).first else { return nil }
@@ -14,7 +14,8 @@ struct LearningProgressView: View {
     private var medals: Int {
         ListeningRegistry.forLanguage(store.language.id).filter { text in
             let best = (store.archive.completions ?? [])
-                .filter { $0.kind == ProgressEngine.listening && $0.itemID == text.id }.map(\.bestScore).max()
+                .filter { $0.kind == ProgressEngine.listening && $0.itemID == text.id &&
+                          ($0.languageID == nil || $0.languageID == store.language.id) }.map(\.bestScore).max()
             return LevelEngine.medal(bestScore: best) >= 1
         }.count
     }

@@ -121,8 +121,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val language get() = LanguageRegistry.get(archive.preferences.learningLanguageID)!!
     val learner get() = LearningEngine.project(archive.sessions, language.id, archive.preferences.hiddenWords)
 
-    /** Progress-screen summary recomputed on demand (never stored). */
-    fun stats(): LearningStats = LearningEngine.stats(archive.sessions, learner)
+    /** Progress-screen summary recomputed on demand (never stored); scoped to the learning language. */
+    fun stats(): LearningStats = LearningEngine.stats(archive.sessions.filter { it.languageID == language.id }, learner)
     val isRunning get() = state in listOf("connecting", "active", "closing")
     val isVoiceSession get() = voiceSession
 
@@ -285,9 +285,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** Appends one completion to the local ledger — the source of every progress metric.
-        The ledger keeps only the newest marks, so validation never rejects a save. */
+        Marks carry the learning language; the ledger keeps only the newest marks. */
     fun recordCompletion(kind: String, rawItemID: String, bestScore: Int = 0) {
-        val mark = CompletionMark(kind, ProgressEngine.completionKey(rawItemID), nowSeconds(), bestScore)
+        val mark = CompletionMark(kind, ProgressEngine.completionKey(rawItemID), nowSeconds(), bestScore, language.id)
         val marks = ((archive.completions ?: mutableListOf()) + mark)
             .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS)
         archive = archive.copy(completions = marks.toMutableList())
@@ -295,7 +295,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun progressStats(): ProgressStats = ProgressEngine.stats(archive.sessions, archive.lessons,
-        archive.completions.orEmpty(), CourseRegistry.all)
+        archive.completions.orEmpty(), CourseRegistry.forLanguage(language.id),
+        ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(), language.id)
 
     fun completedLessonIDs(): Set<String> = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
 
@@ -321,10 +322,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun progressBatchJson(): String = buildJsonObject {
         putJsonArray("entries") {
-            ProgressSync.entries(archive.lessons, archive.completions.orEmpty()).forEach { entry ->
+            ProgressSync.entries(archive.lessons, archive.completions.orEmpty(),
+                CourseRegistry.forLanguage(language.id), ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(),
+                language.id).forEach { entry ->
                 addJsonObject {
                     put("kind", entry.kind); put("itemID", entry.itemID); put("at", entry.atMilliseconds)
-                    put("attempts", entry.attempts); put("bestScore", entry.bestScore)
+                    put("attempts", entry.attempts); put("bestScore", entry.bestScore); put("language", entry.language)
                 }
             }
         }
@@ -341,10 +344,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val lastAt = (row["lastAt"] as? JsonPrimitive)?.doubleOrNull ?: return@mapNotNull null
             val attempts = (row["attempts"] as? JsonPrimitive)?.intOrNull ?: return@mapNotNull null
             val bestScore = (row["bestScore"] as? JsonPrimitive)?.intOrNull ?: return@mapNotNull null
-            RemoteProgress(kind, itemID, firstAt, lastAt, attempts, bestScore)
+            val language = (row["language"] as? JsonPrimitive)?.contentOrNull
+            RemoteProgress(kind, itemID, firstAt, lastAt, attempts, bestScore, language)
         }
         if (merged.isEmpty()) return false
-        archive = ProgressSync.mergeRemote(archive, merged)
+        archive = ProgressSync.mergeRemote(archive, merged, language.id)
         return true
     }
 
@@ -1228,7 +1232,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (i >= 0) lessons[i] = lessons[i].copy(attempts = lessons[i].attempts + 1, lastSeen = nowSeconds())
         else lessons += LessonState(lessonID = lessonID, attempts = 1, lastSeen = nowSeconds())
         archive = archive.copy(lessons = lessons, completions = ((archive.completions ?: mutableListOf()) +
-            CompletionMark(ProgressEngine.LESSON, lessonID, nowSeconds(), 0))
+            CompletionMark(ProgressEngine.LESSON, lessonID, nowSeconds(), 0, language.id))
             .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS).toMutableList())
         CourseRegistry.lesson(lessonID)?.let { RecallEngine.seedFromLesson(archive, it, nowSeconds()) }
         persist()

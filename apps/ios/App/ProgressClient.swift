@@ -20,6 +20,7 @@ struct ProgressClient {
         let lastAt: Double
         let attempts: Int
         let bestScore: Int
+        let language: String?
     }
     private struct EntryWire: Encodable {
         let kind: String
@@ -27,12 +28,14 @@ struct ProgressClient {
         let at: Int64
         let attempts: Int
         let bestScore: Int
+        let language: String
     }
     private struct BatchWire: Encodable { let entries: [EntryWire] }
 
     func send(_ entries: [ProgressSyncEntry], bearer: String) async -> Bool {
         let batch = BatchWire(entries: entries.map {
-            EntryWire(kind: $0.kind, itemID: $0.itemID, at: $0.atMilliseconds, attempts: $0.attempts, bestScore: $0.bestScore)
+            EntryWire(kind: $0.kind, itemID: $0.itemID, at: $0.atMilliseconds, attempts: $0.attempts,
+                      bestScore: $0.bestScore, language: $0.language)
         })
         guard let url = try? configuration.endpoint("/v1/progress"),
               let body = try? JSONEncoder().encode(batch)
@@ -64,7 +67,7 @@ struct ProgressClient {
         else { return nil }
         return wire.progress.map {
             RemoteProgress(kind: $0.kind, itemID: $0.itemID, firstAt: $0.firstAt, lastAt: $0.lastAt,
-                           attempts: $0.attempts, bestScore: $0.bestScore)
+                           attempts: $0.attempts, bestScore: $0.bestScore, language: $0.language)
         }
     }
 }

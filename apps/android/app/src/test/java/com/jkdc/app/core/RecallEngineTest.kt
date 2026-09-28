@@ -63,7 +63,8 @@ class RecallEngineTest {
         val incoming = ArchiveCodec.decode(ArchiveCodec.encode(current))
         incoming.expressions.clear()
         incoming.expressions += ExpressionState(text = "soup", meaning = "a hot liquid food",
-            source = "lookup", bars = 3, attempts = 9, lastSeen = 900.0, dueAt = 900.0)
+            source = "lookup", bars = 3, attempts = 9, lastSeen = 900.0, dueAt = 900.0,
+            languageID = current.preferences.learningLanguageID)
         val merged = ArchiveCodec.merge(current, incoming)
         assertEquals(1, merged.expressions.size)
         assertEquals(3, merged.expressions.single().bars)

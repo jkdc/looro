@@ -86,20 +86,24 @@ data class LessonState(
 )
 
 /** Saved expression for the recall queue. `source` is "lesson" or "lookup";
-    scheduled by RecallEngine on the same ladder as word bars. */
+    scheduled by RecallEngine on the same ladder as word bars. `languageID` is
+    null only on legacy entries, which stay visible in every language. */
 @Serializable
 data class ExpressionState(
     val text: String, val meaning: String, val source: String, val lessonID: String? = null,
-    var bars: Int = 0, var attempts: Int = 0, var lastSeen: Double = 0.0, var dueAt: Double = 0.0
+    var bars: Int = 0, var attempts: Int = 0, var lastSeen: Double = 0.0, var dueAt: Double = 0.0,
+    val languageID: String? = null
 )
 
 /** One completed learning event in the append-only progress ledger. `kind` is the
     closed catalog shared with the server ledger (`user_progress.kind`); itemID is
     a content slug, or its hashed key when the raw item (a word lemma) is not one.
-    Nullable list so pre-ledger archives and backups keep decoding untouched. */
+    `languageID` is null only on legacy marks, which count as global activity.
+    Nullable fields so pre-ledger archives and backups keep decoding untouched. */
 @Serializable
 data class CompletionMark(
-    val kind: String, val itemID: String, val at: Double, val bestScore: Int = 0
+    val kind: String, val itemID: String, val at: Double, val bestScore: Int = 0,
+    val languageID: String? = null
 )
 
 @Serializable
@@ -185,9 +189,9 @@ object ArchiveCodec {
                 attempts = maxOf(cur.attempts, inc.attempts), lastSeen = maxOf(cur.lastSeen, inc.lastSeen), dueAt = maxOf(cur.dueAt, inc.dueAt))
         }
         out.lessons = byLesson.values.toMutableList()
-        val byExpression = out.expressions.associateBy { RecallEngine.normalizeKey(it.text) }.toMutableMap()
+        val byExpression = out.expressions.associateBy { RecallEngine.expressionKey(it.text, it.languageID) }.toMutableMap()
         incoming.expressions.forEach { inc ->
-            val key = RecallEngine.normalizeKey(inc.text)
+            val key = RecallEngine.expressionKey(inc.text, inc.languageID)
             val cur = byExpression[key]
             byExpression[key] = if (cur == null) inc else ExpressionState(
                 text = cur.text, meaning = if (cur.meaning.isNotBlank()) cur.meaning else inc.meaning,
@@ -264,14 +268,15 @@ object ArchiveCodec {
         }
         if (a.lessons.size > MAXIMUM_LESSONS || a.lessons.map { it.lessonID }.toSet().size != a.lessons.size ||
             a.lessons.any { it.lessonID.isBlank() || it.lessonID.length > 200 || it.bars !in 0..3 || it.attempts !in 0..1_000_000 || !it.lastSeen.isFinite() || !it.dueAt.isFinite() }) throw ArchiveError.INVALID
-        if (a.expressions.size > MAXIMUM_EXPRESSIONS || a.expressions.map { RecallEngine.normalizeKey(it.text) }.toSet().size != a.expressions.size ||
+        if (a.expressions.size > MAXIMUM_EXPRESSIONS || a.expressions.map { RecallEngine.expressionKey(it.text, it.languageID) }.toSet().size != a.expressions.size ||
             a.expressions.any { it.text.isBlank() || it.text.length > 300 || it.meaning.isBlank() || it.meaning.length > 300 ||
                 it.source !in listOf("lesson", "lookup") || (it.source == "lesson" && (it.lessonID.isNullOrBlank() || it.lessonID.length > 200)) ||
                 it.bars !in 0..3 || it.attempts !in 0..1_000_000 || !it.lastSeen.isFinite() || !it.dueAt.isFinite() }) throw ArchiveError.INVALID
         val completions = a.completions.orEmpty()
         if (completions.size > MAXIMUM_COMPLETIONS || completions.map { completionKey(it) }.toSet().size != completions.size ||
             completions.any { it.kind !in ProgressEngine.kinds || it.itemID.isBlank() || it.itemID.length > 200 ||
+                it.languageID != null && it.languageID.length > 16 ||
                 !it.at.isFinite() || it.bestScore !in 0..100 }) throw ArchiveError.INVALID
     }
-    private fun completionKey(mark: CompletionMark) = "${mark.kind}|${mark.itemID}|${mark.at}"
+    private fun completionKey(mark: CompletionMark) = "${mark.kind}|${mark.itemID}|${mark.at}|${mark.languageID.orEmpty()}"
 }

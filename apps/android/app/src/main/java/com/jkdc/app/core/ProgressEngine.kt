@@ -34,8 +34,18 @@ object ProgressEngine {
             .joinToString("") { "%02x".format(it) }.take(16)
 
     fun stats(sessions: List<SessionRecord>, lessons: List<LessonState>, completions: List<CompletionMark>,
-              courses: List<Course>, zone: java.time.ZoneId = java.time.ZoneId.systemDefault(), now: Double = nowSeconds()): ProgressStats {
+              courses: List<Course>, listeningIDs: Set<String>, languageID: String,
+              zone: java.time.ZoneId = java.time.ZoneId.systemDefault(), now: Double = nowSeconds()): ProgressStats {
         fun epochDay(seconds: Double): Long = java.time.Instant.ofEpochSecond((seconds + APPLE_EPOCH_UNIX_SECONDS).toLong()).atZone(zone).toLocalDate().toEpochDay()
+        // Content ids (lessons, exercises, listening, course ids) embed the language, so
+        // legacy null-language marks inside them stay unambiguous; ambiguous kinds
+        // (themes, recall rounds, word hashes, "free" assessments) need the stamp.
+        val contentIDs = courses.flatMap { it.units.flatMap { unit -> unit.lessons.map { l -> l.id } } }.toSet() +
+            courses.map { it.id }.toSet() + listeningIDs
+        fun scoped(mark: CompletionMark): Boolean =
+            mark.languageID == languageID || (mark.languageID == null && mark.itemID in contentIDs)
+        val languageSessions = sessions.filter { it.languageID == languageID }
+        val languageMarks = completions.filter { it.languageID == null || it.languageID == languageID }
         val done = lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
         val courseProgress = courses.map { course ->
             val all = course.units.flatMap { it.lessons }
@@ -43,25 +53,26 @@ object ProgressEngine {
         }
         val today = epochDay(now)
         val activeDays = buildSet {
-            completions.forEach { add(epochDay(it.at)) }
-            sessions.filter { it.voiceSeconds > 0 }.forEach { add(epochDay(it.startedAt)) }
+            languageMarks.forEach { add(epochDay(it.at)) }
+            languageSessions.filter { it.voiceSeconds > 0 }.forEach { add(epochDay(it.startedAt)) }
         }
         var active = 0
-        var cursor = if (today in activeDays) today.toLong() else today - 1
+        var cursor = if (today in activeDays) today else today - 1
         while (cursor in activeDays) { active++; cursor-- }
         var longest = 0; var run = 0; var previous = Long.MIN_VALUE
         for (day in activeDays.sorted()) { run = if (day == previous + 1) run + 1 else 1; if (run > longest) longest = run; previous = day }
         val byKind = completions.groupBy { it.kind }
-        fun distinctItems(kind: String) = byKind[kind].orEmpty().map { it.itemID }.toSet().size
+        fun distinctItems(kind: String) = byKind[kind].orEmpty().filter { scoped(it) }.map { it.itemID }.toSet().size
         return ProgressStats(
             courses = courseProgress, lessonsDone = courseProgress.sumOf { it.lessonsDone },
             lessonsTotal = courseProgress.sumOf { it.lessonsTotal },
             activeStreakDays = active, longestStreakDays = longest,
-            last30DaysActivities = (29 downTo 0).map { offset -> completions.count { epochDay(it.at) == today - offset } },
-            themesPractised = distinctItems(CONVERSATION_THEME), exercisesCompleted = distinctItems(EXERCISE_SET),
-            listeningCompleted = distinctItems(LISTENING), practiceRounds = byKind[RECALL_ROUND].orEmpty().size,
+            last30DaysActivities = (29 downTo 0).map { offset -> languageMarks.count { epochDay(it.at) == today - offset } },
+            themesPractised = byKind[CONVERSATION_THEME].orEmpty().filter { it.languageID == languageID }.map { it.itemID }.toSet().size,
+            exercisesCompleted = distinctItems(EXERCISE_SET),
+            listeningCompleted = distinctItems(LISTENING), practiceRounds = byKind[RECALL_ROUND].orEmpty().count { it.languageID == languageID },
             wordsPracticeItems = distinctItems(WORDS_PRACTICE),
-            assessmentsPassed = byKind[ASSESSMENT].orEmpty().filter { it.bestScore >= 100 }.map { it.itemID }.toSet().size,
+            assessmentsPassed = byKind[ASSESSMENT].orEmpty().filter { scoped(it) && it.bestScore >= 100 }.map { it.itemID }.toSet().size,
         )
     }
 }
@@ -69,45 +80,62 @@ object ProgressEngine {
 /** One cumulative wire entry for the server ledger: (kind, item) rollups merge
     monotonically server-side, so cumulative counters are safe to resend. */
 data class ProgressSyncEntry(
-    val kind: String, val itemID: String, val atMilliseconds: Long, val attempts: Int, val bestScore: Int
+    val kind: String, val itemID: String, val atMilliseconds: Long, val attempts: Int, val bestScore: Int,
+    val language: String,
 )
 
 data class RemoteProgress(
     val kind: String, val itemID: String, val firstAt: Double, val lastAt: Double,
-    val attempts: Int, val bestScore: Int
+    val attempts: Int, val bestScore: Int, val language: String? = null
 )
 
 object ProgressSync {
     const val MAXIMUM_ENTRIES = 200
 
-    /** Cumulative rollups from marks + lesson counters, newest first, wire-capped.
-        Lesson counters outrank the (capped) mark ledger so attempts never regress. */
-    fun entries(lessons: List<LessonState>, completions: List<CompletionMark>): List<ProgressSyncEntry> {
-        data class Rollup(var attempts: Int, var firstAt: Double, var lastAt: Double, var bestScore: Int)
+    /** Cumulative rollups for one language, from that language's marks + lesson
+        counters, newest first, wire-capped. Lesson counters outrank the (capped)
+        mark ledger so attempts never regress. */
+    fun entries(lessons: List<LessonState>, completions: List<CompletionMark>, courses: List<Course>,
+                listeningIDs: Set<String>, languageID: String): List<ProgressSyncEntry> {
+        val contentIDs = courses.flatMap { it.units.flatMap { unit -> unit.lessons.map { l -> l.id } } }.toSet() +
+            courses.map { it.id }.toSet() + listeningIDs
+        fun scoped(mark: CompletionMark): Boolean =
+            mark.languageID == languageID || (mark.languageID == null && mark.itemID in contentIDs)
+        val languageLessons = lessons.filter { it.attempts > 0 && lessonIn(it.lessonID, contentIDs) }
+        val rollups = rollupsOf(languageLessons, completions.filter { scoped(it) })
+        return rollups.map { (key, value) ->
+            ProgressSyncEntry(key.substringBefore('|'), key.substringAfter('|'),
+                ((value.lastAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(), value.attempts, value.bestScore, languageID)
+        }.sortedByDescending { it.atMilliseconds }.take(MAXIMUM_ENTRIES)
+    }
+
+    private data class Rollup(var attempts: Int, var firstAt: Double, var lastAt: Double, var bestScore: Int)
+
+    private fun rollupsOf(lessons: List<LessonState>, completions: List<CompletionMark>): MutableMap<String, Rollup> {
         val rollups = LinkedHashMap<String, Rollup>()
         fun rollup(kind: String, item: String, at: Double, score: Int): Rollup =
             rollups.getOrPut("$kind|$item") { Rollup(0, at, at, 0) }.apply {
                 attempts += 1; firstAt = minOf(firstAt, at); lastAt = maxOf(lastAt, at); bestScore = maxOf(bestScore, score)
             }
         completions.forEach { rollup(it.kind, it.itemID, it.at, it.bestScore) }
-        lessons.filter { it.attempts > 0 }.forEach { lesson ->
+        lessons.forEach { lesson ->
             val mark = rollup(ProgressEngine.LESSON, lesson.lessonID, lesson.lastSeen, 0)
             mark.attempts = maxOf(mark.attempts, lesson.attempts)
             mark.lastAt = maxOf(mark.lastAt, lesson.lastSeen)
         }
-        return rollups.map { (key, value) ->
-            ProgressSyncEntry(key.substringBefore('|'), key.substringAfter('|'),
-                ((value.lastAt + APPLE_EPOCH_UNIX_SECONDS) * 1000).toLong(), value.attempts, value.bestScore)
-        }.sortedByDescending { it.atMilliseconds }.take(MAXIMUM_ENTRIES)
+        return rollups
     }
 
-    /** Applies a server pull: lessons merge counter-wise; exercise/listening items the
-        device has never seen come back as one restored mark (per-day history does not
+    private fun lessonIn(lessonID: String, contentIDs: Set<String>): Boolean = lessonID in contentIDs
+
+    /** Applies a server pull for the current language: rows of other languages are
+        ignored, lessons merge counter-wise, and exercise/listening items the device
+        has never seen come back as one restored mark (per-day history does not
         survive a reinstall — accepted v1 limit). */
-    fun mergeRemote(archive: Archive, rows: List<RemoteProgress>): Archive {
+    fun mergeRemote(archive: Archive, rows: List<RemoteProgress>, languageID: String): Archive {
         val lessons = archive.lessons.toMutableList()
         val marks = archive.completions.orEmpty().toMutableList()
-        rows.forEach { row ->
+        rows.filter { it.language == null || it.language == languageID }.forEach { row ->
             when (row.kind) {
                 ProgressEngine.LESSON -> {
                     val i = lessons.indexOfFirst { it.lessonID == row.itemID }
@@ -116,7 +144,7 @@ object ProgressSync {
                 }
                 ProgressEngine.EXERCISE_SET, ProgressEngine.LISTENING ->
                     if (marks.none { it.kind == row.kind && it.itemID == row.itemID })
-                        marks += CompletionMark(row.kind, row.itemID, row.lastAt, row.bestScore)
+                        marks += CompletionMark(row.kind, row.itemID, row.lastAt, row.bestScore, languageID)
             }
         }
         return archive.copy(lessons = lessons,

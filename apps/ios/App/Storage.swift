@@ -72,24 +72,31 @@ import LearningCore
     }
 
     /// One completed learning event in the ledger; keeps only the newest marks.
+    /// Marks carry the learning language.
     func recordCompletion(kind: String, itemID: String, bestScore: Int = 0) {
         var marks = archive.completions ?? []
         marks.append(CompletionMark(kind: kind, itemID: ProgressEngine.completionKey(itemID),
-                                    at: Date.now.timeIntervalSinceReferenceDate, bestScore: bestScore))
+                                    at: Date.now.timeIntervalSinceReferenceDate, bestScore: bestScore,
+                                    languageID: archive.preferences.learningLanguageID))
         if marks.count > Archive.maximumCompletions { marks = Array(marks.suffix(Archive.maximumCompletions)) }
         archive.completions = marks
         persist()
     }
 
     var progressStats: ProgressStats {
-        ProgressEngine.stats(sessions: archive.sessions, lessons: archive.lessons ?? [],
-                             completions: archive.completions ?? [], courses: CourseRegistry.all)
+        let language = archive.preferences.learningLanguageID
+        return ProgressEngine.stats(sessions: archive.sessions, lessons: archive.lessons ?? [],
+                                    completions: archive.completions ?? [],
+                                    courses: CourseRegistry.forLanguage(language),
+                                    listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
+                                    languageID: language)
     }
     var completedLessonIDs: Set<String> {
         Set((archive.lessons ?? []).filter { $0.attempts > 0 }.map(\.lessonID))
     }
     func applyRemoteProgress(_ rows: [RemoteProgress]) {
-        archive = ProgressSync.mergeRemote(archive: archive, rows: rows)
+        archive = ProgressSync.mergeRemote(archive: archive, rows: rows,
+                                           languageID: archive.preferences.learningLanguageID)
         persist()
     }
     func hideWord(_ id: String) { archive.preferences.hiddenWords.append(id); persist() }

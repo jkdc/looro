@@ -382,11 +382,12 @@ private fun SettingsHistorySheet(vm: AppViewModel, onDismiss: () -> Unit, onSele
             SettingsSheetHeader(stringResource(R.string.history_section_title), onDismiss)
             LazyColumn(Modifier.weight(1f).testTag("settings-history-list"), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                if (vm.archive.sessions.isEmpty()) item {
+                val history = vm.archive.sessions.filter { it.languageID == vm.language.id }.sortedByDescending { it.startedAt }
+                if (history.isEmpty()) item {
                     Text(stringResource(R.string.history_empty), style = MaterialTheme.typography.bodyLarge, color = AppColors.Secondary,
                         modifier = Modifier.padding(16.dp))
                 }
-                items(vm.archive.sessions.sortedByDescending { it.startedAt }, key = { it.id }) { session ->
+                items(history, key = { it.id }) { session ->
                     SettingsGroup {
                         Column(Modifier.fillMaxWidth().clickable { onSelect(session) }.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                             Text(session.title, style = MaterialTheme.typography.titleMedium)

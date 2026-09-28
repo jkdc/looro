@@ -45,8 +45,12 @@ import LearningCore
             if let rows = await client.fetch(bearer: bearer), !rows.isEmpty {
                 self.store.applyRemoteProgress(rows)
             }
+            let language = self.store.language.id
             _ = await client.send(ProgressSync.entries(lessons: self.store.archive.lessons ?? [],
-                                                       completions: self.store.archive.completions ?? []), bearer: bearer)
+                                                       completions: self.store.archive.completions ?? [],
+                                                       courses: CourseRegistry.forLanguage(language),
+                                                       listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
+                                                       languageID: language), bearer: bearer)
         }
     }
 
