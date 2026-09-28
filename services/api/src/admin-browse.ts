@@ -176,9 +176,10 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   user_progress: {
     table: 'user_progress',
-    description: 'Progreso de aprendizaje por cuenta: lecciones, temas, ejercicios, listening y prácticas.',
+    description: 'Progreso de aprendizaje por cuenta e idioma: lecciones, temas, ejercicios, listening y prácticas.',
     columns: {
       account_id: column('uuid', uuidFilters), kind: column('text', ['eq']), item_id: column('text', textFilters),
+      language: column('text', ['eq']),
       first_at: column('timestamptz', timeFilters), last_at: column('timestamptz', timeFilters),
       attempts: column('integer', numberFilters), best_score: column('integer', numberFilters)
     },

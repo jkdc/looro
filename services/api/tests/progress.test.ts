@@ -18,7 +18,7 @@ async function account() {
   return id;
 }
 const entry = (overrides: Record<string, unknown> = {}, kind = 'lesson') => ({
-  kind, itemID: 'en-foundations-u1-to-be', at: Date.now(), attempts: 1, bestScore: 0, ...overrides });
+  kind, itemID: 'en-foundations-u1-to-be', at: Date.now(), attempts: 1, bestScore: 0, language: 'en', ...overrides });
 const batch = (entries: unknown) => ({ entries });
 
 test('the parser accepts representative entries from every progress family', () => {
@@ -47,7 +47,8 @@ test('the parser rejects anything outside the closed ledger shape', () => {
     batch([entry({ at: Date.now() + 49 * 3_600_000 })]),
     batch([entry({ attempts: 0 })]), batch([entry({ attempts: 1.5 })]),
     batch([entry({ bestScore: 101 })]), batch([entry({ bestScore: -1 })]),
-    batch([Object.fromEntries(Object.entries(good).filter(([key]) => key !== 'attempts'))])
+    batch([entry({ language: 'xx' })]),
+    batch([Object.fromEntries(Object.entries(good).filter(([key]) => key !== 'language'))])
   ]) {
     assert.throws(() => parseProgressBatch(invalid));
   }
@@ -83,4 +84,18 @@ integration('kinds and items stay independent and account deletion cascades', as
   assert.deepEqual(rows.map(row => row.kind), ['conversation_theme', 'lesson', 'listening']);
   await db!.query('DELETE FROM accounts WHERE id=$1', [id]);
   assert.equal(Number((await db!.query('SELECT count(*) AS total FROM user_progress WHERE account_id=$1', [id])).rows[0].total), 0);
+});
+
+integration('the same item earned in two languages is two rows', async () => {
+  const id = await account();
+  await mergeProgress(db!, id, batch([
+    entry({ kind: 'conversation_theme', itemID: 'restaurant', attempts: 2, bestScore: 0, language: 'en' }),
+    entry({ kind: 'conversation_theme', itemID: 'restaurant', attempts: 5, bestScore: 0, language: 'fr' })]));
+  const rows = (await db!.query('SELECT language,attempts FROM user_progress ORDER BY language')).rows;
+  assert.deepEqual(rows, [{ language: 'en', attempts: 2 }, { language: 'fr', attempts: 5 }]);
+  // The merge stays scoped per language: an en replay must not lift the fr row.
+  await mergeProgress(db!, id, batch([
+    entry({ kind: 'conversation_theme', itemID: 'restaurant', attempts: 9, bestScore: 0, language: 'en' })]));
+  const after = (await db!.query('SELECT language,attempts FROM user_progress ORDER BY language')).rows;
+  assert.deepEqual(after.map(row => row.attempts), [9, 5]);
 });

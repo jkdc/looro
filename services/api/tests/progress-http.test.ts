@@ -29,7 +29,7 @@ before(async () => {
 });
 const bearer = (index = 0) => `Bearer ${bearers[index]!.bearer}`;
 const entry = (overrides: Record<string, unknown> = {}) => ({
-  kind: 'lesson', itemID: 'en-foundations-u1-to-be', at: Date.now(), attempts: 1, bestScore: 0, ...overrides });
+  kind: 'lesson', itemID: 'en-foundations-u1-to-be', at: Date.now(), attempts: 1, bestScore: 0, language: 'en', ...overrides });
 
 integration('the ledger requires an account bearer, guests included', async () => {
   const app = createApp({ db: db!, auth: {} });
@@ -57,11 +57,11 @@ integration('a guest sync is stored and reading back returns only that account, 
     assert.ok(!response.body.includes(bearer(1)));
     const read = await app.inject({ method: 'GET', url: PROGRESS_PATH, headers: { authorization: bearer(1) } });
     assert.equal(read.statusCode, 200);
-    const rows: Array<{ kind: string; itemID: string; firstAt: number; lastAt: number; attempts: number; bestScore: number }> = read.json().progress;
+    const rows: Array<{ kind: string; itemID: string; language: string; firstAt: number; lastAt: number; attempts: number; bestScore: number }> = read.json().progress;
     assert.equal(rows.length, 2);
     const listening = rows.find(row => row.kind === 'listening')!;
     assert.deepEqual(listening,
-      { kind: 'listening', itemID: 'cafe-morning', firstAt: listening.firstAt,
+      { kind: 'listening', itemID: 'cafe-morning', language: 'en', firstAt: listening.firstAt,
         lastAt: listening.lastAt, attempts: 1, bestScore: 60 });
     const other = await app.inject({ method: 'GET', url: PROGRESS_PATH, headers: { authorization: bearer(0) } });
     assert.deepEqual(other.json().progress, []);
@@ -92,6 +92,7 @@ integration('off-catalog entries, oversized batches and oversized bodies fail cl
       { entries: [entry({ kind: 'streak' })] },
       { entries: [entry({ itemID: 'Hola' })] },
       { entries: [entry({ bestScore: 101 })] },
+      { entries: [entry({ language: 'klingon' })] },
       { entries: [] },
       { entries: [entry()], extra: 1 },
       {}
