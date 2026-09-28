@@ -112,9 +112,9 @@ fun ExerciseScreen(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit) {
 }
 
 @Composable
-private fun ExerciseCard(exercise: Exercise, answer: String, selected: Int?, verdict: Boolean?,
-                         onAnswer: (String) -> Unit, onSelect: (Int) -> Unit,
-                         onCheck: () -> Unit, onNext: () -> Unit) {
+internal fun ExerciseCard(exercise: Exercise, answer: String, selected: Int?, verdict: Boolean?,
+                          onAnswer: (String) -> Unit, onSelect: (Int) -> Unit,
+                          onCheck: () -> Unit, onNext: () -> Unit) {
     val tokens = remember(exercise.id) {
         if (exercise.kind == ExerciseEngine.ORDER) {
             exercise.answers.firstOrNull()?.split(" ")?.shuffled(Random(exercise.id.hashCode())) ?: emptyList()
@@ -180,6 +180,6 @@ private fun ExerciseCard(exercise: Exercise, answer: String, selected: Int?, ver
 }
 
 @Composable
-private fun LaunchedEffectOnce(finished: Boolean, lessonID: String, correct: Int, total: Int, record: () -> Unit) {
+internal fun LaunchedEffectOnce(finished: Boolean, lessonID: String, correct: Int, total: Int, record: () -> Unit) {
     androidx.compose.runtime.LaunchedEffect(finished, lessonID) { if (finished && total > 0) record() }
 }

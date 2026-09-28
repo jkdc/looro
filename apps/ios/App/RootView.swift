@@ -28,6 +28,7 @@ struct RootView: View {
                 shell { CoursesView(coordinator: coordinator) { tab = 0 } }
             }
             Tab("Words", systemImage: "book", value: 3) { shell { WordsView(coordinator: coordinator) } }
+            Tab("Listen", systemImage: "headphones", value: 4) { shell { ListeningView(coordinator: coordinator) } }
         }
         .tint(AppColor.ink)
         .sheet(isPresented: $coordinator.showSettings) { SettingsView(coordinator: coordinator) }

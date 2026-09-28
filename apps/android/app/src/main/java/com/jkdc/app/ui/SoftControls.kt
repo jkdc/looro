@@ -53,7 +53,8 @@ fun FloatingNavigation(selected: Int, onSelect: (Int) -> Unit) {
     val items = listOf(Triple(R.string.talk_tab_title, AppSymbol.Wave, "tab-talk"),
         Triple(R.string.topics_tab_title, AppSymbol.Themes, "tab-topics"),
         Triple(R.string.learn_tab_title, AppSymbol.Sparkles, "tab-learn"),
-        Triple(R.string.words_tab_title, AppSymbol.Words, "tab-words"))
+        Triple(R.string.words_tab_title, AppSymbol.Words, "tab-words"),
+        Triple(R.string.listening_tab_title, AppSymbol.Headphones, "tab-listening"))
     Box(Modifier.fillMaxWidth().navigationBarsPadding().padding(top = 8.dp, bottom = 12.dp), contentAlignment = Alignment.Center) {
         BoxWithConstraints(Modifier.widthIn(max = 400.dp).fillMaxWidth().height(66.dp).testTag("floating-navigation")
             .shadow(25.dp, CircleShape, ambientColor = AppColors.Secondary.copy(alpha = .08f), spotColor = AppColors.Secondary.copy(alpha = .10f))

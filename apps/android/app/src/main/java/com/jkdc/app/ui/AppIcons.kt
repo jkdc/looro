@@ -18,7 +18,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 enum class AppSymbol { Wave, Themes, Words, Settings, Mic, MicOff, Captions, Transcript, End,
-    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music, Pause, Play }
+    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music, Pause, Play, Headphones }
 
 /** Original, consistently weighted artwork; no platform-dependent text glyphs. */
 @Composable
@@ -91,6 +91,10 @@ fun AppIcon(symbol: AppSymbol, modifier: Modifier = Modifier, color: Color = App
                     drawOval(color,Offset(3f,16f),Size(6f,5f)); drawOval(color,Offset(15f,13f),Size(6f,5f)); line(9f,9f,21f,6f) }
                 AppSymbol.Pause -> { line(9f,6f,9f,18f); line(15f,6f,15f,18f) }
                 AppSymbol.Play -> path { moveTo(8f,5f); lineTo(19f,12f); lineTo(8f,19f); close() }
+                AppSymbol.Headphones -> { path { moveTo(3f,14f); lineTo(3f,12f); cubicTo(3f,6.5f,7f,2.5f,12f,2.5f)
+                    cubicTo(17f,2.5f,21f,6.5f,21f,12f); lineTo(21f,14f) }
+                    drawRoundRect(color,Offset(3f,14f),Size(5f,7.5f),CornerRadius(2.2f),style=stroke)
+                    drawRoundRect(color,Offset(16f,14f),Size(5f,7.5f),CornerRadius(2.2f),style=stroke) }
             }
         }
     }

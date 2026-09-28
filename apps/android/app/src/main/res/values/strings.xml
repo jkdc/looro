@@ -317,6 +317,19 @@
     <string name="exercise_clear">Clear</string>
     <string name="exercise_summary">You answered %1$d of %2$d correctly.</string>
     <string name="exercise_done">Finish</string>
+    <!-- Listening -->
+    <string name="listening_tab_title">Listen</string>
+    <string name="listening_eyebrow">Your ears</string>
+    <string name="listening_title">Listen and answer</string>
+    <string name="listening_subtitle">Hear a short text, then answer the questions in writing.</string>
+    <string name="listening_level">%1$s · %2$d questions</string>
+    <string name="listening_score">Best %1$d%%</string>
+    <string name="listening_instruction">Listen as many times as you need. The text stays hidden while you answer — try to understand it with your ears first.</string>
+    <string name="listening_play">Play the text</string>
+    <string name="listening_playing">Playing…</string>
+    <string name="listening_stop">Stop</string>
+    <string name="listening_ready">I\'m ready — show the questions</string>
+    <string name="listening_show_transcript">Show the transcript</string>
     <string name="learn_course_percent">Completed: %1$d%%</string>
     <string name="lesson_done">Done</string>
     <string name="common_back">Back</string>

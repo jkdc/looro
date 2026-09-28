@@ -1,0 +1,200 @@
+{
+  "texts": [
+    {
+      "id": "en-listen-coffee-morning",
+      "languageID": "en",
+      "title": "A coffee before work",
+      "level": "A1",
+      "text": "Every morning, Marta walks to a small café near her flat. The waiter knows her name, so she never has to order. Today she sits by the window with a coffee and a croissant. Her bus leaves at half past eight, but she is not worried. The café is very quiet at this hour. She drinks her coffee slowly and watches the city wake up.",
+      "questions": [
+        {"id": "en-listen-coffee-morning-q1", "kind": "choice", "prompt": "Where does Marta go every morning?",
+         "options": ["To a small café", "To her office", "To the bus station", "To a park"], "answers": ["To a small café"],
+         "explain": "She walks to a small café near her flat."},
+        {"id": "en-listen-coffee-morning-q2", "kind": "choice", "prompt": "What does she have for breakfast today?",
+         "options": ["Tea and toast", "A coffee and a croissant", "Orange juice", "Nothing"], "answers": ["A coffee and a croissant"],
+         "explain": "She sits by the window with a coffee and a croissant."},
+        {"id": "en-listen-coffee-morning-q3", "kind": "written", "prompt": "What time does her bus leave?",
+         "answers": ["at half past eight", "half past eight", "8:30"], "explain": "Her bus leaves at half past eight."},
+        {"id": "en-listen-coffee-morning-q4", "kind": "choice", "prompt": "How does she feel about the time?",
+         "options": ["She is not worried", "She is very late", "She is angry", "She is sleepy"], "answers": ["She is not worried"],
+         "explain": "The text says she is not worried."}
+      ]
+    },
+    {
+      "id": "en-listen-new-flatmate",
+      "languageID": "en",
+      "title": "A new flatmate",
+      "level": "A1",
+      "text": "Tom has got a new flatmate. His name is Leo and he is twenty-three years old. Leo comes from a small town in the north, but he works in the city now. He has got two boxes, a guitar and a bicycle. The flat has got two bedrooms and a sunny kitchen. Tom hopes Leo likes cooking, because Tom hates it.",
+      "questions": [
+        {"id": "en-listen-new-flatmate-q1", "kind": "choice", "prompt": "How old is Leo?",
+         "options": ["Twenty-three", "Thirty-two", "Twenty", "Thirty"], "answers": ["Twenty-three"],
+         "explain": "Leo is twenty-three years old."},
+        {"id": "en-listen-new-flatmate-q2", "kind": "choice", "prompt": "What has Leo NOT got?",
+         "options": ["A television", "Two boxes", "A guitar", "A bicycle"], "answers": ["A television"],
+         "explain": "He has two boxes, a guitar and a bicycle — no television."},
+        {"id": "en-listen-new-flatmate-q3", "kind": "written", "prompt": "What does Tom hate doing?",
+         "answers": ["cooking", "he hates cooking", "tom hates cooking"], "explain": "Tom hates cooking."},
+        {"id": "en-listen-new-flatmate-q4", "kind": "choice", "prompt": "What does the flat have?",
+         "options": ["Two bedrooms and a sunny kitchen", "One bedroom and a balcony", "A garden", "Two bathrooms"], "answers": ["Two bedrooms and a sunny kitchen"],
+         "explain": "The flat has got two bedrooms and a sunny kitchen."}
+      ]
+    },
+    {
+      "id": "en-listen-sunday-market",
+      "languageID": "en",
+      "title": "The Sunday market",
+      "level": "A1",
+      "text": "On Sundays there is a market in the town square. Anna and her father go there at nine o'clock, before it gets busy. They buy fruit, bread and flowers. Anna wants some strawberries, but her father says they are too expensive this week. In the end they take home a big bag of oranges and some white roses for the kitchen table.",
+      "questions": [
+        {"id": "en-listen-sunday-market-q1", "kind": "choice", "prompt": "When do Anna and her father go to the market?",
+         "options": ["At nine o'clock", "At noon", "In the afternoon", "At half past six"], "answers": ["At nine o'clock"],
+         "explain": "They go at nine o'clock, before it gets busy."},
+        {"id": "en-listen-sunday-market-q2", "kind": "written", "prompt": "Why doesn't Anna get the strawberries?",
+         "answers": ["they are too expensive", "too expensive", "because they are too expensive"], "explain": "Her father says they are too expensive this week."},
+        {"id": "en-listen-sunday-market-q3", "kind": "choice", "prompt": "What do they take home?",
+         "options": ["Oranges and roses", "Strawberries and bread", "Apples and tulips", "Bread and cheese"], "answers": ["Oranges and roses"],
+         "explain": "They take home oranges and white roses."},
+        {"id": "en-listen-sunday-market-q4", "kind": "choice", "prompt": "Where is the market?",
+         "options": ["In the town square", "Near the river", "At the station", "In a supermarket"], "answers": ["In the town square"],
+         "explain": "There is a market in the town square on Sundays."}
+      ]
+    },
+    {
+      "id": "en-listen-first-day",
+      "languageID": "en",
+      "title": "Sofia's first day",
+      "level": "A2",
+      "text": "Yesterday was Sofia's first day at her new job. She woke up at six, took the tram and arrived early. The office was smaller than she expected, but everyone was friendly. Her manager gave her a laptop and a long list of things to read. At lunchtime she ate with two colleagues in the park next to the office. On the way home she felt tired but happy, and she called her mother to tell her everything.",
+      "questions": [
+        {"id": "en-listen-first-day-q1", "kind": "choice", "prompt": "When did Sofia arrive at the office?",
+         "options": ["Early", "Late", "At noon", "She doesn't say"], "answers": ["Early"],
+         "explain": "She woke up at six and arrived early."},
+        {"id": "en-listen-first-day-q2", "kind": "written", "prompt": "What did her manager give her?",
+         "answers": ["a laptop and a long list", "a laptop and a list of things to read", "a laptop"], "explain": "He gave her a laptop and a long list of things to read."},
+        {"id": "en-listen-first-day-q3", "kind": "choice", "prompt": "Where did she eat lunch?",
+         "options": ["In the park", "At her desk", "In a café", "At home"], "answers": ["In the park"],
+         "explain": "She ate with two colleagues in the park next to the office."},
+        {"id": "en-listen-first-day-q4", "kind": "choice", "prompt": "How did she feel on the way home?",
+         "options": ["Tired but happy", "Angry", "Sad and lonely", "Nervous"], "answers": ["Tired but happy"],
+         "explain": "She felt tired but happy."}
+      ]
+    },
+    {
+      "id": "en-listen-lost-jacket",
+      "languageID": "en",
+      "title": "The lost jacket",
+      "level": "A2",
+      "text": "Last week Daniel lost his favourite jacket. He left it on the number twelve bus on Friday evening. He called the lost property office on Monday, but nobody had seen it. Two days later a neighbour knocked on his door and gave him the jacket. She found it on the bus seat with his name and address inside the pocket. Daniel was amazed and invited her in for a cup of tea.",
+      "questions": [
+        {"id": "en-listen-lost-jacket-q1", "kind": "written", "prompt": "Where did Daniel leave his jacket?",
+         "answers": ["on the number twelve bus", "on the bus", "on the 12 bus"], "explain": "He left it on the number twelve bus."},
+        {"id": "en-listen-lost-jacket-q2", "kind": "choice", "prompt": "When did he call the lost property office?",
+         "options": ["On Monday", "On Friday", "Two days later", "The same evening"], "answers": ["On Monday"],
+         "explain": "He called on Monday, but nobody had seen it."},
+        {"id": "en-listen-lost-jacket-q3", "kind": "choice", "prompt": "Who found the jacket?",
+         "options": ["A neighbour", "A bus driver", "His mother", "A colleague"], "answers": ["A neighbour"],
+         "explain": "A neighbour knocked on his door and gave him the jacket."},
+        {"id": "en-listen-lost-jacket-q4", "kind": "written", "prompt": "How did the neighbour know it was Daniel's jacket?",
+         "answers": ["his name and address were inside the pocket", "there was a name and address in the pocket", "his name and address in the pocket"], "explain": "His name and address were inside the pocket."}
+      ]
+    },
+    {
+      "id": "en-listen-rainy-picnic",
+      "languageID": "en",
+      "title": "The rainy picnic",
+      "level": "A2",
+      "text": "We were so excited about the picnic on Saturday. The weather was warm on Friday, so we didn't check the forecast. On Saturday morning it started to rain and it didn't stop all day. We moved everything into the kitchen and ate on the floor. Honestly, it was one of the best afternoons of the summer. Sometimes the plans that go wrong are the ones you remember.",
+      "questions": [
+        {"id": "en-listen-rainy-picnic-q1", "kind": "choice", "prompt": "Why didn't they check the forecast?",
+         "options": ["The weather was warm on Friday", "They don't have a phone", "They were in a hurry", "They forgot"], "answers": ["The weather was warm on Friday"],
+         "explain": "The weather was warm on Friday, so they didn't check."},
+        {"id": "en-listen-rainy-picnic-q2", "kind": "written", "prompt": "Where did they eat?",
+         "answers": ["in the kitchen", "on the kitchen floor", "on the floor in the kitchen"], "explain": "They moved everything into the kitchen and ate on the floor."},
+        {"id": "en-listen-rainy-picnic-q3", "kind": "choice", "prompt": "How did they feel about the day in the end?",
+         "options": ["It was one of the best afternoons", "It was a disaster", "They were bored", "They were angry"], "answers": ["It was one of the best afternoons"],
+         "explain": "It was one of the best afternoons of the summer."},
+        {"id": "en-listen-rainy-picnic-q4", "kind": "choice", "prompt": "What was the weather like on Saturday?",
+         "options": ["It rained all day", "Sunny", "Cloudy but dry", "Snowy"], "answers": ["It rained all day"],
+         "explain": "It started to rain and didn't stop all day."}
+      ]
+    },
+    {
+      "id": "en-listen-night-train",
+      "languageID": "en",
+      "title": "The night train",
+      "level": "A2",
+      "text": "Ella took the night train to the coast because the morning tickets were too expensive. She shared a small compartment with a woman who worked as a nurse and a student who talked for hours about football. Ella couldn't sleep, but she didn't mind. The train arrived at five in the morning, before the sun came up. She walked out of the station, smelled the sea and knew the trip was worth it.",
+      "questions": [
+        {"id": "en-listen-night-train-q1", "kind": "written", "prompt": "Why did Ella take the night train?",
+         "answers": ["the morning tickets were too expensive", "because the morning tickets were too expensive", "morning tickets were too expensive"], "explain": "The morning tickets were too expensive."},
+        {"id": "en-listen-night-train-q2", "kind": "choice", "prompt": "What did the student talk about?",
+         "options": ["Football", "Nursing", "The coast", "Music"], "answers": ["Football"],
+         "explain": "The student talked for hours about football."},
+        {"id": "en-listen-night-train-q3", "kind": "choice", "prompt": "When did the train arrive?",
+         "options": ["At five in the morning", "At five in the evening", "At sunrise", "At midnight"], "answers": ["At five in the morning"],
+         "explain": "It arrived at five, before the sun came up."},
+        {"id": "en-listen-night-train-q4", "kind": "written", "prompt": "How did Ella know the trip was worth it when she arrived?",
+         "answers": ["she smelled the sea", "she smelled the sea and knew the trip was worth it", "because she smelled the sea"], "explain": "She walked out and smelled the sea."}
+      ]
+    },
+    {
+      "id": "en-listen-grandpas-garden",
+      "languageID": "en",
+      "title": "Grandpa's garden",
+      "level": "A2",
+      "text": "When Pablo was a child, he spent every summer at his grandpa's house. The garden was enormous, full of tomato plants and lemon trees. Every morning they watered the plants together and every afternoon they played cards under the big tree. His grandpa didn't talk much, but he laughed easily. Pablo didn't like vegetables then. Now he grows his own tomatoes and understands why his grandpa smiled at them.",
+      "questions": [
+        {"id": "en-listen-grandpas-garden-q1", "kind": "choice", "prompt": "What was in grandpa's garden?",
+         "options": ["Tomato plants and lemon trees", "Only flowers", "Vegetable soup", "Apple trees"], "answers": ["Tomato plants and lemon trees"],
+         "explain": "It was full of tomato plants and lemon trees."},
+        {"id": "en-listen-grandpas-garden-q2", "kind": "written", "prompt": "What did they do every afternoon?",
+         "answers": ["they played cards", "played cards under the big tree", "they played cards under the big tree"], "explain": "They played cards under the big tree."},
+        {"id": "en-listen-grandpas-garden-q3", "kind": "choice", "prompt": "What was grandpa like?",
+         "options": ["Quiet but quick to laugh", "Loud and serious", "He never smiled", "He talked all day"], "answers": ["Quiet but quick to laugh"],
+         "explain": "He didn't talk much, but he laughed easily."},
+        {"id": "en-listen-grandpas-garden-q4", "kind": "written", "prompt": "What does Pablo grow now?",
+         "answers": ["tomatoes", "his own tomatoes", "he grows tomatoes"], "explain": "Now he grows his own tomatoes."}
+      ]
+    },
+    {
+      "id": "en-listen-language-exchange",
+      "languageID": "en",
+      "title": "The language-exchange evening",
+      "level": "A2",
+      "text": "Last Thursday, Ines went to a language exchange at a bar in the old town. She wanted to practise her English, so she sat with a group from Manchester. At first she could only smile and nod. But after half an hour the words started to come. They talked about films, football and the differences between Spanish and English breakfasts. She didn't leave until eleven, and she wrote down fifteen new expressions on the tram home.",
+      "questions": [
+        {"id": "en-listen-language-exchange-q1", "kind": "choice", "prompt": "Why did Ines go to the exchange?",
+         "options": ["To practise her English", "To watch football", "To eat breakfast", "To teach maths"], "answers": ["To practise her English"],
+         "explain": "She wanted to practise her English."},
+        {"id": "en-listen-language-exchange-q2", "kind": "written", "prompt": "What could she do at first?",
+         "answers": ["she could only smile and nod", "smile and nod", "only smile and nod"], "explain": "At first she could only smile and nod."},
+        {"id": "en-listen-language-exchange-q3", "kind": "choice", "prompt": "What did they NOT talk about?",
+         "options": ["Their jobs", "Films", "Football", "Breakfasts"], "answers": ["Their jobs"],
+         "explain": "They talked about films, football and breakfasts — not jobs."},
+        {"id": "en-listen-language-exchange-q4", "kind": "written", "prompt": "What did she do on the tram home?",
+         "answers": ["she wrote down fifteen new expressions", "she wrote down new expressions", "wrote down fifteen expressions"], "explain": "She wrote down fifteen new expressions."}
+      ]
+    },
+    {
+      "id": "en-listen-small-accident",
+      "languageID": "en",
+      "title": "A small accident",
+      "level": "A2",
+      "text": "While Carlos was cooking dinner on Sunday, he heard a crash from the living room. His cat, Luna, had jumped onto the bookshelf and knocked down his favourite cup. The cup was in pieces on the floor. Luna sat next to the broken pieces, completely calm, as if nothing had happened. Carlos cleaned everything up carefully. The cup was from a trip to Lisbon five years ago, but he didn't shout. It was, after all, only a cup.",
+      "questions": [
+        {"id": "en-listen-small-accident-q1", "kind": "choice", "prompt": "What was Carlos doing when he heard the crash?",
+         "options": ["Cooking dinner", "Cleaning the floor", "Reading", "Sleeping"], "answers": ["Cooking dinner"],
+         "explain": "He was cooking dinner on Sunday."},
+        {"id": "en-listen-small-accident-q2", "kind": "written", "prompt": "Who broke the cup?",
+         "answers": ["his cat luna", "luna", "the cat", "his cat"], "explain": "Luna the cat jumped onto the bookshelf and knocked it down."},
+        {"id": "en-listen-small-accident-q3", "kind": "choice", "prompt": "Where was the cup from?",
+         "options": ["A trip to Lisbon", "A birthday", "His grandmother", "A market"], "answers": ["A trip to Lisbon"],
+         "explain": "The cup was from a trip to Lisbon five years ago."},
+        {"id": "en-listen-small-accident-q4", "kind": "choice", "prompt": "How did Carlos react?",
+         "options": ["He didn't shout", "He shouted at Luna", "He cried", "He called his friend"], "answers": ["He didn't shout"],
+         "explain": "He cleaned up carefully and didn't shout."}
+      ]
+    }
+  ]
+}

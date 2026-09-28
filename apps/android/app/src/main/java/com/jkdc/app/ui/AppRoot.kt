@@ -174,6 +174,7 @@ fun AppRoot(
                                 onOpenTalk = { tab = 0 },
                                 onLookupTerm = { term -> withConsent(CloudAction.Lookup(term, "")); tab = 0 },
                             )
+                            4 -> ListeningScreen(vm)
                         }
                     }
                     Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(108.dp)

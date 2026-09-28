@@ -317,6 +317,19 @@
     <string name="exercise_clear">Borrar</string>
     <string name="exercise_summary">Respondiste bien %1$d de %2$d.</string>
     <string name="exercise_done">Terminar</string>
+    <!-- Listening -->
+    <string name="listening_tab_title">Escuchar</string>
+    <string name="listening_eyebrow">Tus oídos</string>
+    <string name="listening_title">Escucha y responde</string>
+    <string name="listening_subtitle">Escucha un texto corto y responde a las preguntas por escrito.</string>
+    <string name="listening_level">%1$s · %2$d preguntas</string>
+    <string name="listening_score">Mejor %1$d%%</string>
+    <string name="listening_instruction">Escucha las veces que necesites. El texto queda oculto mientras respondes — intenta entenderlo primero con los oídos.</string>
+    <string name="listening_play">Reproducir el texto</string>
+    <string name="listening_playing">Reproduciendo…</string>
+    <string name="listening_stop">Parar</string>
+    <string name="listening_ready">Estoy listo — ver las preguntas</string>
+    <string name="listening_show_transcript">Mostrar la transcripción</string>
     <string name="learn_course_percent">Completado: %1$d%%</string>
     <string name="lesson_done">HECHA</string>
     <string name="common_back">Atrás</string>

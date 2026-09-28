@@ -949,6 +949,41 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         lessonReader.stop()
         lessonReading = false
     }
+
+    /** Listening section: speaks an authored text with the course voice at the
+        chosen rate, sharing the study-card synthesizer (QUEUE_FLUSH semantics). */
+    var listeningPlaying by mutableStateOf(false); private set
+    fun playListeningText(text: String) {
+        if (listeningPlaying || lessonReading || text.isBlank()) return
+        lessonReadJob = viewModelScope.launch {
+            // A missing course-language voice degrades to silence (same rule as session TTS).
+            if (!lessonReader.initialize() || !lessonReader.setLanguage(language.locale)) {
+                listeningPlaying = false; return@launch
+            }
+            lessonReader.setSpeechRate(archive.preferences.effectiveSpeechRate().toFloat())
+            listeningPlaying = true
+            try { lessonReader.speak(text) } finally { listeningPlaying = false }
+        }
+    }
+    fun stopListeningText() {
+        lessonReadJob?.cancel()
+        lessonReader.stop()
+        listeningPlaying = false
+    }
+
+    /** A finished listening exercise: one ledger mark with the score, one telemetry event. */
+    fun listeningCompleted(itemID: String, correct: Int, total: Int) {
+        if (total <= 0) return
+        val percent = correct * 100 / total
+        recordCompletion(ProgressEngine.LISTENING, itemID, percent)
+        usageReporter.record(UsageEvents.LISTENING_COMPLETED) {
+            put("itemID", ProgressEngine.completionKey(itemID)); put("scoreBucket", UsageBuckets.score(percent))
+        }
+    }
+
+    fun listeningScore(itemID: String): Int? = archive.completions.orEmpty()
+        .filter { it.kind == ProgressEngine.LISTENING && it.itemID == ProgressEngine.completionKey(itemID) }
+        .maxOfOrNull { it.bestScore }
     fun toggleMeaning() {
         archive = archive.copy(preferences = archive.preferences.copy(meaningVisible = !archive.preferences.meaningVisible)); persist()
         meanings.reset()
