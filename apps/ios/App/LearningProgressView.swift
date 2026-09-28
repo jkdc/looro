@@ -6,6 +6,18 @@ struct LearningProgressView: View {
     let store: LearningStore
     private var stats: LearningStats { LearningEngine.stats(sessions: store.sessions, learner: store.learner) }
     private var progress: ProgressStats { store.progressStats }
+    private var level: LevelStats? {
+        guard let course = CourseRegistry.forLanguage(store.language.id).first else { return nil }
+        return LevelEngine.stats(course: course, lessons: store.archive.lessons ?? [],
+                                 completions: store.archive.completions ?? [])
+    }
+    private var medals: Int {
+        ListeningRegistry.forLanguage(store.language.id).filter { text in
+            let best = (store.archive.completions ?? [])
+                .filter { $0.kind == ProgressEngine.listening && $0.itemID == text.id }.map(\.bestScore).max()
+            return LevelEngine.medal(bestScore: best) >= 1
+        }.count
+    }
 
     var body: some View {
         Form {
@@ -23,10 +35,14 @@ struct LearningProgressView: View {
                 } header: { Text("Practice") }
                 if progress.lessonsTotal > 0 || progress.activeStreakDays > 0 {
                     Section {
+                        if let level, progress.lessonsTotal > 0 {
+                            row("Level", "Level \(level.level) · \(levelTitle(level.level))")
+                        }
                         if progress.lessonsTotal > 0 { row("Lessons completed", "\(progress.lessonsDone)/\(progress.lessonsTotal)") }
                         if progress.themesPractised > 0 { row("Conversation themes", "\(progress.themesPractised)") }
                         if progress.exercisesCompleted > 0 { row("Exercises completed", "\(progress.exercisesCompleted)") }
                         if progress.listeningCompleted > 0 { row("Listening texts", "\(progress.listeningCompleted)") }
+                        if medals > 0 { row("Listening medals", "\(medals)") }
                         row("Activity streak", "\(progress.activeStreakDays)")
                     } header: { Text("Course progress") }
                 }

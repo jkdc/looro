@@ -54,8 +54,14 @@ struct CoursesView: View {
                                    progress.lessonsTotal > 0 {
                                     Text("Completed: \(progress.percent)%").font(.caption2).foregroundStyle(AppColor.secondary)
                                 }
+                                LevelCardView(level: LevelEngine.stats(course: course,
+                                    lessons: coordinator.store.archive.lessons ?? [],
+                                    completions: coordinator.store.archive.completions ?? []))
                                 ForEach(course.units) { unit in
-                                    UnitSection(coordinator: coordinator, unit: unit) { openLessonID = $0; reader.stop() }
+                                    UnitSection(coordinator: coordinator, unit: unit,
+                                        level: LevelEngine.stats(course: course,
+                                            lessons: coordinator.store.archive.lessons ?? [],
+                                            completions: coordinator.store.archive.completions ?? [])) { openLessonID = $0; reader.stop() }
                                 }
                             }.padding(22)
                                 .background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 26))
@@ -67,9 +73,60 @@ struct CoursesView: View {
     }
 }
 
+/// Engagement level titles — presentation only, never a language-proficiency claim.
+func levelTitle(_ level: Int) -> String {
+    ["Newcomer", "First steps", "Finding the rhythm", "On the move", "Steady pace",
+     "Halfway up", "Getting good", "High ground", "Almost there", "The summit", "Foundations champion"][min(max(level, 0), 10)]
+}
+
+private struct LevelCardView: View {
+    let level: LevelStats
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle().fill(AppColor.sage).frame(width: 46, height: 46)
+                    Text("\(level.level)").font(.headline)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Level \(level.level) · \(levelTitle(level.level))").font(.subheadline.weight(.semibold))
+                    if let toNext = level.pointsToNext {
+                        Text(toNext == 1 ? "1 point to Level \(level.level + 1)"
+                                : "\(toNext) points to Level \(level.level + 1)")
+                            .font(.caption).foregroundStyle(AppColor.secondary)
+                    } else {
+                        Text("Course complete!").font(.caption).foregroundStyle(AppColor.secondary)
+                    }
+                }
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(AppColor.cream)
+                    Capsule().fill(AppColor.secondary)
+                        .frame(width: geo.size.width * CGFloat(min(1, max(0, level.progressInLevel))))
+                }
+            }.frame(height: 6)
+        }
+    }
+}
+
+private struct MasteryStars: View {
+    let tier: Int
+    var body: some View {
+        HStack(spacing: 2) {
+            ForEach(0..<3, id: \.self) { index in
+                Image(systemName: index < tier ? "star.fill" : "star")
+                    .font(.caption2)
+                    .foregroundStyle(AppColor.secondary.opacity(index < tier ? 1 : 0.25))
+            }
+        }.padding(.trailing, 8)
+    }
+}
+
 private struct UnitSection: View {
     let coordinator: ConversationCoordinator
     let unit: CourseUnit
+    let level: LevelStats
     let open: (String) -> Void
 
     var body: some View {
@@ -91,9 +148,8 @@ private struct UnitSection: View {
                             Text(lesson.goal).font(.caption).foregroundStyle(AppColor.secondary)
                         }
                         Spacer()
-                        if coordinator.store.completedLessonIDs.contains(lesson.id) {
-                            Image(systemName: "checkmark").font(.caption.weight(.semibold)).foregroundStyle(AppColor.secondary)
-                        }
+                        let tier = level.mastery.first { $0.lessonID == lesson.id }?.tier ?? 0
+                        if tier > 0 { MasteryStars(tier: tier) }
                         Text(attemptLabel(lesson.id)).font(.caption2).foregroundStyle(AppColor.secondary)
                     }.padding(16).background(AppColor.cream, in: RoundedRectangle(cornerRadius: 18))
                 }.buttonStyle(.plain)

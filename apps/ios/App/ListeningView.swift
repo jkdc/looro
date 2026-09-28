@@ -29,6 +29,9 @@ struct ListeningView: View {
                                         .font(.caption).foregroundStyle(AppColor.secondary)
                                 }
                                 Spacer()
+                                if LevelEngine.medal(bestScore: bestScore(for: text.id)) >= 1 {
+                                    Image(systemName: "star.fill").font(.caption2).foregroundStyle(AppColor.secondary)
+                                }
                                 Text(bestLabel(text.id)).font(.caption2).foregroundStyle(AppColor.secondary)
                             }.padding(22).background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 26))
                         }.buttonStyle(.plain).accessibilityIdentifier("listening-" + text.id)
@@ -38,11 +41,14 @@ struct ListeningView: View {
         }
     }
 
-    private func bestLabel(_ id: String) -> String {
-        let best = (coordinator.store.archive.completions ?? [])
+    private func bestScore(for id: String) -> Int? {
+        (coordinator.store.archive.completions ?? [])
             .filter { $0.kind == ProgressEngine.listening && $0.itemID == id }
             .map(\.bestScore).max()
-        return best.map { "Best \($0)%" } ?? "New"
+    }
+
+    private func bestLabel(_ id: String) -> String {
+        bestScore(for: id).map { "Best \($0)%" } ?? "New"
     }
 }
 

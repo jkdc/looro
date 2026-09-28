@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
@@ -140,7 +141,7 @@ private fun LevelCard(stats: LevelStats) {
                 Text(stringResource(R.string.learn_level_label, stats.level, levelTitle(stats.level)),
                     style = MaterialTheme.typography.titleMedium)
                 Text(if (stats.pointsToNext == null) stringResource(R.string.learn_level_top)
-                    else stringResource(R.string.learn_level_next, stats.pointsToNext, stats.level + 1),
+                    else pluralStringResource(R.plurals.learn_level_next, stats.pointsToNext, stats.pointsToNext, stats.level + 1),
                     style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
             }
         }
