@@ -96,3 +96,38 @@ o LLM híbrido servidor. Detalle en docs/local-engine-impact.md §6-§9.
 - DeepSeek/GLM voice (remote LLM with local STT/TTS) — same pipeline, needs
   live keys.
 - Latency/RAM numbers on Pixel hardware.
+
+## Follow-up: STT accuracy + latency + end-turn UX (2026-09-28, fixed)
+
+User reports on the Pixel 9: (a) transcription accuracy ("hay veces que no
+escribe bien lo que digo") and (b) a hard latency requirement — max 1-2 s for
+STT per turn.
+
+- Measured with device logs: small q5_1 + beam5 = 12-16 s per turn (3-5x the
+  baseline) — reverted to greedy; threads 4→6; base kept as the default model
+  (even greedy small spends 12-16 s: the 30 s encoder window dominates short
+  clips — pinned by model-rank tests).
+- Flash attention enabled in the whisper context (`cparams.flash_attn`).
+- Cloud STT providers added behind the settings row "Voice-to-text":
+  On device / Cloud · OpenAI (whisper-1) / Cloud · Groq (whisper-large-v3-turbo,
+  free tier). Resolved per turn through `cloudSttSelection` — changing the
+  setting applies on the next turn with no session restart; failures (no key,
+  offline, provider error) fall back to the local pass. Partials never go to
+  the cloud. Verified in the emulator: selector opens, selection sticks.
+  Note: the GLM/z.ai API key cannot be used for STT — the API has no ASR
+  endpoint (probed: 5 model names, all "Unknown Model").
+- End-turn press during silence used to be consumed by a turn of leading
+  silence + 128 ms of voice that the <250 ms STT guard discarded (press lost,
+  remaining speech orphaned). New semantics: the press stays armed and captures
+  the NEXT spoken phrase whole, closing when the phrase trails into silence
+  (700 ms). A press with voice already buffered still closes immediately; the
+  20 s manual cap keeps resetting the window (manual mode never auto-processes).
+  Unit-tested: `a press during silence stays armed and captures the next
+  spoken phrase`.
+- End-turn pending visuals driven by `turnInFlight` (press → STT → tutor → TTS
+  done): sage background + filled icon + alpha pulse + "Palique is replying…",
+  restoring when the turn returns. Verified in the emulator (beginner session):
+  pending state during a typed turn, restore after the coach reply; a press
+  during silence produces NO phantom reply (armed, nothing processed); mic orb
+  centred at x=540/1080 in auto mode.
+- Suite: 469 unit tests, 0 failures.
