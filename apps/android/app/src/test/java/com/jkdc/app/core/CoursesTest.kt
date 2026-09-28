@@ -21,9 +21,12 @@ class CoursesTest {
         assertEquals(listOf("A1", "A1", "A1", "A1", "A2", "A2"), levels)
     }
 
-    @Test fun `other languages have no courses yet`() {
-        assertTrue(CourseRegistry.forLanguage("es").isEmpty())
+    @Test fun `each supported course language carries exactly one foundations`() {
+        for (language in listOf("es", "fr", "it", "de", "pt")) {
+            assertEquals(1, CourseRegistry.forLanguage(language).size)
+        }
         assertTrue(CourseRegistry.forLanguage("nb").isEmpty())
+        assertTrue(CourseRegistry.forLanguage("zh").isEmpty())
     }
 
     @Test fun `lesson lookup finds an authored lesson from every unit`() {

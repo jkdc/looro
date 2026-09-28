@@ -1,0 +1,64 @@
+{
+  "texts": [
+    {
+      "id": "pt-listen-cafe-morning",
+      "languageID": "pt",
+      "title": "Um café antes do trabalho",
+      "level": "A1",
+      "text": "Todas as manhãs, Marta caminha até uma cafeteria pequena perto do apartamento dela. O garçom sabe o nome dela, então ela nunca precisa pedir. Hoje ela senta perto da janela com um café e um pão de queijo. O ônibus dela sai às oito e meia, mas ela não está preocupada. A cafeteria é muito tranquila nessa hora. Ela bebe o café devagar e vê a cidade acordar.",
+      "questions": [
+        {"id": "pt-listen-cafe-morning-q1", "kind": "choice", "prompt": "Para onde a Marta vai todas as manhãs?",
+         "options": ["Para uma cafeteria pequena", "Para o escritório dela", "Para o ponto de ônibus", "Para um parque"], "answers": ["Para uma cafeteria pequena"],
+         "explain": "Ela caminha até uma cafeteria pequena perto do apartamento dela."},
+        {"id": "pt-listen-cafe-morning-q2", "kind": "choice", "prompt": "O que ela toma no café da manhã hoje?",
+         "options": ["Um café e um pão de queijo", "Chá e torradas", "Suco de laranja", "Nada"], "answers": ["Um café e um pão de queijo"],
+         "explain": "Ela senta perto da janela com um café e um pão de queijo."},
+        {"id": "pt-listen-cafe-morning-q3", "kind": "written", "prompt": "A que horas sai o ônibus dela?",
+         "answers": ["às oito e meia", "oito e meia"], "explain": "O ônibus dela sai às oito e meia."},
+        {"id": "pt-listen-cafe-morning-q4", "kind": "choice", "prompt": "Como ela se sente com o horário?",
+         "options": ["Não está preocupada", "Está muito atrasada", "Está com raiva", "Está com sono"], "answers": ["Não está preocupada"],
+         "explain": "O texto diz que ela não está preocupada."}
+      ]
+    },
+    {
+      "id": "pt-listen-new-flatmate",
+      "languageID": "pt",
+      "title": "Um novo colega de apartamento",
+      "level": "A1",
+      "text": "Tom tem um colega de apartamento novo. O nome dele é Leo e ele tem vinte e três anos. Leo vem de uma cidade pequena do interior, mas agora trabalha na capital. Ele tem duas caixas, um violão e uma bicicleta. O apartamento tem dois quartos e uma cozinha clara. Tom espera que Leo goste de cozinhar, porque o Tom não gosta nem um pouco.",
+      "questions": [
+        {"id": "pt-listen-new-flatmate-q1", "kind": "choice", "prompt": "Quantos anos o Leo tem?",
+         "options": ["Vinte e três", "Trinta e dois", "Vinte", "Trinta"], "answers": ["Vinte e três"],
+         "explain": "O Leo tem vinte e três anos."},
+        {"id": "pt-listen-new-flatmate-q2", "kind": "choice", "prompt": "O que o Leo NÃO tem?",
+         "options": ["Uma televisão", "Duas caixas", "Um violão", "Uma bicicleta"], "answers": ["Uma televisão"],
+         "explain": "Ele tem duas caixas, um violão e uma bicicleta — sem televisão."},
+        {"id": "pt-listen-new-flatmate-q3", "kind": "written", "prompt": "O que o Tom odeia fazer?",
+         "answers": ["cozinhar", "ele odeia cozinhar", "tom odeia cozinhar"], "explain": "O Tom não gosta nem um pouco de cozinhar."},
+        {"id": "pt-listen-new-flatmate-q4", "kind": "choice", "prompt": "Como é o apartamento?",
+         "options": ["Dois quartos e uma cozinha clara", "Um quarto e uma varanda", "Um jardim", "Dois banheiros"], "answers": ["Dois quartos e uma cozinha clara"],
+         "explain": "O apartamento tem dois quartos e uma cozinha clara."}
+      ]
+    },
+    {
+      "id": "pt-listen-sunday-market",
+      "languageID": "pt",
+      "title": "A feira de domingo",
+      "level": "A1",
+      "text": "Aos domingos tem uma feira na praça do bairro. A Ana e o pai dela vão para lá às nove horas, antes de ficar cheio. Eles compram fruta, pão e flores. A Ana quer morangos, mas o pai dela diz que estão muito caros nesta semana. No final, eles levam para casa um saco grande de laranjas e rosas brancas para a mesa da cozinha.",
+      "questions": [
+        {"id": "pt-listen-sunday-market-q1", "kind": "choice", "prompt": "Quando a Ana e o pai dela vão à feira?",
+         "options": ["Às nove horas", "Ao meio-dia", "À tarde", "Às seis e meia"], "answers": ["Às nove horas"],
+         "explain": "Eles vão às nove horas, antes de ficar cheio."},
+        {"id": "pt-listen-sunday-market-q2", "kind": "written", "prompt": "Por que a Ana não leva os morangos?",
+         "answers": ["estão muito caros", "muito caros", "porque estão muito caros"], "explain": "O pai diz que estão muito caros nesta semana."},
+        {"id": "pt-listen-sunday-market-q3", "kind": "choice", "prompt": "O que eles levam para casa?",
+         "options": ["Laranjas e rosas", "Morangos e pão", "Maçãs e tulipas", "Pão e queijo"], "answers": ["Laranjas e rosas"],
+         "explain": "Eles levam laranjas e rosas brancas."},
+        {"id": "pt-listen-sunday-market-q4", "kind": "choice", "prompt": "Onde fica a feira?",
+         "options": ["Na praça do bairro", "Perto do rio", "Na estação", "Num supermercado"], "answers": ["Na praça do bairro"],
+         "explain": "Aos domingos tem uma feira na praça do bairro."}
+      ]
+    }
+  ]
+}

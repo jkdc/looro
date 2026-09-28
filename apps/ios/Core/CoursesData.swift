@@ -2,6 +2,103 @@
 
 public enum CoursesData {
     public static let all: [Course] = [
+        Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
+            CourseUnit(id: "de-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
+                    ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Berlin. Meet the learner, exchange names, countries and jobs using the verb sein.", 0),
+                    ConversationTheme("introductions", "Nice to meet you", "Start somewhere small", "hand.wave", "Connection", "Meet the learner for the first time. Learn their interests through natural introductions.", 1)], lessons: [
+                    Lesson(id: "de-foundations-u1-sein", title: "The verb “sein”", goal: "Introduce yourself and say who people are with ich bin, du bist, er ist, wir sind, ihr seid, sie sind.",
+                        intro: LessonIntro(explanation: [
+                            "Every German sentence needs a subject and a verb. The verb for saying who you are is “sein”.",
+                            "Six forms, one per subject: ich bin, du bist, er/sie ist, wir sind, ihr seid, sie sind. German always states the subject: “Ich bin Ana”.",
+                            "Use sein for identity and origin: “Ich bin Ana”, “Ich bin aus Deutschland”, “Er ist Lehrer”. Origin takes aus: “Ich bin aus Berlin”."], examples: [
+                            ExampleLine(text: "Ich bin Ana. Ich bin aus Deutschland.", meaning: "Your name and country."),
+                            ExampleLine(text: "Du bist mein bester Freund.", meaning: "A close bond with someone."),
+                            ExampleLine(text: "Sie ist Lehrerin.", meaning: "Someone's profession."),
+                            ExampleLine(text: "Wir sind sehr glücklich heute.", meaning: "A feeling that defines right now."),
+                            ExampleLine(text: "Das Café ist nah am Bahnhof.", meaning: "Where a place is."),
+                            ExampleLine(text: "Sie sind aus Berlin.", meaning: "Someone's origin.")]),
+                        expressions: [
+                            TargetExpression(text: "Ich bin …", meaning: "Introduce yourself.", note: "With your name or job: Ich bin Ana. Ich bin Lehrerin."),
+                            TargetExpression(text: "Ich bin aus …", meaning: "Say where you come from.", note: "Origin takes aus, not von: Ich bin aus Berlin."),
+                            TargetExpression(text: "Bist du … ?", meaning: "Ask about the other person.", note: "Bist du Student? Bist du von hier?"),
+                            TargetExpression(text: "Ja, bin ich. / Nein, bin ich nicht.", meaning: "Short answers to a Bist du… ? question.", note: "The verb comes first in the answer."),
+                            TargetExpression(text: "Er ist / Sie ist …", meaning: "Say what someone else is.", note: "Er ist Lehrer — no article with jobs."),
+                            TargetExpression(text: "Freut mich, dich kennenzulernen.", meaning: "The fixed phrase when you meet someone.", note: "Short and natural: Freut mich!")],
+                        situation: "You meet someone new at a friendly language-exchange café in Berlin. Introduce yourselves and ask simple questions with the verb sein.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Hallo! Ich bin Ana. Wie heißt du?", expected: ["Ich heiße <name>.", "Ich bin <name>.", "Mein Name ist <name>."], focus: "Ich heiße / Ich bin", watch: "Answering only the name: accept it, then recast “Ich heiße …”."),
+                                PracticeQuestion(prompt: "Woher kommst du?", expected: ["Ich komme aus <country>.", "Ich bin aus <country>."], focus: "kommen aus / sein aus", watch: "“Ich komme von Spanien” — recast with aus."),
+                                PracticeQuestion(prompt: "Bist du Student?", expected: ["Ja, bin ich.", "Nein, bin ich nicht."], focus: "short answers with sein", watch: "One-word “Ja” — recast with the verb: Ja, bin ich."),
+                                PracticeQuestion(prompt: "Wie geht es dir heute?", expected: ["Mir geht es gut.", "Ich bin müde.", "Ich bin glücklich."], focus: "sein for feelings", watch: "“Ich bin gut” sounds off — recast “Mir geht es gut”."),
+                                PracticeQuestion(prompt: "Ist deine Stadt groß oder klein?", expected: ["Sie ist groß.", "Sie ist klein.", "Meine Stadt ist …"], focus: "ist with places", watch: "“Meine Stadt groß” — recast “Meine Stadt IST groß”."),
+                                PracticeQuestion(prompt: "Jetzt sind wir Freunde! Woher ist deine Familie?", expected: ["Sie ist aus <country>.", "Meine Familie ist aus <country>."], focus: "ist for a group's origin", watch: "“Meine Familie aus …” — recast with ist.")]),
+                        exercises: [
+                            Exercise(id: "de-foundations-u1-sein-e1", kind: "choice", prompt: "Sie ___ Lehrerin.", options: ["ist", "bist", "bin", "sind"], answers: ["ist"], explain: "With er/sie, sein becomes ist."),
+                            Exercise(id: "de-foundations-u1-sein-e2", kind: "gap", prompt: "Wir ___ aus Berlin.", options: [], answers: ["sind"], explain: "With wir, sein is immer sind."),
+                            Exercise(id: "de-foundations-u1-sein-e3", kind: "order", prompt: "Say where you are from.", options: [], answers: ["Ich bin aus Deutschland"], explain: "Ich bin + aus + country: Ich bin aus Deutschland."),
+                            Exercise(id: "de-foundations-u1-sein-e4", kind: "written", prompt: "Introduce yourself in one sentence: say your name.", options: [], answers: ["Ich heiße <name>", "Ich bin <name>", "Mein Name ist <name>"], explain: "Ich heiße Ana / Ich bin Ana — the subject is never dropped.")]),
+                    Lesson(id: "de-foundations-u1-questions", title: "Questions & negatives", goal: "Ask yes/no questions and say what is not true, with Bist du… ? and ich bin nicht.",
+                        intro: LessonIntro(explanation: [
+                            "German asks yes/no questions by putting the verb first: “Bist du müde?” — statement “Du bist müde” becomes a question by swapping.",
+                            "To negate, put nicht after the verb: “Ich bin nicht Ana”, “Wir sind nicht Freunde”. Nicht usually sits at the end of the sentence.",
+                            "Question words come first: “Woher kommst du?”, “Wer ist das?” — woher asks about origin, wo about place."], examples: [
+                            ExampleLine(text: "Bist du Lehrerin?", meaning: "A yes/no question with bist."),
+                            ExampleLine(text: "Ich bin nicht aus Berlin.", meaning: "A negative with bin."),
+                            ExampleLine(text: "Woher kommst du?", meaning: "Question word + kommst."),
+                            ExampleLine(text: "Er ist nicht mein Bruder.", meaning: "A negative about another person."),
+                            ExampleLine(text: "Seid ihr Nachbarn?", meaning: "Asking a group with seid."),
+                            ExampleLine(text: "Wer ist das?", meaning: "Who is that?")]),
+                        expressions: [
+                            TargetExpression(text: "Bist du … ?", meaning: "Ask a yes/no question.", note: "Verb first: Bist du Lehrer?"),
+                            TargetExpression(text: "Ich bin nicht …", meaning: "Say what is not true about you.", note: "nicht after the verb: Ich bin nicht müde."),
+                            TargetExpression(text: "Woher kommst du?", meaning: "Ask where someone is from.", note: "woher = from where; wo = where."),
+                            TargetExpression(text: "Er ist nicht …", meaning: "Say what someone else is not.", note: "Er ist nicht mein Chef."),
+                            TargetExpression(text: "Stimmt's?", meaning: "Tag a statement to check it.", note: "Du bist von hier, stimmt's?"),
+                            TargetExpression(text: "Genau.", meaning: "The natural yes in talk.", note: "Also: Stimmt.")],
+                        situation: "You chat with a new neighbour in the lift in Berlin. Ask simple yes/no questions and say what is and isn't true for you.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Bist du von hier?", expected: ["Ja, ich bin von hier.", "Nein, ich bin nicht von hier."], focus: "short answers", watch: "One-word “Ja” — recast with the verb: Ja, bin ich."),
+                                PracticeQuestion(prompt: "Bist du Lehrer oder Student?", expected: ["Ich bin Lehrer.", "Ich bin Student.", "Ich bin Studentin."], focus: "choice with sein", watch: "Accept either; no article before jobs."),
+                                PracticeQuestion(prompt: "Ist deine Familie groß?", expected: ["Ja, sie ist groß.", "Nein, sie ist nicht groß."], focus: "ist in questions about others", watch: "“nicht groß” — nicht at the end here."),
+                                PracticeQuestion(prompt: "Woher kommst du genau?", expected: ["Ich komme aus <country>.", "Ich bin aus <country>."], focus: "woher + aus", watch: "“Ich komme aus” und “Ich bin aus” — both fine."),
+                                PracticeQuestion(prompt: "Sag mir, was du nicht bist.", expected: ["Ich bin nicht <job>.", "Ich bin nicht aus <country>."], focus: "negation with nicht", watch: "“Ich nicht bin” — recast: Ich BIN nicht …"),
+                                PracticeQuestion(prompt: "Sind wir jetzt Freunde?", expected: ["Ja, wir sind Freunde.", "Klar, wir sind Freunde."], focus: "sind in questions", watch: "“Wir seid” is wrong — wir takes sind.")]),
+                        exercises: [
+                            Exercise(id: "de-foundations-u1-questions-e1", kind: "choice", prompt: "___ du aus Hamburg?", options: ["Bist", "Ist", "Bin", "Sind"], answers: ["Bist"], explain: "With du, the question starts with Bist."),
+                            Exercise(id: "de-foundations-u1-questions-e2", kind: "gap", prompt: "Sie ist nicht ___ Schwester.", options: [], answers: ["meine"], explain: "meine for feminine things: meine Schwester."),
+                            Exercise(id: "de-foundations-u1-questions-e3", kind: "order", prompt: "Say you are not from München.", options: [], answers: ["Ich bin nicht aus München"], explain: "nicht goes after bin, at the end here."),
+                            Exercise(id: "de-foundations-u1-questions-e4", kind: "written", prompt: "Make it negative: \"Ich bin aus Köln.\"", options: [], answers: ["Ich bin nicht aus Köln"], explain: "nicht before aus Köln: Ich bin nicht aus Köln.")]),
+                    Lesson(id: "de-foundations-u1-introduce", title: "Introducing yourself", goal: "Give a complete self-introduction: name, city, nationality and job.",
+                        intro: LessonIntro(explanation: [
+                            "A full German introduction has four pieces: your name, your city, your nationality and your job.",
+                            "For the name: “Ich heiße Ana” or “Ich bin Ana”. For origin: “Ich komme aus Berlin”. Nationalities are adjectives without an article: “Ich bin deutsche” — wait, careful: “Ich bin Deutsche” as a noun, or “Ich bin deutsch” as an adjective.",
+                            "Jobs with sein drop the article: “Ich bin Lehrerin”. Close with “Freut mich” and bounce the question back with “Und du?”"], examples: [
+                            ExampleLine(text: "Ich heiße Ana. Freut mich.", meaning: "Your name plus a polite close."),
+                            ExampleLine(text: "Ich komme aus Berlin.", meaning: "Your city."),
+                            ExampleLine(text: "Ich bin Deutsche.", meaning: "Nationality as a noun."),
+                            ExampleLine(text: "Ich bin Krankenschwester im Krankenhaus.", meaning: "Job plus workplace."),
+                            ExampleLine(text: "Ich bin fünfundzwanzig Jahre alt.", meaning: "Your age — with sein + alt."),
+                            ExampleLine(text: "Und du? Was machst du?", meaning: "Bounce the question back.")]),
+                        expressions: [
+                            TargetExpression(text: "Ich heiße …", meaning: "Give your name.", note: "Also: Mein Name ist … or Ich bin …"),
+                            TargetExpression(text: "Ich bin + nationality", meaning: "Say your nationality.", note: "As a noun: Ich bin Deutsche / Deutscher."),
+                            TargetExpression(text: "Ich komme aus …", meaning: "Say your city or country.", note: "Ich komme aus Berlin; Ich komme aus Deutschland."),
+                            TargetExpression(text: "Ich arbeite in …", meaning: "Say where you work.", note: "Ich arbeite im Krankenhaus / in einer Schule."),
+                            TargetExpression(text: "Freut mich.", meaning: "Polite close when you meet someone.", note: "Answer: Mich auch."),
+                            TargetExpression(text: "Und du?", meaning: "Bounce the question back.", note: "—Ich komme aus Berlin. Und du?")],
+                        situation: "Your first day at a language school in Berlin. Present yourself completely to the class: name, city, nationality and job.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Wie heißt du?", expected: ["Ich heiße <name>.", "Mein Name ist <name>."], focus: "name formulas", watch: "Both are fine; recast the shorter one as Ich heiße for variety."),
+                                PracticeQuestion(prompt: "Woher kommst du?", expected: ["Ich komme aus <country>."], focus: "origin", watch: "Never von for countries: Ich komme AUS <country>."),
+                                PracticeQuestion(prompt: "Was bist du von der Nationalität?", expected: ["Ich bin <nationality>."], focus: "nationality with sein", watch: "As a noun it takes -e for women: Deutsche, Französin."),
+                                PracticeQuestion(prompt: "Was arbeitest du?", expected: ["Ich bin <job>.", "Ich arbeite als <job>."], focus: "jobs without article", watch: "“Ich bin eine Lehrerin” — recast dropping the article."),
+                                PracticeQuestion(prompt: "Und wo wohnst du?", expected: ["Ich wohne in <city>."], focus: "wohne in", watch: "“Ich wohne in Berlin” — in for cities."),
+                                PracticeQuestion(prompt: "Freut mich! Und was machst du so?", expected: ["Ich bin <job>."], focus: "bounce back and answer", watch: "Recast with Ich bin + job.")]),
+                        exercises: [
+                            Exercise(id: "de-foundations-u1-introduce-e1", kind: "choice", prompt: "___ Ana. Freut mich.", options: ["Ich heiße", "Ich heiße aus", "Heiße", "Ich bin aus"], answers: ["Ich heiße"], explain: "Ich heiße + name: one piece, no aus."),
+                            Exercise(id: "de-foundations-u1-introduce-e2", kind: "gap", prompt: "Ich komme aus ___. Ich bin Italienerin.", options: [], answers: ["Italien"], explain: "Country: Italien — nationality: Italienerin."),
+                            Exercise(id: "de-foundations-u1-introduce-e3", kind: "order", prompt: "Say your name and city.", options: [], answers: ["Ich bin Ana und ich komme aus Berlin"], explain: "Two pieces, each with its verb."),
+                            Exercise(id: "de-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Ich heiße <name> und ich komme aus <country>", "Ich bin <name> und ich komme aus <country>"], explain: "Name + origin, each with its verb.")])])]),
         Course(id: "en-foundations", languageID: "en", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real English: the structures every sentence uses, practised out loud in small conversations.", units: [
             CourseUnit(id: "en-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café. Meet the learner, exchange names, countries and jobs using the verb to be.", 0),
@@ -578,6 +675,394 @@ public enum CoursesData {
                             Exercise(id: "en-foundations-u6-weekend-e1", kind: "choice", prompt: "___ you have a good weekend?", options: ["Did", "Was", "Were", "Do"], answers: ["Did"], explain: "have is a normal verb: questions need Did."),
                             Exercise(id: "en-foundations-u6-weekend-e2", kind: "gap", prompt: "We ___ so tired on Sunday.", options: [], answers: ["were"], explain: "Past be with we: were."),
                             Exercise(id: "en-foundations-u6-weekend-e3", kind: "order", prompt: "Start your Saturday story.", options: [], answers: ["On Saturday I met my friends"], explain: "Time anchor first: On Saturday …"),
-                            Exercise(id: "en-foundations-u6-weekend-e4", kind: "written", prompt: "Tell one thing you did last weekend.", options: [], answers: ["I <verbed> last weekend", "Last weekend I <verbed>", "On Saturday I <verbed>"], explain: "Past verb + time anchor.")])])])
+                            Exercise(id: "en-foundations-u6-weekend-e4", kind: "written", prompt: "Tell one thing you did last weekend.", options: [], answers: ["I <verbed> last weekend", "Last weekend I <verbed>", "On Saturday I <verbed>"], explain: "Past verb + time anchor.")])])]),
+        Course(id: "es-foundations", languageID: "es", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Spanish: the structures every sentence uses, practised out loud in small conversations.", units: [
+            CourseUnit(id: "es-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
+                    ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Madrid. Meet the learner, exchange names, countries and jobs using the verb ser.", 0),
+                    ConversationTheme("introductions", "Nice to meet you", "Start somewhere small", "hand.wave", "Connection", "Meet the learner for the first time. Learn their interests through natural introductions.", 1)], lessons: [
+                    Lesson(id: "es-foundations-u1-ser", title: "The verb “ser”", goal: "Introduce yourself and say who people are with soy, eres, es, somos, son.",
+                        intro: LessonIntro(explanation: [
+                            "Every Spanish sentence needs a subject and a verb. The most important verb for saying who you are is “ser”.",
+                            "One verb, five present forms: yo soy, tú eres, él/ella es, nosotros somos, ellos/ellas son. With “you” formal, use usted es.",
+                            "Use ser for identity and origin: “Soy Ana”, “Soy de España”, “Es profesora”. These facts do not change, so ser is the verb."], examples: [
+                            ExampleLine(text: "Soy Ana. Soy de España.", meaning: "Your name and country."),
+                            ExampleLine(text: "Eres mi mejor amigo.", meaning: "A close bond with someone."),
+                            ExampleLine(text: "Ella es profesora.", meaning: "Someone's profession."),
+                            ExampleLine(text: "Somos muy felices hoy.", meaning: "A feeling that defines right now."),
+                            ExampleLine(text: "El café es cercano a la estación.", meaning: "Where a place is."),
+                            ExampleLine(text: "Ellos son de Madrid.", meaning: "Someone's origin.")]),
+                        expressions: [
+                            TargetExpression(text: "Soy …", meaning: "Introduce yourself.", note: "With your name, job or feeling: Soy Ana. Soy profesora."),
+                            TargetExpression(text: "Soy de …", meaning: "Say where you come from.", note: "Never “Soy España” — the de is obligatory: Soy de España."),
+                            TargetExpression(text: "¿Eres …?", meaning: "Ask about the other person.", note: "¿Eres estudiante? ¿Eres de aquí?"),
+                            TargetExpression(text: "Sí, lo soy. / No, no lo soy.", meaning: "Short answers to an ¿Eres…? question.", note: "Repeat the verb through lo: never just “Sí”."),
+                            TargetExpression(text: "Es …", meaning: "Say what someone else is.", note: "Es profesor — the article is often dropped with jobs: Es médico."),
+                            TargetExpression(text: "Encantado de conocerte.", meaning: "The fixed phrase when you meet someone.", note: "Answer with Encantada if you are a woman, or Igualmente.")],
+                        situation: "You meet someone new at a friendly language-exchange café in Madrid. Introduce yourselves and ask simple questions with the verb ser.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "¡Hola! Soy Ana. ¿Cómo te llamas?", expected: ["Me llamo <name>.", "Soy <name>."], focus: "Me llamo / Soy", watch: "Answering only the name without the verb: accept it, then recast “Me llamo …”."),
+                                PracticeQuestion(prompt: "¿De dónde eres?", expected: ["Soy de <country>."], focus: "ser + de", watch: "“Soy España” — recast “Soy DE España”, stress de."),
+                                PracticeQuestion(prompt: "¿Eres estudiante?", expected: ["Sí, lo soy.", "No, no lo soy."], focus: "short answers with ser", watch: "“Sí estudiante” — the short answer needs the verb."),
+                                PracticeQuestion(prompt: "¿Cómo estás hoy?", expected: ["Estoy bien.", "Estoy cansado.", "Estoy feliz."], focus: "estar for feelings", watch: "“Soy cansado” — recast “Estoy cansado”: feelings take estar."),
+                                PracticeQuestion(prompt: "Tu ciudad, ¿es grande o pequeña?", expected: ["Es grande.", "Es pequeña.", "Mi ciudad es …"], focus: "es with things and places", watch: "“Mi ciudad grande” — recast “Mi ciudad ES grande”."),
+                                PracticeQuestion(prompt: "¡Ya somos amigos! ¿De dónde es tu familia?", expected: ["Es de <country>.", "Mi familia es de <country>."], focus: "es for a group's origin", watch: "“Mi familia de …” — recast with es.")]),
+                        exercises: [
+                            Exercise(id: "es-foundations-u1-ser-e1", kind: "choice", prompt: "Ella ___ profesora.", options: ["es", "eres", "soy", "somos"], answers: ["es"], explain: "With él/ella/usted, ser becomes es."),
+                            Exercise(id: "es-foundations-u1-ser-e2", kind: "gap", prompt: "Nosotros ___ de Madrid.", options: [], answers: ["somos"], explain: "With nosotros, ser is siempre somos."),
+                            Exercise(id: "es-foundations-u1-ser-e3", kind: "order", prompt: "Say where you are from.", options: [], answers: ["Soy de España"], explain: "Soy + de + country: Soy de España."),
+                            Exercise(id: "es-foundations-u1-ser-e4", kind: "written", prompt: "Introduce yourself in one sentence: say your name.", options: [], answers: ["Me llamo <name>", "Soy <name>"], explain: "Me llamo Ana / Soy Ana — the verb is never dropped.")]),
+                    Lesson(id: "es-foundations-u1-questions", title: "Questions & negatives", goal: "Ask yes/no questions and say what is not true, with ¿Eres…? and no soy.",
+                        intro: LessonIntro(explanation: [
+                            "To ask a yes/no question in Spanish, keep the word order and just add the question marks — your voice goes up at the end: “¿Eres Ana?”",
+                            "Question words carry an accent: ¿Qué? ¿Dónde? ¿Cómo? They go first: “¿De dónde eres?”",
+                            "To say something is not true, put no before the verb: “No soy Ana”, “No somos amigos”. In answers, no… twice is normal: “No, no lo soy”."], examples: [
+                            ExampleLine(text: "¿Eres tú profesora?", meaning: "A yes/no question with eres."),
+                            ExampleLine(text: "No soy de Madrid.", meaning: "A negative with soy."),
+                            ExampleLine(text: "¿De dónde eres?", meaning: "Question word + eres."),
+                            ExampleLine(text: "Él no es mi hermano.", meaning: "A negative about another person."),
+                            ExampleLine(text: "¿Sois vosotros vecinos?", meaning: "Asking a group."),
+                            ExampleLine(text: "¿Qué es esto?", meaning: "What is this?")]),
+                        expressions: [
+                            TargetExpression(text: "¿Eres …?", meaning: "Ask a yes/no question.", note: "Same order as the statement, just the marks and rising tone."),
+                            TargetExpression(text: "No soy …", meaning: "Say what is not true about you.", note: "No always goes before the verb: No soy de Sevilla."),
+                            TargetExpression(text: "¿De dónde eres?", meaning: "Ask where someone is from.", note: "De dónde, two words with accents."),
+                            TargetExpression(text: "No es …", meaning: "Say what someone else is not.", note: "Él no es mi jefe."),
+                            TargetExpression(text: "¿Verdad?", meaning: "Tag a statement to check it.", note: "Es tu casa, ¿verdad?"),
+                            TargetExpression(text: "Claro.", meaning: "The natural yes in talk.", note: "Also: Por supuesto.")],
+                        situation: "You chat with a new neighbour in the lift in Madrid. Ask simple yes/no questions and say what is and isn't true for you.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "¿Eres de aquí?", expected: ["Sí, soy de aquí.", "No, no soy de aquí."], focus: "short answers", watch: "One-word “Sí” — recast with the verb: Sí, soy de aquí."),
+                                PracticeQuestion(prompt: "¿Eres profesor o estudiante?", expected: ["Soy profesor.", "Soy estudiante.", "Soy profesora."], focus: "choice with ser", watch: "Accept either; recast with the article dropped: Soy profesor."),
+                                PracticeQuestion(prompt: "¿Tu familia es grande?", expected: ["Sí, es grande.", "No, no es grande."], focus: "es in questions about others", watch: "“Mi familia es grande, ¿verdad?” is also fine."),
+                                PracticeQuestion(prompt: "¿De dónde eres tú?", expected: ["Soy de <country>."], focus: "de dónde + soy", watch: "“Soy de” never “Soy en”."),
+                                PracticeQuestion(prompt: "Dime algo que no eres.", expected: ["No soy <job>.", "No soy de <country>."], focus: "negation with no soy", watch: "“No soy” before the rest: never “Soy no”."),
+                                PracticeQuestion(prompt: "¿Somos amigos ya?", expected: ["Sí, somos amigos.", "Claro, somos amigos."], focus: "somos in questions", watch: "“Sí, estamos amigos” mixes ser and estar — recast with somos.")]),
+                        exercises: [
+                            Exercise(id: "es-foundations-u1-questions-e1", kind: "choice", prompt: "¿___ tú de Barcelona?", options: ["Eres", "Es", "Soy", "Somos"], answers: ["Eres"], explain: "With tú, questions start with Eres."),
+                            Exercise(id: "es-foundations-u1-questions-e2", kind: "gap", prompt: "Ella no ___ mi hermana.", options: [], answers: ["es"], explain: "no + es: with ella the negative keeps es."),
+                            Exercise(id: "es-foundations-u1-questions-e3", kind: "order", prompt: "Say you are not from Seville.", options: [], answers: ["No soy de Sevilla"], explain: "No goes first: No soy de Sevilla."),
+                            Exercise(id: "es-foundations-u1-questions-e4", kind: "written", prompt: "Make it negative: \"Soy de Valencia.\"", options: [], answers: ["No soy de Valencia"], explain: "no + soy: No soy de Valencia.")]),
+                    Lesson(id: "es-foundations-u1-introduce", title: "Introducing yourself", goal: "Give a complete self-introduction: name, country, nationality and job.",
+                        intro: LessonIntro(explanation: [
+                            "A full Spanish introduction has four pieces: your name, your city or country, your nationality and your job.",
+                            "For the name: “Me llamo Ana” (I call myself Ana) or simply “Soy Ana”. For origin: “Soy de España”. Nationalities are lower-case: “soy española”.",
+                            "Jobs with ser drop the article: “Soy profesora”, not “Soy una profesora”. Add “Mucho gusto” at the end to close politely."], examples: [
+                            ExampleLine(text: "Me llamo Ana. Mucho gusto.", meaning: "Your name plus a polite close."),
+                            ExampleLine(text: "Soy de Sevilla, del sur de España.", meaning: "City inside country."),
+                            ExampleLine(text: "Soy española, de Andalucía.", meaning: "Nationality plus region."),
+                            ExampleLine(text: "Soy enfermera en un hospital.", meaning: "Job plus workplace."),
+                            ExampleLine(text: "Tengo veinticinco años.", meaning: "Your age — with tener, not ser."),
+                            ExampleLine(text: "Encantada. ¿Y tú?", meaning: "Close and bounce the question back.")]),
+                        expressions: [
+                            TargetExpression(text: "Me llamo …", meaning: "Give your name.", note: "Literally “I call myself”. Also: Mi nombre es …"),
+                            TargetExpression(text: "Soy + nationality", meaning: "Say your nationality.", note: "española, francesa, alemana — nationality is lower-case in Spanish."),
+                            TargetExpression(text: "Soy de …", meaning: "Say your city or country.", note: "Soy de Sevilla; Soy de España."),
+                            TargetExpression(text: "Trabajo en …", meaning: "Say where you work.", note: "Trabajo en un hospital / en una escuela."),
+                            TargetExpression(text: "Mucho gusto.", meaning: "Polite close when you meet someone.", note: "Answer: Igualmente."),
+                            TargetExpression(text: "¿Y tú?", meaning: "Bounce the question back.", note: "—Soy de Madrid. ¿Y tú?")],
+                        situation: "Your first day at a language school in Madrid. Present yourself completely to the class: name, city, nationality and job.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "¿Cómo te llamas?", expected: ["Me llamo <name>.", "Soy <name>."], focus: "name formulas", watch: "Both are fine; recast the shorter one as Me llamo for variety."),
+                                PracticeQuestion(prompt: "¿De dónde eres?", expected: ["Soy de <country>."], focus: "origin", watch: "Never drop de: Soy DE <country>."),
+                                PracticeQuestion(prompt: "¿Cuál es tu nacionalidad?", expected: ["Soy <nationality>."], focus: "nationality with ser", watch: "Lower-case: soy española, not Española."),
+                                PracticeQuestion(prompt: "¿A qué te dedicas?", expected: ["Soy <job>.", "Trabajo en <place>."], focus: "jobs without article", watch: "“Soy una profesora” — recast dropping the article."),
+                                PracticeQuestion(prompt: "¿Y dónde vives?", expected: ["Vivo en <city>."], focus: "vivo en", watch: "“Vivo a Madrid” — recast with en."),
+                                PracticeQuestion(prompt: "¡Encantado! ¿Y tú, de qué trabajas?", expected: ["Soy <job>.", "Trabajo de <job>."], focus: "bounce back and answer", watch: "Accept Soy de <job>? No — recast: Trabajo DE/Soy <job>.")]),
+                        exercises: [
+                            Exercise(id: "es-foundations-u1-introduce-e1", kind: "choice", prompt: "___ Ana. Mucho gusto.", options: ["Me llamo", "Me llamo de", "Llamo", "Estoy"], answers: ["Me llamo"], explain: "Me llamo + name: one piece, no de."),
+                            Exercise(id: "es-foundations-u1-introduce-e2", kind: "gap", prompt: "Soy ___ Italia. (nationality)", options: [], answers: ["italiana"], explain: "Nationality is lower-case: italiana, italiano."),
+                            Exercise(id: "es-foundations-u1-introduce-e3", kind: "order", prompt: "Say your name and city.", options: [], answers: ["Soy Ana y soy de Madrid"], explain: "Two soy pieces, both with their verb."),
+                            Exercise(id: "es-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Me llamo <name> y soy de <country>", "Soy <name> y soy de <country>", "Me llamo <name>, soy de <country>"], explain: "Name + origin, each with its verb.")])])]),
+        Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
+            CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
+                    ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
+                    ConversationTheme("introductions", "Nice to meet you", "Start somewhere small", "hand.wave", "Connection", "Meet the learner for the first time. Learn their interests through natural introductions.", 1)], lessons: [
+                    Lesson(id: "fr-foundations-u1-etre", title: "The verb “être”", goal: "Introduce yourself and say who people are with je suis, tu es, il est, nous sommes, vous êtes, ils sont.",
+                        intro: LessonIntro(explanation: [
+                            "Every French sentence needs a subject and a verb. The verb for saying who you are is “être”.",
+                            "Six forms, one per subject: je suis, tu es, il/elle est, nous sommes, vous êtes, ils/elles sont. French never drops the subject: say “Je suis”, not just “Suis”.",
+                            "Use être for identity and origin: “Je suis Ana”, “Je suis de France”, “Il est professeur”. Put “de” after a city: “Je suis de Lyon”."], examples: [
+                            ExampleLine(text: "Je suis Ana. Je suis de France.", meaning: "Your name and country."),
+                            ExampleLine(text: "Tu es mon meilleur ami.", meaning: "A close bond with someone."),
+                            ExampleLine(text: "Elle est professeure.", meaning: "Someone's profession."),
+                            ExampleLine(text: "Nous sommes très contents aujourd'hui.", meaning: "A feeling that defines right now."),
+                            ExampleLine(text: "Le café est près de la gare.", meaning: "Where a place is."),
+                            ExampleLine(text: "Ils sont de Paris.", meaning: "Someone's origin.")]),
+                        expressions: [
+                            TargetExpression(text: "Je suis …", meaning: "Introduce yourself.", note: "With your name or job: Je suis Ana. Je suis professeure."),
+                            TargetExpression(text: "Je suis de …", meaning: "Say where you come from.", note: "Never “Je suis France” — the de is obligatory: Je suis de France."),
+                            TargetExpression(text: "Tu es … ?", meaning: "Ask about the other person.", note: "Tu es étudiant ? Tu es d'ici ?"),
+                            TargetExpression(text: "Oui, je le suis. / Non, pas du tout.", meaning: "Short answers to a Tu es… ? question.", note: "Repeat the verb through le."),
+                            TargetExpression(text: "Il est / Elle est …", meaning: "Say what someone else is.", note: "Elle est médecin — jobs often drop the article."),
+                            TargetExpression(text: "Enchanté(e).", meaning: "The fixed phrase when you meet someone.", note: "Add -e if you are a woman: Enchantée.")],
+                        situation: "You meet someone new at a friendly language-exchange café in Lyon. Introduce yourselves and ask simple questions with the verb être.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Bonjour ! Je suis Ana. Comment tu t'appelles ?", expected: ["Je m'appelle <name>.", "Moi, c'est <name>."], focus: "Je m'appelle / Moi, c'est", watch: "Answering only the name: accept it, then recast “Je m'appelle …”."),
+                                PracticeQuestion(prompt: "Tu es de quelle ville ?", expected: ["Je suis de <city>.", "Je viens de <city>."], focus: "être + de", watch: "“Je suis Lyon” — recast “Je suis DE Lyon”."),
+                                PracticeQuestion(prompt: "Tu es étudiant ?", expected: ["Oui, je le suis.", "Non, je ne le suis pas."], focus: "short answers with être", watch: "One-word “Oui” — recast with the verb."),
+                                PracticeQuestion(prompt: "Comment ça va, aujourd'hui ?", expected: ["Ça va bien.", "Je suis fatigué.", "Je suis content."], focus: "être for feelings", watch: "“Je vais content” mixes verbs — recast with Je suis."),
+                                PracticeQuestion(prompt: "Ta ville, elle est grande ou petite ?", expected: ["Elle est grande.", "Elle est petite.", "Ma ville est …"], focus: "est with places", watch: "“Ma ville grande” — recast “Ma ville EST grande”."),
+                                PracticeQuestion(prompt: "On est amis maintenant ! Ta famille est de où ?", expected: ["Elle est de <country>.", "Ma famille est de <country>."], focus: "est for a group's origin", watch: "“Ma famille de …” — recast with est.")]),
+                        exercises: [
+                            Exercise(id: "fr-foundations-u1-etre-e1", kind: "choice", prompt: "Elle ___ professeure.", options: ["est", "es", "suis", "sommes"], answers: ["est"], explain: "With il/elle, être becomes est."),
+                            Exercise(id: "fr-foundations-u1-etre-e2", kind: "gap", prompt: "Nous ___ de Lyon.", options: [], answers: ["sommes"], explain: "With nous, être is toujours sommes."),
+                            Exercise(id: "fr-foundations-u1-etre-e3", kind: "order", prompt: "Say where you are from.", options: [], answers: ["Je suis de France"], explain: "Je suis + de + country: Je suis de France."),
+                            Exercise(id: "fr-foundations-u1-etre-e4", kind: "written", prompt: "Introduce yourself in one sentence: say your name.", options: [], answers: ["Je m'appelle <name>", "Je suis <name>", "Moi c'est <name>"], explain: "Je m'appelle Ana / Je suis Ana — the subject is never dropped.")]),
+                    Lesson(id: "fr-foundations-u1-questions", title: "Questions & negatives", goal: "Ask yes/no questions and say what is not true, with Tu es… ? and je ne suis pas.",
+                        intro: LessonIntro(explanation: [
+                            "Spoken French asks yes/no questions with rising intonation: “Tu es fatigué ?” The formal way adds est-ce que: “Est-ce que tu es fatigué ?”",
+                            "To negate, wrap the verb: ne + verb + pas. With être: “Je ne suis pas fatigué”, “Il n'est pas professeur” — ne becomes n' before a vowel.",
+                            "Question words go first: “Où es-tu ?”, “Qu'est-ce que c'est ?” — and they always carry their accents."], examples: [
+                            ExampleLine(text: "Tu es professeure ?", meaning: "A yes/no question with es."),
+                            ExampleLine(text: "Je ne suis pas de Paris.", meaning: "A negative with suis."),
+                            ExampleLine(text: "Où es-tu ?", meaning: "Question word + es."),
+                            ExampleLine(text: "Il n'est pas mon frère.", meaning: "A negative about another person."),
+                            ExampleLine(text: "Vous êtes voisins ?", meaning: "Asking a group."),
+                            ExampleLine(text: "Qu'est-ce que c'est ?", meaning: "What is this?")]),
+                        expressions: [
+                            TargetExpression(text: "Tu es … ?", meaning: "Ask a yes/no question.", note: "Spoken style: rising tone. Formal: Est-ce que tu es … ?"),
+                            TargetExpression(text: "Je ne suis pas …", meaning: "Say what is not true about you.", note: "ne + suis + pas wraps the verb."),
+                            TargetExpression(text: "Où es-tu ?", meaning: "Ask where someone is.", note: "Où with its accent, always."),
+                            TargetExpression(text: "Il n'est pas …", meaning: "Say what someone else is not.", note: "ne becomes n' before a vowel: n'est."),
+                            TargetExpression(text: "C'est ça ?", meaning: "Tag a statement to check it.", note: "Tu es d'ici, c'est ça ?"),
+                            TargetExpression(text: "Bien sûr.", meaning: "The natural yes in talk.", note: "Also: Exact.")],
+                        situation: "You chat with a new neighbour in the lift in Lyon. Ask simple yes/no questions and say what is and isn't true for you.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Tu es d'ici ?", expected: ["Oui, je suis d'ici.", "Non, je ne suis pas d'ici."], focus: "short answers", watch: "One-word “Oui” — recast with the verb: Oui, je suis d'ici."),
+                                PracticeQuestion(prompt: "Tu es professeur ou étudiant ?", expected: ["Je suis professeur.", "Je suis étudiant.", "Je suis professeure."], focus: "choice with être", watch: "Accept either; note the article stays dropped."),
+                                PracticeQuestion(prompt: "Ta famille est grande ?", expected: ["Oui, elle est grande.", "Non, elle n'est pas grande."], focus: "est in questions about others", watch: "“Elle n'est pas grande” — n' before est."),
+                                PracticeQuestion(prompt: "Tu es de où, toi ?", expected: ["Je suis de <country>.", "Je viens de <country>."], focus: "où + es", watch: "“Je suis à France” — recast with de: Je suis DE France."),
+                                PracticeQuestion(prompt: "Dis-moi quelque chose que tu n'es pas.", expected: ["Je ne suis pas <job>.", "Je ne suis pas de <country>."], focus: "negation ne…pas", watch: "Both parts needed: ne before, pas after."),
+                                PracticeQuestion(prompt: "On est amis maintenant ?", expected: ["Oui, on est amis.", "Bien sûr, on est amis."], focus: "on est", watch: "“On sommes” doesn't exist — on always takes est.")]),
+                        exercises: [
+                            Exercise(id: "fr-foundations-u1-questions-e1", kind: "choice", prompt: "¿ ___ tu de Marseille ?", options: ["Es", "Est", "Suis", "Êtes"], answers: ["Es"], explain: "With tu, the question starts with Es: Tu es de… ?"),
+                            Exercise(id: "fr-foundations-u1-questions-e2", kind: "gap", prompt: "Elle ___ pas ma sœur.", options: [], answers: ["n'est"], explain: "ne + est → n'est pas: n' before the vowel."),
+                            Exercise(id: "fr-foundations-u1-questions-e3", kind: "order", prompt: "Say you are not from Nantes.", options: [], answers: ["Je ne suis pas de Nantes"], explain: "ne + suis + pas wraps the verb."),
+                            Exercise(id: "fr-foundations-u1-questions-e4", kind: "written", prompt: "Make it negative: \"Je suis de Bordeaux.\"", options: [], answers: ["Je ne suis pas de Bordeaux"], explain: "ne…pas around suis: Je ne suis pas de Bordeaux.")]),
+                    Lesson(id: "fr-foundations-u1-introduce", title: "Introducing yourself", goal: "Give a complete self-introduction: name, city, nationality and job.",
+                        intro: LessonIntro(explanation: [
+                            "A full French introduction has four pieces: your name, your city, your nationality and your job.",
+                            "For the name: “Je m'appelle Ana” or “Moi, c'est Ana”. For origin: “Je suis de Lyon”. Nationalities are lower-case: “je suis française”.",
+                            "Jobs with être usually drop the article: “Je suis professeure”. Close with “Enchantée” and bounce the question back with “Et toi ?”"], examples: [
+                            ExampleLine(text: "Je m'appelle Ana. Enchantée.", meaning: "Your name plus a polite close."),
+                            ExampleLine(text: "Je suis de Lyon, dans le sud-est.", meaning: "City inside country."),
+                            ExampleLine(text: "Je suis française, de la région Rhône.", meaning: "Nationality plus region."),
+                            ExampleLine(text: "Je suis infirmière à l'hôpital.", meaning: "Job plus workplace."),
+                            ExampleLine(text: "J'ai vingt-cinq ans.", meaning: "Your age — with avoir, not être."),
+                            ExampleLine(text: "Et toi ? Tu fais quoi ?", meaning: "Bounce the question back.")]),
+                        expressions: [
+                            TargetExpression(text: "Je m'appelle …", meaning: "Give your name.", note: "Literally “I call myself”. Also: Moi, c'est …"),
+                            TargetExpression(text: "Je suis + nationality", meaning: "Say your nationality.", note: "française, allemande, italienne — lower-case in French."),
+                            TargetExpression(text: "Je suis de …", meaning: "Say your city or country.", note: "Je suis de Lyon; Je suis de France."),
+                            TargetExpression(text: "Je travaille à …", meaning: "Say where you work.", note: "Je travaille à l'hôpital / dans une école."),
+                            TargetExpression(text: "Enchanté(e).", meaning: "Polite close when you meet someone.", note: "Answer: Moi aussi."),
+                            TargetExpression(text: "Et toi ?", meaning: "Bounce the question back.", note: "—Je suis de Lyon. Et toi ?")],
+                        situation: "Your first day at a language school in Lyon. Present yourself completely to the class: name, city, nationality and job.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Comment tu t'appelles ?", expected: ["Je m'appelle <name>.", "Moi, c'est <name>."], focus: "name formulas", watch: "Both are fine; recast the shorter one as Je m'appelle for variety."),
+                                PracticeQuestion(prompt: "Tu viens d'où ?", expected: ["Je viens de <country>.", "Je suis de <country>."], focus: "origin", watch: "Never drop de: Je viens DE <country>."),
+                                PracticeQuestion(prompt: "Tu es de quelle nationalité ?", expected: ["Je suis <nationality>."], focus: "nationality with être", watch: "Lower-case: je suis française, not Française."),
+                                PracticeQuestion(prompt: "Tu fais quoi dans la vie ?", expected: ["Je suis <job>.", "Je travaille comme <job>."], focus: "jobs without article", watch: "“Je suis une professeure” — recast dropping the article."),
+                                PracticeQuestion(prompt: "Et tu habites où ?", expected: ["J'habite à <city>."], focus: "j'habite à", watch: "“J'habite à Lyon” — à for cities."),
+                                PracticeQuestion(prompt: "Enchanté ! Et toi, tu fais quoi ?", expected: ["Je suis <job>."], focus: "bounce back and answer", watch: "Recast with Je suis + job.")]),
+                        exercises: [
+                            Exercise(id: "fr-foundations-u1-introduce-e1", kind: "choice", prompt: "___ Ana. Enchantée.", options: ["Je m'appelle", "Je m'appelle de", "J'appelle", "Je suis de"], answers: ["Je m'appelle"], explain: "Je m'appelle + name: one piece, no de."),
+                            Exercise(id: "fr-foundations-u1-introduce-e2", kind: "gap", prompt: "Je suis ___ Italie. (nationality)", options: [], answers: ["italienne"], explain: "Nationality is lower-case: italienne, italien."),
+                            Exercise(id: "fr-foundations-u1-introduce-e3", kind: "order", prompt: "Say your name and city.", options: [], answers: ["Je suis Ana et je suis de Lyon"], explain: "Two suis pieces, each with its subject."),
+                            Exercise(id: "fr-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Je m'appelle <name> et je suis de <country>", "Je suis <name> et je suis de <country>"], explain: "Name + origin, each with its subject.")])])]),
+        Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
+            CourseUnit(id: "it-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
+                    ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.", 0),
+                    ConversationTheme("introductions", "Nice to meet you", "Start somewhere small", "hand.wave", "Connection", "Meet the learner for the first time. Learn their interests through natural introductions.", 1)], lessons: [
+                    Lesson(id: "it-foundations-u1-essere", title: "The verb “essere”", goal: "Introduce yourself and say who people are with sono, sei, è, siamo, siete, sono.",
+                        intro: LessonIntro(explanation: [
+                            "Every Italian sentence needs a subject and a verb. The verb for saying who you are is “essere”.",
+                            "Six forms: io sono, tu sei, lui/lei è, noi siamo, voi siete, loro sono. Italian often drops the subject: “Sono Ana” already means I am Ana.",
+                            "Use essere for identity and origin: “Sono di Roma”, “È insegnante”. Put “di” before a city: “Sono di Roma”."], examples: [
+                            ExampleLine(text: "Sono Ana. Sono di Italia.", meaning: "Your name and country."),
+                            ExampleLine(text: "Sei il mio migliore amico.", meaning: "A close bond with someone."),
+                            ExampleLine(text: "Lei è insegnante.", meaning: "Someone's profession."),
+                            ExampleLine(text: "Siamo molto felici oggi.", meaning: "A feeling that defines right now."),
+                            ExampleLine(text: "Il caffè è vicino alla stazione.", meaning: "Where a place is."),
+                            ExampleLine(text: "Loro sono di Milano.", meaning: "Someone's origin.")]),
+                        expressions: [
+                            TargetExpression(text: "Sono …", meaning: "Introduce yourself.", note: "With your name or job: Sono Ana. Sono insegnante."),
+                            TargetExpression(text: "Sono di …", meaning: "Say where you come from.", note: "Never “Sono Italia” — the di is obligatory: Sono di Roma."),
+                            TargetExpression(text: "Sei … ?", meaning: "Ask about the other person.", note: "Sei studente? Sei di qui?"),
+                            TargetExpression(text: "Sì, lo sono. / No, non lo sono.", meaning: "Short answers to a Sei… ? question.", note: "Repeat the verb through lo."),
+                            TargetExpression(text: "È …", meaning: "Say what someone else is.", note: "È medico — jobs often drop the article."),
+                            TargetExpression(text: "Piacere di conoscerti.", meaning: "The fixed phrase when you meet someone.", note: "Answer with Piacere mio, or simply Piacere.")],
+                        situation: "You meet someone new at a friendly language-exchange café in Roma. Introduce yourselves and ask simple questions with the verb essere.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ciao! Sono Ana. Tu come ti chiami?", expected: ["Mi chiamo <name>.", "Sono <name>."], focus: "Mi chiamo / Sono", watch: "Answering only the name: accept it, then recast “Mi chiamo …”."),
+                                PracticeQuestion(prompt: "Di dove sei?", expected: ["Sono di <city>.", "Vengo da <city>."], focus: "essere + di", watch: "“Sono Roma” — recast “Sono DI Roma”."),
+                                PracticeQuestion(prompt: "Sei studente?", expected: ["Sì, lo sono.", "No, non lo sono."], focus: "short answers with essere", watch: "One-word “Sì” — recast with the verb."),
+                                PracticeQuestion(prompt: "Come stai, oggi?", expected: ["Sto bene.", "Sono stanco.", "Sono contento."], focus: "stare for feelings", watch: "“Sono bene” — recast “Sto bene”: feelings take stare here."),
+                                PracticeQuestion(prompt: "La tua città, è grande o piccola?", expected: ["È grande.", "È piccola.", "La mia città è …"], focus: "è with places", watch: "“La mia città grande” — recast “La mia città È grande”."),
+                                PracticeQuestion(prompt: "Ora siamo amici! Di dove è la tua famiglia?", expected: ["È di <country>.", "La mia famiglia è di <country>."], focus: "è for a group's origin", watch: "“La mia famiglia di …” — recast with è.")]),
+                        exercises: [
+                            Exercise(id: "it-foundations-u1-essere-e1", kind: "choice", prompt: "Lei ___ insegnante.", options: ["è", "sei", "sono", "siamo"], answers: ["è"], explain: "With lui/lei, essere becomes è."),
+                            Exercise(id: "it-foundations-u1-essere-e2", kind: "gap", prompt: "Noi ___ di Milano.", options: [], answers: ["siamo"], explain: "With noi, essere is sempre siamo."),
+                            Exercise(id: "it-foundations-u1-essere-e3", kind: "order", prompt: "Say where you are from.", options: [], answers: ["Sono di Roma"], explain: "Sono + di + city: Sono di Roma."),
+                            Exercise(id: "it-foundations-u1-essere-e4", kind: "written", prompt: "Introduce yourself in one sentence: say your name.", options: [], answers: ["Mi chiamo <name>", "Sono <name>"], explain: "Mi chiamo Ana / Sono Ana — the subject can be dropped.")]),
+                    Lesson(id: "it-foundations-u1-questions", title: "Questions & negatives", goal: "Ask yes/no questions and say what is not true, with Sei… ? and non sono.",
+                        intro: LessonIntro(explanation: [
+                            "Italian asks yes/no questions with rising intonation — same words, same order: “Sei Ana?”",
+                            "Question words go first: “Di dove sei?”, “Cosa è questo?” — and they carry their accents: perché, dove.",
+                            "To negate, put non before the verb: “Non sono Ana”, “Non siamo amici”. No second part is needed, unlike English."], examples: [
+                            ExampleLine(text: "Sei insegnante?", meaning: "A yes/no question with sei."),
+                            ExampleLine(text: "Non sono di Milano.", meaning: "A negative with sono."),
+                            ExampleLine(text: "Di dove sei?", meaning: "Question word + sei."),
+                            ExampleLine(text: "Lui non è mio fratello.", meaning: "A negative about another person."),
+                            ExampleLine(text: "Siete vicini di casa?", meaning: "Asking a group."),
+                            ExampleLine(text: "Cosa è questo?", meaning: "What is this?")]),
+                        expressions: [
+                            TargetExpression(text: "Sei … ?", meaning: "Ask a yes/no question.", note: "Just the marks and rising tone."),
+                            TargetExpression(text: "Non sono …", meaning: "Say what is not true about you.", note: "Non always goes before the verb."),
+                            TargetExpression(text: "Di dove sei?", meaning: "Ask where someone is from.", note: "Di dove, two words."),
+                            TargetExpression(text: "Lui non è …", meaning: "Say what someone else is not.", note: "Lui non è il mio capo."),
+                            TargetExpression(text: "Vero?", meaning: "Tag a statement to check it.", note: "Sei di qui, vero?"),
+                            TargetExpression(text: "Certo.", meaning: "The natural yes in talk.", note: "Also: Esatto.")],
+                        situation: "You chat with a new neighbour in the lift in Roma. Ask simple yes/no questions and say what is and isn't true for you.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sei di qui?", expected: ["Sì, sono di qui.", "No, non sono di qui."], focus: "short answers", watch: "One-word “Sì” — recast with the verb: Sì, sono di qui."),
+                                PracticeQuestion(prompt: "Sei insegnante o studente?", expected: ["Sono insegnante.", "Sono studente.", "Sono studentessa."], focus: "choice with essere", watch: "Accept either; the article stays dropped."),
+                                PracticeQuestion(prompt: "La tua famiglia è grande?", expected: ["Sì, è grande.", "No, non è grande."], focus: "è in questions about others", watch: "“Non è grande” — non before è."),
+                                PracticeQuestion(prompt: "Di dove sei, tu?", expected: ["Sono di <country>.", "Vengo da <country>."], focus: "di dove + sei", watch: "“Sono a Roma” for origin — recast with di."),
+                                PracticeQuestion(prompt: "Dimmi una cosa che non sei.", expected: ["Non sono <job>.", "Non sono di <country>."], focus: "negation with non sono", watch: "“Sono non” doesn't exist — non first."),
+                                PracticeQuestion(prompt: "Siamo amici, ora?", expected: ["Sì, siamo amici.", "Certo, siamo amici."], focus: "siamo in questions", watch: "“Sì, stiamo amici” mixes essere and stare — recast with siamo.")]),
+                        exercises: [
+                            Exercise(id: "it-foundations-u1-questions-e1", kind: "choice", prompt: "___ tu di Bologna?", options: ["Sei", "È", "Sono", "Siamo"], answers: ["Sei"], explain: "With tu, the question starts with Sei."),
+                            Exercise(id: "it-foundations-u1-questions-e2", kind: "gap", prompt: "Lei non ___ mia sorella.", options: [], answers: ["è"], explain: "non + è: the negative keeps è."),
+                            Exercise(id: "it-foundations-u1-questions-e3", kind: "order", prompt: "Say you are not from Napoli.", options: [], answers: ["Non sono di Napoli"], explain: "Non goes first: Non sono di Napoli."),
+                            Exercise(id: "it-foundations-u1-questions-e4", kind: "written", prompt: "Make it negative: \"Sono di Firenze.\"", options: [], answers: ["Non sono di Firenze"], explain: "non + sono: Non sono di Firenze.")]),
+                    Lesson(id: "it-foundations-u1-introduce", title: "Introducing yourself", goal: "Give a complete self-introduction: name, city, nationality and job.",
+                        intro: LessonIntro(explanation: [
+                            "A full Italian introduction has four pieces: your name, your city, your nationality and your job.",
+                            "For the name: “Mi chiamo Ana” or “Sono Ana”. For origin: “Sono di Roma”. Nationalities are lower-case: “sono italiana”.",
+                            "Jobs with essere drop the article: “Sono insegnante”. Close with “Piacere” and bounce the question back with “E tu?”"], examples: [
+                            ExampleLine(text: "Mi chiamo Ana. Piacere.", meaning: "Your name plus a polite close."),
+                            ExampleLine(text: "Sono di Roma, del centro.", meaning: "City inside country."),
+                            ExampleLine(text: "Sono italiana, di Roma.", meaning: "Nationality plus city."),
+                            ExampleLine(text: "Sono infermiera in un ospedale.", meaning: "Job plus workplace."),
+                            ExampleLine(text: "Ho venticinque anni.", meaning: "Your age — with avere, not essere."),
+                            ExampleLine(text: "E tu? Che lavoro fai?", meaning: "Bounce the question back.")]),
+                        expressions: [
+                            TargetExpression(text: "Mi chiamo …", meaning: "Give your name.", note: "Literally “I call myself”. Also: Sono …"),
+                            TargetExpression(text: "Sono + nationality", meaning: "Say your nationality.", note: "italiana, tedesca, francese — lower-case in Italian."),
+                            TargetExpression(text: "Sono di …", meaning: "Say your city or country.", note: "Sono di Roma; Sono di Italia."),
+                            TargetExpression(text: "Lavoro in …", meaning: "Say where you work.", note: "Lavoro in un ospedale / in una scuola."),
+                            TargetExpression(text: "Piacere.", meaning: "Polite close when you meet someone.", note: "Answer: Piacere mio."),
+                            TargetExpression(text: "E tu?", meaning: "Bounce the question back.", note: "—Sono di Roma. E tu?")],
+                        situation: "Your first day at a language school in Roma. Present yourself completely to the class: name, city, nationality and job.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Come ti chiami?", expected: ["Mi chiamo <name>.", "Sono <name>."], focus: "name formulas", watch: "Both are fine; recast the shorter one as Mi chiamo for variety."),
+                                PracticeQuestion(prompt: "Di dove sei?", expected: ["Sono di <country>."], focus: "origin", watch: "Never drop di: Sono DI <country>."),
+                                PracticeQuestion(prompt: "Che nazionalità hai?", expected: ["Sono <nationality>."], focus: "nationality with essere", watch: "Lower-case: sono italiana, not Italiana."),
+                                PracticeQuestion(prompt: "Che lavoro fai?", expected: ["Sono <job>.", "Faccio <job>."], focus: "jobs without article", watch: "“Sono un insegnante” — recast dropping the article."),
+                                PracticeQuestion(prompt: "E dove abiti?", expected: ["Abito a <city>."], focus: "abito a", watch: "“Abito a Roma” — a for cities."),
+                                PracticeQuestion(prompt: "Piacere! E tu, che fai?", expected: ["Sono <job>."], focus: "bounce back and answer", watch: "Recast with Sono + job.")]),
+                        exercises: [
+                            Exercise(id: "it-foundations-u1-introduce-e1", kind: "choice", prompt: "___ Ana. Piacere.", options: ["Mi chiamo", "Mi chiamo di", "Chiamo", "Sto"], answers: ["Mi chiamo"], explain: "Mi chiamo + name: one piece, no di."),
+                            Exercise(id: "it-foundations-u1-introduce-e2", kind: "gap", prompt: "Sono ___ Germania. (nationality)", options: [], answers: ["tedesca"], explain: "Nationality is lower-case: tedesca, tedesco."),
+                            Exercise(id: "it-foundations-u1-introduce-e3", kind: "order", prompt: "Say your name and city.", options: [], answers: ["Sono Ana e sono di Roma"], explain: "Two sono pieces, both with their verb."),
+                            Exercise(id: "it-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Mi chiamo <name> e sono di <country>", "Sono <name> e sono di <country>"], explain: "Name + origin, each with its verb.")])])]),
+        Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
+            CourseUnit(id: "pt-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
+                    ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in São Paulo. Meet the learner, exchange names, countries and jobs using the verb ser.", 0),
+                    ConversationTheme("introductions", "Nice to meet you", "Start somewhere small", "hand.wave", "Connection", "Meet the learner for the first time. Learn their interests through natural introductions.", 1)], lessons: [
+                    Lesson(id: "pt-foundations-u1-ser", title: "The verb “ser”", goal: "Introduce yourself and say who people are with eu sou, você é, ele é, nós somos, eles são.",
+                        intro: LessonIntro(explanation: [
+                            "Every Portuguese sentence needs a subject and a verb. The verb for saying who you are is “ser”.",
+                            "Brazilian forms: eu sou, você é, ele/ela é, nós somos, eles/elas são. In Brazil you will hear “a gente é” for we are in casual talk.",
+                            "Use ser for identity and origin: “Eu sou a Ana”, “Sou do Brasil”, “Ele é professor”. Origin takes de: “Sou de São Paulo”."], examples: [
+                            ExampleLine(text: "Eu sou a Ana. Sou do Brasil.", meaning: "Your name and country."),
+                            ExampleLine(text: "Você é meu melhor amigo.", meaning: "A close bond with someone."),
+                            ExampleLine(text: "Ela é professora.", meaning: "Someone's profession."),
+                            ExampleLine(text: "A gente é muito feliz hoje.", meaning: "A feeling that defines right now (casual we)."),
+                            ExampleLine(text: "O café é perto da estação.", meaning: "Where a place is."),
+                            ExampleLine(text: "Eles são de São Paulo.", meaning: "Someone's origin.")]),
+                        expressions: [
+                            TargetExpression(text: "Eu sou …", meaning: "Introduce yourself.", note: "With your name or job: Eu sou a Ana. Sou professora."),
+                            TargetExpression(text: "Sou do / Sou da …", meaning: "Say where you come from.", note: "Masculine do, feminine da: Sou do Brasil. Sou da Espanha."),
+                            TargetExpression(text: "Você é … ?", meaning: "Ask about the other person.", note: "Você é professora? Você é daqui?"),
+                            TargetExpression(text: "Sou, sim. / Não, não sou.", meaning: "Short answers to a Você é… ? question.", note: "The sim repeats the verb: Sou, sim."),
+                            TargetExpression(text: "Ele é / Ela é …", meaning: "Say what someone else is.", note: "Ele é médico — no article with jobs."),
+                            TargetExpression(text: "Prazer em conhecer você.", meaning: "The fixed phrase when you meet someone.", note: "Short and natural: Prazer!")],
+                        situation: "You meet someone new at a friendly language-exchange café in São Paulo. Introduce yourselves and ask simple questions with the verb ser.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Oi! Eu sou a Ana. Como você se chama?", expected: ["Meu nome é <name>.", "Eu sou o <name>.", "Eu sou a <name>.", "Me chamo <name>."], focus: "Meu nome é / Me chamo", watch: "Answering only the name: accept it, then recast “Meu nome é …”."),
+                                PracticeQuestion(prompt: "De onde você é?", expected: ["Sou do <country>.", "Sou da <country>.", "Sou de <city>."], focus: "ser + de", watch: "“Sou Brasil” — recast “Sou DO Brasil”: the article joins de."),
+                                PracticeQuestion(prompt: "Você é estudante?", expected: ["Sou, sim.", "Não, não sou."], focus: "short answers with ser", watch: "One-word “Sim” — recast with the verb: Sou, sim."),
+                                PracticeQuestion(prompt: "Como você está hoje?", expected: ["Estou bem.", "Estou cansado.", "Estou feliz."], focus: "estar for feelings", watch: "“Sou cansado” — recast “Estou cansado”: feelings take estar."),
+                                PracticeQuestion(prompt: "Sua cidade é grande ou pequena?", expected: ["É grande.", "É pequena.", "Minha cidade é …"], focus: "é with places", watch: "“Minha cidade grande” — recast “Minha cidade É grande”."),
+                                PracticeQuestion(prompt: "Agora somos amigos! De onde é sua família?", expected: ["É do <country>.", "Minha família é do <country>.", "É da <country>."], focus: "é for a group's origin", watch: "“Minha família de …” — recast with é.")]),
+                        exercises: [
+                            Exercise(id: "pt-foundations-u1-ser-e1", kind: "choice", prompt: "Ela ___ professora.", options: ["é", "és", "sou", "somos"], answers: ["é"], explain: "With ele/ela/você, ser becomes é."),
+                            Exercise(id: "pt-foundations-u1-ser-e2", kind: "gap", prompt: "Nós ___ de São Paulo.", options: [], answers: ["somos"], explain: "With nós, ser é sempre somos."),
+                            Exercise(id: "pt-foundations-u1-ser-e3", kind: "order", prompt: "Say where you are from.", options: [], answers: ["Sou do Brasil"], explain: "Sou + do/da + country: Sou do Brasil."),
+                            Exercise(id: "pt-foundations-u1-ser-e4", kind: "written", prompt: "Introduce yourself in one sentence: say your name.", options: [], answers: ["Meu nome é <name>", "Me chamo <name>", "Eu sou <name>"], explain: "Meu nome é Ana / Me chamo Ana — the verb is never dropped.")]),
+                    Lesson(id: "pt-foundations-u1-questions", title: "Questions & negatives", goal: "Ask yes/no questions and say what is not true, with Você é… ? and não sou.",
+                        intro: LessonIntro(explanation: [
+                            "Brazilian Portuguese asks yes/no questions with rising intonation — same words, same order: “Você é a Ana?” You can also add é at the end: “Você é a Ana, né?”",
+                            "Question words go first: “De onde você é?”, “O que é isso?” — and they stay in one piece: onde, o que.",
+                            "To negate, put não before the verb: “Não sou a Ana”, “Não somos amigos”. In short answers the verb answers alone: “Sou, sim.”"], examples: [
+                            ExampleLine(text: "Você é professora?", meaning: "A yes/no question with é."),
+                            ExampleLine(text: "Não sou de São Paulo.", meaning: "A negative with sou."),
+                            ExampleLine(text: "De onde você é?", meaning: "Question word + é."),
+                            ExampleLine(text: "Ele não é meu irmão.", meaning: "A negative about another person."),
+                            ExampleLine(text: "Vocês são vizinhos?", meaning: "Asking a group."),
+                            ExampleLine(text: "O que é isso?", meaning: "What is this?")]),
+                        expressions: [
+                            TargetExpression(text: "Você é … ?", meaning: "Ask a yes/no question.", note: "Add né? at the end in casual talk."),
+                            TargetExpression(text: "Não sou …", meaning: "Say what is not true about you.", note: "Não always goes before the verb."),
+                            TargetExpression(text: "De onde você é?", meaning: "Ask where someone is from.", note: "De onde, two words."),
+                            TargetExpression(text: "Ele não é …", meaning: "Say what someone else is not.", note: "Ele não é meu chefe."),
+                            TargetExpression(text: "…, né?", meaning: "Tag a statement to check it.", note: "Você é daqui, né? = ¿verdad?"),
+                            TargetExpression(text: "Claro.", meaning: "The natural yes in talk.", note: "Also: Com certeza.")],
+                        situation: "You chat with a new neighbour in the lift in São Paulo. Ask simple yes/no questions and say what is and isn't true for you.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Você é daqui?", expected: ["Sou, sim.", "Não, não sou daqui."], focus: "short answers", watch: "One-word “Sim” — recast with the verb: Sou, sim."),
+                                PracticeQuestion(prompt: "Você é professor ou estudante?", expected: ["Sou professor.", "Sou estudante.", "Sou professora."], focus: "choice with ser", watch: "Accept either; the article stays dropped."),
+                                PracticeQuestion(prompt: "Sua família é grande?", expected: ["É, sim.", "Não, não é grande."], focus: "é in questions about others", watch: "“Não é grande” — não before é."),
+                                PracticeQuestion(prompt: "De onde você é, exatamente?", expected: ["Sou do <country>.", "Sou da <country>.", "Sou de <city>."], focus: "de onde + sou", watch: "“Sou em São Paulo” — recast with de."),
+                                PracticeQuestion(prompt: "Me diga uma coisa que você não é.", expected: ["Não sou <job>.", "Não sou do <country>."], focus: "negation with não sou", watch: "“Sou não” doesn't work here — não first."),
+                                PracticeQuestion(prompt: "A gente é amigo, né?", expected: ["É, a gente é amigo.", "Somos, sim."], focus: "a gente é", watch: "“A gente somos” is wrong — a gente takes é.")]),
+                        exercises: [
+                            Exercise(id: "pt-foundations-u1-questions-e1", kind: "choice", prompt: "___ você de Ribeirão?", options: ["É", "És", "Sou", "Somos"], answers: ["É"], explain: "With você, the question starts with É."),
+                            Exercise(id: "pt-foundations-u1-questions-e2", kind: "gap", prompt: "Ela não é ___ irmã.", options: [], answers: ["minha"], explain: "minha for feminine things: minha irmã."),
+                            Exercise(id: "pt-foundations-u1-questions-e3", kind: "order", prompt: "Say you are not from Rio.", options: [], answers: ["Não sou do Rio"], explain: "Não goes first: Não sou do Rio."),
+                            Exercise(id: "pt-foundations-u1-questions-e4", kind: "written", prompt: "Make it negative: \"Sou de Curitiba.\"", options: [], answers: ["Não sou de Curitiba"], explain: "não + sou: Não sou de Curitiba.")]),
+                    Lesson(id: "pt-foundations-u1-introduce", title: "Introducing yourself", goal: "Give a complete self-introduction: name, city, nationality and job.",
+                        intro: LessonIntro(explanation: [
+                            "A full Brazilian introduction has four pieces: your name, your city, your nationality and your job.",
+                            "For the name: “Meu nome é Ana”, “Me chamo Ana” or “Eu sou a Ana”. For origin: “Sou de São Paulo” — do joins the article: do Brasil, da Espanha.",
+                            "Nationalities are lower-case: “sou brasileira”. Jobs with ser drop the article: “sou professora”. Close with “Prazer!” and bounce the question back with “E você?”"], examples: [
+                            ExampleLine(text: "Meu nome é Ana. Prazer!", meaning: "Your name plus a polite close."),
+                            ExampleLine(text: "Sou de São Paulo, capital.", meaning: "City inside country."),
+                            ExampleLine(text: "Sou brasileira, de São Paulo.", meaning: "Nationality plus city."),
+                            ExampleLine(text: "Sou enfermeira num hospital.", meaning: "Job plus workplace."),
+                            ExampleLine(text: "Tenho vinte e cinco anos.", meaning: "Your age — with ter, not ser."),
+                            ExampleLine(text: "E você? O que você faz?", meaning: "Bounce the question back.")]),
+                        expressions: [
+                            TargetExpression(text: "Meu nome é …", meaning: "Give your name.", note: "Also: Me chamo … or Eu sou a/o …"),
+                            TargetExpression(text: "Sou + nationality", meaning: "Say your nationality.", note: "brasileira, argentina, portuguesa — lower-case in Portuguese."),
+                            TargetExpression(text: "Sou do / da …", meaning: "Say your city or country.", note: "do for masculine, da for feminine: do Brasil, da Espanha."),
+                            TargetExpression(text: "Trabalho em …", meaning: "Say where you work.", note: "Trabalho num hospital / numa escola."),
+                            TargetExpression(text: "Prazer!", meaning: "Polite close when you meet someone.", note: "Answer: Prazer! or O prazer é meu."),
+                            TargetExpression(text: "E você?", meaning: "Bounce the question back.", note: "—Sou de São Paulo. E você?")],
+                        situation: "Your first day at a language school in São Paulo. Present yourself completely to the class: name, city, nationality and job.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Como você se chama?", expected: ["Meu nome é <name>.", "Me chamo <name>."], focus: "name formulas", watch: "Both are fine; recast the shorter one as Meu nome é for variety."),
+                                PracticeQuestion(prompt: "De onde você é?", expected: ["Sou do <country>.", "Sou da <country>."], focus: "origin with do/da", watch: "The article joins de: DO Brasil, DA Espanha."),
+                                PracticeQuestion(prompt: "Qual é a sua nacionalidade?", expected: ["Sou <nationality>."], focus: "nationality with ser", watch: "Lower-case: sou brasileira, not Brasileira."),
+                                PracticeQuestion(prompt: "O que você faz?", expected: ["Sou <job>.", "Trabalho como <job>."], focus: "jobs without article", watch: "“Sou uma professora” — recast dropping the article."),
+                                PracticeQuestion(prompt: "E onde você mora?", expected: ["Moro em <city>."], focus: "moro em", watch: "“Moro em São Paulo” — em for cities."),
+                                PracticeQuestion(prompt: "Prazer! E você, o que faz?", expected: ["Sou <job>."], focus: "bounce back and answer", watch: "Recast with Sou + job.")]),
+                        exercises: [
+                            Exercise(id: "pt-foundations-u1-introduce-e1", kind: "choice", prompt: "___ Ana. Prazer!", options: ["Meu nome é", "Meu nome de", "Me chamo em", "Estou"], answers: ["Meu nome é"], explain: "Meu nome é + name: one piece."),
+                            Exercise(id: "pt-foundations-u1-introduce-e2", kind: "gap", prompt: "Sou ___ Itália. (nationality)", options: [], answers: ["italiana"], explain: "Nationality is lower-case: italiana, italiano."),
+                            Exercise(id: "pt-foundations-u1-introduce-e3", kind: "order", prompt: "Say your name and city.", options: [], answers: ["Sou a Ana e sou de São Paulo"], explain: "Two sou pieces, both with their verb."),
+                            Exercise(id: "pt-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Meu nome é <name> e sou do <country>", "Meu nome é <name> e sou da <country>", "Me chamo <name> e sou do <country>"], explain: "Name + origin, each with its verb.")])])])
     ]
 }

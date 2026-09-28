@@ -1,0 +1,64 @@
+{
+  "texts": [
+    {
+      "id": "de-listen-cafe-morning",
+      "languageID": "de",
+      "title": "Ein Kaffee vor der Arbeit",
+      "level": "A1",
+      "text": "Jeden Morgen geht Marta zu einem kleinen Café in der Nähe ihrer Wohnung. Der Kellner kennt ihren Namen, deshalb muss sie nie bestellen. Heute sitzt sie am Fenster mit einem Kaffee und einem Croissant. Ihr Bus fährt um halb neun ab, aber sie macht sich keine Sorgen. Das Café ist zu dieser Stunde sehr ruhig. Sie trinkt ihren Kaffee langsam und sieht zu, wie die Stadt aufwacht.",
+      "questions": [
+        {"id": "de-listen-cafe-morning-q1", "kind": "choice", "prompt": "Wohin geht Marta jeden Morgen?",
+         "options": ["In ein kleines Café", "In ihr Büro", "Zum Busbahnhof", "In einen Park"], "answers": ["In ein kleines Café"],
+         "explain": "Sie geht zu einem kleinen Café in der Nähe ihrer Wohnung."},
+        {"id": "de-listen-cafe-morning-q2", "kind": "choice", "prompt": "Was frühstückt sie heute?",
+         "options": ["Einen Kaffee und ein Croissant", "Tee und Toast", "Orangensaft", "Nichts"], "answers": ["Einen Kaffee und ein Croissant"],
+         "explain": "Sie sitzt am Fenster mit einem Kaffee und einem Croissant."},
+        {"id": "de-listen-cafe-morning-q3", "kind": "written", "prompt": "Wann fährt ihr Bus ab?",
+         "answers": ["um halb neun", "halb neun"], "explain": "Ihr Bus fährt um halb neun ab."},
+        {"id": "de-listen-cafe-morning-q4", "kind": "choice", "prompt": "Wie fühlt sie sich wegen der Zeit?",
+         "options": ["Sie macht sich keine Sorgen", "Sie ist sehr spät dran", "Sie ist wütend", "Sie ist müde"], "answers": ["Sie macht sich keine Sorgen"],
+         "explain": "Im Text steht: sie macht sich keine Sorgen."}
+      ]
+    },
+    {
+      "id": "de-listen-new-flatmate",
+      "languageID": "de",
+      "title": "Ein neuer Mitbewohner",
+      "level": "A1",
+      "text": "Tom hat einen neuen Mitbewohner. Er heißt Leo und ist dreiundzwanzig Jahre alt. Leo kommt aus einem kleinen Dorf im Norden, arbeitet aber jetzt in der Stadt. Er hat zwei Kartons, eine Gitarre und ein Fahrrad. Die Wohnung hat zwei Zimmer und eine helle Küche. Tom hofft, dass Leo gern kocht, denn Tom kocht überhaupt nicht gern.",
+      "questions": [
+        {"id": "de-listen-new-flatmate-q1", "kind": "choice", "prompt": "Wie alt ist Leo?",
+         "options": ["Dreiundzwanzig", "Zweiunddreißig", "Zwanzig", "Dreißig"], "answers": ["Dreiundzwanzig"],
+         "explain": "Leo ist dreiundzwanzig Jahre alt."},
+        {"id": "de-listen-new-flatmate-q2", "kind": "choice", "prompt": "Was hat Leo NICHT?",
+         "options": ["Einen Fernseher", "Zwei Kartons", "Eine Gitarre", "Ein Fahrrad"], "answers": ["Einen Fernseher"],
+         "explain": "Er hat zwei Kartons, eine Gitarre und ein Fahrrad — keinen Fernseher."},
+        {"id": "de-listen-new-flatmate-q3", "kind": "written", "prompt": "Was macht Tom ungern?",
+         "answers": ["kochen", "er kocht nicht gern", "tom kocht nicht gern"], "explain": "Tom kocht überhaupt nicht gern."},
+        {"id": "de-listen-new-flatmate-q4", "kind": "choice", "prompt": "Wie ist die Wohnung?",
+         "options": ["Zwei Zimmer und eine helle Küche", "Ein Zimmer und ein Balkon", "Ein Garten", "Zwei Badezimmer"], "answers": ["Zwei Zimmer und eine helle Küche"],
+         "explain": "Die Wohnung hat zwei Zimmer und eine helle Küche."}
+      ]
+    },
+    {
+      "id": "de-listen-sunday-market",
+      "languageID": "de",
+      "title": "Der Sonntagsmarkt",
+      "level": "A1",
+      "text": "Sonntags gibt es einen Markt auf dem Dorfplatz. Anna und ihr Vater gehen um neun Uhr dorthin, bevor er voll wird. Sie kaufen Obst, Brot und Blumen. Anna möchte Erdbeeren, aber ihr Vater sagt, sie sind diese Woche zu teuer. Am Ende nehmen sie eine große Tüte Orangen und weiße Rosen für den Küchentisch mit nach Hause.",
+      "questions": [
+        {"id": "de-listen-sunday-market-q1", "kind": "choice", "prompt": "Wann gehen Anna und ihr Vater zum Markt?",
+         "options": ["Um neun Uhr", "Um zwölf Uhr", "Am Nachmittag", "Um halb sieben"], "answers": ["Um neun Uhr"],
+         "explain": "Sie gehen um neun Uhr, bevor er voll wird."},
+        {"id": "de-listen-sunday-market-q2", "kind": "written", "prompt": "Warum bekommt Anna keine Erdbeeren?",
+         "answers": ["sie sind zu teuer", "zu teuer", "weil sie zu teuer sind"], "explain": "Ihr Vater sagt, sie sind diese Woche zu teuer."},
+        {"id": "de-listen-sunday-market-q3", "kind": "choice", "prompt": "Was nehmen sie mit nach Hause?",
+         "options": ["Orangen und Rosen", "Erdbeeren und Brot", "Äpfel und Tulpen", "Brot und Käse"], "answers": ["Orangen und Rosen"],
+         "explain": "Sie nehmen Orangen und weiße Rosen mit."},
+        {"id": "de-listen-sunday-market-q4", "kind": "choice", "prompt": "Wo ist der Markt?",
+         "options": ["Auf dem Dorfplatz", "Am Fluss", "Am Bahnhof", "In einem Supermarkt"], "answers": ["Auf dem Dorfplatz"],
+         "explain": "Sonntags gibt es einen Markt auf dem Dorfplatz."}
+      ]
+    }
+  ]
+}

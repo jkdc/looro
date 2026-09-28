@@ -1,0 +1,64 @@
+{
+  "texts": [
+    {
+      "id": "es-listen-cafe-morning",
+      "languageID": "es",
+      "title": "Un café antes del trabajo",
+      "level": "A1",
+      "text": "Cada mañana, Marta camina hasta una cafetería pequeña cerca de su piso. El camarero sabe su nombre, así que nunca tiene que pedir. Hoy se sienta junto a la ventana con un café y un croissant. Su autobús sale a las ocho y media, pero no está preocupada. La cafetería es muy tranquila a esta hora. Bebe su café despacio y mira cómo la ciudad despierta.",
+      "questions": [
+        {"id": "es-listen-cafe-morning-q1", "kind": "choice", "prompt": "¿Adónde va Marta cada mañana?",
+         "options": ["A una cafetería pequeña", "A su oficina", "A la estación de autobuses", "A un parque"], "answers": ["A una cafetería pequeña"],
+         "explain": "Camina hasta una cafetería pequeña cerca de su piso."},
+        {"id": "es-listen-cafe-morning-q2", "kind": "choice", "prompt": "¿Qué desayuna hoy?",
+         "options": ["Un café y un croissant", "Té y tostadas", "Zumo de naranja", "Nada"], "answers": ["Un café y un croissant"],
+         "explain": "Se sienta junto a la ventana con un café y un croissant."},
+        {"id": "es-listen-cafe-morning-q3", "kind": "written", "prompt": "¿A qué hora sale su autobús?",
+         "answers": ["a las ocho y media", "las ocho y media", "ocho y media"], "explain": "Su autobús sale a las ocho y media."},
+        {"id": "es-listen-cafe-morning-q4", "kind": "choice", "prompt": "¿Cómo se siente con el tiempo?",
+         "options": ["No está preocupada", "Está muy tarde", "Está enfadada", "Tiene sueño"], "answers": ["No está preocupada"],
+         "explain": "El texto dice que no está preocupada."}
+      ]
+    },
+    {
+      "id": "es-listen-new-flatmate",
+      "languageID": "es",
+      "title": "Un nuevo compañero de piso",
+      "level": "A1",
+      "text": "Tom tiene un compañero de piso nuevo. Se llama Leo y tiene veintitrés años. Leo viene de un pueblo pequeño del norte, pero ahora trabaja en la ciudad. Tiene dos cajas, una guitarra y una bicicleta. El piso tiene dos habitaciones y una cocina luminosa. Tom espera que a Leo le guste cocinar, porque a Tom no le gusta nada.",
+      "questions": [
+        {"id": "es-listen-new-flatmate-q1", "kind": "choice", "prompt": "¿Cuántos años tiene Leo?",
+         "options": ["Veintitrés", "Treinta y dos", "Veinte", "Treinta"], "answers": ["Veintitrés"],
+         "explain": "Leo tiene veintitrés años."},
+        {"id": "es-listen-new-flatmate-q2", "kind": "choice", "prompt": "¿Qué NO tiene Leo?",
+         "options": ["Un televisor", "Dos cajas", "Una guitarra", "Una bicicleta"], "answers": ["Un televisor"],
+         "explain": "Tiene dos cajas, una guitarra y una bicicleta — sin televisor."},
+        {"id": "es-listen-new-flatmate-q3", "kind": "written", "prompt": "¿Qué odia hacer Tom?",
+         "answers": ["cocinar", "odia cocinar", "tom odia cocinar"], "explain": "A Tom no le gusta nada cocinar."},
+        {"id": "es-listen-new-flatmate-q4", "kind": "choice", "prompt": "¿Cómo es el piso?",
+         "options": ["Dos habitaciones y una cocina luminosa", "Un dormitorio y un balcón", "Un jardín", "Dos baños"], "answers": ["Dos habitaciones y una cocina luminosa"],
+         "explain": "El piso tiene dos habitaciones y una cocina luminosa."}
+      ]
+    },
+    {
+      "id": "es-listen-sunday-market",
+      "languageID": "es",
+      "title": "El mercado del domingo",
+      "level": "A1",
+      "text": "Los domingos hay un mercado en la plaza del pueblo. Ana y su padre van allí a las nueve, antes de que se llene. Compran fruta, pan y flores. Ana quiere unas fresas, pero su padre dice que esta semana son muy caras. Al final se llevan una bolsa grande de naranjas y unas rosas blancas para la mesa de la cocina.",
+      "questions": [
+        {"id": "es-listen-sunday-market-q1", "kind": "choice", "prompt": "¿Cuándo van Ana y su padre al mercado?",
+         "options": ["A las nueve", "Al mediodía", "Por la tarde", "A las seis y media"], "answers": ["A las nueve"],
+         "explain": "Van a las nueve, antes de que se llene."},
+        {"id": "es-listen-sunday-market-q2", "kind": "written", "prompt": "¿Por qué no compra Ana las fresas?",
+         "answers": ["son muy caras", "muy caras", "porque son muy caras"], "explain": "Su padre dice que son muy caras esta semana."},
+        {"id": "es-listen-sunday-market-q3", "kind": "choice", "prompt": "¿Qué se llevan a casa?",
+         "options": ["Naranjas y rosas", "Fresas y pan", "Manzanas y tulipanes", "Pan y queso"], "answers": ["Naranjas y rosas"],
+         "explain": "Se llevan naranjas y rosas blancas."},
+        {"id": "es-listen-sunday-market-q4", "kind": "choice", "prompt": "¿Dónde está el mercado?",
+         "options": ["En la plaza del pueblo", "Junto al río", "En la estación", "En un supermercado"], "answers": ["En la plaza del pueblo"],
+         "explain": "Hay un mercado en la plaza del pueblo los domingos."}
+      ]
+    }
+  ]
+}

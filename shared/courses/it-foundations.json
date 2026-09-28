@@ -1,0 +1,263 @@
+{
+  "id": "it-foundations",
+  "languageID": "it",
+  "title": "Foundations",
+  "subtitle": "Start from zero",
+  "symbol": "graduationcap",
+  "description": "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.",
+  "units": [
+    {
+      "id": "it-foundations-u1",
+      "title": "First sentences",
+      "subtitle": "Say who you are",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "lang-exchange",
+          "title": "Language-exchange café",
+          "subtitle": "Meet and greet",
+          "symbol": "person.2",
+          "category": "Course",
+          "situation": "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.",
+          "colorIndex": 0
+        },
+        {
+          "id": "introductions",
+          "title": "Nice to meet you",
+          "subtitle": "Start somewhere small",
+          "symbol": "hand.wave",
+          "category": "Connection",
+          "situation": "Meet the learner for the first time. Learn their interests through natural introductions.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u1-essere",
+          "title": "The verb “essere”",
+          "goal": "Introduce yourself and say who people are with sono, sei, è, siamo, siete, sono.",
+          "intro": {
+            "explanation": [
+              "Every Italian sentence needs a subject and a verb. The verb for saying who you are is “essere”.",
+              "Six forms: io sono, tu sei, lui/lei è, noi siamo, voi siete, loro sono. Italian often drops the subject: “Sono Ana” already means I am Ana.",
+              "Use essere for identity and origin: “Sono di Roma”, “È insegnante”. Put “di” before a city: “Sono di Roma”."
+            ],
+            "examples": [
+              { "text": "Sono Ana. Sono di Italia.", "meaning": "Your name and country." },
+              { "text": "Sei il mio migliore amico.", "meaning": "A close bond with someone." },
+              { "text": "Lei è insegnante.", "meaning": "Someone's profession." },
+              { "text": "Siamo molto felici oggi.", "meaning": "A feeling that defines right now." },
+              { "text": "Il caffè è vicino alla stazione.", "meaning": "Where a place is." },
+              { "text": "Loro sono di Milano.", "meaning": "Someone's origin." }
+            ]
+          },
+          "expressions": [
+            { "text": "Sono …", "meaning": "Introduce yourself.", "note": "With your name or job: Sono Ana. Sono insegnante." },
+            { "text": "Sono di …", "meaning": "Say where you come from.", "note": "Never “Sono Italia” — the di is obligatory: Sono di Roma." },
+            { "text": "Sei … ?", "meaning": "Ask about the other person.", "note": "Sei studente? Sei di qui?" },
+            { "text": "Sì, lo sono. / No, non lo sono.", "meaning": "Short answers to a Sei… ? question.", "note": "Repeat the verb through lo." },
+            { "text": "È …", "meaning": "Say what someone else is.", "note": "È medico — jobs often drop the article." },
+            { "text": "Piacere di conoscerti.", "meaning": "The fixed phrase when you meet someone.", "note": "Answer with Piacere mio, or simply Piacere." }
+          ],
+          "situation": "You meet someone new at a friendly language-exchange café in Roma. Introduce yourselves and ask simple questions with the verb essere.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ciao! Sono Ana. Tu come ti chiami?",
+                "expected": ["Mi chiamo <name>.", "Sono <name>."],
+                "focus": "Mi chiamo / Sono",
+                "watch": "Answering only the name: accept it, then recast “Mi chiamo …”."
+              },
+              {
+                "prompt": "Di dove sei?",
+                "expected": ["Sono di <city>.", "Vengo da <city>."],
+                "focus": "essere + di",
+                "watch": "“Sono Roma” — recast “Sono DI Roma”."
+              },
+              {
+                "prompt": "Sei studente?",
+                "expected": ["Sì, lo sono.", "No, non lo sono."],
+                "focus": "short answers with essere",
+                "watch": "One-word “Sì” — recast with the verb."
+              },
+              {
+                "prompt": "Come stai, oggi?",
+                "expected": ["Sto bene.", "Sono stanco.", "Sono contento."],
+                "focus": "stare for feelings",
+                "watch": "“Sono bene” — recast “Sto bene”: feelings take stare here."
+              },
+              {
+                "prompt": "La tua città, è grande o piccola?",
+                "expected": ["È grande.", "È piccola.", "La mia città è …"],
+                "focus": "è with places",
+                "watch": "“La mia città grande” — recast “La mia città È grande”."
+              },
+              {
+                "prompt": "Ora siamo amici! Di dove è la tua famiglia?",
+                "expected": ["È di <country>.", "La mia famiglia è di <country>."],
+                "focus": "è for a group's origin",
+                "watch": "“La mia famiglia di …” — recast with è."
+              }
+            ]
+          },
+          "exercises": [
+            {"id": "it-foundations-u1-essere-e1", "kind": "choice", "prompt": "Lei ___ insegnante.", "options": ["è", "sei", "sono", "siamo"], "answers": ["è"], "explain": "With lui/lei, essere becomes è."},
+            {"id": "it-foundations-u1-essere-e2", "kind": "gap", "prompt": "Noi ___ di Milano.", "answers": ["siamo"], "explain": "With noi, essere is sempre siamo."},
+            {"id": "it-foundations-u1-essere-e3", "kind": "order", "prompt": "Say where you are from.", "answers": ["Sono di Roma"], "explain": "Sono + di + city: Sono di Roma."},
+            {"id": "it-foundations-u1-essere-e4", "kind": "written", "prompt": "Introduce yourself in one sentence: say your name.", "answers": ["Mi chiamo <name>", "Sono <name>"], "explain": "Mi chiamo Ana / Sono Ana — the subject can be dropped."}
+          ]
+        },
+        {
+          "id": "it-foundations-u1-questions",
+          "title": "Questions & negatives",
+          "goal": "Ask yes/no questions and say what is not true, with Sei… ? and non sono.",
+          "intro": {
+            "explanation": [
+              "Italian asks yes/no questions with rising intonation — same words, same order: “Sei Ana?”",
+              "Question words go first: “Di dove sei?”, “Cosa è questo?” — and they carry their accents: perché, dove.",
+              "To negate, put non before the verb: “Non sono Ana”, “Non siamo amici”. No second part is needed, unlike English."
+            ],
+            "examples": [
+              { "text": "Sei insegnante?", "meaning": "A yes/no question with sei." },
+              { "text": "Non sono di Milano.", "meaning": "A negative with sono." },
+              { "text": "Di dove sei?", "meaning": "Question word + sei." },
+              { "text": "Lui non è mio fratello.", "meaning": "A negative about another person." },
+              { "text": "Siete vicini di casa?", "meaning": "Asking a group." },
+              { "text": "Cosa è questo?", "meaning": "What is this?" }
+            ]
+          },
+          "expressions": [
+            { "text": "Sei … ?", "meaning": "Ask a yes/no question.", "note": "Just the marks and rising tone." },
+            { "text": "Non sono …", "meaning": "Say what is not true about you.", "note": "Non always goes before the verb." },
+            { "text": "Di dove sei?", "meaning": "Ask where someone is from.", "note": "Di dove, two words." },
+            { "text": "Lui non è …", "meaning": "Say what someone else is not.", "note": "Lui non è il mio capo." },
+            { "text": "Vero?", "meaning": "Tag a statement to check it.", "note": "Sei di qui, vero?" },
+            { "text": "Certo.", "meaning": "The natural yes in talk.", "note": "Also: Esatto." }
+          ],
+          "situation": "You chat with a new neighbour in the lift in Roma. Ask simple yes/no questions and say what is and isn't true for you.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sei di qui?",
+                "expected": ["Sì, sono di qui.", "No, non sono di qui."],
+                "focus": "short answers",
+                "watch": "One-word “Sì” — recast with the verb: Sì, sono di qui."
+              },
+              {
+                "prompt": "Sei insegnante o studente?",
+                "expected": ["Sono insegnante.", "Sono studente.", "Sono studentessa."],
+                "focus": "choice with essere",
+                "watch": "Accept either; the article stays dropped."
+              },
+              {
+                "prompt": "La tua famiglia è grande?",
+                "expected": ["Sì, è grande.", "No, non è grande."],
+                "focus": "è in questions about others",
+                "watch": "“Non è grande” — non before è."
+              },
+              {
+                "prompt": "Di dove sei, tu?",
+                "expected": ["Sono di <country>.", "Vengo da <country>."],
+                "focus": "di dove + sei",
+                "watch": "“Sono a Roma” for origin — recast with di."
+              },
+              {
+                "prompt": "Dimmi una cosa che non sei.",
+                "expected": ["Non sono <job>.", "Non sono di <country>."],
+                "focus": "negation with non sono",
+                "watch": "“Sono non” doesn't exist — non first."
+              },
+              {
+                "prompt": "Siamo amici, ora?",
+                "expected": ["Sì, siamo amici.", "Certo, siamo amici."],
+                "focus": "siamo in questions",
+                "watch": "“Sì, stiamo amici” mixes essere and stare — recast with siamo."
+              }
+            ]
+          },
+          "exercises": [
+            {"id": "it-foundations-u1-questions-e1", "kind": "choice", "prompt": "___ tu di Bologna?", "options": ["Sei", "È", "Sono", "Siamo"], "answers": ["Sei"], "explain": "With tu, the question starts with Sei."},
+            {"id": "it-foundations-u1-questions-e2", "kind": "gap", "prompt": "Lei non ___ mia sorella.", "answers": ["è"], "explain": "non + è: the negative keeps è."},
+            {"id": "it-foundations-u1-questions-e3", "kind": "order", "prompt": "Say you are not from Napoli.", "answers": ["Non sono di Napoli"], "explain": "Non goes first: Non sono di Napoli."},
+            {"id": "it-foundations-u1-questions-e4", "kind": "written", "prompt": "Make it negative: \"Sono di Firenze.\"", "answers": ["Non sono di Firenze"], "explain": "non + sono: Non sono di Firenze."}
+          ]
+        },
+        {
+          "id": "it-foundations-u1-introduce",
+          "title": "Introducing yourself",
+          "goal": "Give a complete self-introduction: name, city, nationality and job.",
+          "intro": {
+            "explanation": [
+              "A full Italian introduction has four pieces: your name, your city, your nationality and your job.",
+              "For the name: “Mi chiamo Ana” or “Sono Ana”. For origin: “Sono di Roma”. Nationalities are lower-case: “sono italiana”.",
+              "Jobs with essere drop the article: “Sono insegnante”. Close with “Piacere” and bounce the question back with “E tu?”"
+            ],
+            "examples": [
+              { "text": "Mi chiamo Ana. Piacere.", "meaning": "Your name plus a polite close." },
+              { "text": "Sono di Roma, del centro.", "meaning": "City inside country." },
+              { "text": "Sono italiana, di Roma.", "meaning": "Nationality plus city." },
+              { "text": "Sono infermiera in un ospedale.", "meaning": "Job plus workplace." },
+              { "text": "Ho venticinque anni.", "meaning": "Your age — with avere, not essere." },
+              { "text": "E tu? Che lavoro fai?", "meaning": "Bounce the question back." }
+            ]
+          },
+          "expressions": [
+            { "text": "Mi chiamo …", "meaning": "Give your name.", "note": "Literally “I call myself”. Also: Sono …" },
+            { "text": "Sono + nationality", "meaning": "Say your nationality.", "note": "italiana, tedesca, francese — lower-case in Italian." },
+            { "text": "Sono di …", "meaning": "Say your city or country.", "note": "Sono di Roma; Sono di Italia." },
+            { "text": "Lavoro in …", "meaning": "Say where you work.", "note": "Lavoro in un ospedale / in una scuola." },
+            { "text": "Piacere.", "meaning": "Polite close when you meet someone.", "note": "Answer: Piacere mio." },
+            { "text": "E tu?", "meaning": "Bounce the question back.", "note": "—Sono di Roma. E tu?" }
+          ],
+          "situation": "Your first day at a language school in Roma. Present yourself completely to the class: name, city, nationality and job.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Come ti chiami?",
+                "expected": ["Mi chiamo <name>.", "Sono <name>."],
+                "focus": "name formulas",
+                "watch": "Both are fine; recast the shorter one as Mi chiamo for variety."
+              },
+              {
+                "prompt": "Di dove sei?",
+                "expected": ["Sono di <country>."],
+                "focus": "origin",
+                "watch": "Never drop di: Sono DI <country>."
+              },
+              {
+                "prompt": "Che nazionalità hai?",
+                "expected": ["Sono <nationality>."],
+                "focus": "nationality with essere",
+                "watch": "Lower-case: sono italiana, not Italiana."
+              },
+              {
+                "prompt": "Che lavoro fai?",
+                "expected": ["Sono <job>.", "Faccio <job>."],
+                "focus": "jobs without article",
+                "watch": "“Sono un insegnante” — recast dropping the article."
+              },
+              {
+                "prompt": "E dove abiti?",
+                "expected": ["Abito a <city>."],
+                "focus": "abito a",
+                "watch": "“Abito a Roma” — a for cities."
+              },
+              {
+                "prompt": "Piacere! E tu, che fai?",
+                "expected": ["Sono <job>."],
+                "focus": "bounce back and answer",
+                "watch": "Recast with Sono + job."
+              }
+            ]
+          },
+          "exercises": [
+            {"id": "it-foundations-u1-introduce-e1", "kind": "choice", "prompt": "___ Ana. Piacere.", "options": ["Mi chiamo", "Mi chiamo di", "Chiamo", "Sto"], "answers": ["Mi chiamo"], "explain": "Mi chiamo + name: one piece, no di."},
+            {"id": "it-foundations-u1-introduce-e2", "kind": "gap", "prompt": "Sono ___ Germania. (nationality)", "answers": ["tedesca"], "explain": "Nationality is lower-case: tedesca, tedesco."},
+            {"id": "it-foundations-u1-introduce-e3", "kind": "order", "prompt": "Say your name and city.", "answers": ["Sono Ana e sono di Roma"], "explain": "Two sono pieces, both with their verb."},
+            {"id": "it-foundations-u1-introduce-e4", "kind": "written", "prompt": "Give your complete introduction: name and country.", "answers": ["Mi chiamo <name> e sono di <country>", "Sono <name> e sono di <country>"], "explain": "Name + origin, each with its verb."}
+          ]
+        }
+      ]
+    }
+  ]
+}

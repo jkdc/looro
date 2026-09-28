@@ -26,7 +26,10 @@ final class ListeningContentTests: XCTestCase {
     func testLookupFindsTextsAndMissesUnknownOnes() {
         XCTAssertEqual("A coffee before work", ListeningRegistry.text(id: "en-listen-coffee-morning")?.title)
         XCTAssertNil(ListeningRegistry.text(id: "en-listen-missing"))
-        XCTAssertTrue(ListeningRegistry.forLanguage("es").isEmpty)
+        XCTAssertTrue(ListeningRegistry.forLanguage("nb").isEmpty)
+        for language in ["es", "fr", "it", "de", "pt"] {
+            XCTAssertEqual(3, ListeningRegistry.forLanguage(language).count, language)
+        }
     }
 
     func testEveryQuestionGradesItsOwnAnswersCorrect() {

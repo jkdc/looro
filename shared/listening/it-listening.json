@@ -1,0 +1,64 @@
+{
+  "texts": [
+    {
+      "id": "it-listen-cafe-morning",
+      "languageID": "it",
+      "title": "Un caffè prima del lavoro",
+      "level": "A1",
+      "text": "Ogni mattina, Marta cammina fino a un piccolo caffè vicino a casa sua. Il cameriere conosce il suo nome, così non deve mai ordinare. Oggi si siede vicino alla finestra con un caffè e un cornetto. Il suo autobus parte alle otto e mezza, ma non è preoccupata. Il caffè è molto tranquillo a quell'ora. Beve il caffè lentamente e guarda la città che si sveglia.",
+      "questions": [
+        {"id": "it-listen-cafe-morning-q1", "kind": "choice", "prompt": "Dove va Marta ogni mattina?",
+         "options": ["In un piccolo caffè", "Al suo ufficio", "Alla stazione degli autobus", "In un parco"], "answers": ["In un piccolo caffè"],
+         "explain": "Cammina fino a un piccolo caffè vicino a casa sua."},
+        {"id": "it-listen-cafe-morning-q2", "kind": "choice", "prompt": "Cosa fa colazione oggi?",
+         "options": ["Un caffè e un cornetto", "Tè e toast", "Succo d'arancia", "Niente"], "answers": ["Un caffè e un cornetto"],
+         "explain": "Si siede vicino alla finestra con un caffè e un cornetto."},
+        {"id": "it-listen-cafe-morning-q3", "kind": "written", "prompt": "A che ora parte il suo autobus?",
+         "answers": ["alle otto e mezza", "otto e mezza"], "explain": "Il suo autobus parte alle otto e mezza."},
+        {"id": "it-listen-cafe-morning-q4", "kind": "choice", "prompt": "Come si sente per l'orario?",
+         "options": ["Non è preoccupata", "È in grandissimo ritardo", "È arrabbiata", "Ha sonno"], "answers": ["Non è preoccupata"],
+         "explain": "Il testo dice che non è preoccupata."}
+      ]
+    },
+    {
+      "id": "it-listen-new-flatmate",
+      "languageID": "it",
+      "title": "Un nuovo coinquilino",
+      "level": "A1",
+      "text": "Tom ha un nuovo coinquilino. Si chiama Leo e ha ventitré anni. Leo viene da un piccolo paese del nord, ma ora lavora in città. Ha due scatole, una chitarra e una bicicletta. L'appartamento ha due camere e una cucina molto luminosa. Tom spera che a Leo piaccia cucinare, perché a Tom non piace per niente.",
+      "questions": [
+        {"id": "it-listen-new-flatmate-q1", "kind": "choice", "prompt": "Quanti anni ha Leo?",
+         "options": ["Ventitré", "Trentadue", "Venti", "Trenta"], "answers": ["Ventitré"],
+         "explain": "Leo ha ventitré anni."},
+        {"id": "it-listen-new-flatmate-q2", "kind": "choice", "prompt": "Cosa NON ha Leo?",
+         "options": ["Una televisione", "Due scatole", "Una chitarra", "Una bicicletta"], "answers": ["Una televisione"],
+         "explain": "Ha due scatole, una chitarra e una bicicletta — niente televisione."},
+        {"id": "it-listen-new-flatmate-q3", "kind": "written", "prompt": "Cosa odia fare Tom?",
+         "answers": ["cucinare", "odia cucinare", "tom odia cucinare"], "explain": "A Tom non piace per niente cucinare."},
+        {"id": "it-listen-new-flatmate-q4", "kind": "choice", "prompt": "Com'è l'appartamento?",
+         "options": ["Due camere e una cucina luminosa", "Una camera e un balcone", "Un giardino", "Due bagni"], "answers": ["Due camere e una cucina luminosa"],
+         "explain": "L'appartamento ha due camere e una cucina molto luminosa."}
+      ]
+    },
+    {
+      "id": "it-listen-sunday-market",
+      "languageID": "it",
+      "title": "Il mercato della domenica",
+      "level": "A1",
+      "text": "La domenica c'è un mercato nella piazza del paese. Anna e suo padre vanno lì alle nove, prima che si riempia. Comprano frutta, pane e fiori. Anna vuole delle fragole, ma suo padre dice che questa settimana sono troppo care. Alla fine portano a casa un grande sacco di arance e delle rose bianche per il tavolo della cucina.",
+      "questions": [
+        {"id": "it-listen-sunday-market-q1", "kind": "choice", "prompt": "Quando Anna e suo padre vanno al mercato?",
+         "options": ["Alle nove", "A mezzogiorno", "Nel pomeriggio", "Alle sei e mezza"], "answers": ["Alle nove"],
+         "explain": "Vanno alle nove, prima che si riempia."},
+        {"id": "it-listen-sunday-market-q2", "kind": "written", "prompt": "Perché Anna non prende le fragole?",
+         "answers": ["sono troppo care", "troppo care", "perché sono troppo care"], "explain": "Suo padre dice che sono troppo care questa settimana."},
+        {"id": "it-listen-sunday-market-q3", "kind": "choice", "prompt": "Cosa portano a casa?",
+         "options": ["Arance e rose", "Fragole e pane", "Mele e tulipani", "Pane e formaggio"], "answers": ["Arance e rose"],
+         "explain": "Portano a casa arance e rose bianche."},
+        {"id": "it-listen-sunday-market-q4", "kind": "choice", "prompt": "Dov'è il mercato?",
+         "options": ["Nella piazza del paese", "Vicino al fiume", "Alla stazione", "In un supermercato"], "answers": ["Nella piazza del paese"],
+         "explain": "La domenica c'è un mercato nella piazza del paese."}
+      ]
+    }
+  ]
+}

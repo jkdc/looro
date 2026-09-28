@@ -1,0 +1,64 @@
+{
+  "texts": [
+    {
+      "id": "fr-listen-cafe-morning",
+      "languageID": "fr",
+      "title": "Un café avant le travail",
+      "level": "A1",
+      "text": "Chaque matin, Marta marche jusqu'à un petit café près de chez elle. Le serveur connaît son nom, alors elle n'a jamais besoin de commander. Aujourd'hui, elle s'assoit près de la fenêtre avec un café et un croissant. Son bus part à huit heures et demie, mais elle ne s'inquiète pas. Le café est très calme à cette heure-là. Elle boit son café lentement et regarde la ville se réveiller.",
+      "questions": [
+        {"id": "fr-listen-cafe-morning-q1", "kind": "choice", "prompt": "Où Marta va-t-elle chaque matin ?",
+         "options": ["Dans un petit café", "À son bureau", "À la gare routière", "Dans un parc"], "answers": ["Dans un petit café"],
+         "explain": "Elle marche jusqu'à un petit café près de chez elle."},
+        {"id": "fr-listen-cafe-morning-q2", "kind": "choice", "prompt": "Qu'est-ce qu'elle prend ce matin ?",
+         "options": ["Un café et un croissant", "Un thé et des toasts", "Du jus d'orange", "Rien"], "answers": ["Un café et un croissant"],
+         "explain": "Elle s'assoit avec un café et un croissant."},
+        {"id": "fr-listen-cafe-morning-q3", "kind": "written", "prompt": "À quelle heure part son bus ?",
+         "answers": ["à huit heures et demie", "huit heures et demie", "huit heures et demi"], "explain": "Son bus part à huit heures et demie."},
+        {"id": "fr-listen-cafe-morning-q4", "kind": "choice", "prompt": "Comment se sent-elle par rapport à l'heure ?",
+         "options": ["Elle ne s'inquiète pas", "Elle est très en retard", "Elle est fâchée", "Elle a sommeil"], "answers": ["Elle ne s'inquiète pas"],
+         "explain": "Le texte dit qu'elle ne s'inquiète pas."}
+      ]
+    },
+    {
+      "id": "fr-listen-new-flatmate",
+      "languageID": "fr",
+      "title": "Un nouveau colocataire",
+      "level": "A1",
+      "text": "Tom a un nouveau colocataire. Il s'appelle Léo et il a vingt-trois ans. Léo vient d'une petite ville du nord, mais il travaille maintenant en ville. Il a deux cartons, une guitare et un vélo. L'appartement a deux chambres et une cuisine très lumineuse. Tom espère que Léo aime cuisiner, parce que Tom, lui, déteste ça.",
+      "questions": [
+        {"id": "fr-listen-new-flatmate-q1", "kind": "choice", "prompt": "Quel âge a Léo ?",
+         "options": ["Vingt-trois ans", "Trente-deux ans", "Vingt ans", "Trente ans"], "answers": ["Vingt-trois ans"],
+         "explain": "Léo a vingt-trois ans."},
+        {"id": "fr-listen-new-flatmate-q2", "kind": "choice", "prompt": "Qu'est-ce que Léo n'a PAS ?",
+         "options": ["Une télévision", "Deux cartons", "Une guitare", "Un vélo"], "answers": ["Une télévision"],
+         "explain": "Il a deux cartons, une guitare et un vélo — pas de télévision."},
+        {"id": "fr-listen-new-flatmate-q3", "kind": "written", "prompt": "Qu'est-ce que Tom déteste faire ?",
+         "answers": ["cuisiner", "il déteste cuisiner", "tom déteste cuisiner"], "explain": "Tom déteste cuisiner."},
+        {"id": "fr-listen-new-flatmate-q4", "kind": "choice", "prompt": "Comment est l'appartement ?",
+         "options": ["Deux chambres et une cuisine lumineuse", "Une chambre et un balcon", "Un jardin", "Deux salles de bain"], "answers": ["Deux chambres et une cuisine lumineuse"],
+         "explain": "L'appartement a deux chambres et une cuisine très lumineuse."}
+      ]
+    },
+    {
+      "id": "fr-listen-sunday-market",
+      "languageID": "fr",
+      "title": "Le marché du dimanche",
+      "level": "A1",
+      "text": "Le dimanche, il y a un marché sur la place du village. Anna et son père y vont à neuf heures, avant que ce soit trop bondé. Ils achètent des fruits, du pain et des fleurs. Anna veut des fraises, mais son père dit qu'elles sont trop chères cette semaine. À la fin, ils rentrent avec un grand sac d'oranges et des roses blanches pour la table de la cuisine.",
+      "questions": [
+        {"id": "fr-listen-sunday-market-q1", "kind": "choice", "prompt": "Quand Anna et son père vont-ils au marché ?",
+         "options": ["À neuf heures", "À midi", "Dans l'après-midi", "À six heures et demie"], "answers": ["À neuf heures"],
+         "explain": "Ils y vont à neuf heures, avant que ce soit trop bondé."},
+        {"id": "fr-listen-sunday-market-q2", "kind": "written", "prompt": "Pourquoi Anna n'a-t-elle pas de fraises ?",
+         "answers": ["elles sont trop chères", "trop chères", "parce qu'elles sont trop chères"], "explain": "Son père dit qu'elles sont trop chères cette semaine."},
+        {"id": "fr-listen-sunday-market-q3", "kind": "choice", "prompt": "Qu'est-ce qu'ils ramènent à la maison ?",
+         "options": ["Des oranges et des roses", "Des fraises et du pain", "Des pommes et des tulipes", "Du pain et du fromage"], "answers": ["Des oranges et des roses"],
+         "explain": "Ils rentrent avec des oranges et des roses blanches."},
+        {"id": "fr-listen-sunday-market-q4", "kind": "choice", "prompt": "Où est le marché ?",
+         "options": ["Sur la place du village", "Près de la rivière", "À la gare", "Dans un supermarché"], "answers": ["Sur la place du village"],
+         "explain": "Il y a un marché sur la place du village le dimanche."}
+      ]
+    }
+  ]
+}

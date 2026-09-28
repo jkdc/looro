@@ -26,7 +26,10 @@ class ListeningContentTest {
     @Test fun `lookup finds texts and misses unknown ones`() {
         assertEquals("A coffee before work", ListeningRegistry.text("en-listen-coffee-morning")?.title)
         assertNull(ListeningRegistry.text("en-listen-missing"))
-        assertTrue(ListeningRegistry.forLanguage("es").isEmpty())
+        assertTrue(ListeningRegistry.forLanguage("nb").isEmpty())
+        for (language in listOf("es", "fr", "it", "de", "pt")) {
+            assertEquals(3, ListeningRegistry.forLanguage(language).size)
+        }
     }
 
     @Test fun `every question grades its own answers correct`() {
