@@ -309,6 +309,14 @@
     <string name="lesson_situation_heading">Situación de práctica</string>
     <string name="lesson_themes_heading">Temas de conversación extra</string>
     <string name="lesson_practice_button">Practicar hablando</string>
+    <string name="lesson_exercises_heading">Ejercicios</string>
+    <string name="lesson_exercises_button">Practicar ejercicios</string>
+    <string name="exercise_counter">Ejercicio %1$d de %2$d</string>
+    <string name="exercise_wrong">Todavía no — mira por qué:</string>
+    <string name="exercise_next">Siguiente</string>
+    <string name="exercise_clear">Borrar</string>
+    <string name="exercise_summary">Respondiste bien %1$d de %2$d.</string>
+    <string name="exercise_done">Terminar</string>
     <string name="learn_course_percent">Completado: %1$d%%</string>
     <string name="lesson_done">HECHA</string>
     <string name="common_back">Atrás</string>

@@ -9,13 +9,16 @@ struct CoursesView: View {
     let coordinator: ConversationCoordinator
     var onThemeChosen: () -> Void
     @State private var openLessonID: String?
+    @State private var exercisesOpen = false
     @State private var audioOn = true
     @State private var reader = LessonReader()
 
     var body: some View {
         let courses = CourseRegistry.forLanguage(coordinator.language.id)
         Group {
-            if let id = openLessonID, let lesson = CourseRegistry.lesson(id: id) {
+            if let id = openLessonID, let lesson = CourseRegistry.lesson(id: id), exercisesOpen {
+                ExerciseView(coordinator: coordinator, lesson: lesson, onBack: { exercisesOpen = false })
+            } else if let id = openLessonID, let lesson = CourseRegistry.lesson(id: id) {
                 LessonDetailView(coordinator: coordinator, lesson: lesson, audioOn: $audioOn, reader: reader,
                     onBack: { openLessonID = nil; reader.stop() },
                     onPractice: { id in
@@ -23,7 +26,8 @@ struct CoursesView: View {
                     },
                     onTheme: { theme in
                         reader.stop(); coordinator.chooseTheme(theme); onThemeChosen()
-                    })
+                    },
+                    onExercises: { exercisesOpen = true })
             } else if courses.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("No courses yet").font(.headline)
@@ -111,6 +115,7 @@ private struct LessonDetailView: View {
     let onBack: () -> Void
     let onPractice: (String) -> Void
     let onTheme: (ConversationTheme) -> Void
+    let onExercises: () -> Void
 
     private var unit: CourseUnit? {
         CourseRegistry.all.flatMap(\.units).first { $0.lessons.contains { $0.id == lesson.id } }
@@ -159,6 +164,13 @@ private struct LessonDetailView: View {
                 }
                 sectionHeading("Practice situation")
                 Text(lesson.situation).font(.body)
+                if !lesson.exercises.isEmpty {
+                    sectionHeading("Exercises")
+                    Button { onExercises() } label: {
+                        Text("Practise exercises").font(.headline).frame(maxWidth: .infinity).padding(18)
+                            .background(AppColor.orange, in: Capsule())
+                    }.buttonStyle(.plain)
+                }
                 if let unit {
                     sectionHeading("Extra conversation themes")
                     ScrollView(.horizontal) {
@@ -194,6 +206,160 @@ private struct LessonDetailView: View {
 
     private func sectionHeading(_ text: String) -> some View {
         Text(text).font(.subheadline.weight(.semibold)).foregroundStyle(AppColor.secondary)
+    }
+}
+
+/// Authored offline exercises for a lesson: choice, written gap, word ordering and
+/// free written answer — graded locally by ExerciseEngine, no AI involved. Finishing
+/// the set records one completion with the score.
+struct ExerciseView: View {
+    let coordinator: ConversationCoordinator
+    let lesson: Lesson
+    let onBack: () -> Void
+    @State private var index = 0
+    @State private var answer = ""
+    @State private var selected: Int?
+    @State private var verdict: Bool?
+    @State private var correctCount = 0
+    @State private var tokens: [String] = []
+    @State private var chosen: [Int] = []
+
+    private var exercise: Exercise? { lesson.exercises.indices.contains(index) ? lesson.exercises[index] : nil }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Button { onBack() } label: {
+                        Image(systemName: "chevron.backward").font(.headline.weight(.semibold))
+                            .padding(12).background(.white.opacity(0.8), in: Circle())
+                    }.buttonStyle(.plain).accessibilityLabel("Back to the lesson")
+                    Spacer()
+                    Text(lesson.title).font(.caption).foregroundStyle(AppColor.secondary)
+                }
+                Text("Exercises").font(.largeTitle.weight(.semibold))
+                if let exercise {
+                    Text("Exercise \(index + 1) of \(lesson.exercises.count)")
+                        .font(.caption).foregroundStyle(AppColor.secondary)
+                    card(exercise)
+                } else if !lesson.exercises.isEmpty {
+                    Text("You answered \(correctCount) of \(lesson.exercises.count) correctly.")
+                        .font(.title2.weight(.semibold))
+                    Button { onBack() } label: {
+                        Text("Finish").font(.headline).frame(maxWidth: .infinity).padding(18)
+                            .background(AppColor.orange, in: Capsule())
+                    }.buttonStyle(.plain)
+                }
+            }.padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 110)
+        }.scrollIndicators(.hidden)
+        .onAppear { prepare() }
+        .accessibilityIdentifier("exercise-screen")
+    }
+
+    @ViewBuilder
+    private func card(_ exercise: Exercise) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(exercise.prompt).font(.title3.weight(.medium))
+            if verdict == nil {
+                switch exercise.kind {
+                case ExerciseEngine.choice:
+                    ForEach(Array(exercise.options.enumerated()), id: \.offset) { optionIndex, option in
+                        Button { selected = optionIndex } label: {
+                            Text(option).font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(16).background(selected == optionIndex ? AppColor.sage : AppColor.cream,
+                                    in: RoundedRectangle(cornerRadius: 18))
+                        }.buttonStyle(.plain)
+                    }
+                case ExerciseEngine.order:
+                    Text(chosen.map { tokens[$0] }.joined(separator: " "))
+                        .font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 52, alignment: .leading)
+                        .padding(16).background(.white, in: RoundedRectangle(cornerRadius: 18))
+                    FlowLike(tokens: tokens, chosen: chosen) { tokenIndex in
+                        if !chosen.contains(tokenIndex) { chosen.append(tokenIndex) }
+                    }
+                    if !chosen.isEmpty {
+                        Button("Clear") { chosen.removeAll() }.font(.caption)
+                    }
+                default:
+                    TextField("Your answer", text: $answer)
+                        .textInputAutocapitalization(.never).autocorrectionDisabled()
+                        .padding(14).background(.white, in: RoundedRectangle(cornerRadius: 18))
+                        .accessibilityIdentifier("exercise-answer")
+                }
+                Button {
+                    let attempt: String
+                    switch exercise.kind {
+                    case ExerciseEngine.choice: attempt = selected.flatMap { exercise.options[$0] } ?? ""
+                    case ExerciseEngine.order: attempt = chosen.map { tokens[$0] }.joined(separator: " ")
+                    default: attempt = answer
+                    }
+                    verdict = ExerciseEngine.isCorrect(exercise: exercise, attempt: attempt)
+                    if verdict == true { correctCount += 1 }
+                } label: {
+                    Text("Check").font(.headline).frame(maxWidth: .infinity).padding(16)
+                        .background(AppColor.orange, in: Capsule())
+                }.buttonStyle(.plain).disabled(!canCheck(exercise))
+                    .accessibilityIdentifier("exercise-check")
+            } else {
+                Text(verdict == true ? "Correct!" : "Not yet — here is why:")
+                    .font(.title3.weight(.semibold)).foregroundStyle(verdict == true ? AppColor.secondary : .red)
+                Text(exercise.explain).font(.subheadline).foregroundStyle(AppColor.secondary)
+                Button {
+                    if index + 1 >= lesson.exercises.count {
+                        let percent = correctCount * 100 / lesson.exercises.count
+                        coordinator.store.recordCompletion(kind: ProgressEngine.exerciseSet, itemID: lesson.id, bestScore: percent)
+                    }
+                    index += 1; answer = ""; selected = nil; verdict = nil; prepare()
+                } label: {
+                    Text("Next").font(.headline).frame(maxWidth: .infinity).padding(16)
+                        .background(AppColor.orange, in: Capsule())
+                }.buttonStyle(.plain)
+                    .accessibilityIdentifier("exercise-next")
+            }
+        }
+    }
+
+    private func canCheck(_ exercise: Exercise) -> Bool {
+        switch exercise.kind {
+        case ExerciseEngine.choice: return selected != nil
+        case ExerciseEngine.order: return !tokens.isEmpty && chosen.count == tokens.count
+        default: return !answer.trimmingCharacters(in: .whitespaces).isEmpty
+        }
+    }
+
+    private func prepare() {
+        guard let exercise else { return }
+        if exercise.kind == ExerciseEngine.order {
+            tokens = (exercise.answers.first ?? "").split(separator: " ").map(String.init).shuffled()
+        } else {
+            tokens = []
+        }
+        chosen = []
+    }
+}
+
+/// Simple wrap-avoiding token row: order exercises have short sentences, so a
+/// wrapped HStack is enough without bringing in a flow layout.
+private struct FlowLike: View {
+    let tokens: [String]
+    let chosen: [Int]
+    let tap: (Int) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(Array(stride(from: 0, to: tokens.count, by: 3)), id: \.self) { start in
+                HStack(spacing: 8) {
+                    ForEach(start..<min(start + 3, tokens.count), id: \.self) { tokenIndex in
+                        Button { tap(tokenIndex) } label: {
+                            Text(tokens[tokenIndex]).font(.subheadline.weight(.semibold))
+                                .padding(12).background(AppColor.panels.first ?? AppColor.cream,
+                                    in: RoundedRectangle(cornerRadius: 14))
+                                .opacity(chosen.contains(tokenIndex) ? 0.35 : 1)
+                        }.buttonStyle(.plain).disabled(chosen.contains(tokenIndex))
+                    }
+                }
+            }
+        }
     }
 }
 

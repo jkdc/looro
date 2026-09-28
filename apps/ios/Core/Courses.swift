@@ -40,9 +40,12 @@ public struct Lesson: Identifiable, Hashable, Sendable {
     public var expressions: [TargetExpression]
     public var situation: String
     public var practice: LessonPractice
-    public init(id: String, title: String, goal: String, intro: LessonIntro, expressions: [TargetExpression], situation: String, practice: LessonPractice) {
+    public var exercises: [Exercise]
+    public init(id: String, title: String, goal: String, intro: LessonIntro, expressions: [TargetExpression],
+                situation: String, practice: LessonPractice, exercises: [Exercise] = []) {
         self.id = id; self.title = title; self.goal = goal; self.intro = intro
         self.expressions = expressions; self.situation = situation; self.practice = practice
+        self.exercises = exercises
     }
 }
 
@@ -81,6 +84,21 @@ public struct PracticeQuestion: Hashable, Sendable {
     public var watch: String
     public init(prompt: String, expected: [String], focus: String, watch: String) {
         self.prompt = prompt; self.expected = expected; self.focus = focus; self.watch = watch
+    }
+}
+
+/// Authored offline drill. `kind` is one of ExerciseEngine's choice/gap/order/written;
+/// `options` is filled for choice only; `<name>` spans in answers accept any text.
+public struct Exercise: Identifiable, Hashable, Sendable {
+    public var id: String
+    public var kind: String
+    public var prompt: String
+    public var options: [String]
+    public var answers: [String]
+    public var explain: String
+    public init(id: String, kind: String, prompt: String, options: [String], answers: [String], explain: String) {
+        self.id = id; self.kind = kind; self.prompt = prompt; self.options = options
+        self.answers = answers; self.explain = explain
     }
 }
 

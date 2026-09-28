@@ -14,7 +14,7 @@ class UsageMetricsTest {
 
     @Test fun catalogMatchesTheServerContract() {
         // The API's CHECK constraint and USAGE_CATALOG pin this list; a rename here is a cross-platform break.
-        assertEquals(15, UsageEvents.all.size)
+        assertEquals(17, UsageEvents.all.size)
         assertEquals(UsageEvents.all.distinct().size, UsageEvents.all.size)
         assertTrue(UsageEvents.all.all { it.matches("[a-z_]+".toRegex()) })
     }

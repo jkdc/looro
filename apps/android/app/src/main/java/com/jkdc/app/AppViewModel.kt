@@ -273,6 +273,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /** A finished authored exercise set: one ledger mark with the score, one telemetry event. */
+    fun exerciseSetCompleted(lessonID: String, correct: Int, total: Int) {
+        if (total <= 0) return
+        val percent = correct * 100 / total
+        recordCompletion(ProgressEngine.EXERCISE_SET, lessonID, percent)
+        val courseID = lessonCourseID(lessonID)
+        if (courseID != null) usageReporter.record(UsageEvents.EXERCISE_COMPLETED) {
+            put("courseID", courseID); put("lessonID", lessonID); put("scoreBucket", UsageBuckets.score(percent))
+        }
+    }
+
     /** Appends one completion to the local ledger — the source of every progress metric.
         The ledger keeps only the newest marks, so validation never rejects a save. */
     fun recordCompletion(kind: String, rawItemID: String, bestScore: Int = 0) {

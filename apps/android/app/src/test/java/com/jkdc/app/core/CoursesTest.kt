@@ -61,4 +61,40 @@ class CoursesTest {
             }
         }
     }
+
+    @Test fun `every lesson carries a graded exercise set`() {
+        val kinds = setOf(ExerciseEngine.CHOICE, ExerciseEngine.GAP, ExerciseEngine.ORDER, ExerciseEngine.WRITTEN)
+        for (lesson in CourseRegistry.all.flatMap { it.units }.flatMap { it.lessons }) {
+            assertTrue(lesson.id, lesson.exercises.size >= 3)
+            assertEquals(lesson.id, lesson.exercises.size, lesson.exercises.map { it.id }.toSet().size)
+            for (exercise in lesson.exercises) {
+                assertTrue(exercise.id, exercise.kind in kinds)
+                assertTrue(exercise.id, exercise.answers.isNotEmpty())
+                assertTrue(exercise.id, exercise.explain.isNotBlank())
+                if (exercise.kind == ExerciseEngine.CHOICE) {
+                    assertTrue(exercise.id, exercise.options.size >= 2)
+                    assertTrue(exercise.id, exercise.answers.all { it in exercise.options })
+                } else {
+                    assertTrue(exercise.id, exercise.options.isEmpty())
+                    if (exercise.kind == ExerciseEngine.GAP) assertTrue(exercise.id, "___" in exercise.prompt)
+                    if (exercise.kind == ExerciseEngine.ORDER) {
+                        assertEquals(exercise.id, 1, exercise.answers.size)
+                        assertTrue(exercise.id, exercise.answers.single().split(" ").size >= 3)
+                    }
+                }
+            }
+        }
+    }
+
+    @Test fun `authored exercises grade deterministically`() {
+        val lesson = CourseRegistry.lesson("en-foundations-u1-to-be")!!
+        val choice = lesson.exercises.first { it.kind == ExerciseEngine.CHOICE }
+        val choiceAnswer = choice.answers.single()
+        val wrongChoice = choice.options.firstOrNull { it != choiceAnswer }
+        assertTrue(ExerciseEngine.isCorrect(choice, choiceAnswer))
+        if (wrongChoice != null) assertFalse(ExerciseEngine.isCorrect(choice, wrongChoice))
+        val gap = lesson.exercises.first { it.kind == ExerciseEngine.GAP }
+        assertTrue(ExerciseEngine.isCorrect(gap, gap.answers.single().uppercase()))
+        assertFalse(ExerciseEngine.isCorrect(gap, "was"))
+    }
 }

@@ -31,7 +31,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Are you a student?", expected: ["Yes, I am.", "No, I'm not. I'm a <job>."], focus: "short answers with am", watch: "“Yes, I student” — the short answer needs am."),
                                 PracticeQuestion(prompt: "How are you today?", expected: ["I'm fine.", "I'm good.", "I'm tired."], focus: "I'm + feeling", watch: "“I fine” — recast “I'm fine”."),
                                 PracticeQuestion(prompt: "Is your city big or small?", expected: ["It's big.", "It's small.", "My city is …"], focus: "is with things and places", watch: "“My city big” — recast “My city IS big”."),
-                                PracticeQuestion(prompt: "We're friends now! Where is your family from?", expected: ["They're from <country>.", "My family is from <country>."], focus: "they are / a group is", watch: "“My family from …” — recast with is.")])),
+                                PracticeQuestion(prompt: "We're friends now! Where is your family from?", expected: ["They're from <country>.", "My family is from <country>."], focus: "they are / a group is", watch: "“My family from …” — recast with is.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u1-to-be-e1", kind: "choice", prompt: "She ___ a doctor.", options: ["is", "are", "am", "be"], answers: ["is"], explain: "With he, she and it, to be becomes is."),
+                            Exercise(id: "en-foundations-u1-to-be-e2", kind: "gap", prompt: "They ___ my friends.", options: [], answers: ["are"], explain: "With they, to be is always are."),
+                            Exercise(id: "en-foundations-u1-to-be-e3", kind: "order", prompt: "Say where you are from.", options: [], answers: ["I am from Spain"], explain: "Am goes with I: I am from …"),
+                            Exercise(id: "en-foundations-u1-to-be-e4", kind: "written", prompt: "Introduce yourself in one sentence: say your name.", options: [], answers: ["I'm <name>", "My name is <name>", "I am <name>"], explain: "I'm Ana / My name is Ana — the verb is never dropped.")]),
                     Lesson(id: "en-foundations-u1-questions", title: "Questions & negatives with “to be”", goal: "Ask yes/no and wh- questions, and say what is not true, with am/is/are.",
                         intro: LessonIntro(explanation: [
                             "To ask a yes/no question, put the verb first. “You are tired.” becomes “Are you tired?” “She is a teacher.” becomes “Is she a teacher?”",
@@ -57,7 +62,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "I'm Marta, by the way. What's your name?", expected: ["I'm <name>.", "My name is <name>."], focus: "what's + name", watch: "“What you name?” — the question needs is: “What's your name?”."),
                                 PracticeQuestion(prompt: "Where are you from?", expected: ["I'm from <country>.", "I am from <country>."], focus: "where + are", watch: "“Where you from?” — don't drop are."),
                                 PracticeQuestion(prompt: "Are your neighbours friendly?", expected: ["Yes, they are.", "No, they aren't."], focus: "short answers with are", watch: "“Yes, they friendly” — repeat are."),
-                                PracticeQuestion(prompt: "I'm not from this city — I'm from Valencia. And you?", expected: ["I'm from <city>.", "I'm not from here either."], focus: "negative with I'm", watch: "“I no from …” — the negative is “I'm not from …”.")])),
+                                PracticeQuestion(prompt: "I'm not from this city — I'm from Valencia. And you?", expected: ["I'm from <city>.", "I'm not from here either."], focus: "negative with I'm", watch: "“I no from …” — the negative is “I'm not from …”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u1-questions-e1", kind: "choice", prompt: "___ you tired?", options: ["Are", "Is", "Am", "Be"], answers: ["Are"], explain: "With you, the question starts with Are."),
+                            Exercise(id: "en-foundations-u1-questions-e2", kind: "gap", prompt: "___ she your sister?", options: [], answers: ["is"], explain: "With she, questions start with Is."),
+                            Exercise(id: "en-foundations-u1-questions-e3", kind: "order", prompt: "Ask where the person is from.", options: [], answers: ["Where are you from"], explain: "Question word + are + you."),
+                            Exercise(id: "en-foundations-u1-questions-e4", kind: "written", prompt: "Make it negative: \"I am late.\"", options: [], answers: ["I'm not late", "I am not late"], explain: "I'm not is already short; is not → isn't, are not → aren't.")]),
                     Lesson(id: "en-foundations-u1-introduce", title: "Introducing yourself", goal: "Give a complete self-introduction: name, age, country, nationality and job.",
                         intro: LessonIntro(explanation: [
                             "A good introduction answers five small questions: your name, your age, your country or city, your nationality, and your job.",
@@ -83,7 +93,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Where are you from?", expected: ["I'm from <country>.", "I'm from <city>, in <country>."], focus: "origin", watch: "“I'm Spanish from Spain” — keep it simple: “I'm from …”."),
                                 PracticeQuestion(prompt: "So you're from Italy — you're Italian, right?", expected: ["Yes, I'm Italian.", "That's right."], focus: "nationality adjectives", watch: "“I'm Italy” — the country is Italy, the person is Italian."),
                                 PracticeQuestion(prompt: "What's your job?", expected: ["I'm a <job>.", "I'm an <job>."], focus: "a/an with jobs", watch: "“I'm teacher” — jobs need a/an: “I'm a teacher”."),
-                                PracticeQuestion(prompt: "Great! Now introduce your friend: this is Carlos.", expected: ["He's a <job>. He's from <country>.", "This is Carlos. He's …"], focus: "talking about a third person with is", watch: "“Carlos is teacher” — add a: “a teacher”.")]))]),
+                                PracticeQuestion(prompt: "Great! Now introduce your friend: this is Carlos.", expected: ["He's a <job>. He's from <country>.", "This is Carlos. He's …"], focus: "talking about a third person with is", watch: "“Carlos is teacher” — add a: “a teacher”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u1-introduce-e1", kind: "choice", prompt: "I ___ from Spain.", options: ["am", "is", "are", "be"], answers: ["am"], explain: "With I, always am — even in short answers."),
+                            Exercise(id: "en-foundations-u1-introduce-e2", kind: "gap", prompt: "Nice to ___ you.", options: [], answers: ["meet"], explain: "The fixed greeting is Nice to meet you."),
+                            Exercise(id: "en-foundations-u1-introduce-e3", kind: "order", prompt: "Say your country.", options: [], answers: ["I'm from Spain"], explain: "Never “I from …” — the am is obligatory."),
+                            Exercise(id: "en-foundations-u1-introduce-e4", kind: "written", prompt: "Say your name and your job.", options: [], answers: ["I'm <name> and I'm a <job>", "I'm <name>. I'm a <job>", "My name is <name> and I'm a <job>"], explain: "Use a before jobs: a teacher, a doctor.")])]),
             CourseUnit(id: "en-foundations-u2", title: "People & things", subtitle: "Name your world", level: "A1", themes: [
                     ConversationTheme("photo-album", "Family photo album", "Who's who", "photo.on.rectangle.angled", "Course", "You show the learner a family photo album. Name the people, ask about each other's families and say who has what.", 0),
                     ConversationTheme("lost-jumper", "The lost jumper", "Whose is it?", "tshirt", "Course", "A jumper appeared in the classroom. Help find its owner: ask what things are, whose they are and what they look like.", 1)], lessons: [
@@ -112,7 +127,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "How many bags do you need?", expected: ["I need two bags.", "Three, please."], focus: "plurals", watch: "“two bag” — plural needs -s: “two bags”."),
                                 PracticeQuestion(prompt: "Do you want apples or oranges?", expected: ["I want two apples.", "Three oranges, please."], focus: "plural -s with food", watch: "“three orange” — add -s."),
                                 PracticeQuestion(prompt: "The watches are over there. How many do you need?", expected: ["One watch, please.", "Two watches."], focus: "-es spelling", watch: "“two watchs” — after ch it's “watches”."),
-                                PracticeQuestion(prompt: "Is your family big?", expected: ["Yes — four people at home.", "No, we are two."], focus: "people", watch: "“four persons” — say “people”.")])),
+                                PracticeQuestion(prompt: "Is your family big?", expected: ["Yes — four people at home.", "No, we are two."], focus: "people", watch: "“four persons” — say “people”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u2-articles-e1", kind: "choice", prompt: "I have ___ idea.", options: ["an", "a", "the", "some"], answers: ["an"], explain: "An before vowel sounds: an idea, an hour."),
+                            Exercise(id: "en-foundations-u2-articles-e2", kind: "gap", prompt: "Look at ___ sun. It is hot.", options: [], answers: ["the"], explain: "There is one sun, so use the."),
+                            Exercise(id: "en-foundations-u2-articles-e3", kind: "order", prompt: "Say what they do (plural).", options: [], answers: ["They are teachers"], explain: "Plural jobs take no article: they are teachers."),
+                            Exercise(id: "en-foundations-u2-articles-e4", kind: "written", prompt: "Complete with two things: I need a ___ and an ___.", options: [], answers: ["a <thing> and an <thing>", "<thing> and <thing>"], explain: "a + consonant sound, an + vowel sound.")]),
                     Lesson(id: "en-foundations-u2-this-that", title: "This / that & my / your", goal: "Point at things near and far, and say who they belong to.",
                         intro: LessonIntro(explanation: [
                             "Use this for something near you, that for something far from you both. Plurals: these (near) and those (far).",
@@ -138,7 +158,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Look at the board — do you see those words?", expected: ["Yes, I see those words.", "Which words?"], focus: "that/those for far things", watch: "“this words” for far things — use “those”."),
                                 PracticeQuestion(prompt: "I'm holding two keys. Are these your keys?", expected: ["Yes, they're my keys.", "No, they aren't mine."], focus: "these + plural", watch: "“this keys” — plural near is “these keys”."),
                                 PracticeQuestion(prompt: "Is that your bike outside?", expected: ["Yes, it's my bike.", "No, it isn't."], focus: "that + far", watch: "Far away: that, not this."),
-                                PracticeQuestion(prompt: "Whose gloves are those on the floor?", expected: ["They're mine!", "I don't know. They aren't mine."], focus: "those + whose", watch: "“They is mine” — plural: “they're mine”.")])),
+                                PracticeQuestion(prompt: "Whose gloves are those on the floor?", expected: ["They're mine!", "I don't know. They aren't mine."], focus: "those + whose", watch: "“They is mine” — plural: “they're mine”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u2-this-that-e1", kind: "choice", prompt: "___ is my bag. Here, in my hand.", options: ["This", "That", "Those", "It"], answers: ["This"], explain: "This points at something near you."),
+                            Exercise(id: "en-foundations-u2-this-that-e2", kind: "gap", prompt: "___ is your coat over there.", options: [], answers: ["That"], explain: "That points at something far away."),
+                            Exercise(id: "en-foundations-u2-this-that-e3", kind: "order", prompt: "Ask about this phone (near you).", options: [], answers: ["Is this your phone"], explain: "Is + this + the thing."),
+                            Exercise(id: "en-foundations-u2-this-that-e4", kind: "written", prompt: "Point at something near you and say what it is.", options: [], answers: ["This is my <thing>", "This is a <thing>", "This is the <thing>"], explain: "This is + my/a/the + thing.")]),
                     Lesson(id: "en-foundations-u2-have-got", title: "“Have got”: family", goal: "Say who is in your family and what you have, with have got.",
                         intro: LessonIntro(explanation: [
                             "have got = have. Use it for family, pets and things: “I've got two sisters.” “She's got a dog.” With he/she/it use has got.",
@@ -164,7 +189,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Has your mum got a car?", expected: ["Yes, she has.", "No, she hasn't."], focus: "has short answers", watch: "“Yes, she got” — short answers repeat has."),
                                 PracticeQuestion(prompt: "Are you the oldest, the youngest or in the middle?", expected: ["I'm the oldest of three.", "I'm in the middle.", "I'm an only child."], focus: "family position", watch: "“I am more old” — “the oldest”."),
                                 PracticeQuestion(prompt: "Have your parents got a garden?", expected: ["Yes, they have. They've got flowers.", "No, they haven't."], focus: "they + have got", watch: "“They has got” — plural takes have."),
-                                PracticeQuestion(prompt: "I've got a big family — six of us! And you?", expected: ["We are <number>.", "There are <number> of us."], focus: "saying family size", watch: "“We is five” — “we are five”.")]))]),
+                                PracticeQuestion(prompt: "I've got a big family — six of us! And you?", expected: ["We are <number>.", "There are <number> of us."], focus: "saying family size", watch: "“We is five” — “we are five”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u2-have-got-e1", kind: "choice", prompt: "She ___ got two brothers.", options: ["has", "have", "is", "does"], answers: ["has"], explain: "With he/she/it: has got."),
+                            Exercise(id: "en-foundations-u2-have-got-e2", kind: "gap", prompt: "I ___ got a big family.", options: [], answers: ["have"], explain: "With I/you/we/they: have got."),
+                            Exercise(id: "en-foundations-u2-have-got-e3", kind: "order", prompt: "Ask about sisters.", options: [], answers: ["Have you got any sisters"], explain: "Have + you + got + any + plural."),
+                            Exercise(id: "en-foundations-u2-have-got-e4", kind: "written", prompt: "Say how many brothers or sisters you have got.", options: [], answers: ["I've got <number> brothers and <number> sisters", "I've got <number> brother and <number> sister", "I haven't got any brothers or sisters"], explain: "I've got + number + family word.")])]),
             CourseUnit(id: "en-foundations-u3", title: "Everyday actions", subtitle: "Your week, out loud", level: "A1", themes: [
                     ConversationTheme("morning-rush", "The morning rush", "Against the clock", "sunrise", "Course", "It's 7:40 and you both have somewhere to be. Describe your morning routine while the clock runs.", 0),
                     ConversationTheme("evening-wind-down", "After work", "The quiet hours", "moon.stars", "Course", "It's the end of the day. Tell each other what you do in the evening and how you unwind.", 1)], lessons: [
@@ -193,7 +223,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Where do you work?", expected: ["I work <place>.", "I work from home.", "I don't work — I study."], focus: "where + do", watch: "“I work in home” — “from home”."),
                                 PracticeQuestion(prompt: "Do you speak any other languages?", expected: ["Yes, I do. I speak <language>.", "No, I don't."], focus: "do + language verbs", watch: "“I no speak” — “I don't speak”."),
                                 PracticeQuestion(prompt: "What do you and your friends do at weekends?", expected: ["We play …", "We go …", "We don't go out much."], focus: "we habits", watch: "“We plays” — with we there's no -s."),
-                                PracticeQuestion(prompt: "I don't watch much TV. Do you?", expected: ["No, I don't.", "Yes, I do. I watch …"], focus: "echo questions with do", watch: "Short answers use do, not the verb.")])),
+                                PracticeQuestion(prompt: "I don't watch much TV. Do you?", expected: ["No, I don't.", "Yes, I do. I watch …"], focus: "echo questions with do", watch: "Short answers use do, not the verb.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u3-present-e1", kind: "choice", prompt: "They ___ in Madrid.", options: ["live", "lives", "living", "does live"], answers: ["live"], explain: "With they there is no -s: they live."),
+                            Exercise(id: "en-foundations-u3-present-e2", kind: "gap", prompt: "___ you work near here?", options: [], answers: ["do"], explain: "Questions with you need Do."),
+                            Exercise(id: "en-foundations-u3-present-e3", kind: "order", prompt: "Say you do not eat meat.", options: [], answers: ["We don't eat meat"], explain: "don't + base verb: We don't eat."),
+                            Exercise(id: "en-foundations-u3-present-e4", kind: "written", prompt: "Say one thing you do every day.", options: [], answers: ["I <verb> every day", "Every day I <verb>"], explain: "Present simple for routines: I work, I walk, I cook.")]),
                     Lesson(id: "en-foundations-u3-third-person", title: "He / she / it + -s & frequency", goal: "Describe another person's routines with the -s ending and say how often things happen.",
                         intro: LessonIntro(explanation: [
                             "With he, she and it the present simple verb takes -s: “She works at night.” “He likes jazz.” This -s is small but very important.",
@@ -219,7 +254,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Does she like football?", expected: ["Yes, she does.", "No, she doesn't."], focus: "does short answers", watch: "“Yes, she likes” — short answer: “Yes, she does”."),
                                 PracticeQuestion(prompt: "How often do you cook?", expected: ["Every day.", "Twice a week.", "I never cook."], focus: "frequency answers", watch: "“I cook two times week” — “twice a week”."),
                                 PracticeQuestion(prompt: "Is your brother always late?", expected: ["Yes, he's always late.", "No, he's never late."], focus: "always/never after be", watch: "“He always is late” — after be: “He's always late”."),
-                                PracticeQuestion(prompt: "My sister never drinks coffee — she hates it. And your family?", expected: ["My <relative> never …", "They always …"], focus: "frequency with family", watch: "“My mum never drink” — keep the -s after never.")])),
+                                PracticeQuestion(prompt: "My sister never drinks coffee — she hates it. And your family?", expected: ["My <relative> never …", "They always …"], focus: "frequency with family", watch: "“My mum never drink” — keep the -s after never.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u3-third-person-e1", kind: "choice", prompt: "He ___ football on Sundays.", options: ["plays", "play", "playing", "is play"], answers: ["plays"], explain: "With he/she/it the verb takes -s."),
+                            Exercise(id: "en-foundations-u3-third-person-e2", kind: "gap", prompt: "She ___ English at night. (study)", options: [], answers: ["studies"], explain: "Consonant + y → -ies: study → studies."),
+                            Exercise(id: "en-foundations-u3-third-person-e3", kind: "order", prompt: "Say where your sister works.", options: [], answers: ["My sister works in a cafe"], explain: "Sister is she → works with -s."),
+                            Exercise(id: "en-foundations-u3-third-person-e4", kind: "written", prompt: "Say that Ana speaks English.", options: [], answers: ["Ana speaks English", "She speaks English"], explain: "Ana = she → speak + s.")]),
                     Lesson(id: "en-foundations-u3-time", title: "Time & daily routine", goal: "Tell the time and describe your day in order.",
                         intro: LessonIntro(explanation: [
                             "Ask with “What time is it?” Answer with o'clock for exact hours: “It's seven o'clock.” For halves say half past: “It's half past seven” (7:30).",
@@ -245,7 +285,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Do you have breakfast before or after your shower?", expected: ["Before. First I …, then I …", "After — first I …"], focus: "first/then", watch: "Answer in order: first …, then …"),
                                 PracticeQuestion(prompt: "What do you do in the evening?", expected: ["In the evening I …", "I usually …"], focus: "in the evening", watch: "“in the night” — evening or “at night”."),
                                 PracticeQuestion(prompt: "When do you go to bed?", expected: ["I go to bed at <time>.", "Around <time>."], focus: "go to bed", watch: "“I go to the bed” — no the: “go to bed”."),
-                                PracticeQuestion(prompt: "Describe your morning in order — first, then, after that.", expected: ["First I …, then I …, after that I …"], focus: "sequencing", watch: "Use the order words — don't list with “and, and, and”.")]))]),
+                                PracticeQuestion(prompt: "Describe your morning in order — first, then, after that.", expected: ["First I …, then I …, after that I …"], focus: "sequencing", watch: "Use the order words — don't list with “and, and, and”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u3-time-e1", kind: "choice", prompt: "It's 7:30. It's half ___ seven.", options: ["past", "to", "at", "on"], answers: ["past"], explain: "Half past = y media."),
+                            Exercise(id: "en-foundations-u3-time-e2", kind: "gap", prompt: "I get up ___ seven o'clock.", options: [], answers: ["at"], explain: "Clock times take at: at seven."),
+                            Exercise(id: "en-foundations-u3-time-e3", kind: "order", prompt: "Say what comes after getting up.", options: [], answers: ["Then I have breakfast"], explain: "Then orders your routine."),
+                            Exercise(id: "en-foundations-u3-time-e4", kind: "written", prompt: "Say what time you usually get up.", options: [], answers: ["I get up at <time>", "I usually get up at <time>"], explain: "get up at + time.")])]),
             CourseUnit(id: "en-foundations-u4", title: "Getting around", subtitle: "Out in the city", level: "A1", themes: [
                     ConversationTheme("neighbourhood", "A new neighbourhood", "Find your way", "map", "Course", "The learner just moved to the area. Walk the streets together and describe what there is on every corner.", 0),
                     ConversationTheme("lost-in-town", "Lost in town", "Ask for help", "location", "Course", "Your phone died and you are lost. Stop people, ask for directions and follow them.", 1)], lessons: [
@@ -274,7 +319,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Can your sister swim?", expected: ["Yes, she can.", "No, she can't."], focus: "can with he/she", watch: "“She cans swim” — can never takes -s."),
                                 PracticeQuestion(prompt: "Can I borrow your pen, please?", expected: ["Yes, of course.", "Sure, here you are."], focus: "permission + polite reply", watch: "Answer a request warmly: “Of course”."),
                                 PracticeQuestion(prompt: "Sorry, can you speak more slowly?", expected: ["No problem.", "Of course. Is this better?"], focus: "polite repeat request", watch: "Practise your “Sorry, can you …?” — it opens every repair."),
-                                PracticeQuestion(prompt: "What's one thing you can't do but want to learn?", expected: ["I can't <skill>, but I want to learn."], focus: "can't + wish", watch: "“I can't to play” — no to after can't.")])),
+                                PracticeQuestion(prompt: "What's one thing you can't do but want to learn?", expected: ["I can't <skill>, but I want to learn."], focus: "can't + wish", watch: "“I can't to play” — no to after can't.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u4-can-e1", kind: "choice", prompt: "___ you help me, please?", options: ["Can", "Are", "Do", "Is"], answers: ["Can"], explain: "Requests start with Can you …?"),
+                            Exercise(id: "en-foundations-u4-can-e2", kind: "gap", prompt: "I ___ swim, but I can't dive.", options: [], answers: ["can"], explain: "can never takes -s and stays with the verb."),
+                            Exercise(id: "en-foundations-u4-can-e3", kind: "order", prompt: "Say your mother cannot drive.", options: [], answers: ["She can't drive"], explain: "can't + base verb: She can't drive."),
+                            Exercise(id: "en-foundations-u4-can-e4", kind: "written", prompt: "Ask permission to open the window.", options: [], answers: ["Can I open the window", "Can I open the window, please"], explain: "Can I …? asks for permission.")]),
                     Lesson(id: "en-foundations-u4-there-is", title: "There is / there are", goal: "Say what exists in a place, and ask about it.",
                         intro: LessonIntro(explanation: [
                             "To say something exists, start with there: “There's a pharmacy on the corner.” Singular: there is (there's). Plural: “There are two parks.”",
@@ -300,7 +350,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Is there a lift in the building?", expected: ["Yes, there is.", "No, there isn't. It's an old building."], focus: "short answers with there", watch: "“Yes, has lift” — repeat there is."),
                                 PracticeQuestion(prompt: "What's in your neighbourhood?", expected: ["There's a <place> and there are <things>."], focus: "mixing is/are", watch: "One thing → there's; more → there are."),
                                 PracticeQuestion(prompt: "Are there any good cafés around?", expected: ["Yes, there are two.", "No, there aren't any."], focus: "any in questions/negatives", watch: "“There aren't some cafés” — negatives take any."),
-                                PracticeQuestion(prompt: "Where exactly is the pharmacy?", expected: ["It's next to the bank.", "It's opposite the park."], focus: "location prepositions", watch: "“It's in front the bank” — “opposite” or “in front of”.")])),
+                                PracticeQuestion(prompt: "Where exactly is the pharmacy?", expected: ["It's next to the bank.", "It's opposite the park."], focus: "location prepositions", watch: "“It's in front the bank” — “opposite” or “in front of”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u4-there-is-e1", kind: "choice", prompt: "___ a pharmacy near here?", options: ["Is there", "Are there", "There is", "Has"], answers: ["Is there"], explain: "Singular questions: Is there …?"),
+                            Exercise(id: "en-foundations-u4-there-is-e2", kind: "gap", prompt: "There ___ two parks in my neighbourhood.", options: [], answers: ["are"], explain: "Plural things: there are."),
+                            Exercise(id: "en-foundations-u4-there-is-e3", kind: "order", prompt: "Say that a market exists on Saturdays.", options: [], answers: ["There is a market on Saturdays"], explain: "There is + singular thing."),
+                            Exercise(id: "en-foundations-u4-there-is-e4", kind: "written", prompt: "Say what there is in your kitchen.", options: [], answers: ["There is <thing>", "There are <things>", "There is a <thing>"], explain: "There is + one thing, there are + many.")]),
                     Lesson(id: "en-foundations-u4-directions", title: "Directions & place", goal: "Give and follow simple directions from A to B.",
                         intro: LessonIntro(explanation: [
                             "Start with go straight on, then turn left or turn right. “Go straight on and turn left at the lights.”",
@@ -326,7 +381,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Is the museum far from here?", expected: ["About <number> minutes on foot.", "No, it's very close."], focus: "distance answers", watch: "“It has five minutes” — “it's five minutes”."),
                                 PracticeQuestion(prompt: "When you leave, the pharmacy is on your right.", expected: ["On the right. Got it.", "Thank you very much."], focus: "on the left/right", watch: "“in the right” — sides take on."),
                                 PracticeQuestion(prompt: "Where's the nearest metro station?", expected: ["Go straight on and it's on the corner.", "Turn right at the bank."], focus: "giving directions", watch: "Give order words: straight, then turn."),
-                                PracticeQuestion(prompt: "Perfect. One last thing — is there a toilet in the museum?", expected: ["Yes, there is, on the left.", "I don't know."], focus: "combining there is + location", watch: "Tie it together: there is + place word.")]))]),
+                                PracticeQuestion(prompt: "Perfect. One last thing — is there a toilet in the museum?", expected: ["Yes, there is, on the left.", "I don't know."], focus: "combining there is + location", watch: "Tie it together: there is + place word.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u4-directions-e1", kind: "choice", prompt: "Go ___ and then turn left.", options: ["straight on", "left", "right", "back"], answers: ["straight on"], explain: "Straight on = todo recto."),
+                            Exercise(id: "en-foundations-u4-directions-e2", kind: "gap", prompt: "Turn left ___ the traffic lights.", options: [], answers: ["at"], explain: "Exact points take at: at the lights."),
+                            Exercise(id: "en-foundations-u4-directions-e3", kind: "order", prompt: "Say where the bank is (beside).", options: [], answers: ["It's next to the bank"], explain: "next to = al lado de."),
+                            Exercise(id: "en-foundations-u4-directions-e4", kind: "written", prompt: "Ask where the station is.", options: [], answers: ["Where is the station", "Where's the station"], explain: "Question word + is: Where is / Where's.")])]),
             CourseUnit(id: "en-foundations-u5", title: "Food & likes", subtitle: "Eat, drink, enjoy", level: "A2", themes: [
                     ConversationTheme("sunday-market", "The Sunday market", "Baskets and barrows", "cart", "Course", "You meet at the Sunday food market: count what's in the baskets, ask what's missing and choose what to cook.", 0),
                     ConversationTheme("restaurant", "Dinner out", "A table for two", "fork.knife", "Course", "You book and enjoy a dinner out: order dishes, say what you love and hate, and ask for the bill.", 1)], lessons: [
@@ -355,7 +415,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "How much rice do we need?", expected: ["About half a kilo.", "Two cups."], focus: "much with uncountables", watch: "“How many rice?” — rice is uncountable: how much."),
                                 PracticeQuestion(prompt: "And how many people are coming?", expected: ["Six people.", "There are six of us."], focus: "many with countables", watch: "“How much people?” — people is countable here: how many."),
                                 PracticeQuestion(prompt: "We need milk. Can you get some?", expected: ["Sure. A litre?", "Yes, a bottle."], focus: "responding to a request", watch: "“Yes, I get milk” — confirm the amount: “A litre?”"),
-                                PracticeQuestion(prompt: "We only need a little salt and a few olives.", expected: ["Got it: a little salt, a few olives."], focus: "a little vs a few", watch: "Countable? a few. Uncountable? a little.")])),
+                                PracticeQuestion(prompt: "We only need a little salt and a few olives.", expected: ["Got it: a little salt, a few olives."], focus: "a little vs a few", watch: "Countable? a few. Uncountable? a little.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u5-some-any-e1", kind: "choice", prompt: "We haven't got ___ milk.", options: ["any", "some", "a", "many"], answers: ["any"], explain: "Negatives take any."),
+                            Exercise(id: "en-foundations-u5-some-any-e2", kind: "gap", prompt: "Can I have ___ water, please?", options: [], answers: ["some"], explain: "Requests take some, even as questions."),
+                            Exercise(id: "en-foundations-u5-some-any-e3", kind: "order", prompt: "Say you need sugar for the cake.", options: [], answers: ["I need some sugar for the cake"], explain: "Affirmatives take some."),
+                            Exercise(id: "en-foundations-u5-some-any-e4", kind: "written", prompt: "Say you need some bread.", options: [], answers: ["I need some bread", "I need to buy some bread"], explain: "some + uncountable: some bread, some water.")]),
                     Lesson(id: "en-foundations-u5-likes", title: "Like / love / hate + -ing", goal: "Talk about what you love, like and hate doing.",
                         intro: LessonIntro(explanation: [
                             "After like, love, hate and don't like, the next verb takes -ing: “I love cooking.” “She hates waiting.”",
@@ -381,7 +446,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "What's something you hate doing?", expected: ["I hate <verb>ing."], focus: "hate + -ing", watch: "“I hate get up” — “hate getting up”."),
                                 PracticeQuestion(prompt: "Do you mind waiting?", expected: ["No, I don't mind waiting.", "Yes, I hate waiting."], focus: "don't mind", watch: "“I don't mind wait” — keep -ing."),
                                 PracticeQuestion(prompt: "How much do you like films — a bit or a lot?", expected: ["I really like films.", "I quite like them."], focus: "softeners", watch: "“I like very much films” — “I really like films”."),
-                                PracticeQuestion(prompt: "Your friend loves dancing but you don't. What do you say?", expected: ["I don't really like dancing.", "I don't like dancing, but thanks!"], focus: "polite dislike", watch: "Soften with really: “I don't really like…”.")])),
+                                PracticeQuestion(prompt: "Your friend loves dancing but you don't. What do you say?", expected: ["I don't really like dancing.", "I don't like dancing, but thanks!"], focus: "polite dislike", watch: "Soften with really: “I don't really like…”.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u5-likes-e1", kind: "choice", prompt: "I love ___ to music.", options: ["listening", "listen", "listens", "to listening"], answers: ["listening"], explain: "Like/love/hate + verb-ing."),
+                            Exercise(id: "en-foundations-u5-likes-e2", kind: "gap", prompt: "She hates ___ up early. (get)", options: [], answers: ["getting"], explain: "Short verb + consonant doubles: get → getting."),
+                            Exercise(id: "en-foundations-u5-likes-e3", kind: "order", prompt: "Ask if the person enjoys cooking.", options: [], answers: ["Do you like cooking"], explain: "Do you like + -ing?"),
+                            Exercise(id: "en-foundations-u5-likes-e4", kind: "written", prompt: "Say one thing you love doing.", options: [], answers: ["I love <verbing>", "I love <verb>ing"], explain: "I love + activity with -ing.")]),
                     Lesson(id: "en-foundations-u5-cafe", title: "Ordering at a café", goal: "Order food and drink, ask for things and pay, in real café English.",
                         intro: LessonIntro(explanation: [
                             "The magic order phrase is “I'd like …” (I would like) — polite and universal. “Can I have …, please?” works everywhere too.",
@@ -407,7 +477,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "For here or to go?", expected: ["For here, please.", "To go, please."], focus: "the classic choice", watch: "Answer the part they asked: here/to go."),
                                 PracticeQuestion(prompt: "Large or small?", expected: ["Large, please.", "Small is fine."], focus: "size answers", watch: "“I take large” — “Large, please” is the café norm."),
                                 PracticeQuestion(prompt: "Here you are — anything else for you two?", expected: ["Yes — the bill, please.", "No, thanks. Keep the change."], focus: "paying phrases", watch: "“Give me the bill” — “The bill, please” is polite."),
-                                PracticeQuestion(prompt: "How was everything?", expected: ["Delicious, thank you!", "Very good, thanks."], focus: "polite close", watch: "One warm sentence closes the visit.")]))]),
+                                PracticeQuestion(prompt: "How was everything?", expected: ["Delicious, thank you!", "Very good, thanks."], focus: "polite close", watch: "One warm sentence closes the visit.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u5-cafe-e1", kind: "choice", prompt: "___ like a coffee, please.", options: ["I'd", "I", "Me", "Mine"], answers: ["I'd"], explain: "I'd like = polite want."),
+                            Exercise(id: "en-foundations-u5-cafe-e2", kind: "gap", prompt: "Can I have the ___ , please? (la cuenta)", options: [], answers: ["bill"], explain: "The bill (UK) / the check (US)."),
+                            Exercise(id: "en-foundations-u5-cafe-e3", kind: "order", prompt: "Ask for the menu politely.", options: [], answers: ["Can I have the menu, please"], explain: "Can I have … , please? works everywhere."),
+                            Exercise(id: "en-foundations-u5-cafe-e4", kind: "written", prompt: "Order a tea politely.", options: [], answers: ["Can I have a tea, please", "I'd like a tea, please", "Can I have a tea"], explain: "Can I have / I’d like + drink + please.")])]),
             CourseUnit(id: "en-foundations-u6", title: "The past begins", subtitle: "Tell what happened", level: "A2", themes: [
                     ConversationTheme("weekend", "The weekend", "What happened", "sun.max", "Course", "Monday catch-up: tell each other what you really did at the weekend, moment by moment.", 0),
                     ConversationTheme("last-trip", "A trip to remember", "Tell the story", "airplane", "Course", "You swap stories of a memorable trip: where you were, what you did and how it ended.", 1)], lessons: [
@@ -436,7 +511,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Were there many people?", expected: ["Yes, there were lots.", "No, there weren't many."], focus: "were + there", watch: "“There was many” — plural: “there were”."),
                                 PracticeQuestion(prompt: "How was the music?", expected: ["It was great.", "It was terrible!"], focus: "verdict with was", watch: "“It were good” — it takes was."),
                                 PracticeQuestion(prompt: "I was so tired on Sunday. And you?", expected: ["I was tired too.", "I wasn't tired — I was full of energy."], focus: "wasn't", watch: "“I not tired” — past negative: “I wasn't tired”."),
-                                PracticeQuestion(prompt: "Who was there from your class?", expected: ["<Name> was there.", "Nobody was there."], focus: "who + was", watch: "“Who were there” — who takes was here.")])),
+                                PracticeQuestion(prompt: "Who was there from your class?", expected: ["<Name> was there.", "Nobody was there."], focus: "who + was", watch: "“Who were there” — who takes was here.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u6-was-were-e1", kind: "choice", prompt: "We ___ at home yesterday.", options: ["were", "was", "are", "did"], answers: ["were"], explain: "With we/you/they: were."),
+                            Exercise(id: "en-foundations-u6-was-were-e2", kind: "gap", prompt: "The film ___ great.", options: [], answers: ["was"], explain: "Singular things: was."),
+                            Exercise(id: "en-foundations-u6-was-were-e3", kind: "order", prompt: "Ask about last night.", options: [], answers: ["Where were you last night"], explain: "were + you for the past."),
+                            Exercise(id: "en-foundations-u6-was-were-e4", kind: "written", prompt: "Say the weather was good at the weekend.", options: [], answers: ["The weather was good at the weekend", "It was sunny at the weekend", "The weather was nice at the weekend"], explain: "was + adjective for past descriptions.")]),
                     Lesson(id: "en-foundations-u6-past", title: "Past simple: -ed", goal: "Tell what you and others did, with regular past forms and didn't.",
                         intro: LessonIntro(explanation: [
                             "For finished actions, regular verbs add -ed: work → worked, play → played, watch → watched. The same form works for every person.",
@@ -462,7 +542,12 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Did you walk to work?", expected: ["No, I didn't. I cycled.", "Yes, I did."], focus: "didn't + plain verb", watch: "“I didn't walked” — after didn't, plain verb."),
                                 PracticeQuestion(prompt: "What time did you finish work?", expected: ["I finished at <time>.", "I didn't finish until <time>."], focus: "past + time", watch: "“What time did you finished?” — after did, plain finish."),
                                 PracticeQuestion(prompt: "Did you study English last week?", expected: ["Yes, I did. I studied on …", "No, I didn't study."], focus: "y→ied spelling", watch: "“I studyed” — study → studied."),
-                                PracticeQuestion(prompt: "Your colleague — did she call you?", expected: ["Yes, she did.", "No, she didn't call."], focus: "third person past", watch: "“Did she called” — after did, plain call.")])),
+                                PracticeQuestion(prompt: "Your colleague — did she call you?", expected: ["Yes, she did.", "No, she didn't call."], focus: "third person past", watch: "“Did she called” — after did, plain call.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u6-past-e1", kind: "choice", prompt: "I ___ TV last night.", options: ["watched", "watch", "watching", "am watch"], answers: ["watched"], explain: "Regular past: watch → watched."),
+                            Exercise(id: "en-foundations-u6-past-e2", kind: "gap", prompt: "She didn't ___ the email. (receive)", options: [], answers: ["receive"], explain: "After didn't the verb stays in base form."),
+                            Exercise(id: "en-foundations-u6-past-e3", kind: "order", prompt: "Say they got here late yesterday.", options: [], answers: ["They arrived late yesterday"], explain: "arrive → arrived; no did when the past is on the verb."),
+                            Exercise(id: "en-foundations-u6-past-e4", kind: "written", prompt: "Say you worked on Saturday.", options: [], answers: ["I worked on Saturday", "On Saturday I worked"], explain: "work → worked.")]),
                     Lesson(id: "en-foundations-u6-weekend", title: "Your weekend (repaso)", goal: "Tell the story of your weekend in order — past be, past verbs, time anchors — and ask about someone else's.",
                         intro: LessonIntro(explanation: [
                             "A weekend story has three parts: where you were (was/were), what you did (past -ed), and how it was (was + opinion).",
@@ -488,6 +573,11 @@ public enum CoursesData {
                                 PracticeQuestion(prompt: "Were you with friends or alone?", expected: ["I was with <people>.", "I was on my own."], focus: "was/were recap", watch: "“I was with” — was works with I."),
                                 PracticeQuestion(prompt: "That sounds nice! Did you eat out?", expected: ["Yes, we did — we tried a new place.", "No, we didn't. We cooked at home."], focus: "did questions about the story", watch: "“Yes, we eat out” — past short answer: “Yes, we did”."),
                                 PracticeQuestion(prompt: "What about Sunday?", expected: ["On Sunday I …", "Sunday was quieter — I …"], focus: "extending the story", watch: "Another time anchor, another scene."),
-                                PracticeQuestion(prompt: "OK, your turn — ask me about my weekend.", expected: ["What did you do?", "How was your weekend?"], focus: "asking back", watch: "A conversation needs a return serve: ask one question.")]))])])
+                                PracticeQuestion(prompt: "OK, your turn — ask me about my weekend.", expected: ["What did you do?", "How was your weekend?"], focus: "asking back", watch: "A conversation needs a return serve: ask one question.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-u6-weekend-e1", kind: "choice", prompt: "___ you have a good weekend?", options: ["Did", "Was", "Were", "Do"], answers: ["Did"], explain: "have is a normal verb: questions need Did."),
+                            Exercise(id: "en-foundations-u6-weekend-e2", kind: "gap", prompt: "We ___ so tired on Sunday.", options: [], answers: ["were"], explain: "Past be with we: were."),
+                            Exercise(id: "en-foundations-u6-weekend-e3", kind: "order", prompt: "Start your Saturday story.", options: [], answers: ["On Saturday I met my friends"], explain: "Time anchor first: On Saturday …"),
+                            Exercise(id: "en-foundations-u6-weekend-e4", kind: "written", prompt: "Tell one thing you did last weekend.", options: [], answers: ["I <verbed> last weekend", "Last weekend I <verbed>", "On Saturday I <verbed>"], explain: "Past verb + time anchor.")])])])
     ]
 }

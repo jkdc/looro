@@ -99,7 +99,13 @@
                 "watch": "“My family from …” — recast with is."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u1-to-be-e1", "kind": "choice", "prompt": "She ___ a doctor.", "options": ["is", "are", "am", "be"], "answers": ["is"], "explain": "With he, she and it, to be becomes is."},
+            {"id": "en-foundations-u1-to-be-e2", "kind": "gap", "prompt": "They ___ my friends.", "answers": ["are"], "explain": "With they, to be is always are."},
+            {"id": "en-foundations-u1-to-be-e3", "kind": "order", "prompt": "Say where you are from.", "answers": ["I am from Spain"], "explain": "Am goes with I: I am from …"},
+            {"id": "en-foundations-u1-to-be-e4", "kind": "written", "prompt": "Introduce yourself in one sentence: say your name.", "answers": ["I'm <name>", "My name is <name>", "I am <name>"], "explain": "I'm Ana / My name is Ana — the verb is never dropped."}
+          ]
         },
         {
           "id": "en-foundations-u1-questions",
@@ -168,7 +174,13 @@
                 "watch": "“I no from …” — the negative is “I'm not from …”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u1-questions-e1", "kind": "choice", "prompt": "___ you tired?", "options": ["Are", "Is", "Am", "Be"], "answers": ["Are"], "explain": "With you, the question starts with Are."},
+            {"id": "en-foundations-u1-questions-e2", "kind": "gap", "prompt": "___ she your sister?", "answers": ["is"], "explain": "With she, questions start with Is."},
+            {"id": "en-foundations-u1-questions-e3", "kind": "order", "prompt": "Ask where the person is from.", "answers": ["Where are you from"], "explain": "Question word + are + you."},
+            {"id": "en-foundations-u1-questions-e4", "kind": "written", "prompt": "Make it negative: \"I am late.\"", "answers": ["I'm not late", "I am not late"], "explain": "I'm not is already short; is not → isn't, are not → aren't."}
+          ]
         },
         {
           "id": "en-foundations-u1-introduce",
@@ -237,7 +249,13 @@
                 "watch": "“Carlos is teacher” — add a: “a teacher”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u1-introduce-e1", "kind": "choice", "prompt": "I ___ from Spain.", "options": ["am", "is", "are", "be"], "answers": ["am"], "explain": "With I, always am — even in short answers."},
+            {"id": "en-foundations-u1-introduce-e2", "kind": "gap", "prompt": "Nice to ___ you.", "answers": ["meet"], "explain": "The fixed greeting is Nice to meet you."},
+            {"id": "en-foundations-u1-introduce-e3", "kind": "order", "prompt": "Say your country.", "answers": ["I'm from Spain"], "explain": "Never “I from …” — the am is obligatory."},
+            {"id": "en-foundations-u1-introduce-e4", "kind": "written", "prompt": "Say your name and your job.", "answers": ["I'm <name> and I'm a <job>", "I'm <name>. I'm a <job>", "My name is <name> and I'm a <job>"], "explain": "Use a before jobs: a teacher, a doctor."}
+          ]
         }
       ]
     },
@@ -334,7 +352,13 @@
                 "watch": "“four persons” — say “people”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u2-articles-e1", "kind": "choice", "prompt": "I have ___ idea.", "options": ["an", "a", "the", "some"], "answers": ["an"], "explain": "An before vowel sounds: an idea, an hour."},
+            {"id": "en-foundations-u2-articles-e2", "kind": "gap", "prompt": "Look at ___ sun. It is hot.", "answers": ["the"], "explain": "There is one sun, so use the."},
+            {"id": "en-foundations-u2-articles-e3", "kind": "order", "prompt": "Say what they do (plural).", "answers": ["They are teachers"], "explain": "Plural jobs take no article: they are teachers."},
+            {"id": "en-foundations-u2-articles-e4", "kind": "written", "prompt": "Complete with two things: I need a ___ and an ___.", "answers": ["a <thing> and an <thing>", "<thing> and <thing>"], "explain": "a + consonant sound, an + vowel sound."}
+          ]
         },
         {
           "id": "en-foundations-u2-this-that",
@@ -403,7 +427,13 @@
                 "watch": "“They is mine” — plural: “they're mine”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u2-this-that-e1", "kind": "choice", "prompt": "___ is my bag. Here, in my hand.", "options": ["This", "That", "Those", "It"], "answers": ["This"], "explain": "This points at something near you."},
+            {"id": "en-foundations-u2-this-that-e2", "kind": "gap", "prompt": "___ is your coat over there.", "answers": ["That"], "explain": "That points at something far away."},
+            {"id": "en-foundations-u2-this-that-e3", "kind": "order", "prompt": "Ask about this phone (near you).", "answers": ["Is this your phone"], "explain": "Is + this + the thing."},
+            {"id": "en-foundations-u2-this-that-e4", "kind": "written", "prompt": "Point at something near you and say what it is.", "answers": ["This is my <thing>", "This is a <thing>", "This is the <thing>"], "explain": "This is + my/a/the + thing."}
+          ]
         },
         {
           "id": "en-foundations-u2-have-got",
@@ -472,7 +502,13 @@
                 "watch": "“We is five” — “we are five”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u2-have-got-e1", "kind": "choice", "prompt": "She ___ got two brothers.", "options": ["has", "have", "is", "does"], "answers": ["has"], "explain": "With he/she/it: has got."},
+            {"id": "en-foundations-u2-have-got-e2", "kind": "gap", "prompt": "I ___ got a big family.", "answers": ["have"], "explain": "With I/you/we/they: have got."},
+            {"id": "en-foundations-u2-have-got-e3", "kind": "order", "prompt": "Ask about sisters.", "answers": ["Have you got any sisters"], "explain": "Have + you + got + any + plural."},
+            {"id": "en-foundations-u2-have-got-e4", "kind": "written", "prompt": "Say how many brothers or sisters you have got.", "answers": ["I've got <number> brothers and <number> sisters", "I've got <number> brother and <number> sister", "I haven't got any brothers or sisters"], "explain": "I've got + number + family word."}
+          ]
         }
       ]
     },
@@ -569,7 +605,13 @@
                 "watch": "Short answers use do, not the verb."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u3-present-e1", "kind": "choice", "prompt": "They ___ in Madrid.", "options": ["live", "lives", "living", "does live"], "answers": ["live"], "explain": "With they there is no -s: they live."},
+            {"id": "en-foundations-u3-present-e2", "kind": "gap", "prompt": "___ you work near here?", "answers": ["do"], "explain": "Questions with you need Do."},
+            {"id": "en-foundations-u3-present-e3", "kind": "order", "prompt": "Say you do not eat meat.", "answers": ["We don't eat meat"], "explain": "don't + base verb: We don't eat."},
+            {"id": "en-foundations-u3-present-e4", "kind": "written", "prompt": "Say one thing you do every day.", "answers": ["I <verb> every day", "Every day I <verb>"], "explain": "Present simple for routines: I work, I walk, I cook."}
+          ]
         },
         {
           "id": "en-foundations-u3-third-person",
@@ -638,7 +680,13 @@
                 "watch": "“My mum never drink” — keep the -s after never."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u3-third-person-e1", "kind": "choice", "prompt": "He ___ football on Sundays.", "options": ["plays", "play", "playing", "is play"], "answers": ["plays"], "explain": "With he/she/it the verb takes -s."},
+            {"id": "en-foundations-u3-third-person-e2", "kind": "gap", "prompt": "She ___ English at night. (study)", "answers": ["studies"], "explain": "Consonant + y → -ies: study → studies."},
+            {"id": "en-foundations-u3-third-person-e3", "kind": "order", "prompt": "Say where your sister works.", "answers": ["My sister works in a cafe"], "explain": "Sister is she → works with -s."},
+            {"id": "en-foundations-u3-third-person-e4", "kind": "written", "prompt": "Say that Ana speaks English.", "answers": ["Ana speaks English", "She speaks English"], "explain": "Ana = she → speak + s."}
+          ]
         },
         {
           "id": "en-foundations-u3-time",
@@ -707,7 +755,13 @@
                 "watch": "Use the order words — don't list with “and, and, and”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u3-time-e1", "kind": "choice", "prompt": "It's 7:30. It's half ___ seven.", "options": ["past", "to", "at", "on"], "answers": ["past"], "explain": "Half past = y media."},
+            {"id": "en-foundations-u3-time-e2", "kind": "gap", "prompt": "I get up ___ seven o'clock.", "answers": ["at"], "explain": "Clock times take at: at seven."},
+            {"id": "en-foundations-u3-time-e3", "kind": "order", "prompt": "Say what comes after getting up.", "answers": ["Then I have breakfast"], "explain": "Then orders your routine."},
+            {"id": "en-foundations-u3-time-e4", "kind": "written", "prompt": "Say what time you usually get up.", "answers": ["I get up at <time>", "I usually get up at <time>"], "explain": "get up at + time."}
+          ]
         }
       ]
     },
@@ -804,7 +858,13 @@
                 "watch": "“I can't to play” — no to after can't."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u4-can-e1", "kind": "choice", "prompt": "___ you help me, please?", "options": ["Can", "Are", "Do", "Is"], "answers": ["Can"], "explain": "Requests start with Can you …?"},
+            {"id": "en-foundations-u4-can-e2", "kind": "gap", "prompt": "I ___ swim, but I can't dive.", "answers": ["can"], "explain": "can never takes -s and stays with the verb."},
+            {"id": "en-foundations-u4-can-e3", "kind": "order", "prompt": "Say your mother cannot drive.", "answers": ["She can't drive"], "explain": "can't + base verb: She can't drive."},
+            {"id": "en-foundations-u4-can-e4", "kind": "written", "prompt": "Ask permission to open the window.", "answers": ["Can I open the window", "Can I open the window, please"], "explain": "Can I …? asks for permission."}
+          ]
         },
         {
           "id": "en-foundations-u4-there-is",
@@ -873,7 +933,13 @@
                 "watch": "“It's in front the bank” — “opposite” or “in front of”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u4-there-is-e1", "kind": "choice", "prompt": "___ a pharmacy near here?", "options": ["Is there", "Are there", "There is", "Has"], "answers": ["Is there"], "explain": "Singular questions: Is there …?"},
+            {"id": "en-foundations-u4-there-is-e2", "kind": "gap", "prompt": "There ___ two parks in my neighbourhood.", "answers": ["are"], "explain": "Plural things: there are."},
+            {"id": "en-foundations-u4-there-is-e3", "kind": "order", "prompt": "Say that a market exists on Saturdays.", "answers": ["There is a market on Saturdays"], "explain": "There is + singular thing."},
+            {"id": "en-foundations-u4-there-is-e4", "kind": "written", "prompt": "Say what there is in your kitchen.", "answers": ["There is <thing>", "There are <things>", "There is a <thing>"], "explain": "There is + one thing, there are + many."}
+          ]
         },
         {
           "id": "en-foundations-u4-directions",
@@ -942,7 +1008,13 @@
                 "watch": "Tie it together: there is + place word."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u4-directions-e1", "kind": "choice", "prompt": "Go ___ and then turn left.", "options": ["straight on", "left", "right", "back"], "answers": ["straight on"], "explain": "Straight on = todo recto."},
+            {"id": "en-foundations-u4-directions-e2", "kind": "gap", "prompt": "Turn left ___ the traffic lights.", "answers": ["at"], "explain": "Exact points take at: at the lights."},
+            {"id": "en-foundations-u4-directions-e3", "kind": "order", "prompt": "Say where the bank is (beside).", "answers": ["It's next to the bank"], "explain": "next to = al lado de."},
+            {"id": "en-foundations-u4-directions-e4", "kind": "written", "prompt": "Ask where the station is.", "answers": ["Where is the station", "Where's the station"], "explain": "Question word + is: Where is / Where's."}
+          ]
         }
       ]
     },
@@ -1039,7 +1111,13 @@
                 "watch": "Countable? a few. Uncountable? a little."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u5-some-any-e1", "kind": "choice", "prompt": "We haven't got ___ milk.", "options": ["any", "some", "a", "many"], "answers": ["any"], "explain": "Negatives take any."},
+            {"id": "en-foundations-u5-some-any-e2", "kind": "gap", "prompt": "Can I have ___ water, please?", "answers": ["some"], "explain": "Requests take some, even as questions."},
+            {"id": "en-foundations-u5-some-any-e3", "kind": "order", "prompt": "Say you need sugar for the cake.", "answers": ["I need some sugar for the cake"], "explain": "Affirmatives take some."},
+            {"id": "en-foundations-u5-some-any-e4", "kind": "written", "prompt": "Say you need some bread.", "answers": ["I need some bread", "I need to buy some bread"], "explain": "some + uncountable: some bread, some water."}
+          ]
         },
         {
           "id": "en-foundations-u5-likes",
@@ -1108,7 +1186,13 @@
                 "watch": "Soften with really: “I don't really like…”."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u5-likes-e1", "kind": "choice", "prompt": "I love ___ to music.", "options": ["listening", "listen", "listens", "to listening"], "answers": ["listening"], "explain": "Like/love/hate + verb-ing."},
+            {"id": "en-foundations-u5-likes-e2", "kind": "gap", "prompt": "She hates ___ up early. (get)", "answers": ["getting"], "explain": "Short verb + consonant doubles: get → getting."},
+            {"id": "en-foundations-u5-likes-e3", "kind": "order", "prompt": "Ask if the person enjoys cooking.", "answers": ["Do you like cooking"], "explain": "Do you like + -ing?"},
+            {"id": "en-foundations-u5-likes-e4", "kind": "written", "prompt": "Say one thing you love doing.", "answers": ["I love <verbing>", "I love <verb>ing"], "explain": "I love + activity with -ing."}
+          ]
         },
         {
           "id": "en-foundations-u5-cafe",
@@ -1177,7 +1261,13 @@
                 "watch": "One warm sentence closes the visit."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u5-cafe-e1", "kind": "choice", "prompt": "___ like a coffee, please.", "options": ["I'd", "I", "Me", "Mine"], "answers": ["I'd"], "explain": "I'd like = polite want."},
+            {"id": "en-foundations-u5-cafe-e2", "kind": "gap", "prompt": "Can I have the ___ , please? (la cuenta)", "answers": ["bill"], "explain": "The bill (UK) / the check (US)."},
+            {"id": "en-foundations-u5-cafe-e3", "kind": "order", "prompt": "Ask for the menu politely.", "answers": ["Can I have the menu, please"], "explain": "Can I have … , please? works everywhere."},
+            {"id": "en-foundations-u5-cafe-e4", "kind": "written", "prompt": "Order a tea politely.", "answers": ["Can I have a tea, please", "I'd like a tea, please", "Can I have a tea"], "explain": "Can I have / I’d like + drink + please."}
+          ]
         }
       ]
     },
@@ -1274,7 +1364,13 @@
                 "watch": "“Who were there” — who takes was here."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u6-was-were-e1", "kind": "choice", "prompt": "We ___ at home yesterday.", "options": ["were", "was", "are", "did"], "answers": ["were"], "explain": "With we/you/they: were."},
+            {"id": "en-foundations-u6-was-were-e2", "kind": "gap", "prompt": "The film ___ great.", "answers": ["was"], "explain": "Singular things: was."},
+            {"id": "en-foundations-u6-was-were-e3", "kind": "order", "prompt": "Ask about last night.", "answers": ["Where were you last night"], "explain": "were + you for the past."},
+            {"id": "en-foundations-u6-was-were-e4", "kind": "written", "prompt": "Say the weather was good at the weekend.", "answers": ["The weather was good at the weekend", "It was sunny at the weekend", "The weather was nice at the weekend"], "explain": "was + adjective for past descriptions."}
+          ]
         },
         {
           "id": "en-foundations-u6-past",
@@ -1343,7 +1439,13 @@
                 "watch": "“Did she called” — after did, plain call."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u6-past-e1", "kind": "choice", "prompt": "I ___ TV last night.", "options": ["watched", "watch", "watching", "am watch"], "answers": ["watched"], "explain": "Regular past: watch → watched."},
+            {"id": "en-foundations-u6-past-e2", "kind": "gap", "prompt": "She didn't ___ the email. (receive)", "answers": ["receive"], "explain": "After didn't the verb stays in base form."},
+            {"id": "en-foundations-u6-past-e3", "kind": "order", "prompt": "Say they got here late yesterday.", "answers": ["They arrived late yesterday"], "explain": "arrive → arrived; no did when the past is on the verb."},
+            {"id": "en-foundations-u6-past-e4", "kind": "written", "prompt": "Say you worked on Saturday.", "answers": ["I worked on Saturday", "On Saturday I worked"], "explain": "work → worked."}
+          ]
         },
         {
           "id": "en-foundations-u6-weekend",
@@ -1412,7 +1514,13 @@
                 "watch": "A conversation needs a return serve: ask one question."
               }
             ]
-          }
+          },
+          "exercises": [
+            {"id": "en-foundations-u6-weekend-e1", "kind": "choice", "prompt": "___ you have a good weekend?", "options": ["Did", "Was", "Were", "Do"], "answers": ["Did"], "explain": "have is a normal verb: questions need Did."},
+            {"id": "en-foundations-u6-weekend-e2", "kind": "gap", "prompt": "We ___ so tired on Sunday.", "answers": ["were"], "explain": "Past be with we: were."},
+            {"id": "en-foundations-u6-weekend-e3", "kind": "order", "prompt": "Start your Saturday story.", "answers": ["On Saturday I met my friends"], "explain": "Time anchor first: On Saturday …"},
+            {"id": "en-foundations-u6-weekend-e4", "kind": "written", "prompt": "Tell one thing you did last weekend.", "answers": ["I <verbed> last weekend", "Last weekend I <verbed>", "On Saturday I <verbed>"], "explain": "Past verb + time anchor."}
+          ]
         }
       ]
     }

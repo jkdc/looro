@@ -23,7 +23,9 @@ SWIFT_DEST = ROOT / 'apps/ios/Core/CoursesData.swift'
 REQUIRED_COURSE = ('id', 'languageID', 'title', 'subtitle', 'symbol', 'description')
 REQUIRED_UNIT = ('id', 'title', 'subtitle', 'level')
 REQUIRED_QUESTION = ('prompt', 'expected', 'focus', 'watch')
+REQUIRED_EXERCISE = ('id', 'kind', 'prompt', 'explain')
 REQUIRED_THEME = ('id', 'title', 'subtitle', 'symbol', 'category', 'situation', 'colorIndex')
+EXERCISE_KINDS = ('choice', 'gap', 'order', 'written')
 
 
 def q(text):
@@ -97,6 +99,30 @@ def validate(course, known_languages, seen_ids):
                     need(key in question and question[key], f'lesson {lesson["id"]}: question missing {key}.')
                 need(isinstance(question['expected'], list) and question['expected'],
                      f'lesson {lesson["id"]}: question needs expected answers.')
+            exercises = lesson.get('exercises', [])
+            need(len(exercises) >= 3, f'lesson {lesson["id"]} needs at least 3 exercises.')
+            for exercise in exercises:
+                for key in REQUIRED_EXERCISE:
+                    need(isinstance(exercise.get(key), str) and exercise[key].strip(),
+                         f'lesson {lesson["id"]}: exercise missing {key}.')
+                need(exercise['kind'] in EXERCISE_KINDS,
+                     f'lesson {lesson["id"]}: unknown exercise kind {exercise["kind"]!r}.')
+                need(isinstance(exercise['answers'], list) and exercise['answers'],
+                     f'lesson {lesson["id"]}: exercise {exercise["id"]!r} needs answers.')
+                options = exercise.get('options', [])
+                if exercise['kind'] == 'choice':
+                    need(len(options) >= 2 and all(isinstance(o, str) and o.strip() for o in options),
+                         f'lesson {lesson["id"]}: choice exercise {exercise["id"]!r} needs 2+ options.')
+                    need(all(a in options for a in exercise['answers']),
+                         f'lesson {lesson["id"]}: choice answers must be listed options.')
+                else:
+                    need(not options, f'lesson {lesson["id"]}: {exercise["kind"]} exercises carry no options.')
+                    if exercise['kind'] == 'gap':
+                        need('___' in exercise['prompt'],
+                             f'lesson {lesson["id"]}: gap exercise {exercise["id"]!r} needs a ___ blank.')
+                    if exercise['kind'] == 'order':
+                        need(len(exercise['answers']) == 1 and len(exercise['answers'][0].split()) >= 3,
+                             f'lesson {lesson["id"]}: order exercise {exercise["id"]!r} needs one 3+ word sentence.')
 
 
 def emit_swift(courses):
@@ -122,6 +148,11 @@ def emit_swift(courses):
                     + ', '.join(q(x) for x in qq['expected']) + '], focus: ' + q(qq['focus'])
                     + ', watch: ' + q(qq['watch']) + ')'
                     for qq in lesson['practice']['questions'])
+                exercises = ',\n                            '.join(
+                    f'Exercise(id: {q(e["id"])}, kind: {q(e["kind"])}, prompt: {q(e["prompt"])}, '
+                    f'options: [{", ".join(q(o) for o in e.get("options", []))}], '
+                    f'answers: [{", ".join(q(a) for a in e["answers"])}], explain: {q(e["explain"])})'
+                    for e in lesson['exercises'])
                 lesson_blocks.append(
                     '                    Lesson(id: ' + q(lesson['id']) + ', title: ' + q(lesson['title'])
                     + ', goal: ' + q(lesson['goal']) + ',\n'
@@ -130,7 +161,8 @@ def emit_swift(courses):
                     '                        expressions: [\n                            ' + expressions + '],\n'
                     '                        situation: ' + q(lesson['situation']) + ',\n'
                     '                        practice: LessonPractice(questions: [\n                                '
-                    + questions + ']))')
+                    + questions + ']),\n'
+                    '                        exercises: [\n                            ' + exercises + '])')
             unit_blocks.append(
                 '            CourseUnit(id: ' + q(unit['id']) + ', title: ' + q(unit['title'])
                 + ', subtitle: ' + q(unit['subtitle']) + ', level: ' + q(unit['level'])
@@ -167,12 +199,18 @@ def emit_kotlin(courses, package_line):
                     + ', '.join(q(x) for x in qq['expected']) + '), focus = ' + q(qq['focus'])
                     + ', watch = ' + q(qq['watch']) + ')'
                     for qq in lesson['practice']['questions'])
+                exercises = ', '.join(
+                    f'Exercise(id = {q(e["id"])}, kind = {q(e["kind"])}, prompt = {q(e["prompt"])}, '
+                    f'options = listOf({", ".join(q(o) for o in e.get("options", []))}), '
+                    f'answers = listOf({", ".join(q(a) for a in e["answers"])}), explain = {q(e["explain"])})'
+                    for e in lesson['exercises'])
                 lesson_blocks.append(
                     '            Lesson(id = ' + q(lesson['id']) + ', title = ' + q(lesson['title'])
                     + ', goal = ' + q(lesson['goal']) + ', intro = LessonIntro(explanation = listOf('
                     + explanation + '), examples = listOf(' + examples + ')), expressions = listOf('
                     + expressions + '), situation = ' + q(lesson['situation'])
-                    + ', practice = LessonPractice(questions = listOf(' + questions + ')))')
+                    + ', practice = LessonPractice(questions = listOf(' + questions + ')), exercises = listOf('
+                    + exercises + '))')
             unit_blocks.append(
                 '        CourseUnit(id = ' + q(unit['id']) + ', title = ' + q(unit['title'])
                 + ', subtitle = ' + q(unit['subtitle']) + ', level = ' + q(unit['level'])

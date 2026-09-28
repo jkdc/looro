@@ -9,12 +9,18 @@ data class Course(val id: String, val languageID: String, val title: String, val
 data class CourseUnit(val id: String, val title: String, val subtitle: String, val level: String,
                       val themes: List<ConversationTheme>, val lessons: List<Lesson>)
 data class Lesson(val id: String, val title: String, val goal: String, val intro: LessonIntro,
-                  val expressions: List<TargetExpression>, val situation: String, val practice: LessonPractice)
+                  val expressions: List<TargetExpression>, val situation: String, val practice: LessonPractice,
+                  val exercises: List<Exercise> = emptyList())
 data class LessonIntro(val explanation: List<String>, val examples: List<ExampleLine>)
 data class ExampleLine(val text: String, val meaning: String)
 data class TargetExpression(val text: String, val meaning: String, val note: String)
 data class LessonPractice(val questions: List<PracticeQuestion>)
 data class PracticeQuestion(val prompt: String, val expected: List<String>, val focus: String, val watch: String)
+
+/** Authored offline drill. `kind` is one of ExerciseEngine's choice/gap/order/written;
+    `options` is filled for choice only; `<name>` spans in answers accept any text. */
+data class Exercise(val id: String, val kind: String, val prompt: String, val options: List<String>,
+                    val answers: List<String>, val explain: String)
 
 object CourseRegistry {
     val all get() = CoursesData.all

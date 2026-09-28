@@ -53,16 +53,20 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
     val courses = CourseRegistry.forLanguage(vm.language.id)
     val progress = remember { vm.progressStats() to vm.completedLessonIDs() }
     var openLessonID by rememberSaveable { mutableStateOf<String?>(null) }
+    var exercisesOpen by rememberSaveable { mutableStateOf(false) }
     var recallOpen by rememberSaveable { mutableStateOf(false) }
     DisposableEffect(Unit) { onDispose { vm.stopLessonReading() } }
     val openLesson = openLessonID?.let { CourseRegistry.lesson(it) }
     if (recallOpen) {
         RecallScreen(vm, onBack = { recallOpen = false })
+    } else if (openLesson != null && exercisesOpen) {
+        ExerciseScreen(vm, openLesson, onBack = { exercisesOpen = false })
     } else if (openLesson != null) {
         LessonDetail(vm, openLesson,
             onBack = { openLessonID = null; vm.stopLessonReading() },
             onPractice = { id -> vm.stopLessonReading(); onPractice(id) },
-            onTheme = { theme -> vm.stopLessonReading(); vm.chooseTheme(theme); onThemeChosen() })
+            onTheme = { theme -> vm.stopLessonReading(); vm.chooseTheme(theme); onThemeChosen() },
+            onExercises = { exercisesOpen = true })
     } else if (courses.isEmpty()) {
         Column(Modifier.fillMaxSize().padding(horizontal = 24.dp), verticalArrangement = Arrangement.Center) {
             Text(stringResource(R.string.learn_empty_title), style = MaterialTheme.typography.titleMedium)
@@ -149,7 +153,8 @@ private fun UnitSection(vm: AppViewModel, unit: CourseUnit, doneLessonIDs: Set<S
 
 @Composable
 private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
-                         onPractice: (String) -> Unit, onTheme: (ConversationTheme) -> Unit) {
+                         onPractice: (String) -> Unit, onTheme: (ConversationTheme) -> Unit,
+                         onExercises: () -> Unit) {
     val unit = CourseRegistry.all.flatMap { it.units }.firstOrNull { u -> u.lessons.any { it.id == lesson.id } }
     LaunchedEffect(lesson.id, vm.lessonAudioOn) {
         // A live practice session is listening: reading the card aloud would feed
@@ -205,6 +210,15 @@ private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
             }
             item { DetailHeading(stringResource(R.string.lesson_situation_heading)) }
             item { Text(lesson.situation, style = MaterialTheme.typography.bodyLarge) }
+            if (lesson.exercises.isNotEmpty()) {
+                item { DetailHeading(stringResource(R.string.lesson_exercises_heading)) }
+                item {
+                    Button(onClick = onExercises, modifier = Modifier.fillMaxWidth().testTag("lesson-exercises"),
+                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {
+                        Text(stringResource(R.string.lesson_exercises_button))
+                    }
+                }
+            }
             unit?.let { u ->
                 item { DetailHeading(stringResource(R.string.lesson_themes_heading)) }
                 item {
