@@ -147,12 +147,13 @@ private fun ListeningDetail(vm: AppViewModel, item: ListeningText, onBack: () ->
                         }
                     }
                 } else {
+                    // Same stale-provider guard as ExerciseScreen: resolve inside the item.
                     item {
                         Text(stringResource(R.string.exercise_counter, index + 1, questions.size),
                             style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                     }
-                    val question = questions[index]
                     item {
+                        val question = questions.getOrNull(index) ?: return@item
                         ExerciseCard(question, answer, selected, verdict,
                             onAnswer = { answer = it.take(160) }, onSelect = { selected = it },
                             onCheck = {

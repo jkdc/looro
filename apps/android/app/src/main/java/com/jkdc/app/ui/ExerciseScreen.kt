@@ -90,8 +90,10 @@ fun ExerciseScreen(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit) {
                         }
                     }
                 } else {
-                    val exercise = exercises[index]
+                    // The item provider can re-run with a stale `finished` but a fresh
+                    // `index`; resolve the exercise inside the item and guard the bounds.
                     item {
+                        val exercise = exercises.getOrNull(index) ?: return@item
                         ExerciseCard(exercise, answer, selected, verdict,
                             onAnswer = { answer = it.take(120) }, onSelect = { selected = it },
                             onCheck = {
