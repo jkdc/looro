@@ -2,8 +2,13 @@ package com.jkdc.app.ui
 
 import android.os.Build
 
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -39,6 +44,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.focusRequester
@@ -247,10 +253,20 @@ fun TalkScreen(
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             RoundAction(AppSymbol.Captions, stringResource(R.string.talk_meaning_label),
                 selected = vm.archive.preferences.meaningVisible, onClick = vm::toggleMeaning)
-            // Beginner mode: the check takes the centre slot the mic vacated.
+            // Beginner mode: the check takes the centre slot the mic vacated. While
+            // the tutor works, waits or speaks, it pulses in a distinct tone and
+            // restores as soon as the learner's turn is back.
             if (vm.voiceManualTurn && vm.isRunning && vm.isVoiceSession) {
-                RoundAction(AppSymbol.Check, stringResource(R.string.talk_end_turn_button),
-                    enabled = !vm.working, onClick = vm::endVoiceTurn)
+                val turnPending = vm.working || replyPending || vm.outputLevel > 0.02
+                val pulse = rememberInfiniteTransition(label = "end-turn-pulse")
+                val pendingAlpha by pulse.animateFloat(
+                    initialValue = 1f, targetValue = 0.4f,
+                    animationSpec = infiniteRepeatable(tween(650), RepeatMode.Reverse), label = "end-turn-alpha",
+                )
+                RoundAction(AppSymbol.Check,
+                    stringResource(if (turnPending) R.string.talk_end_turn_pending else R.string.talk_end_turn_button),
+                    selected = turnPending, enabled = !vm.working, onClick = vm::endVoiceTurn,
+                    modifier = Modifier.alpha(if (turnPending) pendingAlpha else 1f))
             }
             RoundAction(if (vm.isRunning) AppSymbol.End else AppSymbol.Transcript,
                 stringResource(if (vm.isRunning) R.string.talk_end_label else R.string.talk_transcript_label),
@@ -285,8 +301,11 @@ fun TalkScreen(
         Spacer(Modifier.height(if (compact) 8.dp else 16.dp))
     }
     }
-    // Talk control: floats above the navigation bar with three readable modes —
-    // idle (orange mic), listening (green wave), paused (neutral, struck mic).
+    // Talk control: floats CENTRED above the navigation bar with three readable
+    // modes — idle (orange mic), listening (green wave), paused (neutral, struck
+    // mic). In beginner voice sessions it stays hidden: the centre check is the
+    // hero control there and the orb would cover it.
+    val beginnerSession = vm.voiceManualTurn && vm.isRunning && vm.isVoiceSession
     val talkActive = vm.state == "active" && vm.isVoiceSession
     val listening = talkActive && !vm.isMuted
     val micDescription = stringResource(when {
@@ -295,8 +314,8 @@ fun TalkScreen(
         else -> R.string.talk_mic_start_desc
     })
     val micEnabled = !busy && (vm.state != "active" || vm.isVoiceSession)
-    if (!(vm.state == "active" && !vm.isVoiceSession)) {
-        Box(Modifier.align(Alignment.BottomEnd).padding(end = 22.dp, bottom = 124.dp).size(64.dp)
+    if (!(vm.state == "active" && !vm.isVoiceSession) && !beginnerSession) {
+        Box(Modifier.align(Alignment.BottomCenter).padding(bottom = 124.dp).size(64.dp)
             .shadow(16.dp, CircleShape, ambientColor = AppColors.Orange.copy(alpha = .12f), spotColor = AppColors.Orange.copy(alpha = .2f))
             .background(when {
                 listening -> Brush.linearGradient(listOf(AppColors.Sage, AppColors.Sage))
@@ -352,8 +371,9 @@ private fun Modifier.passageScroll(state: ScrollState): Modifier = this
     .verticalScroll(state)
 
 @Composable
-private fun RoundAction(symbol: AppSymbol, label: String, selected: Boolean = false, enabled: Boolean = true, onClick: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+private fun RoundAction(symbol: AppSymbol, label: String, selected: Boolean = false, enabled: Boolean = true,
+                        modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         SoftRoundButton(symbol, label, onClick, tint = if (selected) AppColors.Butter.copy(alpha = .70f) else Color.White.copy(alpha = .72f),
             enabled = enabled, filledIcon = selected)
         Text(label, style = MaterialTheme.typography.labelSmall, color = AppColors.Ink.copy(alpha = if (enabled) 1f else .45f))

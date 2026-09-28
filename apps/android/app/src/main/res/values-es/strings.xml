@@ -293,6 +293,7 @@
     <string name="settings_voice_manual_turn">Modo principiante: botón para terminar de hablar</string>
     <string name="error_guest_secure_storage_unavailable">Palique no pudo restaurar los datos guardados de tu prueba gratuita. Tu historial de aprendizaje sigue disponible. Reinicia la aplicación para intentarlo de nuevo.</string>
     <string name="talk_end_turn_button">He terminado de hablar</string>
+    <string name="talk_end_turn_pending">Palique está respondiendo…</string>
     <string name="error_sign_in_finishing_startup">Palique aún está guardando tu conversación. Intenta iniciar sesión de nuevo dentro de unos instantes.</string>
     <!-- Courses and lessons -->
     <string name="learn_tab_title">Aprender</string>
