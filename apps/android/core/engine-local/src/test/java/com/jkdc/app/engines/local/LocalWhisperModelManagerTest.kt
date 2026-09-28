@@ -10,9 +10,10 @@ class LocalWhisperModelManagerTest {
 
     private fun manager() = LocalWhisperModelManager(tmp.root)
 
-    @Test fun `small is preferred over base when both are present`() {
+    @Test fun `base is preferred over small while decoding is the bottleneck`() {
+        // Reverted 2026-09-28: small measured 12-16 s STT per turn on a Pixel 9.
         tmp.newFile("ggml-base-q5_1.bin"); tmp.newFile("ggml-small-q5_1.bin")
-        assertEquals("ggml-small-q5_1.bin", manager().pick()!!.name)
+        assertEquals("ggml-base-q5_1.bin", manager().pick()!!.name)
     }
 
     @Test fun `multilingual base outranks english-only small`() {
@@ -34,15 +35,13 @@ class LocalWhisperModelManagerTest {
         assertEquals("ggml-small.bin", manager().pick()!!.name)
     }
 
-    @Test fun `rank orders families before english-only penalties`() {
-        assertTrue(LocalWhisperModelManager.preferenceRank("ggml-small-q5_1.bin") <
-            LocalWhisperModelManager.preferenceRank("ggml-base-q5_1.bin"))
+    @Test fun `rank keeps base ahead of small and english-only variants`() {
+        assertTrue(LocalWhisperModelManager.preferenceRank("ggml-base-q5_1.bin") <
+            LocalWhisperModelManager.preferenceRank("ggml-small-q5_1.bin"))
         assertTrue(LocalWhisperModelManager.preferenceRank("ggml-base-q5_1.bin") <
             LocalWhisperModelManager.preferenceRank("ggml-small.en.bin"))
-        // Deliberate: even the smallest multilingual model outranks a larger
-        // English-only one, because the app coaches many languages.
-        assertTrue(LocalWhisperModelManager.preferenceRank("ggml-tiny-q5_1.bin") <
-            LocalWhisperModelManager.preferenceRank("ggml-base.en-q5_1.bin"))
+        assertTrue(LocalWhisperModelManager.preferenceRank("ggml-base.en-q5_1.bin") <
+            LocalWhisperModelManager.preferenceRank("ggml-small.en-q5_1.bin"))
     }
 
     @Test fun `no models picks null`() {

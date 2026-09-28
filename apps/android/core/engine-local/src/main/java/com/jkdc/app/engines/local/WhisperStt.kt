@@ -78,8 +78,10 @@ class WhisperStt(
     }
 }
 
-/** Finds whisper .bin models on device; prefers the most accurate multilingual
- *  model available — small over base, multilingual over English-only. */
+/** Finds whisper .bin models on device; prefers multilingual base over
+ *  English-only. The more accurate small model measured 12-16 s of STT per
+ *  turn on a Pixel 9 (the 30 s encoder window dominates) — conversation-
+ *  killing — so base stays the default until decoding is fast enough. */
 class LocalWhisperModelManager(private val modelsDir: File) {
 
     fun models(): List<LocalModelFile> =
@@ -88,8 +90,7 @@ class LocalWhisperModelManager(private val modelsDir: File) {
             ?.sortedBy { it.name.lowercase() }
             ?: emptyList()
 
-    /** Prefers the largest multilingual family available (small beats base);
-     *  English-only variants are demoted below every multilingual model. */
+    /** Prefers multilingual base over English-only (the app coaches many languages). */
     fun pick(): LocalModelFile? =
         models().minWithOrNull(
             compareBy<LocalModelFile> { preferenceRank(it.name) }.thenByDescending { it.sizeBytes },
@@ -100,7 +101,7 @@ class LocalWhisperModelManager(private val modelsDir: File) {
     fun ensureDirs(): Boolean = modelsDir.mkdirs() || modelsDir.isDirectory
 
     companion object {
-        private val FAMILIES = listOf("small", "base", "tiny")
+        private val FAMILIES = listOf("base", "small", "tiny")
         /** Larger than the whole family span, so any multilingual model outranks
          *  any English-only one (the app coaches many languages). */
         private const val ENGLISH_ONLY_PENALTY = 100
