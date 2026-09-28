@@ -75,7 +75,9 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             onExercises = { exercisesOpen = true })
     } else if (courses.isEmpty()) {
         Column(Modifier.fillMaxSize().padding(horizontal = 24.dp), verticalArrangement = Arrangement.Center) {
-            Text(stringResource(R.string.learn_empty_title), style = MaterialTheme.typography.titleMedium)
+            LanguageSwitcher(vm)
+            Text(stringResource(R.string.learn_empty_title), style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 16.dp))
             Text(stringResource(R.string.learn_empty_body), color = AppColors.Secondary,
                 style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
         }

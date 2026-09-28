@@ -30,7 +30,8 @@ struct CoursesView: View {
                     onExercises: { exercisesOpen = true })
             } else if courses.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("No courses yet").font(.headline)
+                    LanguageSwitcher(coordinator: coordinator)
+                    Text("No courses yet").font(.headline).padding(.top, 8)
                     Text("Courses for this language are on the way. Meanwhile, Themes is the place to practise.")
                         .font(.subheadline).foregroundStyle(AppColor.secondary)
                 }.padding(24)
