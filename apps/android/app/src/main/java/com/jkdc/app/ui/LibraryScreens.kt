@@ -307,6 +307,8 @@ private fun WritingPracticeSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                             Button(onClick = {
                                 if (WordPractice.isCorrect(answer, word.form, word.lemma)) {
                                     correctCount++; index++; answer = ""
+                                    vm.wordPracticed(word)
+                                    if (index >= due.size) vm.wordsPracticeRoundCompleted(correctCount, due.size)
                                 } else missed = true
                             }, enabled = answer.isNotBlank(), modifier = Modifier.fillMaxWidth().testTag("practice-check"),
                                 colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {

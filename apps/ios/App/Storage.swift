@@ -68,6 +68,28 @@ import LearningCore
             lessons.append(LessonState(lessonID: lessonID, attempts: 1, lastSeen: Date.now.timeIntervalSince1970))
         }
         archive.lessons = lessons
+        recordCompletion(kind: ProgressEngine.lesson, itemID: lessonID)
+    }
+
+    /// One completed learning event in the ledger; keeps only the newest marks.
+    func recordCompletion(kind: String, itemID: String, bestScore: Int = 0) {
+        var marks = archive.completions ?? []
+        marks.append(CompletionMark(kind: kind, itemID: ProgressEngine.completionKey(itemID),
+                                    at: Date.now.timeIntervalSinceReferenceDate, bestScore: bestScore))
+        if marks.count > Archive.maximumCompletions { marks = Array(marks.suffix(Archive.maximumCompletions)) }
+        archive.completions = marks
+        persist()
+    }
+
+    var progressStats: ProgressStats {
+        ProgressEngine.stats(sessions: archive.sessions, lessons: archive.lessons ?? [],
+                             completions: archive.completions ?? [], courses: CourseRegistry.all)
+    }
+    var completedLessonIDs: Set<String> {
+        Set((archive.lessons ?? []).filter { $0.attempts > 0 }.map(\.lessonID))
+    }
+    func applyRemoteProgress(_ rows: [RemoteProgress]) {
+        archive = ProgressSync.mergeRemote(archive: archive, rows: rows)
         persist()
     }
     func hideWord(_ id: String) { archive.preferences.hiddenWords.append(id); persist() }

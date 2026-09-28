@@ -234,6 +234,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // Content-free usage telemetry (core/UsageMetrics.kt). Members' bearer first,
     // then the guest grant's; without either, events simply stay queued.
     private val usageClient = accountConfiguration?.let(::UsageClient)
+    private val progressClient = accountConfiguration?.let(::ProgressClient)
     private val usageReporter = UsageReporter(platform = "android", appVersion = appVersionName(),
         send = { batch, _ -> sendUsage(batch) })
 
@@ -257,9 +258,77 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun practiceRoundCompleted(correct: Int, total: Int) {
         if (total <= 0) return
+        recordCompletion(ProgressEngine.RECALL_ROUND, "recall")
         usageReporter.record(UsageEvents.PRACTICE_COMPLETED) {
             put("mode", "recall"); put("scoreBucket", UsageBuckets.score(correct * 100 / total))
         }
+    }
+
+    /** Words writing practice records each correct recall; the round reports telemetry. */
+    fun wordPracticed(word: WordState) { recordCompletion(ProgressEngine.WORDS_PRACTICE, word.id) }
+    fun wordsPracticeRoundCompleted(correct: Int, total: Int) {
+        if (total <= 0) return
+        usageReporter.record(UsageEvents.PRACTICE_COMPLETED) {
+            put("mode", "word"); put("scoreBucket", UsageBuckets.score(correct * 100 / total))
+        }
+    }
+
+    /** Appends one completion to the local ledger — the source of every progress metric.
+        The ledger keeps only the newest marks, so validation never rejects a save. */
+    fun recordCompletion(kind: String, rawItemID: String, bestScore: Int = 0) {
+        val mark = CompletionMark(kind, ProgressEngine.completionKey(rawItemID), nowSeconds(), bestScore)
+        val marks = ((archive.completions ?: mutableListOf()) + mark)
+            .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS)
+        archive = archive.copy(completions = marks.toMutableList())
+        persist()
+    }
+
+    fun progressStats(): ProgressStats = ProgressEngine.stats(archive.sessions, archive.lessons,
+        archive.completions.orEmpty(), CourseRegistry.all)
+
+    fun completedLessonIDs(): Set<String> = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+
+    /** Push/pull the progress ledger against the account (guests included). Failures
+        are silent: sync must never nag, the local ledger stays the source of truth. */
+    fun syncProgress() {
+        val client = progressClient ?: return
+        viewModelScope.launch {
+            try {
+                val session = memberSessions?.read() ?: guests?.availableSession() ?: return@launch
+                val remote = client.fetch(session)
+                if (remote != null && mergeRemoteProgress(remote)) persist()
+                client.send(session, progressBatchJson())
+            } catch (_: Exception) { }
+        }
+    }
+
+    private fun progressBatchJson(): String = buildJsonObject {
+        putJsonArray("entries") {
+            ProgressSync.entries(archive.lessons, archive.completions.orEmpty()).forEach { entry ->
+                addJsonObject {
+                    put("kind", entry.kind); put("itemID", entry.itemID); put("at", entry.atMilliseconds)
+                    put("attempts", entry.attempts); put("bestScore", entry.bestScore)
+                }
+            }
+        }
+    }.toString()
+
+    /** Returns true when the pull changed the archive. */
+    private fun mergeRemoteProgress(body: String): Boolean {
+        val rows = try { json.parseToJsonElement(body).jsonObject.getValue("progress").jsonArray
+            .map { it.jsonObject } } catch (_: Exception) { return false }
+        val merged = rows.mapNotNull { row ->
+            val kind = (row["kind"] as? JsonPrimitive)?.contentOrNull ?: return@mapNotNull null
+            val itemID = (row["itemID"] as? JsonPrimitive)?.contentOrNull ?: return@mapNotNull null
+            val firstAt = (row["firstAt"] as? JsonPrimitive)?.doubleOrNull ?: return@mapNotNull null
+            val lastAt = (row["lastAt"] as? JsonPrimitive)?.doubleOrNull ?: return@mapNotNull null
+            val attempts = (row["attempts"] as? JsonPrimitive)?.intOrNull ?: return@mapNotNull null
+            val bestScore = (row["bestScore"] as? JsonPrimitive)?.intOrNull ?: return@mapNotNull null
+            RemoteProgress(kind, itemID, firstAt, lastAt, attempts, bestScore)
+        }
+        if (merged.isEmpty()) return false
+        archive = ProgressSync.mergeRemote(archive, merged)
+        return true
     }
 
     private data class SaveRequest(val snapshot: LearningSnapshot, val completion: CompletableDeferred<Unit>? = null)
@@ -326,6 +395,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
                 usageReporter.record(UsageEvents.APP_OPEN)
                 viewModelScope.launch { usageReporter.flush() }
+                syncProgress()
                 recoverFinalAssessments()
                 refreshHostedReadiness()
                 if (accountChangeBlocked) reconcileHostedSessions()
@@ -399,6 +469,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 usageReporter.record(UsageEvents.ASSESSMENT_COMPLETED) {
                     put("passed", true); lessonCourseID(updated.lessonID)?.let { put("courseID", it) }
                 }
+                recordCompletion(ProgressEngine.ASSESSMENT, lessonCourseID(updated.lessonID) ?: "free", 100)
                 save(updated)
                 if (session?.id == updated.id) session = clone(updated)
                 persistAndWait()
@@ -1073,6 +1144,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         partialUserTranscript = null
         updateSession { it.endedAt = nowSeconds(); it.usageFinal = final }
         session?.takeIf { s -> s.isLesson }?.lessonID?.let(::recordLessonAttempt)
+        session?.takeIf { !it.isLesson }?.themeID?.takeIf { it.isNotBlank() }?.let { recordCompletion(ProgressEngine.CONVERSATION_THEME, it) }
         session?.let { ended ->
             val seconds = ((ended.endedAt ?: nowSeconds()) - ended.startedAt).toInt().coerceAtLeast(0)
             usageReporter.record(UsageEvents.SESSION_ENDED) {
@@ -1088,6 +1160,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         state = "ended"
         viewModelScope.launch { usageReporter.flush() }
+        syncProgress()
         session?.let {
             if (it.id in hostedSessionIDs) {
                 hostedBindings.ended(it.id); reconcileHostedSessions(); finishHostedAssessment(clone(it))
@@ -1102,7 +1175,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val i = lessons.indexOfFirst { it.lessonID == lessonID }
         if (i >= 0) lessons[i] = lessons[i].copy(attempts = lessons[i].attempts + 1, lastSeen = nowSeconds())
         else lessons += LessonState(lessonID = lessonID, attempts = 1, lastSeen = nowSeconds())
-        archive = archive.copy(lessons = lessons)
+        archive = archive.copy(lessons = lessons, completions = ((archive.completions ?: mutableListOf()) +
+            CompletionMark(ProgressEngine.LESSON, lessonID, nowSeconds(), 0))
+            .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS).toMutableList())
         CourseRegistry.lesson(lessonID)?.let { RecallEngine.seedFromLesson(archive, it, nowSeconds()) }
         persist()
     }

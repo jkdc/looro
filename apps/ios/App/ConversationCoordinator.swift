@@ -32,6 +32,24 @@ import LearningCore
     private func refreshUsageEnabled() {
         usageReporter.enabled = store.preferences.usageMetricsEnabled != false && managed != nil
     }
+
+    /// Push/pull the progress ledger against the account (guests included). Failures
+    /// are silent: sync must never nag, the local ledger stays the source of truth.
+    func syncProgress() {
+        guard let configuration = managed?.configuration,
+              let client = ProgressClient(configuration: configuration),
+              let bearer = try? ManagedAccountKeychain(scope: configuration.storageScope).load()?.accessToken
+        else { return }
+        Task { [weak self] in
+            guard let self else { return }
+            if let rows = await client.fetch(bearer: bearer), !rows.isEmpty {
+                self.store.applyRemoteProgress(rows)
+            }
+            _ = await client.send(ProgressSync.entries(lessons: self.store.archive.lessons ?? [],
+                                                       completions: self.store.archive.completions ?? []), bearer: bearer)
+        }
+    }
+
     private func lessonCourse(_ lessonID: String) -> Course? {
         CourseRegistry.forLanguage(language.id).first { course in
             course.units.contains { unit in unit.lessons.contains { $0.id == lessonID } }
@@ -121,6 +139,7 @@ import LearningCore
         refreshUsageEnabled()
         usageReporter.record(UsageEvents.appOpen)
         Task { await usageReporter.flush() }
+        syncProgress()
     }
     deinit {
         // deinit is nonisolated: observers is @ObservationIgnored so it stays a plain stored property
@@ -374,6 +393,7 @@ import LearningCore
         session?.endedAt = .now; session?.usageFinal = final
         save(); state = .ended
         if session?.isLesson == true, let lessonID = session?.lessonID { store.recordLessonAttempt(lessonID) }
+        else if let themeID = session?.themeID, !themeID.isEmpty { store.recordCompletion(kind: ProgressEngine.conversationTheme, itemID: themeID) }
         if let ended = session {
             var endedProps = [
                 "durationBucket": UsageProp.int(UsageBuckets.duration(seconds: Int(
@@ -389,6 +409,7 @@ import LearningCore
             }
         }
         Task { [weak self] in await self?.usageReporter.flush() }
+        syncProgress()
         if hostedSessionID != nil { closeHostedSession() }
         if let session { finalAssessments.submit(session) }
         scheduleTranslation(); scheduleReset()

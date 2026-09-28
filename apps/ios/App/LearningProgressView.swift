@@ -5,10 +5,11 @@ import LearningCore
 struct LearningProgressView: View {
     let store: LearningStore
     private var stats: LearningStats { LearningEngine.stats(sessions: store.sessions, learner: store.learner) }
+    private var progress: ProgressStats { store.progressStats }
 
     var body: some View {
         Form {
-            if stats.totalSessions == 0 {
+            if stats.totalSessions == 0 && progress.lessonsDone == 0 && progress.last30DaysActivities.allSatisfy({ $0 == 0 }) {
                 Section {
                     Text("Start a conversation to see your progress.")
                         .foregroundStyle(AppColor.secondary)
@@ -20,6 +21,15 @@ struct LearningProgressView: View {
                     row("Day streak", "\(stats.activeStreakDays)")
                     row("Longest streak", "\(stats.longestStreakDays)")
                 } header: { Text("Practice") }
+                if progress.lessonsTotal > 0 || progress.activeStreakDays > 0 {
+                    Section {
+                        if progress.lessonsTotal > 0 { row("Lessons completed", "\(progress.lessonsDone)/\(progress.lessonsTotal)") }
+                        if progress.themesPractised > 0 { row("Conversation themes", "\(progress.themesPractised)") }
+                        if progress.exercisesCompleted > 0 { row("Exercises completed", "\(progress.exercisesCompleted)") }
+                        if progress.listeningCompleted > 0 { row("Listening texts", "\(progress.listeningCompleted)") }
+                        row("Activity streak", "\(progress.activeStreakDays)")
+                    } header: { Text("Course progress") }
+                }
                 Section {
                     ForEach(0..<4, id: \.self) { bars in
                         row(["New", "Fragile", "Growing", "Steady"][bars], "\(stats.wordsByBars[bars])")
@@ -37,6 +47,20 @@ struct LearningProgressView: View {
                     }
                     .frame(height: 64)
                 } header: { Text("Last 14 days") }
+                if progress.last30DaysActivities.contains(where: { $0 > 0 }) {
+                    Section {
+                        HStack(alignment: .bottom, spacing: 2) {
+                            let peak = max(progress.last30DaysActivities.max() ?? 1, 1)
+                            ForEach(progress.last30DaysActivities.indices, id: \.self) { index in
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(Color.accentColor.opacity(index == progress.last30DaysActivities.count - 1 ? 1 : 0.35))
+                                    .frame(height: max(6, 52 * progress.last30DaysActivities[index] / peak))
+                                    .frame(maxHeight: 58, alignment: .bottom)
+                            }
+                        }
+                        .frame(height: 64)
+                    } header: { Text("Last 30 days") }
+                }
                 if stats.capabilityCount > 0 {
                     Section("Can-do milestones: \(stats.capabilityCount)") {
                         if let latest = stats.latestCapability { Text(latest) }

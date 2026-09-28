@@ -409,13 +409,14 @@ private fun SettingsHistorySheet(vm: AppViewModel, onDismiss: () -> Unit, onSele
 private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     // Computed once per open: a read-only projection of the local archive.
     val stats = remember { vm.stats() }
+    val progress = remember { vm.progressStats() }
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = AppColors.Cream,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxHeight(.9f)) {
             SettingsSheetHeader(stringResource(R.string.progress_section_title), onDismiss)
             LazyColumn(Modifier.weight(1f).testTag("settings-progress-list"), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                if (stats.totalSessions == 0) item {
+                if (stats.totalSessions == 0 && progress.lessonsDone == 0 && progress.last30DaysActivities.all { it == 0 }) item {
                     Text(stringResource(R.string.progress_empty), style = MaterialTheme.typography.bodyLarge, color = AppColors.Secondary,
                         modifier = Modifier.padding(16.dp))
                 } else {
@@ -430,6 +431,21 @@ private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                                     else stringResource(R.string.progress_time_m, minutes))
                                 ProgressRow(stringResource(R.string.progress_day_streak), stats.activeStreakDays.toString())
                                 ProgressRow(stringResource(R.string.progress_longest_streak), stats.longestStreakDays.toString())
+                            }
+                        }
+                    }
+                    if (progress.lessonsTotal > 0 || progress.activeStreakDays > 0) item {
+                        SettingsGroup(stringResource(R.string.progress_learning_heading)) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                if (progress.lessonsTotal > 0) ProgressRow(stringResource(R.string.progress_lessons_done),
+                                    "${progress.lessonsDone}/${progress.lessonsTotal}")
+                                if (progress.themesPractised > 0) ProgressRow(stringResource(R.string.progress_themes_practised),
+                                    progress.themesPractised.toString())
+                                if (progress.exercisesCompleted > 0) ProgressRow(stringResource(R.string.progress_exercises_completed),
+                                    progress.exercisesCompleted.toString())
+                                if (progress.listeningCompleted > 0) ProgressRow(stringResource(R.string.progress_listening_completed),
+                                    progress.listeningCompleted.toString())
+                                ProgressRow(stringResource(R.string.progress_activity_streak), progress.activeStreakDays.toString())
                             }
                         }
                     }
@@ -453,6 +469,19 @@ private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                                     Box(Modifier.weight(1f).height((6 + 52 * minutes / peak).dp)
                                         .background(if (index == stats.last14DaysMinutes.lastIndex) AppColors.Secondary
                                             else AppColors.Secondary.copy(alpha = .35f), RoundedCornerShape(3.dp)))
+                                }
+                            }
+                        }
+                    }
+                    if (progress.last30DaysActivities.any { it > 0 }) item {
+                        SettingsGroup(stringResource(R.string.progress_last30)) {
+                            val peak = (progress.last30DaysActivities.maxOrNull() ?: 0).coerceAtLeast(1)
+                            Row(Modifier.fillMaxWidth().padding(16.dp).height(64.dp),
+                                horizontalArrangement = Arrangement.spacedBy(2.dp), verticalAlignment = Alignment.Bottom) {
+                                progress.last30DaysActivities.forEachIndexed { index, count ->
+                                    Box(Modifier.weight(1f).height((6 + 52 * count / peak).dp)
+                                        .background(if (index == progress.last30DaysActivities.lastIndex) AppColors.Secondary
+                                            else AppColors.Secondary.copy(alpha = .35f), RoundedCornerShape(2.dp)))
                                 }
                             }
                         }

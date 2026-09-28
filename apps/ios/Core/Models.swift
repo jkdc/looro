@@ -200,11 +200,29 @@ public struct ExpressionState: Codable, Hashable, Sendable {
     }
 }
 
+/// One completed learning event in the append-only progress ledger. `kind` is the
+/// closed catalog shared with the server ledger (`user_progress.kind`); itemID is
+/// a content slug, or its hashed key when the raw item (a word lemma) is not one.
+/// Optional array so pre-ledger archives and backups keep decoding untouched.
+public struct CompletionMark: Codable, Hashable, Sendable {
+    public var kind: String
+    public var itemID: String
+    public var at: Double
+    public var bestScore: Int
+    public init(kind: String, itemID: String, at: Double, bestScore: Int = 0) {
+        self.kind = kind; self.itemID = itemID; self.at = at; self.bestScore = bestScore
+    }
+}
+
 public struct Archive: Codable, Sendable {
     public static let maximumEncodedBytes = 30_000_000
     private static let maximumSessions = 10_000
     private static let maximumLessons = 1_000
     private static let maximumExpressions = 2_000
+    /// Write sites keep the ledger to the newest marks with this cap so validation never rejects a save.
+    public static let maximumCompletions = 2_000
+    static let completionKinds: Set<String> = ["lesson", "conversation_theme", "exercise_set", "listening",
+                                               "recall_round", "words_practice", "assessment"]
     // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
     // Write sites clamp to these too, so a long model reply can never make a saved session fail validation here.
     public static let maximumTitleCharacters = 200
@@ -215,6 +233,7 @@ public struct Archive: Codable, Sendable {
     public var preferences = Preferences()
     public var lessons: [LessonState]?
     public var expressions: [ExpressionState]?
+    public var completions: [CompletionMark]?
     public init() {}
     public static func decode(_ data: Data) throws -> Archive {
         guard data.count <= maximumEncodedBytes else { throw ArchiveError.tooLarge }
@@ -276,10 +295,18 @@ public struct Archive: Codable, Sendable {
                 dueAt: max(current?.dueAt ?? 0, expression.dueAt))
         }
         candidate.expressions = expressionsByKey.isEmpty ? nil : expressionsByKey.values.sorted { $0.text < $1.text }
+        var marks = candidate.completions ?? []
+        var seenMarks = Set(marks.map(Self.markKey))
+        for mark in incoming.completions ?? [] where seenMarks.insert(Self.markKey(mark)).inserted {
+            marks.append(mark)
+        }
+        marks.sort { $0.at > $1.at }
+        candidate.completions = marks.isEmpty ? nil : Array(marks.prefix(Self.maximumCompletions))
         try candidate.validate()
         guard try candidate.encoded().count <= Self.maximumEncodedBytes else { throw ArchiveError.tooLarge }
         return candidate
     }
+    private static func markKey(_ mark: CompletionMark) -> String { "\(mark.kind)|\(mark.itemID)|\(mark.at)" }
     private func validate() throws {
         guard LanguageRegistry.module(for: preferences.learningLanguageID) != nil else { throw ArchiveError.unsupportedLanguage }
         guard Set(sessions.map(\.id)).count == sessions.count,
@@ -313,6 +340,12 @@ public struct Archive: Codable, Sendable {
                   ($0.source != "lesson" || !($0.lessonID ?? "").isEmpty) &&
                   (0...3).contains($0.bars) && (0...1_000_000).contains($0.attempts) &&
                   $0.lastSeen.isFinite && $0.dueAt.isFinite })
+        else { throw ArchiveError.invalid }
+        let completions = completions ?? []
+        guard completions.count <= Self.maximumCompletions,
+              Set(completions.map(Self.markKey)).count == completions.count,
+              completions.allSatisfy({ Self.completionKinds.contains($0.kind) && !$0.itemID.isEmpty && $0.itemID.count <= 200 &&
+                  $0.at.isFinite && (0...100).contains($0.bestScore) })
         else { throw ArchiveError.invalid }
     }
     /// Version 1 was Norwegian-only. Migration assigns that provenance once;

@@ -264,6 +264,13 @@
     <string name="progress_bar_steady">Steady</string>
     <string name="progress_last14">Last 14 days</string>
     <string name="progress_capabilities">Can-do milestones: %1$d</string>
+    <string name="progress_last30">Last 30 days</string>
+    <string name="progress_learning_heading">Course progress</string>
+    <string name="progress_lessons_done">Lessons completed</string>
+    <string name="progress_activity_streak">Activity streak</string>
+    <string name="progress_themes_practised">Conversation themes</string>
+    <string name="progress_exercises_completed">Exercises completed</string>
+    <string name="progress_listening_completed">Listening texts</string>
     <string name="practice_button_extra">Practise writing (extra — nothing due)</string>
     <string name="words_lookup_cta">Look up “%1$s” with AI</string>
     <string name="words_source_lesson">From a lesson</string>
@@ -302,6 +309,8 @@
     <string name="lesson_situation_heading">Practice situation</string>
     <string name="lesson_themes_heading">Extra conversation themes</string>
     <string name="lesson_practice_button">Practise speaking</string>
+    <string name="learn_course_percent">Completed: %1$d%%</string>
+    <string name="lesson_done">Done</string>
     <string name="common_back">Back</string>
     <string name="settings_conversation_provider">Conversation provider</string>
     <string name="engine_key_included">Included key</string>

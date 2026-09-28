@@ -264,6 +264,13 @@
     <string name="progress_bar_steady">Consolidadas</string>
     <string name="progress_last14">Últimos 14 días</string>
     <string name="progress_capabilities">Hitos de expresión: %1$d</string>
+    <string name="progress_last30">Últimos 30 días</string>
+    <string name="progress_learning_heading">Progreso del curso</string>
+    <string name="progress_lessons_done">Lecciones completadas</string>
+    <string name="progress_activity_streak">Días de actividad</string>
+    <string name="progress_themes_practised">Temas conversados</string>
+    <string name="progress_exercises_completed">Ejercicios completados</string>
+    <string name="progress_listening_completed">Textos de listening</string>
     <string name="practice_button_extra">Práctica de escritura (extra — nada pendiente)</string>
     <string name="words_lookup_cta">Consultar «%1$s» con IA</string>
     <string name="words_source_lesson">De una lección</string>
@@ -302,6 +309,8 @@
     <string name="lesson_situation_heading">Situación de práctica</string>
     <string name="lesson_themes_heading">Temas de conversación extra</string>
     <string name="lesson_practice_button">Practicar hablando</string>
+    <string name="learn_course_percent">Completado: %1$d%%</string>
+    <string name="lesson_done">HECHA</string>
     <string name="common_back">Atrás</string>
     <string name="settings_conversation_provider">Proveedor de conversación</string>
     <string name="engine_key_included">Clave incluida</string>

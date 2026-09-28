@@ -46,6 +46,10 @@ struct CoursesView: View {
                                     }
                                 }
                                 Text(course.description).font(.subheadline)
+                                if let progress = coordinator.store.progressStats.courses.first(where: { $0.courseID == course.id }),
+                                   progress.lessonsTotal > 0 {
+                                    Text("Completed: \(progress.percent)%").font(.caption2).foregroundStyle(AppColor.secondary)
+                                }
                                 ForEach(course.units) { unit in
                                     UnitSection(coordinator: coordinator, unit: unit) { openLessonID = $0; reader.stop() }
                                 }
@@ -66,7 +70,15 @@ private struct UnitSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(unit.title).font(.subheadline.weight(.semibold))
+            HStack {
+                Text(unit.title).font(.subheadline.weight(.semibold))
+                Spacer()
+                if !unit.lessons.isEmpty {
+                    let done = unit.lessons.filter { coordinator.store.completedLessonIDs.contains($0.id) }.count
+                    Text("Completed: \(done * 100 / unit.lessons.count)%")
+                        .font(.caption2).foregroundStyle(AppColor.secondary)
+                }
+            }
             ForEach(unit.lessons) { lesson in
                 Button { open(lesson.id) } label: {
                     HStack {
@@ -75,6 +87,9 @@ private struct UnitSection: View {
                             Text(lesson.goal).font(.caption).foregroundStyle(AppColor.secondary)
                         }
                         Spacer()
+                        if coordinator.store.completedLessonIDs.contains(lesson.id) {
+                            Image(systemName: "checkmark").font(.caption.weight(.semibold)).foregroundStyle(AppColor.secondary)
+                        }
                         Text(attemptLabel(lesson.id)).font(.caption2).foregroundStyle(AppColor.secondary)
                     }.padding(16).background(AppColor.cream, in: RoundedRectangle(cornerRadius: 18))
                 }.buttonStyle(.plain)

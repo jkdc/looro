@@ -25,6 +25,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +40,7 @@ import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.ConversationTheme
 import com.jkdc.app.core.Course
+import com.jkdc.app.core.CourseProgress
 import com.jkdc.app.core.CourseRegistry
 import com.jkdc.app.core.CourseUnit
 import com.jkdc.app.core.Lesson
@@ -49,6 +51,7 @@ import com.jkdc.app.core.Lesson
 @Composable
 fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: () -> Unit) {
     val courses = CourseRegistry.forLanguage(vm.language.id)
+    val progress = remember { vm.progressStats() to vm.completedLessonIDs() }
     var openLessonID by rememberSaveable { mutableStateOf<String?>(null) }
     var recallOpen by rememberSaveable { mutableStateOf(false) }
     DisposableEffect(Unit) { onDispose { vm.stopLessonReading() } }
@@ -85,14 +88,16 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                 }
             }
             items(courses.size, key = { courses[it].id }) { index ->
-                CourseCard(vm, courses[index], onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
+                CourseCard(vm, courses[index], progress.first.courses.firstOrNull { it.courseID == courses[index].id },
+                    progress.second, onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
             }
         }
     }
 }
 
 @Composable
-private fun CourseCard(vm: AppViewModel, course: Course, onOpen: (String) -> Unit) {
+private fun CourseCard(vm: AppViewModel, course: Course, courseProgress: CourseProgress?,
+                       doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
     Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -103,15 +108,25 @@ private fun CourseCard(vm: AppViewModel, course: Course, onOpen: (String) -> Uni
                 }
             }
             Text(course.description, style = MaterialTheme.typography.bodyMedium)
-            course.units.forEach { unit -> UnitSection(vm, unit, onOpen) }
+            courseProgress?.takeIf { it.lessonsTotal > 0 }?.let {
+                Text(stringResource(R.string.learn_course_percent, it.percent),
+                    style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+            }
+            course.units.forEach { unit -> UnitSection(vm, unit, doneLessonIDs, onOpen) }
         }
     }
 }
 
 @Composable
-private fun UnitSection(vm: AppViewModel, unit: CourseUnit, onOpen: (String) -> Unit) {
+private fun UnitSection(vm: AppViewModel, unit: CourseUnit, doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(unit.title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.semantics { heading() })
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(unit.title, style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.semantics { heading() }.weight(1f))
+            if (unit.lessons.isNotEmpty()) Text(stringResource(R.string.learn_course_percent,
+                unit.lessons.count { it.id in doneLessonIDs } * 100 / unit.lessons.size),
+                style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+        }
         unit.lessons.forEach { lesson ->
             val attempts = vm.lessonAttempts(lesson.id)
             Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { onOpen(lesson.id) }.testTag("lesson-" + lesson.id),
@@ -120,6 +135,9 @@ private fun UnitSection(vm: AppViewModel, unit: CourseUnit, onOpen: (String) -> 
                     Column(Modifier.weight(1f)) {
                         Text(lesson.title, style = MaterialTheme.typography.titleSmall)
                         Text(lesson.goal, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                    }
+                    if (lesson.id in doneLessonIDs) {
+                        AppIcon(AppSymbol.Check, Modifier.size(20.dp).padding(end = 6.dp), color = AppColors.Secondary)
                     }
                     Text(if (attempts == 0) stringResource(R.string.lesson_new) else stringResource(R.string.lesson_attempts, attempts),
                         style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)

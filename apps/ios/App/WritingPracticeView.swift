@@ -42,7 +42,9 @@ struct WritingPracticeView: View {
                     } else {
                         Button {
                             if WordPractice.isCorrect(answer: answer, form: word.form, lemma: word.lemma) {
-                                correctCount += 1; advance()
+                                correctCount += 1
+                                store.recordCompletion(kind: ProgressEngine.wordsPractice, itemID: word.id)
+                                advance()
                             } else { missed = true }
                         } label: {
                             Text("Check").frame(maxWidth: .infinity)

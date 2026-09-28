@@ -93,6 +93,15 @@ data class ExpressionState(
     var bars: Int = 0, var attempts: Int = 0, var lastSeen: Double = 0.0, var dueAt: Double = 0.0
 )
 
+/** One completed learning event in the append-only progress ledger. `kind` is the
+    closed catalog shared with the server ledger (`user_progress.kind`); itemID is
+    a content slug, or its hashed key when the raw item (a word lemma) is not one.
+    Nullable list so pre-ledger archives and backups keep decoding untouched. */
+@Serializable
+data class CompletionMark(
+    val kind: String, val itemID: String, val at: Double, val bestScore: Int = 0
+)
+
 @Serializable
 data class SessionRecord(
     val id: String = UUID.randomUUID().toString(), val languageID: String = LanguageRegistry.defaultID,
@@ -128,7 +137,7 @@ data class Preferences(
     back to 0.8 when the old "slower speech" flag is set, otherwise normal. */
 fun Preferences.effectiveSpeechRate(): Double =
     speechRate ?: if (slowSpeech == true) 0.8 else 1.0
-@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf())
+@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf(), var completions: MutableList<CompletionMark>? = null)
 class ArchiveError private constructor(val kind: Kind) : Exception() {
     enum class Kind { TOO_LARGE, UNSUPPORTED_VERSION, UNSUPPORTED_LANGUAGE, INVALID }
     companion object {
@@ -144,6 +153,9 @@ object ArchiveCodec {
     private const val MAXIMUM_SESSIONS = 10_000
     private const val MAXIMUM_LESSONS = 1_000
     private const val MAXIMUM_EXPRESSIONS = 2_000
+
+    /** Write sites keep the ledger to the newest marks with this cap so validation never rejects a save. */
+    const val MAXIMUM_COMPLETIONS = 2_000
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true; prettyPrint = true }
     fun encode(a: Archive): String = json.encodeToString(Archive.serializer(), a)
     fun decode(data: String): Archive {
@@ -184,6 +196,13 @@ object ArchiveCodec {
                 dueAt = maxOf(cur.dueAt, inc.dueAt))
         }
         out.expressions = byExpression.values.toMutableList()
+        val seen = (out.completions.orEmpty()).map { completionKey(it) }.toMutableSet()
+        val marks = (out.completions.orEmpty()).toMutableList()
+        incoming.completions.orEmpty().forEach { mark ->
+            if (seen.add(completionKey(mark))) marks += mark
+        }
+        marks.sortByDescending { it.at }
+        out.completions = if (marks.isEmpty()) null else marks.take(MAXIMUM_COMPLETIONS).toMutableList()
         validate(out); if (encode(out).toByteArray().size > MAXIMUM_ENCODED_BYTES) throw ArchiveError.TOO_LARGE
         return out
     }
@@ -249,5 +268,10 @@ object ArchiveCodec {
             a.expressions.any { it.text.isBlank() || it.text.length > 300 || it.meaning.isBlank() || it.meaning.length > 300 ||
                 it.source !in listOf("lesson", "lookup") || (it.source == "lesson" && (it.lessonID.isNullOrBlank() || it.lessonID.length > 200)) ||
                 it.bars !in 0..3 || it.attempts !in 0..1_000_000 || !it.lastSeen.isFinite() || !it.dueAt.isFinite() }) throw ArchiveError.INVALID
+        val completions = a.completions.orEmpty()
+        if (completions.size > MAXIMUM_COMPLETIONS || completions.map { completionKey(it) }.toSet().size != completions.size ||
+            completions.any { it.kind !in ProgressEngine.kinds || it.itemID.isBlank() || it.itemID.length > 200 ||
+                !it.at.isFinite() || it.bestScore !in 0..100 }) throw ArchiveError.INVALID
     }
+    private fun completionKey(mark: CompletionMark) = "${mark.kind}|${mark.itemID}|${mark.at}"
 }
