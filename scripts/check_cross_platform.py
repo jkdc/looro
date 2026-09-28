@@ -297,6 +297,18 @@ CONSTANTS = [
     ('idle_voice_s', 'scalar',
      ('apps/ios/App/ConversationCoordinator.swift', r'lastActivity\) > (\d[\d_]*)'),
      ('apps/android/app/src/main/java/com/jkdc/app/core/SessionLimits.kt', r'idleSeconds > (\d[\d_]*)')),
+    ('level_exercise_good', 'scalar',
+     ('apps/ios/Core/LevelEngine.swift', r'exerciseGood = (\d[\d_]*)'),
+     ('apps/android/app/src/main/java/com/jkdc/app/core/LevelEngine.kt', r'EXERCISE_GOOD = (\d[\d_]*)')),
+    ('level_exercise_mastered', 'scalar',
+     ('apps/ios/Core/LevelEngine.swift', r'exerciseMastered = (\d[\d_]*)'),
+     ('apps/android/app/src/main/java/com/jkdc/app/core/LevelEngine.kt', r'EXERCISE_MASTERED = (\d[\d_]*)')),
+    ('level_listening_medal', 'scalar',
+     ('apps/ios/Core/LevelEngine.swift', r'listeningMedal = (\d[\d_]*)'),
+     ('apps/android/app/src/main/java/com/jkdc/app/core/LevelEngine.kt', r'LISTENING_MEDAL = (\d[\d_]*)')),
+    ('level_ladder', 'list',
+     ('apps/ios/Core/LevelEngine.swift', r'let ladder = \[([\d., ]+)\]'),
+     ('apps/android/app/src/main/java/com/jkdc/app/core/LevelEngine.kt', r'val LADDER = listOf\(([\d., ]+)\)')),
 ]
 
 
