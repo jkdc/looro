@@ -67,7 +67,7 @@ if [ -f "$KEYS_LOCAL" ]; then
 else
   echo "  NOTE: $KEYS_LOCAL not found. Remote engines need their key at runtime;"
   echo "        copy api-keys.properties.example, fill in your key (ZHIPUAI_API_KEY=... /"
-  echo "        DEEPSEEK_API_KEY=...) and push: ${ADB} push $KEYS_LOCAL $KEYS_REMOTE"
+  echo "        DEEPSEEK_API_KEY=... / GROQ_API_KEY=... for cloud STT) and push: ${ADB} push $KEYS_LOCAL $KEYS_REMOTE"
 fi
 
 bold "[4/4] Launching"
