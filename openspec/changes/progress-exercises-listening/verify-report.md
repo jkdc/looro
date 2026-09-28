@@ -46,12 +46,32 @@ run in this session; anything not run is listed as a pending gate, not claimed.
 - **macOS gate**: `swift test` for the mirrored core (ProgressEngine,
   ExerciseEngine, ListeningData, Archive changes) + iOS app build via
   xcodebuild — required before any release, same policy as all prior changes.
-- **Device gate**: manual run on Joaquín's Pixel 9 (tabs, TTS playback of
-  listening texts on-device, exercise players).
-- Reused-trait note: `wordsPracticeItems` counts distinct words, and
-  restored `exercise_set`/`listening` completions after reinstall come back
-  as one mark per item — per-day history does not survive a reinstall (v1
-  limit, documented in design.md).
+- **Device gate**: final pass on Joaquín's Pixel 9 (real microphone, voice and
+  user history). The emulator stays running with the test state.
+
+## Manual emulator testing (2026-09-28, added after F4)
+
+Full walkthrough of all three features on Medium_Phone_API_36 with
+`make deploy ENGINE=glm`; screenshots in `e2e-evidence/manual-2026-09-28/`.
+
+- **Found**: a real crash — advancing past the last exercise crashed with
+  `ArrayIndexOutOfBoundsException` (the LazyColumn item provider re-ran with a
+  fresh `index` but a stale `finished`, evaluating `exercises[4]` of 4). Fixed
+  in `6266e18` by resolving the exercise inside the item with a bounds guard
+  (same latent pattern fixed in ListeningScreen; the iOS mirror was already
+  safe). Suite re-run green (447/447) after the fix; zero FATAL/ANR in logcat
+  afterwards.
+- Verified end-to-end: Learn percentages + HECHA badge with real archived
+  data; all four exercise kinds completed with verdicts/explanations and the
+  4-of-4 summary; progress sheet counting Exercises completed 1 and Activity
+  streak 1; Listening TTS playback (Playing… state, Stop enabled), 4 written
+  questions answered, transcript toggle, Best 100% in the list; full
+  persistence after force-stop + relaunch (Exercises 1, Listening texts 1).
+- Not covered manually: Words writing practice and Recall rounds (this
+  emulator archive has no learner words — they need a real AI conversation);
+  live progress sync from the app (managed origin points off-box; the HTTP+DB
+  layer is covered by the integration suite, which boots the real server
+  against real Postgres).
 
 ## Position change
 
