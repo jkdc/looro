@@ -161,10 +161,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-    private val transport: VoiceTransport = if (BuildConfig.CONVERSATION_ENGINE == "openai") {
-        LiveTransport(application, viewModelScope)
-    } else {
-        LocalVoiceTransport(
+    private val localTransport = LocalVoiceTransport(
             context = application,
             scope = viewModelScope,
             openOnStart = true,
@@ -188,7 +185,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             )
             cloudSttSelection = { archive.preferences.sttEngine?.takeUnless { it == "local" } }
         }
-    }
+    private val liveTransport by lazy { LiveTransport(application, viewModelScope) }
+
+    /** True while a voice turn is being processed (STT → LLM → TTS): the
+        end-turn button shows its pending state for exactly this window. */
+    val turnInFlight: Boolean get() = localTransport.turnInFlight
+
+    private val transport: VoiceTransport
+        get() = if (BuildConfig.CONVERSATION_ENGINE == "openai") liveTransport else localTransport
     private val providerStore = ConversationProviderStore(application)
     private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
     private val accountConfiguration = ManagedAccountConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN, BuildConfig.GOOGLE_SERVER_CLIENT_ID)

@@ -34,7 +34,9 @@ Java_com_jkdc_app_engines_local_JniWhisperRuntime_init(JNIEnv * env, jclass, jst
     const char * path = env->GetStringUTFChars(jModelPath, nullptr);
     whisper_context_params cparams = whisper_context_default_params();
     cparams.use_gpu = false;   // CPU-only: stable and measurable.
-    cparams.flash_attn = false;
+    // Flash attention measurably speeds up the decoder on mobile CPU; the V
+    // cache stays f16 even for quantized models, so this is safe.
+    cparams.flash_attn = true;
     whisper_log_set(whisper_log_to_logcat, nullptr);
     whisper_context * ctx = whisper_init_from_file_with_params(path, cparams);
     env->ReleaseStringUTFChars(jModelPath, path);

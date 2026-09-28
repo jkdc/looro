@@ -253,19 +253,21 @@ fun TalkScreen(
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             RoundAction(AppSymbol.Captions, stringResource(R.string.talk_meaning_label),
                 selected = vm.archive.preferences.meaningVisible, onClick = vm::toggleMeaning)
-            // Beginner mode: the check takes the centre slot the mic vacated. While
-            // the tutor works, waits or speaks, it pulses in a distinct tone and
-            // restores as soon as the learner's turn is back.
+            // Beginner mode: the check takes the centre slot the mic vacated. The
+            // moment it is pressed it switches to a clearly distinct pending
+            // state (sage background, filled icon, pulsing, replying label) and
+            // holds it until the whole turn — STT → tutor → speech — completes,
+            // then restores for the next turn.
             if (vm.voiceManualTurn && vm.isRunning && vm.isVoiceSession) {
-                val turnPending = vm.working || replyPending || vm.outputLevel > 0.02
+                val turnPending = vm.turnInFlight || vm.working || replyPending
                 val pulse = rememberInfiniteTransition(label = "end-turn-pulse")
                 val pendingAlpha by pulse.animateFloat(
-                    initialValue = 1f, targetValue = 0.4f,
+                    initialValue = 1f, targetValue = 0.55f,
                     animationSpec = infiniteRepeatable(tween(650), RepeatMode.Reverse), label = "end-turn-alpha",
                 )
                 RoundAction(AppSymbol.Check,
                     stringResource(if (turnPending) R.string.talk_end_turn_pending else R.string.talk_end_turn_button),
-                    selected = turnPending, enabled = !vm.working, onClick = vm::endVoiceTurn,
+                    selected = turnPending, pending = turnPending, enabled = !vm.working, onClick = vm::endVoiceTurn,
                     modifier = Modifier.alpha(if (turnPending) pendingAlpha else 1f))
             }
             RoundAction(if (vm.isRunning) AppSymbol.End else AppSymbol.Transcript,
@@ -372,9 +374,13 @@ private fun Modifier.passageScroll(state: ScrollState): Modifier = this
 
 @Composable
 private fun RoundAction(symbol: AppSymbol, label: String, selected: Boolean = false, enabled: Boolean = true,
-                        modifier: Modifier = Modifier, onClick: () -> Unit) {
+                        pending: Boolean = false, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        SoftRoundButton(symbol, label, onClick, tint = if (selected) AppColors.Butter.copy(alpha = .70f) else Color.White.copy(alpha = .72f),
+        SoftRoundButton(symbol, label, onClick, tint = when {
+                pending -> AppColors.Sage
+                selected -> AppColors.Butter.copy(alpha = .70f)
+                else -> Color.White.copy(alpha = .72f)
+            },
             enabled = enabled, filledIcon = selected)
         Text(label, style = MaterialTheme.typography.labelSmall, color = AppColors.Ink.copy(alpha = if (enabled) 1f else .45f))
     }

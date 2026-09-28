@@ -103,6 +103,15 @@ class LocalVoiceTransport(
     @Volatile private var turnEndRequested = false
 
     /**
+     * True from the moment an end-turn is requested (or a turn auto-closes)
+     * until the whole turn pipeline — STT → LLM → TTS — completes. The UI uses
+     * it to give the end-turn button immediate feedback: the transcript itself
+     * only lands seconds after the press, and the button must react at once.
+     */
+    @Volatile var turnInFlight = false
+        private set
+
+    /**
      * Cloud transcription providers by id ("openai", "groq", …) for FINAL turns
      * when the user selects one in settings. Read at transcription time through
      * [cloudSttSelection], so changing the setting applies on the next turn
@@ -245,22 +254,45 @@ class LocalVoiceTransport(
                 var partialClockMs = 0
                 var bargeMs = 0
                 var lastUsageEmit = System.currentTimeMillis()
+                // Manual-mode armed-press state: a press that lands while the
+                // buffer holds no voice stays armed and captures the NEXT
+                // spoken phrase whole, closing when the phrase trails into
+                // silence — not on its first voiced frame.
+                var voicedInBuffer = 0
+                var armedPhraseEnd = false
+                var armedTrailingMs = 0
                 // Close and process whatever the current turn buffered (shared
                 // by the manual end request and the manual-mode safety cap).
                 suspend fun endBufferedTurn(reason: String) {
                     val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                     speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
+                    voicedInBuffer = 0; armedPhraseEnd = false; armedTrailingMs = 0
                     lastPartialClockMs = 0
                     log(reason)
-                    if (samples.isNotEmpty()) processTurn(samples)
+                    if (samples.isNotEmpty()) {
+                        turnInFlight = true
+                        try {
+                            processTurn(samples)
+                        } finally {
+                            turnInFlight = false
+                        }
+                    }
                 }
                 while (coroutineContext.isActive && running) {
                     if (frameDelayMs > 0) delay(frameDelayMs)
 
-                    // Manual mode: the user asked to close and process the turn now.
-                    if (manualTurn && turnEndRequested) {
+                    // Manual mode: "He terminado" closes the turn immediately —
+                    // but only when the buffer already carries VOICE (the user
+                    // spoke, then pressed). A press during silence stays ARMED:
+                    // never consumed by quiet air, and the next spoken phrase
+                    // is captured whole (see the armed-phrase logic below), so
+                    // a press is never lost to silence nor truncates the
+                    // speech that follows it.
+                    if (manualTurn && turnEndRequested && voicedInBuffer > 0 && !armedPhraseEnd) {
                         turnEndRequested = false
-                        endBufferedTurn("manual end of turn")
+                        endOfSpeechAtMs = System.currentTimeMillis()
+                        endBufferedTurn("manual end of turn (voice buffered)")
+                        lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                         continue
                     }
 
@@ -275,6 +307,7 @@ class LocalVoiceTransport(
 
                     if (muted) { // suppressed: drop audio, keep levels alive
                         speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
+                        voicedInBuffer = 0; armedPhraseEnd = false; armedTrailingMs = 0
                         continue
                     }
                     if (speaking) {
@@ -292,8 +325,10 @@ class LocalVoiceTransport(
                     }
                     bargeMs = 0
 
+                    val voiced = rms >= END_TURN_RMS
                     speech.add(frame)
                     turnMs += frameMs
+                    if (voiced) voicedInBuffer += 1
 
                     if (!manualTurn) {
                         // Auto VAD: noise-floor-tracked with hysteresis.
@@ -318,18 +353,45 @@ class LocalVoiceTransport(
                             val samples = speech.flatMap { it.asSequence() }.toList().toFloatArray()
                             speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0; partialClockMs = 0
                             lastPartialClockMs = 0
-                            processTurn(samples)
+                            turnInFlight = true
+                            try {
+                                processTurn(samples)
+                            } finally {
+                                turnInFlight = false
+                            }
                             lastUsageEmit = maybeEmitUsage(lastUsageEmit)
                             continue
                         }
                         partialClockMs = speechMs
                     } else {
                         partialClockMs = turnMs
+                        if (turnEndRequested && voiced && voicedInBuffer == 1 && !armedPhraseEnd) {
+                            // An armed press catching the phrase start: hold the
+                            // request and close when the phrase trails into
+                            // silence, so the whole post-press speech is
+                            // captured instead of a single voiced frame.
+                            armedPhraseEnd = true
+                            armedTrailingMs = 0
+                        }
+                        if (armedPhraseEnd) {
+                            if (voiced) armedTrailingMs = 0 else armedTrailingMs += frameMs
+                            if (armedTrailingMs >= ARMED_PHRASE_END_MS) {
+                                turnEndRequested = false
+                                endOfSpeechAtMs = System.currentTimeMillis()
+                                endBufferedTurn("manual end of turn (armed phrase ended)")
+                                lastUsageEmit = maybeEmitUsage(lastUsageEmit)
+                                continue
+                            }
+                        }
                         if (turnMs >= MAX_TURN_MS) {
-                            // Manual mode never auto-processes: idle noise rode the
-                            // cap and looped the conversation. Reset the window —
-                            // the end-turn button is what closes a manual turn.
+                            if (turnEndRequested) turnEndRequested = false
+                            armedPhraseEnd = false; armedTrailingMs = 0
+                            // Manual mode never auto-processes (real speech
+                            // included): idle noise rode the cap and looped
+                            // the conversation. Reset the window — the
+                            // end-turn button is what closes a manual turn.
                             speech = ArrayList(); speechMs = 0; trailingSilenceMs = 0; turnMs = 0
+                            voicedInBuffer = 0
                             lastPartialClockMs = 0
                             log("manual turn window reset (idle) — press the button to end a turn")
                         }
@@ -688,11 +750,17 @@ class LocalVoiceTransport(
     companion object {
         const val SPEECH_START_MS = 300
         const val MAX_TURN_MS = 20_000
+        /** Voice energy an armed "He terminado" press waits for before closing. */
+        const val END_TURN_RMS = 0.02f
         /** Whisper's cost scales with input length; a capped turn is mostly
             trailing noise, so STT never sees more than this trailing window. */
         private const val MAX_STT_INPUT_MS = 18_000
         /** Manual-mode safety: even a real open turn must eventually close. */
         private const val MANUAL_SAFETY_TURN_MS = 60_000
+        /** Armed press: silence this long after the post-press phrase's voice
+            closes the turn — the phrase is captured whole, not on its first
+            voiced frame (which trims to <250 ms and would be discarded). */
+        private const val ARMED_PHRASE_END_MS = 700
 
         /** System-TTS speech rates for the learner-facing pace preference. */
         const val TTS_NORMAL_RATE = 1.0f

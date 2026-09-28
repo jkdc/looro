@@ -44,14 +44,16 @@ class LocalVoiceTransportTest {
      * express and this fake could not disprove.
      */
     private class FakeFrameSource : AudioFrameSource {
-        val queue = ArrayDeque<FloatArray>()
+        // Concurrent queue: the test thread feeds frames while the transport's
+        // IO loop drains them — an unsynchronized ArrayDeque corrupts here.
+        val queue = java.util.concurrent.ConcurrentLinkedQueue<FloatArray>()
         var started = false
         var stopped = false
         var paused = false
         var resumeCount = 0
         var drainedFrames = 0
         override fun start(): Boolean { started = true; return true }
-        override fun readFrame(): FloatArray? { if (paused) return null; return queue.removeFirstOrNull() }
+        override fun readFrame(): FloatArray? { if (paused) return null; return queue.poll() }
         override fun stop() { stopped = true }
         override fun pause() { paused = true }
         override fun drainStale() { drainedFrames += queue.size; queue.clear() }
@@ -494,39 +496,75 @@ class LocalVoiceTransportTest {
     }
 
     @Test
-    fun `manual mode holds the turn until endTurn is requested`() {
+    fun `turnInFlight spans the manual turn from endTurn until the reply is spoken`() {
         val source = FakeFrameSource()
         val engine = FakeTeachingClient()
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        engine.gate = gate
         val tts = FakeTts()
-        val events = mutableListOf<JsonObject>()
         val transport = LocalVoiceTransport(
             null as android.content.Context?, CoroutineScope(Dispatchers.IO),
             stt(createTempDir(), FakeWhisperRuntime().apply { transcription = "Habla lenta" }), engine, tts,
             frameSourceProvider = { source }, frameDelayMs = 0,
         )
         transport.manualTurn = true
-        transport.onEvent = { events.add(it) }
+        transport.onEvent = { }
+        runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
+        assertFalse("idle: no turn in flight", transport.turnInFlight)
+
+        // Buffer the voiced speech first (deterministic), then press "He
+        // terminado": the close fires at once and in-flight holds through the
+        // gated reply, clearing once the reply is spoken.
+        repeat(4) { source.queue.add(speech()) }
+        Thread.sleep(300)
+        transport.endTurn()
+        val inFlightDeadline = System.currentTimeMillis() + 5_000
+        while (!transport.turnInFlight && System.currentTimeMillis() < inFlightDeadline) Thread.sleep(25)
+        assertTrue("in flight during the gated reply", transport.turnInFlight)
+        assertTrue("no reply spoken yet", tts.spoken.isEmpty())
+
+        gate.complete(Unit)
+        val spokenDeadline = System.currentTimeMillis() + 5_000
+        while (tts.spoken.isEmpty() && System.currentTimeMillis() < spokenDeadline) Thread.sleep(25)
+        val doneDeadline = System.currentTimeMillis() + 5_000
+        while (transport.turnInFlight && System.currentTimeMillis() < doneDeadline) Thread.sleep(25)
+        assertFalse("in flight must clear after the reply is spoken", transport.turnInFlight)
+        transport.close()
+    }
+
+    @Test
+    fun `a press during silence stays armed and captures the next spoken phrase`() {
+        val source = FakeFrameSource()
+        val engine = FakeTeachingClient()
+        val tts = FakeTts()
+        val transport = LocalVoiceTransport(
+            null as android.content.Context?, CoroutineScope(Dispatchers.IO),
+            stt(createTempDir(), FakeWhisperRuntime().apply { transcription = "Al final hablo" }), engine, tts,
+            frameSourceProvider = { source }, frameDelayMs = 0,
+        )
+        transport.manualTurn = true
+        transport.onEvent = { }
         runBlocking { transport.connect(FakeProvider(), "i", language = "en") }
 
-        // habla + silencio muy por encima del umbral automático: NO debe cerrar el turno
-        repeat(4) { source.queue.add(speech()) }
-        repeat(30) { source.queue.add(silence()) }
-        Thread.sleep(700)
-        assertEquals(0, engine.received.size)
-        // Provisional partials may stream, but the stored transcript waits for "He terminado".
-        assertTrue(events.none { (it["type"]?.jsonPrimitive?.content ?: "") == "session.input_transcript.delta" })
-
-        // el usuario pulsa "He terminado"
+        // A press with NOTHING voiced buffered stays armed: silence frames never
+        // satisfy it, and the next spoken phrase is captured WHOLE — closed when
+        // the phrase trails into silence, never on its first voiced frame
+        // (which would trim to <250 ms and be discarded, losing the press).
         transport.endTurn()
+        repeat(10) { source.queue.add(silence()) }
+        Thread.sleep(400)
+        assertEquals("silence must not produce a turn", 0, engine.received.size)
+        repeat(4) { source.queue.add(speech()) }
+        Thread.sleep(400)
+        assertEquals("the phrase start must not close an armed turn", 0, engine.received.size)
+        repeat(8) { source.queue.add(silence()) }
         val deadline = System.currentTimeMillis() + 5_000
         while (engine.received.isEmpty() && System.currentTimeMillis() < deadline) Thread.sleep(25)
-
-        assertEquals(1, engine.received.size)
-        assertEquals("Habla lenta", engine.received[0].second)
+        assertEquals("the phrase end (trailing silence) closes the armed turn", 1, engine.received.size)
         val ttsDeadline = System.currentTimeMillis() + 5_000
         while (tts.spoken.isEmpty() && System.currentTimeMillis() < ttsDeadline) Thread.sleep(25)
         assertEquals("Nice! Tell me more about it.", tts.spoken.single())
-        assertTrue(events.any { (it["type"]?.jsonPrimitive?.content ?: "") == "session.input_transcript.delta" })
+        transport.close()
     }
 
     @Test
