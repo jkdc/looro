@@ -131,3 +131,32 @@ STT per turn.
   during silence produces NO phantom reply (armed, nothing processed); mic orb
   centred at x=540/1080 in auto mode.
 - Suite: 469 unit tests, 0 failures.
+
+## PR-review round (2026-09-28, 4 toolkit agents — fixed in 09cd976)
+
+Reviewed cfc3a79..61c5fc6 with code-reviewer, silent-failure-hunter,
+pr-test-analyzer and comment-analyzer. Fixed:
+
+- turnInFlight was not Compose-observable (plain getter over a @Volatile):
+  the end-turn pending state lagged until STT finished on voice turns. Now
+  mirrored through onTurnInFlight → turnInFlightUi (mutableStateOf).
+- voicedInBuffer/armedPhraseEnd not reset by the auto-VAD close: a live
+  mid-session switch to beginner mode could close a silence-only buffer with
+  a stale count and lose the press. Reset added.
+- Dead code: MANUAL_SAFETY_TURN_MS / manualSafety could never fire (computed
+  inside !manualTurn with manualTurn &&). Removed; the 20 s idle cap bounds
+  manual windows.
+- Cloud STT fallback now logs at warn with the exception class; partial STT
+  and commentary TTS rethrow CancellationException and surface failures;
+  ApiKeysStore logs unreadable-file errors; CloudStt got a 20 s callTimeout
+  and includes the payload in malformed-response errors.
+- 7 new transport tests (cloud selection / fallback / unknown id / armed
+  turnInFlight / stale press expiry / mute survival / one-press-one-phrase).
+  Suite: 476 unit tests, 0 failures.
+
+Accepted, not fixed (documented decisions): the armed press has no pending
+visual while it waits for the post-press phrase (deliberate — nothing is
+processing yet); a press expires after 20 s of silence (cap contract); the
+sttCloud→sttEngine preference rename downgrades pre-rename opt-ins (dev-only
+branch, no released users); Groq STT still needs the key via adb push — no
+in-app key entry for STT providers yet.
