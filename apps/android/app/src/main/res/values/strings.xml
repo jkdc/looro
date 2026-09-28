@@ -294,6 +294,10 @@
     <string name="error_guest_secure_storage_unavailable">Palique couldn\'t restore your saved trial details. Your learning history is still available. Restart the app to try again.</string>
     <string name="talk_end_turn_button">I\'m done speaking</string>
     <string name="talk_end_turn_pending">Palique is replying…</string>
+    <string name="settings_stt_title">Voice-to-text</string>
+    <string name="settings_stt_device">On device</string>
+    <string name="settings_stt_cloud">Cloud</string>
+    <string name="settings_stt_hint">How your speech is transcribed. Cloud uses your OpenAI key and automatically falls back to on-device if unavailable. Applies from the next turn.</string>
     <string name="error_sign_in_finishing_startup">Palique is still saving your conversation. Please try signing in again shortly.</string>
     <!-- Courses and lessons -->
     <string name="learn_tab_title">Learn</string>

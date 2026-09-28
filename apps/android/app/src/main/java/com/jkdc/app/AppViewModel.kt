@@ -175,7 +175,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             ),
             engine = conversationEngine,
             tts = com.jkdc.app.engines.local.LocalTtsEngine(application),
-        )
+        ).apply {
+            // Cloud STT (OpenAI-compatible) selected in settings; resolved per
+            // turn from live preferences, so toggling applies mid-session.
+            cloudStt = com.jkdc.app.network.CloudStt(apiKey = { credentials.read() })
+            cloudSttEnabled = { archive.preferences.sttCloud == true }
+        }
     }
     private val providerStore = ConversationProviderStore(application)
     private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)

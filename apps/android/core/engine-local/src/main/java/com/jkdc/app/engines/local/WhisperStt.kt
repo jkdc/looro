@@ -76,7 +76,8 @@ class WhisperStt(
     }
 }
 
-/** Finds whisper .bin models on device; prefers multilingual base over English-only. */
+/** Finds whisper .bin models on device; prefers the most accurate multilingual
+ *  model available — small over base, multilingual over English-only. */
 class LocalWhisperModelManager(private val modelsDir: File) {
 
     fun models(): List<LocalModelFile> =
@@ -85,7 +86,8 @@ class LocalWhisperModelManager(private val modelsDir: File) {
             ?.sortedBy { it.name.lowercase() }
             ?: emptyList()
 
-    /** Prefers multilingual base over English-only (the app coaches many languages). */
+    /** Prefers the largest multilingual family available (small beats base);
+     *  English-only variants are demoted below every multilingual model. */
     fun pick(): LocalModelFile? =
         models().minWithOrNull(
             compareBy<LocalModelFile> { preferenceRank(it.name) }.thenByDescending { it.sizeBytes },
@@ -96,16 +98,16 @@ class LocalWhisperModelManager(private val modelsDir: File) {
     fun ensureDirs(): Boolean = modelsDir.mkdirs() || modelsDir.isDirectory
 
     companion object {
-        private val PREFERENCE = listOf(
-            "base-q5_1", "base", "small-q5_1", "small", "base.en-q5_1", "base.en", "small.en",
-        )
+        private val FAMILIES = listOf("small", "base", "tiny")
+        /** Larger than the whole family span, so any multilingual model outranks
+         *  any English-only one (the app coaches many languages). */
+        private const val ENGLISH_ONLY_PENALTY = 100
 
         fun preferenceRank(fileName: String): Int {
             val lower = fileName.lowercase()
-            PREFERENCE.forEachIndexed { index, key ->
-                if (lower.contains(key)) return index
-            }
-            return PREFERENCE.size
+            val family = FAMILIES.indexOfFirst { lower.contains(it) }.let { if (it >= 0) it else FAMILIES.size }
+            val englishOnly = lower.contains(".en")
+            return family * 10 + if (englishOnly) ENGLISH_ONLY_PENALTY else 0
         }
     }
 }

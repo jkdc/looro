@@ -5,6 +5,7 @@ import com.jkdc.app.BuildConfig
 import com.jkdc.app.engines.local.AudioFrameSource
 import com.jkdc.app.engines.local.SpeechSink
 import com.jkdc.app.engines.local.MicRecorder
+import com.jkdc.app.engines.local.SttResult
 import com.jkdc.app.engines.local.WhisperStt
 import com.jkdc.app.network.LiveSessionProvider
 import com.jkdc.app.network.TeachingClient
@@ -100,6 +101,15 @@ class LocalVoiceTransport(
      */
     @Volatile var manualTurn = false
     @Volatile private var turnEndRequested = false
+
+    /**
+     * Cloud transcription for FINAL turns when the user selects it in settings.
+     * Read at transcription time through [cloudSttEnabled], so changing the
+     * setting applies on the next turn without restarting the session.
+     * Failures (no key, offline, provider error) fall back to the local pass.
+     */
+    var cloudStt: com.jkdc.app.network.CloudStt? = null
+    @Volatile var cloudSttEnabled: () -> Boolean = { false }
 
     /** Requested by the UI ("He terminado"): close and process the current turn. */
     fun endTurn() {
@@ -415,6 +425,28 @@ class LocalVoiceTransport(
         }
     }
 
+    /**
+     * Final turn transcription: the cloud service when the user enabled it and
+     * it is available, always the local whisper pass on failure or when
+     * disabled. Partial transcriptions never go to the cloud — they run every
+     * couple of seconds and are provisional UI text only.
+     */
+    private suspend fun transcribeTurn(samples: FloatArray, language: String): SttResult {
+        val cloud = cloudStt
+        if (cloud != null && cloudSttEnabled()) {
+            try {
+                val result = cloud.transcribe(samples, language)
+                logContent("cloud STT done in ${result.processingMs} ms: \"${result.text.take(80)}\"")
+                return result
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (e: Exception) {
+                log("cloud STT failed, falling back to local: ${e.message}")
+            }
+        }
+        return stt.transcribe(samples, language)
+    }
+
     private suspend fun processTurn(samples: FloatArray) {
         partialJob?.cancel()
         partialJob = null
@@ -438,7 +470,7 @@ class LocalVoiceTransport(
         // Note: the whisper JNI call cannot be interrupted on cancellation; the
         // recorder stop in stopLoop() is what protects the microphone here.
         val stt = try {
-            stt.transcribe(capped, sessionLanguage)
+            transcribeTurn(capped, sessionLanguage)
         } catch (cancelled: kotlinx.coroutines.CancellationException) {
             throw cancelled
         } catch (e: Exception) {

@@ -21,9 +21,16 @@ SRC="$ROOT/local-models"
 DEST="/sdcard/Android/data/$PKG/files/models"
 SERIAL="${SERIAL:-}"
 
-# Multilingual Whisper (STT leg). Downloaded on first run only.
-WHISPER_NAME="ggml-base-q5_1.bin"
-WHISPER_URL="https://huggingface.co/ggerganov/whisper.cpp/resolve/main/$WHISPER_NAME"
+# Multilingual Whisper models (STT leg). Downloaded on first run only.
+# The app prefers small (much better WER on accented / non-English speech);
+# base stays as the lightweight fallback so first runs work before the
+# bigger download lands.
+WHISPER_NAMES=("ggml-small-q5_1.bin" "ggml-base-q5_1.bin")
+WHISPER_SIZES=("180 MB" "60 MB")
+WHISPER_URLS=(
+  "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin"
+  "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base-q5_1.bin"
+)
 
 command -v adb >/dev/null || { echo "adb not found"; exit 1; }
 DEVICE="$(bash "$(dirname "$0")/adb-device.sh" "$SERIAL")"
@@ -32,10 +39,13 @@ ADB="adb -s $DEVICE"
 mkdir -p "$SRC"
 ${ADB} shell mkdir -p "$DEST/whisper"
 
-if [ ! -f "$SRC/$WHISPER_NAME" ]; then
-  echo "[down] $WHISPER_NAME (multilingual Whisper, ~60 MB)"
-  curl -L --fail --retry 3 -o "$SRC/$WHISPER_NAME" "$WHISPER_URL"
-fi
+for i in "${!WHISPER_NAMES[@]}"; do
+  name="${WHISPER_NAMES[$i]}"
+  if [ ! -f "$SRC/$name" ]; then
+    echo "[down] $name (multilingual Whisper, ~${WHISPER_SIZES[$i]})"
+    curl -L --fail --retry 3 -o "$SRC/$name" "${WHISPER_URLS[$i]}"
+  fi
+done
 
 pushed=0
 push_one() { # $1 local file, $2 remote subdir
@@ -54,7 +64,9 @@ push_one() { # $1 local file, $2 remote subdir
   fi
 }
 
-# STT model
-push_one "$SRC/$WHISPER_NAME" "whisper"
+# STT models (small preferred by the app, base fallback)
+for f in "$SRC"/ggml-small-q5_1.bin "$SRC"/ggml-base-q5_1.bin; do
+  [ -f "$f" ] && push_one "$f" "whisper"
+done
 echo "Done ($pushed pushed). Restart the app to load models:"
 echo "  $ADB shell am force-stop $PKG"

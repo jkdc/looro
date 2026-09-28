@@ -83,7 +83,11 @@ Java_com_jkdc_app_engines_local_JniWhisperRuntime_transcribe(
     params.suppress_blank   = true;
     params.suppress_nst     = true;
     params.temperature      = 0.0f;
-    params.greedy.best_of   = 1;
+    // Beam search over greedy(best_of=1): markedly better WER on accented/
+    // non-English speech for a small latency cost (~10-20% per turn).
+    params.strategy             = WHISPER_SAMPLING_BEAM_SEARCH;
+    params.beam_search.beam_size = 5;
+    params.beam_search.best_of  = 5;
 
     const int rc = whisper_full(ctx, params, samples, numSamples);
     env->ReleaseFloatArrayElements(jSamples, samples, JNI_ABORT);
