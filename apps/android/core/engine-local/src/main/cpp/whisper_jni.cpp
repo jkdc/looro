@@ -83,10 +83,11 @@ Java_com_jkdc_app_engines_local_JniWhisperRuntime_transcribe(
     params.suppress_blank   = true;
     params.suppress_nst     = true;
     params.temperature      = 0.0f;
-    // Beam search over greedy(best_of=1): markedly better WER on accented/
-    // non-English speech for a small latency cost (~10-20% per turn).
-    params.strategy             = WHISPER_SAMPLING_BEAM_SEARCH;
-    params.beam_search.beam_size = 5;
+    // Greedy on purpose: beam search 5 on the small model measured 12-16 s per
+    // turn on a Pixel 9 (3-5x the base+greedy baseline) — conversation-killing.
+    // Greedy keeps the accuracy win of the larger model at usable speed.
+    params.strategy             = WHISPER_SAMPLING_GREEDY;
+    params.greedy.best_of       = 1;
 
     const int rc = whisper_full(ctx, params, samples, numSamples);
     env->ReleaseFloatArrayElements(jSamples, samples, JNI_ABORT);
