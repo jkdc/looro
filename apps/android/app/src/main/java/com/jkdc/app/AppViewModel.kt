@@ -176,10 +176,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             engine = conversationEngine,
             tts = com.jkdc.app.engines.local.LocalTtsEngine(application),
         ).apply {
-            // Cloud STT (OpenAI-compatible) selected in settings; resolved per
-            // turn from live preferences, so toggling applies mid-session.
-            cloudStt = com.jkdc.app.network.CloudStt(apiKey = { credentials.read() })
-            cloudSttEnabled = { archive.preferences.sttCloud == true }
+            // Cloud STT providers (OpenAI-compatible); the settings row selects
+            // one per turn from live preferences — toggling applies mid-session.
+            cloudStts = mapOf(
+                "openai" to com.jkdc.app.network.CloudStt(apiKey = { credentials.read() }),
+                "groq" to com.jkdc.app.network.CloudStt(
+                    endpoint = "https://api.groq.com/openai/v1/audio/transcriptions",
+                    model = "whisper-large-v3-turbo",
+                    apiKey = { com.jkdc.app.core.engines.ApiKeysStore.get(application, "GROQ_API_KEY") },
+                ),
+            )
+            cloudSttSelection = { archive.preferences.sttEngine?.takeUnless { it == "local" } }
         }
     }
     private val providerStore = ConversationProviderStore(application)

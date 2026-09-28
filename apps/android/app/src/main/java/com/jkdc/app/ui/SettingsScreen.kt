@@ -150,13 +150,19 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                     // On-device voice controls: inert in the WebRTC build, where
                     // turn-taking is server-side — never render them there.
                     if (BuildConfig.CONVERSATION_ENGINE != "openai") {
+                        val sttValue = prefs.sttEngine ?: "local"
                         SettingsChoiceRow(stringResource(R.string.settings_stt_title),
-                            stringResource(if (prefs.sttCloud == true) R.string.settings_stt_cloud else R.string.settings_stt_device),
-                            if (prefs.sttCloud == true) "cloud" else "device",
-                            listOf("device" to stringResource(R.string.settings_stt_device),
-                                "cloud" to stringResource(R.string.settings_stt_cloud)),
+                            stringResource(when (sttValue) {
+                                "openai" -> R.string.settings_stt_openai
+                                "groq" -> R.string.settings_stt_groq
+                                else -> R.string.settings_stt_device
+                            }),
+                            sttValue,
+                            listOf("local" to stringResource(R.string.settings_stt_device),
+                                "openai" to stringResource(R.string.settings_stt_openai),
+                                "groq" to stringResource(R.string.settings_stt_groq)),
                             "settings-stt-engine", !vm.isRunning) { id ->
-                            vm.updatePreferences(prefs.copy(sttCloud = if (id == "cloud") true else null))
+                            vm.updatePreferences(prefs.copy(sttEngine = if (id == "local") null else id))
                         }
                         Text(stringResource(R.string.settings_stt_hint),
                             style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary,

@@ -296,8 +296,9 @@
     <string name="talk_end_turn_pending">Palique está respondiendo…</string>
     <string name="settings_stt_title">Voz a texto</string>
     <string name="settings_stt_device">En el dispositivo</string>
-    <string name="settings_stt_cloud">En la nube</string>
-    <string name="settings_stt_hint">Cómo se transcribe tu voz. La nube usa tu clave de OpenAI y vuelve automáticamente al modo local si no está disponible. Se aplica desde el siguiente turno.</string>
+    <string name="settings_stt_openai">Nube · OpenAI</string>
+    <string name="settings_stt_groq">Nube · Groq</string>
+    <string name="settings_stt_hint">Cómo se transcribe tu voz. La nube es más rápida y precisa, usa una clave de API (OpenAI, o Groq con tier gratuito) y vuelve al modo local si no está disponible. Se aplica desde el siguiente turno.</string>
     <string name="error_sign_in_finishing_startup">Palique aún está guardando tu conversación. Intenta iniciar sesión de nuevo dentro de unos instantes.</string>
     <!-- Courses and lessons -->
     <string name="learn_tab_title">Aprender</string>

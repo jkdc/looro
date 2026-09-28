@@ -103,13 +103,15 @@ class LocalVoiceTransport(
     @Volatile private var turnEndRequested = false
 
     /**
-     * Cloud transcription for FINAL turns when the user selects it in settings.
-     * Read at transcription time through [cloudSttEnabled], so changing the
-     * setting applies on the next turn without restarting the session.
-     * Failures (no key, offline, provider error) fall back to the local pass.
+     * Cloud transcription providers by id ("openai", "groq", …) for FINAL turns
+     * when the user selects one in settings. Read at transcription time through
+     * [cloudSttSelection], so changing the setting applies on the next turn
+     * without restarting the session. Failures (no key, offline, provider
+     * error) fall back to the local pass. Partial transcriptions never go to
+     * the cloud — they run every couple of seconds and are provisional UI text.
      */
-    var cloudStt: com.jkdc.app.network.CloudStt? = null
-    @Volatile var cloudSttEnabled: () -> Boolean = { false }
+    var cloudStts: Map<String, com.jkdc.app.network.CloudStt> = emptyMap()
+    @Volatile var cloudSttSelection: () -> String? = { null }
 
     /** Requested by the UI ("He terminado"): close and process the current turn. */
     fun endTurn() {
@@ -432,16 +434,17 @@ class LocalVoiceTransport(
      * couple of seconds and are provisional UI text only.
      */
     private suspend fun transcribeTurn(samples: FloatArray, language: String): SttResult {
-        val cloud = cloudStt
-        if (cloud != null && cloudSttEnabled()) {
+        val selected = cloudSttSelection()
+        val cloud = selected?.let { cloudStts[it] }
+        if (cloud != null) {
             try {
                 val result = cloud.transcribe(samples, language)
-                logContent("cloud STT done in ${result.processingMs} ms: \"${result.text.take(80)}\"")
+                logContent("cloud[$selected] STT done in ${result.processingMs} ms: \"${result.text.take(80)}\"")
                 return result
             } catch (cancelled: kotlinx.coroutines.CancellationException) {
                 throw cancelled
             } catch (e: Exception) {
-                log("cloud STT failed, falling back to local: ${e.message}")
+                log("cloud[$selected] STT failed, falling back to local: ${e.message}")
             }
         }
         return stt.transcribe(samples, language)
