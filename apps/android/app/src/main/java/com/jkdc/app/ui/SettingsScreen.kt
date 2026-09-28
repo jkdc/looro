@@ -410,6 +410,8 @@ private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     // Computed once per open: a read-only projection of the local archive.
     val stats = remember { vm.stats() }
     val progress = remember { vm.progressStats() }
+    val levelStats = remember { vm.currentLevelStats() }
+    val medals = remember { vm.listeningMedals() }
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = AppColors.Cream,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxHeight(.9f)) {
@@ -437,14 +439,21 @@ private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                     if (progress.lessonsTotal > 0 || progress.activeStreakDays > 0) item {
                         SettingsGroup(stringResource(R.string.progress_learning_heading)) {
                             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                if (progress.lessonsTotal > 0) ProgressRow(stringResource(R.string.progress_lessons_done),
-                                    "${progress.lessonsDone}/${progress.lessonsTotal}")
+                                if (progress.lessonsTotal > 0) {
+                                    levelStats?.let {
+                                        ProgressRow(stringResource(R.string.progress_level),
+                                            stringResource(R.string.learn_level_label, it.level, levelTitle(it.level)))
+                                    }
+                                    ProgressRow(stringResource(R.string.progress_lessons_done),
+                                        "${progress.lessonsDone}/${progress.lessonsTotal}")
+                                }
                                 if (progress.themesPractised > 0) ProgressRow(stringResource(R.string.progress_themes_practised),
                                     progress.themesPractised.toString())
                                 if (progress.exercisesCompleted > 0) ProgressRow(stringResource(R.string.progress_exercises_completed),
                                     progress.exercisesCompleted.toString())
                                 if (progress.listeningCompleted > 0) ProgressRow(stringResource(R.string.progress_listening_completed),
                                     progress.listeningCompleted.toString())
+                                if (medals > 0) ProgressRow(stringResource(R.string.progress_listening_medals), medals.toString())
                                 ProgressRow(stringResource(R.string.progress_activity_streak), progress.activeStreakDays.toString())
                             }
                         }

@@ -1,13 +1,16 @@
 package com.jkdc.app.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,6 +47,7 @@ import com.jkdc.app.core.CourseProgress
 import com.jkdc.app.core.CourseRegistry
 import com.jkdc.app.core.CourseUnit
 import com.jkdc.app.core.Lesson
+import com.jkdc.app.core.LevelStats
 
 /** The Learn tab: courses for the current language, their lessons, and the
     study card with optional read-aloud. Practice flows through the same
@@ -102,6 +106,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
 @Composable
 private fun CourseCard(vm: AppViewModel, course: Course, courseProgress: CourseProgress?,
                        doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
+    val level = remember(course.id) { vm.levelStats(course) }
     Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -116,13 +121,39 @@ private fun CourseCard(vm: AppViewModel, course: Course, courseProgress: CourseP
                 Text(stringResource(R.string.learn_course_percent, it.percent),
                     style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
             }
-            course.units.forEach { unit -> UnitSection(vm, unit, doneLessonIDs, onOpen) }
+            LevelCard(level)
+            course.units.forEach { unit -> UnitSection(vm, unit, level, doneLessonIDs, onOpen) }
         }
     }
 }
 
 @Composable
-private fun UnitSection(vm: AppViewModel, unit: CourseUnit, doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
+private fun LevelCard(stats: LevelStats) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Surface(shape = CircleShape, color = AppColors.Sage, modifier = Modifier.size(46.dp)) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(stats.level.toString(), style = MaterialTheme.typography.titleMedium)
+                }
+            }
+            Column {
+                Text(stringResource(R.string.learn_level_label, stats.level, levelTitle(stats.level)),
+                    style = MaterialTheme.typography.titleMedium)
+                Text(if (stats.pointsToNext == null) stringResource(R.string.learn_level_top)
+                    else stringResource(R.string.learn_level_next, stats.pointsToNext, stats.level + 1),
+                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+            }
+        }
+        Box(Modifier.fillMaxWidth().height(6.dp).background(AppColors.Cream, RoundedCornerShape(3.dp))) {
+            Box(Modifier.fillMaxWidth(stats.progressInLevel.coerceIn(0.0, 1.0).toFloat())
+                .height(6.dp).background(AppColors.Secondary, RoundedCornerShape(3.dp)))
+        }
+    }
+}
+
+@Composable
+private fun UnitSection(vm: AppViewModel, unit: CourseUnit, level: LevelStats,
+                        doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(unit.title, style = MaterialTheme.typography.titleSmall,
@@ -133,6 +164,7 @@ private fun UnitSection(vm: AppViewModel, unit: CourseUnit, doneLessonIDs: Set<S
         }
         unit.lessons.forEach { lesson ->
             val attempts = vm.lessonAttempts(lesson.id)
+            val tier = level.mastery.firstOrNull { it.lessonID == lesson.id }?.tier ?: 0
             Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { onOpen(lesson.id) }.testTag("lesson-" + lesson.id),
                 shape = RoundedCornerShape(18.dp), color = AppColors.Cream) {
                 Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -140,13 +172,21 @@ private fun UnitSection(vm: AppViewModel, unit: CourseUnit, doneLessonIDs: Set<S
                         Text(lesson.title, style = MaterialTheme.typography.titleSmall)
                         Text(lesson.goal, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
                     }
-                    if (lesson.id in doneLessonIDs) {
-                        AppIcon(AppSymbol.Check, Modifier.size(20.dp).padding(end = 6.dp), color = AppColors.Secondary)
-                    }
+                    if (tier > 0) LessonStars(tier)
                     Text(if (attempts == 0) stringResource(R.string.lesson_new) else stringResource(R.string.lesson_attempts, attempts),
                         style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun LessonStars(tier: Int) {
+    Row(horizontalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.padding(end = 8.dp)) {
+        repeat(3) { index ->
+            AppIcon(AppSymbol.Star, Modifier.size(15.dp), color = if (index < tier) AppColors.Secondary
+                else AppColors.Secondary.copy(alpha = .25f), filled = index < tier)
         }
     }
 }

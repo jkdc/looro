@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.ExerciseEngine
+import com.jkdc.app.core.LevelEngine
 import com.jkdc.app.core.ListeningRegistry
 import com.jkdc.app.core.ListeningText
 
@@ -58,6 +59,7 @@ fun ListeningScreen(vm: AppViewModel) {
             items(texts.size, key = { texts[it].id }) { index ->
                 val text = texts[index]
                 val best = vm.listeningScore(text.id)
+                val medal = LevelEngine.listeningMedal(best)
                 Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { openTextID = text.id }.testTag("listening-" + text.id),
                     shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
                     Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -67,6 +69,7 @@ fun ListeningScreen(vm: AppViewModel) {
                             Text(stringResource(R.string.listening_level, text.level, text.questions.size),
                                 style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
                         }
+                        if (medal > 0) AppIcon(AppSymbol.Star, Modifier.size(16.dp), color = AppColors.Secondary, filled = true)
                         Text(if (best == null) stringResource(R.string.lesson_new)
                             else stringResource(R.string.listening_score, best),
                             style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)

@@ -18,7 +18,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 enum class AppSymbol { Wave, Themes, Words, Settings, Mic, MicOff, Captions, Transcript, End,
-    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music, Pause, Play, Headphones }
+    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music, Pause, Play, Headphones, Star }
 
 /** Original, consistently weighted artwork; no platform-dependent text glyphs. */
 @Composable
@@ -95,6 +95,10 @@ fun AppIcon(symbol: AppSymbol, modifier: Modifier = Modifier, color: Color = App
                     cubicTo(17f,2.5f,21f,6.5f,21f,12f); lineTo(21f,14f) }
                     drawRoundRect(color,Offset(3f,14f),Size(5f,7.5f),CornerRadius(2.2f),style=stroke)
                     drawRoundRect(color,Offset(16f,14f),Size(5f,7.5f),CornerRadius(2.2f),style=stroke) }
+                AppSymbol.Star -> { val star = Path().apply { moveTo(12f,3.2f); lineTo(14.7f,8.7f); lineTo(20.8f,9.6f)
+                    lineTo(16.4f,13.8f); lineTo(17.5f,19.9f); lineTo(12f,17f); lineTo(6.5f,19.9f); lineTo(7.6f,13.8f)
+                    lineTo(3.2f,9.6f); lineTo(9.3f,8.7f); close() }
+                    if (filled) drawPath(star, color) else drawPath(star, color, style = stroke) }
             }
         }
     }

@@ -299,6 +299,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun completedLessonIDs(): Set<String> = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
 
+    /** Derived engagement level for a course — a pure projection of the ledger. */
+    fun levelStats(course: Course): LevelStats = LevelEngine.stats(course, archive.lessons, archive.completions.orEmpty())
+    fun currentLevelStats(): LevelStats? = CourseRegistry.forLanguage(language.id).firstOrNull()?.let { levelStats(it) }
+    fun listeningMedals(): Int = ListeningRegistry.forLanguage(language.id)
+        .count { LevelEngine.listeningMedal(listeningScore(it.id)) >= 1 }
+
     /** Push/pull the progress ledger against the account (guests included). Failures
         are silent: sync must never nag, the local ledger stays the source of truth. */
     fun syncProgress() {
