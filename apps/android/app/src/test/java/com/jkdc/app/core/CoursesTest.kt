@@ -33,6 +33,9 @@ class CoursesTest {
     @Test fun `each supported course language carries exactly one foundations`() {
         for (language in listOf("es", "fr", "it", "de", "pt")) {
             assertEquals(1, CourseRegistry.forLanguage(language).size)
+            val course = CourseRegistry.forLanguage(language).first()
+            assertEquals(2, course.units.size)
+            assertEquals(6, course.units.sumOf { it.lessons.size })
         }
         assertTrue(CourseRegistry.forLanguage("nb").isEmpty())
         assertTrue(CourseRegistry.forLanguage("zh").isEmpty())

@@ -584,6 +584,524 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-foundations-u2",
+      "title": "La mia giornata",
+      "subtitle": "Routine e progetti",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mattina-folle",
+          "title": "Mattina folle",
+          "subtitle": "Contro la sveglia",
+          "symbol": "sunrise",
+          "category": "Course",
+          "situation": "Racconti la tua mattina minuto per minuto: ore, abitudini e dimenticanze.",
+          "colorIndex": 0
+        },
+        {
+          "id": "sabato-insieme",
+          "title": "Sabato insieme",
+          "subtitle": "Cosa facciamo?",
+          "symbol": "figure.walk",
+          "category": "Course",
+          "situation": "Piani per sabato con un amico: mercato, ora e luogo dell'appuntamento.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u2-routine",
+          "title": "La mia routine",
+          "goal": "Raccontare la giornata al presente con le ore.",
+          "intro": {
+            "explanation": [
+              "Il presente racconta le abitudini: « Mi sveglio alle sette. Faccio colazione. Esco alle otto. »",
+              "I verbi riflessivi portano mi/ti/si : « mi sveglio, mi faccio la doccia, mi addormento » — il pronombre fa parte del verbo.",
+              "Le ore: « alle sette », « alle sette e mezza ». Con a : « alle otto esco »."
+            ],
+            "examples": [
+              {
+                "text": "Mi sveglio alle sette.",
+                "meaning": "Il primo verbo."
+              },
+              {
+                "text": "Faccio colazione con un caffè.",
+                "meaning": "La colazione come verbo."
+              },
+              {
+                "text": "Mi faccio la doccia ed esco alle otto.",
+                "meaning": "Due azioni di fila."
+              },
+              {
+                "text": "La domenica mi sveglio tardi.",
+                "meaning": "L'abitudine del weekend."
+              },
+              {
+                "text": "Mi addormento verso le undici.",
+                "meaning": "La sera, con verso."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Mi sveglio alle …",
+              "meaning": "La sveglia.",
+              "note": "mi + sveglio: ins separabili."
+            },
+            {
+              "text": "Faccio colazione",
+              "meaning": "La colazione.",
+              "note": "fare colazione = desayunar."
+            },
+            {
+              "text": "Esco di casa alle …",
+              "meaning": "L'uscita.",
+              "note": "uscire di + luogo."
+            },
+            {
+              "text": "La domenica, …",
+              "meaning": "L'abitudine.",
+              "note": "la + giorno = ogni domenica."
+            },
+            {
+              "text": "Mi addormento verso …",
+              "meaning": "Il sonno.",
+              "note": "verso = sobre las."
+            }
+          ],
+          "situation": "Racconti la tua mattina a un nuovo amico: sveglia, colazione, doccia, uscita — e come cambia la domenica.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di a che ora ti svegli in settimana.",
+                "expected": [
+                  "Mi sveglio alle <ora> in settimana."
+                ],
+                "focus": "mi sveglio",
+                "watch": "Il riflessivo porta mi: mi sveglio."
+              },
+              {
+                "prompt": "Di cosa fai colazione.",
+                "expected": [
+                  "Faccio colazione con <cibo>."
+                ],
+                "focus": "fare colazione",
+                "watch": "fare colazione = desayunar."
+              },
+              {
+                "prompt": "Di a che ora esci di casa.",
+                "expected": [
+                  "Esco di casa alle <ora>."
+                ],
+                "focus": "uscire di",
+                "watch": "uscire DI casa."
+              },
+              {
+                "prompt": "Di la tua abitudine della domenica.",
+                "expected": [
+                  "La domenica mi sveglio tardi."
+                ],
+                "focus": "la + giorno",
+                "watch": "la domenica = ogni domenica."
+              },
+              {
+                "prompt": "Di a che ora ti addormenti.",
+                "expected": [
+                  "Mi addormento verso le <ora>."
+                ],
+                "focus": "mi addormento",
+                "watch": "verso = sobre las."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u2-routine-e1",
+              "kind": "choice",
+              "prompt": "Mi ___ alle sette tutti i giorni.",
+              "explain": "Mi sveglio: il pronome va davanti.",
+              "options": [
+                "sveglio",
+                "sveglio me",
+                "sveglia",
+                "svegliarmi"
+              ],
+              "answers": [
+                "sveglio"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-routine-e2",
+              "kind": "gap",
+              "prompt": "___ colazione con un caffè. (fare colazione)",
+              "explain": "fare colazione: io faccio.",
+              "answers": [
+                "Faccio",
+                "faccio"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-routine-e3",
+              "kind": "order",
+              "prompt": "Di a che ora esci.",
+              "explain": "esco di + luogo + alle + ora.",
+              "answers": [
+                "Esco di casa alle otto"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-routine-e4",
+              "kind": "written",
+              "prompt": "La tua abitudine della domenica.",
+              "explain": "la + giorno + presente.",
+              "answers": [
+                "la domenica mi sveglio tardi",
+                "di domenica faccio colazione tardi"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:time-expressions",
+            "vocab:daily-routine",
+            "function:talk-about-routines"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u2-quartiere",
+          "title": "Il mio quartiere",
+          "goal": "Dire cosa c'è nel tuo quartiere con c'è / ci sono.",
+          "intro": {
+            "explanation": [
+              "C'è per uno, ci sono per tanti: « C'è un bar, ci sono due negozi ». Non cambia per le domande: « C'è una farmacia qui vicino? »",
+              "Negativo: « Non c'è un cinema, mi dispiace ». Con non c'è il nome resta senza articolo.",
+              "Locazioni: davanti a, vicino a, accanto a : « Il bar è davanti al parco ». A si fonde: al, dal, nel."
+            ],
+            "examples": [
+              {
+                "text": "C'è un bar e ci sono due negozi.",
+                "meaning": "c'è uno, ci sono tanti."
+              },
+              {
+                "text": "C'è una farmacia qui vicino?",
+                "meaning": "La domanda utile."
+              },
+              {
+                "text": "Non c'è un cinema qui.",
+                "meaning": "La negazione."
+              },
+              {
+                "text": "Il bar è davanti al parco.",
+                "meaning": "davanti al = delante del."
+              },
+              {
+                "text": "Tutto è vicino a casa mia.",
+                "meaning": "Il riassunto comodo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "C'è / ci sono + luogo",
+              "meaning": "Dire cosa c'è.",
+              "note": "c'è uno, ci sono tanti."
+            },
+            {
+              "text": "C'è … qui vicino?",
+              "meaning": "Chiedere.",
+              "note": "…una farmacia?"
+            },
+            {
+              "text": "Non c'è …",
+              "meaning": "Quello che manca.",
+              "note": "Non c'è cinema."
+            },
+            {
+              "text": "davanti a / vicino a",
+              "meaning": "Situare.",
+              "note": "davanti al parco."
+            },
+            {
+              "text": "vicino a casa mia",
+              "meaning": "La distanza.",
+              "note": "tutto è vicino."
+            }
+          ],
+          "situation": "Un visitatore chiede del tuo quartiere: nomna quattro posti, di' cosa manca e situa il tuo preferito.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Nomina due posti del tuo quartiere.",
+                "expected": [
+                  "C'è <luogo> e ci sono <luoghi>."
+                ],
+                "focus": "c'è / ci sono",
+                "watch": "c'è uno, ci sono tanti."
+              },
+              {
+                "prompt": "Di' cosa manca. (cinema)",
+                "expected": [
+                  "Non c'è un cinema nel mio quartiere."
+                ],
+                "focus": "non c'è",
+                "watch": "Non c'è + luogo."
+              },
+              {
+                "prompt": "Chiedi se c'è una farmacia.",
+                "expected": [
+                  "C'è una farmacia qui vicino?"
+                ],
+                "focus": "qui vicino",
+                "watch": "qui vicino = aquí cerca."
+              },
+              {
+                "prompt": "Situa il tuo posto preferito.",
+                "expected": [
+                  "<Luogo> è davanti a <luogo>."
+                ],
+                "focus": "davanti a",
+                "watch": "davanti A + luogo."
+              },
+              {
+                "prompt": "Di' che tutto è vicino a casa tua.",
+                "expected": [
+                  "Tutto è vicino a casa mia."
+                ],
+                "focus": "vicino a",
+                "watch": "vicino A casa mia."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u2-quartiere-e1",
+              "kind": "choice",
+              "prompt": "___ un bar e ci sono due negozi.",
+              "explain": "C'è per uno solo.",
+              "options": [
+                "C'è",
+                "Ci sono",
+                "È",
+                "Sono"
+              ],
+              "answers": [
+                "C'è"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-quartiere-e2",
+              "kind": "gap",
+              "prompt": "Non ___ un cinema qui. (esiste)",
+              "explain": "Non c'è + luogo.",
+              "answers": [
+                "c'è"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-quartiere-e3",
+              "kind": "order",
+              "prompt": "Chiedi una farmacia.",
+              "explain": "C'è + luogo + qui vicino?",
+              "answers": [
+                "Ce una farmacia qui vicino"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-quartiere-e4",
+              "kind": "written",
+              "prompt": "Di' cosa c'è davanti a casa tua.",
+              "explain": "C'è + luogo + davanti a.",
+              "answers": [
+                "ce <luogo> davanti a casa mia",
+                "c'è <luogo> davanti a casa mia"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:town",
+            "grammar:there-is-are",
+            "grammar:prepositions-place",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "it-foundations-u2-progetti",
+          "title": "Piani per sabato",
+          "goal": "Proporre piani con si va a e fissare un appuntamento.",
+          "intro": {
+            "explanation": [
+              "Il futuro vicino: andare a + infinito. « Sabato si va al mercato » oppure « noi andiamo al mercato ».",
+              "Proporre: « Andiamo al mercato? », « Vuoi venire? ». Darsi appuntamento: « Ci vediamo alle sei in piazza? »",
+              "Confermare con ora e luogo: « Perfetto, alle sei davanti al parco ». Un piano senza luogo è un desiderio."
+            ],
+            "examples": [
+              {
+                "text": "Sabato andiamo al mercato.",
+                "meaning": "Presente con valore di futuro."
+              },
+              {
+                "text": "Vuoi venire con noi?",
+                "meaning": "L'invito."
+              },
+              {
+                "text": "Ci vediamo alle sei in piazza?",
+                "meaning": "L'appuntamento."
+              },
+              {
+                "text": "Perfetto, ci vediamo lì.",
+                "meaning": "La conferma."
+              },
+              {
+                "text": "Se piove, lo spostiamo a domenica.",
+                "meaning": "Il piano B."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "andiamo a + infinito",
+              "meaning": "Il progetto.",
+              "note": "andiamo al mercato."
+            },
+            {
+              "text": "Vuoi venire?",
+              "meaning": "Invitare.",
+              "note": "venire con noi."
+            },
+            {
+              "text": "Ci vediamo alle … in …",
+              "meaning": "L'appuntamento.",
+              "note": "ci vediamo = nos vemos."
+            },
+            {
+              "text": "Perfetto / D'accordo",
+              "meaning": "Confermare.",
+              "note": "d'accordo = de acuerdo."
+            },
+            {
+              "text": "Se piove, …",
+              "meaning": "Il piano B.",
+              "note": "se + presente + piano."
+            }
+          ],
+          "situation": "Organizzi il sabato con un amico: mercato, appuntamento alle sei davanti al parco, e piano B se piove.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Proponi il mercato con noi.",
+                "expected": [
+                  "Sabato andiamo al mercato."
+                ],
+                "focus": "andiamo",
+                "watch": "noi andiamo = presente per il futuro."
+              },
+              {
+                "prompt": "Invita il tuo amico.",
+                "expected": [
+                  "Vuoi venire con noi?"
+                ],
+                "focus": "venire",
+                "watch": "venire CON noi."
+              },
+              {
+                "prompt": "Fissa l'appuntamento. (6, piazza)",
+                "expected": [
+                  "Ci vediamo alle sei in piazza?"
+                ],
+                "focus": "ci vediamo",
+                "watch": "ci vediamo alle + ora."
+              },
+              {
+                "prompt": "Dai il piano B se piove.",
+                "expected": [
+                  "Se piove, lo spostiamo a domenica."
+                ],
+                "focus": "se + presente",
+                "watch": "se + presente + piano."
+              },
+              {
+                "prompt": "Invita il tuo amico al piano.",
+                "expected": [
+                  "Vuoi venire con noi?"
+                ],
+                "focus": "venire",
+                "watch": "venire CON noi."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u2-progetti-e1",
+              "kind": "choice",
+              "prompt": "Sabato ___ al mercato.",
+              "explain": "noi andiamo: presente per il futuro.",
+              "options": [
+                "andiamo",
+                "vado",
+                "va",
+                "andare"
+              ],
+              "answers": [
+                "andiamo"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-progetti-e2",
+              "kind": "gap",
+              "prompt": "Ci ___ alle sei in piazza? (vedersi)",
+              "explain": "ci vediamo = nos vemos.",
+              "answers": [
+                "vediamo"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-progetti-e3",
+              "kind": "order",
+              "prompt": "Fissa l'appuntamento.",
+              "explain": "ci vediamo + alle + ora + in + luogo.",
+              "answers": [
+                "Ci vediamo alle sei in piazza"
+              ]
+            },
+            {
+              "id": "it-foundations-u2-progetti-e4",
+              "kind": "written",
+              "prompt": "Il piano B se piove.",
+              "explain": "se + presente + piano.",
+              "answers": [
+                "se piove lo spostiamo a domenica",
+                "se piove andiamo al cinema"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:social-expressions",
+            "grammar:present-questions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
     }
   ]
 }

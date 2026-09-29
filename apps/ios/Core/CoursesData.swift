@@ -100,6 +100,96 @@ public enum DeFoundationsU1 {
                             Exercise(id: "de-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Ich heiße <name> und ich komme aus <country>", "Ich bin <name> und ich komme aus <country>"], explain: "Name + origin, each with its verb.")], skills: ["grammar:verb-be", "function:introduce-yourself", "vocab:introductions", "pron:word-stress"], canDo: ["introduce-yourself"])])
 }
 
+public enum DeFoundationsU2 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u2", title: "Mein Alltag", subtitle: "Routine und Pläne", level: "A1", themes: [
+                    ConversationTheme("morgen-chaos", "Morgenchaos", "Gegen die Uhr", "sunrise", "Course", "Du erzählst deinen Morgen Minute für Minute: Uhrzeiten, Gewohnheiten, Vergessenes.", 0),
+                    ConversationTheme("samstag-zwei", "Samstag zu zweit", "Was machen wir?", "figure.walk", "Course", "Pläne für Samstag mit einem Freund: Markt, Uhrzeit, Treffpunkt.", 1)], lessons: [
+            Lesson(id: "de-foundations-u2-routine", title: "Meine Routine", goal: "Deinen Tag im Präsens mit Uhrzeiten erzählen.",
+                intro: LessonIntro(explanation: [
+                            "Das Präsens erzählt Gewohnheiten: „Ich stehe um sieben auf. Ich frühstücke Kaffee und Toast. Um acht gehe ich los.“",
+                            "Trennbare Verben nehmen den Präfix mit ans Ende: „aufstehen“ → „Ich stehe um sieben auf.“",
+                            "Uhrzeiten mit um: „um sieben“, „um halb acht“. Mit ab: „ab acht Uhr bin ich frei.“"], examples: [
+                            ExampleLine(text: "Ich stehe um sieben auf.", meaning: "aufstehen getrennt: … auf."),
+                            ExampleLine(text: "Ich frühstücke Kaffee und Toast.", meaning: "Das Frühstück als Verb."),
+                            ExampleLine(text: "Um acht gehe ich los.", meaning: "losgehen, getrennt."),
+                            ExampleLine(text: "Abends esse ich um neun.", meaning: "Das Abendessen."),
+                            ExampleLine(text: "Samstags schlafe ich lange.", meaning: "Die Wochenendgewohnheit.")]),
+                expressions: [
+                            TargetExpression(text: "Ich stehe um … auf", meaning: "Aufstehen.", note: "auf am Ende!"),
+                            TargetExpression(text: "Ich frühstücke …", meaning: "Das Frühstück.", note: "frühstücke + Essen."),
+                            TargetExpression(text: "Um … gehe ich los", meaning: "Der Start.", note: "um + Uhrzeit."),
+                            TargetExpression(text: "Samstags …", meaning: "Die Gewohnheit.", note: "samstags = jeden Samstag."),
+                            TargetExpression(text: "Ich gehe um … ins Bett", meaning: "Das Zubettgehen.", note: "ins Bett gehen.")],
+                situation: "Du erzählst einem neuen Freund deinen Morgen: Aufstehen, Frühstück, Losgehen — und wie der Samstag anders ist.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag, wann du unter der Woche aufstehst.", expected: ["Ich stehe um <Uhrzeit> auf."], focus: "aufstehen", watch: "trennbar: „…auf“ am Satzende."),
+                                PracticeQuestion(prompt: "Sag, was du frühstückst.", expected: ["Ich frühstücke <Essen> und <Essen>."], focus: "frühstücken", watch: "frühstücke + Essen."),
+                                PracticeQuestion(prompt: "Sag, wann du losgehst.", expected: ["Um <Uhrzeit> gehe ich los."], focus: "losgehen", watch: "„los“ am Satzende."),
+                                PracticeQuestion(prompt: "Sag deine Samstaggewohnheit.", expected: ["Samstags schlafe ich lange."], focus: "samstags", watch: "samstags = jeden Samstag."),
+                                PracticeQuestion(prompt: "Sag, wann du ins Bett gehst.", expected: ["Ich gehe um <Uhrzeit> ins Bett."], focus: "ins Bett", watch: "ins Bett gehen — feststehend.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u2-routine-e1", kind: "choice", prompt: "Ich ___ um sieben ___.", options: ["stehe … auf", "auf … stehe", "stehe … aufstehen", "aufstehe … auf"], answers: ["stehe … auf"], explain: "aufstehen ist trennbar."),
+                            Exercise(id: "de-foundations-u2-routine-e2", kind: "gap", prompt: "Ich ___ Kaffee und Toast. (frühstücken)", options: [], answers: ["frühstücke"], explain: "ich frühstücke."),
+                            Exercise(id: "de-foundations-u2-routine-e3", kind: "order", prompt: "Sag, wann du losgehst.", options: [], answers: ["Um acht gehe ich los"], explain: "um + Zeit + gehe ich los."),
+                            Exercise(id: "de-foundations-u2-routine-e4", kind: "written", prompt: "Deine Samstaggewohnheit.", options: [], answers: ["samstags schlafe ich lange", "samstags stehe ich spät auf"], explain: "samstags + Präsens.")], skills: ["grammar:present-simple", "grammar:time-expressions", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u2-viertel", title: "Mein Viertel", goal: "Sagen, was es in deinem Viertel gibt — mit es gibt.",
+                intro: LessonIntro(explanation: [
+                            "es gibt + Akkusativ für alles, was existiert: „Es gibt einen Markt, zwei Cafés und einen Park.“",
+                            "Frage: „Gibt es hier eine Apotheke?“ Negation: „Nein, es gibt keinen Bahnhof hier.“",
+                            "Lage mit neben / gegenüber / in der Nähe von: „Der Markt ist gegenüber vom Park.“"], examples: [
+                            ExampleLine(text: "Es gibt einen Markt und zwei Cafés.", meaning: "es gibt + Akkusativ."),
+                            ExampleLine(text: "Gibt es hier eine Apotheke?", meaning: "Die nützliche Frage."),
+                            ExampleLine(text: "Nein, es gibt keinen Bahnhof.", meaning: "Die Verneinung: keinen."),
+                            ExampleLine(text: "Der Markt ist gegenüber vom Park.", meaning: "Die Lage."),
+                            ExampleLine(text: "Alles ist in der Nähe.", meaning: "Das bequeme Fazit.")]),
+                expressions: [
+                            TargetExpression(text: "Es gibt + Akkusativ", meaning: "Was es gibt.", note: "einen Markt (maskulin!)."),
+                            TargetExpression(text: "Gibt es … ?", meaning: "Fragen.", note: "…eine Apotheke?"),
+                            TargetExpression(text: "es gibt keinen / keine", meaning: "Verneinung.", note: "keinen Bahnhof."),
+                            TargetExpression(text: "neben / gegenüber von", meaning: "Lage.", note: "gegenüber vom Park."),
+                            TargetExpression(text: "in der Nähe von …", meaning: "Die Nähe.", note: "…von meiner Wohnung.")],
+                situation: "Ein Besucher fragt nach deinem Viertel: nenne vier Orte, sage, was fehlt, und beschreibe deinen Lieblingsort.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Nenne zwei Orte in deinem Viertel.", expected: ["Es gibt <Ort> und <Ort>."], focus: "es gibt", watch: "es gibt + Akkusativ."),
+                                PracticeQuestion(prompt: "Sag, was fehlt. (Kino)", expected: ["Es gibt kein Kino in meinem Viertel."], focus: "kein", watch: "Verneinung: kein/keine."),
+                                PracticeQuestion(prompt: "Frag nach einer Apotheke.", expected: ["Gibt es hier eine Apotheke?"], focus: "gibt es", watch: "Gibt es + Akkusativ?"),
+                                PracticeQuestion(prompt: "Beschreibe deinen Lieblingsort.", expected: ["<Ort> ist gegenüber vom <Ort>."], focus: "gegenüber von", watch: "gegenüber vom + Dativ."),
+                                PracticeQuestion(prompt: "Sag, dass alles in der Nähe ist.", expected: ["Alles ist in der Nähe."], focus: "in der Nähe", watch: "in der Nähe von + Ort.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u2-viertel-e1", kind: "choice", prompt: "___ einen Markt und zwei Cafés.", options: ["Es gibt", "Sie sind", "Das ist", "Es hat"], answers: ["Es gibt"], explain: "es gibt + Akkusativ."),
+                            Exercise(id: "de-foundations-u2-viertel-e2", kind: "gap", prompt: "Es gibt ___ Bahnhof hier. (negación, masculino)", options: [], answers: ["keinen"], explain: "Verneinung: keinen (Akkusativ)."),
+                            Exercise(id: "de-foundations-u2-viertel-e3", kind: "order", prompt: "Frag nach einer Apotheke.", options: [], answers: ["Gibt es hier eine Apotheke"], explain: "Gibt es + Akkusativ?"),
+                            Exercise(id: "de-foundations-u2-viertel-e4", kind: "written", prompt: "Sag, was es bei dir gibt.", options: [], answers: ["es gibt <ort> in der nahe", "es gibt einen park"], explain: "es gibt + Ort.")], skills: ["vocab:town", "grammar:there-is-are", "grammar:prepositions-place", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "de-foundations-u2-plaene", title: "Pläne für Samstag", goal: "Pläne machen mit wir wollen und einen Treffpunkt vereinbaren.",
+                intro: LessonIntro(explanation: [
+                            "Pläne mit wollen: „Wollen wir zum Markt gehen?“ oder „Wir gehen samstags zum Markt“ — Präsens mit Zeitangabe.",
+                            "Vorschlagen: „Gehen wir zum Markt?“, „Willst du mitkommen?“. Treffpunkt: „Treffen wir uns um sechs am Park?“",
+                            "Bestätigen mit Ort und Zeit: „Perfekt, um sechs, vor dem Park.“ Ein Plan ohne Ort bleibt ein Wunsch."], examples: [
+                            ExampleLine(text: "Samstag gehen wir zum Markt.", meaning: "Präsens + Zeit = Zukunft."),
+                            ExampleLine(text: "Willst du mitkommen?", meaning: "Die Einladung."),
+                            ExampleLine(text: "Treffen wir uns um sechs am Park?", meaning: "Der Treffpunkt."),
+                            ExampleLine(text: "Perfekt, bis dann!", meaning: "Die Bestätigung."),
+                            ExampleLine(text: "Wenn es regnet, verschieben wir auf Sonntag.", meaning: "Plan B.")]),
+                expressions: [
+                            TargetExpression(text: "wir gehen + Zeitangabe", meaning: "Zukunft im Präsens.", note: "morgen / samstags + Präsens."),
+                            TargetExpression(text: "Willst du mitkommen?", meaning: "Einladen.", note: "mitkommen = venir."),
+                            TargetExpression(text: "Wir treffen uns um … am …", meaning: "Treffpunkt.", note: "sich treffen = vernos."),
+                            TargetExpression(text: "Perfekt / Bis dann!", meaning: "Bestätigen.", note: "bis dann = hasta luego."),
+                            TargetExpression(text: "Wenn es regnet, …", meaning: "Plan B.", note: "wenn + Presente + plan.")],
+                situation: "Du planst den Samstag mit einem Freund: Markt, Treffen um sechs am Park, und Plan B bei Regen.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Schlage den Markt mit wir vor.", expected: ["Samstag gehen wir zum Markt."], focus: "Präsens + Zeit", watch: "Präsens + Zeitangabe = Zukunft."),
+                                PracticeQuestion(prompt: "Lade deinen Freund ein.", expected: ["Willst du mitkommen?"], focus: "mitkommen", watch: "mitkommen = venir junto."),
+                                PracticeQuestion(prompt: "Vereinbare den Treffpunkt. (6 Uhr, Park)", expected: ["Treffen wir uns um sechs am Park?"], focus: "sich treffen", watch: "Wir treffen uns + Zeit + Ort."),
+                                PracticeQuestion(prompt: "Gib den Plan B bei Regen.", expected: ["Wenn es regnet, verschieben wir auf Sonntag."], focus: "wenn + Plan", watch: "wenn + Presente + plan."),
+                                PracticeQuestion(prompt: "Lade deinen Freund ein.", expected: ["Willst du mitkommen?"], focus: "mitkommen", watch: "mitkommen = venir junto.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u2-plaene-e1", kind: "choice", prompt: "Samstag ___ wir zum Markt.", options: ["gehen", "gehen wir", "gehen zu", "gehen im"], answers: ["gehen"], explain: "Präsens + Zeitangabe = Zukunft."),
+                            Exercise(id: "de-foundations-u2-plaene-e2", kind: "gap", prompt: "Treffen ___ uns um sechs? (reflexiv)", options: [], answers: ["wir"], explain: "Wir treffen uns = nos vemos."),
+                            Exercise(id: "de-foundations-u2-plaene-e3", kind: "order", prompt: "Vereinbare den Treffpunkt.", options: [], answers: ["Treffen wir uns um sechs am Park"], explain: "Treffen wir uns + Zeit + Ort?"),
+                            Exercise(id: "de-foundations-u2-plaene-e4", kind: "written", prompt: "Plan B bei Regen.", options: [], answers: ["wenn es regnet verschieben wir auf sonntag", "wenn es regnet gehen wir ins kino"], explain: "wenn + Presente + plan.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -3011,6 +3101,96 @@ public enum EsFoundationsU1 {
                             Exercise(id: "es-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Me llamo <name> y soy de <country>", "Soy <name> y soy de <country>", "Me llamo <name>, soy de <country>"], explain: "Name + origin, each with its verb.")], skills: ["grammar:verb-be", "function:introduce-yourself", "vocab:introductions", "pron:word-stress"], canDo: ["introduce-yourself"])])
 }
 
+public enum EsFoundationsU2 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u2", title: "Mi día a día", subtitle: "Rutinas y planes", level: "A1", themes: [
+                    ConversationTheme("manana-locura", "Mañana de locos", "La rutina contra el reloj", "sunrise", "Course", "Cuentas tu mañana minuto a minuto: qué haces, a qué hora y qué siempre se olvida.", 0),
+                    ConversationTheme("finde-juntos", "El finde juntos", "¿Qué hacemos?", "figure.walk", "Course", "Planes para el sábado con un amigo: qué quieres hacer y a qué hora os veis.", 1)], lessons: [
+            Lesson(id: "es-foundations-u2-rutina", title: "Mi rutina", goal: "Contar tu día con verbos en presente y las horas.",
+                intro: LessonIntro(explanation: [
+                            "El presente sirve para rutinas: «Me levanto a las siete. Desayuno café y tostadas. Salgo de casa a las ocho».",
+                            "Los reflejos van con pronombre: «me levanto, me ducho, me acuesto» — el me es parte del verbo.",
+                            "Las horas en punto o y media: «a las siete», «a las siete y media». Con a: «a las ocho salgo»."], examples: [
+                            ExampleLine(text: "Me levanto a las siete.", meaning: "El primer verbo del día."),
+                            ExampleLine(text: "Desayuno café y tostadas.", meaning: "El desayuno, sin pronombre."),
+                            ExampleLine(text: "Me ducho y salgo de casa a las ocho.", meaning: "Dos acciones seguidas."),
+                            ExampleLine(text: "Ceno a las nueve y me acuesto a las once.", meaning: "La rutina de noche."),
+                            ExampleLine(text: "Los sábados me levanto tarde.", meaning: "El hábito de fin de semana.")]),
+                expressions: [
+                            TargetExpression(text: "Me levanto a las …", meaning: "El inicio.", note: "…siete, o tarde los sábados."),
+                            TargetExpression(text: "Desayuno / ceno …", meaning: "Comidas como verbos.", note: "Desayuno café."),
+                            TargetExpression(text: "Me ducho / me acuesto", meaning: "Reflejos del día.", note: "El me es obligatorio."),
+                            TargetExpression(text: "Salgo de casa a las …", meaning: "La salida.", note: "salir de + lugar."),
+                            TargetExpression(text: "Los sábados …", meaning: "El hábito de finde.", note: "plural = todos los sábados.")],
+                situation: "Cuentas tu mañana a un amigo nuevo: hora de levantarte, desayuno, ducha, salida — y cómo cambia el sábado.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di a qué hora te levantas entre semana.", expected: ["Me levanto a las <hora> entre semana."], focus: "me levanto", watch: "El reflejo lleva me: me levanto, no levanto me."),
+                                PracticeQuestion(prompt: "Di qué desayunas.", expected: ["Desayuno <comida> y <comida>."], focus: "desayunar", watch: "Desayuno café — el verbo y la comida comparten raíz."),
+                                PracticeQuestion(prompt: "Di a qué hora sales de casa.", expected: ["Salgo de casa a las <hora>."], focus: "salir de", watch: "salir DE casa — la preposición importa."),
+                                PracticeQuestion(prompt: "Di cómo cambia tu sábado.", expected: ["Los sábados me levanto tarde."], focus: "los + día", watch: "Los sábados = todos los sábados."),
+                                PracticeQuestion(prompt: "Di a qué hora te acuestas.", expected: ["Me acuesto a las <hora>."], focus: "me acuesto", watch: "Reflejo: me acuesto, no acuesto me.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u2-rutina-e1", kind: "choice", prompt: "Me ___ a las siete todos los días.", options: ["levanto", "levanto me", "levanta", "levantarse"], answers: ["levanto"], explain: "Me levanto: el me va delante."),
+                            Exercise(id: "es-foundations-u2-rutina-e2", kind: "gap", prompt: "___ café y tostadas. (desayunar)", options: [], answers: ["Desayuno", "desayuno"], explain: "Primera persona: desayuno."),
+                            Exercise(id: "es-foundations-u2-rutina-e3", kind: "order", prompt: "Di a qué hora sales.", options: [], answers: ["Salgo de casa a las ocho"], explain: "salgo de + lugar + a las + hora."),
+                            Exercise(id: "es-foundations-u2-rutina-e4", kind: "written", prompt: "Di tu hábito de los sábados.", options: [], answers: ["los sábados me levanto tarde", "los sabados desayuno tarde"], explain: "Los + día + presente.")], skills: ["grammar:present-simple", "grammar:time-expressions", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u2-barrio", title: "Mi barrio", goal: "Decir qué hay en tu barrio con hay y dónde está.",
+                intro: LessonIntro(explanation: [
+                            "Hay sirve para todo lo que existe: «Hay una plaza, dos bares y una frutería». No cambia con plural.",
+                            "Para preguntar: «¿Hay una farmacia por aquí?». Para negar: «No hay cine, lo siento».",
+                            "Ubica con cerca de / al lado de / enfrente de: «La frutería está enfrente del parque»."], examples: [
+                            ExampleLine(text: "Hay una plaza y dos bares.", meaning: "hay no cambia con plural."),
+                            ExampleLine(text: "¿Hay una farmacia por aquí?", meaning: "La pregunta útil."),
+                            ExampleLine(text: "No hay cine en mi barrio.", meaning: "La negación."),
+                            ExampleLine(text: "La frutería está enfrente del parque.", meaning: "Ubicación exacta."),
+                            ExampleLine(text: "Todo está cerca de mi casa.", meaning: "El resumen cómodo.")]),
+                expressions: [
+                            TargetExpression(text: "Hay + lugar", meaning: "Decir qué existe.", note: "Hay una panadería."),
+                            TargetExpression(text: "¿Hay … por aquí?", meaning: "Preguntar.", note: "…una farmacia?"),
+                            TargetExpression(text: "No hay …", meaning: "Lo que falta.", note: "No hay metro, lo siento."),
+                            TargetExpression(text: "está enfrente de / al lado de", meaning: "Ubicación.", note: "enfrente del parque."),
+                            TargetExpression(text: "cerca de mi casa", meaning: "La distancia.", note: "todo está cerca.")],
+                situation: "Un visitante pregunta qué hay en tu barrio: nombra cuatro sitios, di lo que falta y ubica tu favorito.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di dos sitios que hay en tu barrio.", expected: ["Hay <lugar> y <lugar>."], focus: "hay", watch: "Hay no cambia: hay uno, hay dos."),
+                                PracticeQuestion(prompt: "Di lo que no hay. (cine)", expected: ["No hay cine en mi barrio."], focus: "no hay", watch: "No hay + lugar sin artículo."),
+                                PracticeQuestion(prompt: "Pregunta si hay farmacia cerca.", expected: ["¿Hay una farmacia por aquí?"], focus: "por aquí", watch: "por aquí = cerca, en esta zona."),
+                                PracticeQuestion(prompt: "Ubica tu sitio favorito.", expected: ["<Lugar> está enfrente de <lugar>."], focus: "enfrente de", watch: "enfrente DE + lugar."),
+                                PracticeQuestion(prompt: "Di que todo está cerca de tu casa.", expected: ["Todo está cerca de mi casa."], focus: "cerca de", watch: "cerca DE mi casa.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u2-barrio-e1", kind: "choice", prompt: "___ dos bares y una panadería.", options: ["Hay", "Están", "Es", "Son"], answers: ["Hay"], explain: "Hay para decir qué existe."),
+                            Exercise(id: "es-foundations-u2-barrio-e2", kind: "gap", prompt: "No ___ metro en mi barrio. (existe)", options: [], answers: ["hay"], explain: "No hay + lugar."),
+                            Exercise(id: "es-foundations-u2-barrio-e3", kind: "order", prompt: "Pregunta por una farmacia.", options: [], answers: ["Hay una farmacia por aqui cerca"], explain: "¿Hay + lugar + por aquí?"),
+                            Exercise(id: "es-foundations-u2-barrio-e4", kind: "written", prompt: "Di qué hay enfrente de tu casa.", options: [], answers: ["hay <lugar> enfrente de mi casa", "esta <lugar>"], explain: "Hay + lugar + enfrente de.")], skills: ["vocab:town", "grammar:there-is-are", "grammar:prepositions-place", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "es-foundations-u2-planes", title: "Planes para el finde", goal: "Proponer planes con vamos a y quedar.",
+                intro: LessonIntro(explanation: [
+                            "El futuro cercano: ir a + infinitivo. «El sábado vamos a ir al mercado». Va conjugado el ir, no el segundo verbo.",
+                            "Proponer: «¿Vamos al parque?», «¿Quieres venir?». Quedar es el verbo de las citas: «¿Quedamos a las seis?»",
+                            "Confirmar con hora y lugar: «Perfecto, a las seis en la plaza». Un plan sin lugar es un deseo."], examples: [
+                            ExampleLine(text: "El sábado vamos a ir al mercado.", meaning: "ir a + infinitivo."),
+                            ExampleLine(text: "¿Quieres venir con nosotros?", meaning: "Invitar."),
+                            ExampleLine(text: "¿Quedamos a las seis en la plaza?", meaning: "Quedar = la cita."),
+                            ExampleLine(text: "Perfecto, ahí nos vemos.", meaning: "Confirmar."),
+                            ExampleLine(text: "Si llueve, lo dejamos para el domingo.", meaning: "El plan B.")]),
+                expressions: [
+                            TargetExpression(text: "vamos a + infinitivo", meaning: "El plan conjunto.", note: "vamos a ir al mercado."),
+                            TargetExpression(text: "¿Quieres venir?", meaning: "Invitar.", note: "venir con + personas."),
+                            TargetExpression(text: "¿Quedamos a las … en …?", meaning: "La cita.", note: "quedar = vernos."),
+                            TargetExpression(text: "Perfecto / Vale", meaning: "Confirmar.", note: "Vale es el sí español."),
+                            TargetExpression(text: "Si llueve, …", meaning: "El plan B.", note: "si + presente, plan.")],
+                situation: "Organizas el sábado con un amigo: propones mercado, quedáis a las seis en la plaza y dejáis el plan B si llueve.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Proponer el plan del sábado. (mercado, vamos a)", expected: ["El sábado vamos a ir al mercado."], focus: "vamos a", watch: "ir conjugado + a + infinitivo."),
+                                PracticeQuestion(prompt: "Invitar a tu amigo.", expected: ["¿Quieres venir conmigo?"], focus: "venir", watch: "venir con + persona."),
+                                PracticeQuestion(prompt: "Quedar en hora y lugar. (6, plaza)", expected: ["¿Quedamos a las seis en la plaza?"], focus: "quedar", watch: "quedar = vernos, citarse."),
+                                PracticeQuestion(prompt: "Dejar plan B si llueve.", expected: ["Si llueve, lo dejamos para el domingo."], focus: "si + presente", watch: "si + presente + plan."),
+                                PracticeQuestion(prompt: "Invita a tu amigo al plan.", expected: ["¿Quieres venir conmigo?", "¿Quieres venir con nosotros?"], focus: "venir", watch: "venir CON + persona.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u2-planes-e1", kind: "choice", prompt: "El sábado vamos a ___ al mercado.", options: ["ir", "vamos", "van", "iremos"], answers: ["ir"], explain: "ir a + infinitivo: el segundo va sin conjugar."),
+                            Exercise(id: "es-foundations-u2-planes-e2", kind: "gap", prompt: "¿___ quedar a las seis? (proponer)", options: [], answers: ["Quedamos", "Podemos"], explain: "¿Quedamos a las…?"),
+                            Exercise(id: "es-foundations-u2-planes-e3", kind: "order", prompt: "Confirmar la cita.", options: [], answers: ["Quedamos a las seis en la plaza"], explain: "quedar + a las + hora + en + lugar."),
+                            Exercise(id: "es-foundations-u2-planes-e4", kind: "written", prompt: "Tu plan B si llueve.", options: [], answers: ["si llueve lo dejamos para el domingo", "si llueve vamos al cine"], explain: "Si + presente + plan.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
 public enum FrFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
@@ -3108,6 +3288,96 @@ public enum FrFoundationsU1 {
                             Exercise(id: "fr-foundations-u1-introduce-e2", kind: "gap", prompt: "Je suis ___ Italie. (nationality)", options: [], answers: ["italienne"], explain: "Nationality is lower-case: italienne, italien."),
                             Exercise(id: "fr-foundations-u1-introduce-e3", kind: "order", prompt: "Say your name and city.", options: [], answers: ["Je suis Ana et je suis de Lyon"], explain: "Two suis pieces, each with its subject."),
                             Exercise(id: "fr-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Je m'appelle <name> et je suis de <country>", "Je suis <name> et je suis de <country>"], explain: "Name + origin, each with its subject.")], skills: ["grammar:verb-be", "function:introduce-yourself", "vocab:introductions", "pron:word-stress"], canDo: ["introduce-yourself"])])
+}
+
+public enum FrFoundationsU2 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u2", title: "Mon quotidien", subtitle: "Routine et projets", level: "A1", themes: [
+                    ConversationTheme("matinee-folle", "Matinée folle", "Contre le réveil", "sunrise", "Course", "Tu racontes ta matinée minute par minute : heures, habitudes et oublis.", 0),
+                    ConversationTheme("samedi-ensemble", "Samedi ensemble", "On fait quoi ?", "figure.walk", "Course", "Des projets pour samedi avec un ami : marché, heure, lieu de rendez-vous.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u2-routine", title: "Ma routine", goal: "Raconter ta journée au présent avec les heures.",
+                intro: LessonIntro(explanation: [
+                            "Le présent raconte les habitudes : « Je me lève à sept heures. Je prends un café. Je pars à huit heures. »",
+                            "Les verbes réflexifs gardent me/te/se : « je me lève, je me douche, je me couche » — le pronom fait partie du verbe.",
+                            "Les heures : « à sept heures », « à sept heures et demie ». Avec à : « à huit heures, je pars »."], examples: [
+                            ExampleLine(text: "Je me lève à sept heures.", meaning: "Le premier verbe."),
+                            ExampleLine(text: "Je prends un café le matin.", meaning: "La boisson du réveil."),
+                            ExampleLine(text: "Je me douche et je pars à huit heures.", meaning: "Deux actions de suite."),
+                            ExampleLine(text: "Le samedi, je me lève tard.", meaning: "L'habitude du week-end."),
+                            ExampleLine(text: "Je me couche vers onze heures.", meaning: "Le soir, avec vers.")]),
+                expressions: [
+                            TargetExpression(text: "Je me lève à …", meaning: "Le réveil.", note: "me + lève : inséparables."),
+                            TargetExpression(text: "Je prends mon petit-déjeuner", meaning: "Le matin.", note: "prendre le petit-déjeuner."),
+                            TargetExpression(text: "Je pars à …", meaning: "La sortie.", note: "partir de + lieu."),
+                            TargetExpression(text: "Le samedi, …", meaning: "L'habitude.", note: "le + jour = chaque jour."),
+                            TargetExpression(text: "Je me couche vers …", meaning: "Le coucher.", note: "vers = environ.")],
+                situation: "Tu racontes ta matinée à un nouvel ami : réveil, petit-déjeuner, douche, départ — et le changement du samedi.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis à quelle heure tu te lèves en semaine.", expected: ["Je me lève à <heure> en semaine."], focus: "je me lève", watch: "me/te/se font partie du verbe."),
+                                PracticeQuestion(prompt: "Dis ce que tu prends au petit-déjeuner.", expected: ["Je prends un café et des toasts."], focus: "prendre", watch: "prendre le petit-déjeuner = desayunar."),
+                                PracticeQuestion(prompt: "Dis à quelle heure tu pars de chez toi.", expected: ["Je pars de chez moi à <heure>."], focus: "partir de", watch: "partir DE chez moi."),
+                                PracticeQuestion(prompt: "Dis ton habitude du samedi.", expected: ["Le samedi, je me lève tard."], focus: "le + jour", watch: "le samedi = cada sábado."),
+                                PracticeQuestion(prompt: "Dis à quelle heure tu te couches.", expected: ["Je me couche vers <heure>."], focus: "je me couche", watch: "me couche — vers = hacia las.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u2-routine-e1", kind: "choice", prompt: "Je ___ ___ à sept heures.", options: ["me lève", "lève me", "se lève", "lever"], answers: ["me lève"], explain: "me/te/se + verbe : je me lève."),
+                            Exercise(id: "fr-foundations-u2-routine-e2", kind: "gap", prompt: "Je ___ un café le matin. (prendre)", options: [], answers: ["prends"], explain: "je prends : prendre fait prendre."),
+                            Exercise(id: "fr-foundations-u2-routine-e3", kind: "order", prompt: "Dis ton départ.", options: [], answers: ["Je pars de chez moi a huit heures"], explain: "je pars de + lieu."),
+                            Exercise(id: "fr-foundations-u2-routine-e4", kind: "written", prompt: "Ton habitude du samedi.", options: [], answers: ["le samedi je me leve tard", "le samedi je me leve tard"], explain: "le + jour + présent.")], skills: ["grammar:present-simple", "grammar:time-expressions", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u2-quartier", title: "Mon quartier", goal: "Dire ce qu'il y a dans ton quartier avec il y a.",
+                intro: LessonIntro(explanation: [
+                            "Il y a ne change jamais : « Il y a une boulangerie, deux cafés et un parc. »",
+                            "Pour demander : « Il y a une pharmacie par ici ? ». Pour nier : « Il n'y a pas de cinéma. »",
+                            "Situer : en face de, à côté de, près de : « La boulangerie est en face du parc. »"], examples: [
+                            ExampleLine(text: "Il y a une boulangerie et deux cafés.", meaning: "il y a, toujours pareil."),
+                            ExampleLine(text: "Il y a une pharmacie par ici ?", meaning: "La question utile."),
+                            ExampleLine(text: "Il n'y a pas de cinéma.", meaning: "La négation, avec de."),
+                            ExampleLine(text: "La boulangerie est en face du parc.", meaning: "La localisation."),
+                            ExampleLine(text: "Tout est près de chez moi.", meaning: "Le résumé.")]),
+                expressions: [
+                            TargetExpression(text: "Il y a + lieu", meaning: "Dire ce qui existe.", note: "Il y a un parc."),
+                            TargetExpression(text: "Il y a … par ici ?", meaning: "Demander.", note: "…une pharmacie ?"),
+                            TargetExpression(text: "Il n'y a pas de …", meaning: "Ce qui manque.", note: "pas de cinéma."),
+                            TargetExpression(text: "en face de / à côté de", meaning: "Situer.", note: "en face du parc."),
+                            TargetExpression(text: "près de chez moi", meaning: "La distance.", note: "tout est près.")],
+                situation: "Un visiteur demande ton quartier : nomme quatre lieux, dis ce qui manque et situe ton préféré.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Nomme deux lieux de ton quartier.", expected: ["Il y a <lieu> et <lieu>."], focus: "il y a", watch: "il y a ne change jamais."),
+                                PracticeQuestion(prompt: "Dis ce qui manque. (cinéma)", expected: ["Il n'y a pas de cinéma dans mon quartier."], focus: "pas de", watch: "négation : pas DE cinéma."),
+                                PracticeQuestion(prompt: "Demande s'il y a une pharmacie.", expected: ["Il y a une pharmacie par ici ?"], focus: "par ici", watch: "par ici = cerca, por esta zona."),
+                                PracticeQuestion(prompt: "Situe ton lieu préféré.", expected: ["<Lieu> est en face de <lieu>."], focus: "en face de", watch: "en face DE + lieu."),
+                                PracticeQuestion(prompt: "Dis que tout est près de chez toi.", expected: ["Tout est près de chez moi."], focus: "près de", watch: "près DE chez moi.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u2-quartier-e1", kind: "choice", prompt: "___ une boulangerie et deux cafés.", options: ["Il y a", "Ils sont", "C'est", "Il est"], answers: ["Il y a"], explain: "il y a pour l'existence."),
+                            Exercise(id: "fr-foundations-u2-quartier-e2", kind: "gap", prompt: "Il n'y a ___ de cinéma ici. (negación)", options: [], answers: ["pas"], explain: "il n'y a pas de + lieu."),
+                            Exercise(id: "fr-foundations-u2-quartier-e3", kind: "order", prompt: "Demande une pharmacie.", options: [], answers: ["Il y a une pharmacie par ici"], explain: "Il y a + lieu + par ici ?"),
+                            Exercise(id: "fr-foundations-u2-quartier-e4", kind: "written", prompt: "Dis ce qu'il y a devant chez toi.", options: [], answers: ["il y a <lieu> en face de chez moi", "il y a un parc"], explain: "Il y a + lieu + en face de.")], skills: ["vocab:town", "grammar:there-is-are", "grammar:prepositions-place", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "fr-foundations-u2-projets", title: "Des projets pour samedi", goal: "Proposer des projets avec on va et fixer un rendez-vous.",
+                intro: LessonIntro(explanation: [
+                            "Le futur proche : aller + infinitif. « Samedi, on va aller au marché. » C'est aller qui se conjugue.",
+                            "Proposer : « On va au marché ? », « Tu veux venir ? ». Se donner rendez-vous : « On se retrouve à six heures ? »",
+                            "Confirmer avec lieu et heure : « Parfait, six heures, devant le parc. » Un plan sans lieu reste un rêve."], examples: [
+                            ExampleLine(text: "Samedi, on va aller au marché.", meaning: "aller + infinitif."),
+                            ExampleLine(text: "Tu veux venir avec nous ?", meaning: "L'invitation."),
+                            ExampleLine(text: "On se retrouve à six heures, devant le parc ?", meaning: "Le rendez-vous."),
+                            ExampleLine(text: "Parfait, c'est noté.", meaning: "La confirmation."),
+                            ExampleLine(text: "S'il pleut, on reporte à dimanche.", meaning: "Le plan B.")]),
+                expressions: [
+                            TargetExpression(text: "on va + infinitif", meaning: "Le projet du groupe.", note: "on va aller au marché."),
+                            TargetExpression(text: "Tu veux venir ?", meaning: "Inviter.", note: "venir avec nous."),
+                            TargetExpression(text: "On se retrouve à … , …", meaning: "Le rendez-vous.", note: "heure + lieu."),
+                            TargetExpression(text: "Parfait / C'est noté", meaning: "Confirmer.", note: "c'est noté = queda apuntado."),
+                            TargetExpression(text: "S'il pleut, on …", meaning: "Le plan B.", note: "si + présent.")],
+                situation: "Tu organises samedi avec un ami : le marché, rendez-vous à six heures devant le parc, et plan B s'il pleut.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Propose le marché avec on va.", expected: ["Samedi, on va aller au marché."], focus: "on va", watch: "aller conjugué + infinitif."),
+                                PracticeQuestion(prompt: "Invite ton ami.", expected: ["Tu veux venir avec nous ?"], focus: "venir", watch: "venir AVEC quelqu'un."),
+                                PracticeQuestion(prompt: "Fixe le rendez-vous. (6h, le parc)", expected: ["On se retrouve à six heures, devant le parc ?"], focus: "se retrouver", watch: "heure + lieu."),
+                                PracticeQuestion(prompt: "Donne le plan B. (pluie / dimanche)", expected: ["S'il pleut, on reporte à dimanche."], focus: "si + présent", watch: "si + présent + plan."),
+                                PracticeQuestion(prompt: "Invite ton ami au plan.", expected: ["Tu veux venir avec nous ?"], focus: "venir", watch: "venir AVEC nous.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u2-projets-e1", kind: "choice", prompt: "Samedi, on va ___ au marché.", options: ["aller", "allons", "vont", "irons"], answers: ["aller"], explain: "aller + infinitif : le second reste à l'infinitif."),
+                            Exercise(id: "fr-foundations-u2-projets-e2", kind: "gap", prompt: "On ___ retrouve à six heures ? (rendez-vous)", options: [], answers: ["se"], explain: "on se retrouve = nos vemos."),
+                            Exercise(id: "fr-foundations-u2-projets-e3", kind: "order", prompt: "Fixe le rendez-vous.", options: [], answers: ["On se retrouve a six heures devant le parc"], explain: "on se retrouve + heure + lieu."),
+                            Exercise(id: "fr-foundations-u2-projets-e4", kind: "written", prompt: "Le plan B s'il pleut.", options: [], answers: ["sil pleut on reporte a dimanche", "s'il pleut on va a dimanche"], explain: "si + présent + plan.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
 public enum ItFoundationsU1 {
@@ -3209,6 +3479,96 @@ public enum ItFoundationsU1 {
                             Exercise(id: "it-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Mi chiamo <name> e sono di <country>", "Sono <name> e sono di <country>"], explain: "Name + origin, each with its verb.")], skills: ["grammar:verb-be", "function:introduce-yourself", "vocab:introductions", "pron:word-stress"], canDo: ["introduce-yourself"])])
 }
 
+public enum ItFoundationsU2 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u2", title: "La mia giornata", subtitle: "Routine e progetti", level: "A1", themes: [
+                    ConversationTheme("mattina-folle", "Mattina folle", "Contro la sveglia", "sunrise", "Course", "Racconti la tua mattina minuto per minuto: ore, abitudini e dimenticanze.", 0),
+                    ConversationTheme("sabato-insieme", "Sabato insieme", "Cosa facciamo?", "figure.walk", "Course", "Piani per sabato con un amico: mercato, ora e luogo dell'appuntamento.", 1)], lessons: [
+            Lesson(id: "it-foundations-u2-routine", title: "La mia routine", goal: "Raccontare la giornata al presente con le ore.",
+                intro: LessonIntro(explanation: [
+                            "Il presente racconta le abitudini: « Mi sveglio alle sette. Faccio colazione. Esco alle otto. »",
+                            "I verbi riflessivi portano mi/ti/si : « mi sveglio, mi faccio la doccia, mi addormento » — il pronombre fa parte del verbo.",
+                            "Le ore: « alle sette », « alle sette e mezza ». Con a : « alle otto esco »."], examples: [
+                            ExampleLine(text: "Mi sveglio alle sette.", meaning: "Il primo verbo."),
+                            ExampleLine(text: "Faccio colazione con un caffè.", meaning: "La colazione come verbo."),
+                            ExampleLine(text: "Mi faccio la doccia ed esco alle otto.", meaning: "Due azioni di fila."),
+                            ExampleLine(text: "La domenica mi sveglio tardi.", meaning: "L'abitudine del weekend."),
+                            ExampleLine(text: "Mi addormento verso le undici.", meaning: "La sera, con verso.")]),
+                expressions: [
+                            TargetExpression(text: "Mi sveglio alle …", meaning: "La sveglia.", note: "mi + sveglio: ins separabili."),
+                            TargetExpression(text: "Faccio colazione", meaning: "La colazione.", note: "fare colazione = desayunar."),
+                            TargetExpression(text: "Esco di casa alle …", meaning: "L'uscita.", note: "uscire di + luogo."),
+                            TargetExpression(text: "La domenica, …", meaning: "L'abitudine.", note: "la + giorno = ogni domenica."),
+                            TargetExpression(text: "Mi addormento verso …", meaning: "Il sonno.", note: "verso = sobre las.")],
+                situation: "Racconti la tua mattina a un nuovo amico: sveglia, colazione, doccia, uscita — e come cambia la domenica.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di a che ora ti svegli in settimana.", expected: ["Mi sveglio alle <ora> in settimana."], focus: "mi sveglio", watch: "Il riflessivo porta mi: mi sveglio."),
+                                PracticeQuestion(prompt: "Di cosa fai colazione.", expected: ["Faccio colazione con <cibo>."], focus: "fare colazione", watch: "fare colazione = desayunar."),
+                                PracticeQuestion(prompt: "Di a che ora esci di casa.", expected: ["Esco di casa alle <ora>."], focus: "uscire di", watch: "uscire DI casa."),
+                                PracticeQuestion(prompt: "Di la tua abitudine della domenica.", expected: ["La domenica mi sveglio tardi."], focus: "la + giorno", watch: "la domenica = ogni domenica."),
+                                PracticeQuestion(prompt: "Di a che ora ti addormenti.", expected: ["Mi addormento verso le <ora>."], focus: "mi addormento", watch: "verso = sobre las.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u2-routine-e1", kind: "choice", prompt: "Mi ___ alle sette tutti i giorni.", options: ["sveglio", "sveglio me", "sveglia", "svegliarmi"], answers: ["sveglio"], explain: "Mi sveglio: il pronome va davanti."),
+                            Exercise(id: "it-foundations-u2-routine-e2", kind: "gap", prompt: "___ colazione con un caffè. (fare colazione)", options: [], answers: ["Faccio", "faccio"], explain: "fare colazione: io faccio."),
+                            Exercise(id: "it-foundations-u2-routine-e3", kind: "order", prompt: "Di a che ora esci.", options: [], answers: ["Esco di casa alle otto"], explain: "esco di + luogo + alle + ora."),
+                            Exercise(id: "it-foundations-u2-routine-e4", kind: "written", prompt: "La tua abitudine della domenica.", options: [], answers: ["la domenica mi sveglio tardi", "di domenica faccio colazione tardi"], explain: "la + giorno + presente.")], skills: ["grammar:present-simple", "grammar:time-expressions", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u2-quartiere", title: "Il mio quartiere", goal: "Dire cosa c'è nel tuo quartiere con c'è / ci sono.",
+                intro: LessonIntro(explanation: [
+                            "C'è per uno, ci sono per tanti: « C'è un bar, ci sono due negozi ». Non cambia per le domande: « C'è una farmacia qui vicino? »",
+                            "Negativo: « Non c'è un cinema, mi dispiace ». Con non c'è il nome resta senza articolo.",
+                            "Locazioni: davanti a, vicino a, accanto a : « Il bar è davanti al parco ». A si fonde: al, dal, nel."], examples: [
+                            ExampleLine(text: "C'è un bar e ci sono due negozi.", meaning: "c'è uno, ci sono tanti."),
+                            ExampleLine(text: "C'è una farmacia qui vicino?", meaning: "La domanda utile."),
+                            ExampleLine(text: "Non c'è un cinema qui.", meaning: "La negazione."),
+                            ExampleLine(text: "Il bar è davanti al parco.", meaning: "davanti al = delante del."),
+                            ExampleLine(text: "Tutto è vicino a casa mia.", meaning: "Il riassunto comodo.")]),
+                expressions: [
+                            TargetExpression(text: "C'è / ci sono + luogo", meaning: "Dire cosa c'è.", note: "c'è uno, ci sono tanti."),
+                            TargetExpression(text: "C'è … qui vicino?", meaning: "Chiedere.", note: "…una farmacia?"),
+                            TargetExpression(text: "Non c'è …", meaning: "Quello che manca.", note: "Non c'è cinema."),
+                            TargetExpression(text: "davanti a / vicino a", meaning: "Situare.", note: "davanti al parco."),
+                            TargetExpression(text: "vicino a casa mia", meaning: "La distanza.", note: "tutto è vicino.")],
+                situation: "Un visitatore chiede del tuo quartiere: nomna quattro posti, di' cosa manca e situa il tuo preferito.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Nomina due posti del tuo quartiere.", expected: ["C'è <luogo> e ci sono <luoghi>."], focus: "c'è / ci sono", watch: "c'è uno, ci sono tanti."),
+                                PracticeQuestion(prompt: "Di' cosa manca. (cinema)", expected: ["Non c'è un cinema nel mio quartiere."], focus: "non c'è", watch: "Non c'è + luogo."),
+                                PracticeQuestion(prompt: "Chiedi se c'è una farmacia.", expected: ["C'è una farmacia qui vicino?"], focus: "qui vicino", watch: "qui vicino = aquí cerca."),
+                                PracticeQuestion(prompt: "Situa il tuo posto preferito.", expected: ["<Luogo> è davanti a <luogo>."], focus: "davanti a", watch: "davanti A + luogo."),
+                                PracticeQuestion(prompt: "Di' che tutto è vicino a casa tua.", expected: ["Tutto è vicino a casa mia."], focus: "vicino a", watch: "vicino A casa mia.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u2-quartiere-e1", kind: "choice", prompt: "___ un bar e ci sono due negozi.", options: ["C'è", "Ci sono", "È", "Sono"], answers: ["C'è"], explain: "C'è per uno solo."),
+                            Exercise(id: "it-foundations-u2-quartiere-e2", kind: "gap", prompt: "Non ___ un cinema qui. (esiste)", options: [], answers: ["c'è"], explain: "Non c'è + luogo."),
+                            Exercise(id: "it-foundations-u2-quartiere-e3", kind: "order", prompt: "Chiedi una farmacia.", options: [], answers: ["Ce una farmacia qui vicino"], explain: "C'è + luogo + qui vicino?"),
+                            Exercise(id: "it-foundations-u2-quartiere-e4", kind: "written", prompt: "Di' cosa c'è davanti a casa tua.", options: [], answers: ["ce <luogo> davanti a casa mia", "c'è <luogo> davanti a casa mia"], explain: "C'è + luogo + davanti a.")], skills: ["vocab:town", "grammar:there-is-are", "grammar:prepositions-place", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "it-foundations-u2-progetti", title: "Piani per sabato", goal: "Proporre piani con si va a e fissare un appuntamento.",
+                intro: LessonIntro(explanation: [
+                            "Il futuro vicino: andare a + infinito. « Sabato si va al mercato » oppure « noi andiamo al mercato ».",
+                            "Proporre: « Andiamo al mercato? », « Vuoi venire? ». Darsi appuntamento: « Ci vediamo alle sei in piazza? »",
+                            "Confermare con ora e luogo: « Perfetto, alle sei davanti al parco ». Un piano senza luogo è un desiderio."], examples: [
+                            ExampleLine(text: "Sabato andiamo al mercato.", meaning: "Presente con valore di futuro."),
+                            ExampleLine(text: "Vuoi venire con noi?", meaning: "L'invito."),
+                            ExampleLine(text: "Ci vediamo alle sei in piazza?", meaning: "L'appuntamento."),
+                            ExampleLine(text: "Perfetto, ci vediamo lì.", meaning: "La conferma."),
+                            ExampleLine(text: "Se piove, lo spostiamo a domenica.", meaning: "Il piano B.")]),
+                expressions: [
+                            TargetExpression(text: "andiamo a + infinito", meaning: "Il progetto.", note: "andiamo al mercato."),
+                            TargetExpression(text: "Vuoi venire?", meaning: "Invitare.", note: "venire con noi."),
+                            TargetExpression(text: "Ci vediamo alle … in …", meaning: "L'appuntamento.", note: "ci vediamo = nos vemos."),
+                            TargetExpression(text: "Perfetto / D'accordo", meaning: "Confermare.", note: "d'accordo = de acuerdo."),
+                            TargetExpression(text: "Se piove, …", meaning: "Il piano B.", note: "se + presente + piano.")],
+                situation: "Organizzi il sabato con un amico: mercato, appuntamento alle sei davanti al parco, e piano B se piove.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Proponi il mercato con noi.", expected: ["Sabato andiamo al mercato."], focus: "andiamo", watch: "noi andiamo = presente per il futuro."),
+                                PracticeQuestion(prompt: "Invita il tuo amico.", expected: ["Vuoi venire con noi?"], focus: "venire", watch: "venire CON noi."),
+                                PracticeQuestion(prompt: "Fissa l'appuntamento. (6, piazza)", expected: ["Ci vediamo alle sei in piazza?"], focus: "ci vediamo", watch: "ci vediamo alle + ora."),
+                                PracticeQuestion(prompt: "Dai il piano B se piove.", expected: ["Se piove, lo spostiamo a domenica."], focus: "se + presente", watch: "se + presente + piano."),
+                                PracticeQuestion(prompt: "Invita il tuo amico al piano.", expected: ["Vuoi venire con noi?"], focus: "venire", watch: "venire CON noi.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u2-progetti-e1", kind: "choice", prompt: "Sabato ___ al mercato.", options: ["andiamo", "vado", "va", "andare"], answers: ["andiamo"], explain: "noi andiamo: presente per il futuro."),
+                            Exercise(id: "it-foundations-u2-progetti-e2", kind: "gap", prompt: "Ci ___ alle sei in piazza? (vedersi)", options: [], answers: ["vediamo"], explain: "ci vediamo = nos vemos."),
+                            Exercise(id: "it-foundations-u2-progetti-e3", kind: "order", prompt: "Fissa l'appuntamento.", options: [], answers: ["Ci vediamo alle sei in piazza"], explain: "ci vediamo + alle + ora + in + luogo."),
+                            Exercise(id: "it-foundations-u2-progetti-e4", kind: "written", prompt: "Il piano B se piove.", options: [], answers: ["se piove lo spostiamo a domenica", "se piove andiamo al cinema"], explain: "se + presente + piano.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
 public enum PtFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in São Paulo. Meet the learner, exchange names, countries and jobs using the verb ser.", 0),
@@ -3308,9 +3668,100 @@ public enum PtFoundationsU1 {
                             Exercise(id: "pt-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Meu nome é <name> e sou do <country>", "Meu nome é <name> e sou da <country>", "Me chamo <name> e sou do <country>"], explain: "Name + origin, each with its verb.")], skills: ["grammar:verb-be", "function:introduce-yourself", "vocab:introductions", "pron:word-stress"], canDo: ["introduce-yourself"])])
 }
 
+public enum PtFoundationsU2 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u2", title: "Meu dia a dia", subtitle: "Rotina e planos", level: "A1", themes: [
+                    ConversationTheme("manha-agitada", "Manhã agitada", "Contra o relógio", "sunrise", "Course", "Você conta a sua manhã minuto a minuto: horas, hábitos e esquecimentos.", 0),
+                    ConversationTheme("sabado-juntos", "Sábado juntos", "O que vamos fazer?", "figure.walk", "Course", "Planos para sábado com um amigo: feira, hora e lugar do encontro.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u2-rotina", title: "Minha rotina", goal: "Contar o seu dia no presente com as horas.",
+                intro: LessonIntro(explanation: [
+                            "O presente conta as rotinas: « Acordo às sete. Tomo café com pão de queijo. Saio de casa às oito. »",
+                            "Os dias da semana com plural = toda semana: « aos sábados acordo tarde ».",
+                            "As horas com às : « às oito », « às oito e meia ». Com a: « a noite eu fico em casa »."], examples: [
+                            ExampleLine(text: "Acordo às sete.", meaning: "O primeiro verbo do dia."),
+                            ExampleLine(text: "Tomo café com pão de queijo.", meaning: "O café da manhã."),
+                            ExampleLine(text: "Saio de casa às oito.", meaning: "A saída."),
+                            ExampleLine(text: "Aos sábados acordo tarde.", meaning: "O hábito do fim de semana."),
+                            ExampleLine(text: "Vou para a cama às onze.", meaning: "A hora de dormir.")]),
+                expressions: [
+                            TargetExpression(text: "Acordo às …", meaning: "Acorde.", note: "acordar às + hora."),
+                            TargetExpression(text: "Tomo café …", meaning: "O desjejum.", note: "tomar café da manhã."),
+                            TargetExpression(text: "Saio de casa às …", meaning: "A saída.", note: "sair DE casa."),
+                            TargetExpression(text: "Aos sábados …", meaning: "O hábito.", note: "aos + dia = todos os."),
+                            TargetExpression(text: "Vou para a cama às …", meaning: "Dormir.", note: "ir para a cama.")],
+                situation: "Você conta a sua manhã para um amigo novo: hora de acordar, café, saída — e como muda no sábado.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga a que hora você acorda na semana.", expected: ["Acordo às <hora> na semana."], focus: "acordar às", watch: "acordar ÀS + hora."),
+                                PracticeQuestion(prompt: "Diga o que você toma no café da manhã.", expected: ["Tomo <comida> e <comida>."], focus: "tomar", watch: "tomar café da manhã."),
+                                PracticeQuestion(prompt: "Diga a que hora sai de casa.", expected: ["Saio de casa às <hora>."], focus: "sair de", watch: "sair DE casa."),
+                                PracticeQuestion(prompt: "Diga o hábito do sábado.", expected: ["Aos sábados acordo tarde."], focus: "aos + dia", watch: "aos sábados = todos os sábados."),
+                                PracticeQuestion(prompt: "Diga a que hora vai para a cama.", expected: ["Vou para a cama às <hora>."], focus: "ir para a cama", watch: "ir PARA a cama.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u2-rotina-e1", kind: "choice", prompt: "___ às sete todos os dias.", options: ["Acordo", "Acordo me", "Acorda", "Acordar"], answers: ["Acordo"], explain: "Eu acordo: sem pronome solto."),
+                            Exercise(id: "pt-foundations-u2-rotina-e2", kind: "gap", prompt: "___ café com pão de queijo. (tomar café)", options: [], answers: ["Tomo", "tomo"], explain: "eu tomo café."),
+                            Exercise(id: "pt-foundations-u2-rotina-e3", kind: "order", prompt: "Diga a hora de sair.", options: [], answers: ["Saio de casa as oito"], explain: "saio de + lugar + às + hora."),
+                            Exercise(id: "pt-foundations-u2-rotina-e4", kind: "written", prompt: "O hábito do sábado.", options: [], answers: ["aos sabados acordo tarde", "no sabado acordo tarde"], explain: "aos + dia + presente.")], skills: ["grammar:present-simple", "grammar:time-expressions", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u2-bairro", title: "Meu bairro", goal: "Dizer o que tem no seu bairro com tem / existe.",
+                intro: LessonIntro(explanation: [
+                            "No Brasil informal, tem para tudo: « Tem um bar, dois mercado e uma praça ». Formal: existe / há.",
+                            "Perguntar: « Tem uma farmácia perto daqui? ». Negar: « Não tem cinema, desculpa ».",
+                            "Localizar: em frente a, do lado de, perto de : « A feira fica em frente ao parque »."], examples: [
+                            ExampleLine(text: "Tem um bar e dois mercados.", meaning: "tem não muda com plural."),
+                            ExampleLine(text: "Tem uma farmácia perto daqui?", meaning: "A pergunta útil."),
+                            ExampleLine(text: "Não tem cinema no meu bairro.", meaning: "A negação."),
+                            ExampleLine(text: "A feira fica em frente ao parque.", meaning: "A localização."),
+                            ExampleLine(text: "Tudo fica perto de casa.", meaning: "O resumo.")]),
+                expressions: [
+                            TargetExpression(text: "Tem + lugar", meaning: "Dizer o que existe.", note: "Tem uma padaria."),
+                            TargetExpression(text: "Tem … perto daqui?", meaning: "Perguntar.", note: "…uma farmácia?"),
+                            TargetExpression(text: "Não tem …", meaning: "O que falta.", note: "Não tem cinema."),
+                            TargetExpression(text: "fica em frente a / do lado de", meaning: "Localizar.", note: "em frente ao parque."),
+                            TargetExpression(text: "perto de casa", meaning: "A distância.", note: "tudo é perto.")],
+                situation: "Um visitante pergunta do seu bairro: nomeie quatro lugares, diga o que falta e localize o seu preferido.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga dois lugares do seu bairro.", expected: ["Tem <lugar> e <lugar>."], focus: "tem", watch: "tem não muda: tem um, tem dois."),
+                                PracticeQuestion(prompt: "Diga o que não tem. (cinema)", expected: ["Não tem cinema no meu bairro."], focus: "não tem", watch: "Não tem + lugar."),
+                                PracticeQuestion(prompt: "Pergunte se tem farmácia perto.", expected: ["Tem uma farmácia perto daqui?"], focus: "perto daqui", watch: "perto daqui = aquí cerca."),
+                                PracticeQuestion(prompt: "Localize o seu lugar favorito.", expected: ["<Lugar> fica em frente a <lugar>."], focus: "em frente a", watch: "em frente A + lugar."),
+                                PracticeQuestion(prompt: "Diga que tudo fica perto da sua casa.", expected: ["Tudo fica perto de casa."], focus: "perto de", watch: "perto DE casa.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u2-bairro-e1", kind: "choice", prompt: "___ um bar e dois mercados.", options: ["Tem", "Há também", "São", "Estão"], answers: ["Tem"], explain: "Tem para dizer o que existe (Brasil informal)."),
+                            Exercise(id: "pt-foundations-u2-bairro-e2", kind: "gap", prompt: "Não ___ cinema no meu bairro.", options: [], answers: ["tem"], explain: "Não tem + lugar."),
+                            Exercise(id: "pt-foundations-u2-bairro-e3", kind: "order", prompt: "Pergunte por uma farmácia.", options: [], answers: ["Tem uma farmacia perto daqui"], explain: "Tem + lugar + perto daqui?"),
+                            Exercise(id: "pt-foundations-u2-bairro-e4", kind: "written", prompt: "Diga o que tem em frente à sua casa.", options: [], answers: ["tem <lugar> em frente a minha casa", "tem um mercado em frente"], explain: "Tem + lugar + em frente a.")], skills: ["vocab:town", "grammar:there-is-are", "grammar:prepositions-place", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "pt-foundations-u2-planos", title: "Planos para sábado", goal: "Propor planos com vamos e combinar hora e lugar.",
+                intro: LessonIntro(explanation: [
+                            "O futuro próximo: ir + infinitivo. « No sábado vamos à feira ». O ir conjuga, o segundo verbo fica no infinitivo.",
+                            "Propor: « Vamos à feira? », « Você quer vir? ». Combinar: « Nos vemos às seis na praça? »",
+                            "Confirmar com hora e lugar: « Fechado, às seis na praça ». Plano sem lugar é desejo."], examples: [
+                            ExampleLine(text: "No sábado vamos à feira.", meaning: "ir + infinitivo."),
+                            ExampleLine(text: "Você quer vir com a gente?", meaning: "O convite."),
+                            ExampleLine(text: "Nos vemos às seis na praça?", meaning: "A hora e o lugar."),
+                            ExampleLine(text: "Fechado, até sábado!", meaning: "A confirmação."),
+                            ExampleLine(text: "Se chover, marcamos para domingo.", meaning: "O plano B.")]),
+                expressions: [
+                            TargetExpression(text: "vamos a + lugar / ir + infinitivo", meaning: "O plano.", note: "vamos à feira."),
+                            TargetExpression(text: "Você quer vir?", meaning: "Convidar.", note: "vir com a gente."),
+                            TargetExpression(text: "Nos vemos às … , …", meaning: "O encontro.", note: "às + hora + em + lugar."),
+                            TargetExpression(text: "Fechado / Combinado", meaning: "Confirmar.", note: "fechado = quedamos."),
+                            TargetExpression(text: "Se chover, …", meaning: "O plano B.", note: "se + presente + plano.")],
+                situation: "Você organiza o sábado com um amigo: feira, encontro às seis na praça e plano B se chover.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Proponha a feira no sábado.", expected: ["No sábado vamos à feira."], focus: "vamos a", watch: "vamos A + lugar (a + a = à)."),
+                                PracticeQuestion(prompt: "Convide o seu amigo.", expected: ["Você quer vir com a gente?"], focus: "vir", watch: "vir COM a gente."),
+                                PracticeQuestion(prompt: "Combine o encontro. (6, praça)", expected: ["Nos vemos às seis na praça?"], focus: "nos vemos", watch: "nos vemos ÀS + hora."),
+                                PracticeQuestion(prompt: "Dê o plano B se chover.", expected: ["Se chover, marcamos para domingo."], focus: "se + presente", watch: "se + presente + plano."),
+                                PracticeQuestion(prompt: "Convide o seu amigo para o plano.", expected: ["Você quer vir com a gente?"], focus: "vir", watch: "vir COM a gente.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u2-planos-e1", kind: "choice", prompt: "No sábado vamos ___ feira.", options: ["à", "a", "para a", "na"], answers: ["à"], explain: "vamos A + A feira = vamos À feira."),
+                            Exercise(id: "pt-foundations-u2-planos-e2", kind: "gap", prompt: "___ vemos às seis na praça? (encontro)", options: [], answers: ["Nos"], explain: "Nos vemos = nos vemos."),
+                            Exercise(id: "pt-foundations-u2-planos-e3", kind: "order", prompt: "Combine o encontro.", options: [], answers: ["Nos vemos as seis na praca"], explain: "nos vemos + às + hora + em + lugar."),
+                            Exercise(id: "pt-foundations-u2-planos-e4", kind: "written", prompt: "O plano B se chover.", options: [], answers: ["se chover marcamos para domingo", "se chover vamos ao cinema"], explain: "se + presente + plano.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
-DeFoundationsU1.unit
+DeFoundationsU1.unit,
+DeFoundationsU2.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -3353,16 +3804,20 @@ EnTechU1.unit
 EnWorkU1.unit
         ]),
         Course(id: "es-foundations", languageID: "es", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Spanish: the structures every sentence uses, practised out loud in small conversations.", units: [
-EsFoundationsU1.unit
+EsFoundationsU1.unit,
+EsFoundationsU2.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
-FrFoundationsU1.unit
+FrFoundationsU1.unit,
+FrFoundationsU2.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
-ItFoundationsU1.unit
+ItFoundationsU1.unit,
+ItFoundationsU2.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
-PtFoundationsU1.unit
+PtFoundationsU1.unit,
+PtFoundationsU2.unit
         ]),
     ]
 }

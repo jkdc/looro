@@ -592,6 +592,524 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u2",
+      "title": "Meu dia a dia",
+      "subtitle": "Rotina e planos",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "manha-agitada",
+          "title": "Manhã agitada",
+          "subtitle": "Contra o relógio",
+          "symbol": "sunrise",
+          "category": "Course",
+          "situation": "Você conta a sua manhã minuto a minuto: horas, hábitos e esquecimentos.",
+          "colorIndex": 0
+        },
+        {
+          "id": "sabado-juntos",
+          "title": "Sábado juntos",
+          "subtitle": "O que vamos fazer?",
+          "symbol": "figure.walk",
+          "category": "Course",
+          "situation": "Planos para sábado com um amigo: feira, hora e lugar do encontro.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u2-rotina",
+          "title": "Minha rotina",
+          "goal": "Contar o seu dia no presente com as horas.",
+          "intro": {
+            "explanation": [
+              "O presente conta as rotinas: « Acordo às sete. Tomo café com pão de queijo. Saio de casa às oito. »",
+              "Os dias da semana com plural = toda semana: « aos sábados acordo tarde ».",
+              "As horas com às : « às oito », « às oito e meia ». Com a: « a noite eu fico em casa »."
+            ],
+            "examples": [
+              {
+                "text": "Acordo às sete.",
+                "meaning": "O primeiro verbo do dia."
+              },
+              {
+                "text": "Tomo café com pão de queijo.",
+                "meaning": "O café da manhã."
+              },
+              {
+                "text": "Saio de casa às oito.",
+                "meaning": "A saída."
+              },
+              {
+                "text": "Aos sábados acordo tarde.",
+                "meaning": "O hábito do fim de semana."
+              },
+              {
+                "text": "Vou para a cama às onze.",
+                "meaning": "A hora de dormir."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Acordo às …",
+              "meaning": "Acorde.",
+              "note": "acordar às + hora."
+            },
+            {
+              "text": "Tomo café …",
+              "meaning": "O desjejum.",
+              "note": "tomar café da manhã."
+            },
+            {
+              "text": "Saio de casa às …",
+              "meaning": "A saída.",
+              "note": "sair DE casa."
+            },
+            {
+              "text": "Aos sábados …",
+              "meaning": "O hábito.",
+              "note": "aos + dia = todos os."
+            },
+            {
+              "text": "Vou para a cama às …",
+              "meaning": "Dormir.",
+              "note": "ir para a cama."
+            }
+          ],
+          "situation": "Você conta a sua manhã para um amigo novo: hora de acordar, café, saída — e como muda no sábado.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga a que hora você acorda na semana.",
+                "expected": [
+                  "Acordo às <hora> na semana."
+                ],
+                "focus": "acordar às",
+                "watch": "acordar ÀS + hora."
+              },
+              {
+                "prompt": "Diga o que você toma no café da manhã.",
+                "expected": [
+                  "Tomo <comida> e <comida>."
+                ],
+                "focus": "tomar",
+                "watch": "tomar café da manhã."
+              },
+              {
+                "prompt": "Diga a que hora sai de casa.",
+                "expected": [
+                  "Saio de casa às <hora>."
+                ],
+                "focus": "sair de",
+                "watch": "sair DE casa."
+              },
+              {
+                "prompt": "Diga o hábito do sábado.",
+                "expected": [
+                  "Aos sábados acordo tarde."
+                ],
+                "focus": "aos + dia",
+                "watch": "aos sábados = todos os sábados."
+              },
+              {
+                "prompt": "Diga a que hora vai para a cama.",
+                "expected": [
+                  "Vou para a cama às <hora>."
+                ],
+                "focus": "ir para a cama",
+                "watch": "ir PARA a cama."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u2-rotina-e1",
+              "kind": "choice",
+              "prompt": "___ às sete todos os dias.",
+              "explain": "Eu acordo: sem pronome solto.",
+              "options": [
+                "Acordo",
+                "Acordo me",
+                "Acorda",
+                "Acordar"
+              ],
+              "answers": [
+                "Acordo"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-rotina-e2",
+              "kind": "gap",
+              "prompt": "___ café com pão de queijo. (tomar café)",
+              "explain": "eu tomo café.",
+              "answers": [
+                "Tomo",
+                "tomo"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-rotina-e3",
+              "kind": "order",
+              "prompt": "Diga a hora de sair.",
+              "explain": "saio de + lugar + às + hora.",
+              "answers": [
+                "Saio de casa as oito"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-rotina-e4",
+              "kind": "written",
+              "prompt": "O hábito do sábado.",
+              "explain": "aos + dia + presente.",
+              "answers": [
+                "aos sabados acordo tarde",
+                "no sabado acordo tarde"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:time-expressions",
+            "vocab:daily-routine",
+            "function:talk-about-routines"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u2-bairro",
+          "title": "Meu bairro",
+          "goal": "Dizer o que tem no seu bairro com tem / existe.",
+          "intro": {
+            "explanation": [
+              "No Brasil informal, tem para tudo: « Tem um bar, dois mercado e uma praça ». Formal: existe / há.",
+              "Perguntar: « Tem uma farmácia perto daqui? ». Negar: « Não tem cinema, desculpa ».",
+              "Localizar: em frente a, do lado de, perto de : « A feira fica em frente ao parque »."
+            ],
+            "examples": [
+              {
+                "text": "Tem um bar e dois mercados.",
+                "meaning": "tem não muda com plural."
+              },
+              {
+                "text": "Tem uma farmácia perto daqui?",
+                "meaning": "A pergunta útil."
+              },
+              {
+                "text": "Não tem cinema no meu bairro.",
+                "meaning": "A negação."
+              },
+              {
+                "text": "A feira fica em frente ao parque.",
+                "meaning": "A localização."
+              },
+              {
+                "text": "Tudo fica perto de casa.",
+                "meaning": "O resumo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Tem + lugar",
+              "meaning": "Dizer o que existe.",
+              "note": "Tem uma padaria."
+            },
+            {
+              "text": "Tem … perto daqui?",
+              "meaning": "Perguntar.",
+              "note": "…uma farmácia?"
+            },
+            {
+              "text": "Não tem …",
+              "meaning": "O que falta.",
+              "note": "Não tem cinema."
+            },
+            {
+              "text": "fica em frente a / do lado de",
+              "meaning": "Localizar.",
+              "note": "em frente ao parque."
+            },
+            {
+              "text": "perto de casa",
+              "meaning": "A distância.",
+              "note": "tudo é perto."
+            }
+          ],
+          "situation": "Um visitante pergunta do seu bairro: nomeie quatro lugares, diga o que falta e localize o seu preferido.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga dois lugares do seu bairro.",
+                "expected": [
+                  "Tem <lugar> e <lugar>."
+                ],
+                "focus": "tem",
+                "watch": "tem não muda: tem um, tem dois."
+              },
+              {
+                "prompt": "Diga o que não tem. (cinema)",
+                "expected": [
+                  "Não tem cinema no meu bairro."
+                ],
+                "focus": "não tem",
+                "watch": "Não tem + lugar."
+              },
+              {
+                "prompt": "Pergunte se tem farmácia perto.",
+                "expected": [
+                  "Tem uma farmácia perto daqui?"
+                ],
+                "focus": "perto daqui",
+                "watch": "perto daqui = aquí cerca."
+              },
+              {
+                "prompt": "Localize o seu lugar favorito.",
+                "expected": [
+                  "<Lugar> fica em frente a <lugar>."
+                ],
+                "focus": "em frente a",
+                "watch": "em frente A + lugar."
+              },
+              {
+                "prompt": "Diga que tudo fica perto da sua casa.",
+                "expected": [
+                  "Tudo fica perto de casa."
+                ],
+                "focus": "perto de",
+                "watch": "perto DE casa."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u2-bairro-e1",
+              "kind": "choice",
+              "prompt": "___ um bar e dois mercados.",
+              "explain": "Tem para dizer o que existe (Brasil informal).",
+              "options": [
+                "Tem",
+                "Há também",
+                "São",
+                "Estão"
+              ],
+              "answers": [
+                "Tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-bairro-e2",
+              "kind": "gap",
+              "prompt": "Não ___ cinema no meu bairro.",
+              "explain": "Não tem + lugar.",
+              "answers": [
+                "tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-bairro-e3",
+              "kind": "order",
+              "prompt": "Pergunte por uma farmácia.",
+              "explain": "Tem + lugar + perto daqui?",
+              "answers": [
+                "Tem uma farmacia perto daqui"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-bairro-e4",
+              "kind": "written",
+              "prompt": "Diga o que tem em frente à sua casa.",
+              "explain": "Tem + lugar + em frente a.",
+              "answers": [
+                "tem <lugar> em frente a minha casa",
+                "tem um mercado em frente"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:town",
+            "grammar:there-is-are",
+            "grammar:prepositions-place",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "pt-foundations-u2-planos",
+          "title": "Planos para sábado",
+          "goal": "Propor planos com vamos e combinar hora e lugar.",
+          "intro": {
+            "explanation": [
+              "O futuro próximo: ir + infinitivo. « No sábado vamos à feira ». O ir conjuga, o segundo verbo fica no infinitivo.",
+              "Propor: « Vamos à feira? », « Você quer vir? ». Combinar: « Nos vemos às seis na praça? »",
+              "Confirmar com hora e lugar: « Fechado, às seis na praça ». Plano sem lugar é desejo."
+            ],
+            "examples": [
+              {
+                "text": "No sábado vamos à feira.",
+                "meaning": "ir + infinitivo."
+              },
+              {
+                "text": "Você quer vir com a gente?",
+                "meaning": "O convite."
+              },
+              {
+                "text": "Nos vemos às seis na praça?",
+                "meaning": "A hora e o lugar."
+              },
+              {
+                "text": "Fechado, até sábado!",
+                "meaning": "A confirmação."
+              },
+              {
+                "text": "Se chover, marcamos para domingo.",
+                "meaning": "O plano B."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "vamos a + lugar / ir + infinitivo",
+              "meaning": "O plano.",
+              "note": "vamos à feira."
+            },
+            {
+              "text": "Você quer vir?",
+              "meaning": "Convidar.",
+              "note": "vir com a gente."
+            },
+            {
+              "text": "Nos vemos às … , …",
+              "meaning": "O encontro.",
+              "note": "às + hora + em + lugar."
+            },
+            {
+              "text": "Fechado / Combinado",
+              "meaning": "Confirmar.",
+              "note": "fechado = quedamos."
+            },
+            {
+              "text": "Se chover, …",
+              "meaning": "O plano B.",
+              "note": "se + presente + plano."
+            }
+          ],
+          "situation": "Você organiza o sábado com um amigo: feira, encontro às seis na praça e plano B se chover.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Proponha a feira no sábado.",
+                "expected": [
+                  "No sábado vamos à feira."
+                ],
+                "focus": "vamos a",
+                "watch": "vamos A + lugar (a + a = à)."
+              },
+              {
+                "prompt": "Convide o seu amigo.",
+                "expected": [
+                  "Você quer vir com a gente?"
+                ],
+                "focus": "vir",
+                "watch": "vir COM a gente."
+              },
+              {
+                "prompt": "Combine o encontro. (6, praça)",
+                "expected": [
+                  "Nos vemos às seis na praça?"
+                ],
+                "focus": "nos vemos",
+                "watch": "nos vemos ÀS + hora."
+              },
+              {
+                "prompt": "Dê o plano B se chover.",
+                "expected": [
+                  "Se chover, marcamos para domingo."
+                ],
+                "focus": "se + presente",
+                "watch": "se + presente + plano."
+              },
+              {
+                "prompt": "Convide o seu amigo para o plano.",
+                "expected": [
+                  "Você quer vir com a gente?"
+                ],
+                "focus": "vir",
+                "watch": "vir COM a gente."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u2-planos-e1",
+              "kind": "choice",
+              "prompt": "No sábado vamos ___ feira.",
+              "explain": "vamos A + A feira = vamos À feira.",
+              "options": [
+                "à",
+                "a",
+                "para a",
+                "na"
+              ],
+              "answers": [
+                "à"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-planos-e2",
+              "kind": "gap",
+              "prompt": "___ vemos às seis na praça? (encontro)",
+              "explain": "Nos vemos = nos vemos.",
+              "answers": [
+                "Nos"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-planos-e3",
+              "kind": "order",
+              "prompt": "Combine o encontro.",
+              "explain": "nos vemos + às + hora + em + lugar.",
+              "answers": [
+                "Nos vemos as seis na praca"
+              ]
+            },
+            {
+              "id": "pt-foundations-u2-planos-e4",
+              "kind": "written",
+              "prompt": "O plano B se chover.",
+              "explain": "se + presente + plano.",
+              "answers": [
+                "se chover marcamos para domingo",
+                "se chover vamos ao cinema"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:social-expressions",
+            "grammar:present-questions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
     }
   ]
 }

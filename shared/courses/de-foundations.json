@@ -586,6 +586,523 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u2",
+      "title": "Mein Alltag",
+      "subtitle": "Routine und Pläne",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "morgen-chaos",
+          "title": "Morgenchaos",
+          "subtitle": "Gegen die Uhr",
+          "symbol": "sunrise",
+          "category": "Course",
+          "situation": "Du erzählst deinen Morgen Minute für Minute: Uhrzeiten, Gewohnheiten, Vergessenes.",
+          "colorIndex": 0
+        },
+        {
+          "id": "samstag-zwei",
+          "title": "Samstag zu zweit",
+          "subtitle": "Was machen wir?",
+          "symbol": "figure.walk",
+          "category": "Course",
+          "situation": "Pläne für Samstag mit einem Freund: Markt, Uhrzeit, Treffpunkt.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u2-routine",
+          "title": "Meine Routine",
+          "goal": "Deinen Tag im Präsens mit Uhrzeiten erzählen.",
+          "intro": {
+            "explanation": [
+              "Das Präsens erzählt Gewohnheiten: „Ich stehe um sieben auf. Ich frühstücke Kaffee und Toast. Um acht gehe ich los.“",
+              "Trennbare Verben nehmen den Präfix mit ans Ende: „aufstehen“ → „Ich stehe um sieben auf.“",
+              "Uhrzeiten mit um: „um sieben“, „um halb acht“. Mit ab: „ab acht Uhr bin ich frei.“"
+            ],
+            "examples": [
+              {
+                "text": "Ich stehe um sieben auf.",
+                "meaning": "aufstehen getrennt: … auf."
+              },
+              {
+                "text": "Ich frühstücke Kaffee und Toast.",
+                "meaning": "Das Frühstück als Verb."
+              },
+              {
+                "text": "Um acht gehe ich los.",
+                "meaning": "losgehen, getrennt."
+              },
+              {
+                "text": "Abends esse ich um neun.",
+                "meaning": "Das Abendessen."
+              },
+              {
+                "text": "Samstags schlafe ich lange.",
+                "meaning": "Die Wochenendgewohnheit."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich stehe um … auf",
+              "meaning": "Aufstehen.",
+              "note": "auf am Ende!"
+            },
+            {
+              "text": "Ich frühstücke …",
+              "meaning": "Das Frühstück.",
+              "note": "frühstücke + Essen."
+            },
+            {
+              "text": "Um … gehe ich los",
+              "meaning": "Der Start.",
+              "note": "um + Uhrzeit."
+            },
+            {
+              "text": "Samstags …",
+              "meaning": "Die Gewohnheit.",
+              "note": "samstags = jeden Samstag."
+            },
+            {
+              "text": "Ich gehe um … ins Bett",
+              "meaning": "Das Zubettgehen.",
+              "note": "ins Bett gehen."
+            }
+          ],
+          "situation": "Du erzählst einem neuen Freund deinen Morgen: Aufstehen, Frühstück, Losgehen — und wie der Samstag anders ist.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag, wann du unter der Woche aufstehst.",
+                "expected": [
+                  "Ich stehe um <Uhrzeit> auf."
+                ],
+                "focus": "aufstehen",
+                "watch": "trennbar: „…auf“ am Satzende."
+              },
+              {
+                "prompt": "Sag, was du frühstückst.",
+                "expected": [
+                  "Ich frühstücke <Essen> und <Essen>."
+                ],
+                "focus": "frühstücken",
+                "watch": "frühstücke + Essen."
+              },
+              {
+                "prompt": "Sag, wann du losgehst.",
+                "expected": [
+                  "Um <Uhrzeit> gehe ich los."
+                ],
+                "focus": "losgehen",
+                "watch": "„los“ am Satzende."
+              },
+              {
+                "prompt": "Sag deine Samstaggewohnheit.",
+                "expected": [
+                  "Samstags schlafe ich lange."
+                ],
+                "focus": "samstags",
+                "watch": "samstags = jeden Samstag."
+              },
+              {
+                "prompt": "Sag, wann du ins Bett gehst.",
+                "expected": [
+                  "Ich gehe um <Uhrzeit> ins Bett."
+                ],
+                "focus": "ins Bett",
+                "watch": "ins Bett gehen — feststehend."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u2-routine-e1",
+              "kind": "choice",
+              "prompt": "Ich ___ um sieben ___.",
+              "explain": "aufstehen ist trennbar.",
+              "options": [
+                "stehe … auf",
+                "auf … stehe",
+                "stehe … aufstehen",
+                "aufstehe … auf"
+              ],
+              "answers": [
+                "stehe … auf"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-routine-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ Kaffee und Toast. (frühstücken)",
+              "explain": "ich frühstücke.",
+              "answers": [
+                "frühstücke"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-routine-e3",
+              "kind": "order",
+              "prompt": "Sag, wann du losgehst.",
+              "explain": "um + Zeit + gehe ich los.",
+              "answers": [
+                "Um acht gehe ich los"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-routine-e4",
+              "kind": "written",
+              "prompt": "Deine Samstaggewohnheit.",
+              "explain": "samstags + Präsens.",
+              "answers": [
+                "samstags schlafe ich lange",
+                "samstags stehe ich spät auf"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:time-expressions",
+            "vocab:daily-routine",
+            "function:talk-about-routines"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u2-viertel",
+          "title": "Mein Viertel",
+          "goal": "Sagen, was es in deinem Viertel gibt — mit es gibt.",
+          "intro": {
+            "explanation": [
+              "es gibt + Akkusativ für alles, was existiert: „Es gibt einen Markt, zwei Cafés und einen Park.“",
+              "Frage: „Gibt es hier eine Apotheke?“ Negation: „Nein, es gibt keinen Bahnhof hier.“",
+              "Lage mit neben / gegenüber / in der Nähe von: „Der Markt ist gegenüber vom Park.“"
+            ],
+            "examples": [
+              {
+                "text": "Es gibt einen Markt und zwei Cafés.",
+                "meaning": "es gibt + Akkusativ."
+              },
+              {
+                "text": "Gibt es hier eine Apotheke?",
+                "meaning": "Die nützliche Frage."
+              },
+              {
+                "text": "Nein, es gibt keinen Bahnhof.",
+                "meaning": "Die Verneinung: keinen."
+              },
+              {
+                "text": "Der Markt ist gegenüber vom Park.",
+                "meaning": "Die Lage."
+              },
+              {
+                "text": "Alles ist in der Nähe.",
+                "meaning": "Das bequeme Fazit."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Es gibt + Akkusativ",
+              "meaning": "Was es gibt.",
+              "note": "einen Markt (maskulin!)."
+            },
+            {
+              "text": "Gibt es … ?",
+              "meaning": "Fragen.",
+              "note": "…eine Apotheke?"
+            },
+            {
+              "text": "es gibt keinen / keine",
+              "meaning": "Verneinung.",
+              "note": "keinen Bahnhof."
+            },
+            {
+              "text": "neben / gegenüber von",
+              "meaning": "Lage.",
+              "note": "gegenüber vom Park."
+            },
+            {
+              "text": "in der Nähe von …",
+              "meaning": "Die Nähe.",
+              "note": "…von meiner Wohnung."
+            }
+          ],
+          "situation": "Ein Besucher fragt nach deinem Viertel: nenne vier Orte, sage, was fehlt, und beschreibe deinen Lieblingsort.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Nenne zwei Orte in deinem Viertel.",
+                "expected": [
+                  "Es gibt <Ort> und <Ort>."
+                ],
+                "focus": "es gibt",
+                "watch": "es gibt + Akkusativ."
+              },
+              {
+                "prompt": "Sag, was fehlt. (Kino)",
+                "expected": [
+                  "Es gibt kein Kino in meinem Viertel."
+                ],
+                "focus": "kein",
+                "watch": "Verneinung: kein/keine."
+              },
+              {
+                "prompt": "Frag nach einer Apotheke.",
+                "expected": [
+                  "Gibt es hier eine Apotheke?"
+                ],
+                "focus": "gibt es",
+                "watch": "Gibt es + Akkusativ?"
+              },
+              {
+                "prompt": "Beschreibe deinen Lieblingsort.",
+                "expected": [
+                  "<Ort> ist gegenüber vom <Ort>."
+                ],
+                "focus": "gegenüber von",
+                "watch": "gegenüber vom + Dativ."
+              },
+              {
+                "prompt": "Sag, dass alles in der Nähe ist.",
+                "expected": [
+                  "Alles ist in der Nähe."
+                ],
+                "focus": "in der Nähe",
+                "watch": "in der Nähe von + Ort."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u2-viertel-e1",
+              "kind": "choice",
+              "prompt": "___ einen Markt und zwei Cafés.",
+              "explain": "es gibt + Akkusativ.",
+              "options": [
+                "Es gibt",
+                "Sie sind",
+                "Das ist",
+                "Es hat"
+              ],
+              "answers": [
+                "Es gibt"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-viertel-e2",
+              "kind": "gap",
+              "prompt": "Es gibt ___ Bahnhof hier. (negación, masculino)",
+              "explain": "Verneinung: keinen (Akkusativ).",
+              "answers": [
+                "keinen"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-viertel-e3",
+              "kind": "order",
+              "prompt": "Frag nach einer Apotheke.",
+              "explain": "Gibt es + Akkusativ?",
+              "answers": [
+                "Gibt es hier eine Apotheke"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-viertel-e4",
+              "kind": "written",
+              "prompt": "Sag, was es bei dir gibt.",
+              "explain": "es gibt + Ort.",
+              "answers": [
+                "es gibt <ort> in der nahe",
+                "es gibt einen park"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:town",
+            "grammar:there-is-are",
+            "grammar:prepositions-place",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "de-foundations-u2-plaene",
+          "title": "Pläne für Samstag",
+          "goal": "Pläne machen mit wir wollen und einen Treffpunkt vereinbaren.",
+          "intro": {
+            "explanation": [
+              "Pläne mit wollen: „Wollen wir zum Markt gehen?“ oder „Wir gehen samstags zum Markt“ — Präsens mit Zeitangabe.",
+              "Vorschlagen: „Gehen wir zum Markt?“, „Willst du mitkommen?“. Treffpunkt: „Treffen wir uns um sechs am Park?“",
+              "Bestätigen mit Ort und Zeit: „Perfekt, um sechs, vor dem Park.“ Ein Plan ohne Ort bleibt ein Wunsch."
+            ],
+            "examples": [
+              {
+                "text": "Samstag gehen wir zum Markt.",
+                "meaning": "Präsens + Zeit = Zukunft."
+              },
+              {
+                "text": "Willst du mitkommen?",
+                "meaning": "Die Einladung."
+              },
+              {
+                "text": "Treffen wir uns um sechs am Park?",
+                "meaning": "Der Treffpunkt."
+              },
+              {
+                "text": "Perfekt, bis dann!",
+                "meaning": "Die Bestätigung."
+              },
+              {
+                "text": "Wenn es regnet, verschieben wir auf Sonntag.",
+                "meaning": "Plan B."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "wir gehen + Zeitangabe",
+              "meaning": "Zukunft im Präsens.",
+              "note": "morgen / samstags + Präsens."
+            },
+            {
+              "text": "Willst du mitkommen?",
+              "meaning": "Einladen.",
+              "note": "mitkommen = venir."
+            },
+            {
+              "text": "Wir treffen uns um … am …",
+              "meaning": "Treffpunkt.",
+              "note": "sich treffen = vernos."
+            },
+            {
+              "text": "Perfekt / Bis dann!",
+              "meaning": "Bestätigen.",
+              "note": "bis dann = hasta luego."
+            },
+            {
+              "text": "Wenn es regnet, …",
+              "meaning": "Plan B.",
+              "note": "wenn + Presente + plan."
+            }
+          ],
+          "situation": "Du planst den Samstag mit einem Freund: Markt, Treffen um sechs am Park, und Plan B bei Regen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Schlage den Markt mit wir vor.",
+                "expected": [
+                  "Samstag gehen wir zum Markt."
+                ],
+                "focus": "Präsens + Zeit",
+                "watch": "Präsens + Zeitangabe = Zukunft."
+              },
+              {
+                "prompt": "Lade deinen Freund ein.",
+                "expected": [
+                  "Willst du mitkommen?"
+                ],
+                "focus": "mitkommen",
+                "watch": "mitkommen = venir junto."
+              },
+              {
+                "prompt": "Vereinbare den Treffpunkt. (6 Uhr, Park)",
+                "expected": [
+                  "Treffen wir uns um sechs am Park?"
+                ],
+                "focus": "sich treffen",
+                "watch": "Wir treffen uns + Zeit + Ort."
+              },
+              {
+                "prompt": "Gib den Plan B bei Regen.",
+                "expected": [
+                  "Wenn es regnet, verschieben wir auf Sonntag."
+                ],
+                "focus": "wenn + Plan",
+                "watch": "wenn + Presente + plan."
+              },
+              {
+                "prompt": "Lade deinen Freund ein.",
+                "expected": [
+                  "Willst du mitkommen?"
+                ],
+                "focus": "mitkommen",
+                "watch": "mitkommen = venir junto."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u2-plaene-e1",
+              "kind": "choice",
+              "prompt": "Samstag ___ wir zum Markt.",
+              "explain": "Präsens + Zeitangabe = Zukunft.",
+              "options": [
+                "gehen",
+                "gehen wir",
+                "gehen zu",
+                "gehen im"
+              ],
+              "answers": [
+                "gehen"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-plaene-e2",
+              "kind": "gap",
+              "prompt": "Treffen ___ uns um sechs? (reflexiv)",
+              "explain": "Wir treffen uns = nos vemos.",
+              "answers": [
+                "wir"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-plaene-e3",
+              "kind": "order",
+              "prompt": "Vereinbare den Treffpunkt.",
+              "explain": "Treffen wir uns + Zeit + Ort?",
+              "answers": [
+                "Treffen wir uns um sechs am Park"
+              ]
+            },
+            {
+              "id": "de-foundations-u2-plaene-e4",
+              "kind": "written",
+              "prompt": "Plan B bei Regen.",
+              "explain": "wenn + Presente + plan.",
+              "answers": [
+                "wenn es regnet verschieben wir auf sonntag",
+                "wenn es regnet gehen wir ins kino"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:social-expressions",
+            "grammar:present-questions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
     }
   ]
 }

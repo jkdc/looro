@@ -584,6 +584,526 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-foundations-u2",
+      "title": "Mi día a día",
+      "subtitle": "Rutinas y planes",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "manana-locura",
+          "title": "Mañana de locos",
+          "subtitle": "La rutina contra el reloj",
+          "symbol": "sunrise",
+          "category": "Course",
+          "situation": "Cuentas tu mañana minuto a minuto: qué haces, a qué hora y qué siempre se olvida.",
+          "colorIndex": 0
+        },
+        {
+          "id": "finde-juntos",
+          "title": "El finde juntos",
+          "subtitle": "¿Qué hacemos?",
+          "symbol": "figure.walk",
+          "category": "Course",
+          "situation": "Planes para el sábado con un amigo: qué quieres hacer y a qué hora os veis.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u2-rutina",
+          "title": "Mi rutina",
+          "goal": "Contar tu día con verbos en presente y las horas.",
+          "intro": {
+            "explanation": [
+              "El presente sirve para rutinas: «Me levanto a las siete. Desayuno café y tostadas. Salgo de casa a las ocho».",
+              "Los reflejos van con pronombre: «me levanto, me ducho, me acuesto» — el me es parte del verbo.",
+              "Las horas en punto o y media: «a las siete», «a las siete y media». Con a: «a las ocho salgo»."
+            ],
+            "examples": [
+              {
+                "text": "Me levanto a las siete.",
+                "meaning": "El primer verbo del día."
+              },
+              {
+                "text": "Desayuno café y tostadas.",
+                "meaning": "El desayuno, sin pronombre."
+              },
+              {
+                "text": "Me ducho y salgo de casa a las ocho.",
+                "meaning": "Dos acciones seguidas."
+              },
+              {
+                "text": "Ceno a las nueve y me acuesto a las once.",
+                "meaning": "La rutina de noche."
+              },
+              {
+                "text": "Los sábados me levanto tarde.",
+                "meaning": "El hábito de fin de semana."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Me levanto a las …",
+              "meaning": "El inicio.",
+              "note": "…siete, o tarde los sábados."
+            },
+            {
+              "text": "Desayuno / ceno …",
+              "meaning": "Comidas como verbos.",
+              "note": "Desayuno café."
+            },
+            {
+              "text": "Me ducho / me acuesto",
+              "meaning": "Reflejos del día.",
+              "note": "El me es obligatorio."
+            },
+            {
+              "text": "Salgo de casa a las …",
+              "meaning": "La salida.",
+              "note": "salir de + lugar."
+            },
+            {
+              "text": "Los sábados …",
+              "meaning": "El hábito de finde.",
+              "note": "plural = todos los sábados."
+            }
+          ],
+          "situation": "Cuentas tu mañana a un amigo nuevo: hora de levantarte, desayuno, ducha, salida — y cómo cambia el sábado.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di a qué hora te levantas entre semana.",
+                "expected": [
+                  "Me levanto a las <hora> entre semana."
+                ],
+                "focus": "me levanto",
+                "watch": "El reflejo lleva me: me levanto, no levanto me."
+              },
+              {
+                "prompt": "Di qué desayunas.",
+                "expected": [
+                  "Desayuno <comida> y <comida>."
+                ],
+                "focus": "desayunar",
+                "watch": "Desayuno café — el verbo y la comida comparten raíz."
+              },
+              {
+                "prompt": "Di a qué hora sales de casa.",
+                "expected": [
+                  "Salgo de casa a las <hora>."
+                ],
+                "focus": "salir de",
+                "watch": "salir DE casa — la preposición importa."
+              },
+              {
+                "prompt": "Di cómo cambia tu sábado.",
+                "expected": [
+                  "Los sábados me levanto tarde."
+                ],
+                "focus": "los + día",
+                "watch": "Los sábados = todos los sábados."
+              },
+              {
+                "prompt": "Di a qué hora te acuestas.",
+                "expected": [
+                  "Me acuesto a las <hora>."
+                ],
+                "focus": "me acuesto",
+                "watch": "Reflejo: me acuesto, no acuesto me."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u2-rutina-e1",
+              "kind": "choice",
+              "prompt": "Me ___ a las siete todos los días.",
+              "explain": "Me levanto: el me va delante.",
+              "options": [
+                "levanto",
+                "levanto me",
+                "levanta",
+                "levantarse"
+              ],
+              "answers": [
+                "levanto"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-rutina-e2",
+              "kind": "gap",
+              "prompt": "___ café y tostadas. (desayunar)",
+              "explain": "Primera persona: desayuno.",
+              "answers": [
+                "Desayuno",
+                "desayuno"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-rutina-e3",
+              "kind": "order",
+              "prompt": "Di a qué hora sales.",
+              "explain": "salgo de + lugar + a las + hora.",
+              "answers": [
+                "Salgo de casa a las ocho"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-rutina-e4",
+              "kind": "written",
+              "prompt": "Di tu hábito de los sábados.",
+              "explain": "Los + día + presente.",
+              "answers": [
+                "los sábados me levanto tarde",
+                "los sabados desayuno tarde"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:time-expressions",
+            "vocab:daily-routine",
+            "function:talk-about-routines"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u2-barrio",
+          "title": "Mi barrio",
+          "goal": "Decir qué hay en tu barrio con hay y dónde está.",
+          "intro": {
+            "explanation": [
+              "Hay sirve para todo lo que existe: «Hay una plaza, dos bares y una frutería». No cambia con plural.",
+              "Para preguntar: «¿Hay una farmacia por aquí?». Para negar: «No hay cine, lo siento».",
+              "Ubica con cerca de / al lado de / enfrente de: «La frutería está enfrente del parque»."
+            ],
+            "examples": [
+              {
+                "text": "Hay una plaza y dos bares.",
+                "meaning": "hay no cambia con plural."
+              },
+              {
+                "text": "¿Hay una farmacia por aquí?",
+                "meaning": "La pregunta útil."
+              },
+              {
+                "text": "No hay cine en mi barrio.",
+                "meaning": "La negación."
+              },
+              {
+                "text": "La frutería está enfrente del parque.",
+                "meaning": "Ubicación exacta."
+              },
+              {
+                "text": "Todo está cerca de mi casa.",
+                "meaning": "El resumen cómodo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Hay + lugar",
+              "meaning": "Decir qué existe.",
+              "note": "Hay una panadería."
+            },
+            {
+              "text": "¿Hay … por aquí?",
+              "meaning": "Preguntar.",
+              "note": "…una farmacia?"
+            },
+            {
+              "text": "No hay …",
+              "meaning": "Lo que falta.",
+              "note": "No hay metro, lo siento."
+            },
+            {
+              "text": "está enfrente de / al lado de",
+              "meaning": "Ubicación.",
+              "note": "enfrente del parque."
+            },
+            {
+              "text": "cerca de mi casa",
+              "meaning": "La distancia.",
+              "note": "todo está cerca."
+            }
+          ],
+          "situation": "Un visitante pregunta qué hay en tu barrio: nombra cuatro sitios, di lo que falta y ubica tu favorito.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di dos sitios que hay en tu barrio.",
+                "expected": [
+                  "Hay <lugar> y <lugar>."
+                ],
+                "focus": "hay",
+                "watch": "Hay no cambia: hay uno, hay dos."
+              },
+              {
+                "prompt": "Di lo que no hay. (cine)",
+                "expected": [
+                  "No hay cine en mi barrio."
+                ],
+                "focus": "no hay",
+                "watch": "No hay + lugar sin artículo."
+              },
+              {
+                "prompt": "Pregunta si hay farmacia cerca.",
+                "expected": [
+                  "¿Hay una farmacia por aquí?"
+                ],
+                "focus": "por aquí",
+                "watch": "por aquí = cerca, en esta zona."
+              },
+              {
+                "prompt": "Ubica tu sitio favorito.",
+                "expected": [
+                  "<Lugar> está enfrente de <lugar>."
+                ],
+                "focus": "enfrente de",
+                "watch": "enfrente DE + lugar."
+              },
+              {
+                "prompt": "Di que todo está cerca de tu casa.",
+                "expected": [
+                  "Todo está cerca de mi casa."
+                ],
+                "focus": "cerca de",
+                "watch": "cerca DE mi casa."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u2-barrio-e1",
+              "kind": "choice",
+              "prompt": "___ dos bares y una panadería.",
+              "explain": "Hay para decir qué existe.",
+              "options": [
+                "Hay",
+                "Están",
+                "Es",
+                "Son"
+              ],
+              "answers": [
+                "Hay"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-barrio-e2",
+              "kind": "gap",
+              "prompt": "No ___ metro en mi barrio. (existe)",
+              "explain": "No hay + lugar.",
+              "answers": [
+                "hay"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-barrio-e3",
+              "kind": "order",
+              "prompt": "Pregunta por una farmacia.",
+              "explain": "¿Hay + lugar + por aquí?",
+              "answers": [
+                "Hay una farmacia por aqui cerca"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-barrio-e4",
+              "kind": "written",
+              "prompt": "Di qué hay enfrente de tu casa.",
+              "explain": "Hay + lugar + enfrente de.",
+              "answers": [
+                "hay <lugar> enfrente de mi casa",
+                "esta <lugar>"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:town",
+            "grammar:there-is-are",
+            "grammar:prepositions-place",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "es-foundations-u2-planes",
+          "title": "Planes para el finde",
+          "goal": "Proponer planes con vamos a y quedar.",
+          "intro": {
+            "explanation": [
+              "El futuro cercano: ir a + infinitivo. «El sábado vamos a ir al mercado». Va conjugado el ir, no el segundo verbo.",
+              "Proponer: «¿Vamos al parque?», «¿Quieres venir?». Quedar es el verbo de las citas: «¿Quedamos a las seis?»",
+              "Confirmar con hora y lugar: «Perfecto, a las seis en la plaza». Un plan sin lugar es un deseo."
+            ],
+            "examples": [
+              {
+                "text": "El sábado vamos a ir al mercado.",
+                "meaning": "ir a + infinitivo."
+              },
+              {
+                "text": "¿Quieres venir con nosotros?",
+                "meaning": "Invitar."
+              },
+              {
+                "text": "¿Quedamos a las seis en la plaza?",
+                "meaning": "Quedar = la cita."
+              },
+              {
+                "text": "Perfecto, ahí nos vemos.",
+                "meaning": "Confirmar."
+              },
+              {
+                "text": "Si llueve, lo dejamos para el domingo.",
+                "meaning": "El plan B."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "vamos a + infinitivo",
+              "meaning": "El plan conjunto.",
+              "note": "vamos a ir al mercado."
+            },
+            {
+              "text": "¿Quieres venir?",
+              "meaning": "Invitar.",
+              "note": "venir con + personas."
+            },
+            {
+              "text": "¿Quedamos a las … en …?",
+              "meaning": "La cita.",
+              "note": "quedar = vernos."
+            },
+            {
+              "text": "Perfecto / Vale",
+              "meaning": "Confirmar.",
+              "note": "Vale es el sí español."
+            },
+            {
+              "text": "Si llueve, …",
+              "meaning": "El plan B.",
+              "note": "si + presente, plan."
+            }
+          ],
+          "situation": "Organizas el sábado con un amigo: propones mercado, quedáis a las seis en la plaza y dejáis el plan B si llueve.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Proponer el plan del sábado. (mercado, vamos a)",
+                "expected": [
+                  "El sábado vamos a ir al mercado."
+                ],
+                "focus": "vamos a",
+                "watch": "ir conjugado + a + infinitivo."
+              },
+              {
+                "prompt": "Invitar a tu amigo.",
+                "expected": [
+                  "¿Quieres venir conmigo?"
+                ],
+                "focus": "venir",
+                "watch": "venir con + persona."
+              },
+              {
+                "prompt": "Quedar en hora y lugar. (6, plaza)",
+                "expected": [
+                  "¿Quedamos a las seis en la plaza?"
+                ],
+                "focus": "quedar",
+                "watch": "quedar = vernos, citarse."
+              },
+              {
+                "prompt": "Dejar plan B si llueve.",
+                "expected": [
+                  "Si llueve, lo dejamos para el domingo."
+                ],
+                "focus": "si + presente",
+                "watch": "si + presente + plan."
+              },
+              {
+                "prompt": "Invita a tu amigo al plan.",
+                "expected": [
+                  "¿Quieres venir conmigo?",
+                  "¿Quieres venir con nosotros?"
+                ],
+                "focus": "venir",
+                "watch": "venir CON + persona."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u2-planes-e1",
+              "kind": "choice",
+              "prompt": "El sábado vamos a ___ al mercado.",
+              "explain": "ir a + infinitivo: el segundo va sin conjugar.",
+              "options": [
+                "ir",
+                "vamos",
+                "van",
+                "iremos"
+              ],
+              "answers": [
+                "ir"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-planes-e2",
+              "kind": "gap",
+              "prompt": "¿___ quedar a las seis? (proponer)",
+              "explain": "¿Quedamos a las…?",
+              "answers": [
+                "Quedamos",
+                "Podemos"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-planes-e3",
+              "kind": "order",
+              "prompt": "Confirmar la cita.",
+              "explain": "quedar + a las + hora + en + lugar.",
+              "answers": [
+                "Quedamos a las seis en la plaza"
+              ]
+            },
+            {
+              "id": "es-foundations-u2-planes-e4",
+              "kind": "written",
+              "prompt": "Tu plan B si llueve.",
+              "explain": "Si + presente + plan.",
+              "answers": [
+                "si llueve lo dejamos para el domingo",
+                "si llueve vamos al cine"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:social-expressions",
+            "grammar:present-questions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
     }
   ]
 }
