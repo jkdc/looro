@@ -9,16 +9,15 @@ class CoursesTest {
         assertEquals(1, courses.size)
         val course = courses.first()
         assertEquals("en-foundations", course.id)
-        assertEquals(6, course.units.size)
-        for (unit in course.units) assertEquals(3, unit.lessons.size)
-        assertEquals(18, course.units.sumOf { it.lessons.size })
+        assertEquals(8, course.units.size)
+        assertEquals(25, course.units.sumOf { it.lessons.size })
         assertTrue(course.units.first().themes.size >= 2)
     }
 
     @Test fun `every unit carries its level label`() {
         val levels = CourseRegistry.forLanguage("en").first().units.map { it.level }
         assertTrue(levels.all { it.isNotBlank() })
-        assertEquals(listOf("A1", "A1", "A1", "A1", "A2", "A2"), levels)
+        assertEquals(listOf("A1", "A1", "A1", "A1", "A1", "A1", "A2", "A2"), levels)
     }
 
     @Test fun `each supported course language carries exactly one foundations`() {

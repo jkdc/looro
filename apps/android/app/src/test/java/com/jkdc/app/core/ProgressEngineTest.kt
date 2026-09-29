@@ -18,7 +18,7 @@ class ProgressEngineTest {
                       sessions: List<SessionRecord> = emptyList(), languageID: String = "en",
                       courses: List<Course> = listOf(course("en", "en-l1", "en-l2", "en-l3")),
                       now: Double = 20.0) =
-        ProgressEngine.stats(sessions, lessons, completions, courses, listeningIDs, languageID, zone, now)
+        ProgressEngine.stats(sessions, lessons, completions, courses, listeningIDs, languageID, zone = zone, now = now)
 
     private val lesson = { id: String, attempts: Int -> LessonState(lessonID = id, attempts = attempts) }
 

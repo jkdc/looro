@@ -797,6 +797,399 @@
       ]
     },
     {
+      "id": "en-listen-rainy-day",
+      "languageID": "en",
+      "title": "A rainy Saturday",
+      "level": "A1",
+      "topic": "weather",
+      "unitID": "en-foundations-now",
+      "text": "It is raining in Maple Street, and Anna is looking out of the window. Her brother Ben is playing a video game in the living room, and their mother is reading on the sofa. Outside, the neighbours are running to their cars with umbrellas. The cat is sleeping in its favourite chair, and the dog is watching the rain too. Anna is not bored — she is drawing the grey sky in her notebook. Her mother is making tea, and the kitchen smells wonderful. 'What are you doing?' Ben asks. 'I'm drawing the weather,' Anna says, 'because today the weather is interesting!'",
+      "questions": [
+        {
+          "id": "en-listen-rainy-day-q1",
+          "kind": "choice",
+          "prompt": "What is the weather doing?",
+          "options": [
+            "It's raining",
+            "It's snowing",
+            "It's sunny",
+            "It's windy"
+          ],
+          "answers": [
+            "It's raining"
+          ],
+          "explain": "It is raining in Maple Street."
+        },
+        {
+          "id": "en-listen-rainy-day-q2",
+          "kind": "choice",
+          "prompt": "What is Ben doing?",
+          "options": [
+            "He's playing a video game",
+            "He's drawing",
+            "He's making tea",
+            "He's sleeping"
+          ],
+          "answers": [
+            "He's playing a video game"
+          ],
+          "explain": "Her brother Ben is playing a video game."
+        },
+        {
+          "id": "en-listen-rainy-day-q3",
+          "kind": "written",
+          "prompt": "What is Anna drawing?",
+          "answers": [
+            "the grey sky",
+            "the sky",
+            "the weather"
+          ],
+          "explain": "She is drawing the grey sky in her notebook."
+        },
+        {
+          "id": "en-listen-rainy-day-q4",
+          "kind": "choice",
+          "prompt": "Where is the cat?",
+          "options": [
+            "In its favourite chair",
+            "Under the table",
+            "Outside in the rain",
+            "On Anna's bed"
+          ],
+          "answers": [
+            "In its favourite chair"
+          ],
+          "explain": "The cat is sleeping in its favourite chair."
+        },
+        {
+          "id": "en-listen-rainy-day-q5",
+          "kind": "written",
+          "prompt": "What is the mother making?",
+          "answers": [
+            "tea",
+            "making tea",
+            "she is making tea"
+          ],
+          "explain": "Her mother is making tea."
+        },
+        {
+          "id": "en-listen-rainy-day-q6",
+          "kind": "choice",
+          "prompt": "How does Anna feel about the day?",
+          "options": [
+            "She is not bored",
+            "She is sad",
+            "She is angry",
+            "She is tired"
+          ],
+          "answers": [
+            "She is not bored"
+          ],
+          "explain": "Anna is not bored — for her the weather is interesting."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:present-continuous",
+        "vocab:weather"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-listen-busy-kitchen",
+      "languageID": "en",
+      "title": "Sunday in the kitchen",
+      "level": "A1",
+      "topic": "family",
+      "unitID": "en-foundations-now",
+      "text": "It is Sunday morning, and the whole family is in the kitchen. Grandma is cutting bread, and Grandpa is making coffee — his coffee is always too strong. Anna's father is singing while he is cooking eggs, and her mother is setting the table. The twins are helping, but they are eating more strawberries than they are putting in the bowl. Even the dog is working: he is waiting under the table for pieces of cheese. 'Is anyone NOT eating in this kitchen?' Grandpa laughs. Everyone is smiling. Sunday breakfast is the family's favourite moment of the week.",
+      "questions": [
+        {
+          "id": "en-listen-busy-kitchen-q1",
+          "kind": "choice",
+          "prompt": "Where is the whole family?",
+          "options": [
+            "In the kitchen",
+            "In the garden",
+            "In the car",
+            "At a café"
+          ],
+          "answers": [
+            "In the kitchen"
+          ],
+          "explain": "The whole family is in the kitchen on Sunday morning."
+        },
+        {
+          "id": "en-listen-busy-kitchen-q2",
+          "kind": "written",
+          "prompt": "What is Grandma doing?",
+          "answers": [
+            "cutting bread",
+            "she is cutting bread",
+            "she's cutting bread"
+          ],
+          "explain": "Grandma is cutting bread."
+        },
+        {
+          "id": "en-listen-busy-kitchen-q3",
+          "kind": "choice",
+          "prompt": "What is Grandpa's coffee like?",
+          "options": [
+            "Always too strong",
+            "Cold",
+            "Perfect",
+            "Without sugar"
+          ],
+          "answers": [
+            "Always too strong"
+          ],
+          "explain": "His coffee is always too strong."
+        },
+        {
+          "id": "en-listen-busy-kitchen-q4",
+          "kind": "written",
+          "prompt": "What is the father doing while he cooks?",
+          "answers": [
+            "singing",
+            "he is singing",
+            "he's singing"
+          ],
+          "explain": "He is singing while he is cooking eggs."
+        },
+        {
+          "id": "en-listen-busy-kitchen-q5",
+          "kind": "choice",
+          "prompt": "What are the twins really doing with the strawberries?",
+          "options": [
+            "Eating them",
+            "Washing them",
+            "Selling them",
+            "Cutting them"
+          ],
+          "answers": [
+            "Eating them"
+          ],
+          "explain": "They are eating more strawberries than they are putting in the bowl."
+        },
+        {
+          "id": "en-listen-busy-kitchen-q6",
+          "kind": "written",
+          "prompt": "What is the dog waiting for?",
+          "answers": [
+            "pieces of cheese",
+            "cheese",
+            "some cheese"
+          ],
+          "explain": "He is waiting under the table for pieces of cheese."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "grammar:present-continuous",
+        "vocab:family"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-listen-birthday-week",
+      "languageID": "en",
+      "title": "The birthday week",
+      "level": "A1",
+      "topic": "dates",
+      "unitID": "en-foundations-days",
+      "text": "This is a special week for Leo. His birthday is on Friday, 12 September, and his family is planning three small parties. On Monday, his colleagues are taking him to a café after work. On Wednesday, his friends are coming to his flat for a film night — his sister is making her famous chocolate cake on Thursday, so the flat smells of chocolate for two days. The family party is on Saturday at three o'clock, at his grandparents' house. Leo's favourite day? 'Sunday,' he laughs, 'because then I can finally rest — my birthday week is wonderful but very busy!'",
+      "questions": [
+        {
+          "id": "en-listen-birthday-week-q1",
+          "kind": "written",
+          "prompt": "When is Leo's birthday?",
+          "answers": [
+            "on friday 12 september",
+            "friday 12 september",
+            "12 september",
+            "friday 12th september"
+          ],
+          "explain": "His birthday is on Friday, 12 September."
+        },
+        {
+          "id": "en-listen-birthday-week-q2",
+          "kind": "choice",
+          "prompt": "What are his colleagues doing on Monday?",
+          "options": [
+            "Taking him to a café",
+            "Cooking a cake",
+            "Coming to his flat",
+            "Resting"
+          ],
+          "answers": [
+            "Taking him to a café"
+          ],
+          "explain": "On Monday, his colleagues are taking him to a café after work."
+        },
+        {
+          "id": "en-listen-birthday-week-q3",
+          "kind": "choice",
+          "prompt": "When is the family party?",
+          "options": [
+            "On Saturday at three o'clock",
+            "On Wednesday evening",
+            "On Friday at work",
+            "On Monday morning"
+          ],
+          "answers": [
+            "On Saturday at three o'clock"
+          ],
+          "explain": "The family party is on Saturday at three o'clock."
+        },
+        {
+          "id": "en-listen-birthday-week-q4",
+          "kind": "written",
+          "prompt": "What is his sister making, and when?",
+          "answers": [
+            "chocolate cake on thursday",
+            "a chocolate cake on thursday",
+            "chocolate cake, on thursday"
+          ],
+          "explain": "She is making her famous chocolate cake on Thursday."
+        },
+        {
+          "id": "en-listen-birthday-week-q5",
+          "kind": "choice",
+          "prompt": "Where is the family party?",
+          "options": [
+            "At his grandparents' house",
+            "At a café",
+            "At his flat",
+            "At work"
+          ],
+          "answers": [
+            "At his grandparents' house"
+          ],
+          "explain": "It is at his grandparents' house."
+        },
+        {
+          "id": "en-listen-birthday-week-q6",
+          "kind": "written",
+          "prompt": "What is Leo's favourite day of the week? Why? (one word for the day)",
+          "answers": [
+            "sunday",
+            "on sunday",
+            "sunday because he can rest"
+          ],
+          "explain": "Sunday — because then he can finally rest."
+        }
+      ],
+      "skills": [
+        "listening:number-time",
+        "grammar:time-expressions",
+        "function:tell-time"
+      ],
+      "exposureSkills": [
+        "grammar:present-continuous"
+      ]
+    },
+    {
+      "id": "en-listen-not-feeling-well",
+      "languageID": "en",
+      "title": "Not feeling well",
+      "level": "A1",
+      "topic": "health",
+      "unitID": "en-foundations-days",
+      "text": "Daniel doesn't feel well this morning. He has got a headache and a sore throat, and his whole body is tired. At work, his colleague Sofia notices immediately. 'What's wrong?' she asks. 'I've got a cold, I think,' Daniel says. 'My throat hurts, and I can't stop sneezing.' Sofia is worried. 'Go home and rest! Drink hot tea with honey — my grandmother's recipe.' Daniel takes her advice. In the afternoon, he is in bed with a big cup of tea. His cat is sleeping next to him. On Friday he is back at work, and his colleagues say he looks great.",
+      "questions": [
+        {
+          "id": "en-listen-not-feeling-well-q1",
+          "kind": "choice",
+          "prompt": "How does Daniel feel this morning?",
+          "options": [
+            "He doesn't feel well",
+            "He feels great",
+            "He is angry",
+            "He is hungry"
+          ],
+          "answers": [
+            "He doesn't feel well"
+          ],
+          "explain": "Daniel doesn't feel well this morning."
+        },
+        {
+          "id": "en-listen-not-feeling-well-q2",
+          "kind": "written",
+          "prompt": "What has Daniel got?",
+          "answers": [
+            "a cold",
+            "he has got a cold",
+            "he's got a cold",
+            "a headache and a cold"
+          ],
+          "explain": "He thinks he has got a cold."
+        },
+        {
+          "id": "en-listen-not-feeling-well-q3",
+          "kind": "choice",
+          "prompt": "Who notices first?",
+          "options": [
+            "His colleague Sofia",
+            "His mother",
+            "His cat",
+            "His boss"
+          ],
+          "answers": [
+            "His colleague Sofia"
+          ],
+          "explain": "His colleague Sofia notices immediately."
+        },
+        {
+          "id": "en-listen-not-feeling-well-q4",
+          "kind": "written",
+          "prompt": "What does Sofia recommend?",
+          "answers": [
+            "hot tea with honey",
+            "tea with honey",
+            "go home and rest"
+          ],
+          "explain": "Hot tea with honey — her grandmother's recipe."
+        },
+        {
+          "id": "en-listen-not-feeling-well-q5",
+          "kind": "choice",
+          "prompt": "Where is Daniel in the afternoon?",
+          "options": [
+            "In bed with a cup of tea",
+            "At the pharmacy",
+            "At work",
+            "At Sofia's house"
+          ],
+          "answers": [
+            "In bed with a cup of tea"
+          ],
+          "explain": "He is in bed with a big cup of tea."
+        },
+        {
+          "id": "en-listen-not-feeling-well-q6",
+          "kind": "choice",
+          "prompt": "When is he back at work?",
+          "options": [
+            "On Friday",
+            "On Monday",
+            "The same afternoon",
+            "On Wednesday"
+          ],
+          "answers": [
+            "On Friday"
+          ],
+          "explain": "On Friday he is back at work and looks great."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "vocab:health",
+        "grammar:have-got",
+        "grammar:can"
+      ],
+      "exposureSkills": []
+    },
+    {
       "id": "en-listen-language-exchange",
       "languageID": "en",
       "title": "The language-exchange evening",

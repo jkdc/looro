@@ -22,6 +22,7 @@ public struct ProgressStats: Hashable, Sendable {
     public var practiceRounds: Int
     public var wordsPracticeItems: Int
     public var assessmentsPassed: Int
+    public var readingCompleted: Int
 }
 
 /// The completion catalog every surface shares: the local ledger, the server
@@ -31,10 +32,11 @@ public enum ProgressEngine {
     public static let conversationTheme = "conversation_theme"
     public static let exerciseSet = "exercise_set"
     public static let listening = "listening"
+    public static let reading = "reading"
     public static let recallRound = "recall_round"
     public static let wordsPractice = "words_practice"
     public static let assessment = "assessment"
-    public static let kinds = [lesson, conversationTheme, exerciseSet, listening, recallRound, wordsPractice, assessment]
+    public static let kinds = [lesson, conversationTheme, exerciseSet, listening, reading, recallRound, wordsPractice, assessment]
 
     /// Stable ledger/wire key: readable slugs pass through; anything else (a word
     /// lemma with accents or spaces) collapses to 16 hex chars of SHA-256.
@@ -45,18 +47,19 @@ public enum ProgressEngine {
     }
 
     /// Day boundaries follow the local calendar on both platforms (tests pin UTC).
-    /// Content ids (lessons, exercises, listening, course ids) embed the language,
-    /// so legacy nil-language marks inside them stay unambiguous; ambiguous kinds
-    /// (themes, recall rounds, word hashes, "free" assessments) need the stamp.
+    /// Content ids (lessons, exercises, listening, reading, course ids) embed the
+    /// language, so legacy nil-language marks inside them stay unambiguous;
+    /// ambiguous kinds (themes, recall rounds, word hashes, "free" assessments)
+    /// need the stamp.
     public static func stats(sessions: [SessionRecord], lessons: [LessonState], completions: [CompletionMark],
                              courses: [Course], listeningIDs: Set<String>, languageID: String,
-                             calendar: Calendar = .current, now: Date = .now) -> ProgressStats {
+                             readingIDs: Set<String> = [], calendar: Calendar = .current, now: Date = .now) -> ProgressStats {
         func epochDay(_ date: Date) -> Int {
             let epoch = calendar.startOfDay(for: Date(timeIntervalSinceReferenceDate: 0))
             return calendar.dateComponents([.day], from: epoch, to: calendar.startOfDay(for: date)).day ?? 0
         }
         let contentIDs = Set(courses.flatMap { $0.units.flatMap { $0.lessons.map(\.id) } })
-            .union(courses.map(\.id)).union(listeningIDs)
+            .union(courses.map(\.id)).union(listeningIDs).union(readingIDs)
         func scoped(_ mark: CompletionMark) -> Bool {
             mark.languageID == languageID || (mark.languageID == nil && contentIDs.contains(mark.itemID))
         }
@@ -94,6 +97,7 @@ public enum ProgressEngine {
             themesPractised: Set(completions.filter { $0.kind == conversationTheme && $0.languageID == languageID }.map(\.itemID)).count,
             exercisesCompleted: distinctItems(exerciseSet),
             listeningCompleted: distinctItems(listening),
+            readingCompleted: distinctItems(reading),
             practiceRounds: completions.filter { $0.kind == recallRound && $0.languageID == languageID }.count,
             wordsPracticeItems: distinctItems(wordsPractice),
             assessmentsPassed: Set(completions.filter { $0.kind == assessment && scoped($0) && $0.bestScore >= 100 }.map(\.itemID)).count)
@@ -128,9 +132,9 @@ public enum ProgressSync {
     /// counters, newest first, wire-capped. Lesson counters outrank the (capped)
     /// mark ledger so attempts never regress.
     public static func entries(lessons: [LessonState], completions: [CompletionMark], courses: [Course],
-                               listeningIDs: Set<String>, languageID: String) -> [ProgressSyncEntry] {
+                               listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = []) -> [ProgressSyncEntry] {
         let contentIDs = Set(courses.flatMap { $0.units.flatMap { $0.lessons.map(\.id) } })
-            .union(courses.map(\.id)).union(listeningIDs)
+            .union(courses.map(\.id)).union(listeningIDs).union(readingIDs)
         func scoped(_ mark: CompletionMark) -> Bool {
             mark.languageID == languageID || (mark.languageID == nil && contentIDs.contains(mark.itemID))
         }
@@ -180,7 +184,7 @@ public enum ProgressSync {
                 } else if row.attempts > 0 {
                     lessons.append(LessonState(lessonID: row.itemID, attempts: row.attempts, lastSeen: row.lastAt))
                 }
-            case ProgressEngine.exerciseSet, ProgressEngine.listening:
+            case ProgressEngine.exerciseSet, ProgressEngine.listening, ProgressEngine.reading:
                 if !marks.contains(where: { $0.kind == row.kind && $0.itemID == row.itemID }) {
                     marks.append(CompletionMark(kind: row.kind, itemID: row.itemID, at: row.lastAt,
                                                 bestScore: row.bestScore, languageID: languageID))

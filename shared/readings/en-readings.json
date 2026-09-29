@@ -1,0 +1,521 @@
+{
+  "schemaVersion": 1,
+  "readings": [
+    {
+      "id": "en-read-neighbour-note",
+      "languageID": "en",
+      "title": "A note from your neighbour",
+      "level": "A1",
+      "topic": "home",
+      "unitID": "en-foundations-u2",
+      "text": "Hi! I'm Marta, from flat 4B. I'm your new neighbour. I'm a nurse, and I work at the city hospital on Mondays, Tuesdays and weekends. My cat's name is Luna — she's grey and very friendly, but please don't feed her! My number is 655 214 890. Call me if there's any problem with the building. The lift is very old, so please close both doors. Thank you — and welcome! Let's have a coffee one day. Marta",
+      "questions": [
+        {
+          "id": "en-read-neighbour-note-q1",
+          "kind": "choice",
+          "prompt": "Where is Marta from?",
+          "options": [
+            "Flat 4B",
+            "Flat 2A",
+            "The city hospital",
+            "The ground floor"
+          ],
+          "answers": [
+            "Flat 4B"
+          ],
+          "explain": "She writes: I'm Marta, from flat 4B."
+        },
+        {
+          "id": "en-read-neighbour-note-q2",
+          "kind": "choice",
+          "prompt": "When does Marta work?",
+          "options": [
+            "Mondays, Tuesdays and weekends",
+            "Only at night",
+            "Every morning",
+            "On Fridays"
+          ],
+          "answers": [
+            "Mondays, Tuesdays and weekends"
+          ],
+          "explain": "She works on Mondays, Tuesdays and weekends."
+        },
+        {
+          "id": "en-read-neighbour-note-q3",
+          "kind": "written",
+          "prompt": "What is her cat's name?",
+          "answers": [
+            "luna"
+          ],
+          "explain": "Her cat's name is Luna."
+        },
+        {
+          "id": "en-read-neighbour-note-q4",
+          "kind": "choice",
+          "prompt": "What does she ask about the lift?",
+          "options": [
+            "Close both doors",
+            "Don't use it",
+            "Clean it every week",
+            "Call her before using it"
+          ],
+          "answers": [
+            "Close both doors"
+          ],
+          "explain": "The lift is old, so please close both doors."
+        },
+        {
+          "id": "en-read-neighbour-note-q5",
+          "kind": "choice",
+          "prompt": "What does Marta suggest at the end?",
+          "options": [
+            "Having a coffee one day",
+            "Feeding the cat",
+            "A building meeting",
+            "Nothing"
+          ],
+          "answers": [
+            "Having a coffee one day"
+          ],
+          "explain": "She writes: Let's have a coffee one day."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:possessives",
+        "vocab:home"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-bus-12",
+      "languageID": "en",
+      "title": "Bus number 12",
+      "level": "A1",
+      "topic": "transport",
+      "unitID": "en-foundations-u4",
+      "text": "BUS 12 — CITY CENTRE — AIRPORT. First bus: 6:10. Last bus: 23:40. Buses leave every 20 minutes from Station Square. A single ticket is 2 euros; a day ticket is 5 euros. You can buy tickets from the driver or from the machine at the stop. The bus to the airport takes about 35 minutes. Big suitcases are free, but dogs need a ticket! The night bus N12 leaves at 1:20 and 3:20, from the same stop. For information, call 900 12 12 12 or ask at the station office (open 7:00–21:00).",
+      "questions": [
+        {
+          "id": "en-read-bus-12-q1",
+          "kind": "written",
+          "prompt": "What time is the first bus?",
+          "answers": [
+            "6:10",
+            "at 6:10",
+            "six ten"
+          ],
+          "explain": "The first bus is at 6:10."
+        },
+        {
+          "id": "en-read-bus-12-q2",
+          "kind": "choice",
+          "prompt": "How often do buses leave?",
+          "options": [
+            "Every 20 minutes",
+            "Every hour",
+            "Every 35 minutes",
+            "Twice a day"
+          ],
+          "answers": [
+            "Every 20 minutes"
+          ],
+          "explain": "Buses leave every 20 minutes from Station Square."
+        },
+        {
+          "id": "en-read-bus-12-q3",
+          "kind": "choice",
+          "prompt": "How much is a day ticket?",
+          "options": [
+            "5 euros",
+            "2 euros",
+            "12 euros",
+            "Free"
+          ],
+          "answers": [
+            "5 euros"
+          ],
+          "explain": "A day ticket is 5 euros."
+        },
+        {
+          "id": "en-read-bus-12-q4",
+          "kind": "choice",
+          "prompt": "Who needs a ticket?",
+          "options": [
+            "Dogs",
+            "Children",
+            "People with suitcases",
+            "Students"
+          ],
+          "answers": [
+            "Dogs"
+          ],
+          "explain": "Suitcases are free, but dogs need a ticket!"
+        },
+        {
+          "id": "en-read-bus-12-q5",
+          "kind": "written",
+          "prompt": "How long does the airport bus take?",
+          "answers": [
+            "35 minutes",
+            "about 35 minutes",
+            "35 min"
+          ],
+          "explain": "The bus to the airport takes about 35 minutes."
+        }
+      ],
+      "skills": [
+        "reading:scan",
+        "reading:detail",
+        "vocab:transport",
+        "listening:number-time"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-annas-week",
+      "languageID": "en",
+      "title": "Anna's week",
+      "level": "A1",
+      "topic": "routine",
+      "unitID": "en-foundations-u3",
+      "text": "Anna works in a bookshop from Tuesday to Saturday. On Mondays she doesn't work — she cleans her flat in the morning and plays tennis with her sister in the afternoon. She always gets up at seven and walks to work; the bookshop opens at nine. In the evening she cooks, but on Thursdays she eats with her parents. On Sundays the bookshop is closed, and Anna likes to sleep late, read in the park and call her grandmother. Her grandmother always asks the same question: 'Do you eat enough fruit, Anna?' And Anna always says yes.",
+      "questions": [
+        {
+          "id": "en-read-annas-week-q1",
+          "kind": "choice",
+          "prompt": "When does Anna work?",
+          "options": [
+            "Tuesday to Saturday",
+            "Monday to Friday",
+            "Every day",
+            "Only weekends"
+          ],
+          "answers": [
+            "Tuesday to Saturday"
+          ],
+          "explain": "She works from Tuesday to Saturday."
+        },
+        {
+          "id": "en-read-annas-week-q2",
+          "kind": "written",
+          "prompt": "What does she do on Monday afternoons?",
+          "answers": [
+            "plays tennis",
+            "she plays tennis",
+            "play tennis with her sister"
+          ],
+          "explain": "She plays tennis with her sister."
+        },
+        {
+          "id": "en-read-annas-week-q3",
+          "kind": "choice",
+          "prompt": "How does she go to work?",
+          "options": [
+            "She walks",
+            "By bus",
+            "By bike",
+            "By car"
+          ],
+          "answers": [
+            "She walks"
+          ],
+          "explain": "She always gets up at seven and walks to work."
+        },
+        {
+          "id": "en-read-annas-week-q4",
+          "kind": "choice",
+          "prompt": "When does she eat with her parents?",
+          "options": [
+            "On Thursdays",
+            "On Mondays",
+            "Every evening",
+            "On Sundays"
+          ],
+          "answers": [
+            "On Thursdays"
+          ],
+          "explain": "On Thursdays she eats with her parents."
+        },
+        {
+          "id": "en-read-annas-week-q5",
+          "kind": "written",
+          "prompt": "Who always asks about fruit?",
+          "answers": [
+            "her grandmother",
+            "grandmother",
+            "her grandma"
+          ],
+          "explain": "Her grandmother always asks the same question."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:gist",
+        "grammar:frequency-adverbs",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-lost-dog",
+      "languageID": "en",
+      "title": "The poster on the tree",
+      "level": "A1",
+      "topic": "town",
+      "text": "LOST DOG — HAVE YOU SEEN TOBY? Toby is a small brown dog. He is eight years old, and he is very friendly, but he is old and a little deaf — he doesn't hear very well. He ran away from Elm Street on Friday evening. He has got a red collar with a phone number. Toby is afraid of loud noises, so please don't chase him. If you see him, please call Sandra on 611 404 404 (day or night). There is a reward: 100 euros. Thank you for helping Toby come home!",
+      "questions": [
+        {
+          "id": "en-read-lost-dog-q1",
+          "kind": "written",
+          "prompt": "What is the dog's name?",
+          "answers": [
+            "toby"
+          ],
+          "explain": "The dog's name is Toby."
+        },
+        {
+          "id": "en-read-lost-dog-q2",
+          "kind": "choice",
+          "prompt": "What does Toby look like?",
+          "options": [
+            "Small and brown",
+            "Big and black",
+            "White and old",
+            "Brown and young"
+          ],
+          "answers": [
+            "Small and brown"
+          ],
+          "explain": "Toby is a small brown dog."
+        },
+        {
+          "id": "en-read-lost-dog-q3",
+          "kind": "choice",
+          "prompt": "Why shouldn't you chase him?",
+          "options": [
+            "He is afraid of loud noises",
+            "He is very fast",
+            "He bites",
+            "He is sleeping"
+          ],
+          "answers": [
+            "He is afraid of loud noises"
+          ],
+          "explain": "Toby is afraid of loud noises, so please don't chase him."
+        },
+        {
+          "id": "en-read-lost-dog-q4",
+          "kind": "written",
+          "prompt": "When did he run away?",
+          "answers": [
+            "on friday evening",
+            "friday evening",
+            "friday"
+          ],
+          "explain": "He ran away from Elm Street on Friday evening."
+        },
+        {
+          "id": "en-read-lost-dog-q5",
+          "kind": "choice",
+          "prompt": "What does Toby have got?",
+          "options": [
+            "A red collar with a phone number",
+            "A blue jacket",
+            "A name tag on his ear",
+            "Nothing"
+          ],
+          "answers": [
+            "A red collar with a phone number"
+          ],
+          "explain": "He has got a red collar with a phone number."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:can",
+        "vocab:town"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-cafe-menu",
+      "languageID": "en",
+      "title": "The little café menu",
+      "level": "A1",
+      "topic": "food",
+      "text": "THE LITTLE CAFÉ — OPEN 7:30 TO 18:00, MONDAY TO SATURDAY. Coffee: espresso 1.20 — latte 1.80 — hot chocolate 2.50. Breakfast (until 12:00): toast with tomato 2.20 — croissant 1.50 — full breakfast with eggs, bacon and juice 6.90. Lunch: soup of the day 3.50 — cheese sandwich 4.20 — chicken salad 5.90 — today's special: fish and rice 7.50. Cakes: apple cake 2.80 — lemon cake 2.80. We have free water — just ask! Dogs are welcome on the terrace. Card payments from 3 euros. Follow us online for the soup of the day!",
+      "questions": [
+        {
+          "id": "en-read-cafe-menu-q1",
+          "kind": "choice",
+          "prompt": "When is the café open?",
+          "options": [
+            "7:30 to 18:00, Monday to Saturday",
+            "Every day until midnight",
+            "Only in the morning",
+            "Sundays too"
+          ],
+          "answers": [
+            "7:30 to 18:00, Monday to Saturday"
+          ],
+          "explain": "It is open 7:30 to 18:00, Monday to Saturday."
+        },
+        {
+          "id": "en-read-cafe-menu-q2",
+          "kind": "written",
+          "prompt": "How much is a latte?",
+          "answers": [
+            "1.80",
+            "1,80",
+            "one euro eighty"
+          ],
+          "explain": "A latte is 1.80."
+        },
+        {
+          "id": "en-read-cafe-menu-q3",
+          "kind": "choice",
+          "prompt": "What time does breakfast end?",
+          "options": [
+            "At 12:00",
+            "At 7:30",
+            "At 18:00",
+            "All day"
+          ],
+          "answers": [
+            "At 12:00"
+          ],
+          "explain": "Breakfast is served until 12:00."
+        },
+        {
+          "id": "en-read-cafe-menu-q4",
+          "kind": "choice",
+          "prompt": "Which lunch costs 7.50?",
+          "options": [
+            "Fish and rice",
+            "Cheese sandwich",
+            "Chicken salad",
+            "Soup of the day"
+          ],
+          "answers": [
+            "Fish and rice"
+          ],
+          "explain": "Today's special — fish and rice — is 7.50."
+        },
+        {
+          "id": "en-read-cafe-menu-q5",
+          "kind": "choice",
+          "prompt": "What is free in the café?",
+          "options": [
+            "Water",
+            "Coffee",
+            "Cakes",
+            "Wifi"
+          ],
+          "answers": [
+            "Water"
+          ],
+          "explain": "We have free water — just ask!"
+        }
+      ],
+      "skills": [
+        "reading:scan",
+        "reading:detail",
+        "vocab:food",
+        "function:order-food"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-postcard-london",
+      "languageID": "en",
+      "title": "A postcard from London",
+      "level": "A1",
+      "topic": "travel",
+      "unitID": "en-foundations-now",
+      "text": "Dear Paco, greetings from London! I'm writing this from a small café near the river. It's raining (of course!), so I'm wearing my new blue coat. My friend Clara is sitting next to me and planning our afternoon. This morning we are visiting the British Museum — it's free! — and this afternoon we're walking to Big Ben. In the evening, Clara's cousin is cooking dinner for us. London is expensive, but the museums are free and the parks are beautiful. I'm learning a lot of English every day. See you on Sunday! Elena",
+      "questions": [
+        {
+          "id": "en-read-postcard-london-q1",
+          "kind": "choice",
+          "prompt": "Where is Elena writing from?",
+          "options": [
+            "A small café near the river",
+            "The British Museum",
+            "Her hotel",
+            "Big Ben"
+          ],
+          "answers": [
+            "A small café near the river"
+          ],
+          "explain": "She is writing from a small café near the river."
+        },
+        {
+          "id": "en-read-postcard-london-q2",
+          "kind": "written",
+          "prompt": "What's the weather doing?",
+          "answers": [
+            "it's raining",
+            "it is raining",
+            "raining"
+          ],
+          "explain": "It's raining — of course!"
+        },
+        {
+          "id": "en-read-postcard-london-q3",
+          "kind": "choice",
+          "prompt": "What is she wearing?",
+          "options": [
+            "A new blue coat",
+            "An old red coat",
+            "A yellow scarf",
+            "A green hat"
+          ],
+          "answers": [
+            "A new blue coat"
+          ],
+          "explain": "She's wearing her new blue coat."
+        },
+        {
+          "id": "en-read-postcard-london-q4",
+          "kind": "choice",
+          "prompt": "What are they doing this morning?",
+          "options": [
+            "Visiting the British Museum",
+            "Cooking dinner",
+            "Walking to Big Ben",
+            "Shopping"
+          ],
+          "answers": [
+            "Visiting the British Museum"
+          ],
+          "explain": "This morning they are visiting the British Museum."
+        },
+        {
+          "id": "en-read-postcard-london-q5",
+          "kind": "choice",
+          "prompt": "Who is cooking dinner?",
+          "options": [
+            "Clara's cousin",
+            "Elena",
+            "Clara",
+            "Paco"
+          ],
+          "answers": [
+            "Clara's cousin"
+          ],
+          "explain": "In the evening, Clara's cousin is cooking dinner for them."
+        }
+      ],
+      "skills": [
+        "reading:gist",
+        "grammar:present-continuous",
+        "vocab:travel",
+        "vocab:weather"
+      ],
+      "exposureSkills": []
+    }
+  ]
+}

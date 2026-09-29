@@ -12,7 +12,7 @@ export const PROGRESS_BATCH = 200;
 // syncs converge instead of double-counting. Every entry belongs to one
 // learning language; 'legacy' holds pre-language rows.
 export const PROGRESS_KINDS = ['lesson', 'conversation_theme', 'exercise_set', 'listening',
-  'recall_round', 'words_practice', 'assessment'] as const;
+  'reading', 'recall_round', 'words_practice', 'assessment'] as const;
 export type ProgressKind = (typeof PROGRESS_KINDS)[number];
 
 export const PROGRESS_LANGUAGES = ['nb', 'es', 'en', 'fr', 'de', 'it', 'pt', 'zh', 'legacy'] as const;

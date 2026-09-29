@@ -53,7 +53,7 @@ test('the parser rejects anything outside the closed ledger shape', () => {
     assert.throws(() => parseProgressBatch(invalid));
   }
   assert.deepEqual([...PROGRESS_KINDS].sort(), ['assessment', 'conversation_theme', 'exercise_set',
-    'lesson', 'listening', 'recall_round', 'words_practice']);
+    'lesson', 'listening', 'reading', 'recall_round', 'words_practice']);
 });
 
 integration('entries merge monotonically and replays change nothing', async () => {

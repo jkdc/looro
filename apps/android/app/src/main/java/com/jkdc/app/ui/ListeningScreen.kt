@@ -41,25 +41,57 @@ import com.jkdc.app.core.ExerciseEngine
 import com.jkdc.app.core.LevelEngine
 import com.jkdc.app.core.ListeningRegistry
 import com.jkdc.app.core.ListeningText
+import com.jkdc.app.core.ReadingRegistry
+import com.jkdc.app.core.ReadingText
 
-/** The Listening tab: authored texts read aloud by the local voice, answered in
-    writing, grouped by level and ordered along the course units. The transcript
-    stays hidden while answering and is revealed at the end; finishing records
-    one completion with the score. */
+/** The Listen tab: a small library with two shelves. Listen = authored texts read
+    aloud by the local voice, answered in writing with the transcript hidden until
+    the end. Read = the reading skill's texts, visible while answering. Both
+    finish with one completion mark carrying the score. */
 @Composable
 fun ListeningScreen(vm: AppViewModel) {
+    var shelf by rememberSaveable { mutableStateOf("listen") }
+    DisposableEffect(Unit) { onDispose { vm.stopListeningText() } }
+    Column(Modifier.fillMaxSize()) {
+        LibraryShelfPicker(shelf) { shelf = it }
+        if (shelf == "read") ReadingLibrary(vm) else ListeningLibrary(vm)
+    }
+}
+
+@Composable
+private fun LibraryShelfPicker(selected: String, onSelect: (String) -> Unit) {
+    Row(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        LibraryChip(stringResource(R.string.library_listen), selected == "listen", Modifier.weight(1f)) { onSelect("listen") }
+        LibraryChip(stringResource(R.string.library_read), selected == "read", Modifier.weight(1f)) { onSelect("read") }
+    }
+}
+
+@Composable
+private fun LibraryChip(label: String, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
+    Surface(modifier.clickable(role = Role.Tab, onClick = onClick)
+        .testTag(if (selected) "library-shelf-selected" else "library-shelf"),
+        shape = RoundedCornerShape(20.dp),
+        color = if (selected) AppColors.Secondary else AppColors.Surface.copy(alpha = .85f)) {
+        Text(label, style = MaterialTheme.typography.labelLarge,
+            color = if (selected) AppColors.Cream else AppColors.Secondary, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            modifier = Modifier.padding(vertical = 10.dp).fillMaxWidth())
+    }
+}
+
+@Composable
+private fun ListeningLibrary(vm: AppViewModel) {
     val texts = ListeningRegistry.forLanguage(vm.language.id)
     val unitOrder = CourseRegistry.all.firstOrNull { it.languageID == vm.language.id }?.units ?: emptyList()
     var openTextID by rememberSaveable { mutableStateOf<String?>(null) }
-    DisposableEffect(Unit) { onDispose { vm.stopListeningText() } }
     val open = openTextID?.let { ListeningRegistry.text(it) }
     if (open != null) {
         ListeningDetail(vm, open, unitOrder, onBack = { openTextID = null; vm.stopListeningText() })
     } else {
         LazyColumn(Modifier.fillMaxSize().testTag("listening-screen").padding(horizontal = 24.dp),
-            contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            contentPadding = PaddingValues(top = 4.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.listening_eyebrow), stringResource(R.string.listening_title),
-                stringResource(R.string.listening_subtitle), Modifier.padding(top = 20.dp, bottom = 6.dp)) }
+                stringResource(R.string.listening_subtitle), Modifier.padding(top = 8.dp, bottom = 6.dp)) }
             texts.groupBy { it.level }.forEach { (level, items) ->
                 item(key = "section-$level") {
                     Text(level, style = MaterialTheme.typography.titleSmall, color = AppColors.Secondary,
@@ -91,15 +123,65 @@ fun ListeningScreen(vm: AppViewModel) {
     }
 }
 
-/** "Theme 3 · <unit title> · N questions" when the text belongs to a course
-    unit; "A2 · <topic> · N questions" for topic-only extras. */
 @Composable
-fun listeningSubtitle(text: ListeningText, unitOrder: List<CourseUnit>): String {
-    val rank = text.unitID?.let { id -> unitOrder.indexOfFirst { it.id == id } }
-    return if (rank != null && rank >= 0) stringResource(R.string.listening_theme, rank + 1,
-        unitOrder[rank].title, text.questions.size)
-    else stringResource(R.string.listening_topic, text.level, text.topic, text.questions.size)
+private fun ReadingLibrary(vm: AppViewModel) {
+    val texts = ReadingRegistry.forLanguage(vm.language.id)
+    val unitOrder = CourseRegistry.all.firstOrNull { it.languageID == vm.language.id }?.units ?: emptyList()
+    var openTextID by rememberSaveable { mutableStateOf<String?>(null) }
+    val open = openTextID?.let { ReadingRegistry.text(it) }
+    if (open != null) {
+        ReadingDetail(vm, open, unitOrder, onBack = { openTextID = null })
+    } else {
+        LazyColumn(Modifier.fillMaxSize().testTag("reading-screen").padding(horizontal = 24.dp),
+            contentPadding = PaddingValues(top = 4.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            item { PageHeading(stringResource(R.string.reading_eyebrow), stringResource(R.string.reading_title),
+                stringResource(R.string.reading_subtitle), Modifier.padding(top = 8.dp, bottom = 6.dp)) }
+            texts.groupBy { it.level }.forEach { (level, items) ->
+                item(key = "rsection-$level") {
+                    Text(level, style = MaterialTheme.typography.titleSmall, color = AppColors.Secondary,
+                        modifier = Modifier.padding(top = 8.dp).semantics { heading() }
+                            .testTag("reading-section-" + level))
+                }
+                items(items.size, key = { items[it].id }) { index ->
+                    val text = items[index]
+                    val best = vm.readingScore(text.id)
+                    Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { openTextID = text.id }.testTag("reading-" + text.id),
+                        shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
+                        Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            AppIcon(AppSymbol.Words, Modifier.size(28.dp), color = AppColors.Secondary)
+                            Column(Modifier.weight(1f)) {
+                                Text(text.title, style = MaterialTheme.typography.titleMedium)
+                                Text(readingSubtitle(text, unitOrder),
+                                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                            }
+                            Text(if (best == null) stringResource(R.string.lesson_new)
+                                else stringResource(R.string.listening_score, best),
+                                style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
+/** "Theme 3 · <unit title> · N questions" when the text belongs to a course
+    unit; "A2 · <topic> · N questions" for topic-only extras. Shared by both
+    shelves via their text/id accessors. */
+@Composable
+private fun shelfSubtitle(unitRank: Int?, unitTitle: String?, level: String, topic: String, count: Int): String =
+    if (unitRank != null && unitTitle != null) stringResource(R.string.listening_theme, unitRank + 1, unitTitle, count)
+    else stringResource(R.string.listening_topic, level, topic, count)
+
+@Composable
+fun listeningSubtitle(text: ListeningText, unitOrder: List<CourseUnit>): String =
+    shelfSubtitle(text.unitID?.let { id -> unitOrder.indexOfFirst { it.id == id }.takeIf { rank -> rank >= 0 } },
+        text.unitID?.let { id -> unitOrder.firstOrNull { it.id == id }?.title }, text.level, text.topic, text.questions.size)
+
+@Composable
+fun readingSubtitle(text: ReadingText, unitOrder: List<CourseUnit>): String =
+    shelfSubtitle(text.unitID?.let { id -> unitOrder.indexOfFirst { it.id == id }.takeIf { rank -> rank >= 0 } },
+        text.unitID?.let { id -> unitOrder.firstOrNull { it.id == id }?.title }, text.level, text.topic, text.questions.size)
 
 @Composable
 private fun ListeningDetail(vm: AppViewModel, item: ListeningText,
@@ -173,6 +255,79 @@ private fun ListeningDetail(vm: AppViewModel, item: ListeningText,
                     }
                 } else {
                     // Same stale-provider guard as ExerciseScreen: resolve inside the item.
+                    item {
+                        Text(stringResource(R.string.exercise_counter, index + 1, questions.size),
+                            style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                    }
+                    item {
+                        val question = questions.getOrNull(index) ?: return@item
+                        ExerciseCard(question, answer, selected, verdict,
+                            onAnswer = { answer = it.take(160) }, onSelect = { selected = it },
+                            onCheck = {
+                                val attempt = when (question.kind) {
+                                    ExerciseEngine.CHOICE -> selected?.let { question.options.getOrNull(it) } ?: ""
+                                    else -> answer
+                                }
+                                val correct = ExerciseEngine.isCorrect(question, attempt)
+                                verdict = correct
+                                if (correct) correctCount++
+                            },
+                            onNext = { index++; answer = ""; selected = null; verdict = null })
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Reading keeps the text visible the whole time — comprehension, not memory. */
+@Composable
+private fun ReadingDetail(vm: AppViewModel, item: ReadingText,
+                          unitOrder: List<CourseUnit>, onBack: () -> Unit) {
+    var index by rememberSaveable { mutableStateOf(0) }
+    var answer by rememberSaveable { mutableStateOf("") }
+    var selected by rememberSaveable { mutableStateOf<Int?>(null) }
+    var verdict by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var correctCount by rememberSaveable { mutableStateOf(0) }
+    val questions = item.questions
+    val finished = index >= questions.size && questions.isNotEmpty()
+    LaunchedEffectOnce(finished, item.id, correctCount, questions.size) {
+        vm.readingCompleted(item.id, correctCount, questions.size)
+    }
+
+    Column(Modifier.fillMaxSize().testTag("reading-detail").padding(horizontal = 24.dp)) {
+        Row(Modifier.fillMaxWidth().padding(top = 14.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            SoftRoundButton(AppSymbol.Back, stringResource(R.string.common_back), onClick = onBack, diameter = 44.dp)
+            Spacer(Modifier.weight(1f))
+            Text(item.title, style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+        }
+        LazyColumn(contentPadding = PaddingValues(bottom = 140.dp), verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxSize()) {
+            item {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(item.title, style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.semantics { heading() })
+                    Text(readingSubtitle(item, unitOrder),
+                        style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                }
+            }
+            item {
+                Text(item.text, style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.testTag("reading-text"))
+            }
+            if (questions.isNotEmpty()) {
+                if (index >= questions.size) {
+                    item {
+                        Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                            Text(stringResource(R.string.exercise_summary, correctCount, questions.size),
+                                style = MaterialTheme.typography.titleLarge)
+                            Button(onClick = onBack, modifier = Modifier.fillMaxWidth().testTag("reading-finish"),
+                                colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {
+                                Text(stringResource(R.string.exercise_done))
+                            }
+                        }
+                    }
+                } else {
                     item {
                         Text(stringResource(R.string.exercise_counter, index + 1, questions.size),
                             style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)

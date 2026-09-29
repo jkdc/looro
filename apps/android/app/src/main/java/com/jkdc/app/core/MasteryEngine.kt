@@ -16,6 +16,7 @@ object MasteryEngine {
     const val ORAL_WEIGHT = 0.9
     const val EXERCISE_WEIGHT = 0.6
     const val LISTENING_WEIGHT = 0.5
+    const val READING_WEIGHT = 0.5
 
     /** Guided oral practice records attempts, not marks; showing up and speaking
         is strong evidence even without a score. */
@@ -27,7 +28,7 @@ object MasteryEngine {
     /** Taught skills of a language, from its content — exposureSkills are
         deliberately excluded: nobody is penalised for a structure they have
         only heard. */
-    fun taggedSkills(course: Course, listenings: List<ListeningText>): Map<String, String> {
+    fun taggedSkills(course: Course, listenings: List<ListeningText>, readings: List<ReadingText> = emptyList()): Map<String, String> {
         val tagged = LinkedHashMap<String, String>()
         course.units.flatMap { it.lessons }.forEach { lesson ->
             lesson.skills.forEach { skill -> if (skill !in tagged) SkillsData.categories[skill]?.let { tagged[skill] = it } }
@@ -35,12 +36,15 @@ object MasteryEngine {
         listenings.forEach { text ->
             text.skills.forEach { skill -> if (skill !in tagged) SkillsData.categories[skill]?.let { tagged[skill] = it } }
         }
+        readings.forEach { text ->
+            text.skills.forEach { skill -> if (skill !in tagged) SkillsData.categories[skill]?.let { tagged[skill] = it } }
+        }
         return tagged
     }
 
-    fun stats(course: Course, listenings: List<ListeningText>, lessons: List<LessonState>,
-              completions: List<CompletionMark>, nowSeconds: Double): MasteryStats {
-        val tagged = taggedSkills(course, listenings)
+    fun stats(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>,
+              lessons: List<LessonState>, completions: List<CompletionMark>, nowSeconds: Double): MasteryStats {
+        val tagged = taggedSkills(course, listenings, readings)
         val lessonsBySkill = HashMap<String, MutableList<String>>()
         course.units.flatMap { it.lessons }.forEach { lesson ->
             lesson.skills.forEach { skill -> lessonsBySkill.getOrPut(skill) { mutableListOf() }.add(lesson.id) }
@@ -48,6 +52,10 @@ object MasteryEngine {
         val listeningsBySkill = HashMap<String, MutableList<String>>()
         listenings.forEach { text ->
             text.skills.forEach { skill -> listeningsBySkill.getOrPut(skill) { mutableListOf() }.add(text.id) }
+        }
+        val readingsBySkill = HashMap<String, MutableList<String>>()
+        readings.forEach { text ->
+            text.skills.forEach { skill -> readingsBySkill.getOrPut(skill) { mutableListOf() }.add(text.id) }
         }
         val mastery = tagged.map { (skillID, category) ->
             var best = 0.0
@@ -65,6 +73,10 @@ object MasteryEngine {
             listeningsBySkill[skillID]?.forEach { textID ->
                 completions.filter { it.kind == ProgressEngine.LISTENING && it.itemID == textID }
                     .maxByOrNull { it.bestScore }?.let { offer(LISTENING_WEIGHT, it.bestScore, it.at) }
+            }
+            readingsBySkill[skillID]?.forEach { textID ->
+                completions.filter { it.kind == ProgressEngine.READING && it.itemID == textID }
+                    .maxByOrNull { it.bestScore }?.let { offer(READING_WEIGHT, it.bestScore, it.at) }
             }
             SkillMastery(skillID, category, Math.round(best * 100).toInt().coerceIn(0, 100), bestAt.takeIf { it > 0.0 })
         }

@@ -21,7 +21,7 @@ class MasteryEngineTest {
 
     private fun stats(course: Course, listenings: List<ListeningText> = emptyList(),
                       lessons: List<LessonState> = emptyList(), marks: List<CompletionMark> = emptyList()) =
-        MasteryEngine.stats(course, listenings, lessons, marks, now)
+        MasteryEngine.stats(course, listenings, emptyList(), lessons, marks, now)
 
     @Test fun `evidence is weighted and decayed with a sixty day half life`() {
         val course = course("l1" to listOf("grammar:verb-be"))

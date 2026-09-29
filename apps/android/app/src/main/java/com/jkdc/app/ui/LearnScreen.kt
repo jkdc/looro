@@ -61,10 +61,14 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
     var openLessonID by rememberSaveable { mutableStateOf<String?>(null) }
     var exercisesOpen by rememberSaveable { mutableStateOf(false) }
     var recallOpen by rememberSaveable { mutableStateOf(false) }
+    var openCheckpointID by rememberSaveable { mutableStateOf<String?>(null) }
     DisposableEffect(Unit) { onDispose { vm.stopLessonReading() } }
     val openLesson = openLessonID?.let { CourseRegistry.lesson(it) }
+    val openCheckpoint = openCheckpointID?.let { vm.checkpoint(it) }
     if (recallOpen) {
         RecallScreen(vm, onBack = { recallOpen = false })
+    } else if (openCheckpoint != null) {
+        CheckpointScreen(vm, openCheckpoint, onBack = { openCheckpointID = null })
     } else if (openLesson != null && exercisesOpen) {
         ExerciseScreen(vm, openLesson, onBack = { exercisesOpen = false })
     } else if (openLesson != null) {
@@ -103,6 +107,21 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             items(courses.size, key = { courses[it].id }) { index ->
                 CourseCard(vm, courses[index], progress.first.courses.firstOrNull { it.courseID == courses[index].id },
                     progress.second, onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
+            }
+            vm.checkpointReady()?.let { checkpoint ->
+                item(key = checkpoint.id) {
+                    Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { openCheckpointID = checkpoint.id }
+                        .testTag("checkpoint-card"), shape = RoundedCornerShape(26.dp), color = AppColors.Butter) {
+                        Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            AppIcon(AppSymbol.Sparkles, Modifier.size(28.dp), color = AppColors.Secondary)
+                            Column(Modifier.weight(1f)) {
+                                Text(checkpoint.title, style = MaterialTheme.typography.titleMedium)
+                                Text(stringResource(R.string.learn_checkpoint_ready),
+                                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -269,6 +288,29 @@ private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
                         Column {
                             Text(expression.text + "  —  " + expression.meaning, style = MaterialTheme.typography.titleSmall)
                             Text(expression.note, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        }
+                    }
+                }
+            }
+            val pronTargets = lesson.skills.filter { it.startsWith("pron:") }
+            if (pronTargets.isNotEmpty()) {
+                item { DetailHeading(stringResource(R.string.lesson_pronounce_heading)) }
+                item {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(stringResource(R.string.lesson_pronounce_hint), style = MaterialTheme.typography.bodySmall,
+                            color = AppColors.Secondary)
+                        lesson.expressions.take(3).forEach { expression ->
+                            Surface(Modifier.fillMaxWidth().clickable(role = Role.Button,
+                                    onClickLabel = stringResource(R.string.lesson_pronounce_play)) {
+                                    if (!vm.isRunning) vm.readLessonCard(expression.text)
+                                }.testTag("pronounce-" + expression.text.hashCode()),
+                                shape = RoundedCornerShape(18.dp), color = AppColors.Cream) {
+                                Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    AppIcon(AppSymbol.Wave, Modifier.size(20.dp), color = AppColors.Secondary)
+                                    Text(expression.text, style = MaterialTheme.typography.titleSmall)
+                                }
+                            }
                         }
                     }
                 }

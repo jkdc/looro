@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "checkpoints": [
+    {
+      "id": "checkpoint-en-a1",
+      "languageID": "en",
+      "level": "A1",
+      "title": "A1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-en-a1-q1",
+          "kind": "choice",
+          "skill": "grammar:verb-be",
+          "prompt": "I ___ from Spain.",
+          "options": [
+            "am",
+            "is",
+            "are",
+            "be"
+          ],
+          "answers": [
+            "am"
+          ],
+          "explain": "With I, always am."
+        },
+        {
+          "id": "checkpoint-en-a1-q2",
+          "kind": "choice",
+          "skill": "grammar:present-questions",
+          "prompt": "___ she your sister?",
+          "options": [
+            "Is",
+            "Are",
+            "Am",
+            "Does"
+          ],
+          "answers": [
+            "Is"
+          ],
+          "explain": "With she, questions start with Is."
+        },
+        {
+          "id": "checkpoint-en-a1-q3",
+          "kind": "gap",
+          "skill": "grammar:articles",
+          "prompt": "I have ___ idea.",
+          "answers": [
+            "an"
+          ],
+          "explain": "An before a vowel sound: an idea."
+        },
+        {
+          "id": "checkpoint-en-a1-q4",
+          "kind": "choice",
+          "skill": "grammar:have-got",
+          "prompt": "She ___ got two brothers.",
+          "options": [
+            "has",
+            "have",
+            "is",
+            "does"
+          ],
+          "answers": [
+            "has"
+          ],
+          "explain": "With he/she/it: has got."
+        },
+        {
+          "id": "checkpoint-en-a1-q5",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "We ___ in Madrid.",
+          "options": [
+            "live",
+            "lives",
+            "living",
+            "are live"
+          ],
+          "answers": [
+            "live"
+          ],
+          "explain": "With we, the present simple has no -s."
+        },
+        {
+          "id": "checkpoint-en-a1-q6",
+          "kind": "gap",
+          "skill": "grammar:third-person-s",
+          "prompt": "She ___ football on Saturdays. (play)",
+          "answers": [
+            "plays"
+          ],
+          "explain": "Third person -s: she plays."
+        },
+        {
+          "id": "checkpoint-en-a1-q7",
+          "kind": "choice",
+          "skill": "grammar:can",
+          "prompt": "___ you help me, please?",
+          "options": [
+            "Can",
+            "Are",
+            "Do",
+            "Is"
+          ],
+          "answers": [
+            "Can"
+          ],
+          "explain": "Can for ability and requests: Can you help me?"
+        },
+        {
+          "id": "checkpoint-en-a1-q8",
+          "kind": "gap",
+          "skill": "grammar:there-is-are",
+          "prompt": "___ two supermarkets near here.",
+          "answers": [
+            "there are",
+            "there're"
+          ],
+          "explain": "Plural: there are."
+        },
+        {
+          "id": "checkpoint-en-a1-q9",
+          "kind": "choice",
+          "skill": "grammar:present-continuous",
+          "prompt": "Look! It ___ raining.",
+          "options": [
+            "is",
+            "are",
+            "am",
+            "does"
+          ],
+          "answers": [
+            "is"
+          ],
+          "explain": "It is raining — happening now."
+        },
+        {
+          "id": "checkpoint-en-a1-q10",
+          "kind": "written",
+          "skill": "grammar:prepositions-place",
+          "prompt": "Complete: The bank is ___ the cinema (between two places).",
+          "answers": [
+            "between the cinema and the park",
+            "between"
+          ],
+          "explain": "between + the two places."
+        },
+        {
+          "id": "checkpoint-en-a1-q11",
+          "kind": "written",
+          "skill": "vocab:introductions",
+          "prompt": "Introduce yourself in one sentence.",
+          "answers": [
+            "i'm <name>",
+            "my name is <name>",
+            "i am <name>"
+          ],
+          "explain": "I'm Ana / My name is Ana."
+        },
+        {
+          "id": "checkpoint-en-a1-q12",
+          "kind": "choice",
+          "skill": "vocab:family",
+          "prompt": "My mother's mother is my ___.",
+          "options": [
+            "grandmother",
+            "sister",
+            "aunt",
+            "cousin"
+          ],
+          "answers": [
+            "grandmother"
+          ],
+          "explain": "mother's mother = grandmother."
+        },
+        {
+          "id": "checkpoint-en-a1-q13",
+          "kind": "choice",
+          "skill": "vocab:food",
+          "prompt": "Which one is a drink?",
+          "options": [
+            "Orange juice",
+            "Bread",
+            "Cheese",
+            "Tomato"
+          ],
+          "answers": [
+            "Orange juice"
+          ],
+          "explain": "Juice is a drink."
+        },
+        {
+          "id": "checkpoint-en-a1-q14",
+          "kind": "written",
+          "skill": "vocab:daily-routine",
+          "prompt": "Say one thing you do every morning.",
+          "answers": [
+            "i <verb> every morning",
+            "every morning i <verb>"
+          ],
+          "explain": "Present simple + every morning."
+        },
+        {
+          "id": "checkpoint-en-a1-q15",
+          "kind": "choice",
+          "skill": "function:order-food",
+          "prompt": "You are in a café. How do you order politely?",
+          "options": [
+            "Can I have a coffee, please?",
+            "Give me coffee.",
+            "Coffee now.",
+            "You want coffee?"
+          ],
+          "answers": [
+            "Can I have a coffee, please?"
+          ],
+          "explain": "Can I have …, please? is the polite order."
+        },
+        {
+          "id": "checkpoint-en-a1-q16",
+          "kind": "written",
+          "skill": "function:ask-for-directions",
+          "prompt": "Ask the way to the station.",
+          "answers": [
+            "where is the station",
+            "how do i get to the station",
+            "excuse me where is the station"
+          ],
+          "explain": "Where is the station? / How do I get to the station?"
+        }
+      ]
+    }
+  ]
+}

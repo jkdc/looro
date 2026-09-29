@@ -29,6 +29,7 @@ public enum MasteryEngine {
     public static let oralWeight = 0.9
     public static let exerciseWeight = 0.6
     public static let listeningWeight = 0.5
+    public static let readingWeight = 0.5
 
     /// Guided oral practice records attempts, not marks; showing up and speaking
     /// is strong evidence even without a score.
@@ -40,7 +41,7 @@ public enum MasteryEngine {
     /// Taught skills of a language, from its content — exposureSkills are
     /// deliberately excluded: nobody is penalised for a structure they have
     /// only heard.
-    public static func taggedSkills(course: Course, listenings: [ListeningText]) -> [String: String] {
+    public static func taggedSkills(course: Course, listenings: [ListeningText], readings: [ReadingText] = []) -> [String: String] {
         var tagged: [String: String] = [:]
         for lesson in course.units.flatMap(\.lessons) {
             for skill in lesson.skills where tagged[skill] == nil {
@@ -52,12 +53,17 @@ public enum MasteryEngine {
                 if let category = SkillsData.categories[skill] { tagged[skill] = category }
             }
         }
+        for text in readings {
+            for skill in text.skills where tagged[skill] == nil {
+                if let category = SkillsData.categories[skill] { tagged[skill] = category }
+            }
+        }
         return tagged
     }
 
-    public static func stats(course: Course, listenings: [ListeningText], lessons: [LessonState],
-                             completions: [CompletionMark], nowSeconds: Double) -> MasteryStats {
-        let tagged = taggedSkills(course: course, listenings: listenings)
+    public static func stats(course: Course, listenings: [ListeningText], readings: [ReadingText],
+                             lessons: [LessonState], completions: [CompletionMark], nowSeconds: Double) -> MasteryStats {
+        let tagged = taggedSkills(course: course, listenings: listenings, readings: readings)
         var lessonsBySkill: [String: [String]] = [:]
         for lesson in course.units.flatMap(\.lessons) {
             for skill in lesson.skills { lessonsBySkill[skill, default: []].append(lesson.id) }
@@ -65,6 +71,10 @@ public enum MasteryEngine {
         var listeningsBySkill: [String: [String]] = [:]
         for text in listenings {
             for skill in text.skills { listeningsBySkill[skill, default: []].append(text.id) }
+        }
+        var readingsBySkill: [String: [String]] = [:]
+        for text in readings {
+            for skill in text.skills { readingsBySkill[skill, default: []].append(text.id) }
         }
         let mastery = tagged.map { skillID, category -> SkillMastery in
             var best = 0.0
@@ -86,6 +96,12 @@ public enum MasteryEngine {
                 if let mark = completions.filter({ $0.kind == ProgressEngine.listening && $0.itemID == textID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: listeningWeight, score: mark.bestScore, at: mark.at)
+                }
+            }
+            for textID in readingsBySkill[skillID] ?? [] {
+                if let mark = completions.filter({ $0.kind == ProgressEngine.reading && $0.itemID == textID })
+                    .max(by: { $0.bestScore < $1.bestScore }) {
+                    offer(weight: readingWeight, score: mark.bestScore, at: mark.at)
                 }
             }
             return SkillMastery(skillID: skillID, category: category, mastery: min(100, max(0, Int((best * 100).rounded()))),

@@ -18,14 +18,14 @@
 
 ## F2 — Inglés A1 completo
 
-- [ ] F2.1 Dos unidades A1 nuevas (~7 lecciones completas, skills-tagged).
-- [ ] F2.2 Cuatro listenings A1 nuevos.
-- [ ] F2.3 Readings: `shared/readings/` + exportador + superficie
+- [x] F2.1 Dos unidades A1 nuevas (~7 lecciones completas, skills-tagged).
+- [x] F2.2 Cuatro listenings A1 nuevos.
+- [x] F2.3 Readings: `shared/readings/` + exportador + superficie
       "Listen | Read" + 6 readings A1.
-- [ ] F2.4 Checkpoint A1: `shared/assessments/` + entrada en Aprender con
+- [x] F2.4 Checkpoint A1: `shared/assessments/` + entrada en Aprender con
       mínimos por categoría.
-- [ ] F2.5 Drill de pronunciación mínimo en lecciones con `pron:` targets.
-- [ ] F2.6 Tests + verificación.
+- [x] F2.5 Drill de pronunciación mínimo en lecciones con `pron:` targets.
+- [x] F2.6 Tests + verificación.
 
 ## F3 — Inglés A2 completo
 

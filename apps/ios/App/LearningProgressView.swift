@@ -15,6 +15,7 @@ struct LearningProgressView: View {
     private var mastery: MasteryStats? {
         guard let course = CourseRegistry.forLanguage(store.language.id).first else { return nil }
         return MasteryEngine.stats(course: course, listenings: ListeningRegistry.forLanguage(course.languageID),
+                                   readings: ReadingRegistry.forLanguage(course.languageID),
                                    lessons: store.archive.lessons ?? [],
                                    completions: store.archive.completions ?? [],
                                    nowSeconds: Date.timeIntervalSinceReferenceDate)

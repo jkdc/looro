@@ -315,7 +315,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun progressStats(): ProgressStats = ProgressEngine.stats(archive.sessions, archive.lessons,
         archive.completions.orEmpty(), CourseRegistry.forLanguage(language.id),
-        ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(), language.id)
+        ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(), language.id,
+        ReadingRegistry.forLanguage(language.id).map { it.id }.toSet())
 
     fun completedLessonIDs(): Set<String> = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
 
@@ -330,8 +331,41 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** Skill mastery for the learning language — a pure projection of the ledger;
         null when the language has no course yet. */
     fun masteryStats(): MasteryStats? = CourseRegistry.forLanguage(language.id).firstOrNull()?.let { course ->
-        MasteryEngine.stats(course, ListeningRegistry.forLanguage(language.id), archive.lessons,
-            archive.completions.orEmpty(), nowSeconds())
+        MasteryEngine.stats(course, ListeningRegistry.forLanguage(language.id), ReadingRegistry.forLanguage(language.id),
+            archive.lessons, archive.completions.orEmpty(), nowSeconds())
+    }
+
+    /** A finished reading: one ledger mark with the score, same bargain as listening. */
+    fun readingCompleted(itemID: String, correct: Int, total: Int) {
+        if (total <= 0) return
+        recordCompletion(ProgressEngine.READING, itemID, correct * 100 / total)
+    }
+
+    fun readingScore(itemID: String): Int? = archive.completions.orEmpty()
+        .filter { it.kind == ProgressEngine.READING && it.itemID == itemID }
+        .maxOfOrNull { it.bestScore }
+
+    fun checkpoint(id: String): Checkpoint? = CheckpointRegistry.checkpoint(id)
+
+    fun checkpointBest(id: String): Int? = archive.completions.orEmpty()
+        .filter { it.kind == ProgressEngine.ASSESSMENT && it.itemID == id }
+        .maxOfOrNull { it.bestScore }
+
+    /** The first checkpoint whose level is fully attempted and not yet passed —
+        readiness as preparation, never a proficiency claim. */
+    fun checkpointReady(): Checkpoint? {
+        val course = CourseRegistry.forLanguage(language.id).firstOrNull() ?: return null
+        val done = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+        return CheckpointRegistry.forLanguage(language.id).firstOrNull { checkpoint ->
+            val levelLessons = course.units.filter { it.level == checkpoint.level }.flatMap { it.lessons }
+            levelLessons.isNotEmpty() && levelLessons.all { it.id in done } &&
+                !(checkpointBest(checkpoint.id)?.let { best -> best >= (checkpoint.thresholds["overall"] ?: 100) } == true)
+        }
+    }
+
+    /** A finished checkpoint rides the existing `assessment` kind. */
+    fun checkpointCompleted(id: String, percent: Int) {
+        recordCompletion(ProgressEngine.ASSESSMENT, id, percent)
     }
 
     /** Push/pull the progress ledger against the account (guests included). Failures
@@ -352,7 +386,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         putJsonArray("entries") {
             ProgressSync.entries(archive.lessons, archive.completions.orEmpty(),
                 CourseRegistry.forLanguage(language.id), ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(),
-                language.id).forEach { entry ->
+                language.id, ReadingRegistry.forLanguage(language.id).map { it.id }.toSet()).forEach { entry ->
                 addJsonObject {
                     put("kind", entry.kind); put("itemID", entry.itemID); put("at", entry.atMilliseconds)
                     put("attempts", entry.attempts); put("bestScore", entry.bestScore); put("language", entry.language)

@@ -10,6 +10,7 @@ data class ProgressStats(
     val activeStreakDays: Int, val longestStreakDays: Int, val last30DaysActivities: List<Int>,
     val themesPractised: Int, val exercisesCompleted: Int, val listeningCompleted: Int,
     val practiceRounds: Int, val wordsPracticeItems: Int, val assessmentsPassed: Int,
+    val readingCompleted: Int = 0,
 )
 
 /** The completion catalog every surface shares: the local ledger, the server
@@ -19,10 +20,11 @@ object ProgressEngine {
     const val CONVERSATION_THEME = "conversation_theme"
     const val EXERCISE_SET = "exercise_set"
     const val LISTENING = "listening"
+    const val READING = "reading"
     const val RECALL_ROUND = "recall_round"
     const val WORDS_PRACTICE = "words_practice"
     const val ASSESSMENT = "assessment"
-    val kinds = listOf(LESSON, CONVERSATION_THEME, EXERCISE_SET, LISTENING, RECALL_ROUND, WORDS_PRACTICE, ASSESSMENT)
+    val kinds = listOf(LESSON, CONVERSATION_THEME, EXERCISE_SET, LISTENING, READING, RECALL_ROUND, WORDS_PRACTICE, ASSESSMENT)
 
     private val SLUG = Regex("[a-z0-9][a-z0-9_-]{0,63}")
 
@@ -35,13 +37,15 @@ object ProgressEngine {
 
     fun stats(sessions: List<SessionRecord>, lessons: List<LessonState>, completions: List<CompletionMark>,
               courses: List<Course>, listeningIDs: Set<String>, languageID: String,
+              readingIDs: Set<String> = emptySet(),
               zone: java.time.ZoneId = java.time.ZoneId.systemDefault(), now: Double = nowSeconds()): ProgressStats {
         fun epochDay(seconds: Double): Long = java.time.Instant.ofEpochSecond((seconds + APPLE_EPOCH_UNIX_SECONDS).toLong()).atZone(zone).toLocalDate().toEpochDay()
-        // Content ids (lessons, exercises, listening, course ids) embed the language, so
-        // legacy null-language marks inside them stay unambiguous; ambiguous kinds
-        // (themes, recall rounds, word hashes, "free" assessments) need the stamp.
+        // Content ids (lessons, exercises, listening, reading, course ids) embed the
+        // language, so legacy null-language marks inside them stay unambiguous;
+        // ambiguous kinds (themes, recall rounds, word hashes, "free" assessments)
+        // need the stamp.
         val contentIDs = courses.flatMap { it.units.flatMap { unit -> unit.lessons.map { l -> l.id } } }.toSet() +
-            courses.map { it.id }.toSet() + listeningIDs
+            courses.map { it.id }.toSet() + listeningIDs + readingIDs
         fun scoped(mark: CompletionMark): Boolean =
             mark.languageID == languageID || (mark.languageID == null && mark.itemID in contentIDs)
         val languageSessions = sessions.filter { it.languageID == languageID }
@@ -70,7 +74,8 @@ object ProgressEngine {
             last30DaysActivities = (29 downTo 0).map { offset -> languageMarks.count { epochDay(it.at) == today - offset } },
             themesPractised = byKind[CONVERSATION_THEME].orEmpty().filter { it.languageID == languageID }.map { it.itemID }.toSet().size,
             exercisesCompleted = distinctItems(EXERCISE_SET),
-            listeningCompleted = distinctItems(LISTENING), practiceRounds = byKind[RECALL_ROUND].orEmpty().count { it.languageID == languageID },
+            listeningCompleted = distinctItems(LISTENING), readingCompleted = distinctItems(READING),
+            practiceRounds = byKind[RECALL_ROUND].orEmpty().count { it.languageID == languageID },
             wordsPracticeItems = distinctItems(WORDS_PRACTICE),
             assessmentsPassed = byKind[ASSESSMENT].orEmpty().filter { scoped(it) && it.bestScore >= 100 }.map { it.itemID }.toSet().size,
         )
@@ -96,9 +101,9 @@ object ProgressSync {
         counters, newest first, wire-capped. Lesson counters outrank the (capped)
         mark ledger so attempts never regress. */
     fun entries(lessons: List<LessonState>, completions: List<CompletionMark>, courses: List<Course>,
-                listeningIDs: Set<String>, languageID: String): List<ProgressSyncEntry> {
+                listeningIDs: Set<String>, languageID: String, readingIDs: Set<String> = emptySet()): List<ProgressSyncEntry> {
         val contentIDs = courses.flatMap { it.units.flatMap { unit -> unit.lessons.map { l -> l.id } } }.toSet() +
-            courses.map { it.id }.toSet() + listeningIDs
+            courses.map { it.id }.toSet() + listeningIDs + readingIDs
         fun scoped(mark: CompletionMark): Boolean =
             mark.languageID == languageID || (mark.languageID == null && mark.itemID in contentIDs)
         val languageLessons = lessons.filter { it.attempts > 0 && lessonIn(it.lessonID, contentIDs) }
@@ -142,7 +147,7 @@ object ProgressSync {
                     if (i >= 0) lessons[i] = lessons[i].copy(attempts = maxOf(lessons[i].attempts, row.attempts), lastSeen = maxOf(lessons[i].lastSeen, row.lastAt))
                     else if (row.attempts > 0) lessons += LessonState(lessonID = row.itemID, attempts = row.attempts, lastSeen = row.lastAt)
                 }
-                ProgressEngine.EXERCISE_SET, ProgressEngine.LISTENING ->
+                ProgressEngine.EXERCISE_SET, ProgressEngine.LISTENING, ProgressEngine.READING ->
                     if (marks.none { it.kind == row.kind && it.itemID == row.itemID })
                         marks += CompletionMark(row.kind, row.itemID, row.lastAt, row.bestScore, languageID)
             }
