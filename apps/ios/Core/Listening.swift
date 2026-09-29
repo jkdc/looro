@@ -34,7 +34,7 @@ public enum ListeningRegistry {
     /// A language's texts in teaching order: level, then course-unit order,
     /// then id — so the Listen tab can group by level and follow the temario.
     public static func forLanguage(_ id: String) -> [ListeningText] {
-        let unitOrder = CourseRegistry.all.first { $0.languageID == id }?.units.map(\.id) ?? []
+        let unitOrder = CourseRegistry.all.filter { $0.languageID == id }.flatMap(\.units).map(\.id)
         func key(_ text: ListeningText) -> (Int, Int, String) {
             let level = levelOrder.firstIndex(of: text.level) ?? levelOrder.count
             let unit = text.unitID.flatMap { unitOrder.firstIndex(of: $0) } ?? Int.max

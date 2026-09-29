@@ -69,7 +69,8 @@ final class ListeningContentTests: XCTestCase {
     func testUnitLinkedTextsPointAtASameLevelUnitOfTheirCourse() {
         for text in ListeningRegistry.all {
             let unit = text.unitID.flatMap { id in
-                CourseRegistry.all.first { $0.languageID == text.languageID }?.units.first { $0.id == id }
+                CourseRegistry.all.filter { $0.languageID == text.languageID }
+                    .flatMap(\.units).first { $0.id == id }
             }
             if text.unitID != nil {
                 XCTAssertNotNil(unit, "\(text.id): unit not found")

@@ -6,7 +6,7 @@ import org.junit.Test
 class CoursesTest {
     @Test fun `foundations course is registered for english`() {
         val courses = CourseRegistry.forLanguage("en")
-        assertEquals(2, courses.size)
+        assertEquals(6, courses.size)
         val course = courses.first { it.id == "en-foundations" }
         assertEquals("en-foundations", course.id)
         assertEquals(23, course.units.size)
@@ -15,15 +15,19 @@ class CoursesTest {
     }
 
     @Test fun `every unit carries its level label`() {
-        val levels = CourseRegistry.forLanguage("en").first().units.map { it.level }
+        val levels = CourseRegistry.forLanguage("en").first { it.id == "en-foundations" }.units.map { it.level }
         assertTrue(levels.all { it.isNotBlank() })
         assertEquals(listOf("A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A2", "A2", "A2", "A2", "A2", "A2", "B1", "B1", "B1", "B1", "B2", "B2", "C1"), levels)
     }
 
-    @Test fun `the English work track is registered`() {
-        val track = CourseRegistry.forLanguage("en").first { it.id == "en-work-track" }
-        assertEquals(1, track.units.size)
-        assertEquals(3, track.units.sumOf { it.lessons.size })
+    @Test fun `the five English professional tracks are registered`() {
+        val trackIDs = listOf("en-work-track", "en-business-track", "en-technology-track",
+            "en-hospitality-track", "en-healthcare-track")
+        for (id in trackIDs) {
+            val track = CourseRegistry.forLanguage("en").first { it.id == id }
+            assertEquals(1, track.units.size)
+            assertEquals(3, track.units.sumOf { it.lessons.size })
+        }
     }
 
     @Test fun `each supported course language carries exactly one foundations`() {

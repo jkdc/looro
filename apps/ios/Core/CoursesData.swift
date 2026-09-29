@@ -100,6 +100,98 @@ public enum DeFoundationsU1 {
                             Exercise(id: "de-foundations-u1-introduce-e4", kind: "written", prompt: "Give your complete introduction: name and country.", options: [], answers: ["Ich heiße <name> und ich komme aus <country>", "Ich bin <name> und ich komme aus <country>"], explain: "Name + origin, each with its verb.")], skills: ["grammar:verb-be", "function:introduce-yourself", "vocab:introductions", "pron:word-stress"], canDo: ["introduce-yourself"])])
 }
 
+public enum EnBusinessU1 {
+    public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
+                    ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
+                    ConversationTheme("deal-closer", "Closing the deal", "Numbers on the table", "handshake", "Course", "Final round of a negotiation: price, timeline and the sentence that closes it.", 1)], lessons: [
+            Lesson(id: "en-business-u1-pitch", title: "The pitch", goal: "Pitch a service: problem, solution, proof, in that order.",
+                intro: LessonIntro(explanation: [
+                            "The pitch skeleton: “Your team wastes hours on X. We automate X. Company A saved 20% in one quarter.”",
+                            "Lead with the client's problem, never your product: the problem is why they're listening.",
+                            "One number beats ten adjectives: “a 20% saving” does the arguing for you."], examples: [
+                            ExampleLine(text: "Your team wastes hours on X.", meaning: "The problem, stated as theirs."),
+                            ExampleLine(text: "We automate exactly that.", meaning: "The solution, one line."),
+                            ExampleLine(text: "Company A saved 20% in one quarter.", meaning: "Proof with a number."),
+                            ExampleLine(text: "What would saving that time mean for you?", meaning: "Hand them the win."),
+                            ExampleLine(text: "I'd love to show you a demo.", meaning: "The soft close.")]),
+                expressions: [
+                            TargetExpression(text: "The problem: your client …", meaning: "Open with their pain.", note: "Their problem, their words."),
+                            TargetExpression(text: "The solution: we + verb", meaning: "One line, no jargon.", note: "We automate exactly that."),
+                            TargetExpression(text: "Proof: client + number", meaning: "Evidence sells.", note: "Company A saved 20%."),
+                            TargetExpression(text: "What would … mean for you?", meaning: "Make it personal.", note: "Time, money, headcount."),
+                            TargetExpression(text: "I'd love to show you …", meaning: "The demo ask.", note: "Soft, specific, next step.")],
+                situation: "You pitch to a skeptical operations manager: problem, one-line solution, one proof number — then ask the question that makes it theirs.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Open with the client's problem. (manual invoices)", expected: ["Your team spends hours on manual invoices."], focus: "their problem", watch: "Their pain, their words — not your product name."),
+                                PracticeQuestion(prompt: "Give the one-line solution. (automation)", expected: ["We automate exactly that."], focus: "one line", watch: "One sentence, no feature list."),
+                                PracticeQuestion(prompt: "Bring proof. (a client, 20% saved)", expected: ["Company A saved 20% in one quarter."], focus: "proof", watch: "Name + number is the strongest proof shape."),
+                                PracticeQuestion(prompt: "Make the benefit personal. (question)", expected: ["What would your team do with that time?"], focus: "the personal question", watch: "Hand them the win — let them say it."),
+                                PracticeQuestion(prompt: "Close softly with a demo.", expected: ["I'd love to show you a demo."], focus: "soft close", watch: "Love + demo: soft but specific.")]),
+                exercises: [
+                            Exercise(id: "en-business-u1-pitch-e1", kind: "choice", prompt: "Your team ___ hours on manual work.", options: ["wastes", "waste", "wasting", "to waste"], answers: ["wastes"], explain: "Your team = singular: wastes."),
+                            Exercise(id: "en-business-u1-pitch-e2", kind: "gap", prompt: "We ___ exactly that. (automate)", options: [], answers: ["automate"], explain: "We + base verb."),
+                            Exercise(id: "en-business-u1-pitch-e3", kind: "order", prompt: "Bring the proof.", options: [], answers: ["Company A saved 20 percent in one quarter"], explain: "Client + number + period."),
+                            Exercise(id: "en-business-u1-pitch-e4", kind: "written", prompt: "Ask the personal-benefit question.", options: [], answers: ["what would saving that time mean for you", "what would your team do with that time"], explain: "What would … mean for you?")], skills: ["function:talk-about-work", "grammar:present-simple", "vocab:work", "function:negotiate"], canDo: ["talk-about-work"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "en-business-u1-negotiation", title: "Negotiating the deal", goal: "Trade conditions politely: price, timeline, and the deal that closes.",
+                intro: LessonIntro(explanation: [
+                            "Negotiation is trading, not winning: “If you can do March, we can meet your price.” Every concession has a price tag.",
+                            "Conditional offers: “We could accept that if…”, “That would work as long as…”. The if/as long as carries your condition.",
+                            "Close with a summary: “So: March delivery, half up front. Do we have a deal?” Repeat it or it didn't happen."], examples: [
+                            ExampleLine(text: "If you can do March, we can meet your price.", meaning: "Condition + concession."),
+                            ExampleLine(text: "We could accept that as long as costs are covered.", meaning: "as long as = siempre que."),
+                            ExampleLine(text: "That's difficult for our timeline.", meaning: "Push back without conflict."),
+                            ExampleLine(text: "What if we split the difference?", meaning: "The middle-path move."),
+                            ExampleLine(text: "So: March delivery, half up front. Deal?", meaning: "The closing summary."),
+                            ExampleLine(text: "Half now, half on delivery — does that work?", meaning: "A structured offer.")]),
+                expressions: [
+                            TargetExpression(text: "If you …, we …", meaning: "Trade a condition.", note: "If you hurry, we discount."),
+                            TargetExpression(text: "as long as …", meaning: "Your red line.", note: "as long as costs are covered."),
+                            TargetExpression(text: "That's difficult for …", meaning: "Soft pushback.", note: "…for our timeline."),
+                            TargetExpression(text: "What if we …?", meaning: "Middle path.", note: "…split the difference?"),
+                            TargetExpression(text: "So we agree on …", meaning: "Close and repeat.", note: "Numbers finish it."),
+                            TargetExpression(text: "I'd need something in writing.", meaning: "Protect the agreement.", note: "Even between friends.")],
+                situation: "Final negotiation round: they want March at half price, you need June at full — trade conditions until the summary closes it.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ask for a faster timeline with a trade. (if / premium)", expected: ["If we pay the premium, can you deliver in March?"], focus: "if + trade", watch: "The if carries what you give, not just what you want."),
+                                PracticeQuestion(prompt: "State your red line. (costs covered)", expected: ["That works as long as our costs are covered."], focus: "as long as", watch: "as long as + present: the red line."),
+                                PracticeQuestion(prompt: "Push back softly on the timeline.", expected: ["That's difficult for our timeline."], focus: "soft pushback", watch: "Difficult, not impossible — the door stays open."),
+                                PracticeQuestion(prompt: "Offer the middle path.", expected: ["What if we split the difference?"], focus: "middle path", watch: "What if + present simple proposes it."),
+                                PracticeQuestion(prompt: "Ask for the agreement in writing.", expected: ["I'd need something in writing."], focus: "in writing", watch: "in writing — the phrase protects both sides.")]),
+                exercises: [
+                            Exercise(id: "en-business-u1-negotiation-e1", kind: "choice", prompt: "___ you sign today, we can offer a discount.", options: ["If", "Unless", "Will", "Are"], answers: ["If"], explain: "If + present for the condition."),
+                            Exercise(id: "en-business-u1-negotiation-e2", kind: "gap", prompt: "We can travel ___ ___ as costs are covered. (2 words)", options: [], answers: ["as long", "so long"], explain: "as long as = siempre que."),
+                            Exercise(id: "en-business-u1-negotiation-e3", kind: "order", prompt: "Offer the middle path.", options: [], answers: ["What if we split the difference"], explain: "What if + present simple."),
+                            Exercise(id: "en-business-u1-negotiation-e4", kind: "written", prompt: "Summarise the deal: March, half up front.", options: [], answers: ["so march delivery half up front", "so we agree march delivery half up front"], explain: "So + the numbers.")], skills: ["function:negotiate", "grammar:first-conditional", "grammar:connectors", "vocab:work", "speaking:negotiate"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:first-conditional"]),
+            Lesson(id: "en-business-u1-followup", title: "The follow-up", goal: "Confirm agreements in writing: recap, next steps and a clear ask.",
+                intro: LessonIntro(explanation: [
+                            "The follow-up email exists to prove the meeting happened: “Just to confirm what we agreed…”. Recap in numbered lines.",
+                            "Next steps have owners and dates: “Ana will send the contract by Friday.” No owner, no date, no step.",
+                            "End with the ask, not a whisper: “Could you confirm by Thursday?” A closing without an ask closes nothing."], examples: [
+                            ExampleLine(text: "Just to confirm what we agreed:", meaning: "The recap opener."),
+                            ExampleLine(text: "1. Price. 2. Timeline. 3. Contract.", meaning: "Numbered recap."),
+                            ExampleLine(text: "Ana will send the contract by Friday.", meaning: "Owner + date."),
+                            ExampleLine(text: "Could you confirm by Thursday?", meaning: "The dated ask."),
+                            ExampleLine(text: "Looking forward to working together.", meaning: "The warm close.")]),
+                expressions: [
+                            TargetExpression(text: "Just to confirm, …", meaning: "Open the recap.", note: "…what we agreed in today's call."),
+                            TargetExpression(text: "numbered next steps", meaning: "Owner + date each.", note: "1. Contract — Ana — Friday."),
+                            TargetExpression(text: "Could you confirm by …?", meaning: "The dated ask.", note: "Thursday creates urgency."),
+                            TargetExpression(text: "I'll … by <day>", meaning: "Your own commitments.", note: "I'll send the proposal by Monday."),
+                            TargetExpression(text: "Looking forward to …", meaning: "The warm close.", note: "…-ing: working, hearing.")],
+                situation: "After the negotiation call: write the confirmation email — recap the three agreed points, assign one task with a date and ask for confirmation by Thursday.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Open the confirmation email.", expected: ["Just to confirm what we agreed in today's call."], focus: "the opener", watch: "It exists to prove the meeting happened."),
+                                PracticeQuestion(prompt: "Assign a task with a deadline. (Ana / contract / Friday)", expected: ["Ana will send the contract by Friday."], focus: "owner + date", watch: "No owner, no date, no step."),
+                                PracticeQuestion(prompt: "Ask for confirmation with a date. (Thursday)", expected: ["Could you confirm by Thursday?"], focus: "the dated ask", watch: "A closing without an ask closes nothing."),
+                                PracticeQuestion(prompt: "Close warmly for a new client.", expected: ["Looking forward to working together."], focus: "warm close", watch: "look forward to + -ing."),
+                                PracticeQuestion(prompt: "Commit to your own task with a date. (proposal / Monday)", expected: ["I'll send the proposal by Monday."], focus: "I'll + by + date", watch: "Your commitments go in the same email.")]),
+                exercises: [
+                            Exercise(id: "en-business-u1-followup-e1", kind: "choice", prompt: "Just to ___ what we agreed:", options: ["confirm", "check", "say", "remember"], answers: ["confirm"], explain: "Just to confirm — the recap opener."),
+                            Exercise(id: "en-business-u1-followup-e2", kind: "gap", prompt: "Could you ___ by Thursday? (confirmar)", options: [], answers: ["confirm", "reply"], explain: "The dated ask."),
+                            Exercise(id: "en-business-u1-followup-e3", kind: "order", prompt: "Assign the task with a deadline.", options: [], answers: ["Ana will send the contract by Friday"], explain: "Owner + will + by + date."),
+                            Exercise(id: "en-business-u1-followup-e4", kind: "written", prompt: "Close the email warmly.", options: [], answers: ["looking forward to working together", "best regards"], explain: "Either warm close works.")], skills: ["writing:email", "function:make-requests", "grammar:going-to", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:going-to"])])
+}
+
 public enum EnFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café. Meet the learner, exchange names, countries and jobs using the verb to be.", 0),
@@ -2450,6 +2542,277 @@ public enum EnFoundationsNuance {
                             Exercise(id: "en-foundations-nuance-presenting-e4", kind: "written", prompt: "Own a hostile question before answering.", options: [], answers: ["thats exactly the point", "that is exactly the point"], explain: "That's exactly the point — then structure.")], skills: ["function:talk-about-work", "speaking:sustained-conversation", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum EnCareU1 {
+    public static let unit: CourseUnit = CourseUnit(id: "en-care-u1", title: "Clear care", subtitle: "Appointments, symptoms, instructions", level: "B1", themes: [
+                    ConversationTheme("appointment-scene", "The appointment", "Book and describe", "calendar.badge.clock", "Course", "You book a non-urgent appointment and describe symptoms over the phone.", 0),
+                    ConversationTheme("instructions-scene", "Clear instructions", "Twice a day after meals", "pills", "Course", "You explain medication instructions to a patient and check they understood — kindly, twice.", 1)], lessons: [
+            Lesson(id: "en-care-u1-appointment", title: "Booking the appointment", goal: "Book a medical appointment and describe why you need it.",
+                intro: LessonIntro(explanation: [
+                            "The booking flow: “I'd like to make an appointment.” → routine or urgent? → “It's not an emergency, but…”. Triage needs honesty.",
+                            "Describe the reason simply: “I've had back pain for two weeks.” Simple present perfect + for.",
+                            "Sensitive topics get a phrase: “It's a bit personal…” — receptionists have heard everything."], examples: [
+                            ExampleLine(text: "I'd like to make an appointment.", meaning: "The opener."),
+                            ExampleLine(text: "It's not an emergency, but I do need to be seen.", meaning: "Honest triage."),
+                            ExampleLine(text: "I've had back pain for two weeks.", meaning: "Reason + duration."),
+                            ExampleLine(text: "Is there anything earlier?", meaning: "Ask for the waitlist."),
+                            ExampleLine(text: "What do I need to bring?", meaning: "The practical close.")]),
+                expressions: [
+                            TargetExpression(text: "make an appointment", meaning: "The booking verb.", note: "make, never do."),
+                            TargetExpression(text: "routine vs urgent", meaning: "Triage honesty.", note: "It's not an emergency, but…"),
+                            TargetExpression(text: "I've had … for + time", meaning: "Reason + duration.", note: "for two weeks."),
+                            TargetExpression(text: "Is there anything earlier?", meaning: "Ask for cancellations.", note: "The waitlist question."),
+                            TargetExpression(text: "What do I need to bring?", meaning: "The practical close.", note: "ID, card, previous reports.")],
+                situation: "Book a back-pain appointment: say it's not urgent but two weeks long, ask for anything earlier and check what to bring.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Open the booking.", expected: ["I'd like to make an appointment."], focus: "the opener", watch: "make an appointment — never do."),
+                                PracticeQuestion(prompt: "Be honest about urgency. (not emergency, two weeks)", expected: ["It's not an emergency, but I've had back pain for two weeks."], focus: "triage", watch: "Honesty gets you the right slot."),
+                                PracticeQuestion(prompt: "Ask for an earlier slot.", expected: ["Is there anything earlier?"], focus: "the waitlist", watch: "Cancellations happen — ask."),
+                                PracticeQuestion(prompt: "Check what to bring.", expected: ["What do I need to bring?"], focus: "practical close", watch: "need to + verb."),
+                                PracticeQuestion(prompt: "Say the visit is a bit personal before describing it.", expected: ["It's a bit personal.", "It's a bit personal, but…"], focus: "sensitive", watch: "The phrase buys kindness from the receptionist.")]),
+                exercises: [
+                            Exercise(id: "en-care-u1-appointment-e1", kind: "choice", prompt: "I'd like to ___ an appointment.", options: ["make", "do", "take", "get"], answers: ["make"], explain: "make an appointment — the fixed pair."),
+                            Exercise(id: "en-care-u1-appointment-e2", kind: "gap", prompt: "I've had this pain ___ two weeks. (duration)", options: [], answers: ["for"], explain: "for + period."),
+                            Exercise(id: "en-care-u1-appointment-e3", kind: "order", prompt: "Ask for an earlier slot.", options: [], answers: ["Is there anything earlier"], explain: "Is there anything…?"),
+                            Exercise(id: "en-care-u1-appointment-e4", kind: "written", prompt: "Say it's not an emergency but you need to be seen.", options: [], answers: ["its not an emergency but i do need to be seen", "its not an emergency"], explain: "Honest triage.")], skills: ["function:talk-about-health", "grammar:present-perfect", "grammar:have-got", "vocab:health"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-perfect"]),
+            Lesson(id: "en-care-u1-instructions", title: "Clear instructions", goal: "Explain medication and check the patient understood — kindly, twice.",
+                intro: LessonIntro(explanation: [
+                            "Instruction pattern: “Take one tablet twice a day, after meals.” Frequency + timing + food rule, in that order.",
+                            "Check understanding without condescension: “Just so I know you've got it — how often will you take it?” Teach-back, not a quiz.",
+                            "Warn kindly: “You shouldn't drive while taking these.” should/shouldn't carries every warning."], examples: [
+                            ExampleLine(text: "Take one tablet twice a day, after meals.", meaning: "The full instruction."),
+                            ExampleLine(text: "Don't take them on an empty stomach.", meaning: "The food rule."),
+                            ExampleLine(text: "Just so I know you've got it — how often?", meaning: "The teach-back."),
+                            ExampleLine(text: "You shouldn't drive while taking these.", meaning: "The kind warning."),
+                            ExampleLine(text: "Finish the whole course, even if you feel better.", meaning: "The compliance line.")]),
+                expressions: [
+                            TargetExpression(text: "Take + number + frequency", meaning: "The dose.", note: "one tablet twice a day."),
+                            TargetExpression(text: "after / before / with meals", meaning: "The timing.", note: "after meals."),
+                            TargetExpression(text: "Don't take them + condition", meaning: "The food rule.", note: "on an empty stomach."),
+                            TargetExpression(text: "Just so I know you've got it …", meaning: "Teach-back opener.", note: "Then ask them to repeat."),
+                            TargetExpression(text: "You shouldn't + verb", meaning: "The kind warning.", note: "drive while taking these."),
+                            TargetExpression(text: "Finish the whole course", meaning: "Compliance.", note: "even if you feel better.")],
+                situation: "Explain a new medication: dose, timing, food rule — then use teach-back to check understanding and add one kind warning.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Give the dose and frequency. (1 tablet, twice a day)", expected: ["Take one tablet twice a day."], focus: "dose", watch: "Number + frequency, in that order."),
+                                PracticeQuestion(prompt: "Add the timing rule. (after meals)", expected: ["Take them after meals."], focus: "timing", watch: "after/before/with meals."),
+                                PracticeQuestion(prompt: "Check understanding kindly.", expected: ["Just so I know you've got it — how often will you take them?"], focus: "teach-back", watch: "Ask them to repeat, without a quiz voice."),
+                                PracticeQuestion(prompt: "Give the kind warning. (no driving)", expected: ["You shouldn't drive while taking these."], focus: "the warning", watch: "shouldn't + base verb."),
+                                PracticeQuestion(prompt: "Give the food rule. (no alcohol)", expected: ["You shouldn't drink alcohol with this medication."], focus: "shouldn't", watch: "Warnings use shouldn't, not don't.")]),
+                exercises: [
+                            Exercise(id: "en-care-u1-instructions-e1", kind: "choice", prompt: "Take one tablet ___ a day.", options: ["twice", "two times of", "two", "double"], answers: ["twice"], explain: "twice a day = dos veces al día."),
+                            Exercise(id: "en-care-u1-instructions-e2", kind: "gap", prompt: "Take them ___ meals. (después de)", options: [], answers: ["after"], explain: "after meals."),
+                            Exercise(id: "en-care-u1-instructions-e3", kind: "order", prompt: "Give the kind warning.", options: [], answers: ["You shouldnt drive while taking these"], explain: "shouldn't + base verb."),
+                            Exercise(id: "en-care-u1-instructions-e4", kind: "written", prompt: "The compliance line: finish the course.", options: [], answers: ["finish the whole course even if you feel better", "finish the whole course"], explain: "even if you feel better.")], skills: ["function:talk-about-health", "grammar:modal-should", "grammar:quantities", "vocab:health"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:modal-should"]),
+            Lesson(id: "en-care-u1-reassuring", title: "Reassuring a worried patient", goal: "Calm a worried patient: acknowledge, explain simply, and give the next step.",
+                intro: LessonIntro(explanation: [
+                            "Acknowledge the fear first: “I can see you're worried.” Solutions before empathy sound like dismissal.",
+                            "Explain simply: short sentences, everyday words, no jargon — “The scan will show us what's happening.”",
+                            "Always end with the next step: “The nurse will call you tomorrow with the results.” Uncertainty is the scarier diagnosis."], examples: [
+                            ExampleLine(text: "I can see you're worried.", meaning: "Acknowledge first."),
+                            ExampleLine(text: "The scan will show us what's happening.", meaning: "Simple explanation."),
+                            ExampleLine(text: "It's routine, and you're in good hands.", meaning: "The calm frame."),
+                            ExampleLine(text: "The nurse will call you tomorrow with the results.", meaning: "The next step."),
+                            ExampleLine(text: "Any questions at all — I'm here.", meaning: "The open door.")]),
+                expressions: [
+                            TargetExpression(text: "I can see you're …", meaning: "Name the feeling.", note: "worried, nervous, anxious."),
+                            TargetExpression(text: "short + everyday words", meaning: "Explain simply.", note: "No jargon to a worried mind."),
+                            TargetExpression(text: "It's routine …", meaning: "The calm frame.", note: "Routine for us, new for them."),
+                            TargetExpression(text: "The next step is …", meaning: "Kill the uncertainty.", note: "…the nurse calls tomorrow."),
+                            TargetExpression(text: "Any questions at all?", meaning: "The open door.", note: "Then wait for the real one.")],
+                situation: "A patient is worried about a scan: name the feeling, explain the scan in one simple sentence, give the next step and open the door.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Name the patient's feeling.", expected: ["I can see you're worried."], focus: "acknowledge", watch: "Empathy first — solutions second."),
+                                PracticeQuestion(prompt: "Explain the scan simply.", expected: ["The scan will show us what's happening. It doesn't hurt at all."], focus: "simple", watch: "Short sentences, no jargon."),
+                                PracticeQuestion(prompt: "Give the calm frame.", expected: ["It's routine, and you're in good hands."], focus: "the frame", watch: "Routine for us, new for them."),
+                                PracticeQuestion(prompt: "Give the next step. (nurse calls tomorrow)", expected: ["The nurse will call you tomorrow with the results."], focus: "next step", watch: "Uncertainty is the scarier diagnosis."),
+                                PracticeQuestion(prompt: "Reassure about pain before the scan.", expected: ["It doesn't hurt at all."], focus: "reassure", watch: "Short, absolute, kind.")]),
+                exercises: [
+                            Exercise(id: "en-care-u1-reassuring-e1", kind: "choice", prompt: "I can see you're ___. (worried)", options: ["worried", "worrying", "worry", "worry about"], answers: ["worried"], explain: "worried = how you feel; worrying = what causes it."),
+                            Exercise(id: "en-care-u1-reassuring-e2", kind: "gap", prompt: "It's ___ — you're in good hands. (de rutina)", options: [], answers: ["routine"], explain: "routine = de rutina, normal."),
+                            Exercise(id: "en-care-u1-reassuring-e3", kind: "order", prompt: "Give the next step.", options: [], answers: ["The nurse will call you tomorrow with the results"], explain: "The next step kills the uncertainty."),
+                            Exercise(id: "en-care-u1-reassuring-e4", kind: "written", prompt: "Open the door for questions.", options: [], answers: ["any questions at all im here", "any questions im here"], explain: "Then wait for the real one.")], skills: ["function:talk-about-health", "grammar:present-continuous", "grammar:future-forms", "vocab:health", "speaking:sustained-conversation"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:future-forms"])])
+}
+
+public enum EnHospU1 {
+    public static let unit: CourseUnit = CourseUnit(id: "en-hosp-u1", title: "Guest services", subtitle: "Check-in, requests, complaints", level: "B1", themes: [
+                    ConversationTheme("checkin-scene", "The check-in", "Names, nights, keys", "key.horizontal", "Course", "You check in a tired traveller: booking found, room explained, breakfast mentioned, keys handed.", 0),
+                    ConversationTheme("complaint-scene", "The complaint at midnight", "Fix it kindly", "moon.zzz", "Course", "A guest is upset about noise. Listen, apologise, act — and follow up before breakfast.", 1)], lessons: [
+            Lesson(id: "en-hosp-u1-checkin", title: "The check-in", goal: "Check a guest in: find the booking, explain the room, set expectations.",
+                intro: LessonIntro(explanation: [
+                            "The check-in script: “Good evening! Do you have a reservation?” → name → “A double room for two nights, is that right?”",
+                            "Explain the essentials: breakfast hours, Wi-Fi, checkout time. Tired guests remember none — say them slowly, twice.",
+                            "Hand over with the room number: “You're in room 204, second floor. Enjoy your stay!”"], examples: [
+                            ExampleLine(text: "Good evening! Do you have a reservation?", meaning: "The opener."),
+                            ExampleLine(text: "A double room for two nights, is that right?", meaning: "Confirm the booking."),
+                            ExampleLine(text: "Breakfast is from seven to ten.", meaning: "The essential detail."),
+                            ExampleLine(text: "You're in room 204, second floor.", meaning: "The handover."),
+                            ExampleLine(text: "Enjoy your stay!", meaning: "The close.")]),
+                expressions: [
+                            TargetExpression(text: "Do you have a reservation?", meaning: "The opener.", note: "reservation = booking."),
+                            TargetExpression(text: "…, is that right?", meaning: "Confirm details.", note: "name, room type, nights."),
+                            TargetExpression(text: "Breakfast is from … to …", meaning: "Essential detail.", note: "Slowly. Twice."),
+                            TargetExpression(text: "You're in room + number", meaning: "The handover.", note: "…on the second floor."),
+                            TargetExpression(text: "Enjoy your stay!", meaning: "The close.", note: "Every check-in ends here.")],
+                situation: "Check in a tired traveller: find the booking under their name, confirm two nights, give breakfast hours and hand over the keys warmly.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Open the check-in.", expected: ["Good evening! Do you have a reservation?"], focus: "the opener", watch: "reservation = booking — same thing at a hotel."),
+                                PracticeQuestion(prompt: "Confirm the booking details. (double, two nights)", expected: ["A double room for two nights, is that right?"], focus: "confirm", watch: "Repeat the details back — errors die here."),
+                                PracticeQuestion(prompt: "Give breakfast hours. (7 to 10)", expected: ["Breakfast is from seven to ten, on the ground floor."], focus: "essential detail", watch: "Say it slowly. Tired guests forget."),
+                                PracticeQuestion(prompt: "Hand over the keys warmly.", expected: ["You're in room 204. Enjoy your stay!"], focus: "the handover", watch: "Room number + the close."),
+                                PracticeQuestion(prompt: "Mention the Wi-Fi. (free, all areas)", expected: ["Wi-Fi is free in all areas."], focus: "the extras", watch: "Free + place: in all areas.")]),
+                exercises: [
+                            Exercise(id: "en-hosp-u1-checkin-e1", kind: "choice", prompt: "Do you have a ___? (reserva)", options: ["reservation", "reservate", "reserve", "reserving"], answers: ["reservation"], explain: "reservation = booking."),
+                            Exercise(id: "en-hosp-u1-checkin-e2", kind: "gap", prompt: "A double room ___ two nights, is that right?", options: [], answers: ["for"], explain: "for + duration."),
+                            Exercise(id: "en-hosp-u1-checkin-e3", kind: "order", prompt: "Give breakfast hours.", options: [], answers: ["Breakfast is from seven to ten"], explain: "from … to …"),
+                            Exercise(id: "en-hosp-u1-checkin-e4", kind: "written", prompt: "Hand over the keys warmly. (room 204)", options: [], answers: ["youre in room 204 enjoy your stay", "room 204 enjoy your stay"], explain: "Room + the close.")], skills: ["function:make-requests", "grammar:present-simple", "grammar:quantities", "vocab:social-expressions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:quantities"]),
+            Lesson(id: "en-hosp-u1-complaints", title: "The midnight complaint", goal: "Handle a complaint: listen fully, apologise, act, follow up.",
+                intro: LessonIntro(explanation: [
+                            "The service sequence: listen without interrupting → apologise once, sincerely → act immediately → follow up later.",
+                            "Apologise for the experience, not the fault: “I'm so sorry about the noise” works even if it wasn't your fault.",
+                            "Act visibly: “I'm moving you to the fourth floor right now.” Actions apologise louder than words."], examples: [
+                            ExampleLine(text: "I'm so sorry about the noise.", meaning: "The sincere apology."),
+                            ExampleLine(text: "I completely understand.", meaning: "Validate the feeling."),
+                            ExampleLine(text: "I'm moving you to a quiet room right now.", meaning: "Act immediately."),
+                            ExampleLine(text: "I'll follow up in the morning.", meaning: "The promised follow-up."),
+                            ExampleLine(text: "Is there anything else I can do?", meaning: "The care question.")]),
+                expressions: [
+                            TargetExpression(text: "I'm so sorry about …", meaning: "Apologise for the experience.", note: "Even if it's not your fault."),
+                            TargetExpression(text: "I completely understand.", meaning: "Validate first.", note: "Before any solution."),
+                            TargetExpression(text: "I'll + fix, right now", meaning: "Act visibly.", note: "Moving you now."),
+                            TargetExpression(text: "I'll follow up in the morning.", meaning: "The follow-up promise.", note: "And actually do it."),
+                            TargetExpression(text: "Is there anything else…?", meaning: "The care question.", note: "Then wait, and listen.")],
+                situation: "A guest calls down at midnight about wedding noise upstairs: listen, apologise, move them, promise the follow-up and ask the care question.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Apologise for the noise.", expected: ["I'm so sorry about the noise."], focus: "the apology", watch: "For the experience, whatever the cause."),
+                                PracticeQuestion(prompt: "Validate the guest's feeling.", expected: ["I completely understand — it's unacceptable."], focus: "validate", watch: "Understand first, explain later (or never)."),
+                                PracticeQuestion(prompt: "Say the immediate action. (move to 4th floor)", expected: ["I'm moving you to the fourth floor right now."], focus: "act now", watch: "right now is the apology that works."),
+                                PracticeQuestion(prompt: "Promise the follow-up. (morning)", expected: ["I'll follow up in the morning."], focus: "follow-up", watch: "Promise it, then do it before breakfast."),
+                                PracticeQuestion(prompt: "Ask the care question.", expected: ["Is there anything else I can do?"], focus: "care", watch: "Then wait, and listen again.")]),
+                exercises: [
+                            Exercise(id: "en-hosp-u1-complaints-e1", kind: "choice", prompt: "I'm so sorry ___ the noise.", options: ["about", "of", "that", "for what"], answers: ["about"], explain: "sorry about + thing."),
+                            Exercise(id: "en-hosp-u1-complaints-e2", kind: "gap", prompt: "I ___ understand — that's not acceptable.", options: [], answers: ["completely", "totally"], explain: "completely understand."),
+                            Exercise(id: "en-hosp-u1-complaints-e3", kind: "order", prompt: "Promise the action.", options: [], answers: ["Im moving you to a quiet room right now"], explain: "Act immediately."),
+                            Exercise(id: "en-hosp-u1-complaints-e4", kind: "written", prompt: "Ask the care question.", options: [], answers: ["is there anything else i can do", "can i do anything else"], explain: "Then wait and listen.")], skills: ["function:solve-problems", "function:make-requests", "grammar:present-continuous", "vocab:social-expressions", "speaking:sustained-conversation"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-continuous"]),
+            Lesson(id: "en-hosp-u1-requests", title: "Special requests", goal: "Handle special requests: what's possible, what's not, and the kind alternative.",
+                intro: LessonIntro(explanation: [
+                            "Requests come in every shape: late checkout, a quiet floor, an extra bed. First acknowledge: “Certainly, let me check.”",
+                            "Never a bare no: “I'm afraid we can't do early check-in, but we can store your bags.” The alternative is the service.",
+                            "Follow through visibly: “It's arranged — room 312, away from the lift.” Report back or the request didn't happen."], examples: [
+                            ExampleLine(text: "Certainly, let me check.", meaning: "The acknowledging opener."),
+                            ExampleLine(text: "I'm afraid we can't do early check-in.", meaning: "The kind no."),
+                            ExampleLine(text: "But we can store your bags.", meaning: "The alternative."),
+                            ExampleLine(text: "It's arranged — room 312.", meaning: "The visible follow-through."),
+                            ExampleLine(text: "Anything else I can arrange?", meaning: "The service close.")]),
+                expressions: [
+                            TargetExpression(text: "Certainly, let me check.", meaning: "Buy time kindly.", note: "Then actually check."),
+                            TargetExpression(text: "I'm afraid we can't …", meaning: "The kind no.", note: "afraid softens it."),
+                            TargetExpression(text: "but we CAN …", meaning: "The alternative.", note: "Say the CAN louder."),
+                            TargetExpression(text: "It's arranged.", meaning: "Report back.", note: "Room, time, detail."),
+                            TargetExpression(text: "Anything else I can arrange?", meaning: "The close.", note: "arrange = gestionar.")],
+                situation: "A guest asks for late checkout, a high floor and a quiet room — one yes, one no with an alternative, and one to arrange.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Acknowledge before checking. (late checkout)", expected: ["Certainly, let me check for late checkout."], focus: "acknowledge", watch: "Certainly buys the wait kindly."),
+                                PracticeQuestion(prompt: "Say no kindly with an alternative. (early check-in / bags)", expected: ["I'm afraid we can't do early check-in, but we can store your bags."], focus: "no + alternative", watch: "The CAN in the alternative is the service."),
+                                PracticeQuestion(prompt: "Confirm the arrangement. (room 312)", expected: ["It's arranged — room 312, away from the lift."], focus: "report back", watch: "Detail proves it really happened."),
+                                PracticeQuestion(prompt: "Close with the service question.", expected: ["Anything else I can arrange for you?"], focus: "the close", watch: "arrange, not do — hotel register."),
+                                PracticeQuestion(prompt: "Acknowledge a request for a high floor.", expected: ["Certainly, let me check for a high floor."], focus: "acknowledge", watch: "Certainly first, check second.")]),
+                exercises: [
+                            Exercise(id: "en-hosp-u1-requests-e1", kind: "choice", prompt: "___, let me check for late checkout.", options: ["Certainly", "Maybe", "Perhaps not", "Never"], answers: ["Certainly"], explain: "Certainly buys the wait kindly."),
+                            Exercise(id: "en-hosp-u1-requests-e2", kind: "gap", prompt: "I'm ___ we can't do early check-in.", options: [], answers: ["afraid"], explain: "I'm afraid softens the no."),
+                            Exercise(id: "en-hosp-u1-requests-e3", kind: "order", prompt: "Report the arrangement.", options: [], answers: ["Its arranged room 312 away from the lift"], explain: "Detail proves it happened."),
+                            Exercise(id: "en-hosp-u1-requests-e4", kind: "written", prompt: "Close with the service question.", options: [], answers: ["anything else i can arrange", "anything else i can arrange for you"], explain: "arrange = hotel register.")], skills: ["function:make-requests", "function:solve-problems", "grammar:going-to", "vocab:social-expressions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum EnTechU1 {
+    public static let unit: CourseUnit = CourseUnit(id: "en-tech-u1", title: "Shipping software", subtitle: "Standup, tickets, demos", level: "B1", themes: [
+                    ConversationTheme("standup-scene", "The daily stand-up", "Yesterday, today, blocked", "clock.badge", "Course", "Ninety seconds each: what moved, what's next, what's stuck — and one honest blocker.", 0),
+                    ConversationTheme("demo-scene", "The demo", "Show, don't drown", "play.rectangle", "Course", "You demo a new feature to non-technical colleagues: what it does, why it matters, what's next.", 1)], lessons: [
+            Lesson(id: "en-tech-u1-standup", title: "The stand-up", goal: "Report progress in three sentences: done, doing, blocked.",
+                intro: LessonIntro(explanation: [
+                            "The stand-up spine: “Yesterday I finished X. Today I'm working on Y. I'm blocked on Z.” Past, present, blocker.",
+                            "Blockers name the thing and the person: “I'm blocked on the API — waiting on Marta's review.”",
+                            "Detail is for after: “Let's take that offline” = interesting, but not now."], examples: [
+                            ExampleLine(text: "Yesterday I finished the login flow.", meaning: "Done: past simple."),
+                            ExampleLine(text: "Today I'm working on the API.", meaning: "Doing: continuous."),
+                            ExampleLine(text: "I'm blocked on Marta's review.", meaning: "The blocker + owner."),
+                            ExampleLine(text: "Let's take that offline.", meaning: "Not now, but noted."),
+                            ExampleLine(text: "No blockers from me.", meaning: "The clean report.")]),
+                expressions: [
+                            TargetExpression(text: "finished X (yesterday)", meaning: "Done work.", note: "past simple."),
+                            TargetExpression(text: "I'm working on Y (today)", meaning: "Current work.", note: "present continuous."),
+                            TargetExpression(text: "I'm blocked on Z", meaning: "Name the blocker.", note: "on + the thing."),
+                            TargetExpression(text: "waiting on + person", meaning: "Who you need.", note: "waiting on Marta."),
+                            TargetExpression(text: "take it offline", meaning: "Park the detail.", note: "after the stand-up.")],
+                situation: "Your three sentences: what you finished yesterday, what you're on today, and the one honest blocker — plus park one detail for later.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Report finished work. (the login flow)", expected: ["Yesterday I finished the login flow."], focus: "past simple", watch: "Finished yesterday: past simple."),
+                                PracticeQuestion(prompt: "Report today's work. (the API)", expected: ["Today I'm working on the API."], focus: "present continuous", watch: "Today + continuous: work in progress."),
+                                PracticeQuestion(prompt: "Name your blocker and its owner. (Marta's review)", expected: ["I'm blocked on Marta's review."], focus: "blocker + owner", watch: "Blocked ON the thing, waiting ON the person."),
+                                PracticeQuestion(prompt: "Park a detail politely.", expected: ["Let's take that offline."], focus: "offline", watch: "The phrase parks it without killing it."),
+                                PracticeQuestion(prompt: "The clean report: no blockers.", expected: ["No blockers from me."], focus: "clean", watch: "Saying it clearly keeps stand-ups short.")]),
+                exercises: [
+                            Exercise(id: "en-tech-u1-standup-e1", kind: "choice", prompt: "Yesterday I ___ the login flow.", options: ["finished", "finish", "was finishing", "have finished"], answers: ["finished"], explain: "Yesterday: past simple."),
+                            Exercise(id: "en-tech-u1-standup-e2", kind: "gap", prompt: "Today I'm ___ on the API. (work)", options: [], answers: ["working"], explain: "Today: present continuous."),
+                            Exercise(id: "en-tech-u1-standup-e3", kind: "order", prompt: "Name the blocker.", options: [], answers: ["Im blocked on Martas review"], explain: "I'm blocked on + thing."),
+                            Exercise(id: "en-tech-u1-standup-e4", kind: "written", prompt: "Park a detail for after the meeting.", options: [], answers: ["lets take that offline", "let's take that offline"], explain: "take it offline = later.")], skills: ["function:talk-about-work", "grammar:past-simple-regular", "grammar:present-continuous", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "en-tech-u1-demo", title: "The demo", goal: "Demo a feature to non-technical colleagues: what, why, what's next.",
+                intro: LessonIntro(explanation: [
+                            "Demo grammar: “Here you can see…”, “Watch what happens when I…”, “And that's it — three clicks instead of twenty.”",
+                            "Translate the tech: not “the API caches responses” but “it opens instantly, even offline”. Benefits, not architecture.",
+                            "Own the bugs before they're found: “Export is still slow — that's next on the list.”"], examples: [
+                            ExampleLine(text: "Here you can see the new dashboard.", meaning: "Point at the screen."),
+                            ExampleLine(text: "Watch what happens when I click save.", meaning: "The live moment."),
+                            ExampleLine(text: "Three clicks instead of twenty.", meaning: "The benefit, counted."),
+                            ExampleLine(text: "Export is still slow — that's next.", meaning: "Own the known bug."),
+                            ExampleLine(text: "That's the demo — questions welcome.", meaning: "The close.")]),
+                expressions: [
+                            TargetExpression(text: "Here you can see …", meaning: "Show the screen.", note: "…the new dashboard."),
+                            TargetExpression(text: "Watch what happens when …", meaning: "The live moment.", note: "…I click save."),
+                            TargetExpression(text: "X instead of Y", meaning: "Count the win.", note: "Three clicks instead of twenty."),
+                            TargetExpression(text: "… — that's next on the list", meaning: "Own the flaw.", note: "Known bug, known plan."),
+                            TargetExpression(text: "Questions welcome.", meaning: "The open close.", note: "Then stop talking.")],
+                situation: "Demo the new offline mode to the sales team: show the moment, count the benefit, own the known bug and invite questions.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Show the new screen.", expected: ["Here you can see the new offline mode."], focus: "here you can see", watch: "Point while you name it."),
+                                PracticeQuestion(prompt: "Create the live moment. (click sync)", expected: ["Watch what happens when I click sync."], focus: "watch what happens", watch: "Then click. The pause builds it."),
+                                PracticeQuestion(prompt: "Count the benefit. (3 clicks vs 20)", expected: ["Three clicks instead of twenty."], focus: "instead of", watch: "Numbers carry the benefit."),
+                                PracticeQuestion(prompt: "Own the known bug. (slow export)", expected: ["Export is still slow — that's next on the list."], focus: "own the bug", watch: "Say it before they find it."),
+                                PracticeQuestion(prompt: "Close and invite questions.", expected: ["That's the demo — questions welcome."], focus: "the open close", watch: "Then actually stop talking.")]),
+                exercises: [
+                            Exercise(id: "en-tech-u1-demo-e1", kind: "choice", prompt: "Here you can ___ the new dashboard.", options: ["see", "watch", "look", "view"], answers: ["see"], explain: "Here you can see + thing."),
+                            Exercise(id: "en-tech-u1-demo-e2", kind: "gap", prompt: "___ what happens when I click sync.", options: [], answers: ["watch"], explain: "Watch what happens when…"),
+                            Exercise(id: "en-tech-u1-demo-e3", kind: "order", prompt: "Count the benefit.", options: [], answers: ["Three clicks instead of twenty"], explain: "X instead of Y."),
+                            Exercise(id: "en-tech-u1-demo-e4", kind: "written", prompt: "Own the slow export.", options: [], answers: ["export is still slow thats next on the list", "its still slow thats next"], explain: "Known bug, known plan.")], skills: ["function:talk-about-work", "grammar:present-continuous", "grammar:comparatives", "vocab:work", "speaking:sustained-conversation"], canDo: ["talk-about-work"], prerequisites: ["grammar:comparatives"]),
+            Lesson(id: "en-tech-u1-tickets", title: "Tickets & bugs", goal: "Write and explain a bug report: steps, expected, actual — and a severity.",
+                intro: LessonIntro(explanation: [
+                            "A bug report is a story with evidence: “Steps: open the app offline. Expected: cached data. Actual: a blank screen.”",
+                            "Severity is a scale, not a shout: blocker > critical > major > minor. A blocker means nobody can work.",
+                            "Reproduce before you report: “It happens every time on Android, but not on iOS.” The pattern is the clue."], examples: [
+                            ExampleLine(text: "Steps: open the app offline.", meaning: "How to reproduce."),
+                            ExampleLine(text: "Expected: cached data appears.", meaning: "What should happen."),
+                            ExampleLine(text: "Actual: a blank screen.", meaning: "What really happens."),
+                            ExampleLine(text: "It's a blocker — nobody can log in.", meaning: "The severity."),
+                            ExampleLine(text: "It happens every time on Android.", meaning: "The pattern.")]),
+                expressions: [
+                            TargetExpression(text: "Steps to reproduce", meaning: "The recipe.", note: "Numbered, exact, short."),
+                            TargetExpression(text: "Expected vs actual", meaning: "The gap is the bug.", note: "Both, always."),
+                            TargetExpression(text: "blocker / critical / major / minor", meaning: "The severity scale.", note: "blocker stops the team."),
+                            TargetExpression(text: "every time / intermittently", meaning: "The pattern.", note: "intermittent = a veces."),
+                            TargetExpression(text: "I'll take a look today.", meaning: "The pickup.", note: "Own it or route it.")],
+                situation: "A colleague reports the app eats typed notes offline: write the report as steps, expected, actual, mark the severity and pick it up.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Give the steps to reproduce. (open offline, type, close)", expected: ["Steps: open the app offline, type a note and close it."], focus: "steps", watch: "Numbered, exact, short."),
+                                PracticeQuestion(prompt: "Say expected vs actual. (note saved vs note lost)", expected: ["Expected: the note is saved. Actual: the note is lost."], focus: "the gap", watch: "Both halves — the gap is the bug."),
+                                PracticeQuestion(prompt: "Set the severity if nobody loses data. (major)", expected: ["It's a major, not a blocker — no data loss for most users."], focus: "severity", watch: "A blocker stops everyone; a major hurts some."),
+                                PracticeQuestion(prompt: "Pick it up.", expected: ["I'll take a look today."], focus: "pickup", watch: "Own it or route it to the owner."),
+                                PracticeQuestion(prompt: "Say how often the bug happens. (every time, Android)", expected: ["It happens every time on Android."], focus: "the pattern", watch: "The pattern is the clue to the cause.")]),
+                exercises: [
+                            Exercise(id: "en-tech-u1-tickets-e1", kind: "choice", prompt: "Expected: the note is saved. ___: the note is lost.", options: ["Actual", "Usually", "Maybe", "Blocked"], answers: ["Actual"], explain: "Expected vs actual — the gap is the bug."),
+                            Exercise(id: "en-tech-u1-tickets-e2", kind: "gap", prompt: "Nobody can log in — it's a ___. (severidad máxima)", options: [], answers: ["blocker"], explain: "A blocker stops the whole team."),
+                            Exercise(id: "en-tech-u1-tickets-e3", kind: "order", prompt: "Give the steps.", options: [], answers: ["Open the app offline and type a note"], explain: "Numbered, exact, short."),
+                            Exercise(id: "en-tech-u1-tickets-e4", kind: "written", prompt: "Pick up the bug for today.", options: [], answers: ["ill take a look today", "i will take a look today"], explain: "Own it or route it.")], skills: ["function:talk-about-work", "grammar:present-simple", "grammar:passive-intro", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum EnWorkU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-work-u1", title: "The working day", subtitle: "Meetings, emails, interviews", level: "B1", themes: [
                     ConversationTheme("monday-standup", "Monday stand-up", "Report your week", "clock", "Course", "You report progress in a stand-up: what you did, what you're doing, what's blocked.", 0),
@@ -2949,6 +3312,9 @@ public enum PtFoundationsU1 {
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit
         ]),
+        Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
+EnBusinessU1.unit
+        ]),
         Course(id: "en-foundations", languageID: "en", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real English: the structures every sentence uses, practised out loud in small conversations.", units: [
 EnFoundationsU1.unit,
 EnFoundationsU2.unit,
@@ -2973,6 +3339,15 @@ EnFoundationsTelling.unit,
 EnFoundationsViewpoints.unit,
 EnFoundationsMedia.unit,
 EnFoundationsNuance.unit
+        ]),
+        Course(id: "en-healthcare-track", languageID: "en", title: "English for Healthcare", subtitle: "Professional track", symbol: "briefcase", description: "Appointments, symptoms and kind instructions — clear English for clear care.", units: [
+EnCareU1.unit
+        ]),
+        Course(id: "en-hospitality-track", languageID: "en", title: "English for Hospitality", subtitle: "Professional track", symbol: "briefcase", description: "Check-ins, special requests and the complaint that saves the stay — service English that stays kind under pressure.", units: [
+EnHospU1.unit
+        ]),
+        Course(id: "en-technology-track", languageID: "en", title: "English for Technology", subtitle: "Professional track", symbol: "briefcase", description: "Standups, tickets, demos and technical trade-offs — the English of shipping software with people whose first language differs from yours.", units: [
+EnTechU1.unit
         ]),
         Course(id: "en-work-track", languageID: "en", title: "English for Work", subtitle: "Professional track", symbol: "briefcase", description: "The English of meetings, emails and interviews — professional situations, practised out loud. A track that runs alongside Foundations.", units: [
 EnWorkU1.unit

@@ -19,7 +19,7 @@ object ReadingRegistry {
     /** A language's texts in teaching order: level, then course-unit order,
         then id — the same projection the Listen tab uses. */
     fun forLanguage(id: String): List<ReadingText> {
-        val unitOrder = CourseRegistry.all.firstOrNull { it.languageID == id }?.units?.map { it.id } ?: emptyList()
+        val unitOrder = CourseRegistry.all.filter { it.languageID == id }.flatMap { it.units }.map { it.id }
         return all.filter { it.languageID == id }.sortedWith(compareBy(
             { levelRank(it.level) },
             { it.unitID?.let(unitOrder::indexOf)?.takeIf { rank -> rank >= 0 } ?: Int.MAX_VALUE },

@@ -1,0 +1,540 @@
+{
+  "id": "en-business-track",
+  "languageID": "en",
+  "schemaVersion": 2,
+  "title": "Business English",
+  "subtitle": "Professional track",
+  "symbol": "briefcase",
+  "description": "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.",
+  "units": [
+    {
+      "id": "en-business-u1",
+      "title": "Clients & deals",
+      "subtitle": "Pitch, negotiate, confirm",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "sales-pitch",
+          "title": "The sales pitch",
+          "subtitle": "Ninety seconds of value",
+          "symbol": "chart.bar",
+          "category": "Course",
+          "situation": "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.",
+          "colorIndex": 0
+        },
+        {
+          "id": "deal-closer",
+          "title": "Closing the deal",
+          "subtitle": "Numbers on the table",
+          "symbol": "handshake",
+          "category": "Course",
+          "situation": "Final round of a negotiation: price, timeline and the sentence that closes it.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-business-u1-pitch",
+          "title": "The pitch",
+          "goal": "Pitch a service: problem, solution, proof, in that order.",
+          "intro": {
+            "explanation": [
+              "The pitch skeleton: “Your team wastes hours on X. We automate X. Company A saved 20% in one quarter.”",
+              "Lead with the client's problem, never your product: the problem is why they're listening.",
+              "One number beats ten adjectives: “a 20% saving” does the arguing for you."
+            ],
+            "examples": [
+              {
+                "text": "Your team wastes hours on X.",
+                "meaning": "The problem, stated as theirs."
+              },
+              {
+                "text": "We automate exactly that.",
+                "meaning": "The solution, one line."
+              },
+              {
+                "text": "Company A saved 20% in one quarter.",
+                "meaning": "Proof with a number."
+              },
+              {
+                "text": "What would saving that time mean for you?",
+                "meaning": "Hand them the win."
+              },
+              {
+                "text": "I'd love to show you a demo.",
+                "meaning": "The soft close."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "The problem: your client …",
+              "meaning": "Open with their pain.",
+              "note": "Their problem, their words."
+            },
+            {
+              "text": "The solution: we + verb",
+              "meaning": "One line, no jargon.",
+              "note": "We automate exactly that."
+            },
+            {
+              "text": "Proof: client + number",
+              "meaning": "Evidence sells.",
+              "note": "Company A saved 20%."
+            },
+            {
+              "text": "What would … mean for you?",
+              "meaning": "Make it personal.",
+              "note": "Time, money, headcount."
+            },
+            {
+              "text": "I'd love to show you …",
+              "meaning": "The demo ask.",
+              "note": "Soft, specific, next step."
+            }
+          ],
+          "situation": "You pitch to a skeptical operations manager: problem, one-line solution, one proof number — then ask the question that makes it theirs.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open with the client's problem. (manual invoices)",
+                "expected": [
+                  "Your team spends hours on manual invoices."
+                ],
+                "focus": "their problem",
+                "watch": "Their pain, their words — not your product name."
+              },
+              {
+                "prompt": "Give the one-line solution. (automation)",
+                "expected": [
+                  "We automate exactly that."
+                ],
+                "focus": "one line",
+                "watch": "One sentence, no feature list."
+              },
+              {
+                "prompt": "Bring proof. (a client, 20% saved)",
+                "expected": [
+                  "Company A saved 20% in one quarter."
+                ],
+                "focus": "proof",
+                "watch": "Name + number is the strongest proof shape."
+              },
+              {
+                "prompt": "Make the benefit personal. (question)",
+                "expected": [
+                  "What would your team do with that time?"
+                ],
+                "focus": "the personal question",
+                "watch": "Hand them the win — let them say it."
+              },
+              {
+                "prompt": "Close softly with a demo.",
+                "expected": [
+                  "I'd love to show you a demo."
+                ],
+                "focus": "soft close",
+                "watch": "Love + demo: soft but specific."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-business-u1-pitch-e1",
+              "kind": "choice",
+              "prompt": "Your team ___ hours on manual work.",
+              "explain": "Your team = singular: wastes.",
+              "options": [
+                "wastes",
+                "waste",
+                "wasting",
+                "to waste"
+              ],
+              "answers": [
+                "wastes"
+              ]
+            },
+            {
+              "id": "en-business-u1-pitch-e2",
+              "kind": "gap",
+              "prompt": "We ___ exactly that. (automate)",
+              "explain": "We + base verb.",
+              "answers": [
+                "automate"
+              ]
+            },
+            {
+              "id": "en-business-u1-pitch-e3",
+              "kind": "order",
+              "prompt": "Bring the proof.",
+              "explain": "Client + number + period.",
+              "answers": [
+                "Company A saved 20 percent in one quarter"
+              ]
+            },
+            {
+              "id": "en-business-u1-pitch-e4",
+              "kind": "written",
+              "prompt": "Ask the personal-benefit question.",
+              "explain": "What would … mean for you?",
+              "answers": [
+                "what would saving that time mean for you",
+                "what would your team do with that time"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-simple",
+            "vocab:work",
+            "function:negotiate"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-business-u1-negotiation",
+          "title": "Negotiating the deal",
+          "goal": "Trade conditions politely: price, timeline, and the deal that closes.",
+          "intro": {
+            "explanation": [
+              "Negotiation is trading, not winning: “If you can do March, we can meet your price.” Every concession has a price tag.",
+              "Conditional offers: “We could accept that if…”, “That would work as long as…”. The if/as long as carries your condition.",
+              "Close with a summary: “So: March delivery, half up front. Do we have a deal?” Repeat it or it didn't happen."
+            ],
+            "examples": [
+              {
+                "text": "If you can do March, we can meet your price.",
+                "meaning": "Condition + concession."
+              },
+              {
+                "text": "We could accept that as long as costs are covered.",
+                "meaning": "as long as = siempre que."
+              },
+              {
+                "text": "That's difficult for our timeline.",
+                "meaning": "Push back without conflict."
+              },
+              {
+                "text": "What if we split the difference?",
+                "meaning": "The middle-path move."
+              },
+              {
+                "text": "So: March delivery, half up front. Deal?",
+                "meaning": "The closing summary."
+              },
+              {
+                "text": "Half now, half on delivery — does that work?",
+                "meaning": "A structured offer."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "If you …, we …",
+              "meaning": "Trade a condition.",
+              "note": "If you hurry, we discount."
+            },
+            {
+              "text": "as long as …",
+              "meaning": "Your red line.",
+              "note": "as long as costs are covered."
+            },
+            {
+              "text": "That's difficult for …",
+              "meaning": "Soft pushback.",
+              "note": "…for our timeline."
+            },
+            {
+              "text": "What if we …?",
+              "meaning": "Middle path.",
+              "note": "…split the difference?"
+            },
+            {
+              "text": "So we agree on …",
+              "meaning": "Close and repeat.",
+              "note": "Numbers finish it."
+            },
+            {
+              "text": "I'd need something in writing.",
+              "meaning": "Protect the agreement.",
+              "note": "Even between friends."
+            }
+          ],
+          "situation": "Final negotiation round: they want March at half price, you need June at full — trade conditions until the summary closes it.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask for a faster timeline with a trade. (if / premium)",
+                "expected": [
+                  "If we pay the premium, can you deliver in March?"
+                ],
+                "focus": "if + trade",
+                "watch": "The if carries what you give, not just what you want."
+              },
+              {
+                "prompt": "State your red line. (costs covered)",
+                "expected": [
+                  "That works as long as our costs are covered."
+                ],
+                "focus": "as long as",
+                "watch": "as long as + present: the red line."
+              },
+              {
+                "prompt": "Push back softly on the timeline.",
+                "expected": [
+                  "That's difficult for our timeline."
+                ],
+                "focus": "soft pushback",
+                "watch": "Difficult, not impossible — the door stays open."
+              },
+              {
+                "prompt": "Offer the middle path.",
+                "expected": [
+                  "What if we split the difference?"
+                ],
+                "focus": "middle path",
+                "watch": "What if + present simple proposes it."
+              },
+              {
+                "prompt": "Ask for the agreement in writing.",
+                "expected": [
+                  "I'd need something in writing."
+                ],
+                "focus": "in writing",
+                "watch": "in writing — the phrase protects both sides."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-business-u1-negotiation-e1",
+              "kind": "choice",
+              "prompt": "___ you sign today, we can offer a discount.",
+              "explain": "If + present for the condition.",
+              "options": [
+                "If",
+                "Unless",
+                "Will",
+                "Are"
+              ],
+              "answers": [
+                "If"
+              ]
+            },
+            {
+              "id": "en-business-u1-negotiation-e2",
+              "kind": "gap",
+              "prompt": "We can travel ___ ___ as costs are covered. (2 words)",
+              "explain": "as long as = siempre que.",
+              "answers": [
+                "as long",
+                "so long"
+              ]
+            },
+            {
+              "id": "en-business-u1-negotiation-e3",
+              "kind": "order",
+              "prompt": "Offer the middle path.",
+              "explain": "What if + present simple.",
+              "answers": [
+                "What if we split the difference"
+              ]
+            },
+            {
+              "id": "en-business-u1-negotiation-e4",
+              "kind": "written",
+              "prompt": "Summarise the deal: March, half up front.",
+              "explain": "So + the numbers.",
+              "answers": [
+                "so march delivery half up front",
+                "so we agree march delivery half up front"
+              ]
+            }
+          ],
+          "skills": [
+            "function:negotiate",
+            "grammar:first-conditional",
+            "grammar:connectors",
+            "vocab:work",
+            "speaking:negotiate"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:first-conditional"
+          ]
+        },
+        {
+          "id": "en-business-u1-followup",
+          "title": "The follow-up",
+          "goal": "Confirm agreements in writing: recap, next steps and a clear ask.",
+          "intro": {
+            "explanation": [
+              "The follow-up email exists to prove the meeting happened: “Just to confirm what we agreed…”. Recap in numbered lines.",
+              "Next steps have owners and dates: “Ana will send the contract by Friday.” No owner, no date, no step.",
+              "End with the ask, not a whisper: “Could you confirm by Thursday?” A closing without an ask closes nothing."
+            ],
+            "examples": [
+              {
+                "text": "Just to confirm what we agreed:",
+                "meaning": "The recap opener."
+              },
+              {
+                "text": "1. Price. 2. Timeline. 3. Contract.",
+                "meaning": "Numbered recap."
+              },
+              {
+                "text": "Ana will send the contract by Friday.",
+                "meaning": "Owner + date."
+              },
+              {
+                "text": "Could you confirm by Thursday?",
+                "meaning": "The dated ask."
+              },
+              {
+                "text": "Looking forward to working together.",
+                "meaning": "The warm close."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Just to confirm, …",
+              "meaning": "Open the recap.",
+              "note": "…what we agreed in today's call."
+            },
+            {
+              "text": "numbered next steps",
+              "meaning": "Owner + date each.",
+              "note": "1. Contract — Ana — Friday."
+            },
+            {
+              "text": "Could you confirm by …?",
+              "meaning": "The dated ask.",
+              "note": "Thursday creates urgency."
+            },
+            {
+              "text": "I'll … by <day>",
+              "meaning": "Your own commitments.",
+              "note": "I'll send the proposal by Monday."
+            },
+            {
+              "text": "Looking forward to …",
+              "meaning": "The warm close.",
+              "note": "…-ing: working, hearing."
+            }
+          ],
+          "situation": "After the negotiation call: write the confirmation email — recap the three agreed points, assign one task with a date and ask for confirmation by Thursday.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open the confirmation email.",
+                "expected": [
+                  "Just to confirm what we agreed in today's call."
+                ],
+                "focus": "the opener",
+                "watch": "It exists to prove the meeting happened."
+              },
+              {
+                "prompt": "Assign a task with a deadline. (Ana / contract / Friday)",
+                "expected": [
+                  "Ana will send the contract by Friday."
+                ],
+                "focus": "owner + date",
+                "watch": "No owner, no date, no step."
+              },
+              {
+                "prompt": "Ask for confirmation with a date. (Thursday)",
+                "expected": [
+                  "Could you confirm by Thursday?"
+                ],
+                "focus": "the dated ask",
+                "watch": "A closing without an ask closes nothing."
+              },
+              {
+                "prompt": "Close warmly for a new client.",
+                "expected": [
+                  "Looking forward to working together."
+                ],
+                "focus": "warm close",
+                "watch": "look forward to + -ing."
+              },
+              {
+                "prompt": "Commit to your own task with a date. (proposal / Monday)",
+                "expected": [
+                  "I'll send the proposal by Monday."
+                ],
+                "focus": "I'll + by + date",
+                "watch": "Your commitments go in the same email."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-business-u1-followup-e1",
+              "kind": "choice",
+              "prompt": "Just to ___ what we agreed:",
+              "explain": "Just to confirm — the recap opener.",
+              "options": [
+                "confirm",
+                "check",
+                "say",
+                "remember"
+              ],
+              "answers": [
+                "confirm"
+              ]
+            },
+            {
+              "id": "en-business-u1-followup-e2",
+              "kind": "gap",
+              "prompt": "Could you ___ by Thursday? (confirmar)",
+              "explain": "The dated ask.",
+              "answers": [
+                "confirm",
+                "reply"
+              ]
+            },
+            {
+              "id": "en-business-u1-followup-e3",
+              "kind": "order",
+              "prompt": "Assign the task with a deadline.",
+              "explain": "Owner + will + by + date.",
+              "answers": [
+                "Ana will send the contract by Friday"
+              ]
+            },
+            {
+              "id": "en-business-u1-followup-e4",
+              "kind": "written",
+              "prompt": "Close the email warmly.",
+              "explain": "Either warm close works.",
+              "answers": [
+                "looking forward to working together",
+                "best regards"
+              ]
+            }
+          ],
+          "skills": [
+            "writing:email",
+            "function:make-requests",
+            "grammar:going-to",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
+    }
+  ]
+}

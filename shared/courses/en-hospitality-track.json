@@ -1,0 +1,530 @@
+{
+  "id": "en-hospitality-track",
+  "languageID": "en",
+  "schemaVersion": 2,
+  "title": "English for Hospitality",
+  "subtitle": "Professional track",
+  "symbol": "briefcase",
+  "description": "Check-ins, special requests and the complaint that saves the stay — service English that stays kind under pressure.",
+  "units": [
+    {
+      "id": "en-hosp-u1",
+      "title": "Guest services",
+      "subtitle": "Check-in, requests, complaints",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "checkin-scene",
+          "title": "The check-in",
+          "subtitle": "Names, nights, keys",
+          "symbol": "key.horizontal",
+          "category": "Course",
+          "situation": "You check in a tired traveller: booking found, room explained, breakfast mentioned, keys handed.",
+          "colorIndex": 0
+        },
+        {
+          "id": "complaint-scene",
+          "title": "The complaint at midnight",
+          "subtitle": "Fix it kindly",
+          "symbol": "moon.zzz",
+          "category": "Course",
+          "situation": "A guest is upset about noise. Listen, apologise, act — and follow up before breakfast.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-hosp-u1-checkin",
+          "title": "The check-in",
+          "goal": "Check a guest in: find the booking, explain the room, set expectations.",
+          "intro": {
+            "explanation": [
+              "The check-in script: “Good evening! Do you have a reservation?” → name → “A double room for two nights, is that right?”",
+              "Explain the essentials: breakfast hours, Wi-Fi, checkout time. Tired guests remember none — say them slowly, twice.",
+              "Hand over with the room number: “You're in room 204, second floor. Enjoy your stay!”"
+            ],
+            "examples": [
+              {
+                "text": "Good evening! Do you have a reservation?",
+                "meaning": "The opener."
+              },
+              {
+                "text": "A double room for two nights, is that right?",
+                "meaning": "Confirm the booking."
+              },
+              {
+                "text": "Breakfast is from seven to ten.",
+                "meaning": "The essential detail."
+              },
+              {
+                "text": "You're in room 204, second floor.",
+                "meaning": "The handover."
+              },
+              {
+                "text": "Enjoy your stay!",
+                "meaning": "The close."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Do you have a reservation?",
+              "meaning": "The opener.",
+              "note": "reservation = booking."
+            },
+            {
+              "text": "…, is that right?",
+              "meaning": "Confirm details.",
+              "note": "name, room type, nights."
+            },
+            {
+              "text": "Breakfast is from … to …",
+              "meaning": "Essential detail.",
+              "note": "Slowly. Twice."
+            },
+            {
+              "text": "You're in room + number",
+              "meaning": "The handover.",
+              "note": "…on the second floor."
+            },
+            {
+              "text": "Enjoy your stay!",
+              "meaning": "The close.",
+              "note": "Every check-in ends here."
+            }
+          ],
+          "situation": "Check in a tired traveller: find the booking under their name, confirm two nights, give breakfast hours and hand over the keys warmly.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open the check-in.",
+                "expected": [
+                  "Good evening! Do you have a reservation?"
+                ],
+                "focus": "the opener",
+                "watch": "reservation = booking — same thing at a hotel."
+              },
+              {
+                "prompt": "Confirm the booking details. (double, two nights)",
+                "expected": [
+                  "A double room for two nights, is that right?"
+                ],
+                "focus": "confirm",
+                "watch": "Repeat the details back — errors die here."
+              },
+              {
+                "prompt": "Give breakfast hours. (7 to 10)",
+                "expected": [
+                  "Breakfast is from seven to ten, on the ground floor."
+                ],
+                "focus": "essential detail",
+                "watch": "Say it slowly. Tired guests forget."
+              },
+              {
+                "prompt": "Hand over the keys warmly.",
+                "expected": [
+                  "You're in room 204. Enjoy your stay!"
+                ],
+                "focus": "the handover",
+                "watch": "Room number + the close."
+              },
+              {
+                "prompt": "Mention the Wi-Fi. (free, all areas)",
+                "expected": [
+                  "Wi-Fi is free in all areas."
+                ],
+                "focus": "the extras",
+                "watch": "Free + place: in all areas."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-hosp-u1-checkin-e1",
+              "kind": "choice",
+              "prompt": "Do you have a ___? (reserva)",
+              "explain": "reservation = booking.",
+              "options": [
+                "reservation",
+                "reservate",
+                "reserve",
+                "reserving"
+              ],
+              "answers": [
+                "reservation"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-checkin-e2",
+              "kind": "gap",
+              "prompt": "A double room ___ two nights, is that right?",
+              "explain": "for + duration.",
+              "answers": [
+                "for"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-checkin-e3",
+              "kind": "order",
+              "prompt": "Give breakfast hours.",
+              "explain": "from … to …",
+              "answers": [
+                "Breakfast is from seven to ten"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-checkin-e4",
+              "kind": "written",
+              "prompt": "Hand over the keys warmly. (room 204)",
+              "explain": "Room + the close.",
+              "answers": [
+                "youre in room 204 enjoy your stay",
+                "room 204 enjoy your stay"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "grammar:present-simple",
+            "grammar:quantities",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:quantities"
+          ]
+        },
+        {
+          "id": "en-hosp-u1-complaints",
+          "title": "The midnight complaint",
+          "goal": "Handle a complaint: listen fully, apologise, act, follow up.",
+          "intro": {
+            "explanation": [
+              "The service sequence: listen without interrupting → apologise once, sincerely → act immediately → follow up later.",
+              "Apologise for the experience, not the fault: “I'm so sorry about the noise” works even if it wasn't your fault.",
+              "Act visibly: “I'm moving you to the fourth floor right now.” Actions apologise louder than words."
+            ],
+            "examples": [
+              {
+                "text": "I'm so sorry about the noise.",
+                "meaning": "The sincere apology."
+              },
+              {
+                "text": "I completely understand.",
+                "meaning": "Validate the feeling."
+              },
+              {
+                "text": "I'm moving you to a quiet room right now.",
+                "meaning": "Act immediately."
+              },
+              {
+                "text": "I'll follow up in the morning.",
+                "meaning": "The promised follow-up."
+              },
+              {
+                "text": "Is there anything else I can do?",
+                "meaning": "The care question."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I'm so sorry about …",
+              "meaning": "Apologise for the experience.",
+              "note": "Even if it's not your fault."
+            },
+            {
+              "text": "I completely understand.",
+              "meaning": "Validate first.",
+              "note": "Before any solution."
+            },
+            {
+              "text": "I'll + fix, right now",
+              "meaning": "Act visibly.",
+              "note": "Moving you now."
+            },
+            {
+              "text": "I'll follow up in the morning.",
+              "meaning": "The follow-up promise.",
+              "note": "And actually do it."
+            },
+            {
+              "text": "Is there anything else…?",
+              "meaning": "The care question.",
+              "note": "Then wait, and listen."
+            }
+          ],
+          "situation": "A guest calls down at midnight about wedding noise upstairs: listen, apologise, move them, promise the follow-up and ask the care question.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Apologise for the noise.",
+                "expected": [
+                  "I'm so sorry about the noise."
+                ],
+                "focus": "the apology",
+                "watch": "For the experience, whatever the cause."
+              },
+              {
+                "prompt": "Validate the guest's feeling.",
+                "expected": [
+                  "I completely understand — it's unacceptable."
+                ],
+                "focus": "validate",
+                "watch": "Understand first, explain later (or never)."
+              },
+              {
+                "prompt": "Say the immediate action. (move to 4th floor)",
+                "expected": [
+                  "I'm moving you to the fourth floor right now."
+                ],
+                "focus": "act now",
+                "watch": "right now is the apology that works."
+              },
+              {
+                "prompt": "Promise the follow-up. (morning)",
+                "expected": [
+                  "I'll follow up in the morning."
+                ],
+                "focus": "follow-up",
+                "watch": "Promise it, then do it before breakfast."
+              },
+              {
+                "prompt": "Ask the care question.",
+                "expected": [
+                  "Is there anything else I can do?"
+                ],
+                "focus": "care",
+                "watch": "Then wait, and listen again."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-hosp-u1-complaints-e1",
+              "kind": "choice",
+              "prompt": "I'm so sorry ___ the noise.",
+              "explain": "sorry about + thing.",
+              "options": [
+                "about",
+                "of",
+                "that",
+                "for what"
+              ],
+              "answers": [
+                "about"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-complaints-e2",
+              "kind": "gap",
+              "prompt": "I ___ understand — that's not acceptable.",
+              "explain": "completely understand.",
+              "answers": [
+                "completely",
+                "totally"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-complaints-e3",
+              "kind": "order",
+              "prompt": "Promise the action.",
+              "explain": "Act immediately.",
+              "answers": [
+                "Im moving you to a quiet room right now"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-complaints-e4",
+              "kind": "written",
+              "prompt": "Ask the care question.",
+              "explain": "Then wait and listen.",
+              "answers": [
+                "is there anything else i can do",
+                "can i do anything else"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "function:make-requests",
+            "grammar:present-continuous",
+            "vocab:social-expressions",
+            "speaking:sustained-conversation"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-continuous"
+          ]
+        },
+        {
+          "id": "en-hosp-u1-requests",
+          "title": "Special requests",
+          "goal": "Handle special requests: what's possible, what's not, and the kind alternative.",
+          "intro": {
+            "explanation": [
+              "Requests come in every shape: late checkout, a quiet floor, an extra bed. First acknowledge: “Certainly, let me check.”",
+              "Never a bare no: “I'm afraid we can't do early check-in, but we can store your bags.” The alternative is the service.",
+              "Follow through visibly: “It's arranged — room 312, away from the lift.” Report back or the request didn't happen."
+            ],
+            "examples": [
+              {
+                "text": "Certainly, let me check.",
+                "meaning": "The acknowledging opener."
+              },
+              {
+                "text": "I'm afraid we can't do early check-in.",
+                "meaning": "The kind no."
+              },
+              {
+                "text": "But we can store your bags.",
+                "meaning": "The alternative."
+              },
+              {
+                "text": "It's arranged — room 312.",
+                "meaning": "The visible follow-through."
+              },
+              {
+                "text": "Anything else I can arrange?",
+                "meaning": "The service close."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Certainly, let me check.",
+              "meaning": "Buy time kindly.",
+              "note": "Then actually check."
+            },
+            {
+              "text": "I'm afraid we can't …",
+              "meaning": "The kind no.",
+              "note": "afraid softens it."
+            },
+            {
+              "text": "but we CAN …",
+              "meaning": "The alternative.",
+              "note": "Say the CAN louder."
+            },
+            {
+              "text": "It's arranged.",
+              "meaning": "Report back.",
+              "note": "Room, time, detail."
+            },
+            {
+              "text": "Anything else I can arrange?",
+              "meaning": "The close.",
+              "note": "arrange = gestionar."
+            }
+          ],
+          "situation": "A guest asks for late checkout, a high floor and a quiet room — one yes, one no with an alternative, and one to arrange.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Acknowledge before checking. (late checkout)",
+                "expected": [
+                  "Certainly, let me check for late checkout."
+                ],
+                "focus": "acknowledge",
+                "watch": "Certainly buys the wait kindly."
+              },
+              {
+                "prompt": "Say no kindly with an alternative. (early check-in / bags)",
+                "expected": [
+                  "I'm afraid we can't do early check-in, but we can store your bags."
+                ],
+                "focus": "no + alternative",
+                "watch": "The CAN in the alternative is the service."
+              },
+              {
+                "prompt": "Confirm the arrangement. (room 312)",
+                "expected": [
+                  "It's arranged — room 312, away from the lift."
+                ],
+                "focus": "report back",
+                "watch": "Detail proves it really happened."
+              },
+              {
+                "prompt": "Close with the service question.",
+                "expected": [
+                  "Anything else I can arrange for you?"
+                ],
+                "focus": "the close",
+                "watch": "arrange, not do — hotel register."
+              },
+              {
+                "prompt": "Acknowledge a request for a high floor.",
+                "expected": [
+                  "Certainly, let me check for a high floor."
+                ],
+                "focus": "acknowledge",
+                "watch": "Certainly first, check second."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-hosp-u1-requests-e1",
+              "kind": "choice",
+              "prompt": "___, let me check for late checkout.",
+              "explain": "Certainly buys the wait kindly.",
+              "options": [
+                "Certainly",
+                "Maybe",
+                "Perhaps not",
+                "Never"
+              ],
+              "answers": [
+                "Certainly"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-requests-e2",
+              "kind": "gap",
+              "prompt": "I'm ___ we can't do early check-in.",
+              "explain": "I'm afraid softens the no.",
+              "answers": [
+                "afraid"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-requests-e3",
+              "kind": "order",
+              "prompt": "Report the arrangement.",
+              "explain": "Detail proves it happened.",
+              "answers": [
+                "Its arranged room 312 away from the lift"
+              ]
+            },
+            {
+              "id": "en-hosp-u1-requests-e4",
+              "kind": "written",
+              "prompt": "Close with the service question.",
+              "explain": "arrange = hotel register.",
+              "answers": [
+                "anything else i can arrange",
+                "anything else i can arrange for you"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "function:solve-problems",
+            "grammar:going-to",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -71,7 +71,8 @@ class ListeningContentTest {
     @Test fun `unit-linked texts point at a same-level unit of their course`() {
         for (text in ListeningRegistry.all) {
             val unit = text.unitID?.let { id ->
-                CourseRegistry.all.firstOrNull { it.languageID == text.languageID }?.units?.firstOrNull { it.id == id }
+                CourseRegistry.all.filter { it.languageID == text.languageID }
+                    .flatMap { it.units }.firstOrNull { it.id == id }
             }
             if (text.unitID != null) {
                 assertNotNull("${text.id}: unit not found", unit)

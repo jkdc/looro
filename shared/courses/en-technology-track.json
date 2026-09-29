@@ -1,0 +1,529 @@
+{
+  "id": "en-technology-track",
+  "languageID": "en",
+  "schemaVersion": 2,
+  "title": "English for Technology",
+  "subtitle": "Professional track",
+  "symbol": "briefcase",
+  "description": "Standups, tickets, demos and technical trade-offs — the English of shipping software with people whose first language differs from yours.",
+  "units": [
+    {
+      "id": "en-tech-u1",
+      "title": "Shipping software",
+      "subtitle": "Standup, tickets, demos",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "standup-scene",
+          "title": "The daily stand-up",
+          "subtitle": "Yesterday, today, blocked",
+          "symbol": "clock.badge",
+          "category": "Course",
+          "situation": "Ninety seconds each: what moved, what's next, what's stuck — and one honest blocker.",
+          "colorIndex": 0
+        },
+        {
+          "id": "demo-scene",
+          "title": "The demo",
+          "subtitle": "Show, don't drown",
+          "symbol": "play.rectangle",
+          "category": "Course",
+          "situation": "You demo a new feature to non-technical colleagues: what it does, why it matters, what's next.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-tech-u1-standup",
+          "title": "The stand-up",
+          "goal": "Report progress in three sentences: done, doing, blocked.",
+          "intro": {
+            "explanation": [
+              "The stand-up spine: “Yesterday I finished X. Today I'm working on Y. I'm blocked on Z.” Past, present, blocker.",
+              "Blockers name the thing and the person: “I'm blocked on the API — waiting on Marta's review.”",
+              "Detail is for after: “Let's take that offline” = interesting, but not now."
+            ],
+            "examples": [
+              {
+                "text": "Yesterday I finished the login flow.",
+                "meaning": "Done: past simple."
+              },
+              {
+                "text": "Today I'm working on the API.",
+                "meaning": "Doing: continuous."
+              },
+              {
+                "text": "I'm blocked on Marta's review.",
+                "meaning": "The blocker + owner."
+              },
+              {
+                "text": "Let's take that offline.",
+                "meaning": "Not now, but noted."
+              },
+              {
+                "text": "No blockers from me.",
+                "meaning": "The clean report."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "finished X (yesterday)",
+              "meaning": "Done work.",
+              "note": "past simple."
+            },
+            {
+              "text": "I'm working on Y (today)",
+              "meaning": "Current work.",
+              "note": "present continuous."
+            },
+            {
+              "text": "I'm blocked on Z",
+              "meaning": "Name the blocker.",
+              "note": "on + the thing."
+            },
+            {
+              "text": "waiting on + person",
+              "meaning": "Who you need.",
+              "note": "waiting on Marta."
+            },
+            {
+              "text": "take it offline",
+              "meaning": "Park the detail.",
+              "note": "after the stand-up."
+            }
+          ],
+          "situation": "Your three sentences: what you finished yesterday, what you're on today, and the one honest blocker — plus park one detail for later.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Report finished work. (the login flow)",
+                "expected": [
+                  "Yesterday I finished the login flow."
+                ],
+                "focus": "past simple",
+                "watch": "Finished yesterday: past simple."
+              },
+              {
+                "prompt": "Report today's work. (the API)",
+                "expected": [
+                  "Today I'm working on the API."
+                ],
+                "focus": "present continuous",
+                "watch": "Today + continuous: work in progress."
+              },
+              {
+                "prompt": "Name your blocker and its owner. (Marta's review)",
+                "expected": [
+                  "I'm blocked on Marta's review."
+                ],
+                "focus": "blocker + owner",
+                "watch": "Blocked ON the thing, waiting ON the person."
+              },
+              {
+                "prompt": "Park a detail politely.",
+                "expected": [
+                  "Let's take that offline."
+                ],
+                "focus": "offline",
+                "watch": "The phrase parks it without killing it."
+              },
+              {
+                "prompt": "The clean report: no blockers.",
+                "expected": [
+                  "No blockers from me."
+                ],
+                "focus": "clean",
+                "watch": "Saying it clearly keeps stand-ups short."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-tech-u1-standup-e1",
+              "kind": "choice",
+              "prompt": "Yesterday I ___ the login flow.",
+              "explain": "Yesterday: past simple.",
+              "options": [
+                "finished",
+                "finish",
+                "was finishing",
+                "have finished"
+              ],
+              "answers": [
+                "finished"
+              ]
+            },
+            {
+              "id": "en-tech-u1-standup-e2",
+              "kind": "gap",
+              "prompt": "Today I'm ___ on the API. (work)",
+              "explain": "Today: present continuous.",
+              "answers": [
+                "working"
+              ]
+            },
+            {
+              "id": "en-tech-u1-standup-e3",
+              "kind": "order",
+              "prompt": "Name the blocker.",
+              "explain": "I'm blocked on + thing.",
+              "answers": [
+                "Im blocked on Martas review"
+              ]
+            },
+            {
+              "id": "en-tech-u1-standup-e4",
+              "kind": "written",
+              "prompt": "Park a detail for after the meeting.",
+              "explain": "take it offline = later.",
+              "answers": [
+                "lets take that offline",
+                "let's take that offline"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:past-simple-regular",
+            "grammar:present-continuous",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-tech-u1-demo",
+          "title": "The demo",
+          "goal": "Demo a feature to non-technical colleagues: what, why, what's next.",
+          "intro": {
+            "explanation": [
+              "Demo grammar: “Here you can see…”, “Watch what happens when I…”, “And that's it — three clicks instead of twenty.”",
+              "Translate the tech: not “the API caches responses” but “it opens instantly, even offline”. Benefits, not architecture.",
+              "Own the bugs before they're found: “Export is still slow — that's next on the list.”"
+            ],
+            "examples": [
+              {
+                "text": "Here you can see the new dashboard.",
+                "meaning": "Point at the screen."
+              },
+              {
+                "text": "Watch what happens when I click save.",
+                "meaning": "The live moment."
+              },
+              {
+                "text": "Three clicks instead of twenty.",
+                "meaning": "The benefit, counted."
+              },
+              {
+                "text": "Export is still slow — that's next.",
+                "meaning": "Own the known bug."
+              },
+              {
+                "text": "That's the demo — questions welcome.",
+                "meaning": "The close."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Here you can see …",
+              "meaning": "Show the screen.",
+              "note": "…the new dashboard."
+            },
+            {
+              "text": "Watch what happens when …",
+              "meaning": "The live moment.",
+              "note": "…I click save."
+            },
+            {
+              "text": "X instead of Y",
+              "meaning": "Count the win.",
+              "note": "Three clicks instead of twenty."
+            },
+            {
+              "text": "… — that's next on the list",
+              "meaning": "Own the flaw.",
+              "note": "Known bug, known plan."
+            },
+            {
+              "text": "Questions welcome.",
+              "meaning": "The open close.",
+              "note": "Then stop talking."
+            }
+          ],
+          "situation": "Demo the new offline mode to the sales team: show the moment, count the benefit, own the known bug and invite questions.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Show the new screen.",
+                "expected": [
+                  "Here you can see the new offline mode."
+                ],
+                "focus": "here you can see",
+                "watch": "Point while you name it."
+              },
+              {
+                "prompt": "Create the live moment. (click sync)",
+                "expected": [
+                  "Watch what happens when I click sync."
+                ],
+                "focus": "watch what happens",
+                "watch": "Then click. The pause builds it."
+              },
+              {
+                "prompt": "Count the benefit. (3 clicks vs 20)",
+                "expected": [
+                  "Three clicks instead of twenty."
+                ],
+                "focus": "instead of",
+                "watch": "Numbers carry the benefit."
+              },
+              {
+                "prompt": "Own the known bug. (slow export)",
+                "expected": [
+                  "Export is still slow — that's next on the list."
+                ],
+                "focus": "own the bug",
+                "watch": "Say it before they find it."
+              },
+              {
+                "prompt": "Close and invite questions.",
+                "expected": [
+                  "That's the demo — questions welcome."
+                ],
+                "focus": "the open close",
+                "watch": "Then actually stop talking."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-tech-u1-demo-e1",
+              "kind": "choice",
+              "prompt": "Here you can ___ the new dashboard.",
+              "explain": "Here you can see + thing.",
+              "options": [
+                "see",
+                "watch",
+                "look",
+                "view"
+              ],
+              "answers": [
+                "see"
+              ]
+            },
+            {
+              "id": "en-tech-u1-demo-e2",
+              "kind": "gap",
+              "prompt": "___ what happens when I click sync.",
+              "explain": "Watch what happens when…",
+              "answers": [
+                "watch"
+              ]
+            },
+            {
+              "id": "en-tech-u1-demo-e3",
+              "kind": "order",
+              "prompt": "Count the benefit.",
+              "explain": "X instead of Y.",
+              "answers": [
+                "Three clicks instead of twenty"
+              ]
+            },
+            {
+              "id": "en-tech-u1-demo-e4",
+              "kind": "written",
+              "prompt": "Own the slow export.",
+              "explain": "Known bug, known plan.",
+              "answers": [
+                "export is still slow thats next on the list",
+                "its still slow thats next"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-continuous",
+            "grammar:comparatives",
+            "vocab:work",
+            "speaking:sustained-conversation"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        },
+        {
+          "id": "en-tech-u1-tickets",
+          "title": "Tickets & bugs",
+          "goal": "Write and explain a bug report: steps, expected, actual — and a severity.",
+          "intro": {
+            "explanation": [
+              "A bug report is a story with evidence: “Steps: open the app offline. Expected: cached data. Actual: a blank screen.”",
+              "Severity is a scale, not a shout: blocker > critical > major > minor. A blocker means nobody can work.",
+              "Reproduce before you report: “It happens every time on Android, but not on iOS.” The pattern is the clue."
+            ],
+            "examples": [
+              {
+                "text": "Steps: open the app offline.",
+                "meaning": "How to reproduce."
+              },
+              {
+                "text": "Expected: cached data appears.",
+                "meaning": "What should happen."
+              },
+              {
+                "text": "Actual: a blank screen.",
+                "meaning": "What really happens."
+              },
+              {
+                "text": "It's a blocker — nobody can log in.",
+                "meaning": "The severity."
+              },
+              {
+                "text": "It happens every time on Android.",
+                "meaning": "The pattern."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Steps to reproduce",
+              "meaning": "The recipe.",
+              "note": "Numbered, exact, short."
+            },
+            {
+              "text": "Expected vs actual",
+              "meaning": "The gap is the bug.",
+              "note": "Both, always."
+            },
+            {
+              "text": "blocker / critical / major / minor",
+              "meaning": "The severity scale.",
+              "note": "blocker stops the team."
+            },
+            {
+              "text": "every time / intermittently",
+              "meaning": "The pattern.",
+              "note": "intermittent = a veces."
+            },
+            {
+              "text": "I'll take a look today.",
+              "meaning": "The pickup.",
+              "note": "Own it or route it."
+            }
+          ],
+          "situation": "A colleague reports the app eats typed notes offline: write the report as steps, expected, actual, mark the severity and pick it up.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Give the steps to reproduce. (open offline, type, close)",
+                "expected": [
+                  "Steps: open the app offline, type a note and close it."
+                ],
+                "focus": "steps",
+                "watch": "Numbered, exact, short."
+              },
+              {
+                "prompt": "Say expected vs actual. (note saved vs note lost)",
+                "expected": [
+                  "Expected: the note is saved. Actual: the note is lost."
+                ],
+                "focus": "the gap",
+                "watch": "Both halves — the gap is the bug."
+              },
+              {
+                "prompt": "Set the severity if nobody loses data. (major)",
+                "expected": [
+                  "It's a major, not a blocker — no data loss for most users."
+                ],
+                "focus": "severity",
+                "watch": "A blocker stops everyone; a major hurts some."
+              },
+              {
+                "prompt": "Pick it up.",
+                "expected": [
+                  "I'll take a look today."
+                ],
+                "focus": "pickup",
+                "watch": "Own it or route it to the owner."
+              },
+              {
+                "prompt": "Say how often the bug happens. (every time, Android)",
+                "expected": [
+                  "It happens every time on Android."
+                ],
+                "focus": "the pattern",
+                "watch": "The pattern is the clue to the cause."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-tech-u1-tickets-e1",
+              "kind": "choice",
+              "prompt": "Expected: the note is saved. ___: the note is lost.",
+              "explain": "Expected vs actual — the gap is the bug.",
+              "options": [
+                "Actual",
+                "Usually",
+                "Maybe",
+                "Blocked"
+              ],
+              "answers": [
+                "Actual"
+              ]
+            },
+            {
+              "id": "en-tech-u1-tickets-e2",
+              "kind": "gap",
+              "prompt": "Nobody can log in — it's a ___. (severidad máxima)",
+              "explain": "A blocker stops the whole team.",
+              "answers": [
+                "blocker"
+              ]
+            },
+            {
+              "id": "en-tech-u1-tickets-e3",
+              "kind": "order",
+              "prompt": "Give the steps.",
+              "explain": "Numbered, exact, short.",
+              "answers": [
+                "Open the app offline and type a note"
+              ]
+            },
+            {
+              "id": "en-tech-u1-tickets-e4",
+              "kind": "written",
+              "prompt": "Pick up the bug for today.",
+              "explain": "Own it or route it.",
+              "answers": [
+                "ill take a look today",
+                "i will take a look today"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-simple",
+            "grammar:passive-intro",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    }
+  ]
+}

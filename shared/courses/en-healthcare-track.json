@@ -1,0 +1,535 @@
+{
+  "id": "en-healthcare-track",
+  "languageID": "en",
+  "schemaVersion": 2,
+  "title": "English for Healthcare",
+  "subtitle": "Professional track",
+  "symbol": "briefcase",
+  "description": "Appointments, symptoms and kind instructions — clear English for clear care.",
+  "units": [
+    {
+      "id": "en-care-u1",
+      "title": "Clear care",
+      "subtitle": "Appointments, symptoms, instructions",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "appointment-scene",
+          "title": "The appointment",
+          "subtitle": "Book and describe",
+          "symbol": "calendar.badge.clock",
+          "category": "Course",
+          "situation": "You book a non-urgent appointment and describe symptoms over the phone.",
+          "colorIndex": 0
+        },
+        {
+          "id": "instructions-scene",
+          "title": "Clear instructions",
+          "subtitle": "Twice a day after meals",
+          "symbol": "pills",
+          "category": "Course",
+          "situation": "You explain medication instructions to a patient and check they understood — kindly, twice.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-care-u1-appointment",
+          "title": "Booking the appointment",
+          "goal": "Book a medical appointment and describe why you need it.",
+          "intro": {
+            "explanation": [
+              "The booking flow: “I'd like to make an appointment.” → routine or urgent? → “It's not an emergency, but…”. Triage needs honesty.",
+              "Describe the reason simply: “I've had back pain for two weeks.” Simple present perfect + for.",
+              "Sensitive topics get a phrase: “It's a bit personal…” — receptionists have heard everything."
+            ],
+            "examples": [
+              {
+                "text": "I'd like to make an appointment.",
+                "meaning": "The opener."
+              },
+              {
+                "text": "It's not an emergency, but I do need to be seen.",
+                "meaning": "Honest triage."
+              },
+              {
+                "text": "I've had back pain for two weeks.",
+                "meaning": "Reason + duration."
+              },
+              {
+                "text": "Is there anything earlier?",
+                "meaning": "Ask for the waitlist."
+              },
+              {
+                "text": "What do I need to bring?",
+                "meaning": "The practical close."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "make an appointment",
+              "meaning": "The booking verb.",
+              "note": "make, never do."
+            },
+            {
+              "text": "routine vs urgent",
+              "meaning": "Triage honesty.",
+              "note": "It's not an emergency, but…"
+            },
+            {
+              "text": "I've had … for + time",
+              "meaning": "Reason + duration.",
+              "note": "for two weeks."
+            },
+            {
+              "text": "Is there anything earlier?",
+              "meaning": "Ask for cancellations.",
+              "note": "The waitlist question."
+            },
+            {
+              "text": "What do I need to bring?",
+              "meaning": "The practical close.",
+              "note": "ID, card, previous reports."
+            }
+          ],
+          "situation": "Book a back-pain appointment: say it's not urgent but two weeks long, ask for anything earlier and check what to bring.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open the booking.",
+                "expected": [
+                  "I'd like to make an appointment."
+                ],
+                "focus": "the opener",
+                "watch": "make an appointment — never do."
+              },
+              {
+                "prompt": "Be honest about urgency. (not emergency, two weeks)",
+                "expected": [
+                  "It's not an emergency, but I've had back pain for two weeks."
+                ],
+                "focus": "triage",
+                "watch": "Honesty gets you the right slot."
+              },
+              {
+                "prompt": "Ask for an earlier slot.",
+                "expected": [
+                  "Is there anything earlier?"
+                ],
+                "focus": "the waitlist",
+                "watch": "Cancellations happen — ask."
+              },
+              {
+                "prompt": "Check what to bring.",
+                "expected": [
+                  "What do I need to bring?"
+                ],
+                "focus": "practical close",
+                "watch": "need to + verb."
+              },
+              {
+                "prompt": "Say the visit is a bit personal before describing it.",
+                "expected": [
+                  "It's a bit personal.",
+                  "It's a bit personal, but…"
+                ],
+                "focus": "sensitive",
+                "watch": "The phrase buys kindness from the receptionist."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-care-u1-appointment-e1",
+              "kind": "choice",
+              "prompt": "I'd like to ___ an appointment.",
+              "explain": "make an appointment — the fixed pair.",
+              "options": [
+                "make",
+                "do",
+                "take",
+                "get"
+              ],
+              "answers": [
+                "make"
+              ]
+            },
+            {
+              "id": "en-care-u1-appointment-e2",
+              "kind": "gap",
+              "prompt": "I've had this pain ___ two weeks. (duration)",
+              "explain": "for + period.",
+              "answers": [
+                "for"
+              ]
+            },
+            {
+              "id": "en-care-u1-appointment-e3",
+              "kind": "order",
+              "prompt": "Ask for an earlier slot.",
+              "explain": "Is there anything…?",
+              "answers": [
+                "Is there anything earlier"
+              ]
+            },
+            {
+              "id": "en-care-u1-appointment-e4",
+              "kind": "written",
+              "prompt": "Say it's not an emergency but you need to be seen.",
+              "explain": "Honest triage.",
+              "answers": [
+                "its not an emergency but i do need to be seen",
+                "its not an emergency"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "grammar:present-perfect",
+            "grammar:have-got",
+            "vocab:health"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "en-care-u1-instructions",
+          "title": "Clear instructions",
+          "goal": "Explain medication and check the patient understood — kindly, twice.",
+          "intro": {
+            "explanation": [
+              "Instruction pattern: “Take one tablet twice a day, after meals.” Frequency + timing + food rule, in that order.",
+              "Check understanding without condescension: “Just so I know you've got it — how often will you take it?” Teach-back, not a quiz.",
+              "Warn kindly: “You shouldn't drive while taking these.” should/shouldn't carries every warning."
+            ],
+            "examples": [
+              {
+                "text": "Take one tablet twice a day, after meals.",
+                "meaning": "The full instruction."
+              },
+              {
+                "text": "Don't take them on an empty stomach.",
+                "meaning": "The food rule."
+              },
+              {
+                "text": "Just so I know you've got it — how often?",
+                "meaning": "The teach-back."
+              },
+              {
+                "text": "You shouldn't drive while taking these.",
+                "meaning": "The kind warning."
+              },
+              {
+                "text": "Finish the whole course, even if you feel better.",
+                "meaning": "The compliance line."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Take + number + frequency",
+              "meaning": "The dose.",
+              "note": "one tablet twice a day."
+            },
+            {
+              "text": "after / before / with meals",
+              "meaning": "The timing.",
+              "note": "after meals."
+            },
+            {
+              "text": "Don't take them + condition",
+              "meaning": "The food rule.",
+              "note": "on an empty stomach."
+            },
+            {
+              "text": "Just so I know you've got it …",
+              "meaning": "Teach-back opener.",
+              "note": "Then ask them to repeat."
+            },
+            {
+              "text": "You shouldn't + verb",
+              "meaning": "The kind warning.",
+              "note": "drive while taking these."
+            },
+            {
+              "text": "Finish the whole course",
+              "meaning": "Compliance.",
+              "note": "even if you feel better."
+            }
+          ],
+          "situation": "Explain a new medication: dose, timing, food rule — then use teach-back to check understanding and add one kind warning.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Give the dose and frequency. (1 tablet, twice a day)",
+                "expected": [
+                  "Take one tablet twice a day."
+                ],
+                "focus": "dose",
+                "watch": "Number + frequency, in that order."
+              },
+              {
+                "prompt": "Add the timing rule. (after meals)",
+                "expected": [
+                  "Take them after meals."
+                ],
+                "focus": "timing",
+                "watch": "after/before/with meals."
+              },
+              {
+                "prompt": "Check understanding kindly.",
+                "expected": [
+                  "Just so I know you've got it — how often will you take them?"
+                ],
+                "focus": "teach-back",
+                "watch": "Ask them to repeat, without a quiz voice."
+              },
+              {
+                "prompt": "Give the kind warning. (no driving)",
+                "expected": [
+                  "You shouldn't drive while taking these."
+                ],
+                "focus": "the warning",
+                "watch": "shouldn't + base verb."
+              },
+              {
+                "prompt": "Give the food rule. (no alcohol)",
+                "expected": [
+                  "You shouldn't drink alcohol with this medication."
+                ],
+                "focus": "shouldn't",
+                "watch": "Warnings use shouldn't, not don't."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-care-u1-instructions-e1",
+              "kind": "choice",
+              "prompt": "Take one tablet ___ a day.",
+              "explain": "twice a day = dos veces al día.",
+              "options": [
+                "twice",
+                "two times of",
+                "two",
+                "double"
+              ],
+              "answers": [
+                "twice"
+              ]
+            },
+            {
+              "id": "en-care-u1-instructions-e2",
+              "kind": "gap",
+              "prompt": "Take them ___ meals. (después de)",
+              "explain": "after meals.",
+              "answers": [
+                "after"
+              ]
+            },
+            {
+              "id": "en-care-u1-instructions-e3",
+              "kind": "order",
+              "prompt": "Give the kind warning.",
+              "explain": "shouldn't + base verb.",
+              "answers": [
+                "You shouldnt drive while taking these"
+              ]
+            },
+            {
+              "id": "en-care-u1-instructions-e4",
+              "kind": "written",
+              "prompt": "The compliance line: finish the course.",
+              "explain": "even if you feel better.",
+              "answers": [
+                "finish the whole course even if you feel better",
+                "finish the whole course"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "grammar:modal-should",
+            "grammar:quantities",
+            "vocab:health"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:modal-should"
+          ]
+        },
+        {
+          "id": "en-care-u1-reassuring",
+          "title": "Reassuring a worried patient",
+          "goal": "Calm a worried patient: acknowledge, explain simply, and give the next step.",
+          "intro": {
+            "explanation": [
+              "Acknowledge the fear first: “I can see you're worried.” Solutions before empathy sound like dismissal.",
+              "Explain simply: short sentences, everyday words, no jargon — “The scan will show us what's happening.”",
+              "Always end with the next step: “The nurse will call you tomorrow with the results.” Uncertainty is the scarier diagnosis."
+            ],
+            "examples": [
+              {
+                "text": "I can see you're worried.",
+                "meaning": "Acknowledge first."
+              },
+              {
+                "text": "The scan will show us what's happening.",
+                "meaning": "Simple explanation."
+              },
+              {
+                "text": "It's routine, and you're in good hands.",
+                "meaning": "The calm frame."
+              },
+              {
+                "text": "The nurse will call you tomorrow with the results.",
+                "meaning": "The next step."
+              },
+              {
+                "text": "Any questions at all — I'm here.",
+                "meaning": "The open door."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I can see you're …",
+              "meaning": "Name the feeling.",
+              "note": "worried, nervous, anxious."
+            },
+            {
+              "text": "short + everyday words",
+              "meaning": "Explain simply.",
+              "note": "No jargon to a worried mind."
+            },
+            {
+              "text": "It's routine …",
+              "meaning": "The calm frame.",
+              "note": "Routine for us, new for them."
+            },
+            {
+              "text": "The next step is …",
+              "meaning": "Kill the uncertainty.",
+              "note": "…the nurse calls tomorrow."
+            },
+            {
+              "text": "Any questions at all?",
+              "meaning": "The open door.",
+              "note": "Then wait for the real one."
+            }
+          ],
+          "situation": "A patient is worried about a scan: name the feeling, explain the scan in one simple sentence, give the next step and open the door.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Name the patient's feeling.",
+                "expected": [
+                  "I can see you're worried."
+                ],
+                "focus": "acknowledge",
+                "watch": "Empathy first — solutions second."
+              },
+              {
+                "prompt": "Explain the scan simply.",
+                "expected": [
+                  "The scan will show us what's happening. It doesn't hurt at all."
+                ],
+                "focus": "simple",
+                "watch": "Short sentences, no jargon."
+              },
+              {
+                "prompt": "Give the calm frame.",
+                "expected": [
+                  "It's routine, and you're in good hands."
+                ],
+                "focus": "the frame",
+                "watch": "Routine for us, new for them."
+              },
+              {
+                "prompt": "Give the next step. (nurse calls tomorrow)",
+                "expected": [
+                  "The nurse will call you tomorrow with the results."
+                ],
+                "focus": "next step",
+                "watch": "Uncertainty is the scarier diagnosis."
+              },
+              {
+                "prompt": "Reassure about pain before the scan.",
+                "expected": [
+                  "It doesn't hurt at all."
+                ],
+                "focus": "reassure",
+                "watch": "Short, absolute, kind."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-care-u1-reassuring-e1",
+              "kind": "choice",
+              "prompt": "I can see you're ___. (worried)",
+              "explain": "worried = how you feel; worrying = what causes it.",
+              "options": [
+                "worried",
+                "worrying",
+                "worry",
+                "worry about"
+              ],
+              "answers": [
+                "worried"
+              ]
+            },
+            {
+              "id": "en-care-u1-reassuring-e2",
+              "kind": "gap",
+              "prompt": "It's ___ — you're in good hands. (de rutina)",
+              "explain": "routine = de rutina, normal.",
+              "answers": [
+                "routine"
+              ]
+            },
+            {
+              "id": "en-care-u1-reassuring-e3",
+              "kind": "order",
+              "prompt": "Give the next step.",
+              "explain": "The next step kills the uncertainty.",
+              "answers": [
+                "The nurse will call you tomorrow with the results"
+              ]
+            },
+            {
+              "id": "en-care-u1-reassuring-e4",
+              "kind": "written",
+              "prompt": "Open the door for questions.",
+              "explain": "Then wait for the real one.",
+              "answers": [
+                "any questions at all im here",
+                "any questions im here"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "grammar:present-continuous",
+            "grammar:future-forms",
+            "vocab:health",
+            "speaking:sustained-conversation"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:future-forms"
+          ]
+        }
+      ]
+    }
+  ]
+}
