@@ -1381,6 +1381,174 @@
         "function:express-opinion"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "en-read-op-ed-cities",
+      "languageID": "en",
+      "title": "Op-ed: the fifteen-minute fantasy",
+      "level": "C1",
+      "topic": "town",
+      "text": "The fifteen-minute city is, depending on who you ask, the future of urban life or a conspiracy with better branding. Strip away the noise, however, and the concept is almost disappointingly modest: housing, work, school and groceries within a short walk. That this modesty has been received as tyranny says less about urbanism than about the era in which it landed. Critics are right about one thing, though — proximity is a luxury good. The neighbourhoods that already deliver it are the most expensive in every city that measures, and a plan that paints a café on a map does not lower the rent. Arguably, then, the real fifteen-minute policy is not zoning but housing: build where people want to live, and the walk to the bakery takes care of itself. None of this makes the idea wrong. It makes it insufficient — which, in a field allergic to nuance, is already an unpopular position.",
+      "questions": [
+        {
+          "id": "en-read-op-ed-cities-q1",
+          "kind": "choice",
+          "prompt": "How does the author characterise the fifteen-minute city concept itself?",
+          "options": [
+            "Almost disappointingly modest",
+            "A conspiracy",
+            "The future of urban life",
+            "Tyranny"
+          ],
+          "answers": [
+            "Almost disappointingly modest"
+          ],
+          "explain": "Strip away the noise and the concept is almost disappointingly modest."
+        },
+        {
+          "id": "en-read-op-ed-cities-q2",
+          "kind": "choice",
+          "prompt": "What do critics get right, according to the author?",
+          "options": [
+            "Proximity is a luxury good",
+            "Zoning is evil",
+            "Cafés ruin cities",
+            "Nothing"
+          ],
+          "answers": [
+            "Proximity is a luxury good"
+          ],
+          "explain": "Critics are right about one thing: the neighbourhoods that deliver it are the most expensive."
+        },
+        {
+          "id": "en-read-op-ed-cities-q3",
+          "kind": "written",
+          "prompt": "What does the author call the real fifteen-minute policy?",
+          "answers": [
+            "housing",
+            "build where people want to live"
+          ],
+          "explain": "Not zoning but housing: build where people want to live."
+        },
+        {
+          "id": "en-read-op-ed-cities-q4",
+          "kind": "written",
+          "prompt": "What is the author's final judgement of the idea?",
+          "answers": [
+            "insufficient, not wrong",
+            "it makes the idea insufficient"
+          ],
+          "explain": "It makes the idea insufficient — which is already unpopular."
+        },
+        {
+          "id": "en-read-op-ed-cities-q5",
+          "kind": "choice",
+          "prompt": "What does 'a field allergic to nuance' imply?",
+          "options": [
+            "Urbanism debates reject subtle positions",
+            "Urbanists have allergies",
+            "Cities cause allergies",
+            "Nuance is common"
+          ],
+          "answers": [
+            "Urbanism debates reject subtle positions"
+          ],
+          "explain": "Allergic to nuance = the field dislikes intermediate positions."
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "grammar:connectors",
+        "function:express-opinion",
+        "writing:argument",
+        "vocab:town"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-policy-memo",
+      "languageID": "en",
+      "title": "Internal memo: hybrid policy review",
+      "level": "C1",
+      "topic": "work",
+      "text": "MEMO — For internal circulation. Re: Hybrid working policy, phase two review. 1. Purpose. This memo summarises the findings of the phase-two review and sets out recommendations for the coming financial year. 2. Findings. Office attendance has averaged 2.3 days per week against a target of three, a shortfall attributable primarily to Wednesdays, which function in practice as a de facto remote day. Cross-team collaboration, as measured by shared project hours, has declined 12% year on year; within-team collaboration is unchanged. Exit interviews cite flexibility as the single most valued benefit (cited by 71% of leavers, compared with 34% for compensation). 3. Recommendations. It is recommended that: (a) Wednesday be designated a full on-site day with team-led programming; (b) the target be revised to an average, not a minimum; (c) the policy be reviewed again in twelve months. 4. Caveat. Attendance data was collected via badge swipes and may undercount presence in non-badged areas.",
+      "questions": [
+        {
+          "id": "en-read-policy-memo-q1",
+          "kind": "written",
+          "prompt": "What is the average office attendance against the target?",
+          "answers": [
+            "2.3 days per week against a target of three",
+            "2.3 days",
+            "2,3 days"
+          ],
+          "explain": "2.3 days per week against a target of three."
+        },
+        {
+          "id": "en-read-policy-memo-q2",
+          "kind": "choice",
+          "prompt": "What is the primary cause of the shortfall?",
+          "options": [
+            "Wednesdays functioning as a remote day",
+            "Bad weather",
+            "The badge system",
+            "Low pay"
+          ],
+          "answers": [
+            "Wednesdays functioning as a remote day"
+          ],
+          "explain": "A shortfall attributable primarily to Wednesdays."
+        },
+        {
+          "id": "en-read-policy-memo-q3",
+          "kind": "choice",
+          "prompt": "What do exit interviews cite as the most valued benefit?",
+          "options": [
+            "Flexibility",
+            "Compensation",
+            "Laptops",
+            "Wednesdays"
+          ],
+          "answers": [
+            "Flexibility"
+          ],
+          "explain": "Flexibility: 71% of leavers, compared with 34% for compensation."
+        },
+        {
+          "id": "en-read-policy-memo-q4",
+          "kind": "written",
+          "prompt": "Name one of the three recommendations.",
+          "explain": "Any of (a), (b) or (c).",
+          "answers": [
+            "wednesday be designated a full on-site day",
+            "the target be revised to an average",
+            "the policy be reviewed again in twelve months"
+          ]
+        },
+        {
+          "id": "en-read-policy-memo-q5",
+          "kind": "choice",
+          "prompt": "What caveat does the memo admit?",
+          "options": [
+            "Badge data may undercount presence",
+            "The survey was fake",
+            "There is no data",
+            "The target was met"
+          ],
+          "answers": [
+            "Badge data may undercount presence"
+          ],
+          "explain": "Badge swipes miss non-badged areas."
+        }
+      ],
+      "skills": [
+        "reading:scan",
+        "reading:detail",
+        "grammar:passive-intro",
+        "vocab:work",
+        "writing:email"
+      ],
+      "exposureSkills": []
     }
   ]
 }

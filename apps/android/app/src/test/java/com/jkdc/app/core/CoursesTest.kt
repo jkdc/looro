@@ -10,7 +10,7 @@ class CoursesTest {
         val course = courses.first { it.id == "en-foundations" }
         assertEquals("en-foundations", course.id)
         assertEquals(17, course.units.size)
-        assertEquals(51, course.units.sumOf { it.lessons.size })
+        assertEquals(54, course.units.sumOf { it.lessons.size })
         assertTrue(course.units.first().themes.size >= 2)
     }
 

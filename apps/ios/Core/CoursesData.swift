@@ -1347,7 +1347,38 @@ public enum CoursesData {
                             Exercise(id: "en-foundations-experiences-used-to-e1", kind: "choice", prompt: "She ___ live in Berlin when she was young.", options: ["used to", "use to", "was used to", "would been"], answers: ["used to"], explain: "Past habit: used to + verb."),
                             Exercise(id: "en-foundations-experiences-used-to-e2", kind: "gap", prompt: "We ___ ___ ___ have a car. (negative, 3 words)", options: [], answers: ["didn't use to", "did not use to"], explain: "didn't use to — no -d."),
                             Exercise(id: "en-foundations-experiences-used-to-e3", kind: "order", prompt: "Ask about old habits. (you / use / play / did / to / an instrument)", options: [], answers: ["Did you use to play an instrument"], explain: "Did + you + use to + base verb."),
-                            Exercise(id: "en-foundations-experiences-used-to-e4", kind: "written", prompt: "Fix: “I'm used to get up early.”", options: [], answers: ["i'm used to getting up early", "i am used to getting up early"], explain: "be used to + -ing: getting.")], skills: ["grammar:used-to", "grammar:past-simple-irregular", "function:tell-a-story", "vocab:daily-routine"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"])]),
+                            Exercise(id: "en-foundations-experiences-used-to-e4", kind: "written", prompt: "Fix: “I'm used to get up early.”", options: [], answers: ["i'm used to getting up early", "i am used to getting up early"], explain: "be used to + -ing: getting.")], skills: ["grammar:used-to", "grammar:past-simple-irregular", "function:tell-a-story", "vocab:daily-routine"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"]),
+                    Lesson(id: "en-foundations-experiences-story-writing", title: "Writing your story", goal: "Turn an experience into a short written story with a beginning, a turn and an ending.",
+                        intro: LessonIntro(explanation: [
+                            "Written stories breathe: short sentences for tension, long ones for scenery. Start in the middle: “The lock wouldn't turn.”",
+                            "Spine: opening moment → the turn (when/until/suddenly) → the ending feeling. Three paragraphs, 80-120 words.",
+                            "Show, don't label: not “it was a bad day” but “my keys, my phone and my umbrella were all on the kitchen table — together, at home, where I wasn't.”"], examples: [
+                            ExampleLine(text: "The lock wouldn't turn.", meaning: "Open in the middle of the trouble."),
+                            ExampleLine(text: "It started fine: sun, coffee, an early train.", meaning: "A calm before."),
+                            ExampleLine(text: "Until the announcement, everything was normal.", meaning: "until signals the turn."),
+                            ExampleLine(text: "Suddenly, the platform emptied.", meaning: "sudden movement, short sentence."),
+                            ExampleLine(text: "By the time I got home, I'd laughed about it twice.", meaning: "Ending with distance."),
+                            ExampleLine(text: "Some days you're the tourist, even in your own city.", meaning: "A closing thought.")]),
+                        expressions: [
+                            TargetExpression(text: "Open in the middle", meaning: "First line = trouble or action.", note: "Skip the weather report."),
+                            TargetExpression(text: "until / when + the turn", meaning: "Move the plot.", note: "Until the doors closed…"),
+                            TargetExpression(text: "Suddenly, + short sentence", meaning: "Pace change.", note: "Short = tense."),
+                            TargetExpression(text: "By the time …, …", meaning: "Close with distance.", note: "By the time + past, past perfect feels natural."),
+                            TargetExpression(text: "a closing thought", meaning: "One reflective line.", note: "Some days you win, some days you learn."),
+                            TargetExpression(text: "80-120 words", meaning: "The short-story sweet spot.", note: "Every sentence earns its place.")],
+                        situation: "You write a 100-word story for the class blog: a travel day that went wrong — opening in the middle, one turn, one closing thought.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Open your story in the middle of the trouble. (the lock)", expected: ["The lock wouldn't turn."], focus: "the opening", watch: "“Last summer I travelled…” is a report, not a story."),
+                                PracticeQuestion(prompt: "Set the calm before: sun, coffee, an early train.", expected: ["It started fine: sun, coffee, an early train."], focus: "the calm", watch: "A calm first line makes the turn hit harder."),
+                                PracticeQuestion(prompt: "Signal the turn: the announcement changed everything. (until)", expected: ["Until the announcement, everything was normal."], focus: "until", watch: "until + noun/clause marks the exact turn."),
+                                PracticeQuestion(prompt: "Add pace: the platform emptied suddenly. (short sentence)", expected: ["Suddenly, the platform emptied."], focus: "suddenly", watch: "One-word openers (Suddenly, Luckily) control pace."),
+                                PracticeQuestion(prompt: "Close with distance and humour.", expected: ["By the time I got home, I'd laughed about it twice."], focus: "the ending", watch: "Distance turns disaster into story."),
+                                PracticeQuestion(prompt: "Add a one-line reflection to close.", expected: ["Some days you're the tourist, even in your own city."], focus: "the thought", watch: "One line, not a moral lecture.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-experiences-story-writing-e1", kind: "choice", prompt: "Which opening starts IN the trouble?", options: ["The lock wouldn't turn.", "Last summer I travelled a lot.", "It was a sunny day in June.", "I want to tell you about trains."], answers: ["The lock wouldn't turn."], explain: "In medias res: start inside the problem."),
+                            Exercise(id: "en-foundations-experiences-story-writing-e2", kind: "gap", prompt: "___ the doors closed, we realised the mistake.", options: [], answers: ["when", "until"], explain: "when/until mark the turn."),
+                            Exercise(id: "en-foundations-experiences-story-writing-e3", kind: "order", prompt: "Add pace to the escape.", options: [], answers: ["Suddenly the platform emptied"], explain: "Suddenly + short clause."),
+                            Exercise(id: "en-foundations-experiences-story-writing-e4", kind: "written", prompt: "Write a one-line closing thought for a travel disaster story.", options: [], answers: ["some days you're the tourist even in your own city", "some days you win some days you learn", "at least i have a story now"], explain: "Reflective, light, one line.")], skills: ["writing:story", "grammar:connectors", "grammar:past-continuous", "function:tell-a-story", "speaking:tell-past-story"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-continuous"])]),
             CourseUnit(id: "en-foundations-connections", title: "Opinions & connections", subtitle: "If, which, however", level: "B1", themes: [
                     ConversationTheme("plan-b", "Plan B", "If it rains…", "cloud.bolt", "Course", "Your outdoor plan is at risk. Negotiate conditionals: if this happens, we'll do that.", 0),
                     ConversationTheme("movie-debate", "The film debate", "Which one? However…", "film", "Course", "You review a film together: describe scenes with relative clauses and connect opinions with however and although.", 1)], lessons: [
@@ -1443,7 +1474,38 @@ public enum CoursesData {
                             Exercise(id: "en-foundations-connections-connectors-e1", kind: "choice", prompt: "___ it was late, we went out.", options: ["Although", "However", "So", "Because"], answers: ["Although"], explain: "although + clause expresses contrast."),
                             Exercise(id: "en-foundations-connections-connectors-e2", kind: "gap", prompt: "It was raining, ___ we stayed in. (result)", options: [], answers: ["so"], explain: "so introduces the result."),
                             Exercise(id: "en-foundations-connections-connectors-e3", kind: "order", prompt: "Give the reason for leaving.", options: [], answers: ["We left because it was full"], explain: "result + because + reason."),
-                            Exercise(id: "en-foundations-connections-connectors-e4", kind: "written", prompt: "Fix: “The plan works, however it's slow.” (punctuation)", options: [], answers: ["the plan works however it's slow", "the plan works however it is slow"], explain: "However needs a stronger break: “The plan works. However, it's slow.”")], skills: ["grammar:connectors", "function:express-opinion", "speaking:justify-opinion", "writing:argument"], canDo: ["express-opinion"], prerequisites: ["grammar:present-simple"])]),
+                            Exercise(id: "en-foundations-connections-connectors-e4", kind: "written", prompt: "Fix: “The plan works, however it's slow.” (punctuation)", options: [], answers: ["the plan works however it's slow", "the plan works however it is slow"], explain: "However needs a stronger break: “The plan works. However, it's slow.”")], skills: ["grammar:connectors", "function:express-opinion", "speaking:justify-opinion", "writing:argument"], canDo: ["express-opinion"], prerequisites: ["grammar:present-simple"]),
+                    Lesson(id: "en-foundations-connections-suggestions", title: "Making suggestions", goal: "Propose plans with Why don't we, How about and Let's — and accept or decline kindly.",
+                        intro: LessonIntro(explanation: [
+                            "Three openers, three grammars: Why don't we + verb (“Why don't we order pizza?”), How about + -ing (“How about watching a film?”), Let's + verb (“Let's stay in.”).",
+                            "Accept: “Sounds good!” “Good idea!” Decline kindly with a reason and a counter-offer: “I'm beat, honestly. Rain check?”",
+                            "Ask back with Shall we…? and What about…?: “Shall we meet at eight? What about the new place?”"], examples: [
+                            ExampleLine(text: "Why don't we order pizza?", meaning: "why don't we + base verb."),
+                            ExampleLine(text: "How about trying the new ramen place?", meaning: "how about + -ing."),
+                            ExampleLine(text: "Let's stay in tonight.", meaning: "let's + base verb."),
+                            ExampleLine(text: "Sounds good — I'm in!", meaning: "Accepting."),
+                            ExampleLine(text: "I'm beat, honestly. Rain check?", meaning: "Declining kindly."),
+                            ExampleLine(text: "Shall we say eight, then?", meaning: "Closing the plan.")]),
+                        expressions: [
+                            TargetExpression(text: "Why don't we + verb", meaning: "Suggestion as a question.", note: "Never “Why we don't”."),
+                            TargetExpression(text: "How about + -ing", meaning: "Suggestion with a gerund.", note: "How about going…?"),
+                            TargetExpression(text: "Let's + verb", meaning: "Direct suggestion for both.", note: "Let's not argue."),
+                            TargetExpression(text: "Sounds good / I'm in!", meaning: "Accept.", note: "sounds + adjective, no subject."),
+                            TargetExpression(text: "Rain check?", meaning: "Not today, but soon.", note: "From ticket rain checks."),
+                            TargetExpression(text: "Shall we say …?", meaning: "Fix the detail.", note: "Time or place closer.")],
+                        situation: "Friday night, no plan: trade suggestions, accept one, decline another kindly and settle on a time and place.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Suggest ordering food in. (why don't we)", expected: ["Why don't we order in?"], focus: "why don't we", watch: "“Why we don't order” — the inversion lives in don't we."),
+                                PracticeQuestion(prompt: "Suggest watching a film. (how about)", expected: ["How about watching a film?"], focus: "how about + -ing", watch: "“How about to watch” — the gerund is obligatory."),
+                                PracticeQuestion(prompt: "Suggest staying in, directly.", expected: ["Let's stay in tonight."], focus: "let's", watch: "let's + base verb: “let's to stay” is wrong."),
+                                PracticeQuestion(prompt: "Accept a plan with enthusiasm.", expected: ["Sounds good — I'm in!", "Great idea, I'm in!"], focus: "accepting", watch: "“It sounds good” also works; “Sounds good” is the chatty form."),
+                                PracticeQuestion(prompt: "Decline tonight, but keep the plan alive.", expected: ["I'm beat, honestly. Rain check?", "Can't tonight — rain check?"], focus: "declining", watch: "A decline without a counter-offer ends the friendship chat."),
+                                PracticeQuestion(prompt: "Fix the time: eight.", expected: ["Shall we say eight, then?"], focus: "closing", watch: "shall we say + the detail.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-connections-suggestions-e1", kind: "choice", prompt: "How about ___ the new exhibition?", options: ["visiting", "to visit", "visit", "we visit"], answers: ["visiting"], explain: "How about + -ing."),
+                            Exercise(id: "en-foundations-connections-suggestions-e2", kind: "gap", prompt: "Why ___ we take a break? (suggestion)", options: [], answers: ["don't"], explain: "Why don't we + base verb."),
+                            Exercise(id: "en-foundations-connections-suggestions-e3", kind: "order", prompt: "Suggest staying in.", options: [], answers: ["Let's stay in tonight"], explain: "Let's + base verb."),
+                            Exercise(id: "en-foundations-connections-suggestions-e4", kind: "written", prompt: "Decline tonight kindly and keep it alive.", options: [], answers: ["i'm beat rain check", "cant tonight rain check", "i can't tonight rain check"], explain: "Reason + rain check.")], skills: ["function:make-suggestions", "grammar:gerunds-infinitives", "grammar:connectors", "speaking:sustained-conversation"], canDo: ["make-future-plans"], prerequisites: ["grammar:present-simple"])]),
             CourseUnit(id: "en-foundations-change", title: "Changes", subtitle: "Will, rumours, phrasal verbs", level: "B1", themes: [
                     ConversationTheme("weather-pool", "The office pool", "What will happen?", "cloud.sun", "Course", "You and your colleagues bet on next week: weather, results, deadlines. Make predictions and defend them.", 0),
                     ConversationTheme("rumour-mill", "The rumour mill", "Who said what?", "person.2.wave.2", "Course", "Office news travels fast: report what people said, and work out what is actually true.", 1)], lessons: [
@@ -1732,7 +1794,38 @@ public enum CoursesData {
                             Exercise(id: "en-foundations-nuance-hedging-e1", kind: "choice", prompt: "Which claim is the most hedged?", options: ["It tends to work better.", "It always works.", "It works.", "It never fails."], answers: ["It tends to work better."], explain: "tends to is the hedged pattern claim."),
                             Exercise(id: "en-foundations-nuance-hedging-e2", kind: "gap", prompt: "The new engine is ___ more efficient. (strongest intensifier)", options: [], answers: ["far", "considerably"], explain: "far (or considerably) is stronger than slightly."),
                             Exercise(id: "en-foundations-nuance-hedging-e3", kind: "order", prompt: "Give a partial agreement.", options: [], answers: ["To some extent I agree"], explain: "to some extent + I agree."),
-                            Exercise(id: "en-foundations-nuance-hedging-e4", kind: "written", prompt: "Fix: “It depends of the context.”", options: [], answers: ["it depends on the context"], explain: "depend on — the preposition is on.")], skills: ["grammar:connectors", "function:express-opinion", "speaking:justify-opinion", "writing:argument"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])]),
+                            Exercise(id: "en-foundations-nuance-hedging-e4", kind: "written", prompt: "Fix: “It depends of the context.”", options: [], answers: ["it depends on the context"], explain: "depend on — the preposition is on.")], skills: ["grammar:connectors", "function:express-opinion", "speaking:justify-opinion", "writing:argument"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"]),
+                    Lesson(id: "en-foundations-nuance-academic", title: "The academic voice", goal: "State positions in academic and professional registers: impersonal, evidenced, measured.",
+                        intro: LessonIntro(explanation: [
+                            "The academic voice removes the “I”: “This paper argues that…”, “The data suggests…”, “It has been observed that…”. The claim carries the sentence, not the person.",
+                            "Evidence verbs scale certainty: demonstrate > suggest > indicate > appear to. Choose the verb that matches the strength of your data.",
+                            "Structure is visible: “First… Second… Taken together, these findings…” — the reader should always know where they are."], examples: [
+                            ExampleLine(text: "This paper argues that hybrid models outperform either extreme.", meaning: "The thesis sentence."),
+                            ExampleLine(text: "The data suggests a modest effect.", meaning: "suggests = careful."),
+                            ExampleLine(text: "The results demonstrate a clear correlation.", meaning: "demonstrate = strong evidence."),
+                            ExampleLine(text: "It has been observed that remote teams innovate differently.", meaning: "Impersonal passive reporting."),
+                            ExampleLine(text: "Taken together, these findings point to a structural cause.", meaning: "Synthesis marker."),
+                            ExampleLine(text: "Further research is needed to confirm the effect.", meaning: "The classic closing hedge.")]),
+                        expressions: [
+                            TargetExpression(text: "This paper/chapter argues that …", meaning: "State the thesis.", note: "argue = defend a position."),
+                            TargetExpression(text: "The data suggests / demonstrates …", meaning: "Certainty scaled to evidence.", note: "Choose the honest verb."),
+                            TargetExpression(text: "It has been observed that …", meaning: "Impersonal reporting.", note: "Passive keeps the I out."),
+                            TargetExpression(text: "Taken together, …", meaning: "Synthesise several points.", note: "Ends the middle, opens the close."),
+                            TargetExpression(text: "Further research is needed …", meaning: "The honest limit.", note: "Every study ends here."),
+                            TargetExpression(text: "with respect to / regarding", meaning: "Formal topic shifts.", note: "Regarding costs, the picture differs.")],
+                        situation: "You present a controversial finding to a skeptical panel: thesis, evidence verbs that match your data, visible structure and an honest limit.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "State your thesis formally. (hybrid models outperform)", expected: ["This paper argues that hybrid models outperform either extreme."], focus: "thesis", watch: "argues that + full clause — the position, not the topic."),
+                                PracticeQuestion(prompt: "Your evidence is moderate. Choose the verb. (the data / a modest effect)", expected: ["The data suggests a modest effect."], focus: "scaled verbs", watch: "demonstrates would overclaim; suggests is honest."),
+                                PracticeQuestion(prompt: "Your evidence is strong. Choose the verb. (clear correlation)", expected: ["The results demonstrate a clear correlation."], focus: "scaled verbs", watch: "With strong data, demonstrates is the honest choice."),
+                                PracticeQuestion(prompt: "Report an observation without saying who observed it.", expected: ["It has been observed that remote teams innovate differently."], focus: "impersonal passive", watch: "It + has been + participle keeps the voice out."),
+                                PracticeQuestion(prompt: "Synthesise two findings into one conclusion.", expected: ["Taken together, these findings point to a structural cause."], focus: "synthesis", watch: "Taken together announces the synthesis."),
+                                PracticeQuestion(prompt: "Close with the honest limit of the study.", expected: ["Further research is needed to confirm the effect."], focus: "the limit", watch: "Every credible study admits its edge.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-nuance-academic-e1", kind: "choice", prompt: "The data ___ a modest effect. (moderate evidence)", options: ["suggests", "demonstrates", "proves", "ignores"], answers: ["suggests"], explain: "Moderate evidence takes suggests, not demonstrates."),
+                            Exercise(id: "en-foundations-nuance-academic-e2", kind: "gap", prompt: "It has ___ observed that remote teams innovate differently.", options: [], answers: ["been"], explain: "Impersonal passive: has been + participle."),
+                            Exercise(id: "en-foundations-nuance-academic-e3", kind: "order", prompt: "State the thesis.", options: [], answers: ["This paper argues that hybrid models outperform either extreme"], explain: "This paper argues that + claim."),
+                            Exercise(id: "en-foundations-nuance-academic-e4", kind: "written", prompt: "Close the study honestly.", options: [], answers: ["further research is needed to confirm the effect", "further research is needed"], explain: "The classic honest close.")], skills: ["writing:argument", "grammar:passive-intro", "function:express-opinion", "function:talk-about-work", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:passive-intro", "grammar:connectors"])])]),
         Course(id: "en-work-track", languageID: "en", title: "English for Work", subtitle: "Professional track", symbol: "briefcase", description: "The English of meetings, emails and interviews — professional situations, practised out loud. A track that runs alongside Foundations.", units: [
             CourseUnit(id: "en-work-u1", title: "The working day", subtitle: "Meetings, emails, interviews", level: "B1", themes: [
                     ConversationTheme("monday-standup", "Monday stand-up", "Report your week", "clock", "Course", "You report progress in a stand-up: what you did, what you're doing, what's blocked.", 0),

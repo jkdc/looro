@@ -3061,6 +3061,304 @@
         "grammar:first-conditional"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "en-listen-bridge-news",
+      "languageID": "en",
+      "title": "The morning news: bridge reopened",
+      "level": "B2",
+      "topic": "town",
+      "unitID": "en-foundations-viewpoints",
+      "text": "Good morning. The Millbrook bridge, which was closed in March after cracks were discovered in two support beams, was reopened to traffic shortly after six this morning — three weeks ahead of schedule. Repair work, which was carried out by a local firm, was funded jointly by the council and the regional government, though the exact split has not been disclosed. Drivers are being asked to observe the fifty-kilometre limit for the first fortnight while the surface settles. Bus route nine, which was diverted via the ring road, returns to its original route today. And in a surprise twist, the ferry that was launched as a temporary replacement — will keep running until September, after commuters, apparently, fell in love with it.",
+      "questions": [
+        {
+          "id": "en-listen-bridge-news-q1",
+          "kind": "written",
+          "prompt": "When was the bridge reopened?",
+          "answers": [
+            "shortly after six this morning",
+            "after six this morning",
+            "this morning at six"
+          ],
+          "explain": "Reopened shortly after six this morning."
+        },
+        {
+          "id": "en-listen-bridge-news-q2",
+          "kind": "choice",
+          "prompt": "Why had it been closed?",
+          "options": [
+            "Cracks were found in support beams",
+            "A flood",
+            "It was repainted",
+            "An accident"
+          ],
+          "answers": [
+            "Cracks were found in support beams"
+          ],
+          "explain": "Closed in March after cracks were discovered in two beams."
+        },
+        {
+          "id": "en-listen-bridge-news-q3",
+          "kind": "choice",
+          "prompt": "Who carried out the repairs?",
+          "options": [
+            "A local firm",
+            "The council itself",
+            "The regional government",
+            "It doesn't say"
+          ],
+          "answers": [
+            "A local firm"
+          ],
+          "explain": "Carried out by a local firm — the passive keeps focus on the work."
+        },
+        {
+          "id": "en-listen-bridge-news-q4",
+          "kind": "written",
+          "prompt": "What are drivers asked to do for the first fortnight?",
+          "answers": [
+            "observe the fifty kilometre limit",
+            "observe the 50 km limit",
+            "drive at fifty"
+          ],
+          "explain": "Observe the 50 km/h limit while the surface settles."
+        },
+        {
+          "id": "en-listen-bridge-news-q5",
+          "kind": "choice",
+          "prompt": "What happens to the temporary ferry?",
+          "options": [
+            "It keeps running until September",
+            "It stops today",
+            "It was cancelled",
+            "It becomes permanent"
+          ],
+          "answers": [
+            "It keeps running until September"
+          ],
+          "explain": "Commuters apparently fell in love with it."
+        },
+        {
+          "id": "en-listen-bridge-news-q6",
+          "kind": "choice",
+          "prompt": "Why does this report rely so heavily on the passive?",
+          "options": [
+            "The doers matter less than the facts",
+            "The doers are famous",
+            "It is an error",
+            "To hide the costs"
+          ],
+          "answers": [
+            "The doers matter less than the facts"
+          ],
+          "explain": "News reports the event: was closed, was reopened, was carried out."
+        }
+      ],
+      "skills": [
+        "listening:connected-speech",
+        "listening:detail",
+        "grammar:passive-intro",
+        "grammar:relative-clauses"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-listen-podcast-habits",
+      "languageID": "en",
+      "title": "Podcast: the habits episode",
+      "level": "B2",
+      "topic": "free time",
+      "unitID": "en-foundations-viewpoints",
+      "text": "HOST: Welcome back. Today, habits — the ones that stick and the ones that don't. With me, Dr Amaia Ruiz, who has spent a decade researching behaviour. Amaia, quick version: why do most New Year's resolutions fail? DR RUIZ: Because they're ambitions, not systems. People say 'I'll get fit' — that's a wish. A system is 'I run on Tuesdays with Sam.' HOST: So the friend is part of the system? DR RUIZ: The friend is the system. Accountability beats motivation roughly nine times out of ten in our data. HOST: Nine out of ten! And the two-minute rule everyone quotes? DR RUIZ: Useful, slightly overrated. Starting small matters less than starting at the same time. The clock does the remembering for you. HOST: One habit you'd recommend to everyone? DR RUIZ: A ten-minute walk after lunch. Boring, free, and — according to everything we know — the closest thing to a miracle we've measured.",
+      "questions": [
+        {
+          "id": "en-listen-podcast-habits-q1",
+          "kind": "choice",
+          "prompt": "Why do most resolutions fail, according to Dr Ruiz?",
+          "options": [
+            "They're ambitions, not systems",
+            "January is too cold",
+            "People are lazy",
+            "Gyms are expensive"
+          ],
+          "answers": [
+            "They're ambitions, not systems"
+          ],
+          "explain": "'I'll get fit' is a wish; a system is 'I run on Tuesdays with Sam.'"
+        },
+        {
+          "id": "en-listen-podcast-habits-q2",
+          "kind": "written",
+          "prompt": "What beats motivation in her data?",
+          "answers": [
+            "accountability",
+            "the friend",
+            "accountability beats motivation"
+          ],
+          "explain": "Accountability beats motivation nine times out of ten."
+        },
+        {
+          "id": "en-listen-podcast-habits-q3",
+          "kind": "choice",
+          "prompt": "What does she think of the two-minute rule?",
+          "options": [
+            "Useful, slightly overrated",
+            "Completely wrong",
+            "The best idea",
+            "Dangerous"
+          ],
+          "answers": [
+            "Useful, slightly overrated"
+          ],
+          "explain": "Starting small matters less than starting at the same time."
+        },
+        {
+          "id": "en-listen-podcast-habits-q4",
+          "kind": "written",
+          "prompt": "What does the clock do, according to Dr Ruiz?",
+          "answers": [
+            "the remembering for you",
+            "does the remembering",
+            "remembers for you"
+          ],
+          "explain": "The clock does the remembering for you."
+        },
+        {
+          "id": "en-listen-podcast-habits-q5",
+          "kind": "choice",
+          "prompt": "What habit does she recommend to everyone?",
+          "options": [
+            "A ten-minute walk after lunch",
+            "Running on Tuesdays",
+            "Going to the gym",
+            "Journaling"
+          ],
+          "answers": [
+            "A ten-minute walk after lunch"
+          ],
+          "explain": "Boring, free, and the closest thing to a miracle they've measured."
+        },
+        {
+          "id": "en-listen-podcast-habits-q6",
+          "kind": "choice",
+          "prompt": "What makes this sound like a podcast rather than an essay?",
+          "options": [
+            "The host's interruptions and quick exchanges",
+            "The long sentences",
+            "The passive voice",
+            "The statistics only"
+          ],
+          "answers": [
+            "The host's interruptions and quick exchanges"
+          ],
+          "explain": "Turn-taking, reactions and short questions are the podcast register."
+        }
+      ],
+      "skills": [
+        "listening:connected-speech",
+        "listening:inference",
+        "grammar:first-conditional",
+        "function:talk-about-routines"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-listen-keynote",
+      "languageID": "en",
+      "title": "The keynote",
+      "level": "C1",
+      "topic": "work",
+      "unitID": "en-foundations-nuance",
+      "text": "Good afternoon. I'd like to begin with a confession: everything I believed about attention five years ago has aged badly. The research I'll present today — conducted across four countries, with the caveats that such breadth demands — suggests something uncomfortable: our capacity for sustained focus hasn't declined so much as our tolerance for discomfort has collapsed. Now, I appreciate that's a strong claim. The evidence runs like this. In conditions where devices were removed — not silenced, removed — reading comprehension recovered to pre-smartphone baselines within nine days. What participants reported, however, was not relief but a kind of withdrawal, which raises the question I'd like to leave you with: if a tool has rewritten our baseline for what feels bearable, is it a tool any more? I'll let you sit with that. Thank you.",
+      "questions": [
+        {
+          "id": "en-listen-keynote-q1",
+          "kind": "choice",
+          "prompt": "How does the speaker open the keynote?",
+          "options": [
+            "With a confession",
+            "With a joke",
+            "With data",
+            "With thanks"
+          ],
+          "answers": [
+            "With a confession"
+          ],
+          "explain": "Everything I believed five years ago has aged badly — a confession opener."
+        },
+        {
+          "id": "en-listen-keynote-q2",
+          "kind": "written",
+          "prompt": "What has collapsed, according to the research?",
+          "answers": [
+            "Our tolerance for discomfort"
+          ],
+          "explain": "Not our focus — our tolerance for discomfort has collapsed."
+        },
+        {
+          "id": "en-listen-keynote-q3",
+          "kind": "choice",
+          "prompt": "How does she flag the strength of her claim?",
+          "options": [
+            "Now, I appreciate that's a strong claim",
+            "Obviously",
+            "Everyone knows",
+            "She doesn't"
+          ],
+          "answers": [
+            "Now, I appreciate that's a strong claim"
+          ],
+          "explain": "Naming the claim's strength is the C1 move: hedge before you hit."
+        },
+        {
+          "id": "en-listen-keynote-q4",
+          "kind": "written",
+          "prompt": "What recovered within nine days when devices were removed?",
+          "answers": [
+            "reading comprehension",
+            "comprehension recovered to pre-smartphone baselines",
+            "reading"
+          ],
+          "explain": "Reading comprehension recovered to pre-smartphone baselines."
+        },
+        {
+          "id": "en-listen-keynote-q5",
+          "kind": "choice",
+          "prompt": "What did participants report feeling?",
+          "options": [
+            "A kind of withdrawal",
+            "Relief",
+            "Nothing",
+            "Happiness"
+          ],
+          "answers": [
+            "A kind of withdrawal"
+          ],
+          "explain": "Not relief — a kind of withdrawal."
+        },
+        {
+          "id": "en-listen-keynote-q6",
+          "kind": "choice",
+          "prompt": "What is the closing question really about?",
+          "options": [
+            "Whether a tool that rewrites our baseline is still a tool",
+            "Device batteries",
+            "Reading speed",
+            "Four countries"
+          ],
+          "answers": [
+            "Whether a tool that rewrites our baseline is still a tool"
+          ],
+          "explain": "She leaves the redefinition question with the audience."
+        }
+      ],
+      "skills": [
+        "listening:connected-speech",
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
     }
   ]
 }

@@ -99,3 +99,34 @@ Todas las fases de `docs/plan_mejoras_app_idiomas.md`, una rama
 - Snapshot de mastery y analítica pedagógica (doc §36-37, §70-71):
   deliberadamente fuera de alcance; el ledger de 2.000 marks sigue
   siendo suficiente con el catálogo actual.
+
+## Post-F7: olas de contenido con la skill looro-content
+
+- **B1 wave 1 (da40340):** unidad "Changes" (will vs going to, reported
+  speech, phrasal verbs) + 2 listenings; cierra
+  grammar:reported-speech-basic, function:describe-goals y estrena
+  grammar:phrasal-verbs (nuevo en catálogo).
+- **Tanda A1/A2 (cfb0f8c):** unidad "On the move" (transporte, commute;
+  writing:sentence) y "Staying somewhere" (quantifiers — cierra
+  grammar:quantities —, accommodation, mensajes — writing:message).
+- **Tanda B1/B2/C1 (esta):** sugerencias (cierra
+  function:make-suggestions) y escritura narrativa (writing:story) en B1;
+  dos listenings B2 (noticia en pasiva con connected-speech, podcast de
+  hábitos); bloque C1 completo: lección "academic voice", listening
+  "keynote", readings op-ed y memo institucional, y checkpoint-en-c1
+  (16 ítems) cerrando la escalera A1-C1.
+- **Cobertura final: 100/100 en las 8 categorías salvo pron 3/8**
+  (bloqueada por el módulo de pronunciación, pendiente transversal).
+- Android 488/488 · python 98/98 · 4 exportadores en sync · paridad
+  verde · strings 387/387.
+
+## Estado final del contenido (actualizado)
+
+- en-foundations: 17 unidades, 54 lecciones (A1 7u/21l · A2 5u/15l ·
+  B1 3u/9l · B2 1u/3l · C1 1u/4l).
+- Listenings: en 34 (A1 12 · A2 11 · B1 6 · B2 4 · C1 1); resto 6 c/u.
+- Readings: en 18 (A1 6 · A2 4 · B1 4 · B2 2 · C1 2).
+- Checkpoints: A1, A2, B1, B2, **C1** — escalera completa.
+- Quedan fuera del 100%: volumen A1 hacia 30-40 lecciones (21 hoy),
+  engorde B2/C1, tracks 2-6 del doc §12, y el A1 de los otros idiomas.
+
