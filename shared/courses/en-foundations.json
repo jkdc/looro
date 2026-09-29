@@ -3702,6 +3702,401 @@
       ]
     },
     {
+      "id": "en-foundations-transport",
+      "title": "On the move",
+      "subtitle": "Buses, trains, tickets",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "ticket-machine",
+          "title": "The ticket machine",
+          "subtitle": "Which ticket?",
+          "symbol": "ticket",
+          "category": "Course",
+          "situation": "You help a visitor buy the right ticket from a machine: zones, singles, day passes — one step at a time.",
+          "colorIndex": 0
+        },
+        {
+          "id": "wrong-bus",
+          "title": "The wrong bus",
+          "subtitle": "Where does it go?",
+          "symbol": "bus",
+          "category": "Course",
+          "situation": "You are on the wrong bus together. Ask the driver, check the map and find the way back.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-transport-bus-train",
+          "title": "Bus & train",
+          "goal": "Buy tickets and ask about buses and trains: times, platforms and prices.",
+          "intro": {
+            "explanation": [
+              "At the station, four questions do everything: “Which bus goes to…?” “What time is the next train?” “How much is a ticket?” “Which platform?”",
+              "Transport words travel in pairs: bus / bus stop, train / train station, plane / airport. Learn the pair, not the word alone.",
+              "Prices use how much: “How much is a single ticket?” Answers: “It's two euros fifty.”"
+            ],
+            "examples": [
+              {
+                "text": "Which bus goes to the airport?",
+                "meaning": "The route question."
+              },
+              {
+                "text": "What time is the next train?",
+                "meaning": "The time question."
+              },
+              {
+                "text": "How much is a day ticket?",
+                "meaning": "The price question."
+              },
+              {
+                "text": "Which platform is it?",
+                "meaning": "Where to wait."
+              },
+              {
+                "text": "A single to the centre, please.",
+                "meaning": "One-way ticket."
+              },
+              {
+                "text": "Is this seat free?",
+                "meaning": "On the bus or train."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Which bus/train goes to …?",
+              "meaning": "Ask for the route.",
+              "note": "The 12 goes to the centre."
+            },
+            {
+              "text": "What time is the next …?",
+              "meaning": "Ask the timetable.",
+              "note": "At ten past."
+            },
+            {
+              "text": "How much is a ticket to …?",
+              "meaning": "Ask the price.",
+              "note": "A single or a return?"
+            },
+            {
+              "text": "A single / a return, please.",
+              "meaning": "One-way or both ways.",
+              "note": "return = ida y vuelta."
+            },
+            {
+              "text": "Which platform?",
+              "meaning": "Where to get on.",
+              "note": "Platform 3."
+            },
+            {
+              "text": "Does this bus stop at …?",
+              "meaning": "Check your stop.",
+              "note": "Yes, near the park."
+            }
+          ],
+          "situation": "You help a visitor at the station: choose the bus, buy two singles, find the platform and check the next departure.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "A visitor wants the airport. Ask the route question.",
+                "expected": [
+                  "Which bus goes to the airport?"
+                ],
+                "focus": "route question",
+                "watch": "“What bus for airport?” — the full question is “Which bus goes to…?”"
+              },
+              {
+                "prompt": "Ask about the next train to Madrid.",
+                "expected": [
+                  "What time is the next train to Madrid?"
+                ],
+                "focus": "time question",
+                "watch": "“When is the next train?” also works."
+              },
+              {
+                "prompt": "Ask the price of a ticket to the centre.",
+                "expected": [
+                  "How much is a ticket to the centre?"
+                ],
+                "focus": "price question",
+                "watch": "How much is / are — plural: “How much are the tickets?”"
+              },
+              {
+                "prompt": "Buy one ticket, one way, politely.",
+                "expected": [
+                  "A single to the centre, please.",
+                  "One single, please."
+                ],
+                "focus": "single",
+                "watch": "A return is both ways — check what the visitor wants."
+              },
+              {
+                "prompt": "Ask where to wait for the train.",
+                "expected": [
+                  "Which platform is it?",
+                  "What platform does it leave from?"
+                ],
+                "focus": "platform",
+                "watch": "platform = andén — not “station” again."
+              },
+              {
+                "prompt": "Check the bus stops near the park.",
+                "expected": [
+                  "Does this bus stop near the park?"
+                ],
+                "focus": "stop at",
+                "watch": "“Does this bus go in the park?” — stop at + place."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-transport-bus-train-e1",
+              "kind": "choice",
+              "prompt": "___ much is a day ticket?",
+              "options": [
+                "How",
+                "What",
+                "Which",
+                "When"
+              ],
+              "answers": [
+                "How"
+              ],
+              "explain": "Prices take How much: How much is…?"
+            },
+            {
+              "id": "en-foundations-transport-bus-train-e2",
+              "kind": "gap",
+              "prompt": "The train to the airport leaves from ___ 3. (andén)",
+              "answers": [
+                "platform"
+              ],
+              "explain": "Platform 3 = andén 3."
+            },
+            {
+              "id": "en-foundations-transport-bus-train-e3",
+              "kind": "order",
+              "prompt": "Ask the route question.",
+              "answers": [
+                "Which bus goes to the airport"
+              ],
+              "explain": "Which + bus + goes to + place."
+            },
+            {
+              "id": "en-foundations-transport-bus-train-e4",
+              "kind": "written",
+              "prompt": "Buy a one-way ticket politely.",
+              "answers": [
+                "a single to <place> please",
+                "one single please",
+                "a single please"
+              ],
+              "explain": "A single to…, please."
+            }
+          ],
+          "skills": [
+            "vocab:transport",
+            "grammar:time-expressions",
+            "function:tell-time",
+            "writing:sentence"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:time-expressions"
+          ]
+        },
+        {
+          "id": "en-foundations-transport-commute",
+          "title": "How do you get to work?",
+          "goal": "Describe how you travel to work or school with by + transport.",
+          "intro": {
+            "explanation": [
+              "by + transport for the means: “by bus, by train, by car, by bike, by plane”. On foot for walking: “I go to work on foot.”",
+              "The question: “How do you get to work?” Answers add a time: “It takes twenty minutes.”",
+              "get to + place = arrive: “I get to the office at nine.” get home — no to: “I get home at six.”"
+            ],
+            "examples": [
+              {
+                "text": "I go to work by bike.",
+                "meaning": "by + transport."
+              },
+              {
+                "text": "She goes to school on foot.",
+                "meaning": "Walking = on foot."
+              },
+              {
+                "text": "How do you get to work?",
+                "meaning": "The commute question."
+              },
+              {
+                "text": "It takes twenty minutes by bus.",
+                "meaning": "Duration of the trip."
+              },
+              {
+                "text": "I get to the office at nine.",
+                "meaning": "Arrive at + place."
+              },
+              {
+                "text": "I get home at six.",
+                "meaning": "get home — no to."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "by bus / train / bike / car",
+              "meaning": "The means of travel.",
+              "note": "Never “with bus”."
+            },
+            {
+              "text": "on foot",
+              "meaning": "Walking.",
+              "note": "Not “by foot” in careful English."
+            },
+            {
+              "text": "How do you get to …?",
+              "meaning": "Ask about the journey.",
+              "note": "get to + place."
+            },
+            {
+              "text": "It takes + time",
+              "meaning": "Duration.",
+              "note": "It takes ten minutes on foot."
+            },
+            {
+              "text": "I get to work at …",
+              "meaning": "Arrival time.",
+              "note": "get home, get here: no to."
+            },
+            {
+              "text": "The traffic is terrible.",
+              "meaning": "Explain the delay.",
+              "note": "Traffic is uncountable."
+            }
+          ],
+          "situation": "You compare morning routines with a colleague: how you each get to work, how long it takes and why you would never cycle uphill.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask your colleague about their journey to work.",
+                "expected": [
+                  "How do you get to work?"
+                ],
+                "focus": "the commute question",
+                "watch": "“How you go to work?” — questions need do."
+              },
+              {
+                "prompt": "Say you travel by metro.",
+                "expected": [
+                  "I go to work by metro.",
+                  "I travel by metro."
+                ],
+                "focus": "by + transport",
+                "watch": "“with the metro” — transport takes by."
+              },
+              {
+                "prompt": "Say you walk to school.",
+                "expected": [
+                  "I go to school on foot.",
+                  "I walk to school."
+                ],
+                "focus": "on foot",
+                "watch": "“by foot” is heard but “on foot” is the safe form."
+              },
+              {
+                "prompt": "Say how long the bus takes. (20 minutes)",
+                "expected": [
+                  "It takes twenty minutes by bus.",
+                  "The bus takes twenty minutes."
+                ],
+                "focus": "it takes",
+                "watch": "“The bus has twenty minutes” — duration takes takes!"
+              },
+              {
+                "prompt": "Say when you arrive at the office. (9 o'clock)",
+                "expected": [
+                  "I get to the office at nine."
+                ],
+                "focus": "get to",
+                "watch": "“I arrive to the office” — arrive AT a place, or use get to."
+              },
+              {
+                "prompt": "Say you arrive home late on Fridays.",
+                "expected": [
+                  "I get home late on Fridays."
+                ],
+                "focus": "get home",
+                "watch": "get home has no to — home is special."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-transport-commute-e1",
+              "kind": "choice",
+              "prompt": "I go to work ___ bus.",
+              "options": [
+                "by",
+                "with",
+                "in",
+                "on"
+              ],
+              "answers": [
+                "by"
+              ],
+              "explain": "by + transport: by bus, by train, by bike."
+            },
+            {
+              "id": "en-foundations-transport-commute-e2",
+              "kind": "gap",
+              "prompt": "It ___ thirty minutes by train.",
+              "answers": [
+                "takes"
+              ],
+              "explain": "It takes + time for duration."
+            },
+            {
+              "id": "en-foundations-transport-commute-e3",
+              "kind": "order",
+              "prompt": "Ask about the journey.",
+              "answers": [
+                "How do you get to work"
+              ],
+              "explain": "How + do + you + get to + place."
+            },
+            {
+              "id": "en-foundations-transport-commute-e4",
+              "kind": "written",
+              "prompt": "Fix: “I get to home at six.”",
+              "answers": [
+                "i get home at six"
+              ],
+              "explain": "get home — home needs no to."
+            }
+          ],
+          "skills": [
+            "vocab:transport",
+            "grammar:present-simple",
+            "grammar:prepositions-place",
+            "function:talk-about-routines",
+            "writing:sentence"
+          ],
+          "canDo": [
+            "use-transport",
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
       "id": "en-foundations-u5",
       "title": "Food & likes",
       "subtitle": "Eat, drink, enjoy",
@@ -6009,6 +6404,585 @@
           ],
           "prerequisites": [
             "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-stay",
+      "title": "Staying somewhere",
+      "subtitle": "How much, how many, a room",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "guest-room",
+          "title": "The guest room",
+          "subtitle": "How much space?",
+          "symbol": "bed.double",
+          "category": "Course",
+          "situation": "Family is visiting. Count the beds, the towels and the problems — is there enough room for everyone?",
+          "colorIndex": 0
+        },
+        {
+          "id": "booking-call",
+          "title": "The booking call",
+          "subtitle": "A room for two nights",
+          "symbol": "phone",
+          "category": "Course",
+          "situation": "You book accommodation by phone: dates, price, breakfast — and one special request.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-stay-quantifiers",
+          "title": "How much / how many",
+          "goal": "Ask about countable and uncountable things with how much and how many.",
+          "intro": {
+            "explanation": [
+              "Countable things (bottles, rooms, tickets) take many: “How many rooms do you need?” Uncountable stuff (water, money, time) takes much: “How much water do you need?”",
+              "In everyday questions, much alone sounds formal: “How much money?” is fine, but people say “How much is it?” — the full countable question needs many.",
+              "Answers use a lot of / some / a few (countable) / a little (uncountable): “We need a few chairs and a little luck.”"
+            ],
+            "examples": [
+              {
+                "text": "How many guests are coming?",
+                "meaning": "Countable: guests."
+              },
+              {
+                "text": "How much milk is in the fridge?",
+                "meaning": "Uncountable: milk."
+              },
+              {
+                "text": "How much does it cost?",
+                "meaning": "Price always takes much."
+              },
+              {
+                "text": "We need a few more chairs.",
+                "meaning": "a few + countable."
+              },
+              {
+                "text": "There's a little time left.",
+                "meaning": "a little + uncountable."
+              },
+              {
+                "text": "A lot of people are coming.",
+                "meaning": "a lot of works with both."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "How many + plural?",
+              "meaning": "Count the things.",
+              "note": "How many nights?"
+            },
+            {
+              "text": "How much + uncountable?",
+              "meaning": "Measure the stuff.",
+              "note": "How much luggage?"
+            },
+            {
+              "text": "How much is/are …?",
+              "meaning": "Ask any price.",
+              "note": "How much are the towels?"
+            },
+            {
+              "text": "a few + plural",
+              "meaning": "A small number.",
+              "note": "a few days = algunos días."
+            },
+            {
+              "text": "a little + uncountable",
+              "meaning": "A small amount.",
+              "note": "a little sugar."
+            },
+            {
+              "text": "a lot of + both",
+              "meaning": "A big amount, always right.",
+              "note": "a lot of rooms, a lot of water."
+            }
+          ],
+          "situation": "Family arrives on Friday: count the beds, towels and chairs, check the milk and sugar for coffee, and decide what to buy.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask about the number of guests.",
+                "expected": [
+                  "How many guests are coming?"
+                ],
+                "focus": "how many",
+                "watch": "“How much guests” — people are countable: how many."
+              },
+              {
+                "prompt": "Ask about the amount of milk in the fridge.",
+                "expected": [
+                  "How much milk is there?",
+                  "How much milk is in the fridge?"
+                ],
+                "focus": "how much",
+                "watch": "milk is uncountable: how much, never how many."
+              },
+              {
+                "prompt": "Ask the price of the towels.",
+                "expected": [
+                  "How much are the towels?"
+                ],
+                "focus": "price",
+                "watch": "Price always takes much, even with plural things."
+              },
+              {
+                "prompt": "Say you need a small number of chairs. (a few)",
+                "expected": [
+                  "We need a few more chairs.",
+                  "I need a few chairs."
+                ],
+                "focus": "a few",
+                "watch": "a few + plural: “a few chairs”, never “a little chairs”."
+              },
+              {
+                "prompt": "Say there is a small amount of time left.",
+                "expected": [
+                  "There's a little time left.",
+                  "There is a little time left."
+                ],
+                "focus": "a little",
+                "watch": "a little + uncountable: time, money, luck."
+              },
+              {
+                "prompt": "Safe answer for both: many rooms, much water.",
+                "expected": [
+                  "We need a lot of rooms and a lot of water."
+                ],
+                "focus": "a lot of",
+                "watch": "When unsure, a lot of works with countable and uncountable."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-stay-quantifiers-e1",
+              "kind": "choice",
+              "prompt": "___ many nights are you staying?",
+              "options": [
+                "How",
+                "What",
+                "How much",
+                "Which"
+              ],
+              "answers": [
+                "How"
+              ],
+              "explain": "nights are countable: How many."
+            },
+            {
+              "id": "en-foundations-stay-quantifiers-e2",
+              "kind": "gap",
+              "prompt": "There's ___ ___ sugar left. (small amount, uncountable)",
+              "answers": [
+                "a little"
+              ],
+              "explain": "a little + uncountable."
+            },
+            {
+              "id": "en-foundations-stay-quantifiers-e3",
+              "kind": "order",
+              "prompt": "Ask about the price of the room.",
+              "answers": [
+                "How much is the room"
+              ],
+              "explain": "Price: How much is…?"
+            },
+            {
+              "id": "en-foundations-stay-quantifiers-e4",
+              "kind": "written",
+              "prompt": "Fix: “How much rooms do you need?”",
+              "answers": [
+                "how many rooms do you need"
+              ],
+              "explain": "rooms are countable: how many."
+            }
+          ],
+          "skills": [
+            "grammar:quantities",
+            "grammar:countable-uncountable",
+            "grammar:some-any",
+            "vocab:home"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:some-any",
+            "grammar:countable-uncountable"
+          ]
+        },
+        {
+          "id": "en-foundations-stay-accommodation",
+          "title": "A room for two nights",
+          "goal": "Book accommodation: dates, price, breakfast and one special request.",
+          "intro": {
+            "explanation": [
+              "Booking by phone has a shape: “I'd like to book a room, please.” → dates → “How much is it per night?” → “Does it include breakfast?”",
+              "Room words: a single room (one bed), a double room (big bed), twins (two beds). Say the nights: “from Friday to Sunday — two nights.”",
+              "Special requests stay polite: “Would it be possible to have a quiet room?” The answer you want: “No problem.”"
+            ],
+            "examples": [
+              {
+                "text": "I'd like to book a double room, please.",
+                "meaning": "The opening line."
+              },
+              {
+                "text": "From Friday to Sunday — two nights.",
+                "meaning": "The dates."
+              },
+              {
+                "text": "How much is it per night?",
+                "meaning": "Price per night."
+              },
+              {
+                "text": "Does it include breakfast?",
+                "meaning": "The classic question."
+              },
+              {
+                "text": "Is there Wi-Fi in the rooms?",
+                "meaning": "Check the extras."
+              },
+              {
+                "text": "Would it be possible to have a quiet room?",
+                "meaning": "The polite special request."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I'd like to book …",
+              "meaning": "Open any booking.",
+              "note": "I'd like to = polite want."
+            },
+            {
+              "text": "a single / double / twin room",
+              "meaning": "Room types.",
+              "note": "twin = two separate beds."
+            },
+            {
+              "text": "from … to …, … nights",
+              "meaning": "Say the dates.",
+              "note": "from Friday to Sunday."
+            },
+            {
+              "text": "per night",
+              "meaning": "Price unit.",
+              "note": "€60 per night."
+            },
+            {
+              "text": "Does it include breakfast?",
+              "meaning": "What's included.",
+              "note": "include = venir con."
+            },
+            {
+              "text": "Would it be possible to …?",
+              "meaning": "Special request.",
+              "note": "The politest way to ask."
+            }
+          ],
+          "situation": "You call a small hotel for a weekend: book a double room, ask the price, check breakfast and Wi-Fi, and request a quiet room at the back.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open the call: you want a double room.",
+                "expected": [
+                  "I'd like to book a double room, please."
+                ],
+                "focus": "the opening",
+                "watch": "“I want to book a room” works; “I'd like to” sounds friendlier."
+              },
+              {
+                "prompt": "Say the dates: Friday to Sunday.",
+                "expected": [
+                  "From Friday to Sunday — two nights."
+                ],
+                "focus": "dates",
+                "watch": "Say the number of nights so the price is clear."
+              },
+              {
+                "prompt": "Ask the price per night.",
+                "expected": [
+                  "How much is it per night?"
+                ],
+                "focus": "per night",
+                "watch": "“for a night” also works; per night is the standard."
+              },
+              {
+                "prompt": "Ask if breakfast comes with the room.",
+                "expected": [
+                  "Does it include breakfast?",
+                  "Is breakfast included?"
+                ],
+                "focus": "what's included",
+                "watch": "Both forms are common — pick one and keep it."
+              },
+              {
+                "prompt": "Ask about Wi-Fi in the rooms.",
+                "expected": [
+                  "Is there Wi-Fi in the rooms?"
+                ],
+                "focus": "the extras",
+                "watch": "Wi-Fi is uncountable: Is there, not Are there."
+              },
+              {
+                "prompt": "Make a special request: a quiet room.",
+                "expected": [
+                  "Would it be possible to have a quiet room?"
+                ],
+                "focus": "special requests",
+                "watch": "Would it be possible beats “give me a quiet room”."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-stay-accommodation-e1",
+              "kind": "choice",
+              "prompt": "I'd like ___ book a twin room.",
+              "options": [
+                "to",
+                "for",
+                "that",
+                "book"
+              ],
+              "answers": [
+                "to"
+              ],
+              "explain": "I'd like to + verb: I'd like to book."
+            },
+            {
+              "id": "en-foundations-stay-accommodation-e2",
+              "kind": "gap",
+              "prompt": "How much is it ___ night?",
+              "answers": [
+                "per",
+                "for"
+              ],
+              "explain": "per night / for a night — price units."
+            },
+            {
+              "id": "en-foundations-stay-accommodation-e3",
+              "kind": "order",
+              "prompt": "Ask about breakfast.",
+              "answers": [
+                "Does it include breakfast"
+              ],
+              "explain": "Does + it + include."
+            },
+            {
+              "id": "en-foundations-stay-accommodation-e4",
+              "kind": "written",
+              "prompt": "Make the special request politely: a room on a high floor.",
+              "answers": [
+                "would it be possible to have a room on a high floor",
+                "could i have a room on a high floor please"
+              ],
+              "explain": "Would it be possible to have…?"
+            }
+          ],
+          "skills": [
+            "vocab:travel",
+            "function:solve-problems",
+            "grammar:quantities",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems",
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:quantities"
+          ]
+        },
+        {
+          "id": "en-foundations-stay-messages",
+          "title": "Sending messages",
+          "goal": "Write short informal messages: plans, apologies and quick questions.",
+          "intro": {
+            "explanation": [
+              "Messages drop the formal bits: “Running late — 10 mins!” No “Dear”, no full sentences every time. But clarity stays: who, what, when.",
+              "Useful message chunks: “On my way!” “Are we still on for…?” “Can we move it to…?” “Sorry, something came up.”",
+              "Emoji-free writing still matters: punctuation carries tone. “Fine.” sounds angry; “Fine :)” sounds fine."
+            ],
+            "examples": [
+              {
+                "text": "On my way! 5 mins.",
+                "meaning": "The classic delay message."
+              },
+              {
+                "text": "Are we still on for Saturday?",
+                "meaning": "Confirm a plan."
+              },
+              {
+                "text": "Can we move dinner to 9?",
+                "meaning": "Change of plan."
+              },
+              {
+                "text": "Sorry, something came up at work.",
+                "meaning": "The polite cancellation."
+              },
+              {
+                "text": "Let me know when you're free.",
+                "meaning": "Open-ended plan."
+              },
+              {
+                "text": "Got it, thanks!",
+                "meaning": "Close the thread."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "On my way!",
+              "meaning": "You have left.",
+              "note": "Short for I'm on my way."
+            },
+            {
+              "text": "Are we still on for …?",
+              "meaning": "Confirm the plan.",
+              "note": "on for + day/time."
+            },
+            {
+              "text": "Can we move it to …?",
+              "meaning": "Propose a new time.",
+              "note": "move it to + time."
+            },
+            {
+              "text": "Something came up.",
+              "meaning": "Something happened.",
+              "note": "The universal excuse."
+            },
+            {
+              "text": "Let me know when …",
+              "meaning": "Leave the ball with them.",
+              "note": "…you're free / you arrive."
+            },
+            {
+              "text": "Got it, thanks!",
+              "meaning": "Acknowledge and close.",
+              "note": "got it = understood."
+            }
+          ],
+          "situation": "A dinner with friends is in chaos: confirm who's coming, move the time, apologise for a late change and close the chat kindly.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "You left home. Send the classic message.",
+                "expected": [
+                  "On my way!",
+                  "I'm on my way!"
+                ],
+                "focus": "on my way",
+                "watch": "“I'm arriving” sounds like a flight announcement — “On my way!” is the chunk."
+              },
+              {
+                "prompt": "Check if Saturday dinner is still happening.",
+                "expected": [
+                  "Are we still on for Saturday?"
+                ],
+                "focus": "still on",
+                "watch": "“Are we still …?” + on for + the plan."
+              },
+              {
+                "prompt": "Propose moving dinner to nine.",
+                "expected": [
+                  "Can we move dinner to 9?",
+                  "Can we move it to nine?"
+                ],
+                "focus": "moving plans",
+                "watch": "move it to + time — not “move it at nine”."
+              },
+              {
+                "prompt": "Cancel politely: work happened.",
+                "expected": [
+                  "Sorry, something came up at work.",
+                  "Sorry — something came up."
+                ],
+                "focus": "polite cancellation",
+                "watch": "something came up explains without details."
+              },
+              {
+                "prompt": "Leave the decision to your friend.",
+                "expected": [
+                  "Let me know when you're free."
+                ],
+                "focus": "open-ended",
+                "watch": "let me know + when + present: when you're free."
+              },
+              {
+                "prompt": "Close the conversation after the plan is set.",
+                "expected": [
+                  "Got it, thanks!",
+                  "Perfect, see you then!"
+                ],
+                "focus": "closing",
+                "watch": "Every message thread needs a friendly full stop."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-stay-messages-e1",
+              "kind": "choice",
+              "prompt": "___ we still on for tonight?",
+              "options": [
+                "Are",
+                "Is",
+                "Do",
+                "Will"
+              ],
+              "answers": [
+                "Are"
+              ],
+              "explain": "we + are: Are we still on for…?"
+            },
+            {
+              "id": "en-foundations-stay-messages-e2",
+              "kind": "gap",
+              "prompt": "Sorry, something ___ ___ at work. (happened, 2 words)",
+              "answers": [
+                "came up"
+              ],
+              "explain": "something came up = surgió algo."
+            },
+            {
+              "id": "en-foundations-stay-messages-e3",
+              "kind": "order",
+              "prompt": "Propose a new time. (dinner / can / move / we / to nine)",
+              "answers": [
+                "Can we move dinner to nine"
+              ],
+              "explain": "Can we move + plan + to + time."
+            },
+            {
+              "id": "en-foundations-stay-messages-e4",
+              "kind": "written",
+              "prompt": "Close the thread after agreeing on a plan.",
+              "answers": [
+                "got it thanks",
+                "perfect see you then",
+                "great see you then"
+              ],
+              "explain": "Any friendly closing works."
+            }
+          ],
+          "skills": [
+            "writing:message",
+            "vocab:social-expressions",
+            "grammar:present-continuous",
+            "function:make-suggestions"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:present-continuous"
           ]
         }
       ]
