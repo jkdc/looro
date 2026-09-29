@@ -50,9 +50,9 @@
 
 ## F6 — Escalado multiidioma
 
-- [ ] F6.1 Tagging es/de/fr/it/pt (lecciones + listenings) vía canDo matrix.
-- [ ] F6.2 Validadores de cobertura por nivel/idioma.
-- [ ] F6.3 Tests + verificación.
+- [x] F6.1 Tagging es/de/fr/it/pt (lecciones + listenings) vía canDo matrix.
+- [x] F6.2 Validadores de cobertura por nivel/idioma.
+- [x] F6.3 Tests + verificación.
 
 ## F7 — B2/C1 + tracks
 

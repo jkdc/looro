@@ -91,6 +91,12 @@
           ],
           "explain": "Oggi si siede vicino alla finestra."
         }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "grammar:present-simple",
+        "vocab:daily-routine"
       ]
     },
     {
@@ -184,6 +190,12 @@
           ],
           "explain": "La prossima settimana vanno a prendere un caffè insieme per praticare."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "grammar:verb-be",
+        "vocab:introductions",
+        "function:introduce-yourself"
       ]
     },
     {
@@ -277,6 +289,12 @@
           ],
           "explain": "La sua gioia è enorme."
         }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:verb-be",
+        "grammar:possessives",
+        "vocab:family"
       ]
     },
     {
@@ -370,6 +388,12 @@
           ],
           "explain": "Leo ha una chitarra."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:have-got",
+        "vocab:home"
       ]
     },
     {
@@ -463,6 +487,11 @@
           ],
           "explain": "Dice che è contenta di essere qui."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:describe-people"
       ]
     },
     {
@@ -556,6 +585,12 @@
           ],
           "explain": "Anna vuole delle fragole."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:number-time",
+        "grammar:some-any",
+        "vocab:shopping"
       ]
     }
   ]

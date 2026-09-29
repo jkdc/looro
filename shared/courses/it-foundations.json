@@ -207,6 +207,18 @@
               ],
               "explain": "Mi chiamo Ana / Sono Ana — the subject can be dropped."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "grammar:subject-pronouns",
+            "function:describe-people",
+            "speaking:short-answer"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
           ]
         },
         {
@@ -381,6 +393,15 @@
               ],
               "explain": "non + sono: Non sono di Firenze."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "speaking:short-answer"
+          ],
+          "prerequisites": [
+            "grammar:subject-pronouns"
           ]
         },
         {
@@ -551,6 +572,15 @@
               ],
               "explain": "Name + origin, each with its verb."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "function:introduce-yourself",
+            "vocab:introductions",
+            "pron:word-stress"
+          ],
+          "canDo": [
+            "introduce-yourself"
           ]
         }
       ]

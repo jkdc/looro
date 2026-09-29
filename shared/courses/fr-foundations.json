@@ -208,6 +208,18 @@
               ],
               "explain": "Je m'appelle Ana / Je suis Ana — the subject is never dropped."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "grammar:subject-pronouns",
+            "function:describe-people",
+            "speaking:short-answer"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
           ]
         },
         {
@@ -382,6 +394,15 @@
               ],
               "explain": "ne…pas around suis: Je ne suis pas de Bordeaux."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "speaking:short-answer"
+          ],
+          "prerequisites": [
+            "grammar:subject-pronouns"
           ]
         },
         {
@@ -553,6 +574,15 @@
               ],
               "explain": "Name + origin, each with its subject."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "function:introduce-yourself",
+            "vocab:introductions",
+            "pron:word-stress"
+          ],
+          "canDo": [
+            "introduce-yourself"
           ]
         }
       ]

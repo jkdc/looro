@@ -134,5 +134,13 @@ class ExportListeningTest(unittest.TestCase):
         self.assertIn('skills = listOf("listening:gist", "listening:detail")', kotlin)
         self.assertIn('exposureSkills = listOf("grammar:present-perfect")', kotlin)
 
+
+    def test_every_listening_in_every_language_is_skill_tagged(self):
+        import json
+        for path in sorted(el.LISTENING_DIR.glob("*.json")):
+            data = json.loads(path.read_text())
+            for text in data["texts"]:
+                self.assertTrue(text.get("skills"), f"{text['id']} has no skills")
+
 if __name__ == "__main__":
     unittest.main()

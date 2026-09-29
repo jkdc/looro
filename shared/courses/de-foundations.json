@@ -209,6 +209,18 @@
               ],
               "explain": "Ich heiße Ana / Ich bin Ana — the subject is never dropped."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "grammar:subject-pronouns",
+            "function:describe-people",
+            "speaking:short-answer"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
           ]
         },
         {
@@ -383,6 +395,15 @@
               ],
               "explain": "nicht before aus Köln: Ich bin nicht aus Köln."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "speaking:short-answer"
+          ],
+          "prerequisites": [
+            "grammar:subject-pronouns"
           ]
         },
         {
@@ -553,6 +574,15 @@
               ],
               "explain": "Name + origin, each with its verb."
             }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "function:introduce-yourself",
+            "vocab:introductions",
+            "pron:word-stress"
+          ],
+          "canDo": [
+            "introduce-yourself"
           ]
         }
       ]

@@ -91,6 +91,12 @@
           ],
           "explain": "Hoje ela senta perto da janela."
         }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "grammar:present-simple",
+        "vocab:daily-routine"
       ]
     },
     {
@@ -186,6 +192,12 @@
           ],
           "explain": "Na próxima semana vão tomar um café juntos e praticar."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "grammar:verb-be",
+        "vocab:introductions",
+        "function:introduce-yourself"
       ]
     },
     {
@@ -279,6 +291,12 @@
           ],
           "explain": "A alegria dela é enorme."
         }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:verb-be",
+        "grammar:possessives",
+        "vocab:family"
       ]
     },
     {
@@ -372,6 +390,12 @@
           ],
           "explain": "O Leo tem um violão."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:have-got",
+        "vocab:home"
       ]
     },
     {
@@ -465,6 +489,11 @@
           ],
           "explain": "Ela diz que está contente de estar aqui."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:describe-people"
       ]
     },
     {
@@ -557,6 +586,12 @@
           ],
           "explain": "A Ana quer morangos."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:number-time",
+        "grammar:some-any",
+        "vocab:shopping"
       ]
     }
   ]

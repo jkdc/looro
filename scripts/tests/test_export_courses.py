@@ -184,5 +184,14 @@ class ExportCoursesTest(unittest.TestCase):
         self.assertNotIn("skills =", kotlin)
         self.assertNotIn("canDo", kotlin)
 
+
+    def test_every_lesson_in_every_language_is_skill_tagged(self):
+        import json
+        for path in sorted(ec.COURSES_DIR.glob("*.json")):
+            course = json.loads(path.read_text())
+            for unit in course["units"]:
+                for lesson in unit["lessons"]:
+                    self.assertTrue(lesson.get("skills"), f"{lesson['id']} has no skills")
+
 if __name__ == "__main__":
     unittest.main()

@@ -91,6 +91,12 @@
           ],
           "explain": "Heute sitzt sie am Fenster."
         }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "grammar:present-simple",
+        "vocab:daily-routine"
       ]
     },
     {
@@ -184,6 +190,12 @@
           ],
           "explain": "Nächste Woche gehen sie zusammen einen Kaffee trinken und üben."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "grammar:verb-be",
+        "vocab:introductions",
+        "function:introduce-yourself"
       ]
     },
     {
@@ -276,6 +288,12 @@
           ],
           "explain": "Ihre Freude ist riesig."
         }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:verb-be",
+        "grammar:possessives",
+        "vocab:family"
       ]
     },
     {
@@ -368,6 +386,12 @@
           ],
           "explain": "Leo hat eine Gitarre."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:have-got",
+        "vocab:home"
       ]
     },
     {
@@ -461,6 +485,11 @@
           ],
           "explain": "Sie sagt, sie ist froh, hier zu sein."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:describe-people"
       ]
     },
     {
@@ -553,6 +582,12 @@
           ],
           "explain": "Anna möchte Erdbeeren."
         }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:number-time",
+        "grammar:some-any",
+        "vocab:shopping"
       ]
     }
   ]
