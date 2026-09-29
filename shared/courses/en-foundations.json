@@ -8730,6 +8730,10 @@
               {
                 "text": "I feel dizzy when I stand up.",
                 "meaning": "Another symptom."
+              },
+              {
+                "text": "I have a pain in my lower back.",
+                "meaning": "a pain in + body part."
               }
             ]
           },
@@ -8800,6 +8804,15 @@
                 ],
                 "focus": "duration",
                 "watch": "for + period: for three days."
+              },
+              {
+                "prompt": "Say your temperature is high.",
+                "expected": [
+                  "I've got a temperature.",
+                  "I have a temperature."
+                ],
+                "focus": "temperature",
+                "watch": "a temperature — con artículo, siempre."
               }
             ]
           },
@@ -8897,6 +8910,10 @@
               {
                 "text": "Drink some water and see.",
                 "meaning": "Simple instructions."
+              },
+              {
+                "text": "You should see a doctor if it lasts a week.",
+                "meaning": "Advice with a limit."
               }
             ]
           },
@@ -8966,6 +8983,15 @@
                 ],
                 "focus": "closing",
                 "watch": "see if it helps = a ver si funciona."
+              },
+              {
+                "prompt": "Advise seeing a doctor if the pain continues.",
+                "expected": [
+                  "You should see a doctor if the pain continues.",
+                  "You should see a doctor."
+                ],
+                "focus": "see a doctor",
+                "watch": "see a doctor = visitar al médico; watch no."
               }
             ]
           },
@@ -9058,6 +9084,10 @@
               {
                 "text": "I've started walking to work.",
                 "meaning": "A new habit: start + -ing."
+              },
+              {
+                "text": "My weekends used to be active. Now they're for the sofa.",
+                "meaning": "Contrast con humor."
               }
             ]
           },
@@ -9127,6 +9157,14 @@
                 ],
                 "focus": "start + -ing",
                 "watch": "I've started + -ing: the new habit."
+              },
+              {
+                "prompt": "Say your weekends used to be active.",
+                "expected": [
+                  "My weekends used to be active."
+                ],
+                "focus": "used to",
+                "watch": "used to + verbo base."
               }
             ]
           },

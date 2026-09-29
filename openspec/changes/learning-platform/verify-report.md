@@ -130,3 +130,12 @@ Todas las fases de `docs/plan_mejoras_app_idiomas.md`, una rama
 - Quedan fuera del 100%: volumen A1 hacia 30-40 lecciones (21 hoy),
   engorde B2/C1, tracks 2-6 del doc §12, y el A1 de los otros idiomas.
 
+## Fix transversal: troceo de datos generados
+
+El crecimiento del catálogo (63+ lecciones) hizo que `CoursesData.<clinit>`
+superara el límite de la JVM de 64 KB por método (fallo al compilar F9).
+Los cuatro exportadores ahora emiten **un namespace por unidad/texto**
+(objects Kotlin con `<clinit>` propio, enums Swift con `static let` lazy)
+y montan `all` por referencias — el pipeline vuelve a escalar sin techo.
+Verificado con la suite completa en verde tras el cambio.
+
