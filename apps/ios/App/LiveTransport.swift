@@ -20,7 +20,10 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
     private var ownsAudioActivation = false
     private var lastInput = 0.0, lastOutput = 0.0
 
-    func connect(api: APIClient, instructions: String, history: [[String: Any]]) async throws {
+    /// The caller owns how the realtime session is created: personal OpenAI key
+    /// or hosted minutes. The transport only needs the session descriptor and the
+    /// answer SDP; audio always connects phone-to-provider directly.
+    func connect(establish: @escaping (_ offerSDP: String) async throws -> (session: [String: Any], answer: String)) async throws {
         disconnect()
         closing = false
         let token = UUID(); attempt = token
@@ -52,9 +55,9 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         guard let peer = factory.peerConnection(with: config, constraints: constraints, delegate: self) else { throw TransportError.connection }
         self.peer = peer
         let source = factory.audioSource(with: RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: ["googEchoCancellation": "true", "googNoiseSuppression": "true", "googAutoGainControl": "true"]))
-        let track = factory.audioTrack(with: source, trackId: "mural-microphone")
+        let track = factory.audioTrack(with: source, trackId: "app-microphone")
         localTrack = track; isMuted = false
-        peer.add(track, streamIds: ["mural-audio"])
+        peer.add(track, streamIds: ["app-audio"])
         let dataConfig = RTCDataChannelConfiguration(); dataConfig.isOrdered = true
         guard let channel = peer.dataChannel(forLabel: "oai-events", configuration: dataConfig) else { throw TransportError.connection }
         self.channel = channel; channel.delegate = self
@@ -73,14 +76,10 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
             guard Date() < deadline else { throw TransportError.timeout }
         }
         guard let sdp = peer.localDescription?.sdp else { throw TransportError.connection }
-        let result = try await api.post("live/sessions", body: [
-            "session": ["model": "gpt-live-1", "instructions": instructions, "input": history,
-                        "store": false, "delegation": ["type": "client"], "audio": ["output": ["voice": "marin"]]],
-            "transport": ["type": "webrtc", "sdp": sdp]
-        ])
+        let established = try await establish(sdp)
         guard attempt == token else { throw CancellationError() }
-        guard let transport = result["transport"] as? [String: Any], let answer = transport["sdp"] as? String else { throw TransportError.connection }
-        if let session = result["session"] as? [String: Any] { onEvent?(["type": "mural.session.created", "session": session]) }
+        let answer = established.answer
+        if !established.session.isEmpty { onEvent?(["type": "app.session.created", "session": established.session]) }
         try await withCheckedThrowingContinuation { (c: CheckedContinuation<Void, Error>) in
             peer.setRemoteDescription(RTCSessionDescription(type: .answer, sdp: answer)) { error in
                 if let error { c.resume(throwing: error) } else { c.resume() }
@@ -147,7 +146,7 @@ enum ConnectionState: Equatable { case idle, connecting, active, closing, ended,
         case microphone, connection, timeout
         var errorDescription: String? {
             switch self {
-            case .microphone: "Allow microphone access in iPhone Settings → Mural to start a conversation."
+            case .microphone: "Allow microphone access in iPhone Settings → Palique to start a conversation."
             case .connection: "The voice connection couldn’t be established. Check your connection and try again."
             case .timeout: "The voice connection took too long. Please try again."
             }

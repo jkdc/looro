@@ -1,9 +1,38 @@
 {$API_DOMAIN} {
-  # Access logging is intentionally disabled: no URL, cookie or authorization logging.
-  reverse_proxy api:8080
-  header {
-    Strict-Transport-Security "max-age=31536000"
-    X-Content-Type-Options "nosniff"
-    Referrer-Policy "no-referrer"
-  }
+	# Access logging is intentionally disabled: no URL, cookie or authorization logging.
+	reverse_proxy api:8080
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+	}
+}
+
+{$ADMIN_DOMAIN} {
+	# Operator panel: static UI from the mounted volume, admin API proxied to the app.
+	# Access logging stays disabled for the same reason as the main domain.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'"
+	}
+	# No identity provider is involved: the strict CSP above applies to every
+	# document, including the login page.
+	handle /v1/admin/* {
+		reverse_proxy api:8080 {
+			# Trusted-proxy admission: the API only accepts these headers from Caddy,
+			# and fails closed (503) when ADMIN_PROXY_TOKEN is unset or wrong.
+			header_up X-App-Client-IP {remote_host}
+			header_up X-App-Proxy-Token {$ADMIN_PROXY_TOKEN}
+		}
+	}
+	handle {
+		root * /srv/admin-ui
+		# Never cache HTML: the entry documents carry the asset versions.
+		@html path *.html
+		header @html Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
 }

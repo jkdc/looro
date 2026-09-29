@@ -1,5 +1,11 @@
 # Android release progress
 
+> **Update, 18 September 2026:** the v4 record below is historical. The
+> `feature/switchable-conversation-engine` branch now carries versionCode 7
+> (previews v5–v7 were prepared on main), and build-time conversation-engine
+> selection (`openai`/`deepseek`/`glm`; the on-device engine was removed)
+> changed the build since v4. The checklist below is preserved unchanged.
+
 Updated 14 September 2026. PR #17, which integrates the Android contribution from PR #9, merged into main as `1c175af` after all checks passed. The owner approved submitting a free-trial/personal-key preview while paid work continues. Version 4 is uploaded and saved in a Google Play production draft; it has **not been submitted for review or published**. Hosted guest conversations and optional AI-output reporting are active; paid access and checkout remain disabled.
 
 ## Verified work

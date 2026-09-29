@@ -6,32 +6,49 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
-val muralLocal = Properties().apply {
+val appLocal = Properties().apply {
     rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
 }
-fun muralConfiguration(name: String): String = providers.gradleProperty(name).orNull ?: muralLocal.getProperty(name, "")
+// Single source of brand identity: branding.properties at the repo root.
+val branding = Properties().apply {
+    rootProject.file("../../branding.properties").inputStream().use { load(it) }
+}
+fun appConfiguration(name: String): String = providers.gradleProperty(name).orNull ?: appLocal.getProperty(name, "")
 fun buildString(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "").replace("\r", "") + "\""
-val muralMinutePurchases = muralConfiguration("mural.minutePurchasesEnabled").ifBlank { "false" }
-val muralPurchaseChannel = muralConfiguration("mural.purchaseChannel").ifBlank { "play" }
-require(muralPurchaseChannel in listOf("play", "stripe")) { "mural.purchaseChannel must be play or stripe" }
-val muralMinuteEnvironment = muralConfiguration("mural.minutePurchaseEnvironment").ifBlank { "test" }
-require(muralMinutePurchases in listOf("false", "true")) { "mural.minutePurchasesEnabled must be false or true" }
-require(muralMinuteEnvironment in listOf("test", "live")) { "mural.minutePurchaseEnvironment must be test or live" }
+val appMinutePurchases = appConfiguration("app.minutePurchasesEnabled").ifBlank { "false" }
+val appPurchaseChannel = appConfiguration("app.purchaseChannel").ifBlank { "play" }
+require(appPurchaseChannel in listOf("play", "stripe")) { "app.purchaseChannel must be play or stripe" }
+val appMinuteEnvironment = appConfiguration("app.minutePurchaseEnvironment").ifBlank { "test" }
+require(appMinutePurchases in listOf("false", "true")) { "app.minutePurchasesEnabled must be false or true" }
+require(appMinuteEnvironment in listOf("test", "live")) { "app.minutePurchaseEnvironment must be test or live" }
+
+// Conversation engine selection: -Papp.conversationEngine > local.properties > APP_CONVERSATION_ENGINE env > openai.
+val appConversationEngine = (
+    providers.gradleProperty("app.conversationEngine").orNull
+        ?: appLocal.getProperty("app.conversationEngine")
+        ?: System.getenv("APP_CONVERSATION_ENGINE")
+        ?: "openai"
+    ).trim().lowercase()
+val validConversationEngines = listOf("openai", "deepseek", "glm")
+require(appConversationEngine in validConversationEngines) {
+    "app.conversationEngine must be one of $validConversationEngines (got '$appConversationEngine')"
+}
 android {
-    namespace = "chat.mural"
+    namespace = branding.getProperty("ANDROID_NAMESPACE")
     compileSdk = 36
     defaultConfig {
-        applicationId = "chat.mural.android"
+        applicationId = branding.getProperty("ANDROID_APPLICATION_ID")
         minSdk = 26
         targetSdk = 36
         versionCode = 7
         versionName = "0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "MANAGED_API_ORIGIN", buildString(muralConfiguration("mural.apiOrigin")))
-        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", buildString(muralConfiguration("mural.googleServerClientID")))
-        buildConfigField("boolean", "MINUTE_PURCHASES_ENABLED", muralMinutePurchases)
-        buildConfigField("String", "PURCHASE_CHANNEL", buildString(muralPurchaseChannel))
-        buildConfigField("String", "MINUTE_PURCHASE_ENVIRONMENT", buildString(muralMinuteEnvironment))
+        buildConfigField("String", "MANAGED_API_ORIGIN", buildString(appConfiguration("app.apiOrigin")))
+        buildConfigField("String", "GOOGLE_SERVER_CLIENT_ID", buildString(appConfiguration("app.googleServerClientID")))
+        buildConfigField("boolean", "MINUTE_PURCHASES_ENABLED", appMinutePurchases)
+        buildConfigField("String", "PURCHASE_CHANNEL", buildString(appPurchaseChannel))
+        buildConfigField("String", "MINUTE_PURCHASE_ENVIRONMENT", buildString(appMinuteEnvironment))
+        buildConfigField("String", "CONVERSATION_ENGINE", buildString(appConversationEngine))
     }
     // A personal installation can preserve its local signing identity across SDK resets.
     // This file is ignored by Git; clean checkouts use Android's standard debug key.
@@ -66,6 +83,7 @@ tasks.withType<Test>().configureEach {
 }
 dependencies {
     implementation("androidx.core:core-ktx:1.16.0")
+    implementation(project(":core:engine-local"))
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.0")
@@ -89,6 +107,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     "uiTestImplementation"("androidx.compose.ui:ui-test-manifest")
 }

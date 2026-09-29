@@ -1,6 +1,9 @@
 [extend]
 useDefault = true
 
+# This `generic-api-key` block does NOT redefine the built-in default rule: a
+# rule entry without a `regex` only EXTENDS the gitleaks default rule with the
+# allowlist below (verified empirically with gitleaks 8.30.1).
 [[rules]]
 id = "generic-api-key"
 

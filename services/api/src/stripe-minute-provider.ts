@@ -4,6 +4,10 @@ import { ServiceError } from './errors.js';
 import type { PurchaseEnvironment, VerifiedMinutePurchase } from './minute-purchases.js';
 import { loadProviderOrder, MinuteReceiptVault, providerHash, type MinuteDeliveryAdapter } from './minute-provider-delivery.js';
 
+export const STRIPE_MINUTES_WEBHOOK_PATH = '/v1/webhooks/stripe/minutes';
+/** Routes admit up to this ceiling so the signed-bytes verifier, not transport, rejects beyond it. */
+export const STRIPE_WEBHOOK_BODY_LIMIT = 524_288;
+
 /** Narrow transport boundary keeps contract tests offline while production uses the official SDK. */
 export interface StripeMinuteTransport {
   account(): Promise<{ id: string }>;
@@ -104,7 +108,7 @@ export class StripeMinuteProvider implements MinuteDeliveryAdapter {
   }
   #sessionMatches(session: Stripe.Checkout.Session, order: any, managed: boolean): { gross: number; tax: number } {
     if (!stripeID(session.id, 'cs') || session.livemode !== (this.environment === 'live') || session.mode !== 'payment' ||
-      session.client_reference_id !== order.id || session.metadata?.mural_minute_order !== order.id || session.currency !== order.currency ||
+      session.client_reference_id !== order.id || session.metadata?.app_minute_order !== order.id || session.currency !== order.currency ||
       (managed ? session.managed_payments?.enabled !== true : (session.managed_payments != null && session.managed_payments.enabled !== false)))
       throw new ServiceError('stripe_minute_payment_mismatch', 409);
     const base = Number(order.total_minor);
@@ -146,11 +150,11 @@ export class StripeMinuteProvider implements MinuteDeliveryAdapter {
       const safe = (await this.db.query("SELECT 1 FROM minute_stripe_checkout_attempts WHERE order_id=$1 AND started_at>now()-interval '23 hours'", [order.id])).rowCount;
       if (!safe) throw new ServiceError('checkout_reconciliation_required', 409);
       session = await this.transport.create({ mode: 'payment', client_reference_id: order.id,
-        metadata: { mural_minute_order: order.id }, payment_intent_data: { metadata: { mural_minute_order: order.id } },
+        metadata: { app_minute_order: order.id }, payment_intent_data: { metadata: { app_minute_order: order.id } },
         line_items: [{ price: order.provider_product, quantity: 1 }], allow_promotion_codes: false,
         ...(managed ? { managed_payments: { enabled: true } } : { adaptive_pricing: { enabled: false }, automatic_tax: { enabled: false } }),
         success_url: `${this.#origin}/payment-return?status=success`, cancel_url: `${this.#origin}/payment-return?status=cancelled` },
-      `mural-minute-checkout-${order.id}`);
+      `app-minute-checkout-${order.id}`);
     }
     this.#sessionMatches(session, order, managed);
     // Never return a payable URL until its receipt and retry job are durable.
@@ -162,7 +166,7 @@ export class StripeMinuteProvider implements MinuteDeliveryAdapter {
     return { orderID: order.id, checkoutURL: url.href };
   }
   async #webhookSession(input: any): Promise<string> {
-    if (!Buffer.isBuffer(input.raw) || input.raw.length > 524_288 || typeof input.signature !== 'string' || input.signature.length > 1024)
+    if (!Buffer.isBuffer(input.raw) || input.raw.length > STRIPE_WEBHOOK_BODY_LIMIT || typeof input.signature !== 'string' || input.signature.length > 1024)
       throw new ServiceError('invalid_webhook_signature');
     let event: Stripe.Event;
     try { event = this.transport.verifyEvent(input.raw, input.signature); } catch { throw new ServiceError('invalid_webhook_signature'); }
@@ -210,7 +214,7 @@ export class StripeMinuteProvider implements MinuteDeliveryAdapter {
         intent.currency !== order.currency || intent.amount_received !== gross ||
         (managed && (intent.managed_payments?.enabled !== true || intent.amount !== gross)) ||
         (!managed && intent.managed_payments != null && intent.managed_payments.enabled !== false) ||
-        intent.metadata.mural_minute_order !== order.id || !stripeChargeID(objectID(intent.latest_charge)))
+        intent.metadata.app_minute_order !== order.id || !stripeChargeID(objectID(intent.latest_charge)))
         throw new ServiceError('stripe_payment_not_reconciled', 409);
       const charge = await this.transport.charge(objectID(intent.latest_charge)!);
       if (charge.id !== objectID(intent.latest_charge) || charge.status !== 'succeeded' || objectID(charge.payment_intent) !== intentID || charge.livemode !== (this.environment === 'live') || !charge.paid || !charge.captured ||

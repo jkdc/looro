@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          submodules: recursive
       - name: Test release validator
         run: python3 -m unittest scripts.tests.test_check_android_release -v
       - name: Validate listing copy and available store assets
@@ -36,6 +37,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          submodules: recursive
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
@@ -44,18 +46,18 @@ jobs:
         run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
       - name: Test, lint and build Android
         working-directory: apps/android
-        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleUiTestAndroidTest :app:bundleRelease
+        run: ./gradlew --no-daemon :app:testDebugUnitTest :core:engine-local:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleUiTestAndroidTest :app:bundleRelease
       - name: Inspect unsigned release bundle and native library layout
         run: python3 scripts/check_android_release.py --aab apps/android/app/build/outputs/bundle/release/app-release.aab --output /tmp/android-release-native-checks.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: mural-android-debug
+          name: app-android-debug
           path: apps/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
-          name: mural-android-unsigned-bundle
+          name: app-android-unsigned-bundle
           path: |
             apps/android/app/build/outputs/bundle/release/app-release.aab
             /tmp/android-release-native-checks.json
@@ -74,6 +76,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          submodules: recursive
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin

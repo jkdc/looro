@@ -1,0 +1,263 @@
+{
+  "id": "fr-foundations",
+  "languageID": "fr",
+  "title": "Foundations",
+  "subtitle": "Start from zero",
+  "symbol": "graduationcap",
+  "description": "Your first real French: the structures every sentence uses, practised out loud in small conversations.",
+  "units": [
+    {
+      "id": "fr-foundations-u1",
+      "title": "First sentences",
+      "subtitle": "Say who you are",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "lang-exchange",
+          "title": "Language-exchange café",
+          "subtitle": "Meet and greet",
+          "symbol": "person.2",
+          "category": "Course",
+          "situation": "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.",
+          "colorIndex": 0
+        },
+        {
+          "id": "introductions",
+          "title": "Nice to meet you",
+          "subtitle": "Start somewhere small",
+          "symbol": "hand.wave",
+          "category": "Connection",
+          "situation": "Meet the learner for the first time. Learn their interests through natural introductions.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u1-etre",
+          "title": "The verb “être”",
+          "goal": "Introduce yourself and say who people are with je suis, tu es, il est, nous sommes, vous êtes, ils sont.",
+          "intro": {
+            "explanation": [
+              "Every French sentence needs a subject and a verb. The verb for saying who you are is “être”.",
+              "Six forms, one per subject: je suis, tu es, il/elle est, nous sommes, vous êtes, ils/elles sont. French never drops the subject: say “Je suis”, not just “Suis”.",
+              "Use être for identity and origin: “Je suis Ana”, “Je suis de France”, “Il est professeur”. Put “de” after a city: “Je suis de Lyon”."
+            ],
+            "examples": [
+              { "text": "Je suis Ana. Je suis de France.", "meaning": "Your name and country." },
+              { "text": "Tu es mon meilleur ami.", "meaning": "A close bond with someone." },
+              { "text": "Elle est professeure.", "meaning": "Someone's profession." },
+              { "text": "Nous sommes très contents aujourd'hui.", "meaning": "A feeling that defines right now." },
+              { "text": "Le café est près de la gare.", "meaning": "Where a place is." },
+              { "text": "Ils sont de Paris.", "meaning": "Someone's origin." }
+            ]
+          },
+          "expressions": [
+            { "text": "Je suis …", "meaning": "Introduce yourself.", "note": "With your name or job: Je suis Ana. Je suis professeure." },
+            { "text": "Je suis de …", "meaning": "Say where you come from.", "note": "Never “Je suis France” — the de is obligatory: Je suis de France." },
+            { "text": "Tu es … ?", "meaning": "Ask about the other person.", "note": "Tu es étudiant ? Tu es d'ici ?" },
+            { "text": "Oui, je le suis. / Non, pas du tout.", "meaning": "Short answers to a Tu es… ? question.", "note": "Repeat the verb through le." },
+            { "text": "Il est / Elle est …", "meaning": "Say what someone else is.", "note": "Elle est médecin — jobs often drop the article." },
+            { "text": "Enchanté(e).", "meaning": "The fixed phrase when you meet someone.", "note": "Add -e if you are a woman: Enchantée." }
+          ],
+          "situation": "You meet someone new at a friendly language-exchange café in Lyon. Introduce yourselves and ask simple questions with the verb être.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Bonjour ! Je suis Ana. Comment tu t'appelles ?",
+                "expected": ["Je m'appelle <name>.", "Moi, c'est <name>."],
+                "focus": "Je m'appelle / Moi, c'est",
+                "watch": "Answering only the name: accept it, then recast “Je m'appelle …”."
+              },
+              {
+                "prompt": "Tu es de quelle ville ?",
+                "expected": ["Je suis de <city>.", "Je viens de <city>."],
+                "focus": "être + de",
+                "watch": "“Je suis Lyon” — recast “Je suis DE Lyon”."
+              },
+              {
+                "prompt": "Tu es étudiant ?",
+                "expected": ["Oui, je le suis.", "Non, je ne le suis pas."],
+                "focus": "short answers with être",
+                "watch": "One-word “Oui” — recast with the verb."
+              },
+              {
+                "prompt": "Comment ça va, aujourd'hui ?",
+                "expected": ["Ça va bien.", "Je suis fatigué.", "Je suis content."],
+                "focus": "être for feelings",
+                "watch": "“Je vais content” mixes verbs — recast with Je suis."
+              },
+              {
+                "prompt": "Ta ville, elle est grande ou petite ?",
+                "expected": ["Elle est grande.", "Elle est petite.", "Ma ville est …"],
+                "focus": "est with places",
+                "watch": "“Ma ville grande” — recast “Ma ville EST grande”."
+              },
+              {
+                "prompt": "On est amis maintenant ! Ta famille est de où ?",
+                "expected": ["Elle est de <country>.", "Ma famille est de <country>."],
+                "focus": "est for a group's origin",
+                "watch": "“Ma famille de …” — recast with est."
+              }
+            ]
+          },
+          "exercises": [
+            {"id": "fr-foundations-u1-etre-e1", "kind": "choice", "prompt": "Elle ___ professeure.", "options": ["est", "es", "suis", "sommes"], "answers": ["est"], "explain": "With il/elle, être becomes est."},
+            {"id": "fr-foundations-u1-etre-e2", "kind": "gap", "prompt": "Nous ___ de Lyon.", "answers": ["sommes"], "explain": "With nous, être is toujours sommes."},
+            {"id": "fr-foundations-u1-etre-e3", "kind": "order", "prompt": "Say where you are from.", "answers": ["Je suis de France"], "explain": "Je suis + de + country: Je suis de France."},
+            {"id": "fr-foundations-u1-etre-e4", "kind": "written", "prompt": "Introduce yourself in one sentence: say your name.", "answers": ["Je m'appelle <name>", "Je suis <name>", "Moi c'est <name>"], "explain": "Je m'appelle Ana / Je suis Ana — the subject is never dropped."}
+          ]
+        },
+        {
+          "id": "fr-foundations-u1-questions",
+          "title": "Questions & negatives",
+          "goal": "Ask yes/no questions and say what is not true, with Tu es… ? and je ne suis pas.",
+          "intro": {
+            "explanation": [
+              "Spoken French asks yes/no questions with rising intonation: “Tu es fatigué ?” The formal way adds est-ce que: “Est-ce que tu es fatigué ?”",
+              "To negate, wrap the verb: ne + verb + pas. With être: “Je ne suis pas fatigué”, “Il n'est pas professeur” — ne becomes n' before a vowel.",
+              "Question words go first: “Où es-tu ?”, “Qu'est-ce que c'est ?” — and they always carry their accents."
+            ],
+            "examples": [
+              { "text": "Tu es professeure ?", "meaning": "A yes/no question with es." },
+              { "text": "Je ne suis pas de Paris.", "meaning": "A negative with suis." },
+              { "text": "Où es-tu ?", "meaning": "Question word + es." },
+              { "text": "Il n'est pas mon frère.", "meaning": "A negative about another person." },
+              { "text": "Vous êtes voisins ?", "meaning": "Asking a group." },
+              { "text": "Qu'est-ce que c'est ?", "meaning": "What is this?" }
+            ]
+          },
+          "expressions": [
+            { "text": "Tu es … ?", "meaning": "Ask a yes/no question.", "note": "Spoken style: rising tone. Formal: Est-ce que tu es … ?" },
+            { "text": "Je ne suis pas …", "meaning": "Say what is not true about you.", "note": "ne + suis + pas wraps the verb." },
+            { "text": "Où es-tu ?", "meaning": "Ask where someone is.", "note": "Où with its accent, always." },
+            { "text": "Il n'est pas …", "meaning": "Say what someone else is not.", "note": "ne becomes n' before a vowel: n'est." },
+            { "text": "C'est ça ?", "meaning": "Tag a statement to check it.", "note": "Tu es d'ici, c'est ça ?" },
+            { "text": "Bien sûr.", "meaning": "The natural yes in talk.", "note": "Also: Exact." }
+          ],
+          "situation": "You chat with a new neighbour in the lift in Lyon. Ask simple yes/no questions and say what is and isn't true for you.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Tu es d'ici ?",
+                "expected": ["Oui, je suis d'ici.", "Non, je ne suis pas d'ici."],
+                "focus": "short answers",
+                "watch": "One-word “Oui” — recast with the verb: Oui, je suis d'ici."
+              },
+              {
+                "prompt": "Tu es professeur ou étudiant ?",
+                "expected": ["Je suis professeur.", "Je suis étudiant.", "Je suis professeure."],
+                "focus": "choice with être",
+                "watch": "Accept either; note the article stays dropped."
+              },
+              {
+                "prompt": "Ta famille est grande ?",
+                "expected": ["Oui, elle est grande.", "Non, elle n'est pas grande."],
+                "focus": "est in questions about others",
+                "watch": "“Elle n'est pas grande” — n' before est."
+              },
+              {
+                "prompt": "Tu es de où, toi ?",
+                "expected": ["Je suis de <country>.", "Je viens de <country>."],
+                "focus": "où + es",
+                "watch": "“Je suis à France” — recast with de: Je suis DE France."
+              },
+              {
+                "prompt": "Dis-moi quelque chose que tu n'es pas.",
+                "expected": ["Je ne suis pas <job>.", "Je ne suis pas de <country>."],
+                "focus": "negation ne…pas",
+                "watch": "Both parts needed: ne before, pas after."
+              },
+              {
+                "prompt": "On est amis maintenant ?",
+                "expected": ["Oui, on est amis.", "Bien sûr, on est amis."],
+                "focus": "on est",
+                "watch": "“On sommes” doesn't exist — on always takes est."
+              }
+            ]
+          },
+          "exercises": [
+            {"id": "fr-foundations-u1-questions-e1", "kind": "choice", "prompt": "¿ ___ tu de Marseille ?", "options": ["Es", "Est", "Suis", "Êtes"], "answers": ["Es"], "explain": "With tu, the question starts with Es: Tu es de… ?"},
+            {"id": "fr-foundations-u1-questions-e2", "kind": "gap", "prompt": "Elle ___ pas ma sœur.", "answers": ["n'est"], "explain": "ne + est → n'est pas: n' before the vowel."},
+            {"id": "fr-foundations-u1-questions-e3", "kind": "order", "prompt": "Say you are not from Nantes.", "answers": ["Je ne suis pas de Nantes"], "explain": "ne + suis + pas wraps the verb."},
+            {"id": "fr-foundations-u1-questions-e4", "kind": "written", "prompt": "Make it negative: \"Je suis de Bordeaux.\"", "answers": ["Je ne suis pas de Bordeaux"], "explain": "ne…pas around suis: Je ne suis pas de Bordeaux."}
+          ]
+        },
+        {
+          "id": "fr-foundations-u1-introduce",
+          "title": "Introducing yourself",
+          "goal": "Give a complete self-introduction: name, city, nationality and job.",
+          "intro": {
+            "explanation": [
+              "A full French introduction has four pieces: your name, your city, your nationality and your job.",
+              "For the name: “Je m'appelle Ana” or “Moi, c'est Ana”. For origin: “Je suis de Lyon”. Nationalities are lower-case: “je suis française”.",
+              "Jobs with être usually drop the article: “Je suis professeure”. Close with “Enchantée” and bounce the question back with “Et toi ?”"
+            ],
+            "examples": [
+              { "text": "Je m'appelle Ana. Enchantée.", "meaning": "Your name plus a polite close." },
+              { "text": "Je suis de Lyon, dans le sud-est.", "meaning": "City inside country." },
+              { "text": "Je suis française, de la région Rhône.", "meaning": "Nationality plus region." },
+              { "text": "Je suis infirmière à l'hôpital.", "meaning": "Job plus workplace." },
+              { "text": "J'ai vingt-cinq ans.", "meaning": "Your age — with avoir, not être." },
+              { "text": "Et toi ? Tu fais quoi ?", "meaning": "Bounce the question back." }
+            ]
+          },
+          "expressions": [
+            { "text": "Je m'appelle …", "meaning": "Give your name.", "note": "Literally “I call myself”. Also: Moi, c'est …" },
+            { "text": "Je suis + nationality", "meaning": "Say your nationality.", "note": "française, allemande, italienne — lower-case in French." },
+            { "text": "Je suis de …", "meaning": "Say your city or country.", "note": "Je suis de Lyon; Je suis de France." },
+            { "text": "Je travaille à …", "meaning": "Say where you work.", "note": "Je travaille à l'hôpital / dans une école." },
+            { "text": "Enchanté(e).", "meaning": "Polite close when you meet someone.", "note": "Answer: Moi aussi." },
+            { "text": "Et toi ?", "meaning": "Bounce the question back.", "note": "—Je suis de Lyon. Et toi ?" }
+          ],
+          "situation": "Your first day at a language school in Lyon. Present yourself completely to the class: name, city, nationality and job.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Comment tu t'appelles ?",
+                "expected": ["Je m'appelle <name>.", "Moi, c'est <name>."],
+                "focus": "name formulas",
+                "watch": "Both are fine; recast the shorter one as Je m'appelle for variety."
+              },
+              {
+                "prompt": "Tu viens d'où ?",
+                "expected": ["Je viens de <country>.", "Je suis de <country>."],
+                "focus": "origin",
+                "watch": "Never drop de: Je viens DE <country>."
+              },
+              {
+                "prompt": "Tu es de quelle nationalité ?",
+                "expected": ["Je suis <nationality>."],
+                "focus": "nationality with être",
+                "watch": "Lower-case: je suis française, not Française."
+              },
+              {
+                "prompt": "Tu fais quoi dans la vie ?",
+                "expected": ["Je suis <job>.", "Je travaille comme <job>."],
+                "focus": "jobs without article",
+                "watch": "“Je suis une professeure” — recast dropping the article."
+              },
+              {
+                "prompt": "Et tu habites où ?",
+                "expected": ["J'habite à <city>."],
+                "focus": "j'habite à",
+                "watch": "“J'habite à Lyon” — à for cities."
+              },
+              {
+                "prompt": "Enchanté ! Et toi, tu fais quoi ?",
+                "expected": ["Je suis <job>."],
+                "focus": "bounce back and answer",
+                "watch": "Recast with Je suis + job."
+              }
+            ]
+          },
+          "exercises": [
+            {"id": "fr-foundations-u1-introduce-e1", "kind": "choice", "prompt": "___ Ana. Enchantée.", "options": ["Je m'appelle", "Je m'appelle de", "J'appelle", "Je suis de"], "answers": ["Je m'appelle"], "explain": "Je m'appelle + name: one piece, no de."},
+            {"id": "fr-foundations-u1-introduce-e2", "kind": "gap", "prompt": "Je suis ___ Italie. (nationality)", "answers": ["italienne"], "explain": "Nationality is lower-case: italienne, italien."},
+            {"id": "fr-foundations-u1-introduce-e3", "kind": "order", "prompt": "Say your name and city.", "answers": ["Je suis Ana et je suis de Lyon"], "explain": "Two suis pieces, each with its subject."},
+            {"id": "fr-foundations-u1-introduce-e4", "kind": "written", "prompt": "Give your complete introduction: name and country.", "answers": ["Je m'appelle <name> et je suis de <country>", "Je suis <name> et je suis de <country>"], "explain": "Name + origin, each with its subject."}
+          ]
+        }
+      ]
+    }
+  ]
+}

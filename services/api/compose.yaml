@@ -2,13 +2,13 @@ services:
   database:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: mural
-      POSTGRES_USER: mural
+      POSTGRES_DB: app
+      POSTGRES_USER: app
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a unique database password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U mural -d mural"]
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -16,7 +16,7 @@ services:
   migrate:
     build: .
     environment:
-      DATABASE_URL: postgresql://mural:${POSTGRES_PASSWORD}@database:5432/mural
+      DATABASE_URL: postgresql://app:${POSTGRES_PASSWORD}@database:5432/app
     command: ["node", "dist/src/migrate.js"]
     depends_on:
       database:
@@ -24,9 +24,16 @@ services:
   api:
     build: .
     environment:
-      DATABASE_URL: postgresql://mural:${POSTGRES_PASSWORD}@database:5432/mural
+      DATABASE_URL: postgresql://app:${POSTGRES_PASSWORD}@database:5432/app
       PUBLIC_ORIGIN: https://${API_DOMAIN:?Set the API domain}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      # Accounts admission (trusted-proxy caps for sign-in and account routes).
+      ACCOUNTS_HMAC_KEY: ${ACCOUNTS_HMAC_KEY:-}
+      ACCOUNTS_PROXY_TOKEN: ${ACCOUNTS_PROXY_TOKEN:-}
+      # Token billing proxy (token-billing F2): disabled unless a provider is set.
+      PROXY_PROVIDER_URL: ${PROXY_PROVIDER_URL:-}
+      PROXY_PROVIDER_KEY: ${PROXY_PROVIDER_KEY:-}
+      PROXY_MAX_TOKENS: ${PROXY_MAX_TOKENS:-}
       GOOGLE_ANDROID_SERVER_CLIENT_ID: ${GOOGLE_ANDROID_SERVER_CLIENT_ID:-}
       GOOGLE_ANDROID_CLIENT_IDS: ${GOOGLE_ANDROID_CLIENT_IDS:-}
       APPLE_CLIENT_ID: ${APPLE_CLIENT_ID:-}
@@ -36,6 +43,20 @@ services:
       STRIPE_TEST_PRICE_25_USD: ${STRIPE_TEST_PRICE_25_USD:-}
       STRIPE_TEST_PAYMENT_FEE_10_MINOR: ${STRIPE_TEST_PAYMENT_FEE_10_MINOR:-}
       STRIPE_TEST_PAYMENT_FEE_25_MINOR: ${STRIPE_TEST_PAYMENT_FEE_25_MINOR:-}
+      # Admin panel (docs/admin-panel.md): local operator credentials only;
+      # disabled unless the HMAC/proxy secrets and origin are supplied.
+      ADMIN_HMAC_KEY: ${ADMIN_HMAC_KEY:-}
+      ADMIN_PROXY_TOKEN: ${ADMIN_PROXY_TOKEN:-}
+      ADMIN_PUBLIC_ORIGIN: ${ADMIN_PUBLIC_ORIGIN:-}
+      ADMIN_ALLOW_LOCAL_LOOPBACK: ${ADMIN_ALLOW_LOCAL_LOOPBACK:-false}
+      # Hosted voice passthrough (experimental; docs/hosted-helpers.md).
+      HOSTED_VOICE_EXPERIMENTAL: ${HOSTED_VOICE_EXPERIMENTAL:-false}
+      HOSTED_VOICE_ACCESS: ${HOSTED_VOICE_ACCESS:-restricted-test}
+      HOSTED_VOICE_BILLING_UNIT: ${HOSTED_VOICE_BILLING_UNIT:-nanoUSD}
+      HOSTED_VOICE_ACCOUNT_ALLOWLIST: ${HOSTED_VOICE_ACCOUNT_ALLOWLIST:-}
+      HOSTED_VOICE_LIFETIME_CAP_NANO: ${HOSTED_VOICE_LIFETIME_CAP_NANO:-0}
+      HOSTED_HELPERS_EXPERIMENTAL: ${HOSTED_HELPERS_EXPERIMENTAL:-false}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -48,9 +69,15 @@ services:
     image: caddy:2-alpine
     environment:
       API_DOMAIN: ${API_DOMAIN}
+      # Without the panel's DNS record the site binds admin.localhost with an internal cert,
+      # so the deployment still boots; set ADMIN_DOMAIN to enable the panel for real.
+      ADMIN_DOMAIN: ${ADMIN_DOMAIN:-admin.localhost}
+      # Trusted-proxy secret for /v1/admin/* (header_up); empty keeps the API failing closed.
+      ADMIN_PROXY_TOKEN: ${ADMIN_PROXY_TOKEN:-}
     ports: ["80:80", "443:443", "443:443/udp"]
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./admin-ui:/srv/admin-ui:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on: [api]

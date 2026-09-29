@@ -1,12 +1,12 @@
 import Foundation
 import Security
 import CryptoKit
-import MuralCore
+import LearningCore
 
 extension ManagedAccountConfiguration {
-    /// These keys contain public client IDs, never OAuth secrets or Mural bearer tokens.
+    /// These keys contain public client IDs, never OAuth secrets or Palique bearer tokens.
     static func load(bundle: Bundle = .main) -> Self? {
-        #if MURAL_SIGN_IN_WITH_APPLE
+        #if APP_SIGN_IN_WITH_APPLE
         let appleCapabilityEnabled = true
         #else
         let appleCapabilityEnabled = false
@@ -15,13 +15,13 @@ extension ManagedAccountConfiguration {
             let value = bundle.object(forInfoDictionaryKey: key)
             return value as? Bool == true || (value as? String)?.uppercased() == "YES"
         }
-        guard enabled("MuralManagedAccountsEnabled"),
-              let api = bundle.object(forInfoDictionaryKey: "MuralManagedAPIURL") as? String,
+        guard enabled("AppManagedAccountsEnabled"),
+              let api = bundle.object(forInfoDictionaryKey: "AppManagedAPIURL") as? String,
               let bundleID = bundle.bundleIdentifier else { return nil }
-        let google = enabled("MuralGoogleSignInEnabled")
-            ? bundle.object(forInfoDictionaryKey: "MuralGoogleClientID") as? String : nil
-        let apple = enabled("MuralAppleSignInEnabled") && appleCapabilityEnabled
-            ? bundle.object(forInfoDictionaryKey: "MuralAppleClientID") as? String : nil
+        let google = enabled("AppGoogleSignInEnabled")
+            ? bundle.object(forInfoDictionaryKey: "AppGoogleClientID") as? String : nil
+        let apple = enabled("AppAppleSignInEnabled") && appleCapabilityEnabled
+            ? bundle.object(forInfoDictionaryKey: "AppAppleClientID") as? String : nil
         let schemes = (bundle.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]] ?? [])
             .flatMap { $0["CFBundleURLSchemes"] as? [String] ?? [] }
         return try? Self(apiURL: api, googleClientID: google, appleClientID: apple,
@@ -42,17 +42,17 @@ final class ManagedAccountHTTP: NSObject, URLSessionTaskDelegate, @unchecked Sen
                     newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         completionHandler(nil)
     }
-    func send(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+    func send(_ request: URLRequest, limit: Int = 65_536) async throws -> (Data, HTTPURLResponse) {
         let session = makeSession()
         defer { session.invalidateAndCancel() }
         do {
             let (bytes, response) = try await session.bytes(for: request)
             guard let http = response as? HTTPURLResponse,
-                  response.url == request.url, response.expectedContentLength <= 65_536
+                  response.url == request.url, response.expectedContentLength <= limit
             else { throw ManagedAccountError.invalidResponse }
             var data = Data()
             for try await byte in bytes {
-                guard data.count < 65_536 else { throw ManagedAccountError.invalidResponse }
+                guard data.count < limit else { throw ManagedAccountError.invalidResponse }
                 data.append(byte)
             }
             return (data, http)
@@ -132,7 +132,7 @@ struct ManagedAccountKeychain {
     init(scope: String) { self.scope = scope }
     private var query: [String: Any] {
         [kSecClass as String: kSecClassGenericPassword,
-         kSecAttrService as String: "chat.mural.managed-account",
+         kSecAttrService as String: "com.jkdc.app.managed-account",
          kSecAttrAccount as String: Data(SHA256.hash(data: Data(scope.utf8))).base64EncodedString(),
          kSecAttrSynchronizable as String: false]
     }

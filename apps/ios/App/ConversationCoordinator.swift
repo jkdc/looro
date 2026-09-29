@@ -3,13 +3,69 @@ import Observation
 import NaturalLanguage
 import AVFoundation
 import UIKit
-import MuralCore
+import LearningCore
 
 @MainActor @Observable final class ConversationCoordinator {
     let store: LearningStore
     private(set) var state: ConnectionState = .idle
     private(set) var session: SessionRecord?
     var selectedTheme: ConversationTheme?
+    var selectedLesson: Lesson?
+    enum ConversationProvider { case personalKey, hostedMinutes }
+    private(set) var activeProvider: ConversationProvider = .personalKey
+    private var hostedSessionID: String?
+    private var hostedSessionToken: ManagedAccountSession?
+    private var managed: (client: ManagedAccountClient, configuration: ManagedAccountConfiguration)?
+    /// Content-free usage telemetry (LearningCore.UsageMetrics). Sends only with a
+    /// live managed bearer; otherwise events stay queued until the next flush.
+    private lazy var usageReporter = UsageReporter(platform: "ios",
+        appVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "",
+        send: { [weak self] batch, _ in
+            guard let configuration = self?.managed?.configuration,
+                  let client = UsageClient(configuration: configuration),
+                  let bearer = try? ManagedAccountKeychain(scope: configuration.storageScope).load()?.accessToken
+            else { return false }
+            return await client.send(batch, bearer: bearer)
+        })
+
+    /// Recomputes the metrics switch after every preferences change.
+    private func refreshUsageEnabled() {
+        usageReporter.enabled = store.preferences.usageMetricsEnabled != false && managed != nil
+    }
+
+    /// Push/pull the progress ledger against the account (guests included). Failures
+    /// are silent: sync must never nag, the local ledger stays the source of truth.
+    func syncProgress() {
+        guard let configuration = managed?.configuration,
+              let client = ProgressClient(configuration: configuration),
+              let bearer = try? ManagedAccountKeychain(scope: configuration.storageScope).load()?.accessToken
+        else { return }
+        Task { [weak self] in
+            guard let self else { return }
+            if let rows = await client.fetch(bearer: bearer), !rows.isEmpty {
+                self.store.applyRemoteProgress(rows)
+            }
+            let language = self.store.language.id
+            _ = await client.send(ProgressSync.entries(lessons: self.store.archive.lessons ?? [],
+                                                       completions: self.store.archive.completions ?? [],
+                                                       courses: CourseRegistry.forLanguage(language),
+                                                       listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
+                                                       languageID: language), bearer: bearer)
+        }
+    }
+
+    private func lessonCourse(_ lessonID: String) -> Course? {
+        CourseRegistry.forLanguage(language.id).first { course in
+            course.units.contains { unit in unit.lessons.contains { $0.id == lessonID } }
+        }
+    }
+    private let hostedPreferences = HostedPreferenceStore()
+    private(set) var hostedBalance: HostedMinuteBalance?
+    var hostedUIAvailable: Bool { HostedPreferenceStore.hostedFlagEnabled && managed != nil }
+    /// Hosted minutes are an explicit opt-in; the default stays the personal key.
+    var prefersHostedMinutes: Bool {
+        didSet { hostedPreferences.prefersHostedMinutes = prefersHostedMinutes }
+    }
     private(set) var inputLevel = 0.0
     private(set) var outputLevel = 0.0
     private(set) var isMuted = false
@@ -25,6 +81,7 @@ import MuralCore
     var showAIConsent = false
     private var startAfterConsent = false
     private let api: APIClient
+    private let helperRouter: HelperRouter
     private let transport = LiveTransport()
     private var connectionTask: Task<Void, Never>?
     private var assessmentTask: Task<Void, Never>?
@@ -32,7 +89,7 @@ import MuralCore
     private var closeTask: Task<Void, Never>?
     private var durationTask: Task<Void, Never>?
     private var saveTask: Task<Void, Never>?
-    private var observers: [NSObjectProtocol] = []
+    @ObservationIgnored private var observers: [NSObjectProtocol] = []
     private var lastActivity = Date()
     private var lastLanguageCheck = ""
     private var pendingCommands: [String: Date] = [:]
@@ -46,19 +103,23 @@ import MuralCore
     init(store: LearningStore) {
         self.store = store
         let api = APIClient(); self.api = api
+        let router = HelperRouter(api: api); self.helperRouter = router
+        managed = ManagedAccountConfiguration.load().map { (ManagedAccountClient(configuration: $0), $0) }
+        prefersHostedMinutes = hostedPreferences.prefersHostedMinutes
         finalAssessments = FinalAssessmentQueue { snapshot, passage in
             guard store.preferences.aiConsentVersion == AIProcessingConsent.version || AudioVerification.requested else { throw AIProcessingConsent.ConsentError.required }
-            return try await Self.assess(api: api, snapshot: snapshot, passage: passage)
+            return try await Self.assess(router: router, snapshot: snapshot, passage: passage)
         }
         meanings = MeaningController { request in
             guard store.preferences.aiConsentVersion == AIProcessingConsent.version || AudioVerification.requested else { throw AIProcessingConsent.ConsentError.required }
             guard let language = LanguageRegistry.module(for: request.learningLanguageID) else { throw ArchiveError.unsupportedLanguage }
-            let result = try await api.respond(instructions: TeachingPolicy.translation(language: language, meaningLanguage: request.meaningLanguage), input: String(request.text.suffix(2200)))
+            let result = try await router.respond(purpose: .meaning, instructions: TeachingPolicy.translation(language: language, meaningLanguage: request.meaningLanguage), input: String(request.text.suffix(2200)))
             return MeaningResult(text: result.text, inputTokens: result.usage.input, outputTokens: result.usage.output)
         }
         meanings.onResult = { [weak self] request, result in
             guard let self, self.session?.id == request.sessionID else { return }
-            self.session?.translations[request.cacheKey] = result.text
+            // Bound replies so saved sessions always pass Archive validation.
+            self.session?.translations[request.cacheKey] = String(result.text.prefix(Archive.maximumTranslationCharacters))
             self.session?.inputTokens += result.inputTokens; self.session?.outputTokens += result.outputTokens
             self.save()
         }
@@ -79,6 +140,18 @@ import MuralCore
             guard let raw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt, raw == AVAudioSession.InterruptionType.began.rawValue else { return }
             Task { @MainActor in self?.end(reason: "Audio interrupted") }
         })
+        refreshUsageEnabled()
+        usageReporter.record(UsageEvents.appOpen)
+        Task { await usageReporter.flush() }
+        syncProgress()
+    }
+    deinit {
+        // deinit is nonisolated: observers is @ObservationIgnored so it stays a plain stored property
+        // (observable state would expose a MainActor-isolated accessor the deinit cannot call), and
+        // NotificationCenter removal is thread-safe. The MainActor-isolated transport.disconnect()
+        // still cannot be called synchronously here, so a session alive at deallocation is released
+        // by the WebRTC layer without the audio-session deactivation.
+        observers.forEach { NotificationCenter.default.removeObserver($0) }
     }
     var isRunning: Bool { state == .active || state == .connecting || state == .closing }
     var language: LanguageModule { store.language }
@@ -89,7 +162,7 @@ import MuralCore
         switch state {
         case .idle: "Ready when you are"
         case .connecting: "Getting comfortable…"
-        case .active: outputLevel > 0.02 ? "Mural is speaking" : inputLevel > 0.02 ? "I’m listening" : "Take your time"
+        case .active: outputLevel > 0.02 ? "Palique is speaking" : inputLevel > 0.02 ? "I’m listening" : "Take your time"
         case .closing: "Saving our conversation…"
         case .ended: "Until next time"
         case .failed: "Let’s try again"
@@ -108,28 +181,111 @@ import MuralCore
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--preview") { showSettings = true; return }
         #endif
-        guard CredentialStore.hasKey else { showSettings = true; return }
+        let prefersHosted = hostedUIAvailable && hostedPreferences.prefersHostedMinutes
+        if !prefersHosted, !CredentialStore.hasKey { showSettings = true; return }
         cancelReset(); meanings.reset()
         error = nil; notice = nil; lastAssessmentKey = ""
         lastLanguageCheck = ""; pendingCommands = [:]
         state = .connecting; isMuted = false
-        var record = SessionRecord(languageID: language.id, themeID: selectedTheme?.id, title: selectedTheme?.title)
+        var record = SessionRecord(languageID: language.id, themeID: selectedTheme?.id, title: selectedLesson?.title ?? selectedTheme?.title, lessonID: selectedLesson?.id)
+        if selectedLesson != nil { record.mode = "lesson" }
+        else if store.preferences.listeningPractice == true { record.mode = "listening" }
         if let pendingTopic { record.topics = [pendingTopic] }
         session = record; store.save(record)
+        usageReporter.record(UsageEvents.sessionStarted, props: [
+            "input": .string("voice"), "provider": .string(prefersHosted ? "hosted" : "byok")])
+        if let lesson = selectedLesson {
+            var lessonProps = ["lessonID": UsageProp.string(lesson.id)]
+            if let course = lessonCourse(lesson.id) { lessonProps["courseID"] = .string(course.id) }
+            usageReporter.record(UsageEvents.lessonStarted, props: lessonProps)
+        }
         let generation = record.id
         let learner = store.learner
         // Each new conversation starts fresh; learned vocabulary and difficulty still carry forward.
         let history: [[String: Any]] = []
-        let instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage)
+        let instructions: String
+        if let selectedLesson {
+            instructions = TeachingPolicy.lessonPractice(lesson: selectedLesson, language: language)
+        } else {
+            instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.effectiveSpeechRate() < 1.0)
+        }
+        let requestedMilliseconds = store.preferences.sessionMinutes * 60_000
         connectionTask = Task { [weak self] in
             guard let self else { return }
-            do { try await self.transport.connect(api: self.api, instructions: instructions, history: history) }
+            do {
+                let provider = try await self.beginProvider(prefersHosted: prefersHosted)
+                try await self.transport.connect(establish: self.establishment(provider: provider, language: self.language,
+                    instructions: instructions, history: history, requestedMilliseconds: requestedMilliseconds))
+            }
             catch is CancellationError { return }
             catch {
                 guard self.session?.id == generation, self.state == .connecting || self.state == .active else { return }
                 self.fail(error.localizedDescription)
             }
         }
+    }
+    /// Resolves the conversation provider: hosted minutes when explicitly
+    /// preferred (and available), the personal key otherwise.
+    private func beginProvider(prefersHosted: Bool) async throws -> ConversationProvider {
+        guard prefersHosted, let (client, configuration) = managed else {
+            activeProvider = .personalKey; helperRouter.clearHosted(); hostedSessionID = nil; hostedSessionToken = nil
+            return .personalKey
+        }
+        guard let token = try? ManagedAccountKeychain(scope: configuration.storageScope).load() else { throw HostedFailure.signInRequired }
+        // Settle an orphaned session from a crashed conversation before opening a new one.
+        if let orphan = try? await client.hostedCurrent(session: token), let orphan, !orphan.isClosed {
+            _ = try? await client.hostedClose(sessionID: orphan.sessionID, session: token)
+        }
+        let capabilities = try await client.hostedCapabilities(session: token)
+        guard capabilities.available else { throw HostedFailure.unavailable }
+        let balance = try await client.minutesBalance(session: token)
+        guard balance.canStartConversation else { throw HostedFailure.insufficientMinutes }
+        activeProvider = .hostedMinutes
+        hostedSessionToken = token
+        return .hostedMinutes
+    }
+    private func establishment(provider: ConversationProvider, language: LanguageModule, instructions: String,
+                               history: [[String: Any]], requestedMilliseconds: Int?)
+        -> (_ offerSDP: String) async throws -> (session: [String: Any], answer: String) {
+        guard provider == .hostedMinutes, let (client, _) = managed, let token = hostedSessionToken else {
+            activeProvider = .personalKey
+            let api = self.api
+            return { offer in
+                let result = try await api.post("live/sessions", body: [
+                    "session": ["model": "gpt-live-1", "instructions": instructions, "input": history,
+                                "store": false, "delegation": ["type": "client"], "audio": ["output": ["voice": "marin"]]],
+                    "transport": ["type": "webrtc", "sdp": offer]])
+                guard let transport = result["transport"] as? [String: Any], let answer = transport["sdp"] as? String
+                else { throw LiveTransport.TransportError.connection }
+                return (session: (result["session"] as? [String: Any]) ?? [:], answer: answer)
+            }
+        }
+        return { [weak self] offer in
+            let created = try await client.hostedCreate(sdp: offer, language: language.locale, instructions: instructions,
+                                                        history: history, requestedMilliseconds: requestedMilliseconds, session: token)
+            self?.hostedSessionID = created.sessionID
+            self?.helperRouter.useHosted(sessionID: created.sessionID, client: client, session: token)
+            return (session: ["id": created.sessionID], answer: created.answerSDP)
+        }
+    }
+    /// Close + confirm so reserved minutes are released even if the provider lags.
+    private func closeHostedSession() {
+        guard let (client, _) = managed, let token = hostedSessionToken, let sessionID = hostedSessionID else { return }
+        hostedSessionID = nil; hostedSessionToken = nil; helperRouter.clearHosted()
+        Task {
+            _ = try? await client.hostedClose(sessionID: sessionID, session: token)
+            let deadline = Date().addingTimeInterval(8)
+            while Date() < deadline {
+                guard let status = try? await client.hostedStatus(sessionID: sessionID, session: token), !status.isClosed else { break }
+                try? await Task.sleep(for: .milliseconds(500))
+            }
+        }
+    }
+    func refreshHostedBalance() async {
+        guard hostedUIAvailable, let (client, configuration) = managed,
+              let token = try? ManagedAccountKeychain(scope: configuration.storageScope).load()
+        else { hostedBalance = nil; return }
+        hostedBalance = try? await client.minutesBalance(session: token)
     }
     private var hasAIConsent: Bool {
         store.preferences.aiConsentVersion == AIProcessingConsent.version || AudioVerification.requested
@@ -150,7 +306,7 @@ import MuralCore
         connectionTask?.cancel(); closeTask?.cancel(); durationTask?.cancel()
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
         delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
-        session = nil; selectedTheme = nil; pendingTopic = nil
+        session = nil; selectedTheme = nil; selectedLesson = nil; pendingTopic = nil
         working = false; notice = nil; error = nil
         lastAssessmentKey = ""; lastLanguageCheck = ""; pendingCommands = [:]
         inputLevel = 0; outputLevel = 0; state = .idle; isMuted = false
@@ -162,9 +318,20 @@ import MuralCore
         store.updatePreferences { $0.meaningLanguage = value }
         scheduleTranslation()
     }
+    /// Marks an authored lesson as the next conversation; consent is handled by start().
+    func selectLesson(_ id: String) {
+        guard !isRunning else { return }
+        guard let lesson = CourseRegistry.forLanguage(language.id).flatMap(\.units).flatMap(\.lessons)
+            .first(where: { $0.id == id }) else { return }
+        if !isRunning, session != nil { resetConversation() }
+        selectedTheme = nil; pendingTopic = nil
+        selectedLesson = lesson
+    }
     func chooseTheme(_ theme: ConversationTheme?) {
         if !isRunning, session != nil { resetConversation() }
         selectedTheme = theme
+        selectedLesson = nil
+        if let theme { usageReporter.record(UsageEvents.themeSelected, props: ["themeID": .string(theme.id)]) }
         if theme?.id != "current" { pendingTopic = nil }
         if state == .active {
             session?.themeID = theme?.id; session?.title = theme?.title ?? language.defaultTitle
@@ -187,10 +354,16 @@ import MuralCore
         if store.preferences.meaningVisible { scheduleTranslation() }
         else { meanings.reset() }
     }
+    /// The metrics switch: nil means opted-in (default), false is the explicit opt-out.
+    func setUsageMetrics(enabled: Bool) {
+        store.updatePreferences { $0.usageMetricsEnabled = enabled ? nil : false }
+        refreshUsageEnabled()
+    }
     func help() {
         guard state == .active else { return }
+        usageReporter.record(UsageEvents.helpRequested)
         append("instructions", TeachingPolicy.help(language: language))
-        notice = "Mural will make that a little simpler."
+        notice = "Palique will make that a little simpler."
     }
     func end(reason: String = "Ended by you") {
         guard state == .active || state == .connecting else { return }
@@ -210,7 +383,7 @@ import MuralCore
     }
     func background() {
         guard isRunning else { return }
-        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Close Mural conversation") { [weak self] in
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "Close Palique conversation") { [weak self] in
             Task { @MainActor in self?.finish(final: false) }
         }
         end(reason: "App moved to background")
@@ -223,6 +396,25 @@ import MuralCore
         transport.disconnect(); pendingCommands = [:]; working = false
         session?.endedAt = .now; session?.usageFinal = final
         save(); state = .ended
+        if session?.isLesson == true, let lessonID = session?.lessonID { store.recordLessonAttempt(lessonID) }
+        else if let themeID = session?.themeID, !themeID.isEmpty { store.recordCompletion(kind: ProgressEngine.conversationTheme, itemID: themeID) }
+        if let ended = session {
+            var endedProps = [
+                "durationBucket": UsageProp.int(UsageBuckets.duration(seconds: Int(
+                    (ended.endedAt?.timeIntervalSince(ended.startedAt) ?? 0).rounded()))),
+                "turnsBucket": UsageProp.int(UsageBuckets.turns(
+                    userTurns: ended.passages.filter { $0.speaker == .user }.count))]
+            if let themeID = ended.themeID { endedProps["themeID"] = .string(themeID) }
+            usageReporter.record(UsageEvents.sessionEnded, props: endedProps)
+            if let lessonID = ended.lessonID {
+                var lessonProps = ["lessonID": UsageProp.string(lessonID)]
+                if let course = lessonCourse(lessonID) { lessonProps["courseID"] = .string(course.id) }
+                usageReporter.record(UsageEvents.lessonCompleted, props: lessonProps)
+            }
+        }
+        Task { [weak self] in await self?.usageReporter.flush() }
+        syncProgress()
+        if hostedSessionID != nil { closeHostedSession() }
         if let session { finalAssessments.submit(session) }
         scheduleTranslation(); scheduleReset()
         if !final, session?.providerID != nil { notice = "Conversation saved. Final voice usage is unconfirmed." }
@@ -253,14 +445,21 @@ import MuralCore
     private func handle(_ event: [String: Any]) {
         guard let type = event["type"] as? String, session != nil else { return }
         switch type {
-        case "mural.session.created":
-            session?.providerID = (event["session"] as? [String: Any])?["id"] as? String
-            session?.voiceSeconds = 15; save()
+        case "app.session.created":
+            session?.providerID = (event["session"] as? [String: Any])?["id"] as? String; save()
         case "session.started":
             guard state == .connecting else { return }
             state = .active; lastActivity = .now
             session?.providerID = (event["session"] as? [String: Any])?["id"] as? String
-            append("instructions", TeachingPolicy.greeting(language: language))
+            // The usage estimate is recorded only once the session truly starts, so aborted connects don't log phantom voice time.
+            session?.voiceSeconds = 15
+            if let lessonID = session?.lessonID, let lesson = CourseRegistry.lesson(id: lessonID) {
+                append("instructions", TeachingPolicy.lessonOpening(lesson: lesson, language: language))
+            } else if session?.isListening == true {
+                append("instructions", TeachingPolicy.listeningStory(language: language))
+            } else {
+                append("instructions", TeachingPolicy.greeting(language: language, theme: selectedTheme))
+            }
             startDurationChecks(); save()
         case "session.input_transcript.delta", "session.output_transcript.delta":
             guard state == .active || state == .closing, let delta = event["delta"] as? String,
@@ -281,7 +480,7 @@ import MuralCore
         case "error":
             let details = event["error"] as? [String: Any]
             if let id = details?["client_event_id"] as? String { pendingCommands.removeValue(forKey: id) }
-            notice = "A voice update was rejected. If Mural stops responding, end this conversation and start again."
+            notice = "A voice update was rejected. If Palique stops responding, end this conversation and start again."
         default:
             if type.hasSuffix(".appended"), let id = event["client_event_id"] as? String { pendingCommands.removeValue(forKey: id) }
         }
@@ -296,14 +495,14 @@ import MuralCore
                     self.notice = "You’ve reached your conversation time limit."; self.end(reason: "Time limit"); return
                 }
                 if Date().timeIntervalSince(self.lastActivity) > 120 {
-                    self.notice = "Mural ended this quiet session to avoid running up usage."; self.end(reason: "Inactivity"); return
+                    self.notice = "Palique ended this quiet session to avoid running up usage."; self.end(reason: "Inactivity"); return
                 }
                 self.pendingCommands = self.pendingCommands.filter { Date().timeIntervalSince($0.value) <= 20 }
             }
         }
     }
     private func scheduleTranslation() {
-        guard store.preferences.meaningVisible, let session, let passage = assistantPassage else { return }
+        guard store.preferences.meaningVisible, let session, let passage = assistantPassage, !session.isListening else { return }
         let request = MeaningRequest(sessionID: session.id, passage: passage, learningLanguageID: session.languageID, meaningLanguage: store.preferences.meaningLanguage)
         meanings.update(request, cached: session.translations[request.cacheKey])
     }
@@ -312,7 +511,7 @@ import MuralCore
         guard !isRunning else { return }
         cancelReset(); meanings.reset(); saveTask?.cancel(); saveTask = nil
         languageGeneration = UUID()
-        session = nil; selectedTheme = nil; pendingTopic = nil
+        session = nil; selectedTheme = nil; selectedLesson = nil; pendingTopic = nil
         notice = nil; error = nil; working = false; isMuted = false
         inputLevel = 0; outputLevel = 0; state = .idle
     }
@@ -361,9 +560,9 @@ import MuralCore
     }
     #endif
     private struct AssessmentResult: Decodable { var outcome: Outcome; var suggestedLevel: Int; var nextGoal: String; var capability: String; var words: [WordProposal] }
-    private static func assess(api: APIClient, snapshot: SessionRecord, passage: Passage) async throws -> FinalAssessmentResult {
+    private static func assess(router: HelperRouter, snapshot: SessionRecord, passage: Passage) async throws -> FinalAssessmentResult {
         guard let language = LanguageRegistry.module(for: snapshot.languageID) else { throw ArchiveError.unsupportedLanguage }
-        let result = try await api.respond(instructions: TeachingPolicy.assessment(language: language), input: TeachingPolicy.context(snapshot, passage: passage), schema: APIClient.assessmentSchema(language: language))
+        let result = try await router.respond(purpose: .assessment, instructions: TeachingPolicy.assessment(language: language), input: TeachingPolicy.context(snapshot, passage: passage), schema: APIClient.assessmentSchema(language: language))
         let decoded = try JSONDecoder().decode(AssessmentResult.self, from: Data(result.text.utf8))
         let proposed = Assessment(passageID: passage.id, revisionKey: passage.revisionKey, outcome: decoded.outcome, suggestedLevel: decoded.suggestedLevel,
                                   nextGoal: decoded.nextGoal, capability: decoded.capability, words: decoded.words, context: snapshot.themeID ?? "free")
@@ -378,7 +577,7 @@ import MuralCore
                 guard let self, let snapshot = self.session, let p = snapshot.passages.last(where: { $0.speaker == .user }), p.text.count >= 3,
                       p.revisionKey != self.lastAssessmentKey, self.state == .active else { return }
                 guard let targetLanguage = LanguageRegistry.module(for: snapshot.languageID) else { return }
-                let result = try await Self.assess(api: self.api, snapshot: snapshot, passage: p)
+                let result = try await Self.assess(router: self.helperRouter, snapshot: snapshot, passage: p)
                 guard !Task.isCancelled, self.state == .active, self.session?.id == snapshot.id, self.userPassage?.revisionKey == p.revisionKey,
                       let current = self.session else { return }
                 guard let validated = LearningEngine.validate(result.assessment, session: current) else { return }
@@ -418,11 +617,12 @@ import MuralCore
                 try await Task.sleep(for: .milliseconds(500))
                 guard self.session?.id == snapshot.id, self.state == .active, let current = self.session else { return }
                 guard let targetLanguage = LanguageRegistry.module(for: current.languageID) else { return }
-                let result = try await self.api.respond(instructions: TeachingPolicy.delegation(language: targetLanguage), input: TeachingPolicy.context(current), search: current.searchCalls < 3)
+                let result = try await self.helperRouter.respond(purpose: .delegation, instructions: TeachingPolicy.delegation(language: targetLanguage), input: TeachingPolicy.context(current), search: current.searchCalls < 3)
                 guard self.session?.id == snapshot.id, self.state == .active else { return }
                 self.addUsage(result.usage)
                 if !result.sources.isEmpty {
-                    self.session?.topics.append(TopicBrief(languageID: targetLanguage.id, query: "From our conversation", text: result.text, sources: result.sources))
+                    // Bound lookups so saved sessions always pass Archive validation.
+                    self.session?.topics.append(TopicBrief(languageID: targetLanguage.id, query: "From our conversation", text: String(result.text.prefix(Archive.maximumTopicTextCharacters)), sources: result.sources))
                 }
                 self.append("commentary", result.text, delegationID: id); self.save()
             } catch is CancellationError { }
@@ -442,7 +642,11 @@ import MuralCore
         save(); working = true
         defer { if session?.id == snapshot.id { working = false } }
         do {
-            let result = try await api.respond(instructions: TeachingPolicy.typedReply(language: language), input: TeachingPolicy.context(session!))
+            // Captured after the append and before the await: the reply must see the typed fragment,
+            // and a local avoids the force unwrap across suspension.
+            guard let current = session else { return }
+            let lesson = session?.lessonID.flatMap { CourseRegistry.lesson(id: $0) }
+            let result = try await helperRouter.respond(purpose: .typedReply, instructions: TeachingPolicy.typedReply(language: language, lesson: lesson), input: TeachingPolicy.context(current))
             guard session?.id == snapshot.id, state == .active else { return }
             addUsage(result.usage)
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
@@ -451,20 +655,25 @@ import MuralCore
     }
     func lookup(word: String, sentence: String) async throws -> String {
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }
+        // No term is ever recorded — only that a lookup happened, and from where.
+        usageReporter.record(UsageEvents.wordLookup, props: ["source": .string(sentence.isEmpty ? "words" : "talk")])
         let generation = languageGeneration, sessionID = session?.id
-        let result = try await api.respond(instructions: TeachingPolicy.lookup(language: language, meaningLanguage: store.preferences.meaningLanguage), input: "Selected: \(word)\nSentence: \(sentence)")
+        let result = try await helperRouter.respond(purpose: .lookup, instructions: TeachingPolicy.lookup(language: language, meaningLanguage: store.preferences.meaningLanguage), input: "Selected: \(word)\nSentence: \(sentence)")
         guard generation == languageGeneration else { throw CancellationError() }
         if session?.id == sessionID { addUsage(result.usage); scheduleSave() }
         return result.text
     }
     func currentTopic(_ query: String) async throws -> TopicBrief {
         let targetLanguage = language, generation = languageGeneration
+        // Titles come from this query; bound it so locally saved sessions always pass Archive validation.
+        let query = String(query.prefix(Archive.maximumTitleCharacters))
         if let cached = store.learningSessions.flatMap(\.topics).first(where: { $0.languageID == targetLanguage.id && $0.query.lowercased() == query.lowercased() && $0.isFresh }) { return cached }
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }
-        let result = try await api.respond(instructions: TeachingPolicy.currentTopic(language: targetLanguage), input: String(query.prefix(500)), search: true)
+        let result = try await helperRouter.respond(purpose: .topic, instructions: TeachingPolicy.currentTopic(language: targetLanguage), input: String(query.prefix(500)), search: true)
         guard generation == languageGeneration else { throw CancellationError() }
         guard !result.sources.isEmpty else { throw TopicError.unsourced }
-        let brief = TopicBrief(languageID: targetLanguage.id, query: query, text: result.text, sources: result.sources)
+        // Bound topic text so saved sessions always pass Archive validation.
+        let brief = TopicBrief(languageID: targetLanguage.id, query: query, text: String(result.text.prefix(Archive.maximumTopicTextCharacters)), sources: result.sources)
         if session == nil || !isRunning {
             var saved = SessionRecord(languageID: targetLanguage.id, title: query); saved.endedAt = .now; saved.topics = [brief]
             saved.inputTokens = result.usage.input; saved.outputTokens = result.usage.output; saved.searchCalls = result.usage.searches; store.save(saved)

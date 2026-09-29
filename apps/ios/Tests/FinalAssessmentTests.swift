@@ -1,5 +1,5 @@
 import XCTest
-@testable import MuralCore
+@testable import LearningCore
 
 @MainActor final class FinalAssessmentTests: XCTestCase {
     @MainActor private final class Provider {

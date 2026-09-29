@@ -5,12 +5,12 @@
 ## Completed
 
 - [x] Complete the [September 12 security review](security-audit-2026-09-12.md), publish fixes in `0b2cf65`, deploy the corrected backend and install the signed app update. **60 Core tests and two focused UI checks passed.** Installation succeeded at 17:20 CEST; iOS blocked the subsequent launch because the phone was locked.
-- [x] Publish Google OAuth to **In production**, verify mural.chat ownership through Cloudflare DNS, and publish the verified Mural consent branding. Sensitive/restricted scope verification is not required for the requested basic identity scopes.
-- [x] Publish [the iPhone app repository](https://github.com/Chuloo/mural) under MIT. Earlier CI at `f2f1a78` passed the Swift core and server jobs; the later backend and native checks are recorded separately below.
-- [x] Publish [the separate website repository](https://github.com/Chuloo/mural-website), including update `ab20d41`, and make [mural.chat](https://mural.chat/) available over HTTPS.
-- [x] Verify the live **138,707-byte, 1733 × 908** JPEG social image, updated OG/X metadata, favicon ICO and Apple touch PNG. The matching Mural icon was uploaded to the live Stripe account and its branding setting persisted. This verifies branding, not payment activation.
+- [x] Publish Google OAuth to **In production**, verify palique.example ownership through Cloudflare DNS, and publish the verified Palique consent branding. Sensitive/restricted scope verification is not required for the requested basic identity scopes.
+- [x] Publish [the iPhone app repository](https://github.com/jkdc/palique) under MIT. Earlier CI at `f2f1a78` passed the Swift core and server jobs; the later backend and native checks are recorded separately below.
+- [x] Publish [the separate website repository](https://github.com/jkdc/palique-website), including update `ab20d41`, and make [palique.example](https://palique.example/) available over HTTPS.
+- [x] Verify the live **138,707-byte, 1733 × 908** JPEG social image, updated OG/X metadata, favicon ICO and Apple touch PNG. The matching Palique icon was uploaded to the live Stripe account and its branding setting persisted. This verifies branding, not payment activation.
 - [x] Enable the website's email access list with private database storage, consent, duplicate handling, admission limits and retention. A live browser submission and repeat request produced one database row; the synthetic test address was removed afterward. No invitations are sent automatically.
-- [x] Verify the privacy, terms and support pages on the custom domain return HTTP 200 without login. Confirm the operator as **Hackmamba Inc., incorporated in the United States**, with support at hi@hackmamba.io.
+- [x] Verify the privacy, terms and support pages on the custom domain return HTTP 200 without login. Confirm the operator as **[REQUIRED: publisher legal entity and country of incorporation]**, with support at support@palique.example (placeholder).
 - [x] Implement Norwegian, Spanish, English, French, German, Italian, Brazilian Portuguese and Mandarin modules, language/subtitle onboarding, versioned AI consent, local backups and the existing conversation controls.
 - [x] Pass **56 Swift core tests, three baseline UI checks and two configured-account UI checks**. The signed personal build was installed and launched on the iPhone at **16:48:47 CEST on September 12**, preserving existing data. These checks do not establish a successful real Google login or a final App Store candidate. The earlier 11-test language/onboarding suite is historical coverage. See [the verification record](../verification/validation.md) for tested builds and limits.
 - [x] Deploy backend `0b2cf65` and its matching proxy fix on Hetzner after **77 passing tests with PostgreSQL**. Provider discovery reports Google enabled and Apple disabled. Live checks returned `401` for an anonymous account request, `400` for a malformed identity exchange and `200` for a fresh sign-in challenge. Wallet, trial, Checkout and hosted-voice routes remain gated with `503` responses.
@@ -18,13 +18,13 @@
 - [x] Prepare [listing and review-note drafts](app-store-metadata.md) and a [BYOK privacy inventory](app-privacy.md). These have not been entered or approved in App Store Connect.
 - [x] Compile an unsigned **0.1.0 (1)** iOS Release archive with both privacy manifests and debug symbols at the earlier Settings-link checkpoint. This is historical local compilation evidence; it predates the account rollout and is not the final native candidate. Apple distribution signing, upload validation and review remain pending.
 
-The local archive is `.build/ReleasePrep/Mural-0.1.0-unsigned.xcarchive`, refreshed at **14:44 CEST on September 12** with the permanent Settings links. Its simulator build and existing Settings navigation check passed before archiving. Create and verify a fresh archive from the final account-enabled or BYOK-only release candidate before any upload. Publication scope and exclusions are recorded in [the source audit](source-audit.md).
+The local archive is `.build/ReleasePrep/Palique-0.1.0-unsigned.xcarchive`, refreshed at **14:44 CEST on September 12** with the permanent Settings links. Its simulator build and existing Settings navigation check passed before archiving. Create and verify a fresh archive from the final account-enabled or BYOK-only release candidate before any upload. Publication scope and exclusions are recorded in [the source audit](source-audit.md).
 
 ## Finish the BYOK release
 
 | Remaining item | What is needed |
 | --- | --- |
-| Apple membership and seller | The Apple Developer portal shows **Hackmamba Inc. — Pending**. Complete paid enrollment and confirm the active App Store seller. The operator is incorporated in the United States. William Imoh and hi@hackmamba.io are confirmed contacts; the private App Review telephone is still needed. |
+| Apple membership and seller | [REQUIRED: complete paid Apple Developer Program enrollment for the publisher and confirm the active App Store seller. The upstream membership does not transfer to this fork.] The confirmed contact is support@palique.example (placeholder); the private App Review telephone is still needed. |
 | Apple app record and signing | Register the app identifier, create the App Store Connect record and SKU, accept agreements, and produce a distribution-signed archive. Preserve the personal installation’s signing identity until a migration is planned. |
 | Review access | Provision working review access so the reviewer can use speech without purchasing OpenAI access. Supply credentials privately; do not bundle or commit a shared key. |
 | Final device checks | Test the candidate on an iPhone: microphone denial, offline/failing API requests, interruptions, cellular use, reset, meanings, export/import and deletion. Review pronunciation and corrections for all eight languages with proficient speakers, including Mandarin pinyin and tones. Automated live checks do not establish teaching quality. |
@@ -36,9 +36,9 @@ Language and subtitle selection, followed by AI consent, are active for new inst
 
 | Page | Canonical URL | Availability |
 | --- | --- | --- |
-| Privacy | https://mural.chat/privacy/ | Live; HTTPS 200 verified September 12, 2026 |
-| Terms | https://mural.chat/terms/ | Live; HTTPS 200 verified September 12, 2026 |
-| Support | https://mural.chat/support/ | Live; HTTPS 200 verified September 12, 2026 |
+| Privacy | https://palique.example/privacy/ | Live; HTTPS 200 verified September 12, 2026 |
+| Terms | https://palique.example/terms/ | Live; HTTPS 200 verified September 12, 2026 |
+| Support | https://palique.example/support/ | Live; HTTPS 200 verified September 12, 2026 |
 
 Use [the Apple release checklist](apple-release.md) for the upload sequence and official requirements. Keep final candidate verification distinct from the historical results above.
 

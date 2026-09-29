@@ -1,18 +1,27 @@
 <resources>
-    <string name="hosted_checking_previous">Mural está comprobando tu conversación anterior. Vuelve a intentarlo en unos instantes.</string>
-    <string name="hosted_not_ready">Los minutos de Mural aún no están disponibles para esta cuenta.</string>
-    <string name="hosted_typed_start">Inicia una conversación de voz antes de enviar una respuesta escrita con tus minutos de Mural.</string>
+    <string name="hosted_checking_previous">Palique está comprobando tu conversación anterior. Vuelve a intentarlo en unos instantes.</string>
+    <string name="hosted_typed_start">Inicia una conversación de voz antes de enviar una respuesta escrita con tus minutos de Palique.</string>
     <string name="provider_preference_save_failed">No se ha podido guardar tu preferencia de conversación.</string>
-    <string name="hosted_sign_in">Inicia sesión para usar tus minutos de Mural.</string>
-    <string name="hosted_unconfirmed">Mural no ha podido confirmar esta solicitud. No se volverá a enviar automáticamente.</string>
-    <string name="hosted_unavailable">Los minutos de Mural no están disponibles para esta solicitud ahora mismo.</string>
+    <string name="hosted_sign_in">Inicia sesión para usar tus minutos de Palique.</string>
+    <string name="hosted_unconfirmed">Palique no ha podido confirmar esta solicitud. No se volverá a enviar automáticamente.</string>
+    <string name="hosted_unavailable">Los minutos de Palique no están disponibles para esta solicitud ahora mismo.</string>
     <string name="hosted_no_minutes">No tienes minutos de conversación disponibles.</string>
     <string name="hosted_extra_help_limit">Esta conversación ha alcanzado el límite de explicaciones adicionales.</string>
     <string name="hosted_window_closed">Inicia una nueva conversación para recibir más ayuda. Los significados guardados siguen disponibles.</string>
-    <string name="hosted_request_failed">Mural no ha podido completar esta solicitud. Vuelve a intentarlo más tarde.</string>
-    <string name="hosted_sign_in_again">Vuelve a iniciar sesión para continuar con tus minutos de Mural.</string>
-    <string name="hosted_rate_limit">Mural ha recibido demasiadas solicitudes. Espera un minuto y vuelve a intentarlo.</string>
+    <string name="hosted_request_failed">Palique no ha podido completar esta solicitud. Vuelve a intentarlo más tarde.</string>
+    <string name="hosted_sign_in_again">Vuelve a iniciar sesión para continuar con tus minutos de Palique.</string>
+    <string name="hosted_rate_limit">Palique ha recibido demasiadas solicitudes. Espera un minuto y vuelve a intentarlo.</string>
     <string name="hosted_start_rejected">El servicio de voz no ha podido iniciar esta conversación. Vuelve a intentarlo en unos instantes.</string>
     <string name="hosted_error_reference">Referencia del error: %1$s</string>
     <string name="hosted_minimum_charge_disclosure">Mínimo de 15 segundos por conversación. Las conversaciones más largas consumen el tiempo de conexión. Nunca se cobra más que tu saldo restante.</string>
+    <string name="sub_plan_label">Plan %1$s %2$s</string>
+    <string name="sub_tier_free">Gratis</string>
+    <string name="sub_tier_standard">Estándar</string>
+    <string name="sub_tier_pro">Pro</string>
+    <string name="sub_trial_active">(prueba)</string>
+    <string name="sub_drip_note">Tu plan gratuito suma %1$d min cada mes.</string>
+    <string name="minutes_remaining_estimate">Te quedan ≈ %1$s min</string>
+    <string name="minutes_low_warning">Te quedan menos de 5 minutos de conversación.</string>
+    <string name="minutes_critical_warning">Te quedan menos de 2 minutos de conversación.</string>
+    <string name="minutes_exhausted_upsell">Recarga minutos o mejora tu plan para seguir hablando.</string>
 </resources>

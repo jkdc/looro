@@ -5,6 +5,8 @@ import { appendEntry, lockWallet } from './ledger.js';
 import { ServiceError } from './errors.js';
 import { NANO_USD } from './pricing.js';
 
+export const STRIPE_WEBHOOK_PATH = '/v1/webhooks/stripe';
+
 export interface TopUp { id: string; priceID: string; aiMinor: number; serviceFeeMinor: number; paymentFeeMinor: number }
 export type Catalog = ReadonlyMap<string, TopUp>;
 export function catalogFromEnvironment(env: NodeJS.ProcessEnv): Catalog {
@@ -71,9 +73,9 @@ export class SandboxPayments {
       mode: 'payment', client_reference_id: order.id, line_items: [{ price: order.stripe_price_id, quantity: 1 }],
       adaptive_pricing: { enabled: false },
       success_url: `${this.origin}/payment-return?status=success`, cancel_url: `${this.origin}/payment-return?status=cancelled`,
-      metadata: { mural_order_id: order.id }, allow_promotion_codes: false,
-      custom_text: { submit: { message: `AI usage: $${(aiMinor / 100).toFixed(2)}. Mural fee (15%): $${(serviceFeeMinor / 100).toFixed(2)}. Payment fee: $${(paymentFeeMinor / 100).toFixed(2)}. USD. Sandbox only.` } }
-    }, { idempotencyKey: `mural-checkout-${order.id}` });
+      metadata: { app_order_id: order.id }, allow_promotion_codes: false,
+      custom_text: { submit: { message: `AI usage: $${(aiMinor / 100).toFixed(2)}. Palique fee (15%): $${(serviceFeeMinor / 100).toFixed(2)}. Payment fee: $${(paymentFeeMinor / 100).toFixed(2)}. USD. Sandbox only.` } }
+    }, { idempotencyKey: `app-checkout-${order.id}` });
     try {
       const response = result(session);
       await transaction(db, async sql => {

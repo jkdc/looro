@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "MuralCore",
+    name: "LearningCore",
     platforms: [.macOS(.v14), .iOS(.v17)],
-    products: [.library(name: "MuralCore", targets: ["MuralCore"])],
+    products: [.library(name: "LearningCore", targets: ["LearningCore"])],
     targets: [
-        .target(name: "MuralCore", path: "Core"),
-        .testTarget(name: "MuralCoreTests", dependencies: ["MuralCore"], path: "Tests")
+        .target(name: "LearningCore", path: "Core"),
+        .testTarget(name: "LearningCoreTests", dependencies: ["LearningCore"], path: "Tests")
     ]
 )

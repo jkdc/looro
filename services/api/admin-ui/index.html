@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'">
+<title>Palique · Administración</title>
+<link rel="stylesheet" href="/vendor/tabler.min.css?v=4">
+<link rel="stylesheet" href="/vendor/icons/tabler-icons.min.css?v=4">
+<link rel="stylesheet" href="/vendor/tabulator.min.css?v=4">
+<link rel="stylesheet" href="/app.css?v=4">
+</head>
+<body class="theme-light">
+<div class="page">
+  <aside class="navbar navbar-vertical navbar-expand-lg" data-bs-theme="dark">
+    <div class="container-fluid">
+      <h1 class="navbar-brand mb-0">
+        <span class="nav-link-icon d-inline-block"><i class="ti ti-player-play"></i></span>
+        <span>Palique<span class="text-secondary"> · Admin</span></span>
+      </h1>
+      <div class="collapse navbar-collapse" id="sidebar-menu">
+        <ul class="navbar-nav pt-lg-3" id="nav"></ul>
+        <div class="mt-auto pb-3 px-2 text-secondary small" id="sidebar-foot">
+          <span class="badge bg-success-lt" id="api-status">API</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="page-wrapper">
+    <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none">
+      <div class="container-xl">
+        <div class="navbar-nav flex-row align-items-center">
+          <h2 class="page-title mb-0" id="page-title">Resumen</h2>
+        </div>
+        <div class="navbar-nav flex-row align-items-center order-md-last">
+          <span class="text-secondary me-3 d-none d-xl-inline" id="whoami"></span>
+          <span class="avatar avatar-sm bg-primary-lt me-2" id="avatar"></span>
+          <button class="btn btn-sm btn-outline-secondary" id="signout">
+            <i class="ti ti-logout me-1"></i>Salir
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="page-body">
+      <div class="container-xl" id="view"></div>
+    </div>
+    <footer class="footer footer-transparent d-print-none py-3">
+      <div class="container-xl text-secondary text-center small">
+        Palique Admin · panel de operador · todas las acciones quedan auditadas
+      </div>
+    </footer>
+  </div>
+</div>
+<div class="modal modal-blur fade" id="detail-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="detail-title">Detalle</h5>
+        <button type="button" class="btn-close" id="detail-close" aria-label="Cerrar"></button></div>
+      <div class="modal-body"><pre id="detail-body" class="small text-wrap"></pre></div>
+      <div class="modal-footer"><button class="btn" id="detail-dismiss">Cerrar</button></div>
+    </div>
+  </div>
+</div>
+<div class="modal modal-blur fade" id="reason-modal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="reason-title">Motivo</h5></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="form-label">Objetivo</label><input class="form-control" id="reason-input" readonly></div>
+        <label class="form-label">Motivo (obligatorio, auditado)</label>
+        <textarea class="form-control" id="reason-text" rows="3" maxlength="500"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="reason-cancel">Cancelar</button>
+        <button class="btn btn-primary" id="reason-ok"><i class="ti ti-check me-1"></i>Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/vendor/tabulator.min.js?v=4"></script>
+<script src="/vendor/chart.umd.min.js?v=4"></script>
+<script src="/app.js?v=5"></script>
+</body>
+</html>

@@ -1,34 +1,56 @@
 import Fastify, { type FastifyRequest } from 'fastify';
 import { createHmac, randomUUID } from 'node:crypto';
-import type { Database } from './db.js';
-import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, type verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
+import type { PoolClient } from 'pg';
+import { transaction, type Database } from './db.js';
+import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
 import { HelperSessionLimitError, ServiceError } from './errors.js';
-import { applyStripeEvent, type SandboxPayments } from './payments.js';
+import { applyStripeEvent, STRIPE_WEBHOOK_PATH, type SandboxPayments } from './payments.js';
 import { RATE_VERSION } from './pricing.js';
 import { aiPricingPolicy } from './ai-top-up-pricing.js';
 import { conversationBalance } from './conversation-balance.js';
 import { trialEligibility, UnconfiguredAttestor, type TrialAttestor } from './trial.js';
 import type { HostedVoice } from './hosted-voice.js';
 import { ACCESS_REQUEST_PATH, trustedClientNetwork, type AccessRequests } from './access-requests.js';
+import { TokenProxy } from './token-proxy.js';
 import type { AuthAdmission } from './auth-admission.js';
 import { claimWelcomeMinutes, minuteBalance, UnconfiguredMinuteAttestor, type MinuteAttestor } from './minutes.js';
 import { startGuestMinutes, linkGuestMinutes, UnconfiguredGuestMinuteAttestor, type GuestMinuteAttestor } from './guest-minutes.js';
 import { AI_REPORT_BODY_LIMIT, AI_REPORT_PATH, reportNetwork, type AIReports } from './feedback.js';
 import { stripeOrderByKey, type MinutePurchases } from './minute-purchases.js';
 import type { AIValuePurchases, PurchaseFulfillmentRouter } from './ai-value-purchases.js';
-import type { StripeMinuteProvider } from './stripe-minute-provider.js';
+import { STRIPE_MINUTES_WEBHOOK_PATH, STRIPE_WEBHOOK_BODY_LIMIT, type StripeMinuteProvider } from './stripe-minute-provider.js';
 import type { PlayMinuteProvider } from './play-minute-provider.js';
 import { HOSTED_HELPER_BODY_LIMIT, type HostedHelpers } from './hosted-helpers.js';
 import { startupDiagnostic, type StartupDiagnostic } from './startup-diagnostics.js';
+import { adminAuthenticate, adminClearCookieHeader, adminCookieHeader, assertAdminOrigin,
+  exchangeSessionToken, adminSignOut, localAdminLogin, type AdminAuthServices } from './admin-auth.js';
+import { BROWSE_TABLES, buildBrowseQuery, browseSchema } from './admin-browse.js';
+import { snapshot as adminSnapshot, timeseries, usageOverview, TIMESERIES_SETS } from './admin-metrics.js';
+import { recordAdminAction } from './admins-admin.js';
+import { welcomePolicy, updateWelcomePolicy, prepareMinuteCampaign, applyMinuteCampaign } from './minutes-admin.js';
+import { accountCloseoutReport } from './account-closeout-admin.js';
+import { normalizeAccessEmail } from './access-requests.js';
+import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForAccount, activeSubscription,
+  updateSubscriptionConfig } from './subscriptions.js';
+import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
+import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
+import type { SubscriptionBilling } from './subscription-billing.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
   onStartupDiagnostic?: (diagnostic: StartupDiagnostic) => void | Promise<void>;
   hostedHelpers?: HostedHelpers;
   minuteCommerce?: { purchases: MinutePurchases; aiPurchases?: AIValuePurchases; fulfillment?: PurchaseFulfillmentRouter;
     stripe?: StripeMinuteProvider; play?: PlayMinuteProvider };
-  accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity } }
+  accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
+  tokenProxy?: TokenProxy,
+  subscriptions?: SubscriptionBilling,
+  admin?: { services: AdminAuthServices; admission: AuthAdmission } }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
-  '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover']);
+  '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover',
+  '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
+// These routes carry no client network identity: requiring trusted-proxy headers would 503 them,
+// and behind a proxy they all share one socket address, so they also skip the shared limiter.
+const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products']);
 const objectBody = (request: FastifyRequest): Record<string, unknown> => {
   if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body) || Buffer.isBuffer(request.body)) throw new ServiceError('invalid_request');
   return request.body as Record<string, unknown>;
@@ -48,7 +70,10 @@ export function createApp(services: Services) {
   const orderStatus = async (account: string, id: string) => {
     const commerce = services.minuteCommerce;
     if (!commerce) throw new ServiceError('minute_purchases_unavailable', 503);
-    const kind = (await db.query('SELECT entitlement_kind FROM minute_purchase_orders WHERE id=$1 AND account_id=$2', [id, account])).rows[0]?.entitlement_kind;
+    // Same pre-lookup filter as MinutePurchases.status()/AIValuePurchases.status(): a soft-deleted
+    // account's orders must not route, so lookups report purchase_not_found instead.
+    const kind = (await db.query(`SELECT o.entitlement_kind FROM minute_purchase_orders o JOIN accounts a ON a.id=o.account_id
+      WHERE o.id=$1 AND o.account_id=$2 AND a.deleted_at IS NULL`, [id, account])).rows[0]?.entitlement_kind;
     if (kind === 'ai_value') {
       if (!commerce.aiPurchases) throw new ServiceError('ai_value_purchases_unavailable', 503);
       return commerce.aiPurchases.status(account, id);
@@ -60,7 +85,7 @@ export function createApp(services: Services) {
   // No request bodies, Authorization headers, tokens, transcripts, or Stripe payloads are logged.
   app.removeContentTypeParser('application/json');
   app.addContentTypeParser('application/json', { parseAs: 'buffer' }, (request, body, done) => {
-    if (['/v1/webhooks/stripe', '/v1/webhooks/stripe/minutes'].includes(request.routeOptions.url ?? '')) return done(null, body);
+    if ([STRIPE_WEBHOOK_PATH, STRIPE_MINUTES_WEBHOOK_PATH].includes(request.routeOptions.url ?? '')) return done(null, body);
     try { done(null, JSON.parse(body.toString())); } catch { done(new ServiceError('invalid_json')); }
   });
   const windows = new Map<string, { until: number; count: number }>();
@@ -88,8 +113,28 @@ export function createApp(services: Services) {
       }
       return;
     }
+    // Admin routes carry their own admission caps and never fall through to the shared limiter.
+    if (path.startsWith('/v1/admin/')) {
+      if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+      const operation = path === '/v1/admin/auth/challenge' || path === '/v1/admin/auth/exchange' || path === '/v1/admin/auth/session' ? 'admin' : 'admin-api';
+      try {
+        await services.admin.admission.enter(operation, request.headers, request.raw.socket.remoteAddress ?? request.ip);
+      } catch (error) {
+        if (error instanceof ServiceError) { if (error.status === 429) reply.header('Retry-After', '3600'); throw error; }
+        throw new ServiceError('admin_panel_unavailable', 503);
+      }
+      return;
+    }
     // This endpoint has separate durable admission limits; Caddy's shared address is not its visitor identity.
     if (path === ACCESS_REQUEST_PATH || path === AI_REPORT_PATH || path === '/healthz') return;
+    // Signature-authenticated provider webhooks are delivered server-to-server without trusted-proxy
+    // headers, and proxy headers would 503 them. They also stay outside the shared in-memory
+    // limiter so a client 429 storm cannot delay payment confirmation.
+    if (path === STRIPE_WEBHOOK_PATH || path === STRIPE_MINUTES_WEBHOOK_PATH) return;
+    // Proxy-exempt public routes share the proxy's single socket address, so they stay outside
+    // the shared limiter too: readiness probes, the catalog and payment return must not be
+    // strangled by one abusive client. A durable per-client limiter remains follow-up work.
+    if (proxyExemptPaths.has(path)) return;
     let networkKey = request.ip;
     const proxy = services.accounts?.admission.config ?? services.accessRequests?.config;
     if (proxy) {
@@ -115,7 +160,7 @@ export function createApp(services: Services) {
     const code = purchaseReconciliation ? 'minute_purchase_reconciliation_required' : error instanceof ServiceError ? error.code : status < 500 ? 'invalid_request' : 'service_unavailable';
     const diagnostic = startupDiagnostic(request.method, request.routeOptions.url, request.id, status, code, error);
     if (diagnostic) {
-      reply.header('X-Mural-Error-Reference', diagnostic.reference);
+      reply.header('X-App-Error-Reference', diagnostic.reference);
       try { void Promise.resolve(services.onStartupDiagnostic?.(diagnostic)).catch(() => {}); } catch { /* Diagnostics cannot change a request's outcome. */ }
     }
     if (error instanceof HelperSessionLimitError) {
@@ -177,6 +222,176 @@ export function createApp(services: Services) {
   app.get('/v1/auth/providers', async () => ({ google: Boolean(services.accounts && services.auth.googleClientID),
     googleAndroid: Boolean(services.accounts && services.auth.googleAndroidServerClientID && services.auth.googleAndroidClientIDs?.length),
     apple: Boolean(services.accounts && services.auth.appleClientID && services.appleRevoker) }));
+  // ---- Admin panel ----
+  const adminOnly = async (request: FastifyRequest) => {
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    return adminAuthenticate(services.admin.services.db, request.headers);
+  };
+  const assertAdminCsrf = (request: FastifyRequest) => {
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    assertAdminOrigin(request.headers, services.admin.services.config.allowedOrigin, request.method);
+  };
+  app.post('/v1/admin/auth/challenge', { bodyLimit: 1024 }, async request => {
+    assertAdminCsrf(request);
+    if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
+    // The challenge stays a single-use gate even for password login: it is
+    // rate-limited per operator IP and burned on success.
+    return createChallenge(db);
+  });
+  app.post('/v1/admin/auth/login', { bodyLimit: 4_096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    const body = objectBody(request);
+    if (Object.keys(body).some(key => !['username', 'password', 'challengeID'].includes(key)))
+      throw new ServiceError('invalid_request');
+    const result = await localAdminLogin(services.admin.services,
+      { username: stringField(body, 'username', 64), password: stringField(body, 'password', 1024) },
+      uuid(stringField(body, 'challengeID', 36)));
+    reply.header('Set-Cookie', adminCookieHeader(result.token));
+    return { adminID: result.adminID };
+  });
+  app.post('/v1/admin/auth/session', { bodyLimit: 1024 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    const result = await exchangeSessionToken(services.admin.services, stringField(objectBody(request), 'bearer', 128));
+    reply.header('Set-Cookie', adminCookieHeader(result.token));
+    return { adminID: result.adminID };
+  });
+  app.post('/v1/admin/auth/sign-out', { bodyLimit: 1024 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');
+    await adminSignOut(services.admin.services, request.headers);
+    reply.header('Set-Cookie', adminClearCookieHeader());
+    return { signedOut: true };
+  });
+  app.get('/v1/admin/me', async request => {
+    const admin = await adminOnly(request);
+    return { adminID: admin.adminID, email: admin.email };
+  });
+  app.get('/v1/admin/browse', async request => {
+    await adminOnly(request);
+    return { tables: browseSchema() };
+  });
+  app.get('/v1/admin/accounts/:id', async request => {
+    await adminOnly(request);
+    return accountCloseoutReport(db, uuid((request.params as { id: string }).id));
+  });
+  const browseSchemaCache = browseSchema();
+  app.get('/v1/admin/browse/:table', async request => {
+    await adminOnly(request);
+    const tableName = (request.params as { table: string }).table;
+    if (!(tableName in BROWSE_TABLES)) throw new ServiceError('table_not_browsable', 404);
+    const built = buildBrowseQuery(tableName, request.query as Record<string, unknown>);
+    const admin = services.admin!;
+    const [rows, totals] = await Promise.all([
+      admin.services.db.query(built.sql, built.values), admin.services.db.query(built.countSql, built.values)
+    ]);
+    return { table: tableName, total: Number(totals.rows[0]!.total), limit: built.limit, offset: built.offset,
+      columns: browseSchemaCache[tableName], rows: rows.rows };
+  });
+  app.get('/v1/admin/metrics', async request => {
+    await adminOnly(request);
+    return adminSnapshot(db);
+  });
+  app.get('/v1/admin/metrics/timeseries', async request => {
+    await adminOnly(request);
+    const query = request.query as Record<string, unknown>;
+    const set = typeof query.set === 'string' ? query.set : 'overview';
+    if (!(TIMESERIES_SETS as readonly string[]).includes(set)) throw new ServiceError('invalid_request');
+    const days = query.days === undefined ? 30 : Number(query.days);
+    return timeseries(db, set, days);
+  });
+  app.get('/v1/admin/metrics/usage', async request => {
+    await adminOnly(request);
+    const query = request.query as Record<string, unknown>;
+    return usageOverview(db, query.days === undefined ? 30 : Number(query.days));
+  });
+  // ---- Audited panel actions (every mutation writes admin_actions) ----
+  const adminActor = (admin: { adminID: string; email: string | null }) => `admin:${admin.email ?? admin.adminID}`;
+  app.get('/v1/admin/policy/welcome', async request => {
+    await adminOnly(request);
+    return welcomePolicy(db);
+  });
+  app.get('/v1/admin/plans', async request => {
+    await adminOnly(request);
+    return { config: await subscriptionConfig(db), tiers: await subscriptionTiers(db) };
+  });
+  app.put('/v1/admin/plans', { bodyLimit: 8192 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    const allowed = ['version', 'reason', 'freeDripEnabled', 'freeDripMinutes', 'freeDripRolloverCapMinutes',
+      'trialDays', 'lifetimeDripBudgetMinutes', 'tiers'];
+    if (Object.keys(body).some(key => !allowed.includes(key))) throw new ServiceError('invalid_request');
+    const reason = stringField(body, 'reason', 500);
+    const result = await updateSubscriptionConfig(db, admin.adminID, body as unknown as Parameters<typeof updateSubscriptionConfig>[2]);
+    return reply.send(result);
+  });
+  app.put('/v1/admin/policy/welcome', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['version', 'welcomeEnabled', 'welcomeMinutes', 'reason'].includes(key)))
+      throw new ServiceError('invalid_request');
+    const reason = stringField(body, 'reason', 500);
+    const policy = { version: body.version, welcomeEnabled: body.welcomeEnabled, welcomeMinutes: body.welcomeMinutes } as
+      Parameters<typeof updateWelcomePolicy>[1];
+    const after = await updateWelcomePolicy(db, policy, adminActor(admin), reason,
+      (sql: PoolClient) => recordAdminAction(sql, admin.adminID, 'policy.update', 'minute_policy', reason,
+        { welcomeEnabled: policy.welcomeEnabled, welcomeMinutes: policy.welcomeMinutes }));
+    return reply.send(after);
+  });
+  app.post('/v1/admin/campaigns', { bodyLimit: 1_048_576 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['audience', 'minutesPerUser', 'maxTotalMinutes', 'reason'].includes(key)))
+      throw new ServiceError('invalid_request');
+    const reason = stringField(body, 'reason', 500);
+    const audience = body.audience;
+    const campaignID = randomUUID();
+    const summary = await prepareMinuteCampaign(db, {
+      id: campaignID, actor: adminActor(admin), reason,
+      minutesPerUser: body.minutesPerUser as number, maxTotalMinutes: body.maxTotalMinutes as number, audience: audience as 'all-current-users' | string[]
+    }, (sql: PoolClient) => recordAdminAction(sql, admin.adminID, 'campaign.prepare', campaignID, reason,
+      { minutesPerUser: body.minutesPerUser, maxTotalMinutes: body.maxTotalMinutes,
+        audienceSize: Array.isArray(audience) ? audience.length : 'all-current-users' }));
+    return reply.code(201).send(summary);
+  });
+  app.post('/v1/admin/campaigns/:id/apply', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    const confirmation = stringField(body, 'confirmation', 64), reason = stringField(body, 'reason', 500);
+    if (!/^[a-f0-9]{64}$/.test(confirmation)) throw new ServiceError('campaign_confirmation_required');
+    let outcome;
+    do { outcome = await applyMinuteCampaign(db, uuid((request.params as { id: string }).id), confirmation); }
+    while (outcome.pending > 0);
+    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'campaign.apply',
+      (request.params as { id: string }).id, reason, outcome));
+    return reply.send(outcome);
+  });
+  app.delete('/v1/admin/access-requests', { bodyLimit: 4096 }, async request => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['email', 'reason'].includes(key))) throw new ServiceError('invalid_request');
+    const email = normalizeAccessEmail(body.email);
+    const reason = stringField(body, 'reason', 500);
+    return transaction(db, async sql => {
+      const deleted = await sql.query('DELETE FROM access_requests WHERE email=$1', [email]);
+      if (!deleted.rowCount) throw new ServiceError('access_request_not_found', 404);
+      await recordAdminAction(sql, admin.adminID, 'access_request.delete', email, reason, { email });
+      return { deleted: true };
+    });
+  });
+  app.post('/v1/admin/hosted-sessions/:id/close', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request);
+    if (!services.hosted) throw new ServiceError('hosted_voice_not_ready', 503);
+    const reason = stringField(objectBody(request), 'reason', 500);
+    const sessionID = uuid((request.params as { id: string }).id);
+    const outcome = await services.hosted.adminClose(sessionID);
+    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'hosted_session.close', sessionID, reason,
+      { state: outcome.state }));
+    return reply.send(outcome);
+  });
   app.get('/v1/feedback/capabilities', async () => ({ aiReports: Boolean(services.aiReports?.config) }));
   app.post(AI_REPORT_PATH, { bodyLimit: AI_REPORT_BODY_LIMIT }, async (request, reply) => {
     const reports = services.aiReports;
@@ -202,9 +417,64 @@ export function createApp(services: Services) {
     return exchangeIdentity(db, provider, stringField(body, 'idToken', 16_384), uuid(stringField(body, 'challengeID', 36)), services.auth, services.accounts?.identityVerifier, expectedAccountID);
   });
   app.get('/v1/account', async request => accountProfile(db, request.headers.authorization));
-  app.get('/v1/minutes', async request => conversationBalance(db, await authenticate(db, request.headers.authorization, true),
-    services.hosted?.publicMinuteAccess===true, services.hosted?.publicPaidAccess ? { enabled: true,
-      estimatedNanoUSDPerMinute: services.hosted.estimatedNanoUSDPerMinute, minimumSessionNanoUSD: services.hosted.minimumPaidSessionNanoUSD } : undefined));
+  // Content-free usage telemetry from the apps. Guests are included on purpose:
+  // onboarding is where the funnel matters. The catalog is closed server-side.
+  app.post(USAGE_EVENTS_PATH, { bodyLimit: USAGE_EVENTS_BODY_LIMIT }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    return reply.code(202).send(await ingestUsageEvents(db, account, objectBody(request)));
+  });
+  // Per-user learning progress (lessons, themes, exercises, listening). Carries
+  // content slugs on purpose; the merge is monotonic so replays are harmless.
+  app.post(PROGRESS_PATH, { bodyLimit: PROGRESS_BODY_LIMIT }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    return reply.code(202).send(await mergeProgress(db, account, objectBody(request)));
+  });
+  app.get(PROGRESS_PATH, async request => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    return listProgress(db, account);
+  });
+  app.post('/v1/proxy/responses', { bodyLimit: 32_768 }, async (request, reply) => {
+    const proxy = services.tokenProxy;
+    if (!proxy) throw new ServiceError('proxy_unavailable', 503);
+    const account = await authenticate(db, request.headers.authorization);
+    const unlock = (await db.query(`SELECT unlocked_at FROM entitlements WHERE account_id=$1`, [account])).rows[0]?.unlocked_at;
+    if (!unlock) throw new ServiceError('unlock_required', 403);
+    const body = objectBody(request);
+    const { status, payload } = await proxy.relay(account, body);
+    reply.code(status);
+    return payload;
+  });
+  app.get('/v1/minutes', async request => {
+    const account = await authenticate(db, request.headers.authorization, true);
+    // Opportunistic free drip: idempotent per period, cheap, never blocks the read.
+    await runDripForAccount(db, account).catch(() => undefined);
+    const balance = await conversationBalance(db, account,
+      services.hosted?.publicMinuteAccess===true, services.hosted?.publicPaidAccess ? { enabled: true,
+        estimatedNanoUSDPerMinute: services.hosted.estimatedNanoUSDPerMinute, minimumSessionNanoUSD: services.hosted.minimumPaidSessionNanoUSD } : undefined);
+    const [subscription, catalog] = await Promise.all([activeSubscription(db, account), subscriptionCatalog(db)]);
+    const tier = subscription ? subscription.tier : 'free';
+    const features = subscription ? catalog.tiers.find(entry => entry.tier === subscription.tier)?.features ?? {} : {};
+    return { ...balance, subscription: { tier, status: subscription?.status ?? 'none',
+      trialing: subscription?.status === 'trialing', periodEnd: subscription?.periodEnd ?? null,
+      features, drip: { enabled: catalog.config.freeDripEnabled, minutesPerMonth: catalog.config.freeDripMinutes } } };
+  });
+  app.get('/v1/subscriptions/plans', async () => subscriptionCatalog(db));
+  app.get('/v1/subscriptions/mine', async request => {
+    const account = await authenticate(db, request.headers.authorization);
+    const subscription = await activeSubscription(db, account);
+    return { subscription: subscription ? { tier: subscription.tier, status: subscription.status,
+      store: subscription.store, periodStart: subscription.periodStart, periodEnd: subscription.periodEnd,
+      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd } : null };
+  });
+  app.post('/v1/subscriptions/checkout', { bodyLimit: 1024 }, async (request, reply) => {
+    const account = await authenticate(db, request.headers.authorization);
+    if (!services.subscriptions) throw new ServiceError('subscription_unavailable', 503);
+    const key = request.headers['idempotency-key'];
+    if (typeof key !== 'string' || key.length < 8 || key.length > 128) throw new ServiceError('idempotency_key_required');
+    const result = await services.subscriptions.checkout(account, stringField(objectBody(request), 'tier', 16), key);
+    reply.header('cache-control', 'no-store');
+    return result;
+  });
   app.post('/v1/guest/minutes', { bodyLimit: 1024 }, async request => {
     const proof = objectBody(request);
     try { return { available: true, ...await startGuestMinutes(db, proof, services.guestMinuteAttestor ?? new UnconfiguredGuestMinuteAttestor()) }; }
@@ -286,10 +556,16 @@ export function createApp(services: Services) {
     return (services.minuteCommerce.fulfillment ?? services.minuteCommerce.purchases).reconcile('play', { kind: 'client', accountID: account,
       orderID, purchaseToken });
   });
-  app.post('/v1/webhooks/stripe/minutes', async request => {
+  app.post(STRIPE_MINUTES_WEBHOOK_PATH, { bodyLimit: STRIPE_WEBHOOK_BODY_LIMIT }, async request => {
     if (!services.minuteCommerce?.stripe) throw new ServiceError('minute_purchases_unavailable', 503);
     const signature = request.headers['stripe-signature'];
     if (!Buffer.isBuffer(request.body) || typeof signature !== 'string') throw new ServiceError('invalid_webhook_signature');
+    // Subscription events share the endpoint and secret; anything they don't
+    // claim falls through to the minutes reconcile path unchanged.
+    if (services.subscriptions) {
+      const event = services.subscriptions.transport.verifyEvent(request.body, signature);
+      if (await services.subscriptions.handleEvent(event)) return { received: true };
+    }
     await (services.minuteCommerce.fulfillment ?? services.minuteCommerce.purchases).reconcile('stripe', { kind: 'webhook', raw: request.body, signature });
     return { received: true };
   });
@@ -329,7 +605,7 @@ export function createApp(services: Services) {
     if (typeof key !== 'string' || key.length < 8 || key.length > 128) throw new ServiceError('idempotency_key_required');
     return services.payments.checkout(db, account, stringField(objectBody(request), 'product', 64), key);
   });
-  app.post('/v1/webhooks/stripe', async request => {
+  app.post(STRIPE_WEBHOOK_PATH, { bodyLimit: STRIPE_WEBHOOK_BODY_LIMIT }, async request => {
     if (!services.payments) throw new ServiceError('checkout_not_configured', 503);
     const signature = request.headers['stripe-signature'];
     if (!Buffer.isBuffer(request.body) || typeof signature !== 'string') throw new ServiceError('invalid_webhook_signature');
@@ -376,6 +652,6 @@ export function createApp(services: Services) {
     const account = await authenticate(db, request.headers.authorization, true);
     return services.hostedHelpers.request(account, uuid((request.params as { id: string }).id), request.body);
   });
-  app.get('/payment-return', async (_request, reply) => reply.type('text/html').send('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Mural sandbox</title><body><h1>Return to Mural</h1><p>This is a sandbox payment test. The app checks payment confirmation independently.</p></body></html>'));
+  app.get('/payment-return', async (_request, reply) => reply.type('text/html').send('<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Palique sandbox</title><body><h1>Return to Palique</h1><p>This is a sandbox payment test. The app checks payment confirmation independently.</p></body></html>'));
   return app;
 }

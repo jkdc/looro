@@ -14,7 +14,7 @@ enum AudioVerification {
 import AVFoundation
 import UIKit
 import WebRTC
-import MuralCore
+import LearningCore
 
 extension AudioVerification {
     private struct Playback: Codable {

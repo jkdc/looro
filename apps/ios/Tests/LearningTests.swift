@@ -1,5 +1,5 @@
 import XCTest
-@testable import MuralCore
+@testable import LearningCore
 
 final class LearningTests: XCTestCase {
     func fixture(day: Double = 0, theme: String = "walk", supported: Bool = false, kind: EvidenceKind = .independent) -> SessionRecord {
@@ -137,8 +137,15 @@ final class LearningTests: XCTestCase {
         XCTAssertEqual(original.sessions.count, 10_000)
         incoming.sessions = [original.sessions[0]]
         XCTAssertEqual(try original.merging(incoming).sessions.count, 10_000)
-        original.sessions = [SessionRecord(title: String(repeating: "a", count: Archive.maximumEncodedBytes / 2))]
-        incoming.sessions = [SessionRecord(title: String(repeating: "b", count: Archive.maximumEncodedBytes / 2))]
+        // Titles are capped by validation now, so the bulk comes from fragments at their maximum text length.
+        // Each archive alone stays under the encode cap and decodes; merging both crosses it.
+        func oversized(_ filler: String) -> SessionRecord {
+            var session = SessionRecord()
+            for offset in 0..<500 { session.append(Fragment(speaker: .user, text: String(repeating: filler, count: 50_000), startMS: offset * 1000, endMS: offset * 1000 + 1000)) }
+            return session
+        }
+        original.sessions = [oversized("a")]
+        incoming.sessions = [oversized("b")]
         XCTAssertNoThrow(try Archive.decode(original.encoded()))
         XCTAssertNoThrow(try Archive.decode(incoming.encoded()))
         XCTAssertThrowsError(try original.merging(incoming)) { XCTAssertEqual($0 as? ArchiveError, .tooLarge) }

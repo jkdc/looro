@@ -9,11 +9,15 @@ import { HostedVoice } from './hosted-voice.js';
 import { OpenAILiveProvider } from './live-provider.js';
 import { AccessRequests, accessRequestConfig, pruneAccessRequests } from './access-requests.js';
 import { AuthAdmission, accountAdmissionConfig } from './auth-admission.js';
+import { TokenProxy, tokenProxyConfig } from './token-proxy.js';
+import { adminAuthConfig, pruneAdminRecords, type AdminAuthServices } from './admin-auth.js';
 import { AIReports, aiReportConfig, pruneAIReports } from './feedback.js';
+import { pruneUsageEvents } from './usage.js';
 import { configuredMinuteCommerce } from './minute-commerce-config.js';
 import { HostedHelpers } from './hosted-helpers.js';
 import { OpenAIHostedResponses } from './hosted-responses-transport.js';
 import { InstallationGuestMinuteAttestor } from './guest-minutes.js';
+import { SubscriptionBilling } from './subscription-billing.js';
 
 const databaseURL = process.env.DATABASE_URL;
 if (!databaseURL) { console.error('DATABASE_URL is required.'); process.exit(1); }
@@ -75,6 +79,13 @@ try {
   const accessRequests = accessConfig ? new AccessRequests(db, accessConfig) : undefined;
   const accountsConfig = accountAdmissionConfig(process.env);
   const accounts = accountsConfig ? { admission: new AuthAdmission(db, accountsConfig) } : undefined;
+  const adminConfig = adminAuthConfig(process.env);
+  const admin = adminConfig ? (() => {
+    const admissionConfig = { hmacKey: adminConfig.hmacKey, proxyToken: adminConfig.proxyToken,
+      allowLocalLoopback: adminConfig.allowLocalLoopback };
+    const services: AdminAuthServices = { db, config: adminConfig };
+    return { services, admission: new AuthAdmission(db, admissionConfig) };
+  })() : undefined;
   if (process.env.GUEST_MINUTES_ENABLED==='true' && (!accounts || !hosted?.publicMinuteAccess || !hostedHelpers))
     throw new Error('Guest minutes require public minute voice, teaching and trusted admission.');
   const guestMinuteAttestor = process.env.GUEST_MINUTES_ENABLED==='true' ? new InstallationGuestMinuteAttestor() : undefined;
@@ -83,6 +94,8 @@ try {
   await pruneAccessRequests(db);
   await pruneAuthenticationRecords(db);
   await pruneAIReports(db);
+  await pruneUsageEvents(db);
+  await pruneAdminRecords(db);
   const googleAndroidClientIDs = (process.env.GOOGLE_ANDROID_CLIENT_IDS ?? '').split(',').map(id => id.trim()).filter(Boolean);
   const googleAndroidServerClientID = process.env.GOOGLE_ANDROID_SERVER_CLIENT_ID;
   if (Boolean(googleAndroidServerClientID) !== Boolean(googleAndroidClientIDs.length) || googleAndroidClientIDs.length > 10 ||
@@ -92,12 +105,17 @@ try {
     !(appleClient && appleRevoker)) throw new Error('No account identity provider configured.');
   const app = createApp({ db, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
     googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
-    minuteCommerce, accessRequests, accounts, aiReports,guestMinuteAttestor,
+    minuteCommerce, accessRequests, accounts, admin, aiReports,guestMinuteAttestor,
+    subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,
+      { origin: origin.origin.replace(/\/$/, '') }) : undefined,
+    tokenProxy: tokenProxyConfig(process.env) && new TokenProxy(db, tokenProxyConfig(process.env)!),
     onStartupDiagnostic: diagnostic => console.warn(JSON.stringify({ event: 'conversation_request_failed', ...diagnostic })) });
   const cleanup = setInterval(() => {
     void pruneAuthenticationRecords(db).catch(() => { console.error('Account retention cleanup failed.'); });
     void pruneAccessRequests(db).catch(() => { console.error('Access request retention cleanup failed.'); });
     void pruneAIReports(db).catch(() => { console.error('AI report retention cleanup failed.'); });
+    void pruneUsageEvents(db).catch(() => { console.error('Usage retention cleanup failed.'); });
+    void pruneAdminRecords(db).catch(() => { console.error('Admin retention cleanup failed.'); });
     void hostedHelpers?.expireBudgets().catch(() => { console.error('Hosted helper budget cleanup failed.'); });
   }, 15 * 60_000);
   cleanup.unref();
@@ -112,8 +130,8 @@ try {
   process.on('SIGTERM', close); process.on('SIGINT', close);
   await app.listen({ port: Number(process.env.PORT ?? 8080), host: '0.0.0.0' });
   minuteCommerce?.runner.start();
-  console.info('Mural API is running.');
+  console.info('Palique API is running.');
 } catch {
-  console.error('Mural could not start. Check configuration; no secret values are logged.');
+  console.error('Palique could not start. Check configuration; no secret values are logged.');
   await hosted?.stop(); await minuteCommerce?.runner.stop(); await db.end(); process.exitCode = 1;
 }

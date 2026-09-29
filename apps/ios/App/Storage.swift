@@ -2,12 +2,12 @@ import Foundation
 import SwiftData
 import Security
 import Observation
-import MuralCore
+import LearningCore
 
 @Model final class StoredArchive {
     @Attribute(.unique) var key: String
     var payload: Data
-    init(payload: Data) { key = "mural-v1"; self.payload = payload }
+    init(payload: Data) { key = "app-v1"; self.payload = payload }
 }
 
 @MainActor @Observable final class LearningStore {
@@ -19,7 +19,7 @@ import MuralCore
     private let migrationBackupURL: URL?
     init(inMemory: Bool = false) throws {
         migrationBackupURL = inMemory ? nil : URL.applicationSupportDirectory
-            .appendingPathComponent("Mural", isDirectory: true)
+            .appendingPathComponent("Palique", isDirectory: true)
             .appendingPathComponent("before-language-modules.json")
         container = try ModelContainer(for: StoredArchive.self, configurations: ModelConfiguration(isStoredInMemoryOnly: inMemory, cloudKitDatabase: .none))
         let context = container.mainContext
@@ -58,6 +58,47 @@ import MuralCore
         persist()
     }
     func deleteSession(_ id: UUID) { onSessionInvalidation?(id); archive.sessions.removeAll { $0.id == id }; persist() }
+    /// One attempt per finished practice session; mastery is never claimed here.
+    func recordLessonAttempt(_ lessonID: String) {
+        var lessons = archive.lessons ?? []
+        if let index = lessons.firstIndex(where: { $0.lessonID == lessonID }) {
+            lessons[index].attempts += 1
+            lessons[index].lastSeen = Date.now.timeIntervalSince1970
+        } else {
+            lessons.append(LessonState(lessonID: lessonID, attempts: 1, lastSeen: Date.now.timeIntervalSince1970))
+        }
+        archive.lessons = lessons
+        recordCompletion(kind: ProgressEngine.lesson, itemID: lessonID)
+    }
+
+    /// One completed learning event in the ledger; keeps only the newest marks.
+    /// Marks carry the learning language.
+    func recordCompletion(kind: String, itemID: String, bestScore: Int = 0) {
+        var marks = archive.completions ?? []
+        marks.append(CompletionMark(kind: kind, itemID: ProgressEngine.completionKey(itemID),
+                                    at: Date.now.timeIntervalSinceReferenceDate, bestScore: bestScore,
+                                    languageID: archive.preferences.learningLanguageID))
+        if marks.count > Archive.maximumCompletions { marks = Array(marks.suffix(Archive.maximumCompletions)) }
+        archive.completions = marks
+        persist()
+    }
+
+    var progressStats: ProgressStats {
+        let language = archive.preferences.learningLanguageID
+        return ProgressEngine.stats(sessions: archive.sessions, lessons: archive.lessons ?? [],
+                                    completions: archive.completions ?? [],
+                                    courses: CourseRegistry.forLanguage(language),
+                                    listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
+                                    languageID: language)
+    }
+    var completedLessonIDs: Set<String> {
+        Set((archive.lessons ?? []).filter { $0.attempts > 0 }.map(\.lessonID))
+    }
+    func applyRemoteProgress(_ rows: [RemoteProgress]) {
+        archive = ProgressSync.mergeRemote(archive: archive, rows: rows,
+                                           languageID: archive.preferences.learningLanguageID)
+        persist()
+    }
     func hideWord(_ id: String) { archive.preferences.hiddenWords.append(id); persist() }
     func correctPassage(sessionID: UUID, passageID: String, text: String) {
         guard let index = archive.sessions.firstIndex(where: { $0.id == sessionID }),
@@ -73,12 +114,22 @@ import MuralCore
             do { try FileManager.default.removeItem(at: migrationBackupURL) }
             catch CocoaError.fileNoSuchFile { /* Most installations have no migration backup. */ }
             catch {
-                self.error = "Mural couldn’t delete the older learning backup. Your conversations are still here. Please try again."
+                self.error = "Palique couldn’t delete the older learning backup. Your conversations are still here. Please try again."
                 return
             }
         }
         archive.sessions.forEach { onSessionInvalidation?($0.id) }
         archive.sessions = []; archive.preferences.hiddenWords = []; persist()
+    }
+    /// Removes the on-disk SwiftData store (the default store plus its write-ahead files) and the
+    /// migration backup, so the next init starts from an empty record. Only for the startup failure
+    /// screen, behind the user’s explicit confirmation.
+    static func eraseStore() throws {
+        let base = URL.applicationSupportDirectory
+        for path in ["default.store", "default.store-shm", "default.store-wal", "Palique/before-language-modules.json"] {
+            do { try FileManager.default.removeItem(at: base.appendingPathComponent(path)) }
+            catch CocoaError.fileNoSuchFile { /* Fresh installations have no store yet. */ }
+        }
     }
     func exportData() throws -> Data { try archive.encoded() }
     func importData(_ data: Data) throws {
@@ -87,13 +138,31 @@ import MuralCore
         persist()
     }
     private func persist() {
-        do { document.payload = try archive.encoded(); try container.mainContext.save(); error = nil }
-        catch { self.error = "Mural couldn’t save your progress. Please export a backup and try again." }
+        do {
+            var payload = try archive.encoded()
+            if payload.count > Archive.maximumEncodedBytes {
+                // The importer refuses records beyond this cap on read; on write, drop the oldest
+                // conversations (their evidence is stored inside them) until the record fits again.
+                var trimmed = archive
+                var pruned: [UUID] = []
+                for session in trimmed.sessions.sorted(by: { $0.startedAt < $1.startedAt }) {
+                    guard payload.count > Archive.maximumEncodedBytes else { break }
+                    trimmed.sessions.removeAll { $0.id == session.id }
+                    pruned.append(session.id)
+                    payload = try trimmed.encoded()
+                }
+                guard payload.count <= Archive.maximumEncodedBytes else { throw ArchiveError.tooLarge }
+                pruned.forEach { onSessionInvalidation?($0) }
+                archive = trimmed
+            }
+            document.payload = payload; try container.mainContext.save(); error = nil
+        }
+        catch { self.error = "Palique couldn’t save your progress. Please export a backup and try again." }
     }
 }
 
 enum CredentialStore {
-    private static let service = "no.william.mural.openai"
+    private static let service = "com.jkdc.app.openai"
     private static var query: [String: Any] { [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: "owner", kSecAttrSynchronizable as String: false] }
     static func read() -> String? {
         var q = query; q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne

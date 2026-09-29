@@ -1,27 +1,27 @@
-# Mural
+# Palique
 
 **The language app you eventually delete.**
 
 <p align="center">
-  <img src="marketing/screenshots/iphone-17-spanish/01-hola.png" width="24%" alt="Mural greeting in Spanish with voice controls" />
+  <img src="marketing/screenshots/iphone-17-spanish/01-hola.png" width="24%" alt="Palique greeting in Spanish with voice controls" />
   <img src="marketing/screenshots/iphone-17-spanish/02-conversacion.png" width="24%" alt="Spanish café conversation with English meaning subtitles" />
   <img src="marketing/screenshots/iphone-17-spanish/03-temas.png" width="24%" alt="Conversation themes for learning Spanish" />
   <img src="marketing/screenshots/iphone-17-spanish/04-palabras.png" width="24%" alt="Spanish vocabulary with three levels of recall strength" />
 </p>
 
-Mural is a native iPhone and Android app for learning through conversation. Speak to a warm, animated orb, follow the meaning when you need it, and practise words again in later conversations. Mural adjusts the challenge from the evidence in your replies.
+Palique is a native iPhone and Android app for learning through conversation. Speak to a warm, animated orb, follow the meaning when you need it, and practise words again in later conversations. Palique adjusts the challenge from the evidence in your replies.
 
-Built with SwiftUI and Liquid Glass on iPhone, and Jetpack Compose on Android. Learning records stay on your device. This version connects directly to OpenAI using your own API key. It needs an internet connection, but no Mural account or running Mac.
+Built with SwiftUI and Liquid Glass on iPhone, and Jetpack Compose on Android. Learning records stay on your device. The Android client selects its conversation engine at build time (OpenAI, DeepSeek or GLM): your OpenAI key is stored with Android Keystore, while DeepSeek and GLM keys live in the Git-ignored `api-keys.properties` you push as `api_keys.properties` to the app's external files directory. It needs an internet connection, but no Palique account or running Mac.
 
 ## Android
 
-A native Android client is available in [`apps/android/`](apps/android/README.md), with voice and written conversation, the same eight language modules, local learning records and iPhone-compatible JSON backups. Its interface is English, and Spanish on a phone set to Spanish. It runs on Android 8.0 or later and uses your own OpenAI API key stored with Android Keystore. The iPhone client remains available below.
+A native Android client is available in [`apps/android/`](apps/android/README.md), with voice and written conversation, the same eight language modules, local learning records and iPhone-compatible JSON backups. Its interface is English, and Spanish on a phone set to Spanish. It runs on Android 8.0 or later and uses your own API key for the engine you build in: the OpenAI key is stored with Android Keystore, while DeepSeek and GLM keys live in the Git-ignored `api-keys.properties` pushed as `api_keys.properties` to the app's external files directory (see [conversation engines](apps/android/docs/conversation-engines.md)). The iPhone client remains available below.
 
-See the [Android installation/build guide](docs/run-on-android.md) and [Android verification record](verification/android-validation.md). Build a personal-install APK with Java 17 and Android SDK 36:
+See the [Android installation/build guide](docs/run-on-android.md) and the (historical, 12 September) [Android verification record](verification/android-validation.md). Build a personal-install APK with Java 17 and Android SDK 36:
 
 ```sh
 cd apps/android
-./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+./gradlew :app:testDebugUnitTest :core:engine-local:testDebugUnitTest :app:lintDebug :app:assembleDebug
 ```
 
 ## Get started
@@ -30,10 +30,10 @@ You need a Mac with Xcode 26 or later, an iPhone running iOS 26.1 or later, an A
 
 ### Install with a local AI agent
 
-If Codex or another coding agent has access to your Mac's files and terminal, paste the prompt below. The agent can clone, build and install Mural. You handle Apple Account sign-in and team selection in Xcode, device trust and Developer Mode prompts, and API-key entry inside the app. The [iPhone installation guide](docs/run-on-iphone.md) covers each step.
+If Codex or another coding agent has access to your Mac's files and terminal, paste the prompt below. The agent can clone, build and install Palique. You handle Apple Account sign-in and team selection in Xcode, device trust and Developer Mode prompts, and API-key entry inside the app. The [iPhone installation guide](docs/run-on-iphone.md) covers each step.
 
 ```text
-Help me build and install Mural on my iPhone from https://github.com/Chuloo/mural.
+Help me build and install Palique on my iPhone from https://github.com/jkdc/palique.
 
 Clone the repository into a new local folder, or use this checkout if it is
 already open. Read README.md, docs/run-on-iphone.md and docs/build-and-test.md.
@@ -42,11 +42,11 @@ run the offline core tests, and build the iOS Simulator target.
 
 Guide me through adding my Apple Account and choosing my signing team in
 Xcode. For a first installation, help me choose a unique bundle identifier if
-needed. Preserve the existing team and identifier when updating Mural, and
+needed. Preserve the existing team and identifier when updating Palique, and
 do not uninstall it or erase its learning data.
 
 Detect my connected iPhone, build with the configured signing team, install
-Mural and launch it. Tell me when I need to unlock the phone, trust this Mac
+Palique and launch it. Tell me when I need to unlock the phone, trust this Mac
 or the developer profile, enable Developer Mode, or approve a system prompt.
 
 I will choose my learning and subtitle languages, then enter my own OpenAI
@@ -62,14 +62,14 @@ I still need to do on the phone. I will start the first live conversation.
 
 Updating an earlier checkout? The iPhone project now lives in `apps/ios/`. Before opening it, follow the [local-settings migration steps](docs/run-on-iphone.md#update-an-earlier-checkout) to preserve your signing team, account configuration and existing app identity.
 
-1. Clone [Chuloo/mural](https://github.com/Chuloo/mural), or download its ZIP. Open `apps/ios/Mural.xcodeproj`.
+1. Clone [jkdc/palique](https://github.com/jkdc/palique), or download its ZIP. Open `apps/ios/Palique.xcodeproj`.
 2. In Xcode, open **Settings → Accounts** and add your Apple Account.
-3. Select the **Mural** target, open **Signing & Capabilities**, enable automatic signing, and choose your team. For your own fork, replace the bundle identifier with a unique value such as `com.yourname.mural`. Keep that value stable for later updates.
+3. Select the **Palique** target, open **Signing & Capabilities**, enable automatic signing, and choose your team. For your own fork, replace the bundle identifier with a unique value such as `com.yourname.palique`. Keep that value stable for later updates.
 4. Connect and unlock your iPhone. Trust the Mac if prompted. Turn on **Settings → Privacy & Security → Developer Mode** on the phone, restart, and confirm the setting.
-5. Select **Mural** as the scheme and your iPhone as the destination, then click **Run**. If iOS asks you to trust the developer, do so in **Settings → General → VPN & Device Management**.
+5. Select **Palique** as the scheme and your iPhone as the destination, then click **Run**. If iOS asks you to trust the developer, do so in **Settings → General → VPN & Device Management**.
 6. Choose your learning and subtitle languages in the welcome screens. In **Settings → Advanced → Use your own API key**, save your own OpenAI project key. Start a conversation and allow microphone access.
 
-You should hear Mural greet you in your chosen language. You can now disconnect your phone from the Mac and use Wi-Fi or cellular.
+You should hear Palique greet you in your chosen language. You can now disconnect your phone from the Mac and use Wi-Fi or cellular.
 
 A free Personal Team can run the app on your own phone; TestFlight and App Store distribution require Apple Developer Program membership. Free provisioning profiles expire after seven days. Refresh by running the same project again, preserving the team and bundle identifier. Export a learning backup before changing either or switching phones. See the [detailed iPhone guide](docs/run-on-iphone.md) for common setup problems. [Apple membership guidance](https://developer.apple.com/support/compare-memberships/)
 
@@ -77,7 +77,9 @@ A free Personal Team can run the app on your own phone; TestFlight and App Store
 
 - **A warm welcome:** choose a learning language and a subtitle language in two short screens, with a greeting that changes languages.
 - **Conversation practice:** live voice, gentle corrections, optional meaning subtitles, word lookup, mute, and a typed reply when speaking is inconvenient.
-- **Themes:** 24 conversation settings, with cultural details supplied by each language module. You can also request a current topic; web search supplies source links.
+- **Tuned to you:** a slower-speech setting for new conversations, and a listening-practice mode: a short story without meaning subtitles (the written story stays on screen, and word lookup remains).
+- **Practice between conversations:** a Progress screen with totals, day streaks and your last two weeks, plus a writing drill over due words on the Words tab.
+- **Themes:** 24 conversation settings, with cultural details supplied by each language module. You can also request a current topic; on the OpenAI engine web search supplies source links, while the DeepSeek and GLM engines answer without web sources.
 - **Adaptive practice:** vocabulary and provisional ability observations come from validated conversation evidence. Each learning language keeps separate progress.
 - **Recall bars:** one to three bars summarise repeated retrieval over time. Three bars require spaced evidence in different contexts. These are product heuristics, not calibrated forgetting probabilities or a language certificate.
 - **A fresh start:** the Talk screen returns to its greeting 15 seconds after a conversation ends. Tap **New conversation** to reset immediately. Your saved conversations and learning remain.
@@ -89,9 +91,9 @@ On iPhone, Mandarin includes optional pinyin in Talk, transcripts and word detai
 
 ## Privacy and API costs
 
-Mural stores conversations, vocabulary and preferences on your device. There is no Mural cloud sync, analytics SDK or advertising. The optional iPhone account feature stores signup data on the account service; conversations and vocabulary stay local. Your API key is stored in the device’s Keychain, excluded from learning exports, and sent only to OpenAI.
+Palique stores conversations, vocabulary and preferences on your device. There is no Palique cloud sync, analytics SDK or advertising. The optional iPhone account feature stores signup data on the account service; conversations and vocabulary stay local. Your API key is stored in the device’s Keychain, excluded from learning exports, and sent only to OpenAI.
 
-During practice, audio, selected conversation text, learning context and requested searches go to OpenAI. Mural does not save raw audio. API requests set `store: false` where supported, but that does not disable all provider retention; OpenAI’s abuse-monitoring rules and your project’s settings still apply. [OpenAI data controls](https://developers.openai.com/api/docs/guides/your-data)
+During practice, audio, selected conversation text, learning context and requested searches go to OpenAI. Palique does not save raw audio. API requests set `store: false` where supported, but that does not disable all provider retention; OpenAI’s abuse-monitoring rules and your project’s settings still apply. [OpenAI data controls](https://developers.openai.com/api/docs/guides/your-data)
 
 OpenAI bills your project for voice, text and search. The app’s usage display is an estimate, and its conversation time limit is not a billing cap. Check your OpenAI project’s usage and spending settings.
 
@@ -101,15 +103,13 @@ Hosted free conversations and minute purchases are **not active**. Optional Goog
 
 A public TestFlight link and App Store listing are not yet available. [Release preparation](release/README.md) records the outstanding requirements.
 
-The [Mural website](https://mural.chat) lives in the separate [Chuloo/mural-website repository](https://github.com/Chuloo/mural-website).
-
 ## Build and test
 
 From the repository root:
 
 ```sh
 swift test --package-path apps/ios
-xcodebuild -project apps/ios/Mural.xcodeproj -scheme Mural \
+xcodebuild -project apps/ios/Palique.xcodeproj -scheme Palique \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath .build/DerivedData \
   CODE_SIGNING_ALLOWED=NO ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build
@@ -117,7 +117,7 @@ xcodebuild -project apps/ios/Mural.xcodeproj -scheme Mural \
 
 For UI tests, create or select an iPhone 17 simulator in Xcode, then run **Product → Test**. The tests use in-memory fixtures and do not require an API key. More commands and preview options are in [the build guide](docs/build-and-test.md).
 
-The iPhone language release recorded on 13 September 2026 passed **70 core tests and 20 native UI tests**, including Mandarin pinyin, all four new onboarding choices and the largest accessibility text size. **79 backend tests** passed with an isolated PostgreSQL database and no skips. German, Italian, Brazilian Portuguese and Mandarin each passed a live iPhone check using synthetic typed replies and real voice output, meanings and word lookup. These checks do not establish human speech-recognition, pronunciation or correction quality. [Verification record](verification/validation.md)
+The iPhone language release recorded on 13 September 2026 passed **70 core tests and 20 native UI tests** — a historical record; the iOS core suite now holds **88 tests**. On 20 September 2026 the backend suite passed **358 tests with an isolated PostgreSQL 17 database and no skips** (Node 22), and the Android branch runs **390 unit tests** across the app and on-device engine modules with no skips. German, Italian, Brazilian Portuguese and Mandarin each passed a live iPhone check using synthetic typed replies and real voice output, meanings and word lookup. These checks do not establish human speech-recognition, pronunciation or correction quality. [Verification record](verification/validation.md)
 
 The Android release branch is being prepared separately. See [release progress](verification/android-release-progress.md) for its checks and remaining gates.
 
@@ -142,4 +142,4 @@ Read [how the language architecture works](docs/language-architecture.md) and [h
 
 The native WebRTC package is pinned to [stasel/WebRTC 152.0.0](https://github.com/stasel/WebRTC/tree/152.0.0). The app bundles [third-party notices](apps/ios/App/ThirdPartyNotices.txt) and the SDK’s privacy manifest. Review upstream notices when changing the dependency.
 
-Mural is released under the [MIT License](LICENSE). Third-party components retain their own licenses. The Mural name and logo identify the original project; the software license does not grant trademark rights.
+Palique is released under the [MIT License](LICENSE). Third-party components retain their own licenses. The Palique name and logo identify the original project; the software license does not grant trademark rights.

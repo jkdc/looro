@@ -125,10 +125,15 @@ public struct SessionRecord: Codable, Identifiable, Sendable {
     public var outputTokens = 0
     public var searchCalls = 0
     public var endReason: String?
-    public init(languageID: String = LanguageRegistry.defaultID, themeID: String? = nil, title: String? = nil) {
+    public var mode: String?
+    public var lessonID: String?
+    public init(languageID: String = LanguageRegistry.defaultID, themeID: String? = nil, title: String? = nil, lessonID: String? = nil) {
         self.languageID = languageID; self.themeID = themeID
         self.title = title ?? LanguageRegistry.module(for: languageID)?.defaultTitle ?? "A conversation"
+        self.lessonID = lessonID
     }
+    public var isListening: Bool { mode == "listening" }
+    public var isLesson: Bool { mode == "lesson" }
     public var passages: [Passage] { Transcript.passages(fragments) }
     public mutating func append(_ fragment: Fragment) {
         guard !fragments.contains(where: { $0.id == fragment.id }) else { return }
@@ -156,15 +161,87 @@ public struct Preferences: Codable, Sendable {
     public var interests = ""
     public var hasOnboarded = false
     public var aiConsentVersion: Int?
+    public var slowSpeech: Bool?
+    public var speechRate: Double?
+    public var listeningPractice: Bool?
+    public var usageMetricsEnabled: Bool?
+    public var sttEngine: String?
     public init() {}
+}
+
+/// Per-lesson practice progress. v1 records attempts only; bars/dueAt stay at zero
+/// until the evidence-based progress change claims them.
+public struct LessonState: Codable, Hashable, Sendable {
+    public var lessonID: String
+    public var bars: Int
+    public var attempts: Int
+    public var lastSeen: Double
+    public var dueAt: Double
+    public init(lessonID: String, bars: Int = 0, attempts: Int = 0, lastSeen: Double = 0, dueAt: Double = 0) {
+        self.lessonID = lessonID; self.bars = bars; self.attempts = attempts
+        self.lastSeen = lastSeen; self.dueAt = dueAt
+    }
+}
+
+/// Saved expression for the recall queue. `source` is "lesson" or "lookup";
+/// scheduled by RecallEngine on the same ladder as word bars. `languageID` is
+/// nil only on legacy entries, which stay visible in every language.
+public struct ExpressionState: Codable, Hashable, Sendable {
+    public var text: String
+    public var meaning: String
+    public var source: String
+    public var lessonID: String?
+    public var bars: Int
+    public var attempts: Int
+    public var lastSeen: Double
+    public var dueAt: Double
+    public var languageID: String?
+    public init(text: String, meaning: String, source: String, lessonID: String? = nil,
+                bars: Int = 0, attempts: Int = 0, lastSeen: Double = 0, dueAt: Double = 0,
+                languageID: String? = nil) {
+        self.text = text; self.meaning = meaning; self.source = source; self.lessonID = lessonID
+        self.bars = bars; self.attempts = attempts; self.lastSeen = lastSeen; self.dueAt = dueAt
+        self.languageID = languageID
+    }
+}
+
+/// One completed learning event in the append-only progress ledger. `kind` is the
+/// closed catalog shared with the server ledger (`user_progress.kind`); itemID is
+/// a content slug, or its hashed key when the raw item (a word lemma) is not one.
+/// `languageID` is nil only on legacy marks, which count as global activity.
+/// Optional fields so pre-ledger archives and backups keep decoding untouched.
+public struct CompletionMark: Codable, Hashable, Sendable {
+    public var kind: String
+    public var itemID: String
+    public var at: Double
+    public var bestScore: Int
+    public var languageID: String?
+    public init(kind: String, itemID: String, at: Double, bestScore: Int = 0, languageID: String? = nil) {
+        self.kind = kind; self.itemID = itemID; self.at = at; self.bestScore = bestScore
+        self.languageID = languageID
+    }
 }
 
 public struct Archive: Codable, Sendable {
     public static let maximumEncodedBytes = 30_000_000
     private static let maximumSessions = 10_000
+    private static let maximumLessons = 1_000
+    private static let maximumExpressions = 2_000
+    /// Write sites keep the ledger to the newest marks with this cap so validation never rejects a save.
+    public static let maximumCompletions = 2_000
+    static let completionKinds: Set<String> = ["lesson", "conversation_theme", "exercise_set", "listening",
+                                               "recall_round", "words_practice", "assessment"]
+    // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
+    // Write sites clamp to these too, so a long model reply can never make a saved session fail validation here.
+    public static let maximumTitleCharacters = 200
+    public static let maximumTopicTextCharacters = 20_000
+    public static let maximumTranslationCharacters = 10_000
     public var schemaVersion = 2
     public var sessions: [SessionRecord] = []
     public var preferences = Preferences()
+    public var lessons: [LessonState]?
+    public var expressions: [ExpressionState]?
+    public var completions: [CompletionMark]?
     public init() {}
     public static func decode(_ data: Data) throws -> Archive {
         guard data.count <= maximumEncodedBytes else { throw ArchiveError.tooLarge }
@@ -200,10 +277,44 @@ public struct Archive: Codable, Sendable {
             session.assessments = session.assessments.compactMap { LearningEngine.validate($0, session: session) }
             candidate.sessions.append(session)
         }
+        var lessonsByID: [String: LessonState] = Dictionary(uniqueKeysWithValues: (candidate.lessons ?? []).map { ($0.lessonID, $0) })
+        for lesson in incoming.lessons ?? [] {
+            let current = lessonsByID[lesson.lessonID]
+            lessonsByID[lesson.lessonID] = LessonState(
+                lessonID: lesson.lessonID,
+                bars: max(current?.bars ?? 0, lesson.bars),
+                attempts: max(current?.attempts ?? 0, lesson.attempts),
+                lastSeen: max(current?.lastSeen ?? 0, lesson.lastSeen),
+                dueAt: max(current?.dueAt ?? 0, lesson.dueAt))
+        }
+        candidate.lessons = lessonsByID.isEmpty ? nil : lessonsByID.values.sorted { $0.lessonID < $1.lessonID }
+        var expressionsByKey: [String: ExpressionState] = Dictionary(uniqueKeysWithValues: (candidate.expressions ?? []).map { (RecallEngine.expressionKey($0.text, $0.languageID), $0) })
+        for expression in incoming.expressions ?? [] {
+            let key = RecallEngine.expressionKey(expression.text, expression.languageID)
+            let current = expressionsByKey[key]
+            expressionsByKey[key] = ExpressionState(
+                text: current?.text ?? expression.text,
+                meaning: (current?.meaning.isEmpty == false) ? current!.meaning : expression.meaning,
+                source: current?.source ?? expression.source,
+                lessonID: current?.lessonID ?? expression.lessonID,
+                bars: max(current?.bars ?? 0, expression.bars),
+                attempts: max(current?.attempts ?? 0, expression.attempts),
+                lastSeen: max(current?.lastSeen ?? 0, expression.lastSeen),
+                dueAt: max(current?.dueAt ?? 0, expression.dueAt))
+        }
+        candidate.expressions = expressionsByKey.isEmpty ? nil : expressionsByKey.values.sorted { $0.text < $1.text }
+        var marks = candidate.completions ?? []
+        var seenMarks = Set(marks.map(Self.markKey))
+        for mark in incoming.completions ?? [] where seenMarks.insert(Self.markKey(mark)).inserted {
+            marks.append(mark)
+        }
+        marks.sort { $0.at > $1.at }
+        candidate.completions = marks.isEmpty ? nil : Array(marks.prefix(Self.maximumCompletions))
         try candidate.validate()
         guard try candidate.encoded().count <= Self.maximumEncodedBytes else { throw ArchiveError.tooLarge }
         return candidate
     }
+    private static func markKey(_ mark: CompletionMark) -> String { "\(mark.kind)|\(mark.itemID)|\(mark.at)|\(mark.languageID ?? "")" }
     private func validate() throws {
         guard LanguageRegistry.module(for: preferences.learningLanguageID) != nil else { throw ArchiveError.unsupportedLanguage }
         guard Set(sessions.map(\.id)).count == sessions.count,
@@ -216,12 +327,35 @@ public struct Archive: Codable, Sendable {
             guard s.voiceSeconds.isFinite, (0...31_536_000).contains(s.voiceSeconds),
                   [s.inputTokens, s.outputTokens, s.searchCalls].allSatisfy({ (0...1_000_000_000).contains($0) }),
                   validDate(s.startedAt), s.endedAt.map(validDate) ?? true,
-                  s.assessments.allSatisfy({ validDate($0.createdAt) }) else { throw ArchiveError.invalid }
+                  s.assessments.allSatisfy({ validDate($0.createdAt) }),
+                  s.title.count <= Self.maximumTitleCharacters,
+                  s.translations.values.allSatisfy({ $0.count <= Self.maximumTranslationCharacters }) else { throw ArchiveError.invalid }
             guard Set(s.fragments.map(\.id)).count == s.fragments.count,
                   s.fragments.allSatisfy({ $0.startMS >= 0 && $0.endMS >= $0.startMS && $0.text.count <= 50_000 &&
                       (0...1_000_000).contains($0.revision) && validDate($0.receivedAt) }),
-                  s.topics.allSatisfy({ $0.languageID == s.languageID && validDate($0.retrievedAt) }) else { throw ArchiveError.invalid }
+                  s.topics.allSatisfy({ $0.languageID == s.languageID && $0.text.count <= Self.maximumTopicTextCharacters && validDate($0.retrievedAt) }) else { throw ArchiveError.invalid }
         }
+        let lessons = lessons ?? []
+        guard lessons.count <= Self.maximumLessons, Set(lessons.map(\.lessonID)).count == lessons.count,
+              lessons.allSatisfy({ !$0.lessonID.isEmpty && $0.lessonID.count <= 200 && (0...3).contains($0.bars) &&
+                  (0...1_000_000).contains($0.attempts) && $0.lastSeen.isFinite && $0.dueAt.isFinite })
+        else { throw ArchiveError.invalid }
+        let expressions = expressions ?? []
+        guard expressions.count <= Self.maximumExpressions,
+              Set(expressions.map { RecallEngine.expressionKey($0.text, $0.languageID) }).count == expressions.count,
+              expressions.allSatisfy({ !$0.text.isEmpty && $0.text.count <= 300 && !$0.meaning.isEmpty && $0.meaning.count <= 300 &&
+                  ["lesson", "lookup"].contains($0.source) &&
+                  ($0.source != "lesson" || !($0.lessonID ?? "").isEmpty) &&
+                  (0...3).contains($0.bars) && (0...1_000_000).contains($0.attempts) &&
+                  $0.lastSeen.isFinite && $0.dueAt.isFinite })
+        else { throw ArchiveError.invalid }
+        let completions = completions ?? []
+        guard completions.count <= Self.maximumCompletions,
+              Set(completions.map(Self.markKey)).count == completions.count,
+              completions.allSatisfy({ Self.completionKinds.contains($0.kind) && !$0.itemID.isEmpty && $0.itemID.count <= 200 &&
+                  ($0.languageID ?? "").count <= 16 &&
+                  $0.at.isFinite && (0...100).contains($0.bestScore) })
+        else { throw ArchiveError.invalid }
     }
     /// Version 1 was Norwegian-only. Migration assigns that provenance once;
     /// version 2 records must explicitly declare their language.
@@ -259,9 +393,17 @@ public enum ArchiveError: Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .tooLarge: "This backup is too large to import."
-        case .unsupportedVersion: "This backup needs a newer version of Mural."
-        case .unsupportedLanguage: "This backup contains a language module that this version of Mural does not support."
+        case .unsupportedVersion: "This backup needs a newer version of Palique."
+        case .unsupportedLanguage: "This backup contains a language module that this version of Palique does not support."
         case .invalid: "This backup has invalid or duplicate records."
         }
+    }
+}
+
+/// Effective TTS multiplier: the explicit rate choice wins; legacy archives fall
+/// back to 0.8 when the old "slower speech" flag is set, otherwise normal.
+public extension Preferences {
+    func effectiveSpeechRate() -> Double {
+        speechRate ?? (slowSpeech == true ? 0.8 : 1.0)
     }
 }

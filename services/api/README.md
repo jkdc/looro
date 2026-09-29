@@ -1,4 +1,4 @@
-# Run Mural's commercial backend foundation
+# Run Palique's commercial backend foundation
 
 This backend prepares accounts, a credit ledger, and **Stripe sandbox** payments. Public funded conversations and free trials remain unavailable; live Stripe keys are rejected. A disabled, operator-allowlisted voice experiment now has a real network adapter and durable accounting, tested entirely against a local fake provider. The existing iPhone BYOK build continues to operate independently.
 
@@ -15,7 +15,7 @@ npm ci
 cp .env.example .env
 ```
 
-Set `DATABASE_URL` in `.env` to a database reserved for Mural. Keep `.env` private and excluded from Git. The example password is only for a local development database.
+Set `DATABASE_URL` in `.env` to a database reserved for Palique. Keep `.env` private and excluded from Git. The example password is only for a local development database.
 
 Apply the schema and start the development server:
 
@@ -44,7 +44,7 @@ npm test
 For the full suite, set `TEST_DATABASE_URL` to an **isolated test database whose name ends in `_test`**, then run `npm test`. The integration suite applies migrations and adds synthetic test accounts, purchases, and usage. It never invokes OpenAI, Google, Apple, or Stripe servers. Ledger tests retain synthetic rows; voice tests create and remove isolated PostgreSQL schemas.
 
 ```sh
-TEST_DATABASE_URL=postgresql://mural_test@127.0.0.1:55434/mural_billing_test npm test
+TEST_DATABASE_URL=postgresql://app_test@127.0.0.1:55434/app_billing_test npm test
 ```
 
 The URL above is an example for an already-running local test database. Do not use a production database. Without `TEST_DATABASE_URL`, PostgreSQL tests are explicitly skipped.
@@ -70,7 +70,7 @@ Set `GOOGLE_CLIENT_ID` to the exact audience issued to the native app. Request a
 
 Apple sign-in requires `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY_PATH`, pointing to a private Sign in with Apple `.p8` file. The adapter exchanges a fresh native authorization code, verifies the returned ID token against the authenticated account’s Apple subject, and revokes its refresh/access token. Provider tokens stay in memory. Supplying `APPLE_CLIENT_ID` alone does not enable Apple sign-in. The adapter has cryptographic tests using fake responses; real Apple configuration and device verification remain pending. Mount the private key read-only through a deployment override; never add it to the image or repository.
 
-For payment testing, supply the `STRIPE_TEST_*` variables in `.env`. Only `sk_test_` secrets are accepted. Create one-time USD sandbox Prices whose totals equal AI value + 15% Mural fee + the configured payment fee. Configure the exact `price_…` IDs and payment-fee amounts in cents. The server retrieves the Price and verifies its amount, currency, and test mode before creating Checkout. Taxes and live processor fees are not calculated by this foundation.
+For payment testing, supply the `STRIPE_TEST_*` variables in `.env`. Only `sk_test_` secrets are accepted. Create one-time USD sandbox Prices whose totals equal AI value + 15% Palique fee + the configured payment fee. Configure the exact `price_…` IDs and payment-fee amounts in cents. The server retrieves the Price and verifies its amount, currency, and test mode before creating Checkout. Taxes and live processor fees are not calculated by this foundation.
 
 Point a Stripe sandbox webhook to `/v1/webhooks/stripe`, with the webhook signing secret, for `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `charge.refunded`, and `charge.dispute.created`. The handler verifies the signature on the original bytes. Credit comes from a confirmed payment mapped to a server-created order, never the return URL or client metadata. Retries retrieve the stored Checkout session, including after Stripe’s idempotency-key retention window. An expired Checkout needs a new order; an uncertain create older than 23 hours needs reconciliation. A session whose database mapping fails is expired and its URL is never returned. Resolved disputes still require operator reconciliation; do not activate real payments before that workflow exists. Account deletion returns `409 unresolved_billing` while any pending checkout, balance, or reservation remains. New purchases and reservations lock the account against deletion, so a payment cannot be stranded on a deleted account. This temporary restriction requires a supported refund/expiry/deletion workflow before commercial release.
 
@@ -87,7 +87,7 @@ All monetary strings are integer **nanoUSD**: 1 USD = 1,000,000,000 nanoUSD. A d
 | `POST /v1/guest/minutes` | Verified guest attestation proof | Guest session and remaining allowance; disabled without a verified adapter |
 | `POST /v1/minutes/welcome` | Member token and account-bound attestation proof | Claims the signup offer once within allocation budgets |
 | `POST /v1/minutes/link-guest` | Member token; `guestAccessToken`, optional `deferPending` and `guestAccountID` | Transfers settled guest time; opted-in clients can retain an unsettled transfer without blocking member funds |
-| `POST /v1/auth/sign-out` | Bearer token | Revokes this account's Mural sessions |
+| `POST /v1/auth/sign-out` | Bearer token | Revokes this account's Palique sessions |
 | `DELETE /v1/account` | Bearer token; Apple additionally needs a fresh authorization code | Removes identity/email/session data; retains required financial records under an opaque ID |
 | `GET /v1/pricing` | None | Dated provider rates, money units, and separate-fee policy |
 | `POST /v1/checkout` | Bearer token; `Idempotency-Key`; `product` = `ai-10-usd` or `ai-25-usd` | `checkoutURL`, `orderID`, `sandbox: true`, itemized `quote` |
@@ -97,7 +97,7 @@ All monetary strings are integer **nanoUSD**: 1 USD = 1,000,000,000 nanoUSD. A d
 | `GET /v1/live/sessions/:id` | Bearer token belonging to the session owner | Minimal state, cumulative milliseconds, confirmed provider cost and customer debit |
 | `POST /v1/live/sessions/:id/close` | Bearer token belonging to the session owner | Requests server closure; never accepts client-reported usage |
 
-Error responses contain a safe `error.code` only. Request bodies, keys, ID tokens, bearer tokens, Stripe payloads, and conversations are not logged. Expired authentication records are pruned every 15 minutes. The basic in-memory rate limit does not trust forwarded client-IP headers; behind Caddy it applies conservatively to the proxy address. Configure and test a trusted-proxy policy before scaling it.
+Error responses contain a safe `error.code` only. Request bodies, keys, ID tokens, bearer tokens, Stripe payloads, and conversations are not logged. Expired authentication records are pruned every 15 minutes. The basic in-memory rate limit does not trust forwarded client-IP headers; behind Caddy it applies conservatively to the proxy address, so in the base deployment client routes share one bucket per proxy IP. Configure and test a trusted-proxy policy before scaling it; a durable per-client limiter remains documented follow-up work. Stripe webhook routes (`/v1/webhooks/stripe`, `/v1/webhooks/stripe/minutes`) are signature-authenticated server-to-server endpoints: they are reachable without trusted-proxy headers and stay outside the shared in-memory limiter, so a client 429 storm cannot delay payment confirmation. `/readyz`, `/v1/pricing`, `/v1/minutes/products`, and `/payment-return` are also reachable without proxy headers and, like the webhooks, stay outside the shared per-proxy-IP bucket: these routes are public, cheap, and idempotent, and webhook delivery is signature-authenticated, so one abusive client cannot 429 readiness probes or payment flows for everyone behind the proxy; all other client routes fail closed with `trusted_proxy_required` when the trusted proxy is not configured.
 
 ## Restricted voice experiment
 
@@ -120,15 +120,15 @@ A 600-second wall-clock closure request is **not an absolute provider spending g
 An isolated smoke stack uses PostgreSQL 17, no Caddy, and an ephemeral localhost-only API port:
 
 ```sh
-docker compose -p mural-foundation-smoke -f tests/compose.smoke.yaml up --build -d api
-docker compose -p mural-foundation-smoke -f tests/compose.smoke.yaml run --rm tests
-docker compose -p mural-foundation-smoke -f tests/compose.smoke.yaml port api 8080
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml up --build -d api
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml run --rm tests
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml port api 8080
 ```
 
 Only this disposable test project may be removed with:
 
 ```sh
-docker compose -p mural-foundation-smoke -f tests/compose.smoke.yaml down --volumes
+docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml down --volumes
 ```
 
 ## Complete before commercial activation

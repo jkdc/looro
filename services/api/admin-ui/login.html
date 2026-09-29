@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- No identity provider: login is local operator credentials only. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'">
+<title>Palique · Acceso administración</title>
+<link rel="stylesheet" href="/vendor/tabler.min.css?v=5">
+<link rel="stylesheet" href="/vendor/icons/tabler-icons.min.css?v=5">
+</head>
+<body class="border-top-wide border-primary d-flex flex-column">
+<div class="page page-center">
+  <div class="container container-tight py-4">
+    <div class="text-center mb-4">
+      <span class="avatar avatar-lg bg-primary-lt text-primary mb-2"><i class="ti ti-player-play fs-1"></i></span>
+      <h1 class="login-brand">Palique<span class="text-secondary"> · Admin</span></h1>
+    </div>
+    <div class="card card-md">
+      <div class="card-body">
+        <h2 class="h2 text-center mb-1">Inicio de sesión de operador</h2>
+        <div class="text-secondary text-center mb-4">Acceso reservado; cada entrada queda registrada.</div>
+        <form id="login-form" autocomplete="off">
+          <div class="mb-3">
+            <label class="form-label" for="username">Usuario</label>
+            <input type="text" class="form-control" id="username" maxlength="64" pattern="[a-z0-9._-]{3,64}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="password">Contraseña</label>
+            <input type="password" class="form-control" id="password" maxlength="1024" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" id="login-btn"><i class="ti ti-login me-1"></i>Entrar</button>
+        </form>
+        <div class="hr-text">o</div>
+        <div class="mb-3">
+          <label class="form-label" for="bearer">Sesión existente (token bearer)</label>
+          <input type="text" class="form-control font-monospace" id="bearer" placeholder="43 caracteres" maxlength="128" autocomplete="off">
+          <div class="form-hint">Convierte un token emitido previamente en cookie de sesión. Útil para acceso no interactivo.</div>
+        </div>
+        <button class="btn w-100" id="bearer-btn"><i class="ti ti-key me-1"></i>Crear sesión</button>
+        <div id="error" class="text-danger mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/login.js?v=6"></script>
+</body>
+</html>

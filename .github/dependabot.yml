@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: /server
+    directory: /services/api
     schedule:
       interval: weekly
     open-pull-requests-limit: 5

@@ -65,7 +65,7 @@ export class HostedVoice {
     if (this.leader) throw new ServiceError('voice_worker_already_started', 503);
     const leader = await this.db.connect();
     try {
-      const lock = await leader.query("SELECT pg_try_advisory_lock(hashtext('mural-hosted-voice-worker')) AS acquired");
+      const lock = await leader.query("SELECT pg_try_advisory_lock(hashtext('app-hosted-voice-worker')) AS acquired");
       if (!lock.rows[0].acquired) throw new ServiceError('voice_worker_already_running', 503);
       this.leader = leader;
       this.leaderError=() => { this.accepting = false; void this.emergencyClose(); };
@@ -88,7 +88,7 @@ export class HostedVoice {
       this.timer = setInterval(() => { void this.tick().catch(() => { this.accepting = false; void this.emergencyClose(); }); }, 1_000);
       this.timer.unref();
     } catch (error) {
-      if (this.leader) { await leader.query("SELECT pg_advisory_unlock(hashtext('mural-hosted-voice-worker'))").catch(() => {}); this.leader = undefined; }
+      if (this.leader) { await leader.query("SELECT pg_advisory_unlock(hashtext('app-hosted-voice-worker'))").catch(() => {}); this.leader = undefined; }
       if (this.leaderError) leader.removeListener('error',this.leaderError);
       this.leaderError=undefined;leader.release(); throw error;
     }
@@ -106,7 +106,7 @@ export class HostedVoice {
     let paidReserve=this.paidHold(15_000);
     let deadline = new Date(this.now() + reservedMilliseconds);
     await transaction(this.db, async sql => {
-      await sql.query("SELECT pg_advisory_xact_lock(hashtext('mural-hosted-funding-cap'))");
+      await sql.query("SELECT pg_advisory_xact_lock(hashtext('app-hosted-funding-cap'))");
       const minuteWallet = minutes ? await lockMinuteWallet(sql, account) : undefined;
       let wallet = minuteWallet ?? await lockWallet(sql, account, true);
       if((await sql.query('SELECT 1 FROM minute_guest_link_intents WHERE guest_account_id=$1',[account])).rowCount)
@@ -214,7 +214,7 @@ export class HostedVoice {
   }
   private async settleRejectedCreate(id: string, account: string, rejection: LiveCreateRejectedError): Promise<void> {
     await transaction(this.db, async sql => {
-      await sql.query("SELECT pg_advisory_xact_lock(hashtext('mural-hosted-funding-cap'))");
+      await sql.query("SELECT pg_advisory_xact_lock(hashtext('app-hosted-funding-cap'))");
       const funding = (await sql.query('SELECT minute_reservation_id FROM hosted_sessions WHERE id=$1 AND account_id=$2', [id, account])).rows[0];
       if (!funding) throw new ServiceError('provider_reconciliation_required', 503);
       if (funding.minute_reservation_id) await lockMinuteWallet(sql, account, false);
@@ -249,7 +249,7 @@ export class HostedVoice {
    * only a durable cancellation before it can release time without a provider final event. */
   private async prepareMinuteProviderAttempt(id: string, account: string, attempt = true): Promise<boolean> {
     return transaction(this.db, async sql => {
-      await sql.query("SELECT pg_advisory_xact_lock(hashtext('mural-hosted-funding-cap'))");
+      await sql.query("SELECT pg_advisory_xact_lock(hashtext('app-hosted-funding-cap'))");
       const funding=(await sql.query('SELECT funding_mode FROM hosted_sessions WHERE id=$1 AND account_id=$2',[id,account])).rows[0];
       const paid=funding?.funding_mode==='ai-value';
       if (paid) await lockWallet(sql,account); else await lockMinuteWallet(sql, account, false);
@@ -300,7 +300,7 @@ export class HostedVoice {
     const state = await transaction(this.db, async sql => {
       // Match admission/helper lock order so final voice cost and reduced helper liability
       // become visible atomically to a new funded conversation.
-      await sql.query("SELECT pg_advisory_xact_lock(hashtext('mural-hosted-funding-cap'))");
+      await sql.query("SELECT pg_advisory_xact_lock(hashtext('app-hosted-funding-cap'))");
       const owner = (await sql.query('SELECT account_id,minute_reservation_id FROM hosted_sessions WHERE id=$1', [id])).rows[0];
       if (!owner) throw new ServiceError('unknown_hosted_session');
       if (owner.minute_reservation_id) await lockMinuteWallet(sql, owner.account_id, false);
@@ -361,7 +361,7 @@ export class HostedVoice {
     const row = (await this.db.query('SELECT provider_session_id,state FROM hosted_sessions WHERE id=$1', [id]).catch(() => ({ rows: [] }))).rows[0];
     if (row?.provider_session_id && row.state !== 'closed') await this.provider.hangup(row.provider_session_id).catch(() => {});
   }
-  async requestClose(id: string, reason: 'user_requested' | 'worker_recovery' | 'usage_limit' | 'deadline' | 'funding_reversed' | 'worker_shutdown' | 'sign_out') {
+  async requestClose(id: string, reason: 'user_requested' | 'worker_recovery' | 'usage_limit' | 'deadline' | 'funding_reversed' | 'worker_shutdown' | 'sign_out' | 'operator_close') {
     await this.db.query(`UPDATE hosted_sessions SET state=CASE WHEN state='incomplete' THEN state ELSE 'closing' END,
       close_requested_at=COALESCE(close_requested_at,$2),close_reason=COALESCE(close_reason,$3) WHERE id=$1 AND state<>'closed'`, [id, new Date(this.now()), reason]);
     try { this.slots.get(id)?.connection?.closeSession(); } catch { await this.connectionLost(id); }
@@ -397,6 +397,14 @@ export class HostedVoice {
     return { session: row ? await this.status(account, row.id) : null };
   }
   async close(account: string, id: string) { await this.status(account, id); await this.requestClose(id, 'user_requested'); return this.status(account, id); }
+  /** Panel operator force close: the worker reconciliation settles funds exactly like a user close. */
+  async adminClose(id: string) {
+    const row = (await this.db.query('SELECT id FROM hosted_sessions WHERE id=$1', [id])).rows[0];
+    if (!row) throw new ServiceError('live_session_not_found', 404);
+    await this.requestClose(id, 'operator_close');
+    const after = (await this.db.query('SELECT state,close_reason FROM hosted_sessions WHERE id=$1', [id])).rows[0];
+    return { sessionID: id, state: after?.state ?? null, closeReason: after?.close_reason ?? null };
+  }
   async tick(): Promise<void> {
     if (this.ticking || !this.leader) return; this.ticking = true;
     try {
@@ -445,7 +453,7 @@ export class HostedVoice {
     for (const slot of this.slots.values()) slot.connection?.disconnect();
     this.slots.clear();
     if (this.leader) {
-      await this.leader.query("SELECT pg_advisory_unlock(hashtext('mural-hosted-voice-worker'))").catch(() => {});
+      await this.leader.query("SELECT pg_advisory_unlock(hashtext('app-hosted-voice-worker'))").catch(() => {});
       if (this.leaderError) this.leader.removeListener('error',this.leaderError);
       this.leaderError=undefined;
       this.leader.release(); this.leader = undefined;
