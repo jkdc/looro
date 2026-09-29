@@ -52,6 +52,10 @@ def q(text):
     out = json.dumps(text, ensure_ascii=False)
     return out.replace('$', r'\$')
 
+def q_swift(text):
+    """Swift string literal: $ is not special, so no escaping needed."""
+    return json.dumps(text, ensure_ascii=False)
+
 
 def language_ids():
     """Target-language ids declared by the Swift language registry."""
@@ -184,10 +188,10 @@ def emit_swift(courses):
         for unit in course['units']:
             obj = object_name(unit['id'])
             theme_args = ',\n                    '.join(
-                'ConversationTheme(' + ', '.join(q(t[k]) for k in REQUIRED_THEME) + ')' for t in unit['themes'])
+                'ConversationTheme(' + ', '.join(q_swift(t[k]) for k in REQUIRED_THEME) + ')' for t in unit['themes'])
             lesson_blocks = []
             for lesson in unit['lessons']:
-                explanation = ',\n                            '.join(q(x) for x in lesson['intro']['explanation'])
+                explanation = ',\n                            '.join(q_swift(x) for x in lesson['intro']['explanation'])
                 examples = ',\n                            '.join(
                     f'ExampleLine(text: {q(e["text"])}, meaning: {q(e["meaning"])})'
                     for e in lesson['intro']['examples'])
@@ -195,39 +199,39 @@ def emit_swift(courses):
                     f'TargetExpression(text: {q(e["text"])}, meaning: {q(e["meaning"])}, note: {q(e["note"])})'
                     for e in lesson['expressions'])
                 questions = ',\n                                '.join(
-                    'PracticeQuestion(prompt: ' + q(qq['prompt']) + ', expected: ['
-                    + ', '.join(q(x) for x in qq['expected']) + '], focus: ' + q(qq['focus'])
-                    + ', watch: ' + q(qq['watch']) + ')'
+                    'PracticeQuestion(prompt: ' + q_swift(qq['prompt']) + ', expected: ['
+                    + ', '.join(q_swift(x) for x in qq['expected']) + '], focus: ' + q_swift(qq['focus'])
+                    + ', watch: ' + q_swift(qq['watch']) + ')'
                     for qq in lesson['practice']['questions'])
                 exercises = ',\n                            '.join(
                     f'Exercise(id: {q(e["id"])}, kind: {q(e["kind"])}, prompt: {q(e["prompt"])}, '
-                    f'options: [{", ".join(q(o) for o in e.get("options", []))}], '
-                    f'answers: [{", ".join(q(a) for a in e["answers"])}], explain: {q(e["explain"])})'
+                    f'options: [{", ".join(q_swift(o) for o in e.get("options", []))}], '
+                    f'answers: [{", ".join(q_swift(a) for a in e["answers"])}], explain: {q(e["explain"])})'
                     for e in lesson['exercises'])
                 lesson_blocks.append(
-                    '            Lesson(id: ' + q(lesson['id']) + ', title: ' + q(lesson['title'])
-                    + ', goal: ' + q(lesson['goal']) + ',\n'
+                    '            Lesson(id: ' + q_swift(lesson['id']) + ', title: ' + q_swift(lesson['title'])
+                    + ', goal: ' + q_swift(lesson['goal']) + ',\n'
                     '                intro: LessonIntro(explanation: [\n                            '
                     + explanation + '], examples: [\n                            ' + examples + ']),\n'
                     '                expressions: [\n                            ' + expressions + '],\n'
-                    '                situation: ' + q(lesson['situation']) + ',\n'
+                    '                situation: ' + q_swift(lesson['situation']) + ',\n'
                     '                practice: LessonPractice(questions: [\n                                '
                     + questions + ']),\n'
                     '                exercises: [\n                            ' + exercises + ']'
                     + lesson_skill_suffix(lesson, swift=True) + ')')
             out += ['public enum ' + obj + ' {',
-                    '    public static let unit: CourseUnit = CourseUnit(id: ' + q(unit['id'])
-                    + ', title: ' + q(unit['title']) + ', subtitle: ' + q(unit['subtitle'])
-                    + ', level: ' + q(unit['level']) + ', themes: [\n                    ' + theme_args
+                    '    public static let unit: CourseUnit = CourseUnit(id: ' + q_swift(unit['id'])
+                    + ', title: ' + q_swift(unit['title']) + ', subtitle: ' + q_swift(unit['subtitle'])
+                    + ', level: ' + q_swift(unit['level']) + ', themes: [\n                    ' + theme_args
                     + '], lessons: [\n' + ',\n'.join(lesson_blocks) + '])',
                     '}', '']
             unit_refs.append(obj + '.unit')
         units_by_course.append((course, unit_refs))
     out.append('    public static let all: [Course] = [')
     for course, unit_refs in units_by_course:
-        out.append('        Course(id: ' + q(course['id']) + ', languageID: ' + q(course['languageID'])
-                   + ', title: ' + q(course['title']) + ', subtitle: ' + q(course['subtitle'])
-                   + ', symbol: ' + q(course['symbol']) + ', description: ' + q(course['description'])
+        out.append('        Course(id: ' + q_swift(course['id']) + ', languageID: ' + q_swift(course['languageID'])
+                   + ', title: ' + q_swift(course['title']) + ', subtitle: ' + q_swift(course['subtitle'])
+                   + ', symbol: ' + q_swift(course['symbol']) + ', description: ' + q_swift(course['description'])
                    + ', units: [\n' + ',\n'.join(unit_refs) + '\n        ]),')
     out += ['    ]', '}', '']
     return '\n'.join(out)

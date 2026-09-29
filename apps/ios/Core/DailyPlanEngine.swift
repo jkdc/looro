@@ -35,9 +35,7 @@ public enum DailyPlanEngine {
                 steps.append(PlanStep(kind: "read", minutes: minutes))
             } else if hasUnplayedListening {
                 steps.append(PlanStep(kind: "listen", minutes: minutes))
-            } else if steps.isEmpty {
-                steps.append(PlanStep(kind: "lesson", minutes: minutes))
-            }
+
         }
         return steps
     }

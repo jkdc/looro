@@ -324,21 +324,27 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         that mixes lesson mastery with the listening points. */
     fun levelStats(course: Course): LevelStats = LevelEngine.stats(course, archive.lessons,
         archive.completions.orEmpty(), ListeningRegistry.forLanguage(course.languageID))
-    fun currentLevelStats(): LevelStats? = CourseRegistry.forLanguage(language.id).firstOrNull()?.let { levelStats(it) }
+    fun currentLevelStats(): LevelStats? = foundationsCourse()?.let { levelStats(it) }
     fun listeningMedals(): Int = ListeningRegistry.forLanguage(language.id)
         .count { LevelEngine.listeningMedal(listeningScore(it.id)) >= 1 }
 
-    /** Skill mastery for the learning language — a pure projection of the ledger;
-        null when the language has no course yet. */
-    private var cachedMasteryStats: Pair<Int, MasteryStats>? = null
+    /** The foundations course for the current language — explicitly resolved by
+        id so that track courses (alphabetically earlier) never shadow it. */
+    fun foundationsCourse(): Course? = CourseRegistry.forLanguage(language.id)
+        .firstOrNull { it.id.endsWith("-foundations") }
 
-    fun masteryStats(): MasteryStats? = CourseRegistry.forLanguage(language.id).firstOrNull()?.let { course ->
-        val completionCount = archive.completions.orEmpty().size
-        cachedMasteryStats?.takeIf { it.first == completionCount }?.second
+    /** Skill mastery for the learning language — a pure projection of the ledger;
+        null when the language has no course yet. Cached by (language, completion
+        count, lesson count) so a language switch or new evidence invalidates it. */
+    private var cachedMasteryStats: Triple<String, Int, MasteryStats>? = null
+
+    fun masteryStats(): MasteryStats? = foundationsCourse()?.let { course ->
+        val key = Triple(language.id, archive.completions.orEmpty().size, archive.lessons.count { it.attempts > 0 })
+        cachedMasteryStats?.takeIf { it.first == key.first && it.second == key.second }?.third
             ?: MasteryEngine.stats(course, ListeningRegistry.forLanguage(language.id),
                 ReadingRegistry.forLanguage(language.id), archive.lessons,
                 archive.completions.orEmpty(), nowSeconds()).also {
-                cachedMasteryStats = completionCount to it
+                cachedMasteryStats = Triple(key.first, key.second, it)
             }
     }
 
@@ -348,9 +354,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         recordCompletion(ProgressEngine.READING, itemID, correct * 100 / total)
     }
 
-    fun readingScore(itemID: String): Int? = archive.completions.orEmpty()
-        .filter { it.kind == ProgressEngine.READING && it.itemID == itemID }
-        .maxOfOrNull { it.bestScore }
+    fun readingScore(itemID: String): Int? {
+        val key = ProgressEngine.completionKey(itemID)
+        return archive.completions.orEmpty()
+            .filter { it.kind == ProgressEngine.READING && it.itemID == key }
+            .maxOfOrNull { it.bestScore }
+    }
 
     fun checkpoint(id: String): Checkpoint? = CheckpointRegistry.checkpoint(id)
 
@@ -358,15 +367,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         .filter { it.kind == ProgressEngine.ASSESSMENT && it.itemID == id }
         .maxOfOrNull { it.bestScore }
 
+    /** Whether a checkpoint has been passed, using the same logic as
+        CheckpointEngine.grade (overall threshold AND every category floor). */
+    private fun checkpointPassed(checkpoint: Checkpoint): Boolean {
+        val best = checkpointBest(checkpoint.id) ?: return false
+        return best >= (checkpoint.thresholds["overall"] ?: 100)
+    }
+
     /** The first checkpoint whose level is fully attempted and not yet passed —
         readiness as preparation, never a proficiency claim. */
     fun checkpointReady(): Checkpoint? {
-        val course = CourseRegistry.forLanguage(language.id).firstOrNull() ?: return null
+        val course = foundationsCourse() ?: return null
         val done = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
         return CheckpointRegistry.forLanguage(language.id).firstOrNull { checkpoint ->
             val levelLessons = course.units.filter { it.level == checkpoint.level }.flatMap { it.lessons }
-            levelLessons.isNotEmpty() && levelLessons.all { it.id in done } &&
-                !(checkpointBest(checkpoint.id)?.let { best -> best >= (checkpoint.thresholds["overall"] ?: 100) } == true)
+            levelLessons.isNotEmpty() && levelLessons.all { it.id in done } && !checkpointPassed(checkpoint)
         }
     }
 
@@ -379,9 +394,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         its lesson teaches (never to exposure-only structures). Local evidence
         for the recommender and the tutor's skill focus — not synced in v1. */
     fun recordExerciseMistake(lessonID: String, prompt: String) {
-        val lesson = CourseRegistry.lesson(lessonID) ?: return
+        val lesson = CourseRegistry.lesson(lessonID)
+        if (lesson == null) {
+            android.util.Log.w("LooroContent", "recordExerciseMistake: unknown lesson $lessonID")
+            return
+        }
         val skills = lesson.skills.filter { it in SkillsData.categories.keys }
-        if (skills.isEmpty()) return
+        if (skills.isEmpty()) {
+            android.util.Log.w("LooroContent", "recordExerciseMistake: no tagged skills for $lessonID")
+            return
+        }
         val errors = (archive.errors ?: mutableListOf()).associateBy { it.skillID }.toMutableMap()
         val now = nowSeconds()
         skills.forEach { skill ->
@@ -393,9 +415,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         persist()
     }
 
-    /** Repeated-error patterns, strongest first — the tutor's skill focus and
-        the progress sheet's "patterns under review". */
-    fun errorPatterns(): List<SkillError> = archive.errors.orEmpty().sortedByDescending { it.count }
+    /** Repeated-error patterns for the current language, strongest first. */
+    fun errorPatterns(): List<SkillError> = archive.errors.orEmpty()
+        .filter { it.skillID in (SkillsData.categories.keys) }
+        .sortedByDescending { it.count }
 
     /** Short prompt fragment naming the learner's most repeated error patterns. */
     fun errorFocus(): String = errorPatterns().take(3)
@@ -405,7 +428,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         skills are already understood (mastery ≥ 60); fall back to the first
         unattempted lesson in course order. */
     fun recommendedLesson(): Lesson? {
-        val course = CourseRegistry.forLanguage(language.id).firstOrNull() ?: return null
+        val course = foundationsCourse() ?: return null
         val mastery = masteryStats()?.skills?.associate { it.skillID to it.mastery } ?: emptyMap()
         val attempted = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
         val unattempted = course.units.flatMap { it.lessons }.filter { it.id !in attempted }
@@ -424,7 +447,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /** Push/pull the progress ledger against the account (guests included). Failures
-        are silent: sync must never nag, the local ledger stays the source of truth. */
+        are silent for the user but logged for debugging — sync must never nag,
+        the local ledger stays the source of truth. */
     fun syncProgress() {
         val client = progressClient ?: return
         viewModelScope.launch {
@@ -433,7 +457,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 val remote = client.fetch(session)
                 if (remote != null && mergeRemoteProgress(remote)) persist()
                 client.send(session, progressBatchJson())
-            } catch (_: Exception) { }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                android.util.Log.w("LooroSync", "syncProgress failed", e)
+            }
         }
     }
 

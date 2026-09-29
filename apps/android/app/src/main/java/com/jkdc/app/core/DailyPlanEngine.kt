@@ -34,7 +34,6 @@ object DailyPlanEngine {
                 budget >= 10 && hasUnplayedListening -> steps += PlanStep("listen", minutes)
                 hasUnplayedReading -> steps += PlanStep("read", minutes)
                 hasUnplayedListening -> steps += PlanStep("listen", minutes)
-                steps.isEmpty() -> steps += PlanStep("lesson", minutes)
             }
         }
         return steps

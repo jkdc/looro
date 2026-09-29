@@ -4,10 +4,10 @@
 Checks:
 - Exercises whose answer repeats the prompt verbatim
 - Exercises with only one distractor (choice with 2 options)
-- Lessons with < 3 skills tagged
-- Skills referenced but never taught (no lesson or listening carries them)
-- Words in listenings that don't appear in any lesson's vocabulary
-- Checkpoints with unbalanced category coverage
+- Skills referenced but never taught
+- Prerequisite chain inversions
+- Checkpoint category imbalance
+- Answers missing from exercises
 """
 import collections
 import json
@@ -19,10 +19,7 @@ SHARED = ROOT / 'shared'
 
 
 def load_courses():
-    courses = []
-    for p in sorted(SHARED.glob('courses/*.json')):
-        courses.append(json.loads(p.read_text()))
-    return courses
+    return [json.loads(p.read_text()) for p in sorted(SHARED.glob('courses/*.json'))]
 
 
 def load_listening():
@@ -43,27 +40,23 @@ def load_catalog():
     return {s['id']: s for s in json.loads((SHARED / 'skills/skill-catalog.json').read_text())['skills']}
 
 
-def load_cando():
-    return {c['id'] for c in json.loads((SHARED / 'skills/cando.json').read_text())['competences']}
-
-
 def check_exercises(courses, issues):
     for course in courses:
         for unit in course['units']:
             for lesson in unit['lessons']:
                 for ex in lesson.get('exercises', []):
-                    # Choice with only 2 options (weak distractors)
-                    if ex['kind'] == 'choice' and len(ex.get('options', [])) < 3:
-                        issues.append(f"WEAK_DISTRACTORS: {ex['id']} has only {len(ex['options'])} options")
-                    # Answer too similar to prompt
-                    if ex['kind'] == 'written':
-                        prompt_lower = ex['prompt'].lower()
-                        for ans in ex['answers']:
-                            if len(ans) > 5 and ans.lower() in prompt_lower:
-                                issues.append(f"ANSWER_IN_PROMPT: {ex['id']} answer '{ans}' appears in prompt")
-                    # Explain is empty or too short
+                    ex_id = ex.get('id', '?')
+                    if ex.get('kind') == 'choice':
+                        opts = ex.get('options', [])
+                        if 0 < len(opts) < 3:
+                            issues.append(f"WEAK_DISTRACTORS: {ex_id} has only {len(opts)} options")
+                    for ans in ex.get('answers', []):
+                        if ex.get('kind') == 'written' and len(str(ans)) > 5 and str(ans).lower() in ex.get('prompt', '').lower():
+                            issues.append(f"ANSWER_IN_PROMPT: {ex_id} answer '{ans}' appears in prompt")
                     if len(ex.get('explain', '')) < 10:
-                        issues.append(f"SHORT_EXPLAIN: {ex['id']} explain is '{ex.get('explain', '')}'")
+                        issues.append(f"SHORT_EXPLAIN: {ex_id} explain is '{ex.get('explain', '')}'")
+                    if 'answers' not in ex or not ex.get('answers'):
+                        issues.append(f"NO_ANSWERS: {ex_id} has no answers")
 
 
 def check_skill_coverage(courses, listenings, readings, catalog, issues):
@@ -81,29 +74,30 @@ def check_skill_coverage(courses, listenings, readings, catalog, issues):
             issues.append(f"UNTAUGHT_SKILL: {skill_id} is in the catalog but no content teaches it")
 
 
-def check_prerequisite_chain(catalog, issues):
-    """Skills whose prerequisites are taught at a HIGHER level than the skill itself."""
+def check_prerequisite_chain(courses, catalog, issues):
     skill_levels = {}
     for course in courses:
-        lang = course['languageID']
         for unit in course['units']:
             for lesson in unit['lessons']:
                 for skill in lesson.get('skills', []):
                     level = unit['level']
-                    if skill not in skill_levels or _level_rank(level) < _level_rank(skill_levels[skill]):
+                    rank = _level_rank(level)
+                    if skill not in skill_levels or rank < _level_rank(skill_levels[skill]):
                         skill_levels[skill] = level
     for skill_id, skill in catalog.items():
         for prereq in skill.get('prerequisites', []):
             if prereq in skill_levels and skill_id in skill_levels:
                 if _level_rank(skill_levels[prereq]) > _level_rank(skill_levels[skill_id]):
-                    issues.append(f"PREREQ_INVERSION: {skill_id} ({skill_levels[skill_id]}) requires {prereq} ({skill_levels[prereq]}) which is taught LATER")
+                    issues.append(
+                        f"PREREQ_INVERSION: {skill_id} ({skill_levels[skill_id]}) "
+                        f"requires {prereq} ({skill_levels[prereq]}) which is taught LATER")
 
 
 def _level_rank(level):
     return ['A0', 'A1', 'A2', 'B1', 'B2', 'C1'].index(level) if level in ['A0', 'A1', 'A2', 'B1', 'B2', 'C1'] else 99
 
 
-def check_checkpoint_balance(checkpoints, catalog, issues):
+def check_checkpoint_balance(checkpoints, issues):
     for cp in checkpoints:
         by_cat = collections.Counter()
         for q in cp['questions']:
@@ -112,7 +106,7 @@ def check_checkpoint_balance(checkpoints, catalog, issues):
             by_cat[cat] += 1
         total = sum(by_cat.values())
         for cat, count in by_cat.items():
-            if count / total < 0.1 and total > 10:
+            if total > 10 and count / total < 0.1:
                 issues.append(f"CHECKPOINT_IMBALANCE: {cp['id']} has only {count}/{total} {cat} questions")
 
 
@@ -121,7 +115,6 @@ def main():
     listenings = load_listening()
     readings = load_readings()
     catalog = load_catalog()
-    cando = load_cando()
     checkpoints = []
     for p in sorted(SHARED.glob('assessments/*-checkpoints.json')):
         checkpoints.extend(json.loads(p.read_text()).get('checkpoints', []))
@@ -129,7 +122,8 @@ def main():
     issues = []
     check_exercises(courses, issues)
     check_skill_coverage(courses, listenings, readings, catalog, issues)
-    check_checkpoint_balance(checkpoints, catalog, issues)
+    check_prerequisite_chain(courses, catalog, issues)
+    check_checkpoint_balance(checkpoints, issues)
 
     if issues:
         print(f"Content Health: {len(issues)} issue(s) found\n")
@@ -140,8 +134,12 @@ def main():
 
     print(f"\nCatalogue: {len(courses)} courses, {len(listenings)} listenings, "
           f"{len(readings)} readings, {len(checkpoints)} checkpoints, "
-          f"{len(catalog)} skills, {len(cando)} Can Do competences")
-    return 1 if issues else 0
+          f"{len(catalog)} skills, {len(load_cando())} Can Do competences")
+    return 0
+
+
+def load_cando():
+    return {c['id'] for c in json.loads((SHARED / 'skills/cando.json').read_text())['competences']}
 
 
 if __name__ == '__main__':

@@ -19,10 +19,10 @@ final class DailyPlanEngineTests: XCTestCase {
         XCTAssertTrue(small.map(\.kind).contains("lesson") || small.map(\.kind).contains("read"))
     }
 
-    func testNoDueWordsSkipsRecallAndFallsBackToLessonOnly() {
+    func testNoContentMeansEmptyPlan() {
         let plan = DailyPlanEngine.plan(budget: 10, dueWords: 0, hasNewLesson: false,
                                         hasUnplayedListening: false, hasUnplayedReading: false)
-        XCTAssertEqual(["lesson"], plan.map(\.kind))
+        XCTAssertTrue(plan.isEmpty, "plan should be empty when nothing to do")
     }
 
     func testZeroBudgetYieldsAnEmptyPlan() {

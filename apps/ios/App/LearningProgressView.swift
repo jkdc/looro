@@ -6,14 +6,19 @@ struct LearningProgressView: View {
     let store: LearningStore
     private var stats: LearningStats { LearningEngine.stats(sessions: store.learningSessions, learner: store.learner) }
     private var progress: ProgressStats { store.progressStats }
+    /// The foundations course for the current language — explicitly resolved by
+    /// id so that track courses (alphabetically earlier) never shadow it.
+    private var foundationsCourse: Course? {
+        CourseRegistry.forLanguage(store.language.id).first { $0.id.hasSuffix("-foundations") }
+    }
     private var level: LevelStats? {
-        guard let course = CourseRegistry.forLanguage(store.language.id).first else { return nil }
+        guard let course = foundationsCourse else { return nil }
         return LevelEngine.stats(course: course, lessons: store.archive.lessons ?? [],
                                  completions: store.archive.completions ?? [],
                                  listeningTexts: ListeningRegistry.forLanguage(course.languageID))
     }
     private var mastery: MasteryStats? {
-        guard let course = CourseRegistry.forLanguage(store.language.id).first else { return nil }
+        guard let course = foundationsCourse else { return nil }
         return MasteryEngine.stats(course: course, listenings: ListeningRegistry.forLanguage(course.languageID),
                                    readings: ReadingRegistry.forLanguage(course.languageID),
                                    lessons: store.archive.lessons ?? [],

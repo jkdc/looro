@@ -21,10 +21,10 @@ class DailyPlanEngineTest {
         assertTrue(small.map { it.kind }.contains("lesson") || small.map { it.kind }.contains("read"))
     }
 
-    @Test fun `no due words skips recall and falls back to lesson only`() {
+    @Test fun `no content means empty plan`() {
         val plan = DailyPlanEngine.plan(10, dueWords = 0, hasNewLesson = false,
             hasUnplayedListening = false, hasUnplayedReading = false)
-        assertEquals(listOf("lesson"), plan.map { it.kind })
+            assertTrue("plan should be empty when nothing to do", plan.isEmpty())
     }
 
     @Test fun `zero budget yields an empty plan`() {

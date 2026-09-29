@@ -325,7 +325,8 @@ public struct Archive: Codable, Sendable {
         }
         marks.sort { $0.at > $1.at }
         candidate.completions = marks.isEmpty ? nil : Array(marks.prefix(Self.maximumCompletions))
-        var errorsByKey: [String: SkillError] = Dictionary(uniqueKeysWithValues: (candidate.errors ?? []).map { ($0.skillID, $0) })
+        var errorsByKey: [String: SkillError] = [:]
+        for e in (candidate.errors ?? []) { errorsByKey[e.skillID] = e }
         for error in incoming.errors ?? [] {
             let current = errorsByKey[error.skillID]
             errorsByKey[error.skillID] = SkillError(skillID: error.skillID,

@@ -52,6 +52,7 @@ import com.jkdc.app.core.ReadingText
 fun ListeningScreen(vm: AppViewModel) {
     var shelf by rememberSaveable { mutableStateOf("listen") }
     DisposableEffect(Unit) { onDispose { vm.stopListeningText() } }
+    DisposableEffect(shelf) { onDispose { vm.stopListeningText() } }
     Column(Modifier.fillMaxSize()) {
         LibraryShelfPicker(shelf) { shelf = it }
         if (shelf == "read") ReadingLibrary(vm) else ListeningLibrary(vm)

@@ -44,11 +44,15 @@ fun CheckpointScreen(vm: AppViewModel, checkpoint: Checkpoint, onBack: () -> Uni
     var answer by rememberSaveable { mutableStateOf("") }
     var selected by rememberSaveable { mutableStateOf<Int?>(null) }
     var verdict by rememberSaveable { mutableStateOf<Boolean?>(null) }
-    val answers = remember { mutableStateListOf<String>() }
+    var answers by rememberSaveable { mutableStateOf(listOf<String>()) }
+    var recorded by rememberSaveable { mutableStateOf(false) }
     val finished = index >= questions.size && questions.isNotEmpty()
     val result = if (finished) CheckpointEngine.grade(checkpoint, answers) else null
-    androidx.compose.runtime.LaunchedEffect(finished) {
-        if (finished) vm.checkpointCompleted(checkpoint.id, result!!.overall)
+    androidx.compose.runtime.LaunchedEffect(finished, checkpoint.id) {
+        if (finished && !recorded) {
+            recorded = true
+            vm.checkpointCompleted(checkpoint.id, result!!.overall)
+        }
     }
 
     Column(Modifier.fillMaxSize().testTag("checkpoint-screen").padding(horizontal = 24.dp)) {
@@ -103,7 +107,7 @@ fun CheckpointScreen(vm: AppViewModel, checkpoint: Checkpoint, onBack: () -> Uni
                                 else -> answer
                             }
                             val correct = ExerciseEngine.isCorrect(question.exercise, attempt)
-                            answers.add(attempt)
+                            answers = answers + attempt
                             verdict = correct
                         },
                         onNext = { index++; answer = ""; selected = null; verdict = null })
