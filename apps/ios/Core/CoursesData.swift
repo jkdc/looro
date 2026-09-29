@@ -1535,6 +1535,95 @@ public enum CoursesData {
                             Exercise(id: "en-foundations-stay-messages-e2", kind: "gap", prompt: "Sorry, something ___ ___ at work. (happened, 2 words)", options: [], answers: ["came up"], explain: "something came up = surgió algo."),
                             Exercise(id: "en-foundations-stay-messages-e3", kind: "order", prompt: "Propose a new time. (dinner / can / move / we / to nine)", options: [], answers: ["Can we move dinner to nine"], explain: "Can we move + plan + to + time."),
                             Exercise(id: "en-foundations-stay-messages-e4", kind: "written", prompt: "Close the thread after agreeing on a plan.", options: [], answers: ["got it thanks", "perfect see you then", "great see you then"], explain: "Any friendly closing works.")], skills: ["writing:message", "vocab:social-expressions", "grammar:present-continuous", "function:make-suggestions"], canDo: ["tell-a-story"], prerequisites: ["grammar:present-continuous"])]),
+            CourseUnit(id: "en-foundations-health", title: "Health & habits", subtitle: "Feeling your best", level: "A2", themes: [
+                    ConversationTheme("doctor-visit", "At the doctor's", "Describe the pain", "stethoscope", "Course", "You don't feel well and describe your symptoms to a doctor who asks precise questions.", 0),
+                    ConversationTheme("habit-reset", "The habit reset", "Advice for better weeks", "figure.run", "Course", "You and a friend compare tired weeks and give each other friendly advice with should.", 1)], lessons: [
+                    Lesson(id: "en-foundations-health-symptoms", title: "Describing symptoms", goal: "Explain what hurts and for how long at the doctor's.",
+                        intro: LessonIntro(explanation: [
+                            "Symptoms use have got: “I've got a headache / a sore throat / a temperature.” Pain uses hurt: “My back hurts.”",
+                            "Duration with for + present perfect: “I've had this cold for three days.” The doctor asks: “How long have you had it?”",
+                            "Severity helps the doctor: “It's a sharp pain.” “It's worse when I move.”"], examples: [
+                            ExampleLine(text: "I've got a headache and a temperature.", meaning: "Two symptoms."),
+                            ExampleLine(text: "My back hurts when I move.", meaning: "Pain + trigger."),
+                            ExampleLine(text: "I've had this cold for three days.", meaning: "Duration with for."),
+                            ExampleLine(text: "How long have you had it?", meaning: "The doctor's question."),
+                            ExampleLine(text: "It's worse in the morning.", meaning: "When it hurts more."),
+                            ExampleLine(text: "I feel dizzy when I stand up.", meaning: "Another symptom.")]),
+                        expressions: [
+                            TargetExpression(text: "I've got a headache / a cold", meaning: "have got + illness.", note: "a + illness: a cold."),
+                            TargetExpression(text: "My … hurts", meaning: "Point at the pain.", note: "My throat hurts."),
+                            TargetExpression(text: "I've had … for + time", meaning: "Say how long.", note: "for three days."),
+                            TargetExpression(text: "How long have you had it?", meaning: "Answer: for + time.", note: "The standard question."),
+                            TargetExpression(text: "It's worse when …", meaning: "When it hurts more.", note: "…when I breathe."),
+                            TargetExpression(text: "I feel dizzy / sick", meaning: "Other feelings.", note: "dizzy = mareado.")],
+                        situation: "At the doctor's: describe three symptoms, say how long you've had them, and answer the doctor's follow-up questions precisely.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Say your main symptom: a sore throat.", expected: ["I've got a sore throat."], focus: "have got", watch: "a sore throat — the article matters."),
+                                PracticeQuestion(prompt: "Say your back hurts at night.", expected: ["My back hurts at night."], focus: "hurt", watch: "hurts for one body part: my back hurts."),
+                                PracticeQuestion(prompt: "Say you've had the cold for a week.", expected: ["I've had this cold for a week."], focus: "for + time", watch: "“I have this cold since Monday” — use have had + for."),
+                                PracticeQuestion(prompt: "Answer the doctor: three days.", expected: ["For three days.", "I've had it for three days."], focus: "duration", watch: "for + period: for three days.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-health-symptoms-e1", kind: "choice", prompt: "I've ___ a headache since Monday.", options: ["had", "have", "got has", "having"], answers: ["had"], explain: "have got / have had for symptoms."),
+                            Exercise(id: "en-foundations-health-symptoms-e2", kind: "gap", prompt: "My ___ ___ when I walk. (pain in the foot)", options: [], answers: ["foot hurts", "feet hurt"], explain: "body part + hurts."),
+                            Exercise(id: "en-foundations-health-symptoms-e3", kind: "order", prompt: "Ask the patient about duration.", options: [], answers: ["How long have you had it"], explain: "How long + have + you + had."),
+                            Exercise(id: "en-foundations-health-symptoms-e4", kind: "written", prompt: "Say how long you've had the cough. (two weeks)", options: [], answers: ["i've had it for two weeks", "for two weeks", "two weeks"], explain: "for + period.")], skills: ["vocab:health", "grammar:have-got", "grammar:present-perfect", "function:talk-about-health"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-perfect"]),
+                    Lesson(id: "en-foundations-health-advice", title: "Friendly advice", goal: "Give and respond to advice about health and habits with should.",
+                        intro: LessonIntro(explanation: [
+                            "Advice with should: “You should sleep more.” “You shouldn't check your phone in bed.” Never should to.",
+                            "Soften advice with maybe and try: “Maybe you should try going to bed earlier.” try + -ing for experiments.",
+                            "Accept or decline: “You're right, I'll try.” “I know, I know… it's hard!” Advice between friends is a dance."], examples: [
+                            ExampleLine(text: "You should sleep more.", meaning: "The basic advice."),
+                            ExampleLine(text: "You shouldn't drink coffee at night.", meaning: "Advice against."),
+                            ExampleLine(text: "Maybe you should try walking home.", meaning: "Softer advice."),
+                            ExampleLine(text: "You're right, I'll try.", meaning: "Accepting."),
+                            ExampleLine(text: "I know, I know… it's hard!", meaning: "Declining honestly."),
+                            ExampleLine(text: "Drink some water and see.", meaning: "Simple instructions.")]),
+                        expressions: [
+                            TargetExpression(text: "You should + verb", meaning: "Friendly advice.", note: "You should rest."),
+                            TargetExpression(text: "You shouldn't + verb", meaning: "Advice against.", note: "You shouldn't skip breakfast."),
+                            TargetExpression(text: "Maybe you should try + -ing", meaning: "Softer advice.", note: "…try going to bed earlier."),
+                            TargetExpression(text: "You're right.", meaning: "Accept advice.", note: "Then: I'll try."),
+                            TargetExpression(text: "I'll try.", meaning: "Promise an attempt.", note: "try, not try to definitely."),
+                            TargetExpression(text: "See if it helps.", meaning: "Close the advice.", note: "see if + clause.")],
+                        situation: "A friend has been tired for weeks: hear the symptoms, give three pieces of advice with should and one with try + -ing, and agree on a first step.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Give advice about screens at night. (shouldn't)", expected: ["You shouldn't use screens at night."], focus: "shouldn't", watch: "shouldn't + base verb: no to."),
+                                PracticeQuestion(prompt: "Give softer advice: walking after lunch. (try)", expected: ["Maybe you should try walking after lunch."], focus: "try + -ing", watch: "try + -ing for the experiment."),
+                                PracticeQuestion(prompt: "Accept the advice.", expected: ["You're right, I'll try."], focus: "accepting", watch: "I'll try — promise an attempt."),
+                                PracticeQuestion(prompt: "Close the advice with a check.", expected: ["See if it helps."], focus: "closing", watch: "see if it helps = a ver si funciona.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-health-advice-e1", kind: "choice", prompt: "You look tired. You ___ go to bed early.", options: ["should", "should to", "are should", "will should"], answers: ["should"], explain: "should + base verb."),
+                            Exercise(id: "en-foundations-health-advice-e2", kind: "gap", prompt: "Maybe you should try ___ before ten. (sleep)", options: [], answers: ["sleeping", "to sleep"], explain: "try + -ing for the experiment."),
+                            Exercise(id: "en-foundations-health-advice-e3", kind: "order", prompt: "Advise against coffee at night.", options: [], answers: ["You shouldn't drink coffee at night"], explain: "shouldn't + base verb."),
+                            Exercise(id: "en-foundations-health-advice-e4", kind: "written", prompt: "Accept advice and promise an attempt.", options: [], answers: ["you're right i'll try", "youre right i will try"], explain: "You're right, I'll try.")], skills: ["grammar:modal-should", "grammar:gerunds-infinitives", "vocab:health", "function:talk-about-health"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:modal-should"]),
+                    Lesson(id: "en-foundations-health-habits", title: "Habits: then and now", goal: "Compare old and new habits with used to and now, and say what changed.",
+                        intro: LessonIntro(explanation: [
+                            "Old habits with used to: “I used to sleep eight hours.” New ones with now + present: “Now I sleep five.” The contrast tells the story.",
+                            "Frequency still works: “I hardly ever exercise now.” hardly ever = almost never — softer than never.",
+                            "Be honest about difficulty: “It's harder than I thought.” than + the comparison."], examples: [
+                            ExampleLine(text: "I used to sleep eight hours.", meaning: "The old habit."),
+                            ExampleLine(text: "Now I sleep five.", meaning: "The present reality."),
+                            ExampleLine(text: "I hardly ever exercise now.", meaning: "almost never."),
+                            ExampleLine(text: "It's harder than I thought.", meaning: "than + comparison."),
+                            ExampleLine(text: "I've started walking to work.", meaning: "A new habit: start + -ing.")]),
+                        expressions: [
+                            TargetExpression(text: "used to + verb", meaning: "The old you.", note: "I used to run every day."),
+                            TargetExpression(text: "now + present", meaning: "The current you.", note: "Now I barely move."),
+                            TargetExpression(text: "hardly ever", meaning: "Almost never.", note: "Softer than never."),
+                            TargetExpression(text: "… than I thought", meaning: "Reality check.", note: "harder, easier, better."),
+                            TargetExpression(text: "I've started + -ing", meaning: "A new habit.", note: "I've started cycling."),
+                            TargetExpression(text: "every other day", meaning: "Frequency phrase.", note: "Lunes, miércoles, viernes…")],
+                        situation: "You compare your student life with your working life: sleep, exercise, food — used to for the past, now for the present, and one new habit you've started.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Say an old exercise habit. (run every day)", expected: ["I used to run every day."], focus: "used to", watch: "used to + base verb."),
+                                PracticeQuestion(prompt: "Say the present: no time now.", expected: ["Now I don't have time."], focus: "now", watch: "now + present simple."),
+                                PracticeQuestion(prompt: "Say you almost never cook these days.", expected: ["I hardly ever cook these days."], focus: "hardly ever", watch: "hardly ever = casi nunca."),
+                                PracticeQuestion(prompt: "Say one new habit you've started. (walking to work)", expected: ["I've started walking to work."], focus: "start + -ing", watch: "I've started + -ing: the new habit.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-health-habits-e1", kind: "choice", prompt: "I ___ to run every day when I was a student.", options: ["used", "use", "was use", "am used"], answers: ["used"], explain: "Past habit: used to + verb."),
+                            Exercise(id: "en-foundations-health-habits-e2", kind: "gap", prompt: "I ___ ___ ever cook these days. (casi nunca)", options: [], answers: ["hardly ever"], explain: "hardly ever = almost never."),
+                            Exercise(id: "en-foundations-health-habits-e3", kind: "order", prompt: "Say your new habit. (started / I've / walking / to work)", options: [], answers: ["I've started walking to work"], explain: "I've started + -ing."),
+                            Exercise(id: "en-foundations-health-habits-e4", kind: "written", prompt: "Compare: sleep eight hours before, five now.", options: [], answers: ["i used to sleep eight hours now i sleep five"], explain: "used to … now …")], skills: ["grammar:used-to", "grammar:frequency-adverbs", "grammar:present-perfect", "vocab:health"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:past-simple-irregular"])]),
             CourseUnit(id: "en-foundations-experiences", title: "Experiences & stories", subtitle: "Have you ever…?", level: "B1", themes: [
                     ConversationTheme("travel-bucket-list", "The bucket list", "Have you ever…?", "airplane", "Course", "You compare life experiences: places you have and haven't been, things you have and haven't tried.", 0),
                     ConversationTheme("story-night", "Story night", "What was happening?", "moon.stars", "Course", "You tell a story with background: what was happening when something unexpected occurred.", 1)], lessons: [
