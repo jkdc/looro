@@ -2038,6 +2038,97 @@ public enum EnFoundationsChange {
                             Exercise(id: "en-foundations-change-phrasals-e4", kind: "written", prompt: "Phrasal twin: “They postponed the meeting.”", options: [], answers: ["they put off the meeting", "they put the meeting off"], explain: "put off = postpone.")], skills: ["grammar:phrasal-verbs", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum EnFoundationsTelling {
+    public static let unit: CourseUnit = CourseUnit(id: "en-foundations-telling", title: "Telling it well", subtitle: "Collocations, reactions, problems", level: "B1", themes: [
+                    ConversationTheme("good-news-bad-news", "Good news, bad news", "React naturally", "arrow.up.arrow.down", "Course", "You swap news with a friend: some wonderful, some terrible — your reactions carry the conversation.", 0),
+                    ConversationTheme("the-broken-thing", "The broken thing", "Explain and fix", "wrench.and.screwdriver", "Course", "Something you rented is broken. Explain the problem clearly and agree on a solution.", 1)], lessons: [
+            Lesson(id: "en-foundations-telling-collocations", title: "Collocations that carry you", goal: "Use the word pairs natives reach for: make a decision, have a break, pay attention.",
+                intro: LessonIntro(explanation: [
+                            "Collocations are fixed friendships between words: make a decision (never do a decision), pay attention, take responsibility.",
+                            "Learn them as whole chunks: word-by-word assembly is how “do a mistake” happens — mistakes are made.",
+                            "When unsure, ask a native: “What's the usual verb here?” They hear the pair, not the rule."], examples: [
+                            ExampleLine(text: "We need to make a decision today.", meaning: "make + decision."),
+                            ExampleLine(text: "Let's have a break.", meaning: "have + break/rest."),
+                            ExampleLine(text: "Pay attention to the deadline.", meaning: "pay + attention."),
+                            ExampleLine(text: "I made a mistake in the report.", meaning: "make + mistake."),
+                            ExampleLine(text: "She takes responsibility for the project.", meaning: "take + responsibility.")]),
+                expressions: [
+                            TargetExpression(text: "make a decision / mistake", meaning: "The two makes.", note: "Never do a decision."),
+                            TargetExpression(text: "have a break / rest", meaning: "have + rest words.", note: "Let's have a break."),
+                            TargetExpression(text: "pay attention (to)", meaning: "Focus.", note: "…to the details."),
+                            TargetExpression(text: "take responsibility / a seat", meaning: "take pairs.", note: "take your time."),
+                            TargetExpression(text: "do someone a favour", meaning: "do + favour.", note: "Can you do me a favour?"),
+                            TargetExpression(text: "heavy traffic / light rain", meaning: "Adjective pairs.", note: "The traffic is heavy.")],
+                situation: "You and a colleague polish an email together: swap the literal phrases for natural collocations — decision, break, mistake, favour — and feel it sound native.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Say it with the right verb: decide today. (make a decision)", expected: ["We need to make a decision today."], focus: "make a decision", watch: "Never “do a decision” — decision pairs with make."),
+                                PracticeQuestion(prompt: "Correct the classic error: “I did a mistake”.", expected: ["I made a mistake."], focus: "make a mistake", watch: "do → made: mistakes are made."),
+                                PracticeQuestion(prompt: "Ask a colleague for a favour.", expected: ["Can you do me a favour?"], focus: "do a favour", watch: "favours are done, mistakes are made."),
+                                PracticeQuestion(prompt: "Tell a restless team to pause.", expected: ["Let's have a break."], focus: "have a break", watch: "have a break / have a rest — both natural."),
+                                PracticeQuestion(prompt: "Describe the traffic at five o'clock.", expected: ["The traffic is really heavy."], focus: "heavy traffic", watch: "traffic is heavy or light — never “big traffic”.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-telling-collocations-e1", kind: "choice", prompt: "We need to ___ a decision before Friday.", options: ["make", "do", "have", "take"], answers: ["make"], explain: "make a decision — the fixed pair."),
+                            Exercise(id: "en-foundations-telling-collocations-e2", kind: "gap", prompt: "I ___ a mistake in the report. Sorry.", options: [], answers: ["made"], explain: "make → made a mistake."),
+                            Exercise(id: "en-foundations-telling-collocations-e3", kind: "order", prompt: "Ask for a favour.", options: [], answers: ["Can you do me a favour"], explain: "do someone a favour."),
+                            Exercise(id: "en-foundations-telling-collocations-e4", kind: "written", prompt: "Describe the traffic at rush hour.", options: [], answers: ["the traffic is heavy", "traffic is really heavy"], explain: "heavy traffic.")], skills: ["vocab:collocations", "vocab:social-expressions", "grammar:present-simple", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "en-foundations-telling-reacting", title: "Reacting to news", goal: "Respond to good and bad news naturally — the reactions carry the conversation.",
+                intro: LessonIntro(explanation: [
+                            "Good news reactions, in rising order: “Nice!” “That's great news!” “No way! That's amazing!”",
+                            "Bad news: “Oh no.” “I'm sorry to hear that.” “That's awful.” Then the follow-up question — reactions without questions are walls.",
+                            "The secret: react, then ask. “No way! When did that happen?” — the question proves you care."], examples: [
+                            ExampleLine(text: "No way! That's amazing!", meaning: "Big good news."),
+                            ExampleLine(text: "That's great news, congratulations!", meaning: "Good news + congratulation."),
+                            ExampleLine(text: "Oh no, I'm sorry to hear that.", meaning: "Bad news."),
+                            ExampleLine(text: "That's awful — are you OK?", meaning: "Bad news + care."),
+                            ExampleLine(text: "Really? When did that happen?", meaning: "React + follow-up.")]),
+                expressions: [
+                            TargetExpression(text: "No way!", meaning: "Surprise, good or bad.", note: "Strong but friendly."),
+                            TargetExpression(text: "That's great news!", meaning: "Good news reaction.", note: "news is singular!"),
+                            TargetExpression(text: "I'm sorry to hear that.", meaning: "Bad news reaction.", note: "Fixed phrase."),
+                            TargetExpression(text: "Congratulations!", meaning: "Achievements.", note: "congratulations on + thing."),
+                            TargetExpression(text: "React + question", meaning: "Keep it flowing.", note: "No way! When?")],
+                situation: "A friend calls with a promotion; another cancels with a family emergency; a third has bought a boat. React to each — differently, and always with a question.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "React to big good news: your friend got promoted.", expected: ["No way! Congratulations!", "That's amazing — congratulations!"], focus: "big good news", watch: "congratulations on the promotion."),
+                                PracticeQuestion(prompt: "React to very bad news: your friend's dog died.", expected: ["Oh no, I'm so sorry.", "I'm so sorry to hear that."], focus: "bad news", watch: "Match the weight: “Nice!” would be terrible."),
+                                PracticeQuestion(prompt: "React and ask for details about a new job.", expected: ["That's great! When do you start?"], focus: "react + question", watch: "The follow-up keeps the conversation alive."),
+                                PracticeQuestion(prompt: "React to a surprise: your friend bought a boat.", expected: ["No way! You bought a boat?", "You're kidding!"], focus: "surprise", watch: "You're kidding! = no me lo creo."),
+                                PracticeQuestion(prompt: "Move from bad news to care.", expected: ["That's awful — are you OK?"], focus: "care question", watch: "Awful news gets a care question, not curiosity.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-telling-reacting-e1", kind: "choice", prompt: "That's wonderful ___!", options: ["news", "new", "a news", "newses"], answers: ["news"], explain: "news is uncountable: news is, never newses."),
+                            Exercise(id: "en-foundations-telling-reacting-e2", kind: "gap", prompt: "Congratulations ___ your promotion!", options: [], answers: ["on"], explain: "congratulations on + thing."),
+                            Exercise(id: "en-foundations-telling-reacting-e3", kind: "order", prompt: "React to bad news.", options: [], answers: ["Im sorry to hear that"], explain: "I'm sorry to hear that."),
+                            Exercise(id: "en-foundations-telling-reacting-e4", kind: "written", prompt: "React with surprise to a boat purchase.", options: [], answers: ["no way", "youre kidding", "no way you bought a boat"], explain: "Any natural surprise.")], skills: ["vocab:social-expressions", "function:express-opinion", "speaking:sustained-conversation", "grammar:present-simple"], canDo: ["express-opinion"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "en-foundations-telling-problems", title: "Explaining a problem", goal: "Structure a problem clearly: context, what happened, what you want.",
+                intro: LessonIntro(explanation: [
+                            "The three-step structure: context (“I rented a car on Friday”), problem (“it broke down on the motorway”), request (“I'd like a refund or a replacement”).",
+                            "Stay factual, not emotional: “The engine stopped three times” beats “your car is terrible!”",
+                            "Signal the request: “So what I'd like is…” — the listener knows the explanation has landed somewhere."], examples: [
+                            ExampleLine(text: "I rented a car from your airport office.", meaning: "Context first."),
+                            ExampleLine(text: "It broke down twice on Saturday.", meaning: "The problem, factually."),
+                            ExampleLine(text: "I'd like a replacement or a refund.", meaning: "The request."),
+                            ExampleLine(text: "This is the second time it's happened.", meaning: "History strengthens the case."),
+                            ExampleLine(text: "What can you do about it?", meaning: "Hand the problem over.")]),
+                expressions: [
+                            TargetExpression(text: "Context first: …", meaning: "Set the scene.", note: "I bought it last week."),
+                            TargetExpression(text: "The problem is …", meaning: "Say it plainly.", note: "…it doesn't charge."),
+                            TargetExpression(text: "I'd like …", meaning: "State the request.", note: "I'd like a replacement."),
+                            TargetExpression(text: "This is the second time …", meaning: "Show the pattern.", note: "…it's happened."),
+                            TargetExpression(text: "What can you do about it?", meaning: "Pass the ball.", note: "Polite but firm.")],
+                situation: "You call about a faulty rental: give context, describe the two failures factually, and ask for one of two clear solutions.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Give the context of your complaint. (rented Friday)", expected: ["I rented a car from your office on Friday."], focus: "context", watch: "Dates and places first — emotions later (or never)."),
+                                PracticeQuestion(prompt: "Describe the failure factually. (broke down twice)", expected: ["It broke down twice on Saturday."], focus: "factual", watch: "Twice is a fact; “terrible” is an opinion."),
+                                PracticeQuestion(prompt: "State your request clearly.", expected: ["I'd like a replacement or a refund."], focus: "the request", watch: "Two options make agreement easier."),
+                                PracticeQuestion(prompt: "Show it's a pattern. (second time)", expected: ["This is the second time it's happened."], focus: "the pattern", watch: "Second time strengthens the case."),
+                                PracticeQuestion(prompt: "Hand the problem to them.", expected: ["What can you do about it?"], focus: "pass the ball", watch: "The question puts them on the hook, politely.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-telling-problems-e1", kind: "choice", prompt: "I'd like ___ refund, please.", options: ["a", "an", "some", "the my"], answers: ["a"], explain: "a refund — consonant sound."),
+                            Exercise(id: "en-foundations-telling-problems-e2", kind: "gap", prompt: "The engine ___ ___ three times. (stop, past)", options: [], answers: ["stopped"], explain: "stop → stopped."),
+                            Exercise(id: "en-foundations-telling-problems-e3", kind: "order", prompt: "State your request.", options: [], answers: ["Id like a replacement or a refund"], explain: "I'd like + option or option."),
+                            Exercise(id: "en-foundations-telling-problems-e4", kind: "written", prompt: "Open a complaint: you bought a phone last week.", options: [], answers: ["i bought a phone last week", "i bought this phone last week"], explain: "Context: what, when.")], skills: ["function:solve-problems", "grammar:past-simple-regular", "grammar:connectors", "vocab:social-expressions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:past-simple-regular"])])
+}
+
 public enum EnFoundationsViewpoints {
     public static let unit: CourseUnit = CourseUnit(id: "en-foundations-viewpoints", title: "Viewpoints", subtitle: "Argue, report, imagine", level: "B2", themes: [
                     ConversationTheme("debate-club", "Debate night", "Take a side", "person.3", "Course", "You debate a topical question: state your position, imagine alternatives, report what the data says.", 0),
@@ -2135,6 +2226,69 @@ public enum EnFoundationsViewpoints {
                             Exercise(id: "en-foundations-viewpoints-negotiation-e2", kind: "gap", prompt: "That works ___ ___ as the budget is approved. (2 words: condition)", options: [], answers: ["as long", "so long"], explain: "as long as / so long as = siempre que."),
                             Exercise(id: "en-foundations-viewpoints-negotiation-e3", kind: "order", prompt: "Respectfully disagree.", options: [], answers: ["I see your point however the budget is fixed"], explain: "Acknowledge, then contrast."),
                             Exercise(id: "en-foundations-viewpoints-negotiation-e4", kind: "written", prompt: "Close a deal at ten percent.", options: [], answers: ["shall we say ten percent", "shall we say 10 percent", "shall we say 10%"], explain: "Shall we say + number closes it.")], skills: ["function:negotiate", "grammar:second-conditional", "grammar:connectors", "speaking:negotiate", "vocab:work"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:connectors", "grammar:modal-should"])])
+}
+
+public enum EnFoundationsMedia {
+    public static let unit: CourseUnit = CourseUnit(id: "en-foundations-media", title: "Media & argument", subtitle: "News, claims, debate", level: "B2", themes: [
+                    ConversationTheme("editorial-meeting", "The editorial meeting", "What's the story?", "newspaper", "Course", "You pitch a story: what happened, why now, why anyone should care — in ninety seconds.", 0),
+                    ConversationTheme("letters-page", "The letters page", "Claim and counter", "envelope", "Course", "You respond to an opinion piece: concede a point, then dismantle it politely.", 1)], lessons: [
+            Lesson(id: "en-foundations-media-news-language", title: "The language of news", goal: "Read and report news: passive reporting, headline grammar and attribution.",
+                intro: LessonIntro(explanation: [
+                            "Headlines drop words: “Bridge reopened after repairs” = The bridge has been reopened. Learn to expand them.",
+                            "Attribution protects reporters: “It is believed that…”, “according to sources”. Nobody said it; it is said.",
+                            "The passive rules news because events matter more than doers: “Measures were announced” — by whom, later, maybe."], examples: [
+                            ExampleLine(text: "Bridge reopened after repairs.", meaning: "A headline: expand to a full sentence."),
+                            ExampleLine(text: "It is believed that costs will fall.", meaning: "Attribution without a source."),
+                            ExampleLine(text: "Measures were announced on Tuesday.", meaning: "Event-focused passive."),
+                            ExampleLine(text: "The minister is thought to favour delays.", meaning: "is thought to + verb."),
+                            ExampleLine(text: "According to the report, numbers fell.", meaning: "according to = the source.")]),
+                expressions: [
+                            TargetExpression(text: "… was/were + participle", meaning: "The reporting backbone.", note: "The road was closed."),
+                            TargetExpression(text: "It is said/believed that …", meaning: "Source-free attribution.", note: "It is believed that…"),
+                            TargetExpression(text: "is thought to + verb", meaning: "Report others' claims.", note: "He is thought to have left."),
+                            TargetExpression(text: "according to …", meaning: "Name the source.", note: "according to the report."),
+                            TargetExpression(text: "are expected to + verb", meaning: "Predictions from others.", note: "Talks are expected to continue."),
+                            TargetExpression(text: "Headline → sentence", meaning: "Expand dropped words.", note: "“Man rescues cat” = A man has rescued a cat.")],
+                situation: "You brief a colleague on this morning's news: expand three headlines into full sentences and attribute every claim you can't verify.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Expand the headline: “Bridge reopened”.", expected: ["The bridge has been reopened."], focus: "headline → sentence", watch: "Add the dropped words: has been + participle."),
+                                PracticeQuestion(prompt: "Report unverified costs. (it / believe)", expected: ["It is believed that costs will fall."], focus: "attribution", watch: "It is believed protects the speaker."),
+                                PracticeQuestion(prompt: "Attribute a number to its source. (report)", expected: ["According to the report, sales fell by 10%."], focus: "according to", watch: "according to names the source."),
+                                PracticeQuestion(prompt: "Report what people think about the minister. (thought / delay)", expected: ["The minister is thought to favour delays."], focus: "is thought to", watch: "is thought to have + participle for past acts."),
+                                PracticeQuestion(prompt: "Report expected talks.", expected: ["Talks are expected to continue."], focus: "are expected to", watch: "Passive prediction: nobody predicts, it is expected.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-media-news-language-e1", kind: "choice", prompt: "The road ___ closed since March.", options: ["has been", "is been", "was being", "had being"], answers: ["has been"], explain: "Present perfect passive: has been closed."),
+                            Exercise(id: "en-foundations-media-news-language-e2", kind: "gap", prompt: "It is ___ that costs will fall. (believe)", options: [], answers: ["believed"], explain: "It is believed that…"),
+                            Exercise(id: "en-foundations-media-news-language-e3", kind: "order", prompt: "Expand the headline.", options: [], answers: ["The bridge has been reopened after repairs"], explain: "has been + participle + detail."),
+                            Exercise(id: "en-foundations-media-news-language-e4", kind: "written", prompt: "Attribute the fall to the report.", options: [], answers: ["according to the report sales fell", "sales fell according to the report"], explain: "according to + source.")], skills: ["grammar:passive-intro", "grammar:present-perfect", "grammar:relative-clauses", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "en-foundations-media-opinion-pieces", title: "Opinion pieces", goal: "Build a written argument: claim, support, concession, rebuttal.",
+                intro: LessonIntro(explanation: [
+                            "The four-move structure: claim (“Remote work is here to stay”), support (evidence), concession (“Admittedly, not every job…”), rebuttal (“But the trend is clear”).",
+                            "Concession words buy credibility: admittedly, granted, while it's true that… — you look fair before you disagree.",
+                            "Endings circle back: “For all its flaws, the evidence points one way.” Repeat the claim, changed by everything before it."], examples: [
+                            ExampleLine(text: "Remote work is here to stay.", meaning: "The claim — short and bare."),
+                            ExampleLine(text: "Studies show a 13% productivity rise.", meaning: "Support with numbers."),
+                            ExampleLine(text: "Admittedly, not every job can be remote.", meaning: "The concession."),
+                            ExampleLine(text: "But the trend is unmistakable.", meaning: "The rebuttal."),
+                            ExampleLine(text: "For all its flaws, the evidence points one way.", meaning: "The circular close.")]),
+                expressions: [
+                            TargetExpression(text: "The claim: …", meaning: "State it bare.", note: "One sentence, no hedging yet."),
+                            TargetExpression(text: "Support: studies show / data suggests", meaning: "Bring evidence.", note: "Numbers beat adjectives."),
+                            TargetExpression(text: "Admittedly, … / Granted, …", meaning: "Concede fairly.", note: "Fairness buys trust."),
+                            TargetExpression(text: "But / However, …", meaning: "Rebut.", note: "But the core point stands."),
+                            TargetExpression(text: "For all its flaws, …", meaning: "Circle back.", note: "The claim, transformed.")],
+                situation: "You draft a 120-word opinion piece on four-day weeks: claim, one piece of support, one fair concession, one rebuttal, one close.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "State your claim about four-day weeks. (here to stay)", expected: ["Four-day weeks are here to stay."], focus: "the claim", watch: "Short. Bare. Debatable."),
+                                PracticeQuestion(prompt: "Add one number as support.", expected: ["Trials report a 13% productivity rise."], focus: "support", watch: "A number does the arguing for you."),
+                                PracticeQuestion(prompt: "Concede fairly: not every job. (admittedly)", expected: ["Admittedly, not every job can be done remotely."], focus: "the concession", watch: "admittedly + the strongest counter-case."),
+                                PracticeQuestion(prompt: "Rebut the concession. (but / trend)", expected: ["But the trend is unmistakable."], focus: "the rebuttal", watch: "However also works — but is punchier."),
+                                PracticeQuestion(prompt: "Close by circling back.", expected: ["For all its flaws, the evidence points one way."], focus: "the close", watch: "The claim returns, stronger.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-media-opinion-pieces-e1", kind: "choice", prompt: "___ not every job can be remote, the trend is clear.", options: ["Admittedly", "Because", "So", "Unless"], answers: ["Admittedly"], explain: "admittedly concedes before rebutting."),
+                            Exercise(id: "en-foundations-media-opinion-pieces-e2", kind: "gap", prompt: "Studies ___ a 13% productivity rise. (show)", options: [], answers: ["show"], explain: "studies show + number."),
+                            Exercise(id: "en-foundations-media-opinion-pieces-e3", kind: "order", prompt: "The circular close.", options: [], answers: ["For all its flaws the evidence points one way"], explain: "for all its flaws + claim."),
+                            Exercise(id: "en-foundations-media-opinion-pieces-e4", kind: "written", prompt: "State your claim about four-day weeks.", options: [], answers: ["four-day weeks are here to stay", "four day weeks are here to stay"], explain: "Short, bare, debatable.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion", "vocab:work"], canDo: ["express-opinion"], prerequisites: ["grammar:first-conditional"])])
 }
 
 public enum EnFoundationsNuance {
@@ -2264,7 +2418,36 @@ public enum EnFoundationsNuance {
                             Exercise(id: "en-foundations-nuance-academic-e1", kind: "choice", prompt: "The data ___ a modest effect. (moderate evidence)", options: ["suggests", "demonstrates", "proves", "ignores"], answers: ["suggests"], explain: "Moderate evidence takes suggests, not demonstrates."),
                             Exercise(id: "en-foundations-nuance-academic-e2", kind: "gap", prompt: "It has ___ observed that remote teams innovate differently.", options: [], answers: ["been"], explain: "Impersonal passive: has been + participle."),
                             Exercise(id: "en-foundations-nuance-academic-e3", kind: "order", prompt: "State the thesis.", options: [], answers: ["This paper argues that hybrid models outperform either extreme"], explain: "This paper argues that + claim."),
-                            Exercise(id: "en-foundations-nuance-academic-e4", kind: "written", prompt: "Close the study honestly.", options: [], answers: ["further research is needed to confirm the effect", "further research is needed"], explain: "The classic honest close.")], skills: ["writing:argument", "grammar:passive-intro", "function:express-opinion", "function:talk-about-work", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:passive-intro", "grammar:connectors"])])
+                            Exercise(id: "en-foundations-nuance-academic-e4", kind: "written", prompt: "Close the study honestly.", options: [], answers: ["further research is needed to confirm the effect", "further research is needed"], explain: "The classic honest close.")], skills: ["writing:argument", "grammar:passive-intro", "function:express-opinion", "function:talk-about-work", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:passive-intro", "grammar:connectors"]),
+            Lesson(id: "en-foundations-nuance-presenting", title: "Presenting with confidence", goal: "Signpost a talk, land key points and handle questions without losing your footing.",
+                intro: LessonIntro(explanation: [
+                            "Signposts keep audiences aboard: “I'll start with…”, “That brings me to…”, “So, to sum up…”. Say where you are; nobody resents a map.",
+                            "Land key points with a pause and a restatement: “The one thing to remember is this.” Silence sells importance.",
+                            "Hard questions get a frame: “That's exactly the point — my answer is twofold.” Buying structure, not stalling."], examples: [
+                            ExampleLine(text: "I'll start with why this matters.", meaning: "The opening signpost."),
+                            ExampleLine(text: "That brings me to the results.", meaning: "The transition."),
+                            ExampleLine(text: "The one thing to remember is this.", meaning: "Point-landing phrase."),
+                            ExampleLine(text: "So, to sum up: three findings, one conclusion.", meaning: "The summary signpost."),
+                            ExampleLine(text: "That's exactly the point — and my answer is twofold.", meaning: "Handling the hard question.")]),
+                expressions: [
+                            TargetExpression(text: "I'll start with …", meaning: "Open the map.", note: "I'll start with the problem."),
+                            TargetExpression(text: "That brings me to …", meaning: "Transition.", note: "…to the second point."),
+                            TargetExpression(text: "The one thing to remember is …", meaning: "Land the point.", note: "Then pause. Let it sit."),
+                            TargetExpression(text: "So, to sum up …", meaning: "Signal the close.", note: "Repeat the three parts."),
+                            TargetExpression(text: "That's exactly the point.", meaning: "Own the hard question.", note: "Then answer in two parts."),
+                            TargetExpression(text: "I'm glad you asked that.", meaning: "Buy a second, kindly.", note: "Use sparingly — overdone it's a cliché.")],
+                situation: "You present a small project to a skeptical room: signpost the three parts, land one key sentence and survive two tough questions.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Open your talk by announcing the first part.", expected: ["I'll start with why this matters.", "I'll start with the problem."], focus: "opening signpost", watch: "I'll start with + noun: “I'll start with to explain” is wrong."),
+                                PracticeQuestion(prompt: "Move from findings to recommendations.", expected: ["That brings me to my recommendations."], focus: "transition", watch: "brings me to + noun: the signpost is the map."),
+                                PracticeQuestion(prompt: "Land your single key message.", expected: ["The one thing to remember is this: focus beats time."], focus: "landing", watch: "Say it, then stop talking. The pause is the emphasis."),
+                                PracticeQuestion(prompt: "Signal you are closing.", expected: ["So, to sum up: three findings, one conclusion."], focus: "the close", watch: "to sum up + the structure you promised at the start."),
+                                PracticeQuestion(prompt: "Handle a hostile question confidently.", expected: ["That's exactly the point — and my answer is twofold."], focus: "hard questions", watch: "Own the question, then give structure: first… second…")]),
+                exercises: [
+                            Exercise(id: "en-foundations-nuance-presenting-e1", kind: "gap", prompt: "I'll ___ ___ why this matters. (2 words)", options: [], answers: ["start with"], explain: "I'll start with + noun."),
+                            Exercise(id: "en-foundations-nuance-presenting-e2", kind: "gap", prompt: "That ___ me to my second point.", options: [], answers: ["brings"], explain: "That brings me to…"),
+                            Exercise(id: "en-foundations-nuance-presenting-e3", kind: "order", prompt: "Signal the summary.", options: [], answers: ["So to sum up three findings one conclusion"], explain: "So, to sum up: …"),
+                            Exercise(id: "en-foundations-nuance-presenting-e4", kind: "written", prompt: "Own a hostile question before answering.", options: [], answers: ["thats exactly the point", "that is exactly the point"], explain: "That's exactly the point — then structure.")], skills: ["function:talk-about-work", "speaking:sustained-conversation", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum EnWorkU1 {
@@ -2786,7 +2969,9 @@ EnFoundationsHealth.unit,
 EnFoundationsExperiences.unit,
 EnFoundationsConnections.unit,
 EnFoundationsChange.unit,
+EnFoundationsTelling.unit,
 EnFoundationsViewpoints.unit,
+EnFoundationsMedia.unit,
 EnFoundationsNuance.unit
         ]),
         Course(id: "en-work-track", languageID: "en", title: "English for Work", subtitle: "Professional track", symbol: "briefcase", description: "The English of meetings, emails and interviews — professional situations, practised out loud. A track that runs alongside Foundations.", units: [

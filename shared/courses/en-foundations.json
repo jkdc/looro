@@ -11336,6 +11336,532 @@
       ]
     },
     {
+      "id": "en-foundations-telling",
+      "title": "Telling it well",
+      "subtitle": "Collocations, reactions, problems",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "good-news-bad-news",
+          "title": "Good news, bad news",
+          "subtitle": "React naturally",
+          "symbol": "arrow.up.arrow.down",
+          "category": "Course",
+          "situation": "You swap news with a friend: some wonderful, some terrible — your reactions carry the conversation.",
+          "colorIndex": 0
+        },
+        {
+          "id": "the-broken-thing",
+          "title": "The broken thing",
+          "subtitle": "Explain and fix",
+          "symbol": "wrench.and.screwdriver",
+          "category": "Course",
+          "situation": "Something you rented is broken. Explain the problem clearly and agree on a solution.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-telling-collocations",
+          "title": "Collocations that carry you",
+          "goal": "Use the word pairs natives reach for: make a decision, have a break, pay attention.",
+          "intro": {
+            "explanation": [
+              "Collocations are fixed friendships between words: make a decision (never do a decision), pay attention, take responsibility.",
+              "Learn them as whole chunks: word-by-word assembly is how “do a mistake” happens — mistakes are made.",
+              "When unsure, ask a native: “What's the usual verb here?” They hear the pair, not the rule."
+            ],
+            "examples": [
+              {
+                "text": "We need to make a decision today.",
+                "meaning": "make + decision."
+              },
+              {
+                "text": "Let's have a break.",
+                "meaning": "have + break/rest."
+              },
+              {
+                "text": "Pay attention to the deadline.",
+                "meaning": "pay + attention."
+              },
+              {
+                "text": "I made a mistake in the report.",
+                "meaning": "make + mistake."
+              },
+              {
+                "text": "She takes responsibility for the project.",
+                "meaning": "take + responsibility."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "make a decision / mistake",
+              "meaning": "The two makes.",
+              "note": "Never do a decision."
+            },
+            {
+              "text": "have a break / rest",
+              "meaning": "have + rest words.",
+              "note": "Let's have a break."
+            },
+            {
+              "text": "pay attention (to)",
+              "meaning": "Focus.",
+              "note": "…to the details."
+            },
+            {
+              "text": "take responsibility / a seat",
+              "meaning": "take pairs.",
+              "note": "take your time."
+            },
+            {
+              "text": "do someone a favour",
+              "meaning": "do + favour.",
+              "note": "Can you do me a favour?"
+            },
+            {
+              "text": "heavy traffic / light rain",
+              "meaning": "Adjective pairs.",
+              "note": "The traffic is heavy."
+            }
+          ],
+          "situation": "You and a colleague polish an email together: swap the literal phrases for natural collocations — decision, break, mistake, favour — and feel it sound native.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say it with the right verb: decide today. (make a decision)",
+                "expected": [
+                  "We need to make a decision today."
+                ],
+                "focus": "make a decision",
+                "watch": "Never “do a decision” — decision pairs with make."
+              },
+              {
+                "prompt": "Correct the classic error: “I did a mistake”.",
+                "expected": [
+                  "I made a mistake."
+                ],
+                "focus": "make a mistake",
+                "watch": "do → made: mistakes are made."
+              },
+              {
+                "prompt": "Ask a colleague for a favour.",
+                "expected": [
+                  "Can you do me a favour?"
+                ],
+                "focus": "do a favour",
+                "watch": "favours are done, mistakes are made."
+              },
+              {
+                "prompt": "Tell a restless team to pause.",
+                "expected": [
+                  "Let's have a break."
+                ],
+                "focus": "have a break",
+                "watch": "have a break / have a rest — both natural."
+              },
+              {
+                "prompt": "Describe the traffic at five o'clock.",
+                "expected": [
+                  "The traffic is really heavy."
+                ],
+                "focus": "heavy traffic",
+                "watch": "traffic is heavy or light — never “big traffic”."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-telling-collocations-e1",
+              "kind": "choice",
+              "prompt": "We need to ___ a decision before Friday.",
+              "explain": "make a decision — the fixed pair.",
+              "options": [
+                "make",
+                "do",
+                "have",
+                "take"
+              ],
+              "answers": [
+                "make"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-collocations-e2",
+              "kind": "gap",
+              "prompt": "I ___ a mistake in the report. Sorry.",
+              "explain": "make → made a mistake.",
+              "answers": [
+                "made"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-collocations-e3",
+              "kind": "order",
+              "prompt": "Ask for a favour.",
+              "explain": "do someone a favour.",
+              "answers": [
+                "Can you do me a favour"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-collocations-e4",
+              "kind": "written",
+              "prompt": "Describe the traffic at rush hour.",
+              "explain": "heavy traffic.",
+              "answers": [
+                "the traffic is heavy",
+                "traffic is really heavy"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:collocations",
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-foundations-telling-reacting",
+          "title": "Reacting to news",
+          "goal": "Respond to good and bad news naturally — the reactions carry the conversation.",
+          "intro": {
+            "explanation": [
+              "Good news reactions, in rising order: “Nice!” “That's great news!” “No way! That's amazing!”",
+              "Bad news: “Oh no.” “I'm sorry to hear that.” “That's awful.” Then the follow-up question — reactions without questions are walls.",
+              "The secret: react, then ask. “No way! When did that happen?” — the question proves you care."
+            ],
+            "examples": [
+              {
+                "text": "No way! That's amazing!",
+                "meaning": "Big good news."
+              },
+              {
+                "text": "That's great news, congratulations!",
+                "meaning": "Good news + congratulation."
+              },
+              {
+                "text": "Oh no, I'm sorry to hear that.",
+                "meaning": "Bad news."
+              },
+              {
+                "text": "That's awful — are you OK?",
+                "meaning": "Bad news + care."
+              },
+              {
+                "text": "Really? When did that happen?",
+                "meaning": "React + follow-up."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "No way!",
+              "meaning": "Surprise, good or bad.",
+              "note": "Strong but friendly."
+            },
+            {
+              "text": "That's great news!",
+              "meaning": "Good news reaction.",
+              "note": "news is singular!"
+            },
+            {
+              "text": "I'm sorry to hear that.",
+              "meaning": "Bad news reaction.",
+              "note": "Fixed phrase."
+            },
+            {
+              "text": "Congratulations!",
+              "meaning": "Achievements.",
+              "note": "congratulations on + thing."
+            },
+            {
+              "text": "React + question",
+              "meaning": "Keep it flowing.",
+              "note": "No way! When?"
+            }
+          ],
+          "situation": "A friend calls with a promotion; another cancels with a family emergency; a third has bought a boat. React to each — differently, and always with a question.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "React to big good news: your friend got promoted.",
+                "expected": [
+                  "No way! Congratulations!",
+                  "That's amazing — congratulations!"
+                ],
+                "focus": "big good news",
+                "watch": "congratulations on the promotion."
+              },
+              {
+                "prompt": "React to very bad news: your friend's dog died.",
+                "expected": [
+                  "Oh no, I'm so sorry.",
+                  "I'm so sorry to hear that."
+                ],
+                "focus": "bad news",
+                "watch": "Match the weight: “Nice!” would be terrible."
+              },
+              {
+                "prompt": "React and ask for details about a new job.",
+                "expected": [
+                  "That's great! When do you start?"
+                ],
+                "focus": "react + question",
+                "watch": "The follow-up keeps the conversation alive."
+              },
+              {
+                "prompt": "React to a surprise: your friend bought a boat.",
+                "expected": [
+                  "No way! You bought a boat?",
+                  "You're kidding!"
+                ],
+                "focus": "surprise",
+                "watch": "You're kidding! = no me lo creo."
+              },
+              {
+                "prompt": "Move from bad news to care.",
+                "expected": [
+                  "That's awful — are you OK?"
+                ],
+                "focus": "care question",
+                "watch": "Awful news gets a care question, not curiosity."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-telling-reacting-e1",
+              "kind": "choice",
+              "prompt": "That's wonderful ___!",
+              "explain": "news is uncountable: news is, never newses.",
+              "options": [
+                "news",
+                "new",
+                "a news",
+                "newses"
+              ],
+              "answers": [
+                "news"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-reacting-e2",
+              "kind": "gap",
+              "prompt": "Congratulations ___ your promotion!",
+              "explain": "congratulations on + thing.",
+              "answers": [
+                "on"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-reacting-e3",
+              "kind": "order",
+              "prompt": "React to bad news.",
+              "explain": "I'm sorry to hear that.",
+              "answers": [
+                "Im sorry to hear that"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-reacting-e4",
+              "kind": "written",
+              "prompt": "React with surprise to a boat purchase.",
+              "explain": "Any natural surprise.",
+              "answers": [
+                "no way",
+                "youre kidding",
+                "no way you bought a boat"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:express-opinion",
+            "speaking:sustained-conversation",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-foundations-telling-problems",
+          "title": "Explaining a problem",
+          "goal": "Structure a problem clearly: context, what happened, what you want.",
+          "intro": {
+            "explanation": [
+              "The three-step structure: context (“I rented a car on Friday”), problem (“it broke down on the motorway”), request (“I'd like a refund or a replacement”).",
+              "Stay factual, not emotional: “The engine stopped three times” beats “your car is terrible!”",
+              "Signal the request: “So what I'd like is…” — the listener knows the explanation has landed somewhere."
+            ],
+            "examples": [
+              {
+                "text": "I rented a car from your airport office.",
+                "meaning": "Context first."
+              },
+              {
+                "text": "It broke down twice on Saturday.",
+                "meaning": "The problem, factually."
+              },
+              {
+                "text": "I'd like a replacement or a refund.",
+                "meaning": "The request."
+              },
+              {
+                "text": "This is the second time it's happened.",
+                "meaning": "History strengthens the case."
+              },
+              {
+                "text": "What can you do about it?",
+                "meaning": "Hand the problem over."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Context first: …",
+              "meaning": "Set the scene.",
+              "note": "I bought it last week."
+            },
+            {
+              "text": "The problem is …",
+              "meaning": "Say it plainly.",
+              "note": "…it doesn't charge."
+            },
+            {
+              "text": "I'd like …",
+              "meaning": "State the request.",
+              "note": "I'd like a replacement."
+            },
+            {
+              "text": "This is the second time …",
+              "meaning": "Show the pattern.",
+              "note": "…it's happened."
+            },
+            {
+              "text": "What can you do about it?",
+              "meaning": "Pass the ball.",
+              "note": "Polite but firm."
+            }
+          ],
+          "situation": "You call about a faulty rental: give context, describe the two failures factually, and ask for one of two clear solutions.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Give the context of your complaint. (rented Friday)",
+                "expected": [
+                  "I rented a car from your office on Friday."
+                ],
+                "focus": "context",
+                "watch": "Dates and places first — emotions later (or never)."
+              },
+              {
+                "prompt": "Describe the failure factually. (broke down twice)",
+                "expected": [
+                  "It broke down twice on Saturday."
+                ],
+                "focus": "factual",
+                "watch": "Twice is a fact; “terrible” is an opinion."
+              },
+              {
+                "prompt": "State your request clearly.",
+                "expected": [
+                  "I'd like a replacement or a refund."
+                ],
+                "focus": "the request",
+                "watch": "Two options make agreement easier."
+              },
+              {
+                "prompt": "Show it's a pattern. (second time)",
+                "expected": [
+                  "This is the second time it's happened."
+                ],
+                "focus": "the pattern",
+                "watch": "Second time strengthens the case."
+              },
+              {
+                "prompt": "Hand the problem to them.",
+                "expected": [
+                  "What can you do about it?"
+                ],
+                "focus": "pass the ball",
+                "watch": "The question puts them on the hook, politely."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-telling-problems-e1",
+              "kind": "choice",
+              "prompt": "I'd like ___ refund, please.",
+              "explain": "a refund — consonant sound.",
+              "options": [
+                "a",
+                "an",
+                "some",
+                "the my"
+              ],
+              "answers": [
+                "a"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-problems-e2",
+              "kind": "gap",
+              "prompt": "The engine ___ ___ three times. (stop, past)",
+              "explain": "stop → stopped.",
+              "answers": [
+                "stopped"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-problems-e3",
+              "kind": "order",
+              "prompt": "State your request.",
+              "explain": "I'd like + option or option.",
+              "answers": [
+                "Id like a replacement or a refund"
+              ]
+            },
+            {
+              "id": "en-foundations-telling-problems-e4",
+              "kind": "written",
+              "prompt": "Open a complaint: you bought a phone last week.",
+              "explain": "Context: what, when.",
+              "answers": [
+                "i bought a phone last week",
+                "i bought this phone last week"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "grammar:connectors",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
       "id": "en-foundations-viewpoints",
       "title": "Viewpoints",
       "subtitle": "Argue, report, imagine",
@@ -11912,6 +12438,366 @@
           "prerequisites": [
             "grammar:connectors",
             "grammar:modal-should"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-media",
+      "title": "Media & argument",
+      "subtitle": "News, claims, debate",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "editorial-meeting",
+          "title": "The editorial meeting",
+          "subtitle": "What's the story?",
+          "symbol": "newspaper",
+          "category": "Course",
+          "situation": "You pitch a story: what happened, why now, why anyone should care — in ninety seconds.",
+          "colorIndex": 0
+        },
+        {
+          "id": "letters-page",
+          "title": "The letters page",
+          "subtitle": "Claim and counter",
+          "symbol": "envelope",
+          "category": "Course",
+          "situation": "You respond to an opinion piece: concede a point, then dismantle it politely.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-media-news-language",
+          "title": "The language of news",
+          "goal": "Read and report news: passive reporting, headline grammar and attribution.",
+          "intro": {
+            "explanation": [
+              "Headlines drop words: “Bridge reopened after repairs” = The bridge has been reopened. Learn to expand them.",
+              "Attribution protects reporters: “It is believed that…”, “according to sources”. Nobody said it; it is said.",
+              "The passive rules news because events matter more than doers: “Measures were announced” — by whom, later, maybe."
+            ],
+            "examples": [
+              {
+                "text": "Bridge reopened after repairs.",
+                "meaning": "A headline: expand to a full sentence."
+              },
+              {
+                "text": "It is believed that costs will fall.",
+                "meaning": "Attribution without a source."
+              },
+              {
+                "text": "Measures were announced on Tuesday.",
+                "meaning": "Event-focused passive."
+              },
+              {
+                "text": "The minister is thought to favour delays.",
+                "meaning": "is thought to + verb."
+              },
+              {
+                "text": "According to the report, numbers fell.",
+                "meaning": "according to = the source."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "… was/were + participle",
+              "meaning": "The reporting backbone.",
+              "note": "The road was closed."
+            },
+            {
+              "text": "It is said/believed that …",
+              "meaning": "Source-free attribution.",
+              "note": "It is believed that…"
+            },
+            {
+              "text": "is thought to + verb",
+              "meaning": "Report others' claims.",
+              "note": "He is thought to have left."
+            },
+            {
+              "text": "according to …",
+              "meaning": "Name the source.",
+              "note": "according to the report."
+            },
+            {
+              "text": "are expected to + verb",
+              "meaning": "Predictions from others.",
+              "note": "Talks are expected to continue."
+            },
+            {
+              "text": "Headline → sentence",
+              "meaning": "Expand dropped words.",
+              "note": "“Man rescues cat” = A man has rescued a cat."
+            }
+          ],
+          "situation": "You brief a colleague on this morning's news: expand three headlines into full sentences and attribute every claim you can't verify.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Expand the headline: “Bridge reopened”.",
+                "expected": [
+                  "The bridge has been reopened."
+                ],
+                "focus": "headline → sentence",
+                "watch": "Add the dropped words: has been + participle."
+              },
+              {
+                "prompt": "Report unverified costs. (it / believe)",
+                "expected": [
+                  "It is believed that costs will fall."
+                ],
+                "focus": "attribution",
+                "watch": "It is believed protects the speaker."
+              },
+              {
+                "prompt": "Attribute a number to its source. (report)",
+                "expected": [
+                  "According to the report, sales fell by 10%."
+                ],
+                "focus": "according to",
+                "watch": "according to names the source."
+              },
+              {
+                "prompt": "Report what people think about the minister. (thought / delay)",
+                "expected": [
+                  "The minister is thought to favour delays."
+                ],
+                "focus": "is thought to",
+                "watch": "is thought to have + participle for past acts."
+              },
+              {
+                "prompt": "Report expected talks.",
+                "expected": [
+                  "Talks are expected to continue."
+                ],
+                "focus": "are expected to",
+                "watch": "Passive prediction: nobody predicts, it is expected."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-media-news-language-e1",
+              "kind": "choice",
+              "prompt": "The road ___ closed since March.",
+              "explain": "Present perfect passive: has been closed.",
+              "options": [
+                "has been",
+                "is been",
+                "was being",
+                "had being"
+              ],
+              "answers": [
+                "has been"
+              ]
+            },
+            {
+              "id": "en-foundations-media-news-language-e2",
+              "kind": "gap",
+              "prompt": "It is ___ that costs will fall. (believe)",
+              "explain": "It is believed that…",
+              "answers": [
+                "believed"
+              ]
+            },
+            {
+              "id": "en-foundations-media-news-language-e3",
+              "kind": "order",
+              "prompt": "Expand the headline.",
+              "explain": "has been + participle + detail.",
+              "answers": [
+                "The bridge has been reopened after repairs"
+              ]
+            },
+            {
+              "id": "en-foundations-media-news-language-e4",
+              "kind": "written",
+              "prompt": "Attribute the fall to the report.",
+              "explain": "according to + source.",
+              "answers": [
+                "according to the report sales fell",
+                "sales fell according to the report"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:passive-intro",
+            "grammar:present-perfect",
+            "grammar:relative-clauses",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "en-foundations-media-opinion-pieces",
+          "title": "Opinion pieces",
+          "goal": "Build a written argument: claim, support, concession, rebuttal.",
+          "intro": {
+            "explanation": [
+              "The four-move structure: claim (“Remote work is here to stay”), support (evidence), concession (“Admittedly, not every job…”), rebuttal (“But the trend is clear”).",
+              "Concession words buy credibility: admittedly, granted, while it's true that… — you look fair before you disagree.",
+              "Endings circle back: “For all its flaws, the evidence points one way.” Repeat the claim, changed by everything before it."
+            ],
+            "examples": [
+              {
+                "text": "Remote work is here to stay.",
+                "meaning": "The claim — short and bare."
+              },
+              {
+                "text": "Studies show a 13% productivity rise.",
+                "meaning": "Support with numbers."
+              },
+              {
+                "text": "Admittedly, not every job can be remote.",
+                "meaning": "The concession."
+              },
+              {
+                "text": "But the trend is unmistakable.",
+                "meaning": "The rebuttal."
+              },
+              {
+                "text": "For all its flaws, the evidence points one way.",
+                "meaning": "The circular close."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "The claim: …",
+              "meaning": "State it bare.",
+              "note": "One sentence, no hedging yet."
+            },
+            {
+              "text": "Support: studies show / data suggests",
+              "meaning": "Bring evidence.",
+              "note": "Numbers beat adjectives."
+            },
+            {
+              "text": "Admittedly, … / Granted, …",
+              "meaning": "Concede fairly.",
+              "note": "Fairness buys trust."
+            },
+            {
+              "text": "But / However, …",
+              "meaning": "Rebut.",
+              "note": "But the core point stands."
+            },
+            {
+              "text": "For all its flaws, …",
+              "meaning": "Circle back.",
+              "note": "The claim, transformed."
+            }
+          ],
+          "situation": "You draft a 120-word opinion piece on four-day weeks: claim, one piece of support, one fair concession, one rebuttal, one close.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "State your claim about four-day weeks. (here to stay)",
+                "expected": [
+                  "Four-day weeks are here to stay."
+                ],
+                "focus": "the claim",
+                "watch": "Short. Bare. Debatable."
+              },
+              {
+                "prompt": "Add one number as support.",
+                "expected": [
+                  "Trials report a 13% productivity rise."
+                ],
+                "focus": "support",
+                "watch": "A number does the arguing for you."
+              },
+              {
+                "prompt": "Concede fairly: not every job. (admittedly)",
+                "expected": [
+                  "Admittedly, not every job can be done remotely."
+                ],
+                "focus": "the concession",
+                "watch": "admittedly + the strongest counter-case."
+              },
+              {
+                "prompt": "Rebut the concession. (but / trend)",
+                "expected": [
+                  "But the trend is unmistakable."
+                ],
+                "focus": "the rebuttal",
+                "watch": "However also works — but is punchier."
+              },
+              {
+                "prompt": "Close by circling back.",
+                "expected": [
+                  "For all its flaws, the evidence points one way."
+                ],
+                "focus": "the close",
+                "watch": "The claim returns, stronger."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-media-opinion-pieces-e1",
+              "kind": "choice",
+              "prompt": "___ not every job can be remote, the trend is clear.",
+              "explain": "admittedly concedes before rebutting.",
+              "options": [
+                "Admittedly",
+                "Because",
+                "So",
+                "Unless"
+              ],
+              "answers": [
+                "Admittedly"
+              ]
+            },
+            {
+              "id": "en-foundations-media-opinion-pieces-e2",
+              "kind": "gap",
+              "prompt": "Studies ___ a 13% productivity rise. (show)",
+              "explain": "studies show + number.",
+              "answers": [
+                "show"
+              ]
+            },
+            {
+              "id": "en-foundations-media-opinion-pieces-e3",
+              "kind": "order",
+              "prompt": "The circular close.",
+              "explain": "for all its flaws + claim.",
+              "answers": [
+                "For all its flaws the evidence points one way"
+              ]
+            },
+            {
+              "id": "en-foundations-media-opinion-pieces-e4",
+              "kind": "written",
+              "prompt": "State your claim about four-day weeks.",
+              "explain": "Short, bare, debatable.",
+              "answers": [
+                "four-day weeks are here to stay",
+                "four day weeks are here to stay"
+              ]
+            }
+          ],
+          "skills": [
+            "writing:argument",
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "vocab:work"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:first-conditional"
           ]
         }
       ]
@@ -12676,6 +13562,169 @@
           ],
           "prerequisites": [
             "grammar:passive-intro",
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "en-foundations-nuance-presenting",
+          "title": "Presenting with confidence",
+          "goal": "Signpost a talk, land key points and handle questions without losing your footing.",
+          "intro": {
+            "explanation": [
+              "Signposts keep audiences aboard: “I'll start with…”, “That brings me to…”, “So, to sum up…”. Say where you are; nobody resents a map.",
+              "Land key points with a pause and a restatement: “The one thing to remember is this.” Silence sells importance.",
+              "Hard questions get a frame: “That's exactly the point — my answer is twofold.” Buying structure, not stalling."
+            ],
+            "examples": [
+              {
+                "text": "I'll start with why this matters.",
+                "meaning": "The opening signpost."
+              },
+              {
+                "text": "That brings me to the results.",
+                "meaning": "The transition."
+              },
+              {
+                "text": "The one thing to remember is this.",
+                "meaning": "Point-landing phrase."
+              },
+              {
+                "text": "So, to sum up: three findings, one conclusion.",
+                "meaning": "The summary signpost."
+              },
+              {
+                "text": "That's exactly the point — and my answer is twofold.",
+                "meaning": "Handling the hard question."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I'll start with …",
+              "meaning": "Open the map.",
+              "note": "I'll start with the problem."
+            },
+            {
+              "text": "That brings me to …",
+              "meaning": "Transition.",
+              "note": "…to the second point."
+            },
+            {
+              "text": "The one thing to remember is …",
+              "meaning": "Land the point.",
+              "note": "Then pause. Let it sit."
+            },
+            {
+              "text": "So, to sum up …",
+              "meaning": "Signal the close.",
+              "note": "Repeat the three parts."
+            },
+            {
+              "text": "That's exactly the point.",
+              "meaning": "Own the hard question.",
+              "note": "Then answer in two parts."
+            },
+            {
+              "text": "I'm glad you asked that.",
+              "meaning": "Buy a second, kindly.",
+              "note": "Use sparingly — overdone it's a cliché."
+            }
+          ],
+          "situation": "You present a small project to a skeptical room: signpost the three parts, land one key sentence and survive two tough questions.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open your talk by announcing the first part.",
+                "expected": [
+                  "I'll start with why this matters.",
+                  "I'll start with the problem."
+                ],
+                "focus": "opening signpost",
+                "watch": "I'll start with + noun: “I'll start with to explain” is wrong."
+              },
+              {
+                "prompt": "Move from findings to recommendations.",
+                "expected": [
+                  "That brings me to my recommendations."
+                ],
+                "focus": "transition",
+                "watch": "brings me to + noun: the signpost is the map."
+              },
+              {
+                "prompt": "Land your single key message.",
+                "expected": [
+                  "The one thing to remember is this: focus beats time."
+                ],
+                "focus": "landing",
+                "watch": "Say it, then stop talking. The pause is the emphasis."
+              },
+              {
+                "prompt": "Signal you are closing.",
+                "expected": [
+                  "So, to sum up: three findings, one conclusion."
+                ],
+                "focus": "the close",
+                "watch": "to sum up + the structure you promised at the start."
+              },
+              {
+                "prompt": "Handle a hostile question confidently.",
+                "expected": [
+                  "That's exactly the point — and my answer is twofold."
+                ],
+                "focus": "hard questions",
+                "watch": "Own the question, then give structure: first… second…"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-nuance-presenting-e1",
+              "kind": "gap",
+              "prompt": "I'll ___ ___ why this matters. (2 words)",
+              "explain": "I'll start with + noun.",
+              "answers": [
+                "start with"
+              ]
+            },
+            {
+              "id": "en-foundations-nuance-presenting-e2",
+              "kind": "gap",
+              "prompt": "That ___ me to my second point.",
+              "explain": "That brings me to…",
+              "answers": [
+                "brings"
+              ]
+            },
+            {
+              "id": "en-foundations-nuance-presenting-e3",
+              "kind": "order",
+              "prompt": "Signal the summary.",
+              "explain": "So, to sum up: …",
+              "answers": [
+                "So to sum up three findings one conclusion"
+              ]
+            },
+            {
+              "id": "en-foundations-nuance-presenting-e4",
+              "kind": "written",
+              "prompt": "Own a hostile question before answering.",
+              "explain": "That's exactly the point — then structure.",
+              "answers": [
+                "thats exactly the point",
+                "that is exactly the point"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "speaking:sustained-conversation",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
             "grammar:connectors"
           ]
         }

@@ -532,6 +532,11 @@
       ]
     },
     {
+      "id": "vocab:collocations",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
       "id": "vocab:daily-routine",
       "category": "vocab",
       "prerequisites": []
