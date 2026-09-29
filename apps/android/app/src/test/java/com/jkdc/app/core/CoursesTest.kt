@@ -37,8 +37,7 @@ class CoursesTest {
         for (language in listOf("fr", "it", "de", "pt")) {
             assertEquals(1, CourseRegistry.forLanguage(language).size)
             val course = CourseRegistry.forLanguage(language).first()
-            assertEquals(2, course.units.size)
-            assertEquals(6, course.units.sumOf { it.lessons.size })
+            assertTrue("$language should have 4+ units", course.units.size >= 4)
         }
         assertTrue(CourseRegistry.forLanguage("nb").isEmpty())
         assertTrue(CourseRegistry.forLanguage("zh").isEmpty())

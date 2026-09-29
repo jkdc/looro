@@ -1102,6 +1102,388 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-foundations-u3",
+      "title": "Il passato",
+      "subtitle": "Cosa hai fatto ?",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "weekend-passato",
+          "title": "Il weekend passato",
+          "subtitle": "Passato prossimo",
+          "symbol": "clock.arrow.circlepath",
+          "category": "Course",
+          "situation": "Raccontate il weekend: cosa avete fatto, dove siete andati.",
+          "colorIndex": 0
+        },
+        {
+          "id": "viaggio-ricordo",
+          "title": "Il viaggio dell'anno scorso",
+          "subtitle": "Ricordi",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Un viaggio memorabile: dove siete stati, cosa avete visto.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u3-passato-prossimo",
+          "title": "Il passato prossimo",
+          "goal": "Raccontare azioni finite con essere/avere + participio passato.",
+          "intro": {
+            "explanation": [
+              "Passato prossimo = ausiliare (essere o avere) + participio passato. « Ho mangiato. Sono andato. »",
+              "La maggior parte dei verbi usa avere. I verbi di movimento (andare, venire, uscire) usano essere.",
+              "Con essere, il participio si accorda: « Lei è andata » (femminile), « Loro sono andati » (plurale)."
+            ],
+            "examples": [
+              {
+                "text": "Ho mangiato una paella ieri.",
+                "meaning": "avere + mangiato."
+              },
+              {
+                "text": "Sono andato al cinema.",
+                "meaning": "essere + andato."
+              },
+              {
+                "text": "Abbiamo visto un film.",
+                "meaning": "avere + visto."
+              },
+              {
+                "text": "Lei è uscita presto.",
+                "meaning": "essere + uscita (femminile)."
+              },
+              {
+                "text": "Hai fatto i compiti ?",
+                "meaning": "avere + fatto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ho / hai / ha + participio",
+              "meaning": "Avere + participio.",
+              "note": "Ho mangiato."
+            },
+            {
+              "text": "sono / sei / è + participio",
+              "meaning": "Essere per movimento.",
+              "note": "Sono andato."
+            },
+            {
+              "text": "fatto / detto / visto / scritto",
+              "meaning": "Participi irregolari.",
+              "note": "fare → fatto."
+            },
+            {
+              "text": "accordo con essere",
+              "meaning": "e/a/i/e secondo il soggetto.",
+              "note": "lei è uscita, loro sono usciti."
+            },
+            {
+              "text": "ieri / la settimana scorsa",
+              "meaning": "Marcatori temporali.",
+              "note": "Ieri ho visto…"
+            }
+          ],
+          "situation": "Raccontate il weekend: cosa avete fatto, dove siete andati e una sorpresa.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di un'azione del weekend. (mangiare fuori)",
+                "expected": [
+                  "Ho mangiato fuori."
+                ],
+                "focus": "avere + pp",
+                "watch": "Ho mangiato — azione finita."
+              },
+              {
+                "prompt": "Di dove sei andato sabato.",
+                "expected": [
+                  "Sono andato al parco."
+                ],
+                "focus": "essere + pp",
+                "watch": "andare → essere + andato."
+              },
+              {
+                "prompt": "Chiedi al tuo amico cosa ha fatto.",
+                "expected": [
+                  "Cosa hai fatto ?"
+                ],
+                "focus": "hai + pp",
+                "watch": "Cosa hai fatto ?"
+              },
+              {
+                "prompt": "Di che hai fatto un errore.",
+                "expected": [
+                  "Ho fatto un errore."
+                ],
+                "focus": "fare → fatto",
+                "watch": "fare → fatto."
+              },
+              {
+                "prompt": "Di quando: ieri sera.",
+                "expected": [
+                  "Ieri sera ho guardato un film."
+                ],
+                "focus": "ieri sera",
+                "watch": "ieri sera + passato prossimo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u3-passato-prossimo-e1",
+              "kind": "choice",
+              "prompt": "Ieri ho ___ un film.",
+              "explain": "vedere → visto (participio).",
+              "options": [
+                "visto",
+                "guardato",
+                "veduto",
+                "vedeva"
+              ],
+              "answers": [
+                "visto"
+              ]
+            },
+            {
+              "id": "it-foundations-u3-passato-prossimo-e2",
+              "kind": "gap",
+              "prompt": "Lei ___ ___ al mercato. (andare)",
+              "explain": "andare → essere + andata (femminile).",
+              "answers": [
+                "è andata"
+              ]
+            },
+            {
+              "id": "it-foundations-u3-passato-prossimo-e3",
+              "kind": "order",
+              "prompt": "Chiedi il weekend.",
+              "explain": "Cosa + hai + participio.",
+              "answers": [
+                "Cosa hai fatto questo weekend"
+              ]
+            },
+            {
+              "id": "it-foundations-u3-passato-prossimo-e4",
+              "kind": "written",
+              "prompt": "Di che hai fatto un errore.",
+              "explain": "fare → fatto.",
+              "answers": [
+                "ho fatto un errore",
+                "ho fatto uno sbaglio"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "grammar:time-expressions",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u4",
+      "title": "Confronti e progetti",
+      "subtitle": "Più, meno, futuro",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "due-appartamenti",
+          "title": "Due appartamenti",
+          "subtitle": "Quale scegliere ?",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Confrontate due appartamenti: affitto, superficie, quartiere.",
+          "colorIndex": 0
+        },
+        {
+          "id": "progetti-vacanze",
+          "title": "Progetti di vacanza",
+          "subtitle": "Dove andiamo ?",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Pianificate le vacanze con andare a + infinito.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u4-confronti",
+          "title": "Confronti",
+          "goal": "Confrontare con più/meno… di e il migliore/peggiore.",
+          "intro": {
+            "explanation": [
+              "Comparativi: più/meno + aggettivo + di. « Questo bar è più caro di quello ». « Meno freddo di ieri ».",
+              "Superlativi: il/la più/meno + aggettivo + di. « Il miglior ristorante della città ».",
+              "Irregolari: buono → migliore, cattivo → peggiore."
+            ],
+            "examples": [
+              {
+                "text": "Questo bar è più caro di quello.",
+                "meaning": "più + agg + di."
+              },
+              {
+                "text": "Il treno è meno lento del bus.",
+                "meaning": "meno + agg."
+              },
+              {
+                "text": "È il miglior ristorante della città.",
+                "meaning": "il migliore + di."
+              },
+              {
+                "text": "Quest'estate è peggiore della scorsa.",
+                "meaning": "peggiore = cattivo comparato."
+              },
+              {
+                "text": "Così caro come prima.",
+                "meaning": "così + agg + come = uguaglianza."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "più … di",
+              "meaning": "Più di.",
+              "note": "più caro di."
+            },
+            {
+              "text": "meno … di",
+              "meaning": "Meno di.",
+              "note": "meno freddo di."
+            },
+            {
+              "text": "il/la più … di",
+              "meaning": "Superlativo.",
+              "note": "il più alto della classe."
+            },
+            {
+              "text": "migliore / peggiore",
+              "meaning": "Irregolari.",
+              "note": "buono → migliore."
+            },
+            {
+              "text": "così … come",
+              "meaning": "Uguaglianza.",
+              "note": "così caro come prima."
+            }
+          ],
+          "situation": "Confrontate due appartamenti: affitto, superficie, quartiere — e scegliete il migliore.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Confronta il prezzo: A 800€, B 1000€.",
+                "expected": [
+                  "L'appartamento A è meno caro del B."
+                ],
+                "focus": "meno caro",
+                "watch": "meno + agg + di."
+              },
+              {
+                "prompt": "Di' quale è il migliore. (B)",
+                "expected": [
+                  "L'appartamento B è il migliore."
+                ],
+                "focus": "il migliore",
+                "watch": "il migliore + di."
+              },
+              {
+                "prompt": "Di' che B è peggiore.",
+                "expected": [
+                  "L'appartamento B è peggiore dell'A."
+                ],
+                "focus": "peggiore",
+                "watch": "peggiore di — irregolare."
+              },
+              {
+                "prompt": "Confronta la posizione: A vicino, B lontano.",
+                "expected": [
+                  "L'appartamento A è più vicino al centro."
+                ],
+                "focus": "più vicino",
+                "watch": "più + agg + a/di."
+              },
+              {
+                "prompt": "Confronta la dimensione: A 60m², B 80m².",
+                "expected": [
+                  "Il B è più grande dell'A."
+                ],
+                "focus": "più grande",
+                "watch": "più + agg + di."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u4-confronti-e1",
+              "kind": "choice",
+              "prompt": "Questo bar è ___ caro ___ quello.",
+              "explain": "più + agg + di.",
+              "options": [
+                "più … di",
+                "più … che",
+                "così … che",
+                "molto … che"
+              ],
+              "answers": [
+                "più … di"
+              ]
+            },
+            {
+              "id": "it-foundations-u4-confronti-e2",
+              "kind": "gap",
+              "prompt": "È il ___ ristorante della città. (buono)",
+              "explain": "buono → il migliore.",
+              "answers": [
+                "migliore"
+              ]
+            },
+            {
+              "id": "it-foundations-u4-confronti-e3",
+              "kind": "order",
+              "prompt": "Confronta il prezzo.",
+              "explain": "meno + agg + di.",
+              "answers": [
+                "Questo e meno caro di quello"
+              ]
+            },
+            {
+              "id": "it-foundations-u4-confronti-e4",
+              "kind": "written",
+              "prompt": "Il tuo ristorante preferito.",
+              "explain": "Il mio preferito è X.",
+              "answers": [
+                "il mio ristorante preferito e <nome>",
+                "il migliore e <nome>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "grammar:superlatives",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        }
+      ]
     }
   ]
 }

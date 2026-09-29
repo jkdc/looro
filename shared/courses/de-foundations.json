@@ -1103,6 +1103,388 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u3",
+      "title": "Die Vergangenheit",
+      "subtitle": "Was hast du gemacht ?",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "wochenende-vergangen",
+          "title": "Das vergangene Wochenende",
+          "subtitle": "Perfekt",
+          "symbol": "clock.arrow.circlepath",
+          "category": "Course",
+          "situation": "Ihr erzählt euer Wochenende: Ausflüge, Essen, Begegnungen — im Perfekt.",
+          "colorIndex": 0
+        },
+        {
+          "id": "reise-erinnern",
+          "title": "Die Reise letzten Sommer",
+          "subtitle": "Erinnerungen",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Eine unvergessliche Reise: wohin, was gesehen, mit wem.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u3-perfekt",
+          "title": "Das Perfekt",
+          "goal": "Abgeschlossene Handlungen mit haben/sein + Partizip II erzählen.",
+          "intro": {
+            "explanation": [
+              "Das Perfekt = haben oder sein + Partizip II. „Ich habe gegessen. Sie ist gefahren.“",
+              "Die meisten Verben benutzen haben. Bewegungsverben (gehen, fahren, fliegen) benutzen sein.",
+              "Regelmäßiges Partizip: ge- + Stamm + -t (gemacht, gespielt). Unregelmäßig: gegessen, gesehen, getrunken."
+            ],
+            "examples": [
+              {
+                "text": "Ich habe eine Paella gegessen.",
+                "meaning": "haben + gegessen."
+              },
+              {
+                "text": "Sie ist ins Kino gegangen.",
+                "meaning": "sein + gegangen."
+              },
+              {
+                "text": "Wir haben einen Film gesehen.",
+                "meaning": "haben + gesehen."
+              },
+              {
+                "text": "Er ist früh angekommen.",
+                "meaning": "sein + angekommen."
+              },
+              {
+                "text": "Hast du deine Hausaufgaben gemacht ?",
+                "meaning": "haben + Partizip in der Frage."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ich habe / du hast + Partizip",
+              "meaning": "haben + Partizip II.",
+              "note": "Ich habe gegessen."
+            },
+            {
+              "text": "ich bin / sie ist + Partizip",
+              "meaning": "sein für Bewegung.",
+              "note": "Ich bin gefahren."
+            },
+            {
+              "text": "gemacht / gesagt / gesehen",
+              "meaning": "Partizip II Formen.",
+              "note": "machen → gemacht."
+            },
+            {
+              "text": "gegangen / gefahren / gegessen",
+              "meaning": "Unregelmäßig.",
+              "note": "gehen → gegangen."
+            },
+            {
+              "text": "gestern / letzte Woche",
+              "meaning": "Zeitangaben.",
+              "note": "Gestern habe ich…"
+            }
+          ],
+          "situation": "Ihr erzählt euer Wochenende: was ihr gemacht habt, mit wem, und eine Überraschung.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag eine Handlung vom Wochenende. (essen im Restaurant)",
+                "expected": [
+                  "Ich habe im Restaurant gegessen."
+                ],
+                "focus": "haben + pp",
+                "watch": "Ich habe gegessen — abgeschlossen."
+              },
+              {
+                "prompt": "Sag, wohin du gegangen bist. (der Park)",
+                "expected": [
+                  "Ich bin in den Park gegangen."
+                ],
+                "focus": "sein + pp",
+                "watch": "gehen nimmt sein."
+              },
+              {
+                "prompt": "Frag deinen Freund, was er gemacht hat.",
+                "expected": [
+                  "Was hast du gemacht ?"
+                ],
+                "focus": "hast + pp",
+                "watch": "Was hast du gemacht ?"
+              },
+              {
+                "prompt": "Sag, dass du einen Fehler gemacht hast.",
+                "expected": [
+                  "Ich habe einen Fehler gemacht."
+                ],
+                "focus": "machen → gemacht",
+                "watch": "haben + gemacht."
+              },
+              {
+                "prompt": "Sag, wann: gestern Abend.",
+                "expected": [
+                  "Gestern Abend habe ich einen Film gesehen."
+                ],
+                "focus": "gestern Abend",
+                "watch": "Zeitangabe + Perfekt."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u3-perfekt-e1",
+              "kind": "choice",
+              "prompt": "Ich ___ einen Film gesehen.",
+              "explain": "sehen nimmt haben: ich habe gesehen.",
+              "options": [
+                "habe",
+                "bin",
+                "hat",
+                "war"
+              ],
+              "answers": [
+                "habe"
+              ]
+            },
+            {
+              "id": "de-foundations-u3-perfekt-e2",
+              "kind": "gap",
+              "prompt": "Sie ___ ins Kino ___. (gehen)",
+              "explain": "sein + gegangen.",
+              "answers": [
+                "ist gegangen"
+              ]
+            },
+            {
+              "id": "de-foundations-u3-perfekt-e3",
+              "kind": "order",
+              "prompt": "Frag das Wochenende.",
+              "explain": "Was + hast + du + Partizip ?",
+              "answers": [
+                "Was hast du am Wochenende gemacht"
+              ]
+            },
+            {
+              "id": "de-foundations-u3-perfekt-e4",
+              "kind": "written",
+              "prompt": "Sag, dass du einen Fehler gemacht hast.",
+              "explain": "haben + gemacht.",
+              "answers": [
+                "ich habe einen fehler gemacht",
+                "ich habe einen fehler gemacht"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "grammar:time-expressions",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u4",
+      "title": "Vergleichen und Pläne",
+      "subtitle": "Größer, günstiger, morgen",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "zwei-wohnungen",
+          "title": "Zwei Wohnungen",
+          "subtitle": "Welche nehmen ?",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Ihr vergleicht zwei Wohnungen: Miete, Größe, Lage — und entscheidet euch.",
+          "colorIndex": 0
+        },
+        {
+          "id": "urlaubsplaene",
+          "title": "Urlaubspläne",
+          "subtitle": "Wohin gehen wir ?",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Ihr plant den Urlaub mit werden + Infinitiv oder Präsens + Zeitangabe.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u4-komparativ",
+          "title": "Komparativ und Superlativ",
+          "goal": "Vergleichen mit größer als, am größten, so groß wie.",
+          "intro": {
+            "explanation": [
+              "Komparativ: Adjektivstamm + -er + als. „Dieser Computer ist schneller als der alte.“",
+              "Superlativ: am + Adjektivstamm + -sten. „Das ist am schnellsten.“",
+              "Unregelmäßig: gut → besser → am besten, viel → mehr → am meisten."
+            ],
+            "examples": [
+              {
+                "text": "Dieser Computer ist schneller als der alte.",
+                "meaning": "schnell → schneller + als."
+              },
+              {
+                "text": "Das ist das beste Restaurant der Stadt.",
+                "meaning": "gut → das beste."
+              },
+              {
+                "text": "Berlin ist größer als München.",
+                "meaning": "groß → größer."
+              },
+              {
+                "text": "Es ist am schönsten im Sommer.",
+                "meaning": "am + Superlativ."
+              },
+              {
+                "text": "So teuer wie letzte Jahr.",
+                "meaning": "so + adj + wie = Gleichheit."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "größer / kleiner als",
+              "meaning": "Komparativ.",
+              "note": "größer + als."
+            },
+            {
+              "text": "am besten / am schönsten",
+              "meaning": "Superlativ.",
+              "note": "am + -sten."
+            },
+            {
+              "text": "besser / mehr",
+              "meaning": "Unregelmäßig.",
+              "note": "gut → besser."
+            },
+            {
+              "text": "so … wie",
+              "meaning": "Gleichheit.",
+              "note": "so groß wie ich."
+            },
+            {
+              "text": "viel / mehr / am meisten",
+              "meaning": "Mengenvergleich.",
+              "note": "mehr als erwartet."
+            }
+          ],
+          "situation": "Ihr vergleicht zwei Wohnungen: Miete, Größe, Lage — und wählt die beste.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Vergleiche den Preis: A 800€, B 1000€.",
+                "expected": [
+                  "Wohnung A ist billiger als Wohnung B."
+                ],
+                "focus": "billiger als",
+                "watch": "billig → billiger + als."
+              },
+              {
+                "prompt": "Sag, welche die beste ist. (B)",
+                "expected": [
+                  "Wohnung B ist die beste."
+                ],
+                "focus": "die beste",
+                "watch": "Superlativ mit die."
+              },
+              {
+                "prompt": "Sag, dass sie gleich groß sind.",
+                "expected": [
+                  "Sie sind so groß wie die andere."
+                ],
+                "focus": "so wie",
+                "watch": "so + adj + wie = Gleichheit."
+              },
+              {
+                "prompt": "Wähle und begründe. (B, größer)",
+                "expected": [
+                  "Ich nehme B, weil sie größer ist."
+                ],
+                "focus": "weil",
+                "watch": "weil + Satzbau mit Verb am Ende."
+              },
+              {
+                "prompt": "Vergleiche die Größe: A 60m², B 80m².",
+                "expected": [
+                  "B ist größer als A."
+                ],
+                "focus": "größer als",
+                "watch": "größer + als."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u4-komparativ-e1",
+              "kind": "choice",
+              "prompt": "Berlin ist ___ ___ München.",
+              "explain": "Komparativ + als.",
+              "options": [
+                "größer als",
+                "groß als",
+                "so groß wie",
+                "am größten"
+              ],
+              "answers": [
+                "größer als"
+              ]
+            },
+            {
+              "id": "de-foundations-u4-komparativ-e2",
+              "kind": "gap",
+              "prompt": "Das ist das ___ Restaurant. (gut)",
+              "explain": "gut → das beste.",
+              "answers": [
+                "beste"
+              ]
+            },
+            {
+              "id": "de-foundations-u4-komparativ-e3",
+              "kind": "order",
+              "prompt": "Vergleiche den Preis.",
+              "explain": "Komparativ + als.",
+              "answers": [
+                "Wohnung A ist billiger als B"
+              ]
+            },
+            {
+              "id": "de-foundations-u4-komparativ-e4",
+              "kind": "written",
+              "prompt": "Dein Lieblingsrestaurant.",
+              "explain": "Mein Liebling ist X.",
+              "answers": [
+                "mein lieblingsrestaurant ist <name>",
+                "das beste ist <name>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "grammar:superlatives",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        }
+      ]
     }
   ]
 }

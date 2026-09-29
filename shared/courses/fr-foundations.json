@@ -1103,6 +1103,551 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u3",
+      "title": "Le passé",
+      "subtitle": "Qu'est-ce que tu as fait ?",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "weekend-passe",
+          "title": "Le week-end passé",
+          "subtitle": "Passé composé",
+          "symbol": "clock.arrow.circlepath",
+          "category": "Course",
+          "situation": "Vous racontez votre week-end : sorties, repas, rencontres — au passé composé.",
+          "colorIndex": 0
+        },
+        {
+          "id": "voyage-dernier",
+          "title": "Le voyage de l'année dernière",
+          "subtitle": "Se souvenir",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Un voyage mémorable : où vous êtes allé, ce que vous avez vu.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u3-passe-compose",
+          "title": "Le passé composé",
+          "goal": "Raconter des actions terminées avec avoir/être + participe passé.",
+          "intro": {
+            "explanation": [
+              "Le passé composé = auxiliaire (avoir ou être) + participe passé. « J'ai mangé. Elle est allée. »",
+              "La plupart des verbes prennent avoir. Les verbes de mouvement (aller, venir, partir) prennent être.",
+              "Avec être, le participe s'accorde : « Elle est allée » (féminin + e), « Ils sont allés » (masculin pluriel + s)."
+            ],
+            "examples": [
+              {
+                "text": "J'ai mangé une paella hier.",
+                "meaning": "avoir + mangé."
+              },
+              {
+                "text": "Elle est allée au cinéma.",
+                "meaning": "être + allée (féminin)."
+              },
+              {
+                "text": "Nous avons vu un film.",
+                "meaning": "avoir + vu (voir → vu)."
+              },
+              {
+                "text": "Ils sont partis tôt.",
+                "meaning": "être + partis (pluriel)."
+              },
+              {
+                "text": "Tu as fait tes devoirs ?",
+                "meaning": "avoir + fait (faire → fait)."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'ai / tu as / il a + pp",
+              "meaning": "avoir + participe.",
+              "note": "J'ai mangé."
+            },
+            {
+              "text": "je suis / elle est + pp",
+              "meaning": "Être pour mouvement.",
+              "note": "Je suis allé(e)."
+            },
+            {
+              "text": "fait / dit / vu / écrit",
+              "meaning": "Participes irréguliers.",
+              "note": "faire → fait."
+            },
+            {
+              "text": "accord avec être",
+              "meaning": "e/s selon le sujet.",
+              "note": "elle est allée, ils sont allés."
+            },
+            {
+              "text": "hier / la semaine dernière",
+              "meaning": "Marqueurs de temps.",
+              "note": "Hier, j'ai vu…"
+            }
+          ],
+          "situation": "Vous racontez votre week-end : ce que vous avez fait, avec qui, et une surprise.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis une action du week-end. (manger au restaurant)",
+                "expected": [
+                  "J'ai mangé au restaurant."
+                ],
+                "focus": "avoir + pp",
+                "watch": "J'ai mangé — action terminée."
+              },
+              {
+                "prompt": "Dis où tu es allé(e) samedi.",
+                "expected": [
+                  "Je suis allé(e) au parc."
+                ],
+                "focus": "être + allé",
+                "watch": "aller prend être: je suis allé(e)."
+              },
+              {
+                "prompt": "Demande à ton ami ce qu'il a fait.",
+                "expected": [
+                  "Qu'est-ce que tu as fait ?"
+                ],
+                "focus": "as + pp",
+                "watch": "Qu'est-ce que tu as fait ?"
+              },
+              {
+                "prompt": "Dis que tu as fait une erreur.",
+                "expected": [
+                  "J'ai fait une erreur."
+                ],
+                "focus": "faire → fait",
+                "watch": "faire → fait (participe)."
+              },
+              {
+                "prompt": "Dis quand : hier soir.",
+                "expected": [
+                  "Hier soir, j'ai regardé un film."
+                ],
+                "focus": "hier soir",
+                "watch": "hier soir + passé composé."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u3-passe-compose-e1",
+              "kind": "choice",
+              "prompt": "J'___ un film hier soir.",
+              "explain": "Hier: passé composé.",
+              "options": [
+                "ai regardé",
+                "regarde",
+                "regardais",
+                "vais regarder"
+              ],
+              "answers": [
+                "ai regardé"
+              ]
+            },
+            {
+              "id": "fr-foundations-u3-passe-compose-e2",
+              "kind": "gap",
+              "prompt": "Elle ___ ___ au marché. (aller)",
+              "explain": "aller prend être + accord féminin.",
+              "answers": [
+                "est allée"
+              ]
+            },
+            {
+              "id": "fr-foundations-u3-passe-compose-e3",
+              "kind": "order",
+              "prompt": "Demande le week-end.",
+              "explain": "Qu'est-ce que tu as fait ?",
+              "answers": [
+                "Qu'est-ce que tu as fait ce weekend"
+              ]
+            },
+            {
+              "id": "fr-foundations-u3-passe-compose-e4",
+              "kind": "written",
+              "prompt": "Dis que tu as fait une erreur.",
+              "explain": "faire → fait.",
+              "answers": [
+                "jai fait une erreur",
+                "j'ai fait une erreur"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "grammar:time-expressions",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u4",
+      "title": "Comparer et projeter",
+      "subtitle": "Plus, moins, futur",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "deux-apparts",
+          "title": "Deux appartements",
+          "subtitle": "Lequel choisir ?",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Vous comparez deux appartements : loyer, taille, quartier — et vous choisissez.",
+          "colorIndex": 0
+        },
+        {
+          "id": "projets-vacances",
+          "title": "Projets de vacances",
+          "subtitle": "On va où ?",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Vous planifiez les vacances avec le futur proche.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u4-comparatifs",
+          "title": "Comparatifs et superlatifs",
+          "goal": "Comparer avec plus/moins… que et le/la plus/moins… de.",
+          "intro": {
+            "explanation": [
+              "Comparatifs: plus/moins + adjectif + que. « Ce café est plus cher que l'autre. »",
+              "Superlatifs: le/la plus/moins + adjectif + de. « C'est le meilleur restaurant de la ville. »",
+              "Irréguliers: bon → meilleur, mauvais → pire."
+            ],
+            "examples": [
+              {
+                "text": "Ce café est plus cher que l'autre.",
+                "meaning": "plus + adj + que."
+              },
+              {
+                "text": "Le train est moins lent que le bus.",
+                "meaning": "moins + adj."
+              },
+              {
+                "text": "C'est le meilleur restaurant de la ville.",
+                "meaning": "le meilleur + de."
+              },
+              {
+                "text": "Ce film est pire que l'original.",
+                "meaning": "pire = mauvais comparé."
+              },
+              {
+                "text": "Aussi cher qu'avant.",
+                "meaning": "aussi + adj + que = égalité."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "plus … que",
+              "meaning": "Plus que.",
+              "note": "plus cher que."
+            },
+            {
+              "text": "moins … que",
+              "meaning": "Moins que.",
+              "note": "moins cher que."
+            },
+            {
+              "text": "le/la plus … de",
+              "meaning": "Superlatif.",
+              "note": "le plus grand de France."
+            },
+            {
+              "text": "meilleur / pire",
+              "meaning": "Irréguliers.",
+              "note": "bon → meilleur, mauvais → pire."
+            },
+            {
+              "text": "aussi … que",
+              "meaning": "Égalité.",
+              "note": "aussi grand que moi."
+            }
+          ],
+          "situation": "Vous comparez deux appartements : loyer, surface, quartier — et vous choisissez le meilleur.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Compare le prix : A 800€, B 1000€.",
+                "expected": [
+                  "L'appartement A est moins cher que le B."
+                ],
+                "focus": "moins cher",
+                "watch": "moins + adj + que."
+              },
+              {
+                "prompt": "Dis lequel est le meilleur. (B)",
+                "expected": [
+                  "L'appartement B est le meilleur."
+                ],
+                "focus": "le meilleur",
+                "watch": "Superlatif avec le/la."
+              },
+              {
+                "prompt": "Dis qu'ils sont aussi grands.",
+                "expected": [
+                  "Ils sont aussi grands l'un que l'autre."
+                ],
+                "focus": "aussi que",
+                "watch": "aussi + adj + que = égalité."
+              },
+              {
+                "prompt": "Choisis et justifie.",
+                "expected": [
+                  "Je préfère le B parce qu'il est plus grand."
+                ],
+                "focus": "parce que",
+                "watch": "préférence + parce que + raison."
+              },
+              {
+                "prompt": "Compare la taille: A 60m², B 80m².",
+                "expected": [
+                  "Le B est plus grand que le A."
+                ],
+                "focus": "plus grand",
+                "watch": "grand → plus grand + que."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u4-comparatifs-e1",
+              "kind": "choice",
+              "prompt": "Ce café est ___ cher ___ l'autre.",
+              "explain": "plus + adj + que.",
+              "options": [
+                "plus … que",
+                "plus … de",
+                "très … que",
+                "beaucoup … que"
+              ],
+              "answers": [
+                "plus … que"
+              ]
+            },
+            {
+              "id": "fr-foundations-u4-comparatifs-e2",
+              "kind": "gap",
+              "prompt": "C'est le ___ restaurant de la ville. (bon)",
+              "explain": "bon → le meilleur.",
+              "answers": [
+                "meilleur"
+              ]
+            },
+            {
+              "id": "fr-foundations-u4-comparatifs-e3",
+              "kind": "order",
+              "prompt": "Compare le prix.",
+              "explain": "plus + adj + que + démonstratif.",
+              "answers": [
+                "Ce est plus cher que celui-la"
+              ]
+            },
+            {
+              "id": "fr-foundations-u4-comparatifs-e4",
+              "kind": "written",
+              "prompt": "Ton restaurant préféré.",
+              "explain": "Mon préféré est X.",
+              "answers": [
+                "mon restaurant prefere est <nom>",
+                "mon favori est <nom>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "grammar:superlatives",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        },
+        {
+          "id": "fr-foundations-u4-futur-proche",
+          "title": "Le futur proche",
+          "goal": "Parler de projets avec aller + infinitif.",
+          "intro": {
+            "explanation": [
+              "Le futur proche : aller (conjugué) + infinitif. « Je vais partir. Nous allons manger. »",
+              "Seul aller se conjugue ; le second verbe reste à l'infinitif.",
+              "Négation autour de aller : « Je ne vais pas sortir. »"
+            ],
+            "examples": [
+              {
+                "text": "Je vais partir demain.",
+                "meaning": "aller + partir."
+              },
+              {
+                "text": "Nous allons manger au restaurant.",
+                "meaning": "nous allons + inf."
+              },
+              {
+                "text": "Tu vas venir avec nous ?",
+                "meaning": "Question avec vas."
+              },
+              {
+                "text": "Je ne vais pas sortir ce soir.",
+                "meaning": "Négation: ne…pas autour d'aller."
+              },
+              {
+                "text": "Il va pleuvoir, prends un parapluie.",
+                "meaning": "Prédiction."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je vais + inf",
+              "meaning": "Ton plan.",
+              "note": "Je vais dormir."
+            },
+            {
+              "text": "nous allons + inf",
+              "meaning": "Le projet du groupe.",
+              "note": "Nous allons voyager."
+            },
+            {
+              "text": "tu vas + inf ?",
+              "meaning": "Demander.",
+              "note": "Tu vas venir ?"
+            },
+            {
+              "text": "ne vais pas + inf",
+              "meaning": "Refuser.",
+              "note": "Je ne vais pas sortir."
+            },
+            {
+              "text": "il va + inf (météo)",
+              "meaning": "Prédire.",
+              "note": "Il va pleuvoir."
+            }
+          ],
+          "situation": "Vous planifiez le samedi : proposition, acceptation ou refus, heure et lieu.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis ton plan pour demain. (se reposer)",
+                "expected": [
+                  "Demain, je vais me reposer."
+                ],
+                "focus": "aller + inf",
+                "watch": "je vais + infinitif."
+              },
+              {
+                "prompt": "Demande le plan de ton ami.",
+                "expected": [
+                  "Qu'est-ce que tu vas faire ?"
+                ],
+                "focus": "la question",
+                "watch": "Qu'est-ce que + vas + inf ?"
+              },
+              {
+                "prompt": "Dis que tu ne vas pas sortir.",
+                "expected": [
+                  "Je ne vais pas sortir ce soir."
+                ],
+                "focus": "négation",
+                "watch": "ne + vais + pas + inf."
+              },
+              {
+                "prompt": "Prédis la pluie.",
+                "expected": [
+                  "Il va pleuvoir demain."
+                ],
+                "focus": "prédiction",
+                "watch": "il va + inf pour la météo."
+              },
+              {
+                "prompt": "Dis que tu ne vas pas travailler samedi.",
+                "expected": [
+                  "Je ne vais pas travailler samedi."
+                ],
+                "focus": "ne vais pas",
+                "watch": "ne + vais + pas + infinitif."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u4-futur-proche-e1",
+              "kind": "choice",
+              "prompt": "Je ___ ___ dormir. (2 mots)",
+              "explain": "aller + infinitif.",
+              "options": [
+                "vais dormir",
+                "vais à dormir",
+                "vais dormi",
+                "vais dormeur"
+              ],
+              "answers": [
+                "vais dormir"
+              ]
+            },
+            {
+              "id": "fr-foundations-u4-futur-proche-e2",
+              "kind": "gap",
+              "prompt": "Nous ___ ___ voyager en été. (2 mots)",
+              "explain": "nous allons + inf.",
+              "answers": [
+                "allons voyager"
+              ]
+            },
+            {
+              "id": "fr-foundations-u4-futur-proche-e3",
+              "kind": "order",
+              "prompt": "Demande le plan.",
+              "explain": "Qu'est-ce que + vas + inf ?",
+              "answers": [
+                "Qu'est-ce que tu vas faire ce weekend"
+              ]
+            },
+            {
+              "id": "fr-foundations-u4-futur-proche-e4",
+              "kind": "written",
+              "prompt": "Un plan pour demain.",
+              "explain": "Je vais + verbe.",
+              "answers": [
+                "je vais <activite> demain",
+                "demain je vais <activite>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "grammar:future-forms",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
     }
   ]
 }

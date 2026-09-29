@@ -1110,6 +1110,389 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u3",
+      "title": "O passado",
+      "subtitle": "O que você fez ?",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "fds-passado",
+          "title": "O fim de semana que passou",
+          "subtitle": "Pretérito perfeito",
+          "symbol": "clock.arrow.circlepath",
+          "category": "Course",
+          "situation": "Vocês contam o que fizeram no fim de semana: saídas, comidas, encontros.",
+          "colorIndex": 0
+        },
+        {
+          "id": "viagem-lembrada",
+          "title": "A viagem do ano passado",
+          "subtitle": "Lembranças",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Uma viagem inesquecível: onde foi, o que viu, com quem.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u3-pretérito",
+          "title": "O pretérito perfeito",
+          "goal": "Contar ações terminadas no passado com -ei/-ou/-amos e -i/-iu.",
+          "intro": {
+            "explanation": [
+              "O pretérito perfeito fala de ações terminadas: « Ontem comi paella ». « Ano passado viajei para o México ».",
+              "Regulares: -ar → ei/ou/amos/aram. -er/-ir → i/eu/iu/emos/iram.",
+              "Irrregulares frequentes: fui/foi, fiz/fez, vi/viu, disse/disseram, estive/esteve."
+            ],
+            "examples": [
+              {
+                "text": "Ontem comi paella no centro.",
+                "meaning": "comer → comi."
+              },
+              {
+                "text": "Ano passado viajei para o México.",
+                "meaning": "viajar → viajei."
+              },
+              {
+                "text": "Fui ao cinema com minha irmã.",
+                "meaning": "ir → fui."
+              },
+              {
+                "text": "Fiz a reserva por telefone.",
+                "meaning": "fazer → fiz."
+              },
+              {
+                "text": "Não gostei do hotel.",
+                "meaning": "gostar → gostei."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "comi / comeu / comemos",
+              "meaning": "Comer no passado.",
+              "note": "-er: i/eu/iu."
+            },
+            {
+              "text": "viajei / viajou / viajaram",
+              "meaning": "-ar no passado.",
+              "note": "viajar → viajei."
+            },
+            {
+              "text": "fui / foi",
+              "meaning": "Ir e ser no passado.",
+              "note": "fui ao cinema, foi para casa."
+            },
+            {
+              "text": "fiz / fez / vi / viu",
+              "meaning": "Irrregulares frequentes.",
+              "note": "fiz a comida, vi o filme."
+            },
+            {
+              "text": "ontem / na semana passada",
+              "meaning": "Marcadores de tempo.",
+              "note": "Ontem saí."
+            }
+          ],
+          "situation": "Vocês contam o fim de semana: um conta o que fez no sábado, o outro pergunta detalhes e conta o seu.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga uma ação que você fez ontem. (comer fora)",
+                "expected": [
+                  "Ontem comi fora."
+                ],
+                "focus": "comer → comi",
+                "watch": "Ontem + comi — terminado."
+              },
+              {
+                "prompt": "Diga onde você foi no fim de semana.",
+                "expected": [
+                  "Fui à praia."
+                ],
+                "focus": "ir → fui",
+                "watch": "“I went” → fui."
+              },
+              {
+                "prompt": "Pergunte ao seu amigo o que ele fez ontem.",
+                "expected": [
+                  "O que você fez ontem ?"
+                ],
+                "focus": "você fez",
+                "watch": "fazer → fez."
+              },
+              {
+                "prompt": "Diga que não gostou do filme.",
+                "expected": [
+                  "Não gostei do filme."
+                ],
+                "focus": "gostei",
+                "watch": "gostei (pretérito) para reação."
+              },
+              {
+                "prompt": "Diga quando viajou pela última vez.",
+                "expected": [
+                  "Ano passado viajei para <lugar>."
+                ],
+                "focus": "ano passado",
+                "watch": "Marcador de tempo + pretérito."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u3-pretérito-e1",
+              "kind": "choice",
+              "prompt": "Ontem ___ ao cinema com minha irmã.",
+              "explain": "ir → fui (pretérito).",
+              "options": [
+                "fui",
+                "vou",
+                "ia",
+                "vou ir"
+              ],
+              "answers": [
+                "fui"
+              ]
+            },
+            {
+              "id": "pt-foundations-u3-pretérito-e2",
+              "kind": "gap",
+              "prompt": "Ontem ___ uma paella incrível. (comer)",
+              "explain": "comer → comi.",
+              "answers": [
+                "comi",
+                "comí"
+              ]
+            },
+            {
+              "id": "pt-foundations-u3-pretérito-e3",
+              "kind": "order",
+              "prompt": "Pergunte pelo fim de semana.",
+              "explain": "O que você fez no fim de semana ?",
+              "answers": [
+                "O que voce fez no fim de semana"
+              ]
+            },
+            {
+              "id": "pt-foundations-u3-pretérito-e4",
+              "kind": "written",
+              "prompt": "Diga uma ação no passado: falar com Marta.",
+              "explain": "falar → falei.",
+              "answers": [
+                "falei com marta",
+                "falei com marta ontem"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "grammar:time-expressions",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u4",
+      "title": "Comparando e planejando",
+      "subtitle": "Mais, menos, futuro",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "dois-apartamentos",
+          "title": "Dois apartamentos",
+          "subtitle": "Qual escolher ?",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Vocês comparam dois apartamentos: aluguel, tamanho, bairro — e escolhem o melhor.",
+          "colorIndex": 0
+        },
+        {
+          "id": "planos-viagem",
+          "title": "Planos de viagem",
+          "subtitle": "Vamos aonde ?",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Vocês planejam as férias com ir + infinitivo.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u4-comparando",
+          "title": "Comparando",
+          "goal": "Comparar com mais/menos… do que e o melhor/pior.",
+          "intro": {
+            "explanation": [
+              "Comparativos: mais/menos + adjetivo + do que. « Este hotel é mais caro do que aquele ».",
+              "Superlativos: o/a melhor/pior + de. « O melhor restaurante da cidade ».",
+              "Bom → melhor, mau → pior. « Este é melhor do que aquele »."
+            ],
+            "examples": [
+              {
+                "text": "Este hotel é mais caro do que aquele.",
+                "meaning": "mais + adj + do que."
+              },
+              {
+                "text": "A praia é menos movimentada que a piscina.",
+                "meaning": "menos + adj."
+              },
+              {
+                "text": "É o melhor restaurante da cidade.",
+                "meaning": "o melhor + de."
+              },
+              {
+                "text": "Este verão é pior que o passado.",
+                "meaning": "pior = mau comparado."
+              },
+              {
+                "text": "Tão simples quanto isso.",
+                "meaning": "tão + adj + quanto = igualdade."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mais … do que",
+              "meaning": "Mais do que.",
+              "note": "mais caro do que."
+            },
+            {
+              "text": "menos … do que",
+              "meaning": "Menos do que.",
+              "note": "menos frio do que."
+            },
+            {
+              "text": "o/a melhor … de",
+              "meaning": "Superlativo.",
+              "note": "o melhor da cidade."
+            },
+            {
+              "text": "melhor / pior",
+              "meaning": "Irregulares.",
+              "note": "melhor que, o pior de."
+            },
+            {
+              "text": "tão … quanto",
+              "meaning": "Igualdade.",
+              "note": "tão caro quanto antes."
+            }
+          ],
+          "situation": "Vocês comparam dois hotéis para as férias: preço, localização, limpeza — e escolhem o melhor.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Compare o preço: hotel A 80€, hotel B 100€.",
+                "expected": [
+                  "O hotel A é mais barato do que o hotel B."
+                ],
+                "focus": "mais barato",
+                "watch": "barato → mais barato do que."
+              },
+              {
+                "prompt": "Diga qual é o melhor. (hotel A)",
+                "expected": [
+                  "O hotel A é o melhor."
+                ],
+                "focus": "o melhor",
+                "watch": "o melhor + de/em."
+              },
+              {
+                "prompt": "Diga que o hotel B é pior.",
+                "expected": [
+                  "O hotel B é pior que o A."
+                ],
+                "focus": "pior",
+                "watch": "pior que — irregular."
+              },
+              {
+                "prompt": "Compare localização: A perto, B longe.",
+                "expected": [
+                  "O hotel A fica mais perto do centro."
+                ],
+                "focus": "mais perto",
+                "watch": "perto → mais perto de."
+              },
+              {
+                "prompt": "Diga que são iguais em limpeza.",
+                "expected": [
+                  "São tão limpos quanto o outro."
+                ],
+                "focus": "tão quanto",
+                "watch": "tão + adj + quanto = igualdade."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u4-comparando-e1",
+              "kind": "choice",
+              "prompt": "Este hotel é ___ caro ___ aquele.",
+              "explain": "mais + adj + do que.",
+              "options": [
+                "mais … do que",
+                "mais … de",
+                "tão … que",
+                "muito … que"
+              ],
+              "answers": [
+                "mais … do que"
+              ]
+            },
+            {
+              "id": "pt-foundations-u4-comparando-e2",
+              "kind": "gap",
+              "prompt": "É o ___ restaurante da cidade. (bom)",
+              "explain": "bom → o melhor.",
+              "answers": [
+                "melhor"
+              ]
+            },
+            {
+              "id": "pt-foundations-u4-comparando-e3",
+              "kind": "order",
+              "prompt": "Compare o preço.",
+              "explain": "mais + adj + do que.",
+              "answers": [
+                "Este e mais barato que aquele"
+              ]
+            },
+            {
+              "id": "pt-foundations-u4-comparando-e4",
+              "kind": "written",
+              "prompt": "Seu restaurante favorito.",
+              "explain": "Meu favorito é X.",
+              "answers": [
+                "meu restaurante favorito e <nome>",
+                "o melhor e <nome>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "grammar:superlatives",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        }
+      ]
     }
   ]
 }
