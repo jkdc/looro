@@ -330,9 +330,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Skill mastery for the learning language — a pure projection of the ledger;
         null when the language has no course yet. */
+    private var cachedMasteryStats: Pair<Int, MasteryStats>? = null
+
     fun masteryStats(): MasteryStats? = CourseRegistry.forLanguage(language.id).firstOrNull()?.let { course ->
-        MasteryEngine.stats(course, ListeningRegistry.forLanguage(language.id), ReadingRegistry.forLanguage(language.id),
-            archive.lessons, archive.completions.orEmpty(), nowSeconds())
+        val completionCount = archive.completions.orEmpty().size
+        cachedMasteryStats?.takeIf { it.first == completionCount }?.second
+            ?: MasteryEngine.stats(course, ListeningRegistry.forLanguage(language.id),
+                ReadingRegistry.forLanguage(language.id), archive.lessons,
+                archive.completions.orEmpty(), nowSeconds()).also {
+                cachedMasteryStats = completionCount to it
+            }
     }
 
     /** A finished reading: one ledger mark with the score, same bargain as listening. */

@@ -142,11 +142,14 @@ data class Preferences(
     back to 0.8 when the old "slower speech" flag is set, otherwise normal. */
 fun Preferences.effectiveSpeechRate(): Double =
     speechRate ?: if (slowSpeech == true) 0.8 else 1.0
-@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf(), var completions: MutableList<CompletionMark>? = null, var errors: MutableList<SkillError>? = null)
+@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf(), var completions: MutableList<CompletionMark>? = null, var errors: MutableList<SkillError>? = null,
+    var masteryCache: Map<String, Int>? = null)
 
 /** One repeated-error pattern, attributed to the skill its exercise teaches.
     Local-first evidence for the recommender and the tutor's skill focus —
     deliberately not synced in v1. */
+/** Cached mastery per skill — the last computed projection. Recomputed on
+    access, invalidated when new completions arrive. Not synced (v1). */
 @Serializable data class SkillError(val skillID: String, var count: Int = 0, var lastAt: Double = 0.0, var lastPrompt: String = "")
 class ArchiveError private constructor(val kind: Kind) : Exception() {
     enum class Kind { TOO_LARGE, UNSUPPORTED_VERSION, UNSUPPORTED_LANGUAGE, INVALID }
