@@ -29,10 +29,10 @@
 
 ## F3 — Inglés A2 completo
 
-- [ ] F3.1 Dos unidades A2 nuevas (~6 lecciones).
-- [ ] F3.2 Cuatro listenings A2 a dos voces + exposureSkills deliberados.
-- [ ] F3.3 Cuatro readings A2 + checkpoint A2.
-- [ ] F3.4 Tests + verificación.
+- [x] F3.1 Dos unidades A2 nuevas (~6 lecciones).
+- [x] F3.2 Cuatro listenings A2 a dos voces + exposureSkills deliberados.
+- [x] F3.3 Cuatro readings A2 + checkpoint A2.
+- [x] F3.4 Tests + verificación.
 
 ## F4 — Personalización
 

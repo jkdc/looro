@@ -234,6 +234,232 @@
           "explain": "Where is the station? / How do I get to the station?"
         }
       ]
+    },
+    {
+      "id": "checkpoint-en-a2",
+      "languageID": "en",
+      "level": "A2",
+      "title": "A2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-en-a2-q1",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Yesterday we ___ to the beach.",
+          "options": [
+            "went",
+            "goed",
+            "go",
+            "gone"
+          ],
+          "answers": [
+            "went"
+          ],
+          "explain": "go → went."
+        },
+        {
+          "id": "checkpoint-en-a2-q2",
+          "kind": "written",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Fix: “I didn't took the bus.”",
+          "answers": [
+            "i didn't take the bus"
+          ],
+          "explain": "After didn't: take."
+        },
+        {
+          "id": "checkpoint-en-a2-q3",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "This hotel is ___ than the last one.",
+          "options": [
+            "more comfortable",
+            "comfortabler",
+            "most comfortable",
+            "comfortable"
+          ],
+          "answers": [
+            "more comfortable"
+          ],
+          "explain": "Long adjectives: more."
+        },
+        {
+          "id": "checkpoint-en-a2-q4",
+          "kind": "gap",
+          "skill": "grammar:superlatives",
+          "prompt": "August is ___ (busy) month here.",
+          "answers": [
+            "the busiest"
+          ],
+          "explain": "busy → the busiest."
+        },
+        {
+          "id": "checkpoint-en-a2-q5",
+          "kind": "choice",
+          "skill": "grammar:going-to",
+          "prompt": "They ___ going to move to Lisbon.",
+          "options": [
+            "are",
+            "is",
+            "do",
+            "will"
+          ],
+          "answers": [
+            "are"
+          ],
+          "explain": "With they: are going to."
+        },
+        {
+          "id": "checkpoint-en-a2-q6",
+          "kind": "written",
+          "skill": "grammar:future-forms",
+          "prompt": "Ask about their evening plans. (going to / tonight)",
+          "answers": [
+            "what are you going to do tonight"
+          ],
+          "explain": "What are you going to do tonight?"
+        },
+        {
+          "id": "checkpoint-en-a2-q7",
+          "kind": "choice",
+          "skill": "grammar:modal-should",
+          "prompt": "You look tired. You ___ go to bed early.",
+          "options": [
+            "should",
+            "should to",
+            "are should",
+            "will should"
+          ],
+          "answers": [
+            "should"
+          ],
+          "explain": "should + base verb."
+        },
+        {
+          "id": "checkpoint-en-a2-q8",
+          "kind": "gap",
+          "skill": "grammar:modal-must-have-to",
+          "prompt": "At our office we have ___ wear a badge.",
+          "answers": [
+            "to"
+          ],
+          "explain": "have to + base verb."
+        },
+        {
+          "id": "checkpoint-en-a2-q9",
+          "kind": "choice",
+          "skill": "grammar:object-pronouns",
+          "prompt": "Can you help ___? I can't lift this.",
+          "options": [
+            "me",
+            "I",
+            "my",
+            "mine"
+          ],
+          "answers": [
+            "me"
+          ],
+          "explain": "Object pronoun: help me."
+        },
+        {
+          "id": "checkpoint-en-a2-q10",
+          "kind": "written",
+          "skill": "grammar:object-pronouns",
+          "prompt": "Fix: “She loves he.”",
+          "answers": [
+            "she loves him"
+          ],
+          "explain": "he → him after the verb."
+        },
+        {
+          "id": "checkpoint-en-a2-q11",
+          "kind": "choice",
+          "skill": "grammar:some-any",
+          "prompt": "Is there ___ milk left?",
+          "options": [
+            "any",
+            "some",
+            "a",
+            "many"
+          ],
+          "answers": [
+            "any"
+          ],
+          "explain": "Questions take any."
+        },
+        {
+          "id": "checkpoint-en-a2-q12",
+          "kind": "written",
+          "skill": "grammar:gerunds-infinitives",
+          "prompt": "Complete: I love ___ (cook) on Sundays.",
+          "answers": [
+            "cooking",
+            "to cook"
+          ],
+          "explain": "love + -ing or to + verb."
+        },
+        {
+          "id": "checkpoint-en-a2-q13",
+          "kind": "choice",
+          "skill": "vocab:travel",
+          "prompt": "You pack your clothes in a ___.",
+          "options": [
+            "suitcase",
+            "kitchen",
+            "ticket",
+            "platform"
+          ],
+          "answers": [
+            "suitcase"
+          ],
+          "explain": "Clothes travel in a suitcase."
+        },
+        {
+          "id": "checkpoint-en-a2-q14",
+          "kind": "written",
+          "skill": "vocab:work",
+          "prompt": "Say one thing you have to do at work.",
+          "answers": [
+            "i have to <activity>",
+            "we have to <activity>"
+          ],
+          "explain": "have to + base verb."
+        },
+        {
+          "id": "checkpoint-en-a2-q15",
+          "kind": "choice",
+          "skill": "function:make-future-plans",
+          "prompt": "Your friend asks about the weekend. You have a plan. What do you say?",
+          "options": [
+            "I'm going to visit my family.",
+            "I visit my family yesterday.",
+            "I go visiting always.",
+            "I was visit."
+          ],
+          "answers": [
+            "I'm going to visit my family."
+          ],
+          "explain": "Plans: be going to + verb."
+        },
+        {
+          "id": "checkpoint-en-a2-q16",
+          "kind": "written",
+          "skill": "function:solve-problems",
+          "prompt": "The hotel room is too noisy. Politely ask to change it.",
+          "answers": [
+            "could i change rooms please",
+            "can i change my room please",
+            "could i have a quieter room please",
+            "can i change rooms"
+          ],
+          "explain": "Could I change rooms, please? — polite problem solving."
+        }
+      ]
     }
   ]
 }

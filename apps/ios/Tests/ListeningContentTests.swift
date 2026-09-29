@@ -2,9 +2,9 @@ import XCTest
 @testable import LearningCore
 
 final class ListeningContentTests: XCTestCase {
-    func testNineteenTextsAreRegisteredForEnglishWithClosedShapes() {
+    func testTwentyThreeTextsAreRegisteredForEnglishWithClosedShapes() {
         let texts = ListeningRegistry.forLanguage("en")
-        XCTAssertEqual(19, texts.count)
+        XCTAssertEqual(23, texts.count)
         for text in texts {
             XCTAssertTrue((40 ... 200).contains(text.text.split(separator: " ").count), text.id)
             XCTAssertGreaterThanOrEqual(text.questions.count, 5, text.id)
@@ -53,6 +53,7 @@ final class ListeningContentTests: XCTestCase {
                        texts.filter { $0.level == "A1" }.map(\.unitID))
         // Extras without a unit come after the unit-linked texts of their level.
         XCTAssertEqual(["en-foundations-u5", "en-foundations-u5", "en-foundations-u6", "en-foundations-u6",
+                        "en-foundations-compare", "en-foundations-compare", "en-foundations-plans", "en-foundations-plans",
                         nil, nil, nil], texts.filter { $0.level == "A2" }.map(\.unitID))
     }
 

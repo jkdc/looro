@@ -4,9 +4,9 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ListeningContentTest {
-    @Test fun `nineteen texts are registered for english with closed shapes`() {
+    @Test fun `twenty-three texts are registered for english with closed shapes`() {
         val texts = ListeningRegistry.forLanguage("en")
-        assertEquals(19, texts.size)
+        assertEquals(23, texts.size)
         for (text in texts) {
             assertTrue(text.id, text.text.split(" ").size in 40..200)
             assertTrue(text.id, text.questions.size >= 5)
@@ -55,6 +55,7 @@ class ListeningContentTest {
             texts.filter { it.level == "A1" }.map { it.unitID })
         // Extras without a unit come after the unit-linked texts of their level.
         assertEquals(listOf("en-foundations-u5", "en-foundations-u5", "en-foundations-u6", "en-foundations-u6",
+                "en-foundations-compare", "en-foundations-compare", "en-foundations-plans", "en-foundations-plans",
                 null, null, null), texts.filter { it.level == "A2" }.map { it.unitID })
     }
 
