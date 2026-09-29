@@ -4,9 +4,9 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ReadingContentTest {
-    @Test fun `ten readings are registered for english with closed shapes`() {
+    @Test fun `fourteen readings are registered for english with closed shapes`() {
         val texts = ReadingRegistry.forLanguage("en")
-        assertEquals(10, texts.size)
+        assertEquals(14, texts.size)
         for (text in texts) {
             assertTrue(text.id, text.text.split(" ").size in 40..220)
             assertTrue(text.id, text.questions.size >= 4)
@@ -49,9 +49,9 @@ class ReadingContentTest {
 }
 
 class CheckpointContentTest {
-    @Test fun `english carries the A1 and A2 checkpoints with closed shapes`() {
+    @Test fun `english carries the A1 A2 and B1 checkpoints with closed shapes`() {
         val checkpoints = CheckpointRegistry.forLanguage("en")
-        assertEquals(listOf("checkpoint-en-a1", "checkpoint-en-a2"), checkpoints.map { it.id })
+        assertEquals(listOf("checkpoint-en-a1", "checkpoint-en-a2", "checkpoint-en-b1"), checkpoints.map { it.id })
         for (checkpoint in checkpoints) {
             assertTrue(checkpoint.id, checkpoint.questions.size >= 12)
             assertTrue(checkpoint.id, checkpoint.thresholds.containsKey("overall"))

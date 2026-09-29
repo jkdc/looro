@@ -858,6 +858,361 @@
       "exposureSkills": [
         "grammar:past-simple-irregular"
       ]
+    },
+    {
+      "id": "en-read-hotel-review",
+      "languageID": "en",
+      "title": "A review: The Glass House Hotel",
+      "level": "B1",
+      "topic": "travel",
+      "text": "★★★☆☆ The Glass House Hotel looks spectacular online, and to be fair, the reality is close: the glass roof over the lobby is stunning, and our room, which faced the harbour, had the best view of the week. However, several things annoyed me. Although the website promises 'quiet rooms', ours was above the bar, and the music went on until one in the morning. The breakfast, which is served until ten, ran out of almost everything by nine on both mornings. The staff, who were genuinely kind, tried to help — they moved us on the second night and offered free coffee. Would I return? If they soundproof the bar, yes. If not, I'll pay ten euros more for the hotel next door, which, according to friends, is quieter and includes breakfast.",
+      "questions": [
+        {
+          "id": "en-read-hotel-review-q1",
+          "kind": "choice",
+          "prompt": "What did the reviewer love about the room?",
+          "options": [
+            "The view of the harbour",
+            "The glass roof",
+            "The bar downstairs",
+            "The breakfast"
+          ],
+          "answers": [
+            "The view of the harbour"
+          ],
+          "explain": "Their room faced the harbour and had the best view of the week."
+        },
+        {
+          "id": "en-read-hotel-review-q2",
+          "kind": "written",
+          "prompt": "Why didn't they sleep well?",
+          "answers": [
+            "the music from the bar",
+            "the bar music",
+            "music until one in the morning"
+          ],
+          "explain": "The room was above the bar; music until one."
+        },
+        {
+          "id": "en-read-hotel-review-q3",
+          "kind": "choice",
+          "prompt": "What did the staff do?",
+          "options": [
+            "They moved them and offered free coffee",
+            "Nothing",
+            "They refunded the night",
+            "They closed the bar"
+          ],
+          "answers": [
+            "They moved them and offered free coffee"
+          ],
+          "explain": "The staff, who were genuinely kind, moved them on the second night."
+        },
+        {
+          "id": "en-read-hotel-review-q4",
+          "kind": "choice",
+          "prompt": "What will make the reviewer return?",
+          "options": [
+            "Soundproofing the bar",
+            "A discount",
+            "A better view",
+            "An earlier breakfast"
+          ],
+          "answers": [
+            "Soundproofing the bar"
+          ],
+          "explain": "If they soundproof the bar, yes."
+        },
+        {
+          "id": "en-read-hotel-review-q5",
+          "kind": "written",
+          "prompt": "According to friends, what is the hotel next door like?",
+          "answers": [
+            "quieter and includes breakfast",
+            "quieter",
+            "quieter and with breakfast included"
+          ],
+          "explain": "Quieter and includes breakfast."
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "grammar:relative-clauses",
+        "grammar:first-conditional",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-remote-work",
+      "languageID": "en",
+      "title": "Is remote work working?",
+      "level": "B1",
+      "topic": "work",
+      "text": "Five years ago, most offices insisted that great work needed a shared room. Today, that idea is under review. Companies which moved to hybrid schedules report fewer sick days and lower costs; employees save hours of commuting every week, and many say they are more productive at home. However, the picture is not simple. New employees who have never met their teams in person often feel invisible, and creative work — the kind that grows from accidental corridor conversations — seems harder online. Although younger workers usually prefer flexibility, some admit that home offices blur the line between life and work until answering emails at midnight feels normal again. Perhaps the honest answer is that remote work works when the work is remote-shaped: independent, measured by results, written down. For everything else, the corridor still has value.",
+      "questions": [
+        {
+          "id": "en-read-remote-work-q1",
+          "kind": "choice",
+          "prompt": "What do companies with hybrid schedules report?",
+          "options": [
+            "Fewer sick days and lower costs",
+            "Higher costs",
+            "Worse productivity",
+            "Nothing"
+          ],
+          "answers": [
+            "Fewer sick days and lower costs"
+          ],
+          "explain": "They report fewer sick days and lower costs."
+        },
+        {
+          "id": "en-read-remote-work-q2",
+          "kind": "written",
+          "prompt": "Who often feels invisible?",
+          "answers": [
+            "new employees",
+            "new employees who have never met their teams",
+            "new people"
+          ],
+          "explain": "New employees who have never met their teams in person."
+        },
+        {
+          "id": "en-read-remote-work-q3",
+          "kind": "choice",
+          "prompt": "What kind of work seems harder online?",
+          "options": [
+            "Creative work",
+            "Administrative work",
+            "Written work",
+            "Independent work"
+          ],
+          "answers": [
+            "Creative work"
+          ],
+          "explain": "Work that grows from corridor conversations seems harder online."
+        },
+        {
+          "id": "en-read-remote-work-q4",
+          "kind": "written",
+          "prompt": "What negative habit can return with home offices?",
+          "answers": [
+            "answering emails at midnight",
+            "answering emails late at night",
+            "working at midnight"
+          ],
+          "explain": "Answering emails at midnight can feel normal again."
+        },
+        {
+          "id": "en-read-remote-work-q5",
+          "kind": "choice",
+          "prompt": "When does remote work work, according to the article?",
+          "options": [
+            "When the work is remote-shaped",
+            "Never",
+            "Always",
+            "Only for managers"
+          ],
+          "answers": [
+            "When the work is remote-shaped"
+          ],
+          "explain": "Independent, measured by results, written down."
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "grammar:relative-clauses",
+        "grammar:connectors",
+        "grammar:present-perfect",
+        "vocab:work"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-missing-keys",
+      "languageID": "en",
+      "title": "The missing keys",
+      "level": "B1",
+      "topic": "stories",
+      "text": "Marta was making coffee when she realised the flat was silent — the specific, heavy silence of a missing object. Her keys, which always lived in the blue bowl by the door, were gone. She looked in her coat, in yesterday's bag, under the sofa where small things liked to disappear. Nothing. While she was searching, her phone buzzed: a message from Diego, her downstairs neighbour. 'Are you missing something shiny? A little thief brought me a present.' His cat, Luna, had a habit of collecting small metal objects, and although Marta had never caught her in the act, the evidence was now clear: three keys, a bottle opener and last winter's missing earring. Marta went downstairs, laughed until her sides hurt, and installed a hook high on the wall. The bowl stayed empty from that day; Luna, however, kept bringing gifts.",
+      "questions": [
+        {
+          "id": "en-read-missing-keys-q1",
+          "kind": "choice",
+          "prompt": "What was Marta doing when she noticed the silence?",
+          "options": [
+            "Making coffee",
+            "Searching the sofa",
+            "Reading a message",
+            "Going downstairs"
+          ],
+          "answers": [
+            "Making coffee"
+          ],
+          "explain": "She was making coffee when she realised."
+        },
+        {
+          "id": "en-read-missing-keys-q2",
+          "kind": "written",
+          "prompt": "Where did the keys usually live?",
+          "answers": [
+            "in the blue bowl",
+            "the blue bowl by the door",
+            "the blue bowl"
+          ],
+          "explain": "They always lived in the blue bowl by the door."
+        },
+        {
+          "id": "en-read-missing-keys-q3",
+          "kind": "choice",
+          "prompt": "Who took the keys?",
+          "options": [
+            "Diego's cat",
+            "Diego",
+            "A neighbour",
+            "Nobody knows"
+          ],
+          "answers": [
+            "Diego's cat"
+          ],
+          "explain": "Luna, the downstairs cat, collected small metal objects."
+        },
+        {
+          "id": "en-read-missing-keys-q4",
+          "kind": "written",
+          "prompt": "Name one other thing Luna had taken.",
+          "answers": [
+            "a bottle opener",
+            "an earring",
+            "last winter's missing earring",
+            "three keys"
+          ],
+          "explain": "Three keys, a bottle opener and an earring."
+        },
+        {
+          "id": "en-read-missing-keys-q5",
+          "kind": "choice",
+          "prompt": "What was Marta's solution?",
+          "options": [
+            "A hook high on the wall",
+            "A new bowl",
+            "A locked box",
+            "She locked Luna out"
+          ],
+          "answers": [
+            "A hook high on the wall"
+          ],
+          "explain": "She installed a hook high on the wall."
+        },
+        {
+          "id": "en-read-missing-keys-q6",
+          "kind": "choice",
+          "prompt": "Did Luna stop bringing gifts?",
+          "options": [
+            "No — she kept bringing them",
+            "Yes, immediately",
+            "Yes, after a week",
+            "The text doesn't say"
+          ],
+          "answers": [
+            "No — she kept bringing them"
+          ],
+          "explain": "Luna, however, kept bringing gifts."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "grammar:past-continuous",
+        "grammar:relative-clauses",
+        "grammar:connectors",
+        "function:tell-a-story"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-meetup-email",
+      "languageID": "en",
+      "title": "Planning the alumni meetup",
+      "level": "B1",
+      "topic": "plans",
+      "text": "Subject: Alumni meetup — your vote needed! Hi everyone, Great news: 34 of you answered the survey, so we're finally organising the spring meetup. The Terraza del Río, which most of you recommended, has availability on 14 or 21 June. If we choose the 14th, we'll have the terrace to ourselves but we'll have to finish by midnight. If we choose the 21st, it's shared with another group, although the music usually stops earlier. Several of you asked about a pre-dinner walk — if enough people arrive by 19:30, we'll do the river route first (about 40 minutes, flat and easy). Please vote by Friday. If fewer than twenty people vote, we'll postpone to September and I'll donate the deposit to the class fund! Looking forward to it, Bea",
+      "questions": [
+        {
+          "id": "en-read-meetup-email-q1",
+          "kind": "choice",
+          "prompt": "Which venue did most people recommend?",
+          "options": [
+            "Terraza del Río",
+            "The class fund",
+            "The river route",
+            "A shared hall"
+          ],
+          "answers": [
+            "Terraza del Río"
+          ],
+          "explain": "The Terraza del Río, which most of you recommended."
+        },
+        {
+          "id": "en-read-meetup-email-q2",
+          "kind": "choice",
+          "prompt": "What is the downside of the 14th?",
+          "options": [
+            "They must finish by midnight",
+            "Another group shares it",
+            "No terrace",
+            "It's in September"
+          ],
+          "answers": [
+            "They must finish by midnight"
+          ],
+          "explain": "On the 14th they have the terrace to themselves but finish by midnight."
+        },
+        {
+          "id": "en-read-meetup-email-q3",
+          "kind": "written",
+          "prompt": "What do they plan to do if enough people arrive by 19:30?",
+          "answers": [
+            "the river route",
+            "do the river route first",
+            "walk the river route"
+          ],
+          "explain": "They'll do the river route first."
+        },
+        {
+          "id": "en-read-meetup-email-q4",
+          "kind": "choice",
+          "prompt": "What happens if fewer than twenty people vote?",
+          "options": [
+            "The meetup moves to September",
+            "Bea chooses the date",
+            "The venue decides",
+            "Nothing"
+          ],
+          "answers": [
+            "The meetup moves to September"
+          ],
+          "explain": "They'll postpone to September and donate the deposit."
+        },
+        {
+          "id": "en-read-meetup-email-q5",
+          "kind": "written",
+          "prompt": "How long is the river walk?",
+          "answers": [
+            "about 40 minutes",
+            "40 minutes",
+            "forty minutes"
+          ],
+          "explain": "About 40 minutes, flat and easy."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "grammar:first-conditional",
+        "grammar:connectors",
+        "writing:email"
+      ],
+      "exposureSkills": []
     }
   ]
 }

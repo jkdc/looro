@@ -44,9 +44,9 @@
 
 ## F5 — B1
 
-- [ ] F5.1 Dos unidades B1 (~6 lecciones) + 4 listenings B1 (2 voces).
-- [ ] F5.2 Cuatro readings B1 + checkpoint B1.
-- [ ] F5.3 Tests + verificación.
+- [x] F5.1 Dos unidades B1 (~6 lecciones) + 4 listenings B1 (2 voces).
+- [x] F5.2 Cuatro readings B1 + checkpoint B1.
+- [x] F5.3 Tests + verificación.
 
 ## F6 — Escalado multiidioma
 

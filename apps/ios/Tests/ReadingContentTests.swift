@@ -2,9 +2,9 @@ import XCTest
 @testable import LearningCore
 
 final class ReadingContentTests: XCTestCase {
-    func testTenReadingsAreRegisteredForEnglishWithClosedShapes() {
+    func testFourteenReadingsAreRegisteredForEnglishWithClosedShapes() {
         let texts = ReadingRegistry.forLanguage("en")
-        XCTAssertEqual(10, texts.count)
+        XCTAssertEqual(14, texts.count)
         for text in texts {
             XCTAssertTrue((40 ... 220).contains(text.text.split(separator: " ").count), text.id)
             XCTAssertGreaterThanOrEqual(text.questions.count, 4, text.id)
@@ -50,7 +50,7 @@ final class ReadingContentTests: XCTestCase {
 final class CheckpointContentTests: XCTestCase {
     func testEnglishCarriesTheA1AndA2CheckpointsWithClosedShapes() {
         let checkpoints = CheckpointRegistry.forLanguage("en")
-        XCTAssertEqual(["checkpoint-en-a1", "checkpoint-en-a2"], checkpoints.map(\.id))
+        XCTAssertEqual(["checkpoint-en-a1", "checkpoint-en-a2", "checkpoint-en-b1"], checkpoints.map(\.id))
         for checkpoint in checkpoints {
             XCTAssertGreaterThanOrEqual(checkpoint.questions.count, 12, checkpoint.id)
             XCTAssertTrue(checkpoint.thresholds.keys.contains("overall"), checkpoint.id)

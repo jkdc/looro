@@ -6012,6 +6012,1162 @@
           ]
         }
       ]
+    },
+    {
+      "id": "en-foundations-experiences",
+      "title": "Experiences & stories",
+      "subtitle": "Have you ever…?",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "travel-bucket-list",
+          "title": "The bucket list",
+          "subtitle": "Have you ever…?",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "You compare life experiences: places you have and haven't been, things you have and haven't tried.",
+          "colorIndex": 0
+        },
+        {
+          "id": "story-night",
+          "title": "Story night",
+          "subtitle": "What was happening?",
+          "symbol": "moon.stars",
+          "category": "Course",
+          "situation": "You tell a story with background: what was happening when something unexpected occurred.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-experiences-present-perfect",
+          "title": "Present perfect: experiences",
+          "goal": "Talk about life experiences with have/has + past participle, without saying when.",
+          "intro": {
+            "explanation": [
+              "Experiences without a time use have/has + past participle: “I've visited Rome. She's never tried sushi. Have you been to Japan?”",
+              "The moment you say WHEN, switch to past simple: “I've been to Rome. I went there in 2019.”",
+              "Participates are irregular often: be → been, see → seen, go → gone/been, eat → eaten, do → done."
+            ],
+            "examples": [
+              {
+                "text": "I've never been to Asia.",
+                "meaning": "A life experience (not yet!)."
+              },
+              {
+                "text": "Have you ever tried paella?",
+                "meaning": "ever = in your life."
+              },
+              {
+                "text": "She's seen that film three times.",
+                "meaning": "Repeated experience."
+              },
+              {
+                "text": "We've just finished dinner.",
+                "meaning": "just = a moment ago."
+              },
+              {
+                "text": "I've already packed, but I haven't printed the tickets.",
+                "meaning": "already / not yet."
+              },
+              {
+                "text": "I went to Rome in 2019.",
+                "meaning": "WHEN given → past simple."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I've (never/ever/already) …",
+              "meaning": "Experience, no date.",
+              "note": "I've never driven a van."
+            },
+            {
+              "text": "Have you ever …?",
+              "meaning": "The classic experience question.",
+              "note": "Reply: Yes, I have / No, I haven't."
+            },
+            {
+              "text": "I've just …",
+              "meaning": "Very recent.",
+              "note": "I've just arrived."
+            },
+            {
+              "text": "… twice / three times",
+              "meaning": "Count the experience.",
+              "note": "I've read it twice."
+            },
+            {
+              "text": "gone to vs been to",
+              "meaning": "gone = still there; been = visited and returned.",
+              "note": "She's gone to Rome (not back yet)."
+            },
+            {
+              "text": "When? → past simple",
+              "meaning": "The golden switch rule.",
+              "note": "I've been to Peru. I went in 2018."
+            }
+          ],
+          "situation": "You meet a traveller at a hostel: swap life experiences with Have you ever…? and ask follow-up questions with past simple when they give a when.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask a traveller if they have ever visited Japan.",
+                "expected": [
+                  "Have you ever been to Japan?",
+                  "Have you ever visited Japan?"
+                ],
+                "focus": "Have you ever…?",
+                "watch": "“Did you ever visit…?” is possible in AmE, but “Have you ever…?” is the safest form."
+              },
+              {
+                "prompt": "Answer negatively: you have never tried surfing.",
+                "expected": [
+                  "I've never tried surfing.",
+                  "I have never tried surfing."
+                ],
+                "focus": "never + participle",
+                "watch": "“I've never tried to surf” changes meaning slightly; keep “tried surfing”."
+              },
+              {
+                "prompt": "Say you visited Rome in 2019 (mention the year).",
+                "expected": [
+                  "I went to Rome in 2019."
+                ],
+                "focus": "when → past simple",
+                "watch": "“I've gone to Rome in 2019” — a finished time forbids the present perfect."
+              },
+              {
+                "prompt": "Your friend is not here — she went to the airport. Say it two ways.",
+                "expected": [
+                  "She's gone to the airport.",
+                  "She has gone to the airport."
+                ],
+                "focus": "gone to",
+                "watch": "“She's been to the airport” means she went and came back."
+              },
+              {
+                "prompt": "Say you have seen that film three times.",
+                "expected": [
+                  "I've seen that film three times.",
+                  "I have seen that film three times."
+                ],
+                "focus": "counting experiences",
+                "watch": "“I saw it three times” needs a past anchor; without one, prefer the present perfect."
+              },
+              {
+                "prompt": "Ask a follow-up when someone says “I've been to Iceland”.",
+                "expected": [
+                  "When did you go?",
+                  "What did you see there?",
+                  "How was it?"
+                ],
+                "focus": "switching to past",
+                "watch": "The follow-up asks about the trip → past simple."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-experiences-present-perfect-e1",
+              "kind": "choice",
+              "prompt": "___ you ever eaten octopus?",
+              "options": [
+                "Have",
+                "Did",
+                "Are",
+                "Do"
+              ],
+              "answers": [
+                "Have"
+              ],
+              "explain": "Experience question: Have you ever…?"
+            },
+            {
+              "id": "en-foundations-experiences-present-perfect-e2",
+              "kind": "gap",
+              "prompt": "She's ___ (see) that exhibition twice.",
+              "answers": [
+                "seen"
+              ],
+              "explain": "see → seen with have/has."
+            },
+            {
+              "id": "en-foundations-experiences-present-perfect-e3",
+              "kind": "order",
+              "prompt": "Say it is very recent.",
+              "answers": [
+                "I've just arrived"
+              ],
+              "explain": "have + just + participle."
+            },
+            {
+              "id": "en-foundations-experiences-present-perfect-e4",
+              "kind": "written",
+              "prompt": "Fix: “I've visited Peru in 2018.”",
+              "answers": [
+                "i visited peru in 2018"
+              ],
+              "explain": "With a finished time (in 2018), use past simple."
+            }
+          ],
+          "skills": [
+            "grammar:present-perfect",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events",
+            "listening:inference"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular",
+            "grammar:object-pronouns"
+          ]
+        },
+        {
+          "id": "en-foundations-experiences-past-continuous",
+          "title": "Past continuous: background",
+          "goal": "Set the scene of a past story with was/were + -ing, and interrupt it with past simple.",
+          "intro": {
+            "explanation": [
+              "Background actions use was/were + -ing: “It was raining. People were running. I was cooking.”",
+              "The classic structure: past continuous (background) + when/until + past simple (event): “I was cooking when the lights went out.”",
+              "Two parallel background actions use while: “While she was sleeping, he was reading.”"
+            ],
+            "examples": [
+              {
+                "text": "The sun was setting and the birds were singing.",
+                "meaning": "Scene painting."
+              },
+              {
+                "text": "I was cooking when the phone rang.",
+                "meaning": "Background + interruption."
+              },
+              {
+                "text": "They were waiting for the bus when it started to rain.",
+                "meaning": "Longer action + event."
+              },
+              {
+                "text": "While we were driving, it snowed.",
+                "meaning": "while + two past tenses."
+              },
+              {
+                "text": "What were you doing at midnight?",
+                "meaning": "Question about a past moment."
+              },
+              {
+                "text": "I wasn't listening, sorry.",
+                "meaning": "Negative background."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "was/were + -ing",
+              "meaning": "The background of the story.",
+              "note": "It was getting dark."
+            },
+            {
+              "text": "… when + past simple",
+              "meaning": "The event that interrupts.",
+              "note": "…when he appeared."
+            },
+            {
+              "text": "while + was/were -ing",
+              "meaning": "Two things at once.",
+              "note": "While I was waiting, I read."
+            },
+            {
+              "text": "What were you doing…?",
+              "meaning": "Ask about a past moment.",
+              "note": "…at eight last night?"
+            },
+            {
+              "text": "Suddenly, …",
+              "meaning": "Move from background to event.",
+              "note": "Suddenly, the door opened."
+            },
+            {
+              "text": "It was a normal evening when…",
+              "meaning": "The classic story opener.",
+              "note": "…everything changed."
+            }
+          ],
+          "situation": "You and a friend swap short stories: set the scene with past continuous, then deliver the surprise event with past simple.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Set the scene: the rain / fall, and people / run for shelter.",
+                "expected": [
+                  "The rain was falling and people were running for shelter."
+                ],
+                "focus": "was/were + -ing",
+                "watch": "“The rain fell” is an event — the background is “was falling”."
+              },
+              {
+                "prompt": "Add the interruption: you were cooking / lights went out.",
+                "expected": [
+                  "I was cooking when the lights went out."
+                ],
+                "focus": "when + past simple",
+                "watch": "The short event takes past simple: “went out”, not “was going out”."
+              },
+              {
+                "prompt": "Ask what your friend was doing at ten last night.",
+                "expected": [
+                  "What were you doing at ten last night?"
+                ],
+                "focus": "were + -ing question",
+                "watch": "“What did you do at ten?” asks for an answer list; “were doing” asks about the moment."
+              },
+              {
+                "prompt": "Say two parallel actions: you drove / your partner read the map.",
+                "expected": [
+                  "While I was driving, my partner was reading the map."
+                ],
+                "focus": "while + continuous",
+                "watch": "Both long actions take the continuous after while."
+              },
+              {
+                "prompt": "Open a story: normal evening / everything changed.",
+                "expected": [
+                  "It was a normal evening when everything changed."
+                ],
+                "focus": "story opener",
+                "watch": "Background first (was), event second (changed)."
+              },
+              {
+                "prompt": "Negative background: you weren't listening when she told you.",
+                "expected": [
+                  "I wasn't listening when she told me."
+                ],
+                "focus": "wasn't + -ing",
+                "watch": "“I didn't listening” — negatives of the continuous use wasn't/weren't."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-experiences-past-continuous-e1",
+              "kind": "choice",
+              "prompt": "I ___ dinner when the doorbell rang.",
+              "options": [
+                "was cooking",
+                "cooked",
+                "am cooking",
+                "have cooked"
+              ],
+              "answers": [
+                "was cooking"
+              ],
+              "explain": "Background action: was + -ing."
+            },
+            {
+              "id": "en-foundations-experiences-past-continuous-e2",
+              "kind": "gap",
+              "prompt": "While they ___ ___ (wait), the bus arrived.",
+              "answers": [
+                "were waiting"
+              ],
+              "explain": "Plural background: were + -ing."
+            },
+            {
+              "id": "en-foundations-experiences-past-continuous-e3",
+              "kind": "order",
+              "prompt": "Ask about a past moment. (you / at midnight / what / were / doing)",
+              "answers": [
+                "What were you doing at midnight"
+              ],
+              "explain": "Question word + were + you + -ing."
+            },
+            {
+              "id": "en-foundations-experiences-past-continuous-e4",
+              "kind": "written",
+              "prompt": "Fix: “While I cooked, she was watching TV.”",
+              "answers": [
+                "while i was cooking she was watching tv"
+              ],
+              "explain": "Both parallel long actions take the continuous: was cooking."
+            }
+          ],
+          "skills": [
+            "grammar:past-continuous",
+            "grammar:past-simple-regular",
+            "function:tell-a-story",
+            "speaking:tell-past-story"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-was-were",
+            "grammar:present-continuous"
+          ]
+        },
+        {
+          "id": "en-foundations-experiences-used-to",
+          "title": "Used to: past habits",
+          "goal": "Compare the past with now using used to / didn't use to.",
+          "intro": {
+            "explanation": [
+              "Past habits that stopped use used to + verb: “I used to play outside every day. She used to live in Berlin.”",
+              "Negative: didn't use to: “We didn't use to have a car.” Question: “Did you use to…?” Note: no -d in the negative/question.",
+              "For states still true, prefer present simple; for single past events, past simple. used to is for repeated past routines that ended."
+            ],
+            "examples": [
+              {
+                "text": "I used to hate coffee. Now I love it.",
+                "meaning": "Past habit, changed."
+              },
+              {
+                "text": "There used to be a cinema here.",
+                "meaning": "Past state that ended."
+              },
+              {
+                "text": "We didn't use to lock the door.",
+                "meaning": "Past absence of a habit."
+              },
+              {
+                "text": "Did people use to write letters?",
+                "meaning": "Question form."
+              },
+              {
+                "text": "He didn't use to cook — now he's a chef!",
+                "meaning": "Big change."
+              },
+              {
+                "text": "I used to walk to school.",
+                "meaning": "Routine when you were young."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "used to + verb",
+              "meaning": "A past habit that stopped.",
+              "note": "I used to smoke."
+            },
+            {
+              "text": "didn't use to + verb",
+              "meaning": "Something you didn't do before.",
+              "note": "No -d after use here."
+            },
+            {
+              "text": "Did you use to …?",
+              "meaning": "Ask about old habits.",
+              "note": "Did you use to play an instrument?"
+            },
+            {
+              "text": "… but now …",
+              "meaning": "The contrast sentence.",
+              "note": "I used to walk, but now I cycle."
+            },
+            {
+              "text": "There used to be …",
+              "meaning": "Past places and things.",
+              "note": "There used to be a lake here."
+            },
+            {
+              "text": "be used to + -ing",
+              "meaning": "Different! = estar acostumbrado a.",
+              "note": "I'm used to getting up early."
+            }
+          ],
+          "situation": "You look at old photos with a friend: compare childhood habits with life now using used to, didn't use to and but now.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say one childhood habit you have stopped.",
+                "expected": [
+                  "I used to <habit>."
+                ],
+                "focus": "used to",
+                "watch": "“I used to played” — used to + base verb."
+              },
+              {
+                "prompt": "Say something about your town that no longer exists. (There used to…)",
+                "expected": [
+                  "There used to be <place>.",
+                  "There used to be a market here."
+                ],
+                "focus": "There used to be",
+                "watch": "“There used to have” is wrong — use be for places/things."
+              },
+              {
+                "prompt": "Say you didn't like vegetables before.",
+                "expected": [
+                  "I didn't use to like vegetables.",
+                  "I used to not like vegetables."
+                ],
+                "focus": "didn't use to",
+                "watch": "Careful spelling: didn't use to (no -d)."
+              },
+              {
+                "prompt": "Ask a friend about an old habit. (instrument / sport)",
+                "expected": [
+                  "Did you use to play an instrument?",
+                  "Did you use to do any sport?"
+                ],
+                "focus": "Did you use to…?",
+                "watch": "“Did you used to…?” — in questions, use to loses the -d."
+              },
+              {
+                "prompt": "Contrast: past walk to school, now cycle.",
+                "expected": [
+                  "I used to walk to school, but now I cycle."
+                ],
+                "focus": "but now",
+                "watch": "The contrast word now makes the change explicit."
+              },
+              {
+                "prompt": "Say you are accustomed to early mornings. (be used to)",
+                "expected": [
+                  "I'm used to getting up early."
+                ],
+                "focus": "be used to + -ing",
+                "watch": "Different structure: be used to + -ing = estar acostumbrado."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-experiences-used-to-e1",
+              "kind": "choice",
+              "prompt": "She ___ live in Berlin when she was young.",
+              "options": [
+                "used to",
+                "use to",
+                "was used to",
+                "would been"
+              ],
+              "answers": [
+                "used to"
+              ],
+              "explain": "Past habit: used to + verb."
+            },
+            {
+              "id": "en-foundations-experiences-used-to-e2",
+              "kind": "gap",
+              "prompt": "We ___ ___ ___ have a car. (negative, 3 words)",
+              "answers": [
+                "didn't use to",
+                "did not use to"
+              ],
+              "explain": "didn't use to — no -d."
+            },
+            {
+              "id": "en-foundations-experiences-used-to-e3",
+              "kind": "order",
+              "prompt": "Ask about old habits. (you / use / play / did / to / an instrument)",
+              "answers": [
+                "Did you use to play an instrument"
+              ],
+              "explain": "Did + you + use to + base verb."
+            },
+            {
+              "id": "en-foundations-experiences-used-to-e4",
+              "kind": "written",
+              "prompt": "Fix: “I'm used to get up early.”",
+              "answers": [
+                "i'm used to getting up early",
+                "i am used to getting up early"
+              ],
+              "explain": "be used to + -ing: getting."
+            }
+          ],
+          "skills": [
+            "grammar:used-to",
+            "grammar:past-simple-irregular",
+            "function:tell-a-story",
+            "vocab:daily-routine"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-connections",
+      "title": "Opinions & connections",
+      "subtitle": "If, which, however",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "plan-b",
+          "title": "Plan B",
+          "subtitle": "If it rains…",
+          "symbol": "cloud.bolt",
+          "category": "Course",
+          "situation": "Your outdoor plan is at risk. Negotiate conditionals: if this happens, we'll do that.",
+          "colorIndex": 0
+        },
+        {
+          "id": "movie-debate",
+          "title": "The film debate",
+          "subtitle": "Which one? However…",
+          "symbol": "film",
+          "category": "Course",
+          "situation": "You review a film together: describe scenes with relative clauses and connect opinions with however and although.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-connections-first-conditional",
+          "title": "First conditional",
+          "goal": "Talk about real future possibilities with if + present, will + verb.",
+          "intro": {
+            "explanation": [
+              "Real future conditions: “If it rains, we'll stay in.” The if-clause uses present simple; the result uses will.",
+              "Order can flip, but the comma disappears: “We'll stay in if it rains.” Never will inside the if-clause.",
+              "Variations: “If it rains, we might stay in / we can stay in / let's stay in.”"
+            ],
+            "examples": [
+              {
+                "text": "If it rains, we'll stay home.",
+                "meaning": "The basic pattern."
+              },
+              {
+                "text": "We'll be late if the bus doesn't come.",
+                "meaning": "Result first, no comma."
+              },
+              {
+                "text": "If you help me, I'll help you.",
+                "meaning": "An exchange."
+              },
+              {
+                "text": "If they don't hurry, they'll miss the train.",
+                "meaning": "Negative in the if-clause."
+              },
+              {
+                "text": "If I see him, I might tell him.",
+                "meaning": "might = less certain."
+              },
+              {
+                "text": "What will you do if it snows?",
+                "meaning": "The question form."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "If + present, will + verb",
+              "meaning": "Real future possibility.",
+              "note": "If it rains, we'll stay in."
+            },
+            {
+              "text": "… if + present",
+              "meaning": "Result first, no comma.",
+              "note": "I'll call you if I'm late."
+            },
+            {
+              "text": "If not, … / Otherwise, …",
+              "meaning": "The other branch.",
+              "note": "Otherwise we'll drive."
+            },
+            {
+              "text": "might / can + verb",
+              "meaning": "Softer results.",
+              "note": "If it's cheap, we might buy it."
+            },
+            {
+              "text": "What will happen if …?",
+              "meaning": "Ask about consequences.",
+              "note": "…if the flight is cancelled?"
+            },
+            {
+              "text": "as long as / unless",
+              "meaning": "Condition cousins.",
+              "note": "unless = if not."
+            }
+          ],
+          "situation": "You plan an outdoor birthday with a friend: set conditions for every possible problem (rain, no bus, cold) and what you'll do in each case.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "It may rain. Say what you will do. (stay in)",
+                "expected": [
+                  "If it rains, we'll stay in.",
+                  "If it rains, I'll stay in."
+                ],
+                "focus": "if + present, will",
+                "watch": "“If it will rain” — never will in the if-clause."
+              },
+              {
+                "prompt": "The bus may not come. Predict lateness.",
+                "expected": [
+                  "If the bus doesn't come, we'll be late.",
+                  "We'll be late if the bus doesn't come."
+                ],
+                "focus": "negative condition",
+                "watch": "“If the bus won't come” — present simple after if."
+              },
+              {
+                "prompt": "Offer an exchange of help.",
+                "expected": [
+                  "If you help me, I'll help you."
+                ],
+                "focus": "exchange",
+                "watch": "Both halves stay simple: present + will."
+              },
+              {
+                "prompt": "Ask about a cancelled flight. (what / you / do)",
+                "expected": [
+                  "What will you do if the flight is cancelled?"
+                ],
+                "focus": "the conditional question",
+                "watch": "will goes in the result question, not after if."
+              },
+              {
+                "prompt": "Soften the result: if it's cheap, maybe buy it.",
+                "expected": [
+                  "If it's cheap, I might buy it.",
+                  "If it's cheap, we might buy it."
+                ],
+                "focus": "might",
+                "watch": "might + base verb: “might to buy” is wrong."
+              },
+              {
+                "prompt": "Say the alternative: no picnic → restaurant.",
+                "expected": [
+                  "If we can't have a picnic, we'll go to a restaurant.",
+                  "Otherwise, we'll go to a restaurant."
+                ],
+                "focus": "otherwise",
+                "watch": "Otherwise connects to the previous sentence's failure."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-connections-first-conditional-e1",
+              "kind": "choice",
+              "prompt": "If it ___ tomorrow, we'll cancel the trip.",
+              "options": [
+                "rains",
+                "will rain",
+                "rained",
+                "is going to rain"
+              ],
+              "answers": [
+                "rains"
+              ],
+              "explain": "The if-clause takes present simple."
+            },
+            {
+              "id": "en-foundations-connections-first-conditional-e2",
+              "kind": "gap",
+              "prompt": "I'll call you if I ___ late. (be)",
+              "answers": [
+                "am",
+                "'m"
+              ],
+              "explain": "Present simple after if: if I am late."
+            },
+            {
+              "id": "en-foundations-connections-first-conditional-e3",
+              "kind": "order",
+              "prompt": "Ask about a snow plan.",
+              "answers": [
+                "What will you do if it snows"
+              ],
+              "explain": "Question word + will + you + do + if + present."
+            },
+            {
+              "id": "en-foundations-connections-first-conditional-e4",
+              "kind": "written",
+              "prompt": "Fix: “If it will rain, we stay in.”",
+              "answers": [
+                "if it rains we'll stay in",
+                "if it rains we will stay in"
+              ],
+              "explain": "Present after if, will in the result."
+            }
+          ],
+          "skills": [
+            "grammar:first-conditional",
+            "grammar:future-forms",
+            "function:make-future-plans",
+            "function:solve-problems"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:present-simple",
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "en-foundations-connections-relative-clauses",
+          "title": "Relative clauses",
+          "goal": "Join ideas with who, which, that and where.",
+          "intro": {
+            "explanation": [
+              "who joins people, which joins things, that joins both (informal): “The woman who lives upstairs is a doctor.” “The book which won the prize…”",
+              "where joins places: “That's the café where we met.”",
+              "Shortened clauses: “The man standing there” (= who is standing). No double subject: “the book which won” not “the book which it won”."
+            ],
+            "examples": [
+              {
+                "text": "The woman who lives upstairs is a doctor.",
+                "meaning": "who + person."
+              },
+              {
+                "text": "It's a film which changed cinema.",
+                "meaning": "which + thing."
+              },
+              {
+                "text": "The song that she wrote became famous.",
+                "meaning": "that for people too (informal)."
+              },
+              {
+                "text": "That's the café where we first met.",
+                "meaning": "where + place."
+              },
+              {
+                "text": "The train (that) we caught was late.",
+                "meaning": "that can disappear as object."
+              },
+              {
+                "text": "The guy standing by the door is my cousin.",
+                "meaning": "Shortened: who is standing."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "the person who …",
+              "meaning": "Identify people.",
+              "note": "The person who called left a message."
+            },
+            {
+              "text": "the thing which/that …",
+              "meaning": "Identify things.",
+              "note": "The app which tracks habits."
+            },
+            {
+              "text": "the place where …",
+              "meaning": "Identify places.",
+              "note": "the street where I grew up."
+            },
+            {
+              "text": "(that) … as object",
+              "meaning": "The joining word can vanish.",
+              "note": "the film (that) we saw."
+            },
+            {
+              "text": "…, which …",
+              "meaning": "Comment on the whole sentence.",
+              "note": "He was late, which annoyed everyone."
+            },
+            {
+              "text": "all / something + that",
+              "meaning": "Fixed pairs.",
+              "note": "All that matters is…"
+            }
+          ],
+          "situation": "You describe your neighbourhood to a visitor: the people who live there, the shops which are worth it and the corner where everything happens.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Describe your best friend. (person who…)",
+                "expected": [
+                  "My best friend is the person who knows me best.",
+                  "She's someone who always listens."
+                ],
+                "focus": "who",
+                "watch": "People take who (or that), never which."
+              },
+              {
+                "prompt": "Describe an app you like. (app which…)",
+                "expected": [
+                  "It's an app which helps me study.",
+                  "It's an app that tracks my habits."
+                ],
+                "focus": "which/that",
+                "watch": "Things take which or that — both are fine here."
+              },
+              {
+                "prompt": "Talk about the place you grew up. (where)",
+                "expected": [
+                  "The town where I grew up is small.",
+                  "I grew up in a village where everyone knew everyone."
+                ],
+                "focus": "where",
+                "watch": "where replaces “in which”: “the town where I grew up”."
+              },
+              {
+                "prompt": "Join: “The train was late. We caught it.”",
+                "expected": [
+                  "The train (that) we caught was late."
+                ],
+                "focus": "dropping that",
+                "watch": "When the joiner is the object, that can disappear."
+              },
+              {
+                "prompt": "Comment on a whole fact: “He resigned, … surprised everyone.”",
+                "expected": [
+                  "He resigned, which surprised everyone."
+                ],
+                "focus": ", which",
+                "watch": "Comma + which comments on the whole idea — never “, what surprised”."
+              },
+              {
+                "prompt": "Fix: “The book which it won the prize is long.”",
+                "expected": [
+                  "the book which won the prize is long"
+                ],
+                "focus": "no double subject",
+                "watch": "which replaces it — never both."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-connections-relative-clauses-e1",
+              "kind": "choice",
+              "prompt": "The woman ___ lives upstairs is a doctor.",
+              "options": [
+                "who",
+                "which",
+                "where",
+                "what"
+              ],
+              "answers": [
+                "who"
+              ],
+              "explain": "People take who."
+            },
+            {
+              "id": "en-foundations-connections-relative-clauses-e2",
+              "kind": "gap",
+              "prompt": "That's the café ___ we first met.",
+              "answers": [
+                "where"
+              ],
+              "explain": "Places take where."
+            },
+            {
+              "id": "en-foundations-connections-relative-clauses-e3",
+              "kind": "order",
+              "prompt": "Identify the film.",
+              "answers": [
+                "It's a film which changed cinema"
+              ],
+              "explain": "which/that + verb."
+            },
+            {
+              "id": "en-foundations-connections-relative-clauses-e4",
+              "kind": "written",
+              "prompt": "Join: “He resigned. It annoyed everyone.” (use which)",
+              "answers": [
+                "he resigned which annoyed everyone"
+              ],
+              "explain": "He resigned, which annoyed everyone."
+            }
+          ],
+          "skills": [
+            "grammar:relative-clauses",
+            "grammar:object-pronouns",
+            "function:describe-people",
+            "vocab:town"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:object-pronouns"
+          ]
+        },
+        {
+          "id": "en-foundations-connections-connectors",
+          "title": "Connectors: although, however, so",
+          "goal": "Link ideas with contrast (although, however) and result (so, because).",
+          "intro": {
+            "explanation": [
+              "Contrast: although + clause (“Although it was late, we went out”) and however + comma (“It was late. However, we went out.”).",
+              "Result: so joins cause → effect (“It was late, so we took a taxi”). Reason: because joins effect → cause (“We took a taxi because it was late”).",
+              "Punctuation: however needs a full stop or semicolon before it; although and because live inside the clause."
+            ],
+            "examples": [
+              {
+                "text": "Although it was expensive, we bought it.",
+                "meaning": "Contrast first."
+              },
+              {
+                "text": "We bought it. However, we regret it now.",
+                "meaning": "However starts a new sentence."
+              },
+              {
+                "text": "It was raining, so we stayed in.",
+                "meaning": "Cause → result."
+              },
+              {
+                "text": "We stayed in because it was raining.",
+                "meaning": "Result → reason."
+              },
+              {
+                "text": "The film was long; nevertheless, we enjoyed it.",
+                "meaning": "A formal contrast."
+              },
+              {
+                "text": "Therefore, the plan changed.",
+                "meaning": "Formal result."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Although + clause, …",
+              "meaning": "Contrast inside one sentence.",
+              "note": "Although he's young, he leads the team."
+            },
+            {
+              "text": "… . However, …",
+              "meaning": "Contrast between sentences.",
+              "note": "It works. However, it's slow."
+            },
+            {
+              "text": "… , so + result",
+              "meaning": "Cause then result.",
+              "note": "It was full, so we left."
+            },
+            {
+              "text": "… because + reason",
+              "meaning": "Result then reason.",
+              "note": "I left because it was full."
+            },
+            {
+              "text": "Even though",
+              "meaning": "Stronger although.",
+              "note": "Even though I knew, I forgot."
+            },
+            {
+              "text": "despite + noun/-ing",
+              "meaning": "Contrast without a clause.",
+              "note": "Despite the rain, we walked."
+            }
+          ],
+          "situation": "You and a colleague review a project: what worked, what failed, and why — connecting every point with so, because, although and however.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Contrast in one sentence: it was expensive / we bought it. (although)",
+                "expected": [
+                  "Although it was expensive, we bought it."
+                ],
+                "focus": "although",
+                "watch": "although + full clause with a verb, not a noun."
+              },
+              {
+                "prompt": "Contrast across two sentences: the plan works / it's slow. (however)",
+                "expected": [
+                  "The plan works. However, it's slow.",
+                  "The plan works; however, it's slow."
+                ],
+                "focus": "however",
+                "watch": "however needs a stop before it: full stop or semicolon."
+              },
+              {
+                "prompt": "Cause and result: the shop was full / we left. (so)",
+                "expected": [
+                  "The shop was full, so we left."
+                ],
+                "focus": "so",
+                "watch": "so joins cause → result with just a comma."
+              },
+              {
+                "prompt": "Same idea with because.",
+                "expected": [
+                  "We left because the shop was full."
+                ],
+                "focus": "because",
+                "watch": "because introduces the reason: result + because + reason."
+              },
+              {
+                "prompt": "Stronger contrast: you knew / you forgot. (even though)",
+                "expected": [
+                  "Even though I knew, I forgot."
+                ],
+                "focus": "even though",
+                "watch": "Same grammar as although, stronger feeling."
+              },
+              {
+                "prompt": "Contrast with a noun: the rain / we walked. (despite)",
+                "expected": [
+                  "Despite the rain, we walked.",
+                  "We walked despite the rain."
+                ],
+                "focus": "despite + noun",
+                "watch": "despite takes a noun or -ing, never a full clause."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-connections-connectors-e1",
+              "kind": "choice",
+              "prompt": "___ it was late, we went out.",
+              "options": [
+                "Although",
+                "However",
+                "So",
+                "Because"
+              ],
+              "answers": [
+                "Although"
+              ],
+              "explain": "although + clause expresses contrast."
+            },
+            {
+              "id": "en-foundations-connections-connectors-e2",
+              "kind": "gap",
+              "prompt": "It was raining, ___ we stayed in. (result)",
+              "answers": [
+                "so"
+              ],
+              "explain": "so introduces the result."
+            },
+            {
+              "id": "en-foundations-connections-connectors-e3",
+              "kind": "order",
+              "prompt": "Give the reason for leaving.",
+              "answers": [
+                "We left because it was full"
+              ],
+              "explain": "result + because + reason."
+            },
+            {
+              "id": "en-foundations-connections-connectors-e4",
+              "kind": "written",
+              "prompt": "Fix: “The plan works, however it's slow.” (punctuation)",
+              "answers": [
+                "the plan works however it's slow",
+                "the plan works however it is slow"
+              ],
+              "explain": "However needs a stronger break: “The plan works. However, it's slow.”"
+            }
+          ],
+          "skills": [
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "writing:argument"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

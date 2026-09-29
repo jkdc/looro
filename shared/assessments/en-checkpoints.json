@@ -460,6 +460,231 @@
           "explain": "Could I change rooms, please? — polite problem solving."
         }
       ]
+    },
+    {
+      "id": "checkpoint-en-b1",
+      "languageID": "en",
+      "level": "B1",
+      "title": "B1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-en-b1-q1",
+          "kind": "choice",
+          "skill": "grammar:present-perfect",
+          "prompt": "___ you ever eaten octopus?",
+          "options": [
+            "Have",
+            "Did",
+            "Are",
+            "Do"
+          ],
+          "answers": [
+            "Have"
+          ],
+          "explain": "Have you ever…?"
+        },
+        {
+          "id": "checkpoint-en-b1-q2",
+          "kind": "written",
+          "skill": "grammar:present-perfect",
+          "prompt": "Fix: “I've visited Peru in 2018.”",
+          "answers": [
+            "i visited peru in 2018"
+          ],
+          "explain": "Finished time → past simple."
+        },
+        {
+          "id": "checkpoint-en-b1-q3",
+          "kind": "choice",
+          "skill": "grammar:past-continuous",
+          "prompt": "I ___ dinner when the doorbell rang.",
+          "options": [
+            "was cooking",
+            "cooked",
+            "am cooking",
+            "have cooked"
+          ],
+          "answers": [
+            "was cooking"
+          ],
+          "explain": "Background: was + -ing."
+        },
+        {
+          "id": "checkpoint-en-b1-q4",
+          "kind": "gap",
+          "skill": "grammar:past-continuous",
+          "prompt": "While they ___ ___ (wait), the bus arrived.",
+          "answers": [
+            "were waiting"
+          ],
+          "explain": "Plural: were waiting."
+        },
+        {
+          "id": "checkpoint-en-b1-q5",
+          "kind": "choice",
+          "skill": "grammar:used-to",
+          "prompt": "She ___ live in Berlin when she was young.",
+          "options": [
+            "used to",
+            "use to",
+            "was used to",
+            "would been"
+          ],
+          "answers": [
+            "used to"
+          ],
+          "explain": "Past habit: used to."
+        },
+        {
+          "id": "checkpoint-en-b1-q6",
+          "kind": "written",
+          "skill": "grammar:used-to",
+          "prompt": "Fix: “I'm used to get up early.”",
+          "answers": [
+            "i'm used to getting up early",
+            "i am used to getting up early"
+          ],
+          "explain": "be used to + -ing."
+        },
+        {
+          "id": "checkpoint-en-b1-q7",
+          "kind": "choice",
+          "skill": "grammar:first-conditional",
+          "prompt": "If it ___ tomorrow, we'll cancel the trip.",
+          "options": [
+            "rains",
+            "will rain",
+            "rained",
+            "is going to rain"
+          ],
+          "answers": [
+            "rains"
+          ],
+          "explain": "Present after if."
+        },
+        {
+          "id": "checkpoint-en-b1-q8",
+          "kind": "gap",
+          "skill": "grammar:first-conditional",
+          "prompt": "I'll call you if I ___ late. (be)",
+          "answers": [
+            "am",
+            "'m"
+          ],
+          "explain": "if I am late."
+        },
+        {
+          "id": "checkpoint-en-b1-q9",
+          "kind": "choice",
+          "skill": "grammar:relative-clauses",
+          "prompt": "The woman ___ lives upstairs is a doctor.",
+          "options": [
+            "who",
+            "which",
+            "where",
+            "what"
+          ],
+          "answers": [
+            "who"
+          ],
+          "explain": "People take who."
+        },
+        {
+          "id": "checkpoint-en-b1-q10",
+          "kind": "gap",
+          "skill": "grammar:relative-clauses",
+          "prompt": "That's the café ___ we first met.",
+          "answers": [
+            "where"
+          ],
+          "explain": "Places take where."
+        },
+        {
+          "id": "checkpoint-en-b1-q11",
+          "kind": "choice",
+          "skill": "grammar:connectors",
+          "prompt": "___ it was late, we went out.",
+          "options": [
+            "Although",
+            "However",
+            "So",
+            "Because"
+          ],
+          "answers": [
+            "Although"
+          ],
+          "explain": "although + clause."
+        },
+        {
+          "id": "checkpoint-en-b1-q12",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "It was raining, ___ we stayed in. (result)",
+          "answers": [
+            "so"
+          ],
+          "explain": "so introduces the result."
+        },
+        {
+          "id": "checkpoint-en-b1-q13",
+          "kind": "choice",
+          "skill": "vocab:travel",
+          "prompt": "The plane couldn't leave because of the ___.",
+          "options": [
+            "storm",
+            "menu",
+            "shelf",
+            "ladder"
+          ],
+          "answers": [
+            "storm"
+          ],
+          "explain": "Storms delay flights."
+        },
+        {
+          "id": "checkpoint-en-b1-q14",
+          "kind": "written",
+          "skill": "vocab:work",
+          "prompt": "Say one thing you have to do at work.",
+          "answers": [
+            "i have to <activity>",
+            "we have to <activity>"
+          ],
+          "explain": "have to + base verb."
+        },
+        {
+          "id": "checkpoint-en-b1-q15",
+          "kind": "choice",
+          "skill": "function:tell-a-story",
+          "prompt": "Open a story about a normal evening that changed.",
+          "options": [
+            "It was a normal evening when everything changed.",
+            "Normal evening changing everything.",
+            "Evenings are normal.",
+            "It changed a normal evening."
+          ],
+          "answers": [
+            "It was a normal evening when everything changed."
+          ],
+          "explain": "Background first, event second."
+        },
+        {
+          "id": "checkpoint-en-b1-q16",
+          "kind": "written",
+          "skill": "function:express-opinion",
+          "prompt": "Give an opinion about a film you didn't like, with because.",
+          "answers": [
+            "i didn't like it because <reason>",
+            "i think it was <adjective> because <reason>"
+          ],
+          "explain": "Opinion + because + reason."
+        }
+      ]
     }
   ]
 }

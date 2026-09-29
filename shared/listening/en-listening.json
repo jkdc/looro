@@ -1985,6 +1985,403 @@
       ]
     },
     {
+      "id": "en-listen-never-been",
+      "languageID": "en",
+      "title": "Things I've never done",
+      "level": "B1",
+      "topic": "travel",
+      "unitID": "en-foundations-experiences",
+      "text": "At a hostel kitchen table, three travellers compare lives. Jonas has visited twenty countries, but he's never learned to swim — 'I know, it's ridiculous.' Amara has swum with dolphins twice, yet she's never left Africa until this trip. And Coco, who has been on the road for six years, has never flown: she crosses oceans on ships and borders on buses. 'Never?' Jonas asks. 'Never. The fear is older than I am.' They laugh about the things they haven't done, and Coco says something that stays with them: 'You don't need to have done everything. You just need to still want to.'",
+      "questions": [
+        {
+          "id": "en-listen-never-been-q1",
+          "kind": "choice",
+          "prompt": "What has Jonas never done?",
+          "options": [
+            "Learned to swim",
+            "Visited twenty countries",
+            "Flown on a plane",
+            "Crossed a border"
+          ],
+          "answers": [
+            "Learned to swim"
+          ],
+          "explain": "He has visited twenty countries but has never learned to swim."
+        },
+        {
+          "id": "en-listen-never-been-q2",
+          "kind": "written",
+          "prompt": "How many times has Amara swum with dolphins?",
+          "answers": [
+            "twice",
+            "2 times",
+            "two times"
+          ],
+          "explain": "She has swum with dolphins twice."
+        },
+        {
+          "id": "en-listen-never-been-q3",
+          "kind": "choice",
+          "prompt": "How does Coco travel across oceans?",
+          "options": [
+            "On ships",
+            "On buses",
+            "By plane",
+            "She doesn't cross them"
+          ],
+          "answers": [
+            "On ships"
+          ],
+          "explain": "She crosses oceans on ships and borders on buses."
+        },
+        {
+          "id": "en-listen-never-been-q4",
+          "kind": "written",
+          "prompt": "How long has Coco been travelling?",
+          "answers": [
+            "six years",
+            "6 years"
+          ],
+          "explain": "She has been on the road for six years."
+        },
+        {
+          "id": "en-listen-never-been-q5",
+          "kind": "choice",
+          "prompt": "Why has Coco never flown?",
+          "options": [
+            "Her fear is older than she is",
+            "She can't afford it",
+            "She prefers trains",
+            "She has never wanted to"
+          ],
+          "answers": [
+            "Her fear is older than she is"
+          ],
+          "explain": "She says the fear is older than she is."
+        },
+        {
+          "id": "en-listen-never-been-q6",
+          "kind": "choice",
+          "prompt": "What does Coco say at the end?",
+          "options": [
+            "You just need to still want to",
+            "Everyone should fly once",
+            "Travel is overrated",
+            "Ships are better"
+          ],
+          "answers": [
+            "You just need to still want to"
+          ],
+          "explain": "You don't need to have done everything — just to still want to."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [
+        "grammar:relative-clauses"
+      ]
+    },
+    {
+      "id": "en-listen-traffic-tale",
+      "languageID": "en",
+      "title": "The day of the parade",
+      "level": "B1",
+      "topic": "stories",
+      "unitID": "en-foundations-experiences",
+      "text": "It was a quiet Sunday morning and Elena was cycling to work, as she always did. The streets were almost empty; a few runners were crossing the bridge, and a baker was setting out trays of bread. She was crossing the main square when she heard drums. Suddenly, the road ahead filled with people — a parade she had completely forgotten about. Dancers were spinning, children were waving flags, and a brass band was playing behind them. Elena stopped, one foot on the ground, and just watched. She was twenty minutes late for work, but her boss, who had also been stuck in the crowd, only laughed. 'Some mornings,' he said, 'you're exactly where you should be.'",
+      "questions": [
+        {
+          "id": "en-listen-traffic-tale-q1",
+          "kind": "choice",
+          "prompt": "What was Elena doing when she heard the drums?",
+          "options": [
+            "She was crossing the main square",
+            "She was working",
+            "She was setting out bread",
+            "She was at home"
+          ],
+          "answers": [
+            "She was crossing the main square"
+          ],
+          "explain": "She was crossing the main square when she heard drums."
+        },
+        {
+          "id": "en-listen-traffic-tale-q2",
+          "kind": "written",
+          "prompt": "What were the runners doing on the bridge?",
+          "answers": [
+            "crossing it",
+            "crossing the bridge",
+            "running"
+          ],
+          "explain": "A few runners were crossing the bridge."
+        },
+        {
+          "id": "en-listen-traffic-tale-q3",
+          "kind": "choice",
+          "prompt": "What filled the road?",
+          "options": [
+            "A parade",
+            "Traffic",
+            "Rain",
+            "Runners"
+          ],
+          "answers": [
+            "A parade"
+          ],
+          "explain": "Suddenly, the road filled with people — a forgotten parade."
+        },
+        {
+          "id": "en-listen-traffic-tale-q4",
+          "kind": "written",
+          "prompt": "What was the brass band doing?",
+          "answers": [
+            "playing",
+            "playing behind the dancers",
+            "playing music"
+          ],
+          "explain": "A brass band was playing behind the dancers."
+        },
+        {
+          "id": "en-listen-traffic-tale-q5",
+          "kind": "choice",
+          "prompt": "How late was Elena for work?",
+          "options": [
+            "Twenty minutes",
+            "Ten minutes",
+            "An hour",
+            "She never arrived"
+          ],
+          "answers": [
+            "Twenty minutes"
+          ],
+          "explain": "She was twenty minutes late."
+        },
+        {
+          "id": "en-listen-traffic-tale-q6",
+          "kind": "choice",
+          "prompt": "Why did her boss only laugh?",
+          "options": [
+            "He had also been stuck in the crowd",
+            "It was a holiday",
+            "She never told him",
+            "He loves parades"
+          ],
+          "answers": [
+            "He had also been stuck in the crowd"
+          ],
+          "explain": "Her boss had also been stuck — some mornings you're exactly where you should be."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:past-continuous",
+        "grammar:past-simple-irregular",
+        "function:tell-a-story"
+      ],
+      "exposureSkills": [
+        "grammar:past-continuous"
+      ]
+    },
+    {
+      "id": "en-listen-if-it-rains",
+      "languageID": "en",
+      "title": "If it rains",
+      "level": "B1",
+      "topic": "plans",
+      "unitID": "en-foundations-connections",
+      "text": "'So what's the plan if it rains?' Sam asks, looking at the grey sky. Priya has thought about everything. 'If it rains before ten, we'll move the picnic into the greenhouse — my aunt said we can use it. If it starts while we're out, we'll walk fifteen minutes to the station and take the train back.' 'And if the trains stop?' 'They won't — but if they do, we'll call my brother; he loves an excuse to drive at night.' Sam laughs. 'And if the sun shines all day?' 'Then we'll have the best picnic of the year, and you'll owe me an apology for doubting my planning.'",
+      "questions": [
+        {
+          "id": "en-listen-if-it-rains-q1",
+          "kind": "choice",
+          "prompt": "Where will they go if it rains before ten?",
+          "options": [
+            "To the greenhouse",
+            "Home",
+            "To the station",
+            "To Sam's flat"
+          ],
+          "answers": [
+            "To the greenhouse"
+          ],
+          "explain": "They'll move the picnic into the greenhouse."
+        },
+        {
+          "id": "en-listen-if-it-rains-q2",
+          "kind": "written",
+          "prompt": "What will they do if rain starts while they're out?",
+          "answers": [
+            "take the train back",
+            "walk to the station and take the train",
+            "walk to the station"
+          ],
+          "explain": "Walk to the station and take the train back."
+        },
+        {
+          "id": "en-listen-if-it-rains-q3",
+          "kind": "choice",
+          "prompt": "Who will pick them up if the trains stop?",
+          "options": [
+            "Priya's brother",
+            "Sam's sister",
+            "Priya's aunt",
+            "Nobody"
+          ],
+          "answers": [
+            "Priya's brother"
+          ],
+          "explain": "Her brother loves an excuse to drive at night."
+        },
+        {
+          "id": "en-listen-if-it-rains-q4",
+          "kind": "written",
+          "prompt": "What does Priya say will happen if the sun shines all day?",
+          "answers": [
+            "the best picnic of the year",
+            "they'll have the best picnic of the year",
+            "it will be the best picnic of the year"
+          ],
+          "explain": "Then they'll have the best picnic of the year."
+        },
+        {
+          "id": "en-listen-if-it-rains-q5",
+          "kind": "choice",
+          "prompt": "Why does Sam owe an apology?",
+          "options": [
+            "For doubting Priya's planning",
+            "For being late",
+            "For eating the food",
+            "For losing the map"
+          ],
+          "answers": [
+            "For doubting Priya's planning"
+          ],
+          "explain": "Priya says he'll owe an apology for doubting her planning."
+        },
+        {
+          "id": "en-listen-if-it-rains-q6",
+          "kind": "choice",
+          "prompt": "How does Priya seem about her plan?",
+          "options": [
+            "She has thought about everything",
+            "She is nervous",
+            "She hasn't prepared",
+            "She wants to cancel"
+          ],
+          "answers": [
+            "She has thought about everything"
+          ],
+          "explain": "Priya has an answer for every condition."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:first-conditional",
+        "function:make-future-plans"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-listen-job-change",
+      "languageID": "en",
+      "title": "Before the change",
+      "level": "B1",
+      "topic": "work",
+      "unitID": "en-foundations-connections",
+      "text": "Rosa remembers her office life the way you remember an old coat: familiar, slightly tight. She used to commute ninety minutes each way. She used to eat lunch at her desk and answer emails at midnight. 'I used to think that was normal,' she says. 'Everyone around me did the same.' Two years ago she moved to a small town and opened a bookshop. At first, the silence was unbearable — she didn't use to have quiet, and it felt like something was wrong. Now she closes at six and reads in the evenings. 'People ask if I miss the city. Although I loved parts of it, I don't miss the person I was becoming there.'",
+      "questions": [
+        {
+          "id": "en-listen-job-change-q1",
+          "kind": "written",
+          "prompt": "How long did Rosa use to commute each way?",
+          "answers": [
+            "ninety minutes",
+            "90 minutes",
+            "an hour and a half"
+          ],
+          "explain": "She used to commute ninety minutes each way."
+        },
+        {
+          "id": "en-listen-job-change-q2",
+          "kind": "choice",
+          "prompt": "What did she use to do at midnight?",
+          "options": [
+            "Answer emails",
+            "Sleep",
+            "Read",
+            "Cook"
+          ],
+          "answers": [
+            "Answer emails"
+          ],
+          "explain": "She used to answer emails at midnight."
+        },
+        {
+          "id": "en-listen-job-change-q3",
+          "kind": "written",
+          "prompt": "What did she open in the small town?",
+          "answers": [
+            "a bookshop",
+            "a book shop",
+            "a bookstore"
+          ],
+          "explain": "She opened a bookshop."
+        },
+        {
+          "id": "en-listen-job-change-q4",
+          "kind": "choice",
+          "prompt": "How did the silence feel at first?",
+          "options": [
+            "Unbearable",
+            "Wonderful",
+            "Normal",
+            "Exciting"
+          ],
+          "answers": [
+            "Unbearable"
+          ],
+          "explain": "She didn't use to have quiet, and it felt like something was wrong."
+        },
+        {
+          "id": "en-listen-job-change-q5",
+          "kind": "written",
+          "prompt": "What does she do in the evenings now?",
+          "answers": [
+            "she reads",
+            "reads"
+          ],
+          "explain": "Now she closes at six and reads in the evenings."
+        },
+        {
+          "id": "en-listen-job-change-q6",
+          "kind": "choice",
+          "prompt": "What doesn't she miss about the city?",
+          "options": [
+            "The person she was becoming",
+            "Her colleagues",
+            "The food",
+            "The salary"
+          ],
+          "answers": [
+            "The person she was becoming"
+          ],
+          "explain": "Although she loved parts of it, she doesn't miss who she was becoming."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:used-to",
+        "grammar:connectors",
+        "vocab:work"
+      ],
+      "exposureSkills": []
+    },
+    {
       "id": "en-listen-grandpas-garden",
       "languageID": "en",
       "title": "Grandpa's garden",
