@@ -142,7 +142,12 @@ data class Preferences(
     back to 0.8 when the old "slower speech" flag is set, otherwise normal. */
 fun Preferences.effectiveSpeechRate(): Double =
     speechRate ?: if (slowSpeech == true) 0.8 else 1.0
-@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf(), var completions: MutableList<CompletionMark>? = null)
+@Serializable data class Archive(var schemaVersion: Int = 2, var sessions: MutableList<SessionRecord> = mutableListOf(), var preferences: Preferences = Preferences(), var lessons: MutableList<LessonState> = mutableListOf(), var expressions: MutableList<ExpressionState> = mutableListOf(), var completions: MutableList<CompletionMark>? = null, var errors: MutableList<SkillError>? = null)
+
+/** One repeated-error pattern, attributed to the skill its exercise teaches.
+    Local-first evidence for the recommender and the tutor's skill focus —
+    deliberately not synced in v1. */
+@Serializable data class SkillError(val skillID: String, var count: Int = 0, var lastAt: Double = 0.0, var lastPrompt: String = "")
 class ArchiveError private constructor(val kind: Kind) : Exception() {
     enum class Kind { TOO_LARGE, UNSUPPORTED_VERSION, UNSUPPORTED_LANGUAGE, INVALID }
     companion object {
@@ -161,6 +166,7 @@ object ArchiveCodec {
 
     /** Write sites keep the ledger to the newest marks with this cap so validation never rejects a save. */
     const val MAXIMUM_COMPLETIONS = 2_000
+    const val MAXIMUM_ERRORS = 100
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true; prettyPrint = true }
     fun encode(a: Archive): String = json.encodeToString(Archive.serializer(), a)
     fun decode(data: String): Archive {
@@ -208,6 +214,13 @@ object ArchiveCodec {
         }
         marks.sortByDescending { it.at }
         out.completions = if (marks.isEmpty()) null else marks.take(MAXIMUM_COMPLETIONS).toMutableList()
+        val errors = (out.errors ?: mutableListOf()).associateBy { it.skillID }.toMutableMap()
+        incoming.errors.orEmpty().forEach { inc ->
+            val cur = errors[inc.skillID]
+            errors[inc.skillID] = if (cur == null) inc else SkillError(cur.skillID, maxOf(cur.count, inc.count),
+                maxOf(cur.lastAt, inc.lastAt), if (inc.lastAt >= cur.lastAt) inc.lastPrompt else cur.lastPrompt)
+        }
+        out.errors = if (errors.isEmpty()) null else errors.values.sortedByDescending { it.count }.take(MAXIMUM_ERRORS).toMutableList()
         validate(out); if (encode(out).toByteArray().size > MAXIMUM_ENCODED_BYTES) throw ArchiveError.TOO_LARGE
         return out
     }

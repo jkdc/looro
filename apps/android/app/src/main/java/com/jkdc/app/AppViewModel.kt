@@ -368,6 +368,54 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         recordCompletion(ProgressEngine.ASSESSMENT, id, percent)
     }
 
+    /** Error memory: a wrong exercise answer attributes one hit to every skill
+        its lesson teaches (never to exposure-only structures). Local evidence
+        for the recommender and the tutor's skill focus — not synced in v1. */
+    fun recordExerciseMistake(lessonID: String, prompt: String) {
+        val lesson = CourseRegistry.lesson(lessonID) ?: return
+        val skills = lesson.skills.filter { it in SkillsData.categories.keys }
+        if (skills.isEmpty()) return
+        val errors = (archive.errors ?: mutableListOf()).associateBy { it.skillID }.toMutableMap()
+        val now = nowSeconds()
+        skills.forEach { skill ->
+            val current = errors[skill]
+            errors[skill] = SkillError(skill, (current?.count ?: 0) + 1, now, prompt.take(120))
+        }
+        archive = archive.copy(errors = errors.values.sortedByDescending { it.count }
+            .take(ArchiveCodec.MAXIMUM_ERRORS).toMutableList())
+        persist()
+    }
+
+    /** Repeated-error patterns, strongest first — the tutor's skill focus and
+        the progress sheet's "patterns under review". */
+    fun errorPatterns(): List<SkillError> = archive.errors.orEmpty().sortedByDescending { it.count }
+
+    /** Short prompt fragment naming the learner's most repeated error patterns. */
+    fun errorFocus(): String = errorPatterns().take(3)
+        .joinToString("; ") { "${it.skillID.substringAfter(':')} (${it.count})" }
+
+    /** The next lesson to open: the first unattempted one whose prerequisite
+        skills are already understood (mastery ≥ 60); fall back to the first
+        unattempted lesson in course order. */
+    fun recommendedLesson(): Lesson? {
+        val course = CourseRegistry.forLanguage(language.id).firstOrNull() ?: return null
+        val mastery = masteryStats()?.skills?.associate { it.skillID to it.mastery } ?: emptyMap()
+        val attempted = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
+        val unattempted = course.units.flatMap { it.lessons }.filter { it.id !in attempted }
+        return unattempted.firstOrNull { lesson ->
+            lesson.prerequisites.all { prereq -> (mastery[prereq] ?: 0) >= 60 || prereq !in mastery }
+        } ?: unattempted.firstOrNull()
+    }
+
+    /** Today's plan for a time budget, from due words, the recommended lesson
+        and unplayed comprehension content. */
+    fun dailyPlan(budget: Int): List<PlanStep> {
+        val next = recommendedLesson()
+        val unplayedListening = ListeningRegistry.forLanguage(language.id).any { listeningScore(it.id) == null }
+        val unplayedReading = ReadingRegistry.forLanguage(language.id).any { readingScore(it.id) == null }
+        return DailyPlanEngine.plan(budget, dueRecallCount(), next != null, unplayedListening, unplayedReading)
+    }
+
     /** Push/pull the progress ledger against the account (guests included). Failures
         are silent: sync must never nag, the local ledger stays the source of truth. */
     fun syncProgress() {
@@ -1198,7 +1246,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
         val id = session!!.id
         val module = language
-        val instructions = selectedLesson?.let { TeachingPolicy.lessonPractice(it, module) } ?: TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0)
+        val instructions = selectedLesson?.let { TeachingPolicy.lessonPractice(it, module) } ?: TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0, skillFocus = errorFocus())
         val history = ConversationHistory.messages(session)
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {
@@ -1556,7 +1604,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         actionJob = viewModelScope.launch {
             try {
                 val lesson = session?.lessonID?.let { CourseRegistry.lesson(it) }
-                val instructions = if (voiceSession) TeachingPolicy.typedReply(language, lesson) else TeachingPolicy.voice(language, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage) + "\n" + TeachingPolicy.typedReply(language, lesson)
+                val instructions = if (voiceSession) TeachingPolicy.typedReply(language, lesson) else TeachingPolicy.voice(language, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, skillFocus = errorFocus()) + "\n" + TeachingPolicy.typedReply(language, lesson)
                 val result = teaching(id, HelperPurpose.TYPED_REPLY, UUID.randomUUID().toString(), instructions, helperContext(session!!))
                 if (token != generation || session?.id != id || state != "active") return@launch
                 updateSession { addUsage(it, result.usage) }

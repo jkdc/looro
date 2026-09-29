@@ -36,11 +36,11 @@
 
 ## F4 — Personalización
 
-- [ ] F4.1 ErrorMemory por skill en Archive + integración en recall.
-- [ ] F4.2 Daily Plan (5/10/15/20 min) + tarjeta en Aprender.
-- [ ] F4.3 Recomendador de siguiente lección (prerequisites + mastery).
-- [ ] F4.4 Contexto de skills débiles en el prompt del tutor (paridad kt/swift).
-- [ ] F4.5 Tests + verificación.
+- [x] F4.1 ErrorMemory por skill en Archive + integración en recall.
+- [x] F4.2 Daily Plan (5/10/15/20 min) + tarjeta en Aprender.
+- [x] F4.3 Recomendador de siguiente lección (prerequisites + mastery).
+- [x] F4.4 Contexto de skills débiles en el prompt del tutor (paridad kt/swift).
+- [x] F4.5 Tests + verificación.
 
 ## F5 — B1
 

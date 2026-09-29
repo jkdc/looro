@@ -350,6 +350,15 @@
     <string name="lesson_pronounce_heading">Pronúncialo</string>
     <string name="lesson_pronounce_hint">Toca una frase, escucha la voz y repítela en voz alta.</string>
     <string name="lesson_pronounce_play">Escuchar y repetir</string>
+    <string name="plan_title">Tu entrenamiento de hoy</string>
+    <string name="plan_minutes">%1$d min</string>
+    <string name="plan_empty">Nada pendiente ahora mismo — ¡disfruta el día!</string>
+    <string name="plan_step_recall">Repasa tus palabras</string>
+    <string name="plan_step_lesson">Siguiente lección: %1$s</string>
+    <string name="plan_step_listen">Un listening sin reproducir</string>
+    <string name="plan_step_read">Una lectura sin hacer</string>
+    <string name="learn_recommended">Siguiente sugerida</string>
+    <string name="progress_patterns">Patrones en revisión: %1$d fallos</string>
     <string name="learn_course_percent">Completado: %1$d%%</string>
     <string name="lesson_done">HECHA</string>
     <string name="learn_level_label">Nivel %1$d · %2$s</string>

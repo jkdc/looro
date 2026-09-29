@@ -89,7 +89,34 @@ import LearningCore
                                     completions: archive.completions ?? [],
                                     courses: CourseRegistry.forLanguage(language),
                                     listeningIDs: Set(ListeningRegistry.forLanguage(language).map(\.id)),
-                                    languageID: language)
+                                    languageID: language,
+                                    readingIDs: Set(ReadingRegistry.forLanguage(language).map(\.id)))
+    }
+
+    /// Error memory: one wrong answer attributes a hit to every skill its lesson
+    /// teaches. Local evidence — not synced in v1.
+    func recordExerciseMistake(lessonID: String, prompt: String) {
+        guard let lesson = CourseRegistry.lesson(id: lessonID) else { return }
+        var errorsByKey: [String: SkillError] = Dictionary(uniqueKeysWithValues: (archive.errors ?? []).map { ($0.skillID, $0) })
+        let now = Date.now.timeIntervalSinceReferenceDate
+        for skill in lesson.skills where SkillsData.categories.keys.contains(skill) {
+            let current = errorsByKey[skill]
+            errorsByKey[skill] = SkillError(skillID: skill, count: (current?.count ?? 0) + 1,
+                                            lastAt: now, lastPrompt: String(prompt.prefix(120)))
+        }
+        let merged = errorsByKey.values.sorted { $0.count > $1.count }
+        archive.errors = merged.isEmpty ? nil : Array(merged.prefix(Archive.maximumErrors))
+        persist()
+    }
+
+    func errorFocus() -> String {
+        (archive.errors ?? []).sorted { $0.count > $1.count }.prefix(3)
+            .map { "\($0.skillID.split(separator: ":").last ?? Substring($0.skillID)) (\($0.count))" }
+            .joined(separator: "; ")
+    }
+
+    func readingScore(for id: String) -> Int? {
+        (archive.completions ?? []).filter { $0.kind == ProgressEngine.reading && $0.itemID == id }.map(\.bestScore).max()
     }
     var completedLessonIDs: Set<String> {
         Set((archive.lessons ?? []).filter { $0.attempts > 0 }.map(\.lessonID))

@@ -47,6 +47,7 @@ import com.jkdc.app.core.Course
 import com.jkdc.app.core.CourseProgress
 import com.jkdc.app.core.CourseRegistry
 import com.jkdc.app.core.CourseUnit
+import com.jkdc.app.core.DailyPlanEngine
 import com.jkdc.app.core.LanguageRegistry
 import com.jkdc.app.core.Lesson
 import com.jkdc.app.core.LevelStats
@@ -104,6 +105,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                     }
                 }
             }
+            item(key = "daily-plan") { DailyPlanCard(vm, onRecall = { recallOpen = true }, onLesson = { id -> openLessonID = id; vm.stopLessonReading() }) }
             items(courses.size, key = { courses[it].id }) { index ->
                 CourseCard(vm, courses[index], progress.first.courses.firstOrNull { it.courseID == courses[index].id },
                     progress.second, onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
@@ -196,6 +198,60 @@ private fun LevelCard(stats: LevelStats) {
 }
 
 @Composable
+private fun DailyPlanCard(vm: AppViewModel, onRecall: () -> Unit, onLesson: (String) -> Unit) {
+    var budget by rememberSaveable { mutableStateOf(10) }
+    val steps = vm.dailyPlan(budget)
+    val recommended = vm.recommendedLesson()
+    Surface(Modifier.fillMaxWidth().testTag("daily-plan"),
+        shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
+        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.plan_title), style = MaterialTheme.typography.titleMedium)
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    DailyPlanEngine.BUDGETS.forEach { option ->
+                        Surface(Modifier.clickable(role = Role.Button) { budget = option }.testTag("plan-budget-" + option),
+                            shape = RoundedCornerShape(14.dp),
+                            color = if (option == budget) AppColors.Secondary else AppColors.Cream) {
+                            Text(stringResource(R.string.plan_minutes, option),
+                                Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (option == budget) AppColors.Cream else AppColors.Secondary)
+                        }
+                    }
+                }
+            }
+            if (steps.isEmpty()) {
+                Text(stringResource(R.string.plan_empty), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+            } else steps.forEach { step ->
+                val label = when (step.kind) {
+                    "lesson" -> stringResource(R.string.plan_step_lesson, recommended?.title ?: stringResource(R.string.learn_title))
+                    else -> stringResource(when (step.kind) {
+                        "recall" -> R.string.plan_step_recall
+                        "listen" -> R.string.plan_step_listen
+                        else -> R.string.plan_step_read
+                    })
+                }
+                Row(Modifier.fillMaxWidth().clickable(role = Role.Button) {
+                    when (step.kind) {
+                        "recall" -> onRecall()
+                        "lesson" -> recommended?.let { onLesson(it.id) }
+                    }
+                }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    AppIcon(when (step.kind) {
+                        "recall" -> AppSymbol.Words
+                        "listen" -> AppSymbol.Headphones
+                        else -> AppSymbol.Sparkles
+                    }, Modifier.size(18.dp), color = AppColors.Secondary)
+                    Text(label, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.plan_minutes, step.minutes),
+                        style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun UnitSection(vm: AppViewModel, unit: CourseUnit, level: LevelStats,
                         doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -206,6 +262,7 @@ private fun UnitSection(vm: AppViewModel, unit: CourseUnit, level: LevelStats,
                 unit.lessons.count { it.id in doneLessonIDs } * 100 / unit.lessons.size),
                 style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
         }
+        val recommendedID = vm.recommendedLesson()?.id
         unit.lessons.forEach { lesson ->
             val attempts = vm.lessonAttempts(lesson.id)
             val tier = level.mastery.firstOrNull { it.lessonID == lesson.id }?.tier ?: 0
@@ -213,7 +270,11 @@ private fun UnitSection(vm: AppViewModel, unit: CourseUnit, level: LevelStats,
                 shape = RoundedCornerShape(18.dp), color = AppColors.Cream) {
                 Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
-                        Text(lesson.title, style = MaterialTheme.typography.titleSmall)
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Text(lesson.title, style = MaterialTheme.typography.titleSmall)
+                            if (recommendedID == lesson.id && attempts == 0) Text(stringResource(R.string.learn_recommended),
+                                style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                        }
                         Text(lesson.goal, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
                     }
                     if (tier > 0) LessonStars(tier)

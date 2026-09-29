@@ -102,6 +102,7 @@ fun ExerciseScreen(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit) {
                                     else -> answer
                                 }
                                 val correct = ExerciseEngine.isCorrect(exercise, attempt)
+                                if (!correct) vm.recordExerciseMistake(lesson.id, exercise.prompt)
                                 verdict = correct
                                 if (correct) correctCount++
                             },

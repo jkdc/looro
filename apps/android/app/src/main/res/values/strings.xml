@@ -350,6 +350,15 @@
     <string name="lesson_pronounce_heading">Pronounce it</string>
     <string name="lesson_pronounce_hint">Tap a phrase, listen to the voice and repeat it out loud.</string>
     <string name="lesson_pronounce_play">Listen and repeat</string>
+    <string name="plan_title">Today\'s training</string>
+    <string name="plan_minutes">%1$d min</string>
+    <string name="plan_empty">Nothing due right now — enjoy your day!</string>
+    <string name="plan_step_recall">Recall your words</string>
+    <string name="plan_step_lesson">Next lesson: %1$s</string>
+    <string name="plan_step_listen">A listening you haven\'t played</string>
+    <string name="plan_step_read">A reading you haven\'t played</string>
+    <string name="learn_recommended">Suggested next</string>
+    <string name="progress_patterns">Patterns under review: %1$d misses</string>
     <string name="learn_course_percent">Completed: %1$d%%</string>
     <string name="lesson_done">Done</string>
     <string name="learn_level_label">Level %1$d · %2$s</string>

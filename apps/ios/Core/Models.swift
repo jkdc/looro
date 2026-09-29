@@ -222,6 +222,19 @@ public struct CompletionMark: Codable, Hashable, Sendable {
     }
 }
 
+/// One repeated-error pattern, attributed to the skill its exercise teaches.
+/// Local-first evidence for the recommender and the tutor's skill focus —
+/// deliberately not synced in v1.
+public struct SkillError: Codable, Hashable, Sendable {
+    public var skillID: String
+    public var count: Int
+    public var lastAt: Double
+    public var lastPrompt: String
+    public init(skillID: String, count: Int = 0, lastAt: Double = 0, lastPrompt: String = "") {
+        self.skillID = skillID; self.count = count; self.lastAt = lastAt; self.lastPrompt = lastPrompt
+    }
+}
+
 public struct Archive: Codable, Sendable {
     public static let maximumEncodedBytes = 30_000_000
     private static let maximumSessions = 10_000
@@ -229,8 +242,9 @@ public struct Archive: Codable, Sendable {
     private static let maximumExpressions = 2_000
     /// Write sites keep the ledger to the newest marks with this cap so validation never rejects a save.
     public static let maximumCompletions = 2_000
+    public static let maximumErrors = 100
     static let completionKinds: Set<String> = ["lesson", "conversation_theme", "exercise_set", "listening",
-                                               "recall_round", "words_practice", "assessment"]
+                                               "reading", "recall_round", "words_practice", "assessment"]
     // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
     // Write sites clamp to these too, so a long model reply can never make a saved session fail validation here.
     public static let maximumTitleCharacters = 200
@@ -242,6 +256,7 @@ public struct Archive: Codable, Sendable {
     public var lessons: [LessonState]?
     public var expressions: [ExpressionState]?
     public var completions: [CompletionMark]?
+    public var errors: [SkillError]?
     public init() {}
     public static func decode(_ data: Data) throws -> Archive {
         guard data.count <= maximumEncodedBytes else { throw ArchiveError.tooLarge }
@@ -310,6 +325,16 @@ public struct Archive: Codable, Sendable {
         }
         marks.sort { $0.at > $1.at }
         candidate.completions = marks.isEmpty ? nil : Array(marks.prefix(Self.maximumCompletions))
+        var errorsByKey: [String: SkillError] = Dictionary(uniqueKeysWithValues: (candidate.errors ?? []).map { ($0.skillID, $0) })
+        for error in incoming.errors ?? [] {
+            let current = errorsByKey[error.skillID]
+            errorsByKey[error.skillID] = SkillError(skillID: error.skillID,
+                count: max(current?.count ?? 0, error.count),
+                lastAt: max(current?.lastAt ?? 0, error.lastAt),
+                lastPrompt: error.lastAt >= (current?.lastAt ?? 0) ? error.lastPrompt : current?.lastPrompt ?? error.lastPrompt)
+        }
+        let mergedErrors = errorsByKey.values.sorted { $0.count > $1.count }
+        candidate.errors = mergedErrors.isEmpty ? nil : Array(mergedErrors.prefix(Self.maximumErrors))
         try candidate.validate()
         guard try candidate.encoded().count <= Self.maximumEncodedBytes else { throw ArchiveError.tooLarge }
         return candidate

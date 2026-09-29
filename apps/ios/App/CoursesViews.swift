@@ -380,7 +380,7 @@ struct ExerciseView: View {
                     default: attempt = answer
                     }
                     verdict = ExerciseEngine.isCorrect(exercise: exercise, attempt: attempt)
-                    if verdict == true { correctCount += 1 }
+                    if verdict == true { correctCount += 1 } else { coordinator.store.recordExerciseMistake(lessonID: lesson.id, prompt: exercise.prompt) }
                 } label: {
                     Text("Check").font(.headline).frame(maxWidth: .infinity).padding(16)
                         .background(AppColor.orange, in: Capsule())

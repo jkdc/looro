@@ -486,6 +486,11 @@ private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                                 mastery.categories.forEach { category ->
                                     SkillMasteryBar(stringResource(skillCategoryLabel(category.category)), category.mastery)
                                 }
+                                val patterns = vm.errorPatterns()
+                                if (patterns.isNotEmpty()) {
+                                    Text(stringResource(R.string.progress_patterns, patterns.sumOf { it.count }),
+                                        style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                }
                             }
                         }
                     }
