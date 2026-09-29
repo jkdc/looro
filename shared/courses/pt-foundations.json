@@ -1,6 +1,7 @@
 {
   "id": "pt-foundations",
   "languageID": "pt",
+  "schemaVersion": 2,
   "title": "Foundations",
   "subtitle": "Start from zero",
   "symbol": "graduationcap",
@@ -43,68 +44,174 @@
               "Use ser for identity and origin: “Eu sou a Ana”, “Sou do Brasil”, “Ele é professor”. Origin takes de: “Sou de São Paulo”."
             ],
             "examples": [
-              { "text": "Eu sou a Ana. Sou do Brasil.", "meaning": "Your name and country." },
-              { "text": "Você é meu melhor amigo.", "meaning": "A close bond with someone." },
-              { "text": "Ela é professora.", "meaning": "Someone's profession." },
-              { "text": "A gente é muito feliz hoje.", "meaning": "A feeling that defines right now (casual we)." },
-              { "text": "O café é perto da estação.", "meaning": "Where a place is." },
-              { "text": "Eles são de São Paulo.", "meaning": "Someone's origin." }
+              {
+                "text": "Eu sou a Ana. Sou do Brasil.",
+                "meaning": "Your name and country."
+              },
+              {
+                "text": "Você é meu melhor amigo.",
+                "meaning": "A close bond with someone."
+              },
+              {
+                "text": "Ela é professora.",
+                "meaning": "Someone's profession."
+              },
+              {
+                "text": "A gente é muito feliz hoje.",
+                "meaning": "A feeling that defines right now (casual we)."
+              },
+              {
+                "text": "O café é perto da estação.",
+                "meaning": "Where a place is."
+              },
+              {
+                "text": "Eles são de São Paulo.",
+                "meaning": "Someone's origin."
+              }
             ]
           },
           "expressions": [
-            { "text": "Eu sou …", "meaning": "Introduce yourself.", "note": "With your name or job: Eu sou a Ana. Sou professora." },
-            { "text": "Sou do / Sou da …", "meaning": "Say where you come from.", "note": "Masculine do, feminine da: Sou do Brasil. Sou da Espanha." },
-            { "text": "Você é … ?", "meaning": "Ask about the other person.", "note": "Você é professora? Você é daqui?" },
-            { "text": "Sou, sim. / Não, não sou.", "meaning": "Short answers to a Você é… ? question.", "note": "The sim repeats the verb: Sou, sim." },
-            { "text": "Ele é / Ela é …", "meaning": "Say what someone else is.", "note": "Ele é médico — no article with jobs." },
-            { "text": "Prazer em conhecer você.", "meaning": "The fixed phrase when you meet someone.", "note": "Short and natural: Prazer!" }
+            {
+              "text": "Eu sou …",
+              "meaning": "Introduce yourself.",
+              "note": "With your name or job: Eu sou a Ana. Sou professora."
+            },
+            {
+              "text": "Sou do / Sou da …",
+              "meaning": "Say where you come from.",
+              "note": "Masculine do, feminine da: Sou do Brasil. Sou da Espanha."
+            },
+            {
+              "text": "Você é … ?",
+              "meaning": "Ask about the other person.",
+              "note": "Você é professora? Você é daqui?"
+            },
+            {
+              "text": "Sou, sim. / Não, não sou.",
+              "meaning": "Short answers to a Você é… ? question.",
+              "note": "The sim repeats the verb: Sou, sim."
+            },
+            {
+              "text": "Ele é / Ela é …",
+              "meaning": "Say what someone else is.",
+              "note": "Ele é médico — no article with jobs."
+            },
+            {
+              "text": "Prazer em conhecer você.",
+              "meaning": "The fixed phrase when you meet someone.",
+              "note": "Short and natural: Prazer!"
+            }
           ],
           "situation": "You meet someone new at a friendly language-exchange café in São Paulo. Introduce yourselves and ask simple questions with the verb ser.",
           "practice": {
             "questions": [
               {
                 "prompt": "Oi! Eu sou a Ana. Como você se chama?",
-                "expected": ["Meu nome é <name>.", "Eu sou o <name>.", "Eu sou a <name>.", "Me chamo <name>."],
+                "expected": [
+                  "Meu nome é <name>.",
+                  "Eu sou o <name>.",
+                  "Eu sou a <name>.",
+                  "Me chamo <name>."
+                ],
                 "focus": "Meu nome é / Me chamo",
                 "watch": "Answering only the name: accept it, then recast “Meu nome é …”."
               },
               {
                 "prompt": "De onde você é?",
-                "expected": ["Sou do <country>.", "Sou da <country>.", "Sou de <city>."],
+                "expected": [
+                  "Sou do <country>.",
+                  "Sou da <country>.",
+                  "Sou de <city>."
+                ],
                 "focus": "ser + de",
                 "watch": "“Sou Brasil” — recast “Sou DO Brasil”: the article joins de."
               },
               {
                 "prompt": "Você é estudante?",
-                "expected": ["Sou, sim.", "Não, não sou."],
+                "expected": [
+                  "Sou, sim.",
+                  "Não, não sou."
+                ],
                 "focus": "short answers with ser",
                 "watch": "One-word “Sim” — recast with the verb: Sou, sim."
               },
               {
                 "prompt": "Como você está hoje?",
-                "expected": ["Estou bem.", "Estou cansado.", "Estou feliz."],
+                "expected": [
+                  "Estou bem.",
+                  "Estou cansado.",
+                  "Estou feliz."
+                ],
                 "focus": "estar for feelings",
                 "watch": "“Sou cansado” — recast “Estou cansado”: feelings take estar."
               },
               {
                 "prompt": "Sua cidade é grande ou pequena?",
-                "expected": ["É grande.", "É pequena.", "Minha cidade é …"],
+                "expected": [
+                  "É grande.",
+                  "É pequena.",
+                  "Minha cidade é …"
+                ],
                 "focus": "é with places",
                 "watch": "“Minha cidade grande” — recast “Minha cidade É grande”."
               },
               {
                 "prompt": "Agora somos amigos! De onde é sua família?",
-                "expected": ["É do <country>.", "Minha família é do <country>.", "É da <country>."],
+                "expected": [
+                  "É do <country>.",
+                  "Minha família é do <country>.",
+                  "É da <country>."
+                ],
                 "focus": "é for a group's origin",
                 "watch": "“Minha família de …” — recast with é."
               }
             ]
           },
           "exercises": [
-            {"id": "pt-foundations-u1-ser-e1", "kind": "choice", "prompt": "Ela ___ professora.", "options": ["é", "és", "sou", "somos"], "answers": ["é"], "explain": "With ele/ela/você, ser becomes é."},
-            {"id": "pt-foundations-u1-ser-e2", "kind": "gap", "prompt": "Nós ___ de São Paulo.", "answers": ["somos"], "explain": "With nós, ser é sempre somos."},
-            {"id": "pt-foundations-u1-ser-e3", "kind": "order", "prompt": "Say where you are from.", "answers": ["Sou do Brasil"], "explain": "Sou + do/da + country: Sou do Brasil."},
-            {"id": "pt-foundations-u1-ser-e4", "kind": "written", "prompt": "Introduce yourself in one sentence: say your name.", "answers": ["Meu nome é <name>", "Me chamo <name>", "Eu sou <name>"], "explain": "Meu nome é Ana / Me chamo Ana — the verb is never dropped."}
+            {
+              "id": "pt-foundations-u1-ser-e1",
+              "kind": "choice",
+              "prompt": "Ela ___ professora.",
+              "options": [
+                "é",
+                "és",
+                "sou",
+                "somos"
+              ],
+              "answers": [
+                "é"
+              ],
+              "explain": "With ele/ela/você, ser becomes é."
+            },
+            {
+              "id": "pt-foundations-u1-ser-e2",
+              "kind": "gap",
+              "prompt": "Nós ___ de São Paulo.",
+              "answers": [
+                "somos"
+              ],
+              "explain": "With nós, ser é sempre somos."
+            },
+            {
+              "id": "pt-foundations-u1-ser-e3",
+              "kind": "order",
+              "prompt": "Say where you are from.",
+              "answers": [
+                "Sou do Brasil"
+              ],
+              "explain": "Sou + do/da + country: Sou do Brasil."
+            },
+            {
+              "id": "pt-foundations-u1-ser-e4",
+              "kind": "written",
+              "prompt": "Introduce yourself in one sentence: say your name.",
+              "answers": [
+                "Meu nome é <name>",
+                "Me chamo <name>",
+                "Eu sou <name>"
+              ],
+              "explain": "Meu nome é Ana / Me chamo Ana — the verb is never dropped."
+            }
           ]
         },
         {
@@ -118,68 +225,168 @@
               "To negate, put não before the verb: “Não sou a Ana”, “Não somos amigos”. In short answers the verb answers alone: “Sou, sim.”"
             ],
             "examples": [
-              { "text": "Você é professora?", "meaning": "A yes/no question with é." },
-              { "text": "Não sou de São Paulo.", "meaning": "A negative with sou." },
-              { "text": "De onde você é?", "meaning": "Question word + é." },
-              { "text": "Ele não é meu irmão.", "meaning": "A negative about another person." },
-              { "text": "Vocês são vizinhos?", "meaning": "Asking a group." },
-              { "text": "O que é isso?", "meaning": "What is this?" }
+              {
+                "text": "Você é professora?",
+                "meaning": "A yes/no question with é."
+              },
+              {
+                "text": "Não sou de São Paulo.",
+                "meaning": "A negative with sou."
+              },
+              {
+                "text": "De onde você é?",
+                "meaning": "Question word + é."
+              },
+              {
+                "text": "Ele não é meu irmão.",
+                "meaning": "A negative about another person."
+              },
+              {
+                "text": "Vocês são vizinhos?",
+                "meaning": "Asking a group."
+              },
+              {
+                "text": "O que é isso?",
+                "meaning": "What is this?"
+              }
             ]
           },
           "expressions": [
-            { "text": "Você é … ?", "meaning": "Ask a yes/no question.", "note": "Add né? at the end in casual talk." },
-            { "text": "Não sou …", "meaning": "Say what is not true about you.", "note": "Não always goes before the verb." },
-            { "text": "De onde você é?", "meaning": "Ask where someone is from.", "note": "De onde, two words." },
-            { "text": "Ele não é …", "meaning": "Say what someone else is not.", "note": "Ele não é meu chefe." },
-            { "text": "…, né?", "meaning": "Tag a statement to check it.", "note": "Você é daqui, né? = ¿verdad?" },
-            { "text": "Claro.", "meaning": "The natural yes in talk.", "note": "Also: Com certeza." }
+            {
+              "text": "Você é … ?",
+              "meaning": "Ask a yes/no question.",
+              "note": "Add né? at the end in casual talk."
+            },
+            {
+              "text": "Não sou …",
+              "meaning": "Say what is not true about you.",
+              "note": "Não always goes before the verb."
+            },
+            {
+              "text": "De onde você é?",
+              "meaning": "Ask where someone is from.",
+              "note": "De onde, two words."
+            },
+            {
+              "text": "Ele não é …",
+              "meaning": "Say what someone else is not.",
+              "note": "Ele não é meu chefe."
+            },
+            {
+              "text": "…, né?",
+              "meaning": "Tag a statement to check it.",
+              "note": "Você é daqui, né? = ¿verdad?"
+            },
+            {
+              "text": "Claro.",
+              "meaning": "The natural yes in talk.",
+              "note": "Also: Com certeza."
+            }
           ],
           "situation": "You chat with a new neighbour in the lift in São Paulo. Ask simple yes/no questions and say what is and isn't true for you.",
           "practice": {
             "questions": [
               {
                 "prompt": "Você é daqui?",
-                "expected": ["Sou, sim.", "Não, não sou daqui."],
+                "expected": [
+                  "Sou, sim.",
+                  "Não, não sou daqui."
+                ],
                 "focus": "short answers",
                 "watch": "One-word “Sim” — recast with the verb: Sou, sim."
               },
               {
                 "prompt": "Você é professor ou estudante?",
-                "expected": ["Sou professor.", "Sou estudante.", "Sou professora."],
+                "expected": [
+                  "Sou professor.",
+                  "Sou estudante.",
+                  "Sou professora."
+                ],
                 "focus": "choice with ser",
                 "watch": "Accept either; the article stays dropped."
               },
               {
                 "prompt": "Sua família é grande?",
-                "expected": ["É, sim.", "Não, não é grande."],
+                "expected": [
+                  "É, sim.",
+                  "Não, não é grande."
+                ],
                 "focus": "é in questions about others",
                 "watch": "“Não é grande” — não before é."
               },
               {
                 "prompt": "De onde você é, exatamente?",
-                "expected": ["Sou do <country>.", "Sou da <country>.", "Sou de <city>."],
+                "expected": [
+                  "Sou do <country>.",
+                  "Sou da <country>.",
+                  "Sou de <city>."
+                ],
                 "focus": "de onde + sou",
                 "watch": "“Sou em São Paulo” — recast with de."
               },
               {
                 "prompt": "Me diga uma coisa que você não é.",
-                "expected": ["Não sou <job>.", "Não sou do <country>."],
+                "expected": [
+                  "Não sou <job>.",
+                  "Não sou do <country>."
+                ],
                 "focus": "negation with não sou",
                 "watch": "“Sou não” doesn't work here — não first."
               },
               {
                 "prompt": "A gente é amigo, né?",
-                "expected": ["É, a gente é amigo.", "Somos, sim."],
+                "expected": [
+                  "É, a gente é amigo.",
+                  "Somos, sim."
+                ],
                 "focus": "a gente é",
                 "watch": "“A gente somos” is wrong — a gente takes é."
               }
             ]
           },
           "exercises": [
-            {"id": "pt-foundations-u1-questions-e1", "kind": "choice", "prompt": "___ você de Ribeirão?", "options": ["É", "És", "Sou", "Somos"], "answers": ["É"], "explain": "With você, the question starts with É."},
-            {"id": "pt-foundations-u1-questions-e2", "kind": "gap", "prompt": "Ela não é ___ irmã.", "answers": ["minha"], "explain": "minha for feminine things: minha irmã."},
-            {"id": "pt-foundations-u1-questions-e3", "kind": "order", "prompt": "Say you are not from Rio.", "answers": ["Não sou do Rio"], "explain": "Não goes first: Não sou do Rio."},
-            {"id": "pt-foundations-u1-questions-e4", "kind": "written", "prompt": "Make it negative: \"Sou de Curitiba.\"", "answers": ["Não sou de Curitiba"], "explain": "não + sou: Não sou de Curitiba."}
+            {
+              "id": "pt-foundations-u1-questions-e1",
+              "kind": "choice",
+              "prompt": "___ você de Ribeirão?",
+              "options": [
+                "É",
+                "És",
+                "Sou",
+                "Somos"
+              ],
+              "answers": [
+                "É"
+              ],
+              "explain": "With você, the question starts with É."
+            },
+            {
+              "id": "pt-foundations-u1-questions-e2",
+              "kind": "gap",
+              "prompt": "Ela não é ___ irmã.",
+              "answers": [
+                "minha"
+              ],
+              "explain": "minha for feminine things: minha irmã."
+            },
+            {
+              "id": "pt-foundations-u1-questions-e3",
+              "kind": "order",
+              "prompt": "Say you are not from Rio.",
+              "answers": [
+                "Não sou do Rio"
+              ],
+              "explain": "Não goes first: Não sou do Rio."
+            },
+            {
+              "id": "pt-foundations-u1-questions-e4",
+              "kind": "written",
+              "prompt": "Make it negative: \"Sou de Curitiba.\"",
+              "answers": [
+                "Não sou de Curitiba"
+              ],
+              "explain": "não + sou: Não sou de Curitiba."
+            }
           ]
         },
         {
@@ -193,68 +400,165 @@
               "Nationalities are lower-case: “sou brasileira”. Jobs with ser drop the article: “sou professora”. Close with “Prazer!” and bounce the question back with “E você?”"
             ],
             "examples": [
-              { "text": "Meu nome é Ana. Prazer!", "meaning": "Your name plus a polite close." },
-              { "text": "Sou de São Paulo, capital.", "meaning": "City inside country." },
-              { "text": "Sou brasileira, de São Paulo.", "meaning": "Nationality plus city." },
-              { "text": "Sou enfermeira num hospital.", "meaning": "Job plus workplace." },
-              { "text": "Tenho vinte e cinco anos.", "meaning": "Your age — with ter, not ser." },
-              { "text": "E você? O que você faz?", "meaning": "Bounce the question back." }
+              {
+                "text": "Meu nome é Ana. Prazer!",
+                "meaning": "Your name plus a polite close."
+              },
+              {
+                "text": "Sou de São Paulo, capital.",
+                "meaning": "City inside country."
+              },
+              {
+                "text": "Sou brasileira, de São Paulo.",
+                "meaning": "Nationality plus city."
+              },
+              {
+                "text": "Sou enfermeira num hospital.",
+                "meaning": "Job plus workplace."
+              },
+              {
+                "text": "Tenho vinte e cinco anos.",
+                "meaning": "Your age — with ter, not ser."
+              },
+              {
+                "text": "E você? O que você faz?",
+                "meaning": "Bounce the question back."
+              }
             ]
           },
           "expressions": [
-            { "text": "Meu nome é …", "meaning": "Give your name.", "note": "Also: Me chamo … or Eu sou a/o …" },
-            { "text": "Sou + nationality", "meaning": "Say your nationality.", "note": "brasileira, argentina, portuguesa — lower-case in Portuguese." },
-            { "text": "Sou do / da …", "meaning": "Say your city or country.", "note": "do for masculine, da for feminine: do Brasil, da Espanha." },
-            { "text": "Trabalho em …", "meaning": "Say where you work.", "note": "Trabalho num hospital / numa escola." },
-            { "text": "Prazer!", "meaning": "Polite close when you meet someone.", "note": "Answer: Prazer! or O prazer é meu." },
-            { "text": "E você?", "meaning": "Bounce the question back.", "note": "—Sou de São Paulo. E você?" }
+            {
+              "text": "Meu nome é …",
+              "meaning": "Give your name.",
+              "note": "Also: Me chamo … or Eu sou a/o …"
+            },
+            {
+              "text": "Sou + nationality",
+              "meaning": "Say your nationality.",
+              "note": "brasileira, argentina, portuguesa — lower-case in Portuguese."
+            },
+            {
+              "text": "Sou do / da …",
+              "meaning": "Say your city or country.",
+              "note": "do for masculine, da for feminine: do Brasil, da Espanha."
+            },
+            {
+              "text": "Trabalho em …",
+              "meaning": "Say where you work.",
+              "note": "Trabalho num hospital / numa escola."
+            },
+            {
+              "text": "Prazer!",
+              "meaning": "Polite close when you meet someone.",
+              "note": "Answer: Prazer! or O prazer é meu."
+            },
+            {
+              "text": "E você?",
+              "meaning": "Bounce the question back.",
+              "note": "—Sou de São Paulo. E você?"
+            }
           ],
           "situation": "Your first day at a language school in São Paulo. Present yourself completely to the class: name, city, nationality and job.",
           "practice": {
             "questions": [
               {
                 "prompt": "Como você se chama?",
-                "expected": ["Meu nome é <name>.", "Me chamo <name>."],
+                "expected": [
+                  "Meu nome é <name>.",
+                  "Me chamo <name>."
+                ],
                 "focus": "name formulas",
                 "watch": "Both are fine; recast the shorter one as Meu nome é for variety."
               },
               {
                 "prompt": "De onde você é?",
-                "expected": ["Sou do <country>.", "Sou da <country>."],
+                "expected": [
+                  "Sou do <country>.",
+                  "Sou da <country>."
+                ],
                 "focus": "origin with do/da",
                 "watch": "The article joins de: DO Brasil, DA Espanha."
               },
               {
                 "prompt": "Qual é a sua nacionalidade?",
-                "expected": ["Sou <nationality>."],
+                "expected": [
+                  "Sou <nationality>."
+                ],
                 "focus": "nationality with ser",
                 "watch": "Lower-case: sou brasileira, not Brasileira."
               },
               {
                 "prompt": "O que você faz?",
-                "expected": ["Sou <job>.", "Trabalho como <job>."],
+                "expected": [
+                  "Sou <job>.",
+                  "Trabalho como <job>."
+                ],
                 "focus": "jobs without article",
                 "watch": "“Sou uma professora” — recast dropping the article."
               },
               {
                 "prompt": "E onde você mora?",
-                "expected": ["Moro em <city>."],
+                "expected": [
+                  "Moro em <city>."
+                ],
                 "focus": "moro em",
                 "watch": "“Moro em São Paulo” — em for cities."
               },
               {
                 "prompt": "Prazer! E você, o que faz?",
-                "expected": ["Sou <job>."],
+                "expected": [
+                  "Sou <job>."
+                ],
                 "focus": "bounce back and answer",
                 "watch": "Recast with Sou + job."
               }
             ]
           },
           "exercises": [
-            {"id": "pt-foundations-u1-introduce-e1", "kind": "choice", "prompt": "___ Ana. Prazer!", "options": ["Meu nome é", "Meu nome de", "Me chamo em", "Estou"], "answers": ["Meu nome é"], "explain": "Meu nome é + name: one piece."},
-            {"id": "pt-foundations-u1-introduce-e2", "kind": "gap", "prompt": "Sou ___ Itália. (nationality)", "answers": ["italiana"], "explain": "Nationality is lower-case: italiana, italiano."},
-            {"id": "pt-foundations-u1-introduce-e3", "kind": "order", "prompt": "Say your name and city.", "answers": ["Sou a Ana e sou de São Paulo"], "explain": "Two sou pieces, both with their verb."},
-            {"id": "pt-foundations-u1-introduce-e4", "kind": "written", "prompt": "Give your complete introduction: name and country.", "answers": ["Meu nome é <name> e sou do <country>", "Meu nome é <name> e sou da <country>", "Me chamo <name> e sou do <country>"], "explain": "Name + origin, each with its verb."}
+            {
+              "id": "pt-foundations-u1-introduce-e1",
+              "kind": "choice",
+              "prompt": "___ Ana. Prazer!",
+              "options": [
+                "Meu nome é",
+                "Meu nome de",
+                "Me chamo em",
+                "Estou"
+              ],
+              "answers": [
+                "Meu nome é"
+              ],
+              "explain": "Meu nome é + name: one piece."
+            },
+            {
+              "id": "pt-foundations-u1-introduce-e2",
+              "kind": "gap",
+              "prompt": "Sou ___ Itália. (nationality)",
+              "answers": [
+                "italiana"
+              ],
+              "explain": "Nationality is lower-case: italiana, italiano."
+            },
+            {
+              "id": "pt-foundations-u1-introduce-e3",
+              "kind": "order",
+              "prompt": "Say your name and city.",
+              "answers": [
+                "Sou a Ana e sou de São Paulo"
+              ],
+              "explain": "Two sou pieces, both with their verb."
+            },
+            {
+              "id": "pt-foundations-u1-introduce-e4",
+              "kind": "written",
+              "prompt": "Give your complete introduction: name and country.",
+              "answers": [
+                "Meu nome é <name> e sou do <country>",
+                "Meu nome é <name> e sou da <country>",
+                "Me chamo <name> e sou do <country>"
+              ],
+              "explain": "Name + origin, each with its verb."
+            }
           ]
         }
       ]

@@ -1,6 +1,7 @@
 {
   "id": "de-foundations",
   "languageID": "de",
+  "schemaVersion": 2,
   "title": "Foundations",
   "subtitle": "Start from zero",
   "symbol": "graduationcap",
@@ -43,68 +44,171 @@
               "Use sein for identity and origin: “Ich bin Ana”, “Ich bin aus Deutschland”, “Er ist Lehrer”. Origin takes aus: “Ich bin aus Berlin”."
             ],
             "examples": [
-              { "text": "Ich bin Ana. Ich bin aus Deutschland.", "meaning": "Your name and country." },
-              { "text": "Du bist mein bester Freund.", "meaning": "A close bond with someone." },
-              { "text": "Sie ist Lehrerin.", "meaning": "Someone's profession." },
-              { "text": "Wir sind sehr glücklich heute.", "meaning": "A feeling that defines right now." },
-              { "text": "Das Café ist nah am Bahnhof.", "meaning": "Where a place is." },
-              { "text": "Sie sind aus Berlin.", "meaning": "Someone's origin." }
+              {
+                "text": "Ich bin Ana. Ich bin aus Deutschland.",
+                "meaning": "Your name and country."
+              },
+              {
+                "text": "Du bist mein bester Freund.",
+                "meaning": "A close bond with someone."
+              },
+              {
+                "text": "Sie ist Lehrerin.",
+                "meaning": "Someone's profession."
+              },
+              {
+                "text": "Wir sind sehr glücklich heute.",
+                "meaning": "A feeling that defines right now."
+              },
+              {
+                "text": "Das Café ist nah am Bahnhof.",
+                "meaning": "Where a place is."
+              },
+              {
+                "text": "Sie sind aus Berlin.",
+                "meaning": "Someone's origin."
+              }
             ]
           },
           "expressions": [
-            { "text": "Ich bin …", "meaning": "Introduce yourself.", "note": "With your name or job: Ich bin Ana. Ich bin Lehrerin." },
-            { "text": "Ich bin aus …", "meaning": "Say where you come from.", "note": "Origin takes aus, not von: Ich bin aus Berlin." },
-            { "text": "Bist du … ?", "meaning": "Ask about the other person.", "note": "Bist du Student? Bist du von hier?" },
-            { "text": "Ja, bin ich. / Nein, bin ich nicht.", "meaning": "Short answers to a Bist du… ? question.", "note": "The verb comes first in the answer." },
-            { "text": "Er ist / Sie ist …", "meaning": "Say what someone else is.", "note": "Er ist Lehrer — no article with jobs." },
-            { "text": "Freut mich, dich kennenzulernen.", "meaning": "The fixed phrase when you meet someone.", "note": "Short and natural: Freut mich!" }
+            {
+              "text": "Ich bin …",
+              "meaning": "Introduce yourself.",
+              "note": "With your name or job: Ich bin Ana. Ich bin Lehrerin."
+            },
+            {
+              "text": "Ich bin aus …",
+              "meaning": "Say where you come from.",
+              "note": "Origin takes aus, not von: Ich bin aus Berlin."
+            },
+            {
+              "text": "Bist du … ?",
+              "meaning": "Ask about the other person.",
+              "note": "Bist du Student? Bist du von hier?"
+            },
+            {
+              "text": "Ja, bin ich. / Nein, bin ich nicht.",
+              "meaning": "Short answers to a Bist du… ? question.",
+              "note": "The verb comes first in the answer."
+            },
+            {
+              "text": "Er ist / Sie ist …",
+              "meaning": "Say what someone else is.",
+              "note": "Er ist Lehrer — no article with jobs."
+            },
+            {
+              "text": "Freut mich, dich kennenzulernen.",
+              "meaning": "The fixed phrase when you meet someone.",
+              "note": "Short and natural: Freut mich!"
+            }
           ],
           "situation": "You meet someone new at a friendly language-exchange café in Berlin. Introduce yourselves and ask simple questions with the verb sein.",
           "practice": {
             "questions": [
               {
                 "prompt": "Hallo! Ich bin Ana. Wie heißt du?",
-                "expected": ["Ich heiße <name>.", "Ich bin <name>.", "Mein Name ist <name>."],
+                "expected": [
+                  "Ich heiße <name>.",
+                  "Ich bin <name>.",
+                  "Mein Name ist <name>."
+                ],
                 "focus": "Ich heiße / Ich bin",
                 "watch": "Answering only the name: accept it, then recast “Ich heiße …”."
               },
               {
                 "prompt": "Woher kommst du?",
-                "expected": ["Ich komme aus <country>.", "Ich bin aus <country>."],
+                "expected": [
+                  "Ich komme aus <country>.",
+                  "Ich bin aus <country>."
+                ],
                 "focus": "kommen aus / sein aus",
                 "watch": "“Ich komme von Spanien” — recast with aus."
               },
               {
                 "prompt": "Bist du Student?",
-                "expected": ["Ja, bin ich.", "Nein, bin ich nicht."],
+                "expected": [
+                  "Ja, bin ich.",
+                  "Nein, bin ich nicht."
+                ],
                 "focus": "short answers with sein",
                 "watch": "One-word “Ja” — recast with the verb: Ja, bin ich."
               },
               {
                 "prompt": "Wie geht es dir heute?",
-                "expected": ["Mir geht es gut.", "Ich bin müde.", "Ich bin glücklich."],
+                "expected": [
+                  "Mir geht es gut.",
+                  "Ich bin müde.",
+                  "Ich bin glücklich."
+                ],
                 "focus": "sein for feelings",
                 "watch": "“Ich bin gut” sounds off — recast “Mir geht es gut”."
               },
               {
                 "prompt": "Ist deine Stadt groß oder klein?",
-                "expected": ["Sie ist groß.", "Sie ist klein.", "Meine Stadt ist …"],
+                "expected": [
+                  "Sie ist groß.",
+                  "Sie ist klein.",
+                  "Meine Stadt ist …"
+                ],
                 "focus": "ist with places",
                 "watch": "“Meine Stadt groß” — recast “Meine Stadt IST groß”."
               },
               {
                 "prompt": "Jetzt sind wir Freunde! Woher ist deine Familie?",
-                "expected": ["Sie ist aus <country>.", "Meine Familie ist aus <country>."],
+                "expected": [
+                  "Sie ist aus <country>.",
+                  "Meine Familie ist aus <country>."
+                ],
                 "focus": "ist for a group's origin",
                 "watch": "“Meine Familie aus …” — recast with ist."
               }
             ]
           },
           "exercises": [
-            {"id": "de-foundations-u1-sein-e1", "kind": "choice", "prompt": "Sie ___ Lehrerin.", "options": ["ist", "bist", "bin", "sind"], "answers": ["ist"], "explain": "With er/sie, sein becomes ist."},
-            {"id": "de-foundations-u1-sein-e2", "kind": "gap", "prompt": "Wir ___ aus Berlin.", "answers": ["sind"], "explain": "With wir, sein is immer sind."},
-            {"id": "de-foundations-u1-sein-e3", "kind": "order", "prompt": "Say where you are from.", "answers": ["Ich bin aus Deutschland"], "explain": "Ich bin + aus + country: Ich bin aus Deutschland."},
-            {"id": "de-foundations-u1-sein-e4", "kind": "written", "prompt": "Introduce yourself in one sentence: say your name.", "answers": ["Ich heiße <name>", "Ich bin <name>", "Mein Name ist <name>"], "explain": "Ich heiße Ana / Ich bin Ana — the subject is never dropped."}
+            {
+              "id": "de-foundations-u1-sein-e1",
+              "kind": "choice",
+              "prompt": "Sie ___ Lehrerin.",
+              "options": [
+                "ist",
+                "bist",
+                "bin",
+                "sind"
+              ],
+              "answers": [
+                "ist"
+              ],
+              "explain": "With er/sie, sein becomes ist."
+            },
+            {
+              "id": "de-foundations-u1-sein-e2",
+              "kind": "gap",
+              "prompt": "Wir ___ aus Berlin.",
+              "answers": [
+                "sind"
+              ],
+              "explain": "With wir, sein is immer sind."
+            },
+            {
+              "id": "de-foundations-u1-sein-e3",
+              "kind": "order",
+              "prompt": "Say where you are from.",
+              "answers": [
+                "Ich bin aus Deutschland"
+              ],
+              "explain": "Ich bin + aus + country: Ich bin aus Deutschland."
+            },
+            {
+              "id": "de-foundations-u1-sein-e4",
+              "kind": "written",
+              "prompt": "Introduce yourself in one sentence: say your name.",
+              "answers": [
+                "Ich heiße <name>",
+                "Ich bin <name>",
+                "Mein Name ist <name>"
+              ],
+              "explain": "Ich heiße Ana / Ich bin Ana — the subject is never dropped."
+            }
           ]
         },
         {
@@ -118,68 +222,167 @@
               "Question words come first: “Woher kommst du?”, “Wer ist das?” — woher asks about origin, wo about place."
             ],
             "examples": [
-              { "text": "Bist du Lehrerin?", "meaning": "A yes/no question with bist." },
-              { "text": "Ich bin nicht aus Berlin.", "meaning": "A negative with bin." },
-              { "text": "Woher kommst du?", "meaning": "Question word + kommst." },
-              { "text": "Er ist nicht mein Bruder.", "meaning": "A negative about another person." },
-              { "text": "Seid ihr Nachbarn?", "meaning": "Asking a group with seid." },
-              { "text": "Wer ist das?", "meaning": "Who is that?" }
+              {
+                "text": "Bist du Lehrerin?",
+                "meaning": "A yes/no question with bist."
+              },
+              {
+                "text": "Ich bin nicht aus Berlin.",
+                "meaning": "A negative with bin."
+              },
+              {
+                "text": "Woher kommst du?",
+                "meaning": "Question word + kommst."
+              },
+              {
+                "text": "Er ist nicht mein Bruder.",
+                "meaning": "A negative about another person."
+              },
+              {
+                "text": "Seid ihr Nachbarn?",
+                "meaning": "Asking a group with seid."
+              },
+              {
+                "text": "Wer ist das?",
+                "meaning": "Who is that?"
+              }
             ]
           },
           "expressions": [
-            { "text": "Bist du … ?", "meaning": "Ask a yes/no question.", "note": "Verb first: Bist du Lehrer?" },
-            { "text": "Ich bin nicht …", "meaning": "Say what is not true about you.", "note": "nicht after the verb: Ich bin nicht müde." },
-            { "text": "Woher kommst du?", "meaning": "Ask where someone is from.", "note": "woher = from where; wo = where." },
-            { "text": "Er ist nicht …", "meaning": "Say what someone else is not.", "note": "Er ist nicht mein Chef." },
-            { "text": "Stimmt's?", "meaning": "Tag a statement to check it.", "note": "Du bist von hier, stimmt's?" },
-            { "text": "Genau.", "meaning": "The natural yes in talk.", "note": "Also: Stimmt." }
+            {
+              "text": "Bist du … ?",
+              "meaning": "Ask a yes/no question.",
+              "note": "Verb first: Bist du Lehrer?"
+            },
+            {
+              "text": "Ich bin nicht …",
+              "meaning": "Say what is not true about you.",
+              "note": "nicht after the verb: Ich bin nicht müde."
+            },
+            {
+              "text": "Woher kommst du?",
+              "meaning": "Ask where someone is from.",
+              "note": "woher = from where; wo = where."
+            },
+            {
+              "text": "Er ist nicht …",
+              "meaning": "Say what someone else is not.",
+              "note": "Er ist nicht mein Chef."
+            },
+            {
+              "text": "Stimmt's?",
+              "meaning": "Tag a statement to check it.",
+              "note": "Du bist von hier, stimmt's?"
+            },
+            {
+              "text": "Genau.",
+              "meaning": "The natural yes in talk.",
+              "note": "Also: Stimmt."
+            }
           ],
           "situation": "You chat with a new neighbour in the lift in Berlin. Ask simple yes/no questions and say what is and isn't true for you.",
           "practice": {
             "questions": [
               {
                 "prompt": "Bist du von hier?",
-                "expected": ["Ja, ich bin von hier.", "Nein, ich bin nicht von hier."],
+                "expected": [
+                  "Ja, ich bin von hier.",
+                  "Nein, ich bin nicht von hier."
+                ],
                 "focus": "short answers",
                 "watch": "One-word “Ja” — recast with the verb: Ja, bin ich."
               },
               {
                 "prompt": "Bist du Lehrer oder Student?",
-                "expected": ["Ich bin Lehrer.", "Ich bin Student.", "Ich bin Studentin."],
+                "expected": [
+                  "Ich bin Lehrer.",
+                  "Ich bin Student.",
+                  "Ich bin Studentin."
+                ],
                 "focus": "choice with sein",
                 "watch": "Accept either; no article before jobs."
               },
               {
                 "prompt": "Ist deine Familie groß?",
-                "expected": ["Ja, sie ist groß.", "Nein, sie ist nicht groß."],
+                "expected": [
+                  "Ja, sie ist groß.",
+                  "Nein, sie ist nicht groß."
+                ],
                 "focus": "ist in questions about others",
                 "watch": "“nicht groß” — nicht at the end here."
               },
               {
                 "prompt": "Woher kommst du genau?",
-                "expected": ["Ich komme aus <country>.", "Ich bin aus <country>."],
+                "expected": [
+                  "Ich komme aus <country>.",
+                  "Ich bin aus <country>."
+                ],
                 "focus": "woher + aus",
                 "watch": "“Ich komme aus” und “Ich bin aus” — both fine."
               },
               {
                 "prompt": "Sag mir, was du nicht bist.",
-                "expected": ["Ich bin nicht <job>.", "Ich bin nicht aus <country>."],
+                "expected": [
+                  "Ich bin nicht <job>.",
+                  "Ich bin nicht aus <country>."
+                ],
                 "focus": "negation with nicht",
                 "watch": "“Ich nicht bin” — recast: Ich BIN nicht …"
               },
               {
                 "prompt": "Sind wir jetzt Freunde?",
-                "expected": ["Ja, wir sind Freunde.", "Klar, wir sind Freunde."],
+                "expected": [
+                  "Ja, wir sind Freunde.",
+                  "Klar, wir sind Freunde."
+                ],
                 "focus": "sind in questions",
                 "watch": "“Wir seid” is wrong — wir takes sind."
               }
             ]
           },
           "exercises": [
-            {"id": "de-foundations-u1-questions-e1", "kind": "choice", "prompt": "___ du aus Hamburg?", "options": ["Bist", "Ist", "Bin", "Sind"], "answers": ["Bist"], "explain": "With du, the question starts with Bist."},
-            {"id": "de-foundations-u1-questions-e2", "kind": "gap", "prompt": "Sie ist nicht ___ Schwester.", "answers": ["meine"], "explain": "meine for feminine things: meine Schwester."},
-            {"id": "de-foundations-u1-questions-e3", "kind": "order", "prompt": "Say you are not from München.", "answers": ["Ich bin nicht aus München"], "explain": "nicht goes after bin, at the end here."},
-            {"id": "de-foundations-u1-questions-e4", "kind": "written", "prompt": "Make it negative: \"Ich bin aus Köln.\"", "answers": ["Ich bin nicht aus Köln"], "explain": "nicht before aus Köln: Ich bin nicht aus Köln."}
+            {
+              "id": "de-foundations-u1-questions-e1",
+              "kind": "choice",
+              "prompt": "___ du aus Hamburg?",
+              "options": [
+                "Bist",
+                "Ist",
+                "Bin",
+                "Sind"
+              ],
+              "answers": [
+                "Bist"
+              ],
+              "explain": "With du, the question starts with Bist."
+            },
+            {
+              "id": "de-foundations-u1-questions-e2",
+              "kind": "gap",
+              "prompt": "Sie ist nicht ___ Schwester.",
+              "answers": [
+                "meine"
+              ],
+              "explain": "meine for feminine things: meine Schwester."
+            },
+            {
+              "id": "de-foundations-u1-questions-e3",
+              "kind": "order",
+              "prompt": "Say you are not from München.",
+              "answers": [
+                "Ich bin nicht aus München"
+              ],
+              "explain": "nicht goes after bin, at the end here."
+            },
+            {
+              "id": "de-foundations-u1-questions-e4",
+              "kind": "written",
+              "prompt": "Make it negative: \"Ich bin aus Köln.\"",
+              "answers": [
+                "Ich bin nicht aus Köln"
+              ],
+              "explain": "nicht before aus Köln: Ich bin nicht aus Köln."
+            }
           ]
         },
         {
@@ -193,68 +396,163 @@
               "Jobs with sein drop the article: “Ich bin Lehrerin”. Close with “Freut mich” and bounce the question back with “Und du?”"
             ],
             "examples": [
-              { "text": "Ich heiße Ana. Freut mich.", "meaning": "Your name plus a polite close." },
-              { "text": "Ich komme aus Berlin.", "meaning": "Your city." },
-              { "text": "Ich bin Deutsche.", "meaning": "Nationality as a noun." },
-              { "text": "Ich bin Krankenschwester im Krankenhaus.", "meaning": "Job plus workplace." },
-              { "text": "Ich bin fünfundzwanzig Jahre alt.", "meaning": "Your age — with sein + alt." },
-              { "text": "Und du? Was machst du?", "meaning": "Bounce the question back." }
+              {
+                "text": "Ich heiße Ana. Freut mich.",
+                "meaning": "Your name plus a polite close."
+              },
+              {
+                "text": "Ich komme aus Berlin.",
+                "meaning": "Your city."
+              },
+              {
+                "text": "Ich bin Deutsche.",
+                "meaning": "Nationality as a noun."
+              },
+              {
+                "text": "Ich bin Krankenschwester im Krankenhaus.",
+                "meaning": "Job plus workplace."
+              },
+              {
+                "text": "Ich bin fünfundzwanzig Jahre alt.",
+                "meaning": "Your age — with sein + alt."
+              },
+              {
+                "text": "Und du? Was machst du?",
+                "meaning": "Bounce the question back."
+              }
             ]
           },
           "expressions": [
-            { "text": "Ich heiße …", "meaning": "Give your name.", "note": "Also: Mein Name ist … or Ich bin …" },
-            { "text": "Ich bin + nationality", "meaning": "Say your nationality.", "note": "As a noun: Ich bin Deutsche / Deutscher." },
-            { "text": "Ich komme aus …", "meaning": "Say your city or country.", "note": "Ich komme aus Berlin; Ich komme aus Deutschland." },
-            { "text": "Ich arbeite in …", "meaning": "Say where you work.", "note": "Ich arbeite im Krankenhaus / in einer Schule." },
-            { "text": "Freut mich.", "meaning": "Polite close when you meet someone.", "note": "Answer: Mich auch." },
-            { "text": "Und du?", "meaning": "Bounce the question back.", "note": "—Ich komme aus Berlin. Und du?" }
+            {
+              "text": "Ich heiße …",
+              "meaning": "Give your name.",
+              "note": "Also: Mein Name ist … or Ich bin …"
+            },
+            {
+              "text": "Ich bin + nationality",
+              "meaning": "Say your nationality.",
+              "note": "As a noun: Ich bin Deutsche / Deutscher."
+            },
+            {
+              "text": "Ich komme aus …",
+              "meaning": "Say your city or country.",
+              "note": "Ich komme aus Berlin; Ich komme aus Deutschland."
+            },
+            {
+              "text": "Ich arbeite in …",
+              "meaning": "Say where you work.",
+              "note": "Ich arbeite im Krankenhaus / in einer Schule."
+            },
+            {
+              "text": "Freut mich.",
+              "meaning": "Polite close when you meet someone.",
+              "note": "Answer: Mich auch."
+            },
+            {
+              "text": "Und du?",
+              "meaning": "Bounce the question back.",
+              "note": "—Ich komme aus Berlin. Und du?"
+            }
           ],
           "situation": "Your first day at a language school in Berlin. Present yourself completely to the class: name, city, nationality and job.",
           "practice": {
             "questions": [
               {
                 "prompt": "Wie heißt du?",
-                "expected": ["Ich heiße <name>.", "Mein Name ist <name>."],
+                "expected": [
+                  "Ich heiße <name>.",
+                  "Mein Name ist <name>."
+                ],
                 "focus": "name formulas",
                 "watch": "Both are fine; recast the shorter one as Ich heiße for variety."
               },
               {
                 "prompt": "Woher kommst du?",
-                "expected": ["Ich komme aus <country>."],
+                "expected": [
+                  "Ich komme aus <country>."
+                ],
                 "focus": "origin",
                 "watch": "Never von for countries: Ich komme AUS <country>."
               },
               {
                 "prompt": "Was bist du von der Nationalität?",
-                "expected": ["Ich bin <nationality>."],
+                "expected": [
+                  "Ich bin <nationality>."
+                ],
                 "focus": "nationality with sein",
                 "watch": "As a noun it takes -e for women: Deutsche, Französin."
               },
               {
                 "prompt": "Was arbeitest du?",
-                "expected": ["Ich bin <job>.", "Ich arbeite als <job>."],
+                "expected": [
+                  "Ich bin <job>.",
+                  "Ich arbeite als <job>."
+                ],
                 "focus": "jobs without article",
                 "watch": "“Ich bin eine Lehrerin” — recast dropping the article."
               },
               {
                 "prompt": "Und wo wohnst du?",
-                "expected": ["Ich wohne in <city>."],
+                "expected": [
+                  "Ich wohne in <city>."
+                ],
                 "focus": "wohne in",
                 "watch": "“Ich wohne in Berlin” — in for cities."
               },
               {
                 "prompt": "Freut mich! Und was machst du so?",
-                "expected": ["Ich bin <job>."],
+                "expected": [
+                  "Ich bin <job>."
+                ],
                 "focus": "bounce back and answer",
                 "watch": "Recast with Ich bin + job."
               }
             ]
           },
           "exercises": [
-            {"id": "de-foundations-u1-introduce-e1", "kind": "choice", "prompt": "___ Ana. Freut mich.", "options": ["Ich heiße", "Ich heiße aus", "Heiße", "Ich bin aus"], "answers": ["Ich heiße"], "explain": "Ich heiße + name: one piece, no aus."},
-            {"id": "de-foundations-u1-introduce-e2", "kind": "gap", "prompt": "Ich komme aus ___. Ich bin Italienerin.", "answers": ["Italien"], "explain": "Country: Italien — nationality: Italienerin."},
-            {"id": "de-foundations-u1-introduce-e3", "kind": "order", "prompt": "Say your name and city.", "answers": ["Ich bin Ana und ich komme aus Berlin"], "explain": "Two pieces, each with its verb."},
-            {"id": "de-foundations-u1-introduce-e4", "kind": "written", "prompt": "Give your complete introduction: name and country.", "answers": ["Ich heiße <name> und ich komme aus <country>", "Ich bin <name> und ich komme aus <country>"], "explain": "Name + origin, each with its verb."}
+            {
+              "id": "de-foundations-u1-introduce-e1",
+              "kind": "choice",
+              "prompt": "___ Ana. Freut mich.",
+              "options": [
+                "Ich heiße",
+                "Ich heiße aus",
+                "Heiße",
+                "Ich bin aus"
+              ],
+              "answers": [
+                "Ich heiße"
+              ],
+              "explain": "Ich heiße + name: one piece, no aus."
+            },
+            {
+              "id": "de-foundations-u1-introduce-e2",
+              "kind": "gap",
+              "prompt": "Ich komme aus ___. Ich bin Italienerin.",
+              "answers": [
+                "Italien"
+              ],
+              "explain": "Country: Italien — nationality: Italienerin."
+            },
+            {
+              "id": "de-foundations-u1-introduce-e3",
+              "kind": "order",
+              "prompt": "Say your name and city.",
+              "answers": [
+                "Ich bin Ana und ich komme aus Berlin"
+              ],
+              "explain": "Two pieces, each with its verb."
+            },
+            {
+              "id": "de-foundations-u1-introduce-e4",
+              "kind": "written",
+              "prompt": "Give your complete introduction: name and country.",
+              "answers": [
+                "Ich heiße <name> und ich komme aus <country>",
+                "Ich bin <name> und ich komme aus <country>"
+              ],
+              "explain": "Name + origin, each with its verb."
+            }
           ]
         }
       ]

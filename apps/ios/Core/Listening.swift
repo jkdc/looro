@@ -15,11 +15,15 @@ public struct ListeningText: Identifiable, Hashable, Sendable {
     public var unitID: String?
     public var text: String
     public var questions: [Exercise]
+    public var skills: [String]
+    public var exposureSkills: [String]
     public init(id: String, languageID: String, title: String, level: String, topic: String,
-                unitID: String? = nil, text: String, questions: [Exercise]) {
+                unitID: String? = nil, text: String, questions: [Exercise],
+                skills: [String] = [], exposureSkills: [String] = []) {
         self.id = id; self.languageID = languageID; self.title = title; self.level = level
         self.topic = topic; self.unitID = unitID
         self.text = text; self.questions = questions
+        self.skills = skills; self.exposureSkills = exposureSkills
     }
 }
 

@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 2,
   "texts": [
     {
       "id": "de-listen-cafe-morning",
@@ -9,22 +10,87 @@
       "unitID": "de-foundations-u1",
       "text": "Jeden Morgen geht Marta zu einem kleinen Café in der Nähe ihrer Wohnung. Der Kellner kennt ihren Namen, deshalb muss sie nie bestellen. Heute sitzt sie am Fenster mit einem Kaffee und einem Croissant. Ihr Bus fährt um halb neun ab, aber sie macht sich keine Sorgen. Das Café ist zu dieser Stunde sehr ruhig. Sie trinkt ihren Kaffee langsam und sieht zu, wie die Stadt aufwacht.",
       "questions": [
-        {"id": "de-listen-cafe-morning-q1", "kind": "choice", "prompt": "Wohin geht Marta jeden Morgen?",
-         "options": ["In ein kleines Café", "In ihr Büro", "Zum Busbahnhof", "In einen Park"], "answers": ["In ein kleines Café"],
-         "explain": "Sie geht zu einem kleinen Café in der Nähe ihrer Wohnung."},
-        {"id": "de-listen-cafe-morning-q2", "kind": "choice", "prompt": "Was frühstückt sie heute?",
-         "options": ["Einen Kaffee und ein Croissant", "Tee und Toast", "Orangensaft", "Nichts"], "answers": ["Einen Kaffee und ein Croissant"],
-         "explain": "Sie sitzt am Fenster mit einem Kaffee und einem Croissant."},
-        {"id": "de-listen-cafe-morning-q3", "kind": "written", "prompt": "Wann fährt ihr Bus ab?",
-         "answers": ["um halb neun", "halb neun"], "explain": "Ihr Bus fährt um halb neun ab."},
-        {"id": "de-listen-cafe-morning-q4", "kind": "choice", "prompt": "Wie fühlt sie sich wegen der Zeit?",
-         "options": ["Sie macht sich keine Sorgen", "Sie ist sehr spät dran", "Sie ist wütend", "Sie ist müde"], "answers": ["Sie macht sich keine Sorgen"],
-         "explain": "Im Text steht: sie macht sich keine Sorgen."},
-        {"id": "de-listen-cafe-morning-q5", "kind": "choice", "prompt": "Wer kennt ihren Namen?",
-         "options": ["Der Kellner", "Der Busfahrer", "Ihr Chef", "Ein Nachbar"], "answers": ["Der Kellner"],
-         "explain": "Der Kellner kennt ihren Namen, deshalb muss sie nie bestellen."},
-        {"id": "de-listen-cafe-morning-q6", "kind": "written", "prompt": "Wo sitzt sie heute?",
-         "answers": ["am fenster", "neben dem fenster", "ans fenster"], "explain": "Heute sitzt sie am Fenster."}
+        {
+          "id": "de-listen-cafe-morning-q1",
+          "kind": "choice",
+          "prompt": "Wohin geht Marta jeden Morgen?",
+          "options": [
+            "In ein kleines Café",
+            "In ihr Büro",
+            "Zum Busbahnhof",
+            "In einen Park"
+          ],
+          "answers": [
+            "In ein kleines Café"
+          ],
+          "explain": "Sie geht zu einem kleinen Café in der Nähe ihrer Wohnung."
+        },
+        {
+          "id": "de-listen-cafe-morning-q2",
+          "kind": "choice",
+          "prompt": "Was frühstückt sie heute?",
+          "options": [
+            "Einen Kaffee und ein Croissant",
+            "Tee und Toast",
+            "Orangensaft",
+            "Nichts"
+          ],
+          "answers": [
+            "Einen Kaffee und ein Croissant"
+          ],
+          "explain": "Sie sitzt am Fenster mit einem Kaffee und einem Croissant."
+        },
+        {
+          "id": "de-listen-cafe-morning-q3",
+          "kind": "written",
+          "prompt": "Wann fährt ihr Bus ab?",
+          "answers": [
+            "um halb neun",
+            "halb neun"
+          ],
+          "explain": "Ihr Bus fährt um halb neun ab."
+        },
+        {
+          "id": "de-listen-cafe-morning-q4",
+          "kind": "choice",
+          "prompt": "Wie fühlt sie sich wegen der Zeit?",
+          "options": [
+            "Sie macht sich keine Sorgen",
+            "Sie ist sehr spät dran",
+            "Sie ist wütend",
+            "Sie ist müde"
+          ],
+          "answers": [
+            "Sie macht sich keine Sorgen"
+          ],
+          "explain": "Im Text steht: sie macht sich keine Sorgen."
+        },
+        {
+          "id": "de-listen-cafe-morning-q5",
+          "kind": "choice",
+          "prompt": "Wer kennt ihren Namen?",
+          "options": [
+            "Der Kellner",
+            "Der Busfahrer",
+            "Ihr Chef",
+            "Ein Nachbar"
+          ],
+          "answers": [
+            "Der Kellner"
+          ],
+          "explain": "Der Kellner kennt ihren Namen, deshalb muss sie nie bestellen."
+        },
+        {
+          "id": "de-listen-cafe-morning-q6",
+          "kind": "written",
+          "prompt": "Wo sitzt sie heute?",
+          "answers": [
+            "am fenster",
+            "neben dem fenster",
+            "ans fenster"
+          ],
+          "explain": "Heute sitzt sie am Fenster."
+        }
       ]
     },
     {
@@ -36,22 +102,88 @@
       "unitID": "de-foundations-u1",
       "text": "Marta besucht ihren ersten Portugiesischkurs in einem kleinen Institut. Im Kurs sind sechs Personen, und alle möchten sprechen. Die Lehrerin bittet um Vorstellungen. „Ich heiße Marta und ich bin aus Bolivien“, sagt eine Dame. „Ich bin Andrés, ich komme aus Peru und arbeite in einem Restaurant“, sagt ein junger Mann. Marta stellt sich auch vor: „Ich bin Marta, ich bin Argentinierin und ich bin Krankenschwester.“ Die Lehrerin ist aus Madrid und unterrichtet mit viel Humor. Am Ende des Kurses tauschen die Teilnehmer ihre Telefonnummern aus. Sie sind noch keine Freunde, aber nächste Woche gehen sie zusammen einen Kaffee trinken und üben.",
       "questions": [
-        {"id": "de-listen-language-class-q1", "kind": "choice", "prompt": "Wie viele Personen sind im Kurs?",
-         "options": ["Sechs", "Drei", "Zehn", "Vierzehn"], "answers": ["Sechs"],
-         "explain": "Im Kurs sind sechs Personen."},
-        {"id": "de-listen-language-class-q2", "kind": "choice", "prompt": "Woher kommt Andrés?",
-         "options": ["Aus Peru", "Aus Bolivien", "Aus Argentinien", "Aus Mexiko"], "answers": ["Aus Peru"],
-         "explain": "Andrés kommt aus Peru und arbeitet in einem Restaurant."},
-        {"id": "de-listen-language-class-q3", "kind": "choice", "prompt": "Was ist Marta von Beruf?",
-         "options": ["Krankenschwester", "Lehrerin", "Kellnerin", "Studentin"], "answers": ["Krankenschwester"],
-         "explain": "Marta ist Argentinierin und sie ist Krankenschwester."},
-        {"id": "de-listen-language-class-q4", "kind": "written", "prompt": "Woher ist die Lehrerin?",
-         "answers": ["madrid", "aus madrid", "sie ist aus madrid"], "explain": "Die Lehrerin ist aus Madrid."},
-        {"id": "de-listen-language-class-q5", "kind": "choice", "prompt": "Was machen sie am Ende des Kurses?",
-         "options": ["Sie tauschen ihre Telefonnummern aus", "Sie gehen allein nach Hause", "Sie schreiben einen Test", "Sie essen im Restaurant"], "answers": ["Sie tauschen ihre Telefonnummern aus"],
-         "explain": "Die Teilnehmer tauschen ihre Telefonnummern aus."},
-        {"id": "de-listen-language-class-q6", "kind": "written", "prompt": "Was machen sie nächste Woche?",
-         "answers": ["kaffee trinken", "zusammen einen kaffee trinken", "einen kaffee trinken"], "explain": "Nächste Woche gehen sie zusammen einen Kaffee trinken und üben."}
+        {
+          "id": "de-listen-language-class-q1",
+          "kind": "choice",
+          "prompt": "Wie viele Personen sind im Kurs?",
+          "options": [
+            "Sechs",
+            "Drei",
+            "Zehn",
+            "Vierzehn"
+          ],
+          "answers": [
+            "Sechs"
+          ],
+          "explain": "Im Kurs sind sechs Personen."
+        },
+        {
+          "id": "de-listen-language-class-q2",
+          "kind": "choice",
+          "prompt": "Woher kommt Andrés?",
+          "options": [
+            "Aus Peru",
+            "Aus Bolivien",
+            "Aus Argentinien",
+            "Aus Mexiko"
+          ],
+          "answers": [
+            "Aus Peru"
+          ],
+          "explain": "Andrés kommt aus Peru und arbeitet in einem Restaurant."
+        },
+        {
+          "id": "de-listen-language-class-q3",
+          "kind": "choice",
+          "prompt": "Was ist Marta von Beruf?",
+          "options": [
+            "Krankenschwester",
+            "Lehrerin",
+            "Kellnerin",
+            "Studentin"
+          ],
+          "answers": [
+            "Krankenschwester"
+          ],
+          "explain": "Marta ist Argentinierin und sie ist Krankenschwester."
+        },
+        {
+          "id": "de-listen-language-class-q4",
+          "kind": "written",
+          "prompt": "Woher ist die Lehrerin?",
+          "answers": [
+            "madrid",
+            "aus madrid",
+            "sie ist aus madrid"
+          ],
+          "explain": "Die Lehrerin ist aus Madrid."
+        },
+        {
+          "id": "de-listen-language-class-q5",
+          "kind": "choice",
+          "prompt": "Was machen sie am Ende des Kurses?",
+          "options": [
+            "Sie tauschen ihre Telefonnummern aus",
+            "Sie gehen allein nach Hause",
+            "Sie schreiben einen Test",
+            "Sie essen im Restaurant"
+          ],
+          "answers": [
+            "Sie tauschen ihre Telefonnummern aus"
+          ],
+          "explain": "Die Teilnehmer tauschen ihre Telefonnummern aus."
+        },
+        {
+          "id": "de-listen-language-class-q6",
+          "kind": "written",
+          "prompt": "Was machen sie nächste Woche?",
+          "answers": [
+            "kaffee trinken",
+            "zusammen einen kaffee trinken",
+            "einen kaffee trinken"
+          ],
+          "explain": "Nächste Woche gehen sie zusammen einen Kaffee trinken und üben."
+        }
       ]
     },
     {
@@ -63,22 +195,87 @@
       "unitID": "de-foundations-u1",
       "text": "Meine kleine Schwester heißt Carla und ist neun Jahre alt. Sie ist sehr nett und sehr gesprächig. Carla ist nicht schüchtern: Sie spricht mit allen, mit den Nachbarn, mit den Lehrern und mit den Hunden im Park. Sie ist blond, wie unsere Mutter, und hat braune Augen wie unser Vater. Sie ist nicht groß für ihr Alter, aber sie ist sehr schnell und spielt riesig gern Fußball. Ihre Mannschaft ist nicht sehr gut, aber das ist ihr egal. „Ich bin keine Profispielerin“, sagt sie, „ich bin nur glücklich mit dem Ball.“ Meine Schwester ist klein, aber ihre Freude ist riesig.",
       "questions": [
-        {"id": "de-listen-little-sister-q1", "kind": "choice", "prompt": "Wie alt ist Carla?",
-         "options": ["Neun", "Neunzehn", "Sieben", "Zehn"], "answers": ["Neun"],
-         "explain": "Carla ist neun Jahre alt."},
-        {"id": "de-listen-little-sister-q2", "kind": "choice", "prompt": "Wie ist Carla?",
-         "options": ["Nett und gesprächig", "Schüchtern und still", "Ernst", "Traurig"], "answers": ["Nett und gesprächig"],
-         "explain": "Sie ist sehr nett und sehr gesprächig."},
-        {"id": "de-listen-little-sister-q3", "kind": "written", "prompt": "Welche Augenfarbe hat sie?",
-         "answers": ["braun", "braune augen"], "explain": "Sie hat braune Augen wie ihr Vater."},
-        {"id": "de-listen-little-sister-q4", "kind": "choice", "prompt": "Welche Haare hat sie?",
-         "options": ["Blond, wie ihre Mutter", "Dunkel, wie ihr Vater", "Rot", "Kurz und schwarz"], "answers": ["Blond, wie ihre Mutter"],
-         "explain": "Sie ist blond, wie unsere Mutter."},
-        {"id": "de-listen-little-sister-q5", "kind": "choice", "prompt": "Was spielt sie riesig gern?",
-         "options": ["Fußball", "Schwimmen", "Musik", "Videospiele"], "answers": ["Fußball"],
-         "explain": "Sie ist sehr schnell und spielt riesig gern Fußball."},
-        {"id": "de-listen-little-sister-q6", "kind": "written", "prompt": "Wie ist ihre Freude?",
-         "answers": ["riesig", "sehr groß", "groß"], "explain": "Ihre Freude ist riesig."}
+        {
+          "id": "de-listen-little-sister-q1",
+          "kind": "choice",
+          "prompt": "Wie alt ist Carla?",
+          "options": [
+            "Neun",
+            "Neunzehn",
+            "Sieben",
+            "Zehn"
+          ],
+          "answers": [
+            "Neun"
+          ],
+          "explain": "Carla ist neun Jahre alt."
+        },
+        {
+          "id": "de-listen-little-sister-q2",
+          "kind": "choice",
+          "prompt": "Wie ist Carla?",
+          "options": [
+            "Nett und gesprächig",
+            "Schüchtern und still",
+            "Ernst",
+            "Traurig"
+          ],
+          "answers": [
+            "Nett und gesprächig"
+          ],
+          "explain": "Sie ist sehr nett und sehr gesprächig."
+        },
+        {
+          "id": "de-listen-little-sister-q3",
+          "kind": "written",
+          "prompt": "Welche Augenfarbe hat sie?",
+          "answers": [
+            "braun",
+            "braune augen"
+          ],
+          "explain": "Sie hat braune Augen wie ihr Vater."
+        },
+        {
+          "id": "de-listen-little-sister-q4",
+          "kind": "choice",
+          "prompt": "Welche Haare hat sie?",
+          "options": [
+            "Blond, wie ihre Mutter",
+            "Dunkel, wie ihr Vater",
+            "Rot",
+            "Kurz und schwarz"
+          ],
+          "answers": [
+            "Blond, wie ihre Mutter"
+          ],
+          "explain": "Sie ist blond, wie unsere Mutter."
+        },
+        {
+          "id": "de-listen-little-sister-q5",
+          "kind": "choice",
+          "prompt": "Was spielt sie riesig gern?",
+          "options": [
+            "Fußball",
+            "Schwimmen",
+            "Musik",
+            "Videospiele"
+          ],
+          "answers": [
+            "Fußball"
+          ],
+          "explain": "Sie ist sehr schnell und spielt riesig gern Fußball."
+        },
+        {
+          "id": "de-listen-little-sister-q6",
+          "kind": "written",
+          "prompt": "Wie ist ihre Freude?",
+          "answers": [
+            "riesig",
+            "sehr groß",
+            "groß"
+          ],
+          "explain": "Ihre Freude ist riesig."
+        }
       ]
     },
     {
@@ -90,22 +287,87 @@
       "unitID": "de-foundations-u1",
       "text": "Tom hat einen neuen Mitbewohner. Er heißt Leo und ist dreiundzwanzig Jahre alt. Leo kommt aus einem kleinen Dorf im Norden, arbeitet aber jetzt in der Stadt. Er hat zwei Kartons, eine Gitarre und ein Fahrrad. Die Wohnung hat zwei Zimmer und eine helle Küche. Tom hofft, dass Leo gern kocht, denn Tom kocht überhaupt nicht gern.",
       "questions": [
-        {"id": "de-listen-new-flatmate-q1", "kind": "choice", "prompt": "Wie alt ist Leo?",
-         "options": ["Dreiundzwanzig", "Zweiunddreißig", "Zwanzig", "Dreißig"], "answers": ["Dreiundzwanzig"],
-         "explain": "Leo ist dreiundzwanzig Jahre alt."},
-        {"id": "de-listen-new-flatmate-q2", "kind": "choice", "prompt": "Was hat Leo NICHT?",
-         "options": ["Einen Fernseher", "Zwei Kartons", "Eine Gitarre", "Ein Fahrrad"], "answers": ["Einen Fernseher"],
-         "explain": "Er hat zwei Kartons, eine Gitarre und ein Fahrrad — keinen Fernseher."},
-        {"id": "de-listen-new-flatmate-q3", "kind": "written", "prompt": "Was macht Tom ungern?",
-         "answers": ["kochen", "er kocht nicht gern", "tom kocht nicht gern"], "explain": "Tom kocht überhaupt nicht gern."},
-        {"id": "de-listen-new-flatmate-q4", "kind": "choice", "prompt": "Wie ist die Wohnung?",
-         "options": ["Zwei Zimmer und eine helle Küche", "Ein Zimmer und ein Balkon", "Ein Garten", "Zwei Badezimmer"], "answers": ["Zwei Zimmer und eine helle Küche"],
-         "explain": "Die Wohnung hat zwei Zimmer und eine helle Küche."},
-        {"id": "de-listen-new-flatmate-q5", "kind": "choice", "prompt": "Wo arbeitet Leo jetzt?",
-         "options": ["In der Stadt", "In einem kleinen Dorf", "Im Norden", "Er arbeitet nicht"], "answers": ["In der Stadt"],
-         "explain": "Er kommt aus einem kleinen Dorf, arbeitet aber jetzt in der Stadt."},
-        {"id": "de-listen-new-flatmate-q6", "kind": "written", "prompt": "Welches Instrument hat Leo?",
-         "answers": ["eine gitarre", "gitarre"], "explain": "Leo hat eine Gitarre."}
+        {
+          "id": "de-listen-new-flatmate-q1",
+          "kind": "choice",
+          "prompt": "Wie alt ist Leo?",
+          "options": [
+            "Dreiundzwanzig",
+            "Zweiunddreißig",
+            "Zwanzig",
+            "Dreißig"
+          ],
+          "answers": [
+            "Dreiundzwanzig"
+          ],
+          "explain": "Leo ist dreiundzwanzig Jahre alt."
+        },
+        {
+          "id": "de-listen-new-flatmate-q2",
+          "kind": "choice",
+          "prompt": "Was hat Leo NICHT?",
+          "options": [
+            "Einen Fernseher",
+            "Zwei Kartons",
+            "Eine Gitarre",
+            "Ein Fahrrad"
+          ],
+          "answers": [
+            "Einen Fernseher"
+          ],
+          "explain": "Er hat zwei Kartons, eine Gitarre und ein Fahrrad — keinen Fernseher."
+        },
+        {
+          "id": "de-listen-new-flatmate-q3",
+          "kind": "written",
+          "prompt": "Was macht Tom ungern?",
+          "answers": [
+            "kochen",
+            "er kocht nicht gern",
+            "tom kocht nicht gern"
+          ],
+          "explain": "Tom kocht überhaupt nicht gern."
+        },
+        {
+          "id": "de-listen-new-flatmate-q4",
+          "kind": "choice",
+          "prompt": "Wie ist die Wohnung?",
+          "options": [
+            "Zwei Zimmer und eine helle Küche",
+            "Ein Zimmer und ein Balkon",
+            "Ein Garten",
+            "Zwei Badezimmer"
+          ],
+          "answers": [
+            "Zwei Zimmer und eine helle Küche"
+          ],
+          "explain": "Die Wohnung hat zwei Zimmer und eine helle Küche."
+        },
+        {
+          "id": "de-listen-new-flatmate-q5",
+          "kind": "choice",
+          "prompt": "Wo arbeitet Leo jetzt?",
+          "options": [
+            "In der Stadt",
+            "In einem kleinen Dorf",
+            "Im Norden",
+            "Er arbeitet nicht"
+          ],
+          "answers": [
+            "In der Stadt"
+          ],
+          "explain": "Er kommt aus einem kleinen Dorf, arbeitet aber jetzt in der Stadt."
+        },
+        {
+          "id": "de-listen-new-flatmate-q6",
+          "kind": "written",
+          "prompt": "Welches Instrument hat Leo?",
+          "answers": [
+            "eine gitarre",
+            "gitarre"
+          ],
+          "explain": "Leo hat eine Gitarre."
+        }
       ]
     },
     {
@@ -117,22 +379,88 @@
       "unitID": "de-foundations-u1",
       "text": "Im Haus gibt es eine neue Nachbarin. Sie heißt Amélie und kommt aus Frankreich. Sie ist keine Studentin; sie ist Fotografin. Sie arbeitet nicht in einem Büro: Sie arbeitet von zu Hause und reist viel. Die Nachbarn sind neugierig, aber sie sind auch schüchtern, deshalb sprechen sie nicht mit ihr. Dann trifft Ben sie eines Morgens an der Tür. „Bist du die neue Nachbarin?“, fragt er. „Ja, das bin ich“, antwortet sie, „und ich bin froh, hier zu sein.“ Jetzt sind sie Freunde, und sie ist nicht mehr allein im Haus.",
       "questions": [
-        {"id": "de-listen-new-neighbour-q1", "kind": "choice", "prompt": "Woher kommt Amélie?",
-         "options": ["Aus Frankreich", "Aus Italien", "Aus Japan", "Aus Brasilien"], "answers": ["Aus Frankreich"],
-         "explain": "Amélie kommt aus Frankreich."},
-        {"id": "de-listen-new-neighbour-q2", "kind": "choice", "prompt": "Was ist ihr Beruf?",
-         "options": ["Fotografin", "Studentin", "Büroangestellte", "Lehrerin"], "answers": ["Fotografin"],
-         "explain": "Sie ist keine Studentin; sie ist Fotografin."},
-        {"id": "de-listen-new-neighbour-q3", "kind": "choice", "prompt": "Arbeitet sie in einem Büro?",
-         "options": ["Nein, sie arbeitet von zu Hause", "Ja, jeden Tag", "Nur im Sommer", "Das sagt sie nicht"], "answers": ["Nein, sie arbeitet von zu Hause"],
-         "explain": "Sie arbeitet nicht in einem Büro: Sie arbeitet von zu Hause."},
-        {"id": "de-listen-new-neighbour-q4", "kind": "written", "prompt": "Warum sprechen die Nachbarn nicht mit ihr?",
-         "answers": ["sie sind schüchtern", "weil sie schüchtern sind", "schüchtern"], "explain": "Sie sind neugierig, aber sie sind auch schüchtern."},
-        {"id": "de-listen-new-neighbour-q5", "kind": "choice", "prompt": "Wo trifft Ben sie?",
-         "options": ["An der Tür", "Im Aufzug", "Auf der Straße", "Im Café"], "answers": ["An der Tür"],
-         "explain": "Eines Morgens trifft Ben sie an der Tür."},
-        {"id": "de-listen-new-neighbour-q6", "kind": "written", "prompt": "Wie fühlt sich Amélie am Ende?",
-         "answers": ["froh", "glücklich", "sie ist froh"], "explain": "Sie sagt, sie ist froh, hier zu sein."}
+        {
+          "id": "de-listen-new-neighbour-q1",
+          "kind": "choice",
+          "prompt": "Woher kommt Amélie?",
+          "options": [
+            "Aus Frankreich",
+            "Aus Italien",
+            "Aus Japan",
+            "Aus Brasilien"
+          ],
+          "answers": [
+            "Aus Frankreich"
+          ],
+          "explain": "Amélie kommt aus Frankreich."
+        },
+        {
+          "id": "de-listen-new-neighbour-q2",
+          "kind": "choice",
+          "prompt": "Was ist ihr Beruf?",
+          "options": [
+            "Fotografin",
+            "Studentin",
+            "Büroangestellte",
+            "Lehrerin"
+          ],
+          "answers": [
+            "Fotografin"
+          ],
+          "explain": "Sie ist keine Studentin; sie ist Fotografin."
+        },
+        {
+          "id": "de-listen-new-neighbour-q3",
+          "kind": "choice",
+          "prompt": "Arbeitet sie in einem Büro?",
+          "options": [
+            "Nein, sie arbeitet von zu Hause",
+            "Ja, jeden Tag",
+            "Nur im Sommer",
+            "Das sagt sie nicht"
+          ],
+          "answers": [
+            "Nein, sie arbeitet von zu Hause"
+          ],
+          "explain": "Sie arbeitet nicht in einem Büro: Sie arbeitet von zu Hause."
+        },
+        {
+          "id": "de-listen-new-neighbour-q4",
+          "kind": "written",
+          "prompt": "Warum sprechen die Nachbarn nicht mit ihr?",
+          "answers": [
+            "sie sind schüchtern",
+            "weil sie schüchtern sind",
+            "schüchtern"
+          ],
+          "explain": "Sie sind neugierig, aber sie sind auch schüchtern."
+        },
+        {
+          "id": "de-listen-new-neighbour-q5",
+          "kind": "choice",
+          "prompt": "Wo trifft Ben sie?",
+          "options": [
+            "An der Tür",
+            "Im Aufzug",
+            "Auf der Straße",
+            "Im Café"
+          ],
+          "answers": [
+            "An der Tür"
+          ],
+          "explain": "Eines Morgens trifft Ben sie an der Tür."
+        },
+        {
+          "id": "de-listen-new-neighbour-q6",
+          "kind": "written",
+          "prompt": "Wie fühlt sich Amélie am Ende?",
+          "answers": [
+            "froh",
+            "glücklich",
+            "sie ist froh"
+          ],
+          "explain": "Sie sagt, sie ist froh, hier zu sein."
+        }
       ]
     },
     {
@@ -144,22 +472,87 @@
       "unitID": "de-foundations-u1",
       "text": "Sonntags gibt es einen Markt auf dem Dorfplatz. Anna und ihr Vater gehen um neun Uhr dorthin, bevor er voll wird. Sie kaufen Obst, Brot und Blumen. Anna möchte Erdbeeren, aber ihr Vater sagt, sie sind diese Woche zu teuer. Am Ende nehmen sie eine große Tüte Orangen und weiße Rosen für den Küchentisch mit nach Hause.",
       "questions": [
-        {"id": "de-listen-sunday-market-q1", "kind": "choice", "prompt": "Wann gehen Anna und ihr Vater zum Markt?",
-         "options": ["Um neun Uhr", "Um zwölf Uhr", "Am Nachmittag", "Um halb sieben"], "answers": ["Um neun Uhr"],
-         "explain": "Sie gehen um neun Uhr, bevor er voll wird."},
-        {"id": "de-listen-sunday-market-q2", "kind": "written", "prompt": "Warum bekommt Anna keine Erdbeeren?",
-         "answers": ["sie sind zu teuer", "zu teuer", "weil sie zu teuer sind"], "explain": "Ihr Vater sagt, sie sind diese Woche zu teuer."},
-        {"id": "de-listen-sunday-market-q3", "kind": "choice", "prompt": "Was nehmen sie mit nach Hause?",
-         "options": ["Orangen und Rosen", "Erdbeeren und Brot", "Äpfel und Tulpen", "Brot und Käse"], "answers": ["Orangen und Rosen"],
-         "explain": "Sie nehmen Orangen und weiße Rosen mit."},
-        {"id": "de-listen-sunday-market-q4", "kind": "choice", "prompt": "Wo ist der Markt?",
-         "options": ["Auf dem Dorfplatz", "Am Fluss", "Am Bahnhof", "In einem Supermarkt"], "answers": ["Auf dem Dorfplatz"],
-         "explain": "Sonntags gibt es einen Markt auf dem Dorfplatz."},
-        {"id": "de-listen-sunday-market-q5", "kind": "choice", "prompt": "Was kaufen sie?",
-         "options": ["Obst, Brot und Blumen", "Fisch und Gemüse", "Käse und Fleisch", "Nur Blumen"], "answers": ["Obst, Brot und Blumen"],
-         "explain": "Sie kaufen Obst, Brot und Blumen."},
-        {"id": "de-listen-sunday-market-q6", "kind": "written", "prompt": "Was möchte Anna?",
-         "answers": ["erdbeeren", "sie möchte erdbeeren"], "explain": "Anna möchte Erdbeeren."}
+        {
+          "id": "de-listen-sunday-market-q1",
+          "kind": "choice",
+          "prompt": "Wann gehen Anna und ihr Vater zum Markt?",
+          "options": [
+            "Um neun Uhr",
+            "Um zwölf Uhr",
+            "Am Nachmittag",
+            "Um halb sieben"
+          ],
+          "answers": [
+            "Um neun Uhr"
+          ],
+          "explain": "Sie gehen um neun Uhr, bevor er voll wird."
+        },
+        {
+          "id": "de-listen-sunday-market-q2",
+          "kind": "written",
+          "prompt": "Warum bekommt Anna keine Erdbeeren?",
+          "answers": [
+            "sie sind zu teuer",
+            "zu teuer",
+            "weil sie zu teuer sind"
+          ],
+          "explain": "Ihr Vater sagt, sie sind diese Woche zu teuer."
+        },
+        {
+          "id": "de-listen-sunday-market-q3",
+          "kind": "choice",
+          "prompt": "Was nehmen sie mit nach Hause?",
+          "options": [
+            "Orangen und Rosen",
+            "Erdbeeren und Brot",
+            "Äpfel und Tulpen",
+            "Brot und Käse"
+          ],
+          "answers": [
+            "Orangen und Rosen"
+          ],
+          "explain": "Sie nehmen Orangen und weiße Rosen mit."
+        },
+        {
+          "id": "de-listen-sunday-market-q4",
+          "kind": "choice",
+          "prompt": "Wo ist der Markt?",
+          "options": [
+            "Auf dem Dorfplatz",
+            "Am Fluss",
+            "Am Bahnhof",
+            "In einem Supermarkt"
+          ],
+          "answers": [
+            "Auf dem Dorfplatz"
+          ],
+          "explain": "Sonntags gibt es einen Markt auf dem Dorfplatz."
+        },
+        {
+          "id": "de-listen-sunday-market-q5",
+          "kind": "choice",
+          "prompt": "Was kaufen sie?",
+          "options": [
+            "Obst, Brot und Blumen",
+            "Fisch und Gemüse",
+            "Käse und Fleisch",
+            "Nur Blumen"
+          ],
+          "answers": [
+            "Obst, Brot und Blumen"
+          ],
+          "explain": "Sie kaufen Obst, Brot und Blumen."
+        },
+        {
+          "id": "de-listen-sunday-market-q6",
+          "kind": "written",
+          "prompt": "Was möchte Anna?",
+          "answers": [
+            "erdbeeren",
+            "sie möchte erdbeeren"
+          ],
+          "explain": "Anna möchte Erdbeeren."
+        }
       ]
     }
   ]

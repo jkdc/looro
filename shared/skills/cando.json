@@ -1,0 +1,20 @@
+{
+  "competences": [
+    {"id": "introduce-yourself", "label": "Introduce yourself"},
+    {"id": "describe-people", "label": "Describe people and family"},
+    {"id": "describe-home", "label": "Describe your home and town"},
+    {"id": "talk-about-routines", "label": "Talk about routines"},
+    {"id": "tell-time", "label": "Tell the time and dates"},
+    {"id": "go-shopping", "label": "Go shopping"},
+    {"id": "order-food", "label": "Order food and drink"},
+    {"id": "ask-for-directions", "label": "Ask for and give directions"},
+    {"id": "use-transport", "label": "Use transport and travel"},
+    {"id": "talk-about-weather", "label": "Talk about the weather"},
+    {"id": "describe-past-events", "label": "Describe past events"},
+    {"id": "make-future-plans", "label": "Make future plans"},
+    {"id": "express-opinion", "label": "Express opinions"},
+    {"id": "solve-everyday-problems", "label": "Solve everyday problems"},
+    {"id": "tell-a-story", "label": "Tell a story"},
+    {"id": "talk-about-work", "label": "Talk about work"}
+  ]
+}

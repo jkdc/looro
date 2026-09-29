@@ -12,6 +12,17 @@ struct LearningProgressView: View {
                                  completions: store.archive.completions ?? [],
                                  listeningTexts: ListeningRegistry.forLanguage(course.languageID))
     }
+    private var mastery: MasteryStats? {
+        guard let course = CourseRegistry.forLanguage(store.language.id).first else { return nil }
+        return MasteryEngine.stats(course: course, listenings: ListeningRegistry.forLanguage(course.languageID),
+                                   lessons: store.archive.lessons ?? [],
+                                   completions: store.archive.completions ?? [],
+                                   nowSeconds: Date.timeIntervalSinceReferenceDate)
+    }
+    private func categoryLabel(_ category: String) -> String {
+        ["grammar": "Grammar", "vocab": "Vocabulary", "function": "Functions", "speaking": "Speaking",
+         "listening": "Listening", "reading": "Reading", "writing": "Writing", "pron": "Pronunciation"][category] ?? category
+    }
     private var medals: Int {
         ListeningRegistry.forLanguage(store.language.id).filter { text in
             let best = (store.archive.completions ?? [])
@@ -47,6 +58,16 @@ struct LearningProgressView: View {
                         if medals > 0 { row("Listening medals", "\(medals)") }
                         row("Activity streak", "\(progress.activeStreakDays)")
                     } header: { Text("Course progress") }
+                }
+                if let mastery, !mastery.skills.isEmpty {
+                    Section {
+                        row("Overall mastery", "\(mastery.overall)%")
+                        ForEach(mastery.categories, id: \.category) { category in
+                            row(categoryLabel(category.category), "\(category.mastery)%")
+                        }
+                    } header: { Text("Skills") } footer: {
+                        Text("Mastery is the best recent evidence per skill — it fades without practice and recovers when you practise again.")
+                    }
                 }
                 Section {
                     ForEach(0..<4, id: \.self) { bars in

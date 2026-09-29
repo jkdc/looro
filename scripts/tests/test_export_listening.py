@@ -6,6 +6,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 import export_listening as el
 
 
+def skill_ids():
+    return el.skill_ids()
+
+
 def minimal_text():
     return {
         "id": "en-listen-test",
@@ -30,60 +34,60 @@ def minimal_text():
 class ExportListeningTest(unittest.TestCase):
     def test_valid_text_passes_validation(self):
         seen = set()
-        el.validate(minimal_text(), ["en"], seen, {})
+        el.validate(minimal_text(), ["en"], seen, {}, skill_ids())
         self.assertEqual(seen, {f"en-listen-test-q{n}" for n in range(1, 6)} | {"en-listen-test"})
 
     def test_unknown_language_rejected(self):
         with self.assertRaises(SystemExit):
-            el.validate(minimal_text(), ["fr"], set(), {})
+            el.validate(minimal_text(), ["fr"], set(), {}, skill_ids())
 
     def test_text_length_is_bounded(self):
         text = minimal_text()
         text["text"] = "too short"
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {})
+            el.validate(text, ["en"], set(), {}, skill_ids())
         text["text"] = " ".join(["word"] * 201)
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {})
+            el.validate(text, ["en"], set(), {}, skill_ids())
 
     def test_topic_is_required(self):
         text = minimal_text()
         del text["topic"]
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {})
+            el.validate(text, ["en"], set(), {}, skill_ids())
 
     def test_needs_five_questions(self):
         text = minimal_text()
         del text["questions"][4]
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {})
+            el.validate(text, ["en"], set(), {}, skill_ids())
 
     def test_unit_id_must_exist_match_language_and_level(self):
         units = {"en-foundations-u1": ("en", "A1")}
         text = minimal_text()
         text["unitID"] = "en-foundations-u1"
-        el.validate(text, ["en"], set(), units)  # ok
+        el.validate(text, ["en"], set(), units, skill_ids())  # ok
         text["unitID"] = "en-foundations-missing"
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), units)
+            el.validate(text, ["en"], set(), units, skill_ids())
         text["unitID"] = "es-foundations-u1"
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {"es-foundations-u1": ("es", "A1")})
+            el.validate(text, ["en"], set(), {"es-foundations-u1": ("es", "A1")}, skill_ids())
         text["unitID"] = "en-foundations-u1"
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {"en-foundations-u1": ("en", "A2")})
+            el.validate(text, ["en"], set(), {"en-foundations-u1": ("en", "A2")}, skill_ids())
 
     def test_question_kind_is_closed(self):
         text = minimal_text()
         text["questions"][0]["kind"] = "order"
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {})
+            el.validate(text, ["en"], set(), {}, skill_ids())
 
     def test_choice_answers_must_be_options(self):
         text = minimal_text()
         text["questions"][0]["answers"] = ["Not listed"]
         with self.assertRaises(SystemExit):
-            el.validate(text, ["en"], set(), {})
+            el.validate(text, ["en"], set(), {}, skill_ids())
 
     def test_emitters_carry_texts_and_questions(self):
         text = minimal_text()
@@ -105,6 +109,30 @@ class ExportListeningTest(unittest.TestCase):
         self.assertNotIn("unitID", swift)
         self.assertNotIn("unitID", kotlin)
 
+    def test_root_rejects_missing_or_wrong_schema_version(self):
+        with self.assertRaises(SystemExit):
+            el.validate_root("en-listening.json", {"texts": []})
+        with self.assertRaises(SystemExit):
+            el.validate_root("en-listening.json", {"schemaVersion": 1, "texts": []})
+        self.assertEqual(1, len(el.validate_root("en-listening.json", {"schemaVersion": 2, "texts": [{"id": "x"}]})))
+
+    def test_unknown_skill_reference_rejected(self):
+        text = minimal_text()
+        text["skills"] = ["listening:nonexistent"]
+        with self.assertRaises(SystemExit):
+            el.validate(text, ["en"], set(), {}, skill_ids())
+
+    def test_valid_skill_references_pass_and_are_emitted(self):
+        text = minimal_text()
+        text["skills"] = ["listening:gist", "listening:detail"]
+        text["exposureSkills"] = ["grammar:present-perfect"]
+        el.validate(text, ["en"], set(), {}, skill_ids())
+        swift = el.emit_swift([text])
+        kotlin = el.emit_kotlin([text], "package com.jkdc.app.core")
+        self.assertIn('skills: ["listening:gist", "listening:detail"]', swift)
+        self.assertIn('exposureSkills: ["grammar:present-perfect"]', swift)
+        self.assertIn('skills = listOf("listening:gist", "listening:detail")', kotlin)
+        self.assertIn('exposureSkills = listOf("grammar:present-perfect")', kotlin)
 
 if __name__ == "__main__":
     unittest.main()

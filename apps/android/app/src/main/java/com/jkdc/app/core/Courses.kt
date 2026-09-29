@@ -8,9 +8,14 @@ data class Course(val id: String, val languageID: String, val title: String, val
                   val symbol: String, val description: String, val units: List<CourseUnit>)
 data class CourseUnit(val id: String, val title: String, val subtitle: String, val level: String,
                       val themes: List<ConversationTheme>, val lessons: List<Lesson>)
+/** `skills` are catalog ids (shared/skills/skill-catalog.json) the lesson teaches,
+    `canDo` references the universal competence matrix, `prerequisites` are skills
+    to master first and `exposureSkills` mark structures that appear only passively. */
 data class Lesson(val id: String, val title: String, val goal: String, val intro: LessonIntro,
                   val expressions: List<TargetExpression>, val situation: String, val practice: LessonPractice,
-                  val exercises: List<Exercise> = emptyList())
+                  val exercises: List<Exercise> = emptyList(), val skills: List<String> = emptyList(),
+                  val canDo: List<String> = emptyList(), val prerequisites: List<String> = emptyList(),
+                  val exposureSkills: List<String> = emptyList())
 data class LessonIntro(val explanation: List<String>, val examples: List<ExampleLine>)
 data class ExampleLine(val text: String, val meaning: String)
 data class TargetExpression(val text: String, val meaning: String, val note: String)

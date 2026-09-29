@@ -359,6 +359,17 @@
     <string name="level_title_10">Foundations champion</string>
     <string name="progress_level">Level</string>
     <string name="progress_listening_medals">Listening medals</string>
+    <string name="progress_skills_heading">Skills</string>
+    <string name="progress_skills_overall">Overall mastery: %1$d%%</string>
+    <string name="progress_skills_percent">%1$d%%</string>
+    <string name="skill_category_grammar">Grammar</string>
+    <string name="skill_category_vocab">Vocabulary</string>
+    <string name="skill_category_function">Functions</string>
+    <string name="skill_category_speaking">Speaking</string>
+    <string name="skill_category_listening">Listening</string>
+    <string name="skill_category_reading">Reading</string>
+    <string name="skill_category_writing">Writing</string>
+    <string name="skill_category_pron">Pronunciation</string>
     <string name="common_back">Back</string>
     <string name="settings_conversation_provider">Conversation provider</string>
     <string name="engine_key_included">Included key</string>

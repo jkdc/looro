@@ -2,18 +2,18 @@
 
 ## F1 — Fundamentos del motor
 
-- [ ] F1.1 `shared/skills/skill-catalog.json` (≈90 skills, 8 categorías,
+- [x] F1.1 `shared/skills/skill-catalog.json` (≈90 skills, 8 categorías,
       prerequisites) + `shared/skills/cando.json` (matriz universal).
-- [ ] F1.2 Schema v2: `schemaVersion` + campos de skills en cursos y
+- [x] F1.2 Schema v2: `schemaVersion` + campos de skills en cursos y
       listenings; tagging del contenido inglés (18 lecciones, 15 listenings).
-- [ ] F1.3 Exportadores: validación contra catálogo (referencias,
+- [x] F1.3 Exportadores: validación contra catálogo (referencias,
       prerequisites, niveles CEFR A0-C1) y emisión de los campos nuevos.
-- [ ] F1.4 Modelos kt/swift (`Lesson`, `ListeningText`) con los campos nuevos
+- [x] F1.4 Modelos kt/swift (`Lesson`, `ListeningText`) con los campos nuevos
       y defaults; regenerar datos.
-- [ ] F1.5 `MasteryEngine` kt+swift (pesos, decaimiento, categoría/global) +
+- [x] F1.5 `MasteryEngine` kt+swift (pesos, decaimiento, categoría/global) +
       AppViewModel + sección Skills en la hoja de progreso (EN/ES) + espejo
       iOS.
-- [ ] F1.6 Tests: MasteryEngine, contenido (referencias válidas), python de
+- [x] F1.6 Tests: MasteryEngine, contenido (referencias válidas), python de
       exportadores; verificación completa.
 
 ## F2 — Inglés A1 completo

@@ -32,6 +32,9 @@ public struct CourseUnit: Identifiable, Hashable, Sendable {
     }
 }
 
+/// `skills` are catalog ids (shared/skills/skill-catalog.json) the lesson teaches,
+/// `canDo` references the universal competence matrix, `prerequisites` are skills
+/// to master first and `exposureSkills` mark structures that appear only passively.
 public struct Lesson: Identifiable, Hashable, Sendable {
     public var id: String
     public var title: String
@@ -41,11 +44,19 @@ public struct Lesson: Identifiable, Hashable, Sendable {
     public var situation: String
     public var practice: LessonPractice
     public var exercises: [Exercise]
+    public var skills: [String]
+    public var canDo: [String]
+    public var prerequisites: [String]
+    public var exposureSkills: [String]
     public init(id: String, title: String, goal: String, intro: LessonIntro, expressions: [TargetExpression],
-                situation: String, practice: LessonPractice, exercises: [Exercise] = []) {
+                situation: String, practice: LessonPractice, exercises: [Exercise] = [],
+                skills: [String] = [], canDo: [String] = [], prerequisites: [String] = [],
+                exposureSkills: [String] = []) {
         self.id = id; self.title = title; self.goal = goal; self.intro = intro
         self.expressions = expressions; self.situation = situation; self.practice = practice
         self.exercises = exercises
+        self.skills = skills; self.canDo = canDo; self.prerequisites = prerequisites
+        self.exposureSkills = exposureSkills
     }
 }
 

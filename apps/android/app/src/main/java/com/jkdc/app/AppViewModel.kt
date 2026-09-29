@@ -327,6 +327,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun listeningMedals(): Int = ListeningRegistry.forLanguage(language.id)
         .count { LevelEngine.listeningMedal(listeningScore(it.id)) >= 1 }
 
+    /** Skill mastery for the learning language — a pure projection of the ledger;
+        null when the language has no course yet. */
+    fun masteryStats(): MasteryStats? = CourseRegistry.forLanguage(language.id).firstOrNull()?.let { course ->
+        MasteryEngine.stats(course, ListeningRegistry.forLanguage(language.id), archive.lessons,
+            archive.completions.orEmpty(), nowSeconds())
+    }
+
     /** Push/pull the progress ledger against the account (guests included). Failures
         are silent: sync must never nag, the local ledger stays the source of truth. */
     fun syncProgress() {

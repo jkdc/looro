@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 2,
   "texts": [
     {
       "id": "pt-listen-cafe-morning",
@@ -9,22 +10,87 @@
       "unitID": "pt-foundations-u1",
       "text": "Todas as manhãs, Marta caminha até uma cafeteria pequena perto do apartamento dela. O garçom sabe o nome dela, então ela nunca precisa pedir. Hoje ela senta perto da janela com um café e um pão de queijo. O ônibus dela sai às oito e meia, mas ela não está preocupada. A cafeteria é muito tranquila nessa hora. Ela bebe o café devagar e vê a cidade acordar.",
       "questions": [
-        {"id": "pt-listen-cafe-morning-q1", "kind": "choice", "prompt": "Para onde a Marta vai todas as manhãs?",
-         "options": ["Para uma cafeteria pequena", "Para o escritório dela", "Para o ponto de ônibus", "Para um parque"], "answers": ["Para uma cafeteria pequena"],
-         "explain": "Ela caminha até uma cafeteria pequena perto do apartamento dela."},
-        {"id": "pt-listen-cafe-morning-q2", "kind": "choice", "prompt": "O que ela toma no café da manhã hoje?",
-         "options": ["Um café e um pão de queijo", "Chá e torradas", "Suco de laranja", "Nada"], "answers": ["Um café e um pão de queijo"],
-         "explain": "Ela senta perto da janela com um café e um pão de queijo."},
-        {"id": "pt-listen-cafe-morning-q3", "kind": "written", "prompt": "A que horas sai o ônibus dela?",
-         "answers": ["às oito e meia", "oito e meia"], "explain": "O ônibus dela sai às oito e meia."},
-        {"id": "pt-listen-cafe-morning-q4", "kind": "choice", "prompt": "Como ela se sente com o horário?",
-         "options": ["Não está preocupada", "Está muito atrasada", "Está com raiva", "Está com sono"], "answers": ["Não está preocupada"],
-         "explain": "O texto diz que ela não está preocupada."},
-        {"id": "pt-listen-cafe-morning-q5", "kind": "choice", "prompt": "Quem sabe o nome dela?",
-         "options": ["O garçom", "O motorista do ônibus", "O chefe dela", "Um vizinho"], "answers": ["O garçom"],
-         "explain": "O garçom sabe o nome dela, então ela nunca precisa pedir."},
-        {"id": "pt-listen-cafe-morning-q6", "kind": "written", "prompt": "Onde ela senta hoje?",
-         "answers": ["perto da janela", "ao lado da janela", "na janela"], "explain": "Hoje ela senta perto da janela."}
+        {
+          "id": "pt-listen-cafe-morning-q1",
+          "kind": "choice",
+          "prompt": "Para onde a Marta vai todas as manhãs?",
+          "options": [
+            "Para uma cafeteria pequena",
+            "Para o escritório dela",
+            "Para o ponto de ônibus",
+            "Para um parque"
+          ],
+          "answers": [
+            "Para uma cafeteria pequena"
+          ],
+          "explain": "Ela caminha até uma cafeteria pequena perto do apartamento dela."
+        },
+        {
+          "id": "pt-listen-cafe-morning-q2",
+          "kind": "choice",
+          "prompt": "O que ela toma no café da manhã hoje?",
+          "options": [
+            "Um café e um pão de queijo",
+            "Chá e torradas",
+            "Suco de laranja",
+            "Nada"
+          ],
+          "answers": [
+            "Um café e um pão de queijo"
+          ],
+          "explain": "Ela senta perto da janela com um café e um pão de queijo."
+        },
+        {
+          "id": "pt-listen-cafe-morning-q3",
+          "kind": "written",
+          "prompt": "A que horas sai o ônibus dela?",
+          "answers": [
+            "às oito e meia",
+            "oito e meia"
+          ],
+          "explain": "O ônibus dela sai às oito e meia."
+        },
+        {
+          "id": "pt-listen-cafe-morning-q4",
+          "kind": "choice",
+          "prompt": "Como ela se sente com o horário?",
+          "options": [
+            "Não está preocupada",
+            "Está muito atrasada",
+            "Está com raiva",
+            "Está com sono"
+          ],
+          "answers": [
+            "Não está preocupada"
+          ],
+          "explain": "O texto diz que ela não está preocupada."
+        },
+        {
+          "id": "pt-listen-cafe-morning-q5",
+          "kind": "choice",
+          "prompt": "Quem sabe o nome dela?",
+          "options": [
+            "O garçom",
+            "O motorista do ônibus",
+            "O chefe dela",
+            "Um vizinho"
+          ],
+          "answers": [
+            "O garçom"
+          ],
+          "explain": "O garçom sabe o nome dela, então ela nunca precisa pedir."
+        },
+        {
+          "id": "pt-listen-cafe-morning-q6",
+          "kind": "written",
+          "prompt": "Onde ela senta hoje?",
+          "answers": [
+            "perto da janela",
+            "ao lado da janela",
+            "na janela"
+          ],
+          "explain": "Hoje ela senta perto da janela."
+        }
       ]
     },
     {
@@ -36,22 +102,90 @@
       "unitID": "pt-foundations-u1",
       "text": "Marta participa da primeira aula de português para estrangeiros em um instituto pequeno. Na turma há seis pessoas e todas querem conversar. A professora pede as apresentações. “Meu nome é Marta e sou da Bolívia”, diz uma senhora. “Eu sou o Andrés, sou do Peru e trabalho em um restaurante”, diz um rapaz. Marta também se apresenta: “Sou a Marta, sou argentina e sou enfermeira”. A professora é de Madri e ensina com muito bom humor. No final da aula, os alunos trocam os números de telefone. Ainda não são amigos, mas na próxima semana vão tomar um café juntos e praticar.",
       "questions": [
-        {"id": "pt-listen-language-class-q1", "kind": "choice", "prompt": "Quantas pessoas há na turma?",
-         "options": ["Seis", "Três", "Dez", "Quatorze"], "answers": ["Seis"],
-         "explain": "Na turma há seis pessoas."},
-        {"id": "pt-listen-language-class-q2", "kind": "choice", "prompt": "De onde é o Andrés?",
-         "options": ["Do Peru", "Da Bolívia", "Da Argentina", "Do México"], "answers": ["Do Peru"],
-         "explain": "O Andrés é do Peru e trabalha em um restaurante."},
-        {"id": "pt-listen-language-class-q3", "kind": "choice", "prompt": "Qual é o trabalho da Marta?",
-         "options": ["Enfermeira", "Professora", "Garçonete", "Estudante"], "answers": ["Enfermeira"],
-         "explain": "A Marta é argentina e é enfermeira."},
-        {"id": "pt-listen-language-class-q4", "kind": "written", "prompt": "De onde é a professora?",
-         "answers": ["madril", "de madri", "madri", "madrid", "de madrid"], "explain": "A professora é de Madri."},
-        {"id": "pt-listen-language-class-q5", "kind": "choice", "prompt": "O que eles fazem no final da aula?",
-         "options": ["Trocam os números de telefone", "Voltam para casa sozinhos", "Fazem uma prova", "Jantam em um restaurante"], "answers": ["Trocam os números de telefone"],
-         "explain": "Os alunos trocam os números de telefone."},
-        {"id": "pt-listen-language-class-q6", "kind": "written", "prompt": "O que eles vão fazer na próxima semana?",
-         "answers": ["tomar um café", "vão tomar um café", "tomar um café juntos"], "explain": "Na próxima semana vão tomar um café juntos e praticar."}
+        {
+          "id": "pt-listen-language-class-q1",
+          "kind": "choice",
+          "prompt": "Quantas pessoas há na turma?",
+          "options": [
+            "Seis",
+            "Três",
+            "Dez",
+            "Quatorze"
+          ],
+          "answers": [
+            "Seis"
+          ],
+          "explain": "Na turma há seis pessoas."
+        },
+        {
+          "id": "pt-listen-language-class-q2",
+          "kind": "choice",
+          "prompt": "De onde é o Andrés?",
+          "options": [
+            "Do Peru",
+            "Da Bolívia",
+            "Da Argentina",
+            "Do México"
+          ],
+          "answers": [
+            "Do Peru"
+          ],
+          "explain": "O Andrés é do Peru e trabalha em um restaurante."
+        },
+        {
+          "id": "pt-listen-language-class-q3",
+          "kind": "choice",
+          "prompt": "Qual é o trabalho da Marta?",
+          "options": [
+            "Enfermeira",
+            "Professora",
+            "Garçonete",
+            "Estudante"
+          ],
+          "answers": [
+            "Enfermeira"
+          ],
+          "explain": "A Marta é argentina e é enfermeira."
+        },
+        {
+          "id": "pt-listen-language-class-q4",
+          "kind": "written",
+          "prompt": "De onde é a professora?",
+          "answers": [
+            "madril",
+            "de madri",
+            "madri",
+            "madrid",
+            "de madrid"
+          ],
+          "explain": "A professora é de Madri."
+        },
+        {
+          "id": "pt-listen-language-class-q5",
+          "kind": "choice",
+          "prompt": "O que eles fazem no final da aula?",
+          "options": [
+            "Trocam os números de telefone",
+            "Voltam para casa sozinhos",
+            "Fazem uma prova",
+            "Jantam em um restaurante"
+          ],
+          "answers": [
+            "Trocam os números de telefone"
+          ],
+          "explain": "Os alunos trocam os números de telefone."
+        },
+        {
+          "id": "pt-listen-language-class-q6",
+          "kind": "written",
+          "prompt": "O que eles vão fazer na próxima semana?",
+          "answers": [
+            "tomar um café",
+            "vão tomar um café",
+            "tomar um café juntos"
+          ],
+          "explain": "Na próxima semana vão tomar um café juntos e praticar."
+        }
       ]
     },
     {
@@ -63,22 +197,88 @@
       "unitID": "pt-foundations-u1",
       "text": "Minha irmã mais nova se chama Carla e tem nove anos. É muito simpática e muito falante. Carla não é tímida: fala com todo mundo, com os vizinhos, com os professores e com os cachorros do parque. É loira, como a nossa mãe, e tem olhos castanhos como o meu pai. Não é alta para a idade dela, mas é muito rápida e adora futebol. O time dela não é muito bom, mas isso não é importante para ela. “Não sou profissional”, diz ela, “só sou feliz com a bola”. Minha irmã é pequena, mas a alegria dela é enorme.",
       "questions": [
-        {"id": "pt-listen-little-sister-q1", "kind": "choice", "prompt": "Quantos anos a Carla tem?",
-         "options": ["Nove", "Dezenove", "Sete", "Dez"], "answers": ["Nove"],
-         "explain": "A Carla tem nove anos."},
-        {"id": "pt-listen-little-sister-q2", "kind": "choice", "prompt": "Como é a Carla?",
-         "options": ["Simpática e falante", "Tímida e calada", "Séria", "Triste"], "answers": ["Simpática e falante"],
-         "explain": "É muito simpática e muito falante."},
-        {"id": "pt-listen-little-sister-q3", "kind": "written", "prompt": "De que cor são os olhos dela?",
-         "answers": ["castanhos", "olhos castanhos", "castanhos como o pai dela"], "explain": "Ela tem olhos castanhos como o pai dela."},
-        {"id": "pt-listen-little-sister-q4", "kind": "choice", "prompt": "Como é o cabelo dela?",
-         "options": ["Loiro, como o da mãe", "Escuro, como o do pai", "Ruivo", "Curto e preto"], "answers": ["Loiro, como o da mãe"],
-         "explain": "É loira, como a nossa mãe."},
-        {"id": "pt-listen-little-sister-q5", "kind": "choice", "prompt": "O que ela adora?",
-         "options": ["Futebol", "Natação", "Música", "Videogame"], "answers": ["Futebol"],
-         "explain": "É muito rápida e adora futebol."},
-        {"id": "pt-listen-little-sister-q6", "kind": "written", "prompt": "Como é a alegria dela?",
-         "answers": ["enorme", "muito grande", "grande"], "explain": "A alegria dela é enorme."}
+        {
+          "id": "pt-listen-little-sister-q1",
+          "kind": "choice",
+          "prompt": "Quantos anos a Carla tem?",
+          "options": [
+            "Nove",
+            "Dezenove",
+            "Sete",
+            "Dez"
+          ],
+          "answers": [
+            "Nove"
+          ],
+          "explain": "A Carla tem nove anos."
+        },
+        {
+          "id": "pt-listen-little-sister-q2",
+          "kind": "choice",
+          "prompt": "Como é a Carla?",
+          "options": [
+            "Simpática e falante",
+            "Tímida e calada",
+            "Séria",
+            "Triste"
+          ],
+          "answers": [
+            "Simpática e falante"
+          ],
+          "explain": "É muito simpática e muito falante."
+        },
+        {
+          "id": "pt-listen-little-sister-q3",
+          "kind": "written",
+          "prompt": "De que cor são os olhos dela?",
+          "answers": [
+            "castanhos",
+            "olhos castanhos",
+            "castanhos como o pai dela"
+          ],
+          "explain": "Ela tem olhos castanhos como o pai dela."
+        },
+        {
+          "id": "pt-listen-little-sister-q4",
+          "kind": "choice",
+          "prompt": "Como é o cabelo dela?",
+          "options": [
+            "Loiro, como o da mãe",
+            "Escuro, como o do pai",
+            "Ruivo",
+            "Curto e preto"
+          ],
+          "answers": [
+            "Loiro, como o da mãe"
+          ],
+          "explain": "É loira, como a nossa mãe."
+        },
+        {
+          "id": "pt-listen-little-sister-q5",
+          "kind": "choice",
+          "prompt": "O que ela adora?",
+          "options": [
+            "Futebol",
+            "Natação",
+            "Música",
+            "Videogame"
+          ],
+          "answers": [
+            "Futebol"
+          ],
+          "explain": "É muito rápida e adora futebol."
+        },
+        {
+          "id": "pt-listen-little-sister-q6",
+          "kind": "written",
+          "prompt": "Como é a alegria dela?",
+          "answers": [
+            "enorme",
+            "muito grande",
+            "grande"
+          ],
+          "explain": "A alegria dela é enorme."
+        }
       ]
     },
     {
@@ -90,22 +290,88 @@
       "unitID": "pt-foundations-u1",
       "text": "Tom tem um colega de apartamento novo. O nome dele é Leo e ele tem vinte e três anos. Leo vem de uma cidade pequena do interior, mas agora trabalha na capital. Ele tem duas caixas, um violão e uma bicicleta. O apartamento tem dois quartos e uma cozinha clara. Tom espera que Leo goste de cozinhar, porque o Tom não gosta nem um pouco.",
       "questions": [
-        {"id": "pt-listen-new-flatmate-q1", "kind": "choice", "prompt": "Quantos anos o Leo tem?",
-         "options": ["Vinte e três", "Trinta e dois", "Vinte", "Trinta"], "answers": ["Vinte e três"],
-         "explain": "O Leo tem vinte e três anos."},
-        {"id": "pt-listen-new-flatmate-q2", "kind": "choice", "prompt": "O que o Leo NÃO tem?",
-         "options": ["Uma televisão", "Duas caixas", "Um violão", "Uma bicicleta"], "answers": ["Uma televisão"],
-         "explain": "Ele tem duas caixas, um violão e uma bicicleta — sem televisão."},
-        {"id": "pt-listen-new-flatmate-q3", "kind": "written", "prompt": "O que o Tom odeia fazer?",
-         "answers": ["cozinhar", "ele odeia cozinhar", "tom odeia cozinhar"], "explain": "O Tom não gosta nem um pouco de cozinhar."},
-        {"id": "pt-listen-new-flatmate-q4", "kind": "choice", "prompt": "Como é o apartamento?",
-         "options": ["Dois quartos e uma cozinha clara", "Um quarto e uma varanda", "Um jardim", "Dois banheiros"], "answers": ["Dois quartos e uma cozinha clara"],
-         "explain": "O apartamento tem dois quartos e uma cozinha clara."},
-        {"id": "pt-listen-new-flatmate-q5", "kind": "choice", "prompt": "Onde o Leo trabalha agora?",
-         "options": ["Na capital", "Em uma cidade pequena", "No interior", "Ele não trabalha"], "answers": ["Na capital"],
-         "explain": "Ele vem de uma cidade pequena do interior, mas agora trabalha na capital."},
-        {"id": "pt-listen-new-flatmate-q6", "kind": "written", "prompt": "Que instrumento o Leo tem?",
-         "answers": ["um violão", "o violão", "violão"], "explain": "O Leo tem um violão."}
+        {
+          "id": "pt-listen-new-flatmate-q1",
+          "kind": "choice",
+          "prompt": "Quantos anos o Leo tem?",
+          "options": [
+            "Vinte e três",
+            "Trinta e dois",
+            "Vinte",
+            "Trinta"
+          ],
+          "answers": [
+            "Vinte e três"
+          ],
+          "explain": "O Leo tem vinte e três anos."
+        },
+        {
+          "id": "pt-listen-new-flatmate-q2",
+          "kind": "choice",
+          "prompt": "O que o Leo NÃO tem?",
+          "options": [
+            "Uma televisão",
+            "Duas caixas",
+            "Um violão",
+            "Uma bicicleta"
+          ],
+          "answers": [
+            "Uma televisão"
+          ],
+          "explain": "Ele tem duas caixas, um violão e uma bicicleta — sem televisão."
+        },
+        {
+          "id": "pt-listen-new-flatmate-q3",
+          "kind": "written",
+          "prompt": "O que o Tom odeia fazer?",
+          "answers": [
+            "cozinhar",
+            "ele odeia cozinhar",
+            "tom odeia cozinhar"
+          ],
+          "explain": "O Tom não gosta nem um pouco de cozinhar."
+        },
+        {
+          "id": "pt-listen-new-flatmate-q4",
+          "kind": "choice",
+          "prompt": "Como é o apartamento?",
+          "options": [
+            "Dois quartos e uma cozinha clara",
+            "Um quarto e uma varanda",
+            "Um jardim",
+            "Dois banheiros"
+          ],
+          "answers": [
+            "Dois quartos e uma cozinha clara"
+          ],
+          "explain": "O apartamento tem dois quartos e uma cozinha clara."
+        },
+        {
+          "id": "pt-listen-new-flatmate-q5",
+          "kind": "choice",
+          "prompt": "Onde o Leo trabalha agora?",
+          "options": [
+            "Na capital",
+            "Em uma cidade pequena",
+            "No interior",
+            "Ele não trabalha"
+          ],
+          "answers": [
+            "Na capital"
+          ],
+          "explain": "Ele vem de uma cidade pequena do interior, mas agora trabalha na capital."
+        },
+        {
+          "id": "pt-listen-new-flatmate-q6",
+          "kind": "written",
+          "prompt": "Que instrumento o Leo tem?",
+          "answers": [
+            "um violão",
+            "o violão",
+            "violão"
+          ],
+          "explain": "O Leo tem um violão."
+        }
       ]
     },
     {
@@ -117,22 +383,88 @@
       "unitID": "pt-foundations-u1",
       "text": "No prédio há uma vizinha nova. Ela se chama Amélie e é da França. Não é estudante; é fotógrafa. Não trabalha em um escritório: trabalha em casa e viaja muito. Os vizinhos são curiosos, mas também são tímidos, por isso não falam com ela. Então, uma manhã, Ben a encontra na porta. “Você é a vizinha nova?”, pergunta ele. “Sim, sou eu”, responde ela, “e estou contente de estar aqui”. Agora são amigos, e ela não está mais sozinha no prédio.",
       "questions": [
-        {"id": "pt-listen-new-neighbour-q1", "kind": "choice", "prompt": "De onde é a Amélie?",
-         "options": ["Da França", "Da Itália", "Do Japão", "Do Brasil"], "answers": ["Da França"],
-         "explain": "A Amélie é da França."},
-        {"id": "pt-listen-new-neighbour-q2", "kind": "choice", "prompt": "Qual é o trabalho dela?",
-         "options": ["É fotógrafa", "É estudante", "Trabalha em um escritório", "É professora"], "answers": ["É fotógrafa"],
-         "explain": "Não é estudante; é fotógrafa."},
-        {"id": "pt-listen-new-neighbour-q3", "kind": "choice", "prompt": "Ela trabalha em um escritório?",
-         "options": ["Não, trabalha em casa", "Sim, todos os dias", "Só no verão", "Ela não diz"], "answers": ["Não, trabalha em casa"],
-         "explain": "Não trabalha em um escritório: trabalha em casa."},
-        {"id": "pt-listen-new-neighbour-q4", "kind": "written", "prompt": "Por que os vizinhos não falam com ela?",
-         "answers": ["são tímidos", "porque são tímidos", "tímidos"], "explain": "São curiosos, mas também são tímidos."},
-        {"id": "pt-listen-new-neighbour-q5", "kind": "choice", "prompt": "Onde o Ben a encontra?",
-         "options": ["Na porta", "No elevador", "Na rua", "No café"], "answers": ["Na porta"],
-         "explain": "Uma manhã, o Ben a encontra na porta."},
-        {"id": "pt-listen-new-neighbour-q6", "kind": "written", "prompt": "Como a Amélie se sente no final?",
-         "answers": ["contente", "feliz", "está contente"], "explain": "Ela diz que está contente de estar aqui."}
+        {
+          "id": "pt-listen-new-neighbour-q1",
+          "kind": "choice",
+          "prompt": "De onde é a Amélie?",
+          "options": [
+            "Da França",
+            "Da Itália",
+            "Do Japão",
+            "Do Brasil"
+          ],
+          "answers": [
+            "Da França"
+          ],
+          "explain": "A Amélie é da França."
+        },
+        {
+          "id": "pt-listen-new-neighbour-q2",
+          "kind": "choice",
+          "prompt": "Qual é o trabalho dela?",
+          "options": [
+            "É fotógrafa",
+            "É estudante",
+            "Trabalha em um escritório",
+            "É professora"
+          ],
+          "answers": [
+            "É fotógrafa"
+          ],
+          "explain": "Não é estudante; é fotógrafa."
+        },
+        {
+          "id": "pt-listen-new-neighbour-q3",
+          "kind": "choice",
+          "prompt": "Ela trabalha em um escritório?",
+          "options": [
+            "Não, trabalha em casa",
+            "Sim, todos os dias",
+            "Só no verão",
+            "Ela não diz"
+          ],
+          "answers": [
+            "Não, trabalha em casa"
+          ],
+          "explain": "Não trabalha em um escritório: trabalha em casa."
+        },
+        {
+          "id": "pt-listen-new-neighbour-q4",
+          "kind": "written",
+          "prompt": "Por que os vizinhos não falam com ela?",
+          "answers": [
+            "são tímidos",
+            "porque são tímidos",
+            "tímidos"
+          ],
+          "explain": "São curiosos, mas também são tímidos."
+        },
+        {
+          "id": "pt-listen-new-neighbour-q5",
+          "kind": "choice",
+          "prompt": "Onde o Ben a encontra?",
+          "options": [
+            "Na porta",
+            "No elevador",
+            "Na rua",
+            "No café"
+          ],
+          "answers": [
+            "Na porta"
+          ],
+          "explain": "Uma manhã, o Ben a encontra na porta."
+        },
+        {
+          "id": "pt-listen-new-neighbour-q6",
+          "kind": "written",
+          "prompt": "Como a Amélie se sente no final?",
+          "answers": [
+            "contente",
+            "feliz",
+            "está contente"
+          ],
+          "explain": "Ela diz que está contente de estar aqui."
+        }
       ]
     },
     {
@@ -144,22 +476,87 @@
       "unitID": "pt-foundations-u1",
       "text": "Aos domingos tem uma feira na praça do bairro. A Ana e o pai dela vão para lá às nove horas, antes de ficar cheio. Eles compram fruta, pão e flores. A Ana quer morangos, mas o pai dela diz que estão muito caros nesta semana. No final, eles levam para casa um saco grande de laranjas e rosas brancas para a mesa da cozinha.",
       "questions": [
-        {"id": "pt-listen-sunday-market-q1", "kind": "choice", "prompt": "Quando a Ana e o pai dela vão à feira?",
-         "options": ["Às nove horas", "Ao meio-dia", "À tarde", "Às seis e meia"], "answers": ["Às nove horas"],
-         "explain": "Eles vão às nove horas, antes de ficar cheio."},
-        {"id": "pt-listen-sunday-market-q2", "kind": "written", "prompt": "Por que a Ana não leva os morangos?",
-         "answers": ["estão muito caros", "muito caros", "porque estão muito caros"], "explain": "O pai diz que estão muito caros nesta semana."},
-        {"id": "pt-listen-sunday-market-q3", "kind": "choice", "prompt": "O que eles levam para casa?",
-         "options": ["Laranjas e rosas", "Morangos e pão", "Maçãs e tulipas", "Pão e queijo"], "answers": ["Laranjas e rosas"],
-         "explain": "Eles levam laranjas e rosas brancas."},
-        {"id": "pt-listen-sunday-market-q4", "kind": "choice", "prompt": "Onde fica a feira?",
-         "options": ["Na praça do bairro", "Perto do rio", "Na estação", "Num supermercado"], "answers": ["Na praça do bairro"],
-         "explain": "Aos domingos tem uma feira na praça do bairro."},
-        {"id": "pt-listen-sunday-market-q5", "kind": "choice", "prompt": "O que eles compram?",
-         "options": ["Fruta, pão e flores", "Peixe e legumes", "Queijo e carne", "Somente flores"], "answers": ["Fruta, pão e flores"],
-         "explain": "Eles compram fruta, pão e flores."},
-        {"id": "pt-listen-sunday-market-q6", "kind": "written", "prompt": "O que a Ana quer?",
-         "answers": ["morangos", "quer morangos"], "explain": "A Ana quer morangos."}
+        {
+          "id": "pt-listen-sunday-market-q1",
+          "kind": "choice",
+          "prompt": "Quando a Ana e o pai dela vão à feira?",
+          "options": [
+            "Às nove horas",
+            "Ao meio-dia",
+            "À tarde",
+            "Às seis e meia"
+          ],
+          "answers": [
+            "Às nove horas"
+          ],
+          "explain": "Eles vão às nove horas, antes de ficar cheio."
+        },
+        {
+          "id": "pt-listen-sunday-market-q2",
+          "kind": "written",
+          "prompt": "Por que a Ana não leva os morangos?",
+          "answers": [
+            "estão muito caros",
+            "muito caros",
+            "porque estão muito caros"
+          ],
+          "explain": "O pai diz que estão muito caros nesta semana."
+        },
+        {
+          "id": "pt-listen-sunday-market-q3",
+          "kind": "choice",
+          "prompt": "O que eles levam para casa?",
+          "options": [
+            "Laranjas e rosas",
+            "Morangos e pão",
+            "Maçãs e tulipas",
+            "Pão e queijo"
+          ],
+          "answers": [
+            "Laranjas e rosas"
+          ],
+          "explain": "Eles levam laranjas e rosas brancas."
+        },
+        {
+          "id": "pt-listen-sunday-market-q4",
+          "kind": "choice",
+          "prompt": "Onde fica a feira?",
+          "options": [
+            "Na praça do bairro",
+            "Perto do rio",
+            "Na estação",
+            "Num supermercado"
+          ],
+          "answers": [
+            "Na praça do bairro"
+          ],
+          "explain": "Aos domingos tem uma feira na praça do bairro."
+        },
+        {
+          "id": "pt-listen-sunday-market-q5",
+          "kind": "choice",
+          "prompt": "O que eles compram?",
+          "options": [
+            "Fruta, pão e flores",
+            "Peixe e legumes",
+            "Queijo e carne",
+            "Somente flores"
+          ],
+          "answers": [
+            "Fruta, pão e flores"
+          ],
+          "explain": "Eles compram fruta, pão e flores."
+        },
+        {
+          "id": "pt-listen-sunday-market-q6",
+          "kind": "written",
+          "prompt": "O que a Ana quer?",
+          "answers": [
+            "morangos",
+            "quer morangos"
+          ],
+          "explain": "A Ana quer morangos."
+        }
       ]
     }
   ]

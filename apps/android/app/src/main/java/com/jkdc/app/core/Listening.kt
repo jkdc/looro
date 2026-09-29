@@ -5,10 +5,12 @@ package com.jkdc.app.core
     grades them unchanged; the data lives in `ListeningData` (generated from the
     canonical JSON in shared/listening by scripts/export_listening.py — never
     edit it by hand). `topic` labels the text; `unitID` links it to a course
-    unit when one exists. */
+    unit when one exists; `skills`/`exposureSkills` reference the shared
+    skill catalog. */
 data class ListeningText(val id: String, val languageID: String, val title: String, val level: String,
                          val topic: String, val unitID: String? = null,
-                         val text: String, val questions: List<Exercise>)
+                         val text: String, val questions: List<Exercise>,
+                         val skills: List<String> = emptyList(), val exposureSkills: List<String> = emptyList())
 
 object ListeningRegistry {
     private val LEVEL_ORDER = listOf("A1", "A2", "B1", "B2", "C1", "C2")

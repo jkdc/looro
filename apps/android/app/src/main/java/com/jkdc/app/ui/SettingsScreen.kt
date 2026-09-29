@@ -431,6 +431,7 @@ private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
     val progress = remember { vm.progressStats() }
     val levelStats = remember { vm.currentLevelStats() }
     val medals = remember { vm.listeningMedals() }
+    val mastery = remember { vm.masteryStats() }
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = AppColors.Cream,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxHeight(.9f)) {
@@ -474,6 +475,17 @@ private fun SettingsProgressSheet(vm: AppViewModel, onDismiss: () -> Unit) {
                                     progress.listeningCompleted.toString())
                                 if (medals > 0) ProgressRow(stringResource(R.string.progress_listening_medals), medals.toString())
                                 ProgressRow(stringResource(R.string.progress_activity_streak), progress.activeStreakDays.toString())
+                            }
+                        }
+                    }
+                    if (mastery != null && mastery.skills.isNotEmpty()) item {
+                        SettingsGroup(stringResource(R.string.progress_skills_heading)) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                Text(stringResource(R.string.progress_skills_overall, mastery.overall),
+                                    style = MaterialTheme.typography.bodyMedium)
+                                mastery.categories.forEach { category ->
+                                    SkillMasteryBar(stringResource(skillCategoryLabel(category.category)), category.mastery)
+                                }
                             }
                         }
                     }
@@ -538,6 +550,32 @@ private fun ProgressRow(label: String, value: String) {
         Text(label, style = MaterialTheme.typography.bodyLarge)
         Text(value, style = MaterialTheme.typography.bodyLarge, color = AppColors.Secondary)
     }
+}
+
+@Composable
+private fun SkillMasteryBar(label: String, mastery: Int) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(label, style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.progress_skills_percent, mastery),
+                style = MaterialTheme.typography.bodyMedium, color = AppColors.Secondary)
+        }
+        Box(Modifier.fillMaxWidth().height(5.dp).background(AppColors.Cream, RoundedCornerShape(3.dp))) {
+            Box(Modifier.fillMaxWidth((mastery / 100.0).toFloat())
+                .height(5.dp).background(AppColors.Secondary, RoundedCornerShape(3.dp)))
+        }
+    }
+}
+
+private fun skillCategoryLabel(category: String): Int = when (category) {
+    "grammar" -> R.string.skill_category_grammar
+    "vocab" -> R.string.skill_category_vocab
+    "function" -> R.string.skill_category_function
+    "speaking" -> R.string.skill_category_speaking
+    "listening" -> R.string.skill_category_listening
+    "reading" -> R.string.skill_category_reading
+    "writing" -> R.string.skill_category_writing
+    else -> R.string.skill_category_pron
 }
 
 @Composable

@@ -359,6 +359,17 @@
     <string name="level_title_10">Campeón de Foundations</string>
     <string name="progress_level">Nivel</string>
     <string name="progress_listening_medals">Medallas de listening</string>
+    <string name="progress_skills_heading">Habilidades</string>
+    <string name="progress_skills_overall">Dominio global: %1$d%%</string>
+    <string name="progress_skills_percent">%1$d%%</string>
+    <string name="skill_category_grammar">Gramática</string>
+    <string name="skill_category_vocab">Vocabulario</string>
+    <string name="skill_category_function">Funciones</string>
+    <string name="skill_category_speaking">Expresión oral</string>
+    <string name="skill_category_listening">Comprensión auditiva</string>
+    <string name="skill_category_reading">Lectura</string>
+    <string name="skill_category_writing">Escritura</string>
+    <string name="skill_category_pron">Pronunciación</string>
     <string name="common_back">Atrás</string>
     <string name="settings_conversation_provider">Proveedor de conversación</string>
     <string name="engine_key_included">Clave incluida</string>

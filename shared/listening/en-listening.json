@@ -1,4 +1,5 @@
 {
+  "schemaVersion": 2,
   "texts": [
     {
       "id": "en-listen-language-cafe",
@@ -9,22 +10,94 @@
       "unitID": "en-foundations-u1",
       "text": "Every Wednesday evening, a small café in the city centre is a language café. Students from many countries sit together at big tables. Lucas is twenty-five years old, and he is from Brazil. His Portuguese and Spanish are excellent, and his English is quite good now. At his table there is a woman from Japan and two men from Italy. They ask simple questions: Where are you from? What do you do? Lucas is a nurse, and he is happy to answer. At ten o'clock the café closes, but the new friends are not tired. They are only happy to talk.",
       "questions": [
-        {"id": "en-listen-language-cafe-q1", "kind": "choice", "prompt": "Where is the language café?",
-         "options": ["In a small café in the city centre", "In a school", "In a park", "In a hotel"], "answers": ["In a small café in the city centre"],
-         "explain": "Every Wednesday evening, a small café in the city centre is a language café."},
-        {"id": "en-listen-language-cafe-q2", "kind": "choice", "prompt": "Where is Lucas from?",
-         "options": ["Brazil", "Japan", "Italy", "Portugal"], "answers": ["Brazil"],
-         "explain": "Lucas is from Brazil."},
-        {"id": "en-listen-language-cafe-q3", "kind": "written", "prompt": "How old is Lucas?",
-         "answers": ["twenty-five", "25", "he is twenty-five"], "explain": "Lucas is twenty-five years old."},
-        {"id": "en-listen-language-cafe-q4", "kind": "choice", "prompt": "What is his job?",
-         "options": ["He is a nurse", "He is a teacher", "He is a waiter", "He is a student"], "answers": ["He is a nurse"],
-         "explain": "Lucas is a nurse, and he is happy to answer."},
-        {"id": "en-listen-language-cafe-q5", "kind": "choice", "prompt": "Who sits at his table?",
-         "options": ["A woman from Japan and two men from Italy", "Two women from Brazil", "A man from Japan", "Four students from Spain"], "answers": ["A woman from Japan and two men from Italy"],
-         "explain": "At his table there is a woman from Japan and two men from Italy."},
-        {"id": "en-listen-language-cafe-q6", "kind": "written", "prompt": "What time does the café close?",
-         "answers": ["at ten o'clock", "ten o'clock", "ten"], "explain": "At ten o'clock the café closes."}
+        {
+          "id": "en-listen-language-cafe-q1",
+          "kind": "choice",
+          "prompt": "Where is the language café?",
+          "options": [
+            "In a small café in the city centre",
+            "In a school",
+            "In a park",
+            "In a hotel"
+          ],
+          "answers": [
+            "In a small café in the city centre"
+          ],
+          "explain": "Every Wednesday evening, a small café in the city centre is a language café."
+        },
+        {
+          "id": "en-listen-language-cafe-q2",
+          "kind": "choice",
+          "prompt": "Where is Lucas from?",
+          "options": [
+            "Brazil",
+            "Japan",
+            "Italy",
+            "Portugal"
+          ],
+          "answers": [
+            "Brazil"
+          ],
+          "explain": "Lucas is from Brazil."
+        },
+        {
+          "id": "en-listen-language-cafe-q3",
+          "kind": "written",
+          "prompt": "How old is Lucas?",
+          "answers": [
+            "twenty-five",
+            "25",
+            "he is twenty-five"
+          ],
+          "explain": "Lucas is twenty-five years old."
+        },
+        {
+          "id": "en-listen-language-cafe-q4",
+          "kind": "choice",
+          "prompt": "What is his job?",
+          "options": [
+            "He is a nurse",
+            "He is a teacher",
+            "He is a waiter",
+            "He is a student"
+          ],
+          "answers": [
+            "He is a nurse"
+          ],
+          "explain": "Lucas is a nurse, and he is happy to answer."
+        },
+        {
+          "id": "en-listen-language-cafe-q5",
+          "kind": "choice",
+          "prompt": "Who sits at his table?",
+          "options": [
+            "A woman from Japan and two men from Italy",
+            "Two women from Brazil",
+            "A man from Japan",
+            "Four students from Spain"
+          ],
+          "answers": [
+            "A woman from Japan and two men from Italy"
+          ],
+          "explain": "At his table there is a woman from Japan and two men from Italy."
+        },
+        {
+          "id": "en-listen-language-cafe-q6",
+          "kind": "written",
+          "prompt": "What time does the café close?",
+          "answers": [
+            "at ten o'clock",
+            "ten o'clock",
+            "ten"
+          ],
+          "explain": "At ten o'clock the café closes."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:introductions",
+        "function:introduce-yourself"
       ]
     },
     {
@@ -36,22 +109,93 @@
       "unitID": "en-foundations-u1",
       "text": "There is a new neighbour in the building. Her name is Amélie, and she is from France. She is not a student; she is a photographer. She doesn't work in an office — she works at home, and she travels a lot. The people in the building are curious, but they are also shy, so they don't talk to her. Then one morning, Ben meets her at the door. \"Are you the new neighbour?\" he asks. \"Yes, I am,\" she says, \"and I am happy to be here.\" Now they are friends, and she isn't alone in the building.",
       "questions": [
-        {"id": "en-listen-new-neighbour-q1", "kind": "choice", "prompt": "Where is Amélie from?",
-         "options": ["France", "Italy", "Japan", "Brazil"], "answers": ["France"],
-         "explain": "Amélie is from France."},
-        {"id": "en-listen-new-neighbour-q2", "kind": "choice", "prompt": "What is her job?",
-         "options": ["She is a photographer", "She is a student", "She works in an office", "She is a teacher"], "answers": ["She is a photographer"],
-         "explain": "She is not a student; she is a photographer."},
-        {"id": "en-listen-new-neighbour-q3", "kind": "choice", "prompt": "Does she work in an office?",
-         "options": ["No, she works at home", "Yes, every day", "Only in summer", "She doesn't say"], "answers": ["No, she works at home"],
-         "explain": "She doesn't work in an office — she works at home."},
-        {"id": "en-listen-new-neighbour-q4", "kind": "written", "prompt": "Why don't the people talk to her?",
-         "answers": ["they are shy", "because they are shy", "shy"], "explain": "They are curious, but they are also shy."},
-        {"id": "en-listen-new-neighbour-q5", "kind": "choice", "prompt": "Where does Ben meet her?",
-         "options": ["At the door", "In the lift", "In the street", "At the café"], "answers": ["At the door"],
-         "explain": "One morning, Ben meets her at the door."},
-        {"id": "en-listen-new-neighbour-q6", "kind": "written", "prompt": "How does Amélie feel at the end?",
-         "answers": ["happy", "she is happy", "happy to be here"], "explain": "She says she is happy to be here."}
+        {
+          "id": "en-listen-new-neighbour-q1",
+          "kind": "choice",
+          "prompt": "Where is Amélie from?",
+          "options": [
+            "France",
+            "Italy",
+            "Japan",
+            "Brazil"
+          ],
+          "answers": [
+            "France"
+          ],
+          "explain": "Amélie is from France."
+        },
+        {
+          "id": "en-listen-new-neighbour-q2",
+          "kind": "choice",
+          "prompt": "What is her job?",
+          "options": [
+            "She is a photographer",
+            "She is a student",
+            "She works in an office",
+            "She is a teacher"
+          ],
+          "answers": [
+            "She is a photographer"
+          ],
+          "explain": "She is not a student; she is a photographer."
+        },
+        {
+          "id": "en-listen-new-neighbour-q3",
+          "kind": "choice",
+          "prompt": "Does she work in an office?",
+          "options": [
+            "No, she works at home",
+            "Yes, every day",
+            "Only in summer",
+            "She doesn't say"
+          ],
+          "answers": [
+            "No, she works at home"
+          ],
+          "explain": "She doesn't work in an office — she works at home."
+        },
+        {
+          "id": "en-listen-new-neighbour-q4",
+          "kind": "written",
+          "prompt": "Why don't the people talk to her?",
+          "answers": [
+            "they are shy",
+            "because they are shy",
+            "shy"
+          ],
+          "explain": "They are curious, but they are also shy."
+        },
+        {
+          "id": "en-listen-new-neighbour-q5",
+          "kind": "choice",
+          "prompt": "Where does Ben meet her?",
+          "options": [
+            "At the door",
+            "In the lift",
+            "In the street",
+            "At the café"
+          ],
+          "answers": [
+            "At the door"
+          ],
+          "explain": "One morning, Ben meets her at the door."
+        },
+        {
+          "id": "en-listen-new-neighbour-q6",
+          "kind": "written",
+          "prompt": "How does Amélie feel at the end?",
+          "answers": [
+            "happy",
+            "she is happy",
+            "happy to be here"
+          ],
+          "explain": "She says she is happy to be here."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:describe-people"
       ]
     },
     {
@@ -63,23 +207,97 @@
       "unitID": "en-foundations-u2",
       "text": "It is a rainy Monday, and the classroom is full of umbrellas. \"Whose umbrella is this?\" the teacher asks. It is a big blue umbrella, and it is next to my chair. \"It isn't mine,\" says Marta. \"My umbrella is green.\" \"Is it yours, Pedro?\" \"No, it isn't. My things are in my bag.\" Then Daniel comes in, wet and tired. He looks at the blue umbrella and laughs. \"That's my umbrella! It's my father's umbrella, and he needs it today.\" The class laughs too. Daniel takes his umbrella, and the teacher writes on the board: your, my, his, her.",
       "questions": [
-        {"id": "en-listen-lost-umbrella-q1", "kind": "choice", "prompt": "What is the weather like?",
-         "options": ["Rainy", "Sunny", "Snowy", "Windy and dry"], "answers": ["Rainy"],
-         "explain": "It is a rainy Monday."},
-        {"id": "en-listen-lost-umbrella-q2", "kind": "choice", "prompt": "What colour is the umbrella next to the chair?",
-         "options": ["Blue", "Green", "Black", "Red"], "answers": ["Blue"],
-         "explain": "It is a big blue umbrella."},
-        {"id": "en-listen-lost-umbrella-q3", "kind": "written", "prompt": "What colour is Marta's umbrella?",
-         "answers": ["green", "it is green", "her umbrella is green"], "explain": "Marta's umbrella is green."},
-        {"id": "en-listen-lost-umbrella-q4", "kind": "choice", "prompt": "Whose umbrella is the blue one?",
-         "options": ["Daniel's", "Marta's", "Pedro's", "The teacher's"], "answers": ["Daniel's"],
-         "explain": "Daniel says it is his umbrella — his father's umbrella."},
-        {"id": "en-listen-lost-umbrella-q5", "kind": "choice", "prompt": "Where are Pedro's things?",
-         "options": ["In his bag", "At home", "In his car", "Under the chair"], "answers": ["In his bag"],
-         "explain": "Pedro says his things are in his bag."},
-        {"id": "en-listen-lost-umbrella-q6", "kind": "choice", "prompt": "Why does Daniel need the umbrella today?",
-         "options": ["His father needs it", "It is a gift for Marta", "It is for the teacher", "He wants to sell it"], "answers": ["His father needs it"],
-         "explain": "It is his father's umbrella, and his father needs it today."}
+        {
+          "id": "en-listen-lost-umbrella-q1",
+          "kind": "choice",
+          "prompt": "What is the weather like?",
+          "options": [
+            "Rainy",
+            "Sunny",
+            "Snowy",
+            "Windy and dry"
+          ],
+          "answers": [
+            "Rainy"
+          ],
+          "explain": "It is a rainy Monday."
+        },
+        {
+          "id": "en-listen-lost-umbrella-q2",
+          "kind": "choice",
+          "prompt": "What colour is the umbrella next to the chair?",
+          "options": [
+            "Blue",
+            "Green",
+            "Black",
+            "Red"
+          ],
+          "answers": [
+            "Blue"
+          ],
+          "explain": "It is a big blue umbrella."
+        },
+        {
+          "id": "en-listen-lost-umbrella-q3",
+          "kind": "written",
+          "prompt": "What colour is Marta's umbrella?",
+          "answers": [
+            "green",
+            "it is green",
+            "her umbrella is green"
+          ],
+          "explain": "Marta's umbrella is green."
+        },
+        {
+          "id": "en-listen-lost-umbrella-q4",
+          "kind": "choice",
+          "prompt": "Whose umbrella is the blue one?",
+          "options": [
+            "Daniel's",
+            "Marta's",
+            "Pedro's",
+            "The teacher's"
+          ],
+          "answers": [
+            "Daniel's"
+          ],
+          "explain": "Daniel says it is his umbrella — his father's umbrella."
+        },
+        {
+          "id": "en-listen-lost-umbrella-q5",
+          "kind": "choice",
+          "prompt": "Where are Pedro's things?",
+          "options": [
+            "In his bag",
+            "At home",
+            "In his car",
+            "Under the chair"
+          ],
+          "answers": [
+            "In his bag"
+          ],
+          "explain": "Pedro says his things are in his bag."
+        },
+        {
+          "id": "en-listen-lost-umbrella-q6",
+          "kind": "choice",
+          "prompt": "Why does Daniel need the umbrella today?",
+          "options": [
+            "His father needs it",
+            "It is a gift for Marta",
+            "It is for the teacher",
+            "He wants to sell it"
+          ],
+          "answers": [
+            "His father needs it"
+          ],
+          "explain": "It is his father's umbrella, and his father needs it today."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:demonstratives",
+        "vocab:social-expressions"
       ]
     },
     {
@@ -91,22 +309,94 @@
       "unitID": "en-foundations-u2",
       "text": "Tom has got a new flatmate. His name is Leo and he is twenty-three years old. Leo comes from a small town in the north, but he works in the city now. He has got two boxes, a guitar and a bicycle. The flat has got two bedrooms and a sunny kitchen. Tom hopes Leo likes cooking, because Tom hates it.",
       "questions": [
-        {"id": "en-listen-new-flatmate-q1", "kind": "choice", "prompt": "How old is Leo?",
-         "options": ["Twenty-three", "Thirty-two", "Twenty", "Thirty"], "answers": ["Twenty-three"],
-         "explain": "Leo is twenty-three years old."},
-        {"id": "en-listen-new-flatmate-q2", "kind": "choice", "prompt": "What has Leo NOT got?",
-         "options": ["A television", "Two boxes", "A guitar", "A bicycle"], "answers": ["A television"],
-         "explain": "He has two boxes, a guitar and a bicycle — no television."},
-        {"id": "en-listen-new-flatmate-q3", "kind": "written", "prompt": "What does Tom hate doing?",
-         "answers": ["cooking", "he hates cooking", "tom hates cooking"], "explain": "Tom hates cooking."},
-        {"id": "en-listen-new-flatmate-q4", "kind": "choice", "prompt": "What does the flat have?",
-         "options": ["Two bedrooms and a sunny kitchen", "One bedroom and a balcony", "A garden", "Two bathrooms"], "answers": ["Two bedrooms and a sunny kitchen"],
-         "explain": "The flat has got two bedrooms and a sunny kitchen."},
-        {"id": "en-listen-new-flatmate-q5", "kind": "choice", "prompt": "Where does Leo work now?",
-         "options": ["In the city", "In a small town", "In the north", "He doesn't work"], "answers": ["In the city"],
-         "explain": "He comes from a small town, but he works in the city now."},
-        {"id": "en-listen-new-flatmate-q6", "kind": "written", "prompt": "Which instrument has Leo got?",
-         "answers": ["a guitar", "guitar", "he has got a guitar"], "explain": "Leo has got a guitar."}
+        {
+          "id": "en-listen-new-flatmate-q1",
+          "kind": "choice",
+          "prompt": "How old is Leo?",
+          "options": [
+            "Twenty-three",
+            "Thirty-two",
+            "Twenty",
+            "Thirty"
+          ],
+          "answers": [
+            "Twenty-three"
+          ],
+          "explain": "Leo is twenty-three years old."
+        },
+        {
+          "id": "en-listen-new-flatmate-q2",
+          "kind": "choice",
+          "prompt": "What has Leo NOT got?",
+          "options": [
+            "A television",
+            "Two boxes",
+            "A guitar",
+            "A bicycle"
+          ],
+          "answers": [
+            "A television"
+          ],
+          "explain": "He has two boxes, a guitar and a bicycle — no television."
+        },
+        {
+          "id": "en-listen-new-flatmate-q3",
+          "kind": "written",
+          "prompt": "What does Tom hate doing?",
+          "answers": [
+            "cooking",
+            "he hates cooking",
+            "tom hates cooking"
+          ],
+          "explain": "Tom hates cooking."
+        },
+        {
+          "id": "en-listen-new-flatmate-q4",
+          "kind": "choice",
+          "prompt": "What does the flat have?",
+          "options": [
+            "Two bedrooms and a sunny kitchen",
+            "One bedroom and a balcony",
+            "A garden",
+            "Two bathrooms"
+          ],
+          "answers": [
+            "Two bedrooms and a sunny kitchen"
+          ],
+          "explain": "The flat has got two bedrooms and a sunny kitchen."
+        },
+        {
+          "id": "en-listen-new-flatmate-q5",
+          "kind": "choice",
+          "prompt": "Where does Leo work now?",
+          "options": [
+            "In the city",
+            "In a small town",
+            "In the north",
+            "He doesn't work"
+          ],
+          "answers": [
+            "In the city"
+          ],
+          "explain": "He comes from a small town, but he works in the city now."
+        },
+        {
+          "id": "en-listen-new-flatmate-q6",
+          "kind": "written",
+          "prompt": "Which instrument has Leo got?",
+          "answers": [
+            "a guitar",
+            "guitar",
+            "he has got a guitar"
+          ],
+          "explain": "Leo has got a guitar."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:have-got",
+        "vocab:home"
       ]
     },
     {
@@ -118,22 +408,94 @@
       "unitID": "en-foundations-u3",
       "text": "Every morning, Marta walks to a small café near her flat. The waiter knows her name, so she never has to order. Today she sits by the window with a coffee and a croissant. Her bus leaves at half past eight, but she is not worried. The café is very quiet at this hour. She drinks her coffee slowly and watches the city wake up.",
       "questions": [
-        {"id": "en-listen-coffee-morning-q1", "kind": "choice", "prompt": "Where does Marta go every morning?",
-         "options": ["To a small café", "To her office", "To the bus station", "To a park"], "answers": ["To a small café"],
-         "explain": "She walks to a small café near her flat."},
-        {"id": "en-listen-coffee-morning-q2", "kind": "choice", "prompt": "What does she have for breakfast today?",
-         "options": ["Tea and toast", "A coffee and a croissant", "Orange juice", "Nothing"], "answers": ["A coffee and a croissant"],
-         "explain": "She sits by the window with a coffee and a croissant."},
-        {"id": "en-listen-coffee-morning-q3", "kind": "written", "prompt": "What time does her bus leave?",
-         "answers": ["at half past eight", "half past eight", "8:30"], "explain": "Her bus leaves at half past eight."},
-        {"id": "en-listen-coffee-morning-q4", "kind": "choice", "prompt": "How does she feel about the time?",
-         "options": ["She is not worried", "She is very late", "She is angry", "She is sleepy"], "answers": ["She is not worried"],
-         "explain": "The text says she is not worried."},
-        {"id": "en-listen-coffee-morning-q5", "kind": "choice", "prompt": "Who knows Marta's name?",
-         "options": ["The waiter", "The bus driver", "Her boss", "A neighbour"], "answers": ["The waiter"],
-         "explain": "The waiter knows her name, so she never has to order."},
-        {"id": "en-listen-coffee-morning-q6", "kind": "written", "prompt": "Where does she sit today?",
-         "answers": ["by the window", "next to the window", "at the window"], "explain": "Today she sits by the window."}
+        {
+          "id": "en-listen-coffee-morning-q1",
+          "kind": "choice",
+          "prompt": "Where does Marta go every morning?",
+          "options": [
+            "To a small café",
+            "To her office",
+            "To the bus station",
+            "To a park"
+          ],
+          "answers": [
+            "To a small café"
+          ],
+          "explain": "She walks to a small café near her flat."
+        },
+        {
+          "id": "en-listen-coffee-morning-q2",
+          "kind": "choice",
+          "prompt": "What does she have for breakfast today?",
+          "options": [
+            "Tea and toast",
+            "A coffee and a croissant",
+            "Orange juice",
+            "Nothing"
+          ],
+          "answers": [
+            "A coffee and a croissant"
+          ],
+          "explain": "She sits by the window with a coffee and a croissant."
+        },
+        {
+          "id": "en-listen-coffee-morning-q3",
+          "kind": "written",
+          "prompt": "What time does her bus leave?",
+          "answers": [
+            "at half past eight",
+            "half past eight",
+            "8:30"
+          ],
+          "explain": "Her bus leaves at half past eight."
+        },
+        {
+          "id": "en-listen-coffee-morning-q4",
+          "kind": "choice",
+          "prompt": "How does she feel about the time?",
+          "options": [
+            "She is not worried",
+            "She is very late",
+            "She is angry",
+            "She is sleepy"
+          ],
+          "answers": [
+            "She is not worried"
+          ],
+          "explain": "The text says she is not worried."
+        },
+        {
+          "id": "en-listen-coffee-morning-q5",
+          "kind": "choice",
+          "prompt": "Who knows Marta's name?",
+          "options": [
+            "The waiter",
+            "The bus driver",
+            "Her boss",
+            "A neighbour"
+          ],
+          "answers": [
+            "The waiter"
+          ],
+          "explain": "The waiter knows her name, so she never has to order."
+        },
+        {
+          "id": "en-listen-coffee-morning-q6",
+          "kind": "written",
+          "prompt": "Where does she sit today?",
+          "answers": [
+            "by the window",
+            "next to the window",
+            "at the window"
+          ],
+          "explain": "Today she sits by the window."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "grammar:present-simple",
+        "vocab:daily-routine"
       ]
     },
     {
@@ -145,22 +507,95 @@
       "unitID": "en-foundations-u3",
       "text": "Paolo is a baker, and he works at night. His shift starts at eleven o'clock in the evening, and it finishes at seven in the morning. First, he makes the bread; then he makes the cakes. He never works alone — his cousin works with him, and they talk while they work. Paolo usually sleeps from nine in the morning to three in the afternoon. On Sundays he doesn't work, and he has lunch with his family. His neighbours sometimes ask him: \"Do you like your job?\" \"Yes,\" he says, \"the city is quiet, the bread smells wonderful, and my mornings are free.\"",
       "questions": [
-        {"id": "en-listen-night-shift-q1", "kind": "choice", "prompt": "When does Paolo's shift start?",
-         "options": ["At eleven in the evening", "At seven in the morning", "At nine in the morning", "At three in the afternoon"], "answers": ["At eleven in the evening"],
-         "explain": "His shift starts at eleven o'clock in the evening."},
-        {"id": "en-listen-night-shift-q2", "kind": "written", "prompt": "What does he make first?",
-         "answers": ["bread", "the bread", "he makes the bread"], "explain": "First, he makes the bread; then the cakes."},
-        {"id": "en-listen-night-shift-q3", "kind": "choice", "prompt": "Who works with him?",
-         "options": ["His cousin", "His brother", "His wife", "A friend from school"], "answers": ["His cousin"],
-         "explain": "He never works alone — his cousin works with him."},
-        {"id": "en-listen-night-shift-q4", "kind": "written", "prompt": "When does Paolo usually sleep?",
-         "answers": ["from nine to three", "from nine in the morning to three in the afternoon", "nine to three"], "explain": "He usually sleeps from nine in the morning to three in the afternoon."},
-        {"id": "en-listen-night-shift-q5", "kind": "choice", "prompt": "What does he do on Sundays?",
-         "options": ["He has lunch with his family", "He sleeps all day", "He works alone", "He bakes cakes at home"], "answers": ["He has lunch with his family"],
-         "explain": "On Sundays he doesn't work, and he has lunch with his family."},
-        {"id": "en-listen-night-shift-q6", "kind": "choice", "prompt": "Why does Paolo like his job?",
-         "options": ["The city is quiet and the bread smells wonderful", "It is very well paid", "He meets a lot of people", "The nights are long"], "answers": ["The city is quiet and the bread smells wonderful"],
-         "explain": "He says the city is quiet, the bread smells wonderful and his mornings are free."}
+        {
+          "id": "en-listen-night-shift-q1",
+          "kind": "choice",
+          "prompt": "When does Paolo's shift start?",
+          "options": [
+            "At eleven in the evening",
+            "At seven in the morning",
+            "At nine in the morning",
+            "At three in the afternoon"
+          ],
+          "answers": [
+            "At eleven in the evening"
+          ],
+          "explain": "His shift starts at eleven o'clock in the evening."
+        },
+        {
+          "id": "en-listen-night-shift-q2",
+          "kind": "written",
+          "prompt": "What does he make first?",
+          "answers": [
+            "bread",
+            "the bread",
+            "he makes the bread"
+          ],
+          "explain": "First, he makes the bread; then the cakes."
+        },
+        {
+          "id": "en-listen-night-shift-q3",
+          "kind": "choice",
+          "prompt": "Who works with him?",
+          "options": [
+            "His cousin",
+            "His brother",
+            "His wife",
+            "A friend from school"
+          ],
+          "answers": [
+            "His cousin"
+          ],
+          "explain": "He never works alone — his cousin works with him."
+        },
+        {
+          "id": "en-listen-night-shift-q4",
+          "kind": "written",
+          "prompt": "When does Paolo usually sleep?",
+          "answers": [
+            "from nine to three",
+            "from nine in the morning to three in the afternoon",
+            "nine to three"
+          ],
+          "explain": "He usually sleeps from nine in the morning to three in the afternoon."
+        },
+        {
+          "id": "en-listen-night-shift-q5",
+          "kind": "choice",
+          "prompt": "What does he do on Sundays?",
+          "options": [
+            "He has lunch with his family",
+            "He sleeps all day",
+            "He works alone",
+            "He bakes cakes at home"
+          ],
+          "answers": [
+            "He has lunch with his family"
+          ],
+          "explain": "On Sundays he doesn't work, and he has lunch with his family."
+        },
+        {
+          "id": "en-listen-night-shift-q6",
+          "kind": "choice",
+          "prompt": "Why does Paolo like his job?",
+          "options": [
+            "The city is quiet and the bread smells wonderful",
+            "It is very well paid",
+            "He meets a lot of people",
+            "The nights are long"
+          ],
+          "answers": [
+            "The city is quiet and the bread smells wonderful"
+          ],
+          "explain": "He says the city is quiet, the bread smells wonderful and his mornings are free."
+        }
+      ],
+      "skills": [
+        "listening:number-time",
+        "listening:detail",
+        "grammar:third-person-s",
+        "grammar:frequency-adverbs",
+        "vocab:work"
       ]
     },
     {
@@ -172,22 +607,94 @@
       "unitID": "en-foundations-u4",
       "text": "Nadia is new in town, and today she explores on foot. In her street there is a small supermarket, a bakery and a bookshop — everything is very close, so she doesn't need the bus. She walks to the river and turns left. There, she can see the old bridge and a big park. In the park there are children, dogs and a lot of green space. She can't visit the museum because it is closed on Mondays, but she can sit in the sun. A man with a dog gives her directions to the market: \"Go straight, cross the bridge, and the market is on your right.\" She thanks him and walks on.",
       "questions": [
-        {"id": "en-listen-city-walk-q1", "kind": "choice", "prompt": "How does Nadia explore the city?",
-         "options": ["On foot", "By bus", "By bike", "By tram"], "answers": ["On foot"],
-         "explain": "Today she explores on foot."},
-        {"id": "en-listen-city-walk-q2", "kind": "choice", "prompt": "What is in her street?",
-         "options": ["A supermarket, a bakery and a bookshop", "A cinema and a café", "A school", "A hospital"], "answers": ["A supermarket, a bakery and a bookshop"],
-         "explain": "In her street there is a small supermarket, a bakery and a bookshop."},
-        {"id": "en-listen-city-walk-q3", "kind": "choice", "prompt": "What can she see from the river?",
-         "options": ["The old bridge and a big park", "A castle", "The museum", "A shopping centre"], "answers": ["The old bridge and a big park"],
-         "explain": "From the river she can see the old bridge and a big park."},
-        {"id": "en-listen-city-walk-q4", "kind": "choice", "prompt": "Why can't she visit the museum?",
-         "options": ["It is closed on Mondays", "She doesn't have time", "It is too expensive", "She can't find it"], "answers": ["It is closed on Mondays"],
-         "explain": "The museum is closed on Mondays."},
-        {"id": "en-listen-city-walk-q5", "kind": "written", "prompt": "Where is the market?",
-         "answers": ["on your right", "on the right", "on her right"], "explain": "Cross the bridge, and the market is on your right."},
-        {"id": "en-listen-city-walk-q6", "kind": "written", "prompt": "Who gives her directions?",
-         "answers": ["a man with a dog", "a man", "the man with the dog"], "explain": "A man with a dog gives her directions."}
+        {
+          "id": "en-listen-city-walk-q1",
+          "kind": "choice",
+          "prompt": "How does Nadia explore the city?",
+          "options": [
+            "On foot",
+            "By bus",
+            "By bike",
+            "By tram"
+          ],
+          "answers": [
+            "On foot"
+          ],
+          "explain": "Today she explores on foot."
+        },
+        {
+          "id": "en-listen-city-walk-q2",
+          "kind": "choice",
+          "prompt": "What is in her street?",
+          "options": [
+            "A supermarket, a bakery and a bookshop",
+            "A cinema and a café",
+            "A school",
+            "A hospital"
+          ],
+          "answers": [
+            "A supermarket, a bakery and a bookshop"
+          ],
+          "explain": "In her street there is a small supermarket, a bakery and a bookshop."
+        },
+        {
+          "id": "en-listen-city-walk-q3",
+          "kind": "choice",
+          "prompt": "What can she see from the river?",
+          "options": [
+            "The old bridge and a big park",
+            "A castle",
+            "The museum",
+            "A shopping centre"
+          ],
+          "answers": [
+            "The old bridge and a big park"
+          ],
+          "explain": "From the river she can see the old bridge and a big park."
+        },
+        {
+          "id": "en-listen-city-walk-q4",
+          "kind": "choice",
+          "prompt": "Why can't she visit the museum?",
+          "options": [
+            "It is closed on Mondays",
+            "She doesn't have time",
+            "It is too expensive",
+            "She can't find it"
+          ],
+          "answers": [
+            "It is closed on Mondays"
+          ],
+          "explain": "The museum is closed on Mondays."
+        },
+        {
+          "id": "en-listen-city-walk-q5",
+          "kind": "written",
+          "prompt": "Where is the market?",
+          "answers": [
+            "on your right",
+            "on the right",
+            "on her right"
+          ],
+          "explain": "Cross the bridge, and the market is on your right."
+        },
+        {
+          "id": "en-listen-city-walk-q6",
+          "kind": "written",
+          "prompt": "Who gives her directions?",
+          "answers": [
+            "a man with a dog",
+            "a man",
+            "the man with the dog"
+          ],
+          "explain": "A man with a dog gives her directions."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "function:ask-for-directions",
+        "vocab:directions",
+        "grammar:imperatives"
       ]
     },
     {
@@ -199,22 +706,94 @@
       "unitID": "en-foundations-u4",
       "text": "On Sundays there is a market in the town square. Anna and her father go there at nine o'clock, before it gets busy. They buy fruit, bread and flowers. Anna wants some strawberries, but her father says they are too expensive this week. In the end they take home a big bag of oranges and some white roses for the kitchen table.",
       "questions": [
-        {"id": "en-listen-sunday-market-q1", "kind": "choice", "prompt": "When do Anna and her father go to the market?",
-         "options": ["At nine o'clock", "At noon", "In the afternoon", "At half past six"], "answers": ["At nine o'clock"],
-         "explain": "They go at nine o'clock, before it gets busy."},
-        {"id": "en-listen-sunday-market-q2", "kind": "written", "prompt": "Why doesn't Anna get the strawberries?",
-         "answers": ["they are too expensive", "too expensive", "because they are too expensive"], "explain": "Her father says they are too expensive this week."},
-        {"id": "en-listen-sunday-market-q3", "kind": "choice", "prompt": "What do they take home?",
-         "options": ["Oranges and roses", "Strawberries and bread", "Apples and tulips", "Bread and cheese"], "answers": ["Oranges and roses"],
-         "explain": "They take home oranges and white roses."},
-        {"id": "en-listen-sunday-market-q4", "kind": "choice", "prompt": "Where is the market?",
-         "options": ["In the town square", "Near the river", "At the station", "In a supermarket"], "answers": ["In the town square"],
-         "explain": "There is a market in the town square on Sundays."},
-        {"id": "en-listen-sunday-market-q5", "kind": "choice", "prompt": "What do they buy?",
-         "options": ["Fruit, bread and flowers", "Fish and vegetables", "Cheese and meat", "Only flowers"], "answers": ["Fruit, bread and flowers"],
-         "explain": "They buy fruit, bread and flowers."},
-        {"id": "en-listen-sunday-market-q6", "kind": "written", "prompt": "What does Anna want?",
-         "answers": ["strawberries", "some strawberries", "she wants strawberries"], "explain": "Anna wants some strawberries."}
+        {
+          "id": "en-listen-sunday-market-q1",
+          "kind": "choice",
+          "prompt": "When do Anna and her father go to the market?",
+          "options": [
+            "At nine o'clock",
+            "At noon",
+            "In the afternoon",
+            "At half past six"
+          ],
+          "answers": [
+            "At nine o'clock"
+          ],
+          "explain": "They go at nine o'clock, before it gets busy."
+        },
+        {
+          "id": "en-listen-sunday-market-q2",
+          "kind": "written",
+          "prompt": "Why doesn't Anna get the strawberries?",
+          "answers": [
+            "they are too expensive",
+            "too expensive",
+            "because they are too expensive"
+          ],
+          "explain": "Her father says they are too expensive this week."
+        },
+        {
+          "id": "en-listen-sunday-market-q3",
+          "kind": "choice",
+          "prompt": "What do they take home?",
+          "options": [
+            "Oranges and roses",
+            "Strawberries and bread",
+            "Apples and tulips",
+            "Bread and cheese"
+          ],
+          "answers": [
+            "Oranges and roses"
+          ],
+          "explain": "They take home oranges and white roses."
+        },
+        {
+          "id": "en-listen-sunday-market-q4",
+          "kind": "choice",
+          "prompt": "Where is the market?",
+          "options": [
+            "In the town square",
+            "Near the river",
+            "At the station",
+            "In a supermarket"
+          ],
+          "answers": [
+            "In the town square"
+          ],
+          "explain": "There is a market in the town square on Sundays."
+        },
+        {
+          "id": "en-listen-sunday-market-q5",
+          "kind": "choice",
+          "prompt": "What do they buy?",
+          "options": [
+            "Fruit, bread and flowers",
+            "Fish and vegetables",
+            "Cheese and meat",
+            "Only flowers"
+          ],
+          "answers": [
+            "Fruit, bread and flowers"
+          ],
+          "explain": "They buy fruit, bread and flowers."
+        },
+        {
+          "id": "en-listen-sunday-market-q6",
+          "kind": "written",
+          "prompt": "What does Anna want?",
+          "answers": [
+            "strawberries",
+            "some strawberries",
+            "she wants strawberries"
+          ],
+          "explain": "Anna wants some strawberries."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:number-time",
+        "grammar:some-any",
+        "vocab:shopping"
       ]
     },
     {
@@ -226,21 +805,92 @@
       "unitID": "en-foundations-u5",
       "text": "Last Thursday, Ines went to a language exchange at a bar in the old town. She wanted to practise her English, so she sat with a group from Manchester. At first she could only smile and nod. But after half an hour the words started to come. They talked about films, football and the differences between Spanish and English breakfasts. She didn't leave until eleven, and she wrote down fifteen new expressions on the tram home.",
       "questions": [
-        {"id": "en-listen-language-exchange-q1", "kind": "choice", "prompt": "Why did Ines go to the exchange?",
-         "options": ["To practise her English", "To watch football", "To eat breakfast", "To teach maths"], "answers": ["To practise her English"],
-         "explain": "She wanted to practise her English."},
-        {"id": "en-listen-language-exchange-q2", "kind": "written", "prompt": "What could she do at first?",
-         "answers": ["she could only smile and nod", "smile and nod", "only smile and nod"], "explain": "At first she could only smile and nod."},
-        {"id": "en-listen-language-exchange-q3", "kind": "choice", "prompt": "What did they NOT talk about?",
-         "options": ["Their jobs", "Films", "Football", "Breakfasts"], "answers": ["Their jobs"],
-         "explain": "They talked about films, football and breakfasts — not jobs."},
-        {"id": "en-listen-language-exchange-q4", "kind": "written", "prompt": "What did she do on the tram home?",
-         "answers": ["she wrote down fifteen new expressions", "she wrote down new expressions", "wrote down fifteen expressions"], "explain": "She wrote down fifteen new expressions."},
-        {"id": "en-listen-language-exchange-q5", "kind": "choice", "prompt": "Where did the exchange take place?",
-         "options": ["In a bar in the old town", "In a school", "In a library", "In a park"], "answers": ["In a bar in the old town"],
-         "explain": "It was at a bar in the old town."},
-        {"id": "en-listen-language-exchange-q6", "kind": "written", "prompt": "What time did she leave?",
-         "answers": ["at eleven", "eleven", "at 11"], "explain": "She didn't leave until eleven."}
+        {
+          "id": "en-listen-language-exchange-q1",
+          "kind": "choice",
+          "prompt": "Why did Ines go to the exchange?",
+          "options": [
+            "To practise her English",
+            "To watch football",
+            "To eat breakfast",
+            "To teach maths"
+          ],
+          "answers": [
+            "To practise her English"
+          ],
+          "explain": "She wanted to practise her English."
+        },
+        {
+          "id": "en-listen-language-exchange-q2",
+          "kind": "written",
+          "prompt": "What could she do at first?",
+          "answers": [
+            "she could only smile and nod",
+            "smile and nod",
+            "only smile and nod"
+          ],
+          "explain": "At first she could only smile and nod."
+        },
+        {
+          "id": "en-listen-language-exchange-q3",
+          "kind": "choice",
+          "prompt": "What did they NOT talk about?",
+          "options": [
+            "Their jobs",
+            "Films",
+            "Football",
+            "Breakfasts"
+          ],
+          "answers": [
+            "Their jobs"
+          ],
+          "explain": "They talked about films, football and breakfasts — not jobs."
+        },
+        {
+          "id": "en-listen-language-exchange-q4",
+          "kind": "written",
+          "prompt": "What did she do on the tram home?",
+          "answers": [
+            "she wrote down fifteen new expressions",
+            "she wrote down new expressions",
+            "wrote down fifteen expressions"
+          ],
+          "explain": "She wrote down fifteen new expressions."
+        },
+        {
+          "id": "en-listen-language-exchange-q5",
+          "kind": "choice",
+          "prompt": "Where did the exchange take place?",
+          "options": [
+            "In a bar in the old town",
+            "In a school",
+            "In a library",
+            "In a park"
+          ],
+          "answers": [
+            "In a bar in the old town"
+          ],
+          "explain": "It was at a bar in the old town."
+        },
+        {
+          "id": "en-listen-language-exchange-q6",
+          "kind": "written",
+          "prompt": "What time did she leave?",
+          "answers": [
+            "at eleven",
+            "eleven",
+            "at 11"
+          ],
+          "explain": "She didn't leave until eleven."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [
+        "grammar:past-simple-regular"
       ]
     },
     {
@@ -252,22 +902,97 @@
       "unitID": "en-foundations-u5",
       "text": "We were so excited about the picnic on Saturday. The weather was warm on Friday, so we didn't check the forecast. On Saturday morning it started to rain and it didn't stop all day. We moved everything into the kitchen and ate on the floor. Honestly, it was one of the best afternoons of the summer. Sometimes the plans that go wrong are the ones you remember.",
       "questions": [
-        {"id": "en-listen-rainy-picnic-q1", "kind": "choice", "prompt": "Why didn't they check the forecast?",
-         "options": ["The weather was warm on Friday", "They don't have a phone", "They were in a hurry", "They forgot"], "answers": ["The weather was warm on Friday"],
-         "explain": "The weather was warm on Friday, so they didn't check."},
-        {"id": "en-listen-rainy-picnic-q2", "kind": "written", "prompt": "Where did they eat?",
-         "answers": ["in the kitchen", "on the kitchen floor", "on the floor in the kitchen"], "explain": "They moved everything into the kitchen and ate on the floor."},
-        {"id": "en-listen-rainy-picnic-q3", "kind": "choice", "prompt": "How did they feel about the day in the end?",
-         "options": ["It was one of the best afternoons", "It was a disaster", "They were bored", "They were angry"], "answers": ["It was one of the best afternoons"],
-         "explain": "It was one of the best afternoons of the summer."},
-        {"id": "en-listen-rainy-picnic-q4", "kind": "choice", "prompt": "What was the weather like on Saturday?",
-         "options": ["It rained all day", "Sunny", "Cloudy but dry", "Snowy"], "answers": ["It rained all day"],
-         "explain": "It started to rain and didn't stop all day."},
-        {"id": "en-listen-rainy-picnic-q5", "kind": "choice", "prompt": "Which day was the picnic planned for?",
-         "options": ["Saturday", "Friday", "Sunday", "Monday"], "answers": ["Saturday"],
-         "explain": "They were excited about the picnic on Saturday."},
-        {"id": "en-listen-rainy-picnic-q6", "kind": "written", "prompt": "What was the weather like on Friday?",
-         "answers": ["warm", "it was warm", "the weather was warm"], "explain": "The weather was warm on Friday."}
+        {
+          "id": "en-listen-rainy-picnic-q1",
+          "kind": "choice",
+          "prompt": "Why didn't they check the forecast?",
+          "options": [
+            "The weather was warm on Friday",
+            "They don't have a phone",
+            "They were in a hurry",
+            "They forgot"
+          ],
+          "answers": [
+            "The weather was warm on Friday"
+          ],
+          "explain": "The weather was warm on Friday, so they didn't check."
+        },
+        {
+          "id": "en-listen-rainy-picnic-q2",
+          "kind": "written",
+          "prompt": "Where did they eat?",
+          "answers": [
+            "in the kitchen",
+            "on the kitchen floor",
+            "on the floor in the kitchen"
+          ],
+          "explain": "They moved everything into the kitchen and ate on the floor."
+        },
+        {
+          "id": "en-listen-rainy-picnic-q3",
+          "kind": "choice",
+          "prompt": "How did they feel about the day in the end?",
+          "options": [
+            "It was one of the best afternoons",
+            "It was a disaster",
+            "They were bored",
+            "They were angry"
+          ],
+          "answers": [
+            "It was one of the best afternoons"
+          ],
+          "explain": "It was one of the best afternoons of the summer."
+        },
+        {
+          "id": "en-listen-rainy-picnic-q4",
+          "kind": "choice",
+          "prompt": "What was the weather like on Saturday?",
+          "options": [
+            "It rained all day",
+            "Sunny",
+            "Cloudy but dry",
+            "Snowy"
+          ],
+          "answers": [
+            "It rained all day"
+          ],
+          "explain": "It started to rain and didn't stop all day."
+        },
+        {
+          "id": "en-listen-rainy-picnic-q5",
+          "kind": "choice",
+          "prompt": "Which day was the picnic planned for?",
+          "options": [
+            "Saturday",
+            "Friday",
+            "Sunday",
+            "Monday"
+          ],
+          "answers": [
+            "Saturday"
+          ],
+          "explain": "They were excited about the picnic on Saturday."
+        },
+        {
+          "id": "en-listen-rainy-picnic-q6",
+          "kind": "written",
+          "prompt": "What was the weather like on Friday?",
+          "answers": [
+            "warm",
+            "it was warm",
+            "the weather was warm"
+          ],
+          "explain": "The weather was warm on Friday."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "vocab:weather"
+      ],
+      "exposureSkills": [
+        "grammar:past-was-were",
+        "grammar:past-simple-regular"
       ]
     },
     {
@@ -279,22 +1004,93 @@
       "unitID": "en-foundations-u6",
       "text": "Yesterday was Sofia's first day at her new job. She woke up at six, took the tram and arrived early. The office was smaller than she expected, but everyone was friendly. Her manager gave her a laptop and a long list of things to read. At lunchtime she ate with two colleagues in the park next to the office. On the way home she felt tired but happy, and she called her mother to tell her everything.",
       "questions": [
-        {"id": "en-listen-first-day-q1", "kind": "choice", "prompt": "When did Sofia arrive at the office?",
-         "options": ["Early", "Late", "At noon", "She doesn't say"], "answers": ["Early"],
-         "explain": "She woke up at six and arrived early."},
-        {"id": "en-listen-first-day-q2", "kind": "written", "prompt": "What did her manager give her?",
-         "answers": ["a laptop and a long list", "a laptop and a list of things to read", "a laptop"], "explain": "He gave her a laptop and a long list of things to read."},
-        {"id": "en-listen-first-day-q3", "kind": "choice", "prompt": "Where did she eat lunch?",
-         "options": ["In the park", "At her desk", "In a café", "At home"], "answers": ["In the park"],
-         "explain": "She ate with two colleagues in the park next to the office."},
-        {"id": "en-listen-first-day-q4", "kind": "choice", "prompt": "How did she feel on the way home?",
-         "options": ["Tired but happy", "Angry", "Sad and lonely", "Nervous"], "answers": ["Tired but happy"],
-         "explain": "She felt tired but happy."},
-        {"id": "en-listen-first-day-q5", "kind": "choice", "prompt": "How did she go to work?",
-         "options": ["By tram", "By bus", "On foot", "By car"], "answers": ["By tram"],
-         "explain": "She took the tram."},
-        {"id": "en-listen-first-day-q6", "kind": "written", "prompt": "Who did she call on the way home?",
-         "answers": ["her mother", "she called her mother", "mother"], "explain": "She called her mother to tell her everything."}
+        {
+          "id": "en-listen-first-day-q1",
+          "kind": "choice",
+          "prompt": "When did Sofia arrive at the office?",
+          "options": [
+            "Early",
+            "Late",
+            "At noon",
+            "She doesn't say"
+          ],
+          "answers": [
+            "Early"
+          ],
+          "explain": "She woke up at six and arrived early."
+        },
+        {
+          "id": "en-listen-first-day-q2",
+          "kind": "written",
+          "prompt": "What did her manager give her?",
+          "answers": [
+            "a laptop and a long list",
+            "a laptop and a list of things to read",
+            "a laptop"
+          ],
+          "explain": "He gave her a laptop and a long list of things to read."
+        },
+        {
+          "id": "en-listen-first-day-q3",
+          "kind": "choice",
+          "prompt": "Where did she eat lunch?",
+          "options": [
+            "In the park",
+            "At her desk",
+            "In a café",
+            "At home"
+          ],
+          "answers": [
+            "In the park"
+          ],
+          "explain": "She ate with two colleagues in the park next to the office."
+        },
+        {
+          "id": "en-listen-first-day-q4",
+          "kind": "choice",
+          "prompt": "How did she feel on the way home?",
+          "options": [
+            "Tired but happy",
+            "Angry",
+            "Sad and lonely",
+            "Nervous"
+          ],
+          "answers": [
+            "Tired but happy"
+          ],
+          "explain": "She felt tired but happy."
+        },
+        {
+          "id": "en-listen-first-day-q5",
+          "kind": "choice",
+          "prompt": "How did she go to work?",
+          "options": [
+            "By tram",
+            "By bus",
+            "On foot",
+            "By car"
+          ],
+          "answers": [
+            "By tram"
+          ],
+          "explain": "She took the tram."
+        },
+        {
+          "id": "en-listen-first-day-q6",
+          "kind": "written",
+          "prompt": "Who did she call on the way home?",
+          "answers": [
+            "her mother",
+            "she called her mother",
+            "mother"
+          ],
+          "explain": "She called her mother to tell her everything."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:past-simple-regular",
+        "vocab:work"
       ]
     },
     {
@@ -306,22 +1102,96 @@
       "unitID": "en-foundations-u6",
       "text": "While Carlos was cooking dinner on Sunday, he heard a crash from the living room. His cat, Luna, had jumped onto the bookshelf and knocked down his favourite cup. The cup was in pieces on the floor. Luna sat next to the broken pieces, completely calm, as if nothing had happened. Carlos cleaned everything up carefully. The cup was from a trip to Lisbon five years ago, but he didn't shout. It was, after all, only a cup.",
       "questions": [
-        {"id": "en-listen-small-accident-q1", "kind": "choice", "prompt": "What was Carlos doing when he heard the crash?",
-         "options": ["Cooking dinner", "Cleaning the floor", "Reading", "Sleeping"], "answers": ["Cooking dinner"],
-         "explain": "He was cooking dinner on Sunday."},
-        {"id": "en-listen-small-accident-q2", "kind": "written", "prompt": "Who broke the cup?",
-         "answers": ["his cat luna", "luna", "the cat", "his cat"], "explain": "Luna the cat jumped onto the bookshelf and knocked it down."},
-        {"id": "en-listen-small-accident-q3", "kind": "choice", "prompt": "Where was the cup from?",
-         "options": ["A trip to Lisbon", "A birthday", "His grandmother", "A market"], "answers": ["A trip to Lisbon"],
-         "explain": "The cup was from a trip to Lisbon five years ago."},
-        {"id": "en-listen-small-accident-q4", "kind": "choice", "prompt": "How did Carlos react?",
-         "options": ["He didn't shout", "He shouted at Luna", "He cried", "He called his friend"], "answers": ["He didn't shout"],
-         "explain": "He cleaned up carefully and didn't shout."},
-        {"id": "en-listen-small-accident-q5", "kind": "choice", "prompt": "Where was the bookshelf?",
-         "options": ["In the living room", "In the kitchen", "In the bedroom", "In the hall"], "answers": ["In the living room"],
-         "explain": "He heard the crash from the living room, where the bookshelf was."},
-        {"id": "en-listen-small-accident-q6", "kind": "written", "prompt": "How old is the cup?",
-         "answers": ["five years old", "five years", "five"], "explain": "The cup was from a trip to Lisbon five years ago."}
+        {
+          "id": "en-listen-small-accident-q1",
+          "kind": "choice",
+          "prompt": "What was Carlos doing when he heard the crash?",
+          "options": [
+            "Cooking dinner",
+            "Cleaning the floor",
+            "Reading",
+            "Sleeping"
+          ],
+          "answers": [
+            "Cooking dinner"
+          ],
+          "explain": "He was cooking dinner on Sunday."
+        },
+        {
+          "id": "en-listen-small-accident-q2",
+          "kind": "written",
+          "prompt": "Who broke the cup?",
+          "answers": [
+            "his cat luna",
+            "luna",
+            "the cat",
+            "his cat"
+          ],
+          "explain": "Luna the cat jumped onto the bookshelf and knocked it down."
+        },
+        {
+          "id": "en-listen-small-accident-q3",
+          "kind": "choice",
+          "prompt": "Where was the cup from?",
+          "options": [
+            "A trip to Lisbon",
+            "A birthday",
+            "His grandmother",
+            "A market"
+          ],
+          "answers": [
+            "A trip to Lisbon"
+          ],
+          "explain": "The cup was from a trip to Lisbon five years ago."
+        },
+        {
+          "id": "en-listen-small-accident-q4",
+          "kind": "choice",
+          "prompt": "How did Carlos react?",
+          "options": [
+            "He didn't shout",
+            "He shouted at Luna",
+            "He cried",
+            "He called his friend"
+          ],
+          "answers": [
+            "He didn't shout"
+          ],
+          "explain": "He cleaned up carefully and didn't shout."
+        },
+        {
+          "id": "en-listen-small-accident-q5",
+          "kind": "choice",
+          "prompt": "Where was the bookshelf?",
+          "options": [
+            "In the living room",
+            "In the kitchen",
+            "In the bedroom",
+            "In the hall"
+          ],
+          "answers": [
+            "In the living room"
+          ],
+          "explain": "He heard the crash from the living room, where the bookshelf was."
+        },
+        {
+          "id": "en-listen-small-accident-q6",
+          "kind": "written",
+          "prompt": "How old is the cup?",
+          "answers": [
+            "five years old",
+            "five years",
+            "five"
+          ],
+          "explain": "The cup was from a trip to Lisbon five years ago."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [
+        "grammar:past-continuous"
       ]
     },
     {
@@ -332,21 +1202,88 @@
       "topic": "family",
       "text": "When Pablo was a child, he spent every summer at his grandpa's house. The garden was enormous, full of tomato plants and lemon trees. Every morning they watered the plants together and every afternoon they played cards under the big tree. His grandpa didn't talk much, but he laughed easily. Pablo didn't like vegetables then. Now he grows his own tomatoes and understands why his grandpa smiled at them.",
       "questions": [
-        {"id": "en-listen-grandpas-garden-q1", "kind": "choice", "prompt": "What was in grandpa's garden?",
-         "options": ["Tomato plants and lemon trees", "Only flowers", "Vegetable soup", "Apple trees"], "answers": ["Tomato plants and lemon trees"],
-         "explain": "It was full of tomato plants and lemon trees."},
-        {"id": "en-listen-grandpas-garden-q2", "kind": "written", "prompt": "What did they do every afternoon?",
-         "answers": ["they played cards", "played cards under the big tree", "they played cards under the big tree"], "explain": "They played cards under the big tree."},
-        {"id": "en-listen-grandpas-garden-q3", "kind": "choice", "prompt": "What was grandpa like?",
-         "options": ["Quiet but quick to laugh", "Loud and serious", "He never smiled", "He talked all day"], "answers": ["Quiet but quick to laugh"],
-         "explain": "He didn't talk much, but he laughed easily."},
-        {"id": "en-listen-grandpas-garden-q4", "kind": "written", "prompt": "What does Pablo grow now?",
-         "answers": ["tomatoes", "his own tomatoes", "he grows tomatoes"], "explain": "Now he grows his own tomatoes."},
-        {"id": "en-listen-grandpas-garden-q5", "kind": "choice", "prompt": "What did they do every morning?",
-         "options": ["They watered the plants", "They played cards", "They cooked lunch", "They went shopping"], "answers": ["They watered the plants"],
-         "explain": "Every morning they watered the plants together."},
-        {"id": "en-listen-grandpas-garden-q6", "kind": "written", "prompt": "What didn't Pablo like as a child?",
-         "answers": ["vegetables", "he didn't like vegetables"], "explain": "Pablo didn't like vegetables then."}
+        {
+          "id": "en-listen-grandpas-garden-q1",
+          "kind": "choice",
+          "prompt": "What was in grandpa's garden?",
+          "options": [
+            "Tomato plants and lemon trees",
+            "Only flowers",
+            "Vegetable soup",
+            "Apple trees"
+          ],
+          "answers": [
+            "Tomato plants and lemon trees"
+          ],
+          "explain": "It was full of tomato plants and lemon trees."
+        },
+        {
+          "id": "en-listen-grandpas-garden-q2",
+          "kind": "written",
+          "prompt": "What did they do every afternoon?",
+          "answers": [
+            "they played cards",
+            "played cards under the big tree",
+            "they played cards under the big tree"
+          ],
+          "explain": "They played cards under the big tree."
+        },
+        {
+          "id": "en-listen-grandpas-garden-q3",
+          "kind": "choice",
+          "prompt": "What was grandpa like?",
+          "options": [
+            "Quiet but quick to laugh",
+            "Loud and serious",
+            "He never smiled",
+            "He talked all day"
+          ],
+          "answers": [
+            "Quiet but quick to laugh"
+          ],
+          "explain": "He didn't talk much, but he laughed easily."
+        },
+        {
+          "id": "en-listen-grandpas-garden-q4",
+          "kind": "written",
+          "prompt": "What does Pablo grow now?",
+          "answers": [
+            "tomatoes",
+            "his own tomatoes",
+            "he grows tomatoes"
+          ],
+          "explain": "Now he grows his own tomatoes."
+        },
+        {
+          "id": "en-listen-grandpas-garden-q5",
+          "kind": "choice",
+          "prompt": "What did they do every morning?",
+          "options": [
+            "They watered the plants",
+            "They played cards",
+            "They cooked lunch",
+            "They went shopping"
+          ],
+          "answers": [
+            "They watered the plants"
+          ],
+          "explain": "Every morning they watered the plants together."
+        },
+        {
+          "id": "en-listen-grandpas-garden-q6",
+          "kind": "written",
+          "prompt": "What didn't Pablo like as a child?",
+          "answers": [
+            "vegetables",
+            "he didn't like vegetables"
+          ],
+          "explain": "Pablo didn't like vegetables then."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:past-simple-irregular",
+        "vocab:family"
       ]
     },
     {
@@ -357,21 +1294,89 @@
       "topic": "clothes",
       "text": "Last week Daniel lost his favourite jacket. He left it on the number twelve bus on Friday evening. He called the lost property office on Monday, but nobody had seen it. Two days later a neighbour knocked on his door and gave him the jacket. She found it on the bus seat with his name and address inside the pocket. Daniel was amazed and invited her in for a cup of tea.",
       "questions": [
-        {"id": "en-listen-lost-jacket-q1", "kind": "written", "prompt": "Where did Daniel leave his jacket?",
-         "answers": ["on the number twelve bus", "on the bus", "on the 12 bus"], "explain": "He left it on the number twelve bus."},
-        {"id": "en-listen-lost-jacket-q2", "kind": "choice", "prompt": "When did he call the lost property office?",
-         "options": ["On Monday", "On Friday", "Two days later", "The same evening"], "answers": ["On Monday"],
-         "explain": "He called on Monday, but nobody had seen it."},
-        {"id": "en-listen-lost-jacket-q3", "kind": "choice", "prompt": "Who found the jacket?",
-         "options": ["A neighbour", "A bus driver", "His mother", "A colleague"], "answers": ["A neighbour"],
-         "explain": "A neighbour knocked on his door and gave him the jacket."},
-        {"id": "en-listen-lost-jacket-q4", "kind": "written", "prompt": "How did the neighbour know it was Daniel's jacket?",
-         "answers": ["his name and address were inside the pocket", "there was a name and address in the pocket", "his name and address in the pocket"], "explain": "His name and address were inside the pocket."},
-        {"id": "en-listen-lost-jacket-q5", "kind": "choice", "prompt": "How did Daniel feel when he got the jacket back?",
-         "options": ["Amazed", "Angry", "Sad", "Sleepy"], "answers": ["Amazed"],
-         "explain": "Daniel was amazed."},
-        {"id": "en-listen-lost-jacket-q6", "kind": "written", "prompt": "What did he invite the neighbour for?",
-         "answers": ["a cup of tea", "cup of tea", "tea"], "explain": "He invited her in for a cup of tea."}
+        {
+          "id": "en-listen-lost-jacket-q1",
+          "kind": "written",
+          "prompt": "Where did Daniel leave his jacket?",
+          "answers": [
+            "on the number twelve bus",
+            "on the bus",
+            "on the 12 bus"
+          ],
+          "explain": "He left it on the number twelve bus."
+        },
+        {
+          "id": "en-listen-lost-jacket-q2",
+          "kind": "choice",
+          "prompt": "When did he call the lost property office?",
+          "options": [
+            "On Monday",
+            "On Friday",
+            "Two days later",
+            "The same evening"
+          ],
+          "answers": [
+            "On Monday"
+          ],
+          "explain": "He called on Monday, but nobody had seen it."
+        },
+        {
+          "id": "en-listen-lost-jacket-q3",
+          "kind": "choice",
+          "prompt": "Who found the jacket?",
+          "options": [
+            "A neighbour",
+            "A bus driver",
+            "His mother",
+            "A colleague"
+          ],
+          "answers": [
+            "A neighbour"
+          ],
+          "explain": "A neighbour knocked on his door and gave him the jacket."
+        },
+        {
+          "id": "en-listen-lost-jacket-q4",
+          "kind": "written",
+          "prompt": "How did the neighbour know it was Daniel's jacket?",
+          "answers": [
+            "his name and address were inside the pocket",
+            "there was a name and address in the pocket",
+            "his name and address in the pocket"
+          ],
+          "explain": "His name and address were inside the pocket."
+        },
+        {
+          "id": "en-listen-lost-jacket-q5",
+          "kind": "choice",
+          "prompt": "How did Daniel feel when he got the jacket back?",
+          "options": [
+            "Amazed",
+            "Angry",
+            "Sad",
+            "Sleepy"
+          ],
+          "answers": [
+            "Amazed"
+          ],
+          "explain": "Daniel was amazed."
+        },
+        {
+          "id": "en-listen-lost-jacket-q6",
+          "kind": "written",
+          "prompt": "What did he invite the neighbour for?",
+          "answers": [
+            "a cup of tea",
+            "cup of tea",
+            "tea"
+          ],
+          "explain": "He invited her in for a cup of tea."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:past-simple-regular",
+        "vocab:transport"
       ]
     },
     {
@@ -382,22 +1387,93 @@
       "topic": "travel",
       "text": "Ella took the night train to the coast because the morning tickets were too expensive. She shared a small compartment with a woman who worked as a nurse and a student who talked for hours about football. Ella couldn't sleep, but she didn't mind. The train arrived at five in the morning, before the sun came up. She walked out of the station, smelled the sea and knew the trip was worth it.",
       "questions": [
-        {"id": "en-listen-night-train-q1", "kind": "written", "prompt": "Why did Ella take the night train?",
-         "answers": ["the morning tickets were too expensive", "because the morning tickets were too expensive", "morning tickets were too expensive"], "explain": "The morning tickets were too expensive."},
-        {"id": "en-listen-night-train-q2", "kind": "choice", "prompt": "What did the student talk about?",
-         "options": ["Football", "Nursing", "The coast", "Music"], "answers": ["Football"],
-         "explain": "The student talked for hours about football."},
-        {"id": "en-listen-night-train-q3", "kind": "choice", "prompt": "When did the train arrive?",
-         "options": ["At five in the morning", "At five in the evening", "At sunrise", "At midnight"], "answers": ["At five in the morning"],
-         "explain": "It arrived at five, before the sun came up."},
-        {"id": "en-listen-night-train-q4", "kind": "written", "prompt": "How did Ella know the trip was worth it when she arrived?",
-         "answers": ["she smelled the sea", "she smelled the sea and knew the trip was worth it", "because she smelled the sea"], "explain": "She walked out and smelled the sea."},
-        {"id": "en-listen-night-train-q5", "kind": "choice", "prompt": "What was the woman in the compartment?",
-         "options": ["A nurse", "A teacher", "A doctor", "A driver"], "answers": ["A nurse"],
-         "explain": "She worked as a nurse."},
-        {"id": "en-listen-night-train-q6", "kind": "choice", "prompt": "Did Ella sleep on the train?",
-         "options": ["No, but she didn't mind", "Yes, all night", "Yes, for two hours", "She doesn't say"], "answers": ["No, but she didn't mind"],
-         "explain": "She couldn't sleep, but she didn't mind."}
+        {
+          "id": "en-listen-night-train-q1",
+          "kind": "written",
+          "prompt": "Why did Ella take the night train?",
+          "answers": [
+            "the morning tickets were too expensive",
+            "because the morning tickets were too expensive",
+            "morning tickets were too expensive"
+          ],
+          "explain": "The morning tickets were too expensive."
+        },
+        {
+          "id": "en-listen-night-train-q2",
+          "kind": "choice",
+          "prompt": "What did the student talk about?",
+          "options": [
+            "Football",
+            "Nursing",
+            "The coast",
+            "Music"
+          ],
+          "answers": [
+            "Football"
+          ],
+          "explain": "The student talked for hours about football."
+        },
+        {
+          "id": "en-listen-night-train-q3",
+          "kind": "choice",
+          "prompt": "When did the train arrive?",
+          "options": [
+            "At five in the morning",
+            "At five in the evening",
+            "At sunrise",
+            "At midnight"
+          ],
+          "answers": [
+            "At five in the morning"
+          ],
+          "explain": "It arrived at five, before the sun came up."
+        },
+        {
+          "id": "en-listen-night-train-q4",
+          "kind": "written",
+          "prompt": "How did Ella know the trip was worth it when she arrived?",
+          "answers": [
+            "she smelled the sea",
+            "she smelled the sea and knew the trip was worth it",
+            "because she smelled the sea"
+          ],
+          "explain": "She walked out and smelled the sea."
+        },
+        {
+          "id": "en-listen-night-train-q5",
+          "kind": "choice",
+          "prompt": "What was the woman in the compartment?",
+          "options": [
+            "A nurse",
+            "A teacher",
+            "A doctor",
+            "A driver"
+          ],
+          "answers": [
+            "A nurse"
+          ],
+          "explain": "She worked as a nurse."
+        },
+        {
+          "id": "en-listen-night-train-q6",
+          "kind": "choice",
+          "prompt": "Did Ella sleep on the train?",
+          "options": [
+            "No, but she didn't mind",
+            "Yes, all night",
+            "Yes, for two hours",
+            "She doesn't say"
+          ],
+          "answers": [
+            "No, but she didn't mind"
+          ],
+          "explain": "She couldn't sleep, but she didn't mind."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:past-simple-irregular",
+        "vocab:travel"
       ]
     }
   ]
