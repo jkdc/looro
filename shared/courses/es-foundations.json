@@ -1104,6 +1104,1231 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-foundations-u3",
+      "title": "La comida",
+      "subtitle": "Ingredientes y recetas",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "cocina-juntos",
+          "title": "Cocinando juntos",
+          "subtitle": "Receta sencilla",
+          "symbol": "fork.knife",
+          "category": "Course",
+          "situation": "Cocináis una paella: revisáis ingredientes, seguid los pasos y compartimos.",
+          "colorIndex": 0
+        },
+        {
+          "id": "en-el-mercado",
+          "title": "En el mercado",
+          "subtitle": "Fruta y verdura",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Compráis la comida de la semana: fruta, verdura, pan — contando y preguntando precios.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u3-comida",
+          "title": "La comida de casa",
+          "goal": "Hablar de comida, ingredientes y lo que te gusta comer.",
+          "intro": {
+            "explanation": [
+              "La comida se agrupa: fruta (manzana, plátano), verdura (tomate, cebolla), carne (pollo, cerdo).",
+              "Me gusta + infinitivo o sustantivo: «Me gusta el arroz». «Me gusta cocinar».",
+              "Para preguntar: «¿Qué te gusta comer?» — la respuesta repite me gusta."
+            ],
+            "examples": [
+              {
+                "text": "Me gusta el arroz con pollo.",
+                "meaning": "me gusta + sustantivo."
+              },
+              {
+                "text": "Me gusta cocinar los domingos.",
+                "meaning": "me gusta + infinitivo."
+              },
+              {
+                "text": "¿Qué te gusta comer?",
+                "meaning": "La pregunta clásica."
+              },
+              {
+                "text": "Necesito tomates y cebollas.",
+                "meaning": "necesito + ingredientes."
+              },
+              {
+                "text": "El pan está en la mesa.",
+                "meaning": "estar + ubicación."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Me gusta + comida",
+              "meaning": "Decir lo que te gusta.",
+              "note": "Me gusta el pollo."
+            },
+            {
+              "text": "No me gusta …",
+              "meaning": "Lo contrario.",
+              "note": "No me gusta el pescado."
+            },
+            {
+              "text": "¿Qué te gusta …?",
+              "meaning": "Preguntar.",
+              "note": "…comer? …cocinar?"
+            },
+            {
+              "text": "Necesito + ingrediente",
+              "meaning": "La lista de compra.",
+              "note": "Necesito aceite."
+            },
+            {
+              "text": "Está / están en …",
+              "meaning": "Ubicación de comida.",
+              "note": "Los huevos están en la nevera."
+            }
+          ],
+          "situation": "Compráis la comida del finde: uno lee la lista, el otro busca en el súper y pregunta por lo que falta.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di qué te gusta comer.",
+                "expected": [
+                  "Me gusta <comida>."
+                ],
+                "focus": "me gusta",
+                "watch": "«Me gusta EL arroz» — el artículo importa con comida específica."
+              },
+              {
+                "prompt": "Di algo que NO te gusta.",
+                "expected": [
+                  "No me gusta <comida>."
+                ],
+                "focus": "no me gusta",
+                "watch": "Más suave que «odio»."
+              },
+              {
+                "prompt": "Di dos cosas que necesitas comprar.",
+                "expected": [
+                  "Necesito <comida> y <comida>."
+                ],
+                "focus": "necesito",
+                "watch": "Necesito + sustantivo."
+              },
+              {
+                "prompt": "Pregunta qué le gusta a tu amigo.",
+                "expected": [
+                  "¿Qué te gusta comer?"
+                ],
+                "focus": "la pregunta",
+                "watch": "La respuesta usa me gusta también."
+              },
+              {
+                "prompt": "¿Te gusta el pescado?",
+                "expected": [
+                  "Sí, me gusta.",
+                  "No, no me gusta."
+                ],
+                "focus": "me gusta",
+                "watch": "gusta (singular) para un solo alimento."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u3-comida-e1",
+              "kind": "choice",
+              "prompt": "Me ___ el arroz con pollo.",
+              "explain": "Me gusta + singular: el arroz.",
+              "options": [
+                "gusta",
+                "gustan",
+                "gusto",
+                "gustamos"
+              ],
+              "answers": [
+                "gusta"
+              ]
+            },
+            {
+              "id": "es-foundations-u3-comida-e2",
+              "kind": "gap",
+              "prompt": "Me ___ las verduras. (plural: gustar)",
+              "explain": "Me gustan + plural: las verduras.",
+              "answers": [
+                "gustan"
+              ]
+            },
+            {
+              "id": "es-foundations-u3-comida-e3",
+              "kind": "order",
+              "prompt": "Pregunta qué le gusta comer.",
+              "explain": "¿Qué te gusta comer?",
+              "answers": [
+                "Que te gusta comer"
+              ]
+            },
+            {
+              "id": "es-foundations-u3-comida-e4",
+              "kind": "written",
+              "prompt": "Di dos cosas que necesitas para cocinar.",
+              "explain": "Necesito X y Y.",
+              "answers": [
+                "necesito <ing1> y <ing2>",
+                "necesito aceite y sal"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:present-simple",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u3-recetas",
+          "title": "Recetas sencillas",
+          "goal": "Seguir una receta con imperativos: corta, añade, cocina.",
+          "intro": {
+            "explanation": [
+              "Las recetas usan imperativos: «Corta la cebolla. Añade el aceite. Cocina diez minutos.»",
+              "Los verbos de cocina: cortar, añadir, mezclar, hervir, freír.",
+              "Las cantidades: «un poco de sal», «doscientos gramos de arroz», «medio litro de agua»."
+            ],
+            "examples": [
+              {
+                "text": "Corta la cebolla en trozos pequeños.",
+                "meaning": "cortar + food."
+              },
+              {
+                "text": "Añade el aceite al fuego.",
+                "meaning": "añadir + ingrediente."
+              },
+              {
+                "text": "Hierve el agua diez minutos.",
+                "meaning": "hervir + duration."
+              },
+              {
+                "text": "Necesito medio litro de agua.",
+                "meaning": "medio litro + de."
+              },
+              {
+                "text": "Mezcla todo y añade sal.",
+                "meaning": "mezclar + todo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Corta / añade / mezcla",
+              "meaning": "Los tres verbos básicos.",
+              "note": "Imperativo: tú sin -s final."
+            },
+            {
+              "text": "Hierve / fríe / cocina",
+              "meaning": "Métodos de cocción.",
+              "note": "hervir = boil."
+            },
+            {
+              "text": "un poco de + sustantivo",
+              "meaning": "Cantidad pequeña.",
+              "note": "un poco de sal."
+            },
+            {
+              "text": "medio / media + medida",
+              "meaning": "La mitad.",
+              "note": "medio litro, media taza."
+            },
+            {
+              "text": "¡Que aproveche!",
+              "meaning": "Después de cocinar.",
+              "note": "= buen provecho."
+            }
+          ],
+          "situation": "Cocináis una tortilla de patatas: uno lee los pasos, el otro corta, añade y cocina — y los dos comen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di el primer paso: cortar la cebolla.",
+                "expected": [
+                  "Corta la cebolla."
+                ],
+                "focus": "imperativo",
+                "watch": "Corta — imperativo de tú sin -s."
+              },
+              {
+                "prompt": "Di cuánto tiempo hervir el agua. (10 minutos)",
+                "expected": [
+                  "Hierve el agua diez minutos."
+                ],
+                "focus": "hervir + duration",
+                "watch": "hierve (o→ue) + duration."
+              },
+              {
+                "prompt": "Di cuánta sal necesitas. (un poco)",
+                "expected": [
+                  "Necesito un poco de sal."
+                ],
+                "focus": "un poco de",
+                "watch": "un poco DE + sustantivo."
+              },
+              {
+                "prompt": "Di la frase de después de comer.",
+                "expected": [
+                  "¡Que aproveche!"
+                ],
+                "focus": "la frase",
+                "watch": "Se dice antes de que empiecen a comer."
+              },
+              {
+                "prompt": "Di que hay que mezclar todo.",
+                "expected": [
+                  "Mezcla todo."
+                ],
+                "focus": "mezclar",
+                "watch": "Imperativo: mezcla (tú)."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u3-recetas-e1",
+              "kind": "choice",
+              "prompt": "___ la cebolla en trozos pequeños.",
+              "explain": "Imperativo: corta (tú, sin -s).",
+              "options": [
+                "Corta",
+                "Cortas",
+                "Cortar",
+                "Cortando"
+              ],
+              "answers": [
+                "Corta"
+              ]
+            },
+            {
+              "id": "es-foundations-u3-recetas-e2",
+              "kind": "gap",
+              "prompt": "___ el agua diez minutos. (hervir)",
+              "explain": "hierve (o→ue) + duration.",
+              "answers": [
+                "Hierve",
+                "hierve"
+              ]
+            },
+            {
+              "id": "es-foundations-u3-recetas-e3",
+              "kind": "order",
+              "prompt": "Di la cantidad.",
+              "explain": "medio litro de + sustantivo.",
+              "answers": [
+                "Necesito medio litro de agua"
+              ]
+            },
+            {
+              "id": "es-foundations-u3-recetas-e4",
+              "kind": "written",
+              "prompt": "Di el ingrediente que falta: sal y ___.",
+              "explain": "Cualquier ingrediente de cocina vale.",
+              "answers": [
+                "aceite",
+                "pimienta",
+                "aceite y pimienta"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:imperatives",
+            "grammar:quantities",
+            "function:talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u4",
+      "title": "El pasado",
+      "subtitle": "Qué hiciste ayer",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "finde-pasado",
+          "title": "El finde que fue",
+          "subtitle": "Qué hiciste",
+          "symbol": "clock.arrow.circlepath",
+          "category": "Course",
+          "situation": "Contáis qué hicisteis el finde: salidas, comidas, planes que salieron bien o mal.",
+          "colorIndex": 0
+        },
+        {
+          "id": "viaje-recordado",
+          "title": "El viaje del año pasado",
+          "subtitle": "Recordando",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Un viaje memorable: dónde fuiste, qué viste, con quién — todo en pasado.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u4-indefinido",
+          "title": "El pretérito indefinido",
+          "goal": "Contar acciones terminadas en el pasado con -é/-aste/-ó y -í/-iste/-ió.",
+          "intro": {
+            "explanation": [
+              "El indefinido habla de acciones terminadas: «Ayer comí paella». «El año pasado viajé a México».",
+              "Regulares: -ar → é/aste/ó/amos/asteis/aron. -er/-ir → í/iste/ió/imos/isteis/ieron.",
+              "Irregulares frecuentes: fui/fue, hice/hizo, vi/vio, dije/dijo, estuve/estuvo."
+            ],
+            "examples": [
+              {
+                "text": "Ayer comí paella en el centro.",
+                "meaning": "comer → comí."
+              },
+              {
+                "text": "El año pasado viajé a México.",
+                "meaning": "viajar → viajé."
+              },
+              {
+                "text": "Fui al cine con mi hermana.",
+                "meaning": "ir → fui."
+              },
+              {
+                "text": "Hice la reserva por teléfono.",
+                "meaning": "hacer → hice."
+              },
+              {
+                "text": "No me gustó el hotel.",
+                "meaning": "gustar → gustó."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "comí / comiste / comió",
+              "meaning": "Comer en pasado.",
+              "note": "-er: í/iste/ió."
+            },
+            {
+              "text": "hablé / hablaste / habló",
+              "meaning": "-ar en pasado.",
+              "note": "hablar → hablé."
+            },
+            {
+              "text": "fui / fue",
+              "meaning": "Ir y ser en pasado.",
+              "note": "fui al cine, fue a casa."
+            },
+            {
+              "text": "hice / dijo / vi",
+              "meaning": "Irregulares frecuentes.",
+              "note": "hice la cena, vi la peli."
+            },
+            {
+              "text": "ayer / anoche / el año pasado",
+              "meaning": "Marcadores de tiempo.",
+              "note": "Anoche salí."
+            }
+          ],
+          "situation": "Contáis el finde: uno cuenta lo que hizo el sábado, el otro pregunta detalles y cuenta lo suyo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di una acción que hiciste ayer. (comer fuera)",
+                "expected": [
+                  "Ayer comí fuera."
+                ],
+                "focus": "comer → comí",
+                "watch": "Ayer + comí — terminado."
+              },
+              {
+                "prompt": "Di adónde fuiste el finde.",
+                "expected": [
+                  "Fui a la playa."
+                ],
+                "focus": "ir → fui",
+                "watch": "“I went” → fui, no “voy”."
+              },
+              {
+                "prompt": "Pregunta a tu amigo qué hizo anoche.",
+                "expected": [
+                  "¿Qué hiciste anoche?"
+                ],
+                "focus": "hiciste",
+                "watch": "hacer → hiciste en pregunta."
+              },
+              {
+                "prompt": "Di que no te gustó la película.",
+                "expected": [
+                  "No me gustó la película."
+                ],
+                "focus": "gustó",
+                "watch": "gustó (singular) para la película."
+              },
+              {
+                "prompt": "Di cuándo viajaste por última vez. (el año pasado)",
+                "expected": [
+                  "El año pasado viajé a <lugar>."
+                ],
+                "focus": "el año pasado",
+                "watch": "Marcador de tiempo + pretérito."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u4-indefinido-e1",
+              "kind": "choice",
+              "prompt": "Ayer ___ al cine con mi hermana.",
+              "explain": "ir → fui (pretérito).",
+              "options": [
+                "fui",
+                "voy",
+                "iba",
+                "voy a ir"
+              ],
+              "answers": [
+                "fui"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-indefinido-e2",
+              "kind": "gap",
+              "prompt": "Anoche ___ una paella increíble. (comer)",
+              "explain": "comer → comí.",
+              "answers": [
+                "comí",
+                "comi"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-indefinido-e3",
+              "kind": "order",
+              "prompt": "Pregunta por el finde.",
+              "explain": "¿Qué hiciste el fin de semana?",
+              "answers": [
+                "Que hiciste el fin de semana"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-indefinido-e4",
+              "kind": "written",
+              "prompt": "Di una acción en pasado: hablar con Marta.",
+              "explain": "hablar → hablé.",
+              "answers": [
+                "hablé con marta",
+                "hablé con marta ayer"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "grammar:time-expressions",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "es-foundations-u4-comparando",
+          "title": "Comparando",
+          "goal": "Comparar dos cosas con más/menos… que y el mejor/peor.",
+          "intro": {
+            "explanation": [
+              "Comparativos: más/menos + adjetivo + que. «Este hotel es más caro que aquel». «Menos frío que ayer».",
+              "Superlativos: el/la más/menos + adjetivo + de. «El mejor restaurante de la ciudad».",
+              "Irregulares: mejor (bueno), peor (malo). «Este es mejor que aquel»."
+            ],
+            "examples": [
+              {
+                "text": "Este hotel es más caro que aquel.",
+                "meaning": "más + adjetivo + que."
+              },
+              {
+                "text": "La playa es menos concurrida que la piscina.",
+                "meaning": "menos + adjetivo."
+              },
+              {
+                "text": "Es el mejor restaurante de la ciudad.",
+                "meaning": "el mejor + de."
+              },
+              {
+                "text": "Este verano es peor que el pasado.",
+                "meaning": "peor = malo comparado."
+              },
+              {
+                "text": "Tan simple como eso.",
+                "meaning": "tan + adjetivo + como."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "más … que",
+              "meaning": "Más que.",
+              "note": "más caro que."
+            },
+            {
+              "text": "menos … que",
+              "meaning": "Menos que.",
+              "note": "menos frío que."
+            },
+            {
+              "text": "el/la más … de",
+              "meaning": "Superlativo.",
+              "note": "el más alto de la clase."
+            },
+            {
+              "text": "mejor / peor",
+              "meaning": "Irregulares.",
+              "note": "mejor que, el peor de."
+            },
+            {
+              "text": "tan … como",
+              "meaning": "Igualdad.",
+              "note": "tan caro como antes."
+            }
+          ],
+          "situation": "Comparáis dos hoteles para las vacaciones: precio, ubicación, limpieza — y elegís el mejor.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Compara el precio: hotel A 80€, hotel B 100€.",
+                "expected": [
+                  "El hotel A es más barato que el hotel B."
+                ],
+                "focus": "más barato",
+                "watch": "barato → más barato que."
+              },
+              {
+                "prompt": "Di cuál es el mejor. (hotel A)",
+                "expected": [
+                  "El hotel A es el mejor."
+                ],
+                "focus": "el mejor",
+                "watch": "el mejor + de/in."
+              },
+              {
+                "prompt": "Di que el hotel B es peor.",
+                "expected": [
+                  "El hotel B es peor que el A."
+                ],
+                "focus": "peor",
+                "watch": "peor que — irregular."
+              },
+              {
+                "prompt": "Compara ubicación: A cerca, B lejos.",
+                "expected": [
+                  "El hotel A está más cerca del centro."
+                ],
+                "focus": "más cerca",
+                "watch": "cerca → más cerca de."
+              },
+              {
+                "prompt": "Di que son iguales en limpieza.",
+                "expected": [
+                  "Son tan limpios como el otro."
+                ],
+                "focus": "tan como",
+                "watch": "tan + adjetivo + como = igualdad."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u4-comparando-e1",
+              "kind": "choice",
+              "prompt": "Este hotel es ___ caro ___ aquel.",
+              "explain": "más + adjetivo + que.",
+              "options": [
+                "más … que",
+                "más … de",
+                "tan … que",
+                "muy … que"
+              ],
+              "answers": [
+                "más … que"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-comparando-e2",
+              "kind": "gap",
+              "prompt": "Es el ___ restaurante de la ciudad. (bueno)",
+              "explain": "bueno → el mejor.",
+              "answers": [
+                "mejor"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-comparando-e3",
+              "kind": "order",
+              "prompt": "Compara precio.",
+              "explain": "más + adjetivo + que.",
+              "answers": [
+                "Este es más barato que aquel"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-comparando-e4",
+              "kind": "written",
+              "prompt": "Di tu restaurante favorito.",
+              "explain": "Mi favorito es X.",
+              "answers": [
+                "mi restaurante favorito es <nombre>",
+                "el mejor es <nombre>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "grammar:superlatives",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        },
+        {
+          "id": "es-foundations-u4-futuro",
+          "title": "El futuro",
+          "goal": "Hablar de planes con ir a + infinitivo y expresar intención.",
+          "intro": {
+            "explanation": [
+              "El futuro cercano: ir a + infinitivo. «Voy a estudiar esta noche». «Vamos a viajar en verano».",
+              "Preguntar: «¿Vas a venir?» «¿Qué vas a hacer?» — el verbo ir se conjuga, el infinitivo no.",
+              "Irregulares en el infinitivo se mantienen: «Voy a hacer la cena» (no «hacer» cambia)."
+            ],
+            "examples": [
+              {
+                "text": "Voy a estudiar esta noche.",
+                "meaning": "ir a + infinitivo."
+              },
+              {
+                "text": "Vamos a viajar en verano.",
+                "meaning": "Nosotros: vamos a."
+              },
+              {
+                "text": "¿Vas a venir a la fiesta?",
+                "meaning": "Pregunta con ir a."
+              },
+              {
+                "text": "Va a llover, no salgas.",
+                "meaning": "Predicción: va a + verbo."
+              },
+              {
+                "text": "No voy a trabajar el sábado.",
+                "meaning": "Negativo: no voy a."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "voy / vas / va a + inf",
+              "meaning": "El futuro cercano.",
+              "note": "Voy a comer."
+            },
+            {
+              "text": "vamos a + inf",
+              "meaning": "Nosotros.",
+              "note": "Vamos a viajar."
+            },
+            {
+              "text": "¿Vas a + inf?",
+              "meaning": "Preguntar.",
+              "note": "¿Vas a venir?"
+            },
+            {
+              "text": "no voy a + inf",
+              "meaning": "Negar el plan.",
+              "note": "No voy a salir."
+            },
+            {
+              "text": "va a + inf (clima)",
+              "meaning": "Predicción.",
+              "note": "Va a llover."
+            }
+          ],
+          "situation": "Planificáis el finde: uno propone, el otro acepta o rechaza, y decidís hora y lugar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di qué vas a hacer este finde. (descansar)",
+                "expected": [
+                  "Voy a descansar este finde."
+                ],
+                "focus": "voy a",
+                "watch": "voy a + infinitivo."
+              },
+              {
+                "prompt": "Pregunta qué va a hacer tu amigo.",
+                "expected": [
+                  "¿Qué vas a hacer?"
+                ],
+                "focus": "la pregunta",
+                "watch": "¿Qué + vas a + infinitivo?"
+              },
+              {
+                "prompt": "Di que no vas a salir el sábado.",
+                "expected": [
+                  "No voy a salir el sábado."
+                ],
+                "focus": "no voy a",
+                "watch": "no voy a + infinitivo."
+              },
+              {
+                "prompt": "Di que va a llover mañana.",
+                "expected": [
+                  "Mañana va a llover."
+                ],
+                "focus": "predicción",
+                "watch": "va a + infinitivo para predicción."
+              },
+              {
+                "prompt": "Pregunta si tu amigo va a venir.",
+                "expected": [
+                  "¿Vas a venir?"
+                ],
+                "focus": "¿Vas a…?",
+                "watch": "Vas a + infinitivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u4-futuro-e1",
+              "kind": "choice",
+              "prompt": "Voy ___ descansar este finde.",
+              "explain": "ir A + infinitivo.",
+              "options": [
+                "a",
+                "de",
+                "que",
+                "para"
+              ],
+              "answers": [
+                "a"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-futuro-e2",
+              "kind": "gap",
+              "prompt": "Vamos ___ ___ al cine. (ir a + ir)",
+              "explain": "vamos a ir.",
+              "answers": [
+                "a ir",
+                "a ir"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-futuro-e3",
+              "kind": "order",
+              "prompt": "Pregunta sobre el plan.",
+              "explain": "¿Qué vas a hacer este finde?",
+              "answers": [
+                "Que vas a hacer este finde"
+              ]
+            },
+            {
+              "id": "es-foundations-u4-futuro-e4",
+              "kind": "written",
+              "prompt": "Di un plan para mañana.",
+              "explain": "Voy a + verbo.",
+              "answers": [
+                "voy a <actividad> mañana",
+                "mañana voy a <actividad>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "grammar:future-forms",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u5",
+      "title": "Experiencias y opiniones",
+      "subtitle": "Contar lo vivido",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "viaje-inolvidable",
+          "title": "El viaje inolvidable",
+          "subtitle": "Presente perfecto",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Habéis viajado mucho: comparad experiencias con he/ha + participio.",
+          "colorIndex": 0
+        },
+        {
+          "id": "cambio-vida",
+          "title": "El cambio de vida",
+          "subtitle": "Antes y ahora",
+          "symbol": "arrow.triangle.swap",
+          "category": "Course",
+          "situation": "Comparáis vuestra vida de antes con la de ahora: trabajo, ciudad, hábitos.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u5-presente-perfecto",
+          "title": "He viajado mucho",
+          "goal": "Hablar de experiencias vitales con he/has/ha + participio.",
+          "intro": {
+            "explanation": [
+              "El presente perfecto conecta el pasado con el presente: «He comido en ese restaurante» (y puedo volver a ir).",
+              "Participios: -ar → -ado (hablado), -er/-ir → -ido (comido, vivido). Irregulares: hecho, visto, dicho, escrito.",
+              "Marcadores: ya (ya he comido), todavía no (no he ido), alguna vez (¿Has estado en…?)."
+            ],
+            "examples": [
+              {
+                "text": "He comido en ese restaurante.",
+                "meaning": "he + participio."
+              },
+              {
+                "text": "¿Has estado en Barcelona?",
+                "meaning": "has estado: experiencia."
+              },
+              {
+                "text": "Nunca he visto la nieve.",
+                "meaning": "nunca + he + participio."
+              },
+              {
+                "text": "Ya hemos terminado el proyecto.",
+                "meaning": "ya = terminado."
+              },
+              {
+                "text": "Todavía no he visitado México.",
+                "meaning": "todavía no = aún no."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "he / has / ha + participio",
+              "meaning": "Yo/tú/él.",
+              "note": "he comido, has visto, ha vivido."
+            },
+            {
+              "text": "ya + he + participio",
+              "meaning": "Ya terminado.",
+              "note": "Ya he comido."
+            },
+            {
+              "text": "todavía no + he",
+              "meaning": "Aún no.",
+              "note": "Todavía no he ido."
+            },
+            {
+              "text": "¿Has … alguna vez?",
+              "meaning": "Experiencia vital.",
+              "note": "alguna vez = alguna vez en la vida."
+            },
+            {
+              "text": "nunca + he",
+              "meaning": "Nunca en la vida.",
+              "note": "Nunca he visto nieve."
+            }
+          ],
+          "situation": "Comparáis experiencias de viaje: quién ha estado en más países, quién ha probado comida más rara, quién nunca ha volado.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di una experiencia: comer en ese restaurante.",
+                "expected": [
+                  "He comido en ese restaurante."
+                ],
+                "focus": "he + participio",
+                "watch": "he comido = experiencia sin fecha."
+              },
+              {
+                "prompt": "Pregunta si tu amigo ha estado en Perú.",
+                "expected": [
+                  "¿Has estado en Perú?"
+                ],
+                "focus": "has estado",
+                "watch": "estado, no «ido» — para lugares."
+              },
+              {
+                "prompt": "Di que nunca has visto la nieve.",
+                "expected": [
+                  "Nunca he visto la nieve."
+                ],
+                "focus": "nunca",
+                "watch": "nunca + he + visto."
+              },
+              {
+                "prompt": "Di que ya has comido.",
+                "expected": [
+                  "Ya he comido."
+                ],
+                "focus": "ya",
+                "watch": "ya = la acción está terminada."
+              },
+              {
+                "prompt": "Di que todavía no has visitado México.",
+                "expected": [
+                  "Todavía no he visitado México."
+                ],
+                "focus": "todavía no",
+                "watch": "todavía no = aún no."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u5-presente-perfecto-e1",
+              "kind": "choice",
+              "prompt": "___ ___ en ese restaurante. (comer, yo)",
+              "explain": "he + comido (participio).",
+              "options": [
+                "He comido",
+                "He comí",
+                "He comido",
+                "He comía"
+              ],
+              "answers": [
+                "He comido"
+              ]
+            },
+            {
+              "id": "es-foundations-u5-presente-perfecto-e2",
+              "kind": "gap",
+              "prompt": "¿___ ___ ___ en Perú? (estar, tú)",
+              "explain": "has estado = experiencia.",
+              "answers": [
+                "Has estado"
+              ]
+            },
+            {
+              "id": "es-foundations-u5-presente-perfecto-e3",
+              "kind": "order",
+              "prompt": "Di que nunca has visto nieve.",
+              "explain": "nunca + he + participio.",
+              "answers": [
+                "Nunca he visto la nieve"
+              ]
+            },
+            {
+              "id": "es-foundations-u5-presente-perfecto-e4",
+              "kind": "written",
+              "prompt": "Di que ya has comido.",
+              "explain": "ya + he + comido.",
+              "answers": [
+                "ya he comido",
+                "ya he comido"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-perfect",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "es-foundations-u5-antes-ahora",
+          "title": "Antes y ahora",
+          "goal": "Comparar el pasado con el presente usando antes/imperiético y ahora/presente.",
+          "intro": {
+            "explanation": [
+              "Antes + imperfecto: «Antes vivía en Madrid». Ahora + presente: «Ahora vivo en Barcelona».",
+              "El imperfecto describe hábitos del pasado: «Iba al parque todos los días». «Jugaba al fútbol».",
+              "La contraste: «Antes tenía tiempo, ahora no tengo nada»."
+            ],
+            "examples": [
+              {
+                "text": "Antes vivía en Madrid.",
+                "meaning": "antes + imperfecto."
+              },
+              {
+                "text": "Ahora vivo en Barcelona.",
+                "meaning": "ahora + presente."
+              },
+              {
+                "text": "Iba al parque todos los días.",
+                "meaning": "imperfecto: hábito pasado."
+              },
+              {
+                "text": "Antes tenía más tiempo libre.",
+                "meaning": "tener → tenía."
+              },
+              {
+                "text": "Ahora trabajo desde casa.",
+                "meaning": "ahora + presente."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Antes + imperfecto",
+              "meaning": "El pasado habitual.",
+              "note": "Antes vivía…"
+            },
+            {
+              "text": "Ahora + presente",
+              "meaning": "El presente.",
+              "note": "Ahora trabajo…"
+            },
+            {
+              "text": "-ía / -aba",
+              "meaning": "El imperfecto.",
+              "note": "vivía, comía, trabajaba."
+            },
+            {
+              "text": "tenía / iba / era",
+              "meaning": "Imperfectos frecuentes.",
+              "note": "tenía tiempo."
+            },
+            {
+              "text": "ahora no …",
+              "meaning": "El contraste negativo.",
+              "note": "ahora no tengo tiempo."
+            }
+          ],
+          "situation": "Comparáis vuestra vida de estudiantes con la vida de ahora: horarios, hobbies, dinero, libertad.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di dónde vivías antes. (Madrid)",
+                "expected": [
+                  "Antes vivía en Madrid."
+                ],
+                "focus": "antes + imperfecto",
+                "watch": "vivía = imperfecto de vivir."
+              },
+              {
+                "prompt": "Di qué hacías todos los días. (ir al parque)",
+                "expected": [
+                  "Iba al parque todos los días."
+                ],
+                "focus": "iba",
+                "watch": "ir → iba en imperfecto."
+              },
+              {
+                "prompt": "Di qué haces ahora.",
+                "expected": [
+                  "Ahora trabajo desde casa."
+                ],
+                "focus": "ahora + presente",
+                "watch": "ahora marca el presente."
+              },
+              {
+                "prompt": "Di qué ya no tienes. (tiempo)",
+                "expected": [
+                  "Antes tenía tiempo, ahora no tengo."
+                ],
+                "focus": "contraste",
+                "watch": "antes tenía → ahora no tengo."
+              },
+              {
+                "prompt": "Di qué hacías los domingos antes.",
+                "expected": [
+                  "Iba al cine los domingos."
+                ],
+                "focus": "imperfecto",
+                "watch": "Iba — imperfecto de ir."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u5-antes-ahora-e1",
+              "kind": "choice",
+              "prompt": "Antes ___ en Madrid.",
+              "explain": "imperfecto: hábito pasado.",
+              "options": [
+                "vivía",
+                "vivo",
+                "viví",
+                "viviré"
+              ],
+              "answers": [
+                "vivía"
+              ]
+            },
+            {
+              "id": "es-foundations-u5-antes-ahora-e2",
+              "kind": "gap",
+              "prompt": "___ ___ al parque todos los días. (ir, imperfecto)",
+              "explain": "ir → iba.",
+              "answers": [
+                "Iba",
+                "iba"
+              ]
+            },
+            {
+              "id": "es-foundations-u5-antes-ahora-e3",
+              "kind": "order",
+              "prompt": "Di el contraste.",
+              "explain": "Antes + imperfecto, ahora + presente.",
+              "answers": [
+                "Antes tenia tiempo ahora no tengo nada"
+              ]
+            },
+            {
+              "id": "es-foundations-u5-antes-ahora-e4",
+              "kind": "written",
+              "prompt": "Di un hábito de antes.",
+              "explain": "Antes + imperfecto.",
+              "answers": [
+                "antes <hbito>",
+                "antes jugaba al futbol"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:used-to",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:used-to"
+          ]
+        }
+      ]
     }
   ]
 }

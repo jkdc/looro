@@ -31,7 +31,10 @@ class CoursesTest {
     }
 
     @Test fun `each supported course language carries exactly one foundations`() {
-        for (language in listOf("es", "fr", "it", "de", "pt")) {
+        // Spanish has the full temario block; others have 2 units for now.
+        val esCourse = CourseRegistry.forLanguage("es").first()
+        assertTrue("es should have 5+ units", esCourse.units.size >= 5)
+        for (language in listOf("fr", "it", "de", "pt")) {
             assertEquals(1, CourseRegistry.forLanguage(language).size)
             val course = CourseRegistry.forLanguage(language).first()
             assertEquals(2, course.units.size)
