@@ -1213,6 +1213,174 @@
         "writing:email"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "en-read-ai-emails-debate",
+      "languageID": "en",
+      "title": "Should AI write our emails?",
+      "level": "B2",
+      "topic": "work",
+      "text": "Last quarter, our company quietly enabled an AI assistant for all internal email. The results were measured, and they are worth reporting precisely. Response times improved by roughly a third, and — perhaps surprisingly — politeness increased: messages drafted by the assistant contain fewer blunt openings and more complete sentences. However, two problems are emerging. First, readers are starting to discount the politeness; when everyone sounds courteous, courtesy stops carrying information. Second, and more seriously, responsibility is blurring. When a wrong figure was sent to a client last month, three people said some version of 'the assistant wrote it.' The tool was not to blame, of course — the signature was. My position is therefore narrow but firm: let the assistant draft, but the name at the bottom owns every word. We are testing a one-line disclosure at the end of assisted emails, and if trust metrics hold, we will keep it. If they do not, we will rethink — in our own words.",
+      "questions": [
+        {
+          "id": "en-read-ai-emails-debate-q1",
+          "kind": "written",
+          "prompt": "By how much did response times improve?",
+          "answers": [
+            "roughly a third",
+            "about a third",
+            "a third"
+          ],
+          "explain": "Response times improved by roughly a third."
+        },
+        {
+          "id": "en-read-ai-emails-debate-q2",
+          "kind": "choice",
+          "prompt": "What surprising effect did the assistant have?",
+          "options": [
+            "Politeness increased",
+            "Emails got shorter",
+            "People wrote less",
+            "Costs fell"
+          ],
+          "answers": [
+            "Politeness increased"
+          ],
+          "explain": "Messages contained fewer blunt openings and more complete sentences."
+        },
+        {
+          "id": "en-read-ai-emails-debate-q3",
+          "kind": "choice",
+          "prompt": "What happens when everyone sounds courteous?",
+          "options": [
+            "Courtesy stops carrying information",
+            "Emails get longer",
+            "Nothing",
+            "People write more"
+          ],
+          "answers": [
+            "Courtesy stops carrying information"
+          ],
+          "explain": "Discounted politeness carries less meaning."
+        },
+        {
+          "id": "en-read-ai-emails-debate-q4",
+          "kind": "choice",
+          "prompt": "What is the author's firm position?",
+          "options": [
+            "The signature owns every word",
+            "Ban the assistant",
+            "AI should write everything",
+            "No disclosure needed"
+          ],
+          "answers": [
+            "The signature owns every word"
+          ],
+          "explain": "Let it draft, but the name at the bottom owns every word."
+        },
+        {
+          "id": "en-read-ai-emails-debate-q5",
+          "kind": "written",
+          "prompt": "What will they do if trust metrics do not hold?",
+          "answers": [
+            "rethink",
+            "they will rethink in their own words",
+            "rethink the policy"
+          ],
+          "explain": "If they do not, they will rethink — in their own words."
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "grammar:passive-intro",
+        "grammar:connectors",
+        "grammar:first-conditional",
+        "writing:argument"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-market-report",
+      "languageID": "en",
+      "title": "Quarter in brief: the coffee market",
+      "level": "B2",
+      "topic": "business",
+      "text": "Summary for internal circulation — Q3. Prices rose considerably in the first half of the quarter, driven by weather rather than demand: the frost in July affected the two largest producing regions, which together account for roughly 55% of exports. Demand, by contrast, was flat. Supermarket own-brand lines were the least affected, arguably because their contracts are fixed annually; speciality roasters, which buy on the spot market, reported increases of up to forty per cent. It is widely believed that small cafés absorb such increases poorly, and our survey offers some support: 62% said they would rather reduce opening hours than raise the price of an espresso. Looking ahead, futures suggest a partial correction by December, although this depends on rainfall in August. We therefore recommend hedging half of Q4 volume now and reviewing the remainder in October. As ever, this report is a snapshot, not a guarantee.",
+      "questions": [
+        {
+          "id": "en-read-market-report-q1",
+          "kind": "choice",
+          "prompt": "What drove prices up?",
+          "options": [
+            "Weather",
+            "Demand",
+            "New cafés",
+            "Export taxes"
+          ],
+          "answers": [
+            "Weather"
+          ],
+          "explain": "The July frost, not demand — demand was flat."
+        },
+        {
+          "id": "en-read-market-report-q2",
+          "kind": "written",
+          "prompt": "How much of exports do the two largest regions account for?",
+          "answers": [
+            "roughly 55%",
+            "55%",
+            "about 55 percent"
+          ],
+          "explain": "Roughly 55% of exports."
+        },
+        {
+          "id": "en-read-market-report-q3",
+          "kind": "choice",
+          "prompt": "Which buyers were least affected?",
+          "options": [
+            "Supermarket own brands",
+            "Speciality roasters",
+            "Small cafés",
+            "Futures traders"
+          ],
+          "answers": [
+            "Supermarket own brands"
+          ],
+          "explain": "Arguably because their contracts are fixed annually."
+        },
+        {
+          "id": "en-read-market-report-q4",
+          "kind": "written",
+          "prompt": "What would 62% of small cafés rather do?",
+          "answers": [
+            "Reduce opening hours"
+          ],
+          "explain": "Rather than raise the price of an espresso."
+        },
+        {
+          "id": "en-read-market-report-q5",
+          "kind": "choice",
+          "prompt": "What does the report recommend for Q4?",
+          "options": [
+            "Hedging half the volume now",
+            "Waiting until December",
+            "Buying nothing",
+            "Raising prices by 40%"
+          ],
+          "answers": [
+            "Hedging half the volume now"
+          ],
+          "explain": "Hedge half now, review the rest in October."
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "grammar:passive-intro",
+        "grammar:relative-clauses",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": []
     }
   ]
 }

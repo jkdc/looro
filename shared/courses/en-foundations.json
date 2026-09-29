@@ -7168,6 +7168,1170 @@
           ]
         }
       ]
+    },
+    {
+      "id": "en-foundations-viewpoints",
+      "title": "Viewpoints",
+      "subtitle": "Argue, report, imagine",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "debate-club",
+          "title": "Debate night",
+          "subtitle": "Take a side",
+          "symbol": "person.3",
+          "category": "Course",
+          "situation": "You debate a topical question: state your position, imagine alternatives, report what the data says.",
+          "colorIndex": 0
+        },
+        {
+          "id": "negotiation-table",
+          "title": "The negotiation",
+          "subtitle": "Find the middle",
+          "symbol": "scale.3d",
+          "category": "Course",
+          "situation": "You negotiate a work arrangement: conditions, consequences and a deal both sides can accept.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-viewpoints-second-conditional",
+          "title": "Second conditional",
+          "goal": "Imagine unreal presents and alternatives with if + past, would + verb.",
+          "intro": {
+            "explanation": [
+              "Unreal presents use if + past simple, would + verb: “If I had more time, I would learn the piano.” The time is now/forward — the past form only marks unreality.",
+              "Questions: “What would you do if you lost your job?” I'd = I would.",
+              "Softer advice uses would in the result: “If I were you, I'd negotiate.” Note the fixed phrase If I were you."
+            ],
+            "examples": [
+              {
+                "text": "If I won the lottery, I would travel for a year.",
+                "meaning": "An unreal present."
+              },
+              {
+                "text": "If I were you, I'd ask for a raise.",
+                "meaning": "Advice with were."
+              },
+              {
+                "text": "Would you move abroad if you got the chance?",
+                "meaning": "Question form."
+              },
+              {
+                "text": "I wouldn't say that if I weren't sure.",
+                "meaning": "Negative on both sides."
+              },
+              {
+                "text": "If we had a bigger budget, we could hire help.",
+                "meaning": "could = would be able to."
+              },
+              {
+                "text": "Compare: “If it rains, we'll stay” (real) vs “If it rained, we'd stay” (unlikely).",
+                "meaning": "First vs second conditional."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "If + past, would + verb",
+              "meaning": "Unreal present.",
+              "note": "If I had time, I would cook."
+            },
+            {
+              "text": "If I were you, I'd …",
+              "meaning": "The advice formula.",
+              "note": "were, not was, in formal English."
+            },
+            {
+              "text": "What would you do if …?",
+              "meaning": "The hypothetical question.",
+              "note": "Perfect for debates."
+            },
+            {
+              "text": "I'd never …",
+              "meaning": "A firm unreal negative.",
+              "note": "I'd never lie to a client."
+            },
+            {
+              "text": "could / might instead of would",
+              "meaning": "Ability or possibility in the result.",
+              "note": "If we left now, we could catch it."
+            },
+            {
+              "text": "Compare with first conditional",
+              "meaning": "Real vs imaginary.",
+              "note": "If I win… (possible) vs If I won… (fantasy)."
+            }
+          ],
+          "situation": "A debate table: what would you do with a year off, a sudden fortune, a job abroad? Defend your hypotheticals and challenge theirs.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Imagine you had a year off. What would you do?",
+                "expected": [
+                  "If I had a year off, I would <activity>.",
+                  "I'd <activity>."
+                ],
+                "focus": "if + past, would",
+                "watch": "“If I would have a year” — never would in the if-clause."
+              },
+              {
+                "prompt": "Give advice to a friend who earns too little. (If I were you…)",
+                "expected": [
+                  "If I were you, I'd ask for a raise.",
+                  "If I were you, I would look for another job."
+                ],
+                "focus": "If I were you",
+                "watch": "The fixed advice formula uses were."
+              },
+              {
+                "prompt": "Ask about your friend's hypothetical move abroad.",
+                "expected": [
+                  "Would you move abroad if you got the chance?"
+                ],
+                "focus": "would question",
+                "watch": "would in the result question; past in the if-clause."
+              },
+              {
+                "prompt": "Say what is possible, not certain: if we left now / catch the train.",
+                "expected": [
+                  "If we left now, we could catch the train."
+                ],
+                "focus": "could in the result",
+                "watch": "could replaces would for possibility."
+              },
+              {
+                "prompt": "Contrast real vs imaginary: rain tomorrow / money for a trip.",
+                "expected": [
+                  "If it rains tomorrow, we'll cancel. If I had money for a trip, I'd go today."
+                ],
+                "focus": "first vs second",
+                "watch": "Real future takes present+will; fantasy takes past+would."
+              },
+              {
+                "prompt": "Firm unreal negative: lie to a client.",
+                "expected": [
+                  "I'd never lie to a client.",
+                  "I would never lie to a client."
+                ],
+                "focus": "I'd never",
+                "watch": "would + never + base verb."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-viewpoints-second-conditional-e1",
+              "kind": "choice",
+              "prompt": "If I ___ more time, I would learn the piano.",
+              "options": [
+                "had",
+                "have",
+                "would have",
+                "will have"
+              ],
+              "answers": [
+                "had"
+              ],
+              "explain": "Unreal present: if + past simple."
+            },
+            {
+              "id": "en-foundations-viewpoints-second-conditional-e2",
+              "kind": "gap",
+              "prompt": "If I were you, I ___ ask for a raise.",
+              "answers": [
+                "would",
+                "'d"
+              ],
+              "explain": "would in the result: I'd ask."
+            },
+            {
+              "id": "en-foundations-viewpoints-second-conditional-e3",
+              "kind": "order",
+              "prompt": "Ask the hypothetical question. (move / would / if / you / abroad / the chance / you / got)",
+              "answers": [
+                "Would you move abroad if you got the chance"
+              ],
+              "explain": "would question + if + past."
+            },
+            {
+              "id": "en-foundations-viewpoints-second-conditional-e4",
+              "kind": "written",
+              "prompt": "Fix: “If I would have time, I would cook.”",
+              "answers": [
+                "if i had time i would cook"
+              ],
+              "explain": "The if-clause takes had, never would have."
+            }
+          ],
+          "skills": [
+            "grammar:second-conditional",
+            "grammar:first-conditional",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular",
+            "grammar:first-conditional"
+          ]
+        },
+        {
+          "id": "en-foundations-viewpoints-passive",
+          "title": "The passive: reporting",
+          "goal": "Report information with is/are/was/were + past participle when the doer is unknown or unimportant.",
+          "intro": {
+            "explanation": [
+              "Passive = be + past participle: “The bridge was built in 1900.” “These shoes are made in Portugal.” The doer disappears or moves to a by-phrase.",
+              "Use it when the doer is obvious, unknown or unimportant — the classic register of news, reports and instructions.",
+              "Questions and negatives behave like be: “Was it built recently?” “It isn't sold here.”"
+            ],
+            "examples": [
+              {
+                "text": "The results will be published tomorrow.",
+                "meaning": "Future passive."
+              },
+              {
+                "text": "This bridge was built in 1900.",
+                "meaning": "Past passive."
+              },
+              {
+                "text": "These shoes are made in Portugal.",
+                "meaning": "Present passive."
+              },
+              {
+                "text": "The novel was written by a nurse.",
+                "meaning": "by + the important doer."
+              },
+              {
+                "text": "Payment must be made in advance.",
+                "meaning": "Modal + passive."
+              },
+              {
+                "text": "Was the email sent?",
+                "meaning": "Passive question."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "is/are + participle",
+              "meaning": "Present facts.",
+              "note": "The office is cleaned daily."
+            },
+            {
+              "text": "was/were + participle",
+              "meaning": "Past events.",
+              "note": "It was designed by Gaudí."
+            },
+            {
+              "text": "will be + participle",
+              "meaning": "Future plans.",
+              "note": "The report will be shared on Monday."
+            },
+            {
+              "text": "must be + participle",
+              "meaning": "Rules and instructions.",
+              "note": "Tickets must be validated."
+            },
+            {
+              "text": "by + doer",
+              "meaning": "Only when the doer matters.",
+              "note": "Hamlet was written by Shakespeare."
+            },
+            {
+              "text": "It is said that …",
+              "meaning": "Reporting without a source.",
+              "note": "It is said that the lake is bottomless."
+            }
+          ],
+          "situation": "You present a short report about your town's history: what was built, what is produced there and what will be opened next year.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Report a past fact: they built the theatre in 1921. (passive)",
+                "expected": [
+                  "The theatre was built in 1921."
+                ],
+                "focus": "was + participle",
+                "watch": "“was build” — the participle is built."
+              },
+              {
+                "prompt": "State a present fact: they make these shoes in Portugal. (passive)",
+                "expected": [
+                  "These shoes are made in Portugal."
+                ],
+                "focus": "are + participle",
+                "watch": "“are make” — participle, not base form."
+              },
+              {
+                "prompt": "Announce a plan: they will publish the results tomorrow. (passive)",
+                "expected": [
+                  "The results will be published tomorrow."
+                ],
+                "focus": "will be + participle",
+                "watch": "“will published” — be comes first: will be published."
+              },
+              {
+                "prompt": "State a rule: you must validate tickets. (passive)",
+                "expected": [
+                  "Tickets must be validated."
+                ],
+                "focus": "must be",
+                "watch": "Modal + be + participle."
+              },
+              {
+                "prompt": "The doer matters here. Join: “Shakespeare wrote Hamlet.” Keep Shakespeare. (passive)",
+                "expected": [
+                  "Hamlet was written by Shakespeare."
+                ],
+                "focus": "by + doer",
+                "watch": "by appears only when the doer is important information."
+              },
+              {
+                "prompt": "Ask about a past event in passive form. (the email / send)",
+                "expected": [
+                  "Was the email sent?"
+                ],
+                "focus": "passive question",
+                "watch": "be moves to the front: Was it sent?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-viewpoints-passive-e1",
+              "kind": "choice",
+              "prompt": "These computers ___ in Taiwan.",
+              "options": [
+                "are made",
+                "are making",
+                "made",
+                "is made"
+              ],
+              "answers": [
+                "are made"
+              ],
+              "explain": "Plural present passive: are made."
+            },
+            {
+              "id": "en-foundations-viewpoints-passive-e2",
+              "kind": "gap",
+              "prompt": "The parcel ___ ___ delivered tomorrow. (will, passive)",
+              "answers": [
+                "will be"
+              ],
+              "explain": "will be + participle."
+            },
+            {
+              "id": "en-foundations-viewpoints-passive-e3",
+              "kind": "order",
+              "prompt": "Report the rule.",
+              "answers": [
+                "Tickets must be validated before boarding"
+              ],
+              "explain": "modal + be + participle."
+            },
+            {
+              "id": "en-foundations-viewpoints-passive-e4",
+              "kind": "written",
+              "prompt": "Fix: “The house was build in 1990.”",
+              "answers": [
+                "the house was built in 1990"
+              ],
+              "explain": "build → built: the participle."
+            }
+          ],
+          "skills": [
+            "grammar:passive-intro",
+            "grammar:past-simple-regular",
+            "function:talk-about-work",
+            "writing:email"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular",
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "en-foundations-viewpoints-negotiation",
+          "title": "Negotiating",
+          "goal": "Negotiate politely: propose conditions, concede ground and close a deal.",
+          "intro": {
+            "explanation": [
+              "Proposals soften with could/would: “Could we possibly move the deadline?” “Would it help if I took the night shift?”",
+              "Concede with a condition: “That works if…”, “As long as…, I'm happy to…”. Push back without conflict: “I see your point, however…”",
+              "Close: “Shall we say…?”, “So we agree on…”, “I think we have a deal.”"
+            ],
+            "examples": [
+              {
+                "text": "Could we possibly start at ten?",
+                "meaning": "A softened proposal."
+              },
+              {
+                "text": "That works if the report arrives on Thursday.",
+                "meaning": "A conditional yes."
+              },
+              {
+                "text": "As long as I keep Fridays free, I'm happy to travel.",
+                "meaning": "As long as = condition."
+              },
+              {
+                "text": "I see your point; however, the budget is fixed.",
+                "meaning": "Pushback without conflict."
+              },
+              {
+                "text": "What if we split the difference?",
+                "meaning": "A middle-ground move."
+              },
+              {
+                "text": "Shall we say thirty percent?",
+                "meaning": "The closing formula."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Could we possibly …?",
+              "meaning": "A polite proposal.",
+              "note": "possibly = extra soft."
+            },
+            {
+              "text": "That works if …",
+              "meaning": "Yes, with a condition.",
+              "note": "Condition first, then agreement."
+            },
+            {
+              "text": "as long as …",
+              "meaning": "Your red lines.",
+              "note": "As long as costs stay under X."
+            },
+            {
+              "text": "I see your point; however …",
+              "meaning": "Respectful disagreement.",
+              "note": "Acknowledge, then contrast."
+            },
+            {
+              "text": "What if we …?",
+              "meaning": "Offer a middle path.",
+              "note": "What if we split the costs?"
+            },
+            {
+              "text": "Shall we say …?",
+              "meaning": "Close the deal.",
+              "note": "Numbers finish negotiations."
+            }
+          ],
+          "situation": "You negotiate a remote-work arrangement with your manager: propose, concede, push back once and close with a concrete deal.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Politely propose a later start time.",
+                "expected": [
+                  "Could we possibly start at ten?",
+                  "Would it be possible to start later?"
+                ],
+                "focus": "softened proposal",
+                "watch": "Bare commands sound abrupt in negotiation; use could/would."
+              },
+              {
+                "prompt": "Accept travelling, with one condition. (as long as)",
+                "expected": [
+                  "That works as long as I keep Fridays free.",
+                  "As long as costs are covered, I'm happy to travel."
+                ],
+                "focus": "as long as",
+                "watch": "as long as + present simple for your condition."
+              },
+              {
+                "prompt": "Disagree respectfully with a tight deadline.",
+                "expected": [
+                  "I see your point; however, the deadline is too tight.",
+                  "I understand, however we need two more days."
+                ],
+                "focus": "acknowledge + however",
+                "watch": "Acknowledge first — however lands softer after agreement words."
+              },
+              {
+                "prompt": "Offer a middle ground on price.",
+                "expected": [
+                  "What if we split the difference?",
+                  "What if we meet in the middle?"
+                ],
+                "focus": "what if",
+                "watch": "what if + present simple proposes the path."
+              },
+              {
+                "prompt": "Close the deal on a number. (thirty percent)",
+                "expected": [
+                  "Shall we say thirty percent?"
+                ],
+                "focus": "closing",
+                "watch": "shall we say + the final number."
+              },
+              {
+                "prompt": "State the deal you both reached.",
+                "expected": [
+                  "So we agree on: remote Mondays and a Thursday report.",
+                  "So we agree: I travel twice a month, you cover the costs."
+                ],
+                "focus": "summarising",
+                "watch": "Good negotiators summarise: “So we agree on…”."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-viewpoints-negotiation-e1",
+              "kind": "choice",
+              "prompt": "___ we possibly move the meeting to Thursday?",
+              "options": [
+                "Could",
+                "Must",
+                "Will",
+                "Should"
+              ],
+              "answers": [
+                "Could"
+              ],
+              "explain": "Could we possibly…? is the softest proposal."
+            },
+            {
+              "id": "en-foundations-viewpoints-negotiation-e2",
+              "kind": "gap",
+              "prompt": "That works ___ ___ as the budget is approved. (2 words: condition)",
+              "answers": [
+                "as long",
+                "so long"
+              ],
+              "explain": "as long as / so long as = siempre que."
+            },
+            {
+              "id": "en-foundations-viewpoints-negotiation-e3",
+              "kind": "order",
+              "prompt": "Respectfully disagree.",
+              "answers": [
+                "I see your point however the budget is fixed"
+              ],
+              "explain": "Acknowledge, then contrast."
+            },
+            {
+              "id": "en-foundations-viewpoints-negotiation-e4",
+              "kind": "written",
+              "prompt": "Close a deal at ten percent.",
+              "answers": [
+                "shall we say ten percent",
+                "shall we say 10 percent",
+                "shall we say 10%"
+              ],
+              "explain": "Shall we say + number closes it."
+            }
+          ],
+          "skills": [
+            "function:negotiate",
+            "grammar:second-conditional",
+            "grammar:connectors",
+            "speaking:negotiate",
+            "vocab:work"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors",
+            "grammar:modal-should"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-nuance",
+      "title": "Nuance & register",
+      "subtitle": "Say it the better way",
+      "level": "C1",
+      "themes": [
+        {
+          "id": "formal-swap",
+          "title": "The register swap",
+          "subtitle": "Same idea, different room",
+          "symbol": "arrow.triangle.swap",
+          "category": "Course",
+          "situation": "You rephrase the same message for different audiences: a friend, a client, a complaint, a keynote.",
+          "colorIndex": 0
+        },
+        {
+          "id": "idiom-lab",
+          "title": "The idiom lab",
+          "subtitle": "Sound natural",
+          "symbol": "text.bubble",
+          "category": "Course",
+          "situation": "You upgrade literal sentences with natural chunks and idioms — carefully, one at a time.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-nuance-register",
+          "title": "Register: formal vs informal",
+          "goal": "Rephrase the same message for different audiences and levels of formality.",
+          "intro": {
+            "explanation": [
+              "Informal leans on phrasal verbs and contractions: “We'll set up a call.” Formal prefers single verbs: “We will arrange a call.”",
+              "Requests climb the ladder of politeness: “Send it” → “Can you send it?” → “Could you send it?” → “I would be grateful if you could send it.”",
+              "Written formality also changes vocabulary: get → receive, help → assistance, but → however, kids → children."
+            ],
+            "examples": [
+              {
+                "text": "We'll set up a call tomorrow. (informal)",
+                "meaning": "Phrasal + contraction."
+              },
+              {
+                "text": "We will arrange a call tomorrow. (formal)",
+                "meaning": "Single verb, no contraction."
+              },
+              {
+                "text": "Can you send the invoice?",
+                "meaning": "Neutral request."
+              },
+              {
+                "text": "I would be grateful if you could send the invoice.",
+                "meaning": "Formal request."
+              },
+              {
+                "text": "Sorry, that doesn't work for me. (informal)",
+                "meaning": "Soft refusal."
+              },
+              {
+                "text": "Unfortunately, that arrangement is not feasible. (formal)",
+                "meaning": "Formal refusal."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "set up vs arrange",
+              "meaning": "Phrasal informal, single verb formal.",
+              "note": "Same meaning, different room."
+            },
+            {
+              "text": "I would be grateful if you could …",
+              "meaning": "The formal request.",
+              "note": "Emails, clients, institutions."
+            },
+            {
+              "text": "Unfortunately, … is not feasible.",
+              "meaning": "The formal no.",
+              "note": "feasible = possible/viable."
+            },
+            {
+              "text": "get → receive",
+              "meaning": "Upgrade everyday verbs.",
+              "note": "We received your message."
+            },
+            {
+              "text": "kids → children",
+              "meaning": "Register-sensitive nouns.",
+              "note": "Formal writing avoids kids."
+            },
+            {
+              "text": "Sorry about that → I apologise for the inconvenience.",
+              "meaning": "Apology ladder.",
+              "note": "Match the damage."
+            }
+          ],
+          "situation": "One message, three rooms: say the same cancellation to a friend, then to a client, then in a formal complaint — and feel the register move.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say informally that you'll organise a call.",
+                "expected": [
+                  "I'll set up a call.",
+                  "We'll set up a call."
+                ],
+                "focus": "informal register",
+                "watch": "Phrasal verbs + contractions are the informal markers."
+              },
+              {
+                "prompt": "Now say it formally. (arrange)",
+                "expected": [
+                  "We will arrange a call.",
+                  "I will arrange a call."
+                ],
+                "focus": "formal register",
+                "watch": "Single verb, no contraction."
+              },
+              {
+                "prompt": "Make this formal: “Can you send the report?”",
+                "expected": [
+                  "I would be grateful if you could send the report.",
+                  "Could you please send the report?"
+                ],
+                "focus": "request ladder",
+                "watch": "would be grateful is the top rung for email."
+              },
+              {
+                "prompt": "Refuse formally: the arrangement doesn't work.",
+                "expected": [
+                  "Unfortunately, that arrangement is not feasible.",
+                  "Unfortunately, we are unable to accept the arrangement."
+                ],
+                "focus": "formal refusal",
+                "watch": "Formal refusals start with unfortunately and avoid contractions."
+              },
+              {
+                "prompt": "Make this formal: “Sorry about the delay.”",
+                "expected": [
+                  "I apologise for the delay.",
+                  "Please accept my apologies for the delay."
+                ],
+                "focus": "apology ladder",
+                "watch": "Match formality to the damage."
+              },
+              {
+                "prompt": "Spot the register: “We received your message” vs “We got your message”.",
+                "expected": [
+                  "we received your message is formal",
+                  "we got your message is informal"
+                ],
+                "focus": "get vs receive",
+                "watch": "Same meaning; receive belongs to formal writing."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-nuance-register-e1",
+              "kind": "choice",
+              "prompt": "Which is the FORMAL request?",
+              "options": [
+                "I would be grateful if you could reply.",
+                "Can you reply?",
+                "Reply please.",
+                "Reply when you can!"
+              ],
+              "answers": [
+                "I would be grateful if you could reply."
+              ],
+              "explain": "would be grateful marks formal register."
+            },
+            {
+              "id": "en-foundations-nuance-register-e2",
+              "kind": "gap",
+              "prompt": "Formal single verb: We will ___ a meeting. (phrasal: set up)",
+              "answers": [
+                "arrange",
+                "organise",
+                "organize"
+              ],
+              "explain": "set up → arrange/organise."
+            },
+            {
+              "id": "en-foundations-nuance-register-e3",
+              "kind": "order",
+              "prompt": "Formal apology.",
+              "answers": [
+                "I apologise for the inconvenience"
+              ],
+              "explain": "The formal apology formula."
+            },
+            {
+              "id": "en-foundations-nuance-register-e4",
+              "kind": "written",
+              "prompt": "Make it formal: “We got your email.”",
+              "answers": [
+                "we received your email",
+                "we have received your email"
+              ],
+              "explain": "get → receive."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:negotiate",
+            "writing:email",
+            "function:talk-about-work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors",
+            "grammar:modal-must-have-to"
+          ]
+        },
+        {
+          "id": "en-foundations-nuance-chunks",
+          "title": "Natural chunks",
+          "goal": "Replace literal sentences with natural chunks and idioms — precisely, not decoratively.",
+          "intro": {
+            "explanation": [
+              "Chunks are ready-made phrases native speakers reach for: “It depends.” “That makes sense.” “As far as I know…” “I'm not sure about that.”",
+              "Idioms carry culture and risk: “It's a grey area” is safe and useful; rare or dated idioms can sound costume-y. One per conversation is plenty.",
+              "Upgrading literal speech: “I don't decide yet” → “I'm still on the fence.” The chunk must match the meaning exactly."
+            ],
+            "examples": [
+              {
+                "text": "It depends on the weather.",
+                "meaning": "The universal answer chunk."
+              },
+              {
+                "text": "That makes sense.",
+                "meaning": "Accepting an explanation."
+              },
+              {
+                "text": "As far as I know, the flight is on time.",
+                "meaning": "Limited certainty."
+              },
+              {
+                "text": "I'm still on the fence.",
+                "meaning": "Undecided."
+              },
+              {
+                "text": "It's a bit of a grey area.",
+                "meaning": "Not clearly one thing or the other."
+              },
+              {
+                "text": "Let's play it by ear.",
+                "meaning": "Decide as things happen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "It depends.",
+              "meaning": "Conditional answer.",
+              "note": "…on + factor: on the price."
+            },
+            {
+              "text": "That makes sense.",
+              "meaning": "Understanding confirmed.",
+              "note": "Never “it has sense”."
+            },
+            {
+              "text": "As far as I know, …",
+              "meaning": "Soften a claim.",
+              "note": "Knowledge may be incomplete."
+            },
+            {
+              "text": "I'm on the fence.",
+              "meaning": "No decision yet.",
+              "note": "Sitting between two options."
+            },
+            {
+              "text": "a grey area",
+              "meaning": "Unclear rules or meaning.",
+              "note": "The law here is a grey area."
+            },
+            {
+              "text": "play it by ear",
+              "meaning": "Improvise the plan.",
+              "note": "No fixed script."
+            }
+          ],
+          "situation": "You coach a colleague before a difficult meeting: swap their literal lines for natural chunks — and decide which idioms to avoid.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Answer naturally when asked if remote work is better.",
+                "expected": [
+                  "It depends.",
+                  "It depends on the job."
+                ],
+                "focus": "it depends",
+                "watch": "“It depends of” — English takes on."
+              },
+              {
+                "prompt": "Confirm you understood the explanation.",
+                "expected": [
+                  "That makes sense."
+                ],
+                "focus": "makes sense",
+                "watch": "Never “it has sense” — the chunk is makes sense."
+              },
+              {
+                "prompt": "Soften a claim about tomorrow's schedule.",
+                "expected": [
+                  "As far as I know, it's free.",
+                  "As far as I know, the schedule hasn't changed."
+                ],
+                "focus": "limited certainty",
+                "watch": "The chunk admits your knowledge might be incomplete."
+              },
+              {
+                "prompt": "Say you haven't decided between the two offers.",
+                "expected": [
+                  "I'm still on the fence."
+                ],
+                "focus": "undecided",
+                "watch": "The fence sits between two options — that's the image."
+              },
+              {
+                "prompt": "Say the rule is unclear. (idiom)",
+                "expected": [
+                  "It's a bit of a grey area.",
+                  "It's a grey area."
+                ],
+                "focus": "grey area",
+                "watch": "grey (BrE) or gray (AmE) — both fine."
+              },
+              {
+                "prompt": "Say you'll decide as things happen. (idiom)",
+                "expected": [
+                  "Let's play it by ear.",
+                  "We'll play it by ear."
+                ],
+                "focus": "play it by ear",
+                "watch": "ear, not year — it comes from music."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-nuance-chunks-e1",
+              "kind": "choice",
+              "prompt": "Which chunk means “no decision yet”?",
+              "options": [
+                "I'm on the fence.",
+                "It's a grey area.",
+                "It depends.",
+                "That makes sense."
+              ],
+              "answers": [
+                "I'm on the fence."
+              ],
+              "explain": "On the fence = between two options, undecided."
+            },
+            {
+              "id": "en-foundations-nuance-chunks-e2",
+              "kind": "gap",
+              "prompt": "That ___ sense — thanks for explaining.",
+              "answers": [
+                "makes"
+              ],
+              "explain": "makes sense, never has sense."
+            },
+            {
+              "id": "en-foundations-nuance-chunks-e3",
+              "kind": "order",
+              "prompt": "Soften your claim about the flight.",
+              "answers": [
+                "As far as I know the flight is on time"
+              ],
+              "explain": "as far as I know + the claim."
+            },
+            {
+              "id": "en-foundations-nuance-chunks-e4",
+              "kind": "written",
+              "prompt": "Fix: “It depends of the price.”",
+              "answers": [
+                "it depends on the price"
+              ],
+              "explain": "depend on + factor."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:express-opinion",
+            "speaking:sustained-conversation",
+            "writing:argument"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "en-foundations-nuance-hedging",
+          "title": "Hedging & precision",
+          "goal": "Fine-tune opinions: soften, intensify and qualify like a confident speaker.",
+          "intro": {
+            "explanation": [
+              "Hedging protects accuracy: “tends to”, “to some extent”, “arguably”, “in most cases”. Strong claims need strong evidence — otherwise hedge.",
+              "Intensifiers scale: slightly < rather < considerably < far. “Far more efficient” is stronger than “slightly more efficient”.",
+              "Precision beats intensity: “a threefold increase” > “a lot more”. Numbers, examples and scope (“in this case”) make opinions defensible."
+            ],
+            "examples": [
+              {
+                "text": "This approach tends to work better.",
+                "meaning": "A hedged claim."
+              },
+              {
+                "text": "To some extent, I agree.",
+                "meaning": "Partial agreement."
+              },
+              {
+                "text": "Arguably, it's the best option on the table.",
+                "meaning": "Opinion with room."
+              },
+              {
+                "text": "The new version is far more stable.",
+                "meaning": "A strong, clear difference."
+              },
+              {
+                "text": "Costs fell by roughly a third.",
+                "meaning": "Precision with a number."
+              },
+              {
+                "text": "In this specific case, I'd wait.",
+                "meaning": "Scope limiting."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "tends to + verb",
+              "meaning": "General pattern, not law.",
+              "note": "Prices tend to rise in summer."
+            },
+            {
+              "text": "to some extent / to a degree",
+              "meaning": "Partial truth.",
+              "note": "Agreement with reservations."
+            },
+            {
+              "text": "arguably",
+              "meaning": "Defensible opinion.",
+              "note": "Arguably the best paella in town."
+            },
+            {
+              "text": "slightly / rather / considerably / far",
+              "meaning": "The intensity scale.",
+              "note": "far > considerably > rather > slightly."
+            },
+            {
+              "text": "by roughly a third",
+              "meaning": "Approximate precision.",
+              "note": "roughly, about, approximately."
+            },
+            {
+              "text": "in this specific case",
+              "meaning": "Limit the scope.",
+              "note": "No universal claims."
+            }
+          ],
+          "situation": "You present an opinion to a skeptical audience: claim, hedge, quantify and limit scope — then defend it once challenged.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Hedge a claim about remote productivity.",
+                "expected": [
+                  "Remote work tends to increase productivity.",
+                  "It tends to work better for focused tasks."
+                ],
+                "focus": "tends to",
+                "watch": "tends to + base verb softens the pattern without killing it."
+              },
+              {
+                "prompt": "Agree, but only partly.",
+                "expected": [
+                  "To some extent, I agree.",
+                  "I agree to a degree."
+                ],
+                "focus": "partial agreement",
+                "watch": "The quantifier keeps the disagreement alive."
+              },
+              {
+                "prompt": "Give a defensible superlative opinion about a restaurant.",
+                "expected": [
+                  "Arguably, it's the best ramen in the city."
+                ],
+                "focus": "arguably",
+                "watch": "arguably signals: I can defend this."
+              },
+              {
+                "prompt": "Rank the intensifiers: slightly / far / rather. (weakest to strongest)",
+                "expected": [
+                  "slightly, rather, far"
+                ],
+                "focus": "intensity scale",
+                "watch": "slightly < rather < considerably < far."
+              },
+              {
+                "prompt": "Be precise about a cost drop: from 90 to 60. (roughly)",
+                "expected": [
+                  "Costs fell by roughly a third."
+                ],
+                "focus": "approximate numbers",
+                "watch": "roughly + fraction beats “a lot less”."
+              },
+              {
+                "prompt": "Limit your advice so it isn't universal.",
+                "expected": [
+                  "In this specific case, I'd wait.",
+                  "In this case, I'd wait before deciding."
+                ],
+                "focus": "scope",
+                "watch": "in this case protects the advice from other contexts."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-nuance-hedging-e1",
+              "kind": "choice",
+              "prompt": "Which claim is the most hedged?",
+              "options": [
+                "It tends to work better.",
+                "It always works.",
+                "It works.",
+                "It never fails."
+              ],
+              "answers": [
+                "It tends to work better."
+              ],
+              "explain": "tends to is the hedged pattern claim."
+            },
+            {
+              "id": "en-foundations-nuance-hedging-e2",
+              "kind": "gap",
+              "prompt": "The new engine is ___ more efficient. (strongest intensifier)",
+              "answers": [
+                "far",
+                "considerably"
+              ],
+              "explain": "far (or considerably) is stronger than slightly."
+            },
+            {
+              "id": "en-foundations-nuance-hedging-e3",
+              "kind": "order",
+              "prompt": "Give a partial agreement.",
+              "answers": [
+                "To some extent I agree"
+              ],
+              "explain": "to some extent + I agree."
+            },
+            {
+              "id": "en-foundations-nuance-hedging-e4",
+              "kind": "written",
+              "prompt": "Fix: “It depends of the context.”",
+              "answers": [
+                "it depends on the context"
+              ],
+              "explain": "depend on — the preposition is on."
+            }
+          ],
+          "skills": [
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "writing:argument"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

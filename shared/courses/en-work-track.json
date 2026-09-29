@@ -1,0 +1,588 @@
+{
+  "id": "en-work-track",
+  "languageID": "en",
+  "schemaVersion": 2,
+  "title": "English for Work",
+  "subtitle": "Professional track",
+  "symbol": "briefcase",
+  "description": "The English of meetings, emails and interviews — professional situations, practised out loud. A track that runs alongside Foundations.",
+  "units": [
+    {
+      "id": "en-work-u1",
+      "title": "The working day",
+      "subtitle": "Meetings, emails, interviews",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "monday-standup",
+          "title": "Monday stand-up",
+          "subtitle": "Report your week",
+          "symbol": "clock",
+          "category": "Course",
+          "situation": "You report progress in a stand-up: what you did, what you're doing, what's blocked.",
+          "colorIndex": 0
+        },
+        {
+          "id": "interview-roleplay",
+          "title": "The interview rehearsal",
+          "subtitle": "Sell your experience",
+          "symbol": "person.badge.key",
+          "category": "Course",
+          "situation": "A job interview rehearsal: present yourself, describe projects and answer the hard questions.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-work-u1-meetings",
+          "title": "In meetings",
+          "goal": "Report progress, ask for clarification and disagree politely in a meeting.",
+          "intro": {
+            "explanation": [
+              "Structure beats improvisation: “Last week I finished X. This week I'm working on Y. I'm blocked on Z.”",
+              "Clarify before you guess: “Sorry, could you clarify that?” “Just to make sure I understand…”",
+              "Disagree with data, not people: “I see it slightly differently — the numbers show…”"
+            ],
+            "examples": [
+              {
+                "text": "Last week I finished the report.",
+                "meaning": "Done work, past simple."
+              },
+              {
+                "text": "This week I'm working on the budget.",
+                "meaning": "Current work, continuous."
+              },
+              {
+                "text": "I'm blocked on the approvals.",
+                "meaning": "Say what stops you."
+              },
+              {
+                "text": "Sorry, could you clarify that?",
+                "meaning": "Ask before assuming."
+              },
+              {
+                "text": "Just to make sure I understand: we ship on Friday?",
+                "meaning": "Confirm decisions."
+              },
+              {
+                "text": "I see it slightly differently — the data shows a drop.",
+                "meaning": "Data-based disagreement."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Last week I finished …",
+              "meaning": "Report completed work.",
+              "note": "Past simple for done things."
+            },
+            {
+              "text": "This week I'm working on …",
+              "meaning": "Report current work.",
+              "note": "Continuous for in progress."
+            },
+            {
+              "text": "I'm blocked on …",
+              "meaning": "Name the blocker.",
+              "note": "Blocked on + thing, not person."
+            },
+            {
+              "text": "Could you clarify …?",
+              "meaning": "Ask precisely.",
+              "note": "Clarify + the specific point."
+            },
+            {
+              "text": "Just to make sure I understand, …",
+              "meaning": "Confirm decisions.",
+              "note": "Repeat the decision back."
+            },
+            {
+              "text": "I see it slightly differently.",
+              "meaning": "Soft disagreement.",
+              "note": "Then bring your data."
+            }
+          ],
+          "situation": "Monday stand-up: report what you finished, what you're on and what's blocked; clarify one point and politely disagree with a plan once.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Report one thing you finished last week.",
+                "expected": [
+                  "Last week I finished <task>."
+                ],
+                "focus": "past simple reporting",
+                "watch": "“Last week I finish” — done work takes past simple."
+              },
+              {
+                "prompt": "Report what you're doing this week.",
+                "expected": [
+                  "This week I'm working on <task>."
+                ],
+                "focus": "current work",
+                "watch": "“This week I work on” sounds like a routine — use the continuous."
+              },
+              {
+                "prompt": "Tell the team what is blocking you. (approvals)",
+                "expected": [
+                  "I'm blocked on the approvals."
+                ],
+                "focus": "blockers",
+                "watch": "“I'm blocked by the approvals” also works; “I block on” doesn't."
+              },
+              {
+                "prompt": "Ask for clarification about the deadline.",
+                "expected": [
+                  "Sorry, could you clarify the deadline?",
+                  "Could you clarify when the deadline is?"
+                ],
+                "focus": "clarifying",
+                "watch": "Clarify + the thing: the deadline, the owner, the scope."
+              },
+              {
+                "prompt": "Confirm a decision you half-heard. (ship on Friday)",
+                "expected": [
+                  "Just to make sure I understand: we ship on Friday?"
+                ],
+                "focus": "confirming",
+                "watch": "Repeat the decision back as a question."
+              },
+              {
+                "prompt": "Disagree with a plan, politely, with data.",
+                "expected": [
+                  "I see it slightly differently — the data shows a drop.",
+                  "I see your point; however, the numbers say otherwise."
+                ],
+                "focus": "soft disagreement",
+                "watch": "Data first, tone soft: no “you're wrong”."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-work-u1-meetings-e1",
+              "kind": "choice",
+              "prompt": "Last week I ___ the report.",
+              "options": [
+                "finished",
+                "finish",
+                "am finishing",
+                "was finishing"
+              ],
+              "answers": [
+                "finished"
+              ],
+              "explain": "Last week + past simple for completed work."
+            },
+            {
+              "id": "en-work-u1-meetings-e2",
+              "kind": "gap",
+              "prompt": "This week I'm ___ on the budget. (work)",
+              "answers": [
+                "working"
+              ],
+              "explain": "Current work: I'm working on."
+            },
+            {
+              "id": "en-work-u1-meetings-e3",
+              "kind": "order",
+              "prompt": "Ask for clarification politely.",
+              "answers": [
+                "Could you clarify that please"
+              ],
+              "explain": "Could you clarify + object (+ please)."
+            },
+            {
+              "id": "en-work-u1-meetings-e4",
+              "kind": "written",
+              "prompt": "Say what blocks you: the client's approval.",
+              "answers": [
+                "i'm blocked on the client's approval",
+                "i am blocked on the approval",
+                "i'm blocked by the client's approval"
+              ],
+              "explain": "blocked on/by + the thing."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:past-simple-regular",
+            "grammar:present-continuous",
+            "function:make-requests",
+            "speaking:sustained-conversation"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-simple",
+            "grammar:present-continuous"
+          ]
+        },
+        {
+          "id": "en-work-u1-emails",
+          "title": "Professional emails",
+          "goal": "Write short professional emails: request, confirm and follow up.",
+          "intro": {
+            "explanation": [
+              "Email skeleton: greeting → purpose in line one → details → clear ask → sign-off. “Hi Marta, I'm writing about… Could you…? Thanks, Dan.”",
+              "Requests: “Could you send… by Wednesday?” Deadlines make asks actionable. Follow-ups stay light: “Just following up on my email below.”",
+              "Register: no contractions is safer in formal mail; “I would be grateful if…” is the formal ask."
+            ],
+            "examples": [
+              {
+                "text": "I'm writing about Thursday's meeting.",
+                "meaning": "Purpose in line one."
+              },
+              {
+                "text": "Could you send the figures by Wednesday?",
+                "meaning": "Request + deadline."
+              },
+              {
+                "text": "Please find the report attached.",
+                "meaning": "The attachment line."
+              },
+              {
+                "text": "Just following up on my email below.",
+                "meaning": "Light follow-up."
+              },
+              {
+                "text": "I would be grateful if you could confirm.",
+                "meaning": "Formal ask."
+              },
+              {
+                "text": "Best regards, Daniel",
+                "meaning": "Safe sign-off."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I'm writing about / to ask about …",
+              "meaning": "Open with purpose.",
+              "note": "No weather talk in work mail."
+            },
+            {
+              "text": "Could you … by <day>?",
+              "meaning": "Request + deadline.",
+              "note": "A deadline is kindness."
+            },
+            {
+              "text": "Please find … attached.",
+              "meaning": "Point at the file.",
+              "note": "attached, not annexed."
+            },
+            {
+              "text": "Just following up on …",
+              "meaning": "Nudge without nagging.",
+              "note": "Light tone, clear reference."
+            },
+            {
+              "text": "I would be grateful if you could …",
+              "meaning": "The formal ask.",
+              "note": "Clients, institutions, bosses' bosses."
+            },
+            {
+              "text": "Best regards / Kind regards",
+              "meaning": "Safe sign-offs.",
+              "note": "Cheers is for friends only."
+            }
+          ],
+          "situation": "You need numbers from a busy colleague: write the request, set a deadline, and then follow up two days later — politely.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open an email about the quarterly figures.",
+                "expected": [
+                  "I'm writing about the quarterly figures."
+                ],
+                "focus": "purpose first",
+                "watch": "Line one states the topic — no “I hope you are well” padding needed."
+              },
+              {
+                "prompt": "Ask for the figures with a deadline. (Wednesday)",
+                "expected": [
+                  "Could you send the figures by Wednesday?"
+                ],
+                "focus": "request + deadline",
+                "watch": "by + day: “until Wednesday” is different — by is the limit."
+              },
+              {
+                "prompt": "Point to the report you attached.",
+                "expected": [
+                  "Please find the report attached."
+                ],
+                "focus": "attachment line",
+                "watch": "The fixed phrase is find … attached."
+              },
+              {
+                "prompt": "Follow up on an unanswered email, lightly.",
+                "expected": [
+                  "Just following up on my email below."
+                ],
+                "focus": "follow-up",
+                "watch": "“Why didn't you answer?” is never the opening."
+              },
+              {
+                "prompt": "Make the formal version of the ask. (confirm attendance)",
+                "expected": [
+                  "I would be grateful if you could confirm your attendance."
+                ],
+                "focus": "formal register",
+                "watch": "would be grateful + if you could."
+              },
+              {
+                "prompt": "Choose a safe sign-off for a client.",
+                "expected": [
+                  "Best regards.",
+                  "Kind regards."
+                ],
+                "focus": "sign-off",
+                "watch": "Cheers and hugs stay with friends."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-work-u1-emails-e1",
+              "kind": "choice",
+              "prompt": "I'm writing ___ the invoice.",
+              "options": [
+                "about",
+                "of",
+                "for see",
+                "on see"
+              ],
+              "answers": [
+                "about"
+              ],
+              "explain": "I'm writing about + topic."
+            },
+            {
+              "id": "en-work-u1-emails-e2",
+              "kind": "gap",
+              "prompt": "Could you send it ___ Friday? (deadline)",
+              "answers": [
+                "by"
+              ],
+              "explain": "by Friday = not later than Friday."
+            },
+            {
+              "id": "en-work-u1-emails-e3",
+              "kind": "order",
+              "prompt": "The attachment line.",
+              "answers": [
+                "Please find the report attached"
+              ],
+              "explain": "find + file + attached."
+            },
+            {
+              "id": "en-work-u1-emails-e4",
+              "kind": "written",
+              "prompt": "Formal ask: confirm attendance.",
+              "answers": [
+                "i would be grateful if you could confirm your attendance",
+                "i would be grateful if you could confirm attendance"
+              ],
+              "explain": "I would be grateful if you could…"
+            }
+          ],
+          "skills": [
+            "writing:email",
+            "function:make-requests",
+            "grammar:modal-should",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:modal-should"
+          ]
+        },
+        {
+          "id": "en-work-u1-interviews",
+          "title": "Job interviews",
+          "goal": "Present yourself, describe achievements and handle hard questions in an interview.",
+          "intro": {
+            "explanation": [
+              "The achievement formula: situation → action → result. “The team was behind (S). I rebuilt the schedule (A) and we shipped on time (R).”",
+              "Weakness questions want honesty plus growth: “I used to over-plan; now I timebox decisions.”",
+              "Buy time politely: “That's a good question — let me think for a second.” Silence feels longer to you than to them."
+            ],
+            "examples": [
+              {
+                "text": "I've led a team of five for three years.",
+                "meaning": "Present perfect for ongoing relevance."
+              },
+              {
+                "text": "The project was behind, so I rebuilt the schedule.",
+                "meaning": "Situation + action."
+              },
+              {
+                "text": "As a result, we shipped two weeks early.",
+                "meaning": "Result with a number if possible."
+              },
+              {
+                "text": "I used to over-plan; now I timebox decisions.",
+                "meaning": "Weakness + growth."
+              },
+              {
+                "text": "That's a good question — let me think for a second.",
+                "meaning": "Buying time."
+              },
+              {
+                "text": "I'm particularly proud of the migration project.",
+                "meaning": "Selective pride."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I've + participle + for/since",
+              "meaning": "Experience that continues.",
+              "note": "I've worked here since 2021."
+            },
+            {
+              "text": "The situation was …, so I …",
+              "meaning": "Story spine.",
+              "note": "S-A-R: situation, action, result."
+            },
+            {
+              "text": "As a result, …",
+              "meaning": "Land the outcome.",
+              "note": "Numbers beat adjectives."
+            },
+            {
+              "text": "I used to …; now I …",
+              "meaning": "Weakness + growth.",
+              "note": "Never say “I'm a perfectionist”."
+            },
+            {
+              "text": "Let me think for a second.",
+              "meaning": "Buy time.",
+              "note": "Then answer in structure."
+            },
+            {
+              "text": "I'm particularly proud of …",
+              "meaning": "Choose your highlight.",
+              "note": "One story, told well."
+            }
+          ],
+          "situation": "Interview rehearsal: introduce your experience, tell one achievement with S-A-R, answer the weakness question and negotiate next steps.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Describe your current role and how long you've had it.",
+                "expected": [
+                  "I've worked as a <role> for <time>.",
+                  "I've been a <role> since <year>."
+                ],
+                "focus": "present perfect",
+                "watch": "for + period, since + point."
+              },
+              {
+                "prompt": "Tell one achievement as a story. (situation → action → result)",
+                "expected": [
+                  "The project was behind, so I rebuilt the schedule, and as a result we shipped on time."
+                ],
+                "focus": "S-A-R",
+                "watch": "The result is the point — land it with as a result."
+              },
+              {
+                "prompt": "Answer the weakness question honestly with growth.",
+                "expected": [
+                  "I used to over-plan; now I timebox decisions."
+                ],
+                "focus": "weakness + growth",
+                "watch": "used to for the old habit, now for the fix."
+              },
+              {
+                "prompt": "Buy time on a hard question.",
+                "expected": [
+                  "That's a good question — let me think for a second."
+                ],
+                "focus": "buying time",
+                "watch": "Then structure the answer: point, example, close."
+              },
+              {
+                "prompt": "Explain why you want this job. (growth + contribution)",
+                "expected": [
+                  "I want to grow into <area>, and I believe I can contribute <strength>."
+                ],
+                "focus": "two-sided motivation",
+                "watch": "What you gain AND what you bring."
+              },
+              {
+                "prompt": "Close the interview politely.",
+                "expected": [
+                  "Thank you — I look forward to hearing from you."
+                ],
+                "focus": "closing",
+                "watch": "look forward to + -ing."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-work-u1-interviews-e1",
+              "kind": "choice",
+              "prompt": "I've worked here ___ 2021.",
+              "options": [
+                "since",
+                "for",
+                "from",
+                "during"
+              ],
+              "answers": [
+                "since"
+              ],
+              "explain": "since + point in time; for + period."
+            },
+            {
+              "id": "en-work-u1-interviews-e2",
+              "kind": "gap",
+              "prompt": "___ a result, we shipped two weeks early.",
+              "answers": [
+                "as"
+              ],
+              "explain": "As a result + outcome."
+            },
+            {
+              "id": "en-work-u1-interviews-e3",
+              "kind": "order",
+              "prompt": "Buy time politely.",
+              "answers": [
+                "That's a good question let me think for a second"
+              ],
+              "explain": "The buying-time formula."
+            },
+            {
+              "id": "en-work-u1-interviews-e4",
+              "kind": "written",
+              "prompt": "Weakness + growth: over-plan → timebox.",
+              "answers": [
+                "i used to over-plan now i timebox decisions",
+                "i used to over plan now i timebox decisions"
+              ],
+              "explain": "used to (old) + now (new)."
+            }
+          ],
+          "skills": [
+            "grammar:present-perfect",
+            "grammar:used-to",
+            "function:talk-about-work",
+            "speaking:justify-opinion",
+            "function:introduce-yourself"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect",
+            "grammar:used-to"
+          ]
+        }
+      ]
+    }
+  ]
+}

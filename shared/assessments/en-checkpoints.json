@@ -685,6 +685,232 @@
           "explain": "Opinion + because + reason."
         }
       ]
+    },
+    {
+      "id": "checkpoint-en-b2",
+      "languageID": "en",
+      "level": "B2",
+      "title": "B2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-en-b2-q1",
+          "kind": "choice",
+          "skill": "grammar:second-conditional",
+          "prompt": "If I ___ more time, I would learn the piano.",
+          "options": [
+            "had",
+            "have",
+            "would have",
+            "will have"
+          ],
+          "answers": [
+            "had"
+          ],
+          "explain": "Unreal present: if + past."
+        },
+        {
+          "id": "checkpoint-en-b2-q2",
+          "kind": "written",
+          "skill": "grammar:second-conditional",
+          "prompt": "Fix: “If I would have time, I would cook.”",
+          "answers": [
+            "if i had time i would cook"
+          ],
+          "explain": "The if-clause takes had."
+        },
+        {
+          "id": "checkpoint-en-b2-q3",
+          "kind": "choice",
+          "skill": "grammar:passive-intro",
+          "prompt": "These computers ___ in Taiwan.",
+          "options": [
+            "are made",
+            "are making",
+            "made",
+            "is made"
+          ],
+          "answers": [
+            "are made"
+          ],
+          "explain": "Present passive: are made."
+        },
+        {
+          "id": "checkpoint-en-b2-q4",
+          "kind": "gap",
+          "skill": "grammar:passive-intro",
+          "prompt": "The parcel ___ ___ delivered tomorrow. (will, passive)",
+          "answers": [
+            "will be"
+          ],
+          "explain": "will be + participle."
+        },
+        {
+          "id": "checkpoint-en-b2-q5",
+          "kind": "choice",
+          "skill": "grammar:connectors",
+          "prompt": "___ it was late, we went out.",
+          "options": [
+            "Although",
+            "However",
+            "So",
+            "Because"
+          ],
+          "answers": [
+            "Although"
+          ],
+          "explain": "although + clause."
+        },
+        {
+          "id": "checkpoint-en-b2-q6",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "It was raining, ___ we stayed in. (result)",
+          "answers": [
+            "so"
+          ],
+          "explain": "so introduces the result."
+        },
+        {
+          "id": "checkpoint-en-b2-q7",
+          "kind": "choice",
+          "skill": "function:negotiate",
+          "prompt": "___ we possibly move the meeting to Thursday?",
+          "options": [
+            "Could",
+            "Must",
+            "Will",
+            "Should"
+          ],
+          "answers": [
+            "Could"
+          ],
+          "explain": "The softest proposal."
+        },
+        {
+          "id": "checkpoint-en-b2-q8",
+          "kind": "written",
+          "skill": "function:negotiate",
+          "prompt": "Close a deal at ten percent.",
+          "answers": [
+            "shall we say ten percent",
+            "shall we say 10 percent",
+            "shall we say 10%"
+          ],
+          "explain": "Shall we say + number."
+        },
+        {
+          "id": "checkpoint-en-b2-q9",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "Which chunk means “no decision yet”?",
+          "options": [
+            "I'm on the fence.",
+            "It's a grey area.",
+            "It depends.",
+            "That makes sense."
+          ],
+          "answers": [
+            "I'm on the fence."
+          ],
+          "explain": "On the fence = undecided."
+        },
+        {
+          "id": "checkpoint-en-b2-q10",
+          "kind": "written",
+          "skill": "vocab:social-expressions",
+          "prompt": "Fix: “It depends of the price.”",
+          "answers": [
+            "it depends on the price"
+          ],
+          "explain": "depend on."
+        },
+        {
+          "id": "checkpoint-en-b2-q11",
+          "kind": "choice",
+          "skill": "grammar:first-conditional",
+          "prompt": "If it ___ tomorrow, we'll cancel the trip.",
+          "options": [
+            "rains",
+            "will rain",
+            "rained",
+            "is going to rain"
+          ],
+          "answers": [
+            "rains"
+          ],
+          "explain": "Present after if (real future)."
+        },
+        {
+          "id": "checkpoint-en-b2-q12",
+          "kind": "written",
+          "skill": "grammar:connectors",
+          "prompt": "Join: “He resigned. It annoyed everyone.” (use which)",
+          "answers": [
+            "he resigned which annoyed everyone"
+          ],
+          "explain": "He resigned, which annoyed everyone."
+        },
+        {
+          "id": "checkpoint-en-b2-q13",
+          "kind": "choice",
+          "skill": "vocab:work",
+          "prompt": "In a meeting, work that is stopped by something else is ___",
+          "options": [
+            "blocked",
+            "closed",
+            "finished",
+            "hired"
+          ],
+          "answers": [
+            "blocked"
+          ],
+          "explain": "I'm blocked on the approvals."
+        },
+        {
+          "id": "checkpoint-en-b2-q14",
+          "kind": "written",
+          "skill": "vocab:work",
+          "prompt": "Say one thing you have to do at work.",
+          "answers": [
+            "i have to <activity>",
+            "we have to <activity>"
+          ],
+          "explain": "have to + base verb."
+        },
+        {
+          "id": "checkpoint-en-b2-q15",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "Which claim is the most hedged?",
+          "options": [
+            "It tends to work better.",
+            "It always works.",
+            "It works.",
+            "It never fails."
+          ],
+          "answers": [
+            "It tends to work better."
+          ],
+          "explain": "tends to hedges the claim."
+        },
+        {
+          "id": "checkpoint-en-b2-q16",
+          "kind": "written",
+          "skill": "function:express-opinion",
+          "prompt": "Give a partial agreement.",
+          "answers": [
+            "to some extent i agree",
+            "i agree to a degree",
+            "to a degree i agree"
+          ],
+          "explain": "to some extent / to a degree."
+        }
+      ]
     }
   ]
 }

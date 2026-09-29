@@ -56,6 +56,6 @@
 
 ## F7 — B2/C1 + tracks
 
-- [ ] F7.1 Unidad B2 + unidad C1 + listenings/readings propios + checkpoint B2.
-- [ ] F7.2 Track English for Work (curso tipo track + escenarios).
-- [ ] F7.3 Tests + verificación + verify-report final.
+- [x] F7.1 Unidad B2 + unidad C1 + listenings/readings propios + checkpoint B2.
+- [x] F7.2 Track English for Work (curso tipo track + escenarios).
+- [x] F7.3 Tests + verificación + verify-report final.

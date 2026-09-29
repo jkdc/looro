@@ -6,18 +6,24 @@ import org.junit.Test
 class CoursesTest {
     @Test fun `foundations course is registered for english`() {
         val courses = CourseRegistry.forLanguage("en")
-        assertEquals(1, courses.size)
-        val course = courses.first()
+        assertEquals(2, courses.size)
+        val course = courses.first { it.id == "en-foundations" }
         assertEquals("en-foundations", course.id)
-        assertEquals(12, course.units.size)
-        assertEquals(37, course.units.sumOf { it.lessons.size })
+        assertEquals(14, course.units.size)
+        assertEquals(43, course.units.sumOf { it.lessons.size })
         assertTrue(course.units.first().themes.size >= 2)
     }
 
     @Test fun `every unit carries its level label`() {
         val levels = CourseRegistry.forLanguage("en").first().units.map { it.level }
         assertTrue(levels.all { it.isNotBlank() })
-        assertEquals(listOf("A1", "A1", "A1", "A1", "A1", "A1", "A2", "A2", "A2", "A2", "B1", "B1"), levels)
+        assertEquals(listOf("A1", "A1", "A1", "A1", "A1", "A1", "A2", "A2", "A2", "A2", "B1", "B1", "B2", "C1"), levels)
+    }
+
+    @Test fun `the English work track is registered`() {
+        val track = CourseRegistry.forLanguage("en").first { it.id == "en-work-track" }
+        assertEquals(1, track.units.size)
+        assertEquals(3, track.units.sumOf { it.lessons.size })
     }
 
     @Test fun `each supported course language carries exactly one foundations`() {
