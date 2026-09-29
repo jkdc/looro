@@ -4018,6 +4018,300 @@
       "exposureSkills": [
         "grammar:first-conditional"
       ]
+    },
+    {
+      "id": "en-listen-viewpoint-interview",
+      "languageID": "en",
+      "title": "The viewpoint interview",
+      "level": "B2",
+      "topic": "work",
+      "unitID": "en-foundations-viewpoints",
+      "text": "Interviewer: 'You've argued that the five-day office week is obsolete. But many CEOs disagree.' Marta: 'They do, and I understand why. Commercial leases are expensive. Middle managers built careers on supervision. But the data — and I'd point to the Stanford study of sixteen thousand workers — shows remote workers are 13% more productive.' Interviewer: 'What about young employees who need mentorship?' Marta: 'Fair point. My answer is structured onboarding, not forced presence. You can mentor on Tuesday and Thursday without watching someone's desk on Monday.' Interviewer: 'If you were CEO of a Fortune 500, what would you do first?' Marta: 'I'd scrap the office policy entirely and rebuild it around outcomes, not hours.'",
+      "questions": [
+        {
+          "id": "en-listen-viewpoint-interview-q1",
+          "kind": "choice",
+          "prompt": "What does Marta argue?",
+          "options": [
+            "The five-day office week is obsolete",
+            "CEOs are always right",
+            "Remote work is perfect",
+            "Ban all offices"
+          ],
+          "answers": [
+            "The five-day office week is obsolete"
+          ],
+          "explain": "She argues the five-day office week is obsolete."
+        },
+        {
+          "id": "en-listen-viewpoint-interview-q2",
+          "kind": "written",
+          "prompt": "What study does Marta cite?",
+          "answers": [
+            "the stanford study",
+            "stanford"
+          ],
+          "explain": "The Stanford study of 16,000 workers."
+        },
+        {
+          "id": "en-listen-viewpoint-interview-q3",
+          "kind": "choice",
+          "prompt": "What does Marta propose instead of forced presence?",
+          "options": [
+            "Structured onboarding",
+            "More offices",
+            "Higher salaries",
+            "Fewer meetings"
+          ],
+          "answers": [
+            "Structured onboarding"
+          ],
+          "explain": "Her answer is structured onboarding, not forced presence."
+        },
+        {
+          "id": "en-listen-viewpoint-interview-q4",
+          "kind": "written",
+          "prompt": "What would Marta do first as CEO?",
+          "answers": [
+            "scrap the office policy"
+          ],
+          "explain": "Scrap the office policy and rebuild around outcomes."
+        },
+        {
+          "id": "en-listen-viewpoint-interview-q5",
+          "kind": "choice",
+          "prompt": "What does Marta concede about young employees?",
+          "options": [
+            "They need mentorship",
+            "They are less productive",
+            "They prefer offices",
+            "They need more money"
+          ],
+          "answers": [
+            "They need mentorship"
+          ],
+          "explain": "Fair point: young employees need mentorship."
+        },
+        {
+          "id": "en-listen-viewpoint-interview-q6",
+          "kind": "choice",
+          "prompt": "How does Marta handle the CEO hypothetical?",
+          "options": [
+            "She gives a direct answer",
+            "She refuses",
+            "She laughs",
+            "She changes topic"
+          ],
+          "answers": [
+            "She gives a direct answer"
+          ],
+          "explain": "If I were CEO, I'd scrap the office policy — direct and structured."
+        }
+      ],
+      "skills": [
+        "grammar:second-conditional",
+        "function:express-opinion",
+        "grammar:connectors",
+        "vocab:work"
+      ],
+      "exposureSkills": [
+        "grammar:passive-intro"
+      ]
+    },
+    {
+      "id": "en-listen-hospital-stories",
+      "languageID": "en",
+      "title": "Stories from the ward",
+      "level": "B2",
+      "topic": "health",
+      "unitID": "en-foundations-viewpoints",
+      "text": "Nurse Rosa has worked the night shift for twelve years, and she's collected stories the way other people collect stamps. There was the man who sang opera to his IV drip — he said it was Puccini or nothing. And the woman who refused to sleep until she'd taught every nurse on the ward to make paella. 'It took three nights,' Rosa remembers. 'But the paella was excellent.' The hardest stories, she says, are the quiet ones — the patients who ask the same question over and over because they're more afraid of the answer than the illness. 'You answer it every time. That's the job. You answer, and you stay.'",
+      "questions": [
+        {
+          "id": "en-listen-hospital-stories-q1",
+          "kind": "choice",
+          "prompt": "How long has Rosa worked nights?",
+          "options": [
+            "Twelve years",
+            "Two years",
+            "Twenty years",
+            "Ten years"
+          ],
+          "answers": [
+            "Twelve years"
+          ],
+          "explain": "Twelve years on the night shift."
+        },
+        {
+          "id": "en-listen-hospital-stories-q2",
+          "kind": "written",
+          "prompt": "What did the opera man sing to his IV drip?",
+          "answers": [
+            "puccini",
+            "opera"
+          ],
+          "explain": "Puccini — or nothing."
+        },
+        {
+          "id": "en-listen-hospital-stories-q3",
+          "kind": "choice",
+          "prompt": "How many nights did the paella lesson take?",
+          "options": [
+            "Three",
+            "One",
+            "Two",
+            "Five"
+          ],
+          "answers": [
+            "Three"
+          ],
+          "explain": "Three nights — but the paella was excellent."
+        },
+        {
+          "id": "en-listen-hospital-stories-q4",
+          "kind": "choice",
+          "prompt": "What are the hardest stories?",
+          "options": [
+            "The quiet ones — patients afraid of the answer",
+            "The loud ones",
+            "The opera singers",
+            "The long shifts"
+          ],
+          "answers": [
+            "The quiet ones — patients afraid of the answer"
+          ],
+          "explain": "Patients afraid of the answer than the illness."
+        },
+        {
+          "id": "en-listen-hospital-stories-q5",
+          "kind": "written",
+          "prompt": "What is the job, according to Rosa?",
+          "answers": [
+            "answer and stay"
+          ],
+          "explain": "You answer, and you stay."
+        },
+        {
+          "id": "en-listen-hospital-stories-q6",
+          "kind": "choice",
+          "prompt": "What does Rosa collect?",
+          "options": [
+            "Stories",
+            "Stamps",
+            "IV drips",
+            "Recipes"
+          ],
+          "answers": [
+            "Stories"
+          ],
+          "explain": "Stories, like others collect stamps."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:past-continuous",
+        "function:talk-about-health",
+        "vocab:health"
+      ],
+      "exposureSkills": [
+        "grammar:used-to"
+      ]
+    },
+    {
+      "id": "en-listen-podcast-nuance",
+      "languageID": "en",
+      "title": "The nuance episode",
+      "level": "C1",
+      "topic": "work",
+      "unitID": "en-foundations-nuance",
+      "text": "HOST: You've written that 'nuance is the first casualty of urgency.' That's a great line — but what does it mean? AUTHOR: It means that when we're in a hurry, we flatten complex positions into for-and-against. And most interesting problems are neither. HOST: Give me an example. AUTHOR: Take remote work. The productive question isn't 'is it good or bad?' — it's 'which parts of which jobs benefit from which conditions?' That's a harder question, and the answer is boring: it depends. HOST: So nuance is just… saying it depends? AUTHOR: [laughs] No — it depends is where nuance starts, not where it ends. The next step is specifying: depends on what, for whom, under what conditions. HOST: And that's the book? AUTHOR: That's the book.",
+      "questions": [
+        {
+          "id": "en-listen-podcast-nuance-q1",
+          "kind": "choice",
+          "prompt": "What is the first casualty of urgency?",
+          "options": [
+            "Nuance",
+            "Data",
+            "Humour",
+            "Time"
+          ],
+          "answers": [
+            "Nuance"
+          ],
+          "explain": "Nuance is the first casualty of urgency."
+        },
+        {
+          "id": "en-listen-podcast-nuance-q2",
+          "kind": "written",
+          "prompt": "What does urgency do to complex positions?",
+          "answers": [
+            "flattens them into for-and-against"
+          ],
+          "explain": "It flattens complex positions into for-and-against."
+        },
+        {
+          "id": "en-listen-podcast-nuance-q3",
+          "kind": "choice",
+          "prompt": "What's the productive question about remote work?",
+          "options": [
+            "Which parts benefit from which conditions",
+            "Is it good or bad",
+            "Should everyone be remote",
+            "Why do people hate it"
+          ],
+          "answers": [
+            "Which parts benefit from which conditions"
+          ],
+          "explain": "Not good-or-bad, but which parts of which jobs benefit from which conditions."
+        },
+        {
+          "id": "en-listen-podcast-nuance-q4",
+          "kind": "written",
+          "prompt": "What's the boring answer?",
+          "answers": [
+            "it depends"
+          ],
+          "explain": "The answer is boring: it depends."
+        },
+        {
+          "id": "en-listen-podcast-nuance-q5",
+          "kind": "choice",
+          "prompt": "Where does nuance start and end?",
+          "options": [
+            "Starts at it depends, ends with specification",
+            "Starts with data",
+            "Starts and ends with it depends",
+            "Never starts"
+          ],
+          "answers": [
+            "Starts at it depends, ends with specification"
+          ],
+          "explain": "It depends is where nuance starts; specifying conditions is where it goes."
+        },
+        {
+          "id": "en-listen-podcast-nuance-q6",
+          "kind": "choice",
+          "prompt": "What's the book about?",
+          "options": [
+            "Specifying what nuance depends on",
+            "Remote work",
+            "Urgency",
+            "Podcasts"
+          ],
+          "answers": [
+            "Specifying what nuance depends on"
+          ],
+          "explain": "Depends on what, for whom, under what conditions."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:connectors",
+        "function:express-opinion",
+        "vocab:collocations"
+      ],
+      "exposureSkills": []
     }
   ]
 }

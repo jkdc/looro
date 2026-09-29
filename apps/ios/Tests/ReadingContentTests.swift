@@ -2,9 +2,9 @@ import XCTest
 @testable import LearningCore
 
 final class ReadingContentTests: XCTestCase {
-    func testTwentyReadingsAreRegisteredForEnglishWithClosedShapes() {
+    func testTwentyTwoReadingsAreRegisteredForEnglishWithClosedShapes() {
         let texts = ReadingRegistry.forLanguage("en")
-        XCTAssertEqual(20, texts.count)
+        XCTAssertEqual(22, texts.count)
         for text in texts {
             XCTAssertTrue((40 ... 220).contains(text.text.split(separator: " ").count), text.id)
             XCTAssertGreaterThanOrEqual(text.questions.count, 4, text.id)
