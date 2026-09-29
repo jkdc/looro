@@ -4097,6 +4097,1689 @@
       ]
     },
     {
+      "id": "en-foundations-out",
+      "title": "Out and about",
+      "subtitle": "Shops, chats, help",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "supermarket-run",
+          "title": "The supermarket run",
+          "subtitle": "Food and needs",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "You shop together for the weekend: find things, ask prices and check the list.",
+          "colorIndex": 0
+        },
+        {
+          "id": "new-in-town",
+          "title": "New in town",
+          "subtitle": "Small talk",
+          "symbol": "sun.haze",
+          "category": "Course",
+          "situation": "You chat with someone at the bus stop: the weather, the weekend, the neighbourhood.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-out-supermarket",
+          "title": "At the supermarket",
+          "goal": "Shop for food: name aisles, ask where things are and say what you need.",
+          "intro": {
+            "explanation": [
+              "Supermarket words come in groups: the fruit section, the dairy section, the frozen food aisle.",
+              "Ask for locations: “Where is the milk?” “Which aisle has the bread?” Answers: “Aisle three, next to the juice.”",
+              "Say needs with need + noun: “We need rice, eggs and tomatoes.”"
+            ],
+            "examples": [
+              {
+                "text": "Where is the milk?",
+                "meaning": "The location question."
+              },
+              {
+                "text": "It's in aisle three.",
+                "meaning": "The answer."
+              },
+              {
+                "text": "We need rice and eggs.",
+                "meaning": "Say your needs."
+              },
+              {
+                "text": "Is this bread fresh?",
+                "meaning": "Check quality."
+              },
+              {
+                "text": "Do you have any fresh fish today?",
+                "meaning": "Ask about availability."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Where is the …?",
+              "meaning": "Ask for a place.",
+              "note": "…the sugar?"
+            },
+            {
+              "text": "Which aisle has …?",
+              "meaning": "Ask for the section.",
+              "note": "…the pasta?"
+            },
+            {
+              "text": "We need + food",
+              "meaning": "Say what to buy.",
+              "note": "We need coffee."
+            },
+            {
+              "text": "How much is/are …?",
+              "meaning": "Price, again.",
+              "note": "How much are the eggs?"
+            },
+            {
+              "text": "Is this … fresh?",
+              "meaning": "Check the food.",
+              "note": "Is this fish fresh?"
+            },
+            {
+              "text": "Anything else?",
+              "meaning": "The cashier's question.",
+              "note": "No, that's all, thanks."
+            },
+            {
+              "text": "Is this the only …?",
+              "meaning": "Check the options.",
+              "note": "Is this the only bread?"
+            }
+          ],
+          "situation": "You shop for a weekend with friends: find six things on the list, ask where two of them are and check one price.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say two things you need for breakfast.",
+                "expected": [
+                  "We need <food> and <food>."
+                ],
+                "focus": "need + food",
+                "watch": "Food words have no plural here: “We need bread”, not “breads”."
+              },
+              {
+                "prompt": "Ask where the sugar is.",
+                "expected": [
+                  "Where is the sugar?"
+                ],
+                "focus": "where is",
+                "watch": "Sugar is uncountable: “Where is”, not “Where are”."
+              },
+              {
+                "prompt": "Ask the price of the eggs.",
+                "expected": [
+                  "How much are the eggs?"
+                ],
+                "focus": "plural price",
+                "watch": "Plural things take are: How much ARE the eggs?"
+              },
+              {
+                "prompt": "The cashier asks “Anything else?”. Answer politely.",
+                "expected": [
+                  "No, that's all, thanks.",
+                  "No, that's all."
+                ],
+                "focus": "closing the shop",
+                "watch": "“That's all” is the friendly full stop."
+              },
+              {
+                "prompt": "Ask if the bread is fresh.",
+                "expected": [
+                  "Is this bread fresh?",
+                  "Is the bread fresh?"
+                ],
+                "focus": "fresh",
+                "watch": "fresh = recién hecho — bread, fish, fruit."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-out-supermarket-e1",
+              "kind": "choice",
+              "prompt": "Where ___ the milk?",
+              "explain": "Uncountable: the milk is.",
+              "options": [
+                "is",
+                "are",
+                "do",
+                "does"
+              ],
+              "answers": [
+                "is"
+              ]
+            },
+            {
+              "id": "en-foundations-out-supermarket-e2",
+              "kind": "gap",
+              "prompt": "We ___ rice and tomatoes. (necesitamos)",
+              "explain": "need + food.",
+              "answers": [
+                "need"
+              ]
+            },
+            {
+              "id": "en-foundations-out-supermarket-e3",
+              "kind": "order",
+              "prompt": "Ask about the eggs. (how / are / much / the eggs)",
+              "explain": "Plural price: How much are…?",
+              "answers": [
+                "How much are the eggs"
+              ]
+            },
+            {
+              "id": "en-foundations-out-supermarket-e4",
+              "kind": "written",
+              "prompt": "Name two things on your shopping list.",
+              "explain": "We need X and Y.",
+              "answers": [
+                "we need <food> and <food>",
+                "i need <food> and <food>"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:there-is-are",
+            "function:go-shopping",
+            "writing:sentence"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "en-foundations-out-smalltalk",
+          "title": "Small talk",
+          "goal": "Chat politely with strangers: the weather, the weekend and friendly exits.",
+          "intro": {
+            "explanation": [
+              "Small talk has safe topics: the weather, the weekend, the neighbourhood. Politics and salary are not small talk.",
+              "The rhythm: comment + question. “Cold today, isn't it? Do you know if the bus is late?”",
+              "Exit kindly: “Well, have a good one!” — you don't need a reason to stop."
+            ],
+            "examples": [
+              {
+                "text": "Cold today, isn't it?",
+                "meaning": "Weather opener."
+              },
+              {
+                "text": "Any plans for the weekend?",
+                "meaning": "The classic question."
+              },
+              {
+                "text": "Nothing much — you?",
+                "meaning": "Return the question."
+              },
+              {
+                "text": "Have a good one!",
+                "meaning": "Friendly exit."
+              },
+              {
+                "text": "The bus is always late on Mondays.",
+                "meaning": "A safe complaint."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Comment + isn't it?",
+              "meaning": "Weather opener.",
+              "note": "Lovely day, isn't it?"
+            },
+            {
+              "text": "Any plans for the weekend?",
+              "meaning": "Ask about Saturday.",
+              "note": "Nothing special planned."
+            },
+            {
+              "text": "Nothing much — you?",
+              "meaning": "Answer and return.",
+              "note": "The ping-pong of chat."
+            },
+            {
+              "text": "Have a good one!",
+              "meaning": "Exit kindly.",
+              "note": "= have a good day."
+            },
+            {
+              "text": "See you around!",
+              "meaning": "Exit for strangers.",
+              "note": "You'll meet again."
+            },
+            {
+              "text": "This weather is crazy, right?",
+              "meaning": "Weather small talk 2.0.",
+              "note": "right? invites agreement."
+            }
+          ],
+          "situation": "You wait at a bus stop next to a neighbour you half-know: open with the weather, ask about the weekend and exit kindly when the bus arrives.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Open with the weather. (cold)",
+                "expected": [
+                  "Cold today, isn't it?"
+                ],
+                "focus": "isn't it?",
+                "watch": "The tag asks for agreement: “Cold today, isn't it?”"
+              },
+              {
+                "prompt": "Ask about their weekend plans.",
+                "expected": [
+                  "Any plans for the weekend?",
+                  "Do you have any plans for the weekend?"
+                ],
+                "focus": "the weekend question",
+                "watch": "plans FOR the weekend."
+              },
+              {
+                "prompt": "Answer “not much” and return the question.",
+                "expected": [
+                  "Nothing much — you?",
+                  "Not much. And you?"
+                ],
+                "focus": "answer + return",
+                "watch": "Small talk is ping-pong: always send the question back."
+              },
+              {
+                "prompt": "The bus arrives. Exit kindly.",
+                "expected": [
+                  "Have a good one!",
+                  "See you around!"
+                ],
+                "focus": "friendly exit",
+                "watch": "Both are warm stranger-goodbyes."
+              },
+              {
+                "prompt": "Complain gently about the Monday buses.",
+                "expected": [
+                  "The bus is always late on Mondays."
+                ],
+                "focus": "always + present",
+                "watch": "always + present simple for habits."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-out-smalltalk-e1",
+              "kind": "choice",
+              "prompt": "Lovely day, ___?",
+              "explain": "The tag asks for agreement.",
+              "options": [
+                "isn't it",
+                "is it",
+                "doesn't it",
+                "not"
+              ],
+              "answers": [
+                "isn't it"
+              ]
+            },
+            {
+              "id": "en-foundations-out-smalltalk-e2",
+              "kind": "gap",
+              "prompt": "Any ___ for the weekend? (planes)",
+              "explain": "plans for the weekend.",
+              "answers": [
+                "plans"
+              ]
+            },
+            {
+              "id": "en-foundations-out-smalltalk-e3",
+              "kind": "order",
+              "prompt": "Exit kindly. (a / have / one / good)",
+              "explain": "The friendly stranger-exit.",
+              "answers": [
+                "Have a good one"
+              ]
+            },
+            {
+              "id": "en-foundations-out-smalltalk-e4",
+              "kind": "written",
+              "prompt": "Answer: “Any plans for the weekend?”",
+              "explain": "Short and honest works.",
+              "answers": [
+                "nothing much",
+                "not much",
+                "no plans"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:talk-about-weather",
+            "grammar:present-continuous"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "en-foundations-out-asking-help",
+          "title": "Asking for help",
+          "goal": "Ask strangers for help in a shop or street, and thank them properly.",
+          "intro": {
+            "explanation": [
+              "Open with excuse me: “Excuse me, where's the lift?” It signals a request is coming.",
+              "Requests with can: “Can you help me?” “Can I ask something?” After help, say thank you + a follow-up.",
+              "If you don't understand, say so: “Sorry, can you repeat that?” — people are kind about it."
+            ],
+            "examples": [
+              {
+                "text": "Excuse me, where's the lift?",
+                "meaning": "Open + question."
+              },
+              {
+                "text": "Can you help me, please?",
+                "meaning": "The request."
+              },
+              {
+                "text": "Sorry, can you repeat that?",
+                "meaning": "Didn't hear."
+              },
+              {
+                "text": "Thank you very much!",
+                "meaning": "Close warmly."
+              },
+              {
+                "text": "Could you say that more slowly, please?",
+                "meaning": "A kind second request."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Excuse me, …",
+              "meaning": "Start any request.",
+              "note": "Excuse me, is this seat free?"
+            },
+            {
+              "text": "Can you help me?",
+              "meaning": "Ask for help.",
+              "note": "help me with + thing."
+            },
+            {
+              "text": "Can I ask something?",
+              "meaning": "Softer opener.",
+              "note": "Of course!"
+            },
+            {
+              "text": "Sorry, can you repeat that?",
+              "meaning": "Didn't hear.",
+              "note": "repeat that, not “repeat” alone."
+            },
+            {
+              "text": "Thank you very much!",
+              "meaning": "Close with warmth.",
+              "note": "You're welcome comes back."
+            },
+            {
+              "text": "Is this the right way to…?",
+              "meaning": "Check direction.",
+              "note": "…the station?"
+            }
+          ],
+          "situation": "You are lost in a shopping centre: ask two strangers for help, ask one to repeat, and thank both warmly.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Start your request to a stranger politely.",
+                "expected": [
+                  "Excuse me, where is the <place>?"
+                ],
+                "focus": "excuse me",
+                "watch": "excuse me opens; thank you closes."
+              },
+              {
+                "prompt": "Ask someone to help you with a heavy bag.",
+                "expected": [
+                  "Can you help me with this bag, please?"
+                ],
+                "focus": "can you",
+                "watch": "can + you + base verb."
+              },
+              {
+                "prompt": "You didn't hear the answer. Say so.",
+                "expected": [
+                  "Sorry, can you repeat that?"
+                ],
+                "focus": "repeat",
+                "watch": "repeat that — “repeat?” alone is blunt."
+              },
+              {
+                "prompt": "Thank the person warmly.",
+                "expected": [
+                  "Thank you very much!",
+                  "Thanks a lot!"
+                ],
+                "focus": "closing",
+                "watch": "Warm thanks finish the exchange."
+              },
+              {
+                "prompt": "Ask someone to speak more slowly.",
+                "expected": [
+                  "Could you say that more slowly, please?",
+                  "Can you speak more slowly, please?"
+                ],
+                "focus": "could you",
+                "watch": "could you is softer than can you — use it twice and people will love you."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-out-asking-help-e1",
+              "kind": "choice",
+              "prompt": "___ me, where's the lift?",
+              "explain": "Excuse me opens any request.",
+              "options": [
+                "Excuse",
+                "Sorry for",
+                "Thank",
+                "Hello you"
+              ],
+              "answers": [
+                "Excuse"
+              ]
+            },
+            {
+              "id": "en-foundations-out-asking-help-e2",
+              "kind": "gap",
+              "prompt": "Can you ___ that again, please? (repeat)",
+              "explain": "repeat that, please.",
+              "answers": [
+                "repeat"
+              ]
+            },
+            {
+              "id": "en-foundations-out-asking-help-e3",
+              "kind": "order",
+              "prompt": "Ask for help with a bag.",
+              "explain": "can you help me with + thing.",
+              "answers": [
+                "Can you help me with this bag"
+              ]
+            },
+            {
+              "id": "en-foundations-out-asking-help-e4",
+              "kind": "written",
+              "prompt": "Thank someone who helped you a lot.",
+              "explain": "Two warm closers.",
+              "answers": [
+                "thank you very much",
+                "thanks a lot"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "grammar:can",
+            "vocab:social-expressions",
+            "writing:sentence"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:subject-pronouns"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-town",
+      "title": "My town",
+      "subtitle": "Places, people, corners",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "town-tour",
+          "title": "The town tour",
+          "subtitle": "What's near?",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "You show a visitor your town on a map: what there is, what there isn't and what's good.",
+          "colorIndex": 0
+        },
+        {
+          "id": "neighbour-chat",
+          "title": "The neighbour's chat",
+          "subtitle": "Where you live",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "You tell a neighbour about your street and ask about theirs.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-town-places",
+          "title": "Places in town",
+          "goal": "Name the places in a town and say what there is near you.",
+          "intro": {
+            "explanation": [
+              "Town places: a bank, a bakery, a chemist's, a library, a park, a school. With a/an the first time: “There's a bakery near my house.”",
+              "there is / there are do all the work: “There's a park. There are two schools.” Negative: “There isn't a cinema.”",
+              "Ask back: “Is there a bank near here?” — near here is the magic phrase."
+            ],
+            "examples": [
+              {
+                "text": "There's a bakery near my house.",
+                "meaning": "there's + a + place."
+              },
+              {
+                "text": "There are two schools.",
+                "meaning": "Plural: there are."
+              },
+              {
+                "text": "There isn't a cinema here.",
+                "meaning": "Negative."
+              },
+              {
+                "text": "Is there a bank near here?",
+                "meaning": "The classic question."
+              },
+              {
+                "text": "The park is in front of the school.",
+                "meaning": "Location phrase."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "There's a … near here",
+              "meaning": "One place exists.",
+              "note": "There's a park near here."
+            },
+            {
+              "text": "There are … ",
+              "meaning": "Plural places.",
+              "note": "There are two cafés."
+            },
+            {
+              "text": "There isn't a …",
+              "meaning": "What's missing.",
+              "note": "There isn't a library."
+            },
+            {
+              "text": "Is there a … near here?",
+              "meaning": "Ask about places.",
+              "note": "Is there a chemist's near here?"
+            },
+            {
+              "text": "next to / in front of",
+              "meaning": "Location words.",
+              "note": "The bank is next to the bakery."
+            },
+            {
+              "text": "My favourite place is …",
+              "meaning": "Personalise.",
+              "note": "…the park."
+            },
+            {
+              "text": "Is it far from here?",
+              "meaning": "Check distance.",
+              "note": "No, five minutes."
+            }
+          ],
+          "situation": "You show a visitor a map of your neighbourhood: name five places, say one thing there isn't, and recommend your favourite corner.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Name two places near your home.",
+                "expected": [
+                  "There's a <place> and a <place> near my home."
+                ],
+                "focus": "there's",
+                "watch": "One place: There's a bakery."
+              },
+              {
+                "prompt": "Say a place that doesn't exist near you. (cinema)",
+                "expected": [
+                  "There isn't a cinema near here."
+                ],
+                "focus": "negative",
+                "watch": "there isn't + a + place."
+              },
+              {
+                "prompt": "Ask if there is a bank near here.",
+                "expected": [
+                  "Is there a bank near here?"
+                ],
+                "focus": "the question",
+                "watch": "Is there + a + place + near here?"
+              },
+              {
+                "prompt": "Say your favourite place in town.",
+                "expected": [
+                  "My favourite place is <place>."
+                ],
+                "focus": "favourite",
+                "watch": "favourite place — singular."
+              },
+              {
+                "prompt": "Say the park is in front of the school.",
+                "expected": [
+                  "The park is in front of the school."
+                ],
+                "focus": "in front of",
+                "watch": "in front of = delante de; next to = al lado."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-town-places-e1",
+              "kind": "choice",
+              "prompt": "There ___ two schools in my street.",
+              "explain": "Plural: there are.",
+              "options": [
+                "are",
+                "is",
+                "be",
+                "has"
+              ],
+              "answers": [
+                "are"
+              ]
+            },
+            {
+              "id": "en-foundations-town-places-e2",
+              "kind": "gap",
+              "prompt": "There ___ a library in my town. (negative)",
+              "explain": "there isn't a…",
+              "answers": [
+                "isn't",
+                "is not"
+              ]
+            },
+            {
+              "id": "en-foundations-town-places-e3",
+              "kind": "order",
+              "prompt": "Ask about a bank.",
+              "explain": "Is there + a + place?",
+              "answers": [
+                "Is there a bank near here"
+              ]
+            },
+            {
+              "id": "en-foundations-town-places-e4",
+              "kind": "written",
+              "prompt": "Name one place near your home.",
+              "explain": "There's a…",
+              "answers": [
+                "there's a <place> near my home",
+                "there is a <place>"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:town",
+            "grammar:there-is-are",
+            "grammar:articles",
+            "function:ask-simple-questions",
+            "writing:sentence"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:articles"
+          ]
+        },
+        {
+          "id": "en-foundations-town-hometown",
+          "title": "Describing your town",
+          "goal": "Say what your town is like with adjectives and because.",
+          "intro": {
+            "explanation": [
+              "Describe with be + adjective: “My town is small and quiet.” “The streets are clean.”",
+              "Give reasons with because: “I love it because it's near the sea.”",
+              "Compare gently with like: “What's it like?” — the answer is an adjective, never like again: “It's busy.”"
+            ],
+            "examples": [
+              {
+                "text": "My town is small and quiet.",
+                "meaning": "be + adjectives."
+              },
+              {
+                "text": "I love it because it's near the sea.",
+                "meaning": "because + reason."
+              },
+              {
+                "text": "What's your town like?",
+                "meaning": "The description question."
+              },
+              {
+                "text": "It's busy in summer.",
+                "meaning": "The answer: adjective only."
+              },
+              {
+                "text": "The people are very friendly.",
+                "meaning": "Describe the people."
+              },
+              {
+                "text": "It gets crowded in August.",
+                "meaning": "Seasonal truth."
+              },
+              {
+                "text": "It's famous for its market.",
+                "meaning": "famous for + thing."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "… is + adjective",
+              "meaning": "Describe the town.",
+              "note": "It's old and beautiful."
+            },
+            {
+              "text": "What's … like?",
+              "meaning": "Ask for a description.",
+              "note": "What's the food like?"
+            },
+            {
+              "text": "because …",
+              "meaning": "Give the reason.",
+              "note": "…because everything is close."
+            },
+            {
+              "text": "The people are …",
+              "meaning": "Describe locals.",
+              "note": "The people are friendly."
+            },
+            {
+              "text": "It gets + adjective",
+              "meaning": "Seasonal change.",
+              "note": "It gets cold in winter."
+            },
+            {
+              "text": "I like it because …",
+              "meaning": "Personal reason.",
+              "note": "…because it's quiet."
+            },
+            {
+              "text": "The best thing is the food.",
+              "meaning": "Pick a highlight.",
+              "note": "…and the worst is the traffic."
+            }
+          ],
+          "situation": "A friend asks about your town before visiting: describe it with three adjectives, explain why you like it and warn about one season.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Describe your town with two adjectives.",
+                "expected": [
+                  "My town is <adj> and <adj>."
+                ],
+                "focus": "be + adjectives",
+                "watch": "Adjectives, not nouns: “small and quiet”."
+              },
+              {
+                "prompt": "Say why you like it. (because)",
+                "expected": [
+                  "I like it because <reason>."
+                ],
+                "focus": "because",
+                "watch": "because + full reason: “because it's near the sea”."
+              },
+              {
+                "prompt": "Ask what your friend's town is like.",
+                "expected": [
+                  "What's your town like?"
+                ],
+                "focus": "the question",
+                "watch": "The answer is an adjective — never “It's like small”."
+              },
+              {
+                "prompt": "Warn about one season. (crowded, summer)",
+                "expected": [
+                  "It gets crowded in summer."
+                ],
+                "focus": "it gets",
+                "watch": "it gets + adjective = it becomes."
+              },
+              {
+                "prompt": "Say what your town is famous for. (market)",
+                "expected": [
+                  "It's famous for its market.",
+                  "My town is famous for its market."
+                ],
+                "focus": "famous for",
+                "watch": "famous FOR, never “famous by”."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-town-hometown-e1",
+              "kind": "choice",
+              "prompt": "What's your town ___?",
+              "explain": "What's it like? asks for adjectives.",
+              "options": [
+                "like",
+                "likes",
+                "liking",
+                "to like"
+              ],
+              "answers": [
+                "like"
+              ]
+            },
+            {
+              "id": "en-foundations-town-hometown-e2",
+              "kind": "gap",
+              "prompt": "I love my town ___ everything is close. (reason)",
+              "explain": "because + reason.",
+              "answers": [
+                "because"
+              ]
+            },
+            {
+              "id": "en-foundations-town-hometown-e3",
+              "kind": "order",
+              "prompt": "Describe the people.",
+              "explain": "the people are + adjective.",
+              "answers": [
+                "The people are very friendly"
+              ]
+            },
+            {
+              "id": "en-foundations-town-hometown-e4",
+              "kind": "written",
+              "prompt": "Describe your town with one adjective.",
+              "explain": "It's + adjective.",
+              "answers": [
+                "my town is <adj>",
+                "it's <adj>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:connectors",
+            "vocab:town",
+            "function:express-opinion",
+            "writing:sentence"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "en-foundations-town-neighbours",
+          "title": "Neighbours",
+          "goal": "Talk about your street and your neighbours with there is and they're.",
+          "intro": {
+            "explanation": [
+              "Neighbour vocabulary: a neighbour (next door), upstairs, downstairs. “My neighbour is friendly.”",
+              "Describe people with be: “They're quiet.” “He's very kind.” Plural neighbours: “They are…”, not “They is…”.",
+              "Good-neighbour phrases: “If you need anything, just knock.” — offers that build friendships."
+            ],
+            "examples": [
+              {
+                "text": "My neighbour is very friendly.",
+                "meaning": "be + adjective."
+              },
+              {
+                "text": "They're quiet, I think.",
+                "meaning": "Plural neighbours."
+              },
+              {
+                "text": "She lives upstairs.",
+                "meaning": "Upstairs / downstairs."
+              },
+              {
+                "text": "If you need anything, just knock.",
+                "meaning": "The kind offer."
+              },
+              {
+                "text": "It's nice to have good neighbours.",
+                "meaning": "The closing thought."
+              },
+              {
+                "text": "We say hello every morning.",
+                "meaning": "A small routine."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "My neighbour is …",
+              "meaning": "One person next door.",
+              "note": "…really kind."
+            },
+            {
+              "text": "They're …",
+              "meaning": "A family or couple.",
+              "note": "They're quiet."
+            },
+            {
+              "text": "upstairs / downstairs",
+              "meaning": "Floors.",
+              "note": "The people upstairs are loud."
+            },
+            {
+              "text": "If you need anything, …",
+              "meaning": "Offer help.",
+              "note": "…just knock."
+            },
+            {
+              "text": "Do you know your neighbours?",
+              "meaning": "The question.",
+              "note": "Not really!"
+            },
+            {
+              "text": "It's nice to …",
+              "meaning": "Close warmly.",
+              "note": "…have good neighbours."
+            },
+            {
+              "text": "They keep to themselves.",
+              "meaning": "Neutral neighbours.",
+              "note": "= no molestan ni hablan."
+            }
+          ],
+          "situation": "You meet a neighbour in the stairwell: describe the people in your building, offer help and close the chat warmly.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Describe one neighbour with an adjective.",
+                "expected": [
+                  "My neighbour is <adj>."
+                ],
+                "focus": "be + adjective",
+                "watch": "“My neighbour has friendly” — no: is friendly."
+              },
+              {
+                "prompt": "Say the family upstairs is quiet.",
+                "expected": [
+                  "The family upstairs is quiet.",
+                  "They're quiet."
+                ],
+                "focus": "they're",
+                "watch": "Family = singular in AmE, often plural in BrE — both fine."
+              },
+              {
+                "prompt": "Offer help kindly.",
+                "expected": [
+                  "If you need anything, just knock."
+                ],
+                "focus": "the offer",
+                "watch": "just makes it friendly."
+              },
+              {
+                "prompt": "Close the chat warmly.",
+                "expected": [
+                  "It's nice to have good neighbours.",
+                  "Nice talking to you!"
+                ],
+                "focus": "warm close",
+                "watch": "Any warm close works."
+              },
+              {
+                "prompt": "Say you and your neighbour greet each other every morning.",
+                "expected": [
+                  "We say hello every morning."
+                ],
+                "focus": "say hello",
+                "watch": "say hello TO someone, or just say hello."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-town-neighbours-e1",
+              "kind": "choice",
+              "prompt": "My neighbour ___ very kind.",
+              "explain": "One neighbour: is.",
+              "options": [
+                "is",
+                "are",
+                "has",
+                "does"
+              ],
+              "answers": [
+                "is"
+              ]
+            },
+            {
+              "id": "en-foundations-town-neighbours-e2",
+              "kind": "gap",
+              "prompt": "The people upstairs ___ very quiet. (they)",
+              "explain": "Plural: are.",
+              "answers": [
+                "are",
+                "'re"
+              ]
+            },
+            {
+              "id": "en-foundations-town-neighbours-e3",
+              "kind": "order",
+              "prompt": "Offer help kindly. (anything / if / need / you / just / knock)",
+              "explain": "If you need anything, just knock.",
+              "answers": [
+                "If you need anything just knock"
+              ]
+            },
+            {
+              "id": "en-foundations-town-neighbours-e4",
+              "kind": "written",
+              "prompt": "Describe your neighbours with one word.",
+              "explain": "be + adjective.",
+              "answers": [
+                "my neighbours are <adj>",
+                "they're <adj>",
+                "they are <adj>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:verb-be",
+            "vocab:home",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:subject-pronouns"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-friends",
+      "title": "Family & friends",
+      "subtitle": "The people who matter",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "family-album-2",
+          "title": "The photo album, again",
+          "subtitle": "Who's who now",
+          "symbol": "person.2",
+          "category": "Course",
+          "situation": "More family photos: ages, jobs, personalities — and one mystery relative.",
+          "colorIndex": 0
+        },
+        {
+          "id": "friend-weekend",
+          "title": "A friend's visit",
+          "subtitle": "Plans together",
+          "symbol": "figure.walk",
+          "category": "Course",
+          "situation": "A friend visits your city for a day: decide together what to do, using what you both like.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-friends-family",
+          "title": "Talking about family",
+          "goal": "Describe your family: sizes, ages and one personality word per person.",
+          "intro": {
+            "explanation": [
+              "Family words travel in pairs: mother/father, brother/sister, son/daughter, aunt/uncle, cousin for everyone else.",
+              "Say the size: “There are four of us.” Then one detail per person: “My sister is a student. She's very funny.”",
+              "Ages with be: “My father is sixty.” Never has: “My father has sixty” is wrong."
+            ],
+            "examples": [
+              {
+                "text": "There are four of us.",
+                "meaning": "Family size."
+              },
+              {
+                "text": "My sister is a student.",
+                "meaning": "One detail per person."
+              },
+              {
+                "text": "My father is sixty.",
+                "meaning": "Age with be."
+              },
+              {
+                "text": "I have two cousins.",
+                "meaning": "have + family."
+              },
+              {
+                "text": "We're a close family.",
+                "meaning": "The feeling."
+              },
+              {
+                "text": "My aunt lives in the same building.",
+                "meaning": "Family nearby."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "There are + number + of us",
+              "meaning": "Family size.",
+              "note": "There are five of us."
+            },
+            {
+              "text": "My … is + job/age",
+              "meaning": "One detail.",
+              "note": "My brother is nineteen."
+            },
+            {
+              "text": "He's / She's + adjective",
+              "meaning": "Personality.",
+              "note": "She's very funny."
+            },
+            {
+              "text": "I have + number + cousins",
+              "meaning": "Count the family.",
+              "note": "I have six cousins."
+            },
+            {
+              "text": "the oldest / the youngest",
+              "meaning": "Order in the family.",
+              "note": "I'm the youngest."
+            },
+            {
+              "text": "We're a close family.",
+              "meaning": "The warm line.",
+              "note": "close = unido."
+            },
+            {
+              "text": "We look alike.",
+              "meaning": "Physical similarity.",
+              "note": "alike = one word, after the verb."
+            }
+          ],
+          "situation": "You describe your family photo wall to a new friend: size, one detail per person, ages and who is the oldest.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say how many people there are in your family.",
+                "expected": [
+                  "There are <number> of us."
+                ],
+                "focus": "family size",
+                "watch": "There are four of us — not “we are four”."
+              },
+              {
+                "prompt": "Give one detail about your sister. (student)",
+                "expected": [
+                  "My sister is a student."
+                ],
+                "focus": "detail",
+                "watch": "One line per person: job, age or personality."
+              },
+              {
+                "prompt": "Say your father's age. (60)",
+                "expected": [
+                  "My father is sixty (years old)."
+                ],
+                "focus": "age with be",
+                "watch": "“My father has sixty” — age uses is."
+              },
+              {
+                "prompt": "Say who is the oldest in your family.",
+                "expected": [
+                  "My <relative> is the oldest."
+                ],
+                "focus": "the oldest",
+                "watch": "the oldest of three / in my family."
+              },
+              {
+                "prompt": "Say you and your sister look similar.",
+                "expected": [
+                  "We look alike.",
+                  "My sister and I look alike."
+                ],
+                "focus": "look alike",
+                "watch": "alike after the verb: “we look alike”, never “we look like”."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-friends-family-e1",
+              "kind": "choice",
+              "prompt": "My father ___ sixty years old.",
+              "explain": "Age with be: is sixty.",
+              "options": [
+                "is",
+                "has",
+                "are",
+                "does"
+              ],
+              "answers": [
+                "is"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-family-e2",
+              "kind": "gap",
+              "prompt": "There ___ five of us in my family.",
+              "explain": "There are five of us.",
+              "answers": [
+                "are",
+                "'re"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-family-e3",
+              "kind": "order",
+              "prompt": "Say your position in the family.",
+              "explain": "I'm the youngest.",
+              "answers": [
+                "I'm the youngest in my family"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-family-e4",
+              "kind": "written",
+              "prompt": "Describe one family member in one sentence.",
+              "explain": "One detail is enough.",
+              "answers": [
+                "my <relative> is <detail>",
+                "my sister is very funny"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:family",
+            "grammar:verb-be",
+            "grammar:have-got",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "en-foundations-friends-likes",
+          "title": "What do you like?",
+          "goal": "Talk about likes and dislikes with love, like, don't like and hate.",
+          "intro": {
+            "explanation": [
+              "The pattern: subject + love/like/don't like/hate + noun or verb-ing: “I love music.” “She likes dancing.”",
+              "Ask: “Do you like…?” Short answers repeat do: “Yes, I do. / No, I don't.”",
+              "Strong words: love is 100%, like is warm, don't like is polite, hate is strong — use hate for fun, carefully."
+            ],
+            "examples": [
+              {
+                "text": "I love music.",
+                "meaning": "100% positive."
+              },
+              {
+                "text": "She likes dancing.",
+                "meaning": "like + -ing for activities."
+              },
+              {
+                "text": "I don't like coffee.",
+                "meaning": "Polite negative."
+              },
+              {
+                "text": "Do you like football?",
+                "meaning": "The question."
+              },
+              {
+                "text": "I hate Mondays!",
+                "meaning": "Strong — often funny."
+              },
+              {
+                "text": "I quite like her podcasts.",
+                "meaning": "quite softens like."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I love / like + noun",
+              "meaning": "Positive feelings.",
+              "note": "I like your bag."
+            },
+            {
+              "text": "love / like + -ing",
+              "meaning": "Activities.",
+              "note": "I love swimming."
+            },
+            {
+              "text": "Do you like …?",
+              "meaning": "Ask.",
+              "note": "Do you like cats?"
+            },
+            {
+              "text": "Yes, I do / No, I don't",
+              "meaning": "Short answers.",
+              "note": "Repeat do."
+            },
+            {
+              "text": "I don't like …",
+              "meaning": "Polite negative.",
+              "note": "Softer than hate."
+            },
+            {
+              "text": "My favourite … is …",
+              "meaning": "The top one.",
+              "note": "My favourite food is pasta."
+            },
+            {
+              "text": "…is not really my thing.",
+              "meaning": "Polite dislike.",
+              "note": "Horror films are not my thing."
+            }
+          ],
+          "situation": "You and a friend find common ground: ask about food, music and weekends, and discover one thing you both hate.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask if your friend likes cats.",
+                "expected": [
+                  "Do you like cats?"
+                ],
+                "focus": "the question",
+                "watch": "Do + you + like: no -s with you."
+              },
+              {
+                "prompt": "Say you love swimming.",
+                "expected": [
+                  "I love swimming."
+                ],
+                "focus": "love + -ing",
+                "watch": "“I love to swim” also works — both are fine."
+              },
+              {
+                "prompt": "Say you don't like coffee, politely.",
+                "expected": [
+                  "I don't like coffee."
+                ],
+                "focus": "polite negative",
+                "watch": "“I hate coffee” is strong — don't like is softer."
+              },
+              {
+                "prompt": "Say your favourite food.",
+                "expected": [
+                  "My favourite food is <food>."
+                ],
+                "focus": "favourite",
+                "watch": "favourite food is + noun."
+              },
+              {
+                "prompt": "Say horror films are not for you, politely.",
+                "expected": [
+                  "Horror films are not really my thing.",
+                  "They're not my thing."
+                ],
+                "focus": "not my thing",
+                "watch": "The polite way to dislike something."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-friends-likes-e1",
+              "kind": "choice",
+              "prompt": "___ you like football?",
+              "explain": "With you: Do you like…?",
+              "options": [
+                "Do",
+                "Does",
+                "Are",
+                "Is"
+              ],
+              "answers": [
+                "Do"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-likes-e2",
+              "kind": "choice",
+              "prompt": "She ___ dancing.",
+              "explain": "Third person -s: she likes.",
+              "options": [
+                "likes",
+                "like",
+                "liking",
+                "to like"
+              ],
+              "answers": [
+                "likes"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-likes-e3",
+              "kind": "order",
+              "prompt": "Say you love music.",
+              "explain": "I love + noun.",
+              "answers": [
+                "I love music"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-likes-e4",
+              "kind": "written",
+              "prompt": "Short answer: “Do you like cats?” (yes)",
+              "explain": "Short answers repeat do.",
+              "answers": [
+                "yes i do",
+                "yes, i do"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:present-questions",
+            "vocab:hobbies",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-foundations-friends-plans",
+          "title": "Plans with friends",
+          "goal": "Arrange to meet: suggest, check free time and confirm the plan.",
+          "intro": {
+            "explanation": [
+              "Arrange in three steps: suggest (“Do you want to…?”), check time (“Are you free on Saturday?”), confirm (“See you at eight!”).",
+              "Do you want to + verb is the friendliest opener between equals. Let's works once you agree.",
+              "Times and places finish the plan: “At eight, at the main square.” A plan without a place is a wish."
+            ],
+            "examples": [
+              {
+                "text": "Do you want to see a film?",
+                "meaning": "The friendly opener."
+              },
+              {
+                "text": "Are you free on Saturday?",
+                "meaning": "Check the time."
+              },
+              {
+                "text": "Let's meet at eight.",
+                "meaning": "Confirm the detail."
+              },
+              {
+                "text": "See you at the main square!",
+                "meaning": "Place confirmed."
+              },
+              {
+                "text": "Sorry, I can't. Sunday?",
+                "meaning": "Decline + counter-offer."
+              },
+              {
+                "text": "I'll check my diary and let you know.",
+                "meaning": "A soft maybe."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Do you want to + verb?",
+              "meaning": "Open the plan.",
+              "note": "Do you want to go out?"
+            },
+            {
+              "text": "Are you free + day?",
+              "meaning": "Check the diary.",
+              "note": "Are you free on Friday?"
+            },
+            {
+              "text": "Let's + verb + time/place",
+              "meaning": "Confirm.",
+              "note": "Let's meet at seven."
+            },
+            {
+              "text": "at + time, at/in + place",
+              "meaning": "The details.",
+              "note": "At eight, at the square."
+            },
+            {
+              "text": "Sorry, I can't. …?",
+              "meaning": "Decline + retry.",
+              "note": "…How about Sunday?"
+            },
+            {
+              "text": "See you …!",
+              "meaning": "Close the plan.",
+              "note": "See you Saturday!"
+            },
+            {
+              "text": "I can't wait!",
+              "meaning": "Enthusiasm for the plan.",
+              "note": "can't wait + for/to."
+            }
+          ],
+          "situation": "You arrange a Saturday with a friend: suggest an activity, check Saturday, hear a no, move to Sunday and confirm time and place.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Suggest seeing a film.",
+                "expected": [
+                  "Do you want to see a film?"
+                ],
+                "focus": "the opener",
+                "watch": "Do you want to + verb — friendliest form."
+              },
+              {
+                "prompt": "Check if your friend is free on Saturday.",
+                "expected": [
+                  "Are you free on Saturday?"
+                ],
+                "focus": "free + day",
+                "watch": "free ON Saturday."
+              },
+              {
+                "prompt": "Decline Saturday and offer Sunday.",
+                "expected": [
+                  "Sorry, I can't on Saturday. How about Sunday?"
+                ],
+                "focus": "decline + retry",
+                "watch": "Always add the counter-offer."
+              },
+              {
+                "prompt": "Confirm: eight, at the main square.",
+                "expected": [
+                  "Let's meet at eight, at the main square."
+                ],
+                "focus": "the details",
+                "watch": "A plan needs a time AND a place."
+              },
+              {
+                "prompt": "You're not sure yet. Answer softly.",
+                "expected": [
+                  "I'll check my diary and let you know.",
+                  "Maybe — let me check."
+                ],
+                "focus": "soft maybe",
+                "watch": "A soft maybe is kinder than a slow no."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-friends-plans-e1",
+              "kind": "choice",
+              "prompt": "Do you want ___ see a film?",
+              "explain": "want to + verb.",
+              "options": [
+                "to",
+                "for",
+                "see",
+                "seeing"
+              ],
+              "answers": [
+                "to"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-plans-e2",
+              "kind": "choice",
+              "prompt": "Are you free ___ Saturday?",
+              "explain": "Days take on: on Saturday.",
+              "options": [
+                "on",
+                "in",
+                "at",
+                "to"
+              ],
+              "answers": [
+                "on"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-plans-e3",
+              "kind": "order",
+              "prompt": "Confirm the meeting.",
+              "explain": "Let's + verb + details.",
+              "answers": [
+                "Let's meet at eight at the main square"
+              ]
+            },
+            {
+              "id": "en-foundations-friends-plans-e4",
+              "kind": "written",
+              "prompt": "Decline tonight and offer Friday.",
+              "explain": "Decline + counter-offer.",
+              "answers": [
+                "sorry i can't tonight how about friday",
+                "i can't tonight how about friday"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-future-plans",
+            "grammar:present-questions",
+            "grammar:time-expressions",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
+          ]
+        }
+      ]
+    },
+    {
       "id": "en-foundations-u5",
       "title": "Food & likes",
       "subtitle": "Eat, drink, enjoy",
