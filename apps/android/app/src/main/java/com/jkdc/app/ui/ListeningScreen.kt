@@ -35,44 +35,55 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
+import com.jkdc.app.core.CourseRegistry
+import com.jkdc.app.core.CourseUnit
 import com.jkdc.app.core.ExerciseEngine
 import com.jkdc.app.core.LevelEngine
 import com.jkdc.app.core.ListeningRegistry
 import com.jkdc.app.core.ListeningText
 
 /** The Listening tab: authored texts read aloud by the local voice, answered in
-    writing. The transcript stays hidden while answering and is revealed at the
-    end; finishing records one completion with the score. */
+    writing, grouped by level and ordered along the course units. The transcript
+    stays hidden while answering and is revealed at the end; finishing records
+    one completion with the score. */
 @Composable
 fun ListeningScreen(vm: AppViewModel) {
     val texts = ListeningRegistry.forLanguage(vm.language.id)
+    val unitOrder = CourseRegistry.all.firstOrNull { it.languageID == vm.language.id }?.units ?: emptyList()
     var openTextID by rememberSaveable { mutableStateOf<String?>(null) }
     DisposableEffect(Unit) { onDispose { vm.stopListeningText() } }
     val open = openTextID?.let { ListeningRegistry.text(it) }
     if (open != null) {
-        ListeningDetail(vm, open, onBack = { openTextID = null; vm.stopListeningText() })
+        ListeningDetail(vm, open, unitOrder, onBack = { openTextID = null; vm.stopListeningText() })
     } else {
         LazyColumn(Modifier.fillMaxSize().testTag("listening-screen").padding(horizontal = 24.dp),
             contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.listening_eyebrow), stringResource(R.string.listening_title),
                 stringResource(R.string.listening_subtitle), Modifier.padding(top = 20.dp, bottom = 6.dp)) }
-            items(texts.size, key = { texts[it].id }) { index ->
-                val text = texts[index]
-                val best = vm.listeningScore(text.id)
-                val medal = LevelEngine.listeningMedal(best)
-                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { openTextID = text.id }.testTag("listening-" + text.id),
-                    shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
-                    Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        AppIcon(AppSymbol.Headphones, Modifier.size(28.dp), color = AppColors.Secondary)
-                        Column(Modifier.weight(1f)) {
-                            Text(text.title, style = MaterialTheme.typography.titleMedium)
-                            Text(stringResource(R.string.listening_level, text.level, text.questions.size),
-                                style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+            texts.groupBy { it.level }.forEach { (level, items) ->
+                item(key = "section-$level") {
+                    Text(level, style = MaterialTheme.typography.titleSmall, color = AppColors.Secondary,
+                        modifier = Modifier.padding(top = 8.dp).semantics { heading() }
+                            .testTag("listening-section-" + level))
+                }
+                items(items.size, key = { items[it].id }) { index ->
+                    val text = items[index]
+                    val best = vm.listeningScore(text.id)
+                    val medal = LevelEngine.listeningMedal(best)
+                    Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { openTextID = text.id }.testTag("listening-" + text.id),
+                        shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
+                        Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            AppIcon(AppSymbol.Headphones, Modifier.size(28.dp), color = AppColors.Secondary)
+                            Column(Modifier.weight(1f)) {
+                                Text(text.title, style = MaterialTheme.typography.titleMedium)
+                                Text(listeningSubtitle(text, unitOrder),
+                                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                            }
+                            if (medal > 0) AppIcon(AppSymbol.Star, Modifier.size(16.dp), color = AppColors.Secondary, filled = true)
+                            Text(if (best == null) stringResource(R.string.lesson_new)
+                                else stringResource(R.string.listening_score, best),
+                                style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                         }
-                        if (medal > 0) AppIcon(AppSymbol.Star, Modifier.size(16.dp), color = AppColors.Secondary, filled = true)
-                        Text(if (best == null) stringResource(R.string.lesson_new)
-                            else stringResource(R.string.listening_score, best),
-                            style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                     }
                 }
             }
@@ -80,8 +91,19 @@ fun ListeningScreen(vm: AppViewModel) {
     }
 }
 
+/** "Theme 3 · <unit title> · N questions" when the text belongs to a course
+    unit; "A2 · <topic> · N questions" for topic-only extras. */
 @Composable
-private fun ListeningDetail(vm: AppViewModel, item: ListeningText, onBack: () -> Unit) {
+fun listeningSubtitle(text: ListeningText, unitOrder: List<CourseUnit>): String {
+    val rank = text.unitID?.let { id -> unitOrder.indexOfFirst { it.id == id } }
+    return if (rank != null && rank >= 0) stringResource(R.string.listening_theme, rank + 1,
+        unitOrder[rank].title, text.questions.size)
+    else stringResource(R.string.listening_topic, text.level, text.topic, text.questions.size)
+}
+
+@Composable
+private fun ListeningDetail(vm: AppViewModel, item: ListeningText,
+                            unitOrder: List<CourseUnit>, onBack: () -> Unit) {
     var phase by rememberSaveable { mutableStateOf(0) }
     var index by rememberSaveable { mutableStateOf(0) }
     var answer by rememberSaveable { mutableStateOf("") }
@@ -107,7 +129,7 @@ private fun ListeningDetail(vm: AppViewModel, item: ListeningText, onBack: () ->
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(item.title, style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.semantics { heading() })
-                    Text(stringResource(R.string.listening_level, item.level, questions.size),
+                    Text(listeningSubtitle(item, unitOrder),
                         style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                 }
             }

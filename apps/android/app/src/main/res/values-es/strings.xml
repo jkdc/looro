@@ -328,7 +328,8 @@
     <string name="listening_eyebrow">Tus oídos</string>
     <string name="listening_title">Escucha y responde</string>
     <string name="listening_subtitle">Escucha un texto corto y responde a las preguntas por escrito.</string>
-    <string name="listening_level">%1$s · %2$d preguntas</string>
+    <string name="listening_theme">Tema %1$d · %2$s · %3$d preguntas</string>
+    <string name="listening_topic">%1$s · %2$s · %3$d preguntas</string>
     <string name="listening_score">Mejor %1$d%%</string>
     <string name="listening_instruction">Escucha las veces que necesites. El texto queda oculto mientras respondes — intenta entenderlo primero con los oídos.</string>
     <string name="listening_play">Reproducir el texto</string>

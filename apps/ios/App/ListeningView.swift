@@ -2,43 +2,71 @@ import SwiftUI
 import LearningCore
 
 /// The Listening tab: authored texts read aloud by the local voice, answered in
-/// writing. The transcript stays hidden while answering and is revealed at the
-/// end; finishing records one completion with the score.
+/// writing, grouped by level and ordered along the course units. The transcript
+/// stays hidden while answering and is revealed at the end; finishing records
+/// one completion with the score.
 struct ListeningView: View {
     let coordinator: ConversationCoordinator
     @State private var openTextID: String?
 
     private var texts: [ListeningText] { ListeningRegistry.forLanguage(coordinator.language.id) }
+    private var unitOrder: [CourseUnit] {
+        CourseRegistry.all.first { $0.languageID == coordinator.language.id }?.units ?? []
+    }
+    /// Consecutive runs of the sorted list — one section per level.
+    private var sections: [(level: String, texts: [ListeningText])] {
+        texts.reduce(into: []) { result, text in
+            if let last = result.last, last.level == text.level {
+                result[result.count - 1].texts.append(text)
+            } else {
+                result.append((text.level, [text]))
+            }
+        }
+    }
 
     var body: some View {
         if let id = openTextID, let item = ListeningRegistry.text(id: id) {
-            ListeningDetailView(coordinator: coordinator, item: item, onBack: { openTextID = nil })
+            ListeningDetailView(coordinator: coordinator, item: item, unitOrder: unitOrder,
+                                onBack: { openTextID = nil })
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     PageHeading(eyebrow: "Your ears", title: "Listen and answer",
                                 subtitle: "Hear a short text, then answer the questions in writing.")
-                    ForEach(texts) { text in
-                        Button { openTextID = text.id } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "headphones")
-                                    .font(.system(size: 24, weight: .light)).foregroundStyle(AppColor.secondary)
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text(text.title).font(.subheadline.weight(.semibold))
-                                    Text("\(text.level) · \(text.questions.count) questions")
-                                        .font(.caption).foregroundStyle(AppColor.secondary)
-                                }
-                                Spacer()
-                                if LevelEngine.medal(bestScore: bestScore(for: text.id)) >= 1 {
-                                    Image(systemName: "star.fill").font(.caption2).foregroundStyle(AppColor.secondary)
-                                }
-                                Text(bestLabel(text.id)).font(.caption2).foregroundStyle(AppColor.secondary)
-                            }.padding(22).background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 26))
-                        }.buttonStyle(.plain).accessibilityIdentifier("listening-" + text.id)
+                    ForEach(sections, id: \.level) { section in
+                        Text(section.level)
+                            .font(.subheadline.weight(.semibold)).foregroundStyle(AppColor.secondary)
+                            .padding(.top, 8)
+                        ForEach(section.texts) { text in
+                            Button { openTextID = text.id } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "headphones")
+                                        .font(.system(size: 24, weight: .light)).foregroundStyle(AppColor.secondary)
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(text.title).font(.subheadline.weight(.semibold))
+                                        Text(subtitle(text)).font(.caption).foregroundStyle(AppColor.secondary)
+                                    }
+                                    Spacer()
+                                    if LevelEngine.medal(bestScore: bestScore(for: text.id)) >= 1 {
+                                        Image(systemName: "star.fill").font(.caption2).foregroundStyle(AppColor.secondary)
+                                    }
+                                    Text(bestLabel(text.id)).font(.caption2).foregroundStyle(AppColor.secondary)
+                                }.padding(22).background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 26))
+                            }.buttonStyle(.plain).accessibilityIdentifier("listening-" + text.id)
+                        }
                     }
                 }.padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 110)
             }.scrollIndicators(.hidden)
         }
+    }
+
+    /// "Theme 3 · <unit title> · N questions" for unit-linked texts;
+    /// "A2 · <topic> · N questions" for topic-only extras.
+    private func subtitle(_ text: ListeningText) -> String {
+        if let unitID = text.unitID, let rank = unitOrder.firstIndex(where: { $0.id == unitID }) {
+            return "Theme \(rank + 1) · \(unitOrder[rank].title) · \(text.questions.count) questions"
+        }
+        return "\(text.level) · \(text.topic) · \(text.questions.count) questions"
     }
 
     private func bestScore(for id: String) -> Int? {
@@ -55,6 +83,7 @@ struct ListeningView: View {
 private struct ListeningDetailView: View {
     let coordinator: ConversationCoordinator
     let item: ListeningText
+    let unitOrder: [CourseUnit]
     let onBack: () -> Void
     @State private var phase = 0
     @State private var index = 0
@@ -78,8 +107,7 @@ private struct ListeningDetailView: View {
                     Text(item.title).font(.caption).foregroundStyle(AppColor.secondary)
                 }
                 Text(item.title).font(.largeTitle.weight(.semibold))
-                Text("\(item.level) · \(item.questions.count) questions")
-                    .font(.caption).foregroundStyle(AppColor.secondary)
+                Text(detailSubtitle).font(.caption).foregroundStyle(AppColor.secondary)
                 if phase == 0 {
                     Text("Listen as many times as you need. The text stays hidden while you answer — try to understand it with your ears first.")
                         .font(.body)
@@ -110,6 +138,13 @@ private struct ListeningDetailView: View {
                 }
             }.padding(.horizontal, 24).padding(.top, 14).padding(.bottom, 110)
         }.scrollIndicators(.hidden)
+    }
+
+    private var detailSubtitle: String {
+        if let unitID = item.unitID, let rank = unitOrder.firstIndex(where: { $0.id == unitID }) {
+            return "Theme \(rank + 1) · \(unitOrder[rank].title) · \(item.level) · \(item.questions.count) questions"
+        }
+        return "\(item.level) · \(item.topic) · \(item.questions.count) questions"
     }
 
     @ViewBuilder

@@ -328,7 +328,8 @@
     <string name="listening_eyebrow">Your ears</string>
     <string name="listening_title">Listen and answer</string>
     <string name="listening_subtitle">Hear a short text, then answer the questions in writing.</string>
-    <string name="listening_level">%1$s · %2$d questions</string>
+    <string name="listening_theme">Theme %1$d · %2$s · %3$d questions</string>
+    <string name="listening_topic">%1$s · %2$s · %3$d questions</string>
     <string name="listening_score">Best %1$d%%</string>
     <string name="listening_instruction">Listen as many times as you need. The text stays hidden while you answer — try to understand it with your ears first.</string>
     <string name="listening_play">Play the text</string>
