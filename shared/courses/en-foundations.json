@@ -5780,6 +5780,891 @@
       ]
     },
     {
+      "id": "en-foundations-feelings",
+      "title": "Feelings & opinions",
+      "subtitle": "Say what you think",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mood-check",
+          "title": "The mood check",
+          "subtitle": "How is everyone?",
+          "symbol": "face.smiling",
+          "category": "Course",
+          "situation": "You and your friends check in on each other's mood and talk about what makes you feel good.",
+          "colorIndex": 0
+        },
+        {
+          "id": "pick-a-film",
+          "title": "Pick a film",
+          "subtitle": "I like it / I don't",
+          "symbol": "film",
+          "category": "Course",
+          "situation": "You choose a film together: say what you like, what you don't and why.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-feelings-mood",
+          "title": "How are you feeling?",
+          "goal": "Talk about feelings and moods with be and feel.",
+          "intro": {
+            "explanation": [
+              "Feelings use be: “I'm happy.” “She's tired.” “They're excited.”",
+              "feel works for health and vague states: “I feel sick.” “I feel good about it.”",
+              "Ask: “How are you feeling?” or the simpler “How are you?” — both are always welcome."
+            ],
+            "examples": [
+              {
+                "text": "I'm happy today!",
+                "meaning": "Positive with be."
+              },
+              {
+                "text": "She's tired after work.",
+                "meaning": "be + adjective."
+              },
+              {
+                "text": "I feel good about the exam.",
+                "meaning": "feel + adjective."
+              },
+              {
+                "text": "They're excited about the trip.",
+                "meaning": "excited + about."
+              },
+              {
+                "text": "He's a bit sad today.",
+                "meaning": "a bit softens it."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I'm / She's + feeling",
+              "meaning": "State a mood.",
+              "note": "I'm nervous."
+            },
+            {
+              "text": "I feel + adjective",
+              "meaning": "How it feels inside.",
+              "note": "I feel great."
+            },
+            {
+              "text": "How are you feeling?",
+              "meaning": "Ask about mood.",
+              "note": "Better, thanks!"
+            },
+            {
+              "text": "a bit + adjective",
+              "meaning": "Soften it.",
+              "note": "a bit tired."
+            },
+            {
+              "text": "excited / worried about …",
+              "meaning": "Feelings with about.",
+              "note": "excited about the trip."
+            },
+            {
+              "text": "That's good to hear.",
+              "meaning": "React to good news.",
+              "note": "Fixed phrase."
+            }
+          ],
+          "situation": "You and two friends check in before class: how is everyone today, who is excited, who is a bit nervous and why.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say how you feel today. (happy)",
+                "expected": [
+                  "I'm happy today."
+                ],
+                "focus": "be + adjective",
+                "watch": "Feelings use be: I'm happy."
+              },
+              {
+                "prompt": "Say you feel nervous about the test.",
+                "expected": [
+                  "I feel nervous about the test."
+                ],
+                "focus": "feel + about",
+                "watch": "feel nervous ABOUT the test."
+              },
+              {
+                "prompt": "Ask a friend how they feel.",
+                "expected": [
+                  "How are you feeling?"
+                ],
+                "focus": "the question",
+                "watch": "Present continuous: how ARE you feeling."
+              },
+              {
+                "prompt": "React to good news: your friend is excited.",
+                "expected": [
+                  "That's good to hear!",
+                  "Great! I'm excited too."
+                ],
+                "focus": "react",
+                "watch": "That's good to hear — fixed phrase."
+              },
+              {
+                "prompt": "Soften your answer: a bit tired.",
+                "expected": [
+                  "I'm a bit tired."
+                ],
+                "focus": "a bit",
+                "watch": "a bit = un poco — softens the adjective."
+              },
+              {
+                "prompt": "Say your friend seems excited about something.",
+                "expected": [
+                  "She's excited about the party."
+                ],
+                "focus": "excited about",
+                "watch": "excited ABOUT + thing."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-feelings-mood-e1",
+              "kind": "choice",
+              "prompt": "I ___ nervous about the exam.",
+              "explain": "feel + adjective: I feel nervous.",
+              "options": [
+                "feel",
+                "feels",
+                "am feel",
+                "feeling"
+              ],
+              "answers": [
+                "feel"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-mood-e2",
+              "kind": "gap",
+              "prompt": "She's ___ about the party. (excited)",
+              "explain": "excited about + thing.",
+              "answers": [
+                "excited"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-mood-e3",
+              "kind": "order",
+              "prompt": "Ask about mood.",
+              "explain": "How + are + you + feeling.",
+              "answers": [
+                "How are you feeling today"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-mood-e4",
+              "kind": "written",
+              "prompt": "Say how you feel with one adjective.",
+              "explain": "I'm happy / I feel good.",
+              "answers": [
+                "im <feeling>",
+                "i feel <feeling>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:verb-be",
+            "vocab:feelings",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "en-foundations-feelings-likes",
+          "title": "I like it / I don't",
+          "goal": "Say what you like and don't like, and ask about others.",
+          "intro": {
+            "explanation": [
+              "like/love/hate + noun: “I like pizza.” “She loves music.” “They hate waiting.”",
+              "Don't like is the polite negative: “I don't like horror films.” — softer than hate.",
+              "Ask: “Do you like…?” Answer: “Yes, I do” / “No, I don't” — the do carries the tense."
+            ],
+            "examples": [
+              {
+                "text": "I like pizza a lot.",
+                "meaning": "like + noun."
+              },
+              {
+                "text": "She loves reggaeton.",
+                "meaning": "love = stronger."
+              },
+              {
+                "text": "I don't like horror films.",
+                "meaning": "Polite negative."
+              },
+              {
+                "text": "Do you like rap?",
+                "meaning": "The question."
+              },
+              {
+                "text": "He hates waiting in lines.",
+                "meaning": "hate + -ing."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I like / love + noun",
+              "meaning": "Positive.",
+              "note": "I like this song."
+            },
+            {
+              "text": "I don't like + noun",
+              "meaning": "Polite negative.",
+              "note": "Not “I no like”."
+            },
+            {
+              "text": "Do you like …?",
+              "meaning": "Ask.",
+              "note": "Yes, I do / No, I don't."
+            },
+            {
+              "text": "love / like + -ing",
+              "meaning": "Activities.",
+              "note": "I like swimming."
+            },
+            {
+              "text": "My favourite … is …",
+              "meaning": "The top choice.",
+              "note": "My favourite food is sushi."
+            }
+          ],
+          "situation": "You choose a film for movie night: ask what everyone likes, say your preferences and find something nobody hates.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask if your friend likes comedies.",
+                "expected": [
+                  "Do you like comedies?"
+                ],
+                "focus": "the question",
+                "watch": "Do + you + base verb."
+              },
+              {
+                "prompt": "Say you love action films.",
+                "expected": [
+                  "I love action films."
+                ],
+                "focus": "love + noun",
+                "watch": "love is stronger than like."
+              },
+              {
+                "prompt": "Say you don't like horror films, politely.",
+                "expected": [
+                  "I don't like horror films."
+                ],
+                "focus": "polite negative",
+                "watch": "don't like, not hate — save hate for real hate."
+              },
+              {
+                "prompt": "Say your favourite film.",
+                "expected": [
+                  "My favourite film is <film>."
+                ],
+                "focus": "favourite",
+                "watch": "favourite + noun + is + answer."
+              },
+              {
+                "prompt": "Find common ground: you both like comedies.",
+                "expected": [
+                  "We both like comedies!"
+                ],
+                "focus": "both",
+                "watch": "both = los dos."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-feelings-likes-e1",
+              "kind": "choice",
+              "prompt": "___ she like jazz?",
+              "explain": "Third person: Does she like…?",
+              "options": [
+                "Does",
+                "Do",
+                "Is",
+                "Has"
+              ],
+              "answers": [
+                "Does"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-likes-e2",
+              "kind": "gap",
+              "prompt": "I ___ like spicy food. (negative)",
+              "explain": "don't + base verb.",
+              "answers": [
+                "don't",
+                "do not"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-likes-e3",
+              "kind": "order",
+              "prompt": "Say your favourite food.",
+              "explain": "My favourite + noun + is + answer.",
+              "answers": [
+                "My favourite food is sushi"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-likes-e4",
+              "kind": "written",
+              "prompt": "Say one thing you love.",
+              "explain": "I love + noun or -ing.",
+              "answers": [
+                "i love <thing>",
+                "i really love <thing>"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:present-questions",
+            "grammar:gerunds-infinitives",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-foundations-feelings-opinions",
+          "title": "I think…",
+          "goal": "Give simple opinions with I think and ask What do you think?",
+          "intro": {
+            "explanation": [
+              "I think + opinion: “I think it's great.” “I don't think it's a good idea.”",
+              "Ask: “What do you think?” — the most useful opinion question in English.",
+              "Agree and disagree simply: “I agree.” “I don't agree.” “Really? I think the opposite.”"
+            ],
+            "examples": [
+              {
+                "text": "I think it's great.",
+                "meaning": "Positive opinion."
+              },
+              {
+                "text": "I don't think it's a good idea.",
+                "meaning": "Negative opinion (softened)."
+              },
+              {
+                "text": "What do you think?",
+                "meaning": "Ask for opinions."
+              },
+              {
+                "text": "I agree.",
+                "meaning": "Same view."
+              },
+              {
+                "text": "Really? I think the opposite.",
+                "meaning": "Different view."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I think + opinion",
+              "meaning": "Give a view.",
+              "note": "I think it's good."
+            },
+            {
+              "text": "I don't think …",
+              "meaning": "Negative, softened.",
+              "note": "Not “I think it isn't”."
+            },
+            {
+              "text": "What do you think?",
+              "meaning": "Ask.",
+              "note": "About this plan?"
+            },
+            {
+              "text": "I agree / I don't agree",
+              "meaning": "React.",
+              "note": "agree with + person."
+            },
+            {
+              "text": "Really? I think …",
+              "meaning": "Different opinion.",
+              "note": "Opposite view, politely."
+            }
+          ],
+          "situation": "You and a friend rate three weekend plans: park, cinema or museum. Give opinions with I think and find the winner together.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Give an opinion about the park plan.",
+                "expected": [
+                  "I think the park is a good idea."
+                ],
+                "focus": "I think",
+                "watch": "I think + subject + verb."
+              },
+              {
+                "prompt": "Disagree softly about the cinema.",
+                "expected": [
+                  "I don't think the cinema is a good idea today."
+                ],
+                "focus": "soft negative",
+                "watch": "I don't think + positive — English moves the negative forward."
+              },
+              {
+                "prompt": "Ask your friend for their opinion.",
+                "expected": [
+                  "What do you think?"
+                ],
+                "focus": "the question",
+                "watch": "The most useful opinion question."
+              },
+              {
+                "prompt": "Agree with your friend's choice.",
+                "expected": [
+                  "I agree — let's go to the park."
+                ],
+                "focus": "agree",
+                "watch": "I agree + the plan."
+              },
+              {
+                "prompt": "Say which is your favourite and why.",
+                "expected": [
+                  "My favourite is the park because it's free."
+                ],
+                "focus": "favourite + because",
+                "watch": "Favourite + because + reason."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-feelings-opinions-e1",
+              "kind": "choice",
+              "prompt": "I ___ think it's a good idea. (negative)",
+              "explain": "I don't think + positive — English moves the negative.",
+              "options": [
+                "don't",
+                "do",
+                "am not",
+                "doesn't"
+              ],
+              "answers": [
+                "don't"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-opinions-e2",
+              "kind": "gap",
+              "prompt": "What ___ you think? (opinion question)",
+              "explain": "What do you think?",
+              "answers": [
+                "do"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-opinions-e3",
+              "kind": "order",
+              "prompt": "Agree with the plan.",
+              "explain": "I agree + plan.",
+              "answers": [
+                "I agree lets go to the park"
+              ]
+            },
+            {
+              "id": "en-foundations-feelings-opinions-e4",
+              "kind": "written",
+              "prompt": "Give a simple opinion about music.",
+              "explain": "I think + noun + is + adjective.",
+              "answers": [
+                "i think music is <adj>",
+                "i think <genre> is great"
+              ]
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "grammar:present-simple",
+            "grammar:present-questions",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-meals",
+      "title": "Food & meals",
+      "subtitle": "Cook, eat, order",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "cooking-together",
+          "title": "Cooking together",
+          "subtitle": "In the kitchen",
+          "symbol": "fork.knife",
+          "category": "Course",
+          "situation": "You cook a simple dinner: check the fridge, follow a recipe and share the work.",
+          "colorIndex": 0
+        },
+        {
+          "id": "restaurant-menu",
+          "title": "At the restaurant",
+          "subtitle": "Order and pay",
+          "symbol": "menucard",
+          "category": "Course",
+          "situation": "You eat out: read the menu, order, ask for the bill and leave a tip.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-meals-cooking",
+          "title": "In the kitchen",
+          "goal": "Talk about cooking: ingredients, actions and kitchen tools.",
+          "intro": {
+            "explanation": [
+              "Cooking verbs: chop, mix, cook, bake, boil. “Chop the onions. Boil the water. Bake for 30 minutes.”",
+              "Ingredients with have got / need: “We have got eggs. We need flour.”",
+              "Kitchen tools: a pan, a pot, a knife, a cutting board, an oven."
+            ],
+            "examples": [
+              {
+                "text": "Chop the onions, please.",
+                "meaning": "Chop + food."
+              },
+              {
+                "text": "Boil the water first.",
+                "meaning": "Boil + liquid."
+              },
+              {
+                "text": "We have got eggs but we need flour.",
+                "meaning": "have vs need."
+              },
+              {
+                "text": "Bake it for 30 minutes.",
+                "meaning": "bake for + duration."
+              },
+              {
+                "text": "The pan is on the stove.",
+                "meaning": "Location."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Chop / mix / cook / boil / bake",
+              "meaning": "The five cooking verbs.",
+              "note": "Each has its tool."
+            },
+            {
+              "text": "We need + ingredient",
+              "meaning": "Say what's missing.",
+              "note": "We need flour."
+            },
+            {
+              "text": "We have got …",
+              "meaning": "Say what you have.",
+              "note": "We have got eggs."
+            },
+            {
+              "text": "Bake / cook for + time",
+              "meaning": "Duration.",
+              "note": "for 30 minutes."
+            },
+            {
+              "text": "in the oven / on the stove",
+              "meaning": "Where it cooks.",
+              "note": "in vs on."
+            }
+          ],
+          "situation": "You and a friend cook pasta together: check what you have, what you need, and divide the cooking actions.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say what you need from the shop. (flour, tomatoes)",
+                "expected": [
+                  "We need flour and tomatoes."
+                ],
+                "focus": "need + ingredients",
+                "watch": "need + plural or uncountable."
+              },
+              {
+                "prompt": "Say what you already have. (eggs)",
+                "expected": [
+                  "We have got eggs."
+                ],
+                "focus": "have got",
+                "watch": "have got + ingredient."
+              },
+              {
+                "prompt": "Give one cooking action. (chop the onions)",
+                "expected": [
+                  "Chop the onions."
+                ],
+                "focus": "imperative",
+                "watch": "Cooking instructions use imperatives."
+              },
+              {
+                "prompt": "Say how long to bake it. (30 minutes)",
+                "expected": [
+                  "Bake it for 30 minutes."
+                ],
+                "focus": "for + duration",
+                "watch": "bake for + time."
+              },
+              {
+                "prompt": "Say where the pan is. (on the stove)",
+                "expected": [
+                  "The pan is on the stove."
+                ],
+                "focus": "on the stove",
+                "watch": "on the stove, in the oven."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-meals-cooking-e1",
+              "kind": "choice",
+              "prompt": "___ the onions and ___ the water.",
+              "explain": "Chop solid food; boil liquids.",
+              "options": [
+                "Chop … boil",
+                "Boil … chop",
+                "Mix … bake",
+                "Cut … oven"
+              ],
+              "answers": [
+                "Chop … boil"
+              ]
+            },
+            {
+              "id": "en-foundations-meals-cooking-e2",
+              "kind": "gap",
+              "prompt": "We ___ flour. Can you buy some?",
+              "explain": "need + ingredient.",
+              "answers": [
+                "need"
+              ]
+            },
+            {
+              "id": "en-foundations-meals-cooking-e3",
+              "kind": "order",
+              "prompt": "Give a cooking instruction.",
+              "explain": "bake for + duration.",
+              "answers": [
+                "Bake it for thirty minutes"
+              ]
+            },
+            {
+              "id": "en-foundations-meals-cooking-e4",
+              "kind": "written",
+              "prompt": "Name two things you need to make pasta.",
+              "explain": "We need X and Y.",
+              "answers": [
+                "we need pasta and tomatoes",
+                "pasta and tomatoes"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:imperatives",
+            "grammar:have-got",
+            "function:talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-foundations-meals-restaurant",
+          "title": "At the restaurant",
+          "goal": "Order food, ask for the bill and leave a tip.",
+          "intro": {
+            "explanation": [
+              "Order: “I'll have the pasta.” “Can I get the salad?” “For me, the soup.” — all natural.",
+              "The waiter asks: “Are you ready to order?” “Anything to drink?” “How is everything?”",
+              "The bill: “Could we have the bill, please?” “Is service included?” — then tip if the service was good."
+            ],
+            "examples": [
+              {
+                "text": "I'll have the pasta.",
+                "meaning": "The classic order."
+              },
+              {
+                "text": "Can I get the salad, please?",
+                "meaning": "Alternative order."
+              },
+              {
+                "text": "Are you ready to order?",
+                "meaning": "The waiter asks."
+              },
+              {
+                "text": "Could we have the bill, please?",
+                "meaning": "Ask to pay."
+              },
+              {
+                "text": "Is service included?",
+                "meaning": "Check before tipping."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I'll have + dish",
+              "meaning": "The order.",
+              "note": "I'll have the soup."
+            },
+            {
+              "text": "Can I get + dish",
+              "meaning": "Alternative order.",
+              "note": "Can I get the salad?"
+            },
+            {
+              "text": "Are you ready to order?",
+              "meaning": "Waiter's question.",
+              "note": "Yes, I'll have…"
+            },
+            {
+              "text": "Could we have the bill?",
+              "meaning": "Ask to pay.",
+              "note": "the bill / the check (US)."
+            },
+            {
+              "text": "Is service included?",
+              "meaning": "Tip check.",
+              "note": "Then tip or don't."
+            }
+          ],
+          "situation": "You and a friend eat out: order two dishes and two drinks, ask about a dish you don't recognise and ask for the bill.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Order your main dish.",
+                "expected": [
+                  "I'll have the pasta, please.",
+                  "Can I get the salad, please?"
+                ],
+                "focus": "ordering",
+                "watch": "I'll have or Can I get — both natural."
+              },
+              {
+                "prompt": "Order a drink.",
+                "expected": [
+                  "And a lemonade, please.",
+                  "Can I get a water too?"
+                ],
+                "focus": "drinks",
+                "watch": "Add please — it matters."
+              },
+              {
+                "prompt": "Ask about an unknown dish.",
+                "expected": [
+                  "What's in the paella?"
+                ],
+                "focus": "what's in",
+                "watch": "what's in + dish = qué lleva."
+              },
+              {
+                "prompt": "Ask for the bill.",
+                "expected": [
+                  "Could we have the bill, please?"
+                ],
+                "focus": "the bill",
+                "watch": "Could we have — polite."
+              },
+              {
+                "prompt": "Ask if service is included before tipping.",
+                "expected": [
+                  "Is service included?"
+                ],
+                "focus": "tip check",
+                "watch": "If yes, no tip needed."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-meals-restaurant-e1",
+              "kind": "choice",
+              "prompt": "I'll ___ the pasta.",
+              "explain": "I'll have + dish — the classic order.",
+              "options": [
+                "have",
+                "has",
+                "having",
+                "to have"
+              ],
+              "answers": [
+                "have"
+              ]
+            },
+            {
+              "id": "en-foundations-meals-restaurant-e2",
+              "kind": "gap",
+              "prompt": "Could we have the ___, please? (cuenta)",
+              "explain": "the bill (UK) / the check (US).",
+              "answers": [
+                "bill",
+                "check"
+              ]
+            },
+            {
+              "id": "en-foundations-meals-restaurant-e3",
+              "kind": "order",
+              "prompt": "Order the soup.",
+              "explain": "I'll have + dish + please.",
+              "answers": [
+                "Ill have the soup please"
+              ]
+            },
+            {
+              "id": "en-foundations-meals-restaurant-e4",
+              "kind": "written",
+              "prompt": "Ask what is in the paella.",
+              "explain": "What's in + dish?",
+              "answers": [
+                "whats in the paella",
+                "what is in the paella"
+              ]
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-questions",
+            "function:make-requests"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:some-any"
+          ]
+        }
+      ]
+    },
+    {
       "id": "en-foundations-u5",
       "title": "Food & likes",
       "subtitle": "Eat, drink, enjoy",
