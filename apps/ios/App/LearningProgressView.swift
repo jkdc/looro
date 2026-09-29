@@ -9,7 +9,8 @@ struct LearningProgressView: View {
     private var level: LevelStats? {
         guard let course = CourseRegistry.forLanguage(store.language.id).first else { return nil }
         return LevelEngine.stats(course: course, lessons: store.archive.lessons ?? [],
-                                 completions: store.archive.completions ?? [])
+                                 completions: store.archive.completions ?? [],
+                                 listeningTexts: ListeningRegistry.forLanguage(course.languageID))
     }
     private var medals: Int {
         ListeningRegistry.forLanguage(store.language.id).filter { text in

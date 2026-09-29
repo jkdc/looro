@@ -58,12 +58,14 @@ struct CoursesView: View {
                                 }
                                 LevelCardView(level: LevelEngine.stats(course: course,
                                     lessons: coordinator.store.archive.lessons ?? [],
-                                    completions: coordinator.store.archive.completions ?? []))
+                                    completions: coordinator.store.archive.completions ?? [],
+                                    listeningTexts: ListeningRegistry.forLanguage(course.languageID)))
                                 ForEach(course.units) { unit in
                                     UnitSection(coordinator: coordinator, unit: unit,
                                         level: LevelEngine.stats(course: course,
                                             lessons: coordinator.store.archive.lessons ?? [],
-                                            completions: coordinator.store.archive.completions ?? [])) { openLessonID = $0; reader.stop() }
+                                            completions: coordinator.store.archive.completions ?? [],
+                                            listeningTexts: ListeningRegistry.forLanguage(course.languageID))) { openLessonID = $0; reader.stop() }
                                 }
                             }.padding(22)
                                 .background(.white.opacity(0.8), in: RoundedRectangle(cornerRadius: 26))
@@ -123,6 +125,8 @@ private struct LevelCardView: View {
                     } else {
                         Text("Course complete!").font(.caption).foregroundStyle(AppColor.secondary)
                     }
+                    Text("\(level.lessonPoints) lesson points · \(level.listeningPoints) listening points")
+                        .font(.caption).foregroundStyle(AppColor.secondary)
                 }
             }
             GeometryReader { geo in

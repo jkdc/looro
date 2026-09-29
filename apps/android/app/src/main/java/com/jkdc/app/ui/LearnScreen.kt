@@ -165,6 +165,8 @@ private fun LevelCard(stats: LevelStats) {
                 Text(if (stats.pointsToNext == null) stringResource(R.string.learn_level_top)
                     else pluralStringResource(R.plurals.learn_level_next, stats.pointsToNext, stats.pointsToNext, stats.level + 1),
                     style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                Text(stringResource(R.string.learn_level_breakdown, stats.lessonPoints, stats.listeningPoints),
+                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
             }
         }
         Box(Modifier.fillMaxWidth().height(6.dp).background(AppColors.Cream, RoundedCornerShape(3.dp))) {

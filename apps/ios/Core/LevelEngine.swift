@@ -16,6 +16,14 @@ public struct LevelStats: Hashable, Sendable {
     public var pointsToNext: Int?
     public var progressInLevel: Double
     public var mastery: [LessonMastery]
+    public var lessonPoints: Int
+    public var listeningPoints: Int
+    public init(courseID: String, points: Int, level: Int, pointsToNext: Int?, progressInLevel: Double,
+                mastery: [LessonMastery], lessonPoints: Int = 0, listeningPoints: Int = 0) {
+        self.courseID = courseID; self.points = points; self.level = level; self.pointsToNext = pointsToNext
+        self.progressInLevel = progressInLevel; self.mastery = mastery
+        self.lessonPoints = lessonPoints; self.listeningPoints = listeningPoints
+    }
 }
 
 public enum LevelEngine {
@@ -23,8 +31,10 @@ public enum LevelEngine {
     public static let exerciseMastered = 90
     public static let listeningMedal = 80
 
-    /// Points (Σ mastery tiers) required for each level 1..10.
-    public static let ladder = [1, 4, 8, 13, 19, 26, 34, 42, 48, 54]
+    /// Points (Σ lesson mastery tiers + Σ listening points) required for each
+    /// level 1..10. The top (78) is full en-Foundations: 54 lesson points plus
+    /// 12 listenings at two points each.
+    public static let ladder = [1, 6, 12, 19, 27, 37, 49, 61, 69, 78]
 
     /// Day boundaries follow the local calendar on both platforms (tests pin UTC).
     public static func lessonTier(lessonID: String, lessons: [LessonState], completions: [CompletionMark],
@@ -44,11 +54,13 @@ public enum LevelEngine {
     }
 
     public static func stats(course: Course, lessons: [LessonState], completions: [CompletionMark],
-                             calendar: Calendar = .current) -> LevelStats {
+                             listeningTexts: [ListeningText] = [], calendar: Calendar = .current) -> LevelStats {
         let mastery = course.units.flatMap(\.lessons).map {
             LessonMastery(lessonID: $0.id, tier: lessonTier(lessonID: $0.id, lessons: lessons, completions: completions, calendar: calendar))
         }
-        let points = mastery.reduce(0) { $0 + $1.tier }
+        let lessonPoints = mastery.reduce(0) { $0 + $1.tier }
+        let listeningPoints = listeningTexts.reduce(0) { $0 + listeningTier(bestListeningScore(completions, itemID: $1.id)) }
+        let points = lessonPoints + listeningPoints
         var level = 0
         for threshold in ladder where points >= threshold { level += 1 }
         let pointsToNext = ladder.first { $0 > points }.map { $0 - points }
@@ -56,13 +68,21 @@ public enum LevelEngine {
         let ceiling = ladder.first { $0 > points }
         let progress = ceiling.map { Double(points - floor) / Double($0 - floor) } ?? 1.0
         return LevelStats(courseID: course.id, points: points, level: level, pointsToNext: pointsToNext,
-                          progressInLevel: progress, mastery: mastery)
+                          progressInLevel: progress, mastery: mastery, lessonPoints: lessonPoints,
+                          listeningPoints: listeningPoints)
     }
 
-    /// 0 none · 1 silver (understood) · 2 gold (perfect).
+    /// 0 none · 1 silver (understood) · 2 gold (perfect). The medal grade doubles
+    /// as the listening level tier: silver 1 point, gold 2.
     public static func medal(bestScore: Int?) -> Int {
         guard let bestScore else { return 0 }
         if bestScore >= 100 { return 2 }
         return bestScore >= listeningMedal ? 1 : 0
+    }
+
+    public static func listeningTier(bestScore: Int?) -> Int { medal(bestScore: bestScore) }
+
+    private static func bestListeningScore(_ completions: [CompletionMark], itemID: String) -> Int? {
+        completions.filter { $0.kind == ProgressEngine.listening && $0.itemID == itemID }.map(\.bestScore).max()
     }
 }

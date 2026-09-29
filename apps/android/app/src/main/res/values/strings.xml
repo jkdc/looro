@@ -344,6 +344,7 @@
         <item quantity="other">%1$d points to Level %2$d</item>
     </plurals>
     <string name="learn_level_top">Course complete!</string>
+    <string name="learn_level_breakdown">%1$d lesson points · %2$d listening points</string>
     <string name="level_title_0">Newcomer</string>
     <string name="level_title_1">First steps</string>
     <string name="level_title_2">Finding the rhythm</string>
