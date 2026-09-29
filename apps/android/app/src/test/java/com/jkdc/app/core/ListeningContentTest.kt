@@ -4,9 +4,9 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ListeningContentTest {
-    @Test fun `thirty-four texts are registered for english with closed shapes`() {
+    @Test fun `forty-one texts are registered for english with closed shapes`() {
         val texts = ListeningRegistry.forLanguage("en")
-        assertEquals(34, texts.size)
+        assertEquals(41, texts.size)
         for (text in texts) {
             assertTrue(text.id, text.text.split(" ").size in 40..200)
             assertTrue(text.id, text.questions.size >= 5)
@@ -51,21 +51,26 @@ class ListeningContentTest {
         assertEquals("levels must not regress", levels, levels.sorted())
         assertEquals(listOf("en-foundations-u1", "en-foundations-u1", "en-foundations-u2", "en-foundations-u2",
                 "en-foundations-u3", "en-foundations-u3", "en-foundations-u4", "en-foundations-u4",
-                "en-foundations-now", "en-foundations-now", "en-foundations-days", "en-foundations-days"),
+                "en-foundations-now", "en-foundations-now", "en-foundations-days", "en-foundations-days",
+                "en-foundations-out", "en-foundations-out", "en-foundations-town"),
             texts.filter { it.level == "A1" }.map { it.unitID })
         assertEquals(listOf("en-foundations-experiences", "en-foundations-experiences",
                 "en-foundations-connections", "en-foundations-connections",
-                "en-foundations-change", "en-foundations-change"),
+                "en-foundations-change", "en-foundations-change",
+                "en-foundations-telling"),
             texts.filter { it.level == "B1" }.map { it.unitID })
         assertEquals(listOf("en-foundations-viewpoints", "en-foundations-viewpoints",
-                "en-foundations-viewpoints", "en-foundations-viewpoints"),
+                "en-foundations-viewpoints", "en-foundations-viewpoints",
+                "en-foundations-media"),
             texts.filter { it.level == "B2" }.map { it.unitID })
-        assertEquals(listOf("en-foundations-nuance"),
+        assertEquals(listOf("en-foundations-nuance", "en-foundations-nuance"),
             texts.filter { it.level == "C1" }.map { it.unitID })
+        assertEquals(listOf("en-foundations-out", "en-foundations-out"),
+            texts.filter { it.level == "A1" && it.unitID == "en-foundations-out" }.map { it.unitID })
         // Extras without a unit come after the unit-linked texts of their level.
         assertEquals(listOf("en-foundations-u5", "en-foundations-u5", "en-foundations-u6", "en-foundations-u6",
                 "en-foundations-compare", "en-foundations-compare", "en-foundations-plans", "en-foundations-plans",
-                null, null, null), texts.filter { it.level == "A2" }.map { it.unitID })
+                "en-foundations-health", null, null, null), texts.filter { it.level == "A2" }.map { it.unitID })
     }
 
     @Test fun `unit-linked texts point at a same-level unit of their course`() {

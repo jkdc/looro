@@ -2,9 +2,9 @@ import XCTest
 @testable import LearningCore
 
 final class ListeningContentTests: XCTestCase {
-    func testThirtyFourTextsAreRegisteredForEnglishWithClosedShapes() {
+    func testFortyOneTextsAreRegisteredForEnglishWithClosedShapes() {
         let texts = ListeningRegistry.forLanguage("en")
-        XCTAssertEqual(34, texts.count)
+        XCTAssertEqual(41, texts.count)
         for text in texts {
             XCTAssertTrue((40 ... 200).contains(text.text.split(separator: " ").count), text.id)
             XCTAssertGreaterThanOrEqual(text.questions.count, 5, text.id)
@@ -49,20 +49,23 @@ final class ListeningContentTests: XCTestCase {
         XCTAssertEqual("levels must not regress", levels, levels.sorted())
         XCTAssertEqual(["en-foundations-u1", "en-foundations-u1", "en-foundations-u2", "en-foundations-u2",
                         "en-foundations-u3", "en-foundations-u3", "en-foundations-u4", "en-foundations-u4",
-                        "en-foundations-now", "en-foundations-now", "en-foundations-days", "en-foundations-days"],
+                        "en-foundations-now", "en-foundations-now", "en-foundations-days", "en-foundations-days",
+                        "en-foundations-out", "en-foundations-out", "en-foundations-town"],
                        texts.filter { $0.level == "A1" }.map(\.unitID))
         // Extras without a unit come after the unit-linked texts of their level.
         XCTAssertEqual(["en-foundations-u5", "en-foundations-u5", "en-foundations-u6", "en-foundations-u6",
                         "en-foundations-compare", "en-foundations-compare", "en-foundations-plans", "en-foundations-plans",
-                        nil, nil, nil], texts.filter { $0.level == "A2" }.map(\.unitID))
+                        "en-foundations-health", nil, nil, nil], texts.filter { $0.level == "A2" }.map(\.unitID))
         XCTAssertEqual(["en-foundations-experiences", "en-foundations-experiences",
                         "en-foundations-connections", "en-foundations-connections",
-                        "en-foundations-change", "en-foundations-change"],
+                        "en-foundations-change", "en-foundations-change",
+                        "en-foundations-telling"],
                        texts.filter { $0.level == "B1" }.map(\.unitID))
         XCTAssertEqual(["en-foundations-viewpoints", "en-foundations-viewpoints",
-                        "en-foundations-viewpoints", "en-foundations-viewpoints"],
+                        "en-foundations-viewpoints", "en-foundations-viewpoints",
+                        "en-foundations-media"],
                        texts.filter { $0.level == "B2" }.map(\.unitID))
-        XCTAssertEqual(["en-foundations-nuance"],
+        XCTAssertEqual(["en-foundations-nuance", "en-foundations-nuance"],
                        texts.filter { $0.level == "C1" }.map(\.unitID))
     }
 

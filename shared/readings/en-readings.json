@@ -1549,6 +1549,177 @@
         "writing:email"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "en-read-neighbourhood-blog",
+      "languageID": "en",
+      "title": "Neighbourhood notes: Maple Street",
+      "level": "A1",
+      "topic": "town",
+      "text": "Welcome to Maple Street! Our street is small but friendly. There is a bakery on the corner — the bread is very good. There are two schools and a small park with ten trees. There isn't a cinema, but the library is open on Saturdays. The chemist's is next to the park. Everything is near the bus stop. Our neighbours are friendly and quiet. On Saturdays there is a small market with fruit and flowers. Come and visit!",
+      "questions": [
+        {
+          "id": "en-read-neighbourhood-blog-q1",
+          "kind": "choice",
+          "prompt": "What is on the corner?",
+          "options": [
+            "A bakery",
+            "A cinema",
+            "A school",
+            "A market"
+          ],
+          "answers": [
+            "A bakery"
+          ],
+          "explain": "There is a bakery on the corner."
+        },
+        {
+          "id": "en-read-neighbourhood-blog-q2",
+          "kind": "written",
+          "prompt": "How many trees are in the park?",
+          "answers": [
+            "ten",
+            "10"
+          ],
+          "explain": "A small park with ten trees."
+        },
+        {
+          "id": "en-read-neighbourhood-blog-q3",
+          "kind": "choice",
+          "prompt": "When is the library open?",
+          "options": [
+            "On Saturdays",
+            "Every day",
+            "Never",
+            "On Sundays"
+          ],
+          "answers": [
+            "On Saturdays"
+          ],
+          "explain": "The library is open on Saturdays."
+        },
+        {
+          "id": "en-read-neighbourhood-blog-q4",
+          "kind": "choice",
+          "prompt": "Where is the chemist's?",
+          "options": [
+            "Next to the park",
+            "On the corner",
+            "Near the school",
+            "Far away"
+          ],
+          "answers": [
+            "Next to the park"
+          ],
+          "explain": "The chemist's is next to the park."
+        },
+        {
+          "id": "en-read-neighbourhood-blog-q5",
+          "kind": "choice",
+          "prompt": "What is there on Saturdays?",
+          "options": [
+            "A small market",
+            "A cinema",
+            "A party",
+            "Nothing"
+          ],
+          "answers": [
+            "A small market"
+          ],
+          "explain": "Fruit and flowers — the Saturday market."
+        }
+      ],
+      "skills": [
+        "vocab:town",
+        "grammar:there-is-are",
+        "reading:detail",
+        "function:ask-simple-questions"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-read-tuscany-note",
+      "languageID": "en",
+      "title": "A very short travel story",
+      "level": "B1",
+      "topic": "travel",
+      "text": "The lock wouldn't turn. That was the first sign. My Airbnb host had sent four codes for one door, and none of them worked. It was 30 degrees, my phone had 4% battery, and a man with a dog was watching me from a window. I typed a message to the host: 'I'm outside, the codes don't work.' Three dots. Nothing. Ten minutes later the dog man opened the door downstairs. 'You must be the Tuscany guest,' he said, in perfect English. 'My daughter manages the flat. Come up, have some water.' By the time I got inside, we had laughed about the codes twice, and he had given me two plums from his tree. Some arrivals are better than the photos.",
+      "questions": [
+        {
+          "id": "en-read-tuscany-note-q1",
+          "kind": "choice",
+          "prompt": "What is the first sign of trouble?",
+          "options": [
+            "The lock wouldn't turn",
+            "The host's message",
+            "The dog",
+            "The heat"
+          ],
+          "answers": [
+            "The lock wouldn't turn"
+          ],
+          "explain": "Open in the middle: the lock wouldn't turn."
+        },
+        {
+          "id": "en-read-tuscany-note-q2",
+          "kind": "written",
+          "prompt": "How many codes did the host send?",
+          "answers": [
+            "four",
+            "4"
+          ],
+          "explain": "Four codes for one door."
+        },
+        {
+          "id": "en-read-tuscany-note-q3",
+          "kind": "choice",
+          "prompt": "What was the phone's battery?",
+          "options": [
+            "4%",
+            "40%",
+            "Full",
+            "Dead"
+          ],
+          "answers": [
+            "4%"
+          ],
+          "explain": "My phone had 4% battery."
+        },
+        {
+          "id": "en-read-tuscany-note-q4",
+          "kind": "written",
+          "prompt": "What did the dog man give the guest?",
+          "answers": [
+            "two plums",
+            "plums",
+            "some plums"
+          ],
+          "explain": "Two plums from his tree."
+        },
+        {
+          "id": "en-read-tuscany-note-q5",
+          "kind": "choice",
+          "prompt": "What is the closing thought?",
+          "options": [
+            "Some arrivals are better than the photos",
+            "Never use Airbnb",
+            "Tuscany is far",
+            "Dogs are friendly"
+          ],
+          "answers": [
+            "Some arrivals are better than the photos"
+          ],
+          "explain": "One line, reflective, light."
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "grammar:past-continuous",
+        "function:tell-a-story",
+        "grammar:connectors",
+        "writing:story"
+      ],
+      "exposureSkills": []
     }
   ]
 }

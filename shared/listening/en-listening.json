@@ -698,6 +698,192 @@
       ]
     },
     {
+      "id": "en-listen-bus-stop-chat",
+      "languageID": "en",
+      "title": "The bus stop chat",
+      "level": "A1",
+      "topic": "people",
+      "unitID": "en-foundations-out",
+      "text": "It's cold at the bus stop, and Ben doesn't like silence. 'Cold today, isn't it?' he says to the woman next to him. 'Freezing,' she says. 'Any plans for the weekend?' Ben asks. 'Nothing much — you?' 'My sister is visiting, so we'll walk by the river if it doesn't rain.' The woman smiles. 'Sounds nice. My plans are tea and a book!' The bus arrives — late, of course. 'Have a good one!' Ben says as she gets on. 'You too!' And that's it: a complete conversation with a stranger, sixty seconds long.",
+      "questions": [
+        {
+          "id": "en-listen-bus-stop-chat-q1",
+          "kind": "choice",
+          "prompt": "How does Ben open the conversation?",
+          "explain": "'Cold today, isn't it?' — the weather opener.",
+          "options": [
+            "About the cold",
+            "About the bus",
+            "About the river",
+            "About tea"
+          ],
+          "answers": [
+            "About the cold"
+          ]
+        },
+        {
+          "id": "en-listen-bus-stop-chat-q2",
+          "kind": "written",
+          "prompt": "What are the woman's plans for the weekend?",
+          "explain": "Her plans are tea and a book.",
+          "answers": [
+            "tea and a book",
+            "tea",
+            "a book"
+          ]
+        },
+        {
+          "id": "en-listen-bus-stop-chat-q3",
+          "kind": "choice",
+          "prompt": "Who is visiting Ben?",
+          "explain": "His sister is visiting, so they'll walk by the river.",
+          "options": [
+            "His sister",
+            "His mother",
+            "A neighbour",
+            "Nobody"
+          ],
+          "answers": [
+            "His sister"
+          ]
+        },
+        {
+          "id": "en-listen-bus-stop-chat-q4",
+          "kind": "written",
+          "prompt": "Where will they walk if it doesn't rain?",
+          "explain": "By the river.",
+          "answers": [
+            "by the river",
+            "the river"
+          ]
+        },
+        {
+          "id": "en-listen-bus-stop-chat-q5",
+          "kind": "choice",
+          "prompt": "How does the bus arrive?",
+          "explain": "The bus arrives — late, of course.",
+          "options": [
+            "Late, of course",
+            "Early",
+            "Full",
+            "It never arrives"
+          ],
+          "answers": [
+            "Late, of course"
+          ]
+        },
+        {
+          "id": "en-listen-bus-stop-chat-q6",
+          "kind": "written",
+          "prompt": "How does Ben say goodbye?",
+          "explain": "'Have a good one!' as she gets on.",
+          "answers": [
+            "have a good one",
+            "have a good one!"
+          ]
+        }
+      ],
+      "skills": [
+        "vocab:social-expressions",
+        "grammar:present-continuous",
+        "function:talk-about-weather"
+      ]
+    },
+    {
+      "id": "en-listen-saturday-list",
+      "languageID": "en",
+      "title": "The Saturday list",
+      "level": "A1",
+      "topic": "shopping",
+      "unitID": "en-foundations-out",
+      "text": "Saturday morning, and Marta is at the supermarket with a long list. She needs bread, milk, eggs and tomatoes, but she can't find the tomatoes. A shop assistant is stacking apples nearby. 'Excuse me, where are the tomatoes?' Marta asks. 'Aisle three, next to the juice,' the assistant says. Marta finds them, checks the price — two euros fifty — and goes to the checkout. 'Anything else?' the cashier asks. 'No, that's all, thanks!' At home, she unpacks the bag and finds one thing missing: the bread. It's still on the kitchen table, next to her keys.",
+      "questions": [
+        {
+          "id": "en-listen-saturday-list-q1",
+          "kind": "choice",
+          "prompt": "What is NOT on Marta's list?",
+          "explain": "The apples belong to the shop assistant, not the list.",
+          "options": [
+            "Tomatoes",
+            "Bread",
+            "Milk",
+            "Apples"
+          ],
+          "answers": [
+            "Apples"
+          ]
+        },
+        {
+          "id": "en-listen-saturday-list-q2",
+          "kind": "written",
+          "prompt": "Where are the tomatoes?",
+          "explain": "Aisle three, next to the juice.",
+          "answers": [
+            "aisle three",
+            "in aisle three",
+            "aisle 3"
+          ]
+        },
+        {
+          "id": "en-listen-saturday-list-q3",
+          "kind": "choice",
+          "prompt": "How much are the tomatoes?",
+          "explain": "She checks the price: two euros fifty.",
+          "options": [
+            "Two euros fifty",
+            "Three euros",
+            "Two euros",
+            "Fifty cents"
+          ],
+          "answers": [
+            "Two euros fifty"
+          ]
+        },
+        {
+          "id": "en-listen-saturday-list-q4",
+          "kind": "written",
+          "prompt": "What does the cashier ask?",
+          "explain": "'Anything else?' — the cashier's question.",
+          "answers": [
+            "anything else",
+            "anything else?"
+          ]
+        },
+        {
+          "id": "en-listen-saturday-list-q5",
+          "kind": "choice",
+          "prompt": "What is missing at home?",
+          "explain": "The bread is still on the kitchen table.",
+          "options": [
+            "The bread",
+            "The milk",
+            "The eggs",
+            "The tomatoes"
+          ],
+          "answers": [
+            "The bread"
+          ]
+        },
+        {
+          "id": "en-listen-saturday-list-q6",
+          "kind": "written",
+          "prompt": "What else is on the kitchen table?",
+          "explain": "Her keys are next to the bread.",
+          "answers": [
+            "her keys",
+            "the keys",
+            "keys"
+          ]
+        }
+      ],
+      "skills": [
+        "vocab:food",
+        "grammar:there-is-are",
+        "grammar:present-simple",
+        "function:go-shopping"
+      ]
+    },
+    {
       "id": "en-listen-sunday-market",
       "languageID": "en",
       "title": "The Sunday market",
@@ -794,6 +980,98 @@
         "listening:number-time",
         "grammar:some-any",
         "vocab:shopping"
+      ]
+    },
+    {
+      "id": "en-listen-new-neighbourhood",
+      "languageID": "en",
+      "title": "The new neighbourhood",
+      "level": "A1",
+      "topic": "town",
+      "unitID": "en-foundations-town",
+      "text": "Sofia just moved to Maple Street, and her new neighbour Tom is telling her everything. 'There's a bakery on the corner — the bread is fantastic. There are two schools, a park and a small library. There isn't a cinema, I'm afraid; the nearest one is two bus stops away.' Sofia asks about the park: 'Is there a chemist's near the park?' 'Yes, right next to it,' Tom says. 'And the people?' Sofia wants to know. 'They're friendly and very quiet,' Tom laughs, 'except on Saturdays, when the football starts.'",
+      "questions": [
+        {
+          "id": "en-listen-new-neighbourhood-q1",
+          "kind": "choice",
+          "prompt": "What is on the corner?",
+          "explain": "There's a bakery on the corner — fantastic bread.",
+          "options": [
+            "A bakery",
+            "A park",
+            "A library",
+            "A cinema"
+          ],
+          "answers": [
+            "A bakery"
+          ]
+        },
+        {
+          "id": "en-listen-new-neighbourhood-q2",
+          "kind": "written",
+          "prompt": "What is there two of?",
+          "explain": "There are two schools.",
+          "answers": [
+            "schools",
+            "two schools"
+          ]
+        },
+        {
+          "id": "en-listen-new-neighbourhood-q3",
+          "kind": "choice",
+          "prompt": "What is missing in the neighbourhood?",
+          "explain": "There isn't a cinema — the nearest is two bus stops away.",
+          "options": [
+            "A cinema",
+            "A library",
+            "A bakery",
+            "A park"
+          ],
+          "answers": [
+            "A cinema"
+          ]
+        },
+        {
+          "id": "en-listen-new-neighbourhood-q4",
+          "kind": "written",
+          "prompt": "Where is the chemist's?",
+          "explain": "Right next to the park.",
+          "answers": [
+            "next to the park",
+            "near the park",
+            "right next to the park"
+          ]
+        },
+        {
+          "id": "en-listen-new-neighbourhood-q5",
+          "kind": "choice",
+          "prompt": "What are the people like?",
+          "explain": "Friendly and very quiet — except on Saturdays.",
+          "options": [
+            "Friendly and quiet",
+            "Loud",
+            "Unfriendly",
+            "Always at football"
+          ],
+          "answers": [
+            "Friendly and quiet"
+          ]
+        },
+        {
+          "id": "en-listen-new-neighbourhood-q6",
+          "kind": "written",
+          "prompt": "What starts on Saturdays?",
+          "explain": "The football starts on Saturdays.",
+          "answers": [
+            "the football",
+            "football"
+          ]
+        }
+      ],
+      "skills": [
+        "vocab:town",
+        "grammar:there-is-are",
+        "function:ask-simple-questions"
       ]
     },
     {
@@ -2581,6 +2859,103 @@
       "exposureSkills": []
     },
     {
+      "id": "en-listen-news-swap",
+      "languageID": "en",
+      "title": "The news swap",
+      "level": "B1",
+      "topic": "people",
+      "unitID": "en-foundations-telling",
+      "text": "Café table, two old friends, forty-eight hours of accumulated news. 'You first,' says Ines. 'OK — I got the promotion!' 'No way! Congratulations! When do you start?' 'Monday. And the office is ten minutes from my flat.' 'That IS great news.' Then Ines takes a breath. 'Mine isn't all good. I crashed my bike — I'm fine, but the bike is gone.' 'Oh no, I'm so sorry. Are you OK though? Really?' 'Honestly, yes. Just angry about the bike.' Ines nods, then smiles. 'But there's more: I'm going to Italy in June.' 'Stop it! You're kidding!' 'I'm not. Two weeks, Tuscany, and you're coming with me.'",
+      "questions": [
+        {
+          "id": "en-listen-news-swap-q1",
+          "kind": "choice",
+          "prompt": "What is Ines's good news at the end?",
+          "explain": "Two weeks in Tuscany in June.",
+          "options": [
+            "A trip to Italy",
+            "A new bike",
+            "A promotion",
+            "A new job"
+          ],
+          "answers": [
+            "A trip to Italy"
+          ]
+        },
+        {
+          "id": "en-listen-news-swap-q2",
+          "kind": "written",
+          "prompt": "What is the friend's good news?",
+          "explain": "She got the promotion — starting Monday.",
+          "answers": [
+            "a promotion",
+            "she got the promotion",
+            "the promotion"
+          ]
+        },
+        {
+          "id": "en-listen-news-swap-q3",
+          "kind": "choice",
+          "prompt": "What happened to the bike?",
+          "explain": "Ines crashed her bike; she's fine, but the bike is gone.",
+          "options": [
+            "It's gone after a crash",
+            "It was stolen",
+            "It needs repair",
+            "She sold it"
+          ],
+          "answers": [
+            "It's gone after a crash"
+          ]
+        },
+        {
+          "id": "en-listen-news-swap-q4",
+          "kind": "written",
+          "prompt": "What is the friend's reaction to the crash?",
+          "explain": "'Oh no, I'm so sorry' — then the care question.",
+          "answers": [
+            "im so sorry",
+            "oh no im so sorry"
+          ]
+        },
+        {
+          "id": "en-listen-news-swap-q5",
+          "kind": "choice",
+          "prompt": "How does the friend react to the promotion?",
+          "explain": "React + congratulate.",
+          "options": [
+            "'No way! Congratulations!'",
+            "'That's awful.'",
+            "'Really? Are you OK?'",
+            "'Good luck.'"
+          ],
+          "answers": [
+            "'No way! Congratulations!'"
+          ]
+        },
+        {
+          "id": "en-listen-news-swap-q6",
+          "kind": "choice",
+          "prompt": "What does Ines invite her friend to do?",
+          "explain": "'You're coming with me.'",
+          "options": [
+            "Come to Tuscany",
+            "Buy a new bike",
+            "Visit the new office",
+            "Start in June"
+          ],
+          "answers": [
+            "Come to Tuscany"
+          ]
+        }
+      ],
+      "skills": [
+        "vocab:social-expressions",
+        "function:express-opinion",
+        "grammar:future-forms"
+      ]
+    },
+    {
       "id": "en-listen-grandpas-garden",
       "languageID": "en",
       "title": "Grandpa's garden",
@@ -2863,6 +3238,98 @@
       ]
     },
     {
+      "id": "en-listen-doctor-call",
+      "languageID": "en",
+      "title": "The doctor's phone call",
+      "level": "A2",
+      "topic": "health",
+      "unitID": "en-foundations-health",
+      "text": "The receptionist answers on the second ring. 'Good morning, Riverside Clinic.' 'Hello, I'd like to make an appointment. It's not an emergency, but I've had back pain for two weeks and it's getting worse.' The receptionist types. 'Dr Lee has a slot today at 16:40. Is that OK?' 'Perfect.' 'Just so I know you've got it: today, 16:40, Dr Lee. Bring your ID and your medication list. And drink water — it helps everything.' The caller laughs. 'Thank you very much.' 'See you this afternoon. Take care!'",
+      "questions": [
+        {
+          "id": "en-listen-doctor-call-q1",
+          "kind": "choice",
+          "prompt": "What does the caller want?",
+          "explain": "I'd like to make an appointment.",
+          "options": [
+            "To make an appointment",
+            "A prescription now",
+            "To cancel",
+            "To speak to Dr Lee"
+          ],
+          "answers": [
+            "To make an appointment"
+          ]
+        },
+        {
+          "id": "en-listen-doctor-call-q2",
+          "kind": "written",
+          "prompt": "How long has the back pain lasted?",
+          "explain": "For two weeks — and getting worse.",
+          "answers": [
+            "two weeks",
+            "for two weeks"
+          ]
+        },
+        {
+          "id": "en-listen-doctor-call-q3",
+          "kind": "choice",
+          "prompt": "When is the appointment?",
+          "explain": "Dr Lee has a slot today at 16:40.",
+          "options": [
+            "Today at 16:40",
+            "Tomorrow morning",
+            "This evening",
+            "Next week"
+          ],
+          "answers": [
+            "Today at 16:40"
+          ]
+        },
+        {
+          "id": "en-listen-doctor-call-q4",
+          "kind": "written",
+          "prompt": "What should the caller bring?",
+          "explain": "ID and the medication list.",
+          "answers": [
+            "id and medication list",
+            "her id and medication list",
+            "id and a medication list"
+          ]
+        },
+        {
+          "id": "en-listen-doctor-call-q5",
+          "kind": "choice",
+          "prompt": "What does the receptionist recommend for everything?",
+          "explain": "Drink water — it helps everything (she's joking, half).",
+          "options": [
+            "Drinking water",
+            "Resting",
+            "Painkillers",
+            "Walking"
+          ],
+          "answers": [
+            "Drinking water"
+          ]
+        },
+        {
+          "id": "en-listen-doctor-call-q6",
+          "kind": "written",
+          "prompt": "How does the receptionist close the call?",
+          "explain": "'See you this afternoon. Take care!'",
+          "answers": [
+            "see you this afternoon take care",
+            "take care"
+          ]
+        }
+      ],
+      "skills": [
+        "function:talk-about-health",
+        "grammar:present-perfect",
+        "vocab:health"
+      ]
+    },
+    {
       "id": "en-listen-four-day-week",
       "languageID": "en",
       "title": "The four-day week",
@@ -3061,6 +3528,98 @@
         "grammar:first-conditional"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "en-listen-news-desk",
+      "languageID": "en",
+      "title": "At the news desk",
+      "level": "B2",
+      "topic": "work",
+      "unitID": "en-foundations-media",
+      "text": "The 18:00 bulletin is being assembled at the news desk. The editor reads the running order aloud: 'Lead story: the city council has announced a new flood-prevention plan — measures are expected to cost four million euros, according to documents seen by our reporters. Second: the bridge is believed to be safe after emergency inspections; it is thought that traffic will return to normal by Monday. And the sports close: the match was postponed because the pitch was flooded — the third postponement this season.' A young reporter raises her hand. 'Should we say who saw the documents?' The editor shakes his head. 'We protect sources. The documents exist; the audience can decide what they mean.'",
+      "questions": [
+        {
+          "id": "en-listen-news-desk-q1",
+          "kind": "written",
+          "prompt": "What has the city council announced?",
+          "explain": "A new flood-prevention plan.",
+          "answers": [
+            "a new flood-prevention plan",
+            "a flood-prevention plan"
+          ]
+        },
+        {
+          "id": "en-listen-news-desk-q2",
+          "kind": "choice",
+          "prompt": "How is the cost being reported?",
+          "explain": "According to documents seen by our reporters.",
+          "options": [
+            "According to documents seen by reporters",
+            "The council said it",
+            "It is a rumour",
+            "It is not mentioned"
+          ],
+          "answers": [
+            "According to documents seen by reporters"
+          ]
+        },
+        {
+          "id": "en-listen-news-desk-q3",
+          "kind": "written",
+          "prompt": "What is believed about the bridge?",
+          "explain": "It is believed to be safe after inspections.",
+          "answers": [
+            "that it is safe",
+            "it is believed to be safe",
+            "it is safe"
+          ]
+        },
+        {
+          "id": "en-listen-news-desk-q4",
+          "kind": "choice",
+          "prompt": "Why was the match postponed?",
+          "explain": "Postponed because the pitch was flooded.",
+          "options": [
+            "The pitch was flooded",
+            "The teams were tired",
+            "The bridge closed",
+            "It wasn't"
+          ],
+          "answers": [
+            "The pitch was flooded"
+          ]
+        },
+        {
+          "id": "en-listen-news-desk-q5",
+          "kind": "choice",
+          "prompt": "Why does the editor protect the source?",
+          "explain": "The documents exist; the audience decides.",
+          "options": [
+            "The audience can decide what the documents mean",
+            "The documents are fake",
+            "It is illegal",
+            "He doesn't know the source"
+          ],
+          "answers": [
+            "The audience can decide what the documents mean"
+          ]
+        },
+        {
+          "id": "en-listen-news-desk-q6",
+          "kind": "written",
+          "prompt": "How many postponements has the season had?",
+          "explain": "The third postponement this season.",
+          "answers": [
+            "three",
+            "3"
+          ]
+        }
+      ],
+      "skills": [
+        "grammar:passive-intro",
+        "grammar:present-perfect",
+        "function:talk-about-work"
+      ]
     },
     {
       "id": "en-listen-bridge-news",
@@ -3359,6 +3918,106 @@
         "grammar:connectors"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "en-listen-radio-debate",
+      "languageID": "en",
+      "title": "The radio debate",
+      "level": "C1",
+      "topic": "work",
+      "unitID": "en-foundations-nuance",
+      "text": "Radio phone-in, two guests, one question: should cities ban cars from their centres? The urbanist goes first: 'The evidence tends to support it. Air quality improves, shops report more foot traffic. I wouldn't say it solves everything — admittedly, delivery logistics need rethinking — but the direction is clear.' The taxi representative is unimpressed: 'That's a very comfortable position for someone with a parking space. It is often claimed that everyone supports these bans. My members do not.' The host steps in: 'Let me bring you both together. If — and at this stage it's an if — the city invested in night deliveries, would that change your position?' A long pause. 'It would certainly change mine,' the taxi man admits. The urbanist laughs: 'Then we have something to build on.'",
+      "questions": [
+        {
+          "id": "en-listen-radio-debate-q1",
+          "kind": "choice",
+          "prompt": "What is the urbanist's position?",
+          "explain": "Hedged: tends to support, not solves everything.",
+          "options": [
+            "The evidence tends to support the ban",
+            "The ban solves everything",
+            "The ban is tyranny",
+            "She has no position"
+          ],
+          "answers": [
+            "The evidence tends to support the ban"
+          ]
+        },
+        {
+          "id": "en-listen-radio-debate-q2",
+          "kind": "written",
+          "prompt": "What does the urbanist concede?",
+          "explain": "Admittedly, delivery logistics need rethinking.",
+          "answers": [
+            "delivery logistics need rethinking",
+            "deliveries are a problem"
+          ]
+        },
+        {
+          "id": "en-listen-radio-debate-q3",
+          "kind": "choice",
+          "prompt": "What does 'It is often claimed that everyone supports these bans' imply?",
+          "explain": "The passive + often claims distance the speaker from the claim.",
+          "options": [
+            "The claim is exaggerated",
+            "Everyone supports them",
+            "It is a fact",
+            "Nobody supports them"
+          ],
+          "answers": [
+            "The claim is exaggerated"
+          ]
+        },
+        {
+          "id": "en-listen-radio-debate-q4",
+          "kind": "written",
+          "prompt": "What is the host's conditional question?",
+          "explain": "If the city invested in night deliveries, would positions change?",
+          "answers": [
+            "if the city invested in night deliveries",
+            "whether the city invested in night deliveries"
+          ]
+        },
+        {
+          "id": "en-listen-radio-debate-q5",
+          "kind": "choice",
+          "prompt": "How does the taxi man respond at the end?",
+          "explain": "A conditional concession — something to build on.",
+          "options": [
+            "It would certainly change mine",
+            "Never",
+            "He leaves",
+            "He agrees fully"
+          ],
+          "answers": [
+            "It would certainly change mine"
+          ]
+        },
+        {
+          "id": "en-listen-radio-debate-q6",
+          "kind": "choice",
+          "prompt": "What does the urbanist's laugh suggest?",
+          "explain": "'Then we have something to build on.'",
+          "options": [
+            "A starting point for agreement",
+            "She is mocking him",
+            "She disagrees",
+            "She is nervous"
+          ],
+          "answers": [
+            "A starting point for agreement"
+          ]
+        }
+      ],
+      "skills": [
+        "grammar:second-conditional",
+        "function:negotiate",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [
+        "grammar:first-conditional"
+      ]
     }
   ]
 }

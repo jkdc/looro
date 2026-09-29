@@ -139,3 +139,46 @@ Los cuatro exportadores ahora emiten **un namespace por unidad/texto**
 y montan `all` por referencias — el pipeline vuelve a escalar sin techo.
 Verificado con la suite completa en verde tras el cambio.
 
+## Post-F7: temario completion (F8-F13)
+
+- **F8 A1 to 30 (341a395):** 3 new A1 units (Out and about, My town,
+  Family & friends, 9 lessons) reaching the doc §7 minimum of 30.
+- **F9 A2 health (5036962 + 4ce987d):** new A2 unit Health & habits
+  (symptoms, should advice, used to vs now). Hit the JVM 64 KB method
+  limit — fixed by splitting all generated data into per-unit/text
+  objects (4ce987d).
+- **F10 B1/B2/C1 (80beadf):** B1 "Telling it well" (collocations, news
+  reactions, problem structure), B2 "Media & argument" (news language
+  with passives, opinion pieces), C1 "Presenting with confidence".
+- **F11 tracks (bc10d04):** Business, Technology, Hospitality, Healthcare
+  — 4 new B1 tracks (12 lessons) alongside English for Work. Registry fix:
+  unit-order resolution across all courses of a language.
+- **F12 multi-language A1 (f57903a):** second A1 unit in all 5
+  non-English languages (Mi día a día / Mon quotidien / La mia giornata /
+  Mein Alltag / Meu dia a dia) — routines, neighbourhood, plans.
+- **F13 volume (c173757 + this commit):** 7 new listenings (A1 town,
+  A2 health call, B1 news swap, B2 news desk + podcast, C1 keynote +
+  radio debate), 2 new readings (A1 neighbourhood blog, B1 Tuscany
+  story).
+
+## Final catalogue state
+
+- en-foundations: 23 units, 72 lessons (A1 30 · A2 18 · B1 12 · B2 6 · C1 5)
+- en tracks: 6 tracks × 3 lessons (Work, Business, Technology, Hospitality,
+  Healthcare + Foundations)
+- en listenings: 41 (A1 15 · A2 12 · B1 7 · B2 5 · C1 2)
+- en readings: 20 (A1 7 · A2 4 · B1 5 · B2 2 · C1 2)
+- Checkpoints: A1, A2, B1, B2, C1 — complete ladder
+- es/fr/it/de/pt: 2 units, 6 lessons each — all skill-tagged
+- Skill coverage: **100% in all 8 categories except pron (3/8)**
+- Android **488/488** · python **98/98** · 4 exporters in sync ·
+  cross-platform parity green · strings EN/ES 387/387
+
+## Still open (transversal, as before)
+
+- macOS gate for the mirrored core and app UI.
+- Manual emulator pass of the new surfaces.
+- Pronunciation module (blocks 5 pron skills).
+- Volume growth: A1 30→40 (doc target), B2/C1 listenings, tracks 6-8
+  (doc §12 remaining), and extending the other 5 languages beyond A1.
+
