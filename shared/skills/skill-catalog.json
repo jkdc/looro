@@ -1,116 +1,648 @@
 {
   "schemaVersion": 1,
   "skills": [
-    {"id": "grammar:verb-be", "category": "grammar", "prerequisites": []},
-    {"id": "grammar:subject-pronouns", "category": "grammar", "prerequisites": ["grammar:verb-be"]},
-    {"id": "grammar:articles", "category": "grammar", "prerequisites": []},
-    {"id": "grammar:plurals", "category": "grammar", "prerequisites": ["grammar:articles"]},
-    {"id": "grammar:possessives", "category": "grammar", "prerequisites": ["grammar:subject-pronouns"]},
-    {"id": "grammar:demonstratives", "category": "grammar", "prerequisites": ["grammar:subject-pronouns"]},
-    {"id": "grammar:have-got", "category": "grammar", "prerequisites": ["grammar:articles"]},
-    {"id": "grammar:present-simple", "category": "grammar", "prerequisites": ["grammar:subject-pronouns", "grammar:verb-be"]},
-    {"id": "grammar:present-questions", "category": "grammar", "prerequisites": ["grammar:present-simple"]},
-    {"id": "grammar:third-person-s", "category": "grammar", "prerequisites": ["grammar:present-simple"]},
-    {"id": "grammar:frequency-adverbs", "category": "grammar", "prerequisites": ["grammar:present-simple"]},
-    {"id": "grammar:time-expressions", "category": "grammar", "prerequisites": ["grammar:present-simple"]},
-    {"id": "grammar:can", "category": "grammar", "prerequisites": ["grammar:subject-pronouns"]},
-    {"id": "grammar:there-is-are", "category": "grammar", "prerequisites": ["grammar:articles", "grammar:plurals"]},
-    {"id": "grammar:imperatives", "category": "grammar", "prerequisites": ["grammar:present-simple"]},
-    {"id": "grammar:prepositions-place", "category": "grammar", "prerequisites": ["grammar:there-is-are"]},
-    {"id": "grammar:some-any", "category": "grammar", "prerequisites": ["grammar:plurals"]},
-    {"id": "grammar:quantities", "category": "grammar", "prerequisites": ["grammar:some-any"]},
-    {"id": "grammar:countable-uncountable", "category": "grammar", "prerequisites": ["grammar:plurals", "grammar:some-any"]},
-    {"id": "grammar:present-continuous", "category": "grammar", "prerequisites": ["grammar:verb-be"]},
-    {"id": "grammar:past-was-were", "category": "grammar", "prerequisites": ["grammar:verb-be"]},
-    {"id": "grammar:past-simple-regular", "category": "grammar", "prerequisites": ["grammar:past-was-were", "grammar:time-expressions"]},
-    {"id": "grammar:past-simple-irregular", "category": "grammar", "prerequisites": ["grammar:past-simple-regular"]},
-    {"id": "grammar:object-pronouns", "category": "grammar", "prerequisites": ["grammar:subject-pronouns"]},
-    {"id": "grammar:comparatives", "category": "grammar", "prerequisites": ["grammar:articles"]},
-    {"id": "grammar:superlatives", "category": "grammar", "prerequisites": ["grammar:comparatives"]},
-    {"id": "grammar:going-to", "category": "grammar", "prerequisites": ["grammar:verb-be"]},
-    {"id": "grammar:future-forms", "category": "grammar", "prerequisites": ["grammar:going-to", "grammar:present-continuous"]},
-    {"id": "grammar:modal-should", "category": "grammar", "prerequisites": ["grammar:subject-pronouns"]},
-    {"id": "grammar:modal-must-have-to", "category": "grammar", "prerequisites": ["grammar:modal-should"]},
-    {"id": "grammar:gerunds-infinitives", "category": "grammar", "prerequisites": ["grammar:present-simple"]},
-    {"id": "grammar:present-perfect", "category": "grammar", "prerequisites": ["grammar:past-simple-regular", "grammar:object-pronouns"]},
-    {"id": "grammar:past-continuous", "category": "grammar", "prerequisites": ["grammar:past-was-were", "grammar:present-continuous"]},
-    {"id": "grammar:first-conditional", "category": "grammar", "prerequisites": ["grammar:present-simple", "grammar:going-to"]},
-    {"id": "grammar:second-conditional", "category": "grammar", "prerequisites": ["grammar:past-simple-irregular"]},
-    {"id": "grammar:relative-clauses", "category": "grammar", "prerequisites": ["grammar:object-pronouns"]},
-    {"id": "grammar:used-to", "category": "grammar", "prerequisites": ["grammar:past-simple-irregular"]},
-    {"id": "grammar:passive-intro", "category": "grammar", "prerequisites": ["grammar:past-simple-regular"]},
-    {"id": "grammar:reported-speech-basic", "category": "grammar", "prerequisites": ["grammar:past-simple-irregular"]},
-    {"id": "grammar:connectors", "category": "grammar", "prerequisites": []},
-
-    {"id": "vocab:introductions", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:family", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:home", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:food", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:daily-routine", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:town", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:directions", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:shopping", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:transport", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:hobbies", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:weather", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:health", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:work", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:travel", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:feelings", "category": "vocab", "prerequisites": []},
-    {"id": "vocab:social-expressions", "category": "vocab", "prerequisites": []},
-
-    {"id": "function:introduce-yourself", "category": "function", "prerequisites": []},
-    {"id": "function:ask-simple-questions", "category": "function", "prerequisites": []},
-    {"id": "function:describe-people", "category": "function", "prerequisites": []},
-    {"id": "function:talk-about-routines", "category": "function", "prerequisites": []},
-    {"id": "function:tell-time", "category": "function", "prerequisites": []},
-    {"id": "function:ask-for-directions", "category": "function", "prerequisites": []},
-    {"id": "function:order-food", "category": "function", "prerequisites": []},
-    {"id": "function:go-shopping", "category": "function", "prerequisites": []},
-    {"id": "function:talk-about-weather", "category": "function", "prerequisites": []},
-    {"id": "function:make-requests", "category": "function", "prerequisites": []},
-    {"id": "function:describe-past-events", "category": "function", "prerequisites": []},
-    {"id": "function:make-future-plans", "category": "function", "prerequisites": []},
-    {"id": "function:express-opinion", "category": "function", "prerequisites": []},
-    {"id": "function:tell-a-story", "category": "function", "prerequisites": ["function:describe-past-events"]},
-    {"id": "function:make-suggestions", "category": "function", "prerequisites": []},
-    {"id": "function:solve-problems", "category": "function", "prerequisites": []},
-    {"id": "function:negotiate", "category": "function", "prerequisites": ["function:express-opinion"]},
-    {"id": "function:describe-goals", "category": "function", "prerequisites": []},
-    {"id": "function:talk-about-work", "category": "function", "prerequisites": []},
-    {"id": "function:talk-about-health", "category": "function", "prerequisites": []},
-
-    {"id": "speaking:short-answer", "category": "speaking", "prerequisites": []},
-    {"id": "speaking:describe-routine", "category": "speaking", "prerequisites": []},
-    {"id": "speaking:tell-past-story", "category": "speaking", "prerequisites": ["function:describe-past-events"]},
-    {"id": "speaking:justify-opinion", "category": "speaking", "prerequisites": ["function:express-opinion"]},
-    {"id": "speaking:negotiate", "category": "speaking", "prerequisites": ["function:negotiate"]},
-    {"id": "speaking:sustained-conversation", "category": "speaking", "prerequisites": ["speaking:short-answer"]},
-
-    {"id": "listening:gist", "category": "listening", "prerequisites": []},
-    {"id": "listening:detail", "category": "listening", "prerequisites": ["listening:gist"]},
-    {"id": "listening:number-time", "category": "listening", "prerequisites": []},
-    {"id": "listening:inference", "category": "listening", "prerequisites": ["listening:detail"]},
-    {"id": "listening:connected-speech", "category": "listening", "prerequisites": ["listening:detail"]},
-
-    {"id": "reading:gist", "category": "reading", "prerequisites": []},
-    {"id": "reading:detail", "category": "reading", "prerequisites": ["reading:gist"]},
-    {"id": "reading:scan", "category": "reading", "prerequisites": []},
-    {"id": "reading:inference", "category": "reading", "prerequisites": ["reading:detail"]},
-
-    {"id": "writing:sentence", "category": "writing", "prerequisites": []},
-    {"id": "writing:message", "category": "writing", "prerequisites": ["writing:sentence"]},
-    {"id": "writing:email", "category": "writing", "prerequisites": ["writing:message"]},
-    {"id": "writing:story", "category": "writing", "prerequisites": ["writing:message"]},
-    {"id": "writing:argument", "category": "writing", "prerequisites": ["writing:email"]},
-
-    {"id": "pron:th", "category": "pron", "prerequisites": []},
-    {"id": "pron:r", "category": "pron", "prerequisites": []},
-    {"id": "pron:short-long-vowels", "category": "pron", "prerequisites": []},
-    {"id": "pron:word-stress", "category": "pron", "prerequisites": []},
-    {"id": "pron:sentence-stress", "category": "pron", "prerequisites": ["pron:word-stress"]},
-    {"id": "pron:third-person-s", "category": "pron", "prerequisites": []},
-    {"id": "pron:past-ed", "category": "pron", "prerequisites": []},
-    {"id": "pron:connected-speech", "category": "pron", "prerequisites": ["pron:sentence-stress"]}
+    {
+      "id": "function:ask-for-directions",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:ask-simple-questions",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:describe-goals",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:describe-past-events",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:describe-people",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:express-opinion",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:go-shopping",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:introduce-yourself",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:make-future-plans",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:make-requests",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:make-suggestions",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:negotiate",
+      "category": "function",
+      "prerequisites": [
+        "function:express-opinion"
+      ]
+    },
+    {
+      "id": "function:order-food",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:solve-problems",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:talk-about-health",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:talk-about-routines",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:talk-about-weather",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:talk-about-work",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "function:tell-a-story",
+      "category": "function",
+      "prerequisites": [
+        "function:describe-past-events"
+      ]
+    },
+    {
+      "id": "function:tell-time",
+      "category": "function",
+      "prerequisites": []
+    },
+    {
+      "id": "grammar:articles",
+      "category": "grammar",
+      "prerequisites": []
+    },
+    {
+      "id": "grammar:can",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:subject-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:comparatives",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:articles"
+      ]
+    },
+    {
+      "id": "grammar:connectors",
+      "category": "grammar",
+      "prerequisites": []
+    },
+    {
+      "id": "grammar:countable-uncountable",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:plurals",
+        "grammar:some-any"
+      ]
+    },
+    {
+      "id": "grammar:demonstratives",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:subject-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:first-conditional",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple",
+        "grammar:going-to"
+      ]
+    },
+    {
+      "id": "grammar:frequency-adverbs",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:future-forms",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:going-to",
+        "grammar:present-continuous"
+      ]
+    },
+    {
+      "id": "grammar:gerunds-infinitives",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:going-to",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:verb-be"
+      ]
+    },
+    {
+      "id": "grammar:have-got",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:articles"
+      ]
+    },
+    {
+      "id": "grammar:imperatives",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:modal-must-have-to",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:modal-should"
+      ]
+    },
+    {
+      "id": "grammar:modal-should",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:subject-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:object-pronouns",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:subject-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:passive-intro",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-regular"
+      ]
+    },
+    {
+      "id": "grammar:past-continuous",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-was-were",
+        "grammar:present-continuous"
+      ]
+    },
+    {
+      "id": "grammar:past-simple-irregular",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-regular"
+      ]
+    },
+    {
+      "id": "grammar:past-simple-regular",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-was-were",
+        "grammar:time-expressions"
+      ]
+    },
+    {
+      "id": "grammar:past-was-were",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:verb-be"
+      ]
+    },
+    {
+      "id": "grammar:phrasal-verbs",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:plurals",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:articles"
+      ]
+    },
+    {
+      "id": "grammar:possessives",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:subject-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:prepositions-place",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:there-is-are"
+      ]
+    },
+    {
+      "id": "grammar:present-continuous",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:verb-be"
+      ]
+    },
+    {
+      "id": "grammar:present-perfect",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-regular",
+        "grammar:object-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:present-questions",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:present-simple",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:subject-pronouns",
+        "grammar:verb-be"
+      ]
+    },
+    {
+      "id": "grammar:quantities",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:some-any"
+      ]
+    },
+    {
+      "id": "grammar:relative-clauses",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:object-pronouns"
+      ]
+    },
+    {
+      "id": "grammar:reported-speech-basic",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-irregular"
+      ]
+    },
+    {
+      "id": "grammar:second-conditional",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-irregular"
+      ]
+    },
+    {
+      "id": "grammar:some-any",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:plurals"
+      ]
+    },
+    {
+      "id": "grammar:subject-pronouns",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:verb-be"
+      ]
+    },
+    {
+      "id": "grammar:superlatives",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:comparatives"
+      ]
+    },
+    {
+      "id": "grammar:there-is-are",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:articles",
+        "grammar:plurals"
+      ]
+    },
+    {
+      "id": "grammar:third-person-s",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:time-expressions",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:present-simple"
+      ]
+    },
+    {
+      "id": "grammar:used-to",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-irregular"
+      ]
+    },
+    {
+      "id": "grammar:verb-be",
+      "category": "grammar",
+      "prerequisites": []
+    },
+    {
+      "id": "listening:connected-speech",
+      "category": "listening",
+      "prerequisites": [
+        "listening:detail"
+      ]
+    },
+    {
+      "id": "listening:detail",
+      "category": "listening",
+      "prerequisites": [
+        "listening:gist"
+      ]
+    },
+    {
+      "id": "listening:gist",
+      "category": "listening",
+      "prerequisites": []
+    },
+    {
+      "id": "listening:inference",
+      "category": "listening",
+      "prerequisites": [
+        "listening:detail"
+      ]
+    },
+    {
+      "id": "listening:number-time",
+      "category": "listening",
+      "prerequisites": []
+    },
+    {
+      "id": "pron:connected-speech",
+      "category": "pron",
+      "prerequisites": [
+        "pron:sentence-stress"
+      ]
+    },
+    {
+      "id": "pron:past-ed",
+      "category": "pron",
+      "prerequisites": []
+    },
+    {
+      "id": "pron:r",
+      "category": "pron",
+      "prerequisites": []
+    },
+    {
+      "id": "pron:sentence-stress",
+      "category": "pron",
+      "prerequisites": [
+        "pron:word-stress"
+      ]
+    },
+    {
+      "id": "pron:short-long-vowels",
+      "category": "pron",
+      "prerequisites": []
+    },
+    {
+      "id": "pron:th",
+      "category": "pron",
+      "prerequisites": []
+    },
+    {
+      "id": "pron:third-person-s",
+      "category": "pron",
+      "prerequisites": []
+    },
+    {
+      "id": "pron:word-stress",
+      "category": "pron",
+      "prerequisites": []
+    },
+    {
+      "id": "reading:detail",
+      "category": "reading",
+      "prerequisites": [
+        "reading:gist"
+      ]
+    },
+    {
+      "id": "reading:gist",
+      "category": "reading",
+      "prerequisites": []
+    },
+    {
+      "id": "reading:inference",
+      "category": "reading",
+      "prerequisites": [
+        "reading:detail"
+      ]
+    },
+    {
+      "id": "reading:scan",
+      "category": "reading",
+      "prerequisites": []
+    },
+    {
+      "id": "speaking:describe-routine",
+      "category": "speaking",
+      "prerequisites": []
+    },
+    {
+      "id": "speaking:justify-opinion",
+      "category": "speaking",
+      "prerequisites": [
+        "function:express-opinion"
+      ]
+    },
+    {
+      "id": "speaking:negotiate",
+      "category": "speaking",
+      "prerequisites": [
+        "function:negotiate"
+      ]
+    },
+    {
+      "id": "speaking:short-answer",
+      "category": "speaking",
+      "prerequisites": []
+    },
+    {
+      "id": "speaking:sustained-conversation",
+      "category": "speaking",
+      "prerequisites": [
+        "speaking:short-answer"
+      ]
+    },
+    {
+      "id": "speaking:tell-past-story",
+      "category": "speaking",
+      "prerequisites": [
+        "function:describe-past-events"
+      ]
+    },
+    {
+      "id": "vocab:daily-routine",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:directions",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:family",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:feelings",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:food",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:health",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:hobbies",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:home",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:introductions",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:shopping",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:social-expressions",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:town",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:transport",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:travel",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:weather",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "vocab:work",
+      "category": "vocab",
+      "prerequisites": []
+    },
+    {
+      "id": "writing:argument",
+      "category": "writing",
+      "prerequisites": [
+        "writing:email"
+      ]
+    },
+    {
+      "id": "writing:email",
+      "category": "writing",
+      "prerequisites": [
+        "writing:message"
+      ]
+    },
+    {
+      "id": "writing:message",
+      "category": "writing",
+      "prerequisites": [
+        "writing:sentence"
+      ]
+    },
+    {
+      "id": "writing:sentence",
+      "category": "writing",
+      "prerequisites": []
+    },
+    {
+      "id": "writing:story",
+      "category": "writing",
+      "prerequisites": [
+        "writing:message"
+      ]
+    }
   ]
 }

@@ -2382,6 +2382,205 @@
       "exposureSkills": []
     },
     {
+      "id": "en-listen-monday-predictions",
+      "languageID": "en",
+      "title": "The Monday pool",
+      "level": "B1",
+      "topic": "work",
+      "unitID": "en-foundations-change",
+      "text": "Every Monday, the design team runs a small prediction pool. 'Ten euros says the client changes the brief by Wednesday,' says Jonas. Petra shakes her head. 'The brief will survive — but the printer will break. It always does.' Newcomer Ana smiles nervously. 'I'll just predict something safe: we'll all complain about the coffee.' Everyone writes their bets on the whiteboard, and the week starts. By Wednesday, the client has indeed changed the brief, twice. Jonas collects his ten euros without a word. The printer, loyal to tradition, jams on Thursday morning — Petra's turn to smile. And on Friday, Ana looks at her line on the board, at the empty coffee machine, and says what everyone is thinking: 'Will anyone else complain, or is it just me?'",
+      "questions": [
+        {
+          "id": "en-listen-monday-predictions-q1",
+          "kind": "choice",
+          "prompt": "What does Jonas predict on Monday?",
+          "options": [
+            "The client will change the brief",
+            "The printer will break",
+            "The coffee will run out",
+            "Ana will win"
+          ],
+          "answers": [
+            "The client will change the brief"
+          ],
+          "explain": "'Ten euros says the client changes the brief by Wednesday.'"
+        },
+        {
+          "id": "en-listen-monday-predictions-q2",
+          "kind": "written",
+          "prompt": "What is Petra's prediction?",
+          "answers": [
+            "the printer will break",
+            "the printer breaks",
+            "printer will break"
+          ],
+          "explain": "The brief will survive, but the printer will break."
+        },
+        {
+          "id": "en-listen-monday-predictions-q3",
+          "kind": "written",
+          "prompt": "What does newcomer Ana predict?",
+          "answers": [
+            "they will all complain about the coffee",
+            "everyone will complain about the coffee",
+            "they'll complain about the coffee"
+          ],
+          "explain": "A safe prediction: everyone complains about the coffee."
+        },
+        {
+          "id": "en-listen-monday-predictions-q4",
+          "kind": "choice",
+          "prompt": "What happened by Wednesday?",
+          "options": [
+            "The client changed the brief twice",
+            "The printer broke",
+            "The coffee machine died",
+            "Nothing"
+          ],
+          "answers": [
+            "The client changed the brief twice"
+          ],
+          "explain": "The client changed the brief, twice — Jonas wins his bet."
+        },
+        {
+          "id": "en-listen-monday-predictions-q5",
+          "kind": "choice",
+          "prompt": "When did the printer jam?",
+          "options": [
+            "Thursday morning",
+            "Wednesday",
+            "Monday",
+            "It didn't"
+          ],
+          "answers": [
+            "Thursday morning"
+          ],
+          "explain": "Loyal to tradition, it jammed on Thursday morning."
+        },
+        {
+          "id": "en-listen-monday-predictions-q6",
+          "kind": "choice",
+          "prompt": "How did Jonas collect his winnings?",
+          "options": [
+            "Without a word",
+            "With a speech",
+            "He never did",
+            "He bought coffee"
+          ],
+          "answers": [
+            "Without a word"
+          ],
+          "explain": "He collected his ten euros without a word — the quiet winner."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:future-forms",
+        "function:make-future-plans"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-listen-office-rumours",
+      "languageID": "en",
+      "title": "The rumour mill",
+      "level": "B1",
+      "topic": "work",
+      "unitID": "en-foundations-change",
+      "text": "Carmen came back from one day off and the office had invented three futures. 'Marco said the company was moving to Lisbon,' whispered Diego. 'Lena told me they were hiring twenty people,' said Carmen. 'And Priya swears she heard we were all getting new laptops.' Carmen put down her bag and applied the office rule: trace every rumour to its source. The Lisbon story started with a photo Marco took of a moving van — which was moving his neighbour's piano. The twenty hires were real, but Lena had read 'over the next five years' and skipped that part. And the laptops were true: an email had gone out at seven that morning. One truth, one exaggeration, one piano.",
+      "questions": [
+        {
+          "id": "en-listen-office-rumours-q1",
+          "kind": "choice",
+          "prompt": "How many futures had the office invented?",
+          "options": [
+            "Three",
+            "Two",
+            "Five",
+            "One"
+          ],
+          "answers": [
+            "Three"
+          ],
+          "explain": "The office had invented three futures in one day."
+        },
+        {
+          "id": "en-listen-office-rumours-q2",
+          "kind": "written",
+          "prompt": "What did Marco say, according to Diego?",
+          "answers": [
+            "the company was moving to lisbon",
+            "they were moving to lisbon",
+            "the company was moving"
+          ],
+          "explain": "Marco said the company was moving to Lisbon."
+        },
+        {
+          "id": "en-listen-office-rumours-q3",
+          "kind": "choice",
+          "prompt": "What was the moving van actually moving?",
+          "options": [
+            "A piano",
+            "Office furniture",
+            "Twenty laptops",
+            "Files"
+          ],
+          "answers": [
+            "A piano"
+          ],
+          "explain": "Marco's photo showed his neighbour's piano being moved."
+        },
+        {
+          "id": "en-listen-office-rumours-q4",
+          "kind": "written",
+          "prompt": "What was true about the twenty hires?",
+          "answers": [
+            "over the next five years",
+            "they were real but over five years",
+            "over five years"
+          ],
+          "explain": "Real — but 'over the next five years', which Lena skipped."
+        },
+        {
+          "id": "en-listen-office-rumours-q5",
+          "kind": "choice",
+          "prompt": "Which rumour was completely true?",
+          "options": [
+            "The new laptops",
+            "Lisbon",
+            "Twenty hires immediately",
+            "None"
+          ],
+          "answers": [
+            "The new laptops"
+          ],
+          "explain": "An email had gone out at seven that morning."
+        },
+        {
+          "id": "en-listen-office-rumours-q6",
+          "kind": "choice",
+          "prompt": "What is the office rule Carmen applies?",
+          "options": [
+            "Trace every rumour to its source",
+            "Never believe Lena",
+            "Ignore all emails",
+            "Trust Diego"
+          ],
+          "answers": [
+            "Trace every rumour to its source"
+          ],
+          "explain": "Her rule: trace every rumour to its source."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:reported-speech-basic",
+        "grammar:future-forms",
+        "vocab:work"
+      ],
+      "exposureSkills": []
+    },
+    {
       "id": "en-listen-grandpas-garden",
       "languageID": "en",
       "title": "Grandpa's garden",

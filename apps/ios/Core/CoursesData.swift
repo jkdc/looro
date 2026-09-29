@@ -1283,6 +1283,103 @@ public enum CoursesData {
                             Exercise(id: "en-foundations-connections-connectors-e2", kind: "gap", prompt: "It was raining, ___ we stayed in. (result)", options: [], answers: ["so"], explain: "so introduces the result."),
                             Exercise(id: "en-foundations-connections-connectors-e3", kind: "order", prompt: "Give the reason for leaving.", options: [], answers: ["We left because it was full"], explain: "result + because + reason."),
                             Exercise(id: "en-foundations-connections-connectors-e4", kind: "written", prompt: "Fix: “The plan works, however it's slow.” (punctuation)", options: [], answers: ["the plan works however it's slow", "the plan works however it is slow"], explain: "However needs a stronger break: “The plan works. However, it's slow.”")], skills: ["grammar:connectors", "function:express-opinion", "speaking:justify-opinion", "writing:argument"], canDo: ["express-opinion"], prerequisites: ["grammar:present-simple"])]),
+            CourseUnit(id: "en-foundations-change", title: "Changes", subtitle: "Will, rumours, phrasal verbs", level: "B1", themes: [
+                    ConversationTheme("weather-pool", "The office pool", "What will happen?", "cloud.sun", "Course", "You and your colleagues bet on next week: weather, results, deadlines. Make predictions and defend them.", 0),
+                    ConversationTheme("rumour-mill", "The rumour mill", "Who said what?", "person.2.wave.2", "Course", "Office news travels fast: report what people said, and work out what is actually true.", 1)], lessons: [
+                    Lesson(id: "en-foundations-change-will", title: "Will: decisions & promises", goal: "Use will for spontaneous decisions, offers, promises and predictions without evidence.",
+                        intro: LessonIntro(explanation: [
+                            "Will is for the moment of speaking: “The phone's ringing — I'll get it!” The decision happens as you talk.",
+                            "It also covers promises and offers: “I'll always be there for you.” “I'll carry that for you.” And predictions without evidence: “You'll love this film.”",
+                            "Contrast with going to: going to = already decided before speaking (“I'm going to study tonight”); will = decided now (“OK, I'll study with you”).",
+                            "Negative: won't. Question: “Will you help me?” Never “will to help”."], examples: [
+                            ExampleLine(text: "The phone's ringing — I'll get it!", meaning: "Decision at the moment of speaking."),
+                            ExampleLine(text: "I'll carry that for you.", meaning: "An offer."),
+                            ExampleLine(text: "I won't tell anyone, promise.", meaning: "A promise."),
+                            ExampleLine(text: "Don't worry, you'll pass.", meaning: "A prediction, no evidence given."),
+                            ExampleLine(text: "Shall I open the window? — Good idea, I'll close the door.", meaning: "Offers and instant decisions."),
+                            ExampleLine(text: "I'm going to study tonight. — Great, I'll join you.", meaning: "Plan vs decision now.")]),
+                        expressions: [
+                            TargetExpression(text: "I'll + verb", meaning: "Decision now, offer.", note: "I'll get the door."),
+                            TargetExpression(text: "I won't + verb", meaning: "Promise not to.", note: "I won't be late."),
+                            TargetExpression(text: "You'll love / it'll work", meaning: "Prediction without evidence.", note: "Contrast: it's going to rain (clouds!)."),
+                            TargetExpression(text: "Will you …?", meaning: "Request or prediction question.", note: "Will you help me?"),
+                            TargetExpression(text: "I think / probably + will", meaning: "Soften predictions.", note: "It'll probably rain."),
+                            TargetExpression(text: "vs going to", meaning: "Decided now vs decided before.", note: "Both futures, different moments.")],
+                        situation: "A friend's flat has a small crisis (broken lamp, hungry cat, empty fridge): make instant offers, promises and confident predictions as events unfold.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "The doorbell rings while you're both cooking. Offer to answer.", expected: ["I'll get it!", "I'll answer it!"], focus: "decision now", watch: "“I'm going to get it” sounds pre-planned — the ring is news."),
+                                PracticeQuestion(prompt: "Promise your friend you won't be late tomorrow.", expected: ["I won't be late.", "I promise I won't be late."], focus: "promise", watch: "“I won't to be” — won't + base verb."),
+                                PracticeQuestion(prompt: "No evidence yet: predict your friend will love the film.", expected: ["You'll love the film.", "You're going to love it? no — use will: You'll love it."], focus: "bare prediction", watch: "Without evidence, will is the natural choice."),
+                                PracticeQuestion(prompt: "Offer to carry the heavy boxes.", expected: ["I'll carry the boxes.", "I'll carry them for you."], focus: "offers", watch: "“I carry them” — English needs will for the offer."),
+                                PracticeQuestion(prompt: "Soften your prediction about tonight's traffic. (probably)", expected: ["It'll probably be terrible.", "Traffic will probably be bad."], focus: "probably + will", watch: "probably goes before will: “will probably be”."),
+                                PracticeQuestion(prompt: "Your friend says “I'm going to clean the kitchen”. Join in spontaneously.", expected: ["OK, I'll clean the bathroom!", "I'll help you then."], focus: "plan vs decision", watch: "Their plan = going to; your reaction = will.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-change-will-e1", kind: "choice", prompt: "The phone's ringing — I ___ answer it.", options: ["'ll", "going to", "am", "do"], answers: ["'ll"], explain: "A decision at the moment of speaking takes will."),
+                            Exercise(id: "en-foundations-change-will-e2", kind: "gap", prompt: "Don't worry, you ___ ___ fail. (negative promise)", options: [], answers: ["will not", "won't"], explain: "won't + base verb."),
+                            Exercise(id: "en-foundations-change-will-e3", kind: "order", prompt: "Make a confident prediction.", options: [], answers: ["You will love this film"], explain: "will + base verb, no evidence needed."),
+                            Exercise(id: "en-foundations-change-will-e4", kind: "written", prompt: "Your hands are full. Offer to be helped… no: offer help with the door.", options: [], answers: ["i'll open the door", "i will open the door", "i'll get the door"], explain: "I'll + verb for instant offers.")], skills: ["grammar:future-forms", "function:make-future-plans", "function:describe-goals", "speaking:short-answer"], canDo: ["make-future-plans"], prerequisites: ["grammar:verb-be", "grammar:going-to"]),
+                    Lesson(id: "en-foundations-change-reported", title: "He said he was busy", goal: "Report what people said with said/thought + a tense shift back.",
+                        intro: LessonIntro(explanation: [
+                            "Direct: “I'm busy.” Reported: “He said he was busy.” The present shifts one step into the past.",
+                            "Common shifts: am/is → was, are → were, will → would, can → could, have → had. Past simple usually stays past simple.",
+                            "Questions drop their question form: “Where do you live?” → “She asked where I lived.” No do/did, no inversion."], examples: [
+                            ExampleLine(text: "She said she was tired.", meaning: "“I am tired” → was."),
+                            ExampleLine(text: "They said they would call.", meaning: "“We will call” → would."),
+                            ExampleLine(text: "He told me he couldn't come.", meaning: "tell + person; say + (that)."),
+                            ExampleLine(text: "You said you liked my cooking!", meaning: "“I like” → liked."),
+                            ExampleLine(text: "She asked where I lived.", meaning: "Reported question, no did."),
+                            ExampleLine(text: "I thought you were leaving today.", meaning: "thought + shift.")]),
+                        expressions: [
+                            TargetExpression(text: "said (that) + shifted tense", meaning: "Report statements.", note: "He said (that) he was busy."),
+                            TargetExpression(text: "told me + shifted tense", meaning: "Report to a person.", note: "tell SOMEONE; never “said me”."),
+                            TargetExpression(text: "am/is → was", meaning: "The basic shift.", note: "“I'm here” → she said she was there."),
+                            TargetExpression(text: "will → would / can → could", meaning: "Modals step back too.", note: "“I'll help” → he'd help."),
+                            TargetExpression(text: "asked where/when/why + past", meaning: "Reported questions.", note: "No inversion, no do."),
+                            TargetExpression(text: "Rumour mode: People are saying…", meaning: "Report gossip loosely.", note: "…the office is closing. Really?")],
+                        situation: "You come back from a day off to a wall of office rumours: report who said what, and separate reliable reports from gossip.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Report: “I'm leaving the company.” (Tom, to you)", expected: ["Tom said he was leaving the company.", "Tom told me he was leaving the company."], focus: "is → was", watch: "“Tom said he is leaving” is possible in casual speech — the exam-safe form shifts to was."),
+                                PracticeQuestion(prompt: "Report: “We will announce it on Friday.” (the manager)", expected: ["The manager said they would announce it on Friday."], focus: "will → would", watch: "“said they will” — shift the modal too: would."),
+                                PracticeQuestion(prompt: "Report: “I can't find the file.” (Ana)", expected: ["Ana said she couldn't find the file.", "Ana told me she couldn't find the file."], focus: "can → could", watch: "Never “said me” — say (that) or told me."),
+                                PracticeQuestion(prompt: "Report the question: “Where do you work?”", expected: ["She asked where I worked."], focus: "reported question", watch: "No did, no inversion: “asked where did I work” is wrong."),
+                                PracticeQuestion(prompt: "Pass on gossip about the merger. (People are saying…)", expected: ["People are saying the merger is off.", "People are saying there's going to be a merger."], focus: "rumour mode", watch: "are saying keeps it vague and deniable."),
+                                PracticeQuestion(prompt: "Correct a rumour: “I thought you were leaving, but you're not.”", expected: ["I thought you were leaving, but you're still here.", "I thought you were leaving — obviously not!"], focus: "thought + shift", watch: "thought + was for the belief you had.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-change-reported-e1", kind: "choice", prompt: "She ___ she was tired.", options: ["said", "told", "says to", "spoke"], answers: ["said"], explain: "say (that) + clause; tell needs a person: told ME."),
+                            Exercise(id: "en-foundations-change-reported-e2", kind: "gap", prompt: "They said they ___ call later. (will → shift)", options: [], answers: ["would", "'d"], explain: "will steps back to would."),
+                            Exercise(id: "en-foundations-change-reported-e3", kind: "order", prompt: "Report this question. (asked / I / where / she / lived)", options: [], answers: ["She asked where I lived"], explain: "asked + question word + subject + past."),
+                            Exercise(id: "en-foundations-change-reported-e4", kind: "written", prompt: "Fix: “He said me he is busy.”", options: [], answers: ["he told me he was busy", "he said he was busy"], explain: "said me doesn't exist; and is shifts to was.")], skills: ["grammar:reported-speech-basic", "grammar:past-simple-irregular", "function:tell-a-story", "vocab:work"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"]),
+                    Lesson(id: "en-foundations-change-phrasals", title: "Phrasal verbs you already use", goal: "Master the ten everyday phrasal verbs that replace formal verbs in speech.",
+                        intro: LessonIntro(explanation: [
+                            "A phrasal verb = verb + particle with its own meaning: get up (leave the bed), give up (stop trying), look for (search). The particle changes everything.",
+                            "Separable or not: “turn it off” (separable — the pronoun goes in the middle, never at the end). “Look after the cat” (inseparable). Learn each verb's habit.",
+                            "Formal English often has a single-verb twin: find out = discover, put off = postpone. Speech prefers the phrasal; writing accepts both."], examples: [
+                            ExampleLine(text: "I get up at six even on Sundays.", meaning: "leave the bed."),
+                            ExampleLine(text: "Don't give up now!", meaning: "stop trying."),
+                            ExampleLine(text: "I'm looking for my keys.", meaning: "searching."),
+                            ExampleLine(text: "Turn it off and back on again.", meaning: "Separable: turn the computer off."),
+                            ExampleLine(text: "Can you look after the cat this weekend?", meaning: "Inseparable: take care of."),
+                            ExampleLine(text: "I found out the truth yesterday.", meaning: "= discovered.")]),
+                        expressions: [
+                            TargetExpression(text: "get up", meaning: "Leave the bed.", note: "I got up late."),
+                            TargetExpression(text: "give up", meaning: "Stop trying.", note: "give up + -ing: give up smoking."),
+                            TargetExpression(text: "look for / look after", meaning: "Search / take care of.", note: "Different meanings, same verb."),
+                            TargetExpression(text: "turn on/off (separable)", meaning: "Pronoun in the middle.", note: "turn it on, never turn on it."),
+                            TargetExpression(text: "find out", meaning: "= discover.", note: "I'll find out and tell you."),
+                            TargetExpression(text: "put off = postpone", meaning: "Formal twin exists.", note: "They put off the meeting.")],
+                        situation: "A friend is moving house: phrasal verbs everywhere — get up early, pick up boxes, look after the dog, give up the sofa, turn off the lights.",
+                        practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Say what time you leave the bed on Mondays.", expected: ["I get up at <time> on Mondays."], focus: "get up", watch: "“I get me up” — no pronoun: I get up."),
+                                PracticeQuestion(prompt: "Encourage a friend who wants to quit the gym to continue.", expected: ["Don't give up!"], focus: "give up", watch: "give up alone works: no object needed."),
+                                PracticeQuestion(prompt: "Ask someone to take care of your dog this weekend.", expected: ["Can you look after my dog this weekend?"], focus: "look after", watch: "look after ≠ look for (search)."),
+                                PracticeQuestion(prompt: "The pronoun goes in the middle: the lights / turn off / them.", expected: ["Turn them off.", "Turn off the lights.", "Turn the lights off."], focus: "separable", watch: "“Turn off them” is wrong — pronouns sit inside."),
+                                PracticeQuestion(prompt: "Say you discovered the truth yesterday. (phrasal)", expected: ["I found out the truth yesterday."], focus: "find out", watch: "found out, not “found up” or “discovered out”."),
+                                PracticeQuestion(prompt: "Say the meeting was postponed. (phrasal)", expected: ["They put off the meeting.", "The meeting was put off."], focus: "put off", watch: "put off + thing; put the meeting off also works.")]),
+                        exercises: [
+                            Exercise(id: "en-foundations-change-phrasals-e1", kind: "choice", prompt: "Can you ___ ___ my plants while I'm away?", options: ["look after", "look for", "look up", "look at"], answers: ["look after"], explain: "look after = take care of; look for = search."),
+                            Exercise(id: "en-foundations-change-phrasals-e2", kind: "gap", prompt: "Turn ___ ___ before you leave. (the lights, pronoun)", options: [], answers: ["them off", "it off"], explain: "Separable: the pronoun goes inside."),
+                            Exercise(id: "en-foundations-change-phrasals-e3", kind: "order", prompt: "Encourage your friend.", options: [], answers: ["Don't give up now"], explain: "don't give up = keep trying."),
+                            Exercise(id: "en-foundations-change-phrasals-e4", kind: "written", prompt: "Phrasal twin: “They postponed the meeting.”", options: [], answers: ["they put off the meeting", "they put the meeting off"], explain: "put off = postpone.")], skills: ["grammar:phrasal-verbs", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])]),
             CourseUnit(id: "en-foundations-viewpoints", title: "Viewpoints", subtitle: "Argue, report, imagine", level: "B2", themes: [
                     ConversationTheme("debate-club", "Debate night", "Take a side", "person.3", "Course", "You debate a topical question: state your position, imagine alternatives, report what the data says.", 0),
                     ConversationTheme("negotiation-table", "The negotiation", "Find the middle", "scale.3d", "Course", "You negotiate a work arrangement: conditions, consequences and a deal both sides can accept.", 1)], lessons: [
