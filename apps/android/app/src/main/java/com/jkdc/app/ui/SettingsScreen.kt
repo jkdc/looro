@@ -203,7 +203,8 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                                 style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
                         }
                         SettingsDivider()
-                        // Runtime provider selection + per-provider keys.
+                    }
+                    // Runtime provider selection + per-provider keys. Always visible.
                         Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(6.dp)) {
                             Text(stringResource(R.string.settings_conversation_provider),
@@ -278,7 +279,6 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                             }
                         }
                         SettingsDivider()
-                    }
                     SettingsRow(stringResource(R.string.settings_corrections_label), stringResource(R.string.settings_corrections_value))
                     SettingsDivider()
                     BasicTextField(value = prefs.interests, onValueChange = { vm.updatePreferences(prefs.copy(interests = it.take(500))) },
