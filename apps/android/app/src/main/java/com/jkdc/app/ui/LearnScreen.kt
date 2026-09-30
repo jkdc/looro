@@ -353,7 +353,7 @@ private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
                     }
                 }
             }
-            val pronTargets = lesson.skills.filter { it.startsWith("pron:") }
+            val pronTargets = if (vm.pronunciationEnabled) lesson.skills.filter { it.startsWith("pron:") } else emptyList()
             if (pronTargets.isNotEmpty()) {
                 item { DetailHeading(stringResource(R.string.lesson_pronounce_heading)) }
                 item {

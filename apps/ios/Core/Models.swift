@@ -166,6 +166,7 @@ public struct Preferences: Codable, Sendable {
     public var listeningPractice: Bool?
     public var usageMetricsEnabled: Bool?
     public var sttEngine: String?
+    public var pronunciationEnabled: Bool?
     public init() {}
 }
 

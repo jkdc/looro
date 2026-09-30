@@ -135,7 +135,7 @@ data class Preferences(
     var interests: String = "", var hasOnboarded: Boolean = false, var aiConsentVersion: Int? = null,
     var slowSpeech: Boolean? = null, var listeningPractice: Boolean? = null,
     var speechRate: Double? = null, var usageMetricsEnabled: Boolean? = null,
-    var sttEngine: String? = null
+    var sttEngine: String? = null, var pronunciationEnabled: Boolean? = null
 )
 
 /** Effective TTS multiplier: the explicit rate choice wins; legacy archives fall

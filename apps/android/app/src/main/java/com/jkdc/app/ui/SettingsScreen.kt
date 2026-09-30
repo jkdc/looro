@@ -138,6 +138,16 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                     }
                     SettingsDivider()
                     Column(Modifier.fillMaxWidth()) {
+                        SettingsSwitchRow(stringResource(R.string.settings_pronunciation_practice), "settings-pronunciation-practice",
+                            prefs.pronunciationEnabled == true, !vm.isRunning) {
+                            vm.updatePreferences(prefs.copy(pronunciationEnabled = if (it) true else null))
+                        }
+                        Text(stringResource(R.string.settings_pronunciation_hint),
+                            style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary,
+                            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp))
+                    }
+                    SettingsDivider()
+                    Column(Modifier.fillMaxWidth()) {
                         SettingsSwitchRow(stringResource(R.string.usage_metrics_title), "settings-usage-metrics",
                             prefs.usageMetricsEnabled != false, true) {
                             vm.updatePreferences(prefs.copy(usageMetricsEnabled = if (it) null else false))

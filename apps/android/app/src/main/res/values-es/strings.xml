@@ -381,6 +381,8 @@
     <string name="level_title_10">Campeón de Foundations</string>
     <string name="progress_level">Nivel</string>
     <string name="progress_listening_medals">Medallas de listening</string>
+    <string name="settings_pronunciation_practice">Práctica de pronunciación (beta)</string>
+    <string name="settings_pronunciation_hint">Añade ejercicios de pronunciación a las lecciones: escucha la voz, repite en voz alta y comprueba cómo lo dijiste.</string>
     <string name="progress_skills_heading">Habilidades</string>
     <string name="progress_skills_overall">Dominio global: %1$d%%</string>
     <string name="progress_skills_percent">%1$d%%</string>

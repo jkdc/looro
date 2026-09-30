@@ -305,6 +305,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** Appends one completion to the local ledger — the source of every progress metric.
         Marks carry the learning language; the ledger keeps only the newest marks. */
+    val pronunciationEnabled: Boolean
+        get() = archive.preferences.pronunciationEnabled == true
+
     fun recordCompletion(kind: String, rawItemID: String, bestScore: Int = 0) {
         val mark = CompletionMark(kind, ProgressEngine.completionKey(rawItemID), nowSeconds(), bestScore, language.id)
         val marks = ((archive.completions ?: mutableListOf()) + mark)
