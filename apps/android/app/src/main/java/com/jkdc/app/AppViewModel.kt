@@ -334,35 +334,37 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun foundationsCourse(): Course? = CourseRegistry.forLanguage(language.id)
         .firstOrNull { it.id.endsWith("-foundations") }
 
-    /** Monotonic counter — every ledger mutation increments it. */
+    /** Monotonic counter — every ledger mutation increments it (§7). */
     private var ledgerRevision: Long = 0
     private fun bumpLedgerRevision() { ledgerRevision++ }
 
-    /** Pre-built skill catalog index for the current language. */
-    private var cachedIndex: SkillCatalogIndex? = null
+    /** Skill catalog index, keyed by language so a language switch rebuilds it (§5). */
+    private var cachedIndex: Pair<String, SkillCatalogIndex>? = null
     private fun skillIndex(course: Course): SkillCatalogIndex {
-        if (cachedIndex == null) {
-            cachedIndex = MasteryEngine.buildIndex(course,
-                ListeningRegistry.forLanguage(language.id),
-                ReadingRegistry.forLanguage(language.id))
-        }
-        return cachedIndex!!
+        val key = language.id
+        cachedIndex?.takeIf { it.first == key }?.let { return it.second }
+        val idx = MasteryEngine.buildIndex(course,
+            ListeningRegistry.forLanguage(language.id),
+            ReadingRegistry.forLanguage(language.id))
+        cachedIndex = key to idx
+        return idx
     }
 
-    /** Skill mastery for the learning language — cached by (language, ledger
-        revision, mastery version) so new evidence or algorithm changes
-        invalidate it, but repeated queries are free. */
-    private var cachedMastery: Pair<Pair<String, Long>, MasteryStats>? = null
+    /** Memoized mastery (§9): valid only when language, ledgerRevision, and
+        masteryVersion all match (§20). */
+    private var cachedMastery: Triple<String, Pair<Long, Int>, MasteryStats>? = null
 
     fun masteryStats(): MasteryStats? = foundationsCourse()?.let { course ->
-        val key = language.id to ledgerRevision
-        cachedMastery?.takeIf { it.first == key }?.second
+        val lang = language.id
+        val rev = ledgerRevision
+        val ver = MasteryEngine.MASTERY_VERSION
+        cachedMastery?.takeIf { it.first == lang && it.second.first == rev && it.second.second == ver }?.third
             ?: MasteryEngine.stats(course,
                 ListeningRegistry.forLanguage(language.id),
                 ReadingRegistry.forLanguage(language.id),
                 archive.lessons, archive.completions.orEmpty(),
-                nowSeconds(), skillIndex(course), ledgerRevision
-            ).also { cachedMastery = key to it }
+                nowSeconds(), skillIndex(course), rev
+            ).also { cachedMastery = Triple(lang, rev to ver, it) }
     }
 
     /** A finished reading: one ledger mark with the score, same bargain as listening. */
@@ -1396,6 +1398,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         archive = archive.copy(lessons = lessons, completions = ((archive.completions ?: mutableListOf()) +
             CompletionMark(ProgressEngine.LESSON, lessonID, nowSeconds(), 0, language.id))
             .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS).toMutableList())
+        bumpLedgerRevision()
         CourseRegistry.lesson(lessonID)?.let { RecallEngine.seedFromLesson(archive, it, nowSeconds()) }
         persist()
     }
@@ -1757,7 +1760,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun exportData(): String = ArchiveCodec.encode(archive)
     fun importData(data: String): Boolean {
         if (isRunning || !storageReady) return false
-        return try { archive = ArchiveCodec.merge(archive, prepareImportedArchive(data)); persist(); notice = getApplication<Application>().getString(R.string.notice_backup_imported); true }
+        return try { archive = ArchiveCodec.merge(archive, prepareImportedArchive(data)); bumpLedgerRevision(); persist(); notice = getApplication<Application>().getString(R.string.notice_backup_imported); true }
         catch (_: Exception) { presentError(getApplication<Application>().getString(R.string.error_import_failed)); false }
     }
     override fun onCleared() { hostedBindings.disableHelpers(); transport.disconnect(); super.onCleared() }
