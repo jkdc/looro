@@ -32,6 +32,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,6 +68,7 @@ import com.jkdc.app.BuildConfig
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.LanguageRegistry
+import com.jkdc.app.core.ConversationProvider
 import com.jkdc.app.core.MeaningLanguages
 import com.jkdc.app.core.Passage
 import com.jkdc.app.core.SessionRecord
@@ -205,6 +208,30 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                             verticalArrangement = Arrangement.spacedBy(6.dp)) {
                             Text(stringResource(R.string.settings_conversation_provider),
                                 style = MaterialTheme.typography.bodyLarge, color = AppColors.Ink)
+                            Text(stringResource(R.string.settings_conversation_provider_hint),
+                                style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                            // Conversation provider: Personal key vs Hosted minutes.
+                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                OutlinedButton(
+                                    onClick = { vm.selectConversationProvider(ConversationProvider.PERSONAL_KEY) },
+                                    enabled = !vm.isRunning,
+                                    modifier = Modifier.weight(1f).testTag("provider-personal-key"),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = if (vm.conversationProvider == ConversationProvider.PERSONAL_KEY) AppColors.Secondary else AppColors.Cream,
+                                        contentColor = if (vm.conversationProvider == ConversationProvider.PERSONAL_KEY) AppColors.Cream else AppColors.Ink
+                                    )
+                                ) { Text("Your own key", style = MaterialTheme.typography.labelSmall) }
+                                OutlinedButton(
+                                    onClick = { vm.selectConversationProvider(ConversationProvider.HOSTED_MINUTES) },
+                                    enabled = !vm.isRunning,
+                                    modifier = Modifier.weight(1f).testTag("provider-hosted-minutes"),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = if (vm.conversationProvider == ConversationProvider.HOSTED_MINUTES) AppColors.Secondary else AppColors.Cream,
+                                        contentColor = if (vm.conversationProvider == ConversationProvider.HOSTED_MINUTES) AppColors.Cream else AppColors.Ink
+                                    )
+                                ) { Text("Hosted minutes", style = MaterialTheme.typography.labelSmall) }
+                            }
+                            SettingsDivider()
                             vm.localEngines.forEach { engine ->
                                 Row(Modifier.fillMaxWidth().clickable(enabled = !vm.isRunning) { vm.selectLocalEngine(engine.id) }
                                         .padding(vertical = 4.dp).testTag("engine-" + engine.id),

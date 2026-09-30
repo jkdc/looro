@@ -383,6 +383,7 @@
     <string name="progress_listening_medals">Medallas de listening</string>
     <string name="settings_pronunciation_practice">Práctica de pronunciación (beta)</string>
     <string name="settings_pronunciation_hint">Añade ejercicios de pronunciación a las lecciones: escucha la voz, repite en voz alta y comprueba cómo lo dijiste.</string>
+    <string name="settings_conversation_provider_hint">Elige quién alimenta la conversación: tu propia API key o los minutos hospedados. Necesitas "Your own key" para usar tu clave GLM.</string>
     <string name="progress_skills_heading">Habilidades</string>
     <string name="progress_skills_overall">Dominio global: %1$d%%</string>
     <string name="progress_skills_percent">%1$d%%</string>

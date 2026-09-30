@@ -383,6 +383,7 @@
     <string name="progress_listening_medals">Listening medals</string>
     <string name="settings_pronunciation_practice">Pronunciation practice (beta)</string>
     <string name="settings_pronunciation_hint">Adds pronunciation drills to lessons: listen to the voice, repeat out loud, and check how well you said it.</string>
+    <string name="settings_conversation_provider_hint">Choose who powers the conversation: your own API key or the app hosted minutes. You need "Your own key" to use your GLM key.</string>
     <string name="progress_skills_heading">Skills</string>
     <string name="progress_skills_overall">Overall mastery: %1$d%%</string>
     <string name="progress_skills_percent">%1$d%%</string>
