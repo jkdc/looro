@@ -6665,6 +6665,879 @@
       ]
     },
     {
+      "id": "en-foundations-shopping",
+      "title": "Shopping",
+      "subtitle": "Buy what you need",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "clothes-shop",
+          "title": "The clothes shop",
+          "subtitle": "Does it fit?",
+          "symbol": "tshirt",
+          "category": "Course",
+          "situation": "You buy clothes: sizes, colours, trying things on and asking about price.",
+          "colorIndex": 0
+        },
+        {
+          "id": "food-shopping",
+          "title": "Food shopping",
+          "subtitle": "How much / how many",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "You shop for a recipe: count items, ask about quantities and pay.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-shopping-clothes",
+          "title": "Buying clothes",
+          "goal": "Ask about sizes, colours and prices when shopping for clothes.",
+          "intro": {
+            "explanation": [
+              "Clothes words: shirt, trousers, dress, shoes, jacket, hat. Sizes: small (S), medium (M), large (L).",
+              "Ask: “Do you have this in a medium?” “Can I try it on?” — try on = probarse.",
+              "Colours go before the noun: “a blue shirt”, “red shoes”."
+            ],
+            "examples": [
+              {
+                "text": "Do you have this in a medium?",
+                "meaning": "Ask for a size."
+              },
+              {
+                "text": "Can I try it on?",
+                "meaning": "Ask to test."
+              },
+              {
+                "text": "How much is this jacket?",
+                "meaning": "Ask the price."
+              },
+              {
+                "text": "I'll take it!",
+                "meaning": "Decide to buy."
+              },
+              {
+                "text": "It doesn't fit. Have you got a large?",
+                "meaning": "It's the wrong size."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Do you have … in a …?",
+              "meaning": "Ask for a size.",
+              "note": "Do you have this in blue?"
+            },
+            {
+              "text": "Can I try it/them on?",
+              "meaning": "Ask to test.",
+              "note": "them for plurals."
+            },
+            {
+              "text": "How much is/are …?",
+              "meaning": "Price.",
+              "note": "How much are these shoes?"
+            },
+            {
+              "text": "I'll take it/them.",
+              "meaning": "Buy.",
+              "note": "I'll take it!"
+            },
+            {
+              "text": "It doesn't fit.",
+              "meaning": "Wrong size.",
+              "note": "Have you got a bigger one?"
+            }
+          ],
+          "situation": "You buy a jacket and shoes at a clothes shop: ask for sizes, try them on, check the price and decide.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask for a medium size jacket.",
+                "expected": [
+                  "Do you have this jacket in a medium?"
+                ],
+                "focus": "size",
+                "watch": "Have you got / Do you have + size."
+              },
+              {
+                "prompt": "Ask to try on the shoes.",
+                "expected": [
+                  "Can I try on the shoes?",
+                  "Can I try them on?"
+                ],
+                "focus": "try on",
+                "watch": "them goes in the middle for separable phrasal verbs."
+              },
+              {
+                "prompt": "Ask the price of the jeans.",
+                "expected": [
+                  "How much are the jeans?"
+                ],
+                "focus": "plural price",
+                "watch": "are for plural: How much ARE."
+              },
+              {
+                "prompt": "Decide to buy something.",
+                "expected": [
+                  "I'll take it!",
+                  "I'll take them!"
+                ],
+                "focus": "I'll take",
+                "watch": "Instant decision: will."
+              },
+              {
+                "prompt": "Say the shirt doesn't fit and ask for a bigger one.",
+                "expected": [
+                  "It doesn't fit. Have you got a bigger one?"
+                ],
+                "focus": "fit + bigger",
+                "watch": "bigger one = one more size up."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-shopping-clothes-e1",
+              "kind": "choice",
+              "prompt": "___ I try on these shoes?",
+              "explain": "Can I try on = puedo probarme.",
+              "options": [
+                "Can",
+                "Do",
+                "Am",
+                "Have"
+              ],
+              "answers": [
+                "Can"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-clothes-e2",
+              "kind": "gap",
+              "prompt": "How ___ are these shoes? (precio)",
+              "explain": "How much for price.",
+              "answers": [
+                "much"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-clothes-e3",
+              "kind": "order",
+              "prompt": "Decide to buy.",
+              "explain": "I'll take it = me lo llevo.",
+              "answers": [
+                "Ill take it"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-clothes-e4",
+              "kind": "written",
+              "prompt": "Ask for a size S.",
+              "explain": "Do you have this in a small?",
+              "answers": [
+                "do you have this in a small",
+                "have you got this in a small"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:present-questions",
+            "grammar:some-any",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:some-any"
+          ]
+        },
+        {
+          "id": "en-foundations-shopping-food",
+          "title": "Food shopping",
+          "goal": "Shop for food with how much/how many and containers.",
+          "intro": {
+            "explanation": [
+              "How many for countable: “How many apples?” How much for uncountable: “How much rice?”",
+              "Containers: a bottle of water, a bag of rice, a box of eggs, a kilo of tomatoes.",
+              "Quantifiers: some (afirmativo), any (negativo/pregunta), a lot of (mucho)."
+            ],
+            "examples": [
+              {
+                "text": "How many apples do you need?",
+                "meaning": "Countable: many."
+              },
+              {
+                "text": "How much rice do you want?",
+                "meaning": "Uncountable: much."
+              },
+              {
+                "text": "I need a bottle of water.",
+                "meaning": "Container + of."
+              },
+              {
+                "text": "We need a kilo of tomatoes.",
+                "meaning": "kilo of + plural."
+              },
+              {
+                "text": "Is there any bread left?",
+                "meaning": "any in questions."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "How many + plural",
+              "meaning": "Countable.",
+              "note": "How many eggs?"
+            },
+            {
+              "text": "How much + uncountable",
+              "meaning": "Incountable.",
+              "note": "How much milk?"
+            },
+            {
+              "text": "a bottle/bag/box of …",
+              "meaning": "Containers.",
+              "note": "a bottle of oil."
+            },
+            {
+              "text": "a kilo/half a kilo of …",
+              "meaning": "Weight.",
+              "note": "a kilo of tomatoes."
+            },
+            {
+              "text": "some / any",
+              "meaning": "some afirm, any neg/preg.",
+              "note": "I need some sugar."
+            }
+          ],
+          "situation": "You shop for a dinner party: ask how many guests, how much rice to buy and what containers you need.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask about the number of guests.",
+                "expected": [
+                  "How many guests are coming?"
+                ],
+                "focus": "how many",
+                "watch": "Countable: how many."
+              },
+              {
+                "prompt": "Ask about the amount of rice.",
+                "expected": [
+                  "How much rice do we need?"
+                ],
+                "focus": "how much",
+                "watch": "Uncountable: how much."
+              },
+              {
+                "prompt": "Say you need a bottle of oil and a kilo of rice.",
+                "expected": [
+                  "I need a bottle of oil and a kilo of rice."
+                ],
+                "focus": "containers",
+                "watch": "bottle of, kilo of."
+              },
+              {
+                "prompt": "Say you don't need any more bread.",
+                "expected": [
+                  "We don't need any more bread."
+                ],
+                "focus": "any more",
+                "watch": "any in negatives."
+              },
+              {
+                "prompt": "Di que necesitas un cartón de leche.",
+                "expected": [
+                  "I need a carton of milk."
+                ],
+                "focus": "carton of",
+                "watch": "carton = briq."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-shopping-food-e1",
+              "kind": "choice",
+              "prompt": "___ ___ sugar do you need?",
+              "explain": "sugar is uncountable.",
+              "options": [
+                "How much",
+                "How many",
+                "How long",
+                "How often"
+              ],
+              "answers": [
+                "How much"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-food-e2",
+              "kind": "gap",
+              "prompt": "How ___ eggs are in the fridge? (contable)",
+              "explain": "eggs are countable: how many.",
+              "answers": [
+                "many"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-food-e3",
+              "kind": "order",
+              "prompt": "Say what you need. (a bottle of water)",
+              "explain": "I need + container.",
+              "answers": [
+                "I need a bottle of water"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-food-e4",
+              "kind": "written",
+              "prompt": "Ask about the number of tomatoes.",
+              "explain": "How many + plural.",
+              "answers": [
+                "how many tomatoes do we need",
+                "how many tomatoes"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:quantities",
+            "grammar:some-any",
+            "vocab:food",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:some-any"
+          ]
+        },
+        {
+          "id": "en-foundations-shopping-paying",
+          "title": "Paying",
+          "goal": "Pay in shops: ask for the price, use a card or cash, ask for a receipt.",
+          "intro": {
+            "explanation": [
+              "At the till: “That's twelve fifty.” You pay by card (“Can I pay by card?”) or cash (“Here you are”).",
+              "The cashier asks: “Cash or card?” “Do you need a bag?” “Would you like a receipt?”",
+              "Change and receipts: “Here's your change.” “Would you like a receipt?”"
+            ],
+            "examples": [
+              {
+                "text": "That's twelve fifty, please.",
+                "meaning": "The cashier says the total."
+              },
+              {
+                "text": "Can I pay by card?",
+                "meaning": "Ask about payment method."
+              },
+              {
+                "text": "Here you are.",
+                "meaning": "Hand over money/card."
+              },
+              {
+                "text": "Do you need a bag?",
+                "meaning": "The cashier asks."
+              },
+              {
+                "text": "Could I have a receipt, please?",
+                "meaning": "Ask for proof."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Can I pay by card/cash?",
+              "meaning": "Payment method.",
+              "note": "Both work."
+            },
+            {
+              "text": "Here you are.",
+              "meaning": "Hand over money.",
+              "note": "Fixed phrase."
+            },
+            {
+              "text": "Do you need a bag?",
+              "meaning": "Cashier asks.",
+              "note": "Yes please / No thanks."
+            },
+            {
+              "text": "receipt",
+              "meaning": "Proof of purchase.",
+              "note": "ri-siit."
+            },
+            {
+              "text": "Keep the change.",
+              "meaning": "Let the cashier keep it.",
+              "note": "Generous tip."
+            }
+          ],
+          "situation": "You pay at a small shop: ask if they take cards, pay, ask for a receipt and a bag, and thank the cashier.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ask if they accept cards.",
+                "expected": [
+                  "Can I pay by card?"
+                ],
+                "focus": "payment",
+                "watch": "Can I pay by card? = ¿puedo pagar con tarjeta?"
+              },
+              {
+                "prompt": "Hand over the money.",
+                "expected": [
+                  "Here you are."
+                ],
+                "focus": "hand over",
+                "watch": "Fixed phrase: here you are."
+              },
+              {
+                "prompt": "Ask for a bag. (yes)",
+                "expected": [
+                  "Yes, could I have a bag, please?"
+                ],
+                "focus": "bag",
+                "watch": "Could I have = más educado."
+              },
+              {
+                "prompt": "Say keep the change.",
+                "expected": [
+                  "Keep the change."
+                ],
+                "focus": "generous",
+                "watch": "Se dice al dejar propina o cambio."
+              },
+              {
+                "prompt": "Ask about a discount.",
+                "expected": [
+                  "Is there a discount?"
+                ],
+                "focus": "discount",
+                "watch": "discount = descuento."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-shopping-paying-e1",
+              "kind": "choice",
+              "prompt": "___ I pay by card?",
+              "explain": "Can I pay by card? — fixed.",
+              "options": [
+                "Can",
+                "Do",
+                "Am",
+                "Have"
+              ],
+              "answers": [
+                "Can"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-paying-e2",
+              "kind": "gap",
+              "prompt": "Here ___ ___. (entregar el dinero)",
+              "explain": "Here you are — fixed phrase.",
+              "answers": [
+                "you are"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-paying-e3",
+              "kind": "order",
+              "prompt": "Pedir un recibo.",
+              "explain": "Could I have + thing + please.",
+              "answers": [
+                "Could I have a receipt please"
+              ]
+            },
+            {
+              "id": "en-foundations-shopping-paying-e4",
+              "kind": "written",
+              "prompt": "Pregunta si puedes pagar con tarjeta.",
+              "explain": "Can I pay by card?",
+              "answers": [
+                "can i pay by card",
+                "can i pay with card"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:present-questions",
+            "vocab:shopping",
+            "function:make-requests"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-questions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-home",
+      "title": "My home",
+      "subtitle": "Rooms, things, comfort",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "new-flat",
+          "title": "The new flat",
+          "subtitle": "Rooms and furniture",
+          "symbol": "sofa",
+          "category": "Course",
+          "situation": "You describe your new flat: rooms, furniture and what's missing.",
+          "colorIndex": 0
+        },
+        {
+          "id": "home-problems",
+          "title": "Home problems",
+          "subtitle": "Something's broken",
+          "symbol": "wrench",
+          "category": "Course",
+          "situation": "Things break in your flat: describe the problem and ask for help.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-home-rooms",
+          "title": "Rooms & furniture",
+          "goal": "Name the rooms in a home and the furniture in each one.",
+          "intro": {
+            "explanation": [
+              "Rooms: living room, bedroom, kitchen, bathroom, hall. Furniture: bed, sofa, table, chair, wardrobe, fridge.",
+              "There is/There are for what exists: “There's a sofa in the living room.” “There are two chairs.”",
+              "Prepositions: in, on, under, next to, behind. “The cat is under the bed.”"
+            ],
+            "examples": [
+              {
+                "text": "There's a sofa in the living room.",
+                "meaning": "there's + a + furniture."
+              },
+              {
+                "text": "There are two chairs at the table.",
+                "meaning": "there are + plural."
+              },
+              {
+                "text": "The bed is next to the window.",
+                "meaning": "next to + place."
+              },
+              {
+                "text": "My favourite room is the kitchen.",
+                "meaning": "favourite + room."
+              },
+              {
+                "text": "Is there a bathroom upstairs?",
+                "meaning": "Ask about rooms."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "living room / bedroom / kitchen",
+              "meaning": "Rooms.",
+              "note": "Each has its furniture."
+            },
+            {
+              "text": "There's a … in the …",
+              "meaning": "One thing.",
+              "note": "There's a bed in the bedroom."
+            },
+            {
+              "text": "There are … in the …",
+              "meaning": "Many things.",
+              "note": "There are two chairs."
+            },
+            {
+              "text": "next to / behind / under",
+              "meaning": "Prepositions.",
+              "note": "The cat is under the bed."
+            },
+            {
+              "text": "My favourite room is …",
+              "meaning": "Personalise.",
+              "note": "…the kitchen."
+            }
+          ],
+          "situation": "You describe your new flat to a friend: rooms, furniture and your favourite corner.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Name two rooms in your flat.",
+                "expected": [
+                  "There's a <room> and a <room>."
+                ],
+                "focus": "there's",
+                "watch": "There's a bedroom and a kitchen."
+              },
+              {
+                "prompt": "Say what furniture is in the living room.",
+                "expected": [
+                  "There's a <furniture> in the living room."
+                ],
+                "focus": "there's + furniture",
+                "watch": "There's a sofa and a table."
+              },
+              {
+                "prompt": "Say where the bed is. (next to the window)",
+                "expected": [
+                  "The bed is next to the window."
+                ],
+                "focus": "next to",
+                "watch": "next TO the window."
+              },
+              {
+                "prompt": "Ask if there is a bathroom.",
+                "expected": [
+                  "Is there a bathroom?"
+                ],
+                "focus": "question",
+                "watch": "Is there a…?"
+              },
+              {
+                "prompt": "Say your favourite room.",
+                "expected": [
+                  "My favourite room is the <room>."
+                ],
+                "focus": "favourite",
+                "watch": "favourite + room."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-home-rooms-e1",
+              "kind": "choice",
+              "prompt": "___ a sofa in the living room.",
+              "explain": "Singular: There's a sofa.",
+              "options": [
+                "There's",
+                "They're",
+                "It's",
+                "There are"
+              ],
+              "answers": [
+                "There's"
+              ]
+            },
+            {
+              "id": "en-foundations-home-rooms-e2",
+              "kind": "gap",
+              "prompt": "There ___ two bathrooms. (plural)",
+              "explain": "There are + plural.",
+              "answers": [
+                "are"
+              ]
+            },
+            {
+              "id": "en-foundations-home-rooms-e3",
+              "kind": "order",
+              "prompt": "Ask about a bathroom.",
+              "explain": "Is there + a + room?",
+              "answers": [
+                "Is there a bathroom upstairs"
+              ]
+            },
+            {
+              "id": "en-foundations-home-rooms-e4",
+              "kind": "written",
+              "prompt": "Name your favourite room.",
+              "explain": "My favourite room is X.",
+              "answers": [
+                "my favourite room is the <room>"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:home",
+            "grammar:there-is-are",
+            "grammar:prepositions-place",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "en-foundations-home-problems",
+          "title": "Home problems",
+          "goal": "Describe problems at home: something's broken, not working, or missing.",
+          "intro": {
+            "explanation": [
+              "Broken things: “The washing machine is broken.” “The light doesn't work.” “The tap is leaking.”",
+              "Ask for help: “Can you fix it?” “Who do I call?” — fix = repair.",
+              "Emergency vs nuisance: “The heating is broken!” (urgent) vs “The doorbell doesn't work.” (annoying)"
+            ],
+            "examples": [
+              {
+                "text": "The washing machine is broken.",
+                "meaning": "broken = roto."
+              },
+              {
+                "text": "The light doesn't work.",
+                "meaning": "doesn't work = no funciona."
+              },
+              {
+                "text": "The tap is leaking.",
+                "meaning": "leaking = goteando."
+              },
+              {
+                "text": "Can you fix it?",
+                "meaning": "Ask for repair."
+              },
+              {
+                "text": "It's been like this for a week.",
+                "meaning": "Duration of the problem."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "… is broken",
+              "meaning": "Not working at all.",
+              "note": "The TV is broken."
+            },
+            {
+              "text": "… doesn't work",
+              "meaning": "Not functioning.",
+              "note": "The doorbell doesn't work."
+            },
+            {
+              "text": "… is leaking",
+              "meaning": "Losing liquid.",
+              "note": "The tap is leaking."
+            },
+            {
+              "text": "Can you fix …?",
+              "meaning": "Ask for repair.",
+              "note": "fix = reparar."
+            },
+            {
+              "text": "It's been like this for …",
+              "meaning": "Duration.",
+              "note": "for three days."
+            }
+          ],
+          "situation": "Three things break in your flat on the same day: the boiler, a window and the doorbell. Explain each problem and ask for help.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say the boiler is broken.",
+                "expected": [
+                  "The boiler is broken."
+                ],
+                "focus": "broken",
+                "watch": "broken = roto, no funciona."
+              },
+              {
+                "prompt": "Say the tap is leaking.",
+                "expected": [
+                  "The tap is leaking."
+                ],
+                "focus": "leaking",
+                "watch": "leak = gotear."
+              },
+              {
+                "prompt": "Say the doorbell doesn't work.",
+                "expected": [
+                  "The doorbell doesn't work."
+                ],
+                "focus": "doesn't work",
+                "watch": "doesn't + base verb."
+              },
+              {
+                "prompt": "Say how long the problem has been going on. (3 days)",
+                "expected": [
+                  "It's been like this for three days."
+                ],
+                "focus": "duration",
+                "watch": "for + period."
+              },
+              {
+                "prompt": "Ask for help urgently.",
+                "expected": [
+                  "Can you send someone today, please?"
+                ],
+                "focus": "urgent request",
+                "watch": "send someone = mandar a alguien."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-home-problems-e1",
+              "kind": "choice",
+              "prompt": "The washing machine is ___. It doesn't work.",
+              "explain": "broken = roto, no funciona.",
+              "options": [
+                "broken",
+                "working",
+                "new",
+                "clean"
+              ],
+              "answers": [
+                "broken"
+              ]
+            },
+            {
+              "id": "en-foundations-home-problems-e2",
+              "kind": "gap",
+              "prompt": "The ___ is leaking. (grifo)",
+              "explain": "tap = grifo.",
+              "answers": [
+                "tap",
+                "faucet"
+              ]
+            },
+            {
+              "id": "en-foundations-home-problems-e3",
+              "kind": "order",
+              "prompt": "Pedir que lo arreglen.",
+              "explain": "Can you fix + object.",
+              "answers": [
+                "Can you fix it please"
+              ]
+            },
+            {
+              "id": "en-foundations-home-problems-e4",
+              "kind": "written",
+              "prompt": "Di cuánto tiempo lleva el problema. (3 días)",
+              "explain": "for + period.",
+              "answers": [
+                "its been like this for three days",
+                "for three days"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:home",
+            "grammar:present-simple",
+            "grammar:present-continuous",
+            "function:solve-problems"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-continuous"
+          ]
+        }
+      ]
+    },
+    {
       "id": "en-foundations-u5",
       "title": "Food & likes",
       "subtitle": "Eat, drink, enjoy",

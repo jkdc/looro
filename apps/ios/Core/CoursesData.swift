@@ -1489,6 +1489,158 @@ public enum EnFoundationsMeals {
                             Exercise(id: "en-foundations-meals-restaurant-e4", kind: "written", prompt: "Ask what is in the paella.", options: [], answers: ["whats in the paella", "what is in the paella"], explain: "What's in + dish?")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "function:make-requests"], canDo: ["order-food"], prerequisites: ["grammar:some-any"])])
 }
 
+public enum EnFoundationsShopping {
+    public static let unit: CourseUnit = CourseUnit(id: "en-foundations-shopping", title: "Shopping", subtitle: "Buy what you need", level: "A1", themes: [
+                    ConversationTheme("clothes-shop", "The clothes shop", "Does it fit?", "tshirt", "Course", "You buy clothes: sizes, colours, trying things on and asking about price.", 0),
+                    ConversationTheme("food-shopping", "Food shopping", "How much / how many", "cart", "Course", "You shop for a recipe: count items, ask about quantities and pay.", 1)], lessons: [
+            Lesson(id: "en-foundations-shopping-clothes", title: "Buying clothes", goal: "Ask about sizes, colours and prices when shopping for clothes.",
+                intro: LessonIntro(explanation: [
+                            "Clothes words: shirt, trousers, dress, shoes, jacket, hat. Sizes: small (S), medium (M), large (L).",
+                            "Ask: “Do you have this in a medium?” “Can I try it on?” — try on = probarse.",
+                            "Colours go before the noun: “a blue shirt”, “red shoes”."], examples: [
+                            ExampleLine(text: "Do you have this in a medium?", meaning: "Ask for a size."),
+                            ExampleLine(text: "Can I try it on?", meaning: "Ask to test."),
+                            ExampleLine(text: "How much is this jacket?", meaning: "Ask the price."),
+                            ExampleLine(text: "I'll take it!", meaning: "Decide to buy."),
+                            ExampleLine(text: "It doesn't fit. Have you got a large?", meaning: "It's the wrong size.")]),
+                expressions: [
+                            TargetExpression(text: "Do you have … in a …?", meaning: "Ask for a size.", note: "Do you have this in blue?"),
+                            TargetExpression(text: "Can I try it/them on?", meaning: "Ask to test.", note: "them for plurals."),
+                            TargetExpression(text: "How much is/are …?", meaning: "Price.", note: "How much are these shoes?"),
+                            TargetExpression(text: "I'll take it/them.", meaning: "Buy.", note: "I'll take it!"),
+                            TargetExpression(text: "It doesn't fit.", meaning: "Wrong size.", note: "Have you got a bigger one?")],
+                situation: "You buy a jacket and shoes at a clothes shop: ask for sizes, try them on, check the price and decide.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ask for a medium size jacket.", expected: ["Do you have this jacket in a medium?"], focus: "size", watch: "Have you got / Do you have + size."),
+                                PracticeQuestion(prompt: "Ask to try on the shoes.", expected: ["Can I try on the shoes?", "Can I try them on?"], focus: "try on", watch: "them goes in the middle for separable phrasal verbs."),
+                                PracticeQuestion(prompt: "Ask the price of the jeans.", expected: ["How much are the jeans?"], focus: "plural price", watch: "are for plural: How much ARE."),
+                                PracticeQuestion(prompt: "Decide to buy something.", expected: ["I'll take it!", "I'll take them!"], focus: "I'll take", watch: "Instant decision: will."),
+                                PracticeQuestion(prompt: "Say the shirt doesn't fit and ask for a bigger one.", expected: ["It doesn't fit. Have you got a bigger one?"], focus: "fit + bigger", watch: "bigger one = one more size up.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-shopping-clothes-e1", kind: "choice", prompt: "___ I try on these shoes?", options: ["Can", "Do", "Am", "Have"], answers: ["Can"], explain: "Can I try on = puedo probarme."),
+                            Exercise(id: "en-foundations-shopping-clothes-e2", kind: "gap", prompt: "How ___ are these shoes? (precio)", options: [], answers: ["much"], explain: "How much for price."),
+                            Exercise(id: "en-foundations-shopping-clothes-e3", kind: "order", prompt: "Decide to buy.", options: [], answers: ["Ill take it"], explain: "I'll take it = me lo llevo."),
+                            Exercise(id: "en-foundations-shopping-clothes-e4", kind: "written", prompt: "Ask for a size S.", options: [], answers: ["do you have this in a small", "have you got this in a small"], explain: "Do you have this in a small?")], skills: ["function:go-shopping", "grammar:present-questions", "grammar:some-any", "vocab:shopping"], canDo: ["go-shopping"], prerequisites: ["grammar:some-any"]),
+            Lesson(id: "en-foundations-shopping-food", title: "Food shopping", goal: "Shop for food with how much/how many and containers.",
+                intro: LessonIntro(explanation: [
+                            "How many for countable: “How many apples?” How much for uncountable: “How much rice?”",
+                            "Containers: a bottle of water, a bag of rice, a box of eggs, a kilo of tomatoes.",
+                            "Quantifiers: some (afirmativo), any (negativo/pregunta), a lot of (mucho)."], examples: [
+                            ExampleLine(text: "How many apples do you need?", meaning: "Countable: many."),
+                            ExampleLine(text: "How much rice do you want?", meaning: "Uncountable: much."),
+                            ExampleLine(text: "I need a bottle of water.", meaning: "Container + of."),
+                            ExampleLine(text: "We need a kilo of tomatoes.", meaning: "kilo of + plural."),
+                            ExampleLine(text: "Is there any bread left?", meaning: "any in questions.")]),
+                expressions: [
+                            TargetExpression(text: "How many + plural", meaning: "Countable.", note: "How many eggs?"),
+                            TargetExpression(text: "How much + uncountable", meaning: "Incountable.", note: "How much milk?"),
+                            TargetExpression(text: "a bottle/bag/box of …", meaning: "Containers.", note: "a bottle of oil."),
+                            TargetExpression(text: "a kilo/half a kilo of …", meaning: "Weight.", note: "a kilo of tomatoes."),
+                            TargetExpression(text: "some / any", meaning: "some afirm, any neg/preg.", note: "I need some sugar.")],
+                situation: "You shop for a dinner party: ask how many guests, how much rice to buy and what containers you need.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ask about the number of guests.", expected: ["How many guests are coming?"], focus: "how many", watch: "Countable: how many."),
+                                PracticeQuestion(prompt: "Ask about the amount of rice.", expected: ["How much rice do we need?"], focus: "how much", watch: "Uncountable: how much."),
+                                PracticeQuestion(prompt: "Say you need a bottle of oil and a kilo of rice.", expected: ["I need a bottle of oil and a kilo of rice."], focus: "containers", watch: "bottle of, kilo of."),
+                                PracticeQuestion(prompt: "Say you don't need any more bread.", expected: ["We don't need any more bread."], focus: "any more", watch: "any in negatives."),
+                                PracticeQuestion(prompt: "Di que necesitas un cartón de leche.", expected: ["I need a carton of milk."], focus: "carton of", watch: "carton = briq.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-shopping-food-e1", kind: "choice", prompt: "___ ___ sugar do you need?", options: ["How much", "How many", "How long", "How often"], answers: ["How much"], explain: "sugar is uncountable."),
+                            Exercise(id: "en-foundations-shopping-food-e2", kind: "gap", prompt: "How ___ eggs are in the fridge? (contable)", options: [], answers: ["many"], explain: "eggs are countable: how many."),
+                            Exercise(id: "en-foundations-shopping-food-e3", kind: "order", prompt: "Say what you need. (a bottle of water)", options: [], answers: ["I need a bottle of water"], explain: "I need + container."),
+                            Exercise(id: "en-foundations-shopping-food-e4", kind: "written", prompt: "Ask about the number of tomatoes.", options: [], answers: ["how many tomatoes do we need", "how many tomatoes"], explain: "How many + plural.")], skills: ["grammar:quantities", "grammar:some-any", "vocab:food", "function:go-shopping"], canDo: ["go-shopping"], prerequisites: ["grammar:some-any"]),
+            Lesson(id: "en-foundations-shopping-paying", title: "Paying", goal: "Pay in shops: ask for the price, use a card or cash, ask for a receipt.",
+                intro: LessonIntro(explanation: [
+                            "At the till: “That's twelve fifty.” You pay by card (“Can I pay by card?”) or cash (“Here you are”).",
+                            "The cashier asks: “Cash or card?” “Do you need a bag?” “Would you like a receipt?”",
+                            "Change and receipts: “Here's your change.” “Would you like a receipt?”"], examples: [
+                            ExampleLine(text: "That's twelve fifty, please.", meaning: "The cashier says the total."),
+                            ExampleLine(text: "Can I pay by card?", meaning: "Ask about payment method."),
+                            ExampleLine(text: "Here you are.", meaning: "Hand over money/card."),
+                            ExampleLine(text: "Do you need a bag?", meaning: "The cashier asks."),
+                            ExampleLine(text: "Could I have a receipt, please?", meaning: "Ask for proof.")]),
+                expressions: [
+                            TargetExpression(text: "Can I pay by card/cash?", meaning: "Payment method.", note: "Both work."),
+                            TargetExpression(text: "Here you are.", meaning: "Hand over money.", note: "Fixed phrase."),
+                            TargetExpression(text: "Do you need a bag?", meaning: "Cashier asks.", note: "Yes please / No thanks."),
+                            TargetExpression(text: "receipt", meaning: "Proof of purchase.", note: "ri-siit."),
+                            TargetExpression(text: "Keep the change.", meaning: "Let the cashier keep it.", note: "Generous tip.")],
+                situation: "You pay at a small shop: ask if they take cards, pay, ask for a receipt and a bag, and thank the cashier.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ask if they accept cards.", expected: ["Can I pay by card?"], focus: "payment", watch: "Can I pay by card? = ¿puedo pagar con tarjeta?"),
+                                PracticeQuestion(prompt: "Hand over the money.", expected: ["Here you are."], focus: "hand over", watch: "Fixed phrase: here you are."),
+                                PracticeQuestion(prompt: "Ask for a bag. (yes)", expected: ["Yes, could I have a bag, please?"], focus: "bag", watch: "Could I have = más educado."),
+                                PracticeQuestion(prompt: "Say keep the change.", expected: ["Keep the change."], focus: "generous", watch: "Se dice al dejar propina o cambio."),
+                                PracticeQuestion(prompt: "Ask about a discount.", expected: ["Is there a discount?"], focus: "discount", watch: "discount = descuento.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-shopping-paying-e1", kind: "choice", prompt: "___ I pay by card?", options: ["Can", "Do", "Am", "Have"], answers: ["Can"], explain: "Can I pay by card? — fixed."),
+                            Exercise(id: "en-foundations-shopping-paying-e2", kind: "gap", prompt: "Here ___ ___. (entregar el dinero)", options: [], answers: ["you are"], explain: "Here you are — fixed phrase."),
+                            Exercise(id: "en-foundations-shopping-paying-e3", kind: "order", prompt: "Pedir un recibo.", options: [], answers: ["Could I have a receipt please"], explain: "Could I have + thing + please."),
+                            Exercise(id: "en-foundations-shopping-paying-e4", kind: "written", prompt: "Pregunta si puedes pagar con tarjeta.", options: [], answers: ["can i pay by card", "can i pay with card"], explain: "Can I pay by card?")], skills: ["function:go-shopping", "grammar:present-questions", "vocab:shopping", "function:make-requests"], canDo: ["go-shopping"], prerequisites: ["grammar:present-questions"])])
+}
+
+public enum EnFoundationsHome {
+    public static let unit: CourseUnit = CourseUnit(id: "en-foundations-home", title: "My home", subtitle: "Rooms, things, comfort", level: "A1", themes: [
+                    ConversationTheme("new-flat", "The new flat", "Rooms and furniture", "sofa", "Course", "You describe your new flat: rooms, furniture and what's missing.", 0),
+                    ConversationTheme("home-problems", "Home problems", "Something's broken", "wrench", "Course", "Things break in your flat: describe the problem and ask for help.", 1)], lessons: [
+            Lesson(id: "en-foundations-home-rooms", title: "Rooms & furniture", goal: "Name the rooms in a home and the furniture in each one.",
+                intro: LessonIntro(explanation: [
+                            "Rooms: living room, bedroom, kitchen, bathroom, hall. Furniture: bed, sofa, table, chair, wardrobe, fridge.",
+                            "There is/There are for what exists: “There's a sofa in the living room.” “There are two chairs.”",
+                            "Prepositions: in, on, under, next to, behind. “The cat is under the bed.”"], examples: [
+                            ExampleLine(text: "There's a sofa in the living room.", meaning: "there's + a + furniture."),
+                            ExampleLine(text: "There are two chairs at the table.", meaning: "there are + plural."),
+                            ExampleLine(text: "The bed is next to the window.", meaning: "next to + place."),
+                            ExampleLine(text: "My favourite room is the kitchen.", meaning: "favourite + room."),
+                            ExampleLine(text: "Is there a bathroom upstairs?", meaning: "Ask about rooms.")]),
+                expressions: [
+                            TargetExpression(text: "living room / bedroom / kitchen", meaning: "Rooms.", note: "Each has its furniture."),
+                            TargetExpression(text: "There's a … in the …", meaning: "One thing.", note: "There's a bed in the bedroom."),
+                            TargetExpression(text: "There are … in the …", meaning: "Many things.", note: "There are two chairs."),
+                            TargetExpression(text: "next to / behind / under", meaning: "Prepositions.", note: "The cat is under the bed."),
+                            TargetExpression(text: "My favourite room is …", meaning: "Personalise.", note: "…the kitchen.")],
+                situation: "You describe your new flat to a friend: rooms, furniture and your favourite corner.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Name two rooms in your flat.", expected: ["There's a <room> and a <room>."], focus: "there's", watch: "There's a bedroom and a kitchen."),
+                                PracticeQuestion(prompt: "Say what furniture is in the living room.", expected: ["There's a <furniture> in the living room."], focus: "there's + furniture", watch: "There's a sofa and a table."),
+                                PracticeQuestion(prompt: "Say where the bed is. (next to the window)", expected: ["The bed is next to the window."], focus: "next to", watch: "next TO the window."),
+                                PracticeQuestion(prompt: "Ask if there is a bathroom.", expected: ["Is there a bathroom?"], focus: "question", watch: "Is there a…?"),
+                                PracticeQuestion(prompt: "Say your favourite room.", expected: ["My favourite room is the <room>."], focus: "favourite", watch: "favourite + room.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-home-rooms-e1", kind: "choice", prompt: "___ a sofa in the living room.", options: ["There's", "They're", "It's", "There are"], answers: ["There's"], explain: "Singular: There's a sofa."),
+                            Exercise(id: "en-foundations-home-rooms-e2", kind: "gap", prompt: "There ___ two bathrooms. (plural)", options: [], answers: ["are"], explain: "There are + plural."),
+                            Exercise(id: "en-foundations-home-rooms-e3", kind: "order", prompt: "Ask about a bathroom.", options: [], answers: ["Is there a bathroom upstairs"], explain: "Is there + a + room?"),
+                            Exercise(id: "en-foundations-home-rooms-e4", kind: "written", prompt: "Name your favourite room.", options: [], answers: ["my favourite room is the <room>"], explain: "My favourite room is X.")], skills: ["vocab:home", "grammar:there-is-are", "grammar:prepositions-place", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "en-foundations-home-problems", title: "Home problems", goal: "Describe problems at home: something's broken, not working, or missing.",
+                intro: LessonIntro(explanation: [
+                            "Broken things: “The washing machine is broken.” “The light doesn't work.” “The tap is leaking.”",
+                            "Ask for help: “Can you fix it?” “Who do I call?” — fix = repair.",
+                            "Emergency vs nuisance: “The heating is broken!” (urgent) vs “The doorbell doesn't work.” (annoying)"], examples: [
+                            ExampleLine(text: "The washing machine is broken.", meaning: "broken = roto."),
+                            ExampleLine(text: "The light doesn't work.", meaning: "doesn't work = no funciona."),
+                            ExampleLine(text: "The tap is leaking.", meaning: "leaking = goteando."),
+                            ExampleLine(text: "Can you fix it?", meaning: "Ask for repair."),
+                            ExampleLine(text: "It's been like this for a week.", meaning: "Duration of the problem.")]),
+                expressions: [
+                            TargetExpression(text: "… is broken", meaning: "Not working at all.", note: "The TV is broken."),
+                            TargetExpression(text: "… doesn't work", meaning: "Not functioning.", note: "The doorbell doesn't work."),
+                            TargetExpression(text: "… is leaking", meaning: "Losing liquid.", note: "The tap is leaking."),
+                            TargetExpression(text: "Can you fix …?", meaning: "Ask for repair.", note: "fix = reparar."),
+                            TargetExpression(text: "It's been like this for …", meaning: "Duration.", note: "for three days.")],
+                situation: "Three things break in your flat on the same day: the boiler, a window and the doorbell. Explain each problem and ask for help.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Say the boiler is broken.", expected: ["The boiler is broken."], focus: "broken", watch: "broken = roto, no funciona."),
+                                PracticeQuestion(prompt: "Say the tap is leaking.", expected: ["The tap is leaking."], focus: "leaking", watch: "leak = gotear."),
+                                PracticeQuestion(prompt: "Say the doorbell doesn't work.", expected: ["The doorbell doesn't work."], focus: "doesn't work", watch: "doesn't + base verb."),
+                                PracticeQuestion(prompt: "Say how long the problem has been going on. (3 days)", expected: ["It's been like this for three days."], focus: "duration", watch: "for + period."),
+                                PracticeQuestion(prompt: "Ask for help urgently.", expected: ["Can you send someone today, please?"], focus: "urgent request", watch: "send someone = mandar a alguien.")]),
+                exercises: [
+                            Exercise(id: "en-foundations-home-problems-e1", kind: "choice", prompt: "The washing machine is ___. It doesn't work.", options: ["broken", "working", "new", "clean"], answers: ["broken"], explain: "broken = roto, no funciona."),
+                            Exercise(id: "en-foundations-home-problems-e2", kind: "gap", prompt: "The ___ is leaking. (grifo)", options: [], answers: ["tap", "faucet"], explain: "tap = grifo."),
+                            Exercise(id: "en-foundations-home-problems-e3", kind: "order", prompt: "Pedir que lo arreglen.", options: [], answers: ["Can you fix it please"], explain: "Can you fix + object."),
+                            Exercise(id: "en-foundations-home-problems-e4", kind: "written", prompt: "Di cuánto tiempo lleva el problema. (3 días)", options: [], answers: ["its been like this for three days", "for three days"], explain: "for + period.")], skills: ["vocab:home", "grammar:present-simple", "grammar:present-continuous", "function:solve-problems"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-continuous"])])
+}
+
 public enum EnFoundationsU5 {
     public static let unit: CourseUnit = CourseUnit(id: "en-foundations-u5", title: "Food & likes", subtitle: "Eat, drink, enjoy", level: "A2", themes: [
                     ConversationTheme("sunday-market", "The Sunday market", "Baskets and barrows", "cart", "Course", "You meet at the Sunday food market: count what's in the baskets, ask what's missing and choose what to cook.", 0),
@@ -4449,6 +4601,8 @@ EnFoundationsTown.unit,
 EnFoundationsFriends.unit,
 EnFoundationsFeelings.unit,
 EnFoundationsMeals.unit,
+EnFoundationsShopping.unit,
+EnFoundationsHome.unit,
 EnFoundationsU5.unit,
 EnFoundationsU6.unit,
 EnFoundationsCompare.unit,
