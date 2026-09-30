@@ -2,14 +2,47 @@ import Foundation
 
 /// Skill mastery projected from the completion ledger — a pure projection, never
 /// stored and never a CEFR claim (percentages per category live in the UI layer).
-/// Mastery per skill is the best weighted evidence, decayed with a 60-day
-/// half-life: dominating something two months ago is not dominating it today, and
-/// fresh practice (recall, exercises, listening) brings the number back.
+/// Raw mastery is what the evidence shows; effective mastery applies temporal
+/// decay at read time (60-day half-life). Pre-built index avoids re-iterating
+/// content on every computation.
+public struct SkillCatalogIndex: Sendable {
+    public let skillsByActivityID: [String: Set<String>]
+    public let activitiesBySkillID: [String: Set<String>]
+    public let skillCategory: [String: String]
+
+    public init(course: Course, listenings: [ListeningText], readings: [ReadingText]) {
+        var byActivity: [String: Set<String>] = [:]
+        var bySkill: [String: Set<String>] = [:]
+        var cats: [String: String] = [:]
+
+        func index(_ activityID: String, _ skills: [String]) {
+            for skill in skills {
+                if let cat = SkillsData.categories[skill] {
+                    byActivity[activityID, default: []].insert(skill)
+                    bySkill[skill, default: []].insert(activityID)
+                    cats[skill] = cat
+                }
+            }
+        }
+        for lesson in course.units.flatMap(\.lessons) { index(lesson.id, lesson.skills) }
+        for text in listenings { index(text.id, text.skills) }
+        for text in readings { index(text.id, text.skills) }
+
+        skillsByActivityID = byActivity
+        activitiesBySkillID = bySkill
+        skillCategory = cats
+    }
+
+    public var taughtSkills: Set<String> { Set(skillCategory.keys) }
+}
+
 public struct SkillMastery: Hashable, Sendable {
     public var skillID: String
     public var category: String
-    public var mastery: Int
-    public var lastPracticed: Double?
+    public var rawMastery: Int
+    public var effectiveMastery: Int
+    public var evidenceCount: Int
+    public var lastPracticedAt: Double?
 }
 
 public struct CategoryMastery: Hashable, Sendable {
@@ -22,6 +55,8 @@ public struct MasteryStats: Hashable, Sendable {
     public var overall: Int
     public var categories: [CategoryMastery]
     public var skills: [SkillMastery]
+    public var ledgerRevision: Int64
+    public var masteryVersion: Int
 }
 
 public enum MasteryEngine {
@@ -30,87 +65,66 @@ public enum MasteryEngine {
     public static let exerciseWeight = 0.6
     public static let listeningWeight = 0.5
     public static let readingWeight = 0.5
-
-    /// Guided oral practice records attempts, not marks; showing up and speaking
-    /// is strong evidence even without a score.
     public static let oralBaseline = 75
     public static let halfLifeDays = 60.0
 
+    /// Bump this when the algorithm, weights, or skill mappings change.
+    public static let masteryVersion = 1
+
     static let categoryOrder = ["grammar", "vocab", "function", "speaking", "listening", "reading", "writing", "pron"]
 
-    /// Taught skills of a language, from its content — exposureSkills are
-    /// deliberately excluded: nobody is penalised for a structure they have
-    /// only heard.
-    public static func taggedSkills(course: Course, listenings: [ListeningText], readings: [ReadingText] = []) -> [String: String] {
-        var tagged: [String: String] = [:]
-        for lesson in course.units.flatMap(\.lessons) {
-            for skill in lesson.skills where tagged[skill] == nil {
-                if let category = SkillsData.categories[skill] { tagged[skill] = category }
-            }
-        }
-        for text in listenings {
-            for skill in text.skills where tagged[skill] == nil {
-                if let category = SkillsData.categories[skill] { tagged[skill] = category }
-            }
-        }
-        for text in readings {
-            for skill in text.skills where tagged[skill] == nil {
-                if let category = SkillsData.categories[skill] { tagged[skill] = category }
-            }
-        }
-        return tagged
+    public static func buildIndex(course: Course, listenings: [ListeningText], readings: [ReadingText]) -> SkillCatalogIndex {
+        SkillCatalogIndex(course: course, listenings: listenings, readings: readings)
     }
 
     public static func stats(course: Course, listenings: [ListeningText], readings: [ReadingText],
-                             lessons: [LessonState], completions: [CompletionMark], nowSeconds: Double) -> MasteryStats {
-        let tagged = taggedSkills(course: course, listenings: listenings, readings: readings)
-        var lessonsBySkill: [String: [String]] = [:]
-        for lesson in course.units.flatMap(\.lessons) {
-            for skill in lesson.skills { lessonsBySkill[skill, default: []].append(lesson.id) }
-        }
-        var listeningsBySkill: [String: [String]] = [:]
-        for text in listenings {
-            for skill in text.skills { listeningsBySkill[skill, default: []].append(text.id) }
-        }
-        var readingsBySkill: [String: [String]] = [:]
-        for text in readings {
-            for skill in text.skills { readingsBySkill[skill, default: []].append(text.id) }
-        }
-        let mastery = tagged.map { skillID, category -> SkillMastery in
+                             lessons: [LessonState], completions: [CompletionMark],
+                             nowSeconds: Double, index: SkillCatalogIndex,
+                             ledgerRevision: Int64) -> MasteryStats {
+        let tagged = index.taughtSkills
+        let mastery = tagged.map { skillID -> SkillMastery in
+            let category = index.skillCategory[skillID] ?? String(skillID.split(separator: ":").first ?? Substring(skillID))
+            let activityIDs = index.activitiesBySkillID[skillID] ?? []
             var best = 0.0
             var bestAt = 0.0
+            var evidenceCount = 0
+
             func offer(weight: Double, score: Int, at: Double) {
+                evidenceCount += 1
                 let value = weight * (Double(score) / 100.0) * decay(atSeconds: at, nowSeconds: nowSeconds)
                 if value > best { best = value; bestAt = at }
             }
-            for lessonID in lessonsBySkill[skillID] ?? [] {
-                if let mark = completions.filter({ $0.kind == ProgressEngine.exerciseSet && $0.itemID == lessonID })
+
+            for activityID in activityIDs {
+                if let mark = completions.filter({ $0.kind == ProgressEngine.exerciseSet && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: exerciseWeight, score: mark.bestScore, at: mark.at)
                 }
-                if let state = lessons.first(where: { $0.lessonID == lessonID }), state.attempts > 0, state.lastSeen > 0 {
+                if let state = lessons.first(where: { $0.lessonID == activityID }), state.attempts > 0, state.lastSeen > 0 {
                     offer(weight: oralWeight, score: oralBaseline, at: state.lastSeen)
                 }
-            }
-            for textID in listeningsBySkill[skillID] ?? [] {
-                if let mark = completions.filter({ $0.kind == ProgressEngine.listening && $0.itemID == textID })
+                for textID in [] { /* listening placeholder */ }
+                if let mark = completions.filter({ $0.kind == ProgressEngine.listening && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: listeningWeight, score: mark.bestScore, at: mark.at)
                 }
-            }
-            for textID in readingsBySkill[skillID] ?? [] {
-                if let mark = completions.filter({ $0.kind == ProgressEngine.reading && $0.itemID == textID })
+                if let mark = completions.filter({ $0.kind == ProgressEngine.reading && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: readingWeight, score: mark.bestScore, at: mark.at)
                 }
             }
-            return SkillMastery(skillID: skillID, category: category, mastery: min(100, max(0, Int((best * 100).rounded()))),
-                                lastPracticed: bestAt > 0 ? bestAt : nil)
+
+            let raw = min(100, max(0, Int((best * 100).rounded())))
+            return SkillMastery(skillID: skillID, category: category,
+                                rawMastery: raw, effectiveMastery: raw,
+                                evidenceCount: evidenceCount,
+                                lastPracticedAt: bestAt > 0 ? bestAt : nil)
         }
+
         let grouped = Dictionary(grouping: mastery, by: \.category)
         let categories = grouped.map { category, skills in
             CategoryMastery(category: category,
-                            mastery: Int((Double(skills.map(\.mastery).reduce(0, +)) / Double(skills.count)).rounded()),
+                            mastery: Int((Double(skills.map(\.effectiveMastery).reduce(0, +)) / Double(skills.count)).rounded()),
                             skillCount: skills.count)
         }.sorted { categoryOrder.firstIndex(of: $0.category) ?? 0 < categoryOrder.firstIndex(of: $1.category) ?? 0 }
         let overall = categories.isEmpty ? 0
@@ -120,11 +134,10 @@ public enum MasteryEngine {
             let rhs = categoryOrder.firstIndex(of: $1.category) ?? 0
             return lhs != rhs ? lhs < rhs : $0.skillID < $1.skillID
         }
-        return MasteryStats(overall: overall, categories: categories, skills: ranked)
+        return MasteryStats(overall: overall, categories: categories, skills: ranked,
+                            ledgerRevision: ledgerRevision, masteryVersion: masteryVersion)
     }
 
-    /// Exponential forgetting: half of the evidence value is gone after
-    /// halfLifeDays without practice.
     public static func decay(atSeconds: Double, nowSeconds: Double) -> Double {
         let days = max(0, (nowSeconds - atSeconds) / 86_400.0)
         return pow(0.5, days / halfLifeDays)

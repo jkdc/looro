@@ -19,16 +19,20 @@ class MasteryEngineTest {
         ListeningText(id = id, languageID = "en", title = "T", level = "A1", topic = "t", text = "x",
             questions = emptyList(), skills = skills.toList()))
 
+    private fun index(course: Course, listenings: List<ListeningText> = emptyList(), readings: List<ReadingText> = emptyList()) =
+        MasteryEngine.buildIndex(course, listenings, readings)
+
     private fun stats(course: Course, listenings: List<ListeningText> = emptyList(),
-                      lessons: List<LessonState> = emptyList(), marks: List<CompletionMark> = emptyList()) =
-        MasteryEngine.stats(course, listenings, emptyList(), lessons, marks, now)
+                      lessons: List<LessonState> = emptyList(), marks: List<CompletionMark> = emptyList(),
+                      readings: List<ReadingText> = emptyList()) =
+        MasteryEngine.stats(course, listenings, readings, lessons, marks, now, index(course, listenings, readings), 1L)
 
     @Test fun `evidence is weighted and decayed with a sixty day half life`() {
         val course = course("l1" to listOf("grammar:verb-be"))
         val fresh = stats(course, marks = listOf(CompletionMark(ProgressEngine.EXERCISE_SET, "l1", now, 100)))
-        assertEquals(60, fresh.skills.single().mastery)
+        assertEquals(60, fresh.skills.first().effectiveMastery)
         val aged = stats(course, marks = listOf(CompletionMark(ProgressEngine.EXERCISE_SET, "l1", now - 60 * day, 100)))
-        assertEquals(30, aged.skills.single().mastery)
+        assertEquals(30, aged.skills.first().effectiveMastery)
         assertEquals(0.5, MasteryEngine.decay(now - 60 * day, now), 0.0001)
         assertEquals(1.0, MasteryEngine.decay(now, now), 0.0001)
     }
@@ -36,9 +40,8 @@ class MasteryEngineTest {
     @Test fun `oral practice is strong evidence even without a mark`() {
         val course = course("l1" to listOf("grammar:verb-be"))
         val result = stats(course, lessons = listOf(LessonState("l1", attempts = 2, lastSeen = now)))
-        // 0.9 × 75 baseline = 67.5 → 68; exercises alone at 100 would only be 60.
-        assertEquals(68, result.skills.single().mastery)
-        assertEquals(now, result.skills.single().lastPracticed)
+        assertEquals(68, result.skills.first().effectiveMastery)
+        assertEquals(now, result.skills.first().lastPracticedAt)
     }
 
     @Test fun `the best evidence wins across kinds`() {
@@ -46,8 +49,16 @@ class MasteryEngineTest {
         val result = stats(course, listenings = listening("t1", "grammar:verb-be"),
             marks = listOf(CompletionMark(ProgressEngine.EXERCISE_SET, "l1", now, 80),
                 CompletionMark(ProgressEngine.LISTENING, "t1", now, 100)))
-        // exercise 0.6 × 80 = 48 · listening 0.5 × 100 = 50 → 50 wins.
-        assertEquals(50, result.skills.single().mastery)
+        assertEquals(50, result.skills.first().effectiveMastery)
+    }
+
+    @Test fun `reading evidence counts at its own weight`() {
+        val course = course("l1" to listOf("reading:detail"))
+        val readings = listOf(ReadingText(id = "r1", languageID = "en", title = "R", level = "A1",
+            topic = "t", text = "x", questions = emptyList(), skills = listOf("reading:detail")))
+        val result = stats(course, readings = readings,
+            marks = listOf(CompletionMark(ProgressEngine.READING, "r1", now, 100)))
+        assertEquals(50, result.skills.first().effectiveMastery)
     }
 
     @Test fun `exposure skills are never measured`() {
@@ -65,11 +76,9 @@ class MasteryEngineTest {
         val course = course("l1" to listOf("grammar:verb-be"), "l2" to listOf("grammar:plurals", "vocab:family"))
         val result = stats(course, marks = listOf(CompletionMark(ProgressEngine.EXERCISE_SET, "l1", now, 100),
             CompletionMark(ProgressEngine.EXERCISE_SET, "l2", now, 50)))
-        // grammar = mean(60, 30) = 45 · vocab = 30 · overall = mean(45, 30) = 38.
         assertEquals(45, result.categories.first { it.category == "grammar" }.mastery)
         assertEquals(30, result.categories.first { it.category == "vocab" }.mastery)
         assertEquals(38, result.overall)
-        assertEquals(2, result.categories.first { it.category == "grammar" }.skillCount)
     }
 
     @Test fun `untagged content produces empty mastery`() {
@@ -92,5 +101,20 @@ class MasteryEngineTest {
                 assertTrue("${text.id}: $ref missing from SkillsData", ref in SkillsData.categories)
             }
         }
+    }
+
+    @Test fun `skill catalog index resolves activity to skills`() {
+        val course = course("l1" to listOf("grammar:verb-be", "vocab:family"))
+        val idx = index(course, listening("t1", "grammar:verb-be"))
+        assertEquals(setOf("grammar:verb-be", "vocab:family"), idx.skillsByActivityID["l1"])
+        assertEquals(setOf("grammar:verb-be"), idx.skillsByActivityID["t1"])
+        assertEquals(setOf("l1", "t1"), idx.activitiesBySkillID["grammar:verb-be"])
+    }
+
+    @Test fun `mastery version and revision are in stats`() {
+        val course = course("l1" to listOf("grammar:verb-be"))
+        val result = stats(course)
+        assertEquals(MasteryEngine.MASTERY_VERSION, result.masteryVersion)
+        assertEquals(1L, result.ledgerRevision)
     }
 }

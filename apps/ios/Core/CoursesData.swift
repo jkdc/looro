@@ -190,6 +190,74 @@ public enum DeFoundationsU2 {
                             Exercise(id: "de-foundations-u2-plaene-e4", kind: "written", prompt: "Plan B bei Regen.", options: [], answers: ["wenn es regnet verschieben wir auf sonntag", "wenn es regnet gehen wir ins kino"], explain: "wenn + Presente + plan.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
+public enum DeFoundationsU3 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u3", title: "Die Vergangenheit", subtitle: "Was hast du gemacht ?", level: "A2", themes: [
+                    ConversationTheme("wochenende-vergangen", "Das vergangene Wochenende", "Perfekt", "clock.arrow.circlepath", "Course", "Ihr erzählt euer Wochenende: Ausflüge, Essen, Begegnungen — im Perfekt.", 0),
+                    ConversationTheme("reise-erinnern", "Die Reise letzten Sommer", "Erinnerungen", "airplane", "Course", "Eine unvergessliche Reise: wohin, was gesehen, mit wem.", 1)], lessons: [
+            Lesson(id: "de-foundations-u3-perfekt", title: "Das Perfekt", goal: "Abgeschlossene Handlungen mit haben/sein + Partizip II erzählen.",
+                intro: LessonIntro(explanation: [
+                            "Das Perfekt = haben oder sein + Partizip II. „Ich habe gegessen. Sie ist gefahren.“",
+                            "Die meisten Verben benutzen haben. Bewegungsverben (gehen, fahren, fliegen) benutzen sein.",
+                            "Regelmäßiges Partizip: ge- + Stamm + -t (gemacht, gespielt). Unregelmäßig: gegessen, gesehen, getrunken."], examples: [
+                            ExampleLine(text: "Ich habe eine Paella gegessen.", meaning: "haben + gegessen."),
+                            ExampleLine(text: "Sie ist ins Kino gegangen.", meaning: "sein + gegangen."),
+                            ExampleLine(text: "Wir haben einen Film gesehen.", meaning: "haben + gesehen."),
+                            ExampleLine(text: "Er ist früh angekommen.", meaning: "sein + angekommen."),
+                            ExampleLine(text: "Hast du deine Hausaufgaben gemacht ?", meaning: "haben + Partizip in der Frage.")]),
+                expressions: [
+                            TargetExpression(text: "ich habe / du hast + Partizip", meaning: "haben + Partizip II.", note: "Ich habe gegessen."),
+                            TargetExpression(text: "ich bin / sie ist + Partizip", meaning: "sein für Bewegung.", note: "Ich bin gefahren."),
+                            TargetExpression(text: "gemacht / gesagt / gesehen", meaning: "Partizip II Formen.", note: "machen → gemacht."),
+                            TargetExpression(text: "gegangen / gefahren / gegessen", meaning: "Unregelmäßig.", note: "gehen → gegangen."),
+                            TargetExpression(text: "gestern / letzte Woche", meaning: "Zeitangaben.", note: "Gestern habe ich…")],
+                situation: "Ihr erzählt euer Wochenende: was ihr gemacht habt, mit wem, und eine Überraschung.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag eine Handlung vom Wochenende. (essen im Restaurant)", expected: ["Ich habe im Restaurant gegessen."], focus: "haben + pp", watch: "Ich habe gegessen — abgeschlossen."),
+                                PracticeQuestion(prompt: "Sag, wohin du gegangen bist. (der Park)", expected: ["Ich bin in den Park gegangen."], focus: "sein + pp", watch: "gehen nimmt sein."),
+                                PracticeQuestion(prompt: "Frag deinen Freund, was er gemacht hat.", expected: ["Was hast du gemacht ?"], focus: "hast + pp", watch: "Was hast du gemacht ?"),
+                                PracticeQuestion(prompt: "Sag, dass du einen Fehler gemacht hast.", expected: ["Ich habe einen Fehler gemacht."], focus: "machen → gemacht", watch: "haben + gemacht."),
+                                PracticeQuestion(prompt: "Sag, wann: gestern Abend.", expected: ["Gestern Abend habe ich einen Film gesehen."], focus: "gestern Abend", watch: "Zeitangabe + Perfekt.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u3-perfekt-e1", kind: "choice", prompt: "Ich ___ einen Film gesehen.", options: ["habe", "bin", "hat", "war"], answers: ["habe"], explain: "sehen nimmt haben: ich habe gesehen."),
+                            Exercise(id: "de-foundations-u3-perfekt-e2", kind: "gap", prompt: "Sie ___ ins Kino ___. (gehen)", options: [], answers: ["ist gegangen"], explain: "sein + gegangen."),
+                            Exercise(id: "de-foundations-u3-perfekt-e3", kind: "order", prompt: "Frag das Wochenende.", options: [], answers: ["Was hast du am Wochenende gemacht"], explain: "Was + hast + du + Partizip ?"),
+                            Exercise(id: "de-foundations-u3-perfekt-e4", kind: "written", prompt: "Sag, dass du einen Fehler gemacht hast.", options: [], answers: ["ich habe einen fehler gemacht", "ich habe einen fehler gemacht"], explain: "haben + gemacht.")], skills: ["grammar:past-simple-regular", "grammar:past-simple-irregular", "grammar:time-expressions", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"])])
+}
+
+public enum DeFoundationsU4 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u4", title: "Vergleichen und Pläne", subtitle: "Größer, günstiger, morgen", level: "A2", themes: [
+                    ConversationTheme("zwei-wohnungen", "Zwei Wohnungen", "Welche nehmen ?", "house", "Course", "Ihr vergleicht zwei Wohnungen: Miete, Größe, Lage — und entscheidet euch.", 0),
+                    ConversationTheme("urlaubsplaene", "Urlaubspläne", "Wohin gehen wir ?", "airplane", "Course", "Ihr plant den Urlaub mit werden + Infinitiv oder Präsens + Zeitangabe.", 1)], lessons: [
+            Lesson(id: "de-foundations-u4-komparativ", title: "Komparativ und Superlativ", goal: "Vergleichen mit größer als, am größten, so groß wie.",
+                intro: LessonIntro(explanation: [
+                            "Komparativ: Adjektivstamm + -er + als. „Dieser Computer ist schneller als der alte.“",
+                            "Superlativ: am + Adjektivstamm + -sten. „Das ist am schnellsten.“",
+                            "Unregelmäßig: gut → besser → am besten, viel → mehr → am meisten."], examples: [
+                            ExampleLine(text: "Dieser Computer ist schneller als der alte.", meaning: "schnell → schneller + als."),
+                            ExampleLine(text: "Das ist das beste Restaurant der Stadt.", meaning: "gut → das beste."),
+                            ExampleLine(text: "Berlin ist größer als München.", meaning: "groß → größer."),
+                            ExampleLine(text: "Es ist am schönsten im Sommer.", meaning: "am + Superlativ."),
+                            ExampleLine(text: "So teuer wie letzte Jahr.", meaning: "so + adj + wie = Gleichheit.")]),
+                expressions: [
+                            TargetExpression(text: "größer / kleiner als", meaning: "Komparativ.", note: "größer + als."),
+                            TargetExpression(text: "am besten / am schönsten", meaning: "Superlativ.", note: "am + -sten."),
+                            TargetExpression(text: "besser / mehr", meaning: "Unregelmäßig.", note: "gut → besser."),
+                            TargetExpression(text: "so … wie", meaning: "Gleichheit.", note: "so groß wie ich."),
+                            TargetExpression(text: "viel / mehr / am meisten", meaning: "Mengenvergleich.", note: "mehr als erwartet.")],
+                situation: "Ihr vergleicht zwei Wohnungen: Miete, Größe, Lage — und wählt die beste.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Vergleiche den Preis: A 800€, B 1000€.", expected: ["Wohnung A ist billiger als Wohnung B."], focus: "billiger als", watch: "billig → billiger + als."),
+                                PracticeQuestion(prompt: "Sag, welche die beste ist. (B)", expected: ["Wohnung B ist die beste."], focus: "die beste", watch: "Superlativ mit die."),
+                                PracticeQuestion(prompt: "Sag, dass sie gleich groß sind.", expected: ["Sie sind so groß wie die andere."], focus: "so wie", watch: "so + adj + wie = Gleichheit."),
+                                PracticeQuestion(prompt: "Wähle und begründe. (B, größer)", expected: ["Ich nehme B, weil sie größer ist."], focus: "weil", watch: "weil + Satzbau mit Verb am Ende."),
+                                PracticeQuestion(prompt: "Vergleiche die Größe: A 60m², B 80m².", expected: ["B ist größer als A."], focus: "größer als", watch: "größer + als.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u4-komparativ-e1", kind: "choice", prompt: "Berlin ist ___ ___ München.", options: ["größer als", "groß als", "so groß wie", "am größten"], answers: ["größer als"], explain: "Komparativ + als."),
+                            Exercise(id: "de-foundations-u4-komparativ-e2", kind: "gap", prompt: "Das ist das ___ Restaurant. (gut)", options: [], answers: ["beste"], explain: "gut → das beste."),
+                            Exercise(id: "de-foundations-u4-komparativ-e3", kind: "order", prompt: "Vergleiche den Preis.", options: [], answers: ["Wohnung A ist billiger als B"], explain: "Komparativ + als."),
+                            Exercise(id: "de-foundations-u4-komparativ-e4", kind: "written", prompt: "Dein Lieblingsrestaurant.", options: [], answers: ["mein lieblingsrestaurant ist <name>", "das beste ist <name>"], explain: "Mein Liebling ist X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -3345,6 +3413,220 @@ public enum EsFoundationsU2 {
                             Exercise(id: "es-foundations-u2-planes-e4", kind: "written", prompt: "Tu plan B si llueve.", options: [], answers: ["si llueve lo dejamos para el domingo", "si llueve vamos al cine"], explain: "Si + presente + plan.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
+public enum EsFoundationsU3 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u3", title: "La comida", subtitle: "Ingredientes y recetas", level: "A1", themes: [
+                    ConversationTheme("cocina-juntos", "Cocinando juntos", "Receta sencilla", "fork.knife", "Course", "Cocináis una paella: revisáis ingredientes, seguid los pasos y compartimos.", 0),
+                    ConversationTheme("en-el-mercado", "En el mercado", "Fruta y verdura", "cart", "Course", "Compráis la comida de la semana: fruta, verdura, pan — contando y preguntando precios.", 1)], lessons: [
+            Lesson(id: "es-foundations-u3-comida", title: "La comida de casa", goal: "Hablar de comida, ingredientes y lo que te gusta comer.",
+                intro: LessonIntro(explanation: [
+                            "La comida se agrupa: fruta (manzana, plátano), verdura (tomate, cebolla), carne (pollo, cerdo).",
+                            "Me gusta + infinitivo o sustantivo: «Me gusta el arroz». «Me gusta cocinar».",
+                            "Para preguntar: «¿Qué te gusta comer?» — la respuesta repite me gusta."], examples: [
+                            ExampleLine(text: "Me gusta el arroz con pollo.", meaning: "me gusta + sustantivo."),
+                            ExampleLine(text: "Me gusta cocinar los domingos.", meaning: "me gusta + infinitivo."),
+                            ExampleLine(text: "¿Qué te gusta comer?", meaning: "La pregunta clásica."),
+                            ExampleLine(text: "Necesito tomates y cebollas.", meaning: "necesito + ingredientes."),
+                            ExampleLine(text: "El pan está en la mesa.", meaning: "estar + ubicación.")]),
+                expressions: [
+                            TargetExpression(text: "Me gusta + comida", meaning: "Decir lo que te gusta.", note: "Me gusta el pollo."),
+                            TargetExpression(text: "No me gusta …", meaning: "Lo contrario.", note: "No me gusta el pescado."),
+                            TargetExpression(text: "¿Qué te gusta …?", meaning: "Preguntar.", note: "…comer? …cocinar?"),
+                            TargetExpression(text: "Necesito + ingrediente", meaning: "La lista de compra.", note: "Necesito aceite."),
+                            TargetExpression(text: "Está / están en …", meaning: "Ubicación de comida.", note: "Los huevos están en la nevera.")],
+                situation: "Compráis la comida del finde: uno lee la lista, el otro busca en el súper y pregunta por lo que falta.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di qué te gusta comer.", expected: ["Me gusta <comida>."], focus: "me gusta", watch: "«Me gusta EL arroz» — el artículo importa con comida específica."),
+                                PracticeQuestion(prompt: "Di algo que NO te gusta.", expected: ["No me gusta <comida>."], focus: "no me gusta", watch: "Más suave que «odio»."),
+                                PracticeQuestion(prompt: "Di dos cosas que necesitas comprar.", expected: ["Necesito <comida> y <comida>."], focus: "necesito", watch: "Necesito + sustantivo."),
+                                PracticeQuestion(prompt: "Pregunta qué le gusta a tu amigo.", expected: ["¿Qué te gusta comer?"], focus: "la pregunta", watch: "La respuesta usa me gusta también."),
+                                PracticeQuestion(prompt: "¿Te gusta el pescado?", expected: ["Sí, me gusta.", "No, no me gusta."], focus: "me gusta", watch: "gusta (singular) para un solo alimento.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u3-comida-e1", kind: "choice", prompt: "Me ___ el arroz con pollo.", options: ["gusta", "gustan", "gusto", "gustamos"], answers: ["gusta"], explain: "Me gusta + singular: el arroz."),
+                            Exercise(id: "es-foundations-u3-comida-e2", kind: "gap", prompt: "Me ___ las verduras. (plural: gustar)", options: [], answers: ["gustan"], explain: "Me gustan + plural: las verduras."),
+                            Exercise(id: "es-foundations-u3-comida-e3", kind: "order", prompt: "Pregunta qué le gusta comer.", options: [], answers: ["Que te gusta comer"], explain: "¿Qué te gusta comer?"),
+                            Exercise(id: "es-foundations-u3-comida-e4", kind: "written", prompt: "Di dos cosas que necesitas para cocinar.", options: [], answers: ["necesito <ing1> y <ing2>", "necesito aceite y sal"], explain: "Necesito X y Y.")], skills: ["vocab:food", "grammar:present-simple", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u3-recetas", title: "Recetas sencillas", goal: "Seguir una receta con imperativos: corta, añade, cocina.",
+                intro: LessonIntro(explanation: [
+                            "Las recetas usan imperativos: «Corta la cebolla. Añade el aceite. Cocina diez minutos.»",
+                            "Los verbos de cocina: cortar, añadir, mezclar, hervir, freír.",
+                            "Las cantidades: «un poco de sal», «doscientos gramos de arroz», «medio litro de agua»."], examples: [
+                            ExampleLine(text: "Corta la cebolla en trozos pequeños.", meaning: "cortar + food."),
+                            ExampleLine(text: "Añade el aceite al fuego.", meaning: "añadir + ingrediente."),
+                            ExampleLine(text: "Hierve el agua diez minutos.", meaning: "hervir + duration."),
+                            ExampleLine(text: "Necesito medio litro de agua.", meaning: "medio litro + de."),
+                            ExampleLine(text: "Mezcla todo y añade sal.", meaning: "mezclar + todo.")]),
+                expressions: [
+                            TargetExpression(text: "Corta / añade / mezcla", meaning: "Los tres verbos básicos.", note: "Imperativo: tú sin -s final."),
+                            TargetExpression(text: "Hierve / fríe / cocina", meaning: "Métodos de cocción.", note: "hervir = boil."),
+                            TargetExpression(text: "un poco de + sustantivo", meaning: "Cantidad pequeña.", note: "un poco de sal."),
+                            TargetExpression(text: "medio / media + medida", meaning: "La mitad.", note: "medio litro, media taza."),
+                            TargetExpression(text: "¡Que aproveche!", meaning: "Después de cocinar.", note: "= buen provecho.")],
+                situation: "Cocináis una tortilla de patatas: uno lee los pasos, el otro corta, añade y cocina — y los dos comen.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di el primer paso: cortar la cebolla.", expected: ["Corta la cebolla."], focus: "imperativo", watch: "Corta — imperativo de tú sin -s."),
+                                PracticeQuestion(prompt: "Di cuánto tiempo hervir el agua. (10 minutos)", expected: ["Hierve el agua diez minutos."], focus: "hervir + duration", watch: "hierve (o→ue) + duration."),
+                                PracticeQuestion(prompt: "Di cuánta sal necesitas. (un poco)", expected: ["Necesito un poco de sal."], focus: "un poco de", watch: "un poco DE + sustantivo."),
+                                PracticeQuestion(prompt: "Di la frase de después de comer.", expected: ["¡Que aproveche!"], focus: "la frase", watch: "Se dice antes de que empiecen a comer."),
+                                PracticeQuestion(prompt: "Di que hay que mezclar todo.", expected: ["Mezcla todo."], focus: "mezclar", watch: "Imperativo: mezcla (tú).")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u3-recetas-e1", kind: "choice", prompt: "___ la cebolla en trozos pequeños.", options: ["Corta", "Cortas", "Cortar", "Cortando"], answers: ["Corta"], explain: "Imperativo: corta (tú, sin -s)."),
+                            Exercise(id: "es-foundations-u3-recetas-e2", kind: "gap", prompt: "___ el agua diez minutos. (hervir)", options: [], answers: ["Hierve", "hierve"], explain: "hierve (o→ue) + duration."),
+                            Exercise(id: "es-foundations-u3-recetas-e3", kind: "order", prompt: "Di la cantidad.", options: [], answers: ["Necesito medio litro de agua"], explain: "medio litro de + sustantivo."),
+                            Exercise(id: "es-foundations-u3-recetas-e4", kind: "written", prompt: "Di el ingrediente que falta: sal y ___.", options: [], answers: ["aceite", "pimienta", "aceite y pimienta"], explain: "Cualquier ingrediente de cocina vale.")], skills: ["vocab:food", "grammar:imperatives", "grammar:quantities", "function:talk-about-routines"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum EsFoundationsU4 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u4", title: "El pasado", subtitle: "Qué hiciste ayer", level: "A2", themes: [
+                    ConversationTheme("finde-pasado", "El finde que fue", "Qué hiciste", "clock.arrow.circlepath", "Course", "Contáis qué hicisteis el finde: salidas, comidas, planes que salieron bien o mal.", 0),
+                    ConversationTheme("viaje-recordado", "El viaje del año pasado", "Recordando", "airplane", "Course", "Un viaje memorable: dónde fuiste, qué viste, con quién — todo en pasado.", 1)], lessons: [
+            Lesson(id: "es-foundations-u4-indefinido", title: "El pretérito indefinido", goal: "Contar acciones terminadas en el pasado con -é/-aste/-ó y -í/-iste/-ió.",
+                intro: LessonIntro(explanation: [
+                            "El indefinido habla de acciones terminadas: «Ayer comí paella». «El año pasado viajé a México».",
+                            "Regulares: -ar → é/aste/ó/amos/asteis/aron. -er/-ir → í/iste/ió/imos/isteis/ieron.",
+                            "Irregulares frecuentes: fui/fue, hice/hizo, vi/vio, dije/dijo, estuve/estuvo."], examples: [
+                            ExampleLine(text: "Ayer comí paella en el centro.", meaning: "comer → comí."),
+                            ExampleLine(text: "El año pasado viajé a México.", meaning: "viajar → viajé."),
+                            ExampleLine(text: "Fui al cine con mi hermana.", meaning: "ir → fui."),
+                            ExampleLine(text: "Hice la reserva por teléfono.", meaning: "hacer → hice."),
+                            ExampleLine(text: "No me gustó el hotel.", meaning: "gustar → gustó.")]),
+                expressions: [
+                            TargetExpression(text: "comí / comiste / comió", meaning: "Comer en pasado.", note: "-er: í/iste/ió."),
+                            TargetExpression(text: "hablé / hablaste / habló", meaning: "-ar en pasado.", note: "hablar → hablé."),
+                            TargetExpression(text: "fui / fue", meaning: "Ir y ser en pasado.", note: "fui al cine, fue a casa."),
+                            TargetExpression(text: "hice / dijo / vi", meaning: "Irregulares frecuentes.", note: "hice la cena, vi la peli."),
+                            TargetExpression(text: "ayer / anoche / el año pasado", meaning: "Marcadores de tiempo.", note: "Anoche salí.")],
+                situation: "Contáis el finde: uno cuenta lo que hizo el sábado, el otro pregunta detalles y cuenta lo suyo.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di una acción que hiciste ayer. (comer fuera)", expected: ["Ayer comí fuera."], focus: "comer → comí", watch: "Ayer + comí — terminado."),
+                                PracticeQuestion(prompt: "Di adónde fuiste el finde.", expected: ["Fui a la playa."], focus: "ir → fui", watch: "“I went” → fui, no “voy”."),
+                                PracticeQuestion(prompt: "Pregunta a tu amigo qué hizo anoche.", expected: ["¿Qué hiciste anoche?"], focus: "hiciste", watch: "hacer → hiciste en pregunta."),
+                                PracticeQuestion(prompt: "Di que no te gustó la película.", expected: ["No me gustó la película."], focus: "gustó", watch: "gustó (singular) para la película."),
+                                PracticeQuestion(prompt: "Di cuándo viajaste por última vez. (el año pasado)", expected: ["El año pasado viajé a <lugar>."], focus: "el año pasado", watch: "Marcador de tiempo + pretérito.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u4-indefinido-e1", kind: "choice", prompt: "Ayer ___ al cine con mi hermana.", options: ["fui", "voy", "iba", "voy a ir"], answers: ["fui"], explain: "ir → fui (pretérito)."),
+                            Exercise(id: "es-foundations-u4-indefinido-e2", kind: "gap", prompt: "Anoche ___ una paella increíble. (comer)", options: [], answers: ["comí", "comi"], explain: "comer → comí."),
+                            Exercise(id: "es-foundations-u4-indefinido-e3", kind: "order", prompt: "Pregunta por el finde.", options: [], answers: ["Que hiciste el fin de semana"], explain: "¿Qué hiciste el fin de semana?"),
+                            Exercise(id: "es-foundations-u4-indefinido-e4", kind: "written", prompt: "Di una acción en pasado: hablar con Marta.", options: [], answers: ["hablé con marta", "hablé con marta ayer"], explain: "hablar → hablé.")], skills: ["grammar:past-simple-regular", "grammar:past-simple-irregular", "grammar:time-expressions", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "es-foundations-u4-comparando", title: "Comparando", goal: "Comparar dos cosas con más/menos… que y el mejor/peor.",
+                intro: LessonIntro(explanation: [
+                            "Comparativos: más/menos + adjetivo + que. «Este hotel es más caro que aquel». «Menos frío que ayer».",
+                            "Superlativos: el/la más/menos + adjetivo + de. «El mejor restaurante de la ciudad».",
+                            "Irregulares: mejor (bueno), peor (malo). «Este es mejor que aquel»."], examples: [
+                            ExampleLine(text: "Este hotel es más caro que aquel.", meaning: "más + adjetivo + que."),
+                            ExampleLine(text: "La playa es menos concurrida que la piscina.", meaning: "menos + adjetivo."),
+                            ExampleLine(text: "Es el mejor restaurante de la ciudad.", meaning: "el mejor + de."),
+                            ExampleLine(text: "Este verano es peor que el pasado.", meaning: "peor = malo comparado."),
+                            ExampleLine(text: "Tan simple como eso.", meaning: "tan + adjetivo + como.")]),
+                expressions: [
+                            TargetExpression(text: "más … que", meaning: "Más que.", note: "más caro que."),
+                            TargetExpression(text: "menos … que", meaning: "Menos que.", note: "menos frío que."),
+                            TargetExpression(text: "el/la más … de", meaning: "Superlativo.", note: "el más alto de la clase."),
+                            TargetExpression(text: "mejor / peor", meaning: "Irregulares.", note: "mejor que, el peor de."),
+                            TargetExpression(text: "tan … como", meaning: "Igualdad.", note: "tan caro como antes.")],
+                situation: "Comparáis dos hoteles para las vacaciones: precio, ubicación, limpieza — y elegís el mejor.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Compara el precio: hotel A 80€, hotel B 100€.", expected: ["El hotel A es más barato que el hotel B."], focus: "más barato", watch: "barato → más barato que."),
+                                PracticeQuestion(prompt: "Di cuál es el mejor. (hotel A)", expected: ["El hotel A es el mejor."], focus: "el mejor", watch: "el mejor + de/in."),
+                                PracticeQuestion(prompt: "Di que el hotel B es peor.", expected: ["El hotel B es peor que el A."], focus: "peor", watch: "peor que — irregular."),
+                                PracticeQuestion(prompt: "Compara ubicación: A cerca, B lejos.", expected: ["El hotel A está más cerca del centro."], focus: "más cerca", watch: "cerca → más cerca de."),
+                                PracticeQuestion(prompt: "Di que son iguales en limpieza.", expected: ["Son tan limpios como el otro."], focus: "tan como", watch: "tan + adjetivo + como = igualdad.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u4-comparando-e1", kind: "choice", prompt: "Este hotel es ___ caro ___ aquel.", options: ["más … que", "más … de", "tan … que", "muy … que"], answers: ["más … que"], explain: "más + adjetivo + que."),
+                            Exercise(id: "es-foundations-u4-comparando-e2", kind: "gap", prompt: "Es el ___ restaurante de la ciudad. (bueno)", options: [], answers: ["mejor"], explain: "bueno → el mejor."),
+                            Exercise(id: "es-foundations-u4-comparando-e3", kind: "order", prompt: "Compara precio.", options: [], answers: ["Este es más barato que aquel"], explain: "más + adjetivo + que."),
+                            Exercise(id: "es-foundations-u4-comparando-e4", kind: "written", prompt: "Di tu restaurante favorito.", options: [], answers: ["mi restaurante favorito es <nombre>", "el mejor es <nombre>"], explain: "Mi favorito es X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"]),
+            Lesson(id: "es-foundations-u4-futuro", title: "El futuro", goal: "Hablar de planes con ir a + infinitivo y expresar intención.",
+                intro: LessonIntro(explanation: [
+                            "El futuro cercano: ir a + infinitivo. «Voy a estudiar esta noche». «Vamos a viajar en verano».",
+                            "Preguntar: «¿Vas a venir?» «¿Qué vas a hacer?» — el verbo ir se conjuga, el infinitivo no.",
+                            "Irregulares en el infinitivo se mantienen: «Voy a hacer la cena» (no «hacer» cambia)."], examples: [
+                            ExampleLine(text: "Voy a estudiar esta noche.", meaning: "ir a + infinitivo."),
+                            ExampleLine(text: "Vamos a viajar en verano.", meaning: "Nosotros: vamos a."),
+                            ExampleLine(text: "¿Vas a venir a la fiesta?", meaning: "Pregunta con ir a."),
+                            ExampleLine(text: "Va a llover, no salgas.", meaning: "Predicción: va a + verbo."),
+                            ExampleLine(text: "No voy a trabajar el sábado.", meaning: "Negativo: no voy a.")]),
+                expressions: [
+                            TargetExpression(text: "voy / vas / va a + inf", meaning: "El futuro cercano.", note: "Voy a comer."),
+                            TargetExpression(text: "vamos a + inf", meaning: "Nosotros.", note: "Vamos a viajar."),
+                            TargetExpression(text: "¿Vas a + inf?", meaning: "Preguntar.", note: "¿Vas a venir?"),
+                            TargetExpression(text: "no voy a + inf", meaning: "Negar el plan.", note: "No voy a salir."),
+                            TargetExpression(text: "va a + inf (clima)", meaning: "Predicción.", note: "Va a llover.")],
+                situation: "Planificáis el finde: uno propone, el otro acepta o rechaza, y decidís hora y lugar.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di qué vas a hacer este finde. (descansar)", expected: ["Voy a descansar este finde."], focus: "voy a", watch: "voy a + infinitivo."),
+                                PracticeQuestion(prompt: "Pregunta qué va a hacer tu amigo.", expected: ["¿Qué vas a hacer?"], focus: "la pregunta", watch: "¿Qué + vas a + infinitivo?"),
+                                PracticeQuestion(prompt: "Di que no vas a salir el sábado.", expected: ["No voy a salir el sábado."], focus: "no voy a", watch: "no voy a + infinitivo."),
+                                PracticeQuestion(prompt: "Di que va a llover mañana.", expected: ["Mañana va a llover."], focus: "predicción", watch: "va a + infinitivo para predicción."),
+                                PracticeQuestion(prompt: "Pregunta si tu amigo va a venir.", expected: ["¿Vas a venir?"], focus: "¿Vas a…?", watch: "Vas a + infinitivo.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u4-futuro-e1", kind: "choice", prompt: "Voy ___ descansar este finde.", options: ["a", "de", "que", "para"], answers: ["a"], explain: "ir A + infinitivo."),
+                            Exercise(id: "es-foundations-u4-futuro-e2", kind: "gap", prompt: "Vamos ___ ___ al cine. (ir a + ir)", options: [], answers: ["a ir", "a ir"], explain: "vamos a ir."),
+                            Exercise(id: "es-foundations-u4-futuro-e3", kind: "order", prompt: "Pregunta sobre el plan.", options: [], answers: ["Que vas a hacer este finde"], explain: "¿Qué vas a hacer este finde?"),
+                            Exercise(id: "es-foundations-u4-futuro-e4", kind: "written", prompt: "Di un plan para mañana.", options: [], answers: ["voy a <actividad> mañana", "mañana voy a <actividad>"], explain: "Voy a + verbo.")], skills: ["grammar:going-to", "function:make-future-plans", "grammar:future-forms", "vocab:social-expressions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
+public enum EsFoundationsU5 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u5", title: "Experiencias y opiniones", subtitle: "Contar lo vivido", level: "B1", themes: [
+                    ConversationTheme("viaje-inolvidable", "El viaje inolvidable", "Presente perfecto", "airplane", "Course", "Habéis viajado mucho: comparad experiencias con he/ha + participio.", 0),
+                    ConversationTheme("cambio-vida", "El cambio de vida", "Antes y ahora", "arrow.triangle.swap", "Course", "Comparáis vuestra vida de antes con la de ahora: trabajo, ciudad, hábitos.", 1)], lessons: [
+            Lesson(id: "es-foundations-u5-presente-perfecto", title: "He viajado mucho", goal: "Hablar de experiencias vitales con he/has/ha + participio.",
+                intro: LessonIntro(explanation: [
+                            "El presente perfecto conecta el pasado con el presente: «He comido en ese restaurante» (y puedo volver a ir).",
+                            "Participios: -ar → -ado (hablado), -er/-ir → -ido (comido, vivido). Irregulares: hecho, visto, dicho, escrito.",
+                            "Marcadores: ya (ya he comido), todavía no (no he ido), alguna vez (¿Has estado en…?)."], examples: [
+                            ExampleLine(text: "He comido en ese restaurante.", meaning: "he + participio."),
+                            ExampleLine(text: "¿Has estado en Barcelona?", meaning: "has estado: experiencia."),
+                            ExampleLine(text: "Nunca he visto la nieve.", meaning: "nunca + he + participio."),
+                            ExampleLine(text: "Ya hemos terminado el proyecto.", meaning: "ya = terminado."),
+                            ExampleLine(text: "Todavía no he visitado México.", meaning: "todavía no = aún no.")]),
+                expressions: [
+                            TargetExpression(text: "he / has / ha + participio", meaning: "Yo/tú/él.", note: "he comido, has visto, ha vivido."),
+                            TargetExpression(text: "ya + he + participio", meaning: "Ya terminado.", note: "Ya he comido."),
+                            TargetExpression(text: "todavía no + he", meaning: "Aún no.", note: "Todavía no he ido."),
+                            TargetExpression(text: "¿Has … alguna vez?", meaning: "Experiencia vital.", note: "alguna vez = alguna vez en la vida."),
+                            TargetExpression(text: "nunca + he", meaning: "Nunca en la vida.", note: "Nunca he visto nieve.")],
+                situation: "Comparáis experiencias de viaje: quién ha estado en más países, quién ha probado comida más rara, quién nunca ha volado.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di una experiencia: comer en ese restaurante.", expected: ["He comido en ese restaurante."], focus: "he + participio", watch: "he comido = experiencia sin fecha."),
+                                PracticeQuestion(prompt: "Pregunta si tu amigo ha estado en Perú.", expected: ["¿Has estado en Perú?"], focus: "has estado", watch: "estado, no «ido» — para lugares."),
+                                PracticeQuestion(prompt: "Di que nunca has visto la nieve.", expected: ["Nunca he visto la nieve."], focus: "nunca", watch: "nunca + he + visto."),
+                                PracticeQuestion(prompt: "Di que ya has comido.", expected: ["Ya he comido."], focus: "ya", watch: "ya = la acción está terminada."),
+                                PracticeQuestion(prompt: "Di que todavía no has visitado México.", expected: ["Todavía no he visitado México."], focus: "todavía no", watch: "todavía no = aún no.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u5-presente-perfecto-e1", kind: "choice", prompt: "___ ___ en ese restaurante. (comer, yo)", options: ["He comido", "He comí", "He comido", "He comía"], answers: ["He comido"], explain: "he + comido (participio)."),
+                            Exercise(id: "es-foundations-u5-presente-perfecto-e2", kind: "gap", prompt: "¿___ ___ ___ en Perú? (estar, tú)", options: [], answers: ["Has estado"], explain: "has estado = experiencia."),
+                            Exercise(id: "es-foundations-u5-presente-perfecto-e3", kind: "order", prompt: "Di que nunca has visto nieve.", options: [], answers: ["Nunca he visto la nieve"], explain: "nunca + he + participio."),
+                            Exercise(id: "es-foundations-u5-presente-perfecto-e4", kind: "written", prompt: "Di que ya has comido.", options: [], answers: ["ya he comido", "ya he comido"], explain: "ya + he + comido.")], skills: ["grammar:present-perfect", "grammar:past-simple-irregular", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "es-foundations-u5-antes-ahora", title: "Antes y ahora", goal: "Comparar el pasado con el presente usando antes/imperiético y ahora/presente.",
+                intro: LessonIntro(explanation: [
+                            "Antes + imperfecto: «Antes vivía en Madrid». Ahora + presente: «Ahora vivo en Barcelona».",
+                            "El imperfecto describe hábitos del pasado: «Iba al parque todos los días». «Jugaba al fútbol».",
+                            "La contraste: «Antes tenía tiempo, ahora no tengo nada»."], examples: [
+                            ExampleLine(text: "Antes vivía en Madrid.", meaning: "antes + imperfecto."),
+                            ExampleLine(text: "Ahora vivo en Barcelona.", meaning: "ahora + presente."),
+                            ExampleLine(text: "Iba al parque todos los días.", meaning: "imperfecto: hábito pasado."),
+                            ExampleLine(text: "Antes tenía más tiempo libre.", meaning: "tener → tenía."),
+                            ExampleLine(text: "Ahora trabajo desde casa.", meaning: "ahora + presente.")]),
+                expressions: [
+                            TargetExpression(text: "Antes + imperfecto", meaning: "El pasado habitual.", note: "Antes vivía…"),
+                            TargetExpression(text: "Ahora + presente", meaning: "El presente.", note: "Ahora trabajo…"),
+                            TargetExpression(text: "-ía / -aba", meaning: "El imperfecto.", note: "vivía, comía, trabajaba."),
+                            TargetExpression(text: "tenía / iba / era", meaning: "Imperfectos frecuentes.", note: "tenía tiempo."),
+                            TargetExpression(text: "ahora no …", meaning: "El contraste negativo.", note: "ahora no tengo tiempo.")],
+                situation: "Comparáis vuestra vida de estudiantes con la vida de ahora: horarios, hobbies, dinero, libertad.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di dónde vivías antes. (Madrid)", expected: ["Antes vivía en Madrid."], focus: "antes + imperfecto", watch: "vivía = imperfecto de vivir."),
+                                PracticeQuestion(prompt: "Di qué hacías todos los días. (ir al parque)", expected: ["Iba al parque todos los días."], focus: "iba", watch: "ir → iba en imperfecto."),
+                                PracticeQuestion(prompt: "Di qué haces ahora.", expected: ["Ahora trabajo desde casa."], focus: "ahora + presente", watch: "ahora marca el presente."),
+                                PracticeQuestion(prompt: "Di qué ya no tienes. (tiempo)", expected: ["Antes tenía tiempo, ahora no tengo."], focus: "contraste", watch: "antes tenía → ahora no tengo."),
+                                PracticeQuestion(prompt: "Di qué hacías los domingos antes.", expected: ["Iba al cine los domingos."], focus: "imperfecto", watch: "Iba — imperfecto de ir.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u5-antes-ahora-e1", kind: "choice", prompt: "Antes ___ en Madrid.", options: ["vivía", "vivo", "viví", "viviré"], answers: ["vivía"], explain: "imperfecto: hábito pasado."),
+                            Exercise(id: "es-foundations-u5-antes-ahora-e2", kind: "gap", prompt: "___ ___ al parque todos los días. (ir, imperfecto)", options: [], answers: ["Iba", "iba"], explain: "ir → iba."),
+                            Exercise(id: "es-foundations-u5-antes-ahora-e3", kind: "order", prompt: "Di el contraste.", options: [], answers: ["Antes tenia tiempo ahora no tengo nada"], explain: "Antes + imperfecto, ahora + presente."),
+                            Exercise(id: "es-foundations-u5-antes-ahora-e4", kind: "written", prompt: "Di un hábito de antes.", options: [], answers: ["antes <hbito>", "antes jugaba al futbol"], explain: "Antes + imperfecto.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
+}
+
 public enum FrFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
@@ -3532,6 +3814,102 @@ public enum FrFoundationsU2 {
                             Exercise(id: "fr-foundations-u2-projets-e2", kind: "gap", prompt: "On ___ retrouve à six heures ? (rendez-vous)", options: [], answers: ["se"], explain: "on se retrouve = nos vemos."),
                             Exercise(id: "fr-foundations-u2-projets-e3", kind: "order", prompt: "Fixe le rendez-vous.", options: [], answers: ["On se retrouve a six heures devant le parc"], explain: "on se retrouve + heure + lieu."),
                             Exercise(id: "fr-foundations-u2-projets-e4", kind: "written", prompt: "Le plan B s'il pleut.", options: [], answers: ["sil pleut on reporte a dimanche", "s'il pleut on va a dimanche"], explain: "si + présent + plan.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
+public enum FrFoundationsU3 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u3", title: "Le passé", subtitle: "Qu'est-ce que tu as fait ?", level: "A2", themes: [
+                    ConversationTheme("weekend-passe", "Le week-end passé", "Passé composé", "clock.arrow.circlepath", "Course", "Vous racontez votre week-end : sorties, repas, rencontres — au passé composé.", 0),
+                    ConversationTheme("voyage-dernier", "Le voyage de l'année dernière", "Se souvenir", "airplane", "Course", "Un voyage mémorable : où vous êtes allé, ce que vous avez vu.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u3-passe-compose", title: "Le passé composé", goal: "Raconter des actions terminées avec avoir/être + participe passé.",
+                intro: LessonIntro(explanation: [
+                            "Le passé composé = auxiliaire (avoir ou être) + participe passé. « J'ai mangé. Elle est allée. »",
+                            "La plupart des verbes prennent avoir. Les verbes de mouvement (aller, venir, partir) prennent être.",
+                            "Avec être, le participe s'accorde : « Elle est allée » (féminin + e), « Ils sont allés » (masculin pluriel + s)."], examples: [
+                            ExampleLine(text: "J'ai mangé une paella hier.", meaning: "avoir + mangé."),
+                            ExampleLine(text: "Elle est allée au cinéma.", meaning: "être + allée (féminin)."),
+                            ExampleLine(text: "Nous avons vu un film.", meaning: "avoir + vu (voir → vu)."),
+                            ExampleLine(text: "Ils sont partis tôt.", meaning: "être + partis (pluriel)."),
+                            ExampleLine(text: "Tu as fait tes devoirs ?", meaning: "avoir + fait (faire → fait).")]),
+                expressions: [
+                            TargetExpression(text: "j'ai / tu as / il a + pp", meaning: "avoir + participe.", note: "J'ai mangé."),
+                            TargetExpression(text: "je suis / elle est + pp", meaning: "Être pour mouvement.", note: "Je suis allé(e)."),
+                            TargetExpression(text: "fait / dit / vu / écrit", meaning: "Participes irréguliers.", note: "faire → fait."),
+                            TargetExpression(text: "accord avec être", meaning: "e/s selon le sujet.", note: "elle est allée, ils sont allés."),
+                            TargetExpression(text: "hier / la semaine dernière", meaning: "Marqueurs de temps.", note: "Hier, j'ai vu…")],
+                situation: "Vous racontez votre week-end : ce que vous avez fait, avec qui, et une surprise.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis une action du week-end. (manger au restaurant)", expected: ["J'ai mangé au restaurant."], focus: "avoir + pp", watch: "J'ai mangé — action terminée."),
+                                PracticeQuestion(prompt: "Dis où tu es allé(e) samedi.", expected: ["Je suis allé(e) au parc."], focus: "être + allé", watch: "aller prend être: je suis allé(e)."),
+                                PracticeQuestion(prompt: "Demande à ton ami ce qu'il a fait.", expected: ["Qu'est-ce que tu as fait ?"], focus: "as + pp", watch: "Qu'est-ce que tu as fait ?"),
+                                PracticeQuestion(prompt: "Dis que tu as fait une erreur.", expected: ["J'ai fait une erreur."], focus: "faire → fait", watch: "faire → fait (participe)."),
+                                PracticeQuestion(prompt: "Dis quand : hier soir.", expected: ["Hier soir, j'ai regardé un film."], focus: "hier soir", watch: "hier soir + passé composé.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u3-passe-compose-e1", kind: "choice", prompt: "J'___ un film hier soir.", options: ["ai regardé", "regarde", "regardais", "vais regarder"], answers: ["ai regardé"], explain: "Hier: passé composé."),
+                            Exercise(id: "fr-foundations-u3-passe-compose-e2", kind: "gap", prompt: "Elle ___ ___ au marché. (aller)", options: [], answers: ["est allée"], explain: "aller prend être + accord féminin."),
+                            Exercise(id: "fr-foundations-u3-passe-compose-e3", kind: "order", prompt: "Demande le week-end.", options: [], answers: ["Qu'est-ce que tu as fait ce weekend"], explain: "Qu'est-ce que tu as fait ?"),
+                            Exercise(id: "fr-foundations-u3-passe-compose-e4", kind: "written", prompt: "Dis que tu as fait une erreur.", options: [], answers: ["jai fait une erreur", "j'ai fait une erreur"], explain: "faire → fait.")], skills: ["grammar:past-simple-regular", "grammar:past-simple-irregular", "grammar:time-expressions", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"])])
+}
+
+public enum FrFoundationsU4 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u4", title: "Comparer et projeter", subtitle: "Plus, moins, futur", level: "A2", themes: [
+                    ConversationTheme("deux-apparts", "Deux appartements", "Lequel choisir ?", "house", "Course", "Vous comparez deux appartements : loyer, taille, quartier — et vous choisissez.", 0),
+                    ConversationTheme("projets-vacances", "Projets de vacances", "On va où ?", "airplane", "Course", "Vous planifiez les vacances avec le futur proche.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u4-comparatifs", title: "Comparatifs et superlatifs", goal: "Comparer avec plus/moins… que et le/la plus/moins… de.",
+                intro: LessonIntro(explanation: [
+                            "Comparatifs: plus/moins + adjectif + que. « Ce café est plus cher que l'autre. »",
+                            "Superlatifs: le/la plus/moins + adjectif + de. « C'est le meilleur restaurant de la ville. »",
+                            "Irréguliers: bon → meilleur, mauvais → pire."], examples: [
+                            ExampleLine(text: "Ce café est plus cher que l'autre.", meaning: "plus + adj + que."),
+                            ExampleLine(text: "Le train est moins lent que le bus.", meaning: "moins + adj."),
+                            ExampleLine(text: "C'est le meilleur restaurant de la ville.", meaning: "le meilleur + de."),
+                            ExampleLine(text: "Ce film est pire que l'original.", meaning: "pire = mauvais comparé."),
+                            ExampleLine(text: "Aussi cher qu'avant.", meaning: "aussi + adj + que = égalité.")]),
+                expressions: [
+                            TargetExpression(text: "plus … que", meaning: "Plus que.", note: "plus cher que."),
+                            TargetExpression(text: "moins … que", meaning: "Moins que.", note: "moins cher que."),
+                            TargetExpression(text: "le/la plus … de", meaning: "Superlatif.", note: "le plus grand de France."),
+                            TargetExpression(text: "meilleur / pire", meaning: "Irréguliers.", note: "bon → meilleur, mauvais → pire."),
+                            TargetExpression(text: "aussi … que", meaning: "Égalité.", note: "aussi grand que moi.")],
+                situation: "Vous comparez deux appartements : loyer, surface, quartier — et vous choisissez le meilleur.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Compare le prix : A 800€, B 1000€.", expected: ["L'appartement A est moins cher que le B."], focus: "moins cher", watch: "moins + adj + que."),
+                                PracticeQuestion(prompt: "Dis lequel est le meilleur. (B)", expected: ["L'appartement B est le meilleur."], focus: "le meilleur", watch: "Superlatif avec le/la."),
+                                PracticeQuestion(prompt: "Dis qu'ils sont aussi grands.", expected: ["Ils sont aussi grands l'un que l'autre."], focus: "aussi que", watch: "aussi + adj + que = égalité."),
+                                PracticeQuestion(prompt: "Choisis et justifie.", expected: ["Je préfère le B parce qu'il est plus grand."], focus: "parce que", watch: "préférence + parce que + raison."),
+                                PracticeQuestion(prompt: "Compare la taille: A 60m², B 80m².", expected: ["Le B est plus grand que le A."], focus: "plus grand", watch: "grand → plus grand + que.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u4-comparatifs-e1", kind: "choice", prompt: "Ce café est ___ cher ___ l'autre.", options: ["plus … que", "plus … de", "très … que", "beaucoup … que"], answers: ["plus … que"], explain: "plus + adj + que."),
+                            Exercise(id: "fr-foundations-u4-comparatifs-e2", kind: "gap", prompt: "C'est le ___ restaurant de la ville. (bon)", options: [], answers: ["meilleur"], explain: "bon → le meilleur."),
+                            Exercise(id: "fr-foundations-u4-comparatifs-e3", kind: "order", prompt: "Compare le prix.", options: [], answers: ["Ce est plus cher que celui-la"], explain: "plus + adj + que + démonstratif."),
+                            Exercise(id: "fr-foundations-u4-comparatifs-e4", kind: "written", prompt: "Ton restaurant préféré.", options: [], answers: ["mon restaurant prefere est <nom>", "mon favori est <nom>"], explain: "Mon préféré est X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"]),
+            Lesson(id: "fr-foundations-u4-futur-proche", title: "Le futur proche", goal: "Parler de projets avec aller + infinitif.",
+                intro: LessonIntro(explanation: [
+                            "Le futur proche : aller (conjugué) + infinitif. « Je vais partir. Nous allons manger. »",
+                            "Seul aller se conjugue ; le second verbe reste à l'infinitif.",
+                            "Négation autour de aller : « Je ne vais pas sortir. »"], examples: [
+                            ExampleLine(text: "Je vais partir demain.", meaning: "aller + partir."),
+                            ExampleLine(text: "Nous allons manger au restaurant.", meaning: "nous allons + inf."),
+                            ExampleLine(text: "Tu vas venir avec nous ?", meaning: "Question avec vas."),
+                            ExampleLine(text: "Je ne vais pas sortir ce soir.", meaning: "Négation: ne…pas autour d'aller."),
+                            ExampleLine(text: "Il va pleuvoir, prends un parapluie.", meaning: "Prédiction.")]),
+                expressions: [
+                            TargetExpression(text: "je vais + inf", meaning: "Ton plan.", note: "Je vais dormir."),
+                            TargetExpression(text: "nous allons + inf", meaning: "Le projet du groupe.", note: "Nous allons voyager."),
+                            TargetExpression(text: "tu vas + inf ?", meaning: "Demander.", note: "Tu vas venir ?"),
+                            TargetExpression(text: "ne vais pas + inf", meaning: "Refuser.", note: "Je ne vais pas sortir."),
+                            TargetExpression(text: "il va + inf (météo)", meaning: "Prédire.", note: "Il va pleuvoir.")],
+                situation: "Vous planifiez le samedi : proposition, acceptation ou refus, heure et lieu.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis ton plan pour demain. (se reposer)", expected: ["Demain, je vais me reposer."], focus: "aller + inf", watch: "je vais + infinitif."),
+                                PracticeQuestion(prompt: "Demande le plan de ton ami.", expected: ["Qu'est-ce que tu vas faire ?"], focus: "la question", watch: "Qu'est-ce que + vas + inf ?"),
+                                PracticeQuestion(prompt: "Dis que tu ne vas pas sortir.", expected: ["Je ne vais pas sortir ce soir."], focus: "négation", watch: "ne + vais + pas + inf."),
+                                PracticeQuestion(prompt: "Prédis la pluie.", expected: ["Il va pleuvoir demain."], focus: "prédiction", watch: "il va + inf pour la météo."),
+                                PracticeQuestion(prompt: "Dis que tu ne vas pas travailler samedi.", expected: ["Je ne vais pas travailler samedi."], focus: "ne vais pas", watch: "ne + vais + pas + infinitif.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u4-futur-proche-e1", kind: "choice", prompt: "Je ___ ___ dormir. (2 mots)", options: ["vais dormir", "vais à dormir", "vais dormi", "vais dormeur"], answers: ["vais dormir"], explain: "aller + infinitif."),
+                            Exercise(id: "fr-foundations-u4-futur-proche-e2", kind: "gap", prompt: "Nous ___ ___ voyager en été. (2 mots)", options: [], answers: ["allons voyager"], explain: "nous allons + inf."),
+                            Exercise(id: "fr-foundations-u4-futur-proche-e3", kind: "order", prompt: "Demande le plan.", options: [], answers: ["Qu'est-ce que tu vas faire ce weekend"], explain: "Qu'est-ce que + vas + inf ?"),
+                            Exercise(id: "fr-foundations-u4-futur-proche-e4", kind: "written", prompt: "Un plan pour demain.", options: [], answers: ["je vais <activite> demain", "demain je vais <activite>"], explain: "Je vais + verbe.")], skills: ["grammar:going-to", "function:make-future-plans", "grammar:future-forms", "vocab:social-expressions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
 public enum ItFoundationsU1 {
@@ -3723,6 +4101,74 @@ public enum ItFoundationsU2 {
                             Exercise(id: "it-foundations-u2-progetti-e4", kind: "written", prompt: "Il piano B se piove.", options: [], answers: ["se piove lo spostiamo a domenica", "se piove andiamo al cinema"], explain: "se + presente + piano.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
+public enum ItFoundationsU3 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u3", title: "Il passato", subtitle: "Cosa hai fatto ?", level: "A2", themes: [
+                    ConversationTheme("weekend-passato", "Il weekend passato", "Passato prossimo", "clock.arrow.circlepath", "Course", "Raccontate il weekend: cosa avete fatto, dove siete andati.", 0),
+                    ConversationTheme("viaggio-ricordo", "Il viaggio dell'anno scorso", "Ricordi", "airplane", "Course", "Un viaggio memorabile: dove siete stati, cosa avete visto.", 1)], lessons: [
+            Lesson(id: "it-foundations-u3-passato-prossimo", title: "Il passato prossimo", goal: "Raccontare azioni finite con essere/avere + participio passato.",
+                intro: LessonIntro(explanation: [
+                            "Passato prossimo = ausiliare (essere o avere) + participio passato. « Ho mangiato. Sono andato. »",
+                            "La maggior parte dei verbi usa avere. I verbi di movimento (andare, venire, uscire) usano essere.",
+                            "Con essere, il participio si accorda: « Lei è andata » (femminile), « Loro sono andati » (plurale)."], examples: [
+                            ExampleLine(text: "Ho mangiato una paella ieri.", meaning: "avere + mangiato."),
+                            ExampleLine(text: "Sono andato al cinema.", meaning: "essere + andato."),
+                            ExampleLine(text: "Abbiamo visto un film.", meaning: "avere + visto."),
+                            ExampleLine(text: "Lei è uscita presto.", meaning: "essere + uscita (femminile)."),
+                            ExampleLine(text: "Hai fatto i compiti ?", meaning: "avere + fatto.")]),
+                expressions: [
+                            TargetExpression(text: "ho / hai / ha + participio", meaning: "Avere + participio.", note: "Ho mangiato."),
+                            TargetExpression(text: "sono / sei / è + participio", meaning: "Essere per movimento.", note: "Sono andato."),
+                            TargetExpression(text: "fatto / detto / visto / scritto", meaning: "Participi irregolari.", note: "fare → fatto."),
+                            TargetExpression(text: "accordo con essere", meaning: "e/a/i/e secondo il soggetto.", note: "lei è uscita, loro sono usciti."),
+                            TargetExpression(text: "ieri / la settimana scorsa", meaning: "Marcatori temporali.", note: "Ieri ho visto…")],
+                situation: "Raccontate il weekend: cosa avete fatto, dove siete andati e una sorpresa.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di un'azione del weekend. (mangiare fuori)", expected: ["Ho mangiato fuori."], focus: "avere + pp", watch: "Ho mangiato — azione finita."),
+                                PracticeQuestion(prompt: "Di dove sei andato sabato.", expected: ["Sono andato al parco."], focus: "essere + pp", watch: "andare → essere + andato."),
+                                PracticeQuestion(prompt: "Chiedi al tuo amico cosa ha fatto.", expected: ["Cosa hai fatto ?"], focus: "hai + pp", watch: "Cosa hai fatto ?"),
+                                PracticeQuestion(prompt: "Di che hai fatto un errore.", expected: ["Ho fatto un errore."], focus: "fare → fatto", watch: "fare → fatto."),
+                                PracticeQuestion(prompt: "Di quando: ieri sera.", expected: ["Ieri sera ho guardato un film."], focus: "ieri sera", watch: "ieri sera + passato prossimo.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u3-passato-prossimo-e1", kind: "choice", prompt: "Ieri ho ___ un film.", options: ["visto", "guardato", "veduto", "vedeva"], answers: ["visto"], explain: "vedere → visto (participio)."),
+                            Exercise(id: "it-foundations-u3-passato-prossimo-e2", kind: "gap", prompt: "Lei ___ ___ al mercato. (andare)", options: [], answers: ["è andata"], explain: "andare → essere + andata (femminile)."),
+                            Exercise(id: "it-foundations-u3-passato-prossimo-e3", kind: "order", prompt: "Chiedi il weekend.", options: [], answers: ["Cosa hai fatto questo weekend"], explain: "Cosa + hai + participio."),
+                            Exercise(id: "it-foundations-u3-passato-prossimo-e4", kind: "written", prompt: "Di che hai fatto un errore.", options: [], answers: ["ho fatto un errore", "ho fatto uno sbaglio"], explain: "fare → fatto.")], skills: ["grammar:past-simple-regular", "grammar:past-simple-irregular", "grammar:time-expressions", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"])])
+}
+
+public enum ItFoundationsU4 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u4", title: "Confronti e progetti", subtitle: "Più, meno, futuro", level: "A2", themes: [
+                    ConversationTheme("due-appartamenti", "Due appartamenti", "Quale scegliere ?", "house", "Course", "Confrontate due appartamenti: affitto, superficie, quartiere.", 0),
+                    ConversationTheme("progetti-vacanze", "Progetti di vacanza", "Dove andiamo ?", "airplane", "Course", "Pianificate le vacanze con andare a + infinito.", 1)], lessons: [
+            Lesson(id: "it-foundations-u4-confronti", title: "Confronti", goal: "Confrontare con più/meno… di e il migliore/peggiore.",
+                intro: LessonIntro(explanation: [
+                            "Comparativi: più/meno + aggettivo + di. « Questo bar è più caro di quello ». « Meno freddo di ieri ».",
+                            "Superlativi: il/la più/meno + aggettivo + di. « Il miglior ristorante della città ».",
+                            "Irregolari: buono → migliore, cattivo → peggiore."], examples: [
+                            ExampleLine(text: "Questo bar è più caro di quello.", meaning: "più + agg + di."),
+                            ExampleLine(text: "Il treno è meno lento del bus.", meaning: "meno + agg."),
+                            ExampleLine(text: "È il miglior ristorante della città.", meaning: "il migliore + di."),
+                            ExampleLine(text: "Quest'estate è peggiore della scorsa.", meaning: "peggiore = cattivo comparato."),
+                            ExampleLine(text: "Così caro come prima.", meaning: "così + agg + come = uguaglianza.")]),
+                expressions: [
+                            TargetExpression(text: "più … di", meaning: "Più di.", note: "più caro di."),
+                            TargetExpression(text: "meno … di", meaning: "Meno di.", note: "meno freddo di."),
+                            TargetExpression(text: "il/la più … di", meaning: "Superlativo.", note: "il più alto della classe."),
+                            TargetExpression(text: "migliore / peggiore", meaning: "Irregolari.", note: "buono → migliore."),
+                            TargetExpression(text: "così … come", meaning: "Uguaglianza.", note: "così caro come prima.")],
+                situation: "Confrontate due appartamenti: affitto, superficie, quartiere — e scegliete il migliore.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Confronta il prezzo: A 800€, B 1000€.", expected: ["L'appartamento A è meno caro del B."], focus: "meno caro", watch: "meno + agg + di."),
+                                PracticeQuestion(prompt: "Di' quale è il migliore. (B)", expected: ["L'appartamento B è il migliore."], focus: "il migliore", watch: "il migliore + di."),
+                                PracticeQuestion(prompt: "Di' che B è peggiore.", expected: ["L'appartamento B è peggiore dell'A."], focus: "peggiore", watch: "peggiore di — irregolare."),
+                                PracticeQuestion(prompt: "Confronta la posizione: A vicino, B lontano.", expected: ["L'appartamento A è più vicino al centro."], focus: "più vicino", watch: "più + agg + a/di."),
+                                PracticeQuestion(prompt: "Confronta la dimensione: A 60m², B 80m².", expected: ["Il B è più grande dell'A."], focus: "più grande", watch: "più + agg + di.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u4-confronti-e1", kind: "choice", prompt: "Questo bar è ___ caro ___ quello.", options: ["più … di", "più … che", "così … che", "molto … che"], answers: ["più … di"], explain: "più + agg + di."),
+                            Exercise(id: "it-foundations-u4-confronti-e2", kind: "gap", prompt: "È il ___ ristorante della città. (buono)", options: [], answers: ["migliore"], explain: "buono → il migliore."),
+                            Exercise(id: "it-foundations-u4-confronti-e3", kind: "order", prompt: "Confronta il prezzo.", options: [], answers: ["Questo e meno caro di quello"], explain: "meno + agg + di."),
+                            Exercise(id: "it-foundations-u4-confronti-e4", kind: "written", prompt: "Il tuo ristorante preferito.", options: [], answers: ["il mio ristorante preferito e <nome>", "il migliore e <nome>"], explain: "Il mio preferito è X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"])])
+}
+
 public enum PtFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in São Paulo. Meet the learner, exchange names, countries and jobs using the verb ser.", 0),
@@ -3912,10 +4358,80 @@ public enum PtFoundationsU2 {
                             Exercise(id: "pt-foundations-u2-planos-e4", kind: "written", prompt: "O plano B se chover.", options: [], answers: ["se chover marcamos para domingo", "se chover vamos ao cinema"], explain: "se + presente + plano.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "grammar:present-questions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
+public enum PtFoundationsU3 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u3", title: "O passado", subtitle: "O que você fez ?", level: "A2", themes: [
+                    ConversationTheme("fds-passado", "O fim de semana que passou", "Pretérito perfeito", "clock.arrow.circlepath", "Course", "Vocês contam o que fizeram no fim de semana: saídas, comidas, encontros.", 0),
+                    ConversationTheme("viagem-lembrada", "A viagem do ano passado", "Lembranças", "airplane", "Course", "Uma viagem inesquecível: onde foi, o que viu, com quem.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u3-pretérito", title: "O pretérito perfeito", goal: "Contar ações terminadas no passado com -ei/-ou/-amos e -i/-iu.",
+                intro: LessonIntro(explanation: [
+                            "O pretérito perfeito fala de ações terminadas: « Ontem comi paella ». « Ano passado viajei para o México ».",
+                            "Regulares: -ar → ei/ou/amos/aram. -er/-ir → i/eu/iu/emos/iram.",
+                            "Irrregulares frequentes: fui/foi, fiz/fez, vi/viu, disse/disseram, estive/esteve."], examples: [
+                            ExampleLine(text: "Ontem comi paella no centro.", meaning: "comer → comi."),
+                            ExampleLine(text: "Ano passado viajei para o México.", meaning: "viajar → viajei."),
+                            ExampleLine(text: "Fui ao cinema com minha irmã.", meaning: "ir → fui."),
+                            ExampleLine(text: "Fiz a reserva por telefone.", meaning: "fazer → fiz."),
+                            ExampleLine(text: "Não gostei do hotel.", meaning: "gostar → gostei.")]),
+                expressions: [
+                            TargetExpression(text: "comi / comeu / comemos", meaning: "Comer no passado.", note: "-er: i/eu/iu."),
+                            TargetExpression(text: "viajei / viajou / viajaram", meaning: "-ar no passado.", note: "viajar → viajei."),
+                            TargetExpression(text: "fui / foi", meaning: "Ir e ser no passado.", note: "fui ao cinema, foi para casa."),
+                            TargetExpression(text: "fiz / fez / vi / viu", meaning: "Irrregulares frequentes.", note: "fiz a comida, vi o filme."),
+                            TargetExpression(text: "ontem / na semana passada", meaning: "Marcadores de tempo.", note: "Ontem saí.")],
+                situation: "Vocês contam o fim de semana: um conta o que fez no sábado, o outro pergunta detalhes e conta o seu.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga uma ação que você fez ontem. (comer fora)", expected: ["Ontem comi fora."], focus: "comer → comi", watch: "Ontem + comi — terminado."),
+                                PracticeQuestion(prompt: "Diga onde você foi no fim de semana.", expected: ["Fui à praia."], focus: "ir → fui", watch: "“I went” → fui."),
+                                PracticeQuestion(prompt: "Pergunte ao seu amigo o que ele fez ontem.", expected: ["O que você fez ontem ?"], focus: "você fez", watch: "fazer → fez."),
+                                PracticeQuestion(prompt: "Diga que não gostou do filme.", expected: ["Não gostei do filme."], focus: "gostei", watch: "gostei (pretérito) para reação."),
+                                PracticeQuestion(prompt: "Diga quando viajou pela última vez.", expected: ["Ano passado viajei para <lugar>."], focus: "ano passado", watch: "Marcador de tempo + pretérito.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u3-pretérito-e1", kind: "choice", prompt: "Ontem ___ ao cinema com minha irmã.", options: ["fui", "vou", "ia", "vou ir"], answers: ["fui"], explain: "ir → fui (pretérito)."),
+                            Exercise(id: "pt-foundations-u3-pretérito-e2", kind: "gap", prompt: "Ontem ___ uma paella incrível. (comer)", options: [], answers: ["comi", "comí"], explain: "comer → comi."),
+                            Exercise(id: "pt-foundations-u3-pretérito-e3", kind: "order", prompt: "Pergunte pelo fim de semana.", options: [], answers: ["O que voce fez no fim de semana"], explain: "O que você fez no fim de semana ?"),
+                            Exercise(id: "pt-foundations-u3-pretérito-e4", kind: "written", prompt: "Diga uma ação no passado: falar com Marta.", options: [], answers: ["falei com marta", "falei com marta ontem"], explain: "falar → falei.")], skills: ["grammar:past-simple-regular", "grammar:past-simple-irregular", "grammar:time-expressions", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"])])
+}
+
+public enum PtFoundationsU4 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u4", title: "Comparando e planejando", subtitle: "Mais, menos, futuro", level: "A2", themes: [
+                    ConversationTheme("dois-apartamentos", "Dois apartamentos", "Qual escolher ?", "house", "Course", "Vocês comparam dois apartamentos: aluguel, tamanho, bairro — e escolhem o melhor.", 0),
+                    ConversationTheme("planos-viagem", "Planos de viagem", "Vamos aonde ?", "airplane", "Course", "Vocês planejam as férias com ir + infinitivo.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u4-comparando", title: "Comparando", goal: "Comparar com mais/menos… do que e o melhor/pior.",
+                intro: LessonIntro(explanation: [
+                            "Comparativos: mais/menos + adjetivo + do que. « Este hotel é mais caro do que aquele ».",
+                            "Superlativos: o/a melhor/pior + de. « O melhor restaurante da cidade ».",
+                            "Bom → melhor, mau → pior. « Este é melhor do que aquele »."], examples: [
+                            ExampleLine(text: "Este hotel é mais caro do que aquele.", meaning: "mais + adj + do que."),
+                            ExampleLine(text: "A praia é menos movimentada que a piscina.", meaning: "menos + adj."),
+                            ExampleLine(text: "É o melhor restaurante da cidade.", meaning: "o melhor + de."),
+                            ExampleLine(text: "Este verão é pior que o passado.", meaning: "pior = mau comparado."),
+                            ExampleLine(text: "Tão simples quanto isso.", meaning: "tão + adj + quanto = igualdade.")]),
+                expressions: [
+                            TargetExpression(text: "mais … do que", meaning: "Mais do que.", note: "mais caro do que."),
+                            TargetExpression(text: "menos … do que", meaning: "Menos do que.", note: "menos frio do que."),
+                            TargetExpression(text: "o/a melhor … de", meaning: "Superlativo.", note: "o melhor da cidade."),
+                            TargetExpression(text: "melhor / pior", meaning: "Irregulares.", note: "melhor que, o pior de."),
+                            TargetExpression(text: "tão … quanto", meaning: "Igualdade.", note: "tão caro quanto antes.")],
+                situation: "Vocês comparam dois hotéis para as férias: preço, localização, limpeza — e escolhem o melhor.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Compare o preço: hotel A 80€, hotel B 100€.", expected: ["O hotel A é mais barato do que o hotel B."], focus: "mais barato", watch: "barato → mais barato do que."),
+                                PracticeQuestion(prompt: "Diga qual é o melhor. (hotel A)", expected: ["O hotel A é o melhor."], focus: "o melhor", watch: "o melhor + de/em."),
+                                PracticeQuestion(prompt: "Diga que o hotel B é pior.", expected: ["O hotel B é pior que o A."], focus: "pior", watch: "pior que — irregular."),
+                                PracticeQuestion(prompt: "Compare localização: A perto, B longe.", expected: ["O hotel A fica mais perto do centro."], focus: "mais perto", watch: "perto → mais perto de."),
+                                PracticeQuestion(prompt: "Diga que são iguais em limpeza.", expected: ["São tão limpos quanto o outro."], focus: "tão quanto", watch: "tão + adj + quanto = igualdade.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u4-comparando-e1", kind: "choice", prompt: "Este hotel é ___ caro ___ aquele.", options: ["mais … do que", "mais … de", "tão … que", "muito … que"], answers: ["mais … do que"], explain: "mais + adj + do que."),
+                            Exercise(id: "pt-foundations-u4-comparando-e2", kind: "gap", prompt: "É o ___ restaurante da cidade. (bom)", options: [], answers: ["melhor"], explain: "bom → o melhor."),
+                            Exercise(id: "pt-foundations-u4-comparando-e3", kind: "order", prompt: "Compare o preço.", options: [], answers: ["Este e mais barato que aquele"], explain: "mais + adj + do que."),
+                            Exercise(id: "pt-foundations-u4-comparando-e4", kind: "written", prompt: "Seu restaurante favorito.", options: [], answers: ["meu restaurante favorito e <nome>", "o melhor e <nome>"], explain: "Meu favorito é X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
-DeFoundationsU2.unit
+DeFoundationsU2.unit,
+DeFoundationsU3.unit,
+DeFoundationsU4.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -3961,19 +4477,28 @@ EnWorkU1.unit
         ]),
         Course(id: "es-foundations", languageID: "es", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Spanish: the structures every sentence uses, practised out loud in small conversations.", units: [
 EsFoundationsU1.unit,
-EsFoundationsU2.unit
+EsFoundationsU2.unit,
+EsFoundationsU3.unit,
+EsFoundationsU4.unit,
+EsFoundationsU5.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
-FrFoundationsU2.unit
+FrFoundationsU2.unit,
+FrFoundationsU3.unit,
+FrFoundationsU4.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
-ItFoundationsU2.unit
+ItFoundationsU2.unit,
+ItFoundationsU3.unit,
+ItFoundationsU4.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
-PtFoundationsU2.unit
+PtFoundationsU2.unit,
+PtFoundationsU3.unit,
+PtFoundationsU4.unit
         ]),
     ]
 }

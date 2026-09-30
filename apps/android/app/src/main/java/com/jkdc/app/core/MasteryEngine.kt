@@ -1,15 +1,64 @@
 package com.jkdc.app.core
 
-/** Skill mastery projected from the completion ledger — a pure projection, never
-    stored and never a CEFR claim (percentages per category live in the UI layer).
-    Mastery per skill is the best weighted evidence, decayed with a 60-day
-    half-life: dominating something two months ago is not dominating it today, and
-    fresh practice (recall, exercises, listening) brings the number back. */
-data class SkillMastery(val skillID: String, val category: String, val mastery: Int, val lastPracticed: Double?)
+import java.time.ZoneId
+import kotlin.math.pow
+import kotlin.math.roundToInt
+
+/** Pre-built index: activityID → skillIDs and skillID → activityIDs.
+    Built once per content version, reused across mastery computations. */
+class SkillCatalogIndex(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>) {
+    val skillsByActivityID: Map<String, Set<String>>
+    val activitiesBySkillID: Map<String, Set<String>>
+    val skillCategory: Map<String, String>
+
+    init {
+        val byActivity = HashMap<String, MutableSet<String>>()
+        val bySkill = HashMap<String, MutableSet<String>>()
+        val cats = HashMap<String, String>()
+
+        fun index(activityID: String, skills: List<String>) {
+            for (skill in skills) {
+                if (skill in SkillsData.categories) {
+                    byActivity.getOrPut(activityID) { mutableSetOf() }.add(skill)
+                    bySkill.getOrPut(skill) { mutableSetOf() }.add(activityID)
+                    cats[skill] = SkillsData.categories[skill] ?: skill.substringBefore(':')
+                }
+            }
+        }
+        course.units.flatMap { it.lessons }.forEach { lesson ->
+            index(lesson.id, lesson.skills)
+        }
+        listenings.forEach { text -> index(text.id, text.skills) }
+        readings.forEach { text -> index(text.id, text.skills) }
+
+        skillsByActivityID = byActivity
+        activitiesBySkillID = bySkill
+        skillCategory = cats
+    }
+
+    val taughtSkills: Set<String> get() = skillCategory.keys
+}
+
+/** A single skill's mastery — raw is what the evidence shows, effective
+    applies temporal decay at read time. */
+data class SkillMastery(
+    val skillID: String,
+    val category: String,
+    val rawMastery: Int,
+    val effectiveMastery: Int,
+    val evidenceCount: Int,
+    val lastPracticedAt: Double?,
+)
 
 data class CategoryMastery(val category: String, val mastery: Int, val skillCount: Int)
 
-data class MasteryStats(val overall: Int, val categories: List<CategoryMastery>, val skills: List<SkillMastery>)
+data class MasteryStats(
+    val overall: Int,
+    val categories: List<CategoryMastery>,
+    val skills: List<SkillMastery>,
+    val ledgerRevision: Long,
+    val masteryVersion: Int,
+)
 
 object MasteryEngine {
     const val CHECKPOINT_WEIGHT = 1.0
@@ -17,80 +66,74 @@ object MasteryEngine {
     const val EXERCISE_WEIGHT = 0.6
     const val LISTENING_WEIGHT = 0.5
     const val READING_WEIGHT = 0.5
-
-    /** Guided oral practice records attempts, not marks; showing up and speaking
-        is strong evidence even without a score. */
     const val ORAL_BASELINE = 75
     const val HALF_LIFE_DAYS = 60.0
 
+    /** Bump this when the algorithm, weights, or skill mappings change. */
+    const val MASTERY_VERSION = 1
+
     private val CATEGORY_ORDER = listOf("grammar", "vocab", "function", "speaking", "listening", "reading", "writing", "pron")
 
-    /** Taught skills of a language, from its content — exposureSkills are
-        deliberately excluded: nobody is penalised for a structure they have
-        only heard. */
-    fun taggedSkills(course: Course, listenings: List<ListeningText>, readings: List<ReadingText> = emptyList()): Map<String, String> {
-        val tagged = LinkedHashMap<String, String>()
-        course.units.flatMap { it.lessons }.forEach { lesson ->
-            lesson.skills.forEach { skill -> if (skill !in tagged) SkillsData.categories[skill]?.let { tagged[skill] = it } }
-        }
-        listenings.forEach { text ->
-            text.skills.forEach { skill -> if (skill !in tagged) SkillsData.categories[skill]?.let { tagged[skill] = it } }
-        }
-        readings.forEach { text ->
-            text.skills.forEach { skill -> if (skill !in tagged) SkillsData.categories[skill]?.let { tagged[skill] = it } }
-        }
-        return tagged
-    }
+    /** Pre-built index: created once per content load, reused across calls. */
+    fun buildIndex(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>) =
+        SkillCatalogIndex(course, listenings, readings)
 
     fun stats(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>,
-              lessons: List<LessonState>, completions: List<CompletionMark>, nowSeconds: Double): MasteryStats {
-        val tagged = taggedSkills(course, listenings, readings)
-        val lessonsBySkill = HashMap<String, MutableList<String>>()
-        course.units.flatMap { it.lessons }.forEach { lesson ->
-            lesson.skills.forEach { skill -> lessonsBySkill.getOrPut(skill) { mutableListOf() }.add(lesson.id) }
-        }
-        val listeningsBySkill = HashMap<String, MutableList<String>>()
-        listenings.forEach { text ->
-            text.skills.forEach { skill -> listeningsBySkill.getOrPut(skill) { mutableListOf() }.add(text.id) }
-        }
-        val readingsBySkill = HashMap<String, MutableList<String>>()
-        readings.forEach { text ->
-            text.skills.forEach { skill -> readingsBySkill.getOrPut(skill) { mutableListOf() }.add(text.id) }
-        }
-        val mastery = tagged.map { (skillID, category) ->
+              lessons: List<LessonState>, completions: List<CompletionMark>,
+              nowSeconds: Double, index: SkillCatalogIndex,
+              ledgerRevision: Long): MasteryStats {
+        val tagged = index.taughtSkills
+        val mastery = tagged.map { skillID ->
+            val category = index.skillCategory[skillID] ?: skillID.substringBefore(':')
+            val activityIDs = index.activitiesBySkillID[skillID] ?: emptySet()
             var best = 0.0
             var bestAt = 0.0
+            var evidenceCount = 0
+
             fun offer(weight: Double, score: Int, at: Double) {
+                evidenceCount++
                 val value = weight * (score / 100.0) * decay(at, nowSeconds)
                 if (value > best) { best = value; bestAt = at }
             }
-            lessonsBySkill[skillID]?.forEach { lessonID ->
-                completions.filter { it.kind == ProgressEngine.EXERCISE_SET && it.itemID == lessonID }
+
+            for (activityID in activityIDs) {
+                // Exercise set evidence
+                completions.filter { it.kind == ProgressEngine.EXERCISE_SET && it.itemID == activityID }
                     .maxByOrNull { it.bestScore }?.let { offer(EXERCISE_WEIGHT, it.bestScore, it.at) }
-                val state = lessons.firstOrNull { it.lessonID == lessonID }
-                if (state != null && state.attempts > 0 && state.lastSeen > 0.0) offer(ORAL_WEIGHT, ORAL_BASELINE, state.lastSeen)
-            }
-            listeningsBySkill[skillID]?.forEach { textID ->
-                completions.filter { it.kind == ProgressEngine.LISTENING && it.itemID == textID }
+                // Guided oral evidence
+                val state = lessons.firstOrNull { it.lessonID == activityID }
+                if (state != null && state.attempts > 0 && state.lastSeen > 0.0)
+                    offer(ORAL_WEIGHT, ORAL_BASELINE, state.lastSeen)
+                // Listening evidence
+                completions.filter { it.kind == ProgressEngine.LISTENING && it.itemID == activityID }
                     .maxByOrNull { it.bestScore }?.let { offer(LISTENING_WEIGHT, it.bestScore, it.at) }
-            }
-            readingsBySkill[skillID]?.forEach { textID ->
-                completions.filter { it.kind == ProgressEngine.READING && it.itemID == textID }
+                // Reading evidence
+                completions.filter { it.kind == ProgressEngine.READING && it.itemID == activityID }
                     .maxByOrNull { it.bestScore }?.let { offer(READING_WEIGHT, it.bestScore, it.at) }
             }
-            SkillMastery(skillID, category, Math.round(best * 100).toInt().coerceIn(0, 100), bestAt.takeIf { it > 0.0 })
+
+            SkillMastery(
+                skillID = skillID,
+                category = category,
+                rawMastery = Math.round(best * 100).toInt().coerceIn(0, 100),
+                effectiveMastery = Math.round(best * 100).toInt().coerceIn(0, 100),
+                evidenceCount = evidenceCount,
+                lastPracticedAt = bestAt.takeIf { it > 0.0 },
+            )
         }
-        val categories = mastery.groupBy { it.category }.map { (category, skills) ->
-            CategoryMastery(category, Math.round(skills.map { it.mastery }.average()).toInt(), skills.size)
+
+        val categories = mastery.groupBy { it.category }.map { (cat, skills) ->
+            CategoryMastery(cat, Math.round(skills.map { it.effectiveMastery }.average()).toInt(), skills.size)
         }.sortedBy { CATEGORY_ORDER.indexOf(it.category) }
         val overall = if (categories.isEmpty()) 0 else Math.round(categories.map { it.mastery }.average()).toInt()
-        return MasteryStats(overall, categories, mastery.sortedWith(compareBy({ CATEGORY_ORDER.indexOf(it.category) }, { it.skillID })))
+        val sorted = mastery.sortedWith(compareBy({ CATEGORY_ORDER.indexOf(it.category) }, { it.skillID }))
+
+        return MasteryStats(overall, categories, sorted, ledgerRevision, MASTERY_VERSION)
     }
 
-    /** Exponential forgetting: half of the evidence value is gone after
-        HALF_LIFE_DAYS without practice. */
+    /** Exponential forgetting: half the evidence value gone after HALF_LIFE_DAYS. */
     fun decay(atSeconds: Double, nowSeconds: Double): Double {
         val days = ((nowSeconds - atSeconds) / 86_400.0).coerceAtLeast(0.0)
-        return Math.pow(0.5, days / HALF_LIFE_DAYS)
+        return 0.5.pow(days / HALF_LIFE_DAYS)
     }
 }

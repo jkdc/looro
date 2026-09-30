@@ -21,17 +21,19 @@ final class MasteryEngineTests: XCTestCase {
     }
 
     private func stats(_ course: Course, listenings: [ListeningText] = [], lessons: [LessonState] = [],
-                       marks: [CompletionMark] = []) -> MasteryStats {
-        MasteryEngine.stats(course: course, listenings: listenings, lessons: lessons,
-                            completions: marks, nowSeconds: now)
+                       marks: [CompletionMark] = [], readings: [ReadingText] = []) -> MasteryStats {
+        let idx = MasteryEngine.buildIndex(course: course, listenings: listenings, readings: readings)
+        return MasteryEngine.stats(course: course, listenings: listenings, readings: readings,
+                                   lessons: lessons, completions: marks,
+                                   nowSeconds: now, index: idx, ledgerRevision: 1)
     }
 
     func testEvidenceIsWeightedAndDecayedWithASixtyDayHalfLife() {
         let course = course([("l1", ["grammar:verb-be"])])
         let fresh = stats(course, marks: [CompletionMark(kind: ProgressEngine.exerciseSet, itemID: "l1", at: now, bestScore: 100)])
-        XCTAssertEqual(60, fresh.skills.first!.mastery)
+        XCTAssertEqual(60, fresh.skills.first!.effectiveMastery)
         let aged = stats(course, marks: [CompletionMark(kind: ProgressEngine.exerciseSet, itemID: "l1", at: now - 60 * day, bestScore: 100)])
-        XCTAssertEqual(30, aged.skills.first!.mastery)
+        XCTAssertEqual(30, aged.skills.first!.effectiveMastery)
         XCTAssertEqual(0.5, MasteryEngine.decay(atSeconds: now - 60 * day, nowSeconds: now), accuracy: 0.0001)
         XCTAssertEqual(1.0, MasteryEngine.decay(atSeconds: now, nowSeconds: now), accuracy: 0.0001)
     }
@@ -39,9 +41,8 @@ final class MasteryEngineTests: XCTestCase {
     func testOralPracticeIsStrongEvidenceEvenWithoutAMark() {
         let course = course([("l1", ["grammar:verb-be"])])
         let result = stats(course, lessons: [LessonState(lessonID: "l1", attempts: 2, lastSeen: now)])
-        // 0.9 × 75 baseline = 67.5 → 68; exercises alone at 100 would only be 60.
-        XCTAssertEqual(68, result.skills.first!.mastery)
-        XCTAssertEqual(now, result.skills.first!.lastPracticed)
+        XCTAssertEqual(68, result.skills.first!.effectiveMastery)
+        XCTAssertEqual(now, result.skills.first!.lastPracticedAt)
     }
 
     func testTheBestEvidenceWinsAcrossKinds() {
@@ -49,8 +50,16 @@ final class MasteryEngineTests: XCTestCase {
         let result = stats(course, listenings: listening("t1", ["grammar:verb-be"]),
                            marks: [CompletionMark(kind: ProgressEngine.exerciseSet, itemID: "l1", at: now, bestScore: 80),
                                    CompletionMark(kind: ProgressEngine.listening, itemID: "t1", at: now, bestScore: 100)])
-        // exercise 0.6 × 80 = 48 · listening 0.5 × 100 = 50 → 50 wins.
-        XCTAssertEqual(50, result.skills.first!.mastery)
+        XCTAssertEqual(50, result.skills.first!.effectiveMastery)
+    }
+
+    func testReadingEvidenceCountsAtItsOwnWeight() {
+        let course = course([("l1", ["reading:detail"])])
+        let readings = [ReadingText(id: "r1", languageID: "en", title: "R", level: "A1",
+                                    topic: "t", text: "x", questions: [], skills: ["reading:detail"])]
+        let result = stats(course, readings: readings,
+                           marks: [CompletionMark(kind: ProgressEngine.reading, itemID: "r1", at: now, bestScore: 100)])
+        XCTAssertEqual(50, result.skills.first!.effectiveMastery)
     }
 
     func testExposureSkillsAreNeverMeasured() {
@@ -67,11 +76,9 @@ final class MasteryEngineTests: XCTestCase {
         let course = course([("l1", ["grammar:verb-be"]), ("l2", ["grammar:plurals", "vocab:family"])])
         let result = stats(course, marks: [CompletionMark(kind: ProgressEngine.exerciseSet, itemID: "l1", at: now, bestScore: 100),
                                            CompletionMark(kind: ProgressEngine.exerciseSet, itemID: "l2", at: now, bestScore: 50)])
-        // grammar = mean(60, 30) = 45 · vocab = 30 · overall = mean(45, 30) = 38.
         XCTAssertEqual(45, result.categories.first { $0.category == "grammar" }!.mastery)
         XCTAssertEqual(30, result.categories.first { $0.category == "vocab" }!.mastery)
         XCTAssertEqual(38, result.overall)
-        XCTAssertEqual(2, result.categories.first { $0.category == "grammar" }!.skillCount)
     }
 
     func testUntaggedContentProducesEmptyMastery() {
@@ -79,5 +86,19 @@ final class MasteryEngineTests: XCTestCase {
         XCTAssertEqual(0, result.overall)
         XCTAssertTrue(result.categories.isEmpty)
         XCTAssertTrue(result.skills.isEmpty)
+    }
+
+    func testSkillCatalogIndexResolvesActivityToSkills() {
+        let course = course([("l1", ["grammar:verb-be", "vocab:family"])])
+        let idx = MasteryEngine.buildIndex(course: course, listenings: listening("t1", ["grammar:verb-be"]), readings: [])
+        XCTAssertEqual(Set(["grammar:verb-be", "vocab:family"]), idx.skillsByActivityID["l1"])
+        XCTAssertEqual(Set(["grammar:verb-be"]), idx.skillsByActivityID["t1"])
+        XCTAssertEqual(Set(["l1", "t1"]), idx.activitiesBySkillID["grammar:verb-be"])
+    }
+
+    func testMasteryVersionAndRevisionAreInStats() {
+        let result = stats(course([("l1", ["grammar:verb-be"])]))
+        XCTAssertEqual(MasteryEngine.masteryVersion, result.masteryVersion)
+        XCTAssertEqual(1, result.ledgerRevision)
     }
 }

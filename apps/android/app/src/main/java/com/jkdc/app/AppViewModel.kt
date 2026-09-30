@@ -310,6 +310,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         val marks = ((archive.completions ?: mutableListOf()) + mark)
             .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS)
         archive = archive.copy(completions = marks.toMutableList())
+        bumpLedgerRevision()
         persist()
     }
 
@@ -333,19 +334,35 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun foundationsCourse(): Course? = CourseRegistry.forLanguage(language.id)
         .firstOrNull { it.id.endsWith("-foundations") }
 
-    /** Skill mastery for the learning language — a pure projection of the ledger;
-        null when the language has no course yet. Cached by (language, completion
-        count, lesson count) so a language switch or new evidence invalidates it. */
-    private var cachedMasteryStats: Triple<String, Int, MasteryStats>? = null
+    /** Monotonic counter — every ledger mutation increments it. */
+    private var ledgerRevision: Long = 0
+    private fun bumpLedgerRevision() { ledgerRevision++ }
+
+    /** Pre-built skill catalog index for the current language. */
+    private var cachedIndex: SkillCatalogIndex? = null
+    private fun skillIndex(course: Course): SkillCatalogIndex {
+        if (cachedIndex == null) {
+            cachedIndex = MasteryEngine.buildIndex(course,
+                ListeningRegistry.forLanguage(language.id),
+                ReadingRegistry.forLanguage(language.id))
+        }
+        return cachedIndex!!
+    }
+
+    /** Skill mastery for the learning language — cached by (language, ledger
+        revision, mastery version) so new evidence or algorithm changes
+        invalidate it, but repeated queries are free. */
+    private var cachedMastery: Pair<Pair<String, Long>, MasteryStats>? = null
 
     fun masteryStats(): MasteryStats? = foundationsCourse()?.let { course ->
-        val key = Triple(language.id, archive.completions.orEmpty().size, archive.lessons.count { it.attempts > 0 })
-        cachedMasteryStats?.takeIf { it.first == key.first && it.second == key.second }?.third
-            ?: MasteryEngine.stats(course, ListeningRegistry.forLanguage(language.id),
-                ReadingRegistry.forLanguage(language.id), archive.lessons,
-                archive.completions.orEmpty(), nowSeconds()).also {
-                cachedMasteryStats = Triple(key.first, key.second, it)
-            }
+        val key = language.id to ledgerRevision
+        cachedMastery?.takeIf { it.first == key }?.second
+            ?: MasteryEngine.stats(course,
+                ListeningRegistry.forLanguage(language.id),
+                ReadingRegistry.forLanguage(language.id),
+                archive.lessons, archive.completions.orEmpty(),
+                nowSeconds(), skillIndex(course), ledgerRevision
+            ).also { cachedMastery = key to it }
     }
 
     /** A finished reading: one ledger mark with the score, same bargain as listening. */
@@ -429,7 +446,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         unattempted lesson in course order. */
     fun recommendedLesson(): Lesson? {
         val course = foundationsCourse() ?: return null
-        val mastery = masteryStats()?.skills?.associate { it.skillID to it.mastery } ?: emptyMap()
+        val mastery = masteryStats()?.skills?.associate { it.skillID to it.effectiveMastery } ?: emptyMap()
         val attempted = archive.lessons.filter { it.attempts > 0 }.map { it.lessonID }.toSet()
         val unattempted = course.units.flatMap { it.lessons }.filter { it.id !in attempted }
         return unattempted.firstOrNull { lesson ->
@@ -455,7 +472,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val session = memberSessions?.read() ?: guests?.availableSession() ?: return@launch
                 val remote = client.fetch(session)
-                if (remote != null && mergeRemoteProgress(remote)) persist()
+                if (remote != null && mergeRemoteProgress(remote)) { bumpLedgerRevision(); persist() }
                 client.send(session, progressBatchJson())
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e

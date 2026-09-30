@@ -19,11 +19,16 @@ struct LearningProgressView: View {
     }
     private var mastery: MasteryStats? {
         guard let course = foundationsCourse else { return nil }
+        let idx = MasteryEngine.buildIndex(course: course,
+            listenings: ListeningRegistry.forLanguage(course.languageID),
+            readings: ReadingRegistry.forLanguage(course.languageID))
         return MasteryEngine.stats(course: course, listenings: ListeningRegistry.forLanguage(course.languageID),
                                    readings: ReadingRegistry.forLanguage(course.languageID),
                                    lessons: store.archive.lessons ?? [],
                                    completions: store.archive.completions ?? [],
-                                   nowSeconds: Date.timeIntervalSinceReferenceDate)
+                                   nowSeconds: Date.timeIntervalSinceReferenceDate,
+                                   index: idx,
+                                   ledgerRevision: Int64((store.archive.completions ?? []).count))
     }
     private func categoryLabel(_ category: String) -> String {
         ["grammar": "Grammar", "vocab": "Vocabulary", "function": "Functions", "speaking": "Speaking",
