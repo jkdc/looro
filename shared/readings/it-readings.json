@@ -1077,6 +1077,179 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-read-lista-valigia",
+      "languageID": "it",
+      "title": "La lista della valigia",
+      "level": "A2",
+      "topic": "liste e viaggi",
+      "unitID": "it-foundations-u25",
+      "text": "Parto sabato per Lisbona e questa è la mia lista. Documenti: passaporto, carta d’identità e prenotazioni dell’albergo, già stampate. Vestiti: due magliette, un maglione leggero e una giacca, perché ad ottobre piove spesso. Cose tecniche: telefono, caricatore e adattatore — l’anno scorso l’ho dimenticato a casa e ho pagato troppo per uno nuovo. Salute: cerotti e le medicine per la testa. La regola della casa: la valigia pesa meno di venti chili, quindi metto solo l’indispensabile. Domani faccio il check-in online e controllo i biglietti un’ultima volta. Venerdì sera chiudo tutto e vado a letto presto: due ore prima all’aeroporto non si sbaglia.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:going-to",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-lista-valigia-q1",
+          "kind": "choice",
+          "prompt": "Quando parte il viaggiatore ?",
+          "answers": [
+            "Sabato"
+          ],
+          "explain": "« Parto sabato per Lisbona ».",
+          "options": [
+            "Sabato",
+            "Venerdì",
+            "Domenica",
+            "Lunedì"
+          ]
+        },
+        {
+          "id": "it-read-lista-valigia-q2",
+          "kind": "written",
+          "prompt": "Che cosa ha dimenticato l’anno scorso ?",
+          "answers": [
+            "l’adattatore",
+            "l adattatore",
+            "adattatore"
+          ],
+          "explain": "« L’anno scorso l’ho dimenticato a casa »."
+        },
+        {
+          "id": "it-read-lista-valigia-q3",
+          "kind": "choice",
+          "prompt": "Perché porta un maglione leggero ?",
+          "answers": [
+            "Perché ad ottobre piove spesso"
+          ],
+          "explain": "« Una giacca, perché ad ottobre piove spesso ».",
+          "options": [
+            "Perché ad ottobre piove spesso",
+            "Perché fa caldo",
+            "Perché va in montagna",
+            "Perché l’albergo è freddo"
+          ]
+        },
+        {
+          "id": "it-read-lista-valigia-q4",
+          "kind": "written",
+          "prompt": "Quanto può pesare la valigia ?",
+          "answers": [
+            "meno di venti chili",
+            "venti chili",
+            "20 chili",
+            "meno di 20 chili"
+          ],
+          "explain": "« La valigia pesa meno di venti chili »."
+        },
+        {
+          "id": "it-read-lista-valigia-q5",
+          "kind": "choice",
+          "prompt": "Che cosa fa domani ?",
+          "answers": [
+            "Il check-in online"
+          ],
+          "explain": "« Domani faccio il check-in online ».",
+          "options": [
+            "Il check-in online",
+            "La valigia nuova",
+            "I biglietti nuovi",
+            "Le fotocopie"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-read-locandina-quartiere",
+      "languageID": "it",
+      "title": "La locandina dell’assemblea",
+      "level": "B1",
+      "topic": "città e partecipazione",
+      "unitID": "it-foundations-u26",
+      "text": "LA PIAZZA CHE VOGLIAMO — Assemblea aperta, giovedì alle 18.30, cortile della scuola Garibaldi. Il comitato propone: zona pedonale nella piazza Nucci dal venerdì alla domenica, trenta nuovi posti auto in via Ferretti e cinquanta alberi nei cortili interni. Perché ? Perché oggi il settanta per cento dei clienti arriva a piedi o in bici, ma i negozi temono per il weekend. Da un lato meno traffico e più spazio per i bambini; dall’altro il timore dei commercianti. Per questo proponiamo un test di sei mesi: poi si valuta con i numeri, non con le opinioni. Venite numerosi: il quartiere si costruisce anche con le vostre firme. Informazioni: comitato@quartierenucci.it",
+      "skills": [
+        "reading:inference",
+        "function:express-opinion",
+        "grammar:connectors",
+        "writing:argument"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-locandina-quartiere-q1",
+          "kind": "written",
+          "prompt": "In che giorno e a che ora si tiene l’assemblea ?",
+          "answers": [
+            "giovedì alle 18.30",
+            "giovedi alle 18.30",
+            "giovedì alle 18:30",
+            "giovedi alle 18:30"
+          ],
+          "explain": "« Assemblea aperta, giovedì alle 18.30 »."
+        },
+        {
+          "id": "it-read-locandina-quartiere-q2",
+          "kind": "choice",
+          "prompt": "Che cosa propone il comitato per i weekend ?",
+          "answers": [
+            "La zona pedonale nella piazza"
+          ],
+          "explain": "« Zona pedonale nella piazza Nucci dal venerdì alla domenica ».",
+          "options": [
+            "La zona pedonale nella piazza",
+            "Il mercato al coperto",
+            "Più fermate del bus",
+            "Nuove strade"
+          ]
+        },
+        {
+          "id": "it-read-locandina-quartiere-q3",
+          "kind": "written",
+          "prompt": "Quanti posti auto nuovi sono previsti e dove ?",
+          "answers": [
+            "trenta in via ferretti",
+            "trenta posti in via ferretti",
+            "30 in via ferretti",
+            "trenta posti nuovi in via ferretti"
+          ],
+          "explain": "« Trenta nuovi posti auto in via Ferretti »."
+        },
+        {
+          "id": "it-read-locandina-quartiere-q4",
+          "kind": "choice",
+          "prompt": "Quanto dura il test proposto ?",
+          "answers": [
+            "Sei mesi"
+          ],
+          "explain": "« Un test di sei mesi ».",
+          "options": [
+            "Sei mesi",
+            "Tre mesi",
+            "Un anno",
+            "Sei settimane"
+          ]
+        },
+        {
+          "id": "it-read-locandina-quartiere-q5",
+          "kind": "choice",
+          "prompt": "Che cosa chiede la locandina ai residenti ?",
+          "answers": [
+            "Di firmare"
+          ],
+          "explain": "« Il quartiere si costruisce anche con le vostre firme ».",
+          "options": [
+            "Di firmare",
+            "Di votare online",
+            "Di portare sedie",
+            "Di pagare una quota"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -2800,6 +2800,586 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-listen-compleanno-sorpresa",
+      "languageID": "it",
+      "title": "Il compleanno a sorpresa",
+      "level": "A1",
+      "topic": "compleanni",
+      "unitID": "it-foundations-u22",
+      "text": "« Marco, sabato è il compleanno di Luca ! » « Davvero ? Facciamo una festa a sorpresa ? » « Sì ! A casa tua ? » « Sì, alle otto di sera. Tu cosa porti ? » « Io porto la torta. Tu compri le bibite ? » « Ok. E la musica ? » « Luca ama il jazz, ma per la festa metto la musica pop. » « E gli invitati ? » « Io chiamo Anna e Piero, tu chiami i colleghi. » « Perfetto. È un segreto, eh ? » « Certo ! Tanti auguri a Luca… sabato sera ! »",
+      "skills": [
+        "listening:detail",
+        "vocab:social-expressions",
+        "function:make-suggestions",
+        "grammar:present-simple"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-compleanno-sorpresa-q1",
+          "kind": "choice",
+          "prompt": "Che cosa organizzano Marco e Giulia ?",
+          "answers": [
+            "Una festa a sorpresa"
+          ],
+          "explain": "« Facciamo una festa a sorpresa ? ».",
+          "options": [
+            "Una festa a sorpresa",
+            "Una cena al ristorante",
+            "Una partita di calcio",
+            "Un viaggio"
+          ]
+        },
+        {
+          "id": "it-listen-compleanno-sorpresa-q2",
+          "kind": "choice",
+          "prompt": "Chi porta la torta ?",
+          "answers": [
+            "Giulia"
+          ],
+          "explain": "« Io porto la torta », dice Giulia.",
+          "options": [
+            "Giulia",
+            "Marco",
+            "Anna",
+            "Luca"
+          ]
+        },
+        {
+          "id": "it-listen-compleanno-sorpresa-q3",
+          "kind": "written",
+          "prompt": "A che ora inizia la festa ?",
+          "answers": [
+            "alle otto",
+            "alle otto di sera",
+            "8 di sera"
+          ],
+          "explain": "« Sì, alle otto di sera »."
+        },
+        {
+          "id": "it-listen-compleanno-sorpresa-q4",
+          "kind": "choice",
+          "prompt": "Che musica mette Giulia per la festa ?",
+          "answers": [
+            "La musica pop"
+          ],
+          "explain": "« Per la festa metto la musica pop ».",
+          "options": [
+            "La musica pop",
+            "Il jazz",
+            "Il rock",
+            "Nessuna musica"
+          ]
+        },
+        {
+          "id": "it-listen-compleanno-sorpresa-q5",
+          "kind": "written",
+          "prompt": "Che cosa compra Marco ?",
+          "answers": [
+            "le bibite"
+          ],
+          "explain": "« Tu compri le bibite ? » — sì, Marco le compra."
+        },
+        {
+          "id": "it-listen-compleanno-sorpresa-q6",
+          "kind": "choice",
+          "prompt": "Perché la festa è un segreto ?",
+          "answers": [
+            "Perché è a sorpresa"
+          ],
+          "explain": "« È un segreto »: la festa è a sorpresa.",
+          "options": [
+            "Perché è a sorpresa",
+            "Perché Luca non è invitato",
+            "Perché è a casa di Anna",
+            "Perché è di mattina"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-camerino",
+      "languageID": "it",
+      "title": "Al negozio di vestiti",
+      "level": "A1",
+      "topic": "negozi",
+      "unitID": "it-foundations-u23",
+      "text": "« Buongiorno, cerco una camicia per il lavoro. » « Certamente. Che colore preferisce ? » « Blu, per favore. » « Ecco una camicia blu, taglia M. » « Posso provarla ? » « Certo, il camerino è lì a destra. » « La camicia è un po’ stretta. Ha la taglia più grande ? » « Ecco la L. » « Adesso va bene ! Quant’è ? » « Trentanove euro. » « Per me è un po’ caro… c’è uno sconto ? » « Oggi sì: in cassa il prezzo è trentaquattro euro. » « Perfetto, la prendo. Pago con la carta. » « Grazie a lei e arrivederci ! »",
+      "skills": [
+        "listening:detail",
+        "function:go-shopping",
+        "vocab:shopping",
+        "grammar:can"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-camerino-q1",
+          "kind": "choice",
+          "prompt": "Che cosa cerca la cliente ?",
+          "answers": [
+            "Una camicia"
+          ],
+          "explain": "« Cerco una camicia per il lavoro ».",
+          "options": [
+            "Una camicia",
+            "Un pantalone",
+            "Una giacca",
+            "Un vestito"
+          ]
+        },
+        {
+          "id": "it-listen-camerino-q2",
+          "kind": "choice",
+          "prompt": "Che colore preferisce ?",
+          "answers": [
+            "Blu"
+          ],
+          "explain": "« Blu, per favore ».",
+          "options": [
+            "Blu",
+            "Nero",
+            "Bianco",
+            "Verde"
+          ]
+        },
+        {
+          "id": "it-listen-camerino-q3",
+          "kind": "written",
+          "prompt": "Che problema ha la camicia nel camerino ?",
+          "answers": [
+            "è un po’ stretta",
+            "e un po stretta",
+            "e stretta",
+            "un po stretta"
+          ],
+          "explain": "« La camicia è un po’ stretta »."
+        },
+        {
+          "id": "it-listen-camerino-q4",
+          "kind": "choice",
+          "prompt": "Quanto costa alla fine ?",
+          "answers": [
+            "Trentaquattro euro"
+          ],
+          "explain": "« In cassa il prezzo è trentaquattro euro ».",
+          "options": [
+            "Trentaquattro euro",
+            "Trentanove euro",
+            "Quaranta euro",
+            "Trenta euro"
+          ]
+        },
+        {
+          "id": "it-listen-camerino-q5",
+          "kind": "written",
+          "prompt": "Come paga la cliente ?",
+          "answers": [
+            "con la carta",
+            "paga con la carta",
+            "carta"
+          ],
+          "explain": "« Pago con la carta »."
+        },
+        {
+          "id": "it-listen-camerino-q6",
+          "kind": "choice",
+          "prompt": "Che taglia prende alla fine ?",
+          "answers": [
+            "La L"
+          ],
+          "explain": "« Ecco la L » — « Adesso va bene ! ».",
+          "options": [
+            "La L",
+            "La M",
+            "La S",
+            "La XL"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-restituzione",
+      "languageID": "it",
+      "title": "La stampante da restituire",
+      "level": "A2",
+      "topic": "restituzioni",
+      "unitID": "it-foundations-u24",
+      "text": "« Buongiorno, ho comprato questa stampante sabato, ma non funziona bene. » « Mi dispiace. Che cosa succede ? » « Stampa le pagine a metà. L’ho usata solo tre volte. » « Ha lo scontrino ? » « Sì, eccolo. » « Vuole un’altra stampante uguale oppure preferisce restituirla ? » « Vorrei restituirla e prendere il modello più grande: costa dieci euro in più, però ha recensioni migliori. » « Nessun problema. Ecco il rimborso di ottantanove euro; la differenza sono dieci euro. » « Posso pagare la differenza con la carta ? » « Certo. Anche in tre rate, se preferisce. » « No, tutta insieme, grazie. »",
+      "skills": [
+        "listening:detail",
+        "grammar:past-simple-regular",
+        "function:solve-problems",
+        "vocab:shopping"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-restituzione-q1",
+          "kind": "written",
+          "prompt": "Che cosa ha comprato il cliente ?",
+          "answers": [
+            "una stampante",
+            "la stampante"
+          ],
+          "explain": "« Ho comprato questa stampante sabato »."
+        },
+        {
+          "id": "it-listen-restituzione-q2",
+          "kind": "written",
+          "prompt": "Quante volte l’ha usata ?",
+          "answers": [
+            "tre volte",
+            "3 volte"
+          ],
+          "explain": "« L’ho usata solo tre volte »."
+        },
+        {
+          "id": "it-listen-restituzione-q3",
+          "kind": "choice",
+          "prompt": "Che cosa vuole il cliente ?",
+          "answers": [
+            "Restituirla e prendere il modello più grande"
+          ],
+          "explain": "« Vorrei restituirla e prendere il modello più grande ».",
+          "options": [
+            "Restituirla e prendere il modello più grande",
+            "Cambiare lo scontrino",
+            "Un rimborso senza sostituzione",
+            "Un tecnico a casa"
+          ]
+        },
+        {
+          "id": "it-listen-restituzione-q4",
+          "kind": "written",
+          "prompt": "Quanto costa la differenza ?",
+          "answers": [
+            "dieci euro",
+            "10 euro"
+          ],
+          "explain": "« La differenza sono dieci euro »."
+        },
+        {
+          "id": "it-listen-restituzione-q5",
+          "kind": "choice",
+          "prompt": "Perché sceglie il modello più grande ?",
+          "answers": [
+            "Perché ha recensioni migliori"
+          ],
+          "explain": "« Costa dieci euro in più, però ha recensioni migliori ».",
+          "options": [
+            "Perché ha recensioni migliori",
+            "Perché costa meno",
+            "Perché è più piccolo",
+            "Perché è in saldo"
+          ]
+        },
+        {
+          "id": "it-listen-restituzione-q6",
+          "kind": "written",
+          "prompt": "Come vuole pagare la differenza ?",
+          "answers": [
+            "tutta insieme",
+            "tutta insieme con la carta",
+            "insieme"
+          ],
+          "explain": "« No, tutta insieme, grazie »."
+        }
+      ]
+    },
+    {
+      "id": "it-listen-vigilia-partenza",
+      "languageID": "it",
+      "title": "La vigilia della partenza",
+      "level": "A2",
+      "topic": "viaggi",
+      "unitID": "it-foundations-u25",
+      "text": "« Domani parto per Lisbona ! » « Hai già fatto la valigia ? » « Sto per chiuderla adesso. Mi mancano solo il caricatore e l’adattatore. » « E i documenti ? » « Il passaporto l’ho già messo nella borsa; il biglietto ce l’ho sul telefono. » « A che ora parte il volo ? » « Alle nove e dieci. Devo essere all’aeroporto due ore prima, quindi domani mi sveglio alle sei. » « Prendi il treno o il pullman ? » « Il treno per l’aeroporto: parte dalla stazione centrale alle sei e mezza. » « E l’albergo ? » « È in centro, vicino alla metro. Stasera faccio il check-in online, poi a letto presto ! »",
+      "skills": [
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:travel",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-vigilia-partenza-q1",
+          "kind": "choice",
+          "prompt": "Dove parte la persona ?",
+          "answers": [
+            "A Lisbona"
+          ],
+          "explain": "« Domani parto per Lisbona ! ».",
+          "options": [
+            "A Lisbona",
+            "A Barcellona",
+            "A Roma",
+            "A Londra"
+          ]
+        },
+        {
+          "id": "it-listen-vigilia-partenza-q2",
+          "kind": "written",
+          "prompt": "Che cosa manca ancora nella valigia ?",
+          "answers": [
+            "il caricatore e l’adattatore",
+            "il caricatore e l adattatore",
+            "caricatore e adattatore",
+            "il caricatore"
+          ],
+          "explain": "« Mi mancano solo il caricatore e l’adattatore »."
+        },
+        {
+          "id": "it-listen-vigilia-partenza-q3",
+          "kind": "choice",
+          "prompt": "A che ora parte il volo ?",
+          "answers": [
+            "Alle nove e dieci"
+          ],
+          "explain": "« Alle nove e dieci ».",
+          "options": [
+            "Alle nove e dieci",
+            "Alle sei e mezza",
+            "Alle nove",
+            "Alle sei"
+          ]
+        },
+        {
+          "id": "it-listen-vigilia-partenza-q4",
+          "kind": "written",
+          "prompt": "A che ora si sveglia domani ?",
+          "answers": [
+            "alle sei",
+            "6"
+          ],
+          "explain": "« Domani mi sveglio alle sei »."
+        },
+        {
+          "id": "it-listen-vigilia-partenza-q5",
+          "kind": "choice",
+          "prompt": "Che mezzo prende per l’aeroporto ?",
+          "answers": [
+            "Il treno"
+          ],
+          "explain": "« Il treno per l’aeroporto ».",
+          "options": [
+            "Il treno",
+            "Il pullman",
+            "Un taxi",
+            "La metro"
+          ]
+        },
+        {
+          "id": "it-listen-vigilia-partenza-q6",
+          "kind": "choice",
+          "prompt": "Perché si sveglia presto ?",
+          "answers": [
+            "Perché deve essere all’aeroporto due ore prima"
+          ],
+          "explain": "« Devo essere all’aeroporto due ore prima, quindi domani mi sveglio alle sei ».",
+          "options": [
+            "Perché deve essere all’aeroporto due ore prima",
+            "Perché vuole fare colazione",
+            "Perché l’albergo è lontano",
+            "Perché il volo parte alle sei"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-quartiere-sogno",
+      "languageID": "it",
+      "title": "La piazza che vogliamo",
+      "level": "B1",
+      "topic": "quartieri",
+      "unitID": "it-foundations-u26",
+      "text": "« Hai visto l’assemblea di giovedì ? Si parla della zona pedonale in piazza Nucci. » « Sì, e la mia opinione è chiara: da un lato la piazza diventa più viva, dall’altro i commercianti temono per i clienti. » « Anch’io sono divisa. Secondo me servono dati, non solo opinioni. » « Allora leggi lo studio del comune: il settanta per cento dei clienti arriva a piedi o in bici. » « Davvero ? Però il parcheggio resta un problema. » « Infatti la proposta prevede trenta posti nuovi in via Ferretti. » « Mmm, in questo caso sono d’accordo con il progetto. » « Propongo un test di sei mesi, poi si valuta con i numeri. » « Giusto: meno parole, più fatti. Giovedì, allora ! »",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors",
+        "speaking:justify-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-quartiere-sogno-q1",
+          "kind": "choice",
+          "prompt": "Di che cosa si parla all’assemblea ?",
+          "answers": [
+            "Della zona pedonale in piazza"
+          ],
+          "explain": "« Si parla della zona pedonale in piazza Nucci ».",
+          "options": [
+            "Della zona pedonale in piazza",
+            "Dei prezzi dei negozi",
+            "Dei mezzi pubblici",
+            "Dei rifiuti"
+          ]
+        },
+        {
+          "id": "it-listen-quartiere-sogno-q2",
+          "kind": "written",
+          "prompt": "Che percentuale dei clienti arriva a piedi o in bici ?",
+          "answers": [
+            "il settanta per cento",
+            "settanta per cento",
+            "70 per cento",
+            "il 70%"
+          ],
+          "explain": "« Il settanta per cento dei clienti arriva a piedi o in bici »."
+        },
+        {
+          "id": "it-listen-quartiere-sogno-q3",
+          "kind": "choice",
+          "prompt": "Che cosa temono i commercianti ?",
+          "answers": [
+            "Per i clienti"
+          ],
+          "explain": "« I commercianti temono per i clienti ».",
+          "options": [
+            "Per i clienti",
+            "Per i posti auto",
+            "Per i rifiuti",
+            "Per il rumore"
+          ]
+        },
+        {
+          "id": "it-listen-quartiere-sogno-q4",
+          "kind": "written",
+          "prompt": "Che cosa prevede la proposta per i parcheggi ?",
+          "answers": [
+            "trenta posti nuovi in via ferretti",
+            "trenta posti nuovi",
+            "30 posti nuovi"
+          ],
+          "explain": "« La proposta prevede trenta posti nuovi in via Ferretti »."
+        },
+        {
+          "id": "it-listen-quartiere-sogno-q5",
+          "kind": "written",
+          "prompt": "Quanto dura il test proposto ?",
+          "answers": [
+            "sei mesi",
+            "6 mesi"
+          ],
+          "explain": "« Io propongo un test di sei mesi »."
+        },
+        {
+          "id": "it-listen-quartiere-sogno-q6",
+          "kind": "choice",
+          "prompt": "Come si chiude la discussione ?",
+          "answers": [
+            "Con un accordo e un appuntamento"
+          ],
+          "explain": "« In questo caso sono d’accordo… Ci vediamo giovedì, allora ! ».",
+          "options": [
+            "Con un accordo e un appuntamento",
+            "Con una lite",
+            "Con l’annullamento dell’assemblea",
+            "Con un voto subito"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-riunione-finale",
+      "languageID": "it",
+      "title": "La riunione del progetto",
+      "level": "B1",
+      "topic": "riunioni",
+      "unitID": "it-work-u1",
+      "text": "« Dove siamo con il progetto Tevere ? » « Ho finito la parte analitica e ho parlato col cliente: vuole risultati entro marzo. » « Marzo è fattibile, però il budget attuale non basta. Da un lato possiamo ridurre i test, dall’altro chiedere fondi extra. » « A mio avviso è rischioso: è la parte che il cliente valuta di più. » « Capisco il punto. Quanto costano i fondi extra ? » « Circa quindicimila euro, entro fine mese. » « Allora propongo di presentarla domani, con i numeri in mano. » « D’accordo, ma chi la presenta ? » « Io, se sei d’accordo. Preparo le slide stanotte e le mando in allegato. » « Perfetto. Sentiamo il cliente giovedì. Grazie a tutti. »",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors",
+        "vocab:work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-riunione-finale-q1",
+          "kind": "choice",
+          "prompt": "Che problema ha il progetto ?",
+          "answers": [
+            "Il budget non basta"
+          ],
+          "explain": "« Il budget attuale non basta ».",
+          "options": [
+            "Il budget non basta",
+            "Il cliente è scomparso",
+            "La parte analitica è incompleta",
+            "La scadenza è passata"
+          ]
+        },
+        {
+          "id": "it-listen-riunione-finale-q2",
+          "kind": "written",
+          "prompt": "Entro quando vuole i risultati il cliente ?",
+          "answers": [
+            "entro marzo",
+            "marzo"
+          ],
+          "explain": "« Vuole risultati entro marzo »."
+        },
+        {
+          "id": "it-listen-riunione-finale-q3",
+          "kind": "choice",
+          "prompt": "Perché ridurre i test è rischioso ?",
+          "answers": [
+            "Perché il cliente valuta molto quella parte"
+          ],
+          "explain": "« È la parte che il cliente valuta di più ».",
+          "options": [
+            "Perché il cliente valuta molto quella parte",
+            "Perché costano troppo",
+            "Perché non c’è tempo",
+            "Perché il cliente non li vuole"
+          ]
+        },
+        {
+          "id": "it-listen-riunione-finale-q4",
+          "kind": "written",
+          "prompt": "Quanto costano i fondi extra ?",
+          "answers": [
+            "circa quindicimila euro",
+            "quindicimila euro",
+            "15000 euro"
+          ],
+          "explain": "« Circa quindicimila euro »."
+        },
+        {
+          "id": "it-listen-riunione-finale-q5",
+          "kind": "written",
+          "prompt": "Che cosa fa chi presenta la richiesta, entro stanotte ?",
+          "answers": [
+            "prepara le slide",
+            "prepara le slide e le manda in allegato",
+            "prepara le slide e le manda",
+            "le slide"
+          ],
+          "explain": "« Preparo le slide stanotte e le mando in allegato »."
+        },
+        {
+          "id": "it-listen-riunione-finale-q6",
+          "kind": "choice",
+          "prompt": "Quando sentono il cliente ?",
+          "answers": [
+            "Giovedì"
+          ],
+          "explain": "« Sentiamo il cliente giovedì ».",
+          "options": [
+            "Giovedì",
+            "Domani",
+            "Venerdì",
+            "Entro fine mese"
+          ]
+        }
+      ]
     }
   ]
 }

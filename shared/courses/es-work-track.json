@@ -1,0 +1,564 @@
+{
+  "id": "es-work-track",
+  "languageID": "es",
+  "schemaVersion": 2,
+  "title": "Español para el trabajo",
+  "subtitle": "Ruta profesional",
+  "symbol": "briefcase",
+  "description": "El español de reuniones, correos y entrevistas: situaciones profesionales, practicadas en voz alta. Una ruta que acompaña al curso principal.",
+  "units": [
+    {
+      "id": "es-work-u1",
+      "title": "La jornada laboral",
+      "subtitle": "Reuniones, correos, entrevistas",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "la-reunion",
+          "title": "La reunión",
+          "subtitle": "Opinar y proponer",
+          "symbol": "person.3",
+          "category": "Course",
+          "situation": "Defiendes tus ideas en una reunión de equipo: opinas, propones cambios y matizas tu posición.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-entrevista",
+          "title": "La entrevista",
+          "subtitle": "Experiencia y logros",
+          "symbol": "person.badge.key",
+          "category": "Course",
+          "situation": "Ensayas una entrevista de trabajo: te presentas, cuentas tu experiencia y hablas de tus metas.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-work-u1-reuniones",
+          "title": "En reuniones",
+          "goal": "Opinar y proponer en una reunión: en mi opinión…, propongo…, ¿qué os parece?, estoy de acuerdo, pero…",
+          "intro": {
+            "explanation": [
+              "La reunión arranca con opiniones: «En mi opinión, el plan funciona», «Creo que vamos bien de tiempo».",
+              "Para proponer: «Propongo empezar el lunes», «¿Qué os parece si lo probamos una semana?».",
+              "El desacuerdo con matiz: «Estoy de acuerdo, pero no tenemos tiempo», «Por un lado ahorra dinero; por otro, cuesta tiempo»."
+            ],
+            "examples": [
+              {
+                "text": "En mi opinión, el plan funciona.",
+                "meaning": "Abrir la opinión."
+              },
+              {
+                "text": "Propongo empezar el lunes.",
+                "meaning": "Proponer con yo."
+              },
+              {
+                "text": "¿Qué os parece si lo probamos una semana?",
+                "meaning": "Proponer con pregunta."
+              },
+              {
+                "text": "Estoy de acuerdo, pero falta tiempo.",
+                "meaning": "Matizar el acuerdo."
+              },
+              {
+                "text": "Vamos a votar y decidimos hoy.",
+                "meaning": "Cerrar la reunión."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "en mi opinión, …",
+              "meaning": "Tu postura.",
+              "note": "En mi opinión, es la mejor opción."
+            },
+            {
+              "text": "propongo + infinitivo",
+              "meaning": "Tu idea.",
+              "note": "Propongo dividir el trabajo."
+            },
+            {
+              "text": "¿qué os parece…?",
+              "meaning": "Consultar al equipo.",
+              "note": "¿Qué os parece el nuevo horario?"
+            },
+            {
+              "text": "estoy de acuerdo, pero…",
+              "meaning": "Acuerdo con matiz.",
+              "note": "Estoy de acuerdo, pero es caro."
+            },
+            {
+              "text": "por un lado…, por otro…",
+              "meaning": "Los dos lados.",
+              "note": "Por un lado es rápido; por otro, es caro."
+            }
+          ],
+          "situation": "Reunión de equipo sobre el nuevo horario: opinas, propones una semana de prueba, matizas con los dos lados y la decisión se cierra con una votación.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Opina sobre el plan: para ti, funciona.",
+                "expected": [
+                  "En mi opinión, el plan funciona",
+                  "Creo que el plan funciona",
+                  "en mi opinion el plan funciona"
+                ],
+                "focus": "en mi opinión",
+                "watch": "abre con la fórmula y da tu postura."
+              },
+              {
+                "prompt": "Propone empezar el lunes.",
+                "expected": [
+                  "Propongo empezar el lunes",
+                  "Yo propongo empezar el lunes",
+                  "propongo empezar el lunes"
+                ],
+                "focus": "propongo",
+                "watch": "propongo: primera persona."
+              },
+              {
+                "prompt": "Consulta al equipo con una pregunta: probarlo una semana.",
+                "expected": [
+                  "¿Qué os parece si lo probamos una semana?",
+                  "¿Qué os parece la idea?",
+                  "que os parece si lo probamos una semana"
+                ],
+                "focus": "¿qué os parece?",
+                "watch": "si + presente: la propuesta suave."
+              },
+              {
+                "prompt": "Matiza tu acuerdo: sí, pero falta tiempo.",
+                "expected": [
+                  "Estoy de acuerdo, pero falta tiempo",
+                  "Estoy de acuerdo, pero no tenemos tiempo",
+                  "estoy de acuerdo pero no hay tiempo"
+                ],
+                "focus": "de acuerdo, pero",
+                "watch": "pero + el problema: el desacuerdo educado."
+              },
+              {
+                "prompt": "Propón cerrar la decisión con una votación.",
+                "expected": [
+                  "Vamos a votar",
+                  "Propongo votar",
+                  "Vamos a votar y decidimos hoy"
+                ],
+                "focus": "votar",
+                "watch": "vamos a + infinitivo: la propuesta de cierre."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-work-u1-reuniones-e1",
+              "kind": "choice",
+              "prompt": "___ mi opinión, el nuevo plan funciona.",
+              "options": [
+                "En",
+                "Por",
+                "Sobre",
+                "Entre"
+              ],
+              "answers": [
+                "En"
+              ],
+              "explain": "en mi opinión: fórmula fija para dar tu postura."
+            },
+            {
+              "id": "es-work-u1-reuniones-e2",
+              "kind": "gap",
+              "prompt": "___ dividir el trabajo en dos equipos. (proponer, yo)",
+              "answers": [
+                "Propongo",
+                "propongo"
+              ],
+              "explain": "propongo + infinitivo: la idea de quien habla."
+            },
+            {
+              "id": "es-work-u1-reuniones-e3",
+              "kind": "order",
+              "prompt": "Matiza tu acuerdo en la reunión.",
+              "answers": [
+                "Estoy de acuerdo, pero falta tiempo"
+              ],
+              "explain": "estoy de acuerdo, pero…: el matiz que abre el debate."
+            },
+            {
+              "id": "es-work-u1-reuniones-e4",
+              "kind": "written",
+              "prompt": "Consulta al equipo sobre el nuevo horario.",
+              "answers": [
+                "¿qué os parece el nuevo horario?",
+                "que os parece el nuevo horario",
+                "¿qué os parece el horario nuevo?"
+              ],
+              "explain": "¿Qué os parece…? abre el debate del equipo."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "function:express-opinion",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-work-u1-correos",
+          "title": "Correos formales",
+          "goal": "Escribir un email formal: estimada señora…, les escribo para…, les ruego que confirmen…, un cordial saludo.",
+          "intro": {
+            "explanation": [
+              "El saludo formal: «Estimada Sra. García:». El asunto va en la primera línea: «Les escribo para solicitar…».",
+              "Las peticiones formales con les ruego / agradecería: «Les ruego que me confirmen la fecha», «Agradecería una respuesta antes del viernes».",
+              "El archivo y la despedida: «Adjunto el informe», «Un cordial saludo» o «Atentamente»."
+            ],
+            "examples": [
+              {
+                "text": "Estimada Sra. García:",
+                "meaning": "El saludo formal."
+              },
+              {
+                "text": "Les escribo para solicitar el informe.",
+                "meaning": "El asunto en línea uno."
+              },
+              {
+                "text": "Les ruego que me confirmen la fecha.",
+                "meaning": "La petición formal."
+              },
+              {
+                "text": "Adjunto el presupuesto del proyecto.",
+                "meaning": "El archivo."
+              },
+              {
+                "text": "Un cordial saludo, Elena Ruiz.",
+                "meaning": "La despedida formal."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "estimado/a + apellido:",
+              "meaning": "El saludo formal.",
+              "note": "Estimado Sr. López:"
+            },
+            {
+              "text": "les escribo para + infinitivo",
+              "meaning": "El asunto.",
+              "note": "Les escribo para confirmar la reunión."
+            },
+            {
+              "text": "les ruego que + presente",
+              "meaning": "La petición formal.",
+              "note": "Les ruego que respondan hoy."
+            },
+            {
+              "text": "adjunto + documento",
+              "meaning": "El archivo.",
+              "note": "Adjunto la factura de mayo."
+            },
+            {
+              "text": "un cordial saludo",
+              "meaning": "La despedida.",
+              "note": "Un cordial saludo, Elena Ruiz."
+            }
+          ],
+          "situation": "Escribes a una clienta: presentas el presupuesto, adjuntas el documento, pides la confirmación de la fecha y cierras con una despedida formal.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Saluda formalmente a la Sra. García.",
+                "expected": [
+                  "Estimada Sra. García:",
+                  "Estimada señora García:",
+                  "estimada sra garcia"
+                ],
+                "focus": "estimada",
+                "watch": "estimado/a + apellido: el saludo formal."
+              },
+              {
+                "prompt": "Abre el asunto: solicitar el presupuesto.",
+                "expected": [
+                  "Les escribo para solicitar el presupuesto",
+                  "Les escribo por el presupuesto",
+                  "les escribo para solicitar el presupuesto"
+                ],
+                "focus": "les escribo para",
+                "watch": "el asunto en la primera línea."
+              },
+              {
+                "prompt": "Pide la confirmación de la fecha, formal.",
+                "expected": [
+                  "Les ruego que me confirmen la fecha",
+                  "Agradecería que me confirmaran la fecha",
+                  "les ruego que me confirmen la fecha"
+                ],
+                "focus": "les ruego que",
+                "watch": "les ruego que + presente: la petición formal."
+              },
+              {
+                "prompt": "Di que incluyes el informe en el email.",
+                "expected": [
+                  "Adjunto el informe",
+                  "Le adjunto el informe",
+                  "adjunto el informe"
+                ],
+                "focus": "adjunto",
+                "watch": "adjunto + documento, sin preposición."
+              },
+              {
+                "prompt": "Despídete formalmente.",
+                "expected": [
+                  "Un cordial saludo",
+                  "Atentamente",
+                  "Un cordial saludo, Elena"
+                ],
+                "focus": "la despedida",
+                "watch": "cordial saludo o atentamente; el tono cariñoso no."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-work-u1-correos-e1",
+              "kind": "choice",
+              "prompt": "___ Sra. García: les escribo para confirmar la reunión.",
+              "options": [
+                "Estimada",
+                "Querida",
+                "Hola",
+                "Buenas"
+              ],
+              "answers": [
+                "Estimada"
+              ],
+              "explain": "Estimada + apellido: el saludo formal del email de trabajo."
+            },
+            {
+              "id": "es-work-u1-correos-e2",
+              "kind": "gap",
+              "prompt": "Les ___ que me confirmen la fecha antes del viernes. (rogar, formal)",
+              "answers": [
+                "ruego",
+                "Ruego"
+              ],
+              "explain": "les ruego que + presente: la petición formal por escrito."
+            },
+            {
+              "id": "es-work-u1-correos-e3",
+              "kind": "order",
+              "prompt": "Escribe la línea del archivo.",
+              "answers": [
+                "Adjunto el presupuesto del proyecto"
+              ],
+              "explain": "adjunto + documento: la línea del archivo sin preposición."
+            },
+            {
+              "id": "es-work-u1-correos-e4",
+              "kind": "written",
+              "prompt": "Cierra el email formal.",
+              "answers": [
+                "un cordial saludo",
+                "atentamente",
+                "un cordial saludo, elena ruiz"
+              ],
+              "explain": "un cordial saludo / atentamente: las despedidas formales."
+            }
+          ],
+          "skills": [
+            "writing:email",
+            "function:make-requests",
+            "vocab:work",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-work-u1-entrevistas",
+          "title": "Entrevistas de trabajo",
+          "goal": "Hablar de tu experiencia y metas: he trabajado…, he dirigido…, mi objetivo es…, a largo plazo quiero…",
+          "intro": {
+            "explanation": [
+              "La experiencia va en presente perfecto: «He trabajado cinco años en ventas», «He dirigido un equipo de seis personas».",
+              "El logro se cuenta con estructura, situación, acción y resultado: «El equipo iba retrasado, reorganicé el calendario y entregamos a tiempo».",
+              "Las metas van con objetivo / quiero: «Mi objetivo es crecer en marketing», «A largo plazo, quiero dirigir mi propio equipo»."
+            ],
+            "examples": [
+              {
+                "text": "He trabajado cinco años en ventas.",
+                "meaning": "Experiencia con he + participio."
+              },
+              {
+                "text": "He dirigido un equipo de seis personas.",
+                "meaning": "Responsabilidad en presente perfecto."
+              },
+              {
+                "text": "El proyecto iba retrasado y lo entregamos a tiempo.",
+                "meaning": "El logro con estructura."
+              },
+              {
+                "text": "Mi objetivo es crecer en marketing.",
+                "meaning": "La meta corta."
+              },
+              {
+                "text": "A largo plazo, quiero dirigir mi propio equipo.",
+                "meaning": "La meta de futuro."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "he + participio",
+              "meaning": "La experiencia.",
+              "note": "He gestionado presupuestos grandes."
+            },
+            {
+              "text": "he trabajado… años en…",
+              "meaning": "El tiempo de experiencia.",
+              "note": "He trabajado tres años en ventas."
+            },
+            {
+              "text": "mi mayor logro fue…",
+              "meaning": "El logro estrella.",
+              "note": "Mi mayor logro fue abrir el mercado mexicano."
+            },
+            {
+              "text": "mi objetivo es + infinitivo",
+              "meaning": "La meta.",
+              "note": "Mi objetivo es especializarme en datos."
+            },
+            {
+              "text": "a largo plazo, quiero…",
+              "meaning": "El futuro profesional.",
+              "note": "A largo plazo, quiero liderar un equipo."
+            }
+          ],
+          "situation": "Ensayas una entrevista: cuentas tus cinco años en ventas, describes un logro con su resultado y hablas de tu meta de dirigir un equipo propio.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di tu experiencia: cinco años en ventas.",
+                "expected": [
+                  "He trabajado cinco años en ventas",
+                  "Llevo cinco años trabajando en ventas",
+                  "he trabajado cinco años en ventas"
+                ],
+                "focus": "he trabajado",
+                "watch": "he + participio: la experiencia que cuenta."
+              },
+              {
+                "prompt": "Di tu responsabilidad: un equipo de seis personas.",
+                "expected": [
+                  "He dirigido un equipo de seis personas",
+                  "He gestionado un equipo de seis personas",
+                  "he dirigido un equipo de seis personas"
+                ],
+                "focus": "he dirigido",
+                "watch": "dirigir o gestionar: los dos valen."
+              },
+              {
+                "prompt": "Cuenta tu mayor logro: el proyecto retrasado que llegó a tiempo.",
+                "expected": [
+                  "Mi mayor logro fue entregar el proyecto a tiempo",
+                  "Mi mayor logro fue el proyecto que entregamos a tiempo",
+                  "mi mayor logro fue entregar el proyecto a tiempo"
+                ],
+                "focus": "mi mayor logro",
+                "watch": "logro + resultado: lo que quieren oír."
+              },
+              {
+                "prompt": "Di tu meta: especializarte en datos.",
+                "expected": [
+                  "Mi objetivo es especializarme en datos",
+                  "Quiero especializarme en datos",
+                  "mi objetivo es especializarme en datos"
+                ],
+                "focus": "mi objetivo es",
+                "watch": "objetivo es + infinitivo."
+              },
+              {
+                "prompt": "Di tu futuro a largo plazo: dirigir un equipo.",
+                "expected": [
+                  "A largo plazo, quiero dirigir mi propio equipo",
+                  "A largo plazo, me gustaría dirigir un equipo",
+                  "a largo plazo quiero dirigir un equipo"
+                ],
+                "focus": "a largo plazo",
+                "watch": "a largo plazo: el futuro lejano."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-work-u1-entrevistas-e1",
+              "kind": "choice",
+              "prompt": "He ___ cinco años en el departamento de ventas.",
+              "options": [
+                "trabajado",
+                "trabajar",
+                "trabajando",
+                "trabajo"
+              ],
+              "answers": [
+                "trabajado"
+              ],
+              "explain": "he + participio (trabajado): presente perfecto de experiencia."
+            },
+            {
+              "id": "es-work-u1-entrevistas-e2",
+              "kind": "gap",
+              "prompt": "___ dirigido un equipo de seis personas. (yo)",
+              "answers": [
+                "He",
+                "he"
+              ],
+              "explain": "he dirigido: la responsabilidad con presente perfecto."
+            },
+            {
+              "id": "es-work-u1-entrevistas-e3",
+              "kind": "order",
+              "prompt": "Di tu meta profesional.",
+              "answers": [
+                "Mi objetivo es especializarme en datos"
+              ],
+              "explain": "mi objetivo es + infinitivo: la meta profesional clara."
+            },
+            {
+              "id": "es-work-u1-entrevistas-e4",
+              "kind": "written",
+              "prompt": "Habla de tu futuro a largo plazo: tu propio equipo.",
+              "answers": [
+                "a largo plazo quiero dirigir mi propio equipo",
+                "a largo plazo quiero dirigir mi equipo",
+                "me gustaria dirigir mi propio equipo a largo plazo"
+              ],
+              "explain": "a largo plazo + quiero: la visión de futuro."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-perfect",
+            "vocab:work",
+            "function:describe-goals"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        }
+      ]
+    }
+  ]
+}

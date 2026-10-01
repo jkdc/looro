@@ -10642,6 +10642,2816 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u22",
+      "title": "On fête",
+      "subtitle": "Invitations et cadeaux",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "l-invitation",
+          "title": "L'invitation",
+          "subtitle": "Inviter, répondre",
+          "symbol": "party.popper",
+          "category": "Course",
+          "situation": "L'anniversaire de Karim approche : il invite Léa pour samedi, elle accepte avec plaisir et demande l'heure.",
+          "colorIndex": 0
+        },
+        {
+          "id": "le-cadeau",
+          "title": "Le cadeau",
+          "subtitle": "Idées et félicitations",
+          "symbol": "birthday.cake",
+          "category": "Course",
+          "situation": "Quelle idée pour Mai ? On cherche ce qu'elle aime, on choisit le cadeau et à la fête, chacun fait ses vœux.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u22-fete",
+          "title": "Tu es libre samedi ?",
+          "goal": "Inviter un ami et répondre à une invitation : tu es libre samedi ? On fête mon anniversaire. Bonne idée !",
+          "intro": {
+            "explanation": [
+              "On invite avec une question toute simple au présent : « Tu es libre samedi ? » — la porte est ouverte, l'autre répond oui ou non.",
+              "Pour proposer, on utilise on : « On fête mon anniversaire chez moi. » — on = nous, plus léger et plus naturel à l'oral.",
+              "On répond vite et simplement : « Bonne idée ! » « Avec plaisir ! » Et pour refuser : « Je suis désolé, je travaille samedi. »"
+            ],
+            "examples": [
+              {
+                "text": "Tu es libre samedi soir ?",
+                "meaning": "L'invitation simple."
+              },
+              {
+                "text": "On fête mon anniversaire chez moi.",
+                "meaning": "Proposer avec on."
+              },
+              {
+                "text": "Bonne idée ! J'apporte le dessert.",
+                "meaning": "Accepter et participer."
+              },
+              {
+                "text": "Avec plaisir !",
+                "meaning": "L'acceptation chaleureuse."
+              },
+              {
+                "text": "C'est à quelle heure ?",
+                "meaning": "Demander le détail."
+              },
+              {
+                "text": "Je suis désolé, je travaille samedi.",
+                "meaning": "Refuser poliment."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "tu es libre + quand ?",
+              "meaning": "L'invitation directe.",
+              "note": "Tu es libre demain soir ?"
+            },
+            {
+              "text": "on + présent ?",
+              "meaning": "Proposer une activité.",
+              "note": "On va au marché ?"
+            },
+            {
+              "text": "bonne idée !",
+              "meaning": "Accepter.",
+              "note": "Bonne idée, à samedi !"
+            },
+            {
+              "text": "avec plaisir",
+              "meaning": "Accepter chaleureusement.",
+              "note": "Avec plaisir, merci !"
+            },
+            {
+              "text": "je suis désolé(e) + raison",
+              "meaning": "Refuser poliment.",
+              "note": "Je suis désolée, je travaille."
+            },
+            {
+              "text": "c'est à quelle heure ?",
+              "meaning": "Demander l'heure.",
+              "note": "C'est à quelle heure exactement ?"
+            }
+          ],
+          "situation": "Karim invite Léa pour son anniversaire : il demande si elle est libre samedi, il propose la fête chez lui, elle accepte avec plaisir et demande l'heure.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Invite Léa : elle est libre samedi ?",
+                "expected": [
+                  "Tu es libre samedi ?",
+                  "Tu es libre samedi"
+                ],
+                "focus": "tu es libre",
+                "watch": "la question courte ouvre l'invitation."
+              },
+              {
+                "prompt": "Propose la fête : chez toi, samedi. (avec on)",
+                "expected": [
+                  "On fête mon anniversaire chez moi samedi.",
+                  "On fait une fête chez moi samedi."
+                ],
+                "focus": "on + présent",
+                "watch": "on = nous, plus naturel à l'oral."
+              },
+              {
+                "prompt": "Léa accepte avec enthousiasme.",
+                "expected": [
+                  "Bonne idée !",
+                  "Avec plaisir !",
+                  "Oui, avec plaisir !"
+                ],
+                "focus": "bonne idée",
+                "watch": "l'acceptation la plus simple."
+              },
+              {
+                "prompt": "Demande l'heure de la fête.",
+                "expected": [
+                  "C'est à quelle heure ?",
+                  "C'est à quelle heure, la fête ?"
+                ],
+                "focus": "à quelle heure",
+                "watch": "à + heure pour le rendez-vous."
+              },
+              {
+                "prompt": "Tu es occupé samedi : refuse poliment.",
+                "expected": [
+                  "Je suis désolé, je travaille samedi.",
+                  "Désolé, je ne peux pas.",
+                  "Je suis désolée, je travaille."
+                ],
+                "focus": "je suis désolé",
+                "watch": "désolé + la raison adoucit le non."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u22-fete-e1",
+              "kind": "choice",
+              "prompt": "« ___ libre samedi ? » (l'invitation)",
+              "options": [
+                "Tu es",
+                "Tu as",
+                "Tu fais",
+                "Tu vas"
+              ],
+              "answers": [
+                "Tu es"
+              ],
+              "explain": "Être libre : tu es libre + le moment, l'invitation simple."
+            },
+            {
+              "id": "fr-foundations-u22-fete-e2",
+              "kind": "gap",
+              "prompt": "On ___ mon anniversaire chez moi samedi. (verbe : fêter)",
+              "answers": [
+                "fête",
+                "fete"
+              ],
+              "explain": "On fête : fêter au présent avec on (comme il/elle)."
+            },
+            {
+              "id": "fr-foundations-u22-fete-e3",
+              "kind": "order",
+              "prompt": "Accepte l'invitation et propose ton dessert.",
+              "answers": [
+                "Bonne idée j'apporte le dessert"
+              ],
+              "explain": "Bonne idée + j'apporte : on accepte et on participe."
+            },
+            {
+              "id": "fr-foundations-u22-fete-e4",
+              "kind": "written",
+              "prompt": "Tu travailles samedi : refuse l'invitation poliment.",
+              "answers": [
+                "je suis désolé je travaille samedi",
+                "desole je travaille samedi",
+                "je suis desolee je travaille",
+                "désolé je travaille samedi"
+              ],
+              "explain": "Je suis désolé + la raison : le refus poli."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:make-suggestions",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u22-cadeau",
+          "title": "Qu'est-ce qu'il aime ?",
+          "goal": "Chercher une idée de cadeau avec les questions en qu'est-ce que : Qu'est-ce qu'il aime ? Qu'est-ce que je peux offrir ?",
+          "intro": {
+            "explanation": [
+              "Pour poser la question, qu'est-ce que vient en tête : « Qu'est-ce qu'il aime, Paul ? » — puis la réponse : « Il adore la musique. »",
+              "Qu'est-ce que je peux + infinitif demande une idée : « Qu'est-ce que je peux lui offrir ? »",
+              "Et on répond avec une suggestion : « Un livre, c'est une bonne idée. » — elle aime le chocolat ? Alors des chocolats !"
+            ],
+            "examples": [
+              {
+                "text": "Qu'est-ce qu'il aime ?",
+                "meaning": "La question qui guide le cadeau."
+              },
+              {
+                "text": "Il adore la musique.",
+                "meaning": "La réponse avec adorer."
+              },
+              {
+                "text": "Qu'est-ce que je peux lui offrir ?",
+                "meaning": "Demander une idée."
+              },
+              {
+                "text": "Elle collectionne les livres.",
+                "meaning": "L'indice utile."
+              },
+              {
+                "text": "Un livre, c'est une bonne idée.",
+                "meaning": "La suggestion simple."
+              },
+              {
+                "text": "Tu as une idée de cadeau ?",
+                "meaning": "Demander conseil."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "qu'est-ce que + personne + aime ?",
+              "meaning": "Trouver le goût.",
+              "note": "Qu'est-ce qu'elle aime ?"
+            },
+            {
+              "text": "qu'est-ce que je peux offrir ?",
+              "meaning": "Demander une idée.",
+              "note": "…lui offrir pour sa fête ?"
+            },
+            {
+              "text": "il/elle adore + nom",
+              "meaning": "L'indice fort.",
+              "note": "Elle adore le chocolat."
+            },
+            {
+              "text": "c'est une bonne idée",
+              "meaning": "Valider une suggestion.",
+              "note": "Un livre, c'est une bonne idée."
+            },
+            {
+              "text": "tu as une idée ?",
+              "meaning": "Demander conseil.",
+              "note": "Tu as une idée, toi ?"
+            },
+            {
+              "text": "lui + infinitif",
+              "meaning": "Offrir à la personne.",
+              "note": "je veux lui offrir un livre."
+            }
+          ],
+          "situation": "L'anniversaire de Paul approche : avec Léa, vous cherchez l'idée — qu'est-ce qu'il aime, qu'est-ce que vous pouvez lui offrir, et le livre s'impose.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demande à Léa ce que Paul aime.",
+                "expected": [
+                  "Qu'est-ce qu'il aime ?",
+                  "Qu'est-ce qu'il aime, Paul ?"
+                ],
+                "focus": "qu'est-ce que",
+                "watch": "qu'est-ce que + il aime : la question garde l'ordre affirmatif."
+              },
+              {
+                "prompt": "Dis que Paul adore la musique.",
+                "expected": [
+                  "Il adore la musique.",
+                  "Paul adore la musique."
+                ],
+                "focus": "adorer",
+                "watch": "adorer = aimer beaucoup."
+              },
+              {
+                "prompt": "Demande une idée : quoi offrir à Paul ?",
+                "expected": [
+                  "Qu'est-ce que je peux lui offrir ?",
+                  "Qu'est-ce que je peux offrir ?"
+                ],
+                "focus": "qu'est-ce que je peux",
+                "watch": "pouvoir + infinitif : la demande d'idée."
+              },
+              {
+                "prompt": "Propose le livre : c'est une bonne idée.",
+                "expected": [
+                  "Un livre, c'est une bonne idée.",
+                  "Le livre, c'est une bonne idée."
+                ],
+                "focus": "c'est une bonne idée",
+                "watch": "c'est + nom = la suggestion."
+              },
+              {
+                "prompt": "Demande conseil à Léa.",
+                "expected": [
+                  "Tu as une idée ?",
+                  "Tu as une idée de cadeau ?"
+                ],
+                "focus": "tu as une idée",
+                "watch": "avoir une idée : la question ouverte."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u22-cadeau-e1",
+              "kind": "choice",
+              "prompt": "« Qu'est-ce que je ___ lui offrir ? » (demander une idée)",
+              "options": [
+                "peux",
+                "veux",
+                "dois",
+                "vais"
+              ],
+              "answers": [
+                "peux"
+              ],
+              "explain": "Pouvoir + infinitif : je peux lui offrir, la demande d'idée."
+            },
+            {
+              "id": "fr-foundations-u22-cadeau-e2",
+              "kind": "gap",
+              "prompt": "Il ___ la musique. (verbe : adorer)",
+              "answers": [
+                "adore"
+              ],
+              "explain": "Il adore : adorer au présent, il/elle + adore."
+            },
+            {
+              "id": "fr-foundations-u22-cadeau-e3",
+              "kind": "order",
+              "prompt": "Propose le livre comme cadeau.",
+              "answers": [
+                "Un livre c'est une bonne idée"
+              ],
+              "explain": "C'est une bonne idée : on valide la suggestion."
+            },
+            {
+              "id": "fr-foundations-u22-cadeau-e4",
+              "kind": "written",
+              "prompt": "Demande ce que Paul aime.",
+              "answers": [
+                "qu'est-ce qu'il aime",
+                "qu'est ce qu'il aime",
+                "qu'est-ce que paul aime",
+                "qu'est-ce qu'il aime comme cadeau"
+              ],
+              "explain": "Qu'est-ce qu'il aime ? : la question qui guide le cadeau."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u22-feliciter",
+          "title": "Félicitations !",
+          "goal": "Féliciter et faire ses vœux : joyeux anniversaire, félicitations, bon voyage — et dire sa joie avec être content.",
+          "intro": {
+            "explanation": [
+              "Le vœu universel : bon + nom. « Joyeux anniversaire ! » « Bon voyage ! » « Bon appétit ! »",
+              "Pour une réussite, on dit « Félicitations ! » ou « Bravo ! » — et la personne répond : « Merci beaucoup ! »",
+              "Pour dire sa joie, être + sentiment : « Je suis très content pour toi. » « Ça me fait plaisir. »"
+            ],
+            "examples": [
+              {
+                "text": "Joyeux anniversaire !",
+                "meaning": "Le vœu du jour J."
+              },
+              {
+                "text": "Félicitations pour ton examen !",
+                "meaning": "Féliciter une réussite."
+              },
+              {
+                "text": "Bon voyage !",
+                "meaning": "Le vœu du départ."
+              },
+              {
+                "text": "Bon rétablissement !",
+                "meaning": "Le vœu du malade."
+              },
+              {
+                "text": "Merci beaucoup, c'est gentil !",
+                "meaning": "La réponse au vœu."
+              },
+              {
+                "text": "Je suis très contente pour toi.",
+                "meaning": "Dire sa joie."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "joyeux anniversaire !",
+              "meaning": "Le vœu d'anniversaire.",
+              "note": "Joyeux anniversaire, Mai !"
+            },
+            {
+              "text": "félicitations / bravo !",
+              "meaning": "Féliciter.",
+              "note": "Bravo pour ton examen !"
+            },
+            {
+              "text": "bon + nom",
+              "meaning": "Le vœu universel.",
+              "note": "Bon voyage, bon appétit, bon rétablissement."
+            },
+            {
+              "text": "merci beaucoup",
+              "meaning": "Répondre au vœu.",
+              "note": "Merci beaucoup, c'est gentil !"
+            },
+            {
+              "text": "je suis content(e)",
+              "meaning": "Dire son bonheur.",
+              "note": "Je suis très contente pour toi."
+            },
+            {
+              "text": "ça me fait plaisir",
+              "meaning": "La joie simple.",
+              "note": "Ça me fait plaisir de te voir."
+            }
+          ],
+          "situation": "La fête bat son plein : vous soufflez les bougies avec Mai, vous félicitez son examen, vous souhaitez bon voyage à Karim et chacun dit sa joie.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "C'est l'anniversaire de Mai : souhaite-lui.",
+                "expected": [
+                  "Joyeux anniversaire !",
+                  "Joyeux anniversaire"
+                ],
+                "focus": "joyeux anniversaire",
+                "watch": "le vœu se dit au moment du gâteau."
+              },
+              {
+                "prompt": "Mai réussit son examen : félicite-la.",
+                "expected": [
+                  "Félicitations !",
+                  "Bravo !",
+                  "Félicitations pour ton examen !"
+                ],
+                "focus": "félicitations",
+                "watch": "félicitations ou bravo, les deux marchent."
+              },
+              {
+                "prompt": "Karim part en voyage demain : fais ton vœu.",
+                "expected": [
+                  "Bon voyage !",
+                  "Bon voyage, Karim !"
+                ],
+                "focus": "bon voyage",
+                "watch": "bon + nom : la formule courte."
+              },
+              {
+                "prompt": "Dis ta joie : tu es contente pour Mai.",
+                "expected": [
+                  "Je suis très contente pour toi.",
+                  "Je suis content pour toi."
+                ],
+                "focus": "je suis content",
+                "watch": "être + sentiment : la joie se dit simplement."
+              },
+              {
+                "prompt": "Que répond Mai à « Joyeux anniversaire » ?",
+                "expected": [
+                  "Merci beaucoup !",
+                  "Merci beaucoup"
+                ],
+                "focus": "merci beaucoup",
+                "watch": "merci + beaucoup : la réponse chaleureuse."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u22-feliciter-e1",
+              "kind": "choice",
+              "prompt": "« ___ pour ton examen ! » (féliciter)",
+              "options": [
+                "Félicitations",
+                "Joyeux anniversaire",
+                "Bon voyage",
+                "Bonne nuit"
+              ],
+              "answers": [
+                "Félicitations"
+              ],
+              "explain": "Félicitations + pour : on félicite une réussite."
+            },
+            {
+              "id": "fr-foundations-u22-feliciter-e2",
+              "kind": "gap",
+              "prompt": "Merci ___ , c'est gentil ! (une grande quantité)",
+              "answers": [
+                "beaucoup",
+                "beacoup"
+              ],
+              "explain": "Merci beaucoup : la réponse au vœu."
+            },
+            {
+              "id": "fr-foundations-u22-feliciter-e3",
+              "kind": "order",
+              "prompt": "Karim part demain : fais ton vœu de départ.",
+              "answers": [
+                "Bon voyage et à bientôt"
+              ],
+              "explain": "Bon voyage + à bientôt : le vœu du départ."
+            },
+            {
+              "id": "fr-foundations-u22-feliciter-e4",
+              "kind": "written",
+              "prompt": "Dis ta joie pour Mai (tu es contente).",
+              "answers": [
+                "je suis très contente pour toi",
+                "je suis contente pour toi",
+                "je suis tres content pour toi",
+                "je suis content pour toi"
+              ],
+              "explain": "Je suis content(e) pour toi : le bonheur se dit avec être."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:make-suggestions",
+            "grammar:present-simple",
+            "vocab:feelings"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u23",
+      "title": "Vêtements et tailles",
+      "subtitle": "Acheter et essayer",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "en-boutique",
+          "title": "En boutique",
+          "subtitle": "Chercher, essayer",
+          "symbol": "tshirt",
+          "category": "Course",
+          "situation": "Vous entrez en boutique : vous cherchez un t-shirt, vous demandez la taille et la cabine d'essayage.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-caisse",
+          "title": "La caisse",
+          "subtitle": "Payer, emporter",
+          "symbol": "bag",
+          "category": "Course",
+          "situation": "À la caisse : le total, la carte ou les espèces, et le sac — trop cher ? On renonce avec le sourire.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u23-boutique",
+          "title": "Je cherche un t-shirt",
+          "goal": "Trouver son vêtement en boutique : je cherche…, vous avez du bleu ?, quelle est votre taille ?",
+          "intro": {
+            "explanation": [
+              "On entre et on annonce ce qu'on cherche : « Je cherche un t-shirt. » « Je cherche une robe pour l'été. »",
+              "Le vendeur demande la taille : « Vous cherchez quelle taille ? » On répond : « Du medium, je pense. »",
+              "Pour vérifier le stock : « Vous avez du bleu ? » « Vous avez d'autres tailles ? » — du/des pour les choses sans chiffre précis."
+            ],
+            "examples": [
+              {
+                "text": "Je cherche un t-shirt.",
+                "meaning": "Ce qu'on veut acheter."
+              },
+              {
+                "text": "Vous avez du bleu ?",
+                "meaning": "Demander la couleur."
+              },
+              {
+                "text": "Vous cherchez quelle taille ?",
+                "meaning": "La question du vendeur."
+              },
+              {
+                "text": "Du medium, je pense.",
+                "meaning": "La réponse simple."
+              },
+              {
+                "text": "Vous avez d'autres tailles ?",
+                "meaning": "Vérifier le stock."
+              },
+              {
+                "text": "Je regarde, merci.",
+                "meaning": "Se laisser le temps."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je cherche + vêtement",
+              "meaning": "Annoncer sa recherche.",
+              "note": "Je cherche une veste."
+            },
+            {
+              "text": "vous avez + du/de la + couleur ?",
+              "meaning": "Demander le stock.",
+              "note": "Vous avez du noir ?"
+            },
+            {
+              "text": "quelle est votre taille ?",
+              "meaning": "La question de la taille.",
+              "note": "…et vous cherchez quelle couleur ?"
+            },
+            {
+              "text": "du / de la / des",
+              "meaning": "Les quantités sans chiffre.",
+              "note": "du coton, de la laine, des chaussettes."
+            },
+            {
+              "text": "d'autres + pluriel",
+              "meaning": "Encore des.",
+              "note": "Vous avez d'autres couleurs ?"
+            },
+            {
+              "text": "je regarde, merci",
+              "meaning": "Se laisser le temps.",
+              "note": "le vendeur laisse tranquille."
+            }
+          ],
+          "situation": "En boutique : vous cherchez un t-shirt bleu, la vendeuse demande votre taille, vous demandez d'autres couleurs et vous continuez à regarder tranquillement.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dites ce que vous cherchez : un t-shirt.",
+                "expected": [
+                  "Je cherche un t-shirt.",
+                  "Je cherche un t-shirt"
+                ],
+                "focus": "je cherche",
+                "watch": "chercher + le vêtement : on annonce d'abord."
+              },
+              {
+                "prompt": "La vendeuse demande votre taille : répondez (medium).",
+                "expected": [
+                  "Du medium, je pense.",
+                  "Medium, je pense."
+                ],
+                "focus": "la taille",
+                "watch": "du + taille : du small au XL."
+              },
+              {
+                "prompt": "Demandez si le bleu est disponible.",
+                "expected": [
+                  "Vous avez du bleu ?",
+                  "Vous avez du bleu"
+                ],
+                "focus": "vous avez du",
+                "watch": "du + couleur : le stock en vrac."
+              },
+              {
+                "prompt": "Demandez d'autres tailles.",
+                "expected": [
+                  "Vous avez d'autres tailles ?",
+                  "Vous avez d'autres tailles"
+                ],
+                "focus": "d'autres",
+                "watch": "d'autres + pluriel : encore des tailles."
+              },
+              {
+                "prompt": "Vous voulez regarder tranquillement : dites-le poliment.",
+                "expected": [
+                  "Je regarde, merci.",
+                  "Je regarde juste, merci."
+                ],
+                "focus": "je regarde",
+                "watch": "la formule qui calme l'insistance."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u23-boutique-e1",
+              "kind": "choice",
+              "prompt": "« Je ___ une robe pour l'été. » (vous entrez en boutique)",
+              "options": [
+                "cherche",
+                "essaie",
+                "paye",
+                "prends"
+              ],
+              "answers": [
+                "cherche"
+              ],
+              "explain": "Je cherche + vêtement : on annonce ce qu'on veut."
+            },
+            {
+              "id": "fr-foundations-u23-boutique-e2",
+              "kind": "gap",
+              "prompt": "Vous avez ___ bleu ? (le stock)",
+              "answers": [
+                "du"
+              ],
+              "explain": "Du + couleur : le stock sans chiffre précis."
+            },
+            {
+              "id": "fr-foundations-u23-boutique-e3",
+              "kind": "order",
+              "prompt": "Le vendeur demande votre taille : répondez.",
+              "answers": [
+                "Du medium je pense"
+              ],
+              "explain": "Du + taille : la réponse toute simple."
+            },
+            {
+              "id": "fr-foundations-u23-boutique-e4",
+              "kind": "written",
+              "prompt": "Demandez la couleur noire en stock.",
+              "answers": [
+                "vous avez du noir",
+                "est-ce que vous avez du noir",
+                "vous avez du noir en stock",
+                "est ce que vous avez du noir"
+              ],
+              "explain": "Vous avez du + couleur : la question du stock."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:shopping",
+            "grammar:quantities",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u23-essayage",
+          "title": "Je peux l'essayer ?",
+          "goal": "Essayer un vêtement avec je peux : la cabine, la taille qui va ou pas, et la décision finale.",
+          "intro": {
+            "explanation": [
+              "On demande la permission avec je peux : « Je peux l'essayer ? » — l' = le vêtement, déjà nommé.",
+              "En cabine, on juge avec aller : « Ça me va bien. » « Il est trop petit. » « Elle est trop grande. »",
+              "Et la décision : « Je le prends ! » ou « Finalement, non merci. »"
+            ],
+            "examples": [
+              {
+                "text": "Je peux l'essayer ?",
+                "meaning": "Demander la cabine."
+              },
+              {
+                "text": "Où est la cabine ?",
+                "meaning": "Chercher l'essayage."
+              },
+              {
+                "text": "Ça me va bien !",
+                "meaning": "La taille est bonne."
+              },
+              {
+                "text": "Il est trop petit.",
+                "meaning": "Le problème de taille."
+              },
+              {
+                "text": "Vous avez plus grand ?",
+                "meaning": "Demander la taille au-dessus."
+              },
+              {
+                "text": "Je le prends.",
+                "meaning": "Décider d'acheter."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je peux l'essayer ?",
+              "meaning": "La demande d'essayage.",
+              "note": "l' = le pantalon."
+            },
+            {
+              "text": "ça me va (bien)",
+              "meaning": "La taille est bonne.",
+              "note": "Cette robe me va très bien."
+            },
+            {
+              "text": "trop petit / trop grand",
+              "meaning": "Le problème de taille.",
+              "note": "il est trop petit."
+            },
+            {
+              "text": "vous avez plus grand / plus petit ?",
+              "meaning": "La taille voisine.",
+              "note": "plus grand, s'il vous plaît."
+            },
+            {
+              "text": "je le prends / je la prends",
+              "meaning": "Acheter.",
+              "note": "je la prends pour une robe."
+            },
+            {
+              "text": "finalement, non merci",
+              "meaning": "Renoncer.",
+              "note": "Finalement, non merci."
+            }
+          ],
+          "situation": "En cabine : vous essayez le t-shirt, il vous va bien, mais le pantalon est trop petit — vous demandez plus grand et vous prenez le t-shirt.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demandez à essayer le pantalon.",
+                "expected": [
+                  "Je peux l'essayer ?",
+                  "Je peux essayer le pantalon ?"
+                ],
+                "focus": "je peux",
+                "watch": "l' = le pantalon : le pronom évite la répétition."
+              },
+              {
+                "prompt": "Le t-shirt est parfait : dis-le.",
+                "expected": [
+                  "Ça me va bien !",
+                  "Ça me va très bien.",
+                  "Il me va bien."
+                ],
+                "focus": "ça me va",
+                "watch": "aller à quelqu'un : ça me va = la taille est bonne."
+              },
+              {
+                "prompt": "Les chaussures sont trop petites : dites-le.",
+                "expected": [
+                  "Elles sont trop petites.",
+                  "C'est trop petit."
+                ],
+                "focus": "trop petit",
+                "watch": "trop = plus qu'il faut."
+              },
+              {
+                "prompt": "Demandez la taille au-dessus.",
+                "expected": [
+                  "Vous avez plus grand ?",
+                  "Avez-vous plus grand ?"
+                ],
+                "focus": "plus grand",
+                "watch": "plus + adjectif : la taille d'à côté."
+              },
+              {
+                "prompt": "Vous décidez d'acheter le t-shirt.",
+                "expected": [
+                  "Je le prends.",
+                  "Je le prends !"
+                ],
+                "focus": "je le prends",
+                "watch": "le = le t-shirt : prendre = acheter ici."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u23-essayage-e1",
+              "kind": "choice",
+              "prompt": "« Je peux ___ essayer ? » (le manteau)",
+              "options": [
+                "l'",
+                "la",
+                "les",
+                "me"
+              ],
+              "answers": [
+                "l'"
+              ],
+              "explain": "Devant une voyelle, le devient l' : je peux l'essayer."
+            },
+            {
+              "id": "fr-foundations-u23-essayage-e2",
+              "kind": "gap",
+              "prompt": "Ça me ___ très bien, cette robe ! (verbe : aller)",
+              "answers": [
+                "va"
+              ],
+              "explain": "Aller à quelqu'un : ça me va = la taille est bonne."
+            },
+            {
+              "id": "fr-foundations-u23-essayage-e3",
+              "kind": "order",
+              "prompt": "La robe est trop petite : demandez la taille au-dessus.",
+              "answers": [
+                "Vous avez plus grand"
+              ],
+              "explain": "Plus grand : la taille immédiatement au-dessus."
+            },
+            {
+              "id": "fr-foundations-u23-essayage-e4",
+              "kind": "written",
+              "prompt": "Vous achetez le manteau : annoncez votre décision.",
+              "answers": [
+                "je le prends",
+                "je le prend",
+                "je prends le manteau"
+              ],
+              "explain": "Je le prends : la décision d'acheter."
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "function:go-shopping",
+            "grammar:can",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:can"
+          ]
+        },
+        {
+          "id": "fr-foundations-u23-caisse",
+          "title": "C'est combien ?",
+          "goal": "Payer en boutique : c'est combien, ça fait 25 euros, c'est trop cher — carte ou espèces, et le sac.",
+          "intro": {
+            "explanation": [
+              "Le prix se demande avec combien : « C'est combien, ce sac ? » Et la caisse répond : « Ça fait 25 euros. »",
+              "Si le prix dépasse : « C'est trop cher ! » — et on peut prendre son temps : « Merci, je vais réfléchir. »",
+              "Le paiement : « Vous payez comment ? » « Par carte. » « En espèces. » Et le dernier détail : « Un sac, s'il vous plaît ? »"
+            ],
+            "examples": [
+              {
+                "text": "C'est combien, ce sac ?",
+                "meaning": "Demander le prix."
+              },
+              {
+                "text": "Ça fait 25 euros.",
+                "meaning": "Le total de la caisse."
+              },
+              {
+                "text": "C'est trop cher !",
+                "meaning": "Le prix dépasse."
+              },
+              {
+                "text": "Vous payez comment ?",
+                "meaning": "La question de la caisse."
+              },
+              {
+                "text": "Par carte, s'il vous plaît.",
+                "meaning": "Le paiement classique."
+              },
+              {
+                "text": "Un sac, s'il vous plaît ?",
+                "meaning": "Le dernier détail."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "c'est combien ?",
+              "meaning": "Demander un prix.",
+              "note": "C'est combien, ce t-shirt ?"
+            },
+            {
+              "text": "ça fait + prix",
+              "meaning": "Le total.",
+              "note": "Ça fait 25 euros."
+            },
+            {
+              "text": "c'est trop cher",
+              "meaning": "Le prix dépasse.",
+              "note": "trop cher pour moi."
+            },
+            {
+              "text": "payer par carte / en espèces",
+              "meaning": "Les deux paiements.",
+              "note": "Vous payez par carte ?"
+            },
+            {
+              "text": "je vais réfléchir",
+              "meaning": "Prendre le temps.",
+              "note": "Merci, je vais réfléchir."
+            },
+            {
+              "text": "un sac, s'il vous plaît",
+              "meaning": "La demande du sac.",
+              "note": "le dernier échange de la caisse."
+            }
+          ],
+          "situation": "À la caisse : le t-shirt et le sac font 32 euros, le sac vous paraît un peu cher, vous payez par carte et vous demandez un sac.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demandez le prix du sac.",
+                "expected": [
+                  "C'est combien, ce sac ?",
+                  "C'est combien ?"
+                ],
+                "focus": "c'est combien",
+                "watch": "combien + le prix : la question de base."
+              },
+              {
+                "prompt": "Vous êtes la caisse : annoncez le total (32 euros).",
+                "expected": [
+                  "Ça fait 32 euros.",
+                  "Trente-deux euros."
+                ],
+                "focus": "ça fait",
+                "watch": "ça fait + prix : le total au présent."
+              },
+              {
+                "prompt": "Le sac coûte 40 euros : réagissez.",
+                "expected": [
+                  "C'est trop cher !",
+                  "C'est trop cher."
+                ],
+                "focus": "trop cher",
+                "watch": "trop + cher : plus que le budget."
+              },
+              {
+                "prompt": "La caisse demande votre moyen de paiement : la carte.",
+                "expected": [
+                  "Par carte, s'il vous plaît.",
+                  "Je paie par carte."
+                ],
+                "focus": "par carte",
+                "watch": "par carte, en espèces : deux formules fixes."
+              },
+              {
+                "prompt": "Demandez un sac.",
+                "expected": [
+                  "Un sac, s'il vous plaît ?",
+                  "Vous avez un sac ?"
+                ],
+                "focus": "un sac",
+                "watch": "s'il vous plaît + la demande : poli et court."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u23-caisse-e1",
+              "kind": "choice",
+              "prompt": "« ___ , ce t-shirt ? » (le prix)",
+              "options": [
+                "C'est combien",
+                "C'est quoi",
+                "C'est qui",
+                "C'est où"
+              ],
+              "answers": [
+                "C'est combien"
+              ],
+              "explain": "C'est combien : la question du prix."
+            },
+            {
+              "id": "fr-foundations-u23-caisse-e2",
+              "kind": "gap",
+              "prompt": "Ça ___ 32 euros. (le total à la caisse)",
+              "answers": [
+                "fait"
+              ],
+              "explain": "Ça fait + prix : le total qu'annonce la caisse."
+            },
+            {
+              "id": "fr-foundations-u23-caisse-e3",
+              "kind": "order",
+              "prompt": "Vous payez par carte : dites-le.",
+              "answers": [
+                "Je paie par carte s'il vous plaît"
+              ],
+              "explain": "Payer par carte : la formule du paiement."
+            },
+            {
+              "id": "fr-foundations-u23-caisse-e4",
+              "kind": "written",
+              "prompt": "Le prix est trop élevé : réagissez.",
+              "answers": [
+                "c'est trop cher",
+                "c est trop cher",
+                "c'est beaucoup trop cher"
+              ],
+              "explain": "C'est trop cher : le prix dépasse le budget."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:shopping",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u24",
+      "title": "Gros achats",
+      "subtitle": "Comparer, rendre, payer",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "le-bon-choix",
+          "title": "Le bon choix",
+          "subtitle": "Comparer avant d'acheter",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Un nouveau frigo : vous comparez les modèles en ligne, vous lisez les avis et vous choisissez le moins cher des deux bons.",
+          "colorIndex": 0
+        },
+        {
+          "id": "apres-l-achat",
+          "title": "Après l'achat",
+          "subtitle": "Rendre et payer en fois",
+          "symbol": "creditcard",
+          "category": "Course",
+          "situation": "Le lave-linge est arrivé cassé : vous le rendez, vous étalez le paiement sur trois mois et tout rentre dans l'ordre.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u24-comparer",
+          "title": "Plus grand, moins cher",
+          "goal": "Comparer deux produits : plus/moins… que, le plus/le moins, et trancher avec je préfère.",
+          "intro": {
+            "explanation": [
+              "La comparaison : plus/moins + adjectif + que. « Ce modèle est plus silencieux que l'autre. »",
+              "Le champion du groupe : le plus / le moins. « C'est le moins cher des deux. » Et l'irrégulier : bon → meilleur.",
+              "Et on tranche : « Je préfère celui-là, il consomme moins. »"
+            ],
+            "examples": [
+              {
+                "text": "Ce modèle est plus grand que l'autre.",
+                "meaning": "La comparaison haute."
+              },
+              {
+                "text": "Celui-ci est moins cher.",
+                "meaning": "La comparaison basse."
+              },
+              {
+                "text": "C'est le moins cher des deux.",
+                "meaning": "Le superlatif."
+              },
+              {
+                "text": "Il consomme moins d'électricité.",
+                "meaning": "La donnée qui décide."
+              },
+              {
+                "text": "C'est le meilleur rapport qualité-prix.",
+                "meaning": "L'argument du vendeur."
+              },
+              {
+                "text": "Je préfère celui-là.",
+                "meaning": "Le choix final."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "plus + adjectif + que",
+              "meaning": "Comparer vers le haut.",
+              "note": "plus grand que l'autre."
+            },
+            {
+              "text": "moins + adjectif + que",
+              "meaning": "Comparer vers le bas.",
+              "note": "moins cher que celui-là."
+            },
+            {
+              "text": "le plus / le moins + adjectif",
+              "meaning": "Le superlatif.",
+              "note": "le moins cher des deux."
+            },
+            {
+              "text": "bon → meilleur",
+              "meaning": "L'irrégulier à connaître.",
+              "note": "c'est le meilleur choix."
+            },
+            {
+              "text": "je préfère + celui-là/celui-ci",
+              "meaning": "Trancher.",
+              "note": "Je préfère celui-ci."
+            },
+            {
+              "text": "le rapport qualité-prix",
+              "meaning": "L'argument du vendeur.",
+              "note": "le meilleur rapport qualité-prix."
+            }
+          ],
+          "situation": "Vous comparez deux frigos en ligne : le blanc est plus grand, l'inox est moins cher et plus silencieux — et l'avis des clients tranche : le meilleur rapport qualité-prix.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Le frigo blanc est grand ; l'inox aussi. Comparez (le blanc).",
+                "expected": [
+                  "Le blanc est plus grand que l'inox.",
+                  "Il est plus grand que l'autre."
+                ],
+                "focus": "plus… que",
+                "watch": "plus + adjectif + que : la base de la comparaison."
+              },
+              {
+                "prompt": "L'inox coûte 399 euros, le blanc 450 : comparez l'inox.",
+                "expected": [
+                  "L'inox est moins cher que le blanc.",
+                  "Il est moins cher."
+                ],
+                "focus": "moins… que",
+                "watch": "moins + adjectif + que : vers le bas."
+              },
+              {
+                "prompt": "Des deux, l'inox est le silencieux : dites-le en superlatif.",
+                "expected": [
+                  "L'inox est le plus silencieux des deux.",
+                  "C'est le plus silencieux."
+                ],
+                "focus": "le plus",
+                "watch": "le + plus + adjectif : le champion du groupe."
+              },
+              {
+                "prompt": "Utilisez l'adjectif bon au superlatif pour l'inox.",
+                "expected": [
+                  "C'est le meilleur.",
+                  "L'inox est le meilleur choix."
+                ],
+                "focus": "meilleur",
+                "watch": "bon fait meilleur, pas « plus bon »."
+              },
+              {
+                "prompt": "Vous choisissez : tranchez avec je préfère.",
+                "expected": [
+                  "Je préfère l'inox.",
+                  "Je préfère celui-là."
+                ],
+                "focus": "je préfère",
+                "watch": "préférer + nom ou celui-là."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u24-comparer-e1",
+              "kind": "choice",
+              "prompt": "« Ce modèle est ___ silencieux que l'autre. » (comparaison haute)",
+              "options": [
+                "plus",
+                "le plus",
+                "mieux",
+                "très"
+              ],
+              "answers": [
+                "plus"
+              ],
+              "explain": "Plus + adjectif + que : la comparaison de deux choses."
+            },
+            {
+              "id": "fr-foundations-u24-comparer-e2",
+              "kind": "gap",
+              "prompt": "C'est le ___ cher des deux. (l'opposé de plus)",
+              "answers": [
+                "moins"
+              ],
+              "explain": "Le moins + adjectif : le superlatif vers le bas."
+            },
+            {
+              "id": "fr-foundations-u24-comparer-e3",
+              "kind": "order",
+              "prompt": "Comparez : l'inox face au blanc (le prix).",
+              "answers": [
+                "L'inox est moins cher que le blanc"
+              ],
+              "explain": "Moins + adjectif + que : la comparaison des prix."
+            },
+            {
+              "id": "fr-foundations-u24-comparer-e4",
+              "kind": "written",
+              "prompt": "Dites votre choix pour l'inox avec je préfère.",
+              "answers": [
+                "je préfère l'inox",
+                "je prefere l'inox",
+                "je préfère celui-là",
+                "je prefere celui la"
+              ],
+              "explain": "Je préfère + nom ou celui-là : le choix assumé."
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "function:go-shopping",
+            "grammar:superlatives",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        },
+        {
+          "id": "fr-foundations-u24-retour",
+          "title": "Je voudrais le rendre",
+          "goal": "Rendre un article défectueux : expliquer au passé composé, demander avec je voudrais, sortir le ticket de caisse.",
+          "intro": {
+            "explanation": [
+              "On raconte le problème au passé composé : « J'ai acheté ce lave-linge la semaine dernière. Il est arrivé cassé. »",
+              "La demande avec je voudrais reste ferme et polie : « Je voudrais le rendre. » « Est-ce que je peux avoir un remboursement ? »",
+              "Les pièces du dossier : « Voici le ticket de caisse. » Sans preuve, pas de retour."
+            ],
+            "examples": [
+              {
+                "text": "J'ai acheté ce lave-linge la semaine dernière.",
+                "meaning": "L'achat daté."
+              },
+              {
+                "text": "Il est arrivé cassé.",
+                "meaning": "Le problème en une phrase."
+              },
+              {
+                "text": "Je voudrais le rendre.",
+                "meaning": "La demande claire."
+              },
+              {
+                "text": "Est-ce que je peux avoir un remboursement ?",
+                "meaning": "L'option remboursement."
+              },
+              {
+                "text": "Voici le ticket de caisse.",
+                "meaning": "La preuve."
+              },
+              {
+                "text": "On vous le rembourse sous cinq jours.",
+                "meaning": "La réponse du magasin."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'ai acheté + quand",
+              "meaning": "Situer l'achat.",
+              "note": "la semaine dernière."
+            },
+            {
+              "text": "il est arrivé + cassé/rayé",
+              "meaning": "Le constat.",
+              "note": "arrivé cassé, arrivé rayé."
+            },
+            {
+              "text": "je voudrais + rendre/échanger",
+              "meaning": "La demande polie.",
+              "note": "Je voudrais un échange."
+            },
+            {
+              "text": "est-ce que je peux avoir un remboursement ?",
+              "meaning": "L'option forte.",
+              "note": "…ou un avoir ?"
+            },
+            {
+              "text": "voici le ticket de caisse",
+              "meaning": "La preuve qui débloque.",
+              "note": "on tend et on dit."
+            },
+            {
+              "text": "échanger / rembourser",
+              "meaning": "Les deux issues.",
+              "note": "échanger contre le même modèle."
+            }
+          ],
+          "situation": "Le lave-linge livré mardi est cassé : vous revenez au magasin, vous expliquez l'achat de la semaine dernière, vous sortez le ticket et vous demandez le remboursement.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Expliquez quand vous avez acheté (la semaine dernière).",
+                "expected": [
+                  "J'ai acheté ce lave-linge la semaine dernière.",
+                  "Je l'ai acheté la semaine dernière."
+                ],
+                "focus": "j'ai acheté",
+                "watch": "passé composé : l'achat est daté et fini."
+              },
+              {
+                "prompt": "Décrivez le problème : cassé à l'arrivée.",
+                "expected": [
+                  "Il est arrivé cassé.",
+                  "Le lave-linge est arrivé cassé."
+                ],
+                "focus": "arrivé cassé",
+                "watch": "arrivé + état : le constat en une phrase."
+              },
+              {
+                "prompt": "Demandez à rendre l'article.",
+                "expected": [
+                  "Je voudrais le rendre.",
+                  "Je voudrais rendre le lave-linge."
+                ],
+                "focus": "je voudrais",
+                "watch": "je voudrais + infinitif : ferme et poli."
+              },
+              {
+                "prompt": "Montrez votre preuve d'achat.",
+                "expected": [
+                  "Voici le ticket de caisse.",
+                  "Voilà le ticket."
+                ],
+                "focus": "voici",
+                "watch": "voici + preuve : on tend et on dit."
+              },
+              {
+                "prompt": "Demandez le remboursement.",
+                "expected": [
+                  "Est-ce que je peux avoir un remboursement ?",
+                  "Je voudrais un remboursement."
+                ],
+                "focus": "remboursement",
+                "watch": "remboursement = l'argent revient."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u24-retour-e1",
+              "kind": "choice",
+              "prompt": "« J'___ ce lave-linge la semaine dernière. »",
+              "options": [
+                "ai acheté",
+                "achète",
+                "achetais",
+                "vais acheter"
+              ],
+              "answers": [
+                "ai acheté"
+              ],
+              "explain": "Passé composé : l'achat fini et daté."
+            },
+            {
+              "id": "fr-foundations-u24-retour-e2",
+              "kind": "gap",
+              "prompt": "Je ___ le rendre. (vouloir au conditionnel poli)",
+              "answers": [
+                "voudrais"
+              ],
+              "explain": "Je voudrais + infinitif : la demande polie et ferme."
+            },
+            {
+              "id": "fr-foundations-u24-retour-e3",
+              "kind": "order",
+              "prompt": "Présentez votre preuve d'achat.",
+              "answers": [
+                "Voici le ticket de caisse"
+              ],
+              "explain": "Voici + le ticket : la preuve qui débloque le retour."
+            },
+            {
+              "id": "fr-foundations-u24-retour-e4",
+              "kind": "written",
+              "prompt": "Demandez un remboursement.",
+              "answers": [
+                "est-ce que je peux avoir un remboursement",
+                "je voudrais un remboursement",
+                "est ce que je peux avoir un remboursement",
+                "je voudrais etre rembourse"
+              ],
+              "explain": "Remboursement : l'argent retourne sur votre compte."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "function:make-requests",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "fr-foundations-u24-paiement",
+          "title": "Payer en plusieurs fois",
+          "goal": "Étaler un gros achat : en trois fois, d'abord… ensuite…, et conclure avec donc.",
+          "intro": {
+            "explanation": [
+              "Le gros achat s'étale : « Vous pouvez payer en trois fois. » « Sans frais. »",
+              "Le déroulé avec d'abord… ensuite… : « D'abord un acompte, ensuite deux mensualités. »",
+              "On conclut avec donc : « Du coup, ça fait 100 euros par mois. Donc je signe ici ? »"
+            ],
+            "examples": [
+              {
+                "text": "Vous pouvez payer en trois fois.",
+                "meaning": "La proposition du magasin."
+              },
+              {
+                "text": "D'abord un acompte de 100 euros.",
+                "meaning": "La première étape."
+              },
+              {
+                "text": "Ensuite, deux mensualités de 100 euros.",
+                "meaning": "La suite du plan."
+              },
+              {
+                "text": "Il n'y a pas de frais.",
+                "meaning": "L'argument qui rassure."
+              },
+              {
+                "text": "Du coup, ça fait 100 euros par mois.",
+                "meaning": "Le calcul simple."
+              },
+              {
+                "text": "Donc je signe ici ?",
+                "meaning": "La conclusion."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "payer en + nombre + fois",
+              "meaning": "Étaler le paiement.",
+              "note": "en trois fois sans frais."
+            },
+            {
+              "text": "d'abord… ensuite…",
+              "meaning": "Le plan en étapes.",
+              "note": "D'abord l'acompte, ensuite le reste."
+            },
+            {
+              "text": "un acompte",
+              "meaning": "La première somme.",
+              "note": "100 euros à la commande."
+            },
+            {
+              "text": "une mensualité",
+              "meaning": "Le paiement mensuel.",
+              "note": "100 euros par mois."
+            },
+            {
+              "text": "du coup / donc",
+              "meaning": "Conclure.",
+              "note": "Du coup, ça rentre dans le budget."
+            },
+            {
+              "text": "sans frais",
+              "meaning": "Zéro supplément.",
+              "note": "c'est sans frais."
+            }
+          ],
+          "situation": "Le lave-linge coûte 300 euros : la vendeuse propose trois fois sans frais, un acompte puis deux mensualités — donc vous signez.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "La vendeuse propose d'étaler : dites-le (trois fois).",
+                "expected": [
+                  "Vous pouvez payer en trois fois.",
+                  "On peut payer en trois fois."
+                ],
+                "focus": "en trois fois",
+                "watch": "en + nombre + fois : la formule du paiement étalé."
+              },
+              {
+                "prompt": "Expliquez la première étape : un acompte de 100 euros.",
+                "expected": [
+                  "D'abord un acompte de 100 euros."
+                ],
+                "focus": "d'abord",
+                "watch": "d'abord ouvre le plan."
+              },
+              {
+                "prompt": "Expliquez la suite : deux mensualités de 100 euros.",
+                "expected": [
+                  "Ensuite deux mensualités de 100 euros.",
+                  "Ensuite, deux mensualités."
+                ],
+                "focus": "ensuite",
+                "watch": "ensuite enchaîne l'étape deux."
+              },
+              {
+                "prompt": "L'argument qui rassure : zéro frais.",
+                "expected": [
+                  "Il n'y a pas de frais.",
+                  "C'est sans frais."
+                ],
+                "focus": "sans frais",
+                "watch": "sans frais = aucun supplément."
+              },
+              {
+                "prompt": "Concluez : vous signez.",
+                "expected": [
+                  "Donc je signe ici ?",
+                  "Donc je signe."
+                ],
+                "focus": "donc",
+                "watch": "donc relie le plan et la décision."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u24-paiement-e1",
+              "kind": "choice",
+              "prompt": "« Vous pouvez payer en trois ___ , sans frais. »",
+              "options": [
+                "fois",
+                "parts",
+                "morceaux",
+                "euros"
+              ],
+              "answers": [
+                "fois"
+              ],
+              "explain": "En trois fois : le paiement étalé par défaut."
+            },
+            {
+              "id": "fr-foundations-u24-paiement-e2",
+              "kind": "gap",
+              "prompt": "___ , un acompte ; ensuite, deux mensualités. (la première étape)",
+              "answers": [
+                "d'abord",
+                "d abord"
+              ],
+              "explain": "D'abord… ensuite… : le plan en étapes."
+            },
+            {
+              "id": "fr-foundations-u24-paiement-e3",
+              "kind": "order",
+              "prompt": "Concluez le paiement : vous signez.",
+              "answers": [
+                "Donc je signe ici"
+              ],
+              "explain": "Donc + question : la conclusion qui finalise."
+            },
+            {
+              "id": "fr-foundations-u24-paiement-e4",
+              "kind": "written",
+              "prompt": "Résumez le paiement mensuel avec le connecteur du coup.",
+              "answers": [
+                "du coup ca fait 100 euros par mois",
+                "du coup ça fait 100 euros par mois",
+                "du coup ça fait cent euros par mois"
+              ],
+              "explain": "Du coup, ça fait + somme : le calcul qui convainc."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:connectors",
+            "vocab:shopping",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u25",
+      "title": "Prépare le voyage",
+      "subtitle": "Valise et départ",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "la-valise",
+          "title": "La valise",
+          "subtitle": "Faire sa valise",
+          "symbol": "suitcase",
+          "category": "Course",
+          "situation": "La veille au soir : vous sortez la valise, vous faites le tri avec la liste et vous retrouvez les passeports.",
+          "colorIndex": 0
+        },
+        {
+          "id": "le-depart",
+          "title": "Le départ",
+          "subtitle": "Réserver, dernière vérification",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Vous réservez le taxi et l'hôtel pour demain, puis vous laissez un mot au voisin pour les plantes.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u25-valise",
+          "title": "Je vais prendre mon maillot",
+          "goal": "Parler de la valise avec aller + infinitif : ce qu'on va prendre et ce qu'on ne va pas oublier.",
+          "intro": {
+            "explanation": [
+              "Le futur proche se fait avec aller + infinitif : « Je vais prendre mon maillot. » « On va partir tôt demain. »",
+              "Les indispensables avec ne pas oublier : « Il ne faut pas oublier les documents. » « N'oublie pas ton passeport ! »",
+              "On organise avec d'abord… ensuite… enfin : « D'abord les papiers, ensuite les vêtements, enfin les chargeurs. »"
+            ],
+            "examples": [
+              {
+                "text": "Je vais prendre mon maillot.",
+                "meaning": "Le futur proche de la valise."
+              },
+              {
+                "text": "On va partir tôt demain matin.",
+                "meaning": "Le plan du départ."
+              },
+              {
+                "text": "Il ne faut pas oublier les documents.",
+                "meaning": "L'alerte des papiers."
+              },
+              {
+                "text": "N'oublie pas ton passeport !",
+                "meaning": "Le rappel entre amis."
+              },
+              {
+                "text": "D'abord les papiers, ensuite les vêtements, enfin les chargeurs.",
+                "meaning": "L'ordre du rangement."
+              },
+              {
+                "text": "Tu vas prendre ton parapluie ?",
+                "meaning": "La question du futur proche."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "aller + infinitif",
+              "meaning": "Le futur proche.",
+              "note": "Je vais prendre la valise."
+            },
+            {
+              "text": "ne pas oublier + nom",
+              "meaning": "L'indispensable.",
+              "note": "N'oublie pas les documents !"
+            },
+            {
+              "text": "il faut + infinitif",
+              "meaning": "Le nécessaire.",
+              "note": "Il faut vérifier les papiers."
+            },
+            {
+              "text": "faire sa valise",
+              "meaning": "L'expression du rangement.",
+              "note": "Je fais ma valise ce soir."
+            },
+            {
+              "text": "d'abord… ensuite… enfin",
+              "meaning": "L'ordre du tri.",
+              "note": "Enfin, les chargeurs."
+            },
+            {
+              "text": "l'indispensable",
+              "meaning": "Ce qu'on ne laisse jamais.",
+              "note": "papiers, billets, argent."
+            }
+          ],
+          "situation": "La veille du départ : vous faites votre valise avec la liste — le maillot, les documents, les chargeurs — et vous rappelez à Léa son passeport.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis ce que tu vas prendre pour la plage (le maillot).",
+                "expected": [
+                  "Je vais prendre mon maillot."
+                ],
+                "focus": "aller + infinitif",
+                "watch": "vais + infinitif : le futur proche de la valise."
+              },
+              {
+                "prompt": "Le plan : partir tôt demain. Dis-le avec on.",
+                "expected": [
+                  "On va partir tôt demain."
+                ],
+                "focus": "on va",
+                "watch": "on va + infinitif : le plan du groupe."
+              },
+              {
+                "prompt": "Alerte documents : il ne faut pas les oublier.",
+                "expected": [
+                  "Il ne faut pas oublier les documents.",
+                  "Il faut pas oublier les documents."
+                ],
+                "focus": "il ne faut pas",
+                "watch": "il faut + infinitif : l'obligation neutre."
+              },
+              {
+                "prompt": "Rappelle à Léa son passeport.",
+                "expected": [
+                  "N'oublie pas ton passeport !",
+                  "N'oublie pas ton passeport"
+                ],
+                "focus": "n'oublie pas",
+                "watch": "l'impératif négatif : ne… pas autour du verbe."
+              },
+              {
+                "prompt": "Donne l'ordre du rangement : papiers, puis vêtements.",
+                "expected": [
+                  "D'abord les papiers, ensuite les vêtements."
+                ],
+                "focus": "d'abord… ensuite",
+                "watch": "les connecteurs donnent l'ordre."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u25-valise-e1",
+              "kind": "choice",
+              "prompt": "« Je ___ prendre mon maillot. » (le futur proche)",
+              "options": [
+                "vais",
+                "va",
+                "veux",
+                "dois"
+              ],
+              "answers": [
+                "vais"
+              ],
+              "explain": "Aller + infinitif : je vais prendre, le futur proche."
+            },
+            {
+              "id": "fr-foundations-u25-valise-e2",
+              "kind": "gap",
+              "prompt": "Il ne faut pas ___ les documents.",
+              "answers": [
+                "oublier"
+              ],
+              "explain": "Il ne faut pas + infinitif : l'alerte indispensable."
+            },
+            {
+              "id": "fr-foundations-u25-valise-e3",
+              "kind": "order",
+              "prompt": "Rappelle à Léa son passeport.",
+              "answers": [
+                "N'oublie pas ton passeport"
+              ],
+              "explain": "Ne… pas + oublier à l'impératif : le rappel du départ."
+            },
+            {
+              "id": "fr-foundations-u25-valise-e4",
+              "kind": "written",
+              "prompt": "Dis ton plan : partir tôt demain (avec on).",
+              "answers": [
+                "on va partir tot demain",
+                "on va partir tôt demain",
+                "on va partir tot"
+              ],
+              "explain": "On va + infinitif : le plan de demain."
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "vocab:travel",
+            "function:make-future-plans",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "fr-foundations-u25-reserver",
+          "title": "Je voudrais réserver",
+          "goal": "Réserver taxi et hôtel au téléphone : je voudrais + réserver, préciser la date et confirmer.",
+          "intro": {
+            "explanation": [
+              "Au téléphone, la demande avec je voudrais : « Je voudrais réserver une chambre pour deux nuits. »",
+              "On précise : « C'est pour lundi 12. » « Un taxi pour l'aéroport, à cinq heures et demie. »",
+              "Et on confirme : « Vous confirmez ? » « Oui, je vais confirmer par message. »"
+            ],
+            "examples": [
+              {
+                "text": "Je voudrais réserver une chambre pour deux nuits.",
+                "meaning": "La demande d'hôtel."
+              },
+              {
+                "text": "C'est pour lundi 12, deux personnes.",
+                "meaning": "La date et le nombre."
+              },
+              {
+                "text": "Un taxi pour l'aéroport, à cinq heures et demie.",
+                "meaning": "La réservation de transport."
+              },
+              {
+                "text": "Ça fait combien la nuit ?",
+                "meaning": "La question du prix."
+              },
+              {
+                "text": "Le petit-déjeuner est compris ?",
+                "meaning": "La question qui évite les surprises."
+              },
+              {
+                "text": "Je vais confirmer par message.",
+                "meaning": "La confirmation au futur proche."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je voudrais + réserver",
+              "meaning": "Ouvrir la réservation.",
+              "note": "Je voudrais réserver un taxi."
+            },
+            {
+              "text": "c'est pour + date",
+              "meaning": "Préciser le jour.",
+              "note": "C'est pour lundi 12."
+            },
+            {
+              "text": "un taxi pour + destination",
+              "meaning": "Le transport réservé.",
+              "note": "pour l'aéroport."
+            },
+            {
+              "text": "ça fait combien la nuit ?",
+              "meaning": "Le prix à l'hôtel.",
+              "note": "la nuit, pas la chambre."
+            },
+            {
+              "text": "est-ce que c'est compris ?",
+              "meaning": "La question des extras.",
+              "note": "le petit-déjeuner est compris."
+            },
+            {
+              "text": "confirmer par message",
+              "meaning": "Sécuriser la réservation.",
+              "note": "je vais confirmer par SMS."
+            }
+          ],
+          "situation": "Deux appels : l'hôtel pour deux nuits à partir de lundi, puis le taxi de l'aube pour l'aéroport — dates, prix et confirmation par message.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Réservez une chambre : deux nuits.",
+                "expected": [
+                  "Je voudrais réserver une chambre pour deux nuits.",
+                  "Je voudrais réserver une chambre."
+                ],
+                "focus": "je voudrais",
+                "watch": "je voudrais + infinitif : la demande téléphonique polie."
+              },
+              {
+                "prompt": "Précisez la date : lundi 12.",
+                "expected": [
+                  "C'est pour lundi 12.",
+                  "C'est pour le lundi 12."
+                ],
+                "focus": "c'est pour",
+                "watch": "pour + date : le jour de l'arrivée."
+              },
+              {
+                "prompt": "Réservez le taxi pour l'aéroport, 5 h 30.",
+                "expected": [
+                  "Je voudrais un taxi pour l'aéroport à cinq heures et demie.",
+                  "Un taxi pour l'aéroport, s'il vous plaît."
+                ],
+                "focus": "pour l'aéroport",
+                "watch": "pour + destination : la course complète."
+              },
+              {
+                "prompt": "Demandez le prix de la nuit.",
+                "expected": [
+                  "Ça fait combien la nuit ?",
+                  "Combien coûte la nuit ?"
+                ],
+                "focus": "la nuit",
+                "watch": "la nuit, pas le séjour : le prix unitaire."
+              },
+              {
+                "prompt": "Dites que vous confirmerez par message.",
+                "expected": [
+                  "Je vais confirmer par message."
+                ],
+                "focus": "je vais confirmer",
+                "watch": "futur proche : la confirmation arrive."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u25-reserver-e1",
+              "kind": "choice",
+              "prompt": "« Je ___ réserver une chambre pour deux nuits. »",
+              "options": [
+                "voudrais",
+                "veux bien",
+                "aimer",
+                "voudrai"
+              ],
+              "answers": [
+                "voudrais"
+              ],
+              "explain": "Je voudrais + infinitif : le conditionnel reste poli."
+            },
+            {
+              "id": "fr-foundations-u25-reserver-e2",
+              "kind": "gap",
+              "prompt": "C'est ___ lundi 12, pour deux personnes. (la date)",
+              "answers": [
+                "pour"
+              ],
+              "explain": "C'est pour + date : le jour précis de la réservation."
+            },
+            {
+              "id": "fr-foundations-u25-reserver-e3",
+              "kind": "order",
+              "prompt": "Réservez le taxi pour l'aéroport.",
+              "answers": [
+                "Je voudrais un taxi pour l'aéroport"
+              ],
+              "explain": "Je voudrais + nom + pour : la réservation de transport."
+            },
+            {
+              "id": "fr-foundations-u25-reserver-e4",
+              "kind": "written",
+              "prompt": "Demandez le prix par nuit.",
+              "answers": [
+                "ca fait combien la nuit",
+                "ça fait combien la nuit",
+                "combien coute la nuit",
+                "combien coûte la nuit"
+              ],
+              "explain": "La nuit : l'unité de prix à l'hôtel."
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "vocab:travel",
+            "grammar:going-to",
+            "vocab:transport"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "fr-foundations-u25-veille",
+          "title": "Demain, on part",
+          "goal": "Organiser la veille du départ : ce soir… demain…, demander un dernier service et tout vérifier.",
+          "intro": {
+            "explanation": [
+              "Le contraste ce soir / demain : « Ce soir, je prépare tout. Demain, on va se lever à cinq heures. »",
+              "Le dernier service avec tu peux + infinitif : « Tu peux arroser les plantes ? » « Tu peux garder les clés ? »",
+              "La check-list avec d'abord… ensuite… enfin : « D'abord les fenêtres, ensuite le gaz, et enfin, au lit ! »"
+            ],
+            "examples": [
+              {
+                "text": "Ce soir, je prépare tout.",
+                "meaning": "La veille active."
+              },
+              {
+                "text": "Demain, on va se lever à cinq heures.",
+                "meaning": "Le réveil du départ."
+              },
+              {
+                "text": "Tu peux arroser les plantes ?",
+                "meaning": "Le service du voisin."
+              },
+              {
+                "text": "Je laisse un mot avec les clés.",
+                "meaning": "Prévenir par écrit."
+              },
+              {
+                "text": "D'abord les fenêtres, ensuite le gaz.",
+                "meaning": "La check-list."
+              },
+              {
+                "text": "Et enfin, au lit !",
+                "meaning": "La fin de la veille."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ce soir… demain…",
+              "meaning": "Le contraste de la veille.",
+              "note": "Ce soir je prépare, demain je pars."
+            },
+            {
+              "text": "tu peux + infinitif ?",
+              "meaning": "Le dernier service.",
+              "note": "Tu peux arroser les plantes ?"
+            },
+            {
+              "text": "se lever à + heure",
+              "meaning": "L'heure du départ.",
+              "note": "on se lève à cinq heures."
+            },
+            {
+              "text": "laisser un mot",
+              "meaning": "Prévenir sans appel.",
+              "note": "un mot pour le voisin."
+            },
+            {
+              "text": "être prêt(e)",
+              "meaning": "Le calme avant le départ.",
+              "note": "Tout est prêt !"
+            },
+            {
+              "text": "vérifier + nom",
+              "meaning": "La dernière vérification.",
+              "note": "vérifier les fenêtres."
+            }
+          ],
+          "situation": "La veille au soir : vous préparez tout, vous prévenez le voisin pour les plantes, vous vérifiez fenêtres et gaz — demain, départ à cinq heures.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ce soir tu prépares tout : dis-le.",
+                "expected": [
+                  "Ce soir, je prépare tout.",
+                  "Ce soir je prépare tout."
+                ],
+                "focus": "ce soir",
+                "watch": "le présent suffit pour le programme du soir."
+              },
+              {
+                "prompt": "Demain : lever à cinq heures (avec on, futur proche).",
+                "expected": [
+                  "Demain, on va se lever à cinq heures."
+                ],
+                "focus": "demain on va",
+                "watch": "futur proche pour le programme de demain."
+              },
+              {
+                "prompt": "Demandez au voisin : les plantes.",
+                "expected": [
+                  "Tu peux arroser les plantes ?",
+                  "Vous pouvez arroser les plantes ?"
+                ],
+                "focus": "tu peux",
+                "watch": "tu peux + infinitif : la demande légère."
+              },
+              {
+                "prompt": "Expliquez comment : un mot avec les clés.",
+                "expected": [
+                  "Je laisse un mot avec les clés."
+                ],
+                "focus": "laisser un mot",
+                "watch": "laisser un mot = prévenir par écrit."
+              },
+              {
+                "prompt": "La check-list : fenêtres puis gaz.",
+                "expected": [
+                  "D'abord les fenêtres, ensuite le gaz."
+                ],
+                "focus": "d'abord… ensuite",
+                "watch": "les connecteurs font la liste."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u25-veille-e1",
+              "kind": "choice",
+              "prompt": "« ___, je prépare tout ; demain, on part tôt. »",
+              "options": [
+                "Ce soir",
+                "Hier",
+                "Après-demain",
+                "Souvent"
+              ],
+              "answers": [
+                "Ce soir"
+              ],
+              "explain": "Ce soir… demain… : le contraste de la veille."
+            },
+            {
+              "id": "fr-foundations-u25-veille-e2",
+              "kind": "gap",
+              "prompt": "Tu ___ arroser les plantes ? (demander un service)",
+              "answers": [
+                "peux"
+              ],
+              "explain": "Tu peux + infinitif : le service demandé simplement."
+            },
+            {
+              "id": "fr-foundations-u25-veille-e3",
+              "kind": "order",
+              "prompt": "Le programme de demain : lever à cinq heures (avec on).",
+              "answers": [
+                "Demain on va se lever à cinq heures"
+              ],
+              "explain": "Futur proche + heure : le réveil du départ."
+            },
+            {
+              "id": "fr-foundations-u25-veille-e4",
+              "kind": "written",
+              "prompt": "Tu as fini de préparer tes bagages : dis-le.",
+              "answers": [
+                "tout est pret",
+                "tout est prêt",
+                "tout est prete"
+              ],
+              "explain": "Être prêt : le calme de la veille."
+            }
+          ],
+          "skills": [
+            "grammar:connectors",
+            "function:make-future-plans",
+            "function:make-requests",
+            "vocab:travel"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u26",
+      "title": "La ville que je veux",
+      "subtitle": "Opinions et quartier",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "le-conseil",
+          "title": "Le conseil de quartier",
+          "subtitle": "D'un côté, de l'autre",
+          "symbol": "building.2",
+          "category": "Course",
+          "situation": "Réunion du conseil de quartier : pour ou contre le parking souterrain, chacun argumente et on pèse le pour et le contre.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-consommation",
+          "title": "Consommer autrement",
+          "subtitle": "Local et responsable",
+          "symbol": "leaf",
+          "category": "Course",
+          "situation": "Atelier consommation responsable : marché local, zéro déchet, et des propositions concrètes pour le quartier.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u26-opiner",
+          "title": "D'un côté, de l'autre",
+          "goal": "Donner son opinion et la nuancer : à mon avis, d'un côté… de l'autre…, je ne suis pas d'accord parce que…",
+          "intro": {
+            "explanation": [
+              "L'opinion se pose avec à mon avis / je trouve que : « À mon avis, ce parking est utile. »",
+              "On pèse avec d'un côté… de l'autre… : « D'un côté, ça libère la place ; de l'autre, ça coûte cher. »",
+              "Pour désaccordé poliment : « Je ne suis pas d'accord, parce que les chiffres disent le contraire. »"
+            ],
+            "examples": [
+              {
+                "text": "À mon avis, ce parking est une bonne idée.",
+                "meaning": "L'opinion posée."
+              },
+              {
+                "text": "Je trouve que la rue a besoin d'air.",
+                "meaning": "L'opinion avec trouver."
+              },
+              {
+                "text": "D'un côté, ça libère la place du marché.",
+                "meaning": "L'argument pour."
+              },
+              {
+                "text": "De l'autre, ça va coûter très cher.",
+                "meaning": "L'argument contre."
+              },
+              {
+                "text": "Je ne suis pas d'accord, parce que…",
+                "meaning": "Le désaccord argumenté."
+              },
+              {
+                "text": "Tu as raison, mais les chiffres parlent.",
+                "meaning": "Concéder puis nuancer."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "à mon avis / je trouve que",
+              "meaning": "Poser son opinion.",
+              "note": "À mon avis, c'est utile."
+            },
+            {
+              "text": "d'un côté… de l'autre…",
+              "meaning": "Peser le pour et le contre.",
+              "note": "D'un côté oui, de l'autre non."
+            },
+            {
+              "text": "je ne suis pas d'accord parce que",
+              "meaning": "Le désaccord poli.",
+              "note": "…parce que les chiffres parlent."
+            },
+            {
+              "text": "tu as raison, mais",
+              "meaning": "Concéder puis nuancer.",
+              "note": "Tu as raison, mais c'est cher."
+            },
+            {
+              "text": "en revanche",
+              "meaning": "Le contraste soutenu.",
+              "note": "C'est cher, en revanche c'est propre."
+            },
+            {
+              "text": "peser le pour et le contre",
+              "meaning": "Examiner les deux faces.",
+              "note": "avant de voter, on pèse."
+            }
+          ],
+          "situation": "Conseil de quartier : le parking souterrain divise la salle — avis posés, pour et contre pesés, et chacun nuance sans casser l'ambiance.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Donne ton avis : le parking est utile.",
+                "expected": [
+                  "À mon avis, ce parking est utile.",
+                  "Je trouve que ce parking est utile."
+                ],
+                "focus": "à mon avis",
+                "watch": "à mon avis + phrase : l'opinion assumée."
+              },
+              {
+                "prompt": "Pèse le pour et le contre : place libérée / coût élevé.",
+                "expected": [
+                  "D'un côté ça libère la place, de l'autre ça coûte cher."
+                ],
+                "focus": "d'un côté… de l'autre",
+                "watch": "les deux faces dans une seule phrase."
+              },
+              {
+                "prompt": "Tu n'es pas d'accord : les chiffres disent le contraire.",
+                "expected": [
+                  "Je ne suis pas d'accord, parce que les chiffres disent le contraire.",
+                  "Je ne suis pas d'accord parce que c'est trop cher."
+                ],
+                "focus": "je ne suis pas d'accord",
+                "watch": "parce que + l'argument : le désaccord reste poli."
+              },
+              {
+                "prompt": "Ton voisin a partiellement raison : concède puis nuance (c'est cher).",
+                "expected": [
+                  "Tu as raison, mais c'est très cher.",
+                  "Tu as raison, mais c'est cher."
+                ],
+                "focus": "tu as raison, mais",
+                "watch": "on concède d'abord, on nuance ensuite."
+              },
+              {
+                "prompt": "Contraste avec en revanche : cher mais propre.",
+                "expected": [
+                  "C'est cher, en revanche c'est propre."
+                ],
+                "focus": "en revanche",
+                "watch": "en revanche pose le contraste fort."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u26-opiner-e1",
+              "kind": "choice",
+              "prompt": "« ___ , ce parking est une bonne idée. » (poser son opinion)",
+              "options": [
+                "À mon avis",
+                "Tout à fait",
+                "Bien sûr",
+                "D'accord"
+              ],
+              "answers": [
+                "À mon avis"
+              ],
+              "explain": "À mon avis + phrase : la marque de l'opinion."
+            },
+            {
+              "id": "fr-foundations-u26-opiner-e2",
+              "kind": "gap",
+              "prompt": "Je ne suis pas d'accord, ___ les chiffres disent le contraire. (l'argument)",
+              "answers": [
+                "parce que",
+                "car"
+              ],
+              "explain": "Parce que + cause : le désaccord argumenté."
+            },
+            {
+              "id": "fr-foundations-u26-opiner-e3",
+              "kind": "order",
+              "prompt": "Pèse le pour et le contre (place libérée / coût élevé).",
+              "answers": [
+                "D'un côté ça libère la place de l'autre ça coûte cher"
+              ],
+              "explain": "D'un côté… de l'autre… : les deux faces de l'argument."
+            },
+            {
+              "id": "fr-foundations-u26-opiner-e4",
+              "kind": "written",
+              "prompt": "Nuance : ton collègue a raison, mais c'est cher.",
+              "answers": [
+                "tu as raison mais c'est cher",
+                "tu as raison mais c est cher",
+                "tu as raison mais c'est tres cher"
+              ],
+              "explain": "Tu as raison, mais : on concède puis on nuance."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "grammar:connectors",
+            "speaking:justify-opinion",
+            "grammar:comparatives"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-foundations-u26-proposition",
+          "title": "Nous proposons de…",
+          "goal": "Faire une proposition au quartier : nous proposons de, il faudrait, on pourrait — et conclure concrètement.",
+          "intro": {
+            "explanation": [
+              "La proposition avec nous proposons de + infinitif : « Nous proposons de créer un marché couvert. »",
+              "Les idées au conditionnel : « Il faudrait plus de pistes cyclables. » « On pourrait végétaliser la place. »",
+              "On rend l'idée concrète, puis on ouvre le débat : « Concrètement, ça veut dire dix arbres. Qu'est-ce que vous en pensez ? »"
+            ],
+            "examples": [
+              {
+                "text": "Nous proposons de créer un marché couvert.",
+                "meaning": "La proposition officielle."
+              },
+              {
+                "text": "Il faudrait plus de pistes cyclables.",
+                "meaning": "Le besoin exprimé."
+              },
+              {
+                "text": "On pourrait aussi végétaliser la place.",
+                "meaning": "L'idée complémentaire."
+              },
+              {
+                "text": "Ce serait mieux pour les enfants.",
+                "meaning": "L'argument du conditionnel."
+              },
+              {
+                "text": "Concrètement, ça veut dire dix arbres.",
+                "meaning": "L'idée qui se chiffre."
+              },
+              {
+                "text": "Qu'est-ce que vous en pensez ?",
+                "meaning": "Ouvrir le débat."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "nous proposons de + infinitif",
+              "meaning": "La proposition formelle.",
+              "note": "…de créer un marché."
+            },
+            {
+              "text": "il faudrait + nom/infinitif",
+              "meaning": "Le besoin au conditionnel.",
+              "note": "Il faudrait des arbres."
+            },
+            {
+              "text": "on pourrait + infinitif",
+              "meaning": "L'idée douce.",
+              "note": "On pourrait essayer."
+            },
+            {
+              "text": "concrètement",
+              "meaning": "Passer du rêve au plan.",
+              "note": "Concrètement : dix arbres."
+            },
+            {
+              "text": "qu'est-ce que vous en pensez ?",
+              "meaning": "Inviter la réaction.",
+              "note": "le pronom en = de ça."
+            },
+            {
+              "text": "ce serait mieux",
+              "meaning": "Comparer au conditionnel.",
+              "note": "Ce serait mieux pour tout le monde."
+            }
+          ],
+          "situation": "À la réunion, vous proposez le marché couvert, vous ajoutez pistes cyclables et arbres, vous chiffrez — et vous demandez l'avis de la salle.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Formalisez la proposition : créer un marché couvert.",
+                "expected": [
+                  "Nous proposons de créer un marché couvert."
+                ],
+                "focus": "nous proposons de",
+                "watch": "proposer de + infinitif : la forme formelle."
+              },
+              {
+                "prompt": "Exprimez le besoin : des pistes cyclables.",
+                "expected": [
+                  "Il faudrait plus de pistes cyclables.",
+                  "Il faudrait des pistes cyclables."
+                ],
+                "focus": "il faudrait",
+                "watch": "le conditionnel adoucit la demande."
+              },
+              {
+                "prompt": "Ajoutez une idée douce : végétaliser la place.",
+                "expected": [
+                  "On pourrait végétaliser la place.",
+                  "On pourrait aussi végétaliser la place."
+                ],
+                "focus": "on pourrait",
+                "watch": "pourrait + infinitif : l'idée sans imposition."
+              },
+              {
+                "prompt": "Rendez l'idée concrète : dix arbres.",
+                "expected": [
+                  "Concrètement, ça veut dire dix arbres."
+                ],
+                "focus": "concrètement",
+                "watch": "concrètement + les chiffres : l'idée devient plan."
+              },
+              {
+                "prompt": "Ouvrez le débat.",
+                "expected": [
+                  "Qu'est-ce que vous en pensez ?",
+                  "Qu'est-ce que vous en pensez"
+                ],
+                "focus": "vous en pensez",
+                "watch": "en = de cette idée."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u26-proposition-e1",
+              "kind": "choice",
+              "prompt": "« Nous ___ de créer un marché couvert. »",
+              "options": [
+                "proposons",
+                "pensons",
+                "disons",
+                "voulons"
+              ],
+              "answers": [
+                "proposons"
+              ],
+              "explain": "Nous proposons de + infinitif : la proposition formelle."
+            },
+            {
+              "id": "fr-foundations-u26-proposition-e2",
+              "kind": "gap",
+              "prompt": "Il ___ plus de pistes cyclables. (le besoin, conditionnel de falloir)",
+              "answers": [
+                "faudrait"
+              ],
+              "explain": "Il faudrait : le besoin adouci au conditionnel."
+            },
+            {
+              "id": "fr-foundations-u26-proposition-e3",
+              "kind": "order",
+              "prompt": "Invitez la salle à réagir.",
+              "answers": [
+                "Qu'est-ce que vous en pensez"
+              ],
+              "explain": "Qu'est-ce que vous en pensez ? : la question qui ouvre le débat."
+            },
+            {
+              "id": "fr-foundations-u26-proposition-e4",
+              "kind": "written",
+              "prompt": "Rendez l'idée concrète : dix arbres.",
+              "answers": [
+                "concretement ca veut dire dix arbres",
+                "concrètement ça veut dire dix arbres",
+                "concretement cela veut dire dix arbres"
+              ],
+              "explain": "Concrètement, ça veut dire + chiffres : du rêve au plan."
+            }
+          ],
+          "skills": [
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "writing:argument"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-foundations-u26-consommer",
+          "title": "Acheter local",
+          "goal": "Argumenter pour la consommation responsable : d'abord… ensuite… enfin…, c'est pourquoi, et conclure avec pour conclure.",
+          "intro": {
+            "explanation": [
+              "L'argumentation s'ordonne : « D'abord le prix, ensuite la qualité, enfin l'environnement. »",
+              "On relie cause et conséquence : « Les fruits de saison ont meilleur goût, c'est pourquoi je préfère le marché. »",
+              "La conclusion assumée : « Pour conclure, acheter local, c'est soutenir son quartier. »"
+            ],
+            "examples": [
+              {
+                "text": "Acheter local, c'est soutenir les commerçants.",
+                "meaning": "La thèse simple."
+              },
+              {
+                "text": "D'abord le prix, ensuite la qualité.",
+                "meaning": "Le plan de l'argument."
+              },
+              {
+                "text": "Les fruits de saison ont meilleur goût.",
+                "meaning": "L'argument du goût."
+              },
+              {
+                "text": "C'est pourquoi je préfère le marché.",
+                "meaning": "La conséquence logique."
+              },
+              {
+                "text": "Au lieu d'acheter neuf, on répare.",
+                "meaning": "L'alternative."
+              },
+              {
+                "text": "Pour conclure, c'est un choix pour le quartier.",
+                "meaning": "La conclusion."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "acheter local",
+              "meaning": "La thèse responsable.",
+              "note": "Acheter local, c'est voter quartier."
+            },
+            {
+              "text": "d'abord… ensuite… enfin…",
+              "meaning": "L'argument ordonné.",
+              "note": "Enfin, l'environnement."
+            },
+            {
+              "text": "c'est pourquoi",
+              "meaning": "La conséquence.",
+              "note": "…, c'est pourquoi j'y vais."
+            },
+            {
+              "text": "au lieu de + infinitif",
+              "meaning": "L'alternative.",
+              "note": "Au lieu de jeter, on répare."
+            },
+            {
+              "text": "pour conclure",
+              "meaning": "La conclusion marquée.",
+              "note": "Pour conclure, ce choix nous relie."
+            },
+            {
+              "text": "de saison",
+              "meaning": "Le produit du moment.",
+              "note": "les légumes de saison."
+            }
+          ],
+          "situation": "À l'atelier consommation responsable : vous plaidez pour le marché local — prix, goût, environnement — et vous concluez : acheter local, c'est soutenir son quartier.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pose ta thèse : acheter local = soutenir les commerçants.",
+                "expected": [
+                  "Acheter local, c'est soutenir les commerçants."
+                ],
+                "focus": "acheter local",
+                "watch": "infinitif + c'est : la thèse en une phrase."
+              },
+              {
+                "prompt": "Ordonne tes arguments : prix, qualité, environnement.",
+                "expected": [
+                  "D'abord le prix, ensuite la qualité, enfin l'environnement."
+                ],
+                "focus": "d'abord… ensuite… enfin",
+                "watch": "les connecteurs structurent l'argumentation."
+              },
+              {
+                "prompt": "Relie cause et conséquence : meilleur goût, donc le marché.",
+                "expected": [
+                  "Les fruits de saison ont meilleur goût, c'est pourquoi je préfère le marché."
+                ],
+                "focus": "c'est pourquoi",
+                "watch": "c'est pourquoi + conséquence : la logique visible."
+              },
+              {
+                "prompt": "Propose l'alternative : réparer plutôt que jeter.",
+                "expected": [
+                  "Au lieu de jeter, on répare.",
+                  "Au lieu d'acheter neuf, on répare."
+                ],
+                "focus": "au lieu de",
+                "watch": "au lieu de + infinitif : l'alternative assumée."
+              },
+              {
+                "prompt": "Conclus avec la formule marquée.",
+                "expected": [
+                  "Pour conclure, acheter local, c'est soutenir son quartier.",
+                  "Pour conclure, c'est un choix pour le quartier."
+                ],
+                "focus": "pour conclure",
+                "watch": "pour conclure + thèse : la dernière impression compte."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u26-consommer-e1",
+              "kind": "choice",
+              "prompt": "« Les fruits de saison ont ___ goût. » (comparatif de bon)",
+              "options": [
+                "meilleur",
+                "plus bon",
+                "mieux",
+                "bien"
+              ],
+              "answers": [
+                "meilleur"
+              ],
+              "explain": "Bon fait meilleur : le comparatif irrégulier."
+            },
+            {
+              "id": "fr-foundations-u26-consommer-e2",
+              "kind": "gap",
+              "prompt": "Au ___ de jeter, on répare. (l'alternative)",
+              "answers": [
+                "lieu"
+              ],
+              "explain": "Au lieu de + infinitif : l'alternative qui s'assume."
+            },
+            {
+              "id": "fr-foundations-u26-consommer-e3",
+              "kind": "order",
+              "prompt": "Reliez l'argument du goût à votre choix (c'est pourquoi).",
+              "answers": [
+                "C'est pourquoi je préfère le marché"
+              ],
+              "explain": "C'est pourquoi + conséquence : l'argument aboutit au choix."
+            },
+            {
+              "id": "fr-foundations-u26-consommer-e4",
+              "kind": "written",
+              "prompt": "Conclus ton argument pour le marché local.",
+              "answers": [
+                "pour conclure acheter local c'est soutenir son quartier",
+                "pour conclure acheter local c'est soutenir le quartier",
+                "en conclusion acheter local soutient le quartier"
+              ],
+              "explain": "Pour conclure + thèse : la conclusion qui reste."
+            }
+          ],
+          "skills": [
+            "writing:argument",
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

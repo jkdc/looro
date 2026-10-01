@@ -2798,6 +2798,691 @@
           "explain": "Autant dire que oui, conclut Mme Vasseur."
         }
       ]
+    },
+    {
+      "id": "fr-listen-anniv-surprise",
+      "languageID": "fr",
+      "title": "La surprise de samedi",
+      "level": "A1",
+      "topic": "fête",
+      "unitID": "fr-foundations-u22",
+      "text": "Samedi, c'est l'anniversaire de Mai. Karim appelle Léa : « Tu es libre samedi soir ? On fait une surprise chez moi. » Léa accepte : « Bonne idée ! J'apporte le gâteau. » Karim prépare la musique et achète des fleurs, parce que Mai adore les fleurs. La fête commence à sept heures. C'est une surprise, alors Mai ne sait rien. À sept heures, elle arrive chez Karim et tout le monde crie : « Joyeux anniversaire ! » Mai est très contente et remercie tout le monde.",
+      "questions": [
+        {
+          "id": "fr-listen-anniv-surprise-q1",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que c'est samedi ?",
+          "answers": [
+            "L'anniversaire de Mai"
+          ],
+          "explain": "Samedi, c'est l'anniversaire de Mai.",
+          "options": [
+            "L'anniversaire de Mai",
+            "L'anniversaire de Karim",
+            "La fête du quartier",
+            "Un mariage"
+          ]
+        },
+        {
+          "id": "fr-listen-anniv-surprise-q2",
+          "kind": "choice",
+          "prompt": "Où est la fête ?",
+          "answers": [
+            "Chez Karim"
+          ],
+          "explain": "À sept heures, elle arrive chez Karim.",
+          "options": [
+            "Chez Karim",
+            "Chez Léa",
+            "Au restaurant",
+            "Chez Mai"
+          ]
+        },
+        {
+          "id": "fr-listen-anniv-surprise-q3",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Léa apporte ?",
+          "answers": [
+            "Le gâteau"
+          ],
+          "explain": "Léa accepte : « J'apporte le gâteau. »",
+          "options": [
+            "Le gâteau",
+            "La musique",
+            "Les fleurs",
+            "Les boissons"
+          ]
+        },
+        {
+          "id": "fr-listen-anniv-surprise-q4",
+          "kind": "written",
+          "prompt": "À quelle heure commence la fête ?",
+          "answers": [
+            "à sept heures",
+            "a sept heures",
+            "sept heures"
+          ],
+          "explain": "La fête commence à sept heures."
+        },
+        {
+          "id": "fr-listen-anniv-surprise-q5",
+          "kind": "choice",
+          "prompt": "Pourquoi Mai ne sait rien ?",
+          "answers": [
+            "Parce que c'est une surprise"
+          ],
+          "explain": "C'est une surprise, alors Mai ne sait rien.",
+          "options": [
+            "Parce que c'est une surprise",
+            "Parce qu'elle est loin",
+            "Parce qu'elle travaille",
+            "Parce que Karim oublie"
+          ]
+        },
+        {
+          "id": "fr-listen-anniv-surprise-q6",
+          "kind": "written",
+          "prompt": "Comment est Mai à la fin ?",
+          "answers": [
+            "très contente",
+            "tres contente",
+            "contente",
+            "très content"
+          ],
+          "explain": "Mai est très contente et remercie tout le monde."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:present-simple",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-cabine-essayage",
+      "languageID": "fr",
+      "title": "Dans la cabine",
+      "level": "A1",
+      "topic": "shopping",
+      "unitID": "fr-foundations-u23",
+      "text": "Léa est en boutique. Elle cherche une robe pour la fête de Mai. La vendeuse demande : « Vous cherchez quelle taille ? » Léa répond : « Du medium, je pense. » Elle trouve une robe verte : « Je peux l'essayer ? » La cabine est au fond. Dans la cabine, la robe est un peu trop grande. Léa demande : « Vous avez plus petit ? » La vendeuse apporte la taille en dessous. Léa l'essaie : ça va très bien. Elle dit : « Je la prends ! » À la caisse, ça fait 30 euros. Elle paie par carte et demande un sac.",
+      "questions": [
+        {
+          "id": "fr-listen-cabine-essayage-q1",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Léa cherche ?",
+          "answers": [
+            "Une robe"
+          ],
+          "explain": "Elle cherche une robe pour la fête de Mai.",
+          "options": [
+            "Une robe",
+            "Un t-shirt",
+            "Un sac",
+            "Des chaussures"
+          ]
+        },
+        {
+          "id": "fr-listen-cabine-essayage-q2",
+          "kind": "choice",
+          "prompt": "Quelle est sa taille ?",
+          "answers": [
+            "Du medium"
+          ],
+          "explain": "Léa répond : « Du medium, je pense. »",
+          "options": [
+            "Du medium",
+            "Du small",
+            "Du large",
+            "Elle ne sait pas"
+          ]
+        },
+        {
+          "id": "fr-listen-cabine-essayage-q3",
+          "kind": "choice",
+          "prompt": "La première robe est comment ?",
+          "answers": [
+            "Un peu trop grande"
+          ],
+          "explain": "Dans la cabine, la robe est un peu trop grande.",
+          "options": [
+            "Un peu trop grande",
+            "Trop petite",
+            "Parfaite",
+            "Trop chère"
+          ]
+        },
+        {
+          "id": "fr-listen-cabine-essayage-q4",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Léa demande après ? (la taille)",
+          "answers": [
+            "plus petit",
+            "vous avez plus petit",
+            "une taille plus petite"
+          ],
+          "explain": "Léa demande : « Vous avez plus petit ? »"
+        },
+        {
+          "id": "fr-listen-cabine-essayage-q5",
+          "kind": "choice",
+          "prompt": "Comment paie-t-elle ?",
+          "answers": [
+            "Par carte"
+          ],
+          "explain": "Elle paie par carte et demande un sac.",
+          "options": [
+            "Par carte",
+            "En espèces",
+            "Par chèque",
+            "Avec le téléphone"
+          ]
+        },
+        {
+          "id": "fr-listen-cabine-essayage-q6",
+          "kind": "written",
+          "prompt": "Combien ça fait à la caisse ?",
+          "answers": [
+            "30 euros",
+            "trente euros"
+          ],
+          "explain": "À la caisse, ça fait 30 euros."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:can",
+        "vocab:shopping"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-retour-magasin",
+      "languageID": "fr",
+      "title": "Retour au magasin",
+      "level": "A2",
+      "topic": "achats",
+      "unitID": "fr-foundations-u24",
+      "text": "Léa revient au magasin d'électronique. Elle a acheté un casque le 12 septembre, mais il ne marche plus : le son grésille à gauche. Au comptoir, elle explique : « J'ai bien vérifié la prise et j'ai changé le câble, mais rien à faire. » L'employé demande le ticket de caisse. Léa le sort de son sac. L'employé propose : « Vous pouvez l'échanger ou avoir un remboursement. » Léa choisit le remboursement : le modèle vert est moins cher et il est en stock, donc elle commandera celui-là. L'employé dit : « Vous recevrez l'argent sous cinq jours. » Léa repart contente : cette fois, elle prendra le moins cher des deux.",
+      "questions": [
+        {
+          "id": "fr-listen-retour-magasin-q1",
+          "kind": "choice",
+          "prompt": "Quel est le problème du casque ?",
+          "answers": [
+            "Le son grésille à gauche"
+          ],
+          "explain": "Il ne marche plus : le son grésille à gauche.",
+          "options": [
+            "Le son grésille à gauche",
+            "Il ne s'allume pas",
+            "Le câble est cassé",
+            "Il est trop petit"
+          ]
+        },
+        {
+          "id": "fr-listen-retour-magasin-q2",
+          "kind": "written",
+          "prompt": "Quand Léa a-t-elle acheté le casque ?",
+          "answers": [
+            "le 12 septembre",
+            "12 septembre"
+          ],
+          "explain": "Elle a acheté un casque le 12 septembre."
+        },
+        {
+          "id": "fr-listen-retour-magasin-q3",
+          "kind": "choice",
+          "prompt": "Quelles options l'employé propose-t-il ?",
+          "answers": [
+            "Échanger ou remboursement"
+          ],
+          "explain": "Vous pouvez l'échanger ou avoir un remboursement.",
+          "options": [
+            "Échanger ou remboursement",
+            "Réparer ou prêter",
+            "Un avoir ou une carte cadeau",
+            "Rien du tout"
+          ]
+        },
+        {
+          "id": "fr-listen-retour-magasin-q4",
+          "kind": "choice",
+          "prompt": "Pourquoi Léa choisira le modèle vert ?",
+          "answers": [
+            "Il est moins cher et en stock"
+          ],
+          "explain": "Le modèle vert est moins cher et il est en stock.",
+          "options": [
+            "Il est moins cher et en stock",
+            "Il est plus beau",
+            "Il est plus solide",
+            "Le bleu est épuisé"
+          ]
+        },
+        {
+          "id": "fr-listen-retour-magasin-q5",
+          "kind": "written",
+          "prompt": "Quand recevra-t-elle l'argent ?",
+          "answers": [
+            "sous cinq jours",
+            "dans cinq jours",
+            "5 jours"
+          ],
+          "explain": "Vous recevrez l'argent sous cinq jours."
+        },
+        {
+          "id": "fr-listen-retour-magasin-q6",
+          "kind": "choice",
+          "prompt": "Quel superlatif résume son choix final ?",
+          "answers": [
+            "Le moins cher des deux"
+          ],
+          "explain": "Cette fois, elle prendra le moins cher des deux.",
+          "options": [
+            "Le moins cher des deux",
+            "Le plus cher des deux",
+            "Le plus grand",
+            "Le plus lourd"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:past-simple-regular",
+        "function:solve-problems",
+        "vocab:shopping"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-veille-depart",
+      "languageID": "fr",
+      "title": "La veille du départ",
+      "level": "A2",
+      "topic": "voyage",
+      "unitID": "fr-foundations-u25",
+      "text": "Demain matin, Léa part pour Lisbonne à sept heures. Ce soir, elle fait sa valise. Elle va prendre trois t-shirts, un livre et, bien sûr, son maillot : l'hôtel a une piscine. Elle ne va pas prendre de parapluie, parce qu'il va faire beau toute la semaine. Il ne faut pas oublier les documents : passeport, billets et carte d'identité. À vingt heures, elle écrit un mot pour madame Roux : « Tu peux arroser les plantes ? Merci ! » Elle laisse le mot avec les clés. Enfin, elle met son réveil à cinq heures et demie, vérifie les fenêtres et va au lit. Tout est prêt.",
+      "questions": [
+        {
+          "id": "fr-listen-veille-depart-q1",
+          "kind": "choice",
+          "prompt": "Quand est-ce que Léa part ?",
+          "answers": [
+            "Demain à sept heures"
+          ],
+          "explain": "Demain matin, Léa part pour Lisbonne à sept heures.",
+          "options": [
+            "Demain à sept heures",
+            "Ce soir à sept heures",
+            "Demain à cinq heures et demie",
+            "Après-demain"
+          ]
+        },
+        {
+          "id": "fr-listen-veille-depart-q2",
+          "kind": "written",
+          "prompt": "Qu'est-ce qu'elle va prendre pour la piscine ?",
+          "answers": [
+            "son maillot",
+            "le maillot",
+            "un maillot"
+          ],
+          "explain": "Elle va prendre son maillot : l'hôtel a une piscine."
+        },
+        {
+          "id": "fr-listen-veille-depart-q3",
+          "kind": "choice",
+          "prompt": "Pourquoi ne prend-elle pas de parapluie ?",
+          "answers": [
+            "Il va faire beau"
+          ],
+          "explain": "Il ne va pas prendre de parapluie : il va faire beau toute la semaine.",
+          "options": [
+            "Il va faire beau",
+            "Elle en a déjà un",
+            "L'hôtel en prête",
+            "La valise est pleine"
+          ]
+        },
+        {
+          "id": "fr-listen-veille-depart-q4",
+          "kind": "written",
+          "prompt": "Qu'est-ce que madame Roux peut arroser ?",
+          "answers": [
+            "les plantes"
+          ],
+          "explain": "Tu peux arroser les plantes ? Merci !"
+        },
+        {
+          "id": "fr-listen-veille-depart-q5",
+          "kind": "choice",
+          "prompt": "À quelle heure est le réveil ?",
+          "answers": [
+            "À cinq heures et demie"
+          ],
+          "explain": "Elle met son réveil à cinq heures et demie.",
+          "options": [
+            "À cinq heures et demie",
+            "À cinq heures",
+            "À sept heures",
+            "À six heures"
+          ]
+        },
+        {
+          "id": "fr-listen-veille-depart-q6",
+          "kind": "written",
+          "prompt": "Qu'est-ce qu'elle vérifie avant de dormir ?",
+          "answers": [
+            "les fenêtres",
+            "les fenetres"
+          ],
+          "explain": "Elle vérifie les fenêtres et va au lit."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-quartier-reve",
+      "languageID": "fr",
+      "title": "Le débat de la place",
+      "level": "B1",
+      "topic": "ville",
+      "unitID": "fr-foundations-u26",
+      "text": "Au conseil de quartier, deux habitants débattent de la place végétalisée. Léa : « À mon avis, c'est une excellente idée. D'un côté, on aura plus d'ombre et moins de bruit ; de l'autre, les enfants auront un espace sûr. » Karim : « Je ne suis pas d'accord, parce que les arbres coûtent cher à entretenir. Et on se gare où ? » Léa : « Tu as raison sur le budget, mais les chiffres de Bordeaux sont clairs : ça attire plus de clients au marché. » Karim : « Concrètement, ça veut dire quoi ? » Léa : « Dix arbres, des pistes cyclables, et zéro voiture le dimanche. » Karim : « Bon, alors je vote pour. Mais on vote aussi sur les horaires ! »",
+      "questions": [
+        {
+          "id": "fr-listen-quartier-reve-q1",
+          "kind": "choice",
+          "prompt": "Quel est le projet débattu ?",
+          "answers": [
+            "Une place végétalisée"
+          ],
+          "explain": "Deux habitants débattent du projet de place végétalisée.",
+          "options": [
+            "Une place végétalisée",
+            "Un parking souterrain",
+            "Un marché couvert",
+            "Une piscine"
+          ]
+        },
+        {
+          "id": "fr-listen-quartier-reve-q2",
+          "kind": "written",
+          "prompt": "Pour qui la place sera-t-elle un espace sûr ?",
+          "answers": [
+            "les enfants",
+            "pour les enfants"
+          ],
+          "explain": "Les enfants auront un espace sûr."
+        },
+        {
+          "id": "fr-listen-quartier-reve-q3",
+          "kind": "choice",
+          "prompt": "Pourquoi Karim n'est-il pas d'accord ?",
+          "answers": [
+            "Les arbres coûtent cher à entretenir"
+          ],
+          "explain": "Je ne suis pas d'accord, parce que les arbres coûtent cher à entretenir.",
+          "options": [
+            "Les arbres coûtent cher à entretenir",
+            "La place est trop petite",
+            "Il préfère les voitures",
+            "Les chiffres sont faux"
+          ]
+        },
+        {
+          "id": "fr-listen-quartier-reve-q4",
+          "kind": "choice",
+          "prompt": "Quel exemple convainc Karim ?",
+          "answers": [
+            "Les chiffres de Bordeaux"
+          ],
+          "explain": "Les chiffres de Bordeaux sont clairs : ça attire plus de clients au marché.",
+          "options": [
+            "Les chiffres de Bordeaux",
+            "Le vote du conseil",
+            "Le prix du stationnement",
+            "Une pétition des voisins"
+          ]
+        },
+        {
+          "id": "fr-listen-quartier-reve-q5",
+          "kind": "written",
+          "prompt": "Combien d'arbres sont prévus ?",
+          "answers": [
+            "dix arbres",
+            "10 arbres"
+          ],
+          "explain": "Dix arbres, des pistes cyclables, et zéro voiture le dimanche."
+        },
+        {
+          "id": "fr-listen-quartier-reve-q6",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui change le dimanche ?",
+          "answers": [
+            "Zéro voiture"
+          ],
+          "explain": "Et zéro voiture le dimanche.",
+          "options": [
+            "Zéro voiture",
+            "Le marché ferme",
+            "Un grand nettoyage",
+            "La vente de plantes"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-reunion-concrete",
+      "languageID": "fr",
+      "title": "Réunion de lundi",
+      "level": "B1",
+      "topic": "travail",
+      "unitID": "fr-work-u1",
+      "text": "Réunion de projet, lundi neuf heures. Le planning s'est encore tendu : le client attend la version finale vendredi. Léa ouvre : « Je pense que le planning est trop optimiste. D'un côté, on a presque fini la recherche ; de l'autre, les tests ne commencent que mercredi. » Karim propose : « Je propose de livrer sans le tableau de bord et de l'ajouter la semaine suivante. » Marta nuance : « Tu as raison, mais il faut prévenir le client tout de suite. » Après un court débat, Léa récapitule : « Je récapitule : on livre vendredi sans le tableau de bord, Marta écrit au client avant midi, Karim finit les tests jeudi. On est d'accord ? » Trois oui. La réunion dure douze minutes.",
+      "questions": [
+        {
+          "id": "fr-listen-reunion-concrete-q1",
+          "kind": "choice",
+          "prompt": "Quel est le problème principal ?",
+          "answers": [
+            "Le planning est trop optimiste"
+          ],
+          "explain": "Je pense que le planning est trop optimiste.",
+          "options": [
+            "Le planning est trop optimiste",
+            "Le client a annulé",
+            "Le budget a explosé",
+            "La recherche n'existe pas"
+          ]
+        },
+        {
+          "id": "fr-listen-reunion-concrete-q2",
+          "kind": "choice",
+          "prompt": "Que propose Karim ?",
+          "answers": [
+            "Livrer sans le tableau de bord"
+          ],
+          "explain": "Je propose de livrer sans le tableau de bord et de l'ajouter la semaine suivante.",
+          "options": [
+            "Livrer sans le tableau de bord",
+            "Annuler la livraison",
+            "Recruter un testeur",
+            "Avancer les tests à lundi"
+          ]
+        },
+        {
+          "id": "fr-listen-reunion-concrete-q3",
+          "kind": "written",
+          "prompt": "Qui écrit au client ?",
+          "answers": [
+            "marta",
+            "Marta"
+          ],
+          "explain": "Marta écrit au client avant midi."
+        },
+        {
+          "id": "fr-listen-reunion-concrete-q4",
+          "kind": "written",
+          "prompt": "Quand Karim finit-il les tests ?",
+          "answers": [
+            "jeudi",
+            "le jeudi"
+          ],
+          "explain": "Karim finit les tests jeudi."
+        },
+        {
+          "id": "fr-listen-reunion-concrete-q5",
+          "kind": "choice",
+          "prompt": "Combien de temps dure la réunion ?",
+          "answers": [
+            "Douze minutes"
+          ],
+          "explain": "La réunion dure douze minutes.",
+          "options": [
+            "Douze minutes",
+            "Une heure",
+            "Trente minutes",
+            "Une demi-journée"
+          ]
+        },
+        {
+          "id": "fr-listen-reunion-concrete-q6",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui est livré vendredi ?",
+          "answers": [
+            "La version sans tableau de bord"
+          ],
+          "explain": "On livre vendredi sans le tableau de bord.",
+          "options": [
+            "La version sans tableau de bord",
+            "La version complète",
+            "Un prototype papier",
+            "Rien du tout"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "function:talk-about-work",
+        "grammar:connectors",
+        "vocab:work"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-mail-panne",
+      "languageID": "fr",
+      "title": "Le courriel à madame Dubois",
+      "level": "B1",
+      "topic": "travail",
+      "unitID": "fr-work-u1",
+      "text": "Karim doit écrire à madame Dubois, la cliente. Il demande conseil à Léa. Karim : « Je voudrais les chiffres du trimestre. Je lui écris : envoie-moi les chiffres ? » Léa sourit : « Trop direct. Écris : je vous écris au sujet des chiffres du trimestre. Pourriez-vous me les envoyer d'ici vendredi ? » Karim : « Et pour le devis ? » Léa : « Vous trouverez le devis ci-joint. Et termine par : je vous remercie par avance. » Karim envoie le courriel à onze heures. À quatorze heures, la réponse arrive : madame Dubois confirme tout et envoie même le rapport manquant. Karim apprend la leçon : en courriel pro, la politesse n'est pas du temps perdu.",
+      "questions": [
+        {
+          "id": "fr-listen-mail-panne-q1",
+          "kind": "choice",
+          "prompt": "Que veut Karim au début ?",
+          "answers": [
+            "Les chiffres du trimestre"
+          ],
+          "explain": "Je voudrais les chiffres du trimestre.",
+          "options": [
+            "Les chiffres du trimestre",
+            "Un nouveau devis",
+            "Une réunion avec Dubois",
+            "Le rapport manquant"
+          ]
+        },
+        {
+          "id": "fr-listen-mail-panne-q2",
+          "kind": "written",
+          "prompt": "Pourquoi le premier message de Karim est-il mauvais ?",
+          "answers": [
+            "trop direct",
+            "il est trop direct",
+            "parce qu'il est trop direct"
+          ],
+          "explain": "Léa sourit : « Trop direct. »"
+        },
+        {
+          "id": "fr-listen-mail-panne-q3",
+          "kind": "choice",
+          "prompt": "Quelle échéance Léa propose-t-elle ?",
+          "answers": [
+            "D'ici vendredi"
+          ],
+          "explain": "Pourriez-vous me les envoyer d'ici vendredi ?",
+          "options": [
+            "D'ici vendredi",
+            "D'ici lundi",
+            "Avant midi",
+            "Sans échéance"
+          ]
+        },
+        {
+          "id": "fr-listen-mail-panne-q4",
+          "kind": "choice",
+          "prompt": "Quelle formule annonce la pièce jointe ?",
+          "answers": [
+            "Vous trouverez le devis ci-joint"
+          ],
+          "explain": "Vous trouverez le devis ci-joint.",
+          "options": [
+            "Vous trouverez le devis ci-joint",
+            "Je vous remercie par avance",
+            "Cordialement",
+            "Au sujet du devis"
+          ]
+        },
+        {
+          "id": "fr-listen-mail-panne-q5",
+          "kind": "written",
+          "prompt": "À quelle heure la réponse arrive-t-elle ?",
+          "answers": [
+            "à quatorze heures",
+            "a quatorze heures",
+            "14 heures",
+            "quatorze heures"
+          ],
+          "explain": "À quatorze heures, la réponse arrive."
+        },
+        {
+          "id": "fr-listen-mail-panne-q6",
+          "kind": "choice",
+          "prompt": "Quelle est la leçon de Karim ?",
+          "answers": [
+            "La politesse n'est pas du temps perdu"
+          ],
+          "explain": "En courriel pro, la politesse n'est pas du temps perdu.",
+          "options": [
+            "La politesse n'est pas du temps perdu",
+            "Les courriels longs gagnent toujours",
+            "Il ne faut jamais joindre de devis",
+            "Les clientes répondent vite"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "writing:email",
+        "vocab:work",
+        "function:make-requests"
+      ],
+      "exposureSkills": []
     }
   ]
 }

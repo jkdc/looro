@@ -1,0 +1,552 @@
+{
+  "id": "pt-work-track",
+  "languageID": "pt",
+  "schemaVersion": 2,
+  "title": "Português no trabalho",
+  "subtitle": "Trilha profissional",
+  "symbol": "briefcase",
+  "description": "O português das reuniões, dos e-mails e das entrevistas — situações profissionais, praticadas em voz alta. Uma trilha que acompanha o Foundations.",
+  "units": [
+    {
+      "id": "pt-work-u1",
+      "title": "O dia profissional",
+      "subtitle": "Reuniões, e-mails e entrevistas",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "reuniao-pauta",
+          "title": "Na reunião",
+          "subtitle": "Opinar e propor",
+          "symbol": "bubble.left.and.text.bubble.right",
+          "category": "Course",
+          "situation": "Na reunião de segunda: o time opina sobre o prazo, propõe caminhos e fecha a semana com acordo.",
+          "colorIndex": 0
+        },
+        {
+          "id": "email-entrevista",
+          "title": "E-mail e entrevista",
+          "subtitle": "Formalidade que abre portas",
+          "symbol": "person.badge.key",
+          "category": "Course",
+          "situation": "Do e-mail formal ao cliente à entrevista de emprego: registro certo, experiência e conquistas bem contadas.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-work-u1-reunioes",
+          "title": "Nas reuniões",
+          "goal": "Opinar e propor em reunião: na minha opinião…, sugiro…, por isso…, de acordo.",
+          "intro": {
+            "explanation": [
+              "Opine com marcação clara: « na minha opinião », « eu acho que ». « Na minha opinião, o prazo é curto ».",
+              "Proponha com « sugiro » ou « que tal »: « Sugiro dividir a tarefa ». « Que tal começar pela pauta ? ».",
+              "Pese com conectores: « por um lado …, por outro … », e conclua com « por isso ». Feche em acordo: « de acordo »."
+            ],
+            "examples": [
+              {
+                "text": "Na minha opinião, o prazo é curto demais.",
+                "meaning": "Marcar a opinião."
+              },
+              {
+                "text": "Sugiro dividir a tarefa em duas.",
+                "meaning": "sugiro = sugiero."
+              },
+              {
+                "text": "Por um lado ganhamos tempo; por outro, perdemos detalhes.",
+                "meaning": "Os dois lados na pauta."
+              },
+              {
+                "text": "Por isso, prefiro testar antes.",
+                "meaning": "por isso = por eso."
+              },
+              {
+                "text": "Ficou claro ? — De acordo.",
+                "meaning": "O fechamento da reunião."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Na minha opinião, …",
+              "meaning": "Marcar a opinião.",
+              "note": "Na minha opinião, falta tempo."
+            },
+            {
+              "text": "Sugiro + verbo",
+              "meaning": "Propor em reunião.",
+              "note": "Sugiro começar pelo relatório."
+            },
+            {
+              "text": "Por um lado …, por outro …",
+              "meaning": "Pesar a decisão.",
+              "note": "Por um lado, sim; por outro, não."
+            },
+            {
+              "text": "Por isso, …",
+              "meaning": "Concluir.",
+              "note": "Por isso, peço prazo."
+            },
+            {
+              "text": "De acordo",
+              "meaning": "Fechar em acordo.",
+              "note": "De acordo, fechado."
+            }
+          ],
+          "situation": "Na reunião de segunda: o time discute o prazo do cliente, a Ana sugere dividir a tarefa e todos fecham de acordo com o plano B.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Opine sobre o prazo.",
+                "expected": [
+                  "Na minha opinião, o prazo é curto demais.",
+                  "na minha opiniao o prazo e curto demais"
+                ],
+                "focus": "marcador",
+                "watch": "na minha opinião = en mi opinión."
+              },
+              {
+                "prompt": "Proponha dividir a tarefa.",
+                "expected": [
+                  "Sugiro dividir a tarefa em duas.",
+                  "sugiro dividir a tarefa em duas"
+                ],
+                "focus": "propor",
+                "watch": "sugiro + infinitivo."
+              },
+              {
+                "prompt": "Pese a decisão com os dois lados.",
+                "expected": [
+                  "Por um lado ganhamos tempo; por outro, perdemos detalhes.",
+                  "por um lado ganhamos tempo por outro perdemos detalhes"
+                ],
+                "focus": "os dois lados",
+                "watch": "o par fixo da reunião."
+              },
+              {
+                "prompt": "Conclua com por isso.",
+                "expected": [
+                  "Por isso, prefiro testar antes.",
+                  "por isso prefiro testar antes"
+                ],
+                "focus": "concluir",
+                "watch": "por isso = por eso."
+              },
+              {
+                "prompt": "Responda concordando com a decisão.",
+                "expected": [
+                  "De acordo.",
+                  "de acordo",
+                  "De acordo com o plano.",
+                  "de acordo com o plano"
+                ],
+                "focus": "fechar",
+                "watch": "de acordo = de acuerdo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-work-u1-reunioes-e1",
+              "kind": "choice",
+              "prompt": "___ minha opinião, a pauta está cheia.",
+              "options": [
+                "Na",
+                "Em",
+                "No",
+                "Para"
+              ],
+              "answers": [
+                "Na"
+              ],
+              "explain": "na minha opinião: a fórmula fixa com a contração na."
+            },
+            {
+              "id": "pt-work-u1-reunioes-e2",
+              "kind": "gap",
+              "prompt": "Sugiro ___ a reunião para quinta. (mudar)",
+              "answers": [
+                "mudar"
+              ],
+              "explain": "sugiro + infinitivo: a proposta direta."
+            },
+            {
+              "id": "pt-work-u1-reunioes-e3",
+              "kind": "order",
+              "prompt": "Conclua a sua fala na reunião.",
+              "answers": [
+                "Por isso prefiro testar antes"
+              ],
+              "explain": "por isso + decisão: o conector que fecha o argumento."
+            },
+            {
+              "id": "pt-work-u1-reunioes-e4",
+              "kind": "written",
+              "prompt": "Responda concordando com a decisão.",
+              "answers": [
+                "De acordo.",
+                "de acordo",
+                "De acordo com o plano.",
+                "de acordo com o plano"
+              ],
+              "explain": "De acordo: o fechamento em acordo da reunião."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "function:express-opinion",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-work-u1-emails",
+          "title": "E-mails formais",
+          "goal": "Escrever um e-mail formal: Prezado…, escrevo para…, desde já agradeço, Atenciosamente.",
+          "intro": {
+            "explanation": [
+              "Abra com « Prezado(a) » ou « Olá, + nome »: « Prezado Sr. Alves ».",
+              "O objetivo vem na primeira linha: « Escrevo para confirmar a reunião ». Direto, sem rodeio.",
+              "O pedido com prazo: « Gostaria de receber o relatório até sexta ». Feche com « Atenciosamente »; « Abraços » fica para o time interno."
+            ],
+            "examples": [
+              {
+                "text": "Prezado Sr. Alves,",
+                "meaning": "A saudação formal."
+              },
+              {
+                "text": "Escrevo para confirmar a reunião de quinta.",
+                "meaning": "O objetivo na linha um."
+              },
+              {
+                "text": "Gostaria de receber o relatório até sexta-feira.",
+                "meaning": "gostaria de = quisiera."
+              },
+              {
+                "text": "Desde já, agradeço a atenção.",
+                "meaning": "desde já = desde ya."
+              },
+              {
+                "text": "Atenciosamente, Ana Duarte",
+                "meaning": "A despedida formal."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Prezado(a) Sr.(a) …",
+              "meaning": "A saudação formal.",
+              "note": "Prezada Sra. Duarte,"
+            },
+            {
+              "text": "Escrevo para + verbo",
+              "meaning": "O objetivo na primeira linha.",
+              "note": "Escrevo para pedir um orçamento."
+            },
+            {
+              "text": "Gostaria de + verbo",
+              "meaning": "O pedido formal.",
+              "note": "Gostaria de agendar uma visita."
+            },
+            {
+              "text": "Desde já, agradeço",
+              "meaning": "Agradecer antes da resposta.",
+              "note": "Desde já, agradeço."
+            },
+            {
+              "text": "Atenciosamente",
+              "meaning": "A despedida formal.",
+              "note": "Atenciosamente, Ana"
+            }
+          ],
+          "situation": "E-mail para o cliente: a Ana confirma a reunião, pede o relatório com prazo e fecha com agradecimento e despedida formal.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Abra o e-mail formal para o Sr. Alves.",
+                "expected": [
+                  "Prezado Sr. Alves,",
+                  "prezado sr alves"
+                ],
+                "focus": "saudação",
+                "watch": "prezado(a) = estimado(a)."
+              },
+              {
+                "prompt": "Diga o objetivo: confirmar a reunião.",
+                "expected": [
+                  "Escrevo para confirmar a reunião.",
+                  "escrevo para confirmar a reuniao"
+                ],
+                "focus": "objetivo",
+                "watch": "escrevo para + infinitivo."
+              },
+              {
+                "prompt": "Peça o relatório até sexta, formal.",
+                "expected": [
+                  "Gostaria de receber o relatório até sexta-feira.",
+                  "gostaria de receber o relatorio ate sexta feira"
+                ],
+                "focus": "pedido formal",
+                "watch": "gostaria de = quisiera."
+              },
+              {
+                "prompt": "Agradeça antes da resposta.",
+                "expected": [
+                  "Desde já, agradeço a atenção.",
+                  "desde ja agradeco a atencao"
+                ],
+                "focus": "agradecer",
+                "watch": "desde já = desde ya."
+              },
+              {
+                "prompt": "Escolha a despedida formal.",
+                "expected": [
+                  "Atenciosamente,",
+                  "atenciosamente",
+                  "Atenciosamente, Ana",
+                  "atenciosamente ana"
+                ],
+                "focus": "despedida",
+                "watch": "abraços fica para o time interno."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-work-u1-emails-e1",
+              "kind": "choice",
+              "prompt": "___ Sr. Alves,",
+              "options": [
+                "Prezado",
+                "Olá tudo",
+                "E aí",
+                "Valeu"
+              ],
+              "answers": [
+                "Prezado"
+              ],
+              "explain": "Prezado(a): a saudação formal do e-mail; « e aí » é para amigos."
+            },
+            {
+              "id": "pt-work-u1-emails-e2",
+              "kind": "gap",
+              "prompt": "___ de receber o relatório até sexta.",
+              "answers": [
+                "Gostaria",
+                "gostaria"
+              ],
+              "explain": "gostaria de + infinitivo: o pedido formal."
+            },
+            {
+              "id": "pt-work-u1-emails-e3",
+              "kind": "order",
+              "prompt": "Agradeça antes da resposta, no e-mail.",
+              "answers": [
+                "Desde já agradeço a atenção"
+              ],
+              "explain": "Desde já, agradeço: o agradecimento antes da resposta."
+            },
+            {
+              "id": "pt-work-u1-emails-e4",
+              "kind": "written",
+              "prompt": "Feche o e-mail formal.",
+              "answers": [
+                "Atenciosamente,",
+                "atenciosamente",
+                "Atenciosamente, Ana Duarte",
+                "atenciosamente ana duarte"
+              ],
+              "explain": "Atenciosamente: a despedida formal do e-mail."
+            }
+          ],
+          "skills": [
+            "writing:email",
+            "function:make-requests",
+            "vocab:work",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-work-u1-entrevistas",
+          "title": "Entrevistas",
+          "goal": "Falar de experiência e conquistas: já trabalhei…, nunca…, minha meta é….",
+          "intro": {
+            "explanation": [
+              "A experiência com « já + pretérito »: « Já trabalhei com clientes grandes ». « Nunca liderei um time grande ».",
+              "A conquista com resultado: « Aumentei as vendas em vinte por cento ». Números convencem.",
+              "A meta com « quero »: « Minha meta é liderar um time ». « A longo prazo, quero… »."
+            ],
+            "examples": [
+              {
+                "text": "Já trabalhei com clientes grandes.",
+                "meaning": "A experiência que conta."
+              },
+              {
+                "text": "Nunca liderei um time, mas coordenei projetos.",
+                "meaning": "O que ainda não veio."
+              },
+              {
+                "text": "Aumentei as vendas em vinte por cento.",
+                "meaning": "A conquista com número."
+              },
+              {
+                "text": "Minha meta é liderar um time este ano.",
+                "meaning": "A meta clara."
+              },
+              {
+                "text": "A longo prazo, quero trabalhar com estratégia.",
+                "meaning": "longo prazo = largo plazo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Já + pretérito",
+              "meaning": "A experiência que conta.",
+              "note": "Já trabalhei no exterior."
+            },
+            {
+              "text": "Nunca + pretérito",
+              "meaning": "O que ainda não veio.",
+              "note": "Nunca gerenciei um time."
+            },
+            {
+              "text": "Aumentei / reduzi … em …",
+              "meaning": "A conquista medida.",
+              "note": "Reduzi custos em dez por cento."
+            },
+            {
+              "text": "Minha meta é …",
+              "meaning": "A meta declarada.",
+              "note": "Minha meta é liderar."
+            },
+            {
+              "text": "A longo prazo, …",
+              "meaning": "O horizonte maior.",
+              "note": "A longo prazo, quero crescer."
+            }
+          ],
+          "situation": "Na entrevista: a Ana conta o que já fez, apresenta uma conquista com número e fala da meta de liderar um time.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que já trabalhou com clientes grandes.",
+                "expected": [
+                  "Já trabalhei com clientes grandes.",
+                  "ja trabalhei com clientes grandes"
+                ],
+                "focus": "experiência",
+                "watch": "já = ya."
+              },
+              {
+                "prompt": "Diga o que nunca fez: liderar um time.",
+                "expected": [
+                  "Nunca liderei um time.",
+                  "nunca liderei um time"
+                ],
+                "focus": "nunca",
+                "watch": "nunca + pretérito."
+              },
+              {
+                "prompt": "Conte a conquista: vendas +20 %.",
+                "expected": [
+                  "Aumentei as vendas em vinte por cento.",
+                  "aumentei as vendas em vinte por cento"
+                ],
+                "focus": "conquista",
+                "watch": "números convencem."
+              },
+              {
+                "prompt": "Diga sua meta: liderar um time.",
+                "expected": [
+                  "Minha meta é liderar um time.",
+                  "minha meta e liderar um time"
+                ],
+                "focus": "meta",
+                "watch": "meta = meta/objetivo."
+              },
+              {
+                "prompt": "Fale do longo prazo: estratégia.",
+                "expected": [
+                  "A longo prazo, quero trabalhar com estratégia.",
+                  "a longo prazo quero trabalhar com estrategia"
+                ],
+                "focus": "longo prazo",
+                "watch": "a longo prazo = a largo plazo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-work-u1-entrevistas-e1",
+              "kind": "choice",
+              "prompt": "___ trabalhei com clientes grandes.",
+              "options": [
+                "Já",
+                "Ainda",
+                "Talvez",
+                "Quase"
+              ],
+              "answers": [
+                "Já"
+              ],
+              "explain": "Já + pretérito: a experiência que já aconteceu."
+            },
+            {
+              "id": "pt-work-u1-entrevistas-e2",
+              "kind": "gap",
+              "prompt": "Minha ___ é liderar um time.",
+              "answers": [
+                "meta"
+              ],
+              "explain": "meta = objetivo: a palavra da entrevista."
+            },
+            {
+              "id": "pt-work-u1-entrevistas-e3",
+              "kind": "order",
+              "prompt": "Conte a conquista com número.",
+              "answers": [
+                "Aumentei as vendas em vinte por cento"
+              ],
+              "explain": "Aumentar … em + número: a conquista medida."
+            },
+            {
+              "id": "pt-work-u1-entrevistas-e4",
+              "kind": "written",
+              "prompt": "Fale do longo prazo: estratégia.",
+              "answers": [
+                "A longo prazo, quero trabalhar com estratégia.",
+                "a longo prazo quero trabalhar com estrategia"
+              ],
+              "explain": "A longo prazo, quero…: o horizonte da carreira."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-perfect",
+            "vocab:work",
+            "function:describe-goals"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        }
+      ]
+    }
+  ]
+}

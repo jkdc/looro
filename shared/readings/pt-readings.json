@@ -1049,6 +1049,176 @@
       ],
       "exposureSkills": [],
       "languageID": "pt"
+    },
+    {
+      "id": "pt-read-lista-mala",
+      "languageID": "pt",
+      "title": "A lista da mala",
+      "level": "A2",
+      "topic": "viagem",
+      "unitID": "pt-foundations-u25",
+      "text": "Mensagem no grupo da viagem — Duda: « Gente, a lista da mala está pronta ! Primeiro confiro os documentos: passaporte, reserva do hotel e passagem. Depois vem a mala de mão: três camisetas, uma calça, um casaco leve e o carregador. Não vou esquecer o remédio nem o guarda-chuva; a previsão diz chuva no domingo. O voo é de manhã, às sete, então vou dormir cedo na sexta. Quem quiser, manda a sua lista aqui para conferirmos juntos na véspera. »",
+      "questions": [
+        {
+          "id": "pt-read-lista-mala-q1",
+          "kind": "choice",
+          "prompt": "O que a Duda confere primeiro ?",
+          "options": [
+            "Os documentos",
+            "As camisetas",
+            "O carregador",
+            "O guarda-chuva"
+          ],
+          "answers": [
+            "Os documentos"
+          ],
+          "explain": "Primeiro confiro os documentos: passaporte, reserva do hotel e passagem."
+        },
+        {
+          "id": "pt-read-lista-mala-q2",
+          "kind": "written",
+          "prompt": "A que horas é o voo ?",
+          "answers": [
+            "às sete",
+            "as sete",
+            "sete horas"
+          ],
+          "explain": "O voo é de manhã, às sete."
+        },
+        {
+          "id": "pt-read-lista-mala-q3",
+          "kind": "choice",
+          "prompt": "Por que ela leva guarda-chuva ?",
+          "options": [
+            "A previsão diz chuva",
+            "O hotel não tem",
+            "É presente",
+            "Chove todo dia"
+          ],
+          "answers": [
+            "A previsão diz chuva"
+          ],
+          "explain": "A previsão diz chuva no domingo."
+        },
+        {
+          "id": "pt-read-lista-mala-q4",
+          "kind": "written",
+          "prompt": "Quantas camisetas vão na mala ?",
+          "answers": [
+            "três",
+            "tres",
+            "3"
+          ],
+          "explain": "Três camisetas, uma calça, um casaco leve e o carregador."
+        },
+        {
+          "id": "pt-read-lista-mala-q5",
+          "kind": "written",
+          "prompt": "Quando o grupo confere as listas juntas ?",
+          "answers": [
+            "na véspera",
+            "na vespera",
+            "véspera",
+            "vespera"
+          ],
+          "explain": "Para conferirmos juntos na véspera."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:travel",
+        "grammar:going-to"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-read-cartaz-vizinhanca",
+      "languageID": "pt",
+      "title": "O cartaz da vizinhança",
+      "level": "B1",
+      "topic": "bairro",
+      "unitID": "pt-foundations-u26",
+      "text": "Cartaz na praça — « Vizinhança que cuida ». Na quinta, às 19h, a associação apresenta a proposta da horta comunitária. Por um lado, ocupamos um canto vazio da praça; por outro, ganhamos comida fresca e um lugar de encontro. Além disso, a feira do sábado vai funcionar sem plástico: traga sua sacola. Na nossa opinião, comprar menos e melhor também é cuidar do bairro. Embora o começo exija trabalho, o resultado pertence a todos. Venha opinar — sua voz muda a rua.",
+      "questions": [
+        {
+          "id": "pt-read-cartaz-vizinhanca-q1",
+          "kind": "written",
+          "prompt": "Quando e a que horas é a reunião ?",
+          "answers": [
+            "na quinta às 19h",
+            "na quinta as 19h",
+            "quinta às 19h",
+            "quinta as 19h",
+            "às 19h",
+            "as 19h"
+          ],
+          "explain": "Na quinta, às 19h, a associação apresenta a proposta da horta comunitária."
+        },
+        {
+          "id": "pt-read-cartaz-vizinhanca-q2",
+          "kind": "choice",
+          "prompt": "O que acontece com o canto vazio da praça ?",
+          "options": [
+            "Vira horta comunitária",
+            "Vira estacionamento",
+            "Fecham para obras",
+            "Vira área de plástico"
+          ],
+          "answers": [
+            "Vira horta comunitária"
+          ],
+          "explain": "Por um lado, ocupamos um canto vazio da praça; por outro, ganhamos comida fresca e um lugar de encontro."
+        },
+        {
+          "id": "pt-read-cartaz-vizinhanca-q3",
+          "kind": "choice",
+          "prompt": "O que a feira do sábado pede ?",
+          "options": [
+            "Traga sua sacola",
+            "Pague em dinheiro",
+            "Chegue cedo",
+            "Leve um vizinho"
+          ],
+          "answers": [
+            "Traga sua sacola"
+          ],
+          "explain": "A feira do sábado vai funcionar sem plástico: traga sua sacola."
+        },
+        {
+          "id": "pt-read-cartaz-vizinhanca-q4",
+          "kind": "written",
+          "prompt": "Qual é o lema do consumo no cartaz ?",
+          "answers": [
+            "comprar menos e melhor",
+            "comprar menos",
+            "menos e melhor"
+          ],
+          "explain": "Comprar menos e melhor também é cuidar do bairro."
+        },
+        {
+          "id": "pt-read-cartaz-vizinhanca-q5",
+          "kind": "choice",
+          "prompt": "Como o cartaz reconhece o esforço ?",
+          "options": [
+            "O começo exige trabalho",
+            "É grátis e fácil",
+            "Só a prefeitura trabalha",
+            "Ninguém precisa ajudar"
+          ],
+          "answers": [
+            "O começo exige trabalho"
+          ],
+          "explain": "Embora o começo exija trabalho, o resultado pertence a todos."
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": []
     }
   ]
 }

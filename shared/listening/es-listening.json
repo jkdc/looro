@@ -2793,6 +2793,602 @@
           "explain": "«La lengua pinta tonos, pero el hablante elige el pincel»."
         }
       ]
+    },
+    {
+      "id": "es-listen-cumple-sorpresa",
+      "languageID": "es",
+      "title": "La fiesta sorpresa de Pablo",
+      "level": "A1",
+      "topic": "cumpleaños",
+      "unitID": "es-foundations-u23",
+      "text": "Hoy es el cumpleaños de Pablo y preparamos una fiesta sorpresa en casa de Lucía. Yo llevo el pastel y Lucía pone los globos y las velas. Los invitados llegan a las ocho: traen regalos y música. Pablo llega a las ocho y media y abrimos la puerta: «¡Sorpresa!». Pablo está muy contento y abre los regalos: un libro de cocina y una bufanda. Después cantamos, comemos pastel y bebemos limonada. ¡Qué fiesta tan buena!",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:social-expressions",
+        "grammar:present-simple"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-cumple-sorpresa-q1",
+          "kind": "choice",
+          "prompt": "¿De quién es el cumpleaños?",
+          "options": [
+            "De Pablo",
+            "De Lucía",
+            "Del narrador",
+            "De la madre"
+          ],
+          "answers": [
+            "De Pablo"
+          ],
+          "explain": "Hoy es el cumpleaños de Pablo y preparamos una fiesta sorpresa."
+        },
+        {
+          "id": "es-listen-cumple-sorpresa-q2",
+          "kind": "choice",
+          "prompt": "¿Qué lleva el narrador a la fiesta?",
+          "options": [
+            "El pastel",
+            "Los globos",
+            "La música",
+            "Los regalos"
+          ],
+          "answers": [
+            "El pastel"
+          ],
+          "explain": "Yo llevo el pastel y Lucía pone los globos y las velas."
+        },
+        {
+          "id": "es-listen-cumple-sorpresa-q3",
+          "kind": "written",
+          "prompt": "¿A qué hora llega Pablo?",
+          "answers": [
+            "a las ocho y media",
+            "ocho y media",
+            "a las 8 y media"
+          ],
+          "explain": "Pablo llega a las ocho y media y abrimos la puerta."
+        },
+        {
+          "id": "es-listen-cumple-sorpresa-q4",
+          "kind": "choice",
+          "prompt": "¿Qué regalos recibe Pablo?",
+          "options": [
+            "Un libro de cocina y una bufanda",
+            "Un pastel y unos globos",
+            "Una bufanda y música",
+            "Un libro y unas velas"
+          ],
+          "answers": [
+            "Un libro de cocina y una bufanda"
+          ],
+          "explain": "Abre los regalos: un libro de cocina y una bufanda."
+        },
+        {
+          "id": "es-listen-cumple-sorpresa-q5",
+          "kind": "written",
+          "prompt": "¿Qué beben en la fiesta?",
+          "answers": [
+            "limonada"
+          ],
+          "explain": "Comemos pastel y bebemos limonada."
+        },
+        {
+          "id": "es-listen-cumple-sorpresa-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo está Pablo con la sorpresa?",
+          "options": [
+            "Muy contento",
+            "Triste",
+            "Enfadado",
+            "Cansado"
+          ],
+          "answers": [
+            "Muy contento"
+          ],
+          "explain": "Pablo está muy contento y abre los regalos."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-probador",
+      "languageID": "es",
+      "title": "La camiseta del probador",
+      "level": "A1",
+      "topic": "tiendas de ropa",
+      "unitID": "es-foundations-u24",
+      "text": "Ana entra en una tienda de ropa y busca una camiseta azul. «Buenas tardes, ¿tiene esta camiseta en talla M?», pregunta. «Sí, aquí tiene. ¿La quiere en azul o en negro?», responde el dependiente. «La quiero en azul, gracias». Ana va al probador: la camiseta le queda un poco grande. «¿Me da una talla más pequeña, por favor?», pide. El dependiente trae la talla S y ahora queda perfecta. «¿Cuánto es?», pregunta Ana. «Son quince euros», responde él. «Aquí tiene. Pago en efectivo».",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:go-shopping",
+        "vocab:shopping"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-probador-q1",
+          "kind": "choice",
+          "prompt": "¿Qué busca Ana?",
+          "options": [
+            "Una camiseta azul",
+            "Un pantalón negro",
+            "Una falda verde",
+            "Un jersey blanco"
+          ],
+          "answers": [
+            "Una camiseta azul"
+          ],
+          "explain": "Ana entra en una tienda de ropa y busca una camiseta azul."
+        },
+        {
+          "id": "es-listen-probador-q2",
+          "kind": "written",
+          "prompt": "¿Qué talla pide Ana primero?",
+          "answers": [
+            "la talla m",
+            "talla m",
+            "la m"
+          ],
+          "explain": "«Buenas tardes, ¿tiene esta camiseta en talla M?», pregunta."
+        },
+        {
+          "id": "es-listen-probador-q3",
+          "kind": "choice",
+          "prompt": "¿Cómo le queda la talla M?",
+          "options": [
+            "Un poco grande",
+            "Un poco pequeña",
+            "Perfecta",
+            "Muy corta"
+          ],
+          "answers": [
+            "Un poco grande"
+          ],
+          "explain": "La camiseta le queda un poco grande."
+        },
+        {
+          "id": "es-listen-probador-q4",
+          "kind": "written",
+          "prompt": "¿Qué talla trae el dependiente al final?",
+          "answers": [
+            "la talla s",
+            "la s",
+            "talla s"
+          ],
+          "explain": "El dependiente trae la talla S y ahora queda perfecta."
+        },
+        {
+          "id": "es-listen-probador-q5",
+          "kind": "choice",
+          "prompt": "¿Cuánto cuesta la camiseta?",
+          "options": [
+            "Quince euros",
+            "Cincuenta euros",
+            "Cinco euros",
+            "Veinticinco euros"
+          ],
+          "answers": [
+            "Quince euros"
+          ],
+          "explain": "«Son quince euros», responde él."
+        },
+        {
+          "id": "es-listen-probador-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo paga Ana?",
+          "options": [
+            "En efectivo",
+            "Con tarjeta",
+            "Con un cheque",
+            "A plazos"
+          ],
+          "answers": [
+            "En efectivo"
+          ],
+          "explain": "«Aquí tiene. Pago en efectivo»."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-devolucion",
+      "languageID": "es",
+      "title": "La devolución de la cafetera",
+      "level": "A2",
+      "topic": "compras",
+      "unitID": "es-foundations-u25",
+      "text": "El martes, Sergio compró una cafetera nueva en la tienda ElectroSur. La usó por la mañana, pero el agua no calentaba. Entonces volvió a la tienda con el recibo. «Buenos días, compré esta cafetera ayer, pero no funciona. Quiero devolverla», explicó. La dependienta revisó el recibo y preguntó: «¿Prefiere el dinero o un cambio?». «Prefiero el dinero, gracias», contestó Sergio. La dependienta devolvió los cuarenta y cinco euros a su tarjeta. «En dos o tres días, el banco lo devuelve a su cuenta», avisó. Sergio salió tranquilo: el problema se solucionó en diez minutos.",
+      "skills": [
+        "listening:detail",
+        "listening:gist",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-devolucion-q1",
+          "kind": "choice",
+          "prompt": "¿Qué compró Sergio el martes?",
+          "options": [
+            "Una cafetera",
+            "Una lámpara",
+            "Un portátil",
+            "Una tostadora"
+          ],
+          "answers": [
+            "Una cafetera"
+          ],
+          "explain": "El martes, Sergio compró una cafetera nueva en la tienda ElectroSur."
+        },
+        {
+          "id": "es-listen-devolucion-q2",
+          "kind": "choice",
+          "prompt": "¿Cuál era el problema?",
+          "options": [
+            "El agua no calentaba",
+            "La jarra se rompió",
+            "No llegó el recibo",
+            "Era muy cara"
+          ],
+          "answers": [
+            "El agua no calentaba"
+          ],
+          "explain": "La usó por la mañana, pero el agua no calentaba."
+        },
+        {
+          "id": "es-listen-devolucion-q3",
+          "kind": "written",
+          "prompt": "¿Qué pidió Sergio en la tienda?",
+          "answers": [
+            "devolverla",
+            "quiero devolverla",
+            "la devolución"
+          ],
+          "explain": "Compré esta cafetera ayer, pero no funciona. Quiero devolverla."
+        },
+        {
+          "id": "es-listen-devolucion-q4",
+          "kind": "choice",
+          "prompt": "¿Qué prefirió Sergio?",
+          "options": [
+            "El dinero",
+            "Un cambio",
+            "Otra cafetera",
+            "Un vale"
+          ],
+          "answers": [
+            "El dinero"
+          ],
+          "explain": "«¿Prefiere el dinero o un cambio?». «Prefiero el dinero, gracias»."
+        },
+        {
+          "id": "es-listen-devolucion-q5",
+          "kind": "written",
+          "prompt": "¿Cuánto devolvieron a su tarjeta?",
+          "answers": [
+            "cuarenta y cinco euros",
+            "45 euros",
+            "cuarenta y cinco"
+          ],
+          "explain": "La dependienta devolvió los cuarenta y cinco euros a su tarjeta."
+        },
+        {
+          "id": "es-listen-devolucion-q6",
+          "kind": "choice",
+          "prompt": "¿Cuándo verá Sergio el dinero en su cuenta?",
+          "options": [
+            "En dos o tres días",
+            "Al día siguiente",
+            "En diez minutos",
+            "En un mes"
+          ],
+          "answers": [
+            "En dos o tres días"
+          ],
+          "explain": "«En dos o tres días, el banco lo devuelve a su cuenta», avisó."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-maleta-vispera",
+      "languageID": "es",
+      "title": "La víspera del viaje",
+      "level": "A2",
+      "topic": "viajes",
+      "unitID": "es-foundations-u26",
+      "text": "Mañana Elena y su familia van a viajar a Roma, y hoy es la víspera. Por la tarde, Elena va a preparar la maleta: lleva ropa ligera, dos libros y el cargador. Su hijo va a revisar los documentos: los pasaportes y las tarjetas de embarque. «No olvides el adaptador», le dice ella. Después de cenar, el vecino va a venir a por las llaves para regar las plantas. Todos madrugan, porque el vuelo sale a las siete y media. «Ya está todo listo», dice Elena. «Solo falta dormir».",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-maleta-vispera-q1",
+          "kind": "choice",
+          "prompt": "¿A dónde van a viajar?",
+          "options": [
+            "A Roma",
+            "A Lisboa",
+            "A París",
+            "A Londres"
+          ],
+          "answers": [
+            "A Roma"
+          ],
+          "explain": "Mañana Elena y su familia van a viajar a Roma."
+        },
+        {
+          "id": "es-listen-maleta-vispera-q2",
+          "kind": "written",
+          "prompt": "¿Quién va a revisar los documentos?",
+          "answers": [
+            "su hijo",
+            "el hijo",
+            "hijo"
+          ],
+          "explain": "Su hijo va a revisar los documentos: los pasaportes y las tarjetas de embarque."
+        },
+        {
+          "id": "es-listen-maleta-vispera-q3",
+          "kind": "choice",
+          "prompt": "¿Qué no debe olvidar Elena?",
+          "options": [
+            "El adaptador",
+            "El pasaporte",
+            "Los libros",
+            "Las llaves"
+          ],
+          "answers": [
+            "El adaptador"
+          ],
+          "explain": "«No olvides el adaptador», le dice ella."
+        },
+        {
+          "id": "es-listen-maleta-vispera-q4",
+          "kind": "written",
+          "prompt": "¿Para qué viene el vecino a por las llaves?",
+          "answers": [
+            "para regar las plantas",
+            "regar las plantas"
+          ],
+          "explain": "El vecino va a venir a por las llaves para regar las plantas."
+        },
+        {
+          "id": "es-listen-maleta-vispera-q5",
+          "kind": "choice",
+          "prompt": "¿A qué hora sale el vuelo?",
+          "options": [
+            "A las siete y media",
+            "A las siete",
+            "A las ocho y media",
+            "A las seis y media"
+          ],
+          "answers": [
+            "A las siete y media"
+          ],
+          "explain": "Todos madrugan, porque el vuelo sale a las siete y media."
+        },
+        {
+          "id": "es-listen-maleta-vispera-q6",
+          "kind": "choice",
+          "prompt": "¿Por qué madrugan todos?",
+          "options": [
+            "Porque el vuelo sale temprano",
+            "Porque el vecino llega pronto",
+            "Porque quieren desayunar",
+            "Porque la maleta está pesada"
+          ],
+          "answers": [
+            "Porque el vuelo sale temprano"
+          ],
+          "explain": "Todos madrugan, porque el vuelo sale a las siete y media."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-barrio-que-quiero",
+      "languageID": "es",
+      "title": "El barrio que queremos",
+      "level": "B1",
+      "topic": "barrio",
+      "unitID": "es-foundations-u27",
+      "text": "—¿Has visto la nueva plaza del barrio? ¿Qué te parece?\n—En mi opinión, ha mejorado mucho. Por un lado, hay más zonas verdes; por otro, apenas hay bancos para sentarse.\n—Estoy de acuerdo. Además, el tráfico de la avenida sigue siendo un problema: lo que más me molesta es el ruido por la noche.\n—Por eso propongo escribir al ayuntamiento: pedimos carriles bici y más árboles.\n—Buena idea. Y yo añado un mercado de segunda mano el sábado: así consumimos menos y compramos más barato.\n—Me parece perfecta. ¿La firmamos con los vecinos?\n—Claro. Si somos muchos, creo que nos van a escuchar.",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "function:express-opinion",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-barrio-que-quiero-q1",
+          "kind": "choice",
+          "prompt": "¿Qué opina el primer hablante de la plaza?",
+          "options": [
+            "Ha mejorado mucho",
+            "Ha empeorado",
+            "No ha cambiado",
+            "Le da igual"
+          ],
+          "answers": [
+            "Ha mejorado mucho"
+          ],
+          "explain": "En mi opinión, ha mejorado mucho."
+        },
+        {
+          "id": "es-listen-barrio-que-quiero-q2",
+          "kind": "choice",
+          "prompt": "¿Qué falta en la plaza?",
+          "options": [
+            "Bancos para sentarse",
+            "Zonas verdes",
+            "Árboles",
+            "Luz"
+          ],
+          "answers": [
+            "Bancos para sentarse"
+          ],
+          "explain": "Por otro, apenas hay bancos para sentarse."
+        },
+        {
+          "id": "es-listen-barrio-que-quiero-q3",
+          "kind": "written",
+          "prompt": "¿Qué es lo que más molesta al segundo hablante?",
+          "answers": [
+            "el ruido por la noche",
+            "el ruido",
+            "ruido por la noche"
+          ],
+          "explain": "Lo que más me molesta es el ruido por la noche."
+        },
+        {
+          "id": "es-listen-barrio-que-quiero-q4",
+          "kind": "choice",
+          "prompt": "¿Qué piden al ayuntamiento?",
+          "options": [
+            "Carriles bici y más árboles",
+            "Un mercado nuevo",
+            "Más bancos",
+            "Menos ruido"
+          ],
+          "answers": [
+            "Carriles bici y más árboles"
+          ],
+          "explain": "Pedimos carriles bici y más árboles."
+        },
+        {
+          "id": "es-listen-barrio-que-quiero-q5",
+          "kind": "written",
+          "prompt": "¿Qué proponen para el sábado?",
+          "answers": [
+            "un mercado de segunda mano",
+            "mercado de segunda mano"
+          ],
+          "explain": "Y yo añado un mercado de segunda mano el sábado."
+        },
+        {
+          "id": "es-listen-barrio-que-quiero-q6",
+          "kind": "choice",
+          "prompt": "¿Por qué creen que el ayuntamiento les va a escuchar?",
+          "options": [
+            "Porque serán muchos firmantes",
+            "Porque son famosos",
+            "Porque pagan una tasa",
+            "Porque el alcalde es vecino"
+          ],
+          "answers": [
+            "Porque serán muchos firmantes"
+          ],
+          "explain": "Si somos muchos, creo que nos van a escuchar."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-reunion-practica",
+      "languageID": "es",
+      "title": "La reunión del horario",
+      "level": "B1",
+      "topic": "reuniones",
+      "unitID": "es-work-u1",
+      "text": "—Buenos días a todos. Hoy tenemos que decidir el nuevo horario del equipo. Marta, ¿tú qué opinas?\n—En mi opinión, entrar a las nueve y salir a las cinco funciona mejor. He hablado con los clientes y no hay problema.\n—Yo estoy de acuerdo, pero propongo una semana de prueba antes. Así vemos los resultados reales.\n—Por un lado, la prueba lleva tiempo; por otro, es lo más prudente. ¿Qué os parece si la empezamos el lunes?\n—A mí me parece bien. ¿Quién prepara el resumen para la dirección?\n—Me encargo yo. Les escribo esta tarde y adjunto los datos de la encuesta.\n—Perfecto. Entonces, votamos el viernes y cerramos la decisión.",
+      "skills": [
+        "listening:detail",
+        "listening:inference",
+        "function:talk-about-work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-reunion-practica-q1",
+          "kind": "choice",
+          "prompt": "¿Qué decisión deben tomar en la reunión?",
+          "options": [
+            "El nuevo horario",
+            "El nuevo jefe",
+            "Las vacaciones",
+            "El presupuesto"
+          ],
+          "answers": [
+            "El nuevo horario"
+          ],
+          "explain": "Hoy tenemos que decidir el nuevo horario del equipo."
+        },
+        {
+          "id": "es-listen-reunion-practica-q2",
+          "kind": "choice",
+          "prompt": "¿Qué horario propone Marta?",
+          "options": [
+            "Entrar a las nueve",
+            "Entrar a las ocho",
+            "Trabajar desde casa",
+            "Horario a turnos"
+          ],
+          "answers": [
+            "Entrar a las nueve"
+          ],
+          "explain": "En mi opinión, entrar a las nueve y salir a las cinco funciona mejor."
+        },
+        {
+          "id": "es-listen-reunion-practica-q3",
+          "kind": "written",
+          "prompt": "¿Qué propone el segundo hablante antes de decidir?",
+          "answers": [
+            "una semana de prueba",
+            "una prueba",
+            "semana de prueba"
+          ],
+          "explain": "Yo estoy de acuerdo, pero propongo una semana de prueba antes."
+        },
+        {
+          "id": "es-listen-reunion-practica-q4",
+          "kind": "choice",
+          "prompt": "¿Cuándo empezaría la prueba?",
+          "options": [
+            "El lunes",
+            "El martes",
+            "El jueves",
+            "El viernes"
+          ],
+          "answers": [
+            "El lunes"
+          ],
+          "explain": "¿Qué os parece si la empezamos el lunes?"
+        },
+        {
+          "id": "es-listen-reunion-practica-q5",
+          "kind": "written",
+          "prompt": "¿Qué enviará a la dirección y cuándo?",
+          "answers": [
+            "los datos de la encuesta esta tarde",
+            "los datos esta tarde",
+            "los datos de la encuesta"
+          ],
+          "explain": "Les escribo esta tarde y adjunto los datos de la encuesta."
+        },
+        {
+          "id": "es-listen-reunion-practica-q6",
+          "kind": "choice",
+          "prompt": "¿Cuándo cierran la decisión?",
+          "options": [
+            "El viernes",
+            "El lunes",
+            "Esta tarde",
+            "El miércoles"
+          ],
+          "answers": [
+            "El viernes"
+          ],
+          "explain": "Entonces, votamos el viernes y cerramos la decisión."
+        }
+      ]
     }
   ]
 }

@@ -1056,6 +1056,189 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-read-liste-valise",
+      "languageID": "fr",
+      "title": "La liste sur le frigo",
+      "level": "A2",
+      "topic": "voyage",
+      "unitID": "fr-foundations-u25",
+      "text": "Le départ est demain à sept heures. Sur le frigo, la liste de Léa : documents — passeport, billets, carte d'identité ; vêtements — trois t-shirts, un pull léger, le maillot de bain ; tech — chargeurs, adaptateur, écouteurs. Léa coche chaque ligne. Le pull léger, c'est pour le bus climatisé. Le maillot, c'est pour la piscine de l'hôtel. Il ne faut pas oublier le cadeau pour madame Roux : une boîte de thé du marché. Dernière ligne de la liste : « arroser les plantes ? → madame Roux ». Léa laisse un mot avec les clés, vérifie les fenêtres et met son réveil à cinq heures et demie. Tout est prêt pour Lisbonne.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:travel",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-liste-valise-q1",
+          "kind": "choice",
+          "prompt": "Quand est le départ ?",
+          "answers": [
+            "Demain à sept heures"
+          ],
+          "explain": "Le départ est demain à sept heures.",
+          "options": [
+            "Demain à sept heures",
+            "Ce soir",
+            "Après-demain à cinq heures",
+            "Demain à cinq heures et demie"
+          ]
+        },
+        {
+          "id": "fr-read-liste-valise-q2",
+          "kind": "choice",
+          "prompt": "Pourquoi Léa prend-elle un pull léger ?",
+          "answers": [
+            "Pour le bus climatisé"
+          ],
+          "explain": "Le pull léger, c'est pour le bus climatisé.",
+          "options": [
+            "Pour le bus climatisé",
+            "Parce qu'il va faire froid",
+            "Pour la piscine",
+            "Pour le marché"
+          ]
+        },
+        {
+          "id": "fr-read-liste-valise-q3",
+          "kind": "written",
+          "prompt": "Quel cadeau Léa apporte-t-elle à madame Roux ?",
+          "answers": [
+            "une boîte de thé",
+            "une boite de the",
+            "du thé",
+            "une boîte de thé du marché"
+          ],
+          "explain": "Une boîte de thé du marché."
+        },
+        {
+          "id": "fr-read-liste-valise-q4",
+          "kind": "written",
+          "prompt": "À quelle heure est le réveil ?",
+          "answers": [
+            "à cinq heures et demie",
+            "cinq heures et demie",
+            "5 heures et demie"
+          ],
+          "explain": "Elle met son réveil à cinq heures et demie."
+        },
+        {
+          "id": "fr-read-liste-valise-q5",
+          "kind": "choice",
+          "prompt": "Qui arrose les plantes ?",
+          "answers": [
+            "Madame Roux"
+          ],
+          "explain": "« Arroser les plantes ? → madame Roux ».",
+          "options": [
+            "Madame Roux",
+            "Léa",
+            "Le voisin",
+            "Personne"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-read-affiche-voisins",
+      "languageID": "fr",
+      "title": "L'affiche sur le palier",
+      "level": "B1",
+      "topic": "ville",
+      "unitID": "fr-foundations-u26",
+      "text": "Cette semaine, une affiche du conseil fait parler l'immeuble : « Place verte dès le mois prochain ! La place du Marché sera sans voitures le dimanche : dix arbres, des tables, un marché de producteurs locaux. Votez samedi à dix heures. » Au troisième étage, madame Benali trouve l'idée excellente : moins de bruit, plus de tomates fraîches. Chez les Lefèvre, on grogne : le dimanche, c'est justement le jour où ils rentrent en voiture. Au rez-de-chaussée, Julien propose un compromis : sans voitures seulement le matin. Samedi, 78 % votent pour. Depuis, Léa achète son pain là-bas : le quartier respire. Les Lefèvre, eux, ont testé le vélo — et ils ne s'en plaignent pas.",
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-affiche-voisins-q1",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui change le dimanche ?",
+          "answers": [
+            "La place devient sans voitures"
+          ],
+          "explain": "La place du Marché sera sans voitures le dimanche.",
+          "options": [
+            "La place devient sans voitures",
+            "Le marché ferme",
+            "L'immeuble se réunit",
+            "Les boutiques baissent les prix"
+          ]
+        },
+        {
+          "id": "fr-read-affiche-voisins-q2",
+          "kind": "written",
+          "prompt": "Quand a lieu le vote ?",
+          "answers": [
+            "samedi à dix heures",
+            "samedi a dix heures",
+            "samedi 10 heures"
+          ],
+          "explain": "Votez samedi à dix heures."
+        },
+        {
+          "id": "fr-read-affiche-voisins-q3",
+          "kind": "choice",
+          "prompt": "Pourquoi madame Benali soutient-elle le projet ?",
+          "answers": [
+            "Moins de bruit et des tomates fraîches"
+          ],
+          "explain": "Moins de bruit, plus de tomates fraîches.",
+          "options": [
+            "Moins de bruit et des tomates fraîches",
+            "Elle vend des arbres",
+            "Elle déteste les voitures",
+            "Ses enfants jouent là-bas"
+          ]
+        },
+        {
+          "id": "fr-read-affiche-voisins-q4",
+          "kind": "written",
+          "prompt": "Quel compromis propose Julien ?",
+          "answers": [
+            "sans voitures seulement le matin",
+            "pas de voitures le matin",
+            "sans voiture le matin"
+          ],
+          "explain": "Sans voitures seulement le matin."
+        },
+        {
+          "id": "fr-read-affiche-voisins-q5",
+          "kind": "choice",
+          "prompt": "Quel est le résultat du vote ?",
+          "answers": [
+            "78 % pour"
+          ],
+          "explain": "Samedi, 78 % votent pour.",
+          "options": [
+            "78 % pour",
+            "50 % pour",
+            "Le vote est annulé",
+            "96 % contre"
+          ]
+        },
+        {
+          "id": "fr-read-affiche-voisins-q6",
+          "kind": "written",
+          "prompt": "Comment les Lefèvre vont-ils à la place maintenant ?",
+          "answers": [
+            "à vélo",
+            "a velo",
+            "en vélo",
+            "en velo"
+          ],
+          "explain": "Les Lefèvre ont testé le vélo — et ils ne s'en plaignent pas."
+        }
+      ]
     }
   ]
 }

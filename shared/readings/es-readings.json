@@ -1040,6 +1040,191 @@
           "explain": "Lo recomiendo, pero pide primero el presupuesto."
         }
       ]
+    },
+    {
+      "id": "es-read-lista-maleta",
+      "languageID": "es",
+      "title": "La lista de la maleta",
+      "level": "A2",
+      "topic": "viajes",
+      "unitID": "es-foundations-u26",
+      "text": "Lista de la maleta: viaje a Roma. Mañana viajamos a Roma. La maleta va a llevar:\n— Ropa ligera: tres camisetas, un jersey y un chubasquero, porque puede llover.\n— Documentos: pasaportes, tarjetas de embarque y el seguro de viaje. No olvidar.\n— Tecnología: cargador, adaptador y auriculares.\n— Otros: paraguas pequeño, guía de Roma y una bolsa para la ropa sucia.\nLos líquidos van en la maleta grande, no en la pequeña, porque el control del aeropuerto no acepta botes de más de cien mililitros.\nMamá revisa la lista mañana a las seis y media. ¡No olvidar el adaptador!",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:going-to",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-lista-maleta-q1",
+          "kind": "choice",
+          "prompt": "¿A dónde viajan mañana?",
+          "options": [
+            "A Roma",
+            "A Lisboa",
+            "A París",
+            "A Madrid"
+          ],
+          "answers": [
+            "A Roma"
+          ],
+          "explain": "Mañana viajamos a Roma."
+        },
+        {
+          "id": "es-read-lista-maleta-q2",
+          "kind": "written",
+          "prompt": "¿Por qué llevan chubasquero?",
+          "answers": [
+            "porque puede llover",
+            "puede llover",
+            "por la lluvia"
+          ],
+          "explain": "Un jersey y un chubasquero, porque puede llover."
+        },
+        {
+          "id": "es-read-lista-maleta-q3",
+          "kind": "choice",
+          "prompt": "¿Qué documentos van a llevar?",
+          "options": [
+            "Pasaportes y tarjetas de embarque",
+            "DNI y carnet de conducir",
+            "Solo el seguro",
+            "Visados y billetes impresos"
+          ],
+          "answers": [
+            "Pasaportes y tarjetas de embarque"
+          ],
+          "explain": "Documentos: pasaportes, tarjetas de embarque y el seguro de viaje."
+        },
+        {
+          "id": "es-read-lista-maleta-q4",
+          "kind": "choice",
+          "prompt": "¿Dónde van los líquidos y por qué?",
+          "options": [
+            "En la maleta grande: el control no acepta botes grandes en la pequeña",
+            "En la maleta pequeña: pesan menos",
+            "En el bolsillo: es más rápido",
+            "En una bolsa de tela"
+          ],
+          "answers": [
+            "En la maleta grande: el control no acepta botes grandes en la pequeña"
+          ],
+          "explain": "Los líquidos van en la maleta grande, no en la pequeña, porque el control del aeropuerto no acepta botes de más de cien mililitros."
+        },
+        {
+          "id": "es-read-lista-maleta-q5",
+          "kind": "written",
+          "prompt": "¿A qué hora revisa mamá la lista?",
+          "answers": [
+            "a las seis y media",
+            "seis y media",
+            "a las 6 y media"
+          ],
+          "explain": "Mamá revisa la lista mañana a las seis y media."
+        }
+      ]
+    },
+    {
+      "id": "es-read-cartel-vecinal",
+      "languageID": "es",
+      "title": "Carta abierta a los vecinos",
+      "level": "B1",
+      "topic": "barrio",
+      "unitID": "es-foundations-u27",
+      "text": "CARTA ABIERTA A LOS VECINOS. Queridos vecinos: desde la asociación proponemos peatonalizar la calle del Mercado los sábados por la mañana. ¿Por qué? Primero, porque el mercado ha crecido y la calle ya no respira: hay demasiado tráfico en pocas horas. Además, los niños no pueden jugar ni cruzar tranquilos. Por eso pedimos: una zona peatonal de nueve a dos, más árboles y bancos nuevos, y carril bici en la avenida. Sabemos que algunos comercios temen perder clientes, pero en otros barrios la experiencia ha sido positiva: la gente pasea más y compra más. Firma la carta en el centro cívico o responde a este anuncio. Entre todos, la calle que queremos empieza en nuestra puerta.",
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "function:express-opinion",
+        "writing:argument"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-cartel-vecinal-q1",
+          "kind": "choice",
+          "prompt": "¿Qué propone la asociación?",
+          "options": [
+            "Peatonalizar la calle del Mercado los sábados",
+            "Cerrar el mercado",
+            "Quitar los árboles",
+            "Ampliar la avenida"
+          ],
+          "answers": [
+            "Peatonalizar la calle del Mercado los sábados"
+          ],
+          "explain": "Proponemos peatonalizar la calle del Mercado los sábados por la mañana."
+        },
+        {
+          "id": "es-read-cartel-vecinal-q2",
+          "kind": "written",
+          "prompt": "¿Por qué no pueden cruzar los niños tranquilos?",
+          "answers": [
+            "porque hay demasiado tráfico",
+            "por el tráfico",
+            "demasiado tráfico"
+          ],
+          "explain": "Hay demasiado tráfico en pocas horas."
+        },
+        {
+          "id": "es-read-cartel-vecinal-q3",
+          "kind": "choice",
+          "prompt": "¿Qué piden exactamente?",
+          "options": [
+            "Zona peatonal, árboles, bancos y carril bici",
+            "Solo más aparcamiento",
+            "Un mercado cubierto",
+            "Más semáforos"
+          ],
+          "answers": [
+            "Zona peatonal, árboles, bancos y carril bici"
+          ],
+          "explain": "Pedimos: una zona peatonal de nueve a dos, más árboles y bancos nuevos, y carril bici."
+        },
+        {
+          "id": "es-read-cartel-vecinal-q4",
+          "kind": "choice",
+          "prompt": "¿Qué temen algunos comercios?",
+          "options": [
+            "Perder clientes",
+            "Pagar más impuestos",
+            "Perder el local",
+            "El ruido"
+          ],
+          "answers": [
+            "Perder clientes"
+          ],
+          "explain": "Algunos comercios temen perder clientes."
+        },
+        {
+          "id": "es-read-cartel-vecinal-q5",
+          "kind": "choice",
+          "prompt": "¿Qué argumento usa la carta para tranquilizar a los comercios?",
+          "options": [
+            "En otros barrios la gente pasea y compra más",
+            "El ayuntamiento pagará una ayuda",
+            "Los clientes son todos vecinos",
+            "El mercado se cierra antes"
+          ],
+          "answers": [
+            "En otros barrios la gente pasea y compra más"
+          ],
+          "explain": "En otros barrios la experiencia ha sido positiva: la gente pasea más y compra más."
+        },
+        {
+          "id": "es-read-cartel-vecinal-q6",
+          "kind": "written",
+          "prompt": "¿Dónde puedes firmar la carta?",
+          "answers": [
+            "en el centro cívico",
+            "centro cívico",
+            "el centro civico"
+          ],
+          "explain": "Firma la carta en el centro cívico o responde a este anuncio."
+        }
+      ]
     }
   ]
 }

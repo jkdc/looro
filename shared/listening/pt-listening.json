@@ -2815,6 +2815,614 @@
         "function:express-opinion"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-aniversario-surpresa",
+      "languageID": "pt",
+      "title": "A festa surpresa",
+      "level": "A1",
+      "topic": "festa",
+      "unitID": "pt-foundations-u22",
+      "text": "A Duda liga para a Lu: — Alô, Lu ! Vamos fazer uma festa para a Bia no sábado. — Que legal ! Na sua casa ? — Isso, às oito. Que tal um bolo de chocolate ? — Boa ideia ! Eu levo as bebidas e as velas. — Pode contar comigo para a música também. — Fechado. E não conte nada para a Bia, é surpresa !",
+      "questions": [
+        {
+          "id": "pt-listen-aniversario-surpresa-q1",
+          "kind": "choice",
+          "prompt": "Quem faz aniversário ?",
+          "options": [
+            "A Bia",
+            "A Duda",
+            "A Lu",
+            "A mãe da Lu"
+          ],
+          "answers": [
+            "A Bia"
+          ],
+          "explain": "Vamos fazer uma festa para a Bia no sábado."
+        },
+        {
+          "id": "pt-listen-aniversario-surpresa-q2",
+          "kind": "choice",
+          "prompt": "Que dia e hora é a festa ?",
+          "options": [
+            "Sábado, às oito",
+            "Sexta, às oito",
+            "Sábado, às sete",
+            "Domingo, às nove"
+          ],
+          "answers": [
+            "Sábado, às oito"
+          ],
+          "explain": "Isso, às oito — a festa é no sábado."
+        },
+        {
+          "id": "pt-listen-aniversario-surpresa-q3",
+          "kind": "written",
+          "prompt": "O que a Lu leva ?",
+          "answers": [
+            "as bebidas e as velas",
+            "bebidas e velas"
+          ],
+          "explain": "Eu levo as bebidas e as velas."
+        },
+        {
+          "id": "pt-listen-aniversario-surpresa-q4",
+          "kind": "written",
+          "prompt": "Que bolo vai ter ?",
+          "answers": [
+            "bolo de chocolate",
+            "um bolo de chocolate",
+            "chocolate"
+          ],
+          "explain": "Que tal um bolo de chocolate ?"
+        },
+        {
+          "id": "pt-listen-aniversario-surpresa-q5",
+          "kind": "choice",
+          "prompt": "Por que a Bia não pode saber ?",
+          "options": [
+            "É uma surpresa",
+            "É segredo da Lu",
+            "A festa cancelou",
+            "A Bia viaja"
+          ],
+          "answers": [
+            "É uma surpresa"
+          ],
+          "explain": "E não conte nada para a Bia, é surpresa !"
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "vocab:social-expressions",
+        "grammar:present-simple"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-provador",
+      "languageID": "pt",
+      "title": "No provador",
+      "level": "A1",
+      "topic": "loja",
+      "unitID": "pt-foundations-u23",
+      "text": "Na loja de roupas: — Pois não, posso ajudar ? — Procuro uma camiseta azul. — Que tamanho você usa ? — Eu uso M. — Tem essa aqui em M. — Posso provar ? — Claro, o provador fica ali. — Fica um pouco apertada. Pode trazer um G ? — Um momento, já trago. — Esse fica melhor. Quanto custa ? — Oitenta reais. — Fechado, vou levar.",
+      "questions": [
+        {
+          "id": "pt-listen-provador-q1",
+          "kind": "written",
+          "prompt": "O que a cliente procura ?",
+          "answers": [
+            "uma camiseta azul",
+            "camiseta azul"
+          ],
+          "explain": "Procuro uma camiseta azul."
+        },
+        {
+          "id": "pt-listen-provador-q2",
+          "kind": "choice",
+          "prompt": "Que tamanho ela usa ?",
+          "options": [
+            "M",
+            "P",
+            "G",
+            "GG"
+          ],
+          "answers": [
+            "M"
+          ],
+          "explain": "Que tamanho você usa ? — Eu uso M."
+        },
+        {
+          "id": "pt-listen-provador-q3",
+          "kind": "choice",
+          "prompt": "Por que ela pede outro tamanho ?",
+          "options": [
+            "Fica apertada",
+            "Fica barata",
+            "Não gosta da cor",
+            "Está rasgada"
+          ],
+          "answers": [
+            "Fica apertada"
+          ],
+          "explain": "Fica um pouco apertada. Pode trazer um G ?"
+        },
+        {
+          "id": "pt-listen-provador-q4",
+          "kind": "written",
+          "prompt": "Quanto custa a camiseta ?",
+          "answers": [
+            "oitenta reais",
+            "80 reais"
+          ],
+          "explain": "Oitenta reais."
+        },
+        {
+          "id": "pt-listen-provador-q5",
+          "kind": "choice",
+          "prompt": "Qual é a decisão final ?",
+          "options": [
+            "Ela leva a camiseta",
+            "Ela volta depois",
+            "Ela troca de loja",
+            "Ela pede desconto"
+          ],
+          "answers": [
+            "Ela leva a camiseta"
+          ],
+          "explain": "Fechado, vou levar."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "vocab:shopping",
+        "function:go-shopping"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-devolucao",
+      "languageID": "pt",
+      "title": "A troca do celular",
+      "level": "A2",
+      "topic": "troca",
+      "unitID": "pt-foundations-u24",
+      "text": "No balcão de trocas: — Bom dia ! Em que posso ajudar ? — Comprei esse celular há uma semana e a câmera apresentou defeito. — A senhora trouxe o recibo ? — Sim, aqui está, e a caixa também. — Perfeito. Prefere outro aparelho igual ou o reembolso ? — Quero trocar por outro igual, se possível. — Temos o modelo em estoque; em dez minutos está pronto. — Ótimo. Preciso tirar meus dados do aparelho antigo. — Pode conferir tranquila, a senhora tem tempo.",
+      "questions": [
+        {
+          "id": "pt-listen-devolucao-q1",
+          "kind": "written",
+          "prompt": "Quando ela comprou o celular ?",
+          "answers": [
+            "há uma semana",
+            "ha uma semana",
+            "uma semana atrás",
+            "uma semana atras"
+          ],
+          "explain": "Comprei esse celular há uma semana."
+        },
+        {
+          "id": "pt-listen-devolucao-q2",
+          "kind": "written",
+          "prompt": "Qual é o problema ?",
+          "answers": [
+            "a câmera",
+            "a camera",
+            "o defeito na câmera",
+            "o defeito na camera"
+          ],
+          "explain": "A câmera apresentou defeito."
+        },
+        {
+          "id": "pt-listen-devolucao-q3",
+          "kind": "choice",
+          "prompt": "O que ela mostra no balcão ?",
+          "options": [
+            "O recibo e a caixa",
+            "O cartão de crédito",
+            "Só o aparelho antigo",
+            "A garantia do trabalho"
+          ],
+          "answers": [
+            "O recibo e a caixa"
+          ],
+          "explain": "Sim, aqui está, e a caixa também."
+        },
+        {
+          "id": "pt-listen-devolucao-q4",
+          "kind": "choice",
+          "prompt": "O que ela prefere ?",
+          "options": [
+            "Trocar por outro igual",
+            "O reembolso do dinheiro",
+            "Um modelo melhor",
+            "Consertar a câmera"
+          ],
+          "answers": [
+            "Trocar por outro igual"
+          ],
+          "explain": "Quero trocar por outro igual, se possível."
+        },
+        {
+          "id": "pt-listen-devolucao-q5",
+          "kind": "choice",
+          "prompt": "Em quanto tempo a troca fica pronta ?",
+          "options": [
+            "Dez minutos",
+            "Uma hora",
+            "Dois dias",
+            "Na semana seguinte"
+          ],
+          "answers": [
+            "Dez minutos"
+          ],
+          "explain": "Em dez minutos está pronto."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:inference",
+        "vocab:shopping",
+        "function:solve-problems"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-vespera-viagem",
+      "languageID": "pt",
+      "title": "Na véspera da viagem",
+      "level": "A2",
+      "topic": "viagem",
+      "unitID": "pt-foundations-u25",
+      "text": "Na véspera da viagem: — Amanhã você vai sair cedo, né ? — Isso, o voo é às sete. Vou conferir se está tudo pronto. — Já fez a mala ? — Primeiro a mala, depois os documentos. Não vou esquecer o passaporte nem o carregador. — Confere se falta algo, então. — Confiro, sim. Levo só uma mala de mão. — Boa viagem, Duda ! Me avise quando chegar. — Claro, te aviso no desembarque. Obrigada por tudo !",
+      "questions": [
+        {
+          "id": "pt-listen-vespera-viagem-q1",
+          "kind": "written",
+          "prompt": "A que horas é o voo ?",
+          "answers": [
+            "às sete",
+            "as sete",
+            "sete horas"
+          ],
+          "explain": "Isso, o voo é às sete."
+        },
+        {
+          "id": "pt-listen-vespera-viagem-q2",
+          "kind": "choice",
+          "prompt": "Qual é a ordem dos preparativos ?",
+          "options": [
+            "Mala, depois documentos",
+            "Documentos, depois mala",
+            "Mala e documentos juntos",
+            "Só os documentos"
+          ],
+          "answers": [
+            "Mala, depois documentos"
+          ],
+          "explain": "Primeiro a mala, depois os documentos."
+        },
+        {
+          "id": "pt-listen-vespera-viagem-q3",
+          "kind": "written",
+          "prompt": "O que ela não vai esquecer ?",
+          "answers": [
+            "o passaporte e o carregador",
+            "passaporte e carregador"
+          ],
+          "explain": "Não vou esquecer o passaporte nem o carregador."
+        },
+        {
+          "id": "pt-listen-vespera-viagem-q4",
+          "kind": "choice",
+          "prompt": "Quantas malas ela leva ?",
+          "options": [
+            "Uma mala de mão",
+            "Duas malas grandes",
+            "Uma mala e uma mochila",
+            "Nenhuma"
+          ],
+          "answers": [
+            "Uma mala de mão"
+          ],
+          "explain": "Levo só uma mala de mão."
+        },
+        {
+          "id": "pt-listen-vespera-viagem-q5",
+          "kind": "choice",
+          "prompt": "O que a Duda promete ?",
+          "options": [
+            "Avisar quando chegar",
+            "Voltar cedo",
+            "Enviar fotos do hotel",
+            "Ficar um mês"
+          ],
+          "answers": [
+            "Avisar quando chegar"
+          ],
+          "explain": "Claro, te aviso no desembarque."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "vocab:travel",
+        "grammar:going-to"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-bairro-sonho",
+      "languageID": "pt",
+      "title": "O bairro que a gente quer",
+      "level": "B1",
+      "topic": "bairro",
+      "unitID": "pt-foundations-u26",
+      "text": "Na reunião do bairro, o mediador abre o debate: — Boa noite a todos, vamos começar. O que falta na nossa vizinhança ? — Por um lado, o comércio local está vivo; por outro, faltam lugares de encontro. Na minha opinião, precisamos de uma horta na praça. — Eu acho que a horta é uma boa proposta, mas quem cuida ? — Concordo em parte; por isso sugiro um grupo de moradores por semana. — Além disso, podíamos proibir plástico na feira. — Embora seja difícil no começo, apoiar essas ideias melhora o bairro para todos. — Então está encaminhado: horta, grupo de cuidado e feira sem plástico.",
+      "questions": [
+        {
+          "id": "pt-listen-bairro-sonho-q1",
+          "kind": "choice",
+          "prompt": "Qual é o problema que a turma aponta ?",
+          "options": [
+            "Faltam lugares de encontro",
+            "O comércio está morto",
+            "A praça é grande demais",
+            "Falta segurança à noite"
+          ],
+          "answers": [
+            "Faltam lugares de encontro"
+          ],
+          "explain": "Por um lado, o comércio local está vivo; por outro, faltam lugares de encontro."
+        },
+        {
+          "id": "pt-listen-bairro-sonho-q2",
+          "kind": "written",
+          "prompt": "O que o primeiro morador propõe ?",
+          "answers": [
+            "uma horta na praça",
+            "uma horta na praca",
+            "uma horta",
+            "horta na praça",
+            "horta na praca"
+          ],
+          "explain": "Na minha opinião, precisamos de uma horta na praça."
+        },
+        {
+          "id": "pt-listen-bairro-sonho-q3",
+          "kind": "choice",
+          "prompt": "Qual é a objeção à proposta ?",
+          "options": [
+            "Quem cuida da horta",
+            "O preço da praça",
+            "A prefeitura proíbe",
+            "Falta água no bairro"
+          ],
+          "answers": [
+            "Quem cuida da horta"
+          ],
+          "explain": "Eu acho que a horta é uma boa proposta, mas quem cuida ?"
+        },
+        {
+          "id": "pt-listen-bairro-sonho-q4",
+          "kind": "written",
+          "prompt": "Que solução o grupo sugere para o cuidado ?",
+          "answers": [
+            "um grupo de moradores por semana",
+            "grupo de moradores por semana",
+            "um grupo por semana"
+          ],
+          "explain": "Por isso sugiro um grupo de moradores por semana."
+        },
+        {
+          "id": "pt-listen-bairro-sonho-q5",
+          "kind": "choice",
+          "prompt": "O que se decide sobre a feira ?",
+          "options": [
+            "Proibir o plástico",
+            "Fechar aos domingos",
+            "Aumentar os preços",
+            "Mudar de lugar"
+          ],
+          "answers": [
+            "Proibir o plástico"
+          ],
+          "explain": "Além disso, podíamos proibir plástico na feira."
+        },
+        {
+          "id": "pt-listen-bairro-sonho-q6",
+          "kind": "choice",
+          "prompt": "Como o último morador avalia as ideias ?",
+          "options": [
+            "Difíceis, mas melhoram o bairro",
+            "Inúteis para a vizinhança",
+            "Boas só para a prefeitura",
+            "Caras e inviáveis"
+          ],
+          "answers": [
+            "Difíceis, mas melhoram o bairro"
+          ],
+          "explain": "Embora seja difícil no começo, apoiar essas ideias melhora o bairro para todos."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-reuniao-final",
+      "languageID": "pt",
+      "title": "A reunião de pauta",
+      "level": "B1",
+      "topic": "reunião",
+      "unitID": "pt-work-u1",
+      "text": "Segunda-feira, reunião de pauta: — Bom dia, equipe. Na minha opinião, o prazo do cliente é curto. — Por um lado, temos gente; por outro, falta tempo de teste. — Eu acho que dá para dividir a tarefa em duas frentes. — Sugiro começar pelo relatório; por isso ele precisa ficar pronto até quinta. — De acordo. Quem assume a parte de dados ? — Eu assumo. O restante fica com o time de produto, então. — Se ninguém se opõe, vamos assim: relatório até quinta e dados com a Ana. Vamos revisar na sexta.",
+      "questions": [
+        {
+          "id": "pt-listen-reuniao-final-q1",
+          "kind": "choice",
+          "prompt": "Qual é a preocupação inicial na reunião ?",
+          "options": [
+            "O prazo do cliente é curto",
+            "O time falta à reunião",
+            "O cliente cancelou",
+            "O relatório está pronto"
+          ],
+          "answers": [
+            "O prazo do cliente é curto"
+          ],
+          "explain": "Na minha opinião, o prazo do cliente é curto."
+        },
+        {
+          "id": "pt-listen-reuniao-final-q2",
+          "kind": "choice",
+          "prompt": "Como a turma pesa a decisão ?",
+          "options": [
+            "Temos gente, mas falta tempo de teste",
+            "Temos tempo, mas falta gente",
+            "Não há prazo nem gente",
+            "O cliente vai esticar o prazo"
+          ],
+          "answers": [
+            "Temos gente, mas falta tempo de teste"
+          ],
+          "explain": "Por um lado, temos gente; por outro, falta tempo de teste."
+        },
+        {
+          "id": "pt-listen-reuniao-final-q3",
+          "kind": "written",
+          "prompt": "O que sugere fazer com a tarefa ?",
+          "answers": [
+            "dividir a tarefa em duas frentes",
+            "dividir a tarefa",
+            "dividir em duas frentes"
+          ],
+          "explain": "Eu acho que dá para dividir a tarefa em duas frentes."
+        },
+        {
+          "id": "pt-listen-reuniao-final-q4",
+          "kind": "written",
+          "prompt": "Quando o relatório precisa ficar pronto ?",
+          "answers": [
+            "até quinta",
+            "ate quinta",
+            "até a quinta",
+            "ate a quinta",
+            "quinta"
+          ],
+          "explain": "Por isso ele precisa ficar pronto até quinta."
+        },
+        {
+          "id": "pt-listen-reuniao-final-q5",
+          "kind": "choice",
+          "prompt": "Quem assume a parte de dados ?",
+          "options": [
+            "A Ana",
+            "O chefe",
+            "O time do cliente",
+            "Ninguém ainda"
+          ],
+          "answers": [
+            "A Ana"
+          ],
+          "explain": "Vamos assim: relatório até quinta e dados com a Ana."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "function:talk-about-work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-email-urgente",
+      "languageID": "pt",
+      "title": "O e-mail do cliente",
+      "level": "B1",
+      "topic": "e-mail",
+      "unitID": "pt-work-u1",
+      "text": "No corredor, a Ana para o Téo: — Você já respondeu o e-mail do cliente ? — Ainda não. O que escrevo na abertura ? — Algo como « Prezado Sr. Costa »; em e-mail formal, o objetivo vem na primeira linha. — Tipo « escrevo para confirmar a reunião de quinta » ? — Isso. Se pedir o relatório, use « gostaria de receber até sexta »; prazo no pedido ajuda o cliente a organizar. — E o fecho ? — « Desde já, agradeço » e « Atenciosamente ». Guarde « abraços » para o time interno. — Perfeito, escrevo agora antes da reunião.",
+      "questions": [
+        {
+          "id": "pt-listen-email-urgente-q1",
+          "kind": "choice",
+          "prompt": "Quem ainda não respondeu o e-mail ?",
+          "options": [
+            "O Téo",
+            "A Ana",
+            "O cliente",
+            "O chefe"
+          ],
+          "answers": [
+            "O Téo"
+          ],
+          "explain": "Você já respondeu o e-mail do cliente ? — Ainda não."
+        },
+        {
+          "id": "pt-listen-email-urgente-q2",
+          "kind": "written",
+          "prompt": "Qual é a saudação sugerida ?",
+          "answers": [
+            "prezado sr costa",
+            "prezado senhor costa",
+            "prezado"
+          ],
+          "explain": "Algo como « Prezado Sr. Costa »."
+        },
+        {
+          "id": "pt-listen-email-urgente-q3",
+          "kind": "choice",
+          "prompt": "Onde fica o objetivo do e-mail ?",
+          "options": [
+            "Na primeira linha",
+            "No título do arquivo",
+            "No rodapé",
+            "Na assinatura"
+          ],
+          "answers": [
+            "Na primeira linha"
+          ],
+          "explain": "Em e-mail formal, o objetivo vem na primeira linha."
+        },
+        {
+          "id": "pt-listen-email-urgente-q4",
+          "kind": "written",
+          "prompt": "Como pedir o relatório com prazo ?",
+          "answers": [
+            "gostaria de receber até sexta",
+            "gostaria de receber ate sexta"
+          ],
+          "explain": "Use « gostaria de receber até sexta »; prazo no pedido ajuda."
+        },
+        {
+          "id": "pt-listen-email-urgente-q5",
+          "kind": "choice",
+          "prompt": "Para quem fica o « abraços » ?",
+          "options": [
+            "O time interno",
+            "O cliente novo",
+            "A diretoria",
+            "O recrutador"
+          ],
+          "answers": [
+            "O time interno"
+          ],
+          "explain": "Guarde « abraços » para o time interno."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "writing:email",
+        "vocab:work",
+        "function:make-requests"
+      ],
+      "exposureSkills": []
     }
   ]
 }

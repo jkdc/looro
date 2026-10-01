@@ -10466,6 +10466,2779 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u22",
+      "title": "Wir feiern",
+      "subtitle": "Partys, Geschenke, Wünsche",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "die-ueberraschung",
+          "title": "Die Überraschung",
+          "subtitle": "Kommst du auch ?",
+          "symbol": "party.popper",
+          "category": "Course",
+          "situation": "Lea plant eine Überraschungsparty für Tim: einladen, zusagen, mitbringen — alles im Präsens.",
+          "colorIndex": 0
+        },
+        {
+          "id": "der-geburtstag",
+          "title": "Der Geburtstag",
+          "subtitle": "Alles Gute !",
+          "symbol": "birthday.cake",
+          "category": "Course",
+          "situation": "Die Kerzen brennen, die Tür geht auf: « Überraschung ! » Gratulieren, wünschen, sich freuen.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u22-fest",
+          "title": "Eine Einladung",
+          "goal": "Einladen und zusagen: mit Präsens und Wollen wir … lädst du Freunde zur Party ein.",
+          "intro": {
+            "explanation": [
+              "Einladen geht einfach: « Ich feiere am Samstag eine Party. Kommst du auch ? » — Frage + Präsens, mehr brauchst du nicht.",
+              "Zusagen oder absagen: « Ja, ich komme gern ! », « Leider kann ich nicht. » — mit kann sagst du auch freundlich Nein.",
+              "Vorschläge mit Wollen wir … ? verbinden: « Wollen wir zusammen kommen ? » — der Infinitiv steht am Ende."
+            ],
+            "examples": [
+              {
+                "text": "Ich feiere am Samstag eine Party.",
+                "meaning": "Die Einladung im Präsens."
+              },
+              {
+                "text": "Kommst du auch ?",
+                "meaning": "Die direkte Frage."
+              },
+              {
+                "text": "Ja, ich komme gern !",
+                "meaning": "Die Zusage — gern zeigt Freude."
+              },
+              {
+                "text": "Leider kann ich nicht.",
+                "meaning": "Die höfliche Absage."
+              },
+              {
+                "text": "Wollen wir um sieben kommen ?",
+                "meaning": "Der Vorschlag mit Infinitiv am Ende."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich feiere …",
+              "meaning": "Einladen.",
+              "note": "Ich feiere am Freitag ein Fest."
+            },
+            {
+              "text": "Kommst du auch ?",
+              "meaning": "Freunde fragen.",
+              "note": "Kommst du zu meiner Party ?"
+            },
+            {
+              "text": "Ja, ich komme gern !",
+              "meaning": "Zusagen.",
+              "note": "gern zeigt: du freust dich."
+            },
+            {
+              "text": "Leider kann ich nicht.",
+              "meaning": "Absagen.",
+              "note": "leider macht das Nein höflich."
+            },
+            {
+              "text": "Wollen wir … ?",
+              "meaning": "Vorschlagen.",
+              "note": "Wollen wir zusammen fahren ?"
+            }
+          ],
+          "situation": "Lea ruft Mira an: sie feiert am Samstag eine Party für Tim. « Kommst du auch ? » — Mira sagt zu und fragt, was sie mitbringen soll.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Lade ein: du feierst am Samstag eine Party.",
+                "expected": [
+                  "Ich feiere am Samstag eine Party.",
+                  "ich feiere am samstag eine party"
+                ],
+                "focus": "ich feiere",
+                "watch": "Präsens + Zeitangabe."
+              },
+              {
+                "prompt": "Frag Mira, ob sie auch kommt.",
+                "expected": [
+                  "Kommst du auch ?",
+                  "kommst du auch",
+                  "Kommst du zu meiner Party ?"
+                ],
+                "focus": "kommst du",
+                "watch": "Ja/Nein-Frage im Präsens."
+              },
+              {
+                "prompt": "Sage ja — du kommst gern.",
+                "expected": [
+                  "Ja, ich komme gern.",
+                  "ja ich komme gern",
+                  "Ja, ich komme !"
+                ],
+                "focus": "ich komme",
+                "watch": "gern drückt Freude aus."
+              },
+              {
+                "prompt": "Sage höflich nein: du hast keine Zeit.",
+                "expected": [
+                  "Leider kann ich nicht.",
+                  "leider kann ich nicht",
+                  "Ich kann leider nicht.",
+                  "Leider habe ich keine Zeit."
+                ],
+                "focus": "leider",
+                "watch": "leider + kann: die Absage."
+              },
+              {
+                "prompt": "Schlage vor: ihr kommt zusammen um sieben.",
+                "expected": [
+                  "Wollen wir um sieben kommen ?",
+                  "wollen wir um sieben kommen",
+                  "Lass uns um sieben kommen !"
+                ],
+                "focus": "wollen wir",
+                "watch": "Vorschlag: Wollen wir … ?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u22-fest-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ am Samstag eine Party. Kommst du ? »",
+              "explain": "ich feiere: die Einladung im Präsens.",
+              "answers": [
+                "feiere"
+              ],
+              "options": [
+                "feiere",
+                "feierst",
+                "feiert",
+                "feiern"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-fest-e2",
+              "kind": "gap",
+              "prompt": "Leider ___ ich nicht. (keine Zeit)",
+              "explain": "Absage mit kann: Leider kann ich nicht.",
+              "answers": [
+                "kann"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-fest-e3",
+              "kind": "order",
+              "prompt": "Schlage um sieben Uhr vor.",
+              "explain": "Vorschlag: Wollen wir … ? + Infinitiv am Ende.",
+              "answers": [
+                "Wollen wir um sieben Uhr kommen"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-fest-e4",
+              "kind": "written",
+              "prompt": "Sage zu und zeige deine Freude.",
+              "explain": "Zusage: Ja, ich komme gern !",
+              "answers": [
+                "ja ich komme gern",
+                "ich komme gern",
+                "ja ich komme"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:make-suggestions",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u22-geschenkidee",
+          "title": "Was schenken wir ?",
+          "goal": "Über Geschenke sprechen: mit W-Fragen im Präsens findest du das richtige Geschenk.",
+          "intro": {
+            "explanation": [
+              "W-Fragen helfen beim Planen: « Was schenken wir Lena ? », « Was braucht sie ? » — Fragewort + Verb + Subjekt.",
+              "Im Laden fragst du so: « Haben Sie diese Tasse in Blau ? », « Was kostet das ? » — mit Sie bleibst du höflich.",
+              "Ideen sammeln mit Vorschlägen: « Schenken wir doch einen Kalender ! » — « Gute Idee ! »"
+            ],
+            "examples": [
+              {
+                "text": "Was schenken wir Lena ?",
+                "meaning": "Die Geschenkfrage."
+              },
+              {
+                "text": "Was braucht sie denn ?",
+                "meaning": "Nach dem Bedarf fragen."
+              },
+              {
+                "text": "Haben Sie diese Tasse in Blau ?",
+                "meaning": "Im Laden nach Farbe fragen."
+              },
+              {
+                "text": "Was kostet das Geschenkpapier ?",
+                "meaning": "Nach dem Preis fragen."
+              },
+              {
+                "text": "Schenken wir doch einen Kalender !",
+                "meaning": "Der Vorschlag mit doch."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Was schenkst du … ?",
+              "meaning": "Über Geschenke reden.",
+              "note": "Was schenkst du deiner Schwester ?"
+            },
+            {
+              "text": "Was brauchst du ?",
+              "meaning": "Nach Wünschen fragen.",
+              "note": "Ich brauche eine neue Tasche."
+            },
+            {
+              "text": "Haben Sie … ?",
+              "meaning": "Im Laden fragen.",
+              "note": "Haben Sie das auch in Rot ?"
+            },
+            {
+              "text": "Was kostet … ?",
+              "meaning": "Nach dem Preis fragen.",
+              "note": "Was kostet die Tasse ?"
+            },
+            {
+              "text": "Gute Idee !",
+              "meaning": "Zustimmen.",
+              "note": "Dann schenken wir einen Kalender."
+            }
+          ],
+          "situation": "Mira und Lea suchen ein Geburtstagsgeschenk für Tim. Kopfhörer sind zu teuer — also fragen sie im Laden nach einer Tasse mit Foto. « Was kostet sie ? »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag Mira, was ihr Tim schenkt.",
+                "expected": [
+                  "Was schenken wir Tim ?",
+                  "was schenken wir tim",
+                  "Was schenkst du Tim ?"
+                ],
+                "focus": "was schenken",
+                "watch": "W-Frage: was + Verb + Subjekt."
+              },
+              {
+                "prompt": "Frag, was Tim braucht.",
+                "expected": [
+                  "Was braucht Tim ?",
+                  "was braucht tim",
+                  "Was braucht er ?"
+                ],
+                "focus": "was braucht",
+                "watch": "brauchen + Sache."
+              },
+              {
+                "prompt": "Frag im Laden, ob es die Tasse in Blau gibt.",
+                "expected": [
+                  "Haben Sie die Tasse in Blau ?",
+                  "haben sie die tasse in blau",
+                  "Haben Sie die Tasse auch in Blau ?"
+                ],
+                "focus": "haben sie",
+                "watch": "Höflich im Laden: Haben Sie … ?"
+              },
+              {
+                "prompt": "Frag nach dem Preis der Tasse.",
+                "expected": [
+                  "Was kostet die Tasse ?",
+                  "was kostet die tasse",
+                  "Was kostet sie ?"
+                ],
+                "focus": "was kostet",
+                "watch": "Preisfrage mit was/wie viel."
+              },
+              {
+                "prompt": "Stimme dem Vorschlag zu: ein Kalender.",
+                "expected": [
+                  "Gute Idee !",
+                  "gute idee",
+                  "Das ist eine gute Idee !"
+                ],
+                "focus": "gute idee",
+                "watch": "Zustimmung: Gute Idee !"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u22-geschenkidee-e1",
+              "kind": "choice",
+              "prompt": "« Was ___ wir Lena zum Geburtstag ? »",
+              "explain": "wir schenken: W-Frage mit wir im Präsens.",
+              "answers": [
+                "schenken"
+              ],
+              "options": [
+                "schenken",
+                "schenkt",
+                "schenkst",
+                "geschenkt"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-geschenkidee-e2",
+              "kind": "gap",
+              "prompt": "Haben ___ diese Tasse in Blau ?",
+              "explain": "Im Laden fragt man höflich mit Sie.",
+              "answers": [
+                "Sie"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-geschenkidee-e3",
+              "kind": "order",
+              "prompt": "Frag im Laden nach dem Preis der Tasse.",
+              "explain": "Preisfrage: Was kostet + Sache ?",
+              "answers": [
+                "Was kostet die Tasse"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-geschenkidee-e4",
+              "kind": "written",
+              "prompt": "Sammle Ideen: frag, was Tim braucht.",
+              "explain": "W-Frage: Was braucht Tim ?",
+              "answers": [
+                "was braucht tim",
+                "was braucht er",
+                "was braucht tim denn"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u22-gratulieren",
+          "title": "Alles Gute !",
+          "goal": "Gratulieren und wünschen: Alles Gute, Herzlichen Glückwunsch — und die Freude zeigen.",
+          "intro": {
+            "explanation": [
+              "Der Geburtstagswunsch: « Alles Gute zum Geburtstag ! » oder « Herzlichen Glückwunsch ! » — beides klingt immer richtig.",
+              "Wünschen mit ich wünsche dir: « Ich wünsche dir viel Glück und Gesundheit. » — dir ist Dativ.",
+              "Freude zeigen: « Ich freue mich ! », « Danke, das ist lieb von dir ! » — so bedankst du dich für Geschenke."
+            ],
+            "examples": [
+              {
+                "text": "Alles Gute zum Geburtstag !",
+                "meaning": "Der Klassiker unter den Wünschen."
+              },
+              {
+                "text": "Herzlichen Glückwunsch !",
+                "meaning": "Für Feste und Erfolge."
+              },
+              {
+                "text": "Ich wünsche dir viel Glück.",
+                "meaning": "Der Wunsch mit wünschen + Dativ."
+              },
+              {
+                "text": "Danke, das ist lieb von dir !",
+                "meaning": "Sich für ein Geschenk bedanken."
+              },
+              {
+                "text": "Ich freue mich sehr !",
+                "meaning": "Die Freude zeigen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Alles Gute zum Geburtstag !",
+              "meaning": "Gratulieren.",
+              "note": "kurz und immer richtig"
+            },
+            {
+              "text": "Herzlichen Glückwunsch !",
+              "meaning": "Glückwunsch für Erfolge.",
+              "note": "auch: zur Prüfung, zum Kind"
+            },
+            {
+              "text": "Ich wünsche dir …",
+              "meaning": "Wünsche sagen.",
+              "note": "… viel Glück und Gesundheit."
+            },
+            {
+              "text": "Viel Glück ! / Viel Spaß !",
+              "meaning": "Kurze Wünsche.",
+              "note": "Viel Spaß bei der Party !"
+            },
+            {
+              "text": "Das ist lieb von dir !",
+              "meaning": "Sich bedanken.",
+              "note": "Danke, das ist lieb !"
+            }
+          ],
+          "situation": "Tim öffnet die Tür — und alle rufen « Überraschung ! » Lea gratuliert, Mira schenkt die Tasse. Tim freut sich: « Das ist lieb von euch ! »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Gratuliere Tim zum Geburtstag.",
+                "expected": [
+                  "Alles Gute zum Geburtstag.",
+                  "alles gute zum geburtstag",
+                  "Herzlichen Glückwunsch zum Geburtstag.",
+                  "Herzlichen Glueckwunsch zum Geburtstag."
+                ],
+                "focus": "alles gute",
+                "watch": "Der Standardwunsch: Alles Gute zum Geburtstag !"
+              },
+              {
+                "prompt": "Wünsch ihm viel Glück und Gesundheit.",
+                "expected": [
+                  "Ich wünsche dir viel Glück und Gesundheit.",
+                  "ich wünsche dir viel glück und gesundheit",
+                  "ich wünsche dir viel glueck und gesundheit"
+                ],
+                "focus": "ich wünsche",
+                "watch": "wünschen + Dativ: ich wünsche dir."
+              },
+              {
+                "prompt": "Bedanke dich für die Tasse — das Geschenk ist lieb.",
+                "expected": [
+                  "Danke, das ist lieb von dir.",
+                  "danke das ist lieb von dir",
+                  "Danke, das ist lieb von euch."
+                ],
+                "focus": "lieb von dir",
+                "watch": "Dank für Geschenke: das ist lieb von dir."
+              },
+              {
+                "prompt": "Sag, dass du dich sehr freust.",
+                "expected": [
+                  "Ich freue mich sehr.",
+                  "ich freue mich sehr",
+                  "Ich freue mich !"
+                ],
+                "focus": "ich freue mich",
+                "watch": "sich freuen: die Freude zeigen."
+              },
+              {
+                "prompt": "Wünsch ihm Spaß bei der Party.",
+                "expected": [
+                  "Viel Spaß bei der Party.",
+                  "viel spaß bei der party",
+                  "viel spass bei der party"
+                ],
+                "focus": "viel spaß",
+                "watch": "Viel + Nomen: der Kurz-Wunsch."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u22-gratulieren-e1",
+              "kind": "choice",
+              "prompt": "« ___ Gute zum Geburtstag ! »",
+              "explain": "Der feste Wunsch: Alles Gute zum Geburtstag !",
+              "answers": [
+                "Alles"
+              ],
+              "options": [
+                "Alles",
+                "Alle",
+                "Ganz",
+                "Viel"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-gratulieren-e2",
+              "kind": "gap",
+              "prompt": "Ich wünsche ___ viel Glück.",
+              "explain": "wünschen + Dativ: ich wünsche dir.",
+              "answers": [
+                "dir"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-gratulieren-e3",
+              "kind": "order",
+              "prompt": "Gratuliere herzlich zur bestandenen Prüfung.",
+              "explain": "Herzlichen Glückwunsch + Anlass.",
+              "answers": [
+                "Herzlichen Glückwunsch zur Prüfung"
+              ]
+            },
+            {
+              "id": "de-foundations-u22-gratulieren-e4",
+              "kind": "written",
+              "prompt": "Bedanke dich für ein Geschenk.",
+              "explain": "Dank für Geschenke: Das ist lieb von dir !",
+              "answers": [
+                "danke das ist lieb von dir",
+                "danke das ist lieb von euch",
+                "vielen dank für das geschenk",
+                "vielen dank fur das geschenk"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:make-suggestions",
+            "grammar:present-simple",
+            "vocab:feelings"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u23",
+      "title": "Kleidung und Größen",
+      "subtitle": "Im Geschäft",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "im-laden",
+          "title": "Im Laden",
+          "subtitle": "Welche Größe ?",
+          "symbol": "tshirt",
+          "category": "Course",
+          "situation": "Anna sucht ein T-Shirt in Größe M: Haben Sie das in Blau ? Und wo ist die Umkleide ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "an-der-kasse",
+          "title": "An der Kasse",
+          "subtitle": "Zahlen, bitte",
+          "symbol": "bag",
+          "category": "Course",
+          "situation": "Die Tasche gefällt dir — aber 80 Euro ? An der Kasse: bar oder mit Karte ? Und die Quittung nicht vergessen.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u23-laden",
+          "title": "Welche Größe ?",
+          "goal": "Im Kleiderladen einkaufen: Größe und Farbe fragen — ich suche, haben Sie … ?",
+          "intro": {
+            "explanation": [
+              "Sagen, was du suchst: « Ich suche ein T-Shirt. », « Ich suche eine Hose in Größe M. » — ein/eine passt sich dem Nomen an.",
+              "Im Laden fragen: « Haben Sie das auch in Blau ? », « Welche Größe haben Sie ? » — so fragt auch die Verkäuferin.",
+              "Mengen und Preise: « Ich nehme zwei T-Shirts. », « Wie viel kostet die Hose ? »"
+            ],
+            "examples": [
+              {
+                "text": "Ich suche ein T-Shirt.",
+                "meaning": "Suchen mit ein/eine + Nomen."
+              },
+              {
+                "text": "Welche Größe haben Sie ?",
+                "meaning": "Die Größe erfragen."
+              },
+              {
+                "text": "Haben Sie das auch in Blau ?",
+                "meaning": "Nach Farben fragen."
+              },
+              {
+                "text": "Ich nehme zwei T-Shirts.",
+                "meaning": "Mehrere Sachen kaufen."
+              },
+              {
+                "text": "Wie viel kostet die Hose ?",
+                "meaning": "Nach dem Preis fragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich suche …",
+              "meaning": "Sagen, was du willst.",
+              "note": "Ich suche eine Jacke."
+            },
+            {
+              "text": "Welche Größe … ?",
+              "meaning": "Die Größe fragen.",
+              "note": "Welche Größe haben Sie ?"
+            },
+            {
+              "text": "Größe S / M / L",
+              "meaning": "Die Kleidergrößen.",
+              "note": "Ich trage Größe M."
+            },
+            {
+              "text": "Haben Sie das in Blau ?",
+              "meaning": "Farbe und Modell fragen.",
+              "note": "auch: in Rot, in Weiß"
+            },
+            {
+              "text": "Wie viel kostet … ?",
+              "meaning": "Der Preis.",
+              "note": "Wie viel kostet das ?"
+            }
+          ],
+          "situation": "Anna steht im Laden und sucht ein T-Shirt für die Party. Die Verkäuferin fragt nach der Größe — M, blau — und zeigt ihr drei Modelle. « Wie viel kostet das ? »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag, was du suchst: ein T-Shirt.",
+                "expected": [
+                  "Ich suche ein T-Shirt.",
+                  "ich suche ein t-shirt",
+                  "Ich suche ein blaues T-Shirt."
+                ],
+                "focus": "ich suche",
+                "watch": "suchen + ein/eine + Nomen."
+              },
+              {
+                "prompt": "Die Verkäuferin fragt dich: welche Größe ? Schreib ihre Frage.",
+                "expected": [
+                  "Welche Größe haben Sie ?",
+                  "welche größe haben sie",
+                  "welche groesse haben sie",
+                  "Welche Größe brauchen Sie ?"
+                ],
+                "focus": "welche größe",
+                "watch": "Welche Größe + haben/brauchen."
+              },
+              {
+                "prompt": "Frag, ob es das T-Shirt auch in Blau gibt.",
+                "expected": [
+                  "Haben Sie das auch in Blau ?",
+                  "haben sie das auch in blau",
+                  "Gibt es das auch in Blau ?"
+                ],
+                "focus": "haben sie",
+                "watch": "Haben Sie das in + Farbe ?"
+              },
+              {
+                "prompt": "Kauf zwei T-Shirts.",
+                "expected": [
+                  "Ich nehme zwei T-Shirts.",
+                  "ich nehme zwei t-shirts",
+                  "Ich nehme die zwei T-Shirts."
+                ],
+                "focus": "ich nehme",
+                "watch": "nehmen = kaufen, am Ladentisch."
+              },
+              {
+                "prompt": "Frag nach dem Preis der Hose.",
+                "expected": [
+                  "Wie viel kostet die Hose ?",
+                  "wie viel kostet die hose",
+                  "Was kostet die Hose ?"
+                ],
+                "focus": "wie viel",
+                "watch": "Wie viel kostet + Singular."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u23-laden-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ eine Jacke in Größe M. »",
+              "explain": "ich suche: sagen, was du suchst.",
+              "answers": [
+                "suche"
+              ],
+              "options": [
+                "suche",
+                "suchst",
+                "sucht",
+                "suchen"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-laden-e2",
+              "kind": "gap",
+              "prompt": "Ich nehme ___ T-Shirts. (2)",
+              "explain": "Mengen: zwei T-Shirts.",
+              "answers": [
+                "zwei"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-laden-e3",
+              "kind": "order",
+              "prompt": "Frag im Laden nach der Größe des Kunden.",
+              "explain": "Welche Größe haben Sie ? — die Frage im Laden.",
+              "answers": [
+                "Welche Größe haben Sie"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-laden-e4",
+              "kind": "written",
+              "prompt": "Frag nach dem Preis vom T-Shirt.",
+              "explain": "Wie viel kostet … ? — die Preisfrage.",
+              "answers": [
+                "wie viel kostet das t-shirt",
+                "was kostet das t-shirt",
+                "wie viel kostet das t shirt"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:shopping",
+            "grammar:quantities",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u23-umkleide",
+          "title": "In der Umkleide",
+          "goal": "Anprobieren mit kann: Kann ich das anprobieren ? — und sagen, ob es passt.",
+          "intro": {
+            "explanation": [
+              "Anprobieren mit kann: « Kann ich das anprobieren ? » — damit öffnest du dir die Umkleide.",
+              "Passt es ? Drei Antworten: « Es passt gut. », « Es ist zu groß. », « Es ist zu klein. »",
+              "Höflich bitten: « Können Sie mir Größe L bringen ? » — können + Sie bleibt immer freundlich."
+            ],
+            "examples": [
+              {
+                "text": "Kann ich das anprobieren ?",
+                "meaning": "Die Bitte an der Umkleide."
+              },
+              {
+                "text": "Wo ist die Umkleide ?",
+                "meaning": "Den Ort fragen."
+              },
+              {
+                "text": "Es passt gut !",
+                "meaning": "Die Jacke sitzt."
+              },
+              {
+                "text": "Die Hose ist zu klein.",
+                "meaning": "Zu eng, zu kurz, zu weit."
+              },
+              {
+                "text": "Können Sie mir Größe L bringen ?",
+                "meaning": "Die Bitte an die Verkäuferin."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Kann ich … anprobieren ?",
+              "meaning": "Anprobieren fragen.",
+              "note": "Kann ich die Jacke anprobieren ?"
+            },
+            {
+              "text": "Wo ist die Umkleide ?",
+              "meaning": "Den Ort fragen.",
+              "note": "die Kabine im Geschäft"
+            },
+            {
+              "text": "Es passt (gut).",
+              "meaning": "Die richtige Größe.",
+              "note": "Der Pulli passt perfekt."
+            },
+            {
+              "text": "zu groß / zu klein / zu eng",
+              "meaning": "Passt nicht.",
+              "note": "Die Jacke ist zu eng."
+            },
+            {
+              "text": "Können Sie mir … bringen ?",
+              "meaning": "Höflich bitten.",
+              "note": "… eine andere Größe bringen ?"
+            }
+          ],
+          "situation": "Anna probiert das blaue T-Shirt an: zu eng. « Kann ich Größe L probieren ? » — Die Verkäuferin bringt es. « Und, passt es ? » — « Ja, jetzt passt es gut ! »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag höflich, ob du die Jacke anprobieren kannst.",
+                "expected": [
+                  "Kann ich die Jacke anprobieren ?",
+                  "kann ich die jacke anprobieren",
+                  "Darf ich die Jacke anprobieren ?"
+                ],
+                "focus": "kann ich",
+                "watch": "Kann ich + anprobieren ?"
+              },
+              {
+                "prompt": "Frag, wo die Umkleide ist.",
+                "expected": [
+                  "Wo ist die Umkleide ?",
+                  "wo ist die umkleide",
+                  "Wo sind die Umkleiden ?"
+                ],
+                "focus": "wo ist",
+                "watch": "Wo ist + Ort ?"
+              },
+              {
+                "prompt": "Die Hose ist zu klein. Sag es der Verkäuferin.",
+                "expected": [
+                  "Die Hose ist zu klein.",
+                  "die hose ist zu klein",
+                  "Sie ist zu klein."
+                ],
+                "focus": "zu klein",
+                "watch": "zu + Adjektiv = passt nicht."
+              },
+              {
+                "prompt": "Bitte um Größe L.",
+                "expected": [
+                  "Können Sie mir Größe L bringen ?",
+                  "können sie mir größe l bringen",
+                  "können sie mir groesse l bringen",
+                  "Haben Sie Größe L ?"
+                ],
+                "focus": "können sie",
+                "watch": "Können Sie mir … ? = Bitte im Laden."
+              },
+              {
+                "prompt": "Sag: die Jacke sitzt perfekt.",
+                "expected": [
+                  "Die Jacke passt perfekt.",
+                  "die jacke passt perfekt",
+                  "Es passt perfekt."
+                ],
+                "focus": "passt",
+                "watch": "passen = die richtige Größe."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u23-umkleide-e1",
+              "kind": "choice",
+              "prompt": "« Kann ich die Jacke ___ ? » (probieren)",
+              "explain": "trennbar: anprobieren — ich probiere … an.",
+              "answers": [
+                "anprobieren"
+              ],
+              "options": [
+                "anprobieren",
+                "probieren",
+                "ausprobieren an",
+                "probieren an"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-umkleide-e2",
+              "kind": "gap",
+              "prompt": "Die Schuhe ___ nicht. (falsche Größe)",
+              "explain": "passen + nicht: die falsche Größe.",
+              "answers": [
+                "passen"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-umkleide-e3",
+              "kind": "order",
+              "prompt": "Bitte die Verkäuferin um eine andere Größe.",
+              "explain": "Höfliche Bitte: Können Sie mir … bringen ?",
+              "answers": [
+                "Können Sie mir eine andere Größe bringen"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-umkleide-e4",
+              "kind": "written",
+              "prompt": "Sag mit zu, warum die Hose nicht passt.",
+              "explain": "zu + Adjektiv: Die Hose ist zu eng.",
+              "answers": [
+                "die hose ist zu eng",
+                "sie ist zu eng",
+                "die hose ist zu klein"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "function:go-shopping",
+            "grammar:can",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:can"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u23-kasse",
+          "title": "Zu teuer ?",
+          "goal": "An der Kasse zahlen und über Preise reden: Wie viel … ? — Das ist zu teuer.",
+          "intro": {
+            "explanation": [
+              "Über Preise reden: « Wie viel kostet das ? », « 80 Euro ? Das ist zu teuer ! » — zu + Adjektiv zeigt dein Gefühl.",
+              "Nach Rabatt fragen: « Ist das im Angebot ? » — im Angebot heißt: gerade billiger.",
+              "Zahlen: « Ich zahle mit Karte. », « Bar, bitte. » — und: « Die Quittung, bitte ! »"
+            ],
+            "examples": [
+              {
+                "text": "Das ist zu teuer.",
+                "meaning": "80 Euro ? Nein !"
+              },
+              {
+                "text": "Ist das im Angebot ?",
+                "meaning": "Nach Rabatt fragen."
+              },
+              {
+                "text": "Ich nehme es trotzdem.",
+                "meaning": "Trotzdem kaufen."
+              },
+              {
+                "text": "Bar oder mit Karte ?",
+                "meaning": "Die Frage an der Kasse."
+              },
+              {
+                "text": "Die Quittung, bitte.",
+                "meaning": "Den Beleg nicht vergessen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "zu teuer / zu billig",
+              "meaning": "Preis-Gefühl.",
+              "note": "Das T-Shirt ist zu teuer."
+            },
+            {
+              "text": "Ist das im Angebot ?",
+              "meaning": "Nach Rabatt fragen.",
+              "note": "im Angebot = gerade billiger"
+            },
+            {
+              "text": "Ich nehme es.",
+              "meaning": "Entscheiden.",
+              "note": "Ich nehme die Tasche."
+            },
+            {
+              "text": "Bar oder mit Karte ?",
+              "meaning": "Bezahlen.",
+              "note": "Ich zahle bar, bitte."
+            },
+            {
+              "text": "Die Quittung, bitte.",
+              "meaning": "Beleg verlangen.",
+              "note": "brauchst du für den Umtausch"
+            }
+          ],
+          "situation": "Die Tasche kostet 80 Euro — zu teuer, findet Anna. « Ist sie im Angebot ? » Nein, aber sie gefällt ihr. An der Kasse zahlt sie mit Karte und nimmt die Quittung mit.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag: 80 Euro sind zu teuer.",
+                "expected": [
+                  "Das ist zu teuer.",
+                  "das ist zu teuer",
+                  "80 Euro ? Das ist zu teuer !"
+                ],
+                "focus": "zu teuer",
+                "watch": "zu + Adjektiv = dein Gefühl zum Preis."
+              },
+              {
+                "prompt": "Frag, ob die Tasche im Angebot ist.",
+                "expected": [
+                  "Ist die Tasche im Angebot ?",
+                  "ist die tasche im angebot",
+                  "Ist das im Angebot ?"
+                ],
+                "focus": "im angebot",
+                "watch": "im Angebot = gerade billiger."
+              },
+              {
+                "prompt": "Entscheide dich: du nimmst die Tasche.",
+                "expected": [
+                  "Ich nehme die Tasche.",
+                  "ich nehme die tasche",
+                  "Ich nehme es."
+                ],
+                "focus": "ich nehme",
+                "watch": "nehmen = kaufen."
+              },
+              {
+                "prompt": "Die Kassiererin fragt: bar oder Karte ? Antworte: Karte.",
+                "expected": [
+                  "Mit Karte, bitte.",
+                  "mit karte bitte",
+                  "Ich zahle mit Karte."
+                ],
+                "focus": "mit karte",
+                "watch": "mit Karte oder bar."
+              },
+              {
+                "prompt": "Verlang die Quittung.",
+                "expected": [
+                  "Die Quittung, bitte.",
+                  "die quittung bitte",
+                  "Kann ich die Quittung haben ?"
+                ],
+                "focus": "quittung",
+                "watch": "Die Quittung brauchst du für den Umtausch."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u23-kasse-e1",
+              "kind": "choice",
+              "prompt": "« 100 Euro für eine Tasche ? Das ist zu ___ ! »",
+              "explain": "zu teuer = der Preis ist zu hoch.",
+              "answers": [
+                "teuer"
+              ],
+              "options": [
+                "teuer",
+                "teure",
+                "kostet",
+                "zahlen"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-kasse-e2",
+              "kind": "gap",
+              "prompt": "Ich zahle ___. (keine Karte)",
+              "explain": "bar zahlen = mit Geld.",
+              "answers": [
+                "bar"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-kasse-e3",
+              "kind": "order",
+              "prompt": "Verlang an der Kasse den Beleg.",
+              "explain": "Die Quittung, bitte ! — der Beleg.",
+              "answers": [
+                "Die Quittung bitte"
+              ]
+            },
+            {
+              "id": "de-foundations-u23-kasse-e4",
+              "kind": "written",
+              "prompt": "Frag, ob der Pullover im Angebot ist.",
+              "explain": "im Angebot = gerade billiger: Ist das im Angebot ?",
+              "answers": [
+                "ist der pullover im angebot",
+                "ist der pulli im angebot",
+                "ist das im angebot"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:shopping",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u24",
+      "title": "Große Einkäufe",
+      "subtitle": "Vergleichen und entscheiden",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "der-vergleich",
+          "title": "Der Vergleich",
+          "subtitle": "Besser oder am besten ?",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Sofa, Laptop, Fernseher: günstiger als, am teuersten — der Warenkorb wird mit dem Kopf gefüllt.",
+          "colorIndex": 0
+        },
+        {
+          "id": "die-ratenzahlung",
+          "title": "Auf Raten",
+          "subtitle": "Bezahlen ohne alles auf einmal",
+          "symbol": "creditcard",
+          "category": "Course",
+          "situation": "600 Euro auf einmal ? Geht nicht — geht doch: in Raten, mit Begründung und Plan.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u24-vergleichen",
+          "title": "Besser oder am besten ?",
+          "goal": "Produkte vergleichen: günstiger als, am günstigsten — so findest du das beste Angebot.",
+          "intro": {
+            "explanation": [
+              "Vergleichen mit als: « Dieses Sofa ist günstiger als das andere. » — Adjektiv + -er + als.",
+              "Der Spitzenreiter mit am + -sten: « Dieser Laptop ist am teuersten. » — unregelmäßig: gut → besser → am besten.",
+              "Meinung mit finden: « Ich finde dieses Modell besser — es hat mehr Speicher. »"
+            ],
+            "examples": [
+              {
+                "text": "Dieses Sofa ist günstiger als das andere.",
+                "meaning": "Vergleich mit als."
+              },
+              {
+                "text": "Der Tisch ist größer und schwerer.",
+                "meaning": "Kurze Adjektive: + er."
+              },
+              {
+                "text": "Dieser Laptop ist am teuersten.",
+                "meaning": "Die Spitze mit am + -sten."
+              },
+              {
+                "text": "Aber er ist auch am besten.",
+                "meaning": "gut → besser → am besten."
+              },
+              {
+                "text": "Ich finde das Modell besser.",
+                "meaning": "Meinung + Vergleich."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "… -er als",
+              "meaning": "Vergleichen.",
+              "note": "günstiger als, größer als"
+            },
+            {
+              "text": "am … -sten",
+              "meaning": "Die Spitze.",
+              "note": "am billigsten, am schnellsten"
+            },
+            {
+              "text": "gut → besser → am besten",
+              "meaning": "Unregelmäßig.",
+              "note": "Dieses Angebot ist am besten."
+            },
+            {
+              "text": "viel → mehr",
+              "meaning": "Auch unregelmäßig.",
+              "note": "Er hat mehr Speicher."
+            },
+            {
+              "text": "Ich finde … besser",
+              "meaning": "Meinung + Vergleich.",
+              "note": "Ich finde Variante A besser."
+            }
+          ],
+          "situation": "Lena sucht ein Sofa. Das erste ist billig aber klein, das zweite ist teuer. Online vergleicht sie: « Dieses hier ist günstiger als das rote — und am bequemsten. Ich nehme es ! »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Vergleiche: das grüne Sofa ist günstiger als das rote.",
+                "expected": [
+                  "Das grüne Sofa ist günstiger als das rote.",
+                  "das grüne sofa ist günstiger als das rote",
+                  "das gruene sofa ist guenstiger als das rote"
+                ],
+                "focus": "günstiger als",
+                "watch": "Adjektiv + -er + als."
+              },
+              {
+                "prompt": "Sag: dieser Laptop ist der teuerste.",
+                "expected": [
+                  "Dieser Laptop ist am teuersten.",
+                  "dieser laptop ist am teuersten",
+                  "Das ist der teuerste Laptop."
+                ],
+                "focus": "am teuersten",
+                "watch": "Spitze: am + Adjektiv + -sten."
+              },
+              {
+                "prompt": "Sag: dieses Angebot ist das beste.",
+                "expected": [
+                  "Dieses Angebot ist am besten.",
+                  "dieses angebot ist am besten",
+                  "Das Angebot ist das beste."
+                ],
+                "focus": "am besten",
+                "watch": "gut → besser → am besten."
+              },
+              {
+                "prompt": "Sag deine Meinung: Modell A gefällt dir besser.",
+                "expected": [
+                  "Ich finde Modell A besser.",
+                  "ich finde modell a besser",
+                  "Modell A ist besser."
+                ],
+                "focus": "ich finde",
+                "watch": "finden + Komparativ."
+              },
+              {
+                "prompt": "Sag: der neue Fernseher hat mehr Speicher.",
+                "expected": [
+                  "Der neue Fernseher hat mehr Speicher.",
+                  "der neue fernseher hat mehr speicher"
+                ],
+                "focus": "mehr",
+                "watch": "viel → mehr."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u24-vergleichen-e1",
+              "kind": "choice",
+              "prompt": "« Dieser Tisch ist ___ als der alte. »",
+              "explain": "Vergleich mit als: Adjektiv + -er.",
+              "answers": [
+                "kleiner"
+              ],
+              "options": [
+                "kleiner",
+                "am kleinsten",
+                "klein",
+                "so klein"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-vergleichen-e2",
+              "kind": "gap",
+              "prompt": "Von allen ist dieses Angebot am ___. (gut)",
+              "explain": "unregelmäßig: gut → am besten.",
+              "answers": [
+                "besten"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-vergleichen-e3",
+              "kind": "order",
+              "prompt": "Vergleiche das Sofa mit dem Stuhl. (bequem)",
+              "explain": "bequem → bequemer + als.",
+              "answers": [
+                "Das Sofa ist bequemer als der Stuhl"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-vergleichen-e4",
+              "kind": "written",
+              "prompt": "Vergleiche zwei Handys: eines ist günstiger.",
+              "explain": "Vergleichssatz: … -er als …",
+              "answers": [
+                "das eine ist günstiger als das andere",
+                "das eine ist guenstiger als das andere",
+                "eins ist billiger als das andere",
+                "dieses handy ist günstiger als das andere",
+                "dieses handy ist guenstiger als das andere"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "function:go-shopping",
+            "grammar:superlatives",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u24-rueckgabe",
+          "title": "Zurückgeben",
+          "goal": "Probleme im Laden lösen: im Perfekt sagen, was du gekauft hast — und umtauschen.",
+          "intro": {
+            "explanation": [
+              "Was war ? Perfekt: « Ich habe die Jacke gestern gekauft. », « Sie hat nicht funktioniert. » — haben + Partizip.",
+              "Die Bitte: « Ich möchte die Jacke zurückgeben. » oder « Kann ich sie umtauschen ? »",
+              "Ohne Quittung geht nichts: « Haben Sie die Quittung ? » — « Ja, zum Glück noch. »"
+            ],
+            "examples": [
+              {
+                "text": "Ich habe diese Maschine letzte Woche gekauft.",
+                "meaning": "Perfekt mit haben."
+              },
+              {
+                "text": "Sie hat nicht funktioniert.",
+                "meaning": "Das Problem im Perfekt."
+              },
+              {
+                "text": "Ich möchte das Geld zurück.",
+                "meaning": "Die Rückgabe."
+              },
+              {
+                "text": "Kann ich sie umtauschen ?",
+                "meaning": "Gegen etwas anderes tauschen."
+              },
+              {
+                "text": "Haben Sie die Quittung dabei ?",
+                "meaning": "Der Beweis."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich habe … gekauft.",
+              "meaning": "Perfekt + Einkauf.",
+              "note": "… die Schuhe am Montag gekauft."
+            },
+            {
+              "text": "Es hat nicht funktioniert.",
+              "meaning": "Das Problem sagen.",
+              "note": "Das Gerät war kaputt."
+            },
+            {
+              "text": "… zurückgeben",
+              "meaning": "Zurück zum Laden.",
+              "note": "Ich möchte es zurückgeben."
+            },
+            {
+              "text": "… umtauschen",
+              "meaning": "Gegen Neues tauschen.",
+              "note": "Kann ich die Größe umtauschen ?"
+            },
+            {
+              "text": "die Quittung",
+              "meaning": "Der Beleg.",
+              "note": "Ohne Quittung keine Rückgabe."
+            }
+          ],
+          "situation": "Paul hat gestern einen Drucker gekauft — er hat nicht funktioniert. Im Laden zeigt er die Quittung: « Ich möchte das Geld zurück. » Er bekommt es und bestellt eine andere Marke.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Erzähl: du hast gestern eine Jacke gekauft. (Perfekt)",
+                "expected": [
+                  "Ich habe gestern eine Jacke gekauft.",
+                  "ich habe gestern eine jacke gekauft"
+                ],
+                "focus": "habe gekauft",
+                "watch": "Perfekt: haben + gekauft."
+              },
+              {
+                "prompt": "Sag das Problem: der Drucker hat nicht funktioniert.",
+                "expected": [
+                  "Der Drucker hat nicht funktioniert.",
+                  "der drucker hat nicht funktioniert",
+                  "Er hat nicht funktioniert."
+                ],
+                "focus": "hat funktioniert",
+                "watch": "Perfekt mit haben."
+              },
+              {
+                "prompt": "Gib die Jacke zurück.",
+                "expected": [
+                  "Ich möchte die Jacke zurückgeben.",
+                  "ich möchte die jacke zurückgeben",
+                  "Ich will die Jacke zurückgeben."
+                ],
+                "focus": "zurückgeben",
+                "watch": "trennbar: zurück + geben."
+              },
+              {
+                "prompt": "Frag, ob du sie umtauschen kannst.",
+                "expected": [
+                  "Kann ich sie umtauschen ?",
+                  "kann ich sie umtauschen",
+                  "Kann ich die Jacke umtauschen ?"
+                ],
+                "focus": "umtauschen",
+                "watch": "umtauschen = gegen etwas anderes tauschen."
+              },
+              {
+                "prompt": "Frag die Kundin nach ihrer Quittung.",
+                "expected": [
+                  "Haben Sie die Quittung ?",
+                  "haben sie die quittung",
+                  "Haben Sie die Quittung dabei ?"
+                ],
+                "focus": "die quittung",
+                "watch": "Ohne Quittung keine Rückgabe."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u24-rueckgabe-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ die Jacke gestern gekauft. »",
+              "explain": "Perfekt mit haben: habe gekauft.",
+              "answers": [
+                "habe"
+              ],
+              "options": [
+                "habe",
+                "bin",
+                "war",
+                "hatte"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-rueckgabe-e2",
+              "kind": "gap",
+              "prompt": "Die Maschine hat nicht ___. (funktionieren)",
+              "explain": "Partizip: hat funktioniert.",
+              "answers": [
+                "funktioniert"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-rueckgabe-e3",
+              "kind": "order",
+              "prompt": "Sag: du willst das Geld zurück.",
+              "explain": "Rückgabe: das Geld zurück (bekommen).",
+              "answers": [
+                "Ich möchte das Geld zurück"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-rueckgabe-e4",
+              "kind": "written",
+              "prompt": "Frag, ob du den Pullover umtauschen kannst.",
+              "explain": "umtauschen: Kann ich … umtauschen ?",
+              "answers": [
+                "kann ich den pullover umtauschen",
+                "kann ich den pulli umtauschen",
+                "kann ich ihn umtauschen"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "function:make-requests",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u24-raten",
+          "title": "In Raten zahlen",
+          "goal": "Große Käufe planen: deshalb und denn begründen, zuerst und dann ordnen — und in Raten zahlen.",
+          "intro": {
+            "explanation": [
+              "Preise begründen mit denn und deshalb: « Der Fernseher ist teuer, denn er hat viel Technik. » — « Deshalb zahle ich in Raten. »",
+              "Planen mit zuerst … dann: « Zuerst zahle ich mehr, dann jeden Monat 50 Euro. »",
+              "Raten fragen: « Kann ich in Raten zahlen ? », « Wie viel ist es pro Monat ? »"
+            ],
+            "examples": [
+              {
+                "text": "Kann ich in Raten zahlen ?",
+                "meaning": "Die Frage beim großen Kauf."
+              },
+              {
+                "text": "600 Euro, in Raten 50 pro Monat.",
+                "meaning": "Der Ratenplan."
+              },
+              {
+                "text": "Der Fernseher ist teuer, deshalb zahle ich in Raten.",
+                "meaning": "deshalb begründet die Folge."
+              },
+              {
+                "text": "Zuerst zahle ich mehr, dann weniger.",
+                "meaning": "Reihenfolge mit dann."
+              },
+              {
+                "text": "Ich nehme ihn, denn der Preis passt.",
+                "meaning": "denn begründet nebenbei."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "in Raten zahlen",
+              "meaning": "Monat für Monat zahlen.",
+              "note": "12 Raten à 50 Euro"
+            },
+            {
+              "text": "deshalb",
+              "meaning": "Begründen.",
+              "note": "Teuer, deshalb in Raten."
+            },
+            {
+              "text": "denn",
+              "meaning": "Begründen, nebenbei.",
+              "note": "Ich zahle in Raten, denn ich spare."
+            },
+            {
+              "text": "zuerst … dann …",
+              "meaning": "Reihenfolge.",
+              "note": "Zuerst Anzahlung, dann Raten."
+            },
+            {
+              "text": "pro Monat",
+              "meaning": "Der Monatspreis.",
+              "note": "50 Euro pro Monat"
+            }
+          ],
+          "situation": "Lena kauft einen Fernseher für 600 Euro. « Kann ich in Raten zahlen ? » — Ja: 12 Raten à 50 Euro. Sie sagt ja, denn so bleibt Geld für den Umzug übrig.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag im Geschäft, ob du in Raten zahlen kannst.",
+                "expected": [
+                  "Kann ich in Raten zahlen ?",
+                  "kann ich in raten zahlen"
+                ],
+                "focus": "in raten",
+                "watch": "in Raten = jeden Monat ein Stück."
+              },
+              {
+                "prompt": "Begründe mit deshalb: der Fernseher ist teuer, du zahlst in Raten.",
+                "expected": [
+                  "Der Fernseher ist teuer, deshalb zahle ich in Raten.",
+                  "der fernseher ist teuer deshalb zahle ich in raten",
+                  "Er ist teuer, deshalb zahle ich in Raten."
+                ],
+                "focus": "deshalb",
+                "watch": "deshalb + Verb an Position 2."
+              },
+              {
+                "prompt": "Begründe mit denn: du nimmst ihn, der Preis passt.",
+                "expected": [
+                  "Ich nehme ihn, denn der Preis passt.",
+                  "ich nehme ihn denn der preis passt"
+                ],
+                "focus": "denn",
+                "watch": "denn + Hauptsatz: kein neuer Verbplatz."
+              },
+              {
+                "prompt": "Sag die Reihenfolge: zuerst Anzahlung, dann Raten.",
+                "expected": [
+                  "Zuerst zahle ich die Anzahlung, dann die Raten.",
+                  "zuerst zahle ich die anzahlung dann die raten",
+                  "Zuerst die Anzahlung, dann die Raten."
+                ],
+                "focus": "zuerst dann",
+                "watch": "zuerst … dann … ordnet den Plan."
+              },
+              {
+                "prompt": "Frag nach dem Monatspreis: 50 Euro.",
+                "expected": [
+                  "Wie viel ist es pro Monat ?",
+                  "wie viel ist es pro monat",
+                  "Sind es 50 Euro pro Monat ?"
+                ],
+                "focus": "pro monat",
+                "watch": "pro Monat = jeden Monat."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u24-raten-e1",
+              "kind": "choice",
+              "prompt": "« Der Fernseher ist teuer, ___ zahle ich in Raten. »",
+              "explain": "deshalb + Verb an Position 2: die Begründung.",
+              "answers": [
+                "deshalb"
+              ],
+              "options": [
+                "deshalb",
+                "denn",
+                "aber",
+                "oder"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-raten-e2",
+              "kind": "gap",
+              "prompt": "Ich zahle 50 Euro pro ___. (jeden Monat)",
+              "explain": "pro Monat = jeden Monat.",
+              "answers": [
+                "Monat"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-raten-e3",
+              "kind": "order",
+              "prompt": "Frag, ob Ratenzahlung möglich ist.",
+              "explain": "Kann ich in Raten zahlen ? — die Standardfrage.",
+              "answers": [
+                "Kann ich in Raten zahlen"
+              ]
+            },
+            {
+              "id": "de-foundations-u24-raten-e4",
+              "kind": "written",
+              "prompt": "Begründe mit denn: du kaufst das Sofa, es ist günstig.",
+              "explain": "denn begründet im selben Satz.",
+              "answers": [
+                "ich kaufe das sofa denn es ist günstig",
+                "ich kaufe das sofa denn es ist guenstig",
+                "ich nehme das sofa denn es ist günstig",
+                "ich nehme das sofa denn es ist guenstig"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:connectors",
+            "vocab:shopping",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u25",
+      "title": "Reise vorbereiten",
+      "subtitle": "Koffer, Buchung, Abreise",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "der-koffer",
+          "title": "Der Koffer",
+          "subtitle": "Packen mit Plan",
+          "symbol": "suitcase",
+          "category": "Course",
+          "situation": "Was kommt mit — und was kommt in die Handtasche ? Reisepass, Ticket, Adapter: Nina packt mit Liste.",
+          "colorIndex": 0
+        },
+        {
+          "id": "die-abreise",
+          "title": "Die Abreise",
+          "subtitle": "Buchen und losfahren",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Flug um neun, Taxi um sieben: am Vortag wird geplant, gebucht und zweimal kontrolliert.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u25-koffer",
+          "title": "Koffer und Dokumente",
+          "goal": "Packen mit werden: Ich werde den Reisepass einpacken — so planst du deinen Koffer.",
+          "intro": {
+            "explanation": [
+              "Futur mit werden: « Ich werde nur das Wichtigste einpacken. » — werden + Infinitiv am Satzende.",
+              "Dokumente zuerst: « Der Reisepass kommt in die Handtasche. » — Reisepass, Ausweis, Buchungsbestätigung.",
+              "Bitten beim Packen: « Kannst du mir den Adapter geben ? » — kurz und konkret."
+            ],
+            "examples": [
+              {
+                "text": "Ich werde den Koffer heute Abend packen.",
+                "meaning": "Futur: werden + Infinitiv."
+              },
+              {
+                "text": "Du wirst alles Nötige finden.",
+                "meaning": "du wirst + Infinitiv."
+              },
+              {
+                "text": "Der Reisepass kommt in die Handtasche.",
+                "meaning": "Dokumente sicher verstauen."
+              },
+              {
+                "text": "Brauche ich ein Visum ?",
+                "meaning": "Vor der Reise nachfragen."
+              },
+              {
+                "text": "Kannst du mir den Adapter geben ?",
+                "meaning": "Die Bitte beim Packen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ich werde … + Infinitiv",
+              "meaning": "Futur planen.",
+              "note": "Ich werde früh packen."
+            },
+            {
+              "text": "der Reisepass / der Ausweis",
+              "meaning": "Die Dokumente.",
+              "note": "Ohne Pass keine Reise."
+            },
+            {
+              "text": "die Buchungsbestätigung",
+              "meaning": "Der Beleg fürs Hotel.",
+              "note": "auf dem Handy und gedruckt"
+            },
+            {
+              "text": "packen / einpacken",
+              "meaning": "In den Koffer.",
+              "note": "Ich packe den Koffer."
+            },
+            {
+              "text": "der Stecker-Adapter",
+              "meaning": "Fürs Ausland.",
+              "note": "Brauche ich einen Adapter ?"
+            }
+          ],
+          "situation": "Nina packt mit Liste: « Ich werde nur das Wichtigste mitnehmen. » Der Reisepass kommt in die Handtasche, der Adapter in den Koffer — und Ben gibt ihr die Buchungsbestätigung.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag deinen Pack-Plan: du packst heute Abend. (werden)",
+                "expected": [
+                  "Ich werde den Koffer heute Abend packen.",
+                  "ich werde den koffer heute abend packen",
+                  "Ich werde heute Abend packen."
+                ],
+                "focus": "werde packen",
+                "watch": "werden + Infinitiv am Ende."
+              },
+              {
+                "prompt": "Sag: der Pass kommt in die Handtasche.",
+                "expected": [
+                  "Der Reisepass kommt in die Handtasche.",
+                  "der reisepass kommt in die handtasche",
+                  "Der Pass kommt in die Handtasche."
+                ],
+                "focus": "der reisepass",
+                "watch": "Dokumente in die Handtasche."
+              },
+              {
+                "prompt": "Frag, ob du ein Visum brauchst.",
+                "expected": [
+                  "Brauche ich ein Visum ?",
+                  "brauche ich ein visum",
+                  "Muss ich ein Visum haben ?"
+                ],
+                "focus": "visum",
+                "watch": "Brauche ich … ? für Dokumente."
+              },
+              {
+                "prompt": "Bitt deinen Mitreisenden um den Adapter.",
+                "expected": [
+                  "Kannst du mir den Adapter geben ?",
+                  "kannst du mir den adapter geben",
+                  "Gibst du mir den Adapter ?"
+                ],
+                "focus": "kannst du",
+                "watch": "Bitte: Kannst du mir … geben ?"
+              },
+              {
+                "prompt": "Sag mit werden: du nimmst nur das Wichtigste mit.",
+                "expected": [
+                  "Ich werde nur das Wichtigste mitnehmen.",
+                  "ich werde nur das wichtigste mitnehmen",
+                  "Ich werde nur Wichtiges einpacken."
+                ],
+                "focus": "werde mitnehmen",
+                "watch": "trennbar: werde … mitnehmen."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u25-koffer-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ morgen den Koffer packen. »",
+              "explain": "Futur: werde + Infinitiv (packen).",
+              "answers": [
+                "werde"
+              ],
+              "options": [
+                "werde",
+                "will",
+                "möchte",
+                "habe"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-koffer-e2",
+              "kind": "gap",
+              "prompt": "Du ___ alles Nötige finden. (werden, du-Form)",
+              "explain": "du wirst + Infinitiv.",
+              "answers": [
+                "wirst"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-koffer-e3",
+              "kind": "order",
+              "prompt": "Sag, wo der Reisepass hingeht.",
+              "explain": "kommen in + Akkusativ: der Ort.",
+              "answers": [
+                "Der Reisepass kommt in die Handtasche"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-koffer-e4",
+              "kind": "written",
+              "prompt": "Frag, ob du ein Visum brauchst.",
+              "explain": "Brauche ich … ? — die Dokumentenfrage.",
+              "answers": [
+                "brauche ich ein visum",
+                "muss ich ein visum haben"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "vocab:travel",
+            "function:make-requests",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u25-buchen",
+          "title": "Buchen",
+          "goal": "Reise buchen mit werden: Ich werde den Flug buchen — und den Plan mit zuerst … dann erklären.",
+          "intro": {
+            "explanation": [
+              "Pläne mit werden: « Ich werde den Flug heute buchen. », « Wir werden am Freitag fliegen. »",
+              "Reihenfolge mit zuerst … dann: « Zuerst buche ich den Flug, dann das Hotel. »",
+              "Fragen zum Plan: « Wann wirst du buchen ? », « Wie viel wirst du zahlen ? »"
+            ],
+            "examples": [
+              {
+                "text": "Ich werde den Flug heute Abend buchen.",
+                "meaning": "Der Plan mit werden."
+              },
+              {
+                "text": "Wir werden am Freitag fliegen.",
+                "meaning": "wir werden + Infinitiv."
+              },
+              {
+                "text": "Zuerst der Flug, dann das Hotel.",
+                "meaning": "Reihenfolge mit dann."
+              },
+              {
+                "text": "Wann wirst du buchen ?",
+                "meaning": "Die Frage zum Plan."
+              },
+              {
+                "text": "Ich werde online reservieren.",
+                "meaning": "reservieren = fest halten."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "buchen / reservieren",
+              "meaning": "Fest machen.",
+              "note": "Ich buche einen Flug."
+            },
+            {
+              "text": "ich werde … buchen",
+              "meaning": "Plan in die Zukunft.",
+              "note": "Ich werde morgen buchen."
+            },
+            {
+              "text": "zuerst … dann …",
+              "meaning": "Reihenfolge planen.",
+              "note": "Zuerst Flug, dann Hotel."
+            },
+            {
+              "text": "ein Hotelzimmer",
+              "meaning": "Die Nacht bleiben.",
+              "note": "ein Zimmer für zwei Nächte"
+            },
+            {
+              "text": "Wann wirst du … ?",
+              "meaning": "Nach Plänen fragen.",
+              "note": "Wann wirst du buchen ?"
+            }
+          ],
+          "situation": "Nina und Ben planen die Reise: Nina wird den Flug buchen, Ben reserviert das Hotel. « Zuerst der Flug, dann das Hotel » — so machen sie es, denn am Freitag geht es los.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag deinen Plan: du buchst heute Abend den Flug. (werden)",
+                "expected": [
+                  "Ich werde heute Abend den Flug buchen.",
+                  "ich werde heute abend den flug buchen",
+                  "Ich werde den Flug heute buchen."
+                ],
+                "focus": "werde buchen",
+                "watch": "werden + Infinitiv am Satzende."
+              },
+              {
+                "prompt": "Sag: ihr fliegt am Freitag. (werden)",
+                "expected": [
+                  "Wir werden am Freitag fliegen.",
+                  "wir werden am freitag fliegen"
+                ],
+                "focus": "werden fliegen",
+                "watch": "wir werden + Infinitiv."
+              },
+              {
+                "prompt": "Sag die Reihenfolge: erst der Flug, dann das Hotel.",
+                "expected": [
+                  "Zuerst buche ich den Flug, dann das Hotel.",
+                  "zuerst buche ich den flug dann das hotel",
+                  "Zuerst der Flug, dann das Hotel."
+                ],
+                "focus": "zuerst dann",
+                "watch": "zuerst … dann … ordnet den Plan."
+              },
+              {
+                "prompt": "Frag Nina, wann sie buchen wird.",
+                "expected": [
+                  "Wann wirst du buchen ?",
+                  "wann wirst du buchen",
+                  "Wann wirst du das Hotel buchen ?"
+                ],
+                "focus": "wirst buchen",
+                "watch": "du wirst + Infinitiv in der Frage."
+              },
+              {
+                "prompt": "Reservier ein Zimmer für zwei Nächte.",
+                "expected": [
+                  "Ich reserviere ein Zimmer für zwei Nächte.",
+                  "ich reserviere ein zimmer für zwei nächte",
+                  "ich reserviere ein zimmer für zwei naechte",
+                  "Ich werde ein Zimmer für zwei Nächte reservieren."
+                ],
+                "focus": "reserviere",
+                "watch": "reservieren = das Zimmer fest halten."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u25-buchen-e1",
+              "kind": "choice",
+              "prompt": "« Wir ___ am Freitag fliegen. »",
+              "explain": "Futur: wir werden + Infinitiv.",
+              "answers": [
+                "werden"
+              ],
+              "options": [
+                "werden",
+                "wollen",
+                "würden",
+                "haben"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-buchen-e2",
+              "kind": "gap",
+              "prompt": "Zuerst buche ich den Flug, ___ das Hotel.",
+              "explain": "zuerst … dann …: die Reihenfolge.",
+              "answers": [
+                "dann"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-buchen-e3",
+              "kind": "order",
+              "prompt": "Frag, wann Ben buchen wird.",
+              "explain": "Futur-Frage: Wann wirst du buchen ?",
+              "answers": [
+                "Wann wirst du buchen"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-buchen-e4",
+              "kind": "written",
+              "prompt": "Sag deinen Plan: du wirst online reservieren.",
+              "explain": "werden + Infinitiv: der Plan.",
+              "answers": [
+                "ich werde online reservieren",
+                "ich werde das hotel online reservieren"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:travel",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u25-vortag",
+          "title": "Der Vortag",
+          "goal": "Am Tag vor der Reise: mit werden planen und mit deshalb und dann handeln.",
+          "intro": {
+            "explanation": [
+              "Der Abend vorher: « Morgen fliegen wir — ich werde früh aufstehen. » — werden zeigt: es ist der Plan.",
+              "Gründe mit deshalb: « Der Flug geht um neun, deshalb fahren wir um sieben los. » — Verb an Position 2.",
+              "Check mit dann: « Zuerst die Dokumente, dann der Koffer — dann können wir los. »"
+            ],
+            "examples": [
+              {
+                "text": "Ich werde um sechs Uhr aufstehen.",
+                "meaning": "Der Plan für morgen."
+              },
+              {
+                "text": "Der Flug geht um neun, deshalb fahren wir früh los.",
+                "meaning": "deshalb + Verb Position 2."
+              },
+              {
+                "text": "Ich werde ein Taxi zum Flughafen bestellen.",
+                "meaning": "trennbar: bestellen."
+              },
+              {
+                "text": "Zuerst die Dokumente, dann der Koffer.",
+                "meaning": "Checkliste mit dann."
+              },
+              {
+                "text": "Das Wetter wird schön.",
+                "meaning": "werden ohne Infinitiv: Zustand."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ich werde … aufstehen",
+              "meaning": "Morgen-Plan.",
+              "note": "trennbar: aufstehen → werde … aufstehen"
+            },
+            {
+              "text": "deshalb",
+              "meaning": "Grund → Folge.",
+              "note": "Später Flug, deshalb später los."
+            },
+            {
+              "text": "ein Taxi bestellen",
+              "meaning": "Zum Flughafen.",
+              "note": "Ich bestelle es für sieben."
+            },
+            {
+              "text": "losfahren",
+              "meaning": "Der Start.",
+              "note": "Wir fahren um sieben los."
+            },
+            {
+              "text": "vorher / danach",
+              "meaning": "Vor und nach.",
+              "note": "Vorher packen, danach schlafen."
+            }
+          ],
+          "situation": "Abend vor dem Flug: Nina checkt die Liste, Ben wird um sechs aufstehen und ein Taxi bestellen, denn der Flug geht um neun. « Zuerst die Dokumente, dann der Koffer — dann ist alles fertig. »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag deinen Plan: du stehst früh auf. (werden)",
+                "expected": [
+                  "Ich werde früh aufstehen.",
+                  "ich werde früh aufstehen",
+                  "Ich werde um sechs Uhr aufstehen."
+                ],
+                "focus": "werde aufstehen",
+                "watch": "trennbar: werde … aufstehen."
+              },
+              {
+                "prompt": "Begründe mit deshalb: der Flug geht um neun, ihr fahrt um sieben los.",
+                "expected": [
+                  "Der Flug geht um neun, deshalb fahren wir um sieben los.",
+                  "der flug geht um neun deshalb fahren wir um sieben los",
+                  "Der Flug geht um neun, deshalb fahren wir früh los."
+                ],
+                "focus": "deshalb",
+                "watch": "deshalb + Verb an Position 2."
+              },
+              {
+                "prompt": "Sag: du wirst ein Taxi bestellen.",
+                "expected": [
+                  "Ich werde ein Taxi bestellen.",
+                  "ich werde ein taxi bestellen",
+                  "Ich werde ein Taxi zum Flughafen bestellen."
+                ],
+                "focus": "taxi bestellen",
+                "watch": "bestellen = rufen und organisieren."
+              },
+              {
+                "prompt": "Sag die Reihenfolge: erst Dokumente, dann Koffer.",
+                "expected": [
+                  "Zuerst die Dokumente, dann der Koffer.",
+                  "zuerst die dokumente dann der koffer",
+                  "Zuerst checke ich die Dokumente, dann den Koffer."
+                ],
+                "focus": "zuerst dann",
+                "watch": "Checkliste: zuerst … dann."
+              },
+              {
+                "prompt": "Sag: das Wetter wird morgen schön.",
+                "expected": [
+                  "Das Wetter wird morgen schön.",
+                  "das wetter wird morgen schön",
+                  "das wetter wird morgen schoen",
+                  "Morgen wird das Wetter schön."
+                ],
+                "focus": "wird schön",
+                "watch": "werden + Adjektiv: Zustand in der Zukunft."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u25-vortag-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ morgen um sechs aufstehen. »",
+              "explain": "Futur: ich werde + Infinitiv.",
+              "answers": [
+                "werde"
+              ],
+              "options": [
+                "werde",
+                "werdest",
+                "willst",
+                "würde"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-vortag-e2",
+              "kind": "gap",
+              "prompt": "Der Flug geht um neun, ___ fahren wir um sieben los.",
+              "explain": "Grund → Folge: deshalb + Verb Position 2.",
+              "answers": [
+                "deshalb"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-vortag-e3",
+              "kind": "order",
+              "prompt": "Sag: du bestellst ein Taxi zum Flughafen. (werden)",
+              "explain": "werde + Infinitiv am Ende.",
+              "answers": [
+                "Ich werde ein Taxi zum Flughafen bestellen"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-vortag-e4",
+              "kind": "written",
+              "prompt": "Sag, wie das Wetter morgen wird: schön.",
+              "explain": "werden + Adjektiv: Das Wetter wird schön.",
+              "answers": [
+                "das wetter wird morgen schön",
+                "das wetter wird morgen schoen",
+                "morgen wird das wetter schön",
+                "morgen wird das wetter schoen"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "grammar:connectors",
+            "vocab:transport",
+            "function:make-future-plans"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u26",
+      "title": "Die Stadt, die ich will",
+      "subtitle": "Meinungen zum Viertel",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "mein-traumviertel",
+          "title": "Mein Traumviertel",
+          "subtitle": "Was fehlt der Stadt ?",
+          "symbol": "building.2",
+          "category": "Course",
+          "situation": "Verkehr, Miete, Lärm: Marla und Jonas diskutieren, welches Viertel lebenswerter werden könnte.",
+          "colorIndex": 0
+        },
+        {
+          "id": "gruen-im-viertel",
+          "title": "Grün im Viertel",
+          "subtitle": "Bäume statt Parkplätze",
+          "symbol": "leaf",
+          "category": "Course",
+          "situation": "Ein Park statt eines Parkhauses ? Bewusst einkaufen, weniger Müll — Argumente fürs Viertel.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u26-meinung",
+          "title": "Einerseits … andererseits",
+          "goal": "Differenziert Meinung sagen: mit einerseits/andererseits zeigst du beide Seiten eines Arguments.",
+          "intro": {
+            "explanation": [
+              "Beide Seiten sehen: « Einerseits ist der Verkehr praktisch, andererseits ist er laut. » — so klingt deine Meinung ausgewogen.",
+              "Position klar sagen: « Meiner Meinung nach braucht das Viertel mehr Grün. » — nach + Dativ, danach Hauptsatz.",
+              "Begründen mit dass: « Ich finde, dass man den Verkehr beruhigen sollte. » — das Verb steht ganz am Ende."
+            ],
+            "examples": [
+              {
+                "text": "Einerseits praktisch, andererseits laut.",
+                "meaning": "Beide Seiten in einem Satz."
+              },
+              {
+                "text": "Meiner Meinung nach fehlt hier Grün.",
+                "meaning": "Position mit Dativ."
+              },
+              {
+                "text": "Ich bin der Meinung, dass das Viertel lebenswerter werden kann.",
+                "meaning": "Die formelle Meinung."
+              },
+              {
+                "text": "Ich finde, dass die Straßen zu voll sind.",
+                "meaning": "dass + Verb am Ende."
+              },
+              {
+                "text": "Da bin ich anderer Meinung.",
+                "meaning": "Höflich widersprechen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "einerseits … andererseits …",
+              "meaning": "Zwei Seiten, ein Satz.",
+              "note": "Einerseits teuer, andererseits zentral."
+            },
+            {
+              "text": "meiner Meinung nach",
+              "meaning": "Position zeigen.",
+              "note": "nach + Dativ: meiner Meinung nach"
+            },
+            {
+              "text": "Ich bin der Meinung, dass …",
+              "meaning": "Klare Position.",
+              "note": "Verb am Satzende"
+            },
+            {
+              "text": "Ich finde, dass …",
+              "meaning": "Persönliche Sicht.",
+              "note": "Ich finde, dass es passt."
+            },
+            {
+              "text": "Da bin ich anderer Meinung.",
+              "meaning": "Widersprechen, höflich.",
+              "note": "Dann kommt dein Grund."
+            }
+          ],
+          "situation": "Stadtteilrunde: Marla findet das Viertel lebendig, aber zu laut. « Einerseits habe ich alles um die Ecke, andererseits schlafe ich bei offenem Fenster schlecht. » Jonas widerspricht höflich — und nennt seine Gründe.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Zeig beide Seiten: praktisch, aber laut. (einerseits/andererseits)",
+                "expected": [
+                  "Einerseits ist es praktisch, andererseits ist es laut.",
+                  "einerseits ist es praktisch andererseits ist es laut",
+                  "Einerseits praktisch, andererseits laut."
+                ],
+                "focus": "einerseits andererseits",
+                "watch": "Zwei Seiten in einem Satz."
+              },
+              {
+                "prompt": "Sag deine Position: das Viertel braucht mehr Grün. (meiner Meinung nach)",
+                "expected": [
+                  "Meiner Meinung nach braucht das Viertel mehr Grün.",
+                  "meiner meinung nach braucht das viertel mehr grün",
+                  "meiner meinung nach braucht das viertel mehr gruen",
+                  "Meiner Meinung nach fehlt hier Grün."
+                ],
+                "focus": "meiner meinung nach",
+                "watch": "nach + Dativ: meiner Meinung nach."
+              },
+              {
+                "prompt": "Sag mit dass: die Straßen sind zu voll.",
+                "expected": [
+                  "Ich finde, dass die Straßen zu voll sind.",
+                  "ich finde dass die strassen zu voll sind",
+                  "ich finde dass die straßen zu voll sind"
+                ],
+                "focus": "dass",
+                "watch": "dass-Satz: Verb ganz am Ende."
+              },
+              {
+                "prompt": "Widersprich höflich.",
+                "expected": [
+                  "Da bin ich anderer Meinung.",
+                  "da bin ich anderer meinung",
+                  "Ich sehe das anders."
+                ],
+                "focus": "anderer meinung",
+                "watch": "Höflich widersprechen + Grund."
+              },
+              {
+                "prompt": "Formuliere formell: das Bezirksamt soll handeln. (Meinung, dass)",
+                "expected": [
+                  "Ich bin der Meinung, dass das Bezirksamt handeln sollte.",
+                  "ich bin der meinung dass das bezirksamt handeln sollte",
+                  "Ich bin der Meinung, dass die Stadt handeln sollte."
+                ],
+                "focus": "der meinung dass",
+                "watch": "dass-Satz: Verb am Ende."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u26-meinung-e1",
+              "kind": "choice",
+              "prompt": "« Einerseits zentral, ___ sehr laut. »",
+              "explain": "einerseits … andererseits: die zwei Seiten.",
+              "answers": [
+                "andererseits"
+              ],
+              "options": [
+                "andererseits",
+                "anderseits",
+                "andersseits",
+                "anderenfalls"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-meinung-e2",
+              "kind": "gap",
+              "prompt": "Meiner Meinung ___ fehlt hier Grün.",
+              "explain": "meiner Meinung nach + Hauptsatz.",
+              "answers": [
+                "nach"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-meinung-e3",
+              "kind": "order",
+              "prompt": "Sag mit dass: der Verkehr sollte beruhigt werden.",
+              "explain": "dass-Satz: Verb ganz am Ende.",
+              "answers": [
+                "Ich finde dass der Verkehr beruhigt werden sollte"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-meinung-e4",
+              "kind": "written",
+              "prompt": "Nenne deine Meinung zum Viertel mit einer Begründung.",
+              "explain": "Position + Grund: so klingt eine überzeugende Meinung.",
+              "answers": [
+                "meiner meinung nach braucht das viertel mehr grün",
+                "meiner meinung nach braucht das viertel mehr gruen",
+                "ich finde dass die straßen zu voll sind",
+                "ich finde dass die strassen zu voll sind",
+                "meiner meinung nach fehlt hier grün",
+                "meiner meinung nach fehlt hier gruen"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u26-vorschlag",
+          "title": "Vorschläge fürs Viertel",
+          "goal": "Vorschläge machen: Man sollte … — mit Vergleich und Begründung überzeugst du die Runde.",
+          "intro": {
+            "explanation": [
+              "Vorschläge mit sollte: « Man sollte mehr Radwege bauen. » — sollte + Infinitiv am Ende, klingt konstruktiv.",
+              "Offiziell vorschlagen: « Ich schlage vor, dass wir einen Markttag starten. » — dass + Verb ganz am Ende.",
+              "Vergleichen, um zu überzeugen: « Ein Park wäre besser als ein Parkhaus. » — wäre ist der weiche Konjunktiv."
+            ],
+            "examples": [
+              {
+                "text": "Man sollte mehr Bäume pflanzen.",
+                "meaning": "Der Vorschlag mit sollte."
+              },
+              {
+                "text": "Die Stadt sollte den Verkehr beruhigen.",
+                "meaning": "sollte + Infinitiv am Ende."
+              },
+              {
+                "text": "Ich schlage vor, dass wir einen Markttag starten.",
+                "meaning": "Vorschlag mit dass."
+              },
+              {
+                "text": "Ein Park wäre besser als ein Parkhaus.",
+                "meaning": "Vergleich mit wäre."
+              },
+              {
+                "text": "Warum genau ein Park ?",
+                "meaning": "Nachfragen und stärken."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Man sollte …",
+              "meaning": "Der Grund-Vorschlag.",
+              "note": "Man sollte mehr Grün schaffen."
+            },
+            {
+              "text": "Ich schlage vor, dass …",
+              "meaning": "Offiziell vorschlagen.",
+              "note": "dass + Verb am Ende"
+            },
+            {
+              "text": "… wäre besser als …",
+              "meaning": "Vergleich, weich.",
+              "note": "Ein Park wäre günstiger."
+            },
+            {
+              "text": "Warum genau … ?",
+              "meaning": "Nachfragen.",
+              "note": "Warum genau ein Park ?"
+            },
+            {
+              "text": "Einverstanden !",
+              "meaning": "Zustimmen.",
+              "note": "Dann planen wir weiter."
+            }
+          ],
+          "situation": "Jonas will den alten Parkplatz in einen Park verwandeln. « Ich schlage vor, dass die Stadt dort Bäume und Bänke baut — ein Park wäre besser als ein Parkhaus. » Marla ist einverstanden, fragt aber nach den Kosten.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Schlage vor: mehr Radwege bauen. (man sollte)",
+                "expected": [
+                  "Man sollte mehr Radwege bauen.",
+                  "man sollte mehr radwege bauen"
+                ],
+                "focus": "man sollte",
+                "watch": "sollte + Infinitiv am Ende."
+              },
+              {
+                "prompt": "Schlage vor: die Stadt saniert den Markt. (ich schlage vor, dass)",
+                "expected": [
+                  "Ich schlage vor, dass die Stadt den Markt saniert.",
+                  "ich schlage vor dass die stadt den markt saniert"
+                ],
+                "focus": "ich schlage vor",
+                "watch": "trennbar: schlage … vor + dass."
+              },
+              {
+                "prompt": "Vergleiche weich: ein Park ist besser als ein Parkhaus. (wäre)",
+                "expected": [
+                  "Ein Park wäre besser als ein Parkhaus.",
+                  "ein park wäre besser als ein parkhaus",
+                  "Ein Park wäre schöner als ein Parkhaus.",
+                  "ein park wäre schoener als ein parkhaus"
+                ],
+                "focus": "wäre",
+                "watch": "wäre: der weiche Vergleich im Konjunktiv."
+              },
+              {
+                "prompt": "Frag nach dem Grund: genau ein Park ?",
+                "expected": [
+                  "Warum genau ein Park ?",
+                  "warum genau ein park",
+                  "Warum genau dort ?"
+                ],
+                "focus": "warum genau",
+                "watch": "Nachfragen zeigt Interesse."
+              },
+              {
+                "prompt": "Stimme dem Vorschlag zu.",
+                "expected": [
+                  "Einverstanden.",
+                  "einverstanden",
+                  "Einverstanden, machen wir !"
+                ],
+                "focus": "einverstanden",
+                "watch": "Einverstanden = ich stimme zu."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u26-vorschlag-e1",
+              "kind": "choice",
+              "prompt": "« Man ___ hier mehr Bäume pflanzen. »",
+              "explain": "Vorschlag: man sollte + Infinitiv.",
+              "answers": [
+                "sollte"
+              ],
+              "options": [
+                "sollte",
+                "soll",
+                "will",
+                "mag"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-vorschlag-e2",
+              "kind": "gap",
+              "prompt": "Ich schlage ___, dass wir einen Markttag starten.",
+              "explain": "trennbar: vorschlagen → schlage … vor.",
+              "answers": [
+                "vor"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-vorschlag-e3",
+              "kind": "order",
+              "prompt": "Sag weich: der Park ist besser als das Parkhaus. (wäre)",
+              "explain": "wäre + Komparativ + als.",
+              "answers": [
+                "Ein Park wäre besser als ein Parkhaus"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-vorschlag-e4",
+              "kind": "written",
+              "prompt": "Mach einen Vorschlag für dein Viertel.",
+              "explain": "Vorschlag + Begründung: Man sollte …",
+              "answers": [
+                "man sollte mehr bänke aufstellen",
+                "man sollte mehr baenke aufstellen",
+                "ich schlage vor dass wir einen markttag starten",
+                "man sollte den verkehr beruhigen"
+              ]
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "grammar:connectors",
+            "speaking:justify-opinion",
+            "grammar:comparatives"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u26-konsum",
+          "title": "Bewusst konsumieren",
+          "goal": "Argumentieren beim Konsum: erstens, außerdem, insgesamt — schriftlich und mündlich überzeugen.",
+          "intro": {
+            "explanation": [
+              "Argumente gliedern: « Erstens spart man Geld, außerdem produziert man weniger Müll. » — so baut man einen Text auf.",
+              "Vergleiche als Beleg: « Gebrauchte Möbel sind oft besser verarbeitet. » — der Komparativ macht das Argument konkret.",
+              "Fazit mit insgesamt: « Insgesamt ist Second-Hand die bessere Wahl. » — so schließt man ab."
+            ],
+            "examples": [
+              {
+                "text": "Ich kaufe bewusst Second-Hand.",
+                "meaning": "Der bewusste Konsum."
+              },
+              {
+                "text": "Erstens spart man Geld.",
+                "meaning": "Das erste Argument."
+              },
+              {
+                "text": "Außerdem produziert man weniger Müll.",
+                "meaning": "Das nächste Argument."
+              },
+              {
+                "text": "Gebrauchte Möbel sind oft besser verarbeitet.",
+                "meaning": "Beleg mit Vergleich."
+              },
+              {
+                "text": "Insgesamt ist das die bessere Wahl.",
+                "meaning": "Das Fazit."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "bewusst konsumieren",
+              "meaning": "Mit Absicht kaufen.",
+              "note": "Weniger, aber besser."
+            },
+            {
+              "text": "erstens / zweitens",
+              "meaning": "Argumente ordnen.",
+              "note": "Erstens Zeit, zweitens Geld."
+            },
+            {
+              "text": "außerdem",
+              "meaning": "Hinzufügen.",
+              "note": "Außerdem spart man Ressourcen."
+            },
+            {
+              "text": "insgesamt",
+              "meaning": "Das Fazit.",
+              "note": "Insgesamt überwiegen die Vorteile."
+            },
+            {
+              "text": "die bessere Wahl",
+              "meaning": "Vergleich als Urteil.",
+              "note": "Second-Hand ist die bessere Wahl."
+            }
+          ],
+          "situation": "Fürs Stadtteilblatt schreibt Marla einen Text: Reparatur-Café statt Kaufhauskette. « Erstens Geld, außerdem Müll, insgesamt: die bessere Wahl » — ihre drei Schritte im Argument.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Nenn dein erstes Argument: man spart Geld. (erstens)",
+                "expected": [
+                  "Erstens spart man Geld.",
+                  "erstens spart man geld",
+                  "Erstens: man spart Geld."
+                ],
+                "focus": "erstens",
+                "watch": "erstens ordnet das erste Argument."
+              },
+              {
+                "prompt": "Füge hinzu: man produziert weniger Müll. (außerdem)",
+                "expected": [
+                  "Außerdem produziert man weniger Müll.",
+                  "außerdem produziert man weniger müll",
+                  "ausserdem produziert man weniger muell"
+                ],
+                "focus": "außerdem",
+                "watch": "außerdem fügt das nächste Argument an."
+              },
+              {
+                "prompt": "Belege mit einem Vergleich: gebrauchte Möbel, gut verarbeitet.",
+                "expected": [
+                  "Gebrauchte Möbel sind oft besser verarbeitet.",
+                  "gebrauchte möbel sind oft besser verarbeitet",
+                  "Second-Hand ist oft besser verarbeitet."
+                ],
+                "focus": "besser verarbeitet",
+                "watch": "Komparativ als Beleg."
+              },
+              {
+                "prompt": "Fasse zusammen: Second-Hand ist die bessere Wahl. (insgesamt)",
+                "expected": [
+                  "Insgesamt ist Second-Hand die bessere Wahl.",
+                  "insgesamt ist second-hand die bessere wahl",
+                  "Insgesamt ist Second Hand die bessere Wahl."
+                ],
+                "focus": "insgesamt",
+                "watch": "insgesamt leitet das Fazit ein."
+              },
+              {
+                "prompt": "Sag den Satz komplett: du kaufst bewusst Second-Hand.",
+                "expected": [
+                  "Ich kaufe bewusst Second-Hand.",
+                  "ich kaufe bewusst second-hand",
+                  "Ich kaufe bewusst gebrauchte Sachen."
+                ],
+                "focus": "bewusst",
+                "watch": "bewusst = mit Absicht."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u26-konsum-e1",
+              "kind": "choice",
+              "prompt": "« ___ produziert man weniger Müll. »",
+              "explain": "außerdem fügt ein weiteres Argument hinzu.",
+              "answers": [
+                "Außerdem"
+              ],
+              "options": [
+                "Außerdem",
+                "Gegenüber",
+                "Während",
+                "Dennoch"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-konsum-e2",
+              "kind": "gap",
+              "prompt": "Erstens ___ man Geld, zweitens Zeit.",
+              "explain": "Argument + Verb: erstens spart man …",
+              "answers": [
+                "spart"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-konsum-e3",
+              "kind": "order",
+              "prompt": "Leite dein Fazit ein: Second-Hand ist die bessere Wahl. (insgesamt)",
+              "explain": "insgesamt + Fazitsatz.",
+              "answers": [
+                "Insgesamt ist Second-Hand die bessere Wahl"
+              ]
+            },
+            {
+              "id": "de-foundations-u26-konsum-e4",
+              "kind": "written",
+              "prompt": "Schreib einen Argumentsatz für bewussten Konsum.",
+              "explain": "Argument + Beleg: so startet ein Text.",
+              "answers": [
+                "gebrauchte sachen sind günstiger und nachhaltiger",
+                "gebrauchte sachen sind guenstiger und nachhaltiger",
+                "man sollte weniger und bewusster kaufen",
+                "second-hand spart geld und schützt die umwelt",
+                "second-hand spart geld und schuetzt die umwelt"
+              ]
+            }
+          ],
+          "skills": [
+            "writing:argument",
+            "function:express-opinion",
+            "grammar:connectors",
+            "grammar:comparatives"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ],
+          "exposureSkills": []
+        }
+      ]
     }
   ]
 }

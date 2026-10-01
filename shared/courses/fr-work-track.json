@@ -1,0 +1,565 @@
+{
+  "id": "fr-work-track",
+  "languageID": "fr",
+  "schemaVersion": 2,
+  "title": "Français au travail",
+  "subtitle": "Parcours pro",
+  "symbol": "briefcase",
+  "description": "Le français des réunions, des courriels et des entretiens — des situations professionnelles travaillées à voix haute. Un parcours qui accompagne Foundations.",
+  "units": [
+    {
+      "id": "fr-work-u1",
+      "title": "La vie au bureau",
+      "subtitle": "Réunions, courriels, entretiens",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "la-reunion",
+          "title": "En réunion",
+          "subtitle": "Avis et propositions",
+          "symbol": "person.3",
+          "category": "Course",
+          "situation": "Lundi 9 heures, réunion de projet : le planning est trop juste, chacun donne son avis et Léa récapitule les décisions.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-candidature",
+          "title": "La candidature",
+          "subtitle": "Courriels et entretien",
+          "symbol": "envelope",
+          "category": "Course",
+          "situation": "Vous visez un nouveau poste : le courriel formel avec le devis en pièce jointe, puis l'entretien où chaque réussite se chiffre.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-work-u1-reunions",
+          "title": "En réunion",
+          "goal": "Donner son avis et proposer en réunion : je pense que, je propose de, et le récapitulatif final.",
+          "intro": {
+            "explanation": [
+              "L'avis avec je pense que / à mon avis : « Je pense que le planning est trop optimiste. »",
+              "La proposition avec je propose de + infinitif : « Je propose de livrer vendredi et de prévenir le client. »",
+              "Le récap fait la décision : « Je récapitule : on livre vendredi, Marta prévient le client. On est d'accord ? »"
+            ],
+            "examples": [
+              {
+                "text": "Je pense que le planning est trop optimiste.",
+                "meaning": "L'avis franc."
+              },
+              {
+                "text": "Je propose de couper cette fonctionnalité.",
+                "meaning": "La proposition concrète."
+              },
+              {
+                "text": "D'un côté c'est rapide, de l'autre c'est risqué.",
+                "meaning": "Peser en réunion."
+              },
+              {
+                "text": "Tu as raison, mais il faut prévenir le client.",
+                "meaning": "Le contre-argument poli."
+              },
+              {
+                "text": "Qu'en pensez-vous ?",
+                "meaning": "Solliciter la salle."
+              },
+              {
+                "text": "Je récapitule : on livre vendredi.",
+                "meaning": "Verrouiller la décision."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je pense que + phrase",
+              "meaning": "L'avis clair.",
+              "note": "…que c'est jouable."
+            },
+            {
+              "text": "je propose de + infinitif",
+              "meaning": "La proposition actionnable.",
+              "note": "…de couper la fonctionnalité."
+            },
+            {
+              "text": "qu'en pensez-vous ?",
+              "meaning": "Ouvrir la discussion.",
+              "note": "en = de cette idée."
+            },
+            {
+              "text": "tu as raison, mais",
+              "meaning": "Nuancer sans froisser.",
+              "note": "…mais prévenons le client."
+            },
+            {
+              "text": "je récapitule",
+              "meaning": "Verrouiller la décision.",
+              "note": "chacun sait quoi faire."
+            },
+            {
+              "text": "on est d'accord ?",
+              "meaning": "Fermer la discussion.",
+              "note": "la question qui valide."
+            }
+          ],
+          "situation": "Réunion de lundi : le planning est trop juste — vous donnez votre avis, vous proposez de livrer vendredi et vous récapitulez les décisions.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Donne ton avis : le planning est trop optimiste.",
+                "expected": [
+                  "Je pense que le planning est trop optimiste.",
+                  "À mon avis, le planning est trop optimiste."
+                ],
+                "focus": "je pense que",
+                "watch": "je pense que + phrase complète."
+              },
+              {
+                "prompt": "Propose : livrer vendredi.",
+                "expected": [
+                  "Je propose de livrer vendredi."
+                ],
+                "focus": "je propose de",
+                "watch": "proposer de + infinitif : l'action suit l'avis."
+              },
+              {
+                "prompt": "Ton collègue a raison sur le budget, mais il faut prévenir le client : nuance.",
+                "expected": [
+                  "Tu as raison sur le budget, mais il faut prévenir le client.",
+                  "Tu as raison, mais prévenons le client."
+                ],
+                "focus": "tu as raison, mais",
+                "watch": "concéder d'abord, proposer ensuite."
+              },
+              {
+                "prompt": "Demande l'avis de la salle.",
+                "expected": [
+                  "Qu'en pensez-vous ?",
+                  "Qu'est-ce que vous en pensez ?"
+                ],
+                "focus": "qu'en pensez-vous",
+                "watch": "en = de cette proposition."
+              },
+              {
+                "prompt": "Récapitule : livraison vendredi, Marta prévient le client.",
+                "expected": [
+                  "Je récapitule : on livre vendredi, Marta prévient le client."
+                ],
+                "focus": "je récapitule",
+                "watch": "le récap transforme le débat en décisions."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-work-u1-reunions-e1",
+              "kind": "choice",
+              "prompt": "« Je ___ qu'on devrait avancer la réunion. » (donner son avis)",
+              "options": [
+                "pense",
+                "propose",
+                "récapitule",
+                "demande"
+              ],
+              "answers": [
+                "pense"
+              ],
+              "explain": "Je pense que + phrase : l'avis de base en réunion."
+            },
+            {
+              "id": "fr-work-u1-reunions-e2",
+              "kind": "gap",
+              "prompt": "Je ___ de livrer vendredi. (faire une proposition)",
+              "answers": [
+                "propose"
+              ],
+              "explain": "Je propose de + infinitif : l'avis qui devient action."
+            },
+            {
+              "id": "fr-work-u1-reunions-e3",
+              "kind": "order",
+              "prompt": "Récapitulez la décision : livraison vendredi.",
+              "answers": [
+                "Je récapitule on livre vendredi"
+              ],
+              "explain": "Je récapitule + les décisions : la réunion se termine."
+            },
+            {
+              "id": "fr-work-u1-reunions-e4",
+              "kind": "written",
+              "prompt": "Nuance : ton collègue a raison, mais prévenez le client.",
+              "answers": [
+                "tu as raison mais il faut prevenir le client",
+                "tu as raison mais il faut prévenir le client",
+                "tu as raison mais prevenons le client"
+              ],
+              "explain": "Tu as raison, mais : le désaccord qui avance."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "function:express-opinion",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-work-u1-courriels",
+          "title": "Le courriel formel",
+          "goal": "Écrire un courriel professionnel : je vous écris au sujet de, pourriez-vous + échéance, et une signature solide.",
+          "intro": {
+            "explanation": [
+              "Le but en première ligne : « Je vous écris au sujet de la réunion de lundi. »",
+              "La demande avec pourriez-vous + échéance : « Pourriez-vous me confirmer d'ici vendredi ? »",
+              "La clôture : « Vous trouverez le rapport ci-joint. Je vous remercie par avance. Cordialement, Léa »"
+            ],
+            "examples": [
+              {
+                "text": "Je vous écris au sujet du budget.",
+                "meaning": "Le but en première ligne."
+              },
+              {
+                "text": "Pourriez-vous me confirmer d'ici vendredi ?",
+                "meaning": "La demande datée."
+              },
+              {
+                "text": "Vous trouverez le rapport ci-joint.",
+                "meaning": "La pièce jointe annoncée."
+              },
+              {
+                "text": "Je reste à votre disposition pour toute question.",
+                "meaning": "La formule de service."
+              },
+              {
+                "text": "Je vous remercie par avance.",
+                "meaning": "Remercier avant la réponse."
+              },
+              {
+                "text": "Cordialement, Léa Martin",
+                "meaning": "La signature sûre."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je vous écris au sujet de",
+              "meaning": "Ouvrir avec le but.",
+              "note": "au sujet de la facture n° 128."
+            },
+            {
+              "text": "pourriez-vous + infinitif ?",
+              "meaning": "La demande formelle.",
+              "note": "Pourriez-vous relire ce mail ?"
+            },
+            {
+              "text": "d'ici + date",
+              "meaning": "L'échéance claire.",
+              "note": "d'ici vendredi, midi."
+            },
+            {
+              "text": "ci-joint",
+              "meaning": "La pièce jointe.",
+              "note": "Vous trouverez le devis ci-joint."
+            },
+            {
+              "text": "je vous remercie par avance",
+              "meaning": "Remercier avant la réponse.",
+              "note": "par avance = d'ores et déjà."
+            },
+            {
+              "text": "cordialement",
+              "meaning": "La signature passe-partout.",
+              "note": "entre collègues comme avec un client."
+            }
+          ],
+          "situation": "Il manque les chiffres du client : vous écrivez à Madame Dubois — le but en première ligne, la demande datée d'ici vendredi, le devis en pièce jointe.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ouvrez le courriel : le sujet, c'est la facture 128.",
+                "expected": [
+                  "Je vous écris au sujet de la facture 128."
+                ],
+                "focus": "au sujet de",
+                "watch": "le but en première ligne, pas de blabla."
+              },
+              {
+                "prompt": "Demandez la confirmation : d'ici vendredi.",
+                "expected": [
+                  "Pourriez-vous me confirmer d'ici vendredi ?",
+                  "Pourriez-vous me confirmer avant vendredi ?"
+                ],
+                "focus": "pourriez-vous",
+                "watch": "le conditionnel rend la demande impeccable."
+              },
+              {
+                "prompt": "Annoncez la pièce jointe : le devis.",
+                "expected": [
+                  "Vous trouverez le devis ci-joint.",
+                  "Veuillez trouver ci-joint le devis."
+                ],
+                "focus": "ci-joint",
+                "watch": "ci-joint = le fichier est dans le mail."
+              },
+              {
+                "prompt": "Remerciez avant même la réponse.",
+                "expected": [
+                  "Je vous remercie par avance."
+                ],
+                "focus": "par avance",
+                "watch": "par avance = avant que vous répondiez."
+              },
+              {
+                "prompt": "Signez avec la formule passe-partout.",
+                "expected": [
+                  "Cordialement, Léa",
+                  "Cordialement"
+                ],
+                "focus": "cordialement",
+                "watch": "cordialement marche partout."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-work-u1-courriels-e1",
+              "kind": "choice",
+              "prompt": "« Je vous écris au ___ de la réunion de lundi. »",
+              "options": [
+                "sujet",
+                "thème",
+                "fait",
+                "cas"
+              ],
+              "answers": [
+                "sujet"
+              ],
+              "explain": "Au sujet de + nom : l'ouverture qui annonce le but."
+            },
+            {
+              "id": "fr-work-u1-courriels-e2",
+              "kind": "gap",
+              "prompt": "___ vous me confirmer d'ici vendredi ? (la demande formelle)",
+              "answers": [
+                "pourriez"
+              ],
+              "explain": "Pourriez-vous + infinitif : la demande formelle au conditionnel."
+            },
+            {
+              "id": "fr-work-u1-courriels-e3",
+              "kind": "order",
+              "prompt": "Annoncez la pièce jointe (le devis).",
+              "answers": [
+                "Vous trouverez le devis ci joint"
+              ],
+              "explain": "Vous trouverez + fichier + ci-joint."
+            },
+            {
+              "id": "fr-work-u1-courriels-e4",
+              "kind": "written",
+              "prompt": "Clôturez avec la signature passe-partout.",
+              "answers": [
+                "cordialement",
+                "cordialement lea",
+                "bien cordialement"
+              ],
+              "explain": "Cordialement : la formule sûre, même à un client."
+            }
+          ],
+          "skills": [
+            "writing:email",
+            "function:make-requests",
+            "vocab:work",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-work-u1-entretiens",
+          "title": "Expérience et réussites",
+          "goal": "Valoriser son expérience en entretien : des réussites chiffrées au passé composé et des objectifs avec je voudrais.",
+          "intro": {
+            "explanation": [
+              "La réussite se chiffre au passé composé : « J'ai augmenté les ventes de 20 %. » — verbe + chiffre = preuve.",
+              "On relie l'action à la compétence : « J'ai géré cinq clients, ce qui m'a appris à négocier. »",
+              "L'objectif avec je voudrais : « D'ici cinq ans, je voudrais encadrer une petite équipe. »"
+            ],
+            "examples": [
+              {
+                "text": "J'ai piloté trois projets internationaux.",
+                "meaning": "L'expérience qui se compte."
+              },
+              {
+                "text": "J'ai augmenté les ventes de 20 %.",
+                "meaning": "La réussite chiffrée."
+              },
+              {
+                "text": "J'ai géré cinq clients, ce qui m'a appris à négocier.",
+                "meaning": "L'action devenue compétence."
+              },
+              {
+                "text": "Je suis fier d'avoir livré avant la date.",
+                "meaning": "La fierté assumée."
+              },
+              {
+                "text": "D'ici cinq ans, je voudrais encadrer une équipe.",
+                "meaning": "L'objectif daté."
+              },
+              {
+                "text": "Ce qui m'anime, c'est résoudre des problèmes concrets.",
+                "meaning": "La motivation claire."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'ai + participe + chiffre",
+              "meaning": "La réussite qui prouve.",
+              "note": "j'ai doublé le trafic."
+            },
+            {
+              "text": "ce qui m'a appris à + infinitif",
+              "meaning": "L'expérience devenue compétence.",
+              "note": "…à gérer les urgences."
+            },
+            {
+              "text": "je suis fier(e) d'avoir + participe",
+              "meaning": "La fierté dosée.",
+              "note": "…d'avoir livré à temps."
+            },
+            {
+              "text": "d'ici + durée",
+              "meaning": "L'objectif dans le temps.",
+              "note": "d'ici cinq ans."
+            },
+            {
+              "text": "ce qui m'anime, c'est",
+              "meaning": "La motivation sincère.",
+              "note": "…c'est le travail d'équipe."
+            },
+            {
+              "text": "piloter un projet",
+              "meaning": "Mener un projet.",
+              "note": "j'ai piloté trois projets."
+            }
+          ],
+          "situation": "Entretien final : trois projets pilotés, les ventes en hausse de 20 %, la négociation apprise sur le terrain — et l'objectif d'encadrer une équipe d'ici cinq ans.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Cite une réussite chiffrée : les ventes + 20 %.",
+                "expected": [
+                  "J'ai augmenté les ventes de 20 %."
+                ],
+                "focus": "passé composé + chiffre",
+                "watch": "le chiffre transforme l'affirmation en preuve."
+              },
+              {
+                "prompt": "Relie ton expérience à une compétence : cinq clients, et tu as appris à négocier.",
+                "expected": [
+                  "J'ai géré cinq clients, ce qui m'a appris à négocier."
+                ],
+                "focus": "ce qui m'a appris",
+                "watch": "l'action passée nourrit la compétence présente."
+              },
+              {
+                "prompt": "Exprime ta fierté : livré avant la date.",
+                "expected": [
+                  "Je suis fier d'avoir livré avant la date.",
+                  "Je suis fière d'avoir livré avant la date."
+                ],
+                "focus": "fier d'avoir",
+                "watch": "fier de + avoir + participe."
+              },
+              {
+                "prompt": "Donne ton objectif : encadrer une équipe, d'ici cinq ans.",
+                "expected": [
+                  "D'ici cinq ans, je voudrais encadrer une équipe."
+                ],
+                "focus": "d'ici",
+                "watch": "d'ici + durée : l'objectif se date."
+              },
+              {
+                "prompt": "Dis ce qui te motive : les problèmes concrets.",
+                "expected": [
+                  "Ce qui m'anime, c'est résoudre des problèmes concrets."
+                ],
+                "focus": "ce qui m'anime",
+                "watch": "c'est + infinitif : la motivation sans détour."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-work-u1-entretiens-e1",
+              "kind": "choice",
+              "prompt": "« J'ai ___ les ventes de 20 %. » (la réussite chiffrée)",
+              "options": [
+                "augmenté",
+                "augmenter",
+                "augmente",
+                "augmentais"
+              ],
+              "answers": [
+                "augmenté"
+              ],
+              "explain": "J'ai + participe : j'ai augmenté, le passé composé de la réussite."
+            },
+            {
+              "id": "fr-work-u1-entretiens-e2",
+              "kind": "gap",
+              "prompt": "D'___ cinq ans, je voudrais encadrer une équipe. (l'objectif daté)",
+              "answers": [
+                "ici"
+              ],
+              "explain": "D'ici + durée : l'objectif dans le temps."
+            },
+            {
+              "id": "fr-work-u1-entretiens-e3",
+              "kind": "order",
+              "prompt": "Reliez l'expérience à la compétence apprise.",
+              "answers": [
+                "J'ai géré cinq clients ce qui m'a appris à négocier"
+              ],
+              "explain": "Ce qui m'a appris à + infinitif : l'action devenue compétence."
+            },
+            {
+              "id": "fr-work-u1-entretiens-e4",
+              "kind": "written",
+              "prompt": "Dis ta motivation : les problèmes concrets.",
+              "answers": [
+                "ce qui m'anime c'est resoudre des problemes concrets",
+                "ce qui m'anime c'est résoudre des problèmes concrets",
+                "ce qui m'anime ce sont les problemes concrets"
+              ],
+              "explain": "Ce qui m'anime, c'est + infinitif : la motivation en clair."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-perfect",
+            "vocab:work",
+            "function:describe-goals"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        }
+      ]
+    }
+  ]
+}

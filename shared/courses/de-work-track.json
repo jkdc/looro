@@ -1,0 +1,566 @@
+{
+  "id": "de-work-track",
+  "languageID": "de",
+  "schemaVersion": 2,
+  "title": "Deutsch im Beruf",
+  "subtitle": "Berufsstrecke",
+  "symbol": "briefcase",
+  "description": "Das Deutsch von Besprechungen, E-Mails und Vorstellungsgesprächen — Berufssituationen, laut geübt. Eine Strecke, die neben den Foundations läuft.",
+  "units": [
+    {
+      "id": "de-work-u1",
+      "title": "Der Arbeitstag",
+      "subtitle": "Besprechungen, E-Mails, Vorstellungsgespräche",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "projekt-besprechung",
+          "title": "Die Projektbesprechung",
+          "subtitle": "Meinung und Vorschläge",
+          "symbol": "person.2",
+          "category": "Course",
+          "situation": "Montag um neun: Wo steht das Projekt, was fehlt — und wer schlägt was vor ? In der Besprechung zählt klare Meinung.",
+          "colorIndex": 0
+        },
+        {
+          "id": "bewerbungs-training",
+          "title": "Das Bewerbungstraining",
+          "subtitle": "Erfahrung, die sitzt",
+          "symbol": "person.badge.key",
+          "category": "Course",
+          "situation": "Probe fürs echte Gespräch: Erfahrung im Perfekt, Erfolge mit Zahlen — und die Frage nach dem eigenen Ziel.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-work-u1-besprechungen",
+          "title": "In Besprechungen",
+          "goal": "In Besprechungen Meinung sagen, vorschlagen und höflich widersprechen.",
+          "intro": {
+            "explanation": [
+              "Position mit Struktur: « Einerseits sind wir im Zeitplan, andererseits fehlt das Budget. » — beide Seiten in einem Satz.",
+              "Vorschläge mit schlagen vor: « Ich schlage vor, dass wir das Budget am Freitag klären. » — Verb ganz am Ende.",
+              "Widersprechen mit Punkt: « Da bin ich anderer Meinung, denn wir verlieren sonst Zeit. » — denn macht den Einwand stark."
+            ],
+            "examples": [
+              {
+                "text": "Wo stehen wir mit dem Projekt ?",
+                "meaning": "Die Eröffnungsfrage."
+              },
+              {
+                "text": "Einerseits im Zeitplan, andererseits fehlt das Budget.",
+                "meaning": "Beide Seiten nennen."
+              },
+              {
+                "text": "Ich schlage vor, dass wir das Budget am Freitag klären.",
+                "meaning": "Vorschlag mit Termin."
+              },
+              {
+                "text": "Da bin ich anderer Meinung.",
+                "meaning": "Klarer, höflicher Einwand."
+              },
+              {
+                "text": "Einverstanden — machen wir so.",
+                "meaning": "Beschluss fassen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Kommen wir zum Punkt …",
+              "meaning": "Struktur geben.",
+              "note": "Kommen wir zum letzten Punkt."
+            },
+            {
+              "text": "Ich bin der Meinung, dass …",
+              "meaning": "Position klar sagen.",
+              "note": "… wir früher starten sollten."
+            },
+            {
+              "text": "Ich schlage vor, dass …",
+              "meaning": "Vorschlag + dass.",
+              "note": "… wir einen Termin setzen."
+            },
+            {
+              "text": "Da bin ich anderer Meinung.",
+              "meaning": "Widersprechen.",
+              "note": ", denn … (der Grund)"
+            },
+            {
+              "text": "Einverstanden !",
+              "meaning": "Zustimmen, kurz.",
+              "note": "Dann notiert es jemand."
+            }
+          ],
+          "situation": "Montagsmeeting: das Projekt ist im Zeitplan, aber das Werbebudget fehlt. Ein Vorschlag mit Freitagstermin, ein Einwand mit denn — am Ende fassen alle einen Beschluss.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Eröffne den Punkt: Wo steht das Projekt ?",
+                "expected": [
+                  "Wo stehen wir mit dem Projekt ?",
+                  "wo stehen wir mit dem projekt",
+                  "Wo stehen wir beim Projekt ?"
+                ],
+                "focus": "wo stehen wir",
+                "watch": "Kommen wir zum Punkt … eröffnet."
+              },
+              {
+                "prompt": "Zeig beide Seiten: Zeitplan ja, Budget fehlt.",
+                "expected": [
+                  "Einerseits sind wir im Zeitplan, andererseits fehlt das Budget.",
+                  "einerseits sind wir im zeitplan andererseits fehlt das budget"
+                ],
+                "focus": "einerseits andererseits",
+                "watch": "Beide Seiten, ein Satz."
+              },
+              {
+                "prompt": "Schlag vor: das Budget wird am Freitag geklärt.",
+                "expected": [
+                  "Ich schlage vor, dass wir das Budget am Freitag klären.",
+                  "ich schlage vor dass wir das budget am freitag klären",
+                  "ich schlage vor dass wir das budget am freitag klaeren"
+                ],
+                "focus": "ich schlage vor",
+                "watch": "dass: Verb ganz am Ende."
+              },
+              {
+                "prompt": "Widersprich mit Grund: wir verlieren sonst Zeit. (denn)",
+                "expected": [
+                  "Da bin ich anderer Meinung, denn wir verlieren sonst Zeit.",
+                  "da bin ich anderer meinung denn wir verlieren sonst zeit",
+                  "Ich bin da anderer Meinung."
+                ],
+                "focus": "anderer meinung",
+                "watch": "denn + Grund macht den Einwand stark."
+              },
+              {
+                "prompt": "Fasse den Beschluss zusammen: so machen wir es.",
+                "expected": [
+                  "Einverstanden, machen wir so.",
+                  "einverstanden machen wir so"
+                ],
+                "focus": "einverstanden",
+                "watch": "Kurz zustimmen und abschließen."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-work-u1-besprechungen-e1",
+              "kind": "choice",
+              "prompt": "« Ich bin der ___, dass wir früher starten. »",
+              "explain": "feste Wendung: Ich bin der Meinung, dass …",
+              "answers": [
+                "Meinung"
+              ],
+              "options": [
+                "Meinung",
+                "Meine",
+                "Meinungen",
+                "Meinungs"
+              ]
+            },
+            {
+              "id": "de-work-u1-besprechungen-e2",
+              "kind": "gap",
+              "prompt": "Ich schlage ___, dass wir einen Termin setzen.",
+              "explain": "trennbar: vorschlagen → schlage … vor.",
+              "answers": [
+                "vor"
+              ]
+            },
+            {
+              "id": "de-work-u1-besprechungen-e3",
+              "kind": "order",
+              "prompt": "Widersprich höflich mit Grund: sonst verlieren wir Zeit. (denn)",
+              "explain": "anderer Meinung + denn + Grund.",
+              "answers": [
+                "Da bin ich anderer Meinung denn wir verlieren sonst Zeit"
+              ]
+            },
+            {
+              "id": "de-work-u1-besprechungen-e4",
+              "kind": "written",
+              "prompt": "Mach einen Vorschlag fürs nächste Meeting.",
+              "explain": "Vorschlag mit dass oder als Frage: beides geht.",
+              "answers": [
+                "ich schlage vor dass wir am freitag klären",
+                "ich schlage vor dass wir am freitag klaeren",
+                "ich schlage vor dass wir einen termin setzen",
+                "sollen wir das am freitag besprechen"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "function:express-opinion",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-work-u1-emails",
+          "title": "Formelle E-Mails",
+          "goal": "Eine formelle E-Mail schreiben: Anrede, Anliegen, Bitte mit Deadline und Grußformel.",
+          "intro": {
+            "explanation": [
+              "Gerüst: Anrede → Anliegen in Zeile eins → Bitte → Gruß. « Sehr geehrte Frau Meyer, ich schreibe Ihnen wegen des Budgets. »",
+              "Bitten im Konjunktiv: « Könnten Sie mir bis Mittwoch die Zahlen schicken ? » — höflich, nicht bettelnd.",
+              "Dank und Gruß: « Für eine kurze Rückmeldung wäre ich Ihnen dankbar. Mit freundlichen Grüßen »"
+            ],
+            "examples": [
+              {
+                "text": "Sehr geehrte Frau Meyer,",
+                "meaning": "Die formelle Anrede."
+              },
+              {
+                "text": "Ich schreibe Ihnen wegen des Budgets.",
+                "meaning": "Anliegen in Zeile eins."
+              },
+              {
+                "text": "Könnten Sie mir bis Mittwoch die Zahlen schicken ?",
+                "meaning": "Bitte + Deadline."
+              },
+              {
+                "text": "Für eine kurze Rückmeldung wäre ich Ihnen dankbar.",
+                "meaning": "Der Dank vor dem Gruß."
+              },
+              {
+                "text": "Mit freundlichen Grüßen, Daniel Weber",
+                "meaning": "Die sichere Grußformel."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Sehr geehrte(r) …,",
+              "meaning": "Formelle Anrede.",
+              "note": "bei Namen: Sehr geehrte Frau Krause"
+            },
+            {
+              "text": "Ich schreibe Ihnen wegen …",
+              "meaning": "Anliegen sofort.",
+              "note": "wegen + Nomen"
+            },
+            {
+              "text": "Könnten Sie bitte … ?",
+              "meaning": "Höfliche Bitte.",
+              "note": "Könnten Sie das prüfen ?"
+            },
+            {
+              "text": "Ich wäre Ihnen dankbar, wenn …",
+              "meaning": "Formeller Dank.",
+              "note": "wenn + Verb am Ende"
+            },
+            {
+              "text": "Mit freundlichen Grüßen",
+              "meaning": "Der Standard-Schluss.",
+              "note": "in fast jeder E-Mail richtig"
+            }
+          ],
+          "situation": "Daniel braucht die Quartalszahlen: formelle Anrede, Anliegen in Zeile eins, Bitte mit Deadline — und am Schluss Dank plus Mit freundlichen Grüßen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Beginn die formelle E-Mail an Frau Krause.",
+                "expected": [
+                  "Sehr geehrte Frau Krause,",
+                  "sehr geehrte frau krause",
+                  "Sehr geehrte Frau Krause"
+                ],
+                "focus": "sehr geehrte",
+                "watch": "Bei Namen: Sehr geehrte Frau/Herr …"
+              },
+              {
+                "prompt": "Nenn das Anliegen: du schreibst wegen des Budgets.",
+                "expected": [
+                  "Ich schreibe Ihnen wegen des Budgets.",
+                  "ich schreibe ihnen wegen des budgets"
+                ],
+                "focus": "ich schreibe ihnen",
+                "watch": "Anliegen in Zeile eins."
+              },
+              {
+                "prompt": "Bitt mit Deadline: Zahlen bis Mittwoch.",
+                "expected": [
+                  "Könnten Sie mir die Zahlen bis Mittwoch schicken ?",
+                  "könnten sie mir die zahlen bis mittwoch schicken",
+                  "koennten sie mir die zahlen bis mittwoch schicken"
+                ],
+                "focus": "könnten sie",
+                "watch": "Könnten Sie + Deadline."
+              },
+              {
+                "prompt": "Bedanke dich formell für eine Rückmeldung. (dankbar)",
+                "expected": [
+                  "Für eine kurze Rückmeldung wäre ich Ihnen dankbar.",
+                  "für eine kurze rückmeldung wäre ich ihnen dankbar",
+                  "Ich wäre Ihnen für eine Rückmeldung dankbar."
+                ],
+                "focus": "wäre dankbar",
+                "watch": "wäre ich Ihnen dankbar, wenn …"
+              },
+              {
+                "prompt": "Wähl die sichere Grußformel.",
+                "expected": [
+                  "Mit freundlichen Grüßen.",
+                  "mit freundlichen grüßen",
+                  "mit freundlichen gruessen",
+                  "Mit freundlichen Grüßen, Daniel"
+                ],
+                "focus": "mit freundlichen",
+                "watch": "Mit freundlichen Grüßen geht fast immer."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-work-u1-emails-e1",
+              "kind": "choice",
+              "prompt": "« ___ Frau Meyer, ich schreibe Ihnen wegen des Angebots. »",
+              "explain": "Formelle Anrede: Sehr geehrte Frau …",
+              "answers": [
+                "Sehr geehrte"
+              ],
+              "options": [
+                "Sehr geehrte",
+                "Hallo",
+                "Liebe",
+                "Hi"
+              ]
+            },
+            {
+              "id": "de-work-u1-emails-e2",
+              "kind": "gap",
+              "prompt": "Ich schreibe ___ wegen des Budgets. (formell)",
+              "explain": "formell: Ich schreibe Ihnen.",
+              "answers": [
+                "Ihnen"
+              ]
+            },
+            {
+              "id": "de-work-u1-emails-e3",
+              "kind": "order",
+              "prompt": "Schreib die Bitte mit Deadline: Zahlen, Mittwoch, schicken.",
+              "explain": "Könnten Sie + bitte + bis + Deadline.",
+              "answers": [
+                "Könnten Sie mir die Zahlen bis Mittwoch schicken"
+              ]
+            },
+            {
+              "id": "de-work-u1-emails-e4",
+              "kind": "written",
+              "prompt": "Schreib eine formelle Grußformel mit Namen (Daniel).",
+              "explain": "Mit freundlichen Grüßen + Name.",
+              "answers": [
+                "mit freundlichen grüßen daniel",
+                "mit freundlichen gruessen daniel",
+                "mit freundlichen grüßen daniel weber",
+                "mit freundlichen gruessen daniel weber"
+              ]
+            }
+          ],
+          "skills": [
+            "writing:email",
+            "function:make-requests",
+            "vocab:work",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-work-u1-vorstellungsgespraeche",
+          "title": "Vorstellungsgespräche",
+          "goal": "Erfahrung und Erfolge präsentieren: Perfekt, Zahlen und ein klares Ziel.",
+          "intro": {
+            "explanation": [
+              "Erfahrung im Perfekt: « Ich habe fünf Jahre als Projektleiterin gearbeitet. » — Zeit + Rolle + Beleg.",
+              "Erfolge mit Zahlen: « Wir haben das Projekt zwei Wochen früher abgeschlossen. » — Zahlen bleiben im Kopf.",
+              "Ziele zeigen: « Mein Ziel ist es, ein Team zu führen — deshalb bewerbe ich mich bei Ihnen. »"
+            ],
+            "examples": [
+              {
+                "text": "Ich habe fünf Jahre als Projektleiterin gearbeitet.",
+                "meaning": "Erfahrung im Perfekt."
+              },
+              {
+                "text": "Ich habe ein Team von sechs Personen organisiert.",
+                "meaning": "Konkrete Aufgabe."
+              },
+              {
+                "text": "Wir haben das Projekt zwei Wochen früher abgeschlossen.",
+                "meaning": "Erfolg mit Zahl."
+              },
+              {
+                "text": "Mein Ziel ist es, ein Team zu führen.",
+                "meaning": "Ziel mit zu + Infinitiv."
+              },
+              {
+                "text": "Deshalb habe ich mich bei Ihnen beworben.",
+                "meaning": "Der Schlusspunkt."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich habe … als … gearbeitet.",
+              "meaning": "Erfahrung sagen.",
+              "note": "… zwei Jahre als Analyst."
+            },
+            {
+              "text": "Ich habe … organisiert/geleitet.",
+              "meaning": "Aufgaben benennen.",
+              "note": "das Team, das Projekt"
+            },
+            {
+              "text": "Wir haben … abgeschlossen.",
+              "meaning": "Erfolg + Zahl.",
+              "note": "… rechtzeitig abgeschlossen."
+            },
+            {
+              "text": "Mein Ziel ist es, … zu …",
+              "meaning": "Ziel formulieren.",
+              "note": "… ein Team zu führen."
+            },
+            {
+              "text": "deshalb",
+              "meaning": "Bewerbung begründen.",
+              "note": "Deshalb bin ich hier."
+            }
+          ],
+          "situation": "Probespiel: Lena erzählt fünf Jahre Projektleitung, den Abschluss zwei Wochen früher — und schließt mit ihrem Ziel: ein Team führen, deshalb dieses Unternehmen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Erzähl deine Erfahrung: fünf Jahre Projektleitung. (Perfekt)",
+                "expected": [
+                  "Ich habe fünf Jahre als Projektleiterin gearbeitet.",
+                  "ich habe fünf jahre als projektleiterin gearbeitet",
+                  "Ich habe fünf Jahre als Projektleiter gearbeitet."
+                ],
+                "focus": "habe gearbeitet",
+                "watch": "Perfekt: habe + Partizip."
+              },
+              {
+                "prompt": "Nenn deine Aufgabe: ein Team von sechs organisieren.",
+                "expected": [
+                  "Ich habe ein Team von sechs Personen organisiert.",
+                  "ich habe ein team von sechs personen organisiert",
+                  "Ich habe ein Team organisiert."
+                ],
+                "focus": "habe organisiert",
+                "watch": "Konkrete Aufgabe + Zahl."
+              },
+              {
+                "prompt": "Erzähl den Erfolg: zwei Wochen früher fertig.",
+                "expected": [
+                  "Wir haben das Projekt zwei Wochen früher abgeschlossen.",
+                  "wir haben das projekt zwei wochen früher abgeschlossen",
+                  "wir haben das projekt zwei wochen frueher abgeschlossen",
+                  "Wir haben das Projekt früher abgeschlossen."
+                ],
+                "focus": "abgeschlossen",
+                "watch": "Erfolg + Zahl bleibt im Kopf."
+              },
+              {
+                "prompt": "Nenn dein Ziel: ein Team führen.",
+                "expected": [
+                  "Mein Ziel ist es, ein Team zu führen.",
+                  "mein ziel ist es ein team zu führen",
+                  "mein ziel ist es ein team zu fuehren"
+                ],
+                "focus": "mein ziel",
+                "watch": "es + zu + Infinitiv am Ende."
+              },
+              {
+                "prompt": "Begründe die Bewerbung mit deshalb.",
+                "expected": [
+                  "Deshalb habe ich mich bei Ihnen beworben.",
+                  "deshalb habe ich mich bei ihnen beworben",
+                  "Deshalb bewerbe ich mich bei Ihnen."
+                ],
+                "focus": "deshalb",
+                "watch": "deshalb + Verb an Position 2."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-work-u1-vorstellungsgespraeche-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ drei Jahre in einer Agentur gearbeitet. »",
+              "explain": "Perfekt mit haben: habe gearbeitet.",
+              "answers": [
+                "habe"
+              ],
+              "options": [
+                "habe",
+                "bin",
+                "war",
+                "hatte"
+              ]
+            },
+            {
+              "id": "de-work-u1-vorstellungsgespraeche-e2",
+              "kind": "gap",
+              "prompt": "Wir haben das Projekt rechtzeitig ___. (abschließen)",
+              "explain": "Partizip: haben abgeschlossen.",
+              "answers": [
+                "abgeschlossen"
+              ]
+            },
+            {
+              "id": "de-work-u1-vorstellungsgespraeche-e3",
+              "kind": "order",
+              "prompt": "Nenn dein Ziel: ein Team führen.",
+              "explain": "Mein Ziel ist es, … zu + Infinitiv.",
+              "answers": [
+                "Mein Ziel ist es ein Team zu führen"
+              ]
+            },
+            {
+              "id": "de-work-u1-vorstellungsgespraeche-e4",
+              "kind": "written",
+              "prompt": "Erzähl einen Erfolg mit Zahl.",
+              "explain": "Erfolg + Zahl: so bleibt man im Kopf.",
+              "answers": [
+                "wir haben das projekt zwei wochen früher abgeschlossen",
+                "wir haben das projekt zwei wochen frueher abgeschlossen",
+                "ich habe zehn projekte geleitet",
+                "wir haben das budget um zehn prozent gesenkt"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-perfect",
+            "vocab:work",
+            "function:describe-goals"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    }
+  ]
+}

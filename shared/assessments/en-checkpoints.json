@@ -968,7 +968,7 @@
         {
           "id": "checkpoint-en-c1-q4",
           "kind": "written",
-          "skill": "grammar:connectors",
+          "skill": "speaking:justify-opinion",
           "prompt": "Contrast with a noun: the rain / we walked. (despite)",
           "answers": [
             "despite the rain we walked",
@@ -995,7 +995,7 @@
         {
           "id": "checkpoint-en-c1-q6",
           "kind": "gap",
-          "skill": "grammar:passive-intro",
+          "skill": "writing:message",
           "prompt": "It has ___ observed that remote teams innovate differently.",
           "answers": [
             "been"

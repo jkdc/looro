@@ -2681,6 +2681,574 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-listen-ueberraschungsparty",
+      "languageID": "de",
+      "title": "Die Überraschungsparty",
+      "level": "A1",
+      "topic": "feste",
+      "unitID": "de-foundations-u22",
+      "text": "Samstag ist Tims Geburtstag. Lea ruft Mira an: « Wir machen eine Überraschungsparty für Tim ! Bist du dabei ? » — « Ja, klar ! Wann beginnt die Party ? » — « Um sieben Uhr, bei mir zu Hause. Tim kommt um halb acht — bitte sei pünktlich ! » — « Was bringe ich mit ? » — « Bring bitte Saft und Kekse mit. Ich mache einen Kuchen. » — « Super ! Ist Paul auch eingeladen ? » — « Ja, er bringt die Musik mit. Und Mira: sag nichts zu Tim ! Es ist eine Überraschung ! » — « Keine Sorge, ich sage nichts. Versprochen ! Bis Samstag ! »",
+      "skills": [
+        "listening:detail",
+        "grammar:present-simple",
+        "vocab:social-expressions",
+        "vocab:food"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-ueberraschungsparty-q1",
+          "kind": "choice",
+          "prompt": "Wann ist Tims Geburtstag ?",
+          "options": [
+            "Am Samstag",
+            "Am Sonntag",
+            "Am Freitag",
+            "Heute"
+          ],
+          "answers": [
+            "Am Samstag"
+          ],
+          "explain": "Samstag ist Tims Geburtstag."
+        },
+        {
+          "id": "de-listen-ueberraschungsparty-q2",
+          "kind": "choice",
+          "prompt": "Wo ist die Party ?",
+          "options": [
+            "Bei Lea zu Hause",
+            "Im Café",
+            "Bei Tim zu Hause",
+            "Im Park"
+          ],
+          "answers": [
+            "Bei Lea zu Hause"
+          ],
+          "explain": "Um sieben Uhr, bei mir zu Hause."
+        },
+        {
+          "id": "de-listen-ueberraschungsparty-q3",
+          "kind": "written",
+          "prompt": "Wann beginnt die Party ?",
+          "answers": [
+            "um sieben uhr",
+            "um 19 uhr",
+            "sieben uhr"
+          ],
+          "explain": "Um sieben Uhr, bei Lea zu Hause."
+        },
+        {
+          "id": "de-listen-ueberraschungsparty-q4",
+          "kind": "written",
+          "prompt": "Was bringt Mira mit ?",
+          "answers": [
+            "saft und kekse",
+            "saft und kekse mit"
+          ],
+          "explain": "Bring bitte Saft und Kekse mit."
+        },
+        {
+          "id": "de-listen-ueberraschungsparty-q5",
+          "kind": "choice",
+          "prompt": "Was bringt Paul mit ?",
+          "options": [
+            "Die Musik",
+            "Den Kuchen",
+            "Saft",
+            "Blumen"
+          ],
+          "answers": [
+            "Die Musik"
+          ],
+          "explain": "Er bringt die Musik mit."
+        },
+        {
+          "id": "de-listen-ueberraschungsparty-q6",
+          "kind": "choice",
+          "prompt": "Was ist mit Tim ?",
+          "options": [
+            "Er weiß nichts von der Party",
+            "Er plant die Party",
+            "Er ist auf Reisen",
+            "Er kommt zu spät"
+          ],
+          "answers": [
+            "Er weiß nichts von der Party"
+          ],
+          "explain": "« Sag nichts zu Tim ! Es ist eine Überraschung ! »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-umkleidekabine",
+      "languageID": "de",
+      "title": "In der Umkleidekabine",
+      "level": "A1",
+      "topic": "einkaufen",
+      "unitID": "de-foundations-u23",
+      "text": "Anna möchte eine Jacke kaufen. Die Verkäuferin fragt: « Welche Größe haben Sie ? » — « Größe M, ich glaube. » — « Hier, probieren Sie die Jacke an. Die Umkleide ist da drüben. » Anna geht in die Umkleide. Nach einer Minute: « Die Jacke ist zu klein. Haben Sie sie auch in Größe L ? » — « Ja, hier bitte. » — Eine Minute später: « Und, passt sie ? » — « Ja, jetzt passt sie gut. Wie viel kostet sie ? » — « 59 Euro. » — « Ich nehme sie. Wo kann ich zahlen ? » — « An der Kasse, dort vorne. Vielen Dank ! »",
+      "skills": [
+        "listening:detail",
+        "grammar:can",
+        "vocab:shopping"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-umkleidekabine-q1",
+          "kind": "choice",
+          "prompt": "Was möchte Anna kaufen ?",
+          "options": [
+            "Eine Jacke",
+            "Ein T-Shirt",
+            "Eine Hose",
+            "Schuhe"
+          ],
+          "answers": [
+            "Eine Jacke"
+          ],
+          "explain": "Anna möchte eine Jacke kaufen."
+        },
+        {
+          "id": "de-listen-umkleidekabine-q2",
+          "kind": "written",
+          "prompt": "Welche Größe probiert Anna zuerst an ?",
+          "answers": [
+            "m",
+            "größe m",
+            "groesse m",
+            "grosse m"
+          ],
+          "explain": "« Welche Größe haben Sie ? » — « Größe M. »"
+        },
+        {
+          "id": "de-listen-umkleidekabine-q3",
+          "kind": "choice",
+          "prompt": "Wie findet Anna die erste Jacke ?",
+          "options": [
+            "Zu klein",
+            "Zu groß",
+            "Zu teuer",
+            "Zu eng an den Ärmeln"
+          ],
+          "answers": [
+            "Zu klein"
+          ],
+          "explain": "« Die Jacke ist zu klein. »"
+        },
+        {
+          "id": "de-listen-umkleidekabine-q4",
+          "kind": "written",
+          "prompt": "Wie viel kostet die Jacke ?",
+          "answers": [
+            "59 euro",
+            "neunundfünfzig euro",
+            "neunundfuenfzig euro"
+          ],
+          "explain": "« 59 Euro. »"
+        },
+        {
+          "id": "de-listen-umkleidekabine-q5",
+          "kind": "choice",
+          "prompt": "Wo kann Anna zahlen ?",
+          "options": [
+            "An der Kasse",
+            "In der Umkleide",
+            "Am Eingang",
+            "Im ersten Stock"
+          ],
+          "answers": [
+            "An der Kasse"
+          ],
+          "explain": "« An der Kasse, dort vorne. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-rueckgabe-laden",
+      "languageID": "de",
+      "title": "Die Rückgabe im Laden",
+      "level": "A2",
+      "topic": "einkaufen",
+      "unitID": "de-foundations-u24",
+      "text": "« Guten Tag, ich habe diese Kaffeemaschine letzte Woche gekauft. » — « Was ist damit ? » — « Sie hat nicht funktioniert. Ich habe es zweimal probiert, aber es kommt kein Wasser durch. » — « Haben Sie die Quittung dabei ? » — « Ja, hier. » — « Möchten Sie die Maschine umtauschen oder das Geld zurück ? » — « Ich möchte das Geld zurück, bitte. Ich habe mir schon eine andere Marke bestellt. » — « Kein Problem. Können Sie hier unterschreiben ? Danke. Das Geld ist in drei Tagen auf Ihrem Konto. » — « Sehr gut. Vielen Dank für Ihre Hilfe ! » — « Entschuldigen Sie die Unannehmlichkeiten ! »",
+      "skills": [
+        "listening:detail",
+        "grammar:past-simple-regular",
+        "vocab:shopping",
+        "function:solve-problems"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-rueckgabe-laden-q1",
+          "kind": "choice",
+          "prompt": "Was hat die Kundin gekauft ?",
+          "options": [
+            "Eine Kaffeemaschine",
+            "Einen Wasserkocher",
+            "Eine Jacke",
+            "Ein Handy"
+          ],
+          "answers": [
+            "Eine Kaffeemaschine"
+          ],
+          "explain": "Ich habe diese Kaffeemaschine letzte Woche gekauft."
+        },
+        {
+          "id": "de-listen-rueckgabe-laden-q2",
+          "kind": "written",
+          "prompt": "Was war das Problem ?",
+          "answers": [
+            "sie hat nicht funktioniert",
+            "das gerät hat nicht funktioniert",
+            "das geraet hat nicht funktioniert",
+            "kein wasser kam durch"
+          ],
+          "explain": "« Sie hat nicht funktioniert … es kommt kein Wasser durch. »"
+        },
+        {
+          "id": "de-listen-rueckgabe-laden-q3",
+          "kind": "choice",
+          "prompt": "Was möchte die Kundin ?",
+          "options": [
+            "Das Geld zurück",
+            "Die Maschine umtauschen",
+            "Eine Reparatur",
+            "Eine neue Quittung"
+          ],
+          "answers": [
+            "Das Geld zurück"
+          ],
+          "explain": "« Ich möchte das Geld zurück, bitte. »"
+        },
+        {
+          "id": "de-listen-rueckgabe-laden-q4",
+          "kind": "written",
+          "prompt": "Was hat sie sich schon bestellt ?",
+          "answers": [
+            "eine andere marke",
+            "eine kaffeemaschine einer anderen marke",
+            "eine andere kaffeemaschine"
+          ],
+          "explain": "Ich habe mir schon eine andere Marke bestellt."
+        },
+        {
+          "id": "de-listen-rueckgabe-laden-q5",
+          "kind": "choice",
+          "prompt": "Wann bekommt sie das Geld ?",
+          "options": [
+            "In drei Tagen",
+            "Morgen",
+            "In einer Woche",
+            "Sofort"
+          ],
+          "answers": [
+            "In drei Tagen"
+          ],
+          "explain": "Das Geld ist in drei Tagen auf Ihrem Konto."
+        },
+        {
+          "id": "de-listen-rueckgabe-laden-q6",
+          "kind": "choice",
+          "prompt": "Wann hat sie die Maschine gekauft ?",
+          "options": [
+            "Letzte Woche",
+            "Gestern",
+            "Vor einem Monat",
+            "Heute"
+          ],
+          "answers": [
+            "Letzte Woche"
+          ],
+          "explain": "Ich habe diese Kaffeemaschine letzte Woche gekauft."
+        }
+      ]
+    },
+    {
+      "id": "de-listen-vortag-abreise",
+      "languageID": "de",
+      "title": "Der Vortag der Abreise",
+      "level": "A2",
+      "topic": "reisen",
+      "unitID": "de-foundations-u25",
+      "text": "« Morgen fliegen wir nach Lissabon ! Hast du schon gepackt ? » — « Fast. Ich werde morgen früh die letzten Sachen einpacken. » — « Vergiss den Reisepass nicht ! Wo ist dein Ticket ? » — « Ich habe es gestern ausgedruckt. Und ich werde ein Taxi zum Flughafen bestellen. » — « Gut. Der Flug geht um neun, wir müssen um sieben losfahren. » — « Kein Problem, ich werde um sechs Uhr aufstehen. » — « Und wie wird das Wetter in Lissabon ? » — « Es wird warm. Ich nehme nur leichte Kleidung mit. » — « Perfekt. Dann gute Nacht — und danke, dass ich mitkommen darf ! »",
+      "skills": [
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:travel",
+        "vocab:transport"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-vortag-abreise-q1",
+          "kind": "choice",
+          "prompt": "Wohin fliegen sie ?",
+          "options": [
+            "Nach Lissabon",
+            "Nach Berlin",
+            "Nach Rom",
+            "Nach Madrid"
+          ],
+          "answers": [
+            "Nach Lissabon"
+          ],
+          "explain": "Morgen fliegen wir nach Lissabon."
+        },
+        {
+          "id": "de-listen-vortag-abreise-q2",
+          "kind": "choice",
+          "prompt": "Wann geht der Flug ?",
+          "options": [
+            "Um neun Uhr",
+            "Um sechs Uhr",
+            "Um sieben Uhr",
+            "Um halb neun"
+          ],
+          "answers": [
+            "Um neun Uhr"
+          ],
+          "explain": "Der Flug geht um neun."
+        },
+        {
+          "id": "de-listen-vortag-abreise-q3",
+          "kind": "written",
+          "prompt": "Was wird sie früh am Morgen tun ?",
+          "answers": [
+            "die letzten sachen einpacken",
+            "einpacken",
+            "den koffer fertig packen"
+          ],
+          "explain": "Ich werde morgen früh die letzten Sachen einpacken."
+        },
+        {
+          "id": "de-listen-vortag-abreise-q4",
+          "kind": "written",
+          "prompt": "Wann wird sie aufstehen ?",
+          "answers": [
+            "um sechs uhr",
+            "um 6 uhr",
+            "sechs uhr"
+          ],
+          "explain": "Ich werde um sechs Uhr aufstehen."
+        },
+        {
+          "id": "de-listen-vortag-abreise-q5",
+          "kind": "choice",
+          "prompt": "Wie wird das Wetter in Lissabon ?",
+          "options": [
+            "Warm",
+            "Kalt",
+            "Regnerisch",
+            "Windig"
+          ],
+          "answers": [
+            "Warm"
+          ],
+          "explain": "Es wird warm."
+        },
+        {
+          "id": "de-listen-vortag-abreise-q6",
+          "kind": "choice",
+          "prompt": "Wohin fährt ein Taxi ?",
+          "options": [
+            "Zum Flughafen",
+            "Zum Bahnhof",
+            "Zum Hotel",
+            "In die Innenstadt"
+          ],
+          "answers": [
+            "Zum Flughafen"
+          ],
+          "explain": "Ich werde ein Taxi zum Flughafen bestellen."
+        }
+      ]
+    },
+    {
+      "id": "de-listen-traumviertel",
+      "languageID": "de",
+      "title": "Unser Traumviertel",
+      "level": "B1",
+      "topic": "stadt",
+      "unitID": "de-foundations-u26",
+      "text": "Marla und Jonas reden über ihr Traumviertel. « Ich ziehe bald um — aber welches Viertel soll es sein ? » — « Ich bin der Meinung, dass ein Stadtteil mit vielen Bäumen lebenswerter ist. Einerseits kostet die Miete dort oft mehr, andererseits spare ich mir das Auto. » — « Stimmt, aber öffentliche Verkehrsmittel sind mir wichtiger. Ich schlage das Bahnhofsviertel vor: man ist schnell im Zentrum. » — « Einerseits hast du recht, da ist alles nah. Andererseits ist es dort laut. Ich brauche Grün zum Atmen. » — « Dann vielleicht das Viertel am Fluss ? Es ist ruhig, hat Parks und Radwege. Und die Miete ist günstiger als im Zentrum. » — « Das klingt nach unserem Traumviertel. Sollen wir dort Wohnungen suchen ? »",
+      "skills": [
+        "listening:inference",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-traumviertel-q1",
+          "kind": "choice",
+          "prompt": "Was findet Marla wichtig in einem Viertel ?",
+          "options": [
+            "Viele Bäume und Grün",
+            "Nähe zum Bahnhof",
+            "Günstige Parkplätze",
+            "Viele Geschäfte"
+          ],
+          "answers": [
+            "Viele Bäume und Grün"
+          ],
+          "explain": "Ein Stadtteil mit vielen Bäumen ist lebenswerter."
+        },
+        {
+          "id": "de-listen-traumviertel-q2",
+          "kind": "written",
+          "prompt": "Welches Viertel schlägt Jonas zuerst vor ?",
+          "answers": [
+            "das bahnhofsviertel",
+            "bahnhofsviertel"
+          ],
+          "explain": "« Ich schlage das Bahnhofsviertel vor. »"
+        },
+        {
+          "id": "de-listen-traumviertel-q3",
+          "kind": "choice",
+          "prompt": "Was ist Marlas Einwand gegen das Bahnhofsviertel ?",
+          "options": [
+            "Es ist dort laut",
+            "Die Miete ist zu hoch",
+            "Es gibt keine Parks",
+            "Man braucht ein Auto"
+          ],
+          "answers": [
+            "Es ist dort laut"
+          ],
+          "explain": "Andererseits ist es dort laut."
+        },
+        {
+          "id": "de-listen-traumviertel-q4",
+          "kind": "choice",
+          "prompt": "Wie ist die Miete am Fluss im Vergleich zum Zentrum ?",
+          "options": [
+            "Günstiger",
+            "Teurer",
+            "Gleich teuer",
+            "Sie steigt bald"
+          ],
+          "answers": [
+            "Günstiger"
+          ],
+          "explain": "Die Miete ist günstiger als im Zentrum."
+        },
+        {
+          "id": "de-listen-traumviertel-q5",
+          "kind": "written",
+          "prompt": "Was beschließen die beiden am Ende ?",
+          "answers": [
+            "wohnungen suchen",
+            "sie suchen dort wohnungen",
+            "wohnungen am fluss suchen"
+          ],
+          "explain": "« Sollen wir dort Wohnungen suchen ? »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-besprechung-ende",
+      "languageID": "de",
+      "title": "Der letzte Punkt der Besprechung",
+      "level": "B1",
+      "topic": "arbeit",
+      "unitID": "de-work-u1",
+      "text": "« Kommen wir zum letzten Punkt: Wo stehen wir mit dem Projekt ? » — « Die Präsentation ist fertig. Einerseits sind wir im Zeitplan, andererseits fehlt das Budget für die Werbung. » — « Dann schlage ich vor, dass wir das Budget am Freitag klären. Ich schreibe heute eine E-Mail an die Finanzabteilung. » — « Da bin ich anderer Meinung. Wir sollten zuerst die Werbung besprechen, das Budget danach. Sonst verlieren wir Zeit. » — « Guter Punkt. Ich schreibe die E-Mail an die Finanzen, und Sie leiten die Diskussion. » — « Einverstanden. » — « Herr Aziz, fassen Sie die Ergebnisse zusammen. » — « Mach ich. Bis Freitag bekommen alle eine Zusammenfassung. » — « Sehr gut. Danke an alle ! »",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "function:talk-about-work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-besprechung-ende-q1",
+          "kind": "choice",
+          "prompt": "Was fehlt noch im Projekt ?",
+          "options": [
+            "Das Budget für die Werbung",
+            "Die Präsentation",
+            "Der Zeitplan",
+            "Die Zusammenfassung"
+          ],
+          "answers": [
+            "Das Budget für die Werbung"
+          ],
+          "explain": "Einerseits im Zeitplan, andererseits fehlt noch das Budget für die Werbung."
+        },
+        {
+          "id": "de-listen-besprechung-ende-q2",
+          "kind": "choice",
+          "prompt": "Was schlägt die erste Person vor ?",
+          "options": [
+            "Eine E-Mail an die Finanzabteilung",
+            "Eine Pause",
+            "Ein neues Projekt",
+            "Ein Treffen mit Kunden"
+          ],
+          "answers": [
+            "Eine E-Mail an die Finanzabteilung"
+          ],
+          "explain": "Ich schreibe heute eine E-Mail an die Finanzabteilung."
+        },
+        {
+          "id": "de-listen-besprechung-ende-q3",
+          "kind": "written",
+          "prompt": "Warum will sie zuerst über die Werbung sprechen ?",
+          "answers": [
+            "sonst verlieren wir zeit",
+            "sonst verliert man zeit",
+            "wegen der zeit"
+          ],
+          "explain": "« Sonst verlieren wir Zeit. »"
+        },
+        {
+          "id": "de-listen-besprechung-ende-q4",
+          "kind": "written",
+          "prompt": "Bis wann bekommt die Gruppe die Zusammenfassung ?",
+          "answers": [
+            "bis freitag",
+            "freitag",
+            "am freitag"
+          ],
+          "explain": "Bis Freitag bekommen alle eine Zusammenfassung."
+        },
+        {
+          "id": "de-listen-besprechung-ende-q5",
+          "kind": "choice",
+          "prompt": "Wie endet die Besprechung ?",
+          "options": [
+            "Alle sind einverstanden",
+            "Es gibt Streit",
+            "Sie wird verschoben",
+            "Ohne Ergebnis"
+          ],
+          "answers": [
+            "Alle sind einverstanden"
+          ],
+          "explain": "« Einverstanden. » — « Sehr gut. Danke an alle ! »"
+        },
+        {
+          "id": "de-listen-besprechung-ende-q6",
+          "kind": "choice",
+          "prompt": "Was bedeutet « Einverstanden » in dieser Besprechung ?",
+          "options": [
+            "Ich stimme zu",
+            "Ich bin dagegen",
+            "Ich bin unsicher",
+            "Ich muss fragen"
+          ],
+          "answers": [
+            "Ich stimme zu"
+          ],
+          "explain": "Einverstanden heißt: Ich stimme zu."
+        }
+      ]
     }
   ]
 }

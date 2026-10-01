@@ -1010,6 +1010,174 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-read-kofferliste",
+      "languageID": "de",
+      "title": "Ninas Kofferliste",
+      "level": "A2",
+      "topic": "reisen",
+      "unitID": "de-foundations-u25",
+      "text": "Am Samstag fliegt Nina nach Lissabon. Am Abend vorher schreibt sie eine Liste, denn sie will nichts vergessen. In den Koffer kommen fünf T-Shirts, zwei Hosen, ein leichtes Kleid, eine Regenjacke und ihre guten Schuhe. An Dokumente denkt sie besonders: Reisepass, Ausweis und die Buchungsbestätigung kommen in die Handtasche. Handy und Ladegerät gehören auch hinein. Nina wird schon am Abend packen, denn am Morgen hat sie keine Zeit. Der Koffer ist klein, deshalb nimmt sie nur das Wichtigste mit. Die Sonnencreme kauft sie noch am Flughafen. Vor der Tür kontrolliert sie alles zweimal — den Reisepass hat sie letztes Mal fast vergessen !",
+      "skills": [
+        "reading:detail",
+        "grammar:going-to",
+        "vocab:travel",
+        "vocab:transport"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-kofferliste-q1",
+          "kind": "choice",
+          "prompt": "Wann fliegt Nina nach Lissabon ?",
+          "options": [
+            "Am Samstag",
+            "Am Sonntag",
+            "Am Freitag",
+            "Heute"
+          ],
+          "answers": [
+            "Am Samstag"
+          ],
+          "explain": "Am Samstag fliegt Nina nach Lissabon."
+        },
+        {
+          "id": "de-read-kofferliste-q2",
+          "kind": "choice",
+          "prompt": "Wo kommen die Dokumente hin ?",
+          "options": [
+            "In die Handtasche",
+            "In den großen Koffer",
+            "In die Jackentasche",
+            "Ins Hotel"
+          ],
+          "answers": [
+            "In die Handtasche"
+          ],
+          "explain": "Reisepass, Ausweis und die Buchungsbestätigung kommen in die Handtasche."
+        },
+        {
+          "id": "de-read-kofferliste-q3",
+          "kind": "written",
+          "prompt": "Was kauft Nina noch am Flughafen ?",
+          "answers": [
+            "sonnencreme",
+            "die sonnencreme"
+          ],
+          "explain": "Die Sonnencreme kauft sie noch am Flughafen."
+        },
+        {
+          "id": "de-read-kofferliste-q4",
+          "kind": "choice",
+          "prompt": "Warum packt Nina schon am Abend ?",
+          "options": [
+            "Am Morgen hat sie keine Zeit",
+            "Der Koffer ist zu groß",
+            "Sie fliegt früher",
+            "Der Flug geht am Abend"
+          ],
+          "answers": [
+            "Am Morgen hat sie keine Zeit"
+          ],
+          "explain": "Nina wird schon am Abend packen, denn am Morgen hat sie keine Zeit."
+        },
+        {
+          "id": "de-read-kofferliste-q5",
+          "kind": "written",
+          "prompt": "Was hat sie letztes Mal fast vergessen ?",
+          "answers": [
+            "den reisepass",
+            "ihren reisepass",
+            "den pass"
+          ],
+          "explain": "Den Reisepass hat sie letztes Mal fast vergessen !"
+        }
+      ]
+    },
+    {
+      "id": "de-read-nachbarschaftsplakat",
+      "languageID": "de",
+      "title": "Mehr Grün im Viertel",
+      "level": "B1",
+      "topic": "stadt",
+      "unitID": "de-foundations-u26",
+      "text": "« Mehr Grün im Viertel ! » steht auf dem Plakat am Supermarkt. Eine Bürgerinitiative will den Parkplatz an der Post in einen kleinen Park verwandeln. Einerseits verlieren wir zwanzig Parkplätze, andererseits gewinnen wir vierzig Bäume, Bänke und einen Spielplatz. « Autos können überall parken, aber hier gibt es keinen grünen Ort », sagt die Sprecherin. Die Gegner sind anderer Meinung: Der Parkplatz ist morgens voll, und die Geschäfte brauchen ihre Kunden. Die Initiative schlägt vor, dass die Stadt in der Seitenstraße zusätzliche Stellplätze baut. Bis Ende des Monats brauchen die Gründer fünfhundert Unterschriften — dann muss der Stadtrat über den Vorschlag sprechen. Wer unterschreiben will, findet das Plakat bis Sonntag am Supermarkt.",
+      "skills": [
+        "reading:inference",
+        "grammar:connectors",
+        "function:express-opinion",
+        "writing:argument"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-nachbarschaftsplakat-q1",
+          "kind": "choice",
+          "prompt": "Was will die Bürgerinitiative ?",
+          "options": [
+            "Einen Park statt des Parkplatzes",
+            "Mehr Parkplätze",
+            "Einen neuen Supermarkt",
+            "Ein Rathaus"
+          ],
+          "answers": [
+            "Einen Park statt des Parkplatzes"
+          ],
+          "explain": "Sie will den Parkplatz an der Post in einen kleinen Park verwandeln."
+        },
+        {
+          "id": "de-read-nachbarschaftsplakat-q2",
+          "kind": "choice",
+          "prompt": "Was ist das Argument der Gegner ?",
+          "options": [
+            "Der Parkplatz ist morgens voll",
+            "Es gibt zu viele Bäume",
+            "Der Spielplatz ist teuer",
+            "Die Post schließt"
+          ],
+          "answers": [
+            "Der Parkplatz ist morgens voll"
+          ],
+          "explain": "Der Parkplatz ist morgens voll, und die Geschäfte brauchen ihre Kunden."
+        },
+        {
+          "id": "de-read-nachbarschaftsplakat-q3",
+          "kind": "written",
+          "prompt": "Wie viele Unterschriften braucht die Initiative ?",
+          "answers": [
+            "500",
+            "fünfhundert",
+            "fuenfhundert"
+          ],
+          "explain": "Bis Ende des Monats brauchen die Gründer fünfhundert Unterschriften."
+        },
+        {
+          "id": "de-read-nachbarschaftsplakat-q4",
+          "kind": "choice",
+          "prompt": "Was passiert bei fünfhundert Unterschriften ?",
+          "options": [
+            "Der Stadtrat muss über den Vorschlag sprechen",
+            "Der Park wird sofort gebaut",
+            "Die Initiative bekommt Geld",
+            "Die Geschäfte schließen"
+          ],
+          "answers": [
+            "Der Stadtrat muss über den Vorschlag sprechen"
+          ],
+          "explain": "Dann muss der Stadtrat über den Vorschlag sprechen."
+        },
+        {
+          "id": "de-read-nachbarschaftsplakat-q5",
+          "kind": "written",
+          "prompt": "Wo kann man bis Sonntag unterschreiben ?",
+          "answers": [
+            "am supermarkt",
+            "beim supermarkt"
+          ],
+          "explain": "Wer unterschreiben will, findet das Plakat bis Sonntag am Supermarkt."
+        }
+      ]
     }
   ]
 }

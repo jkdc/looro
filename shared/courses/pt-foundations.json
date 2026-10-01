@@ -10441,6 +10441,2728 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u22",
+      "title": "Hora de festejar",
+      "subtitle": "Convites, presentes e parabéns",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "convite-festa",
+          "title": "O convite",
+          "subtitle": "Chamar a galera",
+          "symbol": "party.popper",
+          "category": "Course",
+          "situation": "A Duda liga para os amigos: convence todos para a festa da Bia no sábado, marca a casa e a hora e cada um promete levar algo.",
+          "colorIndex": 0
+        },
+        {
+          "id": "bolo-velas",
+          "title": "O bolo",
+          "subtitle": "Presente e parabéns",
+          "symbol": "birthday.cake",
+          "category": "Course",
+          "situation": "Na festa: o grupo escolhe o presente, canta parabéns, a Bia apaga as velas e agradece cada gesto com emoção.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u22-festa",
+          "title": "Vai ter festa !",
+          "goal": "Convidar e responder a um convite: vamos…, que tal…, pode contar comigo.",
+          "intro": {
+            "explanation": [
+              "Para convidar, use « vamos + verbo » ou « que tal … ? »: « Vamos fazer uma festa ? », « Que tal sábado ? ».",
+              "Marque o lugar e a hora: « na minha casa », « às oito ». « É na minha casa, às oito ».",
+              "Aceite com alegria ou recuse com jeito: « Pode contar comigo ! », « Que pena, não posso »."
+            ],
+            "examples": [
+              {
+                "text": "Vamos fazer uma festa no sábado ?",
+                "meaning": "O convite direto."
+              },
+              {
+                "text": "Que tal um churrasco na minha casa ?",
+                "meaning": "que tal … ? = ¿qué tal… ?"
+              },
+              {
+                "text": "É na minha casa, às oito.",
+                "meaning": "Lugar e hora juntos."
+              },
+              {
+                "text": "Pode contar comigo, levo o bolo !",
+                "meaning": "Aceitar com vontade."
+              },
+              {
+                "text": "Que pena, no sábado não posso.",
+                "meaning": "Recusar com educação."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Vamos + verbo ?",
+              "meaning": "Convidar para a ação.",
+              "note": "Vamos comemorar ?"
+            },
+            {
+              "text": "Que tal … ?",
+              "meaning": "Sugerir uma ideia.",
+              "note": "Que tal domingo então ?"
+            },
+            {
+              "text": "Na minha casa, às …",
+              "meaning": "Marcar lugar e hora.",
+              "note": "Na minha casa, às oito."
+            },
+            {
+              "text": "Pode contar comigo !",
+              "meaning": "Aceitar o convite.",
+              "note": "Pode contar comigo, levo o bolo !"
+            },
+            {
+              "text": "Que pena, não posso",
+              "meaning": "Recusar com educação.",
+              "note": "Que pena, tenho um compromisso."
+            }
+          ],
+          "situation": "No grupo de amigos: a Duda convence o Téo e a Lu para a festa da Bia, marca a casa e a hora e cada um escolhe o que levar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Convide os amigos para uma festa.",
+                "expected": [
+                  "Vamos fazer uma festa ?",
+                  "vamos fazer uma festa"
+                ],
+                "focus": "vamos + verbo",
+                "watch": "vamos = vamos (nosotros)."
+              },
+              {
+                "prompt": "Sugira o sábado com que tal….",
+                "expected": [
+                  "Que tal sábado ?",
+                  "que tal sabado"
+                ],
+                "focus": "que tal … ?",
+                "watch": "que tal = ¿qué tal ?"
+              },
+              {
+                "prompt": "Marque o lugar e a hora: sua casa, oito.",
+                "expected": [
+                  "Na minha casa, às oito.",
+                  "na minha casa as oito",
+                  "É na minha casa, às oito.",
+                  "e na minha casa as oito"
+                ],
+                "focus": "lugar e hora",
+                "watch": "às oito = a las ocho."
+              },
+              {
+                "prompt": "Aceite o convite com confiança.",
+                "expected": [
+                  "Pode contar comigo !",
+                  "pode contar comigo"
+                ],
+                "focus": "aceitar",
+                "watch": "pode contar comigo = cuenta conmigo."
+              },
+              {
+                "prompt": "Recuse com pena: você viaja no sábado.",
+                "expected": [
+                  "Que pena, não posso.",
+                  "que pena nao posso",
+                  "Que pena, viajo no sábado.",
+                  "que pena viajo no sabado"
+                ],
+                "focus": "recusar",
+                "watch": "que pena = qué pena."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u22-festa-e1",
+              "kind": "choice",
+              "prompt": "___ fazer uma festa sábado ?",
+              "options": [
+                "Vamos",
+                "Vamos a",
+                "Vais",
+                "Tem"
+              ],
+              "answers": [
+                "Vamos"
+              ],
+              "explain": "Vamos + verbo no infinitivo: o convite direto em português."
+            },
+            {
+              "id": "pt-foundations-u22-festa-e2",
+              "kind": "gap",
+              "prompt": "Que ___ um churrasco domingo ?",
+              "answers": [
+                "tal"
+              ],
+              "explain": "Que tal … ?: sugerir uma ideia com leveza."
+            },
+            {
+              "id": "pt-foundations-u22-festa-e3",
+              "kind": "order",
+              "prompt": "Aceite o convite da festa.",
+              "answers": [
+                "Pode contar comigo"
+              ],
+              "explain": "Pode contar comigo: a aceitação que já se oferece para ajudar."
+            },
+            {
+              "id": "pt-foundations-u22-festa-e4",
+              "kind": "written",
+              "prompt": "Recuse o convite de sábado com pena.",
+              "answers": [
+                "Que pena, no sábado não posso.",
+                "que pena no sabado nao posso",
+                "Que pena, não posso.",
+                "que pena nao posso"
+              ],
+              "explain": "Que pena + motivo: recusar sem fechar a porta."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:make-suggestions",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u22-presente",
+          "title": "O presente",
+          "goal": "Escolher o presente em grupo: o que vamos dar, quanto custa, boa ideia.",
+          "intro": {
+            "explanation": [
+              "Pergunte ao grupo: « o que vamos dar para a Bia ? ». « Vamos » marca o plano junto.",
+              "Preço com « custar »: « Quanto custa ? », « Custa pouco ». « O vaso custa uns quarenta reais ».",
+              "Aprovar a ideia: « boa ideia ! », « ela gosta de … ». « Um livro é uma boa ideia, ela gosta de ler »."
+            ],
+            "examples": [
+              {
+                "text": "O que vamos dar para a Bia ?",
+                "meaning": "A pergunta do grupo."
+              },
+              {
+                "text": "Vamos dar um vaso para a planta dela.",
+                "meaning": "vaso = maceta."
+              },
+              {
+                "text": "Quanto custa ? — Uns quarenta reais.",
+                "meaning": "A pergunta do preço."
+              },
+              {
+                "text": "Um livro custa pouco e ela gosta de ler.",
+                "meaning": "gostar de + infinitivo."
+              },
+              {
+                "text": "Boa ideia ! Vamos comprar hoje.",
+                "meaning": "Decidir junto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "O que vamos dar … ?",
+              "meaning": "Perguntar o presente.",
+              "note": "O que vamos dar para o Téo ?"
+            },
+            {
+              "text": "Quanto custa ?",
+              "meaning": "Perguntar o preço.",
+              "note": "Quanto custa esse vaso ?"
+            },
+            {
+              "text": "custa pouco / caro",
+              "meaning": "O preço em duas palavras.",
+              "note": "Custa pouco, vamos levar."
+            },
+            {
+              "text": "Boa ideia !",
+              "meaning": "Aprovar a sugestão.",
+              "note": "Boa ideia, eu topo !"
+            },
+            {
+              "text": "Ela gosta de …",
+              "meaning": "Acertar no gosto.",
+              "note": "Ela gosta de música brasileira."
+            }
+          ],
+          "situation": "Na loja do centro: a Duda e o Téo escolhem o presente da Bia, comparam preços e fecham um livro com dedicatória.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte o que o grupo vai dar para a Bia.",
+                "expected": [
+                  "O que vamos dar para a Bia ?",
+                  "o que vamos dar para a bia"
+                ],
+                "focus": "o que vamos dar",
+                "watch": "vamos = el plan del grupo."
+              },
+              {
+                "prompt": "Pergunte o preço.",
+                "expected": [
+                  "Quanto custa ?",
+                  "quanto custa"
+                ],
+                "focus": "quanto custa",
+                "watch": "custar = costar."
+              },
+              {
+                "prompt": "Diga que o preço é baixo.",
+                "expected": [
+                  "Custa pouco.",
+                  "custa pouco"
+                ],
+                "focus": "custar",
+                "watch": "pouco = poco."
+              },
+              {
+                "prompt": "Aprove a ideia do livro.",
+                "expected": [
+                  "Boa ideia !",
+                  "boa ideia",
+                  "É uma boa ideia !",
+                  "e uma boa ideia"
+                ],
+                "focus": "aprovar",
+                "watch": "ideia com i: idea en português."
+              },
+              {
+                "prompt": "Diga que a Bia gosta de ler.",
+                "expected": [
+                  "Ela gosta de ler.",
+                  "ela gosta de ler"
+                ],
+                "focus": "gostar de",
+                "watch": "gostar de = gustar de."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u22-presente-e1",
+              "kind": "choice",
+              "prompt": "Quanto ___ esse vaso ?",
+              "options": [
+                "custa",
+                "custo",
+                "custam",
+                "custando"
+              ],
+              "answers": [
+                "custa"
+              ],
+              "explain": "Quanto custa + singular: a pergunta do preço."
+            },
+            {
+              "id": "pt-foundations-u22-presente-e2",
+              "kind": "gap",
+              "prompt": "A Bia gosta ___ ler.",
+              "answers": [
+                "de"
+              ],
+              "explain": "gostar de + infinitivo: a regência do gosto."
+            },
+            {
+              "id": "pt-foundations-u22-presente-e3",
+              "kind": "order",
+              "prompt": "Pergunte o preço do presente.",
+              "answers": [
+                "Quanto custa o presente"
+              ],
+              "explain": "Quanto custa + objeto: a pergunta completa do preço."
+            },
+            {
+              "id": "pt-foundations-u22-presente-e4",
+              "kind": "written",
+              "prompt": "Diga que o grupo vai dar um vaso para a Bia.",
+              "answers": [
+                "Vamos dar um vaso para a Bia.",
+                "vamos dar um vaso para a bia",
+                "Vamos dar um vaso pra Bia.",
+                "vamos dar um vaso pra bia"
+              ],
+              "explain": "Vamos + infinitivo: a decisão em grupo."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u22-parabens",
+          "title": "Parabéns pra você",
+          "goal": "Parabenizar na festa: parabéns, muitos anos de vida, tudo de bom.",
+          "intro": {
+            "explanation": [
+              "A canção começa assim: « Parabéns pra você, parabéns pra você… ». Todo mundo canta junto.",
+              "Deseje o bem: « muitos anos de vida », « tudo de bom ». « Parabéns, muitos anos de vida ! ».",
+              "Reaja à festa com « que … ! »: « Que bolo gostoso ! ». Quem recebe agradece: « adorei o presente »."
+            ],
+            "examples": [
+              {
+                "text": "Parabéns pra você, parabéns pra você !",
+                "meaning": "A canção da festa."
+              },
+              {
+                "text": "Parabéns, Bia ! Muitos anos de vida.",
+                "meaning": "O desejo clássico."
+              },
+              {
+                "text": "Tudo de bom pra você !",
+                "meaning": "tudo de bom = todo lo mejor."
+              },
+              {
+                "text": "Que bolo gostoso !",
+                "meaning": "Elogiar com que … !"
+              },
+              {
+                "text": "Obrigada pelo presente, adorei !",
+                "meaning": "A festa agradece."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Parabéns (pra você) !",
+              "meaning": "Felicitare.",
+              "note": "Parabéns, Bia !"
+            },
+            {
+              "text": "Muitos anos de vida",
+              "meaning": "O desejo do aniversário.",
+              "note": "Muitos anos de vida, dona Cida !"
+            },
+            {
+              "text": "Tudo de bom",
+              "meaning": "O desejo curto.",
+              "note": "Tudo de bom pra você !"
+            },
+            {
+              "text": "Que + substantivo + gostoso/bonito",
+              "meaning": "Elogiar a festa.",
+              "note": "Que festa bonita !"
+            },
+            {
+              "text": "Adorei o presente",
+              "meaning": "Agradecer com emoção.",
+              "note": "Adorei, obrigada mesmo !"
+            }
+          ],
+          "situation": "Na hora das velas: todos cantam parabéns, a Bia faz o pedido, corta o bolo e agradece cada presente com emoção.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Cante a primeira linha da canção.",
+                "expected": [
+                  "Parabéns pra você.",
+                  "parabens pra voce",
+                  "Parabéns para você.",
+                  "parabens para voce"
+                ],
+                "focus": "a canção",
+                "watch": "pra = para, na fala."
+              },
+              {
+                "prompt": "Complete o desejo do aniversário.",
+                "expected": [
+                  "Muitos anos de vida !",
+                  "muitos anos de vida"
+                ],
+                "focus": "o desejo",
+                "watch": "vida = vida."
+              },
+              {
+                "prompt": "Diga tudo de bom para a Bia.",
+                "expected": [
+                  "Tudo de bom pra você.",
+                  "tudo de bom pra voce",
+                  "Tudo de bom para você.",
+                  "tudo de bom para voce"
+                ],
+                "focus": "tudo de bom",
+                "watch": "tudo de bom = todo lo mejor."
+              },
+              {
+                "prompt": "Elogie o bolo.",
+                "expected": [
+                  "Que bolo gostoso !",
+                  "que bolo gostoso"
+                ],
+                "focus": "que … !",
+                "watch": "que + substantivo: la exclamación fácil."
+              },
+              {
+                "prompt": "Abra o presente e reaja com emoção.",
+                "expected": [
+                  "Adorei o presente !",
+                  "adorei o presente",
+                  "Obrigada pelo presente, adorei !",
+                  "obrigada pelo presente adorei"
+                ],
+                "focus": "agradecer",
+                "watch": "adorar é forte: me encantó."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u22-parabens-e1",
+              "kind": "choice",
+              "prompt": "___, muitos anos de vida !",
+              "options": [
+                "Parabéns",
+                "Feliz",
+                "Bom",
+                "Bem-vindo"
+              ],
+              "answers": [
+                "Parabéns"
+              ],
+              "explain": "Parabéns abre o desejo: a palavra da festa."
+            },
+            {
+              "id": "pt-foundations-u22-parabens-e2",
+              "kind": "gap",
+              "prompt": "Tudo de ___ pra você !",
+              "answers": [
+                "bom"
+              ],
+              "explain": "tudo de bom: o desejo curto do dia a dia."
+            },
+            {
+              "id": "pt-foundations-u22-parabens-e3",
+              "kind": "order",
+              "prompt": "Elogie o bolo da festa.",
+              "answers": [
+                "Que bolo gostoso"
+              ],
+              "explain": "Que + substantivo + adjetivo: o elogio fácil da festa."
+            },
+            {
+              "id": "pt-foundations-u22-parabens-e4",
+              "kind": "written",
+              "prompt": "Agradeça o presente com emoção.",
+              "answers": [
+                "Adorei o presente !",
+                "adorei o presente",
+                "Obrigada pelo presente, adorei !",
+                "obrigada pelo presente adorei"
+              ],
+              "explain": "Adorei + o quê: emoção direta ao abrir o presente."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:make-suggestions",
+            "grammar:present-simple",
+            "vocab:feelings"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u23",
+      "title": "Roupas e tamanhos",
+      "subtitle": "Na loja de roupas",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "loja-vitrine",
+          "title": "Na loja",
+          "subtitle": "Escolher e provar",
+          "symbol": "tshirt",
+          "category": "Course",
+          "situation": "A Duda entra na loja: procura uma camiseta azul, pergunta tamanho e preço e leva duas peças para o provador.",
+          "colorIndex": 0
+        },
+        {
+          "id": "caixa-sacola",
+          "title": "No caixa",
+          "subtitle": "Pagar e trocar",
+          "symbol": "bag",
+          "category": "Course",
+          "situation": "No caixa: a fila anda, a Duda paga no cartão, mas uma camiseta fica grande e ela volta para trocar no dia seguinte.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u23-loja",
+          "title": "Na loja",
+          "goal": "Começar a compra: procuro…, você tem…, qual é o seu tamanho.",
+          "intro": {
+            "explanation": [
+              "Chegue dizendo o que procura: « boa tarde, procuro uma camiseta ». « Procuro » abre a compra.",
+              "Pergunte pela peça e pelo tamanho: « você tem essa em M ? », « qual é o seu tamanho ? ».",
+              "Diga o seu tamanho com « usar »: « eu uso M ». Para provar, « posso provar ? »."
+            ],
+            "examples": [
+              {
+                "text": "Boa tarde, procuro uma camiseta azul.",
+                "meaning": "A abertura da compra."
+              },
+              {
+                "text": "Você tem essa em tamanho M ?",
+                "meaning": "A pergunta do estoque."
+              },
+              {
+                "text": "Eu uso M, às vezes G.",
+                "meaning": "uso = talla."
+              },
+              {
+                "text": "Quanto custa essa aqui ?",
+                "meaning": "O preço rápido."
+              },
+              {
+                "text": "Posso provar ? — Claro, o provador fica ali.",
+                "meaning": "provar = probarse."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Procuro …",
+              "meaning": "Dizer o que procura.",
+              "note": "Procuro uma calça preta."
+            },
+            {
+              "text": "Você tem … ?",
+              "meaning": "Perguntar pela peça.",
+              "note": "Você tem em outra cor ?"
+            },
+            {
+              "text": "Qual é o seu tamanho ?",
+              "meaning": "A pergunta do tamanho.",
+              "note": "Qual é o seu tamanho ?"
+            },
+            {
+              "text": "Eu uso M / G / P",
+              "meaning": "Dizer o seu tamanho.",
+              "note": "Eu uso M."
+            },
+            {
+              "text": "Posso provar ?",
+              "meaning": "Pedir o provador.",
+              "note": "Posso provar essa calça ?"
+            }
+          ],
+          "situation": "Na loja: a vendedora recebe a Duda, ela procura uma camiseta azul, confere tamanhos e preços e escolhe duas peças para provar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga o que procura: uma camiseta azul.",
+                "expected": [
+                  "Procuro uma camiseta azul.",
+                  "procuro uma camiseta azul"
+                ],
+                "focus": "procuro",
+                "watch": "procuro = busco."
+              },
+              {
+                "prompt": "Pergunte se têm essa em tamanho M.",
+                "expected": [
+                  "Você tem essa em tamanho M ?",
+                  "voce tem essa em tamanho m",
+                  "Tem essa em M ?",
+                  "tem essa em m"
+                ],
+                "focus": "você tem",
+                "watch": "tem = hay/tiene."
+              },
+              {
+                "prompt": "Pergunte o tamanho da cliente.",
+                "expected": [
+                  "Qual é o seu tamanho ?",
+                  "qual e o seu tamanho"
+                ],
+                "focus": "tamanho",
+                "watch": "tamanho = talla."
+              },
+              {
+                "prompt": "Diga que você usa M.",
+                "expected": [
+                  "Eu uso M.",
+                  "eu uso m"
+                ],
+                "focus": "usar",
+                "watch": "usar + talla."
+              },
+              {
+                "prompt": "Peça para provar a camiseta.",
+                "expected": [
+                  "Posso provar ?",
+                  "posso provar",
+                  "Posso provar a camiseta ?",
+                  "posso provar a camiseta"
+                ],
+                "focus": "provar",
+                "watch": "provar = probarse."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u23-loja-e1",
+              "kind": "choice",
+              "prompt": "___ uma camiseta azul, por favor.",
+              "options": [
+                "Procuro",
+                "Procura",
+                "Buscando",
+                "Gostava"
+              ],
+              "answers": [
+                "Procuro"
+              ],
+              "explain": "Procuro + peça: dizer o que procura assim que chega."
+            },
+            {
+              "id": "pt-foundations-u23-loja-e2",
+              "kind": "gap",
+              "prompt": "Eu ___ M, às vezes P.",
+              "answers": [
+                "uso"
+              ],
+              "explain": "usar + tamanho: qual peça serve no corpo."
+            },
+            {
+              "id": "pt-foundations-u23-loja-e3",
+              "kind": "order",
+              "prompt": "Pergunte se a loja tem essa camiseta em preto.",
+              "answers": [
+                "Você tem essa em preto"
+              ],
+              "explain": "Você tem + peça + em + cor: a pergunta do estoque."
+            },
+            {
+              "id": "pt-foundations-u23-loja-e4",
+              "kind": "written",
+              "prompt": "Pergunte o preço da camiseta da vitrine.",
+              "answers": [
+                "Quanto custa essa camiseta ?",
+                "quanto custa essa camiseta",
+                "Quanto custa essa ?",
+                "quanto custa essa"
+              ],
+              "explain": "Quanto custa + essa: o preço da peça da vitrine."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:shopping",
+            "grammar:quantities",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u23-provador",
+          "title": "No provador",
+          "goal": "Ajustar a peça: fica apertado/grande, pode trazer outro tamanho.",
+          "intro": {
+            "explanation": [
+              "Opine sobre a peça com « ficar »: « fica apertado », « fica grande ». « Essa camiseta fica apertada ».",
+              "Peça outro tamanho: « pode trazer um G ? », « um tamanho menor, por favor ».",
+              "A vendedora atende: « um momento », « já vou ver ». « Um momento, já trago outro »."
+            ],
+            "examples": [
+              {
+                "text": "Essa fica apertada, tem um G ?",
+                "meaning": "apertado = ajustado."
+              },
+              {
+                "text": "Essa calça fica grande em mim.",
+                "meaning": "ficar grande = quedar grande."
+              },
+              {
+                "text": "Pode trazer um tamanho menor ?",
+                "meaning": "O pedido do provador."
+              },
+              {
+                "text": "Um momento, já vou ver.",
+                "meaning": "A vendedora atende."
+              },
+              {
+                "text": "Esse número fica melhor em você.",
+                "meaning": "melhor = mejor."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Fica apertado(a) / grande",
+              "meaning": "Como a peça serve.",
+              "note": "O vestido fica apertado."
+            },
+            {
+              "text": "Pode trazer + tamanho ?",
+              "meaning": "Pedir outro número.",
+              "note": "Pode trazer um P ?"
+            },
+            {
+              "text": "Um tamanho menor / maior",
+              "meaning": "Menor ou maior.",
+              "note": "Um tamanho maior, por favor."
+            },
+            {
+              "text": "Um momento, já vejo",
+              "meaning": "Atender o cliente.",
+              "note": "Um momento, já vou ver."
+            },
+            {
+              "text": "Fica melhor em você",
+              "meaning": "A opinião da vendedora.",
+              "note": "Esse fica melhor em você."
+            }
+          ],
+          "situation": "No provador: a camiseta fica apertada, a Duda pede um G para a vendedora e prova a calça que fica perfeita.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga como fica a peça no provador.",
+                "expected": [
+                  "Essa fica apertada.",
+                  "essa fica apertada",
+                  "A camiseta fica apertada.",
+                  "a camiseta fica apertada"
+                ],
+                "focus": "ficar + adjetivo",
+                "watch": "apertada concorda com a peça."
+              },
+              {
+                "prompt": "Peça um tamanho maior.",
+                "expected": [
+                  "Pode trazer um tamanho maior ?",
+                  "pode trazer um tamanho maior"
+                ],
+                "focus": "outro tamanho",
+                "watch": "maior = más grande."
+              },
+              {
+                "prompt": "Peça à vendedora para trazer um G.",
+                "expected": [
+                  "Pode trazer um G ?",
+                  "pode trazer um g"
+                ],
+                "focus": "pode trazer",
+                "watch": "pode = puede (petición)."
+              },
+              {
+                "prompt": "Diga que a calça fica grande em você.",
+                "expected": [
+                  "Essa calça fica grande em mim.",
+                  "essa calca fica grande em mim"
+                ],
+                "focus": "em mim",
+                "watch": "em mim = en mí."
+              },
+              {
+                "prompt": "Diga a sua opinião sobre o número G.",
+                "expected": [
+                  "Esse número fica melhor.",
+                  "esse numero fica melhor"
+                ],
+                "focus": "melhor",
+                "watch": "ficar melhor em você = te queda mejor."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u23-provador-e1",
+              "kind": "choice",
+              "prompt": "Essa camiseta ___ apertada.",
+              "options": [
+                "fica",
+                "está",
+                "é",
+                "tem"
+              ],
+              "answers": [
+                "fica"
+              ],
+              "explain": "ficar + adjetivo: como a roupa serve no corpo."
+            },
+            {
+              "id": "pt-foundations-u23-provador-e2",
+              "kind": "gap",
+              "prompt": "Pode trazer um tamanho ___ ? (não tão grande)",
+              "answers": [
+                "menor"
+              ],
+              "explain": "menor/maior: o tamanho que falta."
+            },
+            {
+              "id": "pt-foundations-u23-provador-e3",
+              "kind": "order",
+              "prompt": "Peça outro número à vendedora.",
+              "answers": [
+                "Pode trazer um tamanho maior"
+              ],
+              "explain": "Pode trazer + tamanho: o pedido educado do provador."
+            },
+            {
+              "id": "pt-foundations-u23-provador-e4",
+              "kind": "written",
+              "prompt": "Diga que a calça fica grande e peça um tamanho menor.",
+              "answers": [
+                "Essa calça fica grande, pode trazer um menor ?",
+                "essa calca fica grande pode trazer um menor",
+                "Fica grande, pode trazer um tamanho menor ?",
+                "fica grande pode trazer um tamanho menor"
+              ],
+              "explain": "Problema + pedido: a fórmula completa do provador."
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "function:go-shopping",
+            "grammar:can",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:can"
+          ]
+        },
+        {
+          "id": "pt-foundations-u23-caixa",
+          "title": "Muito caro",
+          "goal": "No caixa: reagir ao preço, contar a quantidade, pagar e trocar.",
+          "intro": {
+            "explanation": [
+              "Reaja ao preço: « é muito caro », « é barato ». « Nossa, é muito caro para mim ».",
+              "Quantidade e total: « são duas camisetas », « quanto fica no total ? ».",
+              "Pague « no cartão » ou « em dinheiro ». Se não servir: « quero trocar », « não serve »."
+            ],
+            "examples": [
+              {
+                "text": "Nossa, é muito caro para mim.",
+                "meaning": "A reação ao preço."
+              },
+              {
+                "text": "São duas camisetas e uma calça.",
+                "meaning": "A quantidade no caixa."
+              },
+              {
+                "text": "Quanto fica no total ?",
+                "meaning": "total = total."
+              },
+              {
+                "text": "Pode ser no cartão ? — Pode.",
+                "meaning": "cartão = tarjeta."
+              },
+              {
+                "text": "Quero trocar essa, ficou grande.",
+                "meaning": "A troca na loja."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "É muito caro / barato",
+              "meaning": "Reagir ao preço.",
+              "note": "Para mim, é muito caro."
+            },
+            {
+              "text": "São + número + peças",
+              "meaning": "A quantidade no caixa.",
+              "note": "São três camisetas."
+            },
+            {
+              "text": "Quanto fica no total ?",
+              "meaning": "A soma da conta.",
+              "note": "Quanto fica no total ?"
+            },
+            {
+              "text": "No cartão / em dinheiro",
+              "meaning": "A forma de pagamento.",
+              "note": "Em dinheiro, tem desconto ?"
+            },
+            {
+              "text": "Quero trocar / não serve",
+              "meaning": "A troca fácil.",
+              "note": "Não serve, quero trocar."
+            }
+          ],
+          "situation": "No caixa: são duas camisetas e uma calça, a Duda pergunta o total, paga no cartão e volta no dia seguinte para trocar a peça grande.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Reaja ao preço da jaqueta: R$ 800.",
+                "expected": [
+                  "É muito caro.",
+                  "e muito caro",
+                  "Nossa, é muito caro.",
+                  "nossa e muito caro"
+                ],
+                "focus": "preço",
+                "watch": "caro = caro."
+              },
+              {
+                "prompt": "Diga a quantidade: duas camisetas e uma calça.",
+                "expected": [
+                  "São duas camisetas e uma calça.",
+                  "sao duas camisetas e uma calca"
+                ],
+                "focus": "quantidade",
+                "watch": "são + plural."
+              },
+              {
+                "prompt": "Pergunte o total.",
+                "expected": [
+                  "Quanto fica no total ?",
+                  "quanto fica no total",
+                  "Quanto custa no total ?",
+                  "quanto custa no total"
+                ],
+                "focus": "total",
+                "watch": "ficar no total = quedar en total."
+              },
+              {
+                "prompt": "Diga que pode pagar no cartão.",
+                "expected": [
+                  "Pode ser no cartão ?",
+                  "pode ser no cartao",
+                  "Vou pagar no cartão.",
+                  "vou pagar no cartao"
+                ],
+                "focus": "pagar",
+                "watch": "no cartão = con tarjeta."
+              },
+              {
+                "prompt": "Diga que quer trocar porque ficou grande.",
+                "expected": [
+                  "Quero trocar, ficou grande.",
+                  "quero trocar ficou grande"
+                ],
+                "focus": "trocar",
+                "watch": "trocar = cambiar."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u23-caixa-e1",
+              "kind": "choice",
+              "prompt": "Essa jaqueta é muito ___; vou ver outra.",
+              "options": [
+                "cara",
+                "caro",
+                "barata",
+                "grande"
+              ],
+              "answers": [
+                "cara"
+              ],
+              "explain": "Peça no feminino: muito cara / muito barata."
+            },
+            {
+              "id": "pt-foundations-u23-caixa-e2",
+              "kind": "gap",
+              "prompt": "São ___ camisetas e uma calça. (2)",
+              "answers": [
+                "duas"
+              ],
+              "explain": "duas + substantivo feminino: a quantidade concorda."
+            },
+            {
+              "id": "pt-foundations-u23-caixa-e3",
+              "kind": "order",
+              "prompt": "Diga que quer trocar a peça.",
+              "answers": [
+                "Quero trocar essa camiseta"
+              ],
+              "explain": "Quero trocar + peça: o pedido da troca no balcão."
+            },
+            {
+              "id": "pt-foundations-u23-caixa-e4",
+              "kind": "written",
+              "prompt": "No caixa, pergunte se pode pagar com cartão.",
+              "answers": [
+                "Pode ser no cartão ?",
+                "pode ser no cartao",
+                "Posso pagar no cartão ?",
+                "posso pagar no cartao"
+              ],
+              "explain": "Pode ser + forma de pagamento: a pergunta rápida do caixa."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:shopping",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u24",
+      "title": "Compras grandes",
+      "subtitle": "Comparar, devolver, parcelar",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "comparar-preco",
+          "title": "Comparar",
+          "subtitle": "O melhor preço",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "A Duda compara o celular novo em duas lojas: uma é mais barata, mas a outra tem melhor garantia e mais memória.",
+          "colorIndex": 0
+        },
+        {
+          "id": "troca-parcela",
+          "title": "Trocar e parcelar",
+          "subtitle": "Recibo e prestação",
+          "symbol": "creditcard",
+          "category": "Course",
+          "situation": "O celular apresenta defeito: a Duda volta com o recibo, resolve a troca e decide pagar a nova compra em dez parcelas.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u24-comparar",
+          "title": "O melhor preço",
+          "goal": "Comparar produtos: mais barato do que, tão bom quanto, o mais caro de todos.",
+          "intro": {
+            "explanation": [
+              "Desigualdade com « mais … do que »: « essa loja é mais barata do que a outra ». O oposto é « menos … do que ».",
+              "Igualdade com « tão … quanto »: « esse modelo é tão bom quanto o outro ».",
+              "O extremo do grupo com « o/a mais … de »: « é o mais caro de todos ». Irregulares: bom → melhor, ruim → pior."
+            ],
+            "examples": [
+              {
+                "text": "Esse celular é mais barato do que aquele.",
+                "meaning": "mais … do que = más… que."
+              },
+              {
+                "text": "A garantia daqui é melhor do que a de lá.",
+                "meaning": "bom → melhor."
+              },
+              {
+                "text": "Esse modelo é tão bom quanto o outro.",
+                "meaning": "tão … quanto = tan… como."
+              },
+              {
+                "text": "É o mais caro de todos.",
+                "meaning": "O superlativo do grupo."
+              },
+              {
+                "text": "Prefiro a loja com mais garantia.",
+                "meaning": "preferir + comparação."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mais … do que",
+              "meaning": "Comparar desigual.",
+              "note": "Mais barato do que aquele."
+            },
+            {
+              "text": "tão … quanto",
+              "meaning": "Comparar igual.",
+              "note": "Tão rápido quanto o meu."
+            },
+            {
+              "text": "o/a mais … de",
+              "meaning": "O extremo do grupo.",
+              "note": "A mais barata da loja."
+            },
+            {
+              "text": "melhor / pior",
+              "meaning": "Os irregulares.",
+              "note": "É a melhor opção."
+            },
+            {
+              "text": "Prefiro …",
+              "meaning": "Escolher comparando.",
+              "note": "Prefiro essa, custa menos."
+            }
+          ],
+          "situation": "Duas lojas, um celular: a Duda compara preço, garantia e memória e escolhe a oferta mais equilibrada.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Compare as duas lojas de preço.",
+                "expected": [
+                  "Essa loja é mais barata do que a outra.",
+                  "essa loja e mais barata do que a outra",
+                  "Essa loja é mais barata que a outra.",
+                  "essa loja e mais barata que a outra"
+                ],
+                "focus": "mais … do que",
+                "watch": "do que ou que: as duas formas servem."
+              },
+              {
+                "prompt": "Diga o que acha da garantia daqui.",
+                "expected": [
+                  "A garantia daqui é melhor.",
+                  "a garantia daqui e melhor",
+                  "A garantia daqui é melhor do que a de lá.",
+                  "a garantia daqui e melhor do que a de la"
+                ],
+                "focus": "melhor",
+                "watch": "bom → melhor (irregular)."
+              },
+              {
+                "prompt": "Diga qual é o mais caro do grupo.",
+                "expected": [
+                  "Esse é o mais caro de todos.",
+                  "esse e o mais caro de todos"
+                ],
+                "focus": "superlativo",
+                "watch": "o mais + adjetivo + de todos."
+              },
+              {
+                "prompt": "Compare com igualdade: esse modelo e o outro, mesma qualidade.",
+                "expected": [
+                  "Esse modelo é tão bom quanto o outro.",
+                  "esse modelo e tao bom quanto o outro"
+                ],
+                "focus": "tão … quanto",
+                "watch": "tão … quanto = tan… como."
+              },
+              {
+                "prompt": "Diga que prefere a loja com mais garantia.",
+                "expected": [
+                  "Prefiro a loja com mais garantia.",
+                  "prefiro a loja com mais garantia"
+                ],
+                "focus": "preferir",
+                "watch": "prefiro + comparação."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u24-comparar-e1",
+              "kind": "choice",
+              "prompt": "Essa oferta é ___ barata do que a outra.",
+              "options": [
+                "mais",
+                "muito",
+                "tanto",
+                "melhor"
+              ],
+              "answers": [
+                "mais"
+              ],
+              "explain": "mais + adjetivo + do que: a comparação de desigualdade."
+            },
+            {
+              "id": "pt-foundations-u24-comparar-e2",
+              "kind": "gap",
+              "prompt": "A garantia daqui é ___ do que a de lá. (bom)",
+              "answers": [
+                "melhor"
+              ],
+              "explain": "bom → melhor: o comparativo irregular."
+            },
+            {
+              "id": "pt-foundations-u24-comparar-e3",
+              "kind": "order",
+              "prompt": "Compare os dois celulares: esse é mais barato.",
+              "answers": [
+                "Esse celular é mais barato do que aquele"
+              ],
+              "explain": "mais barato do que aquele: compara entre dois."
+            },
+            {
+              "id": "pt-foundations-u24-comparar-e4",
+              "kind": "written",
+              "prompt": "Compare com igualdade: esse modelo e o outro têm a mesma qualidade.",
+              "answers": [
+                "Esse modelo é tão bom quanto o outro.",
+                "esse modelo e tao bom quanto o outro"
+              ],
+              "explain": "tão + adjetivo + quanto: a igualdade comparativa."
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "function:go-shopping",
+            "grammar:superlatives",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        },
+        {
+          "id": "pt-foundations-u24-devolver",
+          "title": "Devolução e troca",
+          "goal": "Resolver a compra com problema: comprei…, apresentou defeito, quero a troca.",
+          "intro": {
+            "explanation": [
+              "Explique o passado: « comprei na semana passada », « apresentou defeito ». O passado simples conta o problema.",
+              "Traga a prova: « aqui está o recibo ». « Trouxe o recibo e a caixa ».",
+              "Peça a solução: « quero trocar por outro igual », « prefiro o reembolso »."
+            ],
+            "examples": [
+              {
+                "text": "Comprei esse celular há uma semana.",
+                "meaning": "O passado simples conta a compra."
+              },
+              {
+                "text": "Ele apresentou defeito na câmera.",
+                "meaning": "defeito = defecto."
+              },
+              {
+                "text": "Aqui está o recibo da compra.",
+                "meaning": "recibo = recibo/ticket."
+              },
+              {
+                "text": "Quero trocar por outro igual, por favor.",
+                "meaning": "A troca clara."
+              },
+              {
+                "text": "Não tem outro ? Então prefiro o reembolso.",
+                "meaning": "reembolso = reembolso."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Comprei … há …",
+              "meaning": "Compra passada + tempo.",
+              "note": "Comprei há uma semana."
+            },
+            {
+              "text": "Apresentou defeito",
+              "meaning": "O problema do produto.",
+              "note": "Apresentou defeito na tela."
+            },
+            {
+              "text": "Aqui está o recibo",
+              "meaning": "A prova da compra.",
+              "note": "Aqui está o recibo."
+            },
+            {
+              "text": "Quero trocar por …",
+              "meaning": "Pedir a troca.",
+              "note": "Trocar por outro igual."
+            },
+            {
+              "text": "Prefiro o reembolso",
+              "meaning": "O dinheiro de volta.",
+              "note": "Prefiro o reembolso, obrigada."
+            }
+          ],
+          "situation": "No atendimento: a Duda explica que comprou o celular na semana passada, mostra o recibo e resolve a troca em cinco minutos.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga quando comprou: na semana passada.",
+                "expected": [
+                  "Comprei na semana passada.",
+                  "comprei na semana passada"
+                ],
+                "focus": "passado simples",
+                "watch": "comprei = compré."
+              },
+              {
+                "prompt": "Explique o problema: a câmera.",
+                "expected": [
+                  "Apresentou defeito na câmera.",
+                  "apresentou defeito na camera",
+                  "A câmera apresentou defeito.",
+                  "a camera apresentou defeito"
+                ],
+                "focus": "defeito",
+                "watch": "apresentar defeito = presentar defecto."
+              },
+              {
+                "prompt": "Mostre o recibo.",
+                "expected": [
+                  "Aqui está o recibo.",
+                  "aqui esta o recibo"
+                ],
+                "focus": "prova",
+                "watch": "recibo = recibo."
+              },
+              {
+                "prompt": "Peça a troca por outro igual.",
+                "expected": [
+                  "Quero trocar por outro igual.",
+                  "quero trocar por outro igual"
+                ],
+                "focus": "troca",
+                "watch": "igual = igual."
+              },
+              {
+                "prompt": "Diga que prefere o reembolso.",
+                "expected": [
+                  "Prefiro o reembolso.",
+                  "prefiro o reembolso"
+                ],
+                "focus": "reembolso",
+                "watch": "reembolso = reembolso."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u24-devolver-e1",
+              "kind": "choice",
+              "prompt": "___ esse celular há uma semana.",
+              "options": [
+                "Comprei",
+                "Compro",
+                "Comprava",
+                "Vou comprar"
+              ],
+              "answers": [
+                "Comprei"
+              ],
+              "explain": "Comprei: passado simples, a compra terminada."
+            },
+            {
+              "id": "pt-foundations-u24-devolver-e2",
+              "kind": "gap",
+              "prompt": "Aqui está o ___ da compra.",
+              "answers": [
+                "recibo"
+              ],
+              "explain": "recibo: a prova oficial da compra."
+            },
+            {
+              "id": "pt-foundations-u24-devolver-e3",
+              "kind": "order",
+              "prompt": "Peça a troca por outro aparelho igual.",
+              "answers": [
+                "Quero trocar por outro igual"
+              ],
+              "explain": "Quero trocar por + igual: a troca mais simples."
+            },
+            {
+              "id": "pt-foundations-u24-devolver-e4",
+              "kind": "written",
+              "prompt": "Explique o problema no passado: a câmera.",
+              "answers": [
+                "Apresentou defeito na câmera.",
+                "apresentou defeito na camera",
+                "A câmera apresentou defeito.",
+                "a camera apresentou defeito"
+              ],
+              "explain": "Apresentou defeito: o problema contado no passado."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "function:make-requests",
+            "vocab:shopping"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "pt-foundations-u24-parcelas",
+          "title": "Pagar parcelado",
+          "goal": "Falar de parcelas: em quantas vezes, sem juros, por isso…",
+          "intro": {
+            "explanation": [
+              "Pergunte pelas parcelas: « posso parcelar em quantas vezes ? ». « parcelar » é dividir o pagamento.",
+              "Conecte causa e decisão: « porque », « por isso », « então ». « É sem juros, por isso vou parcelar ».",
+              "Feche a compra: « fechado ! », « vou levar ». « Então fechado, dez vezes sem juros »."
+            ],
+            "examples": [
+              {
+                "text": "Posso parcelar em quantas vezes ?",
+                "meaning": "parcelar = pagar en cuotas."
+              },
+              {
+                "text": "Em dez vezes sem juros.",
+                "meaning": "sem juros = sin intereses."
+              },
+              {
+                "text": "É sem juros, por isso vou parcelar.",
+                "meaning": "por isso = por eso."
+              },
+              {
+                "text": "O valor fica alto, então prefiro parcelar.",
+                "meaning": "então = entonces."
+              },
+              {
+                "text": "Fechado ! Vou levar assim mesmo.",
+                "meaning": "O sim da compra."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Parcelar em … vezes",
+              "meaning": "Dividir o pagamento.",
+              "note": "Parcelar em dez vezes."
+            },
+            {
+              "text": "sem juros",
+              "meaning": "O que não aumenta.",
+              "note": "Em seis vezes sem juros."
+            },
+            {
+              "text": "por isso / então",
+              "meaning": "Conectar causa e decisão.",
+              "note": "Por isso, vou parcelar."
+            },
+            {
+              "text": "porque",
+              "meaning": "Explicar a razão.",
+              "note": "Porque o valor fica alto."
+            },
+            {
+              "text": "Fechado !",
+              "meaning": "Aceitar a oferta.",
+              "note": "Fechado, obrigado !"
+            }
+          ],
+          "situation": "No balcão: o vendedor oferece dez vezes sem juros, a Duda compara com o preço à vista e decide parcelar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte em quantas vezes pode parcelar.",
+                "expected": [
+                  "Posso parcelar em quantas vezes ?",
+                  "posso parcelar em quantas vezes",
+                  "Em quantas vezes posso parcelar ?",
+                  "em quantas vezes posso parcelar"
+                ],
+                "focus": "parcelar",
+                "watch": "em quantas vezes = ¿en cuántas cuotas ?"
+              },
+              {
+                "prompt": "Diga o parcelamento que a loja oferece.",
+                "expected": [
+                  "Em dez vezes sem juros.",
+                  "em dez vezes sem juros"
+                ],
+                "focus": "sem juros",
+                "watch": "sem juros = sin intereses."
+              },
+              {
+                "prompt": "Conecte: sem juros, por isso você parcela.",
+                "expected": [
+                  "É sem juros, por isso vou parcelar.",
+                  "e sem juros por isso vou parcelar"
+                ],
+                "focus": "por isso",
+                "watch": "por isso = por eso."
+              },
+              {
+                "prompt": "Diga que prefere parcelar porque o valor fica alto.",
+                "expected": [
+                  "O valor fica alto, então prefiro parcelar.",
+                  "o valor fica alto entao prefiro parcelar"
+                ],
+                "focus": "então",
+                "watch": "então = entonces."
+              },
+              {
+                "prompt": "Aceite a oferta com uma palavra.",
+                "expected": [
+                  "Fechado !",
+                  "fechado"
+                ],
+                "focus": "fechar",
+                "watch": "fechado = trato hecho."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u24-parcelas-e1",
+              "kind": "choice",
+              "prompt": "É sem juros, ___ vou parcelar em dez vezes.",
+              "options": [
+                "por isso",
+                "porque",
+                "apesar",
+                "embora"
+              ],
+              "answers": [
+                "por isso"
+              ],
+              "explain": "por isso conecta a causa com a decisão: por eso."
+            },
+            {
+              "id": "pt-foundations-u24-parcelas-e2",
+              "kind": "gap",
+              "prompt": "Posso parcelar ___ quantas vezes ?",
+              "answers": [
+                "em"
+              ],
+              "explain": "parcelar em + número de vezes."
+            },
+            {
+              "id": "pt-foundations-u24-parcelas-e3",
+              "kind": "order",
+              "prompt": "Conclua a sua decisão de parcelar.",
+              "answers": [
+                "É sem juros por isso vou parcelar"
+              ],
+              "explain": "por isso + decisão: o conector no meio da frase."
+            },
+            {
+              "id": "pt-foundations-u24-parcelas-e4",
+              "kind": "written",
+              "prompt": "Pergunte ao vendedor sobre as parcelas.",
+              "answers": [
+                "Posso parcelar em quantas vezes ?",
+                "posso parcelar em quantas vezes",
+                "Em quantas vezes posso parcelar ?",
+                "em quantas vezes posso parcelar"
+              ],
+              "explain": "Posso + verbo + em quantas vezes: a pergunta das cuotas."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:connectors",
+            "vocab:shopping",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u25",
+      "title": "Prepare a viagem",
+      "subtitle": "Mala, reservas e véspera",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "mala-documentos",
+          "title": "Mala e documentos",
+          "subtitle": "Não esquecer nada",
+          "symbol": "suitcase",
+          "category": "Course",
+          "situation": "A Duda faz a lista da viagem: a mala de mão primeiro, depois os documentos; o Téo lembra do carregador.",
+          "colorIndex": 0
+        },
+        {
+          "id": "reserva-vespera",
+          "title": "Reservar e esperar",
+          "subtitle": "Do hotel ao portão",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "A Duda reserva o quarto e o voo de manhã e, na véspera, confere tudo de novo antes da despedida.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u25-mala",
+          "title": "A mala e os documentos",
+          "goal": "Falar dos planos de viagem: vou levar, não vou esquecer, primeiro… depois….",
+          "intro": {
+            "explanation": [
+              "Planos com « ir + infinitivo »: « vou levar só uma mala ». A negativa é « não vou esquecer ».",
+              "A lista segue uma ordem: « primeiro a mala, depois os documentos ».",
+              "Peça ajuda para conferir: « você confere se falta algo ? »."
+            ],
+            "examples": [
+              {
+                "text": "Vou viajar na sexta de manhã.",
+                "meaning": "ir + infinitivo: o plano já decidido."
+              },
+              {
+                "text": "Vou levar só uma mala de mão.",
+                "meaning": "mala de mão = equipaje de mano."
+              },
+              {
+                "text": "Primeiro faço a mala, depois confiro os documentos.",
+                "meaning": "A ordem dos passos."
+              },
+              {
+                "text": "Não vou esquecer o carregador.",
+                "meaning": "A negativa do plano."
+              },
+              {
+                "text": "Você confere se falta algo ?",
+                "meaning": "O pedido de conferência."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Vou + infinitivo",
+              "meaning": "O plano de viagem.",
+              "note": "Vou viajar na sexta."
+            },
+            {
+              "text": "Não vou esquecer …",
+              "meaning": "O que não pode faltar.",
+              "note": "Não vou esquecer o passaporte."
+            },
+            {
+              "text": "Primeiro …, depois …",
+              "meaning": "A ordem dos passos.",
+              "note": "Primeiro a mala, depois o resto."
+            },
+            {
+              "text": "mala de mão",
+              "meaning": "O que entra no avião.",
+              "note": "Só uma mala de mão."
+            },
+            {
+              "text": "Confere se … ?",
+              "meaning": "Pedir conferência.",
+              "note": "Confere se falta algo ?"
+            }
+          ],
+          "situation": "Em casa: a Duda monta a lista com o Téo — primeiro a mala, depois os documentos — e cada um confere o que não pode faltar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga o que vai levar: uma mala de mão.",
+                "expected": [
+                  "Vou levar uma mala de mão.",
+                  "vou levar uma mala de mao"
+                ],
+                "focus": "ir + infinitivo",
+                "watch": "vou + infinitivo = voy a."
+              },
+              {
+                "prompt": "Diga o que não pode faltar: o passaporte.",
+                "expected": [
+                  "Não vou esquecer o passaporte.",
+                  "nao vou esquecer o passaporte"
+                ],
+                "focus": "negativa",
+                "watch": "não vou esquecer = no voy a olvidar."
+              },
+              {
+                "prompt": "Ordene: mala primeiro, documentos depois.",
+                "expected": [
+                  "Primeiro faço a mala, depois confiro os documentos.",
+                  "primeiro faco a mala depois confiro os documentos"
+                ],
+                "focus": "ordem",
+                "watch": "primeiro … depois … = primero… luego…."
+              },
+              {
+                "prompt": "Diga quando vai viajar: sexta de manhã.",
+                "expected": [
+                  "Vou viajar na sexta de manhã.",
+                  "vou viajar na sexta de manha"
+                ],
+                "focus": "quando",
+                "watch": "de manhã = por la mañana."
+              },
+              {
+                "prompt": "Peça para conferir se falta algo.",
+                "expected": [
+                  "Você confere se falta algo ?",
+                  "voce confere se falta algo"
+                ],
+                "focus": "conferir",
+                "watch": "conferir se = revisar si."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u25-mala-e1",
+              "kind": "choice",
+              "prompt": "Amanhã ___ conferir os documentos.",
+              "options": [
+                "vou",
+                "vai",
+                "ir",
+                "indo"
+              ],
+              "answers": [
+                "vou"
+              ],
+              "explain": "Eu + vou + infinitivo: o plano já decidido."
+            },
+            {
+              "id": "pt-foundations-u25-mala-e2",
+              "kind": "gap",
+              "prompt": "Primeiro faço a mala, ___ confiro os documentos.",
+              "answers": [
+                "depois"
+              ],
+              "explain": "primeiro … depois …: a ordem dos passos."
+            },
+            {
+              "id": "pt-foundations-u25-mala-e3",
+              "kind": "order",
+              "prompt": "Diga que não vai esquecer o carregador.",
+              "answers": [
+                "Não vou esquecer o carregador"
+              ],
+              "explain": "não vou + infinitivo: a negativa do plano."
+            },
+            {
+              "id": "pt-foundations-u25-mala-e4",
+              "kind": "written",
+              "prompt": "Diga o que vai levar: só uma mala de mão.",
+              "answers": [
+                "Vou levar só uma mala de mão.",
+                "vou levar so uma mala de mao",
+                "Vou levar apenas uma mala de mão.",
+                "vou levar apenas uma mala de mao"
+              ],
+              "explain": "Vou levar + só: a mala leve do avião."
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:travel",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "pt-foundations-u25-reservar",
+          "title": "Reservar hotel e voo",
+          "goal": "Reservar quarto e voo: quero reservar, ainda tem…, para duas pessoas.",
+          "intro": {
+            "explanation": [
+              "Abra a reserva: « quero reservar um quarto ». « quero + infinitivo » é direto e educado.",
+              "Pergunte pela vaga: « ainda tem quarto duplo ? », « tem voo de manhã ? ».",
+              "Confirme os dados: « para duas pessoas », « com café incluído »."
+            ],
+            "examples": [
+              {
+                "text": "Quero reservar um quarto para duas noites.",
+                "meaning": "O pedido direto."
+              },
+              {
+                "text": "Ainda tem quarto duplo ?",
+                "meaning": "A pergunta da vaga."
+              },
+              {
+                "text": "Tem voo de manhã para Lisboa ?",
+                "meaning": "A pergunta do voo."
+              },
+              {
+                "text": "Para duas pessoas, com café incluído.",
+                "meaning": "incluído = incluido."
+              },
+              {
+                "text": "Reservado ! Chegamos sexta à noite.",
+                "meaning": "A confirmação."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Quero reservar …",
+              "meaning": "Abrir a reserva.",
+              "note": "Quero reservar um quarto."
+            },
+            {
+              "text": "Ainda tem … ?",
+              "meaning": "Perguntar a vaga.",
+              "note": "Ainda tem vaga de manhã ?"
+            },
+            {
+              "text": "Para … pessoas / noites",
+              "meaning": "Os dados da reserva.",
+              "note": "Para duas pessoas."
+            },
+            {
+              "text": "Com café incluído",
+              "meaning": "O que já está no preço.",
+              "note": "Quarto com café incluído."
+            },
+            {
+              "text": "Reservado / confirmado",
+              "meaning": "A confirmação.",
+              "note": "Está confirmado !"
+            }
+          ],
+          "situation": "No telefone: a Duda reserva o quarto duplo com café e escolhe o voo da manhã; o Téo confirma tudo pelo aplicativo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Reserve um quarto para duas noites.",
+                "expected": [
+                  "Quero reservar um quarto para duas noites.",
+                  "quero reservar um quarto para duas noites"
+                ],
+                "focus": "reservar",
+                "watch": "quero + infinitivo."
+              },
+              {
+                "prompt": "Pergunte pela vaga do quarto duplo.",
+                "expected": [
+                  "Ainda tem quarto duplo ?",
+                  "ainda tem quarto duplo"
+                ],
+                "focus": "vaga",
+                "watch": "ainda = todavía."
+              },
+              {
+                "prompt": "Pergunte por voo de manhã.",
+                "expected": [
+                  "Tem voo de manhã ?",
+                  "tem voo de manha",
+                  "Tem voo de manhã para Lisboa ?",
+                  "tem voo de manha para lisboa"
+                ],
+                "focus": "voo",
+                "watch": "voo = vuelo."
+              },
+              {
+                "prompt": "Especifique: duas pessoas, com café.",
+                "expected": [
+                  "Para duas pessoas, com café.",
+                  "para duas pessoas com cafe",
+                  "Para duas pessoas, com café incluído.",
+                  "para duas pessoas com cafe incluido"
+                ],
+                "focus": "dados",
+                "watch": "incluído = incluido."
+              },
+              {
+                "prompt": "Confirme a reserva.",
+                "expected": [
+                  "Reservado !",
+                  "reservado",
+                  "Confirmado !",
+                  "confirmado"
+                ],
+                "focus": "confirmação",
+                "watch": "confirmado = confirmado."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u25-reservar-e1",
+              "kind": "choice",
+              "prompt": "Quero ___ um quarto para duas noites.",
+              "options": [
+                "reservar",
+                "reservo",
+                "reservado",
+                "reserva"
+              ],
+              "answers": [
+                "reservar"
+              ],
+              "explain": "quero + infinitivo: o pedido da reserva."
+            },
+            {
+              "id": "pt-foundations-u25-reservar-e2",
+              "kind": "gap",
+              "prompt": "___ tem quarto duplo ?",
+              "answers": [
+                "Ainda",
+                "ainda"
+              ],
+              "explain": "ainda tem … ?: perguntar se há vaga."
+            },
+            {
+              "id": "pt-foundations-u25-reservar-e3",
+              "kind": "order",
+              "prompt": "Pergunte por voo de manhã.",
+              "answers": [
+                "Tem voo de manhã"
+              ],
+              "explain": "tem + voo + hora: a pergunta simples do voo."
+            },
+            {
+              "id": "pt-foundations-u25-reservar-e4",
+              "kind": "written",
+              "prompt": "Peça o quarto: duas pessoas e café.",
+              "answers": [
+                "Um quarto para duas pessoas, com café.",
+                "um quarto para duas pessoas com cafe",
+                "Quero um quarto para duas pessoas com café.",
+                "quero um quarto para duas pessoas com cafe"
+              ],
+              "explain": "Peça + dados: quarto, pessoas e café."
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "grammar:going-to",
+            "vocab:travel",
+            "vocab:transport"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "pt-foundations-u25-vespera",
+          "title": "Na véspera",
+          "goal": "A véspera da viagem: conferir tudo e despedir-se com boa viagem.",
+          "intro": {
+            "explanation": [
+              "Conferir item por item: « confiro se a mala está pronta ». O « se » liga o verbo à dúvida.",
+              "O último plano: « amanhã vou sair cedo, o voo é às sete ».",
+              "Despeça quem viaja: « boa viagem ! », « me avise quando chegar »."
+            ],
+            "examples": [
+              {
+                "text": "Confiro se está tudo pronto.",
+                "meaning": "conferir se = revisar si…."
+              },
+              {
+                "text": "A mala está pronta e os documentos também.",
+                "meaning": "pronto = listo."
+              },
+              {
+                "text": "Amanhã vou sair cedo, o voo é às sete.",
+                "meaning": "cedo = temprano."
+              },
+              {
+                "text": "Boa viagem ! Me avise quando chegar.",
+                "meaning": "A despedida do amigo."
+              },
+              {
+                "text": "Descansa, amanhã o dia é longo.",
+                "meaning": "A frase da véspera."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Confiro se …",
+              "meaning": "Conferir cada item.",
+              "note": "Confiro se fecho a porta."
+            },
+            {
+              "text": "estar pronto(a)",
+              "meaning": "Tudo preparado.",
+              "note": "A mala já está pronta."
+            },
+            {
+              "text": "sair cedo",
+              "meaning": "Sair temprano.",
+              "note": "Amanhã vou sair cedo."
+            },
+            {
+              "text": "Boa viagem !",
+              "meaning": "Despedir quem viaja.",
+              "note": "Boa viagem, Bia !"
+            },
+            {
+              "text": "Me avise quando chegar",
+              "meaning": "Pedir notícia.",
+              "note": "Me avise quando chegar !"
+            }
+          ],
+          "situation": "Na véspera: a Duda confere a lista com o Téo, diz que vai sair cedo e recebe a despedida com boa viagem.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que confere se está tudo pronto.",
+                "expected": [
+                  "Confiro se está tudo pronto.",
+                  "confiro se esta tudo pronto"
+                ],
+                "focus": "conferir se",
+                "watch": "se = si."
+              },
+              {
+                "prompt": "Confirme o item da mala.",
+                "expected": [
+                  "A mala está pronta.",
+                  "a mala esta pronta"
+                ],
+                "focus": "pronto",
+                "watch": "pronto = listo."
+              },
+              {
+                "prompt": "Diga que amanhã vai sair cedo.",
+                "expected": [
+                  "Amanhã vou sair cedo.",
+                  "amanha vou sair cedo"
+                ],
+                "focus": "cedo",
+                "watch": "cedo = temprano."
+              },
+              {
+                "prompt": "Despeça-se de quem viaja.",
+                "expected": [
+                  "Boa viagem !",
+                  "boa viagem"
+                ],
+                "focus": "despedida",
+                "watch": "boa viagem = buen viaje."
+              },
+              {
+                "prompt": "Peça para avisar quando chegar.",
+                "expected": [
+                  "Me avise quando chegar.",
+                  "me avise quando chegar"
+                ],
+                "focus": "avisar",
+                "watch": "me avise = avísame."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u25-vespera-e1",
+              "kind": "choice",
+              "prompt": "___ viagem ! Me avise quando chegar.",
+              "options": [
+                "Boa",
+                "Bom",
+                "Boas",
+                "Melhor"
+              ],
+              "answers": [
+                "Boa"
+              ],
+              "explain": "boa viagem: a despedida fixa para quem viaja."
+            },
+            {
+              "id": "pt-foundations-u25-vespera-e2",
+              "kind": "gap",
+              "prompt": "Confiro ___ a mala está pronta.",
+              "answers": [
+                "se"
+              ],
+              "explain": "conferir se + oração: verificar si…."
+            },
+            {
+              "id": "pt-foundations-u25-vespera-e3",
+              "kind": "order",
+              "prompt": "Peça para avisar quando chegar.",
+              "answers": [
+                "Me avise quando chegar"
+              ],
+              "explain": "me avise quando + evento: o pedido da despedida."
+            },
+            {
+              "id": "pt-foundations-u25-vespera-e4",
+              "kind": "written",
+              "prompt": "Diga que amanhã vai sair cedo, porque o voo é às sete.",
+              "answers": [
+                "Amanhã vou sair cedo, o voo é às sete.",
+                "amanha vou sair cedo o voo e as sete",
+                "Vou sair cedo, o voo é às sete.",
+                "vou sair cedo o voo e as sete"
+              ],
+              "explain": "Plano + motivo: a frase completa da véspera."
+            }
+          ],
+          "skills": [
+            "grammar:connectors",
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:travel"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u26",
+      "title": "A cidade que eu quero",
+      "subtitle": "Opinião, bairro e consumo",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "opinioes-cidade",
+          "title": "Por um lado…",
+          "subtitle": "Opiniões sobre a cidade",
+          "symbol": "building.2",
+          "category": "Course",
+          "situation": "Na reunião do bairro, cada morador opina: por um lado o comércio local e a praça viva; por outro, o trânsito e os prédios altos.",
+          "colorIndex": 0
+        },
+        {
+          "id": "propostas-consumo",
+          "title": "Propostas",
+          "subtitle": "Consumo consciente",
+          "symbol": "leaf",
+          "category": "Course",
+          "situation": "A turma apresenta propostas para a vizinhança: horta comunitária, feira sem plástico e um consumo mais consciente no dia a dia.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u26-opinar",
+          "title": "Por um lado, por outro",
+          "goal": "Opinar sobre a cidade: por um lado…, por outro…, na minha opinião….",
+          "intro": {
+            "explanation": [
+              "Pese os dois lados com o par fixo: « por um lado …, por outro lado … ». O contraste ganha equilíbrio.",
+              "Marque a opinião: « na minha opinião », « eu acho que ». Depois justifique com « porque ».",
+              "Concorde com limite: « concordo em parte, mas … ». Compare para argumentar: « mais útil do que »."
+            ],
+            "examples": [
+              {
+                "text": "Por um lado, o prédio traz moradores; por outro, tira o sol da praça.",
+                "meaning": "Os dois lados pesados."
+              },
+              {
+                "text": "Na minha opinião, a cidade precisa de menos carros.",
+                "meaning": "na minha opinião = en mi opinión."
+              },
+              {
+                "text": "Eu acho que a feira é o melhor do bairro.",
+                "meaning": "eu acho que = creo que."
+              },
+              {
+                "text": "Concordo em parte, mas falta sombra na praça.",
+                "meaning": "Concordância com limite."
+              },
+              {
+                "text": "A ciclovia é mais útil do que mais vagas de carro.",
+                "meaning": "O comparativo argumenta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Por um lado …, por outro …",
+              "meaning": "Pesar os lados.",
+              "note": "Por um lado, sim; por outro, não."
+            },
+            {
+              "text": "Na minha opinião, …",
+              "meaning": "Marcar a opinião.",
+              "note": "Na minha opinião, falta verde."
+            },
+            {
+              "text": "Eu acho que …",
+              "meaning": "Opinião direta.",
+              "note": "Eu acho que melhora o bairro."
+            },
+            {
+              "text": "Concordo em parte, mas …",
+              "meaning": "Concordar com limite.",
+              "note": "Concordo em parte, mas é caro."
+            },
+            {
+              "text": "mais útil do que",
+              "meaning": "Comparar para argumentar.",
+              "note": "É mais útil do que bonito."
+            }
+          ],
+          "situation": "Na reunião do bairro: cada morador pesa os lados do novo prédio, opina sobre os carros e compara soluções para a praça.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pese os lados do prédio novo: moradores e sol.",
+                "expected": [
+                  "Por um lado, traz moradores; por outro, tira o sol.",
+                  "por um lado traz moradores por outro tira o sol"
+                ],
+                "focus": "os dois lados",
+                "watch": "o par fixo: por um lado / por outro."
+              },
+              {
+                "prompt": "Dê sua opinião sobre os carros na cidade.",
+                "expected": [
+                  "Na minha opinião, a cidade precisa de menos carros.",
+                  "na minha opiniao a cidade precisa de menos carros"
+                ],
+                "focus": "marcador",
+                "watch": "na minha opinião = en mi opinión."
+              },
+              {
+                "prompt": "Diga o que acha da feira.",
+                "expected": [
+                  "Eu acho que a feira é o melhor do bairro.",
+                  "eu acho que a feira e o melhor do bairro"
+                ],
+                "focus": "eu acho que",
+                "watch": "eu acho que = creo que."
+              },
+              {
+                "prompt": "Concorde em parte e aponte o que falta.",
+                "expected": [
+                  "Concordo em parte, mas falta sombra.",
+                  "concordo em parte mas falta sombra"
+                ],
+                "focus": "concordância",
+                "watch": "mas introduz o limite."
+              },
+              {
+                "prompt": "Compare a ciclovia com mais vagas de carro.",
+                "expected": [
+                  "A ciclovia é mais útil do que mais vagas de carro.",
+                  "a ciclovia e mais util do que mais vagas de carro"
+                ],
+                "focus": "comparativo",
+                "watch": "mais útil do que = más útil que."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u26-opinar-e1",
+              "kind": "choice",
+              "prompt": "Por um lado, traz moradores; por ___, tira o sol.",
+              "options": [
+                "outro",
+                "outra",
+                "outros",
+                "vez"
+              ],
+              "answers": [
+                "outro"
+              ],
+              "explain": "por um lado …, por outro (lado) …: o par fixo do contraste."
+            },
+            {
+              "id": "pt-foundations-u26-opinar-e2",
+              "kind": "gap",
+              "prompt": "Na minha ___, a praça é o coração do bairro.",
+              "answers": [
+                "opinião",
+                "opiniao"
+              ],
+              "explain": "na minha opinião: o marcador da opinião pessoal."
+            },
+            {
+              "id": "pt-foundations-u26-opinar-e3",
+              "kind": "order",
+              "prompt": "Compare a ciclovia com o estacionamento.",
+              "answers": [
+                "A ciclovia é mais útil do que o estacionamento"
+              ],
+              "explain": "mais + adjetivo + do que: comparar para argumentar."
+            },
+            {
+              "id": "pt-foundations-u26-opinar-e4",
+              "kind": "written",
+              "prompt": "Concorde em parte e aponte o que falta: sombra.",
+              "answers": [
+                "Concordo em parte, mas falta sombra.",
+                "concordo em parte mas falta sombra"
+              ],
+              "explain": "concordo em parte + mas + falta: concordância com limite."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "grammar:connectors",
+            "speaking:justify-opinion",
+            "grammar:comparatives"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-foundations-u26-proposta",
+          "title": "Propostas de bairro",
+          "goal": "Defender uma proposta: primeiro…, além disso…, por fim…, por isso….",
+          "intro": {
+            "explanation": [
+              "Estruture o argumento: « primeiro …, além disso …, por fim … ». A ordem convence.",
+              "Some força com « além disso » e « também »: « além disso, a horta une os vizinhos ».",
+              "Conclua com a consequência: « por isso, peço o apoio de vocês »."
+            ],
+            "examples": [
+              {
+                "text": "Minha proposta é uma horta na praça.",
+                "meaning": "A proposta em uma frase."
+              },
+              {
+                "text": "Primeiro, ocupamos um canto vazio da praça.",
+                "meaning": "O primeiro passo."
+              },
+              {
+                "text": "Além disso, a horta une os vizinhos.",
+                "meaning": "além disso = además."
+              },
+              {
+                "text": "Por fim, comida fresca de graça para todos.",
+                "meaning": "por fim = por último."
+              },
+              {
+                "text": "Por isso, peço o apoio de vocês.",
+                "meaning": "por isso = por eso."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Minha proposta é …",
+              "meaning": "Abrir a proposta.",
+              "note": "Minha proposta é simples."
+            },
+            {
+              "text": "Primeiro …, depois …, por fim …",
+              "meaning": "A estrutura do argumento.",
+              "note": "Primeiro o plano, por fim a obra."
+            },
+            {
+              "text": "Além disso, …",
+              "meaning": "Somar um argumento.",
+              "note": "Além disso, é barato."
+            },
+            {
+              "text": "Por isso, …",
+              "meaning": "Concluir com a consequência.",
+              "note": "Por isso, apoio a ideia."
+            },
+            {
+              "text": "Peço o apoio de vocês",
+              "meaning": "Fechar pedindo apoio.",
+              "note": "Peço o apoio de vocês !"
+            }
+          ],
+          "situation": "Na reunião: a Ana apresenta a proposta da horta, ordena os passos, soma argumentos e fecha pedindo o apoio dos vizinhos.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Apresente a proposta: uma horta na praça.",
+                "expected": [
+                  "Minha proposta é uma horta na praça.",
+                  "minha proposta e uma horta na praca"
+                ],
+                "focus": "abrir",
+                "watch": "minha proposta é + ideia."
+              },
+              {
+                "prompt": "Diga o primeiro passo: ocupar um canto vazio.",
+                "expected": [
+                  "Primeiro, ocupamos um canto vazio.",
+                  "primeiro ocupamos um canto vazio"
+                ],
+                "focus": "primeiro",
+                "watch": "primeiro = primero."
+              },
+              {
+                "prompt": "Some um argumento: a horta une os vizinhos.",
+                "expected": [
+                  "Além disso, a horta une os vizinhos.",
+                  "alem disso a horta une os vizinhos"
+                ],
+                "focus": "além disso",
+                "watch": "além disso = además."
+              },
+              {
+                "prompt": "Apresente o último argumento: comida fresca.",
+                "expected": [
+                  "Por fim, comida fresca de graça.",
+                  "por fim comida fresca de graca"
+                ],
+                "focus": "por fim",
+                "watch": "por fim = por último."
+              },
+              {
+                "prompt": "Conclua pedindo apoio.",
+                "expected": [
+                  "Por isso, peço o apoio de vocês.",
+                  "por isso peco o apoio de voces"
+                ],
+                "focus": "fecho",
+                "watch": "por isso + pedido: o fecho do argumento."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u26-proposta-e1",
+              "kind": "choice",
+              "prompt": "___ disso, a feira sem plástico reduz o lixo.",
+              "options": [
+                "Além",
+                "Por",
+                "Depois",
+                "Enquanto"
+              ],
+              "answers": [
+                "Além"
+              ],
+              "explain": "além disso: somar um argumento ao anterior."
+            },
+            {
+              "id": "pt-foundations-u26-proposta-e2",
+              "kind": "gap",
+              "prompt": "Primeiro o mapeamento, ___ a coleta de assinaturas, por fim a reunião.",
+              "answers": [
+                "depois"
+              ],
+              "explain": "primeiro … depois …, por fim …: a sequência do plano."
+            },
+            {
+              "id": "pt-foundations-u26-proposta-e3",
+              "kind": "order",
+              "prompt": "Abra sua proposta sobre o transporte.",
+              "answers": [
+                "Minha proposta é uma ciclovia nova"
+              ],
+              "explain": "Minha proposta é + ideia: a abertura em uma frase."
+            },
+            {
+              "id": "pt-foundations-u26-proposta-e4",
+              "kind": "written",
+              "prompt": "Conclua a proposta pedindo apoio.",
+              "answers": [
+                "Por isso, peço o apoio de vocês.",
+                "por isso peco o apoio de voces"
+              ],
+              "explain": "por isso + peço: consequência e pedido no fecho."
+            }
+          ],
+          "skills": [
+            "writing:argument",
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-foundations-u26-consumo",
+          "title": "Consumo consciente",
+          "goal": "Opinar sobre consumo: comprar menos e melhor, apesar de…, embora….",
+          "intro": {
+            "explanation": [
+              "O princípio cabe em uma frase: « comprar menos e melhor ». Qualidade antes de quantidade.",
+              "Conceda com « apesar de + substantivo » ou « embora + verbo »: « apesar do preço, dura mais ».",
+              "Compare hábitos para argumentar: « reutilizar é melhor do que jogar fora »."
+            ],
+            "examples": [
+              {
+                "text": "Consumo consciente é comprar menos e melhor.",
+                "meaning": "O princípio do consumo."
+              },
+              {
+                "text": "Prefiro pagar mais caro por algo que dura anos.",
+                "meaning": "dura = dura."
+              },
+              {
+                "text": "Apesar do preço, sai mais barato no fim.",
+                "meaning": "apesar de = a pesar de."
+              },
+              {
+                "text": "Embora seja mais caro, a qualidade compensa.",
+                "meaning": "embora = aunque."
+              },
+              {
+                "text": "Reutilizar é melhor do que jogar fora.",
+                "meaning": "O comparativo do hábito."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Comprar menos e melhor",
+              "meaning": "O lema do consumo consciente.",
+              "note": "Quero comprar menos e melhor."
+            },
+            {
+              "text": "Apesar de + substantivo",
+              "meaning": "A concessão curta.",
+              "note": "Apesar do preço, vale."
+            },
+            {
+              "text": "Embora seja …",
+              "meaning": "A concessão com verbo.",
+              "note": "Embora seja caro, compensa."
+            },
+            {
+              "text": "durar mais",
+              "meaning": "O que compensa.",
+              "note": "Um casaco que dura mais."
+            },
+            {
+              "text": "É melhor do que",
+              "meaning": "Comparar hábitos.",
+              "note": "Consertar é melhor do que jogar fora."
+            }
+          ],
+          "situation": "Na roda de conversa: o grupo debate o lema comprar menos e melhor, concede com apesar de/embora e compara hábitos.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Resuma o princípio do consumo consciente.",
+                "expected": [
+                  "Comprar menos e melhor.",
+                  "comprar menos e melhor"
+                ],
+                "focus": "o lema",
+                "watch": "menos e melhor: os dois lados do lema."
+              },
+              {
+                "prompt": "Diga que prefere pagar mais caro por algo que dura.",
+                "expected": [
+                  "Prefiro pagar mais caro por algo que dura anos.",
+                  "prefiro pagar mais caro por algo que dura anos"
+                ],
+                "focus": "preferir",
+                "watch": "que dura anos = que dura años."
+              },
+              {
+                "prompt": "Conceda: apesar do preço, sai barato.",
+                "expected": [
+                  "Apesar do preço, sai mais barato no fim.",
+                  "apesar do preco sai mais barato no fim"
+                ],
+                "focus": "apesar de",
+                "watch": "apesar de + substantivo."
+              },
+              {
+                "prompt": "Conceda com embora: caro, mas compensa.",
+                "expected": [
+                  "Embora seja caro, a qualidade compensa.",
+                  "embora seja caro a qualidade compensa"
+                ],
+                "focus": "embora",
+                "watch": "embora + seja: fórmula fixa."
+              },
+              {
+                "prompt": "Compare: reutilizar e jogar fora.",
+                "expected": [
+                  "Reutilizar é melhor do que jogar fora.",
+                  "reutilizar e melhor do que jogar fora"
+                ],
+                "focus": "comparativo",
+                "watch": "melhor do que = mejor que."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u26-consumo-e1",
+              "kind": "choice",
+              "prompt": "___ do preço alto, o casaco dura dez anos.",
+              "options": [
+                "Apesar",
+                "Embora",
+                "Por isso",
+                "Enquanto"
+              ],
+              "answers": [
+                "Apesar"
+              ],
+              "explain": "apesar de + substantivo: a concessão curta; « embora » pede verbo."
+            },
+            {
+              "id": "pt-foundations-u26-consumo-e2",
+              "kind": "gap",
+              "prompt": "Embora ___ mais caro, a qualidade compensa.",
+              "answers": [
+                "seja"
+              ],
+              "explain": "embora seja: a concessão com o verbo no subjuntivo."
+            },
+            {
+              "id": "pt-foundations-u26-consumo-e3",
+              "kind": "order",
+              "prompt": "Compare reutilizar com jogar fora.",
+              "answers": [
+                "Reutilizar é melhor do que jogar fora"
+              ],
+              "explain": "É melhor do que: o comparativo entre hábitos."
+            },
+            {
+              "id": "pt-foundations-u26-consumo-e4",
+              "kind": "written",
+              "prompt": "Diga o lema do consumo consciente.",
+              "answers": [
+                "Comprar menos e melhor.",
+                "comprar menos e melhor"
+              ],
+              "explain": "O lema curto que resume o consumo consciente."
+            }
+          ],
+          "skills": [
+            "speaking:justify-opinion",
+            "grammar:connectors",
+            "function:express-opinion",
+            "writing:argument"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

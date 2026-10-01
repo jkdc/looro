@@ -1,0 +1,581 @@
+{
+  "id": "it-work-track",
+  "languageID": "it",
+  "schemaVersion": 2,
+  "title": "Italiano per il lavoro",
+  "subtitle": "Percorso professionale",
+  "symbol": "briefcase",
+  "description": "The Italian of meetings, emails and interviews — professional situations, practised out loud. A track that runs alongside Foundations.",
+  "units": [
+    {
+      "id": "it-work-u1",
+      "title": "La giornata di lavoro",
+      "subtitle": "Riunioni, email, colloqui",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "la-riunione-del-lunedi",
+          "title": "La riunione del lunedì",
+          "subtitle": "Il mio parere",
+          "symbol": "bubble.left.and.text.bubble.right",
+          "category": "Course",
+          "situation": "Nella riunione del lunedì racconti i progressi, dai il tuo parere e proponi una soluzione.",
+          "colorIndex": 0
+        },
+        {
+          "id": "scrivere-e-presentarsi",
+          "title": "Email e colloqui",
+          "subtitle": "Scrivere e convincere",
+          "symbol": "person.badge.key",
+          "category": "Course",
+          "situation": "La mail formale al cliente e la preparazione del colloquio: richieste gentili ed esperienza raccontata bene.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-work-u1-riunioni",
+          "title": "In riunione",
+          "goal": "Dare il proprio parere in riunione e proporre una soluzione.",
+          "intro": {
+            "explanation": [
+              "Il parere in sala si presenta con calma: « Secondo me… », « A mio avviso… ». Poi arriva la proposta: « Propongo di rimandare la scadenza ».",
+              "I connettivi tengono il discorso insieme: « Da un lato funziona, dall’altro costa troppo », « Quindi suggerisco un test di un mese ».",
+              "Per dissentire senza rompere: « Capisco il punto, però i dati dicono altro ». Prima riconosci, poi porti i numeri."
+            ],
+            "examples": [
+              {
+                "text": "Secondo me la campagna va rimandata.",
+                "meaning": "L’opinione chiara."
+              },
+              {
+                "text": "Propongo di fare un test di un mese.",
+                "meaning": "La proposta concreta."
+              },
+              {
+                "text": "Da un lato funziona, dall’altro costa troppo.",
+                "meaning": "Pro e contro."
+              },
+              {
+                "text": "Capisco il punto, però i numeri dicono altro.",
+                "meaning": "Il dissenso con i dati."
+              },
+              {
+                "text": "Quindi suggerisco di partire piccolo.",
+                "meaning": "La conseguenza e la proposta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "a mio avviso",
+              "meaning": "L’opinione formale.",
+              "note": "A mio avviso conviene rimandare."
+            },
+            {
+              "text": "propongo di + infinito",
+              "meaning": "La proposta in sala.",
+              "note": "Propongo di dividere il progetto."
+            },
+            {
+              "text": "da un lato… dall’altro…",
+              "meaning": "I due lati della questione.",
+              "note": "Da un lato è rapido, dall’altro rischioso."
+            },
+            {
+              "text": "capisco, però…",
+              "meaning": "Il dissenso professionale.",
+              "note": "Capisco, però i dati dicono altro."
+            },
+            {
+              "text": "suggerisco…",
+              "meaning": "La proposta morbida.",
+              "note": "Suggerisco una seconda opzione."
+            }
+          ],
+          "situation": "Riunione del lunedì: il progetto va in ritardo. Dai il tuo parere, pesi pro e contro e proponi un test di un mese.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dai il tuo parere: la campagna va rimandata.",
+                "expected": [
+                  "Secondo me la campagna va rimandata.",
+                  "A mio avviso va rimandata."
+                ],
+                "focus": "secondo me",
+                "watch": "prima la formula, poi il punto."
+              },
+              {
+                "prompt": "Proponi un test di un mese.",
+                "expected": [
+                  "Propongo di fare un test di un mese.",
+                  "Propongo un test di un mese."
+                ],
+                "focus": "propongo di",
+                "watch": "propongo di + infinito."
+              },
+              {
+                "prompt": "Pesa pro e contro della proposta.",
+                "expected": [
+                  "Da un lato funziona, dall’altro costa troppo.",
+                  "Da un lato è rapida, dall’altro rischia poco."
+                ],
+                "focus": "i due lati",
+                "watch": "da un lato… dall’altro…: il bilancio."
+              },
+              {
+                "prompt": "Dissentisci con i dati, con gentilezza.",
+                "expected": [
+                  "Capisco il punto, però i dati dicono altro.",
+                  "Vedo le cose in modo diverso."
+                ],
+                "focus": "il dissenso",
+                "watch": "prima riconosci, poi porti i numeri."
+              },
+              {
+                "prompt": "Chiudi con la conseguenza: quindi, test.",
+                "expected": [
+                  "Quindi suggerisco di partire con un test.",
+                  "Quindi propongo il test."
+                ],
+                "focus": "quindi",
+                "watch": "quindi: la conclusione che porta a casa."
+              },
+              {
+                "prompt": "Chiedi il parere di un collega.",
+                "expected": [
+                  "Che ne pensi, Luca ?",
+                  "Qual è la tua opinione ?",
+                  "Tu che ne dici ?"
+                ],
+                "focus": "chiedere il parere",
+                "watch": "che ne pensi: la domanda che apre la sala."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-work-u1-riunioni-e1",
+              "kind": "choice",
+              "prompt": "___ mio avviso, la scadenza è irrealistica.",
+              "answers": [
+                "A"
+              ],
+              "explain": "A mio avviso: la formula formale del parere.",
+              "options": [
+                "A",
+                "In",
+                "Su",
+                "Da"
+              ]
+            },
+            {
+              "id": "it-work-u1-riunioni-e2",
+              "kind": "gap",
+              "prompt": "___ propongo di fare un test. (la conseguenza)",
+              "answers": [
+                "quindi"
+              ],
+              "explain": "quindi: la conseguenza prima della proposta."
+            },
+            {
+              "id": "it-work-u1-riunioni-e3",
+              "kind": "order",
+              "prompt": "Chiudi con la conseguenza e la proposta del test.",
+              "answers": [
+                "Quindi suggerisco di partire con un test"
+              ],
+              "explain": "quindi + suggerisco: la conclusione operativa."
+            },
+            {
+              "id": "it-work-u1-riunioni-e4",
+              "kind": "written",
+              "prompt": "Proponi di dividere il progetto in due fasi.",
+              "answers": [
+                "propongo di dividere il progetto in due fasi",
+                "propongo di dividere il progetto",
+                "suggerisco di dividere il progetto in due fasi"
+              ],
+              "explain": "propongo di + infinito: la proposta in sala."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "function:express-opinion",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "it-work-u1-email",
+          "title": "La mail formale",
+          "goal": "Scrivere una mail formale: saluto, richiesta gentile e chiusura.",
+          "intro": {
+            "explanation": [
+              "La struttura della mail di lavoro: il saluto (« Gentile Dottoressa Rossi, »), il corpo con la richiesta, la chiusura (« Cordiali saluti »).",
+              "La richiesta si ammorbidisce: « Le scrivo per chiederle… », « Potrebbe cortesemente inviarmelo entro venerdì ? ».",
+              "I connettivi ordinano il testo: « In allegato trova il documento », « Inoltre le confermo la riunione di giovedì »."
+            ],
+            "examples": [
+              {
+                "text": "Gentile Dottoressa Rossi,",
+                "meaning": "Il saluto al Lei."
+              },
+              {
+                "text": "Le scrivo per chiederle il preventivo aggiornato.",
+                "meaning": "Il motivo della mail."
+              },
+              {
+                "text": "Potrebbe cortesemente inviarlo entro venerdì ?",
+                "meaning": "La richiesta gentile."
+              },
+              {
+                "text": "In allegato trova le specifiche.",
+                "meaning": "Il rinvio agli allegati."
+              },
+              {
+                "text": "Cordiali saluti, Marco Bianchi",
+                "meaning": "La chiusura standard."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Gentile… / Spett.le…",
+              "meaning": "Il saluto formale.",
+              "note": "Gentile Sig. Rossi,"
+            },
+            {
+              "text": "Le scrivo per…",
+              "meaning": "Il motivo della mail.",
+              "note": "Le scrivo per confermare l’appuntamento."
+            },
+            {
+              "text": "potrebbe cortesemente… ?",
+              "meaning": "La richiesta al Lei.",
+              "note": "Potrebbe cortesemente rispondermi ?"
+            },
+            {
+              "text": "in allegato",
+              "meaning": "Il documento allegato.",
+              "note": "In allegato trova il preventivo."
+            },
+            {
+              "text": "resto a disposizione",
+              "meaning": "La frase di servizio.",
+              "note": "Resto a disposizione per chiarimenti."
+            },
+            {
+              "text": "cordiali saluti",
+              "meaning": "La chiusura di lavoro.",
+              "note": "Cordiali saluti, Marco Bianchi"
+            }
+          ],
+          "situation": "Scrivi al cliente: chiedi il preventivo aggiornato, confermi la riunione di giovedì e chiudi con cordiali saluti.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Apri la mail alla Dottoressa Rossi.",
+                "expected": [
+                  "Gentile Dottoressa Rossi,",
+                  "Gentile Dott.ssa Rossi,"
+                ],
+                "focus": "il saluto",
+                "watch": "Gentile + titolo: la mail al Lei."
+              },
+              {
+                "prompt": "Dì il motivo: chiedi il preventivo aggiornato.",
+                "expected": [
+                  "Le scrivo per chiederle il preventivo aggiornato.",
+                  "Le scrivo per il preventivo aggiornato."
+                ],
+                "focus": "le scrivo per",
+                "watch": "Le = a Lei (a usted)."
+              },
+              {
+                "prompt": "Chiedi con cortesia di inviarlo entro venerdì.",
+                "expected": [
+                  "Potrebbe cortesemente inviarlo entro venerdì ?",
+                  "Le chiederei gentilmente di inviarlo entro venerdì."
+                ],
+                "focus": "potrebbe",
+                "watch": "potrebbe + infinito: la richiesta morbida."
+              },
+              {
+                "prompt": "Rimanda agli allegati.",
+                "expected": [
+                  "In allegato trova le specifiche.",
+                  "In allegato il documento."
+                ],
+                "focus": "in allegato",
+                "watch": "in allegato = adjunto."
+              },
+              {
+                "prompt": "Conferma la riunione di giovedì, in più.",
+                "expected": [
+                  "Inoltre le confermo la riunione di giovedì.",
+                  "Le confermo inoltre la riunione di giovedì."
+                ],
+                "focus": "inoltre",
+                "watch": "inoltre: aggiunge un punto."
+              },
+              {
+                "prompt": "Chiudi la mail in forma standard.",
+                "expected": [
+                  "Cordiali saluti, Marco Bianchi",
+                  "Cordiali saluti"
+                ],
+                "focus": "cordiali saluti",
+                "watch": "cordiali saluti = saludos cordiales."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-work-u1-email-e1",
+              "kind": "choice",
+              "prompt": "___ scrivo per chiederle un aggiornamento.",
+              "answers": [
+                "Le"
+              ],
+              "explain": "Le = a Lei: il destinatario formale.",
+              "options": [
+                "Le",
+                "La",
+                "Gli",
+                "Ti"
+              ]
+            },
+            {
+              "id": "it-work-u1-email-e2",
+              "kind": "gap",
+              "prompt": "In ___ trova il preventivo firmato. (viaggia con la mail)",
+              "answers": [
+                "allegato"
+              ],
+              "explain": "in allegato: il documento che viaggia con la mail."
+            },
+            {
+              "id": "it-work-u1-email-e3",
+              "kind": "order",
+              "prompt": "Chiudi la mail in forma formale.",
+              "answers": [
+                "Cordiali saluti Marco Bianchi"
+              ],
+              "explain": "Cordiali saluti + nome: la chiusura standard."
+            },
+            {
+              "id": "it-work-u1-email-e4",
+              "kind": "written",
+              "prompt": "Chiedi gentilmente al cliente di confermare l’appuntamento.",
+              "answers": [
+                "potrebbe cortesemente confermare l’appuntamento",
+                "potrebbe cortesemente confermare l appuntamento",
+                "le chiederei di confermare l’appuntamento",
+                "potrebbe confermare l’appuntamento per favore"
+              ],
+              "explain": "potrebbe + infinito: la richiesta al Lei."
+            }
+          ],
+          "skills": [
+            "writing:email",
+            "function:make-requests",
+            "vocab:work",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "it-work-u1-colloqui",
+          "title": "Il colloquio",
+          "goal": "Raccontare esperienza e successi al colloquio con il passato prossimo e le mete.",
+          "intro": {
+            "explanation": [
+              "L’esperienza si racconta al passato prossimo: « Ho lavorato cinque anni nel settore », « Mi sono occupata dei clienti chiave ».",
+              "I successi si misurano: « Ho ridotto i costi del dieci per cento », « Il progetto è arrivato in tempo e in budget ».",
+              "Le mete chiudono il colloquio: « Ho intenzione di crescere nel ruolo », « A lungo termine vorrei gestire un team »."
+            ],
+            "examples": [
+              {
+                "text": "Ho lavorato cinque anni nella logistica.",
+                "meaning": "L’esperienza."
+              },
+              {
+                "text": "Mi sono occupata dei clienti chiave.",
+                "meaning": "La responsabilità."
+              },
+              {
+                "text": "Ho ridotto i costi del dieci per cento.",
+                "meaning": "Il successo misurato."
+              },
+              {
+                "text": "Il progetto è arrivato in tempo e in budget.",
+                "meaning": "Il risultato."
+              },
+              {
+                "text": "Ho intenzione di crescere in questo ruolo.",
+                "meaning": "La meta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mi sono occupato / occupata di…",
+              "meaning": "La responsabilità raccontata.",
+              "note": "Mi sono occupato del cliente chiave."
+            },
+            {
+              "text": "ho ridotto / aumentato…",
+              "meaning": "Il successo misurato.",
+              "note": "Ho ridotto i costi del dieci per cento."
+            },
+            {
+              "text": "in tempo e in budget",
+              "meaning": "Il doppio risultato.",
+              "note": "Il progetto è arrivato in tempo e in budget."
+            },
+            {
+              "text": "ho intenzione di…",
+              "meaning": "Il piano di crescita.",
+              "note": "Ho intenzione di fare un master."
+            },
+            {
+              "text": "a lungo termine",
+              "meaning": "Il futuro lontano.",
+              "note": "A lungo termine vorrei un team mio."
+            }
+          ],
+          "situation": "Colloquio per il ruolo di coordinatore: racconti il percorso, un successo misurato e la meta a lungo termine.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Racconta l’esperienza: cinque anni nella logistica.",
+                "expected": [
+                  "Ho lavorato cinque anni nella logistica.",
+                  "Ho lavorato per cinque anni nella logistica."
+                ],
+                "focus": "ho lavorato",
+                "watch": "lavorare → lavorato."
+              },
+              {
+                "prompt": "Dì la responsabilità: i clienti chiave.",
+                "expected": [
+                  "Mi sono occupata dei clienti chiave.",
+                  "Mi sono occupato dei clienti chiave."
+                ],
+                "focus": "mi sono occupato/a",
+                "watch": "occuparsi di + la cosa; il participio concorda."
+              },
+              {
+                "prompt": "Dì il successo: costi giù del dieci per cento.",
+                "expected": [
+                  "Ho ridotto i costi del dieci per cento.",
+                  "Ho ridotto i costi del 10 %."
+                ],
+                "focus": "ridurre",
+                "watch": "ridurre → ridotto + del + percentuale."
+              },
+              {
+                "prompt": "Dì che il progetto è arrivato in tempo e in budget.",
+                "expected": [
+                  "Il progetto è arrivato in tempo e in budget.",
+                  "È arrivato in tempo e in budget.",
+                  "E arrivato in tempo e in budget"
+                ],
+                "focus": "il risultato",
+                "watch": "essere + arrivato: il risultato finale."
+              },
+              {
+                "prompt": "Dì il piano: intenzione di crescere nel ruolo.",
+                "expected": [
+                  "Ho intenzione di crescere in questo ruolo.",
+                  "Ho intenzione di crescere professionalmente."
+                ],
+                "focus": "ho intenzione di",
+                "watch": "avere intenzione di + infinito."
+              },
+              {
+                "prompt": "Dì la meta a lungo termine: gestire un team.",
+                "expected": [
+                  "A lungo termine vorrei gestire un team.",
+                  "A lungo termine voglio gestire un team."
+                ],
+                "focus": "a lungo termine",
+                "watch": "la meta lontana, con calma."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-work-u1-colloqui-e1",
+              "kind": "choice",
+              "prompt": "___ ridotto i costi del dieci per cento.",
+              "answers": [
+                "Ho"
+              ],
+              "explain": "Avere + ridotto: il successo al passato prossimo.",
+              "options": [
+                "Ho",
+                "Sono",
+                "Sto",
+                "Faccio"
+              ]
+            },
+            {
+              "id": "it-work-u1-colloqui-e2",
+              "kind": "gap",
+              "prompt": "Mi sono ___ dei clienti chiave per due anni. (occuparsi, participio maschile)",
+              "answers": [
+                "occupato"
+              ],
+              "explain": "occuparsi → mi sono occupato (femminile: occupata)."
+            },
+            {
+              "id": "it-work-u1-colloqui-e3",
+              "kind": "order",
+              "prompt": "Dì il successo misurato: costi giù del dieci per cento.",
+              "answers": [
+                "Ho ridotto i costi del dieci per cento"
+              ],
+              "explain": "ridurre → ridotto + del + percentuale."
+            },
+            {
+              "id": "it-work-u1-colloqui-e4",
+              "kind": "written",
+              "prompt": "Dì la meta a lungo termine: gestire un team.",
+              "answers": [
+                "a lungo termine vorrei gestire un team",
+                "a lungo termine voglio gestire un team",
+                "a lungo termine mi piacerebbe gestire un team"
+              ],
+              "explain": "a lungo termine + vorrei / voglio + infinito."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "grammar:present-perfect",
+            "vocab:work",
+            "function:describe-goals"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        }
+      ]
+    }
+  ]
+}
