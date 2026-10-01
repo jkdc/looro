@@ -1551,6 +1551,209 @@
           "explain": "Der Obststand ist klein, aber die Äpfel sind lecker."
         }
       ]
+    },
+    {
+      "id": "de-listen-anruf-oma",
+      "languageID": "de",
+      "title": "Anruf bei Oma",
+      "level": "A1",
+      "topic": "Familie",
+      "unitID": "de-foundations-u12",
+      "text": "Nadia ruft ihre Oma an. Oma Helga nimmt ab. „Hallo, hier ist Nadia!“ — „Nadia! Du rufst nie an! Wie geht es dir ?“ „Gut, Oma. Ist Opa da ?“ — „Nein, er ist nicht da. Er geht oft im Park spazieren. Und du ? Was machst du ?“ — „Ich lese viel und gehe manchmal ins Kino.“ „Schön. Rufst du mich nächste Woche wieder an ?“ — „Ja, Oma. Bis dann!“",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:family",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-anruf-oma-q1",
+          "kind": "choice",
+          "prompt": "Wen ruft Nadia an ?",
+          "explain": "Nadia ruft ihre Oma an.",
+          "options": [
+            "Ihre Oma",
+            "Ihre Mutter",
+            "Ihren Onkel",
+            "Ihre Schwester"
+          ],
+          "answers": [
+            "Ihre Oma"
+          ]
+        },
+        {
+          "id": "de-listen-anruf-oma-q2",
+          "kind": "choice",
+          "prompt": "Was sagt Oma zuerst über Nadias Anrufe ?",
+          "explain": "Oma sagt: Du rufst nie an!",
+          "options": [
+            "Du rufst nie an!",
+            "Du rufst immer an!",
+            "Du rufst oft an!",
+            "Du rufst manchmal an!"
+          ],
+          "answers": [
+            "Du rufst nie an!"
+          ]
+        },
+        {
+          "id": "de-listen-anruf-oma-q3",
+          "kind": "choice",
+          "prompt": "Wo ist Opa ?",
+          "explain": "Er geht oft im Park spazieren.",
+          "options": [
+            "Im Park",
+            "Im Kino",
+            "Zu Hause",
+            "In der Schule"
+          ],
+          "answers": [
+            "Im Park"
+          ]
+        },
+        {
+          "id": "de-listen-anruf-oma-q4",
+          "kind": "written",
+          "prompt": "Was macht Opa oft ?",
+          "explain": "Er geht oft im Park spazieren.",
+          "answers": [
+            "er geht spazieren",
+            "spazieren",
+            "er geht im park spazieren"
+          ]
+        },
+        {
+          "id": "de-listen-anruf-oma-q5",
+          "kind": "written",
+          "prompt": "Was macht Nadia manchmal ?",
+          "explain": "Ich gehe manchmal ins Kino.",
+          "answers": [
+            "ins kino",
+            "sie geht ins kino",
+            "sie geht manchmal ins kino"
+          ]
+        },
+        {
+          "id": "de-listen-anruf-oma-q6",
+          "kind": "choice",
+          "prompt": "Wann ruft Nadia wieder an ?",
+          "explain": "Rufst du mich nächste Woche wieder an ? — Ja.",
+          "options": [
+            "Nächste Woche",
+            "Heute Abend",
+            "Morgen",
+            "Am Wochenende"
+          ],
+          "answers": [
+            "Nächste Woche"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-regnerisches-wochenende",
+      "languageID": "de",
+      "title": "Ein regnerisches Wochenende",
+      "level": "A1",
+      "topic": "Wetter",
+      "unitID": "de-foundations-u13",
+      "text": "Es ist Samstagmorgen. Kim sieht aus dem Fenster: Es regnet. „Oh nein“, sagt Sam, „das Wetter ist schlecht.“ — „Ja, kalt und nass“, sagt Kim. „Wir gehen oft in den Park, aber heute nicht. Was machen wir ?“ „Ich lese nicht gern bei Regen“, sagt Sam, „aber ich koche gern.“ „Super, wir kochen zusammen und spielen Karten.“ — „Und morgen ?“ „Morgen ist es sonnig und warm.“",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:weather",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs",
+        "function:talk-about-weather"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-regnerisches-wochenende-q1",
+          "kind": "choice",
+          "prompt": "Wie ist das Wetter heute ?",
+          "explain": "Kim sieht aus dem Fenster: Es regnet.",
+          "options": [
+            "Es regnet",
+            "Es schneit",
+            "Es ist sonnig",
+            "Es ist warm"
+          ],
+          "answers": [
+            "Es regnet"
+          ]
+        },
+        {
+          "id": "de-listen-regnerisches-wochenende-q2",
+          "kind": "choice",
+          "prompt": "Wohin gehen sie oft ?",
+          "explain": "Wir gehen oft in den Park, aber heute nicht.",
+          "options": [
+            "In den Park",
+            "Ins Kino",
+            "In die Schule",
+            "Zum Markt"
+          ],
+          "answers": [
+            "In den Park"
+          ]
+        },
+        {
+          "id": "de-listen-regnerisches-wochenende-q3",
+          "kind": "written",
+          "prompt": "Was macht Sam gern ?",
+          "explain": "Ich lese nicht gern bei Regen, aber ich koche gern.",
+          "answers": [
+            "kochen",
+            "koche",
+            "er kocht gern"
+          ]
+        },
+        {
+          "id": "de-listen-regnerisches-wochenende-q4",
+          "kind": "written",
+          "prompt": "Wie ist das Wetter morgen ?",
+          "explain": "Morgen ist es sonnig und warm.",
+          "answers": [
+            "sonnig und warm",
+            "es ist sonnig und warm",
+            "warm"
+          ]
+        },
+        {
+          "id": "de-listen-regnerisches-wochenende-q5",
+          "kind": "choice",
+          "prompt": "Was machen sie heute zusammen ?",
+          "explain": "Wir kochen zusammen und spielen Karten.",
+          "options": [
+            "Kochen und Karten",
+            "Lesen und Laufen",
+            "Einkaufen und Kino",
+            "Schwimmen"
+          ],
+          "answers": [
+            "Kochen und Karten"
+          ]
+        },
+        {
+          "id": "de-listen-regnerisches-wochenende-q6",
+          "kind": "choice",
+          "prompt": "Warum gehen sie heute nicht in den Park ?",
+          "explain": "Heute regnet es — deshalb bleiben sie zu Hause.",
+          "options": [
+            "Es regnet",
+            "Sie sind müde",
+            "Kim muss arbeiten",
+            "Sie haben keine Zeit"
+          ],
+          "answers": [
+            "Es regnet"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1609,6 +1609,211 @@
         "vocab:town"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-ligacao-avo",
+      "languageID": "pt",
+      "title": "Uma ligação para a avó",
+      "level": "A1",
+      "topic": "família",
+      "unitID": "pt-foundations-u12",
+      "text": "Hoje é domingo e a Ana liga para a avó. A avó atende: « Alô ? ». A Ana pergunta: « Está tudo bem ? ». A avó responde: « Está, sim. Moro sozinha, mas nunca fico triste. Às vezes os primos vêm almoçar ». A avó conta a rotina: acorda às seis, caminha no parque e sempre almoça às doze. A Ana diz: « Que bom ! Eu ligo mais tarde para o meu tio ». A avó sorri: « Beijo, minha neta ».",
+      "questions": [
+        {
+          "id": "pt-listen-ligacao-avo-q1",
+          "kind": "choice",
+          "prompt": "Quem liga para quem?",
+          "options": [
+            "A Ana liga para a avó",
+            "A avó liga para a Ana",
+            "O tio liga para a Ana",
+            "A Ana liga para o tio"
+          ],
+          "answers": [
+            "A Ana liga para a avó"
+          ],
+          "explain": "Hoje é domingo e a Ana liga para a avó."
+        },
+        {
+          "id": "pt-listen-ligacao-avo-q2",
+          "kind": "choice",
+          "prompt": "Com quem a avó mora?",
+          "options": [
+            "Sozinha",
+            "Com a neta",
+            "Com o tio",
+            "Com os primos"
+          ],
+          "answers": [
+            "Sozinha"
+          ],
+          "explain": "Moro sozinha, mas nunca fico triste."
+        },
+        {
+          "id": "pt-listen-ligacao-avo-q3",
+          "kind": "choice",
+          "prompt": "O que a avó nunca faz?",
+          "options": [
+            "Fica triste",
+            "Caminha no parque",
+            "Almoça às doze",
+            "Acorda às seis"
+          ],
+          "answers": [
+            "Fica triste"
+          ],
+          "explain": "Moro sozinha, mas nunca fico triste."
+        },
+        {
+          "id": "pt-listen-ligacao-avo-q4",
+          "kind": "choice",
+          "prompt": "O que a avó faz às seis?",
+          "options": [
+            "Acorda",
+            "Almoça",
+            "Liga",
+            "Vem"
+          ],
+          "answers": [
+            "Acorda"
+          ],
+          "explain": "Acorda às seis, caminha no parque e sempre almoça às doze."
+        },
+        {
+          "id": "pt-listen-ligacao-avo-q5",
+          "kind": "choice",
+          "prompt": "Quem vem almoçar às vezes?",
+          "options": [
+            "Os primos",
+            "Os pais",
+            "As amigas",
+            "Os vizinhos"
+          ],
+          "answers": [
+            "Os primos"
+          ],
+          "explain": "Às vezes os primos vêm almoçar."
+        },
+        {
+          "id": "pt-listen-ligacao-avo-q6",
+          "kind": "written",
+          "prompt": "Para quem a Ana liga mais tarde?",
+          "answers": [
+            "para o meu tio",
+            "para o tio",
+            "o tio"
+          ],
+          "explain": "Eu ligo mais tarde para o meu tio."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:family",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-fim-de-semana-chuvoso",
+      "languageID": "pt",
+      "title": "Fim de semana chuvoso",
+      "level": "A1",
+      "topic": "clima",
+      "unitID": "pt-foundations-u13",
+      "text": "É sábado de manhã e chove. O Leo olha pela janela: « Que tempo faz ? ». A Bia responde: « Está frio e chove muito ». O plano é caminhar no parque, mas com chuva não dá. Então eles ficam em casa: preparam um chocolate quente e assistem a um filme. O Leo diz: « Eu gosto de chuva, mas só às vezes ». Chove sempre na primavera, diz a Bia, e no verão faz calor.",
+      "questions": [
+        {
+          "id": "pt-listen-fim-de-semana-chuvoso-q1",
+          "kind": "choice",
+          "prompt": "Como está o tempo no sábado?",
+          "options": [
+            "Chove e está frio",
+            "Faz calor",
+            "Neva",
+            "Está ensolarado"
+          ],
+          "answers": [
+            "Chove e está frio"
+          ],
+          "explain": "Está frio e chove muito."
+        },
+        {
+          "id": "pt-listen-fim-de-semana-chuvoso-q2",
+          "kind": "choice",
+          "prompt": "Qual é o plano do grupo?",
+          "options": [
+            "Caminhar no parque",
+            "Nadar na praia",
+            "Ir à feira",
+            "Dormir a manhã toda"
+          ],
+          "answers": [
+            "Caminhar no parque"
+          ],
+          "explain": "O plano é caminhar no parque, mas com chuva não dá."
+        },
+        {
+          "id": "pt-listen-fim-de-semana-chuvoso-q3",
+          "kind": "choice",
+          "prompt": "O que eles fazem em casa?",
+          "options": [
+            "Tomam chocolate quente e veem um filme",
+            "Jogam futebol",
+            "Ligam para a avó",
+            "Preparam o almoço"
+          ],
+          "answers": [
+            "Tomam chocolate quente e veem um filme"
+          ],
+          "explain": "Preparam um chocolate quente e assistem a um filme."
+        },
+        {
+          "id": "pt-listen-fim-de-semana-chuvoso-q4",
+          "kind": "choice",
+          "prompt": "Quando o Leo gosta de chuva?",
+          "options": [
+            "Só às vezes",
+            "Sempre",
+            "Nunca",
+            "Todas as manhãs"
+          ],
+          "answers": [
+            "Só às vezes"
+          ],
+          "explain": "Eu gosto de chuva, mas só às vezes."
+        },
+        {
+          "id": "pt-listen-fim-de-semana-chuvoso-q5",
+          "kind": "written",
+          "prompt": "Quando chove sempre?",
+          "answers": [
+            "na primavera",
+            "primavera"
+          ],
+          "explain": "Chove sempre na primavera."
+        },
+        {
+          "id": "pt-listen-fim-de-semana-chuvoso-q6",
+          "kind": "written",
+          "prompt": "Como está o tempo no verão?",
+          "answers": [
+            "faz calor",
+            "no verão faz calor",
+            "no verao faz calor"
+          ],
+          "explain": "No verão faz calor."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:weather",
+        "function:talk-about-weather",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
     }
   ]
 }

@@ -4914,6 +4914,1079 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u12",
+      "title": "Ma tribu",
+      "subtitle": "Famille et amis",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "photos-de-famille",
+          "title": "Les photos de famille",
+          "subtitle": "Mon, ma, mes",
+          "symbol": "figure-2",
+          "category": "Course",
+          "situation": "Vous montrez les photos : mon père, ma sœur, mes cousins — et vous parlez de votre oncle à Marseille.",
+          "colorIndex": 0
+        },
+        {
+          "id": "les-copains",
+          "title": "Les copains",
+          "subtitle": "Il est sympa",
+          "symbol": "heart",
+          "category": "Course",
+          "situation": "Au café, vous décrivez vos amis : Léa est timide mais très gentille, Karim est travailleur — et vous faites un appel.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u12-famille",
+          "title": "Ma famille",
+          "goal": "Présenter ta famille : mon père, ma sœur, mes parents — et dire que tu as un oncle.",
+          "intro": {
+            "explanation": [
+              "La famille : « Voici mon père, ma mère, mon frère et ma sœur. Mes grands-parents sont à Nice. »",
+              "mon + masculin (mon oncle), ma + féminin (ma tante), mes + pluriel (mes parents) : « Mes parents habitent à Lyon. »",
+              "Pour dire que la famille existe, on utilise avoir : « J'ai un oncle à Marseille. Tu as une tante ? »"
+            ],
+            "examples": [
+              {
+                "text": "Voici mon père et ma mère.",
+                "meaning": "Les parents."
+              },
+              {
+                "text": "Ma sœur s'appelle Léa.",
+                "meaning": "ma + féminin."
+              },
+              {
+                "text": "Mes frères sont sportifs.",
+                "meaning": "mes + pluriel."
+              },
+              {
+                "text": "J'ai un oncle à Marseille.",
+                "meaning": "avoir : j'ai + un."
+              },
+              {
+                "text": "Tu as des cousins ?",
+                "meaning": "La question avec avoir."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mon / ma / mes",
+              "meaning": "À qui est la chose.",
+              "note": "mon oncle, ma tante, mes cousins."
+            },
+            {
+              "text": "les grands-parents",
+              "meaning": "Le grand-père et la grand-mère.",
+              "note": "mamie et papi, c'est familier."
+            },
+            {
+              "text": "J'ai un / une …",
+              "meaning": "Dire la famille.",
+              "note": "J'ai un frère et une sœur."
+            },
+            {
+              "text": "un oncle / une tante",
+              "meaning": "Le frère ou la sœur des parents.",
+              "note": "Mon oncle Paul arrive dimanche."
+            },
+            {
+              "text": "les enfants",
+              "meaning": "Le fils et la fille.",
+              "note": "Mon oncle a deux enfants."
+            }
+          ],
+          "situation": "Vous montrez les photos de la famille sur votre téléphone : mon père, ma sœur, mes grands-parents — et vous annoncez la visite de votre oncle Paul.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Présente ton père sur la photo.",
+                "expected": [
+                  "C'est mon père.",
+                  "C'est mon pere."
+                ],
+                "focus": "mon père",
+                "watch": "père = masculin : mon."
+              },
+              {
+                "prompt": "Ta sœur s'appelle Léa. Dis-le.",
+                "expected": [
+                  "Ma sœur s'appelle Léa.",
+                  "Ma soeur s'appelle Lea."
+                ],
+                "focus": "ma sœur",
+                "watch": "sœur = féminin : ma."
+              },
+              {
+                "prompt": "Tes parents habitent à Lyon. Dis-le.",
+                "expected": [
+                  "Mes parents habitent à Lyon.",
+                  "Mes parents habitent a Lyon."
+                ],
+                "focus": "mes",
+                "watch": "pluriel : mes."
+              },
+              {
+                "prompt": "Tu as un oncle à Marseille. Dis-le.",
+                "expected": [
+                  "J'ai un oncle à Marseille.",
+                  "J'ai un oncle a Marseille."
+                ],
+                "focus": "j'ai",
+                "watch": "avoir : j'ai + un/une."
+              },
+              {
+                "prompt": "Demande à un ami s'il a une tante.",
+                "expected": [
+                  "Tu as une tante ?",
+                  "Est-ce que tu as une tante ?"
+                ],
+                "focus": "tu as",
+                "watch": "question : est-ce que + tu as."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u12-famille-e1",
+              "kind": "choice",
+              "prompt": "___ sœur s'appelle Léa.",
+              "options": [
+                "Ma",
+                "Mon",
+                "Mes",
+                "Me"
+              ],
+              "answers": [
+                "Ma"
+              ],
+              "explain": "sœur = féminin : ma."
+            },
+            {
+              "id": "fr-foundations-u12-famille-e2",
+              "kind": "gap",
+              "prompt": "J'ai ___ oncle à Marseille.",
+              "answers": [
+                "un"
+              ],
+              "explain": "oncle = masculin : un oncle."
+            },
+            {
+              "id": "fr-foundations-u12-famille-e3",
+              "kind": "order",
+              "prompt": "Présente tes grands-parents.",
+              "answers": [
+                "Mes grands-parents habitent à Lyon"
+              ],
+              "explain": "mes + nom + verbe + lieu."
+            },
+            {
+              "id": "fr-foundations-u12-famille-e4",
+              "kind": "written",
+              "prompt": "Dis que tu as un frère et une sœur.",
+              "answers": [
+                "j'ai un frère et une sœur",
+                "j'ai un frere et une soeur",
+                "j'ai un frère et une soeur"
+              ],
+              "explain": "avoir : j'ai + un/une + membre."
+            }
+          ],
+          "skills": [
+            "vocab:family",
+            "grammar:possessives",
+            "grammar:present-simple",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        },
+        {
+          "id": "fr-foundations-u12-amis",
+          "title": "Il est comment ?",
+          "goal": "Décrire tes amis : sympa, timide, travailleur — et demander comment ils sont.",
+          "intro": {
+            "explanation": [
+              "Pour demander le caractère : « Il est comment, ton frère ? » La réponse : « Il est sympa. »",
+              "L'adjectif vient après être : « Léa est timide mais très gentille. » Timide est pareil pour les filles et les garçons.",
+              "Attention au féminin : « Karim est travailleur, sa sœur est travailleuse. » Grand donne grande, petit donne petite."
+            ],
+            "examples": [
+              {
+                "text": "Il est comment, ton frère ?",
+                "meaning": "La question."
+              },
+              {
+                "text": "Mon frère est très sympa.",
+                "meaning": "Sympa = gentil."
+              },
+              {
+                "text": "Léa est timide.",
+                "meaning": "Timide : même forme."
+              },
+              {
+                "text": "Karim est travailleur.",
+                "meaning": "Il travaille beaucoup."
+              },
+              {
+                "text": "Ma sœur est travailleuse.",
+                "meaning": "Le féminin de travailleur."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Il / Elle est comment ?",
+              "meaning": "Demander le caractère.",
+              "note": "Elle est comment, ta sœur ?"
+            },
+            {
+              "text": "être sympa",
+              "meaning": "Être gentil et agréable.",
+              "note": "Mes voisins sont très sympas."
+            },
+            {
+              "text": "être timide",
+              "meaning": "Ne pas parler beaucoup.",
+              "note": "Au début, il est timide."
+            },
+            {
+              "text": "être travailleur / travailleuse",
+              "meaning": "Travailler beaucoup.",
+              "note": "Léa est travailleuse."
+            },
+            {
+              "text": "être gentil / gentille",
+              "meaning": "Être aimable.",
+              "note": "Mon oncle est très gentil."
+            }
+          ],
+          "situation": "Au café, vous parlez de vos amis : Léa est timide mais gentille, Karim est travailleur et très sympa — et vous demandez : il est comment, ton frère ?",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demande comment est le frère de Léa.",
+                "expected": [
+                  "Il est comment, ton frère ?",
+                  "Il est comment, ton frere ?",
+                  "Ton frere, il est comment ?"
+                ],
+                "focus": "il est comment",
+                "watch": "être + comment."
+              },
+              {
+                "prompt": "Dis que ton ami est adorable, toujours à l'heure.",
+                "expected": [
+                  "Karim est très sympa.",
+                  "Karim est tres sympa."
+                ],
+                "focus": "sympa",
+                "watch": "il est + adjectif."
+              },
+              {
+                "prompt": "Léa ne parle pas beaucoup. Décris-la.",
+                "expected": [
+                  "Léa est timide.",
+                  "Lea est timide.",
+                  "Elle est timide."
+                ],
+                "focus": "timide",
+                "watch": "timide : pareil au féminin."
+              },
+              {
+                "prompt": "Dis que ta sœur travaille beaucoup.",
+                "expected": [
+                  "Ma sœur est travailleuse.",
+                  "Ma soeur est travailleuse."
+                ],
+                "focus": "travailleuse",
+                "watch": "travailleur donne travailleuse au féminin."
+              },
+              {
+                "prompt": "Dis que tes voisins sont gentils.",
+                "expected": [
+                  "Mes voisins sont gentils.",
+                  "Mes voisins sont très gentils.",
+                  "Mes voisins sont tres gentils."
+                ],
+                "focus": "gentils",
+                "watch": "pluriel : gentils ; féminin : gentilles."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u12-amis-e1",
+              "kind": "choice",
+              "prompt": "Léa ne parle pas beaucoup : elle est ___.",
+              "options": [
+                "timide",
+                "travailleuse",
+                "sympa",
+                "grande"
+              ],
+              "answers": [
+                "timide"
+              ],
+              "explain": "timide = qui ne parle pas beaucoup."
+            },
+            {
+              "id": "fr-foundations-u12-amis-e2",
+              "kind": "gap",
+              "prompt": "Karim travaille beaucoup : il est ___.",
+              "answers": [
+                "travailleur"
+              ],
+              "explain": "il est travailleur ; elle est travailleuse."
+            },
+            {
+              "id": "fr-foundations-u12-amis-e3",
+              "kind": "order",
+              "prompt": "Décris Léa : très, gentille.",
+              "answers": [
+                "Léa est très gentille"
+              ],
+              "explain": "être + très + adjectif au féminin."
+            },
+            {
+              "id": "fr-foundations-u12-amis-e4",
+              "kind": "written",
+              "prompt": "Demande à un ami comment est sa sœur.",
+              "answers": [
+                "elle est comment, ta sœur ?",
+                "elle est comment, ta soeur ?",
+                "ta soeur, elle est comment ?"
+              ],
+              "explain": "elle est comment + la personne ?"
+            }
+          ],
+          "skills": [
+            "function:describe-people",
+            "grammar:present-simple",
+            "vocab:feelings",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u12-appel",
+          "title": "Un appel",
+          "goal": "Téléphoner : allô, tu es là ? — et laisser un message : je rappelle plus tard.",
+          "intro": {
+            "explanation": [
+              "Au téléphone, on commence par « Allô ? » puis on se présente : « Allô, c'est Léa. Tu es là ? »",
+              "Pour demander une personne : « Il est là ? Elle est là ? » La réponse : « Non, elle n'est pas là, elle revient à six heures. »",
+              "Pour la fin de l'appel : « Je rappelle plus tard » ou « Rappelle-moi ! » : vous appelez encore après."
+            ],
+            "examples": [
+              {
+                "text": "Allô ? C'est Léa.",
+                "meaning": "Le début de l'appel."
+              },
+              {
+                "text": "Tu es là ?",
+                "meaning": "Vérifier la personne."
+              },
+              {
+                "text": "Elle est là ?",
+                "meaning": "Demander une autre personne."
+              },
+              {
+                "text": "Non, elle n'est pas là.",
+                "meaning": "La réponse négative."
+              },
+              {
+                "text": "Je rappelle plus tard.",
+                "meaning": "Appeler encore après."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Allô ?",
+              "meaning": "Répondre au téléphone.",
+              "note": "Allô, c'est mamie !"
+            },
+            {
+              "text": "C'est + prénom.",
+              "meaning": "Se présenter au téléphone.",
+              "note": "C'est Karim."
+            },
+            {
+              "text": "Il / Elle est là ?",
+              "meaning": "Demander une personne.",
+              "note": "Ta mère est là ?"
+            },
+            {
+              "text": "Je rappelle plus tard.",
+              "meaning": "Appeler encore après.",
+              "note": "Je suis au travail, je rappelle plus tard."
+            },
+            {
+              "text": "Rappelle-moi !",
+              "meaning": "Demander un rappel.",
+              "note": "Rappelle-moi ce soir !"
+            }
+          ],
+          "situation": "Vous appelez mamie : allô, c'est Léa, tu es là ? Maman n'est pas là, elle revient à six heures — alors vous rappelez plus tard.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Tu téléphones à mamie. Commence l'appel.",
+                "expected": [
+                  "Allô, c'est Léa.",
+                  "Allo, c'est Lea."
+                ],
+                "focus": "allô",
+                "watch": "allô : le mot du téléphone."
+              },
+              {
+                "prompt": "Demande à ton ami s'il est au téléphone.",
+                "expected": [
+                  "Tu es là ?",
+                  "Tu es la ?"
+                ],
+                "focus": "tu es là",
+                "watch": "là = ici, présent."
+              },
+              {
+                "prompt": "Demande si la mère de Léa est là.",
+                "expected": [
+                  "Elle est là, ta mère ?",
+                  "Elle est la, ta mere ?"
+                ],
+                "focus": "elle est là",
+                "watch": "elle pour une femme."
+              },
+              {
+                "prompt": "La personne n'est pas là. Dis-le.",
+                "expected": [
+                  "Elle n'est pas là.",
+                  "Elle n'est pas la."
+                ],
+                "focus": "n'est pas là",
+                "watch": "ne…pas : la négation."
+              },
+              {
+                "prompt": "Tu rappelles ce soir. Dis-le à mamie.",
+                "expected": [
+                  "Je rappelle plus tard.",
+                  "Je rappelle ce soir."
+                ],
+                "focus": "rappelle",
+                "watch": "re + appeler = rappeler."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u12-appel-e1",
+              "kind": "choice",
+              "prompt": "___ ? C'est Karim. Tu es là ?",
+              "options": [
+                "Allô",
+                "Bonjour",
+                "Salut",
+                "Voilà"
+              ],
+              "answers": [
+                "Allô"
+              ],
+              "explain": "allô : le mot du téléphone."
+            },
+            {
+              "id": "fr-foundations-u12-appel-e2",
+              "kind": "gap",
+              "prompt": "Maman n'est pas là, elle revient à six heures. Je ___ plus tard.",
+              "answers": [
+                "rappelle"
+              ],
+              "explain": "rappeler = appeler encore."
+            },
+            {
+              "id": "fr-foundations-u12-appel-e3",
+              "kind": "order",
+              "prompt": "Tu veux un appel ce soir. Demande-le.",
+              "answers": [
+                "Rappelle-moi ce soir"
+              ],
+              "explain": "rappelle-moi + le moment."
+            },
+            {
+              "id": "fr-foundations-u12-appel-e4",
+              "kind": "written",
+              "prompt": "Tu appelles ta sœur. Elle n'est pas là. Laisse un message : tu rappelles plus tard.",
+              "answers": [
+                "je rappelle plus tard",
+                "je te rappelle plus tard"
+              ],
+              "explain": "je rappelle plus tard : je rappelle après."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u13",
+      "title": "Le temps",
+      "subtitle": "Jours et météo",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "les-jours",
+          "title": "Les jours",
+          "subtitle": "Toujours, souvent, jamais",
+          "symbol": "sun.max",
+          "category": "Course",
+          "situation": "Du café du matin au dîner du soir : votre semaine, avec toujours, souvent, parfois et jamais.",
+          "colorIndex": 0
+        },
+        {
+          "id": "ciel-et-saisons",
+          "title": "Le ciel",
+          "subtitle": "Il pleut, il fait beau",
+          "symbol": "cloud.rain",
+          "category": "Course",
+          "situation": "Quel temps ! Vous regardez la météo et vous décidez : parc ou chocolat chaud ?",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u13-routine",
+          "title": "Du matin au soir",
+          "goal": "Raconter ta journée : le matin, l'après-midi, le soir — avec toujours, souvent, parfois, jamais.",
+          "intro": {
+            "explanation": [
+              "Le présent raconte les habitudes : « Je prends mon café à sept heures. Je fais du sport le samedi. »",
+              "Les adverbes de fréquence viennent après le verbe : « Je bois toujours un café. Je lis souvent le soir. »",
+              "La négation avec jamais : « Je ne mange jamais de viande. » Et parfois, c'est quelquefois."
+            ],
+            "examples": [
+              {
+                "text": "Je prends mon café à sept heures.",
+                "meaning": "Le matin."
+              },
+              {
+                "text": "Je bois toujours un café.",
+                "meaning": "Tous les jours."
+              },
+              {
+                "text": "Je lis souvent le soir.",
+                "meaning": "Beaucoup de fois."
+              },
+              {
+                "text": "Parfois, je marche au parc.",
+                "meaning": "Quelquefois."
+              },
+              {
+                "text": "Je ne mange jamais de viande.",
+                "meaning": "Zéro fois : la négation."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "toujours",
+              "meaning": "Tous les jours.",
+              "note": "Je prends toujours mon café."
+            },
+            {
+              "text": "souvent",
+              "meaning": "Beaucoup de fois.",
+              "note": "Je lis souvent le soir."
+            },
+            {
+              "text": "parfois",
+              "meaning": "Quelquefois.",
+              "note": "Parfois, je regarde un film."
+            },
+            {
+              "text": "ne … jamais",
+              "meaning": "Jamais, zéro fois.",
+              "note": "Je ne sors jamais le dimanche."
+            },
+            {
+              "text": "le matin / le soir",
+              "meaning": "Les moments de la journée.",
+              "note": "Le matin, je travaille ; le soir, je lis."
+            }
+          ],
+          "situation": "Une journée ordinaire : café à sept heures, travail le matin, lecture le soir — toujours, souvent, parfois, jamais.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis ton habitude du matin : café, à sept heures.",
+                "expected": [
+                  "Je prends mon café à sept heures.",
+                  "Je prends mon cafe a sept heures."
+                ],
+                "focus": "le matin",
+                "watch": "le présent pour les habitudes."
+              },
+              {
+                "prompt": "Tu lis le soir, tous les jours. Utilise toujours.",
+                "expected": [
+                  "Je lis toujours le soir.",
+                  "Je lis toujours un livre le soir."
+                ],
+                "focus": "toujours",
+                "watch": "adverbe après le verbe."
+              },
+              {
+                "prompt": "Tu vas au parc, quelquefois. Utilise parfois.",
+                "expected": [
+                  "Parfois, je vais au parc.",
+                  "Je vais parfois au parc."
+                ],
+                "focus": "parfois",
+                "watch": "parfois = quelquefois."
+              },
+              {
+                "prompt": "Tu ne manges pas de viande. Utilise jamais.",
+                "expected": [
+                  "Je ne mange jamais de viande.",
+                  "Jamais de viande pour moi."
+                ],
+                "focus": "jamais",
+                "watch": "ne…jamais : la négation."
+              },
+              {
+                "prompt": "Tu travailles le samedi, beaucoup de fois. Utilise souvent.",
+                "expected": [
+                  "Je travaille souvent le samedi.",
+                  "Le samedi, je travaille souvent."
+                ],
+                "focus": "souvent",
+                "watch": "souvent = beaucoup de fois."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u13-routine-e1",
+              "kind": "choice",
+              "prompt": "Je ___ lis un livre le soir : tous les jours !",
+              "options": [
+                "toujours",
+                "souvent",
+                "parfois",
+                "jamais"
+              ],
+              "answers": [
+                "toujours"
+              ],
+              "explain": "toujours = tous les jours."
+            },
+            {
+              "id": "fr-foundations-u13-routine-e2",
+              "kind": "gap",
+              "prompt": "Je ne mange ___ de viande.",
+              "answers": [
+                "jamais"
+              ],
+              "explain": "ne…jamais = zéro fois."
+            },
+            {
+              "id": "fr-foundations-u13-routine-e3",
+              "kind": "order",
+              "prompt": "Dis ton habitude : souvent, lire, le soir.",
+              "answers": [
+                "Je lis souvent le soir"
+              ],
+              "explain": "adverbe après le verbe."
+            },
+            {
+              "id": "fr-foundations-u13-routine-e4",
+              "kind": "written",
+              "prompt": "Dis ce que tu fais toujours le matin.",
+              "answers": [
+                "je prends toujours mon café",
+                "je prends toujours mon cafe",
+                "je lis toujours le matin"
+              ],
+              "explain": "toujours après le verbe."
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:daily-routine",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u13-meteo",
+          "title": "Quel temps fait-il ?",
+          "goal": "Parler du ciel : il fait beau, il pleut — et des saisons : en été, en hiver.",
+          "intro": {
+            "explanation": [
+              "La question : « Quel temps fait-il ? » La réponse avec il fait : « Il fait beau. Il fait chaud. Il fait froid. »",
+              "La pluie et la neige : « Il pleut. Il neige. » Et le vent : « Il y a du vent. »",
+              "Les saisons : « En été, il fait chaud. En hiver, il neige. » Mais au printemps, c'est en automne."
+            ],
+            "examples": [
+              {
+                "text": "Quel temps fait-il ?",
+                "meaning": "La question."
+              },
+              {
+                "text": "Il fait beau aujourd'hui.",
+                "meaning": "Il y a du soleil."
+              },
+              {
+                "text": "Il pleut, prends ton parapluie !",
+                "meaning": "Il y a de l'eau du ciel."
+              },
+              {
+                "text": "En hiver, il neige.",
+                "meaning": "La saison froide."
+              },
+              {
+                "text": "Aujourd'hui, il y a du vent.",
+                "meaning": "Le vent bouge les arbres."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Quel temps fait-il ?",
+              "meaning": "Demander le temps.",
+              "note": "Quel temps fait-il demain ?"
+            },
+            {
+              "text": "Il fait beau / chaud / froid.",
+              "meaning": "Le temps avec il fait.",
+              "note": "En été, il fait chaud."
+            },
+            {
+              "text": "Il pleut / Il neige.",
+              "meaning": "L'eau et la neige.",
+              "note": "Il pleut sur Toulouse."
+            },
+            {
+              "text": "Il y a du vent.",
+              "meaning": "Le vent.",
+              "note": "Il y a du vent, ferme la fenêtre."
+            },
+            {
+              "text": "en été / en hiver",
+              "meaning": "Les saisons.",
+              "note": "En hiver, il fait froid ; au printemps, il fait doux."
+            }
+          ],
+          "situation": "Quel temps ! Il fait beau, vous allez au parc ; il pleut, vous restez à la maison avec un chocolat chaud.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demande le temps de demain.",
+                "expected": [
+                  "Quel temps fait-il demain ?",
+                  "Demain, quel temps fait-il ?"
+                ],
+                "focus": "quel temps",
+                "watch": "question figée : quel temps fait-il ?"
+              },
+              {
+                "prompt": "Il y a du soleil. Dis-le avec il fait.",
+                "expected": [
+                  "Il fait beau.",
+                  "Aujourd'hui, il fait beau."
+                ],
+                "focus": "il fait beau",
+                "watch": "il fait beau = il y a du soleil."
+              },
+              {
+                "prompt": "Il y a de l'eau du ciel. Dis-le.",
+                "expected": [
+                  "Il pleut.",
+                  "Il pleut beaucoup."
+                ],
+                "focus": "il pleut",
+                "watch": "pleuvoir : il pleut."
+              },
+              {
+                "prompt": "Tu es à Paris, en hiver : très froid. Dis-le avec il fait.",
+                "expected": [
+                  "En hiver, il fait très froid.",
+                  "En hiver, il fait tres froid."
+                ],
+                "focus": "en hiver",
+                "watch": "en + saison, mais au printemps."
+              },
+              {
+                "prompt": "Le vent bouge les arbres aujourd'hui. Dis-le.",
+                "expected": [
+                  "Il y a du vent.",
+                  "Il y a beaucoup de vent."
+                ],
+                "focus": "du vent",
+                "watch": "il y a du + nom."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u13-meteo-e1",
+              "kind": "choice",
+              "prompt": "___ temps fait-il ?",
+              "options": [
+                "Quel",
+                "Quelle",
+                "Comment",
+                "Qui"
+              ],
+              "answers": [
+                "Quel"
+              ],
+              "explain": "quel temps fait-il ? : question figée."
+            },
+            {
+              "id": "fr-foundations-u13-meteo-e2",
+              "kind": "gap",
+              "prompt": "Il ___ : prends ton parapluie !",
+              "answers": [
+                "pleut"
+              ],
+              "explain": "il pleut = il y a de l'eau."
+            },
+            {
+              "id": "fr-foundations-u13-meteo-e3",
+              "kind": "order",
+              "prompt": "Décris l'été.",
+              "answers": [
+                "En été il fait très chaud"
+              ],
+              "explain": "en + saison + il fait + adjectif."
+            },
+            {
+              "id": "fr-foundations-u13-meteo-e4",
+              "kind": "written",
+              "prompt": "Tu es à Paris en hiver. Dis le temps : froid.",
+              "answers": [
+                "il fait froid",
+                "il fait très froid",
+                "il fait tres froid"
+              ],
+              "explain": "il fait + froid : le temps."
+            }
+          ],
+          "skills": [
+            "function:talk-about-weather",
+            "vocab:weather",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "talk-about-weather"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u13-envies",
+          "title": "Ce que j'aime",
+          "goal": "Dire tes goûts : j'aime la musique, j'aime lire — et demander : et toi ?",
+          "intro": {
+            "explanation": [
+              "J'aime + nom : « J'aime le vélo. J'adore la musique. »",
+              "J'aime + verbe à l'infinitif : « J'aime lire. J'aime faire du sport. »",
+              "La négation : « Je n'aime pas cuisiner. » Pour demander : « Tu aimes le foot ? Et toi ? »"
+            ],
+            "examples": [
+              {
+                "text": "J'aime le vélo.",
+                "meaning": "aimer + nom."
+              },
+              {
+                "text": "J'adore la musique.",
+                "meaning": "Aimer beaucoup."
+              },
+              {
+                "text": "J'aime lire le soir.",
+                "meaning": "aimer + infinitif."
+              },
+              {
+                "text": "Je n'aime pas cuisiner.",
+                "meaning": "La négation."
+              },
+              {
+                "text": "Tu aimes le foot ? Et toi ?",
+                "meaning": "La question au groupe."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'aime + nom",
+              "meaning": "Les goûts.",
+              "note": "J'aime les crêpes."
+            },
+            {
+              "text": "j'aime + infinitif",
+              "meaning": "Les activités.",
+              "note": "J'aime nager."
+            },
+            {
+              "text": "j'adore …",
+              "meaning": "J'aime beaucoup.",
+              "note": "J'adore le chocolat."
+            },
+            {
+              "text": "je n'aime pas …",
+              "meaning": "Le dégoût.",
+              "note": "Je n'aime pas la pluie."
+            },
+            {
+              "text": "Et toi ?",
+              "meaning": "Rendre la question.",
+              "note": "J'aime lire. Et toi ?"
+            }
+          ],
+          "situation": "Chacun ses goûts : Léa aime le vélo, Karim adore lire, Mai aime faire des crêpes — et vous, qu'est-ce que vous aimez ?",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis ton goût : la musique, beaucoup.",
+                "expected": [
+                  "J'adore la musique.",
+                  "J'aime beaucoup la musique."
+                ],
+                "focus": "j'adore",
+                "watch": "j'adore = j'aime beaucoup."
+              },
+              {
+                "prompt": "Dis ton activité : lire, le soir.",
+                "expected": [
+                  "J'aime lire le soir.",
+                  "J'aime lire."
+                ],
+                "focus": "j'aime lire",
+                "watch": "aimer + verbe à l'infinitif."
+              },
+              {
+                "prompt": "Tu ne veux pas cuisiner. Dis-le avec aimer.",
+                "expected": [
+                  "Je n'aime pas cuisiner.",
+                  "Je n'aime pas la cuisine."
+                ],
+                "focus": "je n'aime pas",
+                "watch": "ne…pas après j'aime."
+              },
+              {
+                "prompt": "Demande à Karim s'il aime le foot.",
+                "expected": [
+                  "Tu aimes le foot ?",
+                  "Est-ce que tu aimes le foot ?"
+                ],
+                "focus": "tu aimes",
+                "watch": "est-ce que pour la question."
+              },
+              {
+                "prompt": "Rends la question à ton ami.",
+                "expected": [
+                  "Et toi ?",
+                  "Et vous ?"
+                ],
+                "focus": "et toi",
+                "watch": "et toi = à toi de répondre."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u13-envies-e1",
+              "kind": "choice",
+              "prompt": "J'___ le chocolat : c'est trop bon !",
+              "options": [
+                "adore",
+                "adore pas",
+                "déteste",
+                "oublie"
+              ],
+              "answers": [
+                "adore"
+              ],
+              "explain": "j'adore = j'aime beaucoup."
+            },
+            {
+              "id": "fr-foundations-u13-envies-e2",
+              "kind": "gap",
+              "prompt": "J'aime ___ du vélo le samedi.",
+              "answers": [
+                "faire"
+              ],
+              "explain": "aimer + infinitif : faire du vélo."
+            },
+            {
+              "id": "fr-foundations-u13-envies-e3",
+              "kind": "order",
+              "prompt": "Dis ton goût : la pluie, non.",
+              "answers": [
+                "Je n'aime pas la pluie"
+              ],
+              "explain": "ne…pas + aimer + nom."
+            },
+            {
+              "id": "fr-foundations-u13-envies-e4",
+              "kind": "written",
+              "prompt": "Dis une activité que tu aimes.",
+              "answers": [
+                "j'aime lire le soir",
+                "j'aime faire du vélo",
+                "j'aime faire du velo",
+                "j'aime lire"
+              ],
+              "explain": "j'aime + verbe à l'infinitif."
+            }
+          ],
+          "skills": [
+            "vocab:hobbies",
+            "grammar:present-simple",
+            "function:talk-about-routines",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

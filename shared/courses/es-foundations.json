@@ -5560,6 +5560,1080 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-foundations-u13",
+      "title": "Mi gente",
+      "subtitle": "Familia y amigos",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mi-familia",
+          "title": "Mi familia",
+          "subtitle": "Personas y posesivos",
+          "symbol": "figure-2",
+          "category": "Course",
+          "situation": "Presentas a tu familia: tus padres, tus hermanos y un tío muy simpático.",
+          "colorIndex": 0
+        },
+        {
+          "id": "mis-amigos",
+          "title": "Mis amigos",
+          "subtitle": "Carácter y llamadas",
+          "symbol": "heart",
+          "category": "Course",
+          "situation": "Describes a tus amigos por teléfono y quedas con ellos para el sábado.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u13-familia",
+          "title": "Mi familia",
+          "goal": "Presentar a tu familia: padres, hermanos y tíos, con tengo y los posesivos.",
+          "intro": {
+            "explanation": [
+              "La familia: mi madre, mi padre, mi hermano y mi hermana. «Tengo un hermano y dos hermanas».",
+              "Usamos tengo para hablar de tu familia: «Tengo un tío muy simpático». Si no hay: «No tengo hermanos».",
+              "Los posesivos acompañan a la familia: «mi madre», «tu padre», «su mujer». «Mis padres viven en Madrid»."
+            ],
+            "examples": [
+              {
+                "text": "Tengo un hermano y una hermana.",
+                "meaning": "Decir quién está en tu familia."
+              },
+              {
+                "text": "Mi padre se llama Luis.",
+                "meaning": "Presentar a tu padre."
+              },
+              {
+                "text": "Tengo un tío muy gracioso.",
+                "meaning": "Hablar de un tío."
+              },
+              {
+                "text": "No tengo abuelos.",
+                "meaning": "Decir que alguien no está."
+              },
+              {
+                "text": "Mis padres viven en Sevilla.",
+                "meaning": "Hablar de tus padres, en plural."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mi madre / mi padre",
+              "meaning": "Tus padres.",
+              "note": "Mi madre es profesora."
+            },
+            {
+              "text": "mi hermano / mi hermana",
+              "meaning": "Tus hermanos.",
+              "note": "Mi hermana tiene diez años."
+            },
+            {
+              "text": "el tío / la tía",
+              "meaning": "Los hermanos de tus padres.",
+              "note": "Tengo una tía en Valencia."
+            },
+            {
+              "text": "los abuelos",
+              "meaning": "El abuelo y la abuela.",
+              "note": "Mis abuelos viven cerca."
+            },
+            {
+              "text": "tengo … / no tengo …",
+              "meaning": "Decir quién está en tu familia.",
+              "note": "Tengo dos primos."
+            }
+          ],
+          "situation": "Presentas a tu familia: tus padres, tu hermano pequeño y un tío que vive en Barcelona.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di que tienes un hermano y una hermana.",
+                "expected": [
+                  "Tengo un hermano y una hermana",
+                  "tengo un hermano y una hermana"
+                ],
+                "focus": "tengo",
+                "watch": "tengo + persona sin artículo: un hermano."
+              },
+              {
+                "prompt": "Presenta a tu madre: se llama Carmen.",
+                "expected": [
+                  "Mi madre se llama Carmen",
+                  "mi madre se llama carmen"
+                ],
+                "focus": "mi madre",
+                "watch": "mi + familia + se llama + nombre."
+              },
+              {
+                "prompt": "Di que tienes un tío en Barcelona.",
+                "expected": [
+                  "Tengo un tío en Barcelona",
+                  "Tengo un tio en Barcelona"
+                ],
+                "focus": "tío",
+                "watch": "tío lleva tilde; tía también."
+              },
+              {
+                "prompt": "Di que no tienes hermanos.",
+                "expected": [
+                  "No tengo hermanos",
+                  "no tengo hermanos"
+                ],
+                "focus": "no tengo",
+                "watch": "no + tengo para negar."
+              },
+              {
+                "prompt": "Habla de tus padres: viven en Madrid.",
+                "expected": [
+                  "Mis padres viven en Madrid",
+                  "mis padres viven en madrid"
+                ],
+                "focus": "mis",
+                "watch": "mi → mis en plural: mis padres."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u13-familia-e1",
+              "kind": "choice",
+              "prompt": "La madre de mi padre es mi ___.",
+              "explain": "La madre de tu padre o de tu madre es tu abuela.",
+              "options": [
+                "abuela",
+                "tía",
+                "hermana",
+                "prima"
+              ],
+              "answers": [
+                "abuela"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-familia-e2",
+              "kind": "gap",
+              "prompt": "La hija de mis padres es mi ___.",
+              "explain": "La hija de tus padres es tu hermana.",
+              "answers": [
+                "hermana"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-familia-e3",
+              "kind": "order",
+              "prompt": "Presenta a tu padre: se llama Jorge.",
+              "explain": "mi + familia + se llama + nombre.",
+              "answers": [
+                "Mi padre se llama Jorge"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-familia-e4",
+              "kind": "written",
+              "prompt": "Pregunta a tu amigo por su familia: el número de hermanos.",
+              "explain": "¿Cuántos…? para preguntar cantidad, con tilde.",
+              "answers": [
+                "¿Cuántos hermanos tienes?",
+                "¿Cuantos hermanos tienes?"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:family",
+            "grammar:possessives",
+            "grammar:present-simple",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        },
+        {
+          "id": "es-foundations-u13-amigos",
+          "title": "¿Cómo es?",
+          "goal": "Describir el carácter de tus amigos con adjetivos: simpático, tímido, trabajador.",
+          "intro": {
+            "explanation": [
+              "Para describir usamos ser + adjetivo: «Pablo es simpático». «Ana es tímida».",
+              "El adjetivo cambia con la persona: simpático → simpática, tímido → tímida. «Mis amigos son trabajadores».",
+              "Para preguntar: «¿Cómo es tu amigo?». Respondes: «Es muy simpático»."
+            ],
+            "examples": [
+              {
+                "text": "Mi amigo Pablo es muy simpático.",
+                "meaning": "Describir el carácter."
+              },
+              {
+                "text": "Ana es tímida pero muy amable.",
+                "meaning": "Describir a una amiga."
+              },
+              {
+                "text": "¿Cómo es tu hermana?",
+                "meaning": "Preguntar por alguien."
+              },
+              {
+                "text": "Es trabajador y serio.",
+                "meaning": "Dos adjetivos juntos."
+              },
+              {
+                "text": "Mis amigos son divertidos.",
+                "meaning": "Plural: -s al final."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "simpático / simpática",
+              "meaning": "Persona agradable.",
+              "note": "Tu amigo es muy simpático."
+            },
+            {
+              "text": "tímido / tímida",
+              "meaning": "Persona callada con gente nueva.",
+              "note": "Mi prima es tímida."
+            },
+            {
+              "text": "trabajador / trabajadora",
+              "meaning": "Persona que trabaja mucho.",
+              "note": "Es trabajadora y organizada."
+            },
+            {
+              "text": "¿Cómo es …?",
+              "meaning": "Preguntar por el carácter.",
+              "note": "¿Cómo es tu compañero?"
+            },
+            {
+              "text": "muy + adjetivo",
+              "meaning": "Decir mucho.",
+              "note": "Es muy divertido."
+            }
+          ],
+          "situation": "Hablas de tus amigos: Pablo es simpático y divertido; su hermana es tímida pero muy trabajadora.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Describe el carácter de tu amigo Pablo.",
+                "expected": [
+                  "Es simpático",
+                  "es simpatico",
+                  "Pablo es simpático"
+                ],
+                "focus": "es + adjetivo",
+                "watch": "simpático lleva tilde."
+              },
+              {
+                "prompt": "Describe a tu amiga: es callada con gente nueva.",
+                "expected": [
+                  "Es tímida",
+                  "es timida"
+                ],
+                "focus": "tímida",
+                "watch": "Femenino: tímida, con -a y tilde."
+              },
+              {
+                "prompt": "Pregunta por el carácter de tu compañero.",
+                "expected": [
+                  "¿Cómo es tu compañero?",
+                  "¿Como es tu compañero?"
+                ],
+                "focus": "¿cómo es?",
+                "watch": "cómo con tilde en preguntas."
+              },
+              {
+                "prompt": "Di que tus amigos son divertidos.",
+                "expected": [
+                  "Mis amigos son divertidos",
+                  "mis amigos son divertidos"
+                ],
+                "focus": "son",
+                "watch": "Plural: son + divertidos."
+              },
+              {
+                "prompt": "Di que tu jefa trabaja mucho.",
+                "expected": [
+                  "Es muy trabajadora",
+                  "es muy trabajadora",
+                  "Mi jefa es muy trabajadora"
+                ],
+                "focus": "trabajadora",
+                "watch": "Femenino: trabajadora, con -a."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u13-amigos-e1",
+              "kind": "choice",
+              "prompt": "Mi amiga Ana es muy ___. Habla con todo el mundo.",
+              "explain": "Habla con todo el mundo: es simpática.",
+              "options": [
+                "simpática",
+                "tímida",
+                "seria",
+                "callada"
+              ],
+              "answers": [
+                "simpática"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-amigos-e2",
+              "kind": "gap",
+              "prompt": "Pablo no habla con gente nueva. Es ___. (carácter)",
+              "explain": "Sin confianza con gente nueva: tímido, con tilde.",
+              "answers": [
+                "tímido"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-amigos-e3",
+              "kind": "order",
+              "prompt": "Pregunta por el carácter de tu compañera de piso.",
+              "explain": "¿Cómo es…? para preguntar el carácter.",
+              "answers": [
+                "¿Cómo es tu compañera de piso?"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-amigos-e4",
+              "kind": "written",
+              "prompt": "Di que tu prima es callada con la gente nueva.",
+              "explain": "Callada con gente nueva: tímida, con tilde.",
+              "answers": [
+                "Es tímida",
+                "es timida",
+                "Mi prima es tímida"
+              ]
+            }
+          ],
+          "skills": [
+            "function:describe-people",
+            "grammar:present-simple",
+            "vocab:feelings",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u13-llamada",
+          "title": "Una llamada",
+          "goal": "Hablar por teléfono: preguntar por alguien y quedar para llamar más tarde.",
+          "intro": {
+            "explanation": [
+              "Al teléfono: «¿Diga?». Preguntas por alguien: «¿Está Marta?». Respondes: «Sí, soy yo» o «No, no está».",
+              "Si no puede hablar: «Está en una llamada». Propones: «¿Llamas más tarde?».",
+              "Para saber quién llama: «¿De parte de quién?». Respondes: «De parte de Ana»."
+            ],
+            "examples": [
+              {
+                "text": "¿Diga?",
+                "meaning": "Contestar el teléfono."
+              },
+              {
+                "text": "¿Está Marta, por favor?",
+                "meaning": "Preguntar por una persona."
+              },
+              {
+                "text": "Lo siento, no está.",
+                "meaning": "Decir que no puede hablar."
+              },
+              {
+                "text": "¿Llamas más tarde?",
+                "meaning": "Proponer otra llamada."
+              },
+              {
+                "text": "Vale, llamo a las cinco.",
+                "meaning": "Aceptar y decir la hora."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Diga?",
+              "meaning": "Contestar el teléfono en España.",
+              "note": "—¿Diga? —¿Está Pablo?"
+            },
+            {
+              "text": "¿Está …?",
+              "meaning": "Preguntar por alguien.",
+              "note": "¿Está la señora García?"
+            },
+            {
+              "text": "no está / está en una llamada",
+              "meaning": "La persona no puede hablar.",
+              "note": "Está en una llamada."
+            },
+            {
+              "text": "llamo más tarde",
+              "meaning": "Volver a llamar después.",
+              "note": "Vale, llamo más tarde."
+            },
+            {
+              "text": "¿De parte de quién?",
+              "meaning": "Preguntar quién llama.",
+              "note": "De parte de Ana."
+            }
+          ],
+          "situation": "Llamas a Marta para quedar el sábado, pero está en la ducha: llamas más tarde, a las seis.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Contesta el teléfono.",
+                "expected": [
+                  "¿Diga?",
+                  "¿Dígame?",
+                  "¿Sí?"
+                ],
+                "focus": "¿diga?",
+                "watch": "En España contestamos con ¿diga?."
+              },
+              {
+                "prompt": "Llama y pregunta por Marta.",
+                "expected": [
+                  "¿Está Marta?",
+                  "¿Esta Marta?"
+                ],
+                "focus": "¿está?",
+                "watch": "está con tilde: ¿Está Marta?"
+              },
+              {
+                "prompt": "Di que Marta no puede hablar ahora.",
+                "expected": [
+                  "No está ahora",
+                  "Marta no está",
+                  "Lo siento, no está"
+                ],
+                "focus": "no está",
+                "watch": "no está = no puede hablar."
+              },
+              {
+                "prompt": "Di que llamas después, a las seis.",
+                "expected": [
+                  "Llamo más tarde, a las seis",
+                  "Llamo mas tarde a las seis"
+                ],
+                "focus": "más tarde",
+                "watch": "más lleva tilde."
+              },
+              {
+                "prompt": "Pregunta quién llama.",
+                "expected": [
+                  "¿De parte de quién?",
+                  "¿De parte de quien?",
+                  "¿Quién es?",
+                  "¿Quien es?"
+                ],
+                "focus": "de parte de",
+                "watch": "¿De parte de quién? es muy útil al teléfono."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u13-llamada-e1",
+              "kind": "choice",
+              "prompt": "Llamas a Marta. Su hermano contesta: «Ahora está en la ducha». Tú dices: «Vale, ___ más tarde».",
+              "explain": "Yo llamo: llamo más tarde.",
+              "options": [
+                "llamo",
+                "llamas",
+                "llama",
+                "llamar"
+              ],
+              "answers": [
+                "llamo"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-llamada-e2",
+              "kind": "gap",
+              "prompt": "—¿___ Marta, por favor? —Sí, soy yo.",
+              "explain": "¿Está + nombre? para preguntar por alguien al teléfono.",
+              "answers": [
+                "Está"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-llamada-e3",
+              "kind": "order",
+              "prompt": "Deja un recado: dices la hora de tu llamada.",
+              "explain": "llamo + más tarde + la hora.",
+              "answers": [
+                "Llamo más tarde, a las seis"
+              ]
+            },
+            {
+              "id": "es-foundations-u13-llamada-e4",
+              "kind": "written",
+              "prompt": "Pregunta por el señor Vargas al teléfono.",
+              "explain": "¿Está + nombre? con tilde en está.",
+              "answers": [
+                "¿Está el señor Vargas?",
+                "¿Esta el señor Vargas?"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u14",
+      "title": "El tiempo",
+      "subtitle": "Días y clima",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "dias-y-rutina",
+          "title": "Mi semana",
+          "subtitle": "Rutina y frecuencia",
+          "symbol": "sun.max",
+          "category": "Course",
+          "situation": "Cuentas qué haces cada día: siempre, a veces o nunca.",
+          "colorIndex": 0
+        },
+        {
+          "id": "clima-y-gustos",
+          "title": "Clima y gustos",
+          "subtitle": "Tiempo y estaciones",
+          "symbol": "cloud.rain",
+          "category": "Course",
+          "situation": "Hablas del clima de tu ciudad y de lo que te gusta hacer.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u14-rutina",
+          "title": "De la mañana a la noche",
+          "goal": "Contar tu día con siempre, a veces y nunca: de la mañana a la noche.",
+          "intro": {
+            "explanation": [
+              "Los adverbios de frecuencia: siempre (todos los días), a veces (algunos días) y nunca (ningún día). «Siempre desayuno café».",
+              "Con nunca, no hace falta no: «Nunca como tarde». También dices «No como tarde nunca».",
+              "La rutina: me levanto, desayuno, trabajo, ceno y me acuesto. «Me levanto a las siete»."
+            ],
+            "examples": [
+              {
+                "text": "Siempre me levanto a las siete.",
+                "meaning": "Rutina de todos los días."
+              },
+              {
+                "text": "A veces desayuno tostadas.",
+                "meaning": "Algunos días."
+              },
+              {
+                "text": "Nunca ceno muy tarde.",
+                "meaning": "Ningún día."
+              },
+              {
+                "text": "Por la noche veo la televisión.",
+                "meaning": "Un momento del día."
+              },
+              {
+                "text": "Los sábados trabajo por la mañana.",
+                "meaning": "Un día de la semana."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "siempre",
+              "meaning": "Todos los días.",
+              "note": "Siempre desayuno café."
+            },
+            {
+              "text": "a veces",
+              "meaning": "Algunos días.",
+              "note": "A veces como en la oficina."
+            },
+            {
+              "text": "nunca",
+              "meaning": "Ningún día.",
+              "note": "Nunca bebo alcohol."
+            },
+            {
+              "text": "me levanto / me acuesto",
+              "meaning": "Empieza y termina el día.",
+              "note": "Me acuesto a las once."
+            },
+            {
+              "text": "por la mañana / por la noche",
+              "meaning": "Momentos del día.",
+              "note": "Estudio por la noche."
+            }
+          ],
+          "situation": "Cuentas tu día normal: te levantas a las siete, siempre desayunas café y nunca comes en casa.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di que todos los días desayunas café.",
+                "expected": [
+                  "Siempre desayuno café",
+                  "siempre desayuno cafe"
+                ],
+                "focus": "siempre",
+                "watch": "siempre = todos los días."
+              },
+              {
+                "prompt": "Di que algunos días caminas al trabajo.",
+                "expected": [
+                  "A veces camino al trabajo",
+                  "a veces camino al trabajo"
+                ],
+                "focus": "a veces",
+                "watch": "a veces = algunos días."
+              },
+              {
+                "prompt": "Di que ningún día comes carne.",
+                "expected": [
+                  "Nunca como carne",
+                  "nunca como carne"
+                ],
+                "focus": "nunca",
+                "watch": "nunca = 0%, sin no."
+              },
+              {
+                "prompt": "Di a qué hora te levantas: siete.",
+                "expected": [
+                  "Me levanto a las siete",
+                  "me levanto a las siete"
+                ],
+                "focus": "me levanto",
+                "watch": "me levanto + a las + hora."
+              },
+              {
+                "prompt": "Di qué haces por la noche: ves la televisión.",
+                "expected": [
+                  "Por la noche veo la televisión",
+                  "por la noche veo la television",
+                  "veo la television por la noche"
+                ],
+                "focus": "por la noche",
+                "watch": "por la noche + presente simple."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u14-rutina-e1",
+              "kind": "choice",
+              "prompt": "Todos los días bebo café. Bebo café ___.",
+              "explain": "Todos los días = siempre.",
+              "options": [
+                "siempre",
+                "nunca",
+                "a veces",
+                "mañana"
+              ],
+              "answers": [
+                "siempre"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-rutina-e2",
+              "kind": "gap",
+              "prompt": "No como carne, ni un solo día. ___ como carne.",
+              "explain": "Nunca al principio de la frase, sin no.",
+              "answers": [
+                "Nunca"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-rutina-e3",
+              "kind": "order",
+              "prompt": "Di que algunos días vas a la piscina.",
+              "explain": "a veces + voy + lugar.",
+              "answers": [
+                "A veces voy a la piscina"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-rutina-e4",
+              "kind": "written",
+              "prompt": "Di a qué hora te acuestas: once.",
+              "explain": "me acuesto + a las + hora.",
+              "answers": [
+                "Me acuesto a las once",
+                "me acuesto a las once"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:daily-routine",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u14-clima",
+          "title": "¿Qué tiempo hace?",
+          "goal": "Hablar del tiempo y de las estaciones: hace calor, llueve, nieva.",
+          "intro": {
+            "explanation": [
+              "Preguntar: «¿Qué tiempo hace?». Respondes con hace: «Hace sol», «Hace frío».",
+              "Con llueve y nieva no usamos hace: «Hoy llueve mucho», «En invierno nieva».",
+              "Las estaciones: la primavera, el verano, el otoño y el invierno. «En verano hace calor»."
+            ],
+            "examples": [
+              {
+                "text": "¿Qué tiempo hace hoy?",
+                "meaning": "Preguntar por el clima."
+              },
+              {
+                "text": "Hace sol y hace calor.",
+                "meaning": "Un día de verano."
+              },
+              {
+                "text": "Hoy llueve mucho en Bilbao.",
+                "meaning": "Un día de lluvia."
+              },
+              {
+                "text": "En invierno nieva en la montaña.",
+                "meaning": "El clima del invierno."
+              },
+              {
+                "text": "En primavera hace buen tiempo.",
+                "meaning": "Hablar de una estación."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Qué tiempo hace?",
+              "meaning": "Preguntar por el clima.",
+              "note": "¿Qué tiempo hace en Madrid?"
+            },
+            {
+              "text": "hace sol / hace calor",
+              "meaning": "El tiempo bueno.",
+              "note": "Hoy hace sol."
+            },
+            {
+              "text": "hace frío / hace viento",
+              "meaning": "El tiempo frío.",
+              "note": "En invierno hace frío."
+            },
+            {
+              "text": "llueve / nieva",
+              "meaning": "El agua y la nieve.",
+              "note": "Aquí nunca nieva."
+            },
+            {
+              "text": "la primavera, el verano, el otoño, el invierno",
+              "meaning": "Las cuatro estaciones.",
+              "note": "Mi estación es el otoño."
+            }
+          ],
+          "situation": "Hablas del clima de tu ciudad: en verano hace mucho calor, en invierno llueve y nunca nieva.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pregunta por el clima hoy.",
+                "expected": [
+                  "¿Qué tiempo hace hoy?",
+                  "¿Que tiempo hace hoy?"
+                ],
+                "focus": "¿qué tiempo?",
+                "watch": "qué con tilde en preguntas."
+              },
+              {
+                "prompt": "Di que hoy es un día de sol.",
+                "expected": [
+                  "Hace sol",
+                  "hace sol"
+                ],
+                "focus": "hace sol",
+                "watch": "hace + sol, calor, frío, viento."
+              },
+              {
+                "prompt": "Di que la temperatura hoy es muy baja.",
+                "expected": [
+                  "Hace mucho frío",
+                  "hace mucho frio"
+                ],
+                "focus": "frío",
+                "watch": "frío lleva tilde."
+              },
+              {
+                "prompt": "Di que en tu ciudad cae agua hoy.",
+                "expected": [
+                  "Hoy llueve",
+                  "hoy llueve"
+                ],
+                "focus": "llueve",
+                "watch": "llueve, sin hace: hoy llueve."
+              },
+              {
+                "prompt": "Di que en invierno hay nieve.",
+                "expected": [
+                  "En invierno nieva",
+                  "nieva en invierno"
+                ],
+                "focus": "nieva",
+                "watch": "nieva, sin hace."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u14-clima-e1",
+              "kind": "choice",
+              "prompt": "En el desierto la temperatura es muy alta: ___ calor.",
+              "explain": "hace + calor, frío, sol, viento.",
+              "options": [
+                "hace",
+                "llueve",
+                "nieva",
+                "toma"
+              ],
+              "answers": [
+                "hace"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-clima-e2",
+              "kind": "gap",
+              "prompt": "Coge el paraguas: hoy ___ mucho.",
+              "explain": "Llueve = cae agua; sin hace.",
+              "answers": [
+                "llueve"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-clima-e3",
+              "kind": "order",
+              "prompt": "Pregunta por el clima en Sevilla.",
+              "explain": "¿Qué tiempo hace + en + lugar?",
+              "answers": [
+                "¿Qué tiempo hace en Sevilla?"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-clima-e4",
+              "kind": "written",
+              "prompt": "Di que en tu ciudad, en la estación fría, la temperatura es baja.",
+              "explain": "hace + frío; frío lleva tilde.",
+              "answers": [
+                "En invierno hace frío",
+                "En invierno hace frio",
+                "Hace frío en invierno"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-weather",
+            "vocab:weather",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "talk-about-weather"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u14-hobbies",
+          "title": "Lo que me gusta",
+          "goal": "Decir qué te gusta: me gusta + infinitivo y me gusta + sustantivo.",
+          "intro": {
+            "explanation": [
+              "me gusta + infinitivo para actividades: «Me gusta leer», «Me gusta cocinar».",
+              "me gusta + sustantivo para cosas: «Me gusta el café», «Me gusta la música».",
+              "Negamos con no: «No me gusta el frío». Preguntamos: «¿Te gusta el fútbol?»."
+            ],
+            "examples": [
+              {
+                "text": "Me gusta leer por la noche.",
+                "meaning": "Gusto + infinitivo."
+              },
+              {
+                "text": "Me gusta la música latina.",
+                "meaning": "Gusto + sustantivo."
+              },
+              {
+                "text": "¿Te gusta cocinar?",
+                "meaning": "Preguntar por los gustos."
+              },
+              {
+                "text": "No me gusta el frío.",
+                "meaning": "Decir un disgusto."
+              },
+              {
+                "text": "Me encanta viajar.",
+                "meaning": "Un gusto muy fuerte."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "me gusta + infinitivo",
+              "meaning": "Decir qué te gusta hacer.",
+              "note": "Me gusta nadar."
+            },
+            {
+              "text": "me gusta el / la …",
+              "meaning": "Decir qué te gusta.",
+              "note": "Me gusta el cine."
+            },
+            {
+              "text": "no me gusta …",
+              "meaning": "Decir qué no te gusta.",
+              "note": "No me gusta madrugar."
+            },
+            {
+              "text": "¿te gusta …?",
+              "meaning": "Preguntar por los gustos.",
+              "note": "¿Te gusta el chocolate?"
+            },
+            {
+              "text": "me encanta …",
+              "meaning": "Un gusto muy fuerte.",
+              "note": "Me encanta viajar."
+            }
+          ],
+          "situation": "Hablas de tu tiempo libre: te gusta cocinar los domingos y te encanta el cine; no te gusta el frío.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di que te gusta bailar.",
+                "expected": [
+                  "Me gusta bailar",
+                  "me gusta bailar"
+                ],
+                "focus": "me gusta",
+                "watch": "me gusta + infinitivo."
+              },
+              {
+                "prompt": "Di tu opinión sobre el cine.",
+                "expected": [
+                  "Me gusta el cine",
+                  "me gusta el cine"
+                ],
+                "focus": "el cine",
+                "watch": "me gusta + el/la + sustantivo."
+              },
+              {
+                "prompt": "Pregunta a tu amigo por sus gustos en la cocina.",
+                "expected": [
+                  "¿Te gusta cocinar?",
+                  "¿Te gusta cocinar a ti?"
+                ],
+                "focus": "¿te gusta?",
+                "watch": "te para preguntar a tú."
+              },
+              {
+                "prompt": "Di que madrugar no es tu cosa.",
+                "expected": [
+                  "No me gusta madrugar",
+                  "no me gusta madrugar"
+                ],
+                "focus": "no me gusta",
+                "watch": "no va antes de me gusta."
+              },
+              {
+                "prompt": "Di que viajar te gusta mucho.",
+                "expected": [
+                  "Me encanta viajar",
+                  "me encanta viajar"
+                ],
+                "focus": "me encanta",
+                "watch": "me encanta = me gusta mucho."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u14-hobbies-e1",
+              "kind": "choice",
+              "prompt": "___ bailar salsa los sábados; es muy divertido.",
+              "explain": "me gusta + infinitivo: me gusta bailar.",
+              "options": [
+                "Me gusta",
+                "Gusto",
+                "Me gustan",
+                "Gusto en"
+              ],
+              "answers": [
+                "Me gusta"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-hobbies-e2",
+              "kind": "gap",
+              "prompt": "A Ana ___ el chocolate. (a ella)",
+              "explain": "A Ana le gusta: le para tercera persona.",
+              "answers": [
+                "le gusta"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-hobbies-e3",
+              "kind": "order",
+              "prompt": "Di qué haces con gusto los domingos: cocinar.",
+              "explain": "me gusta + infinitivo + momento.",
+              "answers": [
+                "Me gusta cocinar los domingos"
+              ]
+            },
+            {
+              "id": "es-foundations-u14-hobbies-e4",
+              "kind": "written",
+              "prompt": "Di que el frío no es de tu agrado.",
+              "explain": "no me gusta + sustantivo con artículo: el frío.",
+              "answers": [
+                "No me gusta el frío",
+                "No me gusta el frio",
+                "no me gusta el frio"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:hobbies",
+            "grammar:present-simple",
+            "function:talk-about-routines",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

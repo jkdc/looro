@@ -804,6 +804,186 @@ public enum DeFoundationsU11 {
                             Exercise(id: "de-foundations-u11-obststand-e4", kind: "written", prompt: "Fragt ob die Tomaten reif sind.", options: [], answers: ["sind die tomaten reif", "Sind die Tomaten reif ?"], explain: "Qualität fragen: Sind die … reif ?")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum DeFoundationsU12 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u12", title: "Meine Leute", subtitle: "Familie und Freunde", level: "A1", themes: [
+                    ConversationTheme("meine-familie", "Meine Familie", "Wer ist das ?", "figure-2", "Course", "Nadia zeigt Fotos: ihre Mutter, ihr Bruder, ihr Onkel — wer ist wer ?", 0),
+                    ConversationTheme("gute-freunde", "Gute Freunde", "Wie ist er ?", "heart", "Course", "Ihr beschreibt eure Freunde: nett, schüchtern, fleißig. Und dann klingelt das Telefon.", 1)], lessons: [
+            Lesson(id: "de-foundations-u12-familie", title: "Meine Familie", goal: "Familienmitglieder nennen und mit mein und haben sagen, wer zu dir gehört.",
+                intro: LessonIntro(explanation: [
+                            "Die Familie: die Mutter, der Vater, die Schwester, der Bruder, die Oma, der Opa. Beispiel: „Das ist meine Schwester.“",
+                            "mein + Person: „mein Bruder“ (der), „meine Mutter“ (die). Beispiel: „Meine Oma wohnt in Berlin.“",
+                            "haben + einen/eine: „Ich habe einen Bruder.“ „Ich habe eine Schwester.“ Beispiel: „Ich habe auch einen Onkel.“"], examples: [
+                            ExampleLine(text: "Das ist meine Familie.", meaning: "Was du zeigst: meine Familie."),
+                            ExampleLine(text: "Ich habe einen Bruder und eine Schwester.", meaning: "haben + einen (der) / eine (die)."),
+                            ExampleLine(text: "Meine Oma ist 80 Jahre alt.", meaning: "meine + die Oma."),
+                            ExampleLine(text: "Mein Onkel heißt Karim.", meaning: "mein + der Onkel."),
+                            ExampleLine(text: "Hast du Geschwister ?", meaning: "Frage nach der Familie.")]),
+                expressions: [
+                            TargetExpression(text: "die Mutter / der Vater", meaning: "Die Eltern.", note: "Meine Mutter kocht gut."),
+                            TargetExpression(text: "die Schwester / der Bruder", meaning: "Geschwister.", note: "Ich habe einen Bruder."),
+                            TargetExpression(text: "die Oma / der Opa", meaning: "Die Großeltern.", note: "Mein Opa ist 85."),
+                            TargetExpression(text: "die Tante / der Onkel", meaning: "Weitere Familie.", note: "mein Onkel aus Wien"),
+                            TargetExpression(text: "Ich habe …", meaning: "Sagen, wer zu dir gehört.", note: "haben + einen / eine: Ich habe eine Tante.")],
+                situation: "Nadia zeigt ein Familienfoto: Mutter, Vater, Bruder, Oma — und einen Onkel aus Wien.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Zeigst deine Mutter vor.", expected: ["Das ist meine Mutter.", "das ist meine mutter"], focus: "das ist mein …", watch: "die Mutter: meine Mutter."),
+                                PracticeQuestion(prompt: "Sagt, wen du hast. (ein Bruder)", expected: ["Ich habe einen Bruder.", "ich habe einen bruder"], focus: "haben + einen", watch: "der Bruder: einen Bruder."),
+                                PracticeQuestion(prompt: "Sagt, wen du hast. (eine Schwester)", expected: ["Ich habe eine Schwester.", "ich habe eine schwester"], focus: "haben + eine", watch: "die Schwester: eine Schwester."),
+                                PracticeQuestion(prompt: "Fragst, ob jemand Geschwister hat.", expected: ["Hast du Geschwister ?", "hast du geschwister"], focus: "hast du … ?", watch: "du + haben = hast."),
+                                PracticeQuestion(prompt: "Sagt, wen du hast. (eine Tante)", expected: ["Ich habe eine Tante.", "ich habe eine tante"], focus: "die Tante", watch: "die Tante: eine Tante.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u12-familie-e1", kind: "choice", prompt: "Ich habe ___ Bruder.", options: ["einen", "eine", "ein", "kein"], answers: ["einen"], explain: "haben + Akkusativ Maskulin: einen Bruder."),
+                            Exercise(id: "de-foundations-u12-familie-e2", kind: "gap", prompt: "Die Schwester von meinem Vater ist meine ___.", options: [], answers: ["tante", "Tante"], explain: "Familienvokabel: die Schwester vom Vater ist die Tante."),
+                            Exercise(id: "de-foundations-u12-familie-e3", kind: "order", prompt: "Sagt, wen du hast. (Onkel)", options: [], answers: ["Ich habe einen Onkel"], explain: "haben + einen Onkel: so sagt man, wer zu dir gehört."),
+                            Exercise(id: "de-foundations-u12-familie-e4", kind: "written", prompt: "Schreib einen Satz über deine Oma. (kochen)", options: [], answers: ["meine oma kocht gut", "meine oma kocht gern", "meine oma kocht"], explain: "meine + die Oma: meine Oma kocht.")], skills: ["vocab:family", "grammar:possessives", "grammar:present-simple", "function:describe-people"], canDo: ["describe-people"], prerequisites: ["grammar:possessives"]),
+            Lesson(id: "de-foundations-u12-freunde", title: "Wie ist er ?", goal: "Freunde mit Adjektiven beschreiben und fragen: Wie ist er ? Wie ist sie ?",
+                intro: LessonIntro(explanation: [
+                            "Adjektive für Leute: nett, lustig, schüchtern, fleißig, sportlich. Beispiel: „Mia ist nett.“",
+                            "sein + Adjektiv: „Er ist lustig.“ „Sie ist schüchtern.“ So beschreibt man Leute.",
+                            "Frage: „Wie ist er ?“ — „Er ist sehr nett.“ Beispiel: „Und Lisa ? Sie ist fleißig.“"], examples: [
+                            ExampleLine(text: "Mein Freund Jonas ist sehr nett.", meaning: "Beschreibung: sein + nett."),
+                            ExampleLine(text: "Er ist schüchtern, aber sehr fleißig.", meaning: "aber: zwei Adjektive, auch Gegensätze."),
+                            ExampleLine(text: "Wie ist deine Schwester ?", meaning: "Nach einer Person fragen."),
+                            ExampleLine(text: "Sie ist lustig und sportlich.", meaning: "und: zwei Adjektive zusammen."),
+                            ExampleLine(text: "Unser Lehrer ist immer freundlich.", meaning: "Adjektiv nach ist: keine Endung.")]),
+                expressions: [
+                            TargetExpression(text: "nett / freundlich", meaning: "Positive Leute.", note: "Jonas ist nett."),
+                            TargetExpression(text: "schüchtern", meaning: "Nicht viel sprechen vor neuen Leuten.", note: "Sie ist schüchtern."),
+                            TargetExpression(text: "fleißig", meaning: "Viel arbeiten und lernen.", note: "Er ist fleißig."),
+                            TargetExpression(text: "lustig", meaning: "Man lacht viel.", note: "Mia ist lustig."),
+                            TargetExpression(text: "Wie ist er / sie ?", meaning: "Nach einer Person fragen.", note: "Wie ist dein Bruder ?")],
+                situation: "Ben und Lena beschreiben ihre Freunde: Jonas ist schüchtern, aber fleißig. Mia ist lustig.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fragst nach Bens Bruder.", expected: ["Wie ist Bens Bruder ?", "Wie ist er ?", "wie ist er"], focus: "wie ist … ?", watch: "Frage mit wie + sein."),
+                                PracticeQuestion(prompt: "Sagt, wie Jonas ist. (nett)", expected: ["Er ist nett.", "er ist nett", "er ist sehr nett"], focus: "sein + Adjektiv", watch: "Nach er: ist + Adjektiv."),
+                                PracticeQuestion(prompt: "Sagt, wie Lisa ist. (schüchtern)", expected: ["Sie ist schüchtern.", "sie ist schuechtern"], focus: "schüchtern", watch: "ü = ue: schuechtern."),
+                                PracticeQuestion(prompt: "Zwei Adjektive: Jonas ist fleißig und nett.", expected: ["Er ist fleißig und nett.", "er ist fleissig und nett"], focus: "ß = ss", watch: "fleißig: fleissig ohne ß."),
+                                PracticeQuestion(prompt: "Sagt, wie deine Mutter ist. (freundlich)", expected: ["Meine Mutter ist freundlich.", "meine mutter ist freundlich"], focus: "meine + Person", watch: "die Mutter: meine Mutter.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u12-freunde-e1", kind: "choice", prompt: "Jonas ist sehr ___. Er hilft allen.", options: ["nett", "teuer", "leer", "neu"], answers: ["nett"], explain: "nett passt zu Personen: Jonas hilft allen."),
+                            Exercise(id: "de-foundations-u12-freunde-e2", kind: "gap", prompt: "Lisa ist sehr ___. Sie lernt jeden Tag.", options: [], answers: ["fleissig", "fleißig"], explain: "Wer viel lernt, ist fleißig."),
+                            Exercise(id: "de-foundations-u12-freunde-e3", kind: "order", prompt: "Fragst nach Lena.", options: [], answers: ["Wie ist Lena"], explain: "Frage nach einer Person: Wie ist sie ?"),
+                            Exercise(id: "de-foundations-u12-freunde-e4", kind: "written", prompt: "Beschreibst Mia. (lustig und sportlich)", options: [], answers: ["mia ist lustig und sportlich", "Mia ist lustig und sportlich."], explain: "sein + zwei Adjektive mit und.")], skills: ["function:describe-people", "grammar:present-simple", "vocab:feelings", "function:ask-simple-questions"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u12-anruf", title: "Ein Anruf", goal: "Am Telefon fragen, ob jemand da ist, und sagen, dass du später anrufst.",
+                intro: LessonIntro(explanation: [
+                            "Am Telefon: „Hallo, hier ist Nadia.“ So sagt man, wer du bist.",
+                            "Frage: „Ist Papa da ?“ — „Nein, er ist nicht da.“ So fragt man, ob jemand da ist.",
+                            "anrufen: „Ich rufe später an.“ Beispiel: „Rufst du morgen an ?“"], examples: [
+                            ExampleLine(text: "Hallo, hier ist Nadia.", meaning: "Am Telefon: dein Name."),
+                            ExampleLine(text: "Ist dein Vater da ?", meaning: "Frage: Ist … da ?"),
+                            ExampleLine(text: "Nein, er ist nicht da.", meaning: "Negative Antwort: nicht da."),
+                            ExampleLine(text: "Wann ist er wieder da ?", meaning: "Nach der Zeit fragen."),
+                            ExampleLine(text: "Ich rufe später an.", meaning: "anrufen: ich rufe … an.")]),
+                expressions: [
+                            TargetExpression(text: "Hallo, hier ist …", meaning: "Sich am Telefon melden.", note: "hier ist + Name"),
+                            TargetExpression(text: "Ist … da ?", meaning: "Fragen, ob jemand da ist.", note: "Ist Mama da ?"),
+                            TargetExpression(text: "Er / sie ist nicht da.", meaning: "Sagen, dass jemand weg ist.", note: "Sie ist nicht zu Hause."),
+                            TargetExpression(text: "Ich rufe später an.", meaning: "Sagen, dass du noch einmal anrufst.", note: "anrufen: ich rufe an"),
+                            TargetExpression(text: "Bis dann!", meaning: "Am Telefon verabschieden.", note: "auch: Tschüss!")],
+                situation: "Nadia ruft zu Hause an. Papa ist nicht da — sie ruft später noch einmal an.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Meldest dich am Telefon. (Nadia)", expected: ["Hallo, hier ist Nadia.", "hallo hier ist nadia"], focus: "hier ist …", watch: "Am Telefon sagt man: hier ist + Name."),
+                                PracticeQuestion(prompt: "Fragst, ob Papa da ist.", expected: ["Ist Papa da ?", "ist papa da"], focus: "ist … da ?", watch: "Frage: Ist + Person + da ?"),
+                                PracticeQuestion(prompt: "Sagst, dass Mama nicht da ist.", expected: ["Mama ist nicht da.", "Sie ist nicht da.", "mama ist nicht da"], focus: "nicht da", watch: "Verneinung mit nicht."),
+                                PracticeQuestion(prompt: "Sagst, dass du später anrufst.", expected: ["Ich rufe später an.", "ich rufe spaeter an"], focus: "anrufen", watch: "später = spaeter; ich rufe … an."),
+                                PracticeQuestion(prompt: "Verabschiedest dich am Telefon.", expected: ["Bis dann!", "Tschüss!", "tschuess"], focus: "Verabschiedung", watch: "Tschüss: tschuess ohne Ü.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u12-anruf-e1", kind: "choice", prompt: "Am Telefon: „Hallo, ___ Nadia.“", options: ["hier ist", "ist hier", "da ist", "ich bin"], answers: ["hier ist"], explain: "So meldet man sich: Hallo, hier ist + Name."),
+                            Exercise(id: "de-foundations-u12-anruf-e2", kind: "gap", prompt: "Ist deine Schwester ___ ? — Nein, sie ist nicht zu Hause.", options: [], answers: ["da"], explain: "Ist … da ? fragt, ob jemand da ist."),
+                            Exercise(id: "de-foundations-u12-anruf-e3", kind: "order", prompt: "Sagst, dass du später anrufst.", options: [], answers: ["Ich rufe später an"], explain: "anrufen: ich rufe später an."),
+                            Exercise(id: "de-foundations-u12-anruf-e4", kind: "written", prompt: "Fragst, wann dein Vater wieder da ist.", options: [], answers: ["wann ist er wieder da", "wann ist mein vater wieder da"], explain: "Frage mit wann: Wann ist er wieder da ?")], skills: ["vocab:social-expressions", "grammar:present-questions", "function:ask-simple-questions", "grammar:present-simple"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum DeFoundationsU13 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u13", title: "Die Zeit", subtitle: "Tage und Wetter", level: "A1", themes: [
+                    ConversationTheme("die-woche", "Die Woche", "Immer, oft, manchmal", "sun.max", "Course", "Von morgens bis abends: Was machst du immer, was nur manchmal ?", 0),
+                    ConversationTheme("wetter-jahreszeiten", "Wetter und Jahreszeiten", "Es regnet", "cloud.rain", "Course", "Wie ist das Wetter heute ? Und was macht man gern bei Regen ?", 1)], lessons: [
+            Lesson(id: "de-foundations-u13-routine", title: "Von morgens bis abends", goal: "Deine Woche mit immer, oft, manchmal und nie beschreiben.",
+                intro: LessonIntro(explanation: [
+                            "Häufigkeit: immer (100 %), oft, manchmal, nie (0 %). Beispiel: „Ich trinke immer Kaffee.“",
+                            "Das Adverb steht nach dem Verb: „Ich gehe oft ins Kino.“ Beispiel: „Er ist nie müde.“",
+                            "Wann: „am Morgen“, „am Abend“, „am Wochenende“. Beispiel: „Am Wochenende koche ich.“"], examples: [
+                            ExampleLine(text: "Ich trinke immer Kaffee am Morgen.", meaning: "immer: jeden Tag."),
+                            ExampleLine(text: "Sie geht oft ins Kino.", meaning: "oft: viele Male."),
+                            ExampleLine(text: "Wir spielen manchmal Karten.", meaning: "manchmal: nicht oft, nicht nie."),
+                            ExampleLine(text: "Er isst nie Fleisch.", meaning: "nie: 0 %."),
+                            ExampleLine(text: "Am Abend lese ich ein Buch.", meaning: "Wann: am Abend.")]),
+                expressions: [
+                            TargetExpression(text: "immer", meaning: "Jedes Mal.", note: "Ich trinke immer Tee."),
+                            TargetExpression(text: "oft", meaning: "Viele Male.", note: "Sie geht oft schwimmen."),
+                            TargetExpression(text: "manchmal", meaning: "Nicht oft.", note: "Manchmal koche ich."),
+                            TargetExpression(text: "nie", meaning: "Kein Mal.", note: "Er ist nie müde."),
+                            TargetExpression(text: "am Morgen / am Abend", meaning: "Wann: Tageszeit.", note: "Am Morgen arbeite ich.")],
+                situation: "Kim erzählt ihre Woche: immer Kaffee am Morgen, oft Kino, manchmal Karten — nie Fleisch.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sagt, was du jeden Morgen trinkst. (Kaffee)", expected: ["Ich trinke immer Kaffee.", "ich trinke immer kaffee"], focus: "immer", watch: "immer = jeden Tag; nach dem Verb: trinke immer."),
+                                PracticeQuestion(prompt: "Sagt, wie oft du ins Kino gehst. (oft)", expected: ["Ich gehe oft ins Kino.", "ich gehe oft ins kino"], focus: "oft", watch: "Verb zuerst: gehe oft."),
+                                PracticeQuestion(prompt: "Sagt, dass du nie Fleisch isst.", expected: ["Ich esse nie Fleisch.", "ich esse nie fleisch"], focus: "nie", watch: "nie = 0 %."),
+                                PracticeQuestion(prompt: "Sagt, was du manchmal machst. (Karten spielen)", expected: ["Ich spiele manchmal Karten.", "ich spiele manchmal karten"], focus: "manchmal", watch: "manchmal: nach dem Verb."),
+                                PracticeQuestion(prompt: "Sagt, was du am Abend machst. (lesen)", expected: ["Am Abend lese ich.", "Ich lese am Abend.", "am abend lese ich"], focus: "am Abend", watch: "am + Tageszeit.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u13-routine-e1", kind: "choice", prompt: "Ich gehe ___ ins Kino — zweimal in der Woche.", options: ["oft", "nie", "immer", "morgen"], answers: ["oft"], explain: "oft = viele Male: zweimal in der Woche."),
+                            Exercise(id: "de-foundations-u13-routine-e2", kind: "gap", prompt: "Er isst ___ Fleisch. Er ist Vegetarier.", options: [], answers: ["nie"], explain: "Vegetarier essen nie Fleisch: 0 %."),
+                            Exercise(id: "de-foundations-u13-routine-e3", kind: "order", prompt: "Sagt, was du jeden Tag trinkst. (Kaffee)", options: [], answers: ["Ich trinke immer Kaffee"], explain: "immer + Verb: die tägliche Routine."),
+                            Exercise(id: "de-foundations-u13-routine-e4", kind: "written", prompt: "Schreib über deinen Morgen. (am Morgen, immer, Tee)", options: [], answers: ["am morgen trinke ich immer tee", "ich trinke am morgen immer tee"], explain: "am Morgen + immer: die Routine.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:daily-routine", "grammar:present-simple"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u13-wetter", title: "Wie ist das Wetter ?", goal: "Wetter und Jahreszeiten beschreiben: Es regnet. Im Sommer ist es warm.",
+                intro: LessonIntro(explanation: [
+                            "Wetter: „Es ist sonnig / warm / kalt.“ „Es regnet.“ „Es schneit.“ Beispiel: „Heute regnet es.“",
+                            "Jahreszeiten: der Frühling, der Sommer, der Herbst, der Winter. Beispiel: „Im Sommer ist es heiß.“",
+                            "Frage: „Wie ist das Wetter ?“ — „Es ist sonnig und warm.“"], examples: [
+                            ExampleLine(text: "Wie ist das Wetter heute ?", meaning: "Die Wetterfrage."),
+                            ExampleLine(text: "Es ist sonnig und warm.", meaning: "es ist + Adjektiv."),
+                            ExampleLine(text: "Es regnet in Berlin.", meaning: "Es regnet: Wasser vom Himmel."),
+                            ExampleLine(text: "Im Winter schneit es oft.", meaning: "Jahreszeit + im."),
+                            ExampleLine(text: "Im Frühling sind die Tage warm.", meaning: "der Frühling: die Jahreszeit nach dem Winter.")]),
+                expressions: [
+                            TargetExpression(text: "Wie ist das Wetter ?", meaning: "Nach dem Wetter fragen.", note: "Antwort: Es ist …"),
+                            TargetExpression(text: "Es regnet. / Es schneit.", meaning: "Wasser oder Schnee vom Himmel.", note: "Heute regnet es."),
+                            TargetExpression(text: "sonnig / warm / kalt", meaning: "Wetter-Adjektive.", note: "Es ist kalt im Januar."),
+                            TargetExpression(text: "der Frühling / der Sommer / der Herbst / der Winter", meaning: "Die vier Jahreszeiten.", note: "im Sommer, im Winter"),
+                            TargetExpression(text: "Im Sommer ist es heiß.", meaning: "Jahreszeit + Adjektiv.", note: "der Sommer: im Sommer")],
+                situation: "Sam fragt: Wie ist das Wetter ? Kim sagt: Es regnet. Im Sommer ist es oft heiß.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fragst nach dem Wetter.", expected: ["Wie ist das Wetter ?", "wie ist das wetter", "wie ist das wetter heute"], focus: "wie ist das Wetter ?", watch: "Feste Frage: Wie ist das Wetter ?"),
+                                PracticeQuestion(prompt: "Sagt, was heute vom Himmel fällt. (regnen)", expected: ["Es regnet.", "es regnet", "es regnet heute"], focus: "es regnet", watch: "es regnet: ohne Person."),
+                                PracticeQuestion(prompt: "Sagt, wie das Wetter ist. (sonnig, warm)", expected: ["Es ist sonnig und warm.", "es ist sonnig und warm"], focus: "es ist + Adjektiv", watch: "sonnig kommt von die Sonne."),
+                                PracticeQuestion(prompt: "Sagt, wie es im Winter ist. (kalt)", expected: ["Im Winter ist es kalt.", "im winter ist es kalt"], focus: "im Winter", watch: "der Winter: im Winter."),
+                                PracticeQuestion(prompt: "Sagt, was es im Frühling oft macht. (regnen)", expected: ["Im Frühling regnet es oft.", "im fruehling regnet es oft"], focus: "im Frühling", watch: "ü = ue: Fruehling.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u13-wetter-e1", kind: "choice", prompt: "___ schneit es oft.", options: ["Im Winter", "Im Sommer", "Am Montag", "Um acht"], answers: ["Im Winter"], explain: "Schnee gibt es im Winter."),
+                            Exercise(id: "de-foundations-u13-wetter-e2", kind: "gap", prompt: "Die Sonne scheint. Es ist sehr ___.", options: [], answers: ["warm", "heiß", "heiss"], explain: "Bei Sonne ist es warm oder heiß."),
+                            Exercise(id: "de-foundations-u13-wetter-e3", kind: "order", prompt: "Fragst nach dem Wetter heute.", options: [], answers: ["Wie ist das Wetter heute"], explain: "Die Wetterfrage mit wie."),
+                            Exercise(id: "de-foundations-u13-wetter-e4", kind: "written", prompt: "Sagt, wie das Wetter bei euch im Sommer ist. (heiß)", options: [], answers: ["im sommer ist es heiß", "im sommer ist es heiss", "es ist heiss im sommer"], explain: "im Sommer + es ist + Adjektiv.")], skills: ["function:talk-about-weather", "vocab:weather", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["talk-about-weather"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u13-lust", title: "Was ich gern mache", goal: "Sagen, was du magst und was du gern machst.",
+                intro: LessonIntro(explanation: [
+                            "mag + Nomen: „Ich mag Musik.“ „Sie mag Kino.“ So sagt man, was du gut findest.",
+                            "gern + Verb: „Ich lese gern.“ „Er kocht gern.“ gern steht nach dem Verb.",
+                            "nicht gern: „Ich warte nicht gern.“ Beispiel: „Ich spiele nicht gern Computer.“"], examples: [
+                            ExampleLine(text: "Ich mag Musik.", meaning: "mag + Nomen."),
+                            ExampleLine(text: "Ich spiele gern Fußball.", meaning: "gern nach dem Verb."),
+                            ExampleLine(text: "Sie kocht gern für Freunde.", meaning: "gern: mit Freude."),
+                            ExampleLine(text: "Ich warte nicht gern.", meaning: "Verneinung: nicht gern."),
+                            ExampleLine(text: "Was machst du gern ?", meaning: "Frage nach Hobbys.")]),
+                expressions: [
+                            TargetExpression(text: "Ich mag …", meaning: "Sagen, was du gut findest.", note: "Ich mag Kaffee."),
+                            TargetExpression(text: "gern + Verb", meaning: "Sagen, was du mit Freude machst.", note: "Ich lese gern."),
+                            TargetExpression(text: "nicht gern", meaning: "Sagen, was du nicht magst.", note: "Ich warte nicht gern."),
+                            TargetExpression(text: "Was machst du gern ?", meaning: "Nach Hobbys fragen.", note: "Antwort: Ich … gern."),
+                            TargetExpression(text: "Hobbys: Sport, Musik, Lesen", meaning: "Themen für „gern“.", note: "Ich höre gern Musik.")],
+                situation: "Kim und Sam fragen: Was macht ihr gern ? Kim liest gern, Sam spielt gern Fußball. Bei Regen kochen beide gern.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sagt, was du magst. (Musik)", expected: ["Ich mag Musik.", "ich mag musik"], focus: "ich mag …", watch: "mag + Nomen: Musik, Kino, Kaffee."),
+                                PracticeQuestion(prompt: "Sagt, was du gern machst. (Fußball spielen)", expected: ["Ich spiele gern Fußball.", "ich spiele gern fussball"], focus: "gern + Verb", watch: "ü = ue: Fussball; gern nach dem Verb."),
+                                PracticeQuestion(prompt: "Fragst Kim nach ihren Hobbys.", expected: ["Was machst du gern ?", "was machst du gern"], focus: "Was machst du gern ?", watch: "Frage: was + machst + du + gern."),
+                                PracticeQuestion(prompt: "Sagt, was du nicht gern machst. (warten)", expected: ["Ich warte nicht gern.", "Ich warte nicht so gern."], focus: "nicht gern", watch: "Verneinung: nicht vor gern."),
+                                PracticeQuestion(prompt: "Sagt, was ihr bei Regen macht. (kochen)", expected: ["Wir kochen gern.", "Wir kochen gern bei Regen.", "wir kochen gern"], focus: "wir + gern", watch: "Bei Regen: drinnen kochen.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u13-lust-e1", kind: "choice", prompt: "Ich ___ Musik — ich höre jeden Tag CDs.", options: ["mag", "magst", "mögen", "spielt"], answers: ["mag"], explain: "mag + Nomen: ich mag."),
+                            Exercise(id: "de-foundations-u13-lust-e2", kind: "gap", prompt: "Ich lese ___. Es ist mein Hobby.", options: [], answers: ["gern"], explain: "gern nach dem Verb: Ich lese gern."),
+                            Exercise(id: "de-foundations-u13-lust-e3", kind: "order", prompt: "Fragst Sam nach seinen Hobbys.", options: [], answers: ["Was machst du gern"], explain: "Die Hobbyfrage: Was machst du gern ?"),
+                            Exercise(id: "de-foundations-u13-lust-e4", kind: "written", prompt: "Sagt, was du gern machst. (Musik hören)", options: [], answers: ["ich höre gern musik", "ich hoere gern musik", "ich mag musik"], explain: "gern + Verb: Ich höre gern Musik.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -4871,6 +5051,186 @@ public enum EsFoundationsU12 {
                             Exercise(id: "es-foundations-u12-tienda-e4", kind: "written", prompt: "El vendedor pregunta «¿Algo más?». Responde que no, cortésmente.", options: [], answers: ["Nada mas gracias", "Nada más, gracias", "Eso es todo, gracias"], explain: "Nada más, gracias = no quiero nada más.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum EsFoundationsU13 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u13", title: "Mi gente", subtitle: "Familia y amigos", level: "A1", themes: [
+                    ConversationTheme("mi-familia", "Mi familia", "Personas y posesivos", "figure-2", "Course", "Presentas a tu familia: tus padres, tus hermanos y un tío muy simpático.", 0),
+                    ConversationTheme("mis-amigos", "Mis amigos", "Carácter y llamadas", "heart", "Course", "Describes a tus amigos por teléfono y quedas con ellos para el sábado.", 1)], lessons: [
+            Lesson(id: "es-foundations-u13-familia", title: "Mi familia", goal: "Presentar a tu familia: padres, hermanos y tíos, con tengo y los posesivos.",
+                intro: LessonIntro(explanation: [
+                            "La familia: mi madre, mi padre, mi hermano y mi hermana. «Tengo un hermano y dos hermanas».",
+                            "Usamos tengo para hablar de tu familia: «Tengo un tío muy simpático». Si no hay: «No tengo hermanos».",
+                            "Los posesivos acompañan a la familia: «mi madre», «tu padre», «su mujer». «Mis padres viven en Madrid»."], examples: [
+                            ExampleLine(text: "Tengo un hermano y una hermana.", meaning: "Decir quién está en tu familia."),
+                            ExampleLine(text: "Mi padre se llama Luis.", meaning: "Presentar a tu padre."),
+                            ExampleLine(text: "Tengo un tío muy gracioso.", meaning: "Hablar de un tío."),
+                            ExampleLine(text: "No tengo abuelos.", meaning: "Decir que alguien no está."),
+                            ExampleLine(text: "Mis padres viven en Sevilla.", meaning: "Hablar de tus padres, en plural.")]),
+                expressions: [
+                            TargetExpression(text: "mi madre / mi padre", meaning: "Tus padres.", note: "Mi madre es profesora."),
+                            TargetExpression(text: "mi hermano / mi hermana", meaning: "Tus hermanos.", note: "Mi hermana tiene diez años."),
+                            TargetExpression(text: "el tío / la tía", meaning: "Los hermanos de tus padres.", note: "Tengo una tía en Valencia."),
+                            TargetExpression(text: "los abuelos", meaning: "El abuelo y la abuela.", note: "Mis abuelos viven cerca."),
+                            TargetExpression(text: "tengo … / no tengo …", meaning: "Decir quién está en tu familia.", note: "Tengo dos primos.")],
+                situation: "Presentas a tu familia: tus padres, tu hermano pequeño y un tío que vive en Barcelona.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di que tienes un hermano y una hermana.", expected: ["Tengo un hermano y una hermana", "tengo un hermano y una hermana"], focus: "tengo", watch: "tengo + persona sin artículo: un hermano."),
+                                PracticeQuestion(prompt: "Presenta a tu madre: se llama Carmen.", expected: ["Mi madre se llama Carmen", "mi madre se llama carmen"], focus: "mi madre", watch: "mi + familia + se llama + nombre."),
+                                PracticeQuestion(prompt: "Di que tienes un tío en Barcelona.", expected: ["Tengo un tío en Barcelona", "Tengo un tio en Barcelona"], focus: "tío", watch: "tío lleva tilde; tía también."),
+                                PracticeQuestion(prompt: "Di que no tienes hermanos.", expected: ["No tengo hermanos", "no tengo hermanos"], focus: "no tengo", watch: "no + tengo para negar."),
+                                PracticeQuestion(prompt: "Habla de tus padres: viven en Madrid.", expected: ["Mis padres viven en Madrid", "mis padres viven en madrid"], focus: "mis", watch: "mi → mis en plural: mis padres.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u13-familia-e1", kind: "choice", prompt: "La madre de mi padre es mi ___.", options: ["abuela", "tía", "hermana", "prima"], answers: ["abuela"], explain: "La madre de tu padre o de tu madre es tu abuela."),
+                            Exercise(id: "es-foundations-u13-familia-e2", kind: "gap", prompt: "La hija de mis padres es mi ___.", options: [], answers: ["hermana"], explain: "La hija de tus padres es tu hermana."),
+                            Exercise(id: "es-foundations-u13-familia-e3", kind: "order", prompt: "Presenta a tu padre: se llama Jorge.", options: [], answers: ["Mi padre se llama Jorge"], explain: "mi + familia + se llama + nombre."),
+                            Exercise(id: "es-foundations-u13-familia-e4", kind: "written", prompt: "Pregunta a tu amigo por su familia: el número de hermanos.", options: [], answers: ["¿Cuántos hermanos tienes?", "¿Cuantos hermanos tienes?"], explain: "¿Cuántos…? para preguntar cantidad, con tilde.")], skills: ["vocab:family", "grammar:possessives", "grammar:present-simple", "function:describe-people"], canDo: ["describe-people"], prerequisites: ["grammar:possessives"]),
+            Lesson(id: "es-foundations-u13-amigos", title: "¿Cómo es?", goal: "Describir el carácter de tus amigos con adjetivos: simpático, tímido, trabajador.",
+                intro: LessonIntro(explanation: [
+                            "Para describir usamos ser + adjetivo: «Pablo es simpático». «Ana es tímida».",
+                            "El adjetivo cambia con la persona: simpático → simpática, tímido → tímida. «Mis amigos son trabajadores».",
+                            "Para preguntar: «¿Cómo es tu amigo?». Respondes: «Es muy simpático»."], examples: [
+                            ExampleLine(text: "Mi amigo Pablo es muy simpático.", meaning: "Describir el carácter."),
+                            ExampleLine(text: "Ana es tímida pero muy amable.", meaning: "Describir a una amiga."),
+                            ExampleLine(text: "¿Cómo es tu hermana?", meaning: "Preguntar por alguien."),
+                            ExampleLine(text: "Es trabajador y serio.", meaning: "Dos adjetivos juntos."),
+                            ExampleLine(text: "Mis amigos son divertidos.", meaning: "Plural: -s al final.")]),
+                expressions: [
+                            TargetExpression(text: "simpático / simpática", meaning: "Persona agradable.", note: "Tu amigo es muy simpático."),
+                            TargetExpression(text: "tímido / tímida", meaning: "Persona callada con gente nueva.", note: "Mi prima es tímida."),
+                            TargetExpression(text: "trabajador / trabajadora", meaning: "Persona que trabaja mucho.", note: "Es trabajadora y organizada."),
+                            TargetExpression(text: "¿Cómo es …?", meaning: "Preguntar por el carácter.", note: "¿Cómo es tu compañero?"),
+                            TargetExpression(text: "muy + adjetivo", meaning: "Decir mucho.", note: "Es muy divertido.")],
+                situation: "Hablas de tus amigos: Pablo es simpático y divertido; su hermana es tímida pero muy trabajadora.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Describe el carácter de tu amigo Pablo.", expected: ["Es simpático", "es simpatico", "Pablo es simpático"], focus: "es + adjetivo", watch: "simpático lleva tilde."),
+                                PracticeQuestion(prompt: "Describe a tu amiga: es callada con gente nueva.", expected: ["Es tímida", "es timida"], focus: "tímida", watch: "Femenino: tímida, con -a y tilde."),
+                                PracticeQuestion(prompt: "Pregunta por el carácter de tu compañero.", expected: ["¿Cómo es tu compañero?", "¿Como es tu compañero?"], focus: "¿cómo es?", watch: "cómo con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di que tus amigos son divertidos.", expected: ["Mis amigos son divertidos", "mis amigos son divertidos"], focus: "son", watch: "Plural: son + divertidos."),
+                                PracticeQuestion(prompt: "Di que tu jefa trabaja mucho.", expected: ["Es muy trabajadora", "es muy trabajadora", "Mi jefa es muy trabajadora"], focus: "trabajadora", watch: "Femenino: trabajadora, con -a.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u13-amigos-e1", kind: "choice", prompt: "Mi amiga Ana es muy ___. Habla con todo el mundo.", options: ["simpática", "tímida", "seria", "callada"], answers: ["simpática"], explain: "Habla con todo el mundo: es simpática."),
+                            Exercise(id: "es-foundations-u13-amigos-e2", kind: "gap", prompt: "Pablo no habla con gente nueva. Es ___. (carácter)", options: [], answers: ["tímido"], explain: "Sin confianza con gente nueva: tímido, con tilde."),
+                            Exercise(id: "es-foundations-u13-amigos-e3", kind: "order", prompt: "Pregunta por el carácter de tu compañera de piso.", options: [], answers: ["¿Cómo es tu compañera de piso?"], explain: "¿Cómo es…? para preguntar el carácter."),
+                            Exercise(id: "es-foundations-u13-amigos-e4", kind: "written", prompt: "Di que tu prima es callada con la gente nueva.", options: [], answers: ["Es tímida", "es timida", "Mi prima es tímida"], explain: "Callada con gente nueva: tímida, con tilde.")], skills: ["function:describe-people", "grammar:present-simple", "vocab:feelings", "function:ask-simple-questions"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u13-llamada", title: "Una llamada", goal: "Hablar por teléfono: preguntar por alguien y quedar para llamar más tarde.",
+                intro: LessonIntro(explanation: [
+                            "Al teléfono: «¿Diga?». Preguntas por alguien: «¿Está Marta?». Respondes: «Sí, soy yo» o «No, no está».",
+                            "Si no puede hablar: «Está en una llamada». Propones: «¿Llamas más tarde?».",
+                            "Para saber quién llama: «¿De parte de quién?». Respondes: «De parte de Ana»."], examples: [
+                            ExampleLine(text: "¿Diga?", meaning: "Contestar el teléfono."),
+                            ExampleLine(text: "¿Está Marta, por favor?", meaning: "Preguntar por una persona."),
+                            ExampleLine(text: "Lo siento, no está.", meaning: "Decir que no puede hablar."),
+                            ExampleLine(text: "¿Llamas más tarde?", meaning: "Proponer otra llamada."),
+                            ExampleLine(text: "Vale, llamo a las cinco.", meaning: "Aceptar y decir la hora.")]),
+                expressions: [
+                            TargetExpression(text: "¿Diga?", meaning: "Contestar el teléfono en España.", note: "—¿Diga? —¿Está Pablo?"),
+                            TargetExpression(text: "¿Está …?", meaning: "Preguntar por alguien.", note: "¿Está la señora García?"),
+                            TargetExpression(text: "no está / está en una llamada", meaning: "La persona no puede hablar.", note: "Está en una llamada."),
+                            TargetExpression(text: "llamo más tarde", meaning: "Volver a llamar después.", note: "Vale, llamo más tarde."),
+                            TargetExpression(text: "¿De parte de quién?", meaning: "Preguntar quién llama.", note: "De parte de Ana.")],
+                situation: "Llamas a Marta para quedar el sábado, pero está en la ducha: llamas más tarde, a las seis.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Contesta el teléfono.", expected: ["¿Diga?", "¿Dígame?", "¿Sí?"], focus: "¿diga?", watch: "En España contestamos con ¿diga?."),
+                                PracticeQuestion(prompt: "Llama y pregunta por Marta.", expected: ["¿Está Marta?", "¿Esta Marta?"], focus: "¿está?", watch: "está con tilde: ¿Está Marta?"),
+                                PracticeQuestion(prompt: "Di que Marta no puede hablar ahora.", expected: ["No está ahora", "Marta no está", "Lo siento, no está"], focus: "no está", watch: "no está = no puede hablar."),
+                                PracticeQuestion(prompt: "Di que llamas después, a las seis.", expected: ["Llamo más tarde, a las seis", "Llamo mas tarde a las seis"], focus: "más tarde", watch: "más lleva tilde."),
+                                PracticeQuestion(prompt: "Pregunta quién llama.", expected: ["¿De parte de quién?", "¿De parte de quien?", "¿Quién es?", "¿Quien es?"], focus: "de parte de", watch: "¿De parte de quién? es muy útil al teléfono.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u13-llamada-e1", kind: "choice", prompt: "Llamas a Marta. Su hermano contesta: «Ahora está en la ducha». Tú dices: «Vale, ___ más tarde».", options: ["llamo", "llamas", "llama", "llamar"], answers: ["llamo"], explain: "Yo llamo: llamo más tarde."),
+                            Exercise(id: "es-foundations-u13-llamada-e2", kind: "gap", prompt: "—¿___ Marta, por favor? —Sí, soy yo.", options: [], answers: ["Está"], explain: "¿Está + nombre? para preguntar por alguien al teléfono."),
+                            Exercise(id: "es-foundations-u13-llamada-e3", kind: "order", prompt: "Deja un recado: dices la hora de tu llamada.", options: [], answers: ["Llamo más tarde, a las seis"], explain: "llamo + más tarde + la hora."),
+                            Exercise(id: "es-foundations-u13-llamada-e4", kind: "written", prompt: "Pregunta por el señor Vargas al teléfono.", options: [], answers: ["¿Está el señor Vargas?", "¿Esta el señor Vargas?"], explain: "¿Está + nombre? con tilde en está.")], skills: ["vocab:social-expressions", "grammar:present-questions", "function:ask-simple-questions", "grammar:present-simple"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum EsFoundationsU14 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u14", title: "El tiempo", subtitle: "Días y clima", level: "A1", themes: [
+                    ConversationTheme("dias-y-rutina", "Mi semana", "Rutina y frecuencia", "sun.max", "Course", "Cuentas qué haces cada día: siempre, a veces o nunca.", 0),
+                    ConversationTheme("clima-y-gustos", "Clima y gustos", "Tiempo y estaciones", "cloud.rain", "Course", "Hablas del clima de tu ciudad y de lo que te gusta hacer.", 1)], lessons: [
+            Lesson(id: "es-foundations-u14-rutina", title: "De la mañana a la noche", goal: "Contar tu día con siempre, a veces y nunca: de la mañana a la noche.",
+                intro: LessonIntro(explanation: [
+                            "Los adverbios de frecuencia: siempre (todos los días), a veces (algunos días) y nunca (ningún día). «Siempre desayuno café».",
+                            "Con nunca, no hace falta no: «Nunca como tarde». También dices «No como tarde nunca».",
+                            "La rutina: me levanto, desayuno, trabajo, ceno y me acuesto. «Me levanto a las siete»."], examples: [
+                            ExampleLine(text: "Siempre me levanto a las siete.", meaning: "Rutina de todos los días."),
+                            ExampleLine(text: "A veces desayuno tostadas.", meaning: "Algunos días."),
+                            ExampleLine(text: "Nunca ceno muy tarde.", meaning: "Ningún día."),
+                            ExampleLine(text: "Por la noche veo la televisión.", meaning: "Un momento del día."),
+                            ExampleLine(text: "Los sábados trabajo por la mañana.", meaning: "Un día de la semana.")]),
+                expressions: [
+                            TargetExpression(text: "siempre", meaning: "Todos los días.", note: "Siempre desayuno café."),
+                            TargetExpression(text: "a veces", meaning: "Algunos días.", note: "A veces como en la oficina."),
+                            TargetExpression(text: "nunca", meaning: "Ningún día.", note: "Nunca bebo alcohol."),
+                            TargetExpression(text: "me levanto / me acuesto", meaning: "Empieza y termina el día.", note: "Me acuesto a las once."),
+                            TargetExpression(text: "por la mañana / por la noche", meaning: "Momentos del día.", note: "Estudio por la noche.")],
+                situation: "Cuentas tu día normal: te levantas a las siete, siempre desayunas café y nunca comes en casa.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di que todos los días desayunas café.", expected: ["Siempre desayuno café", "siempre desayuno cafe"], focus: "siempre", watch: "siempre = todos los días."),
+                                PracticeQuestion(prompt: "Di que algunos días caminas al trabajo.", expected: ["A veces camino al trabajo", "a veces camino al trabajo"], focus: "a veces", watch: "a veces = algunos días."),
+                                PracticeQuestion(prompt: "Di que ningún día comes carne.", expected: ["Nunca como carne", "nunca como carne"], focus: "nunca", watch: "nunca = 0%, sin no."),
+                                PracticeQuestion(prompt: "Di a qué hora te levantas: siete.", expected: ["Me levanto a las siete", "me levanto a las siete"], focus: "me levanto", watch: "me levanto + a las + hora."),
+                                PracticeQuestion(prompt: "Di qué haces por la noche: ves la televisión.", expected: ["Por la noche veo la televisión", "por la noche veo la television", "veo la television por la noche"], focus: "por la noche", watch: "por la noche + presente simple.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u14-rutina-e1", kind: "choice", prompt: "Todos los días bebo café. Bebo café ___.", options: ["siempre", "nunca", "a veces", "mañana"], answers: ["siempre"], explain: "Todos los días = siempre."),
+                            Exercise(id: "es-foundations-u14-rutina-e2", kind: "gap", prompt: "No como carne, ni un solo día. ___ como carne.", options: [], answers: ["Nunca"], explain: "Nunca al principio de la frase, sin no."),
+                            Exercise(id: "es-foundations-u14-rutina-e3", kind: "order", prompt: "Di que algunos días vas a la piscina.", options: [], answers: ["A veces voy a la piscina"], explain: "a veces + voy + lugar."),
+                            Exercise(id: "es-foundations-u14-rutina-e4", kind: "written", prompt: "Di a qué hora te acuestas: once.", options: [], answers: ["Me acuesto a las once", "me acuesto a las once"], explain: "me acuesto + a las + hora.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:daily-routine", "grammar:present-simple"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u14-clima", title: "¿Qué tiempo hace?", goal: "Hablar del tiempo y de las estaciones: hace calor, llueve, nieva.",
+                intro: LessonIntro(explanation: [
+                            "Preguntar: «¿Qué tiempo hace?». Respondes con hace: «Hace sol», «Hace frío».",
+                            "Con llueve y nieva no usamos hace: «Hoy llueve mucho», «En invierno nieva».",
+                            "Las estaciones: la primavera, el verano, el otoño y el invierno. «En verano hace calor»."], examples: [
+                            ExampleLine(text: "¿Qué tiempo hace hoy?", meaning: "Preguntar por el clima."),
+                            ExampleLine(text: "Hace sol y hace calor.", meaning: "Un día de verano."),
+                            ExampleLine(text: "Hoy llueve mucho en Bilbao.", meaning: "Un día de lluvia."),
+                            ExampleLine(text: "En invierno nieva en la montaña.", meaning: "El clima del invierno."),
+                            ExampleLine(text: "En primavera hace buen tiempo.", meaning: "Hablar de una estación.")]),
+                expressions: [
+                            TargetExpression(text: "¿Qué tiempo hace?", meaning: "Preguntar por el clima.", note: "¿Qué tiempo hace en Madrid?"),
+                            TargetExpression(text: "hace sol / hace calor", meaning: "El tiempo bueno.", note: "Hoy hace sol."),
+                            TargetExpression(text: "hace frío / hace viento", meaning: "El tiempo frío.", note: "En invierno hace frío."),
+                            TargetExpression(text: "llueve / nieva", meaning: "El agua y la nieve.", note: "Aquí nunca nieva."),
+                            TargetExpression(text: "la primavera, el verano, el otoño, el invierno", meaning: "Las cuatro estaciones.", note: "Mi estación es el otoño.")],
+                situation: "Hablas del clima de tu ciudad: en verano hace mucho calor, en invierno llueve y nunca nieva.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pregunta por el clima hoy.", expected: ["¿Qué tiempo hace hoy?", "¿Que tiempo hace hoy?"], focus: "¿qué tiempo?", watch: "qué con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di que hoy es un día de sol.", expected: ["Hace sol", "hace sol"], focus: "hace sol", watch: "hace + sol, calor, frío, viento."),
+                                PracticeQuestion(prompt: "Di que la temperatura hoy es muy baja.", expected: ["Hace mucho frío", "hace mucho frio"], focus: "frío", watch: "frío lleva tilde."),
+                                PracticeQuestion(prompt: "Di que en tu ciudad cae agua hoy.", expected: ["Hoy llueve", "hoy llueve"], focus: "llueve", watch: "llueve, sin hace: hoy llueve."),
+                                PracticeQuestion(prompt: "Di que en invierno hay nieve.", expected: ["En invierno nieva", "nieva en invierno"], focus: "nieva", watch: "nieva, sin hace.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u14-clima-e1", kind: "choice", prompt: "En el desierto la temperatura es muy alta: ___ calor.", options: ["hace", "llueve", "nieva", "toma"], answers: ["hace"], explain: "hace + calor, frío, sol, viento."),
+                            Exercise(id: "es-foundations-u14-clima-e2", kind: "gap", prompt: "Coge el paraguas: hoy ___ mucho.", options: [], answers: ["llueve"], explain: "Llueve = cae agua; sin hace."),
+                            Exercise(id: "es-foundations-u14-clima-e3", kind: "order", prompt: "Pregunta por el clima en Sevilla.", options: [], answers: ["¿Qué tiempo hace en Sevilla?"], explain: "¿Qué tiempo hace + en + lugar?"),
+                            Exercise(id: "es-foundations-u14-clima-e4", kind: "written", prompt: "Di que en tu ciudad, en la estación fría, la temperatura es baja.", options: [], answers: ["En invierno hace frío", "En invierno hace frio", "Hace frío en invierno"], explain: "hace + frío; frío lleva tilde.")], skills: ["function:talk-about-weather", "vocab:weather", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["talk-about-weather"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u14-hobbies", title: "Lo que me gusta", goal: "Decir qué te gusta: me gusta + infinitivo y me gusta + sustantivo.",
+                intro: LessonIntro(explanation: [
+                            "me gusta + infinitivo para actividades: «Me gusta leer», «Me gusta cocinar».",
+                            "me gusta + sustantivo para cosas: «Me gusta el café», «Me gusta la música».",
+                            "Negamos con no: «No me gusta el frío». Preguntamos: «¿Te gusta el fútbol?»."], examples: [
+                            ExampleLine(text: "Me gusta leer por la noche.", meaning: "Gusto + infinitivo."),
+                            ExampleLine(text: "Me gusta la música latina.", meaning: "Gusto + sustantivo."),
+                            ExampleLine(text: "¿Te gusta cocinar?", meaning: "Preguntar por los gustos."),
+                            ExampleLine(text: "No me gusta el frío.", meaning: "Decir un disgusto."),
+                            ExampleLine(text: "Me encanta viajar.", meaning: "Un gusto muy fuerte.")]),
+                expressions: [
+                            TargetExpression(text: "me gusta + infinitivo", meaning: "Decir qué te gusta hacer.", note: "Me gusta nadar."),
+                            TargetExpression(text: "me gusta el / la …", meaning: "Decir qué te gusta.", note: "Me gusta el cine."),
+                            TargetExpression(text: "no me gusta …", meaning: "Decir qué no te gusta.", note: "No me gusta madrugar."),
+                            TargetExpression(text: "¿te gusta …?", meaning: "Preguntar por los gustos.", note: "¿Te gusta el chocolate?"),
+                            TargetExpression(text: "me encanta …", meaning: "Un gusto muy fuerte.", note: "Me encanta viajar.")],
+                situation: "Hablas de tu tiempo libre: te gusta cocinar los domingos y te encanta el cine; no te gusta el frío.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di que te gusta bailar.", expected: ["Me gusta bailar", "me gusta bailar"], focus: "me gusta", watch: "me gusta + infinitivo."),
+                                PracticeQuestion(prompt: "Di tu opinión sobre el cine.", expected: ["Me gusta el cine", "me gusta el cine"], focus: "el cine", watch: "me gusta + el/la + sustantivo."),
+                                PracticeQuestion(prompt: "Pregunta a tu amigo por sus gustos en la cocina.", expected: ["¿Te gusta cocinar?", "¿Te gusta cocinar a ti?"], focus: "¿te gusta?", watch: "te para preguntar a tú."),
+                                PracticeQuestion(prompt: "Di que madrugar no es tu cosa.", expected: ["No me gusta madrugar", "no me gusta madrugar"], focus: "no me gusta", watch: "no va antes de me gusta."),
+                                PracticeQuestion(prompt: "Di que viajar te gusta mucho.", expected: ["Me encanta viajar", "me encanta viajar"], focus: "me encanta", watch: "me encanta = me gusta mucho.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u14-hobbies-e1", kind: "choice", prompt: "___ bailar salsa los sábados; es muy divertido.", options: ["Me gusta", "Gusto", "Me gustan", "Gusto en"], answers: ["Me gusta"], explain: "me gusta + infinitivo: me gusta bailar."),
+                            Exercise(id: "es-foundations-u14-hobbies-e2", kind: "gap", prompt: "A Ana ___ el chocolate. (a ella)", options: [], answers: ["le gusta"], explain: "A Ana le gusta: le para tercera persona."),
+                            Exercise(id: "es-foundations-u14-hobbies-e3", kind: "order", prompt: "Di qué haces con gusto los domingos: cocinar.", options: [], answers: ["Me gusta cocinar los domingos"], explain: "me gusta + infinitivo + momento."),
+                            Exercise(id: "es-foundations-u14-hobbies-e4", kind: "written", prompt: "Di que el frío no es de tu agrado.", options: [], answers: ["No me gusta el frío", "No me gusta el frio", "no me gusta el frio"], explain: "no me gusta + sustantivo con artículo: el frío.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum FrFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
@@ -5702,6 +6062,186 @@ public enum FrFoundationsU11 {
                             Exercise(id: "fr-foundations-u11-fruitier-e4", kind: "written", prompt: "Refusez poliment la proposition du vendeur.", options: [], answers: ["c'est tout merci", "c'est tout, merci.", "rien d'autre, merci."], explain: "formule fixe pour terminer.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum FrFoundationsU12 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u12", title: "Ma tribu", subtitle: "Famille et amis", level: "A1", themes: [
+                    ConversationTheme("photos-de-famille", "Les photos de famille", "Mon, ma, mes", "figure-2", "Course", "Vous montrez les photos : mon père, ma sœur, mes cousins — et vous parlez de votre oncle à Marseille.", 0),
+                    ConversationTheme("les-copains", "Les copains", "Il est sympa", "heart", "Course", "Au café, vous décrivez vos amis : Léa est timide mais très gentille, Karim est travailleur — et vous faites un appel.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u12-famille", title: "Ma famille", goal: "Présenter ta famille : mon père, ma sœur, mes parents — et dire que tu as un oncle.",
+                intro: LessonIntro(explanation: [
+                            "La famille : « Voici mon père, ma mère, mon frère et ma sœur. Mes grands-parents sont à Nice. »",
+                            "mon + masculin (mon oncle), ma + féminin (ma tante), mes + pluriel (mes parents) : « Mes parents habitent à Lyon. »",
+                            "Pour dire que la famille existe, on utilise avoir : « J'ai un oncle à Marseille. Tu as une tante ? »"], examples: [
+                            ExampleLine(text: "Voici mon père et ma mère.", meaning: "Les parents."),
+                            ExampleLine(text: "Ma sœur s'appelle Léa.", meaning: "ma + féminin."),
+                            ExampleLine(text: "Mes frères sont sportifs.", meaning: "mes + pluriel."),
+                            ExampleLine(text: "J'ai un oncle à Marseille.", meaning: "avoir : j'ai + un."),
+                            ExampleLine(text: "Tu as des cousins ?", meaning: "La question avec avoir.")]),
+                expressions: [
+                            TargetExpression(text: "mon / ma / mes", meaning: "À qui est la chose.", note: "mon oncle, ma tante, mes cousins."),
+                            TargetExpression(text: "les grands-parents", meaning: "Le grand-père et la grand-mère.", note: "mamie et papi, c'est familier."),
+                            TargetExpression(text: "J'ai un / une …", meaning: "Dire la famille.", note: "J'ai un frère et une sœur."),
+                            TargetExpression(text: "un oncle / une tante", meaning: "Le frère ou la sœur des parents.", note: "Mon oncle Paul arrive dimanche."),
+                            TargetExpression(text: "les enfants", meaning: "Le fils et la fille.", note: "Mon oncle a deux enfants.")],
+                situation: "Vous montrez les photos de la famille sur votre téléphone : mon père, ma sœur, mes grands-parents — et vous annoncez la visite de votre oncle Paul.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Présente ton père sur la photo.", expected: ["C'est mon père.", "C'est mon pere."], focus: "mon père", watch: "père = masculin : mon."),
+                                PracticeQuestion(prompt: "Ta sœur s'appelle Léa. Dis-le.", expected: ["Ma sœur s'appelle Léa.", "Ma soeur s'appelle Lea."], focus: "ma sœur", watch: "sœur = féminin : ma."),
+                                PracticeQuestion(prompt: "Tes parents habitent à Lyon. Dis-le.", expected: ["Mes parents habitent à Lyon.", "Mes parents habitent a Lyon."], focus: "mes", watch: "pluriel : mes."),
+                                PracticeQuestion(prompt: "Tu as un oncle à Marseille. Dis-le.", expected: ["J'ai un oncle à Marseille.", "J'ai un oncle a Marseille."], focus: "j'ai", watch: "avoir : j'ai + un/une."),
+                                PracticeQuestion(prompt: "Demande à un ami s'il a une tante.", expected: ["Tu as une tante ?", "Est-ce que tu as une tante ?"], focus: "tu as", watch: "question : est-ce que + tu as.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u12-famille-e1", kind: "choice", prompt: "___ sœur s'appelle Léa.", options: ["Ma", "Mon", "Mes", "Me"], answers: ["Ma"], explain: "sœur = féminin : ma."),
+                            Exercise(id: "fr-foundations-u12-famille-e2", kind: "gap", prompt: "J'ai ___ oncle à Marseille.", options: [], answers: ["un"], explain: "oncle = masculin : un oncle."),
+                            Exercise(id: "fr-foundations-u12-famille-e3", kind: "order", prompt: "Présente tes grands-parents.", options: [], answers: ["Mes grands-parents habitent à Lyon"], explain: "mes + nom + verbe + lieu."),
+                            Exercise(id: "fr-foundations-u12-famille-e4", kind: "written", prompt: "Dis que tu as un frère et une sœur.", options: [], answers: ["j'ai un frère et une sœur", "j'ai un frere et une soeur", "j'ai un frère et une soeur"], explain: "avoir : j'ai + un/une + membre.")], skills: ["vocab:family", "grammar:possessives", "grammar:present-simple", "function:describe-people"], canDo: ["describe-people"], prerequisites: ["grammar:possessives"]),
+            Lesson(id: "fr-foundations-u12-amis", title: "Il est comment ?", goal: "Décrire tes amis : sympa, timide, travailleur — et demander comment ils sont.",
+                intro: LessonIntro(explanation: [
+                            "Pour demander le caractère : « Il est comment, ton frère ? » La réponse : « Il est sympa. »",
+                            "L'adjectif vient après être : « Léa est timide mais très gentille. » Timide est pareil pour les filles et les garçons.",
+                            "Attention au féminin : « Karim est travailleur, sa sœur est travailleuse. » Grand donne grande, petit donne petite."], examples: [
+                            ExampleLine(text: "Il est comment, ton frère ?", meaning: "La question."),
+                            ExampleLine(text: "Mon frère est très sympa.", meaning: "Sympa = gentil."),
+                            ExampleLine(text: "Léa est timide.", meaning: "Timide : même forme."),
+                            ExampleLine(text: "Karim est travailleur.", meaning: "Il travaille beaucoup."),
+                            ExampleLine(text: "Ma sœur est travailleuse.", meaning: "Le féminin de travailleur.")]),
+                expressions: [
+                            TargetExpression(text: "Il / Elle est comment ?", meaning: "Demander le caractère.", note: "Elle est comment, ta sœur ?"),
+                            TargetExpression(text: "être sympa", meaning: "Être gentil et agréable.", note: "Mes voisins sont très sympas."),
+                            TargetExpression(text: "être timide", meaning: "Ne pas parler beaucoup.", note: "Au début, il est timide."),
+                            TargetExpression(text: "être travailleur / travailleuse", meaning: "Travailler beaucoup.", note: "Léa est travailleuse."),
+                            TargetExpression(text: "être gentil / gentille", meaning: "Être aimable.", note: "Mon oncle est très gentil.")],
+                situation: "Au café, vous parlez de vos amis : Léa est timide mais gentille, Karim est travailleur et très sympa — et vous demandez : il est comment, ton frère ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande comment est le frère de Léa.", expected: ["Il est comment, ton frère ?", "Il est comment, ton frere ?", "Ton frere, il est comment ?"], focus: "il est comment", watch: "être + comment."),
+                                PracticeQuestion(prompt: "Dis que ton ami est adorable, toujours à l'heure.", expected: ["Karim est très sympa.", "Karim est tres sympa."], focus: "sympa", watch: "il est + adjectif."),
+                                PracticeQuestion(prompt: "Léa ne parle pas beaucoup. Décris-la.", expected: ["Léa est timide.", "Lea est timide.", "Elle est timide."], focus: "timide", watch: "timide : pareil au féminin."),
+                                PracticeQuestion(prompt: "Dis que ta sœur travaille beaucoup.", expected: ["Ma sœur est travailleuse.", "Ma soeur est travailleuse."], focus: "travailleuse", watch: "travailleur donne travailleuse au féminin."),
+                                PracticeQuestion(prompt: "Dis que tes voisins sont gentils.", expected: ["Mes voisins sont gentils.", "Mes voisins sont très gentils.", "Mes voisins sont tres gentils."], focus: "gentils", watch: "pluriel : gentils ; féminin : gentilles.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u12-amis-e1", kind: "choice", prompt: "Léa ne parle pas beaucoup : elle est ___.", options: ["timide", "travailleuse", "sympa", "grande"], answers: ["timide"], explain: "timide = qui ne parle pas beaucoup."),
+                            Exercise(id: "fr-foundations-u12-amis-e2", kind: "gap", prompt: "Karim travaille beaucoup : il est ___.", options: [], answers: ["travailleur"], explain: "il est travailleur ; elle est travailleuse."),
+                            Exercise(id: "fr-foundations-u12-amis-e3", kind: "order", prompt: "Décris Léa : très, gentille.", options: [], answers: ["Léa est très gentille"], explain: "être + très + adjectif au féminin."),
+                            Exercise(id: "fr-foundations-u12-amis-e4", kind: "written", prompt: "Demande à un ami comment est sa sœur.", options: [], answers: ["elle est comment, ta sœur ?", "elle est comment, ta soeur ?", "ta soeur, elle est comment ?"], explain: "elle est comment + la personne ?")], skills: ["function:describe-people", "grammar:present-simple", "vocab:feelings", "function:ask-simple-questions"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u12-appel", title: "Un appel", goal: "Téléphoner : allô, tu es là ? — et laisser un message : je rappelle plus tard.",
+                intro: LessonIntro(explanation: [
+                            "Au téléphone, on commence par « Allô ? » puis on se présente : « Allô, c'est Léa. Tu es là ? »",
+                            "Pour demander une personne : « Il est là ? Elle est là ? » La réponse : « Non, elle n'est pas là, elle revient à six heures. »",
+                            "Pour la fin de l'appel : « Je rappelle plus tard » ou « Rappelle-moi ! » : vous appelez encore après."], examples: [
+                            ExampleLine(text: "Allô ? C'est Léa.", meaning: "Le début de l'appel."),
+                            ExampleLine(text: "Tu es là ?", meaning: "Vérifier la personne."),
+                            ExampleLine(text: "Elle est là ?", meaning: "Demander une autre personne."),
+                            ExampleLine(text: "Non, elle n'est pas là.", meaning: "La réponse négative."),
+                            ExampleLine(text: "Je rappelle plus tard.", meaning: "Appeler encore après.")]),
+                expressions: [
+                            TargetExpression(text: "Allô ?", meaning: "Répondre au téléphone.", note: "Allô, c'est mamie !"),
+                            TargetExpression(text: "C'est + prénom.", meaning: "Se présenter au téléphone.", note: "C'est Karim."),
+                            TargetExpression(text: "Il / Elle est là ?", meaning: "Demander une personne.", note: "Ta mère est là ?"),
+                            TargetExpression(text: "Je rappelle plus tard.", meaning: "Appeler encore après.", note: "Je suis au travail, je rappelle plus tard."),
+                            TargetExpression(text: "Rappelle-moi !", meaning: "Demander un rappel.", note: "Rappelle-moi ce soir !")],
+                situation: "Vous appelez mamie : allô, c'est Léa, tu es là ? Maman n'est pas là, elle revient à six heures — alors vous rappelez plus tard.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Tu téléphones à mamie. Commence l'appel.", expected: ["Allô, c'est Léa.", "Allo, c'est Lea."], focus: "allô", watch: "allô : le mot du téléphone."),
+                                PracticeQuestion(prompt: "Demande à ton ami s'il est au téléphone.", expected: ["Tu es là ?", "Tu es la ?"], focus: "tu es là", watch: "là = ici, présent."),
+                                PracticeQuestion(prompt: "Demande si la mère de Léa est là.", expected: ["Elle est là, ta mère ?", "Elle est la, ta mere ?"], focus: "elle est là", watch: "elle pour une femme."),
+                                PracticeQuestion(prompt: "La personne n'est pas là. Dis-le.", expected: ["Elle n'est pas là.", "Elle n'est pas la."], focus: "n'est pas là", watch: "ne…pas : la négation."),
+                                PracticeQuestion(prompt: "Tu rappelles ce soir. Dis-le à mamie.", expected: ["Je rappelle plus tard.", "Je rappelle ce soir."], focus: "rappelle", watch: "re + appeler = rappeler.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u12-appel-e1", kind: "choice", prompt: "___ ? C'est Karim. Tu es là ?", options: ["Allô", "Bonjour", "Salut", "Voilà"], answers: ["Allô"], explain: "allô : le mot du téléphone."),
+                            Exercise(id: "fr-foundations-u12-appel-e2", kind: "gap", prompt: "Maman n'est pas là, elle revient à six heures. Je ___ plus tard.", options: [], answers: ["rappelle"], explain: "rappeler = appeler encore."),
+                            Exercise(id: "fr-foundations-u12-appel-e3", kind: "order", prompt: "Tu veux un appel ce soir. Demande-le.", options: [], answers: ["Rappelle-moi ce soir"], explain: "rappelle-moi + le moment."),
+                            Exercise(id: "fr-foundations-u12-appel-e4", kind: "written", prompt: "Tu appelles ta sœur. Elle n'est pas là. Laisse un message : tu rappelles plus tard.", options: [], answers: ["je rappelle plus tard", "je te rappelle plus tard"], explain: "je rappelle plus tard : je rappelle après.")], skills: ["vocab:social-expressions", "grammar:present-questions", "function:ask-simple-questions", "grammar:present-simple"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum FrFoundationsU13 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u13", title: "Le temps", subtitle: "Jours et météo", level: "A1", themes: [
+                    ConversationTheme("les-jours", "Les jours", "Toujours, souvent, jamais", "sun.max", "Course", "Du café du matin au dîner du soir : votre semaine, avec toujours, souvent, parfois et jamais.", 0),
+                    ConversationTheme("ciel-et-saisons", "Le ciel", "Il pleut, il fait beau", "cloud.rain", "Course", "Quel temps ! Vous regardez la météo et vous décidez : parc ou chocolat chaud ?", 1)], lessons: [
+            Lesson(id: "fr-foundations-u13-routine", title: "Du matin au soir", goal: "Raconter ta journée : le matin, l'après-midi, le soir — avec toujours, souvent, parfois, jamais.",
+                intro: LessonIntro(explanation: [
+                            "Le présent raconte les habitudes : « Je prends mon café à sept heures. Je fais du sport le samedi. »",
+                            "Les adverbes de fréquence viennent après le verbe : « Je bois toujours un café. Je lis souvent le soir. »",
+                            "La négation avec jamais : « Je ne mange jamais de viande. » Et parfois, c'est quelquefois."], examples: [
+                            ExampleLine(text: "Je prends mon café à sept heures.", meaning: "Le matin."),
+                            ExampleLine(text: "Je bois toujours un café.", meaning: "Tous les jours."),
+                            ExampleLine(text: "Je lis souvent le soir.", meaning: "Beaucoup de fois."),
+                            ExampleLine(text: "Parfois, je marche au parc.", meaning: "Quelquefois."),
+                            ExampleLine(text: "Je ne mange jamais de viande.", meaning: "Zéro fois : la négation.")]),
+                expressions: [
+                            TargetExpression(text: "toujours", meaning: "Tous les jours.", note: "Je prends toujours mon café."),
+                            TargetExpression(text: "souvent", meaning: "Beaucoup de fois.", note: "Je lis souvent le soir."),
+                            TargetExpression(text: "parfois", meaning: "Quelquefois.", note: "Parfois, je regarde un film."),
+                            TargetExpression(text: "ne … jamais", meaning: "Jamais, zéro fois.", note: "Je ne sors jamais le dimanche."),
+                            TargetExpression(text: "le matin / le soir", meaning: "Les moments de la journée.", note: "Le matin, je travaille ; le soir, je lis.")],
+                situation: "Une journée ordinaire : café à sept heures, travail le matin, lecture le soir — toujours, souvent, parfois, jamais.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis ton habitude du matin : café, à sept heures.", expected: ["Je prends mon café à sept heures.", "Je prends mon cafe a sept heures."], focus: "le matin", watch: "le présent pour les habitudes."),
+                                PracticeQuestion(prompt: "Tu lis le soir, tous les jours. Utilise toujours.", expected: ["Je lis toujours le soir.", "Je lis toujours un livre le soir."], focus: "toujours", watch: "adverbe après le verbe."),
+                                PracticeQuestion(prompt: "Tu vas au parc, quelquefois. Utilise parfois.", expected: ["Parfois, je vais au parc.", "Je vais parfois au parc."], focus: "parfois", watch: "parfois = quelquefois."),
+                                PracticeQuestion(prompt: "Tu ne manges pas de viande. Utilise jamais.", expected: ["Je ne mange jamais de viande.", "Jamais de viande pour moi."], focus: "jamais", watch: "ne…jamais : la négation."),
+                                PracticeQuestion(prompt: "Tu travailles le samedi, beaucoup de fois. Utilise souvent.", expected: ["Je travaille souvent le samedi.", "Le samedi, je travaille souvent."], focus: "souvent", watch: "souvent = beaucoup de fois.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u13-routine-e1", kind: "choice", prompt: "Je ___ lis un livre le soir : tous les jours !", options: ["toujours", "souvent", "parfois", "jamais"], answers: ["toujours"], explain: "toujours = tous les jours."),
+                            Exercise(id: "fr-foundations-u13-routine-e2", kind: "gap", prompt: "Je ne mange ___ de viande.", options: [], answers: ["jamais"], explain: "ne…jamais = zéro fois."),
+                            Exercise(id: "fr-foundations-u13-routine-e3", kind: "order", prompt: "Dis ton habitude : souvent, lire, le soir.", options: [], answers: ["Je lis souvent le soir"], explain: "adverbe après le verbe."),
+                            Exercise(id: "fr-foundations-u13-routine-e4", kind: "written", prompt: "Dis ce que tu fais toujours le matin.", options: [], answers: ["je prends toujours mon café", "je prends toujours mon cafe", "je lis toujours le matin"], explain: "toujours après le verbe.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:daily-routine", "grammar:present-simple"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u13-meteo", title: "Quel temps fait-il ?", goal: "Parler du ciel : il fait beau, il pleut — et des saisons : en été, en hiver.",
+                intro: LessonIntro(explanation: [
+                            "La question : « Quel temps fait-il ? » La réponse avec il fait : « Il fait beau. Il fait chaud. Il fait froid. »",
+                            "La pluie et la neige : « Il pleut. Il neige. » Et le vent : « Il y a du vent. »",
+                            "Les saisons : « En été, il fait chaud. En hiver, il neige. » Mais au printemps, c'est en automne."], examples: [
+                            ExampleLine(text: "Quel temps fait-il ?", meaning: "La question."),
+                            ExampleLine(text: "Il fait beau aujourd'hui.", meaning: "Il y a du soleil."),
+                            ExampleLine(text: "Il pleut, prends ton parapluie !", meaning: "Il y a de l'eau du ciel."),
+                            ExampleLine(text: "En hiver, il neige.", meaning: "La saison froide."),
+                            ExampleLine(text: "Aujourd'hui, il y a du vent.", meaning: "Le vent bouge les arbres.")]),
+                expressions: [
+                            TargetExpression(text: "Quel temps fait-il ?", meaning: "Demander le temps.", note: "Quel temps fait-il demain ?"),
+                            TargetExpression(text: "Il fait beau / chaud / froid.", meaning: "Le temps avec il fait.", note: "En été, il fait chaud."),
+                            TargetExpression(text: "Il pleut / Il neige.", meaning: "L'eau et la neige.", note: "Il pleut sur Toulouse."),
+                            TargetExpression(text: "Il y a du vent.", meaning: "Le vent.", note: "Il y a du vent, ferme la fenêtre."),
+                            TargetExpression(text: "en été / en hiver", meaning: "Les saisons.", note: "En hiver, il fait froid ; au printemps, il fait doux.")],
+                situation: "Quel temps ! Il fait beau, vous allez au parc ; il pleut, vous restez à la maison avec un chocolat chaud.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande le temps de demain.", expected: ["Quel temps fait-il demain ?", "Demain, quel temps fait-il ?"], focus: "quel temps", watch: "question figée : quel temps fait-il ?"),
+                                PracticeQuestion(prompt: "Il y a du soleil. Dis-le avec il fait.", expected: ["Il fait beau.", "Aujourd'hui, il fait beau."], focus: "il fait beau", watch: "il fait beau = il y a du soleil."),
+                                PracticeQuestion(prompt: "Il y a de l'eau du ciel. Dis-le.", expected: ["Il pleut.", "Il pleut beaucoup."], focus: "il pleut", watch: "pleuvoir : il pleut."),
+                                PracticeQuestion(prompt: "Tu es à Paris, en hiver : très froid. Dis-le avec il fait.", expected: ["En hiver, il fait très froid.", "En hiver, il fait tres froid."], focus: "en hiver", watch: "en + saison, mais au printemps."),
+                                PracticeQuestion(prompt: "Le vent bouge les arbres aujourd'hui. Dis-le.", expected: ["Il y a du vent.", "Il y a beaucoup de vent."], focus: "du vent", watch: "il y a du + nom.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u13-meteo-e1", kind: "choice", prompt: "___ temps fait-il ?", options: ["Quel", "Quelle", "Comment", "Qui"], answers: ["Quel"], explain: "quel temps fait-il ? : question figée."),
+                            Exercise(id: "fr-foundations-u13-meteo-e2", kind: "gap", prompt: "Il ___ : prends ton parapluie !", options: [], answers: ["pleut"], explain: "il pleut = il y a de l'eau."),
+                            Exercise(id: "fr-foundations-u13-meteo-e3", kind: "order", prompt: "Décris l'été.", options: [], answers: ["En été il fait très chaud"], explain: "en + saison + il fait + adjectif."),
+                            Exercise(id: "fr-foundations-u13-meteo-e4", kind: "written", prompt: "Tu es à Paris en hiver. Dis le temps : froid.", options: [], answers: ["il fait froid", "il fait très froid", "il fait tres froid"], explain: "il fait + froid : le temps.")], skills: ["function:talk-about-weather", "vocab:weather", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["talk-about-weather"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u13-envies", title: "Ce que j'aime", goal: "Dire tes goûts : j'aime la musique, j'aime lire — et demander : et toi ?",
+                intro: LessonIntro(explanation: [
+                            "J'aime + nom : « J'aime le vélo. J'adore la musique. »",
+                            "J'aime + verbe à l'infinitif : « J'aime lire. J'aime faire du sport. »",
+                            "La négation : « Je n'aime pas cuisiner. » Pour demander : « Tu aimes le foot ? Et toi ? »"], examples: [
+                            ExampleLine(text: "J'aime le vélo.", meaning: "aimer + nom."),
+                            ExampleLine(text: "J'adore la musique.", meaning: "Aimer beaucoup."),
+                            ExampleLine(text: "J'aime lire le soir.", meaning: "aimer + infinitif."),
+                            ExampleLine(text: "Je n'aime pas cuisiner.", meaning: "La négation."),
+                            ExampleLine(text: "Tu aimes le foot ? Et toi ?", meaning: "La question au groupe.")]),
+                expressions: [
+                            TargetExpression(text: "j'aime + nom", meaning: "Les goûts.", note: "J'aime les crêpes."),
+                            TargetExpression(text: "j'aime + infinitif", meaning: "Les activités.", note: "J'aime nager."),
+                            TargetExpression(text: "j'adore …", meaning: "J'aime beaucoup.", note: "J'adore le chocolat."),
+                            TargetExpression(text: "je n'aime pas …", meaning: "Le dégoût.", note: "Je n'aime pas la pluie."),
+                            TargetExpression(text: "Et toi ?", meaning: "Rendre la question.", note: "J'aime lire. Et toi ?")],
+                situation: "Chacun ses goûts : Léa aime le vélo, Karim adore lire, Mai aime faire des crêpes — et vous, qu'est-ce que vous aimez ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis ton goût : la musique, beaucoup.", expected: ["J'adore la musique.", "J'aime beaucoup la musique."], focus: "j'adore", watch: "j'adore = j'aime beaucoup."),
+                                PracticeQuestion(prompt: "Dis ton activité : lire, le soir.", expected: ["J'aime lire le soir.", "J'aime lire."], focus: "j'aime lire", watch: "aimer + verbe à l'infinitif."),
+                                PracticeQuestion(prompt: "Tu ne veux pas cuisiner. Dis-le avec aimer.", expected: ["Je n'aime pas cuisiner.", "Je n'aime pas la cuisine."], focus: "je n'aime pas", watch: "ne…pas après j'aime."),
+                                PracticeQuestion(prompt: "Demande à Karim s'il aime le foot.", expected: ["Tu aimes le foot ?", "Est-ce que tu aimes le foot ?"], focus: "tu aimes", watch: "est-ce que pour la question."),
+                                PracticeQuestion(prompt: "Rends la question à ton ami.", expected: ["Et toi ?", "Et vous ?"], focus: "et toi", watch: "et toi = à toi de répondre.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u13-envies-e1", kind: "choice", prompt: "J'___ le chocolat : c'est trop bon !", options: ["adore", "adore pas", "déteste", "oublie"], answers: ["adore"], explain: "j'adore = j'aime beaucoup."),
+                            Exercise(id: "fr-foundations-u13-envies-e2", kind: "gap", prompt: "J'aime ___ du vélo le samedi.", options: [], answers: ["faire"], explain: "aimer + infinitif : faire du vélo."),
+                            Exercise(id: "fr-foundations-u13-envies-e3", kind: "order", prompt: "Dis ton goût : la pluie, non.", options: [], answers: ["Je n'aime pas la pluie"], explain: "ne…pas + aimer + nom."),
+                            Exercise(id: "fr-foundations-u13-envies-e4", kind: "written", prompt: "Dis une activité que tu aimes.", options: [], answers: ["j'aime lire le soir", "j'aime faire du vélo", "j'aime faire du velo", "j'aime lire"], explain: "j'aime + verbe à l'infinitif.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum ItFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.", 0),
@@ -6511,6 +7051,186 @@ public enum ItFoundationsU11 {
                             Exercise(id: "it-foundations-u11-fruttivendolo-e4", kind: "written", prompt: "Ordina mezzo chilo di banane.", options: [], answers: ["Mezzo chilo di banane, per favore.", "Vorrei mezzo chilo di banane."], explain: "mezzo chilo di + frutta.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum ItFoundationsU12 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u12", title: "La mia gente", subtitle: "Famiglia e amici", level: "A1", themes: [
+                    ConversationTheme("la-mia-gente-famiglia", "La famiglia", "Ho uno zio", "figure-2", "Course", "Una cena in famiglia: la sorella, i genitori e lo zio di Napoli — e tu presenti le persone.", 0),
+                    ConversationTheme("la-mia-gente-amici", "Amici e carattere", "È simpatico", "heart", "Course", "Una festa con gli amici: chi è simpatico, chi è timido — e tu descrivi le persone.", 1)], lessons: [
+            Lesson(id: "it-foundations-u12-famiglia", title: "La mia famiglia", goal: "Presentare la famiglia: i membri, mio/mia e « ho uno zio ».",
+                intro: LessonIntro(explanation: [
+                            "I membri della famiglia: « il padre, la madre, il fratello, la sorella. » Papà e mamma sono più informali.",
+                            "Il possessivo dice di chi è la persona: « mio fratello, mia sorella, i miei genitori, le mie cugine. » Mio per il maschile, mia per il femminile, miei/mie per il plurale.",
+                            "Con avere presenti un parente: « Ho due cugini. Ho uno zio a Napoli. » Davanti a z si usa uno: uno zio, uno studente."], examples: [
+                            ExampleLine(text: "Questa è mia sorella.", meaning: "mia + persona femminile."),
+                            ExampleLine(text: "Mio fratello si chiama Luca.", meaning: "mio + persona maschile."),
+                            ExampleLine(text: "I miei genitori abitano a Roma.", meaning: "Plurale: i miei."),
+                            ExampleLine(text: "Ho uno zio simpatico.", meaning: "Avere + uno zio."),
+                            ExampleLine(text: "Ho due cugine e un cugino.", meaning: "I cugini: maschile e femminile.")]),
+                expressions: [
+                            TargetExpression(text: "il padre / la madre", meaning: "I genitori.", note: "Papà e mamma, più informali."),
+                            TargetExpression(text: "il fratello / la sorella", meaning: "I fratelli.", note: "Plurale: i fratelli, le sorelle."),
+                            TargetExpression(text: "mio / mia / miei / mie", meaning: "Il possessivo.", note: "Mio fratello, mia sorella, i miei amici."),
+                            TargetExpression(text: "Ho uno zio.", meaning: "Avere + un parente.", note: "Uno davanti a z: uno zio, uno studente."),
+                            TargetExpression(text: "il cugino / la cugina", meaning: "I figli di zio e zia.", note: "Plurale: i cugini, le cugine.")],
+                situation: "Una cena di famiglia: presenti la sorella, i genitori e racconti dello zio di Napoli con le foto sul telefono.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Presenta tua sorella: si chiama Giulia.", expected: ["Questa è mia sorella, Giulia.", "Questa e mia sorella, Giulia.", "Mia sorella si chiama Giulia."], focus: "mia sorella", watch: "Sorella è femminile: mia."),
+                                PracticeQuestion(prompt: "Presenta tuo fratello: si chiama Marco.", expected: ["Mio fratello si chiama Marco.", "Mio fratello, Marco, ha ventidue anni."], focus: "mio fratello", watch: "Fratello è maschile: mio."),
+                                PracticeQuestion(prompt: "I tuoi genitori abitano a Milano. Dillo.", expected: ["I miei genitori abitano a Milano.", "I miei genitori vivono a Milano."], focus: "i miei", watch: "Plurale: i miei genitori."),
+                                PracticeQuestion(prompt: "Hai una zia a Firenze. Dillo con ho.", expected: ["Ho una zia a Firenze.", "Ho una zia a Firenze, vicino al centro."], focus: "ho una zia", watch: "Zia è femminile: una zia."),
+                                PracticeQuestion(prompt: "Hai anche uno zio a Napoli. Dillo.", expected: ["Ho uno zio a Napoli.", "Ho uno zio che abita a Napoli."], focus: "uno zio", watch: "Uno davanti a z: uno zio.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u12-famiglia-e1", kind: "choice", prompt: "___ sorella abita a Bologna.", options: ["Mia", "Mio", "Miei", "Le"], answers: ["Mia"], explain: "Sorella è femminile singolare: mia sorella."),
+                            Exercise(id: "it-foundations-u12-famiglia-e2", kind: "gap", prompt: "Ho ___ zio molto simpatico.", options: [], answers: ["uno"], explain: "Zio inizia con z: uno zio."),
+                            Exercise(id: "it-foundations-u12-famiglia-e3", kind: "order", prompt: "Presenta i tuoi genitori e la loro città.", options: [], answers: ["I miei genitori abitano a Roma"], explain: "I miei + nome plurale + verbo + luogo."),
+                            Exercise(id: "it-foundations-u12-famiglia-e4", kind: "written", prompt: "Presenta tua sorella: si chiama Sara ed è simpatica.", options: [], answers: ["Mia sorella si chiama Sara ed è simpatica.", "Mia sorella si chiama Sara ed e simpatica.", "Questa è mia sorella Sara.", "Questa e mia sorella Sara."], explain: "mia + sorella + si chiama + nome.")], skills: ["vocab:family", "grammar:possessives", "grammar:present-simple", "function:describe-people"], canDo: ["describe-people"], prerequisites: ["grammar:possessives"]),
+            Lesson(id: "it-foundations-u12-amici", title: "Com'è ?", goal: "Descrivere amici e parenti con gli aggettivi: simpatico, timido, lavoratore.",
+                intro: LessonIntro(explanation: [
+                            "Per descrivere una persona si usa essere + aggettivo: « Marco è simpatico. Giulia è simpatica. » Maschile in -o, femminile in -a.",
+                            "Al plurale l'aggettivo cambia: « I miei amici sono simpatici. Le mie amiche sono simpatiche. »",
+                            "Aggettivi utili per il carattere: « Luca è timido, non parla molto. Paolo è lavoratore, lavora tanto. » Per chiedere: « Com'è Giulia ? »"], examples: [
+                            ExampleLine(text: "Marco è simpatico.", meaning: "Maschile: simpatico."),
+                            ExampleLine(text: "Giulia è simpatica.", meaning: "Femminile: simpatica."),
+                            ExampleLine(text: "Luca è un po' timido.", meaning: "Timido: non parla molto."),
+                            ExampleLine(text: "Paolo è molto lavoratore.", meaning: "Lavoratore: lavora tanto."),
+                            ExampleLine(text: "Le mie amiche sono gentili.", meaning: "Plurale femminile: -i / -e.")]),
+                expressions: [
+                            TargetExpression(text: "Com'è … ?", meaning: "Chiedere il carattere.", note: "Com'è Marco ? È simpatico."),
+                            TargetExpression(text: "simpatico / simpatica", meaning: "Gentile, piacevole.", note: "Plurale: simpatici / simpatiche."),
+                            TargetExpression(text: "timido / timida", meaning: "Non parla molto.", note: "Mia cugina è timida."),
+                            TargetExpression(text: "lavoratore / lavoratrice", meaning: "Lavora molto.", note: "Paolo è molto lavoratore."),
+                            TargetExpression(text: "un po' …", meaning: "Un piccolo grado.", note: "È un po' timido.")],
+                situation: "Alla festa di Giulia ci sono amici nuovi: chi è simpatico, chi è timido — e tu descrivi le persone.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Descrivi Marco: piacevole.", expected: ["Marco è simpatico.", "Marco e simpatico."], focus: "simpatico", watch: "Maschile: simpatico."),
+                                PracticeQuestion(prompt: "Descrivi Anna: piacevole.", expected: ["Anna è simpatica.", "Anna e simpatica."], focus: "simpatica", watch: "Femminile: simpatica."),
+                                PracticeQuestion(prompt: "Luca non parla molto. Descrivilo.", expected: ["Luca è timido.", "Luca e timido.", "Luca è un po' timido."], focus: "timido", watch: "Timido = persona riservata."),
+                                PracticeQuestion(prompt: "Paolo lavora tanto. Descrivilo.", expected: ["Paolo è lavoratore.", "Paolo e lavoratore."], focus: "lavoratore", watch: "Lavoratore = lavora molto."),
+                                PracticeQuestion(prompt: "Chiedi il carattere di Giulia.", expected: ["Com'è Giulia ?", "Com'e Giulia ?"], focus: "com'è", watch: "Com'è = come + è.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u12-amici-e1", kind: "choice", prompt: "Giulia parla con tutti: è molto ___.", options: ["simpatica", "simpatico", "simpatici", "simpatiche"], answers: ["simpatica"], explain: "Giulia è femminile singolare: simpatica."),
+                            Exercise(id: "it-foundations-u12-amici-e2", kind: "gap", prompt: "Luca non parla molto: è ___.", options: [], answers: ["timido"], explain: "Timido = persona riservata, che parla poco."),
+                            Exercise(id: "it-foundations-u12-amici-e3", kind: "order", prompt: "Descrivi due amici simpatici.", options: [], answers: ["Marco e Anna sono simpatici"], explain: "Nome + essere + aggettivo plurale."),
+                            Exercise(id: "it-foundations-u12-amici-e4", kind: "written", prompt: "Descrivi il tuo amico Marco: simpatico e un po' timido.", options: [], answers: ["Marco è simpatico e un po' timido.", "Marco e simpatico e un po timido.", "Marco e simpatico e un po' timido."], explain: "essere + due aggettivi per il carattere.")], skills: ["function:describe-people", "grammar:present-simple", "vocab:feelings", "function:ask-simple-questions"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u12-chiamata", title: "Una telefonata", goal: "Telefonare: pronto ?, c'è … ? e il richiamo dopo.",
+                intro: LessonIntro(explanation: [
+                            "Al telefono si inizia con « Pronto ? » e ci si presenta: « Pronto, sono Luca. »",
+                            "Per chiedere di una persona si usa c'è: « C'è Anna ? » Le risposte: « Sì, un momento » oppure « No, non c'è. »",
+                            "Se la persona non c'è, si lascia un messaggio e si richiama: « Posso lasciare un messaggio ? Richiamo dopo. »"], examples: [
+                            ExampleLine(text: "Pronto ? Sono Luca.", meaning: "Ci si presenta al telefono."),
+                            ExampleLine(text: "C'è Maria, per favore ?", meaning: "Chiedere di una persona."),
+                            ExampleLine(text: "No, non c'è.", meaning: "La persona non è presente."),
+                            ExampleLine(text: "Un momento, la chiamo.", meaning: "Chiamare la persona."),
+                            ExampleLine(text: "Richiamo dopo, grazie.", meaning: "Chiamare più tardi.")]),
+                expressions: [
+                            TargetExpression(text: "Pronto ?", meaning: "La prima parola al telefono.", note: "Pronto, sono Carlo."),
+                            TargetExpression(text: "C'è … ?", meaning: "Chiedere di una persona.", note: "C'è Maria, per favore ?"),
+                            TargetExpression(text: "Non c'è.", meaning: "La persona non c'è.", note: "È uscita."),
+                            TargetExpression(text: "Richiamo dopo.", meaning: "Chiamo più tardi.", note: "Richiamo tra dieci minuti."),
+                            TargetExpression(text: "Posso lasciare un messaggio ?", meaning: "Chiedere di lasciare un messaggio.", note: "Sì, certo.")],
+                situation: "Telefoni a Giulia ma non c'è: sua madre risponde e tu lasci un messaggio e richiami dopo.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Rispondi al telefono.", expected: ["Pronto ?", "Pronto, chi è ?", "Pronto, chi e ?"], focus: "pronto", watch: "Pronto: la prima parola."),
+                                PracticeQuestion(prompt: "Anna è a casa ? Chiedi al telefono.", expected: ["C'è Anna ?", "C'e Anna ?", "Pronto, c'e Anna ?"], focus: "c'è", watch: "C'è + nome della persona."),
+                                PracticeQuestion(prompt: "Anna non è a casa. Dillo.", expected: ["Non c'è.", "Non c'e.", "Anna non c'e."], focus: "non c'è", watch: "Non c'è = persona assente."),
+                                PracticeQuestion(prompt: "Dì che chiami più tardi.", expected: ["Richiamo dopo.", "Richiamo più tardi.", "Richiamo piu tardi."], focus: "richiamo", watch: "Richiamare = chiamare di nuovo."),
+                                PracticeQuestion(prompt: "Chiedi di lasciare un messaggio.", expected: ["Posso lasciare un messaggio ?", "Le lascio un messaggio.", "Un messaggio per Giulia."], focus: "messaggio", watch: "Lasciare un messaggio.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u12-chiamata-e1", kind: "choice", prompt: "Il telefono suona. Cosa dici per primo ?", options: ["Pronto", "Grazie", "Piacere", "Scusa"], answers: ["Pronto"], explain: "Pronto è la prima parola al telefono."),
+                            Exercise(id: "it-foundations-u12-chiamata-e2", kind: "gap", prompt: "C'___ Anna, per favore ?", options: [], answers: ["è", "e"], explain: "C'è = ci + è: si scrive con l'accento."),
+                            Exercise(id: "it-foundations-u12-chiamata-e3", kind: "order", prompt: "Anna non c'è. Dì che richiami dopo.", options: [], answers: ["La richiamo dopo, grazie"], explain: "Richiamare = chiamare di nuovo più tardi."),
+                            Exercise(id: "it-foundations-u12-chiamata-e4", kind: "written", prompt: "Lascia un messaggio per Maria: tu sei Luca e richiami.", options: [], answers: ["Sono Luca, richiamo dopo.", "Sono Luca, richiamo dopo, grazie.", "Sono Luca e richiamo dopo."], explain: "Sono + nome + richiamo dopo.")], skills: ["vocab:social-expressions", "grammar:present-questions", "function:ask-simple-questions", "grammar:present-simple"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum ItFoundationsU13 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u13", title: "Il tempo", subtitle: "Giorni e meteo", level: "A1", themes: [
+                    ConversationTheme("il-tempo-settimana", "La settimana", "Sempre, spesso, mai", "sun.max", "Course", "Una giornata tipo: il caffè sempre la mattina, il lavoro, e la sera — qualche volta un film, mai sport.", 0),
+                    ConversationTheme("il-tempo-meteo", "Il meteo", "Che tempo fa ?", "cloud.rain", "Course", "Sabato piove, ma domenica c'è il sole: si decide il weekend guardando il cielo.", 1)], lessons: [
+            Lesson(id: "it-foundations-u13-routine", title: "Dal mattino alla sera", goal: "Raccontare la giornata con sempre, spesso, qualche volta, mai.",
+                intro: LessonIntro(explanation: [
+                            "La routine si racconta al presente: « La mattina faccio colazione alle sette e vado al lavoro. »",
+                            "Gli avverbi di frequenza dicono quante volte: « Bevo sempre un caffè » (ogni giorno), « Spesso torno tardi » (molte volte), « Qualche volta leggo » (a volte), « Non lavoro mai la domenica » (zero volte).",
+                            "Posizione: con essere l'avverbio sta dopo, con gli altri verbi prima: « Sono sempre in ufficio alle nove. Esco sempre alle sei. »"], examples: [
+                            ExampleLine(text: "La mattina faccio colazione alle sette.", meaning: "La routine al presente."),
+                            ExampleLine(text: "Bevo sempre un caffè al bar.", meaning: "Sempre: ogni giorno."),
+                            ExampleLine(text: "Spesso torno a casa tardi.", meaning: "Spesso: molte volte."),
+                            ExampleLine(text: "Qualche volta leggo la sera.", meaning: "Qualche volta: a volte."),
+                            ExampleLine(text: "La domenica non lavoro mai.", meaning: "Mai: zero volte.")]),
+                expressions: [
+                            TargetExpression(text: "sempre", meaning: "Ogni volta, il 100%.", note: "Bevo sempre un caffè."),
+                            TargetExpression(text: "spesso", meaning: "Molte volte.", note: "Spesso vado in bici."),
+                            TargetExpression(text: "qualche volta", meaning: "A volte.", note: "Qualche volta guardo la TV."),
+                            TargetExpression(text: "(non) … mai", meaning: "Zero volte.", note: "Non mangio mai la carne."),
+                            TargetExpression(text: "di mattina / di sera", meaning: "Le parti della giornata.", note: "Di sera ceno alle otto.")],
+                situation: "Una giornata tipo: sempre il caffè alle sette, spesso in bici, e la sera qualche volta un film, mai sport.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di' la tua routine della mattina: sveglia alle sette.", expected: ["Mi sveglio alle sette.", "Mi alzo alle sette.", "Faccio colazione alle sette."], focus: "routine", watch: "Presente + ora: alle sette."),
+                                PracticeQuestion(prompt: "Bevi un caffè ogni giorno. Rispondi con sempre.", expected: ["Sì, bevo sempre un caffè.", "Si, bevo sempre un caffe.", "Bevo sempre un caffe."], focus: "sempre", watch: "Sempre = ogni giorno."),
+                                PracticeQuestion(prompt: "Non mangi la carne. Di' la frase con mai.", expected: ["Non mangio mai la carne.", "Mai la carne.", "La carne non la mangio mai."], focus: "non … mai", watch: "Non … mai insieme."),
+                                PracticeQuestion(prompt: "A volte vai al cinema. Di' con qualche volta.", expected: ["Qualche volta vado al cinema.", "Qualche volta vado al cinema con amici."], focus: "qualche volta", watch: "Qualche volta = a volte."),
+                                PracticeQuestion(prompt: "La domenica ? Zero lavoro. Di' con mai.", expected: ["La domenica non lavoro mai.", "Domenica non lavoro mai.", "La domenica non studio mai."], focus: "la domenica", watch: "La domenica + non … mai.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u13-routine-e1", kind: "choice", prompt: "Bevo ___ un caffè la mattina: ogni giorno !", options: ["sempre", "mai", "spesso", "qualche volta"], answers: ["sempre"], explain: "Ogni giorno = sempre, il 100% delle volte."),
+                            Exercise(id: "it-foundations-u13-routine-e2", kind: "gap", prompt: "La domenica non lavoro ___.", options: [], answers: ["mai"], explain: "Non … mai = zero volte."),
+                            Exercise(id: "it-foundations-u13-routine-e3", kind: "order", prompt: "Racconta cosa fai spesso la sera.", options: [], answers: ["Spesso guardo la televisione la sera"], explain: "Avverbio + verbo + complemento."),
+                            Exercise(id: "it-foundations-u13-routine-e4", kind: "written", prompt: "Di' la tua giornata: sveglia alle sette e colazione.", options: [], answers: ["Mi sveglio alle sette e faccio colazione.", "Mi alzo alle sette e faccio colazione.", "Faccio colazione alle sette."], explain: "Presente + ore per la routine.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:daily-routine", "grammar:present-simple"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u13-meteo", title: "Che tempo fa ?", goal: "Parlare del tempo e delle stagioni: fa caldo, piove, in estate.",
+                intro: LessonIntro(explanation: [
+                            "Per chiedere: « Che tempo fa ? » Per rispondere si usa fa + aggettivo: « Fa caldo. Fa freddo. Fa bel tempo. »",
+                            "Pioggia e neve hanno verbi propri: « Piove, prendi l'ombrello. In inverno nevica. » Con il sole si dice « c'è il sole ».",
+                            "Le stagioni: la primavera, l'estate, l'autunno, l'inverno. Con in: « In estate fa caldo. In inverno fa freddo. »"], examples: [
+                            ExampleLine(text: "Oggi fa bel tempo.", meaning: "Una bella giornata."),
+                            ExampleLine(text: "Fa freddo oggi !", meaning: "Temperatura bassa."),
+                            ExampleLine(text: "Piove, prendi l'ombrello.", meaning: "Il verbo piovere."),
+                            ExampleLine(text: "In estate fa caldo.", meaning: "La stagione con in."),
+                            ExampleLine(text: "In inverno nevica in montagna.", meaning: "Il verbo nevicare.")]),
+                expressions: [
+                            TargetExpression(text: "Che tempo fa ?", meaning: "La domanda sul meteo.", note: "Fa bello !"),
+                            TargetExpression(text: "fa caldo / fa freddo", meaning: "La temperatura.", note: "Oggi fa molto caldo."),
+                            TargetExpression(text: "piove / nevica", meaning: "La pioggia e la neve.", note: "Piove da stamattina."),
+                            TargetExpression(text: "c'è il sole", meaning: "Una giornata soleggiata.", note: "C'è il sole, usciamo ?"),
+                            TargetExpression(text: "in estate / in inverno", meaning: "Le stagioni.", note: "In inverno nevica in montagna.")],
+                situation: "Sabato piove e fa freddo: ombrello e un film a casa. Domenica c'è il sole — si esce !",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi del tempo a un amico.", expected: ["Che tempo fa ?", "Che tempo fa oggi ?"], focus: "che tempo fa", watch: "Fa + tempo."),
+                                PracticeQuestion(prompt: "Gennaio, zero gradi. Di' il tempo.", expected: ["Fa freddo.", "Fa molto freddo."], focus: "fa freddo", watch: "Fa + freddo."),
+                                PracticeQuestion(prompt: "Prendi l'ombrello. Perché ? Di' il tempo.", expected: ["Piove.", "Piove molto.", "Piove, per questo."], focus: "piove", watch: "Piove = cade la pioggia."),
+                                PracticeQuestion(prompt: "Agosto al mare: trenta gradi. Di' il tempo.", expected: ["Fa caldo.", "Fa molto caldo.", "Fa caldo al mare."], focus: "fa caldo", watch: "Fa + caldo."),
+                                PracticeQuestion(prompt: "In quale stagione nevica ? Rispondi.", expected: ["Nevica in inverno.", "In inverno nevica.", "Nevica d'inverno."], focus: "in inverno", watch: "Le stagioni con in.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u13-meteo-e1", kind: "choice", prompt: "Che ___ fa oggi ?", options: ["tempo", "caldo", "vento", "freddo"], answers: ["tempo"], explain: "Che tempo fa ? è la domanda sul meteo."),
+                            Exercise(id: "it-foundations-u13-meteo-e2", kind: "gap", prompt: "Prendi l'ombrello: oggi ___.", options: [], answers: ["piove"], explain: "Piove = cade la pioggia."),
+                            Exercise(id: "it-foundations-u13-meteo-e3", kind: "order", prompt: "Dì il tempo di agosto.", options: [], answers: ["In estate fa molto caldo"], explain: "In estate + fa + caldo."),
+                            Exercise(id: "it-foundations-u13-meteo-e4", kind: "written", prompt: "Di' il tempo di oggi: fa freddo e cade la neve.", options: [], answers: ["Fa freddo e nevica.", "Oggi fa freddo e nevica.", "Fa freddo e nevica oggi."], explain: "Fa freddo + nevica: due frasi del meteo.")], skills: ["function:talk-about-weather", "vocab:weather", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["talk-about-weather"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u13-gusti", title: "Cosa mi piace", goal: "Dire cosa ti piace: mi piace + infinito o sostantivo.",
+                intro: LessonIntro(explanation: [
+                            "Per le attività si usa mi piace + infinito: « Mi piace leggere. Mi piace cucinare. »",
+                            "Con un sostantivo singolare: « Mi piace il caffè. » Con un sostantivo plurale si usa mi piacciono: « Mi piacciono i film. »",
+                            "La negazione è non mi piace: « Non mi piace il freddo. » Per rafforzare: « Mi piace molto nuotare. »"], examples: [
+                            ExampleLine(text: "Mi piace leggere la sera.", meaning: "Piace + infinito."),
+                            ExampleLine(text: "Mi piace il gelato.", meaning: "Piace + singolare."),
+                            ExampleLine(text: "Mi piacciono i film italiani.", meaning: "Plurale: mi piacciono."),
+                            ExampleLine(text: "Non mi piace il freddo.", meaning: "La negazione."),
+                            ExampleLine(text: "Mi piace molto nuotare.", meaning: "Molto rafforza il gusto.")]),
+                expressions: [
+                            TargetExpression(text: "mi piace + infinito", meaning: "Le attività.", note: "Mi piace camminare."),
+                            TargetExpression(text: "mi piace + singolare", meaning: "Una cosa.", note: "Mi piace la musica."),
+                            TargetExpression(text: "mi piacciono + plurale", meaning: "Più cose.", note: "Mi piacciono i libri."),
+                            TargetExpression(text: "non mi piace …", meaning: "La cosa che non ti piace.", note: "Non mi piace il freddo."),
+                            TargetExpression(text: "anche a me", meaning: "Essere d'accordo.", note: "Mi piace il cinema. — Anche a me !")],
+                situation: "Il weekend si avvicina: ti piace leggere e cucinare, ma il freddo no — e con gli amici sei d'accordo.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di' che ti piace leggere.", expected: ["Mi piace leggere.", "Mi piace leggere la sera."], focus: "mi piace", watch: "Mi piace + infinito."),
+                                PracticeQuestion(prompt: "Di' che ti piace la pizza.", expected: ["Mi piace la pizza.", "A me piace la pizza."], focus: "mi piace", watch: "Mi piace + singolare."),
+                                PracticeQuestion(prompt: "Ti piacciono i film. Di' con piacciono.", expected: ["Mi piacciono i film.", "Mi piacciono i film italiani."], focus: "mi piacciono", watch: "Plurale: mi piacciono."),
+                                PracticeQuestion(prompt: "Non ti piace il freddo. Di' la negazione.", expected: ["Non mi piace il freddo.", "Non mi piace il freddo d'inverno."], focus: "non mi piace", watch: "Non + mi piace."),
+                                PracticeQuestion(prompt: "Il tuo amico dice: mi piace il cinema. Concorda.", expected: ["Anche a me !", "Anche a me piace il cinema."], focus: "anche a me", watch: "Anche a me = sono d'accordo.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u13-gusti-e1", kind: "choice", prompt: "Mi ___ il caffè, tanto !", options: ["piace", "piacciono", "piaccio", "piacere"], answers: ["piace"], explain: "Il caffè è singolare: mi piace."),
+                            Exercise(id: "it-foundations-u13-gusti-e2", kind: "gap", prompt: "Mi ___ i gatti e i cani.", options: [], answers: ["piacciono"], explain: "Plurale: mi piacciono i gatti."),
+                            Exercise(id: "it-foundations-u13-gusti-e3", kind: "order", prompt: "Di' che ti piace fare una cosa la sera.", options: [], answers: ["Mi piace leggere la sera"], explain: "Mi piace + infinito + tempo."),
+                            Exercise(id: "it-foundations-u13-gusti-e4", kind: "written", prompt: "Di' due cose che ti piace fare nel weekend.", options: [], answers: ["Mi piace leggere e cucinare.", "Mi piace nuotare e camminare.", "Mi piace guardare i film e camminare."], explain: "Mi piace + due infiniti.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum PtFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in São Paulo. Meet the learner, exchange names, countries and jobs using the verb ser.", 0),
@@ -7314,6 +8034,186 @@ public enum PtFoundationsU11 {
                             Exercise(id: "pt-foundations-u11-quitanda-e4", kind: "written", prompt: "Peça duas dúzias de bananas, com educação.", options: [], answers: ["Queria duas dúzias de bananas.", "queria duas duzias de bananas", "duas duzias de bananas, por favor"], explain: "duas dúzias de + fruta.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum PtFoundationsU12 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u12", title: "Minha gente", subtitle: "Família e amigos", level: "A1", themes: [
+                    ConversationTheme("gente-familia", "A família", "Quem é quem", "figure-2", "Course", "A Ana mostra as fotos do celular: o avô, os primos e um tio que mora longe.", 0),
+                    ConversationTheme("gente-amigos", "Os amigos", "Como eles são ?", "heart", "Course", "O grupo dos amigos conversa: quem é tímido, quem é simpático e quem trabalha muito.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u12-familia", title: "Minha família", goal: "Falar dos membros da família com meu/minha: tenho um tio muito simpático.",
+                intro: LessonIntro(explanation: [
+                            "A família próxima: « o pai, a mãe, o irmão, a irmã, o avô, a avó ». « Meu avô mora com a gente ».",
+                            "Mais membros: « o tio, a tia, o primo, a prima ». « Tenho um tio que mora longe ».",
+                            "Possessivos com a família: « meu pai, minha mãe, meus primos ». « Minha tia é professora »."], examples: [
+                            ExampleLine(text: "Minha irmã tem vinte anos.", meaning: "minha + feminino."),
+                            ExampleLine(text: "Meu avô é muito simpático.", meaning: "meu + masculino."),
+                            ExampleLine(text: "Tenho dois primos e uma prima.", meaning: "ter + família."),
+                            ExampleLine(text: "Minha tia mora perto.", meaning: "mora = vive."),
+                            ExampleLine(text: "Os meus pais trabalham muito.", meaning: "os meus pais = mis padres.")]),
+                expressions: [
+                            TargetExpression(text: "meu / minha", meaning: "Possessivo com a família.", note: "meu pai, minha mãe."),
+                            TargetExpression(text: "tenho um tio", meaning: "Falar dos parentes.", note: "Tenho um tio no Rio."),
+                            TargetExpression(text: "o avô / a avó", meaning: "Avô (masc) e avó (fem).", note: "Minha avó faz bolo."),
+                            TargetExpression(text: "os meus pais", meaning: "O pai e a mãe.", note: "Os meus pais moram aqui."),
+                            TargetExpression(text: "mora perto", meaning: "Falar do lugar.", note: "Meu tio mora perto.")],
+                situation: "A Ana mostra as fotos do celular: o avô, os primos e um tio que mora longe.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que a sua irmã tem vinte anos. (use minha)", expected: ["Minha irmã tem vinte anos.", "minha irma tem vinte anos"], focus: "minha", watch: "minha + palavra feminina."),
+                                PracticeQuestion(prompt: "Diga que tem um tio simpático.", expected: ["Tenho um tio simpático.", "tenho um tio simpatico"], focus: "tenho", watch: "tenho = tengo."),
+                                PracticeQuestion(prompt: "Diga que o seu avô mora perto. (use meu)", expected: ["Meu avô mora perto.", "meu avo mora perto"], focus: "meu", watch: "meu + palavra masculina."),
+                                PracticeQuestion(prompt: "Pergunte se a colega tem primos.", expected: ["Você tem primos ?", "Tem primos ?", "voce tem primos"], focus: "ter", watch: "Você + tem."),
+                                PracticeQuestion(prompt: "Diga que os seus pais trabalham muito.", expected: ["Os meus pais trabalham muito.", "os meus pais trabalham muito"], focus: "os meus pais", watch: "pais = padres, não países.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u12-familia-e1", kind: "choice", prompt: "Minha ___ é a mãe do meu pai.", options: ["avó", "tia", "prima", "irmã"], answers: ["avó"], explain: "A mãe do pai ou da mãe é a avó."),
+                            Exercise(id: "pt-foundations-u12-familia-e2", kind: "gap", prompt: "Meu ___ é o pai da minha mãe.", options: [], answers: ["avô", "avo"], explain: "O pai da mãe ou do pai é o avô."),
+                            Exercise(id: "pt-foundations-u12-familia-e3", kind: "order", prompt: "Diga o que a sua avó faz aos domingos. (bolo)", options: [], answers: ["A avo faz bolo aos domingos"], explain: "A avó + faz + bolo: rotina da família."),
+                            Exercise(id: "pt-foundations-u12-familia-e4", kind: "written", prompt: "Diga quantos primos você tem: dois.", options: [], answers: ["Tenho dois primos.", "tenho dois primos"], explain: "tenho + número + parente.")], skills: ["vocab:family", "grammar:possessives", "grammar:present-simple", "function:describe-people"], canDo: ["describe-people"], prerequisites: ["grammar:possessives"]),
+            Lesson(id: "pt-foundations-u12-amigos", title: "Como ele é ?", goal: "Descrever as pessoas com adjetivos: simpático, tímido, trabalhador.",
+                intro: LessonIntro(explanation: [
+                            "Descrever com « ser »: « Ele é simpático ». « Ela é tímida ». O adjetivo concorda: tímido/tímida.",
+                            "Adjetivos úteis: « simpático » (amable), « tímido » (reservado), « trabalhador » (trabaja mucho).",
+                            "Perguntar: « Como ele é ? » — a resposta usa « é »: « É muito simpático »."], examples: [
+                            ExampleLine(text: "Como é o seu irmão ?", meaning: "Perguntar a descrição."),
+                            ExampleLine(text: "Ele é simpático e divertido.", meaning: "ser + adjetivo."),
+                            ExampleLine(text: "Minha prima é tímida.", meaning: "fem: tímida."),
+                            ExampleLine(text: "O Rafael é muito trabalhador.", meaning: "muito + adjetivo."),
+                            ExampleLine(text: "Ela não é tímida, é extrovertida.", meaning: "não é + adjetivo.")]),
+                expressions: [
+                            TargetExpression(text: "Como ele é ?", meaning: "Perguntar a descrição.", note: "Como é a sua amiga ?"),
+                            TargetExpression(text: "simpático / simpática", meaning: "Amable.", note: "O vizinho é simpático."),
+                            TargetExpression(text: "tímido / tímida", meaning: "Reservado.", note: "A Ana é tímida."),
+                            TargetExpression(text: "trabalhador / trabalhadora", meaning: "Trabaja mucho.", note: "Meu pai é trabalhador."),
+                            TargetExpression(text: "muito + adjetivo", meaning: "Intensidade.", note: "muito simpático.")],
+                situation: "A Bia pergunta do irmão novo da Ana: ele é tímido, mas muito simpático.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Descreva o seu irmão: simpático.", expected: ["Meu irmão é simpático.", "meu irmao e simpatico"], focus: "ser + adjetivo", watch: "simpático com acento."),
+                                PracticeQuestion(prompt: "Diga que a sua prima é tímida.", expected: ["Minha prima é tímida.", "minha prima e timida"], focus: "tímida", watch: "fem: tímida."),
+                                PracticeQuestion(prompt: "Pergunte como é o amigo novo.", expected: ["Como é o amigo novo ?", "como e o amigo novo"], focus: "Como é … ?", watch: "Como + é."),
+                                PracticeQuestion(prompt: "Diga que o Pedro é muito trabalhador.", expected: ["O Pedro é muito trabalhador.", "o pedro e muito trabalhador"], focus: "muito + adjetivo", watch: "muito antes do adjetivo."),
+                                PracticeQuestion(prompt: "Diga que a Ana não é tímida.", expected: ["A Ana não é tímida.", "a ana nao e timida"], focus: "não é", watch: "não é = no es.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u12-amigos-e1", kind: "choice", prompt: "O meu primo é muito ___. Ele fala com todo o mundo.", options: ["extrovertido", "tímido", "quieto", "triste"], answers: ["extrovertido"], explain: "Quem fala com todo o mundo é extrovertido; é o contrário de tímido."),
+                            Exercise(id: "pt-foundations-u12-amigos-e2", kind: "gap", prompt: "A minha colega é ___. Ela estuda e trabalha muito.", options: [], answers: ["trabalhadora"], explain: "Ela trabalha muito: trabalhadora (fem)."),
+                            Exercise(id: "pt-foundations-u12-amigos-e3", kind: "order", prompt: "Pergunte a descrição do irmão dela.", options: [], answers: ["Como e o irmao dela"], explain: "Como + é + pessoa: pergunta de descrição."),
+                            Exercise(id: "pt-foundations-u12-amigos-e4", kind: "written", prompt: "Descreva a sua amiga: simpática e inteligente.", options: [], answers: ["A minha amiga é simpática e inteligente.", "minha amiga e simpatica e inteligente"], explain: "ser + dois adjetivos no feminino.")], skills: ["function:describe-people", "grammar:present-simple", "vocab:feelings", "function:ask-simple-questions"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u12-ligacao", title: "Uma ligação", goal: "Falar ao telefone: Está… ?, não está, ligo mais tarde.",
+                intro: LessonIntro(explanation: [
+                            "Ao telefone: « Está o Pedro ? ». A resposta: « Ele não está agora. Quer deixar recado ? ».",
+                            "Perguntas com o verbo no começo: « Onde você está ? », « Você pode falar agora ? ».",
+                            "Soluções: « Ligo mais tarde » (llamo más tarde) ou « Manda mensagem para ele »."], examples: [
+                            ExampleLine(text: "Alô ? Está a Marina ?", meaning: "Atender e perguntar."),
+                            ExampleLine(text: "Ela não está agora.", meaning: "não está = no está."),
+                            ExampleLine(text: "Onde você está ?", meaning: "Perguntar o lugar."),
+                            ExampleLine(text: "Eu ligo mais tarde.", meaning: "ligo = llamo."),
+                            ExampleLine(text: "Quer deixar um recado ?", meaning: "Oferecer ajuda.")]),
+                expressions: [
+                            TargetExpression(text: "Alô ?", meaning: "Atender o telefone.", note: "Alô ? Quem fala ?"),
+                            TargetExpression(text: "Está … ?", meaning: "Perguntar se a pessoa está.", note: "Está o Pedro ?"),
+                            TargetExpression(text: "não está", meaning: "A pessoa não está.", note: "Ele não está agora."),
+                            TargetExpression(text: "ligo mais tarde", meaning: "Llamo después.", note: "Ligo mais tarde, obrigado."),
+                            TargetExpression(text: "deixar um recado", meaning: "Dejar un mensaje.", note: "Quer deixar recado ?")],
+                situation: "A Ana liga para o Rafa, mas ele não está: a mãe atende e ela liga mais tarde.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Atenda o telefone.", expected: ["Alô ?", "alo"], focus: "alô", watch: "Alô com acento."),
+                                PracticeQuestion(prompt: "Pergunte se o Pedro está.", expected: ["Está o Pedro ?", "O Pedro está ?", "esta o pedro"], focus: "Está … ?", watch: "Está no começo da pergunta."),
+                                PracticeQuestion(prompt: "Diga que a Marina não está agora.", expected: ["A Marina não está agora.", "a marina nao esta agora"], focus: "não está", watch: "não está = no está."),
+                                PracticeQuestion(prompt: "Diga que você liga mais tarde.", expected: ["Eu ligo mais tarde.", "Ligo mais tarde.", "eu ligo mais tarde"], focus: "ligo mais tarde", watch: "ligo = llamo."),
+                                PracticeQuestion(prompt: "Pergunte se a pessoa quer deixar um recado.", expected: ["Quer deixar um recado ?", "quer deixar recado"], focus: "deixar recado", watch: "recado = mensaje.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u12-ligacao-e1", kind: "choice", prompt: "Alô ? ___ o Rafa ?", options: ["Está", "É", "Faz", "Vai"], answers: ["Está"], explain: "Ao telefone: Está o Rafa ? — pergunta com « está » no começo."),
+                            Exercise(id: "pt-foundations-u12-ligacao-e2", kind: "gap", prompt: "O Pedro não ___ agora. Ele volta às seis.", options: [], answers: ["está", "esta"], explain: "não está = no está agora."),
+                            Exercise(id: "pt-foundations-u12-ligacao-e3", kind: "order", prompt: "Diga que você chama de volta depois.", options: [], answers: ["Eu ligo mais tarde"], explain: "ligo + mais tarde: voltar a ligar."),
+                            Exercise(id: "pt-foundations-u12-ligacao-e4", kind: "written", prompt: "Pergunte sobre um recado para a Marina.", options: [], answers: ["Quer deixar um recado ?", "quer deixar um recado"], explain: "Quer + deixar + recado ?")], skills: ["vocab:social-expressions", "grammar:present-questions", "function:ask-simple-questions", "grammar:present-simple"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum PtFoundationsU13 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u13", title: "O tempo", subtitle: "Dias e clima", level: "A1", themes: [
+                    ConversationTheme("tempo-dias", "O dia a dia", "Rotina e hábitos", "sun.max", "Course", "O Leo conta o dia dele: acorda cedo, toma café com pressa e nunca chega tarde.", 0),
+                    ConversationTheme("tempo-clima", "O clima", "Sol, chuva e estações", "cloud.rain", "Course", "Chove no sábado: o grupo troca o passeio pelo chocolate quente em casa.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u13-rotina", title: "Da manhã à noite", goal: "Falar da rotina com sempre, muitas vezes, às vezes e nunca.",
+                intro: LessonIntro(explanation: [
+                            "A rotina no presente: « Eu acordo às sete. Tomo café às oito. Trabalho de manhã ».",
+                            "Frequência: « sempre » (100%), « muitas vezes » (muchas veces), « às vezes » (a veces), « nunca » (0%).",
+                            "O advérbio vai antes do verbo: « Sempre tomo café », « Nunca como tarde »."], examples: [
+                            ExampleLine(text: "Eu acordo às sete.", meaning: "acordar = despertar."),
+                            ExampleLine(text: "Sempre tomo café de manhã.", meaning: "sempre = siempre."),
+                            ExampleLine(text: "Muitas vezes almoço em casa.", meaning: "muitas vezes = muchas veces."),
+                            ExampleLine(text: "Às vezes leio à noite.", meaning: "às vezes = a veces."),
+                            ExampleLine(text: "Nunca como tarde.", meaning: "nunca = 0%.")]),
+                expressions: [
+                            TargetExpression(text: "sempre", meaning: "100% das vezes.", note: "Sempre tomo café."),
+                            TargetExpression(text: "muitas vezes", meaning: "Muchas veces.", note: "Muitas vezes como em casa."),
+                            TargetExpression(text: "às vezes", meaning: "A veces.", note: "Às vezes saio à noite."),
+                            TargetExpression(text: "nunca", meaning: "0%, jamás.", note: "Nunca como tarde."),
+                            TargetExpression(text: "acordar", meaning: "Despertar.", note: "Acordo às sete.")],
+                situation: "O Leo conta o dia dele: acorda cedo, toma café com pressa e nunca chega tarde.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que você sempre toma café de manhã.", expected: ["Sempre tomo café de manhã.", "sempre tomo cafe da manha"], focus: "sempre", watch: "sempre antes do verbo."),
+                                PracticeQuestion(prompt: "Diga que você nunca janta tarde.", expected: ["Nunca janto tarde.", "nunca janto tarde"], focus: "nunca", watch: "nunca + verbo, sem « não »."),
+                                PracticeQuestion(prompt: "Diga que às vezes você lê à noite.", expected: ["Às vezes leio à noite.", "as vezes leio a noite"], focus: "às vezes", watch: "às vezes = a veces."),
+                                PracticeQuestion(prompt: "Diga a que horas você acorda: às sete.", expected: ["Acordo às sete.", "acordo as sete"], focus: "acordar", watch: "às + hora."),
+                                PracticeQuestion(prompt: "Diga que muitas vezes você almoça em casa.", expected: ["Muitas vezes almoço em casa.", "muitas vezes almoco em casa"], focus: "muitas vezes", watch: "muitas vezes = muchas veces.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u13-rotina-e1", kind: "choice", prompt: "Eu ___ como tarde: é ruim dormir cheio.", options: ["nunca", "sempre", "muitas vezes"], answers: ["nunca"], explain: "nunca = 0%: a pessoa não come tarde."),
+                            Exercise(id: "pt-foundations-u13-rotina-e2", kind: "gap", prompt: "Eu acordo às sete e ___ tomo café. (100%)", options: [], answers: ["sempre"], explain: "100% das vezes = sempre."),
+                            Exercise(id: "pt-foundations-u13-rotina-e3", kind: "order", prompt: "Diga o que você nunca faz com o jantar.", options: [], answers: ["Eu nunca como tarde"], explain: "nunca + como + tarde: frequência zero."),
+                            Exercise(id: "pt-foundations-u13-rotina-e4", kind: "written", prompt: "Conte a sua manhã: acordar às sete e tomar café.", options: [], answers: ["Acordo às sete e tomo café.", "acordo as sete e tomo cafe"], explain: "Duas ações da rotina no presente.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:daily-routine", "grammar:present-simple"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u13-clima", title: "Que tempo faz ?", goal: "Falar do clima e das estações: faz calor, chove, neva.",
+                intro: LessonIntro(explanation: [
+                            "Perguntar o tempo: « Como está o tempo ? ». Responder com « está »: « Está quente », « Está frio ».",
+                            "Verbos do clima: « chove » (llueve), « neva » (nieva), « faz calor/frio ». « Hoje chove muito ».",
+                            "As estações: « o verão, o outono, o inverno, a primavera ». « No inverno faz frio »."], examples: [
+                            ExampleLine(text: "Como está o tempo hoje ?", meaning: "Perguntar."),
+                            ExampleLine(text: "Está quente e ensolarado.", meaning: "está + tempo."),
+                            ExampleLine(text: "Hoje chove em São Paulo.", meaning: "chove = llueve."),
+                            ExampleLine(text: "No inverno faz frio.", meaning: "faz frio = hace frío."),
+                            ExampleLine(text: "No verão vou à praia.", meaning: "a estação quente.")]),
+                expressions: [
+                            TargetExpression(text: "Como está o tempo ?", meaning: "Perguntar el clima.", note: "Como está o tempo hoje ?"),
+                            TargetExpression(text: "faz calor / faz frio", meaning: "Hace calor / frío.", note: "Hoje faz calor."),
+                            TargetExpression(text: "chove / neva", meaning: "Llueve / nieva.", note: "Chove muito em abril."),
+                            TargetExpression(text: "está quente / frio", meaning: "Temperatura agora.", note: "A água está fria."),
+                            TargetExpression(text: "as estações", meaning: "Las estaciones del año.", note: "verão, outono, inverno, primavera.")],
+                situation: "Chove no sábado: o grupo do passeio decide ficar em casa e ver um filme.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pergunte o tempo de hoje.", expected: ["Como está o tempo hoje ?", "como esta o tempo hoje"], focus: "Como está o tempo ?", watch: "está com acento."),
+                                PracticeQuestion(prompt: "Diga que hoje faz calor.", expected: ["Hoje faz calor.", "hoje faz calor"], focus: "faz calor", watch: "faz calor = hace calor."),
+                                PracticeQuestion(prompt: "Diga que chove muito hoje.", expected: ["Hoje chove muito.", "chove muito hoje"], focus: "chove", watch: "chove = llueve."),
+                                PracticeQuestion(prompt: "Diga que no inverno faz frio.", expected: ["No inverno faz frio.", "no inverno faz frio"], focus: "faz frio", watch: "no inverno = en invierno."),
+                                PracticeQuestion(prompt: "Pergunte se está frio hoje.", expected: ["Está frio hoje ?", "esta frio hoje"], focus: "está + frio", watch: "pergunta com « está » no começo.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u13-clima-e1", kind: "choice", prompt: "No verão ___ muito calor no Rio de Janeiro.", options: ["faz", "chove", "neva"], answers: ["faz"], explain: "faz calor = hace calor: expressão fixa do clima."),
+                            Exercise(id: "pt-foundations-u13-clima-e2", kind: "gap", prompt: "Hoje ___ muito: pega o guarda-chuva.", options: [], answers: ["chove"], explain: "Água do céu: chove."),
+                            Exercise(id: "pt-foundations-u13-clima-e3", kind: "order", prompt: "Diga o clima do inverno aqui. (frio)", options: [], answers: ["No inverno faz frio aqui"], explain: "No + inverno + faz frio: estação + clima."),
+                            Exercise(id: "pt-foundations-u13-clima-e4", kind: "written", prompt: "Diga o tempo de hoje: quente e ensolarado.", options: [], answers: ["Hoje está quente e ensolarado.", "hoje esta quente e ensolarado"], explain: "Hoje + está + dois adjetivos do clima.")], skills: ["function:talk-about-weather", "vocab:weather", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["talk-about-weather"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u13-gostos", title: "O que eu gosto", goal: "Dizer o que você gosta: gosto de + infinitivo ou substantivo.",
+                intro: LessonIntro(explanation: [
+                            "« Gostar » pede « de »: « Eu gosto de música ». « Gosto de dançar » (bailar).",
+                            "Depois de « de », verbo no infinitivo: « gosto de ler, de cozinhar, de caminhar ».",
+                            "Negativo: « Não gosto de frio ». Perguntar: « O que você gosta de fazer ? »."], examples: [
+                            ExampleLine(text: "Eu gosto de música brasileira.", meaning: "gosto de + substantivo."),
+                            ExampleLine(text: "Gosto de ler à noite.", meaning: "gosto de + infinitivo."),
+                            ExampleLine(text: "Minha irmã gosta de cozinhar.", meaning: "gosta (ela)."),
+                            ExampleLine(text: "Não gosto de frio.", meaning: "não gosto de."),
+                            ExampleLine(text: "O que você gosta de fazer ?", meaning: "Perguntar gostos.")]),
+                expressions: [
+                            TargetExpression(text: "gosto de …", meaning: "Me gusta…", note: "Gosto de praia."),
+                            TargetExpression(text: "não gosto de …", meaning: "No me gusta…", note: "Não gosto de frio."),
+                            TargetExpression(text: "gosta de … ?", meaning: "Perguntar o gosto dele/dela.", note: "O que ela gosta de fazer ?"),
+                            TargetExpression(text: "ler", meaning: "Leer.", note: "Gosto de ler."),
+                            TargetExpression(text: "caminhar", meaning: "Caminar.", note: "Gosto de caminhar no parque.")],
+                situation: "Cada amigo do grupo conta o que gosta de fazer no tempo livre: ler, cozinhar, caminhar.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que você gosta de música.", expected: ["Gosto de música.", "gosto de musica"], focus: "gosto de", watch: "gosto + de."),
+                                PracticeQuestion(prompt: "Diga que você gosta de ler à noite.", expected: ["Gosto de ler à noite.", "gosto de ler a noite"], focus: "gosto de + infinitivo", watch: "ler = leer."),
+                                PracticeQuestion(prompt: "Diga que a sua irmã gosta de cozinhar.", expected: ["Minha irmã gosta de cozinhar.", "minha irma gosta de cozinhar"], focus: "gosta de", watch: "ela gosta."),
+                                PracticeQuestion(prompt: "Diga que você não gosta de frio.", expected: ["Não gosto de frio.", "nao gosto de frio"], focus: "não gosto de", watch: "não antes do verbo."),
+                                PracticeQuestion(prompt: "Pergunte o que a amiga gosta de fazer.", expected: ["O que você gosta de fazer ?", "o que voce gosta de fazer"], focus: "gosta de fazer", watch: "o que + gosta de.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u13-gostos-e1", kind: "choice", prompt: "___ gosto muito de música. (eu)", options: ["Gosto", "Gosta", "Gostam", "Gostamos"], answers: ["Gosto"], explain: "Eu gosto: 1ª pessoa do singular."),
+                            Exercise(id: "pt-foundations-u13-gostos-e2", kind: "gap", prompt: "Ela não gosta ___ esperar.", options: [], answers: ["de"], explain: "gostar de: gosta de + infinitivo."),
+                            Exercise(id: "pt-foundations-u13-gostos-e3", kind: "order", prompt: "Diga um gosto seu. (música)", options: [], answers: ["Eu gosto de musica"], explain: "gosto de + substantivo."),
+                            Exercise(id: "pt-foundations-u13-gostos-e4", kind: "written", prompt: "Fale dos seus gostos: música e ler.", options: [], answers: ["Gosto de música e de ler.", "gosto de musica e de ler"], explain: "Dois gostos com gosto de + substantivo e infinitivo.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
@@ -7326,7 +8226,9 @@ DeFoundationsU7.unit,
 DeFoundationsU8.unit,
 DeFoundationsU9.unit,
 DeFoundationsU10.unit,
-DeFoundationsU11.unit
+DeFoundationsU11.unit,
+DeFoundationsU12.unit,
+DeFoundationsU13.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -7384,7 +8286,9 @@ EsFoundationsU8.unit,
 EsFoundationsU9.unit,
 EsFoundationsU10.unit,
 EsFoundationsU11.unit,
-EsFoundationsU12.unit
+EsFoundationsU12.unit,
+EsFoundationsU13.unit,
+EsFoundationsU14.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
@@ -7397,7 +8301,9 @@ FrFoundationsU7.unit,
 FrFoundationsU8.unit,
 FrFoundationsU9.unit,
 FrFoundationsU10.unit,
-FrFoundationsU11.unit
+FrFoundationsU11.unit,
+FrFoundationsU12.unit,
+FrFoundationsU13.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
@@ -7410,7 +8316,9 @@ ItFoundationsU7.unit,
 ItFoundationsU8.unit,
 ItFoundationsU9.unit,
 ItFoundationsU10.unit,
-ItFoundationsU11.unit
+ItFoundationsU11.unit,
+ItFoundationsU12.unit,
+ItFoundationsU13.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
@@ -7423,7 +8331,9 @@ PtFoundationsU7.unit,
 PtFoundationsU8.unit,
 PtFoundationsU9.unit,
 PtFoundationsU10.unit,
-PtFoundationsU11.unit
+PtFoundationsU11.unit,
+PtFoundationsU12.unit,
+PtFoundationsU13.unit
         ]),
     ]
 }

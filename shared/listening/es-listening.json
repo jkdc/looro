@@ -1590,6 +1590,209 @@
         "function:ask-for-directions"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "es-listen-llamada-abuela",
+      "languageID": "es",
+      "title": "Una llamada a la abuela",
+      "level": "A1",
+      "topic": "familia",
+      "unitID": "es-foundations-u13",
+      "text": "Hablo con mi abuela por teléfono. «¡Hola, abuela! ¿Está el abuelo?». «No está ahora; está en el mercado. ¿Todo bien?». «Sí, abuela. Mi hermana siempre estudia por la noche y a veces cena con nosotros. Nunca tenemos tiempo los viernes». «¿Y tu madre?». «Trabaja mucho, pero llamamos los domingos». «Vale, cariño. Dile al abuelo que llamo más tarde». «Vale, abuela. Un beso».",
+      "questions": [
+        {
+          "id": "es-listen-llamada-abuela-q1",
+          "kind": "choice",
+          "prompt": "¿Con quién habla?",
+          "options": [
+            "Con su abuela",
+            "Con su tío",
+            "Con su madre",
+            "Con su hermana"
+          ],
+          "answers": [
+            "Con su abuela"
+          ],
+          "explain": "Hablo con mi abuela por teléfono."
+        },
+        {
+          "id": "es-listen-llamada-abuela-q2",
+          "kind": "choice",
+          "prompt": "¿Dónde está el abuelo?",
+          "options": [
+            "En el mercado",
+            "En casa",
+            "En el trabajo",
+            "En la calle"
+          ],
+          "answers": [
+            "En el mercado"
+          ],
+          "explain": "No está ahora; está en el mercado."
+        },
+        {
+          "id": "es-listen-llamada-abuela-q3",
+          "kind": "choice",
+          "prompt": "¿Qué hace siempre la hermana?",
+          "options": [
+            "Estudia por la noche",
+            "Cena fuera",
+            "Llama a la abuela",
+            "Trabaja mucho"
+          ],
+          "answers": [
+            "Estudia por la noche"
+          ],
+          "explain": "Mi hermana siempre estudia por la noche."
+        },
+        {
+          "id": "es-listen-llamada-abuela-q4",
+          "kind": "written",
+          "prompt": "¿Qué hace a veces la hermana?",
+          "answers": [
+            "Cena con nosotros",
+            "cena con nosotros",
+            "a veces cena con nosotros"
+          ],
+          "explain": "A veces cena con nosotros."
+        },
+        {
+          "id": "es-listen-llamada-abuela-q5",
+          "kind": "choice",
+          "prompt": "¿Cuándo llaman a la madre?",
+          "options": [
+            "Los domingos",
+            "Los viernes",
+            "Los sábados",
+            "Los lunes"
+          ],
+          "answers": [
+            "Los domingos"
+          ],
+          "explain": "Llamamos los domingos."
+        },
+        {
+          "id": "es-listen-llamada-abuela-q6",
+          "kind": "written",
+          "prompt": "¿Qué va a hacer la abuela con el abuelo?",
+          "answers": [
+            "Llamar más tarde",
+            "llamar mas tarde",
+            "llamar más tarde"
+          ],
+          "explain": "Dile al abuelo que llamo más tarde."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:family",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "es-listen-finde-lluvioso",
+      "languageID": "es",
+      "title": "Un sábado de lluvia",
+      "level": "A1",
+      "topic": "clima",
+      "unitID": "es-foundations-u14",
+      "text": "Hoy es sábado y llueve mucho. Nunca salgo los días de lluvia. Por la mañana veo una serie y a veces leo un libro. Mi hermano siempre juega al fútbol, pero hoy no puede: hace frío y llueve. Por la tarde vamos al cine con nuestros amigos. En esta ciudad llueve mucho en otoño, pero en verano hace sol todos los días. Me gusta el otoño, pero no me gusta la lluvia.",
+      "questions": [
+        {
+          "id": "es-listen-finde-lluvioso-q1",
+          "kind": "choice",
+          "prompt": "¿Qué tiempo hace hoy?",
+          "options": [
+            "Llueve",
+            "Nieva",
+            "Hace sol",
+            "Hace viento"
+          ],
+          "answers": [
+            "Llueve"
+          ],
+          "explain": "Hoy es sábado y llueve mucho."
+        },
+        {
+          "id": "es-listen-finde-lluvioso-q2",
+          "kind": "choice",
+          "prompt": "¿Qué hace el narrador por la mañana?",
+          "options": [
+            "Ve una serie y a veces lee",
+            "Juega al fútbol",
+            "Va al cine",
+            "Sale con amigos"
+          ],
+          "answers": [
+            "Ve una serie y a veces lee"
+          ],
+          "explain": "Por la mañana veo una serie y a veces leo un libro."
+        },
+        {
+          "id": "es-listen-finde-lluvioso-q3",
+          "kind": "written",
+          "prompt": "¿Por qué no puede jugar al fútbol el hermano?",
+          "answers": [
+            "Porque llueve",
+            "porque hace frío",
+            "porque hace frio",
+            "porque llueve y hace frío"
+          ],
+          "explain": "Hace frío y llueve."
+        },
+        {
+          "id": "es-listen-finde-lluvioso-q4",
+          "kind": "choice",
+          "prompt": "¿Adónde van por la tarde?",
+          "options": [
+            "Al cine",
+            "A la piscina",
+            "Al mercado",
+            "A la montaña"
+          ],
+          "answers": [
+            "Al cine"
+          ],
+          "explain": "Por la tarde vamos al cine."
+        },
+        {
+          "id": "es-listen-finde-lluvioso-q5",
+          "kind": "choice",
+          "prompt": "¿Cómo es el verano en esta ciudad?",
+          "options": [
+            "Hace sol todos los días",
+            "Llueve todos los días",
+            "Nieva mucho",
+            "Hace frío"
+          ],
+          "answers": [
+            "Hace sol todos los días"
+          ],
+          "explain": "En verano hace sol todos los días."
+        },
+        {
+          "id": "es-listen-finde-lluvioso-q6",
+          "kind": "written",
+          "prompt": "¿Qué estación le gusta?",
+          "answers": [
+            "El otoño",
+            "el otoño",
+            "el otono"
+          ],
+          "explain": "Me gusta el otoño."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:weather",
+        "function:talk-about-weather",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
     }
   ]
 }

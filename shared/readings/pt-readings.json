@@ -682,6 +682,102 @@
           "explain": "Trabalho de manhã e leio à noite."
         }
       ]
+    },
+    {
+      "id": "pt-read-mensagem-grupo",
+      "languageID": "pt",
+      "title": "Mensagens do grupo para o fim de semana",
+      "level": "A1",
+      "topic": "fim de semana",
+      "unitID": "pt-foundations-u13",
+      "text": "Mensagens do grupo « Os amigos ». Ana: Chove no sábado ! O que a gente faz ? Leo: Eu caminho de manhã, mas só quando não chove. Bia: Eu gosto de filmes. Vem para casa ! Leo: Boa ! Eu levo o bolo. Nunca como doce, mas sábado é dia. Ana: Eu não gosto de frio. Levo o suco. Até sábado !",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:hobbies",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-mensagem-grupo-q1",
+          "kind": "choice",
+          "prompt": "Como está o tempo no sábado?",
+          "options": [
+            "Chove",
+            "Faz calor",
+            "Neva",
+            "Está quente"
+          ],
+          "answers": [
+            "Chove"
+          ],
+          "explain": "Ana: Chove no sábado !"
+        },
+        {
+          "id": "pt-read-mensagem-grupo-q2",
+          "kind": "choice",
+          "prompt": "Quando o Leo caminha?",
+          "options": [
+            "De manhã",
+            "À noite",
+            "À tarde",
+            "Nunca"
+          ],
+          "answers": [
+            "De manhã"
+          ],
+          "explain": "Eu caminho de manhã, mas só quando não chove."
+        },
+        {
+          "id": "pt-read-mensagem-grupo-q3",
+          "kind": "choice",
+          "prompt": "O que a Bia gosta de fazer?",
+          "options": [
+            "Ver filmes",
+            "Cozinhar",
+            "Caminhar",
+            "Ler"
+          ],
+          "answers": [
+            "Ver filmes"
+          ],
+          "explain": "Bia: Eu gosto de filmes. Vem para casa !"
+        },
+        {
+          "id": "pt-read-mensagem-grupo-q4",
+          "kind": "written",
+          "prompt": "O que o Leo leva para a casa da Bia?",
+          "answers": [
+            "o bolo",
+            "ele leva o bolo",
+            "levo o bolo"
+          ],
+          "explain": "Eu levo o bolo, diz o Leo."
+        },
+        {
+          "id": "pt-read-mensagem-grupo-q5",
+          "kind": "written",
+          "prompt": "O que a Ana leva?",
+          "answers": [
+            "o suco",
+            "ela leva o suco",
+            "levo o suco"
+          ],
+          "explain": "Levo o suco, diz a Ana."
+        },
+        {
+          "id": "pt-read-mensagem-grupo-q6",
+          "kind": "written",
+          "prompt": "O que o Leo nunca come?",
+          "answers": [
+            "doce",
+            "doce nunca",
+            "nunca como doce"
+          ],
+          "explain": "Nunca como doce, mas sábado é dia."
+        }
+      ]
     }
   ]
 }

@@ -1609,6 +1609,209 @@
         "vocab:town"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "it-listen-chiamata-nonna",
+      "languageID": "it",
+      "title": "Una chiamata alla nonna",
+      "level": "A1",
+      "topic": "famiglia",
+      "unitID": "it-foundations-u12",
+      "text": "Luca telefona alla nonna. « Pronto, nonna ! Sono Luca. C'è il nonno ? » « Sì, è in giardino con il gatto. E tu, come va ? » « Bene, nonna. La mattina lavoro e la sera cucino sempre con Sara. » « Molto bene ! E Giulia, com'è ? » « Giulia è simpatica, ma è un po' timida. Domenica vengo a trovare voi. » « D'accordo, a domenica ! Ora chiamo il nonno. »",
+      "questions": [
+        {
+          "id": "it-listen-chiamata-nonna-q1",
+          "kind": "choice",
+          "prompt": "Chi telefona alla nonna ?",
+          "options": [
+            "Luca",
+            "Marco",
+            "Il nonno",
+            "Sara"
+          ],
+          "answers": [
+            "Luca"
+          ],
+          "explain": "« Pronto, nonna ! Sono Luca »."
+        },
+        {
+          "id": "it-listen-chiamata-nonna-q2",
+          "kind": "choice",
+          "prompt": "Dov'è il nonno ?",
+          "options": [
+            "In giardino",
+            "Al lavoro",
+            "In cucina",
+            "A letto"
+          ],
+          "answers": [
+            "In giardino"
+          ],
+          "explain": "« Sì, è in giardino con il gatto »."
+        },
+        {
+          "id": "it-listen-chiamata-nonna-q3",
+          "kind": "written",
+          "prompt": "Cosa fa Luca la sera, sempre ?",
+          "answers": [
+            "cucino con Sara",
+            "cucina con Sara",
+            "cucino"
+          ],
+          "explain": "« La sera cucino sempre con Sara »."
+        },
+        {
+          "id": "it-listen-chiamata-nonna-q4",
+          "kind": "choice",
+          "prompt": "Com'è Giulia ?",
+          "options": [
+            "Simpatica ma un po' timida",
+            "Timida e seria",
+            "Sempre allegra",
+            "Molto lavoratrice"
+          ],
+          "answers": [
+            "Simpatica ma un po' timida"
+          ],
+          "explain": "« Giulia è simpatica, ma è un po' timida »."
+        },
+        {
+          "id": "it-listen-chiamata-nonna-q5",
+          "kind": "written",
+          "prompt": "Quando va dai nonni Luca ?",
+          "answers": [
+            "Domenica",
+            "domenica",
+            "La domenica"
+          ],
+          "explain": "« Domenica vengo a trovare voi »."
+        },
+        {
+          "id": "it-listen-chiamata-nonna-q6",
+          "kind": "choice",
+          "prompt": "Cosa dice la nonna alla fine ?",
+          "options": [
+            "Richiama il nonno",
+            "Esce con il gatto",
+            "Cucina con Sara",
+            "Guarda la TV"
+          ],
+          "answers": [
+            "Richiama il nonno"
+          ],
+          "explain": "« Ora chiamo il nonno »."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:family",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-weekend-piovoso",
+      "languageID": "it",
+      "title": "Un weekend piovoso",
+      "level": "A1",
+      "topic": "meteo",
+      "unitID": "it-foundations-u13",
+      "text": "È sabato e piove. Anna guarda la finestra: che tempo fa ? Fa freddo e piove ancora. Marco telefona: « Che noia, non usciamo ! » « D'accordo, » dice Anna. « Di solito il sabato corro al parco, ma oggi no. Quando piove, qualche volta leggo. E tu ? » « Io guardo spesso dei film, » risponde Marco. « Domenica fa bel tempo: andiamo al parco ! »",
+      "questions": [
+        {
+          "id": "it-listen-weekend-piovoso-q1",
+          "kind": "choice",
+          "prompt": "Che tempo fa sabato ?",
+          "options": [
+            "Piove e fa freddo",
+            "C'è il sole",
+            "Nevica",
+            "Fa caldo"
+          ],
+          "answers": [
+            "Piove e fa freddo"
+          ],
+          "explain": "« Fa freddo e piove ancora »."
+        },
+        {
+          "id": "it-listen-weekend-piovoso-q2",
+          "kind": "written",
+          "prompt": "Cosa fa di solito Anna il sabato ?",
+          "answers": [
+            "corro al parco",
+            "corre al parco",
+            "correre al parco"
+          ],
+          "explain": "« Di solito il sabato corro al parco »."
+        },
+        {
+          "id": "it-listen-weekend-piovoso-q3",
+          "kind": "choice",
+          "prompt": "Cosa fa Anna qualche volta quando piove ?",
+          "options": [
+            "Legge",
+            "Corre",
+            "Guarda i film",
+            "Dorme"
+          ],
+          "answers": [
+            "Legge"
+          ],
+          "explain": "« Quando piove, qualche volta leggo »."
+        },
+        {
+          "id": "it-listen-weekend-piovoso-q4",
+          "kind": "written",
+          "prompt": "Cosa fa spesso Marco ?",
+          "answers": [
+            "guardo dei film",
+            "guarda dei film",
+            "guarda film"
+          ],
+          "explain": "« Io guardo spesso dei film »."
+        },
+        {
+          "id": "it-listen-weekend-piovoso-q5",
+          "kind": "choice",
+          "prompt": "Cosa decidono per domenica ?",
+          "options": [
+            "Andare al parco",
+            "Stare a casa",
+            "Andare al mare",
+            "Cucinare"
+          ],
+          "answers": [
+            "Andare al parco"
+          ],
+          "explain": "« Domenica fa bel tempo: andiamo al parco »."
+        },
+        {
+          "id": "it-listen-weekend-piovoso-q6",
+          "kind": "choice",
+          "prompt": "Perché Anna non corre al parco oggi ?",
+          "options": [
+            "Perché piove",
+            "Perché lavora",
+            "Perché legge",
+            "Perché è stanca"
+          ],
+          "answers": [
+            "Perché piove"
+          ],
+          "explain": "Oggi no: piove e fa freddo."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:weather",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs",
+        "function:talk-about-weather"
+      ],
+      "exposureSkills": []
     }
   ]
 }

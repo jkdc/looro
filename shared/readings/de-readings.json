@@ -671,6 +671,92 @@
           "explain": "Ich bin ruhig und ordentlich."
         }
       ]
+    },
+    {
+      "id": "de-read-nachricht-gruppe",
+      "languageID": "de",
+      "title": "Nachrichten fürs Wochenende",
+      "level": "A1",
+      "topic": "Wochenende",
+      "unitID": "de-foundations-u13",
+      "text": "Gruppe „Wochenende“ — Kim: Es regnet am Samstag. Ich bleibe zu Hause und lese. Ich lese immer am Wochenende. Sam: Ich koche gern. Wer kommt zum Essen ? Wir kochen um 18 Uhr. Mia: Ich bin dabei! Ich spiele oft Volleyball, aber am Samstag nie. Im Sommer spiele ich jeden Tag. Sam: Super. Bis Samstag! — Kim: Ich komme auch. Bis dann!",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:hobbies",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-nachricht-gruppe-q1",
+          "kind": "choice",
+          "prompt": "Wie ist das Wetter am Samstag ?",
+          "explain": "Kim: Es regnet am Samstag.",
+          "options": [
+            "Es regnet",
+            "Es schneit",
+            "Es ist sonnig",
+            "Es ist warm"
+          ],
+          "answers": [
+            "Es regnet"
+          ]
+        },
+        {
+          "id": "de-read-nachricht-gruppe-q2",
+          "kind": "written",
+          "prompt": "Was macht Mia oft ?",
+          "explain": "Ich spiele oft Volleyball, aber am Samstag nie.",
+          "answers": [
+            "volleyball",
+            "sie spielt volleyball",
+            "volleyball spielen"
+          ]
+        },
+        {
+          "id": "de-read-nachricht-gruppe-q3",
+          "kind": "choice",
+          "prompt": "Wann kocht Sam ?",
+          "explain": "Wir kochen um 18 Uhr.",
+          "options": [
+            "Um 18 Uhr",
+            "Um 8 Uhr",
+            "Am Morgen",
+            "Um 20 Uhr"
+          ],
+          "answers": [
+            "Um 18 Uhr"
+          ]
+        },
+        {
+          "id": "de-read-nachricht-gruppe-q4",
+          "kind": "written",
+          "prompt": "Was macht Kim immer am Wochenende ?",
+          "explain": "Ich lese immer am Wochenende.",
+          "answers": [
+            "lesen",
+            "sie liest",
+            "kim liest"
+          ]
+        },
+        {
+          "id": "de-read-nachricht-gruppe-q5",
+          "kind": "choice",
+          "prompt": "Wer kommt zum Essen ?",
+          "explain": "Mia: Ich bin dabei! — Kim: Ich komme auch.",
+          "options": [
+            "Kim und Mia",
+            "Nur Mia",
+            "Niemand",
+            "Sam und Kim"
+          ],
+          "answers": [
+            "Kim und Mia"
+          ]
+        }
+      ]
     }
   ]
 }

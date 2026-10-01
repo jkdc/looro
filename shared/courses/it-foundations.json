@@ -4776,6 +4776,1092 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-foundations-u12",
+      "title": "La mia gente",
+      "subtitle": "Famiglia e amici",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "la-mia-gente-famiglia",
+          "title": "La famiglia",
+          "subtitle": "Ho uno zio",
+          "symbol": "figure-2",
+          "category": "Course",
+          "situation": "Una cena in famiglia: la sorella, i genitori e lo zio di Napoli — e tu presenti le persone.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-mia-gente-amici",
+          "title": "Amici e carattere",
+          "subtitle": "È simpatico",
+          "symbol": "heart",
+          "category": "Course",
+          "situation": "Una festa con gli amici: chi è simpatico, chi è timido — e tu descrivi le persone.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u12-famiglia",
+          "title": "La mia famiglia",
+          "goal": "Presentare la famiglia: i membri, mio/mia e « ho uno zio ».",
+          "intro": {
+            "explanation": [
+              "I membri della famiglia: « il padre, la madre, il fratello, la sorella. » Papà e mamma sono più informali.",
+              "Il possessivo dice di chi è la persona: « mio fratello, mia sorella, i miei genitori, le mie cugine. » Mio per il maschile, mia per il femminile, miei/mie per il plurale.",
+              "Con avere presenti un parente: « Ho due cugini. Ho uno zio a Napoli. » Davanti a z si usa uno: uno zio, uno studente."
+            ],
+            "examples": [
+              {
+                "text": "Questa è mia sorella.",
+                "meaning": "mia + persona femminile."
+              },
+              {
+                "text": "Mio fratello si chiama Luca.",
+                "meaning": "mio + persona maschile."
+              },
+              {
+                "text": "I miei genitori abitano a Roma.",
+                "meaning": "Plurale: i miei."
+              },
+              {
+                "text": "Ho uno zio simpatico.",
+                "meaning": "Avere + uno zio."
+              },
+              {
+                "text": "Ho due cugine e un cugino.",
+                "meaning": "I cugini: maschile e femminile."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "il padre / la madre",
+              "meaning": "I genitori.",
+              "note": "Papà e mamma, più informali."
+            },
+            {
+              "text": "il fratello / la sorella",
+              "meaning": "I fratelli.",
+              "note": "Plurale: i fratelli, le sorelle."
+            },
+            {
+              "text": "mio / mia / miei / mie",
+              "meaning": "Il possessivo.",
+              "note": "Mio fratello, mia sorella, i miei amici."
+            },
+            {
+              "text": "Ho uno zio.",
+              "meaning": "Avere + un parente.",
+              "note": "Uno davanti a z: uno zio, uno studente."
+            },
+            {
+              "text": "il cugino / la cugina",
+              "meaning": "I figli di zio e zia.",
+              "note": "Plurale: i cugini, le cugine."
+            }
+          ],
+          "situation": "Una cena di famiglia: presenti la sorella, i genitori e racconti dello zio di Napoli con le foto sul telefono.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Presenta tua sorella: si chiama Giulia.",
+                "expected": [
+                  "Questa è mia sorella, Giulia.",
+                  "Questa e mia sorella, Giulia.",
+                  "Mia sorella si chiama Giulia."
+                ],
+                "focus": "mia sorella",
+                "watch": "Sorella è femminile: mia."
+              },
+              {
+                "prompt": "Presenta tuo fratello: si chiama Marco.",
+                "expected": [
+                  "Mio fratello si chiama Marco.",
+                  "Mio fratello, Marco, ha ventidue anni."
+                ],
+                "focus": "mio fratello",
+                "watch": "Fratello è maschile: mio."
+              },
+              {
+                "prompt": "I tuoi genitori abitano a Milano. Dillo.",
+                "expected": [
+                  "I miei genitori abitano a Milano.",
+                  "I miei genitori vivono a Milano."
+                ],
+                "focus": "i miei",
+                "watch": "Plurale: i miei genitori."
+              },
+              {
+                "prompt": "Hai una zia a Firenze. Dillo con ho.",
+                "expected": [
+                  "Ho una zia a Firenze.",
+                  "Ho una zia a Firenze, vicino al centro."
+                ],
+                "focus": "ho una zia",
+                "watch": "Zia è femminile: una zia."
+              },
+              {
+                "prompt": "Hai anche uno zio a Napoli. Dillo.",
+                "expected": [
+                  "Ho uno zio a Napoli.",
+                  "Ho uno zio che abita a Napoli."
+                ],
+                "focus": "uno zio",
+                "watch": "Uno davanti a z: uno zio."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u12-famiglia-e1",
+              "kind": "choice",
+              "prompt": "___ sorella abita a Bologna.",
+              "options": [
+                "Mia",
+                "Mio",
+                "Miei",
+                "Le"
+              ],
+              "answers": [
+                "Mia"
+              ],
+              "explain": "Sorella è femminile singolare: mia sorella."
+            },
+            {
+              "id": "it-foundations-u12-famiglia-e2",
+              "kind": "gap",
+              "prompt": "Ho ___ zio molto simpatico.",
+              "answers": [
+                "uno"
+              ],
+              "explain": "Zio inizia con z: uno zio."
+            },
+            {
+              "id": "it-foundations-u12-famiglia-e3",
+              "kind": "order",
+              "prompt": "Presenta i tuoi genitori e la loro città.",
+              "answers": [
+                "I miei genitori abitano a Roma"
+              ],
+              "explain": "I miei + nome plurale + verbo + luogo."
+            },
+            {
+              "id": "it-foundations-u12-famiglia-e4",
+              "kind": "written",
+              "prompt": "Presenta tua sorella: si chiama Sara ed è simpatica.",
+              "answers": [
+                "Mia sorella si chiama Sara ed è simpatica.",
+                "Mia sorella si chiama Sara ed e simpatica.",
+                "Questa è mia sorella Sara.",
+                "Questa e mia sorella Sara."
+              ],
+              "explain": "mia + sorella + si chiama + nome."
+            }
+          ],
+          "skills": [
+            "vocab:family",
+            "grammar:possessives",
+            "grammar:present-simple",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        },
+        {
+          "id": "it-foundations-u12-amici",
+          "title": "Com'è ?",
+          "goal": "Descrivere amici e parenti con gli aggettivi: simpatico, timido, lavoratore.",
+          "intro": {
+            "explanation": [
+              "Per descrivere una persona si usa essere + aggettivo: « Marco è simpatico. Giulia è simpatica. » Maschile in -o, femminile in -a.",
+              "Al plurale l'aggettivo cambia: « I miei amici sono simpatici. Le mie amiche sono simpatiche. »",
+              "Aggettivi utili per il carattere: « Luca è timido, non parla molto. Paolo è lavoratore, lavora tanto. » Per chiedere: « Com'è Giulia ? »"
+            ],
+            "examples": [
+              {
+                "text": "Marco è simpatico.",
+                "meaning": "Maschile: simpatico."
+              },
+              {
+                "text": "Giulia è simpatica.",
+                "meaning": "Femminile: simpatica."
+              },
+              {
+                "text": "Luca è un po' timido.",
+                "meaning": "Timido: non parla molto."
+              },
+              {
+                "text": "Paolo è molto lavoratore.",
+                "meaning": "Lavoratore: lavora tanto."
+              },
+              {
+                "text": "Le mie amiche sono gentili.",
+                "meaning": "Plurale femminile: -i / -e."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Com'è … ?",
+              "meaning": "Chiedere il carattere.",
+              "note": "Com'è Marco ? È simpatico."
+            },
+            {
+              "text": "simpatico / simpatica",
+              "meaning": "Gentile, piacevole.",
+              "note": "Plurale: simpatici / simpatiche."
+            },
+            {
+              "text": "timido / timida",
+              "meaning": "Non parla molto.",
+              "note": "Mia cugina è timida."
+            },
+            {
+              "text": "lavoratore / lavoratrice",
+              "meaning": "Lavora molto.",
+              "note": "Paolo è molto lavoratore."
+            },
+            {
+              "text": "un po' …",
+              "meaning": "Un piccolo grado.",
+              "note": "È un po' timido."
+            }
+          ],
+          "situation": "Alla festa di Giulia ci sono amici nuovi: chi è simpatico, chi è timido — e tu descrivi le persone.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Descrivi Marco: piacevole.",
+                "expected": [
+                  "Marco è simpatico.",
+                  "Marco e simpatico."
+                ],
+                "focus": "simpatico",
+                "watch": "Maschile: simpatico."
+              },
+              {
+                "prompt": "Descrivi Anna: piacevole.",
+                "expected": [
+                  "Anna è simpatica.",
+                  "Anna e simpatica."
+                ],
+                "focus": "simpatica",
+                "watch": "Femminile: simpatica."
+              },
+              {
+                "prompt": "Luca non parla molto. Descrivilo.",
+                "expected": [
+                  "Luca è timido.",
+                  "Luca e timido.",
+                  "Luca è un po' timido."
+                ],
+                "focus": "timido",
+                "watch": "Timido = persona riservata."
+              },
+              {
+                "prompt": "Paolo lavora tanto. Descrivilo.",
+                "expected": [
+                  "Paolo è lavoratore.",
+                  "Paolo e lavoratore."
+                ],
+                "focus": "lavoratore",
+                "watch": "Lavoratore = lavora molto."
+              },
+              {
+                "prompt": "Chiedi il carattere di Giulia.",
+                "expected": [
+                  "Com'è Giulia ?",
+                  "Com'e Giulia ?"
+                ],
+                "focus": "com'è",
+                "watch": "Com'è = come + è."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u12-amici-e1",
+              "kind": "choice",
+              "prompt": "Giulia parla con tutti: è molto ___.",
+              "options": [
+                "simpatica",
+                "simpatico",
+                "simpatici",
+                "simpatiche"
+              ],
+              "answers": [
+                "simpatica"
+              ],
+              "explain": "Giulia è femminile singolare: simpatica."
+            },
+            {
+              "id": "it-foundations-u12-amici-e2",
+              "kind": "gap",
+              "prompt": "Luca non parla molto: è ___.",
+              "answers": [
+                "timido"
+              ],
+              "explain": "Timido = persona riservata, che parla poco."
+            },
+            {
+              "id": "it-foundations-u12-amici-e3",
+              "kind": "order",
+              "prompt": "Descrivi due amici simpatici.",
+              "answers": [
+                "Marco e Anna sono simpatici"
+              ],
+              "explain": "Nome + essere + aggettivo plurale."
+            },
+            {
+              "id": "it-foundations-u12-amici-e4",
+              "kind": "written",
+              "prompt": "Descrivi il tuo amico Marco: simpatico e un po' timido.",
+              "answers": [
+                "Marco è simpatico e un po' timido.",
+                "Marco e simpatico e un po timido.",
+                "Marco e simpatico e un po' timido."
+              ],
+              "explain": "essere + due aggettivi per il carattere."
+            }
+          ],
+          "skills": [
+            "function:describe-people",
+            "grammar:present-simple",
+            "vocab:feelings",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u12-chiamata",
+          "title": "Una telefonata",
+          "goal": "Telefonare: pronto ?, c'è … ? e il richiamo dopo.",
+          "intro": {
+            "explanation": [
+              "Al telefono si inizia con « Pronto ? » e ci si presenta: « Pronto, sono Luca. »",
+              "Per chiedere di una persona si usa c'è: « C'è Anna ? » Le risposte: « Sì, un momento » oppure « No, non c'è. »",
+              "Se la persona non c'è, si lascia un messaggio e si richiama: « Posso lasciare un messaggio ? Richiamo dopo. »"
+            ],
+            "examples": [
+              {
+                "text": "Pronto ? Sono Luca.",
+                "meaning": "Ci si presenta al telefono."
+              },
+              {
+                "text": "C'è Maria, per favore ?",
+                "meaning": "Chiedere di una persona."
+              },
+              {
+                "text": "No, non c'è.",
+                "meaning": "La persona non è presente."
+              },
+              {
+                "text": "Un momento, la chiamo.",
+                "meaning": "Chiamare la persona."
+              },
+              {
+                "text": "Richiamo dopo, grazie.",
+                "meaning": "Chiamare più tardi."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Pronto ?",
+              "meaning": "La prima parola al telefono.",
+              "note": "Pronto, sono Carlo."
+            },
+            {
+              "text": "C'è … ?",
+              "meaning": "Chiedere di una persona.",
+              "note": "C'è Maria, per favore ?"
+            },
+            {
+              "text": "Non c'è.",
+              "meaning": "La persona non c'è.",
+              "note": "È uscita."
+            },
+            {
+              "text": "Richiamo dopo.",
+              "meaning": "Chiamo più tardi.",
+              "note": "Richiamo tra dieci minuti."
+            },
+            {
+              "text": "Posso lasciare un messaggio ?",
+              "meaning": "Chiedere di lasciare un messaggio.",
+              "note": "Sì, certo."
+            }
+          ],
+          "situation": "Telefoni a Giulia ma non c'è: sua madre risponde e tu lasci un messaggio e richiami dopo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Rispondi al telefono.",
+                "expected": [
+                  "Pronto ?",
+                  "Pronto, chi è ?",
+                  "Pronto, chi e ?"
+                ],
+                "focus": "pronto",
+                "watch": "Pronto: la prima parola."
+              },
+              {
+                "prompt": "Anna è a casa ? Chiedi al telefono.",
+                "expected": [
+                  "C'è Anna ?",
+                  "C'e Anna ?",
+                  "Pronto, c'e Anna ?"
+                ],
+                "focus": "c'è",
+                "watch": "C'è + nome della persona."
+              },
+              {
+                "prompt": "Anna non è a casa. Dillo.",
+                "expected": [
+                  "Non c'è.",
+                  "Non c'e.",
+                  "Anna non c'e."
+                ],
+                "focus": "non c'è",
+                "watch": "Non c'è = persona assente."
+              },
+              {
+                "prompt": "Dì che chiami più tardi.",
+                "expected": [
+                  "Richiamo dopo.",
+                  "Richiamo più tardi.",
+                  "Richiamo piu tardi."
+                ],
+                "focus": "richiamo",
+                "watch": "Richiamare = chiamare di nuovo."
+              },
+              {
+                "prompt": "Chiedi di lasciare un messaggio.",
+                "expected": [
+                  "Posso lasciare un messaggio ?",
+                  "Le lascio un messaggio.",
+                  "Un messaggio per Giulia."
+                ],
+                "focus": "messaggio",
+                "watch": "Lasciare un messaggio."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u12-chiamata-e1",
+              "kind": "choice",
+              "prompt": "Il telefono suona. Cosa dici per primo ?",
+              "options": [
+                "Pronto",
+                "Grazie",
+                "Piacere",
+                "Scusa"
+              ],
+              "answers": [
+                "Pronto"
+              ],
+              "explain": "Pronto è la prima parola al telefono."
+            },
+            {
+              "id": "it-foundations-u12-chiamata-e2",
+              "kind": "gap",
+              "prompt": "C'___ Anna, per favore ?",
+              "answers": [
+                "è",
+                "e"
+              ],
+              "explain": "C'è = ci + è: si scrive con l'accento."
+            },
+            {
+              "id": "it-foundations-u12-chiamata-e3",
+              "kind": "order",
+              "prompt": "Anna non c'è. Dì che richiami dopo.",
+              "answers": [
+                "La richiamo dopo, grazie"
+              ],
+              "explain": "Richiamare = chiamare di nuovo più tardi."
+            },
+            {
+              "id": "it-foundations-u12-chiamata-e4",
+              "kind": "written",
+              "prompt": "Lascia un messaggio per Maria: tu sei Luca e richiami.",
+              "answers": [
+                "Sono Luca, richiamo dopo.",
+                "Sono Luca, richiamo dopo, grazie.",
+                "Sono Luca e richiamo dopo."
+              ],
+              "explain": "Sono + nome + richiamo dopo."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u13",
+      "title": "Il tempo",
+      "subtitle": "Giorni e meteo",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "il-tempo-settimana",
+          "title": "La settimana",
+          "subtitle": "Sempre, spesso, mai",
+          "symbol": "sun.max",
+          "category": "Course",
+          "situation": "Una giornata tipo: il caffè sempre la mattina, il lavoro, e la sera — qualche volta un film, mai sport.",
+          "colorIndex": 0
+        },
+        {
+          "id": "il-tempo-meteo",
+          "title": "Il meteo",
+          "subtitle": "Che tempo fa ?",
+          "symbol": "cloud.rain",
+          "category": "Course",
+          "situation": "Sabato piove, ma domenica c'è il sole: si decide il weekend guardando il cielo.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u13-routine",
+          "title": "Dal mattino alla sera",
+          "goal": "Raccontare la giornata con sempre, spesso, qualche volta, mai.",
+          "intro": {
+            "explanation": [
+              "La routine si racconta al presente: « La mattina faccio colazione alle sette e vado al lavoro. »",
+              "Gli avverbi di frequenza dicono quante volte: « Bevo sempre un caffè » (ogni giorno), « Spesso torno tardi » (molte volte), « Qualche volta leggo » (a volte), « Non lavoro mai la domenica » (zero volte).",
+              "Posizione: con essere l'avverbio sta dopo, con gli altri verbi prima: « Sono sempre in ufficio alle nove. Esco sempre alle sei. »"
+            ],
+            "examples": [
+              {
+                "text": "La mattina faccio colazione alle sette.",
+                "meaning": "La routine al presente."
+              },
+              {
+                "text": "Bevo sempre un caffè al bar.",
+                "meaning": "Sempre: ogni giorno."
+              },
+              {
+                "text": "Spesso torno a casa tardi.",
+                "meaning": "Spesso: molte volte."
+              },
+              {
+                "text": "Qualche volta leggo la sera.",
+                "meaning": "Qualche volta: a volte."
+              },
+              {
+                "text": "La domenica non lavoro mai.",
+                "meaning": "Mai: zero volte."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "sempre",
+              "meaning": "Ogni volta, il 100%.",
+              "note": "Bevo sempre un caffè."
+            },
+            {
+              "text": "spesso",
+              "meaning": "Molte volte.",
+              "note": "Spesso vado in bici."
+            },
+            {
+              "text": "qualche volta",
+              "meaning": "A volte.",
+              "note": "Qualche volta guardo la TV."
+            },
+            {
+              "text": "(non) … mai",
+              "meaning": "Zero volte.",
+              "note": "Non mangio mai la carne."
+            },
+            {
+              "text": "di mattina / di sera",
+              "meaning": "Le parti della giornata.",
+              "note": "Di sera ceno alle otto."
+            }
+          ],
+          "situation": "Una giornata tipo: sempre il caffè alle sette, spesso in bici, e la sera qualche volta un film, mai sport.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di' la tua routine della mattina: sveglia alle sette.",
+                "expected": [
+                  "Mi sveglio alle sette.",
+                  "Mi alzo alle sette.",
+                  "Faccio colazione alle sette."
+                ],
+                "focus": "routine",
+                "watch": "Presente + ora: alle sette."
+              },
+              {
+                "prompt": "Bevi un caffè ogni giorno. Rispondi con sempre.",
+                "expected": [
+                  "Sì, bevo sempre un caffè.",
+                  "Si, bevo sempre un caffe.",
+                  "Bevo sempre un caffe."
+                ],
+                "focus": "sempre",
+                "watch": "Sempre = ogni giorno."
+              },
+              {
+                "prompt": "Non mangi la carne. Di' la frase con mai.",
+                "expected": [
+                  "Non mangio mai la carne.",
+                  "Mai la carne.",
+                  "La carne non la mangio mai."
+                ],
+                "focus": "non … mai",
+                "watch": "Non … mai insieme."
+              },
+              {
+                "prompt": "A volte vai al cinema. Di' con qualche volta.",
+                "expected": [
+                  "Qualche volta vado al cinema.",
+                  "Qualche volta vado al cinema con amici."
+                ],
+                "focus": "qualche volta",
+                "watch": "Qualche volta = a volte."
+              },
+              {
+                "prompt": "La domenica ? Zero lavoro. Di' con mai.",
+                "expected": [
+                  "La domenica non lavoro mai.",
+                  "Domenica non lavoro mai.",
+                  "La domenica non studio mai."
+                ],
+                "focus": "la domenica",
+                "watch": "La domenica + non … mai."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u13-routine-e1",
+              "kind": "choice",
+              "prompt": "Bevo ___ un caffè la mattina: ogni giorno !",
+              "options": [
+                "sempre",
+                "mai",
+                "spesso",
+                "qualche volta"
+              ],
+              "answers": [
+                "sempre"
+              ],
+              "explain": "Ogni giorno = sempre, il 100% delle volte."
+            },
+            {
+              "id": "it-foundations-u13-routine-e2",
+              "kind": "gap",
+              "prompt": "La domenica non lavoro ___.",
+              "answers": [
+                "mai"
+              ],
+              "explain": "Non … mai = zero volte."
+            },
+            {
+              "id": "it-foundations-u13-routine-e3",
+              "kind": "order",
+              "prompt": "Racconta cosa fai spesso la sera.",
+              "answers": [
+                "Spesso guardo la televisione la sera"
+              ],
+              "explain": "Avverbio + verbo + complemento."
+            },
+            {
+              "id": "it-foundations-u13-routine-e4",
+              "kind": "written",
+              "prompt": "Di' la tua giornata: sveglia alle sette e colazione.",
+              "answers": [
+                "Mi sveglio alle sette e faccio colazione.",
+                "Mi alzo alle sette e faccio colazione.",
+                "Faccio colazione alle sette."
+              ],
+              "explain": "Presente + ore per la routine."
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:daily-routine",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u13-meteo",
+          "title": "Che tempo fa ?",
+          "goal": "Parlare del tempo e delle stagioni: fa caldo, piove, in estate.",
+          "intro": {
+            "explanation": [
+              "Per chiedere: « Che tempo fa ? » Per rispondere si usa fa + aggettivo: « Fa caldo. Fa freddo. Fa bel tempo. »",
+              "Pioggia e neve hanno verbi propri: « Piove, prendi l'ombrello. In inverno nevica. » Con il sole si dice « c'è il sole ».",
+              "Le stagioni: la primavera, l'estate, l'autunno, l'inverno. Con in: « In estate fa caldo. In inverno fa freddo. »"
+            ],
+            "examples": [
+              {
+                "text": "Oggi fa bel tempo.",
+                "meaning": "Una bella giornata."
+              },
+              {
+                "text": "Fa freddo oggi !",
+                "meaning": "Temperatura bassa."
+              },
+              {
+                "text": "Piove, prendi l'ombrello.",
+                "meaning": "Il verbo piovere."
+              },
+              {
+                "text": "In estate fa caldo.",
+                "meaning": "La stagione con in."
+              },
+              {
+                "text": "In inverno nevica in montagna.",
+                "meaning": "Il verbo nevicare."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Che tempo fa ?",
+              "meaning": "La domanda sul meteo.",
+              "note": "Fa bello !"
+            },
+            {
+              "text": "fa caldo / fa freddo",
+              "meaning": "La temperatura.",
+              "note": "Oggi fa molto caldo."
+            },
+            {
+              "text": "piove / nevica",
+              "meaning": "La pioggia e la neve.",
+              "note": "Piove da stamattina."
+            },
+            {
+              "text": "c'è il sole",
+              "meaning": "Una giornata soleggiata.",
+              "note": "C'è il sole, usciamo ?"
+            },
+            {
+              "text": "in estate / in inverno",
+              "meaning": "Le stagioni.",
+              "note": "In inverno nevica in montagna."
+            }
+          ],
+          "situation": "Sabato piove e fa freddo: ombrello e un film a casa. Domenica c'è il sole — si esce !",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi del tempo a un amico.",
+                "expected": [
+                  "Che tempo fa ?",
+                  "Che tempo fa oggi ?"
+                ],
+                "focus": "che tempo fa",
+                "watch": "Fa + tempo."
+              },
+              {
+                "prompt": "Gennaio, zero gradi. Di' il tempo.",
+                "expected": [
+                  "Fa freddo.",
+                  "Fa molto freddo."
+                ],
+                "focus": "fa freddo",
+                "watch": "Fa + freddo."
+              },
+              {
+                "prompt": "Prendi l'ombrello. Perché ? Di' il tempo.",
+                "expected": [
+                  "Piove.",
+                  "Piove molto.",
+                  "Piove, per questo."
+                ],
+                "focus": "piove",
+                "watch": "Piove = cade la pioggia."
+              },
+              {
+                "prompt": "Agosto al mare: trenta gradi. Di' il tempo.",
+                "expected": [
+                  "Fa caldo.",
+                  "Fa molto caldo.",
+                  "Fa caldo al mare."
+                ],
+                "focus": "fa caldo",
+                "watch": "Fa + caldo."
+              },
+              {
+                "prompt": "In quale stagione nevica ? Rispondi.",
+                "expected": [
+                  "Nevica in inverno.",
+                  "In inverno nevica.",
+                  "Nevica d'inverno."
+                ],
+                "focus": "in inverno",
+                "watch": "Le stagioni con in."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u13-meteo-e1",
+              "kind": "choice",
+              "prompt": "Che ___ fa oggi ?",
+              "options": [
+                "tempo",
+                "caldo",
+                "vento",
+                "freddo"
+              ],
+              "answers": [
+                "tempo"
+              ],
+              "explain": "Che tempo fa ? è la domanda sul meteo."
+            },
+            {
+              "id": "it-foundations-u13-meteo-e2",
+              "kind": "gap",
+              "prompt": "Prendi l'ombrello: oggi ___.",
+              "answers": [
+                "piove"
+              ],
+              "explain": "Piove = cade la pioggia."
+            },
+            {
+              "id": "it-foundations-u13-meteo-e3",
+              "kind": "order",
+              "prompt": "Dì il tempo di agosto.",
+              "answers": [
+                "In estate fa molto caldo"
+              ],
+              "explain": "In estate + fa + caldo."
+            },
+            {
+              "id": "it-foundations-u13-meteo-e4",
+              "kind": "written",
+              "prompt": "Di' il tempo di oggi: fa freddo e cade la neve.",
+              "answers": [
+                "Fa freddo e nevica.",
+                "Oggi fa freddo e nevica.",
+                "Fa freddo e nevica oggi."
+              ],
+              "explain": "Fa freddo + nevica: due frasi del meteo."
+            }
+          ],
+          "skills": [
+            "function:talk-about-weather",
+            "vocab:weather",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "talk-about-weather"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u13-gusti",
+          "title": "Cosa mi piace",
+          "goal": "Dire cosa ti piace: mi piace + infinito o sostantivo.",
+          "intro": {
+            "explanation": [
+              "Per le attività si usa mi piace + infinito: « Mi piace leggere. Mi piace cucinare. »",
+              "Con un sostantivo singolare: « Mi piace il caffè. » Con un sostantivo plurale si usa mi piacciono: « Mi piacciono i film. »",
+              "La negazione è non mi piace: « Non mi piace il freddo. » Per rafforzare: « Mi piace molto nuotare. »"
+            ],
+            "examples": [
+              {
+                "text": "Mi piace leggere la sera.",
+                "meaning": "Piace + infinito."
+              },
+              {
+                "text": "Mi piace il gelato.",
+                "meaning": "Piace + singolare."
+              },
+              {
+                "text": "Mi piacciono i film italiani.",
+                "meaning": "Plurale: mi piacciono."
+              },
+              {
+                "text": "Non mi piace il freddo.",
+                "meaning": "La negazione."
+              },
+              {
+                "text": "Mi piace molto nuotare.",
+                "meaning": "Molto rafforza il gusto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mi piace + infinito",
+              "meaning": "Le attività.",
+              "note": "Mi piace camminare."
+            },
+            {
+              "text": "mi piace + singolare",
+              "meaning": "Una cosa.",
+              "note": "Mi piace la musica."
+            },
+            {
+              "text": "mi piacciono + plurale",
+              "meaning": "Più cose.",
+              "note": "Mi piacciono i libri."
+            },
+            {
+              "text": "non mi piace …",
+              "meaning": "La cosa che non ti piace.",
+              "note": "Non mi piace il freddo."
+            },
+            {
+              "text": "anche a me",
+              "meaning": "Essere d'accordo.",
+              "note": "Mi piace il cinema. — Anche a me !"
+            }
+          ],
+          "situation": "Il weekend si avvicina: ti piace leggere e cucinare, ma il freddo no — e con gli amici sei d'accordo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di' che ti piace leggere.",
+                "expected": [
+                  "Mi piace leggere.",
+                  "Mi piace leggere la sera."
+                ],
+                "focus": "mi piace",
+                "watch": "Mi piace + infinito."
+              },
+              {
+                "prompt": "Di' che ti piace la pizza.",
+                "expected": [
+                  "Mi piace la pizza.",
+                  "A me piace la pizza."
+                ],
+                "focus": "mi piace",
+                "watch": "Mi piace + singolare."
+              },
+              {
+                "prompt": "Ti piacciono i film. Di' con piacciono.",
+                "expected": [
+                  "Mi piacciono i film.",
+                  "Mi piacciono i film italiani."
+                ],
+                "focus": "mi piacciono",
+                "watch": "Plurale: mi piacciono."
+              },
+              {
+                "prompt": "Non ti piace il freddo. Di' la negazione.",
+                "expected": [
+                  "Non mi piace il freddo.",
+                  "Non mi piace il freddo d'inverno."
+                ],
+                "focus": "non mi piace",
+                "watch": "Non + mi piace."
+              },
+              {
+                "prompt": "Il tuo amico dice: mi piace il cinema. Concorda.",
+                "expected": [
+                  "Anche a me !",
+                  "Anche a me piace il cinema."
+                ],
+                "focus": "anche a me",
+                "watch": "Anche a me = sono d'accordo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u13-gusti-e1",
+              "kind": "choice",
+              "prompt": "Mi ___ il caffè, tanto !",
+              "options": [
+                "piace",
+                "piacciono",
+                "piaccio",
+                "piacere"
+              ],
+              "answers": [
+                "piace"
+              ],
+              "explain": "Il caffè è singolare: mi piace."
+            },
+            {
+              "id": "it-foundations-u13-gusti-e2",
+              "kind": "gap",
+              "prompt": "Mi ___ i gatti e i cani.",
+              "answers": [
+                "piacciono"
+              ],
+              "explain": "Plurale: mi piacciono i gatti."
+            },
+            {
+              "id": "it-foundations-u13-gusti-e3",
+              "kind": "order",
+              "prompt": "Di' che ti piace fare una cosa la sera.",
+              "answers": [
+                "Mi piace leggere la sera"
+              ],
+              "explain": "Mi piace + infinito + tempo."
+            },
+            {
+              "id": "it-foundations-u13-gusti-e4",
+              "kind": "written",
+              "prompt": "Di' due cose che ti piace fare nel weekend.",
+              "answers": [
+                "Mi piace leggere e cucinare.",
+                "Mi piace nuotare e camminare.",
+                "Mi piace guardare i film e camminare."
+              ],
+              "explain": "Mi piace + due infiniti."
+            }
+          ],
+          "skills": [
+            "vocab:hobbies",
+            "grammar:present-simple",
+            "function:talk-about-routines",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -4703,6 +4703,1085 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u12",
+      "title": "Meine Leute",
+      "subtitle": "Familie und Freunde",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "meine-familie",
+          "title": "Meine Familie",
+          "subtitle": "Wer ist das ?",
+          "symbol": "figure-2",
+          "category": "Course",
+          "situation": "Nadia zeigt Fotos: ihre Mutter, ihr Bruder, ihr Onkel — wer ist wer ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "gute-freunde",
+          "title": "Gute Freunde",
+          "subtitle": "Wie ist er ?",
+          "symbol": "heart",
+          "category": "Course",
+          "situation": "Ihr beschreibt eure Freunde: nett, schüchtern, fleißig. Und dann klingelt das Telefon.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u12-familie",
+          "title": "Meine Familie",
+          "goal": "Familienmitglieder nennen und mit mein und haben sagen, wer zu dir gehört.",
+          "intro": {
+            "explanation": [
+              "Die Familie: die Mutter, der Vater, die Schwester, der Bruder, die Oma, der Opa. Beispiel: „Das ist meine Schwester.“",
+              "mein + Person: „mein Bruder“ (der), „meine Mutter“ (die). Beispiel: „Meine Oma wohnt in Berlin.“",
+              "haben + einen/eine: „Ich habe einen Bruder.“ „Ich habe eine Schwester.“ Beispiel: „Ich habe auch einen Onkel.“"
+            ],
+            "examples": [
+              {
+                "text": "Das ist meine Familie.",
+                "meaning": "Was du zeigst: meine Familie."
+              },
+              {
+                "text": "Ich habe einen Bruder und eine Schwester.",
+                "meaning": "haben + einen (der) / eine (die)."
+              },
+              {
+                "text": "Meine Oma ist 80 Jahre alt.",
+                "meaning": "meine + die Oma."
+              },
+              {
+                "text": "Mein Onkel heißt Karim.",
+                "meaning": "mein + der Onkel."
+              },
+              {
+                "text": "Hast du Geschwister ?",
+                "meaning": "Frage nach der Familie."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "die Mutter / der Vater",
+              "meaning": "Die Eltern.",
+              "note": "Meine Mutter kocht gut."
+            },
+            {
+              "text": "die Schwester / der Bruder",
+              "meaning": "Geschwister.",
+              "note": "Ich habe einen Bruder."
+            },
+            {
+              "text": "die Oma / der Opa",
+              "meaning": "Die Großeltern.",
+              "note": "Mein Opa ist 85."
+            },
+            {
+              "text": "die Tante / der Onkel",
+              "meaning": "Weitere Familie.",
+              "note": "mein Onkel aus Wien"
+            },
+            {
+              "text": "Ich habe …",
+              "meaning": "Sagen, wer zu dir gehört.",
+              "note": "haben + einen / eine: Ich habe eine Tante."
+            }
+          ],
+          "situation": "Nadia zeigt ein Familienfoto: Mutter, Vater, Bruder, Oma — und einen Onkel aus Wien.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Zeigst deine Mutter vor.",
+                "expected": [
+                  "Das ist meine Mutter.",
+                  "das ist meine mutter"
+                ],
+                "focus": "das ist mein …",
+                "watch": "die Mutter: meine Mutter."
+              },
+              {
+                "prompt": "Sagt, wen du hast. (ein Bruder)",
+                "expected": [
+                  "Ich habe einen Bruder.",
+                  "ich habe einen bruder"
+                ],
+                "focus": "haben + einen",
+                "watch": "der Bruder: einen Bruder."
+              },
+              {
+                "prompt": "Sagt, wen du hast. (eine Schwester)",
+                "expected": [
+                  "Ich habe eine Schwester.",
+                  "ich habe eine schwester"
+                ],
+                "focus": "haben + eine",
+                "watch": "die Schwester: eine Schwester."
+              },
+              {
+                "prompt": "Fragst, ob jemand Geschwister hat.",
+                "expected": [
+                  "Hast du Geschwister ?",
+                  "hast du geschwister"
+                ],
+                "focus": "hast du … ?",
+                "watch": "du + haben = hast."
+              },
+              {
+                "prompt": "Sagt, wen du hast. (eine Tante)",
+                "expected": [
+                  "Ich habe eine Tante.",
+                  "ich habe eine tante"
+                ],
+                "focus": "die Tante",
+                "watch": "die Tante: eine Tante."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u12-familie-e1",
+              "kind": "choice",
+              "prompt": "Ich habe ___ Bruder.",
+              "explain": "haben + Akkusativ Maskulin: einen Bruder.",
+              "options": [
+                "einen",
+                "eine",
+                "ein",
+                "kein"
+              ],
+              "answers": [
+                "einen"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-familie-e2",
+              "kind": "gap",
+              "prompt": "Die Schwester von meinem Vater ist meine ___.",
+              "explain": "Familienvokabel: die Schwester vom Vater ist die Tante.",
+              "answers": [
+                "tante",
+                "Tante"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-familie-e3",
+              "kind": "order",
+              "prompt": "Sagt, wen du hast. (Onkel)",
+              "explain": "haben + einen Onkel: so sagt man, wer zu dir gehört.",
+              "answers": [
+                "Ich habe einen Onkel"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-familie-e4",
+              "kind": "written",
+              "prompt": "Schreib einen Satz über deine Oma. (kochen)",
+              "explain": "meine + die Oma: meine Oma kocht.",
+              "answers": [
+                "meine oma kocht gut",
+                "meine oma kocht gern",
+                "meine oma kocht"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:family",
+            "grammar:possessives",
+            "grammar:present-simple",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        },
+        {
+          "id": "de-foundations-u12-freunde",
+          "title": "Wie ist er ?",
+          "goal": "Freunde mit Adjektiven beschreiben und fragen: Wie ist er ? Wie ist sie ?",
+          "intro": {
+            "explanation": [
+              "Adjektive für Leute: nett, lustig, schüchtern, fleißig, sportlich. Beispiel: „Mia ist nett.“",
+              "sein + Adjektiv: „Er ist lustig.“ „Sie ist schüchtern.“ So beschreibt man Leute.",
+              "Frage: „Wie ist er ?“ — „Er ist sehr nett.“ Beispiel: „Und Lisa ? Sie ist fleißig.“"
+            ],
+            "examples": [
+              {
+                "text": "Mein Freund Jonas ist sehr nett.",
+                "meaning": "Beschreibung: sein + nett."
+              },
+              {
+                "text": "Er ist schüchtern, aber sehr fleißig.",
+                "meaning": "aber: zwei Adjektive, auch Gegensätze."
+              },
+              {
+                "text": "Wie ist deine Schwester ?",
+                "meaning": "Nach einer Person fragen."
+              },
+              {
+                "text": "Sie ist lustig und sportlich.",
+                "meaning": "und: zwei Adjektive zusammen."
+              },
+              {
+                "text": "Unser Lehrer ist immer freundlich.",
+                "meaning": "Adjektiv nach ist: keine Endung."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "nett / freundlich",
+              "meaning": "Positive Leute.",
+              "note": "Jonas ist nett."
+            },
+            {
+              "text": "schüchtern",
+              "meaning": "Nicht viel sprechen vor neuen Leuten.",
+              "note": "Sie ist schüchtern."
+            },
+            {
+              "text": "fleißig",
+              "meaning": "Viel arbeiten und lernen.",
+              "note": "Er ist fleißig."
+            },
+            {
+              "text": "lustig",
+              "meaning": "Man lacht viel.",
+              "note": "Mia ist lustig."
+            },
+            {
+              "text": "Wie ist er / sie ?",
+              "meaning": "Nach einer Person fragen.",
+              "note": "Wie ist dein Bruder ?"
+            }
+          ],
+          "situation": "Ben und Lena beschreiben ihre Freunde: Jonas ist schüchtern, aber fleißig. Mia ist lustig.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fragst nach Bens Bruder.",
+                "expected": [
+                  "Wie ist Bens Bruder ?",
+                  "Wie ist er ?",
+                  "wie ist er"
+                ],
+                "focus": "wie ist … ?",
+                "watch": "Frage mit wie + sein."
+              },
+              {
+                "prompt": "Sagt, wie Jonas ist. (nett)",
+                "expected": [
+                  "Er ist nett.",
+                  "er ist nett",
+                  "er ist sehr nett"
+                ],
+                "focus": "sein + Adjektiv",
+                "watch": "Nach er: ist + Adjektiv."
+              },
+              {
+                "prompt": "Sagt, wie Lisa ist. (schüchtern)",
+                "expected": [
+                  "Sie ist schüchtern.",
+                  "sie ist schuechtern"
+                ],
+                "focus": "schüchtern",
+                "watch": "ü = ue: schuechtern."
+              },
+              {
+                "prompt": "Zwei Adjektive: Jonas ist fleißig und nett.",
+                "expected": [
+                  "Er ist fleißig und nett.",
+                  "er ist fleissig und nett"
+                ],
+                "focus": "ß = ss",
+                "watch": "fleißig: fleissig ohne ß."
+              },
+              {
+                "prompt": "Sagt, wie deine Mutter ist. (freundlich)",
+                "expected": [
+                  "Meine Mutter ist freundlich.",
+                  "meine mutter ist freundlich"
+                ],
+                "focus": "meine + Person",
+                "watch": "die Mutter: meine Mutter."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u12-freunde-e1",
+              "kind": "choice",
+              "prompt": "Jonas ist sehr ___. Er hilft allen.",
+              "explain": "nett passt zu Personen: Jonas hilft allen.",
+              "options": [
+                "nett",
+                "teuer",
+                "leer",
+                "neu"
+              ],
+              "answers": [
+                "nett"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-freunde-e2",
+              "kind": "gap",
+              "prompt": "Lisa ist sehr ___. Sie lernt jeden Tag.",
+              "explain": "Wer viel lernt, ist fleißig.",
+              "answers": [
+                "fleissig",
+                "fleißig"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-freunde-e3",
+              "kind": "order",
+              "prompt": "Fragst nach Lena.",
+              "explain": "Frage nach einer Person: Wie ist sie ?",
+              "answers": [
+                "Wie ist Lena"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-freunde-e4",
+              "kind": "written",
+              "prompt": "Beschreibst Mia. (lustig und sportlich)",
+              "explain": "sein + zwei Adjektive mit und.",
+              "answers": [
+                "mia ist lustig und sportlich",
+                "Mia ist lustig und sportlich."
+              ]
+            }
+          ],
+          "skills": [
+            "function:describe-people",
+            "grammar:present-simple",
+            "vocab:feelings",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u12-anruf",
+          "title": "Ein Anruf",
+          "goal": "Am Telefon fragen, ob jemand da ist, und sagen, dass du später anrufst.",
+          "intro": {
+            "explanation": [
+              "Am Telefon: „Hallo, hier ist Nadia.“ So sagt man, wer du bist.",
+              "Frage: „Ist Papa da ?“ — „Nein, er ist nicht da.“ So fragt man, ob jemand da ist.",
+              "anrufen: „Ich rufe später an.“ Beispiel: „Rufst du morgen an ?“"
+            ],
+            "examples": [
+              {
+                "text": "Hallo, hier ist Nadia.",
+                "meaning": "Am Telefon: dein Name."
+              },
+              {
+                "text": "Ist dein Vater da ?",
+                "meaning": "Frage: Ist … da ?"
+              },
+              {
+                "text": "Nein, er ist nicht da.",
+                "meaning": "Negative Antwort: nicht da."
+              },
+              {
+                "text": "Wann ist er wieder da ?",
+                "meaning": "Nach der Zeit fragen."
+              },
+              {
+                "text": "Ich rufe später an.",
+                "meaning": "anrufen: ich rufe … an."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Hallo, hier ist …",
+              "meaning": "Sich am Telefon melden.",
+              "note": "hier ist + Name"
+            },
+            {
+              "text": "Ist … da ?",
+              "meaning": "Fragen, ob jemand da ist.",
+              "note": "Ist Mama da ?"
+            },
+            {
+              "text": "Er / sie ist nicht da.",
+              "meaning": "Sagen, dass jemand weg ist.",
+              "note": "Sie ist nicht zu Hause."
+            },
+            {
+              "text": "Ich rufe später an.",
+              "meaning": "Sagen, dass du noch einmal anrufst.",
+              "note": "anrufen: ich rufe an"
+            },
+            {
+              "text": "Bis dann!",
+              "meaning": "Am Telefon verabschieden.",
+              "note": "auch: Tschüss!"
+            }
+          ],
+          "situation": "Nadia ruft zu Hause an. Papa ist nicht da — sie ruft später noch einmal an.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Meldest dich am Telefon. (Nadia)",
+                "expected": [
+                  "Hallo, hier ist Nadia.",
+                  "hallo hier ist nadia"
+                ],
+                "focus": "hier ist …",
+                "watch": "Am Telefon sagt man: hier ist + Name."
+              },
+              {
+                "prompt": "Fragst, ob Papa da ist.",
+                "expected": [
+                  "Ist Papa da ?",
+                  "ist papa da"
+                ],
+                "focus": "ist … da ?",
+                "watch": "Frage: Ist + Person + da ?"
+              },
+              {
+                "prompt": "Sagst, dass Mama nicht da ist.",
+                "expected": [
+                  "Mama ist nicht da.",
+                  "Sie ist nicht da.",
+                  "mama ist nicht da"
+                ],
+                "focus": "nicht da",
+                "watch": "Verneinung mit nicht."
+              },
+              {
+                "prompt": "Sagst, dass du später anrufst.",
+                "expected": [
+                  "Ich rufe später an.",
+                  "ich rufe spaeter an"
+                ],
+                "focus": "anrufen",
+                "watch": "später = spaeter; ich rufe … an."
+              },
+              {
+                "prompt": "Verabschiedest dich am Telefon.",
+                "expected": [
+                  "Bis dann!",
+                  "Tschüss!",
+                  "tschuess"
+                ],
+                "focus": "Verabschiedung",
+                "watch": "Tschüss: tschuess ohne Ü."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u12-anruf-e1",
+              "kind": "choice",
+              "prompt": "Am Telefon: „Hallo, ___ Nadia.“",
+              "explain": "So meldet man sich: Hallo, hier ist + Name.",
+              "options": [
+                "hier ist",
+                "ist hier",
+                "da ist",
+                "ich bin"
+              ],
+              "answers": [
+                "hier ist"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-anruf-e2",
+              "kind": "gap",
+              "prompt": "Ist deine Schwester ___ ? — Nein, sie ist nicht zu Hause.",
+              "explain": "Ist … da ? fragt, ob jemand da ist.",
+              "answers": [
+                "da"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-anruf-e3",
+              "kind": "order",
+              "prompt": "Sagst, dass du später anrufst.",
+              "explain": "anrufen: ich rufe später an.",
+              "answers": [
+                "Ich rufe später an"
+              ]
+            },
+            {
+              "id": "de-foundations-u12-anruf-e4",
+              "kind": "written",
+              "prompt": "Fragst, wann dein Vater wieder da ist.",
+              "explain": "Frage mit wann: Wann ist er wieder da ?",
+              "answers": [
+                "wann ist er wieder da",
+                "wann ist mein vater wieder da"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u13",
+      "title": "Die Zeit",
+      "subtitle": "Tage und Wetter",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "die-woche",
+          "title": "Die Woche",
+          "subtitle": "Immer, oft, manchmal",
+          "symbol": "sun.max",
+          "category": "Course",
+          "situation": "Von morgens bis abends: Was machst du immer, was nur manchmal ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "wetter-jahreszeiten",
+          "title": "Wetter und Jahreszeiten",
+          "subtitle": "Es regnet",
+          "symbol": "cloud.rain",
+          "category": "Course",
+          "situation": "Wie ist das Wetter heute ? Und was macht man gern bei Regen ?",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u13-routine",
+          "title": "Von morgens bis abends",
+          "goal": "Deine Woche mit immer, oft, manchmal und nie beschreiben.",
+          "intro": {
+            "explanation": [
+              "Häufigkeit: immer (100 %), oft, manchmal, nie (0 %). Beispiel: „Ich trinke immer Kaffee.“",
+              "Das Adverb steht nach dem Verb: „Ich gehe oft ins Kino.“ Beispiel: „Er ist nie müde.“",
+              "Wann: „am Morgen“, „am Abend“, „am Wochenende“. Beispiel: „Am Wochenende koche ich.“"
+            ],
+            "examples": [
+              {
+                "text": "Ich trinke immer Kaffee am Morgen.",
+                "meaning": "immer: jeden Tag."
+              },
+              {
+                "text": "Sie geht oft ins Kino.",
+                "meaning": "oft: viele Male."
+              },
+              {
+                "text": "Wir spielen manchmal Karten.",
+                "meaning": "manchmal: nicht oft, nicht nie."
+              },
+              {
+                "text": "Er isst nie Fleisch.",
+                "meaning": "nie: 0 %."
+              },
+              {
+                "text": "Am Abend lese ich ein Buch.",
+                "meaning": "Wann: am Abend."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "immer",
+              "meaning": "Jedes Mal.",
+              "note": "Ich trinke immer Tee."
+            },
+            {
+              "text": "oft",
+              "meaning": "Viele Male.",
+              "note": "Sie geht oft schwimmen."
+            },
+            {
+              "text": "manchmal",
+              "meaning": "Nicht oft.",
+              "note": "Manchmal koche ich."
+            },
+            {
+              "text": "nie",
+              "meaning": "Kein Mal.",
+              "note": "Er ist nie müde."
+            },
+            {
+              "text": "am Morgen / am Abend",
+              "meaning": "Wann: Tageszeit.",
+              "note": "Am Morgen arbeite ich."
+            }
+          ],
+          "situation": "Kim erzählt ihre Woche: immer Kaffee am Morgen, oft Kino, manchmal Karten — nie Fleisch.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sagt, was du jeden Morgen trinkst. (Kaffee)",
+                "expected": [
+                  "Ich trinke immer Kaffee.",
+                  "ich trinke immer kaffee"
+                ],
+                "focus": "immer",
+                "watch": "immer = jeden Tag; nach dem Verb: trinke immer."
+              },
+              {
+                "prompt": "Sagt, wie oft du ins Kino gehst. (oft)",
+                "expected": [
+                  "Ich gehe oft ins Kino.",
+                  "ich gehe oft ins kino"
+                ],
+                "focus": "oft",
+                "watch": "Verb zuerst: gehe oft."
+              },
+              {
+                "prompt": "Sagt, dass du nie Fleisch isst.",
+                "expected": [
+                  "Ich esse nie Fleisch.",
+                  "ich esse nie fleisch"
+                ],
+                "focus": "nie",
+                "watch": "nie = 0 %."
+              },
+              {
+                "prompt": "Sagt, was du manchmal machst. (Karten spielen)",
+                "expected": [
+                  "Ich spiele manchmal Karten.",
+                  "ich spiele manchmal karten"
+                ],
+                "focus": "manchmal",
+                "watch": "manchmal: nach dem Verb."
+              },
+              {
+                "prompt": "Sagt, was du am Abend machst. (lesen)",
+                "expected": [
+                  "Am Abend lese ich.",
+                  "Ich lese am Abend.",
+                  "am abend lese ich"
+                ],
+                "focus": "am Abend",
+                "watch": "am + Tageszeit."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u13-routine-e1",
+              "kind": "choice",
+              "prompt": "Ich gehe ___ ins Kino — zweimal in der Woche.",
+              "explain": "oft = viele Male: zweimal in der Woche.",
+              "options": [
+                "oft",
+                "nie",
+                "immer",
+                "morgen"
+              ],
+              "answers": [
+                "oft"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-routine-e2",
+              "kind": "gap",
+              "prompt": "Er isst ___ Fleisch. Er ist Vegetarier.",
+              "explain": "Vegetarier essen nie Fleisch: 0 %.",
+              "answers": [
+                "nie"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-routine-e3",
+              "kind": "order",
+              "prompt": "Sagt, was du jeden Tag trinkst. (Kaffee)",
+              "explain": "immer + Verb: die tägliche Routine.",
+              "answers": [
+                "Ich trinke immer Kaffee"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-routine-e4",
+              "kind": "written",
+              "prompt": "Schreib über deinen Morgen. (am Morgen, immer, Tee)",
+              "explain": "am Morgen + immer: die Routine.",
+              "answers": [
+                "am morgen trinke ich immer tee",
+                "ich trinke am morgen immer tee"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:daily-routine",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u13-wetter",
+          "title": "Wie ist das Wetter ?",
+          "goal": "Wetter und Jahreszeiten beschreiben: Es regnet. Im Sommer ist es warm.",
+          "intro": {
+            "explanation": [
+              "Wetter: „Es ist sonnig / warm / kalt.“ „Es regnet.“ „Es schneit.“ Beispiel: „Heute regnet es.“",
+              "Jahreszeiten: der Frühling, der Sommer, der Herbst, der Winter. Beispiel: „Im Sommer ist es heiß.“",
+              "Frage: „Wie ist das Wetter ?“ — „Es ist sonnig und warm.“"
+            ],
+            "examples": [
+              {
+                "text": "Wie ist das Wetter heute ?",
+                "meaning": "Die Wetterfrage."
+              },
+              {
+                "text": "Es ist sonnig und warm.",
+                "meaning": "es ist + Adjektiv."
+              },
+              {
+                "text": "Es regnet in Berlin.",
+                "meaning": "Es regnet: Wasser vom Himmel."
+              },
+              {
+                "text": "Im Winter schneit es oft.",
+                "meaning": "Jahreszeit + im."
+              },
+              {
+                "text": "Im Frühling sind die Tage warm.",
+                "meaning": "der Frühling: die Jahreszeit nach dem Winter."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Wie ist das Wetter ?",
+              "meaning": "Nach dem Wetter fragen.",
+              "note": "Antwort: Es ist …"
+            },
+            {
+              "text": "Es regnet. / Es schneit.",
+              "meaning": "Wasser oder Schnee vom Himmel.",
+              "note": "Heute regnet es."
+            },
+            {
+              "text": "sonnig / warm / kalt",
+              "meaning": "Wetter-Adjektive.",
+              "note": "Es ist kalt im Januar."
+            },
+            {
+              "text": "der Frühling / der Sommer / der Herbst / der Winter",
+              "meaning": "Die vier Jahreszeiten.",
+              "note": "im Sommer, im Winter"
+            },
+            {
+              "text": "Im Sommer ist es heiß.",
+              "meaning": "Jahreszeit + Adjektiv.",
+              "note": "der Sommer: im Sommer"
+            }
+          ],
+          "situation": "Sam fragt: Wie ist das Wetter ? Kim sagt: Es regnet. Im Sommer ist es oft heiß.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fragst nach dem Wetter.",
+                "expected": [
+                  "Wie ist das Wetter ?",
+                  "wie ist das wetter",
+                  "wie ist das wetter heute"
+                ],
+                "focus": "wie ist das Wetter ?",
+                "watch": "Feste Frage: Wie ist das Wetter ?"
+              },
+              {
+                "prompt": "Sagt, was heute vom Himmel fällt. (regnen)",
+                "expected": [
+                  "Es regnet.",
+                  "es regnet",
+                  "es regnet heute"
+                ],
+                "focus": "es regnet",
+                "watch": "es regnet: ohne Person."
+              },
+              {
+                "prompt": "Sagt, wie das Wetter ist. (sonnig, warm)",
+                "expected": [
+                  "Es ist sonnig und warm.",
+                  "es ist sonnig und warm"
+                ],
+                "focus": "es ist + Adjektiv",
+                "watch": "sonnig kommt von die Sonne."
+              },
+              {
+                "prompt": "Sagt, wie es im Winter ist. (kalt)",
+                "expected": [
+                  "Im Winter ist es kalt.",
+                  "im winter ist es kalt"
+                ],
+                "focus": "im Winter",
+                "watch": "der Winter: im Winter."
+              },
+              {
+                "prompt": "Sagt, was es im Frühling oft macht. (regnen)",
+                "expected": [
+                  "Im Frühling regnet es oft.",
+                  "im fruehling regnet es oft"
+                ],
+                "focus": "im Frühling",
+                "watch": "ü = ue: Fruehling."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u13-wetter-e1",
+              "kind": "choice",
+              "prompt": "___ schneit es oft.",
+              "explain": "Schnee gibt es im Winter.",
+              "options": [
+                "Im Winter",
+                "Im Sommer",
+                "Am Montag",
+                "Um acht"
+              ],
+              "answers": [
+                "Im Winter"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-wetter-e2",
+              "kind": "gap",
+              "prompt": "Die Sonne scheint. Es ist sehr ___.",
+              "explain": "Bei Sonne ist es warm oder heiß.",
+              "answers": [
+                "warm",
+                "heiß",
+                "heiss"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-wetter-e3",
+              "kind": "order",
+              "prompt": "Fragst nach dem Wetter heute.",
+              "explain": "Die Wetterfrage mit wie.",
+              "answers": [
+                "Wie ist das Wetter heute"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-wetter-e4",
+              "kind": "written",
+              "prompt": "Sagt, wie das Wetter bei euch im Sommer ist. (heiß)",
+              "explain": "im Sommer + es ist + Adjektiv.",
+              "answers": [
+                "im sommer ist es heiß",
+                "im sommer ist es heiss",
+                "es ist heiss im sommer"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-weather",
+            "vocab:weather",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "talk-about-weather"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u13-lust",
+          "title": "Was ich gern mache",
+          "goal": "Sagen, was du magst und was du gern machst.",
+          "intro": {
+            "explanation": [
+              "mag + Nomen: „Ich mag Musik.“ „Sie mag Kino.“ So sagt man, was du gut findest.",
+              "gern + Verb: „Ich lese gern.“ „Er kocht gern.“ gern steht nach dem Verb.",
+              "nicht gern: „Ich warte nicht gern.“ Beispiel: „Ich spiele nicht gern Computer.“"
+            ],
+            "examples": [
+              {
+                "text": "Ich mag Musik.",
+                "meaning": "mag + Nomen."
+              },
+              {
+                "text": "Ich spiele gern Fußball.",
+                "meaning": "gern nach dem Verb."
+              },
+              {
+                "text": "Sie kocht gern für Freunde.",
+                "meaning": "gern: mit Freude."
+              },
+              {
+                "text": "Ich warte nicht gern.",
+                "meaning": "Verneinung: nicht gern."
+              },
+              {
+                "text": "Was machst du gern ?",
+                "meaning": "Frage nach Hobbys."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich mag …",
+              "meaning": "Sagen, was du gut findest.",
+              "note": "Ich mag Kaffee."
+            },
+            {
+              "text": "gern + Verb",
+              "meaning": "Sagen, was du mit Freude machst.",
+              "note": "Ich lese gern."
+            },
+            {
+              "text": "nicht gern",
+              "meaning": "Sagen, was du nicht magst.",
+              "note": "Ich warte nicht gern."
+            },
+            {
+              "text": "Was machst du gern ?",
+              "meaning": "Nach Hobbys fragen.",
+              "note": "Antwort: Ich … gern."
+            },
+            {
+              "text": "Hobbys: Sport, Musik, Lesen",
+              "meaning": "Themen für „gern“.",
+              "note": "Ich höre gern Musik."
+            }
+          ],
+          "situation": "Kim und Sam fragen: Was macht ihr gern ? Kim liest gern, Sam spielt gern Fußball. Bei Regen kochen beide gern.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sagt, was du magst. (Musik)",
+                "expected": [
+                  "Ich mag Musik.",
+                  "ich mag musik"
+                ],
+                "focus": "ich mag …",
+                "watch": "mag + Nomen: Musik, Kino, Kaffee."
+              },
+              {
+                "prompt": "Sagt, was du gern machst. (Fußball spielen)",
+                "expected": [
+                  "Ich spiele gern Fußball.",
+                  "ich spiele gern fussball"
+                ],
+                "focus": "gern + Verb",
+                "watch": "ü = ue: Fussball; gern nach dem Verb."
+              },
+              {
+                "prompt": "Fragst Kim nach ihren Hobbys.",
+                "expected": [
+                  "Was machst du gern ?",
+                  "was machst du gern"
+                ],
+                "focus": "Was machst du gern ?",
+                "watch": "Frage: was + machst + du + gern."
+              },
+              {
+                "prompt": "Sagt, was du nicht gern machst. (warten)",
+                "expected": [
+                  "Ich warte nicht gern.",
+                  "Ich warte nicht so gern."
+                ],
+                "focus": "nicht gern",
+                "watch": "Verneinung: nicht vor gern."
+              },
+              {
+                "prompt": "Sagt, was ihr bei Regen macht. (kochen)",
+                "expected": [
+                  "Wir kochen gern.",
+                  "Wir kochen gern bei Regen.",
+                  "wir kochen gern"
+                ],
+                "focus": "wir + gern",
+                "watch": "Bei Regen: drinnen kochen."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u13-lust-e1",
+              "kind": "choice",
+              "prompt": "Ich ___ Musik — ich höre jeden Tag CDs.",
+              "explain": "mag + Nomen: ich mag.",
+              "options": [
+                "mag",
+                "magst",
+                "mögen",
+                "spielt"
+              ],
+              "answers": [
+                "mag"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-lust-e2",
+              "kind": "gap",
+              "prompt": "Ich lese ___. Es ist mein Hobby.",
+              "explain": "gern nach dem Verb: Ich lese gern.",
+              "answers": [
+                "gern"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-lust-e3",
+              "kind": "order",
+              "prompt": "Fragst Sam nach seinen Hobbys.",
+              "explain": "Die Hobbyfrage: Was machst du gern ?",
+              "answers": [
+                "Was machst du gern"
+              ]
+            },
+            {
+              "id": "de-foundations-u13-lust-e4",
+              "kind": "written",
+              "prompt": "Sagt, was du gern machst. (Musik hören)",
+              "explain": "gern + Verb: Ich höre gern Musik.",
+              "answers": [
+                "ich höre gern musik",
+                "ich hoere gern musik",
+                "ich mag musik"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:hobbies",
+            "grammar:present-simple",
+            "function:talk-about-routines",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

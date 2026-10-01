@@ -692,6 +692,94 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-read-message-groupe",
+      "languageID": "fr",
+      "title": "Messages du groupe",
+      "level": "A1",
+      "topic": "week-end",
+      "unitID": "fr-foundations-u13",
+      "text": "Léa : Salut ! Quel temps demain ?\nKarim : Il fait beau le matin, mais il pleut l'après-midi.\nLéa : Dommage ! Je fais toujours du vélo le samedi matin.\nMai : Moi, je vais à la piscine. Je nage souvent, j'adore l'eau.\nKarim : Moi, je ne lis jamais le week-end. Je joue au foot avec mon frère.\nLéa : Et le dimanche ? Vous aimez cuisiner ?\nMai : Oui ! J'aime faire des crêpes. Vous venez ?\nKarim : Super idée ! À dimanche !",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:hobbies",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-message-groupe-q1",
+          "kind": "choice",
+          "prompt": "Quel temps fait-il demain après-midi ?",
+          "options": [
+            "Il pleut",
+            "Il neige",
+            "Il fait beau",
+            "Il fait froid"
+          ],
+          "answers": [
+            "Il pleut"
+          ],
+          "explain": "Il fait beau le matin, mais il pleut l'après-midi."
+        },
+        {
+          "id": "fr-read-message-groupe-q2",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Léa fait toujours le samedi matin ?",
+          "answers": [
+            "du vélo",
+            "du velo",
+            "elle fait toujours du vélo",
+            "elle fait toujours du velo"
+          ],
+          "explain": "Je fais toujours du vélo le samedi matin."
+        },
+        {
+          "id": "fr-read-message-groupe-q3",
+          "kind": "choice",
+          "prompt": "Où va Mai ?",
+          "options": [
+            "À la piscine",
+            "Au parc",
+            "Au marché",
+            "À la maison"
+          ],
+          "answers": [
+            "À la piscine"
+          ],
+          "explain": "Moi, je vais à la piscine, écrit Mai."
+        },
+        {
+          "id": "fr-read-message-groupe-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Karim fait le week-end ?",
+          "options": [
+            "Il joue au foot",
+            "Il nage",
+            "Il lit",
+            "Il fait du vélo"
+          ],
+          "answers": [
+            "Il joue au foot"
+          ],
+          "explain": "Je joue au foot avec mon frère."
+        },
+        {
+          "id": "fr-read-message-groupe-q5",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Mai aime faire ?",
+          "answers": [
+            "faire des crêpes",
+            "faire des crepes",
+            "des crêpes",
+            "des crepes"
+          ],
+          "explain": "J'aime faire des crêpes, écrit Mai."
+        }
+      ]
     }
   ]
 }

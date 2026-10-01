@@ -1570,6 +1570,215 @@
           "explain": "Il adore son quartier."
         }
       ]
+    },
+    {
+      "id": "fr-listen-appel-mamie",
+      "languageID": "fr",
+      "title": "Un appel à mamie",
+      "level": "A1",
+      "topic": "famille",
+      "unitID": "fr-foundations-u12",
+      "text": "Allô, mamie ? C'est Léa. Tu es là ? Oui, ma chérie ! Comment va la famille ? Très bien ! Maman est au travail, elle revient à six heures. Papa prépare le dîner : il cuisine toujours le samedi. Mon petit frère regarde la télé. Et mon oncle Paul ? Il arrive dimanche avec sa fille. Très bien ! Je rappelle plus tard, papa m'appelle pour le dîner. Gros bisous, mamie !",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:family",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-appel-mamie-q1",
+          "kind": "choice",
+          "prompt": "Qui appelle Léa ?",
+          "options": [
+            "Sa mamie",
+            "Son papa",
+            "Sa sœur",
+            "Son oncle"
+          ],
+          "answers": [
+            "Sa mamie"
+          ],
+          "explain": "Elle dit : Allô, mamie ? C'est Léa."
+        },
+        {
+          "id": "fr-listen-appel-mamie-q2",
+          "kind": "choice",
+          "prompt": "Où est maman ?",
+          "options": [
+            "Au travail",
+            "À la maison",
+            "Au parc",
+            "Au marché"
+          ],
+          "answers": [
+            "Au travail"
+          ],
+          "explain": "Maman est au travail, elle revient à six heures."
+        },
+        {
+          "id": "fr-listen-appel-mamie-q3",
+          "kind": "choice",
+          "prompt": "Qui cuisine toujours le samedi ?",
+          "options": [
+            "Papa",
+            "Maman",
+            "Léa",
+            "Le petit frère"
+          ],
+          "answers": [
+            "Papa"
+          ],
+          "explain": "Papa prépare le dîner : il cuisine toujours le samedi."
+        },
+        {
+          "id": "fr-listen-appel-mamie-q4",
+          "kind": "written",
+          "prompt": "Qui arrive dimanche ?",
+          "answers": [
+            "mon oncle Paul",
+            "son oncle",
+            "mon oncle paul"
+          ],
+          "explain": "Mon oncle Paul arrive dimanche avec sa fille."
+        },
+        {
+          "id": "fr-listen-appel-mamie-q5",
+          "kind": "choice",
+          "prompt": "Que fait le petit frère ?",
+          "options": [
+            "Il regarde la télé",
+            "Il cuisine",
+            "Il travaille",
+            "Il lit"
+          ],
+          "answers": [
+            "Il regarde la télé"
+          ],
+          "explain": "Mon petit frère regarde la télé."
+        },
+        {
+          "id": "fr-listen-appel-mamie-q6",
+          "kind": "choice",
+          "prompt": "Que fait Léa à la fin ?",
+          "options": [
+            "Elle rappelle plus tard",
+            "Elle cuisine le dîner",
+            "Elle va au travail",
+            "Elle regarde la télé"
+          ],
+          "answers": [
+            "Elle rappelle plus tard"
+          ],
+          "explain": "Je rappelle plus tard, dit Léa."
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-weekend-pluvieux",
+      "languageID": "fr",
+      "title": "Un week-end pluvieux",
+      "level": "A1",
+      "topic": "météo",
+      "unitID": "fr-foundations-u13",
+      "text": "Quel temps ! Il pleut sur Toulouse. Léa appelle son ami Karim : On va au parc ? Non, il pleut. Et il y a du vent. Le parc est désert ! Bon, je reste à la maison. Je lis toujours le samedi après-midi. En hiver, je ne sors jamais. Moi, j'aime la pluie. Je bois un chocolat chaud et je regarde un film. Alors, à demain ! Demain, il fait beau.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:weather",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs",
+        "function:talk-about-weather"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-weekend-pluvieux-q1",
+          "kind": "choice",
+          "prompt": "Quel temps fait-il ?",
+          "options": [
+            "Il pleut",
+            "Il neige",
+            "Il fait beau",
+            "Il fait chaud"
+          ],
+          "answers": [
+            "Il pleut"
+          ],
+          "explain": "Il pleut sur Toulouse."
+        },
+        {
+          "id": "fr-listen-weekend-pluvieux-q2",
+          "kind": "choice",
+          "prompt": "Pourquoi Karim ne va pas au parc ?",
+          "options": [
+            "Il pleut",
+            "Il travaille",
+            "Il est fatigué",
+            "Il lit"
+          ],
+          "answers": [
+            "Il pleut"
+          ],
+          "explain": "Non, il pleut. Et il y a du vent."
+        },
+        {
+          "id": "fr-listen-weekend-pluvieux-q3",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Léa fait toujours le samedi après-midi ?",
+          "options": [
+            "Elle lit",
+            "Elle cuisine",
+            "Elle nage",
+            "Elle dort"
+          ],
+          "answers": [
+            "Elle lit"
+          ],
+          "explain": "Je lis toujours le samedi après-midi, dit Léa."
+        },
+        {
+          "id": "fr-listen-weekend-pluvieux-q4",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Karim boit ?",
+          "answers": [
+            "un chocolat chaud",
+            "du chocolat chaud"
+          ],
+          "explain": "Je bois un chocolat chaud, dit Karim."
+        },
+        {
+          "id": "fr-listen-weekend-pluvieux-q5",
+          "kind": "choice",
+          "prompt": "En hiver, quand est-ce que Karim sort ?",
+          "options": [
+            "Jamais",
+            "Toujours",
+            "Souvent",
+            "Parfois"
+          ],
+          "answers": [
+            "Jamais"
+          ],
+          "explain": "En hiver, je ne sors jamais."
+        },
+        {
+          "id": "fr-listen-weekend-pluvieux-q6",
+          "kind": "choice",
+          "prompt": "Où est Léa ?",
+          "options": [
+            "À la maison",
+            "Au parc",
+            "Au travail",
+            "À la piscine"
+          ],
+          "answers": [
+            "À la maison"
+          ],
+          "explain": "Bon, je reste à la maison, dit Léa."
+        }
+      ]
     }
   ]
 }

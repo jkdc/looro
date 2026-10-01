@@ -730,6 +730,92 @@
           "explain": "« Il tuo affitto è di 300 euro »."
         }
       ]
+    },
+    {
+      "id": "it-read-messaggio-gruppo",
+      "languageID": "it",
+      "title": "Il gruppo del weekend",
+      "level": "A1",
+      "topic": "weekend",
+      "unitID": "it-foundations-u13",
+      "text": "GRUPPO « WEEKEND » — Giulia: Ragazzi, sabato c'è il sole ! Che facciamo ? Marco: Io di solito nuoto la mattina, ma questo sabato sono libero dopo le quattro. Giulia: Allora bicicletta al parco alle cinque ? Anna: Mi piace ! Io corro spesso al parco, ma in bici non vado mai. Marco: Perfetto. Dopo, pizza da Franco ? Anna: Sì ! Il sabato mangio sempre la pizza. Giulia: D'accordo: bici alle cinque e pizza alle otto !",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:hobbies",
+        "vocab:daily-routine",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-messaggio-gruppo-q1",
+          "kind": "choice",
+          "prompt": "Che tempo fa sabato ?",
+          "options": [
+            "C'è il sole",
+            "Piove",
+            "Nevica",
+            "Fa freddo"
+          ],
+          "answers": [
+            "C'è il sole"
+          ],
+          "explain": "« Sabato c'è il sole »."
+        },
+        {
+          "id": "it-read-messaggio-gruppo-q2",
+          "kind": "written",
+          "prompt": "Cosa fa di solito Marco la mattina ?",
+          "answers": [
+            "nuota",
+            "nuoto",
+            "nuotare"
+          ],
+          "explain": "« Io di solito nuoto la mattina »."
+        },
+        {
+          "id": "it-read-messaggio-gruppo-q3",
+          "kind": "choice",
+          "prompt": "Che cosa fa spesso Anna al parco ?",
+          "options": [
+            "Corre",
+            "Va in bici",
+            "Legge",
+            "Nuota"
+          ],
+          "answers": [
+            "Corre"
+          ],
+          "explain": "« Io corro spesso al parco »."
+        },
+        {
+          "id": "it-read-messaggio-gruppo-q4",
+          "kind": "written",
+          "prompt": "Cosa non fa mai Anna ?",
+          "answers": [
+            "va in bici",
+            "andare in bici",
+            "vado in bici"
+          ],
+          "explain": "« Ma in bici non vado mai »."
+        },
+        {
+          "id": "it-read-messaggio-gruppo-q5",
+          "kind": "choice",
+          "prompt": "A che ora è la pizza ?",
+          "options": [
+            "Alle otto",
+            "Alle cinque",
+            "Alle quattro",
+            "Alle nove"
+          ],
+          "answers": [
+            "Alle otto"
+          ],
+          "explain": "« Bici alle cinque e pizza alle otto »."
+        }
+      ]
     }
   ]
 }

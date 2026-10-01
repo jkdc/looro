@@ -4699,6 +4699,1073 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u12",
+      "title": "Minha gente",
+      "subtitle": "Família e amigos",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "gente-familia",
+          "title": "A família",
+          "subtitle": "Quem é quem",
+          "symbol": "figure-2",
+          "category": "Course",
+          "situation": "A Ana mostra as fotos do celular: o avô, os primos e um tio que mora longe.",
+          "colorIndex": 0
+        },
+        {
+          "id": "gente-amigos",
+          "title": "Os amigos",
+          "subtitle": "Como eles são ?",
+          "symbol": "heart",
+          "category": "Course",
+          "situation": "O grupo dos amigos conversa: quem é tímido, quem é simpático e quem trabalha muito.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u12-familia",
+          "title": "Minha família",
+          "goal": "Falar dos membros da família com meu/minha: tenho um tio muito simpático.",
+          "intro": {
+            "explanation": [
+              "A família próxima: « o pai, a mãe, o irmão, a irmã, o avô, a avó ». « Meu avô mora com a gente ».",
+              "Mais membros: « o tio, a tia, o primo, a prima ». « Tenho um tio que mora longe ».",
+              "Possessivos com a família: « meu pai, minha mãe, meus primos ». « Minha tia é professora »."
+            ],
+            "examples": [
+              {
+                "text": "Minha irmã tem vinte anos.",
+                "meaning": "minha + feminino."
+              },
+              {
+                "text": "Meu avô é muito simpático.",
+                "meaning": "meu + masculino."
+              },
+              {
+                "text": "Tenho dois primos e uma prima.",
+                "meaning": "ter + família."
+              },
+              {
+                "text": "Minha tia mora perto.",
+                "meaning": "mora = vive."
+              },
+              {
+                "text": "Os meus pais trabalham muito.",
+                "meaning": "os meus pais = mis padres."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "meu / minha",
+              "meaning": "Possessivo com a família.",
+              "note": "meu pai, minha mãe."
+            },
+            {
+              "text": "tenho um tio",
+              "meaning": "Falar dos parentes.",
+              "note": "Tenho um tio no Rio."
+            },
+            {
+              "text": "o avô / a avó",
+              "meaning": "Avô (masc) e avó (fem).",
+              "note": "Minha avó faz bolo."
+            },
+            {
+              "text": "os meus pais",
+              "meaning": "O pai e a mãe.",
+              "note": "Os meus pais moram aqui."
+            },
+            {
+              "text": "mora perto",
+              "meaning": "Falar do lugar.",
+              "note": "Meu tio mora perto."
+            }
+          ],
+          "situation": "A Ana mostra as fotos do celular: o avô, os primos e um tio que mora longe.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que a sua irmã tem vinte anos. (use minha)",
+                "expected": [
+                  "Minha irmã tem vinte anos.",
+                  "minha irma tem vinte anos"
+                ],
+                "focus": "minha",
+                "watch": "minha + palavra feminina."
+              },
+              {
+                "prompt": "Diga que tem um tio simpático.",
+                "expected": [
+                  "Tenho um tio simpático.",
+                  "tenho um tio simpatico"
+                ],
+                "focus": "tenho",
+                "watch": "tenho = tengo."
+              },
+              {
+                "prompt": "Diga que o seu avô mora perto. (use meu)",
+                "expected": [
+                  "Meu avô mora perto.",
+                  "meu avo mora perto"
+                ],
+                "focus": "meu",
+                "watch": "meu + palavra masculina."
+              },
+              {
+                "prompt": "Pergunte se a colega tem primos.",
+                "expected": [
+                  "Você tem primos ?",
+                  "Tem primos ?",
+                  "voce tem primos"
+                ],
+                "focus": "ter",
+                "watch": "Você + tem."
+              },
+              {
+                "prompt": "Diga que os seus pais trabalham muito.",
+                "expected": [
+                  "Os meus pais trabalham muito.",
+                  "os meus pais trabalham muito"
+                ],
+                "focus": "os meus pais",
+                "watch": "pais = padres, não países."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u12-familia-e1",
+              "kind": "choice",
+              "prompt": "Minha ___ é a mãe do meu pai.",
+              "explain": "A mãe do pai ou da mãe é a avó.",
+              "options": [
+                "avó",
+                "tia",
+                "prima",
+                "irmã"
+              ],
+              "answers": [
+                "avó"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-familia-e2",
+              "kind": "gap",
+              "prompt": "Meu ___ é o pai da minha mãe.",
+              "explain": "O pai da mãe ou do pai é o avô.",
+              "answers": [
+                "avô",
+                "avo"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-familia-e3",
+              "kind": "order",
+              "prompt": "Diga o que a sua avó faz aos domingos. (bolo)",
+              "explain": "A avó + faz + bolo: rotina da família.",
+              "answers": [
+                "A avo faz bolo aos domingos"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-familia-e4",
+              "kind": "written",
+              "prompt": "Diga quantos primos você tem: dois.",
+              "explain": "tenho + número + parente.",
+              "answers": [
+                "Tenho dois primos.",
+                "tenho dois primos"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:family",
+            "grammar:possessives",
+            "grammar:present-simple",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        },
+        {
+          "id": "pt-foundations-u12-amigos",
+          "title": "Como ele é ?",
+          "goal": "Descrever as pessoas com adjetivos: simpático, tímido, trabalhador.",
+          "intro": {
+            "explanation": [
+              "Descrever com « ser »: « Ele é simpático ». « Ela é tímida ». O adjetivo concorda: tímido/tímida.",
+              "Adjetivos úteis: « simpático » (amable), « tímido » (reservado), « trabalhador » (trabaja mucho).",
+              "Perguntar: « Como ele é ? » — a resposta usa « é »: « É muito simpático »."
+            ],
+            "examples": [
+              {
+                "text": "Como é o seu irmão ?",
+                "meaning": "Perguntar a descrição."
+              },
+              {
+                "text": "Ele é simpático e divertido.",
+                "meaning": "ser + adjetivo."
+              },
+              {
+                "text": "Minha prima é tímida.",
+                "meaning": "fem: tímida."
+              },
+              {
+                "text": "O Rafael é muito trabalhador.",
+                "meaning": "muito + adjetivo."
+              },
+              {
+                "text": "Ela não é tímida, é extrovertida.",
+                "meaning": "não é + adjetivo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Como ele é ?",
+              "meaning": "Perguntar a descrição.",
+              "note": "Como é a sua amiga ?"
+            },
+            {
+              "text": "simpático / simpática",
+              "meaning": "Amable.",
+              "note": "O vizinho é simpático."
+            },
+            {
+              "text": "tímido / tímida",
+              "meaning": "Reservado.",
+              "note": "A Ana é tímida."
+            },
+            {
+              "text": "trabalhador / trabalhadora",
+              "meaning": "Trabaja mucho.",
+              "note": "Meu pai é trabalhador."
+            },
+            {
+              "text": "muito + adjetivo",
+              "meaning": "Intensidade.",
+              "note": "muito simpático."
+            }
+          ],
+          "situation": "A Bia pergunta do irmão novo da Ana: ele é tímido, mas muito simpático.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Descreva o seu irmão: simpático.",
+                "expected": [
+                  "Meu irmão é simpático.",
+                  "meu irmao e simpatico"
+                ],
+                "focus": "ser + adjetivo",
+                "watch": "simpático com acento."
+              },
+              {
+                "prompt": "Diga que a sua prima é tímida.",
+                "expected": [
+                  "Minha prima é tímida.",
+                  "minha prima e timida"
+                ],
+                "focus": "tímida",
+                "watch": "fem: tímida."
+              },
+              {
+                "prompt": "Pergunte como é o amigo novo.",
+                "expected": [
+                  "Como é o amigo novo ?",
+                  "como e o amigo novo"
+                ],
+                "focus": "Como é … ?",
+                "watch": "Como + é."
+              },
+              {
+                "prompt": "Diga que o Pedro é muito trabalhador.",
+                "expected": [
+                  "O Pedro é muito trabalhador.",
+                  "o pedro e muito trabalhador"
+                ],
+                "focus": "muito + adjetivo",
+                "watch": "muito antes do adjetivo."
+              },
+              {
+                "prompt": "Diga que a Ana não é tímida.",
+                "expected": [
+                  "A Ana não é tímida.",
+                  "a ana nao e timida"
+                ],
+                "focus": "não é",
+                "watch": "não é = no es."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u12-amigos-e1",
+              "kind": "choice",
+              "prompt": "O meu primo é muito ___. Ele fala com todo o mundo.",
+              "explain": "Quem fala com todo o mundo é extrovertido; é o contrário de tímido.",
+              "options": [
+                "extrovertido",
+                "tímido",
+                "quieto",
+                "triste"
+              ],
+              "answers": [
+                "extrovertido"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-amigos-e2",
+              "kind": "gap",
+              "prompt": "A minha colega é ___. Ela estuda e trabalha muito.",
+              "explain": "Ela trabalha muito: trabalhadora (fem).",
+              "answers": [
+                "trabalhadora"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-amigos-e3",
+              "kind": "order",
+              "prompt": "Pergunte a descrição do irmão dela.",
+              "explain": "Como + é + pessoa: pergunta de descrição.",
+              "answers": [
+                "Como e o irmao dela"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-amigos-e4",
+              "kind": "written",
+              "prompt": "Descreva a sua amiga: simpática e inteligente.",
+              "explain": "ser + dois adjetivos no feminino.",
+              "answers": [
+                "A minha amiga é simpática e inteligente.",
+                "minha amiga e simpatica e inteligente"
+              ]
+            }
+          ],
+          "skills": [
+            "function:describe-people",
+            "grammar:present-simple",
+            "vocab:feelings",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u12-ligacao",
+          "title": "Uma ligação",
+          "goal": "Falar ao telefone: Está… ?, não está, ligo mais tarde.",
+          "intro": {
+            "explanation": [
+              "Ao telefone: « Está o Pedro ? ». A resposta: « Ele não está agora. Quer deixar recado ? ».",
+              "Perguntas com o verbo no começo: « Onde você está ? », « Você pode falar agora ? ».",
+              "Soluções: « Ligo mais tarde » (llamo más tarde) ou « Manda mensagem para ele »."
+            ],
+            "examples": [
+              {
+                "text": "Alô ? Está a Marina ?",
+                "meaning": "Atender e perguntar."
+              },
+              {
+                "text": "Ela não está agora.",
+                "meaning": "não está = no está."
+              },
+              {
+                "text": "Onde você está ?",
+                "meaning": "Perguntar o lugar."
+              },
+              {
+                "text": "Eu ligo mais tarde.",
+                "meaning": "ligo = llamo."
+              },
+              {
+                "text": "Quer deixar um recado ?",
+                "meaning": "Oferecer ajuda."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Alô ?",
+              "meaning": "Atender o telefone.",
+              "note": "Alô ? Quem fala ?"
+            },
+            {
+              "text": "Está … ?",
+              "meaning": "Perguntar se a pessoa está.",
+              "note": "Está o Pedro ?"
+            },
+            {
+              "text": "não está",
+              "meaning": "A pessoa não está.",
+              "note": "Ele não está agora."
+            },
+            {
+              "text": "ligo mais tarde",
+              "meaning": "Llamo después.",
+              "note": "Ligo mais tarde, obrigado."
+            },
+            {
+              "text": "deixar um recado",
+              "meaning": "Dejar un mensaje.",
+              "note": "Quer deixar recado ?"
+            }
+          ],
+          "situation": "A Ana liga para o Rafa, mas ele não está: a mãe atende e ela liga mais tarde.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Atenda o telefone.",
+                "expected": [
+                  "Alô ?",
+                  "alo"
+                ],
+                "focus": "alô",
+                "watch": "Alô com acento."
+              },
+              {
+                "prompt": "Pergunte se o Pedro está.",
+                "expected": [
+                  "Está o Pedro ?",
+                  "O Pedro está ?",
+                  "esta o pedro"
+                ],
+                "focus": "Está … ?",
+                "watch": "Está no começo da pergunta."
+              },
+              {
+                "prompt": "Diga que a Marina não está agora.",
+                "expected": [
+                  "A Marina não está agora.",
+                  "a marina nao esta agora"
+                ],
+                "focus": "não está",
+                "watch": "não está = no está."
+              },
+              {
+                "prompt": "Diga que você liga mais tarde.",
+                "expected": [
+                  "Eu ligo mais tarde.",
+                  "Ligo mais tarde.",
+                  "eu ligo mais tarde"
+                ],
+                "focus": "ligo mais tarde",
+                "watch": "ligo = llamo."
+              },
+              {
+                "prompt": "Pergunte se a pessoa quer deixar um recado.",
+                "expected": [
+                  "Quer deixar um recado ?",
+                  "quer deixar recado"
+                ],
+                "focus": "deixar recado",
+                "watch": "recado = mensaje."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u12-ligacao-e1",
+              "kind": "choice",
+              "prompt": "Alô ? ___ o Rafa ?",
+              "explain": "Ao telefone: Está o Rafa ? — pergunta com « está » no começo.",
+              "options": [
+                "Está",
+                "É",
+                "Faz",
+                "Vai"
+              ],
+              "answers": [
+                "Está"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-ligacao-e2",
+              "kind": "gap",
+              "prompt": "O Pedro não ___ agora. Ele volta às seis.",
+              "explain": "não está = no está agora.",
+              "answers": [
+                "está",
+                "esta"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-ligacao-e3",
+              "kind": "order",
+              "prompt": "Diga que você chama de volta depois.",
+              "explain": "ligo + mais tarde: voltar a ligar.",
+              "answers": [
+                "Eu ligo mais tarde"
+              ]
+            },
+            {
+              "id": "pt-foundations-u12-ligacao-e4",
+              "kind": "written",
+              "prompt": "Pergunte sobre um recado para a Marina.",
+              "explain": "Quer + deixar + recado ?",
+              "answers": [
+                "Quer deixar um recado ?",
+                "quer deixar um recado"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-questions",
+            "function:ask-simple-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u13",
+      "title": "O tempo",
+      "subtitle": "Dias e clima",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "tempo-dias",
+          "title": "O dia a dia",
+          "subtitle": "Rotina e hábitos",
+          "symbol": "sun.max",
+          "category": "Course",
+          "situation": "O Leo conta o dia dele: acorda cedo, toma café com pressa e nunca chega tarde.",
+          "colorIndex": 0
+        },
+        {
+          "id": "tempo-clima",
+          "title": "O clima",
+          "subtitle": "Sol, chuva e estações",
+          "symbol": "cloud.rain",
+          "category": "Course",
+          "situation": "Chove no sábado: o grupo troca o passeio pelo chocolate quente em casa.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u13-rotina",
+          "title": "Da manhã à noite",
+          "goal": "Falar da rotina com sempre, muitas vezes, às vezes e nunca.",
+          "intro": {
+            "explanation": [
+              "A rotina no presente: « Eu acordo às sete. Tomo café às oito. Trabalho de manhã ».",
+              "Frequência: « sempre » (100%), « muitas vezes » (muchas veces), « às vezes » (a veces), « nunca » (0%).",
+              "O advérbio vai antes do verbo: « Sempre tomo café », « Nunca como tarde »."
+            ],
+            "examples": [
+              {
+                "text": "Eu acordo às sete.",
+                "meaning": "acordar = despertar."
+              },
+              {
+                "text": "Sempre tomo café de manhã.",
+                "meaning": "sempre = siempre."
+              },
+              {
+                "text": "Muitas vezes almoço em casa.",
+                "meaning": "muitas vezes = muchas veces."
+              },
+              {
+                "text": "Às vezes leio à noite.",
+                "meaning": "às vezes = a veces."
+              },
+              {
+                "text": "Nunca como tarde.",
+                "meaning": "nunca = 0%."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "sempre",
+              "meaning": "100% das vezes.",
+              "note": "Sempre tomo café."
+            },
+            {
+              "text": "muitas vezes",
+              "meaning": "Muchas veces.",
+              "note": "Muitas vezes como em casa."
+            },
+            {
+              "text": "às vezes",
+              "meaning": "A veces.",
+              "note": "Às vezes saio à noite."
+            },
+            {
+              "text": "nunca",
+              "meaning": "0%, jamás.",
+              "note": "Nunca como tarde."
+            },
+            {
+              "text": "acordar",
+              "meaning": "Despertar.",
+              "note": "Acordo às sete."
+            }
+          ],
+          "situation": "O Leo conta o dia dele: acorda cedo, toma café com pressa e nunca chega tarde.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que você sempre toma café de manhã.",
+                "expected": [
+                  "Sempre tomo café de manhã.",
+                  "sempre tomo cafe da manha"
+                ],
+                "focus": "sempre",
+                "watch": "sempre antes do verbo."
+              },
+              {
+                "prompt": "Diga que você nunca janta tarde.",
+                "expected": [
+                  "Nunca janto tarde.",
+                  "nunca janto tarde"
+                ],
+                "focus": "nunca",
+                "watch": "nunca + verbo, sem « não »."
+              },
+              {
+                "prompt": "Diga que às vezes você lê à noite.",
+                "expected": [
+                  "Às vezes leio à noite.",
+                  "as vezes leio a noite"
+                ],
+                "focus": "às vezes",
+                "watch": "às vezes = a veces."
+              },
+              {
+                "prompt": "Diga a que horas você acorda: às sete.",
+                "expected": [
+                  "Acordo às sete.",
+                  "acordo as sete"
+                ],
+                "focus": "acordar",
+                "watch": "às + hora."
+              },
+              {
+                "prompt": "Diga que muitas vezes você almoça em casa.",
+                "expected": [
+                  "Muitas vezes almoço em casa.",
+                  "muitas vezes almoco em casa"
+                ],
+                "focus": "muitas vezes",
+                "watch": "muitas vezes = muchas veces."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u13-rotina-e1",
+              "kind": "choice",
+              "prompt": "Eu ___ como tarde: é ruim dormir cheio.",
+              "explain": "nunca = 0%: a pessoa não come tarde.",
+              "options": [
+                "nunca",
+                "sempre",
+                "muitas vezes"
+              ],
+              "answers": [
+                "nunca"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-rotina-e2",
+              "kind": "gap",
+              "prompt": "Eu acordo às sete e ___ tomo café. (100%)",
+              "explain": "100% das vezes = sempre.",
+              "answers": [
+                "sempre"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-rotina-e3",
+              "kind": "order",
+              "prompt": "Diga o que você nunca faz com o jantar.",
+              "explain": "nunca + como + tarde: frequência zero.",
+              "answers": [
+                "Eu nunca como tarde"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-rotina-e4",
+              "kind": "written",
+              "prompt": "Conte a sua manhã: acordar às sete e tomar café.",
+              "explain": "Duas ações da rotina no presente.",
+              "answers": [
+                "Acordo às sete e tomo café.",
+                "acordo as sete e tomo cafe"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:daily-routine",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u13-clima",
+          "title": "Que tempo faz ?",
+          "goal": "Falar do clima e das estações: faz calor, chove, neva.",
+          "intro": {
+            "explanation": [
+              "Perguntar o tempo: « Como está o tempo ? ». Responder com « está »: « Está quente », « Está frio ».",
+              "Verbos do clima: « chove » (llueve), « neva » (nieva), « faz calor/frio ». « Hoje chove muito ».",
+              "As estações: « o verão, o outono, o inverno, a primavera ». « No inverno faz frio »."
+            ],
+            "examples": [
+              {
+                "text": "Como está o tempo hoje ?",
+                "meaning": "Perguntar."
+              },
+              {
+                "text": "Está quente e ensolarado.",
+                "meaning": "está + tempo."
+              },
+              {
+                "text": "Hoje chove em São Paulo.",
+                "meaning": "chove = llueve."
+              },
+              {
+                "text": "No inverno faz frio.",
+                "meaning": "faz frio = hace frío."
+              },
+              {
+                "text": "No verão vou à praia.",
+                "meaning": "a estação quente."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Como está o tempo ?",
+              "meaning": "Perguntar el clima.",
+              "note": "Como está o tempo hoje ?"
+            },
+            {
+              "text": "faz calor / faz frio",
+              "meaning": "Hace calor / frío.",
+              "note": "Hoje faz calor."
+            },
+            {
+              "text": "chove / neva",
+              "meaning": "Llueve / nieva.",
+              "note": "Chove muito em abril."
+            },
+            {
+              "text": "está quente / frio",
+              "meaning": "Temperatura agora.",
+              "note": "A água está fria."
+            },
+            {
+              "text": "as estações",
+              "meaning": "Las estaciones del año.",
+              "note": "verão, outono, inverno, primavera."
+            }
+          ],
+          "situation": "Chove no sábado: o grupo do passeio decide ficar em casa e ver um filme.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte o tempo de hoje.",
+                "expected": [
+                  "Como está o tempo hoje ?",
+                  "como esta o tempo hoje"
+                ],
+                "focus": "Como está o tempo ?",
+                "watch": "está com acento."
+              },
+              {
+                "prompt": "Diga que hoje faz calor.",
+                "expected": [
+                  "Hoje faz calor.",
+                  "hoje faz calor"
+                ],
+                "focus": "faz calor",
+                "watch": "faz calor = hace calor."
+              },
+              {
+                "prompt": "Diga que chove muito hoje.",
+                "expected": [
+                  "Hoje chove muito.",
+                  "chove muito hoje"
+                ],
+                "focus": "chove",
+                "watch": "chove = llueve."
+              },
+              {
+                "prompt": "Diga que no inverno faz frio.",
+                "expected": [
+                  "No inverno faz frio.",
+                  "no inverno faz frio"
+                ],
+                "focus": "faz frio",
+                "watch": "no inverno = en invierno."
+              },
+              {
+                "prompt": "Pergunte se está frio hoje.",
+                "expected": [
+                  "Está frio hoje ?",
+                  "esta frio hoje"
+                ],
+                "focus": "está + frio",
+                "watch": "pergunta com « está » no começo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u13-clima-e1",
+              "kind": "choice",
+              "prompt": "No verão ___ muito calor no Rio de Janeiro.",
+              "explain": "faz calor = hace calor: expressão fixa do clima.",
+              "options": [
+                "faz",
+                "chove",
+                "neva"
+              ],
+              "answers": [
+                "faz"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-clima-e2",
+              "kind": "gap",
+              "prompt": "Hoje ___ muito: pega o guarda-chuva.",
+              "explain": "Água do céu: chove.",
+              "answers": [
+                "chove"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-clima-e3",
+              "kind": "order",
+              "prompt": "Diga o clima do inverno aqui. (frio)",
+              "explain": "No + inverno + faz frio: estação + clima.",
+              "answers": [
+                "No inverno faz frio aqui"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-clima-e4",
+              "kind": "written",
+              "prompt": "Diga o tempo de hoje: quente e ensolarado.",
+              "explain": "Hoje + está + dois adjetivos do clima.",
+              "answers": [
+                "Hoje está quente e ensolarado.",
+                "hoje esta quente e ensolarado"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-weather",
+            "vocab:weather",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "talk-about-weather"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u13-gostos",
+          "title": "O que eu gosto",
+          "goal": "Dizer o que você gosta: gosto de + infinitivo ou substantivo.",
+          "intro": {
+            "explanation": [
+              "« Gostar » pede « de »: « Eu gosto de música ». « Gosto de dançar » (bailar).",
+              "Depois de « de », verbo no infinitivo: « gosto de ler, de cozinhar, de caminhar ».",
+              "Negativo: « Não gosto de frio ». Perguntar: « O que você gosta de fazer ? »."
+            ],
+            "examples": [
+              {
+                "text": "Eu gosto de música brasileira.",
+                "meaning": "gosto de + substantivo."
+              },
+              {
+                "text": "Gosto de ler à noite.",
+                "meaning": "gosto de + infinitivo."
+              },
+              {
+                "text": "Minha irmã gosta de cozinhar.",
+                "meaning": "gosta (ela)."
+              },
+              {
+                "text": "Não gosto de frio.",
+                "meaning": "não gosto de."
+              },
+              {
+                "text": "O que você gosta de fazer ?",
+                "meaning": "Perguntar gostos."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "gosto de …",
+              "meaning": "Me gusta…",
+              "note": "Gosto de praia."
+            },
+            {
+              "text": "não gosto de …",
+              "meaning": "No me gusta…",
+              "note": "Não gosto de frio."
+            },
+            {
+              "text": "gosta de … ?",
+              "meaning": "Perguntar o gosto dele/dela.",
+              "note": "O que ela gosta de fazer ?"
+            },
+            {
+              "text": "ler",
+              "meaning": "Leer.",
+              "note": "Gosto de ler."
+            },
+            {
+              "text": "caminhar",
+              "meaning": "Caminar.",
+              "note": "Gosto de caminhar no parque."
+            }
+          ],
+          "situation": "Cada amigo do grupo conta o que gosta de fazer no tempo livre: ler, cozinhar, caminhar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que você gosta de música.",
+                "expected": [
+                  "Gosto de música.",
+                  "gosto de musica"
+                ],
+                "focus": "gosto de",
+                "watch": "gosto + de."
+              },
+              {
+                "prompt": "Diga que você gosta de ler à noite.",
+                "expected": [
+                  "Gosto de ler à noite.",
+                  "gosto de ler a noite"
+                ],
+                "focus": "gosto de + infinitivo",
+                "watch": "ler = leer."
+              },
+              {
+                "prompt": "Diga que a sua irmã gosta de cozinhar.",
+                "expected": [
+                  "Minha irmã gosta de cozinhar.",
+                  "minha irma gosta de cozinhar"
+                ],
+                "focus": "gosta de",
+                "watch": "ela gosta."
+              },
+              {
+                "prompt": "Diga que você não gosta de frio.",
+                "expected": [
+                  "Não gosto de frio.",
+                  "nao gosto de frio"
+                ],
+                "focus": "não gosto de",
+                "watch": "não antes do verbo."
+              },
+              {
+                "prompt": "Pergunte o que a amiga gosta de fazer.",
+                "expected": [
+                  "O que você gosta de fazer ?",
+                  "o que voce gosta de fazer"
+                ],
+                "focus": "gosta de fazer",
+                "watch": "o que + gosta de."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u13-gostos-e1",
+              "kind": "choice",
+              "prompt": "___ gosto muito de música. (eu)",
+              "explain": "Eu gosto: 1ª pessoa do singular.",
+              "options": [
+                "Gosto",
+                "Gosta",
+                "Gostam",
+                "Gostamos"
+              ],
+              "answers": [
+                "Gosto"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-gostos-e2",
+              "kind": "gap",
+              "prompt": "Ela não gosta ___ esperar.",
+              "explain": "gostar de: gosta de + infinitivo.",
+              "answers": [
+                "de"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-gostos-e3",
+              "kind": "order",
+              "prompt": "Diga um gosto seu. (música)",
+              "explain": "gosto de + substantivo.",
+              "answers": [
+                "Eu gosto de musica"
+              ]
+            },
+            {
+              "id": "pt-foundations-u13-gostos-e4",
+              "kind": "written",
+              "prompt": "Fale dos seus gostos: música e ler.",
+              "explain": "Dois gostos com gosto de + substantivo e infinitivo.",
+              "answers": [
+                "Gosto de música e de ler.",
+                "gosto de musica e de ler"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:hobbies",
+            "grammar:present-simple",
+            "function:talk-about-routines",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }
