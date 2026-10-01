@@ -2420,6 +2420,386 @@
           "explain": "« Capisco il punto », « punto comune »: dissenso con tatto."
         }
       ]
+    },
+    {
+      "id": "it-listen-aperitivo-venerdi",
+      "languageID": "it",
+      "title": "L’aperitivo del venerdì",
+      "level": "A1",
+      "topic": "aperitivo",
+      "unitID": "it-foundations-u19",
+      "text": "È venerdì sera. Luca suona il citofono: è l’aperitivo da Sara. « Posso entrare ? » chiede Luca. « Certo, entra ! ». Luca entra e mette sul tavolo una bottiglia di vino. « Grazie ! Prendi un caffè ? ». « Volentieri ! ». Sul tavolo ci sono olive e biscotti. Parlano del weekend. Alle nove Luca guarda l’orologio: « È tardi, devo andare. Grazie per l’aperitivo ! ». « Grazie a te per il vino ! A presto ! ». « Ciao, alla prossima ! ».",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:social-expressions",
+        "grammar:can"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-aperitivo-venerdi-q1",
+          "kind": "choice",
+          "prompt": "Chi va da Sara ?",
+          "answers": [
+            "Luca"
+          ],
+          "explain": "Luca suona il citofono: è l’aperitivo da Sara.",
+          "options": [
+            "Luca",
+            "Marco",
+            "Anna",
+            "Paolo"
+          ]
+        },
+        {
+          "id": "it-listen-aperitivo-venerdi-q2",
+          "kind": "written",
+          "prompt": "Cosa mette Luca sul tavolo ?",
+          "answers": [
+            "una bottiglia di vino",
+            "una bottiglia di vino rosso"
+          ],
+          "explain": "Luca mette sul tavolo una bottiglia di vino."
+        },
+        {
+          "id": "it-listen-aperitivo-venerdi-q3",
+          "kind": "choice",
+          "prompt": "Cosa offre Sara a Luca ?",
+          "answers": [
+            "Un caffè"
+          ],
+          "explain": "« Prendi un caffè ? » « Volentieri ! ».",
+          "options": [
+            "Un caffè",
+            "Un tè",
+            "Un succo",
+            "Una birra"
+          ]
+        },
+        {
+          "id": "it-listen-aperitivo-venerdi-q4",
+          "kind": "choice",
+          "prompt": "Cosa c’è anche sul tavolo ?",
+          "answers": [
+            "Olive e biscotti"
+          ],
+          "explain": "Sul tavolo ci sono anche olive e biscotti.",
+          "options": [
+            "Olive e biscotti",
+            "Torta e frutta",
+            "Vino e formaggio",
+            "Panini"
+          ]
+        },
+        {
+          "id": "it-listen-aperitivo-venerdi-q5",
+          "kind": "written",
+          "prompt": "Perché Luca deve andare ?",
+          "answers": [
+            "è tardi",
+            "e tardi",
+            "perché è tardi",
+            "perche e tardi"
+          ],
+          "explain": "Alle nove: « È tardi, devo andare »."
+        },
+        {
+          "id": "it-listen-aperitivo-venerdi-q6",
+          "kind": "choice",
+          "prompt": "Come salutano alla fine ?",
+          "answers": [
+            "Alla prossima"
+          ],
+          "explain": "« Ciao, alla prossima ! ».",
+          "options": [
+            "Alla prossima",
+            "A domani",
+            "Buonanotte",
+            "A lunedì"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-reclamo-fattura",
+      "languageID": "it",
+      "title": "Un reclamo al telefono",
+      "level": "A2",
+      "topic": "reclami",
+      "unitID": "it-foundations-u20",
+      "text": "Martedì Anna telefona al negozio. « Buongiorno, vorrei segnalare un problema: ho ricevuto la fattura sbagliata ». « Mi dispiace. Che cosa è successo ? ». « Ho comprato una stampante venerdì, ma nella fattura ci sono due stampanti. E la macchina non funziona bene: si è spenta due volte ». « Capisco. Devo chiedere scusa: c’è stato un errore nostro. Manda la fattura per email e mandiamo subito la fattura giusta. Per la stampante: può portarla in negozio ? ». « Certo, vengo domani mattina ». « Grazie per la pazienza. Buona giornata ! ».",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:solve-problems",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-reclamo-fattura-q1",
+          "kind": "choice",
+          "prompt": "Che problema segnala Anna ?",
+          "answers": [
+            "La fattura sbagliata"
+          ],
+          "explain": "« Ho ricevuto la fattura sbagliata ».",
+          "options": [
+            "La fattura sbagliata",
+            "Il ritardo della consegna",
+            "Il prezzo alto",
+            "Un computer rotto"
+          ]
+        },
+        {
+          "id": "it-listen-reclamo-fattura-q2",
+          "kind": "choice",
+          "prompt": "Quante stampanti ci sono nella fattura ?",
+          "answers": [
+            "Due"
+          ],
+          "explain": "« Nella fattura ci sono due stampanti ».",
+          "options": [
+            "Due",
+            "Una",
+            "Tre",
+            "Nessuna"
+          ]
+        },
+        {
+          "id": "it-listen-reclamo-fattura-q3",
+          "kind": "written",
+          "prompt": "Che cosa è successo alla stampante ?",
+          "answers": [
+            "si è spenta due volte",
+            "si e spenta due volte"
+          ],
+          "explain": "« La macchina non funziona bene: si è spenta due volte »."
+        },
+        {
+          "id": "it-listen-reclamo-fattura-q4",
+          "kind": "written",
+          "prompt": "Che cosa deve mandare Anna per email ?",
+          "answers": [
+            "la fattura",
+            "la fattura sbagliata"
+          ],
+          "explain": "« Manda la fattura per email »."
+        },
+        {
+          "id": "it-listen-reclamo-fattura-q5",
+          "kind": "choice",
+          "prompt": "Quando va Anna in negozio ?",
+          "answers": [
+            "Domani mattina"
+          ],
+          "explain": "« Certo, vengo domani mattina ».",
+          "options": [
+            "Domani mattina",
+            "Domani sera",
+            "Stasera",
+            "Venerdì"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-colloquio-finto",
+      "languageID": "it",
+      "title": "Il colloquio finto",
+      "level": "B1",
+      "topic": "colloqui",
+      "unitID": "it-foundations-u21",
+      "text": "Il colloquio finto di oggi è con Sara, che si prepara a un’azienda di comunicazione. « Raccontaci la sua esperienza ». « Ho lavorato quattro anni in un’agenzia: prima mi occupavo dei social, poi ho gestito due clienti importanti ». « E i suoi punti di forza ? ». « Sono una persona organizzata e calma sotto pressione. Imparo in fretta ». « Perché vuole cambiare ? ». « Cerco una nuova sfida: vorrei occuparmi di progetti internazionali ». « Dove si vede tra cinque anni ? ». « Mi piacerebbe guidare un piccolo team ». « Ha domande ? ». « Sì: come sono gli orari, e c’è possibilità di lavoro ibrido ? ».",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "vocab:work",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-colloquio-finto-q1",
+          "kind": "choice",
+          "prompt": "Dove vuole lavorare Sara ?",
+          "answers": [
+            "In un’azienda di comunicazione"
+          ],
+          "explain": "Si prepara a un’azienda di comunicazione.",
+          "options": [
+            "In un’azienda di comunicazione",
+            "In una scuola",
+            "In un ospedale",
+            "In una banca"
+          ]
+        },
+        {
+          "id": "it-listen-colloquio-finto-q2",
+          "kind": "choice",
+          "prompt": "Che cosa ha gestito nell’agenzia ?",
+          "answers": [
+            "Due clienti importanti"
+          ],
+          "explain": "« Poi ho gestito due clienti importanti ».",
+          "options": [
+            "Due clienti importanti",
+            "I social dell’agenzia",
+            "Un piccolo team",
+            "Il budget annuale"
+          ]
+        },
+        {
+          "id": "it-listen-colloquio-finto-q3",
+          "kind": "written",
+          "prompt": "Che punti di forza dice Sara ?",
+          "answers": [
+            "organizzata e calma sotto pressione",
+            "sono organizzata e calma"
+          ],
+          "explain": "« Sono una persona organizzata e calma sotto pressione »."
+        },
+        {
+          "id": "it-listen-colloquio-finto-q4",
+          "kind": "written",
+          "prompt": "Perché vuole cambiare lavoro ?",
+          "answers": [
+            "cerca una nuova sfida",
+            "per una nuova sfida"
+          ],
+          "explain": "« Cerco una nuova sfida »."
+        },
+        {
+          "id": "it-listen-colloquio-finto-q5",
+          "kind": "choice",
+          "prompt": "Dove si vede tra cinque anni ?",
+          "answers": [
+            "A guidare un piccolo team"
+          ],
+          "explain": "« Mi piacerebbe guidare un piccolo team ».",
+          "options": [
+            "A guidare un piccolo team",
+            "All’estero",
+            "In un’altra città",
+            "Da freelance"
+          ]
+        },
+        {
+          "id": "it-listen-colloquio-finto-q6",
+          "kind": "choice",
+          "prompt": "Che cosa chiede alla fine ?",
+          "answers": [
+            "Orari e lavoro ibrido"
+          ],
+          "explain": "« Come sono gli orari, e c’è possibilità di lavoro ibrido ? ».",
+          "options": [
+            "Orari e lavoro ibrido",
+            "Lo stipendio esatto",
+            "Le ferie",
+            "Il nome del capo"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-tono-podcast",
+      "languageID": "it",
+      "title": "Podcast: il tono esatto",
+      "level": "C1",
+      "topic": "registri",
+      "unitID": "it-foundations-u9",
+      "text": "Benvenuti a « Parole al lavoro », il podcast di chi scrive per mestiere. Oggi: il tono esatto. Scrivere bene non è questione di parole rare, ma di scelte precise: si prende una decisione, non la si fa; si ha voglia di leggere, non la voglia. Le collocazioni sono le coppie che la lingua ci consegna già pronte. E i verbi del dire pesano: sostenere una tesi è neutro, asserire suona distante, rivendicare suona da battaglia. Il consiglio di oggi ? Leggete ad alta voce: dove il fiato manca, la frase è troppo lunga; dove il tono sale, forse la parola è sbagliata. In definitiva, esprimere un’opinione è decidere: parola per parola.",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-tono-podcast-q1",
+          "kind": "choice",
+          "prompt": "Che tema ha il podcast di oggi ?",
+          "answers": [
+            "Il tono esatto"
+          ],
+          "explain": "« Oggi: il tono esatto ».",
+          "options": [
+            "Il tono esatto",
+            "Le parole rare",
+            "La lettura veloce",
+            "I podcast letterari"
+          ]
+        },
+        {
+          "id": "it-listen-tono-podcast-q2",
+          "kind": "choice",
+          "prompt": "Quale collocazione cita come esatta ?",
+          "answers": [
+            "Prendere una decisione"
+          ],
+          "explain": "« Si prende una decisione, non la si fa ».",
+          "options": [
+            "Prendere una decisione",
+            "Fare una decisione",
+            "Dare una decisione",
+            "Mettere una decisione"
+          ]
+        },
+        {
+          "id": "it-listen-tono-podcast-q3",
+          "kind": "written",
+          "prompt": "Che effetto ha « asserire », secondo il relatore ?",
+          "answers": [
+            "suona distante",
+            "un tono distante"
+          ],
+          "explain": "« asserire suona distante »."
+        },
+        {
+          "id": "it-listen-tono-podcast-q4",
+          "kind": "choice",
+          "prompt": "Che effetto ha « rivendicare » ?",
+          "answers": [
+            "Suona da battaglia"
+          ],
+          "explain": "« rivendicare suona da battaglia ».",
+          "options": [
+            "Suona da battaglia",
+            "Suona neutro",
+            "Suona gentile",
+            "Suona antico"
+          ]
+        },
+        {
+          "id": "it-listen-tono-podcast-q5",
+          "kind": "written",
+          "prompt": "Che consiglio pratico dà il relatore ?",
+          "answers": [
+            "leggere ad alta voce",
+            "leggete ad alta voce",
+            "leggere a voce alta"
+          ],
+          "explain": "« Leggete ad alta voce »."
+        },
+        {
+          "id": "it-listen-tono-podcast-q6",
+          "kind": "choice",
+          "prompt": "Come definisce l’opinione alla fine ?",
+          "answers": [
+            "Decidere parola per parola"
+          ],
+          "explain": "« Esprimere un’opinione è decidere: parola per parola ».",
+          "options": [
+            "Decidere parola per parola",
+            "Un gioco di caso",
+            "Una questione di musica",
+            "Un lavoro solitario"
+          ]
+        }
+      ]
     }
   ]
 }

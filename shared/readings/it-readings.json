@@ -989,6 +989,94 @@
           "explain": "« Giulia non sa niente, vero ? » « Shh… è una sorpresa ! »"
         }
       ]
+    },
+    {
+      "id": "it-read-recensione-guasto",
+      "languageID": "it",
+      "title": "La recensione della macchina guasta",
+      "level": "A2",
+      "topic": "recensioni",
+      "unitID": "it-foundations-u20",
+      "text": "Due stelle. Ho comprato questa macchina per il caffè il mese scorso e all’inizio funzionava bene. Poi, lunedì, si è rotta: l’acqua non saliva più e il caffè era freddo. Ho chiamato il servizio clienti tre volte, ma nessuno ha risposto. Alla fine ho scritto un’email e in due giorni ho ricevuto una risposta gentile: una macchina nuova arriva questa settimana. Meno male ! Il caffè, poi, era buono. Se la nuova funziona, cambio la recensione. Consigliata solo a chi ha pazienza.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-recensione-guasto-q1",
+          "kind": "choice",
+          "prompt": "Che cosa si è rotta ?",
+          "answers": [
+            "La macchina per il caffè"
+          ],
+          "explain": "« Si è rotta: l’acqua non saliva più ».",
+          "options": [
+            "La macchina per il caffè",
+            "Il telefono",
+            "La lavatrice",
+            "L’email"
+          ]
+        },
+        {
+          "id": "it-read-recensione-guasto-q2",
+          "kind": "written",
+          "prompt": "Quante volte ha chiamato il servizio clienti ?",
+          "answers": [
+            "tre volte",
+            "3 volte"
+          ],
+          "explain": "« Ho chiamato il servizio clienti tre volte »."
+        },
+        {
+          "id": "it-read-recensione-guasto-q3",
+          "kind": "choice",
+          "prompt": "Che soluzione ha ricevuto ?",
+          "answers": [
+            "Una macchina nuova"
+          ],
+          "explain": "« Una macchina nuova arriva questa settimana ».",
+          "options": [
+            "Una macchina nuova",
+            "Un rimborso",
+            "Un tecnico a casa",
+            "Un caffè gratis"
+          ]
+        },
+        {
+          "id": "it-read-recensione-guasto-q4",
+          "kind": "choice",
+          "prompt": "Quando è arrivata la risposta gentile ?",
+          "answers": [
+            "In due giorni"
+          ],
+          "explain": "« In due giorni ho ricevuto una risposta gentile ».",
+          "options": [
+            "In due giorni",
+            "In tre ore",
+            "In una settimana",
+            "Dopo un mese"
+          ]
+        },
+        {
+          "id": "it-read-recensione-guasto-q5",
+          "kind": "choice",
+          "prompt": "Come giudica il caffè, la recensora ?",
+          "answers": [
+            "Buono"
+          ],
+          "explain": "« Il caffè, poi, era buono ».",
+          "options": [
+            "Buono",
+            "Brutto",
+            "Freddo",
+            "Non lo dice"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -2334,6 +2334,353 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-listen-feier-freitag",
+      "languageID": "de",
+      "title": "Ein Abend bei Lea",
+      "level": "A1",
+      "topic": "besuch",
+      "unitID": "de-foundations-u19",
+      "text": "Es ist Freitagabend. Jakob steht vor Leas Tür und klingelt. « Darf ich reinkommen ? » — « Natürlich, komm rein ! Du darfst die Schuhe ausziehen. » Jakob bringt einen Kuchen mit: « Der ist für euch. » Am Tisch fragt Lea: « Möchtest du Tee oder Saft ? » — « Tee, bitte. » Sie essen Kuchen und reden lange. Am Ende sagt Jakob: « Vielen Dank für die Einladung ! » — « Bis zum nächsten Mal ! »",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:social-expressions",
+        "grammar:can"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-feier-freitag-q1",
+          "kind": "choice",
+          "prompt": "Wann kommt Jakob zu Lea ?",
+          "explain": "Es ist Freitagabend.",
+          "answers": [
+            "Am Freitagabend"
+          ],
+          "options": [
+            "Am Freitagabend",
+            "Am Samstagmorgen",
+            "Am Montag",
+            "Am Sonntag"
+          ]
+        },
+        {
+          "id": "de-listen-feier-freitag-q2",
+          "kind": "written",
+          "prompt": "Was fragt Jakob an der Tür ?",
+          "explain": "« Darf ich reinkommen ? », fragt Jakob.",
+          "answers": [
+            "darf ich reinkommen",
+            "darf ich reinkommen ?",
+            "darf ich hereinkommen"
+          ]
+        },
+        {
+          "id": "de-listen-feier-freitag-q3",
+          "kind": "choice",
+          "prompt": "Was darf Jakob machen ?",
+          "explain": "« Du darfst die Schuhe ausziehen. »",
+          "answers": [
+            "Die Schuhe ausziehen"
+          ],
+          "options": [
+            "Die Schuhe ausziehen",
+            "Rauchen",
+            "Kochen",
+            "Fernsehen"
+          ]
+        },
+        {
+          "id": "de-listen-feier-freitag-q4",
+          "kind": "written",
+          "prompt": "Was bringt Jakob mit ?",
+          "explain": "Jakob bringt einen Kuchen mit.",
+          "answers": [
+            "einen kuchen",
+            "kuchen",
+            "einen kuchen mit"
+          ]
+        },
+        {
+          "id": "de-listen-feier-freitag-q5",
+          "kind": "choice",
+          "prompt": "Was nimmt Jakob zu trinken ?",
+          "explain": "« Tee, bitte. »",
+          "answers": [
+            "Tee"
+          ],
+          "options": [
+            "Tee",
+            "Saft",
+            "Wasser",
+            "Kaffee"
+          ]
+        },
+        {
+          "id": "de-listen-feier-freitag-q6",
+          "kind": "written",
+          "prompt": "Was sagt Jakob am Ende ?",
+          "explain": "« Vielen Dank für die Einladung ! »",
+          "answers": [
+            "vielen dank für die einladung",
+            "vielen dank fur die einladung",
+            "danke für die einladung"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-reklamation-rechnung",
+      "languageID": "de",
+      "title": "Anruf im Laden",
+      "level": "A2",
+      "topic": "reklamation",
+      "unitID": "de-foundations-u20",
+      "text": "Anna ruft im Laden ElektroPlus an. « Guten Tag, es tut mir leid, aber mein Wasserkocher funktioniert nicht mehr. » — « Das tut mir leid. Wann haben Sie ihn gekauft ? » — « Letzte Woche, am Montag. Ich habe die Rechnung hier. » — « Gut, dann können wir ihn umtauschen. Haben Sie ihn schon mit einer anderen Steckdose ausprobiert ? » — « Ja, zweimal. Er geht einfach nicht an. » — « Verstanden. Bringen Sie ihn und die Rechnung einfach vorbei, dann bekommen Sie ein neues Gerät. » — « Super, vielen Dank ! Bis morgen. »",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-reklamation-rechnung-q1",
+          "kind": "choice",
+          "prompt": "Was funktioniert nicht ?",
+          "explain": "« Mein Wasserkocher funktioniert nicht mehr. »",
+          "answers": [
+            "Der Wasserkocher"
+          ],
+          "options": [
+            "Der Wasserkocher",
+            "Die Kaffeemaschine",
+            "Der Fernseher",
+            "Der Drucker"
+          ]
+        },
+        {
+          "id": "de-listen-reklamation-rechnung-q2",
+          "kind": "choice",
+          "prompt": "Wann hat Anna ihn gekauft ?",
+          "explain": "« Letzte Woche, am Montag. »",
+          "answers": [
+            "Letzte Woche, am Montag"
+          ],
+          "options": [
+            "Letzte Woche, am Montag",
+            "Gestern",
+            "Im Mai",
+            "Vor einem Monat"
+          ]
+        },
+        {
+          "id": "de-listen-reklamation-rechnung-q3",
+          "kind": "written",
+          "prompt": "Welchen Beleg hat Anna ?",
+          "explain": "« Ich habe die Rechnung hier. »",
+          "answers": [
+            "die rechnung",
+            "eine rechnung"
+          ]
+        },
+        {
+          "id": "de-listen-reklamation-rechnung-q4",
+          "kind": "written",
+          "prompt": "Was hat Anna schon ausprobiert ?",
+          "explain": "« Haben Sie ihn schon mit einer anderen Steckdose ausprobiert ? » — « Ja, zweimal. »",
+          "answers": [
+            "eine andere steckdose",
+            "eine andere steckdose, zweimal",
+            "eine andere steckdose zweimal"
+          ]
+        },
+        {
+          "id": "de-listen-reklamation-rechnung-q5",
+          "kind": "choice",
+          "prompt": "Was bekommt Anna am Ende ?",
+          "explain": "« …dann bekommen Sie ein neues Gerät. »",
+          "answers": [
+            "Ein neues Gerät"
+          ],
+          "options": [
+            "Ein neues Gerät",
+            "Ihr Geld zurück",
+            "Nur eine Reparatur",
+            "Gar nichts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-probevorstellung",
+      "languageID": "de",
+      "title": "Das Gespräch bei Frau Berger",
+      "level": "B1",
+      "topic": "arbeit",
+      "unitID": "de-foundations-u21",
+      "text": "Frau Berger führt das Gespräch. « Herr Moos, erzählen Sie kurz von Ihrer Erfahrung. » — « Ich habe drei Jahre in einer Marketingagentur gearbeitet, außerdem habe ich dort ein kleines Team geleitet. » — « Und was ist Ihre größte Stärke ? » — « Ich bleibe ruhig, wenn viel los ist. Letztes Jahr liefen zehn Projekte gleichzeitig — das hat gut funktioniert. » — « Warum haben Sie sich bei uns beworben ? » — « Weil Ihre Firma nachhaltig arbeitet. Das überzeugt mich. » Frau Berger nickt. « Wo sehen Sie sich in fünf Jahren ? » — « In einer Führungsrolle, aber zuerst will ich hier viel lernen. » — « Danke, wir melden uns bis Freitag. »",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "vocab:work",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-probevorstellung-q1",
+          "kind": "choice",
+          "prompt": "Warum hat sich Herr Moos beworben ?",
+          "explain": "« Weil Ihre Firma nachhaltig arbeitet. Das überzeugt mich. »",
+          "answers": [
+            "Weil die Firma nachhaltig arbeitet"
+          ],
+          "options": [
+            "Weil die Firma nachhaltig arbeitet",
+            "Weil sie viel Geld zahlt",
+            "Weil sie nah an seiner Wohnung liegt",
+            "Weil sein Freund dort arbeitet"
+          ]
+        },
+        {
+          "id": "de-listen-probevorstellung-q2",
+          "kind": "written",
+          "prompt": "Was hat er in der Agentur geleitet ?",
+          "explain": "« Außerdem habe ich dort ein kleines Team geleitet. »",
+          "answers": [
+            "ein kleines team"
+          ]
+        },
+        {
+          "id": "de-listen-probevorstellung-q3",
+          "kind": "choice",
+          "prompt": "Wie reagiert er, wenn viel los ist ?",
+          "explain": "« Ich bleibe ruhig, wenn viel los ist. »",
+          "answers": [
+            "Er bleibt ruhig"
+          ],
+          "options": [
+            "Er bleibt ruhig",
+            "Er wird laut",
+            "Er braucht Hilfe",
+            "Er geht früher"
+          ]
+        },
+        {
+          "id": "de-listen-probevorstellung-q4",
+          "kind": "written",
+          "prompt": "Wo sieht er sich in fünf Jahren ?",
+          "explain": "« In einer Führungsrolle … »",
+          "answers": [
+            "in einer führungsrolle",
+            "in einer fuehrungsrolle",
+            "in einer führenden rolle"
+          ]
+        },
+        {
+          "id": "de-listen-probevorstellung-q5",
+          "kind": "choice",
+          "prompt": "Was will er zuerst tun ?",
+          "explain": "« …aber zuerst will ich hier viel lernen. »",
+          "answers": [
+            "In der Firma viel lernen"
+          ],
+          "options": [
+            "In der Firma viel lernen",
+            "Sofort Chef werden",
+            "Die Firma wieder verlassen",
+            "Ein eigenes Geschäft aufmachen"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-ton-podcast",
+      "languageID": "de",
+      "title": "Podcast: Das passende Verb",
+      "level": "C1",
+      "topic": "sprache",
+      "unitID": "de-foundations-u9",
+      "text": "Im Podcast « Feines Deutsch » fragt Hörerin Katrin: « Warum klingt « eine Entscheidung machen » falsch ? » Wiebke erklärt: Kollokationen sind Gewohnheiten, keine Regeln — « treffen » gehört zur Entscheidung wie « üben » zur Kritik. Tarek ergänzt: « Wer das falsche Verb nimmt, macht keinen Fehler, der sofort auffällt — aber der Ton stimmt nicht ». Die beiden diskutieren, ob man solche Wendungen auswendig lernen soll. Wiebke hält Lesen für wirksamer: « Im Kontext bleibt die Verbindung hängen ». Am Ende geben sie der Hörerin einen Auftrag: eine Woche lang jede E-Mail auf ein einziges Verb prüfen — das, das man ersetzen könnte. « Genau genommen », lacht Tarek, « ist das die beste Übung für den genauen Ton ».",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-ton-podcast-q1",
+          "kind": "choice",
+          "prompt": "Was sind Kollokationen laut Wiebke ?",
+          "explain": "« Kollokationen sind Gewohnheiten, keine Regeln. »",
+          "answers": [
+            "Gewohnheiten, keine Regeln"
+          ],
+          "options": [
+            "Gewohnheiten, keine Regeln",
+            "Feste Grammatikregeln",
+            "Fremdwörter aus dem Englischen",
+            "Fehler, die auffallen"
+          ]
+        },
+        {
+          "id": "de-listen-ton-podcast-q2",
+          "kind": "written",
+          "prompt": "Welches Verb gehört zur Kritik ?",
+          "explain": "« …wie « üben » zur Kritik. »",
+          "answers": [
+            "üben",
+            "ueben"
+          ]
+        },
+        {
+          "id": "de-listen-ton-podcast-q3",
+          "kind": "choice",
+          "prompt": "Was meint Tarek mit « der Ton stimmt nicht » ?",
+          "explain": "« …macht keinen Fehler, der sofort auffällt — aber der Ton stimmt nicht. »",
+          "answers": [
+            "Es klingt nicht muttersprachlich"
+          ],
+          "options": [
+            "Es klingt nicht muttersprachlich",
+            "Die Grammatik ist falsch",
+            "Die Mail ist zu lang",
+            "Die Musik ist zu laut"
+          ]
+        },
+        {
+          "id": "de-listen-ton-podcast-q4",
+          "kind": "choice",
+          "prompt": "Was hält Wiebke für wirksamer als Auswendiglernen ?",
+          "explain": "« Im Kontext bleibt die Verbindung hängen. »",
+          "answers": [
+            "Lesen im Kontext"
+          ],
+          "options": [
+            "Lesen im Kontext",
+            "Wortlisten schreiben",
+            "Vokabel-Apps",
+            "Alles übersetzen"
+          ]
+        },
+        {
+          "id": "de-listen-ton-podcast-q5",
+          "kind": "written",
+          "prompt": "Welchen Auftrag bekommen die Hörer ?",
+          "explain": "« …eine Woche lang jede E-Mail auf ein einziges Verb prüfen. »",
+          "answers": [
+            "jede e-mail auf ein verb prüfen",
+            "jede email auf ein verb pruefen",
+            "eine woche lang jede e-mail auf ein verb prüfen"
+          ]
+        }
+      ]
     }
   ]
 }

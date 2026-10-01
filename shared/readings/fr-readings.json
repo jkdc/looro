@@ -965,6 +965,97 @@
           "explain": "Puis on va manger une pizza, écrit Léa."
         }
       ]
+    },
+    {
+      "id": "fr-read-avis-panne",
+      "languageID": "fr",
+      "title": "Un vélo, trois étoiles",
+      "level": "A2",
+      "topic": "avis client",
+      "unitID": "fr-foundations-u20",
+      "text": "Titre : un vélo qui roule… trois semaines\nJ'ai acheté ce vélo électrique le 3 mars. Les deux premières semaines, j'ai fait tous mes trajets avec : super ! Mais la semaine dernière, le vélo est tombé en panne : la batterie ne charge plus. J'ai appelé le service client deux fois. La première fois, personne n'a répondu. La deuxième fois, la vendeuse était gentille : elle m'a proposé un échange sous une semaine. J'attends maintenant. Je mets trois étoiles, parce que le vélo roule très bien… quand il marche !",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [
+        "grammar:past-was-were"
+      ],
+      "questions": [
+        {
+          "id": "fr-read-avis-panne-q1",
+          "kind": "choice",
+          "prompt": "Quand est-ce que l'auteur a acheté le vélo ?",
+          "answers": [
+            "Le 3 mars"
+          ],
+          "explain": "J'ai acheté ce vélo électrique le 3 mars.",
+          "options": [
+            "Le 3 mars",
+            "Le 3 mai",
+            "Hier",
+            "La semaine dernière"
+          ]
+        },
+        {
+          "id": "fr-read-avis-panne-q2",
+          "kind": "written",
+          "prompt": "Qu'est-ce qui ne marche plus sur le vélo ?",
+          "answers": [
+            "la batterie",
+            "la batterie ne charge plus",
+            "batterie"
+          ],
+          "explain": "Le vélo est tombé en panne : la batterie ne charge plus."
+        },
+        {
+          "id": "fr-read-avis-panne-q3",
+          "kind": "choice",
+          "prompt": "Combien de fois l'auteur a-t-il appelé le service client ?",
+          "answers": [
+            "Deux fois"
+          ],
+          "explain": "J'ai appelé le service client deux fois.",
+          "options": [
+            "Deux fois",
+            "Une fois",
+            "Trois fois",
+            "Jamais"
+          ]
+        },
+        {
+          "id": "fr-read-avis-panne-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que la vendeuse a proposé ?",
+          "answers": [
+            "Un échange sous une semaine"
+          ],
+          "explain": "Elle m'a proposé un échange sous une semaine.",
+          "options": [
+            "Un échange sous une semaine",
+            "Un remboursement immédiat",
+            "Un nouveau casque",
+            "Une réparation gratuite sur place"
+          ]
+        },
+        {
+          "id": "fr-read-avis-panne-q5",
+          "kind": "choice",
+          "prompt": "Pourquoi l'auteur met-il quand même trois étoiles ?",
+          "answers": [
+            "Le vélo roule très bien quand il marche"
+          ],
+          "explain": "Je mets trois étoiles, parce que le vélo roule très bien… quand il marche !",
+          "options": [
+            "Le vélo roule très bien quand il marche",
+            "Le service client est très rapide",
+            "Il a reçu un cadeau",
+            "Il n'a pas payé le vélo"
+          ]
+        }
+      ]
     }
   ]
 }

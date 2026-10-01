@@ -4668,6 +4668,183 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "es-foundations-u10-tono",
+          "title": "El tono exacto",
+          "goal": "Ajustar el tono con collocations exactas: echar de menos o extrañar, tomar la decisión de…; la palabra que pinta el registro justo.",
+          "intro": {
+            "explanation": [
+              "El tono vive en las collocations: «echar de menos» suena peninsular y entrañable; «extrañar» suena americano y más literario.",
+              "La fórmula completa compromete más: «tomar la decisión de…» avisa de deliberación; «decidir» a secas registra el acto y ya.",
+              "En el argumento, la collocation exacta ahorra adjetivos: «dar la razón en parte» matiza con más precisión que «estoy un poco de acuerdo»."
+            ],
+            "examples": [
+              {
+                "text": "Echo de menos aquellas sobremesas.",
+                "meaning": "Nostalgia peninsular, tono cercano."
+              },
+              {
+                "text": "Extraño las comidas de familia.",
+                "meaning": "Extrañar: registro americano."
+              },
+              {
+                "text": "Tomamos la decisión de posponerlo.",
+                "meaning": "Decisión compartida y asumida."
+              },
+              {
+                "text": "Te doy la razón en parte.",
+                "meaning": "Acuerdo parcial con peso."
+              },
+              {
+                "text": "No es lo mismo decidir que tomar la decisión.",
+                "meaning": "Precisión entre dos fórmulas."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "echar de menos a/algo",
+              "meaning": "Echar en falta; nostalgia peninsular.",
+              "note": "Echo de menos mi barrio."
+            },
+            {
+              "text": "extrañar",
+              "meaning": "Echar de menos, registro americano.",
+              "note": "Extraño esas tardes tranquilas."
+            },
+            {
+              "text": "tomar la decisión de + infinitivo",
+              "meaning": "Decidir de forma asumida y formal.",
+              "note": "Tomamos la decisión de esperar."
+            },
+            {
+              "text": "dar la razón en parte",
+              "meaning": "Acuerdo parcial con peso argumental.",
+              "note": "Te doy la razón en parte, no del todo."
+            },
+            {
+              "text": "no es lo mismo X que Y",
+              "meaning": "Precisión léxica en el debate.",
+              "note": "No es lo mismo escuchar que oír."
+            }
+          ],
+          "situation": "Revisáis una columna dos veces — para un diario y para un blog personal — y elegís la collocation que da el tono exacto: extrañar o echar de menos, decidir o tomar la decisión.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di con tono peninsular que tu barrio te falta: echar de menos.",
+                "expected": [
+                  "Echo de menos mi barrio",
+                  "echo de menos mi barrio"
+                ],
+                "focus": "echo de menos",
+                "watch": "echar de menos: collocation fija."
+              },
+              {
+                "prompt": "Di lo mismo con registro americano: extrañar.",
+                "expected": [
+                  "Extraño esas tardes tranquilas",
+                  "extraño esas tardes tranquilas"
+                ],
+                "focus": "extraño",
+                "watch": "extrañar: registro americano."
+              },
+              {
+                "prompt": "Comprométete con la fórmula completa: tomar la decisión de esperar.",
+                "expected": [
+                  "Tomamos la decisión de esperar",
+                  "tomamos la decision de esperar"
+                ],
+                "focus": "tomar la decisión",
+                "watch": "La fórmula larga avisa de deliberación."
+              },
+              {
+                "prompt": "Matiza en debate: dar la razón en parte.",
+                "expected": [
+                  "Te doy la razón en parte",
+                  "te doy la razon en parte"
+                ],
+                "focus": "dar la razón en parte",
+                "watch": "Delimita el acuerdo."
+              },
+              {
+                "prompt": "Marca la diferencia entre dos verbos: escuchar y oír.",
+                "expected": [
+                  "No es lo mismo escuchar que oír",
+                  "no es lo mismo escuchar que oir"
+                ],
+                "focus": "no es lo mismo",
+                "watch": "Fórmula de precisión léxica."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u10-tono-e1",
+              "kind": "choice",
+              "prompt": "___ de menos aquellas sobremesas de agosto.",
+              "explain": "echar de menos: collocation fija; no se sustituye por hacer ni por dar.",
+              "options": [
+                "Echo",
+                "Hago",
+                "Doy",
+                "Tomo"
+              ],
+              "answers": [
+                "Echo"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-tono-e2",
+              "kind": "gap",
+              "prompt": "La dirección ___ la decisión de cerrar la sala en agosto. (tomar, pasado)",
+              "explain": "tomar la decisión de: fórmula completa y asumida; tomó lleva tilde.",
+              "answers": [
+                "tomó",
+                "tomo",
+                "Tomó"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-tono-e3",
+              "kind": "choice",
+              "prompt": "¿Qué fórmula acota el acuerdo con más precisión argumental?",
+              "explain": "Dar la razón en parte delimita el alcance; las otras dos son difusas.",
+              "options": [
+                "Te doy la razón en parte",
+                "Estoy un poco de acuerdo",
+                "Creo que sí",
+                "Puede ser"
+              ],
+              "answers": [
+                "Te doy la razón en parte"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-tono-e4",
+              "kind": "written",
+              "prompt": "Escribe tu posición sobre el cierre de agosto acotando el acuerdo con la fórmula de la razón parcial.",
+              "explain": "Dar la razón en parte + matiz: la posición exacta en un texto argumentativo.",
+              "answers": [
+                "te doy la razón en parte, pero agosto es complicado",
+                "te doy la razon en parte, pero agosto es complicado",
+                "doy la razón en parte: agosto es complicado"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:collocations",
+            "function:express-opinion",
+            "writing:argument",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -9552,6 +9729,1624 @@
           ],
           "prerequisites": [
             "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u20",
+      "title": "Una visita",
+      "subtitle": "En casa de otros",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "la-llegada",
+          "title": "La llegada",
+          "subtitle": "Pedir permiso",
+          "symbol": "door.left.open",
+          "category": "Course",
+          "situation": "Llegas a casa de tu vecina: llamas a la puerta, pides pasar y dejas el paraguas.",
+          "colorIndex": 0
+        },
+        {
+          "id": "el-detalle-visita",
+          "title": "El detalle",
+          "subtitle": "Ofrecer y agradecer",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "Traes un postre, lo ofreces a los anfitriones y te despides dando las gracias.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u20-visita",
+          "title": "¿Puedo pasar?",
+          "goal": "Pedir permiso en casa de alguien: ¿puedo pasar?, ¿puedo…? y responder con pasa, sí, sí.",
+          "intro": {
+            "explanation": [
+              "Para pedir permiso usamos poder: «¿Puedo pasar?». La respuesta es corta y amable: «¡Pasa, pasa!».",
+              "Puedo + infinitivo sirve para todo en una visita: «¿Puedo quitarme los zapatos?», «¿Puedo dejar el paraguas aquí?».",
+              "Para preguntar por alguien: «¿Está Carmen?». Y para entrar con educación: «¿Se puede?»."
+            ],
+            "examples": [
+              {
+                "text": "¿Puedo pasar?",
+                "meaning": "Pedir permiso para entrar."
+              },
+              {
+                "text": "¡Pasa, pasa!",
+                "meaning": "Dar permiso."
+              },
+              {
+                "text": "¿Puedo dejar el paraguas aquí?",
+                "meaning": "Pedir permiso con puedo + infinitivo."
+              },
+              {
+                "text": "¿Puedo quitarme los zapatos?",
+                "meaning": "Otra petición de permiso."
+              },
+              {
+                "text": "¿Está Carmen?",
+                "meaning": "Preguntar por una persona."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿puedo + infinitivo?",
+              "meaning": "Pedir permiso.",
+              "note": "¿Puedo entrar?"
+            },
+            {
+              "text": "¿puedo pasar?",
+              "meaning": "Pedir pasar a una casa.",
+              "note": "¿Puedo pasar? — ¡Pasa, pasa!"
+            },
+            {
+              "text": "pasa / pasa, pasa",
+              "meaning": "Dar permiso al invitado.",
+              "note": "¡Pasa, pasa, está abierta!"
+            },
+            {
+              "text": "¿está …?",
+              "meaning": "Preguntar por alguien.",
+              "note": "¿Está tu madre?"
+            },
+            {
+              "text": "¿se puede?",
+              "meaning": "Pedir permiso, fórmula fija.",
+              "note": "¿Se puede? — Sí, sí, adelante."
+            }
+          ],
+          "situation": "Llegas a casa de tu vecina Carmen: llamas a la puerta, pides pasar, dejas el paraguas y preguntas si está su hijo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Llamas a la puerta de Carmen: pide pasar.",
+                "expected": [
+                  "¿Puedo pasar?",
+                  "¿Puedo pasar"
+                ],
+                "focus": "¿puedo pasar?",
+                "watch": "puedo + infinitivo."
+              },
+              {
+                "prompt": "Pide permiso para quitarte los zapatos.",
+                "expected": [
+                  "¿Puedo quitarme los zapatos?",
+                  "puedo quitarme los zapatos"
+                ],
+                "focus": "¿puedo…?",
+                "watch": "quitarme: quitarse + me."
+              },
+              {
+                "prompt": "Está lloviendo: pide permiso para dejar el paraguas.",
+                "expected": [
+                  "¿Puedo dejar el paraguas aquí?",
+                  "puedo dejar el paraguas"
+                ],
+                "focus": "dejar",
+                "watch": "dejar = poner algo en un sitio."
+              },
+              {
+                "prompt": "Pregunta si el hijo de Carmen está en casa.",
+                "expected": [
+                  "¿Está tu hijo?",
+                  "¿Está tu hijo en casa?"
+                ],
+                "focus": "¿está…?",
+                "watch": "está con tilde."
+              },
+              {
+                "prompt": "Carmen te abre: responde a «¿Puedo pasar?».",
+                "expected": [
+                  "¡Pasa, pasa!",
+                  "Pasa, pasa",
+                  "Sí, pasa"
+                ],
+                "focus": "pasa",
+                "watch": "pasa: dar permiso."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u20-visita-e1",
+              "kind": "choice",
+              "prompt": "¿___ entrar? — Sí, sí, pasa.",
+              "explain": "Puedo + infinitivo: pedir permiso para ti.",
+              "options": [
+                "Puedo",
+                "Puedes",
+                "Quiero",
+                "Tengo"
+              ],
+              "answers": [
+                "Puedo"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-visita-e2",
+              "kind": "gap",
+              "prompt": "¿___ quitarme los zapatos aquí?",
+              "explain": "Puedo + infinitivo pide permiso; la respuesta corta es «Sí, puedes».",
+              "answers": [
+                "Puedo",
+                "puedo"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-visita-e3",
+              "kind": "order",
+              "prompt": "Estás mojado: pide permiso para dejar el paraguas en la entrada.",
+              "explain": "¿Puedo + infinitivo? es la fórmula de permiso en una visita.",
+              "answers": [
+                "¿Puedo dejar el paraguas aquí?"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-visita-e4",
+              "kind": "written",
+              "prompt": "Llama a la puerta y pregunta por la dueña de la casa.",
+              "explain": "¿Está + nombre? pregunta si la persona está en casa; está lleva tilde.",
+              "answers": [
+                "¿Está Carmen?",
+                "¿Esta Carmen?",
+                "¿Está Carmen en casa?"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:can",
+            "function:make-requests",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u20-detalle",
+          "title": "Traigo un detalle",
+          "goal": "Ofrecer algo a los anfitriones al llegar: traigo…, es para ti, es un detalle, ¿dónde lo pongo?",
+          "intro": {
+            "explanation": [
+              "Al llegar con algo, traer va en primera persona: «Traigo un postre», «Traigo pan».",
+              "Para entregarlo: «Esto es para ti», «Es un detalle». Un detalle es un regalo pequeño y amable.",
+              "La anfitriona lo agradece: «¡Qué detallista!». Y tú preguntas: «¿Dónde lo pongo?»."
+            ],
+            "examples": [
+              {
+                "text": "Traigo un postre.",
+                "meaning": "Decir qué traes."
+              },
+              {
+                "text": "Esto es para ti.",
+                "meaning": "Entregar el regalo."
+              },
+              {
+                "text": "Es un detalle.",
+                "meaning": "Presentar un regalo pequeño."
+              },
+              {
+                "text": "¡Qué detallista!",
+                "meaning": "La anfitriona agradece."
+              },
+              {
+                "text": "¿Dónde lo pongo?",
+                "meaning": "Preguntar el sitio."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "traigo + comida",
+              "meaning": "Decir qué traes.",
+              "note": "Traigo una tarta."
+            },
+            {
+              "text": "esto es para ti",
+              "meaning": "Entregar el detalle.",
+              "note": "Esto es para ti, Carmen."
+            },
+            {
+              "text": "es un detalle",
+              "meaning": "Regalo pequeño y amable.",
+              "note": "No hacía falta, es un detalle."
+            },
+            {
+              "text": "¿dónde lo pongo?",
+              "meaning": "Preguntar dónde dejarlo.",
+              "note": "¿Dónde lo pongo, en la mesa?"
+            },
+            {
+              "text": "¡qué detallista!",
+              "meaning": "La anfitriona agradece.",
+              "note": "¡Qué detallista eres!"
+            }
+          ],
+          "situation": "Vas a cenar en casa de Carmen con una tarta: dices qué traes, la entregas y preguntas dónde la pones.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Llegas con una tarta: di qué traes.",
+                "expected": [
+                  "Traigo una tarta",
+                  "traigo tarta"
+                ],
+                "focus": "traigo",
+                "watch": "traigo: yo traigo, presente."
+              },
+              {
+                "prompt": "Entrega el regalo a Carmen.",
+                "expected": [
+                  "Esto es para ti",
+                  "es para ti"
+                ],
+                "focus": "para ti",
+                "watch": "para + persona."
+              },
+              {
+                "prompt": "Preséntalo como regalo pequeño.",
+                "expected": [
+                  "Es un detalle",
+                  "es un detalle"
+                ],
+                "focus": "un detalle",
+                "watch": "un detalle: regalo amable."
+              },
+              {
+                "prompt": "Pregunta dónde dejas la tarta.",
+                "expected": [
+                  "¿Dónde lo pongo?",
+                  "¿Dónde pongo la tarta?"
+                ],
+                "focus": "¿dónde lo pongo?",
+                "watch": "dónde con tilde."
+              },
+              {
+                "prompt": "Responde al regalo: ¡qué detallista!",
+                "expected": [
+                  "¡Qué detallista!",
+                  "Qué detallista eres"
+                ],
+                "focus": "detallista",
+                "watch": "¡qué + adjetivo!"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u20-detalle-e1",
+              "kind": "choice",
+              "prompt": "Traigo ___ vino para la cena. — ¡Qué detallista!",
+              "explain": "Vino es masculino: un vino; unos es plural.",
+              "options": [
+                "un",
+                "una",
+                "unos",
+                "unas"
+              ],
+              "answers": [
+                "un"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-detalle-e2",
+              "kind": "gap",
+              "prompt": "Esto es ___ ti, Carmen. Gracias por invitarme.",
+              "explain": "para ti: el regalo va dirigido a la persona; por marca el motivo.",
+              "answers": [
+                "para",
+                "Para"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-detalle-e3",
+              "kind": "order",
+              "prompt": "Llegas con una tarta a la cena: di qué traes.",
+              "explain": "traigo + comida: presentar el detalle al llegar.",
+              "answers": [
+                "Traigo una tarta"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-detalle-e4",
+              "kind": "written",
+              "prompt": "Pregunta a la anfitriona dónde dejas el postre.",
+              "explain": "¿Dónde lo pongo? pregunta el sitio; dónde lleva tilde.",
+              "answers": [
+                "¿Dónde lo pongo?",
+                "¿Donde lo pongo?",
+                "¿Dónde pongo la tarta?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "vocab:food",
+            "vocab:social-expressions",
+            "function:order-food"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u20-despedida",
+          "title": "Hasta la próxima",
+          "goal": "Despedirse y agradecer al irte de una casa: gracias por todo, hasta la próxima y ¿puedo ayudar?",
+          "intro": {
+            "explanation": [
+              "Para agradecer: «Gracias por todo», «Muchas gracias por la cena». La respuesta es corta: «De nada».",
+              "Para despedirse: «Hasta la próxima», «Nos vemos». La próxima significa la próxima vez.",
+              "Antes de irte, ofreces ayuda con puedo: «¿Puedo ayudar a recoger?»."
+            ],
+            "examples": [
+              {
+                "text": "Gracias por todo.",
+                "meaning": "Agradecer la visita."
+              },
+              {
+                "text": "Muchas gracias por la cena.",
+                "meaning": "Agradecer por el motivo."
+              },
+              {
+                "text": "De nada.",
+                "meaning": "La respuesta a gracias."
+              },
+              {
+                "text": "Hasta la próxima.",
+                "meaning": "Despedirse para otra vez."
+              },
+              {
+                "text": "¿Puedo ayudar a recoger?",
+                "meaning": "Ofrecer ayuda al irte."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "gracias por todo",
+              "meaning": "Agradecer de forma general.",
+              "note": "Gracias por todo, Carmen."
+            },
+            {
+              "text": "muchas gracias por + comida",
+              "meaning": "Agradecer el motivo.",
+              "note": "Muchas gracias por la cena."
+            },
+            {
+              "text": "de nada",
+              "meaning": "Responder a gracias.",
+              "note": "—Gracias. —De nada."
+            },
+            {
+              "text": "hasta la próxima",
+              "meaning": "Despedirse para otra vez.",
+              "note": "Hasta la próxima, nos vemos."
+            },
+            {
+              "text": "¿puedo ayudar?",
+              "meaning": "Ofrecer ayuda con puedo.",
+              "note": "¿Puedo ayudar a recoger?"
+            }
+          ],
+          "situation": "Termina la cena en casa de Carmen: ofreces ayuda para recoger, das las gracias por la cena y te despides hasta la próxima.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Agradece toda la visita.",
+                "expected": [
+                  "Gracias por todo",
+                  "gracias por todo"
+                ],
+                "focus": "gracias por",
+                "watch": "gracias + por + motivo."
+              },
+              {
+                "prompt": "Agradece la cena en concreto.",
+                "expected": [
+                  "Muchas gracias por la cena",
+                  "muchas gracias por la cena"
+                ],
+                "focus": "por la cena",
+                "watch": "por marca el motivo."
+              },
+              {
+                "prompt": "Carmen dice gracias: responde.",
+                "expected": [
+                  "De nada",
+                  "de nada"
+                ],
+                "focus": "de nada",
+                "watch": "La respuesta fija a gracias."
+              },
+              {
+                "prompt": "Despídete para otra vez.",
+                "expected": [
+                  "Hasta la próxima",
+                  "hasta la proxima"
+                ],
+                "focus": "hasta la próxima",
+                "watch": "próxima lleva tilde."
+              },
+              {
+                "prompt": "Ofrece ayuda para recoger la mesa.",
+                "expected": [
+                  "¿Puedo ayudar a recoger?",
+                  "puedo ayudar"
+                ],
+                "focus": "¿puedo ayudar?",
+                "watch": "puedo + infinitivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u20-despedida-e1",
+              "kind": "choice",
+              "prompt": "—¡Muchas gracias por la cena! —___ nada.",
+              "explain": "La respuesta fija a gracias es «De nada».",
+              "options": [
+                "De",
+                "Por",
+                "Con",
+                "Sin"
+              ],
+              "answers": [
+                "De"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-despedida-e2",
+              "kind": "gap",
+              "prompt": "Gracias ___ la cena, estaba riquísima.",
+              "explain": "gracias por + motivo: gracias por la cena, gracias por el café.",
+              "answers": [
+                "por",
+                "Por"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-despedida-e3",
+              "kind": "order",
+              "prompt": "Te vas de casa de Carmen: despídete para otra vez.",
+              "explain": "Hasta la próxima = hasta la próxima vez; despida amable de visita.",
+              "answers": [
+                "Hasta la próxima"
+              ]
+            },
+            {
+              "id": "es-foundations-u20-despedida-e4",
+              "kind": "written",
+              "prompt": "Antes de irte, ofrece ayuda con el permiso de puedo.",
+              "explain": "¿Puedo ayudar? ofrece ayuda; puedo + infinitivo pide permiso para ayudar.",
+              "answers": [
+                "¿Puedo ayudar?",
+                "¿Puedo ayudar a recoger?",
+                "puedo ayudar"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "grammar:can"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u21",
+      "title": "Problemas del día a día",
+      "subtitle": "Averías y soluciones",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "la-averia",
+          "title": "La avería",
+          "subtitle": "Contar qué pasó",
+          "symbol": "wrench.and.screwdriver",
+          "category": "Course",
+          "situation": "Contáis una avería de casa: qué se estropeó, cuándo pasó y a quién llamasteis.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-solucion",
+          "title": "La solución",
+          "subtitle": "Arreglar y reclamar",
+          "symbol": "phone.badge.checkmark",
+          "category": "Course",
+          "situation": "Buscáis soluciones tranquilas: pedís ayuda, probáis pasos sencillos y reclamáis por teléfono.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u21-averia",
+          "title": "Se ha estropeado",
+          "goal": "Contar una avería en pasado: se estropeó, se rompió, dejó de funcionar y llamé al técnico.",
+          "intro": {
+            "explanation": [
+              "La avería se cuenta en pasado: «La lavadora se estropeó ayer», «Se rompió la pantalla del móvil».",
+              "Hay irregulares muy frecuentes: «Se me cayó el móvil», «Hizo un ruido raro y paró».",
+              "Después cuentas la reacción: «Llamé al técnico», «Busqué el número en internet»."
+            ],
+            "examples": [
+              {
+                "text": "La lavadora se estropeó ayer.",
+                "meaning": "Contar la avería."
+              },
+              {
+                "text": "Se rompió la pantalla.",
+                "meaning": "El daño concreto."
+              },
+              {
+                "text": "Se me cayó el móvil al suelo.",
+                "meaning": "Irregular: caer → cayó."
+              },
+              {
+                "text": "Hizo un ruido raro y paró.",
+                "meaning": "Irregular: hacer → hizo."
+              },
+              {
+                "text": "Llamé al técnico por la mañana.",
+                "meaning": "Tu reacción en pasado."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "se estropeó",
+              "meaning": "Dejó de funcionar.",
+              "note": "La nevera se estropeó."
+            },
+            {
+              "text": "se rompió",
+              "meaning": "Se partió o se dañó.",
+              "note": "Se rompió la pantalla."
+            },
+            {
+              "text": "dejó de funcionar",
+              "meaning": "Regular: dejó de + infinitivo.",
+              "note": "La luz dejó de funcionar."
+            },
+            {
+              "text": "se me cayó",
+              "meaning": "Irregular: caer → cayó.",
+              "note": "Se me cayó el vaso."
+            },
+            {
+              "text": "llamé a + persona",
+              "meaning": "Tu reacción en pasado.",
+              "note": "Llamé al técnico."
+            }
+          ],
+          "situation": "Cuentas el desastre del fin de semana: la lavadora se estropeó el sábado, el móvil se te cayó y, al final, llamaste al técnico.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Cuenta la avería: la lavadora, ayer.",
+                "expected": [
+                  "La lavadora se estropeó ayer",
+                  "la lavadora se estropeo ayer"
+                ],
+                "focus": "se estropeó",
+                "watch": "estropeó lleva tilde."
+              },
+              {
+                "prompt": "Di el daño: la pantalla del móvil.",
+                "expected": [
+                  "Se rompió la pantalla",
+                  "se rompio la pantalla"
+                ],
+                "focus": "se rompió",
+                "watch": "rompió con tilde."
+              },
+              {
+                "prompt": "Cuenta el giro: el móvil, al suelo.",
+                "expected": [
+                  "Se me cayó el móvil",
+                  "se me cayo el movil"
+                ],
+                "focus": "se me cayó",
+                "watch": "cayó: irregular de caer."
+              },
+              {
+                "prompt": "Di la reacción: llamar al técnico.",
+                "expected": [
+                  "Llamé al técnico",
+                  "llame al tecnico"
+                ],
+                "focus": "llamé",
+                "watch": "llamó vs llamé: tú llamaste, yo llamé."
+              },
+              {
+                "prompt": "Di que la nevera dejó de funcionar.",
+                "expected": [
+                  "La nevera dejó de funcionar",
+                  "la nevera dejo de funcionar"
+                ],
+                "focus": "dejó de",
+                "watch": "dejó de + infinitivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u21-averia-e1",
+              "kind": "choice",
+              "prompt": "La lavadora ___ de funcionar ayer.",
+              "explain": "Pasado regular: dejó de funcionar = se estropeó; dejó lleva tilde.",
+              "options": [
+                "dejó",
+                "deja",
+                "dejará",
+                "dejar"
+              ],
+              "answers": [
+                "dejó"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-averia-e2",
+              "kind": "gap",
+              "prompt": "Se me ___ el móvil al suelo y se rompió la pantalla. (caer, pasado)",
+              "explain": "cayó: pasado irregular de caer; lleva tilde en la última sílaba.",
+              "answers": [
+                "cayó",
+                "cayo",
+                "Cayó"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-averia-e3",
+              "kind": "order",
+              "prompt": "Cuenta la avería de la nevera: fue ayer.",
+              "explain": "se estropeó + tiempo: la estructura mínima para contar una avería.",
+              "answers": [
+                "La nevera se estropeó ayer"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-averia-e4",
+              "kind": "written",
+              "prompt": "Cuenta tu reacción: llamar al técnico por teléfono.",
+              "explain": "llamé: primera persona del pasado; llamó es él o ella.",
+              "answers": [
+                "llamé al técnico por teléfono",
+                "llame al tecnico por telefono",
+                "llamé al técnico"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "es-foundations-u21-solucion",
+          "title": "¿Qué hago?",
+          "goal": "Pedir y dar soluciones sencillas: ¿qué hago?, ¿puedes echarme una mano?, prueba a…, si no funciona, llama.",
+          "intro": {
+            "explanation": [
+              "Para pedir ayuda: «¿Qué hago?», «¿Puedes echarme una mano?». Echar una mano es ayudar.",
+              "Para dar soluciones, un paso cada vez: «Prueba a apagarlo y encenderlo», «Mira si está enchufado».",
+              "Los conectores encadenan el plan: «Primero mira el enchufe; después prueba otra vez»."
+            ],
+            "examples": [
+              {
+                "text": "¿Qué hago?",
+                "meaning": "Pedir consejo."
+              },
+              {
+                "text": "¿Puedes echarme una mano?",
+                "meaning": "Pedir ayuda."
+              },
+              {
+                "text": "Prueba a apagarlo y encenderlo.",
+                "meaning": "Dar una solución sencilla."
+              },
+              {
+                "text": "Mira si está enchufado.",
+                "meaning": "El primer paso."
+              },
+              {
+                "text": "Si no funciona, llama al técnico.",
+                "meaning": "El plan B con si."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿qué hago?",
+              "meaning": "Pedir consejo.",
+              "note": "No va la wifi, ¿qué hago?"
+            },
+            {
+              "text": "echar una mano",
+              "meaning": "Ayudar.",
+              "note": "¿Me echas una mano?"
+            },
+            {
+              "text": "prueba a + infinitivo",
+              "meaning": "Sugerir un paso.",
+              "note": "Prueba a reiniciarlo."
+            },
+            {
+              "text": "si no funciona, …",
+              "meaning": "El plan B.",
+              "note": "Si no funciona, llama."
+            },
+            {
+              "text": "primero…, después…",
+              "meaning": "Ordenar los pasos.",
+              "note": "Primero mira; después prueba."
+            }
+          ],
+          "situation": "La impresora no va y pides ayuda a tu compañero: os pasáis pasos sencillos y, si nada funciona, llamaréis al técnico.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pide consejo: la wifi no va.",
+                "expected": [
+                  "¿Qué hago?",
+                  "que hago"
+                ],
+                "focus": "¿qué hago?",
+                "watch": "qué con tilde."
+              },
+              {
+                "prompt": "Pide ayuda a tu compañero.",
+                "expected": [
+                  "¿Puedes echarme una mano?",
+                  "puedes echarme una mano"
+                ],
+                "focus": "echar una mano",
+                "watch": "echar una mano: ayudar."
+              },
+              {
+                "prompt": "Sugiere apagarlo y encenderlo.",
+                "expected": [
+                  "Prueba a apagarlo y encenderlo",
+                  "prueba a apagarlo y encenderlo"
+                ],
+                "focus": "prueba a",
+                "watch": "prueba a + infinitivo."
+              },
+              {
+                "prompt": "Da el primer paso: mirar el enchufe.",
+                "expected": [
+                  "Mira si está enchufado",
+                  "primero mira el enchufe"
+                ],
+                "focus": "primero",
+                "watch": "Primero el paso uno."
+              },
+              {
+                "prompt": "Da el plan B: llamar al técnico.",
+                "expected": [
+                  "Si no funciona, llama al técnico",
+                  "si no funciona llama al tecnico"
+                ],
+                "focus": "si no funciona",
+                "watch": "si + presente: condición."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u21-solucion-e1",
+              "kind": "choice",
+              "prompt": "La impresora no va. ¿___ hago?",
+              "explain": "«¿Qué hago?» pide consejo; qué lleva tilde en la pregunta.",
+              "options": [
+                "Qué",
+                "Que",
+                "Cómo",
+                "Dónde"
+              ],
+              "answers": [
+                "Qué"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-solucion-e2",
+              "kind": "gap",
+              "prompt": "___ a apagarlo y encenderlo otra vez. (intenta este paso)",
+              "explain": "prueba a + infinitivo: la sugerencia sencilla para arreglar algo.",
+              "answers": [
+                "Prueba",
+                "prueba"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-solucion-e3",
+              "kind": "order",
+              "prompt": "Pide ayuda a tu compañero de forma coloquial.",
+              "explain": "echar una mano: fórmula fija para pedir ayuda; con puedo pides permiso-ayuda.",
+              "answers": [
+                "¿Puedes echarme una mano?"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-solucion-e4",
+              "kind": "written",
+              "prompt": "Da el plan B: si la luz vuelve a fallar, tú llamas al técnico.",
+              "explain": "si + presente + presente: la condición y su consecuencia directa.",
+              "answers": [
+                "si no funciona llamo al técnico",
+                "si no funciona llamo al tecnico",
+                "si no funciona, llamo al técnico"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "function:make-requests",
+            "grammar:connectors",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-foundations-u21-reclamo",
+          "title": "Un reclamo tranquilo",
+          "goal": "Reclamar algo roto o mal entregado con educación: quiero reclamar, compró… pero no funciona, ¿qué me puede ofrecer?",
+          "intro": {
+            "explanation": [
+              "El reclamo empieza tranquilo y directo: «Buenas tardes, quiero reclamar un pedido».",
+              "El problema se explica con pasado + pero: «Compré una lámpara, pero llegó rota».",
+              "La solución se pide con cortesía: «¿Qué me puede ofrecer?», «Quiero la devolución, por favor»."
+            ],
+            "examples": [
+              {
+                "text": "Buenas tardes, quiero reclamar un pedido.",
+                "meaning": "Abrir el reclamo."
+              },
+              {
+                "text": "Compré una lámpara, pero llegó rota.",
+                "meaning": "El hecho en pasado."
+              },
+              {
+                "text": "No funciona nada.",
+                "meaning": "El problema en presente."
+              },
+              {
+                "text": "¿Qué me puede ofrecer?",
+                "meaning": "Pedir la solución."
+              },
+              {
+                "text": "Quiero la devolución, por favor.",
+                "meaning": "Pedir la devolución."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "quiero reclamar",
+              "meaning": "Abrir el reclamo.",
+              "note": "Quiero reclamar un pedido."
+            },
+            {
+              "text": "compré…, pero…",
+              "meaning": "El hecho y el contraste.",
+              "note": "Compré una lámpara, pero no funciona."
+            },
+            {
+              "text": "¿qué me puede ofrecer?",
+              "meaning": "Pedir la solución al dependiente.",
+              "note": "¿Qué me puede ofrecer, un cambio?"
+            },
+            {
+              "text": "el cambio / la devolución",
+              "meaning": "Las dos soluciones típicas.",
+              "note": "Quiero la devolución."
+            },
+            {
+              "text": "llegó roto",
+              "meaning": "El estado al llegar.",
+              "note": "El paquete llegó roto."
+            }
+          ],
+          "situation": "El pedido de una lámpara llegó roto: llamas a la tienda, explicas el problema con calma y pides la devolución.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Abre el reclamo por teléfono.",
+                "expected": [
+                  "Quiero reclamar un pedido",
+                  "quiero reclamar"
+                ],
+                "focus": "quiero reclamar",
+                "watch": "Directo y tranquilo."
+              },
+              {
+                "prompt": "Explica el hecho: compraste una lámpara, pero no funciona.",
+                "expected": [
+                  "Compré una lámpara, pero no funciona",
+                  "compre una lampara pero no funciona"
+                ],
+                "focus": "compré…, pero…",
+                "watch": "compré: yo compré."
+              },
+              {
+                "prompt": "Pregunta qué solución te ofrecen.",
+                "expected": [
+                  "¿Qué me puede ofrecer?",
+                  "que me puede ofrecer"
+                ],
+                "focus": "¿qué me puede ofrecer?",
+                "watch": "Cortesía con puede (usted)."
+              },
+              {
+                "prompt": "Pide la devolución con cortesía.",
+                "expected": [
+                  "Quiero la devolución, por favor",
+                  "quiero la devolucion"
+                ],
+                "focus": "la devolución",
+                "watch": "devolución lleva tilde."
+              },
+              {
+                "prompt": "Di el estado del paquete al llegar.",
+                "expected": [
+                  "El paquete llegó roto",
+                  "el paquete llego roto"
+                ],
+                "focus": "llegó roto",
+                "watch": "llegó con tilde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u21-reclamo-e1",
+              "kind": "choice",
+              "prompt": "Compré una lámpara, ___ no funciona.",
+              "explain": "pero contraste lo esperado con lo real; porque daría la causa equivocada.",
+              "options": [
+                "pero",
+                "porque",
+                "además",
+                "entonces"
+              ],
+              "answers": [
+                "pero"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-reclamo-e2",
+              "kind": "gap",
+              "prompt": "Buenas tardes, ___ reclamar un pedido que llegó roto.",
+              "explain": "quiero reclamar: abre el reclamo de forma directa y tranquila.",
+              "answers": [
+                "quiero",
+                "Quiero"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-reclamo-e3",
+              "kind": "order",
+              "prompt": "Pregunta al dependiente qué solución te ofrece.",
+              "explain": "¿Qué me puede ofrecer? pide opciones con cortesía (usted).",
+              "answers": [
+                "¿Qué me puede ofrecer?"
+              ]
+            },
+            {
+              "id": "es-foundations-u21-reclamo-e4",
+              "kind": "written",
+              "prompt": "Explica el problema del envío y pide la solución con cortesía.",
+              "explain": "Pasado + pero + petición: la estructura del reclamo tranquilo.",
+              "answers": [
+                "el pedido llegó roto y quiero la devolución",
+                "el pedido llego roto y quiero la devolucion",
+                "quiero la devolución porque el pedido llegó roto"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:present-questions",
+            "vocab:social-expressions",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u22",
+      "title": "El trabajo",
+      "subtitle": "Oficina y metas",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "la-entrevista",
+          "title": "La entrevista",
+          "subtitle": "Experiencia y puntos fuertes",
+          "symbol": "briefcase",
+          "category": "Course",
+          "situation": "Preparas una entrevista: cuentas tu experiencia con presente perfecto y eliges tus puntos fuertes.",
+          "colorIndex": 0
+        },
+        {
+          "id": "el-equipo",
+          "title": "El equipo",
+          "subtitle": "Ambiente y propósitos",
+          "symbol": "bubble.left.and.text.bubble.right",
+          "category": "Course",
+          "situation": "Con los compañeros describís el ambiente de la oficina y compartís vuestros planes profesionales.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u22-entrevista",
+          "title": "La entrevista",
+          "goal": "Hablar de experiencia y puntos fuertes en una entrevista: he trabajado…, llevo…, destaco en….",
+          "intro": {
+            "explanation": [
+              "La experiencia va con presente perfecto: «He trabajado en marketing cinco años». Une el pasado con el ahora.",
+              "El tiempo que sigues dentro se marca con llevar: «Llevo dos años en esta empresa».",
+              "Los puntos fuertes se presentan con ser o destacar: «Soy organizado», «Destaco en el trabajo en equipo»."
+            ],
+            "examples": [
+              {
+                "text": "He trabajado en marketing cinco años.",
+                "meaning": "Experiencia con presente perfecto."
+              },
+              {
+                "text": "Llevo dos años en esta empresa.",
+                "meaning": "El tiempo que sigue vigente."
+              },
+              {
+                "text": "Soy organizado y puntual.",
+                "meaning": "Puntos fuertes con ser."
+              },
+              {
+                "text": "Destaco en el trabajo en equipo.",
+                "meaning": "Tu punto fuerte con destacar."
+              },
+              {
+                "text": "Además, hablo inglés y francés.",
+                "meaning": "Añadir un argumento."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "he trabajado en…",
+              "meaning": "Experiencia pasada con valor ahora.",
+              "note": "He trabajado en ventas."
+            },
+            {
+              "text": "llevo + tiempo + en…",
+              "meaning": "Experiencia que sigue.",
+              "note": "Llevo tres años aquí."
+            },
+            {
+              "text": "soy + adjetivo",
+              "meaning": "Puntos fuertes.",
+              "note": "Soy organizado."
+            },
+            {
+              "text": "destaco en…",
+              "meaning": "Lo que mejor sabes hacer.",
+              "note": "Destaco en atención al cliente."
+            },
+            {
+              "text": "además / por eso",
+              "meaning": "Encadenar el argumento.",
+              "note": "Además, hablo inglés."
+            }
+          ],
+          "situation": "Preparas una entrevista: cuentas tus cinco años en marketing, añades los idiomas y eliges tu punto fuerte, el trabajo en equipo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Cuenta tu experiencia: marketing, cinco años.",
+                "expected": [
+                  "He trabajado en marketing cinco años",
+                  "he trabajado en marketing"
+                ],
+                "focus": "he trabajado",
+                "watch": "he + participio: trabajado."
+              },
+              {
+                "prompt": "Di que sigues dos años en la empresa.",
+                "expected": [
+                  "Llevo dos años en esta empresa",
+                  "llevo dos años aquí"
+                ],
+                "focus": "llevo",
+                "watch": "llevo + tiempo: sigue abierto."
+              },
+              {
+                "prompt": "Da tu punto fuerte con destacar.",
+                "expected": [
+                  "Destaco en el trabajo en equipo",
+                  "destaco en el trabajo en equipo"
+                ],
+                "focus": "destaco en",
+                "watch": "destacar en + área."
+              },
+              {
+                "prompt": "Preséntate: organizado y puntual.",
+                "expected": [
+                  "Soy organizado y puntual",
+                  "soy organizada y puntual"
+                ],
+                "focus": "soy",
+                "watch": "ser + adjetivo de carácter."
+              },
+              {
+                "prompt": "Añade un argumento: hablas inglés.",
+                "expected": [
+                  "Además, hablo inglés",
+                  "además hablo ingles"
+                ],
+                "focus": "además",
+                "watch": "además encadena argumentos."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u22-entrevista-e1",
+              "kind": "choice",
+              "prompt": "___ trabajado en ventas tres años.",
+              "explain": "Presente perfecto: he + participio; la experiencia cuenta para el ahora.",
+              "options": [
+                "He",
+                "Hace",
+                "Estoy",
+                "Fui"
+              ],
+              "answers": [
+                "He"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-entrevista-e2",
+              "kind": "gap",
+              "prompt": "___ dos años en esta empresa y me gusta el equipo. (llevar)",
+              "explain": "Llevo + tiempo: la experiencia que sigue abierta en el presente.",
+              "answers": [
+                "Llevo",
+                "llevo"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-entrevista-e3",
+              "kind": "order",
+              "prompt": "Di tu punto fuerte con el verbo destacar.",
+              "explain": "destacar en + área: la fórmula de los puntos fuertes en entrevista.",
+              "answers": [
+                "Destaco en el trabajo en equipo"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-entrevista-e4",
+              "kind": "written",
+              "prompt": "Vende tu perfil: experiencia en marketing y, con un conector, los idiomas.",
+              "explain": "he trabajado + además: experiencia y argumento encadenado.",
+              "answers": [
+                "he trabajado en marketing y además hablo inglés",
+                "he trabajado en marketing, además hablo inglés",
+                "he trabajado en marketing y ademas hablo ingles"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "grammar:present-perfect",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "es-foundations-u22-compañeros",
+          "title": "Con los compañeros",
+          "goal": "Describir el ambiente de trabajo: el equipo es…, nos llevamos bien, lo mejor es…, lo peor….",
+          "intro": {
+            "explanation": [
+              "El ambiente se describe con ser y estar: «El equipo es muy cercano», «La oficina está siempre a tope».",
+              "Las relaciones van con llevarse: «Nos llevamos bien», «Me llevo genial con mi jefa».",
+              "El balance usa lo mejor y lo peor: «Lo mejor es el ambiente; lo peor, las reuniones de las nueve»."
+            ],
+            "examples": [
+              {
+                "text": "El equipo es muy cercano.",
+                "meaning": "Describir el ambiente."
+              },
+              {
+                "text": "Nos llevamos muy bien todos.",
+                "meaning": "Las relaciones con llevarse."
+              },
+              {
+                "text": "Me llevo genial con mi jefa.",
+                "meaning": "La relación con una persona."
+              },
+              {
+                "text": "La oficina está siempre a tope.",
+                "meaning": "El ritmo con estar."
+              },
+              {
+                "text": "Lo mejor es el café de las once.",
+                "meaning": "El balance positivo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "el ambiente de trabajo",
+              "meaning": "El clima de la oficina.",
+              "note": "El ambiente es bueno."
+            },
+            {
+              "text": "nos llevamos + bien/mal",
+              "meaning": "La relación del grupo.",
+              "note": "Nos llevamos muy bien."
+            },
+            {
+              "text": "me llevo + bien/mal + con…",
+              "meaning": "La relación con alguien.",
+              "note": "Me llevo bien con mi jefe."
+            },
+            {
+              "text": "lo mejor es…, lo peor…",
+              "meaning": "El balance.",
+              "note": "Lo peor son las reuniones."
+            },
+            {
+              "text": "en general",
+              "meaning": "La valoración global.",
+              "note": "En general, estamos a gusto."
+            }
+          ],
+          "situation": "En el café de la oficina describís el ambiente: os lleváis bien, el equipo es cercano, pero lo peor son las reuniones de las nueve.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Describe el ambiente: el equipo, cercano.",
+                "expected": [
+                  "El equipo es muy cercano",
+                  "el equipo es cercano"
+                ],
+                "focus": "es cercano",
+                "watch": "ser para el carácter del grupo."
+              },
+              {
+                "prompt": "Di cómo os lleváis en el equipo.",
+                "expected": [
+                  "Nos llevamos muy bien",
+                  "nos llevamos bien"
+                ],
+                "focus": "nos llevamos",
+                "watch": "llevarse bien: relación mutua."
+              },
+              {
+                "prompt": "Di tu relación con la jefa.",
+                "expected": [
+                  "Me llevo genial con mi jefa",
+                  "me llevo bien con mi jefa"
+                ],
+                "focus": "me llevo con",
+                "watch": "con + persona."
+              },
+              {
+                "prompt": "Di lo peor de la oficina: las reuniones.",
+                "expected": [
+                  "Lo peor son las reuniones",
+                  "lo peor son las reuniones de las nueve"
+                ],
+                "focus": "lo peor",
+                "watch": "lo mejor / lo peor balancean."
+              },
+              {
+                "prompt": "Valora en global: estáis a gusto.",
+                "expected": [
+                  "En general, estamos a gusto",
+                  "en general estamos a gusto"
+                ],
+                "focus": "en general",
+                "watch": "en general: valoración global."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u22-compañeros-e1",
+              "kind": "choice",
+              "prompt": "En la oficina ___ llevamos muy bien todos.",
+              "explain": "llevarse bien: relación entre personas; nos marca el grupo.",
+              "options": [
+                "nos",
+                "se",
+                "les",
+                "me"
+              ],
+              "answers": [
+                "nos"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-compañeros-e2",
+              "kind": "gap",
+              "prompt": "Lo ___ de la oficina es el café de las once; lo peor, las reuniones.",
+              "explain": "lo mejor…, lo peor…: el balance del ambiente en dos mitades.",
+              "answers": [
+                "mejor",
+                "Mejor"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-compañeros-e3",
+              "kind": "order",
+              "prompt": "Describe la relación de tu equipo con llevarse.",
+              "explain": "nos llevamos + bien/mal: la descripción de la relación del grupo.",
+              "answers": [
+                "Nos llevamos muy bien en el equipo"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-compañeros-e4",
+              "kind": "written",
+              "prompt": "Haz el balance: equipo cercano, pero hay demasiadas reuniones.",
+              "explain": "Descripción + pero + lo peor: el balance honesto del ambiente.",
+              "answers": [
+                "el equipo es muy cercano, pero hay demasiadas reuniones",
+                "el equipo es cercano pero hay demasiadas reuniones",
+                "el equipo es muy cercano, pero lo peor son las reuniones"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "function:describe-people",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-foundations-u22-propositos",
+          "title": "Propósitos laborales",
+          "goal": "Hablar de metas profesionales: quiero lograr…, me gustaría…, para ello voy a….",
+          "intro": {
+            "explanation": [
+              "La meta se abre con querer + lograr: «Quiero lograr un ascenso este año». Lograr es conseguir la meta.",
+              "Me gustaría suaviza el deseo: «Me gustaría cambiar de departamento». Suena menos rotundo que quiero.",
+              "El plan se encadena con conectores: «Para ello, voy a formarme», «Así que este año me presento»."
+            ],
+            "examples": [
+              {
+                "text": "Quiero lograr un ascenso este año.",
+                "meaning": "La meta con querer + lograr."
+              },
+              {
+                "text": "Me gustaría cambiar de departamento.",
+                "meaning": "El deseo con matiz."
+              },
+              {
+                "text": "Para ello, voy a formarme.",
+                "meaning": "El plan encadenado."
+              },
+              {
+                "text": "Así que este año me presento.",
+                "meaning": "La consecuencia con así que."
+              },
+              {
+                "text": "Mi meta es aprender inglés.",
+                "meaning": "La meta con ser."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "quiero lograr…",
+              "meaning": "La meta directa.",
+              "note": "Quiero lograr un ascenso."
+            },
+            {
+              "text": "me gustaría + infinitivo",
+              "meaning": "El deseo con matiz.",
+              "note": "Me gustaría viajar por trabajo."
+            },
+            {
+              "text": "para ello, …",
+              "meaning": "Encadena el plan.",
+              "note": "Para ello, me formo."
+            },
+            {
+              "text": "así que este año…",
+              "meaning": "La consecuencia del deseo.",
+              "note": "Así que me presento."
+            },
+            {
+              "text": "mi meta es…",
+              "meaning": "La meta con ser.",
+              "note": "Mi meta es el examen B2."
+            }
+          ],
+          "situation": "A inicio de año compartís propósitos: tú quieres lograr un ascenso y, para ello, te vas a formar; tu compañero prefiere cambiar de aires.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di tu meta: el ascenso, este año.",
+                "expected": [
+                  "Quiero lograr un ascenso este año",
+                  "quiero lograr un ascenso"
+                ],
+                "focus": "quiero lograr",
+                "watch": "querer + infinitivo."
+              },
+              {
+                "prompt": "Suaviza el deseo: cambiar de departamento.",
+                "expected": [
+                  "Me gustaría cambiar de departamento",
+                  "me gustaria cambiar de departamento"
+                ],
+                "focus": "me gustaría",
+                "watch": "gustaría lleva tilde."
+              },
+              {
+                "prompt": "Encadena el plan: formarte.",
+                "expected": [
+                  "Para ello, voy a formarme",
+                  "para ello voy a formarme"
+                ],
+                "focus": "para ello",
+                "watch": "para ello: conecta meta y plan."
+              },
+              {
+                "prompt": "Di tu meta con ser: el inglés.",
+                "expected": [
+                  "Mi meta es aprender inglés",
+                  "mi meta es aprender ingles"
+                ],
+                "focus": "mi meta es",
+                "watch": "mi meta es + infinitivo."
+              },
+              {
+                "prompt": "Cierra con la consecuencia: te presentas este año.",
+                "expected": [
+                  "Así que este año me presento",
+                  "asi que este año me presento"
+                ],
+                "focus": "así que",
+                "watch": "así que: consecuencia."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u22-propositos-e1",
+              "kind": "choice",
+              "prompt": "Quiero ___ un ascenso este año.",
+              "explain": "querer + infinitivo: quiero lograr; logrado sería participio y no encaja.",
+              "options": [
+                "lograr",
+                "logro",
+                "logré",
+                "logrando"
+              ],
+              "answers": [
+                "lograr"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-propositos-e2",
+              "kind": "gap",
+              "prompt": "___ cambiar de departamento el año que viene. (deseo con matiz)",
+              "explain": "Me gustaría + infinitivo: el deseo suave; gustaría lleva tilde.",
+              "answers": [
+                "Me gustaría",
+                "me gustaría",
+                "Me gustaria",
+                "me gustaria"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-propositos-e3",
+              "kind": "order",
+              "prompt": "Di tu meta para este año con la fórmula de ser.",
+              "explain": "mi meta es + infinitivo: presentar la meta con ser.",
+              "answers": [
+                "Mi meta es aprender inglés"
+              ]
+            },
+            {
+              "id": "es-foundations-u22-propositos-e4",
+              "kind": "written",
+              "prompt": "Cuenta tu plan completo: la meta es el ascenso y el paso es formarte.",
+              "explain": "Meta + para ello + plan: la estructura del propósito laboral.",
+              "answers": [
+                "quiero lograr un ascenso, así que voy a formarme",
+                "quiero lograr un ascenso y voy a formarme",
+                "para lograr un ascenso voy a formarme"
+              ]
+            }
+          ],
+          "skills": [
+            "function:describe-goals",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
           ]
         }
       ]

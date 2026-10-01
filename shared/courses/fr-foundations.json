@@ -4008,6 +4008,182 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "fr-foundations-u9-ton",
+          "title": "Le ton juste",
+          "goal": "Ajuster registre et collocations : préférer avoir envie de à vouloir, prendre une décision plutôt que faire, conclure avec autant dire que.",
+          "intro": {
+            "explanation": [
+              "Le ton passe d'abord par le verbe : « J'ai envie de » reste vivant là où « je veux » sonne brutal — « Je n'ai pas envie d'insister » adoucit un refus.",
+              "Les collocations font le naturel : on prend une décision, on prend position ; « faire une décision » se comprend, mais trahit une langue laborieuse.",
+              "À l'écrit argumenté, ces choix comptent double : « Vous avez raison sur le fond ; toutefois, le calendrier est serré » concède avant de nuancer, et « autant dire que » clôt par l'évidence."
+            ],
+            "examples": [
+              {
+                "text": "Je n'ai pas envie d'insister.",
+                "meaning": "Refuser sans brusquer."
+              },
+              {
+                "text": "Nous devrons prendre une décision d'ici vendredi.",
+                "meaning": "La collocation juste."
+              },
+              {
+                "text": "J'ai le sentiment que le projet mérite un délai.",
+                "meaning": "L'opinion mesurée."
+              },
+              {
+                "text": "Vous avez raison sur le fond ; toutefois, le calendrier est serré.",
+                "meaning": "Concéder puis nuancer."
+              },
+              {
+                "text": "Autant dire que le choix ne sera pas simple.",
+                "meaning": "Conclure par l'évidence."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "avoir envie de + infinitif",
+              "meaning": "Le désir qui reste doux.",
+              "note": "Je n'ai pas envie de trancher."
+            },
+            {
+              "text": "prendre une décision / position",
+              "meaning": "La collocation du choix.",
+              "note": "jamais « faire une décision »."
+            },
+            {
+              "text": "avoir le sentiment que + phrase",
+              "meaning": "L'opinion mesurée.",
+              "note": "plus doux que « je pense que »."
+            },
+            {
+              "text": "vous avez raison sur le fond",
+              "meaning": "Concéder avant de nuancer.",
+              "note": "…; toutefois, …"
+            },
+            {
+              "text": "autant dire que",
+              "meaning": "Conclure par l'évidence.",
+              "note": "Autant dire que c'est tendu."
+            }
+          ],
+          "situation": "Vous rédigez la réponse à un client mécontent : « je veux » sonne sec et « faire une décision » fait tâche — vous ajustez verbe par verbe jusqu'au ton juste, ferme mais humain.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Adoucis ton refus : tu ne veux plus insister.",
+                "expected": [
+                  "Je n'ai pas envie d'insister.",
+                  "Je n'ai pas envie d insister"
+                ],
+                "focus": "avoir envie de",
+                "watch": "avoir envie de reste plus doux que vouloir."
+              },
+              {
+                "prompt": "Réécris « faire une décision » avec la bonne collocation.",
+                "expected": [
+                  "Prendre une décision.",
+                  "Nous devons prendre une décision."
+                ],
+                "focus": "prendre une décision",
+                "watch": "on prend une décision, on ne la fait pas."
+              },
+              {
+                "prompt": "Ton opinion sur le délai, mesurée.",
+                "expected": [
+                  "J'ai le sentiment que le projet mérite un délai.",
+                  "J ai le sentiment que le projet merite un delai"
+                ],
+                "focus": "avoir le sentiment que",
+                "watch": "l'opinion qui ne provoque pas."
+              },
+              {
+                "prompt": "Concède sur le fond, puis nuance sur le calendrier.",
+                "expected": [
+                  "Vous avez raison sur le fond ; toutefois, le calendrier est serré.",
+                  "Vous avez raison sur le fond, toutefois le calendrier est serré."
+                ],
+                "focus": "sur le fond",
+                "watch": "concéder d'abord rend la nuance acceptable."
+              },
+              {
+                "prompt": "Conclus par l'évidence : le choix sera difficile.",
+                "expected": [
+                  "Autant dire que le choix ne sera pas simple.",
+                  "Autant dire que le choix sera difficile."
+                ],
+                "focus": "autant dire que",
+                "watch": "la clôture par l'évidence partagée."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u9-ton-e1",
+              "kind": "choice",
+              "prompt": "Je n'ai pas ___ d'insister, mais le délai pose problème.",
+              "options": [
+                "envie",
+                "vouloir",
+                "peur",
+                "idée"
+              ],
+              "answers": [
+                "envie"
+              ],
+              "explain": "Avoir envie de : le désir adouci, plus habile que « je ne veux pas »."
+            },
+            {
+              "id": "fr-foundations-u9-ton-e2",
+              "kind": "gap",
+              "prompt": "Le comité ___ une décision d'ici vendredi. (collocation : prendre)",
+              "answers": [
+                "prend",
+                "prendra"
+              ],
+              "explain": "Prendre une décision : la collocation correcte, jamais « faire »."
+            },
+            {
+              "id": "fr-foundations-u9-ton-e3",
+              "kind": "choice",
+              "prompt": "« ___ votre point de vue ; toutefois, le calendrier est serré. »",
+              "options": [
+                "Je comprends",
+                "Je marche",
+                "Je cours",
+                "Je saute"
+              ],
+              "answers": [
+                "Je comprends"
+              ],
+              "explain": "Concéder d'abord (« je comprends ») rend la nuance acceptable."
+            },
+            {
+              "id": "fr-foundations-u9-ton-e4",
+              "kind": "written",
+              "prompt": "Formule ton opinion mesurée sur le délai du projet (formule : j'ai le sentiment que…).",
+              "answers": [
+                "j'ai le sentiment que le projet mérite un délai",
+                "j ai le sentiment que le projet merite un delai",
+                "j'ai le sentiment que le projet mérite un délai."
+              ],
+              "explain": "J'ai le sentiment que + phrase : l'opinion qui respecte le lecteur."
+            }
+          ],
+          "skills": [
+            "vocab:collocations",
+            "function:express-opinion",
+            "writing:argument",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -8854,6 +9030,1615 @@
           ],
           "prerequisites": [
             "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u19",
+      "title": "Une visite",
+      "subtitle": "Chez des amis",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "chez-l-hote",
+          "title": "Chez l'hôte",
+          "subtitle": "Entrer, offrir",
+          "symbol": "door.left.open",
+          "category": "Course",
+          "situation": "Vous arrivez chez Léa pour le dîner : vous demandez à entrer, vous laissez votre manteau et vous apportez un petit quelque chose.",
+          "colorIndex": 0
+        },
+        {
+          "id": "l-adieu",
+          "title": "L'adieu",
+          "subtitle": "Merci et à la prochaine",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "La soirée se termine : vous remerciez pour le repas, vous complimentez le gâteau et chacun rentre avec un à la prochaine !",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u19-visite",
+          "title": "Je peux entrer ?",
+          "goal": "Demander la permission avec je peux : entrer, laisser son manteau, aider en cuisine.",
+          "intro": {
+            "explanation": [
+              "Pour demander la permission, on dit « je peux » : « Je peux entrer ? » — court, simple et poli.",
+              "La version complète avec est-ce que monte le ton : « Est-ce que je peux laisser mon manteau ici ? »",
+              "Avec « on peut », on demande pour le groupe : « On peut s'asseoir ici ? » Et pour aider : « Je peux t'aider en cuisine ? »"
+            ],
+            "examples": [
+              {
+                "text": "Je peux entrer ?",
+                "meaning": "Demander la permission."
+              },
+              {
+                "text": "Oui, bien sûr, entre !",
+                "meaning": "Répondre oui à l'invité."
+              },
+              {
+                "text": "Est-ce que je peux laisser mon manteau ici ?",
+                "meaning": "La question complète et polie."
+              },
+              {
+                "text": "On peut s'asseoir ici ?",
+                "meaning": "Demander pour le groupe."
+              },
+              {
+                "text": "Je peux t'aider en cuisine ?",
+                "meaning": "Offrir son aide."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je peux + infinitif ?",
+              "meaning": "Demander la permission.",
+              "note": "Je peux entrer ?"
+            },
+            {
+              "text": "est-ce que je peux… ?",
+              "meaning": "La version complète.",
+              "note": "…laisser mon manteau ?"
+            },
+            {
+              "text": "oui, bien sûr !",
+              "meaning": "Accorder.",
+              "note": "Bien sûr, entre !"
+            },
+            {
+              "text": "je peux t'aider ?",
+              "meaning": "Offrir son aide.",
+              "note": "…en cuisine ?"
+            },
+            {
+              "text": "mets-toi à l'aise",
+              "meaning": "L'hôte accueille.",
+              "note": "l'invité se sent bien."
+            }
+          ],
+          "situation": "Vous sonnez chez Léa pour le dîner : elle ouvre, vous demandez à entrer, vous laissez votre manteau et vous proposez votre aide en cuisine.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Tu sonnes chez Léa. Demande la permission d'entrer.",
+                "expected": [
+                  "Je peux entrer ?",
+                  "Je peux entrer"
+                ],
+                "focus": "je peux",
+                "watch": "question courte, sans est-ce que, à l'oral."
+              },
+              {
+                "prompt": "Demande poliment (forme complète) si tu peux laisser ton manteau.",
+                "expected": [
+                  "Est-ce que je peux laisser mon manteau ?",
+                  "Est-ce que je peux laisser mon manteau ici ?"
+                ],
+                "focus": "est-ce que",
+                "watch": "est-ce que garde la porte ouverte, c'est poli."
+              },
+              {
+                "prompt": "Le canapé est libre : demande la permission de t'asseoir.",
+                "expected": [
+                  "On peut s'asseoir ici ?",
+                  "Je peux m'asseoir ici ?"
+                ],
+                "focus": "on peut",
+                "watch": "on peut demande pour tout le groupe."
+              },
+              {
+                "prompt": "Propose ton aide pour la cuisine.",
+                "expected": [
+                  "Je peux t'aider en cuisine ?",
+                  "Je peux aider ?"
+                ],
+                "focus": "je peux t'aider",
+                "watch": "t' = à la personne qui reçoit."
+              },
+              {
+                "prompt": "L'hôte ouvre la porte : qu'est-ce qu'il dit pour te mettre à l'aise ?",
+                "expected": [
+                  "Mets-toi à l'aise !",
+                  "Mets-toi à l'aise"
+                ],
+                "focus": "mets-toi à l'aise",
+                "watch": "c'est l'hôte qui le dit."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u19-visite-e1",
+              "kind": "choice",
+              "prompt": "Tu es sur le pas de la porte. Tu demandes : « ___ entrer ? »",
+              "options": [
+                "Je peux",
+                "Je vais",
+                "Je veux",
+                "Je dois"
+              ],
+              "answers": [
+                "Je peux"
+              ],
+              "explain": "Je peux + infinitif : la demande de permission la plus simple."
+            },
+            {
+              "id": "fr-foundations-u19-visite-e2",
+              "kind": "gap",
+              "prompt": "Est-ce que je ___ t'aider en cuisine ? (verbe : pouvoir)",
+              "answers": [
+                "peux"
+              ],
+              "explain": "Je peux : pouvoir à la 1re personne du singulier."
+            },
+            {
+              "id": "fr-foundations-u19-visite-e3",
+              "kind": "order",
+              "prompt": "Demande la permission d'entrer.",
+              "answers": [
+                "Je peux entrer"
+              ],
+              "explain": "Je peux + infinitif : la question de l'invité qui arrive."
+            },
+            {
+              "id": "fr-foundations-u19-visite-e4",
+              "kind": "written",
+              "prompt": "Tu proposes ton aide pour la cuisine.",
+              "answers": [
+                "je peux t'aider en cuisine",
+                "je peux aider",
+                "je peux aider en cuisine"
+              ],
+              "explain": "Je peux t'aider ? : on propose son aide avec je peux."
+            }
+          ],
+          "skills": [
+            "grammar:can",
+            "function:make-requests",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u19-attention",
+          "title": "J'apporte un petit quelque chose",
+          "goal": "Offrir aux hôtes et accepter poliment : j'apporte…, vous voulez… ?, volontiers !",
+          "intro": {
+            "explanation": [
+              "On n'arrive jamais les mains vides : « J'apporte des fleurs. » « J'apporte un petit quelque chose pour le café. »",
+              "L'hôte offre avec vous voulez : « Vous voulez un café ? » On accepte : « Volontiers ! » « Avec plaisir. »",
+              "Pour refuser sans froisser, on ajoute merci : « Non merci. » — le merci adoucit le non."
+            ],
+            "examples": [
+              {
+                "text": "J'apporte un petit quelque chose.",
+                "meaning": "Le geste de l'invité."
+              },
+              {
+                "text": "Voici des fleurs pour vous.",
+                "meaning": "Offrir son cadeau."
+              },
+              {
+                "text": "Vous voulez un café ?",
+                "meaning": "L'hôte propose."
+              },
+              {
+                "text": "Volontiers, merci !",
+                "meaning": "Accepter chaleureusement."
+              },
+              {
+                "text": "Non merci, c'est très bon.",
+                "meaning": "Refuser gentiment."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'apporte + quelque chose",
+              "meaning": "Ce que l'invité apporte.",
+              "note": "des fleurs, un dessert."
+            },
+            {
+              "text": "vous voulez + quelque chose ?",
+              "meaning": "L'hôte offre.",
+              "note": "Vous voulez un café ?"
+            },
+            {
+              "text": "volontiers !",
+              "meaning": "Accepter.",
+              "note": "Volontiers, avec plaisir."
+            },
+            {
+              "text": "non, merci",
+              "meaning": "Refuser gentiment.",
+              "note": "merci adoucit le refus."
+            },
+            {
+              "text": "servez-vous",
+              "meaning": "L'hôte invite à goûter.",
+              "note": "le plat est au centre."
+            }
+          ],
+          "situation": "Vous arrivez chez Léa avec des chocolats : elle vous propose un café, puis un morceau de gâteau — vous acceptez le café, vous refusez gentiment le deuxième morceau.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dites ce que vous apportez : un gâteau.",
+                "expected": [
+                  "J'apporte un gâteau.",
+                  "J'apporte un gâteau."
+                ],
+                "focus": "j'apporte",
+                "watch": "présent : j'apporte, tu apportes."
+              },
+              {
+                "prompt": "Offrez les fleurs à Léa.",
+                "expected": [
+                  "Voici des fleurs pour vous.",
+                  "Des fleurs pour toi."
+                ],
+                "focus": "voici",
+                "watch": "voici + cadeau = j'offre."
+              },
+              {
+                "prompt": "Léa propose un café : acceptez.",
+                "expected": [
+                  "Volontiers !",
+                  "Oui, avec plaisir !"
+                ],
+                "focus": "volontiers",
+                "watch": "l'acceptation polie et courte."
+              },
+              {
+                "prompt": "Elle propose un deuxième morceau : refusez gentiment.",
+                "expected": [
+                  "Non merci, c'est très bon.",
+                  "Non, merci."
+                ],
+                "focus": "non merci",
+                "watch": "le merci garde le sourire."
+              },
+              {
+                "prompt": "Le plat arrive : qu'est-ce que l'hôte dit ?",
+                "expected": [
+                  "Servez-vous !",
+                  "Servez-vous"
+                ],
+                "focus": "servez-vous",
+                "watch": "l'hôte invite tout le monde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u19-attention-e1",
+              "kind": "choice",
+              "prompt": "« ___ un petit quelque chose pour le café. » (tu arrives avec un dessert)",
+              "options": [
+                "J'apporte",
+                "Je prends",
+                "Je mets",
+                "Je vais"
+              ],
+              "answers": [
+                "J'apporte"
+              ],
+              "explain": "J'apporte : le présent de ce que l'invité apporte."
+            },
+            {
+              "id": "fr-foundations-u19-attention-e2",
+              "kind": "gap",
+              "prompt": "Vous ___ un café ? (verbe : vouloir, l'hôte propose)",
+              "answers": [
+                "voulez"
+              ],
+              "explain": "Vous voulez + nom : l'offre de l'hôte."
+            },
+            {
+              "id": "fr-foundations-u19-attention-e3",
+              "kind": "order",
+              "prompt": "L'hôte propose un café. Acceptez chaleureusement.",
+              "answers": [
+                "Oui je veux bien"
+              ],
+              "explain": "Oui, je veux bien : on accepte simplement et poliment."
+            },
+            {
+              "id": "fr-foundations-u19-attention-e4",
+              "kind": "written",
+              "prompt": "Léa propose du gâteau. Tu ne veux plus. Refuse gentiment.",
+              "answers": [
+                "non merci",
+                "non, merci",
+                "non merci c'est très bon"
+              ],
+              "explain": "Non, merci : le merci adoucit le refus."
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "vocab:food",
+            "vocab:social-expressions",
+            "function:order-food"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u19-adieu",
+          "title": "À la prochaine",
+          "goal": "Remercier les hôtes et se dire au revoir : merci pour tout, on remet ça samedi ?",
+          "intro": {
+            "explanation": [
+              "Le grand merci de la fin : « Merci pour tout, Léa ! » Et on complimente : « Le gâteau est délicieux ! »",
+              "Pour la prochaine fois, une question suffit : « On remet ça samedi ? » — on remet ça = on recommence.",
+              "Les adieux légers : « Bonne nuit ! » « À la prochaine ! » « À bientôt ! »"
+            ],
+            "examples": [
+              {
+                "text": "Merci pour tout, Léa !",
+                "meaning": "Remercier pour la soirée."
+              },
+              {
+                "text": "Le gâteau est délicieux !",
+                "meaning": "Complimenter le repas."
+              },
+              {
+                "text": "On remet ça samedi ?",
+                "meaning": "Proposer la prochaine fois."
+              },
+              {
+                "text": "Bonne nuit ! Rentre bien !",
+                "meaning": "Les souhaits du départ."
+              },
+              {
+                "text": "À la prochaine !",
+                "meaning": "L'au revoir léger."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "merci pour tout",
+              "meaning": "Le grand merci.",
+              "note": "Merci pour tout, c'était parfait !"
+            },
+            {
+              "text": "c'est délicieux",
+              "meaning": "Complimenter le repas.",
+              "note": "Le gâteau est délicieux !"
+            },
+            {
+              "text": "on remet ça + quand ?",
+              "meaning": "Proposer la prochaine fois.",
+              "note": "On remet ça samedi ?"
+            },
+            {
+              "text": "bonne soirée / bonne nuit",
+              "meaning": "Le souhait du départ.",
+              "note": "selon l'heure."
+            },
+            {
+              "text": "à la prochaine !",
+              "meaning": "L'au revoir léger.",
+              "note": "à bientôt !"
+            }
+          ],
+          "situation": "La soirée se termine : vous remerciez Léa pour le repas, vous complimentez le gâteau, vous proposez samedi et vous vous dites à la prochaine !",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Remercie Léa pour toute la soirée.",
+                "expected": [
+                  "Merci pour tout !",
+                  "Merci pour tout"
+                ],
+                "focus": "merci pour tout",
+                "watch": "le merci qui résume la soirée."
+              },
+              {
+                "prompt": "Complimente le gâteau.",
+                "expected": [
+                  "Le gâteau est délicieux !",
+                  "C'est délicieux !"
+                ],
+                "focus": "délicieux",
+                "watch": "le présent pour complimenter."
+              },
+              {
+                "prompt": "Il est tard : formule le souhait du départ.",
+                "expected": [
+                  "Bonne nuit !",
+                  "Bonne nuit"
+                ],
+                "focus": "bonne nuit",
+                "watch": "bonne soirée avant minuit, bonne nuit après."
+              },
+              {
+                "prompt": "Propose de se revoir samedi.",
+                "expected": [
+                  "On remet ça samedi ?",
+                  "On remet ça samedi"
+                ],
+                "focus": "on remet ça",
+                "watch": "on remet ça = on recommence."
+              },
+              {
+                "prompt": "Termine avec l'au revoir léger.",
+                "expected": [
+                  "À la prochaine !",
+                  "À bientôt !"
+                ],
+                "focus": "à la prochaine",
+                "watch": "l'adieu qui promet une suite."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u19-adieu-e1",
+              "kind": "choice",
+              "prompt": "« Merci pour ___ ! » La soirée est finie.",
+              "options": [
+                "tout",
+                "tous",
+                "toute",
+                "toutes"
+              ],
+              "answers": [
+                "tout"
+              ],
+              "explain": "Merci pour tout : la formule de fin de soirée."
+            },
+            {
+              "id": "fr-foundations-u19-adieu-e2",
+              "kind": "gap",
+              "prompt": "Le gâteau est ___ ! (très bon au goût)",
+              "answers": [
+                "délicieux",
+                "delicieux"
+              ],
+              "explain": "Délicieux : le compliment classique pour un plat."
+            },
+            {
+              "id": "fr-foundations-u19-adieu-e3",
+              "kind": "order",
+              "prompt": "Souhaite une bonne soirée à tes hôtes.",
+              "answers": [
+                "Je vous souhaite une bonne soirée"
+              ],
+              "explain": "Souhaiter : je vous souhaite + le souhait."
+            },
+            {
+              "id": "fr-foundations-u19-adieu-e4",
+              "kind": "written",
+              "prompt": "Dis au revoir avec la formule légère.",
+              "answers": [
+                "à la prochaine",
+                "a la prochaine",
+                "à bientôt",
+                "a bientôt"
+              ],
+              "explain": "À la prochaine ! : l'au revoir qui promet une suite."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "grammar:can"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u20",
+      "title": "Les pépins du quotidien",
+      "subtitle": "Pannes et solutions",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "la-panne",
+          "title": "La panne",
+          "subtitle": "Raconter le pépin",
+          "symbol": "wrench.and.screwdriver",
+          "category": "Course",
+          "situation": "Votre vélo est tombé en panne ce matin : vous racontez le pépin au passé composé et vous cherchez une solution avec Léa.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-reclamation",
+          "title": "La réclamation",
+          "subtitle": "Réclamer poliment",
+          "symbol": "phone.badge.checkmark",
+          "category": "Course",
+          "situation": "Au téléphone avec le magasin : votre imprimante est cassée, vous expliquez calmement et vous demandez un échange.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u20-panne",
+          "title": "C'est tombé en panne",
+          "goal": "Raconter une panne au passé composé : mon vélo est tombé en panne et j'ai appelé le garagiste.",
+          "intro": {
+            "explanation": [
+              "Le pépin se raconte au passé composé : « Mon vélo est tombé en panne ce matin. » — tomber prend être.",
+              "Ce que vous avez fait avec avoir : « J'ai appelé le garagiste » (en -é), « J'ai perdu mes clés » (perdu, irrégulier).",
+              "Le résultat, lui, est au présent : « Ça ne marche plus. » — ne… plus dit que c'est fini."
+            ],
+            "examples": [
+              {
+                "text": "Mon vélo est tombé en panne ce matin.",
+                "meaning": "La panne au passé composé."
+              },
+              {
+                "text": "J'ai appelé le garagiste.",
+                "meaning": "Passé composé régulier en -é."
+              },
+              {
+                "text": "J'ai perdu les clés de la maison.",
+                "meaning": "Participe irrégulier : perdre → perdu."
+              },
+              {
+                "text": "Le moteur ne démarre plus.",
+                "meaning": "Le résultat au présent."
+              },
+              {
+                "text": "Ça m'est arrivé ce matin.",
+                "meaning": "Introduire le récit du pépin."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "tomber en panne",
+              "meaning": "Ça ne marche plus.",
+              "note": "Mon vélo est tombé en panne."
+            },
+            {
+              "text": "ça m'est arrivé",
+              "meaning": "Introduire le pépin.",
+              "note": "…ce matin, devant la gare."
+            },
+            {
+              "text": "j'ai appelé / cherché",
+              "meaning": "Passé composé en -é.",
+              "note": "J'ai appelé le garage."
+            },
+            {
+              "text": "j'ai fait / perdu",
+              "meaning": "Participes irréguliers.",
+              "note": "faire → fait, perdre → perdu."
+            },
+            {
+              "text": "ça ne marche plus",
+              "meaning": "L'état actuel.",
+              "note": "ne… plus = c'est fini."
+            }
+          ],
+          "situation": "Ce matin, votre vélo est tombé en panne devant la gare : vous racontez le pépin à Léa — ce qui est cassé et ce que vous avez déjà fait.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Raconte : ton vélo est tombé en panne ce matin.",
+                "expected": [
+                  "Mon vélo est tombé en panne ce matin.",
+                  "Mon vélo est tombé en panne"
+                ],
+                "focus": "est tombé",
+                "watch": "tomber prend être : est tombé."
+              },
+              {
+                "prompt": "Dis que tu as appelé le garagiste.",
+                "expected": [
+                  "J'ai appelé le garagiste.",
+                  "J'ai appelé le garage."
+                ],
+                "focus": "j'ai appelé",
+                "watch": "avoir + participe en -é."
+              },
+              {
+                "prompt": "Les clés ont disparu : dis-le au passé.",
+                "expected": [
+                  "J'ai perdu les clés.",
+                  "J'ai perdu les clés de la maison."
+                ],
+                "focus": "j'ai perdu",
+                "watch": "perdre → perdu, irrégulier."
+              },
+              {
+                "prompt": "Le moteur ne fonctionne plus : dis-le avec ne… plus.",
+                "expected": [
+                  "Le moteur ne marche plus.",
+                  "Le moteur ne démarre plus."
+                ],
+                "focus": "ne… plus",
+                "watch": "le présent + ne… plus = fini."
+              },
+              {
+                "prompt": "Commence ton récit avec la formule du pépin.",
+                "expected": [
+                  "Ça m'est arrivé ce matin.",
+                  "Ça m'est arrivé hier."
+                ],
+                "focus": "ça m'est arrivé",
+                "watch": "la porte d'entrée des petites histoires."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u20-panne-e1",
+              "kind": "choice",
+              "prompt": "Mon téléphone ___ en panne hier.",
+              "options": [
+                "est tombé",
+                "a tombé",
+                "est tombée",
+                "tombe"
+              ],
+              "answers": [
+                "est tombé"
+              ],
+              "explain": "Tomber au passé composé prend être : est tombé (le téléphone = masculin)."
+            },
+            {
+              "id": "fr-foundations-u20-panne-e2",
+              "kind": "gap",
+              "prompt": "J'___ le garagiste ce matin. (verbe : appeler, passé composé)",
+              "answers": [
+                "ai appelé",
+                "ai appelle"
+              ],
+              "explain": "J'ai appelé : avoir + participe passé en -é."
+            },
+            {
+              "id": "fr-foundations-u20-panne-e3",
+              "kind": "order",
+              "prompt": "Raconte le pépin du vélo.",
+              "answers": [
+                "Mon vélo est tombé en panne"
+              ],
+              "explain": "être + tombé : la phrase type de la panne."
+            },
+            {
+              "id": "fr-foundations-u20-panne-e4",
+              "kind": "written",
+              "prompt": "Le moteur est en panne. Dis-le.",
+              "answers": [
+                "le moteur ne marche plus",
+                "le moteur ne démarre plus",
+                "le moteur ne demarre plus"
+              ],
+              "explain": "Ne… plus : l'action est finie, le moteur ne fonctionne plus maintenant."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "fr-foundations-u20-solution",
+          "title": "Qu'est-ce que je fais ?",
+          "goal": "Demander de l'aide et proposer une solution simple : qu'est-ce que je fais ?, tu n'as qu'à…, il faut…",
+          "intro": {
+            "explanation": [
+              "Le problème sans solution tient dans une question : « Qu'est-ce que je fais ? » « Tu peux m'aider ? »",
+              "La solution la plus simple avec tu n'as qu'à : « Tu n'as qu'à appeler le garage. » — rien de plus à faire que ça.",
+              "Le conseil général avec il faut : « Il faut d'abord vérifier la batterie. » Et on accepte : « D'accord, j'essaie tout de suite. »"
+            ],
+            "examples": [
+              {
+                "text": "Qu'est-ce que je fais ?",
+                "meaning": "Demander de l'aide."
+              },
+              {
+                "text": "Tu peux m'aider, s'il te plaît ?",
+                "meaning": "La demande directe."
+              },
+              {
+                "text": "Tu n'as qu'à appeler le garage.",
+                "meaning": "La solution simple."
+              },
+              {
+                "text": "Il faut d'abord vérifier la batterie.",
+                "meaning": "Le conseil avec il faut."
+              },
+              {
+                "text": "D'accord, j'essaie tout de suite.",
+                "meaning": "Accepter la solution."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "qu'est-ce que je fais ?",
+              "meaning": "Le problème sans solution.",
+              "note": "très courant à l'oral."
+            },
+            {
+              "text": "tu n'as qu'à + infinitif",
+              "meaning": "La solution facile.",
+              "note": "Tu n'as qu'à demander."
+            },
+            {
+              "text": "il faut + infinitif",
+              "meaning": "Le conseil général.",
+              "note": "Il faut vérifier d'abord."
+            },
+            {
+              "text": "tu peux m'aider ?",
+              "meaning": "Demander un coup de main.",
+              "note": "s'il te plaît."
+            },
+            {
+              "text": "j'essaie tout de suite",
+              "meaning": "Accepter la solution.",
+              "note": "tout de suite = maintenant."
+            }
+          ],
+          "situation": "Votre vélo ne marche toujours pas : vous expliquez le problème à Léa, elle vous propose une solution, et vous décidez d'essayer tout de suite.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ton vélo ne marche pas : demande de l'aide avec la question type.",
+                "expected": [
+                  "Qu'est-ce que je fais ?",
+                  "Qu'est-ce que je fais"
+                ],
+                "focus": "qu'est-ce que je fais",
+                "watch": "la question du blocage, à l'oral."
+              },
+              {
+                "prompt": "Conseille à Karim : appeler le garage (tu n'as qu'à…).",
+                "expected": [
+                  "Tu n'as qu'à appeler le garage.",
+                  "Tu n'as qu'à appeler le garage."
+                ],
+                "focus": "tu n'as qu'à",
+                "watch": "tu n'as qu'à + infinitif."
+              },
+              {
+                "prompt": "Conseille avec il faut : vérifier la batterie.",
+                "expected": [
+                  "Il faut vérifier la batterie.",
+                  "Il faut d'abord vérifier la batterie."
+                ],
+                "focus": "il faut",
+                "watch": "il faut + infinitif : le conseil général."
+              },
+              {
+                "prompt": "Léa propose une solution : accepte.",
+                "expected": [
+                  "D'accord, j'essaie tout de suite.",
+                  "Bonne idée, j'essaie."
+                ],
+                "focus": "j'essaie",
+                "watch": "essaie = je vais essayer."
+              },
+              {
+                "prompt": "Demande un coup de main, poliment.",
+                "expected": [
+                  "Tu peux m'aider, s'il te plaît ?",
+                  "Tu peux m'aider ?"
+                ],
+                "focus": "tu peux m'aider",
+                "watch": "la demande directe et polie."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u20-solution-e1",
+              "kind": "choice",
+              "prompt": "Tu ___ qu'à appeler le garage.",
+              "options": [
+                "n'as",
+                "n'es",
+                "ne vas",
+                "n'allais"
+              ],
+              "answers": [
+                "n'as"
+              ],
+              "explain": "Tu n'as qu'à + infinitif : la solution la plus simple."
+            },
+            {
+              "id": "fr-foundations-u20-solution-e2",
+              "kind": "gap",
+              "prompt": "Il ___ d'abord vérifier la batterie. (le conseil)",
+              "answers": [
+                "faut"
+              ],
+              "explain": "Il faut + infinitif : le conseil général."
+            },
+            {
+              "id": "fr-foundations-u20-solution-e3",
+              "kind": "order",
+              "prompt": "Demande de l'aide avec la question type.",
+              "answers": [
+                "Qu'est-ce que je fais"
+              ],
+              "explain": "Qu'est-ce que je fais ? : le blocage posé en une question."
+            },
+            {
+              "id": "fr-foundations-u20-solution-e4",
+              "kind": "written",
+              "prompt": "Léa propose une solution. Accepte avec enthousiasme.",
+              "answers": [
+                "d'accord j'essaie tout de suite",
+                "d'accord j essaie tout de suite",
+                "bonne idée j'essaie",
+                "bonne idee j essaie"
+              ],
+              "explain": "D'accord, j'essaie tout de suite : on accepte et on agit."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "function:make-requests",
+            "grammar:connectors",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-foundations-u20-reclamation",
+          "title": "Une réclamation tranquille",
+          "goal": "Réclamer poliment un article cassé : j'ai acheté…, elle ne marche plus, est-ce que je peux avoir un échange ?",
+          "intro": {
+            "explanation": [
+              "On commence par les faits : « J'ai acheté cette imprimante la semaine dernière. »",
+              "Le problème au présent : « Elle ne marche plus depuis hier. » Puis la conséquence avec donc : « Donc j'ai le ticket, le voici. »",
+              "La demande polie avec est-ce que : « Est-ce que je peux avoir un échange ? » — le ton reste tranquille."
+            ],
+            "examples": [
+              {
+                "text": "J'ai acheté cette imprimante la semaine dernière.",
+                "meaning": "Les faits d'abord."
+              },
+              {
+                "text": "Elle ne marche plus depuis hier.",
+                "meaning": "Le problème au présent."
+              },
+              {
+                "text": "Est-ce que je peux avoir un échange ?",
+                "meaning": "La demande polie."
+              },
+              {
+                "text": "J'ai bien le ticket, le voici.",
+                "meaning": "La preuve d'achat."
+              },
+              {
+                "text": "Merci, c'est très gentil.",
+                "meaning": "Terminer poliment."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'ai acheté + article",
+              "meaning": "Ouvrir la réclamation.",
+              "note": "…la semaine dernière."
+            },
+            {
+              "text": "il ne marche plus",
+              "meaning": "Décrire la panne.",
+              "note": "depuis hier."
+            },
+            {
+              "text": "est-ce que je peux + infinitif ?",
+              "meaning": "La demande polie.",
+              "note": "…avoir un échange ?"
+            },
+            {
+              "text": "un échange / un remboursement",
+              "meaning": "Ce qu'on demande.",
+              "note": "échange = un autre article."
+            },
+            {
+              "text": "voici le ticket",
+              "meaning": "La preuve d'achat.",
+              "note": "garde toujours le ticket."
+            }
+          ],
+          "situation": "Au téléphone avec le magasin : vous avez acheté une imprimante cassée — vous expliquez calmement, vous montrez le ticket et vous demandez un échange.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ouvre la réclamation : achat d'une imprimante la semaine dernière.",
+                "expected": [
+                  "J'ai acheté cette imprimante la semaine dernière.",
+                  "J'ai acheté une imprimante la semaine dernière."
+                ],
+                "focus": "j'ai acheté",
+                "watch": "les faits au passé composé."
+              },
+              {
+                "prompt": "Explique la panne : plus rien depuis hier.",
+                "expected": [
+                  "Elle ne marche plus depuis hier.",
+                  "Elle ne fonctionne plus depuis hier."
+                ],
+                "focus": "ne… plus",
+                "watch": "ne… plus + depuis : la panne et sa durée."
+              },
+              {
+                "prompt": "Demande poliment un échange.",
+                "expected": [
+                  "Est-ce que je peux avoir un échange ?",
+                  "Est-ce que je peux avoir un echange ?"
+                ],
+                "focus": "est-ce que",
+                "watch": "est-ce que garde le ton tranquille."
+              },
+              {
+                "prompt": "Le vendeur demande une preuve d'achat.",
+                "expected": [
+                  "Voici le ticket.",
+                  "J'ai le ticket."
+                ],
+                "focus": "le ticket",
+                "watch": "le ticket fait foi."
+              },
+              {
+                "prompt": "Le vendeur accepte : remercie poliment.",
+                "expected": [
+                  "Merci, c'est très gentil.",
+                  "Merci beaucoup."
+                ],
+                "focus": "remercier",
+                "watch": "on clôt la réclamation par un merci."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u20-reclamation-e1",
+              "kind": "choice",
+              "prompt": "J'ai ___ cette imprimante la semaine dernière.",
+              "options": [
+                "acheté",
+                "acheter",
+                "achetais",
+                "achète"
+              ],
+              "answers": [
+                "acheté"
+              ],
+              "explain": "Passé composé : j'ai acheté, participe en -é."
+            },
+            {
+              "id": "fr-foundations-u20-reclamation-e2",
+              "kind": "gap",
+              "prompt": "Est-ce que je peux avoir un ___ ? (un autre article)",
+              "answers": [
+                "échange",
+                "echange"
+              ],
+              "explain": "Un échange : on rend l'article cassé et on en reçoit un autre."
+            },
+            {
+              "id": "fr-foundations-u20-reclamation-e3",
+              "kind": "order",
+              "prompt": "Demande poliment l'échange au magasin.",
+              "answers": [
+                "Est-ce que je peux avoir un échange"
+              ],
+              "explain": "Est-ce que je peux + infinitif : la demande polie."
+            },
+            {
+              "id": "fr-foundations-u20-reclamation-e4",
+              "kind": "written",
+              "prompt": "L'appareil est cassé depuis hier. Dis-le.",
+              "answers": [
+                "il ne marche plus depuis hier",
+                "elle ne marche plus depuis hier"
+              ],
+              "explain": "Ne… plus + depuis : la panne et sa durée."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:present-questions",
+            "vocab:social-expressions",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u21",
+      "title": "Le travail",
+      "subtitle": "Entretien et projets",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "l-entretien",
+          "title": "L'entretien",
+          "subtitle": "Expérience et points forts",
+          "symbol": "briefcase",
+          "category": "Course",
+          "situation": "Vous passez un entretien dans une agence de voyage : votre expérience chiffrée, vos points forts, et une conclusion en confiance.",
+          "colorIndex": 0
+        },
+        {
+          "id": "l-equipe",
+          "title": "L'équipe",
+          "subtitle": "Ambiance et objectifs",
+          "symbol": "bubble.left.and.text.bubble.right",
+          "category": "Course",
+          "situation": "Premier jour dans l'équipe : l'ambiance détendue, les habitudes du vendredi, et vos projets professionnels à vous.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u21-entretien",
+          "title": "L'entretien",
+          "goal": "Parler de son expérience et de ses points forts en entretien : j'ai travaillé trois ans, je suis rigoureux, donc ce poste est fait pour moi.",
+          "intro": {
+            "explanation": [
+              "L'expérience se chiffre au passé composé : « J'ai travaillé trois ans dans une agence de voyage. »",
+              "Les points forts avec être : « Je suis rigoureux et organisé », et on illustre : « Je suis à l'aise avec les clients. »",
+              "Les connecteurs structurent la réponse : « D'abord j'ai appris le métier, ensuite j'ai géré l'équipe, donc je crois que ce poste est fait pour moi. »"
+            ],
+            "examples": [
+              {
+                "text": "J'ai travaillé trois ans dans une agence de voyage.",
+                "meaning": "L'expérience chiffrée."
+              },
+              {
+                "text": "J'ai géré les réservations et formé deux stagiaires.",
+                "meaning": "La responsabilité concrète."
+              },
+              {
+                "text": "Je suis rigoureux et organisé.",
+                "meaning": "Les points forts."
+              },
+              {
+                "text": "Je suis à l'aise avec les clients.",
+                "meaning": "La qualité relationnelle."
+              },
+              {
+                "text": "Donc je crois que ce poste est fait pour moi.",
+                "meaning": "La conclusion en confiance."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'ai travaillé / géré + durée",
+              "meaning": "L'expérience chiffrée.",
+              "note": "trois ans, deux étés."
+            },
+            {
+              "text": "je suis + qualités",
+              "meaning": "Les points forts.",
+              "note": "rigoureux, organisé, patient."
+            },
+            {
+              "text": "être à l'aise avec",
+              "meaning": "La compétence relationnelle.",
+              "note": "avec les clients."
+            },
+            {
+              "text": "d'abord… ensuite…",
+              "meaning": "Structurer la réponse.",
+              "note": "D'abord j'ai appris, ensuite j'ai géré."
+            },
+            {
+              "text": "ce poste est fait pour moi",
+              "meaning": "Conclure l'entretien.",
+              "note": "donc je postule."
+            }
+          ],
+          "situation": "Vous êtes en entretien dans une agence de voyage : trois ans d'expérience, les réservations gérées, deux stagiaires formés — et vous concluez avec confiance.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Parle de ton expérience : trois ans dans une agence de voyage.",
+                "expected": [
+                  "J'ai travaillé trois ans dans une agence de voyage.",
+                  "J'ai travaille trois ans dans une agence de voyage"
+                ],
+                "focus": "j'ai travaillé",
+                "watch": "passé composé pour l'expérience finie."
+              },
+              {
+                "prompt": "Cite deux de tes points forts.",
+                "expected": [
+                  "Je suis rigoureux et organisé.",
+                  "Je suis organisé et patient."
+                ],
+                "focus": "je suis",
+                "watch": "être + adjectif de qualité."
+              },
+              {
+                "prompt": "Ta qualité avec les clients ? Dis-le.",
+                "expected": [
+                  "Je suis à l'aise avec les clients.",
+                  "Je suis à l'aise avec la clientèle."
+                ],
+                "focus": "à l'aise",
+                "watch": "à l'aise avec = je gère bien."
+              },
+              {
+                "prompt": "Structure ta réponse : le métier appris, puis l'équipe gérée.",
+                "expected": [
+                  "D'abord j'ai appris le métier, ensuite j'ai géré l'équipe.",
+                  "J'ai d'abord appris le métier, puis j'ai géré l'équipe."
+                ],
+                "focus": "d'abord… ensuite",
+                "watch": "les connecteurs donnent le plan."
+              },
+              {
+                "prompt": "Conclus l'entretien avec confiance.",
+                "expected": [
+                  "Donc je crois que ce poste est fait pour moi.",
+                  "Je crois que ce poste est fait pour moi."
+                ],
+                "focus": "donc",
+                "watch": "donc relie les preuves et la conclusion."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u21-entretien-e1",
+              "kind": "choice",
+              "prompt": "« ___ trois ans dans une agence de voyage. » (votre expérience)",
+              "options": [
+                "J'ai travaillé",
+                "Je travaille",
+                "Je vais travailler",
+                "Je travaillais"
+              ],
+              "answers": [
+                "J'ai travaillé"
+              ],
+              "explain": "Passé composé pour l'expérience achevée : j'ai travaillé trois ans."
+            },
+            {
+              "id": "fr-foundations-u21-entretien-e2",
+              "kind": "gap",
+              "prompt": "Je suis ___ : je vérifie tout deux fois. (un point fort, masculin)",
+              "answers": [
+                "rigoureux"
+              ],
+              "explain": "Rigoureux : qui fait tout avec précision, un point fort recherché."
+            },
+            {
+              "id": "fr-foundations-u21-entretien-e3",
+              "kind": "order",
+              "prompt": "Conclus l'entretien avec confiance.",
+              "answers": [
+                "Donc je crois que ce poste est fait pour moi"
+              ],
+              "explain": "Donc + conclusion : la dernière phrase attendue du candidat."
+            },
+            {
+              "id": "fr-foundations-u21-entretien-e4",
+              "kind": "written",
+              "prompt": "Tu as géré les réservations : dis-le au passé.",
+              "answers": [
+                "j'ai géré les réservations",
+                "j'ai gere les reservations",
+                "j'ai géré les réservations de l'agence"
+              ],
+              "explain": "Gérer → géré : avoir + participe, la responsabilité au passé."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "grammar:present-perfect",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "fr-foundations-u21-collègues",
+          "title": "Avec les collègues",
+          "goal": "Décrire l'ambiance de l'équipe et les collègues : l'ambiance est détendue, on s'entraide, par contre les journées sont longues.",
+          "intro": {
+            "explanation": [
+              "L'ambiance avec être + adjectif : « L'ambiance est détendue. » « L'équipe est soudée. »",
+              "Les habitudes avec on + présent : « On s'entraide quand il y a un problème. » « On déjeune ensemble le vendredi. »",
+              "On nuance avec par contre : « Le travail est intéressant, par contre les journées sont longues. »"
+            ],
+            "examples": [
+              {
+                "text": "L'ambiance est vraiment détendue.",
+                "meaning": "L'atmosphère du travail."
+              },
+              {
+                "text": "On s'entraide quand il y a un problème.",
+                "meaning": "L'entraide de l'équipe."
+              },
+              {
+                "text": "Ma collègue Julie est toujours disponible.",
+                "meaning": "Décrire une personne."
+              },
+              {
+                "text": "On déjeune ensemble le vendredi.",
+                "meaning": "L'habitude d'équipe."
+              },
+              {
+                "text": "Par contre, les journées sont longues.",
+                "meaning": "La nuance."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "l'ambiance est + adjectif",
+              "meaning": "L'atmosphère du travail.",
+              "note": "détendue, sérieuse, stressante."
+            },
+            {
+              "text": "on s'entraide",
+              "meaning": "L'équipe qui s'aide.",
+              "note": "s'entraider = s'aider."
+            },
+            {
+              "text": "on + présent",
+              "meaning": "Les habitudes d'équipe.",
+              "note": "On déjeune ensemble."
+            },
+            {
+              "text": "par contre",
+              "meaning": "La nuance, le contraste.",
+              "note": "Intéressant, par contre long."
+            },
+            {
+              "text": "être disponible / à l'écoute",
+              "meaning": "Le collègue fiable.",
+              "note": "toujours prêt à aider."
+            }
+          ],
+          "situation": "Premier jour dans la nouvelle équipe : un collègue vous présente l'ambiance détendue, Julie qui aide toujours tout le monde, le déjeuner du vendredi — et les journées longues.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Décris l'atmosphère : détendue.",
+                "expected": [
+                  "L'ambiance est détendue.",
+                  "L'ambiance est vraiment détendue."
+                ],
+                "focus": "l'ambiance est",
+                "watch": "être + adjectif pour l'atmosphère."
+              },
+              {
+                "prompt": "Dis que l'équipe s'aide.",
+                "expected": [
+                  "On s'entraide.",
+                  "L'équipe s'entraide."
+                ],
+                "focus": "s'entraider",
+                "watch": "s'entraide = s'aide."
+              },
+              {
+                "prompt": "Julie aide toujours : décris-la.",
+                "expected": [
+                  "Julie est toujours disponible.",
+                  "Julie est disponible à toute heure."
+                ],
+                "focus": "disponible",
+                "watch": "disponible = prête à aider."
+              },
+              {
+                "prompt": "L'habitude du vendredi : déjeuner ensemble. Dis-le.",
+                "expected": [
+                  "On déjeune ensemble le vendredi.",
+                  "Le vendredi, on déjeune ensemble."
+                ],
+                "focus": "on + présent",
+                "watch": "le présent dit l'habitude."
+              },
+              {
+                "prompt": "Le travail est intéressant, mais les journées sont longues : nuance avec par contre.",
+                "expected": [
+                  "Le travail est intéressant, par contre les journées sont longues.",
+                  "Par contre, les journées sont longues."
+                ],
+                "focus": "par contre",
+                "watch": "par contre pose le contraste."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u21-collègues-e1",
+              "kind": "choice",
+              "prompt": "L'___ est détendue dans notre équipe.",
+              "options": [
+                "ambiance",
+                "aventure",
+                "agence",
+                "addition"
+              ],
+              "answers": [
+                "ambiance"
+              ],
+              "explain": "L'ambiance : l'atmosphère générale du travail."
+            },
+            {
+              "id": "fr-foundations-u21-collègues-e2",
+              "kind": "gap",
+              "prompt": "On s'___ quand quelqu'un a un problème. (l'équipe s'aide)",
+              "answers": [
+                "entraide"
+              ],
+              "explain": "On s'entraide : chacun aide les autres."
+            },
+            {
+              "id": "fr-foundations-u21-collègues-e3",
+              "kind": "order",
+              "prompt": "Nuance : le travail est intéressant, mais les journées sont longues (formule : par contre).",
+              "answers": [
+                "Le travail est intéressant par contre les journées sont longues"
+              ],
+              "explain": "Phrase + par contre + contraste : la nuance d'équipe."
+            },
+            {
+              "id": "fr-foundations-u21-collègues-e4",
+              "kind": "written",
+              "prompt": "Ton collègue écoute bien tout le monde. Dis-le.",
+              "answers": [
+                "il est à l'écoute",
+                "il est a l'ecoute",
+                "il est toujours à l'écoute"
+              ],
+              "explain": "Être à l'écoute : le collègue qui prend le temps d'écouter."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "function:describe-people",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-foundations-u21-buts",
+          "title": "Les projets pro",
+          "goal": "Parler de ses objectifs professionnels : j'aimerais devenir chef d'équipe, je veux atteindre ce poste, à terme…",
+          "intro": {
+            "explanation": [
+              "L'objectif avec modestie : « J'aimerais devenir chef d'équipe. » — le conditionnel reste poli.",
+              "L'ambition datée avec je veux atteindre : « Je veux atteindre cet objectif dans deux ans. »",
+              "Le plan en étapes : « D'abord je me forme, ensuite je candidate, et à terme je voudrais monter une agence. »"
+            ],
+            "examples": [
+              {
+                "text": "J'aimerais devenir chef d'équipe.",
+                "meaning": "L'objectif poli."
+              },
+              {
+                "text": "Je veux atteindre cet objectif dans deux ans.",
+                "meaning": "L'ambition datée."
+              },
+              {
+                "text": "À terme, je voudrais monter une agence.",
+                "meaning": "Le projet de long terme."
+              },
+              {
+                "text": "D'abord, je me forme au métier.",
+                "meaning": "La première étape."
+              },
+              {
+                "text": "Ensuite, je candidate en interne.",
+                "meaning": "L'étape suivante."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "j'aimerais + infinitif",
+              "meaning": "L'objectif avec modestie.",
+              "note": "J'aimerais évoluer."
+            },
+            {
+              "text": "je veux atteindre + objectif",
+              "meaning": "L'ambition claire.",
+              "note": "atteindre un poste, un chiffre."
+            },
+            {
+              "text": "à terme",
+              "meaning": "Dans le long terme.",
+              "note": "À terme, je m'installe."
+            },
+            {
+              "text": "devenir + métier",
+              "meaning": "Le changement de rôle.",
+              "note": "devenir chef, devenir formatrice."
+            },
+            {
+              "text": "d'abord… ensuite…",
+              "meaning": "Les étapes du plan.",
+              "note": "D'abord me former, ensuite candidater."
+            }
+          ],
+          "situation": "Avec votre responsable, vous parlez projet : devenir chef d'équipe, atteindre le poste dans deux ans, et à terme monter une petite agence.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ton objectif avec modestie : devenir chef d'équipe.",
+                "expected": [
+                  "J'aimerais devenir chef d'équipe.",
+                  "J'aimerais devenir chef d'equipe"
+                ],
+                "focus": "j'aimerais",
+                "watch": "le conditionnel reste poli."
+              },
+              {
+                "prompt": "Sois ambitieux : ce poste dans deux ans.",
+                "expected": [
+                  "Je veux atteindre ce poste dans deux ans.",
+                  "Je veux atteindre cet objectif dans deux ans."
+                ],
+                "focus": "je veux atteindre",
+                "watch": "atteindre un objectif = y arriver."
+              },
+              {
+                "prompt": "Le long terme : monter une agence.",
+                "expected": [
+                  "À terme, je voudrais monter une agence.",
+                  "À terme je voudrais monter une agence."
+                ],
+                "focus": "à terme",
+                "watch": "à terme = dans quelques années."
+              },
+              {
+                "prompt": "La première étape : se former.",
+                "expected": [
+                  "D'abord, je me forme au métier.",
+                  "D'abord je me forme."
+                ],
+                "focus": "d'abord",
+                "watch": "d'abord ouvre le plan."
+              },
+              {
+                "prompt": "L'étape suivante : candidater en interne.",
+                "expected": [
+                  "Ensuite, je candidate en interne.",
+                  "Ensuite je candidate en interne."
+                ],
+                "focus": "ensuite",
+                "watch": "ensuite enchaîne l'étape."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u21-buts-e1",
+              "kind": "choice",
+              "prompt": "« ___ , j'aimerais ouvrir ma propre agence. » (le long terme)",
+              "options": [
+                "À terme",
+                "À peine",
+                "À côté",
+                "À part"
+              ],
+              "answers": [
+                "À terme"
+              ],
+              "explain": "À terme : dans le long terme, l'horizon du projet."
+            },
+            {
+              "id": "fr-foundations-u21-buts-e2",
+              "kind": "gap",
+              "prompt": "Je ___ atteindre cet objectif d'ici deux ans. (verbe : vouloir, présent)",
+              "answers": [
+                "veux"
+              ],
+              "explain": "Je veux atteindre : l'ambition claire et datée."
+            },
+            {
+              "id": "fr-foundations-u21-buts-e3",
+              "kind": "order",
+              "prompt": "Parle de ton projet de long terme (agence).",
+              "answers": [
+                "À terme je voudrais monter une agence"
+              ],
+              "explain": "À terme + conditionnel : le rêve de long terme."
+            },
+            {
+              "id": "fr-foundations-u21-buts-e4",
+              "kind": "written",
+              "prompt": "Ton plan : d'abord te former. Dis-le.",
+              "answers": [
+                "d'abord je me forme",
+                "d'abord je me forme au métier",
+                "d'abord je me forme au metier"
+              ],
+              "explain": "D'abord, je me forme : la première étape du plan."
+            }
+          ],
+          "skills": [
+            "function:describe-goals",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
           ]
         }
       ]

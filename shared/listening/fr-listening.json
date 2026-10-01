@@ -2402,6 +2402,402 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-listen-soiree-vendredi",
+      "languageID": "fr",
+      "title": "La soirée du vendredi",
+      "level": "A1",
+      "topic": "amis",
+      "unitID": "fr-foundations-u19",
+      "text": "C'est vendredi soir. Léa arrive chez Mai pour dîner. Devant la porte, elle demande : « Je peux entrer ? » Mai ouvre : « Oui, bien sûr ! » Léa apporte des fleurs. Mai propose : « Tu veux un jus d'orange ? » Léa répond : « Volontiers ! » Le gâteau est délicieux : Léa prend deux morceaux. À dix heures, Léa dit : « Merci pour tout ! » Mai répond : « Bonne nuit ! » À la prochaine fois !",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:social-expressions",
+        "grammar:can"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-soiree-vendredi-q1",
+          "kind": "choice",
+          "prompt": "Où est-ce que Léa va vendredi soir ?",
+          "answers": [
+            "Chez Mai"
+          ],
+          "explain": "Léa arrive chez Mai pour le dîner.",
+          "options": [
+            "Chez Mai",
+            "Au restaurant",
+            "Au cinéma",
+            "Chez Karim"
+          ]
+        },
+        {
+          "id": "fr-listen-soiree-vendredi-q2",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Léa demande devant la porte ?",
+          "answers": [
+            "Je peux entrer ?"
+          ],
+          "explain": "Devant la porte, elle demande : « Je peux entrer ? »",
+          "options": [
+            "Je peux entrer ?",
+            "Vous allez bien ?",
+            "Où est la fête ?",
+            "Tu es seule ?"
+          ]
+        },
+        {
+          "id": "fr-listen-soiree-vendredi-q3",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Léa apporte ?",
+          "answers": [
+            "des fleurs",
+            "fleurs",
+            "elle apporte des fleurs"
+          ],
+          "explain": "Léa apporte des fleurs pour Mai."
+        },
+        {
+          "id": "fr-listen-soiree-vendredi-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Mai propose à boire ?",
+          "answers": [
+            "Un jus d'orange"
+          ],
+          "explain": "Mai propose à boire : « Tu veux un jus d'orange ? »",
+          "options": [
+            "Un jus d'orange",
+            "Un café",
+            "Un thé",
+            "De l'eau"
+          ]
+        },
+        {
+          "id": "fr-listen-soiree-vendredi-q5",
+          "kind": "choice",
+          "prompt": "Comment est le gâteau ?",
+          "answers": [
+            "Il est délicieux"
+          ],
+          "explain": "Le gâteau de Mai est délicieux : Léa prend deux morceaux.",
+          "options": [
+            "Il est délicieux",
+            "Il est brûlé",
+            "Il est trop sucré",
+            "Il est petit"
+          ]
+        },
+        {
+          "id": "fr-listen-soiree-vendredi-q6",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Léa dit à la fin de la soirée ?",
+          "answers": [
+            "merci pour tout",
+            "merci pour tout !",
+            "elle dit merci pour tout"
+          ],
+          "explain": "À dix heures, Léa se lève : « Merci pour tout ! »"
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-reclamation-facture",
+      "languageID": "fr",
+      "title": "Au téléphone avec le magasin",
+      "level": "A2",
+      "topic": "réclamation",
+      "unitID": "fr-foundations-u20",
+      "text": "Bonjour, j'appelle au sujet d'une imprimante. Je l'ai achetée dans votre magasin la semaine dernière. Elle a bien marché deux jours, mais depuis hier elle ne s'allume plus. J'ai vérifié le câble et j'ai changé la prise, mais rien à faire. De plus, j'ai reçu deux factures pour le même article. Est-ce que je peux avoir un échange ? J'ai le ticket et la première facture sous la main. Le vendeur répond : « Bien sûr, apportez l'appareil au magasin avec les deux factures, et nous faisons l'échange tout de suite. » Le client est content : il passe cet après-midi.",
+      "skills": [
+        "listening:detail",
+        "listening:gist",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-reclamation-facture-q1",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que le client a acheté ?",
+          "answers": [
+            "Une imprimante"
+          ],
+          "explain": "Bonjour, j'appelle au sujet d'une imprimante.",
+          "options": [
+            "Une imprimante",
+            "Un vélo",
+            "Un téléphone",
+            "Une télévision"
+          ]
+        },
+        {
+          "id": "fr-listen-reclamation-facture-q2",
+          "kind": "choice",
+          "prompt": "Quand est-ce que le client l'a achetée ?",
+          "answers": [
+            "La semaine dernière"
+          ],
+          "explain": "Je l'ai achetée dans votre magasin la semaine dernière.",
+          "options": [
+            "La semaine dernière",
+            "Hier",
+            "Le mois dernier",
+            "L'année dernière"
+          ]
+        },
+        {
+          "id": "fr-listen-reclamation-facture-q3",
+          "kind": "written",
+          "prompt": "Depuis quand l'imprimante ne s'allume plus ?",
+          "answers": [
+            "depuis hier",
+            "hier"
+          ],
+          "explain": "Elle a bien marché deux jours, mais depuis hier elle ne s'allume plus."
+        },
+        {
+          "id": "fr-listen-reclamation-facture-q4",
+          "kind": "choice",
+          "prompt": "Quel problème y a-t-il avec les factures ?",
+          "answers": [
+            "Il a reçu deux factures"
+          ],
+          "explain": "De plus, j'ai reçu deux factures pour le même article.",
+          "options": [
+            "Il a reçu deux factures",
+            "Il n'a pas de facture",
+            "Il a perdu la facture",
+            "La facture est illisible"
+          ]
+        },
+        {
+          "id": "fr-listen-reclamation-facture-q5",
+          "kind": "written",
+          "prompt": "Qu'est-ce que le client demande ?",
+          "answers": [
+            "un échange",
+            "un echange",
+            "il demande un échange"
+          ],
+          "explain": "Est-ce que je peux avoir un échange ? demande le client."
+        },
+        {
+          "id": "fr-listen-reclamation-facture-q6",
+          "kind": "choice",
+          "prompt": "Que doit apporter le client au magasin ?",
+          "answers": [
+            "L'appareil et les deux factures"
+          ],
+          "explain": "Apportez l'appareil au magasin avec les deux factures, dit le vendeur.",
+          "options": [
+            "L'appareil et les deux factures",
+            "Seulement le ticket",
+            "Une nouvelle facture",
+            "Rien, tout se fait au téléphone"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-entretien-blanc",
+      "languageID": "fr",
+      "title": "L'entretien blanc",
+      "level": "B1",
+      "topic": "travail",
+      "unitID": "fr-foundations-u21",
+      "text": "Léa fait passer un entretien blanc à Karim, qui postule dans une agence de voyage. Léa : « Parlez-moi de votre expérience. » Karim : « J'ai travaillé trois ans dans une agence à Lyon, où j'ai géré les réservations et j'ai formé deux stagiaires. » Léa : « Quels sont vos points forts ? » Karim : « Je suis organisé et je reste calme quand un client s'énerve ; par contre, je parle encore peu anglais, mais je prends des cours le soir. » Léa : « Et vos objectifs ? » Karim : « J'aimerais évoluer vers le conseil, et à terme coordonner une équipe. » Léa : « Merci. Vous citez une vraie faiblesse, c'est plutôt bon signe : un candidat honnête inspire confiance. »",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "vocab:work",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-entretien-blanc-q1",
+          "kind": "choice",
+          "prompt": "Où Karim veut-il travailler ?",
+          "answers": [
+            "Dans une agence de voyage"
+          ],
+          "explain": "Karim postule dans une agence de voyage.",
+          "options": [
+            "Dans une agence de voyage",
+            "Dans un restaurant",
+            "Dans une école",
+            "Dans un hôpital"
+          ]
+        },
+        {
+          "id": "fr-listen-entretien-blanc-q2",
+          "kind": "written",
+          "prompt": "Combien d'années d'expérience Karim cite-t-il ?",
+          "answers": [
+            "trois ans",
+            "3 ans"
+          ],
+          "explain": "J'ai travaillé trois ans dans une agence à Lyon, dit Karim."
+        },
+        {
+          "id": "fr-listen-entretien-blanc-q3",
+          "kind": "choice",
+          "prompt": "Quelle faiblesse Karim admet-il ?",
+          "answers": [
+            "Il parle peu anglais"
+          ],
+          "explain": "Par contre, je parle encore peu anglais, mais je prends des cours le soir.",
+          "options": [
+            "Il parle peu anglais",
+            "Il est désorganisé",
+            "Il s'énerve vite",
+            "Il n'a jamais formé personne"
+          ]
+        },
+        {
+          "id": "fr-listen-entretien-blanc-q4",
+          "kind": "choice",
+          "prompt": "Que fait Karim pour progresser en anglais ?",
+          "answers": [
+            "Il prend des cours le soir"
+          ],
+          "explain": "Mais je prends des cours le soir, précise Karim.",
+          "options": [
+            "Il prend des cours le soir",
+            "Il regarde des films",
+            "Il a arrêté d'apprendre",
+            "Il voyage chaque mois"
+          ]
+        },
+        {
+          "id": "fr-listen-entretien-blanc-q5",
+          "kind": "written",
+          "prompt": "Quel est l'objectif de long terme de Karim ?",
+          "answers": [
+            "coordonner une équipe",
+            "coordonner une equipe",
+            "à terme coordonner une équipe"
+          ],
+          "explain": "Et à terme coordonner une équipe, dit Karim."
+        },
+        {
+          "id": "fr-listen-entretien-blanc-q6",
+          "kind": "choice",
+          "prompt": "Pourquoi Léa juge-t-elle cet entretien bon signe ?",
+          "answers": [
+            "Karim est honnête sur sa faiblesse"
+          ],
+          "explain": "Vous citez une vraie faiblesse : un candidat honnête inspire confiance.",
+          "options": [
+            "Karim est honnête sur sa faiblesse",
+            "Karim parle parfaitement anglais",
+            "Karim veut un salaire élevé",
+            "Karim connaît déjà l'équipe"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-ton-podcast",
+      "languageID": "fr",
+      "title": "Podcast : le ton juste",
+      "level": "C1",
+      "topic": "langue",
+      "unitID": "fr-foundations-u9",
+      "text": "Dans ce podcast, Léa interroge Mme Vasseur, rédactrice, sur le ton juste. Léa : « Un mail commence par je veux un délai : ça passe ? » Mme Vasseur : « Ça se comprend, mais ça sonne sec. On dira plutôt : j'aimerais qu'on envisage un délai supplémentaire. Le verbe envisager ouvre la discussion au lieu de la fermer. » Léa : « Et côté collocations ? » Mme Vasseur : « C'est là que ça se joue : on prend une décision, on tire une conclusion ; celui qui écrit faire une décision trahit une hâte. » Léa : « Donc le ton juste, c'est une affaire de mots choisis ? » Mme Vasseur : « Autant dire que oui : qui choisit ses verbes domine son sujet ; qui les subit paraît pressé, voire négligé. »",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-ton-podcast-q1",
+          "kind": "choice",
+          "prompt": "Quel est le thème de l'émission ?",
+          "answers": [
+            "Le ton juste et les collocations"
+          ],
+          "explain": "Léa interroge Mme Vasseur sur le ton juste, et la discussion porte sur les collocations.",
+          "options": [
+            "Le ton juste et les collocations",
+            "L'orthographe des e-mails",
+            "Le recrutement des rédacteurs",
+            "La gestion du stress"
+          ]
+        },
+        {
+          "id": "fr-listen-ton-podcast-q2",
+          "kind": "choice",
+          "prompt": "Quel problème Mme Vasseur relève-t-elle dans « je veux un délai » ?",
+          "answers": [
+            "Ça sonne sec"
+          ],
+          "explain": "Ça se comprend, mais ça sonne sec, dit-elle.",
+          "options": [
+            "Ça sonne sec",
+            "C'est trop long",
+            "C'est incorrect",
+            "Ça manque d'exemples"
+          ]
+        },
+        {
+          "id": "fr-listen-ton-podcast-q3",
+          "kind": "written",
+          "prompt": "Quel verbe ouvre la discussion au lieu de la fermer ?",
+          "answers": [
+            "envisager",
+            "le verbe envisager"
+          ],
+          "explain": "Le verbe envisager ouvre la discussion au lieu de la fermer."
+        },
+        {
+          "id": "fr-listen-ton-podcast-q4",
+          "kind": "choice",
+          "prompt": "Quelle paire de collocations Mme Vasseur donne-t-elle ?",
+          "answers": [
+            "Prendre une décision, tirer une conclusion"
+          ],
+          "explain": "On prend une décision, on tire une conclusion.",
+          "options": [
+            "Prendre une décision, tirer une conclusion",
+            "Faire une décision, mettre une conclusion",
+            "Prendre un choix, tirer une décision",
+            "Faire un choix, prendre une conclusion"
+          ]
+        },
+        {
+          "id": "fr-listen-ton-podcast-q5",
+          "kind": "choice",
+          "prompt": "Que veut dire « qui choisit ses verbes domine son sujet » ?",
+          "answers": [
+            "Bien choisir ses mots rend crédible"
+          ],
+          "explain": "Qui choisit ses verbes domine son sujet ; qui les subit paraît pressé.",
+          "options": [
+            "Bien choisir ses mots rend crédible",
+            "Écrire vite impressionne",
+            "Les verbes font peur",
+            "Les sujets dominent les mots"
+          ]
+        },
+        {
+          "id": "fr-listen-ton-podcast-q6",
+          "kind": "written",
+          "prompt": "Avec quelle formule Mme Vasseur conclut-elle ?",
+          "answers": [
+            "autant dire que oui",
+            "autant dire que"
+          ],
+          "explain": "Autant dire que oui, conclut Mme Vasseur."
+        }
+      ]
     }
   ]
 }

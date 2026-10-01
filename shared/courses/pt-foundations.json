@@ -3797,6 +3797,179 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "pt-foundations-u9-tom",
+          "title": "O tom exato",
+          "goal": "Ajustar o tom exato: colocações precisas e o registro certo para cada leitor.",
+          "intro": {
+            "explanation": [
+              "A colocação exata faz o tom: « tomar uma decisão » (não « fazer »), « estar com saudade de » (colocação fixa).",
+              "Verbos precisos elevam o texto: « levantar uma hipótese », « ponderar os prós e os contras ». « Ponderei os prós e os contras antes de me posicionar ».",
+              "Para o tema delicado, suavize e feche sem alongar: « por assim dizer », « prefiro não me alongar ». « Foi, por assim dizer, um recomeço »."
+            ],
+            "examples": [
+              {
+                "text": "Precisamos tomar uma decisão hoje.",
+                "meaning": "decisão: tomar, não fazer."
+              },
+              {
+                "text": "Estou com saudade do time antigo.",
+                "meaning": "estar com saudade de: colocação fixa."
+              },
+              {
+                "text": "Levanto uma hipótese: o prazo era curto.",
+                "meaning": "levantar uma hipótese."
+              },
+              {
+                "text": "Ponderei os prós e os contras.",
+                "meaning": "Ponderar: pesar com cuidado."
+              },
+              {
+                "text": "Foi, por assim dizer, um recomeço.",
+                "meaning": "A suavização do registro."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "tomar uma decisão",
+              "meaning": "A colocação exata (não fazer).",
+              "note": "Quem toma a decisão ?"
+            },
+            {
+              "text": "estar com saudade de",
+              "meaning": "Sentir falta: colocação fixa.",
+              "note": "Estou com saudade daquele café."
+            },
+            {
+              "text": "levantar uma hipótese",
+              "meaning": "Propor uma ideia.",
+              "note": "Levanto uma hipótese no relatório."
+            },
+            {
+              "text": "ponderar os prós e os contras",
+              "meaning": "Pesar antes de decidir.",
+              "note": "Pondere os prós e os contras."
+            },
+            {
+              "text": "por assim dizer",
+              "meaning": "Suavizar a afirmação.",
+              "note": "Foi, por assim dizer, um recomeço."
+            }
+          ],
+          "situation": "Na revisão do ensaio: vocês trocam colocações vagas pelas exatas e calibram o tom de cada parágrafo para o leitor certo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Corrija a colocação: fazer uma decisão.",
+                "expected": [
+                  "Tomar uma decisão.",
+                  "tomar uma decisao"
+                ],
+                "focus": "colocação exata",
+                "watch": "decisão se toma, não se faz."
+              },
+              {
+                "prompt": "Diga que sente falta da cidade, com a colocação fixa.",
+                "expected": [
+                  "Estou com saudade da cidade.",
+                  "estou com saudade da cidade",
+                  "Estou com saudades da cidade.",
+                  "estou com saudades da cidade"
+                ],
+                "focus": "estar com saudade de",
+                "watch": "colocação fixa: estar com, não ter."
+              },
+              {
+                "prompt": "Proponha uma ideia no relatório, com o verbo de hipótese.",
+                "expected": [
+                  "Levanto uma hipótese no relatório.",
+                  "levanto uma hipotese no relatorio"
+                ],
+                "focus": "levantar uma hipótese",
+                "watch": "levanto = propongo."
+              },
+              {
+                "prompt": "Diga que pesou os lados antes de decidir (verbo ponderar).",
+                "expected": [
+                  "Ponderei os prós e os contras antes de decidir.",
+                  "ponderei os pros e os contras antes de decidir",
+                  "Ponderei os prós e os contras.",
+                  "ponderei os pros e os contras"
+                ],
+                "focus": "ponderar",
+                "watch": "ponderar = sopesar."
+              },
+              {
+                "prompt": "Suavize a afirmação com a fórmula pronta.",
+                "expected": [
+                  "Foi, por assim dizer, um recomeço.",
+                  "foi por assim dizer um recomeco",
+                  "por assim dizer"
+                ],
+                "focus": "por assim dizer",
+                "watch": "o recuo elegante."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u9-tom-e1",
+              "kind": "choice",
+              "prompt": "Precisamos ___ uma decisão hoje.",
+              "explain": "tomar uma decisão: a colocação exata; « fazer » soa estranho.",
+              "options": [
+                "tomar",
+                "fazer",
+                "pegar",
+                "dar"
+              ],
+              "answers": [
+                "tomar"
+              ]
+            },
+            {
+              "id": "pt-foundations-u9-tom-e2",
+              "kind": "gap",
+              "prompt": "Estou ___ saudade daquele projeto.",
+              "explain": "estar com saudade de: a colocação fixa.",
+              "answers": [
+                "com"
+              ]
+            },
+            {
+              "id": "pt-foundations-u9-tom-e3",
+              "kind": "order",
+              "prompt": "Diga que propõe uma ideia por escrito.",
+              "explain": "levantar uma hipótese: propor a ideia com o verbo preciso.",
+              "answers": [
+                "Levanto uma hipótese no relatório"
+              ]
+            },
+            {
+              "id": "pt-foundations-u9-tom-e4",
+              "kind": "written",
+              "prompt": "Diga que sopesou os lados antes de decidir (use ponderar).",
+              "explain": "ponderar os prós e os contras: pesar antes de decidir.",
+              "answers": [
+                "Ponderei os prós e os contras antes de decidir.",
+                "ponderei os pros e os contras antes de decidir"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:collocations",
+            "function:express-opinion",
+            "writing:argument",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -8608,6 +8781,1663 @@
           ],
           "prerequisites": [
             "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u19",
+      "title": "Uma visita",
+      "subtitle": "Na casa dos outros",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "porta-sala",
+          "title": "Na porta",
+          "subtitle": "Pedir permissão",
+          "symbol": "door.left.open",
+          "category": "Course",
+          "situation": "A Ana chega na casa da Bia: ela pede permissão para entrar, tira os sapatos e elogia a sala.",
+          "colorIndex": 0
+        },
+        {
+          "id": "lembrancinha-cafe",
+          "title": "A lembrancinha",
+          "subtitle": "Oferecer e agradecer",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "O Leo chega com doces: oferece a lembrancinha, a Bia serve um café e todos agradecem com educação.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u19-visita",
+          "title": "Posso entrar ?",
+          "goal": "Pedir permissão com posso/pode: entrar, sentar, fechar a porta.",
+          "intro": {
+            "explanation": [
+              "Para pedir permissão, use « posso » (eu) ou « pode » (você): « Posso entrar ? », « Pode fechar a porta ? ».",
+              "Antes de pedir, suavize com « com licença »; para responder, « claro » ou « pode sim »: « Posso passar ? — Claro ! ».",
+              "A negativa é delicada: « desculpe, não pode ». « Posso fumar aqui ? — Desculpe, não pode »."
+            ],
+            "examples": [
+              {
+                "text": "Com licença, posso entrar ?",
+                "meaning": "Pedido de permissão."
+              },
+              {
+                "text": "Posso tirar os sapatos ?",
+                "meaning": "posso = puedo."
+              },
+              {
+                "text": "Pode fechar a porta, por favor ?",
+                "meaning": "pode + verbo: pedir a alguém."
+              },
+              {
+                "text": "Posso sentar aqui ? — Claro !",
+                "meaning": "Permissão e resposta."
+              },
+              {
+                "text": "Desculpe, não pode abrir agora.",
+                "meaning": "A negativa com jeito."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Posso + verbo ?",
+              "meaning": "Pedir permissão (eu).",
+              "note": "Posso entrar ?"
+            },
+            {
+              "text": "Pode + verbo ?",
+              "meaning": "Pedir a alguém.",
+              "note": "Pode me esperar um minuto ?"
+            },
+            {
+              "text": "Com licença",
+              "meaning": "Para entrar ou interromper.",
+              "note": "Com licença, posso passar ?"
+            },
+            {
+              "text": "Claro ! / pode sim",
+              "meaning": "Dar permissão.",
+              "note": "Posso sentar ? — Pode sim !"
+            },
+            {
+              "text": "Desculpe, não pode",
+              "meaning": "Negar com educação.",
+              "note": "Desculpe, não pode mexer no computador."
+            }
+          ],
+          "situation": "Na porta do prédio e na sala: a Ana pede permissão para entrar, tirar os sapatos e sentar, e a Bia responde.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte se você pode entrar.",
+                "expected": [
+                  "Posso entrar ?",
+                  "posso entrar"
+                ],
+                "focus": "posso",
+                "watch": "posso = puedo."
+              },
+              {
+                "prompt": "Peça à Bia para fechar a porta, com educação.",
+                "expected": [
+                  "Pode fechar a porta, por favor ?",
+                  "pode fechar a porta"
+                ],
+                "focus": "pode + verbo",
+                "watch": "pode = puede."
+              },
+              {
+                "prompt": "Pergunte se pode tirar os sapatos.",
+                "expected": [
+                  "Posso tirar os sapatos ?",
+                  "posso tirar os sapatos"
+                ],
+                "focus": "posso",
+                "watch": "sapatos = zapatos."
+              },
+              {
+                "prompt": "Dê permissão com uma palavra alegre.",
+                "expected": [
+                  "Claro !",
+                  "Claro.",
+                  "Pode sim !",
+                  "pode sim"
+                ],
+                "focus": "responder",
+                "watch": "claro = claro, por supuesto."
+              },
+              {
+                "prompt": "Peça permissão para ocupar o lugar.",
+                "expected": [
+                  "Posso sentar aqui ?",
+                  "posso sentar aqui"
+                ],
+                "focus": "sentar",
+                "watch": "sentar = sentarse."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u19-visita-e1",
+              "kind": "choice",
+              "prompt": "___ entrar ? (permissão)",
+              "explain": "Posso + verbo: pedir permissão na primeira pessoa.",
+              "options": [
+                "Posso",
+                "Tenho",
+                "Sou",
+                "Vou"
+              ],
+              "answers": [
+                "Posso"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-visita-e2",
+              "kind": "gap",
+              "prompt": "Com ___, posso passar ?",
+              "explain": "Com licença: fórmula educada antes do pedido.",
+              "answers": [
+                "licença",
+                "licenca"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-visita-e3",
+              "kind": "order",
+              "prompt": "Peça para ocupar o lugar.",
+              "explain": "Posso + verbo + lugar: pedido de permissão.",
+              "answers": [
+                "Posso sentar aqui"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-visita-e4",
+              "kind": "written",
+              "prompt": "Peça à Bia para fechar a janela, com educação.",
+              "explain": "Pode + verbo + por favor: pedido educado a alguém.",
+              "answers": [
+                "Pode fechar a janela, por favor ?",
+                "pode fechar a janela",
+                "Pode fechar a janela ?"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:can",
+            "function:make-requests",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u19-lembrancinha",
+          "title": "Trago uma lembrancinha",
+          "goal": "Oferecer algo aos anfitriões: trago…, é para você, aceita….",
+          "intro": {
+            "explanation": [
+              "Para oferecer ao chegar, use « trago » ou « é para você »: « Trago uma lembrancinha », « É para vocês ».",
+              "O anfitrião oferece com « aceita ? » ou « quer ? »: « Aceita um café ? », « Quer mais um pedaço ? ».",
+              "Aceite com « obrigado/obrigada » ou recuse com jeito: « Obrigada, não consigo comer mais »."
+            ],
+            "examples": [
+              {
+                "text": "Trago uma lembrancinha da minha terra.",
+                "meaning": "Oferecer ao chegar."
+              },
+              {
+                "text": "É para vocês, um docinho.",
+                "meaning": "para você = para ti."
+              },
+              {
+                "text": "Aceita um café ? — Aceito, obrigada !",
+                "meaning": "Oferta e aceite."
+              },
+              {
+                "text": "Quer um pedaço de bolo ?",
+                "meaning": "O anfitrião oferece."
+              },
+              {
+                "text": "Só um pouquinho, obrigado.",
+                "meaning": "Aceitar um pouco."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Trago …",
+              "meaning": "Oferecer ao chegar.",
+              "note": "Trago brigadeiro."
+            },
+            {
+              "text": "É para você",
+              "meaning": "Entregar o presente.",
+              "note": "É para você, da Bahia."
+            },
+            {
+              "text": "Aceita … ?",
+              "meaning": "O anfitrião oferece.",
+              "note": "Aceita um suco ?"
+            },
+            {
+              "text": "Aceito, obrigado(a) !",
+              "meaning": "Aceitar a oferta.",
+              "note": "Aceito, obrigado !"
+            },
+            {
+              "text": "Só um pouquinho",
+              "meaning": "Aceitar um pouco.",
+              "note": "Só um pouquinho, obrigada."
+            }
+          ],
+          "situation": "O Leo chega com uma caixa de doces: oferece a lembrancinha, a Bia serve café e cada um aceita com educação.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que você traz doces para os anfitriões.",
+                "expected": [
+                  "Trago uns doces.",
+                  "trago uns doces",
+                  "Trago doces para vocês.",
+                  "trago doces para voce"
+                ],
+                "focus": "trago",
+                "watch": "trago = traigo."
+              },
+              {
+                "prompt": "Entregue o presente ao anfitrião.",
+                "expected": [
+                  "É para você.",
+                  "é para voce",
+                  "e para voce"
+                ],
+                "focus": "é para você",
+                "watch": "para você = para ti."
+              },
+              {
+                "prompt": "A Bia oferece café. Responda aceitando.",
+                "expected": [
+                  "Aceito, obrigada !",
+                  "Aceito, obrigado !",
+                  "aceito obrigada"
+                ],
+                "focus": "aceitar",
+                "watch": "aceito = acepto."
+              },
+              {
+                "prompt": "Recuse mais bolo com educação.",
+                "expected": [
+                  "Não, obrigada.",
+                  "nao obrigada",
+                  "Obrigado, já comi bastante.",
+                  "obrigado ja comi bastante"
+                ],
+                "focus": "recusar",
+                "watch": "não, obrigado(a) suaviza."
+              },
+              {
+                "prompt": "Ofereça bolo ao hóspede: quer… ?",
+                "expected": [
+                  "Quer um pedaço de bolo ?",
+                  "quer um pedaco de bolo"
+                ],
+                "focus": "quer … ?",
+                "watch": "quer = quieres."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u19-lembrancinha-e1",
+              "kind": "choice",
+              "prompt": "___ uma lembrancinha para vocês.",
+              "explain": "trago = eu trago para dar: oferta ao chegar; « traigo » é espanhol.",
+              "options": [
+                "Trago",
+                "Traigo",
+                "Trouxe",
+                "Levar"
+              ],
+              "answers": [
+                "Trago"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-lembrancinha-e2",
+              "kind": "gap",
+              "prompt": "É para ___, um docinho da minha terra.",
+              "explain": "é para você = es para ti: entregar o presente.",
+              "answers": [
+                "você",
+                "voce"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-lembrancinha-e3",
+              "kind": "order",
+              "prompt": "Diga que aceita só um pouco.",
+              "explain": "só um pouquinho: aceitar um pouco, com educação.",
+              "answers": [
+                "Só um pouquinho obrigada"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-lembrancinha-e4",
+              "kind": "written",
+              "prompt": "Ofereça um suco ao seu hóspede.",
+              "explain": "aceita … ? ou quer … ?: a oferta do anfitrião.",
+              "answers": [
+                "Aceita um suco ?",
+                "aceita um suco",
+                "Quer um suco ?",
+                "quer um suco"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "vocab:food",
+            "vocab:social-expressions",
+            "function:order-food"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u19-ate-logo",
+          "title": "Até a próxima",
+          "goal": "Despedir-se e agradecer: até a próxima, obrigado por tudo, voltem sempre.",
+          "intro": {
+            "explanation": [
+              "Para se despedir: « até logo », « até a próxima », « tchau ». « Até a próxima visita ! ».",
+              "Agradeça a visita com « obrigado(a) por tudo » ou « obrigado pelo jantar »: « Foi ótimo, obrigado por tudo ».",
+              "O anfitrião convida a voltar: « volte sempre », « voltem sempre ». « Foi um prazer, voltem sempre ! »."
+            ],
+            "examples": [
+              {
+                "text": "Até a próxima, pessoal !",
+                "meaning": "Despedida amigável."
+              },
+              {
+                "text": "Obrigado por tudo, Bia.",
+                "meaning": "por tudo = por todo."
+              },
+              {
+                "text": "Obrigada pelo café, estava ótimo.",
+                "meaning": "obrigada (mulher)."
+              },
+              {
+                "text": "Voltem sempre !",
+                "meaning": "O anfitrião convida a voltar."
+              },
+              {
+                "text": "Foi um prazer, até logo.",
+                "meaning": "Fecho educado da visita."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Até logo / até a próxima",
+              "meaning": "Despedir-se.",
+              "note": "Até logo, até sábado !"
+            },
+            {
+              "text": "Obrigado(a) por tudo",
+              "meaning": "Agradecer a visita.",
+              "note": "Obrigado por tudo, foi ótimo."
+            },
+            {
+              "text": "Volte sempre / voltem sempre",
+              "meaning": "Convidar a voltar.",
+              "note": "Voltem sempre à nossa casa."
+            },
+            {
+              "text": "Foi um prazer",
+              "meaning": "Fecho educado.",
+              "note": "Foi um prazer, Ana."
+            },
+            {
+              "text": "Tchau, até sábado !",
+              "meaning": "Despedida informal.",
+              "note": "Tchau, tchau !"
+            }
+          ],
+          "situation": "No fim da visita: a Ana agradece o café, a Bia diz voltem sempre e todos se despedem até a próxima.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Despeça-se marcando a próxima visita.",
+                "expected": [
+                  "Até a próxima !",
+                  "ate a proxima",
+                  "Até a próxima visita !",
+                  "ate a proxima visita"
+                ],
+                "focus": "até a próxima",
+                "watch": "até = hasta."
+              },
+              {
+                "prompt": "Agradeça o jantar.",
+                "expected": [
+                  "Obrigado pelo jantar.",
+                  "Obrigada pelo jantar.",
+                  "obrigado pelo jantar"
+                ],
+                "focus": "obrigado pelo",
+                "watch": "obrigado (homem) / obrigada (mulher)."
+              },
+              {
+                "prompt": "O anfitrião convida vocês a voltar.",
+                "expected": [
+                  "Voltem sempre !",
+                  "Volte sempre.",
+                  "voltem sempre"
+                ],
+                "focus": "voltar",
+                "watch": "voltem = vuelvan."
+              },
+              {
+                "prompt": "Feche a visita com a fórmula do prazer.",
+                "expected": [
+                  "Foi um prazer.",
+                  "foi um prazer"
+                ],
+                "focus": "fecho",
+                "watch": "prazer = gusto."
+              },
+              {
+                "prompt": "Despeça-se informalmente, marcando sábado.",
+                "expected": [
+                  "Tchau, até sábado !",
+                  "tchau ate sabado",
+                  "Até sábado !",
+                  "ate sabado"
+                ],
+                "focus": "tchau",
+                "watch": "tchau = chao."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u19-ate-logo-e1",
+              "kind": "choice",
+              "prompt": "Obrigado ___ tudo !",
+              "explain": "obrigado por + coisa: a regência do agradecimento.",
+              "options": [
+                "por",
+                "para",
+                "com",
+                "de"
+              ],
+              "answers": [
+                "por"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-ate-logo-e2",
+              "kind": "gap",
+              "prompt": "Voltem ___, a porta fica aberta.",
+              "explain": "voltem sempre: o convite do anfitrião.",
+              "answers": [
+                "sempre"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-ate-logo-e3",
+              "kind": "order",
+              "prompt": "Despeça-se dos amigos.",
+              "explain": "até a próxima: despedida que marca o reencontro.",
+              "answers": [
+                "Até a próxima pessoal"
+              ]
+            },
+            {
+              "id": "pt-foundations-u19-ate-logo-e4",
+              "kind": "written",
+              "prompt": "Agradeça o café e diga que estava ótimo.",
+              "explain": "obrigado pelo café + elogio: agradecer e valorizar.",
+              "answers": [
+                "Obrigado pelo café, estava ótimo.",
+                "obrigado pelo cafe estava otimo",
+                "Obrigada pelo café, estava ótimo.",
+                "obrigada pelo cafe estava otimo"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "grammar:can"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u20",
+      "title": "Problemas do dia a dia",
+      "subtitle": "Defeitos e soluções",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "defeito-casa",
+          "title": "O defeito",
+          "subtitle": "Contar e consertar",
+          "symbol": "wrench.and.screwdriver",
+          "category": "Course",
+          "situation": "A torneira pinga e o liquidificador quebrou: a Ana conta o que aconteceu e o Leo propõe soluções simples.",
+          "colorIndex": 0
+        },
+        {
+          "id": "reclamacao-loja",
+          "title": "A reclamação",
+          "subtitle": "Falar com a loja",
+          "symbol": "phone.badge.checkmark",
+          "category": "Course",
+          "situation": "O Leo liga para a loja, explica o defeito com calma, mostra a nota e pede a troca do produto.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u20-defeito",
+          "title": "Quebrou",
+          "goal": "Contar um defeito no pretérito: quebrou, apagou, parou de funcionar.",
+          "intro": {
+            "explanation": [
+              "Para contar o problema, use o pretérito: « quebrou », « caiu », « apagou ». « O liquidificador quebrou ontem ».",
+              "Para o estado de agora, « está quebrado » ou « está pingando »: « A torneira está pingando ».",
+              "Diga quando aconteceu: « ontem », « de manhã », « hoje cedo ». « De manhã a luz apagou »."
+            ],
+            "examples": [
+              {
+                "text": "O liquidificador quebrou ontem.",
+                "meaning": "quebrar → quebrou."
+              },
+              {
+                "text": "A torneira está pingando.",
+                "meaning": "estar + -ando: agora."
+              },
+              {
+                "text": "A luz apagou de manhã.",
+                "meaning": "apagar → apagou."
+              },
+              {
+                "text": "O controle remoto caiu e parou.",
+                "meaning": "cair → caiu."
+              },
+              {
+                "text": "O ventilador não funciona mais.",
+                "meaning": "O resultado de agora."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "… quebrou",
+              "meaning": "O objeto deixou de funcionar.",
+              "note": "O vidro quebrou."
+            },
+            {
+              "text": "está quebrado(a)",
+              "meaning": "Estado: precisa de conserto.",
+              "note": "A cadeira está quebrada."
+            },
+            {
+              "text": "… parou de funcionar",
+              "meaning": "Parou sozinho.",
+              "note": "O ventilador parou de funcionar."
+            },
+            {
+              "text": "ontem / de manhã / hoje cedo",
+              "meaning": "Quando aconteceu.",
+              "note": "Ontem de manhã a luz apagou."
+            },
+            {
+              "text": "não funciona mais",
+              "meaning": "O problema de agora.",
+              "note": "O liquidificador não funciona mais."
+            }
+          ],
+          "situation": "Na cozinha, segunda-feira: a Ana conta ao Leo o que quebrou no fim de semana e o que parou de funcionar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Conte o que aconteceu com o liquidificador.",
+                "expected": [
+                  "O liquidificador quebrou ontem.",
+                  "o liquidificador quebrou ontem"
+                ],
+                "focus": "quebrou",
+                "watch": "quebrou = se rompió."
+              },
+              {
+                "prompt": "Diga o problema de agora: a torneira pinga.",
+                "expected": [
+                  "A torneira está pingando.",
+                  "a torneira esta pingando"
+                ],
+                "focus": "estar + -ando",
+                "watch": "pingando = goteando."
+              },
+              {
+                "prompt": "Conte o problema da luz de manhã.",
+                "expected": [
+                  "A luz apagou de manhã.",
+                  "a luz apagou de manha"
+                ],
+                "focus": "apagou",
+                "watch": "apagar = apagarse."
+              },
+              {
+                "prompt": "Conte o problema do ventilador.",
+                "expected": [
+                  "O ventilador parou de funcionar.",
+                  "o ventilador parou de funcionar"
+                ],
+                "focus": "parou de",
+                "watch": "parou de funcionar = dejó de funcionar."
+              },
+              {
+                "prompt": "Como está a cadeira ?",
+                "expected": [
+                  "A cadeira está quebrada.",
+                  "a cadeira esta quebrada",
+                  "Está quebrada.",
+                  "esta quebrada"
+                ],
+                "focus": "estado",
+                "watch": "quebrada = rota."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u20-defeito-e1",
+              "kind": "choice",
+              "prompt": "O liquidificador ___ ontem.",
+              "explain": "Pretérito de quebrar: o fato já aconteceu.",
+              "options": [
+                "quebrou",
+                "quebra",
+                "quebrar",
+                "quebrará"
+              ],
+              "answers": [
+                "quebrou"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-defeito-e2",
+              "kind": "gap",
+              "prompt": "A torneira está ___.",
+              "explain": "estar + -ando: ação que continua agora.",
+              "answers": [
+                "pingando"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-defeito-e3",
+              "kind": "order",
+              "prompt": "Conte o que aconteceu com a luz.",
+              "explain": "apagou: pretérito de apagar, com o tempo do fato.",
+              "answers": [
+                "A luz apagou de manhã"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-defeito-e4",
+              "kind": "written",
+              "prompt": "Diga o estado da cadeira.",
+              "explain": "estar + quebrado(a): o estado de agora.",
+              "answers": [
+                "A cadeira está quebrada.",
+                "a cadeira esta quebrada",
+                "Está quebrada.",
+                "esta quebrada"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "pt-foundations-u20-solucao",
+          "title": "O que eu faço ?",
+          "goal": "Pedir e dar soluções simples: o que eu faço, tente…, primeiro… depois…",
+          "intro": {
+            "explanation": [
+              "Para pedir ajuda: « o que eu faço ? » ou « você pode me ajudar ? ». « O forno não liga — o que eu faço ? ».",
+              "Para dar uma solução: « tente… », « por que você não… ? ». « Tente desligar e ligar de novo ».",
+              "Ordene os passos com « primeiro » e « depois », e guarde um plano B: « se não funcionar… ». « Primeiro feche a água, depois abra o chuveiro »."
+            ],
+            "examples": [
+              {
+                "text": "O que eu faço com esse cabo ?",
+                "meaning": "Pedir uma solução."
+              },
+              {
+                "text": "Tente desligar e ligar de novo.",
+                "meaning": "A solução clássica."
+              },
+              {
+                "text": "Por que você não chama um técnico ?",
+                "meaning": "Sugestão suave."
+              },
+              {
+                "text": "Primeiro feche a água, depois abra o chuveiro.",
+                "meaning": "Passos em ordem."
+              },
+              {
+                "text": "Se não funcionar, eu chamo alguém.",
+                "meaning": "O plano B."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "O que eu faço ?",
+              "meaning": "Pedir uma solução.",
+              "note": "Perdi a chave — o que eu faço ?"
+            },
+            {
+              "text": "Tente + verbo",
+              "meaning": "Dar uma solução.",
+              "note": "Tente apertar o parafuso."
+            },
+            {
+              "text": "Por que você não + verbo ?",
+              "meaning": "Sugerir com jeito.",
+              "note": "Por que você não liga para a loja ?"
+            },
+            {
+              "text": "primeiro … depois …",
+              "meaning": "Passos em ordem.",
+              "note": "Primeiro feche, depois abra."
+            },
+            {
+              "text": "Se não funcionar, …",
+              "meaning": "O plano B.",
+              "note": "Se não funcionar, eu troco."
+            }
+          ],
+          "situation": "O cabo do carregador não funciona: a Ana pede ajuda, o Leo dá um passo de cada vez e combina um plano B.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Peça ajuda com o forno: o que fazer ?",
+                "expected": [
+                  "O que eu faço com o forno ?",
+                  "o que eu faco com o forno",
+                  "O que eu faço ?",
+                  "o que eu faco"
+                ],
+                "focus": "o que eu faço",
+                "watch": "= ¿qué hago ?"
+              },
+              {
+                "prompt": "Sugira chamar um técnico, com jeito.",
+                "expected": [
+                  "Por que você não chama um técnico ?",
+                  "por que voce nao chama um tecnico"
+                ],
+                "focus": "por que você não",
+                "watch": "sugestão suave, sem imperativo."
+              },
+              {
+                "prompt": "Dê a solução clássica: desligar e ligar.",
+                "expected": [
+                  "Tente desligar e ligar de novo.",
+                  "tente desligar e ligar de novo"
+                ],
+                "focus": "tente",
+                "watch": "tente = intenta."
+              },
+              {
+                "prompt": "Dê dois passos: fechar e depois abrir.",
+                "expected": [
+                  "Primeiro feche a água, depois abra.",
+                  "primeiro feche a agua depois abra"
+                ],
+                "focus": "primeiro … depois",
+                "watch": "ordem dos passos."
+              },
+              {
+                "prompt": "Combine o plano B: chamar alguém.",
+                "expected": [
+                  "Se não funcionar, eu chamo alguém.",
+                  "se nao funcionar eu chamo alguem"
+                ],
+                "focus": "se não funcionar",
+                "watch": "o plano B com se."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u20-solucao-e1",
+              "kind": "choice",
+              "prompt": "___ desligar e ligar de novo.",
+              "explain": "Tente + verbo: o imperativo educado da solução.",
+              "options": [
+                "Tente",
+                "Tentou",
+                "Tentar",
+                "Tentando"
+              ],
+              "answers": [
+                "Tente"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-solucao-e2",
+              "kind": "gap",
+              "prompt": "___ não funcionar, eu chamo um técnico.",
+              "explain": "se + não funcionar: o plano B.",
+              "answers": [
+                "Se",
+                "se"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-solucao-e3",
+              "kind": "order",
+              "prompt": "Sugira ligar para a loja.",
+              "explain": "por que você não + verbo: sugestão sem imperativo.",
+              "answers": [
+                "Por que você não liga para a loja"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-solucao-e4",
+              "kind": "written",
+              "prompt": "Pergunte o que fazer com a chave perdida.",
+              "explain": "o que eu faço ?: pedir a solução.",
+              "answers": [
+                "O que eu faço ?",
+                "o que eu faco",
+                "O que faço ?",
+                "o que faco"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "function:make-requests",
+            "grammar:connectors",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-foundations-u20-reclamacao",
+          "title": "Uma reclamação tranquila",
+          "goal": "Reclamar com educação: comprei…, está com defeito, posso trocar ?",
+          "intro": {
+            "explanation": [
+              "Abra com calma: « boa tarde, comprei… ». « Boa tarde, comprei um liquidificador na semana passada ».",
+              "Explique o defeito em uma frase: « está com defeito », « não liga ». « Ele não carrega mais ».",
+              "Peça a solução: « posso trocar ? », « ainda tem garantia ? ». « Aqui está a nota fiscal »."
+            ],
+            "examples": [
+              {
+                "text": "Boa tarde, comprei este fone na loja.",
+                "meaning": "A abertura tranquila."
+              },
+              {
+                "text": "Está com defeito: não carrega.",
+                "meaning": "O defeito em uma frase."
+              },
+              {
+                "text": "Ainda tem garantia ?",
+                "meaning": "garantia = garantía."
+              },
+              {
+                "text": "Posso trocar por outro ?",
+                "meaning": "trocar = cambiar."
+              },
+              {
+                "text": "Trouxe a nota fiscal, está aqui.",
+                "meaning": "a nota = el comprobante."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Comprei …",
+              "meaning": "Abrir a reclamação.",
+              "note": "Comprei na sua loja."
+            },
+            {
+              "text": "está com defeito",
+              "meaning": "O problema do produto.",
+              "note": "O aparelho está com defeito."
+            },
+            {
+              "text": "ainda tem garantia ?",
+              "meaning": "Perguntar a cobertura.",
+              "note": "Ainda tem garantia ?"
+            },
+            {
+              "text": "Posso trocar ?",
+              "meaning": "Pedir outro produto.",
+              "note": "Posso trocar por um novo ?"
+            },
+            {
+              "text": "a nota fiscal",
+              "meaning": "O comprovante da compra.",
+              "note": "Trouxe a nota fiscal."
+            }
+          ],
+          "situation": "Na loja e por telefone: o Leo explica o defeito do fone com calma, mostra a nota e pede a troca.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Abra a reclamação: boa tarde, comprei…",
+                "expected": [
+                  "Boa tarde, comprei um fone na loja.",
+                  "boa tarde comprei um fone"
+                ],
+                "focus": "abrir com calma",
+                "watch": "boa tarde + o fato."
+              },
+              {
+                "prompt": "Diga o problema do produto.",
+                "expected": [
+                  "Está com defeito.",
+                  "esta com defeito",
+                  "O produto está com defeito.",
+                  "o produto esta com defeito"
+                ],
+                "focus": "estar com defeito",
+                "watch": "= tiene un defecto."
+              },
+              {
+                "prompt": "Pergunte pela garantia.",
+                "expected": [
+                  "Ainda tem garantia ?",
+                  "ainda tem garantia",
+                  "Tem garantia ?",
+                  "tem garantia"
+                ],
+                "focus": "garantia",
+                "watch": "garantia = garantía."
+              },
+              {
+                "prompt": "Peça a troca por outro.",
+                "expected": [
+                  "Posso trocar por outro ?",
+                  "posso trocar por outro",
+                  "Posso trocar ?",
+                  "posso trocar"
+                ],
+                "focus": "trocar",
+                "watch": "trocar = cambiar."
+              },
+              {
+                "prompt": "Diga que trouxe o comprovante.",
+                "expected": [
+                  "Trouxe a nota fiscal.",
+                  "trouxe a nota fiscal",
+                  "Aqui está a nota fiscal.",
+                  "aqui esta a nota fiscal"
+                ],
+                "focus": "nota fiscal",
+                "watch": "a prova da compra."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u20-reclamacao-e1",
+              "kind": "choice",
+              "prompt": "Comprei este fone, mas está ___ defeito.",
+              "explain": "estar com defeito: a fórmula fixa do problema.",
+              "options": [
+                "com",
+                "em",
+                "de",
+                "por"
+              ],
+              "answers": [
+                "com"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-reclamacao-e2",
+              "kind": "gap",
+              "prompt": "Posso ___ por outro, por favor ?",
+              "explain": "trocar = cambiar: pedir outro produto.",
+              "answers": [
+                "trocar"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-reclamacao-e3",
+              "kind": "order",
+              "prompt": "Pergunte pela garantia do produto.",
+              "explain": "ainda tem garantia ?: a pergunta da cobertura.",
+              "answers": [
+                "O produto ainda tem garantia"
+              ]
+            },
+            {
+              "id": "pt-foundations-u20-reclamacao-e4",
+              "kind": "written",
+              "prompt": "Explique o defeito do carregador.",
+              "explain": "não carrega: o defeito em uma frase.",
+              "answers": [
+                "Ele não carrega.",
+                "ele nao carrega",
+                "Não carrega mais.",
+                "nao carrega mais"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:present-questions",
+            "vocab:social-expressions",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u21",
+      "title": "O trabalho",
+      "subtitle": "Entrevistas e metas",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "entrevista-pontos",
+          "title": "A entrevista",
+          "subtitle": "Experiência e pontos fortes",
+          "symbol": "briefcase",
+          "category": "Course",
+          "situation": "A Ana ensaia a entrevista com o Leo: conta a experiência, mostra os pontos fortes e explica por que quer mudar.",
+          "colorIndex": 0
+        },
+        {
+          "id": "clima-metas",
+          "title": "Clima e metas",
+          "subtitle": "Colegas e planos",
+          "symbol": "bubble.left.and.text.bubble.right",
+          "category": "Course",
+          "situation": "No café da empresa, a equipe comenta o clima do time e cada um apresenta a meta profissional do ano.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u21-entrevista",
+          "title": "A entrevista",
+          "goal": "Falar de experiência e pontos fortes: já trabalhei…, há… anos, meu ponto forte é….",
+          "intro": {
+            "explanation": [
+              "Para a experiência, o presente perfeito: « já trabalhei », « nunca gerenciei ». « Já trabalhei com vendas ».",
+              "A duração com « há »: « Trabalho com marketing há três anos » (= desde hace tres años).",
+              "Mostre as qualidades: « sou organizada », « aprendo rápido ». « Meu ponto forte é a organização »."
+            ],
+            "examples": [
+              {
+                "text": "Já trabalhei em duas agências.",
+                "meaning": "Experiência com já."
+              },
+              {
+                "text": "Nunca gerenciei uma equipe grande.",
+                "meaning": "nunca + pretérito: o que falta."
+              },
+              {
+                "text": "Trabalho com marketing há três anos.",
+                "meaning": "há = desde hace."
+              },
+              {
+                "text": "Meu ponto forte é a organização.",
+                "meaning": "ponto forte = punto fuerte."
+              },
+              {
+                "text": "Tenho experiência em atendimento e aprendo rápido.",
+                "meaning": "A área e a qualidade."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Já + pretérito",
+              "meaning": "Experiência que conta.",
+              "note": "Já trabalhei no exterior."
+            },
+            {
+              "text": "Nunca + pretérito",
+              "meaning": "O que ainda não veio.",
+              "note": "Nunca apresentei para a diretoria."
+            },
+            {
+              "text": "há + tempo",
+              "meaning": "Duração até hoje.",
+              "note": "Trabalho aqui há dois anos."
+            },
+            {
+              "text": "Meu ponto forte é …",
+              "meaning": "Nomear a qualidade.",
+              "note": "Meu ponto forte é ouvir."
+            },
+            {
+              "text": "tenho experiência em …",
+              "meaning": "A área dominada.",
+              "note": "Tenho experiência em vendas."
+            }
+          ],
+          "situation": "Na véspera da entrevista: a Ana ensaia com o Leo — o que já fez, o que nunca fez e quais pontos fortes vai mostrar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que já tem experiência com vendas.",
+                "expected": [
+                  "Já trabalhei com vendas.",
+                  "ja trabalhei com vendas"
+                ],
+                "focus": "já + pretérito",
+                "watch": "já = ya."
+              },
+              {
+                "prompt": "Diga o que nunca fez: gerenciar equipe grande.",
+                "expected": [
+                  "Nunca gerenciei uma equipe grande.",
+                  "nunca gerenciei uma equipe grande"
+                ],
+                "focus": "nunca + pretérito",
+                "watch": "nunca = nunca."
+              },
+              {
+                "prompt": "Diga há quanto tempo trabalha com marketing.",
+                "expected": [
+                  "Trabalho com marketing há três anos.",
+                  "trabalho com marketing ha tres anos"
+                ],
+                "focus": "há + tempo",
+                "watch": "há = desde hace."
+              },
+              {
+                "prompt": "Mostre o ponto forte: a organização.",
+                "expected": [
+                  "Meu ponto forte é a organização.",
+                  "meu ponto forte e a organizacao"
+                ],
+                "focus": "ponto forte",
+                "watch": "ponto forte = punto fuerte."
+              },
+              {
+                "prompt": "Diga a área de experiência: atendimento.",
+                "expected": [
+                  "Tenho experiência em atendimento.",
+                  "tenho experiencia em atendimento"
+                ],
+                "focus": "experiência em",
+                "watch": "em = en."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u21-entrevista-e1",
+              "kind": "choice",
+              "prompt": "___ trabalhei com vendas por dois anos.",
+              "explain": "Já + pretérito: a experiência que conta.",
+              "options": [
+                "Já",
+                "Ainda",
+                "Nunca",
+                "Nem"
+              ],
+              "answers": [
+                "Já"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-entrevista-e2",
+              "kind": "gap",
+              "prompt": "Trabalho com marketing ___ três anos.",
+              "explain": "há + tempo = desde hace: duração até hoje.",
+              "answers": [
+                "há",
+                "ha"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-entrevista-e3",
+              "kind": "order",
+              "prompt": "Mostre a qualidade principal.",
+              "explain": "meu ponto forte é …: nomear a qualidade.",
+              "answers": [
+                "Meu ponto forte é a organização"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-entrevista-e4",
+              "kind": "written",
+              "prompt": "Fale da experiência no exterior.",
+              "explain": "já trabalhei: o presente perfeito da experiência.",
+              "answers": [
+                "Já trabalhei no exterior.",
+                "ja trabalhei no exterior",
+                "Trabalhei no exterior.",
+                "trabalhei no exterior"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "grammar:present-perfect",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "pt-foundations-u21-colegas",
+          "title": "Com os colegas",
+          "goal": "Descrever o clima de trabalho: a equipe é unida, a gente se ajuda, o gerente escuta.",
+          "intro": {
+            "explanation": [
+              "O clima com ser: « a equipe é unida », « o ambiente é tranquilo ». « Aqui o ambiente é bem tranquilo ».",
+              "O dia a dia com a gente: « a gente se ajuda », « dividimos as tarefas ». « Quando aperta, a gente se ajuda ».",
+              "A liderança: « o gerente escuta antes de decidir », « todos dão feedback ». « O time dá feedback toda semana »."
+            ],
+            "examples": [
+              {
+                "text": "Aqui a equipe é bem unida.",
+                "meaning": "Clima de grupo."
+              },
+              {
+                "text": "O ambiente é tranquilo, mesmo na correria.",
+                "meaning": "ambiente = ambiente."
+              },
+              {
+                "text": "Quando aperta, a gente se ajuda.",
+                "meaning": "a gente = nós."
+              },
+              {
+                "text": "Todos dão feedback depois das reuniões.",
+                "meaning": "feedback = retroalimentación."
+              },
+              {
+                "text": "O gerente escuta antes de decidir.",
+                "meaning": "Liderança aberta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "a equipe é unida",
+              "meaning": "Clima de grupo.",
+              "note": "Nossa equipe é unida."
+            },
+            {
+              "text": "o ambiente é tranquilo",
+              "meaning": "Sem tensão.",
+              "note": "O ambiente é tranquilo na sexta."
+            },
+            {
+              "text": "a gente se ajuda",
+              "meaning": "Cooperação no dia a dia.",
+              "note": "Na correria, a gente se ajuda."
+            },
+            {
+              "text": "dar feedback",
+              "meaning": "Comentar o trabalho.",
+              "note": "O time dá feedback toda semana."
+            },
+            {
+              "text": "dividir as tarefas",
+              "meaning": "Repartir o trabalho.",
+              "note": "Dividimos as tarefas do projeto."
+            }
+          ],
+          "situation": "No café da empresa: a Ana e a Bia comparam o clima das duas equipes — quem ajuda, quem escuta e como se divide o trabalho.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Descreva o clima: sem tensão.",
+                "expected": [
+                  "O ambiente é tranquilo.",
+                  "o ambiente e tranquilo",
+                  "Aqui o ambiente é tranquilo.",
+                  "aqui o ambiente e tranquilo"
+                ],
+                "focus": "ambiente tranquilo",
+                "watch": "tranquilo = tranquilo."
+              },
+              {
+                "prompt": "Diga que o grupo é unido.",
+                "expected": [
+                  "A equipe é unida.",
+                  "a equipe e unida",
+                  "Nossa equipe é unida.",
+                  "nossa equipe e unida"
+                ],
+                "focus": "equipe unida",
+                "watch": "unida = unida."
+              },
+              {
+                "prompt": "Fale da cooperação no dia a dia.",
+                "expected": [
+                  "A gente se ajuda sempre.",
+                  "a gente se ajuda",
+                  "Quando aperta, a gente se ajuda.",
+                  "quando aperta a gente se ajuda"
+                ],
+                "focus": "a gente se ajuda",
+                "watch": "a gente = nosotros."
+              },
+              {
+                "prompt": "Descreva a escuta do gerente.",
+                "expected": [
+                  "O gerente escuta antes de decidir.",
+                  "o gerente escuta antes de decidir"
+                ],
+                "focus": "escutar",
+                "watch": "escuta antes de decidir."
+              },
+              {
+                "prompt": "Diga como repartem o trabalho.",
+                "expected": [
+                  "Dividimos as tarefas do projeto.",
+                  "dividimos as tarefas do projeto",
+                  "Dividimos as tarefas."
+                ],
+                "focus": "dividir",
+                "watch": "dividir las tareas."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u21-colegas-e1",
+              "kind": "choice",
+              "prompt": "Quando aperta, a gente ___ ajuda.",
+              "explain": "a gente se ajuda: o reflexivo de cooperação.",
+              "options": [
+                "se",
+                "nos",
+                "lhe",
+                "o"
+              ],
+              "answers": [
+                "se"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-colegas-e2",
+              "kind": "gap",
+              "prompt": "Nossa equipe é bem ___, ninguém trabalha sozinho.",
+              "explain": "equipe unida: o clima de grupo.",
+              "answers": [
+                "unida"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-colegas-e3",
+              "kind": "order",
+              "prompt": "Descreva a cooperação do time.",
+              "explain": "a gente se ajuda: cooperação com o reflexivo se.",
+              "answers": [
+                "A gente se ajuda sempre"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-colegas-e4",
+              "kind": "written",
+              "prompt": "Descreva a liderança do gerente.",
+              "explain": "escuta antes de decidir: a liderança aberta.",
+              "answers": [
+                "O gerente escuta antes de decidir.",
+                "o gerente escuta antes de decidir",
+                "Nosso gerente escuta o time.",
+                "nosso gerente escuta o time"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "function:describe-people",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-foundations-u21-metas",
+          "title": "Metas profissionais",
+          "goal": "Falar de metas profissionais: quero conquistar…, eu gostaria de…, até o fim do ano.",
+          "intro": {
+            "explanation": [
+              "A meta direta com « quero »: « quero conquistar novos clientes », « quero uma promoção ».",
+              "O sonho mais suave com « eu gostaria de »: « Eu gostaria de trabalhar no exterior » (= me gustaría).",
+              "Meta com prazo e primeiro passo: « até o fim do ano », « primeiro, um curso ». « Até dezembro, fecho o curso »."
+            ],
+            "examples": [
+              {
+                "text": "Quero conquistar novos clientes este ano.",
+                "meaning": "A meta com quero."
+              },
+              {
+                "text": "Eu gostaria de liderar um time.",
+                "meaning": "gostaria = me gustaría."
+              },
+              {
+                "text": "Até o fim do ano, quero uma promoção.",
+                "meaning": "O prazo claro."
+              },
+              {
+                "text": "Primeiro, vou fazer um curso de gestão.",
+                "meaning": "O passo antes da meta."
+              },
+              {
+                "text": "Minha meta é abrir meu próprio negócio.",
+                "meaning": "meta = meta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Quero + verbo",
+              "meaning": "A meta direta.",
+              "note": "Quero mudar de área."
+            },
+            {
+              "text": "Eu gostaria de + verbo",
+              "meaning": "O sonho mais suave.",
+              "note": "Eu gostaria de morar fora."
+            },
+            {
+              "text": "até o fim do ano",
+              "meaning": "O prazo.",
+              "note": "Até o fim do ano, fecho o projeto."
+            },
+            {
+              "text": "minha meta é …",
+              "meaning": "Nomear a meta.",
+              "note": "Minha meta é liderar o time."
+            },
+            {
+              "text": "dar um passo de cada vez",
+              "meaning": "Calma no plano.",
+              "note": "Um passo de cada vez, sem pressa."
+            }
+          ],
+          "situation": "Na reunião de planejamento: cada um apresenta a meta do ano, o prazo e o primeiro passo para chegar lá.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga a meta do ano: novos clientes.",
+                "expected": [
+                  "Quero conquistar novos clientes.",
+                  "quero conquistar novos clientes",
+                  "Quero conquistar novos clientes este ano.",
+                  "quero conquistar novos clientes este ano"
+                ],
+                "focus": "quero + verbo",
+                "watch": "quero = quiero."
+              },
+              {
+                "prompt": "Fale do sonho suave: trabalhar no exterior.",
+                "expected": [
+                  "Eu gostaria de trabalhar no exterior.",
+                  "eu gostaria de trabalhar no exterior"
+                ],
+                "focus": "eu gostaria de",
+                "watch": "gostaria = me gustaría."
+              },
+              {
+                "prompt": "Dê o prazo para a promoção.",
+                "expected": [
+                  "Até o fim do ano, quero uma promoção.",
+                  "ate o fim do ano quero uma promocao",
+                  "Até dezembro, quero uma promoção.",
+                  "ate dezembro quero uma promocao"
+                ],
+                "focus": "até + tempo",
+                "watch": "até = hasta."
+              },
+              {
+                "prompt": "Diga o primeiro passo: um curso de gestão.",
+                "expected": [
+                  "Primeiro, vou fazer um curso de gestão.",
+                  "primeiro vou fazer um curso de gestao"
+                ],
+                "focus": "primeiro",
+                "watch": "o passo antes da meta."
+              },
+              {
+                "prompt": "Nomeie a meta: liderar um time.",
+                "expected": [
+                  "Minha meta é liderar um time.",
+                  "minha meta e liderar um time"
+                ],
+                "focus": "minha meta é",
+                "watch": "meta = meta."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u21-metas-e1",
+              "kind": "choice",
+              "prompt": "Eu ___ de trabalhar no exterior.",
+              "explain": "eu gostaria de + verbo: o desejo mais suave.",
+              "options": [
+                "gostaria",
+                "gostei",
+                "gosto",
+                "agradeço"
+              ],
+              "answers": [
+                "gostaria"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-metas-e2",
+              "kind": "gap",
+              "prompt": "___ o fim do ano, quero uma promoção.",
+              "explain": "até + tempo: o prazo da meta.",
+              "answers": [
+                "Até",
+                "Ate",
+                "até",
+                "ate"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-metas-e3",
+              "kind": "order",
+              "prompt": "Diga a meta do ano com quero.",
+              "explain": "quero + verbo + objeto: a meta direta.",
+              "answers": [
+                "Quero conquistar novos clientes este ano"
+              ]
+            },
+            {
+              "id": "pt-foundations-u21-metas-e4",
+              "kind": "written",
+              "prompt": "Fale do sonho suave: liderar um time.",
+              "explain": "eu gostaria de: o sonho sem pressão.",
+              "answers": [
+                "Eu gostaria de liderar um time.",
+                "eu gostaria de liderar um time",
+                "Gostaria de liderar um time.",
+                "gostaria de liderar um time"
+              ]
+            }
+          ],
+          "skills": [
+            "function:describe-goals",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
           ]
         }
       ]

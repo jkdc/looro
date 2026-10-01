@@ -3810,6 +3810,174 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "it-foundations-u9-tono",
+          "title": "Il tono esatto",
+          "goal": "Regolare il tono di un testo: collocazioni esatte, verbi del dire e connettivi che tengono il registro.",
+          "intro": {
+            "explanation": [
+              "Il tono nasce dalle collocazioni: si prende una decisione e non la si fa, si ha voglia di leggere e non la voglia. Le parole giuste viaggiano in coppia.",
+              "Regolare il tono vuol dire pesare i verbi del dire: sostenere una tesi è neutro, asserire suona distante, rivendicare suona da battaglia.",
+              "I connettivi reggono il registro: tuttavia e pertanto tengono alto il tono, comunque e insomma lo abbassano. E in definitiva chiude l'argomentazione, dando spazio alla tua opinione."
+            ],
+            "examples": [
+              {
+                "text": "Il consiglio deve prendere una decisione entro venerdì.",
+                "meaning": "Collocazione esatta."
+              },
+              {
+                "text": "Gli studenti hanno voglia di chiarezza, non di promesse.",
+                "meaning": "avere voglia di + nome."
+              },
+              {
+                "text": "Il relatore ha sostenuto la tesi con tre dati.",
+                "meaning": "sostenere: registro neutro."
+              },
+              {
+                "text": "Tuttavia, i numeri presentati non convincono tutti.",
+                "meaning": "Connettivo alto."
+              },
+              {
+                "text": "In definitiva, propongo di valutare la proposta.",
+                "meaning": "Chiusura del saggio."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "prendere una decisione",
+              "meaning": "Collocazione: decidere.",
+              "note": "Prendere una decisione difficile."
+            },
+            {
+              "text": "avere voglia di",
+              "meaning": "Collocazione: il desiderio.",
+              "note": "Non ho voglia di polemizzare."
+            },
+            {
+              "text": "sostenere una tesi",
+              "meaning": "Il verbo del dire, neutro.",
+              "note": "Sostiene una tesi costosa."
+            },
+            {
+              "text": "tuttavia / pertanto",
+              "meaning": "Connettivi del registro alto.",
+              "note": "Tuttavia, il dato resta."
+            },
+            {
+              "text": "in definitiva",
+              "meaning": "Chiudere l'argomentazione.",
+              "note": "In definitiva, condivido la proposta."
+            }
+          ],
+          "situation": "Prendete un paragrafo scritto « giusto » e rendetelo esatto: collocazioni in coppia, verbi del dire pesati, connettivi che tengono il tono fino alla chiusura.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Completa la collocazione: il verbo naturale che accompagna « decisione ».",
+                "expected": [
+                  "prendere una decisione",
+                  "prendere una decisione difficile"
+                ],
+                "focus": "prendere",
+                "watch": "Si dice prendere, non fare una decisione."
+              },
+              {
+                "prompt": "Dì che non hai alcun desiderio di polemizzare, con la collocazione con « voglia ».",
+                "expected": [
+                  "non ho voglia di polemizzare",
+                  "non ho voglia di polemizzare oggi"
+                ],
+                "focus": "avere voglia di",
+                "watch": "avere voglia di + infinito."
+              },
+              {
+                "prompt": "Sostituisci « dire » con il verbo accademico per la tesi.",
+                "expected": [
+                  "sostenere una tesi",
+                  "ha sostenuto la tesi"
+                ],
+                "focus": "sostenere",
+                "watch": "« asserire » suona distante; « sostenere » è neutro."
+              },
+              {
+                "prompt": "Apri la frase col connettivo alto che vale « però ».",
+                "expected": [
+                  "tuttavia i dati non convincono tutti",
+                  "tuttavia i numeri non convincono"
+                ],
+                "focus": "tuttavia",
+                "watch": "« però » è parlato; « tuttavia » tiene il registro."
+              },
+              {
+                "prompt": "Chiudi il saggio col connettivo che sintetizza (« in sintesi, alla fine »), dando la tua opinione.",
+                "expected": [
+                  "in definitiva propongo di valutare la proposta",
+                  "in definitiva condivido la proposta"
+                ],
+                "focus": "in definitiva",
+                "watch": "in definitiva chiude l'argomentazione."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u9-tono-e1",
+              "kind": "choice",
+              "prompt": "Formale: il consiglio deve ___ una decisione entro venerdì.",
+              "answers": [
+                "prendere"
+              ],
+              "explain": "Collocazione esatta: prendere una decisione.",
+              "options": [
+                "prendere",
+                "fare",
+                "dare",
+                "mettere"
+              ]
+            },
+            {
+              "id": "it-foundations-u9-tono-e2",
+              "kind": "gap",
+              "prompt": "Non ___ voglia di polemizzare: chiudo qui. (io)",
+              "answers": [
+                "ho"
+              ],
+              "explain": "Collocazione: avere voglia di."
+            },
+            {
+              "id": "it-foundations-u9-tono-e3",
+              "kind": "written",
+              "prompt": "Sostituisci il verbo « dire » con uno di registro accademico: il relatore ha ___ la tesi con tre dati.",
+              "answers": [
+                "sostenuto"
+              ],
+              "explain": "sostenere: verbo del dire, registro neutro."
+            },
+            {
+              "id": "it-foundations-u9-tono-e4",
+              "kind": "written",
+              "prompt": "Riscrivi la frase sostituendo « Però » col connettivo alto equivalente: Però i dati non convincono tutti.",
+              "answers": [
+                "tuttavia i dati non convincono tutti",
+                "tuttavia i dati non convincono"
+              ],
+              "explain": "« tuttavia » regge il registro formale al posto di « però »."
+            }
+          ],
+          "skills": [
+            "vocab:collocations",
+            "function:express-opinion",
+            "writing:argument",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -8824,6 +8992,1705 @@
           ],
           "prerequisites": [
             "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u19",
+      "title": "Una visita",
+      "subtitle": "Ospiti e cortesia",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "l-arrivo",
+          "title": "Posso entrare ?",
+          "subtitle": "Per favore…",
+          "symbol": "door.left.open",
+          "category": "Course",
+          "situation": "Un amico arriva: chiedete di entrare, fate sentire l’ospite a casa e offrite qualcosa.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-piccola-cortesia",
+          "title": "Una piccola cosa",
+          "subtitle": "Porto…",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "Portate un piccolo dono a chi vi ospita e offrite caffè e dolci agli ospiti.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u19-visita",
+          "title": "Posso entrare ?",
+          "goal": "Chiedere il permesso con posso e accogliere un ospite con cortesia.",
+          "intro": {
+            "explanation": [
+              "Per chiedere il permesso usa posso + infinito: « Posso entrare ? ». La risposta gentile: « Certo, entra ! ».",
+              "Accogli l’ospite con frasi brevi: « Togliti la giacca », « Siediti, per favore ». Fanno sentire tutti a casa.",
+              "Poi offri qualcosa: « Vuoi un caffè ? », « Posso portarti qualcosa ? ». E l’ospite ringrazia: « Grazie ! »."
+            ],
+            "examples": [
+              {
+                "text": "Posso entrare ?",
+                "meaning": "Chiedere il permesso."
+              },
+              {
+                "text": "Certo, entra !",
+                "meaning": "Accogliere con calore."
+              },
+              {
+                "text": "Togliti la giacca.",
+                "meaning": "Far sentire a casa."
+              },
+              {
+                "text": "Siediti sul divano.",
+                "meaning": "Offrire un posto."
+              },
+              {
+                "text": "Posso portarti qualcosa ?",
+                "meaning": "Offrire qualcosa."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Posso… ?",
+              "meaning": "Chiedere il permesso.",
+              "note": "Posso entrare ?"
+            },
+            {
+              "text": "Certo, entra !",
+              "meaning": "Accogliere l’ospite.",
+              "note": "Certo, entra, dai !"
+            },
+            {
+              "text": "Togliti la giacca",
+              "meaning": "Far sentire a casa.",
+              "note": "Togliti la giacca, fa caldo."
+            },
+            {
+              "text": "Siediti",
+              "meaning": "Offrire un posto.",
+              "note": "Siediti, per favore."
+            },
+            {
+              "text": "Fai come a casa tua",
+              "meaning": "La formula di benvenuto.",
+              "note": "Fai come a casa tua !"
+            }
+          ],
+          "situation": "Un amico suona alla porta: fate entrare, toglietevi la giacca, sedetevi e offrite un caffè.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi il permesso di entrare.",
+                "expected": [
+                  "Posso entrare ?",
+                  "Posso entrare, per favore ?"
+                ],
+                "focus": "posso",
+                "watch": "posso + infinito = pedir permiso."
+              },
+              {
+                "prompt": "Accogli Luca: dì che può entrare.",
+                "expected": [
+                  "Certo, entra !",
+                  "Dai, entra !"
+                ],
+                "focus": "entra",
+                "watch": "l’imperativo tu: entra."
+              },
+              {
+                "prompt": "Dì all’ospite di togliersi la giacca.",
+                "expected": [
+                  "Togliti la giacca.",
+                  "Togliti la giacca, per favore."
+                ],
+                "focus": "togliti",
+                "watch": "togliersi: togliti."
+              },
+              {
+                "prompt": "Offri un posto: l’ospite può sedersi.",
+                "expected": [
+                  "Siediti, per favore.",
+                  "Siediti qui."
+                ],
+                "focus": "siediti",
+                "watch": "sedersi: siediti."
+              },
+              {
+                "prompt": "Chiedi se puoi aiutare in cucina.",
+                "expected": [
+                  "Posso aiutare in cucina ?",
+                  "Posso aiutare ?"
+                ],
+                "focus": "posso",
+                "watch": "posso + infinito."
+              },
+              {
+                "prompt": "Chiedi a un ospite se vuole un caffè.",
+                "expected": [
+                  "Vuoi un caffè ?",
+                  "Posso portarti un caffè ?",
+                  "Ti va un caffè ?"
+                ],
+                "focus": "vuoi",
+                "watch": "offrire con vuoi / ti va."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u19-visita-e1",
+              "kind": "choice",
+              "prompt": "___ entrare ? Grazie !",
+              "answers": [
+                "Posso"
+              ],
+              "explain": "Il permesso: posso + infinito.",
+              "options": [
+                "Posso",
+                "Voglio",
+                "Devo",
+                "Faccio"
+              ]
+            },
+            {
+              "id": "it-foundations-u19-visita-e2",
+              "kind": "gap",
+              "prompt": "Luca, ___ la giacca e mettila qui. (tu)",
+              "answers": [
+                "togli"
+              ],
+              "explain": "togliersi: tu togli."
+            },
+            {
+              "id": "it-foundations-u19-visita-e3",
+              "kind": "order",
+              "prompt": "Chiedi a un ospite di sedersi, con gentilezza.",
+              "answers": [
+                "Siediti qui per favore"
+              ],
+              "explain": "Siediti + luogo + per favore."
+            },
+            {
+              "id": "it-foundations-u19-visita-e4",
+              "kind": "written",
+              "prompt": "Chiedi il permesso di aprire la finestra.",
+              "answers": [
+                "posso aprire la finestra",
+                "posso aprire la finestra per favore"
+              ],
+              "explain": "posso + infinito: la richiesta gentile."
+            }
+          ],
+          "skills": [
+            "grammar:can",
+            "function:make-requests",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u19-piccolo",
+          "title": "Porto una piccola cosa",
+          "goal": "Offrire qualcosa agli ospiti e portare un piccolo dono a chi vi invita.",
+          "intro": {
+            "explanation": [
+              "Quando vai a cena da qualcuno, porti una piccola cosa: « Porto una bottiglia di vino », « Porto i dolci ». È un’abitudine gentile.",
+              "Per offrire agli ospiti: « Vuoi… ? », « Prendi… ? », « Ti va… ? ». « Prendi un caffè ? » è l’offerta più comune.",
+              "L’ospite risponde: « Volentieri ! » se accetta, « Grazie, ma no » se rifiuta con gentilezza."
+            ],
+            "examples": [
+              {
+                "text": "Porto una bottiglia di vino.",
+                "meaning": "Il piccolo dono."
+              },
+              {
+                "text": "Cosa porto: i dolci o il vino ?",
+                "meaning": "Chiedere cosa portare."
+              },
+              {
+                "text": "Prendi un caffè ?",
+                "meaning": "Offrire agli ospiti."
+              },
+              {
+                "text": "Ti va della torta ?",
+                "meaning": "Offrire con gentilezza."
+              },
+              {
+                "text": "Volentieri !",
+                "meaning": "Accettare con piacere."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Porto…",
+              "meaning": "Portare qualcosa a chi ospita.",
+              "note": "Porto una bottiglia di vino."
+            },
+            {
+              "text": "Prendi… ?",
+              "meaning": "Offrire agli ospiti.",
+              "note": "Prendi un caffè ?"
+            },
+            {
+              "text": "Ti va… ?",
+              "meaning": "Offrire con gentilezza.",
+              "note": "Ti va della torta ?"
+            },
+            {
+              "text": "Volentieri !",
+              "meaning": "Accettare con piacere.",
+              "note": "Volentieri, grazie !"
+            },
+            {
+              "text": "Grazie, ma no",
+              "meaning": "Rifiutare con gentilezza.",
+              "note": "Grazie, ma no, grazie."
+            }
+          ],
+          "situation": "Andate a cena da amici: decidete cosa portare e, a casa loro, offrite caffè e dolci.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì cosa porti alla cena: una bottiglia di vino.",
+                "expected": [
+                  "Porto una bottiglia di vino.",
+                  "Io porto una bottiglia di vino."
+                ],
+                "focus": "porto",
+                "watch": "porto = traigo."
+              },
+              {
+                "prompt": "Chiedi a Anna cosa può portare.",
+                "expected": [
+                  "Cosa porti ?",
+                  "Che cosa porti ?"
+                ],
+                "focus": "porti",
+                "watch": "tu porti."
+              },
+              {
+                "prompt": "Offri un caffè a un ospite.",
+                "expected": [
+                  "Prendi un caffè ?",
+                  "Vuoi un caffè ?"
+                ],
+                "focus": "prendi",
+                "watch": "offrire con prendere."
+              },
+              {
+                "prompt": "Offri della torta, con gentilezza.",
+                "expected": [
+                  "Ti va della torta ?",
+                  "Vuoi della torta ?"
+                ],
+                "focus": "ti va",
+                "watch": "ti va + di."
+              },
+              {
+                "prompt": "Accetta l’offerta con piacere.",
+                "expected": [
+                  "Volentieri !",
+                  "Volentieri, grazie !"
+                ],
+                "focus": "volentieri",
+                "watch": "volentieri = con gusto."
+              },
+              {
+                "prompt": "Rifiuta il vino, con gentilezza.",
+                "expected": [
+                  "Grazie, ma no, grazie.",
+                  "Grazie, ma non bevo."
+                ],
+                "focus": "grazie, ma no",
+                "watch": "il no gentile."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u19-piccolo-e1",
+              "kind": "choice",
+              "prompt": "Alla cena ___ i dolci: è la mia abitudine.",
+              "answers": [
+                "porto"
+              ],
+              "explain": "Io porto: il piccolo dono.",
+              "options": [
+                "porto",
+                "porti",
+                "porta",
+                "portano"
+              ]
+            },
+            {
+              "id": "it-foundations-u19-piccolo-e2",
+              "kind": "gap",
+              "prompt": "___ un caffè, Marta ? (offrire, tu)",
+              "answers": [
+                "prendi"
+              ],
+              "explain": "Offrire con prendere: tu prendi."
+            },
+            {
+              "id": "it-foundations-u19-piccolo-e3",
+              "kind": "order",
+              "prompt": "Offri della torta a un ospite.",
+              "answers": [
+                "Ti va della torta"
+              ],
+              "explain": "Ti va + di + cosa: offrire."
+            },
+            {
+              "id": "it-foundations-u19-piccolo-e4",
+              "kind": "written",
+              "prompt": "Dì cosa porti alla cena: i dolci.",
+              "answers": [
+                "porto i dolci",
+                "io porto i dolci",
+                "porto i dolci per la cena"
+              ],
+              "explain": "Io + porto + i dolci."
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "vocab:food",
+            "vocab:social-expressions",
+            "function:order-food"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u19-addio",
+          "title": "Alla prossima",
+          "goal": "Salutare alla fine di una visita e ringraziare per la serata.",
+          "intro": {
+            "explanation": [
+              "Alla fine della visita l’ospite ringrazia: « Grazie per la serata ! », « È stato bello ! ». Chi ospita risponde: « Grazie a te ! ».",
+              "L’ospite chiede il permesso di andare: « È tardi, devo andare ». E promette: « Ti chiamo ! ».",
+              "I saluti: « Ciao ! » tra amici, « Arrivederci » con persone che non conosci bene. Per la prossima volta: « Alla prossima ! », « A presto ! »."
+            ],
+            "examples": [
+              {
+                "text": "Grazie per la serata !",
+                "meaning": "Ringraziare chi ospita."
+              },
+              {
+                "text": "È stato bello, grazie mille.",
+                "meaning": "Dire che ti è piaciuto."
+              },
+              {
+                "text": "È tardi: devo andare.",
+                "meaning": "Prendere congedo."
+              },
+              {
+                "text": "Grazie a te, alla prossima !",
+                "meaning": "Rispondere e salutare."
+              },
+              {
+                "text": "A presto !",
+                "meaning": "Salutare per presto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Grazie per la serata",
+              "meaning": "Ringraziare alla fine.",
+              "note": "Grazie per la serata, era bellissima."
+            },
+            {
+              "text": "È stato bello",
+              "meaning": "Dire che ti è piaciuto.",
+              "note": "È stato bello vedervi."
+            },
+            {
+              "text": "Devo andare",
+              "meaning": "Prendere congedo.",
+              "note": "È tardi, devo andare."
+            },
+            {
+              "text": "Alla prossima !",
+              "meaning": "Saluto per la volta dopo.",
+              "note": "Ciao, alla prossima !"
+            },
+            {
+              "text": "Grazie a te",
+              "meaning": "Rispondere a un grazie.",
+              "note": "Grazie a te per il vino !"
+            }
+          ],
+          "situation": "La serata finisce: l’ospite ringrazia, dice che deve andare e vi salutate fino alla prossima volta.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ringrazia per la serata.",
+                "expected": [
+                  "Grazie per la serata !",
+                  "Grazie per la bella serata !"
+                ],
+                "focus": "grazie per",
+                "watch": "grazie per + cosa."
+              },
+              {
+                "prompt": "Dì che è stato bello.",
+                "expected": [
+                  "È stato bello, grazie !",
+                  "E stato bello, grazie !"
+                ],
+                "focus": "è stato",
+                "watch": "essere + participio."
+              },
+              {
+                "prompt": "Dì che è tardi e devi andare.",
+                "expected": [
+                  "È tardi, devo andare.",
+                  "E tardi, devo andare."
+                ],
+                "focus": "devo andare",
+                "watch": "devo + infinito."
+              },
+              {
+                "prompt": "Rispondi al grazie e saluta per la prossima volta.",
+                "expected": [
+                  "Grazie a te, alla prossima !",
+                  "Grazie a te !"
+                ],
+                "focus": "grazie a te",
+                "watch": "grazie a te = gracias a ti."
+              },
+              {
+                "prompt": "Saluta un amico, per presto.",
+                "expected": [
+                  "A presto !",
+                  "Ciao, a presto !"
+                ],
+                "focus": "a presto",
+                "watch": "a presto = hasta pronto."
+              },
+              {
+                "prompt": "Prometti di chiamare.",
+                "expected": [
+                  "Ti chiamo !",
+                  "Ti chiamo domani !"
+                ],
+                "focus": "ti chiamo",
+                "watch": "chiamare qualcuno."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u19-addio-e1",
+              "kind": "choice",
+              "prompt": "___ per la serata: è stato bellissimo !",
+              "answers": [
+                "Grazie"
+              ],
+              "explain": "Ringraziare: grazie per + cosa.",
+              "options": [
+                "Grazie",
+                "Scusa",
+                "Prego",
+                "Per favore"
+              ]
+            },
+            {
+              "id": "it-foundations-u19-addio-e2",
+              "kind": "gap",
+              "prompt": "È tardi: devo ___.",
+              "answers": [
+                "andare",
+                "andare via",
+                "andarmene"
+              ],
+              "explain": "devo + infinito: andare."
+            },
+            {
+              "id": "it-foundations-u19-addio-e3",
+              "kind": "order",
+              "prompt": "Rispondi al grazie e saluta per la prossima volta.",
+              "answers": [
+                "Grazie a te alla prossima"
+              ],
+              "explain": "Grazie a te + alla prossima."
+            },
+            {
+              "id": "it-foundations-u19-addio-e4",
+              "kind": "written",
+              "prompt": "Ringrazia chi ti ha ospitato per la serata.",
+              "answers": [
+                "grazie per la serata",
+                "grazie per la serata era bellissima",
+                "e stata una bella serata grazie"
+              ],
+              "explain": "grazie per + la serata."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "grammar:can"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u20",
+      "title": "I guai quotidiani",
+      "subtitle": "Problemi e soluzioni",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "il-guasto",
+          "title": "Si è rotto",
+          "subtitle": "Che disastro !",
+          "symbol": "wrench.and.screwdriver",
+          "category": "Course",
+          "situation": "Raccontate i guasti della settimana: il telefono si è rotto, la macchina non parte.",
+          "colorIndex": 0
+        },
+        {
+          "id": "il-reclamo",
+          "title": "Un reclamo tranquillo",
+          "subtitle": "Vorrei segnalare…",
+          "symbol": "phone.badge.checkmark",
+          "category": "Course",
+          "situation": "Telefonate al negozio: qualcosa non funziona e chiedete una soluzione con educazione.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u20-guasto",
+          "title": "Si è rotto",
+          "goal": "Raccontare un guasto al passato prossimo e reagire.",
+          "intro": {
+            "explanation": [
+              "Il guasto si racconta al passato prossimo: « Il telefono si è rotto », « La macchina non è partita ».",
+              "Con alcuni verbi si usa essere: rompersi, partirsi. Con gli altri, avere: « Ho perso le chiavi », « Ho chiamato il tecnico ».",
+              "Poi reagisci: « Che disastro ! » quando va male, « Meno male ! » quando finisce bene."
+            ],
+            "examples": [
+              {
+                "text": "Il telefono si è rotto.",
+                "meaning": "Raccontare il guasto."
+              },
+              {
+                "text": "La macchina non è partita.",
+                "meaning": "Essere + participio."
+              },
+              {
+                "text": "Ho perso le chiavi di casa.",
+                "meaning": "Avere + participio."
+              },
+              {
+                "text": "Ho chiamato un tecnico.",
+                "meaning": "Chiedere aiuto."
+              },
+              {
+                "text": "Meno male che funziona !",
+                "meaning": "Reagire quando va bene."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "si è rotto / si è rotta",
+              "meaning": "Non funziona più.",
+              "note": "Lo zaino si è rotto."
+            },
+            {
+              "text": "non è partita",
+              "meaning": "Non ha funzionato.",
+              "note": "La macchina non è partita."
+            },
+            {
+              "text": "ho perso",
+              "meaning": "perdere → perso.",
+              "note": "Ho perso le chiavi."
+            },
+            {
+              "text": "chiamare un tecnico",
+              "meaning": "Chiedere aiuto.",
+              "note": "Ho chiamato un tecnico."
+            },
+            {
+              "text": "Che disastro !",
+              "meaning": "Reagire al guasto.",
+              "note": "Che disastro, la mia settimana !"
+            }
+          ],
+          "situation": "Una settimana nera: il telefono si è rotto, la macchina non è partita e hai perso le chiavi. Racconti tutto a un amico.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Racconta il guasto: il telefono, rotto.",
+                "expected": [
+                  "Il telefono si è rotto.",
+                  "Il telefono si e rotto."
+                ],
+                "focus": "si è rotto",
+                "watch": "rompersi: si è rotto."
+              },
+              {
+                "prompt": "La macchina, ieri, non partita.",
+                "expected": [
+                  "La macchina non è partita.",
+                  "La macchina non e partita."
+                ],
+                "focus": "non è partita",
+                "watch": "essere + participio."
+              },
+              {
+                "prompt": "Racconta: hai perso le chiavi.",
+                "expected": [
+                  "Ho perso le chiavi.",
+                  "Ho perso le chiavi di casa."
+                ],
+                "focus": "ho perso",
+                "watch": "perdere → perso."
+              },
+              {
+                "prompt": "Dì la soluzione: il tecnico, chiamato.",
+                "expected": [
+                  "Ho chiamato un tecnico.",
+                  "Ho chiamato il tecnico."
+                ],
+                "focus": "ho chiamato",
+                "watch": "chiamare → chiamato."
+              },
+              {
+                "prompt": "Reagisci al guasto di Luca: è un disastro.",
+                "expected": [
+                  "Che disastro !",
+                  "Che disastro, Luca !"
+                ],
+                "focus": "che disastro",
+                "watch": "reazione simpatica."
+              },
+              {
+                "prompt": "Il problema è finito bene: reagisci con sollievo.",
+                "expected": [
+                  "Meno male !",
+                  "Meno male che funziona !"
+                ],
+                "focus": "meno male",
+                "watch": "meno male = menos mal."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u20-guasto-e1",
+              "kind": "choice",
+              "prompt": "Il caricatore ___ rotto.",
+              "answers": [
+                "si è"
+              ],
+              "explain": "Rompersi: si è + participio.",
+              "options": [
+                "si è",
+                "ha",
+                "è",
+                "fa"
+              ]
+            },
+            {
+              "id": "it-foundations-u20-guasto-e2",
+              "kind": "gap",
+              "prompt": "La macchina non ___ partita. (essere)",
+              "answers": [
+                "è",
+                "e"
+              ],
+              "explain": "Essere + participio: non è partita."
+            },
+            {
+              "id": "it-foundations-u20-guasto-e3",
+              "kind": "order",
+              "prompt": "Racconta il guasto: le chiavi, perse ieri.",
+              "answers": [
+                "Ho perso le chiavi ieri"
+              ],
+              "explain": "Avere + participio: ho perso."
+            },
+            {
+              "id": "it-foundations-u20-guasto-e4",
+              "kind": "written",
+              "prompt": "Dì la soluzione: il tecnico, chiamato ieri.",
+              "answers": [
+                "ho chiamato il tecnico",
+                "ieri ho chiamato il tecnico"
+              ],
+              "explain": "Avere + participio: ho chiamato."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "it-foundations-u20-soluzione",
+          "title": "Cosa faccio ?",
+          "goal": "Chiedere e dare soluzioni semplici con se, devi, puoi.",
+          "intro": {
+            "explanation": [
+              "Per chiedere aiuto: « Cosa faccio ? », « Cosa devo fare ? ». Sono le domande più comuni davanti a un problema.",
+              "Per dare una soluzione: « Devi… », « Puoi… », « Prova a… ». « Devi chiamare il tecnico », « Prova a riavviare ».",
+              "Il se collega problema e soluzione: « Se non funziona, riavvia », « Se è rotto, lo compri nuovo »."
+            ],
+            "examples": [
+              {
+                "text": "Cosa faccio ?",
+                "meaning": "Chiedere una soluzione."
+              },
+              {
+                "text": "Devi chiamare il tecnico.",
+                "meaning": "Il consiglio con devo."
+              },
+              {
+                "text": "Puoi comprare un cavo nuovo.",
+                "meaning": "La possibilità con potere."
+              },
+              {
+                "text": "Prova a spegnere e riaccendere.",
+                "meaning": "Il primo consiglio."
+              },
+              {
+                "text": "Se non funziona, riavvia.",
+                "meaning": "Se + soluzione."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Cosa faccio ?",
+              "meaning": "Chiedere aiuto.",
+              "note": "Non funziona: cosa faccio ?"
+            },
+            {
+              "text": "devi + infinito",
+              "meaning": "Il consiglio forte.",
+              "note": "Devi chiamare il tecnico."
+            },
+            {
+              "text": "puoi + infinito",
+              "meaning": "La possibilità.",
+              "note": "Puoi comprare un cavo nuovo."
+            },
+            {
+              "text": "prova a + infinito",
+              "meaning": "Il consiglio morbido.",
+              "note": "Prova a riavviare."
+            },
+            {
+              "text": "se… , …",
+              "meaning": "Problema e soluzione insieme.",
+              "note": "Se è rotto, lo cambi."
+            }
+          ],
+          "situation": "Il telefono di un amico non funziona: vi fate domande, provate soluzioni e trovate il rimedio giusto.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi aiuto: non sai cosa fare.",
+                "expected": [
+                  "Cosa faccio ?",
+                  "Cosa devo fare ?"
+                ],
+                "focus": "cosa faccio",
+                "watch": "la domanda del problema."
+              },
+              {
+                "prompt": "Consiglia a Luca: chiamare il tecnico.",
+                "expected": [
+                  "Devi chiamare il tecnico.",
+                  "Luca, devi chiamare il tecnico."
+                ],
+                "focus": "devi",
+                "watch": "devi + infinito."
+              },
+              {
+                "prompt": "Dì a Anna che può comprare un cavo nuovo.",
+                "expected": [
+                  "Puoi comprare un cavo nuovo.",
+                  "Anna, puoi comprare un cavo nuovo."
+                ],
+                "focus": "puoi",
+                "watch": "puoi + infinito."
+              },
+              {
+                "prompt": "Dai il consiglio classico: provare a riavviare.",
+                "expected": [
+                  "Prova a riavviare.",
+                  "Prova a spegnere e riaccendere."
+                ],
+                "focus": "prova a",
+                "watch": "prova a + infinito."
+              },
+              {
+                "prompt": "Collega problema e soluzione: non funziona → riavvia.",
+                "expected": [
+                  "Se non funziona, riavvia.",
+                  "Se non funziona, prova a riavviare."
+                ],
+                "focus": "se",
+                "watch": "se + presente, imperativo."
+              },
+              {
+                "prompt": "Consiglia di chiedere a un amico.",
+                "expected": [
+                  "Devi chiedere a un amico.",
+                  "Puoi chiedere a un amico."
+                ],
+                "focus": "chiedere a",
+                "watch": "chiedere a qualcuno."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u20-soluzione-e1",
+              "kind": "choice",
+              "prompt": "Non funziona: ___ devo fare ?",
+              "answers": [
+                "cosa"
+              ],
+              "explain": "Chiedere la soluzione: cosa devo fare ?",
+              "options": [
+                "cosa",
+                "chi",
+                "dove",
+                "quando"
+              ]
+            },
+            {
+              "id": "it-foundations-u20-soluzione-e2",
+              "kind": "gap",
+              "prompt": "Se è rotto, ___ comprare un cavo nuovo. (tu, potere)",
+              "answers": [
+                "puoi"
+              ],
+              "explain": "puoi + infinito: la possibilità."
+            },
+            {
+              "id": "it-foundations-u20-soluzione-e3",
+              "kind": "order",
+              "prompt": "Consiglia a Luca: chiamare il tecnico.",
+              "answers": [
+                "Devi chiamare il tecnico Luca"
+              ],
+              "explain": "Devi + infinito: il consiglio."
+            },
+            {
+              "id": "it-foundations-u20-soluzione-e4",
+              "kind": "written",
+              "prompt": "Dai il consiglio: provare a riavviare il telefono.",
+              "answers": [
+                "prova a riavviare il telefono",
+                "prova a riavviarlo",
+                "devi riavviare il telefono"
+              ],
+              "explain": "prova a / devi + infinito."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "function:make-requests",
+            "grammar:connectors",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "it-foundations-u20-reclamo",
+          "title": "Un reclamo tranquillo",
+          "goal": "Segnalare un problema con educazione e chiedere una soluzione.",
+          "intro": {
+            "explanation": [
+              "Il reclamo gentile comincia con una formula: « Scusi, c’è un problema », « Vorrei segnalare un problema ».",
+              "Poi spieghi il fatto al passato prossimo: « Ho comprato questa macchina, ma non funziona », « Ho ricevuto la fattura sbagliata ».",
+              "Infine chiedi la soluzione: « È possibile cambiare ? », « Che cosa si può fare ? ». E chiudi: « Grazie per la pazienza »."
+            ],
+            "examples": [
+              {
+                "text": "Scusi, c’è un problema.",
+                "meaning": "Aprire il reclamo."
+              },
+              {
+                "text": "Ho comprato questa macchina, ma non funziona.",
+                "meaning": "Il fatto al passato prossimo."
+              },
+              {
+                "text": "Ho ricevuto la fattura sbagliata.",
+                "meaning": "Segnalare l’errore."
+              },
+              {
+                "text": "È possibile cambiare il prodotto ?",
+                "meaning": "Chiedere la soluzione."
+              },
+              {
+                "text": "Grazie per la pazienza.",
+                "meaning": "Chiudere con gentilezza."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Vorrei segnalare…",
+              "meaning": "Aprire il reclamo.",
+              "note": "Vorrei segnalare un problema."
+            },
+            {
+              "text": "non funziona",
+              "meaning": "Il problema adesso.",
+              "note": "La stampante non funziona."
+            },
+            {
+              "text": "la fattura sbagliata",
+              "meaning": "L’errore nei documenti.",
+              "note": "Hanno mandato la fattura sbagliata."
+            },
+            {
+              "text": "È possibile… ?",
+              "meaning": "Chiedere la soluzione.",
+              "note": "È possibile cambiare il prodotto ?"
+            },
+            {
+              "text": "Grazie per la pazienza",
+              "meaning": "Chiudere il reclamo.",
+              "note": "Grazie per la pazienza !"
+            }
+          ],
+          "situation": "Al telefono con il negozio: segnalate una fattura sbagliata e una macchina guasta, e chiedete una soluzione.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Apri un reclamo con gentilezza.",
+                "expected": [
+                  "Scusi, c’è un problema.",
+                  "Scusi, c’e un problema.",
+                  "Vorrei segnalare un problema."
+                ],
+                "focus": "scusi",
+                "watch": "Lei: scusi, gentile."
+              },
+              {
+                "prompt": "Segnala: la stampante, comprata ieri, non funziona.",
+                "expected": [
+                  "Ho comprato questa stampante ma non funziona.",
+                  "Ieri ho comprato una stampante ma non funziona."
+                ],
+                "focus": "ho comprato",
+                "watch": "comprare → comprato."
+              },
+              {
+                "prompt": "Segnala l’errore: la fattura, sbagliata.",
+                "expected": [
+                  "Ho ricevuto la fattura sbagliata.",
+                  "La fattura è sbagliata.",
+                  "La fattura e sbagliata."
+                ],
+                "focus": "ho ricevuto",
+                "watch": "ricevere → ricevuto."
+              },
+              {
+                "prompt": "Chiedi di cambiare il prodotto, con gentilezza.",
+                "expected": [
+                  "È possibile cambiare il prodotto ?",
+                  "E possibile cambiare il prodotto ?",
+                  "Posso cambiare il prodotto ?"
+                ],
+                "focus": "è possibile",
+                "watch": "è possibile + infinito."
+              },
+              {
+                "prompt": "Chiedi che cosa si può fare.",
+                "expected": [
+                  "Che cosa si può fare ?",
+                  "Che cosa si puo fare ?",
+                  "Cosa si può fare ?",
+                  "Cosa si puo fare ?"
+                ],
+                "focus": "si può",
+                "watch": "si può = se puede."
+              },
+              {
+                "prompt": "Chiudi il reclamo ringraziando.",
+                "expected": [
+                  "Grazie per la pazienza.",
+                  "Grazie per l’aiuto."
+                ],
+                "focus": "grazie per",
+                "watch": "la chiusura gentile."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u20-reclamo-e1",
+              "kind": "choice",
+              "prompt": "___ segnalare un problema con la fattura.",
+              "answers": [
+                "Vorrei"
+              ],
+              "explain": "Vorrei: apertura gentile del reclamo.",
+              "options": [
+                "Vorrei",
+                "Voglio",
+                "Devo",
+                "Faccio"
+              ]
+            },
+            {
+              "id": "it-foundations-u20-reclamo-e2",
+              "kind": "gap",
+              "prompt": "Ho ___ la fattura sbagliata. (ricevere, participio)",
+              "answers": [
+                "ricevuto"
+              ],
+              "explain": "ricevere → ricevuto."
+            },
+            {
+              "id": "it-foundations-u20-reclamo-e3",
+              "kind": "order",
+              "prompt": "Chiedi di cambiare il prodotto, con gentilezza.",
+              "answers": [
+                "È possibile cambiare il prodotto"
+              ],
+              "explain": "È possibile + infinito: la richiesta gentile."
+            },
+            {
+              "id": "it-foundations-u20-reclamo-e4",
+              "kind": "written",
+              "prompt": "Chiudi il reclamo con un ringraziamento.",
+              "answers": [
+                "grazie per la pazienza",
+                "grazie mille per la pazienza",
+                "grazie per l’aiuto"
+              ],
+              "explain": "Grazie per + cosa: la chiusura gentile."
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:present-questions",
+            "vocab:social-expressions",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u21",
+      "title": "Il lavoro",
+      "subtitle": "Esperienza e obiettivi",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "il-colloquio",
+          "title": "Il colloquio",
+          "subtitle": "La mia esperienza",
+          "symbol": "briefcase",
+          "category": "Course",
+          "situation": "Raccontate esperienza, punti di forza e motivazione in un colloquio.",
+          "colorIndex": 0
+        },
+        {
+          "id": "clima-e-mete",
+          "title": "In ufficio",
+          "subtitle": "Secondo me…",
+          "symbol": "bubble.left.and.text.bubble.right",
+          "category": "Course",
+          "situation": "Parlate del clima in ufficio, dei colleghi e dei vostri obiettivi di lavoro.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u21-colloquio",
+          "title": "Il colloquio",
+          "goal": "Parlare di esperienza e punti di forza in un colloquio.",
+          "intro": {
+            "explanation": [
+              "Nel colloquio racconti l’esperienza con il passato prossimo: « Ho lavorato tre anni nel marketing », « Ho gestito un piccolo team ».",
+              "I punti di forza si presentano con semplicità: « Sono una persona organizzata », « Imparo in fretta », « Lavoro bene in gruppo ».",
+              "I connettivi danno ordine al percorso: « Prima ho studiato, poi ho lavorato all’estero, ora cerco una nuova sfida »."
+            ],
+            "examples": [
+              {
+                "text": "Ho lavorato tre anni nel marketing.",
+                "meaning": "L’esperienza."
+              },
+              {
+                "text": "Ho gestito un team di cinque persone.",
+                "meaning": "Una responsabilità."
+              },
+              {
+                "text": "Sono una persona organizzata.",
+                "meaning": "Un punto di forza."
+              },
+              {
+                "text": "Prima ho studiato, poi ho lavorato all’estero.",
+                "meaning": "Il percorso in ordine."
+              },
+              {
+                "text": "Ora cerco una nuova sfida.",
+                "meaning": "Il perché del colloquio."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ho lavorato…",
+              "meaning": "Raccontare l’esperienza.",
+              "note": "Ho lavorato tre anni a Milano."
+            },
+            {
+              "text": "ho gestito",
+              "meaning": "Avere responsabilità.",
+              "note": "Ho gestito un piccolo team."
+            },
+            {
+              "text": "sono una persona…",
+              "meaning": "Presentare un punto di forza.",
+              "note": "Sono una persona affidabile."
+            },
+            {
+              "text": "imparo in fretta",
+              "meaning": "Il punto di forza classico.",
+              "note": "Imparo in fretta."
+            },
+            {
+              "text": "una nuova sfida",
+              "meaning": "Il motivo del cambio.",
+              "note": "Cerco una nuova sfida."
+            }
+          ],
+          "situation": "Preparate un colloquio: raccontate il percorso, presentate i punti di forza e spiegate perché cercate il cambiamento.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì la tua esperienza: tre anni nel marketing.",
+                "expected": [
+                  "Ho lavorato tre anni nel marketing.",
+                  "Ho lavorato per tre anni nel marketing."
+                ],
+                "focus": "ho lavorato",
+                "watch": "lavorare → lavorato."
+              },
+              {
+                "prompt": "Dì che hai gestito un piccolo team.",
+                "expected": [
+                  "Ho gestito un piccolo team.",
+                  "Ho gestito un team di cinque persone."
+                ],
+                "focus": "ho gestito",
+                "watch": "gestire → gestito."
+              },
+              {
+                "prompt": "Presenta un punto di forza: sei organizzata.",
+                "expected": [
+                  "Sono una persona organizzata.",
+                  "Sono organizzata."
+                ],
+                "focus": "sono una persona",
+                "watch": "sono una persona + aggettivo."
+              },
+              {
+                "prompt": "Dì che impari in fretta.",
+                "expected": [
+                  "Imparo in fretta.",
+                  "Imparo in fretta e con piacere."
+                ],
+                "focus": "imparo",
+                "watch": "imparare in fretta."
+              },
+              {
+                "prompt": "Racconta il percorso: prima lo studio, poi il lavoro all’estero.",
+                "expected": [
+                  "Prima ho studiato, poi ho lavorato all’estero.",
+                  "Prima ho studiato e poi ho lavorato all’estero."
+                ],
+                "focus": "prima… poi",
+                "watch": "i connettivi ordinano il discorso."
+              },
+              {
+                "prompt": "Dì perché cerchi il cambiamento.",
+                "expected": [
+                  "Ora cerco una nuova sfida.",
+                  "Cerco una nuova sfida professionale."
+                ],
+                "focus": "nuova sfida",
+                "watch": "la motivazione."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u21-colloquio-e1",
+              "kind": "choice",
+              "prompt": "___ lavorato tre anni nel settore.",
+              "answers": [
+                "Ho"
+              ],
+              "explain": "Avere + participio: ho lavorato.",
+              "options": [
+                "Ho",
+                "Sono",
+                "Faccio",
+                "Sto"
+              ]
+            },
+            {
+              "id": "it-foundations-u21-colloquio-e2",
+              "kind": "gap",
+              "prompt": "Ho ___ un piccolo team di sei persone. (gestire, participio)",
+              "answers": [
+                "gestito"
+              ],
+              "explain": "gestire → gestito."
+            },
+            {
+              "id": "it-foundations-u21-colloquio-e3",
+              "kind": "order",
+              "prompt": "Presenta il percorso: prima lo studio, poi il lavoro.",
+              "answers": [
+                "Prima ho studiato poi ho lavorato"
+              ],
+              "explain": "prima… poi: l’ordine del percorso."
+            },
+            {
+              "id": "it-foundations-u21-colloquio-e4",
+              "kind": "written",
+              "prompt": "Dì il tuo punto di forza: sei una persona affidabile.",
+              "answers": [
+                "sono una persona affidabile",
+                "sono affidabile"
+              ],
+              "explain": "sono una persona + aggettivo."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "grammar:present-perfect",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "it-foundations-u21-colleghi",
+          "title": "Con i colleghi",
+          "goal": "Descrivere il clima di lavoro e i colleghi, con opinioni e confronti.",
+          "intro": {
+            "explanation": [
+              "Il clima si descrive con aggettivi: « L’ambiente è rilassato », « Il ritmo è intenso », « L’atmosfera è collaborativa ».",
+              "I colleghi si descrivono con i fatti: « Il mio capo ascolta le idee », « I colleghi si aiutano volentieri ».",
+              "Poi dai la tua opinione e confronti: « Secondo me è un buon ambiente », « È più tranquillo del vecchio ufficio »."
+            ],
+            "examples": [
+              {
+                "text": "L’ambiente è rilassato ma serio.",
+                "meaning": "Il clima di lavoro."
+              },
+              {
+                "text": "Il mio capo ascolta le idee di tutti.",
+                "meaning": "Un buon capo."
+              },
+              {
+                "text": "I colleghi si aiutano volentieri.",
+                "meaning": "Un team collaborativo."
+              },
+              {
+                "text": "Secondo me è un buon ambiente.",
+                "meaning": "Dare un’opinione."
+              },
+              {
+                "text": "È più tranquillo del vecchio ufficio.",
+                "meaning": "Confrontare due lavori."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "l’ambiente di lavoro",
+              "meaning": "Il clima in ufficio.",
+              "note": "L’ambiente di lavoro è rilassato."
+            },
+            {
+              "text": "il capo ascolta",
+              "meaning": "Un segno di rispetto.",
+              "note": "Il mio capo ascolta le idee."
+            },
+            {
+              "text": "aiutarsi tra colleghi",
+              "meaning": "La collaborazione.",
+              "note": "Qui i colleghi si aiutano."
+            },
+            {
+              "text": "Secondo me…",
+              "meaning": "Dare un’opinione.",
+              "note": "Secondo me è un buon team."
+            },
+            {
+              "text": "più… di…",
+              "meaning": "Confrontare.",
+              "note": "È più tranquillo del vecchio lavoro."
+            }
+          ],
+          "situation": "In pausa caffè raccontate il nuovo ufficio: com’è il clima, come sono il capo e i colleghi, e confrontate col vecchio lavoro.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Descrivi il clima: ambiente rilassato.",
+                "expected": [
+                  "L’ambiente è rilassato.",
+                  "L’ambiente di lavoro è rilassato.",
+                  "L’ambiente e rilassato."
+                ],
+                "focus": "l’ambiente",
+                "watch": "ambiente + aggettivo."
+              },
+              {
+                "prompt": "Dì una cosa buona del tuo capo: ascolta.",
+                "expected": [
+                  "Il mio capo ascolta le idee di tutti.",
+                  "Il mio capo ascolta."
+                ],
+                "focus": "il capo",
+                "watch": "il capo = el jefe."
+              },
+              {
+                "prompt": "Descrivi il team: l’aiuto tra colleghi.",
+                "expected": [
+                  "I colleghi si aiutano.",
+                  "I miei colleghi si aiutano volentieri."
+                ],
+                "focus": "si aiutano",
+                "watch": "riflessivo plurale."
+              },
+              {
+                "prompt": "Dai la tua opinione sull’ambiente.",
+                "expected": [
+                  "Secondo me è un buon ambiente.",
+                  "Secondo me l’ambiente è ottimo.",
+                  "Secondo me l’ambiente e ottimo."
+                ],
+                "focus": "secondo me",
+                "watch": "secondo me = en mi opinión."
+              },
+              {
+                "prompt": "Confronta: questo ufficio, più tranquillo del vecchio.",
+                "expected": [
+                  "Questo ufficio è più tranquillo del vecchio.",
+                  "Questo ufficio e piu tranquillo del vecchio.",
+                  "È più tranquillo del vecchio ufficio.",
+                  "E piu tranquillo del vecchio ufficio."
+                ],
+                "focus": "più… di",
+                "watch": "il confronto."
+              },
+              {
+                "prompt": "Descrivi un ritmo intenso.",
+                "expected": [
+                  "Il ritmo è intenso.",
+                  "Il ritmo e intenso.",
+                  "Qui il ritmo di lavoro è intenso.",
+                  "Qui il ritmo di lavoro e intenso."
+                ],
+                "focus": "il ritmo",
+                "watch": "ritmo + aggettivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u21-colleghi-e1",
+              "kind": "choice",
+              "prompt": "Secondo me, l’ambiente ___ molto collaborativo.",
+              "answers": [
+                "è"
+              ],
+              "explain": "Essere + aggettivo: descrivere il clima.",
+              "options": [
+                "è",
+                "ha",
+                "sono",
+                "fa"
+              ]
+            },
+            {
+              "id": "it-foundations-u21-colleghi-e2",
+              "kind": "gap",
+              "prompt": "I colleghi si ___ volentieri. (aiutare)",
+              "answers": [
+                "aiutano"
+              ],
+              "explain": "Riflessivo plurale: si aiutano."
+            },
+            {
+              "id": "it-foundations-u21-colleghi-e3",
+              "kind": "order",
+              "prompt": "Dì una cosa buona del tuo capo.",
+              "answers": [
+                "Il mio capo ascolta le idee"
+              ],
+              "explain": "Il capo + ascoltare: rispetto."
+            },
+            {
+              "id": "it-foundations-u21-colleghi-e4",
+              "kind": "written",
+              "prompt": "Confronta: questo ufficio e il vecchio lavoro.",
+              "answers": [
+                "questo ufficio è più tranquillo del vecchio",
+                "questo ufficio e piu tranquillo del vecchio",
+                "è più tranquillo del vecchio lavoro",
+                "e piu tranquillo del vecchio lavoro"
+              ],
+              "explain": "più… di: il confronto."
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "function:describe-people",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "it-foundations-u21-obiettivi",
+          "title": "Obiettivi di lavoro",
+          "goal": "Parlare di piani e mete professionali: voglio riuscire a, mi piacerebbe.",
+          "intro": {
+            "explanation": [
+              "Le mete si presentano con voglio riuscire a + infinito: « Voglio riuscire a diventare capo di progetto ».",
+              "Più morbido: mi piacerebbe + infinito. « Mi piacerebbe lavorare all’estero », « Mi piacerebbe aprire un’attività ».",
+              "I piani concreti: « Ho intenzione di fare un corso », « L’anno prossimo cambierò lavoro »."
+            ],
+            "examples": [
+              {
+                "text": "Voglio riuscire a diventare capo di progetto.",
+                "meaning": "La meta chiara."
+              },
+              {
+                "text": "Mi piacerebbe lavorare all’estero.",
+                "meaning": "Il desiderio, con tatto."
+              },
+              {
+                "text": "Ho intenzione di fare un corso.",
+                "meaning": "Il piano concreto."
+              },
+              {
+                "text": "L’anno prossimo cambierò lavoro.",
+                "meaning": "Il progetto nel futuro."
+              },
+              {
+                "text": "Passo per passo, senza fretta.",
+                "meaning": "L’atteggiamento."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "voglio riuscire a + infinito",
+              "meaning": "La meta con determinazione.",
+              "note": "Voglio riuscire a aprire un’attività."
+            },
+            {
+              "text": "mi piacerebbe + infinito",
+              "meaning": "Il desiderio gentile.",
+              "note": "Mi piacerebbe lavorare all’estero."
+            },
+            {
+              "text": "avere intenzione di",
+              "meaning": "Il piano deciso.",
+              "note": "Ho intenzione di cambiare lavoro."
+            },
+            {
+              "text": "diventare",
+              "meaning": "La meta professionale.",
+              "note": "Voglio diventare capo di progetto."
+            },
+            {
+              "text": "a lungo termine",
+              "meaning": "Il futuro lontano.",
+              "note": "A lungo termine vorrei una mia équipe."
+            }
+          ],
+          "situation": "A pranzo parlate di futuro: le mete di ognuno, i desideri con tatto e i piani concreti per l’anno prossimo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì la tua meta: riuscire a diventare capo di progetto.",
+                "expected": [
+                  "Voglio riuscire a diventare capo di progetto.",
+                  "Voglio diventare capo di progetto."
+                ],
+                "focus": "voglio riuscire a",
+                "watch": "la meta con determinazione."
+              },
+              {
+                "prompt": "Esprimi il desiderio: lavorare all’estero.",
+                "expected": [
+                  "Mi piacerebbe lavorare all’estero.",
+                  "Mi piacerebbe lavorare all’estero un anno."
+                ],
+                "focus": "mi piacerebbe",
+                "watch": "mi piacerebbe + infinito."
+              },
+              {
+                "prompt": "Dì il piano deciso: un corso di inglese.",
+                "expected": [
+                  "Ho intenzione di fare un corso di inglese.",
+                  "Ho intenzione di fare un corso."
+                ],
+                "focus": "ho intenzione di",
+                "watch": "avere intenzione di + infinito."
+              },
+              {
+                "prompt": "Dì il progetto nel futuro: l’anno prossimo, cambiare lavoro.",
+                "expected": [
+                  "L’anno prossimo cambierò lavoro.",
+                  "L’anno prossimo cambiero lavoro.",
+                  "L’anno prossimo cambio lavoro."
+                ],
+                "focus": "cambierò",
+                "watch": "il futuro."
+              },
+              {
+                "prompt": "Dì la meta di Marco: diventare direttore.",
+                "expected": [
+                  "Marco vuole diventare direttore.",
+                  "Vuole diventare direttore."
+                ],
+                "focus": "vuole",
+                "watch": "volere + infinito."
+              },
+              {
+                "prompt": "Il desiderio di Anna: aprire un’attività.",
+                "expected": [
+                  "Ad Anna piacerebbe aprire un’attività.",
+                  "Le piacerebbe aprire un’attività."
+                ],
+                "focus": "piacerebbe",
+                "watch": "il desiderio di lei."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u21-obiettivi-e1",
+              "kind": "choice",
+              "prompt": "___ riuscire a diventare capo di progetto.",
+              "answers": [
+                "Voglio"
+              ],
+              "explain": "voglio riuscire a: la meta con determinazione.",
+              "options": [
+                "Voglio",
+                "Volevo",
+                "Volere",
+                "Vorrà"
+              ]
+            },
+            {
+              "id": "it-foundations-u21-obiettivi-e2",
+              "kind": "gap",
+              "prompt": "Mi ___ lavorare all’estero. (piacere, condizionale)",
+              "answers": [
+                "piacerebbe"
+              ],
+              "explain": "mi piacerebbe + infinito."
+            },
+            {
+              "id": "it-foundations-u21-obiettivi-e3",
+              "kind": "order",
+              "prompt": "Dì il tuo piano: intenzione di cambiare lavoro.",
+              "answers": [
+                "Ho intenzione di cambiare lavoro"
+              ],
+              "explain": "avere intenzione di + infinito."
+            },
+            {
+              "id": "it-foundations-u21-obiettivi-e4",
+              "kind": "written",
+              "prompt": "Dì la meta di Marco: il sogno di diventare direttore.",
+              "answers": [
+                "marco vuole diventare direttore",
+                "vuole diventare direttore"
+              ],
+              "explain": "volere + infinito: la meta."
+            }
+          ],
+          "skills": [
+            "function:describe-goals",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
           ]
         }
       ]

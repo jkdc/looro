@@ -965,6 +965,90 @@
         "grammar:going-to"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-read-avaliacao-defeito",
+      "title": "A avaliação do defeito",
+      "level": "A2",
+      "topic": "problemas",
+      "unitID": "pt-foundations-u20",
+      "text": "Avaliação: Liquidificador Vermelho 500 — nota: duas estrelas. Comprei o aparelho na semana passada e ele quebrou no terceiro uso. Primeiro, fez um barulho estranho; depois, parou de girar. Liguei para a loja e a atendente foi tranquila: pediu a nota fiscal e marcou a troca para o sábado. Trouxe a nota e o aparelho e recebi um novo na hora. A troca foi rápida, mas o produto não durou. Minha dica: guarde sempre a nota fiscal — ela resolve a reclamação.",
+      "questions": [
+        {
+          "id": "pt-read-avaliacao-defeito-q1",
+          "kind": "choice",
+          "prompt": "Quantas estrelas tem a avaliação ?",
+          "options": [
+            "Duas",
+            "Três",
+            "Quatro",
+            "Cinco"
+          ],
+          "answers": [
+            "Duas"
+          ],
+          "explain": "Nota: duas estrelas."
+        },
+        {
+          "id": "pt-read-avaliacao-defeito-q2",
+          "kind": "written",
+          "prompt": "Quando o aparelho quebrou ?",
+          "answers": [
+            "no terceiro uso",
+            "terceiro uso"
+          ],
+          "explain": "Ele quebrou no terceiro uso."
+        },
+        {
+          "id": "pt-read-avaliacao-defeito-q3",
+          "kind": "choice",
+          "prompt": "O que aconteceu primeiro ?",
+          "options": [
+            "Fez um barulho estranho",
+            "Parou de girar",
+            "Vazou água",
+            "Não ligou"
+          ],
+          "answers": [
+            "Fez um barulho estranho"
+          ],
+          "explain": "Primeiro, fez um barulho estranho; depois, parou de girar."
+        },
+        {
+          "id": "pt-read-avaliacao-defeito-q4",
+          "kind": "written",
+          "prompt": "O que a atendente pediu ?",
+          "answers": [
+            "a nota fiscal",
+            "a nota",
+            "nota fiscal"
+          ],
+          "explain": "A atendente pediu a nota fiscal e marcou a troca para o sábado."
+        },
+        {
+          "id": "pt-read-avaliacao-defeito-q5",
+          "kind": "choice",
+          "prompt": "O que o autor recomenda no fim ?",
+          "options": [
+            "Guardar a nota fiscal",
+            "Não comprar de novo",
+            "Trocar de loja",
+            "Ligar todo dia"
+          ],
+          "answers": [
+            "Guardar a nota fiscal"
+          ],
+          "explain": "Guarde sempre a nota fiscal — ela resolve a reclamação."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "languageID": "pt"
     }
   ]
 }

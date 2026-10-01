@@ -955,6 +955,91 @@
           "explain": "«Llevo el altavoz»."
         }
       ]
+    },
+    {
+      "id": "es-read-resena-averia",
+      "languageID": "es",
+      "title": "La reseña del servicio técnico",
+      "level": "A2",
+      "topic": "reseñas",
+      "unitID": "es-foundations-u21",
+      "text": "★★★☆☆ Servicio rápido, pero caro. Escribo esta reseña porque mi lavadora se estropeó el sábado. Llamé al servicio técnico el lunes por la mañana y el técnico llegó el martes a las diez. Miró la máquina, cambió una pieza pequeña y la lavadora funcionó otra vez en una hora. El arreglo fue rápido y el técnico fue muy amable. El problema fue el precio: la pieza costó treinta euros y la visita, noventa. Lo recomiendo, pero pide primero el presupuesto.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-resena-averia-q1",
+          "kind": "choice",
+          "prompt": "¿Cuál era la avería?",
+          "options": [
+            "La lavadora se estropeó",
+            "El teléfono se rompió",
+            "La nevera dejó de funcionar",
+            "La luz se fue"
+          ],
+          "answers": [
+            "La lavadora se estropeó"
+          ],
+          "explain": "Escribo esta reseña porque mi lavadora se estropeó el sábado."
+        },
+        {
+          "id": "es-read-resena-averia-q2",
+          "kind": "written",
+          "prompt": "¿Qué día llegó el técnico?",
+          "answers": [
+            "el martes",
+            "martes",
+            "el martes a las diez"
+          ],
+          "explain": "Llamó el lunes y el técnico llegó el martes a las diez."
+        },
+        {
+          "id": "es-read-resena-averia-q3",
+          "kind": "choice",
+          "prompt": "¿Qué fue lo mejor del servicio?",
+          "options": [
+            "Fue rápido y el técnico, amable",
+            "Fue barato",
+            "Vino el mismo día",
+            "Regaló la pieza"
+          ],
+          "answers": [
+            "Fue rápido y el técnico, amable"
+          ],
+          "explain": "El arreglo fue rápido y el técnico fue muy amable."
+        },
+        {
+          "id": "es-read-resena-averia-q4",
+          "kind": "choice",
+          "prompt": "¿Cuál fue el problema según el autor?",
+          "options": [
+            "El precio de la pieza y de la visita",
+            "El técnico llegó tarde",
+            "La lavadora no funcionó",
+            "No atendió el teléfono"
+          ],
+          "answers": [
+            "El precio de la pieza y de la visita"
+          ],
+          "explain": "La pieza costó treinta euros y la visita, noventa."
+        },
+        {
+          "id": "es-read-resena-averia-q5",
+          "kind": "written",
+          "prompt": "¿Qué recomienda el autor pedir antes del arreglo?",
+          "answers": [
+            "el presupuesto",
+            "presupuesto",
+            "primero el presupuesto"
+          ],
+          "explain": "Lo recomiendo, pero pide primero el presupuesto."
+        }
+      ]
     }
   ]
 }

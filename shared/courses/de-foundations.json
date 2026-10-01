@@ -3802,6 +3802,178 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "de-foundations-u9-ton",
+          "title": "Der genaue Ton",
+          "goal": "Register und Kollokationen justieren: eine Entscheidung treffen statt machen, Lust haben auf etwas — bis jedes Wort am Platz sitzt.",
+          "intro": {
+            "explanation": [
+              "Kollokationen sind feste Paare: eine Entscheidung treffen, eine Rolle spielen, Kritik üben — das falsche Verb (« eine Entscheidung machen ») verrät sofort den Nichtmuttersprachler.",
+              "Die Präposition gehört dazu: Lust haben AUF etwas — « Ich habe große Lust auf dieses Projekt » (Akkusativ).",
+              "Register justieren: « Wir werden in Kürze eine Entscheidung treffen » klingt formeller als « Wir entscheiden uns bald » — Inhalt gleich, Ton verschieden."
+            ],
+            "examples": [
+              {
+                "text": "Wir müssen in Kürze eine Entscheidung treffen.",
+                "meaning": "treffen, nicht machen: die Kollokation."
+              },
+              {
+                "text": "Ich habe große Lust auf dieses Projekt.",
+                "meaning": "Lust haben auf + Akkusativ."
+              },
+              {
+                "text": "Der Zeitplan spielt eine entscheidende Rolle.",
+                "meaning": "eine Rolle spielen: festes Verb."
+              },
+              {
+                "text": "Genau genommen ist das noch keine Zusage.",
+                "meaning": "genau genommen: präzise eingrenzen."
+              },
+              {
+                "text": "Im Grunde teile ich Ihre Einschätzung.",
+                "meaning": "Meinung gemäßigt einleiten."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "eine Entscheidung treffen",
+              "meaning": "Formell entscheiden.",
+              "note": "nicht: eine Entscheidung machen"
+            },
+            {
+              "text": "Lust haben auf + Akk.",
+              "meaning": "Interesse signalisieren.",
+              "note": "Lust auf ein zweites Gespräch ?"
+            },
+            {
+              "text": "eine Rolle spielen",
+              "meaning": "Wichtig sein.",
+              "note": "Die Fristen spielen eine große Rolle."
+            },
+            {
+              "text": "genau genommen / streng genommen",
+              "meaning": "Präzise eingrenzen.",
+              "note": "Streng genommen fehlt noch die Zusage."
+            },
+            {
+              "text": "im Grunde",
+              "meaning": "Gemäßigt zustimmen.",
+              "note": "Im Grunde stimme ich zu."
+            }
+          ],
+          "situation": "Sie überarbeiten eine Mail an die Projektleitung: « eine Entscheidung treffen » statt « machen », « Lust auf das Projekt » — und mit « genau genommen » grenzen Sie eine Aussage präzise ein.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Korrigieren Sie die Kollokation: wir machen morgen eine Entscheidung.",
+                "expected": [
+                  "wir treffen morgen eine entscheidung",
+                  "wir werden morgen eine entscheidung treffen"
+                ],
+                "focus": "eine entscheidung treffen",
+                "watch": "treffen, nicht machen."
+              },
+              {
+                "prompt": "Sagen Sie, dass Sie Lust auf das Projekt haben.",
+                "expected": [
+                  "ich habe große lust auf das projekt",
+                  "ich habe grosses interesse an dem projekt",
+                  "ich habe lust auf das projekt"
+                ],
+                "focus": "lust haben auf",
+                "watch": "Lust haben auf + Akkusativ."
+              },
+              {
+                "prompt": "Formulieren Sie: der Zeitplan ist sehr wichtig. (eine Rolle spielen)",
+                "expected": [
+                  "der zeitplan spielt eine wichtige rolle",
+                  "der zeitplan spielt eine große rolle",
+                  "der zeitplan spielt eine entscheidende rolle"
+                ],
+                "focus": "eine rolle spielen",
+                "watch": "spielen, nicht machen."
+              },
+              {
+                "prompt": "Grenzen Sie präzise ein: es ist noch keine Zusage. (streng genommen)",
+                "expected": [
+                  "streng genommen ist das noch keine zusage",
+                  "streng genommen ist es noch keine zusage",
+                  "genau genommen ist das noch keine zusage"
+                ],
+                "focus": "streng genommen",
+                "watch": "streng/genau genommen + Einschränkung."
+              },
+              {
+                "prompt": "Stimmen Sie gemäßigt zu. (im Grunde)",
+                "expected": [
+                  "im grunde stimme ich zu",
+                  "im grunde teile ich ihre einschätzung"
+                ],
+                "focus": "im grunde",
+                "watch": "im Grunde: gemäßigte Zustimmung."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u9-ton-e1",
+              "kind": "choice",
+              "prompt": "Formell formuliert: « Wir werden morgen eine Entscheidung ___. »",
+              "explain": "Kollokation: eine Entscheidung treffen — nicht machen.",
+              "answers": [
+                "treffen"
+              ],
+              "options": [
+                "treffen",
+                "machen",
+                "geben",
+                "setzen"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-ton-e2",
+              "kind": "gap",
+              "prompt": "Ich habe ___ auf dieses Projekt. (Wendung: Interesse haben)",
+              "explain": "Lust haben auf + Akkusativ: die feste Wendung.",
+              "answers": [
+                "Lust"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-ton-e3",
+              "kind": "order",
+              "prompt": "Formell: die Fristen sind sehr wichtig. (eine Rolle spielen)",
+              "explain": "eine Rolle spielen: festes Verb + Adjektiv.",
+              "answers": [
+                "Die Fristen spielen eine wichtige Rolle"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-ton-e4",
+              "kind": "written",
+              "prompt": "Grenzen Sie präzise ein: es ist noch keine Zusage. (streng genommen)",
+              "explain": "streng genommen + Einschränkung: der präzise Ton.",
+              "answers": [
+                "streng genommen ist das noch keine zusage",
+                "streng genommen ist es noch keine zusage",
+                "genau genommen ist das noch keine zusage"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:collocations",
+            "function:express-opinion",
+            "writing:argument",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -8647,6 +8819,1650 @@
           ],
           "prerequisites": [
             "grammar:past-simple-regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u19",
+      "title": "Ein Besuch",
+      "subtitle": "Bei Freunden zu Gast",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "die-einladung",
+          "title": "Die Einladung",
+          "subtitle": "Darf ich … ?",
+          "symbol": "door.left.open",
+          "category": "Course",
+          "situation": "Jakob klingelt an Leas Tür: darf er reinkommen, darf er die Schuhe anlassen ? Die Gastgeberin entscheidet mit darf.",
+          "colorIndex": 0
+        },
+        {
+          "id": "das-mitbringsel",
+          "title": "Das Mitbringsel",
+          "subtitle": "Ich bringe etwas mit",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "Niemals mit leeren Händen: Blumen, Kuchen, Schokolade — was bringst du zu Besuch mit ?",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u19-besuch",
+          "title": "Darf ich reinkommen ?",
+          "goal": "Um Erlaubnis bitten: mit darf fragst du, was erlaubt ist — an der Tür, im Haus, bei Freunden.",
+          "intro": {
+            "explanation": [
+              "Fragen mit darf: « Darf ich reinkommen ? », « Darf ich die Schuhe anlassen ? » darf ist wie kann: ich darf, du darfst, Sie dürfen.",
+              "Erlaubnis geben geht mit du darfst: « Du darfst gern reinkommen. » Kurz und freundlich: « Natürlich, komm rein ! »",
+              "Was verboten ist, sagt man mit darf nicht: « Hier darf man nicht rauchen. » darf nicht = es ist nicht erlaubt."
+            ],
+            "examples": [
+              {
+                "text": "Darf ich reinkommen ?",
+                "meaning": "An der Tür um Erlaubnis fragen."
+              },
+              {
+                "text": "Darf ich Ihnen helfen ?",
+                "meaning": "Höflich mit Sie: dürfen."
+              },
+              {
+                "text": "Du darfst gern die Schuhe ausziehen.",
+                "meaning": "Erlaubnis geben: du darfst."
+              },
+              {
+                "text": "Hier darf man nicht rauchen.",
+                "meaning": "Verbot: darf nicht."
+              },
+              {
+                "text": "Natürlich, komm rein !",
+                "meaning": "Die freundliche Antwort."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Darf ich … ?",
+              "meaning": "Um Erlaubnis bitten.",
+              "note": "Darf ich reinkommen ?"
+            },
+            {
+              "text": "du darfst / Sie dürfen",
+              "meaning": "Erlaubnis geben.",
+              "note": "Du darfst gern mitkommen."
+            },
+            {
+              "text": "darf nicht",
+              "meaning": "Nicht erlaubt.",
+              "note": "Ich darf hier nicht parken."
+            },
+            {
+              "text": "Natürlich !",
+              "meaning": "Ja sagen.",
+              "note": "Natürlich, komm rein !"
+            },
+            {
+              "text": "komm rein / reinkommen",
+              "meaning": "Ins Haus bitten.",
+              "note": "trennbar: Ich komme rein."
+            }
+          ],
+          "situation": "Jakob steht vor Leas Tür und klingelt. « Darf ich reinkommen ? » — « Natürlich ! Die Schuhe darfst du ausziehen. » Rauchen darf man hier nicht.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag an der Tür, ob du reinkommen darfst.",
+                "expected": [
+                  "Darf ich reinkommen ?",
+                  "darf ich reinkommen",
+                  "Darf ich hereinkommen ?"
+                ],
+                "focus": "darf ich",
+                "watch": "Fragen mit Darf ich … ?"
+              },
+              {
+                "prompt": "Frag höflich mit Sie, ob du helfen darfst.",
+                "expected": [
+                  "Darf ich Ihnen helfen ?",
+                  "darf ich ihnen helfen",
+                  "Darf ich Ihnen helfen"
+                ],
+                "focus": "darf ich ihnen",
+                "watch": "Höflich: Darf ich Ihnen … ?"
+              },
+              {
+                "prompt": "Gib deinem Gast die Erlaubnis: er darf die Schuhe ausziehen.",
+                "expected": [
+                  "Du darfst die Schuhe ausziehen.",
+                  "du darfst die schuhe ausziehen"
+                ],
+                "focus": "du darfst",
+                "watch": "Erlaubnis: du darfst + Infinitiv."
+              },
+              {
+                "prompt": "Sag, dass man hier nicht rauchen darf.",
+                "expected": [
+                  "Hier darf man nicht rauchen.",
+                  "hier darf man nicht rauchen",
+                  "Man darf hier nicht rauchen."
+                ],
+                "focus": "darf nicht",
+                "watch": "Verbot: darf nicht."
+              },
+              {
+                "prompt": "Dein Gast fragt: Darf ich reinkommen ? Antworte freundlich mit Ja.",
+                "expected": [
+                  "Natürlich, komm rein !",
+                  "natürlich komm rein",
+                  "Natürlich komm rein",
+                  "Klar, komm rein !"
+                ],
+                "focus": "natürlich",
+                "watch": "Natürlich ! = Ja, gern."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u19-besuch-e1",
+              "kind": "choice",
+              "prompt": "« ___ ich reinkommen ? » (an der Tür)",
+              "explain": "Um Erlaubnis bitten: Darf ich … ?",
+              "answers": [
+                "Darf"
+              ],
+              "options": [
+                "Darf",
+                "Kannst",
+                "Muss",
+                "Bin"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-besuch-e2",
+              "kind": "gap",
+              "prompt": "Du ___ gern mitessen. (Erlaubnis geben)",
+              "explain": "du darfst: so gibst du die Erlaubnis.",
+              "answers": [
+                "darfst"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-besuch-e3",
+              "kind": "order",
+              "prompt": "Frag an der Tür höflich mit Sie, ob du helfen darfst.",
+              "explain": "Darf ich Ihnen helfen ? — die höfliche Frage mit Ihnen.",
+              "answers": [
+                "Darf ich Ihnen helfen"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-besuch-e4",
+              "kind": "written",
+              "prompt": "Sag, dass du hier nicht parken darfst.",
+              "explain": "darf nicht = verboten: ich darf hier nicht parken.",
+              "answers": [
+                "ich darf hier nicht parken",
+                "hier darf man nicht parken"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:can",
+            "function:make-requests",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u19-mitbringsel",
+          "title": "Ich bringe etwas mit",
+          "goal": "Den Gastgebern etwas anbieten: Blumen, Kuchen oder Schokolade — ich bringe … mit.",
+          "intro": {
+            "explanation": [
+              "Das Mitbringsel kommt mit: « Ich bringe einen Kuchen mit. » mitbringen ist trennbar: ich bringe … mit.",
+              "Nachfragen am Telefon: « Was kann ich mitbringen ? » — die Antwort: « Bring nichts mit, komm einfach ! »",
+              "Am Tisch bietet man an: « Möchtest du noch Saft ? » — und bedankt sich: « Danke, der Kuchen schmeckt super ! »"
+            ],
+            "examples": [
+              {
+                "text": "Ich bringe Blumen mit.",
+                "meaning": "mitbringen: ich bringe … mit."
+              },
+              {
+                "text": "Was kann ich mitbringen ?",
+                "meaning": "Nach dem Mitbringsel fragen."
+              },
+              {
+                "text": "Bring doch Schokolade mit !",
+                "meaning": "Einen Vorschlag machen."
+              },
+              {
+                "text": "Der Kuchen ist für euch.",
+                "meaning": "Das Geschenk zeigen."
+              },
+              {
+                "text": "Möchtest du noch Saft ?",
+                "meaning": "Am Tisch anbieten."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich bringe … mit.",
+              "meaning": "Das Mitbringsel ankündigen.",
+              "note": "Ich bringe Wein mit."
+            },
+            {
+              "text": "Was kann ich mitbringen ?",
+              "meaning": "Nachfragen.",
+              "note": "« Bring nichts mit ! »"
+            },
+            {
+              "text": "Blumen / Schokolade / ein Kuchen",
+              "meaning": "Typische Mitbringsel.",
+              "note": "Blumen für die Gastgeberin"
+            },
+            {
+              "text": "Möchtest du … ?",
+              "meaning": "Am Tisch anbieten.",
+              "note": "Möchtest du noch Kuchen ?"
+            },
+            {
+              "text": "Das ist für dich/euch.",
+              "meaning": "Übergeben.",
+              "note": "Die Blumen sind für dich."
+            }
+          ],
+          "situation": "Jakob fragt am Telefon: « Was kann ich mitbringen ? » Lea sagt: « Bring nichts mit ! » — aber er bringt Blumen und einen Kuchen mit. Am Tisch: « Möchtest du noch Saft ? »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag, was du mitbringst: einen Kuchen.",
+                "expected": [
+                  "Ich bringe einen Kuchen mit.",
+                  "ich bringe einen kuchen mit"
+                ],
+                "focus": "ich bringe",
+                "watch": "trennbar: bringe … mit."
+              },
+              {
+                "prompt": "Frag am Telefon, was du mitbringen kannst.",
+                "expected": [
+                  "Was kann ich mitbringen ?",
+                  "was kann ich mitbringen"
+                ],
+                "focus": "was kann ich",
+                "watch": "Fragen mit kann."
+              },
+              {
+                "prompt": "Biete am Tisch noch Kuchen an. (Möchtest du … ?)",
+                "expected": [
+                  "Möchtest du noch Kuchen ?",
+                  "möchtest du noch kuchen",
+                  "Moechtest du noch Kuchen ?"
+                ],
+                "focus": "möchtest du",
+                "watch": "Angebot: Möchtest du … ?"
+              },
+              {
+                "prompt": "Gib das Mitbringsel weiter: Blumen, und an wen sie gehen.",
+                "expected": [
+                  "Die Blumen sind für Lea.",
+                  "die blumen sind für lea",
+                  "die blumen sind fur lea"
+                ],
+                "focus": "für",
+                "watch": "für + Akkusativ."
+              },
+              {
+                "prompt": "Bedanke dich für den Kuchen: er schmeckt super.",
+                "expected": [
+                  "Der Kuchen schmeckt super.",
+                  "der kuchen schmeckt super",
+                  "Danke, der Kuchen schmeckt super !"
+                ],
+                "focus": "schmeckt",
+                "watch": "schmecken: Der Kuchen schmeckt super."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u19-mitbringsel-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ einen Salat mit. » (zur Party)",
+              "explain": "mitbringen ist trennbar: ich bringe … mit.",
+              "answers": [
+                "bringe"
+              ],
+              "options": [
+                "bringe",
+                "bringst",
+                "bringt",
+                "kommen"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-mitbringsel-e2",
+              "kind": "gap",
+              "prompt": "Was ___ ich mitbringen ? (können)",
+              "explain": "Fragen mit kann: Was kann ich mitbringen ?",
+              "answers": [
+                "kann"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-mitbringsel-e3",
+              "kind": "order",
+              "prompt": "Sag, was du zu Kim mitbringst: Blumen.",
+              "explain": "trennbares Verb am Satzende: bringe … mit.",
+              "answers": [
+                "Ich bringe Blumen mit"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-mitbringsel-e4",
+              "kind": "written",
+              "prompt": "Biete deinem Gast noch Tee an.",
+              "explain": "Am Tisch anbieten: Möchtest du noch Tee ?",
+              "answers": [
+                "möchtest du noch tee",
+                "moechtest du noch tee",
+                "willst du noch tee"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "vocab:food",
+            "vocab:social-expressions",
+            "function:order-food"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u19-abschied",
+          "title": "Bis zum nächsten Mal",
+          "goal": "Sich verabschieden und danken: Vielen Dank für die Einladung — bis zum nächsten Mal !",
+          "intro": {
+            "explanation": [
+              "Danken gehört zum Abschied: « Vielen Dank für die Einladung ! » oder kurz: « Danke für alles ! »",
+              "Der Abschied mit bis: « Bis bald ! », « Bis zum nächsten Mal ! » — und: « Grüße an deine Familie ! »",
+              "Hilfe und Weggehen mit kann: « Kann ich dir beim Aufräumen helfen ? » — « Komm gut nach Hause ! »"
+            ],
+            "examples": [
+              {
+                "text": "Vielen Dank für die Einladung !",
+                "meaning": "Sich bedanken."
+              },
+              {
+                "text": "Es war wirklich schön.",
+                "meaning": "Das Kompliment am Ende."
+              },
+              {
+                "text": "Bis zum nächsten Mal !",
+                "meaning": "Der Abschied."
+              },
+              {
+                "text": "Komm gut nach Hause !",
+                "meaning": "Gute Heimfahrt wünschen."
+              },
+              {
+                "text": "Kann ich dir beim Aufräumen helfen ?",
+                "meaning": "Hilfe anbieten mit kann."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Vielen Dank für …",
+              "meaning": "Sich bedanken.",
+              "note": "Vielen Dank für das tolle Essen !"
+            },
+            {
+              "text": "Bis bald ! / Bis zum nächsten Mal !",
+              "meaning": "Der Abschied.",
+              "note": "Bis Sonntag !"
+            },
+            {
+              "text": "Grüße an … !",
+              "meaning": "Grüße ausrichten.",
+              "note": "Grüße an deine Eltern !"
+            },
+            {
+              "text": "Komm gut nach Hause !",
+              "meaning": "Gute Heimfahrt wünschen.",
+              "note": "auch: Fahr gut !"
+            },
+            {
+              "text": "Kann ich dir helfen ?",
+              "meaning": "Hilfe anbieten.",
+              "note": "beim Aufräumen, beim Kochen"
+            }
+          ],
+          "situation": "Am späten Abend steht Jakob auf: « Vielen Dank für die Einladung ! » Er hilft kurz beim Aufräumen und verabschiedet sich: « Bis zum nächsten Mal ! Grüße an Tim ! »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Bedanke dich für die Einladung.",
+                "expected": [
+                  "Vielen Dank für die Einladung.",
+                  "vielen dank für die einladung",
+                  "vielen dank fur die einladung",
+                  "Danke für die Einladung."
+                ],
+                "focus": "vielen dank",
+                "watch": "Vielen Dank für + Akkusativ."
+              },
+              {
+                "prompt": "Sag am Ende des Abends, dass es schön war.",
+                "expected": [
+                  "Es war schön.",
+                  "es war schön",
+                  "es war schoen",
+                  "Es war wirklich schön."
+                ],
+                "focus": "es war schön",
+                "watch": "« Es war schön »: feste Formel."
+              },
+              {
+                "prompt": "Verabschiede dich mit der festen Formel fürs Wiedersehen.",
+                "expected": [
+                  "Bis zum nächsten Mal !",
+                  "bis zum nächsten mal",
+                  "bis zum nachsten mal",
+                  "Bis bald !"
+                ],
+                "focus": "bis",
+                "watch": "bis + Zeit: bis bald, bis Sonntag."
+              },
+              {
+                "prompt": "Biete Hilfe beim Aufräumen an. (kann)",
+                "expected": [
+                  "Kann ich dir beim Aufräumen helfen ?",
+                  "kann ich dir beim aufräumen helfen",
+                  "kann ich dir beim aufraumen helfen"
+                ],
+                "focus": "kann ich dir",
+                "watch": "kann + beim: beim Aufräumen."
+              },
+              {
+                "prompt": "Wünsch deinem Gastgeber eine gute Heimfahrt.",
+                "expected": [
+                  "Komm gut nach Hause !",
+                  "komm gut nachhause",
+                  "Gute Heimfahrt !",
+                  "Fahr gut !"
+                ],
+                "focus": "komm gut",
+                "watch": "« Komm gut nach Hause ! »"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u19-abschied-e1",
+              "kind": "choice",
+              "prompt": "« Vielen Dank ___ die Einladung ! »",
+              "explain": "Vielen Dank für + Akkusativ: für die Einladung.",
+              "answers": [
+                "für"
+              ],
+              "options": [
+                "für",
+                "an",
+                "auf",
+                "mit"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-abschied-e2",
+              "kind": "gap",
+              "prompt": "___ zum nächsten Mal !",
+              "explain": "Der Abschied: Bis zum nächsten Mal !",
+              "answers": [
+                "Bis"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-abschied-e3",
+              "kind": "order",
+              "prompt": "Biete Hilfe beim Aufräumen an.",
+              "explain": "Hilfe anbieten mit kann: Kann ich dir helfen ?",
+              "answers": [
+                "Kann ich dir beim Aufräumen helfen"
+              ]
+            },
+            {
+              "id": "de-foundations-u19-abschied-e4",
+              "kind": "written",
+              "prompt": "Verabschiede dich für das nächste Wochenende. (bis)",
+              "explain": "bis + Zeit: bis zum nächsten Mal.",
+              "answers": [
+                "bis zum nächsten mal",
+                "bis zum nachsten mal",
+                "bis bald",
+                "bis sonntag"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "grammar:can"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u20",
+      "title": "Alltagsprobleme",
+      "subtitle": "Kaputt und gelöst",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "die-panne",
+          "title": "Die Panne",
+          "subtitle": "Es ist kaputtgegangen",
+          "symbol": "wrench.and.screwdriver",
+          "category": "Course",
+          "situation": "Die Lampe geht nicht mehr, das Handy war im Wasser: Was ist passiert ? Ihr erzählt Pannen im Perfekt.",
+          "colorIndex": 0
+        },
+        {
+          "id": "die-reklamation",
+          "title": "Die Reklamation",
+          "subtitle": "Höflich reklamieren",
+          "symbol": "phone.badge.checkmark",
+          "category": "Course",
+          "situation": "Der Wasserkocher ist kaputt: Anruf im Laden, Rechnung bereithalten, freundlich eine Lösung finden.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u20-defekt",
+          "title": "Es ist kaputtgegangen",
+          "goal": "Eine Panne im Perfekt erzählen: Was ist kaputtgegangen, was hast du gemacht ?",
+          "intro": {
+            "explanation": [
+              "Pannen erzählt man im Perfekt: « Mein Handy ist kaputtgegangen. », « Die Lampe hat nicht mehr funktioniert. »",
+              "sein oder haben ? Bewegung und Veränderung mit sein: « Das Glas ist runtergefallen. » Alles andere mit haben: « Ich habe die Schlüssel verloren. »",
+              "Regelmäßige Partizipien auf -t: gemacht, gekauft, passiert — unregelmäßige: gegangen, verloren, gefunden."
+            ],
+            "examples": [
+              {
+                "text": "Mein Handy ist kaputtgegangen.",
+                "meaning": "sein + Partizip: Veränderung."
+              },
+              {
+                "text": "Die Lampe hat nicht mehr funktioniert.",
+                "meaning": "haben + Partizip."
+              },
+              {
+                "text": "Das Glas ist runtergefallen.",
+                "meaning": "Bewegung: runterfallen → ist."
+              },
+              {
+                "text": "Ich habe meine Schlüssel verloren.",
+                "meaning": "verlieren → verloren."
+              },
+              {
+                "text": "Was ist passiert ?",
+                "meaning": "Nach der Panne fragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "kaputtgehen → ist kaputtgegangen",
+              "meaning": "Defekt.",
+              "note": "Der Drucker ist kaputtgegangen."
+            },
+            {
+              "text": "Was ist passiert ?",
+              "meaning": "Nachfragen.",
+              "note": "Erzähl mal, was passiert ist."
+            },
+            {
+              "text": "nicht mehr funktionieren",
+              "meaning": "Defekt, sachlich.",
+              "note": "Der Drucker funktioniert nicht mehr."
+            },
+            {
+              "text": "verlieren → verloren",
+              "meaning": "Unregelmäßig.",
+              "note": "Ich habe meinen Schlüssel verloren."
+            },
+            {
+              "text": "runterfallen → ist runtergefallen",
+              "meaning": "sein + Partizip.",
+              "note": "Die Tasse ist runtergefallen."
+            }
+          ],
+          "situation": "Mia erzählt ihre Panne vom Dienstag: Das Handy ist ins Wasser gefallen und ist kaputtgegangen. Paul fragt: « Was hast du dann gemacht ? » — sie hat es sofort ausgemacht.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Erzähle: dein Handy ist kaputtgegangen.",
+                "expected": [
+                  "Mein Handy ist kaputtgegangen.",
+                  "mein handy ist kaputtgegangen",
+                  "mein handy ist kaputt gegangen"
+                ],
+                "focus": "ist kaputtgegangen",
+                "watch": "sein + Partizip."
+              },
+              {
+                "prompt": "Frag nach der Panne.",
+                "expected": [
+                  "Was ist passiert ?",
+                  "was ist passiert"
+                ],
+                "focus": "was ist passiert",
+                "watch": "Feste Frage: Was ist passiert ?"
+              },
+              {
+                "prompt": "Erzähle im Perfekt: die Lampe funktioniert nicht mehr.",
+                "expected": [
+                  "Die Lampe hat nicht mehr funktioniert.",
+                  "die lampe hat nicht mehr funktioniert"
+                ],
+                "focus": "hat funktioniert",
+                "watch": "haben + Partizip."
+              },
+              {
+                "prompt": "Sag: du hast deine Schlüssel verloren.",
+                "expected": [
+                  "Ich habe meine Schlüssel verloren.",
+                  "ich habe meine schlüssel verloren",
+                  "Ich habe den Schlüssel verloren."
+                ],
+                "focus": "verloren",
+                "watch": "verlieren → verloren."
+              },
+              {
+                "prompt": "Erzähle die Panne mit der Tasse. (runterfallen)",
+                "expected": [
+                  "Die Tasse ist runtergefallen.",
+                  "die tasse ist runtergefallen",
+                  "die tasse ist runter gefallen"
+                ],
+                "focus": "ist runtergefallen",
+                "watch": "Bewegung: sein + Partizip."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u20-defekt-e1",
+              "kind": "choice",
+              "prompt": "« Mein Handy ___ kaputtgegangen. »",
+              "explain": "kaputtgehen mit sein: ist kaputtgegangen.",
+              "answers": [
+                "ist"
+              ],
+              "options": [
+                "ist",
+                "hat",
+                "bin",
+                "wird"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-defekt-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ meine Brille verloren. (haben)",
+              "explain": "Perfekt mit haben: ich habe verloren.",
+              "answers": [
+                "habe"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-defekt-e3",
+              "kind": "order",
+              "prompt": "Erzähle die Panne: das Glas, runterfallen.",
+              "explain": "sein + Partizip bei Bewegung: ist runtergefallen.",
+              "answers": [
+                "Das Glas ist runtergefallen"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-defekt-e4",
+              "kind": "written",
+              "prompt": "Frag deinen Freund, was gestern passiert ist.",
+              "explain": "Die Frage nach der Panne: Was ist passiert ?",
+              "answers": [
+                "was ist passiert",
+                "was ist gestern passiert",
+                "was war los"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:past-simple-regular",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "de-foundations-u20-loesung",
+          "title": "Was soll ich tun ?",
+          "goal": "Um einfache Lösungen bitten und welche geben: Was soll ich tun ? — Zuerst …, dann …",
+          "intro": {
+            "explanation": [
+              "Um Rat bitten: « Was soll ich tun ? » oder « Was kann ich machen ? » — so fragt man nach einer Lösung.",
+              "Die Lösung kommt in Schritten: « Zuerst ausschalten, dann wieder einschalten. » danach und am Ende ordnen weitere Schritte.",
+              "Eine Lösung anbieten: « Versuch es nochmal ! », « Du kannst den Kundendienst anrufen. » — und die Rückmeldung: « Das hat geholfen. »"
+            ],
+            "examples": [
+              {
+                "text": "Was soll ich tun ?",
+                "meaning": "Um Rat bitten."
+              },
+              {
+                "text": "Zuerst ausschalten, dann wieder einschalten.",
+                "meaning": "Die Lösung in Schritten."
+              },
+              {
+                "text": "Versuch es nochmal.",
+                "meaning": "Ein erster Tipp."
+              },
+              {
+                "text": "Du kannst den Kundendienst anrufen.",
+                "meaning": "Lösung mit können."
+              },
+              {
+                "text": "Danach hat es wieder funktioniert.",
+                "meaning": "danach ordnet die Schritte."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Was soll ich tun ?",
+              "meaning": "Um Rat bitten.",
+              "note": "auch: Was kann ich machen ?"
+            },
+            {
+              "text": "zuerst …, dann …",
+              "meaning": "Schritte ordnen.",
+              "note": "Zuerst ausschalten, dann einschalten."
+            },
+            {
+              "text": "Versuch es nochmal.",
+              "meaning": "Erster Tipp.",
+              "note": "auch: Probier es nochmal !"
+            },
+            {
+              "text": "Du kannst … anrufen.",
+              "meaning": "Lösung anbieten.",
+              "note": "den Kundendienst, den Notdienst"
+            },
+            {
+              "text": "Das hat geholfen.",
+              "meaning": "Die Lösung war gut.",
+              "note": "Danach hat alles funktioniert."
+            }
+          ],
+          "situation": "Kim kann das WLAN nicht einschalten. Paul fragt: « Was hast du gemacht ? » Kim: « Ich weiß nicht, was ich tun soll. » Paul: « Zuerst den Router ausschalten, dann wieder einschalten. » — danach hat es funktioniert.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag deinen Kollegen um Rat.",
+                "expected": [
+                  "Was soll ich tun ?",
+                  "was soll ich tun",
+                  "Was kann ich machen ?"
+                ],
+                "focus": "was soll ich",
+                "watch": "Um Rat bitten: Was soll ich tun ?"
+              },
+              {
+                "prompt": "Gib den ersten Schritt: ausschalten.",
+                "expected": [
+                  "Zuerst ausschalten.",
+                  "zuerst ausschalten",
+                  "Zuerst den Router ausschalten."
+                ],
+                "focus": "zuerst",
+                "watch": "zuerst = Schritt eins."
+              },
+              {
+                "prompt": "Gib den zweiten Schritt: wieder einschalten.",
+                "expected": [
+                  "Dann wieder einschalten.",
+                  "dann wieder einschalten",
+                  "Danach wieder einschalten."
+                ],
+                "focus": "dann",
+                "watch": "dann = der nächste Schritt."
+              },
+              {
+                "prompt": "Empfiehl deinem Freund, den Kundendienst anzurufen. (können)",
+                "expected": [
+                  "Du kannst den Kundendienst anrufen.",
+                  "du kannst den kundendienst anrufen"
+                ],
+                "focus": "du kannst",
+                "watch": "Lösung: Du kannst … anrufen."
+              },
+              {
+                "prompt": "Sag, dass es danach funktioniert hat.",
+                "expected": [
+                  "Danach hat es funktioniert.",
+                  "danach hat es funktioniert",
+                  "Danach hat es wieder funktioniert."
+                ],
+                "focus": "danach",
+                "watch": "danach + Perfekt."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u20-loesung-e1",
+              "kind": "choice",
+              "prompt": "« Was ___ ich tun ? » (um Rat bitten)",
+              "explain": "Um Rat bitten: Was soll ich tun ?",
+              "answers": [
+                "soll"
+              ],
+              "options": [
+                "soll",
+                "will",
+                "mag",
+                "hat"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-loesung-e2",
+              "kind": "gap",
+              "prompt": "___ den Router ausschalten, dann wieder einschalten.",
+              "explain": "Schritt eins: zuerst.",
+              "answers": [
+                "Zuerst"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-loesung-e3",
+              "kind": "order",
+              "prompt": "Biete als Lösung an: dein Freund ruft den Kundendienst an.",
+              "explain": "Lösung anbieten mit können: Du kannst … anrufen.",
+              "answers": [
+                "Du kannst den Kundendienst anrufen"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-loesung-e4",
+              "kind": "written",
+              "prompt": "Frag um Rat, weil du nicht weiterweißt.",
+              "explain": "Was soll ich tun ? — die Frage nach der Lösung.",
+              "answers": [
+                "was soll ich tun",
+                "was kann ich machen",
+                "was soll ich machen"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "function:make-requests",
+            "grammar:connectors",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "de-foundations-u20-reklamation",
+          "title": "Eine freundliche Reklamation",
+          "goal": "Etwas Kaputtes höflich reklamieren: Problem sagen, Rechnung nennen, eine Lösung fragen.",
+          "intro": {
+            "explanation": [
+              "Höflich einleiten: « Es tut mir leid, aber der Wasserkocher funktioniert nicht mehr. » — aber verbindet Höflichkeit und Problem.",
+              "Fakten nennen: « Ich habe ihn letzte Woche gekauft, hier ist die Rechnung. » deshalb verbindet Grund und Forderung: « Deshalb möchte ich ihn umtauschen. »",
+              "Nach der Lösung fragen: « Kann ich ihn umtauschen ? » oder « Kann ich mein Geld zurückbekommen ? »"
+            ],
+            "examples": [
+              {
+                "text": "Es tut mir leid, aber das Gerät funktioniert nicht.",
+                "meaning": "Höflich reklamieren."
+              },
+              {
+                "text": "Ich habe es letzte Woche gekauft.",
+                "meaning": "Fakt im Perfekt."
+              },
+              {
+                "text": "Hier ist die Rechnung.",
+                "meaning": "Der Beleg."
+              },
+              {
+                "text": "Deshalb möchte ich es umtauschen.",
+                "meaning": "deshalb + Forderung."
+              },
+              {
+                "text": "Kann ich mein Geld zurückbekommen ?",
+                "meaning": "Nach der Lösung fragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Es tut mir leid, aber …",
+              "meaning": "Höflich einleiten.",
+              "note": "… es funktioniert nicht."
+            },
+            {
+              "text": "funktioniert nicht mehr",
+              "meaning": "Das Problem.",
+              "note": "Das Gerät funktioniert nicht mehr."
+            },
+            {
+              "text": "die Rechnung / der Beleg",
+              "meaning": "Der Beweis.",
+              "note": "Hier ist die Rechnung."
+            },
+            {
+              "text": "umtauschen / zurückgeben",
+              "meaning": "Die Lösung fragen.",
+              "note": "Kann ich es umtauschen ?"
+            },
+            {
+              "text": "deshalb",
+              "meaning": "Grund + Forderung.",
+              "note": "Deshalb rufe ich an."
+            }
+          ],
+          "situation": "Anna ruft im Laden an: « Es tut mir leid, aber der Wasserkocher funktioniert nicht mehr. Ich habe ihn letzte Woche gekauft — hier ist die Rechnung. Kann ich ihn umtauschen ? » — « Natürlich, bringen Sie ihn mit der Rechnung vorbei. »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Reklamiere höflich: das Gerät funktioniert nicht.",
+                "expected": [
+                  "Es tut mir leid, aber das Gerät funktioniert nicht.",
+                  "es tut mir leid aber das gerät funktioniert nicht",
+                  "es tut mir leid aber das geraet funktioniert nicht"
+                ],
+                "focus": "es tut mir leid",
+                "watch": "Höflich: Es tut mir leid, aber …"
+              },
+              {
+                "prompt": "Sag, wann du es gekauft hast: letzte Woche.",
+                "expected": [
+                  "Ich habe es letzte Woche gekauft.",
+                  "ich habe es letzte woche gekauft"
+                ],
+                "focus": "habe gekauft",
+                "watch": "Perfekt: habe gekauft."
+              },
+              {
+                "prompt": "Zeig auf die Rechnung.",
+                "expected": [
+                  "Hier ist die Rechnung.",
+                  "hier ist die rechnung"
+                ],
+                "focus": "die rechnung",
+                "watch": "die Rechnung = der Beleg."
+              },
+              {
+                "prompt": "Frag, ob du es umtauschen kannst.",
+                "expected": [
+                  "Kann ich es umtauschen ?",
+                  "kann ich es umtauschen"
+                ],
+                "focus": "umtauschen",
+                "watch": "umtauschen = ein anderes bekommen."
+              },
+              {
+                "prompt": "Frag nach dem Geld zurück.",
+                "expected": [
+                  "Kann ich mein Geld zurückbekommen ?",
+                  "kann ich mein geld zurückbekommen",
+                  "kann ich mein geld zurueckbekommen"
+                ],
+                "focus": "zurückbekommen",
+                "watch": "zurückbekommen: Geld zurück."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u20-reklamation-e1",
+              "kind": "choice",
+              "prompt": "« Es tut mir ___, aber das Gerät funktioniert nicht. »",
+              "explain": "Die feste Formel: Es tut mir leid.",
+              "answers": [
+                "leid"
+              ],
+              "options": [
+                "leid",
+                "schade",
+                "gut",
+                "schlecht"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-reklamation-e2",
+              "kind": "gap",
+              "prompt": "Ich habe ihn letzte Woche gekauft, ___ möchte ich ihn umtauschen.",
+              "explain": "deshalb verbindet Grund und Forderung.",
+              "answers": [
+                "deshalb"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-reklamation-e3",
+              "kind": "order",
+              "prompt": "Frag im Laden nach dem Geld zurück.",
+              "explain": "Nach der Lösung fragen: Geld zurückbekommen.",
+              "answers": [
+                "Kann ich mein Geld zurückbekommen"
+              ]
+            },
+            {
+              "id": "de-foundations-u20-reklamation-e4",
+              "kind": "written",
+              "prompt": "Sag höflich, dass der Drucker nicht mehr funktioniert.",
+              "explain": "Höflich: Es tut mir leid, aber … funktioniert nicht mehr.",
+              "answers": [
+                "es tut mir leid aber der drucker funktioniert nicht",
+                "es tut mir leid, aber der drucker funktioniert nicht mehr",
+                "der drucker funktioniert leider nicht mehr"
+              ]
+            }
+          ],
+          "skills": [
+            "function:solve-problems",
+            "grammar:present-questions",
+            "vocab:social-expressions",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u21",
+      "title": "Die Arbeit",
+      "subtitle": "Beruf und Ziele",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "de-b1-vorstellung",
+          "title": "Das Vorstellungsgespräch",
+          "subtitle": "Erfahrung und Stärken",
+          "symbol": "briefcase",
+          "category": "Course",
+          "situation": "Lena bewirbt sich als Projektkoordinatorin: drei Jahre Erfahrung, gern im Team — aber warum genau dieses Unternehmen ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "de-b1-im-team",
+          "title": "Im Team",
+          "subtitle": "Klima und Ziele",
+          "symbol": "bubble.left.and.text.bubble.right",
+          "category": "Course",
+          "situation": "Wie ist die Atmosphäre bei der neuen Arbeit ? Und wo will man in fünf Jahren sein ? Kollegen und Ziele im Gespräch.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u21-vorstellung",
+          "title": "Das Vorstellungsgespräch",
+          "goal": "Im Vorstellungsgespräch über Erfahrung und Stärken sprechen — mit Beispielen und Konnektoren.",
+          "intro": {
+            "explanation": [
+              "Erfahrung mit Perfekt: « Ich habe drei Jahre als Projektkoordinatorin gearbeitet. » außerdem fügt Beispiele hinzu.",
+              "Stärken konkret nennen und belegen: « Meine größte Stärke ist Organisationstalent — dabei habe ich zehn Projekte gleichzeitig betreut. »",
+              "Warum dieses Unternehmen ? Mit deshalb begründen: « Deshalb habe ich mich bei Ihnen beworben. »"
+            ],
+            "examples": [
+              {
+                "text": "Ich habe drei Jahre in einem Startup gearbeitet.",
+                "meaning": "Erfahrung im Perfekt."
+              },
+              {
+                "text": "Außerdem habe ich ein kleines Team geleitet.",
+                "meaning": "außerdem fügt hinzu."
+              },
+              {
+                "text": "Meine Stärke ist Organisationstalent.",
+                "meaning": "Stärke nennen."
+              },
+              {
+                "text": "Ich arbeite gern im Team, kann aber auch allein arbeiten.",
+                "meaning": "aber balanciert zwei Seiten."
+              },
+              {
+                "text": "Deshalb habe ich mich bei Ihnen beworben.",
+                "meaning": "Begründung mit deshalb."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich habe … als … gearbeitet.",
+              "meaning": "Erfahrung sagen.",
+              "note": "… zwei Jahre als Verkäufer."
+            },
+            {
+              "text": "meine Stärke ist …",
+              "meaning": "Stärken nennen.",
+              "note": "… Organisationstalent."
+            },
+            {
+              "text": "außerdem",
+              "meaning": "Hinzufügen.",
+              "note": "Außerdem spreche ich Spanisch."
+            },
+            {
+              "text": "deshalb",
+              "meaning": "Begründen.",
+              "note": "Deshalb bewerbe ich mich."
+            },
+            {
+              "text": "sich bewerben bei",
+              "meaning": "Um die Stelle fragen.",
+              "note": "Ich habe mich bei Ihnen beworben."
+            }
+          ],
+          "situation": "Lena sitzt im Vorstellungsgespräch: erst die Erfahrung im Perfekt, dann die Stärken mit Beispielen — und am Ende die Begründung, warum genau dieses Unternehmen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Erzähle deine Erfahrung: drei Jahre in einem Startup. (Perfekt)",
+                "expected": [
+                  "Ich habe drei Jahre in einem Startup gearbeitet.",
+                  "ich habe drei jahre in einem startup gearbeitet"
+                ],
+                "focus": "habe gearbeitet",
+                "watch": "Perfekt: habe gearbeitet."
+              },
+              {
+                "prompt": "Füge hinzu: du sprichst außerdem Spanisch.",
+                "expected": [
+                  "Außerdem spreche ich Spanisch.",
+                  "außerdem spreche ich spanisch",
+                  "Ausserdem spreche ich Spanisch."
+                ],
+                "focus": "außerdem",
+                "watch": "außerdem + Hauptsatz."
+              },
+              {
+                "prompt": "Nenne deine Stärke: Organisationstalent.",
+                "expected": [
+                  "Meine Stärke ist Organisationstalent.",
+                  "meine stärke ist organisationstalent",
+                  "Meine größte Stärke ist Organisationstalent."
+                ],
+                "focus": "meine stärke",
+                "watch": "Stärke nennen + Beispiel."
+              },
+              {
+                "prompt": "Sag, dass du gern im Team arbeitest.",
+                "expected": [
+                  "Ich arbeite gern im Team.",
+                  "ich arbeite gern im team"
+                ],
+                "focus": "arbeite gern",
+                "watch": "gern + Verb."
+              },
+              {
+                "prompt": "Begründe deine Bewerbung mit deshalb.",
+                "expected": [
+                  "Deshalb habe ich mich bei Ihnen beworben.",
+                  "deshalb habe ich mich bei ihnen beworben",
+                  "Deshalb bewerbe ich mich."
+                ],
+                "focus": "deshalb",
+                "watch": "deshalb + Verb an Position 2."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u21-vorstellung-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ drei Jahre in einer Agentur gearbeitet. »",
+              "explain": "Perfekt mit haben: habe gearbeitet.",
+              "answers": [
+                "habe"
+              ],
+              "options": [
+                "habe",
+                "bin",
+                "war",
+                "hat"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-vorstellung-e2",
+              "kind": "gap",
+              "prompt": "Ich arbeite gern im Team, ___ kann ich auch allein arbeiten.",
+              "explain": "aber verbindet beide Seiten der Stärke.",
+              "answers": [
+                "aber"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-vorstellung-e3",
+              "kind": "order",
+              "prompt": "Begründe im Gespräch deine Bewerbung mit deshalb.",
+              "explain": "deshalb + Verb an Position 2: die Begründung.",
+              "answers": [
+                "Deshalb habe ich mich bei Ihnen beworben"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-vorstellung-e4",
+              "kind": "written",
+              "prompt": "Nenne eine Stärke und belege sie kurz.",
+              "explain": "Stärke nennen + Beispiel: so klingt man überzeugend.",
+              "answers": [
+                "meine stärke ist organisationstalent",
+                "meine staerke ist organisationstalent",
+                "ich arbeite gern im team und bin zuverlässig",
+                "ich arbeite gern im team und bin zuverlaessig"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "grammar:present-perfect",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "de-foundations-u21-kollegen",
+          "title": "Mit den Kollegen",
+          "goal": "Die Arbeitsatmosphäre beschreiben: das Team, den Chef und den Umgang miteinander.",
+          "intro": {
+            "explanation": [
+              "Atmosphäre mit Adjektiven: entspannt, kollegial, fordernd — « Die Atmosphäre im Team ist sehr kollegial. »",
+              "Umgang beschreiben: « Wir helfen uns gegenseitig », « Mit meinem Chef verstehe ich mich gut. »",
+              "Auch Kritik geht höflich mit aber/allerdings: « Der Job ist spannend, allerdings ist der Stress vor Deadlines groß. »"
+            ],
+            "examples": [
+              {
+                "text": "Die Atmosphäre im Team ist sehr kollegial.",
+                "meaning": "Adjektiv + Atmosphäre."
+              },
+              {
+                "text": "Wir helfen uns gegenseitig.",
+                "meaning": "gegenseitig = alle helfen allen."
+              },
+              {
+                "text": "Mit meinem Chef verstehe ich mich gut.",
+                "meaning": "sich verstehen mit + Dativ."
+              },
+              {
+                "text": "Manchmal gibt es Stress, aber wir lachen viel.",
+                "meaning": "aber relativiert."
+              },
+              {
+                "text": "Der Job ist spannend, allerdings sehr fordernd.",
+                "meaning": "allerdings: formeller Kontrast."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "die Atmosphäre / das Klima",
+              "meaning": "Wie es im Team ist.",
+              "note": "entspannt, kollegial, fordernd"
+            },
+            {
+              "text": "Wir helfen uns gegenseitig.",
+              "meaning": "Zusammenarbeit.",
+              "note": "auch: wir unterstützen uns."
+            },
+            {
+              "text": "sich verstehen mit + Dativ",
+              "meaning": "Beziehungen.",
+              "note": "Ich verstehe mich gut mit allen."
+            },
+            {
+              "text": "kollegial / entspannt / fordernd",
+              "meaning": "Adjektive fürs Klima.",
+              "note": "ein kollegiales Team"
+            },
+            {
+              "text": "allerdings",
+              "meaning": "Formeller Kontrast.",
+              "note": "spannend, allerdings fordernd"
+            }
+          ],
+          "situation": "Lena erzählt ihrer Freundin vom neuen Job: Das Team ist klein und kollegial, alle helfen sich gegenseitig — nur vor Deadlines gibt es manchmal Stress, wie überall.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Beschreibe das Klima: sehr kollegial.",
+                "expected": [
+                  "Das Klima im Team ist sehr kollegial.",
+                  "das klima ist sehr kollegial",
+                  "Die Atmosphäre ist sehr kollegial."
+                ],
+                "focus": "kollegial",
+                "watch": "Adjektiv + Klima/Atmosphäre."
+              },
+              {
+                "prompt": "Sag, dass ihr euch gegenseitig helft.",
+                "expected": [
+                  "Wir helfen uns gegenseitig.",
+                  "wir helfen uns gegenseitig",
+                  "Wir unterstützen uns gegenseitig."
+                ],
+                "focus": "gegenseitig",
+                "watch": "gegenseitig = alle allen."
+              },
+              {
+                "prompt": "Sag, dass du dich mit deinem Chef gut verstehst.",
+                "expected": [
+                  "Mit meinem Chef verstehe ich mich gut.",
+                  "ich verstehe mich gut mit meinem chef"
+                ],
+                "focus": "verstehe mich",
+                "watch": "sich verstehen mit + Dativ."
+              },
+              {
+                "prompt": "Relativiere: Stress gibt es manchmal, aber ihr lacht viel.",
+                "expected": [
+                  "Manchmal gibt es Stress, aber wir lachen viel.",
+                  "manchmal gibt es stress aber wir lachen viel",
+                  "Es gibt Stress, aber die Stimmung ist gut."
+                ],
+                "focus": "aber",
+                "watch": "aber relativiert die Kritik."
+              },
+              {
+                "prompt": "Sage es formeller mit allerdings: spannend, aber fordernd.",
+                "expected": [
+                  "Der Job ist spannend, allerdings fordernd.",
+                  "der job ist spannend allerdings fordernd",
+                  "Der Job ist spannend, allerdings sehr fordernd."
+                ],
+                "focus": "allerdings",
+                "watch": "allerdings: formeller Kontrast."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u21-kollegen-e1",
+              "kind": "choice",
+              "prompt": "« Die ___ im Team ist sehr entspannt. »",
+              "explain": "Atmosphäre/Klima: so beschreibt man das Teamgefühl.",
+              "answers": [
+                "Atmosphäre"
+              ],
+              "options": [
+                "Atmosphäre",
+                "Erfahrung",
+                "Bewerbung",
+                "Entschuldigung"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-kollegen-e2",
+              "kind": "gap",
+              "prompt": "Wir helfen uns ___, wenn viel zu tun ist.",
+              "explain": "gegenseitig: alle helfen allen.",
+              "answers": [
+                "gegenseitig"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-kollegen-e3",
+              "kind": "order",
+              "prompt": "Beschreibe das Verhältnis zu deinem Chef: gut verstehen.",
+              "explain": "sich verstehen mit + Dativ.",
+              "answers": [
+                "Mit meinem Chef verstehe ich mich gut"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-kollegen-e4",
+              "kind": "written",
+              "prompt": "Beschreibe die Atmosphäre an deiner Arbeit: positiv, aber mit einem Minus.",
+              "explain": "Positiv + aber/allerdings + Minus: die ehrliche Beschreibung.",
+              "answers": [
+                "die atmosphäre ist gut aber manchmal stressig",
+                "die atmosphaere ist gut aber manchmal stressig",
+                "das team ist entspannt allerdings fordernd"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-work",
+            "vocab:work",
+            "function:describe-people",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "de-foundations-u21-ziele",
+          "title": "Berufsziele",
+          "goal": "Pläne und Ziele formulieren: mein Ziel ist es, … zu werden, ich würde gern, ich will … erreichen.",
+          "intro": {
+            "explanation": [
+              "Ziele fest benennen: « Mein Ziel ist es, Teamleiterin zu werden. » — es + zu + Infinitiv am Ende.",
+              "Wünsche klingen weicher mit würde gern: « Ich würde gern ein eigenes Projekt leiten. »",
+              "Erreichen braucht einen Weg: « Dafür muss ich noch viel lernen » — dafür verbindet Ziel und Weg."
+            ],
+            "examples": [
+              {
+                "text": "Mein Ziel ist es, Teamleiterin zu werden.",
+                "meaning": "Ziel mit es + zu + Infinitiv."
+              },
+              {
+                "text": "Diese Position will ich in fünf Jahren erreichen.",
+                "meaning": "erreichen + Ziel."
+              },
+              {
+                "text": "Ich würde gern ein eigenes Projekt leiten.",
+                "meaning": "würde gern: der weiche Wunsch."
+              },
+              {
+                "text": "Dafür muss ich noch einiges lernen.",
+                "meaning": "dafür verbindet Ziel und Weg."
+              },
+              {
+                "text": "In fünf Jahren sehe ich mich in einer Führungsrolle.",
+                "meaning": "Blick in die Zukunft."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Mein Ziel ist es, … zu + Infinitiv",
+              "meaning": "Ziel benennen.",
+              "note": "… Teamleiterin zu werden."
+            },
+            {
+              "text": "ich würde gern …",
+              "meaning": "Wunsch, weich.",
+              "note": "Ich würde gern ein Projekt leiten."
+            },
+            {
+              "text": "… erreichen",
+              "meaning": "Das Ziel erreichen.",
+              "note": "Diese Position will ich erreichen."
+            },
+            {
+              "text": "dafür",
+              "meaning": "Ziel + Weg verbinden.",
+              "note": "Dafür lerne ich weiter."
+            },
+            {
+              "text": "in fünf Jahren",
+              "meaning": "Zeithorizont.",
+              "note": "In fünf Jahren sehe ich mich …"
+            }
+          ],
+          "situation": "Auf die Frage nach fünf Jahren antwortet Lena ruhig: ihr Ziel ist eine Führungsrolle, sie würde gern ein eigenes Projekt leiten — dafür nimmt sie noch ein Weiterbildungsseminar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Benenne dein Ziel: Teamleiterin werden.",
+                "expected": [
+                  "Mein Ziel ist es, Teamleiterin zu werden.",
+                  "mein ziel ist es teamleiterin zu werden"
+                ],
+                "focus": "mein ziel",
+                "watch": "es + zu + Infinitiv."
+              },
+              {
+                "prompt": "Sag deinen Wunsch weich: ein eigenes Projekt leiten.",
+                "expected": [
+                  "Ich würde gern ein eigenes Projekt leiten.",
+                  "ich würde gern ein eigenes projekt leiten",
+                  "ich wuerde gern ein eigenes projekt leiten"
+                ],
+                "focus": "würde gern",
+                "watch": "würde gern + Infinitiv."
+              },
+              {
+                "prompt": "Sag, welche Position du erreichen willst: diese Position.",
+                "expected": [
+                  "Ich will diese Position erreichen.",
+                  "ich will diese position erreichen",
+                  "Ich möchte diese Position erreichen."
+                ],
+                "focus": "erreichen",
+                "watch": "erreichen = das Ziel bekommen."
+              },
+              {
+                "prompt": "Verbinde Ziel und Weg: dafür musst du lernen.",
+                "expected": [
+                  "Dafür muss ich noch viel lernen.",
+                  "dafür muss ich noch viel lernen",
+                  "Dafür lerne ich weiter."
+                ],
+                "focus": "dafür",
+                "watch": "dafür = für dieses Ziel."
+              },
+              {
+                "prompt": "Sag, wo du in fünf Jahren sein willst: in einer Führungsrolle.",
+                "expected": [
+                  "In fünf Jahren sehe ich mich in einer Führungsrolle.",
+                  "in fünf jahren sehe ich mich in einer führungsrolle",
+                  "In fünf Jahren will ich eine Führungsrolle haben."
+                ],
+                "focus": "in fünf Jahren",
+                "watch": "Zeithorizont + Zukunft."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u21-ziele-e1",
+              "kind": "choice",
+              "prompt": "« Mein ___ ist es, Projektmanagerin zu werden. »",
+              "explain": "Das Ziel: Mein Ziel ist es, … zu werden.",
+              "answers": [
+                "Ziel"
+              ],
+              "options": [
+                "Ziel",
+                "Beruf",
+                "Gehalt",
+                "Chef"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-ziele-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ gern ein eigenes Team leiten.",
+              "explain": "würde gern + Infinitiv: der weiche Wunsch.",
+              "answers": [
+                "würde"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-ziele-e3",
+              "kind": "order",
+              "prompt": "Sag deinen Wunsch: du möchtest ein eigenes Projekt leiten. (würde gern)",
+              "explain": "würde gern + Infinitiv am Satzende.",
+              "answers": [
+                "Ich würde gern ein eigenes Projekt leiten"
+              ]
+            },
+            {
+              "id": "de-foundations-u21-ziele-e4",
+              "kind": "written",
+              "prompt": "Nenne dein Berufsziel für die nächsten fünf Jahre.",
+              "explain": "Ziel + Zeithorizont: so antwortet man im Gespräch.",
+              "answers": [
+                "in fünf jahren will ich teamleiterin sein",
+                "in funf jahren will ich teamleiter sein",
+                "ich will eine führungsrolle erreichen",
+                "ich will eine fuhrungsrolle erreichen"
+              ]
+            }
+          ],
+          "skills": [
+            "function:describe-goals",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
           ]
         }
       ]

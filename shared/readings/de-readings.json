@@ -924,6 +924,92 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-read-bewertung-defekt",
+      "languageID": "de",
+      "title": "Die Online-Bewertung",
+      "level": "A2",
+      "topic": "bewertung",
+      "unitID": "de-foundations-u20",
+      "text": "« Ich habe den Wasserkocher WK200 im Mai gekauft. Nach zwei Wochen ist er kaputtgegangen: Das Gerät ging einfach nicht mehr an. Ich habe am Freitag beim Kundendienst angerufen und die Rechnung per E-Mail geschickt. Am Montag kam schon ein Paket: ein neues Gerät, kostenlos, mit einer kleinen Entschuldigung. Das neue Gerät läuft seit einem Monat ohne Probleme. Deshalb gibt es trotzdem vier Sterne: Kaputt war ärgerlich, aber der Service war wirklich schnell. Wer einen günstigen Wasserkocher sucht, ist hier gut aufgehoben — der Kundendienst macht den Unterschied. »",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-bewertung-defekt-q1",
+          "kind": "choice",
+          "prompt": "Was hat die Kundin im Mai gekauft ?",
+          "explain": "« Ich habe den Wasserkocher WK200 im Mai gekauft. »",
+          "answers": [
+            "Einen Wasserkocher"
+          ],
+          "options": [
+            "Einen Wasserkocher",
+            "Eine Kaffeemaschine",
+            "Einen Fernseher",
+            "Eine Lampe"
+          ]
+        },
+        {
+          "id": "de-read-bewertung-defekt-q2",
+          "kind": "written",
+          "prompt": "Was ist nach zwei Wochen passiert ?",
+          "explain": "« Nach zwei Wochen ist er kaputtgegangen. »",
+          "answers": [
+            "er ist kaputtgegangen",
+            "das gerät ist kaputtgegangen",
+            "das geraet ist kaputt gegangen",
+            "er ist kaputt gegangen"
+          ]
+        },
+        {
+          "id": "de-read-bewertung-defekt-q3",
+          "kind": "choice",
+          "prompt": "Wann hat die Kundin den Kundendienst angerufen ?",
+          "explain": "« Ich habe am Freitag beim Kundendienst angerufen … »",
+          "answers": [
+            "Am Freitag"
+          ],
+          "options": [
+            "Am Freitag",
+            "Am Montag",
+            "Im Mai",
+            "Nach einem Monat"
+          ]
+        },
+        {
+          "id": "de-read-bewertung-defekt-q4",
+          "kind": "choice",
+          "prompt": "Was war im Paket vom Montag ?",
+          "explain": "« Am Montag kam schon ein Paket: ein neues Gerät, kostenlos. »",
+          "answers": [
+            "Ein neues Gerät"
+          ],
+          "options": [
+            "Ein neues Gerät",
+            "Ihr Geld",
+            "Nur eine Entschuldigung",
+            "Nur die Rechnung"
+          ]
+        },
+        {
+          "id": "de-read-bewertung-defekt-q5",
+          "kind": "written",
+          "prompt": "Warum gibt es trotzdem vier Sterne ?",
+          "explain": "« Kaputt war ärgerlich, aber der Service war wirklich schnell. »",
+          "answers": [
+            "der service war schnell",
+            "weil der service schnell war",
+            "der service war wirklich schnell"
+          ]
+        }
+      ]
     }
   ]
 }

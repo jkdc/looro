@@ -2414,6 +2414,407 @@
         "function:express-opinion"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-roda-sexta",
+      "languageID": "pt",
+      "title": "A roda de sexta",
+      "level": "A1",
+      "topic": "visita",
+      "unitID": "pt-foundations-u19",
+      "text": "É sexta à noite e tem uma roda de conversa na casa da Bia. A Ana chega com uma lembrancinha: « Trago um bolo ». A Bia abre a porta: « Entre, pode deixar o bolo na mesa ». « Posso tirar os sapatos ? — Pode sim », trocam na porta. Na sala, a Bia oferece café: « Aceita um café ? — Aceito, obrigada ! ». No fim, a Ana agradece: « Obrigada por tudo ». « Volte sempre ! », responde a Bia.",
+      "questions": [
+        {
+          "id": "pt-listen-roda-sexta-q1",
+          "kind": "choice",
+          "prompt": "Onde é a roda de conversa ?",
+          "options": [
+            "Na casa da Bia",
+            "No trabalho",
+            "Num café",
+            "Na rua"
+          ],
+          "answers": [
+            "Na casa da Bia"
+          ],
+          "explain": "É sexta à noite e tem uma roda de conversa na casa da Bia."
+        },
+        {
+          "id": "pt-listen-roda-sexta-q2",
+          "kind": "choice",
+          "prompt": "O que a Ana traz ?",
+          "options": [
+            "Um bolo",
+            "Um café",
+            "Um livro",
+            "Doces"
+          ],
+          "answers": [
+            "Um bolo"
+          ],
+          "explain": "« Trago um bolo », diz a Ana ao chegar."
+        },
+        {
+          "id": "pt-listen-roda-sexta-q3",
+          "kind": "written",
+          "prompt": "O que a Ana pede para tirar ?",
+          "answers": [
+            "os sapatos",
+            "sapatos"
+          ],
+          "explain": "« Posso tirar os sapatos ? — Pode sim »."
+        },
+        {
+          "id": "pt-listen-roda-sexta-q4",
+          "kind": "choice",
+          "prompt": "A Bia deixa tirar os sapatos ?",
+          "options": [
+            "Pode sim",
+            "Não pode",
+            "Talvez",
+            "De jeito nenhum"
+          ],
+          "answers": [
+            "Pode sim"
+          ],
+          "explain": "A resposta na porta é « Pode sim »."
+        },
+        {
+          "id": "pt-listen-roda-sexta-q5",
+          "kind": "written",
+          "prompt": "O que a Bia oferece na sala ?",
+          "answers": [
+            "um café",
+            "um cafe",
+            "café",
+            "cafe"
+          ],
+          "explain": "Na sala, a Bia oferece café: « Aceita um café ? »."
+        },
+        {
+          "id": "pt-listen-roda-sexta-q6",
+          "kind": "choice",
+          "prompt": "Como a Bia se despede ?",
+          "options": [
+            "Volte sempre !",
+            "Até nunca !",
+            "Feche a porta !",
+            "Sem café !"
+          ],
+          "answers": [
+            "Volte sempre !"
+          ],
+          "explain": "A despedida da Bia é « Volte sempre ! »."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:social-expressions",
+        "grammar:can"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-reclamacao-nota",
+      "languageID": "pt",
+      "title": "A reclamação na nota",
+      "level": "A2",
+      "topic": "problemas",
+      "unitID": "pt-foundations-u20",
+      "text": "— Boa tarde ! Em que posso ajudar ? — Boa tarde. Comprei um liquidificador aqui na semana passada, mas ele está com defeito: liga e para na hora. — Sinto muito. Você trouxe a nota fiscal ? — Trouxe, está aqui. — O senhor quer trocar por outro igual ou prefere o dinheiro de volta ? — Prefiro outro igual, o vermelho. — Claro: a compra é recente, ainda tem garantia. — Preciso fazer mais alguma coisa ? — Só assinar aqui na nota. Pronto, está trocado. Obrigado pela paciência !",
+      "questions": [
+        {
+          "id": "pt-listen-reclamacao-nota-q1",
+          "kind": "choice",
+          "prompt": "O que o cliente comprou ?",
+          "options": [
+            "Um liquidificador",
+            "Um fone",
+            "Uma torneira",
+            "Um ventilador"
+          ],
+          "answers": [
+            "Um liquidificador"
+          ],
+          "explain": "Comprei um liquidificador aqui na semana passada."
+        },
+        {
+          "id": "pt-listen-reclamacao-nota-q2",
+          "kind": "written",
+          "prompt": "Quando ele comprou o produto ?",
+          "answers": [
+            "na semana passada",
+            "semana passada"
+          ],
+          "explain": "Comprei um liquidificador aqui na semana passada."
+        },
+        {
+          "id": "pt-listen-reclamacao-nota-q3",
+          "kind": "choice",
+          "prompt": "Qual é o defeito ?",
+          "options": [
+            "Liga e para na hora",
+            "Não liga nada",
+            "Faz muito barulho",
+            "Vaza água"
+          ],
+          "answers": [
+            "Liga e para na hora"
+          ],
+          "explain": "Ele está com defeito: liga e para na hora."
+        },
+        {
+          "id": "pt-listen-reclamacao-nota-q4",
+          "kind": "written",
+          "prompt": "O que o cliente trouxe para provar a compra ?",
+          "answers": [
+            "a nota fiscal",
+            "a nota",
+            "nota fiscal"
+          ],
+          "explain": "Você trouxe a nota fiscal ? — Trouxe, está aqui."
+        },
+        {
+          "id": "pt-listen-reclamacao-nota-q5",
+          "kind": "choice",
+          "prompt": "O que o cliente prefere como solução ?",
+          "options": [
+            "Trocar por outro igual",
+            "O dinheiro de volta",
+            "Consertar em casa",
+            "Esperar o técnico"
+          ],
+          "answers": [
+            "Trocar por outro igual"
+          ],
+          "explain": "Prefiro outro igual, o vermelho."
+        },
+        {
+          "id": "pt-listen-reclamacao-nota-q6",
+          "kind": "choice",
+          "prompt": "O que o cliente faz no fim ?",
+          "options": [
+            "Assina a nota",
+            "Volta na sexta",
+            "Chama o técnico",
+            "Pede desconto"
+          ],
+          "answers": [
+            "Assina a nota"
+          ],
+          "explain": "Só assinar aqui na nota. Pronto, está trocado."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:solve-problems",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-entrevista-ensaio",
+      "languageID": "pt",
+      "title": "O ensaio da entrevista",
+      "level": "B1",
+      "topic": "trabalho",
+      "unitID": "pt-foundations-u21",
+      "text": "— Ana, vamos ensaiar a entrevista ? Imagina que eu sou o recrutador. — Fechado. — Conte um pouco da sua experiência. — Trabalho com atendimento há cinco anos e já coordenei uma equipe pequena. — E qual é o seu ponto forte ? — Sou organizada e aprendo rápido. Falar em público ainda é difícil, mas estou fazendo um curso. — Por que você quer mudar de empresa ? — Quero novos desafios e eu gostaria de trabalhar com projetos maiores. — E a meta para este ano ? — Até dezembro, quero assumir uma liderança e melhorar os indicadores do time. — Muito bom. Só um conselho: deixe o tema do salário para o final.",
+      "questions": [
+        {
+          "id": "pt-listen-entrevista-ensaio-q1",
+          "kind": "choice",
+          "prompt": "Qual é o papel do Leo no ensaio ?",
+          "options": [
+            "O recrutador imaginário",
+            "O gerente da loja",
+            "Um colega de trabalho",
+            "O professor de inglês"
+          ],
+          "answers": [
+            "O recrutador imaginário"
+          ],
+          "explain": "Imagina que eu sou o recrutador."
+        },
+        {
+          "id": "pt-listen-entrevista-ensaio-q2",
+          "kind": "written",
+          "prompt": "Há quanto tempo a Ana trabalha com atendimento ?",
+          "answers": [
+            "cinco anos",
+            "há cinco anos",
+            "ha cinco anos",
+            "5 anos"
+          ],
+          "explain": "Trabalho com atendimento há cinco anos."
+        },
+        {
+          "id": "pt-listen-entrevista-ensaio-q3",
+          "kind": "choice",
+          "prompt": "Qual é o ponto forte da Ana ?",
+          "options": [
+            "É organizada",
+            "Fala bem em público",
+            "Gerencia equipes grandes",
+            "Negocia salários"
+          ],
+          "answers": [
+            "É organizada"
+          ],
+          "explain": "Sou organizada e aprendo rápido."
+        },
+        {
+          "id": "pt-listen-entrevista-ensaio-q4",
+          "kind": "choice",
+          "prompt": "Por que a Ana quer mudar de empresa ?",
+          "options": [
+            "Quer novos desafios",
+            "O salário é baixo",
+            "Não gosta do time",
+            "Vai morar fora"
+          ],
+          "answers": [
+            "Quer novos desafios"
+          ],
+          "explain": "Quero novos desafios e eu gostaria de trabalhar com projetos maiores."
+        },
+        {
+          "id": "pt-listen-entrevista-ensaio-q5",
+          "kind": "written",
+          "prompt": "Qual é a meta da Ana até dezembro ?",
+          "answers": [
+            "assumir uma liderança",
+            "assumir uma lideranca",
+            "uma liderança",
+            "uma lideranca"
+          ],
+          "explain": "Até dezembro, quero assumir uma liderança."
+        },
+        {
+          "id": "pt-listen-entrevista-ensaio-q6",
+          "kind": "choice",
+          "prompt": "O que o conselho final do Leo sugere ?",
+          "options": [
+            "Deixar o salário para o final",
+            "Chegar cedo à entrevista",
+            "Enviar o currículo antes",
+            "Estudar inglês mais"
+          ],
+          "answers": [
+            "Deixar o salário para o final"
+          ],
+          "explain": "Só um conselho: deixe o tema do salário para o final."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "vocab:work",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-tom-podcast",
+      "languageID": "pt",
+      "title": "Podcast: o tom exato",
+      "level": "C1",
+      "topic": "tom",
+      "unitID": "pt-foundations-u9",
+      "text": "« Fala, gente ! No podcast de hoje: por que o tom importa mais do que a palavra ? Marina, você revisa texto — abre o jogo. — Abro, sim: ninguém vê, mas todo mundo sente as colocações trocadas. « Tomar uma decisão » flui; « fazer uma decisão » range. — E no e-mail da diretoria ? — Lá cada conector pesa: « no entanto » eleva o registro; « mas » abaixa na hora. Eu, pessoalmente, pondero os prós e os contras antes de escolher o verbo. — Eu já mandei um « te dou um retorno » para a diretoria. — E aí, que sensação ficou ? — Aquela, sabe ? Saudade do tom exato, por assim dizer. — Fecho com chave de ouro: quem domina as colocações domina a conversa. Até a próxima !",
+      "questions": [
+        {
+          "id": "pt-listen-tom-podcast-q1",
+          "kind": "choice",
+          "prompt": "Qual é o tema do episódio ?",
+          "options": [
+            "O tom e as colocações",
+            "A gramática do subjuntivo",
+            "Como escrever e-mails longos",
+            "O sotaque no trabalho"
+          ],
+          "answers": [
+            "O tom e as colocações"
+          ],
+          "explain": "No podcast de hoje: por que o tom importa mais do que a palavra ?"
+        },
+        {
+          "id": "pt-listen-tom-podcast-q2",
+          "kind": "choice",
+          "prompt": "O que a Marina diz de « fazer uma decisão » ?",
+          "options": [
+            "Não flui; o certo é tomar",
+            "É a forma formal",
+            "É uso regional aceito",
+            "É sinônimo exato de tomar"
+          ],
+          "answers": [
+            "Não flui; o certo é tomar"
+          ],
+          "explain": "« Tomar uma decisão » flui; « fazer uma decisão » range."
+        },
+        {
+          "id": "pt-listen-tom-podcast-q3",
+          "kind": "written",
+          "prompt": "Que colocação a Marina usa antes de escolher o verbo ?",
+          "answers": [
+            "pondero os prós e os contras",
+            "pondero os pros e os contras",
+            "os prós e os contras",
+            "os pros e os contras"
+          ],
+          "explain": "Eu, pessoalmente, pondero os prós e os contras antes de escolher o verbo."
+        },
+        {
+          "id": "pt-listen-tom-podcast-q4",
+          "kind": "choice",
+          "prompt": "O que « abaixa na hora » sugere sobre o « mas » ?",
+          "options": [
+            "Reduz o registro da frase",
+            "Nega a frase anterior",
+            "Acelera a leitura",
+            "Soa antiquado"
+          ],
+          "answers": [
+            "Reduz o registro da frase"
+          ],
+          "explain": "« No entanto » eleva o registro; « mas » abaixa na hora: o contraste coloquial."
+        },
+        {
+          "id": "pt-listen-tom-podcast-q5",
+          "kind": "choice",
+          "prompt": "O que a brincadeira com a « saudade do tom exato » revela ?",
+          "options": [
+            "Arrependimento do recado informal",
+            "Orgulho do recado",
+            "Vontade de demitir",
+            "Alívio com o e-mail"
+          ],
+          "answers": [
+            "Arrependimento do recado informal"
+          ],
+          "explain": "O « te dou um retorno » ficou informal para a diretoria; a saudade do tom exato mostra arrependimento."
+        },
+        {
+          "id": "pt-listen-tom-podcast-q6",
+          "kind": "written",
+          "prompt": "Qual fórmula de suavização aparece no episódio ?",
+          "answers": [
+            "por assim dizer",
+            "assim dizer"
+          ],
+          "explain": "« Saudade do tom exato, por assim dizer »: a fórmula suaviza a afirmação."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": []
     }
   ]
 }

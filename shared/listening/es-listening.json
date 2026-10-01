@@ -2393,6 +2393,406 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-listen-tertulia-viernes",
+      "languageID": "es",
+      "title": "La tertulia del viernes",
+      "level": "A1",
+      "topic": "visitas",
+      "unitID": "es-foundations-u20",
+      "text": "Los viernes, Paula visita a su vecina Carmen. Llama a la puerta y dice: «¿Puedo pasar?». Carmen responde: «¡Pasa, pasa!». Paula siempre trae un detalle: hoy trae unas magdalenas. Carmen pregunta: «¿Un café?». Paula dice que sí. Las dos hablan en el salón, junto a la ventana. A las nueve, Paula se despide: «Gracias por todo, Carmen. Hasta la próxima». Carmen le da un beso y contesta: «De nada. Nos vemos el viernes».",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:social-expressions",
+        "grammar:can"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-tertulia-viernes-q1",
+          "kind": "choice",
+          "prompt": "¿Quién visita a Carmen?",
+          "options": [
+            "Paula",
+            "Su vecina",
+            "El hijo de Carmen",
+            "Un camarero"
+          ],
+          "answers": [
+            "Paula"
+          ],
+          "explain": "Los viernes, Paula visita a su vecina Carmen."
+        },
+        {
+          "id": "es-listen-tertulia-viernes-q2",
+          "kind": "choice",
+          "prompt": "¿Qué dice Paula en la puerta?",
+          "options": [
+            "¿Puedo pasar?",
+            "¿Dónde está el baño?",
+            "Hasta la próxima",
+            "¿Un café?"
+          ],
+          "answers": [
+            "¿Puedo pasar?"
+          ],
+          "explain": "Llama a la puerta y dice: «¿Puedo pasar?»."
+        },
+        {
+          "id": "es-listen-tertulia-viernes-q3",
+          "kind": "written",
+          "prompt": "¿Qué trae Paula hoy?",
+          "answers": [
+            "unas magdalenas",
+            "magdalenas",
+            "magdalenas para Carmen"
+          ],
+          "explain": "Paula siempre trae un detalle: hoy trae unas magdalenas."
+        },
+        {
+          "id": "es-listen-tertulia-viernes-q4",
+          "kind": "choice",
+          "prompt": "¿Qué acepta Paula?",
+          "options": [
+            "Un café",
+            "Un té",
+            "Un agua",
+            "Un pastel"
+          ],
+          "answers": [
+            "Un café"
+          ],
+          "explain": "Carmen pregunta: «¿Un café?». Paula dice que sí."
+        },
+        {
+          "id": "es-listen-tertulia-viernes-q5",
+          "kind": "written",
+          "prompt": "¿A qué hora se despide Paula?",
+          "answers": [
+            "a las nueve",
+            "las nueve",
+            "nueve"
+          ],
+          "explain": "A las nueve, Paula se despide."
+        },
+        {
+          "id": "es-listen-tertulia-viernes-q6",
+          "kind": "choice",
+          "prompt": "¿Qué contesta Carmen al final?",
+          "options": [
+            "De nada. Nos vemos el viernes",
+            "Hasta mañana",
+            "Hoy no puedo",
+            "El café es para Paula"
+          ],
+          "answers": [
+            "De nada. Nos vemos el viernes"
+          ],
+          "explain": "Carmen contesta: «De nada. Nos vemos el viernes»."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-reclamo-factura",
+      "languageID": "es",
+      "title": "El reclamo de la factura",
+      "level": "A2",
+      "topic": "reclamos",
+      "unitID": "es-foundations-u21",
+      "text": "Ayer Laura compró una lámpara nueva por internet. El pedido llegó el jueves, pero la factura venía con un error: cobraban dos lámparas y ella solo compró una. Laura decidió reclamar. Buscó el teléfono de la tienda y llamó por la mañana. «Buenas tardes, quiero reclamar una factura», dijo con calma. La dependienta le pidió el número de pedido y revisó los datos. «Tiene razón, es nuestro error», respondió. Le mandó una factura correcta por email y la tienda devolvió la diferencia al día siguiente. Laura colgó contenta: el problema se arregló en diez minutos.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "function:solve-problems",
+        "grammar:past-simple-regular"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-reclamo-factura-q1",
+          "kind": "choice",
+          "prompt": "¿Qué compró Laura ayer?",
+          "options": [
+            "Una lámpara",
+            "Dos facturas",
+            "Un teléfono",
+            "Una mesa"
+          ],
+          "answers": [
+            "Una lámpara"
+          ],
+          "explain": "Ayer Laura compró una lámpara nueva por internet."
+        },
+        {
+          "id": "es-listen-reclamo-factura-q2",
+          "kind": "choice",
+          "prompt": "¿Cuál era el error de la factura?",
+          "options": [
+            "Cobraban dos lámparas",
+            "No llegó el pedido",
+            "El precio era más bajo",
+            "Faltaba la dirección"
+          ],
+          "answers": [
+            "Cobraban dos lámparas"
+          ],
+          "explain": "La factura venía con un error: cobraban dos lámparas y ella solo compró una."
+        },
+        {
+          "id": "es-listen-reclamo-factura-q3",
+          "kind": "written",
+          "prompt": "¿Cuándo llamó Laura a la tienda?",
+          "answers": [
+            "por la mañana",
+            "la mañana",
+            "por la manana"
+          ],
+          "explain": "Buscó el teléfono de la tienda y llamó por la mañana."
+        },
+        {
+          "id": "es-listen-reclamo-factura-q4",
+          "kind": "written",
+          "prompt": "¿Qué le pidió la dependienta?",
+          "answers": [
+            "el número de pedido",
+            "el numero de pedido",
+            "número de pedido"
+          ],
+          "explain": "La dependienta le pidió el número de pedido y revisó los datos."
+        },
+        {
+          "id": "es-listen-reclamo-factura-q5",
+          "kind": "choice",
+          "prompt": "¿Qué hizo la tienda con la diferencia?",
+          "options": [
+            "La devolvió al día siguiente",
+            "La guardó para otra compra",
+            "No hizo nada",
+            "Se la cobró a Laura"
+          ],
+          "answers": [
+            "La devolvió al día siguiente"
+          ],
+          "explain": "La tienda devolvió la diferencia al día siguiente."
+        },
+        {
+          "id": "es-listen-reclamo-factura-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo terminó el problema?",
+          "options": [
+            "Se arregló en diez minutos",
+            "Se arregló un mes después",
+            "Laura volvió a la tienda",
+            "Quedó sin solución"
+          ],
+          "answers": [
+            "Se arregló en diez minutos"
+          ],
+          "explain": "Laura colgó contenta: el problema se arregló en diez minutos."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-entrevista-practica",
+      "languageID": "es",
+      "title": "La entrevista de práctica",
+      "level": "B1",
+      "topic": "entrevistas",
+      "unitID": "es-foundations-u22",
+      "text": "Nora prepara una entrevista con su amigo Sergio, que trabaja en recursos humanos. «Cuéntame tu experiencia», pide él. «He trabajado cinco años en una agencia; llevo dos proyectos grandes a mis espaldas», responde Nora. «¿Y tu punto fuerte?». «Destaco en el trabajo en equipo; además, me queda mucho por aprender, y eso me gusta». Sergio sonríe: «Eso último suena honesto, no lo dejes fuera». «¿Por eso te contrataron a ti?», pregunta ella. «Yo llegué aquí por exactamente esa frase», contesta él. Al despedirse, Sergio le da un consejo: «Buscan a alguien con experiencia, pero sobre todo a alguien con ganas».",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "vocab:work",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-entrevista-practica-q1",
+          "kind": "choice",
+          "prompt": "¿A qué se dedica Sergio?",
+          "options": [
+            "Trabaja en recursos humanos",
+            "Es candidato a un puesto",
+            "Trabaja en una agencia",
+            "Es el jefe de Nora"
+          ],
+          "answers": [
+            "Trabaja en recursos humanos"
+          ],
+          "explain": "Sergio es su amigo y trabaja en recursos humanos."
+        },
+        {
+          "id": "es-listen-entrevista-practica-q2",
+          "kind": "written",
+          "prompt": "¿Cuántos años trabajó Nora en la agencia?",
+          "answers": [
+            "cinco años",
+            "5 años",
+            "cinco"
+          ],
+          "explain": "«He trabajado cinco años en una agencia»."
+        },
+        {
+          "id": "es-listen-entrevista-practica-q3",
+          "kind": "choice",
+          "prompt": "¿Cuál es el punto fuerte de Nora?",
+          "options": [
+            "El trabajo en equipo",
+            "Los idiomas",
+            "La experiencia en ventas",
+            "Hablar en público"
+          ],
+          "answers": [
+            "El trabajo en equipo"
+          ],
+          "explain": "«Destaco en el trabajo en equipo»."
+        },
+        {
+          "id": "es-listen-entrevista-practica-q4",
+          "kind": "choice",
+          "prompt": "¿Qué le aconseja Sergio sobre admitir que le queda mucho por aprender?",
+          "options": [
+            "Que suena honesto y no lo quite",
+            "Que lo esconda en la entrevista",
+            "Que lo cambie por idiomas",
+            "Que lo repita varias veces"
+          ],
+          "answers": [
+            "Que suena honesto y no lo quite"
+          ],
+          "explain": "«Eso último suena honesto, no lo dejes fuera»."
+        },
+        {
+          "id": "es-listen-entrevista-practica-q5",
+          "kind": "written",
+          "prompt": "Según Sergio, ¿por qué le contrataron a él?",
+          "answers": [
+            "por exactamente esa frase",
+            "por esa frase",
+            "porque dijo esa frase"
+          ],
+          "explain": "«Yo llegué aquí por exactamente esa frase»."
+        },
+        {
+          "id": "es-listen-entrevista-practica-q6",
+          "kind": "choice",
+          "prompt": "¿Qué buscan más las empresas, según el consejo de Sergio?",
+          "options": [
+            "Experiencia y, sobre todo, ganas",
+            "Solo experiencia",
+            "Solo títulos e idiomas",
+            "Candidatos con contactos"
+          ],
+          "answers": [
+            "Experiencia y, sobre todo, ganas"
+          ],
+          "explain": "«Buscan a alguien con experiencia, pero sobre todo a alguien con ganas»."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-tono-podcast",
+      "languageID": "es",
+      "title": "Cuestión de tono",
+      "level": "C1",
+      "topic": "lenguaje",
+      "unitID": "es-foundations-u10",
+      "text": "En «Dicho y hecho», Marta y Diego debaten sobre las palabras que eligen los hablantes. «Hoy he oído \"extraño muchísimo mi pueblo\" en un anuncio y me ha sonado a postal», dice Marta. «¿Qué tendría que decir?», pregunta Diego. «Pues \"echo de menos\", que ya es decirlo con el cuerpo». «Yo diría que son equivalentes; una collocation no lleva pasaporte». «No obstante, fíjate: \"tomar una decisión\" pesa más que \"decidir\"; la fórmula larga ya avisa de que lo has pensado». «De acuerdo en parte: la lengua pinta tonos, pero el hablante elige el pincel». «Precisamente por eso insisto: no digas \"hacer una decisión\"». «Eso sí, ahí te doy toda la razón: esa sí que es un crimen».",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-tono-podcast-q1",
+          "kind": "choice",
+          "prompt": "¿Por qué el anuncio le suena «a postal» a Marta?",
+          "options": [
+            "Por el uso de extrañar",
+            "Porque es demasiado largo",
+            "Porque dice echo de menos",
+            "Porque no se entiende"
+          ],
+          "answers": [
+            "Por el uso de extrañar"
+          ],
+          "explain": "«He oído extraño muchísimo mi pueblo… y me ha sonado a postal»."
+        },
+        {
+          "id": "es-listen-tono-podcast-q2",
+          "kind": "choice",
+          "prompt": "¿Qué piensa Diego de las dos formas de echar en falta?",
+          "options": [
+            "Que son equivalentes",
+            "Que extrañar es un error",
+            "Que hay que usarlas juntas",
+            "Que ninguna suena natural"
+          ],
+          "answers": [
+            "Que son equivalentes"
+          ],
+          "explain": "«Yo diría que son equivalentes; una collocation no lleva pasaporte»."
+        },
+        {
+          "id": "es-listen-tono-podcast-q3",
+          "kind": "written",
+          "prompt": "Según Marta, ¿qué avisa ya la fórmula «tomar una decisión»?",
+          "answers": [
+            "que lo has pensado",
+            "que lo has meditado",
+            "avisa de que lo has pensado"
+          ],
+          "explain": "«La fórmula larga ya avisa de que lo has pensado»."
+        },
+        {
+          "id": "es-listen-tono-podcast-q4",
+          "kind": "written",
+          "prompt": "¿Qué expresión rechaza Marta y llama crimen?",
+          "answers": [
+            "hacer una decisión",
+            "hacer una decision",
+            "hacer una decisión "
+          ],
+          "explain": "«Precisamente por eso insisto: no digas hacer una decisión»."
+        },
+        {
+          "id": "es-listen-tono-podcast-q5",
+          "kind": "choice",
+          "prompt": "¿Cómo se cierra la conversación?",
+          "options": [
+            "En acuerdo total sobre un punto",
+            "En desacuerdo total",
+            "Sin ninguna conclusión",
+            "Con una discusión nueva"
+          ],
+          "answers": [
+            "En acuerdo total sobre un punto"
+          ],
+          "explain": "«Eso sí, ahí te doy toda la razón: esa sí que es un crimen»."
+        },
+        {
+          "id": "es-listen-tono-podcast-q6",
+          "kind": "choice",
+          "prompt": "¿Cuál es la postura final de Diego sobre las collocations?",
+          "options": [
+            "La lengua pinta tonos, pero elige el hablante",
+            "La lengua decide siempre",
+            "Las collocations no pintan nada",
+            "Solo importan los diccionarios"
+          ],
+          "answers": [
+            "La lengua pinta tonos, pero elige el hablante"
+          ],
+          "explain": "«La lengua pinta tonos, pero el hablante elige el pincel»."
+        }
+      ]
     }
   ]
 }
