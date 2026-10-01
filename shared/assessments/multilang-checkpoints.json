@@ -1,0 +1,2342 @@
+{
+  "schemaVersion": 1,
+  "checkpoints": [
+    {
+      "id": "checkpoint-es-a1",
+      "languageID": "es",
+      "level": "A1",
+      "title": "A1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-es-a1-q1",
+          "kind": "choice",
+          "skill": "grammar:verb-be",
+          "prompt": "Yo ___ de España.",
+          "answers": [
+            "soy"
+          ],
+          "explain": "Con yo: soy.",
+          "options": [
+            "soy",
+            "eres",
+            "es",
+            "somos"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q2",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Ella ___ café cada mañana.",
+          "answers": [
+            "bebe"
+          ],
+          "explain": "3ª persona: -e.",
+          "options": [
+            "bebe",
+            "bebo",
+            "beben",
+            "beber"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q3",
+          "kind": "gap",
+          "skill": "grammar:possessives",
+          "prompt": "___ hermano se llama Luis. (mi/mis)",
+          "answers": [
+            "mi"
+          ],
+          "explain": "Un hermano: mi."
+        },
+        {
+          "id": "checkpoint-es-a1-q4",
+          "kind": "gap",
+          "skill": "grammar:present-questions",
+          "prompt": "¿___ te llamas?",
+          "answers": [
+            "cómo",
+            "como"
+          ],
+          "explain": "Preguntar el nombre: cómo."
+        },
+        {
+          "id": "checkpoint-es-a1-q5",
+          "kind": "written",
+          "skill": "function:introduce-yourself",
+          "prompt": "Preséntate: te llamas Ana y eres de Madrid.",
+          "answers": [
+            "me llamo ana",
+            "me llamo ana y soy de madrid",
+            "soy ana"
+          ],
+          "explain": "Me llamo + nombre."
+        },
+        {
+          "id": "checkpoint-es-a1-q6",
+          "kind": "choice",
+          "skill": "vocab:family",
+          "prompt": "La madre de mi padre es mi ___.",
+          "answers": [
+            "abuela"
+          ],
+          "explain": "Madre del padre: abuela.",
+          "options": [
+            "abuela",
+            "tía",
+            "hermana",
+            "prima"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q7",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Nosotros ___ al trabajo en metro.",
+          "answers": [
+            "vamos"
+          ],
+          "explain": "Nosotros: vamos.",
+          "options": [
+            "vamos",
+            "voy",
+            "va",
+            "van"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q8",
+          "kind": "choice",
+          "skill": "grammar:quantities",
+          "prompt": "Quiero ___ kilo de manzanas.",
+          "answers": [
+            "un"
+          ],
+          "explain": "kilo es masculino: un.",
+          "options": [
+            "un",
+            "una",
+            "unos",
+            "unas"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q9",
+          "kind": "gap",
+          "skill": "grammar:present-simple",
+          "prompt": "Ellos ___ en Madrid. (vivir)",
+          "answers": [
+            "viven",
+            "vive"
+          ],
+          "explain": "Ellos: viven."
+        },
+        {
+          "id": "checkpoint-es-a1-q10",
+          "kind": "written",
+          "skill": "function:order-food",
+          "prompt": "Pide en el bar: un café con leche.",
+          "answers": [
+            "un cafe con leche",
+            "un café con leche",
+            "quiero un cafe con leche",
+            "quiero un café con leche"
+          ],
+          "explain": "Un café con leche, por favor."
+        },
+        {
+          "id": "checkpoint-es-a1-q11",
+          "kind": "choice",
+          "skill": "speaking:describe-routine",
+          "prompt": "«¿Qué ___ por la mañana?» — «Desayuno y salgo».",
+          "answers": [
+            "haces"
+          ],
+          "explain": "Tú: haces.",
+          "options": [
+            "haces",
+            "hace",
+            "hago",
+            "hacen"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q12",
+          "kind": "choice",
+          "skill": "vocab:daily-routine",
+          "prompt": "Me ___ a las siete y media.",
+          "answers": [
+            "despierto"
+          ],
+          "explain": "Yo: me despierto.",
+          "options": [
+            "despierto",
+            "despierta",
+            "despiertan",
+            "despertar"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q13",
+          "kind": "gap",
+          "skill": "vocab:food",
+          "prompt": "Como pan con ___ por la mañana. (aceite)",
+          "answers": [
+            "aceite"
+          ],
+          "explain": "Pan con aceite: desayuno típico."
+        },
+        {
+          "id": "checkpoint-es-a1-q14",
+          "kind": "choice",
+          "skill": "writing:sentence",
+          "prompt": "La tienda ___ a las nueve.",
+          "answers": [
+            "abre"
+          ],
+          "explain": "La tienda (3ª sing.): abre.",
+          "options": [
+            "abre",
+            "abren",
+            "abro",
+            "abrimos"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a1-q15",
+          "kind": "written",
+          "skill": "speaking:short-answer",
+          "prompt": "Responde a «¿Cómo estás?» con una respuesta completa.",
+          "answers": [
+            "estoy bien",
+            "estoy bien gracias",
+            "muy bien gracias",
+            "muy bien"
+          ],
+          "explain": "Estoy bien, gracias."
+        },
+        {
+          "id": "checkpoint-es-a1-q16",
+          "kind": "written",
+          "skill": "writing:sentence",
+          "prompt": "Escribe una frase sobre tu día: salgo a las ocho.",
+          "answers": [
+            "salgo a las ocho",
+            "yo salgo a las ocho"
+          ],
+          "explain": "Salgo a las ocho."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-es-a2",
+      "languageID": "es",
+      "level": "A2",
+      "title": "A2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-es-a2-q1",
+          "kind": "choice",
+          "skill": "grammar:past-simple-regular",
+          "prompt": "Ayer ___ el examen.",
+          "answers": [
+            "estudié"
+          ],
+          "explain": "Ayer + pretérito: -é.",
+          "options": [
+            "estudié",
+            "estudio",
+            "estudiaba",
+            "estudiaré"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q2",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "El fin de semana pasado ___ al cine.",
+          "answers": [
+            "fui"
+          ],
+          "explain": "ir → fui (pretérito).",
+          "options": [
+            "fui",
+            "voy",
+            "iba",
+            "iré"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q3",
+          "kind": "gap",
+          "skill": "grammar:time-expressions",
+          "prompt": "___ el año pasado viajamos a Perú.",
+          "answers": [
+            "el año pasado",
+            "año pasado"
+          ],
+          "explain": "Marcador de tiempo pasado."
+        },
+        {
+          "id": "checkpoint-es-a2-q4",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Este piso es ___ barato ___ el otro.",
+          "answers": [
+            "más / que"
+          ],
+          "explain": "Comparativo: más … que.",
+          "options": [
+            "más / que",
+            "muy / que",
+            "más / como",
+            "tan / que"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q5",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Cuenta una cosa del pasado: el año pasado viajaste a Perú.",
+          "answers": [
+            "el ano pasado viaje a peru",
+            "el año pasado viajé a perú",
+            "el año pasado viaje a peru",
+            "viaje a peru"
+          ],
+          "explain": "El año pasado viajé a Perú."
+        },
+        {
+          "id": "checkpoint-es-a2-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "Es ___ cocina mejor de las dos.",
+          "answers": [
+            "la"
+          ],
+          "explain": "Superlativo femenino: la mejor.",
+          "options": [
+            "la",
+            "el",
+            "los",
+            "las"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q7",
+          "kind": "choice",
+          "skill": "grammar:going-to",
+          "prompt": "Mañana ___ visitar el museo.",
+          "answers": [
+            "vamos a"
+          ],
+          "explain": "ir a + infinitivo.",
+          "options": [
+            "vamos a",
+            "vamos de",
+            "vamos que",
+            "vamos por"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q8",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Quedamos ___ las ocho.",
+          "answers": [
+            "a",
+            "a las"
+          ],
+          "explain": "a las + hora."
+        },
+        {
+          "id": "checkpoint-es-a2-q9",
+          "kind": "written",
+          "skill": "function:make-future-plans",
+          "prompt": "Propón un plan: cenar fuera el sábado.",
+          "answers": [
+            "vamos a cenar fuera el sabado",
+            "vamos a cenar fuera el sábado",
+            "vamos a cenar fuera"
+          ],
+          "explain": "Vamos a cenar fuera el sábado."
+        },
+        {
+          "id": "checkpoint-es-a2-q10",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "«¿Te ___ bien el sábado?» — «Sí, perfecto».",
+          "answers": [
+            "viene"
+          ],
+          "explain": "¿Te viene bien? = ¿Te sirve?",
+          "options": [
+            "viene",
+            "vas",
+            "hace",
+            "está"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q11",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "¿Qué ___ ayer? — Nada, descansé.",
+          "answers": [
+            "hiciste"
+          ],
+          "explain": "hacer → hiciste (tú, pretérito).",
+          "options": [
+            "hiciste",
+            "haces",
+            "hacías",
+            "harás"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q12",
+          "kind": "gap",
+          "skill": "writing:story",
+          "prompt": "Ayer trabaj___ hasta las seis.",
+          "answers": [
+            "é",
+            "e",
+            "aré"
+          ],
+          "explain": "trabajar → trabajé."
+        },
+        {
+          "id": "checkpoint-es-a2-q13",
+          "kind": "written",
+          "skill": "speaking:sustained-conversation",
+          "prompt": "Responde con detalle: ¿qué vas a hacer este fin de semana?",
+          "answers": [
+            "voy a descansar",
+            "voy a visitar a mi familia",
+            "voy a salir con amigos",
+            "este fin de semana voy a"
+          ],
+          "explain": "Voy a + infinitivo + detalle."
+        },
+        {
+          "id": "checkpoint-es-a2-q14",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Escribe dos frases sobre tu semana pasada.",
+          "answers": [
+            "la semana pasada trabaje mucho",
+            "la semana pasada trabajé mucho",
+            "trabaje mucho y sali con amigos",
+            "trabajé mucho y salí con amigos"
+          ],
+          "explain": "Pretérito + marcador de tiempo."
+        },
+        {
+          "id": "checkpoint-es-a2-q15",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "Para ___ , es la mejor opción.",
+          "answers": [
+            "mí"
+          ],
+          "explain": "Para mí (con tilde).",
+          "options": [
+            "mí",
+            "mi",
+            "yo",
+            "mí mismo"
+          ]
+        },
+        {
+          "id": "checkpoint-es-a2-q16",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Es caro, ___ está muy bien situado.",
+          "answers": [
+            "pero",
+            "sino"
+          ],
+          "explain": "Contraste: pero."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-fr-a1",
+      "languageID": "fr",
+      "level": "A1",
+      "title": "A1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-fr-a1-q1",
+          "kind": "choice",
+          "skill": "grammar:verb-be",
+          "prompt": "Je ___ de France.",
+          "answers": [
+            "suis"
+          ],
+          "explain": "Avec je : suis.",
+          "options": [
+            "suis",
+            "es",
+            "est",
+            "sommes"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q2",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Elle ___ un café chaque matin.",
+          "answers": [
+            "boit"
+          ],
+          "explain": "3ᵉ personne : -t.",
+          "options": [
+            "boit",
+            "bois",
+            "boivent",
+            "boire"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q3",
+          "kind": "gap",
+          "skill": "grammar:possessives",
+          "prompt": "___ frère s'appelle Louis. (mon/ma)",
+          "answers": [
+            "mon"
+          ],
+          "explain": "frère masculin : mon."
+        },
+        {
+          "id": "checkpoint-fr-a1-q4",
+          "kind": "gap",
+          "skill": "grammar:present-questions",
+          "prompt": "Comment ___-tu t'appeler ?",
+          "answers": [
+            "tu",
+            "vous"
+          ],
+          "explain": "Comment tu t'appelles ?"
+        },
+        {
+          "id": "checkpoint-fr-a1-q5",
+          "kind": "written",
+          "skill": "function:introduce-yourself",
+          "prompt": "Présente-toi : tu t'appelles Marie et tu es de Paris.",
+          "answers": [
+            "je m'appelle marie",
+            "je m'appelle marie et je suis de paris",
+            "je suis marie"
+          ],
+          "explain": "Je m'appelle + prénom."
+        },
+        {
+          "id": "checkpoint-fr-a1-q6",
+          "kind": "choice",
+          "skill": "vocab:family",
+          "prompt": "La mère de mon père est ma ___.",
+          "answers": [
+            "grand-mère"
+          ],
+          "explain": "Mère du père : grand-mère.",
+          "options": [
+            "grand-mère",
+            "tante",
+            "sœur",
+            "cousine"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q7",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Nous ___ au travail en métro.",
+          "answers": [
+            "allons"
+          ],
+          "explain": "Nous : allons.",
+          "options": [
+            "allons",
+            "vais",
+            "va",
+            "vont"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q8",
+          "kind": "choice",
+          "skill": "grammar:quantities",
+          "prompt": "Je voudrais ___ kilo de pommes.",
+          "answers": [
+            "un"
+          ],
+          "explain": "kilo masculin : un.",
+          "options": [
+            "un",
+            "une",
+            "des",
+            "du"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q9",
+          "kind": "gap",
+          "skill": "grammar:present-simple",
+          "prompt": "Ils ___ à Paris. (habiter)",
+          "answers": [
+            "habitent",
+            "habite",
+            "habitons"
+          ],
+          "explain": "Ils : habitent."
+        },
+        {
+          "id": "checkpoint-fr-a1-q10",
+          "kind": "written",
+          "skill": "function:order-food",
+          "prompt": "Commande au café : un café au lait.",
+          "answers": [
+            "un cafe au lait",
+            "un café au lait",
+            "je voudrais un cafe au lait",
+            "je voudrais un café au lait"
+          ],
+          "explain": "Un café au lait, s'il vous plaît."
+        },
+        {
+          "id": "checkpoint-fr-a1-q11",
+          "kind": "choice",
+          "skill": "speaking:describe-routine",
+          "prompt": "« Qu'est-ce que tu ___ le matin ? » — « Je prends mon petit-déjeuner ».",
+          "answers": [
+            "fais"
+          ],
+          "explain": "Tu : fais.",
+          "options": [
+            "fais",
+            "fait",
+            "font",
+            "faites"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q12",
+          "kind": "choice",
+          "skill": "vocab:daily-routine",
+          "prompt": "Je me ___ à sept heures et demie.",
+          "answers": [
+            "réveille"
+          ],
+          "explain": "Je me réveille.",
+          "options": [
+            "réveille",
+            "réveille pas",
+            "réveillent",
+            "réveiller"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q13",
+          "kind": "gap",
+          "skill": "vocab:food",
+          "prompt": "Je mange du pain avec de la ___ le matin. (confiture)",
+          "answers": [
+            "confiture"
+          ],
+          "explain": "Pain + confiture."
+        },
+        {
+          "id": "checkpoint-fr-a1-q14",
+          "kind": "choice",
+          "skill": "writing:sentence",
+          "prompt": "Le magasin ___ à neuf heures.",
+          "answers": [
+            "ouvre"
+          ],
+          "explain": "Le magasin (3ᵉ sing.) : ouvre.",
+          "options": [
+            "ouvre",
+            "ouvrent",
+            "ouvre pas",
+            "ouvrons"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a1-q15",
+          "kind": "written",
+          "skill": "speaking:short-answer",
+          "prompt": "Réponds à « Ça va ? » avec une phrase complète.",
+          "answers": [
+            "ca va bien",
+            "ça va bien",
+            "ça va bien merci",
+            "bien merci"
+          ],
+          "explain": "Ça va bien, merci."
+        },
+        {
+          "id": "checkpoint-fr-a1-q16",
+          "kind": "written",
+          "skill": "writing:sentence",
+          "prompt": "Écris une phrase sur ta journée : tu pars à huit heures.",
+          "answers": [
+            "je pars a huit heures",
+            "je pars à huit heures"
+          ],
+          "explain": "Je pars à huit heures."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-fr-a2",
+      "languageID": "fr",
+      "level": "A2",
+      "title": "A2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-fr-a2-q1",
+          "kind": "choice",
+          "skill": "grammar:past-simple-regular",
+          "prompt": "Hier, j'___ l'examen.",
+          "answers": [
+            "ai étudié"
+          ],
+          "explain": "Hier + passé composé.",
+          "options": [
+            "ai étudié",
+            "étudie",
+            "étudiais",
+            "étudierai"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q2",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Le week-end dernier, je ___ au cinéma.",
+          "answers": [
+            "suis allé"
+          ],
+          "explain": "aller → être + allé.",
+          "options": [
+            "suis allé",
+            "vais",
+            "allais",
+            "irai"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q3",
+          "kind": "gap",
+          "skill": "grammar:time-expressions",
+          "prompt": "___ l'année dernière, nous avons voyagé au Portugal.",
+          "answers": [
+            "l'année dernière",
+            "année dernière"
+          ],
+          "explain": "Marqueur de temps passé."
+        },
+        {
+          "id": "checkpoint-fr-a2-q4",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Cet appartement est ___ cher ___ l'autre.",
+          "answers": [
+            "moins / que"
+          ],
+          "explain": "Comparatif : moins … que.",
+          "options": [
+            "moins / que",
+            "plus / comme",
+            "moins / comme",
+            "aussi / que"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q5",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Raconte : l'année dernière tu as voyagé au Portugal.",
+          "answers": [
+            "l'annee derniere j'ai voyage au portugal",
+            "l'année dernière j'ai voyagé au portugal",
+            "j'ai voyagé au portugal"
+          ],
+          "explain": "J'ai voyagé au Portugal."
+        },
+        {
+          "id": "checkpoint-fr-a2-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "C'est ___ meilleure cuisine des deux.",
+          "answers": [
+            "la"
+          ],
+          "explain": "Superlatif : la meilleure.",
+          "options": [
+            "la",
+            "le",
+            "les",
+            "l'"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q7",
+          "kind": "choice",
+          "skill": "grammar:going-to",
+          "prompt": "Demain, on ___ visiter le musée.",
+          "answers": [
+            "va"
+          ],
+          "explain": "aller + infinitif : on va.",
+          "options": [
+            "va",
+            "vas",
+            "voyons",
+            "vont"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q8",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "On se retrouve ___ dix heures.",
+          "answers": [
+            "à",
+            "a"
+          ],
+          "explain": "à + heure."
+        },
+        {
+          "id": "checkpoint-fr-a2-q9",
+          "kind": "written",
+          "skill": "function:make-future-plans",
+          "prompt": "Propose un projet : dîner dehors samedi.",
+          "answers": [
+            "on va diner dehors samedi",
+            "on va dîner dehors samedi",
+            "nous allons dîner dehors"
+          ],
+          "explain": "On va dîner dehors samedi."
+        },
+        {
+          "id": "checkpoint-fr-a2-q10",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Ça ___ samedi ? » — « Oui, parfait ».",
+          "answers": [
+            "te va"
+          ],
+          "explain": "Ça te va ? = Ça te convient ?",
+          "options": [
+            "te va",
+            "tu vas",
+            "ça va",
+            "tu fais"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q11",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Qu'est-ce que tu ___ hier ? — Rien, je me suis reposé.",
+          "answers": [
+            "as fait"
+          ],
+          "explain": "faire → as fait.",
+          "options": [
+            "as fait",
+            "fais",
+            "faisais",
+            "feras"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q12",
+          "kind": "gap",
+          "skill": "writing:story",
+          "prompt": "Hier, j'ai travaill___ jusqu'à six heures.",
+          "answers": [
+            "é",
+            "e"
+          ],
+          "explain": "travailler → travaillé."
+        },
+        {
+          "id": "checkpoint-fr-a2-q13",
+          "kind": "written",
+          "skill": "speaking:sustained-conversation",
+          "prompt": "Réponds en détail : qu'est-ce que tu vas faire ce week-end ?",
+          "answers": [
+            "je vais me reposer",
+            "je vais rendre visite a ma famille",
+            "je vais sortir avec des amis",
+            "je vais"
+          ],
+          "explain": "Je vais + infinitif + détail."
+        },
+        {
+          "id": "checkpoint-fr-a2-q14",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Écris deux phrases sur ta semaine passée.",
+          "answers": [
+            "la semaine passee j'ai beaucoup travaille",
+            "la semaine passée j'ai beaucoup travaillé",
+            "j'ai beaucoup travaillé et je suis sorti"
+          ],
+          "explain": "Passé composé + marqueur de temps."
+        },
+        {
+          "id": "checkpoint-fr-a2-q15",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "Pour ___ , c'est la meilleure option.",
+          "answers": [
+            "moi"
+          ],
+          "explain": "Pour moi.",
+          "options": [
+            "moi",
+            "mon",
+            "je",
+            "ma"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-a2-q16",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "C'est cher, ___ c'est très bien situé.",
+          "answers": [
+            "mais"
+          ],
+          "explain": "Contraste : mais."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-it-a1",
+      "languageID": "it",
+      "level": "A1",
+      "title": "A1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-it-a1-q1",
+          "kind": "choice",
+          "skill": "grammar:verb-be",
+          "prompt": "Io ___ di Italia.",
+          "answers": [
+            "sono"
+          ],
+          "explain": "Con io : sono.",
+          "options": [
+            "sono",
+            "sei",
+            "è",
+            "siamo"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q2",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Lei ___ un caffè ogni mattina.",
+          "answers": [
+            "beve"
+          ],
+          "explain": "3ª persona: -e.",
+          "options": [
+            "beve",
+            "bevo",
+            "bevono",
+            "bere"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q3",
+          "kind": "gap",
+          "skill": "grammar:possessives",
+          "prompt": "___ fratello si chiama Luigi. (mio/mia)",
+          "answers": [
+            "mio"
+          ],
+          "explain": "fratello maschile: mio."
+        },
+        {
+          "id": "checkpoint-it-a1-q4",
+          "kind": "gap",
+          "skill": "grammar:present-questions",
+          "prompt": "___ ti chiami ?",
+          "answers": [
+            "come",
+            "che",
+            "cosa"
+          ],
+          "explain": "Come ti chiami ?"
+        },
+        {
+          "id": "checkpoint-it-a1-q5",
+          "kind": "written",
+          "skill": "function:introduce-yourself",
+          "prompt": "Presentati: ti chiami Maria e sei di Roma.",
+          "answers": [
+            "mi chiamo maria",
+            "mi chiamo maria e sono di roma",
+            "sono maria"
+          ],
+          "explain": "Mi chiamo + nome."
+        },
+        {
+          "id": "checkpoint-it-a1-q6",
+          "kind": "choice",
+          "skill": "vocab:family",
+          "prompt": "La madre di mio padre è mia ___.",
+          "answers": [
+            "nonna"
+          ],
+          "explain": "Madre del padre: nonna.",
+          "options": [
+            "nonna",
+            "zia",
+            "sorella",
+            "cugina"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q7",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Noi ___ al lavoro in metro.",
+          "answers": [
+            "andiamo"
+          ],
+          "explain": "Noi: andiamo.",
+          "options": [
+            "andiamo",
+            "vado",
+            "va",
+            "vanno"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q8",
+          "kind": "choice",
+          "skill": "grammar:quantities",
+          "prompt": "Vorrei ___ chilo di mele.",
+          "answers": [
+            "un"
+          ],
+          "explain": "chilo maschile: un.",
+          "options": [
+            "un",
+            "una",
+            "dei",
+            "delle"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q9",
+          "kind": "gap",
+          "skill": "grammar:present-simple",
+          "prompt": "Loro ___ a Roma. (abitare)",
+          "answers": [
+            "abitano",
+            "abita",
+            "abitiamo"
+          ],
+          "explain": "Loro: abitano."
+        },
+        {
+          "id": "checkpoint-it-a1-q10",
+          "kind": "written",
+          "skill": "function:order-food",
+          "prompt": "Ordina al bar: un caffellatte.",
+          "answers": [
+            "un caffe latte",
+            "un caffellatte",
+            "un caffe con latte",
+            "vorrei un caffellatte"
+          ],
+          "explain": "Un caffellatte, per favore."
+        },
+        {
+          "id": "checkpoint-it-a1-q11",
+          "kind": "choice",
+          "skill": "speaking:describe-routine",
+          "prompt": "« Cosa ___ la mattina ? » — « Faccio colazione ».",
+          "answers": [
+            "fai"
+          ],
+          "explain": "Tu: fai.",
+          "options": [
+            "fai",
+            "fa",
+            "facciamo",
+            "fanno"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q12",
+          "kind": "choice",
+          "skill": "vocab:daily-routine",
+          "prompt": "Mi ___ alle sette e mezza.",
+          "answers": [
+            "sveglio"
+          ],
+          "explain": "Mi sveglio.",
+          "options": [
+            "sveglio",
+            "sveglia",
+            "svegliano",
+            "svegliare"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q13",
+          "kind": "gap",
+          "skill": "vocab:food",
+          "prompt": "Mangio pane con la ___ la mattina. (marmellata)",
+          "answers": [
+            "marmellata"
+          ],
+          "explain": "Pane e marmellata."
+        },
+        {
+          "id": "checkpoint-it-a1-q14",
+          "kind": "choice",
+          "skill": "writing:sentence",
+          "prompt": "Il negozio ___ alle nove.",
+          "answers": [
+            "apre"
+          ],
+          "explain": "Il negozio (3ª sing.): apre.",
+          "options": [
+            "apre",
+            "aprono",
+            "apro",
+            "apriamo"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a1-q15",
+          "kind": "written",
+          "skill": "speaking:short-answer",
+          "prompt": "Rispondi a « Come stai ? » con una frase completa.",
+          "answers": [
+            "sto bene",
+            "sto bene grazie",
+            "bene grazie"
+          ],
+          "explain": "Sto bene, grazie."
+        },
+        {
+          "id": "checkpoint-it-a1-q16",
+          "kind": "written",
+          "skill": "writing:sentence",
+          "prompt": "Scrivi una frase sulla tua giornata: esci alle otto.",
+          "answers": [
+            "esco alle otto",
+            "io esco alle otto"
+          ],
+          "explain": "Esco alle otto."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-it-a2",
+      "languageID": "it",
+      "level": "A2",
+      "title": "A2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-it-a2-q1",
+          "kind": "choice",
+          "skill": "grammar:past-simple-regular",
+          "prompt": "Ieri ho ___ l'esame.",
+          "answers": [
+            "studiato"
+          ],
+          "explain": "Ieri + passato prossimo.",
+          "options": [
+            "studiato",
+            "studio",
+            "studiavo",
+            "studierò"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q2",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Il weekend scorso sono ___ al cinema.",
+          "answers": [
+            "andato"
+          ],
+          "explain": "andare → essere + andato.",
+          "options": [
+            "andato",
+            "vado",
+            "andavo",
+            "andrò"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q3",
+          "kind": "gap",
+          "skill": "grammar:time-expressions",
+          "prompt": "___ anno scorso abbiamo viaggiato in Portogallo.",
+          "answers": [
+            "l'anno scorso",
+            "anno scorso"
+          ],
+          "explain": "Marcatore di tempo passato."
+        },
+        {
+          "id": "checkpoint-it-a2-q4",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Questo appartamento è ___ costoso ___ l'altro.",
+          "answers": [
+            "meno / che"
+          ],
+          "explain": "Comparativo: meno … che.",
+          "options": [
+            "meno / che",
+            "più / che",
+            "meno / come",
+            "così / che"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q5",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Racconta: l'anno scorso hai viaggiato in Portogallo.",
+          "answers": [
+            "l'anno scorso ho viaggiato in portogallo",
+            "l'anno scorso sono viaggiato in portogallo",
+            "ho viaggiato in portogallo"
+          ],
+          "explain": "Ho viaggiato in Portogallo."
+        },
+        {
+          "id": "checkpoint-it-a2-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "È ___ cucina migliore delle due.",
+          "answers": [
+            "la"
+          ],
+          "explain": "Superlativo: la migliore.",
+          "options": [
+            "la",
+            "il",
+            "le",
+            "lo"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q7",
+          "kind": "choice",
+          "skill": "grammar:going-to",
+          "prompt": "Domani ___ visitare il museo.",
+          "answers": [
+            "andiamo"
+          ],
+          "explain": "andare a + infinito: (noi) andiamo a… Use the full form in your answer.",
+          "options": [
+            "andiamo",
+            "andiamo al",
+            "andiamo di",
+            "andiamo che"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q8",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Ci vediamo ___ le dieci.",
+          "answers": [
+            "alle",
+            "a le",
+            "alla"
+          ],
+          "explain": "alle + ora."
+        },
+        {
+          "id": "checkpoint-it-a2-q9",
+          "kind": "written",
+          "skill": "function:make-future-plans",
+          "prompt": "Proponi un piano: cenare fuori sabato.",
+          "answers": [
+            "andiamo a cenare fuori sabato",
+            "andiamo a cenare fuori",
+            "ceniamo fuori sabato"
+          ],
+          "explain": "Andiamo a cenare fuori sabato."
+        },
+        {
+          "id": "checkpoint-it-a2-q10",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Sabato ___ bene ? » — « Sì, perfetto ».",
+          "answers": [
+            "ti va"
+          ],
+          "explain": "Ti va ? = Ti conviene ?",
+          "options": [
+            "ti va",
+            "vai",
+            "fa",
+            "stai"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q11",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Cosa hai ___ ieri ? — Niente, mi sono riposato.",
+          "answers": [
+            "fatto"
+          ],
+          "explain": "fare → fatto.",
+          "options": [
+            "fatto",
+            "fai",
+            "facevi",
+            "farai"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q12",
+          "kind": "gap",
+          "skill": "writing:story",
+          "prompt": "Ieri ho lavor___ fino alle sei.",
+          "answers": [
+            "ato",
+            "o"
+          ],
+          "explain": "lavorare → lavorato."
+        },
+        {
+          "id": "checkpoint-it-a2-q13",
+          "kind": "written",
+          "skill": "speaking:sustained-conversation",
+          "prompt": "Rispondi in dettaglio: cosa farai questo weekend ?",
+          "answers": [
+            "mi riposerò",
+            "andrò a trovare la mia famiglia",
+            "uscirò con gli amici",
+            "andremo"
+          ],
+          "explain": "Andrò a… / Mi riposerò…"
+        },
+        {
+          "id": "checkpoint-it-a2-q14",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Scrivi due frasi sulla tua settimana passata.",
+          "answers": [
+            "la settimana scorsa ho lavorato molto",
+            "ho lavorato molto e sono uscito con gli amici",
+            "la settimana scorsa ho lavorato"
+          ],
+          "explain": "Passato prossimo + marcatore di tempo."
+        },
+        {
+          "id": "checkpoint-it-a2-q15",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "Per ___ , è la migliore opzione.",
+          "answers": [
+            "me"
+          ],
+          "explain": "Per me.",
+          "options": [
+            "me",
+            "mio",
+            "io",
+            "me stesso"
+          ]
+        },
+        {
+          "id": "checkpoint-it-a2-q16",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "È costoso, ___ è molto ben posizionato.",
+          "answers": [
+            "ma"
+          ],
+          "explain": "Contrasto: ma."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-de-a1",
+      "languageID": "de",
+      "level": "A1",
+      "title": "A1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-de-a1-q1",
+          "kind": "choice",
+          "skill": "grammar:verb-be",
+          "prompt": "Ich ___ aus Deutschland.",
+          "answers": [
+            "bin"
+          ],
+          "explain": "Mit ich : bin.",
+          "options": [
+            "bin",
+            "bist",
+            "ist",
+            "sind"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q2",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Sie trinkt jeden Morgen ___ Kaffee.",
+          "answers": [
+            "einen"
+          ],
+          "explain": "Kaffee (der): einen.",
+          "options": [
+            "einen",
+            "eine",
+            "ein",
+            "einem"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q3",
+          "kind": "gap",
+          "skill": "grammar:possessives",
+          "prompt": "___ Bruder heißt Luis. (mein/meine)",
+          "answers": [
+            "mein"
+          ],
+          "explain": "Bruder maskulin : mein."
+        },
+        {
+          "id": "checkpoint-de-a1-q4",
+          "kind": "gap",
+          "skill": "grammar:present-questions",
+          "prompt": "___ heißt du ?",
+          "answers": [
+            "wie",
+            "was",
+            "wer"
+          ],
+          "explain": "Wie heißt du ?"
+        },
+        {
+          "id": "checkpoint-de-a1-q5",
+          "kind": "written",
+          "skill": "function:introduce-yourself",
+          "prompt": "Stell dich vor: du heißt Anna und kommst aus Berlin.",
+          "answers": [
+            "ich heiße anna",
+            "ich heiße anna und komme aus berlin",
+            "ich bin anna"
+          ],
+          "explain": "Ich heiße + Name."
+        },
+        {
+          "id": "checkpoint-de-a1-q6",
+          "kind": "choice",
+          "skill": "vocab:family",
+          "prompt": "Die Mutter meines Vaters ist meine ___.",
+          "answers": [
+            "Oma"
+          ],
+          "explain": "Mutter des Vaters : Oma.",
+          "options": [
+            "Oma",
+            "Tante",
+            "Schwester",
+            "Cousine"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q7",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Wir ___ mit der U-Bahn zur Arbeit.",
+          "answers": [
+            "fahren"
+          ],
+          "explain": "Wir : fahren.",
+          "options": [
+            "fahren",
+            "fahre",
+            "fährt",
+            "fahren nicht"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q8",
+          "kind": "choice",
+          "skill": "grammar:quantities",
+          "prompt": "Ich möchte ___ Kilo Äpfel.",
+          "answers": [
+            "ein"
+          ],
+          "explain": "Kilo (das): ein.",
+          "options": [
+            "ein",
+            "eine",
+            "einen",
+            "einem"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q9",
+          "kind": "gap",
+          "skill": "grammar:present-simple",
+          "prompt": "Sie ___ in Berlin. (wohnen)",
+          "answers": [
+            "wohnen",
+            "wohnt",
+            "wohne"
+          ],
+          "explain": "Sie (Plural): wohnen."
+        },
+        {
+          "id": "checkpoint-de-a1-q10",
+          "kind": "written",
+          "skill": "function:order-food",
+          "prompt": "Bestell im Café: einen Milchkaffee.",
+          "answers": [
+            "einen milchkaffee",
+            "einen milchkaffee bitte",
+            "ich mochte einen milchkaffee",
+            "ich möchte einen milchkaffee"
+          ],
+          "explain": "Einen Milchkaffee, bitte."
+        },
+        {
+          "id": "checkpoint-de-a1-q11",
+          "kind": "choice",
+          "skill": "speaking:describe-routine",
+          "prompt": "« Was ___ du morgens ? » — « Ich frühstücke ».",
+          "answers": [
+            "machst"
+          ],
+          "explain": "Du : machst.",
+          "options": [
+            "machst",
+            "macht",
+            "mache",
+            "machen"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q12",
+          "kind": "choice",
+          "skill": "vocab:daily-routine",
+          "prompt": "Ich ___ um halb sieben auf.",
+          "answers": [
+            "stehe auf"
+          ],
+          "explain": "sich erheben : aufstehen — ich stehe auf.",
+          "options": [
+            "stehe",
+            "steht",
+            "stehen",
+            "stehe auf"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q13",
+          "kind": "gap",
+          "skill": "vocab:food",
+          "prompt": "Ich esse Brot mit ___ am Morgen. (Marmelade)",
+          "answers": [
+            "marmelade"
+          ],
+          "explain": "Brot mit Marmelade."
+        },
+        {
+          "id": "checkpoint-de-a1-q14",
+          "kind": "choice",
+          "skill": "writing:sentence",
+          "prompt": "Der Laden ___ um neun Uhr.",
+          "answers": [
+            "öffnet"
+          ],
+          "explain": "Der Laden (3. Sg.) : öffnet.",
+          "options": [
+            "öffnet",
+            "öffnen",
+            "öffne",
+            "öffnet nicht"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a1-q15",
+          "kind": "written",
+          "skill": "speaking:short-answer",
+          "prompt": "Antworte auf « Wie geht's ? » mit einem ganzen Satz.",
+          "answers": [
+            "mir geht es gut",
+            "es geht mir gut",
+            "gut danke"
+          ],
+          "explain": "Mir geht es gut, danke."
+        },
+        {
+          "id": "checkpoint-de-a1-q16",
+          "kind": "written",
+          "skill": "writing:sentence",
+          "prompt": "Schreibe einen Satz über deinen Tag: du gehst um acht.",
+          "answers": [
+            "ich gehe um acht",
+            "ich gehe um acht uhr"
+          ],
+          "explain": "Ich gehe um acht."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-de-a2",
+      "languageID": "de",
+      "level": "A2",
+      "title": "A2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-de-a2-q1",
+          "kind": "choice",
+          "skill": "grammar:past-simple-regular",
+          "prompt": "Gestern ___ ich für die Prüfung gelernt.",
+          "answers": [
+            "habe"
+          ],
+          "explain": "lernen → haben : habe gelernt.",
+          "options": [
+            "habe",
+            "bin",
+            "war",
+            "hatte"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q2",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Letztes Wochenende ___ ich ins Kino gegangen.",
+          "answers": [
+            "bin"
+          ],
+          "explain": "gehen → sein : bin gegangen.",
+          "options": [
+            "bin",
+            "habe",
+            "war",
+            "bin nicht"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q3",
+          "kind": "gap",
+          "skill": "grammar:time-expressions",
+          "prompt": "___ letzten Sommer sind wir nach Portugal gereist.",
+          "answers": [
+            "im letzten sommer",
+            "letzten sommer"
+          ],
+          "explain": "Zeitmarker der Vergangenheit."
+        },
+        {
+          "id": "checkpoint-de-a2-q4",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Diese Wohnung ist ___ teuer ___ die andere.",
+          "answers": [
+            "weniger / als"
+          ],
+          "explain": "Komparativ : weniger … als.",
+          "options": [
+            "weniger / als",
+            "mehr / als",
+            "weniger / wie",
+            "so / als"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q5",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Erzähl: letzten Sommer bist du nach Portugal gereist.",
+          "answers": [
+            "letzten sommer bin ich nach portugal gereist",
+            "ich bin nach portugal gereist"
+          ],
+          "explain": "Ich bin nach Portugal gereist."
+        },
+        {
+          "id": "checkpoint-de-a2-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "Sie ist ___ beste Küche von beiden.",
+          "answers": [
+            "die"
+          ],
+          "explain": "Superlativ feminin : die beste.",
+          "options": [
+            "die",
+            "der",
+            "das",
+            "den"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q7",
+          "kind": "choice",
+          "skill": "grammar:going-to",
+          "prompt": "Morgen ___ wir das Museum besuchen.",
+          "answers": [
+            "werden"
+          ],
+          "explain": "werden + Infinitiv.",
+          "options": [
+            "werden",
+            "werdest",
+            "würden",
+            "wollen"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q8",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Wir treffen uns ___ zehn Uhr.",
+          "answers": [
+            "um"
+          ],
+          "explain": "um + Uhrzeit."
+        },
+        {
+          "id": "checkpoint-de-a2-q9",
+          "kind": "written",
+          "skill": "function:make-future-plans",
+          "prompt": "Schlag etwas vor: am Samstag ausgehen.",
+          "answers": [
+            "wir werden am samstag ausgehen",
+            "wir gehen am samstag aus",
+            "am samstag gehen wir aus"
+          ],
+          "explain": "Wir werden am Samstag ausgehen."
+        },
+        {
+          "id": "checkpoint-de-a2-q10",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Passt ___ Samstag ? » — « Ja, perfekt ».",
+          "answers": [
+            "dir"
+          ],
+          "explain": "Passt dir ? = Passt es dir ?",
+          "options": [
+            "dir",
+            "du",
+            "dich",
+            "dein"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q11",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Was ___ du gestern gemacht ? — Nichts, ich habe mich ausgeruht.",
+          "answers": [
+            "hast"
+          ],
+          "explain": "haben (du) : hast.",
+          "options": [
+            "hast",
+            "hast du nicht",
+            "hattest",
+            "wirst"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q12",
+          "kind": "gap",
+          "skill": "writing:story",
+          "prompt": "Gestern habe ich bis sechs gearbeit___.",
+          "answers": [
+            "et",
+            "e"
+          ],
+          "explain": "arbeiten → gearbeitet."
+        },
+        {
+          "id": "checkpoint-de-a2-q13",
+          "kind": "written",
+          "skill": "speaking:sustained-conversation",
+          "prompt": "Antworte ausführlich: was machst du am Wochenende ?",
+          "answers": [
+            "ich werde mich erholen",
+            "ich werde meine familie besuchen",
+            "ich gehe mit freunden aus",
+            "ich werde"
+          ],
+          "explain": "Ich werde… + Details."
+        },
+        {
+          "id": "checkpoint-de-a2-q14",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Schreibe zwei Sätze über deine letzte Woche.",
+          "answers": [
+            "letzte woche habe ich viel gearbeitet",
+            "ich habe viel gearbeitet und bin ausgegangen",
+            "letzte woche habe ich"
+          ],
+          "explain": "Perfekt + Zeitmarker."
+        },
+        {
+          "id": "checkpoint-de-a2-q15",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "Für ___ ist es die beste Option.",
+          "answers": [
+            "mich"
+          ],
+          "explain": "Für mich.",
+          "options": [
+            "mich",
+            "mich nicht",
+            "mir",
+            "mein"
+          ]
+        },
+        {
+          "id": "checkpoint-de-a2-q16",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Es ist teuer, ___ es liegt sehr gut.",
+          "answers": [
+            "aber",
+            "sondern"
+          ],
+          "explain": "Kontrast : aber."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-pt-a1",
+      "languageID": "pt",
+      "level": "A1",
+      "title": "A1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-pt-a1-q1",
+          "kind": "choice",
+          "skill": "grammar:verb-be",
+          "prompt": "Eu ___ do Brasil.",
+          "answers": [
+            "sou"
+          ],
+          "explain": "Com eu: sou.",
+          "options": [
+            "sou",
+            "és",
+            "é",
+            "somos"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q2",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Ela ___ café toda manhã.",
+          "answers": [
+            "bebe"
+          ],
+          "explain": "3ª pessoa: -e.",
+          "options": [
+            "bebe",
+            "bebo",
+            "bebem",
+            "beber"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q3",
+          "kind": "gap",
+          "skill": "grammar:possessives",
+          "prompt": "___ irmão se chama Luís. (meu/minha)",
+          "answers": [
+            "meu"
+          ],
+          "explain": "irmão masculino: meu."
+        },
+        {
+          "id": "checkpoint-pt-a1-q4",
+          "kind": "gap",
+          "skill": "grammar:present-questions",
+          "prompt": "___ você se chama ?",
+          "answers": [
+            "como",
+            "qual",
+            "o que"
+          ],
+          "explain": "Como você se chama ?"
+        },
+        {
+          "id": "checkpoint-pt-a1-q5",
+          "kind": "written",
+          "skill": "function:introduce-yourself",
+          "prompt": "Apresente-se: você se chama Ana e é de São Paulo.",
+          "answers": [
+            "meu nome e ana",
+            "meu nome é ana",
+            "me chamo ana",
+            "eu sou ana"
+          ],
+          "explain": "Meu nome é Ana / Me chamo Ana."
+        },
+        {
+          "id": "checkpoint-pt-a1-q6",
+          "kind": "choice",
+          "skill": "vocab:family",
+          "prompt": "A mãe do meu pai é minha ___.",
+          "answers": [
+            "avó"
+          ],
+          "explain": "Mãe do pai: avó.",
+          "options": [
+            "avó",
+            "tia",
+            "irmã",
+            "prima"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q7",
+          "kind": "choice",
+          "skill": "grammar:present-simple",
+          "prompt": "Nós ___ de metrô para o trabalho.",
+          "answers": [
+            "vamos"
+          ],
+          "explain": "Nós: vamos.",
+          "options": [
+            "vamos",
+            "vou",
+            "vai",
+            "vão"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q8",
+          "kind": "choice",
+          "skill": "grammar:quantities",
+          "prompt": "Quero ___ quilo de maçãs.",
+          "answers": [
+            "um"
+          ],
+          "explain": "quilo é masculino: um.",
+          "options": [
+            "um",
+            "uma",
+            "uns",
+            "umas"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q9",
+          "kind": "gap",
+          "skill": "grammar:present-simple",
+          "prompt": "Eles ___ em Lisboa. (morar)",
+          "answers": [
+            "moram",
+            "mora",
+            "moramos"
+          ],
+          "explain": "Eles: moram."
+        },
+        {
+          "id": "checkpoint-pt-a1-q10",
+          "kind": "written",
+          "skill": "function:order-food",
+          "prompt": "Peça no café: um café com leite.",
+          "answers": [
+            "um cafe com leite",
+            "um café com leite",
+            "quero um cafe com leite",
+            "quero um café com leite"
+          ],
+          "explain": "Um café com leite, por favor."
+        },
+        {
+          "id": "checkpoint-pt-a1-q11",
+          "kind": "choice",
+          "skill": "speaking:describe-routine",
+          "prompt": "« O que você ___ de manhã ? » — « Tomo café ».",
+          "answers": [
+            "faz"
+          ],
+          "explain": "Você: faz.",
+          "options": [
+            "faz",
+            "faço",
+            "fazem",
+            "fazemos"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q12",
+          "kind": "choice",
+          "skill": "vocab:daily-routine",
+          "prompt": "Eu ___ às sete e meia.",
+          "answers": [
+            "acordo"
+          ],
+          "explain": "Eu: acordo.",
+          "options": [
+            "acordo",
+            "acorda",
+            "acordam",
+            "acordar"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q13",
+          "kind": "gap",
+          "skill": "vocab:food",
+          "prompt": "Como pão com ___ de manhã. (manteiga)",
+          "answers": [
+            "manteiga"
+          ],
+          "explain": "Pão com manteiga."
+        },
+        {
+          "id": "checkpoint-pt-a1-q14",
+          "kind": "choice",
+          "skill": "writing:sentence",
+          "prompt": "A loja ___ às nove.",
+          "answers": [
+            "abre"
+          ],
+          "explain": "A loja (3ª sing.): abre.",
+          "options": [
+            "abre",
+            "abrem",
+            "abro",
+            "abrimos"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a1-q15",
+          "kind": "written",
+          "skill": "speaking:short-answer",
+          "prompt": "Responda a « Tudo bem ? » com uma frase completa.",
+          "answers": [
+            "tudo bem",
+            "tudo bem obrigado",
+            "tudo bem obrigada",
+            "tudo otimo"
+          ],
+          "explain": "Tudo bem, obrigado(a)."
+        },
+        {
+          "id": "checkpoint-pt-a1-q16",
+          "kind": "written",
+          "skill": "writing:sentence",
+          "prompt": "Escreva uma frase sobre o seu dia: saio às oito.",
+          "answers": [
+            "saio as oito",
+            "saio às oito",
+            "eu saio às oito"
+          ],
+          "explain": "Saio às oito."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-pt-a2",
+      "languageID": "pt",
+      "level": "A2",
+      "title": "A2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-pt-a2-q1",
+          "kind": "choice",
+          "skill": "grammar:past-simple-regular",
+          "prompt": "Ontem ___ para a prova.",
+          "answers": [
+            "estudei"
+          ],
+          "explain": "Ontem + pretérito: -ei.",
+          "options": [
+            "estudei",
+            "estudo",
+            "estudava",
+            "estudarei"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q2",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "No fim de semana passado ___ ao cinema.",
+          "answers": [
+            "fui"
+          ],
+          "explain": "ir → fui.",
+          "options": [
+            "fui",
+            "vou",
+            "ia",
+            "irei"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q3",
+          "kind": "gap",
+          "skill": "grammar:time-expressions",
+          "prompt": "___ ano passado viajamos para Portugal.",
+          "answers": [
+            "no ano passado",
+            "ano passado"
+          ],
+          "explain": "Marcador de tempo passado."
+        },
+        {
+          "id": "checkpoint-pt-a2-q4",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Este apartamento é ___ barato ___ o outro.",
+          "answers": [
+            "mais / do que"
+          ],
+          "explain": "Comparativo: mais … do que.",
+          "options": [
+            "mais / do que",
+            "mais / como",
+            "tão / que",
+            "mais / que"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q5",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Conte: no ano passado você viajou para Portugal.",
+          "answers": [
+            "no ano passado viajei para portugal",
+            "ano passado viajei para portugal",
+            "viajei para portugal"
+          ],
+          "explain": "No ano passado viajei para Portugal."
+        },
+        {
+          "id": "checkpoint-pt-a2-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "É ___ cozinha melhor das duas.",
+          "answers": [
+            "a"
+          ],
+          "explain": "Superlativo feminino: a melhor.",
+          "options": [
+            "a",
+            "o",
+            "as",
+            "os"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q7",
+          "kind": "choice",
+          "skill": "grammar:going-to",
+          "prompt": "Amanhã ___ visitar o museu.",
+          "answers": [
+            "vamos"
+          ],
+          "explain": "ir + infinitivo: vamos visitar.",
+          "options": [
+            "vamos",
+            "vamos de",
+            "vamos que",
+            "vamos por"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q8",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Vamos nos encontrar ___ dez horas.",
+          "answers": [
+            "as",
+            "às"
+          ],
+          "explain": "às + hora."
+        },
+        {
+          "id": "checkpoint-pt-a2-q9",
+          "kind": "written",
+          "skill": "function:make-future-plans",
+          "prompt": "Sugira um plano: jantar fora no sábado.",
+          "answers": [
+            "vamos jantar fora no sabado",
+            "vamos jantar fora no sábado",
+            "vamos jantar fora"
+          ],
+          "explain": "Vamos jantar fora no sábado."
+        },
+        {
+          "id": "checkpoint-pt-a2-q10",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Sábado ___ para você ? » — « Sim, perfeito ».",
+          "answers": [
+            "fica"
+          ],
+          "explain": "Fica para você ? = Serve ?",
+          "options": [
+            "fica",
+            "vai",
+            "está",
+            "dá"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q11",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "O que você ___ ontem ? — Nada, descansei.",
+          "answers": [
+            "fez"
+          ],
+          "explain": "fazer → fez.",
+          "options": [
+            "fez",
+            "faz",
+            "fazia",
+            "fará"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q12",
+          "kind": "gap",
+          "skill": "writing:story",
+          "prompt": "Ontem trabalh___ até as seis.",
+          "answers": [
+            "ei",
+            "e"
+          ],
+          "explain": "trabalhar → trabalhei."
+        },
+        {
+          "id": "checkpoint-pt-a2-q13",
+          "kind": "written",
+          "skill": "speaking:sustained-conversation",
+          "prompt": "Responda em detalhe: o que você vai fazer no fim de semana ?",
+          "answers": [
+            "vou descansar",
+            "vou visitar minha familia",
+            "vou visitar minha família",
+            "vou sair com amigos"
+          ],
+          "explain": "Vou + infinitivo + detalhe."
+        },
+        {
+          "id": "checkpoint-pt-a2-q14",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Escreva duas frases sobre a sua semana passada.",
+          "answers": [
+            "na semana passada trabalhei muito",
+            "trabalhei muito e sai com amigos",
+            "trabalhei muito e saí com amigos"
+          ],
+          "explain": "Pretérito + marcador de tempo."
+        },
+        {
+          "id": "checkpoint-pt-a2-q15",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "Para ___ , é a melhor opção.",
+          "answers": [
+            "mim"
+          ],
+          "explain": "Para mim.",
+          "options": [
+            "mim",
+            "eu",
+            "meu",
+            "minha"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-a2-q16",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "É caro, ___ é muito bem localizado.",
+          "answers": [
+            "mas",
+            "porém"
+          ],
+          "explain": "Contraste: mas."
+        }
+      ]
+    }
+  ]
+}

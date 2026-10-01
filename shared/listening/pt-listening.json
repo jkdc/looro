@@ -593,6 +593,184 @@
         "grammar:some-any",
         "vocab:shopping"
       ]
+    },
+    {
+      "id": "pt-listen-apartamento-escolhido",
+      "languageID": "pt",
+      "title": "O apartamento escolhido",
+      "level": "A2",
+      "topic": "apartamentos",
+      "unitID": "pt-foundations-u4",
+      "text": "Bia e Rafa procuram apartamento no aplicativo. O primeiro é mais barato, mas fica mais longe da estação: quarenta minutos a pé. O segundo custa cem reais a mais por mês, mas é mais claro e tem varanda. Para a Bia, a luz é o mais importante, porque ela trabalha de casa. No final, decidem pedir uma visita ao segundo: é mais caro, mas é o melhor dos dois para eles.",
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "pt-listen-apartamento-escolhido-q1",
+          "kind": "choice",
+          "prompt": "Quantos apartamentos eles comparam ?",
+          "answers": [
+            "Dois"
+          ],
+          "explain": "Comparam dois apartamentos no aplicativo.",
+          "options": [
+            "Dois",
+            "Três",
+            "Quatro"
+          ]
+        },
+        {
+          "id": "pt-listen-apartamento-escolhido-q2",
+          "kind": "choice",
+          "prompt": "Qual é o problema do mais barato ?",
+          "answers": [
+            "Fica longe da estação"
+          ],
+          "explain": "Quarenta minutos a pé da estação.",
+          "options": [
+            "Fica longe da estação",
+            "Não tem varanda",
+            "É muito caro",
+            "É pequeno"
+          ]
+        },
+        {
+          "id": "pt-listen-apartamento-escolhido-q3",
+          "kind": "written",
+          "prompt": "Quanto custa a mais o segundo por mês ?",
+          "answers": [
+            "cem reais",
+            "100 reais"
+          ],
+          "explain": "Cem reais a mais por mês."
+        },
+        {
+          "id": "pt-listen-apartamento-escolhido-q4",
+          "kind": "choice",
+          "prompt": "O que é mais importante para a Bia ?",
+          "answers": [
+            "A luz"
+          ],
+          "explain": "Ela trabalha de casa.",
+          "options": [
+            "A luz",
+            "O preço",
+            "A varanda",
+            "A cozinha"
+          ]
+        },
+        {
+          "id": "pt-listen-apartamento-escolhido-q5",
+          "kind": "choice",
+          "prompt": "O que eles decidem no final ?",
+          "answers": [
+            "Pedir visita ao segundo"
+          ],
+          "explain": "É o melhor dos dois para eles.",
+          "options": [
+            "Pedir visita ao segundo",
+            "Ficar com o primeiro",
+            "Continuar procurando",
+            "Pedir desconto"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-listen-sabado-organizado",
+      "languageID": "pt",
+      "title": "O sábado organizado",
+      "level": "A2",
+      "topic": "planos",
+      "unitID": "pt-foundations-u4",
+      "text": "Lu liga para o irmão para organizar o sábado. Ele sugere a montanha, mas vai chover, então Lu propõe o museu novo. Vão se encontrar às dez na entrada principal e almoçar na feira ao lado, que é mais barata que os restaurantes do centro. À noite não têm plano: vão decidir lá, quando souberem como vai estar o tempo.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [
+        "grammar:future-forms"
+      ],
+      "questions": [
+        {
+          "id": "pt-listen-sabado-organizado-q1",
+          "kind": "choice",
+          "prompt": "Quem sugere a montanha ?",
+          "answers": [
+            "O irmão"
+          ],
+          "explain": "O irmão sugere a montanha.",
+          "options": [
+            "O irmão",
+            "Lu",
+            "A mãe",
+            "Um amigo"
+          ]
+        },
+        {
+          "id": "pt-listen-sabado-organizado-q2",
+          "kind": "choice",
+          "prompt": "Por que não a montanha ?",
+          "answers": [
+            "Vai chover"
+          ],
+          "explain": "Vai chover, então vão ao museu.",
+          "options": [
+            "Vai chover",
+            "Estão cansados",
+            "O museu é grátis",
+            "A montanha é longe"
+          ]
+        },
+        {
+          "id": "pt-listen-sabado-organizado-q3",
+          "kind": "written",
+          "prompt": "A que horas vão se encontrar ?",
+          "answers": [
+            "as dez",
+            "às dez",
+            "dez horas"
+          ],
+          "explain": "Às dez na entrada principal."
+        },
+        {
+          "id": "pt-listen-sabado-organizado-q4",
+          "kind": "choice",
+          "prompt": "Onde vão almoçar ?",
+          "answers": [
+            "Na feira ao lado"
+          ],
+          "explain": "Mais barata que os restaurantes do centro.",
+          "options": [
+            "Na feira ao lado",
+            "Num restaurante do centro",
+            "Em casa",
+            "No museu"
+          ]
+        },
+        {
+          "id": "pt-listen-sabado-organizado-q5",
+          "kind": "choice",
+          "prompt": "O que vão fazer à noite ?",
+          "answers": [
+            "Decidir lá"
+          ],
+          "explain": "Dependendo do tempo.",
+          "options": [
+            "Decidir lá",
+            "Ir ao cinema",
+            "Voltar cedo",
+            "Encontrar amigos"
+          ]
+        }
+      ]
     }
   ]
 }

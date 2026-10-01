@@ -29,7 +29,7 @@ class ListeningContentTest {
         assertNull(ListeningRegistry.text("en-listen-missing"))
         assertTrue(ListeningRegistry.forLanguage("nb").isEmpty())
         for (language in listOf("es", "fr", "it", "de", "pt")) {
-            assertEquals(6, ListeningRegistry.forLanguage(language).size)
+            assertEquals(8, ListeningRegistry.forLanguage(language).size)
         }
     }
 
@@ -83,6 +83,21 @@ class ListeningContentTest {
             if (text.unitID != null) {
                 assertNotNull("${text.id}: unit not found", unit)
                 assertEquals("${text.id}: level mismatch", text.level, unit!!.level)
+            }
+        }
+    }
+}
+
+class ListeningContentMultilangTest {
+    @Test fun `every supported language carries eight A1+A2 texts with closed shapes`() {
+        for (language in listOf("es", "fr", "it", "de", "pt")) {
+            val texts = ListeningRegistry.forLanguage(language)
+            assertTrue("$language should have 8+ texts", texts.size >= 8)
+            assertTrue("$language needs A2", texts.any { it.level == "A2" })
+            for (text in texts) {
+                assertTrue(text.id, text.text.split(" ").size in 40..200)
+                assertTrue(text.id, text.questions.size >= 5)
+                assertTrue(text.id, text.skills.isNotEmpty())
             }
         }
     }

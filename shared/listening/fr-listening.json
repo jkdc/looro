@@ -593,6 +593,184 @@
         "grammar:some-any",
         "vocab:shopping"
       ]
+    },
+    {
+      "id": "fr-listen-appart-choisi",
+      "languageID": "fr",
+      "title": "L'appartement choisi",
+      "level": "A2",
+      "topic": "appartements",
+      "unitID": "fr-foundations-u4",
+      "text": "Camille et Théo cherchent un appartement. Le premier est moins cher, mais il est plus loin de la gare : quarante minutes à pied. Le second coûte cent euros de plus, mais il est plus lumineux et il a un balcon. Pour Camille, la lumière est le plus important, parce qu'elle travaille à la maison. Ils décident de demander une visite du second : il est plus cher, mais c'est le meilleur des deux pour eux.",
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "fr-listen-appart-choisi-q1",
+          "kind": "choice",
+          "prompt": "Combien d'appartements comparent-ils ?",
+          "answers": [
+            "Deux"
+          ],
+          "explain": "Ils comparent deux appartements.",
+          "options": [
+            "Deux",
+            "Trois",
+            "Quatre"
+          ]
+        },
+        {
+          "id": "fr-listen-appart-choisi-q2",
+          "kind": "choice",
+          "prompt": "Quel est le problème du moins cher ?",
+          "answers": [
+            "Il est loin de la gare"
+          ],
+          "explain": "Quarante minutes à pied de la gare.",
+          "options": [
+            "Il est loin de la gare",
+            "Il n'a pas de balcon",
+            "Il est très cher",
+            "Il est petit"
+          ]
+        },
+        {
+          "id": "fr-listen-appart-choisi-q3",
+          "kind": "written",
+          "prompt": "Combien coûte le second en plus par mois ?",
+          "answers": [
+            "cent euros",
+            "100 euros"
+          ],
+          "explain": "Cent euros de plus par mois."
+        },
+        {
+          "id": "fr-listen-appart-choisi-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui est le plus important pour Camille ?",
+          "answers": [
+            "La lumière"
+          ],
+          "explain": "Elle travaille à la maison.",
+          "options": [
+            "La lumière",
+            "Le prix",
+            "Le balcon",
+            "La cuisine"
+          ]
+        },
+        {
+          "id": "fr-listen-appart-choisi-q5",
+          "kind": "choice",
+          "prompt": "Que décident-ils ?",
+          "answers": [
+            "Demander une visite du second"
+          ],
+          "explain": "C'est le meilleur des deux pour eux.",
+          "options": [
+            "Demander une visite du second",
+            "Garder le premier",
+            "Continuer à chercher",
+            "Demander une réduction"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-samedi-organise",
+      "languageID": "fr",
+      "title": "Le samedi organisé",
+      "level": "A2",
+      "topic": "projets",
+      "unitID": "fr-foundations-u4",
+      "text": "Léa appelle son frère pour organiser samedi. Il propose la montagne, mais il va pleuvoir, alors Léa suggère le nouveau musée. Ils vont se retrouver à dix heures à l'entrée principale et déjeuner au marché à côté, qui est moins cher que les restaurants du centre. Le soir, ils n'ont pas de projet : ils vont décider sur place, quand ils connaîtront la météo.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [
+        "grammar:future-forms"
+      ],
+      "questions": [
+        {
+          "id": "fr-listen-samedi-organise-q1",
+          "kind": "choice",
+          "prompt": "Qui propose la montagne ?",
+          "answers": [
+            "Le frère"
+          ],
+          "explain": "Son frère propose la montagne.",
+          "options": [
+            "Le frère",
+            "Léa",
+            "Leur mère",
+            "Un ami"
+          ]
+        },
+        {
+          "id": "fr-listen-samedi-organise-q2",
+          "kind": "choice",
+          "prompt": "Pourquoi pas la montagne ?",
+          "answers": [
+            "Il va pleuvoir"
+          ],
+          "explain": "Il va pleuvoir, alors ils vont au musée.",
+          "options": [
+            "Il va pleuvoir",
+            "Ils sont fatigués",
+            "Le musée est gratuit",
+            "La montagne est loin"
+          ]
+        },
+        {
+          "id": "fr-listen-samedi-organise-q3",
+          "kind": "written",
+          "prompt": "À quelle heure vont-ils se retrouver ?",
+          "answers": [
+            "a dix heures",
+            "à dix heures",
+            "dix heures"
+          ],
+          "explain": "À dix heures à l'entrée principale."
+        },
+        {
+          "id": "fr-listen-samedi-organise-q4",
+          "kind": "choice",
+          "prompt": "Où vont-ils déjeuner ?",
+          "answers": [
+            "Au marché à côté"
+          ],
+          "explain": "Moins cher que les restaurants du centre.",
+          "options": [
+            "Au marché à côté",
+            "Dans un restaurant du centre",
+            "Chez eux",
+            "Au musée"
+          ]
+        },
+        {
+          "id": "fr-listen-samedi-organise-q5",
+          "kind": "choice",
+          "prompt": "Que vont-ils faire le soir ?",
+          "answers": [
+            "Décider sur place"
+          ],
+          "explain": "Ils vont décider selon la météo.",
+          "options": [
+            "Décider sur place",
+            "Aller au cinéma",
+            "Rentrer tôt",
+            "Voir des amis"
+          ]
+        }
+      ]
     }
   ]
 }

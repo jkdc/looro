@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "readings": [
+    {
+      "id": "it-read-gruppo-camminata",
+      "languageID": "it",
+      "title": "Il gruppo di camminata",
+      "level": "A1",
+      "topic": "salute",
+      "unitID": "it-foundations-u2",
+      "text": "Il martedì, il quartiere organizza una camminata gratis. Parte alle nove dalla piazza e arriva fino al fiume. Il gruppo è misto: ci sono studenti, famiglie e pensionati. Nessuno corre; l'idea è camminare e parlare. Alla fine, chi vuole fa colazione insieme in un bar del mercato. Giulia ci va da un mese e ha già tre amici nuovi. Dice che è il momento più tranquillo della sua settimana.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:present-simple",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-gruppo-camminata-q1",
+          "kind": "choice",
+          "prompt": "Quando c'è la camminata ?",
+          "answers": [
+            "Il martedì"
+          ],
+          "explain": "Il martedì, il quartiere organizza una camminata gratis.",
+          "options": [
+            "Il martedì",
+            "Il lunedì",
+            "Il sabato",
+            "Tutti i giorni"
+          ]
+        },
+        {
+          "id": "it-read-gruppo-camminata-q2",
+          "kind": "written",
+          "prompt": "A che ora parte ?",
+          "answers": [
+            "alle nove",
+            "le nove",
+            "nove"
+          ],
+          "explain": "Parte alle nove dalla piazza."
+        },
+        {
+          "id": "it-read-gruppo-camminata-q3",
+          "kind": "choice",
+          "prompt": "Chi partecipa ?",
+          "answers": [
+            "Studenti, famiglie e pensionati"
+          ],
+          "explain": "Il gruppo è misto.",
+          "options": [
+            "Studenti, famiglie e pensionati",
+            "Solo studenti",
+            "Solo pensionati",
+            "Solo famiglie"
+          ]
+        },
+        {
+          "id": "it-read-gruppo-camminata-q4",
+          "kind": "choice",
+          "prompt": "Cosa fa chi vuole alla fine ?",
+          "answers": [
+            "Fa colazione insieme"
+          ],
+          "explain": "Fa colazione insieme in un bar del mercato.",
+          "options": [
+            "Fa colazione insieme",
+            "Corre al fiume",
+            "Torna a casa",
+            "Prende l'autobus"
+          ]
+        },
+        {
+          "id": "it-read-gruppo-camminata-q5",
+          "kind": "written",
+          "prompt": "Da quanto tempo ci va Giulia ?",
+          "answers": [
+            "un mese",
+            "1 mese"
+          ],
+          "explain": "Giulia ci va da un mese."
+        }
+      ]
+    },
+    {
+      "id": "it-read-annuncio-appartamento",
+      "languageID": "it",
+      "title": "L'annuncio dell'appartamento",
+      "level": "A2",
+      "topic": "appartamenti",
+      "unitID": "it-foundations-u4",
+      "text": "Appartamento luminoso di due camere in affitto da settembre. È al terzo piano, con ascensore, e ha un balcone che dà sul cortile, quindi è tranquillo. Il salotto è più grande della cucina, ma la cucina ha la finestra. Il quartiere ha il mercato il sabato e la fermata della metro è a cinque minuti. Non è il meno costoso della zona, ma è il migliore illuminato. Si chiede un mese di caparra e si preferisce qualcuno che lavori da casa, come gli attuali proprietari.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "it-read-annuncio-appartamento-q1",
+          "kind": "choice",
+          "prompt": "Quando è disponibile ?",
+          "answers": [
+            "Da settembre"
+          ],
+          "explain": "In affitto da settembre.",
+          "options": [
+            "Da settembre",
+            "Da agosto",
+            "Subito",
+            "A gennaio"
+          ]
+        },
+        {
+          "id": "it-read-annuncio-appartamento-q2",
+          "kind": "choice",
+          "prompt": "Perché è tranquillo ?",
+          "answers": [
+            "Dà sul cortile"
+          ],
+          "explain": "Il balcone dà sul cortile, quindi è tranquillo.",
+          "options": [
+            "Dà sul cortile",
+            "È al piano terra",
+            "Non ha vicini",
+            "È in campagna"
+          ]
+        },
+        {
+          "id": "it-read-annuncio-appartamento-q3",
+          "kind": "written",
+          "prompt": "A quanti minuti c'è la metro ?",
+          "answers": [
+            "cinque minuti",
+            "5 minuti",
+            "cinque"
+          ],
+          "explain": "La fermata della metro è a cinque minuti."
+        },
+        {
+          "id": "it-read-annuncio-appartamento-q4",
+          "kind": "choice",
+          "prompt": "Com'è rispetto alla zona ?",
+          "answers": [
+            "Non il meno costoso, ma il migliore illuminato"
+          ],
+          "explain": "Non è il meno costoso, ma è il migliore illuminato.",
+          "options": [
+            "Non il meno costoso, ma il migliore illuminato",
+            "Il meno costoso",
+            "Il meno illuminato",
+            "Il più piccolo"
+          ]
+        },
+        {
+          "id": "it-read-annuncio-appartamento-q5",
+          "kind": "choice",
+          "prompt": "Chi preferiscono i proprietari ?",
+          "answers": [
+            "Qualcuno che lavori da casa"
+          ],
+          "explain": "Si preferisce qualcuno che lavori da casa.",
+          "options": [
+            "Qualcuno che lavori da casa",
+            "Studenti",
+            "Famiglie con bambini",
+            "Pensionati"
+          ]
+        }
+      ]
+    }
+  ]
+}

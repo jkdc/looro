@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "readings": [
+    {
+      "id": "es-read-grupo-caminata",
+      "languageID": "es",
+      "title": "El grupo de caminata",
+      "level": "A1",
+      "topic": "salud",
+      "unitID": "es-foundations-u2",
+      "text": "Los martes, el barrio organiza una caminata gratis. Empieza a las nueve en la plaza y termina en el río. El grupo es mixto: hay estudiantes, familias y jubilados. Nadie corre; la idea es caminar y hablar. Al final, los que quieren desayunan juntos en un bar del mercado. Marta va desde hace un mes y ya tiene tres amigos nuevos. Dice que es la hora más tranquila de su semana.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:present-simple",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-grupo-caminata-q1",
+          "kind": "choice",
+          "prompt": "¿Cuándo es la caminata?",
+          "answers": [
+            "Los martes"
+          ],
+          "explain": "Los martes, el barrio organiza una caminata gratis.",
+          "options": [
+            "Los martes",
+            "Los lunes",
+            "Los sábados",
+            "Todos los días"
+          ]
+        },
+        {
+          "id": "es-read-grupo-caminata-q2",
+          "kind": "written",
+          "prompt": "¿A qué hora empieza?",
+          "answers": [
+            "a las nueve",
+            "las nueve",
+            "nueve"
+          ],
+          "explain": "Empieza a las nueve en la plaza."
+        },
+        {
+          "id": "es-read-grupo-caminata-q3",
+          "kind": "choice",
+          "prompt": "¿Quién va al grupo?",
+          "answers": [
+            "Estudiantes, familias y jubilados"
+          ],
+          "explain": "El grupo es mixto.",
+          "options": [
+            "Estudiantes, familias y jubilados",
+            "Solo estudiantes",
+            "Solo jubilados",
+            "Solo familias"
+          ]
+        },
+        {
+          "id": "es-read-grupo-caminata-q4",
+          "kind": "choice",
+          "prompt": "¿Qué hacen al final los que quieren?",
+          "answers": [
+            "Desayunan juntos"
+          ],
+          "explain": "Desayunan juntos en un bar del mercado.",
+          "options": [
+            "Desayunan juntos",
+            "Corren al río",
+            "Vuelven a casa",
+            "Toman el autobús"
+          ]
+        },
+        {
+          "id": "es-read-grupo-caminata-q5",
+          "kind": "written",
+          "prompt": "¿Cuánto tiempo lleva Marta?",
+          "answers": [
+            "un mes",
+            "1 mes"
+          ],
+          "explain": "Marta va desde hace un mes."
+        }
+      ]
+    },
+    {
+      "id": "es-read-piso-luz",
+      "languageID": "es",
+      "title": "El anuncio del piso",
+      "level": "A2",
+      "topic": "pisos",
+      "unitID": "es-foundations-u7",
+      "text": "Piso luminoso de dos habitaciones en alquiler desde septiembre. Está en la tercera planta, con ascensor, y tiene un balcón que da al patio, así que es tranquilo. El salón es más grande que la cocina, pero la cocina tiene ventana. El barrio tiene mercado los sábados y la parada del metro está a cinco minutos. No es el más barato de la zona, pero es el mejor iluminado. Se pide un mes de fianza y se prefiere a alguien que trabaje desde casa, como los dueños actuales.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "es-read-piso-luz-q1",
+          "kind": "choice",
+          "prompt": "¿Cuándo está disponible?",
+          "answers": [
+            "Desde septiembre"
+          ],
+          "explain": "En alquiler desde septiembre.",
+          "options": [
+            "Desde septiembre",
+            "Desde agosto",
+            "Ahora mismo",
+            "En enero"
+          ]
+        },
+        {
+          "id": "es-read-piso-luz-q2",
+          "kind": "choice",
+          "prompt": "¿Por qué es tranquilo?",
+          "answers": [
+            "Da al patio"
+          ],
+          "explain": "El balcón da al patio, así que es tranquilo.",
+          "options": [
+            "Da al patio",
+            "Está en la planta baja",
+            "No tiene vecinos",
+            "Está en el campo"
+          ]
+        },
+        {
+          "id": "es-read-piso-luz-q3",
+          "kind": "written",
+          "prompt": "¿A cuántos minutos está el metro?",
+          "answers": [
+            "cinco minutos",
+            "5 minutos",
+            "cinco"
+          ],
+          "explain": "La parada del metro está a cinco minutos."
+        },
+        {
+          "id": "es-read-piso-luz-q4",
+          "kind": "choice",
+          "prompt": "¿Cómo es comparado con la zona?",
+          "answers": [
+            "No es el más barato, pero sí el mejor iluminado"
+          ],
+          "explain": "No es el más barato de la zona, pero es el mejor iluminado.",
+          "options": [
+            "No es el más barato, pero sí el mejor iluminado",
+            "Es el más barato",
+            "Es el peor iluminado",
+            "Es el más pequeño"
+          ]
+        },
+        {
+          "id": "es-read-piso-luz-q5",
+          "kind": "choice",
+          "prompt": "¿A quién prefieren los dueños?",
+          "answers": [
+            "A alguien que trabaje desde casa"
+          ],
+          "explain": "Se prefiere a alguien que trabaje desde casa.",
+          "options": [
+            "A alguien que trabaje desde casa",
+            "A estudiantes",
+            "A familias con niños",
+            "A jubilados"
+          ]
+        }
+      ]
+    }
+  ]
+}

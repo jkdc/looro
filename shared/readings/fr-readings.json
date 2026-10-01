@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "readings": [
+    {
+      "id": "fr-read-groupe-marche",
+      "languageID": "fr",
+      "title": "Le groupe de marche",
+      "level": "A1",
+      "topic": "santé",
+      "unitID": "fr-foundations-u2",
+      "text": "Les mardis, le quartier organise une marche gratuite. Elle commence à neuf heures sur la place et finit au bord du fleuve. Le groupe est mixte : il y a des étudiants, des familles et des retraités. Personne ne court ; l'idée, c'est marcher et parler. À la fin, ceux qui veulent prennent le petit-déjeuner ensemble dans un bar du marché. Camille y va depuis un mois et elle a déjà trois nouveaux amis. Elle dit que c'est le moment le plus tranquille de sa semaine.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:present-simple",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-groupe-marche-q1",
+          "kind": "choice",
+          "prompt": "Quand a lieu la marche ?",
+          "answers": [
+            "Les mardis"
+          ],
+          "explain": "Les mardis, le quartier organise une marche gratuite.",
+          "options": [
+            "Les mardis",
+            "Les lundis",
+            "Les samedis",
+            "Tous les jours"
+          ]
+        },
+        {
+          "id": "fr-read-groupe-marche-q2",
+          "kind": "written",
+          "prompt": "À quelle heure commence-t-elle ?",
+          "answers": [
+            "a neuf heures",
+            "à neuf heures",
+            "neuf heures"
+          ],
+          "explain": "Elle commence à neuf heures sur la place."
+        },
+        {
+          "id": "fr-read-groupe-marche-q3",
+          "kind": "choice",
+          "prompt": "Qui participe ?",
+          "answers": [
+            "Étudiants, familles et retraités"
+          ],
+          "explain": "Le groupe est mixte.",
+          "options": [
+            "Étudiants, familles et retraités",
+            "Seulement des étudiants",
+            "Seulement des retraités",
+            "Seulement des familles"
+          ]
+        },
+        {
+          "id": "fr-read-groupe-marche-q4",
+          "kind": "choice",
+          "prompt": "Que font ceux qui veulent à la fin ?",
+          "answers": [
+            "Ils prennent le petit-déjeuner ensemble"
+          ],
+          "explain": "Petit-déjeuner ensemble dans un bar du marché.",
+          "options": [
+            "Ils prennent le petit-déjeuner ensemble",
+            "Ils courent au fleuve",
+            "Ils rentrent chez eux",
+            "Ils prennent le bus"
+          ]
+        },
+        {
+          "id": "fr-read-groupe-marche-q5",
+          "kind": "written",
+          "prompt": "Depuis combien de temps Camille y va-t-elle ?",
+          "answers": [
+            "un mois",
+            "1 mois"
+          ],
+          "explain": "Camille y va depuis un mois."
+        }
+      ]
+    },
+    {
+      "id": "fr-read-annonce-appart",
+      "languageID": "fr",
+      "title": "L'annonce de l'appartement",
+      "level": "A2",
+      "topic": "appartements",
+      "unitID": "fr-foundations-u4",
+      "text": "Appartement lumineux de deux chambres à louer à partir de septembre. Il est au troisième étage, avec ascenseur, et il a un balcon qui donne sur la cour, donc il est calme. Le salon est plus grand que la cuisine, mais la cuisine a une fenêtre. Le quartier a un marché le samedi et la station de métro est à cinq minutes. Ce n'est pas le moins cher du quartier, mais c'est le mieux éclairé. Un mois de caution est demandé, et on préfère quelqu'un qui travaille à la maison, comme les propriétaires actuels.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "fr-read-annonce-appart-q1",
+          "kind": "choice",
+          "prompt": "Quand est-il disponible ?",
+          "answers": [
+            "À partir de septembre"
+          ],
+          "explain": "À louer à partir de septembre.",
+          "options": [
+            "À partir de septembre",
+            "À partir d'août",
+            "Tout de suite",
+            "En janvier"
+          ]
+        },
+        {
+          "id": "fr-read-annonce-appart-q2",
+          "kind": "choice",
+          "prompt": "Pourquoi est-il calme ?",
+          "answers": [
+            "Il donne sur la cour"
+          ],
+          "explain": "Le balcon donne sur la cour, donc il est calme.",
+          "options": [
+            "Il donne sur la cour",
+            "Il est au rez-de-chaussée",
+            "Il n'a pas de voisins",
+            "Il est à la campagne"
+          ]
+        },
+        {
+          "id": "fr-read-annonce-appart-q3",
+          "kind": "written",
+          "prompt": "À combien de minutes est le métro ?",
+          "answers": [
+            "cinq minutes",
+            "5 minutes",
+            "cinq"
+          ],
+          "explain": "La station de métro est à cinq minutes."
+        },
+        {
+          "id": "fr-read-annonce-appart-q4",
+          "kind": "choice",
+          "prompt": "Comment est-il comparé au quartier ?",
+          "answers": [
+            "Pas le moins cher, mais le mieux éclairé"
+          ],
+          "explain": "Pas le moins cher, mais le mieux éclairé.",
+          "options": [
+            "Pas le moins cher, mais le mieux éclairé",
+            "Le moins cher",
+            "Le moins éclairé",
+            "Le plus petit"
+          ]
+        },
+        {
+          "id": "fr-read-annonce-appart-q5",
+          "kind": "choice",
+          "prompt": "Qui préfèrent les propriétaires ?",
+          "answers": [
+            "Quelqu'un qui travaille à la maison"
+          ],
+          "explain": "On préfère quelqu'un qui travaille à la maison.",
+          "options": [
+            "Quelqu'un qui travaille à la maison",
+            "Des étudiants",
+            "Des familles avec enfants",
+            "Des retraités"
+          ]
+        }
+      ]
+    }
+  ]
+}

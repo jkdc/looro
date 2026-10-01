@@ -82,3 +82,16 @@ class CheckpointContentTest {
         assertTrue(CheckpointEngine.verdicts(checkpoint, correct).all { it })
     }
 }
+
+class ReadingContentMultilangTest {
+    @Test fun `every supported language carries readings with closed shapes`() {
+        for (language in listOf("es", "fr", "it", "de", "pt")) {
+            val texts = ReadingRegistry.forLanguage(language)
+            assertTrue("$language should have 2+ readings", texts.size >= 2)
+            for (text in texts) {
+                assertTrue(text.id, text.text.split(" ").size in 40..220)
+                assertTrue(text.id, text.questions.size >= 4)
+            }
+        }
+    }
+}

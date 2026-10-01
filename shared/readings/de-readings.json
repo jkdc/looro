@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "readings": [
+    {
+      "id": "de-read-gruppe-spaziergang",
+      "languageID": "de",
+      "title": "Die Spaziergruppe",
+      "level": "A1",
+      "topic": "gesundheit",
+      "unitID": "de-foundations-u2",
+      "text": "Dienstags organisiert das Viertel einen kostenlosen Spaziergang. Er startet um neun Uhr am Platz und endet am Fluss. Die Gruppe ist gemischt: Studierende, Familien und Rentner sind dabei. Niemand rennt; die Idee ist gehen und reden. Am Ende frühstücken alle, die wollen, gemeinsam in einem Café am Markt. Mia geht seit einem Monat mit und hat schon drei neue Freunde. Sie sagt, es ist die ruhigste Stunde ihrer Woche.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:present-simple",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-gruppe-spaziergang-q1",
+          "kind": "choice",
+          "prompt": "Wann ist der Spaziergang ?",
+          "answers": [
+            "Dienstags"
+          ],
+          "explain": "Dienstags organisiert das Viertel einen kostenlosen Spaziergang.",
+          "options": [
+            "Dienstags",
+            "Montags",
+            "Samstags",
+            "Jeden Tag"
+          ]
+        },
+        {
+          "id": "de-read-gruppe-spaziergang-q2",
+          "kind": "written",
+          "prompt": "Um wie viel Uhr startet er ?",
+          "answers": [
+            "um neun uhr",
+            "neun uhr"
+          ],
+          "explain": "Er startet um neun Uhr am Platz."
+        },
+        {
+          "id": "de-read-gruppe-spaziergang-q3",
+          "kind": "choice",
+          "prompt": "Wer macht mit ?",
+          "answers": [
+            "Studierende, Familien und Rentner"
+          ],
+          "explain": "Die Gruppe ist gemischt.",
+          "options": [
+            "Studierende, Familien und Rentner",
+            "Nur Studierende",
+            "Nur Rentner",
+            "Nur Familien"
+          ]
+        },
+        {
+          "id": "de-read-gruppe-spaziergang-q4",
+          "kind": "choice",
+          "prompt": "Was machen alle, die wollen, am Ende ?",
+          "answers": [
+            "Gemeinsam frühstücken"
+          ],
+          "explain": "Gemeinsam in einem Café am Markt frühstücken.",
+          "options": [
+            "Gemeinsam frühstücken",
+            "Zum Fluss rennen",
+            "Nach Hause gehen",
+            "Bus fahren"
+          ]
+        },
+        {
+          "id": "de-read-gruppe-spaziergang-q5",
+          "kind": "written",
+          "prompt": "Seit wann geht Mia mit ?",
+          "answers": [
+            "einem monat",
+            "1 monat",
+            "seit einem monat"
+          ],
+          "explain": "Mia geht seit einem Monat mit."
+        }
+      ]
+    },
+    {
+      "id": "de-read-anzeige-wohnung",
+      "languageID": "de",
+      "title": "Die Wohnungsanzeige",
+      "level": "A2",
+      "topic": "wohnungen",
+      "unitID": "de-foundations-u4",
+      "text": "Helle Zweizimmerwohnung ab September zu mieten. Sie liegt im dritten Stock, mit Aufzug, und hat einen Balkon zum Innenhof, deshalb ist sie ruhig. Das Wohnzimmer ist größer als die Küche, aber die Küche hat ein Fenster. Im Viertel gibt es samstags einen Markt, und die U-Bahn ist fünf Minuten entfernt. Sie ist nicht die billigste in der Gegend, aber die am besten beleuchtete. Eine Kaution von einem Monat wird verlangt, und wer von zu Hause arbeitet, wird bevorzugt – wie die heutigen Besitzer.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "de-read-anzeige-wohnung-q1",
+          "kind": "choice",
+          "prompt": "Wann ist sie verfügbar ?",
+          "answers": [
+            "Ab September"
+          ],
+          "explain": "Ab September zu mieten.",
+          "options": [
+            "Ab September",
+            "Ab August",
+            "Sofort",
+            "Im Januar"
+          ]
+        },
+        {
+          "id": "de-read-anzeige-wohnung-q2",
+          "kind": "choice",
+          "prompt": "Warum ist sie ruhig ?",
+          "answers": [
+            "Balkon zum Innenhof"
+          ],
+          "explain": "Balkon zum Innenhof, deshalb ruhig.",
+          "options": [
+            "Balkon zum Innenhof",
+            "Im Erdgeschoss",
+            "Keine Nachbarn",
+            "Auf dem Land"
+          ]
+        },
+        {
+          "id": "de-read-anzeige-wohnung-q3",
+          "kind": "written",
+          "prompt": "Wie weit ist die U-Bahn ?",
+          "answers": [
+            "fünf minuten",
+            "5 minuten",
+            "fuenf minuten"
+          ],
+          "explain": "Die U-Bahn ist fünf Minuten entfernt."
+        },
+        {
+          "id": "de-read-anzeige-wohnung-q4",
+          "kind": "choice",
+          "prompt": "Wie ist sie im Vergleich ?",
+          "answers": [
+            "Nicht die billigste, aber die am besten beleuchtete"
+          ],
+          "explain": "Nicht die billigste, aber die am besten beleuchtete.",
+          "options": [
+            "Nicht die billigste, aber die am besten beleuchtete",
+            "Die billigste",
+            "Die schlechtesten beleuchtete",
+            "Die kleinste"
+          ]
+        },
+        {
+          "id": "de-read-anzeige-wohnung-q5",
+          "kind": "choice",
+          "prompt": "Wer wird bevorzugt ?",
+          "answers": [
+            "Jemand, der von zu Hause arbeitet"
+          ],
+          "explain": "Wer von zu Hause arbeitet, wird bevorzugt.",
+          "options": [
+            "Jemand, der von zu Hause arbeitet",
+            "Studierende",
+            "Familien mit Kindern",
+            "Rentner"
+          ]
+        }
+      ]
+    }
+  ]
+}

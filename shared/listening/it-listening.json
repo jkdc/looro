@@ -592,6 +592,183 @@
         "grammar:some-any",
         "vocab:shopping"
       ]
+    },
+    {
+      "id": "it-listen-appartamento-scelto",
+      "languageID": "it",
+      "title": "L'appartamento scelto",
+      "level": "A2",
+      "topic": "appartamenti",
+      "unitID": "it-foundations-u4",
+      "text": "Giulia e Marco cercano appartamento su un annuncio. Il primo è meno costoso, ma è più lontano dalla stazione: quaranta minuti a piedi. Il secondo costa cento euro in più al mese, ma è più luminoso e ha il balcone. Per Giulia la luce è la cosa più importante, perché lavora da casa. Alla fine decidono di chiedere una visita del secondo: costa di più, ma è il migliore dei due per loro.",
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "it-listen-appartamento-scelto-q1",
+          "kind": "choice",
+          "prompt": "Quanti appartamenti confrontano ?",
+          "answers": [
+            "Due"
+          ],
+          "explain": "Confrontano due appartamenti.",
+          "options": [
+            "Due",
+            "Tre",
+            "Quattro"
+          ]
+        },
+        {
+          "id": "it-listen-appartamento-scelto-q2",
+          "kind": "choice",
+          "prompt": "Qual è il problema del meno costoso ?",
+          "answers": [
+            "È lontano dalla stazione"
+          ],
+          "explain": "Quaranta minuti a piedi dalla stazione.",
+          "options": [
+            "È lontano dalla stazione",
+            "Non ha il balcone",
+            "È molto costoso",
+            "È piccolo"
+          ]
+        },
+        {
+          "id": "it-listen-appartamento-scelto-q3",
+          "kind": "written",
+          "prompt": "Quanto costa in più il secondo al mese ?",
+          "answers": [
+            "cento euro",
+            "100 euro"
+          ],
+          "explain": "Cento euro in più al mese."
+        },
+        {
+          "id": "it-listen-appartamento-scelto-q4",
+          "kind": "choice",
+          "prompt": "Cos'è più importante per Giulia ?",
+          "answers": [
+            "La luce"
+          ],
+          "explain": "Lavora da casa.",
+          "options": [
+            "La luce",
+            "Il prezzo",
+            "Il balcone",
+            "La cucina"
+          ]
+        },
+        {
+          "id": "it-listen-appartamento-scelto-q5",
+          "kind": "choice",
+          "prompt": "Cosa decidono alla fine ?",
+          "answers": [
+            "Chiedere una visita del secondo"
+          ],
+          "explain": "È il migliore dei due per loro.",
+          "options": [
+            "Chiedere una visita del secondo",
+            "Tenere il primo",
+            "Continuare a cercare",
+            "Chiedere uno sconto"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-sabato-organizzato",
+      "languageID": "it",
+      "title": "Il sabato organizzato",
+      "level": "A2",
+      "topic": "progetti",
+      "unitID": "it-foundations-u4",
+      "text": "Sara chiama suo fratello per organizzare il sabato. Lui propone la montagna, ma pioverà, quindi Sara suggerisce il museo nuovo. Si vedranno alle dieci all'ingresso principale e pranzeranno al mercato accanto, che è meno caro dei ristoranti del centro. La sera non hanno programmi: decideranno sul posto, quando sapranno che tempo fa.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [
+        "grammar:future-forms"
+      ],
+      "questions": [
+        {
+          "id": "it-listen-sabato-organizzato-q1",
+          "kind": "choice",
+          "prompt": "Chi propone la montagna ?",
+          "answers": [
+            "Il fratello"
+          ],
+          "explain": "Suo fratello propone la montagna.",
+          "options": [
+            "Il fratello",
+            "Sara",
+            "La loro madre",
+            "Un amico"
+          ]
+        },
+        {
+          "id": "it-listen-sabato-organizzato-q2",
+          "kind": "choice",
+          "prompt": "Perché non la montagna ?",
+          "answers": [
+            "Pioverà"
+          ],
+          "explain": "Pioverà, quindi vanno al museo.",
+          "options": [
+            "Pioverà",
+            "Sono stanchi",
+            "Il museo è gratis",
+            "La montagna è lontana"
+          ]
+        },
+        {
+          "id": "it-listen-sabato-organizzato-q3",
+          "kind": "written",
+          "prompt": "A che ora si vedranno ?",
+          "answers": [
+            "alle dieci",
+            "dieci"
+          ],
+          "explain": "Alle dieci all'ingresso principale."
+        },
+        {
+          "id": "it-listen-sabato-organizzato-q4",
+          "kind": "choice",
+          "prompt": "Dove pranzeranno ?",
+          "answers": [
+            "Al mercato accanto"
+          ],
+          "explain": "Meno caro dei ristoranti del centro.",
+          "options": [
+            "Al mercato accanto",
+            "In un ristorante del centro",
+            "A casa",
+            "Al museo"
+          ]
+        },
+        {
+          "id": "it-listen-sabato-organizzato-q5",
+          "kind": "choice",
+          "prompt": "Cosa faranno la sera ?",
+          "answers": [
+            "Decideranno sul posto"
+          ],
+          "explain": "Decideranno secondo il tempo.",
+          "options": [
+            "Decideranno sul posto",
+            "Andranno al cinema",
+            "Torneranno presto",
+            "Vedranno amici"
+          ]
+        }
+      ]
     }
   ]
 }

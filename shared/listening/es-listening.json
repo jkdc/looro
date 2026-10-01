@@ -593,6 +593,192 @@
         "grammar:some-any",
         "vocab:shopping"
       ]
+    },
+    {
+      "id": "es-listen-piso-elegido",
+      "languageID": "es",
+      "title": "El piso elegido",
+      "level": "A2",
+      "topic": "pisos",
+      "unitID": "es-foundations-u7",
+      "text": "Lucía y Pablo buscan piso en la app. El primero es más barato, pero está peor situado: a cuarenta minutos del centro. El segundo cuesta cien euros más al mes, pero es más luminoso y tiene balcón. Lucía opina que la luz es lo más importante, porque trabaja desde casa. Al final deciden pedir visita al segundo: es más caro, pero es el mejor de los dos para ellos.",
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "es-listen-piso-elegido-q1",
+          "kind": "choice",
+          "prompt": "¿Cuántos pisos comparan?",
+          "answers": [
+            "Dos"
+          ],
+          "explain": "Comparan dos pisos en la app.",
+          "options": [
+            "Dos",
+            "Tres",
+            "Cuatro"
+          ]
+        },
+        {
+          "id": "es-listen-piso-elegido-q2",
+          "kind": "choice",
+          "prompt": "¿Qué problema tiene el más barato?",
+          "answers": [
+            "Está lejos del centro"
+          ],
+          "explain": "A cuarenta minutos del centro.",
+          "options": [
+            "Está lejos del centro",
+            "No tiene balcón",
+            "Es muy caro",
+            "Es pequeño"
+          ]
+        },
+        {
+          "id": "es-listen-piso-elegido-q3",
+          "kind": "written",
+          "prompt": "¿Cuánto cuesta más el segundo al mes?",
+          "answers": [
+            "cien euros",
+            "100 euros"
+          ],
+          "explain": "Cuesta cien euros más al mes."
+        },
+        {
+          "id": "es-listen-piso-elegido-q4",
+          "kind": "choice",
+          "prompt": "¿Qué es lo más importante para Lucía?",
+          "answers": [
+            "La luz"
+          ],
+          "explain": "Trabaja desde casa y la luz es lo más importante.",
+          "options": [
+            "La luz",
+            "El precio",
+            "El balcón",
+            "La cocina"
+          ]
+        },
+        {
+          "id": "es-listen-piso-elegido-q5",
+          "kind": "choice",
+          "prompt": "¿Qué deciden al final?",
+          "answers": [
+            "Pedir visita al segundo"
+          ],
+          "explain": "Deciden pedir visita al segundo.",
+          "options": [
+            "Pedir visita al segundo",
+            "Quedarse con el primero",
+            "Seguir buscando",
+            "Pedir descuento"
+          ]
+        },
+        {
+          "id": "es-listen-piso-elegido-q6",
+          "kind": "written",
+          "prompt": "¿Para quién es el mejor?",
+          "answers": [
+            "para ellos"
+          ],
+          "explain": "Es el mejor de los dos para ellos."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-plan-sabado",
+      "languageID": "es",
+      "title": "El sábado, organizado",
+      "level": "A2",
+      "topic": "planes",
+      "unitID": "es-foundations-u7",
+      "text": "Elena llama a su hermano para organizar el sábado. Él propone ir a la montaña, pero va a llover, así que Elena sugiere el museo nuevo. Van a quedar a las diez en la entrada principal y van a comer en el mercado de al lado, que es más barato que los restaurantes del centro. Por la noche no tienen plan: van a decidir sobre la marcha, cuando sepan qué tiempo hace.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [
+        "grammar:future-forms"
+      ],
+      "questions": [
+        {
+          "id": "es-listen-plan-sabado-q1",
+          "kind": "choice",
+          "prompt": "¿Quién propone la montaña?",
+          "answers": [
+            "El hermano"
+          ],
+          "explain": "Su hermano propone ir a la montaña.",
+          "options": [
+            "El hermano",
+            "Elena",
+            "Su madre",
+            "Un amigo"
+          ]
+        },
+        {
+          "id": "es-listen-plan-sabado-q2",
+          "kind": "choice",
+          "prompt": "¿Por qué no van a la montaña?",
+          "answers": [
+            "Va a llover"
+          ],
+          "explain": "Va a llover, así que van al museo.",
+          "options": [
+            "Va a llover",
+            "Están cansados",
+            "El museo es gratis",
+            "La montaña está lejos"
+          ]
+        },
+        {
+          "id": "es-listen-plan-sabado-q3",
+          "kind": "written",
+          "prompt": "¿A qué hora van a quedar?",
+          "answers": [
+            "a las diez",
+            "las diez"
+          ],
+          "explain": "Van a quedar a las diez."
+        },
+        {
+          "id": "es-listen-plan-sabado-q4",
+          "kind": "choice",
+          "prompt": "¿Dónde van a comer?",
+          "answers": [
+            "En el mercado de al lado"
+          ],
+          "explain": "Es más barato que los restaurantes del centro.",
+          "options": [
+            "En el mercado de al lado",
+            "En un restaurante del centro",
+            "En casa",
+            "En el museo"
+          ]
+        },
+        {
+          "id": "es-listen-plan-sabado-q5",
+          "kind": "choice",
+          "prompt": "¿Qué van a hacer por la noche?",
+          "answers": [
+            "Decidir sobre la marcha"
+          ],
+          "explain": "Van a decidir cuando sepan el tiempo.",
+          "options": [
+            "Decidir sobre la marcha",
+            "Ir al cine",
+            "Volver temprano",
+            "Quedar con amigos"
+          ]
+        }
+      ]
     }
   ]
 }

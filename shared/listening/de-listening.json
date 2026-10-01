@@ -589,6 +589,183 @@
         "grammar:some-any",
         "vocab:shopping"
       ]
+    },
+    {
+      "id": "de-listen-wohnung-gewaehlt",
+      "languageID": "de",
+      "title": "Die gewählte Wohnung",
+      "level": "A2",
+      "topic": "wohnungen",
+      "unitID": "de-foundations-u4",
+      "text": "Anna und Ben suchen eine Wohnung. Die erste ist billiger, aber sie liegt weiter vom Bahnhof: vierzig Minuten zu Fuß. Die zweite kostet hundert Euro mehr im Monat, aber sie ist heller und hat einen Balkon. Für Anna ist das Licht am wichtigsten, weil sie von zu Hause arbeitet. Am Ende bitten sie um eine Besichtigung der zweiten: sie ist teurer, aber für sie die beste von beiden.",
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "de-listen-wohnung-gewaehlt-q1",
+          "kind": "choice",
+          "prompt": "Wie viele Wohnungen vergleichen sie ?",
+          "answers": [
+            "Zwei"
+          ],
+          "explain": "Sie vergleichen zwei Wohnungen.",
+          "options": [
+            "Zwei",
+            "Drei",
+            "Vier"
+          ]
+        },
+        {
+          "id": "de-listen-wohnung-gewaehlt-q2",
+          "kind": "choice",
+          "prompt": "Was ist das Problem der billigeren ?",
+          "answers": [
+            "Sie liegt weit vom Bahnhof"
+          ],
+          "explain": "Vierzig Minuten zu Fuß.",
+          "options": [
+            "Sie liegt weit vom Bahnhof",
+            "Sie hat keinen Balkon",
+            "Sie ist sehr teuer",
+            "Sie ist klein"
+          ]
+        },
+        {
+          "id": "de-listen-wohnung-gewaehlt-q3",
+          "kind": "written",
+          "prompt": "Wie viel kostet die zweite mehr pro Monat ?",
+          "answers": [
+            "hundert euro",
+            "100 euro"
+          ],
+          "explain": "Hundert Euro mehr im Monat."
+        },
+        {
+          "id": "de-listen-wohnung-gewaehlt-q4",
+          "kind": "choice",
+          "prompt": "Was ist für Anna am wichtigsten ?",
+          "answers": [
+            "Das Licht"
+          ],
+          "explain": "Sie arbeitet von zu Hause.",
+          "options": [
+            "Das Licht",
+            "Der Preis",
+            "Der Balkon",
+            "Die Küche"
+          ]
+        },
+        {
+          "id": "de-listen-wohnung-gewaehlt-q5",
+          "kind": "choice",
+          "prompt": "Was beschließen sie am Ende ?",
+          "answers": [
+            "Eine Besichtigung der zweiten"
+          ],
+          "explain": "Die beste von beiden für sie.",
+          "options": [
+            "Eine Besichtigung der zweiten",
+            "Bei der ersten bleiben",
+            "Weiter suchen",
+            "Rabatt fragen"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-samstag-geplant",
+      "languageID": "de",
+      "title": "Der geplante Samstag",
+      "level": "A2",
+      "topic": "pläne",
+      "unitID": "de-foundations-u4",
+      "text": "Mia ruft ihren Bruder an, um den Samstag zu planen. Er schlägt den Berg vor, aber es wird regnen, deshalb schlägt Mia das neue Museum vor. Sie treffen sich um zehn Uhr am Haupteingang und essen im Markt nebenan, der billiger ist als die Restaurants im Zentrum. Am Abend haben sie keinen Plan: sie entscheiden vor Ort, wenn sie das Wetter kennen.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [
+        "grammar:future-forms"
+      ],
+      "questions": [
+        {
+          "id": "de-listen-samstag-geplant-q1",
+          "kind": "choice",
+          "prompt": "Wer schlägt den Berg vor ?",
+          "answers": [
+            "Der Bruder"
+          ],
+          "explain": "Ihr Bruder schlägt den Berg vor.",
+          "options": [
+            "Der Bruder",
+            "Mia",
+            "Die Mutter",
+            "Ein Freund"
+          ]
+        },
+        {
+          "id": "de-listen-samstag-geplant-q2",
+          "kind": "choice",
+          "prompt": "Warum nicht der Berg ?",
+          "answers": [
+            "Es wird regnen"
+          ],
+          "explain": "Es wird regnen, deshalb Museum.",
+          "options": [
+            "Es wird regnen",
+            "Sie sind müde",
+            "Das Museum ist gratis",
+            "Der Berg ist weit"
+          ]
+        },
+        {
+          "id": "de-listen-samstag-geplant-q3",
+          "kind": "written",
+          "prompt": "Um wie viel Uhr treffen sie sich ?",
+          "answers": [
+            "um zehn uhr",
+            "zehn uhr"
+          ],
+          "explain": "Um zehn Uhr am Haupteingang."
+        },
+        {
+          "id": "de-listen-samstag-geplant-q4",
+          "kind": "choice",
+          "prompt": "Wo essen sie ?",
+          "answers": [
+            "Im Markt nebenan"
+          ],
+          "explain": "Billiger als die Restaurants im Zentrum.",
+          "options": [
+            "Im Markt nebenan",
+            "In einem Restaurant im Zentrum",
+            "Zu Hause",
+            "Im Museum"
+          ]
+        },
+        {
+          "id": "de-listen-samstag-geplant-q5",
+          "kind": "choice",
+          "prompt": "Was machen sie am Abend ?",
+          "answers": [
+            "Vor Ort entscheiden"
+          ],
+          "explain": "Je nach Wetter.",
+          "options": [
+            "Vor Ort entscheiden",
+            "Ins Kino gehen",
+            "Früh heimgehen",
+            "Freunde treffen"
+          ]
+        }
+      ]
     }
   ]
 }

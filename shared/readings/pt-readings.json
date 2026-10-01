@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "readings": [
+    {
+      "id": "pt-read-grupo-caminhada",
+      "languageID": "pt",
+      "title": "O grupo de caminhada",
+      "level": "A1",
+      "topic": "saúde",
+      "unitID": "pt-foundations-u2",
+      "text": "Às terças, o bairro organiza uma caminhada grátis. Começa às nove na praça e termina no rio. O grupo é misto: tem estudantes, famílias e aposentados. Ninguém corre; a ideia é caminhar e conversar. No fim, quem quiser toma café da manhã junto num bar da feira. Bia participa faz um mês e já tem três amigos novos. Ela diz que é a hora mais tranquila da semana dela.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:present-simple",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-grupo-caminhada-q1",
+          "kind": "choice",
+          "prompt": "Quando é a caminhada ?",
+          "answers": [
+            "Às terças"
+          ],
+          "explain": "Às terças, o bairro organiza uma caminhada grátis.",
+          "options": [
+            "Às terças",
+            "Às segundas",
+            "Aos sábados",
+            "Todos os dias"
+          ]
+        },
+        {
+          "id": "pt-read-grupo-caminhada-q2",
+          "kind": "written",
+          "prompt": "A que horas começa ?",
+          "answers": [
+            "as nove",
+            "às nove",
+            "nove horas"
+          ],
+          "explain": "Começa às nove na praça."
+        },
+        {
+          "id": "pt-read-grupo-caminhada-q3",
+          "kind": "choice",
+          "prompt": "Quem participa ?",
+          "answers": [
+            "Estudantes, famílias e aposentados"
+          ],
+          "explain": "O grupo é misto.",
+          "options": [
+            "Estudantes, famílias e aposentados",
+            "Só estudantes",
+            "Só aposentados",
+            "Só famílias"
+          ]
+        },
+        {
+          "id": "pt-read-grupo-caminhada-q4",
+          "kind": "choice",
+          "prompt": "O que faz quem quiser no fim ?",
+          "answers": [
+            "Toma café da manhã junto"
+          ],
+          "explain": "Toma café da manhã junto num bar da feira.",
+          "options": [
+            "Toma café da manhã junto",
+            "Corre até o rio",
+            "Volta para casa",
+            "Pega o ônibus"
+          ]
+        },
+        {
+          "id": "pt-read-grupo-caminhada-q5",
+          "kind": "written",
+          "prompt": "Há quanto tempo a Bia participa ?",
+          "answers": [
+            "um mes",
+            "um mês",
+            "1 mês",
+            "1 mes"
+          ],
+          "explain": "A Bia participa faz um mês."
+        }
+      ]
+    },
+    {
+      "id": "pt-read-anuncio-apartamento",
+      "languageID": "pt",
+      "title": "O anúncio do apartamento",
+      "level": "A2",
+      "topic": "apartamentos",
+      "unitID": "pt-foundations-u4",
+      "text": "Apartamento claro de dois quartos para alugar a partir de setembro. Fica no terceiro andar, com elevador, e tem uma varanda para o pátio, então é tranquilo. A sala é maior que a cozinha, mas a cozinha tem janela. O bairro tem feira aos sábados e a estação de metrô fica a cinco minutos. Não é o mais barato da região, mas é o melhor iluminado. Pedem um mês de caução e preferem alguém que trabalhe de casa, como os atuais donos.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:comparatives"
+      ],
+      "exposureSkills": [
+        "grammar:superlatives"
+      ],
+      "questions": [
+        {
+          "id": "pt-read-anuncio-apartamento-q1",
+          "kind": "choice",
+          "prompt": "Quando está disponível ?",
+          "answers": [
+            "A partir de setembro"
+          ],
+          "explain": "Para alugar a partir de setembro.",
+          "options": [
+            "A partir de setembro",
+            "A partir de agosto",
+            "Agora",
+            "Em janeiro"
+          ]
+        },
+        {
+          "id": "pt-read-anuncio-apartamento-q2",
+          "kind": "choice",
+          "prompt": "Por que é tranquilo ?",
+          "answers": [
+            "Varanda para o pátio"
+          ],
+          "explain": "A varanda dá para o pátio, então é tranquilo.",
+          "options": [
+            "Varanda para o pátio",
+            "Fica no térreo",
+            "Não tem vizinhos",
+            "Fica no campo"
+          ]
+        },
+        {
+          "id": "pt-read-anuncio-apartamento-q3",
+          "kind": "written",
+          "prompt": "A quantos minutos fica o metrô ?",
+          "answers": [
+            "cinco minutos",
+            "5 minutos",
+            "cinco"
+          ],
+          "explain": "A estação de metrô fica a cinco minutos."
+        },
+        {
+          "id": "pt-read-anuncio-apartamento-q4",
+          "kind": "choice",
+          "prompt": "Como é comparado com a região ?",
+          "answers": [
+            "Não é o mais barato, mas é o melhor iluminado"
+          ],
+          "explain": "Não é o mais barato, mas é o melhor iluminado.",
+          "options": [
+            "Não é o mais barato, mas é o melhor iluminado",
+            "É o mais barato",
+            "É o pior iluminado",
+            "É o menor"
+          ]
+        },
+        {
+          "id": "pt-read-anuncio-apartamento-q5",
+          "kind": "choice",
+          "prompt": "Quem os donos preferem ?",
+          "answers": [
+            "Alguém que trabalhe de casa"
+          ],
+          "explain": "Preferem alguém que trabalhe de casa.",
+          "options": [
+            "Alguém que trabalhe de casa",
+            "Estudantes",
+            "Famílias com crianças",
+            "Aposentados"
+          ]
+        }
+      ]
+    }
+  ]
+}
