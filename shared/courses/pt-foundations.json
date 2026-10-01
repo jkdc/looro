@@ -3099,6 +3099,538 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u9",
+      "title": "Nuances e registros",
+      "subtitle": "Dizer melhor",
+      "level": "C1",
+      "themes": [
+        {
+          "id": "pt-foundations-u9-registros",
+          "title": "Como se diz",
+          "subtitle": "Formal ou coloquial",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Vocês traduzem a mensagem de corredor para o e-mail da diretoria e discutem o que muda no tom.",
+          "colorIndex": 0
+        },
+        {
+          "id": "pt-foundations-u9-ideias",
+          "title": "Ideias em ordem",
+          "subtitle": "Matices e estrutura",
+          "symbol": "bubble-left-and-text",
+          "category": "Course",
+          "situation": "Vocês matizam opiniões num debate e depois cada um apresenta sua ideia em um minuto.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u9-registro",
+          "title": "Como se diz",
+          "goal": "Alternar entre o formal e o coloquial: a mesma mensagem em dois registros.",
+          "intro": {
+            "explanation": [
+              "O registro sobe ou desce com o pronome e o verbo: « Poderia me enviar o relatório ? » é formal; « Me manda o relatório aí ? » é de corredor.",
+              "No e-mail para a diretoria, abra com « Prezada Sra. Alves », peça com « Solicito que… » e feche com « Atenciosamente »; no dia a dia, basta « Oi, tudo bem ? ».",
+              "Conectores também têm registro: « mas » vira « no entanto », « porque » vira « visto que » — « Adiei a reunião, visto que a diretoria viajou »."
+            ],
+            "examples": [
+              {
+                "text": "Prezada Sra. Alves, solicito que envie o relatório até sexta.",
+                "meaning": "Abertura e pedido formais."
+              },
+              {
+                "text": "Segue em anexo o contrato assinado.",
+                "meaning": "Fórmula fixa de e-mail."
+              },
+              {
+                "text": "Me manda o arquivo aí, por favor ?",
+                "meaning": "Pedido coloquial."
+              },
+              {
+                "text": "O projeto atrasou; no entanto, o prazo se mantém.",
+                "meaning": "Conector formal de contraste."
+              },
+              {
+                "text": "Tá suave, eu te dou um retorno depois.",
+                "meaning": "Coloquial: combinar depois."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Prezado(a) …",
+              "meaning": "Abertura formal de carta ou e-mail.",
+              "note": "Prezada Sra. Alves,"
+            },
+            {
+              "text": "solicito que + subjuntivo",
+              "meaning": "Pedido formal por escrito.",
+              "note": "Solicito que enviem hoje."
+            },
+            {
+              "text": "segue em anexo",
+              "meaning": "E-mail: apontar o anexo.",
+              "note": "Segue em anexo o contrato."
+            },
+            {
+              "text": "atenciosamente / cordialmente",
+              "meaning": "Fecho formal.",
+              "note": "…Atenciosamente, Marina."
+            },
+            {
+              "text": "dar um retorno",
+              "meaning": "Coloquial de trabalho: responder depois.",
+              "note": "Te dou um retorno amanhã."
+            }
+          ],
+          "situation": "Vocês traduzem a conversa de corredor para o e-mail da diretoria — e comentam o que muda no tom, do pronome ao conector.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Peça formalmente no e-mail: solicito que enviem o relatório até sexta.",
+                "expected": [
+                  "solicito que enviem o relatorio ate sexta",
+                  "solicito que enviem o relatório até sexta"
+                ],
+                "focus": "solicito que",
+                "watch": "Após « solicito que », subjuntivo."
+              },
+              {
+                "prompt": "Diga que o contrato segue em anexo.",
+                "expected": [
+                  "segue em anexo o contrato",
+                  "o contrato segue em anexo"
+                ],
+                "focus": "segue em anexo",
+                "watch": "Fórmula fixa de e-mail."
+              },
+              {
+                "prompt": "Coloquial: me manda o arquivo aí, por favor.",
+                "expected": [
+                  "me manda o arquivo ai por favor",
+                  "me manda o arquivo aí, por favor"
+                ],
+                "focus": "me manda",
+                "watch": "Imperativo coloquial com « aí »."
+              },
+              {
+                "prompt": "Formal, contraste: o projeto atrasou; no entanto, o prazo se mantém.",
+                "expected": [
+                  "o projeto atrasou no entanto o prazo se mantem",
+                  "o projeto atrasou; no entanto, o prazo se mantém"
+                ],
+                "focus": "no entanto",
+                "watch": "Contraste formal: no entanto."
+              },
+              {
+                "prompt": "Feche o e-mail formal para a diretoria.",
+                "expected": [
+                  "atenciosamente",
+                  "cordialmente"
+                ],
+                "focus": "fecho formal",
+                "watch": "Atenciosamente / Cordialmente."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u9-registro-e1",
+              "kind": "choice",
+              "prompt": "___ Sra. Alves, solicito que envie o contrato.",
+              "answers": [
+                "Prezada"
+              ],
+              "explain": "Abertura formal de e-mail: Prezada Sra. …",
+              "options": [
+                "Prezada",
+                "Querida",
+                "Oi",
+                "E aí"
+              ]
+            },
+            {
+              "id": "pt-foundations-u9-registro-e2",
+              "kind": "gap",
+              "prompt": "Segue em ___ o relatório pedido. (palavra do anexo)",
+              "answers": [
+                "anexo"
+              ],
+              "explain": "Fórmula fixa de e-mail: segue em anexo."
+            },
+            {
+              "id": "pt-foundations-u9-registro-e3",
+              "kind": "order",
+              "prompt": "Peça o documento à equipe por escrito (verbo « solicitar »).",
+              "answers": [
+                "Solicito que enviem o relatório"
+              ],
+              "explain": "solicito que + subjuntivo: pedido formal."
+            },
+            {
+              "id": "pt-foundations-u9-registro-e4",
+              "kind": "written",
+              "prompt": "Feche um e-mail formal para a diretoria.",
+              "answers": [
+                "atenciosamente",
+                "cordialmente"
+              ],
+              "explain": "Atenciosamente / Cordialmente fecham e-mails formais."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:talk-about-work",
+            "writing:email",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-foundations-u9-matices",
+          "title": "Mais ou menos",
+          "goal": "Matizar opiniões: concordar em parte, suavizar e reformular o que se pensa.",
+          "intro": {
+            "explanation": [
+              "Para concordar em parte: « De certa forma, você tem razão », « Até certo ponto, concordo », « Em parte, sim; em parte, não ».",
+              "Para reformular com jeito: « Por assim dizer, é um emprego estável », « Digamos que o time está em transição ».",
+              "Para marcar a sua voz sem soar duro: « Na minha visão, a proposta ainda é arriscada » — mais recolhida que « eu acho », mais pessoal que « parece-me »."
+            ],
+            "examples": [
+              {
+                "text": "De certa forma, você tem razão.",
+                "meaning": "Concordância parcial."
+              },
+              {
+                "text": "Até certo ponto, o relatório convence.",
+                "meaning": "Concordo, mas não por inteiro."
+              },
+              {
+                "text": "Por assim dizer, é um emprego estável.",
+                "meaning": "Reformulação com jeito."
+              },
+              {
+                "text": "Na minha visão, a proposta é arriscada.",
+                "meaning": "Opinião pessoal matizada."
+              },
+              {
+                "text": "Não é que eu discorde; é que faltam dados.",
+                "meaning": "Defende-se sem brigar."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "de certa forma, …",
+              "meaning": "Concordar em parte.",
+              "note": "De certa forma, sim."
+            },
+            {
+              "text": "até certo ponto, …",
+              "meaning": "Medir o acordo.",
+              "note": "Até certo ponto, concordo."
+            },
+            {
+              "text": "por assim dizer, …",
+              "meaning": "Reformular com tato.",
+              "note": "…um emprego, por assim dizer."
+            },
+            {
+              "text": "na minha visão, …",
+              "meaning": "Opinião pessoal.",
+              "note": "Na minha visão, é arriscado."
+            },
+            {
+              "text": "não é que…; é que…",
+              "meaning": "Negar antes de explicar.",
+              "note": "Não é que eu discorde."
+            }
+          ],
+          "situation": "Vocês avaliam a proposta de um colega com tato: concordam em parte, reformulam o que soou duro e deixam o debate aberto.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Concorde em parte: de certa forma, você tem razão.",
+                "expected": [
+                  "de certa forma voce tem razao",
+                  "de certa forma, você tem razão"
+                ],
+                "focus": "de certa forma",
+                "watch": "Frase fixa de concordância parcial."
+              },
+              {
+                "prompt": "Meça o acordo: até certo ponto, concordo com o relatório.",
+                "expected": [
+                  "ate certo ponto concordo com o relatorio",
+                  "até certo ponto, concordo com o relatório"
+                ],
+                "focus": "até certo ponto",
+                "watch": "Concordo, mas não por inteiro."
+              },
+              {
+                "prompt": "Reformule: por assim dizer, é um emprego estável.",
+                "expected": [
+                  "por assim dizer e um emprego estavel",
+                  "por assim dizer, é um emprego estável"
+                ],
+                "focus": "por assim dizer",
+                "watch": "Reformulação com tato."
+              },
+              {
+                "prompt": "Dê sua visão: na minha visão, a proposta é arriscada.",
+                "expected": [
+                  "na minha visao a proposta e arriscada",
+                  "na minha visão, a proposta é arriscada"
+                ],
+                "focus": "na minha visão",
+                "watch": "Opinião pessoal matizada."
+              },
+              {
+                "prompt": "Defenda-se: não é que eu discorde; é que faltam dados.",
+                "expected": [
+                  "nao e que eu discorde e que faltam dados",
+                  "não é que eu discorde; é que faltam dados"
+                ],
+                "focus": "não é que",
+                "watch": "Após « não é que », subjuntivo: discorde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u9-matices-e1",
+              "kind": "choice",
+              "prompt": "___ certa forma, você tem razão.",
+              "answers": [
+                "De"
+              ],
+              "explain": "Frase fixa: de certa forma = concordar em parte.",
+              "options": [
+                "De",
+                "Da",
+                "Na",
+                "Por"
+              ]
+            },
+            {
+              "id": "pt-foundations-u9-matices-e2",
+              "kind": "gap",
+              "prompt": "Não é que eu ___; é que faltam dados. (discordar, subjuntivo)",
+              "answers": [
+                "discorde"
+              ],
+              "explain": "Após « não é que », subjuntivo: discorde."
+            },
+            {
+              "id": "pt-foundations-u9-matices-e3",
+              "kind": "order",
+              "prompt": "Dê seu juízo com tato: a ideia convence ou não ?",
+              "answers": [
+                "Na minha visão, a proposta é arriscada"
+              ],
+              "explain": "Na minha visão + juízo matizado."
+            },
+            {
+              "id": "pt-foundations-u9-matices-e4",
+              "kind": "written",
+              "prompt": "Concorde em parte com o relatório, medindo o acordo.",
+              "answers": [
+                "ate certo ponto concordo com o relatorio",
+                "até certo ponto, concordo com o relatório"
+              ],
+              "explain": "Até certo ponto mede o acordo sem negar."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors",
+            "vocab:collocations"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-foundations-u9-apresentar",
+          "title": "Apresentar ideias",
+          "goal": "Estruturar uma fala curta: abrir, encadear e encerrar com clareza.",
+          "intro": {
+            "explanation": [
+              "Abra o ponto: « Para começar, … », « Em primeiro lugar, quero destacar… » — quem ouve já sabe o destino da fala.",
+              "Encadeie sem saltos: « Dito isso, … », « Passando ao próximo ponto », « Volto ao ponto principal ».",
+              "Encerre com fecho claro: « Resumindo, … », « Para encerrar, conto com o apoio de vocês » — fala sem conclusão parece inacabada."
+            ],
+            "examples": [
+              {
+                "text": "Para começar, obrigado pela presença de todos.",
+                "meaning": "Abertura."
+              },
+              {
+                "text": "Dito isso, passo ao orçamento.",
+                "meaning": "Transição."
+              },
+              {
+                "text": "Volto ao ponto principal: o prazo.",
+                "meaning": "Recentrar."
+              },
+              {
+                "text": "Resumindo, os números nos favorecem.",
+                "meaning": "Síntese."
+              },
+              {
+                "text": "Para encerrar, conto com o apoio de vocês.",
+                "meaning": "Fecho com pedido."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "para começar, …",
+              "meaning": "Abrir a fala.",
+              "note": "…obrigado pela presença."
+            },
+            {
+              "text": "dito isso, …",
+              "meaning": "Transição entre pontos.",
+              "note": "Dito isso, passo ao orçamento."
+            },
+            {
+              "text": "voltar ao ponto (principal)",
+              "meaning": "Recentrar o assunto.",
+              "note": "Volto ao ponto: o prazo."
+            },
+            {
+              "text": "resumindo, …",
+              "meaning": "Sintetizar.",
+              "note": "Resumindo, o ano foi bom."
+            },
+            {
+              "text": "para encerrar, …",
+              "meaning": "Fechar com pedido.",
+              "note": "…conto com o apoio de vocês."
+            }
+          ],
+          "situation": "Cada um apresenta em um minuto a ideia que defende na reunião: abre, sustenta com um dado e encerra pedindo algo concreto ao time.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Abra a fala: para começar, obrigado pela presença de todos.",
+                "expected": [
+                  "para comecar obrigado pela presenca de todos",
+                  "para começar, obrigado pela presença de todos"
+                ],
+                "focus": "para começar",
+                "watch": "Abertura clara."
+              },
+              {
+                "prompt": "Transição: dito isso, passo ao orçamento.",
+                "expected": [
+                  "dito isso passo ao orcamento",
+                  "dito isso, passo ao orçamento"
+                ],
+                "focus": "dito isso",
+                "watch": "Particípio como conector."
+              },
+              {
+                "prompt": "Recentre: volto ao ponto principal, o prazo.",
+                "expected": [
+                  "volto ao ponto principal o prazo",
+                  "volto ao ponto principal, o prazo"
+                ],
+                "focus": "voltar ao ponto",
+                "watch": "Recentrar sem se perder."
+              },
+              {
+                "prompt": "Sintetize: resumindo, os números nos favorecem.",
+                "expected": [
+                  "resumindo os numeros nos favorecem",
+                  "resumindo, os números nos favorecem"
+                ],
+                "focus": "resumindo",
+                "watch": "Síntese do balanço."
+              },
+              {
+                "prompt": "Encerre com pedido: para encerrar, conto com o apoio de vocês.",
+                "expected": [
+                  "para encerrar conto com o apoio de voces",
+                  "para encerrar, conto com o apoio de vocês"
+                ],
+                "focus": "para encerrar",
+                "watch": "Fecho + pedido concreto."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u9-apresentar-e1",
+              "kind": "choice",
+              "prompt": "___ encerrar, conto com o apoio de vocês.",
+              "answers": [
+                "Para"
+              ],
+              "explain": "Fecho de fala: para encerrar.",
+              "options": [
+                "Para",
+                "Ao",
+                "Em",
+                "No"
+              ]
+            },
+            {
+              "id": "pt-foundations-u9-apresentar-e2",
+              "kind": "gap",
+              "prompt": "___ isso, passo ao próximo ponto. (particípio de dizer)",
+              "answers": [
+                "dito"
+              ],
+              "explain": "Particípio como conector: dito isso."
+            },
+            {
+              "id": "pt-foundations-u9-apresentar-e3",
+              "kind": "order",
+              "prompt": "Sintetize o balanço do ano para a diretoria.",
+              "answers": [
+                "Resumindo, os números nos favorecem"
+              ],
+              "explain": "Resumindo + conclusão."
+            },
+            {
+              "id": "pt-foundations-u9-apresentar-e4",
+              "kind": "written",
+              "prompt": "Abra sua fala agradecendo quem veio.",
+              "answers": [
+                "para comecar obrigado pela presenca de todos",
+                "para começar, obrigado pela presença de todos"
+              ],
+              "explain": "Para começar + agradecimento."
+            }
+          ],
+          "skills": [
+            "speaking:sustained-conversation",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

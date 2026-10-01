@@ -1110,6 +1110,304 @@
           "explain": "Prometem voltar a falar disso quando o plano sair."
         }
       ]
+    },
+    {
+      "id": "pt-listen-debate-radio",
+      "languageID": "pt",
+      "title": "Debate no rádio",
+      "level": "C1",
+      "topic": "debate",
+      "unitID": "pt-foundations-u9",
+      "text": "No debate desta quinta, a economista Helena Vaz defendeu a semana de quatro dias: « A produtividade não cai; ela se redistribui », afirmou, « e as equipes relatam menos afastamentos ». O apresentador contrapôs: « Mas e as pequenas empresas, que já operam no limite ? ». Helena matizou: « De certa forma, o senhor tem razão; por isso defendo um programa piloto, e não uma lei para todos ». O empresário Rui Costa, convidado ao estúdio, resumiu sua posição: « Para começar, preciso de dados do meu setor; para encerrar, digo que apoio a experiência — com exceções ». O mediador fechou o bloco lembrando que o relatório final sai em novembro e que o debate continua na próxima semana, com a participação de sindicalistas.",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "function:express-opinion",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-listen-debate-radio-q1",
+          "kind": "choice",
+          "prompt": "Qual é a proposta central do debate ?",
+          "answers": [
+            "Semana de quatro dias"
+          ],
+          "explain": "Helena defende a semana de quatro dias.",
+          "options": [
+            "Semana de quatro dias",
+            "Salário mínimo por hora",
+            "Fim do home office",
+            "Mais horas extras"
+          ]
+        },
+        {
+          "id": "pt-listen-debate-radio-q2",
+          "kind": "written",
+          "prompt": "Segundo Helena, o que acontece com a produtividade ?",
+          "answers": [
+            "ela se redistribui",
+            "nao cai ela se redistribui",
+            "se redistribui"
+          ],
+          "explain": "« A produtividade não cai; ela se redistribui »."
+        },
+        {
+          "id": "pt-listen-debate-radio-q3",
+          "kind": "choice",
+          "prompt": "O que Helena defende como caminho ?",
+          "answers": [
+            "Um programa piloto"
+          ],
+          "explain": "« Defendo um programa piloto, e não uma lei para todos ».",
+          "options": [
+            "Um programa piloto",
+            "Uma lei imediata",
+            "Nenhuma mudança",
+            "Um referendo"
+          ]
+        },
+        {
+          "id": "pt-listen-debate-radio-q4",
+          "kind": "choice",
+          "prompt": "O que Rui pede antes de apoiar ?",
+          "answers": [
+            "Dados do seu setor"
+          ],
+          "explain": "« Para começar, preciso de dados do meu setor ».",
+          "options": [
+            "Dados do seu setor",
+            "Mais reuniões",
+            "Um aumento",
+            "Novos sócios"
+          ]
+        },
+        {
+          "id": "pt-listen-debate-radio-q5",
+          "kind": "written",
+          "prompt": "Quando sai o relatório final ?",
+          "answers": [
+            "em novembro",
+            "novembro"
+          ],
+          "explain": "O relatório final sai em novembro."
+        },
+        {
+          "id": "pt-listen-debate-radio-q6",
+          "kind": "choice",
+          "prompt": "Quem participa do debate da próxima semana ?",
+          "answers": [
+            "Sindicalistas"
+          ],
+          "explain": "« O debate continua na próxima semana, com a participação de sindicalistas ».",
+          "options": [
+            "Sindicalistas",
+            "A diretoria",
+            "Estudantes",
+            "Ninguém"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-listen-palestra-chaves",
+      "languageID": "pt",
+      "title": "Palestra: três chaves",
+      "level": "C1",
+      "topic": "palestra",
+      "unitID": "pt-foundations-u9",
+      "text": "Na abertura do congresso, a consultora Marta Reis fez uma pergunta ao plenário: « Quantas reuniões vocês suportaram esta semana ? ». Risos. « É disso que quero tratar: da fala que respeita quem ouve ». Ela organizou a palestra em três chaves. « Para começar, anuncie o destino: se o ouvinte não souber aonde você quer chegar, ele viaja com medo. Depois, dê um dado por ponto — números demais enterram a mensagem. E, para encerrar, peça algo concreto: um voto, um prazo, um apoio ». Ao sintetizar, Marta voltou à pergunta inicial: « Resumindo: quem estrutura bem fala menos — e decide mais ». A plateia respondeu de pé, e a fala dela virou referência interna das equipes.",
+      "skills": [
+        "listening:detail",
+        "listening:gist",
+        "vocab:work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-listen-palestra-chaves-q1",
+          "kind": "choice",
+          "prompt": "Como Marta abre a palestra ?",
+          "answers": [
+            "Com uma pergunta ao plenário"
+          ],
+          "explain": "« Quantas reuniões vocês suportaram esta semana ? ».",
+          "options": [
+            "Com uma pergunta ao plenário",
+            "Com uma estatística",
+            "Com um vídeo",
+            "Com um silêncio"
+          ]
+        },
+        {
+          "id": "pt-listen-palestra-chaves-q2",
+          "kind": "choice",
+          "prompt": "Quantas chaves ela apresenta ?",
+          "answers": [
+            "Três"
+          ],
+          "explain": "« Ela organizou a palestra em três chaves ».",
+          "options": [
+            "Três",
+            "Duas",
+            "Quatro",
+            "Cinco"
+          ]
+        },
+        {
+          "id": "pt-listen-palestra-chaves-q3",
+          "kind": "written",
+          "prompt": "O que ela recomenda anunciar primeiro ?",
+          "answers": [
+            "o destino",
+            "o destino da fala",
+            "onde a fala quer chegar"
+          ],
+          "explain": "« Para começar, anuncie o destino »."
+        },
+        {
+          "id": "pt-listen-palestra-chaves-q4",
+          "kind": "choice",
+          "prompt": "Por que ela evita números demais ?",
+          "answers": [
+            "Enterram a mensagem"
+          ],
+          "explain": "« Números demais enterram a mensagem ».",
+          "options": [
+            "Enterram a mensagem",
+            "Faltam dados",
+            "Confundem o orçamento",
+            "Cansam o orador"
+          ]
+        },
+        {
+          "id": "pt-listen-palestra-chaves-q5",
+          "kind": "written",
+          "prompt": "O que se deve pedir ao encerrar, segundo Marta ?",
+          "answers": [
+            "algo concreto",
+            "um pedido concreto",
+            "um voto um prazo um apoio"
+          ],
+          "explain": "« Peça algo concreto: um voto, um prazo, um apoio »."
+        },
+        {
+          "id": "pt-listen-palestra-chaves-q6",
+          "kind": "choice",
+          "prompt": "Qual é a síntese da palestra ?",
+          "answers": [
+            "Quem estrutura bem fala menos"
+          ],
+          "explain": "« Quem estrutura bem fala menos — e decide mais ».",
+          "options": [
+            "Quem estrutura bem fala menos",
+            "Quem fala mais lidera",
+            "Reuniões devem ser longas",
+            "Dados valem mais que palavras"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-listen-podcast-matices",
+      "languageID": "pt",
+      "title": "Podcast: matizando",
+      "level": "C1",
+      "topic": "podcast",
+      "unitID": "pt-foundations-u9",
+      "text": "No episódio de hoje, Lívia e Tomás discutem o aviso da empresa: três dias presenciais por semana. « Eu vejo com bons olhos », diz Tomás, « o escritório me dá ritmo ». Lívia não concorda de todo: « De certa forma, faz sentido para quem mora perto; no meu caso, eram três horas de metrô por dia ». Tomás reconhece o ponto: « É verdade que o time ficou mais rápido em casa; tiramos conclusões apressadas sobre presença ». « Pois é », resume Lívia, « por assim dizer, virou questão de logística — e de confiança ». Eles fecham o episódio com uma pergunta aos ouvintes: regime fixo ou flexível ? As respostas viram pauta do próximo programa.",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-listen-podcast-matices-q1",
+          "kind": "choice",
+          "prompt": "Qual é o novo regime da empresa ?",
+          "answers": [
+            "Três dias presenciais"
+          ],
+          "explain": "O aviso manda três dias presenciais por semana.",
+          "options": [
+            "Três dias presenciais",
+            "Trabalho cem por cento remoto",
+            "Só reuniões online",
+            "Horário livre"
+          ]
+        },
+        {
+          "id": "pt-listen-podcast-matices-q2",
+          "kind": "choice",
+          "prompt": "Como Tomás reage ao aviso ?",
+          "answers": [
+            "Vê com bons olhos"
+          ],
+          "explain": "« Eu vejo com bons olhos ».",
+          "options": [
+            "Vê com bons olhos",
+            "Rejeita de pronto",
+            "Pede demissão",
+            "Fica neutro"
+          ]
+        },
+        {
+          "id": "pt-listen-podcast-matices-q3",
+          "kind": "written",
+          "prompt": "Qual era o custo do deslocamento de Lívia ?",
+          "answers": [
+            "tres horas de metro por dia",
+            "três horas de metrô por dia",
+            "tres horas de metro"
+          ],
+          "explain": "« Eram três horas de metrô por dia »."
+        },
+        {
+          "id": "pt-listen-podcast-matices-q4",
+          "kind": "choice",
+          "prompt": "Que conclusão apressada o time admite ter tirado ?",
+          "answers": [
+            "Sobre a presença"
+          ],
+          "explain": "« Tiramos conclusões apressadas sobre presença ».",
+          "options": [
+            "Sobre a presença",
+            "Sobre o salário",
+            "Sobre o orçamento",
+            "Sobre o produto"
+          ]
+        },
+        {
+          "id": "pt-listen-podcast-matices-q5",
+          "kind": "written",
+          "prompt": "Como Lívia resume a questão ?",
+          "answers": [
+            "questao de logistica e de confianca",
+            "de logística e de confiança",
+            "logística e confiança"
+          ],
+          "explain": "« Virou questão de logística — e de confiança »."
+        },
+        {
+          "id": "pt-listen-podcast-matices-q6",
+          "kind": "choice",
+          "prompt": "O que os ouvintes vão responder ?",
+          "answers": [
+            "Regime fixo ou flexível"
+          ],
+          "explain": "A pergunta do fecho: regime fixo ou flexível ?",
+          "options": [
+            "Regime fixo ou flexível",
+            "O próximo convidado",
+            "O nome do podcast",
+            "O dia do encontro"
+          ]
+        }
+      ]
     }
   ]
 }

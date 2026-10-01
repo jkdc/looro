@@ -338,6 +338,253 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-read-essay-stadt",
+      "languageID": "de",
+      "title": "Essay: Die kompakte Stadt",
+      "level": "C1",
+      "topic": "stadt",
+      "unitID": "de-foundations-u9",
+      "text": "Ob Großstadt oder Kleinstadt – die Frage klingt alt, doch sie verdient Nuancen. Befürworter der Großstadt verweisen auf Chancen und Vielfalt: Wer dort lebt, findet Arbeit, Kultur und Menschen, die anders denken. Kritiker halten dagegen, dass Mieten steigen und Nachbarschaften anonym werden. Zwar bietet die Kleinstadt Ruhe und günstigen Boden, aber sie kostet oft Mobilität: Wer überallhin fahren muss, verliert Zeit. Aus meiner Sicht entscheidet weniger die Größe als das Angebot: gute Nahversorgung, sichere Radwege, bezahlbare Räume. Sozusagen ist die ideale Stadt die, die Kompromisse überhaupt erst möglich macht. Zusammenfassend bleibt: Statt Ideale zu predigen, sollten Kommunen messen, was die Bewohner tatsächlich brauchen, und genau danach planen. Wer so vorgeht, gewinnt in beiden Welten etwas.",
+      "skills": [
+        "reading:inference",
+        "grammar:connectors",
+        "writing:argument",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-essay-stadt-q1",
+          "kind": "choice",
+          "prompt": "Welchen Vorwurf erheben Kritiker gegen die Großstadt ?",
+          "answers": [
+            "Mieten steigen, Nachbarschaften werden anonym"
+          ],
+          "explain": "« …dass Mieten steigen und Nachbarschaften anonym werden ».",
+          "options": [
+            "Mieten steigen, Nachbarschaften werden anonym",
+            "Es fehlt an Kultur",
+            "Die Arbeit ist langweilig",
+            "Alle denken gleich"
+          ]
+        },
+        {
+          "id": "de-read-essay-stadt-q2",
+          "kind": "written",
+          "prompt": "Was kostet die Kleinstadt laut Text oft ?",
+          "answers": [
+            "mobilität",
+            "mobilitat"
+          ],
+          "explain": "« …aber sie kostet oft Mobilität »."
+        },
+        {
+          "id": "de-read-essay-stadt-q3",
+          "kind": "choice",
+          "prompt": "Worauf kommt es laut Text weniger an ?",
+          "answers": [
+            "Auf die Größe"
+          ],
+          "explain": "« …entscheidet weniger die Größe als das Angebot ».",
+          "options": [
+            "Auf die Größe",
+            "Auf die Nahversorgung",
+            "Auf sichere Radwege",
+            "Auf bezahlbare Räume"
+          ]
+        },
+        {
+          "id": "de-read-essay-stadt-q4",
+          "kind": "written",
+          "prompt": "Was sollten Kommunen laut Text tun ?",
+          "answers": [
+            "messen, was die bewohner brauchen",
+            "messen was die bewohner tatsächlich brauchen",
+            "messen was bewohner tatsachlich brauchen"
+          ],
+          "explain": "« …sollten Kommunen messen, was die Bewohner tatsächlich brauchen »."
+        },
+        {
+          "id": "de-read-essay-stadt-q5",
+          "kind": "choice",
+          "prompt": "Welche Funktion hat « Sozusagen » im Text ?",
+          "answers": [
+            "Es markiert eine Formulierung mit Abstand"
+          ],
+          "explain": "« sozusagen » verallgemeinert mit Vorsicht.",
+          "options": [
+            "Es markiert eine Formulierung mit Abstand",
+            "Es leitet einen Widerspruch ein",
+            "Es nennt eine Quelle",
+            "Es beendet das Essay"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-read-rezension-buch",
+      "languageID": "de",
+      "title": "Rezension: Raus aus dem Hamsterrad",
+      "level": "C1",
+      "topic": "kultur",
+      "unitID": "de-foundations-u9",
+      "text": "Die Debatte « Raus aus dem Hamsterrad » verspricht viel – und hält mehr, als der Titel ahnen lässt. Die Autorin, Ökonomin und ehemalige Journalistin, verbindet Reportagen mit Daten: Zunächst porträtiert sie vier Berufstätige, danach weitet sie den Blick auf Arbeitszeitgesetze. Zwar klingen die Kapitel über Erschöpfung manchmal belehrend, aber die ehrlichen Interviews gleichen das aus. Besonders gelungen ist das Mitteldrittel: Dort zeigt sie, wie eine Fabrik ohne Heroismus auf vier Tage umstellte – keine Revolution, sozusagen Buchführung mit Menschenverstand. Weniger überzeugt das Schlusskapitel, das unbedingt werden will, wo Differenz nötig wäre. Aus meiner Sicht lohnt sich das Buch trotzdem, gerade für Leser, die nuancierte Argumente statt Parolen suchen. Zusammenfassend: eine etwas zu lange, doch selten faire Auseinandersetzung mit unserer Arbeitszeit.",
+      "skills": [
+        "reading:inference",
+        "reading:scan",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-rezension-buch-q1",
+          "kind": "choice",
+          "prompt": "Wie bewertet die Rezensentin das Schlusskapitel ?",
+          "answers": [
+            "Es will unbedingt sein, wo Differenz nötig wäre"
+          ],
+          "explain": "« …das unbedingt werden will, wo Differenz nötig wäre ».",
+          "options": [
+            "Es will unbedingt sein, wo Differenz nötig wäre",
+            "Es ist besonders gelungen",
+            "Es fehlt vollständig",
+            "Es ist zu kurz geraten"
+          ]
+        },
+        {
+          "id": "de-read-rezension-buch-q2",
+          "kind": "written",
+          "prompt": "Welches Beispiel zeigt das Mitteldrittel ?",
+          "answers": [
+            "eine fabrik, die auf vier tage umstellte",
+            "eine fabrik auf vier tage",
+            "eine fabrik"
+          ],
+          "explain": "« …wie eine Fabrik … auf vier Tage umstellte »."
+        },
+        {
+          "id": "de-read-rezension-buch-q3",
+          "kind": "choice",
+          "prompt": "Was gleicht die schwächeren Kapitel aus ?",
+          "answers": [
+            "Die ehrlichen Interviews"
+          ],
+          "explain": "« …aber die ehrlichen Interviews gleichen das aus ».",
+          "options": [
+            "Die ehrlichen Interviews",
+            "Die Datenlage",
+            "Die Titelwahl",
+            "Die Arbeitszeitgesetze"
+          ]
+        },
+        {
+          "id": "de-read-rezension-buch-q4",
+          "kind": "written",
+          "prompt": "Für welche Leser lohnt sich das Buch laut Text ?",
+          "answers": [
+            "leser, die nuancierte argumente suchen",
+            "leser die nuancierte argumente statt parolen suchen"
+          ],
+          "explain": "« …für Leser, die nuancierte Argumente statt Parolen suchen »."
+        },
+        {
+          "id": "de-read-rezension-buch-q5",
+          "kind": "choice",
+          "prompt": "Welches Urteil steht im letzten Satz ?",
+          "answers": [
+            "Etwas zu lang, doch selten fair"
+          ],
+          "explain": "« eine etwas zu lange, doch selten faire Auseinandersetzung ».",
+          "options": [
+            "Etwas zu lang, doch selten fair",
+            "Radikal und revolutionär",
+            "Kurz und präzise",
+            "Belehrend und unfair"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-read-brief-leitung",
+      "languageID": "de",
+      "title": "Brief an die Leitung",
+      "level": "C1",
+      "topic": "arbeit",
+      "unitID": "de-foundations-u9",
+      "text": "Sehr geehrte Frau Mertens,\n\nich wende mich heute an Sie, weil ich eine Anregung aus dem Support-Team weiterleiten möchte. Das Team schlägt vor, die Schichtpläne künftig zwei Wochen im Voraus zu veröffentlichen. Zwar ist das derzeit aus organisatorischen Gründen schwierig, jedoch berichten mehrere Kolleginnen, dass kurzfristige Änderungen die Kinderbetreuung belasten. Aus meiner Sicht wäre ein Kompromiss denkbar: feste Grundschichten, die nur in Ausnahmefällen wechseln. Ich wollte mich zudem erkundigen, ob Sie ein kurzes Gespräch in der nächsten Woche einträumen könnten; dabei können wir die Details gerne klären. Ich danke Ihnen im Voraus für Ihre Rückmeldung und stehe für Rückfragen selbstverständlich zur Verfügung.\n\nMit freundlichen Grüßen,\nJonas Berger",
+      "skills": [
+        "reading:detail",
+        "vocab:work",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-brief-leitung-q1",
+          "kind": "choice",
+          "prompt": "Was schlägt das Team vor ?",
+          "answers": [
+            "Schichtpläne zwei Wochen im Voraus veröffentlichen"
+          ],
+          "explain": "« …die Schichtpläne künftig zwei Wochen im Voraus zu veröffentlichen ».",
+          "options": [
+            "Schichtpläne zwei Wochen im Voraus veröffentlichen",
+            "Das Team verkleinern",
+            "Die Kinderbetreuung übernehmen",
+            "Alle Schichten streichen"
+          ]
+        },
+        {
+          "id": "de-read-brief-leitung-q2",
+          "kind": "written",
+          "prompt": "Was belasten kurzfristige Änderungen laut Brief ?",
+          "answers": [
+            "die kinderbetreuung",
+            "kinderbetreuung"
+          ],
+          "explain": "« …dass kurzfristige Änderungen die Kinderbetreuung belasten »."
+        },
+        {
+          "id": "de-read-brief-leitung-q3",
+          "kind": "written",
+          "prompt": "Welchen Kompromiss schlägt Jonas vor ?",
+          "answers": [
+            "feste grundschichten",
+            "feste grundschichten, die nur in ausnahmefällen wechseln",
+            "feste grundschichten, die nur in ausnahmefaellen wechseln"
+          ],
+          "explain": "« feste Grundschichten, die nur in Ausnahmefällen wechseln »."
+        },
+        {
+          "id": "de-read-brief-leitung-q4",
+          "kind": "choice",
+          "prompt": "Warum schreibt Jonas ?",
+          "answers": [
+            "Um eine Anregung weiterzugeben und ein Gespräch vorzuschlagen"
+          ],
+          "explain": "Anregung + Gesprächsbitte sind der Zweck des Briefs.",
+          "options": [
+            "Um eine Anregung weiterzugeben und ein Gespräch vorzuschlagen",
+            "Um zu kündigen",
+            "Um eine Rechnung zu klären",
+            "Um Urlaub zu beantragen"
+          ]
+        },
+        {
+          "id": "de-read-brief-leitung-q5",
+          "kind": "written",
+          "prompt": "Welche formelle Grußformel steht am Ende ?",
+          "answers": [
+            "mit freundlichen grüßen",
+            "mit freundlichen grussen"
+          ],
+          "explain": "« Mit freundlichen Grüßen » – Standard am Briefende."
+        }
+      ]
     }
   ]
 }

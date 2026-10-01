@@ -1108,6 +1108,311 @@
           "explain": "Promettono di riparlarne quando uscirà il piano."
         }
       ]
+    },
+    {
+      "id": "it-listen-dibattito-radio",
+      "languageID": "it",
+      "title": "Dibattito alla radio",
+      "level": "C1",
+      "topic": "dibattito",
+      "unitID": "it-foundations-u9",
+      "text": "Studi aperti, torniamo sulla viabilità. Con noi Mara Bianchi, urbanista, e Sandro Lenzi, portavoce dei commercianti. Mara, la parola è Sua. « Grazie. A mio avviso, limitare il traffico non è una battaglia ideologica: è una questione di salute pubblica. In un certo senso, tutti ne guadagnerebbero, commercianti compresi ». Lenzi interviene: « Permettetemi di dissentire. È vero che il centro va ridisegnato, però senza parcheggi di scambio qualsiasi misura resta, per così dire, di facciata ». La conduttrice lancia i dati: « Secondo il comune, gli spostamenti a piedi sono cresciuti del dodici per cento ». « Proprio per questo », replica Bianchi, « conviene procedere per tappe ». « Purché le tappe non diventino eterne », chiude Lenzi.",
+      "skills": [
+        "listening:connected-speech",
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-dibattito-radio-q1",
+          "kind": "choice",
+          "prompt": "Qual è la posizione di Mara Bianchi?",
+          "answers": [
+            "Limitare il traffico è una questione di salute"
+          ],
+          "explain": "« Non è una battaglia ideologica: è una questione di salute pubblica ».",
+          "options": [
+            "Limitare il traffico è una questione di salute",
+            "Una battaglia puramente ideologica",
+            "Il traffico non è un problema",
+            "Serve fermare ogni misura"
+          ]
+        },
+        {
+          "id": "it-listen-dibattito-radio-q2",
+          "kind": "choice",
+          "prompt": "Come definisce Lenzi una misura senza parcheggi di scambio?",
+          "answers": [
+            "Di facciata"
+          ],
+          "explain": "« Resta, per così dire, di facciata ».",
+          "options": [
+            "Di facciata",
+            "Eterna",
+            "Salutare",
+            "Impossibile"
+          ]
+        },
+        {
+          "id": "it-listen-dibattito-radio-q3",
+          "kind": "written",
+          "prompt": "Di quanto sono cresciuti gli spostamenti a piedi?",
+          "answers": [
+            "12%",
+            "12 %",
+            "del dodici per cento",
+            "dodici per cento"
+          ],
+          "explain": "Cresciuti del dodici per cento."
+        },
+        {
+          "id": "it-listen-dibattito-radio-q4",
+          "kind": "choice",
+          "prompt": "Che metodo propone Bianchi?",
+          "answers": [
+            "Procedere per tappe"
+          ],
+          "explain": "« Conviene procedere per tappe ».",
+          "options": [
+            "Procedere per tappe",
+            "Un referendum immediato",
+            "Chiudere tutto subito",
+            "Attendere i fondi"
+          ]
+        },
+        {
+          "id": "it-listen-dibattito-radio-q5",
+          "kind": "written",
+          "prompt": "Con quale condizione Lenzi accetta le tappe?",
+          "answers": [
+            "purche non diventino eterne",
+            "purché le tappe non diventino eterne",
+            "purché non diventino eterne"
+          ],
+          "explain": "« Purché le tappe non diventino eterne »."
+        },
+        {
+          "id": "it-listen-dibattito-radio-q6",
+          "kind": "choice",
+          "prompt": "Che funzione ha « Permettetemi di dissentire »?",
+          "answers": [
+            "Marcare il disaccordo in forma cortese"
+          ],
+          "explain": "Disaccordo esplicito ma cortese.",
+          "options": [
+            "Marcare il disaccordo in forma cortese",
+            "Chiedere un rinvio",
+            "Aprire l'intervento",
+            "Chiudere il dibattito"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-intervento-chiavi",
+      "languageID": "it",
+      "title": "Intervento in riunione",
+      "level": "C1",
+      "topic": "lavoro",
+      "unitID": "it-foundations-u9",
+      "text": "Ultimo punto dell'ordine del giorno: il passaggio del progetto Lumen al team di Milano. Chiara Sarti ha cinque minuti. « Per iniziare, una rassicurazione: nessun cliente resterà senza referente. Il dossier che ho preparato contiene contratti, scadenze e contatti; pertanto chi subentrerà avrà tutto in mano. Venendo ai rischi, ne vedo due: la gara della biblioteca, che scade a marzo, e il rinnovo del fornitore di stampa, per così dire ancora a metà trattativa. In sintesi, il progetto è sano ma esige continuità. Per concludere, due richieste: nominare entro venerdì il nuovo referente e, se possibile, tenere il cliente pilota nel nostro gruppo. Sono certa che, sotto certi aspetti, il cambio sarà un'opportunità. Grazie dell'attenzione ».",
+      "skills": [
+        "listening:detail",
+        "listening:gist",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-intervento-chiavi-q1",
+          "kind": "choice",
+          "prompt": "Cosa garantisce Chiara per iniziare?",
+          "answers": [
+            "Nessun cliente resterà senza referente"
+          ],
+          "explain": "« Nessun cliente resterà senza referente ».",
+          "options": [
+            "Nessun cliente resterà senza referente",
+            "Il progetto sarà rinnovato",
+            "La gara sarà vinta",
+            "Il budget sarà aumentato"
+          ]
+        },
+        {
+          "id": "it-listen-intervento-chiavi-q2",
+          "kind": "written",
+          "prompt": "Quando scade la gara della biblioteca?",
+          "answers": [
+            "a marzo",
+            "marzo",
+            "in marzo"
+          ],
+          "explain": "Scade a marzo."
+        },
+        {
+          "id": "it-listen-intervento-chiavi-q3",
+          "kind": "choice",
+          "prompt": "Com'è la trattativa col fornitore di stampa?",
+          "answers": [
+            "Ancora a metà"
+          ],
+          "explain": "« Per così dire ancora a metà trattativa ».",
+          "options": [
+            "Ancora a metà",
+            "Conclusa",
+            "Annullata",
+            "Rinviata a settembre"
+          ]
+        },
+        {
+          "id": "it-listen-intervento-chiavi-q4",
+          "kind": "written",
+          "prompt": "Che cosa chiede entro venerdì?",
+          "answers": [
+            "nominare il nuovo referente",
+            "nominare entro venerdì il nuovo referente",
+            "nominare entro venerdi il nuovo referente"
+          ],
+          "explain": "Chiede di nominare il nuovo referente."
+        },
+        {
+          "id": "it-listen-intervento-chiavi-q5",
+          "kind": "choice",
+          "prompt": "Che funzione ha « Venendo ai rischi »?",
+          "answers": [
+            "Annuncia il cambio di punto"
+          ],
+          "explain": "Transizione annunciata verso un nuovo punto.",
+          "options": [
+            "Annuncia il cambio di punto",
+            "Chiude l'intervento",
+            "Sintetizza i contenuti",
+            "Ringrazia i colleghi"
+          ]
+        },
+        {
+          "id": "it-listen-intervento-chiavi-q6",
+          "kind": "choice",
+          "prompt": "Com'è il progetto in sintesi?",
+          "answers": [
+            "Sano ma esige continuità"
+          ],
+          "explain": "« Il progetto è sano ma esige continuità ».",
+          "options": [
+            "Sano ma esige continuità",
+            "Chiuso e archiviato",
+            "In perdita",
+            "Sospeso"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-listen-podcast-sfumature",
+      "languageID": "it",
+      "title": "Podcast: l'arte della sfumatura",
+      "level": "C1",
+      "topic": "linguaggio",
+      "unitID": "it-foundations-u9",
+      "text": "Benvenuti a « Parole al lavoro », la puntata in cui ascoltiamo come si suona un'opinione in ufficio. Vi racconto un episodio vissuto. In una riunione, il nuovo responsabile avrebbe potuto dire: « Questa idea non funziona ». Invece ha detto: « A mio avviso, qui c'è ancora lavoro da fare ». Stesso fondo, musica diversa: nessuno si è messo sulla difensiva e la discussione è proseguita. Notate le mosse: prima la sfumatura, poi il punto, infine la proposta. « In un certo senso », « per così dire », « direi che » non sono giri di parole: sono la cortesia della precisione. Per così dire, naturalmente. Nella prossima puntata analizziamo il linguaggio delle email: ci vediamo lì.",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "vocab:collocations",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-podcast-sfumature-q1",
+          "kind": "choice",
+          "prompt": "Che alternativa ha proposto il responsabile al giudizio netto?",
+          "answers": [
+            "Qui c'è ancora lavoro da fare"
+          ],
+          "explain": "« A mio avviso, qui c'è ancora lavoro da fare ».",
+          "options": [
+            "Qui c'è ancora lavoro da fare",
+            "L'idea è inutile",
+            "Cambiate subito team",
+            "Non dico niente"
+          ]
+        },
+        {
+          "id": "it-listen-podcast-sfumature-q2",
+          "kind": "choice",
+          "prompt": "Che effetto ha prodotto la formula sfumata?",
+          "answers": [
+            "Nessuno si è messo sulla difensiva"
+          ],
+          "explain": "Nessuno in difesa, la discussione è proseguita.",
+          "options": [
+            "Nessuno si è messo sulla difensiva",
+            "La riunione è finita prima",
+            "Il capo si è arrabbiato",
+            "L'idea è stata approvata subito"
+          ]
+        },
+        {
+          "id": "it-listen-podcast-sfumature-q3",
+          "kind": "written",
+          "prompt": "Quale sequenza indica l'autore per costruire un rilievo?",
+          "answers": [
+            "prima la sfumatura poi il punto infine la proposta",
+            "sfumatura punto proposta",
+            "la sfumatura poi il punto e la proposta"
+          ],
+          "explain": "Prima la sfumatura, poi il punto, infine la proposta."
+        },
+        {
+          "id": "it-listen-podcast-sfumature-q4",
+          "kind": "choice",
+          "prompt": "Come definisce l'autore locuzioni come « direi che »?",
+          "answers": [
+            "La cortesia della precisione"
+          ],
+          "explain": "« Non sono giri di parole: sono la cortesia della precisione ».",
+          "options": [
+            "La cortesia della precisione",
+            "Un giro di parole da evitare",
+            "Un segno di insicurezza",
+            "Un tratto regionale"
+          ]
+        },
+        {
+          "id": "it-listen-podcast-sfumature-q5",
+          "kind": "choice",
+          "prompt": "Di cosa parlerà la prossima puntata?",
+          "answers": [
+            "Del linguaggio delle email"
+          ],
+          "explain": "« Analizziamo il linguaggio delle email ».",
+          "options": [
+            "Del linguaggio delle email",
+            "Delle riunioni efficienti",
+            "Del telegiornale",
+            "Del nuovo responsabile"
+          ]
+        },
+        {
+          "id": "it-listen-podcast-sfumature-q6",
+          "kind": "choice",
+          "prompt": "Che registro ha questo podcast?",
+          "answers": [
+            "Divulgativo e colloquiale"
+          ],
+          "explain": "Tono divulgativo, con episodi vissuti e battute.",
+          "options": [
+            "Divulgativo e colloquiale",
+            "Legale",
+            "Burocratico",
+            "Accademico e freddo"
+          ]
+        }
+      ]
     }
   ]
 }

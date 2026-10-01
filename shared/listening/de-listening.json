@@ -1108,6 +1108,250 @@
           "explain": "Sie versprechen, wieder darüber zu sprechen."
         }
       ]
+    },
+    {
+      "id": "de-listen-radio-debatte",
+      "languageID": "de",
+      "title": "Radio-Debatte: Vier Tage",
+      "level": "C1",
+      "topic": "arbeit",
+      "unitID": "de-foundations-u9",
+      "text": "Im Studio diskutiert die Moderatorin Karin Brandt mit dem Unternehmer Sven Ostermann über die Vier-Tage-Woche. « Zunächst eine Zahl », beginnt Brandt, « in der Pilotfirma stieg die Zufriedenheit um zwanzig Prozent ». Ostermann bleibt skeptisch: « Zwar arbeiten alle konzentrierter, aber vier Tage reichen selten, um Projekte ordentlich abzuschließen ». Brandt widerspricht: « Genau deshalb braucht es Struktur, sozusagen weniger Meetings, mehr Fokus ». Der Unternehmer räumt ein: « Es stimmt, dass der Meeting-Wahnsinn Zeit frisst ». Seine Sorge bleibt: Wer betreut am fünften Tag die Kunden ? Die Moderatorin hält dagegen: « Aus meiner Sicht entscheiden am Ende die Zahlen, nicht die Gefühle ». Zusammenfassend bittet sie beide zu einer Pilotrechnung. Nächste Woche debattiert das Studio die Bürokratie.",
+      "skills": [
+        "listening:inference",
+        "listening:gist",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-radio-debatte-q1",
+          "kind": "choice",
+          "prompt": "Welche Zahl nennt Brandt zuerst ?",
+          "answers": [
+            "Zwanzig Prozent mehr Zufriedenheit"
+          ],
+          "explain": "« …stieg die Zufriedenheit um zwanzig Prozent ».",
+          "options": [
+            "Zwanzig Prozent mehr Zufriedenheit",
+            "Zwanzig Prozent mehr Umsatz",
+            "Vier Tage weniger Urlaub",
+            "Fünfzig Prozent weniger Meetings"
+          ]
+        },
+        {
+          "id": "de-listen-radio-debatte-q2",
+          "kind": "choice",
+          "prompt": "Warum ist Ostermann skeptisch ?",
+          "answers": [
+            "Vier Tage reichen selten für Projekte"
+          ],
+          "explain": "« Vier Tage reichen selten, um Projekte ordentlich abzuschließen ».",
+          "options": [
+            "Vier Tage reichen selten für Projekte",
+            "Die Pilotfirma war zu klein",
+            "Ihm sind Zahlen egal",
+            "Kunden wollen keine Zahlen"
+          ]
+        },
+        {
+          "id": "de-listen-radio-debatte-q3",
+          "kind": "written",
+          "prompt": "Was nennt Brandt als Struktur ?",
+          "answers": [
+            "weniger meetings, mehr fokus",
+            "weniger meetings mehr fokus"
+          ],
+          "explain": "« …sozusagen weniger Meetings, mehr Fokus »."
+        },
+        {
+          "id": "de-listen-radio-debatte-q4",
+          "kind": "written",
+          "prompt": "Worauf räumt Ostermann ein ?",
+          "answers": [
+            "dass der meeting-wahnsinn zeit frisst",
+            "dass meetings zeit fressen",
+            "meeting-wahnsinn frisst zeit"
+          ],
+          "explain": "« Es stimmt, dass der Meeting-Wahnsinn Zeit frisst »."
+        },
+        {
+          "id": "de-listen-radio-debatte-q5",
+          "kind": "written",
+          "prompt": "Wovon soll am Ende entschieden werden ?",
+          "answers": [
+            "den zahlen",
+            "von den zahlen",
+            "zahlen, nicht gefuhlen",
+            "zahlen, nicht gefühlen"
+          ],
+          "explain": "« Aus meiner Sicht entscheiden am Ende die Zahlen, nicht die Gefühle »."
+        }
+      ]
+    },
+    {
+      "id": "de-listen-podcast-nuancen",
+      "languageID": "de",
+      "title": "Podcast: Feines Deutsch",
+      "level": "C1",
+      "topic": "sprache",
+      "unitID": "de-foundations-u9",
+      "text": "Im Podcast « Feines Deutsch » sprechen Wiebke und Tarek darüber, wie man Meinungen abschwächt, ohne an Profil zu verlieren. « Irgendwie klingt alles weicher, wenn man eher sagt », meint Wiebke. Tarek hält dagegen: « Wenn du alles abschwächst, nimmt dich niemand mehr ernst ». Sozusagen einigen sie sich auf eine Regel: Bei Fakten darf man schärfen, bei Menschen sollte man abschwächen. Wiebke ergänzt eine Farbe aus dem Büroalltag: « Aus meiner Sicht » klinge sachlicher als « Ich finde ». Tarek lacht: « Und nicht unbedingt ist die höflichste Form von Nein ». Zum Schluss empfehlen sie den Hörern eine Woche Übung: erst bewusst abschwächen, dann bewusst schärfen – und auf die Reaktionen achten.",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "vocab:social-expressions",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-podcast-nuancen-q1",
+          "kind": "choice",
+          "prompt": "Wovor warnt Tarek ?",
+          "answers": [
+            "Dass ständiges Abschwächen unglaubwürdig macht"
+          ],
+          "explain": "« Wenn du alles abschwächst, nimmt dich niemand mehr ernst ».",
+          "options": [
+            "Dass ständiges Abschwächen unglaubwürdig macht",
+            "Dass « eher » unhöflich klingt",
+            "Dass Fakten weicher werden",
+            "Dass Podcasts zu kurz sind"
+          ]
+        },
+        {
+          "id": "de-listen-podcast-nuancen-q2",
+          "kind": "written",
+          "prompt": "Auf welche Regel einigen sich die beiden ?",
+          "answers": [
+            "bei fakten schärfen, bei menschen abschwächen",
+            "bei fakten scharfen, bei menschen abschwachen",
+            "bei fakten darf man schärfen"
+          ],
+          "explain": "« Bei Fakten darf man schärfen, bei Menschen sollte man abschwächen »."
+        },
+        {
+          "id": "de-listen-podcast-nuancen-q3",
+          "kind": "choice",
+          "prompt": "Wie klingt « Aus meiner Sicht » laut Wiebke ?",
+          "answers": [
+            "Sachlicher als « Ich finde »"
+          ],
+          "explain": "« …klinge sachlicher als « Ich finde » ».",
+          "options": [
+            "Sachlicher als « Ich finde »",
+            "Freundlicher als « Ich finde »",
+            "Unsicherer als « Ich finde »",
+            "Härter als « Ich finde »"
+          ]
+        },
+        {
+          "id": "de-listen-podcast-nuancen-q4",
+          "kind": "written",
+          "prompt": "Was ist laut Tarek die höflichste Form von Nein ?",
+          "answers": [
+            "nicht unbedingt"
+          ],
+          "explain": "« Nicht unbedingt ist die höflichste Form von Nein »."
+        },
+        {
+          "id": "de-listen-podcast-nuancen-q5",
+          "kind": "written",
+          "prompt": "Was üben die Hörer eine Woche lang ?",
+          "answers": [
+            "erst abschwächen, dann schärfen",
+            "erst abschwachen dann scharfen",
+            "bewusst abschwächen und schärfen"
+          ],
+          "explain": "« erst bewusst abschwächen, dann bewusst schärfen »."
+        }
+      ]
+    },
+    {
+      "id": "de-listen-vortrag-schluessel",
+      "languageID": "de",
+      "title": "Vortrag: Schlüsselkompetenzen",
+      "level": "C1",
+      "topic": "bildung",
+      "unitID": "de-foundations-u9",
+      "text": "Herzlich willkommen zur Vorlesung « Berufe von morgen ». Ich teile meinen Vortrag in drei Schritte. Zunächst kläre ich den Begriff: Schlüsselkompetenzen sind Fähigkeiten, die über Fachwissen hinausgehen, etwa im Team kommunizieren oder komplexe Informationen sortieren. Im Folgenden vergleiche ich zwei Studien. Die erste zeigt, dass Arbeitgeber Durchhaltevermögen und Lernbereitschaft höher bewerten als Notendurchschnitte. Die zweite warnt: Wer nur Spezialist bleibt, verliert im Berufsalltag schnell den Anschluss. Daraus folgt meine These: Universitäten sollten Projektarbeit verpflichtend machen. Zusammenfassend merken Sie sich drei Dinge: erstens Transfer, zweitens Kommunikation, drittens Neugier. Zum Schluss öffne ich die Fragerunde; präzise Fragen bekommen präzisere Antworten.",
+      "skills": [
+        "listening:detail",
+        "listening:connected-speech",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-vortrag-schluessel-q1",
+          "kind": "choice",
+          "prompt": "Wie beginnt der Vortrag ?",
+          "answers": [
+            "Mit einer Begriffsklärung"
+          ],
+          "explain": "« Zunächst kläre ich den Begriff… ».",
+          "options": [
+            "Mit einer Begriffsklärung",
+            "Mit zwei Studien",
+            "Mit der Fragerunde",
+            "Mit einer These"
+          ]
+        },
+        {
+          "id": "de-listen-vortrag-schluessel-q2",
+          "kind": "choice",
+          "prompt": "Was bewerten Arbeitgeber laut erster Studie höher ?",
+          "answers": [
+            "Durchhaltevermögen und Lernbereitschaft"
+          ],
+          "explain": "« …höher bewerten als Notendurchschnitte ».",
+          "options": [
+            "Notendurchschnitte",
+            "Durchhaltevermögen und Lernbereitschaft",
+            "Auslandserfahrung",
+            "Gehaltsvorstellungen"
+          ]
+        },
+        {
+          "id": "de-listen-vortrag-schluessel-q3",
+          "kind": "choice",
+          "prompt": "Wovor warnt die zweite Studie ?",
+          "answers": [
+            "Dass reine Spezialisten den Anschluss verlieren"
+          ],
+          "explain": "« Wer nur Spezialist bleibt, verliert … den Anschluss ».",
+          "options": [
+            "Dass reine Spezialisten den Anschluss verlieren",
+            "Dass Noten alles entscheiden",
+            "Dass Teams zu groß werden",
+            "Dass Universitäten schließen"
+          ]
+        },
+        {
+          "id": "de-listen-vortrag-schluessel-q4",
+          "kind": "written",
+          "prompt": "Welche These vertritt der Dozent ?",
+          "answers": [
+            "universitäten sollten projektarbeit verpflichtend machen",
+            "universitaten sollten projektarbeit verpflichtend machen",
+            "projektarbeit sollte verpflichtend sein"
+          ],
+          "explain": "« Universitäten sollten Projektarbeit verpflichtend machen »."
+        },
+        {
+          "id": "de-listen-vortrag-schluessel-q5",
+          "kind": "written",
+          "prompt": "Nenne die drei Merkdinge in Kurzform.",
+          "answers": [
+            "transfer, kommunikation, neugier",
+            "transfer kommunikation neugier"
+          ],
+          "explain": "« erstens Transfer, zweitens Kommunikation, drittens Neugier »."
+        }
+      ]
     }
   ]
 }

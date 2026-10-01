@@ -29,7 +29,7 @@ final class ListeningContentTests: XCTestCase {
         XCTAssertNil(ListeningRegistry.text(id: "en-listen-missing"))
         XCTAssertTrue(ListeningRegistry.forLanguage("nb").isEmpty)
         for language in ["es", "fr", "it", "de", "pt"] {
-            XCTAssertEqual(12, ListeningRegistry.forLanguage(language).count, language)
+            XCTAssertGreaterThanOrEqual(ListeningRegistry.forLanguage(language).count, 12, language)
         }
     }
 

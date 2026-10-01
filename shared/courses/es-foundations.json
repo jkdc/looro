@@ -3938,6 +3938,561 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-foundations-u10",
+      "title": "Matices y registro",
+      "subtitle": "Decirlo mejor",
+      "level": "C1",
+      "themes": [
+        {
+          "id": "es-c1-registro",
+          "title": "Dos registros",
+          "subtitle": "Formal o coloquial",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Escribís el mismo mensaje dos veces — para un cliente y para un compañero — y comparáis lo que cambia.",
+          "colorIndex": 0
+        },
+        {
+          "id": "es-c1-matices",
+          "title": "El matiz",
+          "subtitle": "Más o menos",
+          "symbol": "bubble-left-and-text",
+          "category": "Course",
+          "situation": "Debatís un proyecto sin posturas absolutas: practicáis el sí parcial, la reformulación y el cierre.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u10-registro",
+          "title": "Cómo lo digo",
+          "goal": "Adaptar el registro: lo mismo para un cliente que para un compañero, sin sonar ni rígido ni descuidado.",
+          "intro": {
+            "explanation": [
+              "El registro formal alarga y cortesiza: « Le agradecería que me confirmara la fecha ». El coloquial acorta y tutea: « ¿Me confirmas la fecha ? ».",
+              "El email formal se abre con « Le escribo para… » o « En relación con… » y se cierra con « Quedo a su disposición » o « Un cordial saludo ».",
+              "Los conectores delatan el tono: « no obstante » suena formal, « pero » es neutro y « o sea » delata conversación de pasillo."
+            ],
+            "examples": [
+              {
+                "text": "Le escribo en relación con el contrato.",
+                "meaning": "Apertura formal de email."
+              },
+              {
+                "text": "¿Te viene bien el jueves a las diez ?",
+                "meaning": "Coloquial: proponer hora."
+              },
+              {
+                "text": "Le agradecería una respuesta cuanto antes.",
+                "meaning": "Petición formal."
+              },
+              {
+                "text": "Oye, ¿me pasas el informe cuando puedas ?",
+                "meaning": "Petición coloquial."
+              },
+              {
+                "text": "No obstante, quedo a su disposición.",
+                "meaning": "Cierre formal con conector."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Le/Les agradecería que + subjuntivo",
+              "meaning": "Petición formal.",
+              "note": "Le agradecería que lo revisara."
+            },
+            {
+              "text": "¿Te viene bien…?",
+              "meaning": "Coloquial: cerrar cita.",
+              "note": "¿Te viene bien el martes ?"
+            },
+            {
+              "text": "en relación con…",
+              "meaning": "Presentar un asunto, formal.",
+              "note": "en relación con el contrato."
+            },
+            {
+              "text": "no obstante",
+              "meaning": "Contraste, registro formal.",
+              "note": "No obstante, hay un detalle."
+            },
+            {
+              "text": "Un cordial saludo",
+              "meaning": "Despedida formal de email.",
+              "note": "antes de la firma."
+            }
+          ],
+          "situation": "Comparáis el mismo encargo en dos versiones — email para un cliente y mensaje para un compañero — y decidís qué registro pide cada destinatario.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pide con cortesía formal: le agradecería que me confirmara la fecha.",
+                "expected": [
+                  "Le agradeceria que me confirmara la fecha",
+                  "Le agradecería que me confirmara la fecha"
+                ],
+                "focus": "le agradecería",
+                "watch": "Que + subjuntivo: confirmara."
+              },
+              {
+                "prompt": "Propón hora en confianza: ¿te viene bien el jueves a las diez?",
+                "expected": [
+                  "Te viene bien el jueves a las diez",
+                  "¿Te viene bien el jueves a las diez ?"
+                ],
+                "focus": "¿te viene bien?",
+                "watch": "Coloquial: tú, no usted."
+              },
+              {
+                "prompt": "Despide un email formal: un cordial saludo.",
+                "expected": [
+                  "Un cordial saludo",
+                  "Saludos cordiales"
+                ],
+                "focus": "cordial",
+                "watch": "Despedida formal de email."
+              },
+              {
+                "prompt": "Contrasta en formal: no obstante, quedo a su disposición.",
+                "expected": [
+                  "No obstante quedo a su disposicion",
+                  "No obstante, quedo a su disposición"
+                ],
+                "focus": "no obstante",
+                "watch": "Conector formal, entre comas."
+              },
+              {
+                "prompt": "Pide informal: oye, ¿me pasas el informe cuando puedas?",
+                "expected": [
+                  "Oye me pasas el informe cuando puedas",
+                  "Oye, ¿me pasas el informe cuando puedas ?"
+                ],
+                "focus": "oye",
+                "watch": "Apelativo coloquial de atención."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u10-registro-e1",
+              "kind": "choice",
+              "prompt": "___ agradecería que me confirmara la fecha lo antes posible.",
+              "answers": [
+                "Le"
+              ],
+              "explain": "Cortesía formal: le agradecería (de usted).",
+              "options": [
+                "Le",
+                "Te",
+                "Yo",
+                "Me"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-registro-e2",
+              "kind": "gap",
+              "prompt": "Hubo retrasos; ___, el proyecto sigue en marcha. (conector formal de contraste)",
+              "answers": [
+                "no obstante",
+                "sin embargo"
+              ],
+              "explain": "No obstante / sin embargo: contraste en registro formal."
+            },
+            {
+              "id": "es-foundations-u10-registro-e3",
+              "kind": "choice",
+              "prompt": "¿Cuál es la versión formal de « te escribo por lo del contrato » ?",
+              "answers": [
+                "Le escribo en relación con el contrato"
+              ],
+              "explain": "En relación con: fórmula formal para presentar un asunto.",
+              "options": [
+                "Le escribo en relación con el contrato",
+                "Te suelto lo del contrato",
+                "Te paso lo del contrato ese",
+                "Le comento una cosita del contrato"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-registro-e4",
+              "kind": "written",
+              "prompt": "Pide por email, en registro formal, que te confirmen la fecha de la reunión.",
+              "answers": [
+                "le agradeceria que me confirmaran la fecha de la reunion",
+                "le agradecería que me confirmaran la fecha de la reunión",
+                "quisiera pedirle que confirmara la fecha de la reunión"
+              ],
+              "explain": "Le agradecería que + subjuntivo: petición formal por escrito."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:talk-about-work",
+            "writing:email",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-foundations-u10-matices",
+          "title": "Más o menos",
+          "goal": "Matizar opiniones: acordar a medias, reformular y situar el punto de vista propio.",
+          "intro": {
+            "explanation": [
+              "Para matizar: « En cierto modo sí, pero… », « Hasta cierto punto lo comparto ». No niegas ni aceptas del todo.",
+              "Para reformular: « por así decirlo », « Digamos que… ». Avisan de que la palabra elegida no es exacta.",
+              "Para situar tu opinión: « Desde mi punto de vista », « A mi juicio ». Pesan más que un simple « creo que »."
+            ],
+            "examples": [
+              {
+                "text": "En cierto modo, tienes razón.",
+                "meaning": "Acuerdo parcial."
+              },
+              {
+                "text": "Hasta cierto punto lo comparto.",
+                "meaning": "Delimita el acuerdo."
+              },
+              {
+                "text": "Es, por así decirlo, un puente.",
+                "meaning": "Aviso de metáfora."
+              },
+              {
+                "text": "Desde mi punto de vista, sobra la reunión.",
+                "meaning": "Opinión situada."
+              },
+              {
+                "text": "Digamos que fue un malentendido.",
+                "meaning": "Suaviza el juicio."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "En cierto modo, …",
+              "meaning": "Acuerdo parcial.",
+              "note": "En cierto modo, sí."
+            },
+            {
+              "text": "hasta cierto punto",
+              "meaning": "Matiza el alcance.",
+              "note": "Hasta cierto punto lo entiendo."
+            },
+            {
+              "text": "por así decirlo",
+              "meaning": "Reformula con tacto.",
+              "note": "tras una metáfora."
+            },
+            {
+              "text": "Desde mi punto de vista, …",
+              "meaning": "Opinión con peso.",
+              "note": "equivale a para mí, pero más formal."
+            },
+            {
+              "text": "Digamos que…",
+              "meaning": "Suaviza.",
+              "note": "Digamos que no fue así."
+            }
+          ],
+          "situation": "Valoráis el último proyecto en equipo: nadie quiere un sí o un no rotundos, y practicáis la respuesta intermedia.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Matiza: en cierto modo, tienes razón.",
+                "expected": [
+                  "En cierto modo tienes razon",
+                  "En cierto modo, tienes razón"
+                ],
+                "focus": "en cierto modo",
+                "watch": "Acuerdo parcial, no total."
+              },
+              {
+                "prompt": "Acuerda a medias: hasta cierto punto lo comparto.",
+                "expected": [
+                  "Hasta cierto punto lo comparto",
+                  "Lo comparto hasta cierto punto"
+                ],
+                "focus": "hasta cierto punto",
+                "watch": "Delimita el alcance del acuerdo."
+              },
+              {
+                "prompt": "Reformula: es, por así decirlo, un puente.",
+                "expected": [
+                  "Es por asi decirlo un puente",
+                  "Es, por así decirlo, un puente"
+                ],
+                "focus": "por así decirlo",
+                "watch": "Entre comas: aviso de metáfora."
+              },
+              {
+                "prompt": "Sitúa tu opinión: desde mi punto de vista, sobra la reunión.",
+                "expected": [
+                  "Desde mi punto de vista sobra la reunion",
+                  "Desde mi punto de vista, sobra la reunión"
+                ],
+                "focus": "desde mi punto de vista",
+                "watch": "Fórmula fija, no « en mi punto de vista »."
+              },
+              {
+                "prompt": "Suaviza: digamos que fue un malentendido.",
+                "expected": [
+                  "Digamos que fue un malentendido",
+                  "Digamos que no fue del todo correcto"
+                ],
+                "focus": "digamos que",
+                "watch": "Suaviza el juicio."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u10-matices-e1",
+              "kind": "choice",
+              "prompt": "___ cierto modo, la propuesta funciona.",
+              "answers": [
+                "En"
+              ],
+              "explain": "En cierto modo: acuerdo parcial.",
+              "options": [
+                "En",
+                "Por",
+                "Con",
+                "De"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-matices-e2",
+              "kind": "gap",
+              "prompt": "___ mi punto de vista, el plan es buenísimo.",
+              "answers": [
+                "Desde"
+              ],
+              "explain": "Fórmula fija de opinión: desde mi punto de vista."
+            },
+            {
+              "id": "es-foundations-u10-matices-e3",
+              "kind": "choice",
+              "prompt": "¿Qué fórmula avisa de que una palabra no es exacta ?",
+              "answers": [
+                "por así decirlo"
+              ],
+              "explain": "Por así decirlo introduce una reformulación aproximada.",
+              "options": [
+                "por así decirlo",
+                "desde luego",
+                "sin falta",
+                "en absoluto"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-matices-e4",
+              "kind": "written",
+              "prompt": "Opina sobre las reuniones del lunes con la fórmula de punto de vista.",
+              "answers": [
+                "desde mi punto de vista las reuniones del lunes sobran",
+                "desde mi punto de vista, las reuniones del lunes sobran",
+                "en mi opinion las reuniones del lunes sobran"
+              ],
+              "explain": "Desde mi punto de vista + juicio: opinión situada."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors",
+            "vocab:collocations"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-foundations-u10-presentar",
+          "title": "Presentar ideas",
+          "goal": "Estructurar una intervención breve: abrir, encadenar argumentos y cerrar con una conclusión limpia.",
+          "intro": {
+            "explanation": [
+              "Abre marcando el camino: « Para empezar », « En primer lugar ». El oyente sabe que viene una secuencia.",
+              "Encadena sin saltos: « Por otra parte », « A esto se añade que… ». Cada idea engancha con la anterior.",
+              "Cierra con señal clara: « En resumen », « Para concluir ». Una sola idea final, no tres."
+            ],
+            "examples": [
+              {
+                "text": "Para empezar, repasemos los datos.",
+                "meaning": "Abre la secuencia."
+              },
+              {
+                "text": "En primer lugar, el presupuesto.",
+                "meaning": "Primer punto."
+              },
+              {
+                "text": "Por otra parte, falta tiempo.",
+                "meaning": "Añade un argumento."
+              },
+              {
+                "text": "A esto se añade que el equipo es nuevo.",
+                "meaning": "Encadena otra razón."
+              },
+              {
+                "text": "En resumen: adelante, pero con calendario.",
+                "meaning": "Conclusión breve."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Para empezar, …",
+              "meaning": "Abre.",
+              "note": "Para empezar, los datos."
+            },
+            {
+              "text": "en primer lugar",
+              "meaning": "Primer punto.",
+              "note": "tras él: en segundo lugar."
+            },
+            {
+              "text": "por otra parte, …",
+              "meaning": "Añade otra cara.",
+              "note": "Por otra parte, el tiempo."
+            },
+            {
+              "text": "a esto se añade que…",
+              "meaning": "Encadena razones.",
+              "note": "A esto se añade que…"
+            },
+            {
+              "text": "En resumen, …",
+              "meaning": "Cierra.",
+              "note": "En resumen: sí, pero tarde."
+            }
+          ],
+          "situation": "Cada uno presenta en dos minutos una propuesta: abrir con un punto claro, encadenar dos razones y cerrar con una sola frase.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Abre: para empezar, repasemos los datos.",
+                "expected": [
+                  "Para empezar repasemos los datos",
+                  "Para empezar, repasemos los datos"
+                ],
+                "focus": "para empezar",
+                "watch": "Señal de apertura."
+              },
+              {
+                "prompt": "Primer punto: en primer lugar, el presupuesto.",
+                "expected": [
+                  "En primer lugar el presupuesto",
+                  "En primer lugar, el presupuesto"
+                ],
+                "focus": "en primer lugar",
+                "watch": "Después: en segundo lugar."
+              },
+              {
+                "prompt": "Añade otra cara: por otra parte, falta tiempo.",
+                "expected": [
+                  "Por otra parte falta tiempo",
+                  "Por otra parte, falta tiempo"
+                ],
+                "focus": "por otra parte",
+                "watch": "Añade un argumento nuevo."
+              },
+              {
+                "prompt": "Encadena: a esto se añade que el equipo es nuevo.",
+                "expected": [
+                  "A esto se anade que el equipo es nuevo",
+                  "A esto se añade que el equipo es nuevo"
+                ],
+                "focus": "a esto se añade",
+                "watch": "Engancha con lo anterior."
+              },
+              {
+                "prompt": "Cierra: en resumen, adelante, pero con calendario.",
+                "expected": [
+                  "En resumen adelante pero con calendario",
+                  "En resumen, adelante, pero con calendario"
+                ],
+                "focus": "en resumen",
+                "watch": "Una sola idea final."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u10-presentar-e1",
+              "kind": "choice",
+              "prompt": "___ empezar, repasemos los números del trimestre.",
+              "answers": [
+                "Para"
+              ],
+              "explain": "Para empezar: fórmula de apertura.",
+              "options": [
+                "Para",
+                "Por",
+                "Al",
+                "En"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-presentar-e2",
+              "kind": "gap",
+              "prompt": "La propuesta tiene ventajas; ___, exige presupuesto y tiempo. (conector que añade otra cara)",
+              "answers": [
+                "por otra parte",
+                "por otro lado"
+              ],
+              "explain": "Por otra parte / por otro lado: añaden un argumento nuevo."
+            },
+            {
+              "id": "es-foundations-u10-presentar-e3",
+              "kind": "choice",
+              "prompt": "¿Cuál de estas fórmulas sirve para cerrar una intervención ?",
+              "answers": [
+                "En resumen"
+              ],
+              "explain": "En resumen anuncia la conclusión; las demás organizan la secuencia.",
+              "options": [
+                "En resumen",
+                "Para empezar",
+                "En primer lugar",
+                "A esto se añade"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-presentar-e4",
+              "kind": "written",
+              "prompt": "Cierra la presentación de tu propuesta con la fórmula de resumen.",
+              "answers": [
+                "en resumen la propuesta avanza pero en enero",
+                "en resumen, la propuesta avanza, pero en enero",
+                "para concluir la propuesta avanza pero en enero"
+              ],
+              "explain": "En resumen + una sola idea: cierre de discurso."
+            }
+          ],
+          "skills": [
+            "speaking:sustained-conversation",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

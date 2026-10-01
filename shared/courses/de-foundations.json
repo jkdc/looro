@@ -3096,6 +3096,544 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u9",
+      "title": "Nuancen und Register",
+      "subtitle": "Es besser sagen",
+      "level": "C1",
+      "themes": [
+        {
+          "id": "de-c1-register",
+          "title": "Formell oder locker ?",
+          "subtitle": "Wie man es sagt",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Sie schreiben dieselbe Nachricht zweimal: einmal an die Projektleitung, einmal an Ihre WG – und justieren Ton und Wörter.",
+          "colorIndex": 0
+        },
+        {
+          "id": "de-c1-nuancen",
+          "title": "Fein justiert",
+          "subtitle": "Mehr oder weniger",
+          "symbol": "bubble-left-and-text",
+          "category": "Course",
+          "situation": "Ihr bewertet Vorschläge im Team: abschwächen, einräumen, schärfen – bis jede Aussage genau das sagt, was sie soll.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u9-register",
+          "title": "Wie man es sagt",
+          "goal": "Zwischen den Registern wechseln: dieselbe Idee einmal formell, einmal umgangssprachlich – und dabei Wort für Wort treffen.",
+          "intro": {
+            "explanation": [
+              "Dasselbe Anliegen, zwei Ebenen: « Ich wollte mich erkundigen, ob der Termin noch passt » klingt formell, « Sag mal, passt der Termin noch ? » umgangssprachlich.",
+              "Formelle Ersatzwörter heben das Register: erhalten statt kriegen, mitteilen statt Bescheid sagen, « Ich muss Ihnen leider mitteilen, dass sich alles verschiebt ».",
+              "Im Brief veredeln Konnektoren den Ton: « Da ich noch auf die Zusage warte, wäre ein früherer Termin hilfreich » – begründen und bitten in einem Atemzug."
+            ],
+            "examples": [
+              {
+                "text": "Ich wollte mich erkundigen, ob der Termin noch passt.",
+                "meaning": "Formelle Nachfrage statt « Sag mal »."
+              },
+              {
+                "text": "Ich muss Ihnen leider mitteilen, dass sich alles verschiebt.",
+                "meaning": "Schlechte Nachricht, formell verpackt."
+              },
+              {
+                "text": "Du kriegst die Unterlagen später.",
+                "meaning": "Umgangssprachlich: kriegen = erhalten."
+              },
+              {
+                "text": "Wäre es Ihnen möglich, früher zu antworten ?",
+                "meaning": "Höfliche Bitte mit Konjunktiv II."
+              },
+              {
+                "text": "Sag mal, kannst du mir kurz aushelfen ?",
+                "meaning": "Locker, unter Kollegen mit Du."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ich wollte mich erkundigen, ob…",
+              "meaning": "Formell nachfragen.",
+              "note": "…der Termin noch passt."
+            },
+            {
+              "text": "ich muss Ihnen mitteilen, dass…",
+              "meaning": "Formell informieren.",
+              "note": "…sich alles verschiebt."
+            },
+            {
+              "text": "wäre es Ihnen möglich, … ?",
+              "meaning": "Höfliche Bitte.",
+              "note": "…früher zu antworten ?"
+            },
+            {
+              "text": "kriegen / Bescheid sagen",
+              "meaning": "Umgangssprachliche Ebene.",
+              "note": "formell: erhalten / mitteilen."
+            },
+            {
+              "text": "da ich …, wäre … hilfreich",
+              "meaning": "Begründung + Bitte verbinden.",
+              "note": "Da ich warte, wäre ein Termin hilfreich."
+            }
+          ],
+          "situation": "Sie formulieren dieselbe Nachricht zweimal: einmal an die Projektleitung, einmal an Ihre WG – und justieren Ton, Verben und Konnektoren, bis es jeweils sitzt.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Formell nachfragen: ich wollte mich erkundigen, ob der Termin noch passt.",
+                "expected": [
+                  "ich wollte mich erkundigen ob der termin noch passt",
+                  "ich wollte mich erkundigen, ob der termin noch passt"
+                ],
+                "focus": "sich erkundigen",
+                "watch": "Formel « ich wollte mich erkundigen, ob… »."
+              },
+              {
+                "prompt": "Schlechte Nachricht formell: ich muss Ihnen mitteilen, dass sich der Workshop verschiebt.",
+                "expected": [
+                  "ich muss ihnen mitteilen dass sich der workshop verschiebt",
+                  "ich muss ihnen mitteilen, dass sich der workshop verschiebt"
+                ],
+                "focus": "mitteilen",
+                "watch": "mitteilen + dass-Satz, kein « Bescheid sagen »."
+              },
+              {
+                "prompt": "Höflich bitten: wäre es Ihnen möglich, die Unterlagen vorab zu schicken ?",
+                "expected": [
+                  "ware es ihnen moglich die unterlagen vorab zu schicken",
+                  "wäre es ihnen möglich, die unterlagen vorab zu schicken"
+                ],
+                "focus": "wäre es möglich",
+                "watch": "Konjunktiv II + « Ihnen »."
+              },
+              {
+                "prompt": "Umgangssprachlich zusagen: ich sage dir Bescheid, sobald ich mehr kriege.",
+                "expected": [
+                  "ich sage dir bescheid sobald ich mehr kriege",
+                  "ich sage dir bescheid, sobald ich mehr kriege"
+                ],
+                "focus": "bescheid sagen",
+                "watch": "kriegen statt erhalten – locker bleiben."
+              },
+              {
+                "prompt": "Begründen und bitten: da ich noch auf die Zusage warte, wäre ein früherer Termin hilfreich.",
+                "expected": [
+                  "da ich noch auf die zusage warte ware ein fruherer termin hilfreich",
+                  "da ich noch auf die zusage warte, wäre ein früherer termin hilfreich"
+                ],
+                "focus": "da + Konnektor",
+                "watch": "Kausaler Nebensatz « da » + Konjunktiv."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u9-register-e1",
+              "kind": "choice",
+              "prompt": "Formell statt « kriegen »: Sie ___ die Rechnung in den nächsten Tagen.",
+              "answers": [
+                "erhalten"
+              ],
+              "explain": "« erhalten » ist die formelle Entsprechung von « kriegen/bekommen ».",
+              "options": [
+                "erhalten",
+                "kriegen",
+                "abbekommen",
+                "abstauben"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-register-e2",
+              "kind": "gap",
+              "prompt": "Ich möchte mich ___, ob der Saal am Freitag frei ist. (höflich nachfragen)",
+              "answers": [
+                "erkundigen"
+              ],
+              "explain": "sich erkundigen, ob… – die formelle Variante von « nachfragen »."
+            },
+            {
+              "id": "de-foundations-u9-register-e3",
+              "kind": "order",
+              "prompt": "Aus Wortbausteinen: eine formelle Bitte, dass man Ihnen die Unterlagen bis Mittwoch gibt.",
+              "answers": [
+                "Schicken Sie mir bitte die Unterlagen bis Mittwoch zu"
+              ],
+              "explain": "Höfliche Bitte mit « Sie » und Zeitangabe."
+            },
+            {
+              "id": "de-foundations-u9-register-e4",
+              "kind": "written",
+              "prompt": "Schreiben Sie eine formelle Schlusszeile: Sie bedanken sich vorab für eine Antwort.",
+              "answers": [
+                "ich danke ihnen im voraus fur ihre ruckmeldung",
+                "ich danke ihnen im voraus für ihre rückmeldung"
+              ],
+              "explain": "« Ich danke Ihnen im Voraus für Ihre Rückmeldung » – klassische Schlusszeile."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:talk-about-work",
+            "writing:email",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "de-foundations-u9-nuancen",
+          "title": "Mehr oder weniger",
+          "goal": "Meinungen nuancieren: abschwächen, einräumen und mit Abstand verallgemeinern – ohne an Klarheit zu verlieren.",
+          "intro": {
+            "explanation": [
+              "Abschwächen klingt souverän: « Das ist eher eine Vermutung als ein Fakt » – so zeigen Sie Distanz, ohne grob zu widersprechen.",
+              "Einräumen und halten: « Zwar ist der Ansatz teuer, aber er spart Zeit » – zwar + aber balanciert zwei Seiten in einem Satz.",
+              "Verallgemeinern mit Abstand: « Sozusagen ein Kompromiss », « Gewissermaßen ein Neuanfang » – solche Wendungen signalisieren: ich sage es mit Vorsicht."
+            ],
+            "examples": [
+              {
+                "text": "Das ist eher eine Vermutung als ein Fakt.",
+                "meaning": "Abschwächung: eher … als."
+              },
+              {
+                "text": "Zwar ist der Ansatz teuer, aber er spart Zeit.",
+                "meaning": "zwar + aber = Einräumung."
+              },
+              {
+                "text": "Sozusagen ein Kompromiss auf Zeit.",
+                "meaning": "sozusagen = gewissermaßen."
+              },
+              {
+                "text": "Aus meiner Sicht ist das kein Widerspruch.",
+                "meaning": "Meinung markieren, sachlich bleiben."
+              },
+              {
+                "text": "Das überzeugt mich nicht unbedingt.",
+                "meaning": "Verneinen mit Feingefühl."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "eher … als …",
+              "meaning": "Vergleich mit Abschwächung.",
+              "note": "eher Vermutung als Fakt."
+            },
+            {
+              "text": "zwar …, aber …",
+              "meaning": "Einräumen und halten.",
+              "note": "zwar teuer, aber effektiv."
+            },
+            {
+              "text": "sozusagen / gewissermaßen",
+              "meaning": "Bildlich, mit Abstand.",
+              "note": "sozusagen ein Neuanfang."
+            },
+            {
+              "text": "aus meiner Sicht",
+              "meaning": "Meinung markieren.",
+              "note": "sachlicher als « ich finde »."
+            },
+            {
+              "text": "nicht unbedingt / nicht gerade",
+              "meaning": "Weich verneinen.",
+              "note": "nicht unbedingt überzeugt."
+            }
+          ],
+          "situation": "Sie bewerten in der Redaktionsschleife Vorschläge des Teams – jedes Urteil bekommt eine Feinjustierung: eher, zwar… aber, sozusagen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Schwäche ab: das ist eher eine Vermutung als ein Fakt.",
+                "expected": [
+                  "das ist eher eine vermutung als ein fakt",
+                  "das ist eher eine Vermutung, als ein Fakt"
+                ],
+                "focus": "eher … als",
+                "watch": "Abschwächung vor dem Urteil."
+              },
+              {
+                "prompt": "Räume ein und halte dagegen: zwar ist der Ansatz teuer, aber er spart Zeit.",
+                "expected": [
+                  "zwar ist der ansatz teuer aber er spart zeit",
+                  "zwar ist der ansatz teuer, aber er spart zeit"
+                ],
+                "focus": "zwar …, aber",
+                "watch": "Zwar an Position 1, dann Verb."
+              },
+              {
+                "prompt": "Verallgemeinere mit Abstand: sozusagen ein Kompromiss auf Zeit.",
+                "expected": [
+                  "sozusagen ein kompromiss auf zeit",
+                  "gewissermassen ein kompromiss auf zeit",
+                  "gewissermaßen ein Kompromiss auf Zeit"
+                ],
+                "focus": "sozusagen",
+                "watch": "Alternative: gewissermaßen."
+              },
+              {
+                "prompt": "Markiere deine Meinung formell: aus meiner Sicht ist das kein Widerspruch.",
+                "expected": [
+                  "aus meiner sicht ist das kein widerspruch",
+                  "meiner meinung nach ist das kein widerspruch"
+                ],
+                "focus": "aus meiner Sicht",
+                "watch": "Formeller als « ich finde »."
+              },
+              {
+                "prompt": "Verneine mit Feingefühl: das überzeugt mich nicht unbedingt.",
+                "expected": [
+                  "das uberzeugt mich nicht unbedingt",
+                  "das überzeugt mich nicht unbedingt"
+                ],
+                "focus": "nicht unbedingt",
+                "watch": "Weicher als ein klares Nein."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u9-nuancen-e1",
+              "kind": "choice",
+              "prompt": "Abschwächen: Das ist ___ eine Vermutung als ein Fakt.",
+              "answers": [
+                "eher"
+              ],
+              "explain": "« eher … als » setzt die Abschwächung ins Verhältnis.",
+              "options": [
+                "eher",
+                "völlig",
+                "absolut",
+                "gerade"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-nuancen-e2",
+              "kind": "gap",
+              "prompt": "___ der Ansatz teuer ist, überzeugt er mich. (Einräumung mit Nebensatz)",
+              "answers": [
+                "obwohl",
+                "obgleich",
+                "obschon"
+              ],
+              "explain": "obwohl + Nebensatz: Einräumung, im Hauptsatz bleibt die Zustimmung."
+            },
+            {
+              "id": "de-foundations-u9-nuancen-e3",
+              "kind": "order",
+              "prompt": "Bilde eine verallgemeinernde Nuance: (Kompromiss, der nur vorübergehend gilt – mit « sozusagen »).",
+              "answers": [
+                "Sozusagen ein Kompromiss auf Zeit"
+              ],
+              "explain": "sozusagen + Nominalphrase: Distanz im Ton."
+            },
+            {
+              "id": "de-foundations-u9-nuancen-e4",
+              "kind": "written",
+              "prompt": "Bewerte abschwächend: das Konzept ist nicht schlecht, aber auch nicht neu (mit « nicht gerade »).",
+              "answers": [
+                "das konzept ist nicht schlecht aber auch nicht gerade neu",
+                "das konzept ist nicht schlecht, aber auch nicht gerade neu"
+              ],
+              "explain": "« nicht gerade » schwächt die Kritik ab, ohne sie zu widerrufen."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors",
+            "vocab:collocations"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "de-foundations-u9-prasentieren",
+          "title": "Ideen präsentieren",
+          "goal": "Einen kurzen Vortrag strukturieren: zunächst das Thema, im Folgenden die Punkte, zusammenfassend der Kern.",
+          "intro": {
+            "explanation": [
+              "Einstieg mit Fahrplan: « Zunächst gehe ich auf den Hintergrund ein, danach zeige ich zwei Optionen » – die Zuhörer wissen sofort, wohin die Reise geht.",
+              "Im Hauptteil Rote Fäden halten: « Im Folgenden », « anschließend », « daraus folgt » – solche Konnektoren tragen, wenn man frei spricht.",
+              "Abschluss mit Gewicht: « Zusammenfassend bleibt: … », « Zum Schluss möchte ich den Zeitplan betonen » – am Ende nur noch eine Botschaft."
+            ],
+            "examples": [
+              {
+                "text": "Zunächst gehe ich auf den Hintergrund ein.",
+                "meaning": "Einstieg: erstes Element."
+              },
+              {
+                "text": "Im Folgenden vergleiche ich beide Optionen.",
+                "meaning": "Überleitung zum Hauptteil."
+              },
+              {
+                "text": "Daraus folgt: Wir brauchen eine Pilotphase.",
+                "meaning": "Folgerung ziehen."
+              },
+              {
+                "text": "Zusammenfassend sprechen die Zahlen für Variante B.",
+                "meaning": "Kern komprimieren."
+              },
+              {
+                "text": "Zum Schluss betone ich noch einmal den Zeitplan.",
+                "meaning": "Schlussakzent setzen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "zunächst / anfangs",
+              "meaning": "Erster Schritt.",
+              "note": "Zunächst zum Hintergrund."
+            },
+            {
+              "text": "im Folgenden / anschließend",
+              "meaning": "Überleitung.",
+              "note": "Im Folgenden vergleiche ich…"
+            },
+            {
+              "text": "daraus folgt / folglich",
+              "meaning": "Folgern.",
+              "note": "Daraus folgt eine Pilotphase."
+            },
+            {
+              "text": "zusammenfassend bleibt…",
+              "meaning": "Kern nennen.",
+              "note": "…eine klare Empfehlung."
+            },
+            {
+              "text": "zum Schluss möchte ich … betonen",
+              "meaning": "Schlussakzent.",
+              "note": "…den Zeitplan."
+            }
+          ],
+          "situation": "Sie pitchen der Geschäftsführung in drei Minuten ein internes Tool: Fahrplan, zwei Argumente, Folgerung – und ein Schlusssatz, der hängen bleibt.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Einstieg: zunächst gehe ich auf den Hintergrund ein.",
+                "expected": [
+                  "zunachst gehe ich auf den hintergrund ein",
+                  "zunächst gehe ich auf den hintergrund ein"
+                ],
+                "focus": "zunächst",
+                "watch": "Strukturwort an Position 1."
+              },
+              {
+                "prompt": "Überleitung: im Folgenden vergleiche ich beide Optionen.",
+                "expected": [
+                  "im folgenden vergleiche ich beide optionen",
+                  "im folgenden stelle ich beide optionen gegenuber",
+                  "im folgenden stelle ich beide optionen gegenüber"
+                ],
+                "focus": "im Folgenden",
+                "watch": "Konnektor + Präsens der Ankündigung."
+              },
+              {
+                "prompt": "Folgerung: daraus folgt, dass wir eine Pilotphase brauchen.",
+                "expected": [
+                  "daraus folgt dass wir eine pilotphase brauchen",
+                  "daraus folgt, dass wir eine pilotphase brauchen"
+                ],
+                "focus": "daraus folgt",
+                "watch": "dass-Satz als Inhalt der Folgerung."
+              },
+              {
+                "prompt": "Kern: zusammenfassend sprechen die Zahlen für Variante B.",
+                "expected": [
+                  "zusammenfassend sprechen die zahlen fur variante b",
+                  "zusammenfassend sprechen die zahlen für variante b"
+                ],
+                "focus": "zusammenfassend",
+                "watch": "Kern in einem Satz."
+              },
+              {
+                "prompt": "Schluss: zum Schluss möchte ich den Zeitplan betonen.",
+                "expected": [
+                  "zum schluss mochte ich den zeitplan betonen",
+                  "zum schluss möchte ich den zeitplan betonen"
+                ],
+                "focus": "zum Schluss",
+                "watch": "möchte + betonen: letzter Akzent."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u9-prasentieren-e1",
+              "kind": "choice",
+              "prompt": "Einstieg mit Struktur: ___ gehe ich auf den Hintergrund ein, danach zeige ich die Optionen.",
+              "answers": [
+                "Zunächst"
+              ],
+              "explain": "« zunächst » kündigt den ersten Schritt des Vortrags an.",
+              "options": [
+                "Zunächst",
+                "Deshalb",
+                "Trotzdem",
+                "Stattdessen"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-prasentieren-e2",
+              "kind": "gap",
+              "prompt": "Die Zahlen sinken, ___ müssen wir handeln. (Folgerung ziehen)",
+              "answers": [
+                "folglich",
+                "daher",
+                "deshalb"
+              ],
+              "explain": "Folglich/daher + Hauptsatz: die Folgerung wird besiegelt."
+            },
+            {
+              "id": "de-foundations-u9-prasentieren-e3",
+              "kind": "order",
+              "prompt": "Abschluss des Vortrags: benenne den Kern – eine Empfehlung, die klar bleibt.",
+              "answers": [
+                "Zusammenfassend bleibt eine klare Empfehlung"
+              ],
+              "explain": "zusammenfassend + bleiben + Kern in einem Satz."
+            },
+            {
+              "id": "de-foundations-u9-prasentieren-e4",
+              "kind": "written",
+              "prompt": "Fasse in einem Schlusssatz zusammen: die Pilotphase ist die richtige Wahl (mit « zusammenfassend »).",
+              "answers": [
+                "zusammenfassend spricht alles fur eine pilotphase",
+                "zusammenfassend spricht alles für eine pilotphase"
+              ],
+              "explain": "Zusammenfassend + Bewertung: die eine Botschaft."
+            }
+          ],
+          "skills": [
+            "speaking:sustained-conversation",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

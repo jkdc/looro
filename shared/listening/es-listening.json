@@ -1134,6 +1134,261 @@
           "explain": "Prometen volver a hablarlo cuando se publique el plan."
         }
       ]
+    },
+    {
+      "id": "es-listen-debate-radio",
+      "languageID": "es",
+      "title": "Tertulia: el teletrabajo",
+      "level": "C1",
+      "topic": "debate",
+      "unitID": "es-foundations-u10",
+      "text": "En « Punto de vista », la tertulia de la emisora, la presentadora abre el debate sobre el teletrabajo. « Para empezar, un dato: la productividad sube, según el ministerio », dice. Un contertulio relativiza la cifra: « En cierto modo, sí; pero, desde mi punto de vista, ese dato mide otra cosa ». Una editorial, en cambio, defiende volver a la oficina: « A esto se añade que el equipo necesita verse ». « No obstante », apostilla la presentadora, « hay quien trabaja a cien kilómetros de la sede ». La tertulia se encrespa: por otra parte, nadie menciona los costes del transporte. « En resumen », cierra la presentadora, « el debate sigue abierto: por así decirlo, ni blanco ni negro ».",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-debate-radio-q1",
+          "kind": "choice",
+          "prompt": "¿Qué tema abre la tertulia ?",
+          "options": [
+            "El teletrabajo",
+            "El precio del transporte",
+            "Los indicadores del ministerio",
+            "Una editorial del día"
+          ],
+          "answers": [
+            "El teletrabajo"
+          ],
+          "explain": "La presentadora abre el debate sobre el teletrabajo."
+        },
+        {
+          "id": "es-listen-debate-radio-q2",
+          "kind": "written",
+          "prompt": "¿Qué dato da la presentadora para empezar ?",
+          "answers": [
+            "sube la productividad",
+            "la productividad sube",
+            "que sube la productividad"
+          ],
+          "explain": "« Un dato: la productividad sube »."
+        },
+        {
+          "id": "es-listen-debate-radio-q3",
+          "kind": "choice",
+          "prompt": "¿Qué opina el contertulio de ese dato ?",
+          "options": [
+            "Que mide otra cosa",
+            "Que es falso",
+            "Que lo firma el ministerio",
+            "Que es definitivo"
+          ],
+          "answers": [
+            "Que mide otra cosa"
+          ],
+          "explain": "« En cierto modo, sí; pero… ese dato mide otra cosa »."
+        },
+        {
+          "id": "es-listen-debate-radio-q4",
+          "kind": "choice",
+          "prompt": "¿Qué añade la editorial al debate ?",
+          "options": [
+            "Que el equipo necesita verse",
+            "Que la oficina es cara",
+            "Que sube la productividad",
+            "Que nadie usa el metro"
+          ],
+          "answers": [
+            "Que el equipo necesita verse"
+          ],
+          "explain": "« A esto se añade que el equipo necesita verse »."
+        },
+        {
+          "id": "es-listen-debate-radio-q5",
+          "kind": "written",
+          "prompt": "¿Cómo cierra la presentadora el programa ?",
+          "answers": [
+            "el debate sigue abierto",
+            "sigue abierto",
+            "ni blanco ni negro"
+          ],
+          "explain": "« En resumen… el debate sigue abierto »."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-charla-claves",
+      "languageID": "es",
+      "title": "Tres claves para presentar",
+      "level": "C1",
+      "topic": "comunicación",
+      "unitID": "es-foundations-u10",
+      "text": "Gracias por venir. Hoy quiero compartir con ustedes tres claves para presentar ideas con claridad. La primera: abrir con un mapa. « Para empezar » y « en primer lugar » no son adornos: le dicen al oyente por dónde vamos. La segunda: encadenar, no saltar. Cada argumento debe venir tomado de la mano del anterior — por otra parte, a esto se añade que… —; si saltamos de piedra en piedra, el público se baja del tren. Y la tercera: cerrar con una sola idea. « En resumen » significa elegir: si su conclusión tiene tres frases, no es una conclusión, es un resumen mal entendido. Desde mi punto de vista, quien domina estos conectores no improvisa: simplemente se deja leer. Pasemos ahora a practicar con un caso real de consulta.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:connectors",
+        "vocab:work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-charla-claves-q1",
+          "kind": "choice",
+          "prompt": "¿Cuál es el propósito principal de la charla ?",
+          "options": [
+            "Explicar cómo presentar ideas",
+            "Vender un libro de estilo",
+            "Critica las reuniones de trabajo",
+            "Contar la carrera de la ponente"
+          ],
+          "answers": [
+            "Explicar cómo presentar ideas"
+          ],
+          "explain": "Toda la charla gira alrededor de presentar ideas con claridad."
+        },
+        {
+          "id": "es-listen-charla-claves-q2",
+          "kind": "choice",
+          "prompt": "¿Cuántas claves presenta la ponente ?",
+          "options": [
+            "Tres",
+            "Dos",
+            "Cuatro",
+            "Cinco"
+          ],
+          "answers": [
+            "Tres"
+          ],
+          "explain": "« Hoy quiero compartir con ustedes tres claves »."
+        },
+        {
+          "id": "es-listen-charla-claves-q3",
+          "kind": "written",
+          "prompt": "Según la charla, ¿qué significa cerrar con « en resumen » ?",
+          "answers": [
+            "elegir",
+            "elegir una sola idea",
+            "una sola idea"
+          ],
+          "explain": "« En resumen significa elegir »: una sola idea final."
+        },
+        {
+          "id": "es-listen-charla-claves-q4",
+          "kind": "choice",
+          "prompt": "¿Cómo deben encadenarse los argumentos ?",
+          "options": [
+            "Tomados de la mano del anterior",
+            "Cada uno por su lado",
+            "Del más fuerte al más débil",
+            "Por orden de llegada"
+          ],
+          "answers": [
+            "Tomados de la mano del anterior"
+          ],
+          "explain": "Cada argumento viene tomado de la mano del anterior; si saltas, el público se baja del tren."
+        },
+        {
+          "id": "es-listen-charla-claves-q5",
+          "kind": "written",
+          "prompt": "¿Qué dice la ponente de quien domina los conectores ?",
+          "answers": [
+            "no improvisa",
+            "que no improvisa",
+            "se deja leer"
+          ],
+          "explain": "« No improvisa: simplemente se deja leer »."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-podcast-matices",
+      "languageID": "es",
+      "title": "En defensa del matiz",
+      "level": "C1",
+      "topic": "lenguaje",
+      "unitID": "es-foundations-u10",
+      "text": "En « Se dice así », Marta y Diego discuten sobre la manía de matizar. « Hoy en cierto modo todo el mundo matiza », observa Marta. « ¿Moda ? Yo diría que es pereza: decimos \"más o menos\" para no mojarnos », rebate Diego. « No obstante, matizar no es cobardía; por así decirlo, es dejar la puerta abierta », responde ella. « Desde tu punto de vista, claro: tú jamás das un sí rotundo », se burla él. « Tampoco hace falta: en una reunión, un matiz a tiempo te ahorra una discusión ». « Bueno, ahí te doy la razón: mejor un \"hasta cierto punto\" honesto que un \"sí\" que luego te pesa ». « Trato hecho: matices bien entendidos ».",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "function:express-opinion",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-podcast-matices-q1",
+          "kind": "choice",
+          "prompt": "¿Qué piensa Diego de la moda de matizar ?",
+          "options": [
+            "Que a veces es pereza",
+            "Que es obligatoria en las reuniones",
+            "Que es muy reciente",
+            "Que la defiende sin reservas"
+          ],
+          "answers": [
+            "Que a veces es pereza"
+          ],
+          "explain": "« Yo diría que es pereza: decimos más o menos para no mojarnos »."
+        },
+        {
+          "id": "es-listen-podcast-matices-q2",
+          "kind": "written",
+          "prompt": "Según Marta, ¿qué consigue un matiz a tiempo ?",
+          "answers": [
+            "te ahorra una discusion",
+            "te ahorra una discusión",
+            "ahorra una discusión"
+          ],
+          "explain": "« Un matiz a tiempo te ahorra una discusión »."
+        },
+        {
+          "id": "es-listen-podcast-matices-q3",
+          "kind": "choice",
+          "prompt": "¿En qué punto cede Diego ?",
+          "options": [
+            "Mejor un matiz honesto que un sí que pesa",
+            "Que Marta nunca da un sí rotundo",
+            "Que los matices son pereza",
+            "Que hay que mojarse siempre"
+          ],
+          "answers": [
+            "Mejor un matiz honesto que un sí que pesa"
+          ],
+          "explain": "« Mejor un 'hasta cierto punto' honesto que un 'sí' que luego te pesa »."
+        },
+        {
+          "id": "es-listen-podcast-matices-q4",
+          "kind": "written",
+          "prompt": "¿Cómo defiende Marta el hecho de matizar ?",
+          "answers": [
+            "dejar la puerta abierta",
+            "no es cobardia",
+            "no es cobardía"
+          ],
+          "explain": "« Matizar no es cobardía; es dejar la puerta abierta »."
+        },
+        {
+          "id": "es-listen-podcast-matices-q5",
+          "kind": "choice",
+          "prompt": "¿Qué tono tiene la conversación al final ?",
+          "options": [
+            "Cordial",
+            "Enfrentado",
+            "Indiferente",
+            "Fríamente profesional"
+          ],
+          "answers": [
+            "Cordial"
+          ],
+          "explain": "Se dan la razón en parte y cierran en buen término."
+        }
+      ]
     }
   ]
 }

@@ -534,6 +534,96 @@ public enum DeFoundationsU8 {
                             Exercise(id: "de-foundations-u7-argumentieren-e4", kind: "written", prompt: "Deine These zum ÖPNV-Ausbau (Straßenbahn).", options: [], answers: ["ich finde wir sollten die strassenbahn verlangern", "ich finde, wir sollten die straßenbahn verlängern"], explain: "Ich finde, wir sollten…")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum DeFoundationsU9 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u9", title: "Nuancen und Register", subtitle: "Es besser sagen", level: "C1", themes: [
+                    ConversationTheme("de-c1-register", "Formell oder locker ?", "Wie man es sagt", "sparkles", "Course", "Sie schreiben dieselbe Nachricht zweimal: einmal an die Projektleitung, einmal an Ihre WG – und justieren Ton und Wörter.", 0),
+                    ConversationTheme("de-c1-nuancen", "Fein justiert", "Mehr oder weniger", "bubble-left-and-text", "Course", "Ihr bewertet Vorschläge im Team: abschwächen, einräumen, schärfen – bis jede Aussage genau das sagt, was sie soll.", 1)], lessons: [
+            Lesson(id: "de-foundations-u9-register", title: "Wie man es sagt", goal: "Zwischen den Registern wechseln: dieselbe Idee einmal formell, einmal umgangssprachlich – und dabei Wort für Wort treffen.",
+                intro: LessonIntro(explanation: [
+                            "Dasselbe Anliegen, zwei Ebenen: « Ich wollte mich erkundigen, ob der Termin noch passt » klingt formell, « Sag mal, passt der Termin noch ? » umgangssprachlich.",
+                            "Formelle Ersatzwörter heben das Register: erhalten statt kriegen, mitteilen statt Bescheid sagen, « Ich muss Ihnen leider mitteilen, dass sich alles verschiebt ».",
+                            "Im Brief veredeln Konnektoren den Ton: « Da ich noch auf die Zusage warte, wäre ein früherer Termin hilfreich » – begründen und bitten in einem Atemzug."], examples: [
+                            ExampleLine(text: "Ich wollte mich erkundigen, ob der Termin noch passt.", meaning: "Formelle Nachfrage statt « Sag mal »."),
+                            ExampleLine(text: "Ich muss Ihnen leider mitteilen, dass sich alles verschiebt.", meaning: "Schlechte Nachricht, formell verpackt."),
+                            ExampleLine(text: "Du kriegst die Unterlagen später.", meaning: "Umgangssprachlich: kriegen = erhalten."),
+                            ExampleLine(text: "Wäre es Ihnen möglich, früher zu antworten ?", meaning: "Höfliche Bitte mit Konjunktiv II."),
+                            ExampleLine(text: "Sag mal, kannst du mir kurz aushelfen ?", meaning: "Locker, unter Kollegen mit Du.")]),
+                expressions: [
+                            TargetExpression(text: "ich wollte mich erkundigen, ob…", meaning: "Formell nachfragen.", note: "…der Termin noch passt."),
+                            TargetExpression(text: "ich muss Ihnen mitteilen, dass…", meaning: "Formell informieren.", note: "…sich alles verschiebt."),
+                            TargetExpression(text: "wäre es Ihnen möglich, … ?", meaning: "Höfliche Bitte.", note: "…früher zu antworten ?"),
+                            TargetExpression(text: "kriegen / Bescheid sagen", meaning: "Umgangssprachliche Ebene.", note: "formell: erhalten / mitteilen."),
+                            TargetExpression(text: "da ich …, wäre … hilfreich", meaning: "Begründung + Bitte verbinden.", note: "Da ich warte, wäre ein Termin hilfreich.")],
+                situation: "Sie formulieren dieselbe Nachricht zweimal: einmal an die Projektleitung, einmal an Ihre WG – und justieren Ton, Verben und Konnektoren, bis es jeweils sitzt.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Formell nachfragen: ich wollte mich erkundigen, ob der Termin noch passt.", expected: ["ich wollte mich erkundigen ob der termin noch passt", "ich wollte mich erkundigen, ob der termin noch passt"], focus: "sich erkundigen", watch: "Formel « ich wollte mich erkundigen, ob… »."),
+                                PracticeQuestion(prompt: "Schlechte Nachricht formell: ich muss Ihnen mitteilen, dass sich der Workshop verschiebt.", expected: ["ich muss ihnen mitteilen dass sich der workshop verschiebt", "ich muss ihnen mitteilen, dass sich der workshop verschiebt"], focus: "mitteilen", watch: "mitteilen + dass-Satz, kein « Bescheid sagen »."),
+                                PracticeQuestion(prompt: "Höflich bitten: wäre es Ihnen möglich, die Unterlagen vorab zu schicken ?", expected: ["ware es ihnen moglich die unterlagen vorab zu schicken", "wäre es ihnen möglich, die unterlagen vorab zu schicken"], focus: "wäre es möglich", watch: "Konjunktiv II + « Ihnen »."),
+                                PracticeQuestion(prompt: "Umgangssprachlich zusagen: ich sage dir Bescheid, sobald ich mehr kriege.", expected: ["ich sage dir bescheid sobald ich mehr kriege", "ich sage dir bescheid, sobald ich mehr kriege"], focus: "bescheid sagen", watch: "kriegen statt erhalten – locker bleiben."),
+                                PracticeQuestion(prompt: "Begründen und bitten: da ich noch auf die Zusage warte, wäre ein früherer Termin hilfreich.", expected: ["da ich noch auf die zusage warte ware ein fruherer termin hilfreich", "da ich noch auf die zusage warte, wäre ein früherer termin hilfreich"], focus: "da + Konnektor", watch: "Kausaler Nebensatz « da » + Konjunktiv.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u9-register-e1", kind: "choice", prompt: "Formell statt « kriegen »: Sie ___ die Rechnung in den nächsten Tagen.", options: ["erhalten", "kriegen", "abbekommen", "abstauben"], answers: ["erhalten"], explain: "« erhalten » ist die formelle Entsprechung von « kriegen/bekommen »."),
+                            Exercise(id: "de-foundations-u9-register-e2", kind: "gap", prompt: "Ich möchte mich ___, ob der Saal am Freitag frei ist. (höflich nachfragen)", options: [], answers: ["erkundigen"], explain: "sich erkundigen, ob… – die formelle Variante von « nachfragen »."),
+                            Exercise(id: "de-foundations-u9-register-e3", kind: "order", prompt: "Aus Wortbausteinen: eine formelle Bitte, dass man Ihnen die Unterlagen bis Mittwoch gibt.", options: [], answers: ["Schicken Sie mir bitte die Unterlagen bis Mittwoch zu"], explain: "Höfliche Bitte mit « Sie » und Zeitangabe."),
+                            Exercise(id: "de-foundations-u9-register-e4", kind: "written", prompt: "Schreiben Sie eine formelle Schlusszeile: Sie bedanken sich vorab für eine Antwort.", options: [], answers: ["ich danke ihnen im voraus fur ihre ruckmeldung", "ich danke ihnen im voraus für ihre rückmeldung"], explain: "« Ich danke Ihnen im Voraus für Ihre Rückmeldung » – klassische Schlusszeile.")], skills: ["vocab:social-expressions", "function:talk-about-work", "writing:email", "grammar:connectors"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "de-foundations-u9-nuancen", title: "Mehr oder weniger", goal: "Meinungen nuancieren: abschwächen, einräumen und mit Abstand verallgemeinern – ohne an Klarheit zu verlieren.",
+                intro: LessonIntro(explanation: [
+                            "Abschwächen klingt souverän: « Das ist eher eine Vermutung als ein Fakt » – so zeigen Sie Distanz, ohne grob zu widersprechen.",
+                            "Einräumen und halten: « Zwar ist der Ansatz teuer, aber er spart Zeit » – zwar + aber balanciert zwei Seiten in einem Satz.",
+                            "Verallgemeinern mit Abstand: « Sozusagen ein Kompromiss », « Gewissermaßen ein Neuanfang » – solche Wendungen signalisieren: ich sage es mit Vorsicht."], examples: [
+                            ExampleLine(text: "Das ist eher eine Vermutung als ein Fakt.", meaning: "Abschwächung: eher … als."),
+                            ExampleLine(text: "Zwar ist der Ansatz teuer, aber er spart Zeit.", meaning: "zwar + aber = Einräumung."),
+                            ExampleLine(text: "Sozusagen ein Kompromiss auf Zeit.", meaning: "sozusagen = gewissermaßen."),
+                            ExampleLine(text: "Aus meiner Sicht ist das kein Widerspruch.", meaning: "Meinung markieren, sachlich bleiben."),
+                            ExampleLine(text: "Das überzeugt mich nicht unbedingt.", meaning: "Verneinen mit Feingefühl.")]),
+                expressions: [
+                            TargetExpression(text: "eher … als …", meaning: "Vergleich mit Abschwächung.", note: "eher Vermutung als Fakt."),
+                            TargetExpression(text: "zwar …, aber …", meaning: "Einräumen und halten.", note: "zwar teuer, aber effektiv."),
+                            TargetExpression(text: "sozusagen / gewissermaßen", meaning: "Bildlich, mit Abstand.", note: "sozusagen ein Neuanfang."),
+                            TargetExpression(text: "aus meiner Sicht", meaning: "Meinung markieren.", note: "sachlicher als « ich finde »."),
+                            TargetExpression(text: "nicht unbedingt / nicht gerade", meaning: "Weich verneinen.", note: "nicht unbedingt überzeugt.")],
+                situation: "Sie bewerten in der Redaktionsschleife Vorschläge des Teams – jedes Urteil bekommt eine Feinjustierung: eher, zwar… aber, sozusagen.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Schwäche ab: das ist eher eine Vermutung als ein Fakt.", expected: ["das ist eher eine vermutung als ein fakt", "das ist eher eine Vermutung, als ein Fakt"], focus: "eher … als", watch: "Abschwächung vor dem Urteil."),
+                                PracticeQuestion(prompt: "Räume ein und halte dagegen: zwar ist der Ansatz teuer, aber er spart Zeit.", expected: ["zwar ist der ansatz teuer aber er spart zeit", "zwar ist der ansatz teuer, aber er spart zeit"], focus: "zwar …, aber", watch: "Zwar an Position 1, dann Verb."),
+                                PracticeQuestion(prompt: "Verallgemeinere mit Abstand: sozusagen ein Kompromiss auf Zeit.", expected: ["sozusagen ein kompromiss auf zeit", "gewissermassen ein kompromiss auf zeit", "gewissermaßen ein Kompromiss auf Zeit"], focus: "sozusagen", watch: "Alternative: gewissermaßen."),
+                                PracticeQuestion(prompt: "Markiere deine Meinung formell: aus meiner Sicht ist das kein Widerspruch.", expected: ["aus meiner sicht ist das kein widerspruch", "meiner meinung nach ist das kein widerspruch"], focus: "aus meiner Sicht", watch: "Formeller als « ich finde »."),
+                                PracticeQuestion(prompt: "Verneine mit Feingefühl: das überzeugt mich nicht unbedingt.", expected: ["das uberzeugt mich nicht unbedingt", "das überzeugt mich nicht unbedingt"], focus: "nicht unbedingt", watch: "Weicher als ein klares Nein.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u9-nuancen-e1", kind: "choice", prompt: "Abschwächen: Das ist ___ eine Vermutung als ein Fakt.", options: ["eher", "völlig", "absolut", "gerade"], answers: ["eher"], explain: "« eher … als » setzt die Abschwächung ins Verhältnis."),
+                            Exercise(id: "de-foundations-u9-nuancen-e2", kind: "gap", prompt: "___ der Ansatz teuer ist, überzeugt er mich. (Einräumung mit Nebensatz)", options: [], answers: ["obwohl", "obgleich", "obschon"], explain: "obwohl + Nebensatz: Einräumung, im Hauptsatz bleibt die Zustimmung."),
+                            Exercise(id: "de-foundations-u9-nuancen-e3", kind: "order", prompt: "Bilde eine verallgemeinernde Nuance: (Kompromiss, der nur vorübergehend gilt – mit « sozusagen »).", options: [], answers: ["Sozusagen ein Kompromiss auf Zeit"], explain: "sozusagen + Nominalphrase: Distanz im Ton."),
+                            Exercise(id: "de-foundations-u9-nuancen-e4", kind: "written", prompt: "Bewerte abschwächend: das Konzept ist nicht schlecht, aber auch nicht neu (mit « nicht gerade »).", options: [], answers: ["das konzept ist nicht schlecht aber auch nicht gerade neu", "das konzept ist nicht schlecht, aber auch nicht gerade neu"], explain: "« nicht gerade » schwächt die Kritik ab, ohne sie zu widerrufen.")], skills: ["function:express-opinion", "speaking:justify-opinion", "grammar:connectors", "vocab:collocations"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "de-foundations-u9-prasentieren", title: "Ideen präsentieren", goal: "Einen kurzen Vortrag strukturieren: zunächst das Thema, im Folgenden die Punkte, zusammenfassend der Kern.",
+                intro: LessonIntro(explanation: [
+                            "Einstieg mit Fahrplan: « Zunächst gehe ich auf den Hintergrund ein, danach zeige ich zwei Optionen » – die Zuhörer wissen sofort, wohin die Reise geht.",
+                            "Im Hauptteil Rote Fäden halten: « Im Folgenden », « anschließend », « daraus folgt » – solche Konnektoren tragen, wenn man frei spricht.",
+                            "Abschluss mit Gewicht: « Zusammenfassend bleibt: … », « Zum Schluss möchte ich den Zeitplan betonen » – am Ende nur noch eine Botschaft."], examples: [
+                            ExampleLine(text: "Zunächst gehe ich auf den Hintergrund ein.", meaning: "Einstieg: erstes Element."),
+                            ExampleLine(text: "Im Folgenden vergleiche ich beide Optionen.", meaning: "Überleitung zum Hauptteil."),
+                            ExampleLine(text: "Daraus folgt: Wir brauchen eine Pilotphase.", meaning: "Folgerung ziehen."),
+                            ExampleLine(text: "Zusammenfassend sprechen die Zahlen für Variante B.", meaning: "Kern komprimieren."),
+                            ExampleLine(text: "Zum Schluss betone ich noch einmal den Zeitplan.", meaning: "Schlussakzent setzen.")]),
+                expressions: [
+                            TargetExpression(text: "zunächst / anfangs", meaning: "Erster Schritt.", note: "Zunächst zum Hintergrund."),
+                            TargetExpression(text: "im Folgenden / anschließend", meaning: "Überleitung.", note: "Im Folgenden vergleiche ich…"),
+                            TargetExpression(text: "daraus folgt / folglich", meaning: "Folgern.", note: "Daraus folgt eine Pilotphase."),
+                            TargetExpression(text: "zusammenfassend bleibt…", meaning: "Kern nennen.", note: "…eine klare Empfehlung."),
+                            TargetExpression(text: "zum Schluss möchte ich … betonen", meaning: "Schlussakzent.", note: "…den Zeitplan.")],
+                situation: "Sie pitchen der Geschäftsführung in drei Minuten ein internes Tool: Fahrplan, zwei Argumente, Folgerung – und ein Schlusssatz, der hängen bleibt.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Einstieg: zunächst gehe ich auf den Hintergrund ein.", expected: ["zunachst gehe ich auf den hintergrund ein", "zunächst gehe ich auf den hintergrund ein"], focus: "zunächst", watch: "Strukturwort an Position 1."),
+                                PracticeQuestion(prompt: "Überleitung: im Folgenden vergleiche ich beide Optionen.", expected: ["im folgenden vergleiche ich beide optionen", "im folgenden stelle ich beide optionen gegenuber", "im folgenden stelle ich beide optionen gegenüber"], focus: "im Folgenden", watch: "Konnektor + Präsens der Ankündigung."),
+                                PracticeQuestion(prompt: "Folgerung: daraus folgt, dass wir eine Pilotphase brauchen.", expected: ["daraus folgt dass wir eine pilotphase brauchen", "daraus folgt, dass wir eine pilotphase brauchen"], focus: "daraus folgt", watch: "dass-Satz als Inhalt der Folgerung."),
+                                PracticeQuestion(prompt: "Kern: zusammenfassend sprechen die Zahlen für Variante B.", expected: ["zusammenfassend sprechen die zahlen fur variante b", "zusammenfassend sprechen die zahlen für variante b"], focus: "zusammenfassend", watch: "Kern in einem Satz."),
+                                PracticeQuestion(prompt: "Schluss: zum Schluss möchte ich den Zeitplan betonen.", expected: ["zum schluss mochte ich den zeitplan betonen", "zum schluss möchte ich den zeitplan betonen"], focus: "zum Schluss", watch: "möchte + betonen: letzter Akzent.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u9-prasentieren-e1", kind: "choice", prompt: "Einstieg mit Struktur: ___ gehe ich auf den Hintergrund ein, danach zeige ich die Optionen.", options: ["Zunächst", "Deshalb", "Trotzdem", "Stattdessen"], answers: ["Zunächst"], explain: "« zunächst » kündigt den ersten Schritt des Vortrags an."),
+                            Exercise(id: "de-foundations-u9-prasentieren-e2", kind: "gap", prompt: "Die Zahlen sinken, ___ müssen wir handeln. (Folgerung ziehen)", options: [], answers: ["folglich", "daher", "deshalb"], explain: "Folglich/daher + Hauptsatz: die Folgerung wird besiegelt."),
+                            Exercise(id: "de-foundations-u9-prasentieren-e3", kind: "order", prompt: "Abschluss des Vortrags: benenne den Kern – eine Empfehlung, die klar bleibt.", options: [], answers: ["Zusammenfassend bleibt eine klare Empfehlung"], explain: "zusammenfassend + bleiben + Kern in einem Satz."),
+                            Exercise(id: "de-foundations-u9-prasentieren-e4", kind: "written", prompt: "Fasse in einem Schlusssatz zusammen: die Pilotphase ist die richtige Wahl (mit « zusammenfassend »).", options: [], answers: ["zusammenfassend spricht alles fur eine pilotphase", "zusammenfassend spricht alles für eine pilotphase"], explain: "Zusammenfassend + Bewertung: die eine Botschaft.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -4331,6 +4421,96 @@ public enum EsFoundationsU9 {
                             Exercise(id: "es-foundations-u9-argumentar-e4", kind: "written", prompt: "Tu tesis sobre ampliar el tranvía.", options: [], answers: ["creo que deberiamos ampliar el tranvia", "creo que deberíamos ampliar el tranvía"], explain: "Creo que + deberíamos.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum EsFoundationsU10 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u10", title: "Matices y registro", subtitle: "Decirlo mejor", level: "C1", themes: [
+                    ConversationTheme("es-c1-registro", "Dos registros", "Formal o coloquial", "sparkles", "Course", "Escribís el mismo mensaje dos veces — para un cliente y para un compañero — y comparáis lo que cambia.", 0),
+                    ConversationTheme("es-c1-matices", "El matiz", "Más o menos", "bubble-left-and-text", "Course", "Debatís un proyecto sin posturas absolutas: practicáis el sí parcial, la reformulación y el cierre.", 1)], lessons: [
+            Lesson(id: "es-foundations-u10-registro", title: "Cómo lo digo", goal: "Adaptar el registro: lo mismo para un cliente que para un compañero, sin sonar ni rígido ni descuidado.",
+                intro: LessonIntro(explanation: [
+                            "El registro formal alarga y cortesiza: « Le agradecería que me confirmara la fecha ». El coloquial acorta y tutea: « ¿Me confirmas la fecha ? ».",
+                            "El email formal se abre con « Le escribo para… » o « En relación con… » y se cierra con « Quedo a su disposición » o « Un cordial saludo ».",
+                            "Los conectores delatan el tono: « no obstante » suena formal, « pero » es neutro y « o sea » delata conversación de pasillo."], examples: [
+                            ExampleLine(text: "Le escribo en relación con el contrato.", meaning: "Apertura formal de email."),
+                            ExampleLine(text: "¿Te viene bien el jueves a las diez ?", meaning: "Coloquial: proponer hora."),
+                            ExampleLine(text: "Le agradecería una respuesta cuanto antes.", meaning: "Petición formal."),
+                            ExampleLine(text: "Oye, ¿me pasas el informe cuando puedas ?", meaning: "Petición coloquial."),
+                            ExampleLine(text: "No obstante, quedo a su disposición.", meaning: "Cierre formal con conector.")]),
+                expressions: [
+                            TargetExpression(text: "Le/Les agradecería que + subjuntivo", meaning: "Petición formal.", note: "Le agradecería que lo revisara."),
+                            TargetExpression(text: "¿Te viene bien…?", meaning: "Coloquial: cerrar cita.", note: "¿Te viene bien el martes ?"),
+                            TargetExpression(text: "en relación con…", meaning: "Presentar un asunto, formal.", note: "en relación con el contrato."),
+                            TargetExpression(text: "no obstante", meaning: "Contraste, registro formal.", note: "No obstante, hay un detalle."),
+                            TargetExpression(text: "Un cordial saludo", meaning: "Despedida formal de email.", note: "antes de la firma.")],
+                situation: "Comparáis el mismo encargo en dos versiones — email para un cliente y mensaje para un compañero — y decidís qué registro pide cada destinatario.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pide con cortesía formal: le agradecería que me confirmara la fecha.", expected: ["Le agradeceria que me confirmara la fecha", "Le agradecería que me confirmara la fecha"], focus: "le agradecería", watch: "Que + subjuntivo: confirmara."),
+                                PracticeQuestion(prompt: "Propón hora en confianza: ¿te viene bien el jueves a las diez?", expected: ["Te viene bien el jueves a las diez", "¿Te viene bien el jueves a las diez ?"], focus: "¿te viene bien?", watch: "Coloquial: tú, no usted."),
+                                PracticeQuestion(prompt: "Despide un email formal: un cordial saludo.", expected: ["Un cordial saludo", "Saludos cordiales"], focus: "cordial", watch: "Despedida formal de email."),
+                                PracticeQuestion(prompt: "Contrasta en formal: no obstante, quedo a su disposición.", expected: ["No obstante quedo a su disposicion", "No obstante, quedo a su disposición"], focus: "no obstante", watch: "Conector formal, entre comas."),
+                                PracticeQuestion(prompt: "Pide informal: oye, ¿me pasas el informe cuando puedas?", expected: ["Oye me pasas el informe cuando puedas", "Oye, ¿me pasas el informe cuando puedas ?"], focus: "oye", watch: "Apelativo coloquial de atención.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u10-registro-e1", kind: "choice", prompt: "___ agradecería que me confirmara la fecha lo antes posible.", options: ["Le", "Te", "Yo", "Me"], answers: ["Le"], explain: "Cortesía formal: le agradecería (de usted)."),
+                            Exercise(id: "es-foundations-u10-registro-e2", kind: "gap", prompt: "Hubo retrasos; ___, el proyecto sigue en marcha. (conector formal de contraste)", options: [], answers: ["no obstante", "sin embargo"], explain: "No obstante / sin embargo: contraste en registro formal."),
+                            Exercise(id: "es-foundations-u10-registro-e3", kind: "choice", prompt: "¿Cuál es la versión formal de « te escribo por lo del contrato » ?", options: ["Le escribo en relación con el contrato", "Te suelto lo del contrato", "Te paso lo del contrato ese", "Le comento una cosita del contrato"], answers: ["Le escribo en relación con el contrato"], explain: "En relación con: fórmula formal para presentar un asunto."),
+                            Exercise(id: "es-foundations-u10-registro-e4", kind: "written", prompt: "Pide por email, en registro formal, que te confirmen la fecha de la reunión.", options: [], answers: ["le agradeceria que me confirmaran la fecha de la reunion", "le agradecería que me confirmaran la fecha de la reunión", "quisiera pedirle que confirmara la fecha de la reunión"], explain: "Le agradecería que + subjuntivo: petición formal por escrito.")], skills: ["vocab:social-expressions", "function:talk-about-work", "writing:email", "grammar:connectors"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "es-foundations-u10-matices", title: "Más o menos", goal: "Matizar opiniones: acordar a medias, reformular y situar el punto de vista propio.",
+                intro: LessonIntro(explanation: [
+                            "Para matizar: « En cierto modo sí, pero… », « Hasta cierto punto lo comparto ». No niegas ni aceptas del todo.",
+                            "Para reformular: « por así decirlo », « Digamos que… ». Avisan de que la palabra elegida no es exacta.",
+                            "Para situar tu opinión: « Desde mi punto de vista », « A mi juicio ». Pesan más que un simple « creo que »."], examples: [
+                            ExampleLine(text: "En cierto modo, tienes razón.", meaning: "Acuerdo parcial."),
+                            ExampleLine(text: "Hasta cierto punto lo comparto.", meaning: "Delimita el acuerdo."),
+                            ExampleLine(text: "Es, por así decirlo, un puente.", meaning: "Aviso de metáfora."),
+                            ExampleLine(text: "Desde mi punto de vista, sobra la reunión.", meaning: "Opinión situada."),
+                            ExampleLine(text: "Digamos que fue un malentendido.", meaning: "Suaviza el juicio.")]),
+                expressions: [
+                            TargetExpression(text: "En cierto modo, …", meaning: "Acuerdo parcial.", note: "En cierto modo, sí."),
+                            TargetExpression(text: "hasta cierto punto", meaning: "Matiza el alcance.", note: "Hasta cierto punto lo entiendo."),
+                            TargetExpression(text: "por así decirlo", meaning: "Reformula con tacto.", note: "tras una metáfora."),
+                            TargetExpression(text: "Desde mi punto de vista, …", meaning: "Opinión con peso.", note: "equivale a para mí, pero más formal."),
+                            TargetExpression(text: "Digamos que…", meaning: "Suaviza.", note: "Digamos que no fue así.")],
+                situation: "Valoráis el último proyecto en equipo: nadie quiere un sí o un no rotundos, y practicáis la respuesta intermedia.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Matiza: en cierto modo, tienes razón.", expected: ["En cierto modo tienes razon", "En cierto modo, tienes razón"], focus: "en cierto modo", watch: "Acuerdo parcial, no total."),
+                                PracticeQuestion(prompt: "Acuerda a medias: hasta cierto punto lo comparto.", expected: ["Hasta cierto punto lo comparto", "Lo comparto hasta cierto punto"], focus: "hasta cierto punto", watch: "Delimita el alcance del acuerdo."),
+                                PracticeQuestion(prompt: "Reformula: es, por así decirlo, un puente.", expected: ["Es por asi decirlo un puente", "Es, por así decirlo, un puente"], focus: "por así decirlo", watch: "Entre comas: aviso de metáfora."),
+                                PracticeQuestion(prompt: "Sitúa tu opinión: desde mi punto de vista, sobra la reunión.", expected: ["Desde mi punto de vista sobra la reunion", "Desde mi punto de vista, sobra la reunión"], focus: "desde mi punto de vista", watch: "Fórmula fija, no « en mi punto de vista »."),
+                                PracticeQuestion(prompt: "Suaviza: digamos que fue un malentendido.", expected: ["Digamos que fue un malentendido", "Digamos que no fue del todo correcto"], focus: "digamos que", watch: "Suaviza el juicio.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u10-matices-e1", kind: "choice", prompt: "___ cierto modo, la propuesta funciona.", options: ["En", "Por", "Con", "De"], answers: ["En"], explain: "En cierto modo: acuerdo parcial."),
+                            Exercise(id: "es-foundations-u10-matices-e2", kind: "gap", prompt: "___ mi punto de vista, el plan es buenísimo.", options: [], answers: ["Desde"], explain: "Fórmula fija de opinión: desde mi punto de vista."),
+                            Exercise(id: "es-foundations-u10-matices-e3", kind: "choice", prompt: "¿Qué fórmula avisa de que una palabra no es exacta ?", options: ["por así decirlo", "desde luego", "sin falta", "en absoluto"], answers: ["por así decirlo"], explain: "Por así decirlo introduce una reformulación aproximada."),
+                            Exercise(id: "es-foundations-u10-matices-e4", kind: "written", prompt: "Opina sobre las reuniones del lunes con la fórmula de punto de vista.", options: [], answers: ["desde mi punto de vista las reuniones del lunes sobran", "desde mi punto de vista, las reuniones del lunes sobran", "en mi opinion las reuniones del lunes sobran"], explain: "Desde mi punto de vista + juicio: opinión situada.")], skills: ["function:express-opinion", "speaking:justify-opinion", "grammar:connectors", "vocab:collocations"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "es-foundations-u10-presentar", title: "Presentar ideas", goal: "Estructurar una intervención breve: abrir, encadenar argumentos y cerrar con una conclusión limpia.",
+                intro: LessonIntro(explanation: [
+                            "Abre marcando el camino: « Para empezar », « En primer lugar ». El oyente sabe que viene una secuencia.",
+                            "Encadena sin saltos: « Por otra parte », « A esto se añade que… ». Cada idea engancha con la anterior.",
+                            "Cierra con señal clara: « En resumen », « Para concluir ». Una sola idea final, no tres."], examples: [
+                            ExampleLine(text: "Para empezar, repasemos los datos.", meaning: "Abre la secuencia."),
+                            ExampleLine(text: "En primer lugar, el presupuesto.", meaning: "Primer punto."),
+                            ExampleLine(text: "Por otra parte, falta tiempo.", meaning: "Añade un argumento."),
+                            ExampleLine(text: "A esto se añade que el equipo es nuevo.", meaning: "Encadena otra razón."),
+                            ExampleLine(text: "En resumen: adelante, pero con calendario.", meaning: "Conclusión breve.")]),
+                expressions: [
+                            TargetExpression(text: "Para empezar, …", meaning: "Abre.", note: "Para empezar, los datos."),
+                            TargetExpression(text: "en primer lugar", meaning: "Primer punto.", note: "tras él: en segundo lugar."),
+                            TargetExpression(text: "por otra parte, …", meaning: "Añade otra cara.", note: "Por otra parte, el tiempo."),
+                            TargetExpression(text: "a esto se añade que…", meaning: "Encadena razones.", note: "A esto se añade que…"),
+                            TargetExpression(text: "En resumen, …", meaning: "Cierra.", note: "En resumen: sí, pero tarde.")],
+                situation: "Cada uno presenta en dos minutos una propuesta: abrir con un punto claro, encadenar dos razones y cerrar con una sola frase.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Abre: para empezar, repasemos los datos.", expected: ["Para empezar repasemos los datos", "Para empezar, repasemos los datos"], focus: "para empezar", watch: "Señal de apertura."),
+                                PracticeQuestion(prompt: "Primer punto: en primer lugar, el presupuesto.", expected: ["En primer lugar el presupuesto", "En primer lugar, el presupuesto"], focus: "en primer lugar", watch: "Después: en segundo lugar."),
+                                PracticeQuestion(prompt: "Añade otra cara: por otra parte, falta tiempo.", expected: ["Por otra parte falta tiempo", "Por otra parte, falta tiempo"], focus: "por otra parte", watch: "Añade un argumento nuevo."),
+                                PracticeQuestion(prompt: "Encadena: a esto se añade que el equipo es nuevo.", expected: ["A esto se anade que el equipo es nuevo", "A esto se añade que el equipo es nuevo"], focus: "a esto se añade", watch: "Engancha con lo anterior."),
+                                PracticeQuestion(prompt: "Cierra: en resumen, adelante, pero con calendario.", expected: ["En resumen adelante pero con calendario", "En resumen, adelante, pero con calendario"], focus: "en resumen", watch: "Una sola idea final.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u10-presentar-e1", kind: "choice", prompt: "___ empezar, repasemos los números del trimestre.", options: ["Para", "Por", "Al", "En"], answers: ["Para"], explain: "Para empezar: fórmula de apertura."),
+                            Exercise(id: "es-foundations-u10-presentar-e2", kind: "gap", prompt: "La propuesta tiene ventajas; ___, exige presupuesto y tiempo. (conector que añade otra cara)", options: [], answers: ["por otra parte", "por otro lado"], explain: "Por otra parte / por otro lado: añaden un argumento nuevo."),
+                            Exercise(id: "es-foundations-u10-presentar-e3", kind: "choice", prompt: "¿Cuál de estas fórmulas sirve para cerrar una intervención ?", options: ["En resumen", "Para empezar", "En primer lugar", "A esto se añade"], answers: ["En resumen"], explain: "En resumen anuncia la conclusión; las demás organizan la secuencia."),
+                            Exercise(id: "es-foundations-u10-presentar-e4", kind: "written", prompt: "Cierra la presentación de tu propuesta con la fórmula de resumen.", options: [], answers: ["en resumen la propuesta avanza pero en enero", "en resumen, la propuesta avanza, pero en enero", "para concluir la propuesta avanza pero en enero"], explain: "En resumen + una sola idea: cierre de discurso.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+}
+
 public enum FrFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
@@ -4892,6 +5072,96 @@ public enum FrFoundationsU8 {
                             Exercise(id: "fr-foundations-u7-argumenter-e4", kind: "written", prompt: "Ta thèse sur l'extension du tramway.", options: [], answers: ["je pense qu'on devrait prolonger le tramway", "je pense qu'on devrait agrandir le tram"], explain: "Je pense qu'on devrait…")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum FrFoundationsU9 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u9", title: "Nuances et registres", subtitle: "Le dire mieux", level: "C1", themes: [
+                    ConversationTheme("fr-c1-registres", "Les registres", "Soutenu ou familier", "sparkles", "Course", "Vous réécrivez un e-mail trop familier, puis un e-mail trop raide, jusqu'à trouver le ton juste.", 0),
+                    ConversationTheme("fr-c1-nuancer", "Nuancer", "Plus ou moins", "bubble-left-and-text", "Course", "En réunion, tout le monde tranche ; vous, vous accordez, conditionnez et modulez sans vous contredire.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u9-registre", title: "Comment le dire", goal: "Choisir le bon registre : du e-mail soutenu à la remarque orale, sans fausse note.",
+                intro: LessonIntro(explanation: [
+                            "Le registre se joue d'abord sur les verbes : « Je me permets de vous écrire » (soutenu) remplace « Je t'envoie un mot » (familier).",
+                            "À l'écrit professionnel, le « vous » est la règle et les tournures nommées montent le ton : « bien vouloir », « je vous prie de ».",
+                            "Les connecteurs trahissent le registre : « néanmoins », « toutefois », « par ailleurs » tiennent la longueur d'phrase ; « du coup », « genre » la plombent."], examples: [
+                            ExampleLine(text: "Je me permets de vous écrire au sujet de votre annonce.", meaning: "Ouverture formelle d'e-mail."),
+                            ExampleLine(text: "Je vous prie de bien vouloir me répondre d'ici vendredi.", meaning: "Demande très polie (soutenu)."),
+                            ExampleLine(text: "Nous avons toutefois constaté un léger retard.", meaning: "Concession en registre soutenu."),
+                            ExampleLine(text: "Par ailleurs, le prix de la livraison a augmenté.", meaning: "Argument supplémentaire (soutenu)."),
+                            ExampleLine(text: "Je reste à votre disposition pour toute question.", meaning: "Formule de clôture d'e-mail.")]),
+                expressions: [
+                            TargetExpression(text: "je me permets de + infinitif", meaning: "Ouvrir un e-mail.", note: "Jamais « je te permets » à un inconnu."),
+                            TargetExpression(text: "je vous prie de bien vouloir…", meaning: "Demander avec égards.", note: "…me répondre d'ici vendredi."),
+                            TargetExpression(text: "néanmoins / toutefois", meaning: "« Mais » en soutenu.", note: "Nous avons toutefois un doute."),
+                            TargetExpression(text: "par ailleurs", meaning: "Ajouter un argument.", note: "Remplace « aussi », « pis »."),
+                            TargetExpression(text: "je reste à votre disposition", meaning: "Conclure l'e-mail.", note: "…pour toute question.")],
+                situation: "Vous écrivez au service client pour un colis en retard : votre premier brouillon est trop familier, le deuxième trop raide — vous cherchez le ton juste, professionnel mais humain.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ouvre un e-mail formel pour demander des informations sur l'annonce.", expected: ["Je me permets de vous écrire pour demander des informations", "Je me permets de vous ecrire pour demander des informations", "Je vous écris pour demander des informations"], focus: "je me permets de", watch: "« Vous » au destinataire inconnu."),
+                                PracticeQuestion(prompt: "Demande avec égards une réponse avant vendredi.", expected: ["Je vous prie de bien vouloir me répondre avant vendredi", "Je vous prie de bien vouloir me repondre avant vendredi", "Je vous prie de me répondre avant vendredi"], focus: "bien vouloir", watch: "Prier de + infinitif, jamais « je veux »."),
+                                PracticeQuestion(prompt: "Concède en soutenu : le retard est gênant.", expected: ["Le retard est néanmoins gênant", "Le retard est neanmoins genant", "Le retard reste toutefois gênant"], focus: "néanmoins", watch: "Connecteur en tête ou après le verbe."),
+                                PracticeQuestion(prompt: "Ajoute un second argument en soutenu : le prix de la livraison a augmenté.", expected: ["Par ailleurs, le prix de la livraison a augmenté", "Par ailleurs le prix de la livraison a augmente", "Par ailleurs, le prix de la livraison a augmente"], focus: "par ailleurs", watch: "Bannis « du coup » et « en plus »."),
+                                PracticeQuestion(prompt: "Termine l'e-mail en restant à la disposition du client.", expected: ["Je reste à votre disposition pour toute question", "Je reste a votre disposition pour toute question", "Je reste à votre disposition"], focus: "formule de clôture", watch: "Formule fixe : « pour toute question ».")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u9-registre-e1", kind: "choice", prompt: "___ me permets de vous écrire au sujet de votre annonce.", options: ["Je", "Tu", "Ça", "On"], answers: ["Je"], explain: "E-mail formel : « je me permets », pas de « tu »."),
+                            Exercise(id: "fr-foundations-u9-registre-e2", kind: "gap", prompt: "Je vous prie de bien vouloir ___ ma candidature. (verbe : prendre en compte, infinitif)", options: [], answers: ["considérer", "considerer"], explain: "Bien vouloir + infinitif : le verbe simple monte le registre."),
+                            Exercise(id: "fr-foundations-u9-registre-e3", kind: "choice", prompt: "Nous avons ___ constaté un léger retard. (« mais », en registre soutenu)", options: ["néanmoins", "du coup", "genre", "vachement"], answers: ["néanmoins"], explain: "Néanmoins : la concession qui tient la distance."),
+                            Exercise(id: "fr-foundations-u9-registre-e4", kind: "written", prompt: "Termine l'e-mail : tu restes à la disposition du client.", options: [], answers: ["je reste à votre disposition pour toute question", "je reste a votre disposition pour toute question", "je reste à votre disposition"], explain: "Formule de clôture attendue dans tout e-mail soigné.")], skills: ["vocab:social-expressions", "function:talk-about-work", "writing:email", "grammar:connectors"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "fr-foundations-u9-nuances", title: "Plus ou moins", goal: "Nuancer son opinion pour éviter le tout-ou-rien : en quelque sorte, d'une certaine manière, à mon sens.",
+                intro: LessonIntro(explanation: [
+                            "Le C1 module plutôt qu'il ne tranche : « C'est en quelque sorte une seconde chance » dit presque, sans conclure à la place des faits.",
+                            "« D'une certaine manière, il a raison » accorde un point vrai sans se rendre prisonnier de toute la thèse adverse.",
+                            "« À mon sens » assume la part personnelle du jugement : plus réfléchi que « pour moi », moins raide que « selon moi »."], examples: [
+                            ExampleLine(text: "C'est en quelque sorte une seconde chance.", meaning: "Approximation mesurée."),
+                            ExampleLine(text: "D'une certaine manière, son projet tient la route.", meaning: "Accord prudent."),
+                            ExampleLine(text: "À mon sens, la décision est irréversible.", meaning: "Opinion personnelle assumée."),
+                            ExampleLine(text: "J'y suis favorable, moyennant quelques garanties.", meaning: "Accord à condition."),
+                            ExampleLine(text: "Ce n'est pas faux, mais c'est plus compliqué que ça.", meaning: "Concession nuancée.")]),
+                expressions: [
+                            TargetExpression(text: "en quelque sorte", meaning: "Presque, en quelque façon.", note: "Formule figée : pas « en quelque manière »."),
+                            TargetExpression(text: "d'une certaine manière", meaning: "Accord partiel.", note: "…il a raison, mais seulement en partie."),
+                            TargetExpression(text: "à mon sens", meaning: "Mon jugement réfléchi.", note: "Plus fort que « pour moi »."),
+                            TargetExpression(text: "moyennant + nom", meaning: "À condition de.", note: "Moyennant un effort, moyennant des garanties."),
+                            TargetExpression(text: "pas tout à fait", meaning: "Négation douce.", note: "Je ne suis pas tout à fait d'accord.")],
+                situation: "En débat d'équipe, tout le monde tranche trop vite : tu apprends à accorder sans tout céder, à conditionner sans te contredire.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Nuance : c'est presque une révolution (formule en « sorte »).", expected: ["C'est en quelque sorte une révolution", "C'est en quelque sorte une revolution", "C'est, en quelque sorte, une révolution"], focus: "en quelque sorte", watch: "Formule figée : sorte, pas manière."),
+                                PracticeQuestion(prompt: "Accorde prudemment : il a raison (d'une certaine…).", expected: ["D'une certaine manière, il a raison", "D'une certaine maniere, il a raison", "D'une certaine manière il a raison"], focus: "d'une certaine manière", watch: "Garde l'article : « une certaine manière »."),
+                                PracticeQuestion(prompt: "Donne une opinion réfléchie : ce choix est irréversible.", expected: ["À mon sens, ce choix est irréversible", "A mon sens ce choix est irreversible", "À mon sens ce choix est irréversible"], focus: "à mon sens", watch: "Accent grave sur À en tête de phrase."),
+                                PracticeQuestion(prompt: "Conditionne ton accord : tu es favorable, avec des garanties.", expected: ["J'y suis favorable, moyennant des garanties", "J'y suis favorable moyennant des garanties", "J'y suis favorable, moyennant des garanties."], focus: "moyennant", watch: "Moyennant + nom sans « de »."),
+                                PracticeQuestion(prompt: "Négation douce : tu n'es pas complètement d'accord.", expected: ["Je ne suis pas tout à fait d'accord", "Je ne suis pas tout a fait d'accord", "Je ne suis pas tout-a-fait d'accord"], focus: "pas tout à fait", watch: "Ne coupe pas « tout à fait ».")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u9-nuances-e1", kind: "choice", prompt: "___ mon sens, la mesure arrive trop tôt.", options: ["À", "Par", "Dans", "Chez"], answers: ["À"], explain: "À mon sens : opinion réfléchie, accent grave."),
+                            Exercise(id: "fr-foundations-u9-nuances-e2", kind: "gap", prompt: "D'une certaine ___, son projet tient la route. (synonyme courant : « façon », ici avec accent grave)", options: [], answers: ["manière", "maniere"], explain: "D'une certaine manière : formule figée d'accord prudent."),
+                            Exercise(id: "fr-foundations-u9-nuances-e3", kind: "choice", prompt: "Nous acceptons le projet, ___ quelques ajustements. (à condition de : un seul mot)", options: ["moyennant", "malgré", "pendant", "selon"], answers: ["moyennant"], explain: "Moyennant + nom : accord sous condition."),
+                            Exercise(id: "fr-foundations-u9-nuances-e4", kind: "written", prompt: "Nuance ton accord : tu es d'accord, mais pas complètement.", options: [], answers: ["je suis d'accord mais pas tout à fait", "je suis d'accord, mais pas tout a fait", "je ne suis pas tout à fait d'accord"], explain: "Le C1 pèse son oui : pas tout à fait.")], skills: ["function:express-opinion", "speaking:justify-opinion", "grammar:connectors", "vocab:collocations"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "fr-foundations-u9-presenter", title: "Présenter des idées", goal: "Structurer un exposé court : annoncer le plan, enchaîner nettement, conclure par un bilan.",
+                intro: LessonIntro(explanation: [
+                            "Annoncer le plan, c'est donner la carte : « Pour commencer, le contexte ; ensuite, les chiffres » — l'auditeur sait toujours où il en est.",
+                            "Les transitions s'énoncent : « J'en viens maintenant aux résultats » — on prévient le changement de cap au lieu de l'imposer.",
+                            "On conclut par un bilan, jamais par un « voilà » : « En résumé, le projet tient ; pour conclure, j'ai besoin de votre feu vert »."], examples: [
+                            ExampleLine(text: "Pour commencer, deux mots sur le contexte.", meaning: "Ouverture d'exposé."),
+                            ExampleLine(text: "J'en viens maintenant aux résultats du trimestre.", meaning: "Transition annoncée."),
+                            ExampleLine(text: "En résumé, le projet est rentable dès la deuxième année.", meaning: "Bilan synthétique."),
+                            ExampleLine(text: "Pour conclure, j'ai besoin de votre accord.", meaning: "Demande finale."),
+                            ExampleLine(text: "Si vous le permettez, je passerai à vos questions.", meaning: "Étape suivante, poliment.")]),
+                expressions: [
+                            TargetExpression(text: "pour commencer", meaning: "Ouvrir l'exposé.", note: "…deux mots sur le contexte."),
+                            TargetExpression(text: "j'en viens à…", meaning: "Transiter.", note: "J'en viens aux chiffres."),
+                            TargetExpression(text: "en résumé", meaning: "Faire le bilan.", note: "…le projet tient."),
+                            TargetExpression(text: "pour conclure", meaning: "Finir et décider.", note: "…j'ai besoin de votre accord."),
+                            TargetExpression(text: "si vous le permettez", meaning: "Polir l'étape suivante.", note: "…je passe aux questions.")],
+                situation: "Vous présentez votre projet en cinq minutes en réunion : plan annoncé d'entrée, transitions nettes, bilan chiffré — et une conclusion qui obtient l'accord.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ouvre ton exposé : le contexte d'abord.", expected: ["Pour commencer, le contexte", "Pour commencer le contexte", "Pour commencer, quelques mots sur le contexte"], focus: "pour commencer", watch: "On annonce, on ne démarre pas en pleine matière."),
+                                PracticeQuestion(prompt: "Transition : tu passes maintenant aux résultats.", expected: ["J'en viens maintenant aux résultats", "J'en viens maintenant aux resultats", "J'en viens à présent aux résultats"], focus: "j'en viens à", watch: "J'en viens, pas « je viens »."),
+                                PracticeQuestion(prompt: "Fais le bilan : le projet est rentable.", expected: ["En résumé, le projet est rentable", "En resume le projet est rentable", "En résumé le projet est rentable"], focus: "en résumé", watch: "Accent aigu sur le é final."),
+                                PracticeQuestion(prompt: "Conclus en demandant l'accord de la salle.", expected: ["Pour conclure, j'ai besoin de votre accord", "Pour conclure j'ai besoin de votre accord", "Pour conclure, j'ai besoin de votre feu vert"], focus: "pour conclure", watch: "Besoin DE votre accord."),
+                                PracticeQuestion(prompt: "Demande poliment de passer aux questions.", expected: ["Si vous le permettez, je passerai aux questions", "Si vous le permettez je passerai aux questions", "Si vous le permettez, je passe aux questions"], focus: "si vous le permettez", watch: "Subjonctif : que vous le permettiez, sous-entendu.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u9-presenter-e1", kind: "choice", prompt: "___ commencer, deux mots sur le contexte.", options: ["Pour", "Par", "Chez", "Vers"], answers: ["Pour"], explain: "Pour commencer : ouverture standard d'exposé."),
+                            Exercise(id: "fr-foundations-u9-presenter-e2", kind: "gap", prompt: "En ___, le projet est rentable dès la deuxième année. (synonyme de « bilan », avec accent)", options: [], answers: ["résumé", "resume"], explain: "En résumé : le bilan avant la conclusion."),
+                            Exercise(id: "fr-foundations-u9-presenter-e3", kind: "choice", prompt: "Si vous le ___ , je passerai à vos questions.", options: ["permettez", "pouvez", "savez", "voudrez"], answers: ["permettez"], explain: "Si vous le permettez : formule figée et polie."),
+                            Exercise(id: "fr-foundations-u9-presenter-e4", kind: "written", prompt: "Transition : tu passes maintenant aux chiffres.", options: [], answers: ["j'en viens maintenant aux chiffres", "j'en viens a present aux chiffres", "j'en viens à présent aux chiffres"], explain: "J'en viens à : transition qui prévient l'auditeur.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+}
+
 public enum ItFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.", 0),
@@ -5423,6 +5693,96 @@ public enum ItFoundationsU8 {
                             Exercise(id: "it-foundations-u7-argomentare-e2", kind: "gap", prompt: "È vero che è scomodo, ___ i numeri dicono altro.", options: [], answers: ["ma"], explain: "Concessione + contrasto."),
                             Exercise(id: "it-foundations-u7-argomentare-e3", kind: "order", prompt: "Conclusione: per tutto questo, difendo la misura.", options: [], answers: ["Per tutto questo, difendo la misura"], explain: "per tutto questo."),
                             Exercise(id: "it-foundations-u7-argomentare-e4", kind: "written", prompt: "La tua tesi sul prolungamento del tram.", options: [], answers: ["penso che dovremmo allungare il tram", "penso che dovremmo prolungare la tramvia"], explain: "Penso che + dovremmo.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum ItFoundationsU9 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u9", title: "Sfumature e registri", subtitle: "Dirlo meglio", level: "C1", themes: [
+                    ConversationTheme("it-c1-registro", "Come lo dico", "Formale o colloquiale", "bubble-left-and-text", "Course", "Riscrivete la stessa notizia in due registri: email alla dirigenza e messaggio al collega.", 0),
+                    ConversationTheme("it-c1-sfumature", "Più o meno", "Sfumare le opinioni", "sparkles", "Course", "Valutate una proposta con tatto: accordo parziale, rilievo gentile, chiusura chiara.", 1)], lessons: [
+            Lesson(id: "it-foundations-u9-registro", title: "Come lo dico", goal: "Dire la stessa cosa in due registri: l'email formale alla dirigenza e il messaggio al collega.",
+                intro: LessonIntro(explanation: [
+                            "Il registro è la veste della lingua: « Le scrivo per informarLa che la riunione è stata rinviata » e « Ehi, la riunione è slittata » dicono la stessa cosa in due mondi diversi.",
+                            "Nel formale: Lei con la maiuscola, forme piene, nessuna elisione (« Le invio », « in allegato », « La ringrazio in anticipo »). Nel colloquiale: tu, elisioni (« ti mando », « facciamo »), battute brevi.",
+                            "I connettivi tengono insieme i due mondi: « pertanto » e « tuttavia » reggono la relazione; « comunque » e « infatti » la chat."], examples: [
+                            ExampleLine(text: "Le scrivo per informarLa che la riunione è stata rinviata a giovedì.", meaning: "Email formale: Lei + passivo."),
+                            ExampleLine(text: "Ehi, la riunione è slittata a giovedì.", meaning: "Stessa notizia in chat, registro colloquiale."),
+                            ExampleLine(text: "La ringrazio in anticipo per la Sua disponibilità.", meaning: "Chiusura formale, prima della risposta."),
+                            ExampleLine(text: "Ti ringrazio mille, mi hai tolto un peso!", meaning: "Ringraziamento caloroso tra pari."),
+                            ExampleLine(text: "Pertanto, La invito a confermare la Sua partecipazione entro venerdì.", meaning: "Connettivo formale + richiesta precisa.")]),
+                expressions: [
+                            TargetExpression(text: "Le scrivo per…", meaning: "Apertura formale di email.", note: "Le scrivo per confermare la riunione."),
+                            TargetExpression(text: "in allegato", meaning: "Trasmettere un file.", note: "In allegato Le invio il preventivo."),
+                            TargetExpression(text: "La ringrazio in anticipo", meaning: "Chiusura cortese.", note: "Si usa prima di ricevere la risposta."),
+                            TargetExpression(text: "slittare", meaning: "Posticiparsi (di un impegno).", note: "La riunione è slittata di una settimana."),
+                            TargetExpression(text: "pertanto", meaning: "Connettivo formale di conclusione.", note: "Pertanto Le chiedo una conferma.")],
+                situation: "Riscrivete la stessa notizia due volte: un'email alla dirigenza e un messaggio al collega di fiducia. Poi leggete le due versioni ad alta voce e confrontate i registri.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Apri un'email formale per confermare la tua presenza alla riunione.", expected: ["le scrivo per confermare la mia presenza di giovedì", "le scrivo per confermare la mia presenza di giovedi", "le confermo la mia presenza"], focus: "Le + verbo pieno", watch: "Mai « Ciao »; Lei con la maiuscola nell'email."),
+                                PracticeQuestion(prompt: "Comunica in modo formale che il documento richiesto è allegato.", expected: ["in allegato le invio il documento", "le invio in allegato il documento richiesto", "allego il documento richiesto"], focus: "in allegato", watch: "« allegato » singolare per un solo file."),
+                                PracticeQuestion(prompt: "Rendi colloquiale la notizia che l'incontro è stato posticipato.", expected: ["l'incontro è slittato", "l'incontro e slittato", "la riunione è slittata"], focus: "slittare", watch: "Colloquiale: « slittare » invece di « rinviare »."),
+                                PracticeQuestion(prompt: "Chiudi l'email ringraziando prima ancora di ricevere la risposta.", expected: ["la ringrazio in anticipo", "la ringrazio in anticipo per la disponibilità", "ringrazio sin d'ora per l'attenzione"], focus: "in anticipo", watch: "« in anticipo » si usa prima del ricevimento."),
+                                PracticeQuestion(prompt: "Chiedi formalmente una conferma entro venerdì, aprendo col connettivo conclusivo che vale « per questo motivo ».", expected: ["pertanto le chiedo una conferma entro venerdì", "pertanto le chiedo una conferma entro venerdi", "quindi le chiediamo conferma entro venerdì"], focus: "pertanto / quindi", watch: "Pertanto apre la frase e regge l'indicativo.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u9-registro-e1", kind: "choice", prompt: "Formale: « ___ scrivo per confermare l'appuntamento di giovedì. »", options: ["Le", "Ti", "Vi", "Ce"], answers: ["Le"], explain: "Email formale: pronome di cortesia Lei."),
+                            Exercise(id: "it-foundations-u9-registro-e2", kind: "gap", prompt: "Chiusura cortese: La ringrazio ___ della Sua disponibilità. (si scrive prima ancora di ricevere qualcosa)", options: [], answers: ["in anticipo"], explain: "Formula fissa: ringraziare in anticipo."),
+                            Exercise(id: "it-foundations-u9-registro-e3", kind: "written", prompt: "Riformula in registro colloquiale l'idea che l'incontro è stato posticipato (verbo: la riunione « scivola » in avanti).", options: [], answers: ["l'incontro è slittato", "l'incontro e slittato", "la riunione è slittata"], explain: "Colloquiale: slittare invece di rinviare."),
+                            Exercise(id: "it-foundations-u9-registro-e4", kind: "written", prompt: "Chiudi un'email formale ricordando una scadenza: apri la frase col connettivo che vale « per questo motivo ».", options: [], answers: ["pertanto le chiedo una conferma entro venerdì", "pertanto le chiedo una conferma entro venerdi", "quindi la invito a confermare entro venerdì"], explain: "Pertanto / quindi + richiesta con Lei.")], skills: ["vocab:social-expressions", "function:talk-about-work", "writing:email", "grammar:connectors"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "it-foundations-u9-sfumature", title: "Più o meno", goal: "Sfumare opinioni e giudizi per discutere senza scontri: distacco, concessione, morbidezza.",
+                intro: LessonIntro(explanation: [
+                            "Per non suonare categorici, l'italiano professionale sfuma: « in un certo senso, è una buona base di lavoro » accorda senza chiudere la discussione.",
+                            "« Per così dire » ammorbidisce una parola forte: « è una soluzione, per così dire, provvisoria » avverte senza offendere.",
+                            "« A mio avviso » separa l'opinione dalla persona: si discute l'idea, non chi l'ha proposta."], examples: [
+                            ExampleLine(text: "In un certo senso, la proposta regge.", meaning: "Accordo parziale, non totale."),
+                            ExampleLine(text: "È un promemoria, per così dire, informale.", meaning: "Ammorbidisce il giudizio."),
+                            ExampleLine(text: "A mio avviso, va rifinita la parte finale.", meaning: "Opinione personale, tono professionale."),
+                            ExampleLine(text: "Direi quasi che è pronta; manca solo la sintesi.", meaning: "Sfuma senza negare."),
+                            ExampleLine(text: "Sotto certi aspetti sì, sotto altri no.", meaning: "Opinione divisa, senza scontro.")]),
+                expressions: [
+                            TargetExpression(text: "in un certo senso", meaning: "Accordo parziale.", note: "In un certo senso, sì; però servono dati."),
+                            TargetExpression(text: "per così dire", meaning: "Ammorbidire una parola.", note: "È un registro, per così dire, medio."),
+                            TargetExpression(text: "a mio avviso", meaning: "Opinione con distacco.", note: "A mio avviso, conviene rivederla."),
+                            TargetExpression(text: "direi quasi", meaning: "Sfumare un'affermazione.", note: "Direi quasi che ci siamo."),
+                            TargetExpression(text: "sotto certi aspetti", meaning: "Concessione.", note: "Sotto certi aspetti ha ragione lui.")],
+                situation: "Valutate il progetto di un collega: applaudite con misura, criticate con tatto e chiudete sempre con una proposta, non con un giudizio a secco.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Concorda in parte con la proposta del collega (locuzione di tre parole con « senso »).", expected: ["in un certo senso sono d'accordo", "in un certo senso la proposta regge", "in un certo senso hai ragione"], focus: "in un certo senso", watch: "Non « in certo senso »: serve l'articolo."),
+                                PracticeQuestion(prompt: "Ammorbidisci il giudizio che la relazione è incompleta (locuzione con « così »).", expected: ["la relazione è per così dire ancora una bozza", "è per così dire incompleta", "per così dire è un primo passo"], focus: "per così dire", watch: "Si incornicia tra due virgole."),
+                                PracticeQuestion(prompt: "Dai la tua opinione professionale su quale parte rifinire (formula con « avviso »).", expected: ["a mio avviso va rifinita la conclusione", "a mio avviso manca solo la sintesi", "a mio avviso il capitolo finale è il più debole"], focus: "a mio avviso", watch: "Regge l'indicativo: « a mio avviso va… »."),
+                                PracticeQuestion(prompt: "Dì che il progetto è quasi pronto senza escludere i difetti (formula con « quasi »).", expected: ["direi quasi che è pronto", "direi quasi che il progetto è pronto", "direi quasi di sì"], focus: "direi quasi", watch: "Sfuma senza negare."),
+                                PracticeQuestion(prompt: "Riconosci un merito parziale all'altro prima del tuo rilievo (locuzione con « aspetti »).", expected: ["sotto certi aspetti ha ragione", "sotto certi aspetti la sua analisi funziona", "hai ragione sotto certi aspetti"], focus: "sotto certi aspetti", watch: "Prima la concessione, poi il rilievo.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u9-sfumature-e1", kind: "choice", prompt: "« ___ avviso, la proposta merita attenzione. »", options: ["A mio", "Al mio", "In mio", "Per mio"], answers: ["A mio"], explain: "Formula fissa di distacco: a mio avviso."),
+                            Exercise(id: "it-foundations-u9-sfumature-e2", kind: "gap", prompt: "La relazione è, ___, ancora una bozza. (locuzione di tre parole che ammorbidisce)", options: [], answers: ["per così dire"], explain: "Per così dire incornicia il giudizio."),
+                            Exercise(id: "it-foundations-u9-sfumature-e3", kind: "written", prompt: "Concorda con tatto con l'idea del collega e chiedi una rifinitura: apri con la locuzione che contiene « senso ».", options: [], answers: ["in un certo senso l'idea funziona ma va rifinita", "in un certo senso sono d'accordo però chiederei una rifinitura", "in un certo senso sono d'accordo pero chiederei una rifinitura"], explain: "In un certo senso + concessione + richiesta."),
+                            Exercise(id: "it-foundations-u9-sfumature-e4", kind: "written", prompt: "Giustifica in tono professionale perché preferisci lavorare in team: apri con la formula che contiene « avviso ».", options: [], answers: ["a mio avviso il team aiuta a vedere i punti ciechi", "a mio avviso lavorare in team riduce gli errori", "a mio avviso il team rende le decisioni più solide"], explain: "A mio avviso + motivo professionale.")], skills: ["function:express-opinion", "speaking:justify-opinion", "grammar:connectors", "vocab:collocations"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "it-foundations-u9-presentare", title: "Presentare le idee", goal: "Strutturare un intervento breve in riunione: apertura, transizione, sintesi e chiusura.",
+                intro: LessonIntro(explanation: [
+                            "Un intervento breve ha tre mosse: aprire con « per iniziare », sviluppare i punti, chiudere con « per concludere ».",
+                            "« In sintesi » comprime: due frasi al massimo, poi si passa alla proposta concreta.",
+                            "Se cambiate argomento, annunciatelo: « venendo ai costi », « passo ai tempi » tengono il filo e non perdono la sala."], examples: [
+                            ExampleLine(text: "Per iniziare, un dato: le iscrizioni sono cresciute.", meaning: "Apertura con un dato."),
+                            ExampleLine(text: "Venendo ai costi, restiamo nel budget.", meaning: "Transizione annunciata."),
+                            ExampleLine(text: "In sintesi, la prova ha funzionato.", meaning: "Comprime i punti in una frase."),
+                            ExampleLine(text: "Per concludere, chiediamo due settimane per il prototipo.", meaning: "Chiusura con richiesta precisa."),
+                            ExampleLine(text: "Se posso aggiungere una sfumatura, il campione è ancora grezzo.", meaning: "Entra nel dibattito con garbo.")]),
+                expressions: [
+                            TargetExpression(text: "per iniziare", meaning: "Aprire l'intervento.", note: "Per iniziare, ringrazio i relatori."),
+                            TargetExpression(text: "venendo a…", meaning: "Cambiare punto.", note: "Venendo ai tempi, servono otto settimane."),
+                            TargetExpression(text: "in sintesi", meaning: "Comprimere.", note: "In sintesi: sì, ma con risorse."),
+                            TargetExpression(text: "per concludere", meaning: "Chiudere.", note: "Per concludere, vi chiedo un feedback."),
+                            TargetExpression(text: "se posso aggiungere…", meaning: "Intervenire con garbo.", note: "Se posso aggiungere una sfumatura…")],
+                situation: "Presentate al team una proposta in un minuto: aprite con un dato, sviluppate due argomenti e chiudete con una richiesta precisa, con cosa e quando.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Apri il tuo intervento con un dato sulle iscrizioni (locuzione d'apertura di due parole).", expected: ["per iniziare un dato le iscrizioni sono cresciute", "per iniziare ecco un dato sulle iscrizioni", "per iniziare le iscrizioni crescono"], focus: "per iniziare", watch: "Un solo dato, poi si sviluppa."),
+                                PracticeQuestion(prompt: "Annuncia che passi ai costi (formula di transizione).", expected: ["venendo ai costi", "venendo ai costi restiamo nel budget", "passo ora ai costi"], focus: "venendo a", watch: "« Venendo ai » + plurale."),
+                                PracticeQuestion(prompt: "Comprimi in una frase l'esito positivo della prova (formula di sintesi).", expected: ["in sintesi la prova ha funzionato", "in sintesi siamo nel budget e nei tempi", "in sintesi il bilancio è positivo"], focus: "in sintesi", watch: "Due frasi al massimo, poi la proposta."),
+                                PracticeQuestion(prompt: "Chiudi chiedendo un feedback entro venerdì (locuzione di chiusura).", expected: ["per concludere vi chiedo un feedback entro venerdì", "per concludere attendiamo il vostro feedback entro venerdi", "chiudo chiedendovi un feedback entro venerdì"], focus: "per concludere", watch: "La richiesta è precisa: cosa e quando."),
+                                PracticeQuestion(prompt: "Entra nel dibattito con garbo per aggiungere una riserva (formula cortese con « se posso »).", expected: ["se posso aggiungere una sfumatura il campione è ancora grezzo", "se posso aggiungere qualcosa servono più test", "se posso aggiungere una riserva i tempi sono stretti"], focus: "se posso aggiungere", watch: "La cortesia prima del contenuto.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u9-presentare-e1", kind: "choice", prompt: "« ___ iniziare, un dato: le iscrizioni sono cresciute. »", options: ["Per", "In", "A", "Da"], answers: ["Per"], explain: "Locuzione d'apertura: per iniziare."),
+                            Exercise(id: "it-foundations-u9-presentare-e2", kind: "gap", prompt: "___ sintesi, il bilancio della prova è positivo. (preposizione semplice)", options: [], answers: ["In"], explain: "In sintesi comprime i punti."),
+                            Exercise(id: "it-foundations-u9-presentare-e3", kind: "written", prompt: "Apri il tuo intervento sulle vendite con la locuzione d'apertura seguita da un dato.", options: [], answers: ["per iniziare ecco i dati sulle vendite", "per iniziare un dato le vendite sono cresciute", "per iniziare le vendite sono cresciute del dieci per cento"], explain: "Per iniziare + dato."),
+                            Exercise(id: "it-foundations-u9-presentare-e4", kind: "written", prompt: "Chiudi il tuo intervento chiedendo due settimane per il prototipo: apri con la locuzione di chiusura.", options: [], answers: ["per concludere chiediamo due settimane per il prototipo", "per concludere vi chiedo due settimane per il prototipo", "per concludere servono due settimane per il prototipo"], explain: "Per concludere + richiesta precisa.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum PtFoundationsU1 {
@@ -5958,6 +6318,96 @@ public enum PtFoundationsU8 {
                             Exercise(id: "pt-foundations-u7-argumentar-e4", kind: "written", prompt: "Sua tese sobre ampliar o metrô.", options: [], answers: ["acho que deveriamos ampliar o metro", "acho que deveríamos ampliar o metrô"], explain: "Acho que + deveríamos.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum PtFoundationsU9 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u9", title: "Nuances e registros", subtitle: "Dizer melhor", level: "C1", themes: [
+                    ConversationTheme("pt-foundations-u9-registros", "Como se diz", "Formal ou coloquial", "sparkles", "Course", "Vocês traduzem a mensagem de corredor para o e-mail da diretoria e discutem o que muda no tom.", 0),
+                    ConversationTheme("pt-foundations-u9-ideias", "Ideias em ordem", "Matices e estrutura", "bubble-left-and-text", "Course", "Vocês matizam opiniões num debate e depois cada um apresenta sua ideia em um minuto.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u9-registro", title: "Como se diz", goal: "Alternar entre o formal e o coloquial: a mesma mensagem em dois registros.",
+                intro: LessonIntro(explanation: [
+                            "O registro sobe ou desce com o pronome e o verbo: « Poderia me enviar o relatório ? » é formal; « Me manda o relatório aí ? » é de corredor.",
+                            "No e-mail para a diretoria, abra com « Prezada Sra. Alves », peça com « Solicito que… » e feche com « Atenciosamente »; no dia a dia, basta « Oi, tudo bem ? ».",
+                            "Conectores também têm registro: « mas » vira « no entanto », « porque » vira « visto que » — « Adiei a reunião, visto que a diretoria viajou »."], examples: [
+                            ExampleLine(text: "Prezada Sra. Alves, solicito que envie o relatório até sexta.", meaning: "Abertura e pedido formais."),
+                            ExampleLine(text: "Segue em anexo o contrato assinado.", meaning: "Fórmula fixa de e-mail."),
+                            ExampleLine(text: "Me manda o arquivo aí, por favor ?", meaning: "Pedido coloquial."),
+                            ExampleLine(text: "O projeto atrasou; no entanto, o prazo se mantém.", meaning: "Conector formal de contraste."),
+                            ExampleLine(text: "Tá suave, eu te dou um retorno depois.", meaning: "Coloquial: combinar depois.")]),
+                expressions: [
+                            TargetExpression(text: "Prezado(a) …", meaning: "Abertura formal de carta ou e-mail.", note: "Prezada Sra. Alves,"),
+                            TargetExpression(text: "solicito que + subjuntivo", meaning: "Pedido formal por escrito.", note: "Solicito que enviem hoje."),
+                            TargetExpression(text: "segue em anexo", meaning: "E-mail: apontar o anexo.", note: "Segue em anexo o contrato."),
+                            TargetExpression(text: "atenciosamente / cordialmente", meaning: "Fecho formal.", note: "…Atenciosamente, Marina."),
+                            TargetExpression(text: "dar um retorno", meaning: "Coloquial de trabalho: responder depois.", note: "Te dou um retorno amanhã.")],
+                situation: "Vocês traduzem a conversa de corredor para o e-mail da diretoria — e comentam o que muda no tom, do pronome ao conector.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Peça formalmente no e-mail: solicito que enviem o relatório até sexta.", expected: ["solicito que enviem o relatorio ate sexta", "solicito que enviem o relatório até sexta"], focus: "solicito que", watch: "Após « solicito que », subjuntivo."),
+                                PracticeQuestion(prompt: "Diga que o contrato segue em anexo.", expected: ["segue em anexo o contrato", "o contrato segue em anexo"], focus: "segue em anexo", watch: "Fórmula fixa de e-mail."),
+                                PracticeQuestion(prompt: "Coloquial: me manda o arquivo aí, por favor.", expected: ["me manda o arquivo ai por favor", "me manda o arquivo aí, por favor"], focus: "me manda", watch: "Imperativo coloquial com « aí »."),
+                                PracticeQuestion(prompt: "Formal, contraste: o projeto atrasou; no entanto, o prazo se mantém.", expected: ["o projeto atrasou no entanto o prazo se mantem", "o projeto atrasou; no entanto, o prazo se mantém"], focus: "no entanto", watch: "Contraste formal: no entanto."),
+                                PracticeQuestion(prompt: "Feche o e-mail formal para a diretoria.", expected: ["atenciosamente", "cordialmente"], focus: "fecho formal", watch: "Atenciosamente / Cordialmente.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u9-registro-e1", kind: "choice", prompt: "___ Sra. Alves, solicito que envie o contrato.", options: ["Prezada", "Querida", "Oi", "E aí"], answers: ["Prezada"], explain: "Abertura formal de e-mail: Prezada Sra. …"),
+                            Exercise(id: "pt-foundations-u9-registro-e2", kind: "gap", prompt: "Segue em ___ o relatório pedido. (palavra do anexo)", options: [], answers: ["anexo"], explain: "Fórmula fixa de e-mail: segue em anexo."),
+                            Exercise(id: "pt-foundations-u9-registro-e3", kind: "order", prompt: "Peça o documento à equipe por escrito (verbo « solicitar »).", options: [], answers: ["Solicito que enviem o relatório"], explain: "solicito que + subjuntivo: pedido formal."),
+                            Exercise(id: "pt-foundations-u9-registro-e4", kind: "written", prompt: "Feche um e-mail formal para a diretoria.", options: [], answers: ["atenciosamente", "cordialmente"], explain: "Atenciosamente / Cordialmente fecham e-mails formais.")], skills: ["vocab:social-expressions", "function:talk-about-work", "writing:email", "grammar:connectors"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "pt-foundations-u9-matices", title: "Mais ou menos", goal: "Matizar opiniões: concordar em parte, suavizar e reformular o que se pensa.",
+                intro: LessonIntro(explanation: [
+                            "Para concordar em parte: « De certa forma, você tem razão », « Até certo ponto, concordo », « Em parte, sim; em parte, não ».",
+                            "Para reformular com jeito: « Por assim dizer, é um emprego estável », « Digamos que o time está em transição ».",
+                            "Para marcar a sua voz sem soar duro: « Na minha visão, a proposta ainda é arriscada » — mais recolhida que « eu acho », mais pessoal que « parece-me »."], examples: [
+                            ExampleLine(text: "De certa forma, você tem razão.", meaning: "Concordância parcial."),
+                            ExampleLine(text: "Até certo ponto, o relatório convence.", meaning: "Concordo, mas não por inteiro."),
+                            ExampleLine(text: "Por assim dizer, é um emprego estável.", meaning: "Reformulação com jeito."),
+                            ExampleLine(text: "Na minha visão, a proposta é arriscada.", meaning: "Opinião pessoal matizada."),
+                            ExampleLine(text: "Não é que eu discorde; é que faltam dados.", meaning: "Defende-se sem brigar.")]),
+                expressions: [
+                            TargetExpression(text: "de certa forma, …", meaning: "Concordar em parte.", note: "De certa forma, sim."),
+                            TargetExpression(text: "até certo ponto, …", meaning: "Medir o acordo.", note: "Até certo ponto, concordo."),
+                            TargetExpression(text: "por assim dizer, …", meaning: "Reformular com tato.", note: "…um emprego, por assim dizer."),
+                            TargetExpression(text: "na minha visão, …", meaning: "Opinião pessoal.", note: "Na minha visão, é arriscado."),
+                            TargetExpression(text: "não é que…; é que…", meaning: "Negar antes de explicar.", note: "Não é que eu discorde.")],
+                situation: "Vocês avaliam a proposta de um colega com tato: concordam em parte, reformulam o que soou duro e deixam o debate aberto.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Concorde em parte: de certa forma, você tem razão.", expected: ["de certa forma voce tem razao", "de certa forma, você tem razão"], focus: "de certa forma", watch: "Frase fixa de concordância parcial."),
+                                PracticeQuestion(prompt: "Meça o acordo: até certo ponto, concordo com o relatório.", expected: ["ate certo ponto concordo com o relatorio", "até certo ponto, concordo com o relatório"], focus: "até certo ponto", watch: "Concordo, mas não por inteiro."),
+                                PracticeQuestion(prompt: "Reformule: por assim dizer, é um emprego estável.", expected: ["por assim dizer e um emprego estavel", "por assim dizer, é um emprego estável"], focus: "por assim dizer", watch: "Reformulação com tato."),
+                                PracticeQuestion(prompt: "Dê sua visão: na minha visão, a proposta é arriscada.", expected: ["na minha visao a proposta e arriscada", "na minha visão, a proposta é arriscada"], focus: "na minha visão", watch: "Opinião pessoal matizada."),
+                                PracticeQuestion(prompt: "Defenda-se: não é que eu discorde; é que faltam dados.", expected: ["nao e que eu discorde e que faltam dados", "não é que eu discorde; é que faltam dados"], focus: "não é que", watch: "Após « não é que », subjuntivo: discorde.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u9-matices-e1", kind: "choice", prompt: "___ certa forma, você tem razão.", options: ["De", "Da", "Na", "Por"], answers: ["De"], explain: "Frase fixa: de certa forma = concordar em parte."),
+                            Exercise(id: "pt-foundations-u9-matices-e2", kind: "gap", prompt: "Não é que eu ___; é que faltam dados. (discordar, subjuntivo)", options: [], answers: ["discorde"], explain: "Após « não é que », subjuntivo: discorde."),
+                            Exercise(id: "pt-foundations-u9-matices-e3", kind: "order", prompt: "Dê seu juízo com tato: a ideia convence ou não ?", options: [], answers: ["Na minha visão, a proposta é arriscada"], explain: "Na minha visão + juízo matizado."),
+                            Exercise(id: "pt-foundations-u9-matices-e4", kind: "written", prompt: "Concorde em parte com o relatório, medindo o acordo.", options: [], answers: ["ate certo ponto concordo com o relatorio", "até certo ponto, concordo com o relatório"], explain: "Até certo ponto mede o acordo sem negar.")], skills: ["function:express-opinion", "speaking:justify-opinion", "grammar:connectors", "vocab:collocations"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "pt-foundations-u9-apresentar", title: "Apresentar ideias", goal: "Estruturar uma fala curta: abrir, encadear e encerrar com clareza.",
+                intro: LessonIntro(explanation: [
+                            "Abra o ponto: « Para começar, … », « Em primeiro lugar, quero destacar… » — quem ouve já sabe o destino da fala.",
+                            "Encadeie sem saltos: « Dito isso, … », « Passando ao próximo ponto », « Volto ao ponto principal ».",
+                            "Encerre com fecho claro: « Resumindo, … », « Para encerrar, conto com o apoio de vocês » — fala sem conclusão parece inacabada."], examples: [
+                            ExampleLine(text: "Para começar, obrigado pela presença de todos.", meaning: "Abertura."),
+                            ExampleLine(text: "Dito isso, passo ao orçamento.", meaning: "Transição."),
+                            ExampleLine(text: "Volto ao ponto principal: o prazo.", meaning: "Recentrar."),
+                            ExampleLine(text: "Resumindo, os números nos favorecem.", meaning: "Síntese."),
+                            ExampleLine(text: "Para encerrar, conto com o apoio de vocês.", meaning: "Fecho com pedido.")]),
+                expressions: [
+                            TargetExpression(text: "para começar, …", meaning: "Abrir a fala.", note: "…obrigado pela presença."),
+                            TargetExpression(text: "dito isso, …", meaning: "Transição entre pontos.", note: "Dito isso, passo ao orçamento."),
+                            TargetExpression(text: "voltar ao ponto (principal)", meaning: "Recentrar o assunto.", note: "Volto ao ponto: o prazo."),
+                            TargetExpression(text: "resumindo, …", meaning: "Sintetizar.", note: "Resumindo, o ano foi bom."),
+                            TargetExpression(text: "para encerrar, …", meaning: "Fechar com pedido.", note: "…conto com o apoio de vocês.")],
+                situation: "Cada um apresenta em um minuto a ideia que defende na reunião: abre, sustenta com um dado e encerra pedindo algo concreto ao time.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Abra a fala: para começar, obrigado pela presença de todos.", expected: ["para comecar obrigado pela presenca de todos", "para começar, obrigado pela presença de todos"], focus: "para começar", watch: "Abertura clara."),
+                                PracticeQuestion(prompt: "Transição: dito isso, passo ao orçamento.", expected: ["dito isso passo ao orcamento", "dito isso, passo ao orçamento"], focus: "dito isso", watch: "Particípio como conector."),
+                                PracticeQuestion(prompt: "Recentre: volto ao ponto principal, o prazo.", expected: ["volto ao ponto principal o prazo", "volto ao ponto principal, o prazo"], focus: "voltar ao ponto", watch: "Recentrar sem se perder."),
+                                PracticeQuestion(prompt: "Sintetize: resumindo, os números nos favorecem.", expected: ["resumindo os numeros nos favorecem", "resumindo, os números nos favorecem"], focus: "resumindo", watch: "Síntese do balanço."),
+                                PracticeQuestion(prompt: "Encerre com pedido: para encerrar, conto com o apoio de vocês.", expected: ["para encerrar conto com o apoio de voces", "para encerrar, conto com o apoio de vocês"], focus: "para encerrar", watch: "Fecho + pedido concreto.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u9-apresentar-e1", kind: "choice", prompt: "___ encerrar, conto com o apoio de vocês.", options: ["Para", "Ao", "Em", "No"], answers: ["Para"], explain: "Fecho de fala: para encerrar."),
+                            Exercise(id: "pt-foundations-u9-apresentar-e2", kind: "gap", prompt: "___ isso, passo ao próximo ponto. (particípio de dizer)", options: [], answers: ["dito"], explain: "Particípio como conector: dito isso."),
+                            Exercise(id: "pt-foundations-u9-apresentar-e3", kind: "order", prompt: "Sintetize o balanço do ano para a diretoria.", options: [], answers: ["Resumindo, os números nos favorecem"], explain: "Resumindo + conclusão."),
+                            Exercise(id: "pt-foundations-u9-apresentar-e4", kind: "written", prompt: "Abra sua fala agradecendo quem veio.", options: [], answers: ["para comecar obrigado pela presenca de todos", "para começar, obrigado pela presença de todos"], explain: "Para começar + agradecimento.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
@@ -5967,7 +6417,8 @@ DeFoundationsU4.unit,
 DeFoundationsU5.unit,
 DeFoundationsU6.unit,
 DeFoundationsU7.unit,
-DeFoundationsU8.unit
+DeFoundationsU8.unit,
+DeFoundationsU9.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -6022,7 +6473,8 @@ EsFoundationsU5.unit,
 EsFoundationsU6.unit,
 EsFoundationsU7.unit,
 EsFoundationsU8.unit,
-EsFoundationsU9.unit
+EsFoundationsU9.unit,
+EsFoundationsU10.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
@@ -6032,7 +6484,8 @@ FrFoundationsU4.unit,
 FrFoundationsU5.unit,
 FrFoundationsU6.unit,
 FrFoundationsU7.unit,
-FrFoundationsU8.unit
+FrFoundationsU8.unit,
+FrFoundationsU9.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
@@ -6042,7 +6495,8 @@ ItFoundationsU4.unit,
 ItFoundationsU5.unit,
 ItFoundationsU6.unit,
 ItFoundationsU7.unit,
-ItFoundationsU8.unit
+ItFoundationsU8.unit,
+ItFoundationsU9.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
@@ -6052,7 +6506,8 @@ PtFoundationsU4.unit,
 PtFoundationsU5.unit,
 PtFoundationsU6.unit,
 PtFoundationsU7.unit,
-PtFoundationsU8.unit
+PtFoundationsU8.unit,
+PtFoundationsU9.unit
         ]),
     ]
 }

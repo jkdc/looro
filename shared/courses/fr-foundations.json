@@ -3264,6 +3264,577 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u9",
+      "title": "Nuances et registres",
+      "subtitle": "Le dire mieux",
+      "level": "C1",
+      "themes": [
+        {
+          "id": "fr-c1-registres",
+          "title": "Les registres",
+          "subtitle": "Soutenu ou familier",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Vous réécrivez un e-mail trop familier, puis un e-mail trop raide, jusqu'à trouver le ton juste.",
+          "colorIndex": 0
+        },
+        {
+          "id": "fr-c1-nuancer",
+          "title": "Nuancer",
+          "subtitle": "Plus ou moins",
+          "symbol": "bubble-left-and-text",
+          "category": "Course",
+          "situation": "En réunion, tout le monde tranche ; vous, vous accordez, conditionnez et modulez sans vous contredire.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u9-registre",
+          "title": "Comment le dire",
+          "goal": "Choisir le bon registre : du e-mail soutenu à la remarque orale, sans fausse note.",
+          "intro": {
+            "explanation": [
+              "Le registre se joue d'abord sur les verbes : « Je me permets de vous écrire » (soutenu) remplace « Je t'envoie un mot » (familier).",
+              "À l'écrit professionnel, le « vous » est la règle et les tournures nommées montent le ton : « bien vouloir », « je vous prie de ».",
+              "Les connecteurs trahissent le registre : « néanmoins », « toutefois », « par ailleurs » tiennent la longueur d'phrase ; « du coup », « genre » la plombent."
+            ],
+            "examples": [
+              {
+                "text": "Je me permets de vous écrire au sujet de votre annonce.",
+                "meaning": "Ouverture formelle d'e-mail."
+              },
+              {
+                "text": "Je vous prie de bien vouloir me répondre d'ici vendredi.",
+                "meaning": "Demande très polie (soutenu)."
+              },
+              {
+                "text": "Nous avons toutefois constaté un léger retard.",
+                "meaning": "Concession en registre soutenu."
+              },
+              {
+                "text": "Par ailleurs, le prix de la livraison a augmenté.",
+                "meaning": "Argument supplémentaire (soutenu)."
+              },
+              {
+                "text": "Je reste à votre disposition pour toute question.",
+                "meaning": "Formule de clôture d'e-mail."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je me permets de + infinitif",
+              "meaning": "Ouvrir un e-mail.",
+              "note": "Jamais « je te permets » à un inconnu."
+            },
+            {
+              "text": "je vous prie de bien vouloir…",
+              "meaning": "Demander avec égards.",
+              "note": "…me répondre d'ici vendredi."
+            },
+            {
+              "text": "néanmoins / toutefois",
+              "meaning": "« Mais » en soutenu.",
+              "note": "Nous avons toutefois un doute."
+            },
+            {
+              "text": "par ailleurs",
+              "meaning": "Ajouter un argument.",
+              "note": "Remplace « aussi », « pis »."
+            },
+            {
+              "text": "je reste à votre disposition",
+              "meaning": "Conclure l'e-mail.",
+              "note": "…pour toute question."
+            }
+          ],
+          "situation": "Vous écrivez au service client pour un colis en retard : votre premier brouillon est trop familier, le deuxième trop raide — vous cherchez le ton juste, professionnel mais humain.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ouvre un e-mail formel pour demander des informations sur l'annonce.",
+                "expected": [
+                  "Je me permets de vous écrire pour demander des informations",
+                  "Je me permets de vous ecrire pour demander des informations",
+                  "Je vous écris pour demander des informations"
+                ],
+                "focus": "je me permets de",
+                "watch": "« Vous » au destinataire inconnu."
+              },
+              {
+                "prompt": "Demande avec égards une réponse avant vendredi.",
+                "expected": [
+                  "Je vous prie de bien vouloir me répondre avant vendredi",
+                  "Je vous prie de bien vouloir me repondre avant vendredi",
+                  "Je vous prie de me répondre avant vendredi"
+                ],
+                "focus": "bien vouloir",
+                "watch": "Prier de + infinitif, jamais « je veux »."
+              },
+              {
+                "prompt": "Concède en soutenu : le retard est gênant.",
+                "expected": [
+                  "Le retard est néanmoins gênant",
+                  "Le retard est neanmoins genant",
+                  "Le retard reste toutefois gênant"
+                ],
+                "focus": "néanmoins",
+                "watch": "Connecteur en tête ou après le verbe."
+              },
+              {
+                "prompt": "Ajoute un second argument en soutenu : le prix de la livraison a augmenté.",
+                "expected": [
+                  "Par ailleurs, le prix de la livraison a augmenté",
+                  "Par ailleurs le prix de la livraison a augmente",
+                  "Par ailleurs, le prix de la livraison a augmente"
+                ],
+                "focus": "par ailleurs",
+                "watch": "Bannis « du coup » et « en plus »."
+              },
+              {
+                "prompt": "Termine l'e-mail en restant à la disposition du client.",
+                "expected": [
+                  "Je reste à votre disposition pour toute question",
+                  "Je reste a votre disposition pour toute question",
+                  "Je reste à votre disposition"
+                ],
+                "focus": "formule de clôture",
+                "watch": "Formule fixe : « pour toute question »."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u9-registre-e1",
+              "kind": "choice",
+              "prompt": "___ me permets de vous écrire au sujet de votre annonce.",
+              "answers": [
+                "Je"
+              ],
+              "explain": "E-mail formel : « je me permets », pas de « tu ».",
+              "options": [
+                "Je",
+                "Tu",
+                "Ça",
+                "On"
+              ]
+            },
+            {
+              "id": "fr-foundations-u9-registre-e2",
+              "kind": "gap",
+              "prompt": "Je vous prie de bien vouloir ___ ma candidature. (verbe : prendre en compte, infinitif)",
+              "answers": [
+                "considérer",
+                "considerer"
+              ],
+              "explain": "Bien vouloir + infinitif : le verbe simple monte le registre."
+            },
+            {
+              "id": "fr-foundations-u9-registre-e3",
+              "kind": "choice",
+              "prompt": "Nous avons ___ constaté un léger retard. (« mais », en registre soutenu)",
+              "answers": [
+                "néanmoins"
+              ],
+              "explain": "Néanmoins : la concession qui tient la distance.",
+              "options": [
+                "néanmoins",
+                "du coup",
+                "genre",
+                "vachement"
+              ]
+            },
+            {
+              "id": "fr-foundations-u9-registre-e4",
+              "kind": "written",
+              "prompt": "Termine l'e-mail : tu restes à la disposition du client.",
+              "answers": [
+                "je reste à votre disposition pour toute question",
+                "je reste a votre disposition pour toute question",
+                "je reste à votre disposition"
+              ],
+              "explain": "Formule de clôture attendue dans tout e-mail soigné."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:talk-about-work",
+            "writing:email",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-foundations-u9-nuances",
+          "title": "Plus ou moins",
+          "goal": "Nuancer son opinion pour éviter le tout-ou-rien : en quelque sorte, d'une certaine manière, à mon sens.",
+          "intro": {
+            "explanation": [
+              "Le C1 module plutôt qu'il ne tranche : « C'est en quelque sorte une seconde chance » dit presque, sans conclure à la place des faits.",
+              "« D'une certaine manière, il a raison » accorde un point vrai sans se rendre prisonnier de toute la thèse adverse.",
+              "« À mon sens » assume la part personnelle du jugement : plus réfléchi que « pour moi », moins raide que « selon moi »."
+            ],
+            "examples": [
+              {
+                "text": "C'est en quelque sorte une seconde chance.",
+                "meaning": "Approximation mesurée."
+              },
+              {
+                "text": "D'une certaine manière, son projet tient la route.",
+                "meaning": "Accord prudent."
+              },
+              {
+                "text": "À mon sens, la décision est irréversible.",
+                "meaning": "Opinion personnelle assumée."
+              },
+              {
+                "text": "J'y suis favorable, moyennant quelques garanties.",
+                "meaning": "Accord à condition."
+              },
+              {
+                "text": "Ce n'est pas faux, mais c'est plus compliqué que ça.",
+                "meaning": "Concession nuancée."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "en quelque sorte",
+              "meaning": "Presque, en quelque façon.",
+              "note": "Formule figée : pas « en quelque manière »."
+            },
+            {
+              "text": "d'une certaine manière",
+              "meaning": "Accord partiel.",
+              "note": "…il a raison, mais seulement en partie."
+            },
+            {
+              "text": "à mon sens",
+              "meaning": "Mon jugement réfléchi.",
+              "note": "Plus fort que « pour moi »."
+            },
+            {
+              "text": "moyennant + nom",
+              "meaning": "À condition de.",
+              "note": "Moyennant un effort, moyennant des garanties."
+            },
+            {
+              "text": "pas tout à fait",
+              "meaning": "Négation douce.",
+              "note": "Je ne suis pas tout à fait d'accord."
+            }
+          ],
+          "situation": "En débat d'équipe, tout le monde tranche trop vite : tu apprends à accorder sans tout céder, à conditionner sans te contredire.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Nuance : c'est presque une révolution (formule en « sorte »).",
+                "expected": [
+                  "C'est en quelque sorte une révolution",
+                  "C'est en quelque sorte une revolution",
+                  "C'est, en quelque sorte, une révolution"
+                ],
+                "focus": "en quelque sorte",
+                "watch": "Formule figée : sorte, pas manière."
+              },
+              {
+                "prompt": "Accorde prudemment : il a raison (d'une certaine…).",
+                "expected": [
+                  "D'une certaine manière, il a raison",
+                  "D'une certaine maniere, il a raison",
+                  "D'une certaine manière il a raison"
+                ],
+                "focus": "d'une certaine manière",
+                "watch": "Garde l'article : « une certaine manière »."
+              },
+              {
+                "prompt": "Donne une opinion réfléchie : ce choix est irréversible.",
+                "expected": [
+                  "À mon sens, ce choix est irréversible",
+                  "A mon sens ce choix est irreversible",
+                  "À mon sens ce choix est irréversible"
+                ],
+                "focus": "à mon sens",
+                "watch": "Accent grave sur À en tête de phrase."
+              },
+              {
+                "prompt": "Conditionne ton accord : tu es favorable, avec des garanties.",
+                "expected": [
+                  "J'y suis favorable, moyennant des garanties",
+                  "J'y suis favorable moyennant des garanties",
+                  "J'y suis favorable, moyennant des garanties."
+                ],
+                "focus": "moyennant",
+                "watch": "Moyennant + nom sans « de »."
+              },
+              {
+                "prompt": "Négation douce : tu n'es pas complètement d'accord.",
+                "expected": [
+                  "Je ne suis pas tout à fait d'accord",
+                  "Je ne suis pas tout a fait d'accord",
+                  "Je ne suis pas tout-a-fait d'accord"
+                ],
+                "focus": "pas tout à fait",
+                "watch": "Ne coupe pas « tout à fait »."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u9-nuances-e1",
+              "kind": "choice",
+              "prompt": "___ mon sens, la mesure arrive trop tôt.",
+              "answers": [
+                "À"
+              ],
+              "explain": "À mon sens : opinion réfléchie, accent grave.",
+              "options": [
+                "À",
+                "Par",
+                "Dans",
+                "Chez"
+              ]
+            },
+            {
+              "id": "fr-foundations-u9-nuances-e2",
+              "kind": "gap",
+              "prompt": "D'une certaine ___, son projet tient la route. (synonyme courant : « façon », ici avec accent grave)",
+              "answers": [
+                "manière",
+                "maniere"
+              ],
+              "explain": "D'une certaine manière : formule figée d'accord prudent."
+            },
+            {
+              "id": "fr-foundations-u9-nuances-e3",
+              "kind": "choice",
+              "prompt": "Nous acceptons le projet, ___ quelques ajustements. (à condition de : un seul mot)",
+              "answers": [
+                "moyennant"
+              ],
+              "explain": "Moyennant + nom : accord sous condition.",
+              "options": [
+                "moyennant",
+                "malgré",
+                "pendant",
+                "selon"
+              ]
+            },
+            {
+              "id": "fr-foundations-u9-nuances-e4",
+              "kind": "written",
+              "prompt": "Nuance ton accord : tu es d'accord, mais pas complètement.",
+              "answers": [
+                "je suis d'accord mais pas tout à fait",
+                "je suis d'accord, mais pas tout a fait",
+                "je ne suis pas tout à fait d'accord"
+              ],
+              "explain": "Le C1 pèse son oui : pas tout à fait."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors",
+            "vocab:collocations"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-foundations-u9-presenter",
+          "title": "Présenter des idées",
+          "goal": "Structurer un exposé court : annoncer le plan, enchaîner nettement, conclure par un bilan.",
+          "intro": {
+            "explanation": [
+              "Annoncer le plan, c'est donner la carte : « Pour commencer, le contexte ; ensuite, les chiffres » — l'auditeur sait toujours où il en est.",
+              "Les transitions s'énoncent : « J'en viens maintenant aux résultats » — on prévient le changement de cap au lieu de l'imposer.",
+              "On conclut par un bilan, jamais par un « voilà » : « En résumé, le projet tient ; pour conclure, j'ai besoin de votre feu vert »."
+            ],
+            "examples": [
+              {
+                "text": "Pour commencer, deux mots sur le contexte.",
+                "meaning": "Ouverture d'exposé."
+              },
+              {
+                "text": "J'en viens maintenant aux résultats du trimestre.",
+                "meaning": "Transition annoncée."
+              },
+              {
+                "text": "En résumé, le projet est rentable dès la deuxième année.",
+                "meaning": "Bilan synthétique."
+              },
+              {
+                "text": "Pour conclure, j'ai besoin de votre accord.",
+                "meaning": "Demande finale."
+              },
+              {
+                "text": "Si vous le permettez, je passerai à vos questions.",
+                "meaning": "Étape suivante, poliment."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "pour commencer",
+              "meaning": "Ouvrir l'exposé.",
+              "note": "…deux mots sur le contexte."
+            },
+            {
+              "text": "j'en viens à…",
+              "meaning": "Transiter.",
+              "note": "J'en viens aux chiffres."
+            },
+            {
+              "text": "en résumé",
+              "meaning": "Faire le bilan.",
+              "note": "…le projet tient."
+            },
+            {
+              "text": "pour conclure",
+              "meaning": "Finir et décider.",
+              "note": "…j'ai besoin de votre accord."
+            },
+            {
+              "text": "si vous le permettez",
+              "meaning": "Polir l'étape suivante.",
+              "note": "…je passe aux questions."
+            }
+          ],
+          "situation": "Vous présentez votre projet en cinq minutes en réunion : plan annoncé d'entrée, transitions nettes, bilan chiffré — et une conclusion qui obtient l'accord.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ouvre ton exposé : le contexte d'abord.",
+                "expected": [
+                  "Pour commencer, le contexte",
+                  "Pour commencer le contexte",
+                  "Pour commencer, quelques mots sur le contexte"
+                ],
+                "focus": "pour commencer",
+                "watch": "On annonce, on ne démarre pas en pleine matière."
+              },
+              {
+                "prompt": "Transition : tu passes maintenant aux résultats.",
+                "expected": [
+                  "J'en viens maintenant aux résultats",
+                  "J'en viens maintenant aux resultats",
+                  "J'en viens à présent aux résultats"
+                ],
+                "focus": "j'en viens à",
+                "watch": "J'en viens, pas « je viens »."
+              },
+              {
+                "prompt": "Fais le bilan : le projet est rentable.",
+                "expected": [
+                  "En résumé, le projet est rentable",
+                  "En resume le projet est rentable",
+                  "En résumé le projet est rentable"
+                ],
+                "focus": "en résumé",
+                "watch": "Accent aigu sur le é final."
+              },
+              {
+                "prompt": "Conclus en demandant l'accord de la salle.",
+                "expected": [
+                  "Pour conclure, j'ai besoin de votre accord",
+                  "Pour conclure j'ai besoin de votre accord",
+                  "Pour conclure, j'ai besoin de votre feu vert"
+                ],
+                "focus": "pour conclure",
+                "watch": "Besoin DE votre accord."
+              },
+              {
+                "prompt": "Demande poliment de passer aux questions.",
+                "expected": [
+                  "Si vous le permettez, je passerai aux questions",
+                  "Si vous le permettez je passerai aux questions",
+                  "Si vous le permettez, je passe aux questions"
+                ],
+                "focus": "si vous le permettez",
+                "watch": "Subjonctif : que vous le permettiez, sous-entendu."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u9-presenter-e1",
+              "kind": "choice",
+              "prompt": "___ commencer, deux mots sur le contexte.",
+              "answers": [
+                "Pour"
+              ],
+              "explain": "Pour commencer : ouverture standard d'exposé.",
+              "options": [
+                "Pour",
+                "Par",
+                "Chez",
+                "Vers"
+              ]
+            },
+            {
+              "id": "fr-foundations-u9-presenter-e2",
+              "kind": "gap",
+              "prompt": "En ___, le projet est rentable dès la deuxième année. (synonyme de « bilan », avec accent)",
+              "answers": [
+                "résumé",
+                "resume"
+              ],
+              "explain": "En résumé : le bilan avant la conclusion."
+            },
+            {
+              "id": "fr-foundations-u9-presenter-e3",
+              "kind": "choice",
+              "prompt": "Si vous le ___ , je passerai à vos questions.",
+              "answers": [
+                "permettez"
+              ],
+              "explain": "Si vous le permettez : formule figée et polie.",
+              "options": [
+                "permettez",
+                "pouvez",
+                "savez",
+                "voudrez"
+              ]
+            },
+            {
+              "id": "fr-foundations-u9-presenter-e4",
+              "kind": "written",
+              "prompt": "Transition : tu passes maintenant aux chiffres.",
+              "answers": [
+                "j'en viens maintenant aux chiffres",
+                "j'en viens a present aux chiffres",
+                "j'en viens à présent aux chiffres"
+              ],
+              "explain": "J'en viens à : transition qui prévient l'auditeur."
+            }
+          ],
+          "skills": [
+            "speaking:sustained-conversation",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

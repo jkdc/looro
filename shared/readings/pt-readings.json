@@ -344,6 +344,258 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-read-ensaio-cidade",
+      "languageID": "pt",
+      "title": "Ensaio: a língua na praça",
+      "level": "C1",
+      "topic": "opinião",
+      "unitID": "pt-foundations-u9",
+      "text": "Costuma-se dizer que a internet empobrece a língua. Na minha visão, o diagnóstico é apressado. É verdade que o teclado abrevia — « vc », « pq », « hj » —, mas abreviar não é destruir; por assim dizer, a escrita digital criou um registro novo, oral na sintaxe e escrito na forma. De certa forma, o português sempre fez isso: o que se falava na praça há um século entrou nos romances de hoje. Além disso, nunca se escreveu tanto quanto agora — mensagens, comentários, resenhas. O problema não é a variedade; é a distância entre quem domina os registros e quem fica preso em um só. Por isso, em vez de condenar o « pq », ensinemos quando ele cabe — e quando, no e-mail para a diretoria, precisa virar fórmula formal: visto que o registro é, antes de tudo, uma escolha.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-ensaio-cidade-q1",
+          "kind": "choice",
+          "prompt": "Qual é a tese do ensaio ?",
+          "answers": [
+            "A internet não empobrece a língua"
+          ],
+          "explain": "O autor considera apressado dizer que a internet empobrece a língua.",
+          "options": [
+            "A internet não empobrece a língua",
+            "A internet destrói a escrita",
+            "É preciso proibir abreviações",
+            "Ninguém escreve mais"
+          ]
+        },
+        {
+          "id": "pt-read-ensaio-cidade-q2",
+          "kind": "written",
+          "prompt": "Que abreviações o texto cita ?",
+          "answers": [
+            "vc pq hj",
+            "vc, pq e hj"
+          ],
+          "explain": "« vc », « pq », « hj »."
+        },
+        {
+          "id": "pt-read-ensaio-cidade-q3",
+          "kind": "choice",
+          "prompt": "O que, segundo o autor, já acontecia há um século ?",
+          "answers": [
+            "A fala da praça entrava nos livros"
+          ],
+          "explain": "« O que se falava na praça há um século entrou nos romances de hoje ».",
+          "options": [
+            "A fala da praça entrava nos livros",
+            "Ninguém sabia escrever",
+            "Os romances eram orais",
+            "A escola proibia gírias"
+          ]
+        },
+        {
+          "id": "pt-read-ensaio-cidade-q4",
+          "kind": "written",
+          "prompt": "Qual é, para o autor, o verdadeiro problema ?",
+          "answers": [
+            "a distancia entre quem domina os registros e quem fica preso em um so",
+            "a distância entre quem domina os registros",
+            "ficar preso em um só registro"
+          ],
+          "explain": "« A distância entre quem domina os registros e quem fica preso em um só »."
+        },
+        {
+          "id": "pt-read-ensaio-cidade-q5",
+          "kind": "choice",
+          "prompt": "O que o autor propõe no final ?",
+          "answers": [
+            "Ensinar quando cada registro cabe"
+          ],
+          "explain": "Em vez de condenar, ensinar quando o registro cabe.",
+          "options": [
+            "Ensinar quando cada registro cabe",
+            "Banir o « pq » da escola",
+            "Escrever só e-mails formais",
+            "Parar de usar a internet"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-read-carta-diretoria",
+      "languageID": "pt",
+      "title": "Carta da diretoria",
+      "level": "C1",
+      "topic": "trabalho",
+      "unitID": "pt-foundations-u9",
+      "text": "Prezadas equipes, confirmamos com esta carta o regime híbrido vigente a partir de 3 de março: três dias presenciais, reservados à colaboração e às reuniões de time. Solicitamos que as áreas publiquem seus calendários até 20 de fevereiro, visto que as salas serão alocadas por ordem de registro. Segue em anexo o guia de boas práticas; dele constam as exceções — licenças, saúde e prazos críticos. Registramos, no entanto, que nenhuma decisão do programa reduzirá o trabalho remoto já contratado. Agradecemos desde já o empenho de todos na transição e permanecemos à disposição para esclarecimentos pelos canais habituais. Atenciosamente, Diretoria de Pessoas.",
+      "skills": [
+        "reading:scan",
+        "reading:detail",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-carta-diretoria-q1",
+          "kind": "choice",
+          "prompt": "Quando começa o regime híbrido ?",
+          "answers": [
+            "3 de março"
+          ],
+          "explain": "« Vigente a partir de 3 de março ».",
+          "options": [
+            "3 de março",
+            "20 de fevereiro",
+            "3 de fevereiro",
+            "Em anexo"
+          ]
+        },
+        {
+          "id": "pt-read-carta-diretoria-q2",
+          "kind": "written",
+          "prompt": "Até quando as áreas devem publicar os calendários ?",
+          "answers": [
+            "20 de fevereiro",
+            "ate 20 de fevereiro"
+          ],
+          "explain": "« Até 20 de fevereiro »."
+        },
+        {
+          "id": "pt-read-carta-diretoria-q3",
+          "kind": "choice",
+          "prompt": "Como as salas serão alocadas ?",
+          "answers": [
+            "Por ordem de registro"
+          ],
+          "explain": "« As salas serão alocadas por ordem de registro ».",
+          "options": [
+            "Por ordem de registro",
+            "Por sorteio",
+            "Por antiguidade",
+            "Por indicação"
+          ]
+        },
+        {
+          "id": "pt-read-carta-diretoria-q4",
+          "kind": "written",
+          "prompt": "O que segue em anexo na carta ?",
+          "answers": [
+            "o guia de boas praticas",
+            "guia de boas práticas",
+            "o guia"
+          ],
+          "explain": "Segue em anexo o guia de boas práticas."
+        },
+        {
+          "id": "pt-read-carta-diretoria-q5",
+          "kind": "choice",
+          "prompt": "O que a carta garante sobre o trabalho remoto ?",
+          "answers": [
+            "Nada do programa o reduz"
+          ],
+          "explain": "« Nenhuma decisão do programa reduzirá o trabalho remoto já contratado ».",
+          "options": [
+            "Nada do programa o reduz",
+            "Ele acaba em março",
+            "Só diretores o mantêm",
+            "Depende do cliente"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-read-resenha-critica",
+      "languageID": "pt",
+      "title": "Resenha: Vozes do prédio",
+      "level": "C1",
+      "topic": "cultura",
+      "unitID": "pt-foundations-u9",
+      "text": "Diria que « Vozes do prédio » não é um romance fácil — e é justamente aí que mora o seu valor. A trama é mínima: uma síndica, três inquilinos e uma carta que ninguém quer ter escrito. De certa forma, nada acontece; por assim dizer, o livro inteiro é uma conversa à porta do elevador. E, no entanto, cada capítulo afia um registro: o formal da síndica, o coloquial do porteiro, o burocrático das circulares. Na minha visão, o segundo ato vacila — a autora explica o que o leitor já havia inferido. Não deixa de ser leitura imprescindível: raramente a prosa brasileira escutou tão bem quem fala como pode. Resumindo: um romance sobre registros que é, ele próprio, uma aula de registros.",
+      "skills": [
+        "reading:inference",
+        "function:express-opinion",
+        "writing:argument"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-resenha-critica-q1",
+          "kind": "choice",
+          "prompt": "Onde mora o valor do romance, segundo a resenha ?",
+          "answers": [
+            "Na sua dificuldade"
+          ],
+          "explain": "« Não é um romance fácil — e é justamente aí que mora o seu valor ».",
+          "options": [
+            "Na sua dificuldade",
+            "No seu final feliz",
+            "No seu tamanho",
+            "No seu preço"
+          ]
+        },
+        {
+          "id": "pt-read-resenha-critica-q2",
+          "kind": "written",
+          "prompt": "Quantos personagens centrais a trama tem ?",
+          "answers": [
+            "tres",
+            "três",
+            "quatro com a carta"
+          ],
+          "explain": "Uma síndica e três inquilinos: três personagens."
+        },
+        {
+          "id": "pt-read-resenha-critica-q3",
+          "kind": "choice",
+          "prompt": "O que a resenha critica no segundo ato ?",
+          "answers": [
+            "A autora explica o inferido"
+          ],
+          "explain": "« A autora explica o que o leitor já havia inferido ».",
+          "options": [
+            "A autora explica o inferido",
+            "Faltam capítulos",
+            "O porteiro desaparece",
+            "A carta é falsa"
+          ]
+        },
+        {
+          "id": "pt-read-resenha-critica-q4",
+          "kind": "choice",
+          "prompt": "O veredito final da resenhista é que a leitura é:",
+          "answers": [
+            "Imprescindível"
+          ],
+          "explain": "« Não deixa de ser leitura imprescindível ».",
+          "options": [
+            "Imprescindível",
+            "Descartável",
+            "Confusa",
+            "Inacabada"
+          ]
+        },
+        {
+          "id": "pt-read-resenha-critica-q5",
+          "kind": "written",
+          "prompt": "Como a resenhista resume o livro ?",
+          "answers": [
+            "um romance sobre registros que e uma aula de registros",
+            "um romance sobre registros",
+            "uma aula de registros"
+          ],
+          "explain": "« Um romance sobre registros que é, ele próprio, uma aula de registros »."
+        }
+      ]
     }
   ]
 }

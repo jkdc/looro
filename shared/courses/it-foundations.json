@@ -3085,6 +3085,562 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-foundations-u9",
+      "title": "Sfumature e registri",
+      "subtitle": "Dirlo meglio",
+      "level": "C1",
+      "themes": [
+        {
+          "id": "it-c1-registro",
+          "title": "Come lo dico",
+          "subtitle": "Formale o colloquiale",
+          "symbol": "bubble-left-and-text",
+          "category": "Course",
+          "situation": "Riscrivete la stessa notizia in due registri: email alla dirigenza e messaggio al collega.",
+          "colorIndex": 0
+        },
+        {
+          "id": "it-c1-sfumature",
+          "title": "Più o meno",
+          "subtitle": "Sfumare le opinioni",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Valutate una proposta con tatto: accordo parziale, rilievo gentile, chiusura chiara.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u9-registro",
+          "title": "Come lo dico",
+          "goal": "Dire la stessa cosa in due registri: l'email formale alla dirigenza e il messaggio al collega.",
+          "intro": {
+            "explanation": [
+              "Il registro è la veste della lingua: « Le scrivo per informarLa che la riunione è stata rinviata » e « Ehi, la riunione è slittata » dicono la stessa cosa in due mondi diversi.",
+              "Nel formale: Lei con la maiuscola, forme piene, nessuna elisione (« Le invio », « in allegato », « La ringrazio in anticipo »). Nel colloquiale: tu, elisioni (« ti mando », « facciamo »), battute brevi.",
+              "I connettivi tengono insieme i due mondi: « pertanto » e « tuttavia » reggono la relazione; « comunque » e « infatti » la chat."
+            ],
+            "examples": [
+              {
+                "text": "Le scrivo per informarLa che la riunione è stata rinviata a giovedì.",
+                "meaning": "Email formale: Lei + passivo."
+              },
+              {
+                "text": "Ehi, la riunione è slittata a giovedì.",
+                "meaning": "Stessa notizia in chat, registro colloquiale."
+              },
+              {
+                "text": "La ringrazio in anticipo per la Sua disponibilità.",
+                "meaning": "Chiusura formale, prima della risposta."
+              },
+              {
+                "text": "Ti ringrazio mille, mi hai tolto un peso!",
+                "meaning": "Ringraziamento caloroso tra pari."
+              },
+              {
+                "text": "Pertanto, La invito a confermare la Sua partecipazione entro venerdì.",
+                "meaning": "Connettivo formale + richiesta precisa."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Le scrivo per…",
+              "meaning": "Apertura formale di email.",
+              "note": "Le scrivo per confermare la riunione."
+            },
+            {
+              "text": "in allegato",
+              "meaning": "Trasmettere un file.",
+              "note": "In allegato Le invio il preventivo."
+            },
+            {
+              "text": "La ringrazio in anticipo",
+              "meaning": "Chiusura cortese.",
+              "note": "Si usa prima di ricevere la risposta."
+            },
+            {
+              "text": "slittare",
+              "meaning": "Posticiparsi (di un impegno).",
+              "note": "La riunione è slittata di una settimana."
+            },
+            {
+              "text": "pertanto",
+              "meaning": "Connettivo formale di conclusione.",
+              "note": "Pertanto Le chiedo una conferma."
+            }
+          ],
+          "situation": "Riscrivete la stessa notizia due volte: un'email alla dirigenza e un messaggio al collega di fiducia. Poi leggete le due versioni ad alta voce e confrontate i registri.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Apri un'email formale per confermare la tua presenza alla riunione.",
+                "expected": [
+                  "le scrivo per confermare la mia presenza di giovedì",
+                  "le scrivo per confermare la mia presenza di giovedi",
+                  "le confermo la mia presenza"
+                ],
+                "focus": "Le + verbo pieno",
+                "watch": "Mai « Ciao »; Lei con la maiuscola nell'email."
+              },
+              {
+                "prompt": "Comunica in modo formale che il documento richiesto è allegato.",
+                "expected": [
+                  "in allegato le invio il documento",
+                  "le invio in allegato il documento richiesto",
+                  "allego il documento richiesto"
+                ],
+                "focus": "in allegato",
+                "watch": "« allegato » singolare per un solo file."
+              },
+              {
+                "prompt": "Rendi colloquiale la notizia che l'incontro è stato posticipato.",
+                "expected": [
+                  "l'incontro è slittato",
+                  "l'incontro e slittato",
+                  "la riunione è slittata"
+                ],
+                "focus": "slittare",
+                "watch": "Colloquiale: « slittare » invece di « rinviare »."
+              },
+              {
+                "prompt": "Chiudi l'email ringraziando prima ancora di ricevere la risposta.",
+                "expected": [
+                  "la ringrazio in anticipo",
+                  "la ringrazio in anticipo per la disponibilità",
+                  "ringrazio sin d'ora per l'attenzione"
+                ],
+                "focus": "in anticipo",
+                "watch": "« in anticipo » si usa prima del ricevimento."
+              },
+              {
+                "prompt": "Chiedi formalmente una conferma entro venerdì, aprendo col connettivo conclusivo che vale « per questo motivo ».",
+                "expected": [
+                  "pertanto le chiedo una conferma entro venerdì",
+                  "pertanto le chiedo una conferma entro venerdi",
+                  "quindi le chiediamo conferma entro venerdì"
+                ],
+                "focus": "pertanto / quindi",
+                "watch": "Pertanto apre la frase e regge l'indicativo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u9-registro-e1",
+              "kind": "choice",
+              "prompt": "Formale: « ___ scrivo per confermare l'appuntamento di giovedì. »",
+              "answers": [
+                "Le"
+              ],
+              "explain": "Email formale: pronome di cortesia Lei.",
+              "options": [
+                "Le",
+                "Ti",
+                "Vi",
+                "Ce"
+              ]
+            },
+            {
+              "id": "it-foundations-u9-registro-e2",
+              "kind": "gap",
+              "prompt": "Chiusura cortese: La ringrazio ___ della Sua disponibilità. (si scrive prima ancora di ricevere qualcosa)",
+              "answers": [
+                "in anticipo"
+              ],
+              "explain": "Formula fissa: ringraziare in anticipo."
+            },
+            {
+              "id": "it-foundations-u9-registro-e3",
+              "kind": "written",
+              "prompt": "Riformula in registro colloquiale l'idea che l'incontro è stato posticipato (verbo: la riunione « scivola » in avanti).",
+              "answers": [
+                "l'incontro è slittato",
+                "l'incontro e slittato",
+                "la riunione è slittata"
+              ],
+              "explain": "Colloquiale: slittare invece di rinviare."
+            },
+            {
+              "id": "it-foundations-u9-registro-e4",
+              "kind": "written",
+              "prompt": "Chiudi un'email formale ricordando una scadenza: apri la frase col connettivo che vale « per questo motivo ».",
+              "answers": [
+                "pertanto le chiedo una conferma entro venerdì",
+                "pertanto le chiedo una conferma entro venerdi",
+                "quindi la invito a confermare entro venerdì"
+              ],
+              "explain": "Pertanto / quindi + richiesta con Lei."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:talk-about-work",
+            "writing:email",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "it-foundations-u9-sfumature",
+          "title": "Più o meno",
+          "goal": "Sfumare opinioni e giudizi per discutere senza scontri: distacco, concessione, morbidezza.",
+          "intro": {
+            "explanation": [
+              "Per non suonare categorici, l'italiano professionale sfuma: « in un certo senso, è una buona base di lavoro » accorda senza chiudere la discussione.",
+              "« Per così dire » ammorbidisce una parola forte: « è una soluzione, per così dire, provvisoria » avverte senza offendere.",
+              "« A mio avviso » separa l'opinione dalla persona: si discute l'idea, non chi l'ha proposta."
+            ],
+            "examples": [
+              {
+                "text": "In un certo senso, la proposta regge.",
+                "meaning": "Accordo parziale, non totale."
+              },
+              {
+                "text": "È un promemoria, per così dire, informale.",
+                "meaning": "Ammorbidisce il giudizio."
+              },
+              {
+                "text": "A mio avviso, va rifinita la parte finale.",
+                "meaning": "Opinione personale, tono professionale."
+              },
+              {
+                "text": "Direi quasi che è pronta; manca solo la sintesi.",
+                "meaning": "Sfuma senza negare."
+              },
+              {
+                "text": "Sotto certi aspetti sì, sotto altri no.",
+                "meaning": "Opinione divisa, senza scontro."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "in un certo senso",
+              "meaning": "Accordo parziale.",
+              "note": "In un certo senso, sì; però servono dati."
+            },
+            {
+              "text": "per così dire",
+              "meaning": "Ammorbidire una parola.",
+              "note": "È un registro, per così dire, medio."
+            },
+            {
+              "text": "a mio avviso",
+              "meaning": "Opinione con distacco.",
+              "note": "A mio avviso, conviene rivederla."
+            },
+            {
+              "text": "direi quasi",
+              "meaning": "Sfumare un'affermazione.",
+              "note": "Direi quasi che ci siamo."
+            },
+            {
+              "text": "sotto certi aspetti",
+              "meaning": "Concessione.",
+              "note": "Sotto certi aspetti ha ragione lui."
+            }
+          ],
+          "situation": "Valutate il progetto di un collega: applaudite con misura, criticate con tatto e chiudete sempre con una proposta, non con un giudizio a secco.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Concorda in parte con la proposta del collega (locuzione di tre parole con « senso »).",
+                "expected": [
+                  "in un certo senso sono d'accordo",
+                  "in un certo senso la proposta regge",
+                  "in un certo senso hai ragione"
+                ],
+                "focus": "in un certo senso",
+                "watch": "Non « in certo senso »: serve l'articolo."
+              },
+              {
+                "prompt": "Ammorbidisci il giudizio che la relazione è incompleta (locuzione con « così »).",
+                "expected": [
+                  "la relazione è per così dire ancora una bozza",
+                  "è per così dire incompleta",
+                  "per così dire è un primo passo"
+                ],
+                "focus": "per così dire",
+                "watch": "Si incornicia tra due virgole."
+              },
+              {
+                "prompt": "Dai la tua opinione professionale su quale parte rifinire (formula con « avviso »).",
+                "expected": [
+                  "a mio avviso va rifinita la conclusione",
+                  "a mio avviso manca solo la sintesi",
+                  "a mio avviso il capitolo finale è il più debole"
+                ],
+                "focus": "a mio avviso",
+                "watch": "Regge l'indicativo: « a mio avviso va… »."
+              },
+              {
+                "prompt": "Dì che il progetto è quasi pronto senza escludere i difetti (formula con « quasi »).",
+                "expected": [
+                  "direi quasi che è pronto",
+                  "direi quasi che il progetto è pronto",
+                  "direi quasi di sì"
+                ],
+                "focus": "direi quasi",
+                "watch": "Sfuma senza negare."
+              },
+              {
+                "prompt": "Riconosci un merito parziale all'altro prima del tuo rilievo (locuzione con « aspetti »).",
+                "expected": [
+                  "sotto certi aspetti ha ragione",
+                  "sotto certi aspetti la sua analisi funziona",
+                  "hai ragione sotto certi aspetti"
+                ],
+                "focus": "sotto certi aspetti",
+                "watch": "Prima la concessione, poi il rilievo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u9-sfumature-e1",
+              "kind": "choice",
+              "prompt": "« ___ avviso, la proposta merita attenzione. »",
+              "answers": [
+                "A mio"
+              ],
+              "explain": "Formula fissa di distacco: a mio avviso.",
+              "options": [
+                "A mio",
+                "Al mio",
+                "In mio",
+                "Per mio"
+              ]
+            },
+            {
+              "id": "it-foundations-u9-sfumature-e2",
+              "kind": "gap",
+              "prompt": "La relazione è, ___, ancora una bozza. (locuzione di tre parole che ammorbidisce)",
+              "answers": [
+                "per così dire"
+              ],
+              "explain": "Per così dire incornicia il giudizio."
+            },
+            {
+              "id": "it-foundations-u9-sfumature-e3",
+              "kind": "written",
+              "prompt": "Concorda con tatto con l'idea del collega e chiedi una rifinitura: apri con la locuzione che contiene « senso ».",
+              "answers": [
+                "in un certo senso l'idea funziona ma va rifinita",
+                "in un certo senso sono d'accordo però chiederei una rifinitura",
+                "in un certo senso sono d'accordo pero chiederei una rifinitura"
+              ],
+              "explain": "In un certo senso + concessione + richiesta."
+            },
+            {
+              "id": "it-foundations-u9-sfumature-e4",
+              "kind": "written",
+              "prompt": "Giustifica in tono professionale perché preferisci lavorare in team: apri con la formula che contiene « avviso ».",
+              "answers": [
+                "a mio avviso il team aiuta a vedere i punti ciechi",
+                "a mio avviso lavorare in team riduce gli errori",
+                "a mio avviso il team rende le decisioni più solide"
+              ],
+              "explain": "A mio avviso + motivo professionale."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors",
+            "vocab:collocations"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "it-foundations-u9-presentare",
+          "title": "Presentare le idee",
+          "goal": "Strutturare un intervento breve in riunione: apertura, transizione, sintesi e chiusura.",
+          "intro": {
+            "explanation": [
+              "Un intervento breve ha tre mosse: aprire con « per iniziare », sviluppare i punti, chiudere con « per concludere ».",
+              "« In sintesi » comprime: due frasi al massimo, poi si passa alla proposta concreta.",
+              "Se cambiate argomento, annunciatelo: « venendo ai costi », « passo ai tempi » tengono il filo e non perdono la sala."
+            ],
+            "examples": [
+              {
+                "text": "Per iniziare, un dato: le iscrizioni sono cresciute.",
+                "meaning": "Apertura con un dato."
+              },
+              {
+                "text": "Venendo ai costi, restiamo nel budget.",
+                "meaning": "Transizione annunciata."
+              },
+              {
+                "text": "In sintesi, la prova ha funzionato.",
+                "meaning": "Comprime i punti in una frase."
+              },
+              {
+                "text": "Per concludere, chiediamo due settimane per il prototipo.",
+                "meaning": "Chiusura con richiesta precisa."
+              },
+              {
+                "text": "Se posso aggiungere una sfumatura, il campione è ancora grezzo.",
+                "meaning": "Entra nel dibattito con garbo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "per iniziare",
+              "meaning": "Aprire l'intervento.",
+              "note": "Per iniziare, ringrazio i relatori."
+            },
+            {
+              "text": "venendo a…",
+              "meaning": "Cambiare punto.",
+              "note": "Venendo ai tempi, servono otto settimane."
+            },
+            {
+              "text": "in sintesi",
+              "meaning": "Comprimere.",
+              "note": "In sintesi: sì, ma con risorse."
+            },
+            {
+              "text": "per concludere",
+              "meaning": "Chiudere.",
+              "note": "Per concludere, vi chiedo un feedback."
+            },
+            {
+              "text": "se posso aggiungere…",
+              "meaning": "Intervenire con garbo.",
+              "note": "Se posso aggiungere una sfumatura…"
+            }
+          ],
+          "situation": "Presentate al team una proposta in un minuto: aprite con un dato, sviluppate due argomenti e chiudete con una richiesta precisa, con cosa e quando.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Apri il tuo intervento con un dato sulle iscrizioni (locuzione d'apertura di due parole).",
+                "expected": [
+                  "per iniziare un dato le iscrizioni sono cresciute",
+                  "per iniziare ecco un dato sulle iscrizioni",
+                  "per iniziare le iscrizioni crescono"
+                ],
+                "focus": "per iniziare",
+                "watch": "Un solo dato, poi si sviluppa."
+              },
+              {
+                "prompt": "Annuncia che passi ai costi (formula di transizione).",
+                "expected": [
+                  "venendo ai costi",
+                  "venendo ai costi restiamo nel budget",
+                  "passo ora ai costi"
+                ],
+                "focus": "venendo a",
+                "watch": "« Venendo ai » + plurale."
+              },
+              {
+                "prompt": "Comprimi in una frase l'esito positivo della prova (formula di sintesi).",
+                "expected": [
+                  "in sintesi la prova ha funzionato",
+                  "in sintesi siamo nel budget e nei tempi",
+                  "in sintesi il bilancio è positivo"
+                ],
+                "focus": "in sintesi",
+                "watch": "Due frasi al massimo, poi la proposta."
+              },
+              {
+                "prompt": "Chiudi chiedendo un feedback entro venerdì (locuzione di chiusura).",
+                "expected": [
+                  "per concludere vi chiedo un feedback entro venerdì",
+                  "per concludere attendiamo il vostro feedback entro venerdi",
+                  "chiudo chiedendovi un feedback entro venerdì"
+                ],
+                "focus": "per concludere",
+                "watch": "La richiesta è precisa: cosa e quando."
+              },
+              {
+                "prompt": "Entra nel dibattito con garbo per aggiungere una riserva (formula cortese con « se posso »).",
+                "expected": [
+                  "se posso aggiungere una sfumatura il campione è ancora grezzo",
+                  "se posso aggiungere qualcosa servono più test",
+                  "se posso aggiungere una riserva i tempi sono stretti"
+                ],
+                "focus": "se posso aggiungere",
+                "watch": "La cortesia prima del contenuto."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u9-presentare-e1",
+              "kind": "choice",
+              "prompt": "« ___ iniziare, un dato: le iscrizioni sono cresciute. »",
+              "answers": [
+                "Per"
+              ],
+              "explain": "Locuzione d'apertura: per iniziare.",
+              "options": [
+                "Per",
+                "In",
+                "A",
+                "Da"
+              ]
+            },
+            {
+              "id": "it-foundations-u9-presentare-e2",
+              "kind": "gap",
+              "prompt": "___ sintesi, il bilancio della prova è positivo. (preposizione semplice)",
+              "answers": [
+                "In"
+              ],
+              "explain": "In sintesi comprime i punti."
+            },
+            {
+              "id": "it-foundations-u9-presentare-e3",
+              "kind": "written",
+              "prompt": "Apri il tuo intervento sulle vendite con la locuzione d'apertura seguita da un dato.",
+              "answers": [
+                "per iniziare ecco i dati sulle vendite",
+                "per iniziare un dato le vendite sono cresciute",
+                "per iniziare le vendite sono cresciute del dieci per cento"
+              ],
+              "explain": "Per iniziare + dato."
+            },
+            {
+              "id": "it-foundations-u9-presentare-e4",
+              "kind": "written",
+              "prompt": "Chiudi il tuo intervento chiedendo due settimane per il prototipo: apri con la locuzione di chiusura.",
+              "answers": [
+                "per concludere chiediamo due settimane per il prototipo",
+                "per concludere vi chiedo due settimane per il prototipo",
+                "per concludere servono due settimane per il prototipo"
+              ],
+              "explain": "Per concludere + richiesta precisa."
+            }
+          ],
+          "skills": [
+            "speaking:sustained-conversation",
+            "function:talk-about-work",
+            "grammar:connectors",
+            "vocab:work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

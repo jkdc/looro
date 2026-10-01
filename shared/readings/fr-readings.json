@@ -342,6 +342,271 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-read-essai-ville",
+      "languageID": "fr",
+      "title": "Essai : la ville à hauteur d'homme",
+      "level": "C1",
+      "topic": "essai",
+      "unitID": "fr-foundations-u9",
+      "text": "Faut-il rendre la ville aux piétons ou aux voitures ? À mon sens, la question est mal posée : il ne s'agit pas d'exclure, mais de hiérarchiser. D'un côté, la voiture occupe un espace rare : une place de parking abrite autant de surface qu'un café. De l'autre, des millions d'habitants en dépendent, faute de transports dignes de ce nom. C'est ici que le débat mérite d'être nuancé. Réduire la place de la voiture n'est pas la supprimer ; c'est, en quelque sorte, lui rendre sa valeur. Les villes qui ont osé — Oslo, Pontevedra — constatent moins d'accidents et des commerces qui résistent. Autrement dit, maîtriser la voiture est un gain pour tous, y compris pour ceux qui conduisent. Encore faut-il investir d'abord dans les bus : sans alternative crédible, chaque contrainte devient une punition.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-essai-ville-q1",
+          "kind": "choice",
+          "prompt": "Quelle est la thèse de l'essai ?",
+          "answers": [
+            "Hiérarchiser plutôt qu'exclure"
+          ],
+          "explain": "« Il ne s'agit pas d'exclure, mais de hiérarchiser ».",
+          "options": [
+            "Hiérarchiser plutôt qu'exclure",
+            "Interdire les voitures",
+            "Construire plus de parkings",
+            "Supprimer les bus"
+          ]
+        },
+        {
+          "id": "fr-read-essai-ville-q2",
+          "kind": "written",
+          "prompt": "Qu'abrite une place de parking, selon l'essai ?",
+          "answers": [
+            "autant de surface qu'un cafe",
+            "autant de surface qu'un café",
+            "la surface d'un café"
+          ],
+          "explain": "« Une place de parking abrite autant de surface qu'un café »."
+        },
+        {
+          "id": "fr-read-essai-ville-q3",
+          "kind": "choice",
+          "prompt": "Quelles villes sont citées en exemple ?",
+          "answers": [
+            "Oslo et Pontevedra"
+          ],
+          "explain": "« Les villes qui ont osé — Oslo, Pontevedra ».",
+          "options": [
+            "Oslo et Pontevedra",
+            "Paris et Lyon",
+            "Oslo et Paris",
+            "Lyon et Pontevedra"
+          ]
+        },
+        {
+          "id": "fr-read-essai-ville-q4",
+          "kind": "choice",
+          "prompt": "Que signifie « lui rendre sa valeur » ?",
+          "answers": [
+            "La voiture redevient utile en étant moins prioritaire"
+          ],
+          "explain": "Réduire sa place n'est pas la supprimer : moins partout, donc mieux utilisée.",
+          "options": [
+            "La voiture redevient utile en étant moins prioritaire",
+            "La voiture disparaît",
+            "Le prix de l'essence baisse",
+            "La voiture reprend la ville"
+          ]
+        },
+        {
+          "id": "fr-read-essai-ville-q5",
+          "kind": "written",
+          "prompt": "Quelle condition l'auteur pose-t-il à la fin ?",
+          "answers": [
+            "investir d'abord dans les bus",
+            "investir dans les bus",
+            "des transports credibles",
+            "une alternative credible"
+          ],
+          "explain": "« Encore faut-il investir d'abord dans les bus »."
+        }
+      ]
+    },
+    {
+      "id": "fr-read-lettre-direction",
+      "languageID": "fr",
+      "title": "Lettre de la direction",
+      "level": "C1",
+      "topic": "travail",
+      "unitID": "fr-foundations-u9",
+      "text": "Chères équipes, chers collaborateurs,\n\nJe vous écris au sujet de l'organisation de la rentrée. Comme vous le savez, nos locaux du boulevard Nord seront rénovés à compter du 3 novembre. Par conséquent, les équipes du deuxième étage rejoindront le site Est, moyennant quelques aménagements que la logistique s'engage à achever avant votre arrivée. Par ailleurs, nous instaurons, à titre expérimental, deux jours de télétravail hebdomadaires ; leurs modalités vous parviendront par le portail interne. Je mesure que ces changements suscitent des questions ; aussi vous invite-je à la réunion d'information du 12 octobre, à 14 heures, salle Hemingway. En résumé : même mission, nouveaux espaces, davantage de souplesse. Je vous remercie de votre confiance et reste à votre disposition.\n\nLa direction",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:work",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-lettre-direction-q1",
+          "kind": "choice",
+          "prompt": "Quand les locaux du boulevard Nord seront-ils rénovés ?",
+          "answers": [
+            "À compter du 3 novembre"
+          ],
+          "explain": "« Seront rénovés à compter du 3 novembre ».",
+          "options": [
+            "À compter du 3 novembre",
+            "Le 12 octobre",
+            "Avant la rentrée",
+            "En janvier"
+          ]
+        },
+        {
+          "id": "fr-read-lettre-direction-q2",
+          "kind": "written",
+          "prompt": "Où iront les équipes du deuxième étage ?",
+          "answers": [
+            "au site est",
+            "le site est",
+            "site est"
+          ],
+          "explain": "« Les équipes du deuxième étage rejoindront le site Est »."
+        },
+        {
+          "id": "fr-read-lettre-direction-q3",
+          "kind": "choice",
+          "prompt": "Combien de jours de télétravail sont instaurés ?",
+          "answers": [
+            "Deux par semaine"
+          ],
+          "explain": "« Deux jours de télétravail hebdomadaires ».",
+          "options": [
+            "Deux par semaine",
+            "Trois par semaine",
+            "Un par mois",
+            "Aucun"
+          ]
+        },
+        {
+          "id": "fr-read-lettre-direction-q4",
+          "kind": "choice",
+          "prompt": "Où se tiendra la réunion d'information ?",
+          "answers": [
+            "Salle Hemingway"
+          ],
+          "explain": "« Salle Hemingway » est annoncé en fin de lettre.",
+          "options": [
+            "Salle Hemingway",
+            "Site Est",
+            "Boulevard Nord",
+            "En visioconférence"
+          ]
+        },
+        {
+          "id": "fr-read-lettre-direction-q5",
+          "kind": "choice",
+          "prompt": "Quel est le ton de cette lettre ?",
+          "answers": [
+            "Formel et rassurant"
+          ],
+          "explain": "« Chères équipes », « je reste à votre disposition », « En résumé » : registre soutenu qui rassure.",
+          "options": [
+            "Formel et rassurant",
+            "Familier et direct",
+            "Sec et neutre",
+            "Désolé et défensif"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-read-critique-livre",
+      "languageID": "fr",
+      "title": "Critique : un premier roman",
+      "level": "C1",
+      "topic": "littérature",
+      "unitID": "fr-foundations-u9",
+      "text": "Voilà un roman qui aurait pu sombrer dans la sentimentalité ; il s'en sort avec panache. L'auteure y suit trois générations de femmes dans une boulangerie lyonnaise : la grand-mère qui pétrit, la mère qui tient la caisse, la fille qui veut partir. À mon sens, le génie du livre tient à ses silences : rien n'est expliqué, tout est suggéré, à la manière des grandes fresques familiales. On regrettera toutefois une fin expéditive : les dernières pages résolvent en dix lignes ce que trois cents pages avaient patiemment noué. Nuance importante : ce défaut ne ruine pas l'ensemble. En résumé, un premier roman remarquable, moyennant une certaine tolérance pour les fins pressées. Il mérite sa place dans les prix littéraires de la rentrée ; je lirai le suivant, c'est dire.",
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "function:express-opinion",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-critique-livre-q1",
+          "kind": "choice",
+          "prompt": "Que suit l'auteure dans ce roman ?",
+          "answers": [
+            "Trois générations de femmes"
+          ],
+          "explain": "« Trois générations de femmes dans une boulangerie lyonnaise ».",
+          "options": [
+            "Trois générations de femmes",
+            "Deux frères lyonnais",
+            "Une boulangerie parisienne",
+            "Une mère et son fils"
+          ]
+        },
+        {
+          "id": "fr-read-critique-livre-q2",
+          "kind": "choice",
+          "prompt": "Que signifie « il s'en sort avec panache » ?",
+          "answers": [
+            "Le roman évite habilement le piège"
+          ],
+          "explain": "Il « aurait pu sombrer » mais il évite la sentimentalité avec brio.",
+          "options": [
+            "Le roman évite habilement le piège",
+            "Le roman échoue lamentablement",
+            "L'auteure change de sujet",
+            "Le livre est drôle"
+          ]
+        },
+        {
+          "id": "fr-read-critique-livre-q3",
+          "kind": "written",
+          "prompt": "Que regrette la critique ?",
+          "answers": [
+            "une fin expeditive",
+            "une fin expéditive",
+            "une fin trop rapide",
+            "les dernieres pages"
+          ],
+          "explain": "« On regrettera toutefois une fin expéditive »."
+        },
+        {
+          "id": "fr-read-critique-livre-q4",
+          "kind": "choice",
+          "prompt": "Quelle nuance la critique apporte-t-elle à ce défaut ?",
+          "answers": [
+            "Il ne ruine pas l'ensemble"
+          ],
+          "explain": "« Nuance importante : ce défaut ne ruine pas l'ensemble ».",
+          "options": [
+            "Il ne ruine pas l'ensemble",
+            "Il rend le livre inutile",
+            "Il vient de l'éditeur",
+            "Il prouve la mauvaise foi"
+          ]
+        },
+        {
+          "id": "fr-read-critique-livre-q5",
+          "kind": "choice",
+          "prompt": "Quel est le verdict global ?",
+          "answers": [
+            "Un premier roman remarquable"
+          ],
+          "explain": "« En résumé, un premier roman remarquable ».",
+          "options": [
+            "Un premier roman remarquable",
+            "Un livre à éviter",
+            "Un ouvrage moyen",
+            "Un essai passionnant"
+          ]
+        }
+      ]
     }
   ]
 }

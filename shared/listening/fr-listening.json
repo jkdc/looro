@@ -1112,6 +1112,264 @@
           "explain": "Ils promettent d'en reparler quand le plan sera publié."
         }
       ]
+    },
+    {
+      "id": "fr-listen-debat-radio",
+      "languageID": "fr",
+      "title": "Débat à la radio",
+      "level": "C1",
+      "topic": "débats",
+      "unitID": "fr-foundations-u9",
+      "text": "« Bienvenue dans notre débat du soir : le télétravail a-t-il tué le bureau ? » Diane, consultante : « En quelque sorte, oui. D'une certaine manière, les open spaces ont perdu leur raison d'être : nos clients exigent désormais des résultats, pas une présence. » Marc, dirigeant d'une PME : « À mon sens, c'est plus subtil. Nous avons toutefois constaté une baisse de la créativité : les idées circulent moins bien en visioconférence. » Diane concède : « C'est un argument, néanmoins les salariés ne reviendront pas à plein temps. » Le présentateur reformule : « Autrement dit, le bureau deviendrait un lieu de rencontre plutôt qu'un lieu de production ? » Tous deux l'admettent, moyennant des locaux repensés. Le débat continue, mais l'essentiel est dit : la nuance a gagné la partie.",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-debat-radio-q1",
+          "kind": "choice",
+          "prompt": "Quel est le sujet du débat ?",
+          "answers": [
+            "Le télétravail et le bureau"
+          ],
+          "explain": "Dès l'ouverture : « le télétravail a-t-il tué le bureau ? ».",
+          "options": [
+            "Le télétravail et le bureau",
+            "La baisse des résultats",
+            "Le prix des open spaces",
+            "La visioconférence seule"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-radio-q2",
+          "kind": "written",
+          "prompt": "Quelle formule nuancée Diane utilise-t-elle en premier ?",
+          "answers": [
+            "en quelque sorte oui",
+            "en quelque sorte, oui",
+            "oui en quelque sorte"
+          ],
+          "explain": "« En quelque sorte, oui » : l'accord nuancé ouvre son intervention."
+        },
+        {
+          "id": "fr-listen-debat-radio-q3",
+          "kind": "choice",
+          "prompt": "Que constate Marc ?",
+          "answers": [
+            "Une baisse de la créativité"
+          ],
+          "explain": "« Nous avons toutefois constaté une baisse de la créativité ».",
+          "options": [
+            "Une baisse de la créativité",
+            "Une hausse des résultats",
+            "Une baisse de la présence",
+            "Une hausse des loyers"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-radio-q4",
+          "kind": "choice",
+          "prompt": "Quelle formule le présentateur utilise-t-il pour reformuler ?",
+          "answers": [
+            "Autrement dit"
+          ],
+          "explain": "« Autrement dit » annonce la reformulation.",
+          "options": [
+            "Autrement dit",
+            "Par ailleurs",
+            "Pour commencer",
+            "En fait"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-radio-q5",
+          "kind": "written",
+          "prompt": "Que demandent les deux invités à la fin ?",
+          "answers": [
+            "des locaux repenses",
+            "des locaux repensés",
+            "repenser les locaux"
+          ],
+          "explain": "Ils l'admettent « moyennant des locaux repensés »."
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-conference-cles",
+      "languageID": "fr",
+      "title": "Conférence : les trois clés",
+      "level": "C1",
+      "topic": "travail",
+      "unitID": "fr-foundations-u9",
+      "text": "« Mesdames et messieurs, permettez-moi de conclure par trois clés. Pour commencer, la clarté : une équipe sans objectifs précis confond activité et avancement. J'en viens ensuite à la confiance ; autrement dit, déléguer, c'est accepter que le travail soit fait autrement. Enfin, le feedback : dans nos enquêtes, les salariés qui reçoivent un retour chaque semaine se déclarent nettement plus engagés. En résumé, ni la surveillance ni la bienveillance aveugle ne suffisent ; à mon sens, la performance naît de la combinaison des trois clés. Si vous ne retenez qu'une phrase de cette conférence, retenez celle-ci : on ne gère pas des gens, on crée les conditions pour qu'ils réussissent. Je vous remercie de votre attention et je réponds à vos questions.",
+      "skills": [
+        "listening:connected-speech",
+        "listening:detail",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-conference-cles-q1",
+          "kind": "choice",
+          "prompt": "Combien de clés l'orateur présente-t-il ?",
+          "answers": [
+            "Trois"
+          ],
+          "explain": "« Permettez-moi de conclure par trois clés ».",
+          "options": [
+            "Trois",
+            "Deux",
+            "Quatre",
+            "Cinq"
+          ]
+        },
+        {
+          "id": "fr-listen-conference-cles-q2",
+          "kind": "choice",
+          "prompt": "Quelle est la première clé ?",
+          "answers": [
+            "La clarté"
+          ],
+          "explain": "« Pour commencer, la clarté ».",
+          "options": [
+            "La clarté",
+            "La confiance",
+            "Le feedback",
+            "La rapidité"
+          ]
+        },
+        {
+          "id": "fr-listen-conference-cles-q3",
+          "kind": "written",
+          "prompt": "D'après l'orateur, déléguer signifie quoi ?",
+          "answers": [
+            "accepter que le travail soit fait autrement",
+            "accepter que ce soit fait autrement",
+            "que le travail soit fait autrement"
+          ],
+          "explain": "« Déléguer, c'est accepter que le travail soit fait autrement »."
+        },
+        {
+          "id": "fr-listen-conference-cles-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui rend les salariés plus engagés, selon les enquêtes ?",
+          "answers": [
+            "Un retour chaque semaine"
+          ],
+          "explain": "Les salariés « qui reçoivent un retour chaque semaine se déclarent nettement plus engagés ».",
+          "options": [
+            "Un retour chaque semaine",
+            "Une réunion chaque jour",
+            "Un salaire plus élevé",
+            "Des objectifs flous"
+          ]
+        },
+        {
+          "id": "fr-listen-conference-cles-q5",
+          "kind": "written",
+          "prompt": "Quel mot complète la phrase finale : « On ne gère pas des ___ , on crée les conditions pour qu'ils réussissent. »",
+          "answers": [
+            "gens",
+            "personnes",
+            "des gens"
+          ],
+          "explain": "« On ne gère pas des gens » : la phrase à retenir."
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-podcast-nuances",
+      "languageID": "fr",
+      "title": "Podcast : l'art de nuancer",
+      "level": "C1",
+      "topic": "langue",
+      "unitID": "fr-foundations-u9",
+      "text": "Dans ce podcast, Léa reçoit M. Roussel, linguiste. Léa : « Est-ce vraiment poli de répondre seulement : j'ai bien reçu votre mail ? » M. Roussel : « C'est correct, mais neutre. À l'écrit professionnel, on préférera : je vous confirme la bonne réception de votre message. Le verbe confirmer élève le registre. » Léa : « Et à l'oral ? » M. Roussel : « À l'oral, le ton fait la moitié du travail ; néanmoins, certaines tournures restent marquées : je vous prie de bien vouloir sonne formel, voire guindé entre collègues proches. » Léa : « Donc tout est une question de contexte ? » M. Roussel : « En quelque sorte : nuancer, c'est choisir la bonne distance. Celui qui module gagne la confiance de son auditoire ; celui qui parle tout cru l'épuise. »",
+      "skills": [
+        "listening:inference",
+        "listening:gist",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-podcast-nuances-q1",
+          "kind": "choice",
+          "prompt": "Quel est le thème du podcast ?",
+          "answers": [
+            "Le registre de langue au travail"
+          ],
+          "explain": "Le dialogue porte sur les registres à l'écrit et à l'oral professionnel.",
+          "options": [
+            "Le registre de langue au travail",
+            "L'orthographe des e-mails",
+            "L'histoire du français",
+            "Les réunions à distance"
+          ]
+        },
+        {
+          "id": "fr-listen-podcast-nuances-q2",
+          "kind": "choice",
+          "prompt": "Quelle tournure M. Roussel juge-t-elle guindée entre proches ?",
+          "answers": [
+            "Je vous prie de bien vouloir"
+          ],
+          "explain": "« Je vous prie de bien vouloir sonne formel, voire guindé entre collègues proches ».",
+          "options": [
+            "Je vous prie de bien vouloir",
+            "J'ai bien reçu votre mail",
+            "Je vous confirme la réception",
+            "Le verbe confirmer"
+          ]
+        },
+        {
+          "id": "fr-listen-podcast-nuances-q3",
+          "kind": "written",
+          "prompt": "Comment M. Roussel définit-il la nuance ?",
+          "answers": [
+            "choisir la bonne distance",
+            "c'est choisir la bonne distance",
+            "choisir la distance"
+          ],
+          "explain": "« Nuancer, c'est choisir la bonne distance »."
+        },
+        {
+          "id": "fr-listen-podcast-nuances-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui fait la moitié du travail à l'oral ?",
+          "answers": [
+            "Le ton"
+          ],
+          "explain": "« À l'oral, le ton fait la moitié du travail ».",
+          "options": [
+            "Le ton",
+            "L'orthographe",
+            "La longueur",
+            "Le silence"
+          ]
+        },
+        {
+          "id": "fr-listen-podcast-nuances-q5",
+          "kind": "choice",
+          "prompt": "Que veut dire « celui qui module gagne la confiance » ?",
+          "answers": [
+            "Nuancer rend crédible"
+          ],
+          "explain": "À opposer à « celui qui parle tout cru l'épuise » : la modulation crédibilise.",
+          "options": [
+            "Nuancer rend crédible",
+            "Parler fort convainc",
+            "Écrire court suffit",
+            "Tout dire rassure"
+          ]
+        }
+      ]
     }
   ]
 }

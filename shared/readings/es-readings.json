@@ -344,6 +344,260 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-read-ensayo-ciudad",
+      "languageID": "es",
+      "title": "La ciudad de quince minutos",
+      "level": "C1",
+      "topic": "opinión",
+      "unitID": "es-foundations-u10",
+      "text": "La ciudad de los quince minutos es, por así decirlo, una promesa modesta: nada de coches voladores, solo vida cercana. Para empezar, acercar los servicios reduce el desplazamiento obligatorio; en segundo lugar, la calle recupera su papel de lugar de encuentro. No obstante, el ensayo tiene un punto ciego: quien no puede pagarse un piso en el centro queda fuera del mapa. Desde mi punto de vista, la medida solo funciona si va acompañada de vivienda asequible; de lo contrario, es un lujo con lema. Por otra parte, no todo es economía: hay vecindarios que ya viven a escala humana sin haberlo planeado. En resumen, merece la pena intentarlo, siempre que la palabra clave no sea « minutos », sino « vecindario ».",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-ensayo-ciudad-q1",
+          "kind": "choice",
+          "prompt": "¿Qué riesgo ve el autor en la medida ?",
+          "options": [
+            "Que puede volverse un lujo",
+            "Que promete coches voladores",
+            "Que es demasiado modesta",
+            "Que odia los minutos"
+          ],
+          "answers": [
+            "Que puede volverse un lujo"
+          ],
+          "explain": "Sin vivienda asequible, « es un lujo con lema »."
+        },
+        {
+          "id": "es-read-ensayo-ciudad-q2",
+          "kind": "written",
+          "prompt": "¿Qué necesita la medida para funcionar, según el autor ?",
+          "answers": [
+            "vivienda asequible",
+            "la vivienda asequible"
+          ],
+          "explain": "« Solo funciona si va acompañada de vivienda asequible »."
+        },
+        {
+          "id": "es-read-ensayo-ciudad-q3",
+          "kind": "choice",
+          "prompt": "¿Cuál es la palabra clave final del ensayo ?",
+          "options": [
+            "Vecindario",
+            "Minutos",
+            "Lema",
+            "Mapa"
+          ],
+          "answers": [
+            "Vecindario"
+          ],
+          "explain": "« No sea 'minutos', sino 'vecindario' »."
+        },
+        {
+          "id": "es-read-ensayo-ciudad-q4",
+          "kind": "choice",
+          "prompt": "¿Qué ejemplo da de vida ya a escala humana ?",
+          "options": [
+            "Vecindarios no planificados",
+            "El centro pagado",
+            "Los coches voladores",
+            "El desplazamiento obligatorio"
+          ],
+          "answers": [
+            "Vecindarios no planificados"
+          ],
+          "explain": "« Hay vecindarios que ya viven a escala humana sin haberlo planeado »."
+        },
+        {
+          "id": "es-read-ensayo-ciudad-q5",
+          "kind": "written",
+          "prompt": "¿Cómo califica el autor la promesa de los quince minutos ?",
+          "answers": [
+            "modesta",
+            "una promesa modesta",
+            "promesa modesta"
+          ],
+          "explain": "« Una promesa modesta », dice desde el principio."
+        }
+      ]
+    },
+    {
+      "id": "es-read-carta-directiva",
+      "languageID": "es",
+      "title": "Carta de la dirección",
+      "level": "C1",
+      "topic": "empresa",
+      "unitID": "es-foundations-u10",
+      "text": "Estimado equipo: les escribimos para compartir la reorganización del próximo trimestre. Para empezar, agradecerles el esfuerzo del último ciclo: los indicadores han mejorado notablemente. No obstante, el contexto exige ajustes. En primer lugar, consolidaremos los dos departamentos comerciales en una sola dirección; en segundo lugar, el trabajo en remoto quedará limitado a dos días semanales, salvo acuerdo contrario con el responsable de cada área. Somos conscientes de que, en cierto modo, la medida reduce la autonomía ganada; por otra parte, evita una reducción de plantilla, que era la alternativa sobre la mesa. Les convocamos a una asamblea el jueves a las once para responder a sus preguntas. Quedamos a su disposición. La dirección.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-carta-directiva-q1",
+          "kind": "choice",
+          "prompt": "¿Qué cambia en el trabajo en remoto ?",
+          "options": [
+            "Dos días semanales como máximo",
+            "Se prohibe del todo",
+            "Pasa a ser obligatorio cinco días",
+            "Depende de cada ministerio"
+          ],
+          "answers": [
+            "Dos días semanales como máximo"
+          ],
+          "explain": "« Quedará limitado a dos días semanales »."
+        },
+        {
+          "id": "es-read-carta-directiva-q2",
+          "kind": "choice",
+          "prompt": "¿Qué evita la dirección con la medida ?",
+          "options": [
+            "Una reducción de plantilla",
+            "Una asamblea el jueves",
+            "La flexibilidad semanal",
+            "Los indicadores del ciclo"
+          ],
+          "answers": [
+            "Una reducción de plantilla"
+          ],
+          "explain": "« Por otra parte, evita una reducción de plantilla »."
+        },
+        {
+          "id": "es-read-carta-directiva-q3",
+          "kind": "written",
+          "prompt": "¿Cuándo convoca la dirección a la asamblea ?",
+          "answers": [
+            "el jueves a las once",
+            "jueves a las once",
+            "el jueves"
+          ],
+          "explain": "Les convocan el jueves a las once."
+        },
+        {
+          "id": "es-read-carta-directiva-q4",
+          "kind": "choice",
+          "prompt": "¿Qué reconoce la dirección sobre la medida ?",
+          "options": [
+            "Que reduce la autonomía en cierto modo",
+            "Que sube los indicadores",
+            "Que crea dos direcciones nuevas",
+            "Que no hace falta ninguna medida"
+          ],
+          "answers": [
+            "Que reduce la autonomía en cierto modo"
+          ],
+          "explain": "« Somos conscientes de que, en cierto modo, reduce la autonomía ganada »."
+        },
+        {
+          "id": "es-read-carta-directiva-q5",
+          "kind": "written",
+          "prompt": "¿Quién firma la carta ?",
+          "answers": [
+            "la direccion",
+            "la dirección"
+          ],
+          "explain": "Firma « La dirección »."
+        }
+      ]
+    },
+    {
+      "id": "es-read-resena-critica",
+      "languageID": "es",
+      "title": "Reseña: la exposición « Umbral »",
+      "level": "C1",
+      "topic": "cultura",
+      "unitID": "es-foundations-u10",
+      "text": "Con « Umbral », la galería Lagarta intenta lo difícil: una exposición sobre el silencio. Para empezar, acierta con el recorrido: de la entrada al fondo, cada sala baja el volumen, y el visitante baja la voz sin que nadie se lo pida. La pieza central — cien radios encendidos que no emiten nada — es, por así decirlo, el ruido hecho ausencia. No obstante, la muestra adolece de pretensión: los carteles explican lo que las obras ya dicen, y lo dicen mejor. Desde mi punto de vista, sobra la mitad de los textos. A esto se añade que el catálogo, carísimo, retoca las fotografías hasta vaciarlas. En resumen: vaya, y pronto; la exposición se sostiene sola, a pesar de quienes la acompañan.",
+      "skills": [
+        "reading:inference",
+        "function:express-opinion",
+        "grammar:connectors",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-resena-critica-q1",
+          "kind": "choice",
+          "prompt": "¿Qué opina la crítica de los carteles explicativos ?",
+          "options": [
+            "Que sobran en parte",
+            "Que son imprescindibles",
+            "Que deberían ampliarse",
+            "Que son demasiado baratos"
+          ],
+          "answers": [
+            "Que sobran en parte"
+          ],
+          "explain": "« Sobra la mitad de los textos: las obras lo dicen mejor »."
+        },
+        {
+          "id": "es-read-resena-critica-q2",
+          "kind": "choice",
+          "prompt": "¿Qué es la pieza central de la muestra ?",
+          "options": [
+            "Cien radios encendidos y mudos",
+            "Una sala a oscuras",
+            "Un catálogo carísimo",
+            "Un cartel explicativo"
+          ],
+          "answers": [
+            "Cien radios encendidos y mudos"
+          ],
+          "explain": "« Cien radios encendidos que no emiten nada »."
+        },
+        {
+          "id": "es-read-resena-critica-q3",
+          "kind": "written",
+          "prompt": "¿Cómo describe la crítica el intento de la galería ?",
+          "answers": [
+            "dificil",
+            "difícil",
+            "un intento dificil",
+            "un intento difícil"
+          ],
+          "explain": "« Intenta lo difícil: una exposición sobre el silencio »."
+        },
+        {
+          "id": "es-read-resena-critica-q4",
+          "kind": "choice",
+          "prompt": "¿Qué se deduce sobre el visitante ?",
+          "options": [
+            "Que respeta el silencio sin que se lo pidan",
+            "Que habla durante todo el recorrido",
+            "Que se queja del precio del catálogo",
+            "Que entra y sale enseguida"
+          ],
+          "answers": [
+            "Que respeta el silencio sin que se lo pidan"
+          ],
+          "explain": "« Baja la voz sin que nadie se lo pida »."
+        },
+        {
+          "id": "es-read-resena-critica-q5",
+          "kind": "written",
+          "prompt": "¿Qué defecto señala la crítica del catálogo ?",
+          "answers": [
+            "retoca las fotografias",
+            "retoca las fotografías",
+            "retoca las fotos"
+          ],
+          "explain": "Retoca las fotografías hasta vaciarlas; además, es carísimo."
+        }
+      ]
     }
   ]
 }

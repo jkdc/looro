@@ -344,6 +344,306 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-read-saggio-citta",
+      "languageID": "it",
+      "title": "Saggio: la città che cammina",
+      "level": "C1",
+      "topic": "città",
+      "unitID": "it-foundations-u9",
+      "text": "La città che cammina è, per così dire, una città che pensa. Negli ultimi decenni abbiamo sacrificato lo spazio pubblico alla velocità: parcheggi dove potevano crescere alberi, corsie dove potevano stare i bambini. Non si tratta di nostalgia, bensì di equilibrio. Le città che hanno ridotto il traffico nel centro storico — Oslo, Pontevedra — non hanno registrato il collasso commerciale temuto; hanno anzi visto crescere i piccoli commerci, che vivono di passanti lenti. A mio avviso, il vero ostacolo non è economico ma culturale: confondiamo la libertà di muoversi in auto con la libertà di abitare la città. In sintesi, ridisegnare le strade significa decidere chi le strade devono servire: se la risposta sono le persone, il resto è tecnica.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-saggio-citta-q1",
+          "kind": "choice",
+          "prompt": "Qual è la tesi centrale del saggio?",
+          "answers": [
+            "Ridisegnare le strade per le persone"
+          ],
+          "explain": "« Ridisegnare le strade significa decidere chi devono servire ».",
+          "options": [
+            "Ridisegnare le strade per le persone",
+            "Difendere la velocità in auto",
+            "Tornare al passato per nostalgia",
+            "Spostare i negozi fuori città"
+          ]
+        },
+        {
+          "id": "it-read-saggio-citta-q2",
+          "kind": "choice",
+          "prompt": "Come definisce l'autore il vero ostacolo?",
+          "answers": [
+            "Culturale, non economico"
+          ],
+          "explain": "« Il vero ostacolo non è economico ma culturale ».",
+          "options": [
+            "Culturale, non economico",
+            "Economico, non culturale",
+            "Tecnico e inevitabile",
+            "Politico e temporaneo"
+          ]
+        },
+        {
+          "id": "it-read-saggio-citta-q3",
+          "kind": "written",
+          "prompt": "Cosa hanno visto crescere le città che hanno ridotto il traffico?",
+          "answers": [
+            "i piccoli commerci",
+            "piccoli commerci",
+            "i piccoli esercizi commerciali"
+          ],
+          "explain": "Hanno visto crescere i piccoli commerci."
+        },
+        {
+          "id": "it-read-saggio-citta-q4",
+          "kind": "choice",
+          "prompt": "Quali città vengono citate come esempio?",
+          "answers": [
+            "Oslo e Pontevedra"
+          ],
+          "explain": "Citati Oslo e Pontevedra.",
+          "options": [
+            "Oslo e Pontevedra",
+            "Roma e Milano",
+            "Parigi e Berlino",
+            "Osaka e Kyoto"
+          ]
+        },
+        {
+          "id": "it-read-saggio-citta-q5",
+          "kind": "written",
+          "prompt": "Con cosa confondiamo, secondo l'autore, la libertà di abitare la città?",
+          "answers": [
+            "con la liberta di muoversi in auto",
+            "con la libertà di muoversi in auto",
+            "muoversi in auto"
+          ],
+          "explain": "Con la libertà di muoversi in auto."
+        },
+        {
+          "id": "it-read-saggio-citta-q6",
+          "kind": "choice",
+          "prompt": "Che funzione ha « bensì » nel testo?",
+          "answers": [
+            "Contrastare dopo una negazione"
+          ],
+          "explain": "« Non… bensì »: correzione dopo la negazione.",
+          "options": [
+            "Contrastare dopo una negazione",
+            "Aggiungere un esempio",
+            "Introdurre una causa",
+            "Chiudere il ragionamento"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-read-lettera-dirigenza",
+      "languageID": "it",
+      "title": "Lettera alla dirigenza",
+      "level": "C1",
+      "topic": "lavoro",
+      "unitID": "it-foundations-u9",
+      "text": "Gentile Direzione, Le scrivo per conto del gruppo operativo per sottoporreLe una proposta sul lavoro ibrido. Nei sei mesi di sperimentazione, i rilasci sono stati puntuali e i tempi di risposta sono rimasti stabili; peraltro, il sondaggio interno mostra un netto miglioramento del benessere dichiarato. È vero che alcuni processi, per così dire faccia a faccia, richiedono presenza: pertanto proponiamo tre giorni in sede per i team di produzione e due per gli altri reparti. In sintesi, chiediamo di rendere strutturale quanto finora sperimentato, con una revisione semestrale. Restiamo a Sua completa disposizione per presentare i dati in riunione e La ringraziamo sin d'ora per l'attenzione. Distinti saluti, Il gruppo operativo.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-lettera-dirigenza-q1",
+          "kind": "choice",
+          "prompt": "Cosa chiede il gruppo operativo?",
+          "answers": [
+            "Rendere strutturale il lavoro ibrido"
+          ],
+          "explain": "« Chiediamo di rendere strutturale quanto finora sperimentato ».",
+          "options": [
+            "Rendere strutturale il lavoro ibrido",
+            "Tornare tutti in ufficio cinque giorni",
+            "Assumere nuovo personale",
+            "Posticipare la sperimentazione"
+          ]
+        },
+        {
+          "id": "it-read-lettera-dirigenza-q2",
+          "kind": "written",
+          "prompt": "Quanti giorni in sede propongono per i team di produzione?",
+          "answers": [
+            "tre",
+            "3",
+            "tre giorni"
+          ],
+          "explain": "Tre giorni in sede."
+        },
+        {
+          "id": "it-read-lettera-dirigenza-q3",
+          "kind": "choice",
+          "prompt": "Quali dati portano a favore?",
+          "answers": [
+            "Rilasci puntuali e tempi di risposta stabili"
+          ],
+          "explain": "Rilasci puntuali, tempi stabili, benessere in crescita.",
+          "options": [
+            "Rilasci puntuali e tempi di risposta stabili",
+            "Vendite raddoppiate",
+            "Meno ferie richieste",
+            "Più clienti acquisiti"
+          ]
+        },
+        {
+          "id": "it-read-lettera-dirigenza-q4",
+          "kind": "choice",
+          "prompt": "Quale concessione fa la lettera?",
+          "answers": [
+            "Alcuni processi richiedono la presenza"
+          ],
+          "explain": "« È vero che alcuni processi richiedono presenza ».",
+          "options": [
+            "Alcuni processi richiedono la presenza",
+            "Il sondaggio è inaffidabile",
+            "I tempi sono peggiorati",
+            "La proposta è solo teorica"
+          ]
+        },
+        {
+          "id": "it-read-lettera-dirigenza-q5",
+          "kind": "written",
+          "prompt": "Con quale frequenza chiedono la revisione?",
+          "answers": [
+            "semestrale",
+            "ogni sei mesi",
+            "una revisione semestrale"
+          ],
+          "explain": "Revisione semestrale."
+        },
+        {
+          "id": "it-read-lettera-dirigenza-q6",
+          "kind": "choice",
+          "prompt": "Che funzione ha « peraltro »?",
+          "answers": [
+            "Aggiungere un argomento a favore"
+          ],
+          "explain": "Peraltro: argomento aggiuntivo.",
+          "options": [
+            "Aggiungere un argomento a favore",
+            "Contrastare quanto detto",
+            "Annunciare la conclusione",
+            "Esprimere un dubbio"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-read-recensione-critica",
+      "languageID": "it",
+      "title": "Recensione critica",
+      "level": "C1",
+      "topic": "cultura",
+      "unitID": "it-foundations-u9",
+      "text": "Al debutto, il romanzo di Vera Antonelli affascina: una voce netta, un quartiere di periferia ricostruito con precisione chirurgica. A metà libro, però, la trama incrina: la protagonista, che aveva deciso da sola, improvvisamente si affida al caso, e il lettore perde il gusto di accompagnarla. Non è un difetto minore, perché la forza del romanzo stava proprio in quella volontà. In un certo senso, l'autrice ha scelto la strada più comoda proprio quando il lettore le aveva concesso la più difficile. Eppure il finale riesce: le ultime trenta pagine, quasi senza dialoghi, tengono insieme ciò che il centro aveva disfatto. A mio avviso, Antonelli è una scrittrice da seguire: questo romanzo è una promessa più che un risultato, ma di promesse così se ne vedono poche.",
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "function:express-opinion",
+        "vocab:collocations"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-recensione-critica-q1",
+          "kind": "choice",
+          "prompt": "Che difetto segnala la recensora a metà libro?",
+          "answers": [
+            "La protagonista si affida al caso"
+          ],
+          "explain": "La protagonista improvvisamente si affida al caso.",
+          "options": [
+            "La protagonista si affida al caso",
+            "Troppi dialoghi",
+            "Un finale frettoloso",
+            "Un'ambientazione confusa"
+          ]
+        },
+        {
+          "id": "it-read-recensione-critica-q2",
+          "kind": "choice",
+          "prompt": "Come giudica il finale?",
+          "answers": [
+            "Riesce a tenere insieme il romanzo"
+          ],
+          "explain": "« Il finale riesce » e tiene insieme il romanzo.",
+          "options": [
+            "Riesce a tenere insieme il romanzo",
+            "Rovina tutto",
+            "È troppo lungo",
+            "Manca del tutto"
+          ]
+        },
+        {
+          "id": "it-read-recensione-critica-q3",
+          "kind": "written",
+          "prompt": "Quante pagine finali tengono insieme il romanzo?",
+          "answers": [
+            "trenta",
+            "30",
+            "le ultime trenta pagine"
+          ],
+          "explain": "Le ultime trenta pagine."
+        },
+        {
+          "id": "it-read-recensione-critica-q4",
+          "kind": "choice",
+          "prompt": "Che senso ha « una promessa più che un risultato »?",
+          "answers": [
+            "Il talento c'è, ma il libro non lo esaurisce"
+          ],
+          "explain": "Talento reale, risultato non ancora pieno.",
+          "options": [
+            "Il talento c'è, ma il libro non lo esaurisce",
+            "Il libro è un fallimento",
+            "È un libro per giovani lettori",
+            "È una biografia"
+          ]
+        },
+        {
+          "id": "it-read-recensione-critica-q5",
+          "kind": "written",
+          "prompt": "Dove stava la forza del romanzo secondo la recensora?",
+          "answers": [
+            "nella volonta della protagonista",
+            "nella volontà della protagonista",
+            "nella determinazione della protagonista"
+          ],
+          "explain": "Nella volontà della protagonista."
+        },
+        {
+          "id": "it-read-recensione-critica-q6",
+          "kind": "choice",
+          "prompt": "Che tono ha la recensione?",
+          "answers": [
+            "Critico ma benevolo"
+          ],
+          "explain": "Rilievi severi, chiusura incoraggiante.",
+          "options": [
+            "Critico ma benevolo",
+            "Ostile",
+            "Entusiasta senza riserve",
+            "Indifferente"
+          ]
+        }
+      ]
     }
   ]
 }
