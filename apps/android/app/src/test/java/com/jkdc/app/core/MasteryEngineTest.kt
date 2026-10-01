@@ -117,4 +117,21 @@ class MasteryEngineTest {
         assertEquals(MasteryEngine.MASTERY_VERSION, result.masteryVersion)
         assertEquals(1L, result.ledgerRevision)
     }
+
+    @Test fun `pronunciation evidence lands only on pron skills at its own weight`() {
+        val course = course("l1" to listOf("grammar:verb-be", "pron:th"))
+        val result = stats(course, marks = listOf(CompletionMark(ProgressEngine.PRONUNCIATION, "l1", now, 100)))
+        val byID = result.skills.associateBy { it.skillID }
+        assertEquals(80, byID["pron:th"]!!.effectiveMastery)
+        assertEquals(0, byID["grammar:verb-be"]!!.effectiveMastery)
+    }
+
+    @Test fun `the catalog index can filter pronunciation skills out`() {
+        val course = course("l1" to listOf("grammar:verb-be", "pron:th"))
+        val with = MasteryEngine.buildIndex(course, emptyList(), emptyList(), includePronunciation = true)
+        val without = MasteryEngine.buildIndex(course, emptyList(), emptyList(), includePronunciation = false)
+        assertTrue("pron:th" in with.taughtSkills)
+        assertFalse("pron:th" in without.taughtSkills)
+        assertTrue("grammar:verb-be" in without.taughtSkills)
+    }
 }

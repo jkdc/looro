@@ -202,6 +202,11 @@ private struct LessonDetailView: View {
     let onPractice: (String) -> Void
     let onTheme: (ConversationTheme) -> Void
     let onExercises: () -> Void
+    @StateObject private var drill = PronunciationCheckController()
+
+    private var lessonCourseLanguage: String {
+        CourseRegistry.all.first { $0.units.flatMap(\.lessons).contains { $0.id == lesson.id } }?.languageID ?? "en"
+    }
 
     private var unit: CourseUnit? {
         CourseRegistry.all.flatMap(\.units).first { $0.lessons.contains { $0.id == lesson.id } }
@@ -250,6 +255,42 @@ private struct LessonDetailView: View {
                 }
                 sectionHeading("Practice situation")
                 Text(lesson.situation).font(.body)
+                if coordinator.store.preferences.pronunciationEnabled == true,
+                   !lesson.skills.filter({ $0.hasPrefix("pron:") }).isEmpty {
+                    sectionHeading("Pronounce it")
+                    Text("Tap a phrase to hear it, then Check and say it out loud.")
+                        .font(.caption).foregroundStyle(AppColor.secondary)
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(Array(lesson.expressions.prefix(3).enumerated()), id: \.offset) { _, expression in
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Text(expression.text).font(.subheadline.weight(.semibold))
+                                    Spacer()
+                                    if drill.listeningTarget == expression.text {
+                                        Text("Listening…").font(.caption).foregroundStyle(AppColor.secondary)
+                                    } else {
+                                        Button {
+                                            drill.check(target: expression.text, lessonID: lesson.id,
+                                                        language: lessonCourseLanguage,
+                                                        store: coordinator.store) { _ in }
+                                        } label: {
+                                            Text("Check").font(.caption.weight(.semibold))
+                                                .padding(.horizontal, 12).padding(.vertical, 6)
+                                                .background(AppColor.orange, in: Capsule())
+                                        }.buttonStyle(.plain)
+                                    }
+                                }
+                                Text(expression.note).font(.caption).foregroundStyle(AppColor.secondary)
+                                if let hit = drill.result, hit.target == expression.text {
+                                    Text(PronunciationEngine.passed(hit.score)
+                                         ? "Pronunciation: \(hit.score)% — passed, well said!"
+                                         : "Pronunciation: \(hit.score)% — not quite, listen again and try once more")
+                                        .font(.caption).foregroundStyle(AppColor.secondary)
+                                }
+                            }
+                        }
+                    }
+                }
                 if !lesson.exercises.isEmpty {
                     sectionHeading("Exercises")
                     Button { onExercises() } label: {

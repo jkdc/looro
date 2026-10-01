@@ -167,15 +167,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var turnInFlightUi by androidx.compose.runtime.mutableStateOf(false)
         private set
 
+    private val pronunciationStt = com.jkdc.app.engines.local.WhisperStt(
+        // models/whisper under the app's external files dir — same layout
+        // the local voice pipeline has always used (see docs/conversation-engines.md).
+        java.io.File(application.getExternalFilesDir(null) ?: application.filesDir, "models/whisper"),
+    )
+
     private val localTransport = LocalVoiceTransport(
             context = application,
             scope = viewModelScope,
             openOnStart = true,
-            stt = com.jkdc.app.engines.local.WhisperStt(
-                // models/whisper under the app's external files dir — same layout
-                // the local voice pipeline has always used (see docs/conversation-engines.md).
-                java.io.File(application.getExternalFilesDir(null) ?: application.filesDir, "models/whisper"),
-            ),
+            stt = pronunciationStt,
             engine = conversationEngine,
             tts = com.jkdc.app.engines.local.LocalTtsEngine(application),
         ).apply {
@@ -317,6 +319,49 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         persist()
     }
 
+    /** Pronunciation drill state: the target currently being listened to and
+        the last scored target. Compose-observable so the drill recomposes. */
+    var pronunciationListening by androidx.compose.runtime.mutableStateOf<String?>(null)
+        private set
+    var pronunciationResult by androidx.compose.runtime.mutableStateOf<Pair<String, Int>?>(null)
+        private set
+
+    /** Records ~4 s of microphone audio, transcribes it with the same on-device
+        STT Talk uses, and scores it against the target. A pass records
+        `pronunciation` ledger evidence for the lesson's pron skills; any
+        failure degrades to the plain listen-and-repeat with a notice. */
+    fun checkPronunciation(target: String, lessonID: String) {
+        if (pronunciationListening != null || isRunning) return
+        pronunciationListening = target
+        viewModelScope.launch {
+            val outcome = runCatching {
+                val recorder = com.jkdc.app.engines.local.MicRecorder()
+                check(recorder.start()) { "micro unavailable" }
+                val frames = ArrayList<FloatArray>()
+                val deadline = System.currentTimeMillis() + 4_000
+                while (System.currentTimeMillis() < deadline) {
+                    recorder.readFrame()?.let { frames.add(it) }
+                    kotlinx.coroutines.delay(20)
+                }
+                recorder.stop()
+                val samples = frames.reduce { acc, frame -> acc + frame }
+                val clean = com.jkdc.app.engines.local.MicRecorder.trimSilence(samples)
+                check(clean.size >= com.jkdc.app.engines.local.MicRecorder.SAMPLE_RATE / 2) { "too short" }
+                PronunciationEngine.score(target, pronunciationStt.transcribe(clean, language.id).text)
+            }
+            pronunciationListening = null
+            outcome.fold(
+                onSuccess = { score ->
+                    pronunciationResult = target to score
+                    if (PronunciationEngine.passed(score)) recordCompletion(ProgressEngine.PRONUNCIATION, lessonID, score)
+                },
+                onFailure = {
+                    notice = getApplication<Application>().getString(R.string.lesson_pronounce_unavailable)
+                },
+            )
+        }
+    }
+
     fun progressStats(): ProgressStats = ProgressEngine.stats(archive.sessions, archive.lessons,
         archive.completions.orEmpty(), CourseRegistry.forLanguage(language.id),
         ListeningRegistry.forLanguage(language.id).map { it.id }.toSet(), language.id,
@@ -342,13 +387,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private fun bumpLedgerRevision() { ledgerRevision++ }
 
     /** Skill catalog index, keyed by language so a language switch rebuilds it (§5). */
-    private var cachedIndex: Pair<String, SkillCatalogIndex>? = null
+    private var cachedIndex: Pair<Pair<String, Boolean>, SkillCatalogIndex>? = null
     private fun skillIndex(course: Course): SkillCatalogIndex {
-        val key = language.id
+        val key = language.id to pronunciationEnabled
         cachedIndex?.takeIf { it.first == key }?.let { return it.second }
         val idx = MasteryEngine.buildIndex(course,
             ListeningRegistry.forLanguage(language.id),
-            ReadingRegistry.forLanguage(language.id))
+            ReadingRegistry.forLanguage(language.id),
+            includePronunciation = pronunciationEnabled)
         cachedIndex = key to idx
         return idx
     }

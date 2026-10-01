@@ -10,14 +10,15 @@ public struct SkillCatalogIndex: Sendable {
     public let activitiesBySkillID: [String: Set<String>]
     public let skillCategory: [String: String]
 
-    public init(course: Course, listenings: [ListeningText], readings: [ReadingText]) {
+    public init(course: Course, listenings: [ListeningText], readings: [ReadingText],
+                includePronunciation: Bool = true) {
         var byActivity: [String: Set<String>] = [:]
         var bySkill: [String: Set<String>] = [:]
         var cats: [String: String] = [:]
 
         func index(_ activityID: String, _ skills: [String]) {
             for skill in skills {
-                if let cat = SkillsData.categories[skill] {
+                if let cat = SkillsData.categories[skill], includePronunciation || !skill.hasPrefix("pron:") {
                     byActivity[activityID, default: []].insert(skill)
                     bySkill[skill, default: []].insert(activityID)
                     cats[skill] = cat
@@ -65,16 +66,20 @@ public enum MasteryEngine {
     public static let exerciseWeight = 0.6
     public static let listeningWeight = 0.5
     public static let readingWeight = 0.5
+    /// Self-scored WER evidence is worth less than any graded activity.
+    public static let pronunciationWeight = 0.8
     public static let oralBaseline = 75
     public static let halfLifeDays = 60.0
 
     /// Bump this when the algorithm, weights, or skill mappings change.
-    public static let masteryVersion = 1
+    public static let masteryVersion = 2
 
     static let categoryOrder = ["grammar", "vocab", "function", "speaking", "listening", "reading", "writing", "pron"]
 
-    public static func buildIndex(course: Course, listenings: [ListeningText], readings: [ReadingText]) -> SkillCatalogIndex {
-        SkillCatalogIndex(course: course, listenings: listenings, readings: readings)
+    public static func buildIndex(course: Course, listenings: [ListeningText], readings: [ReadingText],
+                                  includePronunciation: Bool = true) -> SkillCatalogIndex {
+        SkillCatalogIndex(course: course, listenings: listenings, readings: readings,
+                          includePronunciation: includePronunciation)
     }
 
     public static func stats(course: Course, listenings: [ListeningText], readings: [ReadingText],
@@ -95,7 +100,15 @@ public enum MasteryEngine {
                 if value > best { best = value; bestAt = at }
             }
 
+            // Self-scored pronunciation evidence lands only on pron skills —
+            // the mark's itemID is the lesson, so without this guard every
+            // co-tagged grammar skill would inherit it.
+            let pronSkill = skillID.hasPrefix("pron:")
             for activityID in activityIDs {
+                if pronSkill, let mark = completions.filter({ $0.kind == ProgressEngine.pronunciation && $0.itemID == activityID })
+                    .max(by: { $0.bestScore < $1.bestScore }) {
+                    offer(weight: pronunciationWeight, score: mark.bestScore, at: mark.at)
+                }
                 if let mark = completions.filter({ $0.kind == ProgressEngine.exerciseSet && $0.itemID == activityID })
                     .max(by: { $0.bestScore < $1.bestScore }) {
                     offer(weight: exerciseWeight, score: mark.bestScore, at: mark.at)

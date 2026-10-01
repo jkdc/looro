@@ -350,6 +350,12 @@
     <string name="lesson_pronounce_heading">Pronúncialo</string>
     <string name="lesson_pronounce_hint">Toca una frase, escucha la voz y repítela en voz alta.</string>
     <string name="lesson_pronounce_play">Escuchar y repetir</string>
+    <string name="lesson_pronounce_check">Comprobar</string>
+    <string name="lesson_pronounce_listening">Escuchando…</string>
+    <string name="lesson_pronounce_score">Pronunciación: %1$d %%</string>
+    <string name="lesson_pronounce_pass">¡Pasado, bien dicho!</string>
+    <string name="lesson_pronounce_retry">Casi — escucha otra vez e inténtalo de nuevo</string>
+    <string name="lesson_pronounce_unavailable">El micrófono no está disponible ahora</string>
     <string name="plan_title">Tu entrenamiento de hoy</string>
     <string name="plan_minutes">%1$d min</string>
     <string name="plan_empty">Nada pendiente ahora mismo — ¡disfruta el día!</string>

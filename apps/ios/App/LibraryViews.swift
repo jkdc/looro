@@ -339,6 +339,10 @@ struct SettingsView: View {
                         store.updatePreferences { $0.listeningPractice = value ? true : nil }
                     }))
                     .disabled(coordinator.isRunning)
+                    Toggle("Pronunciation practice (beta)", isOn: Binding(get: { store.preferences.pronunciationEnabled == true }, set: { value in
+                        store.updatePreferences { $0.pronunciationEnabled = value ? true : nil }
+                    }))
+                    .disabled(coordinator.isRunning)
                     Toggle("Share anonymous usage metrics", isOn: Binding(get: { store.preferences.usageMetricsEnabled != false }, set: { value in
                         coordinator.setUsageMetrics(enabled: value)
                     }))

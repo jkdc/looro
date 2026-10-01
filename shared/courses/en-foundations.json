@@ -982,7 +982,8 @@
           "skills": [
             "grammar:demonstratives",
             "grammar:possessives",
-            "vocab:home"
+            "vocab:home",
+            "pron:th"
           ],
           "prerequisites": [
             "grammar:subject-pronouns",
@@ -3503,7 +3504,8 @@
           "skills": [
             "grammar:imperatives",
             "function:make-requests",
-            "vocab:social-expressions"
+            "vocab:social-expressions",
+            "pron:sentence-stress"
           ],
           "prerequisites": [
             "grammar:present-simple"
@@ -4459,7 +4461,8 @@
           "skills": [
             "vocab:social-expressions",
             "function:talk-about-weather",
-            "grammar:present-continuous"
+            "grammar:present-continuous",
+            "pron:connected-speech"
           ],
           "prerequisites": [
             "grammar:verb-be"
@@ -6490,7 +6493,8 @@
             "vocab:food",
             "grammar:imperatives",
             "grammar:have-got",
-            "function:talk-about-routines"
+            "function:talk-about-routines",
+            "pron:short-long-vowels"
           ],
           "prerequisites": [
             "grammar:present-simple"
@@ -8323,7 +8327,8 @@
           "skills": [
             "grammar:past-was-were",
             "vocab:feelings",
-            "function:describe-past-events"
+            "function:describe-past-events",
+            "pron:r"
           ],
           "canDo": [
             "describe-past-events"

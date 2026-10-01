@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.ConversationTheme
+import com.jkdc.app.core.PronunciationEngine
 import com.jkdc.app.core.Course
 import com.jkdc.app.core.CourseProgress
 import com.jkdc.app.core.CourseRegistry
@@ -360,6 +361,7 @@ private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
                         Text(stringResource(R.string.lesson_pronounce_hint), style = MaterialTheme.typography.bodySmall,
                             color = AppColors.Secondary)
                         lesson.expressions.take(3).forEach { expression ->
+                            val listening = vm.pronunciationListening == expression.text
                             Surface(Modifier.fillMaxWidth().clickable(role = Role.Button,
                                     onClickLabel = stringResource(R.string.lesson_pronounce_play)) {
                                     if (!vm.isRunning) vm.readLessonCard(expression.text)
@@ -368,8 +370,32 @@ private fun LessonDetail(vm: AppViewModel, lesson: Lesson, onBack: () -> Unit,
                                 Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                     AppIcon(AppSymbol.Wave, Modifier.size(20.dp), color = AppColors.Secondary)
-                                    Text(expression.text, style = MaterialTheme.typography.titleSmall)
+                                    Column(Modifier.weight(1f)) {
+                                        Text(expression.text, style = MaterialTheme.typography.titleSmall)
+                                        Text(expression.note, style = MaterialTheme.typography.bodySmall,
+                                            color = AppColors.Secondary)
+                                    }
+                                    when {
+                                        listening -> Text(stringResource(R.string.lesson_pronounce_listening),
+                                            style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                        else -> Button(onClick = { vm.checkPronunciation(expression.text, lesson.id) },
+                                            enabled = !vm.isRunning,
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {
+                                            Text(stringResource(R.string.lesson_pronounce_check))
+                                        }
+                                    }
                                 }
+                            }
+                            vm.pronunciationResult?.takeIf { it.first == expression.text }?.let { (_, score) ->
+                                val passed = PronunciationEngine.passed(score)
+                                Text(
+                                    stringResource(R.string.lesson_pronounce_score, score) + " · " +
+                                        stringResource(if (passed) R.string.lesson_pronounce_pass else R.string.lesson_pronounce_retry),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = if (passed) AppColors.Secondary else AppColors.Ink,
+                                    modifier = Modifier.testTag("pronounce-score-" + expression.text.hashCode()),
+                                )
                             }
                         }
                     }

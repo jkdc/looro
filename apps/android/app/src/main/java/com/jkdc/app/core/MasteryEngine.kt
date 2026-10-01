@@ -6,7 +6,8 @@ import kotlin.math.roundToInt
 
 /** Pre-built index: activityID → skillIDs and skillID → activityIDs.
     Built once per content version, reused across mastery computations. */
-class SkillCatalogIndex(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>) {
+class SkillCatalogIndex(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>,
+    includePronunciation: Boolean = true) {
     val skillsByActivityID: Map<String, Set<String>>
     val activitiesBySkillID: Map<String, Set<String>>
     val skillCategory: Map<String, String>
@@ -18,7 +19,7 @@ class SkillCatalogIndex(course: Course, listenings: List<ListeningText>, reading
 
         fun index(activityID: String, skills: List<String>) {
             for (skill in skills) {
-                if (skill in SkillsData.categories) {
+                if (skill in SkillsData.categories && (includePronunciation || !skill.startsWith("pron:"))) {
                     byActivity.getOrPut(activityID) { mutableSetOf() }.add(skill)
                     bySkill.getOrPut(skill) { mutableSetOf() }.add(activityID)
                     cats[skill] = SkillsData.categories[skill] ?: skill.substringBefore(':')
@@ -66,17 +67,21 @@ object MasteryEngine {
     const val EXERCISE_WEIGHT = 0.6
     const val LISTENING_WEIGHT = 0.5
     const val READING_WEIGHT = 0.5
+    // Self-scored WER evidence is worth less than any graded activity — a
+    // generous transcript must never outweigh a graded exercise.
+    const val PRONUNCIATION_WEIGHT = 0.8
     const val ORAL_BASELINE = 75
     const val HALF_LIFE_DAYS = 60.0
 
     /** Bump this when the algorithm, weights, or skill mappings change. */
-    const val MASTERY_VERSION = 1
+    const val MASTERY_VERSION = 2
 
     private val CATEGORY_ORDER = listOf("grammar", "vocab", "function", "speaking", "listening", "reading", "writing", "pron")
 
     /** Pre-built index: created once per content load, reused across calls. */
-    fun buildIndex(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>) =
-        SkillCatalogIndex(course, listenings, readings)
+    fun buildIndex(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>,
+        includePronunciation: Boolean = true) =
+        SkillCatalogIndex(course, listenings, readings, includePronunciation)
 
     fun stats(course: Course, listenings: List<ListeningText>, readings: List<ReadingText>,
               lessons: List<LessonState>, completions: List<CompletionMark>,
@@ -96,7 +101,15 @@ object MasteryEngine {
                 if (value > best) { best = value; bestAt = at }
             }
 
+            // Self-scored pronunciation evidence lands only on pron skills —
+            // the mark's itemID is the lesson, so without this guard every
+            // co-tagged grammar skill would inherit it.
+            val pronSkill = skillID.startsWith("pron:")
             for (activityID in activityIDs) {
+                if (pronSkill) {
+                    completions.filter { it.kind == ProgressEngine.PRONUNCIATION && it.itemID == activityID }
+                        .maxByOrNull { it.bestScore }?.let { offer(PRONUNCIATION_WEIGHT, it.bestScore, it.at) }
+                }
                 // Exercise set evidence
                 completions.filter { it.kind == ProgressEngine.EXERCISE_SET && it.itemID == activityID }
                     .maxByOrNull { it.bestScore }?.let { offer(EXERCISE_WEIGHT, it.bestScore, it.at) }

@@ -33,10 +33,11 @@ public enum ProgressEngine {
     public static let exerciseSet = "exercise_set"
     public static let listening = "listening"
     public static let reading = "reading"
+    public static let pronunciation = "pronunciation"
     public static let recallRound = "recall_round"
     public static let wordsPractice = "words_practice"
     public static let assessment = "assessment"
-    public static let kinds = [lesson, conversationTheme, exerciseSet, listening, reading, recallRound, wordsPractice, assessment]
+    public static let kinds = [lesson, conversationTheme, exerciseSet, listening, reading, pronunciation, recallRound, wordsPractice, assessment]
 
     /// Stable ledger/wire key: readable slugs pass through; anything else (a word
     /// lemma with accents or spaces) collapses to 16 hex chars of SHA-256.

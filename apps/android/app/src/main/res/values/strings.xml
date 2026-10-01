@@ -350,6 +350,12 @@
     <string name="lesson_pronounce_heading">Pronounce it</string>
     <string name="lesson_pronounce_hint">Tap a phrase, listen to the voice and repeat it out loud.</string>
     <string name="lesson_pronounce_play">Listen and repeat</string>
+    <string name="lesson_pronounce_check">Check</string>
+    <string name="lesson_pronounce_listening">Listening…</string>
+    <string name="lesson_pronounce_score">Pronunciation: %1$d%%</string>
+    <string name="lesson_pronounce_pass">Passed — well said!</string>
+    <string name="lesson_pronounce_retry">Not quite — listen again and try once more</string>
+    <string name="lesson_pronounce_unavailable">Microphone unavailable right now</string>
     <string name="plan_title">Today\'s training</string>
     <string name="plan_minutes">%1$d min</string>
     <string name="plan_empty">Nothing due right now — enjoy your day!</string>
