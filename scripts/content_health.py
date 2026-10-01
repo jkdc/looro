@@ -120,6 +120,14 @@ PARITY_READINGS_FLOOR = {'A1': 6, 'A2': 4, 'B1': 4, 'B2': 3, 'C1': 2}
 PARITY_CHECKPOINTS = ('A1', 'A2', 'B1', 'B2', 'C1')
 
 
+def check_teaching_order(courses, issues):
+    ranks = {'A0': 0, 'A1': 1, 'A2': 2, 'B1': 3, 'B2': 4, 'C1': 5}
+    for course in courses:
+        idx = [ranks.get(u['level'], 9) for u in course['units']]
+        if idx != sorted(idx):
+            issues.append(f"TEACHING_ORDER: {course['id']} units are not in level order")
+
+
 def check_parity(courses, listenings, readings, checkpoints, issues):
     by_lang_units = collections.defaultdict(lambda: collections.defaultdict(int))
     for course in courses:
@@ -174,6 +182,7 @@ def main():
         check_skill_coverage(courses, listenings, readings, catalog, issues)
         check_prerequisite_chain(courses, catalog, issues)
         check_checkpoint_balance(checkpoints, issues)
+        check_teaching_order(courses, issues)
     check_parity(courses, listenings, readings, checkpoints, issues)
 
     if issues:
