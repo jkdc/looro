@@ -779,6 +779,191 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-listen-primera-vez",
+      "languageID": "es",
+      "title": "Cosas que no he hecho",
+      "level": "B1",
+      "topic": "viajes",
+      "unitID": "es-foundations-u5",
+      "text": "En la cocina de un hostal, tres viajeros comparan vidas. Diego ha visitado veinte países, pero nunca ha aprendido a nadar: «Lo sé, es ridículo». Valeria ha buceado dos veces con tortugas, pero no ha salido de América Latina hasta este viaje. Y Marta, que lleva seis años en la carretera, nunca ha volado: cruza los océanos en barco y las fronteras en autobús. «¿Nunca?», pregunta Diego. «Nunca. El miedo es más viejo que yo.» Se ríen de lo que no han hecho, y Marta dice algo que se quedan todos: «No hace falta haberlo hecho todo. Basta con seguir queriendo».",
+      "skills": [
+        "listening:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [
+        "grammar:relative-clauses"
+      ],
+      "questions": [
+        {
+          "id": "es-listen-primera-vez-q1",
+          "kind": "choice",
+          "prompt": "¿Qué no ha hecho nunca Diego?",
+          "answers": [
+            "Aprender a nadar"
+          ],
+          "explain": "Ha visitado veinte países, pero nunca ha aprendido a nadar.",
+          "options": [
+            "Aprender a nadar",
+            "Visitar veinte países",
+            "Cruzar en barco",
+            "Salir de América"
+          ]
+        },
+        {
+          "id": "es-listen-primera-vez-q2",
+          "kind": "written",
+          "prompt": "¿Cuántas veces ha buceado Valeria?",
+          "answers": [
+            "dos veces",
+            "2 veces",
+            "dos"
+          ],
+          "explain": "Valeria ha buceado dos veces con tortugas."
+        },
+        {
+          "id": "es-listen-primera-vez-q3",
+          "kind": "choice",
+          "prompt": "¿Cómo cruza Marta los océanos?",
+          "answers": [
+            "En barco"
+          ],
+          "explain": "Cruza los océanos en barco y las fronteras en autobús.",
+          "options": [
+            "En barco",
+            "En avión",
+            "En autobús",
+            "A pie"
+          ]
+        },
+        {
+          "id": "es-listen-primera-vez-q4",
+          "kind": "choice",
+          "prompt": "¿Qué dice Marta sobre el miedo?",
+          "answers": [
+            "Es más viejo que ella"
+          ],
+          "explain": "El miedo es más viejo que yo.",
+          "options": [
+            "Es más viejo que ella",
+            "Es más joven que ella",
+            "Es ridículo",
+            "Se ha ido"
+          ]
+        },
+        {
+          "id": "es-listen-primera-vez-q5",
+          "kind": "written",
+          "prompt": "¿Qué basta, según Marta?",
+          "answers": [
+            "seguir queriendo",
+            "con seguir queriendo"
+          ],
+          "explain": "Basta con seguir queriendo."
+        },
+        {
+          "id": "es-listen-primera-vez-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo reaccionan los tres?",
+          "answers": [
+            "Se ríen"
+          ],
+          "explain": "Se ríen de lo que no han hecho.",
+          "options": [
+            "Se ríen",
+            "Se enfadan",
+            "Se van",
+            "Lloran"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-listen-cambio-pueblo",
+      "languageID": "es",
+      "title": "De la ciudad al pueblo",
+      "level": "B1",
+      "topic": "cambios",
+      "unitID": "es-foundations-u5",
+      "text": "Nacho explica por qué dejó Madrid. Antes vivía en un piso pequeño y trabajaba once horas al día: «Ganaba bien, pero no tenía vida». Un invierno se puso enfermo, y entonces entendió que algo tenía que cambiar. Ahora vive en un pueblo de mil habitantes, trabaja desde casa por las mañanas y cultiva un huerto por las tardes. «Gano menos, pero me sobra tiempo.» Al principio sus padres no lo entendían; ahora vienen cada mes. «¿Te arrepientes de algo?», le pregunta su amiga. «De no haberlo hecho antes».",
+      "skills": [
+        "listening:inference",
+        "grammar:used-to",
+        "grammar:connectors",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-cambio-pueblo-q1",
+          "kind": "choice",
+          "prompt": "¿Dónde vivía Nacho antes?",
+          "answers": [
+            "En Madrid"
+          ],
+          "explain": "Nacho explica por qué dejó Madrid.",
+          "options": [
+            "En Madrid",
+            "En un pueblo",
+            "En Barcelona",
+            "En un hostal"
+          ]
+        },
+        {
+          "id": "es-listen-cambio-pueblo-q2",
+          "kind": "written",
+          "prompt": "¿Cuántas horas trabajaba al día?",
+          "answers": [
+            "once horas",
+            "11 horas",
+            "once"
+          ],
+          "explain": "Trabajaba once horas al día."
+        },
+        {
+          "id": "es-listen-cambio-pueblo-q3",
+          "kind": "choice",
+          "prompt": "¿Qué le hizo cambiar?",
+          "answers": [
+            "Se puso enfermo"
+          ],
+          "explain": "Un invierno se puso enfermo, y entonces entendió que tenía que cambiar.",
+          "options": [
+            "Se puso enfermo",
+            "Perdió el trabajo",
+            "Ganó la lotería",
+            "Conoció a alguien"
+          ]
+        },
+        {
+          "id": "es-listen-cambio-pueblo-q4",
+          "kind": "choice",
+          "prompt": "¿Qué hace por las tardes ahora?",
+          "answers": [
+            "Cultiva un huerto"
+          ],
+          "explain": "Trabaja desde casa por las mañanas y cultiva un huerto por las tardes.",
+          "options": [
+            "Cultiva un huerto",
+            "Trabaja más horas",
+            "Viaja cada mes",
+            "Estudia"
+          ]
+        },
+        {
+          "id": "es-listen-cambio-pueblo-q5",
+          "kind": "written",
+          "prompt": "¿Qué se arrepiente Nacho?",
+          "answers": [
+            "de no haberlo hecho antes",
+            "no haberlo hecho antes"
+          ],
+          "explain": "«De no haberlo hecho antes»."
+        }
+      ]
     }
   ]
 }

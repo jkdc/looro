@@ -29,7 +29,7 @@ class ListeningContentTest {
         assertNull(ListeningRegistry.text("en-listen-missing"))
         assertTrue(ListeningRegistry.forLanguage("nb").isEmpty())
         for (language in listOf("es", "fr", "it", "de", "pt")) {
-            assertEquals(8, ListeningRegistry.forLanguage(language).size)
+            assertEquals(10, ListeningRegistry.forLanguage(language).size)
         }
     }
 

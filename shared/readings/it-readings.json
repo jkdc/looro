@@ -174,6 +174,91 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-read-viaggio-indimenticabile",
+      "languageID": "it",
+      "title": "Il viaggio indimenticabile",
+      "level": "B1",
+      "topic": "viaggi",
+      "unitID": "it-foundations-u6",
+      "text": "L'estate scorsa ho fatto il viaggio dei miei sogni: quindici giorni in Perù. Avevo già visitato il Messico e l'Argentina, ma il Sud America mi ha ancora sorpreso. Il terzo giorno sono salito al Machu Picchu. C'era nebbia, così all'inizio non si vedeva niente. Poi, poco a poco, è uscito il sole ed è apparsa la città intera. Non ho detto niente; sono rimasto a guardare. Sul treno del ritorno ho conosciuto una famiglia di Cusco, e mi hanno invitato a cena. « I viaggiatori dicono sempre la stessa cosa », ha riso la nonna, « ma questa zuppa è vera ». Aveva ragione: è stata la migliore cena del viaggio. Da allora, ogni volta che qualcuno chiede una destinazione, io rispondo il Perù.",
+      "skills": [
+        "reading:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-viaggio-indimenticabile-q1",
+          "kind": "choice",
+          "prompt": "Quanto è durato il viaggio ?",
+          "answers": [
+            "Quindici giorni"
+          ],
+          "explain": "Quindici giorni in Perù.",
+          "options": [
+            "Quindici giorni",
+            "Dieci giorni",
+            "Un mese",
+            "Tre giorni"
+          ]
+        },
+        {
+          "id": "it-read-viaggio-indimenticabile-q2",
+          "kind": "written",
+          "prompt": "Quali paesi aveva già visitato ?",
+          "answers": [
+            "messico e argentina",
+            "il messico e l'argentina"
+          ],
+          "explain": "Avevo già visitato il Messico e l'Argentina."
+        },
+        {
+          "id": "it-read-viaggio-indimenticabile-q3",
+          "kind": "choice",
+          "prompt": "Perché non si vedeva niente all'inizio ?",
+          "answers": [
+            "C'era nebbia"
+          ],
+          "explain": "C'era nebbia, così non si vedeva niente.",
+          "options": [
+            "C'era nebbia",
+            "Era chiuso",
+            "Pioveva forte",
+            "Era di notte"
+          ]
+        },
+        {
+          "id": "it-read-viaggio-indimenticabile-q4",
+          "kind": "choice",
+          "prompt": "Con chi ha cenato il narratore ?",
+          "answers": [
+            "Con una famiglia di Cusco"
+          ],
+          "explain": "Ho conosciuto una famiglia di Cusco e mi hanno invitato a cena.",
+          "options": [
+            "Con una famiglia di Cusco",
+            "Con la nonna dell'albergo",
+            "Da solo",
+            "Con amici del treno"
+          ]
+        },
+        {
+          "id": "it-read-viaggio-indimenticabile-q5",
+          "kind": "written",
+          "prompt": "Cosa risponde ora quando gli chiedono una destinazione ?",
+          "answers": [
+            "peru",
+            "perù",
+            "il peru",
+            "il perù"
+          ],
+          "explain": "Io rispondo il Perù."
+        }
+      ]
     }
   ]
 }

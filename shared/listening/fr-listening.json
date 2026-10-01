@@ -771,6 +771,177 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-listen-jamais-fait",
+      "languageID": "fr",
+      "title": "Ce que je n'ai jamais fait",
+      "level": "B1",
+      "topic": "voyages",
+      "unitID": "fr-foundations-u6",
+      "text": "Dans la cuisine d'une auberge, trois voyageurs comparent leurs vies. Théo a visité vingt pays, mais il n'a jamais appris à nager : « Je sais, c'est ridicule ». Aïcha a déjà plongé deux fois avec des tortues, mais elle n'a jamais quitté l'Afrique avant ce voyage. Et Léa, qui est sur la route depuis six ans, n'a jamais pris l'avion : elle traverse les océans en bateau et les frontières en bus. « Jamais ? » demande Théo. « Jamais. La peur est plus vieille que moi. » Ils rient de ce qu'ils n'ont pas fait, et Léa dit quelque chose qui reste : « Il ne faut pas avoir tout fait. Il suffit de vouloir encore ».",
+      "skills": [
+        "listening:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [
+        "grammar:relative-clauses"
+      ],
+      "questions": [
+        {
+          "id": "fr-listen-jamais-fait-q1",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Théo n'a jamais fait ?",
+          "answers": [
+            "Apprendre à nager"
+          ],
+          "explain": "Il a visité vingt pays, mais il n'a jamais appris à nager.",
+          "options": [
+            "Apprendre à nager",
+            "Visiter vingt pays",
+            "Traverser en bateau",
+            "Quitter l'Afrique"
+          ]
+        },
+        {
+          "id": "fr-listen-jamais-fait-q2",
+          "kind": "written",
+          "prompt": "Combien de fois Aïcha a-t-elle plongé ?",
+          "answers": [
+            "deux fois",
+            "2 fois",
+            "deux"
+          ],
+          "explain": "Aïcha a déjà plongé deux fois avec des tortues."
+        },
+        {
+          "id": "fr-listen-jamais-fait-q3",
+          "kind": "choice",
+          "prompt": "Comment Léa traverse-t-elle les océans ?",
+          "answers": [
+            "En bateau"
+          ],
+          "explain": "Elle traverse les océans en bateau et les frontières en bus.",
+          "options": [
+            "En bateau",
+            "En avion",
+            "En bus",
+            "À pied"
+          ]
+        },
+        {
+          "id": "fr-listen-jamais-fait-q4",
+          "kind": "choice",
+          "prompt": "Que dit Léa sur la peur ?",
+          "answers": [
+            "Elle est plus vieille qu'elle"
+          ],
+          "explain": "La peur est plus vieille que moi.",
+          "options": [
+            "Elle est plus vieille qu'elle",
+            "Elle est plus jeune",
+            "C'est ridicule",
+            "Elle est partie"
+          ]
+        },
+        {
+          "id": "fr-listen-jamais-fait-q5",
+          "kind": "written",
+          "prompt": "Qu'est-ce qui suffit, selon Léa ?",
+          "answers": [
+            "vouloir encore",
+            "de vouloir encore"
+          ],
+          "explain": "Il suffit de vouloir encore."
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-ville-village",
+      "languageID": "fr",
+      "title": "De la ville au village",
+      "level": "B1",
+      "topic": "changements",
+      "unitID": "fr-foundations-u6",
+      "text": "Nicolas explique pourquoi il a quitté Paris. Avant, il vivait dans un petit appartement et travaillait onze heures par jour : « Je gagnais bien, mais je n'avais pas de vie ». Un hiver, il est tombé malade, et là il a compris qu'il fallait changer. Maintenant il habite dans un village de mille habitants, il travaille de chez lui le matin et cultive un potager l'après-midi. « Je gagne moins, mais j'ai du temps. » Au début, ses parents ne comprenaient pas ; maintenant ils viennent chaque mois. « Tu regrettes quelque chose ? » demande son amie. « De ne pas l'avoir fait plus tôt ».",
+      "skills": [
+        "listening:inference",
+        "grammar:used-to",
+        "grammar:connectors",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-ville-village-q1",
+          "kind": "choice",
+          "prompt": "Où habitait Nicolas avant ?",
+          "answers": [
+            "À Paris"
+          ],
+          "explain": "Nicolas explique pourquoi il a quitté Paris.",
+          "options": [
+            "À Paris",
+            "Dans un village",
+            "À Lyon",
+            "Dans une auberge"
+          ]
+        },
+        {
+          "id": "fr-listen-ville-village-q2",
+          "kind": "written",
+          "prompt": "Combien d'heures travaillait-il par jour ?",
+          "answers": [
+            "onze heures",
+            "11 heures",
+            "onze"
+          ],
+          "explain": "Il travaillait onze heures par jour."
+        },
+        {
+          "id": "fr-listen-ville-village-q3",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui l'a fait changer ?",
+          "answers": [
+            "Il est tombé malade"
+          ],
+          "explain": "Un hiver, il est tombé malade, et là il a compris.",
+          "options": [
+            "Il est tombé malade",
+            "Il a perdu son travail",
+            "Il a gagné à la loterie",
+            "Il a rencontré quelqu'un"
+          ]
+        },
+        {
+          "id": "fr-listen-ville-village-q4",
+          "kind": "choice",
+          "prompt": "Que fait-il l'après-midi maintenant ?",
+          "answers": [
+            "Il cultive un potager"
+          ],
+          "explain": "Il travaille le matin et cultive un potager l'après-midi.",
+          "options": [
+            "Il cultive un potager",
+            "Il travaille plus d'heures",
+            "Il voyage chaque mois",
+            "Il étudie"
+          ]
+        },
+        {
+          "id": "fr-listen-ville-village-q5",
+          "kind": "written",
+          "prompt": "Que regrette Nicolas ?",
+          "answers": [
+            "de ne pas l'avoir fait plus tot",
+            "de ne pas l'avoir fait plus tôt",
+            "ne pas l'avoir fait plus tôt"
+          ],
+          "explain": "« De ne pas l'avoir fait plus tôt »."
+        }
+      ]
     }
   ]
 }

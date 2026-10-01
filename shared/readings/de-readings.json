@@ -174,6 +174,87 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-read-unvergessliche-reise",
+      "languageID": "de",
+      "title": "Die unvergessliche Reise",
+      "level": "B1",
+      "topic": "reisen",
+      "unitID": "de-foundations-u6",
+      "text": "Letzten Sommer habe ich die Reise gemacht, von der ich immer geträumt habe: fünfzehn Tage in Peru. Ich war schon in Mexiko und Argentinien, aber Südamerika hat mich wieder überrascht. Am dritten Tag bin ich zum Machu Picchu hochgestiegen. Es gab Nebel, deshalb hat man am Anfang nichts gesehen. Dann ist die Sonne langsam herausgekommen und die ganze Stadt ist erschienen. Ich habe nichts gesagt; ich bin nur dageblieben. Im Rückzugszug habe ich eine Familie aus Cusco kennengelernt, und sie haben mich zum Essen eingeladen. « Reisende sagen immer dasselbe », hat die Oma gelacht, « aber diese Suppe ist echt ». Sie hatte recht: es war das beste Essen der Reise. Seitdem, wenn jemand nach einem Reiseziel fragt, sage ich Peru.",
+      "skills": [
+        "reading:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-unvergessliche-reise-q1",
+          "kind": "choice",
+          "prompt": "Wie lange dauerte die Reise ?",
+          "answers": [
+            "Fünfzehn Tage"
+          ],
+          "explain": "Fünfzehn Tage in Peru.",
+          "options": [
+            "Fünfzehn Tage",
+            "Zehn Tage",
+            "Ein Monat",
+            "Drei Tage"
+          ]
+        },
+        {
+          "id": "de-read-unvergessliche-reise-q2",
+          "kind": "written",
+          "prompt": "In welchen Ländern war er schon ?",
+          "answers": [
+            "mexiko und argentinien"
+          ],
+          "explain": "Ich war schon in Mexiko und Argentinien."
+        },
+        {
+          "id": "de-read-unvergessliche-reise-q3",
+          "kind": "choice",
+          "prompt": "Warum hat man am Anfang nichts gesehen ?",
+          "answers": [
+            "Wegen des Nebels"
+          ],
+          "explain": "Es gab Nebel, deshalb hat man nichts gesehen.",
+          "options": [
+            "Wegen des Nebels",
+            "Weil er geschlossen war",
+            "Wegen starken Regens",
+            "Weil es Nacht war"
+          ]
+        },
+        {
+          "id": "de-read-unvergessliche-reise-q4",
+          "kind": "choice",
+          "prompt": "Mit wem hat er gegessen ?",
+          "answers": [
+            "Mit einer Familie aus Cusco"
+          ],
+          "explain": "Eine Familie aus Cusco hat mich zum Essen eingeladen.",
+          "options": [
+            "Mit einer Familie aus Cusco",
+            "Mit der Oma vom Hotel",
+            "Allein",
+            "Mit Freunden aus dem Zug"
+          ]
+        },
+        {
+          "id": "de-read-unvergessliche-reise-q5",
+          "kind": "written",
+          "prompt": "Was sagt er jetzt, wenn jemand nach einem Reiseziel fragt ?",
+          "answers": [
+            "peru"
+          ],
+          "explain": "Ich sage Peru."
+        }
+      ]
     }
   ]
 }

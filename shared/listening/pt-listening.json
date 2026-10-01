@@ -771,6 +771,178 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-listen-nunca-fez",
+      "languageID": "pt",
+      "title": "Coisas que nunca fiz",
+      "level": "B1",
+      "topic": "viagens",
+      "unitID": "pt-foundations-u6",
+      "text": "Na cozinha de um hostel, três viajantes comparam as vidas. Caio já visitou vinte países, mas nunca aprendeu a nadar: « Eu sei, é ridículo ». Marina já mergulhou duas vezes com tartarugas, mas não tinha saído do Brasil antes desta viagem. E Beatriz, que está na estrada há seis anos, nunca pegou avião: ela atravessa os oceanos de navio e as fronteiras de ônibus. « Nunca ? » pergunta Caio. « Nunca. O medo é mais velho do que eu. » Eles riem das coisas que não fizeram, e Beatriz diz uma frase que fica: « Não precisa ter feito tudo. Basta ainda querer ».",
+      "skills": [
+        "listening:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [
+        "grammar:relative-clauses"
+      ],
+      "questions": [
+        {
+          "id": "pt-listen-nunca-fez-q1",
+          "kind": "choice",
+          "prompt": "O que Caio nunca fez ?",
+          "answers": [
+            "Aprender a nadar"
+          ],
+          "explain": "Já visitou vinte países, mas nunca aprendeu a nadar.",
+          "options": [
+            "Aprender a nadar",
+            "Visitar vinte países",
+            "Atravessar de navio",
+            "Sair do Brasil"
+          ]
+        },
+        {
+          "id": "pt-listen-nunca-fez-q2",
+          "kind": "written",
+          "prompt": "Quantas vezes Marina mergulhou ?",
+          "answers": [
+            "duas vezes",
+            "2 vezes",
+            "duas"
+          ],
+          "explain": "Marina já mergulhou duas vezes com tartarugas."
+        },
+        {
+          "id": "pt-listen-nunca-fez-q3",
+          "kind": "choice",
+          "prompt": "Como Beatriz atravessa os oceanos ?",
+          "answers": [
+            "De navio"
+          ],
+          "explain": "Ela atravessa os oceanos de navio e as fronteiras de ônibus.",
+          "options": [
+            "De navio",
+            "De avião",
+            "De ônibus",
+            "A pé"
+          ]
+        },
+        {
+          "id": "pt-listen-nunca-fez-q4",
+          "kind": "choice",
+          "prompt": "O que Beatriz diz sobre o medo ?",
+          "answers": [
+            "É mais velho do que ela"
+          ],
+          "explain": "O medo é mais velho do que eu.",
+          "options": [
+            "É mais velho do que ela",
+            "É mais jovem",
+            "É ridículo",
+            "Se foi"
+          ]
+        },
+        {
+          "id": "pt-listen-nunca-fez-q5",
+          "kind": "written",
+          "prompt": "O que basta, segundo Beatriz ?",
+          "answers": [
+            "ainda querer",
+            "basta ainda querer"
+          ],
+          "explain": "Basta ainda querer."
+        }
+      ]
+    },
+    {
+      "id": "pt-listen-cidade-interior",
+      "languageID": "pt",
+      "title": "Da cidade para o interior",
+      "level": "B1",
+      "topic": "mudanças",
+      "unitID": "pt-foundations-u6",
+      "text": "Pedro conta por que saiu de São Paulo. Antes ele morava num apartamento pequeno e trabalhava onze horas por dia: « Eu ganhava bem, mas não tinha vida ». Num inverno ele adoeceu, e aí entendeu que precisava mudar. Agora mora num vilarejo de mil habitantes, trabalha de casa pela manhã e cuida de uma horta à tarde. « Ganho menos, mas sobra tempo. » No começo os pais não entendiam; agora vêm todo mês. « Você se arrepende de algo ? », pergunta a amiga. « De não ter feito isso antes ».",
+      "skills": [
+        "listening:inference",
+        "grammar:used-to",
+        "grammar:connectors",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-listen-cidade-interior-q1",
+          "kind": "choice",
+          "prompt": "Onde Pedro morava antes ?",
+          "answers": [
+            "Em São Paulo"
+          ],
+          "explain": "Pedro conta por que saiu de São Paulo.",
+          "options": [
+            "Em São Paulo",
+            "Num vilarejo",
+            "No Rio de Janeiro",
+            "Num hostel"
+          ]
+        },
+        {
+          "id": "pt-listen-cidade-interior-q2",
+          "kind": "written",
+          "prompt": "Quantas horas ele trabalhava por dia ?",
+          "answers": [
+            "onze horas",
+            "11 horas",
+            "onze"
+          ],
+          "explain": "Trabalhava onze horas por dia."
+        },
+        {
+          "id": "pt-listen-cidade-interior-q3",
+          "kind": "choice",
+          "prompt": "O que o fez mudar ?",
+          "answers": [
+            "Ele adoeceu"
+          ],
+          "explain": "Num inverno ele adoeceu, e aí entendeu.",
+          "options": [
+            "Ele adoeceu",
+            "Perdeu o emprego",
+            "Ganhou na loteria",
+            "Conheceu alguém"
+          ]
+        },
+        {
+          "id": "pt-listen-cidade-interior-q4",
+          "kind": "choice",
+          "prompt": "O que ele faz à tarde agora ?",
+          "answers": [
+            "Cuida de uma horta"
+          ],
+          "explain": "Trabalha pela manhã e cuida de uma horta à tarde.",
+          "options": [
+            "Cuida de uma horta",
+            "Trabalha mais horas",
+            "Viaja todo mês",
+            "Estuda"
+          ]
+        },
+        {
+          "id": "pt-listen-cidade-interior-q5",
+          "kind": "written",
+          "prompt": "De que Pedro se arrepende ?",
+          "answers": [
+            "de nao ter feito isso antes",
+            "de não ter feito isso antes",
+            "nao ter feito antes",
+            "não ter feito antes"
+          ],
+          "explain": "« De não ter feito isso antes »."
+        }
+      ]
     }
   ]
 }

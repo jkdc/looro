@@ -766,6 +766,178 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-listen-nie-gemacht",
+      "languageID": "de",
+      "title": "Was ich nie gemacht habe",
+      "level": "B1",
+      "topic": "reisen",
+      "unitID": "de-foundations-u6",
+      "text": "In der Küche einer Herberge vergleichen drei Reisende ihr Leben. Jonas ist in zwanzig Ländern gewesen, aber er hat nie schwimmen gelernt: « Ich weiß, es ist lächerlich ». Amira ist schon zweimal mit Schildkröten getaucht, aber sie hat Afrika vor dieser Reise nie verlassen. Und Coco, die seit sechs Jahren unterwegs ist, ist noch nie geflogen: sie überquert die Ozeane mit dem Schiff und die Grenzen mit dem Bus. « Nie ? » fragt Jonas. « Nie. Die Angst ist älter als ich. » Sie lachen über die Dinge, die sie nicht gemacht haben, und Coco sagt einen Satz, der bleibt: « Man muss nicht alles gemacht haben. Man muss nur noch wollen ».",
+      "skills": [
+        "listening:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [
+        "grammar:relative-clauses"
+      ],
+      "questions": [
+        {
+          "id": "de-listen-nie-gemacht-q1",
+          "kind": "choice",
+          "prompt": "Was hat Jonas nie gemacht ?",
+          "answers": [
+            "Schwimmen lernen"
+          ],
+          "explain": "Er ist in zwanzig Ländern gewesen, aber nie schwimmen gelernt.",
+          "options": [
+            "Schwimmen lernen",
+            "Zwanzig Länder besuchen",
+            "Mit dem Schiff fahren",
+            "Afrika verlassen"
+          ]
+        },
+        {
+          "id": "de-listen-nie-gemacht-q2",
+          "kind": "written",
+          "prompt": "Wie oft ist Amira getaucht ?",
+          "answers": [
+            "zweimal",
+            "2 mal",
+            "zwei mal"
+          ],
+          "explain": "Amira ist schon zweimal mit Schildkröten getaucht."
+        },
+        {
+          "id": "de-listen-nie-gemacht-q3",
+          "kind": "choice",
+          "prompt": "Wie überquert Coco die Ozeane ?",
+          "answers": [
+            "Mit dem Schiff"
+          ],
+          "explain": "Sie überquert die Ozeane mit dem Schiff.",
+          "options": [
+            "Mit dem Schiff",
+            "Mit dem Flugzeug",
+            "Mit dem Bus",
+            "Zu Fuß"
+          ]
+        },
+        {
+          "id": "de-listen-nie-gemacht-q4",
+          "kind": "choice",
+          "prompt": "Was sagt Coco über die Angst ?",
+          "answers": [
+            "Sie ist älter als sie"
+          ],
+          "explain": "Die Angst ist älter als ich.",
+          "options": [
+            "Sie ist älter als sie",
+            "Sie ist jünger",
+            "Es ist lächerlich",
+            "Sie ist weg"
+          ]
+        },
+        {
+          "id": "de-listen-nie-gemacht-q5",
+          "kind": "written",
+          "prompt": "Was reicht, laut Coco ?",
+          "answers": [
+            "noch wollen",
+            "man muss noch wollen"
+          ],
+          "explain": "Man muss nur noch wollen."
+        }
+      ]
+    },
+    {
+      "id": "de-listen-stadt-dorf",
+      "languageID": "de",
+      "title": "Von der Stadt ins Dorf",
+      "level": "B1",
+      "topic": "veränderungen",
+      "unitID": "de-foundations-u6",
+      "text": "Lukas erzählt, warum er Berlin verlassen hat. Früher hat er in einer kleinen Wohnung gewohnt und elf Stunden am Tag gearbeitet: « Ich habe gut verdient, aber kein Leben gehabt ». Einen Winter wurde er krank, und da hat er verstanden: so konnte es nicht weitergehen. Heute wohnt er in einem Dorf mit tausend Einwohnern, arbeitet morgens von zu Hause und gartelt nachmittags. « Ich verdiene weniger, aber ich habe Zeit. » Am Anfang haben seine Eltern es nicht verstanden; heute kommen sie jeden Monat. « Bereust du etwas ? » fragt seine Freundin. « Dass ich es nicht früher gemacht habe ».",
+      "skills": [
+        "listening:inference",
+        "grammar:used-to",
+        "grammar:connectors",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-stadt-dorf-q1",
+          "kind": "choice",
+          "prompt": "Wo hat Lukas früher gewohnt ?",
+          "answers": [
+            "In Berlin"
+          ],
+          "explain": "Lukas erzählt, warum er Berlin verlassen hat.",
+          "options": [
+            "In Berlin",
+            "In einem Dorf",
+            "In Hamburg",
+            "In einer Herberge"
+          ]
+        },
+        {
+          "id": "de-listen-stadt-dorf-q2",
+          "kind": "written",
+          "prompt": "Wie viele Stunden hat er am Tag gearbeitet ?",
+          "answers": [
+            "elf stunden",
+            "11 stunden",
+            "elf"
+          ],
+          "explain": "Elf Stunden am Tag."
+        },
+        {
+          "id": "de-listen-stadt-dorf-q3",
+          "kind": "choice",
+          "prompt": "Was hat ihn verändert ?",
+          "answers": [
+            "Er wurde krank"
+          ],
+          "explain": "Einen Winter wurde er krank, und da hat er verstanden.",
+          "options": [
+            "Er wurde krank",
+            "Er verlor seinen Job",
+            "Er gewann im Lotto",
+            "Er traf jemanden"
+          ]
+        },
+        {
+          "id": "de-listen-stadt-dorf-q4",
+          "kind": "choice",
+          "prompt": "Was macht er nachmittags ?",
+          "answers": [
+            "Er gartelt"
+          ],
+          "explain": "Er arbeitet morgens und gartelt nachmittags.",
+          "options": [
+            "Er gartelt",
+            "Er arbeitet mehr Stunden",
+            "Er reist jeden Monat",
+            "Er lernt"
+          ]
+        },
+        {
+          "id": "de-listen-stadt-dorf-q5",
+          "kind": "written",
+          "prompt": "Was bereut Lukas ?",
+          "answers": [
+            "dass ich es nicht frueher gemacht habe",
+            "dass ich es nicht früher gemacht habe",
+            "nicht frueher",
+            "nicht früher"
+          ],
+          "explain": "« Dass ich es nicht früher gemacht habe »."
+        }
+      ]
     }
   ]
 }

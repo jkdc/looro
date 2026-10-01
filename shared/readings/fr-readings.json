@@ -174,6 +174,91 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-read-voyage-inoubliable",
+      "languageID": "fr",
+      "title": "Le voyage inoubliable",
+      "level": "B1",
+      "topic": "voyages",
+      "unitID": "fr-foundations-u6",
+      "text": "L'été dernier, j'ai fait le voyage dont j'avais le plus rêvé : quinze jours au Pérou. J'avais déjà visité le Mexique et l'Argentine, mais l'Amérique du Sud m'a encore surpris. Le troisième jour, je suis monté au Machu Picchu. Il y avait du brouillard, donc au début on ne voyait rien. Puis, peu à peu, le soleil est sorti et la ville entière est apparue. Je n'ai rien dit ; je suis resté à regarder. Dans le train du retour, j'ai rencontré une famille de Cusco, et ils m'ont invité à dîner. « Les voyageurs disent toujours la même chose », a ri la grand-mère, « mais cette soupe est vraie ». Elle avait raison : c'était le meilleur dîner du voyage. Depuis, chaque fois qu'on me demande une destination, je réponds le Pérou.",
+      "skills": [
+        "reading:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-voyage-inoubliable-q1",
+          "kind": "choice",
+          "prompt": "Combien de temps a duré le voyage ?",
+          "answers": [
+            "Quinze jours"
+          ],
+          "explain": "Quinze jours au Pérou.",
+          "options": [
+            "Quinze jours",
+            "Dix jours",
+            "Un mois",
+            "Trois jours"
+          ]
+        },
+        {
+          "id": "fr-read-voyage-inoubliable-q2",
+          "kind": "written",
+          "prompt": "Quels pays avait-il déjà visités ?",
+          "answers": [
+            "mexique et argentine",
+            "le mexique et l'argentine"
+          ],
+          "explain": "J'avais déjà visité le Mexique et l'Argentine."
+        },
+        {
+          "id": "fr-read-voyage-inoubliable-q3",
+          "kind": "choice",
+          "prompt": "Pourquoi ne voyait-on rien au début ?",
+          "answers": [
+            "Il y avait du brouillard"
+          ],
+          "explain": "Il y avait du brouillard, donc on ne voyait rien.",
+          "options": [
+            "Il y avait du brouillard",
+            "C'était fermé",
+            "Il pleuvait fort",
+            "C'était la nuit"
+          ]
+        },
+        {
+          "id": "fr-read-voyage-inoubliable-q4",
+          "kind": "choice",
+          "prompt": "Avec qui a-t-il dîné ?",
+          "answers": [
+            "Avec une famille de Cusco"
+          ],
+          "explain": "J'ai rencontré une famille de Cusco, et ils m'ont invité à dîner.",
+          "options": [
+            "Avec une famille de Cusco",
+            "Avec la grand-mère de l'hôtel",
+            "Seul",
+            "Avec des amis du train"
+          ]
+        },
+        {
+          "id": "fr-read-voyage-inoubliable-q5",
+          "kind": "written",
+          "prompt": "Que répond-il maintenant quand on lui demande une destination ?",
+          "answers": [
+            "perou",
+            "perú",
+            "le perou",
+            "le pérou"
+          ],
+          "explain": "Je réponds le Pérou."
+        }
+      ]
     }
   ]
 }

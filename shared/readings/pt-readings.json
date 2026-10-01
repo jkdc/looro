@@ -176,6 +176,90 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-read-viagem-inesquecivel",
+      "languageID": "pt",
+      "title": "A viagem inesquecível",
+      "level": "B1",
+      "topic": "viagens",
+      "unitID": "pt-foundations-u6",
+      "text": "No ano passado fiz a viagem dos meus sonhos: quinze dias no Peru. Já tinha conhecido o México e a Argentina, mas a América do Sul ainda me surpreendeu. No terceiro dia subi ao Machu Picchu. Estava com neblina, então no começo não dava para ver nada. Depois, aos poucos, o sol apareceu e a cidade inteira surgiu. Não disse nada; fiquei olhando. No trem de volta conheci uma família de Cusco, e me chamaram para jantar. « Os viajantes sempre dizem a mesma coisa », riu a avó, « mas essa sopa é de verdade ». Ela tinha razão: foi o melhor jantar da viagem. Desde então, quando alguém pergunta por um destino, eu digo Peru.",
+      "skills": [
+        "reading:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-viagem-inesquecivel-q1",
+          "kind": "choice",
+          "prompt": "Quanto durou a viagem ?",
+          "answers": [
+            "Quinze dias"
+          ],
+          "explain": "Quinze dias no Peru.",
+          "options": [
+            "Quinze dias",
+            "Dez dias",
+            "Um mês",
+            "Três dias"
+          ]
+        },
+        {
+          "id": "pt-read-viagem-inesquecivel-q2",
+          "kind": "written",
+          "prompt": "Que países ele já tinha conhecido ?",
+          "answers": [
+            "mexico e argentina",
+            "méxico e argentina"
+          ],
+          "explain": "Já tinha conhecido o México e a Argentina."
+        },
+        {
+          "id": "pt-read-viagem-inesquecivel-q3",
+          "kind": "choice",
+          "prompt": "Por que não dava para ver nada no começo ?",
+          "answers": [
+            "Estava com neblina"
+          ],
+          "explain": "Estava com neblina, então não se via nada.",
+          "options": [
+            "Estava com neblina",
+            "Estava fechado",
+            "Chovia forte",
+            "Era de noite"
+          ]
+        },
+        {
+          "id": "pt-read-viagem-inesquecivel-q4",
+          "kind": "choice",
+          "prompt": "Com quem jantou o narrador ?",
+          "answers": [
+            "Com uma família de Cusco"
+          ],
+          "explain": "Conheci uma família de Cusco e me chamaram para jantar.",
+          "options": [
+            "Com uma família de Cusco",
+            "Com a avó do hotel",
+            "Sozinho",
+            "Com amigos do trem"
+          ]
+        },
+        {
+          "id": "pt-read-viagem-inesquecivel-q5",
+          "kind": "written",
+          "prompt": "O que ele diz agora quando perguntam por um destino ?",
+          "answers": [
+            "peru",
+            "eu digo peru",
+            "digo peru"
+          ],
+          "explain": "Eu digo Peru."
+        }
+      ]
     }
   ]
 }

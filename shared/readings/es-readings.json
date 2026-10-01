@@ -174,6 +174,91 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-read-viaje-inolvidable",
+      "languageID": "es",
+      "title": "El viaje inolvidable",
+      "level": "B1",
+      "topic": "viajes",
+      "unitID": "es-foundations-u5",
+      "text": "El verano pasado hice el viaje que más había soñado: quince días en Perú. Ya había visitado México y Argentina, pero Sudamérica todavía me sorprendió. El tercer día subí al Machu Picchu. Había niebla, así que al principio no se veía nada. Después, poco a poco, salió el sol y apareció la ciudad entera. No dije nada; me quedé mirando. Conocí a una familia de Cusco en el tren de vuelta, y me invitaron a cenar. «Los viajeros siempre dicen lo mismo», se rió la abuela, «pero esta sopa es de verdad». Tenía razón: fue la mejor cena del viaje. Desde entonces, cada vez que alguien pregunta por un destino, yo digo Perú.",
+      "skills": [
+        "reading:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-viaje-inolvidable-q1",
+          "kind": "choice",
+          "prompt": "¿Cuánto duró el viaje?",
+          "answers": [
+            "Quince días"
+          ],
+          "explain": "Quince días en Perú.",
+          "options": [
+            "Quince días",
+            "Diez días",
+            "Un mes",
+            "Tres días"
+          ]
+        },
+        {
+          "id": "es-read-viaje-inolvidable-q2",
+          "kind": "written",
+          "prompt": "¿Qué países había visitado antes?",
+          "answers": [
+            "mexico y argentina",
+            "méxico y argentina"
+          ],
+          "explain": "Ya había visitado México y Argentina."
+        },
+        {
+          "id": "es-read-viaje-inolvidable-q3",
+          "kind": "choice",
+          "prompt": "¿Por qué no se veía nada al principio?",
+          "answers": [
+            "Había niebla"
+          ],
+          "explain": "Había niebla, así que al principio no se veía nada.",
+          "options": [
+            "Había niebla",
+            "Estaba cerrado",
+            "Llovía mucho",
+            "Era de noche"
+          ]
+        },
+        {
+          "id": "es-read-viaje-inolvidable-q4",
+          "kind": "choice",
+          "prompt": "¿Con quién cenó el narrador?",
+          "answers": [
+            "Con una familia de Cusco"
+          ],
+          "explain": "Conocí a una familia de Cusco y me invitaron a cenar.",
+          "options": [
+            "Con una familia de Cusco",
+            "Con la abuela del hotel",
+            "Solo",
+            "Con amigos del tren"
+          ]
+        },
+        {
+          "id": "es-read-viaje-inolvidable-q5",
+          "kind": "written",
+          "prompt": "¿Qué dice ahora cuando le preguntan por un destino?",
+          "answers": [
+            "peru",
+            "perú",
+            "yo digo peru",
+            "digo peru"
+          ],
+          "explain": "Cada vez que alguien pregunta, yo digo Perú."
+        }
+      ]
     }
   ]
 }

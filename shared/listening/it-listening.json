@@ -769,6 +769,176 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-listen-mai-fatto",
+      "languageID": "it",
+      "title": "Cose che non ho mai fatto",
+      "level": "B1",
+      "topic": "viaggi",
+      "unitID": "it-foundations-u6",
+      "text": "Nella cucina di un ostello, tre viaggiatori paragonano le loro vite. Luca ha visitato venti paesi, ma non ha mai imparato a nuotare: « Lo so, è ridicolo ». Sara ha già fatto snorkeling due volte con le tartarughe, ma non è mai uscita dall'Europa prima di questo viaggio. E Elena, che è in viaggio da sei anni, non ha mai preso l'aereo: attraversa gli oceani in nave e i confini in autobus. « Mai ? » chiede Luca. « Mai. La paura è più vecchia di me. » Ridono delle cose che non hanno fatto, ed Elena dice una frase che resta: « Non serve aver fatto tutto. Basta avere ancora voglia ».",
+      "skills": [
+        "listening:inference",
+        "grammar:present-perfect",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": [
+        "grammar:relative-clauses"
+      ],
+      "questions": [
+        {
+          "id": "it-listen-mai-fatto-q1",
+          "kind": "choice",
+          "prompt": "Cosa non ha mai fatto Luca ?",
+          "answers": [
+            "Imparare a nuotare"
+          ],
+          "explain": "Ha visitato venti paesi, ma non ha mai imparato a nuotare.",
+          "options": [
+            "Imparare a nuotare",
+            "Visitare venti paesi",
+            "Attraversare in nave",
+            "Uscire dall'Europa"
+          ]
+        },
+        {
+          "id": "it-listen-mai-fatto-q2",
+          "kind": "written",
+          "prompt": "Quante volte ha fatto snorkeling Sara ?",
+          "answers": [
+            "due volte",
+            "2 volte",
+            "due"
+          ],
+          "explain": "Sara ha già fatto snorkeling due volte con le tartarughe."
+        },
+        {
+          "id": "it-listen-mai-fatto-q3",
+          "kind": "choice",
+          "prompt": "Come attraversa Elena gli oceani ?",
+          "answers": [
+            "In nave"
+          ],
+          "explain": "Attraversa gli oceani in nave e i confini in autobus.",
+          "options": [
+            "In nave",
+            "In aereo",
+            "In autobus",
+            "A piedi"
+          ]
+        },
+        {
+          "id": "it-listen-mai-fatto-q4",
+          "kind": "choice",
+          "prompt": "Cosa dice Elena della paura ?",
+          "answers": [
+            "È più vecchia di lei"
+          ],
+          "explain": "La paura è più vecchia di me.",
+          "options": [
+            "È più vecchia di lei",
+            "È più giovane",
+            "È ridicola",
+            "Se n'è andata"
+          ]
+        },
+        {
+          "id": "it-listen-mai-fatto-q5",
+          "kind": "written",
+          "prompt": "Cosa basta, secondo Elena ?",
+          "answers": [
+            "avere ancora voglia",
+            "aver voglia"
+          ],
+          "explain": "Basta avere ancora voglia."
+        }
+      ]
+    },
+    {
+      "id": "it-listen-citta-paese",
+      "languageID": "it",
+      "title": "Dalla città al paese",
+      "level": "B1",
+      "topic": "cambiamenti",
+      "unitID": "it-foundations-u6",
+      "text": "Marco racconta perché ha lasciato Milano. Prima viveva in un appartamento piccolo e lavorava undici ore al giorno: « Guadagnavo bene, ma non avevo vita ». Un inverno si è ammalato, e allora ha capito che doveva cambiare. Adesso vive in un paese di mille abitanti, lavora da casa la mattina e coltiva un orto nel pomeriggio. « Guadagno meno, ma mi avanza tempo. » All'inizio i suoi genitori non capivano; adesso vengono ogni mese. « Ti penti di qualcosa ? » gli chiede l'amica. « Di non averlo fatto prima ».",
+      "skills": [
+        "listening:inference",
+        "grammar:used-to",
+        "grammar:connectors",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-citta-paese-q1",
+          "kind": "choice",
+          "prompt": "Dove viveva Marco prima ?",
+          "answers": [
+            "A Milano"
+          ],
+          "explain": "Marco racconta perché ha lasciato Milano.",
+          "options": [
+            "A Milano",
+            "In un paese",
+            "A Roma",
+            "In un ostello"
+          ]
+        },
+        {
+          "id": "it-listen-citta-paese-q2",
+          "kind": "written",
+          "prompt": "Quante ore lavorava al giorno ?",
+          "answers": [
+            "undici ore",
+            "11 ore",
+            "undici"
+          ],
+          "explain": "Lavorava undici ore al giorno."
+        },
+        {
+          "id": "it-listen-citta-paese-q3",
+          "kind": "choice",
+          "prompt": "Cosa l'ha fatto cambiare ?",
+          "answers": [
+            "Si è ammalato"
+          ],
+          "explain": "Un inverno si è ammalato, e allora ha capito.",
+          "options": [
+            "Si è ammalato",
+            "Ha perso il lavoro",
+            "Ha vinto alla lotteria",
+            "Ha conosciuto qualcuno"
+          ]
+        },
+        {
+          "id": "it-listen-citta-paese-q4",
+          "kind": "choice",
+          "prompt": "Cosa fa nel pomeriggio adesso ?",
+          "answers": [
+            "Coltiva un orto"
+          ],
+          "explain": "Lavora la mattina e coltiva un orto nel pomeriggio.",
+          "options": [
+            "Coltiva un orto",
+            "Lavora più ore",
+            "Viaggia ogni mese",
+            "Studia"
+          ]
+        },
+        {
+          "id": "it-listen-citta-paese-q5",
+          "kind": "written",
+          "prompt": "Di cosa si pente Marco ?",
+          "answers": [
+            "di non averlo fatto prima",
+            "non averlo fatto prima"
+          ],
+          "explain": "« Di non averlo fatto prima »."
+        }
+      ]
     }
   ]
 }

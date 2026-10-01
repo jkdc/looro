@@ -2337,6 +2337,1201 @@
           "explain": "Contraste: mas."
         }
       ]
+    },
+    {
+      "id": "checkpoint-es-b1",
+      "languageID": "es",
+      "level": "B1",
+      "title": "B1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-es-b1-q1",
+          "kind": "choice",
+          "skill": "grammar:present-perfect",
+          "prompt": "___ nunca he esquiado.",
+          "answers": [
+            "Nunca"
+          ],
+          "explain": "nunca + he + participio: nunca he esquiado.",
+          "options": [
+            "Nunca",
+            "Jamás",
+            "Todavía no… bien",
+            "Alguna vez"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q2",
+          "kind": "gap",
+          "skill": "grammar:present-perfect",
+          "prompt": "___ probado la paella muchas veces. (ya)",
+          "answers": [
+            "ya",
+            "he ya"
+          ],
+          "explain": "Ya + he + participio: ya he probado."
+        },
+        {
+          "id": "checkpoint-es-b1-q3",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "El año pasado ___ a Perú.",
+          "answers": [
+            "fui"
+          ],
+          "explain": "ir → fui (pretérito).",
+          "options": [
+            "fui",
+            "voy",
+            "iba",
+            "iré"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q4",
+          "kind": "choice",
+          "skill": "grammar:used-to",
+          "prompt": "Antes ___ once horas; ahora trabajo menos.",
+          "answers": [
+            "trabajaba"
+          ],
+          "explain": "Antes + imperfecto: rutina del pasado.",
+          "options": [
+            "trabajaba",
+            "trabajo",
+            "trabajé",
+            "trabajaré"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q5",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Este hostel es ___ barato ___ el hotel.",
+          "answers": [
+            "más / que"
+          ],
+          "explain": "Comparativo: más … que.",
+          "options": [
+            "más / que",
+            "muy / que",
+            "más / como",
+            "tan / que"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "Fue ___ mejor cena del viaje.",
+          "answers": [
+            "la"
+          ],
+          "explain": "Superlativo: la mejor.",
+          "options": [
+            "la",
+            "el",
+            "lo",
+            "las"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q7",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Ganaba bien, ___ no tenía vida.",
+          "answers": [
+            "pero",
+            "sino",
+            "aunque"
+          ],
+          "explain": "Contraste: pero."
+        },
+        {
+          "id": "checkpoint-es-b1-q8",
+          "kind": "written",
+          "skill": "function:describe-past-events",
+          "prompt": "Cuenta una experiencia de viaje (una frase).",
+          "answers": [
+            "viaje a peru el ano pasado",
+            "viajé a perú el año pasado",
+            "fui a peru el ano pasado",
+            "el ano pasado viaje a peru",
+            "conoci machu picchu",
+            "conocí machu picchu"
+          ],
+          "explain": "Pretérito + marcador: Viajé a Perú el año pasado."
+        },
+        {
+          "id": "checkpoint-es-b1-q9",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , es la mejor opción del barrio.",
+          "answers": [
+            "Para mí"
+          ],
+          "explain": "Para mí + opinión.",
+          "options": [
+            "Para mí",
+            "Por mí",
+            "A mí",
+            "Sobre mí"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q10",
+          "kind": "choice",
+          "skill": "vocab:travel",
+          "prompt": "Alojamiento barato para viajeros:",
+          "answers": [
+            "el hostal"
+          ],
+          "explain": "El hostal es el alojamiento barato.",
+          "options": [
+            "el hostal",
+            "el hospital",
+            "el hotel de lujo",
+            "la oficina"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q11",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "«¿___ bien el sábado?» — «Sí, perfecto».",
+          "answers": [
+            "Te viene"
+          ],
+          "explain": "¿Te viene bien? = ¿Te sirve?",
+          "options": [
+            "Te viene",
+            "Vas",
+            "Haces",
+            "Estás"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b1-q12",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "¿Te viene ___ el sábado ?",
+          "answers": [
+            "bien"
+          ],
+          "explain": "¿Te viene bien ? = pregunta clave para quedar."
+        },
+        {
+          "id": "checkpoint-es-b1-q13",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Escribe una frase de historia pasada: el viaje fue inolvidable.",
+          "answers": [
+            "el viaje fue inolvidable",
+            "el viaje fue inolvidable y conoci gente muy amable"
+          ],
+          "explain": "El viaje fue inolvidable."
+        },
+        {
+          "id": "checkpoint-es-b1-q14",
+          "kind": "written",
+          "skill": "writing:message",
+          "prompt": "Escribe un mensaje para quedar: quedamos a las ocho en la plaza.",
+          "answers": [
+            "quedamos a las ocho en la plaza",
+            "quedamos a las ocho",
+            "nos vemos a las ocho en la plaza"
+          ],
+          "explain": "Quedamos a las ocho en la plaza."
+        },
+        {
+          "id": "checkpoint-es-b1-q15",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Cuenta algo que hiciste el año pasado (una frase).",
+          "answers": [
+            "el ano pasado viaje a peru",
+            "el año pasado viajé a perú",
+            "el ano pasado trabaje mucho",
+            "el año pasado trabajé mucho",
+            "aprendi a cocinar",
+            "aprendí a cocinar"
+          ],
+          "explain": "El año pasado + pretérito."
+        },
+        {
+          "id": "checkpoint-es-b1-q16",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Opina y justifica: prefiero el pueblo porque es tranquilo.",
+          "answers": [
+            "prefiero el pueblo porque es tranquilo",
+            "me gusta mas el pueblo porque es tranquilo",
+            "prefiero el pueblo porque es mas tranquilo"
+          ],
+          "explain": "Opinión + porque + razón."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-fr-b1",
+      "languageID": "fr",
+      "level": "B1",
+      "title": "B1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-fr-b1-q1",
+          "kind": "choice",
+          "skill": "grammar:present-perfect",
+          "prompt": "Je n'ai ___ skié.",
+          "answers": [
+            "jamais"
+          ],
+          "explain": "ne… jamais autour de l'auxiliaire.",
+          "options": [
+            "jamais",
+            "déjà",
+            "souvent",
+            "toujours"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q2",
+          "kind": "gap",
+          "skill": "grammar:present-perfect",
+          "prompt": "J'ai ___ goûté la paella. (déjà)",
+          "answers": [
+            "déjà",
+            "deja"
+          ],
+          "explain": "déjà entre auxiliaire et participe."
+        },
+        {
+          "id": "checkpoint-fr-b1-q3",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "L'année dernière, je ___ au Pérou.",
+          "answers": [
+            "suis allé"
+          ],
+          "explain": "aller → être + allé.",
+          "options": [
+            "suis allé",
+            "vais",
+            "allais",
+            "irai"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q4",
+          "kind": "choice",
+          "skill": "grammar:used-to",
+          "prompt": "Avant je ___ onze heures ; maintenant je travaille moins.",
+          "answers": [
+            "travaillais"
+          ],
+          "explain": "Avant + imparfait : habitude passée.",
+          "options": [
+            "travaillais",
+            "travaille",
+            "ai travaillé",
+            "travaillerai"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q5",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Cette auberge est ___ chère ___ l'hôtel.",
+          "answers": [
+            "moins / que"
+          ],
+          "explain": "Comparatif : moins … que.",
+          "options": [
+            "moins / que",
+            "moins / comme",
+            "aussi / que",
+            "plus / comme"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "C'était ___ meilleur dîner du voyage.",
+          "answers": [
+            "le"
+          ],
+          "explain": "Superlatif : le meilleur.",
+          "options": [
+            "le",
+            "la",
+            "les",
+            "l'"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q7",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Je gagnais bien, ___ je n'avais pas de vie.",
+          "answers": [
+            "mais"
+          ],
+          "explain": "Contraste : mais."
+        },
+        {
+          "id": "checkpoint-fr-b1-q8",
+          "kind": "written",
+          "skill": "function:describe-past-events",
+          "prompt": "Raconte une expérience de voyage (une phrase).",
+          "answers": [
+            "j'ai voyage au perou l'annee derniere",
+            "j'ai voyagé au pérou l'année dernière",
+            "je suis alle au perou l'annee derniere",
+            "je suis allé au pérou l'année dernière",
+            "j'ai visite le machu picchu",
+            "j'ai visité le machu picchu"
+          ],
+          "explain": "Passé composé + marqueur : J'ai voyagé au Pérou."
+        },
+        {
+          "id": "checkpoint-fr-b1-q9",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , c'est la meilleure option du quartier.",
+          "answers": [
+            "Pour moi"
+          ],
+          "explain": "Pour moi + opinion.",
+          "options": [
+            "Pour moi",
+            "Par moi",
+            "À moi",
+            "Sur moi"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q10",
+          "kind": "choice",
+          "skill": "vocab:travel",
+          "prompt": "Hébergement bon marché pour les voyageurs :",
+          "answers": [
+            "l'auberge"
+          ],
+          "explain": "L'auberge (de jeunesse) est l'hébergement bon marché.",
+          "options": [
+            "l'auberge",
+            "l'hôpital",
+            "l'hôtel de luxe",
+            "le bureau"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q11",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Ça ___ samedi ? » — « Oui, parfait ».",
+          "answers": [
+            "te va"
+          ],
+          "explain": "Ça te va ? = Ça te convient ?",
+          "options": [
+            "te va",
+            "tu vas",
+            "tu fais",
+            "tu es"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b1-q12",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Ça te ___ bien samedi ?",
+          "answers": [
+            "va",
+            "vas"
+          ],
+          "explain": "Ça te va bien ? = question clé pour se retrouver."
+        },
+        {
+          "id": "checkpoint-fr-b1-q13",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Écris une phrase d'histoire passée : le voyage était inoubliable.",
+          "answers": [
+            "le voyage etait inoubliable",
+            "le voyage était inoubliable",
+            "le voyage a ete inoubliable",
+            "le voyage a été inoubliable"
+          ],
+          "explain": "Le voyage était inoubliable."
+        },
+        {
+          "id": "checkpoint-fr-b1-q14",
+          "kind": "written",
+          "skill": "writing:message",
+          "prompt": "Écris un message pour se retrouver : on se retrouve à dix heures sur la place.",
+          "answers": [
+            "on se retrouve a dix heures sur la place",
+            "on se retrouve à dix heures sur la place",
+            "on se retrouve à dix heures",
+            "on se retrouve a dix heures"
+          ],
+          "explain": "On se retrouve à dix heures sur la place."
+        },
+        {
+          "id": "checkpoint-fr-b1-q15",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Raconte quelque chose que tu as fait l'année dernière (une phrase).",
+          "answers": [
+            "l'annee derniere j'ai voyage au perou",
+            "l'année dernière j'ai voyagé au pérou",
+            "l'annee derniere j'ai beaucoup travaille",
+            "l'année dernière j'ai beaucoup travaillé",
+            "j'ai appris a cuisiner",
+            "j'ai appris à cuisiner"
+          ],
+          "explain": "L'année dernière + passé composé."
+        },
+        {
+          "id": "checkpoint-fr-b1-q16",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Donne ton avis et justifie : je préfère le village parce que c'est calme.",
+          "answers": [
+            "je prefere le village parce que c'est calme",
+            "je préfère le village parce que c'est calme",
+            "j'aime plus le village parce que c'est calme"
+          ],
+          "explain": "Avis + parce que + raison."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-it-b1",
+      "languageID": "it",
+      "level": "B1",
+      "title": "B1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-it-b1-q1",
+          "kind": "choice",
+          "skill": "grammar:present-perfect",
+          "prompt": "Non ho ___ sciato.",
+          "answers": [
+            "mai"
+          ],
+          "explain": "non… mai attorno all'ausiliare.",
+          "options": [
+            "mai",
+            "già",
+            "spesso",
+            "sempre"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q2",
+          "kind": "gap",
+          "skill": "grammar:present-perfect",
+          "prompt": "Ho ___ assaggiato la paella. (già)",
+          "answers": [
+            "già",
+            "gia",
+            "ho gia"
+          ],
+          "explain": "già tra ausiliare e participio."
+        },
+        {
+          "id": "checkpoint-it-b1-q3",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "L'anno scorso sono ___ in Perù.",
+          "answers": [
+            "andato"
+          ],
+          "explain": "andare → essere + andato.",
+          "options": [
+            "andato",
+            "vado",
+            "andavo",
+            "andrò"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q4",
+          "kind": "choice",
+          "skill": "grammar:used-to",
+          "prompt": "Prima ___ undici ore; adesso lavoro meno.",
+          "answers": [
+            "lavoravo"
+          ],
+          "explain": "Prima + imperfetto: abitudine passata.",
+          "options": [
+            "lavoravo",
+            "lavoro",
+            "ho lavorato",
+            "lavorerò"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q5",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Questo ostello è ___ economico ___ l'albergo.",
+          "answers": [
+            "più / che"
+          ],
+          "explain": "Comparativo: più … che.",
+          "options": [
+            "più / che",
+            "più / di quanto",
+            "così / che",
+            "più / come"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "È stata ___ migliore cena del viaggio.",
+          "answers": [
+            "la"
+          ],
+          "explain": "Superlativo: la migliore.",
+          "options": [
+            "la",
+            "il",
+            "lo",
+            "le"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q7",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Guadagnavo bene, ___ non avevo vita.",
+          "answers": [
+            "ma",
+            "però"
+          ],
+          "explain": "Contrasto: ma."
+        },
+        {
+          "id": "checkpoint-it-b1-q8",
+          "kind": "written",
+          "skill": "function:describe-past-events",
+          "prompt": "Racconta un'esperienza di viaggio (una frase).",
+          "answers": [
+            "ho viaggiato in perù l'anno scorso",
+            "ho viaggiato in perù l'anno scorso",
+            "sono andato in perù l'anno scorso",
+            "l'anno scorso ho viaggiato in perù",
+            "ho visitato machu picchu"
+          ],
+          "explain": "Passato prossimo + marcatore: L'anno scorso ho viaggiato in Perù."
+        },
+        {
+          "id": "checkpoint-it-b1-q9",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , è la migliore opzione del quartiere.",
+          "answers": [
+            "Per me"
+          ],
+          "explain": "Per me + opinione.",
+          "options": [
+            "Per me",
+            "Da me",
+            "A me",
+            "Su di me"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q10",
+          "kind": "choice",
+          "skill": "vocab:travel",
+          "prompt": "Alloggio economico per viaggiatori:",
+          "answers": [
+            "l'ostello"
+          ],
+          "explain": "L'ostello è l'alloggio economico.",
+          "options": [
+            "l'ostello",
+            "l'ospedale",
+            "l'albergo di lusso",
+            "l'ufficio"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q11",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Sabato ___ bene ? » — « Sì, perfetto ».",
+          "answers": [
+            "ti va"
+          ],
+          "explain": "Ti va ? = Ti conviene ?",
+          "options": [
+            "ti va",
+            "vai",
+            "fai",
+            "stai"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b1-q12",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Ti va ___ sabato ?",
+          "answers": [
+            "bene",
+            "il"
+          ],
+          "explain": "Ti va bene ? = domanda chiave per vedersi."
+        },
+        {
+          "id": "checkpoint-it-b1-q13",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Scrivi una frase di storia passata: il viaggio è stato indimenticabile.",
+          "answers": [
+            "il viaggio e stato indimenticabile",
+            "il viaggio è stato indimenticabile",
+            "il viaggio era indimenticabile"
+          ],
+          "explain": "Il viaggio è stato indimenticabile."
+        },
+        {
+          "id": "checkpoint-it-b1-q14",
+          "kind": "written",
+          "skill": "writing:message",
+          "prompt": "Scrivi un messaggio per vedersi: ci vediamo alle dieci in piazza.",
+          "answers": [
+            "ci vediamo alle dieci in piazza",
+            "ci vediamo alle dieci",
+            "ci vediamo alle dieci sulla piazza"
+          ],
+          "explain": "Ci vediamo alle dieci in piazza."
+        },
+        {
+          "id": "checkpoint-it-b1-q15",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Racconta qualcosa che hai fatto l'anno scorso (una frase).",
+          "answers": [
+            "l'anno scorso ho viaggiato in perù",
+            "l'anno scorso ho lavorato molto",
+            "ho imparato a cucinare",
+            "l'anno scorso sono andato in perù"
+          ],
+          "explain": "L'anno scorso + passato prossimo."
+        },
+        {
+          "id": "checkpoint-it-b1-q16",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Dai il tuo parere e giustifica: preferisco il paese perché è tranquillo.",
+          "answers": [
+            "preferisco il paese perche e tranquillo",
+            "preferisco il paese perché è tranquillo",
+            "mi piace più il paese perché è tranquillo"
+          ],
+          "explain": "Parere + perché + motivo."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-de-b1",
+      "languageID": "de",
+      "level": "B1",
+      "title": "B1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-de-b1-q1",
+          "kind": "choice",
+          "skill": "grammar:present-perfect",
+          "prompt": "Ich habe ___ nie Ski gefahren.",
+          "answers": [
+            "noch nie"
+          ],
+          "explain": "noch nie = jamais hasta ahora.",
+          "options": [
+            "als Kind",
+            "noch nie",
+            "schon",
+            "oft"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q2",
+          "kind": "gap",
+          "skill": "grammar:present-perfect",
+          "prompt": "Ich habe Paella schon ___ probiert. (ya)",
+          "answers": [
+            "mal",
+            "schon mal"
+          ],
+          "explain": "schon mal = alguna vez."
+        },
+        {
+          "id": "checkpoint-de-b1-q3",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "Letztes Sommer bin ich nach Peru ___.",
+          "answers": [
+            "gereist"
+          ],
+          "explain": "reisen → sein + gereist.",
+          "options": [
+            "gereist",
+            "reise",
+            "reiste",
+            "werde reisen"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q4",
+          "kind": "choice",
+          "skill": "grammar:used-to",
+          "prompt": "Früher habe ich elf Stunden ___ ; heute arbeite ich weniger.",
+          "answers": [
+            "gearbeitet"
+          ],
+          "explain": "Früher + Perfekt: gearbeitet.",
+          "options": [
+            "gearbeitet",
+            "arbeite",
+            "arbeitete",
+            "werde arbeiten"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q5",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Diese Herberge ist ___ billig ___ das Hotel.",
+          "answers": [
+            "günstiger / als"
+          ],
+          "explain": "Komparativ: günstiger … als.",
+          "options": [
+            "günstiger / als",
+            "günstig / als",
+            "so / als",
+            "günstiger / wie"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "Es war ___ beste Essen der Reise.",
+          "answers": [
+            "das"
+          ],
+          "explain": "Superlativ: das beste.",
+          "options": [
+            "das",
+            "der",
+            "die",
+            "dem"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q7",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Ich habe gut verdient, ___ ich hatte kein Leben.",
+          "answers": [
+            "aber",
+            "doch"
+          ],
+          "explain": "Kontrast: aber."
+        },
+        {
+          "id": "checkpoint-de-b1-q8",
+          "kind": "written",
+          "skill": "function:describe-past-events",
+          "prompt": "Erzähl eine Reiserfahrung (ein Satz).",
+          "answers": [
+            "letzten sommer bin ich nach peru gereist",
+            "ich bin nach peru gereist",
+            "letzte woche habe ich viel gereist",
+            "ich habe machu picchu besucht"
+          ],
+          "explain": "Perfekt + Zeitmarker: Letzten Sommer bin ich nach Peru gereist."
+        },
+        {
+          "id": "checkpoint-de-b1-q9",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ ist es die beste Option im Viertel.",
+          "answers": [
+            "Für mich"
+          ],
+          "explain": "Für mich + Meinung.",
+          "options": [
+            "Für mich",
+            "Von mir",
+            "Zu mir",
+            "Über mich"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q10",
+          "kind": "choice",
+          "skill": "vocab:travel",
+          "prompt": "Günstige Unterkunft für Reisende:",
+          "answers": [
+            "die Herberge"
+          ],
+          "explain": "Die Herberge (Jugendherberge) ist die günstige Unterkunft.",
+          "options": [
+            "die Herberge",
+            "das Krankenhaus",
+            "das Luxushotel",
+            "das Büro"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q11",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« ___ Samstag ? » — « Ja, perfekt ».",
+          "answers": [
+            "Passt dir"
+          ],
+          "explain": "Passt dir Samstag ? = passt es dir ?",
+          "options": [
+            "Passt dir",
+            "Gehst du",
+            "Machst du",
+            "Bist du"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b1-q12",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Passt ___ Samstag ?",
+          "answers": [
+            "dir",
+            "es dir"
+          ],
+          "explain": "Passt es dir ? = Schlüsselfrage zum Treffen."
+        },
+        {
+          "id": "checkpoint-de-b1-q13",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Schreibe einen Satz einer Vergangenheitsgeschichte: die Reise war unvergesslich.",
+          "answers": [
+            "die reise war unvergesslich",
+            "die reise war unvergesslich und ich habe tolle leute getroffen"
+          ],
+          "explain": "Die Reise war unvergesslich."
+        },
+        {
+          "id": "checkpoint-de-b1-q14",
+          "kind": "written",
+          "skill": "writing:message",
+          "prompt": "Schreibe eine Nachricht zum Treffen: wir treffen uns um zehn Uhr am Platz.",
+          "answers": [
+            "wir treffen uns um zehn uhr am platz",
+            "wir treffen uns um zehn uhr",
+            "treffen wir uns um zehn uhr"
+          ],
+          "explain": "Wir treffen uns um zehn Uhr am Platz."
+        },
+        {
+          "id": "checkpoint-de-b1-q15",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Erzähl etwas, das du letztes Jahr gemacht hast (ein Satz).",
+          "answers": [
+            "letztes jahr bin ich nach peru gereist",
+            "letztes jahr habe ich viel gearbeitet",
+            "ich habe kochen gelernt",
+            "letztes jahr war ich in peru"
+          ],
+          "explain": "Letztes Jahr + Perfekt."
+        },
+        {
+          "id": "checkpoint-de-b1-q16",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Gib deine Meinung und begründe: ich wohne lieber im Dorf, weil es ruhig ist.",
+          "answers": [
+            "ich wohne lieber im dorf weil es ruhig ist",
+            "ich mag das dorf mehr weil es ruhig ist",
+            "ich finde das dorf besser weil es ruhig ist"
+          ],
+          "explain": "Meinung + weil + Grund."
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-pt-b1",
+      "languageID": "pt",
+      "level": "B1",
+      "title": "B1 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-pt-b1-q1",
+          "kind": "choice",
+          "skill": "grammar:present-perfect",
+          "prompt": "___ nunca esqueei.",
+          "answers": [
+            "Nunca"
+          ],
+          "explain": "nunca + pretérito: nunca esqueei.",
+          "options": [
+            "Nunca",
+            "Já",
+            "Sempre",
+            "Muitas vezes"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q2",
+          "kind": "gap",
+          "skill": "grammar:present-perfect",
+          "prompt": "___ provei a paella várias vezes. (já)",
+          "answers": [
+            "já",
+            "ja"
+          ],
+          "explain": "Já + pretérito: já provei."
+        },
+        {
+          "id": "checkpoint-pt-b1-q3",
+          "kind": "choice",
+          "skill": "grammar:past-simple-irregular",
+          "prompt": "No ano passado ___ ao Peru.",
+          "answers": [
+            "fui"
+          ],
+          "explain": "ir → fui.",
+          "options": [
+            "fui",
+            "vou",
+            "ia",
+            "irei"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q4",
+          "kind": "choice",
+          "skill": "grammar:used-to",
+          "prompt": "Antes ___ onze horas; agora trabalho menos.",
+          "answers": [
+            "trabalhava"
+          ],
+          "explain": "Antes + imperfeito: rotina do passado.",
+          "options": [
+            "trabalhava",
+            "trabalho",
+            "trabalhei",
+            "trabalharei"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q5",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Este hostel é ___ barato ___ o hotel.",
+          "answers": [
+            "mais / do que"
+          ],
+          "explain": "Comparativo: mais … do que.",
+          "options": [
+            "mais / do que",
+            "mais / que",
+            "tão / como",
+            "mais / como"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q6",
+          "kind": "choice",
+          "skill": "grammar:superlatives",
+          "prompt": "Foi ___ melhor jantar da viagem.",
+          "answers": [
+            "o"
+          ],
+          "explain": "Superlativo: o melhor.",
+          "options": [
+            "o",
+            "a",
+            "os",
+            "as"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q7",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Ganhava bem, ___ não tinha vida.",
+          "answers": [
+            "mas",
+            "porém",
+            "contudo"
+          ],
+          "explain": "Contraste: mas."
+        },
+        {
+          "id": "checkpoint-pt-b1-q8",
+          "kind": "written",
+          "skill": "function:describe-past-events",
+          "prompt": "Conte uma experiência de viagem (uma frase).",
+          "answers": [
+            "no ano passado viajei para o peru",
+            "viajei para o peru no ano passado",
+            "fui ao perú ano passado",
+            "fui ao peru ano passado",
+            "conheci machu picchu"
+          ],
+          "explain": "Pretérito + marcador: No ano passado viajei para o Peru."
+        },
+        {
+          "id": "checkpoint-pt-b1-q9",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , é a melhor opção do bairro.",
+          "answers": [
+            "Para mim"
+          ],
+          "explain": "Para mim + opinião.",
+          "options": [
+            "Para mim",
+            "Por mim",
+            "A mim",
+            "Sobre mim"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q10",
+          "kind": "choice",
+          "skill": "vocab:travel",
+          "prompt": "Acomodação barata para viajantes:",
+          "answers": [
+            "o hostel"
+          ],
+          "explain": "O hostel é a acomodação barata.",
+          "options": [
+            "o hostel",
+            "o hospital",
+            "o hotel de luxo",
+            "o escritório"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q11",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Sábado ___ para você ? » — « Sim, perfeito ».",
+          "answers": [
+            "fica"
+          ],
+          "explain": "Fica para você ? = Serve para você ?",
+          "options": [
+            "fica",
+            "vai",
+            "faz",
+            "está"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b1-q12",
+          "kind": "gap",
+          "skill": "vocab:social-expressions",
+          "prompt": "Fica ___ você sábado ?",
+          "answers": [
+            "para",
+            "pra"
+          ],
+          "explain": "Fica para você ? = pergunta-chave para se encontrar."
+        },
+        {
+          "id": "checkpoint-pt-b1-q13",
+          "kind": "written",
+          "skill": "writing:story",
+          "prompt": "Escreva uma frase de história passada: a viagem foi inesquecível.",
+          "answers": [
+            "a viagem foi inesquecivel",
+            "a viagem foi inesquecível",
+            "a viagem era inesquecível"
+          ],
+          "explain": "A viagem foi inesquecível."
+        },
+        {
+          "id": "checkpoint-pt-b1-q14",
+          "kind": "written",
+          "skill": "writing:message",
+          "prompt": "Escreva uma mensagem para se encontrar: vamos nos encontrar às dez na praça.",
+          "answers": [
+            "vamos nos encontrar as dez na praca",
+            "vamos nos encontrar às dez na praça",
+            "vamos nos encontrar às dez",
+            "nos vemos as dez na praca",
+            "nos vemos às dez na praça"
+          ],
+          "explain": "Vamos nos encontrar às dez na praça."
+        },
+        {
+          "id": "checkpoint-pt-b1-q15",
+          "kind": "written",
+          "skill": "speaking:tell-past-story",
+          "prompt": "Conte algo que você fez no ano passado (uma frase).",
+          "answers": [
+            "no ano passado viajei para o perú",
+            "no ano passado viajei para o peru",
+            "no ano passado trabalhei muito",
+            "aprendi a cozinhar",
+            "no ano passado fui ao perú"
+          ],
+          "explain": "No ano passado + pretérito."
+        },
+        {
+          "id": "checkpoint-pt-b1-q16",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Dê sua opinião e justifique: prefiro o interior porque é tranquilo.",
+          "answers": [
+            "prefiro o interior porque e tranquilo",
+            "prefiro o interior porque é tranquilo",
+            "gosto mais do interior porque e tranquilo",
+            "gosto mais do interior porque é tranquilo"
+          ],
+          "explain": "Opinião + porque + motivo."
+        }
+      ]
     }
   ]
 }
