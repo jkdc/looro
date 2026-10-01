@@ -1493,6 +1493,721 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u5",
+      "title": "Na feira",
+      "subtitle": "Comprar local",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "feira-dia",
+          "title": "Dia de feira",
+          "subtitle": "Fruta e verdura fresca",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Compram na feira do bairro: fruta, verdura e contacto com o vendedor.",
+          "colorIndex": 0
+        },
+        {
+          "id": "padaria-express",
+          "title": "Na padaria",
+          "subtitle": "O que falta",
+          "symbol": "storefront",
+          "category": "Course",
+          "situation": "Falta algo para o jantar: correm à padaria na esquina.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u5-feira",
+          "title": "Na feira",
+          "goal": "Comprar fruta e verdura: quantidades, preços e fórmulas educadas.",
+          "intro": {
+            "explanation": [
+              "Na feira pergunta-se: « A quanto está o tomate ? ». « Está maduro ? »",
+              "As quantidades: « Meio quilo de cebolas ». « Um quilo de maçãs ». « Duzentos gramas de presunto ».",
+              "A fórmula educada: « Bom dia, queria um quilo de maçãs, por favor » — queria = educado."
+            ],
+            "examples": [
+              {
+                "text": "A quanto está o tomate ?",
+                "meaning": "O preço."
+              },
+              {
+                "text": "Queria um quilo de maçãs.",
+                "meaning": "queria = educado."
+              },
+              {
+                "text": "Está maduro ?",
+                "meaning": "Qualidade."
+              },
+              {
+                "text": "Duzentos gramas de presunto.",
+                "meaning": "Peso exato."
+              },
+              {
+                "text": "Quer mais alguma coisa ?",
+                "meaning": "O vendedor pergunta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "A quanto está …?",
+              "meaning": "Preço na feira.",
+              "note": "…o tomate ?"
+            },
+            {
+              "text": "Queria + quantidade",
+              "meaning": "Pedir educado.",
+              "note": "Queria um quilo."
+            },
+            {
+              "text": "Está maduro ?",
+              "meaning": "Qualidade.",
+              "note": "maduro = ripe."
+            },
+            {
+              "text": "duzentos gramas de …",
+              "meaning": "Peso.",
+              "note": "200 g."
+            },
+            {
+              "text": "Quer mais alguma coisa ?",
+              "meaning": "O vendedor pergunta.",
+              "note": "mais = más."
+            }
+          ],
+          "situation": "Compram na feira: meio quilo de tomates, um quilo de maçãs e perguntam se estão maduras.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Perguntem o preço dos tomates.",
+                "expected": [
+                  "A quanto está o tomate ?"
+                ],
+                "focus": "a quanto",
+                "watch": "A quanto está = ¿a cuánto está?"
+              },
+              {
+                "prompt": "Peçam meio quilo de cebolas.",
+                "expected": [
+                  "Queria meio quilo de cebolas."
+                ],
+                "focus": "queria",
+                "watch": "queria = educado."
+              },
+              {
+                "prompt": "Perguntem se as maçãs estão maduras.",
+                "expected": [
+                  "Estão maduras ?"
+                ],
+                "focus": "maduras",
+                "watch": "maduras (fem pl) para maçãs."
+              },
+              {
+                "prompt": "Digam o que precisam: um quilo de laranjas.",
+                "expected": [
+                  "Queria um quilo de laranjas."
+                ],
+                "focus": "queria + quant",
+                "watch": "queria + quantidade + produto."
+              },
+              {
+                "prompt": "Respondam ao vendedor: nada mais, obrigado.",
+                "expected": [
+                  "Nada mais obrigado.",
+                  "Só isso obrigado."
+                ],
+                "focus": "quer mais alguma coisa",
+                "watch": "Só isso = solo eso."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u5-feira-e1",
+              "kind": "choice",
+              "prompt": "A ___ ___ o tomate ?",
+              "explain": "A quanto está = ¿a cuánto está?",
+              "options": [
+                "quanto está",
+                "quanto é",
+                "muito custa",
+                "que preço"
+              ],
+              "answers": [
+                "quanto está"
+              ]
+            },
+            {
+              "id": "pt-foundations-u5-feira-e2",
+              "kind": "gap",
+              "prompt": "___ um quilo de maçãs. (querer educado)",
+              "explain": "queria = educado.",
+              "answers": [
+                "Queria"
+              ]
+            },
+            {
+              "id": "pt-foundations-u5-feira-e3",
+              "kind": "order",
+              "prompt": "Peçam um quilo de maçãs.",
+              "explain": "Queria + quantidade.",
+              "answers": [
+                "Queria um quilo de macas"
+              ]
+            },
+            {
+              "id": "pt-foundations-u5-feira-e4",
+              "kind": "written",
+              "prompt": "Reaccione cuando las peras no estén buenas: no están buenas.",
+              "explain": "maduras (fem pl) para peras.",
+              "answers": [
+                "están maduras",
+                "no están maduras"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:quantities",
+            "vocab:shopping",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u5-padaria",
+          "title": "Na padaria",
+          "goal": "Comprar o que falta: procurar, perguntar e pagar.",
+          "intro": {
+            "explanation": [
+              "Na padaria: « Tem pão integral ? » « Estou procurando fermento fresco ».",
+              "Não tem = esgotado. « Não tem ? Tudo bem, obrigado mesmo assim ».",
+              "O pagamento: « Quanto fica ? » « Fica sete reais »."
+            ],
+            "examples": [
+              {
+                "text": "Tem pão integral ?",
+                "meaning": "Perguntar se têm."
+              },
+              {
+                "text": "Estou procurando fermento fresco.",
+                "meaning": "Procurar."
+              },
+              {
+                "text": "Não tem ? Tudo bem, obrigado mesmo assim.",
+                "meaning": "Aceitar o não."
+              },
+              {
+                "text": "Quanto fica ?",
+                "meaning": "Perguntar o total."
+              },
+              {
+                "text": "Fica sete reais.",
+                "meaning": "O preço."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Tem … ?",
+              "meaning": "Perguntar em loja.",
+              "note": "…pão integral ?"
+            },
+            {
+              "text": "Estou procurando …",
+              "meaning": "Procurar.",
+              "note": "…fermento fresco."
+            },
+            {
+              "text": "Não tem / está esgotado",
+              "meaning": "Não há mais.",
+              "note": "Tudo bem = está bien."
+            },
+            {
+              "text": "Quanto fica ?",
+              "meaning": "Total.",
+              "note": "fica + preço."
+            },
+            {
+              "text": "Obrigado mesmo assim.",
+              "meaning": "Agradecer mesmo sem comprar.",
+              "note": "mesmo assim = igualmente."
+            }
+          ],
+          "situation": "Correm à padaria antes de fechar: procuram três coisas, duas têm e uma está esgotada.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Perguntar se têm pão integral.",
+                "expected": [
+                  "Tem pão integral ?"
+                ],
+                "focus": "tem",
+                "watch": "Tem + produto ?"
+              },
+              {
+                "prompt": "Dizer o que procuram.",
+                "expected": [
+                  "Estou procurando fermento fresco."
+                ],
+                "focus": "procurando",
+                "watch": "estar + gerúndio."
+              },
+              {
+                "prompt": "Aceitar quando não tem.",
+                "expected": [
+                  "Tudo bem, obrigado mesmo assim."
+                ],
+                "focus": "aceitar o não",
+                "watch": "mesmo assim = igualmente."
+              },
+              {
+                "prompt": "Perguntar o total.",
+                "expected": [
+                  "Quanto fica ?"
+                ],
+                "focus": "total",
+                "watch": "Quanto fica ?"
+              },
+              {
+                "prompt": "Pergunte se pode pagar com cartão.",
+                "expected": [
+                  "Pode ser no cartão ?",
+                  "Posso pagar no cartão ?"
+                ],
+                "focus": "cartão",
+                "watch": "no cartão = con tarjeta."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u5-padaria-e1",
+              "kind": "choice",
+              "prompt": "___ pão integral ?",
+              "explain": "Tem + produto ?",
+              "options": [
+                "Tem",
+                "Tem-se",
+                "Há",
+                "Está"
+              ],
+              "answers": [
+                "Tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u5-padaria-e2",
+              "kind": "gap",
+              "prompt": "Estou ___ fermento fresco. (procurar)",
+              "explain": "estar + gerúndio.",
+              "answers": [
+                "procurando"
+              ]
+            },
+            {
+              "id": "pt-foundations-u5-padaria-e3",
+              "kind": "order",
+              "prompt": "Pergunte o total de tudo.",
+              "explain": "Quanto fica + tudo junto ?",
+              "answers": [
+                "Quanto fica tudo junto"
+              ]
+            },
+            {
+              "id": "pt-foundations-u5-padaria-e4",
+              "kind": "written",
+              "prompt": "Diga o que procura: fermento fresco.",
+              "explain": "Estou procurando + produto.",
+              "answers": [
+                "estou procurando fermento fresco",
+                "procurando fermento fresco"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:present-questions",
+            "vocab:food",
+            "function:solve-problems"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u6",
+      "title": "Experiências e mudanças",
+      "subtitle": "Já ou nunca",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "pt-b1-viagem",
+          "title": "A viagem inesquecível",
+          "subtitle": "Já visto",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Vocês falam de viagens e primeiras vezes: já foi, nunca viu, e uma história inesquecível.",
+          "colorIndex": 0
+        },
+        {
+          "id": "pt-b1-mudanca",
+          "title": "A mudança de vida",
+          "subtitle": "Antes / agora",
+          "symbol": "arrow-up-forward",
+          "category": "Course",
+          "situation": "Vocês comparam a vida de antes e de hoje e explicam o que mudou.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-b1-experiencias",
+          "title": "Você já fez ?",
+          "goal": "Contar experiências com o pretérito perfeito e já/nunca.",
+          "intro": {
+            "explanation": [
+              "A experiência: « Você já foi a Lisboa ? » — « Sim, fui no ano passado. »",
+              "já = pelo menos uma vez. « Já provei essa paella ». nunca = zero vezes. « Nunca esquiei ».",
+              "Os particípios irregulares voltam: « vi », « fiz », « fui »."
+            ],
+            "examples": [
+              {
+                "text": "Você já foi a Lisboa ?",
+                "meaning": "Pergunta de experiência."
+              },
+              {
+                "text": "Nunca esqueei.",
+                "meaning": "nunca = zero vezes."
+              },
+              {
+                "text": "Já provei a paella.",
+                "meaning": "já = uma vez."
+              },
+              {
+                "text": "Foi a primeira vez.",
+                "meaning": "Primeira vez."
+              },
+              {
+                "text": "O que você fez lá ?",
+                "meaning": "Aprofundar."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Você já + pretérito ?",
+              "meaning": "Experiência.",
+              "note": "Você já foi a Roma ?"
+            },
+            {
+              "text": "nunca + verbo",
+              "meaning": "nunca.",
+              "note": "Nunca vi isso."
+            },
+            {
+              "text": "vi / fiz / fui",
+              "meaning": "Particípios-chave.",
+              "note": "ver→vi, fazer→fiz."
+            },
+            {
+              "text": "a primeira vez que…",
+              "meaning": "Primeira vez.",
+              "note": "Foi a primeira vez que…"
+            },
+            {
+              "text": "e você ?",
+              "meaning": "Devolver a pergunta.",
+              "note": "E você, já… ?"
+            }
+          ],
+          "situation": "Vocês falam de viagens: quem já pegou avião, quem nunca acampou, e uma primeira vez inesquecível.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte se seu amigo já foi a Lisboa.",
+                "expected": [
+                  "Você já foi a Lisboa ?"
+                ],
+                "focus": "já + pretérito",
+                "watch": "Você já foi… ?"
+              },
+              {
+                "prompt": "Diga que nunca esqueeu.",
+                "expected": [
+                  "Nunca esqueei.",
+                  "Eu nunca esqueei."
+                ],
+                "focus": "nunca",
+                "watch": "nunca + pretérito."
+              },
+              {
+                "prompt": "Diga que já provou a paella.",
+                "expected": [
+                  "Já provei a paella."
+                ],
+                "focus": "já",
+                "watch": "Já + pretérito."
+              },
+              {
+                "prompt": "Diga que foi a sua primeira vez.",
+                "expected": [
+                  "Foi a minha primeira vez.",
+                  "Foi a primeira vez."
+                ],
+                "focus": "primeira vez",
+                "watch": "foi + primeira vez."
+              },
+              {
+                "prompt": "Devolva a pergunta: e você ?",
+                "expected": [
+                  "E você ?",
+                  "E você, já surfou ?"
+                ],
+                "focus": "e você",
+                "watch": "e você devolve."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-b1-experiencias-e1",
+              "kind": "choice",
+              "prompt": "Você já ___ a Roma ?",
+              "options": [
+                "foi",
+                "vou",
+                "ia",
+                "vai"
+              ],
+              "answers": [
+                "foi"
+              ],
+              "explain": "ir → foi (pretérito)."
+            },
+            {
+              "id": "pt-b1-experiencias-e2",
+              "kind": "gap",
+              "prompt": "___ esqueei. (nunca)",
+              "answers": [
+                "nunca"
+              ],
+              "explain": "nunca + pretérito."
+            },
+            {
+              "id": "pt-b1-experiencias-e3",
+              "kind": "order",
+              "prompt": "Pergunte a experiência: você já comeu caracóis ?",
+              "answers": [
+                "Você já comeu caracóis"
+              ],
+              "explain": "Você já + pretérito + objeto ?"
+            },
+            {
+              "id": "pt-b1-experiencias-e4",
+              "kind": "written",
+              "prompt": "Diga uma experiência: você já viu esse filme.",
+              "answers": [
+                "ja vi esse filme",
+                "já vi esse filme"
+              ],
+              "explain": "Já + vi (ver → vi)."
+            }
+          ],
+          "skills": [
+            "grammar:present-perfect",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "pt-b1-antes-ahora",
+          "title": "Antes e agora",
+          "goal": "Contrastar passado e presente com o imperfeito e conectivos.",
+          "intro": {
+            "explanation": [
+              "O imperfeito pinta o passado habitual: « Antes eu morava na cidade ».",
+              "O contraste: « Antes… agora… ». « Antes eu fumava, agora corro ».",
+              "Os conectivos: « mas », « porque », « então ». « Era cansativo, então me mudei »."
+            ],
+            "examples": [
+              {
+                "text": "Antes eu morava na cidade.",
+                "meaning": "imperfeito do passado."
+              },
+              {
+                "text": "Agora moro no interior.",
+                "meaning": "presente em contraste."
+              },
+              {
+                "text": "Antes eu fumava, agora corro.",
+                "meaning": "Mudança de vida."
+              },
+              {
+                "text": "Era cansativo, então me mudei.",
+                "meaning": "então = consequência."
+              },
+              {
+                "text": "Prefiro a vida de agora, porque…",
+                "meaning": "porque = causa."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Antes, eu …-ava/-ia",
+              "meaning": "imperfeito.",
+              "note": "morava, fazia."
+            },
+            {
+              "text": "agora, eu …",
+              "meaning": "presente.",
+              "note": "agora moro…"
+            },
+            {
+              "text": "mas / porque / então",
+              "meaning": "Conectivos.",
+              "note": "mas = contraste."
+            },
+            {
+              "text": "prefiro …",
+              "meaning": "Opinião.",
+              "note": "prefiro a vida…"
+            },
+            {
+              "text": "Era + adjetivo",
+              "meaning": "Quadro no passado.",
+              "note": "Era tranquilo."
+            }
+          ],
+          "situation": "Vocês comparam a vida de antes e de hoje: cidade e interior, trabalho e lazer, e por que mudaram.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que antes você morava na cidade.",
+                "expected": [
+                  "Antes eu morava na cidade.",
+                  "Antes, eu morava na cidade."
+                ],
+                "focus": "imperfeito",
+                "watch": "-ava: morava."
+              },
+              {
+                "prompt": "Diga que agora você mora no interior.",
+                "expected": [
+                  "Agora moro no interior."
+                ],
+                "focus": "agora",
+                "watch": "presente para agora."
+              },
+              {
+                "prompt": "Contraste: antes você fumava, agora corre.",
+                "expected": [
+                  "Antes eu fumava agora corro.",
+                  "Antes eu fumava, agora corro."
+                ],
+                "focus": "antes/agora",
+                "watch": "dois tempos opostos."
+              },
+              {
+                "prompt": "Dê a consequência: era cansativo, então você se mudou.",
+                "expected": [
+                  "Era cansativo então me mudei.",
+                  "Era cansativo, então me mudei."
+                ],
+                "focus": "então",
+                "watch": "então + consequência."
+              },
+              {
+                "prompt": "Diga o que prefere e por quê.",
+                "expected": [
+                  "Prefiro a vida de agora porque sou mais livre.",
+                  "Prefiro a vida de agora."
+                ],
+                "focus": "porque",
+                "watch": "porque + causa."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-b1-antes-ahora-e1",
+              "kind": "choice",
+              "prompt": "Antes, eu ___ na cidade. (morar, imperfeito)",
+              "options": [
+                "morava",
+                "moro",
+                "morei",
+                "morarei"
+              ],
+              "answers": [
+                "morava"
+              ],
+              "explain": "imperfeito: -ava."
+            },
+            {
+              "id": "pt-b1-antes-ahora-e2",
+              "kind": "gap",
+              "prompt": "Era cansativo, ___ me mudei. (consequência)",
+              "answers": [
+                "então"
+              ],
+              "explain": "então = consequência."
+            },
+            {
+              "id": "pt-b1-antes-ahora-e3",
+              "kind": "order",
+              "prompt": "Contraste: antes você fumava, agora corre.",
+              "answers": [
+                "Antes eu fumava agora corro"
+              ],
+              "explain": "antes + imperfeito, agora + presente."
+            },
+            {
+              "id": "pt-b1-antes-ahora-e4",
+              "kind": "written",
+              "prompt": "Diga o que mudou: agora você trabalha de casa.",
+              "answers": [
+                "agora trabalho de casa",
+                "agora trabalho em casa"
+              ],
+              "explain": "agora + presente."
+            }
+          ],
+          "skills": [
+            "grammar:used-to",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:used-to"
+          ]
+        }
+      ]
     }
   ]
 }

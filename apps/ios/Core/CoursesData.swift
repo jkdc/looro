@@ -258,6 +258,130 @@ public enum DeFoundationsU4 {
                             Exercise(id: "de-foundations-u4-komparativ-e4", kind: "written", prompt: "Dein Lieblingsrestaurant.", options: [], answers: ["mein lieblingsrestaurant ist <name>", "das beste ist <name>"], explain: "Mein Liebling ist X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"])])
 }
 
+public enum DeFoundationsU5 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u5", title: "Einkaufen", subtitle: "Lokal einkaufen", level: "A1", themes: [
+                    ConversationTheme("markttag", "Markttag", "Obst und Gemüse", "cart", "Course", "Ihr kauft auf dem Wochenmarkt: Obst, Gemüse und Kontakt mit dem Verkäufer.", 0),
+                    ConversationTheme("laden-um-ecke", "Der Laden um die Ecke", "Was fehlt", "storefront", "Course", "Etwas fehlt zum Abendessen: ihr rennt zum Laden um die Ecke.", 1)], lessons: [
+            Lesson(id: "de-foundations-u5-markt", title: "Auf dem Markt", goal: "Obst und Gemüse kaufen: Mengen, Preise und höfliche Formeln.",
+                intro: LessonIntro(explanation: [
+                            "Auf dem Markt: „Was kosten die Tomaten?“ „Sind die reif?“",
+                            "Mengen: „Ein Pfund Zwiebeln.“ „Zwei Kilo Äpfel.“ „Zweihundert Gramm Schinken.“",
+                            "Höflich einkaufen: „Ich hätte gern ein Kilo Äpfel.“ — hätte = höfliche Form von haben."], examples: [
+                            ExampleLine(text: "Was kosten die Tomaten ?", meaning: "Der Preis."),
+                            ExampleLine(text: "Ich hätte gern ein Kilo Äpfel.", meaning: "Höflich einkaufen."),
+                            ExampleLine(text: "Sind die reif ?", meaning: "Nach der Qualität fragen."),
+                            ExampleLine(text: "Zweihundert Gramm Schinken.", meaning: "Gewicht."),
+                            ExampleLine(text: "Sonst noch etwas ?", meaning: "Der Verkäufer fragt.")]),
+                expressions: [
+                            TargetExpression(text: "Was kosten …?", meaning: "Preis fragen.", note: "…die Tomaten ?"),
+                            TargetExpression(text: "Ich hätte gern …", meaning: "Höflich kaufen.", note: "hätte = Konjunktiv von haben."),
+                            TargetExpression(text: "ein Pfund / ein Kilo von …", meaning: "Gewicht.", note: "ein Pfund = 500 g."),
+                            TargetExpression(text: "Sind die reif ?", meaning: "Qualität.", note: "reif = maduro."),
+                            TargetExpression(text: "Sonst noch etwas ?", meaning: "Der Verkäufer fragt.", note: "Nein, das ist alles.")],
+                situation: "Ihr kauft auf dem Wochenmarkt: ein Kilo Äpfel, ein Pfund Zwiebeln und fragt nach der Qualität.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fragt den Preis der Tomaten.", expected: ["Was kosten die Tomaten ?"], focus: "was kosten", watch: "Was kosten + Plural."),
+                                PracticeQuestion(prompt: "Kauft ein Kilo Äpfel (höflich).", expected: ["Ich hätte gern ein Kilo Äpfel."], focus: "hätte gern", watch: "hätte gern + Akkusativ."),
+                                PracticeQuestion(prompt: "Fragt nach der Qualität. (reif)", expected: ["Sind die Äpfel reif ?"], focus: "reif", watch: "reif = maduro."),
+                                PracticeQuestion(prompt: "Sagt was ihr kauft: 200 g Schinken.", expected: ["Ich nehme zweihundert Gramm Schinken."], focus: "ich nehme", watch: "nehmen = tomar/elegir."),
+                                PracticeQuestion(prompt: "Responde al vendedor: nada más, gracias.", expected: ["Nichts sonst danke.", "Sonst nichts danke.", "Das war's danke."], focus: "sonst noch etwas", watch: "Sonst nichts, danke = nada más.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u5-markt-e1", kind: "choice", prompt: "___ ___ die Tomaten ?", options: ["Was kosten", "Was sind", "Wie viel ist", "Was ist"], answers: ["Was kosten"], explain: "Was kosten + Plural."),
+                            Exercise(id: "de-foundations-u5-markt-e2", kind: "gap", prompt: "Ich ___ gern ein Kilo Äpfel. (höflich)", options: [], answers: ["hätte"], explain: "hätte gern + Akkusativ."),
+                            Exercise(id: "de-foundations-u5-markt-e3", kind: "order", prompt: "Kauft ein Kilo Äpfel.", options: [], answers: ["Ich hätte gern ein Kilo Apfel"], explain: "hätte gern + Menge."),
+                            Exercise(id: "de-foundations-u5-markt-e4", kind: "written", prompt: "Fragt nach der Qualität.", options: [], answers: ["sind die apfel reif", "sind die äpfel reif"], explain: "Sind die … reif ?")], skills: ["vocab:food", "grammar:quantities", "vocab:shopping", "function:go-shopping"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u5-laden", title: "Der Laden um die Ecke", goal: "Kaufen was fehlt: suchen, fragen und bezahlen.",
+                intro: LessonIntro(explanation: [
+                            "Im Laden: „Haben Sie…?“ „Ich suche…“. Der Verkäufer: „Ja, hier bitte“ oder „Tut mir leid, ist ausverkauft“.",
+                            "Ausverkauft = es gibt nicht mehr. „Der Laden ist ausverkauft“ (alle Tickets) vs „Das Produkt ist ausverkauft“.",
+                            "Bezahlen: „Was macht das ?“ „Das macht fünf Euro.“ „Bar oder mit Karte ?“"], examples: [
+                            ExampleLine(text: "Haben Sie Vollkornbrot ?", meaning: "Fragen ob vorhanden."),
+                            ExampleLine(text: "Ich suche frische Hefe.", meaning: "Suchen."),
+                            ExampleLine(text: "Tut mir leid, ist ausverkauft.", meaning: "Nicht mehr da."),
+                            ExampleLine(text: "Was macht das ?", meaning: "Total fragen."),
+                            ExampleLine(text: "Das macht fünf Euro.", meaning: "Der Preis.")]),
+                expressions: [
+                            TargetExpression(text: "Haben Sie … ?", meaning: "Fragen.", note: "…Vollkornbrot ?"),
+                            TargetExpression(text: "Ich suche …", meaning: "Suchen.", note: "…frische Hefe."),
+                            TargetExpression(text: "ausverkauft", meaning: "Nicht mehr verfügbar.", note: "aus + verkauft."),
+                            TargetExpression(text: "Was macht das ?", meaning: "Total.", note: "Das macht + Preis."),
+                            TargetExpression(text: "Bar oder mit Karte ?", meaning: "Zahlungsart.", note: "bar = efectivo.")],
+                situation: "Ihr rennt zum Laden bevor er schließt: ihr sucht drei Sachen, zwei hat er und eine ist ausverkauft.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fragen nach Vollkornbrot.", expected: ["Haben Sie Vollkornbrot ?"], focus: "haben Sie", watch: "Haben Sie + Produkt ?"),
+                                PracticeQuestion(prompt: "Sagen was ihr sucht. (frische Hefe)", expected: ["Ich suche frische Hefe."], focus: "ich suche", watch: "ich suche + Produkt."),
+                                PracticeQuestion(prompt: "Reagieren wenn ausverkauft.", expected: ["Schade! Danke trotzdem."], focus: "schade", watch: "Schade = lástima."),
+                                PracticeQuestion(prompt: "Fragen nach dem Total.", expected: ["Was macht das ?"], focus: "total", watch: "Was macht das ? = ¿cuánto es?"),
+                                PracticeQuestion(prompt: "Pregunta cómo puedes pagar.", expected: ["Bar oder mit Karte ?", "Kann ich mit Karte zahlen ?"], focus: "bar oder karte", watch: "Bar = efectivo.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u5-laden-e1", kind: "choice", prompt: "___ Sie Vollkornbrot ?", options: ["Haben", "Sind", "Es gibt", "Gibt"], answers: ["Haben"], explain: "Haben Sie + Produkt ?"),
+                            Exercise(id: "de-foundations-u5-laden-e2", kind: "gap", prompt: "Ich ___ frische Hefe. (suchen)", options: [], answers: ["suche"], explain: "ich suche + Produkt."),
+                            Exercise(id: "de-foundations-u5-laden-e3", kind: "order", prompt: "Fragt nach dem Total.", options: [], answers: ["Was macht das"], explain: "Was macht das ?"),
+                            Exercise(id: "de-foundations-u5-laden-e4", kind: "written", prompt: "Sagt was ihr sucht: frische Hefe.", options: [], answers: ["ich suche frische hefe"], explain: "Ich suche + Produkt.")], skills: ["function:go-shopping", "grammar:present-questions", "vocab:food", "function:solve-problems"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum DeFoundationsU6 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u6", title: "Erlebnisse und Veränderungen", subtitle: "Schon mal?", level: "B1", themes: [
+                    ConversationTheme("de-b1-reise", "Die unvergessliche Reise", "Schon gesehen", "airplane", "Course", "Ihr sprecht über Reisen und erste Male: schon mal dort, noch nie gesehen, eine unvergessliche Geschichte.", 0),
+                    ConversationTheme("de-b1-wandel", "Der Lebenswandel", "Früher / heute", "arrow-up-forward", "Course", "Ihr vergleicht euer Leben früher und heute und erklärt, was sich geändert hat.", 1)], lessons: [
+            Lesson(id: "de-b1-experiencias", title: "Schon mal gemacht ?", goal: "Von Erfahrungen erzählen mit dem Perfekt und schon/mal/nie.",
+                intro: LessonIntro(explanation: [
+                            "Die Erfahrung: « Warst du schon mal in Lissabon ? » — « Ja, letztes Jahr war ich dort. »",
+                            "schon mal = mindestens einmal. « Ich habe Paella schon mal probiert. » nie = nullmal. « Ich bin noch nie Ski gefahren. »",
+                            "Die starken Partizipien bleiben: « gesehen », « gemacht », « gewesen »."], examples: [
+                            ExampleLine(text: "Warst du schon mal in Lissabon ?", meaning: "Erfahrungsfrage."),
+                            ExampleLine(text: "Ich bin noch nie Ski gefahren.", meaning: "nie = nullmal."),
+                            ExampleLine(text: "Ich habe Paella schon mal probiert.", meaning: "schon mal = einmal."),
+                            ExampleLine(text: "Das war das erste Mal.", meaning: "Erstes Mal."),
+                            ExampleLine(text: "Was hast du dort gemacht ?", meaning: "Nachfragen.")]),
+                expressions: [
+                            TargetExpression(text: "Warst du schon mal … ?", meaning: "Erfahrung.", note: "Warst du schon mal in Rom ?"),
+                            TargetExpression(text: "Ich bin noch nie …", meaning: "nie.", note: "…gefahren/gesehen."),
+                            TargetExpression(text: "gesehen / gemacht / gewesen", meaning: "starke Partizipien.", note: "sehen→gesehen."),
+                            TargetExpression(text: "das erste Mal", meaning: "Erstes Mal.", note: "Das war das erste Mal."),
+                            TargetExpression(text: "und du ?", meaning: "Zurückfragen.", note: "Und du, warst du… ?")],
+                situation: "Ihr sprecht über Reisen: wer schon mal geflogen ist, wer noch nie gezeltet hat, und ein unvergessliches erstes Mal.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Frag, ob dein Freund schon mal in Lissabon war.", expected: ["Warst du schon mal in Lissabon ?"], focus: "schon mal", watch: "Warst du schon mal … ?"),
+                                PracticeQuestion(prompt: "Sag, dass du noch nie Ski gefahren bist.", expected: ["Ich bin noch nie Ski gefahren."], focus: "noch nie", watch: "noch nie + Partizip am Ende."),
+                                PracticeQuestion(prompt: "Sag, dass du Paella schon mal probiert hast.", expected: ["Ich habe Paella schon mal probiert."], focus: "schon mal", watch: "schon mal + Partizip."),
+                                PracticeQuestion(prompt: "Sag, dass es dein erstes Mal war.", expected: ["Das war mein erstes Mal.", "Das war das erste Mal."], focus: "erstes Mal", watch: "Präteritum war."),
+                                PracticeQuestion(prompt: "Frag zurück: und du ?", expected: ["Und du ?", "Und du, warst du schon mal surfen ?"], focus: "und du", watch: "und du fragt zurück.")]),
+                exercises: [
+                            Exercise(id: "de-b1-experiencias-e1", kind: "choice", prompt: "Warst du schon mal ___ Rom ?", options: ["in", "nach", "zu", "an"], answers: ["in"], explain: "in + Stadt (wo)."),
+                            Exercise(id: "de-b1-experiencias-e2", kind: "gap", prompt: "Ich bin noch nie Ski ___. (fahren)", options: [], answers: ["gefahren"], explain: "fahren → gefahren (sein)."),
+                            Exercise(id: "de-b1-experiencias-e3", kind: "order", prompt: "Frag die Erfahrung: hast du schon mal Schnecken gegessen ?", options: [], answers: ["Hast du schon mal Schnecken gegessen"], explain: "Hast du schon mal + … + Partizip ?"),
+                            Exercise(id: "de-b1-experiencias-e4", kind: "written", prompt: "Sag eine Erfahrung: du hast diesen Film schon gesehen.", options: [], answers: ["ich habe diesen film schon gesehen"], explain: "habe … + Partizip am Ende.")], skills: ["grammar:present-perfect", "grammar:past-simple-irregular", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "de-b1-antes-ahora", title: "Früher und heute", goal: "Vergangenheit und Gegenwart mit Präteritum und Konnektoren gegenüberstellen.",
+                intro: LessonIntro(explanation: [
+                            "Das Präteritum erzählt Gewohntes: « Früher habe ich in der Stadt gewohnt. »",
+                            "Der Kontrast: « Früher… heute… ». « Früher habe ich geraucht, heute laufe ich. »",
+                            "Die Konnektoren: « aber », « weil », « also ». « Es war anstrengend, also bin ich umgezogen. »"], examples: [
+                            ExampleLine(text: "Früher habe ich in der Stadt gewohnt.", meaning: "Vergangenheit."),
+                            ExampleLine(text: "Heute wohne ich auf dem Land.", meaning: "Gegenwart im Kontrast."),
+                            ExampleLine(text: "Früher habe ich geraucht, heute laufe ich.", meaning: "Lebenswandel."),
+                            ExampleLine(text: "Es war anstrengend, also bin ich umgezogen.", meaning: "also = Folge."),
+                            ExampleLine(text: "Ich finde das heutige Leben besser, weil…", meaning: "weil = Grund.")]),
+                expressions: [
+                            TargetExpression(text: "Früher habe ich …", meaning: "Perfekt.", note: "…gewohnt/gemacht."),
+                            TargetExpression(text: "heute …", meaning: "Präsens.", note: "heute wohne ich…"),
+                            TargetExpression(text: "aber / weil / also", meaning: "Konnektoren.", note: "aber = Kontrast."),
+                            TargetExpression(text: "ich finde … besser", meaning: "Meinung.", note: "ich finde…"),
+                            TargetExpression(text: "Es war + Adjektiv", meaning: "Rahmen.", note: "Es war ruhig.")],
+                situation: "Ihr vergleicht das Leben früher und heute: Stadt und Land, Arbeit und Freizeit, und warum ihr umgezogen seid.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag, dass du früher in der Stadt gewohnt hast.", expected: ["Früher habe ich in der Stadt gewohnt."], focus: "Früher", watch: "Früher + Perfekt."),
+                                PracticeQuestion(prompt: "Sag, dass du heute auf dem Land wohnst.", expected: ["Heute wohne ich auf dem Land."], focus: "heute", watch: "heute + Präsens."),
+                                PracticeQuestion(prompt: "Gegenüber: früher geraucht, heute läufst du.", expected: ["Früher habe ich geraucht heute laufe ich.", "Früher habe ich geraucht, heute laufe ich."], focus: "früher/heute", watch: "zwei Zeiten."),
+                                PracticeQuestion(prompt: "Nenne die Folge: es war anstrengend, also bist du umgezogen.", expected: ["Es war anstrengend also bin ich umgezogen.", "Es war anstrengend, also bin ich umgezogen."], focus: "also", watch: "also + Folge."),
+                                PracticeQuestion(prompt: "Sag, was dir besser gefällt und warum.", expected: ["Ich finde das heutige Leben besser weil ich freier bin.", "Ich finde das heutige Leben besser."], focus: "weil", watch: "weil + Grund.")]),
+                exercises: [
+                            Exercise(id: "de-b1-antes-ahora-e1", kind: "choice", prompt: "Früher ___ ich in der Stadt gewohnt.", options: ["habe", "bin", "war", "hatte"], answers: ["habe"], explain: "wohnen → haben: habe gewohnt."),
+                            Exercise(id: "de-b1-antes-ahora-e2", kind: "gap", prompt: "Es war anstrengend, ___ bin ich umgezogen. (Folge)", options: [], answers: ["also"], explain: "also = Folge."),
+                            Exercise(id: "de-b1-antes-ahora-e3", kind: "order", prompt: "Gegenüber: früher geraucht, heute gelaufen.", options: [], answers: ["Früher habe ich geraucht heute laufe ich"], explain: "Früher + Perfekt, heute + Präsens."),
+                            Exercise(id: "de-b1-antes-ahora-e4", kind: "written", prompt: "Sag, was sich geändert hat: heute arbeitest du von zu Hause.", options: [], answers: ["heute arbeite ich von zu hause"], explain: "heute + Präsens.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -613,7 +737,7 @@ public enum EnFoundationsU3 {
                             Exercise(id: "en-foundations-u3-third-person-e1", kind: "choice", prompt: "He ___ football on Sundays.", options: ["plays", "play", "playing", "is play"], answers: ["plays"], explain: "With he/she/it the verb takes -s."),
                             Exercise(id: "en-foundations-u3-third-person-e2", kind: "gap", prompt: "She ___ English at night. (study)", options: [], answers: ["studies"], explain: "Consonant + y → -ies: study → studies."),
                             Exercise(id: "en-foundations-u3-third-person-e3", kind: "order", prompt: "Say where your sister works.", options: [], answers: ["My sister works in a cafe"], explain: "Sister is she → works with -s."),
-                            Exercise(id: "en-foundations-u3-third-person-e4", kind: "written", prompt: "Say that Ana speaks English.", options: [], answers: ["Ana speaks English", "She speaks English"], explain: "Ana = she → speak + s.")], skills: ["grammar:third-person-s", "grammar:frequency-adverbs", "function:talk-about-routines", "pron:third-person-s"], prerequisites: ["grammar:present-simple"]),
+                            Exercise(id: "en-foundations-u3-third-person-e4", kind: "written", prompt: "Presénte a Ana: ¿qué habla? (inglés)", options: [], answers: ["Ana speaks English", "She speaks English"], explain: "Ana = she → speak + s.")], skills: ["grammar:third-person-s", "grammar:frequency-adverbs", "function:talk-about-routines", "pron:third-person-s"], prerequisites: ["grammar:present-simple"]),
             Lesson(id: "en-foundations-u3-time", title: "Time & daily routine", goal: "Tell the time and describe your day in order.",
                 intro: LessonIntro(explanation: [
                             "Ask with “What time is it?” Answer with o'clock for exact hours: “It's seven o'clock.” For halves say half past: “It's half past seven” (7:30).",
@@ -879,7 +1003,7 @@ public enum EnFoundationsDays {
                             Exercise(id: "en-foundations-days-calendar-e1", kind: "choice", prompt: "The course starts ___ September.", options: ["in", "on", "at", "to"], answers: ["in"], explain: "Months take in: in September."),
                             Exercise(id: "en-foundations-days-calendar-e2", kind: "gap", prompt: "We always meet ___ Fridays.", options: [], answers: ["on"], explain: "Days take on: on Fridays (every Friday)."),
                             Exercise(id: "en-foundations-days-calendar-e3", kind: "order", prompt: "Say when your birthday is. (5 / on / May / My birthday / is)", options: [], answers: ["My birthday is on 5 May"], explain: "on + day + month for dates."),
-                            Exercise(id: "en-foundations-days-calendar-e4", kind: "written", prompt: "Which is correct: “in Monday”, “on Monday” or “at Monday”?", options: [], answers: ["on monday"], explain: "Days always take on.")], skills: ["grammar:time-expressions", "function:tell-time", "vocab:social-expressions"], prerequisites: ["grammar:time-expressions"]),
+                            Exercise(id: "en-foundations-days-calendar-e4", kind: "gap", prompt: "The class is ___ Monday.", options: [], answers: ["on monday"], explain: "Días con on: on Monday.")], skills: ["grammar:time-expressions", "function:tell-time", "vocab:social-expressions"], prerequisites: ["grammar:time-expressions"]),
             Lesson(id: "en-foundations-days-free-time", title: "Free time and hobbies", goal: "Talk about hobbies with play, go and do, and say how often.",
                 intro: LessonIntro(explanation: [
                             "Three verbs own the hobbies: play for games (play football), go for -ing activities (go swimming), do for the rest (do yoga).",
@@ -1486,7 +1610,7 @@ public enum EnFoundationsMeals {
                             Exercise(id: "en-foundations-meals-restaurant-e1", kind: "choice", prompt: "I'll ___ the pasta.", options: ["have", "has", "having", "to have"], answers: ["have"], explain: "I'll have + dish — the classic order."),
                             Exercise(id: "en-foundations-meals-restaurant-e2", kind: "gap", prompt: "Could we have the ___, please? (cuenta)", options: [], answers: ["bill", "check"], explain: "the bill (UK) / the check (US)."),
                             Exercise(id: "en-foundations-meals-restaurant-e3", kind: "order", prompt: "Order the soup.", options: [], answers: ["Ill have the soup please"], explain: "I'll have + dish + please."),
-                            Exercise(id: "en-foundations-meals-restaurant-e4", kind: "written", prompt: "Ask what is in the paella.", options: [], answers: ["whats in the paella", "what is in the paella"], explain: "What's in + dish?")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "function:make-requests"], canDo: ["order-food"], prerequisites: ["grammar:some-any"])])
+                            Exercise(id: "en-foundations-meals-restaurant-e4", kind: "written", prompt: "Pregunte qué lleva la paella.", options: [], answers: ["whats in the paella", "what is in the paella"], explain: "What's in + dish?")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "function:make-requests"], canDo: ["order-food"], prerequisites: ["grammar:some-any"])])
 }
 
 public enum EnFoundationsShopping {
@@ -1774,7 +1898,7 @@ public enum EnFoundationsU6 {
                             Exercise(id: "en-foundations-u6-was-were-e1", kind: "choice", prompt: "We ___ at home yesterday.", options: ["were", "was", "are", "did"], answers: ["were"], explain: "With we/you/they: were."),
                             Exercise(id: "en-foundations-u6-was-were-e2", kind: "gap", prompt: "The film ___ great.", options: [], answers: ["was"], explain: "Singular things: was."),
                             Exercise(id: "en-foundations-u6-was-were-e3", kind: "order", prompt: "Ask about last night.", options: [], answers: ["Where were you last night"], explain: "were + you for the past."),
-                            Exercise(id: "en-foundations-u6-was-were-e4", kind: "written", prompt: "Say the weather was good at the weekend.", options: [], answers: ["The weather was good at the weekend", "It was sunny at the weekend", "The weather was nice at the weekend"], explain: "was + adjective for past descriptions.")], skills: ["grammar:past-was-were", "vocab:feelings", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:verb-be"]),
+                            Exercise(id: "en-foundations-u6-was-were-e4", kind: "written", prompt: "Describe el tiempo el fin de semana pasado.", options: [], answers: ["The weather was good at the weekend", "It was sunny at the weekend", "The weather was nice at the weekend"], explain: "was + adjective for past descriptions.")], skills: ["grammar:past-was-were", "vocab:feelings", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:verb-be"]),
             Lesson(id: "en-foundations-u6-past", title: "Past simple: -ed", goal: "Tell what you and others did, with regular past forms and didn't.",
                 intro: LessonIntro(explanation: [
                             "For finished actions, regular verbs add -ed: work → worked, play → played, watch → watched. The same form works for every person.",
@@ -2170,7 +2294,7 @@ public enum EnFoundationsHealth {
                             Exercise(id: "en-foundations-health-symptoms-e1", kind: "choice", prompt: "I've ___ a headache since Monday.", options: ["had", "have", "got has", "having"], answers: ["had"], explain: "have got / have had for symptoms."),
                             Exercise(id: "en-foundations-health-symptoms-e2", kind: "gap", prompt: "My ___ ___ when I walk. (pain in the foot)", options: [], answers: ["foot hurts", "feet hurt"], explain: "body part + hurts."),
                             Exercise(id: "en-foundations-health-symptoms-e3", kind: "order", prompt: "Ask the patient about duration.", options: [], answers: ["How long have you had it"], explain: "How long + have + you + had."),
-                            Exercise(id: "en-foundations-health-symptoms-e4", kind: "written", prompt: "Say how long you've had the cough. (two weeks)", options: [], answers: ["i've had it for two weeks", "for two weeks", "two weeks"], explain: "for + period.")], skills: ["vocab:health", "grammar:have-got", "grammar:present-perfect", "function:talk-about-health"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-perfect"]),
+                            Exercise(id: "en-foundations-health-symptoms-e4", kind: "written", prompt: "Diga cuánto tiempo lleva con el síntoma.", options: [], answers: ["i've had it for two weeks", "for two weeks", "two weeks"], explain: "for + period.")], skills: ["vocab:health", "grammar:have-got", "grammar:present-perfect", "function:talk-about-health"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-perfect"]),
             Lesson(id: "en-foundations-health-advice", title: "Friendly advice", goal: "Give and respond to advice about health and habits with should.",
                 intro: LessonIntro(explanation: [
                             "Advice with should: “You should sleep more.” “You shouldn't check your phone in bed.” Never should to.",
@@ -3774,9 +3898,133 @@ public enum EsFoundationsU5 {
                                 PracticeQuestion(prompt: "Di qué hacías los domingos antes.", expected: ["Iba al cine los domingos."], focus: "imperfecto", watch: "Iba — imperfecto de ir.")]),
                 exercises: [
                             Exercise(id: "es-foundations-u5-antes-ahora-e1", kind: "choice", prompt: "Antes ___ en Madrid.", options: ["vivía", "vivo", "viví", "viviré"], answers: ["vivía"], explain: "imperfecto: hábito pasado."),
-                            Exercise(id: "es-foundations-u5-antes-ahora-e2", kind: "gap", prompt: "___ ___ al parque todos los días. (ir, imperfecto)", options: [], answers: ["Iba", "iba"], explain: "ir → iba."),
+                            Exercise(id: "es-foundations-u5-antes-ahora-e2", kind: "gap", prompt: "___ ___ al parque todos los días. (ir, imperfecto)", options: [], answers: ["Iba", "iba"], explain: "Imperfecto de ir: iba, ibas, íbamos — describe rutinas del pasado."),
                             Exercise(id: "es-foundations-u5-antes-ahora-e3", kind: "order", prompt: "Di el contraste.", options: [], answers: ["Antes tenia tiempo ahora no tengo nada"], explain: "Antes + imperfecto, ahora + presente."),
                             Exercise(id: "es-foundations-u5-antes-ahora-e4", kind: "written", prompt: "Di un hábito de antes.", options: [], answers: ["antes <hbito>", "antes jugaba al futbol"], explain: "Antes + imperfecto.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
+}
+
+public enum EsFoundationsU6 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u6", title: "En el mercado", subtitle: "Compra local", level: "A1", themes: [
+                    ConversationTheme("mercado-dia", "Día de mercado", "Fruta y verdura fresca", "cart", "Course", "Compras en el mercado del barrio: fruta, verdura y trato con el vendedor.", 0),
+                    ConversationTheme("tienda-esquina", "La tienda de la esquina", "Lo que falta", "storefront", "Course", "Falta algo para la cena: corres a la tienda de la esquina.", 1)], lessons: [
+            Lesson(id: "es-foundations-u6-mercado", title: "En el mercado", goal: "Comprar fruta y verdura: cantidades, precios y tratamientos educados.",
+                intro: LessonIntro(explanation: [
+                            "En el mercado se pregunta: «¿A cómo están los tomates?». «¿Están maduros?»",
+                            "Las cantidades: «Medio kilo de cebollas». «Un kilo de manzanas». «Doscientos gramos de jamón».",
+                            "El trato educado: «Buenos días, ¿me pone medio kilo?» — el vendedor responde «Ahora mismo»."], examples: [
+                            ExampleLine(text: "¿A cómo están los tomates?", meaning: "Precio por kilo."),
+                            ExampleLine(text: "Me pone medio kilo de cebollas.", meaning: "Pedir cantidad."),
+                            ExampleLine(text: "¿Están maduros?", meaning: "Preguntar calidad."),
+                            ExampleLine(text: "Doscientos gramos de jamón.", meaning: "Peso exacto."),
+                            ExampleLine(text: "¿Le puedo poner algo más?", meaning: "El vendedor pregunta.")]),
+                expressions: [
+                            TargetExpression(text: "¿A cómo están …?", meaning: "Preguntar precio en mercado.", note: "plural: están."),
+                            TargetExpression(text: "Me pone + cantidad", meaning: "Pedir en el mercado.", note: "Me pone un kilo."),
+                            TargetExpression(text: "medio kilo / un kilo de …", meaning: "Peso.", note: "medio kilo de cebollas."),
+                            TargetExpression(text: "¿Están maduros?", meaning: "Calidad de la fruta.", note: "maduro = ripe."),
+                            TargetExpression(text: "Ahora mismo.", meaning: "El vendedor responde.", note: "= inmediatamente.")],
+                situation: "Compras en el mercado del barrio: medio kilo de tomates, un kilo de manzanas y preguntas si están maduros.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pregunta el precio de los tomates.", expected: ["¿A cómo están los tomates?"], focus: "a cómo", watch: "¿A cómo están? = ¿a cuánto el kilo?"),
+                                PracticeQuestion(prompt: "Pide medio kilo de cebollas.", expected: ["Me pone medio kilo de cebollas."], focus: "me pone", watch: "Me pone + cantidad = fórmula de mercado."),
+                                PracticeQuestion(prompt: "Pregunta si las manzanas están maduras.", expected: ["¿Están maduras?"], focus: "calidad", watch: "maduras (fem plural) para manzanas."),
+                                PracticeQuestion(prompt: "Di lo que necesitas: un kilo de naranjas.", expected: ["Necesito un kilo de naranjas."], focus: "necesito", watch: "necesito + cantidad + comida."),
+                                PracticeQuestion(prompt: "Pide doscientos gramos de jamón.", expected: ["Me pone doscientos gramos de jamón.", "Quiero doscientos gramos de jamón."], focus: "me pone", watch: "Me pone + cantidad.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u6-mercado-e1", kind: "choice", prompt: "¿A cómo ___ los tomates?", options: ["están", "es", "hay", "son"], answers: ["están"], explain: "¿A cómo están? — precio en mercado."),
+                            Exercise(id: "es-foundations-u6-mercado-e2", kind: "gap", prompt: "Me ___ un kilo de manzanas. (pedir)", options: [], answers: ["pone"], explain: "Me pone — fórmula de mercado."),
+                            Exercise(id: "es-foundations-u6-mercado-e3", kind: "order", prompt: "Pide medio kilo de cebollas.", options: [], answers: ["Me pone medio kilo de cebollas"], explain: "Me pone + cantidad."),
+                            Exercise(id: "es-foundations-u6-mercado-e4", kind: "written", prompt: "Pregunta si las manzanas están maduras.", options: [], answers: ["estan maduras", "¿están maduras?"], explain: "¿Están maduras?")], skills: ["vocab:food", "grammar:quantities", "vocab:shopping", "function:go-shopping"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u6-tienda", title: "La tienda de la esquina", goal: "Comprar lo que falta: decir lo que buscas y pagar.",
+                intro: LessonIntro(explanation: [
+                            "En la tienda pequeña: «¿Tiene…?» «Estoy buscando…». El tendero responde: «Sí, aquí tiene» o «Lo siento, no queda».",
+                            "No queda = se acabó. «¿No queda pan?» «No, se acabó hace un rato».",
+                            "El pago: «¿Cuánto es?» «Son tres euros». «Pague con tarjeta»."], examples: [
+                            ExampleLine(text: "¿Tiene pan integral?", meaning: "Preguntar si tienen."),
+                            ExampleLine(text: "Estoy buscando levadura.", meaning: "Buscar algo específico."),
+                            ExampleLine(text: "Lo siento, no queda.", meaning: "El tendero dice que no."),
+                            ExampleLine(text: "¿Cuánto es?", meaning: "Preguntar el total."),
+                            ExampleLine(text: "Son tres euros con cincuenta.", meaning: "El precio total.")]),
+                expressions: [
+                            TargetExpression(text: "¿Tiene …?", meaning: "Preguntar en tienda.", note: "¿Tiene leche sin lactosa?"),
+                            TargetExpression(text: "Estoy buscando …", meaning: "Buscar específico.", note: "…levadura fresca."),
+                            TargetExpression(text: "No queda / se acabó", meaning: "No hay más.", note: "Ambas dicen lo mismo."),
+                            TargetExpression(text: "¿Cuánto es?", meaning: "Preguntar el total.", note: "Son + precio."),
+                            TargetExpression(text: "aquí tiene", meaning: "El vendedor entrega.", note: "Aquí tiene su cambio.")],
+                situation: "Corres a la tienda de la esquina antes de que cierre: buscas tres cosas, dos las tiene y una se acabó.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Preguntar si tienen leche sin lactosa.", expected: ["¿Tiene leche sin lactosa?"], focus: "tiene", watch: "¿Tiene…? — formal pero normal."),
+                                PracticeQuestion(prompt: "Decir que buscas algo específico.", expected: ["Estoy buscando <producto>."], focus: "buscando", watch: "estoy buscando = estoy en el proceso."),
+                                PracticeQuestion(prompt: "Reaccionar cuando no tienen algo.", expected: ["Lo siento, ¿tienen de otra marca?"], focus: "alternativa", watch: "Preguntar por alternativa."),
+                                PracticeQuestion(prompt: "Preguntar el total.", expected: ["¿Cuánto es?"], focus: "total", watch: "¿Cuánto es? — la pregunta universal."),
+                                PracticeQuestion(prompt: "Acepta cuando te ofrecen otra cosa: sí, vale.", expected: ["Sí vale.", "Vale gracias."], focus: "vale", watch: "Vale = está bien (España).")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u6-tienda-e1", kind: "choice", prompt: "¿___ leche sin lactosa?", options: ["Tiene", "Hay", "Está", "Es"], answers: ["Tiene"], explain: "¿Tiene…? para preguntar en tienda."),
+                            Exercise(id: "es-foundations-u6-tienda-e2", kind: "gap", prompt: "Estoy ___ levadura fresca. (buscar)", options: [], answers: ["buscando"], explain: "estoy buscando + producto."),
+                            Exercise(id: "es-foundations-u6-tienda-e3", kind: "order", prompt: "Preguntar el total.", options: [], answers: ["Cuanto es eso senior"], explain: "¿Cuánto es?"),
+                            Exercise(id: "es-foundations-u6-tienda-e4", kind: "written", prompt: "El tendero no tiene. Di que buscas otra marca.", options: [], answers: ["busco otra marca", "estoy buscando otra marca"], explain: "buscar + alternativa.")], skills: ["function:go-shopping", "grammar:present-questions", "vocab:food", "function:solve-problems"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum EsFoundationsU7 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u7", title: "Comparar y planear", subtitle: "Mejor o peor", level: "A2", themes: [
+                    ConversationTheme("dos-pisos", "Dos pisos", "Cuál es mejor", "house", "Course", "Comparáis dos pisos para alquilar: uno más barato, el otro más luminoso.", 0),
+                    ConversationTheme("plan-finde", "El plan del finde", "Qué vais a hacer", "calendar", "Course", "Organizáis el fin de semana: qué vais a hacer, a qué hora y dónde quedar.", 1)], lessons: [
+            Lesson(id: "es-foundations-u7-comparando", title: "Comparando pisos", goal: "Comparar opciones con comparativos y superlativos y dar tu opinión.",
+                intro: LessonIntro(explanation: [
+                            "El comparativo: « más … que ». « Este piso es más barato que el otro ».",
+                            "Los irregulares: « mejor » (bien) y « peor » (mal). « Este es mejor, pero está peor situado ».",
+                            "El superlativo: « el más luminoso de los dos ». « Es la zona más tranquila del barrio »."], examples: [
+                            ExampleLine(text: "Este piso es más barato que el otro.", meaning: "Comparativo."),
+                            ExampleLine(text: "Es más pequeño, pero más luminoso.", meaning: "pero + matiz."),
+                            ExampleLine(text: "La cocina es la mejor de las dos.", meaning: "Superlativo irregular."),
+                            ExampleLine(text: "Está peor situado.", meaning: "peor = estar mal situado."),
+                            ExampleLine(text: "Para mí, es la mejor opción.", meaning: "Opinión.")]),
+                expressions: [
+                            TargetExpression(text: "más … que", meaning: "Comparativo.", note: "más barato que."),
+                            TargetExpression(text: "mejor / peor", meaning: "Irregulares.", note: "bien→mejor, mal→peor."),
+                            TargetExpression(text: "el/la más … de", meaning: "Superlativo.", note: "el más luminoso de."),
+                            TargetExpression(text: "Para mí, …", meaning: "Opinión.", note: "Para mí, es la mejor."),
+                            TargetExpression(text: "no tan … como", meaning: "Igualdad negativa.", note: "No es tan caro como parece.")],
+                situation: "Comparamos dos pisos en la app de alquiler: precio, tamaño, luz y barrio, y decidimos cuál pedir visita.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di que este piso es más barato que el otro.", expected: ["Este piso es más barato que el otro."], focus: "más … que", watch: "más + adjetivo + que."),
+                                PracticeQuestion(prompt: "Di que la cocina es la mejor de las dos.", expected: ["La cocina es la mejor de las dos."], focus: "mejor", watch: "mejor (irregular), no «más bueno»."),
+                                PracticeQuestion(prompt: "Di que está peor situado.", expected: ["Está peor situado."], focus: "peor", watch: "peor, no «más malo»."),
+                                PracticeQuestion(prompt: "Da tu opinión: es la mejor opción.", expected: ["Para mí es la mejor opción.", "Para mí, es la mejor opción."], focus: "para mí", watch: "Para mí + opinión."),
+                                PracticeQuestion(prompt: "Di que no es tan caro como parece.", expected: ["No es tan caro como parece."], focus: "tan … como", watch: "no tan + adjetivo + como.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u7-comparando-e1", kind: "choice", prompt: "Este piso es ___ barato ___ el otro.", options: ["más / que", "muy / que", "más / como", "tan / que"], answers: ["más / que"], explain: "Comparativo: más + adjetivo + que."),
+                            Exercise(id: "es-foundations-u7-comparando-e2", kind: "gap", prompt: "La cocina es la ___ de las dos. (bueno)", options: [], answers: ["mejor"], explain: "Superlativo irregular: bueno → el mejor."),
+                            Exercise(id: "es-foundations-u7-comparando-e3", kind: "order", prompt: "Compara: este barrio es el más tranquilo.", options: [], answers: ["Este barrio es el más tranquilo"], explain: "el más + adjetivo."),
+                            Exercise(id: "es-foundations-u7-comparando-e4", kind: "written", prompt: "Compara: tu barrio es más tranquilo que este.", options: [], answers: ["mi barrio es más tranquilo que este", "mi barrio es más tranquilo"], explain: "más + adjetivo + que.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"]),
+            Lesson(id: "es-foundations-u7-plan", title: "El plan del finde", goal: "Hablar de planes con ir a + infinitivo y quedar a una hora.",
+                intro: LessonIntro(explanation: [
+                            "El futuro cercano: « ir a + infinitivo ». « Vamos a cenar fuera el sábado ».",
+                            "Preguntar planes: « ¿Qué vas a hacer ? ». « ¿Vienes con nosotros ? ».",
+                            "Quedar: « Quedamos a las ocho en la plaza ». « ¿A qué hora nos vemos ? »."], examples: [
+                            ExampleLine(text: "Vamos a cenar fuera el sábado.", meaning: "ir a + infinitivo."),
+                            ExampleLine(text: "¿Qué vas a hacer ?", meaning: "Preguntar planes."),
+                            ExampleLine(text: "Voy a visitar a mi hermana.", meaning: "voy a + infinitivo."),
+                            ExampleLine(text: "Quedamos a las ocho en la plaza.", meaning: "Quedar + hora + lugar."),
+                            ExampleLine(text: "¿A qué hora nos vemos ?", meaning: "Cerrar el plan.")]),
+                expressions: [
+                            TargetExpression(text: "ir a + infinitivo", meaning: "Futuro cercano.", note: "vamos a cenar."),
+                            TargetExpression(text: "¿Qué vas a hacer ?", meaning: "Preguntar planes.", note: "vas a + infinitivo."),
+                            TargetExpression(text: "Quedamos a las + hora", meaning: "Quedar.", note: "a las ocho."),
+                            TargetExpression(text: "¿Te viene bien ?", meaning: "Confirmar hora.", note: "¿Te viene bien el sábado ?"),
+                            TargetExpression(text: "Nos vemos en + lugar", meaning: "Cita.", note: "en la plaza.")],
+                situation: "Organizáis el sábado: uno propone montaña, el otro mercado; acabáis quedando a las diez para ir al lago.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Propón: vamos a cenar fuera el sábado.", expected: ["Vamos a cenar fuera el sábado."], focus: "vamos a", watch: "ir a + infinitivo."),
+                                PracticeQuestion(prompt: "Pregunta qué va a hacer.", expected: ["Qué vas a hacer ?", "¿Qué vas a hacer ?"], focus: "qué vas a", watch: "¿Qué + vas a hacer ?"),
+                                PracticeQuestion(prompt: "Di que vas a visitar a tu hermana.", expected: ["Voy a visitar a mi hermana."], focus: "voy a", watch: "voy a + infinitivo."),
+                                PracticeQuestion(prompt: "Propón quedar a las ocho en la plaza.", expected: ["Quedamos a las ocho en la plaza."], focus: "quedamos", watch: "Quedamos a las + hora."),
+                                PracticeQuestion(prompt: "Pregunta a qué hora os veis.", expected: ["A qué hora nos vemos ?", "¿A qué hora nos vemos ?"], focus: "a qué hora", watch: "¿A qué hora + nos vemos ?")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u7-plan-e1", kind: "choice", prompt: "Mañana ___ visitar el museo.", options: ["vamos a", "vamos de", "vamos que", "vamos por"], answers: ["vamos a"], explain: "ir a + infinitivo."),
+                            Exercise(id: "es-foundations-u7-plan-e2", kind: "gap", prompt: "Quedamos ___ las ocho. (hora)", options: [], answers: ["a"], explain: "a las + hora."),
+                            Exercise(id: "es-foundations-u7-plan-e3", kind: "order", prompt: "Cierra el plan: nos vemos en la plaza.", options: [], answers: ["Nos vemos a las ocho en la plaza"], explain: "nos vemos + hora + lugar."),
+                            Exercise(id: "es-foundations-u7-plan-e4", kind: "written", prompt: "Di lo que vas a hacer el fin de semana: descansar.", options: [], answers: ["voy a descansar", "voy a descansar el fin de semana"], explain: "voy a + infinitivo.")], skills: ["grammar:going-to", "function:make-future-plans", "grammar:future-forms", "vocab:social-expressions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
 public enum FrFoundationsU1 {
@@ -4064,6 +4312,130 @@ public enum FrFoundationsU4 {
                             Exercise(id: "fr-foundations-u4-futur-proche-e4", kind: "written", prompt: "Un plan pour demain.", options: [], answers: ["je vais <activite> demain", "demain je vais <activite>"], explain: "Je vais + verbe.")], skills: ["grammar:going-to", "function:make-future-plans", "grammar:future-forms", "vocab:social-expressions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
+public enum FrFoundationsU5 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u5", title: "Au marché", subtitle: "Acheter local", level: "A1", themes: [
+                    ConversationTheme("marche-du-quartier", "Le marché du quartier", "Fruits et légumes", "cart", "Course", "Vous achetez au marché du quartier: fruits, légumes et contact avec le vendeur.", 0),
+                    ConversationTheme("epicerie-coin", "L'épicerie du coin", "Ce qui manque", "storefront", "Course", "Il manque quelque chose pour le dîner: vous courez à l'épicerie.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u5-marche", title: "Au marché", goal: "Acheter des fruits et légumes: quantités, prix et formules polies.",
+                intro: LessonIntro(explanation: [
+                            "Au marché on demande: « C'est combien, les tomates ? ». « Elles sont bonnes ? »",
+                            "Les quantités: « Une livre de cerises ». « Un kilo de pommes ». « Deux cents grammes de jambon ».",
+                            "La formule polie: « Bonjour, je voudrais un kilo de pommes, s'il vous plaît »."], examples: [
+                            ExampleLine(text: "C'est combien, les tomates ?", meaning: "Le prix."),
+                            ExampleLine(text: "Je voudrais un kilo de pommes.", meaning: "Je voudrais + quantité."),
+                            ExampleLine(text: "Elles sont bonnes ?", meaning: "Qualité."),
+                            ExampleLine(text: "Deux cents grammes de jambon.", meaning: "Poids exact."),
+                            ExampleLine(text: "Vous désirez autre chose ?", meaning: "Le vendeur demande.")]),
+                expressions: [
+                            TargetExpression(text: "C'est combien, … ?", meaning: "Prix.", note: "…les tomates ?"),
+                            TargetExpression(text: "Je voudrais + quantité", meaning: "Demander.", note: "Je voudrais un kilo."),
+                            TargetExpression(text: "Elles sont bonnes ?", meaning: "Qualité.", note: "bonnes (fem pl)."),
+                            TargetExpression(text: "une livre de …", meaning: "Poids français.", note: "= environ 500 g."),
+                            TargetExpression(text: "Vous désirez … ?", meaning: "Le vendeur demande.", note: "= Que voulez-vous ?")],
+                situation: "Vous achetez au marché: un kilo de pommes, une livre de cerises et vous demandez si tout est frais.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demandez le prix des tomates.", expected: ["C'est combien, les tomates ?"], focus: "combien", watch: "C'est combien + article + nom."),
+                                PracticeQuestion(prompt: "Demandez un kilo de pommes.", expected: ["Je voudrais un kilo de pommes, s'il vous plaît."], focus: "je voudrais", watch: "je voudrais + quantité + produit."),
+                                PracticeQuestion(prompt: "Demandez si les pommes sont bonnes.", expected: ["Elles sont bonnes ?"], focus: "qualité", watch: "Elles (pommes, fem pl)."),
+                                PracticeQuestion(prompt: "Dites ce que vous voulez: une livre de cerises.", expected: ["Je voudrais une livre de cerises."], focus: "livre", watch: "une livre ≈ 500 g."),
+                                PracticeQuestion(prompt: "Répondez au vendeur : rien d'autre, merci.", expected: ["Rien d'autre merci.", "C'est tout merci."], focus: "vous désirez", watch: "Rien d'autre = nada más.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u5-marche-e1", kind: "choice", prompt: "___ ___, les tomates ?", options: ["C'est combien", "C'est comment", "Il est combien", "Qu'est-ce"], answers: ["C'est combien"], explain: "C'est combien + article + nom."),
+                            Exercise(id: "fr-foundations-u5-marche-e2", kind: "gap", prompt: "Je ___ un kilo de pommes. (vouloir poliment)", options: [], answers: ["voudrais"], explain: "je voudrais + quantité."),
+                            Exercise(id: "fr-foundations-u5-marche-e3", kind: "order", prompt: "Demandez des cerises.", options: [], answers: ["Je voudrais une livre de cerises"], explain: "je voudrais + poids + produit."),
+                            Exercise(id: "fr-foundations-u5-marche-e4", kind: "written", prompt: "Demandez si les pommes sont bonnes.", options: [], answers: ["elles sont bonnes", "sont-elles bonnes"], explain: "Elles sont bonnes ?")], skills: ["vocab:food", "grammar:quantities", "vocab:shopping", "function:go-shopping"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u5-epicerie", title: "L'épicerie du coin", goal: "Acheter ce qui manque: chercher, demander et payer.",
+                intro: LessonIntro(explanation: [
+                            "À l'épicerie: « Vous avez…? » « Je cherche… ». Le vendeur répond: « Oui, là-bas » ou « Désolé, c'est en rupture ».",
+                            "Rupture = épuisé. « C'est en rupture de stock. » « Il n'y en a plus. »",
+                            "Le paiement: « Ça fait combien ? » « Ça fait sept euros. » « Vous payez par carte ? »"], examples: [
+                            ExampleLine(text: "Vous avez du pain complet ?", meaning: "Preguntar si tienen."),
+                            ExampleLine(text: "Je cherche de la levadure fraîche.", meaning: "Buscar algo."),
+                            ExampleLine(text: "Désolé, c'est en rupture de stock.", meaning: "No queda."),
+                            ExampleLine(text: "Ça fait combien ?", meaning: "Preguntar el total."),
+                            ExampleLine(text: "Je paie par carte.", meaning: "Método de pago.")]),
+                expressions: [
+                            TargetExpression(text: "Vous avez … ?", meaning: "Preguntar en tienda.", note: "…du pain complet ?"),
+                            TargetExpression(text: "Je cherche …", meaning: "Buscar.", note: "…de la levadure fraîche."),
+                            TargetExpression(text: "c'est en rupture", meaning: "Epuisé.", note: "rupture de stock."),
+                            TargetExpression(text: "Ça fait combien ?", meaning: "El total.", note: "Ça fait + precio."),
+                            TargetExpression(text: "Je paie par carte.", meaning: "Pago.", note: "payer par carte.")],
+                situation: "Corres a la épicerie antes del cierre: buscas tres cosas, dos las tiene y una está agotada.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Preguntar si tienen pan integral.", expected: ["Vous avez du pain complet ?"], focus: "vous avez", watch: "Vous avez + produit ?"),
+                                PracticeQuestion(prompt: "Decir que buscas levadura fresca.", expected: ["Je cherche de la levadure fraîche."], focus: "je cherche", watch: "je cherche + produit."),
+                                PracticeQuestion(prompt: "Reaccionar cuando está agotado.", expected: ["Ah, c'est en rupture de stock. Dommage !"], focus: "rupture", watch: "dommage = lástima."),
+                                PracticeQuestion(prompt: "Preguntar el total.", expected: ["Ça fait combien ?"], focus: "total", watch: "Ça fait + precio."),
+                                PracticeQuestion(prompt: "Dites comment vous payez : par carte.", expected: ["Je paie par carte.", "Je paie par carte, s'il vous plaît."], focus: "je paie", watch: "par carte = con tarjeta.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u5-epicerie-e1", kind: "choice", prompt: "___ ___ du pain complet ?", options: ["Vous avez", "Il y a", "C'est", "Vous êtes"], answers: ["Vous avez"], explain: "Vous avez + produit ?"),
+                            Exercise(id: "fr-foundations-u5-epicerie-e2", kind: "gap", prompt: "Je ___ de la levadure fraîche. (chercher)", options: [], answers: ["cherche"], explain: "je cherche + produit."),
+                            Exercise(id: "fr-foundations-u5-epicerie-e3", kind: "order", prompt: "Preguntar el total.", options: [], answers: ["Ca fait combien"], explain: "Ça fait combien ?"),
+                            Exercise(id: "fr-foundations-u5-epicerie-e4", kind: "written", prompt: "Di que buscas levadura fresca.", options: [], answers: ["je cherche de la levadure fraiche", "je cherche de la levure fraiche"], explain: "Je cherche + producto.")], skills: ["function:go-shopping", "grammar:present-questions", "vocab:food", "function:solve-problems"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum FrFoundationsU6 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u6", title: "Expériences et changements", subtitle: "Déjà ou jamais", level: "B1", themes: [
+                    ConversationTheme("fr-b1-voyage", "Le voyage inoubliable", "Déjà vu", "airplane", "Course", "Vous parlez des voyages et des premières fois : déjà allé, jamais vu, et une histoire inoubliable.", 0),
+                    ConversationTheme("fr-b1-changement", "Le changement de vie", "Avant / maintenant", "arrow-up-forward", "Course", "Vous comparez votre vie d'avant et d'aujourd'hui et expliquez ce qui a changé.", 1)], lessons: [
+            Lesson(id: "fr-b1-experiencias", title: "Tu l'as déjà fait ?", goal: "Raconter des expériences avec le passé composé et déjà/jamais.",
+                intro: LessonIntro(explanation: [
+                            "L'expérience : « Tu as déjà été à Lisbonne ? » — « Oui, j'y suis allé l'année dernière. »",
+                            "déjà = une fois dans la vie. « J'ai déjà goûté ce plat. » jamais = zéro fois. « Je n'ai jamais skié. »",
+                            "Les participes irréguliers reviennent : « J'ai vu », « J'ai fait », « J'ai été »."], examples: [
+                            ExampleLine(text: "Tu as déjà été à Lisbonne ?", meaning: "Question d'expérience."),
+                            ExampleLine(text: "Je n'ai jamais skié.", meaning: "jamais = zéro fois."),
+                            ExampleLine(text: "J'ai déjà goûté la paella.", meaning: "déjà = une fois."),
+                            ExampleLine(text: "C'était la première fois.", meaning: "Première fois."),
+                            ExampleLine(text: "Qu'est-ce que tu as fait là-bas ?", meaning: "Relancer.")]),
+                expressions: [
+                            TargetExpression(text: "Tu as déjà + pp ?", meaning: "Expérience.", note: "Tu as déjà été à Rome ?"),
+                            TargetExpression(text: "Je n'ai jamais + pp", meaning: "jamais.", note: "Je n'ai jamais vu ça."),
+                            TargetExpression(text: "vu / fait / été", meaning: "Participes clés.", note: "voir→vu, faire→fait, aller→été."),
+                            TargetExpression(text: "la première fois que…", meaning: "Première fois.", note: "C'est la première fois que je…"),
+                            TargetExpression(text: "et toi ?", meaning: "Renvoyer la question.", note: "Et toi, tu as déjà… ?")],
+                situation: "Vous parlez voyages : qui a déjà pris l'avion, qui n'a jamais campé, et une première fois inoubliable.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande si ton ami a déjà été à Lisbonne.", expected: ["Tu as déjà été à Lisbonne ?", "Est-ce que tu as déjà été à Lisbonne ?"], focus: "déjà + pp", watch: "déjà entre auxiliaire et participe."),
+                                PracticeQuestion(prompt: "Dis que tu n'as jamais skié.", expected: ["Je n'ai jamais skié.", "Je n'ai jamais fait de ski."], focus: "jamais", watch: "ne… jamais autour de l'auxiliaire."),
+                                PracticeQuestion(prompt: "Dis que tu as déjà goûté la paella.", expected: ["J'ai déjà goûté la paella."], focus: "déjà", watch: "J'ai déjà + pp."),
+                                PracticeQuestion(prompt: "Dis que c'était ta première fois.", expected: ["C'était la première fois."], focus: "première fois", watch: "imparfait pour le cadre."),
+                                PracticeQuestion(prompt: "Renvoie la question : et toi ?", expected: ["Et toi ?", "Et toi, tu as déjà fait du surf ?"], focus: "et toi", watch: "et toi relance.")]),
+                exercises: [
+                            Exercise(id: "fr-b1-experiencias-e1", kind: "choice", prompt: "Tu ___ déjà ___ à Rome ?", options: ["as / été", "es / allé", "as / allé", "es / été"], answers: ["as / été"], explain: "aller → être, mais ici : as été (expérience avec avoir accepté : « avoir été »)."),
+                            Exercise(id: "fr-b1-experiencias-e2", kind: "gap", prompt: "Je n'ai ___ skié. (jamais)", options: [], answers: ["jamais"], explain: "ne… jamais autour de l'auxiliaire."),
+                            Exercise(id: "fr-b1-experiencias-e3", kind: "order", prompt: "Demande l'expérience : tu as déjà mangé des escargots ?", options: [], answers: ["Tu as déjà mangé des escargots"], explain: "Tu as déjà + pp + objet ?"),
+                            Exercise(id: "fr-b1-experiencias-e4", kind: "written", prompt: "Dis une expérience : tu as déjà vu ce film.", options: [], answers: ["j'ai deja vu ce film", "j'ai déjà vu ce film"], explain: "J'ai déjà + pp.")], skills: ["grammar:present-perfect", "grammar:past-simple-irregular", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "fr-b1-antes-ahora", title: "Avant et maintenant", goal: "Opposer le passé et le présent avec l'imparfait et les connecteurs.",
+                intro: LessonIntro(explanation: [
+                            "L'imparfait peint le passé régulier : « Avant, j'habitais en ville. »",
+                            "L'opposition : « Avant… maintenant… ». « Avant je fumais, maintenant je cours. »",
+                            "Les connecteurs : « mais », « parce que », « donc ». « C'était fatigant, donc j'ai déménagé. »"], examples: [
+                            ExampleLine(text: "Avant, j'habitais en ville.", meaning: "imparfait du passé."),
+                            ExampleLine(text: "Maintenant, je vis à la campagne.", meaning: "présent contrasté."),
+                            ExampleLine(text: "Avant je fumais, maintenant je cours.", meaning: "Changement de vie."),
+                            ExampleLine(text: "C'était fatigant, donc j'ai déménagé.", meaning: "donc = conséquence."),
+                            ExampleLine(text: "Je préfère ma vie actuelle, parce que…", meaning: "parce que = cause.")]),
+                expressions: [
+                            TargetExpression(text: "Avant, j'…-ais", meaning: "imparfait.", note: "j'habitais, je faisais."),
+                            TargetExpression(text: "maintenant, je …", meaning: "présent.", note: "maintenant je vis…"),
+                            TargetExpression(text: "mais / donc / parce que", meaning: "Connecteurs.", note: "mais = contraste."),
+                            TargetExpression(text: "je préfère …", meaning: "Opinion.", note: "je préfère ma vie…"),
+                            TargetExpression(text: "C'était + adjectif", meaning: "Cadre du passé.", note: "C'était calme.")],
+                situation: "Vous comparez la vie d'avant et d'aujourd'hui : la ville et la campagne, le travail et le temps libre, et pourquoi vous avez changé.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis qu'avant tu habitais en ville.", expected: ["Avant j'habitais en ville.", "Avant, j'habitais en ville."], focus: "imparfait", watch: "-ais : j'habitais."),
+                                PracticeQuestion(prompt: "Dis que maintenant tu vis à la campagne.", expected: ["Maintenant je vis à la campagne.", "Maintenant, je vis à la campagne."], focus: "maintenant", watch: "présent pour maintenant."),
+                                PracticeQuestion(prompt: "Oppose : avant tu fumais, maintenant tu cours.", expected: ["Avant je fumais maintenant je cours.", "Avant, je fumais, maintenant je cours."], focus: "avant/maintenant", watch: "deux temps opposés."),
+                                PracticeQuestion(prompt: "Donne la conséquence : c'était fatigant, donc tu as déménagé.", expected: ["C'était fatigant donc j'ai déménagé.", "C'était fatigant, donc j'ai déménagé."], focus: "donc", watch: "donc + conséquence."),
+                                PracticeQuestion(prompt: "Dis ce que tu préfères et pourquoi.", expected: ["Je préfère ma vie actuelle parce que je suis plus libre.", "Je préfère ma vie maintenant."], focus: "parce que", watch: "parce que + cause.")]),
+                exercises: [
+                            Exercise(id: "fr-b1-antes-ahora-e1", kind: "choice", prompt: "Avant, j'___ en ville. (habiter, imparfait)", options: ["habitais", "habite", "ai habité", "habiterai"], answers: ["habitais"], explain: "imparfait : -ais."),
+                            Exercise(id: "fr-b1-antes-ahora-e2", kind: "gap", prompt: "C'était fatigant, ___ j'ai déménagé. (conséquence)", options: [], answers: ["donc"], explain: "donc = conséquence."),
+                            Exercise(id: "fr-b1-antes-ahora-e3", kind: "order", prompt: "Oppose : avant je fumais, maintenant je cours.", options: [], answers: ["Avant je fumais maintenant je cours"], explain: "avant + imparfait, maintenant + présent."),
+                            Exercise(id: "fr-b1-antes-ahora-e4", kind: "written", prompt: "Dis ce qui a changé : maintenant tu travailles de chez toi.", options: [], answers: ["maintenant je travaille de chez moi", "maintenant je travaille chez moi"], explain: "maintenant + présent.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
+}
+
 public enum ItFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.", 0),
@@ -4319,6 +4691,130 @@ public enum ItFoundationsU4 {
                             Exercise(id: "it-foundations-u4-confronti-e2", kind: "gap", prompt: "È il ___ ristorante della città. (buono)", options: [], answers: ["migliore"], explain: "buono → il migliore."),
                             Exercise(id: "it-foundations-u4-confronti-e3", kind: "order", prompt: "Confronta il prezzo.", options: [], answers: ["Questo e meno caro di quello"], explain: "meno + agg + di."),
                             Exercise(id: "it-foundations-u4-confronti-e4", kind: "written", prompt: "Il tuo ristorante preferito.", options: [], answers: ["il mio ristorante preferito e <nome>", "il migliore e <nome>"], explain: "Il mio preferito è X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"])])
+}
+
+public enum ItFoundationsU5 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u5", title: "Al mercato", subtitle: "Compro locale", level: "A1", themes: [
+                    ConversationTheme("mercato-quartiere", "Il mercato di quartiere", "Frutta e verdura", "cart", "Course", "Fate la spesa al mercato: frutta, verdura e contatino con il venditore.", 0),
+                    ConversationTheme("alimentari", "L'alimentari sotto casa", "Quello che manca", "storefront", "Course", "Manca qualcosa per cena: corri dall'alimentari sotto casa.", 1)], lessons: [
+            Lesson(id: "it-foundations-u5-mercato", title: "Al mercato", goal: "Comprare frutta e verdura: quantità, prezzi e formule educate.",
+                intro: LessonIntro(explanation: [
+                            "Al mercato si chiede: « Quant'costano i pomodori ? ». « Sono maturi ? »",
+                            "Le quantità: « Mezzo chilo di cipolle ». « Un chilo di mele ».",
+                            "La formula educata: « Buongiorno, mi metta mezzo chilo di pesche, per favore »."], examples: [
+                            ExampleLine(text: "Quant'costano i pomodori ?", meaning: "Il prezzo."),
+                            ExampleLine(text: "Me ne metta mezzo chilo.", meaning: "Chiedere quantità."),
+                            ExampleLine(text: "Sono maturi ?", meaning: "Qualità."),
+                            ExampleLine(text: "Due etti di prosciutto.", meaning: "Peso."),
+                            ExampleLine(text: "Vorrei delle mele.", meaning: "Vorrei + prodotto.")]),
+                expressions: [
+                            TargetExpression(text: "Quant'costano …?", meaning: "Prezzo.", note: "…i pomodori ?"),
+                            TargetExpression(text: "Me ne metta + quantità", meaning: "Chiedere.", note: "Me ne metta un chilo."),
+                            TargetExpression(text: "Sono maturi/mature ?", meaning: "Qualità.", note: "maturi (m), mature (f)."),
+                            TargetExpression(text: "due etti di …", meaning: "200 g.", note: "etto = 100 g."),
+                            TargetExpression(text: "Vorrei + prodotto", meaning: "Vorrei.", note: "Vorrei delle mele.")],
+                situation: "Fate la spesa al mercato: mezzo chilo di pomodori, un chilo di mele e chiedete se sono mature.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedete il prezzo dei pomodori.", expected: ["Quant costano i pomodori"], focus: "quant'costano", watch: "Quant'costano = ¿a cuánto?"),
+                                PracticeQuestion(prompt: "Chiedete mezzo chilo di cipolle.", expected: ["Mi metta mezzo chilo di cipolle."], focus: "me ne metta", watch: "Mi metta + cantidad."),
+                                PracticeQuestion(prompt: "Chiedete se le mele sono mature.", expected: ["Sono mature ?"], focus: "mature", watch: "mature (fem pl) per mele."),
+                                PracticeQuestion(prompt: "Dire cosa serve: un chilo di arance.", expected: ["Mi servono un chilo di arance."], focus: "mi servono", watch: "mi servono = necesito."),
+                                PracticeQuestion(prompt: "Dire che vorreste delle mele.", expected: ["Vorrei delle mele."], focus: "vorrei", watch: "Vorrei + prodotto.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u5-mercato-e1", kind: "choice", prompt: "___ ___ i pomodori ?", options: ["Quant'costano", "Quanto è", "Sono costati", "Come sono"], answers: ["Quant'costano"], explain: "Quant'costano = ¿a cuánto?"),
+                            Exercise(id: "it-foundations-u5-mercato-e2", kind: "gap", prompt: "___ ___ mezzo chilo di cipolle. (pedir)", options: [], answers: ["Mi metta"], explain: "Mi metta + cantidad."),
+                            Exercise(id: "it-foundations-u5-mercato-e3", kind: "order", prompt: "Chiedete il prezzo.", options: [], answers: ["Quant costano i pomodori"], explain: "Quant' + costare + prodotto."),
+                            Exercise(id: "it-foundations-u5-mercato-e4", kind: "written", prompt: "Dire cosa serve: un chilo di arance.", options: [], answers: ["mi servono un chilo di arance", "mi serve un chilo di arance"], explain: "Mi servono + cantidad.")], skills: ["vocab:food", "grammar:quantities", "vocab:shopping", "function:go-shopping"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u5-alimentari", title: "Dall'alimentari", goal: "Comprare quello che manca: cercare, chiedere e pagare.",
+                intro: LessonIntro(explanation: [
+                            "All'alimentari: « Avete…? » « Sto cercando… ». Il negoziente risponde: « Sì, eccolo » o « Mi dispiace, è finito ».",
+                            "È finito = non c'è più. « Il latte è finito ».",
+                            "Il pagamento: « Quanto fa ? » « Fa sette euro »."], examples: [
+                            ExampleLine(text: "Avete latte senza lattosio ?", meaning: "Chiedere se hanno."),
+                            ExampleLine(text: "Sto cercando il lievito fresco.", meaning: "Cercare qualcosa."),
+                            ExampleLine(text: "Mi dispiace, è finito.", meaning: "Non c'è più."),
+                            ExampleLine(text: "Quanto fa ?", meaning: "Chiedere il totale."),
+                            ExampleLine(text: "Fa sette euro e venti.", meaning: "Il prezzo.")]),
+                expressions: [
+                            TargetExpression(text: "Avete … ?", meaning: "Chiedere in negozio.", note: "…latte senza lattosio ?"),
+                            TargetExpression(text: "Sto cercando …", meaning: "Cercare.", note: "…il lievito fresco."),
+                            TargetExpression(text: "è finito / è finita", meaning: "Non c'è più.", note: "il latte è finito."),
+                            TargetExpression(text: "Quanto fa ?", meaning: "Totale.", note: "fa + prezzo."),
+                            TargetExpression(text: "eccolo / eccola", meaning: "Ecco il prodotto.", note: "Eccolo! = aquí está.")],
+                situation: "Corri dall'alimentari prima che chiuda: cerchi tre cose, due le ha e una è finita.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedere se hanno latte senza lattosio.", expected: ["Avete latte senza lattosio ?"], focus: "avete", watch: "Avete + prodotto ?"),
+                                PracticeQuestion(prompt: "Dire che cerchi lievito fresco.", expected: ["Sto cercando il lievito fresco."], focus: "sto cercando", watch: "sto cercando = estoy buscando."),
+                                PracticeQuestion(prompt: "Reagire quando è finito.", expected: ["Ah, peccato! Grazie lo stesso."], focus: "peccato", watch: "peccato = lástima."),
+                                PracticeQuestion(prompt: "Chiedere il totale.", expected: ["Quanto fa ?"], focus: "quanto fa", watch: "Quanto fa ? = ¿cuánto es?"),
+                                PracticeQuestion(prompt: "Dire che cercate lievito fresco.", expected: ["Sto cercando il lievito fresco."], focus: "sto cercando", watch: "sto cercando = estoy buscando.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u5-alimentari-e1", kind: "choice", prompt: "___ latte senza lattosio ?", options: ["Avete", "Ci sono", "C'è", "Siete"], answers: ["Avete"], explain: "Avete + prodotto ?"),
+                            Exercise(id: "it-foundations-u5-alimentari-e2", kind: "gap", prompt: "Sto ___ il lievito fresco. (cercare)", options: [], answers: ["cercando"], explain: "sto cercando + producto."),
+                            Exercise(id: "it-foundations-u5-alimentari-e3", kind: "order", prompt: "Chiedete il totale.", options: [], answers: ["Quanto fa tutto insieme"], explain: "Quanto fa ?"),
+                            Exercise(id: "it-foundations-u5-alimentari-e4", kind: "written", prompt: "Dire che cercate lievito fresco.", options: [], answers: ["sto cercando lievito fresco", "sto cercando del lievito fresco"], explain: "Sto cercando + prodotto.")], skills: ["function:go-shopping", "grammar:present-questions", "vocab:food", "function:solve-problems"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum ItFoundationsU6 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u6", title: "Esperienze e cambiamenti", subtitle: "Già o mai", level: "B1", themes: [
+                    ConversationTheme("it-b1-viaggio", "Il viaggio indimenticabile", "Già visto", "airplane", "Course", "Parlate di viaggi e prime volte: già stato, mai visto, e una storia indimenticabile.", 0),
+                    ConversationTheme("it-b1-cambio", "Il cambio di vita", "Prima / adesso", "arrow-up-forward", "Course", "Confrontate la vita di prima e di oggi e spiegate cosa è cambiato.", 1)], lessons: [
+            Lesson(id: "it-b1-experiencias", title: "L'hai mai fatto ?", goal: "Raccontare esperienze con il passato prossimo e già/mai.",
+                intro: LessonIntro(explanation: [
+                            "L'esperienza: « Sei mai stato a Lisbona ? » — « Sì, ci sono stato l'anno scorso. »",
+                            "già = almeno una volta. « Ho già assaggiato quel piatto ». mai = zero volte. « Non ho mai sciato ».",
+                            "I participi irregolari tornano: « ho visto », « ho fatto », « sono stato »."], examples: [
+                            ExampleLine(text: "Sei mai stato a Lisbona ?", meaning: "Domanda di esperienza."),
+                            ExampleLine(text: "Non ho mai sciato.", meaning: "mai = zero volte."),
+                            ExampleLine(text: "Ho già assaggiato la paella.", meaning: "già = almeno una volta."),
+                            ExampleLine(text: "Era la prima volta.", meaning: "Prima volta."),
+                            ExampleLine(text: "Cosa hai fatto laggiù ?", meaning: "Rilanciare.")]),
+                expressions: [
+                            TargetExpression(text: "Sei mai stato/a … ?", meaning: "Esperienza.", note: "Sei mai stato a Roma ?"),
+                            TargetExpression(text: "Non ho mai + participio", meaning: "mai.", note: "Non ho mai visto così."),
+                            TargetExpression(text: "visto / fatto / stato", meaning: "Participi chiave.", note: "vedere→visto, fare→fatto."),
+                            TargetExpression(text: "la prima volta che…", meaning: "Prima volta.", note: "È la prima volta che…"),
+                            TargetExpression(text: "e tu ?", meaning: "Rilanciare.", note: "E tu, sei mai… ?")],
+                situation: "Parlate di viaggi: chi è già stato in aereo, chi non ha mai campeggiato, e una prima volta indimenticabile.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi se il tuo amico è mai stato a Lisbona.", expected: ["Sei mai stato a Lisbona ?", "Sei mai stata a Lisbona ?"], focus: "mai", watch: "Sei mai stato/a ?"),
+                                PracticeQuestion(prompt: "Di che non hai mai sciato.", expected: ["Non ho mai sciato."], focus: "non… mai", watch: "non + ho + mai + participio."),
+                                PracticeQuestion(prompt: "Di che hai già assaggiato la paella.", expected: ["Ho già assaggiato la paella."], focus: "già", watch: "Ho già + participio."),
+                                PracticeQuestion(prompt: "Di che era la tua prima volta.", expected: ["Era la prima volta."], focus: "prima volta", watch: "imperfetto per il quadro."),
+                                PracticeQuestion(prompt: "Rilancia: e tu ?", expected: ["E tu ?", "E tu, sei mai andato in surf ?"], focus: "e tu", watch: "e tu rilancia.")]),
+                exercises: [
+                            Exercise(id: "it-b1-experiencias-e1", kind: "choice", prompt: "Sei mai ___ a Roma ?", options: ["stato", "stata solo al femminile", "andato con avere", "sii"], answers: ["stato"], explain: "andare → essere: sei mai stato/a."),
+                            Exercise(id: "it-b1-experiencias-e2", kind: "gap", prompt: "Non ho ___ sciato. (mai)", options: [], answers: ["mai"], explain: "non… mai attorno all'ausiliare."),
+                            Exercise(id: "it-b1-experiencias-e3", kind: "order", prompt: "Chiedi l'esperienza: hai già mangiato le lumache ?", options: [], answers: ["Hai già mangiato le lumache"], explain: "Hai già + participio + oggetto ?"),
+                            Exercise(id: "it-b1-experiencias-e4", kind: "written", prompt: "Di un'esperienza: hai già visto questo film.", options: [], answers: ["ho gia visto questo film", "ho già visto questo film"], explain: "Ho già + participio.")], skills: ["grammar:present-perfect", "grammar:past-simple-irregular", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "it-b1-antes-ahora", title: "Prima e adesso", goal: "Contrastare passato e presente con l'imperfetto e i connettivi.",
+                intro: LessonIntro(explanation: [
+                            "L'imperfetto dipinge il passato abituale: « Prima vivevo in città ».",
+                            "Il contrasto: « Prima… adesso… ». « Prima fumavo, adesso corro ».",
+                            "I connettivi: « ma », « perché », « quindi ». « Era stancante, quindi mi sono trasferito »."], examples: [
+                            ExampleLine(text: "Prima vivevo in città.", meaning: "imperfetto del passato."),
+                            ExampleLine(text: "Adesso vivo in campagna.", meaning: "presente in contrasto."),
+                            ExampleLine(text: "Prima fumavo, adesso corro.", meaning: "Cambio di vita."),
+                            ExampleLine(text: "Era stancante, quindi mi sono trasferito.", meaning: "quindi = conseguenza."),
+                            ExampleLine(text: "Preferisco la vita di adesso, perché…", meaning: "perché = causa.")]),
+                expressions: [
+                            TargetExpression(text: "Prima, …-avo/-evo", meaning: "imperfetto.", note: "vivevo, facevo."),
+                            TargetExpression(text: "adesso, …", meaning: "presente.", note: "adesso vivo…"),
+                            TargetExpression(text: "ma / quindi / perché", meaning: "Connettivi.", note: "ma = contrasto."),
+                            TargetExpression(text: "preferisco …", meaning: "Opinione.", note: "preferisco la vita…"),
+                            TargetExpression(text: "Era + aggettivo", meaning: "Quadro al passato.", note: "Era tranquillo.")],
+                situation: "Confrontate la vita di prima e di oggi: città e campagna, lavoro e tempo libero, e perché avete cambiato.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di che prima vivevi in città.", expected: ["Prima vivevo in città.", "Prima, vivevo in città."], focus: "imperfetto", watch: "-evo: vivevo."),
+                                PracticeQuestion(prompt: "Di che adesso vivi in campagna.", expected: ["Adesso vivo in campagna."], focus: "adesso", watch: "presente per adesso."),
+                                PracticeQuestion(prompt: "Contrasta: prima fumavi, adesso corri.", expected: ["Prima fumavo adesso corro.", "Prima fumavo, adesso corro."], focus: "prima/adesso", watch: "due tempi opposti."),
+                                PracticeQuestion(prompt: "Dai la conseguenza: era stancante, quindi ti sei trasferito.", expected: ["Era stancante quindi mi sono trasferito.", "Era stancante, quindi mi sono trasferito."], focus: "quindi", watch: "quindi + conseguenza."),
+                                PracticeQuestion(prompt: "Di cosa preferisci e perché.", expected: ["Preferisco la vita di adesso perché sono più libero.", "Preferisco la vita di adesso."], focus: "perché", watch: "perché + causa.")]),
+                exercises: [
+                            Exercise(id: "it-b1-antes-ahora-e1", kind: "choice", prompt: "Prima, ___ in città. (vivere, imperfetto)", options: ["vivevo", "vivo", "ho vissuto", "viverò"], answers: ["vivevo"], explain: "imperfetto: -evo."),
+                            Exercise(id: "it-b1-antes-ahora-e2", kind: "gap", prompt: "Era stancante, ___ mi sono trasferito. (conseguenza)", options: [], answers: ["quindi"], explain: "quindi = conseguenza."),
+                            Exercise(id: "it-b1-antes-ahora-e3", kind: "order", prompt: "Contrasta: prima fumavi, adesso corri.", options: [], answers: ["Prima fumavo adesso corro"], explain: "prima + imperfetto, adesso + presente."),
+                            Exercise(id: "it-b1-antes-ahora-e4", kind: "written", prompt: "Di cosa è cambiato: adesso lavori da casa.", options: [], answers: ["adesso lavoro da casa"], explain: "adesso + presente.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
 }
 
 public enum PtFoundationsU1 {
@@ -4578,12 +5074,138 @@ public enum PtFoundationsU4 {
                             Exercise(id: "pt-foundations-u4-comparando-e4", kind: "written", prompt: "Seu restaurante favorito.", options: [], answers: ["meu restaurante favorito e <nome>", "o melhor e <nome>"], explain: "Meu favorito é X.")], skills: ["grammar:comparatives", "grammar:superlatives", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:comparatives"])])
 }
 
+public enum PtFoundationsU5 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u5", title: "Na feira", subtitle: "Comprar local", level: "A1", themes: [
+                    ConversationTheme("feira-dia", "Dia de feira", "Fruta e verdura fresca", "cart", "Course", "Compram na feira do bairro: fruta, verdura e contacto com o vendedor.", 0),
+                    ConversationTheme("padaria-express", "Na padaria", "O que falta", "storefront", "Course", "Falta algo para o jantar: correm à padaria na esquina.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u5-feira", title: "Na feira", goal: "Comprar fruta e verdura: quantidades, preços e fórmulas educadas.",
+                intro: LessonIntro(explanation: [
+                            "Na feira pergunta-se: « A quanto está o tomate ? ». « Está maduro ? »",
+                            "As quantidades: « Meio quilo de cebolas ». « Um quilo de maçãs ». « Duzentos gramas de presunto ».",
+                            "A fórmula educada: « Bom dia, queria um quilo de maçãs, por favor » — queria = educado."], examples: [
+                            ExampleLine(text: "A quanto está o tomate ?", meaning: "O preço."),
+                            ExampleLine(text: "Queria um quilo de maçãs.", meaning: "queria = educado."),
+                            ExampleLine(text: "Está maduro ?", meaning: "Qualidade."),
+                            ExampleLine(text: "Duzentos gramas de presunto.", meaning: "Peso exato."),
+                            ExampleLine(text: "Quer mais alguma coisa ?", meaning: "O vendedor pergunta.")]),
+                expressions: [
+                            TargetExpression(text: "A quanto está …?", meaning: "Preço na feira.", note: "…o tomate ?"),
+                            TargetExpression(text: "Queria + quantidade", meaning: "Pedir educado.", note: "Queria um quilo."),
+                            TargetExpression(text: "Está maduro ?", meaning: "Qualidade.", note: "maduro = ripe."),
+                            TargetExpression(text: "duzentos gramas de …", meaning: "Peso.", note: "200 g."),
+                            TargetExpression(text: "Quer mais alguma coisa ?", meaning: "O vendedor pergunta.", note: "mais = más.")],
+                situation: "Compram na feira: meio quilo de tomates, um quilo de maçãs e perguntam se estão maduras.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Perguntem o preço dos tomates.", expected: ["A quanto está o tomate ?"], focus: "a quanto", watch: "A quanto está = ¿a cuánto está?"),
+                                PracticeQuestion(prompt: "Peçam meio quilo de cebolas.", expected: ["Queria meio quilo de cebolas."], focus: "queria", watch: "queria = educado."),
+                                PracticeQuestion(prompt: "Perguntem se as maçãs estão maduras.", expected: ["Estão maduras ?"], focus: "maduras", watch: "maduras (fem pl) para maçãs."),
+                                PracticeQuestion(prompt: "Digam o que precisam: um quilo de laranjas.", expected: ["Queria um quilo de laranjas."], focus: "queria + quant", watch: "queria + quantidade + produto."),
+                                PracticeQuestion(prompt: "Respondam ao vendedor: nada mais, obrigado.", expected: ["Nada mais obrigado.", "Só isso obrigado."], focus: "quer mais alguma coisa", watch: "Só isso = solo eso.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u5-feira-e1", kind: "choice", prompt: "A ___ ___ o tomate ?", options: ["quanto está", "quanto é", "muito custa", "que preço"], answers: ["quanto está"], explain: "A quanto está = ¿a cuánto está?"),
+                            Exercise(id: "pt-foundations-u5-feira-e2", kind: "gap", prompt: "___ um quilo de maçãs. (querer educado)", options: [], answers: ["Queria"], explain: "queria = educado."),
+                            Exercise(id: "pt-foundations-u5-feira-e3", kind: "order", prompt: "Peçam um quilo de maçãs.", options: [], answers: ["Queria um quilo de macas"], explain: "Queria + quantidade."),
+                            Exercise(id: "pt-foundations-u5-feira-e4", kind: "written", prompt: "Reaccione cuando las peras no estén buenas: no están buenas.", options: [], answers: ["están maduras", "no están maduras"], explain: "maduras (fem pl) para peras.")], skills: ["vocab:food", "grammar:quantities", "vocab:shopping", "function:go-shopping"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u5-padaria", title: "Na padaria", goal: "Comprar o que falta: procurar, perguntar e pagar.",
+                intro: LessonIntro(explanation: [
+                            "Na padaria: « Tem pão integral ? » « Estou procurando fermento fresco ».",
+                            "Não tem = esgotado. « Não tem ? Tudo bem, obrigado mesmo assim ».",
+                            "O pagamento: « Quanto fica ? » « Fica sete reais »."], examples: [
+                            ExampleLine(text: "Tem pão integral ?", meaning: "Perguntar se têm."),
+                            ExampleLine(text: "Estou procurando fermento fresco.", meaning: "Procurar."),
+                            ExampleLine(text: "Não tem ? Tudo bem, obrigado mesmo assim.", meaning: "Aceitar o não."),
+                            ExampleLine(text: "Quanto fica ?", meaning: "Perguntar o total."),
+                            ExampleLine(text: "Fica sete reais.", meaning: "O preço.")]),
+                expressions: [
+                            TargetExpression(text: "Tem … ?", meaning: "Perguntar em loja.", note: "…pão integral ?"),
+                            TargetExpression(text: "Estou procurando …", meaning: "Procurar.", note: "…fermento fresco."),
+                            TargetExpression(text: "Não tem / está esgotado", meaning: "Não há mais.", note: "Tudo bem = está bien."),
+                            TargetExpression(text: "Quanto fica ?", meaning: "Total.", note: "fica + preço."),
+                            TargetExpression(text: "Obrigado mesmo assim.", meaning: "Agradecer mesmo sem comprar.", note: "mesmo assim = igualmente.")],
+                situation: "Correm à padaria antes de fechar: procuram três coisas, duas têm e uma está esgotada.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Perguntar se têm pão integral.", expected: ["Tem pão integral ?"], focus: "tem", watch: "Tem + produto ?"),
+                                PracticeQuestion(prompt: "Dizer o que procuram.", expected: ["Estou procurando fermento fresco."], focus: "procurando", watch: "estar + gerúndio."),
+                                PracticeQuestion(prompt: "Aceitar quando não tem.", expected: ["Tudo bem, obrigado mesmo assim."], focus: "aceitar o não", watch: "mesmo assim = igualmente."),
+                                PracticeQuestion(prompt: "Perguntar o total.", expected: ["Quanto fica ?"], focus: "total", watch: "Quanto fica ?"),
+                                PracticeQuestion(prompt: "Pergunte se pode pagar com cartão.", expected: ["Pode ser no cartão ?", "Posso pagar no cartão ?"], focus: "cartão", watch: "no cartão = con tarjeta.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u5-padaria-e1", kind: "choice", prompt: "___ pão integral ?", options: ["Tem", "Tem-se", "Há", "Está"], answers: ["Tem"], explain: "Tem + produto ?"),
+                            Exercise(id: "pt-foundations-u5-padaria-e2", kind: "gap", prompt: "Estou ___ fermento fresco. (procurar)", options: [], answers: ["procurando"], explain: "estar + gerúndio."),
+                            Exercise(id: "pt-foundations-u5-padaria-e3", kind: "order", prompt: "Pergunte o total de tudo.", options: [], answers: ["Quanto fica tudo junto"], explain: "Quanto fica + tudo junto ?"),
+                            Exercise(id: "pt-foundations-u5-padaria-e4", kind: "written", prompt: "Diga o que procura: fermento fresco.", options: [], answers: ["estou procurando fermento fresco", "procurando fermento fresco"], explain: "Estou procurando + produto.")], skills: ["function:go-shopping", "grammar:present-questions", "vocab:food", "function:solve-problems"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum PtFoundationsU6 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u6", title: "Experiências e mudanças", subtitle: "Já ou nunca", level: "B1", themes: [
+                    ConversationTheme("pt-b1-viagem", "A viagem inesquecível", "Já visto", "airplane", "Course", "Vocês falam de viagens e primeiras vezes: já foi, nunca viu, e uma história inesquecível.", 0),
+                    ConversationTheme("pt-b1-mudanca", "A mudança de vida", "Antes / agora", "arrow-up-forward", "Course", "Vocês comparam a vida de antes e de hoje e explicam o que mudou.", 1)], lessons: [
+            Lesson(id: "pt-b1-experiencias", title: "Você já fez ?", goal: "Contar experiências com o pretérito perfeito e já/nunca.",
+                intro: LessonIntro(explanation: [
+                            "A experiência: « Você já foi a Lisboa ? » — « Sim, fui no ano passado. »",
+                            "já = pelo menos uma vez. « Já provei essa paella ». nunca = zero vezes. « Nunca esquiei ».",
+                            "Os particípios irregulares voltam: « vi », « fiz », « fui »."], examples: [
+                            ExampleLine(text: "Você já foi a Lisboa ?", meaning: "Pergunta de experiência."),
+                            ExampleLine(text: "Nunca esqueei.", meaning: "nunca = zero vezes."),
+                            ExampleLine(text: "Já provei a paella.", meaning: "já = uma vez."),
+                            ExampleLine(text: "Foi a primeira vez.", meaning: "Primeira vez."),
+                            ExampleLine(text: "O que você fez lá ?", meaning: "Aprofundar.")]),
+                expressions: [
+                            TargetExpression(text: "Você já + pretérito ?", meaning: "Experiência.", note: "Você já foi a Roma ?"),
+                            TargetExpression(text: "nunca + verbo", meaning: "nunca.", note: "Nunca vi isso."),
+                            TargetExpression(text: "vi / fiz / fui", meaning: "Particípios-chave.", note: "ver→vi, fazer→fiz."),
+                            TargetExpression(text: "a primeira vez que…", meaning: "Primeira vez.", note: "Foi a primeira vez que…"),
+                            TargetExpression(text: "e você ?", meaning: "Devolver a pergunta.", note: "E você, já… ?")],
+                situation: "Vocês falam de viagens: quem já pegou avião, quem nunca acampou, e uma primeira vez inesquecível.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pergunte se seu amigo já foi a Lisboa.", expected: ["Você já foi a Lisboa ?"], focus: "já + pretérito", watch: "Você já foi… ?"),
+                                PracticeQuestion(prompt: "Diga que nunca esqueeu.", expected: ["Nunca esqueei.", "Eu nunca esqueei."], focus: "nunca", watch: "nunca + pretérito."),
+                                PracticeQuestion(prompt: "Diga que já provou a paella.", expected: ["Já provei a paella."], focus: "já", watch: "Já + pretérito."),
+                                PracticeQuestion(prompt: "Diga que foi a sua primeira vez.", expected: ["Foi a minha primeira vez.", "Foi a primeira vez."], focus: "primeira vez", watch: "foi + primeira vez."),
+                                PracticeQuestion(prompt: "Devolva a pergunta: e você ?", expected: ["E você ?", "E você, já surfou ?"], focus: "e você", watch: "e você devolve.")]),
+                exercises: [
+                            Exercise(id: "pt-b1-experiencias-e1", kind: "choice", prompt: "Você já ___ a Roma ?", options: ["foi", "vou", "ia", "vai"], answers: ["foi"], explain: "ir → foi (pretérito)."),
+                            Exercise(id: "pt-b1-experiencias-e2", kind: "gap", prompt: "___ esqueei. (nunca)", options: [], answers: ["nunca"], explain: "nunca + pretérito."),
+                            Exercise(id: "pt-b1-experiencias-e3", kind: "order", prompt: "Pergunte a experiência: você já comeu caracóis ?", options: [], answers: ["Você já comeu caracóis"], explain: "Você já + pretérito + objeto ?"),
+                            Exercise(id: "pt-b1-experiencias-e4", kind: "written", prompt: "Diga uma experiência: você já viu esse filme.", options: [], answers: ["ja vi esse filme", "já vi esse filme"], explain: "Já + vi (ver → vi).")], skills: ["grammar:present-perfect", "grammar:past-simple-irregular", "function:describe-past-events"], canDo: ["describe-past-events"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "pt-b1-antes-ahora", title: "Antes e agora", goal: "Contrastar passado e presente com o imperfeito e conectivos.",
+                intro: LessonIntro(explanation: [
+                            "O imperfeito pinta o passado habitual: « Antes eu morava na cidade ».",
+                            "O contraste: « Antes… agora… ». « Antes eu fumava, agora corro ».",
+                            "Os conectivos: « mas », « porque », « então ». « Era cansativo, então me mudei »."], examples: [
+                            ExampleLine(text: "Antes eu morava na cidade.", meaning: "imperfeito do passado."),
+                            ExampleLine(text: "Agora moro no interior.", meaning: "presente em contraste."),
+                            ExampleLine(text: "Antes eu fumava, agora corro.", meaning: "Mudança de vida."),
+                            ExampleLine(text: "Era cansativo, então me mudei.", meaning: "então = consequência."),
+                            ExampleLine(text: "Prefiro a vida de agora, porque…", meaning: "porque = causa.")]),
+                expressions: [
+                            TargetExpression(text: "Antes, eu …-ava/-ia", meaning: "imperfeito.", note: "morava, fazia."),
+                            TargetExpression(text: "agora, eu …", meaning: "presente.", note: "agora moro…"),
+                            TargetExpression(text: "mas / porque / então", meaning: "Conectivos.", note: "mas = contraste."),
+                            TargetExpression(text: "prefiro …", meaning: "Opinião.", note: "prefiro a vida…"),
+                            TargetExpression(text: "Era + adjetivo", meaning: "Quadro no passado.", note: "Era tranquilo.")],
+                situation: "Vocês comparam a vida de antes e de hoje: cidade e interior, trabalho e lazer, e por que mudaram.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que antes você morava na cidade.", expected: ["Antes eu morava na cidade.", "Antes, eu morava na cidade."], focus: "imperfeito", watch: "-ava: morava."),
+                                PracticeQuestion(prompt: "Diga que agora você mora no interior.", expected: ["Agora moro no interior."], focus: "agora", watch: "presente para agora."),
+                                PracticeQuestion(prompt: "Contraste: antes você fumava, agora corre.", expected: ["Antes eu fumava agora corro.", "Antes eu fumava, agora corro."], focus: "antes/agora", watch: "dois tempos opostos."),
+                                PracticeQuestion(prompt: "Dê a consequência: era cansativo, então você se mudou.", expected: ["Era cansativo então me mudei.", "Era cansativo, então me mudei."], focus: "então", watch: "então + consequência."),
+                                PracticeQuestion(prompt: "Diga o que prefere e por quê.", expected: ["Prefiro a vida de agora porque sou mais livre.", "Prefiro a vida de agora."], focus: "porque", watch: "porque + causa.")]),
+                exercises: [
+                            Exercise(id: "pt-b1-antes-ahora-e1", kind: "choice", prompt: "Antes, eu ___ na cidade. (morar, imperfeito)", options: ["morava", "moro", "morei", "morarei"], answers: ["morava"], explain: "imperfeito: -ava."),
+                            Exercise(id: "pt-b1-antes-ahora-e2", kind: "gap", prompt: "Era cansativo, ___ me mudei. (consequência)", options: [], answers: ["então"], explain: "então = consequência."),
+                            Exercise(id: "pt-b1-antes-ahora-e3", kind: "order", prompt: "Contraste: antes você fumava, agora corre.", options: [], answers: ["Antes eu fumava agora corro"], explain: "antes + imperfeito, agora + presente."),
+                            Exercise(id: "pt-b1-antes-ahora-e4", kind: "written", prompt: "Diga o que mudou: agora você trabalha de casa.", options: [], answers: ["agora trabalho de casa", "agora trabalho em casa"], explain: "agora + presente.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
 DeFoundationsU2.unit,
 DeFoundationsU3.unit,
-DeFoundationsU4.unit
+DeFoundationsU4.unit,
+DeFoundationsU5.unit,
+DeFoundationsU6.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -4634,25 +5256,33 @@ EsFoundationsU1.unit,
 EsFoundationsU2.unit,
 EsFoundationsU3.unit,
 EsFoundationsU4.unit,
-EsFoundationsU5.unit
+EsFoundationsU5.unit,
+EsFoundationsU6.unit,
+EsFoundationsU7.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
 FrFoundationsU2.unit,
 FrFoundationsU3.unit,
-FrFoundationsU4.unit
+FrFoundationsU4.unit,
+FrFoundationsU5.unit,
+FrFoundationsU6.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
 ItFoundationsU2.unit,
 ItFoundationsU3.unit,
-ItFoundationsU4.unit
+ItFoundationsU4.unit,
+ItFoundationsU5.unit,
+ItFoundationsU6.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
 PtFoundationsU2.unit,
 PtFoundationsU3.unit,
-PtFoundationsU4.unit
+PtFoundationsU4.unit,
+PtFoundationsU5.unit,
+PtFoundationsU6.unit
         ]),
     ]
 }

@@ -2290,7 +2290,7 @@
               "id": "es-foundations-u5-antes-ahora-e2",
               "kind": "gap",
               "prompt": "___ ___ al parque todos los días. (ir, imperfecto)",
-              "explain": "ir → iba.",
+              "explain": "Imperfecto de ir: iba, ibas, íbamos — describe rutinas del pasado.",
               "answers": [
                 "Iba",
                 "iba"
@@ -2326,6 +2326,719 @@
           ],
           "prerequisites": [
             "grammar:used-to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u6",
+      "title": "En el mercado",
+      "subtitle": "Compra local",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mercado-dia",
+          "title": "Día de mercado",
+          "subtitle": "Fruta y verdura fresca",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Compras en el mercado del barrio: fruta, verdura y trato con el vendedor.",
+          "colorIndex": 0
+        },
+        {
+          "id": "tienda-esquina",
+          "title": "La tienda de la esquina",
+          "subtitle": "Lo que falta",
+          "symbol": "storefront",
+          "category": "Course",
+          "situation": "Falta algo para la cena: corres a la tienda de la esquina.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u6-mercado",
+          "title": "En el mercado",
+          "goal": "Comprar fruta y verdura: cantidades, precios y tratamientos educados.",
+          "intro": {
+            "explanation": [
+              "En el mercado se pregunta: «¿A cómo están los tomates?». «¿Están maduros?»",
+              "Las cantidades: «Medio kilo de cebollas». «Un kilo de manzanas». «Doscientos gramos de jamón».",
+              "El trato educado: «Buenos días, ¿me pone medio kilo?» — el vendedor responde «Ahora mismo»."
+            ],
+            "examples": [
+              {
+                "text": "¿A cómo están los tomates?",
+                "meaning": "Precio por kilo."
+              },
+              {
+                "text": "Me pone medio kilo de cebollas.",
+                "meaning": "Pedir cantidad."
+              },
+              {
+                "text": "¿Están maduros?",
+                "meaning": "Preguntar calidad."
+              },
+              {
+                "text": "Doscientos gramos de jamón.",
+                "meaning": "Peso exacto."
+              },
+              {
+                "text": "¿Le puedo poner algo más?",
+                "meaning": "El vendedor pregunta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿A cómo están …?",
+              "meaning": "Preguntar precio en mercado.",
+              "note": "plural: están."
+            },
+            {
+              "text": "Me pone + cantidad",
+              "meaning": "Pedir en el mercado.",
+              "note": "Me pone un kilo."
+            },
+            {
+              "text": "medio kilo / un kilo de …",
+              "meaning": "Peso.",
+              "note": "medio kilo de cebollas."
+            },
+            {
+              "text": "¿Están maduros?",
+              "meaning": "Calidad de la fruta.",
+              "note": "maduro = ripe."
+            },
+            {
+              "text": "Ahora mismo.",
+              "meaning": "El vendedor responde.",
+              "note": "= inmediatamente."
+            }
+          ],
+          "situation": "Compras en el mercado del barrio: medio kilo de tomates, un kilo de manzanas y preguntas si están maduros.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pregunta el precio de los tomates.",
+                "expected": [
+                  "¿A cómo están los tomates?"
+                ],
+                "focus": "a cómo",
+                "watch": "¿A cómo están? = ¿a cuánto el kilo?"
+              },
+              {
+                "prompt": "Pide medio kilo de cebollas.",
+                "expected": [
+                  "Me pone medio kilo de cebollas."
+                ],
+                "focus": "me pone",
+                "watch": "Me pone + cantidad = fórmula de mercado."
+              },
+              {
+                "prompt": "Pregunta si las manzanas están maduras.",
+                "expected": [
+                  "¿Están maduras?"
+                ],
+                "focus": "calidad",
+                "watch": "maduras (fem plural) para manzanas."
+              },
+              {
+                "prompt": "Di lo que necesitas: un kilo de naranjas.",
+                "expected": [
+                  "Necesito un kilo de naranjas."
+                ],
+                "focus": "necesito",
+                "watch": "necesito + cantidad + comida."
+              },
+              {
+                "prompt": "Pide doscientos gramos de jamón.",
+                "expected": [
+                  "Me pone doscientos gramos de jamón.",
+                  "Quiero doscientos gramos de jamón."
+                ],
+                "focus": "me pone",
+                "watch": "Me pone + cantidad."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u6-mercado-e1",
+              "kind": "choice",
+              "prompt": "¿A cómo ___ los tomates?",
+              "explain": "¿A cómo están? — precio en mercado.",
+              "options": [
+                "están",
+                "es",
+                "hay",
+                "son"
+              ],
+              "answers": [
+                "están"
+              ]
+            },
+            {
+              "id": "es-foundations-u6-mercado-e2",
+              "kind": "gap",
+              "prompt": "Me ___ un kilo de manzanas. (pedir)",
+              "explain": "Me pone — fórmula de mercado.",
+              "answers": [
+                "pone"
+              ]
+            },
+            {
+              "id": "es-foundations-u6-mercado-e3",
+              "kind": "order",
+              "prompt": "Pide medio kilo de cebollas.",
+              "explain": "Me pone + cantidad.",
+              "answers": [
+                "Me pone medio kilo de cebollas"
+              ]
+            },
+            {
+              "id": "es-foundations-u6-mercado-e4",
+              "kind": "written",
+              "prompt": "Pregunta si las manzanas están maduras.",
+              "explain": "¿Están maduras?",
+              "answers": [
+                "estan maduras",
+                "¿están maduras?"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:quantities",
+            "vocab:shopping",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u6-tienda",
+          "title": "La tienda de la esquina",
+          "goal": "Comprar lo que falta: decir lo que buscas y pagar.",
+          "intro": {
+            "explanation": [
+              "En la tienda pequeña: «¿Tiene…?» «Estoy buscando…». El tendero responde: «Sí, aquí tiene» o «Lo siento, no queda».",
+              "No queda = se acabó. «¿No queda pan?» «No, se acabó hace un rato».",
+              "El pago: «¿Cuánto es?» «Son tres euros». «Pague con tarjeta»."
+            ],
+            "examples": [
+              {
+                "text": "¿Tiene pan integral?",
+                "meaning": "Preguntar si tienen."
+              },
+              {
+                "text": "Estoy buscando levadura.",
+                "meaning": "Buscar algo específico."
+              },
+              {
+                "text": "Lo siento, no queda.",
+                "meaning": "El tendero dice que no."
+              },
+              {
+                "text": "¿Cuánto es?",
+                "meaning": "Preguntar el total."
+              },
+              {
+                "text": "Son tres euros con cincuenta.",
+                "meaning": "El precio total."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Tiene …?",
+              "meaning": "Preguntar en tienda.",
+              "note": "¿Tiene leche sin lactosa?"
+            },
+            {
+              "text": "Estoy buscando …",
+              "meaning": "Buscar específico.",
+              "note": "…levadura fresca."
+            },
+            {
+              "text": "No queda / se acabó",
+              "meaning": "No hay más.",
+              "note": "Ambas dicen lo mismo."
+            },
+            {
+              "text": "¿Cuánto es?",
+              "meaning": "Preguntar el total.",
+              "note": "Son + precio."
+            },
+            {
+              "text": "aquí tiene",
+              "meaning": "El vendedor entrega.",
+              "note": "Aquí tiene su cambio."
+            }
+          ],
+          "situation": "Corres a la tienda de la esquina antes de que cierre: buscas tres cosas, dos las tiene y una se acabó.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Preguntar si tienen leche sin lactosa.",
+                "expected": [
+                  "¿Tiene leche sin lactosa?"
+                ],
+                "focus": "tiene",
+                "watch": "¿Tiene…? — formal pero normal."
+              },
+              {
+                "prompt": "Decir que buscas algo específico.",
+                "expected": [
+                  "Estoy buscando <producto>."
+                ],
+                "focus": "buscando",
+                "watch": "estoy buscando = estoy en el proceso."
+              },
+              {
+                "prompt": "Reaccionar cuando no tienen algo.",
+                "expected": [
+                  "Lo siento, ¿tienen de otra marca?"
+                ],
+                "focus": "alternativa",
+                "watch": "Preguntar por alternativa."
+              },
+              {
+                "prompt": "Preguntar el total.",
+                "expected": [
+                  "¿Cuánto es?"
+                ],
+                "focus": "total",
+                "watch": "¿Cuánto es? — la pregunta universal."
+              },
+              {
+                "prompt": "Acepta cuando te ofrecen otra cosa: sí, vale.",
+                "expected": [
+                  "Sí vale.",
+                  "Vale gracias."
+                ],
+                "focus": "vale",
+                "watch": "Vale = está bien (España)."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u6-tienda-e1",
+              "kind": "choice",
+              "prompt": "¿___ leche sin lactosa?",
+              "explain": "¿Tiene…? para preguntar en tienda.",
+              "options": [
+                "Tiene",
+                "Hay",
+                "Está",
+                "Es"
+              ],
+              "answers": [
+                "Tiene"
+              ]
+            },
+            {
+              "id": "es-foundations-u6-tienda-e2",
+              "kind": "gap",
+              "prompt": "Estoy ___ levadura fresca. (buscar)",
+              "explain": "estoy buscando + producto.",
+              "answers": [
+                "buscando"
+              ]
+            },
+            {
+              "id": "es-foundations-u6-tienda-e3",
+              "kind": "order",
+              "prompt": "Preguntar el total.",
+              "explain": "¿Cuánto es?",
+              "answers": [
+                "Cuanto es eso senior"
+              ]
+            },
+            {
+              "id": "es-foundations-u6-tienda-e4",
+              "kind": "written",
+              "prompt": "El tendero no tiene. Di que buscas otra marca.",
+              "explain": "buscar + alternativa.",
+              "answers": [
+                "busco otra marca",
+                "estoy buscando otra marca"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:present-questions",
+            "vocab:food",
+            "function:solve-problems"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u7",
+      "title": "Comparar y planear",
+      "subtitle": "Mejor o peor",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "dos-pisos",
+          "title": "Dos pisos",
+          "subtitle": "Cuál es mejor",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Comparáis dos pisos para alquilar: uno más barato, el otro más luminoso.",
+          "colorIndex": 0
+        },
+        {
+          "id": "plan-finde",
+          "title": "El plan del finde",
+          "subtitle": "Qué vais a hacer",
+          "symbol": "calendar",
+          "category": "Course",
+          "situation": "Organizáis el fin de semana: qué vais a hacer, a qué hora y dónde quedar.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u7-comparando",
+          "title": "Comparando pisos",
+          "goal": "Comparar opciones con comparativos y superlativos y dar tu opinión.",
+          "intro": {
+            "explanation": [
+              "El comparativo: « más … que ». « Este piso es más barato que el otro ».",
+              "Los irregulares: « mejor » (bien) y « peor » (mal). « Este es mejor, pero está peor situado ».",
+              "El superlativo: « el más luminoso de los dos ». « Es la zona más tranquila del barrio »."
+            ],
+            "examples": [
+              {
+                "text": "Este piso es más barato que el otro.",
+                "meaning": "Comparativo."
+              },
+              {
+                "text": "Es más pequeño, pero más luminoso.",
+                "meaning": "pero + matiz."
+              },
+              {
+                "text": "La cocina es la mejor de las dos.",
+                "meaning": "Superlativo irregular."
+              },
+              {
+                "text": "Está peor situado.",
+                "meaning": "peor = estar mal situado."
+              },
+              {
+                "text": "Para mí, es la mejor opción.",
+                "meaning": "Opinión."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "más … que",
+              "meaning": "Comparativo.",
+              "note": "más barato que."
+            },
+            {
+              "text": "mejor / peor",
+              "meaning": "Irregulares.",
+              "note": "bien→mejor, mal→peor."
+            },
+            {
+              "text": "el/la más … de",
+              "meaning": "Superlativo.",
+              "note": "el más luminoso de."
+            },
+            {
+              "text": "Para mí, …",
+              "meaning": "Opinión.",
+              "note": "Para mí, es la mejor."
+            },
+            {
+              "text": "no tan … como",
+              "meaning": "Igualdad negativa.",
+              "note": "No es tan caro como parece."
+            }
+          ],
+          "situation": "Comparamos dos pisos en la app de alquiler: precio, tamaño, luz y barrio, y decidimos cuál pedir visita.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di que este piso es más barato que el otro.",
+                "expected": [
+                  "Este piso es más barato que el otro."
+                ],
+                "focus": "más … que",
+                "watch": "más + adjetivo + que."
+              },
+              {
+                "prompt": "Di que la cocina es la mejor de las dos.",
+                "expected": [
+                  "La cocina es la mejor de las dos."
+                ],
+                "focus": "mejor",
+                "watch": "mejor (irregular), no «más bueno»."
+              },
+              {
+                "prompt": "Di que está peor situado.",
+                "expected": [
+                  "Está peor situado."
+                ],
+                "focus": "peor",
+                "watch": "peor, no «más malo»."
+              },
+              {
+                "prompt": "Da tu opinión: es la mejor opción.",
+                "expected": [
+                  "Para mí es la mejor opción.",
+                  "Para mí, es la mejor opción."
+                ],
+                "focus": "para mí",
+                "watch": "Para mí + opinión."
+              },
+              {
+                "prompt": "Di que no es tan caro como parece.",
+                "expected": [
+                  "No es tan caro como parece."
+                ],
+                "focus": "tan … como",
+                "watch": "no tan + adjetivo + como."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u7-comparando-e1",
+              "kind": "choice",
+              "prompt": "Este piso es ___ barato ___ el otro.",
+              "options": [
+                "más / que",
+                "muy / que",
+                "más / como",
+                "tan / que"
+              ],
+              "answers": [
+                "más / que"
+              ],
+              "explain": "Comparativo: más + adjetivo + que."
+            },
+            {
+              "id": "es-foundations-u7-comparando-e2",
+              "kind": "gap",
+              "prompt": "La cocina es la ___ de las dos. (bueno)",
+              "answers": [
+                "mejor"
+              ],
+              "explain": "Superlativo irregular: bueno → el mejor."
+            },
+            {
+              "id": "es-foundations-u7-comparando-e3",
+              "kind": "order",
+              "prompt": "Compara: este barrio es el más tranquilo.",
+              "answers": [
+                "Este barrio es el más tranquilo"
+              ],
+              "explain": "el más + adjetivo."
+            },
+            {
+              "id": "es-foundations-u7-comparando-e4",
+              "kind": "written",
+              "prompt": "Compara: tu barrio es más tranquilo que este.",
+              "answers": [
+                "mi barrio es más tranquilo que este",
+                "mi barrio es más tranquilo"
+              ],
+              "explain": "más + adjetivo + que."
+            }
+          ],
+          "skills": [
+            "grammar:comparatives",
+            "grammar:superlatives",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:comparatives"
+          ]
+        },
+        {
+          "id": "es-foundations-u7-plan",
+          "title": "El plan del finde",
+          "goal": "Hablar de planes con ir a + infinitivo y quedar a una hora.",
+          "intro": {
+            "explanation": [
+              "El futuro cercano: « ir a + infinitivo ». « Vamos a cenar fuera el sábado ».",
+              "Preguntar planes: « ¿Qué vas a hacer ? ». « ¿Vienes con nosotros ? ».",
+              "Quedar: « Quedamos a las ocho en la plaza ». « ¿A qué hora nos vemos ? »."
+            ],
+            "examples": [
+              {
+                "text": "Vamos a cenar fuera el sábado.",
+                "meaning": "ir a + infinitivo."
+              },
+              {
+                "text": "¿Qué vas a hacer ?",
+                "meaning": "Preguntar planes."
+              },
+              {
+                "text": "Voy a visitar a mi hermana.",
+                "meaning": "voy a + infinitivo."
+              },
+              {
+                "text": "Quedamos a las ocho en la plaza.",
+                "meaning": "Quedar + hora + lugar."
+              },
+              {
+                "text": "¿A qué hora nos vemos ?",
+                "meaning": "Cerrar el plan."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ir a + infinitivo",
+              "meaning": "Futuro cercano.",
+              "note": "vamos a cenar."
+            },
+            {
+              "text": "¿Qué vas a hacer ?",
+              "meaning": "Preguntar planes.",
+              "note": "vas a + infinitivo."
+            },
+            {
+              "text": "Quedamos a las + hora",
+              "meaning": "Quedar.",
+              "note": "a las ocho."
+            },
+            {
+              "text": "¿Te viene bien ?",
+              "meaning": "Confirmar hora.",
+              "note": "¿Te viene bien el sábado ?"
+            },
+            {
+              "text": "Nos vemos en + lugar",
+              "meaning": "Cita.",
+              "note": "en la plaza."
+            }
+          ],
+          "situation": "Organizáis el sábado: uno propone montaña, el otro mercado; acabáis quedando a las diez para ir al lago.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Propón: vamos a cenar fuera el sábado.",
+                "expected": [
+                  "Vamos a cenar fuera el sábado."
+                ],
+                "focus": "vamos a",
+                "watch": "ir a + infinitivo."
+              },
+              {
+                "prompt": "Pregunta qué va a hacer.",
+                "expected": [
+                  "Qué vas a hacer ?",
+                  "¿Qué vas a hacer ?"
+                ],
+                "focus": "qué vas a",
+                "watch": "¿Qué + vas a hacer ?"
+              },
+              {
+                "prompt": "Di que vas a visitar a tu hermana.",
+                "expected": [
+                  "Voy a visitar a mi hermana."
+                ],
+                "focus": "voy a",
+                "watch": "voy a + infinitivo."
+              },
+              {
+                "prompt": "Propón quedar a las ocho en la plaza.",
+                "expected": [
+                  "Quedamos a las ocho en la plaza."
+                ],
+                "focus": "quedamos",
+                "watch": "Quedamos a las + hora."
+              },
+              {
+                "prompt": "Pregunta a qué hora os veis.",
+                "expected": [
+                  "A qué hora nos vemos ?",
+                  "¿A qué hora nos vemos ?"
+                ],
+                "focus": "a qué hora",
+                "watch": "¿A qué hora + nos vemos ?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u7-plan-e1",
+              "kind": "choice",
+              "prompt": "Mañana ___ visitar el museo.",
+              "options": [
+                "vamos a",
+                "vamos de",
+                "vamos que",
+                "vamos por"
+              ],
+              "answers": [
+                "vamos a"
+              ],
+              "explain": "ir a + infinitivo."
+            },
+            {
+              "id": "es-foundations-u7-plan-e2",
+              "kind": "gap",
+              "prompt": "Quedamos ___ las ocho. (hora)",
+              "answers": [
+                "a"
+              ],
+              "explain": "a las + hora."
+            },
+            {
+              "id": "es-foundations-u7-plan-e3",
+              "kind": "order",
+              "prompt": "Cierra el plan: nos vemos en la plaza.",
+              "answers": [
+                "Nos vemos a las ocho en la plaza"
+              ],
+              "explain": "nos vemos + hora + lugar."
+            },
+            {
+              "id": "es-foundations-u7-plan-e4",
+              "kind": "written",
+              "prompt": "Di lo que vas a hacer el fin de semana: descansar.",
+              "answers": [
+                "voy a descansar",
+                "voy a descansar el fin de semana"
+              ],
+              "explain": "voy a + infinitivo."
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "grammar:future-forms",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
           ]
         }
       ]

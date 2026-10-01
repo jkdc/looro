@@ -1484,6 +1484,717 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-foundations-u5",
+      "title": "Al mercato",
+      "subtitle": "Compro locale",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mercato-quartiere",
+          "title": "Il mercato di quartiere",
+          "subtitle": "Frutta e verdura",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Fate la spesa al mercato: frutta, verdura e contatino con il venditore.",
+          "colorIndex": 0
+        },
+        {
+          "id": "alimentari",
+          "title": "L'alimentari sotto casa",
+          "subtitle": "Quello che manca",
+          "symbol": "storefront",
+          "category": "Course",
+          "situation": "Manca qualcosa per cena: corri dall'alimentari sotto casa.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u5-mercato",
+          "title": "Al mercato",
+          "goal": "Comprare frutta e verdura: quantità, prezzi e formule educate.",
+          "intro": {
+            "explanation": [
+              "Al mercato si chiede: « Quant'costano i pomodori ? ». « Sono maturi ? »",
+              "Le quantità: « Mezzo chilo di cipolle ». « Un chilo di mele ».",
+              "La formula educata: « Buongiorno, mi metta mezzo chilo di pesche, per favore »."
+            ],
+            "examples": [
+              {
+                "text": "Quant'costano i pomodori ?",
+                "meaning": "Il prezzo."
+              },
+              {
+                "text": "Me ne metta mezzo chilo.",
+                "meaning": "Chiedere quantità."
+              },
+              {
+                "text": "Sono maturi ?",
+                "meaning": "Qualità."
+              },
+              {
+                "text": "Due etti di prosciutto.",
+                "meaning": "Peso."
+              },
+              {
+                "text": "Vorrei delle mele.",
+                "meaning": "Vorrei + prodotto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Quant'costano …?",
+              "meaning": "Prezzo.",
+              "note": "…i pomodori ?"
+            },
+            {
+              "text": "Me ne metta + quantità",
+              "meaning": "Chiedere.",
+              "note": "Me ne metta un chilo."
+            },
+            {
+              "text": "Sono maturi/mature ?",
+              "meaning": "Qualità.",
+              "note": "maturi (m), mature (f)."
+            },
+            {
+              "text": "due etti di …",
+              "meaning": "200 g.",
+              "note": "etto = 100 g."
+            },
+            {
+              "text": "Vorrei + prodotto",
+              "meaning": "Vorrei.",
+              "note": "Vorrei delle mele."
+            }
+          ],
+          "situation": "Fate la spesa al mercato: mezzo chilo di pomodori, un chilo di mele e chiedete se sono mature.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedete il prezzo dei pomodori.",
+                "expected": [
+                  "Quant costano i pomodori"
+                ],
+                "focus": "quant'costano",
+                "watch": "Quant'costano = ¿a cuánto?"
+              },
+              {
+                "prompt": "Chiedete mezzo chilo di cipolle.",
+                "expected": [
+                  "Mi metta mezzo chilo di cipolle."
+                ],
+                "focus": "me ne metta",
+                "watch": "Mi metta + cantidad."
+              },
+              {
+                "prompt": "Chiedete se le mele sono mature.",
+                "expected": [
+                  "Sono mature ?"
+                ],
+                "focus": "mature",
+                "watch": "mature (fem pl) per mele."
+              },
+              {
+                "prompt": "Dire cosa serve: un chilo di arance.",
+                "expected": [
+                  "Mi servono un chilo di arance."
+                ],
+                "focus": "mi servono",
+                "watch": "mi servono = necesito."
+              },
+              {
+                "prompt": "Dire che vorreste delle mele.",
+                "expected": [
+                  "Vorrei delle mele."
+                ],
+                "focus": "vorrei",
+                "watch": "Vorrei + prodotto."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u5-mercato-e1",
+              "kind": "choice",
+              "prompt": "___ ___ i pomodori ?",
+              "options": [
+                "Quant'costano",
+                "Quanto è",
+                "Sono costati",
+                "Come sono"
+              ],
+              "answers": [
+                "Quant'costano"
+              ],
+              "explain": "Quant'costano = ¿a cuánto?"
+            },
+            {
+              "id": "it-foundations-u5-mercato-e2",
+              "kind": "gap",
+              "prompt": "___ ___ mezzo chilo di cipolle. (pedir)",
+              "answers": [
+                "Mi metta"
+              ],
+              "explain": "Mi metta + cantidad."
+            },
+            {
+              "id": "it-foundations-u5-mercato-e3",
+              "kind": "order",
+              "prompt": "Chiedete il prezzo.",
+              "answers": [
+                "Quant costano i pomodori"
+              ],
+              "explain": "Quant' + costare + prodotto."
+            },
+            {
+              "id": "it-foundations-u5-mercato-e4",
+              "kind": "written",
+              "prompt": "Dire cosa serve: un chilo di arance.",
+              "answers": [
+                "mi servono un chilo di arance",
+                "mi serve un chilo di arance"
+              ],
+              "explain": "Mi servono + cantidad."
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:quantities",
+            "vocab:shopping",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u5-alimentari",
+          "title": "Dall'alimentari",
+          "goal": "Comprare quello che manca: cercare, chiedere e pagare.",
+          "intro": {
+            "explanation": [
+              "All'alimentari: « Avete…? » « Sto cercando… ». Il negoziente risponde: « Sì, eccolo » o « Mi dispiace, è finito ».",
+              "È finito = non c'è più. « Il latte è finito ».",
+              "Il pagamento: « Quanto fa ? » « Fa sette euro »."
+            ],
+            "examples": [
+              {
+                "text": "Avete latte senza lattosio ?",
+                "meaning": "Chiedere se hanno."
+              },
+              {
+                "text": "Sto cercando il lievito fresco.",
+                "meaning": "Cercare qualcosa."
+              },
+              {
+                "text": "Mi dispiace, è finito.",
+                "meaning": "Non c'è più."
+              },
+              {
+                "text": "Quanto fa ?",
+                "meaning": "Chiedere il totale."
+              },
+              {
+                "text": "Fa sette euro e venti.",
+                "meaning": "Il prezzo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Avete … ?",
+              "meaning": "Chiedere in negozio.",
+              "note": "…latte senza lattosio ?"
+            },
+            {
+              "text": "Sto cercando …",
+              "meaning": "Cercare.",
+              "note": "…il lievito fresco."
+            },
+            {
+              "text": "è finito / è finita",
+              "meaning": "Non c'è più.",
+              "note": "il latte è finito."
+            },
+            {
+              "text": "Quanto fa ?",
+              "meaning": "Totale.",
+              "note": "fa + prezzo."
+            },
+            {
+              "text": "eccolo / eccola",
+              "meaning": "Ecco il prodotto.",
+              "note": "Eccolo! = aquí está."
+            }
+          ],
+          "situation": "Corri dall'alimentari prima che chiuda: cerchi tre cose, due le ha e una è finita.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedere se hanno latte senza lattosio.",
+                "expected": [
+                  "Avete latte senza lattosio ?"
+                ],
+                "focus": "avete",
+                "watch": "Avete + prodotto ?"
+              },
+              {
+                "prompt": "Dire che cerchi lievito fresco.",
+                "expected": [
+                  "Sto cercando il lievito fresco."
+                ],
+                "focus": "sto cercando",
+                "watch": "sto cercando = estoy buscando."
+              },
+              {
+                "prompt": "Reagire quando è finito.",
+                "expected": [
+                  "Ah, peccato! Grazie lo stesso."
+                ],
+                "focus": "peccato",
+                "watch": "peccato = lástima."
+              },
+              {
+                "prompt": "Chiedere il totale.",
+                "expected": [
+                  "Quanto fa ?"
+                ],
+                "focus": "quanto fa",
+                "watch": "Quanto fa ? = ¿cuánto es?"
+              },
+              {
+                "prompt": "Dire che cercate lievito fresco.",
+                "expected": [
+                  "Sto cercando il lievito fresco."
+                ],
+                "focus": "sto cercando",
+                "watch": "sto cercando = estoy buscando."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u5-alimentari-e1",
+              "kind": "choice",
+              "prompt": "___ latte senza lattosio ?",
+              "options": [
+                "Avete",
+                "Ci sono",
+                "C'è",
+                "Siete"
+              ],
+              "answers": [
+                "Avete"
+              ],
+              "explain": "Avete + prodotto ?"
+            },
+            {
+              "id": "it-foundations-u5-alimentari-e2",
+              "kind": "gap",
+              "prompt": "Sto ___ il lievito fresco. (cercare)",
+              "answers": [
+                "cercando"
+              ],
+              "explain": "sto cercando + producto."
+            },
+            {
+              "id": "it-foundations-u5-alimentari-e3",
+              "kind": "order",
+              "prompt": "Chiedete il totale.",
+              "answers": [
+                "Quanto fa tutto insieme"
+              ],
+              "explain": "Quanto fa ?"
+            },
+            {
+              "id": "it-foundations-u5-alimentari-e4",
+              "kind": "written",
+              "prompt": "Dire che cercate lievito fresco.",
+              "answers": [
+                "sto cercando lievito fresco",
+                "sto cercando del lievito fresco"
+              ],
+              "explain": "Sto cercando + prodotto."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:present-questions",
+            "vocab:food",
+            "function:solve-problems"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u6",
+      "title": "Esperienze e cambiamenti",
+      "subtitle": "Già o mai",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "it-b1-viaggio",
+          "title": "Il viaggio indimenticabile",
+          "subtitle": "Già visto",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Parlate di viaggi e prime volte: già stato, mai visto, e una storia indimenticabile.",
+          "colorIndex": 0
+        },
+        {
+          "id": "it-b1-cambio",
+          "title": "Il cambio di vita",
+          "subtitle": "Prima / adesso",
+          "symbol": "arrow-up-forward",
+          "category": "Course",
+          "situation": "Confrontate la vita di prima e di oggi e spiegate cosa è cambiato.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-b1-experiencias",
+          "title": "L'hai mai fatto ?",
+          "goal": "Raccontare esperienze con il passato prossimo e già/mai.",
+          "intro": {
+            "explanation": [
+              "L'esperienza: « Sei mai stato a Lisbona ? » — « Sì, ci sono stato l'anno scorso. »",
+              "già = almeno una volta. « Ho già assaggiato quel piatto ». mai = zero volte. « Non ho mai sciato ».",
+              "I participi irregolari tornano: « ho visto », « ho fatto », « sono stato »."
+            ],
+            "examples": [
+              {
+                "text": "Sei mai stato a Lisbona ?",
+                "meaning": "Domanda di esperienza."
+              },
+              {
+                "text": "Non ho mai sciato.",
+                "meaning": "mai = zero volte."
+              },
+              {
+                "text": "Ho già assaggiato la paella.",
+                "meaning": "già = almeno una volta."
+              },
+              {
+                "text": "Era la prima volta.",
+                "meaning": "Prima volta."
+              },
+              {
+                "text": "Cosa hai fatto laggiù ?",
+                "meaning": "Rilanciare."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Sei mai stato/a … ?",
+              "meaning": "Esperienza.",
+              "note": "Sei mai stato a Roma ?"
+            },
+            {
+              "text": "Non ho mai + participio",
+              "meaning": "mai.",
+              "note": "Non ho mai visto così."
+            },
+            {
+              "text": "visto / fatto / stato",
+              "meaning": "Participi chiave.",
+              "note": "vedere→visto, fare→fatto."
+            },
+            {
+              "text": "la prima volta che…",
+              "meaning": "Prima volta.",
+              "note": "È la prima volta che…"
+            },
+            {
+              "text": "e tu ?",
+              "meaning": "Rilanciare.",
+              "note": "E tu, sei mai… ?"
+            }
+          ],
+          "situation": "Parlate di viaggi: chi è già stato in aereo, chi non ha mai campeggiato, e una prima volta indimenticabile.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi se il tuo amico è mai stato a Lisbona.",
+                "expected": [
+                  "Sei mai stato a Lisbona ?",
+                  "Sei mai stata a Lisbona ?"
+                ],
+                "focus": "mai",
+                "watch": "Sei mai stato/a ?"
+              },
+              {
+                "prompt": "Di che non hai mai sciato.",
+                "expected": [
+                  "Non ho mai sciato."
+                ],
+                "focus": "non… mai",
+                "watch": "non + ho + mai + participio."
+              },
+              {
+                "prompt": "Di che hai già assaggiato la paella.",
+                "expected": [
+                  "Ho già assaggiato la paella."
+                ],
+                "focus": "già",
+                "watch": "Ho già + participio."
+              },
+              {
+                "prompt": "Di che era la tua prima volta.",
+                "expected": [
+                  "Era la prima volta."
+                ],
+                "focus": "prima volta",
+                "watch": "imperfetto per il quadro."
+              },
+              {
+                "prompt": "Rilancia: e tu ?",
+                "expected": [
+                  "E tu ?",
+                  "E tu, sei mai andato in surf ?"
+                ],
+                "focus": "e tu",
+                "watch": "e tu rilancia."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-b1-experiencias-e1",
+              "kind": "choice",
+              "prompt": "Sei mai ___ a Roma ?",
+              "options": [
+                "stato",
+                "stata solo al femminile",
+                "andato con avere",
+                "sii"
+              ],
+              "answers": [
+                "stato"
+              ],
+              "explain": "andare → essere: sei mai stato/a."
+            },
+            {
+              "id": "it-b1-experiencias-e2",
+              "kind": "gap",
+              "prompt": "Non ho ___ sciato. (mai)",
+              "answers": [
+                "mai"
+              ],
+              "explain": "non… mai attorno all'ausiliare."
+            },
+            {
+              "id": "it-b1-experiencias-e3",
+              "kind": "order",
+              "prompt": "Chiedi l'esperienza: hai già mangiato le lumache ?",
+              "answers": [
+                "Hai già mangiato le lumache"
+              ],
+              "explain": "Hai già + participio + oggetto ?"
+            },
+            {
+              "id": "it-b1-experiencias-e4",
+              "kind": "written",
+              "prompt": "Di un'esperienza: hai già visto questo film.",
+              "answers": [
+                "ho gia visto questo film",
+                "ho già visto questo film"
+              ],
+              "explain": "Ho già + participio."
+            }
+          ],
+          "skills": [
+            "grammar:present-perfect",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "it-b1-antes-ahora",
+          "title": "Prima e adesso",
+          "goal": "Contrastare passato e presente con l'imperfetto e i connettivi.",
+          "intro": {
+            "explanation": [
+              "L'imperfetto dipinge il passato abituale: « Prima vivevo in città ».",
+              "Il contrasto: « Prima… adesso… ». « Prima fumavo, adesso corro ».",
+              "I connettivi: « ma », « perché », « quindi ». « Era stancante, quindi mi sono trasferito »."
+            ],
+            "examples": [
+              {
+                "text": "Prima vivevo in città.",
+                "meaning": "imperfetto del passato."
+              },
+              {
+                "text": "Adesso vivo in campagna.",
+                "meaning": "presente in contrasto."
+              },
+              {
+                "text": "Prima fumavo, adesso corro.",
+                "meaning": "Cambio di vita."
+              },
+              {
+                "text": "Era stancante, quindi mi sono trasferito.",
+                "meaning": "quindi = conseguenza."
+              },
+              {
+                "text": "Preferisco la vita di adesso, perché…",
+                "meaning": "perché = causa."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Prima, …-avo/-evo",
+              "meaning": "imperfetto.",
+              "note": "vivevo, facevo."
+            },
+            {
+              "text": "adesso, …",
+              "meaning": "presente.",
+              "note": "adesso vivo…"
+            },
+            {
+              "text": "ma / quindi / perché",
+              "meaning": "Connettivi.",
+              "note": "ma = contrasto."
+            },
+            {
+              "text": "preferisco …",
+              "meaning": "Opinione.",
+              "note": "preferisco la vita…"
+            },
+            {
+              "text": "Era + aggettivo",
+              "meaning": "Quadro al passato.",
+              "note": "Era tranquillo."
+            }
+          ],
+          "situation": "Confrontate la vita di prima e di oggi: città e campagna, lavoro e tempo libero, e perché avete cambiato.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di che prima vivevi in città.",
+                "expected": [
+                  "Prima vivevo in città.",
+                  "Prima, vivevo in città."
+                ],
+                "focus": "imperfetto",
+                "watch": "-evo: vivevo."
+              },
+              {
+                "prompt": "Di che adesso vivi in campagna.",
+                "expected": [
+                  "Adesso vivo in campagna."
+                ],
+                "focus": "adesso",
+                "watch": "presente per adesso."
+              },
+              {
+                "prompt": "Contrasta: prima fumavi, adesso corri.",
+                "expected": [
+                  "Prima fumavo adesso corro.",
+                  "Prima fumavo, adesso corro."
+                ],
+                "focus": "prima/adesso",
+                "watch": "due tempi opposti."
+              },
+              {
+                "prompt": "Dai la conseguenza: era stancante, quindi ti sei trasferito.",
+                "expected": [
+                  "Era stancante quindi mi sono trasferito.",
+                  "Era stancante, quindi mi sono trasferito."
+                ],
+                "focus": "quindi",
+                "watch": "quindi + conseguenza."
+              },
+              {
+                "prompt": "Di cosa preferisci e perché.",
+                "expected": [
+                  "Preferisco la vita di adesso perché sono più libero.",
+                  "Preferisco la vita di adesso."
+                ],
+                "focus": "perché",
+                "watch": "perché + causa."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-b1-antes-ahora-e1",
+              "kind": "choice",
+              "prompt": "Prima, ___ in città. (vivere, imperfetto)",
+              "options": [
+                "vivevo",
+                "vivo",
+                "ho vissuto",
+                "viverò"
+              ],
+              "answers": [
+                "vivevo"
+              ],
+              "explain": "imperfetto: -evo."
+            },
+            {
+              "id": "it-b1-antes-ahora-e2",
+              "kind": "gap",
+              "prompt": "Era stancante, ___ mi sono trasferito. (conseguenza)",
+              "answers": [
+                "quindi"
+              ],
+              "explain": "quindi = conseguenza."
+            },
+            {
+              "id": "it-b1-antes-ahora-e3",
+              "kind": "order",
+              "prompt": "Contrasta: prima fumavi, adesso corri.",
+              "answers": [
+                "Prima fumavo adesso corro"
+              ],
+              "explain": "prima + imperfetto, adesso + presente."
+            },
+            {
+              "id": "it-b1-antes-ahora-e4",
+              "kind": "written",
+              "prompt": "Di cosa è cambiato: adesso lavori da casa.",
+              "answers": [
+                "adesso lavoro da casa"
+              ],
+              "explain": "adesso + presente."
+            }
+          ],
+          "skills": [
+            "grammar:used-to",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:used-to"
+          ]
+        }
+      ]
     }
   ]
 }

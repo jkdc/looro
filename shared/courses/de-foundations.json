@@ -1485,6 +1485,717 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u5",
+      "title": "Einkaufen",
+      "subtitle": "Lokal einkaufen",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "markttag",
+          "title": "Markttag",
+          "subtitle": "Obst und Gemüse",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Ihr kauft auf dem Wochenmarkt: Obst, Gemüse und Kontakt mit dem Verkäufer.",
+          "colorIndex": 0
+        },
+        {
+          "id": "laden-um-ecke",
+          "title": "Der Laden um die Ecke",
+          "subtitle": "Was fehlt",
+          "symbol": "storefront",
+          "category": "Course",
+          "situation": "Etwas fehlt zum Abendessen: ihr rennt zum Laden um die Ecke.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u5-markt",
+          "title": "Auf dem Markt",
+          "goal": "Obst und Gemüse kaufen: Mengen, Preise und höfliche Formeln.",
+          "intro": {
+            "explanation": [
+              "Auf dem Markt: „Was kosten die Tomaten?“ „Sind die reif?“",
+              "Mengen: „Ein Pfund Zwiebeln.“ „Zwei Kilo Äpfel.“ „Zweihundert Gramm Schinken.“",
+              "Höflich einkaufen: „Ich hätte gern ein Kilo Äpfel.“ — hätte = höfliche Form von haben."
+            ],
+            "examples": [
+              {
+                "text": "Was kosten die Tomaten ?",
+                "meaning": "Der Preis."
+              },
+              {
+                "text": "Ich hätte gern ein Kilo Äpfel.",
+                "meaning": "Höflich einkaufen."
+              },
+              {
+                "text": "Sind die reif ?",
+                "meaning": "Nach der Qualität fragen."
+              },
+              {
+                "text": "Zweihundert Gramm Schinken.",
+                "meaning": "Gewicht."
+              },
+              {
+                "text": "Sonst noch etwas ?",
+                "meaning": "Der Verkäufer fragt."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Was kosten …?",
+              "meaning": "Preis fragen.",
+              "note": "…die Tomaten ?"
+            },
+            {
+              "text": "Ich hätte gern …",
+              "meaning": "Höflich kaufen.",
+              "note": "hätte = Konjunktiv von haben."
+            },
+            {
+              "text": "ein Pfund / ein Kilo von …",
+              "meaning": "Gewicht.",
+              "note": "ein Pfund = 500 g."
+            },
+            {
+              "text": "Sind die reif ?",
+              "meaning": "Qualität.",
+              "note": "reif = maduro."
+            },
+            {
+              "text": "Sonst noch etwas ?",
+              "meaning": "Der Verkäufer fragt.",
+              "note": "Nein, das ist alles."
+            }
+          ],
+          "situation": "Ihr kauft auf dem Wochenmarkt: ein Kilo Äpfel, ein Pfund Zwiebeln und fragt nach der Qualität.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fragt den Preis der Tomaten.",
+                "expected": [
+                  "Was kosten die Tomaten ?"
+                ],
+                "focus": "was kosten",
+                "watch": "Was kosten + Plural."
+              },
+              {
+                "prompt": "Kauft ein Kilo Äpfel (höflich).",
+                "expected": [
+                  "Ich hätte gern ein Kilo Äpfel."
+                ],
+                "focus": "hätte gern",
+                "watch": "hätte gern + Akkusativ."
+              },
+              {
+                "prompt": "Fragt nach der Qualität. (reif)",
+                "expected": [
+                  "Sind die Äpfel reif ?"
+                ],
+                "focus": "reif",
+                "watch": "reif = maduro."
+              },
+              {
+                "prompt": "Sagt was ihr kauft: 200 g Schinken.",
+                "expected": [
+                  "Ich nehme zweihundert Gramm Schinken."
+                ],
+                "focus": "ich nehme",
+                "watch": "nehmen = tomar/elegir."
+              },
+              {
+                "prompt": "Responde al vendedor: nada más, gracias.",
+                "expected": [
+                  "Nichts sonst danke.",
+                  "Sonst nichts danke.",
+                  "Das war's danke."
+                ],
+                "focus": "sonst noch etwas",
+                "watch": "Sonst nichts, danke = nada más."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u5-markt-e1",
+              "kind": "choice",
+              "prompt": "___ ___ die Tomaten ?",
+              "explain": "Was kosten + Plural.",
+              "options": [
+                "Was kosten",
+                "Was sind",
+                "Wie viel ist",
+                "Was ist"
+              ],
+              "answers": [
+                "Was kosten"
+              ]
+            },
+            {
+              "id": "de-foundations-u5-markt-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ gern ein Kilo Äpfel. (höflich)",
+              "explain": "hätte gern + Akkusativ.",
+              "answers": [
+                "hätte"
+              ]
+            },
+            {
+              "id": "de-foundations-u5-markt-e3",
+              "kind": "order",
+              "prompt": "Kauft ein Kilo Äpfel.",
+              "explain": "hätte gern + Menge.",
+              "answers": [
+                "Ich hätte gern ein Kilo Apfel"
+              ]
+            },
+            {
+              "id": "de-foundations-u5-markt-e4",
+              "kind": "written",
+              "prompt": "Fragt nach der Qualität.",
+              "explain": "Sind die … reif ?",
+              "answers": [
+                "sind die apfel reif",
+                "sind die äpfel reif"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:food",
+            "grammar:quantities",
+            "vocab:shopping",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u5-laden",
+          "title": "Der Laden um die Ecke",
+          "goal": "Kaufen was fehlt: suchen, fragen und bezahlen.",
+          "intro": {
+            "explanation": [
+              "Im Laden: „Haben Sie…?“ „Ich suche…“. Der Verkäufer: „Ja, hier bitte“ oder „Tut mir leid, ist ausverkauft“.",
+              "Ausverkauft = es gibt nicht mehr. „Der Laden ist ausverkauft“ (alle Tickets) vs „Das Produkt ist ausverkauft“.",
+              "Bezahlen: „Was macht das ?“ „Das macht fünf Euro.“ „Bar oder mit Karte ?“"
+            ],
+            "examples": [
+              {
+                "text": "Haben Sie Vollkornbrot ?",
+                "meaning": "Fragen ob vorhanden."
+              },
+              {
+                "text": "Ich suche frische Hefe.",
+                "meaning": "Suchen."
+              },
+              {
+                "text": "Tut mir leid, ist ausverkauft.",
+                "meaning": "Nicht mehr da."
+              },
+              {
+                "text": "Was macht das ?",
+                "meaning": "Total fragen."
+              },
+              {
+                "text": "Das macht fünf Euro.",
+                "meaning": "Der Preis."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Haben Sie … ?",
+              "meaning": "Fragen.",
+              "note": "…Vollkornbrot ?"
+            },
+            {
+              "text": "Ich suche …",
+              "meaning": "Suchen.",
+              "note": "…frische Hefe."
+            },
+            {
+              "text": "ausverkauft",
+              "meaning": "Nicht mehr verfügbar.",
+              "note": "aus + verkauft."
+            },
+            {
+              "text": "Was macht das ?",
+              "meaning": "Total.",
+              "note": "Das macht + Preis."
+            },
+            {
+              "text": "Bar oder mit Karte ?",
+              "meaning": "Zahlungsart.",
+              "note": "bar = efectivo."
+            }
+          ],
+          "situation": "Ihr rennt zum Laden bevor er schließt: ihr sucht drei Sachen, zwei hat er und eine ist ausverkauft.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fragen nach Vollkornbrot.",
+                "expected": [
+                  "Haben Sie Vollkornbrot ?"
+                ],
+                "focus": "haben Sie",
+                "watch": "Haben Sie + Produkt ?"
+              },
+              {
+                "prompt": "Sagen was ihr sucht. (frische Hefe)",
+                "expected": [
+                  "Ich suche frische Hefe."
+                ],
+                "focus": "ich suche",
+                "watch": "ich suche + Produkt."
+              },
+              {
+                "prompt": "Reagieren wenn ausverkauft.",
+                "expected": [
+                  "Schade! Danke trotzdem."
+                ],
+                "focus": "schade",
+                "watch": "Schade = lástima."
+              },
+              {
+                "prompt": "Fragen nach dem Total.",
+                "expected": [
+                  "Was macht das ?"
+                ],
+                "focus": "total",
+                "watch": "Was macht das ? = ¿cuánto es?"
+              },
+              {
+                "prompt": "Pregunta cómo puedes pagar.",
+                "expected": [
+                  "Bar oder mit Karte ?",
+                  "Kann ich mit Karte zahlen ?"
+                ],
+                "focus": "bar oder karte",
+                "watch": "Bar = efectivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u5-laden-e1",
+              "kind": "choice",
+              "prompt": "___ Sie Vollkornbrot ?",
+              "explain": "Haben Sie + Produkt ?",
+              "options": [
+                "Haben",
+                "Sind",
+                "Es gibt",
+                "Gibt"
+              ],
+              "answers": [
+                "Haben"
+              ]
+            },
+            {
+              "id": "de-foundations-u5-laden-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ frische Hefe. (suchen)",
+              "explain": "ich suche + Produkt.",
+              "answers": [
+                "suche"
+              ]
+            },
+            {
+              "id": "de-foundations-u5-laden-e3",
+              "kind": "order",
+              "prompt": "Fragt nach dem Total.",
+              "explain": "Was macht das ?",
+              "answers": [
+                "Was macht das"
+              ]
+            },
+            {
+              "id": "de-foundations-u5-laden-e4",
+              "kind": "written",
+              "prompt": "Sagt was ihr sucht: frische Hefe.",
+              "explain": "Ich suche + Produkt.",
+              "answers": [
+                "ich suche frische hefe"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:present-questions",
+            "vocab:food",
+            "function:solve-problems"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u6",
+      "title": "Erlebnisse und Veränderungen",
+      "subtitle": "Schon mal?",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "de-b1-reise",
+          "title": "Die unvergessliche Reise",
+          "subtitle": "Schon gesehen",
+          "symbol": "airplane",
+          "category": "Course",
+          "situation": "Ihr sprecht über Reisen und erste Male: schon mal dort, noch nie gesehen, eine unvergessliche Geschichte.",
+          "colorIndex": 0
+        },
+        {
+          "id": "de-b1-wandel",
+          "title": "Der Lebenswandel",
+          "subtitle": "Früher / heute",
+          "symbol": "arrow-up-forward",
+          "category": "Course",
+          "situation": "Ihr vergleicht euer Leben früher und heute und erklärt, was sich geändert hat.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-b1-experiencias",
+          "title": "Schon mal gemacht ?",
+          "goal": "Von Erfahrungen erzählen mit dem Perfekt und schon/mal/nie.",
+          "intro": {
+            "explanation": [
+              "Die Erfahrung: « Warst du schon mal in Lissabon ? » — « Ja, letztes Jahr war ich dort. »",
+              "schon mal = mindestens einmal. « Ich habe Paella schon mal probiert. » nie = nullmal. « Ich bin noch nie Ski gefahren. »",
+              "Die starken Partizipien bleiben: « gesehen », « gemacht », « gewesen »."
+            ],
+            "examples": [
+              {
+                "text": "Warst du schon mal in Lissabon ?",
+                "meaning": "Erfahrungsfrage."
+              },
+              {
+                "text": "Ich bin noch nie Ski gefahren.",
+                "meaning": "nie = nullmal."
+              },
+              {
+                "text": "Ich habe Paella schon mal probiert.",
+                "meaning": "schon mal = einmal."
+              },
+              {
+                "text": "Das war das erste Mal.",
+                "meaning": "Erstes Mal."
+              },
+              {
+                "text": "Was hast du dort gemacht ?",
+                "meaning": "Nachfragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Warst du schon mal … ?",
+              "meaning": "Erfahrung.",
+              "note": "Warst du schon mal in Rom ?"
+            },
+            {
+              "text": "Ich bin noch nie …",
+              "meaning": "nie.",
+              "note": "…gefahren/gesehen."
+            },
+            {
+              "text": "gesehen / gemacht / gewesen",
+              "meaning": "starke Partizipien.",
+              "note": "sehen→gesehen."
+            },
+            {
+              "text": "das erste Mal",
+              "meaning": "Erstes Mal.",
+              "note": "Das war das erste Mal."
+            },
+            {
+              "text": "und du ?",
+              "meaning": "Zurückfragen.",
+              "note": "Und du, warst du… ?"
+            }
+          ],
+          "situation": "Ihr sprecht über Reisen: wer schon mal geflogen ist, wer noch nie gezeltet hat, und ein unvergessliches erstes Mal.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag, ob dein Freund schon mal in Lissabon war.",
+                "expected": [
+                  "Warst du schon mal in Lissabon ?"
+                ],
+                "focus": "schon mal",
+                "watch": "Warst du schon mal … ?"
+              },
+              {
+                "prompt": "Sag, dass du noch nie Ski gefahren bist.",
+                "expected": [
+                  "Ich bin noch nie Ski gefahren."
+                ],
+                "focus": "noch nie",
+                "watch": "noch nie + Partizip am Ende."
+              },
+              {
+                "prompt": "Sag, dass du Paella schon mal probiert hast.",
+                "expected": [
+                  "Ich habe Paella schon mal probiert."
+                ],
+                "focus": "schon mal",
+                "watch": "schon mal + Partizip."
+              },
+              {
+                "prompt": "Sag, dass es dein erstes Mal war.",
+                "expected": [
+                  "Das war mein erstes Mal.",
+                  "Das war das erste Mal."
+                ],
+                "focus": "erstes Mal",
+                "watch": "Präteritum war."
+              },
+              {
+                "prompt": "Frag zurück: und du ?",
+                "expected": [
+                  "Und du ?",
+                  "Und du, warst du schon mal surfen ?"
+                ],
+                "focus": "und du",
+                "watch": "und du fragt zurück."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-b1-experiencias-e1",
+              "kind": "choice",
+              "prompt": "Warst du schon mal ___ Rom ?",
+              "options": [
+                "in",
+                "nach",
+                "zu",
+                "an"
+              ],
+              "answers": [
+                "in"
+              ],
+              "explain": "in + Stadt (wo)."
+            },
+            {
+              "id": "de-b1-experiencias-e2",
+              "kind": "gap",
+              "prompt": "Ich bin noch nie Ski ___. (fahren)",
+              "answers": [
+                "gefahren"
+              ],
+              "explain": "fahren → gefahren (sein)."
+            },
+            {
+              "id": "de-b1-experiencias-e3",
+              "kind": "order",
+              "prompt": "Frag die Erfahrung: hast du schon mal Schnecken gegessen ?",
+              "answers": [
+                "Hast du schon mal Schnecken gegessen"
+              ],
+              "explain": "Hast du schon mal + … + Partizip ?"
+            },
+            {
+              "id": "de-b1-experiencias-e4",
+              "kind": "written",
+              "prompt": "Sag eine Erfahrung: du hast diesen Film schon gesehen.",
+              "answers": [
+                "ich habe diesen film schon gesehen"
+              ],
+              "explain": "habe … + Partizip am Ende."
+            }
+          ],
+          "skills": [
+            "grammar:present-perfect",
+            "grammar:past-simple-irregular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "describe-past-events"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "de-b1-antes-ahora",
+          "title": "Früher und heute",
+          "goal": "Vergangenheit und Gegenwart mit Präteritum und Konnektoren gegenüberstellen.",
+          "intro": {
+            "explanation": [
+              "Das Präteritum erzählt Gewohntes: « Früher habe ich in der Stadt gewohnt. »",
+              "Der Kontrast: « Früher… heute… ». « Früher habe ich geraucht, heute laufe ich. »",
+              "Die Konnektoren: « aber », « weil », « also ». « Es war anstrengend, also bin ich umgezogen. »"
+            ],
+            "examples": [
+              {
+                "text": "Früher habe ich in der Stadt gewohnt.",
+                "meaning": "Vergangenheit."
+              },
+              {
+                "text": "Heute wohne ich auf dem Land.",
+                "meaning": "Gegenwart im Kontrast."
+              },
+              {
+                "text": "Früher habe ich geraucht, heute laufe ich.",
+                "meaning": "Lebenswandel."
+              },
+              {
+                "text": "Es war anstrengend, also bin ich umgezogen.",
+                "meaning": "also = Folge."
+              },
+              {
+                "text": "Ich finde das heutige Leben besser, weil…",
+                "meaning": "weil = Grund."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Früher habe ich …",
+              "meaning": "Perfekt.",
+              "note": "…gewohnt/gemacht."
+            },
+            {
+              "text": "heute …",
+              "meaning": "Präsens.",
+              "note": "heute wohne ich…"
+            },
+            {
+              "text": "aber / weil / also",
+              "meaning": "Konnektoren.",
+              "note": "aber = Kontrast."
+            },
+            {
+              "text": "ich finde … besser",
+              "meaning": "Meinung.",
+              "note": "ich finde…"
+            },
+            {
+              "text": "Es war + Adjektiv",
+              "meaning": "Rahmen.",
+              "note": "Es war ruhig."
+            }
+          ],
+          "situation": "Ihr vergleicht das Leben früher und heute: Stadt und Land, Arbeit und Freizeit, und warum ihr umgezogen seid.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag, dass du früher in der Stadt gewohnt hast.",
+                "expected": [
+                  "Früher habe ich in der Stadt gewohnt."
+                ],
+                "focus": "Früher",
+                "watch": "Früher + Perfekt."
+              },
+              {
+                "prompt": "Sag, dass du heute auf dem Land wohnst.",
+                "expected": [
+                  "Heute wohne ich auf dem Land."
+                ],
+                "focus": "heute",
+                "watch": "heute + Präsens."
+              },
+              {
+                "prompt": "Gegenüber: früher geraucht, heute läufst du.",
+                "expected": [
+                  "Früher habe ich geraucht heute laufe ich.",
+                  "Früher habe ich geraucht, heute laufe ich."
+                ],
+                "focus": "früher/heute",
+                "watch": "zwei Zeiten."
+              },
+              {
+                "prompt": "Nenne die Folge: es war anstrengend, also bist du umgezogen.",
+                "expected": [
+                  "Es war anstrengend also bin ich umgezogen.",
+                  "Es war anstrengend, also bin ich umgezogen."
+                ],
+                "focus": "also",
+                "watch": "also + Folge."
+              },
+              {
+                "prompt": "Sag, was dir besser gefällt und warum.",
+                "expected": [
+                  "Ich finde das heutige Leben besser weil ich freier bin.",
+                  "Ich finde das heutige Leben besser."
+                ],
+                "focus": "weil",
+                "watch": "weil + Grund."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-b1-antes-ahora-e1",
+              "kind": "choice",
+              "prompt": "Früher ___ ich in der Stadt gewohnt.",
+              "options": [
+                "habe",
+                "bin",
+                "war",
+                "hatte"
+              ],
+              "answers": [
+                "habe"
+              ],
+              "explain": "wohnen → haben: habe gewohnt."
+            },
+            {
+              "id": "de-b1-antes-ahora-e2",
+              "kind": "gap",
+              "prompt": "Es war anstrengend, ___ bin ich umgezogen. (Folge)",
+              "answers": [
+                "also"
+              ],
+              "explain": "also = Folge."
+            },
+            {
+              "id": "de-b1-antes-ahora-e3",
+              "kind": "order",
+              "prompt": "Gegenüber: früher geraucht, heute gelaufen.",
+              "answers": [
+                "Früher habe ich geraucht heute laufe ich"
+              ],
+              "explain": "Früher + Perfekt, heute + Präsens."
+            },
+            {
+              "id": "de-b1-antes-ahora-e4",
+              "kind": "written",
+              "prompt": "Sag, was sich geändert hat: heute arbeitest du von zu Hause.",
+              "answers": [
+                "heute arbeite ich von zu hause"
+              ],
+              "explain": "heute + Präsens."
+            }
+          ],
+          "skills": [
+            "grammar:used-to",
+            "grammar:connectors",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:used-to"
+          ]
+        }
+      ]
     }
   ]
 }

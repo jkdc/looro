@@ -33,11 +33,11 @@ class CoursesTest {
     @Test fun `each supported course language carries exactly one foundations`() {
         // Spanish has the full temario block; others have 2 units for now.
         val esCourse = CourseRegistry.forLanguage("es").first()
-        assertTrue("es should have 5+ units", esCourse.units.size >= 5)
+        assertTrue("es should have 7+ units", esCourse.units.size >= 7)
         for (language in listOf("fr", "it", "de", "pt")) {
             assertEquals(1, CourseRegistry.forLanguage(language).size)
             val course = CourseRegistry.forLanguage(language).first()
-            assertTrue("$language should have 4+ units", course.units.size >= 4)
+            assertTrue("$language should have 6+ units", course.units.size >= 6)
         }
         assertTrue(CourseRegistry.forLanguage("nb").isEmpty())
         assertTrue(CourseRegistry.forLanguage("zh").isEmpty())
@@ -113,5 +113,17 @@ class CoursesTest {
         val gap = lesson.exercises.first { it.kind == ExerciseEngine.GAP }
         assertTrue(ExerciseEngine.isCorrect(gap, gap.answers.single().uppercase()))
         assertFalse(ExerciseEngine.isCorrect(gap, "was"))
+    }
+}
+
+class CheckpointCoverageTest {
+    @Test fun `every supported language carries A1 and A2 checkpoints`() {
+        for (language in listOf("en", "es", "fr", "it", "de", "pt")) {
+            val checkpoints = CheckpointRegistry.forLanguage(language)
+            assertTrue("$language needs A1+A2", setOf("A1", "A2").all { it in checkpoints.map { c -> c.level } })
+            for (checkpoint in checkpoints) {
+                assertEquals(checkpoint.id, 16, checkpoint.questions.size)
+            }
+        }
     }
 }

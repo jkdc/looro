@@ -1562,7 +1562,7 @@
             {
               "id": "en-foundations-u3-third-person-e4",
               "kind": "written",
-              "prompt": "Say that Ana speaks English.",
+              "prompt": "Presénte a Ana: ¿qué habla? (inglés)",
               "answers": [
                 "Ana speaks English",
                 "She speaks English"
@@ -3121,12 +3121,12 @@
             },
             {
               "id": "en-foundations-days-calendar-e4",
-              "kind": "written",
-              "prompt": "Which is correct: “in Monday”, “on Monday” or “at Monday”?",
+              "kind": "gap",
+              "prompt": "The class is ___ Monday.",
               "answers": [
                 "on monday"
               ],
-              "explain": "Days always take on."
+              "explain": "Días con on: on Monday."
             }
           ],
           "skills": [
@@ -6641,7 +6641,7 @@
             {
               "id": "en-foundations-meals-restaurant-e4",
               "kind": "written",
-              "prompt": "Ask what is in the paella.",
+              "prompt": "Pregunte qué lleva la paella.",
               "explain": "What's in + dish?",
               "answers": [
                 "whats in the paella",
@@ -8311,7 +8311,7 @@
             {
               "id": "en-foundations-u6-was-were-e4",
               "kind": "written",
-              "prompt": "Say the weather was good at the weekend.",
+              "prompt": "Describe el tiempo el fin de semana pasado.",
               "answers": [
                 "The weather was good at the weekend",
                 "It was sunny at the weekend",
@@ -10612,7 +10612,7 @@
             {
               "id": "en-foundations-health-symptoms-e4",
               "kind": "written",
-              "prompt": "Say how long you've had the cough. (two weeks)",
+              "prompt": "Diga cuánto tiempo lleva con el síntoma.",
               "explain": "for + period.",
               "answers": [
                 "i've had it for two weeks",
