@@ -624,6 +624,186 @@ public enum DeFoundationsU9 {
                             Exercise(id: "de-foundations-u9-prasentieren-e4", kind: "written", prompt: "Fasse in einem Schlusssatz zusammen: die Pilotphase ist die richtige Wahl (mit « zusammenfassend »).", options: [], answers: ["zusammenfassend spricht alles fur eine pilotphase", "zusammenfassend spricht alles für eine pilotphase"], explain: "Zusammenfassend + Bewertung: die eine Botschaft.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum DeFoundationsU10 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u10", title: "Meine Wohnung", subtitle: "Mein Raum", level: "A1", themes: [
+                    ConversationTheme("meine-wohnung", "Meine Wohnung", "Zimmer und Möbel", "house", "Course", "Lena zeigt ihre neue Wohnung: zwei Zimmer, eine Küche, ein Bad.", 0),
+                    ConversationTheme("im-zimmer", "Im Zimmer", "Wo ist das ?", "bed", "Course", "Wo ist mein Schlüssel, wo ist sein Schrank ? Ihr beschreibt euer Zuhause.", 1)], lessons: [
+            Lesson(id: "de-foundations-u10-wohnung", title: "Meine Wohnung", goal: "Zimmer und Möbel nennen und mit es gibt beschreiben.",
+                intro: LessonIntro(explanation: [
+                            "Die Wohnung: das Zimmer, die Küche, das Bad, der Balkon. Möbel: das Bett, der Tisch, das Sofa.",
+                            "es gibt + Akkusativ: „Es gibt eine Küche.“ „Es gibt zwei Zimmer.“ So sagt man, was da ist.",
+                            "Frage: „Gibt es einen Balkon ?“ — „Ja, es gibt einen kleinen Balkon.“"], examples: [
+                            ExampleLine(text: "Meine Wohnung ist klein, aber schön.", meaning: "Beschreibung: klein + schön."),
+                            ExampleLine(text: "Es gibt eine Küche und ein Bad.", meaning: "Was da ist: es gibt + Akkusativ."),
+                            ExampleLine(text: "Gibt es einen Balkon ?", meaning: "Frage mit Gibt es … ?"),
+                            ExampleLine(text: "Im Wohnzimmer gibt es ein Sofa.", meaning: "Wo genau: im Wohnzimmer."),
+                            ExampleLine(text: "Wie viele Zimmer gibt es ?", meaning: "Nach der Zahl fragen.")]),
+                expressions: [
+                            TargetExpression(text: "Es gibt …", meaning: "Sagen was da ist.", note: "es gibt + Akkusativ: einen Tisch"),
+                            TargetExpression(text: "Gibt es … ?", meaning: "Fragen ob etwas da ist.", note: "Gibt es einen Aufzug ?"),
+                            TargetExpression(text: "das Zimmer / die Küche / das Bad", meaning: "Räume in der Wohnung.", note: "die Küche = la cocina"),
+                            TargetExpression(text: "das Bett / der Tisch / das Sofa", meaning: "Möbel.", note: "die Möbel = Plural"),
+                            TargetExpression(text: "Wie viele … ?", meaning: "Nach der Anzahl fragen.", note: "Wie viele Zimmer ?")],
+                situation: "Lena zieht ein: sie zeigt ihre Wohnung — zwei Zimmer, eine Küche, ein kleines Bad, kein Balkon.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Beschreibt die Wohnung. (klein, schön)", expected: ["Meine Wohnung ist klein, aber schön.", "Meine Wohnung ist klein und schön."], focus: "meine wohnung", watch: "mein + Wohnung (f) = meine"),
+                                PracticeQuestion(prompt: "Sagt was es gibt: eine Küche und ein Bad.", expected: ["Es gibt eine Küche und ein Bad.", "es gibt eine kueche und ein bad"], focus: "es gibt", watch: "es gibt + Akkusativ"),
+                                PracticeQuestion(prompt: "Fragt nach einem Balkon.", expected: ["Gibt es einen Balkon ?", "gibt es einen balkon"], focus: "gibt es", watch: "einen: der Balkon ist Maskulin"),
+                                PracticeQuestion(prompt: "Sagt was es im Wohnzimmer gibt. (ein Sofa)", expected: ["Im Wohnzimmer gibt es ein Sofa.", "Es gibt ein Sofa im Wohnzimmer."], focus: "im wohnzimmer", watch: "im = in dem (Dativ)"),
+                                PracticeQuestion(prompt: "Fragt wie viele Zimmer es gibt.", expected: ["Wie viele Zimmer gibt es ?", "Wie viele Zimmer sind es ?"], focus: "wie viele", watch: "das Zimmer: Neutrum, immer gleich")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u10-wohnung-e1", kind: "choice", prompt: "___ ___ eine Küche und ein Bad.", options: ["Es gibt", "Es ist", "Gibt es", "Sie sind"], answers: ["Es gibt"], explain: "es gibt + Akkusativ: was da ist."),
+                            Exercise(id: "de-foundations-u10-wohnung-e2", kind: "gap", prompt: "Im Bad ___ es eine Dusche.", options: [], answers: ["gibt"], explain: "es gibt + Akkusativ: eine Dusche."),
+                            Exercise(id: "de-foundations-u10-wohnung-e3", kind: "order", prompt: "Beschreibt die Wohnung. (zwei Zimmer, eine Küche)", options: [], answers: ["Es gibt zwei Zimmer und eine Küche"], explain: "es gibt + Akkusativ: zwei Zimmer."),
+                            Exercise(id: "de-foundations-u10-wohnung-e4", kind: "written", prompt: "Sagt wie die Wohnung ist. (schön)", options: [], answers: ["die wohnung ist schön", "die wohnung ist schoen", "meine wohnung ist schön"], explain: "Beschreibung mit sein: ist + Adjektiv.")], skills: ["grammar:there-is-are", "grammar:present-simple", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u10-orte", title: "Wo ist das ?", goal: "Sagen und fragen wo Dinge sind: auf, unter, neben.",
+                intro: LessonIntro(explanation: [
+                            "Wo ist der Schlüssel ? — Auf dem Tisch. Fragen mit „Wo ist … ?“ und „Wo sind … ?“",
+                            "auf = encima de, unter = debajo de, neben = al lado de. Alle drei + Dativ: dem.",
+                            "Im Zimmer gibt es ein Bett und einen Schrank. in + Dativ: im Zimmer, in der Küche."], examples: [
+                            ExampleLine(text: "Wo ist mein Buch ? — Auf dem Tisch.", meaning: "Frage und Antwort mit Wo."),
+                            ExampleLine(text: "Die Schuhe sind unter dem Bett.", meaning: "unter + Dativ."),
+                            ExampleLine(text: "Der Stuhl steht neben dem Fenster.", meaning: "neben + Dativ."),
+                            ExampleLine(text: "Ist die Lampe auf dem Schreibtisch ?", meaning: "Ja-Nein-Frage mit auf."),
+                            ExampleLine(text: "Im Zimmer gibt es ein Bett.", meaning: "Wo etwas ist: im + Dativ.")]),
+                expressions: [
+                            TargetExpression(text: "Wo ist … ? / Wo sind … ?", meaning: "Nach dem Ort fragen.", note: "eine Sache: ist, zwei: sind"),
+                            TargetExpression(text: "auf dem Tisch", meaning: "Oben drauf.", note: "auf + Dativ: dem"),
+                            TargetExpression(text: "unter dem Bett", meaning: "Unten.", note: "unter + Dativ"),
+                            TargetExpression(text: "neben dem Sofa", meaning: "An der Seite.", note: "neben + Dativ"),
+                            TargetExpression(text: "im Zimmer / in der Küche", meaning: "Wo etwas ist.", note: "im = in dem")],
+                situation: "Lena sucht ihren Schlüssel: er ist auf dem Tisch, unter einer Zeitschrift. Jonas hilft ihr.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fragt wo das Buch ist.", expected: ["Wo ist das Buch ?", "wo ist das buch"], focus: "wo ist", watch: "Wo ist + eine Sache"),
+                                PracticeQuestion(prompt: "Sagt wo die Schuhe sind: unter dem Bett.", expected: ["Die Schuhe sind unter dem Bett.", "Sie sind unter dem Bett."], focus: "unter", watch: "unter + dem (Dativ)"),
+                                PracticeQuestion(prompt: "Sagt wo der Stuhl steht: neben dem Fenster.", expected: ["Der Stuhl steht neben dem Fenster.", "Der Stuhl ist neben dem Fenster."], focus: "neben", watch: "neben + dem Fenster"),
+                                PracticeQuestion(prompt: "Fragt ob die Lampe auf dem Tisch ist.", expected: ["Ist die Lampe auf dem Tisch ?", "ist die lampe auf dem tisch"], focus: "ist die lampe", watch: "Ja-Nein-Frage: das Verb kommt zuerst"),
+                                PracticeQuestion(prompt: "Sagt was es in der Küche gibt. (ein Tisch)", expected: ["In der Küche gibt es einen Tisch.", "Es gibt einen Tisch in der Küche."], focus: "in der kueche", watch: "in der Küche (f): Dativ")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u10-orte-e1", kind: "choice", prompt: "Das Buch ist ___ dem Tisch.", options: ["auf", "im", "am", "zu"], answers: ["auf"], explain: "auf + Dativ: auf dem Tisch."),
+                            Exercise(id: "de-foundations-u10-orte-e2", kind: "gap", prompt: "Die Katze schläft ___ dem Bett. (unten)", options: [], answers: ["unter"], explain: "unter + Dativ: unter dem Bett."),
+                            Exercise(id: "de-foundations-u10-orte-e3", kind: "order", prompt: "Sagt wo der Stuhl steht. (neben dem Fenster)", options: [], answers: ["Der Stuhl steht neben dem Fenster"], explain: "neben + Dativ: dem Fenster."),
+                            Exercise(id: "de-foundations-u10-orte-e4", kind: "written", prompt: "Fragt wo die Lampe ist.", options: [], answers: ["wo ist die lampe", "Wo ist die Lampe ?"], explain: "Fragen nach dem Ort: Wo ist … ?")], skills: ["grammar:prepositions-place", "grammar:there-is-are", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u10-mitbewohner", title: "Mein Mitbewohner", goal: "Über Menschen in der Wohnung sprechen: mein, dein, sein.",
+                intro: LessonIntro(explanation: [
+                            "Personen: der Mitbewohner, die Mitbewohnerin. „Er heißt Jonas.“ „Sie ist nett.“",
+                            "Possessivartikel: mein (ich), dein (du), sein (er), ihr (sie). „Das ist mein Zimmer.“",
+                            "Beschreiben: „Er ist nett und ruhig.“ „Er kocht gern.“"], examples: [
+                            ExampleLine(text: "Das ist Jonas. Er ist mein Mitbewohner.", meaning: "mein = von mir."),
+                            ExampleLine(text: "Sein Zimmer ist klein, aber schön.", meaning: "sein = von er."),
+                            ExampleLine(text: "Ist das dein Mantel ? — Nein, das ist sein Mantel.", meaning: "dein = von du."),
+                            ExampleLine(text: "Wo ist mein Schlüssel ?", meaning: "mein + Schlüssel."),
+                            ExampleLine(text: "Er ist nett und sehr ruhig.", meaning: "Person beschreiben.")]),
+                expressions: [
+                            TargetExpression(text: "mein / dein / sein", meaning: "ich / du / er.", note: "mein Schlüssel, dein Zimmer"),
+                            TargetExpression(text: "der Mitbewohner / die Mitbewohnerin", meaning: "Person, die mit euch wohnt.", note: "mit + wohnen"),
+                            TargetExpression(text: "Er heißt …", meaning: "Den Namen sagen.", note: "Er heißt Jonas."),
+                            TargetExpression(text: "nett / ruhig / freundlich", meaning: "Positive Eigenschaften.", note: "nett = simpático"),
+                            TargetExpression(text: "Er kocht gern.", meaning: "Was er tut.", note: "gern = con gusto")],
+                situation: "Jonas, der Mitbewohner von Lena, kocht heute: er ist ruhig, aber er kocht sehr gern und gut.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Stellt euren Mitbewohner vor. (Name: Jonas)", expected: ["Das ist mein Mitbewohner. Er heißt Jonas.", "Mein Mitbewohner heißt Jonas."], focus: "mein mitbewohner", watch: "der Mitbewohner ist Maskulin: mein"),
+                                PracticeQuestion(prompt: "Sagt wessen Zimmer es ist. (Jonas, klein)", expected: ["Sein Zimmer ist klein.", "sein zimmer ist klein"], focus: "sein zimmer", watch: "sein = von er"),
+                                PracticeQuestion(prompt: "Fragt nach eurem Schlüssel.", expected: ["Wo ist mein Schlüssel ?", "wo ist mein schluessel"], focus: "mein schlüssel", watch: "Der Schlüssel gehört dir: mein"),
+                                PracticeQuestion(prompt: "Beschreibt Jonas. (nett, ruhig)", expected: ["Er ist nett und ruhig.", "er ist nett und ruhig"], focus: "er ist", watch: "Eigenschaften mit sein"),
+                                PracticeQuestion(prompt: "Fragt einen Freund, ob das sein Mantel ist.", expected: ["Ist das dein Mantel ?", "ist das dein mantel"], focus: "ist das dein", watch: "Zu einem Freund sagst du dein")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u10-mitbewohner-e1", kind: "choice", prompt: "Das ist ___ Mitbewohner. (ich)", options: ["mein", "dein", "sein", "ihr"], answers: ["mein"], explain: "mein = von ich: mein Mitbewohner."),
+                            Exercise(id: "de-foundations-u10-mitbewohner-e2", kind: "gap", prompt: "Das ist Jonas und das ist ___ Zimmer. (er)", options: [], answers: ["sein"], explain: "sein = von er: sein Zimmer."),
+                            Exercise(id: "de-foundations-u10-mitbewohner-e3", kind: "order", prompt: "Beschreibt das Zimmer von Jonas. (klein, aber schön)", options: [], answers: ["Sein Zimmer ist klein, aber schön"], explain: "sein + Zimmer: das Zimmer von er."),
+                            Exercise(id: "de-foundations-u10-mitbewohner-e4", kind: "written", prompt: "Beschreibt euren Mitbewohner. (nett und ruhig)", options: [], answers: ["er ist nett und ruhig", "Er ist nett und ruhig."], explain: "Person beschreiben: er ist + Adjektiv.")], skills: ["grammar:possessives", "function:describe-people", "vocab:home", "grammar:present-simple"], canDo: ["describe-home"], prerequisites: ["grammar:possessives"])])
+}
+
+public enum DeFoundationsU11 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u11", title: "Mein Viertel", subtitle: "In der Nähe", level: "A1", themes: [
+                    ConversationTheme("in-der-naehe", "In der Nähe", "Orte im Viertel", "map", "Course", "Miguel ist neu im Viertel und sucht Orte: Supermarkt, Bäckerei, Park.", 0),
+                    ConversationTheme("am-obststand", "Am Obststand", "Frisches Obst", "cart", "Course", "Um die Ecke ist der Obststand: Äpfel, Bananen, Tomaten.", 1)], lessons: [
+            Lesson(id: "de-foundations-u11-orte", title: "Gibt es einen Supermarkt ?", goal: "Fragen was es im Viertel gibt: Gibt es … ?",
+                intro: LessonIntro(explanation: [
+                            "Orte im Viertel: der Supermarkt, die Bäckerei, die Apotheke, der Park, die Bank.",
+                            "Fragen: „Gibt es hier einen Supermarkt ?“ Gibt es + Akkusativ.",
+                            "Antwort: „Ja, es gibt einen.“ „Nein, es gibt keinen.“"], examples: [
+                            ExampleLine(text: "Gibt es hier einen Supermarkt ?", meaning: "Frage mit Gibt es."),
+                            ExampleLine(text: "Ja, es gibt einen in der Goethestraße.", meaning: "Ja-Antwort: einen."),
+                            ExampleLine(text: "Gibt es eine Bäckerei in der Nähe ?", meaning: "in der Nähe = cerca."),
+                            ExampleLine(text: "Nein, es gibt keine Bäckerei hier.", meaning: "Nein-Antwort: keine."),
+                            ExampleLine(text: "Der Park ist um die Ecke.", meaning: "Den Ort sagen.")]),
+                expressions: [
+                            TargetExpression(text: "Gibt es … ?", meaning: "Fragen was es gibt.", note: "einen Supermarkt, eine Bäckerei"),
+                            TargetExpression(text: "in der Nähe", meaning: "Nicht weit von hier.", note: "Nähe = cercanía"),
+                            TargetExpression(text: "die Bäckerei / die Apotheke / der Park", meaning: "Orte im Viertel.", note: "die Bäckerei = la panadería"),
+                            TargetExpression(text: "es gibt keinen / keine", meaning: "Die Nein-Antwort.", note: "keinen (m), keine (f)"),
+                            TargetExpression(text: "um die Ecke", meaning: "Sehr nah.", note: "die Ecke = la esquina")],
+                situation: "Miguel ist neu im Viertel: er fragt nach Supermarkt, Bäckerei und Park — alles ist in der Nähe.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fragt nach einem Supermarkt. (hier)", expected: ["Gibt es hier einen Supermarkt ?", "gibt es hier einen supermarkt"], focus: "gibt es", watch: "Gibt es + einen (Maskulin)"),
+                                PracticeQuestion(prompt: "Antwortet ja: einen in der Goethestraße.", expected: ["Ja, es gibt einen in der Goethestraße.", "Ja, in der Goethestraße."], focus: "es gibt einen", watch: "einen statt ein"),
+                                PracticeQuestion(prompt: "Fragt nach einer Bäckerei in der Nähe.", expected: ["Gibt es eine Bäckerei in der Nähe ?", "Gibt es in der Nähe eine Bäckerei ?"], focus: "in der nähe", watch: "eine Bäckerei (f)"),
+                                PracticeQuestion(prompt: "Antwortet nein: keine Apotheke.", expected: ["Nein, es gibt keine Apotheke.", "nein es gibt keine apotheke"], focus: "keine", watch: "keine + Femininum"),
+                                PracticeQuestion(prompt: "Sagt wo der Park ist: sehr nah.", expected: ["Der Park ist um die Ecke.", "Der Park ist nah."], focus: "um die ecke", watch: "um die Ecke = muy cerca")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u11-orte-e1", kind: "choice", prompt: "___ es hier einen Supermarkt ?", options: ["Gibt", "Ist", "Sind", "Hat"], answers: ["Gibt"], explain: "Frage mit Gibt es + Akkusativ."),
+                            Exercise(id: "de-foundations-u11-orte-e2", kind: "gap", prompt: "Ja, es gibt ___ Supermarkt. (ein)", options: [], answers: ["einen"], explain: "es gibt + Akkusativ: einen Supermarkt."),
+                            Exercise(id: "de-foundations-u11-orte-e3", kind: "order", prompt: "Fragt nach einer Bäckerei in der Nähe.", options: [], answers: ["Gibt es eine Bäckerei in der Nähe"], explain: "Gibt es + eine (Femininum)."),
+                            Exercise(id: "de-foundations-u11-orte-e4", kind: "written", prompt: "Antwortet mit nein: Bäckerei.", options: [], answers: ["nein es gibt keine bäckerei", "nein es gibt keine baeckerei", "es gibt keine bäckerei hier"], explain: "Nein-Antwort: es gibt keine + Femininum.")], skills: ["grammar:there-is-are", "grammar:present-questions", "vocab:town", "function:ask-simple-questions"], canDo: ["ask-for-directions"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "de-foundations-u11-weg", title: "Wie komme ich…?", goal: "Nach dem Weg fragen und einen einfachen Weg erklären.",
+                intro: LessonIntro(explanation: [
+                            "Fragen: „Wie komme ich zum Park ?“ „Wie komme ich zur Bank ?“ zum = zu dem, zur = zu der.",
+                            "Erklären: „Gehen Sie geradeaus.“ „Biegen Sie links ab.“ Höflich mit Sie.",
+                            "Kurz und nah: „Es ist nah.“ „Es ist um die Ecke.“"], examples: [
+                            ExampleLine(text: "Wie komme ich zum Bahnhof ?", meaning: "Frage nach dem Weg."),
+                            ExampleLine(text: "Gehen Sie geradeaus.", meaning: "Immer weiter nach vorne."),
+                            ExampleLine(text: "Biegen Sie links ab.", meaning: "Richtung links."),
+                            ExampleLine(text: "Dann biegen Sie rechts ab.", meaning: "Richtung rechts."),
+                            ExampleLine(text: "Es ist nah, nur fünf Minuten.", meaning: "Entfernung: nah.")]),
+                expressions: [
+                            TargetExpression(text: "Wie komme ich zum/zur … ?", meaning: "Nach dem Weg fragen.", note: "zum Park (m), zur Bank (f)"),
+                            TargetExpression(text: "Gehen Sie geradeaus.", meaning: "Den Weg erklären.", note: "geradeaus = recto"),
+                            TargetExpression(text: "Biegen Sie links/rechts ab.", meaning: "Abbiegen.", note: "links = izquierda"),
+                            TargetExpression(text: "Es ist nah.", meaning: "Sehr kurz.", note: "nah = cerca"),
+                            TargetExpression(text: "bis zum Park", meaning: "Der Endpunkt.", note: "bis + zum")],
+                situation: "Miguel fragt den Weg zur Apotheke: geradeaus bis zum Park, dann links — es ist um die Ecke.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fragt den Weg zum Bahnhof.", expected: ["Wie komme ich zum Bahnhof ?", "wie komme ich zum bahnhof"], focus: "wie komme ich", watch: "zum = zu dem (Maskulin/Neutrum)"),
+                                PracticeQuestion(prompt: "Erklärt: geradeaus gehen. (höflich)", expected: ["Gehen Sie geradeaus.", "gehen sie geradeaus"], focus: "gehen sie", watch: "Höflich: Gehen Sie"),
+                                PracticeQuestion(prompt: "Erklärt: links abbiegen. (höflich)", expected: ["Biegen Sie links ab.", "biegen sie links ab"], focus: "biegen sie", watch: "abbiegen: biegen … ab"),
+                                PracticeQuestion(prompt: "Fragt den Weg zur Apotheke.", expected: ["Wie komme ich zur Apotheke ?", "Wie komme ich zur Apotheke"], focus: "zur apotheke", watch: "zur = zu der (Femininum)"),
+                                PracticeQuestion(prompt: "Sagt: es ist sehr nah.", expected: ["Es ist nah.", "Es ist sehr nah.", "Es ist um die Ecke."], focus: "es ist nah", watch: "nah = cerca")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u11-weg-e1", kind: "choice", prompt: "Wie komme ich ___ Park ?", options: ["zum", "zur", "dem", "in"], answers: ["zum"], explain: "zum = zu dem: der Park."),
+                            Exercise(id: "de-foundations-u11-weg-e2", kind: "gap", prompt: "___ Sie geradeaus bis zum Park. (höflich)", options: [], answers: ["Gehen"], explain: "Höfliche Form: Gehen Sie geradeaus."),
+                            Exercise(id: "de-foundations-u11-weg-e3", kind: "order", prompt: "Sagt: bitte links abbiegen. (höflich)", options: [], answers: ["Biegen Sie bitte links ab"], explain: "Höflich abbiegen: Biegen Sie … ab."),
+                            Exercise(id: "de-foundations-u11-weg-e4", kind: "written", prompt: "Fragt den Weg zum Bahnhof.", options: [], answers: ["wie komme ich zum bahnhof", "Wie komme ich zum Bahnhof ?"], explain: "Frage nach dem Weg: Wie komme ich … ?")], skills: ["function:ask-for-directions", "vocab:directions", "grammar:present-simple", "vocab:town"], canDo: ["ask-for-directions"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u11-obststand", title: "Am Obststand", goal: "Obst im Viertel kaufen: Mengen, Preise und Qualität.",
+                intro: LessonIntro(explanation: [
+                            "Am Obststand: Äpfel, Bananen, Tomaten. Alles ist frisch und aus der Nähe.",
+                            "Kaufen: „Ich nehme ein Kilo Äpfel.“ „Was kostet ein Pfund Bananen ?“",
+                            "Preis: „Das macht drei Euro.“ Qualität: „Sind die Tomaten reif ?“"], examples: [
+                            ExampleLine(text: "Ich nehme ein Kilo Äpfel.", meaning: "Kaufen mit ich nehme."),
+                            ExampleLine(text: "Was kostet ein Pfund Bananen ?", meaning: "Den Preis fragen."),
+                            ExampleLine(text: "Das macht drei Euro fünfzig.", meaning: "Der Preis."),
+                            ExampleLine(text: "Sind die Tomaten reif ?", meaning: "Nach der Qualität fragen."),
+                            ExampleLine(text: "Noch etwas ? — Nein, danke.", meaning: "Der Verkäufer fragt.")]),
+                expressions: [
+                            TargetExpression(text: "Ich nehme …", meaning: "Kaufen.", note: "nehmen = tomar"),
+                            TargetExpression(text: "ein Kilo / ein Pfund", meaning: "Menge.", note: "ein Pfund = 500 g"),
+                            TargetExpression(text: "Was kostet … ?", meaning: "Den Preis fragen.", note: "kostet: Singular"),
+                            TargetExpression(text: "reif / süß", meaning: "Qualität von Obst.", note: "süß = dulce"),
+                            TargetExpression(text: "Das macht … Euro.", meaning: "Der Preis.", note: "Das macht 3 Euro.")],
+                situation: "Samstag am Obststand: Miguel kauft ein Kilo Äpfel und ein Pfund Bananen für drei Euro.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Kauft ein Kilo Äpfel.", expected: ["Ich nehme ein Kilo Äpfel.", "ich nehme ein kilo äpfel", "ich nehme ein kilo aepfel"], focus: "ich nehme", watch: "ich nehme + Akkusativ"),
+                                PracticeQuestion(prompt: "Fragt den Preis: ein Pfund Bananen.", expected: ["Was kostet ein Pfund Bananen ?", "was kostet ein pfund bananen"], focus: "was kostet", watch: "kostet: eine Sache/Menge"),
+                                PracticeQuestion(prompt: "Fragt ob die Tomaten reif sind.", expected: ["Sind die Tomaten reif ?", "sind die tomaten reif"], focus: "reif", watch: "Ja-Nein-Frage: Sind … ?"),
+                                PracticeQuestion(prompt: "Sagt den Preis: drei Euro.", expected: ["Das macht drei Euro.", "das macht drei euro"], focus: "das macht", watch: "Das macht + Preis"),
+                                PracticeQuestion(prompt: "Antwortet dem Verkäufer: nichts mehr, danke.", expected: ["Nein, danke. Nichts mehr.", "Nichts mehr, danke.", "Nein danke"], focus: "nichts mehr", watch: "nichts mehr = nada más")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u11-obststand-e1", kind: "choice", prompt: "Ich ___ ein Kilo Äpfel.", options: ["nehme", "nimm", "nimmt", "esse"], answers: ["nehme"], explain: "ich nehme: kaufen im Laden."),
+                            Exercise(id: "de-foundations-u11-obststand-e2", kind: "gap", prompt: "Was ___ ein Pfund Bananen ? (kosten)", options: [], answers: ["kostet"], explain: "Was kostet + Menge."),
+                            Exercise(id: "de-foundations-u11-obststand-e3", kind: "order", prompt: "Kauft ein Pfund Bananen.", options: [], answers: ["Ich nehme ein Pfund Bananen"], explain: "ich nehme + Menge + Produkt."),
+                            Exercise(id: "de-foundations-u11-obststand-e4", kind: "written", prompt: "Fragt ob die Tomaten reif sind.", options: [], answers: ["sind die tomaten reif", "Sind die Tomaten reif ?"], explain: "Qualität fragen: Sind die … reif ?")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -4511,6 +4691,186 @@ public enum EsFoundationsU10 {
                             Exercise(id: "es-foundations-u10-presentar-e4", kind: "written", prompt: "Cierra la presentación de tu propuesta con la fórmula de resumen.", options: [], answers: ["en resumen la propuesta avanza pero en enero", "en resumen, la propuesta avanza, pero en enero", "para concluir la propuesta avanza pero en enero"], explain: "En resumen + una sola idea: cierre de discurso.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum EsFoundationsU11 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u11", title: "Mi casa", subtitle: "Mi espacio", level: "A1", themes: [
+                    ConversationTheme("mi-espacio", "Mi espacio", "Habitaciones y muebles", "house", "Course", "Describes tu piso: el salón, la cocina y lo que hay en cada habitación.", 0),
+                    ConversationTheme("compartir-casa", "Compartimos casa", "Cosas y personas", "bed", "Course", "Hablas de tu compañero de piso: su habitación, sus cosas y su rutina.", 1)], lessons: [
+            Lesson(id: "es-foundations-u11-casa", title: "Mi piso", goal: "Describir tu piso: habitaciones, muebles y qué hay en cada sitio.",
+                intro: LessonIntro(explanation: [
+                            "Para decir qué existe usamos «hay»: «En la cocina hay una mesa». Negamos con «no hay»: «No hay garaje».",
+                            "Las habitaciones de casa: el salón, la cocina, el dormitorio y el baño. «El piso tiene dos habitaciones».",
+                            "Para preguntar: «¿Cuántas habitaciones hay?». Respondes: «Hay dos: el salón y el dormitorio»."], examples: [
+                            ExampleLine(text: "Mi piso es pequeño.", meaning: "Describir el piso."),
+                            ExampleLine(text: "En el salón hay un sofá y una mesa.", meaning: "Decir qué hay."),
+                            ExampleLine(text: "La cocina tiene una ventana grande.", meaning: "Describir una habitación."),
+                            ExampleLine(text: "No hay garaje.", meaning: "Decir que algo no existe."),
+                            ExampleLine(text: "¿Cuántas habitaciones hay?", meaning: "Preguntar por espacios.")]),
+                expressions: [
+                            TargetExpression(text: "hay un / una …", meaning: "Decir qué existe (singular).", note: "Hay un sofá nuevo."),
+                            TargetExpression(text: "no hay …", meaning: "Decir que no existe.", note: "No hay ascensor."),
+                            TargetExpression(text: "el salón / la cocina", meaning: "Habitaciones de casa.", note: "El salón es grande."),
+                            TargetExpression(text: "el dormitorio / el baño", meaning: "Más habitaciones.", note: "El baño está a la derecha."),
+                            TargetExpression(text: "¿Cuántas habitaciones hay?", meaning: "Preguntar por espacios.", note: "Hay dos habitaciones.")],
+                situation: "Hablas de tu piso nuevo: dos habitaciones, un salón con sofá azul y una cocina pequeña sin lavavajillas.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Describe tu salón: di que hay un sofá y una mesa.", expected: ["En mi salon hay un sofa y una mesa", "En mi salón hay un sofá y una mesa"], focus: "hay", watch: "hay + un/una en singular."),
+                                PracticeQuestion(prompt: "Pregunta cuántas habitaciones tiene el piso.", expected: ["¿Cuantas habitaciones tiene el piso?", "¿Cuántas habitaciones tiene el piso?"], focus: "cuántas", watch: "En preguntas, cuántas lleva tilde."),
+                                PracticeQuestion(prompt: "Di qué hay en la cocina.", expected: ["Hay una mesa y dos sillas", "hay una mesa y dos sillas"], focus: "hay", watch: "hay nunca cambia: hay una mesa, hay dos sillas."),
+                                PracticeQuestion(prompt: "Habla de tu casa: el número de habitaciones.", expected: ["Mi piso tiene tres habitaciones", "mi piso tiene tres habitaciones"], focus: "tiene", watch: "El piso tiene + cantidad."),
+                                PracticeQuestion(prompt: "Pregunta si hay lavavajillas.", expected: ["¿Hay lavavajillas en la cocina?", "¿Hay lava platos en la cocina?"], focus: "¿hay…?", watch: "Pregunta con ¿Hay…? + sustantivo.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u11-casa-e1", kind: "choice", prompt: "En el salón ___ un sofá grande.", options: ["hay", "es", "tiene", "está"], answers: ["hay"], explain: "Hay + un/una: decir qué existe en un lugar."),
+                            Exercise(id: "es-foundations-u11-casa-e2", kind: "gap", prompt: "Mi piso ___ dos habitaciones. (tener)", options: [], answers: ["tiene"], explain: "tiene: el piso posee habitaciones."),
+                            Exercise(id: "es-foundations-u11-casa-e3", kind: "order", prompt: "Di qué hay en el salón: un sofá y una mesa.", options: [], answers: ["En el salón hay un sofá y una mesa"], explain: "hay + muebles del salón."),
+                            Exercise(id: "es-foundations-u11-casa-e4", kind: "written", prompt: "Pregunta cuántas habitaciones hay.", options: [], answers: ["¿Cuantas habitaciones hay en el piso?", "¿Cuántas habitaciones hay en el piso?"], explain: "¿Cuántas… hay? con tilde en cuántas.")], skills: ["grammar:there-is-are", "grammar:present-simple", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u11-lugares", title: "¿Dónde está?", goal: "Decir dónde están las cosas: encima de, debajo de y al lado de.",
+                intro: LessonIntro(explanation: [
+                            "Para preguntar lugar: «¿Dónde está el teléfono?». Respondes con está + lugar: «Está en la mesa».",
+                            "Las preposiciones de lugar: encima de, debajo de, al lado de. «La lámpara está encima de la mesa».",
+                            "También usas delante de y detrás de: «El gato está debajo de la cama»."], examples: [
+                            ExampleLine(text: "¿Dónde está el gato?", meaning: "Preguntar lugar."),
+                            ExampleLine(text: "Está encima de la mesa.", meaning: "Posición superior."),
+                            ExampleLine(text: "El periódico está debajo de la cama.", meaning: "Posición inferior."),
+                            ExampleLine(text: "La silla está al lado de la ventana.", meaning: "Junto a la ventana."),
+                            ExampleLine(text: "El móvil está en el cajón.", meaning: "Dentro: en.")]),
+                expressions: [
+                            TargetExpression(text: "¿Dónde está …?", meaning: "Preguntar por una cosa.", note: "¿Dónde están las llaves? (plural)"),
+                            TargetExpression(text: "encima de", meaning: "Sobre algo.", note: "El libro está encima de la mesa."),
+                            TargetExpression(text: "debajo de", meaning: "Bajo algo.", note: "El gato está debajo de la silla."),
+                            TargetExpression(text: "al lado de", meaning: "Junto a algo.", note: "La cama está al lado de la ventana."),
+                            TargetExpression(text: "delante de / detrás de", meaning: "Antes o después en el espacio.", note: "El coche está delante de la casa.")],
+                situation: "Buscas las llaves en casa: están encima de la mesa del salón, al lado de un periódico viejo.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pregunta dónde está la llave.", expected: ["¿Donde esta la llave?", "¿Dónde está la llave?"], focus: "¿dónde está?", watch: "dónde con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di que el libro está sobre la mesa.", expected: ["El libro esta encima de la mesa", "El libro está encima de la mesa"], focus: "encima de", watch: "encima de = sobre."),
+                                PracticeQuestion(prompt: "Di que el gato duerme bajo la cama.", expected: ["El gato esta debajo de la cama", "El gato está debajo de la cama"], focus: "debajo de", watch: "debajo de = bajo."),
+                                PracticeQuestion(prompt: "Di que la silla está junto a la ventana.", expected: ["La silla esta al lado de la ventana", "La silla está al lado de la ventana"], focus: "al lado de", watch: "al lado de = junto a."),
+                                PracticeQuestion(prompt: "Di que las llaves están dentro del cajón.", expected: ["Las llaves estan en el cajon", "Las llaves están en el cajón"], focus: "en", watch: "Para dentro usamos en.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u11-lugares-e1", kind: "choice", prompt: "La cama está ___ de la ventana, muy cerca.", options: ["al lado de", "encima de", "debajo de", "detrás de"], answers: ["al lado de"], explain: "al lado de = junto a, muy cerca."),
+                            Exercise(id: "es-foundations-u11-lugares-e2", kind: "gap", prompt: "El periódico está ___ de la mesa. (posición)", options: [], answers: ["debajo"], explain: "debajo de la mesa = bajo la mesa."),
+                            Exercise(id: "es-foundations-u11-lugares-e3", kind: "order", prompt: "Di que el móvil está dentro del cajón.", options: [], answers: ["El móvil está en el cajón"], explain: "en + lugar = dentro."),
+                            Exercise(id: "es-foundations-u11-lugares-e4", kind: "written", prompt: "Di que la lámpara está sobre la mesa.", options: [], answers: ["La lampara esta encima de la mesa", "La lámpara está encima de la mesa"], explain: "encima de para posición superior.")], skills: ["grammar:prepositions-place", "grammar:there-is-are", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u11-companeros", title: "Mi compañero de piso", goal: "Describir a tu compañero de piso y hablar de sus cosas con mi, tu y su.",
+                intro: LessonIntro(explanation: [
+                            "Los posesivos: mi, tu, su. «Mi compañero se llama Pablo». «Tu habitación es la grande».",
+                            "su = de él o de ella. «Ana trabaja mucho; su trabajo es interesante».",
+                            "Para describir personas: «Es simpático y muy ordenado». «Trabaja por la noche»."], examples: [
+                            ExampleLine(text: "Mi compañero de piso se llama Pablo.", meaning: "Decir el nombre."),
+                            ExampleLine(text: "Su habitación está limpia.", meaning: "su = de Pablo."),
+                            ExampleLine(text: "Es simpático pero ruidoso.", meaning: "Describir carácter."),
+                            ExampleLine(text: "Mi compañera estudia medicina.", meaning: "Compañera: femenino."),
+                            ExampleLine(text: "Tu bici está en el balcón.", meaning: "tu = de ti.")]),
+                expressions: [
+                            TargetExpression(text: "mi / mis", meaning: "Poseedor: yo.", note: "Mis llaves están aquí."),
+                            TargetExpression(text: "tu / tus", meaning: "Poseedor: tú.", note: "Tu móvil suena."),
+                            TargetExpression(text: "su / sus", meaning: "Poseedor: él o ella.", note: "Sus libros están en el salón."),
+                            TargetExpression(text: "se llama …", meaning: "Decir el nombre.", note: "Mi compañera se llama Ana."),
+                            TargetExpression(text: "Es + adjetivo", meaning: "Describir carácter.", note: "Es ordenado y simpático.")],
+                situation: "Presentas a Pablo: comparte la cocina, trabaja de noche y sus cosas siempre están en el salón.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di cómo se llama tu compañero de piso.", expected: ["Mi compañero se llama Pablo", "mi compañero se llama pablo"], focus: "se llama", watch: "se llama + nombre."),
+                                PracticeQuestion(prompt: "Di que la habitación de él es pequeña.", expected: ["Su habitacion es pequena", "Su habitación es pequeña"], focus: "su", watch: "su = de él o de ella."),
+                                PracticeQuestion(prompt: "Describe el carácter de tu compañera: simpática y ordenada.", expected: ["Es simpatica y ordenada", "Es simpática y ordenada"], focus: "es + adjetivo", watch: "Adjetivo femenino: -a."),
+                                PracticeQuestion(prompt: "Habla de tus llaves: están en la cocina.", expected: ["Mis llaves estan en la cocina", "Mis llaves están en la cocina"], focus: "mis", watch: "mi → mis en plural."),
+                                PracticeQuestion(prompt: "Pregunta a tu compañero por su bici.", expected: ["¿Donde esta tu bici?", "¿Dónde está tu bici?"], focus: "tu", watch: "tu posesivo, sin tilde; tú pronombre, con tilde.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u11-companeros-e1", kind: "choice", prompt: "Pablo es mi compañero y ___ habitación es la roja.", options: ["su", "tu", "mis", "nuestra"], answers: ["su"], explain: "su = de él: la habitación de Pablo."),
+                            Exercise(id: "es-foundations-u11-companeros-e2", kind: "gap", prompt: "___ llaves están en la mesa. (posesivo de yo)", options: [], answers: ["Mis"], explain: "mi → mis en plural: mis llaves."),
+                            Exercise(id: "es-foundations-u11-companeros-e3", kind: "order", prompt: "Presenta a tu compañera: se llama Ana.", options: [], answers: ["Mi compañera se llama Ana"], explain: "mi + persona + se llama + nombre."),
+                            Exercise(id: "es-foundations-u11-companeros-e4", kind: "written", prompt: "Habla del carácter de él.", options: [], answers: ["es muy simpatico", "Es muy simpático"], explain: "Es + adjetivo: simpático lleva tilde.")], skills: ["grammar:possessives", "function:describe-people", "vocab:home", "grammar:present-simple"], canDo: ["describe-home"], prerequisites: ["grammar:possessives"])])
+}
+
+public enum EsFoundationsU12 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u12", title: "Mi barrio", subtitle: "Cerca de casa", level: "A1", themes: [
+                    ConversationTheme("sitios-cercanos", "Sitios cercanos", "¿Qué hay por aquí?", "map", "Course", "Buscas sitios cerca de casa: supermercado, farmacia, parque y parada de autobús.", 0),
+                    ConversationTheme("fruta-fresca", "Fruta del barrio", "La frutería de abajo", "cart", "Course", "Compras fruta en la frutería del barrio: kilos, medio kilo y buen precio.", 1)], lessons: [
+            Lesson(id: "es-foundations-u12-sitios", title: "¿Hay un supermercado?", goal: "Preguntar por sitios del barrio con ¿hay? y responder con hay / no hay.",
+                intro: LessonIntro(explanation: [
+                            "Para preguntar por sitios: «¿Hay un supermercado por aquí?». «¿Hay una farmacia cerca?».",
+                            "Para responder: «Sí, hay uno en la esquina». «No, no hay nada cerca».",
+                            "Sitios del barrio: el supermercado, la farmacia, el parque y la parada de autobús."], examples: [
+                            ExampleLine(text: "¿Hay un supermercado por aquí?", meaning: "Preguntar por un sitio."),
+                            ExampleLine(text: "Sí, hay uno en la esquina.", meaning: "Responder que sí."),
+                            ExampleLine(text: "¿Hay una farmacia cerca?", meaning: "Preguntar distancia."),
+                            ExampleLine(text: "No, aquí no hay banco.", meaning: "Responder que no."),
+                            ExampleLine(text: "La parada de autobús está en la avenida.", meaning: "Situar un sitio.")]),
+                expressions: [
+                            TargetExpression(text: "¿Hay … por aquí?", meaning: "Preguntar por sitios.", note: "¿Hay un cajero por aquí?"),
+                            TargetExpression(text: "hay uno / hay una", meaning: "Responder que sí.", note: "¿Un bar? Hay uno al lado."),
+                            TargetExpression(text: "no hay nada", meaning: "Responder que no.", note: "No hay nada cerca."),
+                            TargetExpression(text: "la esquina", meaning: "El final de la calle.", note: "Está en la esquina."),
+                            TargetExpression(text: "la parada de autobús", meaning: "Sitio del barrio.", note: "La parada está cerca.")],
+                situation: "Llegas al barrio y preguntas: hay un supermercado en la esquina, una farmacia cerca y una parada de autobús en la avenida.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pregunta si hay un supermercado por aquí.", expected: ["¿Hay un supermercado por aqui?", "¿Hay un supermercado por aquí?"], focus: "¿hay…?", watch: "Pregunta con ¿Hay…? + un/una."),
+                                PracticeQuestion(prompt: "Responde que sí: hay un bar al lado.", expected: ["Si hay uno al lado", "Sí, hay uno al lado"], focus: "hay uno", watch: "hay uno/una sustituye al sitio."),
+                                PracticeQuestion(prompt: "Pregunta si hay una farmacia cerca.", expected: ["¿Hay una farmacia cerca?", "¿Hay una farmacia por aquí?"], focus: "¿hay una…?", watch: "farmacia es femenino: una."),
+                                PracticeQuestion(prompt: "Preguntan por un banco. Di que no hay.", expected: ["No hay nada cerca", "no hay nada cerca"], focus: "no hay nada", watch: "nada = ningún sitio."),
+                                PracticeQuestion(prompt: "Di dónde está la parada de autobús: en la avenida.", expected: ["La parada de autobus esta en la avenida", "La parada de autobús está en la avenida"], focus: "está en", watch: "Sitios concretos: está + en.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u12-sitios-e1", kind: "choice", prompt: "¿___ una farmacia por aquí?", options: ["Hay", "Es", "Está", "Son"], answers: ["Hay"], explain: "¿Hay…? pregunta si existe un sitio."),
+                            Exercise(id: "es-foundations-u12-sitios-e2", kind: "gap", prompt: "¿Un cajero? Sí, hay ___ en la esquina. (masculino)", options: [], answers: ["uno"], explain: "hay uno sustituye al sustantivo masculino."),
+                            Exercise(id: "es-foundations-u12-sitios-e3", kind: "order", prompt: "Responde afirmativamente: preguntan por un bar.", options: [], answers: ["Hay un bar en la esquina"], explain: "hay + sitio + lugar."),
+                            Exercise(id: "es-foundations-u12-sitios-e4", kind: "written", prompt: "Preguntan por un banco en esta calle. Responde negativamente.", options: [], answers: ["No hay nada cerca", "No hay ningun banco aqui", "No hay ningún banco aquí"], explain: "No hay nada / no hay ningún + sustantivo.")], skills: ["grammar:there-is-are", "grammar:present-questions", "vocab:town", "function:ask-simple-questions"], canDo: ["ask-for-directions"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "es-foundations-u12-direcciones", title: "¿Cómo llego?", goal: "Pedir y dar direcciones básicas: siga recto, gire a la izquierda, está cerca.",
+                intro: LessonIntro(explanation: [
+                            "Para pedir direcciones: «Perdone, ¿cómo llego a la estación?». «¿Está lejos?».",
+                            "Para dar direcciones: «Siga recto». «Gire a la izquierda». «Gire a la derecha en el semáforo».",
+                            "Para la distancia: «Está a cinco minutos». «Está muy cerca, no necesita autobús»."], examples: [
+                            ExampleLine(text: "Perdone, ¿cómo llego a la estación?", meaning: "Pedir direcciones."),
+                            ExampleLine(text: "Siga recto dos calles.", meaning: "Dar una dirección."),
+                            ExampleLine(text: "Gire a la izquierda en el semáforo.", meaning: "Indicar un giro."),
+                            ExampleLine(text: "¿Está lejos?", meaning: "Preguntar distancia."),
+                            ExampleLine(text: "No, está a cinco minutos andando.", meaning: "Decir que está cerca.")]),
+                expressions: [
+                            TargetExpression(text: "¿Cómo llego a …?", meaning: "Pedir direcciones.", note: "¿Cómo llego al parque?"),
+                            TargetExpression(text: "siga recto", meaning: "Seguir de frente.", note: "Siga recto hasta la plaza."),
+                            TargetExpression(text: "gire a la izquierda / derecha", meaning: "Indicar un giro.", note: "Gire a la derecha."),
+                            TargetExpression(text: "está cerca / lejos", meaning: "Distancia.", note: "Está muy cerca."),
+                            TargetExpression(text: "a cinco minutos", meaning: "Tiempo andando.", note: "Está a cinco minutos.")],
+                situation: "Preguntas por la estación: siga recto, gire a la izquierda en la farmacia y está a diez minutos andando.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pide direcciones para ir a la estación, con educación.", expected: ["Perdone, ¿como llego a la estacion?", "Perdone, ¿cómo llego a la estación?"], focus: "¿cómo llego?", watch: "Perdone para llamar la atención."),
+                                PracticeQuestion(prompt: "Di que la persona debe seguir de frente.", expected: ["Siga recto", "siga recto"], focus: "siga recto", watch: "Fórmula de usted: siga."),
+                                PracticeQuestion(prompt: "Indica un giro a la izquierda.", expected: ["Gire a la izquierda", "gire a la izquierda"], focus: "gire a", watch: "gire a la izquierda / a la derecha."),
+                                PracticeQuestion(prompt: "Pregunta si el museo está lejos.", expected: ["¿Esta lejos el museo?", "¿Está lejos el museo?"], focus: "¿está lejos?", watch: "está con tilde."),
+                                PracticeQuestion(prompt: "Tranquiliza a la persona: el paseo dura cinco minutos.", expected: ["Esta a cinco minutos andando", "Está a cinco minutos andando"], focus: "a + tiempo", watch: "a cinco minutos = tiempo a pie.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u12-direcciones-e1", kind: "choice", prompt: "Para llegar al parque, ___ recto.", options: ["siga", "gire", "está", "toma"], answers: ["siga"], explain: "siga recto = continuar de frente."),
+                            Exercise(id: "es-foundations-u12-direcciones-e2", kind: "gap", prompt: "En el semáforo, gire a la ___. (dirección)", options: [], answers: ["izquierda"], explain: "a la izquierda = girar a la mano izquierda."),
+                            Exercise(id: "es-foundations-u12-direcciones-e3", kind: "order", prompt: "Indica el giro a la izquierda.", options: [], answers: ["Gire a la izquierda"], explain: "gire a + izquierda/derecha."),
+                            Exercise(id: "es-foundations-u12-direcciones-e4", kind: "written", prompt: "Indica el giro: hay que girar en el semáforo.", options: [], answers: ["Gire a la derecha en el semaforo", "Gire a la derecha en el semáforo"], explain: "Gire a la derecha en + lugar.")], skills: ["function:ask-for-directions", "vocab:directions", "grammar:present-simple", "vocab:town"], canDo: ["ask-for-directions"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u12-tienda", title: "En la frutería", goal: "Comprar fruta en el barrio: cantidades, calidad y fórmulas de trato.",
+                intro: LessonIntro(explanation: [
+                            "En la frutería el vendedor pregunta: «¿Qué le pongo?». Tú respondes la cantidad: «Medio kilo de plátanos».",
+                            "Más cantidades: «Un kilo de naranjas». «Doscientos gramos de fresas». «Una sandía».",
+                            "Para terminar: «Eso es todo, gracias». El vendedor pregunta: «¿Algo más?»."], examples: [
+                            ExampleLine(text: "Buenos días, ¿qué le pongo?", meaning: "El vendedor saluda."),
+                            ExampleLine(text: "Medio kilo de plátanos, por favor.", meaning: "Pedir cantidad."),
+                            ExampleLine(text: "¿Están buenas las fresas?", meaning: "Preguntar calidad."),
+                            ExampleLine(text: "¿Algo más?", meaning: "El vendedor pregunta."),
+                            ExampleLine(text: "Eso es todo, gracias.", meaning: "Terminar la compra.")]),
+                expressions: [
+                            TargetExpression(text: "¿Qué le pongo?", meaning: "El vendedor pregunta.", note: "Respondes con la cantidad."),
+                            TargetExpression(text: "medio kilo de …", meaning: "Peso.", note: "Medio kilo de plátanos."),
+                            TargetExpression(text: "¿Están buenas …?", meaning: "Calidad de la fruta.", note: "Sí, están muy dulces."),
+                            TargetExpression(text: "¿Algo más?", meaning: "Preguntar si falta algo.", note: "Nada más, gracias."),
+                            TargetExpression(text: "Eso es todo.", meaning: "Cerrar la compra.", note: "Eso es todo, gracias.")],
+                situation: "Compras en la frutería de tu calle: medio kilo de plátanos, una sandía y preguntas si las fresas están buenas.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "El vendedor pregunta qué quieres. Pide medio kilo de plátanos.", expected: ["Me pone medio kilo de platanos", "Me pone medio kilo de plátanos"], focus: "me pone", watch: "me pone + cantidad."),
+                                PracticeQuestion(prompt: "Pregunta si las fresas están buenas.", expected: ["¿Estan buenas las fresas?", "¿Están buenas las fresas?"], focus: "¿están buenas?", watch: "buenas concuerda con fresas."),
+                                PracticeQuestion(prompt: "Pide un kilo de naranjas.", expected: ["Me pone un kilo de naranjas", "Quiero un kilo de naranjas", "quiero un kilo de naranjas"], focus: "kilo", watch: "un kilo de + fruta."),
+                                PracticeQuestion(prompt: "El vendedor pregunta si falta algo. Di que no.", expected: ["Nada mas gracias", "Nada más, gracias"], focus: "nada más", watch: "Nada más = eso es todo."),
+                                PracticeQuestion(prompt: "Di que ya terminaste la compra.", expected: ["Eso es todo gracias", "Eso es todo, gracias"], focus: "eso es todo", watch: "Fórmula para cerrar.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u12-tienda-e1", kind: "choice", prompt: "Buenos días, ¿qué le ___?", options: ["pongo", "pone", "pones", "ponemos"], answers: ["pone"], explain: "El vendedor dice: ¿qué le pongo?"),
+                            Exercise(id: "es-foundations-u12-tienda-e2", kind: "gap", prompt: "Quiero ___ kilo de manzanas. (ni uno ni dos)", options: [], answers: ["medio"], explain: "medio kilo = 500 gramos."),
+                            Exercise(id: "es-foundations-u12-tienda-e3", kind: "order", prompt: "Pide medio kilo de plátanos.", options: [], answers: ["Me pone medio kilo de plátanos"], explain: "me pone + cantidad + fruta."),
+                            Exercise(id: "es-foundations-u12-tienda-e4", kind: "written", prompt: "El vendedor pregunta «¿Algo más?». Responde que no, cortésmente.", options: [], answers: ["Nada mas gracias", "Nada más, gracias", "Eso es todo, gracias"], explain: "Nada más, gracias = no quiero nada más.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum FrFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
@@ -5162,6 +5522,186 @@ public enum FrFoundationsU9 {
                             Exercise(id: "fr-foundations-u9-presenter-e4", kind: "written", prompt: "Transition : tu passes maintenant aux chiffres.", options: [], answers: ["j'en viens maintenant aux chiffres", "j'en viens a present aux chiffres", "j'en viens à présent aux chiffres"], explain: "J'en viens à : transition qui prévient l'auditeur.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum FrFoundationsU10 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u10", title: "Ma maison", subtitle: "Mon espace", level: "A1", themes: [
+                    ConversationTheme("visite-appart", "La visite de l'appart", "Il y a / il n'y a pas", "house", "Course", "Vous visitez un petit appartement du quartier : les pièces, les meubles, et ce qui manque.", 0),
+                    ConversationTheme("coloc-recherche", "La colocation", "Mon, ma, mes", "bed", "Course", "Karim arrive avec ses cartons : sa chambre, ses livres — et vous présentez vos choses.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u10-maison", title: "Mon appart", goal: "Dire ce qu'il y a chez toi : les pièces et les meubles avec il y a.",
+                intro: LessonIntro(explanation: [
+                            "Pour dire ce qui existe, on utilise « il y a » : « Il y a une grande cuisine. Il y a deux chambres. »",
+                            "Un, une pour le singulier, des pour le pluriel : « Il y a un canapé, une table, des chaises. »",
+                            "La négation : « Il n'y a pas de garage. » Devant une voyelle, de devient d' : « Il n'y a pas d'ascenseur. »"], examples: [
+                            ExampleLine(text: "Il y a une grande cuisine.", meaning: "La pièce pour cuisiner."),
+                            ExampleLine(text: "Il y a deux chambres.", meaning: "La pièce pour dormir."),
+                            ExampleLine(text: "Dans le salon, il y a un canapé.", meaning: "Les meubles du salon."),
+                            ExampleLine(text: "Il y a des chaises dans la cuisine.", meaning: "Le pluriel avec des."),
+                            ExampleLine(text: "Il n'y a pas d'ascenseur.", meaning: "La négation avec d'.")]),
+                expressions: [
+                            TargetExpression(text: "Il y a + un / une / des", meaning: "Dire ce qui existe.", note: "Il y a un lit dans la chambre."),
+                            TargetExpression(text: "Il n'y a pas de …", meaning: "La négation.", note: "pas de garage ; pas d'ascenseur."),
+                            TargetExpression(text: "la salle de bains", meaning: "La pièce pour se laver.", note: "les toilettes, c'est à côté."),
+                            TargetExpression(text: "un deux-pièces", meaning: "Un petit appartement.", note: "une pièce = une chambre."),
+                            TargetExpression(text: "C'est grand / petit.", meaning: "La taille.", note: "C'est petit mais clair.")],
+                situation: "Vous visitez un petit appartement : deux pièces, une cuisine claire, pas d'ascenseur — et vous demandez s'il y a un balcon.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis ce qu'il y a dans ta cuisine.", expected: ["Il y a une table et des chaises.", "Dans ma cuisine, il y a une table et des chaises."], focus: "il y a", watch: "des pour le pluriel."),
+                                PracticeQuestion(prompt: "L'immeuble n'a pas de place pour la voiture. Dis-le.", expected: ["Il n'y a pas de garage.", "Il n'y a pas de parking."], focus: "pas de", watch: "négation : pas DE + nom."),
+                                PracticeQuestion(prompt: "Demandez au propriétaire s'il y a un balcon.", expected: ["Il y a un balcon ?", "Est-ce qu'il y a un balcon ?"], focus: "question", watch: "est-ce que + il y a."),
+                                PracticeQuestion(prompt: "Dis ce qu'il y a dans ta chambre.", expected: ["Il y a un lit et une armoire.", "Il y a un lit et un bureau."], focus: "la chambre", watch: "un lit, une armoire."),
+                                PracticeQuestion(prompt: "L'appartement est au cinquième étage. Dis que l'immeuble n'a pas d'ascenseur.", expected: ["Il n'y a pas d'ascenseur.", "Il n'y a pas d'ascenseur dans l'immeuble."], focus: "d'ascenseur", watch: "de devient d' devant une voyelle.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u10-maison-e1", kind: "choice", prompt: "___ ___ une grande cuisine dans ton appart ?", options: ["Il y a", "Il est", "C'est", "Elle a"], answers: ["Il y a"], explain: "il y a = il existe ; il est = identité."),
+                            Exercise(id: "fr-foundations-u10-maison-e2", kind: "gap", prompt: "Dans la chambre, il y a ___ grand lit.", options: [], answers: ["un"], explain: "un lit : masculin singulier."),
+                            Exercise(id: "fr-foundations-u10-maison-e3", kind: "order", prompt: "Décrivez la cuisine.", options: [], answers: ["Il y a une table dans la cuisine"], explain: "il y a + article + nom + lieu."),
+                            Exercise(id: "fr-foundations-u10-maison-e4", kind: "written", prompt: "Dis ce qu'il y a dans le salon : un canapé bleu et une télé.", options: [], answers: ["il y a un canapé bleu et une télé", "il y a un canape bleu et une tele"], explain: "il y a + un/une + meuble.")], skills: ["grammar:there-is-are", "grammar:present-simple", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u10-endroits", title: "Où est-ce ?", goal: "Situer les objets : sur, sous, à côté de — et demander où est la chose.",
+                intro: LessonIntro(explanation: [
+                            "Les mots de lieu : « sur » (en haut) et « sous » (en bas) : « Le chat est sur le lit. Les clés sont sous la table. »",
+                            "« À côté de » dit la proximité : « à côté du canapé » (le), « à côté de la fenêtre » (la), « à côté des livres » (les).",
+                            "Pour demander : « Où est le chat ? » (un seul objet), « Où sont les clés ? » (plusieurs objets)."], examples: [
+                            ExampleLine(text: "Le chat est sur le lit.", meaning: "En haut du lit."),
+                            ExampleLine(text: "Les clés sont sous la table.", meaning: "En bas de la table."),
+                            ExampleLine(text: "La lampe est à côté du canapé.", meaning: "Près du canapé."),
+                            ExampleLine(text: "Où est la salle de bains ?", meaning: "Demander une pièce."),
+                            ExampleLine(text: "Où sont mes clés ?", meaning: "Plusieurs objets.")]),
+                expressions: [
+                            TargetExpression(text: "sur", meaning: "En haut.", note: "sur le lit, sur la table."),
+                            TargetExpression(text: "sous", meaning: "En bas.", note: "sous le canapé."),
+                            TargetExpression(text: "à côté de / du / de la", meaning: "Près.", note: "à côté du frigo."),
+                            TargetExpression(text: "Où est … ?", meaning: "Un seul objet.", note: "Où est le chat ?"),
+                            TargetExpression(text: "Où sont … ?", meaning: "Plusieurs objets.", note: "Où sont les clés ?")],
+                situation: "Le chat joue à cache-cache dans l'appartement : sur le lit, sous la table, à côté du frigo — et vous cherchez aussi vos clés.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Le chat est en haut du lit. Dis-le avec sur.", expected: ["Le chat est sur le lit.", "Il est sur le lit."], focus: "sur", watch: "sur = en haut de."),
+                                PracticeQuestion(prompt: "Les chaussures sont en bas du lit. Dis-le avec sous.", expected: ["Les chaussures sont sous le lit.", "Elles sont sous le lit."], focus: "sous", watch: "sous = en bas de."),
+                                PracticeQuestion(prompt: "La lampe est près du canapé. Dis-le avec à côté de.", expected: ["La lampe est à côté du canapé.", "Elle est à côté du canapé.", "La lampe est a cote du canape."], focus: "à côté du", watch: "de + le = du ; de + la = de la."),
+                                PracticeQuestion(prompt: "Vous cherchez la salle de bains. Posez la question.", expected: ["Où est la salle de bains ?", "Ou est la salle de bains ?"], focus: "où est", watch: "où est + un objet singulier."),
+                                PracticeQuestion(prompt: "Vos clés ont disparu. Posez la question.", expected: ["Où sont mes clés ?", "Ou sont mes cles ?"], focus: "où sont", watch: "où sont + pluriel.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u10-endroits-e1", kind: "choice", prompt: "Le chat est ___ le lit : en haut !", options: ["sur", "sous", "dans", "à côté"], answers: ["sur"], explain: "sur = en haut ; sous = en bas."),
+                            Exercise(id: "fr-foundations-u10-endroits-e2", kind: "gap", prompt: "La lampe est à côté ___ canapé.", options: [], answers: ["du"], explain: "à côté de + le = du."),
+                            Exercise(id: "fr-foundations-u10-endroits-e3", kind: "order", prompt: "Décrivez la photo : le chat et le lit.", options: [], answers: ["Le chat est sur le lit"], explain: "sur + le lit : en haut."),
+                            Exercise(id: "fr-foundations-u10-endroits-e4", kind: "written", prompt: "Vous cherchez vos clés. Un ami répond : la table, en haut.", options: [], answers: ["les clés sont sur la table", "les cles sont sur la table", "elles sont sur la table"], explain: "les clés sont sur + lieu.")], skills: ["grammar:prepositions-place", "grammar:there-is-are", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u10-coloc", title: "Mon colocataire", goal: "Présenter ton colocataire et parler de tes choses avec mon, ma, mes.",
+                intro: LessonIntro(explanation: [
+                            "mon, ma, mes disent à qui est la chose : « mon frère, ma sœur, mes amis. »",
+                            "mon devant un mot masculin, ma devant un mot féminin, mes au pluriel : « mon colocataire, ma chambre, mes meubles. »",
+                            "Pour décrire une personne : « Il est grand et sympa. » « Elle est très gentille. »"], examples: [
+                            ExampleLine(text: "Mon colocataire s'appelle Karim.", meaning: "mon + masculin."),
+                            ExampleLine(text: "Ma chambre est petite mais claire.", meaning: "ma + féminin."),
+                            ExampleLine(text: "Mes voisins sont très gentils.", meaning: "mes + pluriel."),
+                            ExampleLine(text: "Karim est grand et sympa.", meaning: "La description."),
+                            ExampleLine(text: "Il aime la musique et le foot.", meaning: "Les goûts.")]),
+                expressions: [
+                            TargetExpression(text: "mon …", meaning: "Possessif masculin.", note: "mon frère, mon colocataire."),
+                            TargetExpression(text: "ma …", meaning: "Possessif féminin.", note: "ma chambre, ma sœur."),
+                            TargetExpression(text: "mes …", meaning: "Possessif pluriel.", note: "mes amis, mes clés."),
+                            TargetExpression(text: "Il est / Elle est …", meaning: "Décrire quelqu'un.", note: "Elle est très sympa."),
+                            TargetExpression(text: "Il / Elle aime …", meaning: "Les goûts.", note: "Il aime le foot.")],
+                situation: "Karim arrive avec ses cartons : sa chambre, ses livres, sa guitare — et vous présentez vos choses à lui.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Présente ton colocataire : il s'appelle Karim.", expected: ["Mon colocataire s'appelle Karim.", "Mon colocataire, c'est Karim."], focus: "mon", watch: "colocataire = mot masculin."),
+                                PracticeQuestion(prompt: "Ta chambre est petite. Dis-le avec mon, ma ou mes.", expected: ["Ma chambre est petite.", "Ma chambre est vraiment petite."], focus: "ma", watch: "chambre = féminin : ma."),
+                                PracticeQuestion(prompt: "Tes amis sont gentils. Dis-le avec mon, ma ou mes.", expected: ["Mes amis sont gentils.", "Mes amis sont très gentils."], focus: "mes", watch: "pluriel : mes."),
+                                PracticeQuestion(prompt: "Comment est Karim ? Donnez deux qualités.", expected: ["Il est grand et sympa.", "Karim est grand et sympa."], focus: "description", watch: "il/elle est + adjectif."),
+                                PracticeQuestion(prompt: "Dis ce qu'aime ta colocataire Léa : la musique.", expected: ["Elle aime la musique.", "Léa aime la musique.", "Lea aime la musique."], focus: "elle aime", watch: "elle + aime + activité.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u10-coloc-e1", kind: "choice", prompt: "___ chambre est en désordre, désolé !", options: ["Ma", "Mon", "Mes", "Me"], answers: ["Ma"], explain: "chambre = féminin : ma."),
+                            Exercise(id: "fr-foundations-u10-coloc-e2", kind: "gap", prompt: "J'habite avec ___ deux frères.", options: [], answers: ["mes"], explain: "frères = pluriel : mes."),
+                            Exercise(id: "fr-foundations-u10-coloc-e3", kind: "order", prompt: "Présente ta colocataire et son caractère.", options: [], answers: ["Ma colocataire est grande et sympa"], explain: "ma + nom + être + adjectif."),
+                            Exercise(id: "fr-foundations-u10-coloc-e4", kind: "written", prompt: "Décris ta colocataire Léa.", options: [], answers: ["elle est grande et gentille", "léa est grande et gentille"], explain: "elle est + adjectifs.")], skills: ["grammar:possessives", "function:describe-people", "vocab:home", "grammar:present-simple"], canDo: ["describe-home"], prerequisites: ["grammar:possessives"])])
+}
+
+public enum FrFoundationsU11 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u11", title: "Mon quartier", subtitle: "Près de chez moi", level: "A1", themes: [
+                    ConversationTheme("carte-du-quartier", "La carte du quartier", "Les lieux utiles", "map", "Course", "Vous cherchez les lieux du quartier : boulangerie, pharmacie, banque, parc et gare.", 0),
+                    ConversationTheme("le-primeur", "Le primeur du coin", "Fruits et légumes", "cart", "Course", "Chez le primeur du quartier : vous choisissez vos fruits et vous payez.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u11-lieux", title: "Y a-t-il un supermarché ?", goal: "Demander ce qu'il y a dans le quartier avec est-ce qu'il y a.",
+                intro: LessonIntro(explanation: [
+                            "Pour demander un lieu : « Est-ce qu'il y a un supermarché près d'ici ? » Ou plus court : « Il y a une boulangerie ici ? »",
+                            "La réponse : « Oui, il y en a une à côté. » Négatif : « Non, il n'y en a pas. »",
+                            "Les lieux du quartier : la boulangerie, la pharmacie, la banque, la gare, le parc."], examples: [
+                            ExampleLine(text: "Est-ce qu'il y a une boulangerie près d'ici ?", meaning: "Demander un lieu."),
+                            ExampleLine(text: "Oui, il y en a une à côté.", meaning: "Réponse affirmative."),
+                            ExampleLine(text: "Non, il n'y en a pas.", meaning: "Réponse négative."),
+                            ExampleLine(text: "Il y a un parc près de la gare.", meaning: "Situer deux lieux."),
+                            ExampleLine(text: "La pharmacie est ouverte le dimanche ?", meaning: "Une question utile.")]),
+                expressions: [
+                            TargetExpression(text: "Est-ce qu'il y a … ?", meaning: "Demander un lieu.", note: "…un supermarché près d'ici ?"),
+                            TargetExpression(text: "près d'ici", meaning: "À quelques minutes.", note: "près d'ici = tout proche."),
+                            TargetExpression(text: "il y en a un / une", meaning: "Répondre oui.", note: "une boulangerie → il y en a une."),
+                            TargetExpression(text: "il n'y en a pas", meaning: "Répondre non.", note: "= il n'y a pas de lieu."),
+                            TargetExpression(text: "la boulangerie", meaning: "Le pain du quartier.", note: "la pharmacie : les médicaments.")],
+                situation: "Vous êtes nouveau dans le quartier : vous cherchez une boulangerie, une pharmacie et un endroit pour courir.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demandez s'il y a une boulangerie près d'ici.", expected: ["Est-ce qu'il y a une boulangerie près d'ici ?", "Il y a une boulangerie près d'ici ?", "Est-ce qu'il y a une boulangerie pres d'ici ?"], focus: "est-ce qu'il y a", watch: "est-ce que + il y a."),
+                                PracticeQuestion(prompt: "La pharmacie est dans la rue d'à côté. Répondez oui.", expected: ["Oui, il y en a une à côté.", "Oui, il y a une pharmacie à côté.", "Oui, il y en a une a cote."], focus: "il y en a", watch: "une pharmacie → il y en a une."),
+                                PracticeQuestion(prompt: "Il n'y a pas de banque ici. Répondez négativement.", expected: ["Non, il n'y en a pas.", "Non, il n'y a pas de banque."], focus: "négation", watch: "en = de ce lieu."),
+                                PracticeQuestion(prompt: "Demandez s'il y a un parc dans le quartier.", expected: ["Est-ce qu'il y a un parc dans le quartier ?", "Il y a un parc dans le quartier ?"], focus: "un parc", watch: "un parc : masculin singulier."),
+                                PracticeQuestion(prompt: "Situez la gare : elle est proche du parc.", expected: ["La gare est près du parc.", "Elle est près du parc.", "La gare est pres du parc."], focus: "près de", watch: "près du (masc.), près de la (fém.).")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u11-lieux-e1", kind: "choice", prompt: "___ ___ ___ une pharmacie près d'ici ?", options: ["Est-ce qu'il y a", "Est-ce qu'il est", "Est-ce que c'est", "Il y est"], answers: ["Est-ce qu'il y a"], explain: "il y a pour dire l'existence d'un lieu."),
+                            Exercise(id: "fr-foundations-u11-lieux-e2", kind: "gap", prompt: "Oui, il y en ___ une, à côté de la banque.", options: [], answers: ["a"], explain: "il y en a une = elle existe."),
+                            Exercise(id: "fr-foundations-u11-lieux-e3", kind: "order", prompt: "Demandez un parc dans le quartier.", options: [], answers: ["Il y a un parc dans le quartier"], explain: "il y a + article + lieu."),
+                            Exercise(id: "fr-foundations-u11-lieux-e4", kind: "written", prompt: "La banque est loin. Dites qu'il n'y en a pas près d'ici.", options: [], answers: ["il n'y a pas de banque près d'ici", "il n'y a pas de banque pres d'ici"], explain: "il n'y a pas de + lieu.")], skills: ["grammar:there-is-are", "grammar:present-questions", "vocab:town", "function:ask-simple-questions"], canDo: ["ask-for-directions"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "fr-foundations-u11-directions", title: "Comment y aller ?", goal: "Demander le chemin et comprendre : tout droit, à gauche, à droite.",
+                intro: LessonIntro(explanation: [
+                            "Pour demander le chemin : « Pardon, où est la gare ? Comment y aller ? »",
+                            "Les directions à l'impératif : « Allez tout droit. Tournez à gauche au feu. Tournez à droite après la boulangerie. »",
+                            "La distance : « C'est près. C'est à cinq minutes à pied. »"], examples: [
+                            ExampleLine(text: "Pardon, où est la gare ?", meaning: "Attirer l'attention."),
+                            ExampleLine(text: "Allez tout droit.", meaning: "Ne tournez pas."),
+                            ExampleLine(text: "Tournez à gauche au feu.", meaning: "Le carrefour."),
+                            ExampleLine(text: "C'est à cinq minutes à pied.", meaning: "La distance à pied."),
+                            ExampleLine(text: "C'est près de la boulangerie.", meaning: "Un lieu connu pour situer.")]),
+                expressions: [
+                            TargetExpression(text: "Comment y aller ?", meaning: "Demander le chemin.", note: "y = à ce lieu."),
+                            TargetExpression(text: "Allez tout droit.", meaning: "La direction.", note: "tout droit = en ligne."),
+                            TargetExpression(text: "Tournez à gauche / à droite.", meaning: "Le carrefour.", note: "au feu, après la banque."),
+                            TargetExpression(text: "à … minutes à pied", meaning: "La distance.", note: "à cinq minutes à pied."),
+                            TargetExpression(text: "C'est près / loin.", meaning: "Près ou loin.", note: "près = à côté.")],
+                situation: "Un touriste vous demande la gare : tout droit, à gauche au feu — cinq minutes à pied, c'est près.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Un inconnu vous arrête. Demandez la gare.", expected: ["Pardon, où est la gare ?", "Où est la gare, s'il vous plaît ?", "Ou est la gare, s'il vous plait ?"], focus: "où est", watch: "où est + lieu ?"),
+                                PracticeQuestion(prompt: "Guidez quelqu'un : la rue continue tout droit. Employez l'impératif.", expected: ["Allez tout droit.", "Vous allez tout droit."], focus: "tout droit", watch: "impératif : allez (vous)."),
+                                PracticeQuestion(prompt: "Guidez : le carrefour est à votre main gauche. Employez l'impératif.", expected: ["Tournez à gauche.", "Tournez à gauche au feu.", "Tournez a gauche au feu."], focus: "à gauche", watch: "à gauche / à droite."),
+                                PracticeQuestion(prompt: "La gare ? Comptez cinq minutes en marchant. Dites-le.", expected: ["C'est à cinq minutes à pied.", "C'est a cinq minutes a pied.", "La gare est à cinq minutes à pied."], focus: "à pied", watch: "à pied = en marchant."),
+                                PracticeQuestion(prompt: "La pharmacie est vraiment proche. Dites-le avec un mot.", expected: ["C'est près.", "C'est tout près.", "C'est pres."], focus: "près", watch: "près / loin.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u11-directions-e1", kind: "choice", prompt: "Pour aller à la gare : ___ tout droit.", options: ["Allez", "Aller", "Allons", "Allez-vous"], answers: ["Allez"], explain: "impératif avec vous : allez."),
+                            Exercise(id: "fr-foundations-u11-directions-e2", kind: "gap", prompt: "Tournez ___ gauche après la boulangerie.", options: [], answers: ["à", "a"], explain: "à gauche / à droite."),
+                            Exercise(id: "fr-foundations-u11-directions-e3", kind: "order", prompt: "Guidez quelqu'un jusqu'au feu.", options: [], answers: ["Allez tout droit jusqu'au feu"], explain: "allez + direction + jusqu'au + lieu."),
+                            Exercise(id: "fr-foundations-u11-directions-e4", kind: "written", prompt: "La pharmacie ? Comptez cinq minutes en marchant.", options: [], answers: ["c'est à cinq minutes à pied", "c est a cinq minutes a pied", "elle est à cinq minutes à pied"], explain: "c'est à + minutes + à pied.")], skills: ["function:ask-for-directions", "vocab:directions", "grammar:present-simple", "vocab:town"], canDo: ["ask-for-directions"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u11-fruitier", title: "Chez le primeur", goal: "Acheter des fruits au primeur du quartier : quantités et prix.",
+                intro: LessonIntro(explanation: [
+                            "Au primeur, on commande avec la quantité : « Je voudrais un kilo de pommes. Deux cents grammes de fraises. »",
+                            "Le vendeur propose : « Vous désirez ? Avec ceci ? » On répond : « C'est tout, merci. »",
+                            "Le prix : « C'est combien, les fraises ? » — « Ça fait trois euros. »"], examples: [
+                            ExampleLine(text: "Bonjour, je voudrais un kilo de pommes.", meaning: "La commande."),
+                            ExampleLine(text: "Je prends aussi deux bananes.", meaning: "Ajouter un article."),
+                            ExampleLine(text: "C'est combien, les fraises ?", meaning: "Le prix."),
+                            ExampleLine(text: "Avec ceci ?", meaning: "Le vendeur propose."),
+                            ExampleLine(text: "Ça fait trois euros.", meaning: "Le total.")]),
+                expressions: [
+                            TargetExpression(text: "Je voudrais + quantité", meaning: "Commander.", note: "un kilo de pommes."),
+                            TargetExpression(text: "Je prends …", meaning: "Choisir.", note: "Je prends deux bananes."),
+                            TargetExpression(text: "C'est combien, … ?", meaning: "Le prix.", note: "…les fraises ?"),
+                            TargetExpression(text: "Avec ceci ?", meaning: "Le vendeur propose.", note: "= autre chose ?"),
+                            TargetExpression(text: "C'est tout, merci.", meaning: "Terminer l'achat.", note: "= rien d'autre.")],
+                situation: "Samedi matin, chez le primeur du quartier : un kilo de pommes, deux bananes — et vous demandez le prix des fraises.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Commandez un kilo de pommes.", expected: ["Je voudrais un kilo de pommes.", "Un kilo de pommes, s'il vous plaît.", "Un kilo de pommes, s'il vous plait."], focus: "je voudrais", watch: "je voudrais + quantité + produit."),
+                                PracticeQuestion(prompt: "Demandez le prix des fraises.", expected: ["C'est combien, les fraises ?", "C'est combien les fraises ?"], focus: "combien", watch: "c'est combien + article + fruit."),
+                                PracticeQuestion(prompt: "Ajoutez deux bananes à votre commande.", expected: ["Je prends deux bananes.", "Et deux bananes, aussi."], focus: "je prends", watch: "je prends = je choisis."),
+                                PracticeQuestion(prompt: "Le vendeur propose encore quelque chose. Refusez poliment.", expected: ["C'est tout, merci.", "C'est tout merci.", "Rien d'autre, merci."], focus: "c'est tout", watch: "= je ne veux rien d'autre."),
+                                PracticeQuestion(prompt: "Dites le total : trois euros.", expected: ["Ça fait trois euros.", "Ca fait trois euros."], focus: "ça fait", watch: "ça fait + prix.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u11-fruitier-e1", kind: "choice", prompt: "Bonjour, madame, je ___ un kilo de pommes, s'il vous plaît.", options: ["voudrais", "vouloir", "voudra", "voulu"], answers: ["voudrais"], explain: "je voudrais : la forme polie de vouloir."),
+                            Exercise(id: "fr-foundations-u11-fruitier-e2", kind: "gap", prompt: "C'est ___ , les fraises ?", options: [], answers: ["combien"], explain: "c'est combien = demandez le prix."),
+                            Exercise(id: "fr-foundations-u11-fruitier-e3", kind: "order", prompt: "Commandez deux bananes.", options: [], answers: ["Je voudrais deux bananes"], explain: "je voudrais + quantité + fruit."),
+                            Exercise(id: "fr-foundations-u11-fruitier-e4", kind: "written", prompt: "Refusez poliment la proposition du vendeur.", options: [], answers: ["c'est tout merci", "c'est tout, merci.", "rien d'autre, merci."], explain: "formule fixe pour terminer.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum ItFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.", 0),
@@ -5783,6 +6323,192 @@ public enum ItFoundationsU9 {
                             Exercise(id: "it-foundations-u9-presentare-e2", kind: "gap", prompt: "___ sintesi, il bilancio della prova è positivo. (preposizione semplice)", options: [], answers: ["In"], explain: "In sintesi comprime i punti."),
                             Exercise(id: "it-foundations-u9-presentare-e3", kind: "written", prompt: "Apri il tuo intervento sulle vendite con la locuzione d'apertura seguita da un dato.", options: [], answers: ["per iniziare ecco i dati sulle vendite", "per iniziare un dato le vendite sono cresciute", "per iniziare le vendite sono cresciute del dieci per cento"], explain: "Per iniziare + dato."),
                             Exercise(id: "it-foundations-u9-presentare-e4", kind: "written", prompt: "Chiudi il tuo intervento chiedendo due settimane per il prototipo: apri con la locuzione di chiusura.", options: [], answers: ["per concludere chiediamo due settimane per il prototipo", "per concludere vi chiedo due settimane per il prototipo", "per concludere servono due settimane per il prototipo"], explain: "Per concludere + richiesta precisa.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum ItFoundationsU10 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u10", title: "Casa mia", subtitle: "Il mio spazio", level: "A1", themes: [
+                    ConversationTheme("casa-stanze", "Le stanze di casa", "C'è / ci sono", "house", "Course", "Entri nel tuo appartamento nuovo: descrivi le stanze e i mobili.", 0),
+                    ConversationTheme("il-mio-spazio", "Le mie cose", "Dov'è ?", "bed", "Course", "Ogni cosa al suo posto: cerchi le tue cose e presenti il coinquilino.", 1)], lessons: [
+            Lesson(id: "it-foundations-u10-casa", title: "Il mio appartamento", goal: "Descrivere le stanze e i mobili di casa con c'è e ci sono.",
+                intro: LessonIntro(explanation: [
+                            "Per una cosa usi c'è: « Nella cucina c'è un tavolo ». Per più cose usi ci sono: « Nella cucina ci sono due sedie ».",
+                            "La domanda è semplice: « C'è il bagno ? » — « Sì, c'è ». E la negazione: « Non c'è la lavatrice ».",
+                            "Le stanze di casa: « la cucina », « la camera da letto », « il bagno », « il soggiorno ». « Il soggiorno è grande e luminoso »."], examples: [
+                            ExampleLine(text: "C'è un divano nel soggiorno.", meaning: "Una cosa sola."),
+                            ExampleLine(text: "Ci sono due camere.", meaning: "Più cose."),
+                            ExampleLine(text: "Non c'è la lavatrice.", meaning: "Negare."),
+                            ExampleLine(text: "Il bagno è piccolo ma pulito.", meaning: "Descrivere una stanza."),
+                            ExampleLine(text: "La cucina è grande ?", meaning: "Chiedere di una stanza.")]),
+                expressions: [
+                            TargetExpression(text: "c'è + singolare", meaning: "Una cosa sola.", note: "C'è un tavolo."),
+                            TargetExpression(text: "ci sono + plurale", meaning: "Più cose.", note: "Ci sono due sedie."),
+                            TargetExpression(text: "non c'è / non ci sono", meaning: "Negare.", note: "Non c'è la lavatrice."),
+                            TargetExpression(text: "C'è … ?", meaning: "Chiedere.", note: "C'è il bagno ?"),
+                            TargetExpression(text: "la camera da letto", meaning: "La stanza per dormire.", note: "La camera è luminosa.")],
+                situation: "Entri nel tuo appartamento nuovo e lo descrivi a un'amica: la cucina, il soggiorno e le due camere.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dì dove sta il divano: nel soggiorno.", expected: ["Nel soggiorno c'è un divano.", "Nel soggiorno c'e un divano.", "In soggiorno c'è un divano."], focus: "c'è", watch: "c'è = hay (una cosa)."),
+                                PracticeQuestion(prompt: "Conta i mobili della cucina: due sedie.", expected: ["In cucina ci sono due sedie.", "Nella cucina ci sono due sedie."], focus: "ci sono", watch: "ci sono = hay (plurale)."),
+                                PracticeQuestion(prompt: "Dì che la lavatrice manca.", expected: ["Non c'è la lavatrice.", "Non c'e la lavatrice.", "Non c'è lavatrice."], focus: "non c'è", watch: "non c'è = no hay."),
+                                PracticeQuestion(prompt: "Chiedi se la casa ha il bagno.", expected: ["C'è il bagno ?", "C'e il bagno ?", "C'è un bagno ?"], focus: "c'è…?", watch: "Domanda con c'è."),
+                                PracticeQuestion(prompt: "Descrivi la tua camera: piccola ma luminosa.", expected: ["La camera è piccola ma luminosa.", "La mia camera è piccola ma luminosa.", "La camera e piccola ma luminosa."], focus: "essere + aggettivo", watch: "ma = pero."),
+                                PracticeQuestion(prompt: "Contiamo le finestre del soggiorno: due.", expected: ["Nel soggiorno ci sono due finestre.", "In soggiorno ci sono due finestre."], focus: "ci sono", watch: "Due cose → ci sono.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u10-casa-e1", kind: "choice", prompt: "___ un divano nel soggiorno.", options: ["C'è", "Ci sono", "Sono", "Hanno"], answers: ["C'è"], explain: "Una cosa sola → c'è."),
+                            Exercise(id: "it-foundations-u10-casa-e2", kind: "gap", prompt: "Nella cucina ___ due sedie. (essere)", options: [], answers: ["ci sono"], explain: "Plurale → ci sono."),
+                            Exercise(id: "it-foundations-u10-casa-e3", kind: "order", prompt: "Descrivi il bagno: piccolo, ma pulito.", options: [], answers: ["Il bagno è piccolo ma pulito"], explain: "essere + aggettivo."),
+                            Exercise(id: "it-foundations-u10-casa-e4", kind: "written", prompt: "Descrivi il soggiorno: una finestra grande.", options: [], answers: ["Nel soggiorno c'è una finestra grande.", "Nel soggiorno c'e una finestra grande.", "In soggiorno c'è una finestra grande."], explain: "c'è + una cosa sola.")], skills: ["grammar:there-is-are", "grammar:present-simple", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u10-posti", title: "Dov'è ?", goal: "Dire dov'è una cosa: sopra, sotto, accanto a.",
+                intro: LessonIntro(explanation: [
+                            "Per chiedere dove sta una cosa: « Dov'è il gatto ? ». La risposta usa il posto: « È sotto il letto ».",
+                            "Sopra = sulla superficie: « Il libro è sopra il tavolo ». Sotto = in basso: « Le scarpe sono sotto il letto ».",
+                            "Accanto a = di lato: « La lampada è accanto al letto ». Vicino a = non lontano: « Il bagno è vicino alla cucina »."], examples: [
+                            ExampleLine(text: "Dov'è il gatto ?", meaning: "Chiedere il posto."),
+                            ExampleLine(text: "È sopra il tavolo.", meaning: "Sulla superficie."),
+                            ExampleLine(text: "Le chiavi sono sotto il divano.", meaning: "In basso."),
+                            ExampleLine(text: "La sedia è accanto al tavolo.", meaning: "Di lato."),
+                            ExampleLine(text: "Il bagno è vicino alla cucina.", meaning: "Non lontano.")]),
+                expressions: [
+                            TargetExpression(text: "Dov'è … ?", meaning: "Chiedere il posto.", note: "Dov'è il gatto ?"),
+                            TargetExpression(text: "sopra", meaning: "Sulla superficie.", note: "sopra il tavolo."),
+                            TargetExpression(text: "sotto", meaning: "In basso.", note: "sotto il letto."),
+                            TargetExpression(text: "accanto a", meaning: "Di lato.", note: "accanto al letto."),
+                            TargetExpression(text: "vicino a", meaning: "Non lontano.", note: "vicino alla finestra.")],
+                situation: "Cerchi le tue cose in casa: il libro è sopra il tavolo, le chiavi sono sotto il divano e la lampada è accanto al letto.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dì dove sta il libro: sulla superficie del tavolo.", expected: ["Il libro è sopra il tavolo.", "Il libro e sopra il tavolo.", "Sta sopra il tavolo."], focus: "sopra", watch: "sopra = encima de."),
+                                PracticeQuestion(prompt: "Dì dove stanno le scarpe: in basso.", expected: ["Le scarpe sono sotto il letto.", "Sono sotto il letto."], focus: "sotto", watch: "sotto = debajo de."),
+                                PracticeQuestion(prompt: "Chiedi dove sta il gatto.", expected: ["Dov'è il gatto ?", "Dov'e il gatto ?", "Dove è il gatto ?"], focus: "dov'è", watch: "Dov'è = dónde está."),
+                                PracticeQuestion(prompt: "Dì dove sta la lampada: di lato al letto.", expected: ["La lampada è accanto al letto.", "La lampada e accanto al letto."], focus: "accanto a", watch: "accanto a = al lado de."),
+                                PracticeQuestion(prompt: "Dì che il bagno non è lontano dalla cucina.", expected: ["Il bagno è vicino alla cucina.", "Il bagno e vicino alla cucina."], focus: "vicino a", watch: "vicino a = cerca de."),
+                                PracticeQuestion(prompt: "Riassumi: il gatto sta sulla poltrona.", expected: ["Il gatto è sopra la poltrona.", "Il gatto e sopra la poltrona."], focus: "sopra", watch: "Ripasso: sopra = encima de.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u10-posti-e1", kind: "choice", prompt: "La lampada è ___ al letto, di lato.", options: ["accanto", "sopra", "sotto", "dove"], answers: ["accanto"], explain: "Di lato → accanto a."),
+                            Exercise(id: "it-foundations-u10-posti-e2", kind: "gap", prompt: "La sedia è ___ al tavolo. (di lato)", options: [], answers: ["accanto"], explain: "accanto a = di lato."),
+                            Exercise(id: "it-foundations-u10-posti-e3", kind: "order", prompt: "Chiedi dove sta il gatto.", options: [], answers: ["Dov'è il gatto"], explain: "Dov'è + cosa ?"),
+                            Exercise(id: "it-foundations-u10-posti-e4", kind: "written", prompt: "Dì dove stanno le scarpe: in basso, sotto il letto.", options: [], answers: ["Le scarpe sono sotto il letto.", "Sono sotto il letto.", "Le scarpe stanno sotto il letto."], explain: "sotto + il letto.")], skills: ["grammar:prepositions-place", "grammar:there-is-are", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u10-coinquilino", title: "Il mio coinquilino", goal: "Descrivere una persona e dire di chi è una cosa: mio, tuo, suo.",
+                intro: LessonIntro(explanation: [
+                            "I possessivi vanno con l'articolo: « il mio », « il tuo », « il suo ». « Il mio coinquilino è Luca ». « La tua camera è piccola ».",
+                            "Mio, tuo, suo si accordano con la cosa, non con la persona: « il suo libro », « le sue chiavi » (di lui o di lei).",
+                            "Per descrivere una persona: « Luca è simpatico e ordinato ». E il lavoro: « Luca lavora in un bar »."], examples: [
+                            ExampleLine(text: "Il mio coinquilino è Luca.", meaning: "Presentare."),
+                            ExampleLine(text: "La sua camera è ordinata.", meaning: "Possessivo."),
+                            ExampleLine(text: "Le sue cose sono in bagno.", meaning: "Plurale."),
+                            ExampleLine(text: "Luca è simpatico e tranquillo.", meaning: "Carattere."),
+                            ExampleLine(text: "Luca lavora in un bar.", meaning: "Lavoro.")]),
+                expressions: [
+                            TargetExpression(text: "il mio / la mia", meaning: "Di me.", note: "il mio ragazzo, la mia camera."),
+                            TargetExpression(text: "il tuo / la tua", meaning: "Di te.", note: "la tua borsa."),
+                            TargetExpression(text: "il suo / la sua", meaning: "Di lui o di lei.", note: "il suo libro."),
+                            TargetExpression(text: "i miei / le mie", meaning: "Plurale.", note: "le mie chiavi."),
+                            TargetExpression(text: "essere + aggettivo", meaning: "Descrivere.", note: "Luca è ordinato.")],
+                situation: "Luca, il tuo coinquilino nuovo, arriva con le sue cose: lo presenti e descrivi la vita in due.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Presenta il coinquilino: Luca.", expected: ["Il mio coinquilino è Luca.", "Il mio coinquilino e Luca."], focus: "il mio", watch: "il mio = mi (con articolo)."),
+                                PracticeQuestion(prompt: "Dì di chi è la camera: di lei, è ordinata.", expected: ["La sua camera è ordinata.", "La sua camera e ordinata."], focus: "la sua", watch: "suo/a = su (di lui o di lei)."),
+                                PracticeQuestion(prompt: "Dì che sono le tue chiavi.", expected: ["Sono le mie chiavi.", "Le chiavi sono le mie."], focus: "le mie", watch: "mie = mis (plurale)."),
+                                PracticeQuestion(prompt: "Descrivi Luca: simpatico e ordinato.", expected: ["Luca è simpatico e ordinato.", "Luca e simpatico e ordinato."], focus: "aggettivi", watch: "ordinato = ordenado."),
+                                PracticeQuestion(prompt: "Dì dove lavora Luca: in un bar.", expected: ["Luca lavora in un bar.", "Lavora in un bar."], focus: "lavora in", watch: "lavorare = trabajar."),
+                                PracticeQuestion(prompt: "Hai trovato un libro in salotto: chiedi a chi appartiene.", expected: ["Di chi è questo libro ?", "Di chi e questo libro ?", "Di chi è il libro ?"], focus: "di chi è", watch: "di chi è = ¿de quién es?")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u10-coinquilino-e1", kind: "choice", prompt: "___ coinquilino è molto ordinato.", options: ["Il mio", "Il miei", "La mia", "Le mie"], answers: ["Il mio"], explain: "Maschile singolare → il mio."),
+                            Exercise(id: "it-foundations-u10-coinquilino-e2", kind: "gap", prompt: "Luca mette le ___ chiavi sul tavolo. (di lui)", options: [], answers: ["sue"], explain: "le sue chiavi = sus llaves."),
+                            Exercise(id: "it-foundations-u10-coinquilino-e3", kind: "order", prompt: "Dì di chi è la camera ordinata: di lei.", options: [], answers: ["La sua camera è ordinata"], explain: "il suo / la sua + cosa."),
+                            Exercise(id: "it-foundations-u10-coinquilino-e4", kind: "written", prompt: "Presenta il tuo coinquilino: è simpatico.", options: [], answers: ["Il mio coinquilino è simpatico.", "Il mio coinquilino e simpatico.", "Luca è simpatico."], explain: "il mio + persona + aggettivo.")], skills: ["grammar:possessives", "function:describe-people", "vocab:home", "grammar:present-simple"], canDo: ["describe-home"], prerequisites: ["grammar:possessives"])])
+}
+
+public enum ItFoundationsU11 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u11", title: "Il mio quartiere", subtitle: "Vicino a casa", level: "A1", themes: [
+                    ConversationTheme("luoghi-quartiere", "I luoghi del quartiere", "Cosa c'è qui vicino", "map", "Course", "Sei nuovo nel quartiere: cerchi i posti utili e chiedi la strada.", 0),
+                    ConversationTheme("spesa-frutta", "La frutta del quartiere", "Dal fruttivendolo", "cart", "Course", "Fai la spesa di frutta per la settimana dal fruttivendolo sotto casa.", 1)], lessons: [
+            Lesson(id: "it-foundations-u11-luoghi", title: "C'è un supermercato ?", goal: "Chiedere se ci sono posti nel quartiere con c'è e ci sono.",
+                intro: LessonIntro(explanation: [
+                            "Per chiedere un posto: « Scusi, c'è un supermercato qui vicino ? ». La risposta: « Sì, c'è, in via Roma ».",
+                            "Per più posti usi ci sono: « Ci sono farmacie in zona ? » — « Sì, due ». E la negazione: « Qui non c'è una banca ».",
+                            "I posti del quartiere: « il supermercato », « la farmacia », « la banca », « la fermata dell'autobus », « il parco »."], examples: [
+                            ExampleLine(text: "Scusi, c'è un supermercato qui vicino ?", meaning: "Chiedere."),
+                            ExampleLine(text: "Sì, c'è, in via Roma.", meaning: "Rispondere."),
+                            ExampleLine(text: "Ci sono farmacie in zona ?", meaning: "Plurale."),
+                            ExampleLine(text: "Non c'è una banca qui.", meaning: "Negare."),
+                            ExampleLine(text: "La fermata è dietro l'angolo.", meaning: "Il posto.")]),
+                expressions: [
+                            TargetExpression(text: "Scusi, c'è … ?", meaning: "Chiedere educata.", note: "…un supermercato qui vicino ?"),
+                            TargetExpression(text: "c'è, in + via/piazza", meaning: "Rispondere.", note: "c'è, in via Roma."),
+                            TargetExpression(text: "ci sono + plurale ?", meaning: "Chiedere più posti.", note: "Ci sono farmacie ?"),
+                            TargetExpression(text: "non c'è / non ci sono", meaning: "Negare.", note: "Non c'è una banca."),
+                            TargetExpression(text: "in zona / qui vicino", meaning: "Qui intorno.", note: "c'è un parco in zona ?")],
+                situation: "Sei nuovo nel quartiere: chiedi a una signora in strada dove stanno supermercato, farmacia e fermata.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi educatamente se qui intorno si trova un supermercato.", expected: ["Scusi, c'è un supermercato qui vicino ?", "Scusi, c'e un supermercato qui vicino ?", "C'è un supermercato qui vicino ?"], focus: "scusi, c'è", watch: "Scusi = pregunta educada."),
+                                PracticeQuestion(prompt: "Rispondi: sì, in via Roma.", expected: ["Sì, c'è, in via Roma.", "Si, c'e, in via Roma.", "C'è, in via Roma."], focus: "c'è + posto", watch: "Sì, c'è = sí, hay."),
+                                PracticeQuestion(prompt: "Chiedi se in zona si trovano farmacie.", expected: ["Ci sono farmacie in zona ?", "Ci sono farmacie in zona"], focus: "ci sono…?", watch: "plurale → ci sono."),
+                                PracticeQuestion(prompt: "Dì che manca la banca qui.", expected: ["Qui non c'è una banca.", "Qui non c'e una banca.", "Non c'è una banca qui."], focus: "non c'è", watch: "non c'è = no hay."),
+                                PracticeQuestion(prompt: "Ti serve l'autobus: chiedi il posto della fermata.", expected: ["Dov'è la fermata dell'autobus ?", "Dov'e la fermata dell'autobus ?", "Dove è la fermata ?"], focus: "dov'è", watch: "Dov'è = dónde está."),
+                                PracticeQuestion(prompt: "Rispondi: il parco sta dietro l'angolo.", expected: ["Il parco è dietro l'angolo.", "Il parco e dietro l'angolo."], focus: "è + posto", watch: "dietro l'angolo = a la vuelta.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u11-luoghi-e1", kind: "choice", prompt: "Scusi, ___ un supermercato qui vicino ?", options: ["c'è", "ci sono", "è", "hanno"], answers: ["c'è"], explain: "Singolare → c'è."),
+                            Exercise(id: "it-foundations-u11-luoghi-e2", kind: "gap", prompt: "___ due farmacie in zona. (essere)", options: [], answers: ["ci sono"], explain: "Plurale → ci sono."),
+                            Exercise(id: "it-foundations-u11-luoghi-e3", kind: "order", prompt: "Chiedi educatamente il supermercato.", options: [], answers: ["Scusi c'è un supermercato qui vicino"], explain: "Scusi + c'è + posto."),
+                            Exercise(id: "it-foundations-u11-luoghi-e4", kind: "written", prompt: "Rispondi che la farmacia qui manca.", options: [], answers: ["Non c'è una farmacia qui.", "Non c'e una farmacia qui.", "qui non c'e una farmacia"], explain: "non c'è + posto.")], skills: ["grammar:there-is-are", "grammar:present-questions", "vocab:town", "function:ask-simple-questions"], canDo: ["ask-for-directions"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "it-foundations-u11-indicazioni", title: "Come arrivo ?", goal: "Chiedere e dare indicazioni semplici: dritto, sinistra, destra, vicino.",
+                intro: LessonIntro(explanation: [
+                            "Per chiedere la strada: « Scusi, come arrivo al supermercato ? ». La risposta usa vada: « Vada sempre dritto ».",
+                            "Per girare: « Alla piazza giri a sinistra ». Poi la distanza: « Il supermercato è lì, vicino al parco ».",
+                            "Per ringraziare: « Grazie mille ! ». La risposta: « Prego ! »."], examples: [
+                            ExampleLine(text: "Scusi, come arrivo alla stazione ?", meaning: "Chiedere la strada."),
+                            ExampleLine(text: "Vada sempre dritto.", meaning: "Indicazione."),
+                            ExampleLine(text: "All'angolo giri a sinistra.", meaning: "Indicazione."),
+                            ExampleLine(text: "È vicino, cinque minuti a piedi.", meaning: "Distanza."),
+                            ExampleLine(text: "Grazie mille ! — Prego !", meaning: "Educate.")]),
+                expressions: [
+                            TargetExpression(text: "come arrivo a/al/alla … ?", meaning: "Chiedere la strada.", note: "come arrivo al supermercato ?"),
+                            TargetExpression(text: "vada sempre dritto", meaning: "Indicazione.", note: "dritto fino alla piazza."),
+                            TargetExpression(text: "giri a sinistra/destra", meaning: "Girare.", note: "giri a destra alla farmacia."),
+                            TargetExpression(text: "è vicino / è lì", meaning: "Distanza corta.", note: "è lì, vicino al parco."),
+                            TargetExpression(text: "grazie mille — prego", meaning: "Educate.", note: "Prego !")],
+                situation: "Cerchi il supermercato: una signora ti spiega la strada e tu ringrazi.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi la strada per il supermercato.", expected: ["Scusi, come arrivo al supermercato ?", "Come arrivo al supermercato ?"], focus: "come arrivo", watch: "come arrivo a…? = ¿cómo llego a…?"),
+                                PracticeQuestion(prompt: "Dai l'indicazione: sempre dritto.", expected: ["Vada sempre dritto.", "Vada dritto."], focus: "vada dritto", watch: "vada = formal (usted)."),
+                                PracticeQuestion(prompt: "Dai l'indicazione: alla piazza, a sinistra.", expected: ["Alla piazza giri a sinistra.", "Giri a sinistra alla piazza."], focus: "giri a sinistra", watch: "giri = gire; sinistra = izquierda."),
+                                PracticeQuestion(prompt: "Dai la distanza: cinque minuti a piedi.", expected: ["È vicino, cinque minuti a piedi.", "E vicino, cinque minuti a piedi."], focus: "è vicino", watch: "vicino = cerca."),
+                                PracticeQuestion(prompt: "Ringrazia con forza.", expected: ["Grazie mille !", "Grazie mille"], focus: "grazie mille", watch: "mille = mil."),
+                                PracticeQuestion(prompt: "Rispondi a un grazie.", expected: ["Prego !", "Prego"], focus: "prego", watch: "prego = de nada.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u11-indicazioni-e1", kind: "choice", prompt: "Scusi, come arrivo ___ supermercato ?", options: ["al", "allo", "a il", "della"], answers: ["al"], explain: "a + il → al."),
+                            Exercise(id: "it-foundations-u11-indicazioni-e2", kind: "gap", prompt: "Vada sempre ___, poi giri a destra. (avanti, linea retta)", options: [], answers: ["dritto"], explain: "andare dritto = seguir recto."),
+                            Exercise(id: "it-foundations-u11-indicazioni-e3", kind: "order", prompt: "Dai l'indicazione: dritto.", options: [], answers: ["Vada sempre dritto"], explain: "vada + sempre + dritto."),
+                            Exercise(id: "it-foundations-u11-indicazioni-e4", kind: "written", prompt: "Dì che il supermercato è a poca distanza: due minuti a piedi.", options: [], answers: ["Il supermercato è vicino.", "Il supermercato e vicino.", "È vicino, due minuti a piedi."], explain: "vicino + minuti a piedi.")], skills: ["function:ask-for-directions", "vocab:directions", "grammar:present-simple", "vocab:town"], canDo: ["ask-for-directions"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u11-fruttivendolo", title: "Dal fruttivendolo", goal: "Comprare frutta: quantità e prezzo dal fruttivendolo del quartiere.",
+                intro: LessonIntro(explanation: [
+                            "Dal fruttivendolo si ordina con vorrei: « Buongiorno, vorrei delle mele ». È educato e semplice.",
+                            "Le quantità: « un chilo di arance », « mezzo chilo di banane », « una mela ».",
+                            "Per pagare: « Quanto fa ? » — « Fa tre euro e venti »."], examples: [
+                            ExampleLine(text: "Vorrei delle mele.", meaning: "Ordinare."),
+                            ExampleLine(text: "Un chilo di arance.", meaning: "Quantità."),
+                            ExampleLine(text: "Mezzo chilo di banane.", meaning: "Quantità."),
+                            ExampleLine(text: "Quanto fa ?", meaning: "Chiedere il totale."),
+                            ExampleLine(text: "Fa tre euro e venti.", meaning: "Il prezzo.")]),
+                expressions: [
+                            TargetExpression(text: "vorrei + frutta", meaning: "Ordinare educata.", note: "vorrei delle mele."),
+                            TargetExpression(text: "un chilo di …", meaning: "1 kg.", note: "un chilo di arance."),
+                            TargetExpression(text: "mezzo chilo di …", meaning: "Medio kilo.", note: "mezzo chilo di banane."),
+                            TargetExpression(text: "Quanto fa ?", meaning: "Totale.", note: "fa due euro."),
+                            TargetExpression(text: "Che altro ?", meaning: "Il venditore chiede.", note: "Sì, grazie.")],
+                situation: "Fai la spesa di frutta dal fruttivendolo sotto casa: un chilo di arance, mezzo chilo di banane e delle mele.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ordina educatamente delle mele.", expected: ["Vorrei delle mele.", "vorrei delle mele"], focus: "vorrei", watch: "vorrei = quisiera."),
+                                PracticeQuestion(prompt: "Chiedi un chilo di arance.", expected: ["Un chilo di arance, per favore.", "Vorrei un chilo di arance."], focus: "un chilo di", watch: "chilo = kilo."),
+                                PracticeQuestion(prompt: "Chiedi le banane: la quantità è mezzo chilo.", expected: ["Mezzo chilo di banane.", "Vorrei mezzo chilo di banane."], focus: "mezzo chilo", watch: "mezzo = medio."),
+                                PracticeQuestion(prompt: "Chiedi il totale.", expected: ["Quanto fa ?", "Quanto fa"], focus: "quanto fa", watch: "Quanto fa ? = ¿cuánto es?"),
+                                PracticeQuestion(prompt: "Il venditore dice il prezzo: tre euro e venti.", expected: ["Fa tre euro e venti.", "Sono tre euro e venti."], focus: "fa + prezzo", watch: "fa = suma/son."),
+                                PracticeQuestion(prompt: "Dì che va bene così e ringrazi.", expected: ["Tutto qui, grazie.", "Basta così, grazie.", "Basta cosi, grazie."], focus: "chiusura", watch: "Tutto qui = eso es todo.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u11-fruttivendolo-e1", kind: "choice", prompt: "Buongiorno, ___ delle mele, per favore.", options: ["vorrei", "voglio di", "vorresti", "sono"], answers: ["vorrei"], explain: "vorrei = forma educata."),
+                            Exercise(id: "it-foundations-u11-fruttivendolo-e2", kind: "gap", prompt: "Vorrei ___ chilo di arance. (1 kg)", options: [], answers: ["un"], explain: "un chilo di + frutta."),
+                            Exercise(id: "it-foundations-u11-fruttivendolo-e3", kind: "order", prompt: "Chiedi il totale.", options: [], answers: ["Quanto fa tutto insieme"], explain: "Quanto fa ?"),
+                            Exercise(id: "it-foundations-u11-fruttivendolo-e4", kind: "written", prompt: "Ordina mezzo chilo di banane.", options: [], answers: ["Mezzo chilo di banane, per favore.", "Vorrei mezzo chilo di banane."], explain: "mezzo chilo di + frutta.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
 }
 
 public enum PtFoundationsU1 {
@@ -6408,6 +7134,186 @@ public enum PtFoundationsU9 {
                             Exercise(id: "pt-foundations-u9-apresentar-e4", kind: "written", prompt: "Abra sua fala agradecendo quem veio.", options: [], answers: ["para comecar obrigado pela presenca de todos", "para começar, obrigado pela presença de todos"], explain: "Para começar + agradecimento.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum PtFoundationsU10 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u10", title: "Minha casa", subtitle: "Meu espaço", level: "A1", themes: [
+                    ConversationTheme("casa-espaco", "O apartamento", "Cômodos e móveis", "house", "Course", "A Bia mostra o apartamento novo para a amiga: dois quartos, cozinha clara e uma varanda com plantas.", 0),
+                    ConversationTheme("casa-quarto", "Onde está ?", "Coisas da casa", "bed", "Course", "A chave não aparece: procuram pela casa e dizem onde cada coisa está.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u10-casa", title: "Meu apartamento", goal: "Falar dos cômodos e móveis da casa com tem e não tem.",
+                intro: LessonIntro(explanation: [
+                            "O que existe na casa: « tem ». « Na sala tem um sofá novo ». « No banheiro não tem janela ».",
+                            "Os cômodos: « a sala, o quarto, a cozinha, o banheiro ». A varanda é fora, mas faz parte da casa.",
+                            "Para perguntar: « Tem varanda ? » — a resposta usa « tem » também: « Tem, é grande »."], examples: [
+                            ExampleLine(text: "Meu apartamento é pequeno.", meaning: "Descrição simples."),
+                            ExampleLine(text: "Tem dois quartos e uma cozinha.", meaning: "tem = hay."),
+                            ExampleLine(text: "Na sala tem um sofá e uma mesa.", meaning: "Onde + tem."),
+                            ExampleLine(text: "Não tem garagem.", meaning: "não tem = no hay."),
+                            ExampleLine(text: "Tem varanda ?", meaning: "Pergunta simples.")]),
+                expressions: [
+                            TargetExpression(text: "tem …", meaning: "Dizer o que existe.", note: "Na sala tem um sofá."),
+                            TargetExpression(text: "não tem …", meaning: "Dizer o que falta.", note: "Não tem garagem."),
+                            TargetExpression(text: "Tem … ?", meaning: "Perguntar se existe.", note: "Tem varanda ?"),
+                            TargetExpression(text: "quantos quartos ?", meaning: "Perguntar o número.", note: "Quantos quartos tem ?"),
+                            TargetExpression(text: "a varanda", meaning: "Espaço fora do apartamento.", note: "Tomo café na varanda.")],
+                situation: "A Bia mostra o apartamento novo: dois quartos, uma cozinha clara e uma varanda com plantas.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga quantos quartos o apartamento tem: dois.", expected: ["Tem dois quartos.", "tem dois quartos"], focus: "tem", watch: "tem = hay."),
+                                PracticeQuestion(prompt: "Diga que na cozinha não tem mesa.", expected: ["Na cozinha não tem mesa.", "na cozinha nao tem mesa"], focus: "não tem", watch: "não tem = no hay."),
+                                PracticeQuestion(prompt: "Pergunte se tem varanda.", expected: ["Tem varanda ?", "O apartamento tem varanda ?"], focus: "tem … ?", watch: "Tem + coisa ?"),
+                                PracticeQuestion(prompt: "Fale do tamanho do quarto.", expected: ["O quarto é pequeno.", "o quarto e pequeno"], focus: "ser + adjetivo", watch: "é pequeno = es pequeño."),
+                                PracticeQuestion(prompt: "Diga o que tem na sala: um sofá e uma TV.", expected: ["Na sala tem um sofá e uma TV.", "Na sala tem um sofa e uma TV.", "Tem um sofá e uma TV na sala."], focus: "onde + tem", watch: "Na + cômodo + tem.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u10-casa-e1", kind: "choice", prompt: "___ dois quartos no apartamento.", options: ["Tem", "Está", "Faz", "Vai"], answers: ["Tem"], explain: "« tem » fala do que existe na casa."),
+                            Exercise(id: "pt-foundations-u10-casa-e2", kind: "gap", prompt: "Na cozinha ___ uma geladeira nova.", options: [], answers: ["tem"], explain: "tem + coisa: o que existe no cômodo."),
+                            Exercise(id: "pt-foundations-u10-casa-e3", kind: "order", prompt: "Fale do que o prédio não tem.", options: [], answers: ["Nao tem garagem"], explain: "não tem + coisa que falta."),
+                            Exercise(id: "pt-foundations-u10-casa-e4", kind: "written", prompt: "Fale do tamanho do quarto.", options: [], answers: ["O quarto é pequeno.", "o quarto e pequeno"], explain: "ser + adjetivo: é pequeno.")], skills: ["grammar:there-is-are", "grammar:present-simple", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u10-lugares", title: "Onde está ?", goal: "Dizer onde as coisas estão: em cima de, embaixo de, ao lado de.",
+                intro: LessonIntro(explanation: [
+                            "Perguntar o lugar: « Onde está a chave ? ». A resposta usa « está »: « Está na mesa ».",
+                            "As preposições: « em cima de » (sobre), « embaixo de » (debaixo), « ao lado de » (al lado). « A chave está em cima da mesa ».",
+                            "em + a = na, em + o = no. « O livro está na gaveta ». « A carteira está no bolso »."], examples: [
+                            ExampleLine(text: "Onde está a chave ?", meaning: "Perguntar o lugar."),
+                            ExampleLine(text: "Está em cima da mesa.", meaning: "sobre la mesa."),
+                            ExampleLine(text: "Está embaixo da cama.", meaning: "debajo de la cama."),
+                            ExampleLine(text: "A cadeira está ao lado da janela.", meaning: "al lado de."),
+                            ExampleLine(text: "O celular está dentro da bolsa.", meaning: "dentro de.")]),
+                expressions: [
+                            TargetExpression(text: "Onde está … ?", meaning: "Perguntar o lugar.", note: "…a chave ?"),
+                            TargetExpression(text: "em cima de", meaning: "Sobre.", note: "em cima da mesa."),
+                            TargetExpression(text: "embaixo de", meaning: "Debaixo de.", note: "embaixo da cama."),
+                            TargetExpression(text: "ao lado de", meaning: "Al lado de.", note: "ao lado da porta."),
+                            TargetExpression(text: "dentro de", meaning: "Dentro de.", note: "dentro da bolsa.")],
+                situation: "A chave do armário não aparece: procuram no quarto e encontram embaixo da cama.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pergunte o lugar da chave.", expected: ["Onde está a chave ?", "onde esta a chave"], focus: "onde está", watch: "Onde está = ¿dónde está?"),
+                                PracticeQuestion(prompt: "Diga o lugar do livro: sobre a mesa.", expected: ["O livro está em cima da mesa.", "o livro esta em cima da mesa"], focus: "em cima de", watch: "em cima de = sobre."),
+                                PracticeQuestion(prompt: "Diga o lugar do gato: debaixo da cama.", expected: ["O gato está embaixo da cama.", "o gato esta embaixo da cama"], focus: "embaixo de", watch: "embaixo de = debajo de."),
+                                PracticeQuestion(prompt: "Diga o lugar da cadeira: ao lado da janela.", expected: ["A cadeira está ao lado da janela.", "a cadeira esta ao lado da janela"], focus: "ao lado de", watch: "ao lado de = al lado de."),
+                                PracticeQuestion(prompt: "Diga o lugar do celular: dentro da gaveta.", expected: ["O celular está dentro da gaveta.", "o celular esta dentro da gaveta"], focus: "dentro de", watch: "dentro de = dentro de.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u10-lugares-e1", kind: "choice", prompt: "Onde ___ a chave ?", options: ["está", "é", "tem", "faz"], answers: ["está"], explain: "Onde está = ¿dónde está?"),
+                            Exercise(id: "pt-foundations-u10-lugares-e2", kind: "gap", prompt: "O gato dorme ___ da cama.", options: [], answers: ["embaixo"], explain: "embaixo de = debajo de."),
+                            Exercise(id: "pt-foundations-u10-lugares-e3", kind: "order", prompt: "Diga o lugar da cadeira. (ao lado + mesa)", options: [], answers: ["A cadeira esta ao lado da mesa"], explain: "ao lado de + lugar."),
+                            Exercise(id: "pt-foundations-u10-lugares-e4", kind: "written", prompt: "Diga onde está o celular. (dentro + bolsa)", options: [], answers: ["O celular está dentro da bolsa.", "o celular esta dentro da bolsa"], explain: "dentro de + lugar.")], skills: ["grammar:prepositions-place", "grammar:there-is-are", "vocab:home", "function:ask-simple-questions"], canDo: ["describe-home"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u10-colega", title: "Meu colega de casa", goal: "Descrever o colega de casa e usar os possessivos meu, minha, seu.",
+                intro: LessonIntro(explanation: [
+                            "Os possessivos: « meu » (masc), « minha » (fem). « Meu colega cozinha bem ». « Minha colega estuda à noite ».",
+                            "Para falar do outro: « seu, sua ». « Como é o seu colega ? » « A sua casa é grande ? »",
+                            "Descrever com « ser »: « Ele é alto e tranquilo ». « Ela é organizada e muito calma »."], examples: [
+                            ExampleLine(text: "Meu colega de casa é do Rio.", meaning: "meu + masc."),
+                            ExampleLine(text: "Minha colega estuda medicina.", meaning: "minha + fem."),
+                            ExampleLine(text: "O seu quarto é arrumado.", meaning: "seu = su."),
+                            ExampleLine(text: "Ele cozinha muito bem.", meaning: "Descrever."),
+                            ExampleLine(text: "Ela é calma e organizada.", meaning: "ser + adjetivo.")]),
+                expressions: [
+                            TargetExpression(text: "meu / minha", meaning: "Possessivo: mi, mio.", note: "meu quarto, minha casa."),
+                            TargetExpression(text: "seu / sua", meaning: "Possessivo dele/dela.", note: "seu colega, sua sala."),
+                            TargetExpression(text: "colega de casa", meaning: "Quem mora junto.", note: "Divido a casa com ele."),
+                            TargetExpression(text: "Ele/Ela é …", meaning: "Descrever pessoa.", note: "Ele é alto."),
+                            TargetExpression(text: "muito + adjetivo", meaning: "Intensidade.", note: "muito calma.")],
+                situation: "O Rafa chega como novo colega de casa: alto, tranquilo e cozinha aos domingos.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que o seu colega cozinha bem. (use meu)", expected: ["Meu colega cozinha bem.", "meu colega cozinha bem"], focus: "meu", watch: "meu + palavra masculina."),
+                                PracticeQuestion(prompt: "Diga que a sua casa é pequena. (use minha)", expected: ["Minha casa é pequena.", "minha casa e pequena"], focus: "minha", watch: "minha + palavra feminina."),
+                                PracticeQuestion(prompt: "Pergunte como é o colega de casa dele.", expected: ["Como é o seu colega de casa ?", "como e o seu colega de casa"], focus: "seu", watch: "seu = de você."),
+                                PracticeQuestion(prompt: "Descreva o Rafa: alto e tranquilo.", expected: ["O Rafa é alto e tranquilo.", "Ele é alto e tranquilo.", "o rafa e alto e tranquilo"], focus: "ser + adjetivo", watch: "adjetivo concorda com a pessoa."),
+                                PracticeQuestion(prompt: "Diga que a sala dela é organizada.", expected: ["A sala dela é organizada.", "a sala dela e organizada"], focus: "descrever", watch: "organizada (fem).")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u10-colega-e1", kind: "choice", prompt: "___ colega cozinha muito bem.", options: ["Meu", "Minha", "Meus", "Minhas"], answers: ["Meu"], explain: "meu + palavra masculina: o colega."),
+                            Exercise(id: "pt-foundations-u10-colega-e2", kind: "gap", prompt: "___ quarto é sempre arrumado. (do colega)", options: [], answers: ["Seu"], explain: "seu = o quarto dele."),
+                            Exercise(id: "pt-foundations-u10-colega-e3", kind: "order", prompt: "Descreva a sua colega. (muito + calma)", options: [], answers: ["A minha colega e muito calma"], explain: "minha + colega + adjetivo."),
+                            Exercise(id: "pt-foundations-u10-colega-e4", kind: "written", prompt: "Pergunte ao colega onde está a chave dele.", options: [], answers: ["Onde está a sua chave ?", "onde esta a sua chave"], explain: "seu + coisa: a chave dele.")], skills: ["grammar:possessives", "function:describe-people", "vocab:home", "grammar:present-simple"], canDo: ["describe-home"], prerequisites: ["grammar:possessives"])])
+}
+
+public enum PtFoundationsU11 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u11", title: "Meu bairro", subtitle: "Perto de casa", level: "A1", themes: [
+                    ConversationTheme("bairro-lugares", "No bairro", "O que tem perto", "map", "Course", "Chegam ao bairro novo e perguntam o que tem perto: mercado, farmácia e uma praça.", 0),
+                    ConversationTheme("bairro-compras", "Compras perto", "Fruta do bairro", "cart", "Course", "Na quitanda da esquina: compram fruta fresca e conversam com o dono.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u11-lugares", title: "Tem um supermercado ?", goal: "Perguntar o que tem no bairro com tem e há.",
+                intro: LessonIntro(explanation: [
+                            "Perguntar por lugares: « Tem um supermercado aqui perto ? ». A resposta: « Tem, é perto » ou « Não tem ».",
+                            "Outra forma: « há ». « Há uma praça no centro ». No dia a dia, « tem » é mais comum.",
+                            "Lugares do bairro: « o supermercado, a farmácia, a padaria, a praça, o ponto de ônibus »."], examples: [
+                            ExampleLine(text: "Tem um supermercado aqui perto ?", meaning: "Perguntar por lugar."),
+                            ExampleLine(text: "Tem, é na esquina.", meaning: "Confirmar."),
+                            ExampleLine(text: "Não tem farmácia na rua.", meaning: "Negar."),
+                            ExampleLine(text: "Há uma praça pequena aqui.", meaning: "há = hay."),
+                            ExampleLine(text: "Tem um ponto de ônibus em frente.", meaning: "Lugar perto.")]),
+                expressions: [
+                            TargetExpression(text: "Tem … aqui perto ?", meaning: "Perguntar por lugar.", note: "…um supermercado ?"),
+                            TargetExpression(text: "tem / não tem", meaning: "Confirmar ou negar.", note: "Tem, é perto."),
+                            TargetExpression(text: "há", meaning: "Forma neutra de tem.", note: "Há uma praça aqui."),
+                            TargetExpression(text: "aqui perto", meaning: "Lugar próximo.", note: "Moro aqui perto."),
+                            TargetExpression(text: "na esquina", meaning: "Onde as ruas se cruzam.", note: "A padaria é na esquina.")],
+                situation: "Chegam ao bairro novo: procuram supermercado, farmácia e um lugar para tomar café.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pergunte por um supermercado próximo.", expected: ["Tem um supermercado perto ?", "tem um supermercado aqui perto"], focus: "tem … perto ?", watch: "Tem + lugar ?"),
+                                PracticeQuestion(prompt: "Diga que tem uma padaria na esquina.", expected: ["Tem uma padaria na esquina.", "tem uma padaria na esquina"], focus: "tem + lugar", watch: "na esquina = en la esquina."),
+                                PracticeQuestion(prompt: "Diga que não tem farmácia aqui.", expected: ["Não tem farmácia aqui.", "nao tem farmacia aqui"], focus: "não tem", watch: "não tem = no hay."),
+                                PracticeQuestion(prompt: "Diga que há uma praça no bairro.", expected: ["Há uma praça no bairro.", "ha uma praca no bairro"], focus: "há", watch: "há = hay (formal)."),
+                                PracticeQuestion(prompt: "Pergunte o lugar do ponto de ônibus.", expected: ["Onde é o ponto de ônibus ?", "onde e o ponto de onibus"], focus: "onde é", watch: "Onde é + lugar fixo.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u11-lugares-e1", kind: "choice", prompt: "___ um supermercado aqui perto ?", options: ["Tem", "Está", "É", "Vai"], answers: ["Tem"], explain: "Tem + lugar ? = ¿hay…?"),
+                            Exercise(id: "pt-foundations-u11-lugares-e2", kind: "gap", prompt: "___ uma padaria antiga nesta rua.", options: [], answers: ["Tem"], explain: "tem = hay no dia a dia."),
+                            Exercise(id: "pt-foundations-u11-lugares-e3", kind: "order", prompt: "O vizinho pergunta pela farmácia. Responda.", options: [], answers: ["A farmacia e perto"], explain: "ser + perto: lugar perto."),
+                            Exercise(id: "pt-foundations-u11-lugares-e4", kind: "written", prompt: "Você precisa de mercado. Pergunte para o vizinho.", options: [], answers: ["Tem um mercado aqui perto ?", "tem mercado por aqui ?"], explain: "Tem + lugar ? para perguntar.")], skills: ["grammar:there-is-are", "grammar:present-questions", "vocab:town", "function:ask-simple-questions"], canDo: ["ask-for-directions"], prerequisites: ["grammar:there-is-are"]),
+            Lesson(id: "pt-foundations-u11-caminho", title: "Como eu chego ?", goal: "Dar e pedir direções simples: siga em frente, vire à esquerda, é perto.",
+                intro: LessonIntro(explanation: [
+                            "Pedir direção: « Como eu chego à praça ? » « É longe ? »",
+                            "Direções: « Siga em frente ». « Vire à esquerda ». « Vire à direita na segunda rua ».",
+                            "Distância: « É perto, pode ir a pé ». « É longe, melhor de ônibus »."], examples: [
+                            ExampleLine(text: "Como eu chego à praça ?", meaning: "Pedir direção."),
+                            ExampleLine(text: "Siga em frente duas quadras.", meaning: "Seguir reto."),
+                            ExampleLine(text: "Vire à esquerda na esquina.", meaning: "Girar a la izquierda."),
+                            ExampleLine(text: "É perto, pode ir a pé.", meaning: "Distância curta."),
+                            ExampleLine(text: "É longe, melhor de ônibus.", meaning: "Distância longa.")]),
+                expressions: [
+                            TargetExpression(text: "Como eu chego a … ?", meaning: "Pedir direção.", note: "…à praça ?"),
+                            TargetExpression(text: "siga em frente", meaning: "Seguir reto.", note: "Siga em frente duas quadras."),
+                            TargetExpression(text: "vire à esquerda / à direita", meaning: "Girar.", note: "Vire à direita ali."),
+                            TargetExpression(text: "é perto / é longe", meaning: "Distância.", note: "É perto mesmo."),
+                            TargetExpression(text: "a pé", meaning: "Andando.", note: "Pode ir a pé.")],
+                situation: "Querem ir à feira do bairro: perguntam o caminho e chegam a pé em dez minutos.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pergunte o caminho até a praça.", expected: ["Como eu chego à praça ?", "como eu chego a praca"], focus: "como eu chego", watch: "eu chego = yo llego."),
+                                PracticeQuestion(prompt: "Diga para seguir reto.", expected: ["Siga em frente.", "siga em frente duas quadras"], focus: "siga em frente", watch: "imperativo de seguir."),
+                                PracticeQuestion(prompt: "Diga para girar à direita.", expected: ["Vire à direita.", "vire a direita"], focus: "vire à", watch: "vire à direita = gire a la derecha."),
+                                PracticeQuestion(prompt: "Diga que pode ir caminhando porque é perto.", expected: ["É perto, pode ir a pé.", "e perto pode ir a pe"], focus: "a pé", watch: "a pé = a pie."),
+                                PracticeQuestion(prompt: "Diga que é longe e recomende o ônibus.", expected: ["É longe, melhor de ônibus.", "e longe melhor de onibus"], focus: "é longe", watch: "melhor de + transporte.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u11-caminho-e1", kind: "choice", prompt: "Como eu ___ à farmácia ?", options: ["chego", "chega", "chegue", "chegamos"], answers: ["chego"], explain: "eu chego: a pessoa eu + o verbo."),
+                            Exercise(id: "pt-foundations-u11-caminho-e2", kind: "gap", prompt: "___ em frente e o mercado fica na terceira quadra.", options: [], answers: ["Siga"], explain: "siga em frente = seguir reto."),
+                            Exercise(id: "pt-foundations-u11-caminho-e3", kind: "order", prompt: "O turista pergunta pelo caminho. Diga a ele a direção.", options: [], answers: ["Vire a esquerda na esquina"], explain: "vire à esquerda + na esquina."),
+                            Exercise(id: "pt-foundations-u11-caminho-e4", kind: "written", prompt: "O lugar fica perto. Diga como a pessoa pode ir.", options: [], answers: ["É perto, pode ir a pé.", "e perto pode ir a pe"], explain: "é perto + a pé.")], skills: ["function:ask-for-directions", "vocab:directions", "grammar:present-simple", "vocab:town"], canDo: ["ask-for-directions"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u11-quitanda", title: "Na quitanda", goal: "Comprar fruta na quitanda do bairro: quantidades e preços.",
+                intro: LessonIntro(explanation: [
+                            "A quitanda vende fruta e verdura. « Queria um quilo de laranjas ». « As bananas estão maduras ? »",
+                            "As quantidades: « meio quilo de uvas », « duas dúzias de bananas », « um abacaxi ».",
+                            "O pagamento: « Quanto fica ? » « Fica doze reais ». « Pode ser no cartão ? »"], examples: [
+                            ExampleLine(text: "Bom dia! Queria um quilo de laranjas.", meaning: "Cumprimentar e pedir."),
+                            ExampleLine(text: "As bananas estão maduras ?", meaning: "Perguntar a qualidade."),
+                            ExampleLine(text: "Meio quilo de uvas, por favor.", meaning: "Quantidade."),
+                            ExampleLine(text: "Quanto fica ?", meaning: "Perguntar o total."),
+                            ExampleLine(text: "Fica doze reais.", meaning: "O preço.")]),
+                expressions: [
+                            TargetExpression(text: "Queria + quantidade", meaning: "Pedir educado.", note: "Queria um quilo de laranjas."),
+                            TargetExpression(text: "estão maduras ?", meaning: "Qualidade da fruta.", note: "As bananas estão maduras ?"),
+                            TargetExpression(text: "meio quilo de …", meaning: "Peso menor.", note: "…uvas."),
+                            TargetExpression(text: "uma dúzia de …", meaning: "Doze unidades.", note: "uma dúzia de bananas."),
+                            TargetExpression(text: "Quanto fica ?", meaning: "Total da compra.", note: "Fica doze reais.")],
+                situation: "Sábado de manhã: compram laranjas, bananas e uvas na quitanda da esquina e pagam no cartão.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Peça um quilo de laranjas, com educação.", expected: ["Queria um quilo de laranjas.", "queria um quilo de laranjas"], focus: "queria", watch: "queria = educado."),
+                                PracticeQuestion(prompt: "Pergunte a qualidade das bananas.", expected: ["As bananas estão maduras ?", "as bananas estao maduras"], focus: "estão maduras", watch: "maduras (fem pl)."),
+                                PracticeQuestion(prompt: "Peça meio quilo de uvas.", expected: ["Queria meio quilo de uvas.", "meio quilo de uvas"], focus: "meio quilo", watch: "meio quilo = medio kilo."),
+                                PracticeQuestion(prompt: "Pergunte se pode pagar com cartão.", expected: ["Pode ser no cartão ?", "Posso pagar no cartão ?", "pode ser no cartao"], focus: "no cartão", watch: "no cartão = con tarjeta."),
+                                PracticeQuestion(prompt: "Diga o total: dez reais.", expected: ["Fica dez reais.", "fica dez reais"], focus: "fica + preço", watch: "fica = queda en.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u11-quitanda-e1", kind: "choice", prompt: "Queria um quilo de ___.", options: ["laranjas", "cadernos", "toalhas", "chaves"], answers: ["laranjas"], explain: "Na quitanda se compra fruta."),
+                            Exercise(id: "pt-foundations-u11-quitanda-e2", kind: "gap", prompt: "___ fica ?", options: [], answers: ["Quanto"], explain: "Quanto fica ? = total da compra."),
+                            Exercise(id: "pt-foundations-u11-quitanda-e3", kind: "order", prompt: "Peça um quilo de bananas.", options: [], answers: ["Queria um quilo de bananas"], explain: "Queria + quantidade."),
+                            Exercise(id: "pt-foundations-u11-quitanda-e4", kind: "written", prompt: "Peça duas dúzias de bananas, com educação.", options: [], answers: ["Queria duas dúzias de bananas.", "queria duas duzias de bananas", "duas duzias de bananas, por favor"], explain: "duas dúzias de + fruta.")], skills: ["function:go-shopping", "grammar:quantities", "vocab:food", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
@@ -6418,7 +7324,9 @@ DeFoundationsU5.unit,
 DeFoundationsU6.unit,
 DeFoundationsU7.unit,
 DeFoundationsU8.unit,
-DeFoundationsU9.unit
+DeFoundationsU9.unit,
+DeFoundationsU10.unit,
+DeFoundationsU11.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -6474,7 +7382,9 @@ EsFoundationsU6.unit,
 EsFoundationsU7.unit,
 EsFoundationsU8.unit,
 EsFoundationsU9.unit,
-EsFoundationsU10.unit
+EsFoundationsU10.unit,
+EsFoundationsU11.unit,
+EsFoundationsU12.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
@@ -6485,7 +7395,9 @@ FrFoundationsU5.unit,
 FrFoundationsU6.unit,
 FrFoundationsU7.unit,
 FrFoundationsU8.unit,
-FrFoundationsU9.unit
+FrFoundationsU9.unit,
+FrFoundationsU10.unit,
+FrFoundationsU11.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
@@ -6496,7 +7408,9 @@ ItFoundationsU5.unit,
 ItFoundationsU6.unit,
 ItFoundationsU7.unit,
 ItFoundationsU8.unit,
-ItFoundationsU9.unit
+ItFoundationsU9.unit,
+ItFoundationsU10.unit,
+ItFoundationsU11.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
@@ -6507,7 +7421,9 @@ PtFoundationsU5.unit,
 PtFoundationsU6.unit,
 PtFoundationsU7.unit,
 PtFoundationsU8.unit,
-PtFoundationsU9.unit
+PtFoundationsU9.unit,
+PtFoundationsU10.unit,
+PtFoundationsU11.unit
         ]),
     ]
 }

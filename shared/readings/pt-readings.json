@@ -596,6 +596,92 @@
           "explain": "« Um romance sobre registros que é, ele próprio, uma aula de registros »."
         }
       ]
+    },
+    {
+      "id": "pt-read-anuncio-colega",
+      "languageID": "pt",
+      "title": "Anúncio: procuro colega de casa",
+      "level": "A1",
+      "topic": "casa",
+      "unitID": "pt-foundations-u10",
+      "text": "Procuro uma colega de casa para o meu apartamento na Vila Madalena. O apartamento tem dois quartos: o meu é pequeno e o seu é grande, com uma janela para a rua. A sala é clara e tem um sofá confortável. Eu sou o Pedro, tenho vinte e seis anos, sou professor e cozinho nos fins de semana. Minha rotina é tranquila: trabalho de manhã e leio à noite. Você é organizada e não fuma ? Manda uma mensagem para mim!",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:possessives",
+        "vocab:home",
+        "function:describe-people"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-anuncio-colega-q1",
+          "kind": "choice",
+          "prompt": "Quantos quartos tem o apartamento?",
+          "answers": [
+            "Dois"
+          ],
+          "explain": "O apartamento tem dois quartos.",
+          "options": [
+            "Dois",
+            "Um",
+            "Três",
+            "Quatro"
+          ]
+        },
+        {
+          "id": "pt-read-anuncio-colega-q2",
+          "kind": "choice",
+          "prompt": "Como é o quarto do Pedro?",
+          "answers": [
+            "É pequeno"
+          ],
+          "explain": "O meu é pequeno e o seu é grande, com uma janela para a rua.",
+          "options": [
+            "É pequeno",
+            "É grande",
+            "Não tem janela",
+            "É escuro"
+          ]
+        },
+        {
+          "id": "pt-read-anuncio-colega-q3",
+          "kind": "choice",
+          "prompt": "Qual é o trabalho do Pedro?",
+          "answers": [
+            "Professor"
+          ],
+          "explain": "Eu sou o Pedro, tenho vinte e seis anos, sou professor.",
+          "options": [
+            "Professor",
+            "Médico",
+            "Estudante",
+            "Garçom"
+          ]
+        },
+        {
+          "id": "pt-read-anuncio-colega-q4",
+          "kind": "written",
+          "prompt": "O que o Pedro faz nos fins de semana?",
+          "answers": [
+            "cozinha",
+            "ele cozinha",
+            "cozinha nos fins de semana"
+          ],
+          "explain": "Eu… cozinho nos fins de semana."
+        },
+        {
+          "id": "pt-read-anuncio-colega-q5",
+          "kind": "written",
+          "prompt": "Quando o Pedro lê?",
+          "answers": [
+            "à noite",
+            "a noite",
+            "de noite"
+          ],
+          "explain": "Trabalho de manhã e leio à noite."
+        }
+      ]
     }
   ]
 }

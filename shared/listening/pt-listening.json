@@ -1408,6 +1408,207 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-listen-apartamento-novo",
+      "languageID": "pt",
+      "title": "O apartamento novo da Bia",
+      "level": "A1",
+      "topic": "casa",
+      "unitID": "pt-foundations-u10",
+      "text": "A Bia muda para um apartamento novo no centro. O apartamento é pequeno, mas é claro. Tem dois quartos, uma cozinha ampla e uma varanda com plantas. Na sala tem um sofá velho da avó dela e uma estante cheia de livros. Os livros ficam em cima da estante e as chaves ficam na gaveta. Não tem garagem, mas tem uma bicicletaria no térreo. O melhor é o bairro: tem padaria, farmácia e uma praça aqui perto.",
+      "questions": [
+        {
+          "id": "pt-listen-apartamento-novo-q1",
+          "kind": "choice",
+          "prompt": "Como é o apartamento da Bia?",
+          "options": [
+            "Pequeno, mas claro",
+            "Grande e escuro",
+            "Velho e vazio",
+            "Longe do centro"
+          ],
+          "answers": [
+            "Pequeno, mas claro"
+          ],
+          "explain": "O texto diz: o apartamento é pequeno, mas é claro."
+        },
+        {
+          "id": "pt-listen-apartamento-novo-q2",
+          "kind": "choice",
+          "prompt": "O que tem na sala?",
+          "options": [
+            "Um sofá e uma estante",
+            "Uma mesa e seis cadeiras",
+            "Uma cama grande",
+            "Uma televisão nova"
+          ],
+          "answers": [
+            "Um sofá e uma estante"
+          ],
+          "explain": "Na sala tem um sofá velho da avó dela e uma estante cheia de livros."
+        },
+        {
+          "id": "pt-listen-apartamento-novo-q3",
+          "kind": "choice",
+          "prompt": "Onde ficam as chaves?",
+          "options": [
+            "Na gaveta",
+            "Em cima da estante",
+            "Embaixo da cama",
+            "Na cozinha"
+          ],
+          "answers": [
+            "Na gaveta"
+          ],
+          "explain": "As chaves ficam na gaveta."
+        },
+        {
+          "id": "pt-listen-apartamento-novo-q4",
+          "kind": "choice",
+          "prompt": "O que o apartamento não tem?",
+          "options": [
+            "Garagem",
+            "Varanda",
+            "Quartos",
+            "Cozinha"
+          ],
+          "answers": [
+            "Garagem"
+          ],
+          "explain": "Não tem garagem, mas tem uma bicicletaria no térreo."
+        },
+        {
+          "id": "pt-listen-apartamento-novo-q5",
+          "kind": "written",
+          "prompt": "O que tem na varanda?",
+          "answers": [
+            "plantas",
+            "tem plantas",
+            "as plantas"
+          ],
+          "explain": "Tem dois quartos, uma cozinha ampla e uma varanda com plantas."
+        },
+        {
+          "id": "pt-listen-apartamento-novo-q6",
+          "kind": "written",
+          "prompt": "O que tem aqui perto no bairro? Dê duas coisas.",
+          "answers": [
+            "padaria e farmácia",
+            "padaria e farmacia",
+            "padaria, farmácia e praça",
+            "padaria, farmacia e praca"
+          ],
+          "explain": "Tem padaria, farmácia e uma praça aqui perto."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:there-is-are",
+        "grammar:prepositions-place",
+        "vocab:home"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-passeio-bairro",
+      "languageID": "pt",
+      "title": "Um passeio pelo bairro",
+      "level": "A1",
+      "topic": "bairro",
+      "unitID": "pt-foundations-u11",
+      "text": "Hoje o Leo quer conhecer o bairro novo. Ele para um vizinho na rua: « Desculpe, tem um mercado aqui perto ? ». O vizinho responde: « Tem, sim. Siga em frente duas quadras e vire à esquerda. O mercado fica na esquina, ao lado da farmácia ». O Leo agradece e caminha. No caminho ele vê uma praça com crianças e um ponto de ônibus. O mercado é pequeno, mas tem de tudo. E é perto: em cinco minutos ele está em casa com as compras.",
+      "questions": [
+        {
+          "id": "pt-listen-passeio-bairro-q1",
+          "kind": "choice",
+          "prompt": "O que o Leo quer saber?",
+          "options": [
+            "Onde tem um mercado",
+            "Que horas abre a praça",
+            "Onde mora o vizinho",
+            "Como vai ao trabalho"
+          ],
+          "answers": [
+            "Onde tem um mercado"
+          ],
+          "explain": "Ele pergunta: tem um mercado aqui perto ?"
+        },
+        {
+          "id": "pt-listen-passeio-bairro-q2",
+          "kind": "choice",
+          "prompt": "O que o vizinho manda fazer primeiro?",
+          "options": [
+            "Siga em frente duas quadras",
+            "Vire à direita",
+            "Pegue um ônibus",
+            "Espere na praça"
+          ],
+          "answers": [
+            "Siga em frente duas quadras"
+          ],
+          "explain": "Siga em frente duas quadras e vire à esquerda."
+        },
+        {
+          "id": "pt-listen-passeio-bairro-q3",
+          "kind": "choice",
+          "prompt": "Onde o mercado fica?",
+          "options": [
+            "Na esquina, ao lado da farmácia",
+            "Em frente à praça",
+            "Perto do ponto de ônibus",
+            "Dentro do centro"
+          ],
+          "answers": [
+            "Na esquina, ao lado da farmácia"
+          ],
+          "explain": "O mercado fica na esquina, ao lado da farmácia."
+        },
+        {
+          "id": "pt-listen-passeio-bairro-q4",
+          "kind": "choice",
+          "prompt": "O que o Leo vê no caminho?",
+          "options": [
+            "Uma praça com crianças",
+            "Uma escola grande",
+            "Um cinema novo",
+            "Um mercado enorme"
+          ],
+          "answers": [
+            "Uma praça com crianças"
+          ],
+          "explain": "No caminho ele vê uma praça com crianças e um ponto de ônibus."
+        },
+        {
+          "id": "pt-listen-passeio-bairro-q5",
+          "kind": "written",
+          "prompt": "Como é o mercado?",
+          "answers": [
+            "é pequeno",
+            "e pequeno",
+            "pequeno",
+            "pequeno mas tem de tudo"
+          ],
+          "explain": "O mercado é pequeno, mas tem de tudo."
+        },
+        {
+          "id": "pt-listen-passeio-bairro-q6",
+          "kind": "written",
+          "prompt": "Em quanto tempo o Leo chega em casa?",
+          "answers": [
+            "em cinco minutos",
+            "cinco minutos",
+            "5 minutos"
+          ],
+          "explain": "Em cinco minutos ele está em casa com as compras."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "function:ask-for-directions",
+        "vocab:town"
+      ],
+      "exposureSkills": []
     }
   ]
 }

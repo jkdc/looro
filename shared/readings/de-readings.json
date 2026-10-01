@@ -585,6 +585,92 @@
           "explain": "« Mit freundlichen Grüßen » – Standard am Briefende."
         }
       ]
+    },
+    {
+      "id": "de-read-anzeige-mitbewohner",
+      "languageID": "de",
+      "title": "Anzeige: Mitbewohner gesucht",
+      "level": "A1",
+      "topic": "Wohnen",
+      "unitID": "de-foundations-u10",
+      "text": "Zimmer frei! Ich suche einen Mitbewohner für meine Wohnung. Die Wohnung liegt im zweiten Stock und hat vier Zimmer. Dein Zimmer ist 18 Quadratmeter groß und sehr hell. Es gibt eine Küche, ein Bad und einen kleinen Balkon. Auf dem Balkon stehen zwei Stühle. Ich heiße Anna, bin 27 Jahre alt und arbeite als Verkäuferin. Ich bin ruhig und ordentlich. Mein Sofa ist alt, aber gemütlich. Schreib mir!",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:possessives",
+        "vocab:home",
+        "function:describe-people"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-anzeige-mitbewohner-q1",
+          "kind": "choice",
+          "prompt": "Was sucht Anna ?",
+          "options": [
+            "Einen Mitbewohner",
+            "Eine neue Wohnung",
+            "Einen Job",
+            "Ein Sofa"
+          ],
+          "answers": [
+            "Einen Mitbewohner"
+          ],
+          "explain": "Ich suche einen Mitbewohner für meine Wohnung."
+        },
+        {
+          "id": "de-read-anzeige-mitbewohner-q2",
+          "kind": "written",
+          "prompt": "Wie groß ist das Zimmer ?",
+          "answers": [
+            "18 quadratmeter",
+            "achtzehn quadratmeter",
+            "18 qm"
+          ],
+          "explain": "Dein Zimmer ist 18 Quadratmeter groß."
+        },
+        {
+          "id": "de-read-anzeige-mitbewohner-q3",
+          "kind": "choice",
+          "prompt": "Was gibt es auf dem Balkon ?",
+          "options": [
+            "Zwei Stühle",
+            "Ein Sofa",
+            "Einen Tisch",
+            "Blumen"
+          ],
+          "answers": [
+            "Zwei Stühle"
+          ],
+          "explain": "Auf dem Balkon stehen zwei Stühle."
+        },
+        {
+          "id": "de-read-anzeige-mitbewohner-q4",
+          "kind": "written",
+          "prompt": "Wie alt ist Anna ?",
+          "answers": [
+            "27",
+            "27 jahre",
+            "sie ist 27 jahre alt"
+          ],
+          "explain": "Anna ist 27 Jahre alt."
+        },
+        {
+          "id": "de-read-anzeige-mitbewohner-q5",
+          "kind": "choice",
+          "prompt": "Wie ist Anna ?",
+          "options": [
+            "Ruhig und ordentlich",
+            "Laut und unordentlich",
+            "Nett, aber laut",
+            "Sehr sportlich"
+          ],
+          "answers": [
+            "Ruhig und ordentlich"
+          ],
+          "explain": "Ich bin ruhig und ordentlich."
+        }
+      ]
     }
   ]
 }

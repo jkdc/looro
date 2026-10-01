@@ -3641,6 +3641,1141 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-foundations-u10",
+      "title": "Casa mia",
+      "subtitle": "Il mio spazio",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "casa-stanze",
+          "title": "Le stanze di casa",
+          "subtitle": "C'è / ci sono",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Entri nel tuo appartamento nuovo: descrivi le stanze e i mobili.",
+          "colorIndex": 0
+        },
+        {
+          "id": "il-mio-spazio",
+          "title": "Le mie cose",
+          "subtitle": "Dov'è ?",
+          "symbol": "bed",
+          "category": "Course",
+          "situation": "Ogni cosa al suo posto: cerchi le tue cose e presenti il coinquilino.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u10-casa",
+          "title": "Il mio appartamento",
+          "goal": "Descrivere le stanze e i mobili di casa con c'è e ci sono.",
+          "intro": {
+            "explanation": [
+              "Per una cosa usi c'è: « Nella cucina c'è un tavolo ». Per più cose usi ci sono: « Nella cucina ci sono due sedie ».",
+              "La domanda è semplice: « C'è il bagno ? » — « Sì, c'è ». E la negazione: « Non c'è la lavatrice ».",
+              "Le stanze di casa: « la cucina », « la camera da letto », « il bagno », « il soggiorno ». « Il soggiorno è grande e luminoso »."
+            ],
+            "examples": [
+              {
+                "text": "C'è un divano nel soggiorno.",
+                "meaning": "Una cosa sola."
+              },
+              {
+                "text": "Ci sono due camere.",
+                "meaning": "Più cose."
+              },
+              {
+                "text": "Non c'è la lavatrice.",
+                "meaning": "Negare."
+              },
+              {
+                "text": "Il bagno è piccolo ma pulito.",
+                "meaning": "Descrivere una stanza."
+              },
+              {
+                "text": "La cucina è grande ?",
+                "meaning": "Chiedere di una stanza."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "c'è + singolare",
+              "meaning": "Una cosa sola.",
+              "note": "C'è un tavolo."
+            },
+            {
+              "text": "ci sono + plurale",
+              "meaning": "Più cose.",
+              "note": "Ci sono due sedie."
+            },
+            {
+              "text": "non c'è / non ci sono",
+              "meaning": "Negare.",
+              "note": "Non c'è la lavatrice."
+            },
+            {
+              "text": "C'è … ?",
+              "meaning": "Chiedere.",
+              "note": "C'è il bagno ?"
+            },
+            {
+              "text": "la camera da letto",
+              "meaning": "La stanza per dormire.",
+              "note": "La camera è luminosa."
+            }
+          ],
+          "situation": "Entri nel tuo appartamento nuovo e lo descrivi a un'amica: la cucina, il soggiorno e le due camere.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì dove sta il divano: nel soggiorno.",
+                "expected": [
+                  "Nel soggiorno c'è un divano.",
+                  "Nel soggiorno c'e un divano.",
+                  "In soggiorno c'è un divano."
+                ],
+                "focus": "c'è",
+                "watch": "c'è = hay (una cosa)."
+              },
+              {
+                "prompt": "Conta i mobili della cucina: due sedie.",
+                "expected": [
+                  "In cucina ci sono due sedie.",
+                  "Nella cucina ci sono due sedie."
+                ],
+                "focus": "ci sono",
+                "watch": "ci sono = hay (plurale)."
+              },
+              {
+                "prompt": "Dì che la lavatrice manca.",
+                "expected": [
+                  "Non c'è la lavatrice.",
+                  "Non c'e la lavatrice.",
+                  "Non c'è lavatrice."
+                ],
+                "focus": "non c'è",
+                "watch": "non c'è = no hay."
+              },
+              {
+                "prompt": "Chiedi se la casa ha il bagno.",
+                "expected": [
+                  "C'è il bagno ?",
+                  "C'e il bagno ?",
+                  "C'è un bagno ?"
+                ],
+                "focus": "c'è…?",
+                "watch": "Domanda con c'è."
+              },
+              {
+                "prompt": "Descrivi la tua camera: piccola ma luminosa.",
+                "expected": [
+                  "La camera è piccola ma luminosa.",
+                  "La mia camera è piccola ma luminosa.",
+                  "La camera e piccola ma luminosa."
+                ],
+                "focus": "essere + aggettivo",
+                "watch": "ma = pero."
+              },
+              {
+                "prompt": "Contiamo le finestre del soggiorno: due.",
+                "expected": [
+                  "Nel soggiorno ci sono due finestre.",
+                  "In soggiorno ci sono due finestre."
+                ],
+                "focus": "ci sono",
+                "watch": "Due cose → ci sono."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u10-casa-e1",
+              "kind": "choice",
+              "prompt": "___ un divano nel soggiorno.",
+              "options": [
+                "C'è",
+                "Ci sono",
+                "Sono",
+                "Hanno"
+              ],
+              "answers": [
+                "C'è"
+              ],
+              "explain": "Una cosa sola → c'è."
+            },
+            {
+              "id": "it-foundations-u10-casa-e2",
+              "kind": "gap",
+              "prompt": "Nella cucina ___ due sedie. (essere)",
+              "answers": [
+                "ci sono"
+              ],
+              "explain": "Plurale → ci sono."
+            },
+            {
+              "id": "it-foundations-u10-casa-e3",
+              "kind": "order",
+              "prompt": "Descrivi il bagno: piccolo, ma pulito.",
+              "answers": [
+                "Il bagno è piccolo ma pulito"
+              ],
+              "explain": "essere + aggettivo."
+            },
+            {
+              "id": "it-foundations-u10-casa-e4",
+              "kind": "written",
+              "prompt": "Descrivi il soggiorno: una finestra grande.",
+              "answers": [
+                "Nel soggiorno c'è una finestra grande.",
+                "Nel soggiorno c'e una finestra grande.",
+                "In soggiorno c'è una finestra grande."
+              ],
+              "explain": "c'è + una cosa sola."
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-simple",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u10-posti",
+          "title": "Dov'è ?",
+          "goal": "Dire dov'è una cosa: sopra, sotto, accanto a.",
+          "intro": {
+            "explanation": [
+              "Per chiedere dove sta una cosa: « Dov'è il gatto ? ». La risposta usa il posto: « È sotto il letto ».",
+              "Sopra = sulla superficie: « Il libro è sopra il tavolo ». Sotto = in basso: « Le scarpe sono sotto il letto ».",
+              "Accanto a = di lato: « La lampada è accanto al letto ». Vicino a = non lontano: « Il bagno è vicino alla cucina »."
+            ],
+            "examples": [
+              {
+                "text": "Dov'è il gatto ?",
+                "meaning": "Chiedere il posto."
+              },
+              {
+                "text": "È sopra il tavolo.",
+                "meaning": "Sulla superficie."
+              },
+              {
+                "text": "Le chiavi sono sotto il divano.",
+                "meaning": "In basso."
+              },
+              {
+                "text": "La sedia è accanto al tavolo.",
+                "meaning": "Di lato."
+              },
+              {
+                "text": "Il bagno è vicino alla cucina.",
+                "meaning": "Non lontano."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Dov'è … ?",
+              "meaning": "Chiedere il posto.",
+              "note": "Dov'è il gatto ?"
+            },
+            {
+              "text": "sopra",
+              "meaning": "Sulla superficie.",
+              "note": "sopra il tavolo."
+            },
+            {
+              "text": "sotto",
+              "meaning": "In basso.",
+              "note": "sotto il letto."
+            },
+            {
+              "text": "accanto a",
+              "meaning": "Di lato.",
+              "note": "accanto al letto."
+            },
+            {
+              "text": "vicino a",
+              "meaning": "Non lontano.",
+              "note": "vicino alla finestra."
+            }
+          ],
+          "situation": "Cerchi le tue cose in casa: il libro è sopra il tavolo, le chiavi sono sotto il divano e la lampada è accanto al letto.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì dove sta il libro: sulla superficie del tavolo.",
+                "expected": [
+                  "Il libro è sopra il tavolo.",
+                  "Il libro e sopra il tavolo.",
+                  "Sta sopra il tavolo."
+                ],
+                "focus": "sopra",
+                "watch": "sopra = encima de."
+              },
+              {
+                "prompt": "Dì dove stanno le scarpe: in basso.",
+                "expected": [
+                  "Le scarpe sono sotto il letto.",
+                  "Sono sotto il letto."
+                ],
+                "focus": "sotto",
+                "watch": "sotto = debajo de."
+              },
+              {
+                "prompt": "Chiedi dove sta il gatto.",
+                "expected": [
+                  "Dov'è il gatto ?",
+                  "Dov'e il gatto ?",
+                  "Dove è il gatto ?"
+                ],
+                "focus": "dov'è",
+                "watch": "Dov'è = dónde está."
+              },
+              {
+                "prompt": "Dì dove sta la lampada: di lato al letto.",
+                "expected": [
+                  "La lampada è accanto al letto.",
+                  "La lampada e accanto al letto."
+                ],
+                "focus": "accanto a",
+                "watch": "accanto a = al lado de."
+              },
+              {
+                "prompt": "Dì che il bagno non è lontano dalla cucina.",
+                "expected": [
+                  "Il bagno è vicino alla cucina.",
+                  "Il bagno e vicino alla cucina."
+                ],
+                "focus": "vicino a",
+                "watch": "vicino a = cerca de."
+              },
+              {
+                "prompt": "Riassumi: il gatto sta sulla poltrona.",
+                "expected": [
+                  "Il gatto è sopra la poltrona.",
+                  "Il gatto e sopra la poltrona."
+                ],
+                "focus": "sopra",
+                "watch": "Ripasso: sopra = encima de."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u10-posti-e1",
+              "kind": "choice",
+              "prompt": "La lampada è ___ al letto, di lato.",
+              "options": [
+                "accanto",
+                "sopra",
+                "sotto",
+                "dove"
+              ],
+              "answers": [
+                "accanto"
+              ],
+              "explain": "Di lato → accanto a."
+            },
+            {
+              "id": "it-foundations-u10-posti-e2",
+              "kind": "gap",
+              "prompt": "La sedia è ___ al tavolo. (di lato)",
+              "answers": [
+                "accanto"
+              ],
+              "explain": "accanto a = di lato."
+            },
+            {
+              "id": "it-foundations-u10-posti-e3",
+              "kind": "order",
+              "prompt": "Chiedi dove sta il gatto.",
+              "answers": [
+                "Dov'è il gatto"
+              ],
+              "explain": "Dov'è + cosa ?"
+            },
+            {
+              "id": "it-foundations-u10-posti-e4",
+              "kind": "written",
+              "prompt": "Dì dove stanno le scarpe: in basso, sotto il letto.",
+              "answers": [
+                "Le scarpe sono sotto il letto.",
+                "Sono sotto il letto.",
+                "Le scarpe stanno sotto il letto."
+              ],
+              "explain": "sotto + il letto."
+            }
+          ],
+          "skills": [
+            "grammar:prepositions-place",
+            "grammar:there-is-are",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u10-coinquilino",
+          "title": "Il mio coinquilino",
+          "goal": "Descrivere una persona e dire di chi è una cosa: mio, tuo, suo.",
+          "intro": {
+            "explanation": [
+              "I possessivi vanno con l'articolo: « il mio », « il tuo », « il suo ». « Il mio coinquilino è Luca ». « La tua camera è piccola ».",
+              "Mio, tuo, suo si accordano con la cosa, non con la persona: « il suo libro », « le sue chiavi » (di lui o di lei).",
+              "Per descrivere una persona: « Luca è simpatico e ordinato ». E il lavoro: « Luca lavora in un bar »."
+            ],
+            "examples": [
+              {
+                "text": "Il mio coinquilino è Luca.",
+                "meaning": "Presentare."
+              },
+              {
+                "text": "La sua camera è ordinata.",
+                "meaning": "Possessivo."
+              },
+              {
+                "text": "Le sue cose sono in bagno.",
+                "meaning": "Plurale."
+              },
+              {
+                "text": "Luca è simpatico e tranquillo.",
+                "meaning": "Carattere."
+              },
+              {
+                "text": "Luca lavora in un bar.",
+                "meaning": "Lavoro."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "il mio / la mia",
+              "meaning": "Di me.",
+              "note": "il mio ragazzo, la mia camera."
+            },
+            {
+              "text": "il tuo / la tua",
+              "meaning": "Di te.",
+              "note": "la tua borsa."
+            },
+            {
+              "text": "il suo / la sua",
+              "meaning": "Di lui o di lei.",
+              "note": "il suo libro."
+            },
+            {
+              "text": "i miei / le mie",
+              "meaning": "Plurale.",
+              "note": "le mie chiavi."
+            },
+            {
+              "text": "essere + aggettivo",
+              "meaning": "Descrivere.",
+              "note": "Luca è ordinato."
+            }
+          ],
+          "situation": "Luca, il tuo coinquilino nuovo, arriva con le sue cose: lo presenti e descrivi la vita in due.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Presenta il coinquilino: Luca.",
+                "expected": [
+                  "Il mio coinquilino è Luca.",
+                  "Il mio coinquilino e Luca."
+                ],
+                "focus": "il mio",
+                "watch": "il mio = mi (con articolo)."
+              },
+              {
+                "prompt": "Dì di chi è la camera: di lei, è ordinata.",
+                "expected": [
+                  "La sua camera è ordinata.",
+                  "La sua camera e ordinata."
+                ],
+                "focus": "la sua",
+                "watch": "suo/a = su (di lui o di lei)."
+              },
+              {
+                "prompt": "Dì che sono le tue chiavi.",
+                "expected": [
+                  "Sono le mie chiavi.",
+                  "Le chiavi sono le mie."
+                ],
+                "focus": "le mie",
+                "watch": "mie = mis (plurale)."
+              },
+              {
+                "prompt": "Descrivi Luca: simpatico e ordinato.",
+                "expected": [
+                  "Luca è simpatico e ordinato.",
+                  "Luca e simpatico e ordinato."
+                ],
+                "focus": "aggettivi",
+                "watch": "ordinato = ordenado."
+              },
+              {
+                "prompt": "Dì dove lavora Luca: in un bar.",
+                "expected": [
+                  "Luca lavora in un bar.",
+                  "Lavora in un bar."
+                ],
+                "focus": "lavora in",
+                "watch": "lavorare = trabajar."
+              },
+              {
+                "prompt": "Hai trovato un libro in salotto: chiedi a chi appartiene.",
+                "expected": [
+                  "Di chi è questo libro ?",
+                  "Di chi e questo libro ?",
+                  "Di chi è il libro ?"
+                ],
+                "focus": "di chi è",
+                "watch": "di chi è = ¿de quién es?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u10-coinquilino-e1",
+              "kind": "choice",
+              "prompt": "___ coinquilino è molto ordinato.",
+              "options": [
+                "Il mio",
+                "Il miei",
+                "La mia",
+                "Le mie"
+              ],
+              "answers": [
+                "Il mio"
+              ],
+              "explain": "Maschile singolare → il mio."
+            },
+            {
+              "id": "it-foundations-u10-coinquilino-e2",
+              "kind": "gap",
+              "prompt": "Luca mette le ___ chiavi sul tavolo. (di lui)",
+              "answers": [
+                "sue"
+              ],
+              "explain": "le sue chiavi = sus llaves."
+            },
+            {
+              "id": "it-foundations-u10-coinquilino-e3",
+              "kind": "order",
+              "prompt": "Dì di chi è la camera ordinata: di lei.",
+              "answers": [
+                "La sua camera è ordinata"
+              ],
+              "explain": "il suo / la sua + cosa."
+            },
+            {
+              "id": "it-foundations-u10-coinquilino-e4",
+              "kind": "written",
+              "prompt": "Presenta il tuo coinquilino: è simpatico.",
+              "answers": [
+                "Il mio coinquilino è simpatico.",
+                "Il mio coinquilino e simpatico.",
+                "Luca è simpatico."
+              ],
+              "explain": "il mio + persona + aggettivo."
+            }
+          ],
+          "skills": [
+            "grammar:possessives",
+            "function:describe-people",
+            "vocab:home",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u11",
+      "title": "Il mio quartiere",
+      "subtitle": "Vicino a casa",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "luoghi-quartiere",
+          "title": "I luoghi del quartiere",
+          "subtitle": "Cosa c'è qui vicino",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "Sei nuovo nel quartiere: cerchi i posti utili e chiedi la strada.",
+          "colorIndex": 0
+        },
+        {
+          "id": "spesa-frutta",
+          "title": "La frutta del quartiere",
+          "subtitle": "Dal fruttivendolo",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Fai la spesa di frutta per la settimana dal fruttivendolo sotto casa.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u11-luoghi",
+          "title": "C'è un supermercato ?",
+          "goal": "Chiedere se ci sono posti nel quartiere con c'è e ci sono.",
+          "intro": {
+            "explanation": [
+              "Per chiedere un posto: « Scusi, c'è un supermercato qui vicino ? ». La risposta: « Sì, c'è, in via Roma ».",
+              "Per più posti usi ci sono: « Ci sono farmacie in zona ? » — « Sì, due ». E la negazione: « Qui non c'è una banca ».",
+              "I posti del quartiere: « il supermercato », « la farmacia », « la banca », « la fermata dell'autobus », « il parco »."
+            ],
+            "examples": [
+              {
+                "text": "Scusi, c'è un supermercato qui vicino ?",
+                "meaning": "Chiedere."
+              },
+              {
+                "text": "Sì, c'è, in via Roma.",
+                "meaning": "Rispondere."
+              },
+              {
+                "text": "Ci sono farmacie in zona ?",
+                "meaning": "Plurale."
+              },
+              {
+                "text": "Non c'è una banca qui.",
+                "meaning": "Negare."
+              },
+              {
+                "text": "La fermata è dietro l'angolo.",
+                "meaning": "Il posto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Scusi, c'è … ?",
+              "meaning": "Chiedere educata.",
+              "note": "…un supermercato qui vicino ?"
+            },
+            {
+              "text": "c'è, in + via/piazza",
+              "meaning": "Rispondere.",
+              "note": "c'è, in via Roma."
+            },
+            {
+              "text": "ci sono + plurale ?",
+              "meaning": "Chiedere più posti.",
+              "note": "Ci sono farmacie ?"
+            },
+            {
+              "text": "non c'è / non ci sono",
+              "meaning": "Negare.",
+              "note": "Non c'è una banca."
+            },
+            {
+              "text": "in zona / qui vicino",
+              "meaning": "Qui intorno.",
+              "note": "c'è un parco in zona ?"
+            }
+          ],
+          "situation": "Sei nuovo nel quartiere: chiedi a una signora in strada dove stanno supermercato, farmacia e fermata.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi educatamente se qui intorno si trova un supermercato.",
+                "expected": [
+                  "Scusi, c'è un supermercato qui vicino ?",
+                  "Scusi, c'e un supermercato qui vicino ?",
+                  "C'è un supermercato qui vicino ?"
+                ],
+                "focus": "scusi, c'è",
+                "watch": "Scusi = pregunta educada."
+              },
+              {
+                "prompt": "Rispondi: sì, in via Roma.",
+                "expected": [
+                  "Sì, c'è, in via Roma.",
+                  "Si, c'e, in via Roma.",
+                  "C'è, in via Roma."
+                ],
+                "focus": "c'è + posto",
+                "watch": "Sì, c'è = sí, hay."
+              },
+              {
+                "prompt": "Chiedi se in zona si trovano farmacie.",
+                "expected": [
+                  "Ci sono farmacie in zona ?",
+                  "Ci sono farmacie in zona"
+                ],
+                "focus": "ci sono…?",
+                "watch": "plurale → ci sono."
+              },
+              {
+                "prompt": "Dì che manca la banca qui.",
+                "expected": [
+                  "Qui non c'è una banca.",
+                  "Qui non c'e una banca.",
+                  "Non c'è una banca qui."
+                ],
+                "focus": "non c'è",
+                "watch": "non c'è = no hay."
+              },
+              {
+                "prompt": "Ti serve l'autobus: chiedi il posto della fermata.",
+                "expected": [
+                  "Dov'è la fermata dell'autobus ?",
+                  "Dov'e la fermata dell'autobus ?",
+                  "Dove è la fermata ?"
+                ],
+                "focus": "dov'è",
+                "watch": "Dov'è = dónde está."
+              },
+              {
+                "prompt": "Rispondi: il parco sta dietro l'angolo.",
+                "expected": [
+                  "Il parco è dietro l'angolo.",
+                  "Il parco e dietro l'angolo."
+                ],
+                "focus": "è + posto",
+                "watch": "dietro l'angolo = a la vuelta."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u11-luoghi-e1",
+              "kind": "choice",
+              "prompt": "Scusi, ___ un supermercato qui vicino ?",
+              "options": [
+                "c'è",
+                "ci sono",
+                "è",
+                "hanno"
+              ],
+              "answers": [
+                "c'è"
+              ],
+              "explain": "Singolare → c'è."
+            },
+            {
+              "id": "it-foundations-u11-luoghi-e2",
+              "kind": "gap",
+              "prompt": "___ due farmacie in zona. (essere)",
+              "answers": [
+                "ci sono"
+              ],
+              "explain": "Plurale → ci sono."
+            },
+            {
+              "id": "it-foundations-u11-luoghi-e3",
+              "kind": "order",
+              "prompt": "Chiedi educatamente il supermercato.",
+              "answers": [
+                "Scusi c'è un supermercato qui vicino"
+              ],
+              "explain": "Scusi + c'è + posto."
+            },
+            {
+              "id": "it-foundations-u11-luoghi-e4",
+              "kind": "written",
+              "prompt": "Rispondi che la farmacia qui manca.",
+              "answers": [
+                "Non c'è una farmacia qui.",
+                "Non c'e una farmacia qui.",
+                "qui non c'e una farmacia"
+              ],
+              "explain": "non c'è + posto."
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-questions",
+            "vocab:town",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "it-foundations-u11-indicazioni",
+          "title": "Come arrivo ?",
+          "goal": "Chiedere e dare indicazioni semplici: dritto, sinistra, destra, vicino.",
+          "intro": {
+            "explanation": [
+              "Per chiedere la strada: « Scusi, come arrivo al supermercato ? ». La risposta usa vada: « Vada sempre dritto ».",
+              "Per girare: « Alla piazza giri a sinistra ». Poi la distanza: « Il supermercato è lì, vicino al parco ».",
+              "Per ringraziare: « Grazie mille ! ». La risposta: « Prego ! »."
+            ],
+            "examples": [
+              {
+                "text": "Scusi, come arrivo alla stazione ?",
+                "meaning": "Chiedere la strada."
+              },
+              {
+                "text": "Vada sempre dritto.",
+                "meaning": "Indicazione."
+              },
+              {
+                "text": "All'angolo giri a sinistra.",
+                "meaning": "Indicazione."
+              },
+              {
+                "text": "È vicino, cinque minuti a piedi.",
+                "meaning": "Distanza."
+              },
+              {
+                "text": "Grazie mille ! — Prego !",
+                "meaning": "Educate."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "come arrivo a/al/alla … ?",
+              "meaning": "Chiedere la strada.",
+              "note": "come arrivo al supermercato ?"
+            },
+            {
+              "text": "vada sempre dritto",
+              "meaning": "Indicazione.",
+              "note": "dritto fino alla piazza."
+            },
+            {
+              "text": "giri a sinistra/destra",
+              "meaning": "Girare.",
+              "note": "giri a destra alla farmacia."
+            },
+            {
+              "text": "è vicino / è lì",
+              "meaning": "Distanza corta.",
+              "note": "è lì, vicino al parco."
+            },
+            {
+              "text": "grazie mille — prego",
+              "meaning": "Educate.",
+              "note": "Prego !"
+            }
+          ],
+          "situation": "Cerchi il supermercato: una signora ti spiega la strada e tu ringrazi.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi la strada per il supermercato.",
+                "expected": [
+                  "Scusi, come arrivo al supermercato ?",
+                  "Come arrivo al supermercato ?"
+                ],
+                "focus": "come arrivo",
+                "watch": "come arrivo a…? = ¿cómo llego a…?"
+              },
+              {
+                "prompt": "Dai l'indicazione: sempre dritto.",
+                "expected": [
+                  "Vada sempre dritto.",
+                  "Vada dritto."
+                ],
+                "focus": "vada dritto",
+                "watch": "vada = formal (usted)."
+              },
+              {
+                "prompt": "Dai l'indicazione: alla piazza, a sinistra.",
+                "expected": [
+                  "Alla piazza giri a sinistra.",
+                  "Giri a sinistra alla piazza."
+                ],
+                "focus": "giri a sinistra",
+                "watch": "giri = gire; sinistra = izquierda."
+              },
+              {
+                "prompt": "Dai la distanza: cinque minuti a piedi.",
+                "expected": [
+                  "È vicino, cinque minuti a piedi.",
+                  "E vicino, cinque minuti a piedi."
+                ],
+                "focus": "è vicino",
+                "watch": "vicino = cerca."
+              },
+              {
+                "prompt": "Ringrazia con forza.",
+                "expected": [
+                  "Grazie mille !",
+                  "Grazie mille"
+                ],
+                "focus": "grazie mille",
+                "watch": "mille = mil."
+              },
+              {
+                "prompt": "Rispondi a un grazie.",
+                "expected": [
+                  "Prego !",
+                  "Prego"
+                ],
+                "focus": "prego",
+                "watch": "prego = de nada."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u11-indicazioni-e1",
+              "kind": "choice",
+              "prompt": "Scusi, come arrivo ___ supermercato ?",
+              "options": [
+                "al",
+                "allo",
+                "a il",
+                "della"
+              ],
+              "answers": [
+                "al"
+              ],
+              "explain": "a + il → al."
+            },
+            {
+              "id": "it-foundations-u11-indicazioni-e2",
+              "kind": "gap",
+              "prompt": "Vada sempre ___, poi giri a destra. (avanti, linea retta)",
+              "answers": [
+                "dritto"
+              ],
+              "explain": "andare dritto = seguir recto."
+            },
+            {
+              "id": "it-foundations-u11-indicazioni-e3",
+              "kind": "order",
+              "prompt": "Dai l'indicazione: dritto.",
+              "answers": [
+                "Vada sempre dritto"
+              ],
+              "explain": "vada + sempre + dritto."
+            },
+            {
+              "id": "it-foundations-u11-indicazioni-e4",
+              "kind": "written",
+              "prompt": "Dì che il supermercato è a poca distanza: due minuti a piedi.",
+              "answers": [
+                "Il supermercato è vicino.",
+                "Il supermercato e vicino.",
+                "È vicino, due minuti a piedi."
+              ],
+              "explain": "vicino + minuti a piedi."
+            }
+          ],
+          "skills": [
+            "function:ask-for-directions",
+            "vocab:directions",
+            "grammar:present-simple",
+            "vocab:town"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u11-fruttivendolo",
+          "title": "Dal fruttivendolo",
+          "goal": "Comprare frutta: quantità e prezzo dal fruttivendolo del quartiere.",
+          "intro": {
+            "explanation": [
+              "Dal fruttivendolo si ordina con vorrei: « Buongiorno, vorrei delle mele ». È educato e semplice.",
+              "Le quantità: « un chilo di arance », « mezzo chilo di banane », « una mela ».",
+              "Per pagare: « Quanto fa ? » — « Fa tre euro e venti »."
+            ],
+            "examples": [
+              {
+                "text": "Vorrei delle mele.",
+                "meaning": "Ordinare."
+              },
+              {
+                "text": "Un chilo di arance.",
+                "meaning": "Quantità."
+              },
+              {
+                "text": "Mezzo chilo di banane.",
+                "meaning": "Quantità."
+              },
+              {
+                "text": "Quanto fa ?",
+                "meaning": "Chiedere il totale."
+              },
+              {
+                "text": "Fa tre euro e venti.",
+                "meaning": "Il prezzo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "vorrei + frutta",
+              "meaning": "Ordinare educata.",
+              "note": "vorrei delle mele."
+            },
+            {
+              "text": "un chilo di …",
+              "meaning": "1 kg.",
+              "note": "un chilo di arance."
+            },
+            {
+              "text": "mezzo chilo di …",
+              "meaning": "Medio kilo.",
+              "note": "mezzo chilo di banane."
+            },
+            {
+              "text": "Quanto fa ?",
+              "meaning": "Totale.",
+              "note": "fa due euro."
+            },
+            {
+              "text": "Che altro ?",
+              "meaning": "Il venditore chiede.",
+              "note": "Sì, grazie."
+            }
+          ],
+          "situation": "Fai la spesa di frutta dal fruttivendolo sotto casa: un chilo di arance, mezzo chilo di banane e delle mele.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ordina educatamente delle mele.",
+                "expected": [
+                  "Vorrei delle mele.",
+                  "vorrei delle mele"
+                ],
+                "focus": "vorrei",
+                "watch": "vorrei = quisiera."
+              },
+              {
+                "prompt": "Chiedi un chilo di arance.",
+                "expected": [
+                  "Un chilo di arance, per favore.",
+                  "Vorrei un chilo di arance."
+                ],
+                "focus": "un chilo di",
+                "watch": "chilo = kilo."
+              },
+              {
+                "prompt": "Chiedi le banane: la quantità è mezzo chilo.",
+                "expected": [
+                  "Mezzo chilo di banane.",
+                  "Vorrei mezzo chilo di banane."
+                ],
+                "focus": "mezzo chilo",
+                "watch": "mezzo = medio."
+              },
+              {
+                "prompt": "Chiedi il totale.",
+                "expected": [
+                  "Quanto fa ?",
+                  "Quanto fa"
+                ],
+                "focus": "quanto fa",
+                "watch": "Quanto fa ? = ¿cuánto es?"
+              },
+              {
+                "prompt": "Il venditore dice il prezzo: tre euro e venti.",
+                "expected": [
+                  "Fa tre euro e venti.",
+                  "Sono tre euro e venti."
+                ],
+                "focus": "fa + prezzo",
+                "watch": "fa = suma/son."
+              },
+              {
+                "prompt": "Dì che va bene così e ringrazi.",
+                "expected": [
+                  "Tutto qui, grazie.",
+                  "Basta così, grazie.",
+                  "Basta cosi, grazie."
+                ],
+                "focus": "chiusura",
+                "watch": "Tutto qui = eso es todo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u11-fruttivendolo-e1",
+              "kind": "choice",
+              "prompt": "Buongiorno, ___ delle mele, per favore.",
+              "options": [
+                "vorrei",
+                "voglio di",
+                "vorresti",
+                "sono"
+              ],
+              "answers": [
+                "vorrei"
+              ],
+              "explain": "vorrei = forma educata."
+            },
+            {
+              "id": "it-foundations-u11-fruttivendolo-e2",
+              "kind": "gap",
+              "prompt": "Vorrei ___ chilo di arance. (1 kg)",
+              "answers": [
+                "un"
+              ],
+              "explain": "un chilo di + frutta."
+            },
+            {
+              "id": "it-foundations-u11-fruttivendolo-e3",
+              "kind": "order",
+              "prompt": "Chiedi il totale.",
+              "answers": [
+                "Quanto fa tutto insieme"
+              ],
+              "explain": "Quanto fa ?"
+            },
+            {
+              "id": "it-foundations-u11-fruttivendolo-e4",
+              "kind": "written",
+              "prompt": "Ordina mezzo chilo di banane.",
+              "answers": [
+                "Mezzo chilo di banane, per favore.",
+                "Vorrei mezzo chilo di banane."
+              ],
+              "explain": "mezzo chilo di + frutta."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:food",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

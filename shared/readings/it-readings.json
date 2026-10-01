@@ -644,6 +644,92 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-read-annuncio-coinquilino",
+      "languageID": "it",
+      "title": "Cerco un coinquilino",
+      "level": "A1",
+      "topic": "casa",
+      "unitID": "it-foundations-u10",
+      "text": "CERCO COINQUILINO — L'appartamento è in via Verdi 10, vicino al parco. Ci sono due camere, una cucina e un bagno. La mia camera è piccola; la tua camera è grande e luminosa. C'è un divano nel soggiorno e ci sono due bici nel balcone. Il mio gatto si chiama Micio. Io lavoro in una libreria e sono tranquillo. Il tuo affitto è di 300 euro. Scrivimi a micio@posta.it !",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:possessives",
+        "vocab:home",
+        "function:describe-people"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-annuncio-coinquilino-q1",
+          "kind": "choice",
+          "prompt": "Quante camere ci sono nell'appartamento ?",
+          "options": [
+            "Due",
+            "Una",
+            "Tre",
+            "Quattro"
+          ],
+          "answers": [
+            "Due"
+          ],
+          "explain": "« Ci sono due camere, una cucina e un bagno »."
+        },
+        {
+          "id": "it-read-annuncio-coinquilino-q2",
+          "kind": "choice",
+          "prompt": "Com'è la camera del nuovo coinquilino ?",
+          "options": [
+            "Grande e luminosa",
+            "Piccola e scura",
+            "Piccola e luminosa",
+            "Senza finestre"
+          ],
+          "answers": [
+            "Grande e luminosa"
+          ],
+          "explain": "« La tua camera è grande e luminosa »."
+        },
+        {
+          "id": "it-read-annuncio-coinquilino-q3",
+          "kind": "written",
+          "prompt": "Com'è la camera di chi scrive ?",
+          "answers": [
+            "piccola",
+            "e piccola",
+            "la camera e piccola"
+          ],
+          "explain": "« La mia camera è piccola »."
+        },
+        {
+          "id": "it-read-annuncio-coinquilino-q4",
+          "kind": "written",
+          "prompt": "Dov'è l'appartamento ?",
+          "answers": [
+            "in via Verdi 10",
+            "via Verdi 10",
+            "in via Verdi dieci"
+          ],
+          "explain": "« L'appartamento è in via Verdi 10 »."
+        },
+        {
+          "id": "it-read-annuncio-coinquilino-q5",
+          "kind": "choice",
+          "prompt": "Quanto costa l'affitto ?",
+          "options": [
+            "300 euro",
+            "30 euro",
+            "350 euro",
+            "Non è scritto"
+          ],
+          "answers": [
+            "300 euro"
+          ],
+          "explain": "« Il tuo affitto è di 300 euro »."
+        }
+      ]
     }
   ]
 }

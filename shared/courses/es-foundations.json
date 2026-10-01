@@ -4493,6 +4493,1073 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-foundations-u11",
+      "title": "Mi casa",
+      "subtitle": "Mi espacio",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mi-espacio",
+          "title": "Mi espacio",
+          "subtitle": "Habitaciones y muebles",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Describes tu piso: el salón, la cocina y lo que hay en cada habitación.",
+          "colorIndex": 0
+        },
+        {
+          "id": "compartir-casa",
+          "title": "Compartimos casa",
+          "subtitle": "Cosas y personas",
+          "symbol": "bed",
+          "category": "Course",
+          "situation": "Hablas de tu compañero de piso: su habitación, sus cosas y su rutina.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u11-casa",
+          "title": "Mi piso",
+          "goal": "Describir tu piso: habitaciones, muebles y qué hay en cada sitio.",
+          "intro": {
+            "explanation": [
+              "Para decir qué existe usamos «hay»: «En la cocina hay una mesa». Negamos con «no hay»: «No hay garaje».",
+              "Las habitaciones de casa: el salón, la cocina, el dormitorio y el baño. «El piso tiene dos habitaciones».",
+              "Para preguntar: «¿Cuántas habitaciones hay?». Respondes: «Hay dos: el salón y el dormitorio»."
+            ],
+            "examples": [
+              {
+                "text": "Mi piso es pequeño.",
+                "meaning": "Describir el piso."
+              },
+              {
+                "text": "En el salón hay un sofá y una mesa.",
+                "meaning": "Decir qué hay."
+              },
+              {
+                "text": "La cocina tiene una ventana grande.",
+                "meaning": "Describir una habitación."
+              },
+              {
+                "text": "No hay garaje.",
+                "meaning": "Decir que algo no existe."
+              },
+              {
+                "text": "¿Cuántas habitaciones hay?",
+                "meaning": "Preguntar por espacios."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "hay un / una …",
+              "meaning": "Decir qué existe (singular).",
+              "note": "Hay un sofá nuevo."
+            },
+            {
+              "text": "no hay …",
+              "meaning": "Decir que no existe.",
+              "note": "No hay ascensor."
+            },
+            {
+              "text": "el salón / la cocina",
+              "meaning": "Habitaciones de casa.",
+              "note": "El salón es grande."
+            },
+            {
+              "text": "el dormitorio / el baño",
+              "meaning": "Más habitaciones.",
+              "note": "El baño está a la derecha."
+            },
+            {
+              "text": "¿Cuántas habitaciones hay?",
+              "meaning": "Preguntar por espacios.",
+              "note": "Hay dos habitaciones."
+            }
+          ],
+          "situation": "Hablas de tu piso nuevo: dos habitaciones, un salón con sofá azul y una cocina pequeña sin lavavajillas.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Describe tu salón: di que hay un sofá y una mesa.",
+                "expected": [
+                  "En mi salon hay un sofa y una mesa",
+                  "En mi salón hay un sofá y una mesa"
+                ],
+                "focus": "hay",
+                "watch": "hay + un/una en singular."
+              },
+              {
+                "prompt": "Pregunta cuántas habitaciones tiene el piso.",
+                "expected": [
+                  "¿Cuantas habitaciones tiene el piso?",
+                  "¿Cuántas habitaciones tiene el piso?"
+                ],
+                "focus": "cuántas",
+                "watch": "En preguntas, cuántas lleva tilde."
+              },
+              {
+                "prompt": "Di qué hay en la cocina.",
+                "expected": [
+                  "Hay una mesa y dos sillas",
+                  "hay una mesa y dos sillas"
+                ],
+                "focus": "hay",
+                "watch": "hay nunca cambia: hay una mesa, hay dos sillas."
+              },
+              {
+                "prompt": "Habla de tu casa: el número de habitaciones.",
+                "expected": [
+                  "Mi piso tiene tres habitaciones",
+                  "mi piso tiene tres habitaciones"
+                ],
+                "focus": "tiene",
+                "watch": "El piso tiene + cantidad."
+              },
+              {
+                "prompt": "Pregunta si hay lavavajillas.",
+                "expected": [
+                  "¿Hay lavavajillas en la cocina?",
+                  "¿Hay lava platos en la cocina?"
+                ],
+                "focus": "¿hay…?",
+                "watch": "Pregunta con ¿Hay…? + sustantivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u11-casa-e1",
+              "kind": "choice",
+              "prompt": "En el salón ___ un sofá grande.",
+              "explain": "Hay + un/una: decir qué existe en un lugar.",
+              "options": [
+                "hay",
+                "es",
+                "tiene",
+                "está"
+              ],
+              "answers": [
+                "hay"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-casa-e2",
+              "kind": "gap",
+              "prompt": "Mi piso ___ dos habitaciones. (tener)",
+              "explain": "tiene: el piso posee habitaciones.",
+              "answers": [
+                "tiene"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-casa-e3",
+              "kind": "order",
+              "prompt": "Di qué hay en el salón: un sofá y una mesa.",
+              "explain": "hay + muebles del salón.",
+              "answers": [
+                "En el salón hay un sofá y una mesa"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-casa-e4",
+              "kind": "written",
+              "prompt": "Pregunta cuántas habitaciones hay.",
+              "explain": "¿Cuántas… hay? con tilde en cuántas.",
+              "answers": [
+                "¿Cuantas habitaciones hay en el piso?",
+                "¿Cuántas habitaciones hay en el piso?"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-simple",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u11-lugares",
+          "title": "¿Dónde está?",
+          "goal": "Decir dónde están las cosas: encima de, debajo de y al lado de.",
+          "intro": {
+            "explanation": [
+              "Para preguntar lugar: «¿Dónde está el teléfono?». Respondes con está + lugar: «Está en la mesa».",
+              "Las preposiciones de lugar: encima de, debajo de, al lado de. «La lámpara está encima de la mesa».",
+              "También usas delante de y detrás de: «El gato está debajo de la cama»."
+            ],
+            "examples": [
+              {
+                "text": "¿Dónde está el gato?",
+                "meaning": "Preguntar lugar."
+              },
+              {
+                "text": "Está encima de la mesa.",
+                "meaning": "Posición superior."
+              },
+              {
+                "text": "El periódico está debajo de la cama.",
+                "meaning": "Posición inferior."
+              },
+              {
+                "text": "La silla está al lado de la ventana.",
+                "meaning": "Junto a la ventana."
+              },
+              {
+                "text": "El móvil está en el cajón.",
+                "meaning": "Dentro: en."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Dónde está …?",
+              "meaning": "Preguntar por una cosa.",
+              "note": "¿Dónde están las llaves? (plural)"
+            },
+            {
+              "text": "encima de",
+              "meaning": "Sobre algo.",
+              "note": "El libro está encima de la mesa."
+            },
+            {
+              "text": "debajo de",
+              "meaning": "Bajo algo.",
+              "note": "El gato está debajo de la silla."
+            },
+            {
+              "text": "al lado de",
+              "meaning": "Junto a algo.",
+              "note": "La cama está al lado de la ventana."
+            },
+            {
+              "text": "delante de / detrás de",
+              "meaning": "Antes o después en el espacio.",
+              "note": "El coche está delante de la casa."
+            }
+          ],
+          "situation": "Buscas las llaves en casa: están encima de la mesa del salón, al lado de un periódico viejo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pregunta dónde está la llave.",
+                "expected": [
+                  "¿Donde esta la llave?",
+                  "¿Dónde está la llave?"
+                ],
+                "focus": "¿dónde está?",
+                "watch": "dónde con tilde en preguntas."
+              },
+              {
+                "prompt": "Di que el libro está sobre la mesa.",
+                "expected": [
+                  "El libro esta encima de la mesa",
+                  "El libro está encima de la mesa"
+                ],
+                "focus": "encima de",
+                "watch": "encima de = sobre."
+              },
+              {
+                "prompt": "Di que el gato duerme bajo la cama.",
+                "expected": [
+                  "El gato esta debajo de la cama",
+                  "El gato está debajo de la cama"
+                ],
+                "focus": "debajo de",
+                "watch": "debajo de = bajo."
+              },
+              {
+                "prompt": "Di que la silla está junto a la ventana.",
+                "expected": [
+                  "La silla esta al lado de la ventana",
+                  "La silla está al lado de la ventana"
+                ],
+                "focus": "al lado de",
+                "watch": "al lado de = junto a."
+              },
+              {
+                "prompt": "Di que las llaves están dentro del cajón.",
+                "expected": [
+                  "Las llaves estan en el cajon",
+                  "Las llaves están en el cajón"
+                ],
+                "focus": "en",
+                "watch": "Para dentro usamos en."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u11-lugares-e1",
+              "kind": "choice",
+              "prompt": "La cama está ___ de la ventana, muy cerca.",
+              "explain": "al lado de = junto a, muy cerca.",
+              "options": [
+                "al lado de",
+                "encima de",
+                "debajo de",
+                "detrás de"
+              ],
+              "answers": [
+                "al lado de"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-lugares-e2",
+              "kind": "gap",
+              "prompt": "El periódico está ___ de la mesa. (posición)",
+              "explain": "debajo de la mesa = bajo la mesa.",
+              "answers": [
+                "debajo"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-lugares-e3",
+              "kind": "order",
+              "prompt": "Di que el móvil está dentro del cajón.",
+              "explain": "en + lugar = dentro.",
+              "answers": [
+                "El móvil está en el cajón"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-lugares-e4",
+              "kind": "written",
+              "prompt": "Di que la lámpara está sobre la mesa.",
+              "explain": "encima de para posición superior.",
+              "answers": [
+                "La lampara esta encima de la mesa",
+                "La lámpara está encima de la mesa"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:prepositions-place",
+            "grammar:there-is-are",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u11-companeros",
+          "title": "Mi compañero de piso",
+          "goal": "Describir a tu compañero de piso y hablar de sus cosas con mi, tu y su.",
+          "intro": {
+            "explanation": [
+              "Los posesivos: mi, tu, su. «Mi compañero se llama Pablo». «Tu habitación es la grande».",
+              "su = de él o de ella. «Ana trabaja mucho; su trabajo es interesante».",
+              "Para describir personas: «Es simpático y muy ordenado». «Trabaja por la noche»."
+            ],
+            "examples": [
+              {
+                "text": "Mi compañero de piso se llama Pablo.",
+                "meaning": "Decir el nombre."
+              },
+              {
+                "text": "Su habitación está limpia.",
+                "meaning": "su = de Pablo."
+              },
+              {
+                "text": "Es simpático pero ruidoso.",
+                "meaning": "Describir carácter."
+              },
+              {
+                "text": "Mi compañera estudia medicina.",
+                "meaning": "Compañera: femenino."
+              },
+              {
+                "text": "Tu bici está en el balcón.",
+                "meaning": "tu = de ti."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mi / mis",
+              "meaning": "Poseedor: yo.",
+              "note": "Mis llaves están aquí."
+            },
+            {
+              "text": "tu / tus",
+              "meaning": "Poseedor: tú.",
+              "note": "Tu móvil suena."
+            },
+            {
+              "text": "su / sus",
+              "meaning": "Poseedor: él o ella.",
+              "note": "Sus libros están en el salón."
+            },
+            {
+              "text": "se llama …",
+              "meaning": "Decir el nombre.",
+              "note": "Mi compañera se llama Ana."
+            },
+            {
+              "text": "Es + adjetivo",
+              "meaning": "Describir carácter.",
+              "note": "Es ordenado y simpático."
+            }
+          ],
+          "situation": "Presentas a Pablo: comparte la cocina, trabaja de noche y sus cosas siempre están en el salón.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di cómo se llama tu compañero de piso.",
+                "expected": [
+                  "Mi compañero se llama Pablo",
+                  "mi compañero se llama pablo"
+                ],
+                "focus": "se llama",
+                "watch": "se llama + nombre."
+              },
+              {
+                "prompt": "Di que la habitación de él es pequeña.",
+                "expected": [
+                  "Su habitacion es pequena",
+                  "Su habitación es pequeña"
+                ],
+                "focus": "su",
+                "watch": "su = de él o de ella."
+              },
+              {
+                "prompt": "Describe el carácter de tu compañera: simpática y ordenada.",
+                "expected": [
+                  "Es simpatica y ordenada",
+                  "Es simpática y ordenada"
+                ],
+                "focus": "es + adjetivo",
+                "watch": "Adjetivo femenino: -a."
+              },
+              {
+                "prompt": "Habla de tus llaves: están en la cocina.",
+                "expected": [
+                  "Mis llaves estan en la cocina",
+                  "Mis llaves están en la cocina"
+                ],
+                "focus": "mis",
+                "watch": "mi → mis en plural."
+              },
+              {
+                "prompt": "Pregunta a tu compañero por su bici.",
+                "expected": [
+                  "¿Donde esta tu bici?",
+                  "¿Dónde está tu bici?"
+                ],
+                "focus": "tu",
+                "watch": "tu posesivo, sin tilde; tú pronombre, con tilde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u11-companeros-e1",
+              "kind": "choice",
+              "prompt": "Pablo es mi compañero y ___ habitación es la roja.",
+              "explain": "su = de él: la habitación de Pablo.",
+              "options": [
+                "su",
+                "tu",
+                "mis",
+                "nuestra"
+              ],
+              "answers": [
+                "su"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-companeros-e2",
+              "kind": "gap",
+              "prompt": "___ llaves están en la mesa. (posesivo de yo)",
+              "explain": "mi → mis en plural: mis llaves.",
+              "answers": [
+                "Mis"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-companeros-e3",
+              "kind": "order",
+              "prompt": "Presenta a tu compañera: se llama Ana.",
+              "explain": "mi + persona + se llama + nombre.",
+              "answers": [
+                "Mi compañera se llama Ana"
+              ]
+            },
+            {
+              "id": "es-foundations-u11-companeros-e4",
+              "kind": "written",
+              "prompt": "Habla del carácter de él.",
+              "explain": "Es + adjetivo: simpático lleva tilde.",
+              "answers": [
+                "es muy simpatico",
+                "Es muy simpático"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:possessives",
+            "function:describe-people",
+            "vocab:home",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u12",
+      "title": "Mi barrio",
+      "subtitle": "Cerca de casa",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "sitios-cercanos",
+          "title": "Sitios cercanos",
+          "subtitle": "¿Qué hay por aquí?",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "Buscas sitios cerca de casa: supermercado, farmacia, parque y parada de autobús.",
+          "colorIndex": 0
+        },
+        {
+          "id": "fruta-fresca",
+          "title": "Fruta del barrio",
+          "subtitle": "La frutería de abajo",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Compras fruta en la frutería del barrio: kilos, medio kilo y buen precio.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u12-sitios",
+          "title": "¿Hay un supermercado?",
+          "goal": "Preguntar por sitios del barrio con ¿hay? y responder con hay / no hay.",
+          "intro": {
+            "explanation": [
+              "Para preguntar por sitios: «¿Hay un supermercado por aquí?». «¿Hay una farmacia cerca?».",
+              "Para responder: «Sí, hay uno en la esquina». «No, no hay nada cerca».",
+              "Sitios del barrio: el supermercado, la farmacia, el parque y la parada de autobús."
+            ],
+            "examples": [
+              {
+                "text": "¿Hay un supermercado por aquí?",
+                "meaning": "Preguntar por un sitio."
+              },
+              {
+                "text": "Sí, hay uno en la esquina.",
+                "meaning": "Responder que sí."
+              },
+              {
+                "text": "¿Hay una farmacia cerca?",
+                "meaning": "Preguntar distancia."
+              },
+              {
+                "text": "No, aquí no hay banco.",
+                "meaning": "Responder que no."
+              },
+              {
+                "text": "La parada de autobús está en la avenida.",
+                "meaning": "Situar un sitio."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Hay … por aquí?",
+              "meaning": "Preguntar por sitios.",
+              "note": "¿Hay un cajero por aquí?"
+            },
+            {
+              "text": "hay uno / hay una",
+              "meaning": "Responder que sí.",
+              "note": "¿Un bar? Hay uno al lado."
+            },
+            {
+              "text": "no hay nada",
+              "meaning": "Responder que no.",
+              "note": "No hay nada cerca."
+            },
+            {
+              "text": "la esquina",
+              "meaning": "El final de la calle.",
+              "note": "Está en la esquina."
+            },
+            {
+              "text": "la parada de autobús",
+              "meaning": "Sitio del barrio.",
+              "note": "La parada está cerca."
+            }
+          ],
+          "situation": "Llegas al barrio y preguntas: hay un supermercado en la esquina, una farmacia cerca y una parada de autobús en la avenida.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pregunta si hay un supermercado por aquí.",
+                "expected": [
+                  "¿Hay un supermercado por aqui?",
+                  "¿Hay un supermercado por aquí?"
+                ],
+                "focus": "¿hay…?",
+                "watch": "Pregunta con ¿Hay…? + un/una."
+              },
+              {
+                "prompt": "Responde que sí: hay un bar al lado.",
+                "expected": [
+                  "Si hay uno al lado",
+                  "Sí, hay uno al lado"
+                ],
+                "focus": "hay uno",
+                "watch": "hay uno/una sustituye al sitio."
+              },
+              {
+                "prompt": "Pregunta si hay una farmacia cerca.",
+                "expected": [
+                  "¿Hay una farmacia cerca?",
+                  "¿Hay una farmacia por aquí?"
+                ],
+                "focus": "¿hay una…?",
+                "watch": "farmacia es femenino: una."
+              },
+              {
+                "prompt": "Preguntan por un banco. Di que no hay.",
+                "expected": [
+                  "No hay nada cerca",
+                  "no hay nada cerca"
+                ],
+                "focus": "no hay nada",
+                "watch": "nada = ningún sitio."
+              },
+              {
+                "prompt": "Di dónde está la parada de autobús: en la avenida.",
+                "expected": [
+                  "La parada de autobus esta en la avenida",
+                  "La parada de autobús está en la avenida"
+                ],
+                "focus": "está en",
+                "watch": "Sitios concretos: está + en."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u12-sitios-e1",
+              "kind": "choice",
+              "prompt": "¿___ una farmacia por aquí?",
+              "explain": "¿Hay…? pregunta si existe un sitio.",
+              "options": [
+                "Hay",
+                "Es",
+                "Está",
+                "Son"
+              ],
+              "answers": [
+                "Hay"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-sitios-e2",
+              "kind": "gap",
+              "prompt": "¿Un cajero? Sí, hay ___ en la esquina. (masculino)",
+              "explain": "hay uno sustituye al sustantivo masculino.",
+              "answers": [
+                "uno"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-sitios-e3",
+              "kind": "order",
+              "prompt": "Responde afirmativamente: preguntan por un bar.",
+              "explain": "hay + sitio + lugar.",
+              "answers": [
+                "Hay un bar en la esquina"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-sitios-e4",
+              "kind": "written",
+              "prompt": "Preguntan por un banco en esta calle. Responde negativamente.",
+              "explain": "No hay nada / no hay ningún + sustantivo.",
+              "answers": [
+                "No hay nada cerca",
+                "No hay ningun banco aqui",
+                "No hay ningún banco aquí"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-questions",
+            "vocab:town",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "es-foundations-u12-direcciones",
+          "title": "¿Cómo llego?",
+          "goal": "Pedir y dar direcciones básicas: siga recto, gire a la izquierda, está cerca.",
+          "intro": {
+            "explanation": [
+              "Para pedir direcciones: «Perdone, ¿cómo llego a la estación?». «¿Está lejos?».",
+              "Para dar direcciones: «Siga recto». «Gire a la izquierda». «Gire a la derecha en el semáforo».",
+              "Para la distancia: «Está a cinco minutos». «Está muy cerca, no necesita autobús»."
+            ],
+            "examples": [
+              {
+                "text": "Perdone, ¿cómo llego a la estación?",
+                "meaning": "Pedir direcciones."
+              },
+              {
+                "text": "Siga recto dos calles.",
+                "meaning": "Dar una dirección."
+              },
+              {
+                "text": "Gire a la izquierda en el semáforo.",
+                "meaning": "Indicar un giro."
+              },
+              {
+                "text": "¿Está lejos?",
+                "meaning": "Preguntar distancia."
+              },
+              {
+                "text": "No, está a cinco minutos andando.",
+                "meaning": "Decir que está cerca."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Cómo llego a …?",
+              "meaning": "Pedir direcciones.",
+              "note": "¿Cómo llego al parque?"
+            },
+            {
+              "text": "siga recto",
+              "meaning": "Seguir de frente.",
+              "note": "Siga recto hasta la plaza."
+            },
+            {
+              "text": "gire a la izquierda / derecha",
+              "meaning": "Indicar un giro.",
+              "note": "Gire a la derecha."
+            },
+            {
+              "text": "está cerca / lejos",
+              "meaning": "Distancia.",
+              "note": "Está muy cerca."
+            },
+            {
+              "text": "a cinco minutos",
+              "meaning": "Tiempo andando.",
+              "note": "Está a cinco minutos."
+            }
+          ],
+          "situation": "Preguntas por la estación: siga recto, gire a la izquierda en la farmacia y está a diez minutos andando.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pide direcciones para ir a la estación, con educación.",
+                "expected": [
+                  "Perdone, ¿como llego a la estacion?",
+                  "Perdone, ¿cómo llego a la estación?"
+                ],
+                "focus": "¿cómo llego?",
+                "watch": "Perdone para llamar la atención."
+              },
+              {
+                "prompt": "Di que la persona debe seguir de frente.",
+                "expected": [
+                  "Siga recto",
+                  "siga recto"
+                ],
+                "focus": "siga recto",
+                "watch": "Fórmula de usted: siga."
+              },
+              {
+                "prompt": "Indica un giro a la izquierda.",
+                "expected": [
+                  "Gire a la izquierda",
+                  "gire a la izquierda"
+                ],
+                "focus": "gire a",
+                "watch": "gire a la izquierda / a la derecha."
+              },
+              {
+                "prompt": "Pregunta si el museo está lejos.",
+                "expected": [
+                  "¿Esta lejos el museo?",
+                  "¿Está lejos el museo?"
+                ],
+                "focus": "¿está lejos?",
+                "watch": "está con tilde."
+              },
+              {
+                "prompt": "Tranquiliza a la persona: el paseo dura cinco minutos.",
+                "expected": [
+                  "Esta a cinco minutos andando",
+                  "Está a cinco minutos andando"
+                ],
+                "focus": "a + tiempo",
+                "watch": "a cinco minutos = tiempo a pie."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u12-direcciones-e1",
+              "kind": "choice",
+              "prompt": "Para llegar al parque, ___ recto.",
+              "explain": "siga recto = continuar de frente.",
+              "options": [
+                "siga",
+                "gire",
+                "está",
+                "toma"
+              ],
+              "answers": [
+                "siga"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-direcciones-e2",
+              "kind": "gap",
+              "prompt": "En el semáforo, gire a la ___. (dirección)",
+              "explain": "a la izquierda = girar a la mano izquierda.",
+              "answers": [
+                "izquierda"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-direcciones-e3",
+              "kind": "order",
+              "prompt": "Indica el giro a la izquierda.",
+              "explain": "gire a + izquierda/derecha.",
+              "answers": [
+                "Gire a la izquierda"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-direcciones-e4",
+              "kind": "written",
+              "prompt": "Indica el giro: hay que girar en el semáforo.",
+              "explain": "Gire a la derecha en + lugar.",
+              "answers": [
+                "Gire a la derecha en el semaforo",
+                "Gire a la derecha en el semáforo"
+              ]
+            }
+          ],
+          "skills": [
+            "function:ask-for-directions",
+            "vocab:directions",
+            "grammar:present-simple",
+            "vocab:town"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u12-tienda",
+          "title": "En la frutería",
+          "goal": "Comprar fruta en el barrio: cantidades, calidad y fórmulas de trato.",
+          "intro": {
+            "explanation": [
+              "En la frutería el vendedor pregunta: «¿Qué le pongo?». Tú respondes la cantidad: «Medio kilo de plátanos».",
+              "Más cantidades: «Un kilo de naranjas». «Doscientos gramos de fresas». «Una sandía».",
+              "Para terminar: «Eso es todo, gracias». El vendedor pregunta: «¿Algo más?»."
+            ],
+            "examples": [
+              {
+                "text": "Buenos días, ¿qué le pongo?",
+                "meaning": "El vendedor saluda."
+              },
+              {
+                "text": "Medio kilo de plátanos, por favor.",
+                "meaning": "Pedir cantidad."
+              },
+              {
+                "text": "¿Están buenas las fresas?",
+                "meaning": "Preguntar calidad."
+              },
+              {
+                "text": "¿Algo más?",
+                "meaning": "El vendedor pregunta."
+              },
+              {
+                "text": "Eso es todo, gracias.",
+                "meaning": "Terminar la compra."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Qué le pongo?",
+              "meaning": "El vendedor pregunta.",
+              "note": "Respondes con la cantidad."
+            },
+            {
+              "text": "medio kilo de …",
+              "meaning": "Peso.",
+              "note": "Medio kilo de plátanos."
+            },
+            {
+              "text": "¿Están buenas …?",
+              "meaning": "Calidad de la fruta.",
+              "note": "Sí, están muy dulces."
+            },
+            {
+              "text": "¿Algo más?",
+              "meaning": "Preguntar si falta algo.",
+              "note": "Nada más, gracias."
+            },
+            {
+              "text": "Eso es todo.",
+              "meaning": "Cerrar la compra.",
+              "note": "Eso es todo, gracias."
+            }
+          ],
+          "situation": "Compras en la frutería de tu calle: medio kilo de plátanos, una sandía y preguntas si las fresas están buenas.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "El vendedor pregunta qué quieres. Pide medio kilo de plátanos.",
+                "expected": [
+                  "Me pone medio kilo de platanos",
+                  "Me pone medio kilo de plátanos"
+                ],
+                "focus": "me pone",
+                "watch": "me pone + cantidad."
+              },
+              {
+                "prompt": "Pregunta si las fresas están buenas.",
+                "expected": [
+                  "¿Estan buenas las fresas?",
+                  "¿Están buenas las fresas?"
+                ],
+                "focus": "¿están buenas?",
+                "watch": "buenas concuerda con fresas."
+              },
+              {
+                "prompt": "Pide un kilo de naranjas.",
+                "expected": [
+                  "Me pone un kilo de naranjas",
+                  "Quiero un kilo de naranjas",
+                  "quiero un kilo de naranjas"
+                ],
+                "focus": "kilo",
+                "watch": "un kilo de + fruta."
+              },
+              {
+                "prompt": "El vendedor pregunta si falta algo. Di que no.",
+                "expected": [
+                  "Nada mas gracias",
+                  "Nada más, gracias"
+                ],
+                "focus": "nada más",
+                "watch": "Nada más = eso es todo."
+              },
+              {
+                "prompt": "Di que ya terminaste la compra.",
+                "expected": [
+                  "Eso es todo gracias",
+                  "Eso es todo, gracias"
+                ],
+                "focus": "eso es todo",
+                "watch": "Fórmula para cerrar."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u12-tienda-e1",
+              "kind": "choice",
+              "prompt": "Buenos días, ¿qué le ___?",
+              "explain": "El vendedor dice: ¿qué le pongo?",
+              "options": [
+                "pongo",
+                "pone",
+                "pones",
+                "ponemos"
+              ],
+              "answers": [
+                "pone"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-tienda-e2",
+              "kind": "gap",
+              "prompt": "Quiero ___ kilo de manzanas. (ni uno ni dos)",
+              "explain": "medio kilo = 500 gramos.",
+              "answers": [
+                "medio"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-tienda-e3",
+              "kind": "order",
+              "prompt": "Pide medio kilo de plátanos.",
+              "explain": "me pone + cantidad + fruta.",
+              "answers": [
+                "Me pone medio kilo de plátanos"
+              ]
+            },
+            {
+              "id": "es-foundations-u12-tienda-e4",
+              "kind": "written",
+              "prompt": "El vendedor pregunta «¿Algo más?». Responde que no, cortésmente.",
+              "explain": "Nada más, gracias = no quiero nada más.",
+              "answers": [
+                "Nada mas gracias",
+                "Nada más, gracias",
+                "Eso es todo, gracias"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:food",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

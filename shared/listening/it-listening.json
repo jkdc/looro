@@ -1413,6 +1413,202 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-listen-appartamento-nuovo",
+      "languageID": "it",
+      "title": "Un appartamento nuovo",
+      "level": "A1",
+      "topic": "casa",
+      "unitID": "it-foundations-u10",
+      "text": "Anna ha un appartamento nuovo. « È piccolo, ma mi piace. La porta è gialla. C'è una cucina piccola e luminosa: ci sono un tavolo, due sedie e un frigo nuovo. Il soggiorno è grande: c'è un divano blu e ci sono due finestre. La camera da letto è tranquilla: il letto è sotto la finestra e c'è un armadio bianco. Il bagno è piccolo ma pulito. Il mio gatto dorme sul divano. La mia casa è piccola, ma è la mia casa. »",
+      "questions": [
+        {
+          "id": "it-listen-appartamento-nuovo-q1",
+          "kind": "choice",
+          "prompt": "Com'è l'appartamento ?",
+          "options": [
+            "Piccolo, ma ad Anna piace",
+            "Grande e moderno",
+            "Molto costoso",
+            "Senza cucina"
+          ],
+          "answers": [
+            "Piccolo, ma ad Anna piace"
+          ],
+          "explain": "« È piccolo, ma mi piace »."
+        },
+        {
+          "id": "it-listen-appartamento-nuovo-q2",
+          "kind": "choice",
+          "prompt": "Cosa c'è nella cucina ?",
+          "options": [
+            "Un tavolo, due sedie e un frigo",
+            "Un divano blu",
+            "Un armadio bianco",
+            "Niente"
+          ],
+          "answers": [
+            "Un tavolo, due sedie e un frigo"
+          ],
+          "explain": "« Ci sono un tavolo, due sedie e un frigo nuovo »."
+        },
+        {
+          "id": "it-listen-appartamento-nuovo-q3",
+          "kind": "written",
+          "prompt": "Dove sta il letto ?",
+          "answers": [
+            "sotto la finestra",
+            "sotto la finestra della camera"
+          ],
+          "explain": "« Il letto è sotto la finestra »."
+        },
+        {
+          "id": "it-listen-appartamento-nuovo-q4",
+          "kind": "choice",
+          "prompt": "Com'è il bagno ?",
+          "options": [
+            "Piccolo ma pulito",
+            "Grande e luminoso",
+            "Giallo",
+            "Non c'è"
+          ],
+          "answers": [
+            "Piccolo ma pulito"
+          ],
+          "explain": "« Il bagno è piccolo ma pulito »."
+        },
+        {
+          "id": "it-listen-appartamento-nuovo-q5",
+          "kind": "written",
+          "prompt": "Dove dorme il gatto ?",
+          "answers": [
+            "sul divano",
+            "sopra il divano",
+            "sul divano blu"
+          ],
+          "explain": "« Il mio gatto dorme sul divano »."
+        },
+        {
+          "id": "it-listen-appartamento-nuovo-q6",
+          "kind": "choice",
+          "prompt": "Quante finestre ci sono nel soggiorno ?",
+          "options": [
+            "Due",
+            "Una",
+            "Tre",
+            "Nessuna"
+          ],
+          "answers": [
+            "Due"
+          ],
+          "explain": "« Ci sono due finestre »."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:there-is-are",
+        "grammar:prepositions-place",
+        "vocab:home"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-passeggiata-quartiere",
+      "languageID": "it",
+      "title": "Una passeggiata nel quartiere",
+      "level": "A1",
+      "topic": "quartiere",
+      "unitID": "it-foundations-u11",
+      "text": "Marco è nuovo nel quartiere. Oggi fa una passeggiata. « Scusi, c'è un supermercato qui vicino ? » chiede a una signora. « Sì, vada sempre dritto e alla piazza giri a sinistra. È lì, accanto alla farmacia ». Marco cammina cinque minuti. Il supermercato è piccolo ma c'è di tutto. Dopo entra nel parco: ci sono alberi, panchine e un chiosco. Torna a casa con le mele e due arance. Il suo quartiere è tranquillo e lui è contento.",
+      "questions": [
+        {
+          "id": "it-listen-passeggiata-quartiere-q1",
+          "kind": "choice",
+          "prompt": "Cosa chiede Marco alla signora ?",
+          "options": [
+            "Dov'è un supermercato",
+            "L'ora",
+            "Il suo nome",
+            "Il prezzo delle mele"
+          ],
+          "answers": [
+            "Dov'è un supermercato"
+          ],
+          "explain": "« Scusi, c'è un supermercato qui vicino ? »."
+        },
+        {
+          "id": "it-listen-passeggiata-quartiere-q2",
+          "kind": "written",
+          "prompt": "Che cosa deve fare alla piazza ?",
+          "answers": [
+            "giri a sinistra",
+            "gira a sinistra",
+            "andare a sinistra"
+          ],
+          "explain": "« Alla piazza giri a sinistra »."
+        },
+        {
+          "id": "it-listen-passeggiata-quartiere-q3",
+          "kind": "choice",
+          "prompt": "Dov'è il supermercato ?",
+          "options": [
+            "Accanto alla farmacia",
+            "Dietro il parco",
+            "In piazza",
+            "Vicino alla stazione"
+          ],
+          "answers": [
+            "Accanto alla farmacia"
+          ],
+          "explain": "« È lì, accanto alla farmacia »."
+        },
+        {
+          "id": "it-listen-passeggiata-quartiere-q4",
+          "kind": "written",
+          "prompt": "Quanto cammina Marco ?",
+          "answers": [
+            "cinque minuti",
+            "5 minuti"
+          ],
+          "explain": "« Marco cammina cinque minuti »."
+        },
+        {
+          "id": "it-listen-passeggiata-quartiere-q5",
+          "kind": "choice",
+          "prompt": "Cosa c'è nel parco ?",
+          "options": [
+            "Alberi, panchine e un chiosco",
+            "Un supermercato",
+            "Una farmacia",
+            "Niente"
+          ],
+          "answers": [
+            "Alberi, panchine e un chiosco"
+          ],
+          "explain": "« Ci sono alberi, panchine e un chiosco »."
+        },
+        {
+          "id": "it-listen-passeggiata-quartiere-q6",
+          "kind": "written",
+          "prompt": "Com'è il quartiere ?",
+          "answers": [
+            "tranquillo",
+            "è tranquillo",
+            "e tranquillo"
+          ],
+          "explain": "« Il suo quartiere è tranquillo »."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:prepositions-place",
+        "function:ask-for-directions",
+        "vocab:town"
+      ],
+      "exposureSkills": []
     }
   ]
 }

@@ -3835,6 +3835,1085 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u10",
+      "title": "Ma maison",
+      "subtitle": "Mon espace",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "visite-appart",
+          "title": "La visite de l'appart",
+          "subtitle": "Il y a / il n'y a pas",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Vous visitez un petit appartement du quartier : les pièces, les meubles, et ce qui manque.",
+          "colorIndex": 0
+        },
+        {
+          "id": "coloc-recherche",
+          "title": "La colocation",
+          "subtitle": "Mon, ma, mes",
+          "symbol": "bed",
+          "category": "Course",
+          "situation": "Karim arrive avec ses cartons : sa chambre, ses livres — et vous présentez vos choses.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u10-maison",
+          "title": "Mon appart",
+          "goal": "Dire ce qu'il y a chez toi : les pièces et les meubles avec il y a.",
+          "intro": {
+            "explanation": [
+              "Pour dire ce qui existe, on utilise « il y a » : « Il y a une grande cuisine. Il y a deux chambres. »",
+              "Un, une pour le singulier, des pour le pluriel : « Il y a un canapé, une table, des chaises. »",
+              "La négation : « Il n'y a pas de garage. » Devant une voyelle, de devient d' : « Il n'y a pas d'ascenseur. »"
+            ],
+            "examples": [
+              {
+                "text": "Il y a une grande cuisine.",
+                "meaning": "La pièce pour cuisiner."
+              },
+              {
+                "text": "Il y a deux chambres.",
+                "meaning": "La pièce pour dormir."
+              },
+              {
+                "text": "Dans le salon, il y a un canapé.",
+                "meaning": "Les meubles du salon."
+              },
+              {
+                "text": "Il y a des chaises dans la cuisine.",
+                "meaning": "Le pluriel avec des."
+              },
+              {
+                "text": "Il n'y a pas d'ascenseur.",
+                "meaning": "La négation avec d'."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Il y a + un / une / des",
+              "meaning": "Dire ce qui existe.",
+              "note": "Il y a un lit dans la chambre."
+            },
+            {
+              "text": "Il n'y a pas de …",
+              "meaning": "La négation.",
+              "note": "pas de garage ; pas d'ascenseur."
+            },
+            {
+              "text": "la salle de bains",
+              "meaning": "La pièce pour se laver.",
+              "note": "les toilettes, c'est à côté."
+            },
+            {
+              "text": "un deux-pièces",
+              "meaning": "Un petit appartement.",
+              "note": "une pièce = une chambre."
+            },
+            {
+              "text": "C'est grand / petit.",
+              "meaning": "La taille.",
+              "note": "C'est petit mais clair."
+            }
+          ],
+          "situation": "Vous visitez un petit appartement : deux pièces, une cuisine claire, pas d'ascenseur — et vous demandez s'il y a un balcon.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis ce qu'il y a dans ta cuisine.",
+                "expected": [
+                  "Il y a une table et des chaises.",
+                  "Dans ma cuisine, il y a une table et des chaises."
+                ],
+                "focus": "il y a",
+                "watch": "des pour le pluriel."
+              },
+              {
+                "prompt": "L'immeuble n'a pas de place pour la voiture. Dis-le.",
+                "expected": [
+                  "Il n'y a pas de garage.",
+                  "Il n'y a pas de parking."
+                ],
+                "focus": "pas de",
+                "watch": "négation : pas DE + nom."
+              },
+              {
+                "prompt": "Demandez au propriétaire s'il y a un balcon.",
+                "expected": [
+                  "Il y a un balcon ?",
+                  "Est-ce qu'il y a un balcon ?"
+                ],
+                "focus": "question",
+                "watch": "est-ce que + il y a."
+              },
+              {
+                "prompt": "Dis ce qu'il y a dans ta chambre.",
+                "expected": [
+                  "Il y a un lit et une armoire.",
+                  "Il y a un lit et un bureau."
+                ],
+                "focus": "la chambre",
+                "watch": "un lit, une armoire."
+              },
+              {
+                "prompt": "L'appartement est au cinquième étage. Dis que l'immeuble n'a pas d'ascenseur.",
+                "expected": [
+                  "Il n'y a pas d'ascenseur.",
+                  "Il n'y a pas d'ascenseur dans l'immeuble."
+                ],
+                "focus": "d'ascenseur",
+                "watch": "de devient d' devant une voyelle."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u10-maison-e1",
+              "kind": "choice",
+              "prompt": "___ ___ une grande cuisine dans ton appart ?",
+              "options": [
+                "Il y a",
+                "Il est",
+                "C'est",
+                "Elle a"
+              ],
+              "answers": [
+                "Il y a"
+              ],
+              "explain": "il y a = il existe ; il est = identité."
+            },
+            {
+              "id": "fr-foundations-u10-maison-e2",
+              "kind": "gap",
+              "prompt": "Dans la chambre, il y a ___ grand lit.",
+              "answers": [
+                "un"
+              ],
+              "explain": "un lit : masculin singulier."
+            },
+            {
+              "id": "fr-foundations-u10-maison-e3",
+              "kind": "order",
+              "prompt": "Décrivez la cuisine.",
+              "answers": [
+                "Il y a une table dans la cuisine"
+              ],
+              "explain": "il y a + article + nom + lieu."
+            },
+            {
+              "id": "fr-foundations-u10-maison-e4",
+              "kind": "written",
+              "prompt": "Dis ce qu'il y a dans le salon : un canapé bleu et une télé.",
+              "answers": [
+                "il y a un canapé bleu et une télé",
+                "il y a un canape bleu et une tele"
+              ],
+              "explain": "il y a + un/une + meuble."
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-simple",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u10-endroits",
+          "title": "Où est-ce ?",
+          "goal": "Situer les objets : sur, sous, à côté de — et demander où est la chose.",
+          "intro": {
+            "explanation": [
+              "Les mots de lieu : « sur » (en haut) et « sous » (en bas) : « Le chat est sur le lit. Les clés sont sous la table. »",
+              "« À côté de » dit la proximité : « à côté du canapé » (le), « à côté de la fenêtre » (la), « à côté des livres » (les).",
+              "Pour demander : « Où est le chat ? » (un seul objet), « Où sont les clés ? » (plusieurs objets)."
+            ],
+            "examples": [
+              {
+                "text": "Le chat est sur le lit.",
+                "meaning": "En haut du lit."
+              },
+              {
+                "text": "Les clés sont sous la table.",
+                "meaning": "En bas de la table."
+              },
+              {
+                "text": "La lampe est à côté du canapé.",
+                "meaning": "Près du canapé."
+              },
+              {
+                "text": "Où est la salle de bains ?",
+                "meaning": "Demander une pièce."
+              },
+              {
+                "text": "Où sont mes clés ?",
+                "meaning": "Plusieurs objets."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "sur",
+              "meaning": "En haut.",
+              "note": "sur le lit, sur la table."
+            },
+            {
+              "text": "sous",
+              "meaning": "En bas.",
+              "note": "sous le canapé."
+            },
+            {
+              "text": "à côté de / du / de la",
+              "meaning": "Près.",
+              "note": "à côté du frigo."
+            },
+            {
+              "text": "Où est … ?",
+              "meaning": "Un seul objet.",
+              "note": "Où est le chat ?"
+            },
+            {
+              "text": "Où sont … ?",
+              "meaning": "Plusieurs objets.",
+              "note": "Où sont les clés ?"
+            }
+          ],
+          "situation": "Le chat joue à cache-cache dans l'appartement : sur le lit, sous la table, à côté du frigo — et vous cherchez aussi vos clés.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Le chat est en haut du lit. Dis-le avec sur.",
+                "expected": [
+                  "Le chat est sur le lit.",
+                  "Il est sur le lit."
+                ],
+                "focus": "sur",
+                "watch": "sur = en haut de."
+              },
+              {
+                "prompt": "Les chaussures sont en bas du lit. Dis-le avec sous.",
+                "expected": [
+                  "Les chaussures sont sous le lit.",
+                  "Elles sont sous le lit."
+                ],
+                "focus": "sous",
+                "watch": "sous = en bas de."
+              },
+              {
+                "prompt": "La lampe est près du canapé. Dis-le avec à côté de.",
+                "expected": [
+                  "La lampe est à côté du canapé.",
+                  "Elle est à côté du canapé.",
+                  "La lampe est a cote du canape."
+                ],
+                "focus": "à côté du",
+                "watch": "de + le = du ; de + la = de la."
+              },
+              {
+                "prompt": "Vous cherchez la salle de bains. Posez la question.",
+                "expected": [
+                  "Où est la salle de bains ?",
+                  "Ou est la salle de bains ?"
+                ],
+                "focus": "où est",
+                "watch": "où est + un objet singulier."
+              },
+              {
+                "prompt": "Vos clés ont disparu. Posez la question.",
+                "expected": [
+                  "Où sont mes clés ?",
+                  "Ou sont mes cles ?"
+                ],
+                "focus": "où sont",
+                "watch": "où sont + pluriel."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u10-endroits-e1",
+              "kind": "choice",
+              "prompt": "Le chat est ___ le lit : en haut !",
+              "options": [
+                "sur",
+                "sous",
+                "dans",
+                "à côté"
+              ],
+              "answers": [
+                "sur"
+              ],
+              "explain": "sur = en haut ; sous = en bas."
+            },
+            {
+              "id": "fr-foundations-u10-endroits-e2",
+              "kind": "gap",
+              "prompt": "La lampe est à côté ___ canapé.",
+              "answers": [
+                "du"
+              ],
+              "explain": "à côté de + le = du."
+            },
+            {
+              "id": "fr-foundations-u10-endroits-e3",
+              "kind": "order",
+              "prompt": "Décrivez la photo : le chat et le lit.",
+              "answers": [
+                "Le chat est sur le lit"
+              ],
+              "explain": "sur + le lit : en haut."
+            },
+            {
+              "id": "fr-foundations-u10-endroits-e4",
+              "kind": "written",
+              "prompt": "Vous cherchez vos clés. Un ami répond : la table, en haut.",
+              "answers": [
+                "les clés sont sur la table",
+                "les cles sont sur la table",
+                "elles sont sur la table"
+              ],
+              "explain": "les clés sont sur + lieu."
+            }
+          ],
+          "skills": [
+            "grammar:prepositions-place",
+            "grammar:there-is-are",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u10-coloc",
+          "title": "Mon colocataire",
+          "goal": "Présenter ton colocataire et parler de tes choses avec mon, ma, mes.",
+          "intro": {
+            "explanation": [
+              "mon, ma, mes disent à qui est la chose : « mon frère, ma sœur, mes amis. »",
+              "mon devant un mot masculin, ma devant un mot féminin, mes au pluriel : « mon colocataire, ma chambre, mes meubles. »",
+              "Pour décrire une personne : « Il est grand et sympa. » « Elle est très gentille. »"
+            ],
+            "examples": [
+              {
+                "text": "Mon colocataire s'appelle Karim.",
+                "meaning": "mon + masculin."
+              },
+              {
+                "text": "Ma chambre est petite mais claire.",
+                "meaning": "ma + féminin."
+              },
+              {
+                "text": "Mes voisins sont très gentils.",
+                "meaning": "mes + pluriel."
+              },
+              {
+                "text": "Karim est grand et sympa.",
+                "meaning": "La description."
+              },
+              {
+                "text": "Il aime la musique et le foot.",
+                "meaning": "Les goûts."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mon …",
+              "meaning": "Possessif masculin.",
+              "note": "mon frère, mon colocataire."
+            },
+            {
+              "text": "ma …",
+              "meaning": "Possessif féminin.",
+              "note": "ma chambre, ma sœur."
+            },
+            {
+              "text": "mes …",
+              "meaning": "Possessif pluriel.",
+              "note": "mes amis, mes clés."
+            },
+            {
+              "text": "Il est / Elle est …",
+              "meaning": "Décrire quelqu'un.",
+              "note": "Elle est très sympa."
+            },
+            {
+              "text": "Il / Elle aime …",
+              "meaning": "Les goûts.",
+              "note": "Il aime le foot."
+            }
+          ],
+          "situation": "Karim arrive avec ses cartons : sa chambre, ses livres, sa guitare — et vous présentez vos choses à lui.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Présente ton colocataire : il s'appelle Karim.",
+                "expected": [
+                  "Mon colocataire s'appelle Karim.",
+                  "Mon colocataire, c'est Karim."
+                ],
+                "focus": "mon",
+                "watch": "colocataire = mot masculin."
+              },
+              {
+                "prompt": "Ta chambre est petite. Dis-le avec mon, ma ou mes.",
+                "expected": [
+                  "Ma chambre est petite.",
+                  "Ma chambre est vraiment petite."
+                ],
+                "focus": "ma",
+                "watch": "chambre = féminin : ma."
+              },
+              {
+                "prompt": "Tes amis sont gentils. Dis-le avec mon, ma ou mes.",
+                "expected": [
+                  "Mes amis sont gentils.",
+                  "Mes amis sont très gentils."
+                ],
+                "focus": "mes",
+                "watch": "pluriel : mes."
+              },
+              {
+                "prompt": "Comment est Karim ? Donnez deux qualités.",
+                "expected": [
+                  "Il est grand et sympa.",
+                  "Karim est grand et sympa."
+                ],
+                "focus": "description",
+                "watch": "il/elle est + adjectif."
+              },
+              {
+                "prompt": "Dis ce qu'aime ta colocataire Léa : la musique.",
+                "expected": [
+                  "Elle aime la musique.",
+                  "Léa aime la musique.",
+                  "Lea aime la musique."
+                ],
+                "focus": "elle aime",
+                "watch": "elle + aime + activité."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u10-coloc-e1",
+              "kind": "choice",
+              "prompt": "___ chambre est en désordre, désolé !",
+              "options": [
+                "Ma",
+                "Mon",
+                "Mes",
+                "Me"
+              ],
+              "answers": [
+                "Ma"
+              ],
+              "explain": "chambre = féminin : ma."
+            },
+            {
+              "id": "fr-foundations-u10-coloc-e2",
+              "kind": "gap",
+              "prompt": "J'habite avec ___ deux frères.",
+              "answers": [
+                "mes"
+              ],
+              "explain": "frères = pluriel : mes."
+            },
+            {
+              "id": "fr-foundations-u10-coloc-e3",
+              "kind": "order",
+              "prompt": "Présente ta colocataire et son caractère.",
+              "answers": [
+                "Ma colocataire est grande et sympa"
+              ],
+              "explain": "ma + nom + être + adjectif."
+            },
+            {
+              "id": "fr-foundations-u10-coloc-e4",
+              "kind": "written",
+              "prompt": "Décris ta colocataire Léa.",
+              "answers": [
+                "elle est grande et gentille",
+                "léa est grande et gentille"
+              ],
+              "explain": "elle est + adjectifs."
+            }
+          ],
+          "skills": [
+            "grammar:possessives",
+            "function:describe-people",
+            "vocab:home",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u11",
+      "title": "Mon quartier",
+      "subtitle": "Près de chez moi",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "carte-du-quartier",
+          "title": "La carte du quartier",
+          "subtitle": "Les lieux utiles",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "Vous cherchez les lieux du quartier : boulangerie, pharmacie, banque, parc et gare.",
+          "colorIndex": 0
+        },
+        {
+          "id": "le-primeur",
+          "title": "Le primeur du coin",
+          "subtitle": "Fruits et légumes",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Chez le primeur du quartier : vous choisissez vos fruits et vous payez.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u11-lieux",
+          "title": "Y a-t-il un supermarché ?",
+          "goal": "Demander ce qu'il y a dans le quartier avec est-ce qu'il y a.",
+          "intro": {
+            "explanation": [
+              "Pour demander un lieu : « Est-ce qu'il y a un supermarché près d'ici ? » Ou plus court : « Il y a une boulangerie ici ? »",
+              "La réponse : « Oui, il y en a une à côté. » Négatif : « Non, il n'y en a pas. »",
+              "Les lieux du quartier : la boulangerie, la pharmacie, la banque, la gare, le parc."
+            ],
+            "examples": [
+              {
+                "text": "Est-ce qu'il y a une boulangerie près d'ici ?",
+                "meaning": "Demander un lieu."
+              },
+              {
+                "text": "Oui, il y en a une à côté.",
+                "meaning": "Réponse affirmative."
+              },
+              {
+                "text": "Non, il n'y en a pas.",
+                "meaning": "Réponse négative."
+              },
+              {
+                "text": "Il y a un parc près de la gare.",
+                "meaning": "Situer deux lieux."
+              },
+              {
+                "text": "La pharmacie est ouverte le dimanche ?",
+                "meaning": "Une question utile."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Est-ce qu'il y a … ?",
+              "meaning": "Demander un lieu.",
+              "note": "…un supermarché près d'ici ?"
+            },
+            {
+              "text": "près d'ici",
+              "meaning": "À quelques minutes.",
+              "note": "près d'ici = tout proche."
+            },
+            {
+              "text": "il y en a un / une",
+              "meaning": "Répondre oui.",
+              "note": "une boulangerie → il y en a une."
+            },
+            {
+              "text": "il n'y en a pas",
+              "meaning": "Répondre non.",
+              "note": "= il n'y a pas de lieu."
+            },
+            {
+              "text": "la boulangerie",
+              "meaning": "Le pain du quartier.",
+              "note": "la pharmacie : les médicaments."
+            }
+          ],
+          "situation": "Vous êtes nouveau dans le quartier : vous cherchez une boulangerie, une pharmacie et un endroit pour courir.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demandez s'il y a une boulangerie près d'ici.",
+                "expected": [
+                  "Est-ce qu'il y a une boulangerie près d'ici ?",
+                  "Il y a une boulangerie près d'ici ?",
+                  "Est-ce qu'il y a une boulangerie pres d'ici ?"
+                ],
+                "focus": "est-ce qu'il y a",
+                "watch": "est-ce que + il y a."
+              },
+              {
+                "prompt": "La pharmacie est dans la rue d'à côté. Répondez oui.",
+                "expected": [
+                  "Oui, il y en a une à côté.",
+                  "Oui, il y a une pharmacie à côté.",
+                  "Oui, il y en a une a cote."
+                ],
+                "focus": "il y en a",
+                "watch": "une pharmacie → il y en a une."
+              },
+              {
+                "prompt": "Il n'y a pas de banque ici. Répondez négativement.",
+                "expected": [
+                  "Non, il n'y en a pas.",
+                  "Non, il n'y a pas de banque."
+                ],
+                "focus": "négation",
+                "watch": "en = de ce lieu."
+              },
+              {
+                "prompt": "Demandez s'il y a un parc dans le quartier.",
+                "expected": [
+                  "Est-ce qu'il y a un parc dans le quartier ?",
+                  "Il y a un parc dans le quartier ?"
+                ],
+                "focus": "un parc",
+                "watch": "un parc : masculin singulier."
+              },
+              {
+                "prompt": "Situez la gare : elle est proche du parc.",
+                "expected": [
+                  "La gare est près du parc.",
+                  "Elle est près du parc.",
+                  "La gare est pres du parc."
+                ],
+                "focus": "près de",
+                "watch": "près du (masc.), près de la (fém.)."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u11-lieux-e1",
+              "kind": "choice",
+              "prompt": "___ ___ ___ une pharmacie près d'ici ?",
+              "options": [
+                "Est-ce qu'il y a",
+                "Est-ce qu'il est",
+                "Est-ce que c'est",
+                "Il y est"
+              ],
+              "answers": [
+                "Est-ce qu'il y a"
+              ],
+              "explain": "il y a pour dire l'existence d'un lieu."
+            },
+            {
+              "id": "fr-foundations-u11-lieux-e2",
+              "kind": "gap",
+              "prompt": "Oui, il y en ___ une, à côté de la banque.",
+              "answers": [
+                "a"
+              ],
+              "explain": "il y en a une = elle existe."
+            },
+            {
+              "id": "fr-foundations-u11-lieux-e3",
+              "kind": "order",
+              "prompt": "Demandez un parc dans le quartier.",
+              "answers": [
+                "Il y a un parc dans le quartier"
+              ],
+              "explain": "il y a + article + lieu."
+            },
+            {
+              "id": "fr-foundations-u11-lieux-e4",
+              "kind": "written",
+              "prompt": "La banque est loin. Dites qu'il n'y en a pas près d'ici.",
+              "answers": [
+                "il n'y a pas de banque près d'ici",
+                "il n'y a pas de banque pres d'ici"
+              ],
+              "explain": "il n'y a pas de + lieu."
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-questions",
+            "vocab:town",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "fr-foundations-u11-directions",
+          "title": "Comment y aller ?",
+          "goal": "Demander le chemin et comprendre : tout droit, à gauche, à droite.",
+          "intro": {
+            "explanation": [
+              "Pour demander le chemin : « Pardon, où est la gare ? Comment y aller ? »",
+              "Les directions à l'impératif : « Allez tout droit. Tournez à gauche au feu. Tournez à droite après la boulangerie. »",
+              "La distance : « C'est près. C'est à cinq minutes à pied. »"
+            ],
+            "examples": [
+              {
+                "text": "Pardon, où est la gare ?",
+                "meaning": "Attirer l'attention."
+              },
+              {
+                "text": "Allez tout droit.",
+                "meaning": "Ne tournez pas."
+              },
+              {
+                "text": "Tournez à gauche au feu.",
+                "meaning": "Le carrefour."
+              },
+              {
+                "text": "C'est à cinq minutes à pied.",
+                "meaning": "La distance à pied."
+              },
+              {
+                "text": "C'est près de la boulangerie.",
+                "meaning": "Un lieu connu pour situer."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Comment y aller ?",
+              "meaning": "Demander le chemin.",
+              "note": "y = à ce lieu."
+            },
+            {
+              "text": "Allez tout droit.",
+              "meaning": "La direction.",
+              "note": "tout droit = en ligne."
+            },
+            {
+              "text": "Tournez à gauche / à droite.",
+              "meaning": "Le carrefour.",
+              "note": "au feu, après la banque."
+            },
+            {
+              "text": "à … minutes à pied",
+              "meaning": "La distance.",
+              "note": "à cinq minutes à pied."
+            },
+            {
+              "text": "C'est près / loin.",
+              "meaning": "Près ou loin.",
+              "note": "près = à côté."
+            }
+          ],
+          "situation": "Un touriste vous demande la gare : tout droit, à gauche au feu — cinq minutes à pied, c'est près.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Un inconnu vous arrête. Demandez la gare.",
+                "expected": [
+                  "Pardon, où est la gare ?",
+                  "Où est la gare, s'il vous plaît ?",
+                  "Ou est la gare, s'il vous plait ?"
+                ],
+                "focus": "où est",
+                "watch": "où est + lieu ?"
+              },
+              {
+                "prompt": "Guidez quelqu'un : la rue continue tout droit. Employez l'impératif.",
+                "expected": [
+                  "Allez tout droit.",
+                  "Vous allez tout droit."
+                ],
+                "focus": "tout droit",
+                "watch": "impératif : allez (vous)."
+              },
+              {
+                "prompt": "Guidez : le carrefour est à votre main gauche. Employez l'impératif.",
+                "expected": [
+                  "Tournez à gauche.",
+                  "Tournez à gauche au feu.",
+                  "Tournez a gauche au feu."
+                ],
+                "focus": "à gauche",
+                "watch": "à gauche / à droite."
+              },
+              {
+                "prompt": "La gare ? Comptez cinq minutes en marchant. Dites-le.",
+                "expected": [
+                  "C'est à cinq minutes à pied.",
+                  "C'est a cinq minutes a pied.",
+                  "La gare est à cinq minutes à pied."
+                ],
+                "focus": "à pied",
+                "watch": "à pied = en marchant."
+              },
+              {
+                "prompt": "La pharmacie est vraiment proche. Dites-le avec un mot.",
+                "expected": [
+                  "C'est près.",
+                  "C'est tout près.",
+                  "C'est pres."
+                ],
+                "focus": "près",
+                "watch": "près / loin."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u11-directions-e1",
+              "kind": "choice",
+              "prompt": "Pour aller à la gare : ___ tout droit.",
+              "options": [
+                "Allez",
+                "Aller",
+                "Allons",
+                "Allez-vous"
+              ],
+              "answers": [
+                "Allez"
+              ],
+              "explain": "impératif avec vous : allez."
+            },
+            {
+              "id": "fr-foundations-u11-directions-e2",
+              "kind": "gap",
+              "prompt": "Tournez ___ gauche après la boulangerie.",
+              "answers": [
+                "à",
+                "a"
+              ],
+              "explain": "à gauche / à droite."
+            },
+            {
+              "id": "fr-foundations-u11-directions-e3",
+              "kind": "order",
+              "prompt": "Guidez quelqu'un jusqu'au feu.",
+              "answers": [
+                "Allez tout droit jusqu'au feu"
+              ],
+              "explain": "allez + direction + jusqu'au + lieu."
+            },
+            {
+              "id": "fr-foundations-u11-directions-e4",
+              "kind": "written",
+              "prompt": "La pharmacie ? Comptez cinq minutes en marchant.",
+              "answers": [
+                "c'est à cinq minutes à pied",
+                "c est a cinq minutes a pied",
+                "elle est à cinq minutes à pied"
+              ],
+              "explain": "c'est à + minutes + à pied."
+            }
+          ],
+          "skills": [
+            "function:ask-for-directions",
+            "vocab:directions",
+            "grammar:present-simple",
+            "vocab:town"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u11-fruitier",
+          "title": "Chez le primeur",
+          "goal": "Acheter des fruits au primeur du quartier : quantités et prix.",
+          "intro": {
+            "explanation": [
+              "Au primeur, on commande avec la quantité : « Je voudrais un kilo de pommes. Deux cents grammes de fraises. »",
+              "Le vendeur propose : « Vous désirez ? Avec ceci ? » On répond : « C'est tout, merci. »",
+              "Le prix : « C'est combien, les fraises ? » — « Ça fait trois euros. »"
+            ],
+            "examples": [
+              {
+                "text": "Bonjour, je voudrais un kilo de pommes.",
+                "meaning": "La commande."
+              },
+              {
+                "text": "Je prends aussi deux bananes.",
+                "meaning": "Ajouter un article."
+              },
+              {
+                "text": "C'est combien, les fraises ?",
+                "meaning": "Le prix."
+              },
+              {
+                "text": "Avec ceci ?",
+                "meaning": "Le vendeur propose."
+              },
+              {
+                "text": "Ça fait trois euros.",
+                "meaning": "Le total."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Je voudrais + quantité",
+              "meaning": "Commander.",
+              "note": "un kilo de pommes."
+            },
+            {
+              "text": "Je prends …",
+              "meaning": "Choisir.",
+              "note": "Je prends deux bananes."
+            },
+            {
+              "text": "C'est combien, … ?",
+              "meaning": "Le prix.",
+              "note": "…les fraises ?"
+            },
+            {
+              "text": "Avec ceci ?",
+              "meaning": "Le vendeur propose.",
+              "note": "= autre chose ?"
+            },
+            {
+              "text": "C'est tout, merci.",
+              "meaning": "Terminer l'achat.",
+              "note": "= rien d'autre."
+            }
+          ],
+          "situation": "Samedi matin, chez le primeur du quartier : un kilo de pommes, deux bananes — et vous demandez le prix des fraises.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Commandez un kilo de pommes.",
+                "expected": [
+                  "Je voudrais un kilo de pommes.",
+                  "Un kilo de pommes, s'il vous plaît.",
+                  "Un kilo de pommes, s'il vous plait."
+                ],
+                "focus": "je voudrais",
+                "watch": "je voudrais + quantité + produit."
+              },
+              {
+                "prompt": "Demandez le prix des fraises.",
+                "expected": [
+                  "C'est combien, les fraises ?",
+                  "C'est combien les fraises ?"
+                ],
+                "focus": "combien",
+                "watch": "c'est combien + article + fruit."
+              },
+              {
+                "prompt": "Ajoutez deux bananes à votre commande.",
+                "expected": [
+                  "Je prends deux bananes.",
+                  "Et deux bananes, aussi."
+                ],
+                "focus": "je prends",
+                "watch": "je prends = je choisis."
+              },
+              {
+                "prompt": "Le vendeur propose encore quelque chose. Refusez poliment.",
+                "expected": [
+                  "C'est tout, merci.",
+                  "C'est tout merci.",
+                  "Rien d'autre, merci."
+                ],
+                "focus": "c'est tout",
+                "watch": "= je ne veux rien d'autre."
+              },
+              {
+                "prompt": "Dites le total : trois euros.",
+                "expected": [
+                  "Ça fait trois euros.",
+                  "Ca fait trois euros."
+                ],
+                "focus": "ça fait",
+                "watch": "ça fait + prix."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u11-fruitier-e1",
+              "kind": "choice",
+              "prompt": "Bonjour, madame, je ___ un kilo de pommes, s'il vous plaît.",
+              "options": [
+                "voudrais",
+                "vouloir",
+                "voudra",
+                "voulu"
+              ],
+              "answers": [
+                "voudrais"
+              ],
+              "explain": "je voudrais : la forme polie de vouloir."
+            },
+            {
+              "id": "fr-foundations-u11-fruitier-e2",
+              "kind": "gap",
+              "prompt": "C'est ___ , les fraises ?",
+              "answers": [
+                "combien"
+              ],
+              "explain": "c'est combien = demandez le prix."
+            },
+            {
+              "id": "fr-foundations-u11-fruitier-e3",
+              "kind": "order",
+              "prompt": "Commandez deux bananes.",
+              "answers": [
+                "Je voudrais deux bananes"
+              ],
+              "explain": "je voudrais + quantité + fruit."
+            },
+            {
+              "id": "fr-foundations-u11-fruitier-e4",
+              "kind": "written",
+              "prompt": "Refusez poliment la proposition du vendeur.",
+              "answers": [
+                "c'est tout merci",
+                "c'est tout, merci.",
+                "rien d'autre, merci."
+              ],
+              "explain": "formule fixe pour terminer."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:food",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

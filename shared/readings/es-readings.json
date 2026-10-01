@@ -598,6 +598,92 @@
           "explain": "Retoca las fotografías hasta vaciarlas; además, es carísimo."
         }
       ]
+    },
+    {
+      "id": "es-read-anuncio-companero",
+      "languageID": "es",
+      "title": "Se busca compañera de piso",
+      "level": "A1",
+      "topic": "vivienda",
+      "unitID": "es-foundations-u11",
+      "text": "Busco una compañera de piso para un piso en la calle Serrano. El piso tiene tres habitaciones y dos baños. Tu habitación es grande, con una ventana y una mesa. Mi habitación está al lado del salón. En la cocina hay una lavadora nueva. El alquiler es de 350 euros al mes, más la luz y el agua. Busco una persona tranquila y ordenada. Mi nombre es Elena y trabajo en un hospital. ¿Estás interesada? Llama al 602 123 405.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:possessives",
+        "vocab:home",
+        "function:describe-people"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-anuncio-companero-q1",
+          "kind": "choice",
+          "prompt": "¿Cuántas habitaciones tiene el piso?",
+          "answers": [
+            "Tres"
+          ],
+          "explain": "El piso tiene tres habitaciones y dos baños.",
+          "options": [
+            "Tres",
+            "Dos",
+            "Cuatro",
+            "Una"
+          ]
+        },
+        {
+          "id": "es-read-anuncio-companero-q2",
+          "kind": "written",
+          "prompt": "¿Cómo es la habitación del anuncio?",
+          "answers": [
+            "grande",
+            "es grande",
+            "muy grande"
+          ],
+          "explain": "Tu habitación es grande, con una ventana y una mesa."
+        },
+        {
+          "id": "es-read-anuncio-companero-q3",
+          "kind": "choice",
+          "prompt": "¿Dónde está la habitación de Elena?",
+          "answers": [
+            "Al lado del salón"
+          ],
+          "explain": "Mi habitación está al lado del salón.",
+          "options": [
+            "Al lado del salón",
+            "Encima de la cocina",
+            "Debajo de la escalera",
+            "Lejos del baño"
+          ]
+        },
+        {
+          "id": "es-read-anuncio-companero-q4",
+          "kind": "written",
+          "prompt": "¿Cuánto es el alquiler al mes?",
+          "answers": [
+            "350 euros",
+            "trescientos cincuenta euros",
+            "350"
+          ],
+          "explain": "El alquiler es de 350 euros al mes."
+        },
+        {
+          "id": "es-read-anuncio-companero-q5",
+          "kind": "choice",
+          "prompt": "¿Qué persona busca Elena?",
+          "answers": [
+            "Tranquila y ordenada"
+          ],
+          "explain": "Busco una persona tranquila y ordenada.",
+          "options": [
+            "Tranquila y ordenada",
+            "Simpática y ruidosa",
+            "Joven y deportista",
+            "Seria y callada"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -3634,6 +3634,1075 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u10",
+      "title": "Meine Wohnung",
+      "subtitle": "Mein Raum",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "meine-wohnung",
+          "title": "Meine Wohnung",
+          "subtitle": "Zimmer und Möbel",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Lena zeigt ihre neue Wohnung: zwei Zimmer, eine Küche, ein Bad.",
+          "colorIndex": 0
+        },
+        {
+          "id": "im-zimmer",
+          "title": "Im Zimmer",
+          "subtitle": "Wo ist das ?",
+          "symbol": "bed",
+          "category": "Course",
+          "situation": "Wo ist mein Schlüssel, wo ist sein Schrank ? Ihr beschreibt euer Zuhause.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u10-wohnung",
+          "title": "Meine Wohnung",
+          "goal": "Zimmer und Möbel nennen und mit es gibt beschreiben.",
+          "intro": {
+            "explanation": [
+              "Die Wohnung: das Zimmer, die Küche, das Bad, der Balkon. Möbel: das Bett, der Tisch, das Sofa.",
+              "es gibt + Akkusativ: „Es gibt eine Küche.“ „Es gibt zwei Zimmer.“ So sagt man, was da ist.",
+              "Frage: „Gibt es einen Balkon ?“ — „Ja, es gibt einen kleinen Balkon.“"
+            ],
+            "examples": [
+              {
+                "text": "Meine Wohnung ist klein, aber schön.",
+                "meaning": "Beschreibung: klein + schön."
+              },
+              {
+                "text": "Es gibt eine Küche und ein Bad.",
+                "meaning": "Was da ist: es gibt + Akkusativ."
+              },
+              {
+                "text": "Gibt es einen Balkon ?",
+                "meaning": "Frage mit Gibt es … ?"
+              },
+              {
+                "text": "Im Wohnzimmer gibt es ein Sofa.",
+                "meaning": "Wo genau: im Wohnzimmer."
+              },
+              {
+                "text": "Wie viele Zimmer gibt es ?",
+                "meaning": "Nach der Zahl fragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Es gibt …",
+              "meaning": "Sagen was da ist.",
+              "note": "es gibt + Akkusativ: einen Tisch"
+            },
+            {
+              "text": "Gibt es … ?",
+              "meaning": "Fragen ob etwas da ist.",
+              "note": "Gibt es einen Aufzug ?"
+            },
+            {
+              "text": "das Zimmer / die Küche / das Bad",
+              "meaning": "Räume in der Wohnung.",
+              "note": "die Küche = la cocina"
+            },
+            {
+              "text": "das Bett / der Tisch / das Sofa",
+              "meaning": "Möbel.",
+              "note": "die Möbel = Plural"
+            },
+            {
+              "text": "Wie viele … ?",
+              "meaning": "Nach der Anzahl fragen.",
+              "note": "Wie viele Zimmer ?"
+            }
+          ],
+          "situation": "Lena zieht ein: sie zeigt ihre Wohnung — zwei Zimmer, eine Küche, ein kleines Bad, kein Balkon.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Beschreibt die Wohnung. (klein, schön)",
+                "expected": [
+                  "Meine Wohnung ist klein, aber schön.",
+                  "Meine Wohnung ist klein und schön."
+                ],
+                "focus": "meine wohnung",
+                "watch": "mein + Wohnung (f) = meine"
+              },
+              {
+                "prompt": "Sagt was es gibt: eine Küche und ein Bad.",
+                "expected": [
+                  "Es gibt eine Küche und ein Bad.",
+                  "es gibt eine kueche und ein bad"
+                ],
+                "focus": "es gibt",
+                "watch": "es gibt + Akkusativ"
+              },
+              {
+                "prompt": "Fragt nach einem Balkon.",
+                "expected": [
+                  "Gibt es einen Balkon ?",
+                  "gibt es einen balkon"
+                ],
+                "focus": "gibt es",
+                "watch": "einen: der Balkon ist Maskulin"
+              },
+              {
+                "prompt": "Sagt was es im Wohnzimmer gibt. (ein Sofa)",
+                "expected": [
+                  "Im Wohnzimmer gibt es ein Sofa.",
+                  "Es gibt ein Sofa im Wohnzimmer."
+                ],
+                "focus": "im wohnzimmer",
+                "watch": "im = in dem (Dativ)"
+              },
+              {
+                "prompt": "Fragt wie viele Zimmer es gibt.",
+                "expected": [
+                  "Wie viele Zimmer gibt es ?",
+                  "Wie viele Zimmer sind es ?"
+                ],
+                "focus": "wie viele",
+                "watch": "das Zimmer: Neutrum, immer gleich"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u10-wohnung-e1",
+              "kind": "choice",
+              "prompt": "___ ___ eine Küche und ein Bad.",
+              "explain": "es gibt + Akkusativ: was da ist.",
+              "options": [
+                "Es gibt",
+                "Es ist",
+                "Gibt es",
+                "Sie sind"
+              ],
+              "answers": [
+                "Es gibt"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-wohnung-e2",
+              "kind": "gap",
+              "prompt": "Im Bad ___ es eine Dusche.",
+              "explain": "es gibt + Akkusativ: eine Dusche.",
+              "answers": [
+                "gibt"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-wohnung-e3",
+              "kind": "order",
+              "prompt": "Beschreibt die Wohnung. (zwei Zimmer, eine Küche)",
+              "explain": "es gibt + Akkusativ: zwei Zimmer.",
+              "answers": [
+                "Es gibt zwei Zimmer und eine Küche"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-wohnung-e4",
+              "kind": "written",
+              "prompt": "Sagt wie die Wohnung ist. (schön)",
+              "explain": "Beschreibung mit sein: ist + Adjektiv.",
+              "answers": [
+                "die wohnung ist schön",
+                "die wohnung ist schoen",
+                "meine wohnung ist schön"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-simple",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u10-orte",
+          "title": "Wo ist das ?",
+          "goal": "Sagen und fragen wo Dinge sind: auf, unter, neben.",
+          "intro": {
+            "explanation": [
+              "Wo ist der Schlüssel ? — Auf dem Tisch. Fragen mit „Wo ist … ?“ und „Wo sind … ?“",
+              "auf = encima de, unter = debajo de, neben = al lado de. Alle drei + Dativ: dem.",
+              "Im Zimmer gibt es ein Bett und einen Schrank. in + Dativ: im Zimmer, in der Küche."
+            ],
+            "examples": [
+              {
+                "text": "Wo ist mein Buch ? — Auf dem Tisch.",
+                "meaning": "Frage und Antwort mit Wo."
+              },
+              {
+                "text": "Die Schuhe sind unter dem Bett.",
+                "meaning": "unter + Dativ."
+              },
+              {
+                "text": "Der Stuhl steht neben dem Fenster.",
+                "meaning": "neben + Dativ."
+              },
+              {
+                "text": "Ist die Lampe auf dem Schreibtisch ?",
+                "meaning": "Ja-Nein-Frage mit auf."
+              },
+              {
+                "text": "Im Zimmer gibt es ein Bett.",
+                "meaning": "Wo etwas ist: im + Dativ."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Wo ist … ? / Wo sind … ?",
+              "meaning": "Nach dem Ort fragen.",
+              "note": "eine Sache: ist, zwei: sind"
+            },
+            {
+              "text": "auf dem Tisch",
+              "meaning": "Oben drauf.",
+              "note": "auf + Dativ: dem"
+            },
+            {
+              "text": "unter dem Bett",
+              "meaning": "Unten.",
+              "note": "unter + Dativ"
+            },
+            {
+              "text": "neben dem Sofa",
+              "meaning": "An der Seite.",
+              "note": "neben + Dativ"
+            },
+            {
+              "text": "im Zimmer / in der Küche",
+              "meaning": "Wo etwas ist.",
+              "note": "im = in dem"
+            }
+          ],
+          "situation": "Lena sucht ihren Schlüssel: er ist auf dem Tisch, unter einer Zeitschrift. Jonas hilft ihr.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fragt wo das Buch ist.",
+                "expected": [
+                  "Wo ist das Buch ?",
+                  "wo ist das buch"
+                ],
+                "focus": "wo ist",
+                "watch": "Wo ist + eine Sache"
+              },
+              {
+                "prompt": "Sagt wo die Schuhe sind: unter dem Bett.",
+                "expected": [
+                  "Die Schuhe sind unter dem Bett.",
+                  "Sie sind unter dem Bett."
+                ],
+                "focus": "unter",
+                "watch": "unter + dem (Dativ)"
+              },
+              {
+                "prompt": "Sagt wo der Stuhl steht: neben dem Fenster.",
+                "expected": [
+                  "Der Stuhl steht neben dem Fenster.",
+                  "Der Stuhl ist neben dem Fenster."
+                ],
+                "focus": "neben",
+                "watch": "neben + dem Fenster"
+              },
+              {
+                "prompt": "Fragt ob die Lampe auf dem Tisch ist.",
+                "expected": [
+                  "Ist die Lampe auf dem Tisch ?",
+                  "ist die lampe auf dem tisch"
+                ],
+                "focus": "ist die lampe",
+                "watch": "Ja-Nein-Frage: das Verb kommt zuerst"
+              },
+              {
+                "prompt": "Sagt was es in der Küche gibt. (ein Tisch)",
+                "expected": [
+                  "In der Küche gibt es einen Tisch.",
+                  "Es gibt einen Tisch in der Küche."
+                ],
+                "focus": "in der kueche",
+                "watch": "in der Küche (f): Dativ"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u10-orte-e1",
+              "kind": "choice",
+              "prompt": "Das Buch ist ___ dem Tisch.",
+              "explain": "auf + Dativ: auf dem Tisch.",
+              "options": [
+                "auf",
+                "im",
+                "am",
+                "zu"
+              ],
+              "answers": [
+                "auf"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-orte-e2",
+              "kind": "gap",
+              "prompt": "Die Katze schläft ___ dem Bett. (unten)",
+              "explain": "unter + Dativ: unter dem Bett.",
+              "answers": [
+                "unter"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-orte-e3",
+              "kind": "order",
+              "prompt": "Sagt wo der Stuhl steht. (neben dem Fenster)",
+              "explain": "neben + Dativ: dem Fenster.",
+              "answers": [
+                "Der Stuhl steht neben dem Fenster"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-orte-e4",
+              "kind": "written",
+              "prompt": "Fragt wo die Lampe ist.",
+              "explain": "Fragen nach dem Ort: Wo ist … ?",
+              "answers": [
+                "wo ist die lampe",
+                "Wo ist die Lampe ?"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:prepositions-place",
+            "grammar:there-is-are",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u10-mitbewohner",
+          "title": "Mein Mitbewohner",
+          "goal": "Über Menschen in der Wohnung sprechen: mein, dein, sein.",
+          "intro": {
+            "explanation": [
+              "Personen: der Mitbewohner, die Mitbewohnerin. „Er heißt Jonas.“ „Sie ist nett.“",
+              "Possessivartikel: mein (ich), dein (du), sein (er), ihr (sie). „Das ist mein Zimmer.“",
+              "Beschreiben: „Er ist nett und ruhig.“ „Er kocht gern.“"
+            ],
+            "examples": [
+              {
+                "text": "Das ist Jonas. Er ist mein Mitbewohner.",
+                "meaning": "mein = von mir."
+              },
+              {
+                "text": "Sein Zimmer ist klein, aber schön.",
+                "meaning": "sein = von er."
+              },
+              {
+                "text": "Ist das dein Mantel ? — Nein, das ist sein Mantel.",
+                "meaning": "dein = von du."
+              },
+              {
+                "text": "Wo ist mein Schlüssel ?",
+                "meaning": "mein + Schlüssel."
+              },
+              {
+                "text": "Er ist nett und sehr ruhig.",
+                "meaning": "Person beschreiben."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "mein / dein / sein",
+              "meaning": "ich / du / er.",
+              "note": "mein Schlüssel, dein Zimmer"
+            },
+            {
+              "text": "der Mitbewohner / die Mitbewohnerin",
+              "meaning": "Person, die mit euch wohnt.",
+              "note": "mit + wohnen"
+            },
+            {
+              "text": "Er heißt …",
+              "meaning": "Den Namen sagen.",
+              "note": "Er heißt Jonas."
+            },
+            {
+              "text": "nett / ruhig / freundlich",
+              "meaning": "Positive Eigenschaften.",
+              "note": "nett = simpático"
+            },
+            {
+              "text": "Er kocht gern.",
+              "meaning": "Was er tut.",
+              "note": "gern = con gusto"
+            }
+          ],
+          "situation": "Jonas, der Mitbewohner von Lena, kocht heute: er ist ruhig, aber er kocht sehr gern und gut.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Stellt euren Mitbewohner vor. (Name: Jonas)",
+                "expected": [
+                  "Das ist mein Mitbewohner. Er heißt Jonas.",
+                  "Mein Mitbewohner heißt Jonas."
+                ],
+                "focus": "mein mitbewohner",
+                "watch": "der Mitbewohner ist Maskulin: mein"
+              },
+              {
+                "prompt": "Sagt wessen Zimmer es ist. (Jonas, klein)",
+                "expected": [
+                  "Sein Zimmer ist klein.",
+                  "sein zimmer ist klein"
+                ],
+                "focus": "sein zimmer",
+                "watch": "sein = von er"
+              },
+              {
+                "prompt": "Fragt nach eurem Schlüssel.",
+                "expected": [
+                  "Wo ist mein Schlüssel ?",
+                  "wo ist mein schluessel"
+                ],
+                "focus": "mein schlüssel",
+                "watch": "Der Schlüssel gehört dir: mein"
+              },
+              {
+                "prompt": "Beschreibt Jonas. (nett, ruhig)",
+                "expected": [
+                  "Er ist nett und ruhig.",
+                  "er ist nett und ruhig"
+                ],
+                "focus": "er ist",
+                "watch": "Eigenschaften mit sein"
+              },
+              {
+                "prompt": "Fragt einen Freund, ob das sein Mantel ist.",
+                "expected": [
+                  "Ist das dein Mantel ?",
+                  "ist das dein mantel"
+                ],
+                "focus": "ist das dein",
+                "watch": "Zu einem Freund sagst du dein"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u10-mitbewohner-e1",
+              "kind": "choice",
+              "prompt": "Das ist ___ Mitbewohner. (ich)",
+              "explain": "mein = von ich: mein Mitbewohner.",
+              "options": [
+                "mein",
+                "dein",
+                "sein",
+                "ihr"
+              ],
+              "answers": [
+                "mein"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-mitbewohner-e2",
+              "kind": "gap",
+              "prompt": "Das ist Jonas und das ist ___ Zimmer. (er)",
+              "explain": "sein = von er: sein Zimmer.",
+              "answers": [
+                "sein"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-mitbewohner-e3",
+              "kind": "order",
+              "prompt": "Beschreibt das Zimmer von Jonas. (klein, aber schön)",
+              "explain": "sein + Zimmer: das Zimmer von er.",
+              "answers": [
+                "Sein Zimmer ist klein, aber schön"
+              ]
+            },
+            {
+              "id": "de-foundations-u10-mitbewohner-e4",
+              "kind": "written",
+              "prompt": "Beschreibt euren Mitbewohner. (nett und ruhig)",
+              "explain": "Person beschreiben: er ist + Adjektiv.",
+              "answers": [
+                "er ist nett und ruhig",
+                "Er ist nett und ruhig."
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:possessives",
+            "function:describe-people",
+            "vocab:home",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u11",
+      "title": "Mein Viertel",
+      "subtitle": "In der Nähe",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "in-der-naehe",
+          "title": "In der Nähe",
+          "subtitle": "Orte im Viertel",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "Miguel ist neu im Viertel und sucht Orte: Supermarkt, Bäckerei, Park.",
+          "colorIndex": 0
+        },
+        {
+          "id": "am-obststand",
+          "title": "Am Obststand",
+          "subtitle": "Frisches Obst",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Um die Ecke ist der Obststand: Äpfel, Bananen, Tomaten.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u11-orte",
+          "title": "Gibt es einen Supermarkt ?",
+          "goal": "Fragen was es im Viertel gibt: Gibt es … ?",
+          "intro": {
+            "explanation": [
+              "Orte im Viertel: der Supermarkt, die Bäckerei, die Apotheke, der Park, die Bank.",
+              "Fragen: „Gibt es hier einen Supermarkt ?“ Gibt es + Akkusativ.",
+              "Antwort: „Ja, es gibt einen.“ „Nein, es gibt keinen.“"
+            ],
+            "examples": [
+              {
+                "text": "Gibt es hier einen Supermarkt ?",
+                "meaning": "Frage mit Gibt es."
+              },
+              {
+                "text": "Ja, es gibt einen in der Goethestraße.",
+                "meaning": "Ja-Antwort: einen."
+              },
+              {
+                "text": "Gibt es eine Bäckerei in der Nähe ?",
+                "meaning": "in der Nähe = cerca."
+              },
+              {
+                "text": "Nein, es gibt keine Bäckerei hier.",
+                "meaning": "Nein-Antwort: keine."
+              },
+              {
+                "text": "Der Park ist um die Ecke.",
+                "meaning": "Den Ort sagen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Gibt es … ?",
+              "meaning": "Fragen was es gibt.",
+              "note": "einen Supermarkt, eine Bäckerei"
+            },
+            {
+              "text": "in der Nähe",
+              "meaning": "Nicht weit von hier.",
+              "note": "Nähe = cercanía"
+            },
+            {
+              "text": "die Bäckerei / die Apotheke / der Park",
+              "meaning": "Orte im Viertel.",
+              "note": "die Bäckerei = la panadería"
+            },
+            {
+              "text": "es gibt keinen / keine",
+              "meaning": "Die Nein-Antwort.",
+              "note": "keinen (m), keine (f)"
+            },
+            {
+              "text": "um die Ecke",
+              "meaning": "Sehr nah.",
+              "note": "die Ecke = la esquina"
+            }
+          ],
+          "situation": "Miguel ist neu im Viertel: er fragt nach Supermarkt, Bäckerei und Park — alles ist in der Nähe.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fragt nach einem Supermarkt. (hier)",
+                "expected": [
+                  "Gibt es hier einen Supermarkt ?",
+                  "gibt es hier einen supermarkt"
+                ],
+                "focus": "gibt es",
+                "watch": "Gibt es + einen (Maskulin)"
+              },
+              {
+                "prompt": "Antwortet ja: einen in der Goethestraße.",
+                "expected": [
+                  "Ja, es gibt einen in der Goethestraße.",
+                  "Ja, in der Goethestraße."
+                ],
+                "focus": "es gibt einen",
+                "watch": "einen statt ein"
+              },
+              {
+                "prompt": "Fragt nach einer Bäckerei in der Nähe.",
+                "expected": [
+                  "Gibt es eine Bäckerei in der Nähe ?",
+                  "Gibt es in der Nähe eine Bäckerei ?"
+                ],
+                "focus": "in der nähe",
+                "watch": "eine Bäckerei (f)"
+              },
+              {
+                "prompt": "Antwortet nein: keine Apotheke.",
+                "expected": [
+                  "Nein, es gibt keine Apotheke.",
+                  "nein es gibt keine apotheke"
+                ],
+                "focus": "keine",
+                "watch": "keine + Femininum"
+              },
+              {
+                "prompt": "Sagt wo der Park ist: sehr nah.",
+                "expected": [
+                  "Der Park ist um die Ecke.",
+                  "Der Park ist nah."
+                ],
+                "focus": "um die ecke",
+                "watch": "um die Ecke = muy cerca"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u11-orte-e1",
+              "kind": "choice",
+              "prompt": "___ es hier einen Supermarkt ?",
+              "explain": "Frage mit Gibt es + Akkusativ.",
+              "options": [
+                "Gibt",
+                "Ist",
+                "Sind",
+                "Hat"
+              ],
+              "answers": [
+                "Gibt"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-orte-e2",
+              "kind": "gap",
+              "prompt": "Ja, es gibt ___ Supermarkt. (ein)",
+              "explain": "es gibt + Akkusativ: einen Supermarkt.",
+              "answers": [
+                "einen"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-orte-e3",
+              "kind": "order",
+              "prompt": "Fragt nach einer Bäckerei in der Nähe.",
+              "explain": "Gibt es + eine (Femininum).",
+              "answers": [
+                "Gibt es eine Bäckerei in der Nähe"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-orte-e4",
+              "kind": "written",
+              "prompt": "Antwortet mit nein: Bäckerei.",
+              "explain": "Nein-Antwort: es gibt keine + Femininum.",
+              "answers": [
+                "nein es gibt keine bäckerei",
+                "nein es gibt keine baeckerei",
+                "es gibt keine bäckerei hier"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-questions",
+            "vocab:town",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "de-foundations-u11-weg",
+          "title": "Wie komme ich…?",
+          "goal": "Nach dem Weg fragen und einen einfachen Weg erklären.",
+          "intro": {
+            "explanation": [
+              "Fragen: „Wie komme ich zum Park ?“ „Wie komme ich zur Bank ?“ zum = zu dem, zur = zu der.",
+              "Erklären: „Gehen Sie geradeaus.“ „Biegen Sie links ab.“ Höflich mit Sie.",
+              "Kurz und nah: „Es ist nah.“ „Es ist um die Ecke.“"
+            ],
+            "examples": [
+              {
+                "text": "Wie komme ich zum Bahnhof ?",
+                "meaning": "Frage nach dem Weg."
+              },
+              {
+                "text": "Gehen Sie geradeaus.",
+                "meaning": "Immer weiter nach vorne."
+              },
+              {
+                "text": "Biegen Sie links ab.",
+                "meaning": "Richtung links."
+              },
+              {
+                "text": "Dann biegen Sie rechts ab.",
+                "meaning": "Richtung rechts."
+              },
+              {
+                "text": "Es ist nah, nur fünf Minuten.",
+                "meaning": "Entfernung: nah."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Wie komme ich zum/zur … ?",
+              "meaning": "Nach dem Weg fragen.",
+              "note": "zum Park (m), zur Bank (f)"
+            },
+            {
+              "text": "Gehen Sie geradeaus.",
+              "meaning": "Den Weg erklären.",
+              "note": "geradeaus = recto"
+            },
+            {
+              "text": "Biegen Sie links/rechts ab.",
+              "meaning": "Abbiegen.",
+              "note": "links = izquierda"
+            },
+            {
+              "text": "Es ist nah.",
+              "meaning": "Sehr kurz.",
+              "note": "nah = cerca"
+            },
+            {
+              "text": "bis zum Park",
+              "meaning": "Der Endpunkt.",
+              "note": "bis + zum"
+            }
+          ],
+          "situation": "Miguel fragt den Weg zur Apotheke: geradeaus bis zum Park, dann links — es ist um die Ecke.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fragt den Weg zum Bahnhof.",
+                "expected": [
+                  "Wie komme ich zum Bahnhof ?",
+                  "wie komme ich zum bahnhof"
+                ],
+                "focus": "wie komme ich",
+                "watch": "zum = zu dem (Maskulin/Neutrum)"
+              },
+              {
+                "prompt": "Erklärt: geradeaus gehen. (höflich)",
+                "expected": [
+                  "Gehen Sie geradeaus.",
+                  "gehen sie geradeaus"
+                ],
+                "focus": "gehen sie",
+                "watch": "Höflich: Gehen Sie"
+              },
+              {
+                "prompt": "Erklärt: links abbiegen. (höflich)",
+                "expected": [
+                  "Biegen Sie links ab.",
+                  "biegen sie links ab"
+                ],
+                "focus": "biegen sie",
+                "watch": "abbiegen: biegen … ab"
+              },
+              {
+                "prompt": "Fragt den Weg zur Apotheke.",
+                "expected": [
+                  "Wie komme ich zur Apotheke ?",
+                  "Wie komme ich zur Apotheke"
+                ],
+                "focus": "zur apotheke",
+                "watch": "zur = zu der (Femininum)"
+              },
+              {
+                "prompt": "Sagt: es ist sehr nah.",
+                "expected": [
+                  "Es ist nah.",
+                  "Es ist sehr nah.",
+                  "Es ist um die Ecke."
+                ],
+                "focus": "es ist nah",
+                "watch": "nah = cerca"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u11-weg-e1",
+              "kind": "choice",
+              "prompt": "Wie komme ich ___ Park ?",
+              "explain": "zum = zu dem: der Park.",
+              "options": [
+                "zum",
+                "zur",
+                "dem",
+                "in"
+              ],
+              "answers": [
+                "zum"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-weg-e2",
+              "kind": "gap",
+              "prompt": "___ Sie geradeaus bis zum Park. (höflich)",
+              "explain": "Höfliche Form: Gehen Sie geradeaus.",
+              "answers": [
+                "Gehen"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-weg-e3",
+              "kind": "order",
+              "prompt": "Sagt: bitte links abbiegen. (höflich)",
+              "explain": "Höflich abbiegen: Biegen Sie … ab.",
+              "answers": [
+                "Biegen Sie bitte links ab"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-weg-e4",
+              "kind": "written",
+              "prompt": "Fragt den Weg zum Bahnhof.",
+              "explain": "Frage nach dem Weg: Wie komme ich … ?",
+              "answers": [
+                "wie komme ich zum bahnhof",
+                "Wie komme ich zum Bahnhof ?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:ask-for-directions",
+            "vocab:directions",
+            "grammar:present-simple",
+            "vocab:town"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u11-obststand",
+          "title": "Am Obststand",
+          "goal": "Obst im Viertel kaufen: Mengen, Preise und Qualität.",
+          "intro": {
+            "explanation": [
+              "Am Obststand: Äpfel, Bananen, Tomaten. Alles ist frisch und aus der Nähe.",
+              "Kaufen: „Ich nehme ein Kilo Äpfel.“ „Was kostet ein Pfund Bananen ?“",
+              "Preis: „Das macht drei Euro.“ Qualität: „Sind die Tomaten reif ?“"
+            ],
+            "examples": [
+              {
+                "text": "Ich nehme ein Kilo Äpfel.",
+                "meaning": "Kaufen mit ich nehme."
+              },
+              {
+                "text": "Was kostet ein Pfund Bananen ?",
+                "meaning": "Den Preis fragen."
+              },
+              {
+                "text": "Das macht drei Euro fünfzig.",
+                "meaning": "Der Preis."
+              },
+              {
+                "text": "Sind die Tomaten reif ?",
+                "meaning": "Nach der Qualität fragen."
+              },
+              {
+                "text": "Noch etwas ? — Nein, danke.",
+                "meaning": "Der Verkäufer fragt."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich nehme …",
+              "meaning": "Kaufen.",
+              "note": "nehmen = tomar"
+            },
+            {
+              "text": "ein Kilo / ein Pfund",
+              "meaning": "Menge.",
+              "note": "ein Pfund = 500 g"
+            },
+            {
+              "text": "Was kostet … ?",
+              "meaning": "Den Preis fragen.",
+              "note": "kostet: Singular"
+            },
+            {
+              "text": "reif / süß",
+              "meaning": "Qualität von Obst.",
+              "note": "süß = dulce"
+            },
+            {
+              "text": "Das macht … Euro.",
+              "meaning": "Der Preis.",
+              "note": "Das macht 3 Euro."
+            }
+          ],
+          "situation": "Samstag am Obststand: Miguel kauft ein Kilo Äpfel und ein Pfund Bananen für drei Euro.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Kauft ein Kilo Äpfel.",
+                "expected": [
+                  "Ich nehme ein Kilo Äpfel.",
+                  "ich nehme ein kilo äpfel",
+                  "ich nehme ein kilo aepfel"
+                ],
+                "focus": "ich nehme",
+                "watch": "ich nehme + Akkusativ"
+              },
+              {
+                "prompt": "Fragt den Preis: ein Pfund Bananen.",
+                "expected": [
+                  "Was kostet ein Pfund Bananen ?",
+                  "was kostet ein pfund bananen"
+                ],
+                "focus": "was kostet",
+                "watch": "kostet: eine Sache/Menge"
+              },
+              {
+                "prompt": "Fragt ob die Tomaten reif sind.",
+                "expected": [
+                  "Sind die Tomaten reif ?",
+                  "sind die tomaten reif"
+                ],
+                "focus": "reif",
+                "watch": "Ja-Nein-Frage: Sind … ?"
+              },
+              {
+                "prompt": "Sagt den Preis: drei Euro.",
+                "expected": [
+                  "Das macht drei Euro.",
+                  "das macht drei euro"
+                ],
+                "focus": "das macht",
+                "watch": "Das macht + Preis"
+              },
+              {
+                "prompt": "Antwortet dem Verkäufer: nichts mehr, danke.",
+                "expected": [
+                  "Nein, danke. Nichts mehr.",
+                  "Nichts mehr, danke.",
+                  "Nein danke"
+                ],
+                "focus": "nichts mehr",
+                "watch": "nichts mehr = nada más"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u11-obststand-e1",
+              "kind": "choice",
+              "prompt": "Ich ___ ein Kilo Äpfel.",
+              "explain": "ich nehme: kaufen im Laden.",
+              "options": [
+                "nehme",
+                "nimm",
+                "nimmt",
+                "esse"
+              ],
+              "answers": [
+                "nehme"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-obststand-e2",
+              "kind": "gap",
+              "prompt": "Was ___ ein Pfund Bananen ? (kosten)",
+              "explain": "Was kostet + Menge.",
+              "answers": [
+                "kostet"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-obststand-e3",
+              "kind": "order",
+              "prompt": "Kauft ein Pfund Bananen.",
+              "explain": "ich nehme + Menge + Produkt.",
+              "answers": [
+                "Ich nehme ein Pfund Bananen"
+              ]
+            },
+            {
+              "id": "de-foundations-u11-obststand-e4",
+              "kind": "written",
+              "prompt": "Fragt ob die Tomaten reif sind.",
+              "explain": "Qualität fragen: Sind die … reif ?",
+              "answers": [
+                "sind die tomaten reif",
+                "Sind die Tomaten reif ?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:food",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1352,6 +1352,205 @@
           "explain": "« erstens Transfer, zweitens Kommunikation, drittens Neugier »."
         }
       ]
+    },
+    {
+      "id": "de-listen-neue-wohnung",
+      "languageID": "de",
+      "title": "Die neue Wohnung",
+      "level": "A1",
+      "topic": "Wohnen",
+      "unitID": "de-foundations-u10",
+      "text": "Lena hat eine neue Wohnung. Sie ist klein, aber sie gefällt Lena sehr. Es gibt ein Wohnzimmer, ein Schlafzimmer und eine Küche. Das Bad ist sehr klein. Im Wohnzimmer gibt es ein Sofa und einen Tisch. Der Tisch steht neben dem Fenster. Auf dem Sofa liegt eine grüne Decke. Der Schrank ist im Schlafzimmer, neben dem Bett. Am Samstag bringt Jonas eine Lampe. Lena freut sich.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:there-is-are",
+        "grammar:prepositions-place",
+        "vocab:home"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-neue-wohnung-q1",
+          "kind": "choice",
+          "prompt": "Was hat Lena ?",
+          "options": [
+            "Eine kleine Wohnung",
+            "Ein großes Haus",
+            "Ein Zimmer im Hotel",
+            "Ein Haus im Dorf"
+          ],
+          "answers": [
+            "Eine kleine Wohnung"
+          ],
+          "explain": "Lena hat eine neue Wohnung. Sie ist klein, aber sie gefällt ihr."
+        },
+        {
+          "id": "de-listen-neue-wohnung-q2",
+          "kind": "choice",
+          "prompt": "Wie viele Zimmer gibt es ?",
+          "options": [
+            "Zwei",
+            "Drei",
+            "Vier",
+            "Eins"
+          ],
+          "answers": [
+            "Zwei"
+          ],
+          "explain": "Es gibt ein Wohnzimmer und ein Schlafzimmer: zwei Zimmer."
+        },
+        {
+          "id": "de-listen-neue-wohnung-q3",
+          "kind": "written",
+          "prompt": "Wo steht der Tisch ?",
+          "answers": [
+            "neben dem fenster",
+            "Neben dem Fenster."
+          ],
+          "explain": "Der Tisch steht neben dem Fenster."
+        },
+        {
+          "id": "de-listen-neue-wohnung-q4",
+          "kind": "choice",
+          "prompt": "Wo ist der Schrank ?",
+          "options": [
+            "Im Schlafzimmer",
+            "In der Küche",
+            "Im Bad",
+            "Auf dem Balkon"
+          ],
+          "answers": [
+            "Im Schlafzimmer"
+          ],
+          "explain": "Der Schrank ist im Schlafzimmer, neben dem Bett."
+        },
+        {
+          "id": "de-listen-neue-wohnung-q5",
+          "kind": "written",
+          "prompt": "Was liegt auf dem Sofa ?",
+          "answers": [
+            "eine grüne decke",
+            "eine gruene decke"
+          ],
+          "explain": "Auf dem Sofa liegt eine grüne Decke."
+        },
+        {
+          "id": "de-listen-neue-wohnung-q6",
+          "kind": "choice",
+          "prompt": "Was bringt Jonas am Samstag ?",
+          "options": [
+            "Eine Lampe",
+            "Einen Tisch",
+            "Einen Stuhl",
+            "Blumen"
+          ],
+          "answers": [
+            "Eine Lampe"
+          ],
+          "explain": "Am Samstag bringt Jonas eine Lampe."
+        }
+      ]
+    },
+    {
+      "id": "de-listen-viertel-spaziergang",
+      "languageID": "de",
+      "title": "Spaziergang im Viertel",
+      "level": "A1",
+      "topic": "Im Viertel",
+      "unitID": "de-foundations-u11",
+      "text": "Miguel ist neu im Viertel. Er fragt Mia: „Gibt es hier einen Supermarkt ?“ „Ja“, sagt Mia, „in der Bahnhofstraße, neben der Apotheke.“ „Und wo kann ich Obst kaufen ?“ „Am Obststand, um die Ecke.“ Sie gehen zusammen los: geradeaus bis zum Park, dann links. Der Obststand ist klein, aber die Äpfel sind lecker. Miguel kauft ein Kilo. Jetzt kennt er sein neues Viertel besser.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:there-is-are",
+        "vocab:town",
+        "function:ask-for-directions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-viertel-spaziergang-q1",
+          "kind": "choice",
+          "prompt": "Was fragt Miguel zuerst ?",
+          "options": [
+            "Nach einem Supermarkt",
+            "Nach dem Bahnhof",
+            "Nach einer Schule",
+            "Nach dem Park"
+          ],
+          "answers": [
+            "Nach einem Supermarkt"
+          ],
+          "explain": "Er fragt: Gibt es hier einen Supermarkt ?"
+        },
+        {
+          "id": "de-listen-viertel-spaziergang-q2",
+          "kind": "choice",
+          "prompt": "Wo ist der Supermarkt ?",
+          "options": [
+            "In der Bahnhofstraße",
+            "Am Park",
+            "Um die Ecke",
+            "Im ersten Stock"
+          ],
+          "answers": [
+            "In der Bahnhofstraße"
+          ],
+          "explain": "Der Supermarkt ist in der Bahnhofstraße, neben der Apotheke."
+        },
+        {
+          "id": "de-listen-viertel-spaziergang-q3",
+          "kind": "written",
+          "prompt": "Wo kann Miguel Obst kaufen ?",
+          "answers": [
+            "am obststand",
+            "Am Obststand.",
+            "am obststand um die ecke"
+          ],
+          "explain": "Obst gibt es am Obststand, um die Ecke."
+        },
+        {
+          "id": "de-listen-viertel-spaziergang-q4",
+          "kind": "choice",
+          "prompt": "Wo gehen sie nach dem Park hin ?",
+          "options": [
+            "Nach links",
+            "Nach rechts",
+            "Geradeaus weiter",
+            "Nach Hause"
+          ],
+          "answers": [
+            "Nach links"
+          ],
+          "explain": "Sie gehen geradeaus bis zum Park, dann links."
+        },
+        {
+          "id": "de-listen-viertel-spaziergang-q5",
+          "kind": "written",
+          "prompt": "Was kauft Miguel ?",
+          "answers": [
+            "ein kilo äpfel",
+            "ein kilo aepfel"
+          ],
+          "explain": "Miguel kauft ein Kilo Äpfel."
+        },
+        {
+          "id": "de-listen-viertel-spaziergang-q6",
+          "kind": "choice",
+          "prompt": "Wie sind die Äpfel ?",
+          "options": [
+            "Lecker",
+            "Zu teuer",
+            "Nicht reif",
+            "Klein"
+          ],
+          "answers": [
+            "Lecker"
+          ],
+          "explain": "Der Obststand ist klein, aber die Äpfel sind lecker."
+        }
+      ]
     }
   ]
 }

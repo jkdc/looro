@@ -1389,6 +1389,207 @@
           "explain": "Se dan la razón en parte y cierran en buen término."
         }
       ]
+    },
+    {
+      "id": "es-listen-piso-nuevo",
+      "languageID": "es",
+      "title": "Un piso nuevo",
+      "level": "A1",
+      "topic": "casa",
+      "unitID": "es-foundations-u11",
+      "text": "Leo tiene un piso nuevo en el centro. El piso tiene dos habitaciones y un salón grande. En el salón hay un sofá azul y una mesa junto a la ventana. La cocina es pequeña, pero hay una mesa para desayunar. Su compañero de piso se llama Martín. Su habitación está limpia y sus libros están encima de la mesa. No hay lavavajillas, así que lavan los platos a mano. A Leo le gusta el piso porque está cerca de un parque.",
+      "questions": [
+        {
+          "id": "es-listen-piso-nuevo-q1",
+          "kind": "choice",
+          "prompt": "¿Cuántas habitaciones tiene el piso?",
+          "options": [
+            "Dos",
+            "Tres",
+            "Cuatro",
+            "Una"
+          ],
+          "answers": [
+            "Dos"
+          ],
+          "explain": "El piso tiene dos habitaciones y un salón grande."
+        },
+        {
+          "id": "es-listen-piso-nuevo-q2",
+          "kind": "choice",
+          "prompt": "¿Dónde está la mesa del salón?",
+          "options": [
+            "Junto a la ventana",
+            "En la cocina",
+            "Debajo del sofá",
+            "En el pasillo"
+          ],
+          "answers": [
+            "Junto a la ventana"
+          ],
+          "explain": "Hay una mesa junto a la ventana."
+        },
+        {
+          "id": "es-listen-piso-nuevo-q3",
+          "kind": "written",
+          "prompt": "¿Cómo se llama su compañero de piso?",
+          "answers": [
+            "Martin",
+            "Martín"
+          ],
+          "explain": "Su compañero de piso se llama Martín."
+        },
+        {
+          "id": "es-listen-piso-nuevo-q4",
+          "kind": "choice",
+          "prompt": "¿Dónde están los libros de Martín?",
+          "options": [
+            "Encima de la mesa",
+            "Debajo de la cama",
+            "En el salón",
+            "En una caja"
+          ],
+          "answers": [
+            "Encima de la mesa"
+          ],
+          "explain": "Sus libros están encima de la mesa."
+        },
+        {
+          "id": "es-listen-piso-nuevo-q5",
+          "kind": "written",
+          "prompt": "¿Por qué le gusta el piso a Leo?",
+          "answers": [
+            "esta cerca de un parque",
+            "está cerca de un parque",
+            "porque está cerca de un parque"
+          ],
+          "explain": "Está cerca de un parque."
+        },
+        {
+          "id": "es-listen-piso-nuevo-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo es la cocina?",
+          "options": [
+            "Pequeña",
+            "Grande",
+            "Nueva",
+            "Moderna"
+          ],
+          "answers": [
+            "Pequeña"
+          ],
+          "explain": "La cocina es pequeña, pero hay una mesa para desayunar."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:there-is-are",
+        "grammar:prepositions-place",
+        "vocab:home"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "es-listen-paseo-barrio",
+      "languageID": "es",
+      "title": "Un paseo por el barrio",
+      "level": "A1",
+      "topic": "barrio",
+      "unitID": "es-foundations-u12",
+      "text": "Hoy soy nuevo en el barrio. Pregunto a una señora: «Perdone, ¿hay un supermercado por aquí?». «Sí, hay uno en la esquina», dice ella. «¿Y una farmacia?». «Siga recto y gire a la izquierda; está a tres minutos». Camino y veo el supermercado, pero no veo la farmacia. Una chica me ayuda: «Está detrás del supermercado, muy cerca». Al final compro agua y pan. El barrio es tranquilo y la gente es muy amable.",
+      "questions": [
+        {
+          "id": "es-listen-paseo-barrio-q1",
+          "kind": "choice",
+          "prompt": "¿Dónde está el supermercado?",
+          "options": [
+            "En la esquina",
+            "En la plaza",
+            "Detrás de la farmacia",
+            "Muy lejos"
+          ],
+          "answers": [
+            "En la esquina"
+          ],
+          "explain": "La señora dice: hay uno en la esquina."
+        },
+        {
+          "id": "es-listen-paseo-barrio-q2",
+          "kind": "choice",
+          "prompt": "¿Qué hay que hacer para llegar a la farmacia?",
+          "options": [
+            "Siga recto y gire a la izquierda",
+            "Gire a la derecha",
+            "Tome el autobús",
+            "Vuelva a casa"
+          ],
+          "answers": [
+            "Siga recto y gire a la izquierda"
+          ],
+          "explain": "Siga recto y gire a la izquierda."
+        },
+        {
+          "id": "es-listen-paseo-barrio-q3",
+          "kind": "written",
+          "prompt": "¿Dónde está la farmacia?",
+          "answers": [
+            "detras del supermercado",
+            "detrás del supermercado",
+            "muy cerca"
+          ],
+          "explain": "Está detrás del supermercado."
+        },
+        {
+          "id": "es-listen-paseo-barrio-q4",
+          "kind": "choice",
+          "prompt": "¿Qué compra al final?",
+          "options": [
+            "Agua y pan",
+            "Fruta",
+            "Leche y café",
+            "Nada"
+          ],
+          "answers": [
+            "Agua y pan"
+          ],
+          "explain": "Al final compra agua y pan."
+        },
+        {
+          "id": "es-listen-paseo-barrio-q5",
+          "kind": "choice",
+          "prompt": "¿Cómo es el barrio?",
+          "options": [
+            "Tranquilo",
+            "Ruidoso",
+            "Grande",
+            "Feo"
+          ],
+          "answers": [
+            "Tranquilo"
+          ],
+          "explain": "El barrio es tranquilo."
+        },
+        {
+          "id": "es-listen-paseo-barrio-q6",
+          "kind": "written",
+          "prompt": "¿Cómo es la gente del barrio?",
+          "answers": [
+            "muy amable",
+            "es muy amable",
+            "amable"
+          ],
+          "explain": "La gente es muy amable."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:there-is-are",
+        "vocab:town",
+        "function:ask-for-directions"
+      ],
+      "exposureSkills": []
     }
   ]
 }

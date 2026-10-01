@@ -3631,6 +3631,1074 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u10",
+      "title": "Minha casa",
+      "subtitle": "Meu espaço",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "casa-espaco",
+          "title": "O apartamento",
+          "subtitle": "Cômodos e móveis",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "A Bia mostra o apartamento novo para a amiga: dois quartos, cozinha clara e uma varanda com plantas.",
+          "colorIndex": 0
+        },
+        {
+          "id": "casa-quarto",
+          "title": "Onde está ?",
+          "subtitle": "Coisas da casa",
+          "symbol": "bed",
+          "category": "Course",
+          "situation": "A chave não aparece: procuram pela casa e dizem onde cada coisa está.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u10-casa",
+          "title": "Meu apartamento",
+          "goal": "Falar dos cômodos e móveis da casa com tem e não tem.",
+          "intro": {
+            "explanation": [
+              "O que existe na casa: « tem ». « Na sala tem um sofá novo ». « No banheiro não tem janela ».",
+              "Os cômodos: « a sala, o quarto, a cozinha, o banheiro ». A varanda é fora, mas faz parte da casa.",
+              "Para perguntar: « Tem varanda ? » — a resposta usa « tem » também: « Tem, é grande »."
+            ],
+            "examples": [
+              {
+                "text": "Meu apartamento é pequeno.",
+                "meaning": "Descrição simples."
+              },
+              {
+                "text": "Tem dois quartos e uma cozinha.",
+                "meaning": "tem = hay."
+              },
+              {
+                "text": "Na sala tem um sofá e uma mesa.",
+                "meaning": "Onde + tem."
+              },
+              {
+                "text": "Não tem garagem.",
+                "meaning": "não tem = no hay."
+              },
+              {
+                "text": "Tem varanda ?",
+                "meaning": "Pergunta simples."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "tem …",
+              "meaning": "Dizer o que existe.",
+              "note": "Na sala tem um sofá."
+            },
+            {
+              "text": "não tem …",
+              "meaning": "Dizer o que falta.",
+              "note": "Não tem garagem."
+            },
+            {
+              "text": "Tem … ?",
+              "meaning": "Perguntar se existe.",
+              "note": "Tem varanda ?"
+            },
+            {
+              "text": "quantos quartos ?",
+              "meaning": "Perguntar o número.",
+              "note": "Quantos quartos tem ?"
+            },
+            {
+              "text": "a varanda",
+              "meaning": "Espaço fora do apartamento.",
+              "note": "Tomo café na varanda."
+            }
+          ],
+          "situation": "A Bia mostra o apartamento novo: dois quartos, uma cozinha clara e uma varanda com plantas.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga quantos quartos o apartamento tem: dois.",
+                "expected": [
+                  "Tem dois quartos.",
+                  "tem dois quartos"
+                ],
+                "focus": "tem",
+                "watch": "tem = hay."
+              },
+              {
+                "prompt": "Diga que na cozinha não tem mesa.",
+                "expected": [
+                  "Na cozinha não tem mesa.",
+                  "na cozinha nao tem mesa"
+                ],
+                "focus": "não tem",
+                "watch": "não tem = no hay."
+              },
+              {
+                "prompt": "Pergunte se tem varanda.",
+                "expected": [
+                  "Tem varanda ?",
+                  "O apartamento tem varanda ?"
+                ],
+                "focus": "tem … ?",
+                "watch": "Tem + coisa ?"
+              },
+              {
+                "prompt": "Fale do tamanho do quarto.",
+                "expected": [
+                  "O quarto é pequeno.",
+                  "o quarto e pequeno"
+                ],
+                "focus": "ser + adjetivo",
+                "watch": "é pequeno = es pequeño."
+              },
+              {
+                "prompt": "Diga o que tem na sala: um sofá e uma TV.",
+                "expected": [
+                  "Na sala tem um sofá e uma TV.",
+                  "Na sala tem um sofa e uma TV.",
+                  "Tem um sofá e uma TV na sala."
+                ],
+                "focus": "onde + tem",
+                "watch": "Na + cômodo + tem."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u10-casa-e1",
+              "kind": "choice",
+              "prompt": "___ dois quartos no apartamento.",
+              "explain": "« tem » fala do que existe na casa.",
+              "options": [
+                "Tem",
+                "Está",
+                "Faz",
+                "Vai"
+              ],
+              "answers": [
+                "Tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-casa-e2",
+              "kind": "gap",
+              "prompt": "Na cozinha ___ uma geladeira nova.",
+              "explain": "tem + coisa: o que existe no cômodo.",
+              "answers": [
+                "tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-casa-e3",
+              "kind": "order",
+              "prompt": "Fale do que o prédio não tem.",
+              "explain": "não tem + coisa que falta.",
+              "answers": [
+                "Nao tem garagem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-casa-e4",
+              "kind": "written",
+              "prompt": "Fale do tamanho do quarto.",
+              "explain": "ser + adjetivo: é pequeno.",
+              "answers": [
+                "O quarto é pequeno.",
+                "o quarto e pequeno"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-simple",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u10-lugares",
+          "title": "Onde está ?",
+          "goal": "Dizer onde as coisas estão: em cima de, embaixo de, ao lado de.",
+          "intro": {
+            "explanation": [
+              "Perguntar o lugar: « Onde está a chave ? ». A resposta usa « está »: « Está na mesa ».",
+              "As preposições: « em cima de » (sobre), « embaixo de » (debaixo), « ao lado de » (al lado). « A chave está em cima da mesa ».",
+              "em + a = na, em + o = no. « O livro está na gaveta ». « A carteira está no bolso »."
+            ],
+            "examples": [
+              {
+                "text": "Onde está a chave ?",
+                "meaning": "Perguntar o lugar."
+              },
+              {
+                "text": "Está em cima da mesa.",
+                "meaning": "sobre la mesa."
+              },
+              {
+                "text": "Está embaixo da cama.",
+                "meaning": "debajo de la cama."
+              },
+              {
+                "text": "A cadeira está ao lado da janela.",
+                "meaning": "al lado de."
+              },
+              {
+                "text": "O celular está dentro da bolsa.",
+                "meaning": "dentro de."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Onde está … ?",
+              "meaning": "Perguntar o lugar.",
+              "note": "…a chave ?"
+            },
+            {
+              "text": "em cima de",
+              "meaning": "Sobre.",
+              "note": "em cima da mesa."
+            },
+            {
+              "text": "embaixo de",
+              "meaning": "Debaixo de.",
+              "note": "embaixo da cama."
+            },
+            {
+              "text": "ao lado de",
+              "meaning": "Al lado de.",
+              "note": "ao lado da porta."
+            },
+            {
+              "text": "dentro de",
+              "meaning": "Dentro de.",
+              "note": "dentro da bolsa."
+            }
+          ],
+          "situation": "A chave do armário não aparece: procuram no quarto e encontram embaixo da cama.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte o lugar da chave.",
+                "expected": [
+                  "Onde está a chave ?",
+                  "onde esta a chave"
+                ],
+                "focus": "onde está",
+                "watch": "Onde está = ¿dónde está?"
+              },
+              {
+                "prompt": "Diga o lugar do livro: sobre a mesa.",
+                "expected": [
+                  "O livro está em cima da mesa.",
+                  "o livro esta em cima da mesa"
+                ],
+                "focus": "em cima de",
+                "watch": "em cima de = sobre."
+              },
+              {
+                "prompt": "Diga o lugar do gato: debaixo da cama.",
+                "expected": [
+                  "O gato está embaixo da cama.",
+                  "o gato esta embaixo da cama"
+                ],
+                "focus": "embaixo de",
+                "watch": "embaixo de = debajo de."
+              },
+              {
+                "prompt": "Diga o lugar da cadeira: ao lado da janela.",
+                "expected": [
+                  "A cadeira está ao lado da janela.",
+                  "a cadeira esta ao lado da janela"
+                ],
+                "focus": "ao lado de",
+                "watch": "ao lado de = al lado de."
+              },
+              {
+                "prompt": "Diga o lugar do celular: dentro da gaveta.",
+                "expected": [
+                  "O celular está dentro da gaveta.",
+                  "o celular esta dentro da gaveta"
+                ],
+                "focus": "dentro de",
+                "watch": "dentro de = dentro de."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u10-lugares-e1",
+              "kind": "choice",
+              "prompt": "Onde ___ a chave ?",
+              "explain": "Onde está = ¿dónde está?",
+              "options": [
+                "está",
+                "é",
+                "tem",
+                "faz"
+              ],
+              "answers": [
+                "está"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-lugares-e2",
+              "kind": "gap",
+              "prompt": "O gato dorme ___ da cama.",
+              "explain": "embaixo de = debajo de.",
+              "answers": [
+                "embaixo"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-lugares-e3",
+              "kind": "order",
+              "prompt": "Diga o lugar da cadeira. (ao lado + mesa)",
+              "explain": "ao lado de + lugar.",
+              "answers": [
+                "A cadeira esta ao lado da mesa"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-lugares-e4",
+              "kind": "written",
+              "prompt": "Diga onde está o celular. (dentro + bolsa)",
+              "explain": "dentro de + lugar.",
+              "answers": [
+                "O celular está dentro da bolsa.",
+                "o celular esta dentro da bolsa"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:prepositions-place",
+            "grammar:there-is-are",
+            "vocab:home",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u10-colega",
+          "title": "Meu colega de casa",
+          "goal": "Descrever o colega de casa e usar os possessivos meu, minha, seu.",
+          "intro": {
+            "explanation": [
+              "Os possessivos: « meu » (masc), « minha » (fem). « Meu colega cozinha bem ». « Minha colega estuda à noite ».",
+              "Para falar do outro: « seu, sua ». « Como é o seu colega ? » « A sua casa é grande ? »",
+              "Descrever com « ser »: « Ele é alto e tranquilo ». « Ela é organizada e muito calma »."
+            ],
+            "examples": [
+              {
+                "text": "Meu colega de casa é do Rio.",
+                "meaning": "meu + masc."
+              },
+              {
+                "text": "Minha colega estuda medicina.",
+                "meaning": "minha + fem."
+              },
+              {
+                "text": "O seu quarto é arrumado.",
+                "meaning": "seu = su."
+              },
+              {
+                "text": "Ele cozinha muito bem.",
+                "meaning": "Descrever."
+              },
+              {
+                "text": "Ela é calma e organizada.",
+                "meaning": "ser + adjetivo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "meu / minha",
+              "meaning": "Possessivo: mi, mio.",
+              "note": "meu quarto, minha casa."
+            },
+            {
+              "text": "seu / sua",
+              "meaning": "Possessivo dele/dela.",
+              "note": "seu colega, sua sala."
+            },
+            {
+              "text": "colega de casa",
+              "meaning": "Quem mora junto.",
+              "note": "Divido a casa com ele."
+            },
+            {
+              "text": "Ele/Ela é …",
+              "meaning": "Descrever pessoa.",
+              "note": "Ele é alto."
+            },
+            {
+              "text": "muito + adjetivo",
+              "meaning": "Intensidade.",
+              "note": "muito calma."
+            }
+          ],
+          "situation": "O Rafa chega como novo colega de casa: alto, tranquilo e cozinha aos domingos.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que o seu colega cozinha bem. (use meu)",
+                "expected": [
+                  "Meu colega cozinha bem.",
+                  "meu colega cozinha bem"
+                ],
+                "focus": "meu",
+                "watch": "meu + palavra masculina."
+              },
+              {
+                "prompt": "Diga que a sua casa é pequena. (use minha)",
+                "expected": [
+                  "Minha casa é pequena.",
+                  "minha casa e pequena"
+                ],
+                "focus": "minha",
+                "watch": "minha + palavra feminina."
+              },
+              {
+                "prompt": "Pergunte como é o colega de casa dele.",
+                "expected": [
+                  "Como é o seu colega de casa ?",
+                  "como e o seu colega de casa"
+                ],
+                "focus": "seu",
+                "watch": "seu = de você."
+              },
+              {
+                "prompt": "Descreva o Rafa: alto e tranquilo.",
+                "expected": [
+                  "O Rafa é alto e tranquilo.",
+                  "Ele é alto e tranquilo.",
+                  "o rafa e alto e tranquilo"
+                ],
+                "focus": "ser + adjetivo",
+                "watch": "adjetivo concorda com a pessoa."
+              },
+              {
+                "prompt": "Diga que a sala dela é organizada.",
+                "expected": [
+                  "A sala dela é organizada.",
+                  "a sala dela e organizada"
+                ],
+                "focus": "descrever",
+                "watch": "organizada (fem)."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u10-colega-e1",
+              "kind": "choice",
+              "prompt": "___ colega cozinha muito bem.",
+              "explain": "meu + palavra masculina: o colega.",
+              "options": [
+                "Meu",
+                "Minha",
+                "Meus",
+                "Minhas"
+              ],
+              "answers": [
+                "Meu"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-colega-e2",
+              "kind": "gap",
+              "prompt": "___ quarto é sempre arrumado. (do colega)",
+              "explain": "seu = o quarto dele.",
+              "answers": [
+                "Seu"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-colega-e3",
+              "kind": "order",
+              "prompt": "Descreva a sua colega. (muito + calma)",
+              "explain": "minha + colega + adjetivo.",
+              "answers": [
+                "A minha colega e muito calma"
+              ]
+            },
+            {
+              "id": "pt-foundations-u10-colega-e4",
+              "kind": "written",
+              "prompt": "Pergunte ao colega onde está a chave dele.",
+              "explain": "seu + coisa: a chave dele.",
+              "answers": [
+                "Onde está a sua chave ?",
+                "onde esta a sua chave"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:possessives",
+            "function:describe-people",
+            "vocab:home",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:possessives"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u11",
+      "title": "Meu bairro",
+      "subtitle": "Perto de casa",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "bairro-lugares",
+          "title": "No bairro",
+          "subtitle": "O que tem perto",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "Chegam ao bairro novo e perguntam o que tem perto: mercado, farmácia e uma praça.",
+          "colorIndex": 0
+        },
+        {
+          "id": "bairro-compras",
+          "title": "Compras perto",
+          "subtitle": "Fruta do bairro",
+          "symbol": "cart",
+          "category": "Course",
+          "situation": "Na quitanda da esquina: compram fruta fresca e conversam com o dono.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u11-lugares",
+          "title": "Tem um supermercado ?",
+          "goal": "Perguntar o que tem no bairro com tem e há.",
+          "intro": {
+            "explanation": [
+              "Perguntar por lugares: « Tem um supermercado aqui perto ? ». A resposta: « Tem, é perto » ou « Não tem ».",
+              "Outra forma: « há ». « Há uma praça no centro ». No dia a dia, « tem » é mais comum.",
+              "Lugares do bairro: « o supermercado, a farmácia, a padaria, a praça, o ponto de ônibus »."
+            ],
+            "examples": [
+              {
+                "text": "Tem um supermercado aqui perto ?",
+                "meaning": "Perguntar por lugar."
+              },
+              {
+                "text": "Tem, é na esquina.",
+                "meaning": "Confirmar."
+              },
+              {
+                "text": "Não tem farmácia na rua.",
+                "meaning": "Negar."
+              },
+              {
+                "text": "Há uma praça pequena aqui.",
+                "meaning": "há = hay."
+              },
+              {
+                "text": "Tem um ponto de ônibus em frente.",
+                "meaning": "Lugar perto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Tem … aqui perto ?",
+              "meaning": "Perguntar por lugar.",
+              "note": "…um supermercado ?"
+            },
+            {
+              "text": "tem / não tem",
+              "meaning": "Confirmar ou negar.",
+              "note": "Tem, é perto."
+            },
+            {
+              "text": "há",
+              "meaning": "Forma neutra de tem.",
+              "note": "Há uma praça aqui."
+            },
+            {
+              "text": "aqui perto",
+              "meaning": "Lugar próximo.",
+              "note": "Moro aqui perto."
+            },
+            {
+              "text": "na esquina",
+              "meaning": "Onde as ruas se cruzam.",
+              "note": "A padaria é na esquina."
+            }
+          ],
+          "situation": "Chegam ao bairro novo: procuram supermercado, farmácia e um lugar para tomar café.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte por um supermercado próximo.",
+                "expected": [
+                  "Tem um supermercado perto ?",
+                  "tem um supermercado aqui perto"
+                ],
+                "focus": "tem … perto ?",
+                "watch": "Tem + lugar ?"
+              },
+              {
+                "prompt": "Diga que tem uma padaria na esquina.",
+                "expected": [
+                  "Tem uma padaria na esquina.",
+                  "tem uma padaria na esquina"
+                ],
+                "focus": "tem + lugar",
+                "watch": "na esquina = en la esquina."
+              },
+              {
+                "prompt": "Diga que não tem farmácia aqui.",
+                "expected": [
+                  "Não tem farmácia aqui.",
+                  "nao tem farmacia aqui"
+                ],
+                "focus": "não tem",
+                "watch": "não tem = no hay."
+              },
+              {
+                "prompt": "Diga que há uma praça no bairro.",
+                "expected": [
+                  "Há uma praça no bairro.",
+                  "ha uma praca no bairro"
+                ],
+                "focus": "há",
+                "watch": "há = hay (formal)."
+              },
+              {
+                "prompt": "Pergunte o lugar do ponto de ônibus.",
+                "expected": [
+                  "Onde é o ponto de ônibus ?",
+                  "onde e o ponto de onibus"
+                ],
+                "focus": "onde é",
+                "watch": "Onde é + lugar fixo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u11-lugares-e1",
+              "kind": "choice",
+              "prompt": "___ um supermercado aqui perto ?",
+              "explain": "Tem + lugar ? = ¿hay…?",
+              "options": [
+                "Tem",
+                "Está",
+                "É",
+                "Vai"
+              ],
+              "answers": [
+                "Tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-lugares-e2",
+              "kind": "gap",
+              "prompt": "___ uma padaria antiga nesta rua.",
+              "explain": "tem = hay no dia a dia.",
+              "answers": [
+                "Tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-lugares-e3",
+              "kind": "order",
+              "prompt": "O vizinho pergunta pela farmácia. Responda.",
+              "explain": "ser + perto: lugar perto.",
+              "answers": [
+                "A farmacia e perto"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-lugares-e4",
+              "kind": "written",
+              "prompt": "Você precisa de mercado. Pergunte para o vizinho.",
+              "explain": "Tem + lugar ? para perguntar.",
+              "answers": [
+                "Tem um mercado aqui perto ?",
+                "tem mercado por aqui ?"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "grammar:present-questions",
+            "vocab:town",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are"
+          ]
+        },
+        {
+          "id": "pt-foundations-u11-caminho",
+          "title": "Como eu chego ?",
+          "goal": "Dar e pedir direções simples: siga em frente, vire à esquerda, é perto.",
+          "intro": {
+            "explanation": [
+              "Pedir direção: « Como eu chego à praça ? » « É longe ? »",
+              "Direções: « Siga em frente ». « Vire à esquerda ». « Vire à direita na segunda rua ».",
+              "Distância: « É perto, pode ir a pé ». « É longe, melhor de ônibus »."
+            ],
+            "examples": [
+              {
+                "text": "Como eu chego à praça ?",
+                "meaning": "Pedir direção."
+              },
+              {
+                "text": "Siga em frente duas quadras.",
+                "meaning": "Seguir reto."
+              },
+              {
+                "text": "Vire à esquerda na esquina.",
+                "meaning": "Girar a la izquierda."
+              },
+              {
+                "text": "É perto, pode ir a pé.",
+                "meaning": "Distância curta."
+              },
+              {
+                "text": "É longe, melhor de ônibus.",
+                "meaning": "Distância longa."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Como eu chego a … ?",
+              "meaning": "Pedir direção.",
+              "note": "…à praça ?"
+            },
+            {
+              "text": "siga em frente",
+              "meaning": "Seguir reto.",
+              "note": "Siga em frente duas quadras."
+            },
+            {
+              "text": "vire à esquerda / à direita",
+              "meaning": "Girar.",
+              "note": "Vire à direita ali."
+            },
+            {
+              "text": "é perto / é longe",
+              "meaning": "Distância.",
+              "note": "É perto mesmo."
+            },
+            {
+              "text": "a pé",
+              "meaning": "Andando.",
+              "note": "Pode ir a pé."
+            }
+          ],
+          "situation": "Querem ir à feira do bairro: perguntam o caminho e chegam a pé em dez minutos.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte o caminho até a praça.",
+                "expected": [
+                  "Como eu chego à praça ?",
+                  "como eu chego a praca"
+                ],
+                "focus": "como eu chego",
+                "watch": "eu chego = yo llego."
+              },
+              {
+                "prompt": "Diga para seguir reto.",
+                "expected": [
+                  "Siga em frente.",
+                  "siga em frente duas quadras"
+                ],
+                "focus": "siga em frente",
+                "watch": "imperativo de seguir."
+              },
+              {
+                "prompt": "Diga para girar à direita.",
+                "expected": [
+                  "Vire à direita.",
+                  "vire a direita"
+                ],
+                "focus": "vire à",
+                "watch": "vire à direita = gire a la derecha."
+              },
+              {
+                "prompt": "Diga que pode ir caminhando porque é perto.",
+                "expected": [
+                  "É perto, pode ir a pé.",
+                  "e perto pode ir a pe"
+                ],
+                "focus": "a pé",
+                "watch": "a pé = a pie."
+              },
+              {
+                "prompt": "Diga que é longe e recomende o ônibus.",
+                "expected": [
+                  "É longe, melhor de ônibus.",
+                  "e longe melhor de onibus"
+                ],
+                "focus": "é longe",
+                "watch": "melhor de + transporte."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u11-caminho-e1",
+              "kind": "choice",
+              "prompt": "Como eu ___ à farmácia ?",
+              "explain": "eu chego: a pessoa eu + o verbo.",
+              "options": [
+                "chego",
+                "chega",
+                "chegue",
+                "chegamos"
+              ],
+              "answers": [
+                "chego"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-caminho-e2",
+              "kind": "gap",
+              "prompt": "___ em frente e o mercado fica na terceira quadra.",
+              "explain": "siga em frente = seguir reto.",
+              "answers": [
+                "Siga"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-caminho-e3",
+              "kind": "order",
+              "prompt": "O turista pergunta pelo caminho. Diga a ele a direção.",
+              "explain": "vire à esquerda + na esquina.",
+              "answers": [
+                "Vire a esquerda na esquina"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-caminho-e4",
+              "kind": "written",
+              "prompt": "O lugar fica perto. Diga como a pessoa pode ir.",
+              "explain": "é perto + a pé.",
+              "answers": [
+                "É perto, pode ir a pé.",
+                "e perto pode ir a pe"
+              ]
+            }
+          ],
+          "skills": [
+            "function:ask-for-directions",
+            "vocab:directions",
+            "grammar:present-simple",
+            "vocab:town"
+          ],
+          "canDo": [
+            "ask-for-directions"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u11-quitanda",
+          "title": "Na quitanda",
+          "goal": "Comprar fruta na quitanda do bairro: quantidades e preços.",
+          "intro": {
+            "explanation": [
+              "A quitanda vende fruta e verdura. « Queria um quilo de laranjas ». « As bananas estão maduras ? »",
+              "As quantidades: « meio quilo de uvas », « duas dúzias de bananas », « um abacaxi ».",
+              "O pagamento: « Quanto fica ? » « Fica doze reais ». « Pode ser no cartão ? »"
+            ],
+            "examples": [
+              {
+                "text": "Bom dia! Queria um quilo de laranjas.",
+                "meaning": "Cumprimentar e pedir."
+              },
+              {
+                "text": "As bananas estão maduras ?",
+                "meaning": "Perguntar a qualidade."
+              },
+              {
+                "text": "Meio quilo de uvas, por favor.",
+                "meaning": "Quantidade."
+              },
+              {
+                "text": "Quanto fica ?",
+                "meaning": "Perguntar o total."
+              },
+              {
+                "text": "Fica doze reais.",
+                "meaning": "O preço."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Queria + quantidade",
+              "meaning": "Pedir educado.",
+              "note": "Queria um quilo de laranjas."
+            },
+            {
+              "text": "estão maduras ?",
+              "meaning": "Qualidade da fruta.",
+              "note": "As bananas estão maduras ?"
+            },
+            {
+              "text": "meio quilo de …",
+              "meaning": "Peso menor.",
+              "note": "…uvas."
+            },
+            {
+              "text": "uma dúzia de …",
+              "meaning": "Doze unidades.",
+              "note": "uma dúzia de bananas."
+            },
+            {
+              "text": "Quanto fica ?",
+              "meaning": "Total da compra.",
+              "note": "Fica doze reais."
+            }
+          ],
+          "situation": "Sábado de manhã: compram laranjas, bananas e uvas na quitanda da esquina e pagam no cartão.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Peça um quilo de laranjas, com educação.",
+                "expected": [
+                  "Queria um quilo de laranjas.",
+                  "queria um quilo de laranjas"
+                ],
+                "focus": "queria",
+                "watch": "queria = educado."
+              },
+              {
+                "prompt": "Pergunte a qualidade das bananas.",
+                "expected": [
+                  "As bananas estão maduras ?",
+                  "as bananas estao maduras"
+                ],
+                "focus": "estão maduras",
+                "watch": "maduras (fem pl)."
+              },
+              {
+                "prompt": "Peça meio quilo de uvas.",
+                "expected": [
+                  "Queria meio quilo de uvas.",
+                  "meio quilo de uvas"
+                ],
+                "focus": "meio quilo",
+                "watch": "meio quilo = medio kilo."
+              },
+              {
+                "prompt": "Pergunte se pode pagar com cartão.",
+                "expected": [
+                  "Pode ser no cartão ?",
+                  "Posso pagar no cartão ?",
+                  "pode ser no cartao"
+                ],
+                "focus": "no cartão",
+                "watch": "no cartão = con tarjeta."
+              },
+              {
+                "prompt": "Diga o total: dez reais.",
+                "expected": [
+                  "Fica dez reais.",
+                  "fica dez reais"
+                ],
+                "focus": "fica + preço",
+                "watch": "fica = queda en."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u11-quitanda-e1",
+              "kind": "choice",
+              "prompt": "Queria um quilo de ___.",
+              "explain": "Na quitanda se compra fruta.",
+              "options": [
+                "laranjas",
+                "cadernos",
+                "toalhas",
+                "chaves"
+              ],
+              "answers": [
+                "laranjas"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-quitanda-e2",
+              "kind": "gap",
+              "prompt": "___ fica ?",
+              "explain": "Quanto fica ? = total da compra.",
+              "answers": [
+                "Quanto"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-quitanda-e3",
+              "kind": "order",
+              "prompt": "Peça um quilo de bananas.",
+              "explain": "Queria + quantidade.",
+              "answers": [
+                "Queria um quilo de bananas"
+              ]
+            },
+            {
+              "id": "pt-foundations-u11-quitanda-e4",
+              "kind": "written",
+              "prompt": "Peça duas dúzias de bananas, com educação.",
+              "explain": "duas dúzias de + fruta.",
+              "answers": [
+                "Queria duas dúzias de bananas.",
+                "queria duas duzias de bananas",
+                "duas duzias de bananas, por favor"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "grammar:quantities",
+            "vocab:food",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
     }
   ]
 }

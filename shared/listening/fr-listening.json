@@ -1370,6 +1370,206 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-listen-nouvel-appart",
+      "languageID": "fr",
+      "title": "Un nouvel appart pour Léa",
+      "level": "A1",
+      "topic": "maison",
+      "unitID": "fr-foundations-u10",
+      "text": "Léa visite un nouvel appartement dans le quartier. Dans l'entrée, il y a un miroir. La cuisine est petite, mais il y a une fenêtre. Le salon donne sur la rue : il y a un canapé bleu et deux fauteuils. La chambre est à côté du salon ; le lit est sous la fenêtre. Il n'y a pas de garage, mais il y a un balcon. Le propriétaire dit : « C'est à dix minutes à pied de la gare. » Léa est contente : elle prend l'appartement.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:there-is-are",
+        "grammar:prepositions-place",
+        "vocab:home"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-nouvel-appart-q1",
+          "kind": "choice",
+          "prompt": "Où est le lit ?",
+          "options": [
+            "Sous la fenêtre",
+            "Sur le balcon",
+            "Dans l'entrée",
+            "À côté de la cuisine"
+          ],
+          "answers": [
+            "Sous la fenêtre"
+          ],
+          "explain": "Le lit est sous la fenêtre."
+        },
+        {
+          "id": "fr-listen-nouvel-appart-q2",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qu'il y a dans le salon ?",
+          "options": [
+            "Un canapé bleu et deux fauteuils",
+            "Une grande table avec des chaises",
+            "Un miroir et un balcon",
+            "Un lit sous la fenêtre"
+          ],
+          "answers": [
+            "Un canapé bleu et deux fauteuils"
+          ],
+          "explain": "Il y a un canapé bleu et deux fauteuils."
+        },
+        {
+          "id": "fr-listen-nouvel-appart-q3",
+          "kind": "written",
+          "prompt": "Qu'est-ce qu'il n'y a pas dans l'appartement ?",
+          "answers": [
+            "il n'y a pas de garage",
+            "pas de garage"
+          ],
+          "explain": "Il n'y a pas de garage, mais il y a un balcon."
+        },
+        {
+          "id": "fr-listen-nouvel-appart-q4",
+          "kind": "choice",
+          "prompt": "À quelle distance est la gare ?",
+          "options": [
+            "À dix minutes à pied",
+            "À dix minutes en bus",
+            "Tout près du salon",
+            "Loin du quartier"
+          ],
+          "answers": [
+            "À dix minutes à pied"
+          ],
+          "explain": "C'est à dix minutes à pied de la gare."
+        },
+        {
+          "id": "fr-listen-nouvel-appart-q5",
+          "kind": "written",
+          "prompt": "Qu'est-ce qu'il y a à côté du salon ?",
+          "answers": [
+            "la chambre",
+            "c'est la chambre"
+          ],
+          "explain": "La chambre est à côté du salon."
+        },
+        {
+          "id": "fr-listen-nouvel-appart-q6",
+          "kind": "choice",
+          "prompt": "Comment est Léa à la fin ?",
+          "options": [
+            "Contente",
+            "Triste",
+            "Fatiguée",
+            "Fâchée"
+          ],
+          "answers": [
+            "Contente"
+          ],
+          "explain": "Léa est contente : elle prend l'appartement."
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-balade-quartier",
+      "languageID": "fr",
+      "title": "Une balade dans le quartier",
+      "level": "A1",
+      "topic": "quartier",
+      "unitID": "fr-foundations-u11",
+      "text": "Karim est nouveau dans le quartier. Il demande à une voisine : « Pardon, est-ce qu'il y a une boulangerie près d'ici ? » La voisine répond : « Allez tout droit, tournez à gauche au feu ; c'est tout près. La boulangerie est à côté de la pharmacie. » Karim marche cinq minutes. Ensuite, il traverse le parc : il y a un marché. Le samedi, le marché vend des fruits : pommes, fraises et tomates. Karim achète un kilo de pommes. Il adore son quartier.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:there-is-are",
+        "function:ask-for-directions",
+        "vocab:town"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-balade-quartier-q1",
+          "kind": "choice",
+          "prompt": "Que cherche Karim ?",
+          "options": [
+            "Une boulangerie",
+            "Une pharmacie",
+            "La gare",
+            "Un marché"
+          ],
+          "answers": [
+            "Une boulangerie"
+          ],
+          "explain": "Il demande s'il y a une boulangerie près d'ici."
+        },
+        {
+          "id": "fr-listen-balade-quartier-q2",
+          "kind": "choice",
+          "prompt": "Quelle est la direction ?",
+          "options": [
+            "Tournez à gauche au feu",
+            "Tournez à droite au feu",
+            "Allez à gauche tout de suite",
+            "Traversez le quartier"
+          ],
+          "answers": [
+            "Tournez à gauche au feu"
+          ],
+          "explain": "Allez tout droit, tournez à gauche au feu."
+        },
+        {
+          "id": "fr-listen-balade-quartier-q3",
+          "kind": "written",
+          "prompt": "Où est la boulangerie ?",
+          "answers": [
+            "à côté de la pharmacie",
+            "a cote de la pharmacie",
+            "près de la pharmacie"
+          ],
+          "explain": "La boulangerie est à côté de la pharmacie."
+        },
+        {
+          "id": "fr-listen-balade-quartier-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qu'il y a dans le parc ?",
+          "options": [
+            "Un marché",
+            "Des voitures",
+            "Une école",
+            "Un cinéma"
+          ],
+          "answers": [
+            "Un marché"
+          ],
+          "explain": "Il traverse le parc : il y a un marché."
+        },
+        {
+          "id": "fr-listen-balade-quartier-q5",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Karim achète ?",
+          "answers": [
+            "un kilo de pommes",
+            "1 kilo de pommes",
+            "des pommes"
+          ],
+          "explain": "Karim achète un kilo de pommes."
+        },
+        {
+          "id": "fr-listen-balade-quartier-q6",
+          "kind": "choice",
+          "prompt": "Comment trouve-t-il le quartier ?",
+          "options": [
+            "Il adore",
+            "Il déteste",
+            "Il oublie",
+            "Il cherche"
+          ],
+          "answers": [
+            "Il adore"
+          ],
+          "explain": "Il adore son quartier."
+        }
+      ]
     }
   ]
 }

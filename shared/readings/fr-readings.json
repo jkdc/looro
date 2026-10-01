@@ -607,6 +607,91 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-read-annonce-coloc",
+      "languageID": "fr",
+      "title": "Petite annonce : cherche colocataire",
+      "level": "A1",
+      "topic": "colocation",
+      "unitID": "fr-foundations-u10",
+      "text": "Cherche colocataire pour un grand appartement près du parc. Il y a trois chambres, une cuisine et un grand salon avec un canapé. Ma chambre est petite ; ta chambre est à côté de la salle de bains. Je m'appelle Julie, je suis étudiante et je suis très sympa. J'aime la musique et le vélo. Le loyer est de quatre cents euros. Il n'y a pas de garage, mais il y a un balcon. Tu es intéressé ? Appelle-moi le soir.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:possessives",
+        "vocab:home",
+        "function:describe-people"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-annonce-coloc-q1",
+          "kind": "choice",
+          "prompt": "Combien de chambres dans l'appartement ?",
+          "answers": [
+            "Trois"
+          ],
+          "explain": "Il y a trois chambres.",
+          "options": [
+            "Trois",
+            "Deux",
+            "Quatre",
+            "Une"
+          ]
+        },
+        {
+          "id": "fr-read-annonce-coloc-q2",
+          "kind": "written",
+          "prompt": "Où est la chambre du colocataire ?",
+          "answers": [
+            "à côté de la salle de bains",
+            "a cote de la salle de bains"
+          ],
+          "explain": "Ta chambre est à côté de la salle de bains."
+        },
+        {
+          "id": "fr-read-annonce-coloc-q3",
+          "kind": "choice",
+          "prompt": "Comment est Julie ?",
+          "answers": [
+            "Très sympa"
+          ],
+          "explain": "Je suis très sympa, dit Julie.",
+          "options": [
+            "Très sympa",
+            "Très sérieuse",
+            "Très fatiguée",
+            "Timide"
+          ]
+        },
+        {
+          "id": "fr-read-annonce-coloc-q4",
+          "kind": "written",
+          "prompt": "Quel est le prix du loyer ?",
+          "answers": [
+            "quatre cents euros",
+            "400 euros",
+            "quatre cent euros"
+          ],
+          "explain": "Le loyer est de quatre cents euros."
+        },
+        {
+          "id": "fr-read-annonce-coloc-q5",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qu'il n'y a pas ?",
+          "answers": [
+            "De garage"
+          ],
+          "explain": "Il n'y a pas de garage, mais il y a un balcon.",
+          "options": [
+            "De garage",
+            "De balcon",
+            "De cuisine",
+            "De salon"
+          ]
+        }
+      ]
     }
   ]
 }
