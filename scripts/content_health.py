@@ -110,7 +110,56 @@ def check_checkpoint_balance(checkpoints, issues):
                 issues.append(f"CHECKPOINT_IMBALANCE: {cp['id']} has only {count}/{total} {cat} questions")
 
 
+# Parity targets per non-English language (docs/plan_completar_idiomas_2026-10-01.md):
+# lessons per level, listenings per level, readings per level, checkpoint levels.
+PARITY_LANGUAGES = ('es', 'fr', 'it', 'de', 'pt')
+PARITY_LESSONS = {'A1': 40, 'A2': 18, 'B1': 14, 'B2': 5, 'C1': 5}
+PARITY_LISTENINGS = {'A1': 15, 'A2': 12, 'B1': 7, 'B2': 7, 'C1': 3}
+PARITY_READINGS = {'A1': 7, 'A2': 4, 'B1': 5, 'B2': 3, 'C1': 3}
+PARITY_READINGS_FLOOR = {'A1': 6, 'A2': 4, 'B1': 4, 'B2': 3, 'C1': 2}
+PARITY_CHECKPOINTS = ('A1', 'A2', 'B1', 'B2', 'C1')
+
+
+def check_parity(courses, listenings, readings, checkpoints, issues):
+    by_lang_units = collections.defaultdict(lambda: collections.defaultdict(int))
+    for course in courses:
+        base = course['id'].split('-')[0]
+        if base not in PARITY_LANGUAGES:
+            continue
+        for unit in course['units']:
+            by_lang_units[base][unit['level']] += len(unit['lessons'])
+    by_lang_listen = collections.defaultdict(lambda: collections.defaultdict(int))
+    for text in listenings:
+        if text['languageID'] in PARITY_LANGUAGES:
+            by_lang_listen[text['languageID']][text['level']] += 1
+    by_lang_read = collections.defaultdict(lambda: collections.defaultdict(int))
+    for text in readings:
+        if text['languageID'] in PARITY_LANGUAGES:
+            by_lang_read[text['languageID']][text['level']] += 1
+    by_lang_cp = collections.defaultdict(set)
+    for cp in checkpoints:
+        if cp['languageID'] in PARITY_LANGUAGES:
+            by_lang_cp[cp['languageID']].add(cp['level'])
+    for lang in PARITY_LANGUAGES:
+        for level, target in PARITY_LESSONS.items():
+            have = by_lang_units[lang][level]
+            if have < target:
+                issues.append(f"PARITY_GAP: {lang} {level} lessons {have}/{target}")
+        for level, target in PARITY_LISTENINGS.items():
+            have = by_lang_listen[lang][level]
+            if have < target:
+                issues.append(f"PARITY_GAP: {lang} {level} listenings {have}/{target}")
+        for level, target in PARITY_READINGS_FLOOR.items():
+            have = by_lang_read[lang][level]
+            if have < target:
+                issues.append(f"PARITY_GAP: {lang} {level} readings {have}/{target}")
+        for level in PARITY_CHECKPOINTS:
+            if level not in by_lang_cp[lang]:
+                issues.append(f"PARITY_GAP: {lang} checkpoint {level} missing")
+
+
 def main():
+    parity_only = '--parity' in sys.argv
     courses = load_courses()
     listenings = load_listening()
     readings = load_readings()
@@ -120,10 +169,12 @@ def main():
         checkpoints.extend(json.loads(p.read_text()).get('checkpoints', []))
 
     issues = []
-    check_exercises(courses, issues)
-    check_skill_coverage(courses, listenings, readings, catalog, issues)
-    check_prerequisite_chain(courses, catalog, issues)
-    check_checkpoint_balance(checkpoints, issues)
+    if not parity_only:
+        check_exercises(courses, issues)
+        check_skill_coverage(courses, listenings, readings, catalog, issues)
+        check_prerequisite_chain(courses, catalog, issues)
+        check_checkpoint_balance(checkpoints, issues)
+    check_parity(courses, listenings, readings, checkpoints, issues)
 
     if issues:
         print(f"Content Health: {len(issues)} issue(s) found\n")
