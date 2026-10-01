@@ -6,7 +6,7 @@
 - [x] F3 A1 ola 1 — hogar y barrio (2u × 5 idiomas + listenings)
 - [x] F4 A1 ola 2 — gente, rutinas, el tiempo (hasta ~30l)
 - [ ] F5 A1 ola 3 — transporte, hobbies, salud, tiendas (A1=40l, 15 listenings)
-- [ ] F6 A2 hasta 18 lecciones (+6 listenings, +3 readings)
+- [~] F6/F7 en progreso: ola de relleno A1+A2+B1+C1 aplicada (v. verify F6)
 - [ ] F7 B1 hasta 14 lecciones (+5 listenings, +4 readings)
 - [ ] F8 track profesional por idioma (B1, 3 lecciones + Talk)
 - [ ] F9 pronunciación F2-F5 + drills (pron 8/8)
@@ -44,3 +44,14 @@
 - A1 "gente y días" × 5: 2 unidades de 3 lecciones (familia, descripciones,
   llamada; rutina con frecuencia, clima, gustos) + 2 listenings + 1 reading.
 - Gradle 494/494; sin avisos nuevos.
+
+## Verify F6a + split 64KB (2026-10-01)
+
+- Ola de relleno por idioma: unidad A1 "a la mesa" (3l), A2 "quedar
+  bien" (3l), B1 "contar historias" (3l) y 4ª lección C1 "debatir", con
+  4 listenings y 1 reading nuevos por idioma.
+- ListeningData reventó el límite de método de la JVM (139 textos en un
+  clinit); Kotlin ahora emite un objeto por ítem y la lista se monta
+  perezosa. Mismo split aplicado a ReadingData y CheckpointsData.
+- Gradle 494/494. Gaps de lecciones por idioma: A1 -9/-11, A2 -10/-13,
+  B1 -9, C1 -1.
