@@ -3,7 +3,7 @@
 - [x] F0 SDD paraguas + `PARITY_GAP` en content_health
 - [x] F1 B2 × 5 idiomas — 2 unidades/5 lecciones + 2 listenings + reading + checkpoint por idioma
 - [x] F2 C1 × 5 idiomas — unidad de 3 lecciones + 3 listenings + 3 readings + checkpoint
-- [ ] F3 A1 ola 1 — hogar y barrio (2u × 5 idiomas + listenings)
+- [x] F3 A1 ola 1 — hogar y barrio (2u × 5 idiomas + listenings)
 - [ ] F4 A1 ola 2 — gente, rutinas, el tiempo (hasta ~30l)
 - [ ] F5 A1 ola 3 — transporte, hobbies, salud, tiendas (A1=40l, 15 listenings)
 - [ ] F6 A2 hasta 18 lecciones (+6 listenings, +3 readings)
@@ -32,3 +32,10 @@
   duplicados; exportadores reales y Content Health en verde.
 - Escalera A1→C1 COMPLETA en los 6 idiomas. Quedan en paridad: lecciones
   A1/A2/B1, listenings A1/A2/B1/B2, readings y tracks.
+
+## Verify F3 (2026-10-01)
+
+- A1 "hogar y barrio" × 5 idiomas: 2 unidades de 3 lecciones
+  (casa con hay, preposiciones de lugar, compañeros; preguntar por
+  sitios, direcciones, frutería) + 2 listenings + 1 reading.
+- Gaps de paridad: 75 → 60. Gradle 494/494, sin avisos nuevos.
