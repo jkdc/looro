@@ -4,7 +4,7 @@
 - [x] F1 B2 × 5 idiomas — 2 unidades/5 lecciones + 2 listenings + reading + checkpoint por idioma
 - [x] F2 C1 × 5 idiomas — unidad de 3 lecciones + 3 listenings + 3 readings + checkpoint
 - [x] F3 A1 ola 1 — hogar y barrio (2u × 5 idiomas + listenings)
-- [ ] F4 A1 ola 2 — gente, rutinas, el tiempo (hasta ~30l)
+- [x] F4 A1 ola 2 — gente, rutinas, el tiempo (hasta ~30l)
 - [ ] F5 A1 ola 3 — transporte, hobbies, salud, tiendas (A1=40l, 15 listenings)
 - [ ] F6 A2 hasta 18 lecciones (+6 listenings, +3 readings)
 - [ ] F7 B1 hasta 14 lecciones (+5 listenings, +4 readings)
@@ -39,3 +39,8 @@
   (casa con hay, preposiciones de lugar, compañeros; preguntar por
   sitios, direcciones, frutería) + 2 listenings + 1 reading.
 - Gaps de paridad: 75 → 60. Gradle 494/494, sin avisos nuevos.
+
+## Verify F4 (2026-10-01)
+- A1 "gente y días" × 5: 2 unidades de 3 lecciones (familia, descripciones,
+  llamada; rutina con frecuencia, clima, gustos) + 2 listenings + 1 reading.
+- Gradle 494/494; sin avisos nuevos.
