@@ -984,6 +984,186 @@ public enum DeFoundationsU13 {
                             Exercise(id: "de-foundations-u13-lust-e4", kind: "written", prompt: "Sagt, was du gern machst. (Musik hören)", options: [], answers: ["ich höre gern musik", "ich hoere gern musik", "ich mag musik"], explain: "gern + Verb: Ich höre gern Musik.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum DeFoundationsU14 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u14", title: "Unterwegs", subtitle: "U-Bahn, Bus und Bahn", level: "A1", themes: [
+                    ConversationTheme("unterwegs-stadt", "Mit Bus und Bahn", "Wie ich hinkomme", "bus", "Course", "Sam ist neu in der Stadt: U-Bahn, Bus oder zu Fuß — wie kommst du zur Arbeit ?", 0),
+                    ConversationTheme("fahrkarten", "Fahrkarten", "Eine Fahrkarte, bitte", "tram", "Course", "Am Schalter: eine Fahrkarte nach Bonn, hin und zurück — und der Zug fährt von Gleis 3.", 1)], lessons: [
+            Lesson(id: "de-foundations-u14-verkehr", title: "Wie ich hinkomme", goal: "Sagen, wie du zur Arbeit, zur Schule oder in die Stadt kommst.",
+                intro: LessonIntro(explanation: [
+                            "nehmen + Verkehrsmittel: „Ich nehme die U-Bahn.“ „Ich nehme den Bus.“ Beispiel: „Ich nehme das Fahrrad.“",
+                            "zu Fuß gehen = laufen, ohne Bus und Auto: „Ich gehe zu Fuß.“ Beispiel: „Ich gehe zu Fuß ins Büro.“",
+                            "Frage: „Wie kommst du zur Arbeit ?“ — „Mit dem Bus.“ Beispiel: „Ich fahre mit dem Bus.“"], examples: [
+                            ExampleLine(text: "Ich nehme die U-Bahn.", meaning: "nehmen + die U-Bahn."),
+                            ExampleLine(text: "Ich nehme den Bus zur Arbeit.", meaning: "der Bus → den Bus."),
+                            ExampleLine(text: "Ich gehe zu Fuß.", meaning: "Laufen, ohne Bus und Auto."),
+                            ExampleLine(text: "Wie kommst du zur Schule ?", meaning: "Nach dem Weg fragen."),
+                            ExampleLine(text: "Sie fährt mit dem Fahrrad.", meaning: "fahren mit + dem.")]),
+                expressions: [
+                            TargetExpression(text: "die U-Bahn / der Bus", meaning: "Verkehr in der Stadt.", note: "Ich nehme die U-Bahn."),
+                            TargetExpression(text: "zu Fuß", meaning: "Ohne Bus, ohne Auto.", note: "Ich gehe zu Fuß."),
+                            TargetExpression(text: "das Fahrrad / das Auto", meaning: "Weitere Verkehrsmittel.", note: "Ich fahre mit dem Fahrrad."),
+                            TargetExpression(text: "Ich nehme …", meaning: "Sagen, welches Verkehrsmittel du nimmst.", note: "Ich nehme den Bus."),
+                            TargetExpression(text: "Wie kommst du … ?", meaning: "Nach dem Weg fragen.", note: "Wie kommst du zur Schule ?")],
+                situation: "Sam ist neu in der Stadt: Er fragt Kim, wie sie zur Arbeit kommt — mit der U-Bahn, mit dem Bus oder zu Fuß.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sagst, wie du zur Arbeit fährst. (die U-Bahn)", expected: ["Ich nehme die U-Bahn.", "ich nehme die u-bahn"], focus: "nehmen + die", watch: "die U-Bahn: die bleibt die."),
+                                PracticeQuestion(prompt: "Sagst, wie du fährst. (der Bus)", expected: ["Ich nehme den Bus.", "ich nehme den bus"], focus: "der → den", watch: "der Bus: ich nehme den Bus."),
+                                PracticeQuestion(prompt: "Du hast kein Auto. Sagst, dass du läufst.", expected: ["Ich gehe zu Fuß.", "ich gehe zu fuss"], focus: "zu Fuß gehen", watch: "ß = ss: zu Fuss."),
+                                PracticeQuestion(prompt: "Fragst Sam, wie er zur Schule kommt.", expected: ["Wie kommst du zur Schule ?", "wie kommst du zur schule"], focus: "Wie kommst du … ?", watch: "Frage mit wie + kommen."),
+                                PracticeQuestion(prompt: "Sagst, wie Mia fährt. (das Fahrrad)", expected: ["Sie fährt mit dem Fahrrad.", "sie faehrt mit dem fahrrad"], focus: "fahren mit + dem", watch: "fahren: sie fährt; ä = ae.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u14-verkehr-e1", kind: "choice", prompt: "Ich ___ den Bus.", options: ["nehme", "nimmst", "nimm", "nehmen"], answers: ["nehme"], explain: "ich + nehmen = ich nehme den Bus."),
+                            Exercise(id: "de-foundations-u14-verkehr-e2", kind: "gap", prompt: "Du hast kein Auto. Du gehst ___.", options: [], answers: ["zu fuss", "zu Fuß"], explain: "zu Fuß gehen: laufen, ohne Bus und Auto."),
+                            Exercise(id: "de-foundations-u14-verkehr-e3", kind: "order", prompt: "Sagst, wie du zur Arbeit fährst. (die U-Bahn)", options: [], answers: ["Ich nehme die U-Bahn"], explain: "nehmen + die U-Bahn: so sagst du, wie du fährst."),
+                            Exercise(id: "de-foundations-u14-verkehr-e4", kind: "written", prompt: "Fragst, wie Lena zur Arbeit kommt.", options: [], answers: ["wie kommt lena zur arbeit", "Wie kommt Lena zur Arbeit ?"], explain: "Frage mit wie: Wie kommt sie zur Arbeit ?")], skills: ["vocab:transport", "grammar:present-simple", "function:ask-simple-questions", "vocab:town"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u14-fahrplan", title: "Wann fährt er ab ?", goal: "Uhrzeiten sagen und im Fahrplan lesen: wann fährt der Bus oder Zug ?",
+                intro: LessonIntro(explanation: [
+                            "Uhrzeit: „Es ist neun Uhr.“ „Es ist halb neun.“ Beispiel: „Es ist Viertel nach acht.“",
+                            "fahren ab = starten, ankommen = am Ziel sein: „Der Zug fährt um 9 Uhr ab.“ Beispiel: „Der Bus kommt um halb zehn an.“",
+                            "Frage mit wann: „Wann fährt der Bus ab ?“ — „Um 8:15 Uhr.“ Beispiel: „Wann kommt der Zug an ?“"], examples: [
+                            ExampleLine(text: "Es ist Viertel nach acht.", meaning: "8:15 Uhr."),
+                            ExampleLine(text: "Der Zug fährt um 9 Uhr ab.", meaning: "fahren ab + um + Zeit."),
+                            ExampleLine(text: "Wann fährt der Bus ab ?", meaning: "Frage nach der Zeit."),
+                            ExampleLine(text: "Der Bus kommt um halb zehn an.", meaning: "halb zehn = 9:30 Uhr."),
+                            ExampleLine(text: "Die letzte Bahn fährt um 23 Uhr.", meaning: "der letzte Bus / die letzte Bahn.")]),
+                expressions: [
+                            TargetExpression(text: "um wie viel Uhr ?", meaning: "Nach der genauen Zeit fragen.", note: "Um wie viel Uhr fährt der Zug ?"),
+                            TargetExpression(text: "fahren ab", meaning: "Der Bus oder Zug startet.", note: "Der Zug fährt um 9 Uhr ab."),
+                            TargetExpression(text: "ankommen", meaning: "Du bist am Ziel.", note: "Der Bus kommt um 9 Uhr an."),
+                            TargetExpression(text: "halb zehn", meaning: "9:30 Uhr.", note: "Es ist halb zehn."),
+                            TargetExpression(text: "der Fahrplan", meaning: "Hier stehen alle Zeiten.", note: "Ich sehe im Fahrplan nach.")],
+                situation: "Kim und Sam stehen am Bahnsteig: Die nächste Bahn fährt erst um Viertel nach zehn — der Fahrplan hilft.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sagst die Uhrzeit. (8:15)", expected: ["Es ist Viertel nach acht.", "es ist viertel nach acht", "es ist acht uhr funfzehn"], focus: "Viertel nach", watch: "8:15: Viertel nach acht."),
+                                PracticeQuestion(prompt: "Fragst, wann der Zug startet.", expected: ["Wann fährt der Zug ab ?", "wann faehrt der zug ab"], focus: "wann … ab ?", watch: "fahren: er fährt; ä = ae."),
+                                PracticeQuestion(prompt: "Sagst, wann der Bus am Ziel ist. (halb neun)", expected: ["Der Bus kommt um halb neun an.", "der bus kommt um halb neun an"], focus: "ankommen", watch: "halb neun = 8:30 Uhr."),
+                                PracticeQuestion(prompt: "Sagst, wann dein Zug startet. (um 9 Uhr)", expected: ["Mein Zug fährt um 9 Uhr ab.", "mein zug faehrt um neun uhr ab"], focus: "fahren ab", watch: "fährt = faehrt."),
+                                PracticeQuestion(prompt: "Fragst nach der genauen Zeit des Buses.", expected: ["Um wie viel Uhr fährt der Bus ?", "um wie viel uhr faehrt der bus"], focus: "um wie viel Uhr ?", watch: "Frage mit um wie viel Uhr.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u14-fahrplan-e1", kind: "choice", prompt: "Der Zug fährt um 9 Uhr ___.", options: ["ab", "an", "auf", "aus"], answers: ["ab"], explain: "fahren ab = starten: Der Zug fährt um 9 Uhr ab."),
+                            Exercise(id: "de-foundations-u14-fahrplan-e2", kind: "gap", prompt: "Es ist 9:30 Uhr — es ist ___ neun.", options: [], answers: ["halb"], explain: "halb neun = 8:30 Uhr: in Deutschland zählt halb rückwärts."),
+                            Exercise(id: "de-foundations-u14-fahrplan-e3", kind: "order", prompt: "Fragst nach der Abfahrt des Buses.", options: [], answers: ["Wann fährt der Bus ab"], explain: "Frage nach der Zeit: wann + fährt + ab."),
+                            Exercise(id: "de-foundations-u14-fahrplan-e4", kind: "written", prompt: "Sagst die Uhrzeit. (9:15 Uhr)", options: [], answers: ["es ist viertel nach neun", "Es ist Viertel nach neun.", "es ist neun uhr funfzehn"], explain: "9:15: Viertel nach neun oder neun Uhr fünfzehn.")], skills: ["function:tell-time", "vocab:transport", "grammar:present-questions", "grammar:present-simple"], canDo: ["tell-time"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u14-ticket", title: "Eine Fahrkarte, bitte", goal: "Am Schalter oder am Automaten Fahrkarten kaufen: möchte, Preis, hin und zurück.",
+                intro: LessonIntro(explanation: [
+                            "möchte + Bestellung: „Ich möchte eine Fahrkarte nach Bonn.“ Beispiel: „Wir möchten zwei Fahrkarten.“",
+                            "eine Fahrkarte — zwei Fahrkarten: Beispiel: „Zwei Fahrkarten nach Köln, bitte.“",
+                            "Preis und Fahrt: „Das kostet 4 Euro 50.“ Beispiel: „Hin und zurück, bitte.“"], examples: [
+                            ExampleLine(text: "Eine Fahrkarte nach Bonn, bitte.", meaning: "Höflich bestellen."),
+                            ExampleLine(text: "Ich möchte zwei Fahrkarten.", meaning: "Mehrzahl: zwei Fahrkarten."),
+                            ExampleLine(text: "Einzeln oder hin und zurück ?", meaning: "Frage am Schalter."),
+                            ExampleLine(text: "Das kostet 4 Euro 50.", meaning: "Der Preis."),
+                            ExampleLine(text: "Der Zug fährt von Gleis 3.", meaning: "das Gleis: Wo der Zug startet.")]),
+                expressions: [
+                            TargetExpression(text: "Eine Fahrkarte, bitte.", meaning: "Höflich kaufen.", note: "Eine Fahrkarte nach Bonn, bitte."),
+                            TargetExpression(text: "einzel / hin und zurück", meaning: "Ein Weg — oder beide Wege.", note: "Hin und zurück, bitte."),
+                            TargetExpression(text: "Ich möchte …", meaning: "Sagen, was du kaufst.", note: "Ich möchte eine Fahrkarte."),
+                            TargetExpression(text: "Das kostet …", meaning: "Den Preis sagen.", note: "Das kostet 3 Euro 50."),
+                            TargetExpression(text: "das Gleis", meaning: "Wo der Zug abfährt.", note: "Der Zug fährt von Gleis 3.")],
+                situation: "Sam kauft am Schalter eine Fahrkarte nach Bonn — einzeln oder hin und zurück ? Und von welchem Gleis ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Bestellst eine Fahrkarte nach Bonn.", expected: ["Eine Fahrkarte nach Bonn, bitte.", "ich möchte eine fahrkarte nach bonn", "ich moechte eine fahrkarte nach bonn"], focus: "möchte", watch: "ö = oe: moechte."),
+                                PracticeQuestion(prompt: "Sagst, was du möchtest. (zwei Fahrkarten)", expected: ["Ich möchte zwei Fahrkarten.", "ich moechte zwei fahrkarten"], focus: "möchte + Mehrzahl", watch: "eine Fahrkarte — zwei Fahrkarten."),
+                                PracticeQuestion(prompt: "Sagst, dass du beide Wege fährst.", expected: ["Hin und zurück, bitte.", "hin und zurück bitte"], focus: "hin und zurück", watch: "Beide Wege: hin und zurück."),
+                                PracticeQuestion(prompt: "Sagst den Preis. (7 Euro 80)", expected: ["Das kostet 7 Euro 80.", "das kostet 7 euro 80"], focus: "Das kostet …", watch: "Preis: 7 Euro 80."),
+                                PracticeQuestion(prompt: "Fragst, wo der Zug startet.", expected: ["Von welchem Gleis fährt der Zug ?", "von welchem gleis faehrt der zug"], focus: "das Gleis", watch: "das Gleis: Wo der Zug abfährt.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u14-ticket-e1", kind: "choice", prompt: "Ich möchte eine Fahrkarte ___ Bonn.", options: ["nach", "zu", "in", "auf"], answers: ["nach"], explain: "nach + Stadtname: nach Bonn, nach Berlin."),
+                            Exercise(id: "de-foundations-u14-ticket-e2", kind: "gap", prompt: "Hin ___ zurück, bitte.", options: [], answers: ["und"], explain: "hin und zurück = beide Wege: hin fahren und zurück fahren."),
+                            Exercise(id: "de-foundations-u14-ticket-e3", kind: "order", prompt: "Bestellst zwei Fahrkarten.", options: [], answers: ["Ich möchte zwei Fahrkarten"], explain: "möchte + zwei Fahrkarten: so bestellst du höflich."),
+                            Exercise(id: "de-foundations-u14-ticket-e4", kind: "written", prompt: "Der Schalter fragt: ein Weg oder zwei Wege ?", options: [], answers: ["Einzeln oder hin und zurück ?", "einzeln oder hin und zurueck"], explain: "Am Schalter fragt man: Einzeln oder hin und zurück ?")], skills: ["function:go-shopping", "function:make-requests", "vocab:transport", "grammar:quantities"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum DeFoundationsU15 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u15", title: "Ich fühle mich gut", subtitle: "Grundgesundheit", level: "A1", themes: [
+                    ConversationTheme("nicht-so-gut", "Nicht so gut", "Symptome sagen", "cross.case", "Course", "Mia fühlt sich nicht gut: Kopfschmerzen und Fieber. Kim fragt: Was hast du ?", 0),
+                    ConversationTheme("gesund-leben", "Gesund leben", "Gute Gewohnheiten", "pills", "Course", "Immer Wasser trinken, nie Fast Food — so bleibst du gesund.", 1)], lessons: [
+            Lesson(id: "de-foundations-u15-symptome", title: "Ich fühle mich nicht gut", goal: "Sagen, wie du dich fühlst, und Symptome nennen: Kopfschmerzen, Fieber, Husten.",
+                intro: LessonIntro(explanation: [
+                            "sich fühlen: „Ich fühle mich gut.“ „Ich fühle mich nicht gut.“ Beispiel: „Wie fühlst du dich ?“",
+                            "haben + Krankheit: „Ich habe Kopfschmerzen.“ „Ich habe Fieber.“ Beispiel: „Ich habe Husten.“",
+                            "sein + Gefühl: „Ich bin krank.“ „Ich bin müde.“ Beispiel: „Er ist auch krank.“"], examples: [
+                            ExampleLine(text: "Ich fühle mich nicht gut.", meaning: "sich fühlen: Mir geht es schlecht."),
+                            ExampleLine(text: "Ich habe Kopfschmerzen.", meaning: "haben + Schmerzen."),
+                            ExampleLine(text: "Ich habe Fieber.", meaning: "haben + Fieber."),
+                            ExampleLine(text: "Ich bin müde und krank.", meaning: "sein + Adjektiv."),
+                            ExampleLine(text: "Was hast du ?", meaning: "Nach Symptomen fragen.")]),
+                expressions: [
+                            TargetExpression(text: "Ich fühle mich …", meaning: "Sagen, wie es dir geht.", note: "Ich fühle mich gut."),
+                            TargetExpression(text: "Kopfschmerzen haben", meaning: "Der Kopf tut weh.", note: "Ich habe Kopfschmerzen."),
+                            TargetExpression(text: "Fieber / Husten haben", meaning: "Krankheit mit haben.", note: "Ich habe Husten und Fieber."),
+                            TargetExpression(text: "Ich bin müde.", meaning: "Keine Energie: sein + müde.", note: "Ich bin so müde."),
+                            TargetExpression(text: "Was hast du ?", meaning: "Fragen, was los ist.", note: "Was hast du ? — Ich bin krank.")],
+                situation: "Mia fühlt sich nicht gut: Sie ist müde und hat Kopfschmerzen. Kim fragt: Was hast du ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sagst, dass es dir nicht gut geht.", expected: ["Ich fühle mich nicht gut.", "ich fuehle mich nicht gut"], focus: "sich fühlen", watch: "fühlen = fuehlen."),
+                                PracticeQuestion(prompt: "Sagst, dass dein Kopf wehtut.", expected: ["Ich habe Kopfschmerzen.", "ich habe kopfschmerzen"], focus: "haben + …schmerzen", watch: "Kopf + Schmerzen = Kopfschmerzen."),
+                                PracticeQuestion(prompt: "Sagst, dass deine Temperatur 39 Grad ist.", expected: ["Ich habe Fieber.", "ich habe fieber"], focus: "Fieber haben", watch: "Hohe Temperatur = Fieber."),
+                                PracticeQuestion(prompt: "Fragst Sam, was los ist.", expected: ["Was hast du ?", "was hast du"], focus: "Was hast du ?", watch: "du hast → hast du ?"),
+                                PracticeQuestion(prompt: "Sagst zwei Gefühle. (müde und krank)", expected: ["Ich bin müde und krank.", "ich bin muede und krank"], focus: "sein + Adjektiv", watch: "müde = muede.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u15-symptome-e1", kind: "choice", prompt: "Ich habe ___. Mein Kopf tut weh.", options: ["Kopfschmerzen", "Fieber", "Husten", "Durst"], answers: ["Kopfschmerzen"], explain: "Mein Kopf tut weh = ich habe Kopfschmerzen."),
+                            Exercise(id: "de-foundations-u15-symptome-e2", kind: "gap", prompt: "Ich habe ___. Die Temperatur ist 39 Grad.", options: [], answers: ["fieber", "Fieber"], explain: "Hohe Temperatur: ich habe Fieber."),
+                            Exercise(id: "de-foundations-u15-symptome-e3", kind: "order", prompt: "Sagst, dass es dir nicht gut geht.", options: [], answers: ["Ich fühle mich nicht gut"], explain: "sich fühlen: so sagt man, dass man krank ist."),
+                            Exercise(id: "de-foundations-u15-symptome-e4", kind: "written", prompt: "Fragst deine Freundin, was los ist.", options: [], answers: ["was hast du", "Was hast du ?"], explain: "Frage nach Symptomen: Was hast du ?")], skills: ["function:talk-about-health", "vocab:health", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u15-apotheke", title: "In der Apotheke", goal: "In der Apotheke etwas gegen Schmerzen oder Husten fragen und Anweisungen verstehen.",
+                intro: LessonIntro(explanation: [
+                            "brauchen + Sache: „Ich brauche etwas gegen die Schmerzen.“ Beispiel: „Ich brauche Taschentücher.“",
+                            "etwas gegen + Problem: „Haben Sie etwas gegen Husten ?“ Beispiel: „etwas gegen Kopfschmerzen.“",
+                            "Anweisung mit Sie: „Nehmen Sie zwei Tabletten.“ Beispiel: „Gute Besserung !“"], examples: [
+                            ExampleLine(text: "Ich brauche etwas gegen die Schmerzen.", meaning: "brauchen + gegen."),
+                            ExampleLine(text: "Haben Sie etwas gegen Husten ?", meaning: "Höflich fragen mit Sie."),
+                            ExampleLine(text: "Nehmen Sie zwei Tabletten.", meaning: "Anweisung mit Sie."),
+                            ExampleLine(text: "Das macht 6 Euro 50.", meaning: "Der Preis in der Apotheke."),
+                            ExampleLine(text: "Gute Besserung !", meaning: "Wunsch: bald wieder gesund.")]),
+                expressions: [
+                            TargetExpression(text: "die Apotheke", meaning: "Hier kaufst du Medikamente.", note: "Ich gehe in die Apotheke."),
+                            TargetExpression(text: "etwas gegen …", meaning: "Ein Medikament für ein Problem.", note: "etwas gegen Kopfschmerzen"),
+                            TargetExpression(text: "die Tablette / die Tabletten", meaning: "eine Tablette — zwei Tabletten.", note: "Nehmen Sie zwei Tabletten."),
+                            TargetExpression(text: "Ich brauche …", meaning: "Sagen, was du brauchst.", note: "Ich brauche etwas gegen Husten."),
+                            TargetExpression(text: "Gute Besserung !", meaning: "Wunsch für Kranke.", note: "gute Besserung und schlaf gut !")],
+                situation: "Kim ist für Mia in der Apotheke: Sie fragt nach etwas gegen die Schmerzen und wünscht gute Besserung.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sagst in der Apotheke, was du brauchst. (etwas gegen die Schmerzen)", expected: ["Ich brauche etwas gegen die Schmerzen.", "ich brauche etwas gegen die schmerzen"], focus: "brauchen + gegen", watch: "gegen die Schmerzen."),
+                                PracticeQuestion(prompt: "Fragst höflich nach etwas gegen Husten. (Sie)", expected: ["Haben Sie etwas gegen Husten ?", "haben sie etwas gegen husten"], focus: "Haben Sie … ?", watch: "Sie (höflich) schreibt man groß."),
+                                PracticeQuestion(prompt: "Sagst, wie oft du die Tabletten nimmst. (dreimal am Tag)", expected: ["Ich nehme die Tabletten dreimal am Tag.", "ich nehme die tabletten dreimal am tag"], focus: "dreimal am Tag", watch: "drei + mal = dreimal."),
+                                PracticeQuestion(prompt: "Wünschst deiner Freundin, dass sie bald gesund ist.", expected: ["Gute Besserung !", "gute besserung"], focus: "Gute Besserung !", watch: "Fester Wunsch für Kranke."),
+                                PracticeQuestion(prompt: "Sagst, wohin du gehst. (die Apotheke)", expected: ["Ich gehe in die Apotheke.", "ich gehe in die apotheke"], focus: "in die Apotheke", watch: "die Apotheke: ich gehe in die Apotheke.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u15-apotheke-e1", kind: "choice", prompt: "Haben Sie etwas ___ Kopfschmerzen ?", options: ["gegen", "für", "mit", "von"], answers: ["gegen"], explain: "etwas gegen + Problem: etwas gegen Kopfschmerzen."),
+                            Exercise(id: "de-foundations-u15-apotheke-e2", kind: "gap", prompt: "Ich gehe in ___ Apotheke.", options: [], answers: ["die"], explain: "die Apotheke: ich gehe in die Apotheke."),
+                            Exercise(id: "de-foundations-u15-apotheke-e3", kind: "order", prompt: "Fragst in der Apotheke nach Husten.", options: [], answers: ["Haben Sie etwas gegen Husten"], explain: "Höfliche Frage mit Sie: Haben Sie etwas gegen Husten ?"),
+                            Exercise(id: "de-foundations-u15-apotheke-e4", kind: "written", prompt: "Wünschst jemandem, dass er bald gesund wird.", options: [], answers: ["gute besserung", "Gute Besserung !"], explain: "Für Kranke wünscht man: Gute Besserung !")], skills: ["function:go-shopping", "vocab:health", "function:make-requests", "grammar:present-simple"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u15-gewohnheiten", title: "Gesund leben", goal: "Gesunde Gewohnheiten mit immer, oft und nie beschreiben.",
+                intro: LessonIntro(explanation: [
+                            "Gesunde Gewohnheiten: Wasser trinken, Obst essen, spazieren gehen, schlafen. Beispiel: „Ich esse Obst.“",
+                            "immer / nie + Verb: „Ich trinke immer Wasser.“ „Ich rauche nie.“ Beispiel: „Ich gehe oft spazieren.“",
+                            "wie oft: „jeden Tag“, „zweimal pro Woche“. Beispiel: „Ich schwimme zweimal pro Woche.“"], examples: [
+                            ExampleLine(text: "Ich trinke immer viel Wasser.", meaning: "immer: jeden Tag."),
+                            ExampleLine(text: "Ich esse nie Fast Food.", meaning: "nie: 0 %."),
+                            ExampleLine(text: "Ich gehe oft spazieren.", meaning: "spazieren gehen: zu Fuß draußen."),
+                            ExampleLine(text: "Ich schlafe acht Stunden.", meaning: "schlafen + Zeit."),
+                            ExampleLine(text: "Ich schwimme zweimal pro Woche.", meaning: "wie oft: zweimal.")]),
+                expressions: [
+                            TargetExpression(text: "spazieren gehen", meaning: "Zu Fuß draußen sein.", note: "Ich gehe jeden Tag spazieren."),
+                            TargetExpression(text: "viel Wasser trinken", meaning: "Gesund für den Körper.", note: "Ich trinke viel Wasser."),
+                            TargetExpression(text: "nie rauchen", meaning: "0 % — sehr gesund.", note: "Er raucht nie."),
+                            TargetExpression(text: "Obst und Gemüse", meaning: "Gesund essen.", note: "Ich esse oft Obst."),
+                            TargetExpression(text: "schlafen", meaning: "Ausruhen: so bleibst du gesund.", note: "Ich schlafe acht Stunden.")],
+                situation: "Mia ist wieder fit: Sie trinkt immer viel Wasser, isst nie Fast Food und geht oft spazieren.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sagst, dass du jeden Tag Wasser trinkst.", expected: ["Ich trinke immer Wasser.", "ich trinke immer wasser"], focus: "immer + Verb", watch: "immer steht nach dem Verb."),
+                                PracticeQuestion(prompt: "Sagst, dass du nie Fast Food isst.", expected: ["Ich esse nie Fast Food.", "ich esse nie fast food"], focus: "nie + Verb", watch: "nie: 0 %."),
+                                PracticeQuestion(prompt: "Sagst, wie oft du schwimmst. (2 x pro Woche)", expected: ["Ich schwimme zweimal pro Woche.", "ich schwimme zweimal pro woche", "zweimal pro woche"], focus: "zweimal", watch: "zwei + mal = zweimal."),
+                                PracticeQuestion(prompt: "Sagst, dass du oft draußen zu Fuß gehst.", expected: ["Ich gehe oft spazieren.", "ich gehe oft spazieren"], focus: "spazieren gehen", watch: "ich gehe + spazieren."),
+                                PracticeQuestion(prompt: "Fragst Sam, wie oft er schwimmt.", expected: ["Wie oft schwimmst du ?", "wie oft schwimmst du"], focus: "wie oft … ?", watch: "schwimmen: du schwimmst.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u15-gewohnheiten-e1", kind: "choice", prompt: "Ich trinke ___ viel Wasser — jeden Tag.", options: ["immer", "nie", "manchmal", "selten"], answers: ["immer"], explain: "jeden Tag = immer: 100 %."),
+                            Exercise(id: "de-foundations-u15-gewohnheiten-e2", kind: "gap", prompt: "Ich esse ___ Fast Food. Ich mag es nicht.", options: [], answers: ["nie"], explain: "Ich mag es nicht = 0 % = nie."),
+                            Exercise(id: "de-foundations-u15-gewohnheiten-e3", kind: "order", prompt: "Sagst, dass du oft draußen zu Fuß gehst.", options: [], answers: ["Ich gehe oft spazieren"], explain: "spazieren gehen: ich gehe oft spazieren — gesund und einfach."),
+                            Exercise(id: "de-foundations-u15-gewohnheiten-e4", kind: "written", prompt: "Sagst, wie oft du Obst isst. (jeden Tag)", options: [], answers: ["ich esse jeden tag obst", "Ich esse jeden Tag Obst."], explain: "jeden Tag = immer: ich esse jeden Tag Obst.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -5231,6 +5411,186 @@ public enum EsFoundationsU14 {
                             Exercise(id: "es-foundations-u14-hobbies-e4", kind: "written", prompt: "Di que el frío no es de tu agrado.", options: [], answers: ["No me gusta el frío", "No me gusta el frio", "no me gusta el frio"], explain: "no me gusta + sustantivo con artículo: el frío.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum EsFoundationsU15 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u15", title: "En movimiento", subtitle: "Metro, bus y tren", level: "A1", themes: [
+                    ConversationTheme("metro-y-bus", "En metro y bus", "Ir por la ciudad", "bus", "Course", "Vas al centro con tus amigos: uno va en metro, otro en bus y otro a pie.", 0),
+                    ConversationTheme("tren-y-estacion", "En tren", "Horas y billetes", "tram", "Course", "Compras un billete en la estación y preguntas la hora de salida del tren.", 1)], lessons: [
+            Lesson(id: "es-foundations-u15-transporte", title: "Cómo voy", goal: "Decir cómo vas a un sitio: voy en metro, voy en bus o voy a pie.",
+                intro: LessonIntro(explanation: [
+                            "Para decir tu transporte usamos voy en + transporte: «Voy en metro». «Voy al centro en bus».",
+                            "Si caminas, la frase es voy a pie: «Voy a pie al trabajo; está muy cerca».",
+                            "Para preguntar: «¿Cómo vas al trabajo?». Respondes: «Voy en metro» o «Voy a pie»."], examples: [
+                            ExampleLine(text: "Voy en metro al centro.", meaning: "Decir tu transporte."),
+                            ExampleLine(text: "Voy al trabajo en bus.", meaning: "Otro transporte: el bus."),
+                            ExampleLine(text: "Voy a pie; vive cerca.", meaning: "Decir que caminas."),
+                            ExampleLine(text: "¿Cómo vas a la escuela?", meaning: "Preguntar cómo va alguien."),
+                            ExampleLine(text: "Mi hermano va en bici.", meaning: "Hablar de otra persona.")]),
+                expressions: [
+                            TargetExpression(text: "voy en metro", meaning: "Tu transporte es el metro.", note: "Voy en metro al trabajo."),
+                            TargetExpression(text: "voy en bus / en autobús", meaning: "Tu transporte es el bus.", note: "Voy en autobús a la playa."),
+                            TargetExpression(text: "voy a pie", meaning: "Camino.", note: "Está cerca: voy a pie."),
+                            TargetExpression(text: "voy en coche", meaning: "Tu transporte es el coche.", note: "Mi padre va en coche."),
+                            TargetExpression(text: "¿Cómo vas a …?", meaning: "Preguntar el transporte de alguien.", note: "¿Cómo vas a la oficina?")],
+                situation: "Vas al centro con tus amigos: tú vas en metro, Marta va en bus y Pablo va a pie porque vive cerca.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di que vas al centro en metro.", expected: ["Voy en metro al centro", "voy en metro al centro", "Voy al centro en metro"], focus: "voy en", watch: "voy en + metro, sin artículo."),
+                                PracticeQuestion(prompt: "Di que vas al trabajo en autobús.", expected: ["Voy al trabajo en autobús", "voy al trabajo en autobus", "Voy al trabajo en bus"], focus: "en autobús", watch: "autobús lleva tilde; bus no."),
+                                PracticeQuestion(prompt: "Di que caminas a la escuela: está cerca.", expected: ["Voy a pie a la escuela", "voy a pie", "Voy andando a la escuela"], focus: "a pie", watch: "A pie, nunca «a pies»."),
+                                PracticeQuestion(prompt: "Pregunta cómo va tu compañero a la oficina.", expected: ["¿Cómo vas a la oficina?", "¿Como vas a la oficina?"], focus: "¿cómo vas?", watch: "cómo con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di que no vas en coche: vas andando.", expected: ["No voy en coche; voy a pie", "no voy en coche voy a pie", "Voy a pie"], focus: "no voy en", watch: "A pie = andando.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u15-transporte-e1", kind: "choice", prompt: "El centro está lejos. No camino; ___ en metro.", options: ["voy", "vas", "va", "vamos"], answers: ["voy"], explain: "Yo: voy en metro. Con yo decimos voy."),
+                            Exercise(id: "es-foundations-u15-transporte-e2", kind: "gap", prompt: "Está muy cerca. No voy en bus: voy ___. (andando)", options: [], answers: ["a pie"], explain: "Andar = ir a pie, nunca «a pies»."),
+                            Exercise(id: "es-foundations-u15-transporte-e3", kind: "order", prompt: "Pregunta cómo va tu amiga al trabajo.", options: [], answers: ["¿Cómo vas al trabajo?"], explain: "Preguntas el transporte: ¿Cómo vas al trabajo?, con tilde."),
+                            Exercise(id: "es-foundations-u15-transporte-e4", kind: "written", prompt: "Di que vas a la playa en autobús.", options: [], answers: ["Voy a la playa en autobús", "voy a la playa en autobus", "Voy a la playa en bus"], explain: "voy en + autobús, con tilde; bus también vale.")], skills: ["vocab:transport", "grammar:present-simple", "function:ask-simple-questions", "vocab:town"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u15-horario", title: "¿A qué hora sale?", goal: "Preguntar y decir la hora de un transporte: el tren sale a las ocho y media.",
+                intro: LessonIntro(explanation: [
+                            "Para preguntar la hora de un transporte: «¿A qué hora sale el tren?». Para la hora ahora: «¿Qué hora es?».",
+                            "La hora va con a las: «Sale a las ocho». Y media: «a las ocho y media». Y cuarto: «a las ocho y cuarto».",
+                            "Con la una usamos a la: «Sale a la una». Con las demás: a las dos, a las tres, a las cuatro…"], examples: [
+                            ExampleLine(text: "¿A qué hora sale el tren?", meaning: "Preguntar la hora de salida."),
+                            ExampleLine(text: "Sale a las ocho y media.", meaning: "Decir la hora: 8:30."),
+                            ExampleLine(text: "El metro pasa a las nueve y cuarto.", meaning: "La hora: 9:15."),
+                            ExampleLine(text: "El primer bus es a las seis.", meaning: "El horario de la mañana."),
+                            ExampleLine(text: "¿Qué hora es? — Es la una.", meaning: "La hora exacta: 1:00.")]),
+                expressions: [
+                            TargetExpression(text: "¿A qué hora sale …?", meaning: "Preguntar la hora de un transporte.", note: "¿A qué hora sale el bus?"),
+                            TargetExpression(text: "a las ocho y media", meaning: "8:30.", note: "El tren sale a las ocho y media."),
+                            TargetExpression(text: "a las … y cuarto", meaning: "…:15.", note: "Llego a las siete y cuarto."),
+                            TargetExpression(text: "el primero / la primera", meaning: "El primero del día.", note: "El primer metro es a las seis."),
+                            TargetExpression(text: "¿Qué hora es?", meaning: "Preguntar la hora ahora.", note: "¿Qué hora es? — Son las tres.")],
+                situation: "Estás en la estación: el primero tren es a las seis, tu tren sale a las ocho y media y el último, a las once.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pregunta la hora de salida del tren.", expected: ["¿A qué hora sale el tren?", "¿A que hora sale el tren?", "¿Qué hora sale el tren?", "¿Que hora sale el tren?"], focus: "¿a qué hora?", watch: "qué con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di la hora de salida de tu autobús: 8:30.", expected: ["El autobús sale a las ocho y media", "el autobus sale a las ocho y media", "Sale a las ocho y media"], focus: "a las ocho y media", watch: "8:30 = ocho y media; autobús con tilde."),
+                                PracticeQuestion(prompt: "Di que llegas a las nueve y cuarto.", expected: ["Llego a las nueve y cuarto", "llego a las nueve y cuarto"], focus: "a las nueve y cuarto", watch: "9:15 = nueve y cuarto."),
+                                PracticeQuestion(prompt: "Pregunta la hora ahora a tu amigo.", expected: ["¿Qué hora es?", "¿Que hora es?", "¿Qué hora es, por favor?", "¿Que hora es, por favor?"], focus: "¿qué hora es?", watch: "qué con tilde."),
+                                PracticeQuestion(prompt: "Di que tu primer metro es a la una.", expected: ["El primer metro es a la una", "el primer metro es a la una", "Mi primer metro es a la una"], focus: "a la una", watch: "Con una decimos a la una, no a las una.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u15-horario-e1", kind: "choice", prompt: "El tren sale a las siete y media. Son las siete y cuarto. Faltan ___ minutos.", options: ["quince", "treinta", "cuarenta y cinco", "diez"], answers: ["quince"], explain: "De las siete y cuarto a las siete y media hay quince minutos."),
+                            Exercise(id: "es-foundations-u15-horario-e2", kind: "gap", prompt: "Son las 9:15. El tren sale ahora: sale a las nueve ___.", options: [], answers: ["y cuarto"], explain: "9:15 = nueve y cuarto; 30 = y media."),
+                            Exercise(id: "es-foundations-u15-horario-e3", kind: "order", prompt: "Pregunta la hora de llegada del bus.", options: [], answers: ["¿A qué hora llega el bus?"], explain: "La llegada es con llegar: ¿A qué hora llega el bus?"),
+                            Exercise(id: "es-foundations-u15-horario-e4", kind: "written", prompt: "Di que tu tren sale a las siete y media.", options: [], answers: ["Mi tren sale a las siete y media", "mi tren sale a las siete y media"], explain: "mi + transporte + sale + a las + hora.")], skills: ["function:tell-time", "vocab:transport", "grammar:present-questions", "grammar:present-simple"], canDo: ["tell-time"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u15-billete", title: "Un billete, por favor", goal: "Comprar billetes en la taquilla: un billete de ida y vuelta, por favor.",
+                intro: LessonIntro(explanation: [
+                            "En la taquilla pides con quiero o con un…, por favor: «Quiero un billete». «Un billete, por favor».",
+                            "Para dos billetes usamos el plural: «Dos billetes, por favor». Y preguntas el precio: «¿Cuánto cuesta?».",
+                            "El billete de ida y vuelta es para ir y volver: «Un billete de ida y vuelta, por favor»."], examples: [
+                            ExampleLine(text: "Un billete, por favor.", meaning: "Pedir un billete."),
+                            ExampleLine(text: "Quiero un billete de ida y vuelta.", meaning: "Ida y vuelta: allí y de regreso."),
+                            ExampleLine(text: "Dos billetes para el centro.", meaning: "Pedir dos billetes."),
+                            ExampleLine(text: "¿Cuánto cuesta el billete?", meaning: "Preguntar el precio."),
+                            ExampleLine(text: "¿De qué andén sale el tren?", meaning: "Preguntar el andén.")]),
+                expressions: [
+                            TargetExpression(text: "un billete, por favor", meaning: "Pedir un billete.", note: "Un billete, por favor. — Son dos euros."),
+                            TargetExpression(text: "de ida y vuelta", meaning: "Allí y de regreso.", note: "De ida y vuelta, por favor."),
+                            TargetExpression(text: "solo ida", meaning: "Sin vuelta.", note: "Solo ida, por favor."),
+                            TargetExpression(text: "¿Cuánto cuesta?", meaning: "Preguntar el precio.", note: "¿Cuánto cuesta? — Tres euros."),
+                            TargetExpression(text: "el andén", meaning: "El lugar del tren en la estación.", note: "El tren sale del andén dos.")],
+                situation: "Compras billetes en la estación: dos billetes de ida y vuelta para Segovia, dieciséis euros, andén tres.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pide un billete al empleado.", expected: ["Un billete, por favor", "un billete por favor", "Quiero un billete, por favor"], focus: "por favor", watch: "En la taquilla: un billete, por favor."),
+                                PracticeQuestion(prompt: "Estás en la taquilla con tu amigo; queréis ir al centro. Pide los billetes.", expected: ["Dos billetes para el centro", "dos billetes para el centro", "Dos billetes al centro"], focus: "dos billetes", watch: "Plural: dos billetes."),
+                                PracticeQuestion(prompt: "Pregunta el precio del billete.", expected: ["¿Cuánto cuesta el billete?", "¿Cuanto cuesta el billete?", "¿Cuánto es?", "¿Cuanto es?"], focus: "¿cuánto cuesta?", watch: "cuánto con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Vas a Valencia y vuelves el viernes. Pide el billete adecuado.", expected: ["Un billete de ida y vuelta, por favor", "un billete de ida y vuelta por favor", "Quiero un billete de ida y vuelta"], focus: "ida y vuelta", watch: "Ida y vuelta = allí y de regreso."),
+                                PracticeQuestion(prompt: "Pregunta por el andén del tren a Toledo.", expected: ["¿De qué andén sale el tren?", "¿De que anden sale el tren?", "¿De qué andén sale el tren a Toledo?", "¿De que anden sale el tren a Toledo?"], focus: "¿de qué andén?", watch: "andén lleva tilde.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u15-billete-e1", kind: "choice", prompt: "Vas a Salamanca y vuelves el mismo día. Pides: «Un billete de ___, por favor».", options: ["ida y vuelta", "andén", "hora", "metro"], answers: ["ida y vuelta"], explain: "Vas y vuelves el mismo día: ida y vuelta."),
+                            Exercise(id: "es-foundations-u15-billete-e2", kind: "gap", prompt: "—¿___ cuesta el billete? —Cuatro euros.", options: [], answers: ["Cuánto", "Cuanto"], explain: "El precio: ¿Cuánto cuesta?, con tilde en cuánto."),
+                            Exercise(id: "es-foundations-u15-billete-e3", kind: "order", prompt: "Estás en la taquilla con un amigo: queréis ir al centro. Pide los billetes.", options: [], answers: ["Dos billetes para el centro"], explain: "Pides dos: dos billetes + destino."),
+                            Exercise(id: "es-foundations-u15-billete-e4", kind: "written", prompt: "Pregunta el precio del billete de tren a Sevilla.", options: [], answers: ["¿Cuánto cuesta el billete?", "¿Cuanto cuesta el billete?", "¿Cuánto es?", "¿Cuanto es?"], explain: "El precio: ¿Cuánto cuesta el billete?, con tilde.")], skills: ["function:go-shopping", "function:make-requests", "vocab:transport", "grammar:quantities"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum EsFoundationsU16 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u16", title: "Me siento bien", subtitle: "Salud básica", level: "A1", themes: [
+                    ConversationTheme("hoy-no-estoy-bien", "Hoy no estoy bien", "Síntomas y dolores", "cross.case", "Course", "Tienes dolor de cabeza y fiebre: explicas qué te pasa.", 0),
+                    ConversationTheme("farmacia-y-habitos", "Farmacia y vida sana", "Remedios y costumbres", "pills", "Course", "Compras algo para el dolor en la farmacia y hablas de tus hábitos sanos.", 1)], lessons: [
+            Lesson(id: "es-foundations-u16-sintomas", title: "No me siento bien", goal: "Decir qué te pasa: me duele la cabeza, tengo fiebre.",
+                intro: LessonIntro(explanation: [
+                            "Para el dolor usamos me duele + parte del cuerpo: «Me duele la cabeza». «Me duele el estómago».",
+                            "Otros síntomas van con tengo: «Tengo fiebre». «Tengo tos». «Tengo frío».",
+                            "Para preguntar a alguien: «¿Qué te pasa?». Respondes: «No me siento bien; me duele la cabeza»."], examples: [
+                            ExampleLine(text: "No me siento bien.", meaning: "Decir que estás mal."),
+                            ExampleLine(text: "Me duele la cabeza.", meaning: "Dolor en la cabeza."),
+                            ExampleLine(text: "Tengo fiebre y tos.", meaning: "Dos síntomas."),
+                            ExampleLine(text: "Me duele el estómago.", meaning: "Dolor en el estómago."),
+                            ExampleLine(text: "¿Qué te pasa? — Tengo gripe.", meaning: "Preguntar y responder.")]),
+                expressions: [
+                            TargetExpression(text: "me duele la cabeza", meaning: "Dolor de cabeza.", note: "Me duele la cabeza; quiero dormir."),
+                            TargetExpression(text: "tengo fiebre", meaning: "Tu cuerpo está muy caliente.", note: "Tengo fiebre; estoy en casa."),
+                            TargetExpression(text: "tengo tos", meaning: "Toses.", note: "Tengo tos por la noche."),
+                            TargetExpression(text: "me duele el estómago", meaning: "Dolor de estómago.", note: "Me duele el estómago después de comer."),
+                            TargetExpression(text: "¿Qué te pasa?", meaning: "Preguntar a alguien cómo está.", note: "¿Qué te pasa? — Me duele la cabeza.")],
+                situation: "Es lunes y no vas al trabajo: tienes fiebre y tos, y te duele la cabeza; tu amigo pregunta qué te pasa.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di que estás mal hoy.", expected: ["No me siento bien", "no me siento bien", "Hoy no me siento bien"], focus: "no me siento bien", watch: "yo me siento; tú te sientes."),
+                                PracticeQuestion(prompt: "Di que te duele la cabeza.", expected: ["Me duele la cabeza", "me duele la cabeza", "Me duele un poco la cabeza"], focus: "me duele", watch: "me duele + la + parte del cuerpo."),
+                                PracticeQuestion(prompt: "Di que tienes fiebre.", expected: ["Tengo fiebre", "tengo fiebre", "Tengo mucha fiebre"], focus: "tengo fiebre", watch: "Síntomas con tengo: fiebre, tos, frío."),
+                                PracticeQuestion(prompt: "Pregunta a tu amigo qué le pasa.", expected: ["¿Qué te pasa?", "¿Que te pasa?"], focus: "¿qué te pasa?", watch: "qué con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di que te duele el estómago.", expected: ["Me duele el estómago", "me duele el estomago"], focus: "estómago", watch: "estómago lleva tilde.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u16-sintomas-e1", kind: "choice", prompt: "Tu cabeza está mal hoy: «___ la cabeza».", options: ["Me duele", "Tengo", "Me gusta", "Estoy"], answers: ["Me duele"], explain: "El dolor va con me duele: me duele la cabeza."),
+                            Exercise(id: "es-foundations-u16-sintomas-e2", kind: "gap", prompt: "Toses mucho por la noche: tienes ___.", options: [], answers: ["tos"], explain: "El sustantivo es tos: tengo tos, con -s final."),
+                            Exercise(id: "es-foundations-u16-sintomas-e3", kind: "order", prompt: "Tu cabeza está mal hoy: dilo.", options: [], answers: ["Me duele la cabeza"], explain: "El dolor: me duele + la cabeza."),
+                            Exercise(id: "es-foundations-u16-sintomas-e4", kind: "written", prompt: "Tu amigo no está bien. Pregúntale qué pasa.", options: [], answers: ["¿Qué te pasa?", "¿Que te pasa?"], explain: "¿Qué te pasa? para preguntar, con tilde en qué.")], skills: ["function:talk-about-health", "vocab:health", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u16-farmacia", title: "En la farmacia", goal: "Pedir un remedio en la farmacia: quiero algo para la cabeza.",
+                intro: LessonIntro(explanation: [
+                            "En la farmacia pides con quiero algo para…: «Quiero algo para la cabeza».",
+                            "El farmacéutico pregunta: «¿Para qué es?». Respondes: «Es para el dolor de garganta».",
+                            "Preguntas la dosis con ¿cada cuántas horas?: «¿Cada cuántas horas tomo la pastilla?»."], examples: [
+                            ExampleLine(text: "Quiero algo para la cabeza.", meaning: "Pedir un remedio."),
+                            ExampleLine(text: "¿Para qué es?", meaning: "El farmacéutico pregunta."),
+                            ExampleLine(text: "Es para el dolor de garganta.", meaning: "Decir tu problema."),
+                            ExampleLine(text: "¿Cada cuántas horas tomo la pastilla?", meaning: "Preguntar la dosis."),
+                            ExampleLine(text: "Son doce euros.", meaning: "El farmacéutico dice el precio.")]),
+                expressions: [
+                            TargetExpression(text: "quiero algo para…", meaning: "Pedir un remedio.", note: "Quiero algo para la tos."),
+                            TargetExpression(text: "el dolor de cabeza / de garganta", meaning: "El sitio donde te duele.", note: "Es para el dolor de garganta."),
+                            TargetExpression(text: "¿cada cuántas horas?", meaning: "Preguntar el tiempo entre tomas.", note: "¿Cada cuántas horas la tomo?"),
+                            TargetExpression(text: "la pastilla", meaning: "Medicina pequeña, para tragar.", note: "Tomo una pastilla al día."),
+                            TargetExpression(text: "el jarabe", meaning: "Medicina líquida y dulce.", note: "El jarabe es bueno para la tos.")],
+                situation: "Vas a la farmacia: quieres algo para la garganta; el farmacéutico te da unas pastillas: una cada ocho horas.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pide algo para el dolor de cabeza en la farmacia.", expected: ["Quiero algo para la cabeza", "quiero algo para la cabeza", "Quiero algo para el dolor de cabeza"], focus: "algo para", watch: "quiero algo para + el problema."),
+                                PracticeQuestion(prompt: "El farmacéutico pregunta para qué es. Di tu problema: la garganta.", expected: ["Es para el dolor de garganta", "es para el dolor de garganta", "Para la garganta"], focus: "es para", watch: "es para + el problema."),
+                                PracticeQuestion(prompt: "Pregunta el precio del jarabe.", expected: ["¿Cuánto cuesta?", "¿Cuanto cuesta?", "¿Cuánto es?", "¿Cuanto es?"], focus: "¿cuánto cuesta?", watch: "cuánto con tilde."),
+                                PracticeQuestion(prompt: "Pregunta cuántas pastillas tomas al día.", expected: ["¿Cuántas pastillas tomo al día?", "¿Cuantas pastillas tomo al dia?", "¿Cuántas tomo?", "¿Cuantas tomo?"], focus: "¿cuántas…?", watch: "cuántas con tilde."),
+                                PracticeQuestion(prompt: "Tu problema es la tos. Di para qué sirve el jarabe.", expected: ["El jarabe es para la tos", "el jarabe es para la tos"], focus: "es para la tos", watch: "el jarabe es líquido y dulce.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u16-farmacia-e1", kind: "choice", prompt: "Estás en la farmacia y te duele la cabeza. Dices: «Quiero ___ para la cabeza».", options: ["algo", "nadie", "nada", "todos"], answers: ["algo"], explain: "Pides un remedio: quiero algo para la cabeza."),
+                            Exercise(id: "es-foundations-u16-farmacia-e2", kind: "gap", prompt: "—¿___ es? —Es para el dolor de garganta.", options: [], answers: ["Para qué", "Para que"], explain: "El farmacéutico pregunta: ¿Para qué es?, con tilde en qué."),
+                            Exercise(id: "es-foundations-u16-farmacia-e3", kind: "order", prompt: "Pide un remedio para la tos.", options: [], answers: ["Quiero algo para la tos"], explain: "Pides con quiero + algo para + la tos."),
+                            Exercise(id: "es-foundations-u16-farmacia-e4", kind: "written", prompt: "Pregunta al farmacéutico el precio de las pastillas.", options: [], answers: ["¿Cuánto cuestan las pastillas?", "¿Cuanto cuestan las pastillas?", "¿Cuánto es?", "¿Cuanto es?"], explain: "El precio: ¿Cuánto cuesta?, con tilde.")], skills: ["function:go-shopping", "vocab:health", "function:make-requests", "grammar:present-simple"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u16-habitos", title: "Vida sana", goal: "Hablar de hábitos con siempre y nunca: siempre desayuno fruta; nunca fumo.",
+                intro: LessonIntro(explanation: [
+                            "Con siempre hablas de algo que haces todos los días: «Siempre desayuno fruta». Va antes del verbo.",
+                            "Con nunca hablas de algo que no haces: «Nunca fumo». «Nunca como dulces».",
+                            "También usas a veces y todos los días: «A veces camino al trabajo». «Bebo agua todos los días»."], examples: [
+                            ExampleLine(text: "Siempre desayuno fruta.", meaning: "Un hábito de cada día."),
+                            ExampleLine(text: "Nunca fumo.", meaning: "Un hábito sano."),
+                            ExampleLine(text: "Bebo agua todos los días.", meaning: "Beber mucha agua."),
+                            ExampleLine(text: "A veces camino al trabajo.", meaning: "Algunos días, no todos."),
+                            ExampleLine(text: "Duermo ocho horas todas las noches.", meaning: "Dormir bien.")]),
+                expressions: [
+                            TargetExpression(text: "siempre + verbo", meaning: "Todos los días.", note: "Siempre ceno temprano."),
+                            TargetExpression(text: "nunca + verbo", meaning: "Ningún día.", note: "Nunca bebo refrescos."),
+                            TargetExpression(text: "todos los días", meaning: "Cada día.", note: "Camino todos los días."),
+                            TargetExpression(text: "dormir ocho horas", meaning: "Dormir toda la noche.", note: "Duermo ocho horas."),
+                            TargetExpression(text: "hacer deporte", meaning: "Correr, nadar, bailar…", note: "Hago deporte los sábados.")],
+                situation: "Tu vida sana: siempre desayunas fruta, caminas todos los días, duermes ocho horas y nunca bebes refrescos.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di que desayunas fruta todos los días.", expected: ["Siempre desayuno fruta", "siempre desayuno fruta", "Desayuno fruta todos los días", "desayuno fruta todos los dias"], focus: "siempre", watch: "siempre va antes del verbo."),
+                                PracticeQuestion(prompt: "Di que no fumas, ningún día.", expected: ["Nunca fumo", "nunca fumo", "No fumo nunca"], focus: "nunca", watch: "nunca va antes del verbo: nunca fumo."),
+                                PracticeQuestion(prompt: "Di que caminas al trabajo a veces.", expected: ["A veces camino al trabajo", "a veces camino al trabajo", "Camino al trabajo a veces"], focus: "a veces", watch: "a veces = algunos días, no todos."),
+                                PracticeQuestion(prompt: "Di que bebes mucha agua.", expected: ["Bebo mucha agua", "bebo mucha agua", "Bebo agua todos los días", "bebo agua todos los dias"], focus: "bebo agua", watch: "El agua es sana: bebe mucha agua."),
+                                PracticeQuestion(prompt: "Di que duermes ocho horas.", expected: ["Duermo ocho horas", "duermo ocho horas", "Duermo ocho horas todas las noches"], focus: "duermo", watch: "dormir → duermo (o → ue).")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u16-habitos-e1", kind: "choice", prompt: "No comes dulces, ni un día: «___ como dulces».", options: ["Nunca", "Siempre", "Todos los días", "Mucho"], answers: ["Nunca"], explain: "Cero dulces: nunca como dulces."),
+                            Exercise(id: "es-foundations-u16-habitos-e2", kind: "gap", prompt: "Es una costumbre de cada día: ___ desayuno yogur.", options: [], answers: ["Siempre"], explain: "Cada día: siempre desayuno yogur."),
+                            Exercise(id: "es-foundations-u16-habitos-e3", kind: "order", prompt: "Habla de tu hábito con la fruta: cada mañana.", options: [], answers: ["Siempre desayuno fruta"], explain: "Cada mañana: siempre + desayuno + fruta."),
+                            Exercise(id: "es-foundations-u16-habitos-e4", kind: "written", prompt: "Habla del agua: es tu bebida de cada día.", options: [], answers: ["Bebo agua todos los días", "bebo agua todos los dias", "Tomo agua todos los días", "tomo agua todos los dias"], explain: "Cada día = todos los días: bebo agua todos los días.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
 public enum FrFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
@@ -6242,6 +6602,186 @@ public enum FrFoundationsU13 {
                             Exercise(id: "fr-foundations-u13-envies-e4", kind: "written", prompt: "Dis une activité que tu aimes.", options: [], answers: ["j'aime lire le soir", "j'aime faire du vélo", "j'aime faire du velo", "j'aime lire"], explain: "j'aime + verbe à l'infinitif.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum FrFoundationsU14 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u14", title: "En mouvement", subtitle: "Métro, bus et train", level: "A1", themes: [
+                    ConversationTheme("metro-et-bus", "Le métro et le bus", "Je prends le métro", "bus", "Course", "Chaque matin, vous prenez le métro à la station République — et un ami vous demande : comment tu vas au centre-ville ?", 0),
+                    ConversationTheme("le-train", "Le train", "Un billet, s'il vous plaît", "tram", "Course", "À la gare, vous lisez les horaires : le train part à sept heures et demie — et au guichet, vous demandez un billet pour Lyon.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u14-transport", title: "Comment j'y vais", goal: "Parler de tes transports du quotidien : je prends le métro, je prends le bus — ou je vais à pied.",
+                intro: LessonIntro(explanation: [
+                            "Pour dire comment tu vas quelque part, on utilise prendre : « Je prends le métro. » « Je prends le bus numéro 12. »",
+                            "On peut aussi aller à pied : « Je vais au travail à pied. » À pied = je marche.",
+                            "Pour demander le moyen : « Tu vas au bureau en bus ? » ou « Comment tu vas au centre-ville ? »"], examples: [
+                            ExampleLine(text: "Je prends le métro tous les jours.", meaning: "Le métro du quotidien."),
+                            ExampleLine(text: "Je prends le bus à la gare.", meaning: "Prendre le bus."),
+                            ExampleLine(text: "Je vais au travail à pied.", meaning: "À pied = je marche."),
+                            ExampleLine(text: "Tu vas au bureau en bus ?", meaning: "La question avec est-ce que ou non."),
+                            ExampleLine(text: "Comment tu vas au centre-ville ?", meaning: "Demander le moyen.")]),
+                expressions: [
+                            TargetExpression(text: "prendre le métro / le bus", meaning: "Utiliser un transport.", note: "Je prends le métro à République."),
+                            TargetExpression(text: "à pied", meaning: "Marcher.", note: "Je vais à la piscine à pied."),
+                            TargetExpression(text: "en bus / en métro", meaning: "Dire le moyen.", note: "Je vais en bus, pas en métro."),
+                            TargetExpression(text: "la station / l'arrêt", meaning: "Où prendre le métro / le bus.", note: "L'arrêt de bus est là."),
+                            TargetExpression(text: "Comment tu vas … ?", meaning: "Demander le moyen.", note: "Comment tu vas au travail ?")],
+                situation: "Chaque matin, vous prenez le métro à la station République avec le bus numéro 12 pour les grands jours — et un ami vous demande : comment tu vas au centre-ville ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis que tu prends le métro.", expected: ["Je prends le métro.", "Je prends le metro.", "Je prends toujours le métro."], focus: "prendre le métro", watch: "avec je : je prends."),
+                                PracticeQuestion(prompt: "Dis que tu vas au travail à pied.", expected: ["Je vais au travail à pied.", "Je vais au travail a pied.", "Je vais à pied au travail."], focus: "à pied", watch: "à pied = je marche."),
+                                PracticeQuestion(prompt: "Demande à un ami s'il va au bureau en bus.", expected: ["Tu vas au bureau en bus ?", "Est-ce que tu vas au bureau en bus ?"], focus: "en bus", watch: "question : est-ce que + tu vas."),
+                                PracticeQuestion(prompt: "Demande comment un ami va au centre-ville.", expected: ["Comment tu vas au centre-ville ?", "Tu vas au centre-ville comment ?"], focus: "comment", watch: "comment + tu vas."),
+                                PracticeQuestion(prompt: "Dis que tu prends le bus à la gare.", expected: ["Je prends le bus à la gare.", "Je prends le bus a la gare.", "Je prends le bus, à la gare."], focus: "à la gare", watch: "à = le lieu.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u14-transport-e1", kind: "choice", prompt: "Je ___ le bus numéro 12.", options: ["prends", "prend", "prendre", "vais"], answers: ["prends"], explain: "Avec je : je prends le bus."),
+                            Exercise(id: "fr-foundations-u14-transport-e2", kind: "gap", prompt: "Je vais au travail ___ pied.", options: [], answers: ["à", "a"], explain: "à pied = je marche."),
+                            Exercise(id: "fr-foundations-u14-transport-e3", kind: "order", prompt: "Dis que le métro est ton transport, chaque jour.", options: [], answers: ["Je prends le métro tous les jours"], explain: "je prends + le métro + le moment."),
+                            Exercise(id: "fr-foundations-u14-transport-e4", kind: "written", prompt: "Et toi ? Dis comment tu vas au centre-ville : tu vas en métro.", options: [], answers: ["je vais au centre-ville en métro", "je vais au centre-ville en metro", "je prends le métro pour aller au centre-ville"], explain: "aller en métro : le moyen de transport.")], skills: ["vocab:transport", "grammar:present-simple", "function:ask-simple-questions", "vocab:town"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u14-horaires", title: "Ça part à quelle heure ?", goal: "Lire les horaires et dire l'heure : le train part à sept heures et demie, le bus arrive à neuf heures et quart.",
+                intro: LessonIntro(explanation: [
+                            "Pour demander l'heure : « Il est quelle heure ? » Pour le départ : « Ça part à quelle heure ? » La réponse : « Ça part à sept heures. »",
+                            "Les minutes faciles : « et quart » = 15 minutes après, « et demie » = 30 minutes après. 7 h 30 = sept heures et demie.",
+                            "Pour les horaires, on utilise partir et arriver : « Le bus part à huit heures. Le métro arrive à neuf heures et quart. »"], examples: [
+                            ExampleLine(text: "Il est quelle heure ?", meaning: "Demander l'heure."),
+                            ExampleLine(text: "Il est huit heures.", meaning: "Dire l'heure."),
+                            ExampleLine(text: "Ça part à quelle heure ?", meaning: "Demander le départ."),
+                            ExampleLine(text: "Le train part à sept heures et demie.", meaning: "7 h 30 : et demie."),
+                            ExampleLine(text: "Le bus arrive à neuf heures et quart.", meaning: "9 h 15 : et quart.")]),
+                expressions: [
+                            TargetExpression(text: "Il est quelle heure ?", meaning: "Demander l'heure.", note: "Il est quelle heure ? — Il est midi."),
+                            TargetExpression(text: "à + heure", meaning: "Le moment du départ.", note: "Le bus part à huit heures."),
+                            TargetExpression(text: "et demie", meaning: "30 minutes après.", note: "À sept heures et demie (7 h 30)."),
+                            TargetExpression(text: "et quart", meaning: "15 minutes après.", note: "À neuf heures et quart (9 h 15)."),
+                            TargetExpression(text: "partir / arriver", meaning: "Le départ et l'arrivée.", note: "Le train part, il arrive à Lyon.")],
+                situation: "À la gare, vous lisez les horaires : le train part à sept heures et demie, le bus arrive à neuf heures et quart.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande l'heure à un ami.", expected: ["Il est quelle heure ?", "Quelle heure est-il ?"], focus: "quelle heure", watch: "Il est + quelle heure ?"),
+                                PracticeQuestion(prompt: "Demande à quelle heure part le train.", expected: ["Le train part à quelle heure ?", "Le train part a quelle heure ?", "Ça part à quelle heure ?"], focus: "à quelle heure", watch: "à + quelle heure."),
+                                PracticeQuestion(prompt: "Dis que le train part à sept heures et demie.", expected: ["Le train part à sept heures et demie.", "Le train part a sept heures et demie.", "Il part à sept heures et demie."], focus: "et demie", watch: "7 h 30 = et demie."),
+                                PracticeQuestion(prompt: "Dis que le bus arrive à neuf heures et quart.", expected: ["Le bus arrive à neuf heures et quart.", "Le bus arrive a neuf heures et quart."], focus: "et quart", watch: "9 h 15 = et quart."),
+                                PracticeQuestion(prompt: "Dis que le métro arrive à six heures.", expected: ["Le métro arrive à six heures.", "Le metro arrive a six heures.", "Il arrive à six heures."], focus: "arrive", watch: "arriver à + heure.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u14-horaires-e1", kind: "choice", prompt: "Il est 7 h 30 : sept heures et ___.", options: ["demie", "quart", "midi", "minuit"], answers: ["demie"], explain: "30 minutes après : et demie."),
+                            Exercise(id: "fr-foundations-u14-horaires-e2", kind: "gap", prompt: "Le bus arrive ___ neuf heures et quart.", options: [], answers: ["à", "a"], explain: "à + heure : le moment."),
+                            Exercise(id: "fr-foundations-u14-horaires-e3", kind: "order", prompt: "Il est 7 h 30 et le train part. Dis-le.", options: [], answers: ["Le train part à sept heures et demie"], explain: "partir à + l'heure."),
+                            Exercise(id: "fr-foundations-u14-horaires-e4", kind: "written", prompt: "Demande à un ami à quelle heure part le bus.", options: [], answers: ["le bus part à quelle heure", "le bus part a quelle heure", "ça part à quelle heure", "ca part a quelle heure"], explain: "partir à quelle heure ? : la question.")], skills: ["function:tell-time", "vocab:transport", "grammar:present-questions", "grammar:present-simple"], canDo: ["tell-time"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u14-billet", title: "Un billet, s'il vous plaît", goal: "Acheter des billets : un billet pour Lyon, aller-retour — et demander le prix.",
+                intro: LessonIntro(explanation: [
+                            "Pour acheter un billet, on dit la destination après pour : « Un billet pour Lyon, s'il vous plaît. »",
+                            "Aller simple = seulement l'aller. Aller-retour = aller et revenir : « Un aller-retour, s'il vous plaît. »",
+                            "Pour le prix : « Ça coûte combien ? » La réponse : « Ça coûte douze euros. » On demande aussi : « Combien de bagages ? »"], examples: [
+                            ExampleLine(text: "Un billet pour Lyon, s'il vous plaît.", meaning: "La demande polie."),
+                            ExampleLine(text: "Aller-retour, s'il vous plaît.", meaning: "Aller et revenir."),
+                            ExampleLine(text: "Un aller simple pour Paris.", meaning: "Seulement l'aller."),
+                            ExampleLine(text: "Ça coûte combien ?", meaning: "Demander le prix."),
+                            ExampleLine(text: "Ça coûte douze euros.", meaning: "Le prix.")]),
+                expressions: [
+                            TargetExpression(text: "un billet pour + ville", meaning: "Le billet de destination.", note: "Un billet pour Marseille."),
+                            TargetExpression(text: "aller simple / aller-retour", meaning: "Un trajet ou deux.", note: "Je prends un aller-retour."),
+                            TargetExpression(text: "s'il vous plaît", meaning: "La formule polie.", note: "Un billet, s'il vous plaît."),
+                            TargetExpression(text: "Ça coûte combien ?", meaning: "Demander le prix.", note: "Ça coûte combien, le billet ?"),
+                            TargetExpression(text: "combien de + quantité", meaning: "La quantité.", note: "Combien de bagages ?")],
+                situation: "Au guichet de la gare, vous demandez : un billet pour Lyon, s'il vous plaît, aller-retour — et vous demandez le prix.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande un billet pour Paris.", expected: ["Un billet pour Paris, s'il vous plaît.", "Je voudrais un billet pour Paris."], focus: "un billet pour", watch: "poli : s'il vous plaît."),
+                                PracticeQuestion(prompt: "Demande un billet aller-retour.", expected: ["Un aller-retour, s'il vous plaît.", "Je voudrais un aller-retour."], focus: "aller-retour", watch: "aller et revenir."),
+                                PracticeQuestion(prompt: "Demande le prix du billet.", expected: ["Ça coûte combien ?", "C'est combien ?", "Ça coûte combien, le billet ?"], focus: "combien", watch: "ça coûte combien ?"),
+                                PracticeQuestion(prompt: "Dis que le billet coûte douze euros.", expected: ["Ça coûte douze euros.", "C'est douze euros."], focus: "coûter", watch: "ça coûte + le prix."),
+                                PracticeQuestion(prompt: "Demande au vendeur combien de bagages tu peux prendre.", expected: ["Combien de bagages ?", "Combien de bagages je peux prendre ?"], focus: "combien de", watch: "de après combien.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u14-billet-e1", kind: "choice", prompt: "Je voudrais un billet ___ Lyon, s'il vous plaît.", options: ["pour", "à", "en", "de"], answers: ["pour"], explain: "pour + la destination : pour Lyon."),
+                            Exercise(id: "fr-foundations-u14-billet-e2", kind: "gap", prompt: "Un aller-___, s'il vous plaît. Je reviens ce soir.", options: [], answers: ["retour"], explain: "aller-retour = aller et revenir."),
+                            Exercise(id: "fr-foundations-u14-billet-e3", kind: "order", prompt: "Demande le prix, poliment.", options: [], answers: ["Ça coûte combien"], explain: "ça coûte + combien : le prix."),
+                            Exercise(id: "fr-foundations-u14-billet-e4", kind: "written", prompt: "Au guichet : demande un billet pour Lyon, poliment.", options: [], answers: ["un billet pour lyon, s'il vous plaît", "un billet pour lyon s'il vous plait", "je voudrais un billet pour lyon"], explain: "un billet pour + ville + s'il vous plaît.")], skills: ["function:go-shopping", "function:make-requests", "vocab:transport", "grammar:quantities"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum FrFoundationsU15 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u15", title: "Je me sens bien", subtitle: "Santé de base", level: "A1", themes: [
+                    ConversationTheme("pas-en-forme", "Je ne me sens pas bien", "J'ai mal à la tête", "cross.case", "Course", "Vous êtes malade : j'ai mal à la tête et j'ai de la fièvre — un ami demande : ça va ?", 0),
+                    ConversationTheme("la-pharmacie", "À la pharmacie", "Quelque chose pour la douleur", "pills", "Course", "À la pharmacie, vous demandez quelque chose pour la tête — et vous demandez : combien de fois par jour ?", 1)], lessons: [
+            Lesson(id: "fr-foundations-u15-symptomes", title: "Je ne me sens pas bien", goal: "Dire tes symptômes : j'ai mal à la tête, j'ai de la fièvre — et demander : ça va ?",
+                intro: LessonIntro(explanation: [
+                            "Pour dire que tu n'es pas en forme : « Je ne me sens pas bien. » On dit aussi : « Je suis malade. »",
+                            "La douleur avec avoir mal à : « J'ai mal à la tête. » « J'ai mal au ventre. » à la (féminin), au (masculin).",
+                            "Autres symptômes avec avoir : « J'ai de la fièvre. » « Je suis fatigué. » Pour demander : « Ça va ? Tu es malade ? »"], examples: [
+                            ExampleLine(text: "Je ne me sens pas bien.", meaning: "Être malade."),
+                            ExampleLine(text: "J'ai mal à la tête.", meaning: "La tête fait mal."),
+                            ExampleLine(text: "J'ai mal au ventre.", meaning: "à + le = au."),
+                            ExampleLine(text: "J'ai de la fièvre.", meaning: "38 °C, c'est la fièvre."),
+                            ExampleLine(text: "Tu es malade ?", meaning: "La question.")]),
+                expressions: [
+                            TargetExpression(text: "avoir mal à la tête / au ventre", meaning: "Dire la douleur.", note: "à la (féminin), au (masculin)."),
+                            TargetExpression(text: "avoir de la fièvre", meaning: "Être chaud, malade.", note: "J'ai 38 de fièvre."),
+                            TargetExpression(text: "être malade", meaning: "Ne pas être en forme.", note: "Il est malade, il reste au lit."),
+                            TargetExpression(text: "être fatigué / fatiguée", meaning: "Ne pas avoir d'énergie.", note: "Je suis très fatiguée."),
+                            TargetExpression(text: "Ça va ?", meaning: "Demander la santé.", note: "Ça va ? — Non, je suis malade.")],
+                situation: "Vous êtes malade : je ne me sens pas bien, j'ai mal à la tête et j'ai de la fièvre — un ami demande : ça va ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis que tu ne te sens pas bien.", expected: ["Je ne me sens pas bien.", "Je suis malade."], focus: "ne…pas", watch: "négation : ne me sens pas."),
+                                PracticeQuestion(prompt: "Dis que tu as mal à la tête.", expected: ["J'ai mal à la tête.", "J'ai mal a la tete.", "J'ai très mal à la tête."], focus: "mal à la tête", watch: "à la + féminin : la tête."),
+                                PracticeQuestion(prompt: "Dis que tu as de la fièvre.", expected: ["J'ai de la fièvre.", "J'ai de la fievre.", "J'ai beaucoup de fièvre."], focus: "fièvre", watch: "avoir de la + fièvre."),
+                                PracticeQuestion(prompt: "Dis que tu as mal au ventre.", expected: ["J'ai mal au ventre.", "J'ai très mal au ventre."], focus: "mal au ventre", watch: "à + le = au."),
+                                PracticeQuestion(prompt: "Demande à un ami s'il va bien.", expected: ["Ça va ?", "Tu vas bien ?", "Ça va, tu es malade ?"], focus: "ça va", watch: "question rapide : ça va ?")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u15-symptomes-e1", kind: "choice", prompt: "J'ai ___ à la tête.", options: ["mal", "bien", "froid", "peur"], answers: ["mal"], explain: "avoir mal à : la douleur."),
+                            Exercise(id: "fr-foundations-u15-symptomes-e2", kind: "gap", prompt: "J'ai mal ___ ventre.", options: [], answers: ["au"], explain: "à + le = au : au ventre."),
+                            Exercise(id: "fr-foundations-u15-symptomes-e3", kind: "order", prompt: "Tu as 38 °C. Dis-le avec la fièvre.", options: [], answers: ["J'ai de la fièvre"], explain: "avoir de la fièvre : le symptôme."),
+                            Exercise(id: "fr-foundations-u15-symptomes-e4", kind: "written", prompt: "Dis deux choses : tu es malade et tu as mal à la tête.", options: [], answers: ["je suis malade et j'ai mal à la tête", "je suis malade et j'ai mal a la tete", "je ne me sens pas bien et j'ai mal à la tête"], explain: "être malade + avoir mal à : les symptômes.")], skills: ["function:talk-about-health", "vocab:health", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u15-pharmacie", title: "À la pharmacie", goal: "Demander quelque chose pour la douleur à la pharmacie — et comprendre combien de fois par jour.",
+                intro: LessonIntro(explanation: [
+                            "À la pharmacie, on demande : « Bonjour, quelque chose pour la tête, s'il vous plaît. » On dit le problème après pour.",
+                            "Le pharmacien demande : « Vous avez une ordonnance ? » La réponse : « Non, je n'ai pas d'ordonnance. » Une ordonnance = le papier du docteur.",
+                            "La posologie : « Combien de fois par jour ? » La réponse : « Deux fois par jour, matin et soir. »"], examples: [
+                            ExampleLine(text: "Bonjour, je voudrais quelque chose pour la tête.", meaning: "La demande."),
+                            ExampleLine(text: "Vous avez une ordonnance ?", meaning: "La question du pharmacien."),
+                            ExampleLine(text: "Non, je n'ai pas d'ordonnance.", meaning: "La réponse négative."),
+                            ExampleLine(text: "Combien de fois par jour ?", meaning: "La posologie."),
+                            ExampleLine(text: "Deux fois par jour, matin et soir.", meaning: "La réponse.")]),
+                expressions: [
+                            TargetExpression(text: "quelque chose pour…", meaning: "Demander un médicament.", note: "Quelque chose pour la gorge ?"),
+                            TargetExpression(text: "une ordonnance", meaning: "Le papier du docteur.", note: "Vous avez une ordonnance ?"),
+                            TargetExpression(text: "des comprimés / un sirop", meaning: "Le médicament.", note: "Un sirop pour la toux."),
+                            TargetExpression(text: "deux fois par jour", meaning: "La quantité du jour.", note: "Deux fois par jour, matin et soir."),
+                            TargetExpression(text: "Je voudrais…", meaning: "Demander poliment.", note: "Je voudrais quelque chose pour dormir.")],
+                situation: "À la pharmacie, vous demandez quelque chose pour la tête. Le pharmacien demande une ordonnance — non — et vous demandez : combien de fois par jour ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande quelque chose pour la tête, à la pharmacie.", expected: ["Quelque chose pour la tête, s'il vous plaît.", "Quelque chose pour la tete, s'il vous plait."], focus: "quelque chose pour", watch: "pour + le problème."),
+                                PracticeQuestion(prompt: "Le pharmacien demande une ordonnance. Réponds : non.", expected: ["Non, je n'ai pas d'ordonnance.", "Je n'ai pas d'ordonnance."], focus: "pas d'ordonnance", watch: "ne…pas de : pas d'ordonnance."),
+                                PracticeQuestion(prompt: "Demande combien de fois par jour tu prends le médicament.", expected: ["Combien de fois par jour ?", "Je le prends combien de fois par jour ?"], focus: "combien de fois", watch: "fois : la fréquence."),
+                                PracticeQuestion(prompt: "Dis que tu prends deux comprimés par jour.", expected: ["Je prends deux comprimés par jour.", "Deux fois par jour, matin et soir."], focus: "deux fois", watch: "deux fois par jour."),
+                                PracticeQuestion(prompt: "Demande poliment quelque chose pour dormir.", expected: ["Je voudrais quelque chose pour dormir.", "Quelque chose pour dormir, s'il vous plaît."], focus: "je voudrais", watch: "je voudrais = poli.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u15-pharmacie-e1", kind: "choice", prompt: "Quelque chose ___ la gorge, s'il vous plaît.", options: ["pour", "à", "au", "de"], answers: ["pour"], explain: "pour + le problème de santé."),
+                            Exercise(id: "fr-foundations-u15-pharmacie-e2", kind: "gap", prompt: "Vous avez une ___ ? — Non, je n'ai pas.", options: [], answers: ["ordonnance"], explain: "une ordonnance : le papier du docteur."),
+                            Exercise(id: "fr-foundations-u15-pharmacie-e3", kind: "order", prompt: "Demande la posologie.", options: [], answers: ["Combien de fois par jour"], explain: "combien de fois par jour : la fréquence."),
+                            Exercise(id: "fr-foundations-u15-pharmacie-e4", kind: "written", prompt: "À la pharmacie : demande quelque chose pour la tête.", options: [], answers: ["quelque chose pour la tête, s'il vous plaît", "quelque chose pour la tete s'il vous plait", "je voudrais quelque chose pour la tête"], explain: "quelque chose pour + la douleur.")], skills: ["function:go-shopping", "vocab:health", "function:make-requests", "grammar:present-simple"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u15-habitudes", title: "Une vie saine", goal: "Parler de tes habitudes avec toujours et jamais : je bois toujours de l'eau, je ne fume jamais.",
+                intro: LessonIntro(explanation: [
+                            "Toujours = 100 % du temps : « Je bois toujours de l'eau. » Jamais = 0 % : « Je ne fume jamais. »",
+                            "Position : toujours et jamais viennent après le verbe : « Je mange toujours des fruits. » « Je ne dors jamais tard. »",
+                            "Les bonnes habitudes : « Je fais du sport le matin, je dors huit heures. » Pour demander : « Tu fais du sport ? »"], examples: [
+                            ExampleLine(text: "Je bois toujours de l'eau.", meaning: "Tous les jours."),
+                            ExampleLine(text: "Je ne fume jamais.", meaning: "Zéro cigarettes."),
+                            ExampleLine(text: "Je mange toujours des fruits.", meaning: "après le verbe."),
+                            ExampleLine(text: "Je ne dors jamais tard.", meaning: "ne…jamais."),
+                            ExampleLine(text: "Je fais du sport le matin.", meaning: "La bonne habitude.")]),
+                expressions: [
+                            TargetExpression(text: "toujours", meaning: "100 % du temps.", note: "Je bois toujours de l'eau."),
+                            TargetExpression(text: "ne…jamais", meaning: "0 % du temps.", note: "Je ne fume jamais."),
+                            TargetExpression(text: "faire du sport", meaning: "Bouger le corps.", note: "Je fais du sport deux fois par semaine."),
+                            TargetExpression(text: "dormir huit heures", meaning: "Bien dormir.", note: "Je dors huit heures par nuit."),
+                            TargetExpression(text: "être en forme", meaning: "Être en bonne santé.", note: "Je mange des fruits et je marche : je suis en forme.")],
+                situation: "Vous parlez de votre vie saine : vous buvez toujours de l'eau, vous ne fumez jamais — et vous dormez huit heures.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dis que tu bois toujours de l'eau.", expected: ["Je bois toujours de l'eau.", "Je bois de l'eau tous les jours."], focus: "toujours", watch: "toujours après le verbe."),
+                                PracticeQuestion(prompt: "Dis que tu ne fumes jamais.", expected: ["Je ne fume jamais.", "Non, je ne fume jamais."], focus: "ne…jamais", watch: "ne + verbe + jamais."),
+                                PracticeQuestion(prompt: "Dis que tu manges toujours des fruits.", expected: ["Je mange toujours des fruits.", "Je mange toujours des fruits frais."], focus: "toujours", watch: "toujours après le verbe."),
+                                PracticeQuestion(prompt: "Dis que tu ne dors jamais tard.", expected: ["Je ne dors jamais tard.", "Je me couche toujours tôt."], focus: "jamais", watch: "ne…jamais + tard."),
+                                PracticeQuestion(prompt: "Demande à un ami s'il fait du sport.", expected: ["Tu fais du sport ?", "Est-ce que tu fais du sport ?"], focus: "faire du sport", watch: "question : est-ce que + tu fais.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u15-habitudes-e1", kind: "choice", prompt: "À chaque repas, je bois de l'eau : je ___ bois !", options: ["toujours", "jamais", "souvent", "peu"], answers: ["toujours"], explain: "toujours = tous les jours, 100 %."),
+                            Exercise(id: "fr-foundations-u15-habitudes-e2", kind: "gap", prompt: "Je ne fume ___, c'est mauvais pour la santé.", options: [], answers: ["jamais"], explain: "ne…jamais = 0 %."),
+                            Exercise(id: "fr-foundations-u15-habitudes-e3", kind: "order", prompt: "Bonne habitude : le sport, chaque matin. Dis-le.", options: [], answers: ["Je fais du sport le matin"], explain: "faire du sport + le moment."),
+                            Exercise(id: "fr-foundations-u15-habitudes-e4", kind: "written", prompt: "Donne deux bonnes habitudes avec toujours et jamais.", options: [], answers: ["je bois toujours de l'eau et je ne fume jamais", "je bois toujours de l'eau, je ne fume jamais", "je bois toujours de l'eau et je ne fume jamais !"], explain: "toujours + jamais : deux habitudes saines.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
 public enum ItFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.", 0),
@@ -7231,6 +7771,189 @@ public enum ItFoundationsU13 {
                             Exercise(id: "it-foundations-u13-gusti-e4", kind: "written", prompt: "Di' due cose che ti piace fare nel weekend.", options: [], answers: ["Mi piace leggere e cucinare.", "Mi piace nuotare e camminare.", "Mi piace guardare i film e camminare."], explain: "Mi piace + due infiniti.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum ItFoundationsU14 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u14", title: "In movimento", subtitle: "Metro, bus e treno", level: "A1", themes: [
+                    ConversationTheme("in-movimento-trasporti", "I trasporti", "Prendo la metro", "bus", "Course", "In città: la metro, il bus e i piedi — scegli il mezzo e vai.", 0),
+                    ConversationTheme("in-movimento-orari", "Gli orari", "Alle otto e mezza", "tram", "Course", "Alla stazione: il treno parte alle nove e mezza — chiedi l'orario e guarda il tabellone.", 1)], lessons: [
+            Lesson(id: "it-foundations-u14-trasporti", title: "Come vado", goal: "Dire come ti sposti in città: prendo la metro, vado in bus, vado a piedi.",
+                intro: LessonIntro(explanation: [
+                            "Per i trasporti si usa prendere: « Prendo la metro. Prendo il bus. Prendo il treno. » Prendere = viaggiare con quel mezzo.",
+                            "Con i mezzi si usa in: « Vado al lavoro in metro. Vado in centro in bus. » Con la bicicletta si dice in bici.",
+                            "A piedi è senza mezzo: « L'ufficio è vicino: vado a piedi. » Per chiedere: « Come vai al lavoro ? »"], examples: [
+                            ExampleLine(text: "Prendo la metro ogni mattina.", meaning: "Prendere + mezzo."),
+                            ExampleLine(text: "Vado al lavoro in bus.", meaning: "in + mezzo."),
+                            ExampleLine(text: "Il centro è vicino: vado a piedi.", meaning: "A piedi = cammino."),
+                            ExampleLine(text: "Come vai in ufficio ?", meaning: "Domanda con come."),
+                            ExampleLine(text: "Luisa va a scuola in bici.", meaning: "In bici = in bicicletta.")]),
+                expressions: [
+                            TargetExpression(text: "prendo la metro", meaning: "Uso la metro.", note: "Anche: prendo il bus, prendo il treno."),
+                            TargetExpression(text: "vado a piedi", meaning: "Cammino.", note: "Senza mezzo: il posto è vicino."),
+                            TargetExpression(text: "in metro / in bus / in treno", meaning: "Con i mezzi si usa in.", note: "Vado in centro in metro."),
+                            TargetExpression(text: "Come vai a … ?", meaning: "Chiedere il mezzo.", note: "Come vai al lavoro ?"),
+                            TargetExpression(text: "in bici", meaning: "Con la bicicletta.", note: "Bici = bicicletta, parola corta.")],
+                situation: "Un giorno tipo in città: la metro al mattino, il bus quando piove e a piedi quando il centro è vicino.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Prendi la metro ogni giorno. Dillo.", expected: ["Prendo la metro ogni giorno.", "La mattina prendo la metro."], focus: "prendo", watch: "Io prendo, tu prendi."),
+                                PracticeQuestion(prompt: "L'ufficio è vicino. Dì che vai camminando.", expected: ["Vado a piedi.", "Vado all'ufficio a piedi."], focus: "a piedi", watch: "A piedi = senza mezzo."),
+                                PracticeQuestion(prompt: "Chiedi a Paolo come va al lavoro.", expected: ["Come vai al lavoro ?", "Paolo, come vai al lavoro ?"], focus: "come vai", watch: "Domanda con come + tu vai."),
+                                PracticeQuestion(prompt: "Dì che vai in centro con il bus.", expected: ["Vado in centro in bus.", "Prendo il bus per il centro."], focus: "in bus", watch: "Con i mezzi si usa in: in bus."),
+                                PracticeQuestion(prompt: "La scuola è lontana. Dì che prendi il treno.", expected: ["Prendo il treno.", "Vado a scuola in treno."], focus: "il treno", watch: "Treno: per le distanze lunghe."),
+                                PracticeQuestion(prompt: "Il mercato è vicino. Dì che ci vai in bici.", expected: ["Vado in bici.", "Vado al mercato in bici."], focus: "in bici", watch: "In bici = in bicicletta.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u14-trasporti-e1", kind: "choice", prompt: "Il lavoro è lontano: ___ il bus.", options: ["prendo", "vado", "sono", "faccio"], answers: ["prendo"], explain: "Con i mezzi si usa prendere: prendo il bus."),
+                            Exercise(id: "it-foundations-u14-trasporti-e2", kind: "gap", prompt: "Il centro è vicino: vado ___.", options: [], answers: ["a piedi"], explain: "A piedi = cammino, senza mezzo."),
+                            Exercise(id: "it-foundations-u14-trasporti-e3", kind: "order", prompt: "Dì che ogni mattina usi la metro.", options: [], answers: ["Prendo la metro ogni mattina"], explain: "Prendere + mezzo + tempo."),
+                            Exercise(id: "it-foundations-u14-trasporti-e4", kind: "written", prompt: "Come vai al lavoro ? Rispondi: usi la metro.", options: [], answers: ["Vado al lavoro in metro.", "Vado al lavoro con la metro.", "Prendo la metro."], explain: "in + mezzo: vado al lavoro in metro.")], skills: ["vocab:transport", "grammar:present-simple", "function:ask-simple-questions", "vocab:town"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u14-orari", title: "A che ora parte ?", goal: "Chiedere e dire l'ora e gli orari: sono le otto, il treno parte alle nove.",
+                intro: LessonIntro(explanation: [
+                            "Per chiedere l'ora: « Che ora è ? » La risposta va con essere: « È l'una. Sono le due. »",
+                            "Per gli orari dei mezzi si usa alle: « Il treno parte alle nove. La metro parte alle otto e mezza. »",
+                            "L'una è speciale: è l'una, alle una. Dalle due in poi è plurale: sono le due, alle due."], examples: [
+                            ExampleLine(text: "Che ora è ?", meaning: "Chiedere l'ora."),
+                            ExampleLine(text: "È l'una.", meaning: "Una: singolare."),
+                            ExampleLine(text: "Sono le tre e mezza.", meaning: "Mezza = trenta minuti."),
+                            ExampleLine(text: "Il treno parte alle nove.", meaning: "alle + ora."),
+                            ExampleLine(text: "La metro parte alle otto e un quarto.", meaning: "Un quarto = quindici minuti.")]),
+                expressions: [
+                            TargetExpression(text: "Che ora è ?", meaning: "Chiedere l'ora.", note: "Risposta: sono le otto."),
+                            TargetExpression(text: "È l'una.", meaning: "Una soltanto: l'una.", note: "Alle una, non alle uno."),
+                            TargetExpression(text: "Sono le due / le tre …", meaning: "Dalle due in poi: plurale.", note: "Sono le cinque."),
+                            TargetExpression(text: "alle … e mezza", meaning: "Trenta minuti dopo l'ora.", note: "Alle nove e mezza."),
+                            TargetExpression(text: "parte alle …", meaning: "L'orario del mezzo.", note: "Il bus parte alle dieci.")],
+                situation: "Alla stazione con Luca: che ora è ?, il treno parte alle nove e mezza — si legge il tabellone.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi l'ora a Luca.", expected: ["Che ora è ?", "Che ora e ?", "Luca, che ora e ?"], focus: "che ora", watch: "È con l'accento: che ora è ?"),
+                                PracticeQuestion(prompt: "L'orologio segna le 13:00. Dì l'ora.", expected: ["È l'una.", "E l'una.", "E l'una in punto."], focus: "l'una", watch: "Una è singolare: l'una."),
+                                PracticeQuestion(prompt: "L'orologio segna le 15:00. Dì l'ora.", expected: ["Sono le tre.", "E le tre.", "Sono le tre in punto."], focus: "le tre", watch: "Tre è plurale: sono le tre."),
+                                PracticeQuestion(prompt: "Il treno parte alle 9:30. Dì l'orario completo.", expected: ["Il treno parte alle nove e mezza.", "Il treno parte alle nove e trenta."], focus: "nove e mezza", watch: "Mezza = trenta minuti."),
+                                PracticeQuestion(prompt: "Vuoi sapere l'orario della metro. Chiedi.", expected: ["A che ora parte la metro ?", "A che ora parte la metro"], focus: "a che ora", watch: "A che ora + verbo: parte."),
+                                PracticeQuestion(prompt: "Il bus parte alle 8:15. Dillo.", expected: ["Il bus parte alle otto e un quarto.", "Il bus parte alle otto e quindici."], focus: "un quarto", watch: "Un quarto = quindici minuti.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u14-orari-e1", kind: "choice", prompt: "Una sola ora: ___ l'una.", options: ["È", "E", "Sono", "Hanno"], answers: ["È"], explain: "L'una è singolare: è l'una, con è."),
+                            Exercise(id: "it-foundations-u14-orari-e2", kind: "gap", prompt: "Il treno parte ___ nove.", options: [], answers: ["alle"], explain: "Con l'orario si usa alle: alle nove."),
+                            Exercise(id: "it-foundations-u14-orari-e3", kind: "order", prompt: "Chiedi l'orario della metro.", options: [], answers: ["A che ora parte la metro"], explain: "A che ora + parte + soggetto."),
+                            Exercise(id: "it-foundations-u14-orari-e4", kind: "written", prompt: "Sono le 4:30. Dì l'ora.", options: [], answers: ["Sono le quattro e mezza.", "Sono le quattro e trenta.", "Le quattro e mezza."], explain: "Mezza = trenta minuti dopo l'ora.")], skills: ["function:tell-time", "vocab:transport", "grammar:present-questions", "grammar:present-simple"], canDo: ["tell-time"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u14-biglietto", title: "Un biglietto, per favore", goal: "Comprare i biglietti: uno o due, quanto costa, pagare con la carta.",
+                intro: LessonIntro(explanation: [
+                            "Al chiosco la richiesta è con per favore: « Un biglietto, per favore. Due biglietti per Milano, per favore. »",
+                            "Per il prezzo: « Quanto costa ? » — « Costa due euro e cinquanta. » Con due biglietti: « Costano cinque euro. »",
+                            "Le quantità: un biglietto, due biglietti, tre biglietti. Euro non cambia: un euro, due euro."], examples: [
+                            ExampleLine(text: "Un biglietto, per favore.", meaning: "Chiedere un biglietto."),
+                            ExampleLine(text: "Due biglietti per Roma, per favore.", meaning: "Numero + biglietti + per."),
+                            ExampleLine(text: "Quanto costa ?", meaning: "Chiedere il prezzo."),
+                            ExampleLine(text: "Costa due euro e cinquanta.", meaning: "Il prezzo in euro."),
+                            ExampleLine(text: "Posso pagare con la carta ?", meaning: "Chiedere il pagamento.")]),
+                expressions: [
+                            TargetExpression(text: "un biglietto, per favore", meaning: "La richiesta al chiosco.", note: "Con il numero: due biglietti."),
+                            TargetExpression(text: "per + città", meaning: "La destinazione.", note: "Un biglietto per Napoli."),
+                            TargetExpression(text: "Quanto costa ?", meaning: "Chiedere il prezzo.", note: "Costa tre euro."),
+                            TargetExpression(text: "due euro e cinquanta", meaning: "Il prezzo con i centesimi.", note: "Cinquanta = 50 centesimi."),
+                            TargetExpression(text: "Posso pagare con la carta ?", meaning: "Pagare con la carta.", note: "Oppure: in contanti.")],
+                situation: "Al chiosco della stazione: due biglietti per Roma, due euro e cinquanta — e si paga con la carta.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sei al chiosco. Chiedi un biglietto, gentile.", expected: ["Un biglietto, per favore.", "Un biglietto per favore."], focus: "per favore", watch: "Per favore rende gentile la richiesta."),
+                                PracticeQuestion(prompt: "Sei al chiosco, vuoi andare nella capitale. Chiedi due biglietti, gentile.", expected: ["Due biglietti per Roma, per favore.", "Due biglietti per Roma."], focus: "due biglietti", watch: "Plurale: due biglietti."),
+                                PracticeQuestion(prompt: "Non vedi il prezzo. Chiedilo.", expected: ["Quanto costa ?", "Quanto costa il biglietto ?"], focus: "quanto costa", watch: "Biglietto singolare: costa."),
+                                PracticeQuestion(prompt: "Il biglietto costa 2,50 €. Dì il prezzo.", expected: ["Costa due euro e cinquanta.", "Due euro e cinquanta.", "Costa due euro e cinquanta centesimi."], focus: "due euro", watch: "Euro non cambia: due euro."),
+                                PracticeQuestion(prompt: "Chiedi se puoi pagare con la carta.", expected: ["Posso pagare con la carta ?", "Posso pagare con la carta"], focus: "posso", watch: "Posso + infinito: posso pagare.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u14-biglietto-e1", kind: "choice", prompt: "Per chiedere gentile si aggiunge: « Un biglietto, ___ ».", options: ["per favore", "grazie mille", "buongiorno", "scusa"], answers: ["per favore"], explain: "Per favore rende gentile la richiesta."),
+                            Exercise(id: "it-foundations-u14-biglietto-e2", kind: "gap", prompt: "Quanto ___ il biglietto ? — Tre euro.", options: [], answers: ["costa"], explain: "Prezzo singolare: costa."),
+                            Exercise(id: "it-foundations-u14-biglietto-e3", kind: "order", prompt: "Al chiosco, chiedi gentilmente un biglietto per Napoli.", options: [], answers: ["Un biglietto per Napoli, per favore"], explain: "Un biglietto + per + città + per favore."),
+                            Exercise(id: "it-foundations-u14-biglietto-e4", kind: "written", prompt: "Il biglietto costa 3,50 €. Dì il prezzo.", options: [], answers: ["Costa tre euro e cinquanta.", "Tre euro e cinquanta.", "Costa tre euro e cinquanta centesimi."], explain: "Euro + e + centesimi: tre euro e cinquanta.")], skills: ["function:go-shopping", "function:make-requests", "vocab:transport", "grammar:quantities"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum ItFoundationsU15 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u15", title: "Mi sento bene", subtitle: "Salute di base", level: "A1", themes: [
+                    ConversationTheme("mi-sento-bene-salute", "La salute", "Mi fa male la testa", "cross.case", "Course", "Un raffreddore: la febbre, la testa che fa male — e racconti come ti senti.", 0),
+                    ConversationTheme("mi-sento-bene-abitudini", "Le abitudini", "Sempre o mai ?", "pills", "Course", "La settimana sana: colazione sempre la mattina, molta acqua, otto ore di sonno.", 1)], lessons: [
+            Lesson(id: "it-foundations-u15-sintomi", title: "Non mi sento bene", goal: "Dire come stai: ho la febbre, mi fa male la testa.",
+                intro: LessonIntro(explanation: [
+                            "I sintomi vanno con avere: « Ho la febbre. Ho la tosse. Ho mal di testa. »",
+                            "Il dolore si dice con mi fa male: « Mi fa male la testa. Mi fa male la gola. » Al plurale: « Mi fanno male i piedi. »",
+                            "Per lo stato generale: « Non mi sento bene. Sono malato / malata. » Per chiedere: « Come ti senti ? »"], examples: [
+                            ExampleLine(text: "Non mi sento bene.", meaning: "Lo stato generale."),
+                            ExampleLine(text: "Ho la febbre.", meaning: "Avere + sintomo."),
+                            ExampleLine(text: "Mi fa male la testa.", meaning: "Il dolore alla testa."),
+                            ExampleLine(text: "Ho mal di gola.", meaning: "mal di + parte del corpo."),
+                            ExampleLine(text: "Sono malata oggi.", meaning: "Malata: donna. Malato: uomo.")]),
+                expressions: [
+                            TargetExpression(text: "Non mi sento bene.", meaning: "Dire che stai male.", note: "Oppure: sto male."),
+                            TargetExpression(text: "ho la febbre", meaning: "Calore nel corpo, 38-39.", note: "Ho la febbre alta."),
+                            TargetExpression(text: "mi fa male …", meaning: "Il dolore.", note: "Mi fa male la testa."),
+                            TargetExpression(text: "mal di testa / di gola / di pancia", meaning: "Le parti che fanno male.", note: "Mal di testa: la testa fa male."),
+                            TargetExpression(text: "Come ti senti ?", meaning: "Chiedere lo stato.", note: "Non mi sento bene.")],
+                situation: "Martedì mattina, a casa: la febbre, la testa che fa male — e racconti come ti senti.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "La temperatura è 38,5. Dì cosa hai.", expected: ["Ho la febbre.", "Ho febbre.", "Ho la febbre alta."], focus: "ho la febbre", watch: "Avere + la febbre."),
+                                PracticeQuestion(prompt: "La testa fa male. Dillo.", expected: ["Mi fa male la testa.", "La testa mi fa male."], focus: "mi fa male", watch: "Mi fa male + parte del corpo."),
+                                PracticeQuestion(prompt: "Vuoi sapere come sta Anna. Chiedi.", expected: ["Come ti senti ?", "Come stai ?", "Anna, come ti senti ?"], focus: "come ti senti", watch: "Domanda con tu: ti senti."),
+                                PracticeQuestion(prompt: "La gola fa male. Dillo in due modi.", expected: ["Ho mal di gola.", "Mi fa male la gola."], focus: "mal di gola", watch: "Mal di + parte del corpo."),
+                                PracticeQuestion(prompt: "Oggi stai male. Dillo.", expected: ["Oggi non mi sento bene.", "Non mi sento bene oggi.", "Oggi sono malata."], focus: "non mi sento bene", watch: "Io sento: non mi sento bene.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u15-sintomi-e1", kind: "choice", prompt: "Temperatura 39 °C: ho la ___.", options: ["febbre", "fame", "sete", "sonno"], answers: ["febbre"], explain: "Temperatura alta: ho la febbre."),
+                            Exercise(id: "it-foundations-u15-sintomi-e2", kind: "gap", prompt: "Mi ___ male la testa.", options: [], answers: ["fa"], explain: "Mi fa male + parte del corpo: fa male."),
+                            Exercise(id: "it-foundations-u15-sintomi-e3", kind: "order", prompt: "Dì che hai mal di gola.", options: [], answers: ["Ho mal di gola"], explain: "Avere + mal di + parte del corpo."),
+                            Exercise(id: "it-foundations-u15-sintomi-e4", kind: "written", prompt: "Hai 38 di febbre e la testa che fa male. Scrivi come ti senti.", options: [], answers: ["Ho la febbre e mi fa male la testa.", "Ho la febbre e ho mal di testa.", "Ho febbre e mal di testa."], explain: "Avere + sintomi: la descrizione del malato.")], skills: ["function:talk-about-health", "vocab:health", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u15-farmacia", title: "In farmacia", goal: "In farmacia: chiedere qualcosa per il dolore e capire la dose.",
+                intro: LessonIntro(explanation: [
+                            "In farmacia si chiede: « Ha qualcosa per la testa ? » Oppure: « Vorrei qualcosa per la febbre. »",
+                            "Il farmacista dà la dose: « Due compresse al giorno. Questo sciroppo è per la tosse. »",
+                            "Si paga come al negozio: « Quanto costano ? » — « Sette euro. Posso pagare con la carta ? »"], examples: [
+                            ExampleLine(text: "Ha qualcosa per la testa ?", meaning: "Chiedere un farmaco."),
+                            ExampleLine(text: "Vorrei qualcosa per la tosse.", meaning: "Vorrei = richiesta gentile."),
+                            ExampleLine(text: "Due compresse al giorno.", meaning: "La dose."),
+                            ExampleLine(text: "Questo sciroppo è per la tosse.", meaning: "Sciroppo: farmaco liquido."),
+                            ExampleLine(text: "Quanto costano ?", meaning: "Il prezzo al plurale.")]),
+                expressions: [
+                            TargetExpression(text: "Ha qualcosa per … ?", meaning: "Chiedere un farmaco.", note: "Ha qualcosa per la febbre ?"),
+                            TargetExpression(text: "Vorrei qualcosa per …", meaning: "Richiesta gentile.", note: "Vorrei qualcosa per dormire."),
+                            TargetExpression(text: "due compresse al giorno", meaning: "Quante volte al giorno.", note: "Una la mattina, una la sera."),
+                            TargetExpression(text: "la compressa / lo sciroppo", meaning: "I tipi di farmaco.", note: "Lo sciroppo per i bambini."),
+                            TargetExpression(text: "Quanto costano ?", meaning: "Chiedere il prezzo.", note: "Costano sette euro.")],
+                situation: "In farmacia sotto casa: qualcosa per la febbre, due compresse al giorno e sette euro.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sei in farmacia. Chiedi qualcosa per la testa.", expected: ["Ha qualcosa per la testa ?", "Vorrei qualcosa per la testa."], focus: "qualcosa per", watch: "Qualcosa per + dolore."),
+                                PracticeQuestion(prompt: "Chiedi qualcosa per la tosse, in modo gentile.", expected: ["Vorrei qualcosa per la tosse.", "Vorrei qualcosa contro la tosse."], focus: "vorrei", watch: "Vorrei = voglio, ma gentile."),
+                                PracticeQuestion(prompt: "Il farmacista dice: 2 compresse ogni giorno. Ripeti la dose.", expected: ["Due compresse al giorno.", "Prendo due compresse al giorno."], focus: "al giorno", watch: "Al giorno = ogni giorno."),
+                                PracticeQuestion(prompt: "Chiedi il prezzo delle compresse.", expected: ["Quanto costano ?", "Quanto costano le compresse ?"], focus: "quanto costano", watch: "Compresse plurale: costano."),
+                                PracticeQuestion(prompt: "Vuoi pagare con la carta. Chiedi.", expected: ["Posso pagare con la carta ?", "Posso pagare con la carta"], focus: "posso pagare", watch: "Posso + infinito: posso pagare.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u15-farmacia-e1", kind: "choice", prompt: "In farmacia chiedi: « ___ qualcosa per la febbre ? »", options: ["Ha", "È", "Fa", "Va"], answers: ["Ha"], explain: "Ha qualcosa per … : la domanda al farmacista."),
+                            Exercise(id: "it-foundations-u15-farmacia-e2", kind: "gap", prompt: "Prenda due ___ al giorno.", options: [], answers: ["compresse"], explain: "La dose: due compresse al giorno."),
+                            Exercise(id: "it-foundations-u15-farmacia-e3", kind: "order", prompt: "Chiedi gentilmente qualcosa per la tosse.", options: [], answers: ["Vorrei qualcosa per la tosse"], explain: "Vorrei + qualcosa + per + sintomo."),
+                            Exercise(id: "it-foundations-u15-farmacia-e4", kind: "written", prompt: "Il farmacista dà lo sciroppo: 2 cucchiai ogni giorno. Scrivi la dose.", options: [], answers: ["Due cucchiai al giorno.", "Prendo due cucchiai al giorno.", "Due cucchiai al giorno, la mattina e la sera."], explain: "Numero + dose + al giorno.")], skills: ["function:go-shopping", "vocab:health", "function:make-requests", "grammar:present-simple"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u15-abitudini", title: "Vita sana", goal: "Raccontare la vita sana con gli avverbi: sempre, spesso, mai.",
+                intro: LessonIntro(explanation: [
+                            "Gli avverbi di frequenza: sempre (100 %), spesso, a volte, mai (0 %).",
+                            "Sempre e mai stanno col verbo: « Faccio sempre colazione. Non fumo mai. » Mai vuole non: non … mai.",
+                            "La vita sana: « Bevo molta acqua. Dormo otto ore. Vado a piedi al lavoro. »"], examples: [
+                            ExampleLine(text: "Faccio sempre colazione.", meaning: "Sempre: ogni giorno."),
+                            ExampleLine(text: "Non fumo mai.", meaning: "Mai va con non."),
+                            ExampleLine(text: "Spesso vado a piedi.", meaning: "Spesso: molte volte."),
+                            ExampleLine(text: "Bevo molta acqua.", meaning: "Molta: quantità grande."),
+                            ExampleLine(text: "Dormo otto ore la notte.", meaning: "Le ore di sonno.")]),
+                expressions: [
+                            TargetExpression(text: "sempre", meaning: "Ogni volta, 100 %.", note: "Faccio sempre colazione."),
+                            TargetExpression(text: "non … mai", meaning: "Non + verbo + mai: 0 %.", note: "Non mangio mai dolci."),
+                            TargetExpression(text: "spesso / a volte", meaning: "Frequenza media.", note: "A volte corro al parco."),
+                            TargetExpression(text: "dormire otto ore", meaning: "Le ore di sonno.", note: "Dormo otto ore la notte."),
+                            TargetExpression(text: "bere molta acqua", meaning: "Abitudine sana.", note: "Bevo molta acqua al giorno.")],
+                situation: "Colazione sempre alle sette, otto ore di sonno e il bus mai: a piedi — la settimana sana.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fai colazione ogni giorno. Dillo con sempre.", expected: ["Faccio sempre colazione.", "La mattina faccio sempre colazione."], focus: "sempre", watch: "Sempre sta col verbo: faccio sempre."),
+                                PracticeQuestion(prompt: "Non mangi dolci. Mai. Dillo.", expected: ["Non mangio mai dolci.", "Non mangio mai i dolci."], focus: "non … mai", watch: "Non e mai stanno insieme."),
+                                PracticeQuestion(prompt: "Bevi molta acqua ogni giorno. Dillo con sempre.", expected: ["Bevo sempre molta acqua.", "Bevo sempre molta acqua al giorno."], focus: "bevo sempre", watch: "Verbo + sempre: bevo sempre."),
+                                PracticeQuestion(prompt: "Dormi otto ore la notte. Dillo.", expected: ["Dormo otto ore la notte.", "Dormo otto ore.", "Ogni notte dormo otto ore."], focus: "otto ore", watch: "Otto ore: la quantità di sonno."),
+                                PracticeQuestion(prompt: "Non fai sport. Mai. Dillo.", expected: ["Non faccio mai sport.", "Io non faccio mai sport."], focus: "non faccio mai", watch: "Non + faccio + mai."),
+                                PracticeQuestion(prompt: "Spesso vai a piedi al lavoro. Dillo.", expected: ["Spesso vado a piedi al lavoro.", "Vado spesso a piedi al lavoro."], focus: "spesso", watch: "Spesso = molte volte.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u15-abitudini-e1", kind: "choice", prompt: "Mangio ___ verdura: ogni giorno.", options: ["sempre", "mai", "a volte", "domani"], answers: ["sempre"], explain: "Ogni giorno = sempre, 100 %."),
+                            Exercise(id: "it-foundations-u15-abitudini-e2", kind: "gap", prompt: "Fumo zero volte: non fumo ___.", options: [], answers: ["mai"], explain: "Non + verbo + mai: frequenza zero."),
+                            Exercise(id: "it-foundations-u15-abitudini-e3", kind: "order", prompt: "Dì che fai colazione la mattina, tutti i giorni: usa sempre.", options: [], answers: ["La mattina faccio sempre colazione"], explain: "Tempo + verbo + sempre + oggetto."),
+                            Exercise(id: "it-foundations-u15-abitudini-e4", kind: "written", prompt: "Descrivi una tua abitudine sana: usa sempre o mai.", options: [], answers: ["Faccio sempre colazione.", "Non fumo mai.", "Bevo sempre molta acqua.", "Non mangio mai dolci."], explain: "Verbo + sempre oppure non + verbo + mai.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
 public enum PtFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in São Paulo. Meet the learner, exchange names, countries and jobs using the verb ser.", 0),
@@ -8214,6 +8937,186 @@ public enum PtFoundationsU13 {
                             Exercise(id: "pt-foundations-u13-gostos-e4", kind: "written", prompt: "Fale dos seus gostos: música e ler.", options: [], answers: ["Gosto de música e de ler.", "gosto de musica e de ler"], explain: "Dois gostos com gosto de + substantivo e infinitivo.")], skills: ["vocab:hobbies", "grammar:present-simple", "function:talk-about-routines", "vocab:social-expressions"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
 }
 
+public enum PtFoundationsU14 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u14", title: "Em movimento", subtitle: "Metrô, ônibus e trem", level: "A1", themes: [
+                    ConversationTheme("mover-transporte", "O transporte", "Como eu vou", "bus", "Course", "O Leo mostra como vai para o trabalho: pega o metrô, o ônibus e às vezes vai a pé.", 0),
+                    ConversationTheme("mover-horarios", "Os horários", "Horas e passagens", "tram", "Course", "Na estação, o grupo pergunta as horas, compra passagens e pega o trem certo.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u14-transporte", title: "Como eu vou", goal: "Falar do transporte do dia a dia: pego o metrô, pego o ônibus, vou a pé.",
+                intro: LessonIntro(explanation: [
+                            "Meios de transporte: « o metrô, o ônibus, o trem, o carro, a bicicleta ». « Eu pego o metrô todo dia ».",
+                            "Usar « pegar » com o transporte: « Pego o ônibus às sete ». Sem veículo é « vou a pé »: « Vou a pé para o trabalho ».",
+                            "Perguntar como a pessoa vai: « Como você vai para o trabalho ? ». A resposta usa « pego » ou « vou »: « Pego o trem »."], examples: [
+                            ExampleLine(text: "Eu pego o metrô todo dia.", meaning: "pegar + transporte."),
+                            ExampleLine(text: "Pego o ônibus às sete.", meaning: "hora + transporte."),
+                            ExampleLine(text: "Vou a pé para o trabalho.", meaning: "a pé = caminhando."),
+                            ExampleLine(text: "Ela vai de bicicleta para a escola.", meaning: "de + transporte."),
+                            ExampleLine(text: "Como você vai para o trabalho ?", meaning: "Perguntar o meio.")]),
+                expressions: [
+                            TargetExpression(text: "pego o metrô", meaning: "Uso o metrô.", note: "Pego o metrô às oito."),
+                            TargetExpression(text: "pega o ônibus", meaning: "Uso o ônibus.", note: "Ele pega o ônibus."),
+                            TargetExpression(text: "vou a pé", meaning: "Caminho.", note: "Vou a pé para a escola."),
+                            TargetExpression(text: "de trem / de bicicleta", meaning: "Meio de transporte.", note: "Ela vai de bicicleta."),
+                            TargetExpression(text: "Como você vai ?", meaning: "Perguntar o transporte.", note: "Como você vai para casa ?")],
+                situation: "O Leo mostra como vai para o trabalho: pega o metrô, o ônibus e às vezes vai a pé.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que você pega o metrô todo dia.", expected: ["Eu pego o metrô todo dia.", "eu pego o metro todo dia"], focus: "pego", watch: "pegar + transporte."),
+                                PracticeQuestion(prompt: "Diga que você pega o ônibus às sete.", expected: ["Pego o ônibus às sete.", "pego o onibus as sete"], focus: "pegar", watch: "ônibus com acento."),
+                                PracticeQuestion(prompt: "Diga que você vai a pé para o trabalho.", expected: ["Vou a pé para o trabalho.", "vou a pe para o trabalho"], focus: "a pé", watch: "a pé com acento."),
+                                PracticeQuestion(prompt: "Pergunte como a colega vai para o trabalho.", expected: ["Como você vai para o trabalho ?", "Como vai para o trabalho ?", "como voce vai para o trabalho"], focus: "Como … ?", watch: "Você + vai."),
+                                PracticeQuestion(prompt: "Diga que a Marina vai de bicicleta.", expected: ["Ela vai de bicicleta.", "ela vai de bicicleta"], focus: "de bicicleta", watch: "vai de + transporte.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u14-transporte-e1", kind: "choice", prompt: "Sem carro e sem ônibus: eu vou ___ para o trabalho.", options: ["a pé", "de metrô", "de trem", "de bicicleta"], answers: ["a pé"], explain: "Sem veículo: vou a pé = caminho."),
+                            Exercise(id: "pt-foundations-u14-transporte-e2", kind: "gap", prompt: "Eu ___ o metrô às oito.", options: [], answers: ["pego"], explain: "pegar + transporte: eu pego o metrô."),
+                            Exercise(id: "pt-foundations-u14-transporte-e3", kind: "order", prompt: "Pergunte o meio de transporte da colega.", options: [], answers: ["Como voce vai para o trabalho"], explain: "Como você vai … ? — pergunta do transporte."),
+                            Exercise(id: "pt-foundations-u14-transporte-e4", kind: "written", prompt: "Diga como você vai para a escola: de ônibus.", options: [], answers: ["Vou de ônibus para a escola.", "vou de onibus para a escola"], explain: "vou + de + transporte.")], skills: ["vocab:transport", "grammar:present-simple", "function:ask-simple-questions", "vocab:town"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u14-horario", title: "A que horas sai ?", goal: "Dizer e perguntar as horas dos transportes: A que horas sai ? Sai às oito.",
+                intro: LessonIntro(explanation: [
+                            "Dizer as horas: « às oito, às seis e meia, às nove e vinte ». « O trem sai às oito ».",
+                            "Perguntar a hora do transporte: « A que horas sai o ônibus ? ». A resposta é curta: « Sai às nove ».",
+                            "Sair e chegar: « O trem sai às oito e chega às oito e vinte ». « chega » = llega."], examples: [
+                            ExampleLine(text: "A que horas sai o metrô ?", meaning: "Perguntar a hora."),
+                            ExampleLine(text: "O metrô sai às seis e meia.", meaning: "sair + às + hora."),
+                            ExampleLine(text: "O trem chega às nove.", meaning: "chegar + às + hora."),
+                            ExampleLine(text: "O ônibus sai às sete e vinte.", meaning: "e vinte = :20."),
+                            ExampleLine(text: "Sai às oito, todos os dias.", meaning: "rotina com horas.")]),
+                expressions: [
+                            TargetExpression(text: "A que horas … ?", meaning: "Perguntar a hora.", note: "A que horas sai o trem ?"),
+                            TargetExpression(text: "sai às …", meaning: "Parte a una hora.", note: "Sai às sete."),
+                            TargetExpression(text: "chega às …", meaning: "Llega a una hora.", note: "Chega às oito e vinte."),
+                            TargetExpression(text: "e meia", meaning: "Hora y media (:30).", note: "Às seis e meia."),
+                            TargetExpression(text: "e vinte", meaning: "Hora y veinte (:20).", note: "Às nove e vinte.")],
+                situation: "Na estação, a Ana pergunta a que horas sai o trem para o centro.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pergunte a hora de partida do metrô.", expected: ["A que horas sai o metrô ?", "a que horas sai o metro"], focus: "A que horas … ?", watch: "A que horas + sai."),
+                                PracticeQuestion(prompt: "Diga a hora de partida do trem: oito.", expected: ["O trem sai às oito.", "o trem sai as oito"], focus: "sai às", watch: "sai + às + hora."),
+                                PracticeQuestion(prompt: "Diga a hora de chegada do ônibus: nove e vinte.", expected: ["O ônibus chega às nove e vinte.", "o onibus chega as nove e vinte"], focus: "chega às", watch: "chega = llega."),
+                                PracticeQuestion(prompt: "Diga a hora de partida do trem: seis e meia.", expected: ["O trem sai às seis e meia.", "o trem sai as seis e meia"], focus: "e meia", watch: "e meia = :30."),
+                                PracticeQuestion(prompt: "Pergunte a hora de chegada do ônibus.", expected: ["A que horas o ônibus chega ?", "a que horas o onibus chega"], focus: "A que horas … ?", watch: "sai/chega podem vir no fim.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u14-horario-e1", kind: "choice", prompt: "___ horas sai o ônibus ?", options: ["A que", "Que", "Como", "Onde"], answers: ["A que"], explain: "Perguntar a hora: A que horas sai o ônibus ?"),
+                            Exercise(id: "pt-foundations-u14-horario-e2", kind: "gap", prompt: "O metrô ___ às seis e chega às sete.", options: [], answers: ["sai"], explain: "sai às + hora: partida."),
+                            Exercise(id: "pt-foundations-u14-horario-e3", kind: "order", prompt: "Diga a hora de partida do trem (oito).", options: [], answers: ["O trem sai as oito"], explain: "O trem + sai + às + hora."),
+                            Exercise(id: "pt-foundations-u14-horario-e4", kind: "written", prompt: "Diga a que horas o metrô chega: seis e meia.", options: [], answers: ["O metrô chega às seis e meia.", "o metro chega as seis e meia"], explain: "chega + às + hora.")], skills: ["function:tell-time", "vocab:transport", "grammar:present-questions", "grammar:present-simple"], canDo: ["tell-time"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u14-bilhete", title: "Uma passagem, por favor", goal: "Comprar passagens: Uma passagem para o centro, por favor. Quanto custa ?",
+                intro: LessonIntro(explanation: [
+                            "No guichê: « Uma passagem para o centro, por favor ». Para duas pessoas: « Duas passagens ».",
+                            "Perguntar o preço: « Quanto custa ? ». A resposta: « Custa cinco reais ».",
+                            "Pedir com educação: « por favor » e « obrigado ». « Quero uma passagem » também funciona."], examples: [
+                            ExampleLine(text: "Uma passagem para o centro, por favor.", meaning: "Pedir um bilhete."),
+                            ExampleLine(text: "Duas passagens para São Paulo.", meaning: "quantidade + passagem."),
+                            ExampleLine(text: "Quanto custa a passagem ?", meaning: "Perguntar o preço."),
+                            ExampleLine(text: "Custa cinco reais.", meaning: "custar + preço."),
+                            ExampleLine(text: "Quero uma passagem de volta.", meaning: "quero + pedido.")]),
+                expressions: [
+                            TargetExpression(text: "uma passagem", meaning: "Un billete.", note: "Uma passagem para o centro."),
+                            TargetExpression(text: "para … , por favor", meaning: "Destino + educação.", note: "Para o centro, por favor."),
+                            TargetExpression(text: "Quanto custa ?", meaning: "Preguntar el precio.", note: "Quanto custa a passagem ?"),
+                            TargetExpression(text: "custa … reais", meaning: "El precio.", note: "Custa cinco reais."),
+                            TargetExpression(text: "quero duas passagens", meaning: "Pedido con cantidad.", note: "Quero duas passagens.")],
+                situation: "Na estação, o Leo compra duas passagens para o centro no guichê.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "No guichê, peça a passagem para o centro, com educação.", expected: ["Uma passagem para o centro, por favor.", "uma passagem para o centro por favor"], focus: "por favor", watch: "Pedido educado."),
+                                PracticeQuestion(prompt: "Peça passagens para duas pessoas.", expected: ["Duas passagens, por favor.", "duas passagens por favor"], focus: "quantidade", watch: "duas + passagens."),
+                                PracticeQuestion(prompt: "Pergunte o preço da passagem.", expected: ["Quanto custa a passagem ?", "Quanto custa ?", "quanto custa a passagem"], focus: "Quanto custa ?", watch: "custar + preço."),
+                                PracticeQuestion(prompt: "Diga o preço da passagem: cinco reais.", expected: ["Custa cinco reais.", "custa cinco reais"], focus: "custa", watch: "custa + preço."),
+                                PracticeQuestion(prompt: "Diga que você quer uma passagem.", expected: ["Quero uma passagem.", "quero uma passagem"], focus: "quero", watch: "quero = quiero.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u14-bilhete-e1", kind: "choice", prompt: "No guichê, você pede: « ___ para o centro, por favor ».", options: ["Uma passagem", "Uma hora", "Um trem", "Uma vez"], answers: ["Uma passagem"], explain: "Pedido no guichê: Uma passagem para o centro, por favor."),
+                            Exercise(id: "pt-foundations-u14-bilhete-e2", kind: "gap", prompt: "Quanto ___ a passagem ? — Cinco reais.", options: [], answers: ["custa"], explain: "Quanto custa ? — pergunta do preço."),
+                            Exercise(id: "pt-foundations-u14-bilhete-e3", kind: "order", prompt: "Pergunte o preço do bilhete.", options: [], answers: ["Quanto custa a passagem"], explain: "Quanto + custa + coisa: pergunta do preço."),
+                            Exercise(id: "pt-foundations-u14-bilhete-e4", kind: "written", prompt: "Diga o preço do bilhete: cinco reais.", options: [], answers: ["Custa cinco reais.", "custa cinco reais"], explain: "custa + preço.")], skills: ["function:go-shopping", "function:make-requests", "vocab:transport", "grammar:quantities"], canDo: ["use-transport"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum PtFoundationsU15 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u15", title: "Me sinto bem", subtitle: "Saúde básica", level: "A1", themes: [
+                    ConversationTheme("saude-sintomas", "Os sintomas", "Não me sinto bem", "cross.case", "Course", "A Ana não está bem: dor de cabeça e febre. Ela diz como se sente.", 0),
+                    ConversationTheme("saude-farmacia", "A farmácia", "Remédios e hábitos", "pills", "Course", "Na farmácia, a Ana pede um remédio; em casa, todos falam de hábitos saudáveis.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u15-sintomas", title: "Não me sinto bem", goal: "Dizer sintomas: estou com dor de cabeça, estou com febre.",
+                intro: LessonIntro(explanation: [
+                            "Dizer como você está: « Não me sinto bem », « Estou doente ». « sentir-se » = sentirse.",
+                            "Sintomas com « estar com »: « Estou com dor de cabeça », « Estou com febre », « Estou com tosse ».",
+                            "Perguntar: « Como você está ? », « O que você tem ? ». A resposta: « Estou com dor de cabeça »."], examples: [
+                            ExampleLine(text: "Hoje não me sinto bem.", meaning: "sentir-se mal."),
+                            ExampleLine(text: "Estou com dor de cabeça.", meaning: "dor de cabeça = dolor de cabeza."),
+                            ExampleLine(text: "Estou com febre.", meaning: "estar com + sintoma."),
+                            ExampleLine(text: "Ele está com tosse.", meaning: "tosse = tos."),
+                            ExampleLine(text: "O que você tem ?", meaning: "Perguntar o sintoma.")]),
+                expressions: [
+                            TargetExpression(text: "não me sinto bem", meaning: "No me siento bien.", note: "Hoje não me sinto bem."),
+                            TargetExpression(text: "estou com dor de cabeça", meaning: "Dolor de cabeza.", note: "Estou com dor de cabeça."),
+                            TargetExpression(text: "estou com febre", meaning: "Tengo fiebre.", note: "Estou com febre alta."),
+                            TargetExpression(text: "estou com tosse", meaning: "Tengo tos.", note: "Ele está com tosse."),
+                            TargetExpression(text: "O que você tem ?", meaning: "¿Qué tienes ?", note: "O que você tem ? — Estou com febre.")],
+                situation: "A Ana não está bem: está com dor de cabeça e febre, e o Leo pergunta como ela está.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que hoje você não se sente bem.", expected: ["Hoje não me sinto bem.", "hoje nao me sinto bem"], focus: "não me sinto bem", watch: "sinto = siento."),
+                                PracticeQuestion(prompt: "Diga que você está com dor de cabeça.", expected: ["Estou com dor de cabeça.", "estou com dor de cabeca"], focus: "dor de cabeça", watch: "cabeça com cedilha."),
+                                PracticeQuestion(prompt: "Diga que você está com febre.", expected: ["Estou com febre.", "Tenho febre.", "estou com febre"], focus: "febre", watch: "estar com + sintoma."),
+                                PracticeQuestion(prompt: "Pergunte como a amiga está.", expected: ["Como você está ?", "como voce esta"], focus: "Como está ?", watch: "estar para o estado."),
+                                PracticeQuestion(prompt: "Pergunte o que a colega tem.", expected: ["O que você tem ?", "o que voce tem"], focus: "O que … tem ?", watch: "Pergunta do sintoma.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u15-sintomas-e1", kind: "choice", prompt: "A cabeça dói. A pessoa diz: « Estou com ___ ».", options: ["dor de cabeça", "pressa", "fome", "medo"], answers: ["dor de cabeça"], explain: "A cabeça dói: dor de cabeça."),
+                            Exercise(id: "pt-foundations-u15-sintomas-e2", kind: "gap", prompt: "Ela está com ___ alta: 39 graus.", options: [], answers: ["febre"], explain: "Febre alta: a temperatura sobe."),
+                            Exercise(id: "pt-foundations-u15-sintomas-e3", kind: "order", prompt: "Pergunte o sintoma da colega.", options: [], answers: ["O que voce tem"], explain: "O que você tem ? — pergunta do sintoma."),
+                            Exercise(id: "pt-foundations-u15-sintomas-e4", kind: "written", prompt: "Diga que você está com dor de cabeça e febre.", options: [], answers: ["Estou com dor de cabeça e febre.", "estou com dor de cabeca e febre"], explain: "estar com + sintoma + e + sintoma.")], skills: ["function:talk-about-health", "vocab:health", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u15-farmacia", title: "Na farmácia", goal: "Pedir algo para a dor na farmácia: Algo para dor de cabeça, por favor.",
+                intro: LessonIntro(explanation: [
+                            "Na farmácia: « Boa tarde. Algo para dor de cabeça, por favor ». « para » indica o remédio.",
+                            "O farmacêutico pergunta e responde: « O que você tem ? » — « Estou com dor ». Ele dá o remédio: « Este aqui é bom ».",
+                            "Preço e instrução: « Quanto custa ? — Custa doze reais ». « Você toma um comprimido de manhã »."], examples: [
+                            ExampleLine(text: "Algo para dor de cabeça, por favor.", meaning: "Pedido na farmácia."),
+                            ExampleLine(text: "Você tem algo para a febre ?", meaning: "Perguntar o remédio."),
+                            ExampleLine(text: "Este remédio é bom.", meaning: "este + remédio."),
+                            ExampleLine(text: "Quanto custa o comprimido ?", meaning: "Preço do remédio."),
+                            ExampleLine(text: "Você toma um comprimido de manhã.", meaning: "tomar + comprimido.")]),
+                expressions: [
+                            TargetExpression(text: "algo para …", meaning: "Algo para un síntoma.", note: "Algo para a dor, por favor."),
+                            TargetExpression(text: "o farmacêutico", meaning: "El farmacéutico.", note: "O farmacêutico dá o remédio."),
+                            TargetExpression(text: "o remédio / o comprimido", meaning: "Medicina / pastilla.", note: "Tomo o remédio às oito."),
+                            TargetExpression(text: "Este aqui é bom.", meaning: "Recomendar.", note: "Este aqui é bom para a dor."),
+                            TargetExpression(text: "toma um comprimido", meaning: "Instrução do remédio.", note: "Você toma um comprimido à noite.")],
+                situation: "Na farmácia, a Ana pede algo para a dor de cabeça e o farmacêutico dá um remédio.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Peça algo para a dor de cabeça na farmácia.", expected: ["Algo para dor de cabeça, por favor.", "algo para dor de cabeca por favor"], focus: "algo para", watch: "Pedido educado."),
+                                PracticeQuestion(prompt: "Pergunte se há algo para a febre.", expected: ["Você tem algo para a febre ?", "voce tem algo para a febre"], focus: "algo para a febre", watch: "Você tem … ?"),
+                                PracticeQuestion(prompt: "Dê a sua opinião sobre o remédio: bom.", expected: ["Este remédio é bom.", "este remedio e bom"], focus: "este", watch: "remédio com acento."),
+                                PracticeQuestion(prompt: "Pergunte o preço do remédio.", expected: ["Quanto custa o remédio ?", "quanto custa o remedio"], focus: "Quanto custa ?", watch: "o remédio."),
+                                PracticeQuestion(prompt: "Diga que você toma um comprimido de manhã.", expected: ["Tomo um comprimido de manhã.", "tomo um comprimido de manha"], focus: "tomo", watch: "tomar + comprimido.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u15-farmacia-e1", kind: "choice", prompt: "Na farmácia, você pede: « Algo ___ a dor, por favor ».", options: ["para", "com", "de", "sem"], answers: ["para"], explain: "Algo para a dor: « para » indica o remédio."),
+                            Exercise(id: "pt-foundations-u15-farmacia-e2", kind: "gap", prompt: "Você ___ um comprimido de manhã e um à noite.", options: [], answers: ["toma"], explain: "Você toma: instrução do farmacêutico."),
+                            Exercise(id: "pt-foundations-u15-farmacia-e3", kind: "order", prompt: "Pergunte o preço do remédio.", options: [], answers: ["Quanto custa o remedio"], explain: "Quanto custa o remédio ? — preço."),
+                            Exercise(id: "pt-foundations-u15-farmacia-e4", kind: "written", prompt: "Peça algo para a febre, com educação.", options: [], answers: ["Algo para a febre, por favor.", "algo para a febre por favor"], explain: "Algo para + sintoma + por favor.")], skills: ["function:go-shopping", "vocab:health", "function:make-requests", "grammar:present-simple"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u15-habitos", title: "Vida saudável", goal: "Falar de hábitos com sempre e nunca: Sempre caminho, nunca como doce.",
+                intro: LessonIntro(explanation: [
+                            "Frequência: « sempre » (todos os dias), « às vezes », « nunca » (nunca!). « Sempre caminho no parque ».",
+                            "Hábitos saudáveis: « bebo água », « como fruta », « durmo oito horas ». « durmo » = duermo.",
+                            "Vida saudável com « nunca »: « Nunca como doce ». O verbo fica no presente."], examples: [
+                            ExampleLine(text: "Sempre caminho no parque.", meaning: "sempre = todos os dias."),
+                            ExampleLine(text: "Nunca como doce.", meaning: "nunca = jamás."),
+                            ExampleLine(text: "Às vezes bebo refrigerante.", meaning: "às vezes = a veces."),
+                            ExampleLine(text: "Durmo oito horas todas as noites.", meaning: "dormir bem."),
+                            ExampleLine(text: "Bebo muita água todo dia.", meaning: "muita + água.")]),
+                expressions: [
+                            TargetExpression(text: "sempre / nunca", meaning: "Frequência: todos os dias / nunca.", note: "Sempre como fruta."),
+                            TargetExpression(text: "às vezes", meaning: "A veces.", note: "Às vezes bebo café."),
+                            TargetExpression(text: "beber água", meaning: "Hábito saudável.", note: "Bebo água todo dia."),
+                            TargetExpression(text: "dormir oito horas", meaning: "Dormir bien.", note: "Durmo oito horas."),
+                            TargetExpression(text: "vida saudável", meaning: "Vida sana.", note: "Caminhar é vida saudável.")],
+                situation: "O grupo conversa sobre hábitos: quem caminha sempre, quem dorme bem e quem come doce às vezes.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que você sempre caminha no parque.", expected: ["Sempre caminho no parque.", "Eu sempre caminho no parque.", "sempre caminho no parque"], focus: "sempre", watch: "sempre + verbo."),
+                                PracticeQuestion(prompt: "Diga que você nunca come doce.", expected: ["Nunca como doce.", "Eu nunca como doce.", "nunca como doce"], focus: "nunca", watch: "nunca + verbo."),
+                                PracticeQuestion(prompt: "Diga que você dorme oito horas.", expected: ["Durmo oito horas.", "Eu durmo oito horas.", "durmo oito horas"], focus: "durmo", watch: "durmo = duermo."),
+                                PracticeQuestion(prompt: "Diga que às vezes você bebe refrigerante.", expected: ["Às vezes bebo refrigerante.", "as vezes bebo refrigerante"], focus: "às vezes", watch: "às vezes com acento."),
+                                PracticeQuestion(prompt: "Diga que você bebe muita água todo dia.", expected: ["Bebo muita água todo dia.", "bebo muita agua todo dia"], focus: "muita água", watch: "água com acento.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u15-habitos-e1", kind: "choice", prompt: "Ela caminha todos os dias. Ela ___ caminha.", options: ["sempre", "nunca", "às vezes"], answers: ["sempre"], explain: "Todos os dias = sempre."),
+                            Exercise(id: "pt-foundations-u15-habitos-e2", kind: "gap", prompt: "Eu não como doce. ___ como doce.", options: [], answers: ["Nunca", "nunca"], explain: "nunca = 0 %: não como doce."),
+                            Exercise(id: "pt-foundations-u15-habitos-e3", kind: "order", prompt: "Diga um hábito saudável: caminhar no parque, todos os dias.", options: [], answers: ["Sempre caminho no parque"], explain: "sempre + caminhar: hábito."),
+                            Exercise(id: "pt-foundations-u15-habitos-e4", kind: "written", prompt: "Diga quantas horas você dorme: oito.", options: [], answers: ["Durmo oito horas.", "Eu durmo oito horas.", "durmo oito horas"], explain: "durmo + horas.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
@@ -8228,7 +9131,9 @@ DeFoundationsU9.unit,
 DeFoundationsU10.unit,
 DeFoundationsU11.unit,
 DeFoundationsU12.unit,
-DeFoundationsU13.unit
+DeFoundationsU13.unit,
+DeFoundationsU14.unit,
+DeFoundationsU15.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -8288,7 +9193,9 @@ EsFoundationsU10.unit,
 EsFoundationsU11.unit,
 EsFoundationsU12.unit,
 EsFoundationsU13.unit,
-EsFoundationsU14.unit
+EsFoundationsU14.unit,
+EsFoundationsU15.unit,
+EsFoundationsU16.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
@@ -8303,7 +9210,9 @@ FrFoundationsU9.unit,
 FrFoundationsU10.unit,
 FrFoundationsU11.unit,
 FrFoundationsU12.unit,
-FrFoundationsU13.unit
+FrFoundationsU13.unit,
+FrFoundationsU14.unit,
+FrFoundationsU15.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
@@ -8318,7 +9227,9 @@ ItFoundationsU9.unit,
 ItFoundationsU10.unit,
 ItFoundationsU11.unit,
 ItFoundationsU12.unit,
-ItFoundationsU13.unit
+ItFoundationsU13.unit,
+ItFoundationsU14.unit,
+ItFoundationsU15.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
@@ -8333,7 +9244,9 @@ PtFoundationsU9.unit,
 PtFoundationsU10.unit,
 PtFoundationsU11.unit,
 PtFoundationsU12.unit,
-PtFoundationsU13.unit
+PtFoundationsU13.unit,
+PtFoundationsU14.unit,
+PtFoundationsU15.unit
         ]),
     ]
 }

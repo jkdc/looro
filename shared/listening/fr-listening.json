@@ -1779,6 +1779,229 @@
           "explain": "Bon, je reste à la maison, dit Léa."
         }
       ]
+    },
+    {
+      "id": "fr-listen-metro-perdu",
+      "languageID": "fr",
+      "title": "Perdue dans le métro",
+      "level": "A1",
+      "topic": "transports",
+      "unitID": "fr-foundations-u14",
+      "text": "Léa est à Paris pour la première fois. Elle prend le métro tous les jours, mais aujourd'hui, elle est perdue. Elle demande à un agent : « Pardon, le train part à quelle heure ? » « À huit heures et quart. » « Et je prends quelle ligne ? » « La ligne 4. Le métro arrive à huit heures et demie à la gare. » « Merci ! D'habitude, je prends toujours le bus, mais le métro, c'est rapide ! » Elle est contente : à Paris, on va partout en métro.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-metro-perdu-q1",
+          "kind": "choice",
+          "prompt": "Pourquoi Léa demande de l'aide ?",
+          "options": [
+            "Elle est perdue",
+            "Elle est malade",
+            "Elle est fatiguée",
+            "Elle est en retard"
+          ],
+          "answers": [
+            "Elle est perdue"
+          ],
+          "explain": "Aujourd'hui, elle est perdue dans le métro."
+        },
+        {
+          "id": "fr-listen-metro-perdu-q2",
+          "kind": "choice",
+          "prompt": "Le train part à quelle heure ?",
+          "options": [
+            "À huit heures et quart",
+            "À huit heures et demie",
+            "À sept heures et quart",
+            "À neuf heures"
+          ],
+          "answers": [
+            "À huit heures et quart"
+          ],
+          "explain": "À huit heures et quart, dit l'agent."
+        },
+        {
+          "id": "fr-listen-metro-perdu-q3",
+          "kind": "choice",
+          "prompt": "Le métro arrive à quelle heure à la gare ?",
+          "options": [
+            "À huit heures et demie",
+            "À huit heures et quart",
+            "À neuf heures et demie",
+            "À sept heures"
+          ],
+          "answers": [
+            "À huit heures et demie"
+          ],
+          "explain": "Le métro arrive à huit heures et demie à la gare."
+        },
+        {
+          "id": "fr-listen-metro-perdu-q4",
+          "kind": "written",
+          "prompt": "Quelle ligne est-ce que Léa prend ?",
+          "answers": [
+            "la ligne 4",
+            "ligne 4",
+            "la 4"
+          ],
+          "explain": "La ligne 4, dit l'agent."
+        },
+        {
+          "id": "fr-listen-metro-perdu-q5",
+          "kind": "choice",
+          "prompt": "Quel transport est-ce que Léa prend d'habitude ?",
+          "options": [
+            "Le bus",
+            "Le train",
+            "Le vélo",
+            "À pied"
+          ],
+          "answers": [
+            "Le bus"
+          ],
+          "explain": "D'habitude, je prends toujours le bus."
+        },
+        {
+          "id": "fr-listen-metro-perdu-q6",
+          "kind": "choice",
+          "prompt": "Le métro, c'est comment, pour Léa ?",
+          "options": [
+            "Rapide",
+            "Cher",
+            "Long",
+            "Difficile"
+          ],
+          "answers": [
+            "Rapide"
+          ],
+          "explain": "Le métro, c'est rapide, dit Léa."
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-pharmacie-samedi",
+      "languageID": "fr",
+      "title": "À la pharmacie, samedi",
+      "level": "A1",
+      "topic": "santé",
+      "unitID": "fr-foundations-u15",
+      "text": "Samedi matin, Hugo est malade. Il a mal à la tête et il a de la fièvre. Il va à la pharmacie. « Bonjour, je voudrais quelque chose pour la tête, s'il vous plaît. » « Vous avez une ordonnance ? » « Non, je n'ai pas d'ordonnance. » « Alors, voici des comprimés : deux fois par jour, matin et soir. Buvez toujours beaucoup d'eau ! » « Ça coûte combien ? » « Quatre euros. » Merci, bonne journée ! Hugo rentre : avec les comprimés et l'eau, il va être en forme.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:health",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-pharmacie-samedi-q1",
+          "kind": "choice",
+          "prompt": "Quel jour Hugo va à la pharmacie ?",
+          "options": [
+            "Samedi",
+            "Dimanche",
+            "Lundi",
+            "Vendredi"
+          ],
+          "answers": [
+            "Samedi"
+          ],
+          "explain": "Samedi matin, Hugo est malade."
+        },
+        {
+          "id": "fr-listen-pharmacie-samedi-q2",
+          "kind": "choice",
+          "prompt": "Hugo a mal à… ?",
+          "options": [
+            "À la tête",
+            "Au ventre",
+            "À la gorge",
+            "Au dos"
+          ],
+          "answers": [
+            "À la tête"
+          ],
+          "explain": "Il a mal à la tête et il a de la fièvre."
+        },
+        {
+          "id": "fr-listen-pharmacie-samedi-q3",
+          "kind": "written",
+          "prompt": "Qu'est-ce qu'Hugo demande à la pharmacie ?",
+          "answers": [
+            "quelque chose pour la tête",
+            "quelque chose pour la tete",
+            "il demande quelque chose pour la tête"
+          ],
+          "explain": "Je voudrais quelque chose pour la tête, dit Hugo."
+        },
+        {
+          "id": "fr-listen-pharmacie-samedi-q4",
+          "kind": "choice",
+          "prompt": "Hugo a une ordonnance ?",
+          "options": [
+            "Non",
+            "Oui",
+            "Deux",
+            "Peut-être"
+          ],
+          "answers": [
+            "Non"
+          ],
+          "explain": "Non, je n'ai pas d'ordonnance, dit Hugo."
+        },
+        {
+          "id": "fr-listen-pharmacie-samedi-q5",
+          "kind": "choice",
+          "prompt": "Combien de fois par jour est-ce qu'il prend les comprimés ?",
+          "options": [
+            "Deux fois",
+            "Une fois",
+            "Trois fois",
+            "Jamais"
+          ],
+          "answers": [
+            "Deux fois"
+          ],
+          "explain": "Deux fois par jour, matin et soir."
+        },
+        {
+          "id": "fr-listen-pharmacie-samedi-q6",
+          "kind": "choice",
+          "prompt": "Ça coûte combien ?",
+          "options": [
+            "Quatre euros",
+            "Six euros",
+            "Quatorze euros",
+            "Deux euros"
+          ],
+          "answers": [
+            "Quatre euros"
+          ],
+          "explain": "Quatre euros, dit le pharmacien."
+        },
+        {
+          "id": "fr-listen-pharmacie-samedi-q7",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qu'Hugo boit toujours ?",
+          "options": [
+            "Beaucoup d'eau",
+            "Du café",
+            "Du jus",
+            "Du lait"
+          ],
+          "answers": [
+            "Beaucoup d'eau"
+          ],
+          "explain": "Buvez toujours beaucoup d'eau !"
+        }
+      ]
     }
   ]
 }

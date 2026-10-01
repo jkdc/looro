@@ -6634,6 +6634,1112 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-foundations-u15",
+      "title": "En movimiento",
+      "subtitle": "Metro, bus y tren",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "metro-y-bus",
+          "title": "En metro y bus",
+          "subtitle": "Ir por la ciudad",
+          "symbol": "bus",
+          "category": "Course",
+          "situation": "Vas al centro con tus amigos: uno va en metro, otro en bus y otro a pie.",
+          "colorIndex": 0
+        },
+        {
+          "id": "tren-y-estacion",
+          "title": "En tren",
+          "subtitle": "Horas y billetes",
+          "symbol": "tram",
+          "category": "Course",
+          "situation": "Compras un billete en la estación y preguntas la hora de salida del tren.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u15-transporte",
+          "title": "Cómo voy",
+          "goal": "Decir cómo vas a un sitio: voy en metro, voy en bus o voy a pie.",
+          "intro": {
+            "explanation": [
+              "Para decir tu transporte usamos voy en + transporte: «Voy en metro». «Voy al centro en bus».",
+              "Si caminas, la frase es voy a pie: «Voy a pie al trabajo; está muy cerca».",
+              "Para preguntar: «¿Cómo vas al trabajo?». Respondes: «Voy en metro» o «Voy a pie»."
+            ],
+            "examples": [
+              {
+                "text": "Voy en metro al centro.",
+                "meaning": "Decir tu transporte."
+              },
+              {
+                "text": "Voy al trabajo en bus.",
+                "meaning": "Otro transporte: el bus."
+              },
+              {
+                "text": "Voy a pie; vive cerca.",
+                "meaning": "Decir que caminas."
+              },
+              {
+                "text": "¿Cómo vas a la escuela?",
+                "meaning": "Preguntar cómo va alguien."
+              },
+              {
+                "text": "Mi hermano va en bici.",
+                "meaning": "Hablar de otra persona."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "voy en metro",
+              "meaning": "Tu transporte es el metro.",
+              "note": "Voy en metro al trabajo."
+            },
+            {
+              "text": "voy en bus / en autobús",
+              "meaning": "Tu transporte es el bus.",
+              "note": "Voy en autobús a la playa."
+            },
+            {
+              "text": "voy a pie",
+              "meaning": "Camino.",
+              "note": "Está cerca: voy a pie."
+            },
+            {
+              "text": "voy en coche",
+              "meaning": "Tu transporte es el coche.",
+              "note": "Mi padre va en coche."
+            },
+            {
+              "text": "¿Cómo vas a …?",
+              "meaning": "Preguntar el transporte de alguien.",
+              "note": "¿Cómo vas a la oficina?"
+            }
+          ],
+          "situation": "Vas al centro con tus amigos: tú vas en metro, Marta va en bus y Pablo va a pie porque vive cerca.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di que vas al centro en metro.",
+                "expected": [
+                  "Voy en metro al centro",
+                  "voy en metro al centro",
+                  "Voy al centro en metro"
+                ],
+                "focus": "voy en",
+                "watch": "voy en + metro, sin artículo."
+              },
+              {
+                "prompt": "Di que vas al trabajo en autobús.",
+                "expected": [
+                  "Voy al trabajo en autobús",
+                  "voy al trabajo en autobus",
+                  "Voy al trabajo en bus"
+                ],
+                "focus": "en autobús",
+                "watch": "autobús lleva tilde; bus no."
+              },
+              {
+                "prompt": "Di que caminas a la escuela: está cerca.",
+                "expected": [
+                  "Voy a pie a la escuela",
+                  "voy a pie",
+                  "Voy andando a la escuela"
+                ],
+                "focus": "a pie",
+                "watch": "A pie, nunca «a pies»."
+              },
+              {
+                "prompt": "Pregunta cómo va tu compañero a la oficina.",
+                "expected": [
+                  "¿Cómo vas a la oficina?",
+                  "¿Como vas a la oficina?"
+                ],
+                "focus": "¿cómo vas?",
+                "watch": "cómo con tilde en preguntas."
+              },
+              {
+                "prompt": "Di que no vas en coche: vas andando.",
+                "expected": [
+                  "No voy en coche; voy a pie",
+                  "no voy en coche voy a pie",
+                  "Voy a pie"
+                ],
+                "focus": "no voy en",
+                "watch": "A pie = andando."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u15-transporte-e1",
+              "kind": "choice",
+              "prompt": "El centro está lejos. No camino; ___ en metro.",
+              "explain": "Yo: voy en metro. Con yo decimos voy.",
+              "options": [
+                "voy",
+                "vas",
+                "va",
+                "vamos"
+              ],
+              "answers": [
+                "voy"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-transporte-e2",
+              "kind": "gap",
+              "prompt": "Está muy cerca. No voy en bus: voy ___. (andando)",
+              "explain": "Andar = ir a pie, nunca «a pies».",
+              "answers": [
+                "a pie"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-transporte-e3",
+              "kind": "order",
+              "prompt": "Pregunta cómo va tu amiga al trabajo.",
+              "explain": "Preguntas el transporte: ¿Cómo vas al trabajo?, con tilde.",
+              "answers": [
+                "¿Cómo vas al trabajo?"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-transporte-e4",
+              "kind": "written",
+              "prompt": "Di que vas a la playa en autobús.",
+              "explain": "voy en + autobús, con tilde; bus también vale.",
+              "answers": [
+                "Voy a la playa en autobús",
+                "voy a la playa en autobus",
+                "Voy a la playa en bus"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:transport",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "vocab:town"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u15-horario",
+          "title": "¿A qué hora sale?",
+          "goal": "Preguntar y decir la hora de un transporte: el tren sale a las ocho y media.",
+          "intro": {
+            "explanation": [
+              "Para preguntar la hora de un transporte: «¿A qué hora sale el tren?». Para la hora ahora: «¿Qué hora es?».",
+              "La hora va con a las: «Sale a las ocho». Y media: «a las ocho y media». Y cuarto: «a las ocho y cuarto».",
+              "Con la una usamos a la: «Sale a la una». Con las demás: a las dos, a las tres, a las cuatro…"
+            ],
+            "examples": [
+              {
+                "text": "¿A qué hora sale el tren?",
+                "meaning": "Preguntar la hora de salida."
+              },
+              {
+                "text": "Sale a las ocho y media.",
+                "meaning": "Decir la hora: 8:30."
+              },
+              {
+                "text": "El metro pasa a las nueve y cuarto.",
+                "meaning": "La hora: 9:15."
+              },
+              {
+                "text": "El primer bus es a las seis.",
+                "meaning": "El horario de la mañana."
+              },
+              {
+                "text": "¿Qué hora es? — Es la una.",
+                "meaning": "La hora exacta: 1:00."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿A qué hora sale …?",
+              "meaning": "Preguntar la hora de un transporte.",
+              "note": "¿A qué hora sale el bus?"
+            },
+            {
+              "text": "a las ocho y media",
+              "meaning": "8:30.",
+              "note": "El tren sale a las ocho y media."
+            },
+            {
+              "text": "a las … y cuarto",
+              "meaning": "…:15.",
+              "note": "Llego a las siete y cuarto."
+            },
+            {
+              "text": "el primero / la primera",
+              "meaning": "El primero del día.",
+              "note": "El primer metro es a las seis."
+            },
+            {
+              "text": "¿Qué hora es?",
+              "meaning": "Preguntar la hora ahora.",
+              "note": "¿Qué hora es? — Son las tres."
+            }
+          ],
+          "situation": "Estás en la estación: el primero tren es a las seis, tu tren sale a las ocho y media y el último, a las once.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pregunta la hora de salida del tren.",
+                "expected": [
+                  "¿A qué hora sale el tren?",
+                  "¿A que hora sale el tren?",
+                  "¿Qué hora sale el tren?",
+                  "¿Que hora sale el tren?"
+                ],
+                "focus": "¿a qué hora?",
+                "watch": "qué con tilde en preguntas."
+              },
+              {
+                "prompt": "Di la hora de salida de tu autobús: 8:30.",
+                "expected": [
+                  "El autobús sale a las ocho y media",
+                  "el autobus sale a las ocho y media",
+                  "Sale a las ocho y media"
+                ],
+                "focus": "a las ocho y media",
+                "watch": "8:30 = ocho y media; autobús con tilde."
+              },
+              {
+                "prompt": "Di que llegas a las nueve y cuarto.",
+                "expected": [
+                  "Llego a las nueve y cuarto",
+                  "llego a las nueve y cuarto"
+                ],
+                "focus": "a las nueve y cuarto",
+                "watch": "9:15 = nueve y cuarto."
+              },
+              {
+                "prompt": "Pregunta la hora ahora a tu amigo.",
+                "expected": [
+                  "¿Qué hora es?",
+                  "¿Que hora es?",
+                  "¿Qué hora es, por favor?",
+                  "¿Que hora es, por favor?"
+                ],
+                "focus": "¿qué hora es?",
+                "watch": "qué con tilde."
+              },
+              {
+                "prompt": "Di que tu primer metro es a la una.",
+                "expected": [
+                  "El primer metro es a la una",
+                  "el primer metro es a la una",
+                  "Mi primer metro es a la una"
+                ],
+                "focus": "a la una",
+                "watch": "Con una decimos a la una, no a las una."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u15-horario-e1",
+              "kind": "choice",
+              "prompt": "El tren sale a las siete y media. Son las siete y cuarto. Faltan ___ minutos.",
+              "explain": "De las siete y cuarto a las siete y media hay quince minutos.",
+              "options": [
+                "quince",
+                "treinta",
+                "cuarenta y cinco",
+                "diez"
+              ],
+              "answers": [
+                "quince"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-horario-e2",
+              "kind": "gap",
+              "prompt": "Son las 9:15. El tren sale ahora: sale a las nueve ___.",
+              "explain": "9:15 = nueve y cuarto; 30 = y media.",
+              "answers": [
+                "y cuarto"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-horario-e3",
+              "kind": "order",
+              "prompt": "Pregunta la hora de llegada del bus.",
+              "explain": "La llegada es con llegar: ¿A qué hora llega el bus?",
+              "answers": [
+                "¿A qué hora llega el bus?"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-horario-e4",
+              "kind": "written",
+              "prompt": "Di que tu tren sale a las siete y media.",
+              "explain": "mi + transporte + sale + a las + hora.",
+              "answers": [
+                "Mi tren sale a las siete y media",
+                "mi tren sale a las siete y media"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-time",
+            "vocab:transport",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "tell-time"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u15-billete",
+          "title": "Un billete, por favor",
+          "goal": "Comprar billetes en la taquilla: un billete de ida y vuelta, por favor.",
+          "intro": {
+            "explanation": [
+              "En la taquilla pides con quiero o con un…, por favor: «Quiero un billete». «Un billete, por favor».",
+              "Para dos billetes usamos el plural: «Dos billetes, por favor». Y preguntas el precio: «¿Cuánto cuesta?».",
+              "El billete de ida y vuelta es para ir y volver: «Un billete de ida y vuelta, por favor»."
+            ],
+            "examples": [
+              {
+                "text": "Un billete, por favor.",
+                "meaning": "Pedir un billete."
+              },
+              {
+                "text": "Quiero un billete de ida y vuelta.",
+                "meaning": "Ida y vuelta: allí y de regreso."
+              },
+              {
+                "text": "Dos billetes para el centro.",
+                "meaning": "Pedir dos billetes."
+              },
+              {
+                "text": "¿Cuánto cuesta el billete?",
+                "meaning": "Preguntar el precio."
+              },
+              {
+                "text": "¿De qué andén sale el tren?",
+                "meaning": "Preguntar el andén."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "un billete, por favor",
+              "meaning": "Pedir un billete.",
+              "note": "Un billete, por favor. — Son dos euros."
+            },
+            {
+              "text": "de ida y vuelta",
+              "meaning": "Allí y de regreso.",
+              "note": "De ida y vuelta, por favor."
+            },
+            {
+              "text": "solo ida",
+              "meaning": "Sin vuelta.",
+              "note": "Solo ida, por favor."
+            },
+            {
+              "text": "¿Cuánto cuesta?",
+              "meaning": "Preguntar el precio.",
+              "note": "¿Cuánto cuesta? — Tres euros."
+            },
+            {
+              "text": "el andén",
+              "meaning": "El lugar del tren en la estación.",
+              "note": "El tren sale del andén dos."
+            }
+          ],
+          "situation": "Compras billetes en la estación: dos billetes de ida y vuelta para Segovia, dieciséis euros, andén tres.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pide un billete al empleado.",
+                "expected": [
+                  "Un billete, por favor",
+                  "un billete por favor",
+                  "Quiero un billete, por favor"
+                ],
+                "focus": "por favor",
+                "watch": "En la taquilla: un billete, por favor."
+              },
+              {
+                "prompt": "Estás en la taquilla con tu amigo; queréis ir al centro. Pide los billetes.",
+                "expected": [
+                  "Dos billetes para el centro",
+                  "dos billetes para el centro",
+                  "Dos billetes al centro"
+                ],
+                "focus": "dos billetes",
+                "watch": "Plural: dos billetes."
+              },
+              {
+                "prompt": "Pregunta el precio del billete.",
+                "expected": [
+                  "¿Cuánto cuesta el billete?",
+                  "¿Cuanto cuesta el billete?",
+                  "¿Cuánto es?",
+                  "¿Cuanto es?"
+                ],
+                "focus": "¿cuánto cuesta?",
+                "watch": "cuánto con tilde en preguntas."
+              },
+              {
+                "prompt": "Vas a Valencia y vuelves el viernes. Pide el billete adecuado.",
+                "expected": [
+                  "Un billete de ida y vuelta, por favor",
+                  "un billete de ida y vuelta por favor",
+                  "Quiero un billete de ida y vuelta"
+                ],
+                "focus": "ida y vuelta",
+                "watch": "Ida y vuelta = allí y de regreso."
+              },
+              {
+                "prompt": "Pregunta por el andén del tren a Toledo.",
+                "expected": [
+                  "¿De qué andén sale el tren?",
+                  "¿De que anden sale el tren?",
+                  "¿De qué andén sale el tren a Toledo?",
+                  "¿De que anden sale el tren a Toledo?"
+                ],
+                "focus": "¿de qué andén?",
+                "watch": "andén lleva tilde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u15-billete-e1",
+              "kind": "choice",
+              "prompt": "Vas a Salamanca y vuelves el mismo día. Pides: «Un billete de ___, por favor».",
+              "explain": "Vas y vuelves el mismo día: ida y vuelta.",
+              "options": [
+                "ida y vuelta",
+                "andén",
+                "hora",
+                "metro"
+              ],
+              "answers": [
+                "ida y vuelta"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-billete-e2",
+              "kind": "gap",
+              "prompt": "—¿___ cuesta el billete? —Cuatro euros.",
+              "explain": "El precio: ¿Cuánto cuesta?, con tilde en cuánto.",
+              "answers": [
+                "Cuánto",
+                "Cuanto"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-billete-e3",
+              "kind": "order",
+              "prompt": "Estás en la taquilla con un amigo: queréis ir al centro. Pide los billetes.",
+              "explain": "Pides dos: dos billetes + destino.",
+              "answers": [
+                "Dos billetes para el centro"
+              ]
+            },
+            {
+              "id": "es-foundations-u15-billete-e4",
+              "kind": "written",
+              "prompt": "Pregunta el precio del billete de tren a Sevilla.",
+              "explain": "El precio: ¿Cuánto cuesta el billete?, con tilde.",
+              "answers": [
+                "¿Cuánto cuesta el billete?",
+                "¿Cuanto cuesta el billete?",
+                "¿Cuánto es?",
+                "¿Cuanto es?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "function:make-requests",
+            "vocab:transport",
+            "grammar:quantities"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u16",
+      "title": "Me siento bien",
+      "subtitle": "Salud básica",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "hoy-no-estoy-bien",
+          "title": "Hoy no estoy bien",
+          "subtitle": "Síntomas y dolores",
+          "symbol": "cross.case",
+          "category": "Course",
+          "situation": "Tienes dolor de cabeza y fiebre: explicas qué te pasa.",
+          "colorIndex": 0
+        },
+        {
+          "id": "farmacia-y-habitos",
+          "title": "Farmacia y vida sana",
+          "subtitle": "Remedios y costumbres",
+          "symbol": "pills",
+          "category": "Course",
+          "situation": "Compras algo para el dolor en la farmacia y hablas de tus hábitos sanos.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u16-sintomas",
+          "title": "No me siento bien",
+          "goal": "Decir qué te pasa: me duele la cabeza, tengo fiebre.",
+          "intro": {
+            "explanation": [
+              "Para el dolor usamos me duele + parte del cuerpo: «Me duele la cabeza». «Me duele el estómago».",
+              "Otros síntomas van con tengo: «Tengo fiebre». «Tengo tos». «Tengo frío».",
+              "Para preguntar a alguien: «¿Qué te pasa?». Respondes: «No me siento bien; me duele la cabeza»."
+            ],
+            "examples": [
+              {
+                "text": "No me siento bien.",
+                "meaning": "Decir que estás mal."
+              },
+              {
+                "text": "Me duele la cabeza.",
+                "meaning": "Dolor en la cabeza."
+              },
+              {
+                "text": "Tengo fiebre y tos.",
+                "meaning": "Dos síntomas."
+              },
+              {
+                "text": "Me duele el estómago.",
+                "meaning": "Dolor en el estómago."
+              },
+              {
+                "text": "¿Qué te pasa? — Tengo gripe.",
+                "meaning": "Preguntar y responder."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "me duele la cabeza",
+              "meaning": "Dolor de cabeza.",
+              "note": "Me duele la cabeza; quiero dormir."
+            },
+            {
+              "text": "tengo fiebre",
+              "meaning": "Tu cuerpo está muy caliente.",
+              "note": "Tengo fiebre; estoy en casa."
+            },
+            {
+              "text": "tengo tos",
+              "meaning": "Toses.",
+              "note": "Tengo tos por la noche."
+            },
+            {
+              "text": "me duele el estómago",
+              "meaning": "Dolor de estómago.",
+              "note": "Me duele el estómago después de comer."
+            },
+            {
+              "text": "¿Qué te pasa?",
+              "meaning": "Preguntar a alguien cómo está.",
+              "note": "¿Qué te pasa? — Me duele la cabeza."
+            }
+          ],
+          "situation": "Es lunes y no vas al trabajo: tienes fiebre y tos, y te duele la cabeza; tu amigo pregunta qué te pasa.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di que estás mal hoy.",
+                "expected": [
+                  "No me siento bien",
+                  "no me siento bien",
+                  "Hoy no me siento bien"
+                ],
+                "focus": "no me siento bien",
+                "watch": "yo me siento; tú te sientes."
+              },
+              {
+                "prompt": "Di que te duele la cabeza.",
+                "expected": [
+                  "Me duele la cabeza",
+                  "me duele la cabeza",
+                  "Me duele un poco la cabeza"
+                ],
+                "focus": "me duele",
+                "watch": "me duele + la + parte del cuerpo."
+              },
+              {
+                "prompt": "Di que tienes fiebre.",
+                "expected": [
+                  "Tengo fiebre",
+                  "tengo fiebre",
+                  "Tengo mucha fiebre"
+                ],
+                "focus": "tengo fiebre",
+                "watch": "Síntomas con tengo: fiebre, tos, frío."
+              },
+              {
+                "prompt": "Pregunta a tu amigo qué le pasa.",
+                "expected": [
+                  "¿Qué te pasa?",
+                  "¿Que te pasa?"
+                ],
+                "focus": "¿qué te pasa?",
+                "watch": "qué con tilde en preguntas."
+              },
+              {
+                "prompt": "Di que te duele el estómago.",
+                "expected": [
+                  "Me duele el estómago",
+                  "me duele el estomago"
+                ],
+                "focus": "estómago",
+                "watch": "estómago lleva tilde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u16-sintomas-e1",
+              "kind": "choice",
+              "prompt": "Tu cabeza está mal hoy: «___ la cabeza».",
+              "explain": "El dolor va con me duele: me duele la cabeza.",
+              "options": [
+                "Me duele",
+                "Tengo",
+                "Me gusta",
+                "Estoy"
+              ],
+              "answers": [
+                "Me duele"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-sintomas-e2",
+              "kind": "gap",
+              "prompt": "Toses mucho por la noche: tienes ___.",
+              "explain": "El sustantivo es tos: tengo tos, con -s final.",
+              "answers": [
+                "tos"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-sintomas-e3",
+              "kind": "order",
+              "prompt": "Tu cabeza está mal hoy: dilo.",
+              "explain": "El dolor: me duele + la cabeza.",
+              "answers": [
+                "Me duele la cabeza"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-sintomas-e4",
+              "kind": "written",
+              "prompt": "Tu amigo no está bien. Pregúntale qué pasa.",
+              "explain": "¿Qué te pasa? para preguntar, con tilde en qué.",
+              "answers": [
+                "¿Qué te pasa?",
+                "¿Que te pasa?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "vocab:health",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u16-farmacia",
+          "title": "En la farmacia",
+          "goal": "Pedir un remedio en la farmacia: quiero algo para la cabeza.",
+          "intro": {
+            "explanation": [
+              "En la farmacia pides con quiero algo para…: «Quiero algo para la cabeza».",
+              "El farmacéutico pregunta: «¿Para qué es?». Respondes: «Es para el dolor de garganta».",
+              "Preguntas la dosis con ¿cada cuántas horas?: «¿Cada cuántas horas tomo la pastilla?»."
+            ],
+            "examples": [
+              {
+                "text": "Quiero algo para la cabeza.",
+                "meaning": "Pedir un remedio."
+              },
+              {
+                "text": "¿Para qué es?",
+                "meaning": "El farmacéutico pregunta."
+              },
+              {
+                "text": "Es para el dolor de garganta.",
+                "meaning": "Decir tu problema."
+              },
+              {
+                "text": "¿Cada cuántas horas tomo la pastilla?",
+                "meaning": "Preguntar la dosis."
+              },
+              {
+                "text": "Son doce euros.",
+                "meaning": "El farmacéutico dice el precio."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "quiero algo para…",
+              "meaning": "Pedir un remedio.",
+              "note": "Quiero algo para la tos."
+            },
+            {
+              "text": "el dolor de cabeza / de garganta",
+              "meaning": "El sitio donde te duele.",
+              "note": "Es para el dolor de garganta."
+            },
+            {
+              "text": "¿cada cuántas horas?",
+              "meaning": "Preguntar el tiempo entre tomas.",
+              "note": "¿Cada cuántas horas la tomo?"
+            },
+            {
+              "text": "la pastilla",
+              "meaning": "Medicina pequeña, para tragar.",
+              "note": "Tomo una pastilla al día."
+            },
+            {
+              "text": "el jarabe",
+              "meaning": "Medicina líquida y dulce.",
+              "note": "El jarabe es bueno para la tos."
+            }
+          ],
+          "situation": "Vas a la farmacia: quieres algo para la garganta; el farmacéutico te da unas pastillas: una cada ocho horas.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pide algo para el dolor de cabeza en la farmacia.",
+                "expected": [
+                  "Quiero algo para la cabeza",
+                  "quiero algo para la cabeza",
+                  "Quiero algo para el dolor de cabeza"
+                ],
+                "focus": "algo para",
+                "watch": "quiero algo para + el problema."
+              },
+              {
+                "prompt": "El farmacéutico pregunta para qué es. Di tu problema: la garganta.",
+                "expected": [
+                  "Es para el dolor de garganta",
+                  "es para el dolor de garganta",
+                  "Para la garganta"
+                ],
+                "focus": "es para",
+                "watch": "es para + el problema."
+              },
+              {
+                "prompt": "Pregunta el precio del jarabe.",
+                "expected": [
+                  "¿Cuánto cuesta?",
+                  "¿Cuanto cuesta?",
+                  "¿Cuánto es?",
+                  "¿Cuanto es?"
+                ],
+                "focus": "¿cuánto cuesta?",
+                "watch": "cuánto con tilde."
+              },
+              {
+                "prompt": "Pregunta cuántas pastillas tomas al día.",
+                "expected": [
+                  "¿Cuántas pastillas tomo al día?",
+                  "¿Cuantas pastillas tomo al dia?",
+                  "¿Cuántas tomo?",
+                  "¿Cuantas tomo?"
+                ],
+                "focus": "¿cuántas…?",
+                "watch": "cuántas con tilde."
+              },
+              {
+                "prompt": "Tu problema es la tos. Di para qué sirve el jarabe.",
+                "expected": [
+                  "El jarabe es para la tos",
+                  "el jarabe es para la tos"
+                ],
+                "focus": "es para la tos",
+                "watch": "el jarabe es líquido y dulce."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u16-farmacia-e1",
+              "kind": "choice",
+              "prompt": "Estás en la farmacia y te duele la cabeza. Dices: «Quiero ___ para la cabeza».",
+              "explain": "Pides un remedio: quiero algo para la cabeza.",
+              "options": [
+                "algo",
+                "nadie",
+                "nada",
+                "todos"
+              ],
+              "answers": [
+                "algo"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-farmacia-e2",
+              "kind": "gap",
+              "prompt": "—¿___ es? —Es para el dolor de garganta.",
+              "explain": "El farmacéutico pregunta: ¿Para qué es?, con tilde en qué.",
+              "answers": [
+                "Para qué",
+                "Para que"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-farmacia-e3",
+              "kind": "order",
+              "prompt": "Pide un remedio para la tos.",
+              "explain": "Pides con quiero + algo para + la tos.",
+              "answers": [
+                "Quiero algo para la tos"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-farmacia-e4",
+              "kind": "written",
+              "prompt": "Pregunta al farmacéutico el precio de las pastillas.",
+              "explain": "El precio: ¿Cuánto cuesta?, con tilde.",
+              "answers": [
+                "¿Cuánto cuestan las pastillas?",
+                "¿Cuanto cuestan las pastillas?",
+                "¿Cuánto es?",
+                "¿Cuanto es?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:health",
+            "function:make-requests",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u16-habitos",
+          "title": "Vida sana",
+          "goal": "Hablar de hábitos con siempre y nunca: siempre desayuno fruta; nunca fumo.",
+          "intro": {
+            "explanation": [
+              "Con siempre hablas de algo que haces todos los días: «Siempre desayuno fruta». Va antes del verbo.",
+              "Con nunca hablas de algo que no haces: «Nunca fumo». «Nunca como dulces».",
+              "También usas a veces y todos los días: «A veces camino al trabajo». «Bebo agua todos los días»."
+            ],
+            "examples": [
+              {
+                "text": "Siempre desayuno fruta.",
+                "meaning": "Un hábito de cada día."
+              },
+              {
+                "text": "Nunca fumo.",
+                "meaning": "Un hábito sano."
+              },
+              {
+                "text": "Bebo agua todos los días.",
+                "meaning": "Beber mucha agua."
+              },
+              {
+                "text": "A veces camino al trabajo.",
+                "meaning": "Algunos días, no todos."
+              },
+              {
+                "text": "Duermo ocho horas todas las noches.",
+                "meaning": "Dormir bien."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "siempre + verbo",
+              "meaning": "Todos los días.",
+              "note": "Siempre ceno temprano."
+            },
+            {
+              "text": "nunca + verbo",
+              "meaning": "Ningún día.",
+              "note": "Nunca bebo refrescos."
+            },
+            {
+              "text": "todos los días",
+              "meaning": "Cada día.",
+              "note": "Camino todos los días."
+            },
+            {
+              "text": "dormir ocho horas",
+              "meaning": "Dormir toda la noche.",
+              "note": "Duermo ocho horas."
+            },
+            {
+              "text": "hacer deporte",
+              "meaning": "Correr, nadar, bailar…",
+              "note": "Hago deporte los sábados."
+            }
+          ],
+          "situation": "Tu vida sana: siempre desayunas fruta, caminas todos los días, duermes ocho horas y nunca bebes refrescos.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di que desayunas fruta todos los días.",
+                "expected": [
+                  "Siempre desayuno fruta",
+                  "siempre desayuno fruta",
+                  "Desayuno fruta todos los días",
+                  "desayuno fruta todos los dias"
+                ],
+                "focus": "siempre",
+                "watch": "siempre va antes del verbo."
+              },
+              {
+                "prompt": "Di que no fumas, ningún día.",
+                "expected": [
+                  "Nunca fumo",
+                  "nunca fumo",
+                  "No fumo nunca"
+                ],
+                "focus": "nunca",
+                "watch": "nunca va antes del verbo: nunca fumo."
+              },
+              {
+                "prompt": "Di que caminas al trabajo a veces.",
+                "expected": [
+                  "A veces camino al trabajo",
+                  "a veces camino al trabajo",
+                  "Camino al trabajo a veces"
+                ],
+                "focus": "a veces",
+                "watch": "a veces = algunos días, no todos."
+              },
+              {
+                "prompt": "Di que bebes mucha agua.",
+                "expected": [
+                  "Bebo mucha agua",
+                  "bebo mucha agua",
+                  "Bebo agua todos los días",
+                  "bebo agua todos los dias"
+                ],
+                "focus": "bebo agua",
+                "watch": "El agua es sana: bebe mucha agua."
+              },
+              {
+                "prompt": "Di que duermes ocho horas.",
+                "expected": [
+                  "Duermo ocho horas",
+                  "duermo ocho horas",
+                  "Duermo ocho horas todas las noches"
+                ],
+                "focus": "duermo",
+                "watch": "dormir → duermo (o → ue)."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u16-habitos-e1",
+              "kind": "choice",
+              "prompt": "No comes dulces, ni un día: «___ como dulces».",
+              "explain": "Cero dulces: nunca como dulces.",
+              "options": [
+                "Nunca",
+                "Siempre",
+                "Todos los días",
+                "Mucho"
+              ],
+              "answers": [
+                "Nunca"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-habitos-e2",
+              "kind": "gap",
+              "prompt": "Es una costumbre de cada día: ___ desayuno yogur.",
+              "explain": "Cada día: siempre desayuno yogur.",
+              "answers": [
+                "Siempre"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-habitos-e3",
+              "kind": "order",
+              "prompt": "Habla de tu hábito con la fruta: cada mañana.",
+              "explain": "Cada mañana: siempre + desayuno + fruta.",
+              "answers": [
+                "Siempre desayuno fruta"
+              ]
+            },
+            {
+              "id": "es-foundations-u16-habitos-e4",
+              "kind": "written",
+              "prompt": "Habla del agua: es tu bebida de cada día.",
+              "explain": "Cada día = todos los días: bebo agua todos los días.",
+              "answers": [
+                "Bebo agua todos los días",
+                "bebo agua todos los dias",
+                "Tomo agua todos los días",
+                "tomo agua todos los dias"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:health",
+            "vocab:daily-routine"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:frequency-adverbs"
+          ]
+        }
+      ]
     }
   ]
 }

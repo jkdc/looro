@@ -1754,6 +1754,202 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-listen-ubahn-verlaufen",
+      "languageID": "de",
+      "title": "Im falschen Zug",
+      "level": "A1",
+      "topic": "Unterwegs",
+      "unitID": "de-foundations-u14",
+      "text": "Sam ist neu in Berlin. Er möchte zu Kim, aber er sitzt im falschen Zug. „Oh nein — das ist die U8, nicht die U2 !“ Er fragt eine Frau: „Entschuldigung, wann fährt die nächste Bahn ?“ — „Um Viertel nach zehn, von Gleis 3“, sagt die Frau. Sam fährt zurück zum Alexanderplatz. Dort steigt er in die U2. Um halb elf klingelt er bei Kim. „Du bist spät !“ — „Ab jetzt nehme ich immer die U2“, sagt Sam.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-ubahn-verlaufen-q1",
+          "kind": "choice",
+          "prompt": "Wo ist Sam neu ?",
+          "explain": "Sam ist neu in Berlin.",
+          "answers": [
+            "In Berlin"
+          ],
+          "options": [
+            "In Berlin",
+            "In Bonn",
+            "In Köln",
+            "In Wien"
+          ]
+        },
+        {
+          "id": "de-listen-ubahn-verlaufen-q2",
+          "kind": "choice",
+          "prompt": "Welche Bahn möchte Sam nehmen ?",
+          "explain": "Das ist die U8, nicht die U2 — er möchte die U2.",
+          "answers": [
+            "Die U2"
+          ],
+          "options": [
+            "Die U2",
+            "Die U8",
+            "Die U3",
+            "Die S7"
+          ]
+        },
+        {
+          "id": "de-listen-ubahn-verlaufen-q3",
+          "kind": "written",
+          "prompt": "Wann fährt die nächste Bahn ?",
+          "explain": "Um Viertel nach zehn, von Gleis 3.",
+          "answers": [
+            "um viertel nach zehn",
+            "Viertel nach zehn",
+            "10:15 Uhr"
+          ]
+        },
+        {
+          "id": "de-listen-ubahn-verlaufen-q4",
+          "kind": "choice",
+          "prompt": "Wo steigt Sam in die U2 ?",
+          "explain": "Sam fährt zurück zum Alexanderplatz. Dort steigt er in die U2.",
+          "answers": [
+            "Am Alexanderplatz"
+          ],
+          "options": [
+            "Am Alexanderplatz",
+            "Am Hauptbahnhof",
+            "Bei Kim",
+            "In Bonn"
+          ]
+        },
+        {
+          "id": "de-listen-ubahn-verlaufen-q5",
+          "kind": "written",
+          "prompt": "Wann ist Sam bei Kim ?",
+          "explain": "Um halb elf klingelt er bei Kim.",
+          "answers": [
+            "um halb elf",
+            "halb elf",
+            "10:30",
+            "10:30 Uhr"
+          ]
+        },
+        {
+          "id": "de-listen-ubahn-verlaufen-q6",
+          "kind": "choice",
+          "prompt": "Was nimmt Sam ab jetzt immer ?",
+          "explain": "Ab jetzt nehme ich immer die U2, sagt Sam.",
+          "answers": [
+            "Die U2"
+          ],
+          "options": [
+            "Die U2",
+            "Die U8",
+            "Die Bahn von Gleis 3",
+            "Ein Fahrrad"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-apotheke-samstag",
+      "languageID": "de",
+      "title": "Samstag in der Apotheke",
+      "level": "A1",
+      "topic": "Gesundheit",
+      "unitID": "de-foundations-u15",
+      "text": "Es ist Samstagmorgen. Mia hat Kopfschmerzen und Fieber. Kim geht mit ihr in die Apotheke. „Guten Tag, meine Freundin fühlt sich nicht gut“, sagt Kim. „Sie braucht etwas gegen die Schmerzen.“ — „Nehmen Sie diese Tabletten“, sagt der Apotheker. „Zweimal am Tag, mit Wasser.“ — „Was kostet das ?“ — „Neun Euro.“ Mia nimmt die Tabletten und trinkt viel Wasser. Am Abend fühlt sie sich besser. Kim sagt: „Gute Besserung und schlaf gut !“",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:health",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-apotheke-samstag-q1",
+          "kind": "choice",
+          "prompt": "Was hat Mia ?",
+          "explain": "Mia hat Kopfschmerzen und Fieber.",
+          "answers": [
+            "Kopfschmerzen und Fieber"
+          ],
+          "options": [
+            "Kopfschmerzen und Fieber",
+            "Husten und Schnupfen",
+            "Nur Müdigkeit",
+            "Bauchschmerzen"
+          ]
+        },
+        {
+          "id": "de-listen-apotheke-samstag-q2",
+          "kind": "written",
+          "prompt": "Wohin gehen die Freundinnen ?",
+          "explain": "Kim geht mit ihr in die Apotheke.",
+          "answers": [
+            "in die apotheke",
+            "zur apotheke",
+            "Apotheke"
+          ]
+        },
+        {
+          "id": "de-listen-apotheke-samstag-q3",
+          "kind": "choice",
+          "prompt": "Wie oft soll Mia die Tabletten nehmen ?",
+          "explain": "Zweimal am Tag, mit Wasser.",
+          "answers": [
+            "Zweimal am Tag"
+          ],
+          "options": [
+            "Zweimal am Tag",
+            "Dreimal am Tag",
+            "Einmal am Tag",
+            "Nie"
+          ]
+        },
+        {
+          "id": "de-listen-apotheke-samstag-q4",
+          "kind": "written",
+          "prompt": "Was kostet das ?",
+          "explain": "Neun Euro.",
+          "answers": [
+            "neun euro",
+            "9 euro",
+            "9"
+          ]
+        },
+        {
+          "id": "de-listen-apotheke-samstag-q5",
+          "kind": "written",
+          "prompt": "Was trinkt Mia ?",
+          "explain": "Mia nimmt die Tabletten und trinkt viel Wasser.",
+          "answers": [
+            "wasser",
+            "viel wasser"
+          ]
+        },
+        {
+          "id": "de-listen-apotheke-samstag-q6",
+          "kind": "choice",
+          "prompt": "Wie fühlt sich Mia am Abend ?",
+          "explain": "Am Abend fühlt sie sich besser.",
+          "answers": [
+            "Besser"
+          ],
+          "options": [
+            "Besser",
+            "Schlechter",
+            "Gleich",
+            "Sehr krank"
+          ]
+        }
+      ]
     }
   ]
 }

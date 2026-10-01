@@ -785,6 +785,91 @@
           "explain": "Yo llevo el café, dice Ana."
         }
       ]
+    },
+    {
+      "id": "es-read-horario-metro",
+      "languageID": "es",
+      "title": "El horario del metro",
+      "level": "A1",
+      "topic": "transporte",
+      "unitID": "es-foundations-u15",
+      "text": "Este es el horario de la línea dos de metro. El primer tren sale a las seis de la mañana y el último, a las once y media de la noche. Hay un tren cada cinco minutos por la mañana y cada ocho por la tarde. Los fines de semana, el primer tren es a las siete. Para ir al centro, tomas la línea dos en la estación Norte y bajas en la parada Mayor; el viaje dura veinte minutos. Un billete cuesta dos euros y cincuenta.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-horario-metro-q1",
+          "kind": "choice",
+          "prompt": "¿A qué hora sale el último tren?",
+          "answers": [
+            "A las once y media de la noche"
+          ],
+          "explain": "El último tren sale a las once y media de la noche.",
+          "options": [
+            "A las once y media de la noche",
+            "A las once de la mañana",
+            "A las seis de la mañana",
+            "A las diez y media de la noche"
+          ]
+        },
+        {
+          "id": "es-read-horario-metro-q2",
+          "kind": "choice",
+          "prompt": "¿Cada cuánto hay un tren por la mañana?",
+          "answers": [
+            "Cada cinco minutos"
+          ],
+          "explain": "Hay un tren cada cinco minutos por la mañana.",
+          "options": [
+            "Cada cinco minutos",
+            "Cada ocho minutos",
+            "Cada veinte minutos",
+            "Cada media hora"
+          ]
+        },
+        {
+          "id": "es-read-horario-metro-q3",
+          "kind": "written",
+          "prompt": "¿A qué hora es el primer tren los fines de semana?",
+          "answers": [
+            "A las siete",
+            "a las siete",
+            "las siete"
+          ],
+          "explain": "Los fines de semana, el primer tren es a las siete."
+        },
+        {
+          "id": "es-read-horario-metro-q4",
+          "kind": "written",
+          "prompt": "¿En qué estación tomas la línea dos para ir al centro?",
+          "answers": [
+            "En la estación Norte",
+            "en la estacion norte",
+            "la estación Norte"
+          ],
+          "explain": "Tomas la línea dos en la estación Norte."
+        },
+        {
+          "id": "es-read-horario-metro-q5",
+          "kind": "choice",
+          "prompt": "¿Cuánto dura el viaje al centro?",
+          "answers": [
+            "Veinte minutos"
+          ],
+          "explain": "El viaje dura veinte minutos.",
+          "options": [
+            "Veinte minutos",
+            "Cinco minutos",
+            "Ocho minutos",
+            "Diez minutos"
+          ]
+        }
+      ]
     }
   ]
 }

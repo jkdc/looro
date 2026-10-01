@@ -778,6 +778,107 @@
           "explain": "Nunca como doce, mas sábado é dia."
         }
       ]
+    },
+    {
+      "id": "pt-read-horario-metro",
+      "languageID": "pt",
+      "title": "O horário do metrô",
+      "level": "A1",
+      "topic": "horários",
+      "unitID": "pt-foundations-u14",
+      "text": "Este é o horário do metrô da Linha Verde, da estação São João. De manhã, os trens saem às seis, às seis e meia, às sete e às sete e meia. À tarde, saem às treze, às quatorze e às quinze. O Leo trabalha perto da estação Central. Ele pega o trem das sete e chega às sete e vinte. Nos fins de semana, os trens saem só a cada meia hora. O horário fica na parede da estação.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-horario-metro-q1",
+          "kind": "choice",
+          "prompt": "De que estação é o horário ?",
+          "options": [
+            "Da estação São João",
+            "Da estação Central",
+            "Da estação Leste",
+            "Do centro"
+          ],
+          "answers": [
+            "Da estação São João"
+          ],
+          "explain": "Este é o horário do metrô da Linha Verde, da estação São João."
+        },
+        {
+          "id": "pt-read-horario-metro-q2",
+          "kind": "choice",
+          "prompt": "Qual trem sai às sete e meia ?",
+          "options": [
+            "Um trem de manhã",
+            "Um trem da tarde",
+            "Um trem da noite",
+            "Nenhum trem"
+          ],
+          "answers": [
+            "Um trem de manhã"
+          ],
+          "explain": "De manhã, os trens saem às seis, às seis e meia, às sete e às sete e meia."
+        },
+        {
+          "id": "pt-read-horario-metro-q3",
+          "kind": "choice",
+          "prompt": "Qual trem o Leo pega ?",
+          "options": [
+            "O trem das sete",
+            "O trem das seis",
+            "O trem das treze",
+            "O trem das quinze"
+          ],
+          "answers": [
+            "O trem das sete"
+          ],
+          "explain": "Ele pega o trem das sete e chega às sete e vinte."
+        },
+        {
+          "id": "pt-read-horario-metro-q4",
+          "kind": "choice",
+          "prompt": "A que horas o Leo chega ?",
+          "options": [
+            "Às sete e vinte",
+            "Às sete",
+            "Às sete e meia",
+            "Às oito"
+          ],
+          "answers": [
+            "Às sete e vinte"
+          ],
+          "explain": "Ele pega o trem das sete e chega às sete e vinte."
+        },
+        {
+          "id": "pt-read-horario-metro-q5",
+          "kind": "written",
+          "prompt": "Quantos trens saem à tarde ?",
+          "answers": [
+            "três",
+            "tres",
+            "3"
+          ],
+          "explain": "À tarde, saem às treze, às quatorze e às quinze."
+        },
+        {
+          "id": "pt-read-horario-metro-q6",
+          "kind": "written",
+          "prompt": "Onde fica o horário ?",
+          "answers": [
+            "na parede da estação",
+            "na parede da estacao",
+            "na parede",
+            "parede da estacao"
+          ],
+          "explain": "O horário fica na parede da estação."
+        }
+      ]
     }
   ]
 }

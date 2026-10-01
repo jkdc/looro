@@ -1814,6 +1814,210 @@
         "grammar:frequency-adverbs"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-metro-perdido",
+      "languageID": "pt",
+      "title": "O metrô perdido",
+      "level": "A1",
+      "topic": "transporte",
+      "unitID": "pt-foundations-u14",
+      "text": "Hoje o Leo vai ao centro de metrô. Ele pega o metrô na estação São João. O trem sai às oito e chega às oito e vinte. O Leo quer ir ao museu, mas sai na estação errada. Ele pergunta a uma funcionária: « A que horas vem o próximo trem ? ». A funcionária responde: « O trem sai às oito e meia ». O Leo pega o trem certo e chega ao museu às nove. « Eu sempre viajo de metrô », diz ele.",
+      "questions": [
+        {
+          "id": "pt-listen-metro-perdido-q1",
+          "kind": "choice",
+          "prompt": "Como o Leo vai ao centro ?",
+          "options": [
+            "De metrô",
+            "De ônibus",
+            "A pé",
+            "De carro"
+          ],
+          "answers": [
+            "De metrô"
+          ],
+          "explain": "Hoje o Leo vai ao centro de metrô."
+        },
+        {
+          "id": "pt-listen-metro-perdido-q2",
+          "kind": "choice",
+          "prompt": "A que horas chega o trem da manhã ?",
+          "options": [
+            "Às oito e vinte",
+            "Às oito",
+            "Às oito e meia",
+            "Às nove"
+          ],
+          "answers": [
+            "Às oito e vinte"
+          ],
+          "explain": "O trem sai às oito e chega às oito e vinte."
+        },
+        {
+          "id": "pt-listen-metro-perdido-q3",
+          "kind": "choice",
+          "prompt": "Qual é o problema do Leo ?",
+          "options": [
+            "Ele sai na estação errada",
+            "Ele não encontra a estação",
+            "Ele perde a passagem",
+            "Ele esquece o museu"
+          ],
+          "answers": [
+            "Ele sai na estação errada"
+          ],
+          "explain": "O Leo quer ir ao museu, mas sai na estação errada."
+        },
+        {
+          "id": "pt-listen-metro-perdido-q4",
+          "kind": "choice",
+          "prompt": "A que horas sai o próximo trem ?",
+          "options": [
+            "Às oito e meia",
+            "Às oito",
+            "Às nove e vinte",
+            "Às nove"
+          ],
+          "answers": [
+            "Às oito e meia"
+          ],
+          "explain": "« O trem sai às oito e meia », diz a funcionária."
+        },
+        {
+          "id": "pt-listen-metro-perdido-q5",
+          "kind": "choice",
+          "prompt": "A que horas o Leo chega ao museu ?",
+          "options": [
+            "Às nove",
+            "Às oito e meia",
+            "Às nove e vinte",
+            "Às dez"
+          ],
+          "answers": [
+            "Às nove"
+          ],
+          "explain": "O Leo pega o trem certo e chega ao museu às nove."
+        },
+        {
+          "id": "pt-listen-metro-perdido-q6",
+          "kind": "written",
+          "prompt": "O que o Leo sempre faz ?",
+          "answers": [
+            "viaja de metrô",
+            "viaja de metro",
+            "viajo de metro"
+          ],
+          "explain": "« Eu sempre viajo de metrô », diz o Leo."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-farmacia-sabado",
+      "languageID": "pt",
+      "title": "Sábado na farmácia",
+      "level": "A1",
+      "topic": "saúde",
+      "unitID": "pt-foundations-u15",
+      "text": "É sábado de manhã e a Ana não se sente bem. Ela está com dor de cabeça e está com febre. O Leo diz: « Vamos à farmácia ». Na farmácia, a Ana fala com o farmacêutico: « Estou com dor de cabeça ». O farmacêutico dá um remédio: « Você toma um comprimido de manhã e um à noite ». Custa dez reais. A Ana nunca toma remédio, mas hoje é preciso. Ela toma o remédio e dorme um pouco. À tarde, está melhor.",
+      "questions": [
+        {
+          "id": "pt-listen-farmacia-sabado-q1",
+          "kind": "choice",
+          "prompt": "Como está a Ana no sábado ?",
+          "options": [
+            "Não se sente bem",
+            "Muito feliz",
+            "Com fome",
+            "Muito cansada"
+          ],
+          "answers": [
+            "Não se sente bem"
+          ],
+          "explain": "É sábado de manhã e a Ana não se sente bem."
+        },
+        {
+          "id": "pt-listen-farmacia-sabado-q2",
+          "kind": "choice",
+          "prompt": "Quais são os sintomas da Ana ?",
+          "options": [
+            "Dor de cabeça e febre",
+            "Tosse e febre",
+            "Dor de cabeça e tosse",
+            "Febre e dor de barriga"
+          ],
+          "answers": [
+            "Dor de cabeça e febre"
+          ],
+          "explain": "Ela está com dor de cabeça e está com febre."
+        },
+        {
+          "id": "pt-listen-farmacia-sabado-q3",
+          "kind": "choice",
+          "prompt": "Quando a Ana toma o comprimido ?",
+          "options": [
+            "De manhã e à noite",
+            "Só de manhã",
+            "Só à noite",
+            "Só à tarde"
+          ],
+          "answers": [
+            "De manhã e à noite"
+          ],
+          "explain": "« Você toma um comprimido de manhã e um à noite »."
+        },
+        {
+          "id": "pt-listen-farmacia-sabado-q4",
+          "kind": "choice",
+          "prompt": "Quanto custa o remédio ?",
+          "options": [
+            "Dez reais",
+            "Doze reais",
+            "Três reais",
+            "Treze reais"
+          ],
+          "answers": [
+            "Dez reais"
+          ],
+          "explain": "Custa dez reais."
+        },
+        {
+          "id": "pt-listen-farmacia-sabado-q5",
+          "kind": "written",
+          "prompt": "O que a Ana nunca faz ?",
+          "answers": [
+            "toma remédio",
+            "toma remedio",
+            "nunca toma remedio"
+          ],
+          "explain": "A Ana nunca toma remédio, mas hoje é preciso."
+        },
+        {
+          "id": "pt-listen-farmacia-sabado-q6",
+          "kind": "written",
+          "prompt": "Como está a Ana à tarde ?",
+          "answers": [
+            "melhor",
+            "está melhor",
+            "esta melhor"
+          ],
+          "explain": "À tarde, está melhor."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:health",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
     }
   ]
 }

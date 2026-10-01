@@ -5782,6 +5782,1076 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u14",
+      "title": "Unterwegs",
+      "subtitle": "U-Bahn, Bus und Bahn",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "unterwegs-stadt",
+          "title": "Mit Bus und Bahn",
+          "subtitle": "Wie ich hinkomme",
+          "symbol": "bus",
+          "category": "Course",
+          "situation": "Sam ist neu in der Stadt: U-Bahn, Bus oder zu Fuß — wie kommst du zur Arbeit ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "fahrkarten",
+          "title": "Fahrkarten",
+          "subtitle": "Eine Fahrkarte, bitte",
+          "symbol": "tram",
+          "category": "Course",
+          "situation": "Am Schalter: eine Fahrkarte nach Bonn, hin und zurück — und der Zug fährt von Gleis 3.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u14-verkehr",
+          "title": "Wie ich hinkomme",
+          "goal": "Sagen, wie du zur Arbeit, zur Schule oder in die Stadt kommst.",
+          "intro": {
+            "explanation": [
+              "nehmen + Verkehrsmittel: „Ich nehme die U-Bahn.“ „Ich nehme den Bus.“ Beispiel: „Ich nehme das Fahrrad.“",
+              "zu Fuß gehen = laufen, ohne Bus und Auto: „Ich gehe zu Fuß.“ Beispiel: „Ich gehe zu Fuß ins Büro.“",
+              "Frage: „Wie kommst du zur Arbeit ?“ — „Mit dem Bus.“ Beispiel: „Ich fahre mit dem Bus.“"
+            ],
+            "examples": [
+              {
+                "text": "Ich nehme die U-Bahn.",
+                "meaning": "nehmen + die U-Bahn."
+              },
+              {
+                "text": "Ich nehme den Bus zur Arbeit.",
+                "meaning": "der Bus → den Bus."
+              },
+              {
+                "text": "Ich gehe zu Fuß.",
+                "meaning": "Laufen, ohne Bus und Auto."
+              },
+              {
+                "text": "Wie kommst du zur Schule ?",
+                "meaning": "Nach dem Weg fragen."
+              },
+              {
+                "text": "Sie fährt mit dem Fahrrad.",
+                "meaning": "fahren mit + dem."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "die U-Bahn / der Bus",
+              "meaning": "Verkehr in der Stadt.",
+              "note": "Ich nehme die U-Bahn."
+            },
+            {
+              "text": "zu Fuß",
+              "meaning": "Ohne Bus, ohne Auto.",
+              "note": "Ich gehe zu Fuß."
+            },
+            {
+              "text": "das Fahrrad / das Auto",
+              "meaning": "Weitere Verkehrsmittel.",
+              "note": "Ich fahre mit dem Fahrrad."
+            },
+            {
+              "text": "Ich nehme …",
+              "meaning": "Sagen, welches Verkehrsmittel du nimmst.",
+              "note": "Ich nehme den Bus."
+            },
+            {
+              "text": "Wie kommst du … ?",
+              "meaning": "Nach dem Weg fragen.",
+              "note": "Wie kommst du zur Schule ?"
+            }
+          ],
+          "situation": "Sam ist neu in der Stadt: Er fragt Kim, wie sie zur Arbeit kommt — mit der U-Bahn, mit dem Bus oder zu Fuß.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sagst, wie du zur Arbeit fährst. (die U-Bahn)",
+                "expected": [
+                  "Ich nehme die U-Bahn.",
+                  "ich nehme die u-bahn"
+                ],
+                "focus": "nehmen + die",
+                "watch": "die U-Bahn: die bleibt die."
+              },
+              {
+                "prompt": "Sagst, wie du fährst. (der Bus)",
+                "expected": [
+                  "Ich nehme den Bus.",
+                  "ich nehme den bus"
+                ],
+                "focus": "der → den",
+                "watch": "der Bus: ich nehme den Bus."
+              },
+              {
+                "prompt": "Du hast kein Auto. Sagst, dass du läufst.",
+                "expected": [
+                  "Ich gehe zu Fuß.",
+                  "ich gehe zu fuss"
+                ],
+                "focus": "zu Fuß gehen",
+                "watch": "ß = ss: zu Fuss."
+              },
+              {
+                "prompt": "Fragst Sam, wie er zur Schule kommt.",
+                "expected": [
+                  "Wie kommst du zur Schule ?",
+                  "wie kommst du zur schule"
+                ],
+                "focus": "Wie kommst du … ?",
+                "watch": "Frage mit wie + kommen."
+              },
+              {
+                "prompt": "Sagst, wie Mia fährt. (das Fahrrad)",
+                "expected": [
+                  "Sie fährt mit dem Fahrrad.",
+                  "sie faehrt mit dem fahrrad"
+                ],
+                "focus": "fahren mit + dem",
+                "watch": "fahren: sie fährt; ä = ae."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u14-verkehr-e1",
+              "kind": "choice",
+              "prompt": "Ich ___ den Bus.",
+              "explain": "ich + nehmen = ich nehme den Bus.",
+              "answers": [
+                "nehme"
+              ],
+              "options": [
+                "nehme",
+                "nimmst",
+                "nimm",
+                "nehmen"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-verkehr-e2",
+              "kind": "gap",
+              "prompt": "Du hast kein Auto. Du gehst ___.",
+              "explain": "zu Fuß gehen: laufen, ohne Bus und Auto.",
+              "answers": [
+                "zu fuss",
+                "zu Fuß"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-verkehr-e3",
+              "kind": "order",
+              "prompt": "Sagst, wie du zur Arbeit fährst. (die U-Bahn)",
+              "explain": "nehmen + die U-Bahn: so sagst du, wie du fährst.",
+              "answers": [
+                "Ich nehme die U-Bahn"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-verkehr-e4",
+              "kind": "written",
+              "prompt": "Fragst, wie Lena zur Arbeit kommt.",
+              "explain": "Frage mit wie: Wie kommt sie zur Arbeit ?",
+              "answers": [
+                "wie kommt lena zur arbeit",
+                "Wie kommt Lena zur Arbeit ?"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:transport",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "vocab:town"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u14-fahrplan",
+          "title": "Wann fährt er ab ?",
+          "goal": "Uhrzeiten sagen und im Fahrplan lesen: wann fährt der Bus oder Zug ?",
+          "intro": {
+            "explanation": [
+              "Uhrzeit: „Es ist neun Uhr.“ „Es ist halb neun.“ Beispiel: „Es ist Viertel nach acht.“",
+              "fahren ab = starten, ankommen = am Ziel sein: „Der Zug fährt um 9 Uhr ab.“ Beispiel: „Der Bus kommt um halb zehn an.“",
+              "Frage mit wann: „Wann fährt der Bus ab ?“ — „Um 8:15 Uhr.“ Beispiel: „Wann kommt der Zug an ?“"
+            ],
+            "examples": [
+              {
+                "text": "Es ist Viertel nach acht.",
+                "meaning": "8:15 Uhr."
+              },
+              {
+                "text": "Der Zug fährt um 9 Uhr ab.",
+                "meaning": "fahren ab + um + Zeit."
+              },
+              {
+                "text": "Wann fährt der Bus ab ?",
+                "meaning": "Frage nach der Zeit."
+              },
+              {
+                "text": "Der Bus kommt um halb zehn an.",
+                "meaning": "halb zehn = 9:30 Uhr."
+              },
+              {
+                "text": "Die letzte Bahn fährt um 23 Uhr.",
+                "meaning": "der letzte Bus / die letzte Bahn."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "um wie viel Uhr ?",
+              "meaning": "Nach der genauen Zeit fragen.",
+              "note": "Um wie viel Uhr fährt der Zug ?"
+            },
+            {
+              "text": "fahren ab",
+              "meaning": "Der Bus oder Zug startet.",
+              "note": "Der Zug fährt um 9 Uhr ab."
+            },
+            {
+              "text": "ankommen",
+              "meaning": "Du bist am Ziel.",
+              "note": "Der Bus kommt um 9 Uhr an."
+            },
+            {
+              "text": "halb zehn",
+              "meaning": "9:30 Uhr.",
+              "note": "Es ist halb zehn."
+            },
+            {
+              "text": "der Fahrplan",
+              "meaning": "Hier stehen alle Zeiten.",
+              "note": "Ich sehe im Fahrplan nach."
+            }
+          ],
+          "situation": "Kim und Sam stehen am Bahnsteig: Die nächste Bahn fährt erst um Viertel nach zehn — der Fahrplan hilft.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sagst die Uhrzeit. (8:15)",
+                "expected": [
+                  "Es ist Viertel nach acht.",
+                  "es ist viertel nach acht",
+                  "es ist acht uhr funfzehn"
+                ],
+                "focus": "Viertel nach",
+                "watch": "8:15: Viertel nach acht."
+              },
+              {
+                "prompt": "Fragst, wann der Zug startet.",
+                "expected": [
+                  "Wann fährt der Zug ab ?",
+                  "wann faehrt der zug ab"
+                ],
+                "focus": "wann … ab ?",
+                "watch": "fahren: er fährt; ä = ae."
+              },
+              {
+                "prompt": "Sagst, wann der Bus am Ziel ist. (halb neun)",
+                "expected": [
+                  "Der Bus kommt um halb neun an.",
+                  "der bus kommt um halb neun an"
+                ],
+                "focus": "ankommen",
+                "watch": "halb neun = 8:30 Uhr."
+              },
+              {
+                "prompt": "Sagst, wann dein Zug startet. (um 9 Uhr)",
+                "expected": [
+                  "Mein Zug fährt um 9 Uhr ab.",
+                  "mein zug faehrt um neun uhr ab"
+                ],
+                "focus": "fahren ab",
+                "watch": "fährt = faehrt."
+              },
+              {
+                "prompt": "Fragst nach der genauen Zeit des Buses.",
+                "expected": [
+                  "Um wie viel Uhr fährt der Bus ?",
+                  "um wie viel uhr faehrt der bus"
+                ],
+                "focus": "um wie viel Uhr ?",
+                "watch": "Frage mit um wie viel Uhr."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u14-fahrplan-e1",
+              "kind": "choice",
+              "prompt": "Der Zug fährt um 9 Uhr ___.",
+              "explain": "fahren ab = starten: Der Zug fährt um 9 Uhr ab.",
+              "answers": [
+                "ab"
+              ],
+              "options": [
+                "ab",
+                "an",
+                "auf",
+                "aus"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-fahrplan-e2",
+              "kind": "gap",
+              "prompt": "Es ist 9:30 Uhr — es ist ___ neun.",
+              "explain": "halb neun = 8:30 Uhr: in Deutschland zählt halb rückwärts.",
+              "answers": [
+                "halb"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-fahrplan-e3",
+              "kind": "order",
+              "prompt": "Fragst nach der Abfahrt des Buses.",
+              "explain": "Frage nach der Zeit: wann + fährt + ab.",
+              "answers": [
+                "Wann fährt der Bus ab"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-fahrplan-e4",
+              "kind": "written",
+              "prompt": "Sagst die Uhrzeit. (9:15 Uhr)",
+              "explain": "9:15: Viertel nach neun oder neun Uhr fünfzehn.",
+              "answers": [
+                "es ist viertel nach neun",
+                "Es ist Viertel nach neun.",
+                "es ist neun uhr funfzehn"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-time",
+            "vocab:transport",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "tell-time"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u14-ticket",
+          "title": "Eine Fahrkarte, bitte",
+          "goal": "Am Schalter oder am Automaten Fahrkarten kaufen: möchte, Preis, hin und zurück.",
+          "intro": {
+            "explanation": [
+              "möchte + Bestellung: „Ich möchte eine Fahrkarte nach Bonn.“ Beispiel: „Wir möchten zwei Fahrkarten.“",
+              "eine Fahrkarte — zwei Fahrkarten: Beispiel: „Zwei Fahrkarten nach Köln, bitte.“",
+              "Preis und Fahrt: „Das kostet 4 Euro 50.“ Beispiel: „Hin und zurück, bitte.“"
+            ],
+            "examples": [
+              {
+                "text": "Eine Fahrkarte nach Bonn, bitte.",
+                "meaning": "Höflich bestellen."
+              },
+              {
+                "text": "Ich möchte zwei Fahrkarten.",
+                "meaning": "Mehrzahl: zwei Fahrkarten."
+              },
+              {
+                "text": "Einzeln oder hin und zurück ?",
+                "meaning": "Frage am Schalter."
+              },
+              {
+                "text": "Das kostet 4 Euro 50.",
+                "meaning": "Der Preis."
+              },
+              {
+                "text": "Der Zug fährt von Gleis 3.",
+                "meaning": "das Gleis: Wo der Zug startet."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Eine Fahrkarte, bitte.",
+              "meaning": "Höflich kaufen.",
+              "note": "Eine Fahrkarte nach Bonn, bitte."
+            },
+            {
+              "text": "einzel / hin und zurück",
+              "meaning": "Ein Weg — oder beide Wege.",
+              "note": "Hin und zurück, bitte."
+            },
+            {
+              "text": "Ich möchte …",
+              "meaning": "Sagen, was du kaufst.",
+              "note": "Ich möchte eine Fahrkarte."
+            },
+            {
+              "text": "Das kostet …",
+              "meaning": "Den Preis sagen.",
+              "note": "Das kostet 3 Euro 50."
+            },
+            {
+              "text": "das Gleis",
+              "meaning": "Wo der Zug abfährt.",
+              "note": "Der Zug fährt von Gleis 3."
+            }
+          ],
+          "situation": "Sam kauft am Schalter eine Fahrkarte nach Bonn — einzeln oder hin und zurück ? Und von welchem Gleis ?",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Bestellst eine Fahrkarte nach Bonn.",
+                "expected": [
+                  "Eine Fahrkarte nach Bonn, bitte.",
+                  "ich möchte eine fahrkarte nach bonn",
+                  "ich moechte eine fahrkarte nach bonn"
+                ],
+                "focus": "möchte",
+                "watch": "ö = oe: moechte."
+              },
+              {
+                "prompt": "Sagst, was du möchtest. (zwei Fahrkarten)",
+                "expected": [
+                  "Ich möchte zwei Fahrkarten.",
+                  "ich moechte zwei fahrkarten"
+                ],
+                "focus": "möchte + Mehrzahl",
+                "watch": "eine Fahrkarte — zwei Fahrkarten."
+              },
+              {
+                "prompt": "Sagst, dass du beide Wege fährst.",
+                "expected": [
+                  "Hin und zurück, bitte.",
+                  "hin und zurück bitte"
+                ],
+                "focus": "hin und zurück",
+                "watch": "Beide Wege: hin und zurück."
+              },
+              {
+                "prompt": "Sagst den Preis. (7 Euro 80)",
+                "expected": [
+                  "Das kostet 7 Euro 80.",
+                  "das kostet 7 euro 80"
+                ],
+                "focus": "Das kostet …",
+                "watch": "Preis: 7 Euro 80."
+              },
+              {
+                "prompt": "Fragst, wo der Zug startet.",
+                "expected": [
+                  "Von welchem Gleis fährt der Zug ?",
+                  "von welchem gleis faehrt der zug"
+                ],
+                "focus": "das Gleis",
+                "watch": "das Gleis: Wo der Zug abfährt."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u14-ticket-e1",
+              "kind": "choice",
+              "prompt": "Ich möchte eine Fahrkarte ___ Bonn.",
+              "explain": "nach + Stadtname: nach Bonn, nach Berlin.",
+              "answers": [
+                "nach"
+              ],
+              "options": [
+                "nach",
+                "zu",
+                "in",
+                "auf"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-ticket-e2",
+              "kind": "gap",
+              "prompt": "Hin ___ zurück, bitte.",
+              "explain": "hin und zurück = beide Wege: hin fahren und zurück fahren.",
+              "answers": [
+                "und"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-ticket-e3",
+              "kind": "order",
+              "prompt": "Bestellst zwei Fahrkarten.",
+              "explain": "möchte + zwei Fahrkarten: so bestellst du höflich.",
+              "answers": [
+                "Ich möchte zwei Fahrkarten"
+              ]
+            },
+            {
+              "id": "de-foundations-u14-ticket-e4",
+              "kind": "written",
+              "prompt": "Der Schalter fragt: ein Weg oder zwei Wege ?",
+              "explain": "Am Schalter fragt man: Einzeln oder hin und zurück ?",
+              "answers": [
+                "Einzeln oder hin und zurück ?",
+                "einzeln oder hin und zurueck"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "function:make-requests",
+            "vocab:transport",
+            "grammar:quantities"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u15",
+      "title": "Ich fühle mich gut",
+      "subtitle": "Grundgesundheit",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "nicht-so-gut",
+          "title": "Nicht so gut",
+          "subtitle": "Symptome sagen",
+          "symbol": "cross.case",
+          "category": "Course",
+          "situation": "Mia fühlt sich nicht gut: Kopfschmerzen und Fieber. Kim fragt: Was hast du ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "gesund-leben",
+          "title": "Gesund leben",
+          "subtitle": "Gute Gewohnheiten",
+          "symbol": "pills",
+          "category": "Course",
+          "situation": "Immer Wasser trinken, nie Fast Food — so bleibst du gesund.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u15-symptome",
+          "title": "Ich fühle mich nicht gut",
+          "goal": "Sagen, wie du dich fühlst, und Symptome nennen: Kopfschmerzen, Fieber, Husten.",
+          "intro": {
+            "explanation": [
+              "sich fühlen: „Ich fühle mich gut.“ „Ich fühle mich nicht gut.“ Beispiel: „Wie fühlst du dich ?“",
+              "haben + Krankheit: „Ich habe Kopfschmerzen.“ „Ich habe Fieber.“ Beispiel: „Ich habe Husten.“",
+              "sein + Gefühl: „Ich bin krank.“ „Ich bin müde.“ Beispiel: „Er ist auch krank.“"
+            ],
+            "examples": [
+              {
+                "text": "Ich fühle mich nicht gut.",
+                "meaning": "sich fühlen: Mir geht es schlecht."
+              },
+              {
+                "text": "Ich habe Kopfschmerzen.",
+                "meaning": "haben + Schmerzen."
+              },
+              {
+                "text": "Ich habe Fieber.",
+                "meaning": "haben + Fieber."
+              },
+              {
+                "text": "Ich bin müde und krank.",
+                "meaning": "sein + Adjektiv."
+              },
+              {
+                "text": "Was hast du ?",
+                "meaning": "Nach Symptomen fragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich fühle mich …",
+              "meaning": "Sagen, wie es dir geht.",
+              "note": "Ich fühle mich gut."
+            },
+            {
+              "text": "Kopfschmerzen haben",
+              "meaning": "Der Kopf tut weh.",
+              "note": "Ich habe Kopfschmerzen."
+            },
+            {
+              "text": "Fieber / Husten haben",
+              "meaning": "Krankheit mit haben.",
+              "note": "Ich habe Husten und Fieber."
+            },
+            {
+              "text": "Ich bin müde.",
+              "meaning": "Keine Energie: sein + müde.",
+              "note": "Ich bin so müde."
+            },
+            {
+              "text": "Was hast du ?",
+              "meaning": "Fragen, was los ist.",
+              "note": "Was hast du ? — Ich bin krank."
+            }
+          ],
+          "situation": "Mia fühlt sich nicht gut: Sie ist müde und hat Kopfschmerzen. Kim fragt: Was hast du ?",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sagst, dass es dir nicht gut geht.",
+                "expected": [
+                  "Ich fühle mich nicht gut.",
+                  "ich fuehle mich nicht gut"
+                ],
+                "focus": "sich fühlen",
+                "watch": "fühlen = fuehlen."
+              },
+              {
+                "prompt": "Sagst, dass dein Kopf wehtut.",
+                "expected": [
+                  "Ich habe Kopfschmerzen.",
+                  "ich habe kopfschmerzen"
+                ],
+                "focus": "haben + …schmerzen",
+                "watch": "Kopf + Schmerzen = Kopfschmerzen."
+              },
+              {
+                "prompt": "Sagst, dass deine Temperatur 39 Grad ist.",
+                "expected": [
+                  "Ich habe Fieber.",
+                  "ich habe fieber"
+                ],
+                "focus": "Fieber haben",
+                "watch": "Hohe Temperatur = Fieber."
+              },
+              {
+                "prompt": "Fragst Sam, was los ist.",
+                "expected": [
+                  "Was hast du ?",
+                  "was hast du"
+                ],
+                "focus": "Was hast du ?",
+                "watch": "du hast → hast du ?"
+              },
+              {
+                "prompt": "Sagst zwei Gefühle. (müde und krank)",
+                "expected": [
+                  "Ich bin müde und krank.",
+                  "ich bin muede und krank"
+                ],
+                "focus": "sein + Adjektiv",
+                "watch": "müde = muede."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u15-symptome-e1",
+              "kind": "choice",
+              "prompt": "Ich habe ___. Mein Kopf tut weh.",
+              "explain": "Mein Kopf tut weh = ich habe Kopfschmerzen.",
+              "answers": [
+                "Kopfschmerzen"
+              ],
+              "options": [
+                "Kopfschmerzen",
+                "Fieber",
+                "Husten",
+                "Durst"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-symptome-e2",
+              "kind": "gap",
+              "prompt": "Ich habe ___. Die Temperatur ist 39 Grad.",
+              "explain": "Hohe Temperatur: ich habe Fieber.",
+              "answers": [
+                "fieber",
+                "Fieber"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-symptome-e3",
+              "kind": "order",
+              "prompt": "Sagst, dass es dir nicht gut geht.",
+              "explain": "sich fühlen: so sagt man, dass man krank ist.",
+              "answers": [
+                "Ich fühle mich nicht gut"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-symptome-e4",
+              "kind": "written",
+              "prompt": "Fragst deine Freundin, was los ist.",
+              "explain": "Frage nach Symptomen: Was hast du ?",
+              "answers": [
+                "was hast du",
+                "Was hast du ?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "vocab:health",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u15-apotheke",
+          "title": "In der Apotheke",
+          "goal": "In der Apotheke etwas gegen Schmerzen oder Husten fragen und Anweisungen verstehen.",
+          "intro": {
+            "explanation": [
+              "brauchen + Sache: „Ich brauche etwas gegen die Schmerzen.“ Beispiel: „Ich brauche Taschentücher.“",
+              "etwas gegen + Problem: „Haben Sie etwas gegen Husten ?“ Beispiel: „etwas gegen Kopfschmerzen.“",
+              "Anweisung mit Sie: „Nehmen Sie zwei Tabletten.“ Beispiel: „Gute Besserung !“"
+            ],
+            "examples": [
+              {
+                "text": "Ich brauche etwas gegen die Schmerzen.",
+                "meaning": "brauchen + gegen."
+              },
+              {
+                "text": "Haben Sie etwas gegen Husten ?",
+                "meaning": "Höflich fragen mit Sie."
+              },
+              {
+                "text": "Nehmen Sie zwei Tabletten.",
+                "meaning": "Anweisung mit Sie."
+              },
+              {
+                "text": "Das macht 6 Euro 50.",
+                "meaning": "Der Preis in der Apotheke."
+              },
+              {
+                "text": "Gute Besserung !",
+                "meaning": "Wunsch: bald wieder gesund."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "die Apotheke",
+              "meaning": "Hier kaufst du Medikamente.",
+              "note": "Ich gehe in die Apotheke."
+            },
+            {
+              "text": "etwas gegen …",
+              "meaning": "Ein Medikament für ein Problem.",
+              "note": "etwas gegen Kopfschmerzen"
+            },
+            {
+              "text": "die Tablette / die Tabletten",
+              "meaning": "eine Tablette — zwei Tabletten.",
+              "note": "Nehmen Sie zwei Tabletten."
+            },
+            {
+              "text": "Ich brauche …",
+              "meaning": "Sagen, was du brauchst.",
+              "note": "Ich brauche etwas gegen Husten."
+            },
+            {
+              "text": "Gute Besserung !",
+              "meaning": "Wunsch für Kranke.",
+              "note": "gute Besserung und schlaf gut !"
+            }
+          ],
+          "situation": "Kim ist für Mia in der Apotheke: Sie fragt nach etwas gegen die Schmerzen und wünscht gute Besserung.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sagst in der Apotheke, was du brauchst. (etwas gegen die Schmerzen)",
+                "expected": [
+                  "Ich brauche etwas gegen die Schmerzen.",
+                  "ich brauche etwas gegen die schmerzen"
+                ],
+                "focus": "brauchen + gegen",
+                "watch": "gegen die Schmerzen."
+              },
+              {
+                "prompt": "Fragst höflich nach etwas gegen Husten. (Sie)",
+                "expected": [
+                  "Haben Sie etwas gegen Husten ?",
+                  "haben sie etwas gegen husten"
+                ],
+                "focus": "Haben Sie … ?",
+                "watch": "Sie (höflich) schreibt man groß."
+              },
+              {
+                "prompt": "Sagst, wie oft du die Tabletten nimmst. (dreimal am Tag)",
+                "expected": [
+                  "Ich nehme die Tabletten dreimal am Tag.",
+                  "ich nehme die tabletten dreimal am tag"
+                ],
+                "focus": "dreimal am Tag",
+                "watch": "drei + mal = dreimal."
+              },
+              {
+                "prompt": "Wünschst deiner Freundin, dass sie bald gesund ist.",
+                "expected": [
+                  "Gute Besserung !",
+                  "gute besserung"
+                ],
+                "focus": "Gute Besserung !",
+                "watch": "Fester Wunsch für Kranke."
+              },
+              {
+                "prompt": "Sagst, wohin du gehst. (die Apotheke)",
+                "expected": [
+                  "Ich gehe in die Apotheke.",
+                  "ich gehe in die apotheke"
+                ],
+                "focus": "in die Apotheke",
+                "watch": "die Apotheke: ich gehe in die Apotheke."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u15-apotheke-e1",
+              "kind": "choice",
+              "prompt": "Haben Sie etwas ___ Kopfschmerzen ?",
+              "explain": "etwas gegen + Problem: etwas gegen Kopfschmerzen.",
+              "answers": [
+                "gegen"
+              ],
+              "options": [
+                "gegen",
+                "für",
+                "mit",
+                "von"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-apotheke-e2",
+              "kind": "gap",
+              "prompt": "Ich gehe in ___ Apotheke.",
+              "explain": "die Apotheke: ich gehe in die Apotheke.",
+              "answers": [
+                "die"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-apotheke-e3",
+              "kind": "order",
+              "prompt": "Fragst in der Apotheke nach Husten.",
+              "explain": "Höfliche Frage mit Sie: Haben Sie etwas gegen Husten ?",
+              "answers": [
+                "Haben Sie etwas gegen Husten"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-apotheke-e4",
+              "kind": "written",
+              "prompt": "Wünschst jemandem, dass er bald gesund wird.",
+              "explain": "Für Kranke wünscht man: Gute Besserung !",
+              "answers": [
+                "gute besserung",
+                "Gute Besserung !"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:health",
+            "function:make-requests",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u15-gewohnheiten",
+          "title": "Gesund leben",
+          "goal": "Gesunde Gewohnheiten mit immer, oft und nie beschreiben.",
+          "intro": {
+            "explanation": [
+              "Gesunde Gewohnheiten: Wasser trinken, Obst essen, spazieren gehen, schlafen. Beispiel: „Ich esse Obst.“",
+              "immer / nie + Verb: „Ich trinke immer Wasser.“ „Ich rauche nie.“ Beispiel: „Ich gehe oft spazieren.“",
+              "wie oft: „jeden Tag“, „zweimal pro Woche“. Beispiel: „Ich schwimme zweimal pro Woche.“"
+            ],
+            "examples": [
+              {
+                "text": "Ich trinke immer viel Wasser.",
+                "meaning": "immer: jeden Tag."
+              },
+              {
+                "text": "Ich esse nie Fast Food.",
+                "meaning": "nie: 0 %."
+              },
+              {
+                "text": "Ich gehe oft spazieren.",
+                "meaning": "spazieren gehen: zu Fuß draußen."
+              },
+              {
+                "text": "Ich schlafe acht Stunden.",
+                "meaning": "schlafen + Zeit."
+              },
+              {
+                "text": "Ich schwimme zweimal pro Woche.",
+                "meaning": "wie oft: zweimal."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "spazieren gehen",
+              "meaning": "Zu Fuß draußen sein.",
+              "note": "Ich gehe jeden Tag spazieren."
+            },
+            {
+              "text": "viel Wasser trinken",
+              "meaning": "Gesund für den Körper.",
+              "note": "Ich trinke viel Wasser."
+            },
+            {
+              "text": "nie rauchen",
+              "meaning": "0 % — sehr gesund.",
+              "note": "Er raucht nie."
+            },
+            {
+              "text": "Obst und Gemüse",
+              "meaning": "Gesund essen.",
+              "note": "Ich esse oft Obst."
+            },
+            {
+              "text": "schlafen",
+              "meaning": "Ausruhen: so bleibst du gesund.",
+              "note": "Ich schlafe acht Stunden."
+            }
+          ],
+          "situation": "Mia ist wieder fit: Sie trinkt immer viel Wasser, isst nie Fast Food und geht oft spazieren.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sagst, dass du jeden Tag Wasser trinkst.",
+                "expected": [
+                  "Ich trinke immer Wasser.",
+                  "ich trinke immer wasser"
+                ],
+                "focus": "immer + Verb",
+                "watch": "immer steht nach dem Verb."
+              },
+              {
+                "prompt": "Sagst, dass du nie Fast Food isst.",
+                "expected": [
+                  "Ich esse nie Fast Food.",
+                  "ich esse nie fast food"
+                ],
+                "focus": "nie + Verb",
+                "watch": "nie: 0 %."
+              },
+              {
+                "prompt": "Sagst, wie oft du schwimmst. (2 x pro Woche)",
+                "expected": [
+                  "Ich schwimme zweimal pro Woche.",
+                  "ich schwimme zweimal pro woche",
+                  "zweimal pro woche"
+                ],
+                "focus": "zweimal",
+                "watch": "zwei + mal = zweimal."
+              },
+              {
+                "prompt": "Sagst, dass du oft draußen zu Fuß gehst.",
+                "expected": [
+                  "Ich gehe oft spazieren.",
+                  "ich gehe oft spazieren"
+                ],
+                "focus": "spazieren gehen",
+                "watch": "ich gehe + spazieren."
+              },
+              {
+                "prompt": "Fragst Sam, wie oft er schwimmt.",
+                "expected": [
+                  "Wie oft schwimmst du ?",
+                  "wie oft schwimmst du"
+                ],
+                "focus": "wie oft … ?",
+                "watch": "schwimmen: du schwimmst."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u15-gewohnheiten-e1",
+              "kind": "choice",
+              "prompt": "Ich trinke ___ viel Wasser — jeden Tag.",
+              "explain": "jeden Tag = immer: 100 %.",
+              "answers": [
+                "immer"
+              ],
+              "options": [
+                "immer",
+                "nie",
+                "manchmal",
+                "selten"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-gewohnheiten-e2",
+              "kind": "gap",
+              "prompt": "Ich esse ___ Fast Food. Ich mag es nicht.",
+              "explain": "Ich mag es nicht = 0 % = nie.",
+              "answers": [
+                "nie"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-gewohnheiten-e3",
+              "kind": "order",
+              "prompt": "Sagst, dass du oft draußen zu Fuß gehst.",
+              "explain": "spazieren gehen: ich gehe oft spazieren — gesund und einfach.",
+              "answers": [
+                "Ich gehe oft spazieren"
+              ]
+            },
+            {
+              "id": "de-foundations-u15-gewohnheiten-e4",
+              "kind": "written",
+              "prompt": "Sagst, wie oft du Obst isst. (jeden Tag)",
+              "explain": "jeden Tag = immer: ich esse jeden Tag Obst.",
+              "answers": [
+                "ich esse jeden tag obst",
+                "Ich esse jeden Tag Obst."
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:health",
+            "vocab:daily-routine"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:frequency-adverbs"
+          ]
+        }
+      ]
     }
   ]
 }

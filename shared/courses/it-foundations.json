@@ -5862,6 +5862,1112 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-foundations-u14",
+      "title": "In movimento",
+      "subtitle": "Metro, bus e treno",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "in-movimento-trasporti",
+          "title": "I trasporti",
+          "subtitle": "Prendo la metro",
+          "symbol": "bus",
+          "category": "Course",
+          "situation": "In città: la metro, il bus e i piedi — scegli il mezzo e vai.",
+          "colorIndex": 0
+        },
+        {
+          "id": "in-movimento-orari",
+          "title": "Gli orari",
+          "subtitle": "Alle otto e mezza",
+          "symbol": "tram",
+          "category": "Course",
+          "situation": "Alla stazione: il treno parte alle nove e mezza — chiedi l'orario e guarda il tabellone.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u14-trasporti",
+          "title": "Come vado",
+          "goal": "Dire come ti sposti in città: prendo la metro, vado in bus, vado a piedi.",
+          "intro": {
+            "explanation": [
+              "Per i trasporti si usa prendere: « Prendo la metro. Prendo il bus. Prendo il treno. » Prendere = viaggiare con quel mezzo.",
+              "Con i mezzi si usa in: « Vado al lavoro in metro. Vado in centro in bus. » Con la bicicletta si dice in bici.",
+              "A piedi è senza mezzo: « L'ufficio è vicino: vado a piedi. » Per chiedere: « Come vai al lavoro ? »"
+            ],
+            "examples": [
+              {
+                "text": "Prendo la metro ogni mattina.",
+                "meaning": "Prendere + mezzo."
+              },
+              {
+                "text": "Vado al lavoro in bus.",
+                "meaning": "in + mezzo."
+              },
+              {
+                "text": "Il centro è vicino: vado a piedi.",
+                "meaning": "A piedi = cammino."
+              },
+              {
+                "text": "Come vai in ufficio ?",
+                "meaning": "Domanda con come."
+              },
+              {
+                "text": "Luisa va a scuola in bici.",
+                "meaning": "In bici = in bicicletta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "prendo la metro",
+              "meaning": "Uso la metro.",
+              "note": "Anche: prendo il bus, prendo il treno."
+            },
+            {
+              "text": "vado a piedi",
+              "meaning": "Cammino.",
+              "note": "Senza mezzo: il posto è vicino."
+            },
+            {
+              "text": "in metro / in bus / in treno",
+              "meaning": "Con i mezzi si usa in.",
+              "note": "Vado in centro in metro."
+            },
+            {
+              "text": "Come vai a … ?",
+              "meaning": "Chiedere il mezzo.",
+              "note": "Come vai al lavoro ?"
+            },
+            {
+              "text": "in bici",
+              "meaning": "Con la bicicletta.",
+              "note": "Bici = bicicletta, parola corta."
+            }
+          ],
+          "situation": "Un giorno tipo in città: la metro al mattino, il bus quando piove e a piedi quando il centro è vicino.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Prendi la metro ogni giorno. Dillo.",
+                "expected": [
+                  "Prendo la metro ogni giorno.",
+                  "La mattina prendo la metro."
+                ],
+                "focus": "prendo",
+                "watch": "Io prendo, tu prendi."
+              },
+              {
+                "prompt": "L'ufficio è vicino. Dì che vai camminando.",
+                "expected": [
+                  "Vado a piedi.",
+                  "Vado all'ufficio a piedi."
+                ],
+                "focus": "a piedi",
+                "watch": "A piedi = senza mezzo."
+              },
+              {
+                "prompt": "Chiedi a Paolo come va al lavoro.",
+                "expected": [
+                  "Come vai al lavoro ?",
+                  "Paolo, come vai al lavoro ?"
+                ],
+                "focus": "come vai",
+                "watch": "Domanda con come + tu vai."
+              },
+              {
+                "prompt": "Dì che vai in centro con il bus.",
+                "expected": [
+                  "Vado in centro in bus.",
+                  "Prendo il bus per il centro."
+                ],
+                "focus": "in bus",
+                "watch": "Con i mezzi si usa in: in bus."
+              },
+              {
+                "prompt": "La scuola è lontana. Dì che prendi il treno.",
+                "expected": [
+                  "Prendo il treno.",
+                  "Vado a scuola in treno."
+                ],
+                "focus": "il treno",
+                "watch": "Treno: per le distanze lunghe."
+              },
+              {
+                "prompt": "Il mercato è vicino. Dì che ci vai in bici.",
+                "expected": [
+                  "Vado in bici.",
+                  "Vado al mercato in bici."
+                ],
+                "focus": "in bici",
+                "watch": "In bici = in bicicletta."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u14-trasporti-e1",
+              "kind": "choice",
+              "prompt": "Il lavoro è lontano: ___ il bus.",
+              "options": [
+                "prendo",
+                "vado",
+                "sono",
+                "faccio"
+              ],
+              "answers": [
+                "prendo"
+              ],
+              "explain": "Con i mezzi si usa prendere: prendo il bus."
+            },
+            {
+              "id": "it-foundations-u14-trasporti-e2",
+              "kind": "gap",
+              "prompt": "Il centro è vicino: vado ___.",
+              "answers": [
+                "a piedi"
+              ],
+              "explain": "A piedi = cammino, senza mezzo."
+            },
+            {
+              "id": "it-foundations-u14-trasporti-e3",
+              "kind": "order",
+              "prompt": "Dì che ogni mattina usi la metro.",
+              "answers": [
+                "Prendo la metro ogni mattina"
+              ],
+              "explain": "Prendere + mezzo + tempo."
+            },
+            {
+              "id": "it-foundations-u14-trasporti-e4",
+              "kind": "written",
+              "prompt": "Come vai al lavoro ? Rispondi: usi la metro.",
+              "answers": [
+                "Vado al lavoro in metro.",
+                "Vado al lavoro con la metro.",
+                "Prendo la metro."
+              ],
+              "explain": "in + mezzo: vado al lavoro in metro."
+            }
+          ],
+          "skills": [
+            "vocab:transport",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "vocab:town"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u14-orari",
+          "title": "A che ora parte ?",
+          "goal": "Chiedere e dire l'ora e gli orari: sono le otto, il treno parte alle nove.",
+          "intro": {
+            "explanation": [
+              "Per chiedere l'ora: « Che ora è ? » La risposta va con essere: « È l'una. Sono le due. »",
+              "Per gli orari dei mezzi si usa alle: « Il treno parte alle nove. La metro parte alle otto e mezza. »",
+              "L'una è speciale: è l'una, alle una. Dalle due in poi è plurale: sono le due, alle due."
+            ],
+            "examples": [
+              {
+                "text": "Che ora è ?",
+                "meaning": "Chiedere l'ora."
+              },
+              {
+                "text": "È l'una.",
+                "meaning": "Una: singolare."
+              },
+              {
+                "text": "Sono le tre e mezza.",
+                "meaning": "Mezza = trenta minuti."
+              },
+              {
+                "text": "Il treno parte alle nove.",
+                "meaning": "alle + ora."
+              },
+              {
+                "text": "La metro parte alle otto e un quarto.",
+                "meaning": "Un quarto = quindici minuti."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Che ora è ?",
+              "meaning": "Chiedere l'ora.",
+              "note": "Risposta: sono le otto."
+            },
+            {
+              "text": "È l'una.",
+              "meaning": "Una soltanto: l'una.",
+              "note": "Alle una, non alle uno."
+            },
+            {
+              "text": "Sono le due / le tre …",
+              "meaning": "Dalle due in poi: plurale.",
+              "note": "Sono le cinque."
+            },
+            {
+              "text": "alle … e mezza",
+              "meaning": "Trenta minuti dopo l'ora.",
+              "note": "Alle nove e mezza."
+            },
+            {
+              "text": "parte alle …",
+              "meaning": "L'orario del mezzo.",
+              "note": "Il bus parte alle dieci."
+            }
+          ],
+          "situation": "Alla stazione con Luca: che ora è ?, il treno parte alle nove e mezza — si legge il tabellone.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi l'ora a Luca.",
+                "expected": [
+                  "Che ora è ?",
+                  "Che ora e ?",
+                  "Luca, che ora e ?"
+                ],
+                "focus": "che ora",
+                "watch": "È con l'accento: che ora è ?"
+              },
+              {
+                "prompt": "L'orologio segna le 13:00. Dì l'ora.",
+                "expected": [
+                  "È l'una.",
+                  "E l'una.",
+                  "E l'una in punto."
+                ],
+                "focus": "l'una",
+                "watch": "Una è singolare: l'una."
+              },
+              {
+                "prompt": "L'orologio segna le 15:00. Dì l'ora.",
+                "expected": [
+                  "Sono le tre.",
+                  "E le tre.",
+                  "Sono le tre in punto."
+                ],
+                "focus": "le tre",
+                "watch": "Tre è plurale: sono le tre."
+              },
+              {
+                "prompt": "Il treno parte alle 9:30. Dì l'orario completo.",
+                "expected": [
+                  "Il treno parte alle nove e mezza.",
+                  "Il treno parte alle nove e trenta."
+                ],
+                "focus": "nove e mezza",
+                "watch": "Mezza = trenta minuti."
+              },
+              {
+                "prompt": "Vuoi sapere l'orario della metro. Chiedi.",
+                "expected": [
+                  "A che ora parte la metro ?",
+                  "A che ora parte la metro"
+                ],
+                "focus": "a che ora",
+                "watch": "A che ora + verbo: parte."
+              },
+              {
+                "prompt": "Il bus parte alle 8:15. Dillo.",
+                "expected": [
+                  "Il bus parte alle otto e un quarto.",
+                  "Il bus parte alle otto e quindici."
+                ],
+                "focus": "un quarto",
+                "watch": "Un quarto = quindici minuti."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u14-orari-e1",
+              "kind": "choice",
+              "prompt": "Una sola ora: ___ l'una.",
+              "options": [
+                "È",
+                "E",
+                "Sono",
+                "Hanno"
+              ],
+              "answers": [
+                "È"
+              ],
+              "explain": "L'una è singolare: è l'una, con è."
+            },
+            {
+              "id": "it-foundations-u14-orari-e2",
+              "kind": "gap",
+              "prompt": "Il treno parte ___ nove.",
+              "answers": [
+                "alle"
+              ],
+              "explain": "Con l'orario si usa alle: alle nove."
+            },
+            {
+              "id": "it-foundations-u14-orari-e3",
+              "kind": "order",
+              "prompt": "Chiedi l'orario della metro.",
+              "answers": [
+                "A che ora parte la metro"
+              ],
+              "explain": "A che ora + parte + soggetto."
+            },
+            {
+              "id": "it-foundations-u14-orari-e4",
+              "kind": "written",
+              "prompt": "Sono le 4:30. Dì l'ora.",
+              "answers": [
+                "Sono le quattro e mezza.",
+                "Sono le quattro e trenta.",
+                "Le quattro e mezza."
+              ],
+              "explain": "Mezza = trenta minuti dopo l'ora."
+            }
+          ],
+          "skills": [
+            "function:tell-time",
+            "vocab:transport",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "tell-time"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u14-biglietto",
+          "title": "Un biglietto, per favore",
+          "goal": "Comprare i biglietti: uno o due, quanto costa, pagare con la carta.",
+          "intro": {
+            "explanation": [
+              "Al chiosco la richiesta è con per favore: « Un biglietto, per favore. Due biglietti per Milano, per favore. »",
+              "Per il prezzo: « Quanto costa ? » — « Costa due euro e cinquanta. » Con due biglietti: « Costano cinque euro. »",
+              "Le quantità: un biglietto, due biglietti, tre biglietti. Euro non cambia: un euro, due euro."
+            ],
+            "examples": [
+              {
+                "text": "Un biglietto, per favore.",
+                "meaning": "Chiedere un biglietto."
+              },
+              {
+                "text": "Due biglietti per Roma, per favore.",
+                "meaning": "Numero + biglietti + per."
+              },
+              {
+                "text": "Quanto costa ?",
+                "meaning": "Chiedere il prezzo."
+              },
+              {
+                "text": "Costa due euro e cinquanta.",
+                "meaning": "Il prezzo in euro."
+              },
+              {
+                "text": "Posso pagare con la carta ?",
+                "meaning": "Chiedere il pagamento."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "un biglietto, per favore",
+              "meaning": "La richiesta al chiosco.",
+              "note": "Con il numero: due biglietti."
+            },
+            {
+              "text": "per + città",
+              "meaning": "La destinazione.",
+              "note": "Un biglietto per Napoli."
+            },
+            {
+              "text": "Quanto costa ?",
+              "meaning": "Chiedere il prezzo.",
+              "note": "Costa tre euro."
+            },
+            {
+              "text": "due euro e cinquanta",
+              "meaning": "Il prezzo con i centesimi.",
+              "note": "Cinquanta = 50 centesimi."
+            },
+            {
+              "text": "Posso pagare con la carta ?",
+              "meaning": "Pagare con la carta.",
+              "note": "Oppure: in contanti."
+            }
+          ],
+          "situation": "Al chiosco della stazione: due biglietti per Roma, due euro e cinquanta — e si paga con la carta.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sei al chiosco. Chiedi un biglietto, gentile.",
+                "expected": [
+                  "Un biglietto, per favore.",
+                  "Un biglietto per favore."
+                ],
+                "focus": "per favore",
+                "watch": "Per favore rende gentile la richiesta."
+              },
+              {
+                "prompt": "Sei al chiosco, vuoi andare nella capitale. Chiedi due biglietti, gentile.",
+                "expected": [
+                  "Due biglietti per Roma, per favore.",
+                  "Due biglietti per Roma."
+                ],
+                "focus": "due biglietti",
+                "watch": "Plurale: due biglietti."
+              },
+              {
+                "prompt": "Non vedi il prezzo. Chiedilo.",
+                "expected": [
+                  "Quanto costa ?",
+                  "Quanto costa il biglietto ?"
+                ],
+                "focus": "quanto costa",
+                "watch": "Biglietto singolare: costa."
+              },
+              {
+                "prompt": "Il biglietto costa 2,50 €. Dì il prezzo.",
+                "expected": [
+                  "Costa due euro e cinquanta.",
+                  "Due euro e cinquanta.",
+                  "Costa due euro e cinquanta centesimi."
+                ],
+                "focus": "due euro",
+                "watch": "Euro non cambia: due euro."
+              },
+              {
+                "prompt": "Chiedi se puoi pagare con la carta.",
+                "expected": [
+                  "Posso pagare con la carta ?",
+                  "Posso pagare con la carta"
+                ],
+                "focus": "posso",
+                "watch": "Posso + infinito: posso pagare."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u14-biglietto-e1",
+              "kind": "choice",
+              "prompt": "Per chiedere gentile si aggiunge: « Un biglietto, ___ ».",
+              "options": [
+                "per favore",
+                "grazie mille",
+                "buongiorno",
+                "scusa"
+              ],
+              "answers": [
+                "per favore"
+              ],
+              "explain": "Per favore rende gentile la richiesta."
+            },
+            {
+              "id": "it-foundations-u14-biglietto-e2",
+              "kind": "gap",
+              "prompt": "Quanto ___ il biglietto ? — Tre euro.",
+              "answers": [
+                "costa"
+              ],
+              "explain": "Prezzo singolare: costa."
+            },
+            {
+              "id": "it-foundations-u14-biglietto-e3",
+              "kind": "order",
+              "prompt": "Al chiosco, chiedi gentilmente un biglietto per Napoli.",
+              "answers": [
+                "Un biglietto per Napoli, per favore"
+              ],
+              "explain": "Un biglietto + per + città + per favore."
+            },
+            {
+              "id": "it-foundations-u14-biglietto-e4",
+              "kind": "written",
+              "prompt": "Il biglietto costa 3,50 €. Dì il prezzo.",
+              "answers": [
+                "Costa tre euro e cinquanta.",
+                "Tre euro e cinquanta.",
+                "Costa tre euro e cinquanta centesimi."
+              ],
+              "explain": "Euro + e + centesimi: tre euro e cinquanta."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "function:make-requests",
+            "vocab:transport",
+            "grammar:quantities"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u15",
+      "title": "Mi sento bene",
+      "subtitle": "Salute di base",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mi-sento-bene-salute",
+          "title": "La salute",
+          "subtitle": "Mi fa male la testa",
+          "symbol": "cross.case",
+          "category": "Course",
+          "situation": "Un raffreddore: la febbre, la testa che fa male — e racconti come ti senti.",
+          "colorIndex": 0
+        },
+        {
+          "id": "mi-sento-bene-abitudini",
+          "title": "Le abitudini",
+          "subtitle": "Sempre o mai ?",
+          "symbol": "pills",
+          "category": "Course",
+          "situation": "La settimana sana: colazione sempre la mattina, molta acqua, otto ore di sonno.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u15-sintomi",
+          "title": "Non mi sento bene",
+          "goal": "Dire come stai: ho la febbre, mi fa male la testa.",
+          "intro": {
+            "explanation": [
+              "I sintomi vanno con avere: « Ho la febbre. Ho la tosse. Ho mal di testa. »",
+              "Il dolore si dice con mi fa male: « Mi fa male la testa. Mi fa male la gola. » Al plurale: « Mi fanno male i piedi. »",
+              "Per lo stato generale: « Non mi sento bene. Sono malato / malata. » Per chiedere: « Come ti senti ? »"
+            ],
+            "examples": [
+              {
+                "text": "Non mi sento bene.",
+                "meaning": "Lo stato generale."
+              },
+              {
+                "text": "Ho la febbre.",
+                "meaning": "Avere + sintomo."
+              },
+              {
+                "text": "Mi fa male la testa.",
+                "meaning": "Il dolore alla testa."
+              },
+              {
+                "text": "Ho mal di gola.",
+                "meaning": "mal di + parte del corpo."
+              },
+              {
+                "text": "Sono malata oggi.",
+                "meaning": "Malata: donna. Malato: uomo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Non mi sento bene.",
+              "meaning": "Dire che stai male.",
+              "note": "Oppure: sto male."
+            },
+            {
+              "text": "ho la febbre",
+              "meaning": "Calore nel corpo, 38-39.",
+              "note": "Ho la febbre alta."
+            },
+            {
+              "text": "mi fa male …",
+              "meaning": "Il dolore.",
+              "note": "Mi fa male la testa."
+            },
+            {
+              "text": "mal di testa / di gola / di pancia",
+              "meaning": "Le parti che fanno male.",
+              "note": "Mal di testa: la testa fa male."
+            },
+            {
+              "text": "Come ti senti ?",
+              "meaning": "Chiedere lo stato.",
+              "note": "Non mi sento bene."
+            }
+          ],
+          "situation": "Martedì mattina, a casa: la febbre, la testa che fa male — e racconti come ti senti.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "La temperatura è 38,5. Dì cosa hai.",
+                "expected": [
+                  "Ho la febbre.",
+                  "Ho febbre.",
+                  "Ho la febbre alta."
+                ],
+                "focus": "ho la febbre",
+                "watch": "Avere + la febbre."
+              },
+              {
+                "prompt": "La testa fa male. Dillo.",
+                "expected": [
+                  "Mi fa male la testa.",
+                  "La testa mi fa male."
+                ],
+                "focus": "mi fa male",
+                "watch": "Mi fa male + parte del corpo."
+              },
+              {
+                "prompt": "Vuoi sapere come sta Anna. Chiedi.",
+                "expected": [
+                  "Come ti senti ?",
+                  "Come stai ?",
+                  "Anna, come ti senti ?"
+                ],
+                "focus": "come ti senti",
+                "watch": "Domanda con tu: ti senti."
+              },
+              {
+                "prompt": "La gola fa male. Dillo in due modi.",
+                "expected": [
+                  "Ho mal di gola.",
+                  "Mi fa male la gola."
+                ],
+                "focus": "mal di gola",
+                "watch": "Mal di + parte del corpo."
+              },
+              {
+                "prompt": "Oggi stai male. Dillo.",
+                "expected": [
+                  "Oggi non mi sento bene.",
+                  "Non mi sento bene oggi.",
+                  "Oggi sono malata."
+                ],
+                "focus": "non mi sento bene",
+                "watch": "Io sento: non mi sento bene."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u15-sintomi-e1",
+              "kind": "choice",
+              "prompt": "Temperatura 39 °C: ho la ___.",
+              "options": [
+                "febbre",
+                "fame",
+                "sete",
+                "sonno"
+              ],
+              "answers": [
+                "febbre"
+              ],
+              "explain": "Temperatura alta: ho la febbre."
+            },
+            {
+              "id": "it-foundations-u15-sintomi-e2",
+              "kind": "gap",
+              "prompt": "Mi ___ male la testa.",
+              "answers": [
+                "fa"
+              ],
+              "explain": "Mi fa male + parte del corpo: fa male."
+            },
+            {
+              "id": "it-foundations-u15-sintomi-e3",
+              "kind": "order",
+              "prompt": "Dì che hai mal di gola.",
+              "answers": [
+                "Ho mal di gola"
+              ],
+              "explain": "Avere + mal di + parte del corpo."
+            },
+            {
+              "id": "it-foundations-u15-sintomi-e4",
+              "kind": "written",
+              "prompt": "Hai 38 di febbre e la testa che fa male. Scrivi come ti senti.",
+              "answers": [
+                "Ho la febbre e mi fa male la testa.",
+                "Ho la febbre e ho mal di testa.",
+                "Ho febbre e mal di testa."
+              ],
+              "explain": "Avere + sintomi: la descrizione del malato."
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "vocab:health",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u15-farmacia",
+          "title": "In farmacia",
+          "goal": "In farmacia: chiedere qualcosa per il dolore e capire la dose.",
+          "intro": {
+            "explanation": [
+              "In farmacia si chiede: « Ha qualcosa per la testa ? » Oppure: « Vorrei qualcosa per la febbre. »",
+              "Il farmacista dà la dose: « Due compresse al giorno. Questo sciroppo è per la tosse. »",
+              "Si paga come al negozio: « Quanto costano ? » — « Sette euro. Posso pagare con la carta ? »"
+            ],
+            "examples": [
+              {
+                "text": "Ha qualcosa per la testa ?",
+                "meaning": "Chiedere un farmaco."
+              },
+              {
+                "text": "Vorrei qualcosa per la tosse.",
+                "meaning": "Vorrei = richiesta gentile."
+              },
+              {
+                "text": "Due compresse al giorno.",
+                "meaning": "La dose."
+              },
+              {
+                "text": "Questo sciroppo è per la tosse.",
+                "meaning": "Sciroppo: farmaco liquido."
+              },
+              {
+                "text": "Quanto costano ?",
+                "meaning": "Il prezzo al plurale."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ha qualcosa per … ?",
+              "meaning": "Chiedere un farmaco.",
+              "note": "Ha qualcosa per la febbre ?"
+            },
+            {
+              "text": "Vorrei qualcosa per …",
+              "meaning": "Richiesta gentile.",
+              "note": "Vorrei qualcosa per dormire."
+            },
+            {
+              "text": "due compresse al giorno",
+              "meaning": "Quante volte al giorno.",
+              "note": "Una la mattina, una la sera."
+            },
+            {
+              "text": "la compressa / lo sciroppo",
+              "meaning": "I tipi di farmaco.",
+              "note": "Lo sciroppo per i bambini."
+            },
+            {
+              "text": "Quanto costano ?",
+              "meaning": "Chiedere il prezzo.",
+              "note": "Costano sette euro."
+            }
+          ],
+          "situation": "In farmacia sotto casa: qualcosa per la febbre, due compresse al giorno e sette euro.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sei in farmacia. Chiedi qualcosa per la testa.",
+                "expected": [
+                  "Ha qualcosa per la testa ?",
+                  "Vorrei qualcosa per la testa."
+                ],
+                "focus": "qualcosa per",
+                "watch": "Qualcosa per + dolore."
+              },
+              {
+                "prompt": "Chiedi qualcosa per la tosse, in modo gentile.",
+                "expected": [
+                  "Vorrei qualcosa per la tosse.",
+                  "Vorrei qualcosa contro la tosse."
+                ],
+                "focus": "vorrei",
+                "watch": "Vorrei = voglio, ma gentile."
+              },
+              {
+                "prompt": "Il farmacista dice: 2 compresse ogni giorno. Ripeti la dose.",
+                "expected": [
+                  "Due compresse al giorno.",
+                  "Prendo due compresse al giorno."
+                ],
+                "focus": "al giorno",
+                "watch": "Al giorno = ogni giorno."
+              },
+              {
+                "prompt": "Chiedi il prezzo delle compresse.",
+                "expected": [
+                  "Quanto costano ?",
+                  "Quanto costano le compresse ?"
+                ],
+                "focus": "quanto costano",
+                "watch": "Compresse plurale: costano."
+              },
+              {
+                "prompt": "Vuoi pagare con la carta. Chiedi.",
+                "expected": [
+                  "Posso pagare con la carta ?",
+                  "Posso pagare con la carta"
+                ],
+                "focus": "posso pagare",
+                "watch": "Posso + infinito: posso pagare."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u15-farmacia-e1",
+              "kind": "choice",
+              "prompt": "In farmacia chiedi: « ___ qualcosa per la febbre ? »",
+              "options": [
+                "Ha",
+                "È",
+                "Fa",
+                "Va"
+              ],
+              "answers": [
+                "Ha"
+              ],
+              "explain": "Ha qualcosa per … : la domanda al farmacista."
+            },
+            {
+              "id": "it-foundations-u15-farmacia-e2",
+              "kind": "gap",
+              "prompt": "Prenda due ___ al giorno.",
+              "answers": [
+                "compresse"
+              ],
+              "explain": "La dose: due compresse al giorno."
+            },
+            {
+              "id": "it-foundations-u15-farmacia-e3",
+              "kind": "order",
+              "prompt": "Chiedi gentilmente qualcosa per la tosse.",
+              "answers": [
+                "Vorrei qualcosa per la tosse"
+              ],
+              "explain": "Vorrei + qualcosa + per + sintomo."
+            },
+            {
+              "id": "it-foundations-u15-farmacia-e4",
+              "kind": "written",
+              "prompt": "Il farmacista dà lo sciroppo: 2 cucchiai ogni giorno. Scrivi la dose.",
+              "answers": [
+                "Due cucchiai al giorno.",
+                "Prendo due cucchiai al giorno.",
+                "Due cucchiai al giorno, la mattina e la sera."
+              ],
+              "explain": "Numero + dose + al giorno."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:health",
+            "function:make-requests",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u15-abitudini",
+          "title": "Vita sana",
+          "goal": "Raccontare la vita sana con gli avverbi: sempre, spesso, mai.",
+          "intro": {
+            "explanation": [
+              "Gli avverbi di frequenza: sempre (100 %), spesso, a volte, mai (0 %).",
+              "Sempre e mai stanno col verbo: « Faccio sempre colazione. Non fumo mai. » Mai vuole non: non … mai.",
+              "La vita sana: « Bevo molta acqua. Dormo otto ore. Vado a piedi al lavoro. »"
+            ],
+            "examples": [
+              {
+                "text": "Faccio sempre colazione.",
+                "meaning": "Sempre: ogni giorno."
+              },
+              {
+                "text": "Non fumo mai.",
+                "meaning": "Mai va con non."
+              },
+              {
+                "text": "Spesso vado a piedi.",
+                "meaning": "Spesso: molte volte."
+              },
+              {
+                "text": "Bevo molta acqua.",
+                "meaning": "Molta: quantità grande."
+              },
+              {
+                "text": "Dormo otto ore la notte.",
+                "meaning": "Le ore di sonno."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "sempre",
+              "meaning": "Ogni volta, 100 %.",
+              "note": "Faccio sempre colazione."
+            },
+            {
+              "text": "non … mai",
+              "meaning": "Non + verbo + mai: 0 %.",
+              "note": "Non mangio mai dolci."
+            },
+            {
+              "text": "spesso / a volte",
+              "meaning": "Frequenza media.",
+              "note": "A volte corro al parco."
+            },
+            {
+              "text": "dormire otto ore",
+              "meaning": "Le ore di sonno.",
+              "note": "Dormo otto ore la notte."
+            },
+            {
+              "text": "bere molta acqua",
+              "meaning": "Abitudine sana.",
+              "note": "Bevo molta acqua al giorno."
+            }
+          ],
+          "situation": "Colazione sempre alle sette, otto ore di sonno e il bus mai: a piedi — la settimana sana.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fai colazione ogni giorno. Dillo con sempre.",
+                "expected": [
+                  "Faccio sempre colazione.",
+                  "La mattina faccio sempre colazione."
+                ],
+                "focus": "sempre",
+                "watch": "Sempre sta col verbo: faccio sempre."
+              },
+              {
+                "prompt": "Non mangi dolci. Mai. Dillo.",
+                "expected": [
+                  "Non mangio mai dolci.",
+                  "Non mangio mai i dolci."
+                ],
+                "focus": "non … mai",
+                "watch": "Non e mai stanno insieme."
+              },
+              {
+                "prompt": "Bevi molta acqua ogni giorno. Dillo con sempre.",
+                "expected": [
+                  "Bevo sempre molta acqua.",
+                  "Bevo sempre molta acqua al giorno."
+                ],
+                "focus": "bevo sempre",
+                "watch": "Verbo + sempre: bevo sempre."
+              },
+              {
+                "prompt": "Dormi otto ore la notte. Dillo.",
+                "expected": [
+                  "Dormo otto ore la notte.",
+                  "Dormo otto ore.",
+                  "Ogni notte dormo otto ore."
+                ],
+                "focus": "otto ore",
+                "watch": "Otto ore: la quantità di sonno."
+              },
+              {
+                "prompt": "Non fai sport. Mai. Dillo.",
+                "expected": [
+                  "Non faccio mai sport.",
+                  "Io non faccio mai sport."
+                ],
+                "focus": "non faccio mai",
+                "watch": "Non + faccio + mai."
+              },
+              {
+                "prompt": "Spesso vai a piedi al lavoro. Dillo.",
+                "expected": [
+                  "Spesso vado a piedi al lavoro.",
+                  "Vado spesso a piedi al lavoro."
+                ],
+                "focus": "spesso",
+                "watch": "Spesso = molte volte."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u15-abitudini-e1",
+              "kind": "choice",
+              "prompt": "Mangio ___ verdura: ogni giorno.",
+              "options": [
+                "sempre",
+                "mai",
+                "a volte",
+                "domani"
+              ],
+              "answers": [
+                "sempre"
+              ],
+              "explain": "Ogni giorno = sempre, 100 %."
+            },
+            {
+              "id": "it-foundations-u15-abitudini-e2",
+              "kind": "gap",
+              "prompt": "Fumo zero volte: non fumo ___.",
+              "answers": [
+                "mai"
+              ],
+              "explain": "Non + verbo + mai: frequenza zero."
+            },
+            {
+              "id": "it-foundations-u15-abitudini-e3",
+              "kind": "order",
+              "prompt": "Dì che fai colazione la mattina, tutti i giorni: usa sempre.",
+              "answers": [
+                "La mattina faccio sempre colazione"
+              ],
+              "explain": "Tempo + verbo + sempre + oggetto."
+            },
+            {
+              "id": "it-foundations-u15-abitudini-e4",
+              "kind": "written",
+              "prompt": "Descrivi una tua abitudine sana: usa sempre o mai.",
+              "answers": [
+                "Faccio sempre colazione.",
+                "Non fumo mai.",
+                "Bevo sempre molta acqua.",
+                "Non mangio mai dolci."
+              ],
+              "explain": "Verbo + sempre oppure non + verbo + mai."
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:health",
+            "vocab:daily-routine"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:frequency-adverbs"
+          ]
+        }
+      ]
     }
   ]
 }

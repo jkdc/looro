@@ -5766,6 +5766,1077 @@
           ]
         }
       ]
+    },
+    {
+      "id": "pt-foundations-u14",
+      "title": "Em movimento",
+      "subtitle": "Metrô, ônibus e trem",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "mover-transporte",
+          "title": "O transporte",
+          "subtitle": "Como eu vou",
+          "symbol": "bus",
+          "category": "Course",
+          "situation": "O Leo mostra como vai para o trabalho: pega o metrô, o ônibus e às vezes vai a pé.",
+          "colorIndex": 0
+        },
+        {
+          "id": "mover-horarios",
+          "title": "Os horários",
+          "subtitle": "Horas e passagens",
+          "symbol": "tram",
+          "category": "Course",
+          "situation": "Na estação, o grupo pergunta as horas, compra passagens e pega o trem certo.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u14-transporte",
+          "title": "Como eu vou",
+          "goal": "Falar do transporte do dia a dia: pego o metrô, pego o ônibus, vou a pé.",
+          "intro": {
+            "explanation": [
+              "Meios de transporte: « o metrô, o ônibus, o trem, o carro, a bicicleta ». « Eu pego o metrô todo dia ».",
+              "Usar « pegar » com o transporte: « Pego o ônibus às sete ». Sem veículo é « vou a pé »: « Vou a pé para o trabalho ».",
+              "Perguntar como a pessoa vai: « Como você vai para o trabalho ? ». A resposta usa « pego » ou « vou »: « Pego o trem »."
+            ],
+            "examples": [
+              {
+                "text": "Eu pego o metrô todo dia.",
+                "meaning": "pegar + transporte."
+              },
+              {
+                "text": "Pego o ônibus às sete.",
+                "meaning": "hora + transporte."
+              },
+              {
+                "text": "Vou a pé para o trabalho.",
+                "meaning": "a pé = caminhando."
+              },
+              {
+                "text": "Ela vai de bicicleta para a escola.",
+                "meaning": "de + transporte."
+              },
+              {
+                "text": "Como você vai para o trabalho ?",
+                "meaning": "Perguntar o meio."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "pego o metrô",
+              "meaning": "Uso o metrô.",
+              "note": "Pego o metrô às oito."
+            },
+            {
+              "text": "pega o ônibus",
+              "meaning": "Uso o ônibus.",
+              "note": "Ele pega o ônibus."
+            },
+            {
+              "text": "vou a pé",
+              "meaning": "Caminho.",
+              "note": "Vou a pé para a escola."
+            },
+            {
+              "text": "de trem / de bicicleta",
+              "meaning": "Meio de transporte.",
+              "note": "Ela vai de bicicleta."
+            },
+            {
+              "text": "Como você vai ?",
+              "meaning": "Perguntar o transporte.",
+              "note": "Como você vai para casa ?"
+            }
+          ],
+          "situation": "O Leo mostra como vai para o trabalho: pega o metrô, o ônibus e às vezes vai a pé.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que você pega o metrô todo dia.",
+                "expected": [
+                  "Eu pego o metrô todo dia.",
+                  "eu pego o metro todo dia"
+                ],
+                "focus": "pego",
+                "watch": "pegar + transporte."
+              },
+              {
+                "prompt": "Diga que você pega o ônibus às sete.",
+                "expected": [
+                  "Pego o ônibus às sete.",
+                  "pego o onibus as sete"
+                ],
+                "focus": "pegar",
+                "watch": "ônibus com acento."
+              },
+              {
+                "prompt": "Diga que você vai a pé para o trabalho.",
+                "expected": [
+                  "Vou a pé para o trabalho.",
+                  "vou a pe para o trabalho"
+                ],
+                "focus": "a pé",
+                "watch": "a pé com acento."
+              },
+              {
+                "prompt": "Pergunte como a colega vai para o trabalho.",
+                "expected": [
+                  "Como você vai para o trabalho ?",
+                  "Como vai para o trabalho ?",
+                  "como voce vai para o trabalho"
+                ],
+                "focus": "Como … ?",
+                "watch": "Você + vai."
+              },
+              {
+                "prompt": "Diga que a Marina vai de bicicleta.",
+                "expected": [
+                  "Ela vai de bicicleta.",
+                  "ela vai de bicicleta"
+                ],
+                "focus": "de bicicleta",
+                "watch": "vai de + transporte."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u14-transporte-e1",
+              "kind": "choice",
+              "prompt": "Sem carro e sem ônibus: eu vou ___ para o trabalho.",
+              "explain": "Sem veículo: vou a pé = caminho.",
+              "options": [
+                "a pé",
+                "de metrô",
+                "de trem",
+                "de bicicleta"
+              ],
+              "answers": [
+                "a pé"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-transporte-e2",
+              "kind": "gap",
+              "prompt": "Eu ___ o metrô às oito.",
+              "explain": "pegar + transporte: eu pego o metrô.",
+              "answers": [
+                "pego"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-transporte-e3",
+              "kind": "order",
+              "prompt": "Pergunte o meio de transporte da colega.",
+              "explain": "Como você vai … ? — pergunta do transporte.",
+              "answers": [
+                "Como voce vai para o trabalho"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-transporte-e4",
+              "kind": "written",
+              "prompt": "Diga como você vai para a escola: de ônibus.",
+              "explain": "vou + de + transporte.",
+              "answers": [
+                "Vou de ônibus para a escola.",
+                "vou de onibus para a escola"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:transport",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "vocab:town"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u14-horario",
+          "title": "A que horas sai ?",
+          "goal": "Dizer e perguntar as horas dos transportes: A que horas sai ? Sai às oito.",
+          "intro": {
+            "explanation": [
+              "Dizer as horas: « às oito, às seis e meia, às nove e vinte ». « O trem sai às oito ».",
+              "Perguntar a hora do transporte: « A que horas sai o ônibus ? ». A resposta é curta: « Sai às nove ».",
+              "Sair e chegar: « O trem sai às oito e chega às oito e vinte ». « chega » = llega."
+            ],
+            "examples": [
+              {
+                "text": "A que horas sai o metrô ?",
+                "meaning": "Perguntar a hora."
+              },
+              {
+                "text": "O metrô sai às seis e meia.",
+                "meaning": "sair + às + hora."
+              },
+              {
+                "text": "O trem chega às nove.",
+                "meaning": "chegar + às + hora."
+              },
+              {
+                "text": "O ônibus sai às sete e vinte.",
+                "meaning": "e vinte = :20."
+              },
+              {
+                "text": "Sai às oito, todos os dias.",
+                "meaning": "rotina com horas."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "A que horas … ?",
+              "meaning": "Perguntar a hora.",
+              "note": "A que horas sai o trem ?"
+            },
+            {
+              "text": "sai às …",
+              "meaning": "Parte a una hora.",
+              "note": "Sai às sete."
+            },
+            {
+              "text": "chega às …",
+              "meaning": "Llega a una hora.",
+              "note": "Chega às oito e vinte."
+            },
+            {
+              "text": "e meia",
+              "meaning": "Hora y media (:30).",
+              "note": "Às seis e meia."
+            },
+            {
+              "text": "e vinte",
+              "meaning": "Hora y veinte (:20).",
+              "note": "Às nove e vinte."
+            }
+          ],
+          "situation": "Na estação, a Ana pergunta a que horas sai o trem para o centro.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pergunte a hora de partida do metrô.",
+                "expected": [
+                  "A que horas sai o metrô ?",
+                  "a que horas sai o metro"
+                ],
+                "focus": "A que horas … ?",
+                "watch": "A que horas + sai."
+              },
+              {
+                "prompt": "Diga a hora de partida do trem: oito.",
+                "expected": [
+                  "O trem sai às oito.",
+                  "o trem sai as oito"
+                ],
+                "focus": "sai às",
+                "watch": "sai + às + hora."
+              },
+              {
+                "prompt": "Diga a hora de chegada do ônibus: nove e vinte.",
+                "expected": [
+                  "O ônibus chega às nove e vinte.",
+                  "o onibus chega as nove e vinte"
+                ],
+                "focus": "chega às",
+                "watch": "chega = llega."
+              },
+              {
+                "prompt": "Diga a hora de partida do trem: seis e meia.",
+                "expected": [
+                  "O trem sai às seis e meia.",
+                  "o trem sai as seis e meia"
+                ],
+                "focus": "e meia",
+                "watch": "e meia = :30."
+              },
+              {
+                "prompt": "Pergunte a hora de chegada do ônibus.",
+                "expected": [
+                  "A que horas o ônibus chega ?",
+                  "a que horas o onibus chega"
+                ],
+                "focus": "A que horas … ?",
+                "watch": "sai/chega podem vir no fim."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u14-horario-e1",
+              "kind": "choice",
+              "prompt": "___ horas sai o ônibus ?",
+              "explain": "Perguntar a hora: A que horas sai o ônibus ?",
+              "options": [
+                "A que",
+                "Que",
+                "Como",
+                "Onde"
+              ],
+              "answers": [
+                "A que"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-horario-e2",
+              "kind": "gap",
+              "prompt": "O metrô ___ às seis e chega às sete.",
+              "explain": "sai às + hora: partida.",
+              "answers": [
+                "sai"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-horario-e3",
+              "kind": "order",
+              "prompt": "Diga a hora de partida do trem (oito).",
+              "explain": "O trem + sai + às + hora.",
+              "answers": [
+                "O trem sai as oito"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-horario-e4",
+              "kind": "written",
+              "prompt": "Diga a que horas o metrô chega: seis e meia.",
+              "explain": "chega + às + hora.",
+              "answers": [
+                "O metrô chega às seis e meia.",
+                "o metro chega as seis e meia"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-time",
+            "vocab:transport",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "tell-time"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u14-bilhete",
+          "title": "Uma passagem, por favor",
+          "goal": "Comprar passagens: Uma passagem para o centro, por favor. Quanto custa ?",
+          "intro": {
+            "explanation": [
+              "No guichê: « Uma passagem para o centro, por favor ». Para duas pessoas: « Duas passagens ».",
+              "Perguntar o preço: « Quanto custa ? ». A resposta: « Custa cinco reais ».",
+              "Pedir com educação: « por favor » e « obrigado ». « Quero uma passagem » também funciona."
+            ],
+            "examples": [
+              {
+                "text": "Uma passagem para o centro, por favor.",
+                "meaning": "Pedir um bilhete."
+              },
+              {
+                "text": "Duas passagens para São Paulo.",
+                "meaning": "quantidade + passagem."
+              },
+              {
+                "text": "Quanto custa a passagem ?",
+                "meaning": "Perguntar o preço."
+              },
+              {
+                "text": "Custa cinco reais.",
+                "meaning": "custar + preço."
+              },
+              {
+                "text": "Quero uma passagem de volta.",
+                "meaning": "quero + pedido."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "uma passagem",
+              "meaning": "Un billete.",
+              "note": "Uma passagem para o centro."
+            },
+            {
+              "text": "para … , por favor",
+              "meaning": "Destino + educação.",
+              "note": "Para o centro, por favor."
+            },
+            {
+              "text": "Quanto custa ?",
+              "meaning": "Preguntar el precio.",
+              "note": "Quanto custa a passagem ?"
+            },
+            {
+              "text": "custa … reais",
+              "meaning": "El precio.",
+              "note": "Custa cinco reais."
+            },
+            {
+              "text": "quero duas passagens",
+              "meaning": "Pedido con cantidad.",
+              "note": "Quero duas passagens."
+            }
+          ],
+          "situation": "Na estação, o Leo compra duas passagens para o centro no guichê.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "No guichê, peça a passagem para o centro, com educação.",
+                "expected": [
+                  "Uma passagem para o centro, por favor.",
+                  "uma passagem para o centro por favor"
+                ],
+                "focus": "por favor",
+                "watch": "Pedido educado."
+              },
+              {
+                "prompt": "Peça passagens para duas pessoas.",
+                "expected": [
+                  "Duas passagens, por favor.",
+                  "duas passagens por favor"
+                ],
+                "focus": "quantidade",
+                "watch": "duas + passagens."
+              },
+              {
+                "prompt": "Pergunte o preço da passagem.",
+                "expected": [
+                  "Quanto custa a passagem ?",
+                  "Quanto custa ?",
+                  "quanto custa a passagem"
+                ],
+                "focus": "Quanto custa ?",
+                "watch": "custar + preço."
+              },
+              {
+                "prompt": "Diga o preço da passagem: cinco reais.",
+                "expected": [
+                  "Custa cinco reais.",
+                  "custa cinco reais"
+                ],
+                "focus": "custa",
+                "watch": "custa + preço."
+              },
+              {
+                "prompt": "Diga que você quer uma passagem.",
+                "expected": [
+                  "Quero uma passagem.",
+                  "quero uma passagem"
+                ],
+                "focus": "quero",
+                "watch": "quero = quiero."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u14-bilhete-e1",
+              "kind": "choice",
+              "prompt": "No guichê, você pede: « ___ para o centro, por favor ».",
+              "explain": "Pedido no guichê: Uma passagem para o centro, por favor.",
+              "options": [
+                "Uma passagem",
+                "Uma hora",
+                "Um trem",
+                "Uma vez"
+              ],
+              "answers": [
+                "Uma passagem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-bilhete-e2",
+              "kind": "gap",
+              "prompt": "Quanto ___ a passagem ? — Cinco reais.",
+              "explain": "Quanto custa ? — pergunta do preço.",
+              "answers": [
+                "custa"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-bilhete-e3",
+              "kind": "order",
+              "prompt": "Pergunte o preço do bilhete.",
+              "explain": "Quanto + custa + coisa: pergunta do preço.",
+              "answers": [
+                "Quanto custa a passagem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u14-bilhete-e4",
+              "kind": "written",
+              "prompt": "Diga o preço do bilhete: cinco reais.",
+              "explain": "custa + preço.",
+              "answers": [
+                "Custa cinco reais.",
+                "custa cinco reais"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "function:make-requests",
+            "vocab:transport",
+            "grammar:quantities"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u15",
+      "title": "Me sinto bem",
+      "subtitle": "Saúde básica",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "saude-sintomas",
+          "title": "Os sintomas",
+          "subtitle": "Não me sinto bem",
+          "symbol": "cross.case",
+          "category": "Course",
+          "situation": "A Ana não está bem: dor de cabeça e febre. Ela diz como se sente.",
+          "colorIndex": 0
+        },
+        {
+          "id": "saude-farmacia",
+          "title": "A farmácia",
+          "subtitle": "Remédios e hábitos",
+          "symbol": "pills",
+          "category": "Course",
+          "situation": "Na farmácia, a Ana pede um remédio; em casa, todos falam de hábitos saudáveis.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u15-sintomas",
+          "title": "Não me sinto bem",
+          "goal": "Dizer sintomas: estou com dor de cabeça, estou com febre.",
+          "intro": {
+            "explanation": [
+              "Dizer como você está: « Não me sinto bem », « Estou doente ». « sentir-se » = sentirse.",
+              "Sintomas com « estar com »: « Estou com dor de cabeça », « Estou com febre », « Estou com tosse ».",
+              "Perguntar: « Como você está ? », « O que você tem ? ». A resposta: « Estou com dor de cabeça »."
+            ],
+            "examples": [
+              {
+                "text": "Hoje não me sinto bem.",
+                "meaning": "sentir-se mal."
+              },
+              {
+                "text": "Estou com dor de cabeça.",
+                "meaning": "dor de cabeça = dolor de cabeza."
+              },
+              {
+                "text": "Estou com febre.",
+                "meaning": "estar com + sintoma."
+              },
+              {
+                "text": "Ele está com tosse.",
+                "meaning": "tosse = tos."
+              },
+              {
+                "text": "O que você tem ?",
+                "meaning": "Perguntar o sintoma."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "não me sinto bem",
+              "meaning": "No me siento bien.",
+              "note": "Hoje não me sinto bem."
+            },
+            {
+              "text": "estou com dor de cabeça",
+              "meaning": "Dolor de cabeza.",
+              "note": "Estou com dor de cabeça."
+            },
+            {
+              "text": "estou com febre",
+              "meaning": "Tengo fiebre.",
+              "note": "Estou com febre alta."
+            },
+            {
+              "text": "estou com tosse",
+              "meaning": "Tengo tos.",
+              "note": "Ele está com tosse."
+            },
+            {
+              "text": "O que você tem ?",
+              "meaning": "¿Qué tienes ?",
+              "note": "O que você tem ? — Estou com febre."
+            }
+          ],
+          "situation": "A Ana não está bem: está com dor de cabeça e febre, e o Leo pergunta como ela está.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que hoje você não se sente bem.",
+                "expected": [
+                  "Hoje não me sinto bem.",
+                  "hoje nao me sinto bem"
+                ],
+                "focus": "não me sinto bem",
+                "watch": "sinto = siento."
+              },
+              {
+                "prompt": "Diga que você está com dor de cabeça.",
+                "expected": [
+                  "Estou com dor de cabeça.",
+                  "estou com dor de cabeca"
+                ],
+                "focus": "dor de cabeça",
+                "watch": "cabeça com cedilha."
+              },
+              {
+                "prompt": "Diga que você está com febre.",
+                "expected": [
+                  "Estou com febre.",
+                  "Tenho febre.",
+                  "estou com febre"
+                ],
+                "focus": "febre",
+                "watch": "estar com + sintoma."
+              },
+              {
+                "prompt": "Pergunte como a amiga está.",
+                "expected": [
+                  "Como você está ?",
+                  "como voce esta"
+                ],
+                "focus": "Como está ?",
+                "watch": "estar para o estado."
+              },
+              {
+                "prompt": "Pergunte o que a colega tem.",
+                "expected": [
+                  "O que você tem ?",
+                  "o que voce tem"
+                ],
+                "focus": "O que … tem ?",
+                "watch": "Pergunta do sintoma."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u15-sintomas-e1",
+              "kind": "choice",
+              "prompt": "A cabeça dói. A pessoa diz: « Estou com ___ ».",
+              "explain": "A cabeça dói: dor de cabeça.",
+              "options": [
+                "dor de cabeça",
+                "pressa",
+                "fome",
+                "medo"
+              ],
+              "answers": [
+                "dor de cabeça"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-sintomas-e2",
+              "kind": "gap",
+              "prompt": "Ela está com ___ alta: 39 graus.",
+              "explain": "Febre alta: a temperatura sobe.",
+              "answers": [
+                "febre"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-sintomas-e3",
+              "kind": "order",
+              "prompt": "Pergunte o sintoma da colega.",
+              "explain": "O que você tem ? — pergunta do sintoma.",
+              "answers": [
+                "O que voce tem"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-sintomas-e4",
+              "kind": "written",
+              "prompt": "Diga que você está com dor de cabeça e febre.",
+              "explain": "estar com + sintoma + e + sintoma.",
+              "answers": [
+                "Estou com dor de cabeça e febre.",
+                "estou com dor de cabeca e febre"
+              ]
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "vocab:health",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u15-farmacia",
+          "title": "Na farmácia",
+          "goal": "Pedir algo para a dor na farmácia: Algo para dor de cabeça, por favor.",
+          "intro": {
+            "explanation": [
+              "Na farmácia: « Boa tarde. Algo para dor de cabeça, por favor ». « para » indica o remédio.",
+              "O farmacêutico pergunta e responde: « O que você tem ? » — « Estou com dor ». Ele dá o remédio: « Este aqui é bom ».",
+              "Preço e instrução: « Quanto custa ? — Custa doze reais ». « Você toma um comprimido de manhã »."
+            ],
+            "examples": [
+              {
+                "text": "Algo para dor de cabeça, por favor.",
+                "meaning": "Pedido na farmácia."
+              },
+              {
+                "text": "Você tem algo para a febre ?",
+                "meaning": "Perguntar o remédio."
+              },
+              {
+                "text": "Este remédio é bom.",
+                "meaning": "este + remédio."
+              },
+              {
+                "text": "Quanto custa o comprimido ?",
+                "meaning": "Preço do remédio."
+              },
+              {
+                "text": "Você toma um comprimido de manhã.",
+                "meaning": "tomar + comprimido."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "algo para …",
+              "meaning": "Algo para un síntoma.",
+              "note": "Algo para a dor, por favor."
+            },
+            {
+              "text": "o farmacêutico",
+              "meaning": "El farmacéutico.",
+              "note": "O farmacêutico dá o remédio."
+            },
+            {
+              "text": "o remédio / o comprimido",
+              "meaning": "Medicina / pastilla.",
+              "note": "Tomo o remédio às oito."
+            },
+            {
+              "text": "Este aqui é bom.",
+              "meaning": "Recomendar.",
+              "note": "Este aqui é bom para a dor."
+            },
+            {
+              "text": "toma um comprimido",
+              "meaning": "Instrução do remédio.",
+              "note": "Você toma um comprimido à noite."
+            }
+          ],
+          "situation": "Na farmácia, a Ana pede algo para a dor de cabeça e o farmacêutico dá um remédio.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Peça algo para a dor de cabeça na farmácia.",
+                "expected": [
+                  "Algo para dor de cabeça, por favor.",
+                  "algo para dor de cabeca por favor"
+                ],
+                "focus": "algo para",
+                "watch": "Pedido educado."
+              },
+              {
+                "prompt": "Pergunte se há algo para a febre.",
+                "expected": [
+                  "Você tem algo para a febre ?",
+                  "voce tem algo para a febre"
+                ],
+                "focus": "algo para a febre",
+                "watch": "Você tem … ?"
+              },
+              {
+                "prompt": "Dê a sua opinião sobre o remédio: bom.",
+                "expected": [
+                  "Este remédio é bom.",
+                  "este remedio e bom"
+                ],
+                "focus": "este",
+                "watch": "remédio com acento."
+              },
+              {
+                "prompt": "Pergunte o preço do remédio.",
+                "expected": [
+                  "Quanto custa o remédio ?",
+                  "quanto custa o remedio"
+                ],
+                "focus": "Quanto custa ?",
+                "watch": "o remédio."
+              },
+              {
+                "prompt": "Diga que você toma um comprimido de manhã.",
+                "expected": [
+                  "Tomo um comprimido de manhã.",
+                  "tomo um comprimido de manha"
+                ],
+                "focus": "tomo",
+                "watch": "tomar + comprimido."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u15-farmacia-e1",
+              "kind": "choice",
+              "prompt": "Na farmácia, você pede: « Algo ___ a dor, por favor ».",
+              "explain": "Algo para a dor: « para » indica o remédio.",
+              "options": [
+                "para",
+                "com",
+                "de",
+                "sem"
+              ],
+              "answers": [
+                "para"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-farmacia-e2",
+              "kind": "gap",
+              "prompt": "Você ___ um comprimido de manhã e um à noite.",
+              "explain": "Você toma: instrução do farmacêutico.",
+              "answers": [
+                "toma"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-farmacia-e3",
+              "kind": "order",
+              "prompt": "Pergunte o preço do remédio.",
+              "explain": "Quanto custa o remédio ? — preço.",
+              "answers": [
+                "Quanto custa o remedio"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-farmacia-e4",
+              "kind": "written",
+              "prompt": "Peça algo para a febre, com educação.",
+              "explain": "Algo para + sintoma + por favor.",
+              "answers": [
+                "Algo para a febre, por favor.",
+                "algo para a febre por favor"
+              ]
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:health",
+            "function:make-requests",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u15-habitos",
+          "title": "Vida saudável",
+          "goal": "Falar de hábitos com sempre e nunca: Sempre caminho, nunca como doce.",
+          "intro": {
+            "explanation": [
+              "Frequência: « sempre » (todos os dias), « às vezes », « nunca » (nunca!). « Sempre caminho no parque ».",
+              "Hábitos saudáveis: « bebo água », « como fruta », « durmo oito horas ». « durmo » = duermo.",
+              "Vida saudável com « nunca »: « Nunca como doce ». O verbo fica no presente."
+            ],
+            "examples": [
+              {
+                "text": "Sempre caminho no parque.",
+                "meaning": "sempre = todos os dias."
+              },
+              {
+                "text": "Nunca como doce.",
+                "meaning": "nunca = jamás."
+              },
+              {
+                "text": "Às vezes bebo refrigerante.",
+                "meaning": "às vezes = a veces."
+              },
+              {
+                "text": "Durmo oito horas todas as noites.",
+                "meaning": "dormir bem."
+              },
+              {
+                "text": "Bebo muita água todo dia.",
+                "meaning": "muita + água."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "sempre / nunca",
+              "meaning": "Frequência: todos os dias / nunca.",
+              "note": "Sempre como fruta."
+            },
+            {
+              "text": "às vezes",
+              "meaning": "A veces.",
+              "note": "Às vezes bebo café."
+            },
+            {
+              "text": "beber água",
+              "meaning": "Hábito saudável.",
+              "note": "Bebo água todo dia."
+            },
+            {
+              "text": "dormir oito horas",
+              "meaning": "Dormir bien.",
+              "note": "Durmo oito horas."
+            },
+            {
+              "text": "vida saudável",
+              "meaning": "Vida sana.",
+              "note": "Caminhar é vida saudável."
+            }
+          ],
+          "situation": "O grupo conversa sobre hábitos: quem caminha sempre, quem dorme bem e quem come doce às vezes.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que você sempre caminha no parque.",
+                "expected": [
+                  "Sempre caminho no parque.",
+                  "Eu sempre caminho no parque.",
+                  "sempre caminho no parque"
+                ],
+                "focus": "sempre",
+                "watch": "sempre + verbo."
+              },
+              {
+                "prompt": "Diga que você nunca come doce.",
+                "expected": [
+                  "Nunca como doce.",
+                  "Eu nunca como doce.",
+                  "nunca como doce"
+                ],
+                "focus": "nunca",
+                "watch": "nunca + verbo."
+              },
+              {
+                "prompt": "Diga que você dorme oito horas.",
+                "expected": [
+                  "Durmo oito horas.",
+                  "Eu durmo oito horas.",
+                  "durmo oito horas"
+                ],
+                "focus": "durmo",
+                "watch": "durmo = duermo."
+              },
+              {
+                "prompt": "Diga que às vezes você bebe refrigerante.",
+                "expected": [
+                  "Às vezes bebo refrigerante.",
+                  "as vezes bebo refrigerante"
+                ],
+                "focus": "às vezes",
+                "watch": "às vezes com acento."
+              },
+              {
+                "prompt": "Diga que você bebe muita água todo dia.",
+                "expected": [
+                  "Bebo muita água todo dia.",
+                  "bebo muita agua todo dia"
+                ],
+                "focus": "muita água",
+                "watch": "água com acento."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u15-habitos-e1",
+              "kind": "choice",
+              "prompt": "Ela caminha todos os dias. Ela ___ caminha.",
+              "explain": "Todos os dias = sempre.",
+              "options": [
+                "sempre",
+                "nunca",
+                "às vezes"
+              ],
+              "answers": [
+                "sempre"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-habitos-e2",
+              "kind": "gap",
+              "prompt": "Eu não como doce. ___ como doce.",
+              "explain": "nunca = 0 %: não como doce.",
+              "answers": [
+                "Nunca",
+                "nunca"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-habitos-e3",
+              "kind": "order",
+              "prompt": "Diga um hábito saudável: caminhar no parque, todos os dias.",
+              "explain": "sempre + caminhar: hábito.",
+              "answers": [
+                "Sempre caminho no parque"
+              ]
+            },
+            {
+              "id": "pt-foundations-u15-habitos-e4",
+              "kind": "written",
+              "prompt": "Diga quantas horas você dorme: oito.",
+              "explain": "durmo + horas.",
+              "answers": [
+                "Durmo oito horas.",
+                "Eu durmo oito horas.",
+                "durmo oito horas"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:health",
+            "vocab:daily-routine"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:frequency-adverbs"
+          ]
+        }
+      ]
     }
   ]
 }

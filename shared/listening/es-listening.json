@@ -1793,6 +1793,202 @@
         "grammar:frequency-adverbs"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "es-listen-metro-perdido",
+      "languageID": "es",
+      "title": "Perdido en el metro",
+      "level": "A1",
+      "topic": "transporte",
+      "unitID": "es-foundations-u15",
+      "text": "Estoy en el centro y quiero ir al museo. No conozco la ciudad y estoy perdido. Pregunto a una señora: «¿Dónde está la estación de metro, por favor?». La señora dice: «Está en la plaza, al lado del banco». Tomo la línea cuatro y bajo en la parada del museo. El metro pasa cada cinco minutos y el viaje dura diez. Llego al museo a las once y cuarto. Los billetes cuestan dos euros y cincuenta.",
+      "questions": [
+        {
+          "id": "es-listen-metro-perdido-q1",
+          "kind": "choice",
+          "prompt": "¿Adónde quiere ir el narrador?",
+          "options": [
+            "Al museo",
+            "A la estación",
+            "Al banco",
+            "A la plaza"
+          ],
+          "answers": [
+            "Al museo"
+          ],
+          "explain": "Estoy en el centro y quiero ir al museo."
+        },
+        {
+          "id": "es-listen-metro-perdido-q2",
+          "kind": "choice",
+          "prompt": "¿Dónde está la estación de metro?",
+          "options": [
+            "En la plaza, al lado del banco",
+            "Dentro del museo",
+            "En la parada del bus",
+            "Al final de la calle"
+          ],
+          "answers": [
+            "En la plaza, al lado del banco"
+          ],
+          "explain": "La señora dice: «Está en la plaza, al lado del banco»."
+        },
+        {
+          "id": "es-listen-metro-perdido-q3",
+          "kind": "written",
+          "prompt": "¿Qué línea toma el narrador?",
+          "answers": [
+            "La línea cuatro",
+            "la linea cuatro",
+            "la cuatro"
+          ],
+          "explain": "Tomo la línea cuatro."
+        },
+        {
+          "id": "es-listen-metro-perdido-q4",
+          "kind": "choice",
+          "prompt": "¿Cada cuánto pasa el metro?",
+          "options": [
+            "Cada cinco minutos",
+            "Cada diez minutos",
+            "Cada quince minutos",
+            "Cada media hora"
+          ],
+          "answers": [
+            "Cada cinco minutos"
+          ],
+          "explain": "El metro pasa cada cinco minutos."
+        },
+        {
+          "id": "es-listen-metro-perdido-q5",
+          "kind": "written",
+          "prompt": "¿A qué hora llega al museo?",
+          "answers": [
+            "A las once y cuarto",
+            "a las once y cuarto",
+            "las once y cuarto"
+          ],
+          "explain": "Llego al museo a las once y cuarto."
+        },
+        {
+          "id": "es-listen-metro-perdido-q6",
+          "kind": "written",
+          "prompt": "¿Cuánto cuesta el billete?",
+          "answers": [
+            "Dos euros y cincuenta",
+            "dos euros con cincuenta",
+            "2,50 euros"
+          ],
+          "explain": "Los billetes cuestan dos euros y cincuenta."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "es-listen-farmacia-sabado",
+      "languageID": "es",
+      "title": "Sábado en la farmacia",
+      "level": "A1",
+      "topic": "salud",
+      "unitID": "es-foundations-u16",
+      "text": "Es sábado y no me siento bien. Me duele la garganta y tengo tos, pero no tengo fiebre. Voy a la farmacia de mi barrio y pregunto por un jarabe para la tos. El farmacéutico pregunta: «¿Para quién es?». Es para mí. Compro también unas pastillas para la garganta: cuestan tres euros. La pastilla es una cada ocho horas y el jarabe, tres veces al día. Por la tarde descanso en casa y bebo mucha agua. Nunca tomo medicamentos sin preguntar primero.",
+      "questions": [
+        {
+          "id": "es-listen-farmacia-sabado-q1",
+          "kind": "choice",
+          "prompt": "¿Qué le duele?",
+          "options": [
+            "La garganta",
+            "La cabeza",
+            "El estómago",
+            "La espalda"
+          ],
+          "answers": [
+            "La garganta"
+          ],
+          "explain": "Me duele la garganta."
+        },
+        {
+          "id": "es-listen-farmacia-sabado-q2",
+          "kind": "choice",
+          "prompt": "¿Qué tiene y qué no tiene?",
+          "options": [
+            "Tos, pero no fiebre",
+            "Fiebre, pero no tos",
+            "Fiebre y tos",
+            "Ni tos ni fiebre"
+          ],
+          "answers": [
+            "Tos, pero no fiebre"
+          ],
+          "explain": "Tengo tos, pero no tengo fiebre."
+        },
+        {
+          "id": "es-listen-farmacia-sabado-q3",
+          "kind": "choice",
+          "prompt": "¿Qué compra para la garganta?",
+          "options": [
+            "Pastillas",
+            "Jarabe",
+            "Agua",
+            "Nada"
+          ],
+          "answers": [
+            "Pastillas"
+          ],
+          "explain": "Compro también unas pastillas para la garganta."
+        },
+        {
+          "id": "es-listen-farmacia-sabado-q4",
+          "kind": "written",
+          "prompt": "¿Cuánto cuestan las pastillas?",
+          "answers": [
+            "Tres euros",
+            "tres euros",
+            "3 euros"
+          ],
+          "explain": "Las pastillas cuestan tres euros."
+        },
+        {
+          "id": "es-listen-farmacia-sabado-q5",
+          "kind": "written",
+          "prompt": "¿Cada cuántas horas toma la pastilla?",
+          "answers": [
+            "Cada ocho horas",
+            "cada ocho horas",
+            "cada 8 horas"
+          ],
+          "explain": "La pastilla es una cada ocho horas."
+        },
+        {
+          "id": "es-listen-farmacia-sabado-q6",
+          "kind": "choice",
+          "prompt": "¿Qué hace por la tarde?",
+          "options": [
+            "Descansa en casa y bebe agua",
+            "Trabaja en la farmacia",
+            "Sale con amigos",
+            "Juega al fútbol"
+          ],
+          "answers": [
+            "Descansa en casa y bebe agua"
+          ],
+          "explain": "Por la tarde descanso en casa y bebo mucha agua."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:health",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
     }
   ]
 }

@@ -5987,6 +5987,1089 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u14",
+      "title": "En mouvement",
+      "subtitle": "Métro, bus et train",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "metro-et-bus",
+          "title": "Le métro et le bus",
+          "subtitle": "Je prends le métro",
+          "symbol": "bus",
+          "category": "Course",
+          "situation": "Chaque matin, vous prenez le métro à la station République — et un ami vous demande : comment tu vas au centre-ville ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "le-train",
+          "title": "Le train",
+          "subtitle": "Un billet, s'il vous plaît",
+          "symbol": "tram",
+          "category": "Course",
+          "situation": "À la gare, vous lisez les horaires : le train part à sept heures et demie — et au guichet, vous demandez un billet pour Lyon.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u14-transport",
+          "title": "Comment j'y vais",
+          "goal": "Parler de tes transports du quotidien : je prends le métro, je prends le bus — ou je vais à pied.",
+          "intro": {
+            "explanation": [
+              "Pour dire comment tu vas quelque part, on utilise prendre : « Je prends le métro. » « Je prends le bus numéro 12. »",
+              "On peut aussi aller à pied : « Je vais au travail à pied. » À pied = je marche.",
+              "Pour demander le moyen : « Tu vas au bureau en bus ? » ou « Comment tu vas au centre-ville ? »"
+            ],
+            "examples": [
+              {
+                "text": "Je prends le métro tous les jours.",
+                "meaning": "Le métro du quotidien."
+              },
+              {
+                "text": "Je prends le bus à la gare.",
+                "meaning": "Prendre le bus."
+              },
+              {
+                "text": "Je vais au travail à pied.",
+                "meaning": "À pied = je marche."
+              },
+              {
+                "text": "Tu vas au bureau en bus ?",
+                "meaning": "La question avec est-ce que ou non."
+              },
+              {
+                "text": "Comment tu vas au centre-ville ?",
+                "meaning": "Demander le moyen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "prendre le métro / le bus",
+              "meaning": "Utiliser un transport.",
+              "note": "Je prends le métro à République."
+            },
+            {
+              "text": "à pied",
+              "meaning": "Marcher.",
+              "note": "Je vais à la piscine à pied."
+            },
+            {
+              "text": "en bus / en métro",
+              "meaning": "Dire le moyen.",
+              "note": "Je vais en bus, pas en métro."
+            },
+            {
+              "text": "la station / l'arrêt",
+              "meaning": "Où prendre le métro / le bus.",
+              "note": "L'arrêt de bus est là."
+            },
+            {
+              "text": "Comment tu vas … ?",
+              "meaning": "Demander le moyen.",
+              "note": "Comment tu vas au travail ?"
+            }
+          ],
+          "situation": "Chaque matin, vous prenez le métro à la station République avec le bus numéro 12 pour les grands jours — et un ami vous demande : comment tu vas au centre-ville ?",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis que tu prends le métro.",
+                "expected": [
+                  "Je prends le métro.",
+                  "Je prends le metro.",
+                  "Je prends toujours le métro."
+                ],
+                "focus": "prendre le métro",
+                "watch": "avec je : je prends."
+              },
+              {
+                "prompt": "Dis que tu vas au travail à pied.",
+                "expected": [
+                  "Je vais au travail à pied.",
+                  "Je vais au travail a pied.",
+                  "Je vais à pied au travail."
+                ],
+                "focus": "à pied",
+                "watch": "à pied = je marche."
+              },
+              {
+                "prompt": "Demande à un ami s'il va au bureau en bus.",
+                "expected": [
+                  "Tu vas au bureau en bus ?",
+                  "Est-ce que tu vas au bureau en bus ?"
+                ],
+                "focus": "en bus",
+                "watch": "question : est-ce que + tu vas."
+              },
+              {
+                "prompt": "Demande comment un ami va au centre-ville.",
+                "expected": [
+                  "Comment tu vas au centre-ville ?",
+                  "Tu vas au centre-ville comment ?"
+                ],
+                "focus": "comment",
+                "watch": "comment + tu vas."
+              },
+              {
+                "prompt": "Dis que tu prends le bus à la gare.",
+                "expected": [
+                  "Je prends le bus à la gare.",
+                  "Je prends le bus a la gare.",
+                  "Je prends le bus, à la gare."
+                ],
+                "focus": "à la gare",
+                "watch": "à = le lieu."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u14-transport-e1",
+              "kind": "choice",
+              "prompt": "Je ___ le bus numéro 12.",
+              "options": [
+                "prends",
+                "prend",
+                "prendre",
+                "vais"
+              ],
+              "answers": [
+                "prends"
+              ],
+              "explain": "Avec je : je prends le bus."
+            },
+            {
+              "id": "fr-foundations-u14-transport-e2",
+              "kind": "gap",
+              "prompt": "Je vais au travail ___ pied.",
+              "answers": [
+                "à",
+                "a"
+              ],
+              "explain": "à pied = je marche."
+            },
+            {
+              "id": "fr-foundations-u14-transport-e3",
+              "kind": "order",
+              "prompt": "Dis que le métro est ton transport, chaque jour.",
+              "answers": [
+                "Je prends le métro tous les jours"
+              ],
+              "explain": "je prends + le métro + le moment."
+            },
+            {
+              "id": "fr-foundations-u14-transport-e4",
+              "kind": "written",
+              "prompt": "Et toi ? Dis comment tu vas au centre-ville : tu vas en métro.",
+              "answers": [
+                "je vais au centre-ville en métro",
+                "je vais au centre-ville en metro",
+                "je prends le métro pour aller au centre-ville"
+              ],
+              "explain": "aller en métro : le moyen de transport."
+            }
+          ],
+          "skills": [
+            "vocab:transport",
+            "grammar:present-simple",
+            "function:ask-simple-questions",
+            "vocab:town"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u14-horaires",
+          "title": "Ça part à quelle heure ?",
+          "goal": "Lire les horaires et dire l'heure : le train part à sept heures et demie, le bus arrive à neuf heures et quart.",
+          "intro": {
+            "explanation": [
+              "Pour demander l'heure : « Il est quelle heure ? » Pour le départ : « Ça part à quelle heure ? » La réponse : « Ça part à sept heures. »",
+              "Les minutes faciles : « et quart » = 15 minutes après, « et demie » = 30 minutes après. 7 h 30 = sept heures et demie.",
+              "Pour les horaires, on utilise partir et arriver : « Le bus part à huit heures. Le métro arrive à neuf heures et quart. »"
+            ],
+            "examples": [
+              {
+                "text": "Il est quelle heure ?",
+                "meaning": "Demander l'heure."
+              },
+              {
+                "text": "Il est huit heures.",
+                "meaning": "Dire l'heure."
+              },
+              {
+                "text": "Ça part à quelle heure ?",
+                "meaning": "Demander le départ."
+              },
+              {
+                "text": "Le train part à sept heures et demie.",
+                "meaning": "7 h 30 : et demie."
+              },
+              {
+                "text": "Le bus arrive à neuf heures et quart.",
+                "meaning": "9 h 15 : et quart."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Il est quelle heure ?",
+              "meaning": "Demander l'heure.",
+              "note": "Il est quelle heure ? — Il est midi."
+            },
+            {
+              "text": "à + heure",
+              "meaning": "Le moment du départ.",
+              "note": "Le bus part à huit heures."
+            },
+            {
+              "text": "et demie",
+              "meaning": "30 minutes après.",
+              "note": "À sept heures et demie (7 h 30)."
+            },
+            {
+              "text": "et quart",
+              "meaning": "15 minutes après.",
+              "note": "À neuf heures et quart (9 h 15)."
+            },
+            {
+              "text": "partir / arriver",
+              "meaning": "Le départ et l'arrivée.",
+              "note": "Le train part, il arrive à Lyon."
+            }
+          ],
+          "situation": "À la gare, vous lisez les horaires : le train part à sept heures et demie, le bus arrive à neuf heures et quart.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demande l'heure à un ami.",
+                "expected": [
+                  "Il est quelle heure ?",
+                  "Quelle heure est-il ?"
+                ],
+                "focus": "quelle heure",
+                "watch": "Il est + quelle heure ?"
+              },
+              {
+                "prompt": "Demande à quelle heure part le train.",
+                "expected": [
+                  "Le train part à quelle heure ?",
+                  "Le train part a quelle heure ?",
+                  "Ça part à quelle heure ?"
+                ],
+                "focus": "à quelle heure",
+                "watch": "à + quelle heure."
+              },
+              {
+                "prompt": "Dis que le train part à sept heures et demie.",
+                "expected": [
+                  "Le train part à sept heures et demie.",
+                  "Le train part a sept heures et demie.",
+                  "Il part à sept heures et demie."
+                ],
+                "focus": "et demie",
+                "watch": "7 h 30 = et demie."
+              },
+              {
+                "prompt": "Dis que le bus arrive à neuf heures et quart.",
+                "expected": [
+                  "Le bus arrive à neuf heures et quart.",
+                  "Le bus arrive a neuf heures et quart."
+                ],
+                "focus": "et quart",
+                "watch": "9 h 15 = et quart."
+              },
+              {
+                "prompt": "Dis que le métro arrive à six heures.",
+                "expected": [
+                  "Le métro arrive à six heures.",
+                  "Le metro arrive a six heures.",
+                  "Il arrive à six heures."
+                ],
+                "focus": "arrive",
+                "watch": "arriver à + heure."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u14-horaires-e1",
+              "kind": "choice",
+              "prompt": "Il est 7 h 30 : sept heures et ___.",
+              "options": [
+                "demie",
+                "quart",
+                "midi",
+                "minuit"
+              ],
+              "answers": [
+                "demie"
+              ],
+              "explain": "30 minutes après : et demie."
+            },
+            {
+              "id": "fr-foundations-u14-horaires-e2",
+              "kind": "gap",
+              "prompt": "Le bus arrive ___ neuf heures et quart.",
+              "answers": [
+                "à",
+                "a"
+              ],
+              "explain": "à + heure : le moment."
+            },
+            {
+              "id": "fr-foundations-u14-horaires-e3",
+              "kind": "order",
+              "prompt": "Il est 7 h 30 et le train part. Dis-le.",
+              "answers": [
+                "Le train part à sept heures et demie"
+              ],
+              "explain": "partir à + l'heure."
+            },
+            {
+              "id": "fr-foundations-u14-horaires-e4",
+              "kind": "written",
+              "prompt": "Demande à un ami à quelle heure part le bus.",
+              "answers": [
+                "le bus part à quelle heure",
+                "le bus part a quelle heure",
+                "ça part à quelle heure",
+                "ca part a quelle heure"
+              ],
+              "explain": "partir à quelle heure ? : la question."
+            }
+          ],
+          "skills": [
+            "function:tell-time",
+            "vocab:transport",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "tell-time"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u14-billet",
+          "title": "Un billet, s'il vous plaît",
+          "goal": "Acheter des billets : un billet pour Lyon, aller-retour — et demander le prix.",
+          "intro": {
+            "explanation": [
+              "Pour acheter un billet, on dit la destination après pour : « Un billet pour Lyon, s'il vous plaît. »",
+              "Aller simple = seulement l'aller. Aller-retour = aller et revenir : « Un aller-retour, s'il vous plaît. »",
+              "Pour le prix : « Ça coûte combien ? » La réponse : « Ça coûte douze euros. » On demande aussi : « Combien de bagages ? »"
+            ],
+            "examples": [
+              {
+                "text": "Un billet pour Lyon, s'il vous plaît.",
+                "meaning": "La demande polie."
+              },
+              {
+                "text": "Aller-retour, s'il vous plaît.",
+                "meaning": "Aller et revenir."
+              },
+              {
+                "text": "Un aller simple pour Paris.",
+                "meaning": "Seulement l'aller."
+              },
+              {
+                "text": "Ça coûte combien ?",
+                "meaning": "Demander le prix."
+              },
+              {
+                "text": "Ça coûte douze euros.",
+                "meaning": "Le prix."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "un billet pour + ville",
+              "meaning": "Le billet de destination.",
+              "note": "Un billet pour Marseille."
+            },
+            {
+              "text": "aller simple / aller-retour",
+              "meaning": "Un trajet ou deux.",
+              "note": "Je prends un aller-retour."
+            },
+            {
+              "text": "s'il vous plaît",
+              "meaning": "La formule polie.",
+              "note": "Un billet, s'il vous plaît."
+            },
+            {
+              "text": "Ça coûte combien ?",
+              "meaning": "Demander le prix.",
+              "note": "Ça coûte combien, le billet ?"
+            },
+            {
+              "text": "combien de + quantité",
+              "meaning": "La quantité.",
+              "note": "Combien de bagages ?"
+            }
+          ],
+          "situation": "Au guichet de la gare, vous demandez : un billet pour Lyon, s'il vous plaît, aller-retour — et vous demandez le prix.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demande un billet pour Paris.",
+                "expected": [
+                  "Un billet pour Paris, s'il vous plaît.",
+                  "Je voudrais un billet pour Paris."
+                ],
+                "focus": "un billet pour",
+                "watch": "poli : s'il vous plaît."
+              },
+              {
+                "prompt": "Demande un billet aller-retour.",
+                "expected": [
+                  "Un aller-retour, s'il vous plaît.",
+                  "Je voudrais un aller-retour."
+                ],
+                "focus": "aller-retour",
+                "watch": "aller et revenir."
+              },
+              {
+                "prompt": "Demande le prix du billet.",
+                "expected": [
+                  "Ça coûte combien ?",
+                  "C'est combien ?",
+                  "Ça coûte combien, le billet ?"
+                ],
+                "focus": "combien",
+                "watch": "ça coûte combien ?"
+              },
+              {
+                "prompt": "Dis que le billet coûte douze euros.",
+                "expected": [
+                  "Ça coûte douze euros.",
+                  "C'est douze euros."
+                ],
+                "focus": "coûter",
+                "watch": "ça coûte + le prix."
+              },
+              {
+                "prompt": "Demande au vendeur combien de bagages tu peux prendre.",
+                "expected": [
+                  "Combien de bagages ?",
+                  "Combien de bagages je peux prendre ?"
+                ],
+                "focus": "combien de",
+                "watch": "de après combien."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u14-billet-e1",
+              "kind": "choice",
+              "prompt": "Je voudrais un billet ___ Lyon, s'il vous plaît.",
+              "options": [
+                "pour",
+                "à",
+                "en",
+                "de"
+              ],
+              "answers": [
+                "pour"
+              ],
+              "explain": "pour + la destination : pour Lyon."
+            },
+            {
+              "id": "fr-foundations-u14-billet-e2",
+              "kind": "gap",
+              "prompt": "Un aller-___, s'il vous plaît. Je reviens ce soir.",
+              "answers": [
+                "retour"
+              ],
+              "explain": "aller-retour = aller et revenir."
+            },
+            {
+              "id": "fr-foundations-u14-billet-e3",
+              "kind": "order",
+              "prompt": "Demande le prix, poliment.",
+              "answers": [
+                "Ça coûte combien"
+              ],
+              "explain": "ça coûte + combien : le prix."
+            },
+            {
+              "id": "fr-foundations-u14-billet-e4",
+              "kind": "written",
+              "prompt": "Au guichet : demande un billet pour Lyon, poliment.",
+              "answers": [
+                "un billet pour lyon, s'il vous plaît",
+                "un billet pour lyon s'il vous plait",
+                "je voudrais un billet pour lyon"
+              ],
+              "explain": "un billet pour + ville + s'il vous plaît."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "function:make-requests",
+            "vocab:transport",
+            "grammar:quantities"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u15",
+      "title": "Je me sens bien",
+      "subtitle": "Santé de base",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "pas-en-forme",
+          "title": "Je ne me sens pas bien",
+          "subtitle": "J'ai mal à la tête",
+          "symbol": "cross.case",
+          "category": "Course",
+          "situation": "Vous êtes malade : j'ai mal à la tête et j'ai de la fièvre — un ami demande : ça va ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-pharmacie",
+          "title": "À la pharmacie",
+          "subtitle": "Quelque chose pour la douleur",
+          "symbol": "pills",
+          "category": "Course",
+          "situation": "À la pharmacie, vous demandez quelque chose pour la tête — et vous demandez : combien de fois par jour ?",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u15-symptomes",
+          "title": "Je ne me sens pas bien",
+          "goal": "Dire tes symptômes : j'ai mal à la tête, j'ai de la fièvre — et demander : ça va ?",
+          "intro": {
+            "explanation": [
+              "Pour dire que tu n'es pas en forme : « Je ne me sens pas bien. » On dit aussi : « Je suis malade. »",
+              "La douleur avec avoir mal à : « J'ai mal à la tête. » « J'ai mal au ventre. » à la (féminin), au (masculin).",
+              "Autres symptômes avec avoir : « J'ai de la fièvre. » « Je suis fatigué. » Pour demander : « Ça va ? Tu es malade ? »"
+            ],
+            "examples": [
+              {
+                "text": "Je ne me sens pas bien.",
+                "meaning": "Être malade."
+              },
+              {
+                "text": "J'ai mal à la tête.",
+                "meaning": "La tête fait mal."
+              },
+              {
+                "text": "J'ai mal au ventre.",
+                "meaning": "à + le = au."
+              },
+              {
+                "text": "J'ai de la fièvre.",
+                "meaning": "38 °C, c'est la fièvre."
+              },
+              {
+                "text": "Tu es malade ?",
+                "meaning": "La question."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "avoir mal à la tête / au ventre",
+              "meaning": "Dire la douleur.",
+              "note": "à la (féminin), au (masculin)."
+            },
+            {
+              "text": "avoir de la fièvre",
+              "meaning": "Être chaud, malade.",
+              "note": "J'ai 38 de fièvre."
+            },
+            {
+              "text": "être malade",
+              "meaning": "Ne pas être en forme.",
+              "note": "Il est malade, il reste au lit."
+            },
+            {
+              "text": "être fatigué / fatiguée",
+              "meaning": "Ne pas avoir d'énergie.",
+              "note": "Je suis très fatiguée."
+            },
+            {
+              "text": "Ça va ?",
+              "meaning": "Demander la santé.",
+              "note": "Ça va ? — Non, je suis malade."
+            }
+          ],
+          "situation": "Vous êtes malade : je ne me sens pas bien, j'ai mal à la tête et j'ai de la fièvre — un ami demande : ça va ?",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis que tu ne te sens pas bien.",
+                "expected": [
+                  "Je ne me sens pas bien.",
+                  "Je suis malade."
+                ],
+                "focus": "ne…pas",
+                "watch": "négation : ne me sens pas."
+              },
+              {
+                "prompt": "Dis que tu as mal à la tête.",
+                "expected": [
+                  "J'ai mal à la tête.",
+                  "J'ai mal a la tete.",
+                  "J'ai très mal à la tête."
+                ],
+                "focus": "mal à la tête",
+                "watch": "à la + féminin : la tête."
+              },
+              {
+                "prompt": "Dis que tu as de la fièvre.",
+                "expected": [
+                  "J'ai de la fièvre.",
+                  "J'ai de la fievre.",
+                  "J'ai beaucoup de fièvre."
+                ],
+                "focus": "fièvre",
+                "watch": "avoir de la + fièvre."
+              },
+              {
+                "prompt": "Dis que tu as mal au ventre.",
+                "expected": [
+                  "J'ai mal au ventre.",
+                  "J'ai très mal au ventre."
+                ],
+                "focus": "mal au ventre",
+                "watch": "à + le = au."
+              },
+              {
+                "prompt": "Demande à un ami s'il va bien.",
+                "expected": [
+                  "Ça va ?",
+                  "Tu vas bien ?",
+                  "Ça va, tu es malade ?"
+                ],
+                "focus": "ça va",
+                "watch": "question rapide : ça va ?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u15-symptomes-e1",
+              "kind": "choice",
+              "prompt": "J'ai ___ à la tête.",
+              "options": [
+                "mal",
+                "bien",
+                "froid",
+                "peur"
+              ],
+              "answers": [
+                "mal"
+              ],
+              "explain": "avoir mal à : la douleur."
+            },
+            {
+              "id": "fr-foundations-u15-symptomes-e2",
+              "kind": "gap",
+              "prompt": "J'ai mal ___ ventre.",
+              "answers": [
+                "au"
+              ],
+              "explain": "à + le = au : au ventre."
+            },
+            {
+              "id": "fr-foundations-u15-symptomes-e3",
+              "kind": "order",
+              "prompt": "Tu as 38 °C. Dis-le avec la fièvre.",
+              "answers": [
+                "J'ai de la fièvre"
+              ],
+              "explain": "avoir de la fièvre : le symptôme."
+            },
+            {
+              "id": "fr-foundations-u15-symptomes-e4",
+              "kind": "written",
+              "prompt": "Dis deux choses : tu es malade et tu as mal à la tête.",
+              "answers": [
+                "je suis malade et j'ai mal à la tête",
+                "je suis malade et j'ai mal a la tete",
+                "je ne me sens pas bien et j'ai mal à la tête"
+              ],
+              "explain": "être malade + avoir mal à : les symptômes."
+            }
+          ],
+          "skills": [
+            "function:talk-about-health",
+            "vocab:health",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u15-pharmacie",
+          "title": "À la pharmacie",
+          "goal": "Demander quelque chose pour la douleur à la pharmacie — et comprendre combien de fois par jour.",
+          "intro": {
+            "explanation": [
+              "À la pharmacie, on demande : « Bonjour, quelque chose pour la tête, s'il vous plaît. » On dit le problème après pour.",
+              "Le pharmacien demande : « Vous avez une ordonnance ? » La réponse : « Non, je n'ai pas d'ordonnance. » Une ordonnance = le papier du docteur.",
+              "La posologie : « Combien de fois par jour ? » La réponse : « Deux fois par jour, matin et soir. »"
+            ],
+            "examples": [
+              {
+                "text": "Bonjour, je voudrais quelque chose pour la tête.",
+                "meaning": "La demande."
+              },
+              {
+                "text": "Vous avez une ordonnance ?",
+                "meaning": "La question du pharmacien."
+              },
+              {
+                "text": "Non, je n'ai pas d'ordonnance.",
+                "meaning": "La réponse négative."
+              },
+              {
+                "text": "Combien de fois par jour ?",
+                "meaning": "La posologie."
+              },
+              {
+                "text": "Deux fois par jour, matin et soir.",
+                "meaning": "La réponse."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "quelque chose pour…",
+              "meaning": "Demander un médicament.",
+              "note": "Quelque chose pour la gorge ?"
+            },
+            {
+              "text": "une ordonnance",
+              "meaning": "Le papier du docteur.",
+              "note": "Vous avez une ordonnance ?"
+            },
+            {
+              "text": "des comprimés / un sirop",
+              "meaning": "Le médicament.",
+              "note": "Un sirop pour la toux."
+            },
+            {
+              "text": "deux fois par jour",
+              "meaning": "La quantité du jour.",
+              "note": "Deux fois par jour, matin et soir."
+            },
+            {
+              "text": "Je voudrais…",
+              "meaning": "Demander poliment.",
+              "note": "Je voudrais quelque chose pour dormir."
+            }
+          ],
+          "situation": "À la pharmacie, vous demandez quelque chose pour la tête. Le pharmacien demande une ordonnance — non — et vous demandez : combien de fois par jour ?",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demande quelque chose pour la tête, à la pharmacie.",
+                "expected": [
+                  "Quelque chose pour la tête, s'il vous plaît.",
+                  "Quelque chose pour la tete, s'il vous plait."
+                ],
+                "focus": "quelque chose pour",
+                "watch": "pour + le problème."
+              },
+              {
+                "prompt": "Le pharmacien demande une ordonnance. Réponds : non.",
+                "expected": [
+                  "Non, je n'ai pas d'ordonnance.",
+                  "Je n'ai pas d'ordonnance."
+                ],
+                "focus": "pas d'ordonnance",
+                "watch": "ne…pas de : pas d'ordonnance."
+              },
+              {
+                "prompt": "Demande combien de fois par jour tu prends le médicament.",
+                "expected": [
+                  "Combien de fois par jour ?",
+                  "Je le prends combien de fois par jour ?"
+                ],
+                "focus": "combien de fois",
+                "watch": "fois : la fréquence."
+              },
+              {
+                "prompt": "Dis que tu prends deux comprimés par jour.",
+                "expected": [
+                  "Je prends deux comprimés par jour.",
+                  "Deux fois par jour, matin et soir."
+                ],
+                "focus": "deux fois",
+                "watch": "deux fois par jour."
+              },
+              {
+                "prompt": "Demande poliment quelque chose pour dormir.",
+                "expected": [
+                  "Je voudrais quelque chose pour dormir.",
+                  "Quelque chose pour dormir, s'il vous plaît."
+                ],
+                "focus": "je voudrais",
+                "watch": "je voudrais = poli."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u15-pharmacie-e1",
+              "kind": "choice",
+              "prompt": "Quelque chose ___ la gorge, s'il vous plaît.",
+              "options": [
+                "pour",
+                "à",
+                "au",
+                "de"
+              ],
+              "answers": [
+                "pour"
+              ],
+              "explain": "pour + le problème de santé."
+            },
+            {
+              "id": "fr-foundations-u15-pharmacie-e2",
+              "kind": "gap",
+              "prompt": "Vous avez une ___ ? — Non, je n'ai pas.",
+              "answers": [
+                "ordonnance"
+              ],
+              "explain": "une ordonnance : le papier du docteur."
+            },
+            {
+              "id": "fr-foundations-u15-pharmacie-e3",
+              "kind": "order",
+              "prompt": "Demande la posologie.",
+              "answers": [
+                "Combien de fois par jour"
+              ],
+              "explain": "combien de fois par jour : la fréquence."
+            },
+            {
+              "id": "fr-foundations-u15-pharmacie-e4",
+              "kind": "written",
+              "prompt": "À la pharmacie : demande quelque chose pour la tête.",
+              "answers": [
+                "quelque chose pour la tête, s'il vous plaît",
+                "quelque chose pour la tete s'il vous plait",
+                "je voudrais quelque chose pour la tête"
+              ],
+              "explain": "quelque chose pour + la douleur."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:health",
+            "function:make-requests",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "fr-foundations-u15-habitudes",
+          "title": "Une vie saine",
+          "goal": "Parler de tes habitudes avec toujours et jamais : je bois toujours de l'eau, je ne fume jamais.",
+          "intro": {
+            "explanation": [
+              "Toujours = 100 % du temps : « Je bois toujours de l'eau. » Jamais = 0 % : « Je ne fume jamais. »",
+              "Position : toujours et jamais viennent après le verbe : « Je mange toujours des fruits. » « Je ne dors jamais tard. »",
+              "Les bonnes habitudes : « Je fais du sport le matin, je dors huit heures. » Pour demander : « Tu fais du sport ? »"
+            ],
+            "examples": [
+              {
+                "text": "Je bois toujours de l'eau.",
+                "meaning": "Tous les jours."
+              },
+              {
+                "text": "Je ne fume jamais.",
+                "meaning": "Zéro cigarettes."
+              },
+              {
+                "text": "Je mange toujours des fruits.",
+                "meaning": "après le verbe."
+              },
+              {
+                "text": "Je ne dors jamais tard.",
+                "meaning": "ne…jamais."
+              },
+              {
+                "text": "Je fais du sport le matin.",
+                "meaning": "La bonne habitude."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "toujours",
+              "meaning": "100 % du temps.",
+              "note": "Je bois toujours de l'eau."
+            },
+            {
+              "text": "ne…jamais",
+              "meaning": "0 % du temps.",
+              "note": "Je ne fume jamais."
+            },
+            {
+              "text": "faire du sport",
+              "meaning": "Bouger le corps.",
+              "note": "Je fais du sport deux fois par semaine."
+            },
+            {
+              "text": "dormir huit heures",
+              "meaning": "Bien dormir.",
+              "note": "Je dors huit heures par nuit."
+            },
+            {
+              "text": "être en forme",
+              "meaning": "Être en bonne santé.",
+              "note": "Je mange des fruits et je marche : je suis en forme."
+            }
+          ],
+          "situation": "Vous parlez de votre vie saine : vous buvez toujours de l'eau, vous ne fumez jamais — et vous dormez huit heures.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dis que tu bois toujours de l'eau.",
+                "expected": [
+                  "Je bois toujours de l'eau.",
+                  "Je bois de l'eau tous les jours."
+                ],
+                "focus": "toujours",
+                "watch": "toujours après le verbe."
+              },
+              {
+                "prompt": "Dis que tu ne fumes jamais.",
+                "expected": [
+                  "Je ne fume jamais.",
+                  "Non, je ne fume jamais."
+                ],
+                "focus": "ne…jamais",
+                "watch": "ne + verbe + jamais."
+              },
+              {
+                "prompt": "Dis que tu manges toujours des fruits.",
+                "expected": [
+                  "Je mange toujours des fruits.",
+                  "Je mange toujours des fruits frais."
+                ],
+                "focus": "toujours",
+                "watch": "toujours après le verbe."
+              },
+              {
+                "prompt": "Dis que tu ne dors jamais tard.",
+                "expected": [
+                  "Je ne dors jamais tard.",
+                  "Je me couche toujours tôt."
+                ],
+                "focus": "jamais",
+                "watch": "ne…jamais + tard."
+              },
+              {
+                "prompt": "Demande à un ami s'il fait du sport.",
+                "expected": [
+                  "Tu fais du sport ?",
+                  "Est-ce que tu fais du sport ?"
+                ],
+                "focus": "faire du sport",
+                "watch": "question : est-ce que + tu fais."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u15-habitudes-e1",
+              "kind": "choice",
+              "prompt": "À chaque repas, je bois de l'eau : je ___ bois !",
+              "options": [
+                "toujours",
+                "jamais",
+                "souvent",
+                "peu"
+              ],
+              "answers": [
+                "toujours"
+              ],
+              "explain": "toujours = tous les jours, 100 %."
+            },
+            {
+              "id": "fr-foundations-u15-habitudes-e2",
+              "kind": "gap",
+              "prompt": "Je ne fume ___, c'est mauvais pour la santé.",
+              "answers": [
+                "jamais"
+              ],
+              "explain": "ne…jamais = 0 %."
+            },
+            {
+              "id": "fr-foundations-u15-habitudes-e3",
+              "kind": "order",
+              "prompt": "Bonne habitude : le sport, chaque matin. Dis-le.",
+              "answers": [
+                "Je fais du sport le matin"
+              ],
+              "explain": "faire du sport + le moment."
+            },
+            {
+              "id": "fr-foundations-u15-habitudes-e4",
+              "kind": "written",
+              "prompt": "Donne deux bonnes habitudes avec toujours et jamais.",
+              "answers": [
+                "je bois toujours de l'eau et je ne fume jamais",
+                "je bois toujours de l'eau, je ne fume jamais",
+                "je bois toujours de l'eau et je ne fume jamais !"
+              ],
+              "explain": "toujours + jamais : deux habitudes saines."
+            }
+          ],
+          "skills": [
+            "grammar:frequency-adverbs",
+            "function:talk-about-routines",
+            "vocab:health",
+            "vocab:daily-routine"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:frequency-adverbs"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -816,6 +816,90 @@
           "explain": "« Bici alle cinque e pizza alle otto »."
         }
       ]
+    },
+    {
+      "id": "it-read-orari-metro",
+      "languageID": "it",
+      "title": "Gli orari della metro",
+      "level": "A1",
+      "topic": "trasporti",
+      "unitID": "it-foundations-u14",
+      "text": "Gli orari della metro. La metro apre alle sei del mattino e chiude a mezzanotte. La mattina i treni partono ogni cinque minuti: alle 6:00, alle 6:05, alle 6:10. La sera partono ogni dieci minuti. Il viaggio da Porta Nuova a Lingotto dura dieci minuti. Il biglietto costa un euro e settanta: lo compri alla macchinetta, poi lo passi alla barriera. A che ora parte il prossimo treno ? Guarda il tabellone giallo: lì trovi tutti gli orari.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-orari-metro-q1",
+          "kind": "choice",
+          "prompt": "A che ora apre la metro ?",
+          "options": [
+            "Alle sei",
+            "Alle sette",
+            "A mezzanotte",
+            "Alle otto"
+          ],
+          "answers": [
+            "Alle sei"
+          ],
+          "explain": "« La metro apre alle sei del mattino »."
+        },
+        {
+          "id": "it-read-orari-metro-q2",
+          "kind": "choice",
+          "prompt": "Ogni quanti minuti partono i treni la mattina ?",
+          "options": [
+            "Ogni cinque minuti",
+            "Ogni dieci minuti",
+            "Ogni venti minuti",
+            "Ogni ora"
+          ],
+          "answers": [
+            "Ogni cinque minuti"
+          ],
+          "explain": "« La mattina i treni partono ogni cinque minuti »."
+        },
+        {
+          "id": "it-read-orari-metro-q3",
+          "kind": "written",
+          "prompt": "Quanto dura il viaggio da Porta Nuova a Lingotto ?",
+          "answers": [
+            "Dieci minuti",
+            "10 minuti"
+          ],
+          "explain": "« Il viaggio dura dieci minuti »."
+        },
+        {
+          "id": "it-read-orari-metro-q4",
+          "kind": "written",
+          "prompt": "Quanto costa il biglietto ?",
+          "answers": [
+            "Un euro e settanta",
+            "1 euro e 70",
+            "Un euro e settanta centesimi"
+          ],
+          "explain": "« Il biglietto costa un euro e settanta »."
+        },
+        {
+          "id": "it-read-orari-metro-q5",
+          "kind": "choice",
+          "prompt": "Dove trovi tutti gli orari ?",
+          "options": [
+            "Sul tabellone giallo",
+            "Sul biglietto",
+            "Alla barriera",
+            "Sulla macchinetta"
+          ],
+          "answers": [
+            "Sul tabellone giallo"
+          ],
+          "explain": "« Guarda il tabellone giallo: lì trovi tutti gli orari »."
+        }
+      ]
     }
   ]
 }

@@ -780,6 +780,91 @@
           "explain": "J'aime faire des crêpes, écrit Mai."
         }
       ]
+    },
+    {
+      "id": "fr-read-horaires-metro",
+      "languageID": "fr",
+      "title": "Les horaires du métro",
+      "level": "A1",
+      "topic": "horaires",
+      "unitID": "fr-foundations-u14",
+      "text": "Voici les horaires du métro, ligne 1. Premier départ : six heures. Dernier départ : vingt-trois heures (11 h du soir). Un train part toutes les quatre minutes le matin. La prochaine rame arrive à huit heures et quart. Pour lire l'horaire, regardez la direction : Château de Vincennes ou La Défense. Je prends toujours le métro de huit heures pour aller au travail : il n'est jamais en retard !",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-horaires-metro-q1",
+          "kind": "choice",
+          "prompt": "Le premier départ est à quelle heure ?",
+          "options": [
+            "À six heures",
+            "À huit heures",
+            "À onze heures",
+            "À trois heures"
+          ],
+          "answers": [
+            "À six heures"
+          ],
+          "explain": "Premier départ : six heures."
+        },
+        {
+          "id": "fr-read-horaires-metro-q2",
+          "kind": "choice",
+          "prompt": "Le dernier départ est à quelle heure ?",
+          "options": [
+            "À vingt-trois heures",
+            "À six heures",
+            "À huit heures et quart",
+            "À midi"
+          ],
+          "answers": [
+            "À vingt-trois heures"
+          ],
+          "explain": "Dernier départ : vingt-trois heures, c'est 11 h du soir."
+        },
+        {
+          "id": "fr-read-horaires-metro-q3",
+          "kind": "choice",
+          "prompt": "Un train part toutes les… ?",
+          "options": [
+            "Quatre minutes",
+            "Quatre heures",
+            "Deux minutes",
+            "Dix minutes"
+          ],
+          "answers": [
+            "Quatre minutes"
+          ],
+          "explain": "Un train part toutes les quatre minutes le matin."
+        },
+        {
+          "id": "fr-read-horaires-metro-q4",
+          "kind": "written",
+          "prompt": "La prochaine rame arrive à quelle heure ?",
+          "answers": [
+            "huit heures et quart",
+            "à huit heures et quart",
+            "huit heures et quart (8h15)"
+          ],
+          "explain": "La prochaine rame arrive à huit heures et quart."
+        },
+        {
+          "id": "fr-read-horaires-metro-q5",
+          "kind": "written",
+          "prompt": "Quel métro est-ce que l'auteur prend pour aller au travail ?",
+          "answers": [
+            "le métro de huit heures",
+            "le metro de huit heures",
+            "celui de huit heures"
+          ],
+          "explain": "Je prends toujours le métro de huit heures."
+        }
+      ]
     }
   ]
 }

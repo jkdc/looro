@@ -757,6 +757,91 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-read-fahrplan-ubahn",
+      "languageID": "de",
+      "title": "Fahrplan der U2",
+      "level": "A1",
+      "topic": "Fahrplan",
+      "unitID": "de-foundations-u14",
+      "text": "U2: Ruhleben — Pankow. Fahrplan von Montag bis Freitag. Die erste Bahn fährt um 4:30 Uhr. Danach kommt alle fünf Minuten eine Bahn. Von Gleis 2 fährt die Bahn um 8:00, 8:05 und 8:10 Uhr. Nach 20 Uhr kommt alle zehn Minuten eine Bahn. Die letzte Bahn fährt um 1:00 Uhr. Eine Fahrkarte kostet 3 Euro 50. Du kaufst sie vor der Fahrt am Automaten.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-fahrplan-ubahn-q1",
+          "kind": "choice",
+          "prompt": "Wann fährt die erste Bahn ?",
+          "explain": "Die erste Bahn fährt um 4:30 Uhr.",
+          "answers": [
+            "Um 4:30 Uhr"
+          ],
+          "options": [
+            "Um 4:30 Uhr",
+            "Um 8:00 Uhr",
+            "Um 1:00 Uhr",
+            "Um 20 Uhr"
+          ]
+        },
+        {
+          "id": "de-read-fahrplan-ubahn-q2",
+          "kind": "written",
+          "prompt": "Von welchem Gleis fährt die Bahn am Morgen ?",
+          "explain": "Von Gleis 2 fährt die Bahn um 8:00, 8:05 und 8:10 Uhr.",
+          "answers": [
+            "gleis 2",
+            "von gleis 2"
+          ]
+        },
+        {
+          "id": "de-read-fahrplan-ubahn-q3",
+          "kind": "choice",
+          "prompt": "Wann fährt die letzte Bahn ?",
+          "explain": "Die letzte Bahn fährt um 1:00 Uhr.",
+          "answers": [
+            "Um 1:00 Uhr"
+          ],
+          "options": [
+            "Um 1:00 Uhr",
+            "Um 4:30 Uhr",
+            "Um 8:10 Uhr",
+            "Um 20:10 Uhr"
+          ]
+        },
+        {
+          "id": "de-read-fahrplan-ubahn-q4",
+          "kind": "written",
+          "prompt": "Was kostet eine Fahrkarte ?",
+          "explain": "Eine Fahrkarte kostet 3 Euro 50.",
+          "answers": [
+            "3 euro 50",
+            "drei euro fünfzig",
+            "drei euro funfzig",
+            "3,50 euro"
+          ]
+        },
+        {
+          "id": "de-read-fahrplan-ubahn-q5",
+          "kind": "choice",
+          "prompt": "Wie oft kommt eine Bahn nach 20 Uhr ?",
+          "explain": "Nach 20 Uhr kommt alle zehn Minuten eine Bahn.",
+          "answers": [
+            "Alle zehn Minuten"
+          ],
+          "options": [
+            "Alle zehn Minuten",
+            "Alle fünf Minuten",
+            "Alle zwanzig Minuten",
+            "Um 1:00 Uhr"
+          ]
+        }
+      ]
     }
   ]
 }

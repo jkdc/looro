@@ -1812,6 +1812,207 @@
         "function:talk-about-weather"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "it-listen-metro-perso",
+      "languageID": "it",
+      "title": "Perso in metro",
+      "level": "A1",
+      "topic": "trasporti",
+      "unitID": "it-foundations-u14",
+      "text": "Marco va al lavoro in metro. Ogni mattina prende la metro alle otto e un quarto alla stazione Garibaldi. Stamattina guarda i messaggi sul telefono e non sente l'annuncio: « Prossima fermata: Duomo ». Marco non scende e la metro parte. Arriva a San Babila e chiede: « Scusi, come vado al Duomo ? » « Facile: prendi la metro in direzione opposta, due fermate e sei a posto ! » Marco prende l'altra metro ed è in ufficio alle nove e dieci. « Scusate il ritardo ! »",
+      "questions": [
+        {
+          "id": "it-listen-metro-perso-q1",
+          "kind": "choice",
+          "prompt": "Come va al lavoro Marco ?",
+          "options": [
+            "In metro",
+            "A piedi",
+            "In bici",
+            "In treno"
+          ],
+          "answers": [
+            "In metro"
+          ],
+          "explain": "« Marco va al lavoro in metro »."
+        },
+        {
+          "id": "it-listen-metro-perso-q2",
+          "kind": "choice",
+          "prompt": "A che ora prende la metro ?",
+          "options": [
+            "Alle otto e un quarto",
+            "Alle otto e mezza",
+            "Alle nove e dieci",
+            "Alle sette"
+          ],
+          "answers": [
+            "Alle otto e un quarto"
+          ],
+          "explain": "« Prende la metro alle otto e un quarto »."
+        },
+        {
+          "id": "it-listen-metro-perso-q3",
+          "kind": "written",
+          "prompt": "Perché non scende al Duomo ?",
+          "answers": [
+            "Guarda i messaggi sul telefono",
+            "Perché guarda il telefono",
+            "Guarda il telefono",
+            "Perche guarda il telefono"
+          ],
+          "explain": "« Guarda i messaggi sul telefono e non sente l'annuncio »."
+        },
+        {
+          "id": "it-listen-metro-perso-q4",
+          "kind": "written",
+          "prompt": "A che ora è in ufficio ?",
+          "answers": [
+            "Alle nove e dieci",
+            "Nove e dieci",
+            "Alle 9:10"
+          ],
+          "explain": "« È in ufficio alle nove e dieci »."
+        },
+        {
+          "id": "it-listen-metro-perso-q5",
+          "kind": "choice",
+          "prompt": "Quante fermate per tornare al Duomo ?",
+          "options": [
+            "Due",
+            "Tre",
+            "Quattro",
+            "Una"
+          ],
+          "answers": [
+            "Due"
+          ],
+          "explain": "« Due fermate e sei a posto »."
+        },
+        {
+          "id": "it-listen-metro-perso-q6",
+          "kind": "choice",
+          "prompt": "Cosa dice Marco in ufficio ?",
+          "options": [
+            "Scusate il ritardo",
+            "Grazie mille",
+            "A domani",
+            "Buongiorno"
+          ],
+          "answers": [
+            "Scusate il ritardo"
+          ],
+          "explain": "« Scusate il ritardo ! »."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:transport",
+        "function:tell-time"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-farmacia-sabato",
+      "languageID": "it",
+      "title": "Sabato in farmacia",
+      "level": "A1",
+      "topic": "salute",
+      "unitID": "it-foundations-u15",
+      "text": "È sabato mattina. Anna non si sente bene: ha la febbre e la testa le fa male. In casa non ci sono medicine: Anna non le compra mai. Va in farmacia. « Buongiorno, ho la febbre e ho mal di testa. » « Da quanti giorni ? » « Da due giorni. » « Ecco questo: due compresse al giorno, una la mattina e una la sera. Bevi molta acqua. » « Quanto costano ? » « Sette euro. » « Grazie, buona giornata ! »",
+      "questions": [
+        {
+          "id": "it-listen-farmacia-sabato-q1",
+          "kind": "choice",
+          "prompt": "Come si sente Anna ?",
+          "options": [
+            "Ha la febbre e mal di testa",
+            "Ha mal di pancia",
+            "Ha la tosse",
+            "È solo stanca"
+          ],
+          "answers": [
+            "Ha la febbre e mal di testa"
+          ],
+          "explain": "« Ho la febbre e ho mal di testa »."
+        },
+        {
+          "id": "it-listen-farmacia-sabato-q2",
+          "kind": "written",
+          "prompt": "Quante compresse al giorno prende Anna ?",
+          "answers": [
+            "Due",
+            "2",
+            "Due compresse"
+          ],
+          "explain": "« Due compresse al giorno »."
+        },
+        {
+          "id": "it-listen-farmacia-sabato-q3",
+          "kind": "choice",
+          "prompt": "Quando prende le compresse ?",
+          "options": [
+            "La mattina e la sera",
+            "Solo la mattina",
+            "Solo la sera",
+            "A mezzogiorno"
+          ],
+          "answers": [
+            "La mattina e la sera"
+          ],
+          "explain": "« Una la mattina e una la sera »."
+        },
+        {
+          "id": "it-listen-farmacia-sabato-q4",
+          "kind": "written",
+          "prompt": "Quanto costano le medicine ?",
+          "answers": [
+            "Sette euro",
+            "7 euro",
+            "Sette"
+          ],
+          "explain": "« Sette euro »."
+        },
+        {
+          "id": "it-listen-farmacia-sabato-q5",
+          "kind": "choice",
+          "prompt": "Cosa non fa mai Anna ?",
+          "options": [
+            "Compra le medicine",
+            "Beve l'acqua",
+            "Va in farmacia",
+            "Dorme otto ore"
+          ],
+          "answers": [
+            "Compra le medicine"
+          ],
+          "explain": "« Anna non le compra mai »."
+        },
+        {
+          "id": "it-listen-farmacia-sabato-q6",
+          "kind": "choice",
+          "prompt": "Che altro deve bere Anna ?",
+          "options": [
+            "Molta acqua",
+            "Il caffè",
+            "Il latte",
+            "Il tè freddo"
+          ],
+          "answers": [
+            "Molta acqua"
+          ],
+          "explain": "« Bevi anche molta acqua »."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:health",
+        "grammar:frequency-adverbs"
+      ],
+      "exposureSkills": []
     }
   ]
 }
