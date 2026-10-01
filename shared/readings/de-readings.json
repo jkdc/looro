@@ -1178,6 +1178,505 @@
           "explain": "Wer unterschreiben will, findet das Plakat bis Sonntag am Supermarkt."
         }
       ]
+    },
+    {
+      "id": "de-read-hobbys-anna",
+      "languageID": "de",
+      "title": "Annas Woche",
+      "level": "A1",
+      "topic": "hobbys",
+      "unitID": "de-foundations-u27",
+      "text": "Anna ist 24 Jahre alt und kommt aus Leipzig. Sie arbeitet als Verkäuferin. In ihrer Freizeit spielt sie gern Gitarre und liest gern Krimis. Am Samstag geht sie mit Freunden in ein Café. Sie kocht nicht gern — ihr Freund kocht fantastisch ! Am Sonntag schläft Anna lange und fährt dann mit dem Fahrrad an den See. Im Winter geht sie oft schwimmen, im Sommer spielt sie Volleyball im Park. Was machst du gern ? Schreib Anna eine Nachricht !",
+      "skills": [
+        "reading:detail",
+        "vocab:hobbies",
+        "grammar:present-simple"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-hobbys-anna-q1",
+          "kind": "choice",
+          "prompt": "Woher kommt Anna ?",
+          "options": [
+            "Aus Leipzig",
+            "Aus Berlin",
+            "Aus Wien",
+            "Aus Hamburg"
+          ],
+          "answers": [
+            "Aus Leipzig"
+          ],
+          "explain": "« Anna … kommt aus Leipzig. »"
+        },
+        {
+          "id": "de-read-hobbys-anna-q2",
+          "kind": "written",
+          "prompt": "Was spielt Anna gern ?",
+          "answers": [
+            "gitarre",
+            "sie spielt gitarre"
+          ],
+          "explain": "« In ihrer Freizeit spielt sie gern Gitarre. »"
+        },
+        {
+          "id": "de-read-hobbys-anna-q3",
+          "kind": "choice",
+          "prompt": "Wer kocht bei Anna ?",
+          "options": [
+            "Ihr Freund",
+            "Anna",
+            "Ihre Mutter",
+            "Niemand"
+          ],
+          "answers": [
+            "Ihr Freund"
+          ],
+          "explain": "« …ihr Freund kocht fantastisch ! »"
+        },
+        {
+          "id": "de-read-hobbys-anna-q4",
+          "kind": "written",
+          "prompt": "Was macht Anna am Sonntag ?",
+          "answers": [
+            "sie schlaeft lange und faehrt an den see",
+            "sie schläft lange und fährt an den see",
+            "sie schläft lange und fährt mit dem fahrrad an den see"
+          ],
+          "explain": "« Am Sonntag schläft Anna lange und fährt dann mit dem Fahrrad an den See. »"
+        },
+        {
+          "id": "de-read-hobbys-anna-q5",
+          "kind": "choice",
+          "prompt": "Was macht Anna im Sommer im Park ?",
+          "options": [
+            "Sie spielt Volleyball",
+            "Sie schwimmt",
+            "Sie liest Krimis",
+            "Sie arbeitet"
+          ],
+          "answers": [
+            "Sie spielt Volleyball"
+          ],
+          "explain": "« Im Sommer spielt sie Volleyball im Park. »"
+        }
+      ]
+    },
+    {
+      "id": "de-read-markt-preise",
+      "languageID": "de",
+      "title": "Am Markt bei Frau Öz",
+      "level": "A1",
+      "topic": "einkaufen",
+      "unitID": "de-foundations-u5",
+      "text": "Der Markt ist jeden Samstag von 8 bis 14 Uhr offen. Am Stand von Frau Öz gibt es Obst und Gemüse: Äpfel kosten 2 Euro 50 pro Kilo, Bananen 1 Euro 90, Tomaten nur 2 Euro. Sie sind heute günstig. Käse vom Bauern kostet 8 Euro pro Packung, frischer Fisch 12 Euro. Brot gibt es beim Stand nebenan. Kinder bekommen einen Apfel gratis. Frau Öz verkauft gern und viel: Am Mittag sind die Tomaten oft schon weg. Komm früh !",
+      "skills": [
+        "reading:scan",
+        "vocab:food",
+        "function:go-shopping"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-markt-preise-q1",
+          "kind": "written",
+          "prompt": "Wie viel kostet ein Kilo Tomaten ?",
+          "answers": [
+            "2 euro",
+            "zwei euro"
+          ],
+          "explain": "« Tomaten nur 2 Euro. »"
+        },
+        {
+          "id": "de-read-markt-preise-q2",
+          "kind": "choice",
+          "prompt": "Was kostet ein Kilo Bananen ?",
+          "options": [
+            "1 Euro 90",
+            "2 Euro 50",
+            "1 Euro",
+            "3 Euro"
+          ],
+          "answers": [
+            "1 Euro 90"
+          ],
+          "explain": "« Bananen 1 Euro 90. »"
+        },
+        {
+          "id": "de-read-markt-preise-q3",
+          "kind": "choice",
+          "prompt": "Wie lange ist der Markt offen ?",
+          "options": [
+            "8 bis 14 Uhr",
+            "7 bis 12 Uhr",
+            "9 bis 15 Uhr",
+            "8 bis 18 Uhr"
+          ],
+          "answers": [
+            "8 bis 14 Uhr"
+          ],
+          "explain": "« Der Markt ist jeden Samstag von 8 bis 14 Uhr offen. »"
+        },
+        {
+          "id": "de-read-markt-preise-q4",
+          "kind": "written",
+          "prompt": "Was bekommen Kinder gratis ?",
+          "answers": [
+            "einen apfel",
+            "ein apfel",
+            "apfel"
+          ],
+          "explain": "« Kinder bekommen einen Apfel gratis. »"
+        },
+        {
+          "id": "de-read-markt-preise-q5",
+          "kind": "choice",
+          "prompt": "Wann sind die Tomaten oft schon weg ?",
+          "options": [
+            "Am Mittag",
+            "Am Morgen",
+            "Um 8 Uhr",
+            "Nie"
+          ],
+          "answers": [
+            "Am Mittag"
+          ],
+          "explain": "« Am Mittag sind die Tomaten oft schon weg. »"
+        }
+      ]
+    },
+    {
+      "id": "de-read-bewerbung-lea",
+      "languageID": "de",
+      "title": "Leas Bewerbung",
+      "level": "B1",
+      "topic": "arbeit",
+      "unitID": "de-foundations-u21",
+      "text": "Betreff: Bewerbung als Praktikantin im Marketing — Liebe Frau Berger, ich habe Ihre Anzeige auf der Jobbörse gesehen und interessiere mich sehr für die Stelle. Seit zwei Jahren studiere ich Medienmanagement in Münster; im Sommer habe ich ein Praktikum bei einer kleinen Agentur gemacht. Dort habe ich Social-Media-Kanäle betreut und zwei Kampagnen mitgeplant. Meine Professorin, Frau Krause, hat mich auf Ihre Firma aufmerksam gemacht — man sagt, bei Ihnen wird Teamarbeit großgeschrieben. Gerne schicke ich Ihnen meine Zeugnisse und Arbeitsproben. Über ein persönliches Gespräch freue ich mich sehr. Passt es Ihnen nächste Woche vormittags ? Mit freundlichen Grüßen, Lea Hoffmann",
+      "skills": [
+        "reading:detail",
+        "writing:email",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-bewerbung-lea-q1",
+          "kind": "choice",
+          "prompt": "Um welche Stelle geht es ?",
+          "options": [
+            "Praktikum im Marketing",
+            "Festanstellung als Designerin",
+            "Stelle als Professorin",
+            "Ausbildung im Vertrieb"
+          ],
+          "answers": [
+            "Praktikum im Marketing"
+          ],
+          "explain": "« Bewerbung als Praktikantin im Marketing »."
+        },
+        {
+          "id": "de-read-bewerbung-lea-q2",
+          "kind": "written",
+          "prompt": "Was hat Lea im Sommer gemacht ?",
+          "answers": [
+            "ein praktikum",
+            "sie hat ein praktikum gemacht",
+            "ein praktikum bei einer agentur"
+          ],
+          "explain": "« Im Sommer habe ich ein Praktikum bei einer kleinen Agentur gemacht. »"
+        },
+        {
+          "id": "de-read-bewerbung-lea-q3",
+          "kind": "choice",
+          "prompt": "Wer hat sie auf die Firma aufmerksam gemacht ?",
+          "options": [
+            "Frau Krause",
+            "Frau Berger",
+            "Eine Freundin",
+            "Der Chef"
+          ],
+          "answers": [
+            "Frau Krause"
+          ],
+          "explain": "« Meine Professorin, Frau Krause, hat mich auf Ihre Firma aufmerksam gemacht. »"
+        },
+        {
+          "id": "de-read-bewerbung-lea-q4",
+          "kind": "choice",
+          "prompt": "Wann möchte Lea zum Gespräch kommen ?",
+          "options": [
+            "Nächste Woche vormittags",
+            "Heute Nachmittag",
+            "Nächsten Montag abends",
+            "In zwei Wochen"
+          ],
+          "answers": [
+            "Nächste Woche vormittags"
+          ],
+          "explain": "« Passt es Ihnen nächste Woche vormittags ? »"
+        },
+        {
+          "id": "de-read-bewerbung-lea-q5",
+          "kind": "written",
+          "prompt": "Was schickt Lea gern mit ?",
+          "answers": [
+            "zeugnisse und arbeitsproben",
+            "ihre zeugnisse und arbeitsproben"
+          ],
+          "explain": "« Gerne schicke ich Ihnen meine Zeugnisse und Arbeitsproben. »"
+        }
+      ]
+    },
+    {
+      "id": "de-read-falsche-nummer",
+      "languageID": "de",
+      "title": "Die Nachricht an die falsche Nummer",
+      "level": "B1",
+      "topic": "erlebnisse",
+      "unitID": "de-foundations-u18",
+      "text": "Es war ein grauer Dienstag, als Miriam eine Nachricht bekam: « Hallo Oma, ich habe meinen Schlüssel verloren. Bist du zu Hause ? » Die Nummer kannte sie nicht. Statt die Nachricht zu löschen, antwortete sie: « Ich bin leider nicht deine Oma, aber ich mache Tee. Komm trotzdem ! » Eine Stunde später stand Jonas vor ihrer Tür, müde und ratlos. Sie tranken Tee, redeten zwei Stunden — und lachten viel. Am Abend fand Jonas den Schlüssel in seiner Jackentasche: Er war nie verloren gewesen. Aber er sagt heute, die falsche Nummer sei der beste Fehler seines Jahres. Die beiden sind seitdem gute Freunde.",
+      "skills": [
+        "reading:inference",
+        "function:tell-a-story",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-falsche-nummer-q1",
+          "kind": "choice",
+          "prompt": "Was stand in der Nachricht ?",
+          "options": [
+            "Ein verlorener Schlüssel",
+            "Eine Einladung zum Kaffee",
+            "Ein Jobangebot",
+            "Ein Umzug"
+          ],
+          "answers": [
+            "Ein verlorener Schlüssel"
+          ],
+          "explain": "« Ich habe meinen Schlüssel verloren. Bist du zu Hause ? »"
+        },
+        {
+          "id": "de-read-falsche-nummer-q2",
+          "kind": "written",
+          "prompt": "Was machte Miriam statt die Nachricht zu löschen ?",
+          "answers": [
+            "sie antwortete",
+            "sie hat geantwortet"
+          ],
+          "explain": "« Statt die Nachricht zu löschen, antwortete sie. »"
+        },
+        {
+          "id": "de-read-falsche-nummer-q3",
+          "kind": "choice",
+          "prompt": "Wie lange redeten die beiden beim ersten Mal ?",
+          "options": [
+            "Zwei Stunden",
+            "Eine Stunde",
+            "Zwanzig Minuten",
+            "Den ganzen Abend"
+          ],
+          "answers": [
+            "Zwei Stunden"
+          ],
+          "explain": "« Sie tranken Tee, redeten zwei Stunden — und lachten viel. »"
+        },
+        {
+          "id": "de-read-falsche-nummer-q4",
+          "kind": "choice",
+          "prompt": "Wo war der Schlüssel wirklich ?",
+          "options": [
+            "In Jonas' Jackentasche",
+            "Bei der Oma",
+            "Im Café",
+            "Unter dem Tisch"
+          ],
+          "answers": [
+            "In Jonas' Jackentasche"
+          ],
+          "explain": "« …fand Jonas den Schlüssel in seiner Jackentasche: Er war nie verloren gewesen. »"
+        },
+        {
+          "id": "de-read-falsche-nummer-q5",
+          "kind": "written",
+          "prompt": "Was sagt Jonas über die falsche Nummer ?",
+          "answers": [
+            "der beste fehler seines jahres",
+            "sie sei der beste fehler seines jahres"
+          ],
+          "explain": "« …die falsche Nummer sei der beste Fehler seines Jahres. »"
+        }
+      ]
+    },
+    {
+      "id": "de-read-leserbrief-handy",
+      "languageID": "de",
+      "title": "Leserbrief: Das Handy gehört nicht in die Schulbank",
+      "level": "B2",
+      "topic": "meinung",
+      "unitID": "de-foundations-u8",
+      "text": "Sehr geehrte Redaktion, immer wieder fordern Politiker ein Handyverbot an Schulen — und ich widerspreche. Zugegeben: Wer während des Unterrichts scrollt, lernt weniger; das zeigen die Studien aus Nachbarländern deutlich. Aber ein generelles Verbot verfehlt das Ziel. Wer seinen Schülern konzentriertes Arbeiten beibringen will, muss ihnen Verantwortung geben, nicht Verbote. An unserer Schule regeln die Klassen selbst, wann das Handy weggepackt wird — die Lehrkräfte beraten nur noch. Die Ergebnisse sind erstaunlich: weniger Konflikte, mehr Eigenverantwortung. Statt Verbote zu verschärfen, sollten wir digitale Bildung stärken. Ein Kind, das nie gelernt hat, mit dem Handy umzugehen, wird auch ohne Verbot abgelenkt sein — nur klüger ist es nicht geworden. Ich freue mich auf die Diskussion. Markus Vogel, Lehrer aus Essen",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-leserbrief-handy-q1",
+          "kind": "choice",
+          "prompt": "Was ist die These des Briefes ?",
+          "options": [
+            "Kein generelles Handyverbot",
+            "Mehr Verbote an Schulen",
+            "Handys sofort verbieten",
+            "Handys für alle Fächer"
+          ],
+          "answers": [
+            "Kein generelles Handyverbot"
+          ],
+          "explain": "« …fordern Politiker ein Handyverbot an Schulen — und ich widerspreche. »"
+        },
+        {
+          "id": "de-read-leserbrief-handy-q2",
+          "kind": "written",
+          "prompt": "Was zeigen die Studien aus Nachbarländern ?",
+          "answers": [
+            "wer im unterricht scrollt lernt weniger",
+            "wer waehrend des unterrichts scrollt lernt weniger",
+            "scrollende schueler lernen weniger"
+          ],
+          "explain": "« Wer während des Unterrichts scrollt, lernt weniger. »"
+        },
+        {
+          "id": "de-read-leserbrief-handy-q3",
+          "kind": "choice",
+          "prompt": "Wie regelt die Schule des Autors das Handy ?",
+          "options": [
+            "Die Klassen selbst regeln es",
+            "Die Polizei kontrolliert",
+            "Ein Verbot seit diesem Jahr",
+            "Die Eltern sammeln die Handys"
+          ],
+          "answers": [
+            "Die Klassen selbst regeln es"
+          ],
+          "explain": "« …regeln die Klassen selbst, wann das Handy weggepackt wird. »"
+        },
+        {
+          "id": "de-read-leserbrief-handy-q4",
+          "kind": "choice",
+          "prompt": "Was sollen Schulen laut Autor stattdessen stärken ?",
+          "options": [
+            "Digitale Bildung",
+            "Sportunterricht",
+            "Disziplinarstrafen",
+            "Alte Medien"
+          ],
+          "answers": [
+            "Digitale Bildung"
+          ],
+          "explain": "« Statt Verbote zu verschärfen, sollten wir digitale Bildung stärken. »"
+        },
+        {
+          "id": "de-read-leserbrief-handy-q5",
+          "kind": "written",
+          "prompt": "Welche Ergebnisse nennt der Autor ?",
+          "answers": [
+            "weniger konflikte, mehr eigenverantwortung",
+            "weniger konflikte und mehr eigenverantwortung"
+          ],
+          "explain": "« Die Ergebnisse sind erstaunlich: weniger Konflikte, mehr Eigenverantwortung. »"
+        }
+      ]
+    },
+    {
+      "id": "de-read-nachricht-radwege",
+      "languageID": "de",
+      "title": "Stadt verzögert Radwege-Ausbau",
+      "level": "B2",
+      "topic": "nachrichten",
+      "unitID": "de-foundations-u8",
+      "text": "Wie die Stadtverwaltung am Dienstag mitteilte, wird der geplante Ausbau der Radwege um mindestens ein Jahr verschoben. Der Grund: Die Baufirma, deren Angebot eigentlich günstig war, habe die Unterlagen unvollständig eingereicht. Deshalb müsse neu ausgeschrieben werden. Kritik kommt aus dem Stadtrat: Die Opposition spricht von einem verpatzten Projekt und fordert einen Untersuchungsausschuss. Die Verkehrsplanerin Dr. Steiner verteidigt den Zeitplan: Sicherheit gehe vor Tempo, ein falscher Vertrag würde am Ende Millionen kosten. Gleichzeitig bestätigte sie, dass die Baukosten bereits um acht Prozent gestiegen sind. Radverbände zeigen sich enttäuscht; sie verweisen auf andere Städte, in denen ähnliche Projekte schneller umgesetzt wurden. Der Rat will in der nächsten Sitzung über den neuen Zeitplan entscheiden. Ein Baubeginn vor dem kommenden Frühjahr gilt als unwahrscheinlich.",
+      "skills": [
+        "reading:detail",
+        "grammar:passive-intro",
+        "grammar:reported-speech-basic"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-nachricht-radwege-q1",
+          "kind": "choice",
+          "prompt": "Um wie viel wird der Ausbau verschoben ?",
+          "options": [
+            "Mindestens ein Jahr",
+            "Mindestens zwei Jahre",
+            "Drei Monate",
+            "Gar nicht"
+          ],
+          "answers": [
+            "Mindestens ein Jahr"
+          ],
+          "explain": "« …wird der geplante Ausbau der Radwege um mindestens ein Jahr verschoben. »"
+        },
+        {
+          "id": "de-read-nachricht-radwege-q2",
+          "kind": "written",
+          "prompt": "Warum muss neu ausgeschrieben werden ?",
+          "answers": [
+            "die unterlagen waren unvollständig",
+            "die unterlagen waren unvollstaendig",
+            "die baufirma hat die unterlagen unvollständig eingereicht"
+          ],
+          "explain": "« …habe die Unterlagen unvollständig eingereicht. Deshalb müsse neu ausgeschrieben werden. »"
+        },
+        {
+          "id": "de-read-nachricht-radwege-q3",
+          "kind": "choice",
+          "prompt": "Was fordert die Opposition ?",
+          "options": [
+            "Einen Untersuchungsausschuss",
+            "Mehr Parkplätze",
+            "Den Rücktritt der Planerin",
+            "Schnellere Kosten"
+          ],
+          "answers": [
+            "Einen Untersuchungsausschuss"
+          ],
+          "explain": "« Die Opposition spricht von einem verpatzten Projekt und fordert einen Untersuchungsausschuss. »"
+        },
+        {
+          "id": "de-read-nachricht-radwege-q4",
+          "kind": "choice",
+          "prompt": "Wie viel sind die Baukosten gestiegen ?",
+          "options": [
+            "Um acht Prozent",
+            "Um achtzehn Prozent",
+            "Um fünf Prozent",
+            "Gar nicht"
+          ],
+          "answers": [
+            "Um acht Prozent"
+          ],
+          "explain": "« …dass die Baukosten bereits um acht Prozent gestiegen sind. »"
+        },
+        {
+          "id": "de-read-nachricht-radwege-q5",
+          "kind": "written",
+          "prompt": "Wann gilt ein Baubeginn als unwahrscheinlich ?",
+          "answers": [
+            "vor dem kommenden fruehjahr",
+            "vor dem frühjahr",
+            "vor dem kommenden frühjahr"
+          ],
+          "explain": "« Ein Baubeginn vor dem kommenden Frühjahr gilt als unwahrscheinlich. »"
+        }
+      ]
     }
   ]
 }

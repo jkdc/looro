@@ -9184,6 +9184,181 @@
           "prerequisites": [
             "grammar:going-to"
           ]
+        },
+        {
+          "id": "es-foundations-u18-quedar",
+          "title": "¿A qué hora quedamos?",
+          "goal": "Concretar la hora y el lugar de un plan: quedar a las…, quedar en…, nos vemos.",
+          "intro": {
+            "explanation": [
+              "Para cerrar un plan usamos quedar: «¿Quedamos a las ocho en la plaza?». Fija hora y lugar en una sola pregunta.",
+              "La hora va con a («a las ocho y media») y el lugar con en («en la puerta del cine»).",
+              "Para confirmar, repites el plan: «Entonces, a las ocho en la plaza, ¿no?». Y si te retrasas, avisas: «Voy a llegar cinco minutos tarde»."
+            ],
+            "examples": [
+              {
+                "text": "¿A qué hora quedamos?",
+                "meaning": "Preguntar por la hora del plan."
+              },
+              {
+                "text": "Quedamos a las ocho y media.",
+                "meaning": "Concretar la hora."
+              },
+              {
+                "text": "¿Dónde nos vemos?",
+                "meaning": "Preguntar por el lugar."
+              },
+              {
+                "text": "Quedamos en la puerta del cine.",
+                "meaning": "Concretar el lugar."
+              },
+              {
+                "text": "Voy a llegar cinco minutos tarde.",
+                "meaning": "Avisar de un retraso."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿a qué hora…?",
+              "meaning": "Preguntar la hora.",
+              "note": "¿A qué hora quedamos?"
+            },
+            {
+              "text": "quedar a las + hora",
+              "meaning": "Fijar la hora.",
+              "note": "Quedamos a las siete."
+            },
+            {
+              "text": "quedar en + lugar",
+              "meaning": "Fijar el lugar.",
+              "note": "Quedamos en la plaza."
+            },
+            {
+              "text": "nos vemos en…",
+              "meaning": "Confirmar el punto de encuentro.",
+              "note": "Nos vemos en el metro."
+            },
+            {
+              "text": "llegar tarde",
+              "meaning": "Avisar de un retraso.",
+              "note": "Voy a llegar diez minutos tarde."
+            }
+          ],
+          "situation": "Cierras el plan del sábado con tu amiga: acordáis hora, lugar y avisas si vas a llegar tarde.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pregunta a qué hora quedáis.",
+                "expected": [
+                  "¿A qué hora quedamos?",
+                  "a que hora quedamos",
+                  "¿A qué hora nos vemos?"
+                ],
+                "focus": "a qué hora",
+                "watch": "qué con tilde."
+              },
+              {
+                "prompt": "Di que quedáis a las ocho y media.",
+                "expected": [
+                  "Quedamos a las ocho y media",
+                  "quedamos a las 8 y media",
+                  "Nos vemos a las ocho y media"
+                ],
+                "focus": "quedar a las",
+                "watch": "a las + hora."
+              },
+              {
+                "prompt": "Pregunta por el lugar del encuentro.",
+                "expected": [
+                  "¿Dónde nos vemos?",
+                  "donde nos vemos",
+                  "¿Dónde quedamos?"
+                ],
+                "focus": "dónde",
+                "watch": "dónde con tilde."
+              },
+              {
+                "prompt": "Di que quedáis en la puerta del cine.",
+                "expected": [
+                  "Quedamos en la puerta del cine",
+                  "Nos vemos en la puerta del cine",
+                  "quedamos en la puerta del cine"
+                ],
+                "focus": "quedar en",
+                "watch": "en + lugar."
+              },
+              {
+                "prompt": "Avisa de que llegarás cinco minutos tarde.",
+                "expected": [
+                  "Voy a llegar cinco minutos tarde",
+                  "voy a llegar 5 minutos tarde",
+                  "Llego cinco minutos tarde"
+                ],
+                "focus": "llegar tarde",
+                "watch": "voy a + infinitivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u18-quedar-e1",
+              "kind": "choice",
+              "prompt": "¿Quedamos ___ la puerta del teatro?",
+              "explain": "El lugar de encuentro va con en: quedar en + lugar.",
+              "options": [
+                "en",
+                "a",
+                "de",
+                "para"
+              ],
+              "answers": [
+                "en"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-quedar-e2",
+              "kind": "gap",
+              "prompt": "Nos ___ en la cafetería de la plaza a las siete.",
+              "explain": "Nos vemos = quedamos; confirma el punto de encuentro.",
+              "answers": [
+                "vemos",
+                "Vemos"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-quedar-e3",
+              "kind": "order",
+              "prompt": "Avisa de que vas a llegar tarde al plan.",
+              "explain": "Para avisar del retraso: voy a llegar + tiempo + tarde.",
+              "answers": [
+                "Voy a llegar diez minutos tarde"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-quedar-e4",
+              "kind": "written",
+              "prompt": "Propón quedar mañana a las siete.",
+              "explain": "¿Quedamos + tiempo? propone el plan y pregunta a la vez.",
+              "answers": [
+                "¿Quedamos mañana a las siete?",
+                "quedamos mañana a las siete",
+                "Quedamos manana a las siete"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-suggestions",
+            "grammar:time-expressions",
+            "grammar:present-simple",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:time-expressions"
+          ]
         }
       ]
     },

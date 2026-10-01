@@ -3483,6 +3483,1069 @@
         "function:make-requests"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-weekend-lyon",
+      "languageID": "fr",
+      "title": "Un week-end à Lyon",
+      "level": "A2",
+      "topic": "voyages",
+      "unitID": "fr-foundations-u25",
+      "text": "Mardi soir, dans le salon, Léa lance l'idée : « Et si on allait à Lyon ce week-end ? » Karim pose son téléphone : « Bonne idée. On va prendre le train de samedi matin ? » Léa vérifie sur son application : « Il y en a un à huit heures dix, on arrive vers dix. » Karim s'occupe de la suite : « Moi, je vais réserver l'hôtel ce soir, près de la place Bellecour. » Léa propose déjà le programme : « On va visiter le vieux Lyon samedi, et dimanche, on va manger dans un bouchon, tu sais, ces petits restaurants. » Karim sourit : « Parfait. Je vais prévenir ma sœur, elle nous prête son parapluie, il paraît qu'il va pleuvoir. »",
+      "questions": [
+        {
+          "id": "fr-listen-weekend-lyon-q1",
+          "kind": "choice",
+          "prompt": "Où va-t-on passer le week-end ?",
+          "answers": [
+            "À Lyon"
+          ],
+          "explain": "« Et si on allait à Lyon ce week-end ? »",
+          "options": [
+            "À Lyon",
+            "À Marseille",
+            "À Paris",
+            "À Nice"
+          ]
+        },
+        {
+          "id": "fr-listen-weekend-lyon-q2",
+          "kind": "written",
+          "prompt": "À quelle heure est le train du samedi ?",
+          "answers": [
+            "à huit heures dix",
+            "huit heures dix",
+            "8h10",
+            "a huit heures dix"
+          ],
+          "explain": "« Il y en a un à huit heures dix. »"
+        },
+        {
+          "id": "fr-listen-weekend-lyon-q3",
+          "kind": "written",
+          "prompt": "Qui va réserver l'hôtel ?",
+          "answers": [
+            "karim",
+            "c'est karim",
+            "karim va réserver l'hôtel"
+          ],
+          "explain": "« Moi, je vais réserver l'hôtel ce soir », dit Karim."
+        },
+        {
+          "id": "fr-listen-weekend-lyon-q4",
+          "kind": "choice",
+          "prompt": "Où est l'hôtel ?",
+          "answers": [
+            "Près de la place Bellecour"
+          ],
+          "explain": "« Près de la place Bellecour. »",
+          "options": [
+            "Près de la place Bellecour",
+            "Près de la gare",
+            "Dans le vieux Lyon",
+            "Près du fleuve"
+          ]
+        },
+        {
+          "id": "fr-listen-weekend-lyon-q5",
+          "kind": "choice",
+          "prompt": "Que va-t-on faire dimanche ?",
+          "answers": [
+            "Manger dans un bouchon"
+          ],
+          "explain": "« Dimanche, on va manger dans un bouchon. »",
+          "options": [
+            "Manger dans un bouchon",
+            "Visiter le vieux Lyon",
+            "Rendre le parapluie",
+            "Aller au musée"
+          ]
+        },
+        {
+          "id": "fr-listen-weekend-lyon-q6",
+          "kind": "written",
+          "prompt": "Pourquoi la sœur de Karim prête-t-elle un parapluie ?",
+          "answers": [
+            "parce qu'il va pleuvoir",
+            "il va pleuvoir",
+            "parce qu'il va pleuvoir"
+          ],
+          "explain": "« Il paraît qu'il va pleuvoir. »"
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-hotel-erreur",
+      "languageID": "fr",
+      "title": "La réservation disparue",
+      "level": "A2",
+      "topic": "problèmes",
+      "unitID": "fr-foundations-u20",
+      "text": "Vingt-deux heures, à la réception de l'hôtel. Karim pose son sac : « Bonsoir, j'ai une chambre au nom de Moreau, pour deux nuits. » La réceptionniste tape sur son clavier et fronce les sourcils : « Je suis désolée, je ne trouve rien. » Karim reste calme : « Il n'y a pas ma réservation ? J'ai la confirmation sur mon téléphone. » Elle regarde le courriel : « Ah, vous avez réservé dans l'hôtel du same nom, rue Voltaire. C'est à dix minutes d'ici. » Karim soupire : « Ah mince. Est-ce que vous pouvez m'aider ? » Elle appelle l'autre hôtel : « Bonne nouvelle : ils gardent votre chambre, et le tram s'arrête devant. » Karim reprend son sac : « Merci beaucoup. Pas grave, ça me va. »",
+      "questions": [
+        {
+          "id": "fr-listen-hotel-erreur-q1",
+          "kind": "choice",
+          "prompt": "Quel problème Karim découvre-t-il ?",
+          "answers": [
+            "Sa réservation n'est pas dans cet hôtel"
+          ],
+          "explain": "« Je ne trouve rien », dit la réceptionniste.",
+          "options": [
+            "Sa réservation n'est pas dans cet hôtel",
+            "Sa chambre est trop petite",
+            "Il a perdu sa confirmation",
+            "L'hôtel est complet"
+          ]
+        },
+        {
+          "id": "fr-listen-hotel-erreur-q2",
+          "kind": "written",
+          "prompt": "Combien de nuits a-t-il réservées ?",
+          "answers": [
+            "deux",
+            "2",
+            "deux nuits"
+          ],
+          "explain": "« Pour deux nuits. »"
+        },
+        {
+          "id": "fr-listen-hotel-erreur-q3",
+          "kind": "choice",
+          "prompt": "Où est la vraie réservation ?",
+          "answers": [
+            "À l'hôtel du même nom, rue Voltaire"
+          ],
+          "explain": "« Vous avez réservé dans l'hôtel du même nom, rue Voltaire. »",
+          "options": [
+            "À l'hôtel du même nom, rue Voltaire",
+            "Dans un hôtel près de la gare",
+            "Dans un autre quartier de la ville",
+            "L'hôtel n'existe pas"
+          ]
+        },
+        {
+          "id": "fr-listen-hotel-erreur-q4",
+          "kind": "written",
+          "prompt": "À quelle distance est le bon hôtel ?",
+          "answers": [
+            "à dix minutes",
+            "dix minutes",
+            "10 minutes",
+            "a dix minutes"
+          ],
+          "explain": "« C'est à dix minutes d'ici. »"
+        },
+        {
+          "id": "fr-listen-hotel-erreur-q5",
+          "kind": "choice",
+          "prompt": "Quelle est la bonne nouvelle à la fin ?",
+          "answers": [
+            "L'autre hôtel garde sa chambre"
+          ],
+          "explain": "« Ils gardent votre chambre. »",
+          "options": [
+            "L'autre hôtel garde sa chambre",
+            "Il obtient une chambre ici",
+            "Il est remboursé",
+            "La réceptionniste lui prête une chambre"
+          ]
+        },
+        {
+          "id": "fr-listen-hotel-erreur-q6",
+          "kind": "written",
+          "prompt": "Comment Karim réagit-il à la fin ?",
+          "answers": [
+            "pas grave ça me va",
+            "ça me va",
+            "ca me va",
+            "pas grave"
+          ],
+          "explain": "« Pas grave, ça me va. »"
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:gist",
+        "function:solve-problems",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-train-annule",
+      "languageID": "fr",
+      "title": "Le train annulé",
+      "level": "A2",
+      "topic": "voyages",
+      "unitID": "fr-foundations-u25",
+      "text": "Samedi, huit heures, à la gare. Sur le panneau, en rouge : « Train de 8 h 10 — ANNULÉ ». Léa regarde Karim : « Ah mince ! Et maintenant ? » Karim consulte l'application : « Il y en a un à dix heures, mais il est complet. Le suivant, à onze heures trente, il reste des places. » Léa réfléchit : « Tu devrais réserver tout de suite, avant que ça se remplisse. » Karim réserve : « Voilà, c'est fait. On arrive à quatorze heures au lieu de onze. » Léa propose : « On pourrait déjeuner à la gare, comme ça, on ne perd rien. » Karim sourit : « Pas grave pour l'hôtel, je vais envoyer un message pour prévenir. » Léa : « Parfait. Bon, et si on prenait un café pendant d'attendre ? »",
+      "questions": [
+        {
+          "id": "fr-listen-train-annule-q1",
+          "kind": "choice",
+          "prompt": "Quel est le problème du samedi matin ?",
+          "answers": [
+            "Le train de huit heures dix est annulé"
+          ],
+          "explain": "Sur le panneau : « Train de 8 h 10 — ANNULÉ ».",
+          "options": [
+            "Le train de huit heures dix est annulé",
+            "La gare est fermée",
+            "Ils ont perdu les billets",
+            "Le train a une heure de retard"
+          ]
+        },
+        {
+          "id": "fr-listen-train-annule-q2",
+          "kind": "written",
+          "prompt": "Quel train peut-on encore prendre ?",
+          "answers": [
+            "celui de onze heures trente",
+            "onze heures trente",
+            "11h30",
+            "de onze heures trente"
+          ],
+          "explain": "« Le suivant, à onze heures trente, il reste des places. »"
+        },
+        {
+          "id": "fr-listen-train-annule-q3",
+          "kind": "choice",
+          "prompt": "Que conseille Léa ?",
+          "answers": [
+            "Réserver tout de suite"
+          ],
+          "explain": "« Tu devrais réserver tout de suite. »",
+          "options": [
+            "Réserver tout de suite",
+            "Attendre demain",
+            "Prendre le bus",
+            "Annuler le voyage"
+          ]
+        },
+        {
+          "id": "fr-listen-train-annule-q4",
+          "kind": "written",
+          "prompt": "À quelle heure arrivent-ils maintenant ?",
+          "answers": [
+            "à quatorze heures",
+            "quatorze heures",
+            "14 heures",
+            "a quatorze heures"
+          ],
+          "explain": "« On arrive à quatorze heures au lieu de onze. »"
+        },
+        {
+          "id": "fr-listen-train-annule-q5",
+          "kind": "choice",
+          "prompt": "Quelle est l'alternative de Léa pour le déjeuner ?",
+          "answers": [
+            "Déjeuner à la gare"
+          ],
+          "explain": "« On pourrait déjeuner à la gare. »",
+          "options": [
+            "Déjeuner à la gare",
+            "Déjeuner dans le train",
+            "Sauter le déjeuner",
+            "Déjeuner à l'hôtel"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:inference",
+        "grammar:modal-should",
+        "vocab:transport"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-soiree-potluck",
+      "languageID": "fr",
+      "title": "On organise la soirée",
+      "level": "A2",
+      "topic": "projets",
+      "unitID": "fr-foundations-u17",
+      "text": "Dans la cuisine, on prépare la soirée de samedi. Léa ouvre le frigo : « On va inviter Mai et Hugo, et chacun va apporter un plat. Comme ça, c'est moins cher. » Karim prend un papier : « Moi, je vais faire ma fameuse tarte aux pommes. » Léa rigole : « Si tu veux, mais je vais aussi préparer une salade, au cas où. » Karim continue la liste : « Hugo va apporter à boire, et Mai ? » Léa : « Elle va ramener ses jeux de société, elle a promis. » Karim note tout : « Et on va ranger le salon vendredi soir, comme ça, samedi on n'a rien à faire. » Léa attrape son téléphone : « Je vais envoyer le message au groupe, chacun sa mission ! »",
+      "questions": [
+        {
+          "id": "fr-listen-soiree-potluck-q1",
+          "kind": "choice",
+          "prompt": "Quel est le principe de la soirée ?",
+          "answers": [
+            "Chacun apporte un plat"
+          ],
+          "explain": "« Chacun va apporter un plat. Comme ça, c'est moins cher. »",
+          "options": [
+            "Chacun apporte un plat",
+            "On commande des pizzas",
+            "On va au restaurant",
+            "Léa cuisine tout"
+          ]
+        },
+        {
+          "id": "fr-listen-soiree-potluck-q2",
+          "kind": "written",
+          "prompt": "Que va préparer Karim ?",
+          "answers": [
+            "une tarte aux pommes",
+            "tarte aux pommes",
+            "sa tarte aux pommes",
+            "la tarte"
+          ],
+          "explain": "« Je vais faire ma fameuse tarte aux pommes. »"
+        },
+        {
+          "id": "fr-listen-soiree-potluck-q3",
+          "kind": "choice",
+          "prompt": "Que va apporter Mai ?",
+          "answers": [
+            "Des jeux de société"
+          ],
+          "explain": "« Elle va ramener ses jeux de société. »",
+          "options": [
+            "Des jeux de société",
+            "À boire",
+            "Une salade",
+            "Des desserts"
+          ]
+        },
+        {
+          "id": "fr-listen-soiree-potluck-q4",
+          "kind": "written",
+          "prompt": "Quand va-t-on ranger le salon ?",
+          "answers": [
+            "vendredi soir",
+            "vendredi",
+            "le vendredi soir"
+          ],
+          "explain": "« On va ranger le salon vendredi soir. »"
+        },
+        {
+          "id": "fr-listen-soiree-potluck-q5",
+          "kind": "choice",
+          "prompt": "Que va faire Léa en dernier ?",
+          "answers": [
+            "Envoyer le message au groupe"
+          ],
+          "explain": "« Je vais envoyer le message au groupe, chacun sa mission ! »",
+          "options": [
+            "Envoyer le message au groupe",
+            "Préparer une salade",
+            "Ranger le salon",
+            "Acheter à boire"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:food"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-bagage-perdu",
+      "languageID": "fr",
+      "title": "La valise n'est pas arrivée",
+      "level": "A2",
+      "topic": "problèmes",
+      "unitID": "fr-foundations-u20",
+      "text": "À l'aéroport de Lisbonne, le tapis s'arrête, vide. Léa reste seule avec son sac à dos : « Non, pas ça… Ma valise n'est pas là. » Elle va au comptoir bagages avec l'étiquette bleue. L'employée tape le numéro : « Votre valise est restée à Paris, elle arrive avec le vol de ce soir. » Léa encaisse : « Ah mince. Est-ce que vous pouvez la livrer à mon hôtel ? Je suis à Albufeira jusqu'à dimanche. » L'employée note l'adresse : « Bien sûr, elle sera là demain matin. Vous avez besoin d'une trousse de toilette ? » Léa accepte le petit sac offert : « Oui, merci. Il y a ma brosse à dents dedans ? » L'employée sourit : « Il y a l'essentiel. Pas de panique, madame. »",
+      "questions": [
+        {
+          "id": "fr-listen-bagage-perdu-q1",
+          "kind": "choice",
+          "prompt": "Quel est le problème de Léa ?",
+          "answers": [
+            "Sa valise n'est pas arrivée"
+          ],
+          "explain": "« Ma valise n'est pas là. »",
+          "options": [
+            "Sa valise n'est pas arrivée",
+            "Elle a perdu son billet",
+            "Son vol est annulé",
+            "Elle a oublié son sac à dos"
+          ]
+        },
+        {
+          "id": "fr-listen-bagage-perdu-q2",
+          "kind": "written",
+          "prompt": "Où est restée la valise ?",
+          "answers": [
+            "à paris",
+            "paris",
+            "a paris",
+            "elle est restée à paris"
+          ],
+          "explain": "« Votre valise est restée à Paris. »"
+        },
+        {
+          "id": "fr-listen-bagage-perdu-q3",
+          "kind": "written",
+          "prompt": "Quand la valise arrive-t-elle à l'aéroport ?",
+          "answers": [
+            "ce soir",
+            "avec le vol de ce soir",
+            "soir"
+          ],
+          "explain": "« Elle arrive avec le vol de ce soir. »"
+        },
+        {
+          "id": "fr-listen-bagage-perdu-q4",
+          "kind": "choice",
+          "prompt": "Quand Léa recevra-t-elle sa valise à l'hôtel ?",
+          "answers": [
+            "Demain matin"
+          ],
+          "explain": "« Elle sera là demain matin. »",
+          "options": [
+            "Demain matin",
+            "Ce soir",
+            "Dimanche",
+            "Dans deux jours"
+          ]
+        },
+        {
+          "id": "fr-listen-bagage-perdu-q5",
+          "kind": "choice",
+          "prompt": "Que donne l'employée à Léa ?",
+          "answers": [
+            "Une trousse de toilette"
+          ],
+          "explain": "« Vous avez besoin d'une trousse de toilette ? »",
+          "options": [
+            "Une trousse de toilette",
+            "Un nouveau billet",
+            "Un repas gratuit",
+            "Une autre valise"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "function:solve-problems",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-velos-location",
+      "languageID": "fr",
+      "title": "Location de vélos",
+      "level": "A2",
+      "topic": "voyages",
+      "unitID": "fr-foundations-u25",
+      "text": "Devant la boutique « Roule ma poule », Karim entre avec Léa. Le loueur s'avance : « Bonjour ! Pour la journée, c'est douze euros le vélo, casque compris. » Léa sort sa carte : « Deux vélos pour aujourd'hui, s'il vous plaît. » Le loueur remplit le formulaire : « Vous les rendez avant dix-neuf heures, la boutique ferme à dix-neuf heures trente. » Karim demande : « Le chemin de la côte, c'est loin ? » Le loueur sourit : « Comptez vingt minutes jusqu'à la plage, c'est plat. Mais prenez de l'eau, il fait trente degrés aujourd'hui. » Léa attrape son casque : « Et si on veut garder les vélos demain ? » Le loueur : « Le deuxième jour, c'est moitié prix. Vous me dites ce soir. »",
+      "questions": [
+        {
+          "id": "fr-listen-velos-location-q1",
+          "kind": "written",
+          "prompt": "Combien coûte la location d'un vélo pour la journée ?",
+          "answers": [
+            "douze euros",
+            "12 euros",
+            "12€",
+            "douze"
+          ],
+          "explain": "« Pour la journée, c'est douze euros le vélo. »"
+        },
+        {
+          "id": "fr-listen-velos-location-q2",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui est compris dans le prix ?",
+          "answers": [
+            "Le casque"
+          ],
+          "explain": "« Douze euros le vélo, casque compris. »",
+          "options": [
+            "Le casque",
+            "Le pique-nique",
+            "L'eau",
+            "Le panier"
+          ]
+        },
+        {
+          "id": "fr-listen-velos-location-q3",
+          "kind": "written",
+          "prompt": "Avant quelle heure faut-il rendre les vélos ?",
+          "answers": [
+            "dix-neuf heures",
+            "19 heures",
+            "19h",
+            "dix neuf heures"
+          ],
+          "explain": "« Vous les rendez avant dix-neuf heures. »"
+        },
+        {
+          "id": "fr-listen-velos-location-q4",
+          "kind": "written",
+          "prompt": "Combien de temps faut-il jusqu'à la plage ?",
+          "answers": [
+            "vingt minutes",
+            "20 minutes",
+            "20 min"
+          ],
+          "explain": "« Comptez vingt minutes jusqu'à la plage. »"
+        },
+        {
+          "id": "fr-listen-velos-location-q5",
+          "kind": "choice",
+          "prompt": "Quel est le tarif du deuxième jour ?",
+          "answers": [
+            "Moitié prix"
+          ],
+          "explain": "« Le deuxième jour, c'est moitié prix. »",
+          "options": [
+            "Moitié prix",
+            "Le même prix",
+            "Gratuit",
+            "Le double"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:number-time",
+        "listening:detail",
+        "grammar:can",
+        "vocab:transport"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-debat-teletravail",
+      "languageID": "fr",
+      "title": "Débat : le bureau a-t-il encore un sens ?",
+      "level": "B2",
+      "topic": "débats",
+      "unitID": "fr-foundations-u7",
+      "text": "Sur le plateau, deux chroniqueurs s'affrontent. Nadia ouvre : « Le télétravail a tué le bureau, tant mieux. Moins de transports, plus d'autonomie : les études sur la productivité sont formelles. » Marc rebondit : « Formelles, vraiment ? Ces études oublient les jeunes embauchés qui apprennent leur métier seuls, devant un écran. L'entreprise, c'est aussi un lieu. » Nadia concède un point : « Je vous accorde l'apprentissage, mais la solution n'est pas le retour imposé à temps plein. Trois jours chez soi, deux au bureau : c'est le compromis que la plupart revendiquent. » Marc sourit : « Vous savez ce qui m'inquiète ? Les invisibles : ceux qui n'osent pas demander. Si le bureau devient un privilège de cadres, on aura remplacé une contrainte par une inégalité. » Le modérateur coupe : « Nous reviendrons dessus après la pause. »",
+      "questions": [
+        {
+          "id": "fr-listen-debat-teletravail-q1",
+          "kind": "choice",
+          "prompt": "Quelle est la position de Nadia ?",
+          "answers": [
+            "Le télétravail est une bonne chose"
+          ],
+          "explain": "« Le télétravail a tué le bureau, tant mieux. »",
+          "options": [
+            "Le télétravail est une bonne chose",
+            "Il faut revenir au bureau à temps plein",
+            "Le télétravail devrait être interdit",
+            "Elle ne prend pas position"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-teletravail-q2",
+          "kind": "written",
+          "prompt": "Quel groupe Marc estime-t-on avoir oublié dans les études ?",
+          "answers": [
+            "les jeunes embauchés",
+            "les jeunes",
+            "les nouveaux embauchés",
+            "les jeunes qui apprennent leur métier seuls"
+          ],
+          "explain": "« Ces études oublient les jeunes embauchés qui apprennent leur métier seuls. »"
+        },
+        {
+          "id": "fr-listen-debat-teletravail-q3",
+          "kind": "written",
+          "prompt": "Quel compromis Nadia défend-elle ?",
+          "answers": [
+            "trois jours chez soi deux au bureau",
+            "trois jours chez soi",
+            "3 jours de télétravail et 2 au bureau",
+            "deux jours au bureau"
+          ],
+          "explain": "« Trois jours chez soi, deux au bureau. »"
+        },
+        {
+          "id": "fr-listen-debat-teletravail-q4",
+          "kind": "choice",
+          "prompt": "Quelle inégalité Marc redoute-t-il ?",
+          "answers": [
+            "Le bureau réservé aux cadres"
+          ],
+          "explain": "« Si le bureau devient un privilège de cadres… »",
+          "options": [
+            "Le bureau réservé aux cadres",
+            "Les salaires plus bas en télétravail",
+            "Les transports bondés",
+            "Les écrans cassés"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-teletravail-q5",
+          "kind": "choice",
+          "prompt": "Comment Marc qualifie-t-il sa crainte ?",
+          "answers": [
+            "On remplace une contrainte par une inégalité"
+          ],
+          "explain": "« On aura remplacé une contrainte par une inégalité. »",
+          "options": [
+            "On remplace une contrainte par une inégalité",
+            "La productivité va s'effondrer",
+            "Les bureaux vont disparaître",
+            "Les études sont truquées"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors",
+        "vocab:work"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-negoc-loyer",
+      "languageID": "fr",
+      "title": "Négocier le renouvellement du bail",
+      "level": "B2",
+      "topic": "négociation",
+      "unitID": "fr-foundations-u7",
+      "text": "Dans le salon de l'appartement, Inès reçoit le propriétaire. Il annonce la couleur : « Le voisinage monte, madame Diallo. Je passe le loyer à mille deux cents euros. » Inès ne se braque pas : « Je comprends le marché, mais trois ans de locataire sans un jour de retard, ça a une valeur. Je vous propose mille cent. » Il tique : « Mille cent ? Vous me faites rire. Mille cent soixante-quinze. » Elle sort un argument : « Je peux aussi m'engager sur vingt-quatre mois, pas dix-huit. Et je repeins le couloir à mes frais. » Il hésite, regarde le plafond : « Vingt-quatre mois, ça, c'est intéressant… Mille cent cinquante, et c'est ma dernière. » Inès tend la main : « Mille cent quarante, et on signe ce soir. » Il rit : « Vous négociez comme un agent ! Marché conclu. »",
+      "questions": [
+        {
+          "id": "fr-listen-negoc-loyer-q1",
+          "kind": "choice",
+          "prompt": "Combien le propriétaire demande-t-il au départ ?",
+          "answers": [
+            "Mille deux cents euros"
+          ],
+          "explain": "« Je passe le loyer à mille deux cents euros. »",
+          "options": [
+            "Mille deux cents euros",
+            "Mille cent euros",
+            "Mille cent soixante-quinze euros",
+            "Mille cent cinquante euros"
+          ]
+        },
+        {
+          "id": "fr-listen-negoc-loyer-q2",
+          "kind": "written",
+          "prompt": "Quel argument sur sa fiabilité Inès avance-t-elle ?",
+          "answers": [
+            "trois ans sans un jour de retard",
+            "trois ans de locataire sans retard",
+            "elle n'a jamais eu de retard",
+            "3 ans sans retard"
+          ],
+          "explain": "« Trois ans de locataire sans un jour de retard, ça a une valeur. »"
+        },
+        {
+          "id": "fr-listen-negoc-loyer-q3",
+          "kind": "choice",
+          "prompt": "Que propose-t-elle en échange d'un meilleur prix ?",
+          "answers": [
+            "Vingt-quatre mois d'engagement et repeindre le couloir"
+          ],
+          "explain": "« Je peux m'engager sur vingt-quatre mois. Et je repeins le couloir à mes frais. »",
+          "options": [
+            "Vingt-quatre mois d'engagement et repeindre le couloir",
+            "De partir dans six mois",
+            "De payer deux mois d'avance",
+            "De trouver un autre locataire"
+          ]
+        },
+        {
+          "id": "fr-listen-negoc-loyer-q4",
+          "kind": "written",
+          "prompt": "À combien le propriétaire fixe-t-il sa dernière offre ?",
+          "answers": [
+            "mille cent cinquante",
+            "1150 euros",
+            "mille cent cinquante euros",
+            "1150"
+          ],
+          "explain": "« Mille cent cinquante, et c'est ma dernière. »"
+        },
+        {
+          "id": "fr-listen-negoc-loyer-q5",
+          "kind": "written",
+          "prompt": "À quel prix signent-ils finalement ?",
+          "answers": [
+            "mille cent quarante",
+            "1140 euros",
+            "mille cent quarante euros",
+            "1140"
+          ],
+          "explain": "« Mille cent quarante, et on signe ce soir. »"
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-actu-canicule",
+      "languageID": "fr",
+      "title": "Journal : la ville s'adapte à la chaleur",
+      "level": "B2",
+      "topic": "actualité",
+      "unitID": "fr-foundations-u8",
+      "text": "Dernière édition : la canicule qui s'installe oblige les métropoles à s'adapter. À Lyon, les fontaines brumisatrices, installées l'année dernière, ont été ouvertes en continu. Les écoles privées de cours d'école goudronnée reçoivent des subventions pour végétaliser leurs cours. La mairie, dont le plan a été voté à l'unanimité, fermera aussi les parcs à midi les jours d'alerte rouge. Le rapport présenté hier chiffre l'enjeu : la température urbaine a grimpé de deux degrés en dix ans. Les opposants, eux, dénoncent un plan cosmetic : « On brumise les piétons pendant que les parkings climatisés, eux, tournent à plein. » La ville répond que la deuxième phase, qui sera débattue en septembre, visera les bâtiments publics. Les associations demandent déjà des audiences ouvertes.",
+      "questions": [
+        {
+          "id": "fr-listen-actu-canicule-q1",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui oblige les métropoles à s'adapter ?",
+          "answers": [
+            "La canicule qui s'installe"
+          ],
+          "explain": "« La canicule qui s'installe oblige les métropoles à s'adapter. »",
+          "options": [
+            "La canicule qui s'installe",
+            "Une élection prochaine",
+            "Une décision européenne",
+            "Le coût de l'eau"
+          ]
+        },
+        {
+          "id": "fr-listen-actu-canicule-q2",
+          "kind": "written",
+          "prompt": "Que reçoivent les écoles à cour goudronnée ?",
+          "answers": [
+            "des subventions",
+            "subventions",
+            "des subventions pour végétaliser",
+            "de l'argent"
+          ],
+          "explain": "« Les écoles… reçoivent des subventions pour végétaliser leurs cours. »"
+        },
+        {
+          "id": "fr-listen-actu-canicule-q3",
+          "kind": "written",
+          "prompt": "De combien la température urbaine a-t-elle grimpé en dix ans ?",
+          "answers": [
+            "deux degrés",
+            "2 degrés",
+            "2°",
+            "de deux degrés"
+          ],
+          "explain": "« La température urbaine a grimpé de deux degrés en dix ans. »"
+        },
+        {
+          "id": "fr-listen-actu-canicule-q4",
+          "kind": "choice",
+          "prompt": "Que reprochent les opposants au plan ?",
+          "answers": [
+            "Il est surtout cosmétique"
+          ],
+          "explain": "« On brumise les piétons pendant que les parkings climatisés tournent à plein. »",
+          "options": [
+            "Il est surtout cosmétique",
+            "Il coûte trop cher",
+            "Il ferme trop d'écoles",
+            "Il arrive trop tard"
+          ]
+        },
+        {
+          "id": "fr-listen-actu-canicule-q5",
+          "kind": "choice",
+          "prompt": "Que visera la deuxième phase du plan ?",
+          "answers": [
+            "Les bâtiments publics"
+          ],
+          "explain": "« La deuxième phase… visera les bâtiments publics. »",
+          "options": [
+            "Les bâtiments publics",
+            "Les parkings privés",
+            "Les fontaines",
+            "Les écoles maternelles"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:passive-intro",
+        "grammar:relative-clauses"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-debat-notes",
+      "languageID": "fr",
+      "title": "Débat : faut-il supprimer les notes ?",
+      "level": "B2",
+      "topic": "débats",
+      "unitID": "fr-foundations-u7",
+      "text": "Thème du jour : l'école sans notes. Salif tranche d'entrée : « Une note, c'est un jugement qui remplace un retour. Un élève qui reçoit huit sur vingt ne sait pas ce qu'il doit corriger. » Claire oppose l'expérience : « Sans notes, mon frère n'aurait jamais ouvert un livre. La compétition le réveille. Ce qui compte, c'est ce qu'on met derrière : des commentaires précis. » Salif concède : « Je ne dis pas de tout supprimer du jour au lendemain. Je dis qu'on devrait tester : une année, deux collèges, des évaluations écrites détaillées. » Claire sourit : « Voilà une proposition intéressante, à condition de former les enseignants. Sinon, vous remplacez un chiffre par du blabla. » Le modérateur conclut : « Deux camps, un accord : tout dépendra de la mise en œuvre. »",
+      "questions": [
+        {
+          "id": "fr-listen-debat-notes-q1",
+          "kind": "choice",
+          "prompt": "Quel est le problème principal que Salif voit dans la note ?",
+          "answers": [
+            "Elle ne dit pas quoi corriger"
+          ],
+          "explain": "« Un élève qui reçoit huit sur vingt ne sait pas ce qu'il doit corriger. »",
+          "options": [
+            "Elle ne dit pas quoi corriger",
+            "Elle est trop rare",
+            "Elle favorise les bons élèves",
+            "Elle stresse les parents"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-notes-q2",
+          "kind": "written",
+          "prompt": "Pourquoi Claire défend-elle la note ?",
+          "answers": [
+            "la compétition réveille",
+            "la compétition réveille les élèves",
+            "elle motive",
+            "parce que la compétition réveille"
+          ],
+          "explain": "« La compétition le réveille. »"
+        },
+        {
+          "id": "fr-listen-debat-notes-q3",
+          "kind": "written",
+          "prompt": "Quelle expérience Salif propose-t-il ?",
+          "answers": [
+            "une année deux collèges",
+            "tester deux collèges pendant un an",
+            "une année de test dans deux collèges",
+            "2 collèges 1 an"
+          ],
+          "explain": "« On devrait tester : une année, deux collèges. »"
+        },
+        {
+          "id": "fr-listen-debat-notes-q4",
+          "kind": "choice",
+          "prompt": "À quelle condition Claire accepte-t-elle l'expérience ?",
+          "answers": [
+            "Former les enseignants"
+          ],
+          "explain": "« À condition de former les enseignants. »",
+          "options": [
+            "Former les enseignants",
+            "Garder les examens finaux",
+            "Prévenir les parents",
+            "Commencer en terminale"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-notes-q5",
+          "kind": "choice",
+          "prompt": "Sur quoi les deux camps se rejoignent-ils ?",
+          "answers": [
+            "Tout dépendra de la mise en œuvre"
+          ],
+          "explain": "« Deux camps, un accord : tout dépendra de la mise en œuvre. »",
+          "options": [
+            "Tout dépendra de la mise en œuvre",
+            "Les notes doivent disparaître",
+            "Les notes doivent rester",
+            "L'école est en crise"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors",
+        "vocab:collocations"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-negoc-festival",
+      "languageID": "fr",
+      "title": "Négocier le budget du festival de quartier",
+      "level": "B2",
+      "topic": "négociation",
+      "unitID": "fr-foundations-u8",
+      "text": "À la mairie d'arrondissement, l'association des commerçants défend son festival. Madame Costa expose : « Trois mille euros, et la rue des Écoles devient une scène ouverte pendant deux jours. » L'adjoint secoue la tête : « Le budget culture est serré. Je peux vous accorder mille huit cents. » Madame Costa ne lâche pas : « Mille huit cents, c'est la sono et rien d'autre. Regardez les retombées : l'an dernier, les commerçants du voisinage ont fait un chiffre d'affaires supérieur de trente pour cent ce week-end-là. » L'adjoint ouvre son classeur : « Admettons deux mille deux cents. Vous trouvez le reste en parrainages. » Elle joue son dernier carton : « Deux mille quatre cents, et nous affichons le logo de la mairie sur la scène. » L'adjoint rit : « Vous me vendez ma propre publicité ! D'accord pour deux mille quatre, mais je veux le programme avant juin. »",
+      "questions": [
+        {
+          "id": "fr-listen-negoc-festival-q1",
+          "kind": "written",
+          "prompt": "Combien l'association demande-t-elle au départ ?",
+          "answers": [
+            "trois mille euros",
+            "3000 euros",
+            "trois mille",
+            "3000"
+          ],
+          "explain": "« Trois mille euros, et la rue des Écoles devient une scène ouverte. »"
+        },
+        {
+          "id": "fr-listen-negoc-festival-q2",
+          "kind": "choice",
+          "prompt": "Que propose l'adjoint dans un premier temps ?",
+          "answers": [
+            "Mille huit cents euros"
+          ],
+          "explain": "« Je peux vous accorder mille huit cents. »",
+          "options": [
+            "Mille huit cents euros",
+            "Deux mille deux cents euros",
+            "Rien du tout",
+            "Deux mille quatre cents euros"
+          ]
+        },
+        {
+          "id": "fr-listen-negoc-festival-q3",
+          "kind": "written",
+          "prompt": "Quel chiffre d'affaires les commerçants ont-ils réalisé l'an dernier ce week-end ?",
+          "answers": [
+            "trente pour cent de plus",
+            "30 % de plus",
+            "30% de plus",
+            "trente pour cent supérieur"
+          ],
+          "explain": "« Un chiffre d'affaires supérieur de trente pour cent. »"
+        },
+        {
+          "id": "fr-listen-negoc-festival-q4",
+          "kind": "choice",
+          "prompt": "Que promet Madame Costa en échange des deux mille quatre cents ?",
+          "answers": [
+            "Le logo de la mairie sur la scène"
+          ],
+          "explain": "« Nous affichons le logo de la mairie sur la scène. »",
+          "options": [
+            "Le logo de la mairie sur la scène",
+            "Un concert gratuit",
+            "Des places réservées",
+            "Un stand pour la mairie"
+          ]
+        },
+        {
+          "id": "fr-listen-negoc-festival-q5",
+          "kind": "written",
+          "prompt": "Quelle condition l'adjoint pose-t-il à la fin ?",
+          "answers": [
+            "le programme avant juin",
+            "recevoir le programme avant juin",
+            "le programme avant juin",
+            "programme avant juin"
+          ],
+          "explain": "« Je veux le programme avant juin. »"
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:first-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "fr-listen-anecdote-train-perdu",
+      "languageID": "fr",
+      "title": "L'anecdote du train manqué",
+      "level": "B1",
+      "topic": "récits",
+      "unitID": "fr-foundations-u18",
+      "text": "Au déjeuner, Hugo raconte encore son week-end catastrophique. « Je vous jure, tout est allé de travers. Samedi, je devais prendre le train de sept heures pour aller à l'anniversaire de ma cousine. Mon réveil n'a pas sonné — enfin, il a sonné, mais j'avais oublié de le mettre en sonnerie. Je me suis réveillé à sept heures et quart, chez moi, avec le train déjà parti. J'ai couru jusqu'à la gare en pyjama, enfin, à peu près, et l'agent m'a dit : le prochain est à midi. Ma cousine a ouvert la porte à vingt heures. Il ne restait qu'un morceau de gâteau. Le pire ? Le lendemain, la femme de ménage a trouvé mon pyjama dans le hall de la gare. Depuis, ma cousine m'appelle « monsieur midi ». »",
+      "questions": [
+        {
+          "id": "fr-listen-anecdote-train-perdu-q1",
+          "kind": "choice",
+          "prompt": "Pourquoi Hugo a-t-il raté son train ?",
+          "answers": [
+            "Son réveil n'était pas en sonnerie"
+          ],
+          "explain": "« Il a sonné, mais j'avais oublié de le mettre en sonnerie. »",
+          "options": [
+            "Son réveil n'était pas en sonnerie",
+            "Il est tombé malade",
+            "Le train est parti plus tôt",
+            "Il s'est trompé de gare"
+          ]
+        },
+        {
+          "id": "fr-listen-anecdote-train-perdu-q2",
+          "kind": "written",
+          "prompt": "À quelle heure s'est-il réveillé ?",
+          "answers": [
+            "à sept heures et quart",
+            "sept heures et quart",
+            "7h15",
+            "a sept heures et quart"
+          ],
+          "explain": "« Je me suis réveillé à sept heures et quart. »"
+        },
+        {
+          "id": "fr-listen-anecdote-train-perdu-q3",
+          "kind": "written",
+          "prompt": "À quelle heure a-t-il finalement frappé chez sa cousine ?",
+          "answers": [
+            "à vingt heures",
+            "vingt heures",
+            "8 heures du soir",
+            "20 heures"
+          ],
+          "explain": "« Ma cousine a ouvert la porte à vingt heures. »"
+        },
+        {
+          "id": "fr-listen-anecdote-train-perdu-q4",
+          "kind": "choice",
+          "prompt": "Où la femme de ménage a-t-elle trouvé son pyjama ?",
+          "answers": [
+            "Dans le hall de la gare"
+          ],
+          "explain": "« La femme de ménage a trouvé mon pyjama dans le hall de la gare. »",
+          "options": [
+            "Dans le hall de la gare",
+            "Dans le train",
+            "Chez sa cousine",
+            "Dans la rue"
+          ]
+        },
+        {
+          "id": "fr-listen-anecdote-train-perdu-q5",
+          "kind": "written",
+          "prompt": "Comment sa cousine l'appelle-t-elle maintenant ?",
+          "answers": [
+            "monsieur midi",
+            "m monsieur midi",
+            "« monsieur midi »"
+          ],
+          "explain": "« Depuis, ma cousine m'appelle “monsieur midi”. »"
+        },
+        {
+          "id": "fr-listen-anecdote-train-perdu-q6",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui restait du gâteau quand Hugo est arrivé ?",
+          "answers": [
+            "Un morceau"
+          ],
+          "explain": "« Il ne restait qu'un morceau de gâteau. »",
+          "options": [
+            "Un morceau",
+            "La moitié",
+            "Deux parts",
+            "Rien du tout"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:tell-a-story",
+        "grammar:connectors",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
     }
   ]
 }

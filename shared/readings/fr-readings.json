@@ -1239,6 +1239,520 @@
           "explain": "Les Lefèvre ont testé le vélo — et ils ne s'en plaignent pas."
         }
       ]
+    },
+    {
+      "id": "fr-read-journee-mai",
+      "languageID": "fr",
+      "title": "La journée de Mai",
+      "level": "A1",
+      "topic": "routine",
+      "unitID": "fr-foundations-u2",
+      "text": "Mai est étudiante à Lyon. Elle se lève à sept heures et quart, même le week-end, parce qu'elle aime les matins tranquilles. D'abord, elle boit un grand thé avec du miel. Ensuite, elle lit dix pages d'un livre : c'est sa petite règle. À huit heures, elle prend le tram avec son voisin Théo, qui parle tout le temps de football. Les cours commencent à huit heures trente et finissent à midi et demi. L'après-midi, elle travaille à la bibliothèque parce que chez elle, il y a trop de bruit. Le soir, elle cuisine avec sa colocataire : elles préparent souvent des pâtes ou une soupe. À dix heures, Mai éteint tout et lit encore quelques pages. Elle dit que sa journée est simple, mais c'est exactement la sienne.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:third-person-s",
+        "vocab:daily-routine"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-journee-mai-q1",
+          "kind": "choice",
+          "prompt": "À quelle heure Mai se lève-t-elle ?",
+          "answers": [
+            "À sept heures et quart"
+          ],
+          "explain": "« Elle se lève à sept heures et quart. »",
+          "options": [
+            "À sept heures et quart",
+            "À huit heures",
+            "À sept heures",
+            "À midi et demi"
+          ]
+        },
+        {
+          "id": "fr-read-journee-mai-q2",
+          "kind": "written",
+          "prompt": "Que boit-elle le matin ?",
+          "answers": [
+            "un grand thé",
+            "du thé",
+            "thé avec du miel",
+            "un the"
+          ],
+          "explain": "« D'abord, elle boit un grand thé avec du miel. »"
+        },
+        {
+          "id": "fr-read-journee-mai-q3",
+          "kind": "written",
+          "prompt": "Combien de pages lit-elle chaque jour ?",
+          "answers": [
+            "dix",
+            "10",
+            "dix pages"
+          ],
+          "explain": "« Ensuite, elle lit dix pages d'un livre. »"
+        },
+        {
+          "id": "fr-read-journee-mai-q4",
+          "kind": "choice",
+          "prompt": "Pourquoi travaille-t-elle à la bibliothèque l'après-midi ?",
+          "answers": [
+            "Parce qu'il y a trop de bruit chez elle"
+          ],
+          "explain": "« Parce que chez elle, il y a trop de bruit. »",
+          "options": [
+            "Parce qu'il y a trop de bruit chez elle",
+            "Parce que la bibliothèque est gratuite",
+            "Parce que Théo y travaille",
+            "Parce qu'elle n'a pas de cours"
+          ]
+        },
+        {
+          "id": "fr-read-journee-mai-q5",
+          "kind": "choice",
+          "prompt": "Avec qui cuisine-t-elle le soir ?",
+          "answers": [
+            "Avec sa colocataire"
+          ],
+          "explain": "« Le soir, elle cuisine avec sa colocataire. »",
+          "options": [
+            "Avec sa colocataire",
+            "Avec Théo",
+            "Avec sa sœur",
+            "Elle cuisine seule"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-read-famille-karim",
+      "languageID": "fr",
+      "title": "La tribu de Karim",
+      "level": "A1",
+      "topic": "famille",
+      "unitID": "fr-foundations-u12",
+      "text": "Karim a une grande famille. Son père s'appelle Youssef et travaille dans un garage : il adore les vieilles voitures. Sa mère, Sylvie, est infirmière à l'hôpital Saint-Louis ; elle rentre fatiguée mais elle sourit toujours. Karim a deux sœurs. L'aînée, Nadia, a vingt-quatre ans et vit à Bordeaux avec son copain. La petite, Inès, a neuf ans : elle dessine partout, même sur les murs, dit maman. Il y a aussi le grand-père, Maurice. Il a soixante-dix-huit ans et il raconte les mêmes histoires à chaque déjeuner, mais toute la famille écoute encore. Le dimanche, tout le monde se retrouve chez les parents. Le grand-père apporte son gâteau au chocolat, Nadia téléphone en retard, et Karim met la table. Chacun a sa place, et c'est comme ça qu'ils aiment leur dimanche.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:possessives",
+        "vocab:family"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-famille-karim-q1",
+          "kind": "choice",
+          "prompt": "Quel est le métier du père de Karim ?",
+          "answers": [
+            "Il travaille dans un garage"
+          ],
+          "explain": "« Son père… travaille dans un garage. »",
+          "options": [
+            "Il travaille dans un garage",
+            "Il est infirmier",
+            "Il est professeur",
+            "Il est à la retraite"
+          ]
+        },
+        {
+          "id": "fr-read-famille-karim-q2",
+          "kind": "written",
+          "prompt": "Où vit la sœur aînée de Karim ?",
+          "answers": [
+            "à bordeaux",
+            "bordeaux",
+            "a bordeaux",
+            "elle vit à bordeaux"
+          ],
+          "explain": "« L'aînée, Nadia… vit à Bordeaux. »"
+        },
+        {
+          "id": "fr-read-famille-karim-q3",
+          "kind": "written",
+          "prompt": "Quel âge a Inès ?",
+          "answers": [
+            "neuf ans",
+            "9 ans",
+            "neuf"
+          ],
+          "explain": "« La petite, Inès, a neuf ans. »"
+        },
+        {
+          "id": "fr-read-famille-karim-q4",
+          "kind": "choice",
+          "prompt": "Qu'apporte le grand-père le dimanche ?",
+          "answers": [
+            "Son gâteau au chocolat"
+          ],
+          "explain": "« Le grand-père apporte son gâteau au chocolat. »",
+          "options": [
+            "Son gâteau au chocolat",
+            "Des vieilles voitures",
+            "Des dessins",
+            "Du thé"
+          ]
+        },
+        {
+          "id": "fr-read-famille-karim-q5",
+          "kind": "written",
+          "prompt": "Que fait Karim quand toute la famille est réunie ?",
+          "answers": [
+            "il met la table",
+            "met la table",
+            "il met la table",
+            "il aide à mettre la table"
+          ],
+          "explain": "« Et Karim met la table. »"
+        }
+      ]
+    },
+    {
+      "id": "fr-read-premier-jour-lea",
+      "languageID": "fr",
+      "title": "Le premier jour de Léa",
+      "level": "B1",
+      "topic": "travail",
+      "unitID": "fr-foundations-u21",
+      "text": "Léa avait préparé son premier jour au millimètre : tenue repassée, trajet répété, arrivée prévue vingt minutes en avance. Tout s'est effondré à la station République : un dégagement d'urgence a bloqué la ligne pendant quarante minutes. Elle a couru sous la pluie, elle est entrée dans l'agence à neuf heures deux, trempée et rouge. Sa manager, madame Robin, n'a pas bronché : « Vous êtes pile à l'heure pour le café. » Dans l'équipe, tout le monde a vécu la même entrée en matière, dit-elle : Hugo a perdu son badge le premier matin, Karim s'était présenté un jour férié. À la pause déjeuner, Léa a déjà appris les prénoms de huit collègues et l'histoire de la plante verte du hall, morte trois fois et ressuscitée à chaque fois. Le soir, en rentrant, elle a compris quelque chose : elle avait peur de rater ses débuts, mais c'est justement ces débuts ratés qui font partie de l'équipe.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-premier-jour-lea-q1",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui a perturbé le trajet de Léa ?",
+          "answers": [
+            "Un dégagement d'urgence à la station"
+          ],
+          "explain": "« Un dégagement d'urgence a bloqué la ligne. »",
+          "options": [
+            "Un dégagement d'urgence à la station",
+            "Une grève des tramways",
+            "Elle s'est perdue",
+            "Sa tenue n'était pas prête"
+          ]
+        },
+        {
+          "id": "fr-read-premier-jour-lea-q2",
+          "kind": "written",
+          "prompt": "À quelle heure Léa est-elle arrivée à l'agence ?",
+          "answers": [
+            "à neuf heures deux",
+            "neuf heures deux",
+            "9h02",
+            "a neuf heures deux"
+          ],
+          "explain": "« Elle est entrée dans l'agence à neuf heures deux. »"
+        },
+        {
+          "id": "fr-read-premier-jour-lea-q3",
+          "kind": "choice",
+          "prompt": "Comment madame Robin réagit-elle ?",
+          "answers": [
+            "Avec calme et humour"
+          ],
+          "explain": "« Vous êtes pile à l'heure pour le café. »",
+          "options": [
+            "Avec calme et humour",
+            "Elle la sanctionne",
+            "Elle ne parle pas à Léa",
+            "Elle est furieuse"
+          ]
+        },
+        {
+          "id": "fr-read-premier-jour-lea-q4",
+          "kind": "written",
+          "prompt": "Quelle erreur Karim avait-il commise à son premier jour ?",
+          "answers": [
+            "il s'était présenté un jour férié",
+            "il était venu un jour férié",
+            "un jour férié",
+            "il s'est présenté un jour férié"
+          ],
+          "explain": "« Karim s'était présenté un jour férié. »"
+        },
+        {
+          "id": "fr-read-premier-jour-lea-q5",
+          "kind": "choice",
+          "prompt": "Que comprend Léa à la fin du texte ?",
+          "answers": [
+            "Les faux pas font partie de l'équipe"
+          ],
+          "explain": "« C'est justement ces débuts ratés qui font partie de l'équipe. »",
+          "options": [
+            "Les faux pas font partie de l'équipe",
+            "Il ne faut jamais être en retard",
+            "Cette agence n'est pas pour elle",
+            "Les managers sont tous indulgents"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-read-fete-rue-ecoles",
+      "languageID": "fr",
+      "title": "La fête de la rue des Écoles",
+      "level": "B1",
+      "topic": "ville",
+      "unitID": "fr-foundations-u26",
+      "text": "Le comité des voisins publie son programme : samedi 14 juin, la rue des Écoles sera piétonne de dix heures à vingt-deux heures pour sa fête annuelle. Au programme : un marché des créateurs dès dix heures, un atelier réparation de vélos à quatorze heures, puis le repas partagé à dix-neuf heures — chacun apporte un plat, l'association fournit les tables et les grillades. Nouveauté cette année : la cour de l'école ouvrira ses portes pour un tournoi de pétanque et un coin lecture pour les enfants. Les habitants qui veulent exposer peuvent s'inscrire jusqu'au 7 juin à la boulangerie du coin, qui sert de QG au comité. On cherche encore quatre volontaires pour l'installation des tables le samedi matin : huit heures, café offert. En cas de pluie, la fête sera reportée au samedi suivant, comme l'an dernier. La rue n'attend que vous : venez nombreux, venez curieux.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "function:express-opinion",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-fete-rue-ecoles-q1",
+          "kind": "written",
+          "prompt": "Jusqu'à quelle heure la rue sera-t-elle piétonne ?",
+          "answers": [
+            "vingt-deux heures",
+            "22 heures",
+            "22h",
+            "vingt deux heures"
+          ],
+          "explain": "« La rue des Écoles sera piétonne de dix heures à vingt-deux heures. »"
+        },
+        {
+          "id": "fr-read-fete-rue-ecoles-q2",
+          "kind": "choice",
+          "prompt": "Que se passe-t-il à quatorze heures ?",
+          "answers": [
+            "Un atelier réparation de vélos"
+          ],
+          "explain": "« Un atelier réparation de vélos à quatorze heures. »",
+          "options": [
+            "Un atelier réparation de vélos",
+            "Le repas partagé",
+            "Le marché des créateurs",
+            "Le tournoi de pétanque"
+          ]
+        },
+        {
+          "id": "fr-read-fete-rue-ecoles-q3",
+          "kind": "choice",
+          "prompt": "Où les habitants peuvent-ils s'inscrire pour exposer ?",
+          "answers": [
+            "À la boulangerie du coin"
+          ],
+          "explain": "« S'inscrire jusqu'au 7 juin à la boulangerie du coin. »",
+          "options": [
+            "À la boulangerie du coin",
+            "À la mairie",
+            "À l'école",
+            "Sur place, le jour même"
+          ]
+        },
+        {
+          "id": "fr-read-fete-rue-ecoles-q4",
+          "kind": "written",
+          "prompt": "Combien de volontaires cherche-t-on pour l'installation ?",
+          "answers": [
+            "quatre",
+            "4",
+            "quatre volontaires"
+          ],
+          "explain": "« On cherche encore quatre volontaires. »"
+        },
+        {
+          "id": "fr-read-fete-rue-ecoles-q5",
+          "kind": "choice",
+          "prompt": "Que se passe-t-il s'il pleut ?",
+          "answers": [
+            "La fête est reportée au samedi suivant"
+          ],
+          "explain": "« La fête sera reportée au samedi suivant, comme l'an dernier. »",
+          "options": [
+            "La fête est reportée au samedi suivant",
+            "La fête est annulée",
+            "La fête se passe à l'intérieur",
+            "Le programme change seulement"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-read-tribune-trotinettes",
+      "languageID": "fr",
+      "title": "Tribune : les trottinettes à la croisée des chemins",
+      "level": "B2",
+      "topic": "opinion",
+      "unitID": "fr-foundations-u8",
+      "text": "Faut-il bannir les trottinettes libres-service de nos villes ? La question mérite mieux qu'un réflexe. D'un côté, le constat est sévère : des engins abandonnés sur les trottoirs, des piétons qui trébuchent, des accidents dont les urgences gardent la trace. De l'autre, la trottinette comble un vide réel : le trajet de trois kilomètres, trop long à pied, trop court en voiture. Si nous supprimions le service sans rien proposer, nous punirions une pratique utile pour des abus réels mais gérables. La solution n'est pas l'interdiction, elle est la discipline : des stations obligatoires, une vitesse bridée dans les zones piétonnes, une amende qui pique pour les dépôts sauvages. Les villes qui ont imposé ces règles constatent des trottoirs rendus aux piétons sans faire disparaître l'offre. Bannissons donc les abus, pas l'objet : c'est le devoir d'une ville qui se veut moderne de corriger avant de condamner.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-tribune-trotinettes-q1",
+          "kind": "choice",
+          "prompt": "Quelle est la thèse de la tribune ?",
+          "answers": [
+            "Encadrer les trottinettes plutôt que les interdire"
+          ],
+          "explain": "« La solution n'est pas l'interdiction, elle est la discipline. »",
+          "options": [
+            "Encadrer les trottinettes plutôt que les interdire",
+            "Interdire immédiatement les trottinettes",
+            "Laisser la situation telle quelle",
+            "Réduire le nombre de piétons"
+          ]
+        },
+        {
+          "id": "fr-read-tribune-trotinettes-q2",
+          "kind": "written",
+          "prompt": "Quel trajet la trottinette comble-t-elle selon l'auteur ?",
+          "answers": [
+            "le trajet de trois kilomètres",
+            "trois kilomètres",
+            "3 km",
+            "le trajet de 3 kilomètres"
+          ],
+          "explain": "« Le trajet de trois kilomètres, trop long à pied, trop court en voiture. »"
+        },
+        {
+          "id": "fr-read-tribune-trotinettes-q3",
+          "kind": "choice",
+          "prompt": "Quelles mesures l'auteur propose-t-il ?",
+          "answers": [
+            "Stations obligatoires, vitesse bridée, amende"
+          ],
+          "explain": "« Des stations obligatoires, une vitesse bridée… une amende qui pique. »",
+          "options": [
+            "Stations obligatoires, vitesse bridée, amende",
+            "Une interdiction la nuit",
+            "Des trottinettes gratuites",
+            "Plus de pistes cyclables seulement"
+          ]
+        },
+        {
+          "id": "fr-read-tribune-trotinettes-q4",
+          "kind": "written",
+          "prompt": "Que constatent les villes qui ont imposé ces règles ?",
+          "answers": [
+            "des trottoirs rendus aux piétons",
+            "les trottoirs rendus aux piétons",
+            "trottoirs rendus aux piétons"
+          ],
+          "explain": "« Des trottoirs rendus aux piétons sans faire disparaître l'offre. »"
+        },
+        {
+          "id": "fr-read-tribune-trotinettes-q5",
+          "kind": "choice",
+          "prompt": "Avec quelle maxime l'auteur conclut-il ?",
+          "answers": [
+            "Corriger avant de condamner"
+          ],
+          "explain": "« C'est le devoir… de corriger avant de condamner. »",
+          "options": [
+            "Corriger avant de condamner",
+            "Interdire pour protéger",
+            "Laisser faire le marché",
+            "Punir les piétons"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-read-negociation-scene-ouverte",
+      "languageID": "fr",
+      "title": "Dossier : une scène ouverte au marché couvert",
+      "level": "B2",
+      "topic": "négociation",
+      "unitID": "fr-foundations-u7",
+      "text": "Le marché couvert pourrait accueillir une scène ouverte le samedi soir. Le dossier, porté par l'association Les Commerçants debout, prévoit deux heures de musique par semaine, dix-huit heures de montage assurées par des bénévoles et une jauge limitée à deux cents personnes. La chambre des commerçants pose ses conditions : le stationnement des vendeurs doit rester possible jusqu'à midi, le bruit doit cesser à vingt-deux heures précises et l'association devra souscrire une assurance responsabilité civile. En échange, la mairie étudie une prise en charge du nettoyage du dimanche matin, à condition que la scène teste son projet pendant six mois. Si le bilan s'avère positif — fréquentation des étals, aucun incident, Budget respecté —, la convention sera reconduite pour une année complète. Le vote aura lieu le mois prochain ; les riverains seront invités à s'exprimer avant, parce qu'une scène ouverte se négocie aussi avec ceux qui dorment au-dessus.",
+      "skills": [
+        "reading:inference",
+        "function:negotiate",
+        "grammar:first-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-negociation-scene-ouverte-q1",
+          "kind": "written",
+          "prompt": "Combien de personnes la jauge limite-t-elle ?",
+          "answers": [
+            "deux cents",
+            "200",
+            "deux cents personnes",
+            "200 personnes"
+          ],
+          "explain": "« Une jauge limitée à deux cents personnes. »"
+        },
+        {
+          "id": "fr-read-negociation-scene-ouverte-q2",
+          "kind": "choice",
+          "prompt": "Quelle condition concerne les vendeurs du marché ?",
+          "answers": [
+            "Leur stationnement reste possible jusqu'à midi"
+          ],
+          "explain": "« Le stationnement des vendeurs doit rester possible jusqu'à midi. »",
+          "options": [
+            "Leur stationnement reste possible jusqu'à midi",
+            "Ils doivent animer la scène",
+            "Ils paient la musique",
+            "Ils ferment à dix-huit heures"
+          ]
+        },
+        {
+          "id": "fr-read-negociation-scene-ouverte-q3",
+          "kind": "choice",
+          "prompt": "Que propose la mairie en échange ?",
+          "answers": [
+            "La prise en charge du nettoyage du dimanche"
+          ],
+          "explain": "« La mairie étudie une prise en charge du nettoyage du dimanche matin. »",
+          "options": [
+            "La prise en charge du nettoyage du dimanche",
+            "Une subvention de dix mille euros",
+            "Du matériel sonore",
+            "Un local permanent"
+          ]
+        },
+        {
+          "id": "fr-read-negociation-scene-ouverte-q4",
+          "kind": "written",
+          "prompt": "Pendant combien de temps le projet doit-il être testé ?",
+          "answers": [
+            "six mois",
+            "6 mois",
+            "pendant six mois"
+          ],
+          "explain": "« À condition que la scène teste son projet pendant six mois. »"
+        },
+        {
+          "id": "fr-read-negociation-scene-ouverte-q5",
+          "kind": "choice",
+          "prompt": "Pourquoi les riverains seront-ils consultés ?",
+          "answers": [
+            "Parce qu'ils vivent au-dessus du marché"
+          ],
+          "explain": "« Une scène ouverte se négocie aussi avec ceux qui dorment au-dessus. »",
+          "options": [
+            "Parce qu'ils vivent au-dessus du marché",
+            "Parce qu'ils financent le projet",
+            "Parce que la loi l'exige",
+            "Parce qu'ils sont opposés au projet"
+          ]
+        }
+      ]
     }
   ]
 }

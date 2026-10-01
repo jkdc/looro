@@ -2117,7 +2117,35 @@ public enum DeFoundationsU25 {
                             Exercise(id: "de-foundations-u25-vortag-e1", kind: "choice", prompt: "« Ich ___ morgen um sechs aufstehen. »", options: ["werde", "werdest", "willst", "würde"], answers: ["werde"], explain: "Futur: ich werde + Infinitiv."),
                             Exercise(id: "de-foundations-u25-vortag-e2", kind: "gap", prompt: "Der Flug geht um neun, ___ fahren wir um sieben los.", options: [], answers: ["deshalb"], explain: "Grund → Folge: deshalb + Verb Position 2."),
                             Exercise(id: "de-foundations-u25-vortag-e3", kind: "order", prompt: "Sag: du bestellst ein Taxi zum Flughafen. (werden)", options: [], answers: ["Ich werde ein Taxi zum Flughafen bestellen"], explain: "werde + Infinitiv am Ende."),
-                            Exercise(id: "de-foundations-u25-vortag-e4", kind: "written", prompt: "Sag, wie das Wetter morgen wird: schön.", options: [], answers: ["das wetter wird morgen schön", "das wetter wird morgen schoen", "morgen wird das wetter schön", "morgen wird das wetter schoen"], explain: "werden + Adjektiv: Das Wetter wird schön.")], skills: ["grammar:going-to", "grammar:connectors", "vocab:transport", "function:make-future-plans"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+                            Exercise(id: "de-foundations-u25-vortag-e4", kind: "written", prompt: "Sag, wie das Wetter morgen wird: schön.", options: [], answers: ["das wetter wird morgen schön", "das wetter wird morgen schoen", "morgen wird das wetter schön", "morgen wird das wetter schoen"], explain: "werden + Adjektiv: Das Wetter wird schön.")], skills: ["grammar:going-to", "grammar:connectors", "vocab:transport", "function:make-future-plans"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "de-foundations-u25-flughafen", title: "Am Flughafen", goal: "Check-in und Gate: Ich möchte einchecken — so kommst du ans Gate und in den Flieger.",
+                intro: LessonIntro(explanation: [
+                            "möchte + Infinitiv: « Ich möchte einchecken. » — höflicher als wollen.",
+                            "Am Schalter: « Hier ist mein Reisepass. », « Ich habe nur Handgepäck. » — kurz und klar.",
+                            "Fragen nach Zeit und Ort: « Wann beginnt das Boarding ? », « Von welchem Gate fliegt der Flug ? »"], examples: [
+                            ExampleLine(text: "Ich möchte einchecken.", meaning: "möchte: höflich planen."),
+                            ExampleLine(text: "Hier ist mein Reisepass.", meaning: "Die Dokumente am Schalter."),
+                            ExampleLine(text: "Wann beginnt das Boarding ?", meaning: "Boarding = das Einsteigen."),
+                            ExampleLine(text: "Von welchem Gate fliegt der Flug ?", meaning: "Nach dem Gate fragen."),
+                            ExampleLine(text: "Ich habe nur Handgepäck.", meaning: "Handgepäck: der kleine Koffer für die Kabine.")]),
+                expressions: [
+                            TargetExpression(text: "möchte + Infinitiv", meaning: "Höflich sagen, was du willst.", note: "Ich möchte einen Platz am Fenster."),
+                            TargetExpression(text: "das Boarding", meaning: "Das Einsteigen.", note: "Das Boarding beginnt um 8:30."),
+                            TargetExpression(text: "das Gate", meaning: "Der Weg zum Flieger.", note: "Gate B 12, bitte."),
+                            TargetExpression(text: "das Handgepäck", meaning: "Kommt in die Kabine.", note: "Nur ein Handgepäckstück."),
+                            TargetExpression(text: "pünktlich / verspätet", meaning: "Die Anzeige am Flughafen.", note: "Unser Flug ist pünktlich.")],
+                situation: "Flughafen, halb acht: Nina steht am Schalter. « Guten Morgen, ich möchte einchecken. Hier ist mein Reisepass. » — « Nur Handgepäck ? » — « Ja. Wann beginnt das Boarding ? » — « Um 8:30, Gate B 12. Der Flug ist pünktlich. »",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag am Schalter höflich: einchecken.", expected: ["Ich möchte einchecken.", "ich moechte einchecken", "Ich möchte bitte einchecken."], focus: "möchte einchecken", watch: "möchte + Infinitiv am Ende."),
+                                PracticeQuestion(prompt: "Gib dem Personal deinen Pass.", expected: ["Hier ist mein Reisepass.", "hier ist mein reisepass", "Hier ist mein Pass."], focus: "reisepass", watch: "Hier ist mein … ."),
+                                PracticeQuestion(prompt: "Frag nach der Zeit fürs Boarding.", expected: ["Wann beginnt das Boarding ?", "wann beginnt das boarding", "Wann startet das Boarding ?"], focus: "wann beginnt", watch: "Wann + Verb an Position 2."),
+                                PracticeQuestion(prompt: "Frag nach deinem Gate.", expected: ["Von welchem Gate fliegt der Flug ?", "von welchem gate fliegt der flug", "Welches Gate habe ich ?"], focus: "welches gate", watch: "welch- + Gate: welches."),
+                                PracticeQuestion(prompt: "Sag: nur der kleine Koffer für die Kabine.", expected: ["Ich habe nur Handgepäck.", "ich habe nur handgepäck", "ich habe nur handgepaeck"], focus: "handgepäck", watch: "Handgepäck: in die Kabine.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u25-flughafen-e1", kind: "choice", prompt: "« Ich ___ einen Platz am Fenster. »", options: ["möchte", "möchte zu", "will zu", "mögen"], answers: ["möchte"], explain: "möchte + Akkusativ/Infinitiv: höflich am Schalter."),
+                            Exercise(id: "de-foundations-u25-flughafen-e2", kind: "gap", prompt: "Wann ___ das Boarding ? (beginnen, 3. Person)", options: [], answers: ["beginnt"], explain: "das Boarding beginnt: 3. Person Singular mit -t."),
+                            Exercise(id: "de-foundations-u25-flughafen-e3", kind: "order", prompt: "Frag nach dem Abflug-Gate.", options: [], answers: ["Von welchem Gate fliegt der Flug"], explain: "welch- fragt nach dem Gate: Von welchem Gate … ?"),
+                            Exercise(id: "de-foundations-u25-flughafen-e4", kind: "written", prompt: "Sag, was du an Gepäck hast: nur der kleine Koffer.", options: [], answers: ["ich habe nur handgepaeck", "ich habe nur handgepäck"], explain: "Handgepäck: nur der kleine Koffer in der Kabine.")], skills: ["vocab:travel", "function:ask-simple-questions", "grammar:present-questions"], canDo: ["use-transport"], prerequisites: ["grammar:present-questions"])])
 }
 
 public enum DeFoundationsU26 {
@@ -2208,6 +2236,158 @@ public enum DeFoundationsU26 {
                             Exercise(id: "de-foundations-u26-konsum-e2", kind: "gap", prompt: "Erstens ___ man Geld, zweitens Zeit.", options: [], answers: ["spart"], explain: "Argument + Verb: erstens spart man …"),
                             Exercise(id: "de-foundations-u26-konsum-e3", kind: "order", prompt: "Leite dein Fazit ein: Second-Hand ist die bessere Wahl. (insgesamt)", options: [], answers: ["Insgesamt ist Second-Hand die bessere Wahl"], explain: "insgesamt + Fazitsatz."),
                             Exercise(id: "de-foundations-u26-konsum-e4", kind: "written", prompt: "Schreib einen Argumentsatz für bewussten Konsum.", options: [], answers: ["gebrauchte sachen sind günstiger und nachhaltiger", "gebrauchte sachen sind guenstiger und nachhaltiger", "man sollte weniger und bewusster kaufen", "second-hand spart geld und schützt die umwelt", "second-hand spart geld und schuetzt die umwelt"], explain: "Argument + Beleg: so startet ein Text.")], skills: ["writing:argument", "function:express-opinion", "grammar:connectors", "grammar:comparatives"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum DeFoundationsU27 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u27", title: "Freizeit", subtitle: "Hobbys und Wochenende", level: "A1", themes: [
+                    ConversationTheme("das-hobby", "Das Hobby", "Was du gern machst", "book", "Course", "Lena erzählt, was sie in ihrer Freizeit macht: Gitarre, Krimis, Kaffee mit Freunden — und was sie gar nicht gern macht.", 0),
+                    ConversationTheme("das-wochenende", "Das Wochenende", "Pläne für Samstag und Sonntag", "figure.walk", "Course", "Freitagabend: Was machen wir am Wochenende ? Lena und Ben planen ihr Wochenende — mit Fahrrad, See und einem faulen Sonntag.", 1)], lessons: [
+            Lesson(id: "de-foundations-u27-hobbys", title: "Ich spiele gern Gitarre", goal: "Über Hobbys reden: Ich spiele gern Gitarre — sag, was du gern machst und was nicht.",
+                intro: LessonIntro(explanation: [
+                            "gern steht nach dem Verb: « Ich spiele gern Gitarre. », « Ich lese gern. » — so sagst du, was du magst.",
+                            "Fragen mit was: « Was machst du gern ? » — das Verb an Position 2: du machst.",
+                            "Das Gegenteil: « Ich koche nicht gern. » — nicht gern heißt höflich: nein, danke."], examples: [
+                            ExampleLine(text: "Ich spiele gern Gitarre.", meaning: "gern + Verb: die Lieblingssache."),
+                            ExampleLine(text: "Ich lese gern Bücher.", meaning: "lesen + gern."),
+                            ExampleLine(text: "Was machst du in deiner Freizeit ?", meaning: "Die Frage nach dem Hobby."),
+                            ExampleLine(text: "Ich schwimme nicht gern.", meaning: "nicht gern: das höfliche Nein."),
+                            ExampleLine(text: "Er hört gern Musik.", meaning: "hören → er hört: er/sie/es + t.")]),
+                expressions: [
+                            TargetExpression(text: "gern + Verb", meaning: "Sagen, was du magst.", note: "Ich schwimme gern."),
+                            TargetExpression(text: "in meiner Freizeit", meaning: "Wenn du nicht arbeitest.", note: "In meiner Freizeit lese ich."),
+                            TargetExpression(text: "Was machst du gern ?", meaning: "Nach dem Hobby fragen.", note: "— Ich koche gern !"),
+                            TargetExpression(text: "nicht gern", meaning: "Sagen, was du nicht magst.", note: "Ich fahre nicht gern Bus."),
+                            TargetExpression(text: "das Hobby, die Hobbys", meaning: "Die Sache, die du in der Freizeit liebst.", note: "Gitarre ist mein Hobby.")],
+                situation: "Lena trifft Ben im Park. « Was machst du in deiner Freizeit ? » — « Ich spiele gern Gitarre und lese gern. Und du ? » — « Ich koche nicht gern, aber ich laufe gern. » — « Dann gehen wir zusammen laufen ! »",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag, dass du gern Gitarre spielst.", expected: ["Ich spiele gern Gitarre.", "ich spiele gern gitarre"], focus: "spiele gern", watch: "gern steht nach dem Verb: spiele gern."),
+                                PracticeQuestion(prompt: "Frag Lena, was sie gern macht.", expected: ["Was machst du gern ?", "was machst du gern", "Was machst du in deiner Freizeit ?"], focus: "was machst du", watch: "W-Frage: das Verb an Position 2 — machst."),
+                                PracticeQuestion(prompt: "Sag, dass du gern Bücher liest.", expected: ["Ich lese gern Bücher.", "ich lese gern bücher", "ich lese gern buecher"], focus: "lese gern", watch: "ich lese + gern."),
+                                PracticeQuestion(prompt: "Sag höflich: Kochen ist nichts für dich.", expected: ["Ich koche nicht gern.", "ich koche nicht gern", "Ich koche nicht so gern."], focus: "nicht gern", watch: "nicht steht vor gern: koche nicht gern."),
+                                PracticeQuestion(prompt: "Frag, was Ben in seiner Freizeit macht.", expected: ["Was machst du in deiner Freizeit ?", "was machst du in deiner freizeit", "Was machst du gern ?"], focus: "freizeit", watch: "in deiner Freizeit = nach der Arbeit oder Schule.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u27-hobbys-e1", kind: "choice", prompt: "« Ich spiele ___ Gitarre. »", options: ["gern", "gut", "oft", "immer"], answers: ["gern"], explain: "gern nach dem Verb: ich spiele gern."),
+                            Exercise(id: "de-foundations-u27-hobbys-e2", kind: "gap", prompt: "Er ___ gern Musik. (hören, er-Form)", options: [], answers: ["hört", "hoert"], explain: "hören → er hört: aus dem Stamm + t."),
+                            Exercise(id: "de-foundations-u27-hobbys-e3", kind: "order", prompt: "Frag Lena nach ihrem Hobby.", options: [], answers: ["Was machst du gern"], explain: "Die W-Frage: Was + machst + du + gern ?"),
+                            Exercise(id: "de-foundations-u27-hobbys-e4", kind: "written", prompt: "Sag, dass du nicht gern schwimmst.", options: [], answers: ["ich schwimme nicht gern", "ich schwimme nicht so gern"], explain: "nicht gern: das höfliche Nein beim Sport.")], skills: ["grammar:present-simple", "vocab:hobbies", "function:ask-simple-questions", "grammar:frequency-adverbs"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u27-wochenende", title: "Was machst du am Wochenende ?", goal: "Wochenendpläne im Präsens: Am Samstag fahre ich an den See — frag und erzähl, was du machst.",
+                intro: LessonIntro(explanation: [
+                            "Zeit vorne, Verb an Position 2: « Am Samstag fahre ich an den See. » — so planst du laut.",
+                            "am + Tag: « am Samstag », « am Sonntag », « am Wochenende » — auch am Morgen, am Abend.",
+                            "Achtung Vokalwechsel: « Du fährst schnell ! » — fahren → du fährst, er fährt; lesen → du liest."], examples: [
+                            ExampleLine(text: "Am Samstag fahre ich an den See.", meaning: "Zeit an Position 1, Verb an Position 2."),
+                            ExampleLine(text: "Was machst du am Wochenende ?", meaning: "Die Wochenendfrage."),
+                            ExampleLine(text: "Am Sonntag schlafe ich lange.", meaning: "Ausschlafen im Präsens."),
+                            ExampleLine(text: "Du fährst mit dem Fahrrad.", meaning: "fahren → du fährst: der Vokalwechsel."),
+                            ExampleLine(text: "Wir treffen uns um zehn.", meaning: "Wir-Pläne: sich treffen.")]),
+                expressions: [
+                            TargetExpression(text: "am Samstag / am Sonntag", meaning: "Der Tag + am.", note: "Am Samstag backe ich Kuchen."),
+                            TargetExpression(text: "am Wochenende", meaning: "Samstag und Sonntag zusammen.", note: "Was machst du am Wochenende ?"),
+                            TargetExpression(text: "lange schlafen", meaning: "Ausschlafen am Sonntag.", note: "Ich schlafe am Sonntag lange."),
+                            TargetExpression(text: "Wir treffen uns …", meaning: "Pläne mit Freunden.", note: "Wir treffen uns am See."),
+                            TargetExpression(text: "fahren → du fährst", meaning: "Der Vokalwechsel a → ä.", note: "Du fährst schnell !")],
+                situation: "Freitagabend: Lena und Ben planen das Wochenende. « Am Samstag fahre ich an den See — kommst du mit ? » — « Gerne ! Ich hole das Fahrrad. Am Sonntag schlafe ich dann lange. » — « Perfekt, wir treffen uns um zehn ! »",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag deinen Plan: Samstag, an den See fahren.", expected: ["Am Samstag fahre ich an den See.", "am samstag fahre ich an den see"], focus: "am samstag", watch: "Zeit an Position 1, Verb an Position 2."),
+                                PracticeQuestion(prompt: "Frag Ben nach seinem Wochenende.", expected: ["Was machst du am Wochenende ?", "was machst du am wochenende"], focus: "wochenende", watch: "am Wochenende = Samstag + Sonntag."),
+                                PracticeQuestion(prompt: "Sag mit du: mit dem Fahrrad fahren.", expected: ["Du fährst mit dem Fahrrad.", "du fährst mit dem fahrrad", "du faehrst mit dem fahrrad", "Du fährst mit dem Rad."], focus: "du fährst", watch: "fahren → du fährst mit ä."),
+                                PracticeQuestion(prompt: "Schlag vor: ihr trefft euch um zehn.", expected: ["Wir treffen uns um zehn.", "wir treffen uns um zehn"], focus: "wir treffen", watch: "sich treffen: Wir treffen uns."),
+                                PracticeQuestion(prompt: "Sag: Sonntag, lange schlafen.", expected: ["Am Sonntag schlafe ich lange.", "am sonntag schlafe ich lange", "Ich schlafe am Sonntag lange."], focus: "schlafe lange", watch: "schlafen → ich schlafe.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u27-wochenende-e1", kind: "choice", prompt: "« Am Sonntag ___ ich lange. »", options: ["schlafe", "schlafst", "schlafen", "schläfst"], answers: ["schlafe"], explain: "ich schlafe: aus schlafen wird schlafe."),
+                            Exercise(id: "de-foundations-u27-wochenende-e2", kind: "gap", prompt: "Du ___ mit dem Fahrrad. (fahren, du-Form)", options: [], answers: ["fährst", "faehrst"], explain: "fahren → du fährst: der Vokalwechsel a → ä."),
+                            Exercise(id: "de-foundations-u27-wochenende-e3", kind: "order", prompt: "Sag deinen Samstag-Plan mit dem See.", options: [], answers: ["Am Samstag fahre ich an den See"], explain: "Zeit an Position 1 (Am Samstag), Verb an Position 2, Ziel am Ende."),
+                            Exercise(id: "de-foundations-u27-wochenende-e4", kind: "written", prompt: "Frag, was jemand am Wochenende macht.", options: [], answers: ["was machst du am wochenende", "was hast du am wochenende vor"], explain: "Die Wochenendfrage: was + machst du + am Wochenende ?")], skills: ["grammar:time-expressions", "grammar:present-simple", "function:talk-about-routines", "vocab:hobbies"], canDo: ["talk-about-routines"], prerequisites: ["grammar:time-expressions"])])
+}
+
+public enum DeFoundationsU28 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u28", title: "Der Umzug", subtitle: "Neue Wohnung, neue Stadt", level: "A2", themes: [
+                    ConversationTheme("die-wohnungssuche", "Die Wohnungssuche", "Inserate und Besichtigung", "house", "Course", "Anna sucht eine Zwei-Zimmer-Wohnung: Inserate vergleichen, anrufen, einen Termin für die Besichtigung machen.", 0),
+                    ConversationTheme("der-umzugstag", "Der Umzugstag", "Kisten, Freunde, Ankommen", "door.left.open", "Course", "Umzugstag: Freunde helfen, Kisten wandern nach oben — am Abend steht der erste Kaffee in der neuen Küche.", 1)], lessons: [
+            Lesson(id: "de-foundations-u28-suche", title: "Wohnungsinserate verstehen", goal: "Inserate lesen und sagen, was nötig ist: Ich muss bis Ende des Monats umziehen — die Miete darf nicht zu hoch sein.",
+                intro: LessonIntro(explanation: [
+                            "müssen + Infinitiv am Ende: « Ich muss bis Ende des Monats umziehen. » — so sagst du, was nötig ist.",
+                            "dürfen mit nicht: « Die Miete darf nicht über 900 Euro liegen. » — so setzt du deine Grenze.",
+                            "Inserate-Sprache: « 2 Zi., 62 m², 3. OG, mit Balkon » — Zi. = Zimmer, OG = Stockwerk (Etage)."], examples: [
+                            ExampleLine(text: "Ich muss bis Ende des Monats umziehen.", meaning: "müssen + Infinitiv am Satzende."),
+                            ExampleLine(text: "Die Miete darf nicht zu hoch sein.", meaning: "dürfen nicht: die Grenze."),
+                            ExampleLine(text: "Ich suche eine Wohnung mit Balkon.", meaning: "mit + das Wunschkriterium."),
+                            ExampleLine(text: "Wie hoch ist die Miete ?", meaning: "Nach dem Preis fragen."),
+                            ExampleLine(text: "Die Wohnung liegt in der dritten Etage.", meaning: "OG = Obergeschoss: die Etage.")]),
+                expressions: [
+                            TargetExpression(text: "müssen + Infinitiv", meaning: "Was nötig ist.", note: "Ich muss morgen anrufen."),
+                            TargetExpression(text: "die Miete / die Kaution", meaning: "Monatlich zahlen / einmalig hinterlegen.", note: "Zwei Monatsmieten als Kaution."),
+                            TargetExpression(text: "dürfen nicht + Infinitiv", meaning: "Die Grenze.", note: "Sie darf nicht zu hoch sein."),
+                            TargetExpression(text: "2 Zi., 60 m², 3. OG", meaning: "Die Kürzel im Inserat.", note: "Drei Zimmer, drittes Stockwerk."),
+                            TargetExpression(text: "die Besichtigung", meaning: "Die Wohnung anschauen.", note: "Ich mache einen Besichtigungstermin.")],
+                situation: "Anna liest Inserate: « Ich muss bis Ende des Monats umziehen. » Zwei Zimmer, Balkon, dritte Etage — und die Miete darf nicht über 900 Euro liegen. Sie zirkelt die besten Anzeigen und ruft gleich an.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag mit müssen: umziehen, bis Ende des Monats.", expected: ["Ich muss bis Ende des Monats umziehen.", "ich muss bis ende des monats umziehen"], focus: "muss umziehen", watch: "müssen + Infinitiv am Satzende."),
+                                PracticeQuestion(prompt: "Sag mit dürfen: die Miete, nicht über 900 Euro.", expected: ["Die Miete darf nicht über 900 Euro liegen.", "die miete darf nicht über 900 euro liegen", "die miete darf nicht ueber 900 euro liegen"], focus: "darf nicht", watch: "dürfen nicht = die Grenze."),
+                                PracticeQuestion(prompt: "Sag, was du suchst: eine Wohnung, mit Balkon.", expected: ["Ich suche eine Wohnung mit Balkon.", "ich suche eine wohnung mit balkon"], focus: "mit balkon", watch: "mit + das Kriterium."),
+                                PracticeQuestion(prompt: "Frag nach der Höhe der Miete.", expected: ["Wie hoch ist die Miete ?", "wie hoch ist die miete"], focus: "wie hoch", watch: "Wie hoch + Miete oder Preis."),
+                                PracticeQuestion(prompt: "Mach einen Termin: die Wohnung besichtigen, morgen um 17 Uhr.", expected: ["Kann ich die Wohnung morgen um 17 Uhr besichtigen ?", "Ich möchte einen Besichtigungstermin morgen um 17 Uhr.", "Können wir morgen um 17 Uhr kommen ?"], focus: "besichtigen", watch: "besichtigen = die Wohnung anschauen.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u28-suche-e1", kind: "choice", prompt: "« Ich ___ bis Freitag antworten. » (nötig)", options: ["muss", "darf", "kann", "mag"], answers: ["muss"], explain: "müssen: nötig — muss + Infinitiv am Ende."),
+                            Exercise(id: "de-foundations-u28-suche-e2", kind: "gap", prompt: "Die Miete ___ nicht über 1 000 Euro liegen. (dürfen)", options: [], answers: ["darf"], explain: "dürfen nicht: die Grenze bei der Miete."),
+                            Exercise(id: "de-foundations-u28-suche-e3", kind: "order", prompt: "Sag deinen Plan mit müssen: der Vermieter, anrufen, morgen.", options: [], answers: ["Ich muss morgen den Vermieter anrufen"], explain: "müssen an Position 2, der Infinitiv anruft am Ende."),
+                            Exercise(id: "de-foundations-u28-suche-e4", kind: "written", prompt: "Sag mit suchen, was du brauchst: Wohnung plus Balkon.", options: [], answers: ["ich suche eine wohnung mit balkon", "ich suche eine wohnung mit einem balkon"], explain: "suchen + mit: das Wunschkriterium im Inserat.")], skills: ["grammar:modal-must-have-to", "vocab:home", "function:solve-problems", "grammar:present-questions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:modal-must-have-to"]),
+            Lesson(id: "de-foundations-u28-besichtigung", title: "Die Besichtigung", goal: "Bei der Besichtigung fragen: Kann ich die Wohnung besichtigen ? — Wie hoch sind die Nebenkosten ?",
+                intro: LessonIntro(explanation: [
+                            "Höflich fragen mit können: « Kann ich die Wohnung besichtigen ? », « Können Sie mir mehr sagen ? »",
+                            "Nach Details fragen: « Wie hoch sind die Nebenkosten ? » — Plural: sind.",
+                            "Termine machen: « Passt es Ihnen am Dienstag um 18 Uhr ? » — der höfliche Vorschlag."], examples: [
+                            ExampleLine(text: "Kann ich die Wohnung besichtigen ?", meaning: "Die Terminfrage."),
+                            ExampleLine(text: "Wie hoch sind die Nebenkosten ?", meaning: "Nebenkosten: Strom, Wasser, Heizung."),
+                            ExampleLine(text: "Ist die Küche im Preis dabei ?", meaning: "dabei = inklusive."),
+                            ExampleLine(text: "Passt es Ihnen am Dienstag um 18 Uhr ?", meaning: "Der Terminvorschlag mit Sie."),
+                            ExampleLine(text: "Wann kann ich einziehen ?", meaning: "einziehen: in die Wohnung kommen.")]),
+                expressions: [
+                            TargetExpression(text: "Kann ich … ? / Können Sie … ?", meaning: "Höflich fragen.", note: "Kann ich nochmal vorbeikommen ?"),
+                            TargetExpression(text: "die Nebenkosten", meaning: "Strom, Wasser, Heizung.", note: "Wie hoch sind die Nebenkosten ?"),
+                            TargetExpression(text: "im Preis dabei", meaning: "Inklusive.", note: "Ist der Keller dabei ?"),
+                            TargetExpression(text: "Passt es Ihnen … ?", meaning: "Den Termin fragen.", note: "Passt es Ihnen um 18 Uhr ?"),
+                            TargetExpression(text: "einziehen / ausziehen", meaning: "In die Wohnung rein — raus.", note: "Ich ziehe am 1. Mai ein.")],
+                situation: "Anna besichtigt die Wohnung in der Lindenstraße. « Wie hoch sind die Nebenkosten ? » — « 180 Euro, Heizung dabei. » — « Ist die Küche im Preis dabei ? » — « Leider nicht. » — « Passt es Ihnen am Dienstag um 18 Uhr ? Dann nehme ich sie. »",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Frag, ob du die Wohnung besichtigen kannst.", expected: ["Kann ich die Wohnung besichtigen ?", "kann ich die wohnung besichtigen"], focus: "kann ich", watch: "Kann ich … ? — die höfliche Frage."),
+                                PracticeQuestion(prompt: "Frag nach den Nebenkosten.", expected: ["Wie hoch sind die Nebenkosten ?", "wie hoch sind die nebenkosten"], focus: "nebenkosten", watch: "Plural: die Nebenkosten sind."),
+                                PracticeQuestion(prompt: "Frag, ob die Küche inklusive ist.", expected: ["Ist die Küche im Preis dabei ?", "ist die kueche im preis dabei", "Ist die Küche dabei ?"], focus: "im preis dabei", watch: "dabei = inklusive."),
+                                PracticeQuestion(prompt: "Schlag Dienstag um 18 Uhr als Termin vor (Sie-Form).", expected: ["Passt es Ihnen am Dienstag um 18 Uhr ?", "passt es ihnen am dienstag um 18 uhr", "Passt es Ihnen am Dienstag ?"], focus: "passt es ihnen", watch: "Passt es Ihnen … ? — der Vorschlag."),
+                                PracticeQuestion(prompt: "Frag, wann du einziehen kannst.", expected: ["Wann kann ich einziehen ?", "wann kann ich einziehen"], focus: "einziehen", watch: "trennbar: ich ziehe … ein.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u28-besichtigung-e1", kind: "choice", prompt: "« ___ ich die Wohnung morgen sehen ? »", options: ["Kann", "Muss", "Darf", "Bin"], answers: ["Kann"], explain: "Kann ich … ? — die höfliche Frage bei der Besichtigung."),
+                            Exercise(id: "de-foundations-u28-besichtigung-e2", kind: "gap", prompt: "Wie hoch ___ die Nebenkosten ? (sein, Plural)", options: [], answers: ["sind"], explain: "Plural: die Nebenkosten sind."),
+                            Exercise(id: "de-foundations-u28-besichtigung-e3", kind: "order", prompt: "Frag, ob die Küche inklusive ist.", options: [], answers: ["Ist die Küche im Preis dabei"], explain: "Im Preis dabei = inklusive — die Küchenfrage."),
+                            Exercise(id: "de-foundations-u28-besichtigung-e4", kind: "written", prompt: "Mach einen Terminvorschlag für Montag um 17 Uhr (Sie-Form).", options: [], answers: ["passt es ihnen montag um 17 uhr", "passt es ihnen am montag um 17 uhr"], explain: "Passt es Ihnen + Zeit — der Terminvorschlag.")], skills: ["grammar:can", "grammar:present-questions", "function:make-requests", "vocab:home"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:can"]),
+            Lesson(id: "de-foundations-u28-umzug", title: "Der Umzugstag", goal: "Helfen und Anweisungen geben: Trag die Kiste hoch ! — Kannst du mir helfen ?",
+                intro: LessonIntro(explanation: [
+                            "Imperativ mit du: « Trag die Kiste hoch ! » — ohne du, das Verb steht zuerst.",
+                            "helfen + mir/dir (Dativ): « Kannst du mir helfen ? », « Ich helfe dir. »",
+                            "Für mehrere: « Tragt schnell ! » — ihr-Form; mit Sie: « Tragen Sie bitte vorsichtig. »"], examples: [
+                            ExampleLine(text: "Trag die Kiste hoch !", meaning: "du-Imperativ: das Verb zuerst."),
+                            ExampleLine(text: "Kannst du mir helfen ?", meaning: "helfen + mir: Dativ."),
+                            ExampleLine(text: "Ich helfe dir beim Packen.", meaning: "du → dir."),
+                            ExampleLine(text: "Tragt die Stühle vorsichtig !", meaning: "ihr-Imperativ: Endung -t."),
+                            ExampleLine(text: "Warte bitte kurz unten !", meaning: "bitte macht den Imperativ höflich.")]),
+                expressions: [
+                            TargetExpression(text: "Trag … ! / Hol … !", meaning: "Der du-Imperativ.", note: "Hol den Kistenwagen !"),
+                            TargetExpression(text: "mir / dir (Dativ)", meaning: "helfen + Dativ.", note: "Ich helfe dir, hilfst du mir ?"),
+                            TargetExpression(text: "die Kiste / der Karton", meaning: "Beim Umzug.", note: "Der Karton ist schwer."),
+                            TargetExpression(text: "hochtragen / einräumen", meaning: "Trennbare Verben.", note: "Trag den Tisch hoch !"),
+                            TargetExpression(text: "Willkommen in der neuen Wohnung !", meaning: "Ankommen.", note: "Kaffee geht immer !")],
+                situation: "Umzugstag bei Anna: Ben und Lena helfen. « Kannst du mir helfen ? » — « Klar, ich helfe dir. Trag die Kiste hoch, ich hol den Tisch ! » Am Abend: der erste Kaffee in der neuen Küche — Willkommen !",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Bitt Ben um Hilfe.", expected: ["Kannst du mir helfen ?", "kannst du mir helfen", "Kannst du mir bitte helfen ?"], focus: "kannst du mir", watch: "helfen + mir (Dativ)."),
+                                PracticeQuestion(prompt: "Sag zu Ben: die Kiste, hochtragen (du-Imperativ).", expected: ["Trag die Kiste hoch !", "trag die kiste hoch", "Trag die Kiste bitte hoch !"], focus: "trag hoch", watch: "Verb zuerst: Trag … hoch !"),
+                                PracticeQuestion(prompt: "Sag, dass du ihm hilfst.", expected: ["Ich helfe dir.", "ich helfe dir", "Ich helfe dir gern."], focus: "ich helfe dir", watch: "helfen + dir."),
+                                PracticeQuestion(prompt: "Gib zwei Leuten den Auftrag: die Stühle, vorsichtig (ihr).", expected: ["Tragt die Stühle vorsichtig !", "tragt die stuehle vorsichtig", "Tragt die Stühle bitte vorsichtig !"], focus: "tragt", watch: "ihr-Imperativ: Endung -t."),
+                                PracticeQuestion(prompt: "Sag Ben, er soll kurz unten warten (mit bitte).", expected: ["Warte bitte kurz unten !", "warte bitte kurz unten", "Warte kurz unten, bitte."], focus: "warte", watch: "warten → Warte ! ohne du.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u28-umzug-e1", kind: "choice", prompt: "« ___ bitte die Tür auf ! » (du)", options: ["Mach", "Machen", "Macht", "Machst"], answers: ["Mach"], explain: "du-Imperativ: Verb zuerst, ohne du."),
+                            Exercise(id: "de-foundations-u28-umzug-e2", kind: "gap", prompt: "Kannst du ___ helfen ? (ich, Dativ)", options: [], answers: ["mir"], explain: "helfen + Dativ: hilf mir."),
+                            Exercise(id: "de-foundations-u28-umzug-e3", kind: "order", prompt: "Sag Lena und Ben, sie sollen den Tisch hochtragen (ihr).", options: [], answers: ["Tragt den Tisch hoch"], explain: "ihr-Imperativ: Tragt … hoch !"),
+                            Exercise(id: "de-foundations-u28-umzug-e4", kind: "written", prompt: "Bitt eine Freundin um Hilfe beim Packen.", options: [], answers: ["kannst du mir beim packen helfen", "kannst du mir bitte helfen", "kannst du mir helfen"], explain: "Kannst du mir (beim Packen) helfen ? — die Bitte.")], skills: ["grammar:imperatives", "grammar:object-pronouns", "function:make-requests", "vocab:home"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:imperatives"])])
 }
 
 public enum DeWorkU1 {
@@ -6962,7 +7142,35 @@ public enum EsFoundationsU18 {
                             Exercise(id: "es-foundations-u18-regalo-e1", kind: "choice", prompt: "Le ___ a encantar.", options: ["va", "voy", "van", "vas"], answers: ["va"], explain: "le va a encantar: la tercera persona."),
                             Exercise(id: "es-foundations-u18-regalo-e2", kind: "gap", prompt: "Vamos a ___ unas flores. (regalar + le)", options: [], answers: ["regalarle", "Regalarle"], explain: "regalar + le = regalarle, pegado al infinitivo."),
                             Exercise(id: "es-foundations-u18-regalo-e3", kind: "order", prompt: "Di qué vas a hacer con el dinero del grupo.", options: [], answers: ["Voy a comprarle un libro"], explain: "voy a + comprarle: plan de regalo."),
-                            Exercise(id: "es-foundations-u18-regalo-e4", kind: "written", prompt: "Pregunta al grupo por el regalo de tu jefe.", options: [], answers: ["¿Qué le vamos a regalar?", "¿Que le vamos a regalar?", "qué le vamos a regalar"], explain: "le vamos a regalar: futuro cercano.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "function:go-shopping"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+                            Exercise(id: "es-foundations-u18-regalo-e4", kind: "written", prompt: "Pregunta al grupo por el regalo de tu jefe.", options: [], answers: ["¿Qué le vamos a regalar?", "¿Que le vamos a regalar?", "qué le vamos a regalar"], explain: "le vamos a regalar: futuro cercano.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "function:go-shopping"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "es-foundations-u18-quedar", title: "¿A qué hora quedamos?", goal: "Concretar la hora y el lugar de un plan: quedar a las…, quedar en…, nos vemos.",
+                intro: LessonIntro(explanation: [
+                            "Para cerrar un plan usamos quedar: «¿Quedamos a las ocho en la plaza?». Fija hora y lugar en una sola pregunta.",
+                            "La hora va con a («a las ocho y media») y el lugar con en («en la puerta del cine»).",
+                            "Para confirmar, repites el plan: «Entonces, a las ocho en la plaza, ¿no?». Y si te retrasas, avisas: «Voy a llegar cinco minutos tarde»."], examples: [
+                            ExampleLine(text: "¿A qué hora quedamos?", meaning: "Preguntar por la hora del plan."),
+                            ExampleLine(text: "Quedamos a las ocho y media.", meaning: "Concretar la hora."),
+                            ExampleLine(text: "¿Dónde nos vemos?", meaning: "Preguntar por el lugar."),
+                            ExampleLine(text: "Quedamos en la puerta del cine.", meaning: "Concretar el lugar."),
+                            ExampleLine(text: "Voy a llegar cinco minutos tarde.", meaning: "Avisar de un retraso.")]),
+                expressions: [
+                            TargetExpression(text: "¿a qué hora…?", meaning: "Preguntar la hora.", note: "¿A qué hora quedamos?"),
+                            TargetExpression(text: "quedar a las + hora", meaning: "Fijar la hora.", note: "Quedamos a las siete."),
+                            TargetExpression(text: "quedar en + lugar", meaning: "Fijar el lugar.", note: "Quedamos en la plaza."),
+                            TargetExpression(text: "nos vemos en…", meaning: "Confirmar el punto de encuentro.", note: "Nos vemos en el metro."),
+                            TargetExpression(text: "llegar tarde", meaning: "Avisar de un retraso.", note: "Voy a llegar diez minutos tarde.")],
+                situation: "Cierras el plan del sábado con tu amiga: acordáis hora, lugar y avisas si vas a llegar tarde.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pregunta a qué hora quedáis.", expected: ["¿A qué hora quedamos?", "a que hora quedamos", "¿A qué hora nos vemos?"], focus: "a qué hora", watch: "qué con tilde."),
+                                PracticeQuestion(prompt: "Di que quedáis a las ocho y media.", expected: ["Quedamos a las ocho y media", "quedamos a las 8 y media", "Nos vemos a las ocho y media"], focus: "quedar a las", watch: "a las + hora."),
+                                PracticeQuestion(prompt: "Pregunta por el lugar del encuentro.", expected: ["¿Dónde nos vemos?", "donde nos vemos", "¿Dónde quedamos?"], focus: "dónde", watch: "dónde con tilde."),
+                                PracticeQuestion(prompt: "Di que quedáis en la puerta del cine.", expected: ["Quedamos en la puerta del cine", "Nos vemos en la puerta del cine", "quedamos en la puerta del cine"], focus: "quedar en", watch: "en + lugar."),
+                                PracticeQuestion(prompt: "Avisa de que llegarás cinco minutos tarde.", expected: ["Voy a llegar cinco minutos tarde", "voy a llegar 5 minutos tarde", "Llego cinco minutos tarde"], focus: "llegar tarde", watch: "voy a + infinitivo.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u18-quedar-e1", kind: "choice", prompt: "¿Quedamos ___ la puerta del teatro?", options: ["en", "a", "de", "para"], answers: ["en"], explain: "El lugar de encuentro va con en: quedar en + lugar."),
+                            Exercise(id: "es-foundations-u18-quedar-e2", kind: "gap", prompt: "Nos ___ en la cafetería de la plaza a las siete.", options: [], answers: ["vemos", "Vemos"], explain: "Nos vemos = quedamos; confirma el punto de encuentro."),
+                            Exercise(id: "es-foundations-u18-quedar-e3", kind: "order", prompt: "Avisa de que vas a llegar tarde al plan.", options: [], answers: ["Voy a llegar diez minutos tarde"], explain: "Para avisar del retraso: voy a llegar + tiempo + tarde."),
+                            Exercise(id: "es-foundations-u18-quedar-e4", kind: "written", prompt: "Propón quedar mañana a las siete.", options: [], answers: ["¿Quedamos mañana a las siete?", "quedamos mañana a las siete", "Quedamos manana a las siete"], explain: "¿Quedamos + tiempo? propone el plan y pregunta a la vez.")], skills: ["function:make-suggestions", "grammar:time-expressions", "grammar:present-simple", "vocab:social-expressions"], canDo: ["make-future-plans"], prerequisites: ["grammar:time-expressions"])])
 }
 
 public enum EsFoundationsU19 {
@@ -10139,6 +10347,158 @@ public enum FrFoundationsU26 {
                             Exercise(id: "fr-foundations-u26-consommer-e4", kind: "written", prompt: "Conclus ton argument pour le marché local.", options: [], answers: ["pour conclure acheter local c'est soutenir son quartier", "pour conclure acheter local c'est soutenir le quartier", "en conclusion acheter local soutient le quartier"], explain: "Pour conclure + thèse : la conclusion qui reste.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
+public enum FrFoundationsU27 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u27", title: "Numéros et âge", subtitle: "Compter, téléphoner, se présenter", level: "A1", themes: [
+                    ConversationTheme("les-nombres", "Les nombres", "De zéro à cent", "number", "Course", "Au café puis dans la rue : Léa paie sept euros, Karim cherche le vingt-cinq et note un numéro de téléphone par petits groupes.", 0),
+                    ConversationTheme("l-age", "L'âge", "Quel âge tu as ?", "person.crop.circle", "Course", "À la soirée de bienvenue : Mai demande l'âge de Léa, Léa parle de sa sœur et du bébé de la famille.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u27-nombres", title: "De zéro à cent", goal: "Compter de zéro à cent, donner ton numéro de téléphone et comprendre un prix ou un numéro de rue : j'habite au vingt-cinq.",
+                intro: LessonIntro(explanation: [
+                            "Les nombres servent partout : « Deux cafés, s'il vous plaît — ça fait sept euros. » Le prix, l'heure, l'adresse : toujours des nombres.",
+                            "Pour un numéro de téléphone, on le coupe en petits groupes : « C'est le zéro six, vingt, trente et un. » Plus facile à dire, plus facile à noter.",
+                            "On demande un numéro avec quel : « C'est quel numéro ? » Et on répond tout simplement : « C'est le vingt-cinq. »"], examples: [
+                            ExampleLine(text: "Ça fait sept euros.", meaning: "Le prix, tout simplement."),
+                            ExampleLine(text: "J'habite au vingt-cinq.", meaning: "Le numéro de la rue."),
+                            ExampleLine(text: "C'est quel numéro ?", meaning: "Demander un numéro."),
+                            ExampleLine(text: "Mon numéro, c'est le zéro six douze.", meaning: "Le téléphone, par petits groupes."),
+                            ExampleLine(text: "Rendez-vous à dix-huit heures.", meaning: "L'heure, encore des nombres.")]),
+                expressions: [
+                            TargetExpression(text: "ça fait + prix", meaning: "Le total à payer.", note: "Ça fait douze euros."),
+                            TargetExpression(text: "c'est quel numéro ?", meaning: "Demander un numéro.", note: "C'est quel numéro, ta maison ?"),
+                            TargetExpression(text: "j'habite au + nombre", meaning: "Donner son adresse.", note: "J'habite au dix rue Victor."),
+                            TargetExpression(text: "le zéro six…", meaning: "Commencer un numéro de portable.", note: "Le zéro six, c'est le portable."),
+                            TargetExpression(text: "à + nombre heures", meaning: "Donner l'heure du rendez-vous.", note: "À neuf heures, c'est bon ?")],
+                situation: "Karim cherche la maison de Léa : il relit le numéro de la rue, il lui téléphone, elle lui donne son numéro et l'heure du rendez-vous.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ça fait quel prix ? Deux cafés à trois euros cinquante.", expected: ["Ça fait sept euros.", "Ca fait sept euros.", "Ça fait 7 euros."], focus: "ça fait", watch: "ça fait + le prix : le total tout simple."),
+                                PracticeQuestion(prompt: "Donne ton adresse : rue Victor, numéro dix.", expected: ["J'habite au dix rue Victor.", "J'habite au 10 rue Victor."], focus: "j'habite au", watch: "au + le numéro, avant le nom de la rue."),
+                                PracticeQuestion(prompt: "Tu veux connaître le numéro de la maison de Léa. Demande-le.", expected: ["C'est quel numéro ?", "C'est quel numero ?", "C'est quel numéro, ta maison ?"], focus: "c'est quel numéro", watch: "quel + être : la question toute simple."),
+                                PracticeQuestion(prompt: "Donne ton numéro de portable par groupes : zéro six, puis vingt.", expected: ["C'est le zéro six vingt.", "Le zéro six vingt.", "Zero six vingt."], focus: "le zéro six", watch: "on dit chaque groupe, sans le réfléchir : zéro six, c'est le portable."),
+                                PracticeQuestion(prompt: "Fixe le rendez-vous à dix-huit heures.", expected: ["Rendez-vous à dix-huit heures.", "On se retrouve à dix-huit heures ?", "Rendez-vous a dix-huit heures."], focus: "à dix-huit heures", watch: "à + l'heure : le point de rendez-vous.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u27-nombres-e1", kind: "choice", prompt: "« J'habite ___ vingt-cinq rue des Lilas. » (la petite préposition)", options: ["au", "à la", "de", "en"], answers: ["au"], explain: "Pour un numéro de rue : j'habite au vingt-cinq."),
+                            Exercise(id: "fr-foundations-u27-nombres-e2", kind: "gap", prompt: "Deux cafés et un thé : ça ___ sept euros. (verbe : faire)", options: [], answers: ["fait"], explain: "Ça fait + le prix : faire au présent avec ça."),
+                            Exercise(id: "fr-foundations-u27-nombres-e3", kind: "order", prompt: "Tu veux connaître le numéro de la maison de Léa.", options: [], answers: ["C'est quel numéro ta maison"], explain: "C'est quel numéro : la question directe pour un numéro."),
+                            Exercise(id: "fr-foundations-u27-nombres-e4", kind: "written", prompt: "Le rendez-vous est à trois heures de l'après-midi. Écris l'heure complète en lettres.", options: [], answers: ["à quinze heures", "a quinze heures", "quinze heures", "rendez-vous à quinze heures"], explain: "Trois heures de l'après-midi, c'est à quinze heures.")], skills: ["grammar:present-simple", "function:tell-time", "function:ask-simple-questions", "vocab:social-expressions"], canDo: ["tell-time"], prerequisites: ["grammar:subject-pronouns"]),
+            Lesson(id: "fr-foundations-u27-age", title: "Quel âge tu as ?", goal: "Demander et dire ton âge avec avoir : j'ai vingt ans. Parler de l'âge de ta famille : ma sœur a seize ans.",
+                intro: LessonIntro(explanation: [
+                            "En français, l'âge se dit avec avoir : « J'ai vingt ans. » On a un âge, on n'est pas un âge.",
+                            "Pour demander : « Tu as quel âge ? » — la question courte, parfaite entre amis.",
+                            "Avec la famille, le possessif accompagne le nom : « Mon petit frère a huit ans. » Mon, ma, mes : chacun son accord."], examples: [
+                            ExampleLine(text: "Tu as quel âge ?", meaning: "La question directe."),
+                            ExampleLine(text: "J'ai vingt et un ans.", meaning: "Dire son âge avec avoir."),
+                            ExampleLine(text: "Ma sœur a seize ans.", meaning: "L'âge d'un proche."),
+                            ExampleLine(text: "Mon grand-père a soixante-dix ans.", meaning: "Les grands nombres d'âge."),
+                            ExampleLine(text: "Il est tout petit : il a trois ans.", meaning: "L'âge et la description ensemble.")]),
+                expressions: [
+                            TargetExpression(text: "tu as quel âge ?", meaning: "Demander l'âge.", note: "Tu as quel âge, Mai ?"),
+                            TargetExpression(text: "j'ai + nombre + ans", meaning: "Dire ton âge.", note: "J'ai vingt-deux ans."),
+                            TargetExpression(text: "mon / ma + famille", meaning: "Désigner un proche.", note: "Ma cousine a dix ans."),
+                            TargetExpression(text: "il / elle a + ans", meaning: "L'âge des autres.", note: "Elle a trente ans."),
+                            TargetExpression(text: "tout(e) + adjectif", meaning: "Insister sur la description.", note: "Elle est toute petite.")],
+                situation: "À la soirée de bienvenue, on fait connaissance : Mai demande l'âge à Léa, Léa parle de sa sœur et du bébé de la famille.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande l'âge de Mai (avec tu).", expected: ["Tu as quel âge ?", "Tu as quel age ?", "Quel âge tu as ?"], focus: "tu as quel âge", watch: "avoir pour l'âge : tu as, jamais tu es."),
+                                PracticeQuestion(prompt: "Dis ton âge : vingt ans.", expected: ["J'ai vingt ans.", "J'ai 20 ans.", "Jai vingt ans."], focus: "j'ai vingt ans", watch: "j'ai + nombre + ans : la formule complète."),
+                                PracticeQuestion(prompt: "Ta sœur a seize ans. Dis-le.", expected: ["Ma sœur a seize ans.", "Ma soeur a seize ans.", "Ma sœur a 16 ans."], focus: "ma sœur a", watch: "ma + sœur : le possessif s'accorde au féminin."),
+                                PracticeQuestion(prompt: "Ton grand-père a soixante-dix-huit ans. Dis-le.", expected: ["Mon grand-père a soixante-dix-huit ans.", "Mon grand-pere a soixante-dix-huit ans."], focus: "mon grand-père a", watch: "mon + grand-père : le possessif masculin."),
+                                PracticeQuestion(prompt: "Le bébé de la famille a trois ans. Décris-le avec tendresse.", expected: ["Il est tout petit : il a trois ans.", "Il a trois ans.", "Il a 3 ans."], focus: "il a trois ans", watch: "tout + adjectif pour insister : tout petit, toute petite.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u27-age-e1", kind: "choice", prompt: "« ___ seize ans. » (parler de ta sœur)", options: ["Ma sœur a", "Ma sœur est", "Mon sœur a", "Ma sœur ai"], answers: ["Ma sœur a"], explain: "L'âge avec avoir : ma sœur a seize ans."),
+                            Exercise(id: "fr-foundations-u27-age-e2", kind: "gap", prompt: "J'___ vingt-deux ans. (verbe : avoir)", options: [], answers: ["ai"], explain: "J'ai : avoir à la première personne, l'âge se dit avec avoir."),
+                            Exercise(id: "fr-foundations-u27-age-e3", kind: "order", prompt: "Tu veux connaître l'âge de Mai. Pose la question.", options: [], answers: ["Tu as quel âge Mai"], explain: "Tu as quel âge : avoir + quel âge, la question des âges."),
+                            Exercise(id: "fr-foundations-u27-age-e4", kind: "written", prompt: "Parle de ta cousine : elle a dix ans. Écris la phrase complète.", options: [], answers: ["ma cousine a dix ans", "ma cousine a 10 ans"], explain: "Ma cousine a dix ans : possessif + avoir + ans.")], skills: ["function:describe-people", "vocab:family", "grammar:present-simple", "grammar:possessives"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum FrFoundationsU28 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u28", title: "Imprévus en voyage", subtitle: "Organiser, réagir, changer les plans", level: "A2", themes: [
+                    ConversationTheme("le-projet", "Le projet", "On part ce week-end", "map", "Course", "Mardi soir : Léa propose un week-end à Lyon, on prévoit le train de samedi et Karim promet de réserver l'hôtel.", 0),
+                    ConversationTheme("les-imprevus", "Les imprévus", "Quand tout déraille", "exclamationmark.triangle", "Course", "À la gare puis à l'hôtel : le train est annulé, la réservation a disparu. On réagit, on demande de l'aide et on change le plan.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u28-projet", title: "On part ce week-end ?", goal: "Proposer et organiser un voyage avec le futur proche : on va partir à Lyon. Prendre ses responsabilités : je vais réserver l'hôtel.",
+                intro: LessonIntro(explanation: [
+                            "Le futur proche, c'est aller + infinitif : « On va partir à Lyon samedi. » Un projet déjà décidé, pas une hypothèse.",
+                            "Avec l'intonation montante, le plan devient une suggestion : « On va prendre le train de huit heures ? »",
+                            "Pour organiser, on enchaîne avec des connecteurs : « D'abord le train, ensuite l'hôtel, après le programme. »"], examples: [
+                            ExampleLine(text: "On va partir à Lyon ce week-end.", meaning: "Le projet décidé."),
+                            ExampleLine(text: "Je vais réserver le train ce soir.", meaning: "Une action prévue, une promesse."),
+                            ExampleLine(text: "On va prendre le train de huit heures ?", meaning: "Le plan transformé en suggestion."),
+                            ExampleLine(text: "Tu vas adorer le vieux Lyon.", meaning: "Prédire avec aller + infinitif."),
+                            ExampleLine(text: "D'abord la gare, ensuite l'hôtel.", meaning: "Le programme dans l'ordre.")]),
+                expressions: [
+                            TargetExpression(text: "on va + infinitif", meaning: "Proposer un projet.", note: "On va visiter le musée ?"),
+                            TargetExpression(text: "je vais réserver", meaning: "Prendre une tâche.", note: "Je vais réserver l'hôtel."),
+                            TargetExpression(text: "tu vas + infinitif", meaning: "Parler des plans de l'autre.", note: "Tu vas venir avec nous ?"),
+                            TargetExpression(text: "d'abord… ensuite", meaning: "Mettre en ordre.", note: "D'abord le train, ensuite l'hôtel."),
+                            TargetExpression(text: "ça te dit ?", meaning: "Proposer léger.", note: "Lyon samedi, ça te dit ?")],
+                situation: "Léa propose un week-end à Lyon : on va prendre le train de samedi matin, Karim va réserver l'hôtel et on va visiter le vieux Lyon.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Propose Lyon pour ce week-end (avec on + aller).", expected: ["On va partir à Lyon ce week-end.", "On va aller à Lyon ce week-end."], focus: "on va + infinitif", watch: "vais, vas, va + infinitif : le futur proche du projet."),
+                                PracticeQuestion(prompt: "Tu prends en charge l'hôtel : dis-le avec le futur proche.", expected: ["Je vais réserver l'hôtel.", "Je vais reserver l'hotel."], focus: "je vais réserver", watch: "aller + infinitif : le second verbe reste à l'infinitif."),
+                                PracticeQuestion(prompt: "Suggère le train de huit heures (avec on).", expected: ["On va prendre le train de huit heures ?", "On va prendre le train de 8 heures ?"], focus: "on va prendre", watch: "l'intonation montante transforme le plan en suggestion."),
+                                PracticeQuestion(prompt: "Mets le programme en ordre : la gare, puis l'hôtel.", expected: ["D'abord la gare, ensuite l'hôtel.", "D'abord la gare ensuite l'hotel."], focus: "d'abord… ensuite", watch: "les connecteurs donnent l'ordre du programme."),
+                                PracticeQuestion(prompt: "Propose simplement le week-end à Lyon à Karim.", expected: ["Lyon samedi, ça te dit ?", "Ça te dit ?", "Ca te dit ?"], focus: "ça te dit", watch: "l'invitation légère entre amis : ça te dit ?")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u28-projet-e1", kind: "choice", prompt: "« Samedi, on ___ visiter le vieux Lyon. » (futur proche)", options: ["va", "vas", "allez", "vais"], answers: ["va"], explain: "On va + infinitif : aller à la troisième personne du singulier."),
+                            Exercise(id: "fr-foundations-u28-projet-e2", kind: "gap", prompt: "Je ___ réserver le train ce soir. (verbe : aller)", options: [], answers: ["vais"], explain: "Je vais + infinitif : le futur proche de la décision."),
+                            Exercise(id: "fr-foundations-u28-projet-e3", kind: "order", prompt: "Organise le programme : le train d'abord, l'hôtel ensuite.", options: [], answers: ["D'abord le train ensuite l'hôtel"], explain: "D'abord… ensuite : les connecteurs ordonnent le programme."),
+                            Exercise(id: "fr-foundations-u28-projet-e4", kind: "written", prompt: "Propose un café à Mai, avec l'invitation légère des amis.", options: [], answers: ["un café ça te dit", "ça te dit un café", "un cafe ca te dit", "cafe ca te dit"], explain: "Ça te dit ? : l'invitation légère, suivie de la proposition.")], skills: ["grammar:going-to", "function:make-future-plans", "function:make-suggestions", "vocab:travel"], canDo: ["make-future-plans"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u28-hotel", title: "Il n'y a pas ma réservation", goal: "Signaler un problème à l'hôtel : il n'y a pas ma réservation. Demander de l'aide poliment : est-ce que vous pouvez m'aider ?",
+                intro: LessonIntro(explanation: [
+                            "Pour signaler un problème, on reste simple et calme : « Il n'y a pas ma réservation. » Un constat, pas une dispute.",
+                            "On demande de l'aide avec pouvoir et le vous de politesse : « Est-ce que vous pouvez m'aider ? »",
+                            "L'impératif fait avancer : « Vérifiez, s'il vous plaît. » Le verbe tout seul, sans sujet, adouci par s'il vous plaît."], examples: [
+                            ExampleLine(text: "Il n'y a pas ma réservation.", meaning: "Signaler le problème."),
+                            ExampleLine(text: "Est-ce que vous pouvez m'aider ?", meaning: "Demander de l'aide."),
+                            ExampleLine(text: "J'ai réservé pour deux nuits.", meaning: "Expliquer la situation."),
+                            ExampleLine(text: "Vérifiez, s'il vous plaît.", meaning: "Demander une action, poliment."),
+                            ExampleLine(text: "Pas grave, ça me va.", meaning: "Accepter la solution.")]),
+                expressions: [
+                            TargetExpression(text: "il n'y a pas + nom", meaning: "Signaler un manque.", note: "Il n'y a pas ma chambre."),
+                            TargetExpression(text: "est-ce que vous pouvez… ?", meaning: "Demander de l'aide poliment.", note: "Est-ce que vous pouvez vérifier ?"),
+                            TargetExpression(text: "j'ai réservé", meaning: "Rappeler la réservation.", note: "J'ai réservé au nom de Karim."),
+                            TargetExpression(text: "impératif + s'il vous plaît", meaning: "Une demande ferme et polie.", note: "Regardez, s'il vous plaît."),
+                            TargetExpression(text: "ça me va", meaning: "Accepter.", note: "Une chambre au troisième ? Ça me va.")],
+                situation: "À la réception, Karim découvre que sa réservation a disparu. Il explique le problème calmement, demande de l'aide et accepte une chambre au troisième.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ta réservation n'existe pas dans l'ordinateur. Signale-le.", expected: ["Il n'y a pas ma réservation.", "Il ny a pas ma reservation.", "Il y a pas ma réservation."], focus: "il n'y a pas", watch: "ne… pas autour de y a : le constat calme."),
+                                PracticeQuestion(prompt: "Demande de l'aide à la réception (avec vous).", expected: ["Est-ce que vous pouvez m'aider ?", "Est-ce que vous pouvez maider ?", "Pouvez-vous m'aider ?"], focus: "vous pouvez m'aider", watch: "vous de politesse + pouvoir + m'aider."),
+                                PracticeQuestion(prompt: "Explique ta réservation : deux nuits, au nom de Karim.", expected: ["J'ai réservé deux nuits au nom de Karim.", "J'ai reserve deux nuits."], focus: "j'ai réservé", watch: "participe passé : réserver → réservé."),
+                                PracticeQuestion(prompt: "Demande à la réception de vérifier, avec l'impératif et la politesse.", expected: ["Vérifiez, s'il vous plaît.", "Verifiez sil vous plait.", "Vérifiez s'il vous plaît."], focus: "vérifiez", watch: "l'impératif avec vous : le verbe prend -ez."),
+                                PracticeQuestion(prompt: "On te propose une chambre au troisième. Accepte.", expected: ["Ça me va.", "Ca me va.", "Pas grave, ça me va."], focus: "ça me va", watch: "ça me va : ça me convient, en trois mots.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u28-hotel-e1", kind: "choice", prompt: "« ___ pas ma réservation. » (le constat calme)", options: ["Il n'y a", "Il n'a", "Il y", "Il n'est"], answers: ["Il n'y a"], explain: "Il n'y a pas : signaler le manque avec y avoir."),
+                            Exercise(id: "fr-foundations-u28-hotel-e2", kind: "gap", prompt: "Est-ce que vous ___ m'aider ? (verbe : pouvoir)", options: [], answers: ["pouvez"], explain: "Vous pouvez : pouvoir avec vous, la demande polie."),
+                            Exercise(id: "fr-foundations-u28-hotel-e3", kind: "order", prompt: "Demande à la réception de vérifier, avec politesse.", options: [], answers: ["Vérifiez s'il vous plaît"], explain: "Vérifiez, s'il vous plaît : l'impératif adouci par la politesse."),
+                            Exercise(id: "fr-foundations-u28-hotel-e4", kind: "written", prompt: "Explique ta situation : tu as réservé deux nuits, au nom de Karim.", options: [], answers: ["j'ai réservé deux nuits au nom de karim", "j'ai reserve deux nuits", "j'ai réservé pour deux nuits"], explain: "J'ai réservé + les détails : la situation devient claire.")], skills: ["function:solve-problems", "function:make-requests", "vocab:travel", "grammar:imperatives"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u28-imprevus", title: "Changer les plans", goal: "Conseiller avec devrais et proposer une alternative avec pourrait : tu devrais prendre celui de dix heures, on pourrait partir dimanche.",
+                intro: LessonIntro(explanation: [
+                            "Pour conseiller : « Tu devrais prendre le train de dix heures. » Devrais, c'est le conseil doux, sans obligation.",
+                            "Pour proposer une alternative : « On pourrait partir dimanche. » Pourrait ouvre la porte sans imposer.",
+                            "On réagit d'abord au problème : « Ah mince ! » Puis on avance : « Pas grave, on change le plan. »"], examples: [
+                            ExampleLine(text: "Ah mince, le train est annulé !", meaning: "La petite déception."),
+                            ExampleLine(text: "Tu devrais prendre celui de dix heures.", meaning: "Le conseil."),
+                            ExampleLine(text: "On pourrait partir dimanche à la place.", meaning: "L'alternative."),
+                            ExampleLine(text: "Pas grave, on change le plan.", meaning: "Rester positif."),
+                            ExampleLine(text: "Ça marche pour toi, dimanche ?", meaning: "Vérifier l'accord.")]),
+                expressions: [
+                            TargetExpression(text: "tu devrais + infinitif", meaning: "Conseiller.", note: "Tu devrais réserver maintenant."),
+                            TargetExpression(text: "on pourrait + infinitif", meaning: "Proposer une alternative.", note: "On pourrait y aller en bus."),
+                            TargetExpression(text: "ah mince !", meaning: "La petite déception.", note: "Ah mince, c'est complet !"),
+                            TargetExpression(text: "pas grave", meaning: "Minimiser le problème.", note: "Pas grave, demain c'est bien aussi."),
+                            TargetExpression(text: "ça marche ?", meaning: "Vérifier l'accord.", note: "Dix heures, ça marche ?")],
+                situation: "Le train de samedi est annulé : Léa conseille celui de dix heures, Karim propose de partir dimanche et on vérifie que le nouveau plan convient.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Conseille à Karim le train de dix heures.", expected: ["Tu devrais prendre le train de dix heures.", "Tu devrais prendre le train de 10 heures.", "Tu devrais prendre le train de dix heures"], focus: "tu devrais", watch: "devrais + infinitif : le conseil sans obligation."),
+                                PracticeQuestion(prompt: "Propose de partir dimanche (avec on).", expected: ["On pourrait partir dimanche.", "On pourait partir dimanche."], focus: "on pourrait", watch: "pouvoir au conditionnel : la proposition souple."),
+                                PracticeQuestion(prompt: "Le train est annulé. Réagis avec la petite déception.", expected: ["Ah mince !", "Ah mince, le train est annulé !"], focus: "ah mince", watch: "l'interjection petite, très française."),
+                                PracticeQuestion(prompt: "Rassure Karim : le problème est petit.", expected: ["Pas grave, on change le plan.", "Pas grave.", "Pas grave, demain c'est bien."], focus: "pas grave", watch: "pas grave : le problème devient tout petit."),
+                                PracticeQuestion(prompt: "Vérifie que dix heures convient à Karim.", expected: ["Dix heures, ça marche ?", "10 heures, ça marche ?", "Ça marche, dix heures ?"], focus: "ça marche", watch: "ça marche ? : l'accord se vérifie en deux mots.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u28-imprevus-e1", kind: "choice", prompt: "« Tu ___ prendre le train de dix heures. » (le conseil doux)", options: ["devrais", "dois", "veux", "vas"], answers: ["devrais"], explain: "Tu devrais + infinitif : le conseil, pas l'obligation."),
+                            Exercise(id: "fr-foundations-u28-imprevus-e2", kind: "gap", prompt: "On ___ visiter le musée demain. (proposer avec pouvoir au conditionnel)", options: [], answers: ["pourrait"], explain: "On pourrait : l'alternative proposée en douceur."),
+                            Exercise(id: "fr-foundations-u28-imprevus-e3", kind: "order", prompt: "Conseille à Léa de réserver maintenant.", options: [], answers: ["Tu devrais réserver maintenant"], explain: "Tu devrais + infinitif : le conseil doux."),
+                            Exercise(id: "fr-foundations-u28-imprevus-e4", kind: "written", prompt: "Le musée est complet : réagis avec la petite déception française.", options: [], answers: ["ah mince", "ah mince !", "mince", "oh mince"], explain: "Ah mince ! : la déception légère, sans drame.")], skills: ["grammar:modal-should", "function:solve-problems", "function:make-suggestions", "vocab:transport"], canDo: ["solve-everyday-problems", "use-transport"], prerequisites: ["grammar:present-simple"])])
+}
+
 public enum FrWorkU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-work-u1", title: "La vie au bureau", subtitle: "Réunions, courriels, entretiens", level: "B1", themes: [
                     ConversationTheme("la-reunion", "En réunion", "Avis et propositions", "person.3", "Course", "Lundi 9 heures, réunion de projet : le planning est trop juste, chacun donne son avis et Léa récapitule les décisions.", 0),
@@ -12391,7 +12751,35 @@ public enum ItFoundationsU25 {
                             Exercise(id: "it-foundations-u25-vigilia-e1", kind: "choice", prompt: "Prima faccio il check-in, ___ vado a letto.", options: ["poi", "prima", "pero", "anzi"], answers: ["poi"], explain: "prima… poi: la coppia dell’ordine."),
                             Exercise(id: "it-foundations-u25-vigilia-e2", kind: "gap", prompt: "Il volo ___ alle nove e dieci. (partire)", options: [], answers: ["parte"], explain: "Il volo (lui) parte."),
                             Exercise(id: "it-foundations-u25-vigilia-e3", kind: "order", prompt: "Dì l’orario del volo: nove.", options: [], answers: ["Il volo parte alle nove"], explain: "Il volo + parte alle + ora."),
-                            Exercise(id: "it-foundations-u25-vigilia-e4", kind: "written", prompt: "Dì che devi arrivare due ore prima.", options: [], answers: ["devo arrivare due ore prima", "devo essere la due ore prima", "devo essere li due ore prima"], explain: "devo + infinito + due ore prima.")], skills: ["grammar:connectors", "vocab:transport", "function:make-future-plans", "vocab:travel"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+                            Exercise(id: "it-foundations-u25-vigilia-e4", kind: "written", prompt: "Dì che devi arrivare due ore prima.", options: [], answers: ["devo arrivare due ore prima", "devo essere la due ore prima", "devo essere li due ore prima"], explain: "devo + infinito + due ore prima.")], skills: ["grammar:connectors", "vocab:transport", "function:make-future-plans", "vocab:travel"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "it-foundations-u25-aeroporto", title: "All'aeroporto", goal: "Muoversi all'aeroporto: leggere gli annunci, trovare il gate e reagire a un volo in ritardo.",
+                intro: LessonIntro(explanation: [
+                            "L'aeroporto ha le sue parole: il check-in, il gate, l'imbarco. « Il gate chiude alle nove e mezza ».",
+                            "Negli annunci si sente il presente: « Il volo imbarca al gate quindici ». Il volo fa le azioni, non tu.",
+                            "Per il problema classico: « Il volo è in ritardo di quaranta minuti ». E la soluzione si chiede con devo: « Devo cambiare il biglietto? »."], examples: [
+                            ExampleLine(text: "Dov'è il check-in?", meaning: "Il primo punto."),
+                            ExampleLine(text: "Il gate chiude alle nove e mezza.", meaning: "L'ora limite."),
+                            ExampleLine(text: "Il volo imbarca al gate quindici.", meaning: "L'annuncio tipico."),
+                            ExampleLine(text: "Il volo è in ritardo di quaranta minuti.", meaning: "Il problema classico."),
+                            ExampleLine(text: "Devo cambiare il biglietto?", meaning: "La soluzione chiesta.")]),
+                expressions: [
+                            TargetExpression(text: "il gate / l'imbarco", meaning: "Le parole dell'aeroporto.", note: "Il gate chiude presto."),
+                            TargetExpression(text: "il volo è in ritardo", meaning: "Il problema.", note: "Il volo è in ritardo di un'ora."),
+                            TargetExpression(text: "un ritardo di + tempo", meaning: "Quanto aspetti.", note: "Un ritardo di trenta minuti."),
+                            TargetExpression(text: "dovere essere a…", meaning: "L'obbligo del posto.", note: "Devo essere al gate alle nove."),
+                            TargetExpression(text: "cambiare il biglietto", meaning: "La soluzione.", note: "Devo cambiare il biglietto?")],
+                situation: "Sei all'aeroporto: trovi il check-in, ascolti gli annunci, scopri che il volo è in ritardo e chiedi che cosa fare.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi dov'è il check-in.", expected: ["Dov'è il check-in?", "Dov'è il check in?", "Dove è il check-in?"], focus: "dov'è", watch: "dov'è = dove + è, con l'apostrofo."),
+                                PracticeQuestion(prompt: "Dì che il tuo volo ha quaranta minuti di ritardo.", expected: ["Il volo è in ritardo di quaranta minuti.", "Il volo ha quaranta minuti di ritardo."], focus: "in ritardo di", watch: "in ritardo di + tempo."),
+                                PracticeQuestion(prompt: "Dì l'obbligo: dovete essere al gate alle nove.", expected: ["Dovete essere al gate alle nove.", "Dovete essere al gate alle 9"], focus: "dovere essere a", watch: "dovere + essere al posto: l'obbligo del posto."),
+                                PracticeQuestion(prompt: "Chiedi se devi cambiare il biglietto.", expected: ["Devo cambiare il biglietto?", "Devo cambiare il biglietto"], focus: "devo", watch: "devo + infinito: chiedo la soluzione."),
+                                PracticeQuestion(prompt: "Dì l'ora limite: il gate, nove e mezza.", expected: ["Il gate chiude alle nove e mezza.", "Il gate chiude alle 9 e 30"], focus: "chiudere", watch: "il gate chiude: il presente degli annunci.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u25-aeroporto-e1", kind: "choice", prompt: "Il volo ___ al gate quindici.", options: ["imbarca", "imbarchi", "imbarco", "imbarcate"], answers: ["imbarca"], explain: "Il volo (lui) imbarca: il presente degli annunci ufficiali."),
+                            Exercise(id: "it-foundations-u25-aeroporto-e2", kind: "gap", prompt: "Il volo è in ___ di trenta minuti.", options: [], answers: ["ritardo"], explain: "il ritardo di + tempo: la durata dell'attesa."),
+                            Exercise(id: "it-foundations-u25-aeroporto-e3", kind: "order", prompt: "Dì l'obbligo del gate: appuntamento alle nove.", options: [], answers: ["Dovete essere al gate alle nove"], explain: "dovete + essere a + il posto + l'ora: l'obbligo annunciato."),
+                            Exercise(id: "it-foundations-u25-aeroporto-e4", kind: "written", prompt: "Dì l'ora di chiusura del gate (9:30).", options: [], answers: ["il gate chiude alle nove e mezza", "il gate chiude alle 9 e 30", "chiude alle nove e mezza"], explain: "il gate chiude alle + l'ora: l'informazione che conta.")], skills: ["vocab:travel", "grammar:modal-must-have-to", "function:solve-problems", "grammar:time-expressions"], canDo: ["use-transport"], prerequisites: ["vocab:travel", "grammar:modal-must-have-to"])])
 }
 
 public enum ItFoundationsU26 {
@@ -12485,6 +12873,164 @@ public enum ItFoundationsU26 {
                             Exercise(id: "it-foundations-u26-consumo-e2", kind: "gap", prompt: "Il riutilizzo viene ___ del riciclo. (prima)", options: [], answers: ["prima"], explain: "venire prima di: l’ordine delle priorità."),
                             Exercise(id: "it-foundations-u26-consumo-e3", kind: "order", prompt: "Apri il dibattito con la domanda sulle alternative.", options: [], answers: ["Conviene riparare o comprare nuovo"], explain: "La domanda con due alternative."),
                             Exercise(id: "it-foundations-u26-consumo-e4", kind: "written", prompt: "Scrivi la tua argomentazione: idea, motivo, esempio (comprare usato).", options: [], answers: ["compro usato perché è un rifiuto in meno e spendo meno", "compro usato perche e un rifiuto in meno e spendo meno", "per me comprare usato conta perché è un rifiuto in meno", "per me comprare usato conta perche e un rifiuto in meno"], explain: "L’idea + perché + il fatto: l’argomentazione breve.")], skills: ["writing:argument", "function:express-opinion", "grammar:connectors", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum ItFoundationsU27 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u27", title: "Al bar", subtitle: "Caffè, cornetti ed euro", level: "A1", themes: [
+                    ConversationTheme("u27-al-bancone", "Al bancone", "Ordinare al bar", "takeout.bag", "Course", "Sei al bar la mattina: ordini al bancone, chiedi se c'è il cornetto integrale e scambi due parole con il barista.", 0),
+                    ConversationTheme("u27-quanto-costa", "Quanto costa?", "Numeri ed euro", "creditcard", "Course", "Alla cassa chiedi il prezzo, paghi in contanti e controlli il resto.", 1)], lessons: [
+            Lesson(id: "it-foundations-u27-bancone", title: "Al bancone", goal: "Ordinare al bar con vorrei, prendere e prego, come un italiano vero.",
+                intro: LessonIntro(explanation: [
+                            "Al bar si ordina con vorrei + la cosa: « Vorrei un caffè, per favore ». È gentile e va bene sempre.",
+                            "La scelta rapida è prendo + la cosa: « Prendo un cornetto alla crema ». Suona deciso, da clienti abituali.",
+                            "Per sapere se una cosa esiste: « C'è il cornetto integrale? ». La risposta breve: « Sì, c'è » oppure « No, non c'è ».",
+                            "Il barista serve e dice « Prego! ». E tu rispondi « Grazie! »: prego è la risposta, non il ringraziamento."], examples: [
+                            ExampleLine(text: "Vorrei un caffè, per favore.", meaning: "Il modo gentile di ordinare."),
+                            ExampleLine(text: "Prendo anche un cornetto.", meaning: "La scelta rapida al bancone."),
+                            ExampleLine(text: "C'è il cornetto integrale?", meaning: "La domanda con c'è."),
+                            ExampleLine(text: "Prego, signora!", meaning: "Il barista offre."),
+                            ExampleLine(text: "Grazie mille. — Prego!", meaning: "Grazie e la sua risposta.")]),
+                expressions: [
+                            TargetExpression(text: "vorrei + …", meaning: "Ordino con gentilezza.", note: "Vorrei un cappuccino."),
+                            TargetExpression(text: "prendo + …", meaning: "La scelta al bancone.", note: "Prendo anche un'acqua."),
+                            TargetExpression(text: "C'è… ?", meaning: "Chiedo se esiste.", note: "C'è il latte di soia?"),
+                            TargetExpression(text: "prego", meaning: "La risposta del barista.", note: "Ecco il caffè, prego!"),
+                            TargetExpression(text: "per favore / grazie", meaning: "Le parole magiche.", note: "Un caffè, per favore. Grazie!")],
+                situation: "È sabato mattina: entri al bar sotto casa, ordini un caffè e un cornetto, chiedi se c'è il cornetto integrale e ringrazi il barista.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ordina gentilmente un caffè.", expected: ["Vorrei un caffè, per favore.", "Vorrei un caffè per favore"], focus: "vorrei", watch: "vorrei + la cosa: è il modo gentile di ordinare."),
+                                PracticeQuestion(prompt: "Dì che prendi anche un cornetto alla crema.", expected: ["Prendo anche un cornetto alla crema.", "E prendo un cornetto alla crema."], focus: "prendo", watch: "prendo + la cosa: la scelta rapida."),
+                                PracticeQuestion(prompt: "Chiedi se c'è il cornetto integrale.", expected: ["C'è il cornetto integrale?", "C'e il cornetto integrale?"], focus: "c'è", watch: "c'è si scrive con l'accento: c'è, non c'e."),
+                                PracticeQuestion(prompt: "Il barista ti dà il caffè: che parola usa?", expected: ["Prego!", "Prego", "Ecco il caffè, prego!"], focus: "prego", watch: "prego = la risposta quando si serve."),
+                                PracticeQuestion(prompt: "Ringrazia il barista con entusiasmo.", expected: ["Grazie mille!", "Grazie mille", "Mille grazie!"], focus: "grazie mille", watch: "grazie mille è più forte di grazie."),
+                                PracticeQuestion(prompt: "Chiedi al barista se c'è il latte di soia.", expected: ["C'è il latte di soia?", "C'e il latte di soia?"], focus: "c'è", watch: "c'è + singolare: una cosa sola.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u27-bancone-e1", kind: "choice", prompt: "Per ordinare con gentilezza al bar, dici: « ___ un caffè, per favore ».", options: ["Vorrei", "Voglio", "Sono", "Faccio"], answers: ["Vorrei"], explain: "Vorrei + la cosa: è il modo gentile e sicuro di ordinare al bar."),
+                            Exercise(id: "it-foundations-u27-bancone-e2", kind: "gap", prompt: "Il barista mette il cappuccino sul bancone e dice: « ___! » (la risposta a grazie)", options: [], answers: ["Prego", "prego", "Prego!", "prego!"], explain: "Prego è la risposta tipica del barista quando serve al bancone."),
+                            Exercise(id: "it-foundations-u27-bancone-e3", kind: "order", prompt: "Metti in ordine la domanda: chiedi se il cornetto integrale è disponibile.", options: [], answers: ["C'è il cornetto integrale"], explain: "c'è + la cosa: la domanda breve per sapere se esiste."),
+                            Exercise(id: "it-foundations-u27-bancone-e4", kind: "written", prompt: "Ordina anche l'acqua naturale.", options: [], answers: ["Prendo anche un'acqua", "Vorrei anche un'acqua", "Prendo anche un acqua", "Prendo un'acqua"], explain: "prendo / vorrei + la cosa: anche aggiunge un secondo ordine.")], skills: ["function:order-food", "vocab:food", "grammar:present-simple", "vocab:social-expressions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple", "vocab:food"]),
+            Lesson(id: "it-foundations-u27-costo", title: "Quanto costa?", goal: "Chiedere il prezzo, capire i numeri e pagare in euro alla cassa.",
+                intro: LessonIntro(explanation: [
+                            "Per il prezzo si chiede « Quanto costa? » per una cosa e « Quanto costano? » per più cose: « Quanto costa il cappuccino? ».",
+                            "La risposta usa il verbo essere: « Sono due euro e cinquanta ». In italiano il plurale è euro, mai « euri ».",
+                            "Alla cassa si chiede: « Posso pagare con la carta? ». La risposta: « Sì » oppure « Solo contanti »."], examples: [
+                            ExampleLine(text: "Quanto costa il cappuccino?", meaning: "Una cosa: costa."),
+                            ExampleLine(text: "Quanto costano i cornetti?", meaning: "Più cose: costano."),
+                            ExampleLine(text: "Sono un euro e venti.", meaning: "Il prezzo con e."),
+                            ExampleLine(text: "Posso pagare con la carta?", meaning: "La domanda alla cassa."),
+                            ExampleLine(text: "Ecco dieci euro. — Ecco il resto.", meaning: "Contanti e resto.")]),
+                expressions: [
+                            TargetExpression(text: "Quanto costa… ?", meaning: "Il prezzo di una cosa.", note: "Quanto costa il caffè?"),
+                            TargetExpression(text: "Quanto costano… ?", meaning: "Il prezzo di più cose.", note: "Quanto costano le brioche?"),
+                            TargetExpression(text: "sono … euro", meaning: "La risposta col prezzo.", note: "Sono due euro e cinquanta."),
+                            TargetExpression(text: "posso pagare… ?", meaning: "Carta o contanti.", note: "Posso pagare in contanti?"),
+                            TargetExpression(text: "il resto", meaning: "I soldi che tornano.", note: "Ecco il resto, grazie!")],
+                situation: "Prendi due cornetti e un cappuccino: alla cassa chiedi il prezzo, paghi con dieci euro e ricevi il resto.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi il prezzo del cappuccino.", expected: ["Quanto costa il cappuccino?", "Quanto costa il cappuccino"], focus: "quanto costa", watch: "una cosa sola: quanto costa."),
+                                PracticeQuestion(prompt: "Chiedi il prezzo dei cornetti, in due.", expected: ["Quanto costano i cornetti?", "Quanto costano i cornetti"], focus: "quanto costano", watch: "più cose: quanto costano."),
+                                PracticeQuestion(prompt: "Dì il prezzo: 1 euro e 20.", expected: ["Sono un euro e venti.", "Sono 1 euro e 20", "Un euro e venti."], focus: "sono … euro", watch: "il plurale è euro, non euri."),
+                                PracticeQuestion(prompt: "Alla cassa, chiedi se puoi pagare con la carta.", expected: ["Posso pagare con la carta?", "Posso pagare con la carta", "Posso pagare con la carta?"], focus: "posso", watch: "posso + infinito: chiedo il permesso."),
+                                PracticeQuestion(prompt: "Paghi dieci euro per un caffè da due: come si chiamano gli otto euro che il barista ti dà?", expected: ["Il resto", "il resto", "Resto"], focus: "il resto", watch: "il resto = i soldi che tornano."),
+                                PracticeQuestion(prompt: "Dì il prezzo totale: 2 euro e 50.", expected: ["Sono due euro e cinquanta.", "Sono 2 euro e 50", "Due euro e cinquanta."], focus: "sono … euro", watch: "cinquanta, non cinquanti.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u27-costo-e1", kind: "choice", prompt: "___ costa il cappuccino?", options: ["Quanto", "Che", "Dove", "Quando"], answers: ["Quanto"], explain: "Quanto costa…? è la domanda per il prezzo di una cosa."),
+                            Exercise(id: "it-foundations-u27-costo-e2", kind: "gap", prompt: "Chiedi il prezzo dei cornetti: ___ costano i cornetti? (il plurale della domanda)", options: [], answers: ["Quanto", "quanto"], explain: "Per più cose il verbo va al plurale: quanto costano."),
+                            Exercise(id: "it-foundations-u27-costo-e3", kind: "order", prompt: "Chiedi se la carta è accettata alla cassa.", options: [], answers: ["Posso pagare con la carta"], explain: "posso + infinito: la domanda gentile per il pagamento."),
+                            Exercise(id: "it-foundations-u27-costo-e4", kind: "written", prompt: "Dì il prezzo: 2 euro e 50 centesimi.", options: [], answers: ["sono due euro e cinquanta", "due euro e cinquanta", "sono 2 euro e 50", "due euro e cinquanta centesimi"], explain: "sono + il prezzo in euro: la risposta alla cassa.")], skills: ["function:go-shopping", "vocab:shopping", "grammar:quantities", "grammar:present-simple"], canDo: ["go-shopping"], prerequisites: ["grammar:present-simple", "vocab:shopping"])])
+}
+
+public enum ItFoundationsU28 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u28", title: "Il trasloco", subtitle: "Scatole e nuova casa", level: "A2", themes: [
+                    ConversationTheme("u28-scatole-e-ordine", "Scatole e ordine", "Imballare casa", "house", "Course", "Il trasloco è deciso: si imballano le scatole, si fa la lista di che cosa portare e si organizza il furgone.", 0),
+                    ConversationTheme("u28-aiuto-e-arrivo", "Aiuto e arrivo", "Vicini e prima notte", "handshake", "Course", "Chiedi aiuto ai vicini, arrivi nella casa nuova e sistemi la prima notte tra scatole e lampade.", 1)], lessons: [
+            Lesson(id: "it-foundations-u28-scatole", title: "Scatole e ordine", goal: "Dire che cosa devi fare durante il trasloco con devo, devi e bisogna.",
+                intro: LessonIntro(explanation: [
+                            "Per gli obblighi c'è devo + infinito: « Devo imballare i libri ». Devo, devi, deve funziona come un interruttore: obbligo acceso.",
+                            "La regola generale è bisogna + infinito, senza soggetto: « Bisogna comprare le scatole ». Non dice chi fa l'azione.",
+                            "Per dire che qualcosa non è necessario: « Non devo portare i mobili ». Non devo spegne l'interruttore."], examples: [
+                            ExampleLine(text: "Devo imballare la cucina.", meaning: "L'obbligo al io."),
+                            ExampleLine(text: "Devi chiudere le scatole col nastro.", meaning: "L'obbligo al tu."),
+                            ExampleLine(text: "Bisogna comprare più scatole.", meaning: "La regola impersonale."),
+                            ExampleLine(text: "Non devo fare i pacchi dei vestiti.", meaning: "Non è necessario."),
+                            ExampleLine(text: "Devo chiamare il furgone per le nove.", meaning: "Obbligo con l'ora.")]),
+                expressions: [
+                            TargetExpression(text: "devo + infinito", meaning: "L'obbligo al io.", note: "Devo preparare le scatole."),
+                            TargetExpression(text: "devi + infinito", meaning: "L'obbligo al tu.", note: "Devi portare giù le biciclette?"),
+                            TargetExpression(text: "bisogna + infinito", meaning: "Serve in generale.", note: "Bisogna prenotare il furgone."),
+                            TargetExpression(text: "non devo…", meaning: "Nessun obbligo.", note: "Non devo portare il divano."),
+                            TargetExpression(text: "mi servono…", meaning: "La quantità necessaria.", note: "Mi servono dieci scatole grandi.")],
+                situation: "Sabato traslochi: fai la lista delle cose da fare, dai ordini a Marco con devi e spieghi che cosa non serve fare.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dì il tuo obbligo: imballi la cucina.", expected: ["Devo imballare la cucina.", "Devo imballare la cucina"], focus: "devo", watch: "devo + infinito: l'obbligo al io."),
+                                PracticeQuestion(prompt: "Dai l'ordine a Marco: chiudere le scatole col nastro.", expected: ["Devi chiudere le scatole col nastro.", "Tu devi chiudere le scatole col nastro."], focus: "devi", watch: "devi + infinito: l'obbligo al tu."),
+                                PracticeQuestion(prompt: "Dì la regola generale: comprare le scatole.", expected: ["Bisogna comprare le scatole.", "Bisogna comprare le scatole"], focus: "bisogna", watch: "bisogna + infinito: senza soggetto."),
+                                PracticeQuestion(prompt: "Dì che non è necessario: i mobili non li porti tu.", expected: ["Non devo portare i mobili.", "Non devo portare io i mobili"], focus: "non devo", watch: "non devo = non è necessario."),
+                                PracticeQuestion(prompt: "Dì quante scatole ti servono: dieci grandi.", expected: ["Mi servono dieci scatole grandi.", "Mi servono 10 scatole grandi"], focus: "mi servono", watch: "mi servono + plurale: la quantità."),
+                                PracticeQuestion(prompt: "Dì il tuo obbligo con l'ora: chiamare il furgone per le nove.", expected: ["Devo chiamare il furgone per le nove.", "Devo chiamare il furgone alle nove."], focus: "devo + ora", watch: "per le nove = entro le nove.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u28-scatole-e1", kind: "choice", prompt: "Io ___ imballare tutta la cucina sabato.", options: ["devo", "devi", "deve", "bisogno"], answers: ["devo"], explain: "Io devo + infinito: l'obbligo alla prima persona."),
+                            Exercise(id: "it-foundations-u28-scatole-e2", kind: "gap", prompt: "___ comprare il nastro adesivo: è la regola del trasloco.", options: [], answers: ["Bisogna", "bisogna"], explain: "bisogna + infinito: l'obbligo impersonale, non dice chi fa."),
+                            Exercise(id: "it-foundations-u28-scatole-e3", kind: "order", prompt: "Dai l'ordine a Marco: le biciclette devono scendere.", options: [], answers: ["Devi portare giù le biciclette"], explain: "devi + infinito: l'obbligo al tu, con portare giù."),
+                            Exercise(id: "it-foundations-u28-scatole-e4", kind: "written", prompt: "Dì che non è necessario: il divano resta qui.", options: [], answers: ["non devo portare il divano", "non devo portare io il divano", "non e necessario portare il divano", "non è necessario portare il divano"], explain: "non devo + infinito: l'obbligo assente.")], skills: ["grammar:modal-must-have-to", "vocab:home", "function:solve-problems", "grammar:quantities"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:modal-must-have-to", "vocab:home"]),
+            Lesson(id: "it-foundations-u28-aiuto", title: "Chiedere aiuto", goal: "Chiedere una mano ai vicini con puoi, mi presti e l'imperativo gentile.",
+                intro: LessonIntro(explanation: [
+                            "La richiesta gentile parte con puoi + infinito: « Puoi darmi una mano sabato? ». È una domanda, non un ordine.",
+                            "Per gli oggetti si chiede mi presti + la cosa: « Mi presti il furgone? ». È il tu gentile dei vicini.",
+                            "L'imperativo informale serve per le istruzioni: « Prendi quella scatola ». Il negativo al tu è non + infinito: « Non preoccuparti »."], examples: [
+                            ExampleLine(text: "Puoi darmi una mano sabato?", meaning: "La richiesta con puoi."),
+                            ExampleLine(text: "Mi presti il furgone?", meaning: "L'oggetto prestato."),
+                            ExampleLine(text: "Prendi quella scatola, per favore.", meaning: "L'istruzione al tu."),
+                            ExampleLine(text: "Non preoccuparti, ci sto io.", meaning: "Il tu negativo."),
+                            ExampleLine(text: "Grazie mille, sei gentilissimo!", meaning: "Il ringraziamento forte.")]),
+                expressions: [
+                            TargetExpression(text: "puoi… ?", meaning: "La richiesta gentile.", note: "Puoi aiutarmi sabato?"),
+                            TargetExpression(text: "mi presti… ?", meaning: "Chiedo l'oggetto.", note: "Mi presti il carrello?"),
+                            TargetExpression(text: "darmi una mano", meaning: "Aiutarmi.", note: "Puoi darmi una mano?"),
+                            TargetExpression(text: "non preoccuparti", meaning: "Il tu negativo.", note: "Non preoccuparti, va tutto bene."),
+                            TargetExpression(text: "sei gentilissimo!", meaning: "Il ringraziamento forte.", note: "Grazie mille, sei gentilissimo!")],
+                situation: "Chiedi a Giulia di darti una mano, le chiedi il furgone e le spieghi che cosa deve prendere, senza dimenticare i ringraziamenti.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi a Giulia una mano per sabato.", expected: ["Puoi darmi una mano sabato?", "Puoi darmi una mano sabato"], focus: "puoi", watch: "puoi + infinito: la richiesta gentile."),
+                                PracticeQuestion(prompt: "Chiedi a Giulia il furgone.", expected: ["Mi presti il furgone?", "Mi presti il furgone"], focus: "mi presti", watch: "mi presti + la cosa: chiedi un prestito."),
+                                PracticeQuestion(prompt: "Dai l'istruzione: quella scatola va al piano di sopra.", expected: ["Prendi quella scatola, per favore.", "Prendi quella scatola per favore"], focus: "imperativo", watch: "al tu: prendi, porta, sali."),
+                                PracticeQuestion(prompt: "Tranquillizza Giulia al negativo: non serve preoccuparsi.", expected: ["Non preoccuparti.", "Non preoccuparti, va tutto bene.", "Non ti preoccupare."], focus: "non preoccuparti", watch: "il tu negativo: non + infinito."),
+                                PracticeQuestion(prompt: "Ringrazia Giulia al massimo.", expected: ["Grazie mille, sei gentilissima!", "Grazie mille sei gentilissima", "Grazie mille, gentilissima!"], focus: "grazie mille", watch: "gentilissima per una donna, gentilissimo per un uomo."),
+                                PracticeQuestion(prompt: "Chiedi a Giulia di aiutarti a salire le scatole.", expected: ["Puoi aiutarmi a salire le scatole?", "Mi aiuti a salire le scatole?"], focus: "puoi", watch: "aiutarmi = aiutare + me.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u28-aiuto-e1", kind: "choice", prompt: "___ darmi una mano sabato mattina?", options: ["Puoi", "Devo", "Sono", "Vado"], answers: ["Puoi"], explain: "Puoi + infinito: la richiesta gentile al tu."),
+                            Exercise(id: "it-foundations-u28-aiuto-e2", kind: "gap", prompt: "___ il carrello per le scatole pesanti? (prestare, tu)", options: [], answers: ["Mi presti", "mi presti"], explain: "mi presti + la cosa: il prestito chiesto con gentilezza."),
+                            Exercise(id: "it-foundations-u28-aiuto-e3", kind: "order", prompt: "Istruisci Giulia sui libri: quella scatola deve salire.", options: [], answers: ["Prendi la scatola dei libri"], explain: "l'imperativo al tu: prendi, un'istruzione chiara."),
+                            Exercise(id: "it-foundations-u28-aiuto-e4", kind: "written", prompt: "Tranquillizza Giulia: nessun obbligo, tutto va bene.", options: [], answers: ["non preoccuparti", "non ti preoccupare", "non preoccuparti va tutto bene"], explain: "non + infinito al tu: non preoccuparti, la forma negativa dell'imperativo.")], skills: ["grammar:imperatives", "function:make-requests", "grammar:can", "vocab:social-expressions"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:imperatives", "grammar:can"]),
+            Lesson(id: "it-foundations-u28-prima-notte", title: "La prima notte", goal: "Descrivere la casa nuova con c'è e ci sono, e dire che cosa stai sistemando.",
+                intro: LessonIntro(explanation: [
+                            "Per descrivere: c'è + una cosa, ci sono + molte: « C'è una lampada nuova », « Ci sono ancora scatole ovunque ».",
+                            "Il negativo e la domanda: « Non c'è il tavolo », « C'è l'ascensore? ». Sono le due frasi che servono davvero in casa nuova.",
+                            "Per l'azione in corso: sto + gerundio: « Sto sistemando i libri ». Lo usi come un blocco: sto facendo, sto sistemando."], examples: [
+                            ExampleLine(text: "C'è una lampada nuova in salotto.", meaning: "Una cosa: c'è."),
+                            ExampleLine(text: "Ci sono ancora dieci scatole.", meaning: "Molte cose: ci sono."),
+                            ExampleLine(text: "Non c'è il divano, arriva venerdì.", meaning: "Il negativo singolare."),
+                            ExampleLine(text: "C'è l'ascensore? No, non c'è.", meaning: "La domanda utile."),
+                            ExampleLine(text: "Sto sistemando la camera da letto.", meaning: "L'azione adesso.")]),
+                expressions: [
+                            TargetExpression(text: "c'è + singolare", meaning: "Una cosa esiste.", note: "C'è un balcone grande."),
+                            TargetExpression(text: "ci sono + plurale", meaning: "Molte cose esistono.", note: "Ci sono due bagni."),
+                            TargetExpression(text: "non c'è / non ci sono", meaning: "La mancanza.", note: "Non ci sono le tende."),
+                            TargetExpression(text: "c'è… ?", meaning: "La domanda veloce.", note: "C'è l'ascensore?"),
+                            TargetExpression(text: "sto + gerundio", meaning: "L'azione adesso.", note: "Sto sistemando i libri.")],
+                situation: "Prima notte nella casa nuova: spieghi a un amico che cosa c'è, che cosa manca e che cosa stai sistemando adesso.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dì che in salotto c'è una lampada nuova.", expected: ["In salotto c'è una lampada nuova.", "C'è una lampada nuova in salotto."], focus: "c'è", watch: "una cosa sola: c'è."),
+                                PracticeQuestion(prompt: "Dì che ci sono ancora dieci scatole.", expected: ["Ci sono ancora dieci scatole.", "Ci sono ancora 10 scatole."], focus: "ci sono", watch: "più cose: ci sono."),
+                                PracticeQuestion(prompt: "Dì che manca il divano, arriva venerdì.", expected: ["Non c'è il divano, arriva venerdì.", "Non c'è il divano."], focus: "non c'è", watch: "non c'è + singolare: la mancanza."),
+                                PracticeQuestion(prompt: "Chiedi a un amico se c'è l'ascensore.", expected: ["C'è l'ascensore?", "C'e l'ascensore?"], focus: "c'è… ?", watch: "c'è si scrive con l'accento."),
+                                PracticeQuestion(prompt: "Dì che in questo momento sistemi i libri.", expected: ["Sto sistemando i libri.", "Sto sistemando i libri adesso."], focus: "sto + gerundio", watch: "sto + -ando: l'azione in corso."),
+                                PracticeQuestion(prompt: "Dì che mancano le tende.", expected: ["Non ci sono le tende.", "Mancano le tende."], focus: "non ci sono", watch: "non ci sono + plurale.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u28-prima-notte-e1", kind: "choice", prompt: "In cucina ___ un forno nuovo.", options: ["c'è", "ci sono", "sono", "hanno"], answers: ["c'è"], explain: "Una cosa sola: c'è + singolare."),
+                            Exercise(id: "it-foundations-u28-prima-notte-e2", kind: "gap", prompt: "___ ancora tre scatole in corridoio. (plurale)", options: [], answers: ["Ci sono", "ci sono"], explain: "Più cose: ci sono + plurale."),
+                            Exercise(id: "it-foundations-u28-prima-notte-e3", kind: "order", prompt: "Chiedi all'amico come si sale: senza scale.", options: [], answers: ["C'è l'ascensore nel palazzo"], explain: "c'è + la cosa: la domanda per sapere se esiste."),
+                            Exercise(id: "it-foundations-u28-prima-notte-e4", kind: "written", prompt: "Dì che in questo momento sistemi la camera da letto.", options: [], answers: ["sto sistemando la camera da letto", "sto sistemando la camera", "sto sistemando la camera da letto adesso"], explain: "sto + gerundio: l'azione che sta succedendo adesso.")], skills: ["grammar:there-is-are", "vocab:home", "grammar:present-continuous", "function:solve-problems"], canDo: ["describe-home"], prerequisites: ["grammar:there-is-are", "vocab:home"])])
 }
 
 public enum ItWorkU1 {
@@ -14697,7 +15243,35 @@ public enum PtFoundationsU25 {
                             Exercise(id: "pt-foundations-u25-vespera-e1", kind: "choice", prompt: "___ viagem ! Me avise quando chegar.", options: ["Boa", "Bom", "Boas", "Melhor"], answers: ["Boa"], explain: "boa viagem: a despedida fixa para quem viaja."),
                             Exercise(id: "pt-foundations-u25-vespera-e2", kind: "gap", prompt: "Confiro ___ a mala está pronta.", options: [], answers: ["se"], explain: "conferir se + oração: verificar si…."),
                             Exercise(id: "pt-foundations-u25-vespera-e3", kind: "order", prompt: "Peça para avisar quando chegar.", options: [], answers: ["Me avise quando chegar"], explain: "me avise quando + evento: o pedido da despedida."),
-                            Exercise(id: "pt-foundations-u25-vespera-e4", kind: "written", prompt: "Diga que amanhã vai sair cedo, porque o voo é às sete.", options: [], answers: ["Amanhã vou sair cedo, o voo é às sete.", "amanha vou sair cedo o voo e as sete", "Vou sair cedo, o voo é às sete.", "vou sair cedo o voo e as sete"], explain: "Plano + motivo: a frase completa da véspera.")], skills: ["grammar:connectors", "grammar:going-to", "function:make-future-plans", "vocab:travel"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+                            Exercise(id: "pt-foundations-u25-vespera-e4", kind: "written", prompt: "Diga que amanhã vai sair cedo, porque o voo é às sete.", options: [], answers: ["Amanhã vou sair cedo, o voo é às sete.", "amanha vou sair cedo o voo e as sete", "Vou sair cedo, o voo é às sete.", "vou sair cedo o voo e as sete"], explain: "Plano + motivo: a frase completa da véspera.")], skills: ["grammar:connectors", "grammar:going-to", "function:make-future-plans", "vocab:travel"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "pt-foundations-u25-aeroporto", title: "No balcão do aeroporto", goal: "Fazer o check-in: despachar a mala, escolher assento e achar o portão de embarque.",
+                intro: LessonIntro(explanation: [
+                            "No balcão, o funcionário pergunta: « despacha alguma bagagem ? ». Responda com « só esta mala » ou « duas, para despachar ».",
+                            "Escolha o assento: « janela, por favor », « prefiro corredor ». Depois, o lugar fica perto do portão de embarque.",
+                            "Confirme o portão e a hora: « de qual portão sai o voo ? », « o embarque é às nove, certo ? »."], examples: [
+                            ExampleLine(text: "Bom dia, quero fazer o check-in.", meaning: "começar o atendimento."),
+                            ExampleLine(text: "Despacho esta mala, por favor.", meaning: "a mala que vai no porão."),
+                            ExampleLine(text: "Prefiro assento de janela.", meaning: "a escolha do lugar."),
+                            ExampleLine(text: "De qual portão sai o voo ?", meaning: "a pergunta do portão."),
+                            ExampleLine(text: "O embarque é às nove, certo ?", meaning: "confirmar a hora.")]),
+                expressions: [
+                            TargetExpression(text: "fazer o check-in", meaning: "O registro do voo.", note: "Quero fazer o check-in."),
+                            TargetExpression(text: "despachar a bagagem", meaning: "Mandar a mala ao porão.", note: "Só uma mala para despachar."),
+                            TargetExpression(text: "assento de janela / corredor", meaning: "A escolha do lugar.", note: "Assento de corredor, por favor."),
+                            TargetExpression(text: "de qual portão… ?", meaning: "Achar o portão de embarque.", note: "De qual portão sai o voo ?"),
+                            TargetExpression(text: "cartão de embarque", meaning: "O bilhete do voo.", note: "Aqui está o seu cartão de embarque.")],
+                situation: "No balcão do aeroporto: a Duda despacha a mala, escolhe assento de janela, recebe o cartão de embarque e confere o portão e a hora do embarque com o funcionário.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que quer fazer o check-in.", expected: ["Quero fazer o check-in.", "quero fazer o check in"], focus: "check-in", watch: "check-in = el check-in (igual)."),
+                                PracticeQuestion(prompt: "Diga que despacha uma mala.", expected: ["Despacho uma mala, por favor.", "despacho uma mala por favor"], focus: "despachar", watch: "despachar = facturar (la maleta)."),
+                                PracticeQuestion(prompt: "Escolha o assento: janela.", expected: ["Prefiro assento de janela.", "prefiro assento de janela"], focus: "assento", watch: "assento = asiento; janela = ventanilla."),
+                                PracticeQuestion(prompt: "Pergunte o portão de saída do voo.", expected: ["De qual portão sai o voo ?", "de qual portao sai o voo"], focus: "portão", watch: "portão de embarque = puerta de embarque."),
+                                PracticeQuestion(prompt: "Confirme a hora: embarque às nove.", expected: ["O embarque é às nove, certo ?", "o embarque e as nove certo"], focus: "confirmação", watch: "…, certo ? = ¿verdad?")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u25-aeroporto-e1", kind: "choice", prompt: "Eu quero ___ esta mala, por favor.", options: ["despachar", "despacho", "despachando", "despachou"], answers: ["despachar"], explain: "quero + infinitivo: o pedido do check-in."),
+                            Exercise(id: "pt-foundations-u25-aeroporto-e2", kind: "gap", prompt: "Prefiro assento ___ janela.", options: [], answers: ["de"], explain: "assento de janela = asiento de ventanilla."),
+                            Exercise(id: "pt-foundations-u25-aeroporto-e3", kind: "order", prompt: "Pergunte o portão de saída do voo.", options: [], answers: ["De qual portão sai o voo"], explain: "de qual + substantivo: a pergunta do portão de embarque."),
+                            Exercise(id: "pt-foundations-u25-aeroporto-e4", kind: "written", prompt: "Diga o que você recebe do funcionário para embarcar.", options: [], answers: ["O cartão de embarque.", "o cartao de embarque", "Recebo o cartão de embarque."], explain: "o cartão de embarque = la tarjeta de embarque: sem ele, não embarca.")], skills: ["grammar:present-questions", "function:make-requests", "vocab:transport", "grammar:quantities"], canDo: ["use-transport"], prerequisites: ["grammar:present-questions"])])
 }
 
 public enum PtFoundationsU26 {
@@ -14788,6 +15362,158 @@ public enum PtFoundationsU26 {
                             Exercise(id: "pt-foundations-u26-consumo-e2", kind: "gap", prompt: "Embora ___ mais caro, a qualidade compensa.", options: [], answers: ["seja"], explain: "embora seja: a concessão com o verbo no subjuntivo."),
                             Exercise(id: "pt-foundations-u26-consumo-e3", kind: "order", prompt: "Compare reutilizar com jogar fora.", options: [], answers: ["Reutilizar é melhor do que jogar fora"], explain: "É melhor do que: o comparativo entre hábitos."),
                             Exercise(id: "pt-foundations-u26-consumo-e4", kind: "written", prompt: "Diga o lema do consumo consciente.", options: [], answers: ["Comprar menos e melhor.", "comprar menos e melhor"], explain: "O lema curto que resume o consumo consciente.")], skills: ["speaking:justify-opinion", "grammar:connectors", "function:express-opinion", "writing:argument"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum PtFoundationsU27 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u27", title: "Bicho de casa", subtitle: "Um pet, muitas palavras", level: "A1", themes: [
+                    ConversationTheme("bicho-chega", "O bicho chega", "Como ele é", "heart", "Course", "A Nina ganha um gatinho do tio Rafa e, pelo telefone, conta para a avó o nome, a cor, o tamanho e a idade do novo amigo.", 0),
+                    ConversationTheme("bicho-rotina", "A rotina do bicho", "Todo dia igual", "figure.walk", "Course", "De manhã, a Nina cuida do Biscoito: ele acorda cedo, come ração às sete e brinca com a bolinha antes do passeio.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u27-bicho", title: "O novo bicho", goal: "Apresentar o seu bicho: dizer o nome, a cor, o tamanho e a idade dele.",
+                intro: LessonIntro(explanation: [
+                            "« Ter » mostra posse: « Eu tenho um gato ». Para perguntar, use « você tem… ? »: « Você tem bicho em casa ? ».",
+                            "« Ser » descreve o bicho: « Ele é pequeno e preto ». A pergunta fica « ele é como ? ».",
+                            "A idade também fica com « ter »: « O Biscoito tem três meses ». Você vê: « ter » serve para a posse e para a idade."], examples: [
+                            ExampleLine(text: "Eu tenho um gatinho preto.", meaning: "ter + bicho: a posse."),
+                            ExampleLine(text: "Ele é pequeno e muito carinhoso.", meaning: "ser + adjetivo: a descrição."),
+                            ExampleLine(text: "Você tem bicho em casa ?", meaning: "a pergunta com « você tem »."),
+                            ExampleLine(text: "Ele tem três meses.", meaning: "ter + tempo: a idade."),
+                            ExampleLine(text: "O nome dele é Biscoito.", meaning: "o nome com « ser ».")]),
+                expressions: [
+                            TargetExpression(text: "Eu tenho …", meaning: "A posse: o seu bicho.", note: "Eu tenho uma cachorra."),
+                            TargetExpression(text: "Você tem bicho ?", meaning: "Perguntar sobre pets.", note: "Você tem bicho em casa ?"),
+                            TargetExpression(text: "Ele/Ela é …", meaning: "Descrever o bicho.", note: "Ele é branco e preto."),
+                            TargetExpression(text: "Ele tem … meses/anos", meaning: "A idade do bicho.", note: "Ela tem dois anos."),
+                            TargetExpression(text: "O nome dele é …", meaning: "Dar o nome do bicho.", note: "O nome dele é Biscoito.")],
+                situation: "Pelo telefone com a avó: a Nina apresenta o gatinho — o nome, a cor, o tamanho e a idade — e a avó conta que também teve um gato parecido.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que você tem um gatinho preto.", expected: ["Eu tenho um gatinho preto.", "eu tenho um gatinho preto"], focus: "ter", watch: "ter = tener (a posse fica com ter)."),
+                                PracticeQuestion(prompt: "Pergunte se a amiga tem bicho em casa.", expected: ["Você tem bicho em casa ?", "voce tem bicho em casa"], focus: "pergunta", watch: "você tem… ? = ¿tienes…?"),
+                                PracticeQuestion(prompt: "Descreva o bicho: pequeno e carinhoso.", expected: ["Ele é pequeno e carinhoso.", "ele e pequeno e carinhoso", "Ele é pequeno e muito carinhoso."], focus: "ser", watch: "é = es (a descrição fica com ser)."),
+                                PracticeQuestion(prompt: "Diga a idade dele: três meses.", expected: ["Ele tem três meses.", "ele tem tres meses"], focus: "idade", watch: "ter + idade = tener + edad."),
+                                PracticeQuestion(prompt: "Apresente o nome do bicho, com « o nome dele… ».", expected: ["O nome dele é Biscoito.", "o nome dele e biscoito"], focus: "nome", watch: "o nome dele = su nombre.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u27-bicho-e1", kind: "choice", prompt: "O Biscoito ___ preto e pequeno.", options: ["é", "tem", "tenho", "está"], answers: ["é"], explain: "« ser » descreve o bicho: ele é preto e pequeno."),
+                            Exercise(id: "pt-foundations-u27-bicho-e2", kind: "gap", prompt: "Eu ___ um gatinho em casa.", options: [], answers: ["tenho"], explain: "« ter » para a posse: eu tenho um bicho em casa."),
+                            Exercise(id: "pt-foundations-u27-bicho-e3", kind: "order", prompt: "Diga a idade dele.", options: [], answers: ["Ele tem três meses"], explain: "ter + tempo: a idade do bicho fica com « ter »."),
+                            Exercise(id: "pt-foundations-u27-bicho-e4", kind: "written", prompt: "Apresente o bicho com o nome dele.", options: [], answers: ["O nome dele é Biscoito.", "o nome dele e biscoito"], explain: "« O nome dele é + nome »: a apresentação completa do bicho.")], skills: ["grammar:have-got", "grammar:present-simple", "vocab:family", "function:describe-people"], canDo: ["describe-people"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u27-rotina", title: "A rotina do Biscoito", goal: "Contar a rotina do seu bicho: o que ele faz sempre, às vezes ou nunca.",
+                intro: LessonIntro(explanation: [
+                            "A rotina fica no presente: « o Biscoito acorda cedo », « ele come ração ». Você conta o dia inteiro com o mesmo tempo.",
+                            "As palavras da frequência vêm antes do verbo: « ele sempre dorme no sofá », « ele nunca sobe na cama ».",
+                            "Para perguntar, use o presente mesmo: « Ele passeia todos os dias ? »."], examples: [
+                            ExampleLine(text: "O Biscoito acorda muito cedo.", meaning: "o presente: a rotina dele."),
+                            ExampleLine(text: "Ele sempre come ração às sete.", meaning: "sempre + verbo: todo dia."),
+                            ExampleLine(text: "Às vezes ele dorme no sofá.", meaning: "às vezes: não é todo dia."),
+                            ExampleLine(text: "Ele nunca sobe na cama.", meaning: "nunca: a negativa forte."),
+                            ExampleLine(text: "Ele passeia no parque todos os dias ?", meaning: "a pergunta da rotina.")]),
+                expressions: [
+                            TargetExpression(text: "acordar cedo", meaning: "Levantar bem cedo.", note: "O Biscoito acorda cedo."),
+                            TargetExpression(text: "sempre / às vezes / nunca", meaning: "A frequência antes do verbo.", note: "Ele sempre mia de manhã."),
+                            TargetExpression(text: "comer ração", meaning: "A comida do bicho.", note: "Ele come ração duas vezes por dia."),
+                            TargetExpression(text: "passear no parque", meaning: "A caminhada do cachorro.", note: "Passeamos no parque à tarde."),
+                            TargetExpression(text: "todos os dias", meaning: "A rotina completa.", note: "Ele brinca todos os dias.")],
+                situation: "De manhã em casa: a Nina conta o dia do Biscoito — ração às sete, soneca no sofá, bolinha na sala — e o irmão pergunta se o gato sobe na cama.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Como começa o dia do gato ?", expected: ["O Biscoito acorda cedo.", "o biscoito acorda cedo"], focus: "presente", watch: "acordar = despertarse."),
+                                PracticeQuestion(prompt: "Diga que ele come ração às sete, todo dia.", expected: ["Ele sempre come ração às sete.", "ele sempre come racao as sete"], focus: "sempre", watch: "sempre = siempre (antes do verbo)."),
+                                PracticeQuestion(prompt: "Diga que a soneca no sofá não é todo dia.", expected: ["Às vezes ele dorme no sofá.", "as vezes ele dorme no sofa"], focus: "às vezes", watch: "às vezes = a veces."),
+                                PracticeQuestion(prompt: "Diga que a cama é proibida para o gato.", expected: ["Ele nunca sobe na cama.", "ele nunca sobe na cama"], focus: "nunca", watch: "nunca = nunca (a negativa vai antes do verbo)."),
+                                PracticeQuestion(prompt: "Pergunte se o passeio acontece todo dia.", expected: ["Ele passeia todos os dias ?", "ele passeia todos os dias"], focus: "pergunta", watch: "todos os dias = todos los días.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u27-rotina-e1", kind: "choice", prompt: "Ele ___ dorme no sofá, só quando chove.", options: ["às vezes", "sempre", "nunca", "todo dia"], answers: ["às vezes"], explain: "« só quando chove » marca frequência parcial: às vezes."),
+                            Exercise(id: "pt-foundations-u27-rotina-e2", kind: "gap", prompt: "Ele ___ mia de manhã, todos os dias.", options: [], answers: ["sempre"], explain: "todos os dias = sempre: a frequência antes do verbo."),
+                            Exercise(id: "pt-foundations-u27-rotina-e3", kind: "order", prompt: "Qual é a regra da cama para o gato ?", options: [], answers: ["Ele nunca sobe na cama"], explain: "nunca + verbo: a negativa forte da rotina."),
+                            Exercise(id: "pt-foundations-u27-rotina-e4", kind: "written", prompt: "Conte uma coisa que o bicho faz todo dia.", options: [], answers: ["Ele come ração todos os dias.", "ele come racao todos os dias", "Ele passeia todos os dias.", "ele passeia todos os dias"], explain: "Presente + todos os dias: a rotina completa do bicho.")], skills: ["grammar:present-simple", "grammar:frequency-adverbs", "vocab:daily-routine", "function:talk-about-routines"], canDo: ["talk-about-routines"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum PtFoundationsU28 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u28", title: "Imprevistos de viagem", subtitle: "Quando o plano muda", level: "A2", themes: [
+                    ConversationTheme("imprevisto-caminho", "O imprevisto", "Voo e mala", "clock.arrow.circlepath", "Course", "No aeroporto, o voo da Duda e do Téo atrasa e a mala dela não aparece na esteira; os dois resolvem um problema de cada vez, sem pressa.", 0),
+                    ConversationTheme("resolver-balcao", "Resolver no balcão", "Pedidos e trocas", "phone.badge.checkmark", "Course", "No balcão da companhia e por telefone com o hotel, eles registram a mala perdida e mudam a reserva de data sem estresse.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u28-atraso", title: "O voo atrasou", goal: "Entender e reagir a um atraso: perguntar o motivo, a nova hora e o que fazer agora.",
+                intro: LessonIntro(explanation: [
+                            "Para o motivo, use « porque »: « o voo atrasou porque chove muito ». Para o resultado, « por isso »: « choveu, por isso o voo atrasou ».",
+                            "Pergunte a nova hora com « a que horas… ? »: « A que horas sai o novo voo ? ».",
+                            "Peça a solução com « podemos… ? »: « Podemos trocar o voo ? »."], examples: [
+                            ExampleLine(text: "O voo atrasou porque chove forte.", meaning: "porque: o motivo do atraso."),
+                            ExampleLine(text: "Chove forte, por isso o voo atrasou.", meaning: "por isso: o resultado."),
+                            ExampleLine(text: "A que horas sai o novo voo ?", meaning: "a pergunta da nova hora."),
+                            ExampleLine(text: "Podemos trocar o voo de amanhã ?", meaning: "o pedido da troca."),
+                            ExampleLine(text: "Então vamos esperar no portão.", meaning: "então: a conclusão calma.")]),
+                expressions: [
+                            TargetExpression(text: "O voo atrasou.", meaning: "O avião sai mais tarde.", note: "Meu voo atrasou duas horas."),
+                            TargetExpression(text: "porque … / por isso …", meaning: "O motivo e o resultado.", note: "Atrasou porque chove; por isso vou esperar."),
+                            TargetExpression(text: "A que horas … ?", meaning: "Perguntar a hora exata.", note: "A que horas sai o novo voo ?"),
+                            TargetExpression(text: "Podemos trocar … ?", meaning: "Pedir a mudança.", note: "Podemos trocar o assento ?"),
+                            TargetExpression(text: "Não tem problema.", meaning: "Acalmar: está tudo bem assim.", note: "Uma hora a mais, não tem problema.")],
+                situation: "No portão de embarque: o telão anuncia atraso, a Duda pergunta o motivo e a nova hora, e os dois decidem esperar tranquilos no aeroporto.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Informe o tamanho do atraso: duas horas.", expected: ["O voo atrasou duas horas.", "o voo atrasou duas horas"], focus: "atraso", watch: "atrasar = retrasarse."),
+                                PracticeQuestion(prompt: "Diga o motivo: chove muito hoje.", expected: ["O voo atrasou porque chove muito hoje.", "o voo atrasou porque chove muito hoje"], focus: "porque", watch: "porque = porque (el motivo)."),
+                                PracticeQuestion(prompt: "Pergunte a hora de saída do novo voo.", expected: ["A que horas sai o novo voo ?", "a que horas sai o novo voo"], focus: "a que horas", watch: "a que horas = ¿a qué horas?"),
+                                PracticeQuestion(prompt: "Peça a troca do voo ao atendente.", expected: ["Podemos trocar o voo ?", "podemos trocar o voo"], focus: "pedido", watch: "podemos + infinitivo = pedido direto."),
+                                PracticeQuestion(prompt: "Mostre calma diante do atraso.", expected: ["Não tem problema.", "nao tem problema"], focus: "acalmar", watch: "não tem problema = no hay problema.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u28-atraso-e1", kind: "choice", prompt: "O voo atrasou ___ chove muito na cidade.", options: ["porque", "por isso", "então", "mas"], answers: ["porque"], explain: "« porque » apresenta o motivo do atraso."),
+                            Exercise(id: "pt-foundations-u28-atraso-e2", kind: "gap", prompt: "Chove muito, ___ o voo atrasou.", options: [], answers: ["por isso"], explain: "por isso = por eso: o resultado do motivo."),
+                            Exercise(id: "pt-foundations-u28-atraso-e3", kind: "order", prompt: "Pergunte a hora de saída do novo voo.", options: [], answers: ["A que horas sai o novo voo"], explain: "a que horas + verbo: a pergunta da hora exata."),
+                            Exercise(id: "pt-foundations-u28-atraso-e4", kind: "written", prompt: "Peça ao atendente a troca do voo, com « podemos… ? ».", options: [], answers: ["Podemos trocar o voo ?", "podemos trocar o voo", "Podemos trocar o voo de amanhã ?", "podemos trocar o voo de amanha"], explain: "Podemos + infinitivo: o pedido educado no balcão.")], skills: ["grammar:connectors", "grammar:present-questions", "function:solve-problems", "vocab:transport"], canDo: ["use-transport"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "pt-foundations-u28-mala", title: "A mala não chegou", goal: "Comunicar a perda da mala e descrever ela para o registro no balcão.",
+                intro: LessonIntro(explanation: [
+                            "Conte o problema no passado: « a mala não chegou », « a esteira parou ».",
+                            "Descreva a mala para acharem: « é azul, de quatro rodas, com uma fita amarela ».",
+                            "Feche com o combinado: « registram o pedido ? », « entregam no hotel quando chegar ? »."], examples: [
+                            ExampleLine(text: "Minha mala não chegou na esteira.", meaning: "o problema no passado."),
+                            ExampleLine(text: "Ela é azul, média, de quatro rodas.", meaning: "a descrição da mala."),
+                            ExampleLine(text: "Tem uma fita amarela na alça.", meaning: "um detalhe que ajuda a achar."),
+                            ExampleLine(text: "Você pode registrar o pedido agora ?", meaning: "o pedido do registro."),
+                            ExampleLine(text: "Entregam no hotel quando chegar ?", meaning: "o combinado da entrega.")]),
+                expressions: [
+                            TargetExpression(text: "A mala não chegou.", meaning: "A mala sumiu no voo.", note: "Minha mala não chegou."),
+                            TargetExpression(text: "É azul, de roda…", meaning: "Descrever para achar.", note: "É preta, pequena, de duas rodas."),
+                            TargetExpression(text: "Registrar o pedido", meaning: "Abrir a ocorrência.", note: "Posso registrar o pedido aqui ?"),
+                            TargetExpression(text: "quando chegar", meaning: "A condição da entrega.", note: "Liguem quando chegar, por favor."),
+                            TargetExpression(text: "entrega no hotel", meaning: "Onde receber a mala.", note: "A entrega é no hotel, está bem ?")],
+                situation: "Na esteira de bagagens: a esteira para, a mala da Duda não aparece; no balcão ela descreve a mala, registra o pedido e combina a entrega no hotel.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga que a sua mala não chegou.", expected: ["Minha mala não chegou.", "minha mala nao chegou"], focus: "problema", watch: "chegar = llegar (a mala não chegou)."),
+                                PracticeQuestion(prompt: "Descreva a mala: azul e grande.", expected: ["Ela é azul e grande.", "ela e azul e grande", "É azul e grande, de quatro rodas."], focus: "descrição", watch: "é + cor/tamanho = la descripción."),
+                                PracticeQuestion(prompt: "Peça para registrar o pedido.", expected: ["Você pode registrar o pedido ?", "voce pode registrar o pedido"], focus: "registro", watch: "registrar o pedido = registrar la ocurrencia."),
+                                PracticeQuestion(prompt: "Peça para avisarem quando a mala chegar.", expected: ["Ligam quando chegar ?", "ligam quando chegar"], focus: "quando", watch: "quando chegar = cuando llegue."),
+                                PracticeQuestion(prompt: "Diga que quer receber a mala no hotel.", expected: ["Quero a entrega no hotel.", "quero a entrega no hotel"], focus: "entrega", watch: "entrega no hotel = entrega en el hotel.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u28-mala-e1", kind: "choice", prompt: "Minha mala não ___ na esteira.", options: ["chegou", "chega", "chegava", "chegando"], answers: ["chegou"], explain: "Passado do verbo chegar: a mala não chegou na esteira."),
+                            Exercise(id: "pt-foundations-u28-mala-e2", kind: "gap", prompt: "Ela é azul, ___ quatro rodas.", options: [], answers: ["de"], explain: "de + característica: mala de quatro rodas."),
+                            Exercise(id: "pt-foundations-u28-mala-e3", kind: "order", prompt: "Peça para avisarem quando a mala chegar.", options: [], answers: ["Ligam quando chegar, por favor"], explain: "quando + chegar: a condição do contato."),
+                            Exercise(id: "pt-foundations-u28-mala-e4", kind: "written", prompt: "Descreva a mala perdida: a cor e um detalhe.", options: [], answers: ["Ela é azul, com fita amarela.", "ela e azul com fita amarela", "É azul e tem uma fita amarela na alça.", "e azul e tem uma fita amarela"], explain: "É + cor + com + detalhe: a descrição que ajuda a achar a mala.")], skills: ["grammar:past-simple-regular", "function:solve-problems", "vocab:travel", "grammar:connectors"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "pt-foundations-u28-reserva", title: "Mudar a reserva", goal: "Pedir uma mudança de reserva por telefone: data, quarto e confirmação.",
+                intro: LessonIntro(explanation: [
+                            "Abra o pedido com « queria » ou « posso »: « queria mudar a reserva », « posso mudar para sexta ? ».",
+                            "Diga a mudança clara: « de quarta para sexta », « um quarto duplo, com café ».",
+                            "Confirme no fim: « então está confirmado para sexta, certo ? »."], examples: [
+                            ExampleLine(text: "Queria mudar a minha reserva.", meaning: "queria: o pedido educado."),
+                            ExampleLine(text: "Posso mudar de quarta para sexta ?", meaning: "a troca de data."),
+                            ExampleLine(text: "Prefiro um quarto duplo, com café.", meaning: "a preferência clara."),
+                            ExampleLine(text: "Tem custo extra pela mudança ?", meaning: "a pergunta do preço."),
+                            ExampleLine(text: "Então está confirmado para sexta, certo ?", meaning: "a confirmação final.")]),
+                expressions: [
+                            TargetExpression(text: "Queria mudar …", meaning: "O pedido educado ao telefone.", note: "Queria mudar a reserva."),
+                            TargetExpression(text: "de … para …", meaning: "A mudança de data.", note: "De quarta para sexta, por favor."),
+                            TargetExpression(text: "Tem custo extra ?", meaning: "Perguntar o preço da troca.", note: "Tem custo extra pela mudança ?"),
+                            TargetExpression(text: "Está confirmado ?", meaning: "Confirmar de novo.", note: "A nova data está confirmada ?"),
+                            TargetExpression(text: "no meu nome", meaning: "A reserva em seu nome.", note: "Está no nome de Téo Prado.")],
+                situation: "Por telefone com o hotel: a Duda pede para mudar a reserva — de quarta para sexta, quarto duplo — pergunta pelo custo e repete os dados para confirmar.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Peça, educado, para mudar a reserva.", expected: ["Queria mudar a minha reserva.", "queria mudar a minha reserva"], focus: "queria", watch: "queria = quisiera (el pedido educado)."),
+                                PracticeQuestion(prompt: "Peça a troca de data: quarta vira sexta.", expected: ["Posso mudar de quarta para sexta ?", "posso mudar de quarta para sexta"], focus: "de… para…", watch: "de … para … = de… para (la fecha)."),
+                                PracticeQuestion(prompt: "Pergunte se a mudança custa algo.", expected: ["Tem custo extra ?", "tem custo extra"], focus: "custo", watch: "custo extra = costo extra."),
+                                PracticeQuestion(prompt: "Confirme a nova data com o atendente.", expected: ["Está confirmado para sexta, certo ?", "esta confirmado para sexta certo"], focus: "confirmar", watch: "…, certo ? = ¿verdad? (repite para garantir)."),
+                                PracticeQuestion(prompt: "Diga que a reserva está no seu nome.", expected: ["A reserva está no meu nome.", "a reserva esta no meu nome"], focus: "nome", watch: "no meu nome = a mi nombre.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u28-reserva-e1", kind: "choice", prompt: "___ mudar a minha reserva, por favor.", options: ["Queria", "Quer", "Mudar", "Mudando"], answers: ["Queria"], explain: "Queria + infinitivo: o pedido educado ao telefone."),
+                            Exercise(id: "pt-foundations-u28-reserva-e2", kind: "gap", prompt: "De quarta ___ sexta, por favor.", options: [], answers: ["para"], explain: "de … para …: a mudança de data."),
+                            Exercise(id: "pt-foundations-u28-reserva-e3", kind: "order", prompt: "Pergunte se a mudança custa algo.", options: [], answers: ["Tem custo extra pela mudança"], explain: "tem custo… ?: a pergunta do preço antes de aceitar."),
+                            Exercise(id: "pt-foundations-u28-reserva-e4", kind: "written", prompt: "Confirme a sexta, pedindo certeza ao atendente.", options: [], answers: ["Está confirmado para sexta, certo ?", "esta confirmado para sexta certo", "Está confirmada para sexta ?"], explain: "« …, certo ? » pede um sim: a confirmação final da reserva.")], skills: ["grammar:can", "function:make-requests", "vocab:travel", "grammar:connectors"], canDo: ["make-future-plans"], prerequisites: ["grammar:can"])])
 }
 
 public enum PtWorkU1 {
@@ -14907,7 +15633,9 @@ DeFoundationsU22.unit,
 DeFoundationsU23.unit,
 DeFoundationsU24.unit,
 DeFoundationsU25.unit,
-DeFoundationsU26.unit
+DeFoundationsU26.unit,
+DeFoundationsU27.unit,
+DeFoundationsU28.unit
         ]),
         Course(id: "de-work-track", languageID: "de", title: "Deutsch im Beruf", subtitle: "Berufsstrecke", symbol: "briefcase", description: "Das Deutsch von Besprechungen, E-Mails und Vorstellungsgesprächen — Berufssituationen, laut geübt. Eine Strecke, die neben den Foundations läuft.", units: [
 DeWorkU1.unit
@@ -15014,7 +15742,9 @@ FrFoundationsU22.unit,
 FrFoundationsU23.unit,
 FrFoundationsU24.unit,
 FrFoundationsU25.unit,
-FrFoundationsU26.unit
+FrFoundationsU26.unit,
+FrFoundationsU27.unit,
+FrFoundationsU28.unit
         ]),
         Course(id: "fr-work-track", languageID: "fr", title: "Français au travail", subtitle: "Parcours pro", symbol: "briefcase", description: "Le français des réunions, des courriels et des entretiens — des situations professionnelles travaillées à voix haute. Un parcours qui accompagne Foundations.", units: [
 FrWorkU1.unit
@@ -15045,7 +15775,9 @@ ItFoundationsU22.unit,
 ItFoundationsU23.unit,
 ItFoundationsU24.unit,
 ItFoundationsU25.unit,
-ItFoundationsU26.unit
+ItFoundationsU26.unit,
+ItFoundationsU27.unit,
+ItFoundationsU28.unit
         ]),
         Course(id: "it-work-track", languageID: "it", title: "Italiano per il lavoro", subtitle: "Percorso professionale", symbol: "briefcase", description: "The Italian of meetings, emails and interviews — professional situations, practised out loud. A track that runs alongside Foundations.", units: [
 ItWorkU1.unit
@@ -15076,7 +15808,9 @@ PtFoundationsU22.unit,
 PtFoundationsU23.unit,
 PtFoundationsU24.unit,
 PtFoundationsU25.unit,
-PtFoundationsU26.unit
+PtFoundationsU26.unit,
+PtFoundationsU27.unit,
+PtFoundationsU28.unit
         ]),
         Course(id: "pt-work-track", languageID: "pt", title: "Português no trabalho", subtitle: "Trilha profissional", symbol: "briefcase", description: "O português das reuniões, dos e-mails e das entrevistas — situações profissionais, praticadas em voz alta. Uma trilha que acompanha o Foundations.", units: [
 PtWorkU1.unit

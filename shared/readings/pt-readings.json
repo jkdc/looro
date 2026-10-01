@@ -1219,6 +1219,522 @@
         "function:express-opinion"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-read-biscoito-chega",
+      "languageID": "pt",
+      "title": "O Biscoito chega",
+      "level": "A1",
+      "topic": "bicho",
+      "unitID": "pt-foundations-u27",
+      "text": "O Biscoito chegou na terça, de presente do tio Rafa. Ele é um gatinho preto, pequeno, com os olhos verdes. A Nina tem sete anos e cuida dele todos os dias: a água fresca fica na cozinha e a ração, no potinho vermelho. O Biscoito dorme muito, mas acorda cedo e brinca com a bolinha azul. À tarde, ele senta na janela e olha os pássaros. A avó já pergunta ao telefone: « e o Biscoito, está comportado ? ». A Nina responde que sim — mais ou menos.",
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "grammar:present-simple",
+        "vocab:family"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-biscoito-chega-q1",
+          "kind": "choice",
+          "prompt": "Quem dá o gatinho de presente ?",
+          "options": [
+            "O tio Rafa",
+            "A avó",
+            "O vizinho",
+            "O pai da Nina"
+          ],
+          "answers": [
+            "O tio Rafa"
+          ],
+          "explain": "« De presente do tio Rafa »."
+        },
+        {
+          "id": "pt-read-biscoito-chega-q2",
+          "kind": "written",
+          "prompt": "Como é o Biscoito ? (a cor)",
+          "answers": [
+            "preto",
+            "é preto",
+            "preto e pequeno",
+            "gatinho preto"
+          ],
+          "explain": "« Ele é um gatinho preto, pequeno »."
+        },
+        {
+          "id": "pt-read-biscoito-chega-q3",
+          "kind": "choice",
+          "prompt": "Onde fica a ração ?",
+          "options": [
+            "No potinho vermelho",
+            "Na sala",
+            "Na janela",
+            "No sofá"
+          ],
+          "answers": [
+            "No potinho vermelho"
+          ],
+          "explain": "« A ração, no potinho vermelho »."
+        },
+        {
+          "id": "pt-read-biscoito-chega-q4",
+          "kind": "choice",
+          "prompt": "Com o que o Biscoito brinca ?",
+          "options": [
+            "Com a bolinha azul",
+            "Com o novelo",
+            "Com a caixa",
+            "Com os pássaros"
+          ],
+          "answers": [
+            "Com a bolinha azul"
+          ],
+          "explain": "« Brinca com a bolinha azul »."
+        },
+        {
+          "id": "pt-read-biscoito-chega-q5",
+          "kind": "written",
+          "prompt": "O que a avó pergunta ao telefone ?",
+          "answers": [
+            "se está comportado",
+            "está comportado",
+            "se o biscoito está comportado"
+          ],
+          "explain": "« E o Biscoito, está comportado ? »"
+        }
+      ]
+    },
+    {
+      "id": "pt-read-cardapio-domingo",
+      "languageID": "pt",
+      "title": "Almoço de domingo",
+      "level": "A1",
+      "topic": "cardápio",
+      "unitID": "pt-foundations-u16",
+      "text": "Almoço de domingo — Casa da Lu. Para começar: sopa de legumes ou salada verde. Pratos principais: frango assado com arroz, lasanha da casa e moqueca de peixe. O frango vem com farofa; a lasanha, com pão de alho. Sobremesas: pudim, mousse de maracujá e sorvete de coco. Bebidas: suco de laranja, refrigerante e água. Preços: a sopa custa doze reais, os pratos, trinta e dois, e as sobremesas, dez. Crianças até seis anos não pagam. Para pedir, chame a Lu na cozinha ou mande mensagem até as onze da manhã.",
+      "skills": [
+        "reading:scan",
+        "reading:detail",
+        "vocab:food",
+        "function:order-food"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-cardapio-domingo-q1",
+          "kind": "choice",
+          "prompt": "Quais são os pratos principais ?",
+          "options": [
+            "Frango, lasanha e moqueca",
+            "Sopa e salada",
+            "Pudim e sorvete",
+            "Pão de alho e farofa"
+          ],
+          "answers": [
+            "Frango, lasanha e moqueca"
+          ],
+          "explain": "« Frango assado com arroz, lasanha da casa e moqueca de peixe »."
+        },
+        {
+          "id": "pt-read-cardapio-domingo-q2",
+          "kind": "written",
+          "prompt": "Quanto custa um prato principal ?",
+          "answers": [
+            "trinta e dois reais",
+            "trinta e dois",
+            "32 reais",
+            "r$ 32"
+          ],
+          "explain": "« Os pratos, trinta e dois »."
+        },
+        {
+          "id": "pt-read-cardapio-domingo-q3",
+          "kind": "choice",
+          "prompt": "O que acompanha a lasanha ?",
+          "options": [
+            "Pão de alho",
+            "Farofa",
+            "Arroz",
+            "Salada verde"
+          ],
+          "answers": [
+            "Pão de alho"
+          ],
+          "explain": "« A lasanha, com pão de alho »."
+        },
+        {
+          "id": "pt-read-cardapio-domingo-q4",
+          "kind": "choice",
+          "prompt": "Quem não paga o almoço ?",
+          "options": [
+            "Crianças até seis anos",
+            "Quem pede sopa",
+            "A família da Lu",
+            "Ninguém"
+          ],
+          "answers": [
+            "Crianças até seis anos"
+          ],
+          "explain": "« Crianças até seis anos não pagam »."
+        },
+        {
+          "id": "pt-read-cardapio-domingo-q5",
+          "kind": "written",
+          "prompt": "Até que horas se faz o pedido ?",
+          "answers": [
+            "até as onze",
+            "às onze",
+            "as onze da manhã",
+            "11h"
+          ],
+          "explain": "« Mande mensagem até as onze da manhã »."
+        }
+      ]
+    },
+    {
+      "id": "pt-read-mensagem-entrevista",
+      "languageID": "pt",
+      "title": "A entrevista remarcada",
+      "level": "B1",
+      "topic": "trabalho",
+      "unitID": "pt-foundations-u21",
+      "text": "Conversa do time — segunda-feira. Marta: gente, a entrevista do Bruno é amanhã às dez, na sala grande, certo ? Caio: era. A recrutadora pediu para mudar para as quatorze, porque às dez ela está em outro processo. Marta: ok. Bruno, você confirmou a hora com ela ? Bruno: confirmei. Mandei também a versão final do portfólio ontem à noite; ela respondeu que vai ler hoje. Caio: bom. Lembram que a próxima etapa é prática: uma simulação de atendimento. Quem avalia é a gerente da loja. Marta: então vocês ensaiam com ele hoje à tarde, sim ? Quanto mais treino, menos frio na barriga. Bruno: combinado. Às dezesseis na copa, levo o roteiro impresso.",
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "vocab:work",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-mensagem-entrevista-q1",
+          "kind": "choice",
+          "prompt": "A que horas fica a entrevista ?",
+          "options": [
+            "Às quatorze",
+            "Às dez",
+            "Às dezesseis",
+            "Às nove"
+          ],
+          "answers": [
+            "Às quatorze"
+          ],
+          "explain": "« Pediu para mudar para as quatorze »."
+        },
+        {
+          "id": "pt-read-mensagem-entrevista-q2",
+          "kind": "written",
+          "prompt": "Por que a hora mudou ?",
+          "answers": [
+            "ela está em outro processo",
+            "a recrutadora está em outro processo",
+            "outro processo"
+          ],
+          "explain": "« Porque às dez ela está em outro processo »."
+        },
+        {
+          "id": "pt-read-mensagem-entrevista-q3",
+          "kind": "choice",
+          "prompt": "O que o Bruno enviou ontem ?",
+          "options": [
+            "A versão final do portfólio",
+            "O roteiro impresso",
+            "O currículo antigo",
+            "A lista de referências"
+          ],
+          "answers": [
+            "A versão final do portfólio"
+          ],
+          "explain": "« Mandei também a versão final do portfólio ontem à noite »."
+        },
+        {
+          "id": "pt-read-mensagem-entrevista-q4",
+          "kind": "choice",
+          "prompt": "Quem avalia a etapa prática ?",
+          "options": [
+            "A gerente da loja",
+            "A recrutadora",
+            "A Marta",
+            "O Caio"
+          ],
+          "answers": [
+            "A gerente da loja"
+          ],
+          "explain": "« Quem avalia é a gerente da loja »."
+        },
+        {
+          "id": "pt-read-mensagem-entrevista-q5",
+          "kind": "written",
+          "prompt": "Onde e quando o time ensaia ?",
+          "answers": [
+            "na copa às dezesseis",
+            "às dezesseis na copa",
+            "na copa",
+            "16h na copa"
+          ],
+          "explain": "« Às dezesseis na copa, levo o roteiro impresso »."
+        }
+      ]
+    },
+    {
+      "id": "pt-read-virada-bicicleta",
+      "languageID": "pt",
+      "title": "A bicicleta da virada",
+      "level": "B1",
+      "topic": "histórias",
+      "unitID": "pt-foundations-u18",
+      "text": "A bicicleta alugada mudou o meu ano. No começo de fevereiro eu perdi o emprego e, com ele, o crédito do transporte. Para não ficar em casa, comecei a pedalar: alugava a bike por duas horas e conhecia um bairro diferente por dia. Numa dessas voltas, parei numa padaria e reclamei do mapa da cidade com o dono; ele riu e me chamou para conversar. Ele procurava alguém para organizar as entregas de bicicleta — exatamente o que eu tinha aprendido a fazer, sem querer. Comecei na semana seguinte, com três rotas e uma sacola térmica. Seis meses depois, eu coordenava dez ciclistas e não pego mais ônibus. Não foi sorte: foi a bicicleta que me levou até a porta certa.",
+      "skills": [
+        "reading:inference",
+        "grammar:past-simple-irregular",
+        "function:tell-a-story",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-virada-bicicleta-q1",
+          "kind": "choice",
+          "prompt": "Por que o narrador começou a pedalar ?",
+          "options": [
+            "Porque perdeu o crédito do transporte",
+            "Porque gostava de esporte",
+            "Porque a padaria ficava longe",
+            "Porque o médico recomendou"
+          ],
+          "answers": [
+            "Porque perdeu o crédito do transporte"
+          ],
+          "explain": "« Perdi o emprego e, com ele, o crédito do transporte »."
+        },
+        {
+          "id": "pt-read-virada-bicicleta-q2",
+          "kind": "written",
+          "prompt": "O que o dono da padaria procurava ?",
+          "answers": [
+            "alguém para organizar as entregas",
+            "alguem para organizar as entregas",
+            "organizador de entregas de bicicleta"
+          ],
+          "explain": "« Ele procurava alguém para organizar as entregas de bicicleta »."
+        },
+        {
+          "id": "pt-read-virada-bicicleta-q3",
+          "kind": "choice",
+          "prompt": "Como o narrador conseguiu o trabalho ?",
+          "options": [
+            "Conversando na padaria",
+            "Por um anúncio na internet",
+            "Por indicação da irmã",
+            "Num processo seletivo"
+          ],
+          "answers": [
+            "Conversando na padaria"
+          ],
+          "explain": "« Ele riu e me chamou para conversar »."
+        },
+        {
+          "id": "pt-read-virada-bicicleta-q4",
+          "kind": "written",
+          "prompt": "O que ele fazia seis meses depois ?",
+          "answers": [
+            "coordenava dez ciclistas",
+            "coordenava ciclistas",
+            "coordenava dez ciclistas da entrega"
+          ],
+          "explain": "« Seis meses depois, eu coordenava dez ciclistas »."
+        },
+        {
+          "id": "pt-read-virada-bicicleta-q5",
+          "kind": "choice",
+          "prompt": "Qual é a conclusão da história ?",
+          "options": [
+            "A bicicleta o levou à porta certa",
+            "Ele voltou ao emprego antigo",
+            "A sorte resolveu tudo",
+            "Ele largou a bicicleta"
+          ],
+          "answers": [
+            "A bicicleta o levou à porta certa"
+          ],
+          "explain": "« Foi a bicicleta que me levou até a porta certa »."
+        }
+      ]
+    },
+    {
+      "id": "pt-read-artigo-energia",
+      "languageID": "pt",
+      "title": "A solução está no telhado",
+      "level": "B2",
+      "topic": "atualidade",
+      "unitID": "pt-foundations-u8",
+      "text": "A cidade gasta uma fortuna em luz — e a solução está no telhado. Enquanto discutimos tarifas, os prédios públicos continuam com lajes vazias, expostas a um sol que não mandamos cobrar. O programa aprovado pela câmara aponta o caminho: painéis nos telhados, kits nas escolas e técnicos treinados aqui, não trazidos de fora. É verdade que o custo inicial assusta e que os prazos anunciados parecem otimistas; todo programa novo carrega esses riscos. Mas o cálculo muda quando olhamos dez anos: a conta que cairia trinta por cento paga a instalação sozinha. Além do dinheiro, há um ganho invisível — vizinhanças que aprendem a produzir a própria energia discutem melhor qualquer outro serviço público. Se o edital sair claro e auditável, apoiar o programa não é aposta; é matemática.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "grammar:first-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-artigo-energia-q1",
+          "kind": "choice",
+          "prompt": "Qual é a tese do artigo ?",
+          "options": [
+            "O programa solar deve ser apoiado",
+            "As tarifas devem subir",
+            "As lajes devem virar jardins",
+            "O edital deve ser cancelado"
+          ],
+          "answers": [
+            "O programa solar deve ser apoiado"
+          ],
+          "explain": "« Apoiar o programa não é aposta; é matemática »."
+        },
+        {
+          "id": "pt-read-artigo-energia-q2",
+          "kind": "written",
+          "prompt": "O que o autor reconhece como risco ?",
+          "answers": [
+            "o custo inicial",
+            "os prazos otimistas",
+            "o custo inicial e os prazos otimistas",
+            "custo e prazo"
+          ],
+          "explain": "« O custo inicial assusta e os prazos… parecem otimistas »."
+        },
+        {
+          "id": "pt-read-artigo-energia-q3",
+          "kind": "choice",
+          "prompt": "Qual ganho invisível o artigo cita ?",
+          "options": [
+            "Vizinhanças que aprendem a produzir energia",
+            "Desconto na taxa de água",
+            "Mais vagas de estacionamento",
+            "Menos trânsito no centro"
+          ],
+          "answers": [
+            "Vizinhanças que aprendem a produzir energia"
+          ],
+          "explain": "« Vizinhanças que aprendem a produzir a própria energia »."
+        },
+        {
+          "id": "pt-read-artigo-energia-q4",
+          "kind": "written",
+          "prompt": "Em quanto tempo a instalação se paga, segundo o autor ?",
+          "answers": [
+            "em dez anos",
+            "dez anos",
+            "10 anos"
+          ],
+          "explain": "« Quando olhamos dez anos: a conta… paga a instalação sozinha »."
+        },
+        {
+          "id": "pt-read-artigo-energia-q5",
+          "kind": "choice",
+          "prompt": "Que condição o autor coloca para apoiar ?",
+          "options": [
+            "Um edital claro e auditável",
+            "Desconto para os deputados",
+            "Kits só para escolas",
+            "Técnicos de fora"
+          ],
+          "answers": [
+            "Um edital claro e auditável"
+          ],
+          "explain": "« Se o edital sair claro e auditável »."
+        }
+      ]
+    },
+    {
+      "id": "pt-read-email-fornecedor",
+      "languageID": "pt",
+      "title": "Negociando a proposta",
+      "level": "B2",
+      "topic": "negociação",
+      "text": "Assunto: proposta 2027 — prazo e volumes. Prezada equipe Vetriz, agradecemos a proposta recebida na segunda. A qualidade dos catálogos continua sendo o nosso principal motivo para renovar, e é justamente por isso que vamos direto aos dois pontos que travam o acordo: o prazo e o volume mínimo. Sobre o prazo: precisamos da primeira remessa até 15 de fevereiro; a data de março proposta atrasa nossa campanha de verão. Sobre o volume: mil unidades por pedido é muito para uma rede do nosso tamanho; oferecemos seiscentas, com compromisso de quatro pedidos no ano. Em troca dessas duas concessões, aceitamos o reajuste de sete por cento e antecipamos o pagamento da primeira remessa. Se essas condições fizerem sentido até sexta, marcamos a reunião de assinatura na próxima semana. Atenciosamente, Bia Camargo — Rede Estreita.",
+      "skills": [
+        "reading:inference",
+        "function:negotiate",
+        "writing:email",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-email-fornecedor-q1",
+          "kind": "choice",
+          "prompt": "Qual é o principal motivo para renovar com a Vetriz ?",
+          "options": [
+            "A qualidade dos catálogos",
+            "O preço baixo",
+            "O prazo longo",
+            "O frete grátis"
+          ],
+          "answers": [
+            "A qualidade dos catálogos"
+          ],
+          "explain": "« A qualidade dos catálogos continua sendo o nosso principal motivo »."
+        },
+        {
+          "id": "pt-read-email-fornecedor-q2",
+          "kind": "written",
+          "prompt": "Que prazo a rede precisa ?",
+          "answers": [
+            "15 de fevereiro",
+            "15/02",
+            "primeira remessa até 15 de fevereiro",
+            "quinze de fevereiro"
+          ],
+          "explain": "« Precisamos da primeira remessa até 15 de fevereiro »."
+        },
+        {
+          "id": "pt-read-email-fornecedor-q3",
+          "kind": "choice",
+          "prompt": "Quantas unidades a rede oferece por pedido ?",
+          "options": [
+            "Seiscentas",
+            "Mil",
+            "Quatrocentas",
+            "Mil e duzentas"
+          ],
+          "answers": [
+            "Seiscentas"
+          ],
+          "explain": "« Oferecemos seiscentas, com compromisso de quatro pedidos no ano »."
+        },
+        {
+          "id": "pt-read-email-fornecedor-q4",
+          "kind": "written",
+          "prompt": "O que a rede aceita em troca ?",
+          "answers": [
+            "o reajuste de sete por cento",
+            "reajuste de 7%",
+            "sete por cento",
+            "7%"
+          ],
+          "explain": "« Aceitamos o reajuste de sete por cento »."
+        },
+        {
+          "id": "pt-read-email-fornecedor-q5",
+          "kind": "choice",
+          "prompt": "O que acontece se as condições forem aceitas até sexta ?",
+          "options": [
+            "Marcam a reunião de assinatura",
+            "Cancelam a proposta",
+            "Pedem novo catálogo",
+            "Esperam março"
+          ],
+          "answers": [
+            "Marcam a reunião de assinatura"
+          ],
+          "explain": "« Marcamos a reunião de assinatura na próxima semana »."
+        }
+      ]
     }
   ]
 }

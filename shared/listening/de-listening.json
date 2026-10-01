@@ -3249,6 +3249,1009 @@
           "explain": "Einverstanden heißt: Ich stimme zu."
         }
       ]
+    },
+    {
+      "id": "de-listen-umzugsplan",
+      "languageID": "de",
+      "title": "Der Umzugsplan",
+      "level": "A2",
+      "topic": "pläne",
+      "unitID": "de-foundations-u28",
+      "text": "Anna ruft Lena an: « Ich muss nächsten Samstag umziehen — kannst du helfen ? » — « Klar ! Ich leihe den Kistenwagen von meinem Onkel. Wie viele Kartons hast du ? » — « Zwölf, glaube ich. Und einen Transporter zu mieten ist zu teuer. » — « Kein Problem, der Wagen von meinem Onkel kostet nichts. Ich bin um neun bei dir. » — « Super. Ben bringt den Kaffee mit — und ich werde Kuchen backen. » — « Abgemacht ! Dann sehen wir uns am Samstag früh um neun. »",
+      "skills": [
+        "listening:detail",
+        "grammar:modal-must-have-to",
+        "function:make-future-plans"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-umzugsplan-q1",
+          "kind": "choice",
+          "prompt": "Wann muss Anna umziehen ?",
+          "options": [
+            "Nächsten Samstag",
+            "Diesen Freitag",
+            "Heute Abend",
+            "In zwei Wochen"
+          ],
+          "answers": [
+            "Nächsten Samstag"
+          ],
+          "explain": "« Ich muss nächsten Samstag umziehen. »"
+        },
+        {
+          "id": "de-listen-umzugsplan-q2",
+          "kind": "written",
+          "prompt": "Was leiht Lena ?",
+          "answers": [
+            "den kistenwagen",
+            "den kistenwagen von ihrem onkel",
+            "den wagen von ihrem onkel"
+          ],
+          "explain": "« Ich leihe den Kistenwagen von meinem Onkel. »"
+        },
+        {
+          "id": "de-listen-umzugsplan-q3",
+          "kind": "choice",
+          "prompt": "Warum mietet Anna keinen Transporter ?",
+          "options": [
+            "Es ist zu teuer",
+            "Er ist zu klein",
+            "Sie kann nicht fahren",
+            "Es gibt keinen"
+          ],
+          "answers": [
+            "Es ist zu teuer"
+          ],
+          "explain": "« Einen Transporter zu mieten ist zu teuer. »"
+        },
+        {
+          "id": "de-listen-umzugsplan-q4",
+          "kind": "choice",
+          "prompt": "Wann kommt Lena bei Anna an ?",
+          "options": [
+            "Um neun",
+            "Um acht",
+            "Um zehn",
+            "Um sieben"
+          ],
+          "answers": [
+            "Um neun"
+          ],
+          "explain": "« Ich bin um neun bei dir. »"
+        },
+        {
+          "id": "de-listen-umzugsplan-q5",
+          "kind": "written",
+          "prompt": "Was wird Anna backen ?",
+          "answers": [
+            "kuchen",
+            "einen kuchen",
+            "sie wird kuchen backen"
+          ],
+          "explain": "« Ich werde Kuchen backen. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-besichtigung",
+      "languageID": "de",
+      "title": "Die Besichtigung",
+      "level": "A2",
+      "topic": "wohnen",
+      "unitID": "de-foundations-u28",
+      "text": "Frau Weber öffnet die Tür: « Guten Tag, kommen Sie rein. Die Wohnung hat zwei Zimmer, Küche und Bad. » — Anna: « Wie hoch sind die Nebenkosten ? » — « 180 Euro, die Heizung ist dabei. » — « Ist die Küche im Preis dabei ? » — « Leider nicht, aber sie ist fast neu. » — Anna schaut sich alles an: « Der Balkon ist schön groß. Passt es Ihnen, wenn ich morgen mit meinem Partner nochmal komme ? » — « Gerne, wie wäre es um 17 Uhr ? » — « Perfekt. Und ab wann kann ich einziehen ? » — « Ab dem 1. Juni. Den Vertrag bekommen Sie per E-Mail. » — « Vielen Dank, bis morgen ! »",
+      "skills": [
+        "listening:detail",
+        "vocab:home",
+        "function:ask-simple-questions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-besichtigung-q1",
+          "kind": "choice",
+          "prompt": "Wie groß ist die Wohnung ?",
+          "options": [
+            "Zwei Zimmer",
+            "Drei Zimmer",
+            "Ein Zimmer",
+            "Vier Zimmer"
+          ],
+          "answers": [
+            "Zwei Zimmer"
+          ],
+          "explain": "« Die Wohnung hat zwei Zimmer, Küche und Bad. »"
+        },
+        {
+          "id": "de-listen-besichtigung-q2",
+          "kind": "written",
+          "prompt": "Wie hoch sind die Nebenkosten ?",
+          "answers": [
+            "180 euro",
+            "hundertachtzig euro"
+          ],
+          "explain": "« 180 Euro, die Heizung ist dabei. »"
+        },
+        {
+          "id": "de-listen-besichtigung-q3",
+          "kind": "choice",
+          "prompt": "Ist die Küche im Preis dabei ?",
+          "options": [
+            "Nein, aber sie ist fast neu",
+            "Ja, ganz neu",
+            "Ja, mit Heizung",
+            "Nein, sie ist kaputt"
+          ],
+          "answers": [
+            "Nein, aber sie ist fast neu"
+          ],
+          "explain": "« Leider nicht, aber sie ist fast neu. »"
+        },
+        {
+          "id": "de-listen-besichtigung-q4",
+          "kind": "written",
+          "prompt": "Wann kommt Anna wieder ?",
+          "answers": [
+            "morgen um 17 uhr",
+            "um 17 uhr"
+          ],
+          "explain": "« …wenn ich morgen … nochmal komme ? » — « Wie wäre es um 17 Uhr ? »"
+        },
+        {
+          "id": "de-listen-besichtigung-q5",
+          "kind": "choice",
+          "prompt": "Ab wann kann Anna einziehen ?",
+          "options": [
+            "Ab dem 1. Juni",
+            "Ab dem 1. Mai",
+            "Sofort",
+            "Ab dem 15. Juni"
+          ],
+          "answers": [
+            "Ab dem 1. Juni"
+          ],
+          "explain": "« Ab dem 1. Juni. Den Vertrag bekommen Sie per E-Mail. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-rueckblick-wochenende",
+      "languageID": "de",
+      "title": "Wie war dein Wochenende ?",
+      "level": "A2",
+      "topic": "vergangenheit",
+      "unitID": "de-foundations-u3",
+      "text": "Ben trifft Lena im Café: « Wie war dein Wochenende ? » — « Toll und etwas verrückt. Am Samstag habe ich einen Ausflug gemacht — und dann hat es geregnet. » — « Was hast du gemacht ? » — « Ich bin ins Museum gegangen. Es war interessant, aber sehr voll. » — « Und am Abend ? » — « Ich habe Pizza gegessen und einen Film gesehen. Am Sonntag habe ich lange geschlafen und bin dann Fahrrad gefahren. » — « Klingt gut ! Und was war verrückt ? » — « Im Museum habe ich meinen alten Lehrer getroffen. » — « Das glaub ich nicht ! » — « Stimmt aber. Es war ein schönes Wiedersehen. »",
+      "skills": [
+        "listening:detail",
+        "grammar:present-perfect",
+        "function:describe-past-events"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-rueckblick-wochenende-q1",
+          "kind": "written",
+          "prompt": "Was hat das Wetter am Samstag gemacht ?",
+          "answers": [
+            "es hat geregnet",
+            "geregnet"
+          ],
+          "explain": "« …und dann hat es geregnet. »"
+        },
+        {
+          "id": "de-listen-rueckblick-wochenende-q2",
+          "kind": "choice",
+          "prompt": "Wohin ist sie gegangen ?",
+          "options": [
+            "Ins Museum",
+            "Zum See",
+            "In die Berge",
+            "Nach Hause"
+          ],
+          "answers": [
+            "Ins Museum"
+          ],
+          "explain": "« Ich bin ins Museum gegangen. »"
+        },
+        {
+          "id": "de-listen-rueckblick-wochenende-q3",
+          "kind": "written",
+          "prompt": "Was hat sie am Abend gegessen ?",
+          "answers": [
+            "pizza",
+            "sie hat pizza gegessen"
+          ],
+          "explain": "« Ich habe Pizza gegessen und einen Film gesehen. »"
+        },
+        {
+          "id": "de-listen-rueckblick-wochenende-q4",
+          "kind": "choice",
+          "prompt": "Was hat sie am Sonntag gemacht ?",
+          "options": [
+            "Lange geschlafen und Rad gefahren",
+            "Gearbeitet",
+            "Gekocht",
+            "Gefeiert"
+          ],
+          "answers": [
+            "Lange geschlafen und Rad gefahren"
+          ],
+          "explain": "« Am Sonntag habe ich lange geschlafen und bin dann Fahrrad gefahren. »"
+        },
+        {
+          "id": "de-listen-rueckblick-wochenende-q5",
+          "kind": "choice",
+          "prompt": "Wen hat sie im Museum getroffen ?",
+          "options": [
+            "Ihren alten Lehrer",
+            "Ihre Nachbarin",
+            "Ihren Bruder",
+            "Eine alte Freundin"
+          ],
+          "answers": [
+            "Ihren alten Lehrer"
+          ],
+          "explain": "« Im Museum habe ich meinen alten Lehrer getroffen. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-zug-verspaetet",
+      "languageID": "de",
+      "title": "Der verspätete Zug",
+      "level": "A2",
+      "topic": "probleme",
+      "unitID": "de-foundations-u20",
+      "text": "Am Informationsschalter: « Guten Tag, mein Zug nach Hamburg hat 40 Minuten Verspätung. Ich verpasse meinen Anschluss. » — « Kein Problem. Der nächste Zug fährt um 15:12. » — « Komme ich damit um 17 Uhr in Hamburg an ? » — « Leider erst um 17:35. » — « Das ist zu spät — ich habe um 18 Uhr einen Termin. » — « Moment. Es gibt einen ICE über Hannover, Abfahrt 14:50, Ankunft 16:55. » — « Perfekt ! Muss ich ein neues Ticket kaufen ? » — « Nein, Ihr Ticket gilt auch für diesen Zug. Ich drücke Ihnen den neuen Anschluss aus. » — « Vielen Dank für die Hilfe ! »",
+      "skills": [
+        "listening:detail",
+        "vocab:transport",
+        "function:solve-problems"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-zug-verspaetet-q1",
+          "kind": "choice",
+          "prompt": "Was ist das Problem ?",
+          "options": [
+            "Der Zug hat Verspätung",
+            "Das Ticket ist weg",
+            "Der Zug fällt aus",
+            "Sie ist am falschen Bahnhof"
+          ],
+          "answers": [
+            "Der Zug hat Verspätung"
+          ],
+          "explain": "« Mein Zug nach Hamburg hat 40 Minuten Verspätung. »"
+        },
+        {
+          "id": "de-listen-zug-verspaetet-q2",
+          "kind": "choice",
+          "prompt": "Wann fährt der nächste normale Zug ?",
+          "options": [
+            "Um 15:12",
+            "Um 14:50",
+            "Um 16:55",
+            "Um 17:35"
+          ],
+          "answers": [
+            "Um 15:12"
+          ],
+          "explain": "« Der nächste Zug fährt um 15:12. »"
+        },
+        {
+          "id": "de-listen-zug-verspaetet-q3",
+          "kind": "written",
+          "prompt": "Über welche Stadt fährt der schnellere ICE ?",
+          "answers": [
+            "hannover",
+            "über hannover",
+            "ueber hannover"
+          ],
+          "explain": "« Es gibt einen ICE über Hannover. »"
+        },
+        {
+          "id": "de-listen-zug-verspaetet-q4",
+          "kind": "choice",
+          "prompt": "Wann kommt sie in Hamburg an ?",
+          "options": [
+            "Um 16:55",
+            "Um 17:35",
+            "Um 18 Uhr",
+            "Um 17 Uhr"
+          ],
+          "answers": [
+            "Um 16:55"
+          ],
+          "explain": "« Abfahrt 14:50, Ankunft 16:55. »"
+        },
+        {
+          "id": "de-listen-zug-verspaetet-q5",
+          "kind": "written",
+          "prompt": "Muss sie ein neues Ticket kaufen ?",
+          "answers": [
+            "nein",
+            "nein, das ticket gilt",
+            "nein, ihr ticket gilt auch"
+          ],
+          "explain": "« Nein, Ihr Ticket gilt auch für diesen Zug. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-hotelbuchung",
+      "languageID": "de",
+      "title": "Der Anruf im Hotel",
+      "level": "A2",
+      "topic": "reisen",
+      "unitID": "de-foundations-u25",
+      "text": "« Hotel Seeblick, guten Tag. » — « Guten Tag, ich habe für nächste Woche ein Doppelzimmer gebucht. Mein Name ist Nina Keller. » — « Einen Moment … Es tut mir leid: Wir haben Ihr Zimmer leider doppelt vergeben. » — « Wie bitte ? Ich fliege am Montag an ! » — « Bitte bleiben Sie ruhig — wir bezahlen Ihr Taxi und Sie bekommen ein Zimmer im Hotel am Park, zwei Minuten von hier. Gleicher Preis. » — « Ist dort auch Frühstück dabei ? » — « Ja, und wir holen Sie vom Flughafen ab. » — « Na gut, ich bin gespannt. » — « Vielen Dank für Ihr Verständnis, Frau Keller. Bis Montag ! »",
+      "skills": [
+        "listening:detail",
+        "vocab:travel",
+        "function:solve-problems"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-hotelbuchung-q1",
+          "kind": "choice",
+          "prompt": "Was war das Problem ?",
+          "options": [
+            "Das Zimmer war doppelt vergeben",
+            "Das Hotel war voll",
+            "Das Frühstück fehlte",
+            "Der Preis war falsch"
+          ],
+          "answers": [
+            "Das Zimmer war doppelt vergeben"
+          ],
+          "explain": "« Wir haben Ihr Zimmer leider doppelt vergeben. »"
+        },
+        {
+          "id": "de-listen-hotelbuchung-q2",
+          "kind": "choice",
+          "prompt": "Wann kommt Frau Keller an ?",
+          "options": [
+            "Am Montag",
+            "Am Wochenende",
+            "Am Dienstag",
+            "Am Freitag"
+          ],
+          "answers": [
+            "Am Montag"
+          ],
+          "explain": "« Ich fliege am Montag an ! »"
+        },
+        {
+          "id": "de-listen-hotelbuchung-q3",
+          "kind": "written",
+          "prompt": "Was bekommt sie im Hotel am Park ?",
+          "answers": [
+            "ein zimmer",
+            "ein zimmer zum gleichen preis",
+            "ein zimmer, gleicher preis"
+          ],
+          "explain": "« Sie bekommen ein Zimmer im Hotel am Park … Gleicher Preis. »"
+        },
+        {
+          "id": "de-listen-hotelbuchung-q4",
+          "kind": "choice",
+          "prompt": "Wer zahlt das Taxi ?",
+          "options": [
+            "Das Hotel Seeblick",
+            "Frau Keller",
+            "Das Hotel am Park",
+            "Niemand"
+          ],
+          "answers": [
+            "Das Hotel Seeblick"
+          ],
+          "explain": "« Wir bezahlen Ihr Taxi. » (Hotel Seeblick)"
+        },
+        {
+          "id": "de-listen-hotelbuchung-q5",
+          "kind": "written",
+          "prompt": "Wie kommt sie vom Flughafen zum Hotel ?",
+          "answers": [
+            "das hotel holt sie ab",
+            "sie wird abgeholt",
+            "das hotel seeblick holt sie ab"
+          ],
+          "explain": "« Wir holen Sie vom Flughafen ab. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-moebel-raten",
+      "languageID": "de",
+      "title": "Das Sofa für die neue Wohnung",
+      "level": "A2",
+      "topic": "einkaufen",
+      "unitID": "de-foundations-u24",
+      "text": "Im Möbelhaus: « Das Sofa gefällt mir. Was kostet es ? » — « 899 Euro. Dieses Modell hier ist billiger: nur 749 Euro. » — « Es ist aber kleiner. Gibt es das große auch in Blau ? » — « In Blau dauert es zwei Wochen. Sie können aber Ratenzahlung nehmen: dann zahlen Sie jeden Monat 75 Euro. » — « Wie lange dauert das ? » — « Zwölf Monate, ohne Zinsen. » — « Und die Lieferung ? » — « Wir liefern kostenlos bis in die Wohnung. Wann passt es Ihnen ? » — « Könnten Sie am Samstagvormittag kommen ? Wir ziehen gerade um. » — « Samstag früh, kein Problem. Herzlichen Glückwunsch zur neuen Wohnung ! »",
+      "skills": [
+        "listening:detail",
+        "vocab:shopping",
+        "grammar:comparatives",
+        "function:go-shopping"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-moebel-raten-q1",
+          "kind": "choice",
+          "prompt": "Was kostet das Sofa, das Nina gefällt ?",
+          "options": [
+            "899 Euro",
+            "749 Euro",
+            "75 Euro",
+            "12 Euro"
+          ],
+          "answers": [
+            "899 Euro"
+          ],
+          "explain": "« Das Sofa gefällt mir. Was kostet es ? » — « 899 Euro. »"
+        },
+        {
+          "id": "de-listen-moebel-raten-q2",
+          "kind": "choice",
+          "prompt": "Warum dauert die blaue Farbe länger ?",
+          "options": [
+            "Es dauert zwei Wochen",
+            "Es gibt nur Rot",
+            "Sie ist ausverkauft",
+            "Der Laden ist geschlossen"
+          ],
+          "answers": [
+            "Es dauert zwei Wochen"
+          ],
+          "explain": "« In Blau dauert es zwei Wochen. »"
+        },
+        {
+          "id": "de-listen-moebel-raten-q3",
+          "kind": "written",
+          "prompt": "Wie viel zahlt sie bei Ratenzahlung pro Monat ?",
+          "answers": [
+            "75 euro",
+            "fünfundsiebzig euro",
+            "fuenfundsiebzig euro"
+          ],
+          "explain": "« …zahlen Sie jeden Monat 75 Euro. »"
+        },
+        {
+          "id": "de-listen-moebel-raten-q4",
+          "kind": "choice",
+          "prompt": "Wie lange dauert die Ratenzahlung ?",
+          "options": [
+            "Zwölf Monate",
+            "Zwei Wochen",
+            "Sechs Monate",
+            "Sechs Wochen"
+          ],
+          "answers": [
+            "Zwölf Monate"
+          ],
+          "explain": "« Zwölf Monate, ohne Zinsen. »"
+        },
+        {
+          "id": "de-listen-moebel-raten-q5",
+          "kind": "written",
+          "prompt": "Was kostet die Lieferung ?",
+          "answers": [
+            "nichts",
+            "sie ist kostenlos",
+            "die lieferung ist kostenlos"
+          ],
+          "explain": "« Wir liefern kostenlos bis in die Wohnung. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-schluessel-panne",
+      "languageID": "de",
+      "title": "Die Schlüssel-Panne",
+      "level": "B1",
+      "topic": "erlebnisse",
+      "unitID": "de-foundations-u18",
+      "text": "Paul erzählt: « Letzten Dienstag hatte ich ein Vorstellungsgespräch um 9 Uhr. Um Viertel vor acht war ich fertig angezogen — und dann: der Schlüssel war im Schloss abgebrochen. Von innen ! Ich habe meine Mitbewohnerin angerufen, aber sie war schon im Büro. Also bin ich zum Nachbarn gegangen, Herrn Braun. Der hilft uns schon oft. Er kam mit einer Zange — nach zwanzig Minuten war die Tür offen. » — « Und das Gespräch ? » — « Ich bin mit dreckigen Händen zur U-Bahn gelaufen, aber pünktlich da gewesen. Der Chef hat gelacht und gesagt, wer sich selbst hilft, kommt durch jede Tür. Ich habe den Job ! » — « Unglaublich. Manchmal hilft das Chaos mehr als der Plan. »",
+      "skills": [
+        "listening:inference",
+        "function:tell-a-story",
+        "grammar:present-perfect"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-schluessel-panne-q1",
+          "kind": "choice",
+          "prompt": "Was war um Viertel vor acht passiert ?",
+          "options": [
+            "Der Schlüssel war abgebrochen",
+            "Der Zug war weg",
+            "Das Gespräch war verschoben",
+            "Der Nachbar war nicht da"
+          ],
+          "answers": [
+            "Der Schlüssel war abgebrochen"
+          ],
+          "explain": "« …der Schlüssel war im Schloss abgebrochen. »"
+        },
+        {
+          "id": "de-listen-schluessel-panne-q2",
+          "kind": "written",
+          "prompt": "Wer half Paul mit einer Zange ?",
+          "answers": [
+            "herr braun",
+            "der nachbar",
+            "sein nachbar herr braun"
+          ],
+          "explain": "« Also bin ich zum Nachbarn gegangen, Herrn Braun. Er kam mit einer Zange. »"
+        },
+        {
+          "id": "de-listen-schluessel-panne-q3",
+          "kind": "choice",
+          "prompt": "Wie kam Paul zum Gespräch ?",
+          "options": [
+            "Mit der U-Bahn",
+            "Mit dem Auto",
+            "Zu Fuß bis zum Büro",
+            "Mit dem Taxi"
+          ],
+          "answers": [
+            "Mit der U-Bahn"
+          ],
+          "explain": "« Ich bin mit dreckigen Händen zur U-Bahn gelaufen. »"
+        },
+        {
+          "id": "de-listen-schluessel-panne-q4",
+          "kind": "written",
+          "prompt": "Wann war das Gespräch ?",
+          "answers": [
+            "um 9 uhr",
+            "um neun uhr",
+            "um neun"
+          ],
+          "explain": "« …ein Vorstellungsgespräch um 9 Uhr. »"
+        },
+        {
+          "id": "de-listen-schluessel-panne-q5",
+          "kind": "choice",
+          "prompt": "Wie endet die Geschichte ?",
+          "options": [
+            "Paul hat den Job bekommen",
+            "Paul kam zu spät",
+            "Der Chef war wütend",
+            "Paul fand den Schlüssel nie"
+          ],
+          "answers": [
+            "Paul hat den Job bekommen"
+          ],
+          "explain": "« Ich habe den Job ! »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-debatte-homeoffice",
+      "languageID": "de",
+      "title": "Debatte: Homeoffice — Segen oder Sünde ?",
+      "level": "B2",
+      "topic": "meinung",
+      "unitID": "de-foundations-u7",
+      "text": "Rundfunk-Debatte mit Dr. Lang und dem Gewerkschafter Kramer. — Dr. Lang: « Ich vertrete den Standpunkt, dass Homeoffice produktiver macht. Einerseits entfällt der Weg zur Arbeit, andererseits lässt sich der Tag besser strukturieren. Die Zahlen meiner Studie sprechen eine klare Sprache: vier Stunden mehr pro Woche. » — Kramer: « Dagegen möchte ich einwenden: Nicht jeder Job passt an den Küchentisch. Zudem leidet das Teamgefühl — wer schon mal per Video diskutiert hat, weiß, wovon ich rede. » — Lang: « Ein berechtigter Einwand, doch die Lösung heißt Mischung: zwei Tage im Büro, drei zu Hause. » — Kramer: « Da stimme ich Ihnen zu — solange die Firma uns die Ausstattung zahlt. » — Moderatorin: « Damit ist die Runde am Ende: Die Mischung macht's. »",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-debatte-homeoffice-q1",
+          "kind": "choice",
+          "prompt": "Was ist Dr. Langs These ?",
+          "options": [
+            "Homeoffice macht produktiver",
+            "Homeoffice kostet Jobs",
+            "Homeoffice macht krank",
+            "Homeoffice ist zu teuer"
+          ],
+          "answers": [
+            "Homeoffice macht produktiver"
+          ],
+          "explain": "« Ich vertrete den Standpunkt, dass Homeoffice produktiver macht. »"
+        },
+        {
+          "id": "de-listen-debatte-homeoffice-q2",
+          "kind": "written",
+          "prompt": "Wie viele Stunden mehr pro Woche nennt die Studie ?",
+          "answers": [
+            "vier",
+            "4",
+            "vier stunden"
+          ],
+          "explain": "« …vier Stunden mehr pro Woche. »"
+        },
+        {
+          "id": "de-listen-debatte-homeoffice-q3",
+          "kind": "choice",
+          "prompt": "Was wirft Kramer ein ?",
+          "options": [
+            "Das Teamgefühl leidet",
+            "Die Zahlen seien falsch",
+            "Homeoffice sei verboten",
+            "Das Büro sei zu laut"
+          ],
+          "answers": [
+            "Das Teamgefühl leidet"
+          ],
+          "explain": "« Zudem leidet das Teamgefühl. »"
+        },
+        {
+          "id": "de-listen-debatte-homeoffice-q4",
+          "kind": "written",
+          "prompt": "Welche Lösung schlägt Dr. Lang vor ?",
+          "answers": [
+            "mischung",
+            "zwei tage im buero, drei zu hause",
+            "zwei tage im büro und drei zu hause",
+            "zwei tage buero, drei zuhause"
+          ],
+          "explain": "« Die Lösung heißt Mischung: zwei Tage im Büro, drei zu Hause. »"
+        },
+        {
+          "id": "de-listen-debatte-homeoffice-q5",
+          "kind": "choice",
+          "prompt": "Was fordert Kramer als Bedingung ?",
+          "options": [
+            "Die Firma soll die Ausstattung zahlen",
+            "Mehr Gehalt",
+            "Weniger Meetings",
+            "Freie Wahl des Ortes"
+          ],
+          "answers": [
+            "Die Firma soll die Ausstattung zahlen"
+          ],
+          "explain": "« …solange die Firma uns die Ausstattung zahlt. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-miete-verhandlung",
+      "languageID": "de",
+      "title": "Die Mietverhandlung",
+      "level": "B2",
+      "topic": "verhandeln",
+      "unitID": "de-foundations-u7",
+      "text": "Frau Simon klingelt bei ihrem Vermieter Herrn Krause: « Ich wohne jetzt vier Jahre hier und habe nie eine Miete zu spät gezahlt. Nun erhöhen Sie um 15 Prozent — das finde ich zu viel. » — « Die Kosten steigen überall, Frau Simon. » — « Verstehe. Mein Vorschlag: zehn Prozent, dafür verlängere ich den Vertrag auf drei Jahre. » — « Zwei Jahre, und Sie übernehmen die kleine Garage mit. » — « Nur ohne Aufpreis. Dann erkläre ich mich einverstanden. » — « Also: zehn Prozent, zwei Jahre, die Garage zum alten Preis. Danke für das offene Wort. » — « Ebenso — auf ein faires Wohnen ! »",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "speaking:negotiate"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-miete-verhandlung-q1",
+          "kind": "choice",
+          "prompt": "Wie viel Prozent wollte der Vermieter zuerst ?",
+          "options": [
+            "15",
+            "10",
+            "12",
+            "20"
+          ],
+          "answers": [
+            "15"
+          ],
+          "explain": "« Nun erhöhen Sie um 15 Prozent. »"
+        },
+        {
+          "id": "de-listen-miete-verhandlung-q2",
+          "kind": "written",
+          "prompt": "Wie lange wohnt Frau Simon schon dort ?",
+          "answers": [
+            "vier jahre",
+            "4 jahre"
+          ],
+          "explain": "« Ich wohne jetzt vier Jahre hier … »"
+        },
+        {
+          "id": "de-listen-miete-verhandlung-q3",
+          "kind": "choice",
+          "prompt": "Was bietet sie im ersten Vorschlag ?",
+          "options": [
+            "Verlängerung auf drei Jahre",
+            "Auszug im Sommer",
+            "Neue Fenster",
+            "Eine sofortige volle Erhöhung"
+          ],
+          "answers": [
+            "Verlängerung auf drei Jahre"
+          ],
+          "explain": "« …dafür verlängere ich den Vertrag auf drei Jahre. »"
+        },
+        {
+          "id": "de-listen-miete-verhandlung-q4",
+          "kind": "written",
+          "prompt": "Was soll sie zusätzlich übernehmen ?",
+          "answers": [
+            "die garage",
+            "die kleine garage"
+          ],
+          "explain": "« …und Sie übernehmen die kleine Garage mit. »"
+        },
+        {
+          "id": "de-listen-miete-verhandlung-q5",
+          "kind": "choice",
+          "prompt": "Wie endet die Verhandlung ?",
+          "options": [
+            "Zehn Prozent, zwei Jahre, Garage zum alten Preis",
+            "Fünfzehn Prozent, ein Jahr",
+            "Zehn Prozent, drei Jahre",
+            "Der Vermieter verzichtet ganz"
+          ],
+          "answers": [
+            "Zehn Prozent, zwei Jahre, Garage zum alten Preis"
+          ],
+          "explain": "« Also: zehn Prozent, zwei Jahre, die Garage zum alten Preis. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-nachricht-streik",
+      "languageID": "de",
+      "title": "Nachrichten: Warnstreik im Verkehr",
+      "level": "B2",
+      "topic": "nachrichten",
+      "unitID": "de-foundations-u8",
+      "text": "Von der Nachrichtenzentrale: Der Warnstreik der Bus- und Bahnfahrer hat heute Morgen den Verkehr in der Region lahmgelegt. Wie das Verkehrsunternehmen mitteilte, seien rund 70 Prozent der Fahrten ausgefallen. Die Gewerkschaft begründet den Streik mit den laufenden Tarifverhandlungen: Sie fordert fünf Prozent mehr Lohn und bessere Dienstpläne. Der Vorstand nannte die Forderung verhandlungsfähig, wies aber darauf hin, dass höhere Löhne die Fahrpreise erhöhen würden. Die Gespräche sollen kommende Woche fortgesetzt werden. Ein Sprecher der Gewerkschaft kündigte an, die Streiks würden so lange wiederholt, bis ein akzeptables Angebot vorliege. Reisende wurden gebeten, frühzeitiger als gewöhnlich zu planen. Weitere Nachrichten um halb.",
+      "skills": [
+        "listening:detail",
+        "grammar:passive-intro",
+        "grammar:reported-speech-basic"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-nachricht-streik-q1",
+          "kind": "choice",
+          "prompt": "Was ist das Thema der Nachricht ?",
+          "options": [
+            "Ein Warnstreik im Verkehr",
+            "Ein Unfall auf der Bahn",
+            "Neue Fahrpreise",
+            "Ein neues Bahnhofsgebäude"
+          ],
+          "answers": [
+            "Ein Warnstreik im Verkehr"
+          ],
+          "explain": "« Der Warnstreik … hat heute Morgen den Verkehr in der Region lahmgelegt. »"
+        },
+        {
+          "id": "de-listen-nachricht-streik-q2",
+          "kind": "written",
+          "prompt": "Wie viele Fahrten sind laut Unternehmen ausgefallen ?",
+          "answers": [
+            "rund 70 prozent",
+            "70 prozent",
+            "siebzig prozent"
+          ],
+          "explain": "« …seien rund 70 Prozent der Fahrten ausgefallen. »"
+        },
+        {
+          "id": "de-listen-nachricht-streik-q3",
+          "kind": "choice",
+          "prompt": "Was fordert die Gewerkschaft ?",
+          "options": [
+            "Fünf Prozent mehr Lohn",
+            "Kürzere Fahrpreise",
+            "Neue Busse",
+            "Mehr Züge am Abend"
+          ],
+          "answers": [
+            "Fünf Prozent mehr Lohn"
+          ],
+          "explain": "« Sie fordert fünf Prozent mehr Lohn und bessere Dienstpläne. »"
+        },
+        {
+          "id": "de-listen-nachricht-streik-q4",
+          "kind": "choice",
+          "prompt": "Was würde laut Vorstand bei höheren Löhnen passieren ?",
+          "options": [
+            "Die Fahrpreise würden erhöht",
+            "Die Bahnen würden stillstehen",
+            "Der Streik würde enden",
+            "Die Pläne würden besser"
+          ],
+          "answers": [
+            "Die Fahrpreise würden erhöht"
+          ],
+          "explain": "« …dass höhere Löhne die Fahrpreise erhöhen würden. »"
+        },
+        {
+          "id": "de-listen-nachricht-streik-q5",
+          "kind": "written",
+          "prompt": "Wie lange sollen die Streiks wiederholt werden ?",
+          "answers": [
+            "bis ein akzeptables angebot vorliegt",
+            "solange, bis ein angebot vorliegt"
+          ],
+          "explain": "« …bis ein akzeptables Angebot vorliege. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-medien-podcast",
+      "languageID": "de",
+      "title": "Kulturteil: Lesen im Alltag",
+      "level": "B2",
+      "topic": "medien",
+      "unitID": "de-foundations-u8",
+      "text": "Im Kulturteil spricht Moderatorin Rieder mit der Medienwissenschaftlerin Professorin Adeyemi. — « Professorin, viele lesen nur noch Schlagzeilen. Verlieren wir die Tiefe ? » — « Ich würde vorsichtig formulieren: Das Lesen hat sich verschoben, nicht abgeschafft. Menschen lesen viel — nur anders: schnell und quer. » — « Was heißt das für die Nachrichten ? » — « Wer nur Headlines scannt, verbindet die Fakten nicht mehr. Deshalb raten wir zu einem langen Artikel pro Tag — die Tiefe kommt von der Zeit, die wir uns nehmen. » — « Und die sozialen Netzwerke ? » — « Sie sind Werkzeuge. Ob sie uns dumm machen, entscheidet der Gebrauch — ein Hammer kann bauen oder zerstören. » — « Danke für das klare Bild. »",
+      "skills": [
+        "listening:inference",
+        "grammar:reported-speech-basic",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-medien-podcast-q1",
+          "kind": "choice",
+          "prompt": "Wie nennt Professorin Adeyemi die Entwicklung des Lesens ?",
+          "options": [
+            "Verschoben, nicht abgeschafft",
+            "Beendet",
+            "Unverändert",
+            "Gefährlich"
+          ],
+          "answers": [
+            "Verschoben, nicht abgeschafft"
+          ],
+          "explain": "« Das Lesen hat sich verschoben, nicht abgeschafft. »"
+        },
+        {
+          "id": "de-listen-medien-podcast-q2",
+          "kind": "written",
+          "prompt": "Was raten die Forscher für jeden Tag ?",
+          "answers": [
+            "einen langen artikel",
+            "einen langen artikel pro tag",
+            "ein langer artikel"
+          ],
+          "explain": "« Deshalb raten wir zu einem langen Artikel pro Tag. »"
+        },
+        {
+          "id": "de-listen-medien-podcast-q3",
+          "kind": "choice",
+          "prompt": "Wovor warnt sie bei Headlines ?",
+          "options": [
+            "Man verbindet die Fakten nicht mehr",
+            "Man liest zu langsam",
+            "Man kauft zu viele Zeitungen",
+            "Man vergisst Termine"
+          ],
+          "answers": [
+            "Man verbindet die Fakten nicht mehr"
+          ],
+          "explain": "« Wer nur Headlines scannt, verbindet die Fakten nicht mehr. »"
+        },
+        {
+          "id": "de-listen-medien-podcast-q4",
+          "kind": "choice",
+          "prompt": "Womit vergleicht sie soziale Netzwerke ?",
+          "options": [
+            "Mit einem Hammer",
+            "Mit einem Buch",
+            "Mit einer Brücke",
+            "Mit einem Spiegel"
+          ],
+          "answers": [
+            "Mit einem Hammer"
+          ],
+          "explain": "« Ein Hammer kann bauen oder zerstören. »"
+        },
+        {
+          "id": "de-listen-medien-podcast-q5",
+          "kind": "written",
+          "prompt": "Wovon kommt laut ihr die Tiefe ?",
+          "answers": [
+            "von der zeit",
+            "von der zeit, die wir uns nehmen",
+            "von der zeit, die man sich nimmt"
+          ],
+          "explain": "« Die Tiefe kommt von der Zeit, die wir uns nehmen. »"
+        }
+      ]
+    },
+    {
+      "id": "de-listen-gehalt-verhandlung",
+      "languageID": "de",
+      "title": "Die Gehaltsverhandlung",
+      "level": "B2",
+      "topic": "verhandeln",
+      "unitID": "de-foundations-u7",
+      "text": "Frau Berger von der Personalabteilung empfängt Anna: « Sie haben die Probezeit überzeugt. Wie stellen Sie sich Ihr Gehalt vor ? » — « Aufgrund meiner Verantwortung wünsche ich 52 000 Euro im Jahr. » — « Das übersteigt unser Budget. Ich kann 47 000 anbieten. » — « Verstehe. Ich bringe die Kundenkontakte aus meiner alten Firma mit — zwei Großkunden sind schon angefragt. Was wäre, wenn wir 50 000 sagen und ich die Betreuung übernehme ? » — « Interessant. 48 500, dafür eine Gehaltsprüfung nach sechs Monaten. » — « Einverstanden — und bitte eine schriftliche Zusage. » — « Selbstverständlich. Willkommen im Team ! »",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-gehalt-verhandlung-q1",
+          "kind": "choice",
+          "prompt": "Was hat Anna abgeschlossen ?",
+          "options": [
+            "Die Probezeit",
+            "Die Ausbildung",
+            "Das Studium",
+            "Den Vertrag nicht"
+          ],
+          "answers": [
+            "Die Probezeit"
+          ],
+          "explain": "« Sie haben die Probezeit überzeugt. »"
+        },
+        {
+          "id": "de-listen-gehalt-verhandlung-q2",
+          "kind": "written",
+          "prompt": "Wie viel Gehalt wünscht sich Anna ?",
+          "answers": [
+            "52 000 euro",
+            "52000 euro",
+            "52.000 euro",
+            "zweiundfünfzigtausend euro"
+          ],
+          "explain": "« …wünsche ich 52 000 Euro im Jahr. »"
+        },
+        {
+          "id": "de-listen-gehalt-verhandlung-q3",
+          "kind": "choice",
+          "prompt": "Was bietet Anna zusätzlich an ?",
+          "options": [
+            "Kundenkontakte aus der alten Firma",
+            "Einen Umzug",
+            "Mehrarbeit ohne Lohn",
+            "Ein eigenes Büro"
+          ],
+          "answers": [
+            "Kundenkontakte aus der alten Firma"
+          ],
+          "explain": "« Ich bringe die Kundenkontakte aus meiner alten Firma mit. »"
+        },
+        {
+          "id": "de-listen-gehalt-verhandlung-q4",
+          "kind": "choice",
+          "prompt": "Was ist die letzte Zusage ?",
+          "options": [
+            "48 500 Euro mit Gehaltsprüfung",
+            "52 000 Euro sofort",
+            "47 000 Euro ohne Prüfung",
+            "50 000 Euro ohne Prüfung"
+          ],
+          "answers": [
+            "48 500 Euro mit Gehaltsprüfung"
+          ],
+          "explain": "« 48 500, dafür eine Gehaltsprüfung nach sechs Monaten. »"
+        },
+        {
+          "id": "de-listen-gehalt-verhandlung-q5",
+          "kind": "written",
+          "prompt": "Was verlangt Anna am Ende zusätzlich ?",
+          "answers": [
+            "eine schriftliche zusage",
+            "eine schriftliche bestätigung"
+          ],
+          "explain": "« Einverstanden — und bitte eine schriftliche Zusage. »"
+        }
+      ]
     }
   ]
 }

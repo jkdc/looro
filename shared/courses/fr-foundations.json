@@ -13452,6 +13452,926 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u27",
+      "title": "Numéros et âge",
+      "subtitle": "Compter, téléphoner, se présenter",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "les-nombres",
+          "title": "Les nombres",
+          "subtitle": "De zéro à cent",
+          "symbol": "number",
+          "category": "Course",
+          "situation": "Au café puis dans la rue : Léa paie sept euros, Karim cherche le vingt-cinq et note un numéro de téléphone par petits groupes.",
+          "colorIndex": 0
+        },
+        {
+          "id": "l-age",
+          "title": "L'âge",
+          "subtitle": "Quel âge tu as ?",
+          "symbol": "person.crop.circle",
+          "category": "Course",
+          "situation": "À la soirée de bienvenue : Mai demande l'âge de Léa, Léa parle de sa sœur et du bébé de la famille.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u27-nombres",
+          "title": "De zéro à cent",
+          "goal": "Compter de zéro à cent, donner ton numéro de téléphone et comprendre un prix ou un numéro de rue : j'habite au vingt-cinq.",
+          "situation": "Karim cherche la maison de Léa : il relit le numéro de la rue, il lui téléphone, elle lui donne son numéro et l'heure du rendez-vous.",
+          "skills": [
+            "grammar:present-simple",
+            "function:tell-time",
+            "function:ask-simple-questions",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "tell-time"
+          ],
+          "prerequisites": [
+            "grammar:subject-pronouns"
+          ],
+          "intro": {
+            "explanation": [
+              "Les nombres servent partout : « Deux cafés, s'il vous plaît — ça fait sept euros. » Le prix, l'heure, l'adresse : toujours des nombres.",
+              "Pour un numéro de téléphone, on le coupe en petits groupes : « C'est le zéro six, vingt, trente et un. » Plus facile à dire, plus facile à noter.",
+              "On demande un numéro avec quel : « C'est quel numéro ? » Et on répond tout simplement : « C'est le vingt-cinq. »"
+            ],
+            "examples": [
+              {
+                "text": "Ça fait sept euros.",
+                "meaning": "Le prix, tout simplement."
+              },
+              {
+                "text": "J'habite au vingt-cinq.",
+                "meaning": "Le numéro de la rue."
+              },
+              {
+                "text": "C'est quel numéro ?",
+                "meaning": "Demander un numéro."
+              },
+              {
+                "text": "Mon numéro, c'est le zéro six douze.",
+                "meaning": "Le téléphone, par petits groupes."
+              },
+              {
+                "text": "Rendez-vous à dix-huit heures.",
+                "meaning": "L'heure, encore des nombres."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ça fait + prix",
+              "meaning": "Le total à payer.",
+              "note": "Ça fait douze euros."
+            },
+            {
+              "text": "c'est quel numéro ?",
+              "meaning": "Demander un numéro.",
+              "note": "C'est quel numéro, ta maison ?"
+            },
+            {
+              "text": "j'habite au + nombre",
+              "meaning": "Donner son adresse.",
+              "note": "J'habite au dix rue Victor."
+            },
+            {
+              "text": "le zéro six…",
+              "meaning": "Commencer un numéro de portable.",
+              "note": "Le zéro six, c'est le portable."
+            },
+            {
+              "text": "à + nombre heures",
+              "meaning": "Donner l'heure du rendez-vous.",
+              "note": "À neuf heures, c'est bon ?"
+            }
+          ],
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ça fait quel prix ? Deux cafés à trois euros cinquante.",
+                "expected": [
+                  "Ça fait sept euros.",
+                  "Ca fait sept euros.",
+                  "Ça fait 7 euros."
+                ],
+                "focus": "ça fait",
+                "watch": "ça fait + le prix : le total tout simple."
+              },
+              {
+                "prompt": "Donne ton adresse : rue Victor, numéro dix.",
+                "expected": [
+                  "J'habite au dix rue Victor.",
+                  "J'habite au 10 rue Victor."
+                ],
+                "focus": "j'habite au",
+                "watch": "au + le numéro, avant le nom de la rue."
+              },
+              {
+                "prompt": "Tu veux connaître le numéro de la maison de Léa. Demande-le.",
+                "expected": [
+                  "C'est quel numéro ?",
+                  "C'est quel numero ?",
+                  "C'est quel numéro, ta maison ?"
+                ],
+                "focus": "c'est quel numéro",
+                "watch": "quel + être : la question toute simple."
+              },
+              {
+                "prompt": "Donne ton numéro de portable par groupes : zéro six, puis vingt.",
+                "expected": [
+                  "C'est le zéro six vingt.",
+                  "Le zéro six vingt.",
+                  "Zero six vingt."
+                ],
+                "focus": "le zéro six",
+                "watch": "on dit chaque groupe, sans le réfléchir : zéro six, c'est le portable."
+              },
+              {
+                "prompt": "Fixe le rendez-vous à dix-huit heures.",
+                "expected": [
+                  "Rendez-vous à dix-huit heures.",
+                  "On se retrouve à dix-huit heures ?",
+                  "Rendez-vous a dix-huit heures."
+                ],
+                "focus": "à dix-huit heures",
+                "watch": "à + l'heure : le point de rendez-vous."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u27-nombres-e1",
+              "kind": "choice",
+              "prompt": "« J'habite ___ vingt-cinq rue des Lilas. » (la petite préposition)",
+              "options": [
+                "au",
+                "à la",
+                "de",
+                "en"
+              ],
+              "answers": [
+                "au"
+              ],
+              "explain": "Pour un numéro de rue : j'habite au vingt-cinq."
+            },
+            {
+              "id": "fr-foundations-u27-nombres-e2",
+              "kind": "gap",
+              "prompt": "Deux cafés et un thé : ça ___ sept euros. (verbe : faire)",
+              "answers": [
+                "fait"
+              ],
+              "explain": "Ça fait + le prix : faire au présent avec ça."
+            },
+            {
+              "id": "fr-foundations-u27-nombres-e3",
+              "kind": "order",
+              "prompt": "Tu veux connaître le numéro de la maison de Léa.",
+              "answers": [
+                "C'est quel numéro ta maison"
+              ],
+              "explain": "C'est quel numéro : la question directe pour un numéro."
+            },
+            {
+              "id": "fr-foundations-u27-nombres-e4",
+              "kind": "written",
+              "prompt": "Le rendez-vous est à trois heures de l'après-midi. Écris l'heure complète en lettres.",
+              "answers": [
+                "à quinze heures",
+                "a quinze heures",
+                "quinze heures",
+                "rendez-vous à quinze heures"
+              ],
+              "explain": "Trois heures de l'après-midi, c'est à quinze heures."
+            }
+          ]
+        },
+        {
+          "id": "fr-foundations-u27-age",
+          "title": "Quel âge tu as ?",
+          "goal": "Demander et dire ton âge avec avoir : j'ai vingt ans. Parler de l'âge de ta famille : ma sœur a seize ans.",
+          "situation": "À la soirée de bienvenue, on fait connaissance : Mai demande l'âge à Léa, Léa parle de sa sœur et du bébé de la famille.",
+          "skills": [
+            "function:describe-people",
+            "vocab:family",
+            "grammar:present-simple",
+            "grammar:possessives"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "intro": {
+            "explanation": [
+              "En français, l'âge se dit avec avoir : « J'ai vingt ans. » On a un âge, on n'est pas un âge.",
+              "Pour demander : « Tu as quel âge ? » — la question courte, parfaite entre amis.",
+              "Avec la famille, le possessif accompagne le nom : « Mon petit frère a huit ans. » Mon, ma, mes : chacun son accord."
+            ],
+            "examples": [
+              {
+                "text": "Tu as quel âge ?",
+                "meaning": "La question directe."
+              },
+              {
+                "text": "J'ai vingt et un ans.",
+                "meaning": "Dire son âge avec avoir."
+              },
+              {
+                "text": "Ma sœur a seize ans.",
+                "meaning": "L'âge d'un proche."
+              },
+              {
+                "text": "Mon grand-père a soixante-dix ans.",
+                "meaning": "Les grands nombres d'âge."
+              },
+              {
+                "text": "Il est tout petit : il a trois ans.",
+                "meaning": "L'âge et la description ensemble."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "tu as quel âge ?",
+              "meaning": "Demander l'âge.",
+              "note": "Tu as quel âge, Mai ?"
+            },
+            {
+              "text": "j'ai + nombre + ans",
+              "meaning": "Dire ton âge.",
+              "note": "J'ai vingt-deux ans."
+            },
+            {
+              "text": "mon / ma + famille",
+              "meaning": "Désigner un proche.",
+              "note": "Ma cousine a dix ans."
+            },
+            {
+              "text": "il / elle a + ans",
+              "meaning": "L'âge des autres.",
+              "note": "Elle a trente ans."
+            },
+            {
+              "text": "tout(e) + adjectif",
+              "meaning": "Insister sur la description.",
+              "note": "Elle est toute petite."
+            }
+          ],
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Demande l'âge de Mai (avec tu).",
+                "expected": [
+                  "Tu as quel âge ?",
+                  "Tu as quel age ?",
+                  "Quel âge tu as ?"
+                ],
+                "focus": "tu as quel âge",
+                "watch": "avoir pour l'âge : tu as, jamais tu es."
+              },
+              {
+                "prompt": "Dis ton âge : vingt ans.",
+                "expected": [
+                  "J'ai vingt ans.",
+                  "J'ai 20 ans.",
+                  "Jai vingt ans."
+                ],
+                "focus": "j'ai vingt ans",
+                "watch": "j'ai + nombre + ans : la formule complète."
+              },
+              {
+                "prompt": "Ta sœur a seize ans. Dis-le.",
+                "expected": [
+                  "Ma sœur a seize ans.",
+                  "Ma soeur a seize ans.",
+                  "Ma sœur a 16 ans."
+                ],
+                "focus": "ma sœur a",
+                "watch": "ma + sœur : le possessif s'accorde au féminin."
+              },
+              {
+                "prompt": "Ton grand-père a soixante-dix-huit ans. Dis-le.",
+                "expected": [
+                  "Mon grand-père a soixante-dix-huit ans.",
+                  "Mon grand-pere a soixante-dix-huit ans."
+                ],
+                "focus": "mon grand-père a",
+                "watch": "mon + grand-père : le possessif masculin."
+              },
+              {
+                "prompt": "Le bébé de la famille a trois ans. Décris-le avec tendresse.",
+                "expected": [
+                  "Il est tout petit : il a trois ans.",
+                  "Il a trois ans.",
+                  "Il a 3 ans."
+                ],
+                "focus": "il a trois ans",
+                "watch": "tout + adjectif pour insister : tout petit, toute petite."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u27-age-e1",
+              "kind": "choice",
+              "prompt": "« ___ seize ans. » (parler de ta sœur)",
+              "options": [
+                "Ma sœur a",
+                "Ma sœur est",
+                "Mon sœur a",
+                "Ma sœur ai"
+              ],
+              "answers": [
+                "Ma sœur a"
+              ],
+              "explain": "L'âge avec avoir : ma sœur a seize ans."
+            },
+            {
+              "id": "fr-foundations-u27-age-e2",
+              "kind": "gap",
+              "prompt": "J'___ vingt-deux ans. (verbe : avoir)",
+              "answers": [
+                "ai"
+              ],
+              "explain": "J'ai : avoir à la première personne, l'âge se dit avec avoir."
+            },
+            {
+              "id": "fr-foundations-u27-age-e3",
+              "kind": "order",
+              "prompt": "Tu veux connaître l'âge de Mai. Pose la question.",
+              "answers": [
+                "Tu as quel âge Mai"
+              ],
+              "explain": "Tu as quel âge : avoir + quel âge, la question des âges."
+            },
+            {
+              "id": "fr-foundations-u27-age-e4",
+              "kind": "written",
+              "prompt": "Parle de ta cousine : elle a dix ans. Écris la phrase complète.",
+              "answers": [
+                "ma cousine a dix ans",
+                "ma cousine a 10 ans"
+              ],
+              "explain": "Ma cousine a dix ans : possessif + avoir + ans."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u28",
+      "title": "Imprévus en voyage",
+      "subtitle": "Organiser, réagir, changer les plans",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "le-projet",
+          "title": "Le projet",
+          "subtitle": "On part ce week-end",
+          "symbol": "map",
+          "category": "Course",
+          "situation": "Mardi soir : Léa propose un week-end à Lyon, on prévoit le train de samedi et Karim promet de réserver l'hôtel.",
+          "colorIndex": 0
+        },
+        {
+          "id": "les-imprevus",
+          "title": "Les imprévus",
+          "subtitle": "Quand tout déraille",
+          "symbol": "exclamationmark.triangle",
+          "category": "Course",
+          "situation": "À la gare puis à l'hôtel : le train est annulé, la réservation a disparu. On réagit, on demande de l'aide et on change le plan.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u28-projet",
+          "title": "On part ce week-end ?",
+          "goal": "Proposer et organiser un voyage avec le futur proche : on va partir à Lyon. Prendre ses responsabilités : je vais réserver l'hôtel.",
+          "situation": "Léa propose un week-end à Lyon : on va prendre le train de samedi matin, Karim va réserver l'hôtel et on va visiter le vieux Lyon.",
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "function:make-suggestions",
+            "vocab:travel"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "intro": {
+            "explanation": [
+              "Le futur proche, c'est aller + infinitif : « On va partir à Lyon samedi. » Un projet déjà décidé, pas une hypothèse.",
+              "Avec l'intonation montante, le plan devient une suggestion : « On va prendre le train de huit heures ? »",
+              "Pour organiser, on enchaîne avec des connecteurs : « D'abord le train, ensuite l'hôtel, après le programme. »"
+            ],
+            "examples": [
+              {
+                "text": "On va partir à Lyon ce week-end.",
+                "meaning": "Le projet décidé."
+              },
+              {
+                "text": "Je vais réserver le train ce soir.",
+                "meaning": "Une action prévue, une promesse."
+              },
+              {
+                "text": "On va prendre le train de huit heures ?",
+                "meaning": "Le plan transformé en suggestion."
+              },
+              {
+                "text": "Tu vas adorer le vieux Lyon.",
+                "meaning": "Prédire avec aller + infinitif."
+              },
+              {
+                "text": "D'abord la gare, ensuite l'hôtel.",
+                "meaning": "Le programme dans l'ordre."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "on va + infinitif",
+              "meaning": "Proposer un projet.",
+              "note": "On va visiter le musée ?"
+            },
+            {
+              "text": "je vais réserver",
+              "meaning": "Prendre une tâche.",
+              "note": "Je vais réserver l'hôtel."
+            },
+            {
+              "text": "tu vas + infinitif",
+              "meaning": "Parler des plans de l'autre.",
+              "note": "Tu vas venir avec nous ?"
+            },
+            {
+              "text": "d'abord… ensuite",
+              "meaning": "Mettre en ordre.",
+              "note": "D'abord le train, ensuite l'hôtel."
+            },
+            {
+              "text": "ça te dit ?",
+              "meaning": "Proposer léger.",
+              "note": "Lyon samedi, ça te dit ?"
+            }
+          ],
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Propose Lyon pour ce week-end (avec on + aller).",
+                "expected": [
+                  "On va partir à Lyon ce week-end.",
+                  "On va aller à Lyon ce week-end."
+                ],
+                "focus": "on va + infinitif",
+                "watch": "vais, vas, va + infinitif : le futur proche du projet."
+              },
+              {
+                "prompt": "Tu prends en charge l'hôtel : dis-le avec le futur proche.",
+                "expected": [
+                  "Je vais réserver l'hôtel.",
+                  "Je vais reserver l'hotel."
+                ],
+                "focus": "je vais réserver",
+                "watch": "aller + infinitif : le second verbe reste à l'infinitif."
+              },
+              {
+                "prompt": "Suggère le train de huit heures (avec on).",
+                "expected": [
+                  "On va prendre le train de huit heures ?",
+                  "On va prendre le train de 8 heures ?"
+                ],
+                "focus": "on va prendre",
+                "watch": "l'intonation montante transforme le plan en suggestion."
+              },
+              {
+                "prompt": "Mets le programme en ordre : la gare, puis l'hôtel.",
+                "expected": [
+                  "D'abord la gare, ensuite l'hôtel.",
+                  "D'abord la gare ensuite l'hotel."
+                ],
+                "focus": "d'abord… ensuite",
+                "watch": "les connecteurs donnent l'ordre du programme."
+              },
+              {
+                "prompt": "Propose simplement le week-end à Lyon à Karim.",
+                "expected": [
+                  "Lyon samedi, ça te dit ?",
+                  "Ça te dit ?",
+                  "Ca te dit ?"
+                ],
+                "focus": "ça te dit",
+                "watch": "l'invitation légère entre amis : ça te dit ?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u28-projet-e1",
+              "kind": "choice",
+              "prompt": "« Samedi, on ___ visiter le vieux Lyon. » (futur proche)",
+              "options": [
+                "va",
+                "vas",
+                "allez",
+                "vais"
+              ],
+              "answers": [
+                "va"
+              ],
+              "explain": "On va + infinitif : aller à la troisième personne du singulier."
+            },
+            {
+              "id": "fr-foundations-u28-projet-e2",
+              "kind": "gap",
+              "prompt": "Je ___ réserver le train ce soir. (verbe : aller)",
+              "answers": [
+                "vais"
+              ],
+              "explain": "Je vais + infinitif : le futur proche de la décision."
+            },
+            {
+              "id": "fr-foundations-u28-projet-e3",
+              "kind": "order",
+              "prompt": "Organise le programme : le train d'abord, l'hôtel ensuite.",
+              "answers": [
+                "D'abord le train ensuite l'hôtel"
+              ],
+              "explain": "D'abord… ensuite : les connecteurs ordonnent le programme."
+            },
+            {
+              "id": "fr-foundations-u28-projet-e4",
+              "kind": "written",
+              "prompt": "Propose un café à Mai, avec l'invitation légère des amis.",
+              "answers": [
+                "un café ça te dit",
+                "ça te dit un café",
+                "un cafe ca te dit",
+                "cafe ca te dit"
+              ],
+              "explain": "Ça te dit ? : l'invitation légère, suivie de la proposition."
+            }
+          ]
+        },
+        {
+          "id": "fr-foundations-u28-hotel",
+          "title": "Il n'y a pas ma réservation",
+          "goal": "Signaler un problème à l'hôtel : il n'y a pas ma réservation. Demander de l'aide poliment : est-ce que vous pouvez m'aider ?",
+          "situation": "À la réception, Karim découvre que sa réservation a disparu. Il explique le problème calmement, demande de l'aide et accepte une chambre au troisième.",
+          "skills": [
+            "function:solve-problems",
+            "function:make-requests",
+            "vocab:travel",
+            "grammar:imperatives"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "intro": {
+            "explanation": [
+              "Pour signaler un problème, on reste simple et calme : « Il n'y a pas ma réservation. » Un constat, pas une dispute.",
+              "On demande de l'aide avec pouvoir et le vous de politesse : « Est-ce que vous pouvez m'aider ? »",
+              "L'impératif fait avancer : « Vérifiez, s'il vous plaît. » Le verbe tout seul, sans sujet, adouci par s'il vous plaît."
+            ],
+            "examples": [
+              {
+                "text": "Il n'y a pas ma réservation.",
+                "meaning": "Signaler le problème."
+              },
+              {
+                "text": "Est-ce que vous pouvez m'aider ?",
+                "meaning": "Demander de l'aide."
+              },
+              {
+                "text": "J'ai réservé pour deux nuits.",
+                "meaning": "Expliquer la situation."
+              },
+              {
+                "text": "Vérifiez, s'il vous plaît.",
+                "meaning": "Demander une action, poliment."
+              },
+              {
+                "text": "Pas grave, ça me va.",
+                "meaning": "Accepter la solution."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "il n'y a pas + nom",
+              "meaning": "Signaler un manque.",
+              "note": "Il n'y a pas ma chambre."
+            },
+            {
+              "text": "est-ce que vous pouvez… ?",
+              "meaning": "Demander de l'aide poliment.",
+              "note": "Est-ce que vous pouvez vérifier ?"
+            },
+            {
+              "text": "j'ai réservé",
+              "meaning": "Rappeler la réservation.",
+              "note": "J'ai réservé au nom de Karim."
+            },
+            {
+              "text": "impératif + s'il vous plaît",
+              "meaning": "Une demande ferme et polie.",
+              "note": "Regardez, s'il vous plaît."
+            },
+            {
+              "text": "ça me va",
+              "meaning": "Accepter.",
+              "note": "Une chambre au troisième ? Ça me va."
+            }
+          ],
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ta réservation n'existe pas dans l'ordinateur. Signale-le.",
+                "expected": [
+                  "Il n'y a pas ma réservation.",
+                  "Il ny a pas ma reservation.",
+                  "Il y a pas ma réservation."
+                ],
+                "focus": "il n'y a pas",
+                "watch": "ne… pas autour de y a : le constat calme."
+              },
+              {
+                "prompt": "Demande de l'aide à la réception (avec vous).",
+                "expected": [
+                  "Est-ce que vous pouvez m'aider ?",
+                  "Est-ce que vous pouvez maider ?",
+                  "Pouvez-vous m'aider ?"
+                ],
+                "focus": "vous pouvez m'aider",
+                "watch": "vous de politesse + pouvoir + m'aider."
+              },
+              {
+                "prompt": "Explique ta réservation : deux nuits, au nom de Karim.",
+                "expected": [
+                  "J'ai réservé deux nuits au nom de Karim.",
+                  "J'ai reserve deux nuits."
+                ],
+                "focus": "j'ai réservé",
+                "watch": "participe passé : réserver → réservé."
+              },
+              {
+                "prompt": "Demande à la réception de vérifier, avec l'impératif et la politesse.",
+                "expected": [
+                  "Vérifiez, s'il vous plaît.",
+                  "Verifiez sil vous plait.",
+                  "Vérifiez s'il vous plaît."
+                ],
+                "focus": "vérifiez",
+                "watch": "l'impératif avec vous : le verbe prend -ez."
+              },
+              {
+                "prompt": "On te propose une chambre au troisième. Accepte.",
+                "expected": [
+                  "Ça me va.",
+                  "Ca me va.",
+                  "Pas grave, ça me va."
+                ],
+                "focus": "ça me va",
+                "watch": "ça me va : ça me convient, en trois mots."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u28-hotel-e1",
+              "kind": "choice",
+              "prompt": "« ___ pas ma réservation. » (le constat calme)",
+              "options": [
+                "Il n'y a",
+                "Il n'a",
+                "Il y",
+                "Il n'est"
+              ],
+              "answers": [
+                "Il n'y a"
+              ],
+              "explain": "Il n'y a pas : signaler le manque avec y avoir."
+            },
+            {
+              "id": "fr-foundations-u28-hotel-e2",
+              "kind": "gap",
+              "prompt": "Est-ce que vous ___ m'aider ? (verbe : pouvoir)",
+              "answers": [
+                "pouvez"
+              ],
+              "explain": "Vous pouvez : pouvoir avec vous, la demande polie."
+            },
+            {
+              "id": "fr-foundations-u28-hotel-e3",
+              "kind": "order",
+              "prompt": "Demande à la réception de vérifier, avec politesse.",
+              "answers": [
+                "Vérifiez s'il vous plaît"
+              ],
+              "explain": "Vérifiez, s'il vous plaît : l'impératif adouci par la politesse."
+            },
+            {
+              "id": "fr-foundations-u28-hotel-e4",
+              "kind": "written",
+              "prompt": "Explique ta situation : tu as réservé deux nuits, au nom de Karim.",
+              "answers": [
+                "j'ai réservé deux nuits au nom de karim",
+                "j'ai reserve deux nuits",
+                "j'ai réservé pour deux nuits"
+              ],
+              "explain": "J'ai réservé + les détails : la situation devient claire."
+            }
+          ]
+        },
+        {
+          "id": "fr-foundations-u28-imprevus",
+          "title": "Changer les plans",
+          "goal": "Conseiller avec devrais et proposer une alternative avec pourrait : tu devrais prendre celui de dix heures, on pourrait partir dimanche.",
+          "situation": "Le train de samedi est annulé : Léa conseille celui de dix heures, Karim propose de partir dimanche et on vérifie que le nouveau plan convient.",
+          "skills": [
+            "grammar:modal-should",
+            "function:solve-problems",
+            "function:make-suggestions",
+            "vocab:transport"
+          ],
+          "canDo": [
+            "solve-everyday-problems",
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "intro": {
+            "explanation": [
+              "Pour conseiller : « Tu devrais prendre le train de dix heures. » Devrais, c'est le conseil doux, sans obligation.",
+              "Pour proposer une alternative : « On pourrait partir dimanche. » Pourrait ouvre la porte sans imposer.",
+              "On réagit d'abord au problème : « Ah mince ! » Puis on avance : « Pas grave, on change le plan. »"
+            ],
+            "examples": [
+              {
+                "text": "Ah mince, le train est annulé !",
+                "meaning": "La petite déception."
+              },
+              {
+                "text": "Tu devrais prendre celui de dix heures.",
+                "meaning": "Le conseil."
+              },
+              {
+                "text": "On pourrait partir dimanche à la place.",
+                "meaning": "L'alternative."
+              },
+              {
+                "text": "Pas grave, on change le plan.",
+                "meaning": "Rester positif."
+              },
+              {
+                "text": "Ça marche pour toi, dimanche ?",
+                "meaning": "Vérifier l'accord."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "tu devrais + infinitif",
+              "meaning": "Conseiller.",
+              "note": "Tu devrais réserver maintenant."
+            },
+            {
+              "text": "on pourrait + infinitif",
+              "meaning": "Proposer une alternative.",
+              "note": "On pourrait y aller en bus."
+            },
+            {
+              "text": "ah mince !",
+              "meaning": "La petite déception.",
+              "note": "Ah mince, c'est complet !"
+            },
+            {
+              "text": "pas grave",
+              "meaning": "Minimiser le problème.",
+              "note": "Pas grave, demain c'est bien aussi."
+            },
+            {
+              "text": "ça marche ?",
+              "meaning": "Vérifier l'accord.",
+              "note": "Dix heures, ça marche ?"
+            }
+          ],
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Conseille à Karim le train de dix heures.",
+                "expected": [
+                  "Tu devrais prendre le train de dix heures.",
+                  "Tu devrais prendre le train de 10 heures.",
+                  "Tu devrais prendre le train de dix heures"
+                ],
+                "focus": "tu devrais",
+                "watch": "devrais + infinitif : le conseil sans obligation."
+              },
+              {
+                "prompt": "Propose de partir dimanche (avec on).",
+                "expected": [
+                  "On pourrait partir dimanche.",
+                  "On pourait partir dimanche."
+                ],
+                "focus": "on pourrait",
+                "watch": "pouvoir au conditionnel : la proposition souple."
+              },
+              {
+                "prompt": "Le train est annulé. Réagis avec la petite déception.",
+                "expected": [
+                  "Ah mince !",
+                  "Ah mince, le train est annulé !"
+                ],
+                "focus": "ah mince",
+                "watch": "l'interjection petite, très française."
+              },
+              {
+                "prompt": "Rassure Karim : le problème est petit.",
+                "expected": [
+                  "Pas grave, on change le plan.",
+                  "Pas grave.",
+                  "Pas grave, demain c'est bien."
+                ],
+                "focus": "pas grave",
+                "watch": "pas grave : le problème devient tout petit."
+              },
+              {
+                "prompt": "Vérifie que dix heures convient à Karim.",
+                "expected": [
+                  "Dix heures, ça marche ?",
+                  "10 heures, ça marche ?",
+                  "Ça marche, dix heures ?"
+                ],
+                "focus": "ça marche",
+                "watch": "ça marche ? : l'accord se vérifie en deux mots."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u28-imprevus-e1",
+              "kind": "choice",
+              "prompt": "« Tu ___ prendre le train de dix heures. » (le conseil doux)",
+              "options": [
+                "devrais",
+                "dois",
+                "veux",
+                "vas"
+              ],
+              "answers": [
+                "devrais"
+              ],
+              "explain": "Tu devrais + infinitif : le conseil, pas l'obligation."
+            },
+            {
+              "id": "fr-foundations-u28-imprevus-e2",
+              "kind": "gap",
+              "prompt": "On ___ visiter le musée demain. (proposer avec pouvoir au conditionnel)",
+              "answers": [
+                "pourrait"
+              ],
+              "explain": "On pourrait : l'alternative proposée en douceur."
+            },
+            {
+              "id": "fr-foundations-u28-imprevus-e3",
+              "kind": "order",
+              "prompt": "Conseille à Léa de réserver maintenant.",
+              "answers": [
+                "Tu devrais réserver maintenant"
+              ],
+              "explain": "Tu devrais + infinitif : le conseil doux."
+            },
+            {
+              "id": "fr-foundations-u28-imprevus-e4",
+              "kind": "written",
+              "prompt": "Le musée est complet : réagis avec la petite déception française.",
+              "answers": [
+                "ah mince",
+                "ah mince !",
+                "mince",
+                "oh mince"
+              ],
+              "explain": "Ah mince ! : la déception légère, sans drame."
+            }
+          ]
+        }
+      ]
     }
   ]
 }

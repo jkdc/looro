@@ -3389,6 +3389,1117 @@
           "explain": "Entonces, votamos el viernes y cerramos la decisión."
         }
       ]
+    },
+    {
+      "id": "es-listen-picnic-lluvia",
+      "languageID": "es",
+      "title": "El picnic de la lluvia",
+      "level": "A2",
+      "topic": "planes",
+      "text": "El sábado, Pablo y Lucía organizaron un picnic en el parque, pero por la mañana llovió muchísimo. Pablo llamó a Lucía: «Qué pena, hoy no podemos hacer el picnic». Lucía pensó una solución: «¿Por qué no lo dejamos para mañana? Por la tarde estoy libre, así que podemos ir sobre las dos». Pablo va a preparar las empanadas y Lucía va a llevar el batido y la manta. Van a quedar a las dos en la entrada del parque. Y si mañana también llueve, van a comer el picnic en casa de Pablo, que tiene un salón muy grande.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:past-simple-regular",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-picnic-lluvia-q1",
+          "kind": "choice",
+          "prompt": "¿Qué organizaron Pablo y Lucía el sábado?",
+          "answers": [
+            "Un picnic"
+          ],
+          "explain": "Organizaron un picnic en el parque.",
+          "options": [
+            "Un picnic",
+            "Una fiesta",
+            "Una excursión",
+            "Una cena"
+          ]
+        },
+        {
+          "id": "es-listen-picnic-lluvia-q2",
+          "kind": "written",
+          "prompt": "¿Por qué no pudieron hacer el picnic el sábado?",
+          "answers": [
+            "porque llovió muchísimo",
+            "llovió muchísimo",
+            "por la lluvia"
+          ],
+          "explain": "Por la mañana llovió muchísimo."
+        },
+        {
+          "id": "es-listen-picnic-lluvia-q3",
+          "kind": "choice",
+          "prompt": "¿Para cuándo dejan el picnic?",
+          "answers": [
+            "Para mañana"
+          ],
+          "explain": "«¿Por qué no lo dejamos para mañana?».",
+          "options": [
+            "Para mañana",
+            "Para la noche",
+            "Para la semana que viene",
+            "No lo dejan"
+          ]
+        },
+        {
+          "id": "es-listen-picnic-lluvia-q4",
+          "kind": "choice",
+          "prompt": "¿Qué va a llevar Lucía?",
+          "answers": [
+            "El batido y la manta"
+          ],
+          "explain": "Lucía va a llevar el batido y la manta.",
+          "options": [
+            "El batido y la manta",
+            "Las empanadas",
+            "La música",
+            "Los vasos"
+          ]
+        },
+        {
+          "id": "es-listen-picnic-lluvia-q5",
+          "kind": "written",
+          "prompt": "¿A qué hora van a quedar?",
+          "answers": [
+            "a las dos",
+            "las dos",
+            "a las 2"
+          ],
+          "explain": "Van a quedar a las dos en la entrada del parque."
+        },
+        {
+          "id": "es-listen-picnic-lluvia-q6",
+          "kind": "choice",
+          "prompt": "¿Qué van a hacer si mañana también llueve?",
+          "answers": [
+            "Comer en casa de Pablo"
+          ],
+          "explain": "Van a comer el picnic en casa de Pablo.",
+          "options": [
+            "Comer en casa de Pablo",
+            "Ir al cine",
+            "Quedarse en el parque",
+            "Cancelar todo"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u18"
+    },
+    {
+      "id": "es-listen-reserva-hostal",
+      "languageID": "es",
+      "title": "La reserva del hostal",
+      "level": "A2",
+      "topic": "viajes",
+      "text": "Elena va a viajar a Lisboa el mes que viene, así que llamó a un hostal para confirmar su reserva. «Buenas tardes, tengo una reserva para dos noches, a nombre de Elena Ríos». El recepcionista la buscó en el ordenador: «Sí, aquí está: habitación doble con baño, desde el jueves hasta el sábado». Elena preguntó por el desayuno: está incluido desde las siete de la mañana. Pero hay un problema: su vuelo llega muy tarde, casi a la medianoche. El recepcionista la tranquilizó: «No se preocupe, la guardamos la habitación toda la noche. ¿Nos confirma su número de móvil?».",
+      "skills": [
+        "listening:detail",
+        "listening:gist",
+        "vocab:travel",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-reserva-hostal-q1",
+          "kind": "choice",
+          "prompt": "¿A dónde va a viajar Elena?",
+          "answers": [
+            "A Lisboa"
+          ],
+          "explain": "Elena va a viajar a Lisboa el mes que viene.",
+          "options": [
+            "A Lisboa",
+            "A Madrid",
+            "A Sevilla",
+            "A Oporto"
+          ]
+        },
+        {
+          "id": "es-listen-reserva-hostal-q2",
+          "kind": "written",
+          "prompt": "¿Para cuántas noches es la reserva?",
+          "answers": [
+            "dos noches",
+            "2 noches",
+            "dos"
+          ],
+          "explain": "Tiene una reserva para dos noches."
+        },
+        {
+          "id": "es-listen-reserva-hostal-q3",
+          "kind": "choice",
+          "prompt": "¿Qué habitación reservó Elena?",
+          "answers": [
+            "Doble con baño"
+          ],
+          "explain": "Aquí está: habitación doble con baño.",
+          "options": [
+            "Doble con baño",
+            "Individual",
+            "Doble sin baño",
+            "Familiar"
+          ]
+        },
+        {
+          "id": "es-listen-reserva-hostal-q4",
+          "kind": "written",
+          "prompt": "¿Desde qué hora está incluido el desayuno?",
+          "answers": [
+            "desde las siete",
+            "las siete",
+            "desde las 7"
+          ],
+          "explain": "El desayuno está incluido desde las siete."
+        },
+        {
+          "id": "es-listen-reserva-hostal-q5",
+          "kind": "choice",
+          "prompt": "¿Cuál es el problema de Elena?",
+          "answers": [
+            "Va a llegar muy tarde"
+          ],
+          "explain": "Su vuelo llega muy tarde, casi a la medianoche.",
+          "options": [
+            "Va a llegar muy tarde",
+            "No tiene reserva",
+            "El hostal cierra el jueves",
+            "El desayuno no está incluido"
+          ]
+        },
+        {
+          "id": "es-listen-reserva-hostal-q6",
+          "kind": "choice",
+          "prompt": "¿Qué le pide el recepcionista al final?",
+          "answers": [
+            "Su número de móvil"
+          ],
+          "explain": "«¿Nos confirma su número de móvil?».",
+          "options": [
+            "Su número de móvil",
+            "Su pasaporte",
+            "Una tarjeta de crédito",
+            "Un email"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u26"
+    },
+    {
+      "id": "es-listen-tren-retrasado",
+      "languageID": "es",
+      "title": "El tren con retraso",
+      "level": "A2",
+      "topic": "viajes",
+      "text": "Hoy Andrés va a viajar en tren a Valencia para ver a su hermana. Llegó a la estación con tiempo, pero en el panel apareció una mala noticia: el tren de las ocho va con cuarenta minutos de retraso. Andrés fue a la ventanilla: «Buenos días, mi tren va con retraso y a las once tengo una cita importante. ¿Hay otro tren antes?». La empleada le respondió: «El de las nueve llega antes, pero está lleno; puedo darle un asiento en el de las nueve y media». Andrés aceptó y compró un café para esperar: así llega a las doce, justo para comer con su hermana.",
+      "skills": [
+        "listening:detail",
+        "function:solve-problems",
+        "vocab:transport",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-tren-retrasado-q1",
+          "kind": "choice",
+          "prompt": "¿A dónde va a viajar Andrés?",
+          "answers": [
+            "A Valencia"
+          ],
+          "explain": "Andrés va a viajar en tren a Valencia para ver a su hermana.",
+          "options": [
+            "A Valencia",
+            "A Sevilla",
+            "A Bilbao",
+            "A Málaga"
+          ]
+        },
+        {
+          "id": "es-listen-tren-retrasado-q2",
+          "kind": "written",
+          "prompt": "¿Cuánto retraso tiene su tren?",
+          "answers": [
+            "cuarenta minutos",
+            "40 minutos",
+            "cuarenta"
+          ],
+          "explain": "El tren de las ocho va con cuarenta minutos de retraso."
+        },
+        {
+          "id": "es-listen-tren-retrasado-q3",
+          "kind": "choice",
+          "prompt": "¿Por qué necesita llegar antes de las once?",
+          "answers": [
+            "Tiene una cita importante"
+          ],
+          "explain": "«A las once tengo una cita importante».",
+          "options": [
+            "Tiene una cita importante",
+            "Su hermana está enferma",
+            "El hotel cierra a las once",
+            "El tren desaparece"
+          ]
+        },
+        {
+          "id": "es-listen-tren-retrasado-q4",
+          "kind": "choice",
+          "prompt": "¿Qué le ofrece la empleada?",
+          "answers": [
+            "Un asiento en el tren de las nueve y media"
+          ],
+          "explain": "Puedo darle un asiento en el de las nueve y media.",
+          "options": [
+            "Un asiento en el tren de las nueve y media",
+            "Un billete gratis",
+            "Un taxi a la estación",
+            "La devolución del dinero"
+          ]
+        },
+        {
+          "id": "es-listen-tren-retrasado-q5",
+          "kind": "written",
+          "prompt": "¿Para qué compra Andrés un café?",
+          "answers": [
+            "para esperar",
+            "esperar"
+          ],
+          "explain": "Andrés compró un café para esperar."
+        },
+        {
+          "id": "es-listen-tren-retrasado-q6",
+          "kind": "choice",
+          "prompt": "¿A qué hora va a llegar a Valencia?",
+          "answers": [
+            "A las doce"
+          ],
+          "explain": "Así llega a las doce, justo para comer con su hermana.",
+          "options": [
+            "A las doce",
+            "A las once",
+            "A las nueve y media",
+            "A las dos"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u26"
+    },
+    {
+      "id": "es-listen-averia-lavadora",
+      "languageID": "es",
+      "title": "La lavadora rota",
+      "level": "A2",
+      "topic": "problemas",
+      "text": "Anoche la lavadora de Carmen hizo un ruido muy raro y después se paró. Esta mañana llamó al servicio técnico. «Buenos días, mi lavadora no funciona. Tiene tres años, ¿entra en garantía?». El dependiente revisó los datos: «Sí, tiene garantía de cinco años, así que la revisión es gratis. Tenemos cita para mañana por la tarde, de cuatro a seis. ¿Le va bien?». Carmen va a salir del trabajo temprano para estar en casa. Antes de colgar, pidió un consejo: «¿La uso hoy?». «Mejor que no», respondió, «y deje las toallas viejas fuera de la máquina: a veces bloquean el filtro».",
+      "skills": [
+        "listening:detail",
+        "function:solve-problems",
+        "grammar:past-simple-regular",
+        "vocab:home"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-averia-lavadora-q1",
+          "kind": "choice",
+          "prompt": "¿Qué se averió en casa de Carmen?",
+          "answers": [
+            "La lavadora"
+          ],
+          "explain": "Anoche la lavadora de Carmen hizo un ruido raro y se paró.",
+          "options": [
+            "La lavadora",
+            "La nevera",
+            "El horno",
+            "La tele"
+          ]
+        },
+        {
+          "id": "es-listen-averia-lavadora-q2",
+          "kind": "written",
+          "prompt": "¿Cuántos años tiene la lavadora?",
+          "answers": [
+            "tres",
+            "3",
+            "tres años"
+          ],
+          "explain": "«Tiene tres años, ¿entra en garantía?»."
+        },
+        {
+          "id": "es-listen-averia-lavadora-q3",
+          "kind": "choice",
+          "prompt": "¿Cuánto cuesta la revisión?",
+          "answers": [
+            "Es gratis, por la garantía"
+          ],
+          "explain": "Tiene garantía de cinco años, así que la revisión es gratis.",
+          "options": [
+            "Es gratis, por la garantía",
+            "Cuesta cincuenta euros",
+            "Cuesta el doble",
+            "Carmen debe pagar la máquina"
+          ]
+        },
+        {
+          "id": "es-listen-averia-lavadora-q4",
+          "kind": "written",
+          "prompt": "¿Cuándo es la cita del técnico?",
+          "answers": [
+            "mañana por la tarde",
+            "manana por la tarde",
+            "de cuatro a seis"
+          ],
+          "explain": "Tenemos cita para mañana por la tarde, de cuatro a seis."
+        },
+        {
+          "id": "es-listen-averia-lavadora-q5",
+          "kind": "choice",
+          "prompt": "¿Qué consejo le dan a Carmen?",
+          "answers": [
+            "No usar hoy la lavadora"
+          ],
+          "explain": "«Mejor que no», respondió, «y deje las toallas viejas fuera».",
+          "options": [
+            "No usar hoy la lavadora",
+            "Lavar con agua caliente",
+            "Comprar otra máquina",
+            "Quitar el filtro"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u21"
+    },
+    {
+      "id": "es-listen-mudanza-finde",
+      "languageID": "es",
+      "title": "La mudanza del sábado",
+      "level": "A2",
+      "topic": "planes",
+      "text": "El hermano de Nora encontró un piso en el centro y se va a mudar el sábado. Nora le llamó para ayudar: «¿Qué necesitas?». «Pues una furgoneta: mis muebles no caben en el coche». Nora va a reservar una furgoneta pequeña para la mañana, y su compañero Diego va a llevar las cajas grandes. El problema es la hora: la furgoneta hay que devolverla antes de las seis, así que van a empezar a las ocho de la mañana. Después, todos van a comer pizza en el piso nuevo para celebrarlo. Nora ya sabe qué regalo va a hacerle a su hermano: una planta para el salón.",
+      "skills": [
+        "listening:gist",
+        "grammar:going-to",
+        "vocab:home",
+        "function:make-future-plans"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-mudanza-finde-q1",
+          "kind": "choice",
+          "prompt": "¿Qué va a hacer el hermano de Nora el sábado?",
+          "answers": [
+            "Mudarse"
+          ],
+          "explain": "Encontró un piso en el centro y se va a mudar el sábado.",
+          "options": [
+            "Mudarse",
+            "Comprar un coche",
+            "Viajar al centro",
+            "Cambiar de trabajo"
+          ]
+        },
+        {
+          "id": "es-listen-mudanza-finde-q2",
+          "kind": "written",
+          "prompt": "¿Qué necesita para llevar los muebles?",
+          "answers": [
+            "una furgoneta",
+            "furgoneta"
+          ],
+          "explain": "«Pues una furgoneta: mis muebles no caben en el coche»."
+        },
+        {
+          "id": "es-listen-mudanza-finde-q3",
+          "kind": "choice",
+          "prompt": "¿Qué va a reservar Nora?",
+          "answers": [
+            "Una furgoneta pequeña"
+          ],
+          "explain": "Nora va a reservar una furgoneta pequeña para la mañana.",
+          "options": [
+            "Una furgoneta pequeña",
+            "Un camión grande",
+            "Un taxi",
+            "Una moto"
+          ]
+        },
+        {
+          "id": "es-listen-mudanza-finde-q4",
+          "kind": "choice",
+          "prompt": "¿Por qué van a empezar a las ocho?",
+          "answers": [
+            "Hay que devolver la furgoneta antes de las seis"
+          ],
+          "explain": "La furgoneta hay que devolverla antes de las seis.",
+          "options": [
+            "Hay que devolver la furgoneta antes de las seis",
+            "Nora trabaja por la tarde",
+            "El piso está muy lejos",
+            "Hace calor al mediodía"
+          ]
+        },
+        {
+          "id": "es-listen-mudanza-finde-q5",
+          "kind": "written",
+          "prompt": "¿Qué van a comer después de la mudanza?",
+          "answers": [
+            "pizza",
+            "una pizza"
+          ],
+          "explain": "Van a comer pizza en el piso nuevo para celebrarlo."
+        },
+        {
+          "id": "es-listen-mudanza-finde-q6",
+          "kind": "choice",
+          "prompt": "¿Qué regalo va a hacerle Nora a su hermano?",
+          "answers": [
+            "Una planta para el salón"
+          ],
+          "explain": "Nora va a hacerle una planta para el salón.",
+          "options": [
+            "Una planta para el salón",
+            "Un cuadro",
+            "Unas sillas",
+            "Una lámpara"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u7"
+    },
+    {
+      "id": "es-listen-cambio-zapatillas",
+      "languageID": "es",
+      "title": "El cambio de zapatillas",
+      "level": "A2",
+      "topic": "compras",
+      "text": "El martes, Rubén compró unas zapatillas por internet, pero al probarlas se equivocó de talla: le quedaban grandes. Fue a la tienda del centro con la caja y el recibo. «Buenas tardes, quiero cambiar unas zapatillas, es que son muy grandes». La dependienta las miró: «¿Quiere la misma en una talla menor?». «Sí, la cuarenta y dos, por favor». No había en la tienda, así que la dependienta las va a pedir al almacén: «Llegan el jueves; le mandamos un mensaje cuando estén». Rubén prefirió esperar: el jueves pasa por la tienda después del trabajo.",
+      "skills": [
+        "listening:detail",
+        "function:solve-problems",
+        "grammar:past-simple-regular",
+        "vocab:shopping"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-cambio-zapatillas-q1",
+          "kind": "choice",
+          "prompt": "¿Qué compró Rubén el martes?",
+          "answers": [
+            "Unas zapatillas"
+          ],
+          "explain": "El martes, Rubén compró unas zapatillas por internet.",
+          "options": [
+            "Unas zapatillas",
+            "Una chaqueta",
+            "Unos vaqueros",
+            "Una mochila"
+          ]
+        },
+        {
+          "id": "es-listen-cambio-zapatillas-q2",
+          "kind": "written",
+          "prompt": "¿Cuál fue el problema con las zapatillas?",
+          "answers": [
+            "le quedaban grandes",
+            "son muy grandes",
+            "quedaban grandes"
+          ],
+          "explain": "Al probarlas se equivocó de talla: le quedaban grandes."
+        },
+        {
+          "id": "es-listen-cambio-zapatillas-q3",
+          "kind": "choice",
+          "prompt": "¿Qué talla necesita Rubén?",
+          "answers": [
+            "La cuarenta y dos"
+          ],
+          "explain": "«Sí, la cuarenta y dos, por favor».",
+          "options": [
+            "La cuarenta y dos",
+            "La cuarenta",
+            "La cuarenta y cuatro",
+            "La treinta y ocho"
+          ]
+        },
+        {
+          "id": "es-listen-cambio-zapatillas-q4",
+          "kind": "choice",
+          "prompt": "¿Qué va a hacer la tienda?",
+          "answers": [
+            "Pedirlas al almacén"
+          ],
+          "explain": "La dependienta las va a pedir al almacén.",
+          "options": [
+            "Pedirlas al almacén",
+            "Devolverle el dinero",
+            "Arreglárselas",
+            "Regalarle calcetines"
+          ]
+        },
+        {
+          "id": "es-listen-cambio-zapatillas-q5",
+          "kind": "written",
+          "prompt": "¿Cuándo van a llegar las zapatillas a la tienda?",
+          "answers": [
+            "el jueves",
+            "jueves"
+          ],
+          "explain": "«Llegan el jueves; le mandamos un mensaje cuando estén»."
+        },
+        {
+          "id": "es-listen-cambio-zapatillas-q6",
+          "kind": "choice",
+          "prompt": "¿Cuándo pasa Rubén por la tienda?",
+          "answers": [
+            "El jueves, después del trabajo"
+          ],
+          "explain": "El jueves pasa por la tienda después del trabajo.",
+          "options": [
+            "El jueves, después del trabajo",
+            "El martes por la mañana",
+            "El fin de semana",
+            "No va a volver"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u25"
+    },
+    {
+      "id": "es-listen-carnet-tercera",
+      "languageID": "es",
+      "title": "El carnet, a la tercera",
+      "level": "B1",
+      "topic": "anécdotas",
+      "text": "Te cuento una anécdota: el carnet de conducir me ha costado más de lo que esperaba. La primera vez lo suspendí porque me puse muy nervioso en el examen práctico: se me olvidó mirar los espejos. La segunda vez, el coche del examen se averió a mitad de la prueba, así que tuvimos que repetirla entera. Cuando por fin me presenté a la tercera, ya no esperaba nada: llevaba meses practicando y había dado cientos de vueltas al polígono. Y aquella vez, que menos lo buscaba, aprobé. Mi instructor se rió: «Ya ves, a la tercera va la vencida». Desde entonces, conducir es mi momento tranquilo del día.",
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "function:tell-a-story",
+        "grammar:present-perfect"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-carnet-tercera-q1",
+          "kind": "written",
+          "prompt": "¿Qué le ha costado más de lo que esperaba?",
+          "answers": [
+            "el carnet de conducir",
+            "el carnet",
+            "el carné de conducir"
+          ],
+          "explain": "El carnet de conducir me ha costado más de lo que esperaba."
+        },
+        {
+          "id": "es-listen-carnet-tercera-q2",
+          "kind": "choice",
+          "prompt": "¿Por qué suspendió la primera vez?",
+          "answers": [
+            "Se puso nervioso y olvidó mirar los espejos"
+          ],
+          "explain": "Me puse muy nervioso: se me olvidó mirar los espejos.",
+          "options": [
+            "Se puso nervioso y olvidó mirar los espejos",
+            "Hacía mucho sol",
+            "El coche no arrancaba",
+            "Se equivocó de ruta"
+          ]
+        },
+        {
+          "id": "es-listen-carnet-tercera-q3",
+          "kind": "choice",
+          "prompt": "¿Qué pasó en el segundo examen?",
+          "answers": [
+            "El coche se averió a mitad de la prueba"
+          ],
+          "explain": "El coche del examen se averió a mitad de la prueba.",
+          "options": [
+            "El coche se averió a mitad de la prueba",
+            "Llegó tarde al examen",
+            "Confundió una señal",
+            "Suspendió por los espejos"
+          ]
+        },
+        {
+          "id": "es-listen-carnet-tercera-q4",
+          "kind": "written",
+          "prompt": "¿Cuántas vueltas había dado al polígono?",
+          "answers": [
+            "cientos",
+            "cientos de vueltas",
+            "muchas vueltas"
+          ],
+          "explain": "Había dado cientos de vueltas al polígono."
+        },
+        {
+          "id": "es-listen-carnet-tercera-q5",
+          "kind": "choice",
+          "prompt": "¿Qué le dice el instructor al final?",
+          "answers": [
+            "«A la tercera va la vencida»"
+          ],
+          "explain": "«Ya ves, a la tercera va la vencida».",
+          "options": [
+            "«A la tercera va la vencida»",
+            "«Lo siento, suspende»",
+            "«Todavía falta poco»",
+            "«Cambia de autoescuela»"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u19"
+    },
+    {
+      "id": "es-listen-debate-redes",
+      "languageID": "es",
+      "title": "Debate: redes y bulos",
+      "level": "B2",
+      "topic": "redes",
+      "text": "En «La Tarde», debate sobre redes sociales. La periodista Marta Roca abre: «Las noticias que circularon ayer por las redes fueron compartidas miles de veces sin verificar. Si fuéramos más pacientes, el bulo no se extendería tanto». El tecnólogo Iván Puig matiza: «No demonizaría las plataformas: el problema es el modelo, que premia la velocidad frente al rigor. Si los ingresos no dependieran de los clics, los medios publicarían mejor». Marta añade que la educación mediática debería enseñarse en el instituto: «Un adolescente que sabe contrastar fuentes es inmune a la mitad de los engaños». Iván cierra con una propuesta concreta: etiquetar con claridad los contenidos sin verificar. Los oyentes pueden votar a favor y en contra en la web del programa.",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:second-conditional",
+        "grammar:relative-clauses"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-debate-redes-q1",
+          "kind": "choice",
+          "prompt": "¿Cuál es el problema que plantea Marta?",
+          "answers": [
+            "Noticias compartidas sin verificar"
+          ],
+          "explain": "Las noticias que circularon ayer fueron compartidas miles de veces sin verificar.",
+          "options": [
+            "Noticias compartidas sin verificar",
+            "El precio de los móviles",
+            "Los anuncios en redes",
+            "La lentitud de la web"
+          ]
+        },
+        {
+          "id": "es-listen-debate-redes-q2",
+          "kind": "written",
+          "prompt": "¿Qué premia el modelo actual, según Iván?",
+          "answers": [
+            "la velocidad",
+            "velocidad",
+            "la velocidad frente al rigor"
+          ],
+          "explain": "El problema es el modelo, que premia la velocidad frente al rigor."
+        },
+        {
+          "id": "es-listen-debate-redes-q3",
+          "kind": "choice",
+          "prompt": "Según Iván, ¿de qué no deberían depender los ingresos?",
+          "answers": [
+            "De los clics"
+          ],
+          "explain": "Si los ingresos no dependieran de los clics, los medios publicarían mejor.",
+          "options": [
+            "De los clics",
+            "De los suscriptores",
+            "Del Estado",
+            "De la radio"
+          ]
+        },
+        {
+          "id": "es-listen-debate-redes-q4",
+          "kind": "written",
+          "prompt": "¿Dónde debería enseñarse la educación mediática, según Marta?",
+          "answers": [
+            "en el instituto",
+            "el instituto",
+            "en los institutos"
+          ],
+          "explain": "La educación mediática debería enseñarse en el instituto."
+        },
+        {
+          "id": "es-listen-debate-redes-q5",
+          "kind": "choice",
+          "prompt": "¿Qué propone Iván al final?",
+          "answers": [
+            "Etiquetar los contenidos sin verificar"
+          ],
+          "explain": "Iván cierra con una propuesta: etiquetar los contenidos sin verificar.",
+          "options": [
+            "Etiquetar los contenidos sin verificar",
+            "Cerrar las redes",
+            "Multar a los usuarios",
+            "Prohibir los bulos"
+          ]
+        },
+        {
+          "id": "es-listen-debate-redes-q6",
+          "kind": "choice",
+          "prompt": "¿Quiénes pueden participar con su voto?",
+          "answers": [
+            "Los oyentes, en la web"
+          ],
+          "explain": "Los oyentes pueden votar en la web del programa.",
+          "options": [
+            "Los oyentes, en la web",
+            "Solo los invitados",
+            "Los periodistas del programa",
+            "Nadie"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u9"
+    },
+    {
+      "id": "es-listen-sueldo-negociado",
+      "languageID": "es",
+      "title": "El aumento negociado",
+      "level": "B2",
+      "topic": "negociación",
+      "text": "Carla preparó la conversación de su aumento como quien prepara un examen. Primero se documentó: averiguó cuánto se paga en puestos parecidos al suyo y anotó los proyectos que ella había liderado aquel año. En la reunión no pidió un favor; presentó datos: «Si el presupuesto lo permitiera, propondría una revisión salarial acorde al mercado». Su jefa no dijo que no, sino que pidió tiempo: la decisión se tomaría después del cierre trimestral. Carla lo aceptó, pero dejó una condición: volver a hablarlo en marzo, con cifras sobre la mesa. La subida llegó: no fue todo lo que soñaba, pero la conversación le enseñó lo esencial: lo que no se negocia, no se consigue.",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:passive-intro",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-sueldo-negociado-q1",
+          "kind": "choice",
+          "prompt": "¿Qué averiguó Carla antes de la reunión?",
+          "answers": [
+            "Cuánto se paga en puestos parecidos"
+          ],
+          "explain": "Averiguó cuánto se paga en puestos parecidos al suyo.",
+          "options": [
+            "Cuánto se paga en puestos parecidos",
+            "El sueldo de su jefa",
+            "Las vacaciones de sus compañeros",
+            "El precio del parking"
+          ]
+        },
+        {
+          "id": "es-listen-sueldo-negociado-q2",
+          "kind": "written",
+          "prompt": "¿Qué anotó Carla?",
+          "answers": [
+            "los proyectos que había liderado",
+            "los proyectos",
+            "los proyectos liderados"
+          ],
+          "explain": "Anotó los proyectos que ella había liderado aquel año."
+        },
+        {
+          "id": "es-listen-sueldo-negociado-q3",
+          "kind": "choice",
+          "prompt": "¿Cuándo se tomará la decisión?",
+          "answers": [
+            "Tras el cierre trimestral"
+          ],
+          "explain": "La decisión se tomaría después del cierre trimestral.",
+          "options": [
+            "Tras el cierre trimestral",
+            "Esa misma tarde",
+            "En enero",
+            "No se tomará nunca"
+          ]
+        },
+        {
+          "id": "es-listen-sueldo-negociado-q4",
+          "kind": "choice",
+          "prompt": "¿Qué condición puso Carla?",
+          "answers": [
+            "Volver a hablarlo en marzo"
+          ],
+          "explain": "Dejó una condición: volver a hablarlo en marzo, con cifras sobre la mesa.",
+          "options": [
+            "Volver a hablarlo en marzo",
+            "Cambiar de departamento",
+            "Trabajar desde casa",
+            "Firmar ya el contrato"
+          ]
+        },
+        {
+          "id": "es-listen-sueldo-negociado-q5",
+          "kind": "choice",
+          "prompt": "¿Qué le enseñó la conversación?",
+          "answers": [
+            "Lo que no se negocia, no se consigue"
+          ],
+          "explain": "Le enseñó lo esencial: lo que no se negocia, no se consigue.",
+          "options": [
+            "Lo que no se negocia, no se consigue",
+            "Los jefes nunca dicen sí",
+            "Conviene pedir poco",
+            "Los datos sobran"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-listen-tertulia-ia",
+      "languageID": "es",
+      "title": "Tertulia: IA y empleo",
+      "level": "B2",
+      "topic": "actualidad",
+      "text": "Tertulia de medianoche: inteligencia artificial y empleo. La economista Nerea Ortiz arranca: «Muchas tareas rutinarias serán sustituidas por sistemas automáticos; eso ya está ocurriendo». El escritor Leo Manso discrepa del pesimismo: «Cada revolución técnica destruyó oficios, pero creó otros que nadie imaginaba. Yo no prohibiría la herramienta: la regularía». Nerea responde con cautela: «Regular, sí, pero rápido, porque el ritmo del cambio no espera a las leyes. Y habría que formar a la gente cuyo trabajo cambie, no solo avisarla». El moderador cierra: los expertos coinciden en algo — el reto no es la máquina, sino repartir sus beneficios —, aunque discrepan en casi todo lo demás.",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:passive-intro",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-tertulia-ia-q1",
+          "kind": "choice",
+          "prompt": "¿Cuál es el tema de la tertulia?",
+          "answers": [
+            "La IA y el empleo"
+          ],
+          "explain": "La tertulia trata sobre inteligencia artificial y empleo.",
+          "options": [
+            "La IA y el empleo",
+            "Los coches eléctricos",
+            "La reforma laboral",
+            "Las pensiones"
+          ]
+        },
+        {
+          "id": "es-listen-tertulia-ia-q2",
+          "kind": "written",
+          "prompt": "¿Qué tareas serán sustituidas, según Nerea?",
+          "answers": [
+            "las rutinarias",
+            "tareas rutinarias",
+            "las tareas rutinarias"
+          ],
+          "explain": "«Muchas tareas rutinarias serán sustituidas por sistemas automáticos»."
+        },
+        {
+          "id": "es-listen-tertulia-ia-q3",
+          "kind": "choice",
+          "prompt": "¿Qué haría Leo con la herramienta?",
+          "answers": [
+            "La regularía"
+          ],
+          "explain": "«Yo no prohibiría la herramienta: la regularía».",
+          "options": [
+            "La regularía",
+            "La prohibiría",
+            "La vendería",
+            "La ignoraría"
+          ]
+        },
+        {
+          "id": "es-listen-tertulia-ia-q4",
+          "kind": "choice",
+          "prompt": "¿A quién habría que formar, según Nerea?",
+          "answers": [
+            "A la gente cuyo trabajo cambie"
+          ],
+          "explain": "Habría que formar a la gente cuyo trabajo cambie.",
+          "options": [
+            "A la gente cuyo trabajo cambie",
+            "Solo a los jóvenes",
+            "A los ingenieros",
+            "A los profesores"
+          ]
+        },
+        {
+          "id": "es-listen-tertulia-ia-q5",
+          "kind": "choice",
+          "prompt": "¿En qué coinciden los expertos?",
+          "answers": [
+            "El reto es repartir los beneficios"
+          ],
+          "explain": "Coinciden: el reto no es la máquina, sino repartir sus beneficios.",
+          "options": [
+            "El reto es repartir los beneficios",
+            "Hay que prohibir la IA",
+            "El cambio no existe",
+            "Las leyes sobran"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u9"
+    },
+    {
+      "id": "es-listen-mediacion-ruido",
+      "languageID": "es",
+      "title": "Mediación: ruido en el edificio",
+      "level": "B2",
+      "topic": "negociación",
+      "text": "En el centro cívico, una mediación vecinal. Don Ernesto, del tercer piso, se queja: «Desde que abrió el local, los fines de semana no duermo; el ruido atraviesa la pared como si no existiera». La dueña del local, Bea, responde: «Entiendo su cansancio, pero el bar es mi único ingreso; si cerrara a las doce, echaría a perder el negocio». La mediadora propone un acuerdo por partes: insonorizar la sala que da al patio, mover los conciertos al viernes y crear un canal directo de avisos. «Si el ruido bajara esta misma semana, retiraría la denuncia», concede don Ernesto. Bea firma: se compromete a insonorizar para el mes que viene y a invitar a los vecinos a una cena para estrenar el silencio.",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-mediacion-ruido-q1",
+          "kind": "written",
+          "prompt": "¿De qué se queja don Ernesto?",
+          "answers": [
+            "del ruido",
+            "el ruido",
+            "del ruido del local"
+          ],
+          "explain": "Desde que abrió el local, el ruido no le deja dormir."
+        },
+        {
+          "id": "es-listen-mediacion-ruido-q2",
+          "kind": "choice",
+          "prompt": "¿Qué significa el bar para Bea?",
+          "answers": [
+            "Su único ingreso"
+          ],
+          "explain": "«El bar es mi único ingreso».",
+          "options": [
+            "Su único ingreso",
+            "Un pasatiempo",
+            "Un negocio familiar",
+            "Una pérdida de tiempo"
+          ]
+        },
+        {
+          "id": "es-listen-mediacion-ruido-q3",
+          "kind": "choice",
+          "prompt": "¿Qué propone la mediadora?",
+          "answers": [
+            "Insonorizar, mover conciertos y crear un canal de avisos"
+          ],
+          "explain": "Propone insonorizar, mover los conciertos al viernes y crear un canal de avisos.",
+          "options": [
+            "Insonorizar, mover conciertos y crear un canal de avisos",
+            "Cerrar el bar para siempre",
+            "Multar a Bea cada fin de semana",
+            "Cambiar a don Ernesto de piso"
+          ]
+        },
+        {
+          "id": "es-listen-mediacion-ruido-q4",
+          "kind": "written",
+          "prompt": "¿Qué retiraría don Ernesto si baja el ruido?",
+          "answers": [
+            "la denuncia",
+            "denuncia"
+          ],
+          "explain": "«Si el ruido bajara esta misma semana, retiraría la denuncia»."
+        },
+        {
+          "id": "es-listen-mediacion-ruido-q5",
+          "kind": "choice",
+          "prompt": "¿Cuándo se compromete Bea a insonorizar?",
+          "answers": [
+            "Para el mes que viene"
+          ],
+          "explain": "Se compromete a insonorizar para el mes que viene.",
+          "options": [
+            "Para el mes que viene",
+            "Para el verano",
+            "Nunca",
+            "Cuando cierre el bar"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-listen-turismo-masas",
+      "languageID": "es",
+      "title": "Puntos de vista: turismo y barrios",
+      "level": "B2",
+      "topic": "opinión",
+      "text": "Programa «Puntos de vista»: turismo y ciudades que se llenan. La guionista Sara Pons es clara: «Los barrios que visitan los turistas se están quedando sin vecinos; los pisos se convierten en apartamentos de alquiler y la tienda de toda la vida cierra». El hotelero Marc Vidal responde: «Sin turismo, esta ciudad no comería: uno de cada cinco empleos depende de él. Lo que hay que discutir no es si turistas, sino cuántos y dónde». Sara propone límites: «Yo limitaría las licencias de alquiler turístico y ampliaría el transporte público hacia los barrios que nadie visita». Marc sonríe: «Al menos estamos de acuerdo en algo: el problema no son los visitantes, sino la falta de plan».",
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:second-conditional",
+        "grammar:passive-intro"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-turismo-masas-q1",
+          "kind": "written",
+          "prompt": "¿Qué están perdiendo los barrios turísticos?",
+          "answers": [
+            "vecinos",
+            "los vecinos",
+            "sus vecinos"
+          ],
+          "explain": "Los barrios que visitan los turistas se están quedando sin vecinos."
+        },
+        {
+          "id": "es-listen-turismo-masas-q2",
+          "kind": "choice",
+          "prompt": "¿Cuántos empleos dependen del turismo, según Marc?",
+          "answers": [
+            "Uno de cada cinco"
+          ],
+          "explain": "«Uno de cada cinco empleos depende de él».",
+          "options": [
+            "Uno de cada cinco",
+            "Uno de cada dos",
+            "Uno de cada diez",
+            "Ninguno"
+          ]
+        },
+        {
+          "id": "es-listen-turismo-masas-q3",
+          "kind": "written",
+          "prompt": "¿Qué limitaría Sara?",
+          "answers": [
+            "las licencias de alquiler turístico",
+            "las licencias",
+            "licencias turísticas"
+          ],
+          "explain": "«Yo limitaría las licencias de alquiler turístico»."
+        },
+        {
+          "id": "es-listen-turismo-masas-q4",
+          "kind": "choice",
+          "prompt": "¿Qué propone Sara para el transporte público?",
+          "answers": [
+            "Ampliarlo hacia los barrios que nadie visita"
+          ],
+          "explain": "Ampliaría el transporte público hacia los barrios que nadie visita.",
+          "options": [
+            "Ampliarlo hacia los barrios que nadie visita",
+            "Prohibir el autobús turístico",
+            "Subir el precio del billete",
+            "Quitar el metro"
+          ]
+        },
+        {
+          "id": "es-listen-turismo-masas-q5",
+          "kind": "choice",
+          "prompt": "¿En qué están de acuerdo Sara y Marc?",
+          "answers": [
+            "El problema es la falta de plan"
+          ],
+          "explain": "Están de acuerdo: el problema es la falta de plan.",
+          "options": [
+            "El problema es la falta de plan",
+            "Hay que prohibir el turismo",
+            "El ayuntamiento miente",
+            "Los hoteles sobran"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u8"
     }
   ]
 }

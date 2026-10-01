@@ -1225,6 +1225,556 @@
           "explain": "Firma la carta en el centro cívico o responde a este anuncio."
         }
       ]
+    },
+    {
+      "id": "es-read-dia-abuelo",
+      "languageID": "es",
+      "title": "Un día con el abuelo",
+      "level": "A1",
+      "topic": "rutina",
+      "text": "El abuelo Ramón se levanta a las seis y media, siempre antes que el sol. Prepara un café solo y lee el periódico en la cocina, en silencio. A las ocho pasea por el parque con su perro Toby; allí saluda a todos los jardineros. Por la tarde cuida su huerto: tomates, lechugas y una higuera muy vieja. Los domingos, sus nietos comen en su casa y él cocina su famosa tortilla. Dice que el secreto de la vida es la rutina: cada cosa a su hora.",
+      "skills": [
+        "reading:detail",
+        "grammar:present-simple",
+        "vocab:daily-routine",
+        "vocab:family"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-dia-abuelo-q1",
+          "kind": "choice",
+          "prompt": "¿A qué hora se levanta el abuelo?",
+          "answers": [
+            "A las seis y media"
+          ],
+          "explain": "Se levanta a las seis y media, siempre antes que el sol.",
+          "options": [
+            "A las seis y media",
+            "A las siete",
+            "A las ocho",
+            "A las nueve"
+          ]
+        },
+        {
+          "id": "es-read-dia-abuelo-q2",
+          "kind": "written",
+          "prompt": "¿Cómo se llama su perro?",
+          "answers": [
+            "toby",
+            "Toby"
+          ],
+          "explain": "Pasea por el parque con su perro Toby."
+        },
+        {
+          "id": "es-read-dia-abuelo-q3",
+          "kind": "choice",
+          "prompt": "¿Qué hace por la tarde?",
+          "answers": [
+            "Cuida su huerto"
+          ],
+          "explain": "Por la tarde cuida su huerto.",
+          "options": [
+            "Cuida su huerto",
+            "Duerme la siesta",
+            "Ve la tele",
+            "Va al bar"
+          ]
+        },
+        {
+          "id": "es-read-dia-abuelo-q4",
+          "kind": "choice",
+          "prompt": "¿Qué cocina los domingos para sus nietos?",
+          "answers": [
+            "Una tortilla"
+          ],
+          "explain": "Cocina su famosa tortilla.",
+          "options": [
+            "Una tortilla",
+            "Una paella",
+            "Una sopa",
+            "Galletas"
+          ]
+        },
+        {
+          "id": "es-read-dia-abuelo-q5",
+          "kind": "written",
+          "prompt": "¿Qué lee por la mañana?",
+          "answers": [
+            "el periódico",
+            "el periodico",
+            "el diario"
+          ],
+          "explain": "Lee el periódico en la cocina, en silencio."
+        }
+      ],
+      "unitID": "es-foundations-u2"
+    },
+    {
+      "id": "es-read-receta-tortilla",
+      "languageID": "es",
+      "title": "La tortilla de la casa",
+      "level": "A1",
+      "topic": "comida",
+      "text": "La tortilla de patatas es el plato favorito de mi familia. En casa la prepara mi madre, y es muy fácil. Primero, pelamos cuatro patatas y las cortamos en trozos pequeños. Después, freímos las patatas con aceite en una sartén grande. Batimos cinco huevos en un plato y mezclamos todo con sal. Por último, cocinamos la mezcla en la sartén unos minutos por cada lado. En mi casa la comemos con pan y tomate. ¡Está riquísima!",
+      "skills": [
+        "reading:scan",
+        "reading:detail",
+        "vocab:food",
+        "grammar:present-simple"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-receta-tortilla-q1",
+          "kind": "choice",
+          "prompt": "¿Cuál es el plato favorito de la familia?",
+          "answers": [
+            "La tortilla de patatas"
+          ],
+          "explain": "La tortilla de patatas es el plato favorito de mi familia.",
+          "options": [
+            "La tortilla de patatas",
+            "La paella",
+            "La sopa",
+            "El gazpacho"
+          ]
+        },
+        {
+          "id": "es-read-receta-tortilla-q2",
+          "kind": "written",
+          "prompt": "¿Cuántas patatas pela?",
+          "answers": [
+            "cuatro",
+            "4"
+          ],
+          "explain": "Primero, pelamos cuatro patatas."
+        },
+        {
+          "id": "es-read-receta-tortilla-q3",
+          "kind": "choice",
+          "prompt": "¿Con qué fríe las patatas?",
+          "answers": [
+            "Con aceite"
+          ],
+          "explain": "Freímos las patatas con aceite en una sartén grande.",
+          "options": [
+            "Con aceite",
+            "Con mantequilla",
+            "Con agua",
+            "Con sal"
+          ]
+        },
+        {
+          "id": "es-read-receta-tortilla-q4",
+          "kind": "written",
+          "prompt": "¿Cuántos huevos bate?",
+          "answers": [
+            "cinco",
+            "5"
+          ],
+          "explain": "Batimos cinco huevos en un plato."
+        },
+        {
+          "id": "es-read-receta-tortilla-q5",
+          "kind": "choice",
+          "prompt": "¿Con qué comen la tortilla en su casa?",
+          "answers": [
+            "Con pan y tomate"
+          ],
+          "explain": "En mi casa la comemos con pan y tomate.",
+          "options": [
+            "Con pan y tomate",
+            "Con arroz",
+            "Con ensalada",
+            "Con patatas fritas"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u3"
+    },
+    {
+      "id": "es-read-primera-semana",
+      "languageID": "es",
+      "title": "Mi primera semana",
+      "level": "B1",
+      "topic": "trabajo",
+      "text": "Mi primera semana en la oficina ha sido un torbellino. El lunes llegué tan temprano que nadie estaba todavía; el edificio no abría hasta las ocho. Desde entonces he aprendido tres cosas. Primera: preguntar no es debilidad; he evitado dos errores grandes gracias a mis preguntas «tontas». Segunda: el café de la máquina está sobrevalorado, pero las conversaciones junto a la máquina no; ahí he conocido a medio equipo. Tercera: por eso he dejado de comer frente al ordenador; bajar a la plaza con los compañeros enseña más que diez reuniones. Todavía no he firmado ningún proyecto grande, pero ya me siento parte del lugar. El viernes, cuando he apagado el ordenador, he sonreído.",
+      "skills": [
+        "reading:detail",
+        "grammar:present-perfect",
+        "function:talk-about-work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-primera-semana-q1",
+          "kind": "written",
+          "prompt": "¿Qué ha sido la primera semana?",
+          "answers": [
+            "un torbellino",
+            "torbellino"
+          ],
+          "explain": "Mi primera semana en la oficina ha sido un torbellino."
+        },
+        {
+          "id": "es-read-primera-semana-q2",
+          "kind": "choice",
+          "prompt": "¿Cómo llegó el lunes?",
+          "answers": [
+            "Tan temprano que nadie estaba"
+          ],
+          "explain": "Llegué tan temprano que nadie estaba todavía.",
+          "options": [
+            "Tan temprano que nadie estaba",
+            "A las nueve en punto",
+            "Después del café",
+            "A mediodía"
+          ]
+        },
+        {
+          "id": "es-read-primera-semana-q3",
+          "kind": "choice",
+          "prompt": "¿Qué ha evitado gracias a preguntar?",
+          "answers": [
+            "Dos errores grandes"
+          ],
+          "explain": "He evitado dos errores grandes gracias a mis preguntas «tontas».",
+          "options": [
+            "Dos errores grandes",
+            "La reunión del viernes",
+            "El café de la máquina",
+            "El tráfico"
+          ]
+        },
+        {
+          "id": "es-read-primera-semana-q4",
+          "kind": "written",
+          "prompt": "¿Dónde ha conocido a medio equipo?",
+          "answers": [
+            "junto a la máquina de café",
+            "junto a la máquina",
+            "junto a la maquina"
+          ],
+          "explain": "Las conversaciones junto a la máquina le han servido para conocer a medio equipo."
+        },
+        {
+          "id": "es-read-primera-semana-q5",
+          "kind": "choice",
+          "prompt": "¿Qué ha dejado de hacer?",
+          "answers": [
+            "Comer frente al ordenador"
+          ],
+          "explain": "Por eso he dejado de comer frente al ordenador.",
+          "options": [
+            "Comer frente al ordenador",
+            "Ir a la plaza",
+            "Preguntar dudas",
+            "Tomar café"
+          ]
+        },
+        {
+          "id": "es-read-primera-semana-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo se siente al final de la semana?",
+          "answers": [
+            "Parte del lugar"
+          ],
+          "explain": "Todavía no ha firmado nada grande, pero ya se siente parte del lugar.",
+          "options": [
+            "Parte del lugar",
+            "Un extraño",
+            "Cansado y triste",
+            "Sin energía"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u22"
+    },
+    {
+      "id": "es-read-blog-bici",
+      "languageID": "es",
+      "title": "Bici o coche: mi experimento",
+      "level": "B1",
+      "topic": "ciudad",
+      "text": "Durante años cogí el coche para todo: al trabajo, al gimnasio, incluso a la panadería de la esquina. El mes pasado hice un experimento: dejé el coche aparcado y me moví en bici. Los resultados me han sorprendido. He tardado casi lo mismo en llegar al trabajo, porque el atasco ya no cuenta. He gastado menos dinero en gasolina y he dormido mejor. Sin embargo, no todo ha sido perfecto: un día llovió muchísimo y llegué empapado a una reunión. Además, el carril bici desaparece justamente en las calles más peligrosas. Aun así, no pienso volver atrás: la ciudad se ve distinta cuando la recorres a pedales.",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "grammar:present-perfect",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-blog-bici-q1",
+          "kind": "choice",
+          "prompt": "¿Qué experimento hizo el autor?",
+          "answers": [
+            "Ir en bici durante un mes"
+          ],
+          "explain": "Dejó el coche aparcado y se movió en bici durante un mes.",
+          "options": [
+            "Ir en bici durante un mes",
+            "Vender el coche",
+            "Ir andando al trabajo",
+            "Comprar una moto"
+          ]
+        },
+        {
+          "id": "es-read-blog-bici-q2",
+          "kind": "written",
+          "prompt": "¿Cuánto ha tardado en llegar al trabajo?",
+          "answers": [
+            "casi lo mismo",
+            "lo mismo"
+          ],
+          "explain": "Ha tardado casi lo mismo, porque el atasco ya no cuenta."
+        },
+        {
+          "id": "es-read-blog-bici-q3",
+          "kind": "choice",
+          "prompt": "¿Qué ventaja menciona el texto?",
+          "answers": [
+            "Ha dormido mejor"
+          ],
+          "explain": "He gastado menos dinero en gasolina y he dormido mejor.",
+          "options": [
+            "Ha dormido mejor",
+            "Ha llegado antes al gimnasio",
+            "Ha conocido gente nueva",
+            "Ha adelgazado"
+          ]
+        },
+        {
+          "id": "es-read-blog-bici-q4",
+          "kind": "choice",
+          "prompt": "¿Qué pasó el día de lluvia?",
+          "answers": [
+            "Llegó empapado a una reunión"
+          ],
+          "explain": "Un día llovió muchísimo y llegó empapado a una reunión.",
+          "options": [
+            "Llegó empapado a una reunión",
+            "Perdió la bici",
+            "Se quedó en casa",
+            "Rompió el móvil"
+          ]
+        },
+        {
+          "id": "es-read-blog-bici-q5",
+          "kind": "written",
+          "prompt": "¿Qué desaparece en las calles más peligrosas?",
+          "answers": [
+            "el carril bici",
+            "carril bici",
+            "el carril"
+          ],
+          "explain": "El carril bici desaparece en las calles más peligrosas."
+        },
+        {
+          "id": "es-read-blog-bici-q6",
+          "kind": "choice",
+          "prompt": "¿Qué decide al final?",
+          "answers": [
+            "No volver atrás"
+          ],
+          "explain": "Aun así, no piensa volver atrás.",
+          "options": [
+            "No volver atrás",
+            "Volver al coche",
+            "Comprar dos bicis",
+            "Ir en patinete"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u27"
+    },
+    {
+      "id": "es-read-columna-ia",
+      "languageID": "es",
+      "title": "Columna: algoritmos que deciden",
+      "level": "B2",
+      "topic": "actualidad",
+      "text": "Cada vez más decisiones que nos afectan las toman sistemas automáticos: a qué empleo se nos convoca, a qué crédito accedemos, qué noticia leemos. Los bancos afirman que los algoritmos son neutrales; la experiencia demuestra lo contrario: un sistema entrenado con datos del pasado reproduce los sesgos que escondían esos datos. Si quisiéramos evitarlo, habría que abrir la caja negra: que cualquier persona afectada pudiera conocer y discutir los criterios con los que ha sido evaluada. Algunos países ya lo han regulado; otros se esconden detrás de la innovación. La tecnología no es destino: es una elección colectiva. La pregunta no es lo que las máquinas pueden hacer, sino lo que decidimos que hagan. Esa decisión, todavía, es nuestra.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:passive-intro",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-columna-ia-q1",
+          "kind": "choice",
+          "prompt": "¿Qué decisiones toman ya los algoritmos?",
+          "answers": [
+            "Empleo, crédito y noticias"
+          ],
+          "explain": "A qué empleo se nos convoca, a qué crédito accedemos, qué noticia leemos.",
+          "options": [
+            "Empleo, crédito y noticias",
+            "Los precios del supermercado",
+            "El tiempo que hará",
+            "Los exámenes de escuela"
+          ]
+        },
+        {
+          "id": "es-read-columna-ia-q2",
+          "kind": "written",
+          "prompt": "¿Qué reproducen los sistemas entrenados con datos del pasado?",
+          "answers": [
+            "los sesgos",
+            "sesgos",
+            "los prejuicios"
+          ],
+          "explain": "Un sistema entrenado con datos del pasado reproduce los sesgos que escondían esos datos."
+        },
+        {
+          "id": "es-read-columna-ia-q3",
+          "kind": "choice",
+          "prompt": "¿Qué haría falta, según la autora, para evitar los sesgos?",
+          "answers": [
+            "Abrir la caja negra"
+          ],
+          "explain": "Habría que abrir la caja negra: conocer y discutir los criterios.",
+          "options": [
+            "Abrir la caja negra",
+            "Prohibir los bancos",
+            "Esperar diez años",
+            "Comprar más datos"
+          ]
+        },
+        {
+          "id": "es-read-columna-ia-q4",
+          "kind": "written",
+          "prompt": "¿Con qué se esconden algunos países?",
+          "answers": [
+            "detrás de la innovación",
+            "la innovación",
+            "detras de la innovacion"
+          ],
+          "explain": "Otros países se esconden detrás de la innovación."
+        },
+        {
+          "id": "es-read-columna-ia-q5",
+          "kind": "choice",
+          "prompt": "¿Cómo describe la autora la tecnología?",
+          "answers": [
+            "Una elección colectiva"
+          ],
+          "explain": "La tecnología no es destino: es una elección colectiva.",
+          "options": [
+            "Una elección colectiva",
+            "Un destino inevitable",
+            "Un juego peligroso",
+            "Una moda pasajera"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u9"
+    },
+    {
+      "id": "es-read-carta-vivienda",
+      "languageID": "es",
+      "title": "Carta al director: vivienda",
+      "level": "B2",
+      "topic": "opinión",
+      "text": "Señor director: su editorial de ayer sostiene que la crisis de vivienda se arregla sola, con paciencia y mercado. Me permito discrepar. Mientras se construyen decenas de miles de pisos de lujo, personas con trabajos estables viven en pisos que ni siquiera son suyos y que se comen la mitad de su sueldo. La vivienda, que debería ser un derecho, se ha convertido en activo financiero. Yo no demonizaría al propietario pequeño, que alquila una herencia; señalaría al especulador, cuyo negocio depende de que los precios suban siempre. Si graváramos las viviendas vacías y liberáramos suelo público, el mapa cambiaría en dos años. No pido milagros: pido decisiones. Las ciudades no se arreglan solas; las arreglamos quienes las habitamos.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:second-conditional",
+        "grammar:relative-clauses"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-carta-vivienda-q1",
+          "kind": "choice",
+          "prompt": "¿Qué sostiene el editorial que la carta critica?",
+          "answers": [
+            "La crisis se arregla sola"
+          ],
+          "explain": "Su editorial sostiene que la crisis de vivienda se arregla sola.",
+          "options": [
+            "La crisis se arregla sola",
+            "Hay que construir más pisos de lujo",
+            "Los sueldos deben subir",
+            "Hay que prohibir alquilar"
+          ]
+        },
+        {
+          "id": "es-read-carta-vivienda-q2",
+          "kind": "written",
+          "prompt": "¿En qué se ha convertido la vivienda?",
+          "answers": [
+            "en activo financiero",
+            "activo financiero",
+            "un activo financiero"
+          ],
+          "explain": "La vivienda se ha convertido en activo financiero."
+        },
+        {
+          "id": "es-read-carta-vivienda-q3",
+          "kind": "choice",
+          "prompt": "¿A quién no demoniza la carta?",
+          "answers": [
+            "Al propietario pequeño"
+          ],
+          "explain": "Yo no demonizaría al propietario pequeño, que alquila una herencia.",
+          "options": [
+            "Al propietario pequeño",
+            "Al especulador",
+            "A los bancos",
+            "A los inquilinos"
+          ]
+        },
+        {
+          "id": "es-read-carta-vivienda-q4",
+          "kind": "written",
+          "prompt": "¿De qué depende el negocio del especulador?",
+          "answers": [
+            "de que los precios suban",
+            "los precios suban",
+            "que suban los precios"
+          ],
+          "explain": "Su negocio depende de que los precios suban siempre."
+        },
+        {
+          "id": "es-read-carta-vivienda-q5",
+          "kind": "choice",
+          "prompt": "¿Qué propone la autora?",
+          "answers": [
+            "Gravar viviendas vacías y liberar suelo público"
+          ],
+          "explain": "Si graváramos las viviendas vacías y liberáramos suelo público, el mapa cambiaría.",
+          "options": [
+            "Gravar viviendas vacías y liberar suelo público",
+            "Congelar los alquileres para siempre",
+            "Construir solo pisos de lujo",
+            "Esperar al mercado"
+          ]
+        },
+        {
+          "id": "es-read-carta-vivienda-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo termina la carta?",
+          "answers": [
+            "Las arreglamos quienes las habitamos"
+          ],
+          "explain": "Las ciudades no se arreglan solas; las arreglamos quienes las habitamos.",
+          "options": [
+            "Las arreglamos quienes las habitamos",
+            "El gobierno lo resolverá",
+            "Con paciencia se arregla",
+            "Nada se puede hacer"
+          ]
+        }
+      ],
+      "unitID": "es-foundations-u8"
     }
   ]
 }

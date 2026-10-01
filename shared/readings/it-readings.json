@@ -1250,6 +1250,509 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-read-bar-sottocasa",
+      "languageID": "it",
+      "title": "Il bar sotto casa",
+      "level": "A1",
+      "topic": "al bar",
+      "unitID": "it-foundations-u27",
+      "text": "Il bar è sotto casa mia, all'angolo. La mattina c'è sempre fila: tutti vogliono il caffè e il cornetto. Al bancone c'è Franco, il barista: parla con tutti e sa i nomi di tutti. Io prendo sempre un cappuccino e un cornetto alla crema, e pago due euro e venti. Marta, la mia collega, preferisce il tè con il latte. Al bar c'è anche il giornale del giorno e, la domenica, i cornetti alla marmellata finiscono presto. Il bar chiude a mezzanotte, ma la mattina apre alle sei: per i lavoratori del quartiere è il primo amico della giornata.",
+      "questions": [
+        {
+          "id": "it-read-bar-sottocasa-q1",
+          "kind": "choice",
+          "prompt": "Dove si trova il bar?",
+          "answers": [
+            "Sotto casa della scrittrice"
+          ],
+          "explain": "« Il bar è sotto casa mia, all'angolo ».",
+          "options": [
+            "Sotto casa della scrittrice",
+            "Vicino all'ufficio",
+            "In stazione",
+            "In centro"
+          ]
+        },
+        {
+          "id": "it-read-bar-sottocasa-q2",
+          "kind": "written",
+          "prompt": "Che cosa prende la scrittrice al bancone?",
+          "answers": [
+            "un cappuccino e un cornetto alla crema",
+            "cappuccino e cornetto alla crema",
+            "un cappuccino e un cornetto"
+          ],
+          "explain": "« Io prendo sempre un cappuccino e un cornetto alla crema »."
+        },
+        {
+          "id": "it-read-bar-sottocasa-q3",
+          "kind": "written",
+          "prompt": "Quanto paga?",
+          "answers": [
+            "due euro e venti",
+            "2 euro e 20",
+            "2,20 euro"
+          ],
+          "explain": "« Pago due euro e venti »."
+        },
+        {
+          "id": "it-read-bar-sottocasa-q4",
+          "kind": "choice",
+          "prompt": "Che cosa preferisce Marta?",
+          "answers": [
+            "Il tè con il latte"
+          ],
+          "explain": "« Marta… preferisce il tè con il latte ».",
+          "options": [
+            "Il tè con il latte",
+            "Il caffè amaro",
+            "Il cornetto integrale",
+            "Il succo d'arancia"
+          ]
+        },
+        {
+          "id": "it-read-bar-sottocasa-q5",
+          "kind": "choice",
+          "prompt": "Quando apre il bar?",
+          "answers": [
+            "Alle sei"
+          ],
+          "explain": "« La mattina apre alle sei ».",
+          "options": [
+            "Alle sei",
+            "Alle otto",
+            "A mezzanotte",
+            "Alle nove"
+          ]
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:food",
+        "grammar:present-simple"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-read-invito-festa",
+      "languageID": "it",
+      "title": "L'invito alla festa",
+      "level": "A1",
+      "topic": "feste",
+      "unitID": "it-foundations-u22",
+      "text": "Ciao Anna! Ti scrivo per la festa di sabato. La festa è a casa mia, in Via Roma numero dodici, al quarto piano. Iniziamo alle otto della sera e la musica finisce a mezzanotte: i vicini sono gentili, ma a mezzanotte il palazzo dorme! Io preparo la pizza in casa e Luca porta il dolce. Tu porti da bere? Non serve il regalo: la tua presenza è il regalo! Ci sono anche Marco e Paola, i vicini nuovi. Per entrare, il citofono è « Rossi ». A sabato, e porta le tue canzoni preferite! Un abbraccio, Sara.",
+      "questions": [
+        {
+          "id": "it-read-invito-festa-q1",
+          "kind": "choice",
+          "prompt": "Dov'è la festa?",
+          "answers": [
+            "A casa di Sara"
+          ],
+          "explain": "« La festa è a casa mia », scrive Sara.",
+          "options": [
+            "A casa di Sara",
+            "A casa di Anna",
+            "A casa di Luca",
+            "Al bar di Marco"
+          ]
+        },
+        {
+          "id": "it-read-invito-festa-q2",
+          "kind": "written",
+          "prompt": "A che ora inizia la festa?",
+          "answers": [
+            "alle otto",
+            "otto",
+            "alle 8"
+          ],
+          "explain": "« Iniziamo alle otto della sera »."
+        },
+        {
+          "id": "it-read-invito-festa-q3",
+          "kind": "choice",
+          "prompt": "Che cosa porta Luca?",
+          "answers": [
+            "Il dolce"
+          ],
+          "explain": "« Luca porta il dolce ».",
+          "options": [
+            "Il dolce",
+            "La pizza",
+            "Le canzoni",
+            "Da bere"
+          ]
+        },
+        {
+          "id": "it-read-invito-festa-q4",
+          "kind": "written",
+          "prompt": "Che cosa chiede Sara ad Anna?",
+          "answers": [
+            "da bere",
+            "di portare da bere",
+            "porta da bere"
+          ],
+          "explain": "« Tu porti da bere? »."
+        },
+        {
+          "id": "it-read-invito-festa-q5",
+          "kind": "written",
+          "prompt": "Qual è il nome sul citofono?",
+          "answers": [
+            "rossi",
+            "Rossi"
+          ],
+          "explain": "« Il citofono è « Rossi » »."
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:scan",
+        "vocab:social-expressions",
+        "grammar:present-simple"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-read-annuncio-lavoro",
+      "languageID": "it",
+      "title": "L'annuncio di lavoro",
+      "level": "B1",
+      "topic": "lavoro",
+      "unitID": "it-foundations-u21",
+      "text": "Il caffè letterario Aurora cerca barista per il punto vendita in centro storico. Orario: dal lunedì al venerdì, sei ore al giorno, turno mattutino. Contratto iniziale di sei mesi, con possibilità di stabilizzazione. Richieste: esperienza di almeno un anno alla macchina del caffè, buona mano con la pasticceria fresca e una vera passione per i clienti; l'inglese è utile ma non obbligatorio. Offriamo: uno stipendio in linea con il contratto, sconti sui prodotti e un ambiente di squadra. Se vi riconoscete in questa descrizione, mandate il curriculum e tre righe su di voi entro il 15 del mese all'indirizzo aurora@caffeletterario.it: i colloqui si svolgono la settimana successiva, in città. Solo candidature scritte, per favore: al telefono non riusciamo a rispondere a tutti.",
+      "questions": [
+        {
+          "id": "it-read-annuncio-lavoro-q1",
+          "kind": "choice",
+          "prompt": "Che tipo di contratto offre il caffè?",
+          "answers": [
+            "Sei mesi, con possibilità di stabilizzazione"
+          ],
+          "explain": "« Contratto iniziale di sei mesi, con possibilità di stabilizzazione ».",
+          "options": [
+            "Sei mesi, con possibilità di stabilizzazione",
+            "Un anno non rinnovabile",
+            "Solo weekend",
+            "Stagionale estivo"
+          ]
+        },
+        {
+          "id": "it-read-annuncio-lavoro-q2",
+          "kind": "written",
+          "prompt": "Quante ore al giorno si lavora?",
+          "answers": [
+            "sei ore",
+            "6 ore"
+          ],
+          "explain": "« Sei ore al giorno, turno mattutino »."
+        },
+        {
+          "id": "it-read-annuncio-lavoro-q3",
+          "kind": "choice",
+          "prompt": "Che cosa è obbligatorio?",
+          "answers": [
+            "L'esperienza alla macchina del caffè"
+          ],
+          "explain": "« Esperienza di almeno un anno alla macchina del caffè ».",
+          "options": [
+            "L'esperienza alla macchina del caffè",
+            "L'inglese perfetto",
+            "Il diploma di cucina",
+            "La macchina propria"
+          ]
+        },
+        {
+          "id": "it-read-annuncio-lavoro-q4",
+          "kind": "written",
+          "prompt": "Entro quando bisogna mandare il curriculum?",
+          "answers": [
+            "entro il 15",
+            "il 15",
+            "entro il 15 del mese"
+          ],
+          "explain": "« Entro il 15 del mese »."
+        },
+        {
+          "id": "it-read-annuncio-lavoro-q5",
+          "kind": "choice",
+          "prompt": "Perché chiedono solo candidature scritte?",
+          "answers": [
+            "Non riescono a rispondere al telefono a tutti"
+          ],
+          "explain": "« Al telefono non riusciamo a rispondere a tutti ».",
+          "options": [
+            "Non riescono a rispondere al telefono a tutti",
+            "Il telefono è rotto",
+            "Il direttore è in trasferta",
+            "Le telefonate costano troppo"
+          ]
+        }
+      ],
+      "skills": [
+        "reading:scan",
+        "reading:detail",
+        "vocab:work",
+        "function:talk-about-work"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-read-diario-viaggio",
+      "languageID": "it",
+      "title": "Dal diario: il treno per Bolzano",
+      "level": "B1",
+      "topic": "viaggi",
+      "unitID": "it-foundations-u18",
+      "text": "Sabato 14 giugno. Oggi è il giorno del grande errore. Eravamo in treno per Bolzano e io controllavo i biglietti ogni dieci minuti: i miei, quelli di Luca, anche quelli della signora accanto. Alla stazione di Verona scendiamo per prendere un caffè e, quando il treno riparte, io resto sul binario: la porta si chiude con Luca dentro e io fuori. Il capotreno mi guarda e ride: « Il prossimo passa alle sedici e dieci ». Luca mi scrive: « Ti aspetto a Bolzano, ma il caffè lo paghi tu ». Prendo il treno delle sedici e dieci e, alle sette della sera, ridevamo tutti e due di questa avventura. Morale: controllare i biglietti è utile, ma guardare le porte è meglio.",
+      "questions": [
+        {
+          "id": "it-read-diario-viaggio-q1",
+          "kind": "choice",
+          "prompt": "Dove vanno in treno?",
+          "answers": [
+            "A Bolzano"
+          ],
+          "explain": "« Eravamo in treno per Bolzano ».",
+          "options": [
+            "A Bolzano",
+            "A Verona",
+            "A Roma",
+            "A Trieste"
+          ]
+        },
+        {
+          "id": "it-read-diario-viaggio-q2",
+          "kind": "written",
+          "prompt": "Che cosa succede a Verona?",
+          "answers": [
+            "rimane sul binario",
+            "la porta si chiude con luca dentro e lei fuori",
+            "perde il treno"
+          ],
+          "explain": "« La porta si chiude con Luca dentro e io fuori »."
+        },
+        {
+          "id": "it-read-diario-viaggio-q3",
+          "kind": "choice",
+          "prompt": "A che ora passa il treno successivo?",
+          "answers": [
+            "Alle sedici e dieci"
+          ],
+          "explain": "« Il prossimo passa alle sedici e dieci ».",
+          "options": [
+            "Alle sedici e dieci",
+            "Alle sei e dieci",
+            "Alle sette",
+            "Alle sedici"
+          ]
+        },
+        {
+          "id": "it-read-diario-viaggio-q4",
+          "kind": "written",
+          "prompt": "Chi paga il caffè, secondo Luca?",
+          "answers": [
+            "lei",
+            "la scrivente",
+            "il caffè lo paga lei"
+          ],
+          "explain": "« Ti aspetto a Bolzano, ma il caffè lo paghi tu »."
+        },
+        {
+          "id": "it-read-diario-viaggio-q5",
+          "kind": "choice",
+          "prompt": "Che morale trae la scrittrice?",
+          "answers": [
+            "Guardare le porte è meglio che controllare i biglietti"
+          ],
+          "explain": "« Controllare i biglietti è utile, ma guardare le porte è meglio ».",
+          "options": [
+            "Guardare le porte è meglio che controllare i biglietti",
+            "I treni sono sempre in ritardo",
+            "Non viaggiare con Luca",
+            "Il caffè di Verona è caro"
+          ]
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "function:tell-a-story",
+        "grammar:past-continuous"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-read-colonna-social",
+      "languageID": "it",
+      "title": "Colonna: mangiare insieme, guardarsi altrove",
+      "level": "B2",
+      "topic": "social",
+      "unitID": "it-foundations-u8",
+      "text": "Ogni sera la stessa scena: quattro persone a tavola, quattro schermi accesi. Non è un dramma, lo scrivo subito: il telefono non ha mangiato nessuno. Ma forse vale la pena nominare quello che perdiamo. La conversazione a tavola non è intrattenimento: è la palestra dove impariamo ad aspettare il nostro turno, a dissentire senza alzare la voce, a fare domande vere. I social ci danno mille conversazioni parallele e nessuna profondità: rispondere a tutto significa non approfondire niente. La mia proposta non è il divieto, che dura il tempo di un sermone, ma una piccola asimmetria volontaria: il telefono lontano durante il pasto, ritrovato dopo il dolce. Sono quaranta minuti. Chi ha davvero bisogno di noi può chiamare due volte; chi scrive « urgente » alle nove di sera, forse non ha capito cosa sia l'urgenza.",
+      "questions": [
+        {
+          "id": "it-read-colonna-social-q1",
+          "kind": "choice",
+          "prompt": "Come definisce l'autrice la conversazione a tavola?",
+          "answers": [
+            "Una palestra di ascolto"
+          ],
+          "explain": "« La conversazione a tavola… è la palestra dove impariamo ad aspettare il nostro turno ».",
+          "options": [
+            "Una palestra di ascolto",
+            "Un intrattenimento leggero",
+            "Una perdita di tempo",
+            "Un'abitudine antica"
+          ]
+        },
+        {
+          "id": "it-read-colonna-social-q2",
+          "kind": "written",
+          "prompt": "Che cosa manca alle mille conversazioni parallele dei social?",
+          "answers": [
+            "profondità",
+            "la profondità",
+            "nessuna profondità"
+          ],
+          "explain": "« I social ci danno mille conversazioni parallele e nessuna profondità »."
+        },
+        {
+          "id": "it-read-colonna-social-q3",
+          "kind": "choice",
+          "prompt": "Che cosa propone l'autrice?",
+          "answers": [
+            "Il telefono lontano durante il pasto"
+          ],
+          "explain": "« Una piccola asimmetria volontaria: il telefono lontano durante il pasto ».",
+          "options": [
+            "Il telefono lontano durante il pasto",
+            "Vietare i telefoni ai figli",
+            "Cenare sempre fuori",
+            "Spegnere il wifi di casa"
+          ]
+        },
+        {
+          "id": "it-read-colonna-social-q4",
+          "kind": "written",
+          "prompt": "Chi può chiamare due volte?",
+          "answers": [
+            "chi ha davvero bisogno di noi",
+            "chi ha bisogno di noi"
+          ],
+          "explain": "« Chi ha davvero bisogno di noi può chiamare due volte »."
+        },
+        {
+          "id": "it-read-colonna-social-q5",
+          "kind": "choice",
+          "prompt": "Che tono ha la colonna?",
+          "answers": [
+            "Critico ma moderato, senza drammi"
+          ],
+          "explain": "« Non è un dramma, lo scrivo subito »: l'autrice critica senza drammatizzare.",
+          "options": [
+            "Critico ma moderato, senza drammi",
+            "Indignato e ironico",
+            "Nostalgico e triste",
+            "Neutro e giornalistico"
+          ]
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "reading:gist",
+        "function:express-opinion",
+        "writing:argument"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-read-controproposta-affitto",
+      "languageID": "it",
+      "title": "La controproposta per l'affitto",
+      "level": "B2",
+      "topic": "affitto",
+      "unitID": "it-foundations-u7",
+      "text": "Oggetto: controproposta per il contratto di locazione, Via dei Mille 24.\nGentile signora Bruni, la ringrazio per la disponibilità di giovedì. L'appartamento mi convince: luce, zona e il terrazzo con vista. Rimane il prezzo: millequattrocento euro sono sopra il mio budget, e le sarò franco: a quella cifra il contratto non parte. Le propongo millecento per un impegno di ventiquattro mesi, con pagamento anticipato dell'ultimo mese a titolo di garanzia. In cambio, chiedo solo due interventi prima dell'ingresso: il boiler nuovo, che ha già superato la vita utile, e una mano con le persiane del salotto. Se la proposta le sembra interessante, sono disponibile a un incontro in settimana, anche in videochiamata. Resto a disposizione e la ringrazio per la lettura. Cordiali saluti, Dario Ferri.",
+      "questions": [
+        {
+          "id": "it-read-controproposta-affitto-q1",
+          "kind": "choice",
+          "prompt": "Che cosa propone Dario come affitto?",
+          "answers": [
+            "Millecento per ventiquattro mesi"
+          ],
+          "explain": "« Le propongo millecento per un impegno di ventiquattro mesi ».",
+          "options": [
+            "Millecento per ventiquattro mesi",
+            "Millequattrocento per un anno",
+            "Millecento con ingresso immediato",
+            "Mille se la signora ripara il boiler"
+          ]
+        },
+        {
+          "id": "it-read-controproposta-affitto-q2",
+          "kind": "written",
+          "prompt": "Che cosa offre come garanzia?",
+          "answers": [
+            "il pagamento anticipato dell ultimo mese",
+            "pagamento anticipato dell ultimo mese",
+            "l ultimo mese anticipato"
+          ],
+          "explain": "« Con pagamento anticipato dell'ultimo mese a titolo di garanzia »."
+        },
+        {
+          "id": "it-read-controproposta-affitto-q3",
+          "kind": "choice",
+          "prompt": "Quali interventi chiede prima dell'ingresso?",
+          "answers": [
+            "Il boiler nuovo e le persiane"
+          ],
+          "explain": "« Il boiler nuovo… e una mano con le persiane del salotto ».",
+          "options": [
+            "Il boiler nuovo e le persiane",
+            "La verniciatura e il parquet",
+            "Il condizionatore e le tende",
+            "Solo il boiler"
+          ]
+        },
+        {
+          "id": "it-read-controproposta-affitto-q4",
+          "kind": "written",
+          "prompt": "Come dice Dario che si comporterà sul prezzo?",
+          "answers": [
+            "franco",
+            "sarò franco",
+            "le sarò franco"
+          ],
+          "explain": "« Le sarò franco: a quella cifra il contratto non parte »."
+        },
+        {
+          "id": "it-read-controproposta-affitto-q5",
+          "kind": "choice",
+          "prompt": "Che impressione dà la lettera?",
+          "answers": [
+            "Ferma e rispettosa, con argomenti chiari"
+          ],
+          "explain": "« Le sarò franco » e la chiusura cortese mostrano fermezza e rispetto.",
+          "options": [
+            "Ferma e rispettosa, con argomenti chiari",
+            "Aggressiva",
+            "Indecisa e vaga",
+            "Fredda e burocratica"
+          ]
+        }
+      ],
+      "skills": [
+        "reading:inference",
+        "reading:detail",
+        "function:negotiate",
+        "writing:email"
+      ],
+      "exposureSkills": []
     }
   ]
 }

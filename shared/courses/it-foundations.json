@@ -12971,6 +12971,178 @@
           "prerequisites": [
             "grammar:going-to"
           ]
+        },
+        {
+          "id": "it-foundations-u25-aeroporto",
+          "title": "All'aeroporto",
+          "goal": "Muoversi all'aeroporto: leggere gli annunci, trovare il gate e reagire a un volo in ritardo.",
+          "intro": {
+            "explanation": [
+              "L'aeroporto ha le sue parole: il check-in, il gate, l'imbarco. « Il gate chiude alle nove e mezza ».",
+              "Negli annunci si sente il presente: « Il volo imbarca al gate quindici ». Il volo fa le azioni, non tu.",
+              "Per il problema classico: « Il volo è in ritardo di quaranta minuti ». E la soluzione si chiede con devo: « Devo cambiare il biglietto? »."
+            ],
+            "examples": [
+              {
+                "text": "Dov'è il check-in?",
+                "meaning": "Il primo punto."
+              },
+              {
+                "text": "Il gate chiude alle nove e mezza.",
+                "meaning": "L'ora limite."
+              },
+              {
+                "text": "Il volo imbarca al gate quindici.",
+                "meaning": "L'annuncio tipico."
+              },
+              {
+                "text": "Il volo è in ritardo di quaranta minuti.",
+                "meaning": "Il problema classico."
+              },
+              {
+                "text": "Devo cambiare il biglietto?",
+                "meaning": "La soluzione chiesta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "il gate / l'imbarco",
+              "meaning": "Le parole dell'aeroporto.",
+              "note": "Il gate chiude presto."
+            },
+            {
+              "text": "il volo è in ritardo",
+              "meaning": "Il problema.",
+              "note": "Il volo è in ritardo di un'ora."
+            },
+            {
+              "text": "un ritardo di + tempo",
+              "meaning": "Quanto aspetti.",
+              "note": "Un ritardo di trenta minuti."
+            },
+            {
+              "text": "dovere essere a…",
+              "meaning": "L'obbligo del posto.",
+              "note": "Devo essere al gate alle nove."
+            },
+            {
+              "text": "cambiare il biglietto",
+              "meaning": "La soluzione.",
+              "note": "Devo cambiare il biglietto?"
+            }
+          ],
+          "situation": "Sei all'aeroporto: trovi il check-in, ascolti gli annunci, scopri che il volo è in ritardo e chiedi che cosa fare.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi dov'è il check-in.",
+                "expected": [
+                  "Dov'è il check-in?",
+                  "Dov'è il check in?",
+                  "Dove è il check-in?"
+                ],
+                "focus": "dov'è",
+                "watch": "dov'è = dove + è, con l'apostrofo."
+              },
+              {
+                "prompt": "Dì che il tuo volo ha quaranta minuti di ritardo.",
+                "expected": [
+                  "Il volo è in ritardo di quaranta minuti.",
+                  "Il volo ha quaranta minuti di ritardo."
+                ],
+                "focus": "in ritardo di",
+                "watch": "in ritardo di + tempo."
+              },
+              {
+                "prompt": "Dì l'obbligo: dovete essere al gate alle nove.",
+                "expected": [
+                  "Dovete essere al gate alle nove.",
+                  "Dovete essere al gate alle 9"
+                ],
+                "focus": "dovere essere a",
+                "watch": "dovere + essere al posto: l'obbligo del posto."
+              },
+              {
+                "prompt": "Chiedi se devi cambiare il biglietto.",
+                "expected": [
+                  "Devo cambiare il biglietto?",
+                  "Devo cambiare il biglietto"
+                ],
+                "focus": "devo",
+                "watch": "devo + infinito: chiedo la soluzione."
+              },
+              {
+                "prompt": "Dì l'ora limite: il gate, nove e mezza.",
+                "expected": [
+                  "Il gate chiude alle nove e mezza.",
+                  "Il gate chiude alle 9 e 30"
+                ],
+                "focus": "chiudere",
+                "watch": "il gate chiude: il presente degli annunci."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u25-aeroporto-e1",
+              "kind": "choice",
+              "prompt": "Il volo ___ al gate quindici.",
+              "answers": [
+                "imbarca"
+              ],
+              "explain": "Il volo (lui) imbarca: il presente degli annunci ufficiali.",
+              "options": [
+                "imbarca",
+                "imbarchi",
+                "imbarco",
+                "imbarcate"
+              ]
+            },
+            {
+              "id": "it-foundations-u25-aeroporto-e2",
+              "kind": "gap",
+              "prompt": "Il volo è in ___ di trenta minuti.",
+              "answers": [
+                "ritardo"
+              ],
+              "explain": "il ritardo di + tempo: la durata dell'attesa."
+            },
+            {
+              "id": "it-foundations-u25-aeroporto-e3",
+              "kind": "order",
+              "prompt": "Dì l'obbligo del gate: appuntamento alle nove.",
+              "answers": [
+                "Dovete essere al gate alle nove"
+              ],
+              "explain": "dovete + essere a + il posto + l'ora: l'obbligo annunciato."
+            },
+            {
+              "id": "it-foundations-u25-aeroporto-e4",
+              "kind": "written",
+              "prompt": "Dì l'ora di chiusura del gate (9:30).",
+              "answers": [
+                "il gate chiude alle nove e mezza",
+                "il gate chiude alle 9 e 30",
+                "chiude alle nove e mezza"
+              ],
+              "explain": "il gate chiude alle + l'ora: l'informazione che conta."
+            }
+          ],
+          "skills": [
+            "vocab:travel",
+            "grammar:modal-must-have-to",
+            "function:solve-problems",
+            "grammar:time-expressions"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "vocab:travel",
+            "grammar:modal-must-have-to"
+          ],
+          "exposureSkills": []
         }
       ]
     },
@@ -13537,6 +13709,981 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u27",
+      "title": "Al bar",
+      "subtitle": "Caffè, cornetti ed euro",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "u27-al-bancone",
+          "title": "Al bancone",
+          "subtitle": "Ordinare al bar",
+          "symbol": "takeout.bag",
+          "category": "Course",
+          "situation": "Sei al bar la mattina: ordini al bancone, chiedi se c'è il cornetto integrale e scambi due parole con il barista.",
+          "colorIndex": 0
+        },
+        {
+          "id": "u27-quanto-costa",
+          "title": "Quanto costa?",
+          "subtitle": "Numeri ed euro",
+          "symbol": "creditcard",
+          "category": "Course",
+          "situation": "Alla cassa chiedi il prezzo, paghi in contanti e controlli il resto.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u27-bancone",
+          "title": "Al bancone",
+          "goal": "Ordinare al bar con vorrei, prendere e prego, come un italiano vero.",
+          "intro": {
+            "explanation": [
+              "Al bar si ordina con vorrei + la cosa: « Vorrei un caffè, per favore ». È gentile e va bene sempre.",
+              "La scelta rapida è prendo + la cosa: « Prendo un cornetto alla crema ». Suona deciso, da clienti abituali.",
+              "Per sapere se una cosa esiste: « C'è il cornetto integrale? ». La risposta breve: « Sì, c'è » oppure « No, non c'è ».",
+              "Il barista serve e dice « Prego! ». E tu rispondi « Grazie! »: prego è la risposta, non il ringraziamento."
+            ],
+            "examples": [
+              {
+                "text": "Vorrei un caffè, per favore.",
+                "meaning": "Il modo gentile di ordinare."
+              },
+              {
+                "text": "Prendo anche un cornetto.",
+                "meaning": "La scelta rapida al bancone."
+              },
+              {
+                "text": "C'è il cornetto integrale?",
+                "meaning": "La domanda con c'è."
+              },
+              {
+                "text": "Prego, signora!",
+                "meaning": "Il barista offre."
+              },
+              {
+                "text": "Grazie mille. — Prego!",
+                "meaning": "Grazie e la sua risposta."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "vorrei + …",
+              "meaning": "Ordino con gentilezza.",
+              "note": "Vorrei un cappuccino."
+            },
+            {
+              "text": "prendo + …",
+              "meaning": "La scelta al bancone.",
+              "note": "Prendo anche un'acqua."
+            },
+            {
+              "text": "C'è… ?",
+              "meaning": "Chiedo se esiste.",
+              "note": "C'è il latte di soia?"
+            },
+            {
+              "text": "prego",
+              "meaning": "La risposta del barista.",
+              "note": "Ecco il caffè, prego!"
+            },
+            {
+              "text": "per favore / grazie",
+              "meaning": "Le parole magiche.",
+              "note": "Un caffè, per favore. Grazie!"
+            }
+          ],
+          "situation": "È sabato mattina: entri al bar sotto casa, ordini un caffè e un cornetto, chiedi se c'è il cornetto integrale e ringrazi il barista.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ordina gentilmente un caffè.",
+                "expected": [
+                  "Vorrei un caffè, per favore.",
+                  "Vorrei un caffè per favore"
+                ],
+                "focus": "vorrei",
+                "watch": "vorrei + la cosa: è il modo gentile di ordinare."
+              },
+              {
+                "prompt": "Dì che prendi anche un cornetto alla crema.",
+                "expected": [
+                  "Prendo anche un cornetto alla crema.",
+                  "E prendo un cornetto alla crema."
+                ],
+                "focus": "prendo",
+                "watch": "prendo + la cosa: la scelta rapida."
+              },
+              {
+                "prompt": "Chiedi se c'è il cornetto integrale.",
+                "expected": [
+                  "C'è il cornetto integrale?",
+                  "C'e il cornetto integrale?"
+                ],
+                "focus": "c'è",
+                "watch": "c'è si scrive con l'accento: c'è, non c'e."
+              },
+              {
+                "prompt": "Il barista ti dà il caffè: che parola usa?",
+                "expected": [
+                  "Prego!",
+                  "Prego",
+                  "Ecco il caffè, prego!"
+                ],
+                "focus": "prego",
+                "watch": "prego = la risposta quando si serve."
+              },
+              {
+                "prompt": "Ringrazia il barista con entusiasmo.",
+                "expected": [
+                  "Grazie mille!",
+                  "Grazie mille",
+                  "Mille grazie!"
+                ],
+                "focus": "grazie mille",
+                "watch": "grazie mille è più forte di grazie."
+              },
+              {
+                "prompt": "Chiedi al barista se c'è il latte di soia.",
+                "expected": [
+                  "C'è il latte di soia?",
+                  "C'e il latte di soia?"
+                ],
+                "focus": "c'è",
+                "watch": "c'è + singolare: una cosa sola."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u27-bancone-e1",
+              "kind": "choice",
+              "prompt": "Per ordinare con gentilezza al bar, dici: « ___ un caffè, per favore ».",
+              "answers": [
+                "Vorrei"
+              ],
+              "explain": "Vorrei + la cosa: è il modo gentile e sicuro di ordinare al bar.",
+              "options": [
+                "Vorrei",
+                "Voglio",
+                "Sono",
+                "Faccio"
+              ]
+            },
+            {
+              "id": "it-foundations-u27-bancone-e2",
+              "kind": "gap",
+              "prompt": "Il barista mette il cappuccino sul bancone e dice: « ___! » (la risposta a grazie)",
+              "answers": [
+                "Prego",
+                "prego",
+                "Prego!",
+                "prego!"
+              ],
+              "explain": "Prego è la risposta tipica del barista quando serve al bancone."
+            },
+            {
+              "id": "it-foundations-u27-bancone-e3",
+              "kind": "order",
+              "prompt": "Metti in ordine la domanda: chiedi se il cornetto integrale è disponibile.",
+              "answers": [
+                "C'è il cornetto integrale"
+              ],
+              "explain": "c'è + la cosa: la domanda breve per sapere se esiste."
+            },
+            {
+              "id": "it-foundations-u27-bancone-e4",
+              "kind": "written",
+              "prompt": "Ordina anche l'acqua naturale.",
+              "answers": [
+                "Prendo anche un'acqua",
+                "Vorrei anche un'acqua",
+                "Prendo anche un acqua",
+                "Prendo un'acqua"
+              ],
+              "explain": "prendo / vorrei + la cosa: anche aggiunge un secondo ordine."
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-simple",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple",
+            "vocab:food"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "it-foundations-u27-costo",
+          "title": "Quanto costa?",
+          "goal": "Chiedere il prezzo, capire i numeri e pagare in euro alla cassa.",
+          "intro": {
+            "explanation": [
+              "Per il prezzo si chiede « Quanto costa? » per una cosa e « Quanto costano? » per più cose: « Quanto costa il cappuccino? ».",
+              "La risposta usa il verbo essere: « Sono due euro e cinquanta ». In italiano il plurale è euro, mai « euri ».",
+              "Alla cassa si chiede: « Posso pagare con la carta? ». La risposta: « Sì » oppure « Solo contanti »."
+            ],
+            "examples": [
+              {
+                "text": "Quanto costa il cappuccino?",
+                "meaning": "Una cosa: costa."
+              },
+              {
+                "text": "Quanto costano i cornetti?",
+                "meaning": "Più cose: costano."
+              },
+              {
+                "text": "Sono un euro e venti.",
+                "meaning": "Il prezzo con e."
+              },
+              {
+                "text": "Posso pagare con la carta?",
+                "meaning": "La domanda alla cassa."
+              },
+              {
+                "text": "Ecco dieci euro. — Ecco il resto.",
+                "meaning": "Contanti e resto."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Quanto costa… ?",
+              "meaning": "Il prezzo di una cosa.",
+              "note": "Quanto costa il caffè?"
+            },
+            {
+              "text": "Quanto costano… ?",
+              "meaning": "Il prezzo di più cose.",
+              "note": "Quanto costano le brioche?"
+            },
+            {
+              "text": "sono … euro",
+              "meaning": "La risposta col prezzo.",
+              "note": "Sono due euro e cinquanta."
+            },
+            {
+              "text": "posso pagare… ?",
+              "meaning": "Carta o contanti.",
+              "note": "Posso pagare in contanti?"
+            },
+            {
+              "text": "il resto",
+              "meaning": "I soldi che tornano.",
+              "note": "Ecco il resto, grazie!"
+            }
+          ],
+          "situation": "Prendi due cornetti e un cappuccino: alla cassa chiedi il prezzo, paghi con dieci euro e ricevi il resto.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi il prezzo del cappuccino.",
+                "expected": [
+                  "Quanto costa il cappuccino?",
+                  "Quanto costa il cappuccino"
+                ],
+                "focus": "quanto costa",
+                "watch": "una cosa sola: quanto costa."
+              },
+              {
+                "prompt": "Chiedi il prezzo dei cornetti, in due.",
+                "expected": [
+                  "Quanto costano i cornetti?",
+                  "Quanto costano i cornetti"
+                ],
+                "focus": "quanto costano",
+                "watch": "più cose: quanto costano."
+              },
+              {
+                "prompt": "Dì il prezzo: 1 euro e 20.",
+                "expected": [
+                  "Sono un euro e venti.",
+                  "Sono 1 euro e 20",
+                  "Un euro e venti."
+                ],
+                "focus": "sono … euro",
+                "watch": "il plurale è euro, non euri."
+              },
+              {
+                "prompt": "Alla cassa, chiedi se puoi pagare con la carta.",
+                "expected": [
+                  "Posso pagare con la carta?",
+                  "Posso pagare con la carta",
+                  "Posso pagare con la carta?"
+                ],
+                "focus": "posso",
+                "watch": "posso + infinito: chiedo il permesso."
+              },
+              {
+                "prompt": "Paghi dieci euro per un caffè da due: come si chiamano gli otto euro che il barista ti dà?",
+                "expected": [
+                  "Il resto",
+                  "il resto",
+                  "Resto"
+                ],
+                "focus": "il resto",
+                "watch": "il resto = i soldi che tornano."
+              },
+              {
+                "prompt": "Dì il prezzo totale: 2 euro e 50.",
+                "expected": [
+                  "Sono due euro e cinquanta.",
+                  "Sono 2 euro e 50",
+                  "Due euro e cinquanta."
+                ],
+                "focus": "sono … euro",
+                "watch": "cinquanta, non cinquanti."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u27-costo-e1",
+              "kind": "choice",
+              "prompt": "___ costa il cappuccino?",
+              "answers": [
+                "Quanto"
+              ],
+              "explain": "Quanto costa…? è la domanda per il prezzo di una cosa.",
+              "options": [
+                "Quanto",
+                "Che",
+                "Dove",
+                "Quando"
+              ]
+            },
+            {
+              "id": "it-foundations-u27-costo-e2",
+              "kind": "gap",
+              "prompt": "Chiedi il prezzo dei cornetti: ___ costano i cornetti? (il plurale della domanda)",
+              "answers": [
+                "Quanto",
+                "quanto"
+              ],
+              "explain": "Per più cose il verbo va al plurale: quanto costano."
+            },
+            {
+              "id": "it-foundations-u27-costo-e3",
+              "kind": "order",
+              "prompt": "Chiedi se la carta è accettata alla cassa.",
+              "answers": [
+                "Posso pagare con la carta"
+              ],
+              "explain": "posso + infinito: la domanda gentile per il pagamento."
+            },
+            {
+              "id": "it-foundations-u27-costo-e4",
+              "kind": "written",
+              "prompt": "Dì il prezzo: 2 euro e 50 centesimi.",
+              "answers": [
+                "sono due euro e cinquanta",
+                "due euro e cinquanta",
+                "sono 2 euro e 50",
+                "due euro e cinquanta centesimi"
+              ],
+              "explain": "sono + il prezzo in euro: la risposta alla cassa."
+            }
+          ],
+          "skills": [
+            "function:go-shopping",
+            "vocab:shopping",
+            "grammar:quantities",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "go-shopping"
+          ],
+          "prerequisites": [
+            "grammar:present-simple",
+            "vocab:shopping"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u28",
+      "title": "Il trasloco",
+      "subtitle": "Scatole e nuova casa",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "u28-scatole-e-ordine",
+          "title": "Scatole e ordine",
+          "subtitle": "Imballare casa",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Il trasloco è deciso: si imballano le scatole, si fa la lista di che cosa portare e si organizza il furgone.",
+          "colorIndex": 0
+        },
+        {
+          "id": "u28-aiuto-e-arrivo",
+          "title": "Aiuto e arrivo",
+          "subtitle": "Vicini e prima notte",
+          "symbol": "handshake",
+          "category": "Course",
+          "situation": "Chiedi aiuto ai vicini, arrivi nella casa nuova e sistemi la prima notte tra scatole e lampade.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u28-scatole",
+          "title": "Scatole e ordine",
+          "goal": "Dire che cosa devi fare durante il trasloco con devo, devi e bisogna.",
+          "intro": {
+            "explanation": [
+              "Per gli obblighi c'è devo + infinito: « Devo imballare i libri ». Devo, devi, deve funziona come un interruttore: obbligo acceso.",
+              "La regola generale è bisogna + infinito, senza soggetto: « Bisogna comprare le scatole ». Non dice chi fa l'azione.",
+              "Per dire che qualcosa non è necessario: « Non devo portare i mobili ». Non devo spegne l'interruttore."
+            ],
+            "examples": [
+              {
+                "text": "Devo imballare la cucina.",
+                "meaning": "L'obbligo al io."
+              },
+              {
+                "text": "Devi chiudere le scatole col nastro.",
+                "meaning": "L'obbligo al tu."
+              },
+              {
+                "text": "Bisogna comprare più scatole.",
+                "meaning": "La regola impersonale."
+              },
+              {
+                "text": "Non devo fare i pacchi dei vestiti.",
+                "meaning": "Non è necessario."
+              },
+              {
+                "text": "Devo chiamare il furgone per le nove.",
+                "meaning": "Obbligo con l'ora."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "devo + infinito",
+              "meaning": "L'obbligo al io.",
+              "note": "Devo preparare le scatole."
+            },
+            {
+              "text": "devi + infinito",
+              "meaning": "L'obbligo al tu.",
+              "note": "Devi portare giù le biciclette?"
+            },
+            {
+              "text": "bisogna + infinito",
+              "meaning": "Serve in generale.",
+              "note": "Bisogna prenotare il furgone."
+            },
+            {
+              "text": "non devo…",
+              "meaning": "Nessun obbligo.",
+              "note": "Non devo portare il divano."
+            },
+            {
+              "text": "mi servono…",
+              "meaning": "La quantità necessaria.",
+              "note": "Mi servono dieci scatole grandi."
+            }
+          ],
+          "situation": "Sabato traslochi: fai la lista delle cose da fare, dai ordini a Marco con devi e spieghi che cosa non serve fare.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì il tuo obbligo: imballi la cucina.",
+                "expected": [
+                  "Devo imballare la cucina.",
+                  "Devo imballare la cucina"
+                ],
+                "focus": "devo",
+                "watch": "devo + infinito: l'obbligo al io."
+              },
+              {
+                "prompt": "Dai l'ordine a Marco: chiudere le scatole col nastro.",
+                "expected": [
+                  "Devi chiudere le scatole col nastro.",
+                  "Tu devi chiudere le scatole col nastro."
+                ],
+                "focus": "devi",
+                "watch": "devi + infinito: l'obbligo al tu."
+              },
+              {
+                "prompt": "Dì la regola generale: comprare le scatole.",
+                "expected": [
+                  "Bisogna comprare le scatole.",
+                  "Bisogna comprare le scatole"
+                ],
+                "focus": "bisogna",
+                "watch": "bisogna + infinito: senza soggetto."
+              },
+              {
+                "prompt": "Dì che non è necessario: i mobili non li porti tu.",
+                "expected": [
+                  "Non devo portare i mobili.",
+                  "Non devo portare io i mobili"
+                ],
+                "focus": "non devo",
+                "watch": "non devo = non è necessario."
+              },
+              {
+                "prompt": "Dì quante scatole ti servono: dieci grandi.",
+                "expected": [
+                  "Mi servono dieci scatole grandi.",
+                  "Mi servono 10 scatole grandi"
+                ],
+                "focus": "mi servono",
+                "watch": "mi servono + plurale: la quantità."
+              },
+              {
+                "prompt": "Dì il tuo obbligo con l'ora: chiamare il furgone per le nove.",
+                "expected": [
+                  "Devo chiamare il furgone per le nove.",
+                  "Devo chiamare il furgone alle nove."
+                ],
+                "focus": "devo + ora",
+                "watch": "per le nove = entro le nove."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u28-scatole-e1",
+              "kind": "choice",
+              "prompt": "Io ___ imballare tutta la cucina sabato.",
+              "answers": [
+                "devo"
+              ],
+              "explain": "Io devo + infinito: l'obbligo alla prima persona.",
+              "options": [
+                "devo",
+                "devi",
+                "deve",
+                "bisogno"
+              ]
+            },
+            {
+              "id": "it-foundations-u28-scatole-e2",
+              "kind": "gap",
+              "prompt": "___ comprare il nastro adesivo: è la regola del trasloco.",
+              "answers": [
+                "Bisogna",
+                "bisogna"
+              ],
+              "explain": "bisogna + infinito: l'obbligo impersonale, non dice chi fa."
+            },
+            {
+              "id": "it-foundations-u28-scatole-e3",
+              "kind": "order",
+              "prompt": "Dai l'ordine a Marco: le biciclette devono scendere.",
+              "answers": [
+                "Devi portare giù le biciclette"
+              ],
+              "explain": "devi + infinito: l'obbligo al tu, con portare giù."
+            },
+            {
+              "id": "it-foundations-u28-scatole-e4",
+              "kind": "written",
+              "prompt": "Dì che non è necessario: il divano resta qui.",
+              "answers": [
+                "non devo portare il divano",
+                "non devo portare io il divano",
+                "non e necessario portare il divano",
+                "non è necessario portare il divano"
+              ],
+              "explain": "non devo + infinito: l'obbligo assente."
+            }
+          ],
+          "skills": [
+            "grammar:modal-must-have-to",
+            "vocab:home",
+            "function:solve-problems",
+            "grammar:quantities"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:modal-must-have-to",
+            "vocab:home"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "it-foundations-u28-aiuto",
+          "title": "Chiedere aiuto",
+          "goal": "Chiedere una mano ai vicini con puoi, mi presti e l'imperativo gentile.",
+          "intro": {
+            "explanation": [
+              "La richiesta gentile parte con puoi + infinito: « Puoi darmi una mano sabato? ». È una domanda, non un ordine.",
+              "Per gli oggetti si chiede mi presti + la cosa: « Mi presti il furgone? ». È il tu gentile dei vicini.",
+              "L'imperativo informale serve per le istruzioni: « Prendi quella scatola ». Il negativo al tu è non + infinito: « Non preoccuparti »."
+            ],
+            "examples": [
+              {
+                "text": "Puoi darmi una mano sabato?",
+                "meaning": "La richiesta con puoi."
+              },
+              {
+                "text": "Mi presti il furgone?",
+                "meaning": "L'oggetto prestato."
+              },
+              {
+                "text": "Prendi quella scatola, per favore.",
+                "meaning": "L'istruzione al tu."
+              },
+              {
+                "text": "Non preoccuparti, ci sto io.",
+                "meaning": "Il tu negativo."
+              },
+              {
+                "text": "Grazie mille, sei gentilissimo!",
+                "meaning": "Il ringraziamento forte."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "puoi… ?",
+              "meaning": "La richiesta gentile.",
+              "note": "Puoi aiutarmi sabato?"
+            },
+            {
+              "text": "mi presti… ?",
+              "meaning": "Chiedo l'oggetto.",
+              "note": "Mi presti il carrello?"
+            },
+            {
+              "text": "darmi una mano",
+              "meaning": "Aiutarmi.",
+              "note": "Puoi darmi una mano?"
+            },
+            {
+              "text": "non preoccuparti",
+              "meaning": "Il tu negativo.",
+              "note": "Non preoccuparti, va tutto bene."
+            },
+            {
+              "text": "sei gentilissimo!",
+              "meaning": "Il ringraziamento forte.",
+              "note": "Grazie mille, sei gentilissimo!"
+            }
+          ],
+          "situation": "Chiedi a Giulia di darti una mano, le chiedi il furgone e le spieghi che cosa deve prendere, senza dimenticare i ringraziamenti.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi a Giulia una mano per sabato.",
+                "expected": [
+                  "Puoi darmi una mano sabato?",
+                  "Puoi darmi una mano sabato"
+                ],
+                "focus": "puoi",
+                "watch": "puoi + infinito: la richiesta gentile."
+              },
+              {
+                "prompt": "Chiedi a Giulia il furgone.",
+                "expected": [
+                  "Mi presti il furgone?",
+                  "Mi presti il furgone"
+                ],
+                "focus": "mi presti",
+                "watch": "mi presti + la cosa: chiedi un prestito."
+              },
+              {
+                "prompt": "Dai l'istruzione: quella scatola va al piano di sopra.",
+                "expected": [
+                  "Prendi quella scatola, per favore.",
+                  "Prendi quella scatola per favore"
+                ],
+                "focus": "imperativo",
+                "watch": "al tu: prendi, porta, sali."
+              },
+              {
+                "prompt": "Tranquillizza Giulia al negativo: non serve preoccuparsi.",
+                "expected": [
+                  "Non preoccuparti.",
+                  "Non preoccuparti, va tutto bene.",
+                  "Non ti preoccupare."
+                ],
+                "focus": "non preoccuparti",
+                "watch": "il tu negativo: non + infinito."
+              },
+              {
+                "prompt": "Ringrazia Giulia al massimo.",
+                "expected": [
+                  "Grazie mille, sei gentilissima!",
+                  "Grazie mille sei gentilissima",
+                  "Grazie mille, gentilissima!"
+                ],
+                "focus": "grazie mille",
+                "watch": "gentilissima per una donna, gentilissimo per un uomo."
+              },
+              {
+                "prompt": "Chiedi a Giulia di aiutarti a salire le scatole.",
+                "expected": [
+                  "Puoi aiutarmi a salire le scatole?",
+                  "Mi aiuti a salire le scatole?"
+                ],
+                "focus": "puoi",
+                "watch": "aiutarmi = aiutare + me."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u28-aiuto-e1",
+              "kind": "choice",
+              "prompt": "___ darmi una mano sabato mattina?",
+              "answers": [
+                "Puoi"
+              ],
+              "explain": "Puoi + infinito: la richiesta gentile al tu.",
+              "options": [
+                "Puoi",
+                "Devo",
+                "Sono",
+                "Vado"
+              ]
+            },
+            {
+              "id": "it-foundations-u28-aiuto-e2",
+              "kind": "gap",
+              "prompt": "___ il carrello per le scatole pesanti? (prestare, tu)",
+              "answers": [
+                "Mi presti",
+                "mi presti"
+              ],
+              "explain": "mi presti + la cosa: il prestito chiesto con gentilezza."
+            },
+            {
+              "id": "it-foundations-u28-aiuto-e3",
+              "kind": "order",
+              "prompt": "Istruisci Giulia sui libri: quella scatola deve salire.",
+              "answers": [
+                "Prendi la scatola dei libri"
+              ],
+              "explain": "l'imperativo al tu: prendi, un'istruzione chiara."
+            },
+            {
+              "id": "it-foundations-u28-aiuto-e4",
+              "kind": "written",
+              "prompt": "Tranquillizza Giulia: nessun obbligo, tutto va bene.",
+              "answers": [
+                "non preoccuparti",
+                "non ti preoccupare",
+                "non preoccuparti va tutto bene"
+              ],
+              "explain": "non + infinito al tu: non preoccuparti, la forma negativa dell'imperativo."
+            }
+          ],
+          "skills": [
+            "grammar:imperatives",
+            "function:make-requests",
+            "grammar:can",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:imperatives",
+            "grammar:can"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "it-foundations-u28-prima-notte",
+          "title": "La prima notte",
+          "goal": "Descrivere la casa nuova con c'è e ci sono, e dire che cosa stai sistemando.",
+          "intro": {
+            "explanation": [
+              "Per descrivere: c'è + una cosa, ci sono + molte: « C'è una lampada nuova », « Ci sono ancora scatole ovunque ».",
+              "Il negativo e la domanda: « Non c'è il tavolo », « C'è l'ascensore? ». Sono le due frasi che servono davvero in casa nuova.",
+              "Per l'azione in corso: sto + gerundio: « Sto sistemando i libri ». Lo usi come un blocco: sto facendo, sto sistemando."
+            ],
+            "examples": [
+              {
+                "text": "C'è una lampada nuova in salotto.",
+                "meaning": "Una cosa: c'è."
+              },
+              {
+                "text": "Ci sono ancora dieci scatole.",
+                "meaning": "Molte cose: ci sono."
+              },
+              {
+                "text": "Non c'è il divano, arriva venerdì.",
+                "meaning": "Il negativo singolare."
+              },
+              {
+                "text": "C'è l'ascensore? No, non c'è.",
+                "meaning": "La domanda utile."
+              },
+              {
+                "text": "Sto sistemando la camera da letto.",
+                "meaning": "L'azione adesso."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "c'è + singolare",
+              "meaning": "Una cosa esiste.",
+              "note": "C'è un balcone grande."
+            },
+            {
+              "text": "ci sono + plurale",
+              "meaning": "Molte cose esistono.",
+              "note": "Ci sono due bagni."
+            },
+            {
+              "text": "non c'è / non ci sono",
+              "meaning": "La mancanza.",
+              "note": "Non ci sono le tende."
+            },
+            {
+              "text": "c'è… ?",
+              "meaning": "La domanda veloce.",
+              "note": "C'è l'ascensore?"
+            },
+            {
+              "text": "sto + gerundio",
+              "meaning": "L'azione adesso.",
+              "note": "Sto sistemando i libri."
+            }
+          ],
+          "situation": "Prima notte nella casa nuova: spieghi a un amico che cosa c'è, che cosa manca e che cosa stai sistemando adesso.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì che in salotto c'è una lampada nuova.",
+                "expected": [
+                  "In salotto c'è una lampada nuova.",
+                  "C'è una lampada nuova in salotto."
+                ],
+                "focus": "c'è",
+                "watch": "una cosa sola: c'è."
+              },
+              {
+                "prompt": "Dì che ci sono ancora dieci scatole.",
+                "expected": [
+                  "Ci sono ancora dieci scatole.",
+                  "Ci sono ancora 10 scatole."
+                ],
+                "focus": "ci sono",
+                "watch": "più cose: ci sono."
+              },
+              {
+                "prompt": "Dì che manca il divano, arriva venerdì.",
+                "expected": [
+                  "Non c'è il divano, arriva venerdì.",
+                  "Non c'è il divano."
+                ],
+                "focus": "non c'è",
+                "watch": "non c'è + singolare: la mancanza."
+              },
+              {
+                "prompt": "Chiedi a un amico se c'è l'ascensore.",
+                "expected": [
+                  "C'è l'ascensore?",
+                  "C'e l'ascensore?"
+                ],
+                "focus": "c'è… ?",
+                "watch": "c'è si scrive con l'accento."
+              },
+              {
+                "prompt": "Dì che in questo momento sistemi i libri.",
+                "expected": [
+                  "Sto sistemando i libri.",
+                  "Sto sistemando i libri adesso."
+                ],
+                "focus": "sto + gerundio",
+                "watch": "sto + -ando: l'azione in corso."
+              },
+              {
+                "prompt": "Dì che mancano le tende.",
+                "expected": [
+                  "Non ci sono le tende.",
+                  "Mancano le tende."
+                ],
+                "focus": "non ci sono",
+                "watch": "non ci sono + plurale."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u28-prima-notte-e1",
+              "kind": "choice",
+              "prompt": "In cucina ___ un forno nuovo.",
+              "answers": [
+                "c'è"
+              ],
+              "explain": "Una cosa sola: c'è + singolare.",
+              "options": [
+                "c'è",
+                "ci sono",
+                "sono",
+                "hanno"
+              ]
+            },
+            {
+              "id": "it-foundations-u28-prima-notte-e2",
+              "kind": "gap",
+              "prompt": "___ ancora tre scatole in corridoio. (plurale)",
+              "answers": [
+                "Ci sono",
+                "ci sono"
+              ],
+              "explain": "Più cose: ci sono + plurale."
+            },
+            {
+              "id": "it-foundations-u28-prima-notte-e3",
+              "kind": "order",
+              "prompt": "Chiedi all'amico come si sale: senza scale.",
+              "answers": [
+                "C'è l'ascensore nel palazzo"
+              ],
+              "explain": "c'è + la cosa: la domanda per sapere se esiste."
+            },
+            {
+              "id": "it-foundations-u28-prima-notte-e4",
+              "kind": "written",
+              "prompt": "Dì che in questo momento sistemi la camera da letto.",
+              "answers": [
+                "sto sistemando la camera da letto",
+                "sto sistemando la camera",
+                "sto sistemando la camera da letto adesso"
+              ],
+              "explain": "sto + gerundio: l'azione che sta succedendo adesso."
+            }
+          ],
+          "skills": [
+            "grammar:there-is-are",
+            "vocab:home",
+            "grammar:present-continuous",
+            "function:solve-problems"
+          ],
+          "canDo": [
+            "describe-home"
+          ],
+          "prerequisites": [
+            "grammar:there-is-are",
+            "vocab:home"
+          ],
+          "exposureSkills": []
         }
       ]
     }

@@ -12679,6 +12679,179 @@
             "grammar:going-to"
           ],
           "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u25-flughafen",
+          "title": "Am Flughafen",
+          "goal": "Check-in und Gate: Ich möchte einchecken — so kommst du ans Gate und in den Flieger.",
+          "intro": {
+            "explanation": [
+              "möchte + Infinitiv: « Ich möchte einchecken. » — höflicher als wollen.",
+              "Am Schalter: « Hier ist mein Reisepass. », « Ich habe nur Handgepäck. » — kurz und klar.",
+              "Fragen nach Zeit und Ort: « Wann beginnt das Boarding ? », « Von welchem Gate fliegt der Flug ? »"
+            ],
+            "examples": [
+              {
+                "text": "Ich möchte einchecken.",
+                "meaning": "möchte: höflich planen."
+              },
+              {
+                "text": "Hier ist mein Reisepass.",
+                "meaning": "Die Dokumente am Schalter."
+              },
+              {
+                "text": "Wann beginnt das Boarding ?",
+                "meaning": "Boarding = das Einsteigen."
+              },
+              {
+                "text": "Von welchem Gate fliegt der Flug ?",
+                "meaning": "Nach dem Gate fragen."
+              },
+              {
+                "text": "Ich habe nur Handgepäck.",
+                "meaning": "Handgepäck: der kleine Koffer für die Kabine."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "möchte + Infinitiv",
+              "meaning": "Höflich sagen, was du willst.",
+              "note": "Ich möchte einen Platz am Fenster."
+            },
+            {
+              "text": "das Boarding",
+              "meaning": "Das Einsteigen.",
+              "note": "Das Boarding beginnt um 8:30."
+            },
+            {
+              "text": "das Gate",
+              "meaning": "Der Weg zum Flieger.",
+              "note": "Gate B 12, bitte."
+            },
+            {
+              "text": "das Handgepäck",
+              "meaning": "Kommt in die Kabine.",
+              "note": "Nur ein Handgepäckstück."
+            },
+            {
+              "text": "pünktlich / verspätet",
+              "meaning": "Die Anzeige am Flughafen.",
+              "note": "Unser Flug ist pünktlich."
+            }
+          ],
+          "situation": "Flughafen, halb acht: Nina steht am Schalter. « Guten Morgen, ich möchte einchecken. Hier ist mein Reisepass. » — « Nur Handgepäck ? » — « Ja. Wann beginnt das Boarding ? » — « Um 8:30, Gate B 12. Der Flug ist pünktlich. »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag am Schalter höflich: einchecken.",
+                "expected": [
+                  "Ich möchte einchecken.",
+                  "ich moechte einchecken",
+                  "Ich möchte bitte einchecken."
+                ],
+                "focus": "möchte einchecken",
+                "watch": "möchte + Infinitiv am Ende."
+              },
+              {
+                "prompt": "Gib dem Personal deinen Pass.",
+                "expected": [
+                  "Hier ist mein Reisepass.",
+                  "hier ist mein reisepass",
+                  "Hier ist mein Pass."
+                ],
+                "focus": "reisepass",
+                "watch": "Hier ist mein … ."
+              },
+              {
+                "prompt": "Frag nach der Zeit fürs Boarding.",
+                "expected": [
+                  "Wann beginnt das Boarding ?",
+                  "wann beginnt das boarding",
+                  "Wann startet das Boarding ?"
+                ],
+                "focus": "wann beginnt",
+                "watch": "Wann + Verb an Position 2."
+              },
+              {
+                "prompt": "Frag nach deinem Gate.",
+                "expected": [
+                  "Von welchem Gate fliegt der Flug ?",
+                  "von welchem gate fliegt der flug",
+                  "Welches Gate habe ich ?"
+                ],
+                "focus": "welches gate",
+                "watch": "welch- + Gate: welches."
+              },
+              {
+                "prompt": "Sag: nur der kleine Koffer für die Kabine.",
+                "expected": [
+                  "Ich habe nur Handgepäck.",
+                  "ich habe nur handgepäck",
+                  "ich habe nur handgepaeck"
+                ],
+                "focus": "handgepäck",
+                "watch": "Handgepäck: in die Kabine."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u25-flughafen-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ einen Platz am Fenster. »",
+              "explain": "möchte + Akkusativ/Infinitiv: höflich am Schalter.",
+              "answers": [
+                "möchte"
+              ],
+              "options": [
+                "möchte",
+                "möchte zu",
+                "will zu",
+                "mögen"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-flughafen-e2",
+              "kind": "gap",
+              "prompt": "Wann ___ das Boarding ? (beginnen, 3. Person)",
+              "explain": "das Boarding beginnt: 3. Person Singular mit -t.",
+              "answers": [
+                "beginnt"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-flughafen-e3",
+              "kind": "order",
+              "prompt": "Frag nach dem Abflug-Gate.",
+              "explain": "welch- fragt nach dem Gate: Von welchem Gate … ?",
+              "answers": [
+                "Von welchem Gate fliegt der Flug"
+              ]
+            },
+            {
+              "id": "de-foundations-u25-flughafen-e4",
+              "kind": "written",
+              "prompt": "Sag, was du an Gepäck hast: nur der kleine Koffer.",
+              "explain": "Handgepäck: nur der kleine Koffer in der Kabine.",
+              "answers": [
+                "ich habe nur handgepaeck",
+                "ich habe nur handgepäck"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:travel",
+            "function:ask-simple-questions",
+            "grammar:present-questions"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-questions"
+          ],
+          "exposureSkills": []
         }
       ]
     },
@@ -13235,6 +13408,926 @@
           ],
           "prerequisites": [
             "grammar:connectors"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u27",
+      "title": "Freizeit",
+      "subtitle": "Hobbys und Wochenende",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "das-hobby",
+          "title": "Das Hobby",
+          "subtitle": "Was du gern machst",
+          "symbol": "book",
+          "category": "Course",
+          "situation": "Lena erzählt, was sie in ihrer Freizeit macht: Gitarre, Krimis, Kaffee mit Freunden — und was sie gar nicht gern macht.",
+          "colorIndex": 0
+        },
+        {
+          "id": "das-wochenende",
+          "title": "Das Wochenende",
+          "subtitle": "Pläne für Samstag und Sonntag",
+          "symbol": "figure.walk",
+          "category": "Course",
+          "situation": "Freitagabend: Was machen wir am Wochenende ? Lena und Ben planen ihr Wochenende — mit Fahrrad, See und einem faulen Sonntag.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u27-hobbys",
+          "title": "Ich spiele gern Gitarre",
+          "goal": "Über Hobbys reden: Ich spiele gern Gitarre — sag, was du gern machst und was nicht.",
+          "intro": {
+            "explanation": [
+              "gern steht nach dem Verb: « Ich spiele gern Gitarre. », « Ich lese gern. » — so sagst du, was du magst.",
+              "Fragen mit was: « Was machst du gern ? » — das Verb an Position 2: du machst.",
+              "Das Gegenteil: « Ich koche nicht gern. » — nicht gern heißt höflich: nein, danke."
+            ],
+            "examples": [
+              {
+                "text": "Ich spiele gern Gitarre.",
+                "meaning": "gern + Verb: die Lieblingssache."
+              },
+              {
+                "text": "Ich lese gern Bücher.",
+                "meaning": "lesen + gern."
+              },
+              {
+                "text": "Was machst du in deiner Freizeit ?",
+                "meaning": "Die Frage nach dem Hobby."
+              },
+              {
+                "text": "Ich schwimme nicht gern.",
+                "meaning": "nicht gern: das höfliche Nein."
+              },
+              {
+                "text": "Er hört gern Musik.",
+                "meaning": "hören → er hört: er/sie/es + t."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "gern + Verb",
+              "meaning": "Sagen, was du magst.",
+              "note": "Ich schwimme gern."
+            },
+            {
+              "text": "in meiner Freizeit",
+              "meaning": "Wenn du nicht arbeitest.",
+              "note": "In meiner Freizeit lese ich."
+            },
+            {
+              "text": "Was machst du gern ?",
+              "meaning": "Nach dem Hobby fragen.",
+              "note": "— Ich koche gern !"
+            },
+            {
+              "text": "nicht gern",
+              "meaning": "Sagen, was du nicht magst.",
+              "note": "Ich fahre nicht gern Bus."
+            },
+            {
+              "text": "das Hobby, die Hobbys",
+              "meaning": "Die Sache, die du in der Freizeit liebst.",
+              "note": "Gitarre ist mein Hobby."
+            }
+          ],
+          "situation": "Lena trifft Ben im Park. « Was machst du in deiner Freizeit ? » — « Ich spiele gern Gitarre und lese gern. Und du ? » — « Ich koche nicht gern, aber ich laufe gern. » — « Dann gehen wir zusammen laufen ! »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag, dass du gern Gitarre spielst.",
+                "expected": [
+                  "Ich spiele gern Gitarre.",
+                  "ich spiele gern gitarre"
+                ],
+                "focus": "spiele gern",
+                "watch": "gern steht nach dem Verb: spiele gern."
+              },
+              {
+                "prompt": "Frag Lena, was sie gern macht.",
+                "expected": [
+                  "Was machst du gern ?",
+                  "was machst du gern",
+                  "Was machst du in deiner Freizeit ?"
+                ],
+                "focus": "was machst du",
+                "watch": "W-Frage: das Verb an Position 2 — machst."
+              },
+              {
+                "prompt": "Sag, dass du gern Bücher liest.",
+                "expected": [
+                  "Ich lese gern Bücher.",
+                  "ich lese gern bücher",
+                  "ich lese gern buecher"
+                ],
+                "focus": "lese gern",
+                "watch": "ich lese + gern."
+              },
+              {
+                "prompt": "Sag höflich: Kochen ist nichts für dich.",
+                "expected": [
+                  "Ich koche nicht gern.",
+                  "ich koche nicht gern",
+                  "Ich koche nicht so gern."
+                ],
+                "focus": "nicht gern",
+                "watch": "nicht steht vor gern: koche nicht gern."
+              },
+              {
+                "prompt": "Frag, was Ben in seiner Freizeit macht.",
+                "expected": [
+                  "Was machst du in deiner Freizeit ?",
+                  "was machst du in deiner freizeit",
+                  "Was machst du gern ?"
+                ],
+                "focus": "freizeit",
+                "watch": "in deiner Freizeit = nach der Arbeit oder Schule."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u27-hobbys-e1",
+              "kind": "choice",
+              "prompt": "« Ich spiele ___ Gitarre. »",
+              "explain": "gern nach dem Verb: ich spiele gern.",
+              "answers": [
+                "gern"
+              ],
+              "options": [
+                "gern",
+                "gut",
+                "oft",
+                "immer"
+              ]
+            },
+            {
+              "id": "de-foundations-u27-hobbys-e2",
+              "kind": "gap",
+              "prompt": "Er ___ gern Musik. (hören, er-Form)",
+              "explain": "hören → er hört: aus dem Stamm + t.",
+              "answers": [
+                "hört",
+                "hoert"
+              ]
+            },
+            {
+              "id": "de-foundations-u27-hobbys-e3",
+              "kind": "order",
+              "prompt": "Frag Lena nach ihrem Hobby.",
+              "explain": "Die W-Frage: Was + machst + du + gern ?",
+              "answers": [
+                "Was machst du gern"
+              ]
+            },
+            {
+              "id": "de-foundations-u27-hobbys-e4",
+              "kind": "written",
+              "prompt": "Sag, dass du nicht gern schwimmst.",
+              "explain": "nicht gern: das höfliche Nein beim Sport.",
+              "answers": [
+                "ich schwimme nicht gern",
+                "ich schwimme nicht so gern"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "vocab:hobbies",
+            "function:ask-simple-questions",
+            "grammar:frequency-adverbs"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u27-wochenende",
+          "title": "Was machst du am Wochenende ?",
+          "goal": "Wochenendpläne im Präsens: Am Samstag fahre ich an den See — frag und erzähl, was du machst.",
+          "intro": {
+            "explanation": [
+              "Zeit vorne, Verb an Position 2: « Am Samstag fahre ich an den See. » — so planst du laut.",
+              "am + Tag: « am Samstag », « am Sonntag », « am Wochenende » — auch am Morgen, am Abend.",
+              "Achtung Vokalwechsel: « Du fährst schnell ! » — fahren → du fährst, er fährt; lesen → du liest."
+            ],
+            "examples": [
+              {
+                "text": "Am Samstag fahre ich an den See.",
+                "meaning": "Zeit an Position 1, Verb an Position 2."
+              },
+              {
+                "text": "Was machst du am Wochenende ?",
+                "meaning": "Die Wochenendfrage."
+              },
+              {
+                "text": "Am Sonntag schlafe ich lange.",
+                "meaning": "Ausschlafen im Präsens."
+              },
+              {
+                "text": "Du fährst mit dem Fahrrad.",
+                "meaning": "fahren → du fährst: der Vokalwechsel."
+              },
+              {
+                "text": "Wir treffen uns um zehn.",
+                "meaning": "Wir-Pläne: sich treffen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "am Samstag / am Sonntag",
+              "meaning": "Der Tag + am.",
+              "note": "Am Samstag backe ich Kuchen."
+            },
+            {
+              "text": "am Wochenende",
+              "meaning": "Samstag und Sonntag zusammen.",
+              "note": "Was machst du am Wochenende ?"
+            },
+            {
+              "text": "lange schlafen",
+              "meaning": "Ausschlafen am Sonntag.",
+              "note": "Ich schlafe am Sonntag lange."
+            },
+            {
+              "text": "Wir treffen uns …",
+              "meaning": "Pläne mit Freunden.",
+              "note": "Wir treffen uns am See."
+            },
+            {
+              "text": "fahren → du fährst",
+              "meaning": "Der Vokalwechsel a → ä.",
+              "note": "Du fährst schnell !"
+            }
+          ],
+          "situation": "Freitagabend: Lena und Ben planen das Wochenende. « Am Samstag fahre ich an den See — kommst du mit ? » — « Gerne ! Ich hole das Fahrrad. Am Sonntag schlafe ich dann lange. » — « Perfekt, wir treffen uns um zehn ! »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag deinen Plan: Samstag, an den See fahren.",
+                "expected": [
+                  "Am Samstag fahre ich an den See.",
+                  "am samstag fahre ich an den see"
+                ],
+                "focus": "am samstag",
+                "watch": "Zeit an Position 1, Verb an Position 2."
+              },
+              {
+                "prompt": "Frag Ben nach seinem Wochenende.",
+                "expected": [
+                  "Was machst du am Wochenende ?",
+                  "was machst du am wochenende"
+                ],
+                "focus": "wochenende",
+                "watch": "am Wochenende = Samstag + Sonntag."
+              },
+              {
+                "prompt": "Sag mit du: mit dem Fahrrad fahren.",
+                "expected": [
+                  "Du fährst mit dem Fahrrad.",
+                  "du fährst mit dem fahrrad",
+                  "du faehrst mit dem fahrrad",
+                  "Du fährst mit dem Rad."
+                ],
+                "focus": "du fährst",
+                "watch": "fahren → du fährst mit ä."
+              },
+              {
+                "prompt": "Schlag vor: ihr trefft euch um zehn.",
+                "expected": [
+                  "Wir treffen uns um zehn.",
+                  "wir treffen uns um zehn"
+                ],
+                "focus": "wir treffen",
+                "watch": "sich treffen: Wir treffen uns."
+              },
+              {
+                "prompt": "Sag: Sonntag, lange schlafen.",
+                "expected": [
+                  "Am Sonntag schlafe ich lange.",
+                  "am sonntag schlafe ich lange",
+                  "Ich schlafe am Sonntag lange."
+                ],
+                "focus": "schlafe lange",
+                "watch": "schlafen → ich schlafe."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u27-wochenende-e1",
+              "kind": "choice",
+              "prompt": "« Am Sonntag ___ ich lange. »",
+              "explain": "ich schlafe: aus schlafen wird schlafe.",
+              "answers": [
+                "schlafe"
+              ],
+              "options": [
+                "schlafe",
+                "schlafst",
+                "schlafen",
+                "schläfst"
+              ]
+            },
+            {
+              "id": "de-foundations-u27-wochenende-e2",
+              "kind": "gap",
+              "prompt": "Du ___ mit dem Fahrrad. (fahren, du-Form)",
+              "explain": "fahren → du fährst: der Vokalwechsel a → ä.",
+              "answers": [
+                "fährst",
+                "faehrst"
+              ]
+            },
+            {
+              "id": "de-foundations-u27-wochenende-e3",
+              "kind": "order",
+              "prompt": "Sag deinen Samstag-Plan mit dem See.",
+              "explain": "Zeit an Position 1 (Am Samstag), Verb an Position 2, Ziel am Ende.",
+              "answers": [
+                "Am Samstag fahre ich an den See"
+              ]
+            },
+            {
+              "id": "de-foundations-u27-wochenende-e4",
+              "kind": "written",
+              "prompt": "Frag, was jemand am Wochenende macht.",
+              "explain": "Die Wochenendfrage: was + machst du + am Wochenende ?",
+              "answers": [
+                "was machst du am wochenende",
+                "was hast du am wochenende vor"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:time-expressions",
+            "grammar:present-simple",
+            "function:talk-about-routines",
+            "vocab:hobbies"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:time-expressions"
+          ],
+          "exposureSkills": []
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u28",
+      "title": "Der Umzug",
+      "subtitle": "Neue Wohnung, neue Stadt",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "die-wohnungssuche",
+          "title": "Die Wohnungssuche",
+          "subtitle": "Inserate und Besichtigung",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Anna sucht eine Zwei-Zimmer-Wohnung: Inserate vergleichen, anrufen, einen Termin für die Besichtigung machen.",
+          "colorIndex": 0
+        },
+        {
+          "id": "der-umzugstag",
+          "title": "Der Umzugstag",
+          "subtitle": "Kisten, Freunde, Ankommen",
+          "symbol": "door.left.open",
+          "category": "Course",
+          "situation": "Umzugstag: Freunde helfen, Kisten wandern nach oben — am Abend steht der erste Kaffee in der neuen Küche.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u28-suche",
+          "title": "Wohnungsinserate verstehen",
+          "goal": "Inserate lesen und sagen, was nötig ist: Ich muss bis Ende des Monats umziehen — die Miete darf nicht zu hoch sein.",
+          "intro": {
+            "explanation": [
+              "müssen + Infinitiv am Ende: « Ich muss bis Ende des Monats umziehen. » — so sagst du, was nötig ist.",
+              "dürfen mit nicht: « Die Miete darf nicht über 900 Euro liegen. » — so setzt du deine Grenze.",
+              "Inserate-Sprache: « 2 Zi., 62 m², 3. OG, mit Balkon » — Zi. = Zimmer, OG = Stockwerk (Etage)."
+            ],
+            "examples": [
+              {
+                "text": "Ich muss bis Ende des Monats umziehen.",
+                "meaning": "müssen + Infinitiv am Satzende."
+              },
+              {
+                "text": "Die Miete darf nicht zu hoch sein.",
+                "meaning": "dürfen nicht: die Grenze."
+              },
+              {
+                "text": "Ich suche eine Wohnung mit Balkon.",
+                "meaning": "mit + das Wunschkriterium."
+              },
+              {
+                "text": "Wie hoch ist die Miete ?",
+                "meaning": "Nach dem Preis fragen."
+              },
+              {
+                "text": "Die Wohnung liegt in der dritten Etage.",
+                "meaning": "OG = Obergeschoss: die Etage."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "müssen + Infinitiv",
+              "meaning": "Was nötig ist.",
+              "note": "Ich muss morgen anrufen."
+            },
+            {
+              "text": "die Miete / die Kaution",
+              "meaning": "Monatlich zahlen / einmalig hinterlegen.",
+              "note": "Zwei Monatsmieten als Kaution."
+            },
+            {
+              "text": "dürfen nicht + Infinitiv",
+              "meaning": "Die Grenze.",
+              "note": "Sie darf nicht zu hoch sein."
+            },
+            {
+              "text": "2 Zi., 60 m², 3. OG",
+              "meaning": "Die Kürzel im Inserat.",
+              "note": "Drei Zimmer, drittes Stockwerk."
+            },
+            {
+              "text": "die Besichtigung",
+              "meaning": "Die Wohnung anschauen.",
+              "note": "Ich mache einen Besichtigungstermin."
+            }
+          ],
+          "situation": "Anna liest Inserate: « Ich muss bis Ende des Monats umziehen. » Zwei Zimmer, Balkon, dritte Etage — und die Miete darf nicht über 900 Euro liegen. Sie zirkelt die besten Anzeigen und ruft gleich an.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag mit müssen: umziehen, bis Ende des Monats.",
+                "expected": [
+                  "Ich muss bis Ende des Monats umziehen.",
+                  "ich muss bis ende des monats umziehen"
+                ],
+                "focus": "muss umziehen",
+                "watch": "müssen + Infinitiv am Satzende."
+              },
+              {
+                "prompt": "Sag mit dürfen: die Miete, nicht über 900 Euro.",
+                "expected": [
+                  "Die Miete darf nicht über 900 Euro liegen.",
+                  "die miete darf nicht über 900 euro liegen",
+                  "die miete darf nicht ueber 900 euro liegen"
+                ],
+                "focus": "darf nicht",
+                "watch": "dürfen nicht = die Grenze."
+              },
+              {
+                "prompt": "Sag, was du suchst: eine Wohnung, mit Balkon.",
+                "expected": [
+                  "Ich suche eine Wohnung mit Balkon.",
+                  "ich suche eine wohnung mit balkon"
+                ],
+                "focus": "mit balkon",
+                "watch": "mit + das Kriterium."
+              },
+              {
+                "prompt": "Frag nach der Höhe der Miete.",
+                "expected": [
+                  "Wie hoch ist die Miete ?",
+                  "wie hoch ist die miete"
+                ],
+                "focus": "wie hoch",
+                "watch": "Wie hoch + Miete oder Preis."
+              },
+              {
+                "prompt": "Mach einen Termin: die Wohnung besichtigen, morgen um 17 Uhr.",
+                "expected": [
+                  "Kann ich die Wohnung morgen um 17 Uhr besichtigen ?",
+                  "Ich möchte einen Besichtigungstermin morgen um 17 Uhr.",
+                  "Können wir morgen um 17 Uhr kommen ?"
+                ],
+                "focus": "besichtigen",
+                "watch": "besichtigen = die Wohnung anschauen."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u28-suche-e1",
+              "kind": "choice",
+              "prompt": "« Ich ___ bis Freitag antworten. » (nötig)",
+              "explain": "müssen: nötig — muss + Infinitiv am Ende.",
+              "answers": [
+                "muss"
+              ],
+              "options": [
+                "muss",
+                "darf",
+                "kann",
+                "mag"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-suche-e2",
+              "kind": "gap",
+              "prompt": "Die Miete ___ nicht über 1 000 Euro liegen. (dürfen)",
+              "explain": "dürfen nicht: die Grenze bei der Miete.",
+              "answers": [
+                "darf"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-suche-e3",
+              "kind": "order",
+              "prompt": "Sag deinen Plan mit müssen: der Vermieter, anrufen, morgen.",
+              "explain": "müssen an Position 2, der Infinitiv anruft am Ende.",
+              "answers": [
+                "Ich muss morgen den Vermieter anrufen"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-suche-e4",
+              "kind": "written",
+              "prompt": "Sag mit suchen, was du brauchst: Wohnung plus Balkon.",
+              "explain": "suchen + mit: das Wunschkriterium im Inserat.",
+              "answers": [
+                "ich suche eine wohnung mit balkon",
+                "ich suche eine wohnung mit einem balkon"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:modal-must-have-to",
+            "vocab:home",
+            "function:solve-problems",
+            "grammar:present-questions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:modal-must-have-to"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u28-besichtigung",
+          "title": "Die Besichtigung",
+          "goal": "Bei der Besichtigung fragen: Kann ich die Wohnung besichtigen ? — Wie hoch sind die Nebenkosten ?",
+          "intro": {
+            "explanation": [
+              "Höflich fragen mit können: « Kann ich die Wohnung besichtigen ? », « Können Sie mir mehr sagen ? »",
+              "Nach Details fragen: « Wie hoch sind die Nebenkosten ? » — Plural: sind.",
+              "Termine machen: « Passt es Ihnen am Dienstag um 18 Uhr ? » — der höfliche Vorschlag."
+            ],
+            "examples": [
+              {
+                "text": "Kann ich die Wohnung besichtigen ?",
+                "meaning": "Die Terminfrage."
+              },
+              {
+                "text": "Wie hoch sind die Nebenkosten ?",
+                "meaning": "Nebenkosten: Strom, Wasser, Heizung."
+              },
+              {
+                "text": "Ist die Küche im Preis dabei ?",
+                "meaning": "dabei = inklusive."
+              },
+              {
+                "text": "Passt es Ihnen am Dienstag um 18 Uhr ?",
+                "meaning": "Der Terminvorschlag mit Sie."
+              },
+              {
+                "text": "Wann kann ich einziehen ?",
+                "meaning": "einziehen: in die Wohnung kommen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Kann ich … ? / Können Sie … ?",
+              "meaning": "Höflich fragen.",
+              "note": "Kann ich nochmal vorbeikommen ?"
+            },
+            {
+              "text": "die Nebenkosten",
+              "meaning": "Strom, Wasser, Heizung.",
+              "note": "Wie hoch sind die Nebenkosten ?"
+            },
+            {
+              "text": "im Preis dabei",
+              "meaning": "Inklusive.",
+              "note": "Ist der Keller dabei ?"
+            },
+            {
+              "text": "Passt es Ihnen … ?",
+              "meaning": "Den Termin fragen.",
+              "note": "Passt es Ihnen um 18 Uhr ?"
+            },
+            {
+              "text": "einziehen / ausziehen",
+              "meaning": "In die Wohnung rein — raus.",
+              "note": "Ich ziehe am 1. Mai ein."
+            }
+          ],
+          "situation": "Anna besichtigt die Wohnung in der Lindenstraße. « Wie hoch sind die Nebenkosten ? » — « 180 Euro, Heizung dabei. » — « Ist die Küche im Preis dabei ? » — « Leider nicht. » — « Passt es Ihnen am Dienstag um 18 Uhr ? Dann nehme ich sie. »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag, ob du die Wohnung besichtigen kannst.",
+                "expected": [
+                  "Kann ich die Wohnung besichtigen ?",
+                  "kann ich die wohnung besichtigen"
+                ],
+                "focus": "kann ich",
+                "watch": "Kann ich … ? — die höfliche Frage."
+              },
+              {
+                "prompt": "Frag nach den Nebenkosten.",
+                "expected": [
+                  "Wie hoch sind die Nebenkosten ?",
+                  "wie hoch sind die nebenkosten"
+                ],
+                "focus": "nebenkosten",
+                "watch": "Plural: die Nebenkosten sind."
+              },
+              {
+                "prompt": "Frag, ob die Küche inklusive ist.",
+                "expected": [
+                  "Ist die Küche im Preis dabei ?",
+                  "ist die kueche im preis dabei",
+                  "Ist die Küche dabei ?"
+                ],
+                "focus": "im preis dabei",
+                "watch": "dabei = inklusive."
+              },
+              {
+                "prompt": "Schlag Dienstag um 18 Uhr als Termin vor (Sie-Form).",
+                "expected": [
+                  "Passt es Ihnen am Dienstag um 18 Uhr ?",
+                  "passt es ihnen am dienstag um 18 uhr",
+                  "Passt es Ihnen am Dienstag ?"
+                ],
+                "focus": "passt es ihnen",
+                "watch": "Passt es Ihnen … ? — der Vorschlag."
+              },
+              {
+                "prompt": "Frag, wann du einziehen kannst.",
+                "expected": [
+                  "Wann kann ich einziehen ?",
+                  "wann kann ich einziehen"
+                ],
+                "focus": "einziehen",
+                "watch": "trennbar: ich ziehe … ein."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u28-besichtigung-e1",
+              "kind": "choice",
+              "prompt": "« ___ ich die Wohnung morgen sehen ? »",
+              "explain": "Kann ich … ? — die höfliche Frage bei der Besichtigung.",
+              "answers": [
+                "Kann"
+              ],
+              "options": [
+                "Kann",
+                "Muss",
+                "Darf",
+                "Bin"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-besichtigung-e2",
+              "kind": "gap",
+              "prompt": "Wie hoch ___ die Nebenkosten ? (sein, Plural)",
+              "explain": "Plural: die Nebenkosten sind.",
+              "answers": [
+                "sind"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-besichtigung-e3",
+              "kind": "order",
+              "prompt": "Frag, ob die Küche inklusive ist.",
+              "explain": "Im Preis dabei = inklusive — die Küchenfrage.",
+              "answers": [
+                "Ist die Küche im Preis dabei"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-besichtigung-e4",
+              "kind": "written",
+              "prompt": "Mach einen Terminvorschlag für Montag um 17 Uhr (Sie-Form).",
+              "explain": "Passt es Ihnen + Zeit — der Terminvorschlag.",
+              "answers": [
+                "passt es ihnen montag um 17 uhr",
+                "passt es ihnen am montag um 17 uhr"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:can",
+            "grammar:present-questions",
+            "function:make-requests",
+            "vocab:home"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:can"
+          ],
+          "exposureSkills": []
+        },
+        {
+          "id": "de-foundations-u28-umzug",
+          "title": "Der Umzugstag",
+          "goal": "Helfen und Anweisungen geben: Trag die Kiste hoch ! — Kannst du mir helfen ?",
+          "intro": {
+            "explanation": [
+              "Imperativ mit du: « Trag die Kiste hoch ! » — ohne du, das Verb steht zuerst.",
+              "helfen + mir/dir (Dativ): « Kannst du mir helfen ? », « Ich helfe dir. »",
+              "Für mehrere: « Tragt schnell ! » — ihr-Form; mit Sie: « Tragen Sie bitte vorsichtig. »"
+            ],
+            "examples": [
+              {
+                "text": "Trag die Kiste hoch !",
+                "meaning": "du-Imperativ: das Verb zuerst."
+              },
+              {
+                "text": "Kannst du mir helfen ?",
+                "meaning": "helfen + mir: Dativ."
+              },
+              {
+                "text": "Ich helfe dir beim Packen.",
+                "meaning": "du → dir."
+              },
+              {
+                "text": "Tragt die Stühle vorsichtig !",
+                "meaning": "ihr-Imperativ: Endung -t."
+              },
+              {
+                "text": "Warte bitte kurz unten !",
+                "meaning": "bitte macht den Imperativ höflich."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Trag … ! / Hol … !",
+              "meaning": "Der du-Imperativ.",
+              "note": "Hol den Kistenwagen !"
+            },
+            {
+              "text": "mir / dir (Dativ)",
+              "meaning": "helfen + Dativ.",
+              "note": "Ich helfe dir, hilfst du mir ?"
+            },
+            {
+              "text": "die Kiste / der Karton",
+              "meaning": "Beim Umzug.",
+              "note": "Der Karton ist schwer."
+            },
+            {
+              "text": "hochtragen / einräumen",
+              "meaning": "Trennbare Verben.",
+              "note": "Trag den Tisch hoch !"
+            },
+            {
+              "text": "Willkommen in der neuen Wohnung !",
+              "meaning": "Ankommen.",
+              "note": "Kaffee geht immer !"
+            }
+          ],
+          "situation": "Umzugstag bei Anna: Ben und Lena helfen. « Kannst du mir helfen ? » — « Klar, ich helfe dir. Trag die Kiste hoch, ich hol den Tisch ! » Am Abend: der erste Kaffee in der neuen Küche — Willkommen !",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Bitt Ben um Hilfe.",
+                "expected": [
+                  "Kannst du mir helfen ?",
+                  "kannst du mir helfen",
+                  "Kannst du mir bitte helfen ?"
+                ],
+                "focus": "kannst du mir",
+                "watch": "helfen + mir (Dativ)."
+              },
+              {
+                "prompt": "Sag zu Ben: die Kiste, hochtragen (du-Imperativ).",
+                "expected": [
+                  "Trag die Kiste hoch !",
+                  "trag die kiste hoch",
+                  "Trag die Kiste bitte hoch !"
+                ],
+                "focus": "trag hoch",
+                "watch": "Verb zuerst: Trag … hoch !"
+              },
+              {
+                "prompt": "Sag, dass du ihm hilfst.",
+                "expected": [
+                  "Ich helfe dir.",
+                  "ich helfe dir",
+                  "Ich helfe dir gern."
+                ],
+                "focus": "ich helfe dir",
+                "watch": "helfen + dir."
+              },
+              {
+                "prompt": "Gib zwei Leuten den Auftrag: die Stühle, vorsichtig (ihr).",
+                "expected": [
+                  "Tragt die Stühle vorsichtig !",
+                  "tragt die stuehle vorsichtig",
+                  "Tragt die Stühle bitte vorsichtig !"
+                ],
+                "focus": "tragt",
+                "watch": "ihr-Imperativ: Endung -t."
+              },
+              {
+                "prompt": "Sag Ben, er soll kurz unten warten (mit bitte).",
+                "expected": [
+                  "Warte bitte kurz unten !",
+                  "warte bitte kurz unten",
+                  "Warte kurz unten, bitte."
+                ],
+                "focus": "warte",
+                "watch": "warten → Warte ! ohne du."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u28-umzug-e1",
+              "kind": "choice",
+              "prompt": "« ___ bitte die Tür auf ! » (du)",
+              "explain": "du-Imperativ: Verb zuerst, ohne du.",
+              "answers": [
+                "Mach"
+              ],
+              "options": [
+                "Mach",
+                "Machen",
+                "Macht",
+                "Machst"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-umzug-e2",
+              "kind": "gap",
+              "prompt": "Kannst du ___ helfen ? (ich, Dativ)",
+              "explain": "helfen + Dativ: hilf mir.",
+              "answers": [
+                "mir"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-umzug-e3",
+              "kind": "order",
+              "prompt": "Sag Lena und Ben, sie sollen den Tisch hochtragen (ihr).",
+              "explain": "ihr-Imperativ: Tragt … hoch !",
+              "answers": [
+                "Tragt den Tisch hoch"
+              ]
+            },
+            {
+              "id": "de-foundations-u28-umzug-e4",
+              "kind": "written",
+              "prompt": "Bitt eine Freundin um Hilfe beim Packen.",
+              "explain": "Kannst du mir (beim Packen) helfen ? — die Bitte.",
+              "answers": [
+                "kannst du mir beim packen helfen",
+                "kannst du mir bitte helfen",
+                "kannst du mir helfen"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:imperatives",
+            "grammar:object-pronouns",
+            "function:make-requests",
+            "vocab:home"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:imperatives"
           ],
           "exposureSkills": []
         }

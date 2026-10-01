@@ -3380,6 +3380,1051 @@
           ]
         }
       ]
+    },
+    {
+      "id": "it-listen-trasloco-lista",
+      "languageID": "it",
+      "title": "La lista del trasloco",
+      "level": "A2",
+      "topic": "trasloco",
+      "unitID": "it-foundations-u28",
+      "text": "Quando Marco dice: « Sabato trasloco! », io apro la lista delle cose da fare. Per prima cosa compro le scatole: me ne servono almeno dieci, grandi e piccole. Poi imballo la cucina, che è la parte più lenta: piatti, bicchieri e pentole, con tanta carta di giornale. I libri vanno in scatole piccole, perché diventano pesantissime. Devo anche chiamare il furgone: devo farlo entro giovedì, altrimenti non troviamo nulla. Bisogna poi pensare alle cose che non si imballano: le piante, ad esempio, vengono in macchina con me. La sera prima chiudo tutte le scatole e scrivo su ognuna il nome della stanza. Così, nella casa nuova, tutto va direttamente al suo posto.",
+      "questions": [
+        {
+          "id": "it-listen-trasloco-lista-q1",
+          "kind": "choice",
+          "prompt": "Che cosa fa Marco il sabato?",
+          "answers": [
+            "Trasloca di casa"
+          ],
+          "explain": "« Sabato trasloco! », dice Marco: si trasferisce di casa.",
+          "options": [
+            "Trasloca di casa",
+            "Compra un furgone",
+            "Trova lavoro",
+            "Vende la cucina"
+          ]
+        },
+        {
+          "id": "it-listen-trasloco-lista-q2",
+          "kind": "written",
+          "prompt": "Quante scatole servono almeno?",
+          "answers": [
+            "dieci",
+            "10",
+            "dieci scatole"
+          ],
+          "explain": "« Me ne servono almeno dieci, grandi e piccole »."
+        },
+        {
+          "id": "it-listen-trasloco-lista-q3",
+          "kind": "choice",
+          "prompt": "Qual è la parte più lenta da imballare?",
+          "answers": [
+            "La cucina"
+          ],
+          "explain": "« Imballo la cucina, che è la parte più lenta ».",
+          "options": [
+            "La cucina",
+            "I libri",
+            "Le piante",
+            "Il salotto"
+          ]
+        },
+        {
+          "id": "it-listen-trasloco-lista-q4",
+          "kind": "written",
+          "prompt": "Entro quando deve chiamare il furgone?",
+          "answers": [
+            "entro giovedì",
+            "giovedì",
+            "entro giovedi"
+          ],
+          "explain": "« Devo farlo entro giovedì, altrimenti non troviamo nulla »."
+        },
+        {
+          "id": "it-listen-trasloco-lista-q5",
+          "kind": "choice",
+          "prompt": "Come viaggiano le piante?",
+          "answers": [
+            "In macchina con lui"
+          ],
+          "explain": "« Le piante… vengono in macchina con me ».",
+          "options": [
+            "In macchina con lui",
+            "Nel furgone",
+            "Restano a casa",
+            "Per posta"
+          ]
+        },
+        {
+          "id": "it-listen-trasloco-lista-q6",
+          "kind": "written",
+          "prompt": "Che cosa scrive sulle scatole?",
+          "answers": [
+            "il nome della stanza",
+            "la stanza",
+            "il nome della stanza di destinazione"
+          ],
+          "explain": "« Scrivo su ognuna il nome della stanza »."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "grammar:modal-must-have-to",
+        "vocab:home"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-vicini-furgone",
+      "languageID": "it",
+      "title": "Il furgone di Giulia",
+      "level": "A2",
+      "topic": "richieste",
+      "unitID": "it-foundations-u28",
+      "text": "« Giulia, tu hai il furgone, vero? »\n« Sì, quello piccolo. Perché, ti serve? »\n« Ti devo dire una cosa: sabato trasloco e devo portare i libri e le piante. Puoi prestarmelo per la mattina? »\n« Certo! Ma devi riportarmelo entro le due, perché alle tre esco. »\n« Perfetto, per le due è da riportare. Posso darti una mano con qualcosa in cambio? »\n« Mmm… puoi aiutarmi a montare lo scaffale nuovo? Da sola ci metto ore! »\n« Affare fatto. E grazie mille, sei gentilissima! »\n« Figurati! Poi mi racconti com'è la casa nuova. »",
+      "questions": [
+        {
+          "id": "it-listen-vicini-furgone-q1",
+          "kind": "choice",
+          "prompt": "Che cosa chiede Marco a Giulia?",
+          "answers": [
+            "Il furgone per sabato mattina"
+          ],
+          "explain": "« Puoi prestarmelo per la mattina? », chiede Marco per il trasloco del sabato.",
+          "options": [
+            "Il furgone per sabato mattina",
+            "I libri di scuola",
+            "Una pianta nuova",
+            "Lo scaffale di casa"
+          ]
+        },
+        {
+          "id": "it-listen-vicini-furgone-q2",
+          "kind": "written",
+          "prompt": "Entro che ora deve riportare il furgone?",
+          "answers": [
+            "entro le due",
+            "le due",
+            "alle due"
+          ],
+          "explain": "« Devi riportarmelo entro le due, perché alle tre esco »."
+        },
+        {
+          "id": "it-listen-vicini-furgone-q3",
+          "kind": "choice",
+          "prompt": "Che cosa chiede Giulia in cambio?",
+          "answers": [
+            "Aiuto per montare uno scaffale"
+          ],
+          "explain": "« Puoi aiutarmi a montare lo scaffale nuovo? ».",
+          "options": [
+            "Aiuto per montare uno scaffale",
+            "Dieci euro di benzina",
+            "Un vaso per le piante",
+            "Un aiuto col trasloco"
+          ]
+        },
+        {
+          "id": "it-listen-vicini-furgone-q4",
+          "kind": "written",
+          "prompt": "Come risponde Giulia al grazie?",
+          "answers": [
+            "figurati",
+            "Figurati",
+            "figurati!"
+          ],
+          "explain": "« Figurati! »: è la risposta tipica a un grazie."
+        },
+        {
+          "id": "it-listen-vicini-furgone-q5",
+          "kind": "choice",
+          "prompt": "Com'è il furgone di Giulia?",
+          "answers": [
+            "Piccolo"
+          ],
+          "explain": "« Sì, quello piccolo », risponde Giulia.",
+          "options": [
+            "Piccolo",
+            "Enorme",
+            "Nuovo di zecca",
+            "Rosso"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "function:make-requests",
+        "grammar:can",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-prima-notte-sistemi",
+      "languageID": "it",
+      "title": "La prima notte",
+      "level": "A2",
+      "topic": "casa nuova",
+      "unitID": "it-foundations-u28",
+      "text": "« Allora, com'è la casa nuova? »\n« Strana! Ci sono scatole ovunque e adesso sto sistemando i libri nella libreria. »\n« E la camera? »\n« C'è un letto grande e un balcone sul cortile, molto tranquillo. Ma non ci sono ancora le tende, quindi domani il sole entra alle sei! »\n« E la cucina? »\n« C'è il forno nuovo, ma manca il tavolo: per ora mangiamo sul divano, che comunque è arrivato! »\n« Almeno una cosa! C'è l'ascensore o fai le scale? »\n« C'è, per fortuna: sono al terzo piano e con le scatole sarebbe un disastro. »\n« Ti auguro la prima buona notte nella casa nuova! »",
+      "questions": [
+        {
+          "id": "it-listen-prima-notte-sistemi-q1",
+          "kind": "choice",
+          "prompt": "Che cosa fa Marco adesso?",
+          "answers": [
+            "Sistema i libri"
+          ],
+          "explain": "« Adesso sto sistemando i libri nella libreria ».",
+          "options": [
+            "Sistema i libri",
+            "Monta il letto",
+            "Fa la spesa",
+            "Pulisce la cucina"
+          ]
+        },
+        {
+          "id": "it-listen-prima-notte-sistemi-q2",
+          "kind": "written",
+          "prompt": "Che cosa manca nella camera da letto?",
+          "answers": [
+            "le tende",
+            "tenda",
+            "le tende ancora"
+          ],
+          "explain": "« Non ci sono ancora le tende »."
+        },
+        {
+          "id": "it-listen-prima-notte-sistemi-q3",
+          "kind": "choice",
+          "prompt": "Che cosa c'è in cucina?",
+          "answers": [
+            "Il forno nuovo"
+          ],
+          "explain": "« C'è il forno nuovo, ma manca il tavolo ».",
+          "options": [
+            "Il forno nuovo",
+            "Il tavolo nuovo",
+            "Il divano rosso",
+            "La lavastoviglie"
+          ]
+        },
+        {
+          "id": "it-listen-prima-notte-sistemi-q4",
+          "kind": "written",
+          "prompt": "A che piano abita?",
+          "answers": [
+            "al terzo piano",
+            "terzo piano",
+            "3 piano"
+          ],
+          "explain": "« Sono al terzo piano »."
+        },
+        {
+          "id": "it-listen-prima-notte-sistemi-q5",
+          "kind": "choice",
+          "prompt": "Perché l'ascensore è importante?",
+          "answers": [
+            "Perché ci sono molte scatole"
+          ],
+          "explain": "« Con le scatole sarebbe un disastro ».",
+          "options": [
+            "Perché ci sono molte scatole",
+            "Perché abita all'ultimo piano",
+            "Perché il palazzo è vecchio",
+            "Perché il divano è pesante"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:there-is-are",
+        "vocab:home",
+        "listening:gist"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-aeroporto-ritardo",
+      "languageID": "it",
+      "title": "Il volo in ritardo",
+      "level": "A2",
+      "topic": "aeroporto",
+      "unitID": "it-foundations-u25",
+      "text": "« Buongiorno, dove posso fare il check-in per il volo di Lisbona? »\n« Al banco dodici, signora, è lì al fondo. »\nPoi arriva l'annuncio: « Signore e signori, il volo AZ 452 per Lisbona è in ritardo di quaranta minuti. L'imbarco avverrà al gate quindici, che chiude alle nove e mezza. Vi invitiamo a recarvi al gate. »\n« Scusi, il volo è in ritardo: perdo la coincidenza di Lisbona. Devo cambiare il biglietto? »\n« No, signora: la coincidenza è protetta. Al suo arrivo troverà il prossimo volo. »\n« Perfetto. E dove aspetto adesso? »\n« C'è un caffè dopo i controlli di sicurezza: il gate apre tra mezz'ora. »",
+      "questions": [
+        {
+          "id": "it-listen-aeroporto-ritardo-q1",
+          "kind": "written",
+          "prompt": "Di quanto è in ritardo il volo?",
+          "answers": [
+            "quaranta minuti",
+            "40 minuti"
+          ],
+          "explain": "« Il volo AZ 452 per Lisbona è in ritardo di quaranta minuti »."
+        },
+        {
+          "id": "it-listen-aeroporto-ritardo-q2",
+          "kind": "choice",
+          "prompt": "Dove avviene l'imbarco?",
+          "answers": [
+            "Al gate quindici"
+          ],
+          "explain": "« L'imbarco avverrà al gate quindici ».",
+          "options": [
+            "Al gate quindici",
+            "Al banco dodici",
+            "Al gate cinquanta",
+            "Al caffè"
+          ]
+        },
+        {
+          "id": "it-listen-aeroporto-ritardo-q3",
+          "kind": "written",
+          "prompt": "A che ora chiude il gate?",
+          "answers": [
+            "alle nove e mezza",
+            "nove e mezza",
+            "alle 9 e 30"
+          ],
+          "explain": "« …che chiude alle nove e mezza »."
+        },
+        {
+          "id": "it-listen-aeroporto-ritardo-q4",
+          "kind": "choice",
+          "prompt": "Che cosa succede alla coincidenza di Lisbona?",
+          "answers": [
+            "È protetta: prende il volo dopo"
+          ],
+          "explain": "« La coincidenza è protetta. Al suo arrivo troverà il prossimo volo ».",
+          "options": [
+            "È protetta: prende il volo dopo",
+            "È persa per sempre",
+            "È annullata",
+            "Parte senza di lei"
+          ]
+        },
+        {
+          "id": "it-listen-aeroporto-ritardo-q5",
+          "kind": "choice",
+          "prompt": "Che cosa può fare mentre aspetta?",
+          "answers": [
+            "Prendere un caffè dopo i controlli"
+          ],
+          "explain": "« C'è un caffè dopo i controlli di sicurezza ».",
+          "options": [
+            "Prendere un caffè dopo i controlli",
+            "Tornare a casa",
+            "Cambiare il banco",
+            "Comprare un altro biglietto"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "vocab:travel",
+        "function:solve-problems"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-progetto-camper",
+      "languageID": "it",
+      "title": "Il progetto dell'estate",
+      "level": "A2",
+      "topic": "progetti",
+      "unitID": "it-foundations-u4",
+      "text": "« Quest'estate finalmente facciamo il viaggio in camper! »\n« Davvero? Dove andate? »\n« Prima andiamo in Toscana, per una settimana, poi scendiamo in Umbria. Il campeggio in Toscana l'ho già prenotato. »\n« E come preparate il camper? »\n« Sto facendo la lista: dobbiamo portare il frigo portatile, le sedie e il tavolo pieghevole. E devo controllare la ruota di scorta. »\n« Quanto costa il campeggio? »\n« Venti euro a notte, con la corrente inclusa. Domani vado a comprare l'adattatore per la corrente. »\n« Ad agosto ci sono mosche e zanzare, eh? »\n« Lo so: per questo prendo anche la zanzariera. L'anno scorso mi hanno mangiato! »",
+      "questions": [
+        {
+          "id": "it-listen-progetto-camper-q1",
+          "kind": "choice",
+          "prompt": "Dove vanno prima?",
+          "answers": [
+            "In Toscana"
+          ],
+          "explain": "« Prima andiamo in Toscana, per una settimana ».",
+          "options": [
+            "In Toscana",
+            "In Umbria",
+            "Al mare",
+            "In montagna"
+          ]
+        },
+        {
+          "id": "it-listen-progetto-camper-q2",
+          "kind": "written",
+          "prompt": "Che cosa ha già prenotato?",
+          "answers": [
+            "il campeggio",
+            "campeggio",
+            "il campeggio in toscana"
+          ],
+          "explain": "« Il campeggio in Toscana l'ho già prenotato »."
+        },
+        {
+          "id": "it-listen-progetto-camper-q3",
+          "kind": "choice",
+          "prompt": "Quanto costa il campeggio a notte?",
+          "answers": [
+            "Venti euro"
+          ],
+          "explain": "« Venti euro a notte, con la corrente inclusa ».",
+          "options": [
+            "Venti euro",
+            "Dodici euro",
+            "Trenta euro",
+            "Due euro"
+          ]
+        },
+        {
+          "id": "it-listen-progetto-camper-q4",
+          "kind": "written",
+          "prompt": "Che cosa compra domani?",
+          "answers": [
+            "l'adattatore",
+            "l adattatore",
+            "adattatore"
+          ],
+          "explain": "« Domani vado a comprare l'adattatore per la corrente »."
+        },
+        {
+          "id": "it-listen-progetto-camper-q5",
+          "kind": "choice",
+          "prompt": "Perché prende la zanzariera?",
+          "answers": [
+            "Per le zanzare di agosto"
+          ],
+          "explain": "« Ad agosto ci sono mosche e zanzare… per questo prendo anche la zanzariera ».",
+          "options": [
+            "Per le zanzare di agosto",
+            "Per la pioggia",
+            "Per il sole",
+            "Per il frigo"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "function:make-future-plans",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-bici-riparata",
+      "languageID": "it",
+      "title": "La bici riparata",
+      "level": "A2",
+      "topic": "problemi",
+      "unitID": "it-foundations-u20",
+      "text": "« Ciao Paolo! Ma la bici com'è? L'hai riparata? »\n« Sì! Sabato la gomma era buciata e io ero senza strumenti. »\n« E che cosa hai fatto? »\n« Ho chiesto a un ragazzo del quartiere che ripara le bici nel cortile di palazzo. In mezz'ora la gomma era a posto e ha cambiato anche la camera d'aria. »\n« Quanto ti è costato? »\n« Dodici euro, pezzi e manodopera. Un biglietto di autobus costa un euro e cinquanta, quindi in un mese mi sono già rifatto! »\n« E adesso ci vai al lavoro in bici? »\n« Certo: in venti minuti sono in ufficio. E non trovo più un posto per l'auto: perdo più tempo a parcheggiare che a pedalare! »",
+      "questions": [
+        {
+          "id": "it-listen-bici-buciata-q1",
+          "kind": "choice",
+          "prompt": "Qual era il problema di sabato?",
+          "answers": [
+            "La gomma era buciata"
+          ],
+          "explain": "« Sabato la gomma era buciata ».",
+          "options": [
+            "La gomma era buciata",
+            "La catena era rotta",
+            "Il freno non funzionava",
+            "Non c'era la sella"
+          ]
+        },
+        {
+          "id": "it-listen-bici-buciata-q2",
+          "kind": "written",
+          "prompt": "Quanto è costata la riparazione?",
+          "answers": [
+            "dodici euro",
+            "12 euro"
+          ],
+          "explain": "« Dodici euro, pezzi e manodopera »."
+        },
+        {
+          "id": "it-listen-bici-buciata-q3",
+          "kind": "choice",
+          "prompt": "Che cosa ha cambiato il ragazzo?",
+          "answers": [
+            "La camera d'aria"
+          ],
+          "explain": "« Ha cambiato anche la camera d'aria ».",
+          "options": [
+            "La camera d'aria",
+            "La catena",
+            "La sella",
+            "Il manubrio"
+          ]
+        },
+        {
+          "id": "it-listen-bici-buciata-q4",
+          "kind": "written",
+          "prompt": "Quanto tempo ci mette ora per andare al lavoro in bici?",
+          "answers": [
+            "venti minuti",
+            "20 minuti"
+          ],
+          "explain": "« In venti minuti sono in ufficio »."
+        },
+        {
+          "id": "it-listen-bici-buciata-q5",
+          "kind": "choice",
+          "prompt": "Perché preferisce la bici all'auto?",
+          "answers": [
+            "Perché parcheggiare è difficile"
+          ],
+          "explain": "« Non trovo più un posto per l'auto: perdo più tempo a parcheggiare ».",
+          "options": [
+            "Perché parcheggiare è difficile",
+            "Perché l'auto è rotta",
+            "Perché il lavoro è lontano",
+            "Perché l'autobus è caro"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "function:solve-problems",
+        "vocab:transport"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-colloquio-vero",
+      "languageID": "it",
+      "title": "Il secondo colloquio",
+      "level": "B1",
+      "topic": "lavoro",
+      "unitID": "it-foundations-u21",
+      "text": "« Bentornata, Chiara. Il primo colloquio è andato bene, ma ora vuole conoscerla il direttore: ha qualche domanda da farci? »\n« Sì: vorrei sapere com'è organizzato il team e con chi lavorerò ogni giorno. »\n« Siamo sei persone, due in sede e il resto in remoto. Il direttore, poi, apprezza chi porta idee nuove: le è mai capitato di proporre un cambiamento? »\n« Nel mio lavoro attuale ho proposto un nuovo turno di apertura del negozio: le vendite del sabato sono aumentate del dieci per cento. »\n« Perfetto. E che cosa si aspetta da noi? »\n« Prima di tutto imparare, poi crescere. Non cerco solo uno stipendio: cerco un posto dove rimanere. »\n« Bella risposta. La richiameremo entro venerdì. »",
+      "questions": [
+        {
+          "id": "it-listen-colloquio-vero-q1",
+          "kind": "choice",
+          "prompt": "Chi vuole conoscere Chiara?",
+          "answers": [
+            "Il direttore"
+          ],
+          "explain": "« Ora vuole conoscerla il direttore ».",
+          "options": [
+            "Il direttore",
+            "Il suo capo attuale",
+            "I clienti del negozio",
+            "I colleghi in remoto"
+          ]
+        },
+        {
+          "id": "it-listen-colloquio-vero-q2",
+          "kind": "written",
+          "prompt": "Di quante persone è composto il team?",
+          "answers": [
+            "sei persone",
+            "6 persone",
+            "sei"
+          ],
+          "explain": "« Siamo sei persone, due in sede e il resto in remoto »."
+        },
+        {
+          "id": "it-listen-colloquio-vero-q3",
+          "kind": "choice",
+          "prompt": "Che cosa ha proposto nel lavoro attuale?",
+          "answers": [
+            "Un nuovo turno di apertura"
+          ],
+          "explain": "« Ho proposto un nuovo turno di apertura del negozio ».",
+          "options": [
+            "Un nuovo turno di apertura",
+            "Un nuovo negozio",
+            "Uno stipendio più alto",
+            "Un lavoro in remoto"
+          ]
+        },
+        {
+          "id": "it-listen-colloquio-vero-q4",
+          "kind": "written",
+          "prompt": "Di quanto sono aumentate le vendite del sabato?",
+          "answers": [
+            "del dieci per cento",
+            "dieci per cento",
+            "10 per cento"
+          ],
+          "explain": "« Le vendite del sabato sono aumentate del dieci per cento »."
+        },
+        {
+          "id": "it-listen-colloquio-vero-q5",
+          "kind": "choice",
+          "prompt": "Che cosa cerca Chiara?",
+          "answers": [
+            "Un posto dove rimanere"
+          ],
+          "explain": "« Non cerco solo uno stipendio: cerco un posto dove rimanere ».",
+          "options": [
+            "Un posto dove rimanere",
+            "Solo uno stipendio",
+            "Un lavoro in remoto",
+            "Un contratto breve"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "function:talk-about-work",
+        "vocab:work"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-trattativa-affitto",
+      "languageID": "it",
+      "title": "La trattativa dell'affitto",
+      "level": "B2",
+      "topic": "affitto",
+      "unitID": "it-foundations-u7",
+      "text": "« Allora, signor Ferri, l'appartamento le piace. L'offerta è di novecento euro al mese, spese escluse. »\n« Mi permetta un'osservazione: per un quarto piano senza ascensore, novecento sono tanti. Le propongo ottocento, spese incluse. »\n« Ottocento è impossibile, lo capisca. Ma posso fare un passo: ottocentosessanta, e le spese restano a suo carico. »\n« Se mi garantisce un contratto di tre anni con rinnovo, accetto ottocentosessanta. »\n« Tre anni vanno bene, ma il rinnovo automatico no: preferiamo rivedere le condizioni ogni anno, è giusto per entrambi. »\n« D'accordo, a patto che l'aumento non superi l'inflazione. E una cosa ancora: chi paga le tapparelle rotte della camera? »\n« Quelle le sistemo io, prima che entri. È un piacere trattare con qualcuno che sa quello che vuole. »",
+      "questions": [
+        {
+          "id": "it-listen-trattativa-affitto-q1",
+          "kind": "choice",
+          "prompt": "Che cosa propone il signor Ferri all'inizio?",
+          "answers": [
+            "Ottocento euro, spese incluse"
+          ],
+          "explain": "« Le propongo ottocento, spese incluse ».",
+          "options": [
+            "Ottocento euro, spese incluse",
+            "Novecento euro, spese escluse",
+            "Ottocentosessanta euro",
+            "Un contratto di tre anni"
+          ]
+        },
+        {
+          "id": "it-listen-trattativa-affitto-q2",
+          "kind": "written",
+          "prompt": "Perché il signor Ferri ritiene alto il prezzo?",
+          "answers": [
+            "perché è un quarto piano senza ascensore",
+            "quarto piano senza ascensore",
+            "perche non c e l ascensore"
+          ],
+          "explain": "« Per un quarto piano senza ascensore, novecento sono tanti »."
+        },
+        {
+          "id": "it-listen-trattativa-affitto-q3",
+          "kind": "choice",
+          "prompt": "Che condizione mette per accettare ottocentosessanta?",
+          "answers": [
+            "Un contratto di tre anni"
+          ],
+          "explain": "« Se mi garantisce un contratto di tre anni con rinnovo, accetto ottocentosessanta ».",
+          "options": [
+            "Un contratto di tre anni",
+            "Le spese incluse",
+            "Un aumento annuale",
+            "Le tapparelle nuove"
+          ]
+        },
+        {
+          "id": "it-listen-trattativa-affitto-q4",
+          "kind": "choice",
+          "prompt": "Come vuole gestire i rinnovi la proprietaria?",
+          "answers": [
+            "Rivedendo le condizioni ogni anno"
+          ],
+          "explain": "« Preferiamo rivedere le condizioni ogni anno, è giusto per entrambi ».",
+          "options": [
+            "Rivedendo le condizioni ogni anno",
+            "Con un rinnovo automatico",
+            "Senza mai aumentare",
+            "Con un contratto di un mese"
+          ]
+        },
+        {
+          "id": "it-listen-trattativa-affitto-q5",
+          "kind": "written",
+          "prompt": "Chi ripara le tapparelle rotte?",
+          "answers": [
+            "la proprietaria",
+            "il proprietario",
+            "la padrona di casa"
+          ],
+          "explain": "« Quelle le sistemo io », dice la proprietaria."
+        },
+        {
+          "id": "it-listen-trattativa-affitto-q6",
+          "kind": "choice",
+          "prompt": "Come si può descrivere il signor Ferri?",
+          "answers": [
+            "Sa negoziare punto per punto"
+          ],
+          "explain": "« È un piacere trattare con qualcuno che sa quello che vuole ».",
+          "options": [
+            "Sa negoziare punto per punto",
+            "Ha fretta di firmare",
+            "Non vuole il contratto",
+            "Accetta tutto subito"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "speaking:negotiate",
+        "listening:connected-speech"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-dibattito-turismo",
+      "languageID": "it",
+      "title": "Il dibattito sul turismo",
+      "level": "B2",
+      "topic": "attualità",
+      "unitID": "it-foundations-u8",
+      "text": "« Microfoni aperti » torna sul turismo eccessivo. Con noi Elena Marchi, guida turistica a Venezia, e Paolo Sarti, albergatore.\nElena: « In centro i residenti sono meno di cinquantamila, e ogni giorno arrivano ottantamila visitatori. Non sono contro il turismo: sono contro un turismo che svuota i negozi di quartiere e riempie solo i negozi di souvenir. Serve una prenotazione obbligatoria, come per i musei. »\nPaolo: « La prenotazione penalizza chi viene per un weekend e spende qui. Il problema non sono i turisti, ma i case vacanza: limitare quelle, non le persone. »\nElena: « Limitarle è giusto, ma da sole non bastano: senza un limite d'ingresso, nel 2030 il centro è un parco a tema. »\nPaolo: « E chi controlla questo limite? Alcuni residenti vorrebbero la città vuota. »",
+      "questions": [
+        {
+          "id": "it-listen-dibattito-turismo-q1",
+          "kind": "choice",
+          "prompt": "Che cosa propone Elena per l'ingresso in centro?",
+          "answers": [
+            "Una prenotazione obbligatoria"
+          ],
+          "explain": "« Serve una prenotazione obbligatoria, come per i musei ».",
+          "options": [
+            "Una prenotazione obbligatoria",
+            "Un biglietto più caro",
+            "La chiusura dei souvenir",
+            "Più alberghi"
+          ]
+        },
+        {
+          "id": "it-listen-dibattito-turismo-q2",
+          "kind": "written",
+          "prompt": "Quanti residenti restano in centro, secondo Elena?",
+          "answers": [
+            "meno di cinquantamila",
+            "cinquantamila",
+            "meno di 50000"
+          ],
+          "explain": "« I residenti sono meno di cinquantamila »."
+        },
+        {
+          "id": "it-listen-dibattito-turismo-q3",
+          "kind": "choice",
+          "prompt": "Secondo Paolo, qual è il vero problema?",
+          "answers": [
+            "I case vacanza"
+          ],
+          "explain": "« Il problema non sono i turisti, ma i case vacanza ».",
+          "options": [
+            "I case vacanza",
+            "I souvenir",
+            "I musei",
+            "I residenti"
+          ]
+        },
+        {
+          "id": "it-listen-dibattito-turismo-q4",
+          "kind": "choice",
+          "prompt": "Che relazione c'è tra i due ospiti?",
+          "answers": [
+            "Posizioni diverse, ma ragionano sui numeri"
+          ],
+          "explain": "Elena concede un punto (« Limitarle è giusto, ma da sole non bastano ») e poi torna al suo limite d'ingresso.",
+          "options": [
+            "Posizioni diverse, ma ragionano sui numeri",
+            "Sono completamente d'accordo",
+            "Non si parlano",
+            "Elena difende gli albergatori"
+          ]
+        },
+        {
+          "id": "it-listen-dibattito-turismo-q5",
+          "kind": "written",
+          "prompt": "Che cosa diventerà il centro nel 2030, secondo Elena, senza limiti?",
+          "answers": [
+            "un parco a tema",
+            "parco a tema",
+            "il centro è un parco a tema"
+          ],
+          "explain": "« Senza un limite d'ingresso, nel 2030 il centro è un parco a tema »."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:gist",
+        "function:express-opinion",
+        "speaking:justify-opinion"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-podcast-social",
+      "languageID": "it",
+      "title": "Podcast: social a tavola",
+      "level": "B2",
+      "topic": "social",
+      "unitID": "it-foundations-u8",
+      "text": "Bentornati a « Controcorrente ». Oggi la domanda è semplice: il telefono a tavola, colpa nostra o abitudine del secolo? Io dico la mia: a casa mia il telefono resta nel cassetto dell'ingresso. Non per purismo, ma perché i primi venti minuti di cena senza schermi sono i più interessanti: è lì che i figli raccontano davvero la giornata. Mi rispondo da solo: « Ma il gruppo di lavoro? ». No, grazie: il mondo può aspettare quaranta minuti. E se proprio serve, c'è la lavagna della cucina per gli appunti. Non è nostalgia: è una scelta. L'abitudine non si combatte con i sermoni, si combatte con alternative. Provateci una sera e scriveteci: la casella degli ascoltatori è aperta.",
+      "questions": [
+        {
+          "id": "it-listen-podcast-social-q1",
+          "kind": "choice",
+          "prompt": "Dove resta il telefono nell'opinione del conduttore?",
+          "answers": [
+            "Nel cassetto dell'ingresso"
+          ],
+          "explain": "« A casa mia il telefono resta nel cassetto dell'ingresso ».",
+          "options": [
+            "Nel cassetto dell'ingresso",
+            "Sul tavolo",
+            "In tasca",
+            "In cucina"
+          ]
+        },
+        {
+          "id": "it-listen-podcast-social-q2",
+          "kind": "written",
+          "prompt": "Perché i primi venti minuti senza schermi sono importanti?",
+          "answers": [
+            "perché i figli raccontano davvero la giornata",
+            "i figli raccontano davvero la giornata",
+            "li figli raccontano la giornata"
+          ],
+          "explain": "« È lì che i figli raccontano davvero la giornata »."
+        },
+        {
+          "id": "it-listen-podcast-social-q3",
+          "kind": "choice",
+          "prompt": "Come risponde all'obiezione del gruppo di lavoro?",
+          "answers": [
+            "Il mondo può aspettare"
+          ],
+          "explain": "« No, grazie: il mondo può aspettare quaranta minuti ».",
+          "options": [
+            "Il mondo può aspettare",
+            "Serve subito",
+            "Solo per emergenze",
+            "Non ne parla"
+          ]
+        },
+        {
+          "id": "it-listen-podcast-social-q4",
+          "kind": "choice",
+          "prompt": "Come si combatte l'abitudine, per lui?",
+          "answers": [
+            "Con alternative, non con sermoni"
+          ],
+          "explain": "« L'abitudine non si combatte con i sermoni, si combatte con alternative ».",
+          "options": [
+            "Con alternative, non con sermoni",
+            "Con i sermoni",
+            "Vietando i telefoni a scuola",
+            "Spegnendo il wifi"
+          ]
+        },
+        {
+          "id": "it-listen-podcast-social-q5",
+          "kind": "written",
+          "prompt": "Che cosa chiede ai suoi ascoltatori?",
+          "answers": [
+            "di provare una sera e scrivere",
+            "provare una sera",
+            "che provino una sera"
+          ],
+          "explain": "« Provateci una sera e scriveteci »."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "speaking:justify-opinion",
+        "listening:connected-speech"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-notizia-caldo",
+      "languageID": "it",
+      "title": "Il notiziario: ondata di caldo",
+      "level": "B2",
+      "topic": "attualità",
+      "unitID": "it-foundations-u8",
+      "text": "Alle ore tredici il termometro ha segnato trentanove gradi all'ombra, un record per il mese. La protezione civile ha attivato il livello massimo di allerta fino a giovedì. Il sindaco ha annunciato che le fontane storiche resteranno aperte anche di notte e che i parchi municipali prolungano l'orario fino alle ventitre. I servizi sociali distribuiranno bottiglie d'acqua nei quartieri con più anziani soli, e i volontari dell'associazione di quartiere faranno i giri porta a porta. Le scuole mantengono gli orari mattutini, mentre i cantieri stradali fermeranno i lavori nelle ore centrali. Si prevede l'arrivo di perturbazioni atlantiche per il weekend, con temporali e un calo di dieci gradi. Aggiornamenti ogni mezz'ora sulle nostre pagine.",
+      "questions": [
+        {
+          "id": "it-listen-notizia-caldo-q1",
+          "kind": "written",
+          "prompt": "Quanti gradi ha segnato il termometro all'ombra?",
+          "answers": [
+            "trentanove",
+            "39 gradi",
+            "trentanove gradi"
+          ],
+          "explain": "« Il termometro ha segnato trentanove gradi all'ombra »."
+        },
+        {
+          "id": "it-listen-notizia-caldo-q2",
+          "kind": "choice",
+          "prompt": "Fino a quando dura l'allerta?",
+          "answers": [
+            "Fino a giovedì"
+          ],
+          "explain": "« Ha attivato il livello massimo di allerta fino a giovedì ».",
+          "options": [
+            "Fino a giovedì",
+            "Fino a venerdì",
+            "Fino al weekend",
+            "Fino a mezzanotte"
+          ]
+        },
+        {
+          "id": "it-listen-notizia-caldo-q3",
+          "kind": "choice",
+          "prompt": "Che cosa faranno i volontari nei quartieri?",
+          "answers": [
+            "I giri porta a porta"
+          ],
+          "explain": "« I volontari… faranno i giri porta a porta ».",
+          "options": [
+            "I giri porta a porta",
+            "Le docce pubbliche",
+            "I cantieri nuovi",
+            "Le scuole aperte"
+          ]
+        },
+        {
+          "id": "it-listen-notizia-caldo-q4",
+          "kind": "written",
+          "prompt": "Fino a che ora restano aperti i parchi municipali?",
+          "answers": [
+            "fino alle ventitre",
+            "alle ventitre",
+            "ventitre",
+            "fino alle 23"
+          ],
+          "explain": "« I parchi municipali prolungano l'orario fino alle ventitre »."
+        },
+        {
+          "id": "it-listen-notizia-caldo-q5",
+          "kind": "choice",
+          "prompt": "Che cosa prevedono per il weekend?",
+          "answers": [
+            "Temporali e un calo di dieci gradi"
+          ],
+          "explain": "« Con temporali e un calo di dieci gradi ».",
+          "options": [
+            "Temporali e un calo di dieci gradi",
+            "Ancora più caldo",
+            "Pioggia leggera e vento",
+            "Sereno e afa"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:number-time",
+        "listening:gist",
+        "vocab:weather"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "it-listen-tavola-rotonda-auto",
+      "languageID": "it",
+      "title": "Tavola rotonda: auto in centro",
+      "level": "B2",
+      "topic": "città",
+      "unitID": "it-foundations-u7",
+      "text": "Tavola rotonda al circolo culturale: le auto possono restare in centro? La moderatrice dà la parola a Nadia, negoziante in piazza: « Io devo caricare la merce alle sei del mattino: se vietate le auto, vietate il mio negozio. Con una deroga per il carico, sono d'accordo ». Poi è il turno di Samuele, studente: « Prendere la macchina per andare all'università è un'abitudine, non una necessità: il tram ci mette lo stesso tempo. Servono piste ciclabili continue, non più parcheggi ». La moderatrice cita il dato del consiglio: il trenta per cento dei viaggi in centro è sotto i due chilometri. Nadia conclude: « Allora partiamo da lì: meno tragitti corti in auto, e il traffico si dimezza senza vietare niente a nessuno ».",
+      "questions": [
+        {
+          "id": "it-listen-tavola-rotonda-auto-q1",
+          "kind": "choice",
+          "prompt": "Che problema ha Nadia con un divieto totale?",
+          "answers": [
+            "Deve caricare la merce al mattino"
+          ],
+          "explain": "« Io devo caricare la merce alle sei del mattino ».",
+          "options": [
+            "Deve caricare la merce al mattino",
+            "Non ha un'auto",
+            "Abita fuori centro",
+            "Ha parcheggi a pagamento"
+          ]
+        },
+        {
+          "id": "it-listen-tavola-rotonda-auto-q2",
+          "kind": "written",
+          "prompt": "A che ora carica la merce Nadia?",
+          "answers": [
+            "alle sei",
+            "sei",
+            "le sei"
+          ],
+          "explain": "« Devo caricare la merce alle sei del mattino »."
+        },
+        {
+          "id": "it-listen-tavola-rotonda-auto-q3",
+          "kind": "choice",
+          "prompt": "Che cosa propone Samuele invece dei parcheggi?",
+          "answers": [
+            "Piste ciclabili continue"
+          ],
+          "explain": "« Servono piste ciclabili continue, non più parcheggi ».",
+          "options": [
+            "Piste ciclabili continue",
+            "Più strade",
+            "Nuovi ponti",
+            "Zone blu gratuite"
+          ]
+        },
+        {
+          "id": "it-listen-tavola-rotonda-auto-q4",
+          "kind": "written",
+          "prompt": "Quanti viaggi in centro sono sotto i due chilometri?",
+          "answers": [
+            "il trenta per cento",
+            "trenta per cento",
+            "il 30 per cento",
+            "30 per cento"
+          ],
+          "explain": "« Il trenta per cento dei viaggi in centro è sotto i due chilometri »."
+        },
+        {
+          "id": "it-listen-tavola-rotonda-auto-q5",
+          "kind": "choice",
+          "prompt": "Che soluzione finale emerge dal dibattito?",
+          "answers": [
+            "Ridurre i tragitti corti in auto"
+          ],
+          "explain": "« Meno tragitti corti in auto, e il traffico si dimezza senza vietare niente ».",
+          "options": [
+            "Ridurre i tragitti corti in auto",
+            "Vietare tutte le auto",
+            "Costruire parcheggi sotterranei",
+            "Togliere il tram"
+          ]
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "function:express-opinion",
+        "speaking:justify-opinion"
+      ],
+      "exposureSkills": []
     }
   ]
 }

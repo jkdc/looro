@@ -3423,6 +3423,946 @@
         "function:make-requests"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-voo-atrasado",
+      "languageID": "pt",
+      "title": "O voo mudou",
+      "level": "A2",
+      "topic": "atraso",
+      "unitID": "pt-foundations-u28",
+      "text": "— Boa noite, senhora. O voo 402 para Salvador mudou. — Mudou ? A que horas sai agora ? — Sai às dez e vinte, duas horas depois do previsto. — Foi porque chove muito, né ? — Isso. Chove forte, por isso os voos atrasam hoje. — E o meu assento, continua igual ? — Continua, senhora. O portão também é o mesmo, o nove. — Ótimo. Então vou esperar aqui perto. — Pode ir tomar um café; eu chamo pelo alto-falante quando o embarque começar. — Obrigada. Uma hora a mais, não tem problema.",
+      "questions": [
+        {
+          "id": "pt-listen-voo-atrasado-q1",
+          "kind": "choice",
+          "prompt": "A que horas sai o novo voo ?",
+          "options": [
+            "Dez e vinte",
+            "Oito e vinte",
+            "Nove e vinte",
+            "Onze e meia"
+          ],
+          "answers": [
+            "Dez e vinte"
+          ],
+          "explain": "« Sai às dez e vinte, duas horas depois do previsto »."
+        },
+        {
+          "id": "pt-listen-voo-atrasado-q2",
+          "kind": "written",
+          "prompt": "Qual é o motivo do atraso ?",
+          "answers": [
+            "a chuva",
+            "chuva",
+            "chove muito",
+            "chove forte"
+          ],
+          "explain": "« Chove forte, por isso os voos atrasam hoje »."
+        },
+        {
+          "id": "pt-listen-voo-atrasado-q3",
+          "kind": "choice",
+          "prompt": "O que acontece com o assento dela ?",
+          "options": [
+            "Continua igual",
+            "Muda para a frente",
+            "Vira assento de corredor",
+            "Some do sistema"
+          ],
+          "answers": [
+            "Continua igual"
+          ],
+          "explain": "« Continua, senhora »."
+        },
+        {
+          "id": "pt-listen-voo-atrasado-q4",
+          "kind": "choice",
+          "prompt": "Qual é o portão de embarque ?",
+          "options": [
+            "O nove",
+            "O quatro",
+            "O dois",
+            "O dez"
+          ],
+          "answers": [
+            "O nove"
+          ],
+          "explain": "« O portão também é o mesmo, o nove »."
+        },
+        {
+          "id": "pt-listen-voo-atrasado-q5",
+          "kind": "written",
+          "prompt": "O que ela vai fazer enquanto espera ?",
+          "answers": [
+            "tomar um café",
+            "tomar um cafe",
+            "beber um café",
+            "beber um cafe"
+          ],
+          "explain": "« Pode ir tomar um café; eu chamo pelo alto-falante »."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:inference",
+        "grammar:connectors",
+        "vocab:transport"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-mala-extraviada",
+      "languageID": "pt",
+      "title": "A mala no balcão",
+      "level": "A2",
+      "topic": "mala",
+      "unitID": "pt-foundations-u28",
+      "text": "— Boa tarde. Em que posso ajudar ? — Minha mala não chegou. Esperei até a esteira parar e nada. — Sinto muito. A senhora vem de qual voo ? — Do voo 118, de Curitiba. — Me descreve a mala, por favor. — É azul, média, de quatro rodas, e tem uma fita amarela na alça. — Perfeito. Vou registrar o pedido e procurar no sistema. — Quanto tempo costuma levar ? — Normalmente um dia. Quando chegar, fazemos a entrega no seu hotel, sem custo. — Está bem. Meu número está no cadastro. — A senhora recebe uma mensagem hoje à noite.",
+      "questions": [
+        {
+          "id": "pt-listen-mala-extraviada-q1",
+          "kind": "written",
+          "prompt": "Qual é o problema dela ?",
+          "answers": [
+            "a mala não chegou",
+            "a mala nao chegou",
+            "perdeu a mala",
+            "a mala sumiu"
+          ],
+          "explain": "« Minha mala não chegou »."
+        },
+        {
+          "id": "pt-listen-mala-extraviada-q2",
+          "kind": "choice",
+          "prompt": "Como é a mala ?",
+          "options": [
+            "Azul, com fita amarela",
+            "Preta, com rodas grandes",
+            "Vermelha e pequena",
+            "Azul e sem rodas"
+          ],
+          "answers": [
+            "Azul, com fita amarela"
+          ],
+          "explain": "« É azul… e tem uma fita amarela na alça »."
+        },
+        {
+          "id": "pt-listen-mala-extraviada-q3",
+          "kind": "choice",
+          "prompt": "Em quanto tempo a mala costuma chegar ?",
+          "options": [
+            "Em um dia",
+            "Em uma hora",
+            "Em três dias",
+            "Na próxima semana"
+          ],
+          "answers": [
+            "Em um dia"
+          ],
+          "explain": "« Normalmente um dia »."
+        },
+        {
+          "id": "pt-listen-mala-extraviada-q4",
+          "kind": "written",
+          "prompt": "Onde a mala será entregue ?",
+          "answers": [
+            "no hotel",
+            "no seu hotel",
+            "no hotel dela"
+          ],
+          "explain": "« Fazemos a entrega no seu hotel »."
+        },
+        {
+          "id": "pt-listen-mala-extraviada-q5",
+          "kind": "choice",
+          "prompt": "Quanto ela paga pela entrega ?",
+          "options": [
+            "Nada, é sem custo",
+            "Metade do valor",
+            "Só a taxa do hotel",
+            "Vinte reais"
+          ],
+          "answers": [
+            "Nada, é sem custo"
+          ],
+          "explain": "« A entrega no seu hotel, sem custo »."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "vocab:travel",
+        "function:solve-problems",
+        "grammar:present-questions"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-reserva-mudada",
+      "languageID": "pt",
+      "title": "A reserva nova",
+      "level": "A2",
+      "topic": "reserva",
+      "unitID": "pt-foundations-u28",
+      "text": "— Hotel Bela Vista, bom dia ! — Bom dia. Queria mudar a minha reserva; está no nome de Téo Prado. — Claro. O senhor quer mudar a data ou o quarto ? — A data: de quarta para sexta, se der. — Deixa eu ver… tem vaga, sim, e não tem custo extra. — Que bom. É um quarto duplo, com café. — Isso, e já tem estacionamento incluído. — Perfeito. Então fica sexta, duas noites. — Confirmado, senhor. Mando a nova confirmação por mensagem. — Obrigado ! Até sexta.",
+      "questions": [
+        {
+          "id": "pt-listen-reserva-mudada-q1",
+          "kind": "written",
+          "prompt": "O que o Téo quer mudar ?",
+          "answers": [
+            "a data",
+            "a data da reserva"
+          ],
+          "explain": "« Queria mudar a minha reserva »… « A data »."
+        },
+        {
+          "id": "pt-listen-reserva-mudada-q2",
+          "kind": "choice",
+          "prompt": "De que dia para que dia muda a reserva ?",
+          "options": [
+            "De quarta para sexta",
+            "De sexta para quarta",
+            "De quinta para sábado",
+            "De sexta para domingo"
+          ],
+          "answers": [
+            "De quarta para sexta"
+          ],
+          "explain": "« De quarta para sexta, se der »."
+        },
+        {
+          "id": "pt-listen-reserva-mudada-q3",
+          "kind": "choice",
+          "prompt": "A mudança tem custo extra ?",
+          "options": [
+            "Não, não tem custo",
+            "Sim, cinquenta reais",
+            "Sim, uma diária",
+            "Só o estacionamento"
+          ],
+          "answers": [
+            "Não, não tem custo"
+          ],
+          "explain": "« Tem vaga, sim, e não tem custo extra »."
+        },
+        {
+          "id": "pt-listen-reserva-mudada-q4",
+          "kind": "choice",
+          "prompt": "Que tipo de quarto é a reserva ?",
+          "options": [
+            "Quarto duplo, com café",
+            "Quarto single, com varanda",
+            "Suíte, com banheira",
+            "Quarto triplo"
+          ],
+          "answers": [
+            "Quarto duplo, com café"
+          ],
+          "explain": "« É um quarto duplo, com café »."
+        },
+        {
+          "id": "pt-listen-reserva-mudada-q5",
+          "kind": "written",
+          "prompt": "Como o hotel manda a confirmação ?",
+          "answers": [
+            "por mensagem",
+            "mensagem",
+            "por mensagem no celular"
+          ],
+          "explain": "« Mando a nova confirmação por mensagem »."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "listening:inference",
+        "vocab:travel",
+        "function:make-requests"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-fds-praia",
+      "languageID": "pt",
+      "title": "Praia no fim de semana",
+      "level": "A2",
+      "topic": "planos",
+      "unitID": "pt-foundations-u17",
+      "text": "— Gente, o que vamos fazer no fim de semana ? — Vou levar todo mundo para a praia, na minha casa de Guaratuba. — Sério ? E como vamos chegar ? — De carro; saio sábado de manhã cedo, às sete. — Eu levo o guarda-sol e as cadeiras. — Ótimo. E vamos levar comida ou paramos num mercado ? — Vou fazer sanduíches em casa, é mais barato. — Então eu levo os refrescos. — Combinado: sábado às sete, na esquina da minha rua. — Perfeito, não vou me atrasar !",
+      "questions": [
+        {
+          "id": "pt-listen-fds-praia-q1",
+          "kind": "choice",
+          "prompt": "Para onde o grupo vai no fim de semana ?",
+          "options": [
+            "Para a praia",
+            "Para a serra",
+            "Para a casa da avó",
+            "Para um hotel na cidade"
+          ],
+          "answers": [
+            "Para a praia"
+          ],
+          "explain": "« Vou levar todo mundo para a praia »."
+        },
+        {
+          "id": "pt-listen-fds-praia-q2",
+          "kind": "written",
+          "prompt": "A que horas saem no sábado ?",
+          "answers": [
+            "às sete",
+            "as sete",
+            "sete horas",
+            "às 7"
+          ],
+          "explain": "« Saio sábado de manhã cedo, às sete »."
+        },
+        {
+          "id": "pt-listen-fds-praia-q3",
+          "kind": "choice",
+          "prompt": "Como o grupo vai viajar ?",
+          "options": [
+            "De carro",
+            "De ônibus",
+            "De trem",
+            "De avião"
+          ],
+          "answers": [
+            "De carro"
+          ],
+          "explain": "« De carro; saio sábado de manhã cedo »."
+        },
+        {
+          "id": "pt-listen-fds-praia-q4",
+          "kind": "written",
+          "prompt": "O que vão comer lá ?",
+          "answers": [
+            "sanduíches",
+            "sanduiches",
+            "sanduíches feitos em casa"
+          ],
+          "explain": "« Vou fazer sanduíches em casa, é mais barato »."
+        },
+        {
+          "id": "pt-listen-fds-praia-q5",
+          "kind": "choice",
+          "prompt": "Onde o grupo se encontra ?",
+          "options": [
+            "Na esquina da rua dele",
+            "Na estação de trem",
+            "Na entrada da praia",
+            "No mercado"
+          ],
+          "answers": [
+            "Na esquina da rua dele"
+          ],
+          "explain": "« Sábado às sete, na esquina da minha rua »."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:going-to",
+        "function:make-suggestions"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-chave-porta",
+      "languageID": "pt",
+      "title": "A chave ficou dentro",
+      "level": "A2",
+      "topic": "problemas",
+      "unitID": "pt-foundations-u20",
+      "text": "— Alô, mãe ? Travei a porta e a chave ficou dentro de casa. — Nossa ! Olha, a chave reserva está aqui comigo, mas não consigo subir agora. — Então vou ligar para o chaveiro do prédio. — Pede o orçamento antes, hein ? — Pede, sim. Ah, o vizinho do terceiro tem uma escada grande. — Menina, não sobe em escada nenhuma ! Espera o chaveiro, com calma. — Está bem, está bem. Fico no corredor esperando. — Assim eu fico tranquila. Depois me conta quanto custou, ouviu ?",
+      "questions": [
+        {
+          "id": "pt-listen-chave-porta-q1",
+          "kind": "written",
+          "prompt": "O que aconteceu com a chave ?",
+          "answers": [
+            "ficou dentro de casa",
+            "a chave ficou dentro",
+            "ficou dentro do apartamento"
+          ],
+          "explain": "« A chave ficou dentro de casa »."
+        },
+        {
+          "id": "pt-listen-chave-porta-q2",
+          "kind": "choice",
+          "prompt": "O que a mãe tem em casa ?",
+          "options": [
+            "A chave reserva",
+            "Uma escada",
+            "Outro apartamento",
+            "O telefone do chaveiro"
+          ],
+          "answers": [
+            "A chave reserva"
+          ],
+          "explain": "« A chave reserva está aqui comigo »."
+        },
+        {
+          "id": "pt-listen-chave-porta-q3",
+          "kind": "choice",
+          "prompt": "O que a mãe não permite ?",
+          "options": [
+            "Subir na escada",
+            "Ligar para o chaveiro",
+            "Esperar no corredor",
+            "Pedir o orçamento"
+          ],
+          "answers": [
+            "Subir na escada"
+          ],
+          "explain": "« Não sobe em escada nenhuma ! »"
+        },
+        {
+          "id": "pt-listen-chave-porta-q4",
+          "kind": "written",
+          "prompt": "Onde a filha decide esperar ?",
+          "answers": [
+            "no corredor",
+            "no corredor do prédio",
+            "no corredor do predio"
+          ],
+          "explain": "« Fico no corredor esperando »."
+        },
+        {
+          "id": "pt-listen-chave-porta-q5",
+          "kind": "choice",
+          "prompt": "O que a mãe pede antes do serviço ?",
+          "options": [
+            "O orçamento",
+            "A foto do chaveiro",
+            "Um documento",
+            "A nota fiscal antiga"
+          ],
+          "answers": [
+            "O orçamento"
+          ],
+          "explain": "« Pede o orçamento antes, hein ? »"
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "vocab:home",
+        "function:solve-problems",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-fds-serra",
+      "languageID": "pt",
+      "title": "O fim de semana na serra",
+      "level": "A2",
+      "topic": "viagem",
+      "unitID": "pt-foundations-u3",
+      "text": "— Então, como foi o fim de semana na serra ? — Foi maravilhoso ! Saímos sexta à noite e chegamos na cabana às dez. — E o tempo, ajudou ? — Choveu só no sábado de manhã; à tarde abriu e subimos ao mirante. — Que vista, né ? E a comida da região ? — Provei o fondue e um pão de queijo incrível. — E as fotos ? — Tirei um monte; domingo à noite mostro tudo para vocês. — Que inveja boa ! Da próxima vez eu vou junto.",
+      "questions": [
+        {
+          "id": "pt-listen-fds-serra-q1",
+          "kind": "choice",
+          "prompt": "Quando eles viajaram ?",
+          "options": [
+            "Sexta à noite",
+            "Sábado de manhã",
+            "Domingo cedo",
+            "Quinta à noite"
+          ],
+          "answers": [
+            "Sexta à noite"
+          ],
+          "explain": "« Saímos sexta à noite »."
+        },
+        {
+          "id": "pt-listen-fds-serra-q2",
+          "kind": "written",
+          "prompt": "O que aconteceu no sábado de manhã ?",
+          "answers": [
+            "choveu",
+            "choveu de manhã",
+            "choveu um pouco"
+          ],
+          "explain": "« Choveu só no sábado de manhã »."
+        },
+        {
+          "id": "pt-listen-fds-serra-q3",
+          "kind": "choice",
+          "prompt": "O que fizeram quando abriu ?",
+          "options": [
+            "Subiram ao mirante",
+            "Ficaram na cabana",
+            "Voltaram para casa",
+            "Foram a um restaurante"
+          ],
+          "answers": [
+            "Subiram ao mirante"
+          ],
+          "explain": "« À tarde abriu e subimos ao mirante »."
+        },
+        {
+          "id": "pt-listen-fds-serra-q4",
+          "kind": "choice",
+          "prompt": "O que ele provou na viagem ?",
+          "options": [
+            "Fondue e pão de queijo",
+            "Pizza e açaí",
+            "Truta e vinho",
+            "Chocolate quente"
+          ],
+          "answers": [
+            "Fondue e pão de queijo"
+          ],
+          "explain": "« Provei o fondue e um pão de queijo incrível »."
+        },
+        {
+          "id": "pt-listen-fds-serra-q5",
+          "kind": "written",
+          "prompt": "Quando ele mostra as fotos ?",
+          "answers": [
+            "domingo à noite",
+            "domingo a noite",
+            "no domingo à noite"
+          ],
+          "explain": "« Domingo à noite mostro tudo para vocês »."
+        }
+      ],
+      "skills": [
+        "listening:detail",
+        "grammar:past-simple-regular",
+        "function:describe-past-events",
+        "vocab:travel"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-entrevista-inflacao",
+      "languageID": "pt",
+      "title": "O preço do carrinho",
+      "level": "B2",
+      "topic": "notícias",
+      "unitID": "pt-foundations-u8",
+      "text": "— Boa noite. Hoje falamos do preço da comida com a economista Helena Braga. Dona Helena, por que o carrinho subiu tanto este ano ? — Dois motivos: a seca reduziu a colheita do arroz e o frete internacional ficou mais caro. Quando o frete sobe, o supermercado repassa o aumento. — E o que muda na mesa das famílias ? — Muda a marca, não a refeição: muita gente troca produtos de marca por itens de armazém. — O governo anunciou a redução de impostos sobre alimentos básicos. Isso resolve ? — Ajuda, mas não resolve tudo; sem chuva boa, o problema volta no ano que vem. — Obrigado pela análise, dona Helena.",
+      "questions": [
+        {
+          "id": "pt-listen-entrevista-inflacao-q1",
+          "kind": "choice",
+          "prompt": "Quais são os dois motivos citados para a alta ?",
+          "options": [
+            "A seca e o frete mais caro",
+            "O aluguel e a energia",
+            "Os impostos e o salário",
+            "A seca e o desemprego"
+          ],
+          "answers": [
+            "A seca e o frete mais caro"
+          ],
+          "explain": "« A seca reduziu a colheita… e o frete internacional ficou mais caro »."
+        },
+        {
+          "id": "pt-listen-entrevista-inflacao-q2",
+          "kind": "choice",
+          "prompt": "O que as famílias mudam na compra ?",
+          "options": [
+            "Trocam a marca, não a refeição",
+            "Param de comprar arroz",
+            "Compram só importado",
+            "Deixam de cozinhar"
+          ],
+          "answers": [
+            "Trocam a marca, não a refeição"
+          ],
+          "explain": "« Muda a marca, não a refeição »."
+        },
+        {
+          "id": "pt-listen-entrevista-inflacao-q3",
+          "kind": "written",
+          "prompt": "O que o governo anunciou ?",
+          "answers": [
+            "a redução de impostos",
+            "redução de impostos sobre alimentos",
+            "reduzir impostos",
+            "a reducao de impostos"
+          ],
+          "explain": "« O governo anunciou a redução de impostos sobre alimentos básicos »."
+        },
+        {
+          "id": "pt-listen-entrevista-inflacao-q4",
+          "kind": "choice",
+          "prompt": "Qual é a ressalva da economista ?",
+          "options": [
+            "Sem chuva boa, o problema volta",
+            "Os impostos não existem mais",
+            "O frete vai cair sozinho",
+            "Ninguém troca de marca"
+          ],
+          "answers": [
+            "Sem chuva boa, o problema volta"
+          ],
+          "explain": "« Sem chuva boa, o problema volta no ano que vem »."
+        },
+        {
+          "id": "pt-listen-entrevista-inflacao-q5",
+          "kind": "written",
+          "prompt": "Quem é Helena Braga ?",
+          "answers": [
+            "economista",
+            "uma economista",
+            "a economista"
+          ],
+          "explain": "« Falamos do preço da comida com a economista Helena Braga »."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:connectors",
+        "grammar:first-conditional"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-debate-carros",
+      "languageID": "pt",
+      "title": "Carros no centro: sim ou não ?",
+      "level": "B2",
+      "topic": "debate",
+      "unitID": "pt-foundations-u8",
+      "text": "Apresentador: Nossa pauta de hoje: proibir carros no centro, sim ou não ? — Lucas: A favor. O centro vive engarrafado; se os carros saíssem, o transporte público ficaria mais rápido e o ar, mais limpo. — Marta: Discordo. Meu pai é comerciante e depende do carro para a entrega da manhã. Se proibirem, ele perde clientes. — Lucas: As entregas podem ser de bicicleta elétrica, como em outras cidades. — Marta: Bonito no papel; na prática, quem paga a diferença ? — Apresentador: E os pedestres, o que dizem ? — Lucas: Andamos mais e com segurança; a calçada vira espaço de gente, não de motor. — Marta: Que seja aos domingos, como teste. — Apresentador: Um bom meio-termo. Continuem a discussão no nosso site.",
+      "questions": [
+        {
+          "id": "pt-listen-debate-carros-q1",
+          "kind": "choice",
+          "prompt": "Qual é o argumento principal de Lucas ?",
+          "options": [
+            "Centro engarrafado e ar mais limpo",
+            "Estacionamento mais barato",
+            "Mais vagas de garagem",
+            "Táxis mais rápidos"
+          ],
+          "answers": [
+            "Centro engarrafado e ar mais limpo"
+          ],
+          "explain": "« O centro vive engarrafado… e o ar, mais limpo »."
+        },
+        {
+          "id": "pt-listen-debate-carros-q2",
+          "kind": "written",
+          "prompt": "De que o pai de Marta depende para trabalhar ?",
+          "answers": [
+            "do carro",
+            "do carro para a entrega",
+            "do carro de entrega"
+          ],
+          "explain": "« Meu pai… depende do carro para a entrega da manhã »."
+        },
+        {
+          "id": "pt-listen-debate-carros-q3",
+          "kind": "choice",
+          "prompt": "Qual alternativa Lucas propõe para as entregas ?",
+          "options": [
+            "Bicicleta elétrica",
+            "Caminhão pequeno",
+            "Moto de entrega",
+            "Drone"
+          ],
+          "answers": [
+            "Bicicleta elétrica"
+          ],
+          "explain": "« As entregas podem ser de bicicleta elétrica »."
+        },
+        {
+          "id": "pt-listen-debate-carros-q4",
+          "kind": "written",
+          "prompt": "Qual concessão Marta aceita no fim ?",
+          "answers": [
+            "aos domingos",
+            "teste aos domingos",
+            "um teste aos domingos",
+            "proibir aos domingos"
+          ],
+          "explain": "« Que seja aos domingos, como teste »."
+        },
+        {
+          "id": "pt-listen-debate-carros-q5",
+          "kind": "choice",
+          "prompt": "Como o apresentador classifica o acordo ?",
+          "options": [
+            "Um bom meio-termo",
+            "Uma péssima ideia",
+            "Uma decisão final",
+            "Um empate técnico"
+          ],
+          "answers": [
+            "Um bom meio-termo"
+          ],
+          "explain": "« Um bom meio-termo »."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:express-opinion",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-aluguel-negociado",
+      "languageID": "pt",
+      "title": "O reajuste do aluguel",
+      "level": "B2",
+      "topic": "negociação",
+      "unitID": "pt-foundations-u7",
+      "text": "— Então, senhora Rosa, o contrato vence em março e o senhorio pede um reajuste de doze por cento. — Doze ? Isso está acima do índice; foi o que li no jornal. — Ele argumenta com as reformas: pintura nova e o portão eletrônico. — As melhorias são bem-vindas, reconheço. Mas proponho oito por cento, dentro do índice. — Ele aceitaria dez, com contrato de dois anos. — Dez e dois anos… Aceito, com uma condição: ele conserta a infiltração da varanda antes de junho. — Vou levar a proposta; acho que fecha. — Ótimo. Mande o contrato por escrito para eu ler com calma.",
+      "questions": [
+        {
+          "id": "pt-listen-aluguel-negociado-q1",
+          "kind": "written",
+          "prompt": "Quanto o senhorio pede de reajuste ?",
+          "answers": [
+            "doze por cento",
+            "12%",
+            "12 %",
+            "doze"
+          ],
+          "explain": "« Pede um reajuste de doze por cento »."
+        },
+        {
+          "id": "pt-listen-aluguel-negociado-q2",
+          "kind": "choice",
+          "prompt": "Com que argumento o senhorio justifica o valor ?",
+          "options": [
+            "As reformas feitas",
+            "O IPTU novo",
+            "A inflação do mês",
+            "Os vizinhos que saíram"
+          ],
+          "answers": [
+            "As reformas feitas"
+          ],
+          "explain": "« Ele argumenta com as reformas: pintura nova e o portão eletrônico »."
+        },
+        {
+          "id": "pt-listen-aluguel-negociado-q3",
+          "kind": "written",
+          "prompt": "O que a senhora Rosa propõe primeiro ?",
+          "answers": [
+            "oito por cento",
+            "8%",
+            "8 %",
+            "oito"
+          ],
+          "explain": "« Proponho oito por cento, dentro do índice »."
+        },
+        {
+          "id": "pt-listen-aluguel-negociado-q4",
+          "kind": "choice",
+          "prompt": "Qual acordo final se desenha ?",
+          "options": [
+            "Dez por cento com contrato de dois anos",
+            "Oito por cento sem contrato",
+            "Doze por cento com pintura",
+            "Nenhum reajuste"
+          ],
+          "answers": [
+            "Dez por cento com contrato de dois anos"
+          ],
+          "explain": "« Ele aceitaria dez, com contrato de dois anos »."
+        },
+        {
+          "id": "pt-listen-aluguel-negociado-q5",
+          "kind": "written",
+          "prompt": "Qual condição a senhora coloca ?",
+          "answers": [
+            "consertar a infiltração",
+            "a infiltração da varanda",
+            "conserto da infiltração",
+            "consertar a infiltracao"
+          ],
+          "explain": "« Ele conserta a infiltração da varanda antes de junho »."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-aumento-pedido",
+      "languageID": "pt",
+      "title": "A conversa do aumento",
+      "level": "B2",
+      "topic": "trabalho",
+      "text": "— Rafael, senta aqui. Vi que você assumiu três clientes novos este trimestre. — Sim, e o resultado do time cresceu: entregamos vinte por cento mais que no ano passado. — Os números são bons, reconheço. O que você tem em mente ? — Gostaria de conversar sobre o meu salário. Pesquisei o mercado: o cargo paga de quinze a vinte por cento acima do que recebo. — Vou ser franco: o orçamento deste semestre está apertado. — E se eu assumir a coordenação do projeto novo ? Aí o ajuste se paga sozinho. — Deixa-me conversar com a diretoria. Volto a falar com você na próxima sexta. — Combinado; levo uma proposta por escrito.",
+      "questions": [
+        {
+          "id": "pt-listen-aumento-pedido-q1",
+          "kind": "written",
+          "prompt": "O que Rafael quer conversar ?",
+          "answers": [
+            "o salário",
+            "meu salário",
+            "o aumento salarial",
+            "o salario"
+          ],
+          "explain": "« Gostaria de conversar sobre o meu salário »."
+        },
+        {
+          "id": "pt-listen-aumento-pedido-q2",
+          "kind": "choice",
+          "prompt": "Que número Rafael apresenta ?",
+          "options": [
+            "Vinte por cento mais entregas",
+            "Três projetos cancelados",
+            "Quinze clientes perdidos",
+            "Meta cumprida pela metade"
+          ],
+          "answers": [
+            "Vinte por cento mais entregas"
+          ],
+          "explain": "« Entregamos vinte por cento mais que no ano passado »."
+        },
+        {
+          "id": "pt-listen-aumento-pedido-q3",
+          "kind": "choice",
+          "prompt": "Qual é a objeção do gestor ?",
+          "options": [
+            "O orçamento está apertado",
+            "Rafael é novo demais",
+            "O mercado está ruim",
+            "A diretoria recusou"
+          ],
+          "answers": [
+            "O orçamento está apertado"
+          ],
+          "explain": "« O orçamento deste semestre está apertado »."
+        },
+        {
+          "id": "pt-listen-aumento-pedido-q4",
+          "kind": "written",
+          "prompt": "O que Rafael oferece em troca ?",
+          "answers": [
+            "assumir a coordenação",
+            "a coordenação do projeto",
+            "assumir a coordenação do projeto novo",
+            "assumir a coordenacao"
+          ],
+          "explain": "« E se eu assumir a coordenação do projeto novo ? »"
+        },
+        {
+          "id": "pt-listen-aumento-pedido-q5",
+          "kind": "choice",
+          "prompt": "Quando o gestor dá a resposta ?",
+          "options": [
+            "Na próxima sexta",
+            "Hoje à noite",
+            "No fim do mês",
+            "Depois do projeto"
+          ],
+          "answers": [
+            "Na próxima sexta"
+          ],
+          "explain": "« Volto a falar com você na próxima sexta »."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "vocab:work",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-noticia-energia",
+      "languageID": "pt",
+      "title": "Solar nos telhados",
+      "level": "B2",
+      "topic": "notícias",
+      "unitID": "pt-foundations-u8",
+      "text": "Locutor: Notícias da cidade. O programa de energia solar dos telhados foi aprovado ontem pela câmara. Pelas regras, famílias que instalarem painéis até o fim do ano recebem desconto na taxa de instalação, e escolas públicas ganham kits gratuitos. O prefeito comemorou: segundo ele, a conta de luz cairia até trinta por cento nas unidades beneficiadas. A oposição pede cuidado: o custo do programa seria alto e os prazos, otimistas. A associação de moradores do bairro Norte apoia, mas cobra um detalhe — as oficinas de manutenção precisam treinar técnicos locais, não trazê-los de fora. A previsão da prefeitura é publicar o edital no próximo mês.",
+      "questions": [
+        {
+          "id": "pt-listen-noticia-energia-q1",
+          "kind": "choice",
+          "prompt": "O que foi aprovado ontem ?",
+          "options": [
+            "O programa de energia solar dos telhados",
+            "A tarifa do ônibus",
+            "O novo mercado municipal",
+            "O plano da ciclovia"
+          ],
+          "answers": [
+            "O programa de energia solar dos telhados"
+          ],
+          "explain": "« O programa de energia solar dos telhados foi aprovado ontem pela câmara »."
+        },
+        {
+          "id": "pt-listen-noticia-energia-q2",
+          "kind": "written",
+          "prompt": "O que ganham as escolas públicas ?",
+          "answers": [
+            "kits gratuitos",
+            "kits",
+            "kits de painéis",
+            "kits gratis"
+          ],
+          "explain": "« Escolas públicas ganham kits gratuitos »."
+        },
+        {
+          "id": "pt-listen-noticia-energia-q3",
+          "kind": "choice",
+          "prompt": "Qual é a promessa do prefeito ?",
+          "options": [
+            "A conta de luz cairia até trinta por cento",
+            "Empregos para cem técnicos",
+            "Ônibus solar em junho",
+            "Imposto zero em janeiro"
+          ],
+          "answers": [
+            "A conta de luz cairia até trinta por cento"
+          ],
+          "explain": "« A conta de luz cairia até trinta por cento nas unidades beneficiadas »."
+        },
+        {
+          "id": "pt-listen-noticia-energia-q4",
+          "kind": "choice",
+          "prompt": "O que a oposição critica ?",
+          "options": [
+            "O custo alto e os prazos otimistas",
+            "O desconto das famílias",
+            "Os kits das escolas",
+            "O bairro Norte"
+          ],
+          "answers": [
+            "O custo alto e os prazos otimistas"
+          ],
+          "explain": "« O custo do programa seria alto e os prazos, otimistas »."
+        },
+        {
+          "id": "pt-listen-noticia-energia-q5",
+          "kind": "written",
+          "prompt": "O que a associação de moradores cobra ?",
+          "answers": [
+            "treinar técnicos locais",
+            "treinar tecnicos locais",
+            "oficinas de manutenção locais"
+          ],
+          "explain": "« As oficinas… precisam treinar técnicos locais »."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:passive-intro",
+        "grammar:connectors",
+        "vocab:town"
+      ],
+      "exposureSkills": []
     }
   ]
 }

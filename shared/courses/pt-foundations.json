@@ -12628,6 +12628,175 @@
           "prerequisites": [
             "grammar:going-to"
           ]
+        },
+        {
+          "id": "pt-foundations-u25-aeroporto",
+          "title": "No balcão do aeroporto",
+          "goal": "Fazer o check-in: despachar a mala, escolher assento e achar o portão de embarque.",
+          "intro": {
+            "explanation": [
+              "No balcão, o funcionário pergunta: « despacha alguma bagagem ? ». Responda com « só esta mala » ou « duas, para despachar ».",
+              "Escolha o assento: « janela, por favor », « prefiro corredor ». Depois, o lugar fica perto do portão de embarque.",
+              "Confirme o portão e a hora: « de qual portão sai o voo ? », « o embarque é às nove, certo ? »."
+            ],
+            "examples": [
+              {
+                "text": "Bom dia, quero fazer o check-in.",
+                "meaning": "começar o atendimento."
+              },
+              {
+                "text": "Despacho esta mala, por favor.",
+                "meaning": "a mala que vai no porão."
+              },
+              {
+                "text": "Prefiro assento de janela.",
+                "meaning": "a escolha do lugar."
+              },
+              {
+                "text": "De qual portão sai o voo ?",
+                "meaning": "a pergunta do portão."
+              },
+              {
+                "text": "O embarque é às nove, certo ?",
+                "meaning": "confirmar a hora."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "fazer o check-in",
+              "meaning": "O registro do voo.",
+              "note": "Quero fazer o check-in."
+            },
+            {
+              "text": "despachar a bagagem",
+              "meaning": "Mandar a mala ao porão.",
+              "note": "Só uma mala para despachar."
+            },
+            {
+              "text": "assento de janela / corredor",
+              "meaning": "A escolha do lugar.",
+              "note": "Assento de corredor, por favor."
+            },
+            {
+              "text": "de qual portão… ?",
+              "meaning": "Achar o portão de embarque.",
+              "note": "De qual portão sai o voo ?"
+            },
+            {
+              "text": "cartão de embarque",
+              "meaning": "O bilhete do voo.",
+              "note": "Aqui está o seu cartão de embarque."
+            }
+          ],
+          "situation": "No balcão do aeroporto: a Duda despacha a mala, escolhe assento de janela, recebe o cartão de embarque e confere o portão e a hora do embarque com o funcionário.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que quer fazer o check-in.",
+                "expected": [
+                  "Quero fazer o check-in.",
+                  "quero fazer o check in"
+                ],
+                "focus": "check-in",
+                "watch": "check-in = el check-in (igual)."
+              },
+              {
+                "prompt": "Diga que despacha uma mala.",
+                "expected": [
+                  "Despacho uma mala, por favor.",
+                  "despacho uma mala por favor"
+                ],
+                "focus": "despachar",
+                "watch": "despachar = facturar (la maleta)."
+              },
+              {
+                "prompt": "Escolha o assento: janela.",
+                "expected": [
+                  "Prefiro assento de janela.",
+                  "prefiro assento de janela"
+                ],
+                "focus": "assento",
+                "watch": "assento = asiento; janela = ventanilla."
+              },
+              {
+                "prompt": "Pergunte o portão de saída do voo.",
+                "expected": [
+                  "De qual portão sai o voo ?",
+                  "de qual portao sai o voo"
+                ],
+                "focus": "portão",
+                "watch": "portão de embarque = puerta de embarque."
+              },
+              {
+                "prompt": "Confirme a hora: embarque às nove.",
+                "expected": [
+                  "O embarque é às nove, certo ?",
+                  "o embarque e as nove certo"
+                ],
+                "focus": "confirmação",
+                "watch": "…, certo ? = ¿verdad?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u25-aeroporto-e1",
+              "kind": "choice",
+              "prompt": "Eu quero ___ esta mala, por favor.",
+              "options": [
+                "despachar",
+                "despacho",
+                "despachando",
+                "despachou"
+              ],
+              "answers": [
+                "despachar"
+              ],
+              "explain": "quero + infinitivo: o pedido do check-in."
+            },
+            {
+              "id": "pt-foundations-u25-aeroporto-e2",
+              "kind": "gap",
+              "prompt": "Prefiro assento ___ janela.",
+              "answers": [
+                "de"
+              ],
+              "explain": "assento de janela = asiento de ventanilla."
+            },
+            {
+              "id": "pt-foundations-u25-aeroporto-e3",
+              "kind": "order",
+              "prompt": "Pergunte o portão de saída do voo.",
+              "answers": [
+                "De qual portão sai o voo"
+              ],
+              "explain": "de qual + substantivo: a pergunta do portão de embarque."
+            },
+            {
+              "id": "pt-foundations-u25-aeroporto-e4",
+              "kind": "written",
+              "prompt": "Diga o que você recebe do funcionário para embarcar.",
+              "answers": [
+                "O cartão de embarque.",
+                "o cartao de embarque",
+                "Recebo o cartão de embarque."
+              ],
+              "explain": "o cartão de embarque = la tarjeta de embarque: sem ele, não embarca."
+            }
+          ],
+          "skills": [
+            "grammar:present-questions",
+            "function:make-requests",
+            "vocab:transport",
+            "grammar:quantities"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:present-questions"
+          ]
         }
       ]
     },
@@ -13160,6 +13329,911 @@
           ],
           "prerequisites": [
             "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u27",
+      "title": "Bicho de casa",
+      "subtitle": "Um pet, muitas palavras",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "bicho-chega",
+          "title": "O bicho chega",
+          "subtitle": "Como ele é",
+          "symbol": "heart",
+          "category": "Course",
+          "situation": "A Nina ganha um gatinho do tio Rafa e, pelo telefone, conta para a avó o nome, a cor, o tamanho e a idade do novo amigo.",
+          "colorIndex": 0
+        },
+        {
+          "id": "bicho-rotina",
+          "title": "A rotina do bicho",
+          "subtitle": "Todo dia igual",
+          "symbol": "figure.walk",
+          "category": "Course",
+          "situation": "De manhã, a Nina cuida do Biscoito: ele acorda cedo, come ração às sete e brinca com a bolinha antes do passeio.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u27-bicho",
+          "title": "O novo bicho",
+          "goal": "Apresentar o seu bicho: dizer o nome, a cor, o tamanho e a idade dele.",
+          "intro": {
+            "explanation": [
+              "« Ter » mostra posse: « Eu tenho um gato ». Para perguntar, use « você tem… ? »: « Você tem bicho em casa ? ».",
+              "« Ser » descreve o bicho: « Ele é pequeno e preto ». A pergunta fica « ele é como ? ».",
+              "A idade também fica com « ter »: « O Biscoito tem três meses ». Você vê: « ter » serve para a posse e para a idade."
+            ],
+            "examples": [
+              {
+                "text": "Eu tenho um gatinho preto.",
+                "meaning": "ter + bicho: a posse."
+              },
+              {
+                "text": "Ele é pequeno e muito carinhoso.",
+                "meaning": "ser + adjetivo: a descrição."
+              },
+              {
+                "text": "Você tem bicho em casa ?",
+                "meaning": "a pergunta com « você tem »."
+              },
+              {
+                "text": "Ele tem três meses.",
+                "meaning": "ter + tempo: a idade."
+              },
+              {
+                "text": "O nome dele é Biscoito.",
+                "meaning": "o nome com « ser »."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Eu tenho …",
+              "meaning": "A posse: o seu bicho.",
+              "note": "Eu tenho uma cachorra."
+            },
+            {
+              "text": "Você tem bicho ?",
+              "meaning": "Perguntar sobre pets.",
+              "note": "Você tem bicho em casa ?"
+            },
+            {
+              "text": "Ele/Ela é …",
+              "meaning": "Descrever o bicho.",
+              "note": "Ele é branco e preto."
+            },
+            {
+              "text": "Ele tem … meses/anos",
+              "meaning": "A idade do bicho.",
+              "note": "Ela tem dois anos."
+            },
+            {
+              "text": "O nome dele é …",
+              "meaning": "Dar o nome do bicho.",
+              "note": "O nome dele é Biscoito."
+            }
+          ],
+          "situation": "Pelo telefone com a avó: a Nina apresenta o gatinho — o nome, a cor, o tamanho e a idade — e a avó conta que também teve um gato parecido.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que você tem um gatinho preto.",
+                "expected": [
+                  "Eu tenho um gatinho preto.",
+                  "eu tenho um gatinho preto"
+                ],
+                "focus": "ter",
+                "watch": "ter = tener (a posse fica com ter)."
+              },
+              {
+                "prompt": "Pergunte se a amiga tem bicho em casa.",
+                "expected": [
+                  "Você tem bicho em casa ?",
+                  "voce tem bicho em casa"
+                ],
+                "focus": "pergunta",
+                "watch": "você tem… ? = ¿tienes…?"
+              },
+              {
+                "prompt": "Descreva o bicho: pequeno e carinhoso.",
+                "expected": [
+                  "Ele é pequeno e carinhoso.",
+                  "ele e pequeno e carinhoso",
+                  "Ele é pequeno e muito carinhoso."
+                ],
+                "focus": "ser",
+                "watch": "é = es (a descrição fica com ser)."
+              },
+              {
+                "prompt": "Diga a idade dele: três meses.",
+                "expected": [
+                  "Ele tem três meses.",
+                  "ele tem tres meses"
+                ],
+                "focus": "idade",
+                "watch": "ter + idade = tener + edad."
+              },
+              {
+                "prompt": "Apresente o nome do bicho, com « o nome dele… ».",
+                "expected": [
+                  "O nome dele é Biscoito.",
+                  "o nome dele e biscoito"
+                ],
+                "focus": "nome",
+                "watch": "o nome dele = su nombre."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u27-bicho-e1",
+              "kind": "choice",
+              "prompt": "O Biscoito ___ preto e pequeno.",
+              "options": [
+                "é",
+                "tem",
+                "tenho",
+                "está"
+              ],
+              "answers": [
+                "é"
+              ],
+              "explain": "« ser » descreve o bicho: ele é preto e pequeno."
+            },
+            {
+              "id": "pt-foundations-u27-bicho-e2",
+              "kind": "gap",
+              "prompt": "Eu ___ um gatinho em casa.",
+              "answers": [
+                "tenho"
+              ],
+              "explain": "« ter » para a posse: eu tenho um bicho em casa."
+            },
+            {
+              "id": "pt-foundations-u27-bicho-e3",
+              "kind": "order",
+              "prompt": "Diga a idade dele.",
+              "answers": [
+                "Ele tem três meses"
+              ],
+              "explain": "ter + tempo: a idade do bicho fica com « ter »."
+            },
+            {
+              "id": "pt-foundations-u27-bicho-e4",
+              "kind": "written",
+              "prompt": "Apresente o bicho com o nome dele.",
+              "answers": [
+                "O nome dele é Biscoito.",
+                "o nome dele e biscoito"
+              ],
+              "explain": "« O nome dele é + nome »: a apresentação completa do bicho."
+            }
+          ],
+          "skills": [
+            "grammar:have-got",
+            "grammar:present-simple",
+            "vocab:family",
+            "function:describe-people"
+          ],
+          "canDo": [
+            "describe-people"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "pt-foundations-u27-rotina",
+          "title": "A rotina do Biscoito",
+          "goal": "Contar a rotina do seu bicho: o que ele faz sempre, às vezes ou nunca.",
+          "intro": {
+            "explanation": [
+              "A rotina fica no presente: « o Biscoito acorda cedo », « ele come ração ». Você conta o dia inteiro com o mesmo tempo.",
+              "As palavras da frequência vêm antes do verbo: « ele sempre dorme no sofá », « ele nunca sobe na cama ».",
+              "Para perguntar, use o presente mesmo: « Ele passeia todos os dias ? »."
+            ],
+            "examples": [
+              {
+                "text": "O Biscoito acorda muito cedo.",
+                "meaning": "o presente: a rotina dele."
+              },
+              {
+                "text": "Ele sempre come ração às sete.",
+                "meaning": "sempre + verbo: todo dia."
+              },
+              {
+                "text": "Às vezes ele dorme no sofá.",
+                "meaning": "às vezes: não é todo dia."
+              },
+              {
+                "text": "Ele nunca sobe na cama.",
+                "meaning": "nunca: a negativa forte."
+              },
+              {
+                "text": "Ele passeia no parque todos os dias ?",
+                "meaning": "a pergunta da rotina."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "acordar cedo",
+              "meaning": "Levantar bem cedo.",
+              "note": "O Biscoito acorda cedo."
+            },
+            {
+              "text": "sempre / às vezes / nunca",
+              "meaning": "A frequência antes do verbo.",
+              "note": "Ele sempre mia de manhã."
+            },
+            {
+              "text": "comer ração",
+              "meaning": "A comida do bicho.",
+              "note": "Ele come ração duas vezes por dia."
+            },
+            {
+              "text": "passear no parque",
+              "meaning": "A caminhada do cachorro.",
+              "note": "Passeamos no parque à tarde."
+            },
+            {
+              "text": "todos os dias",
+              "meaning": "A rotina completa.",
+              "note": "Ele brinca todos os dias."
+            }
+          ],
+          "situation": "De manhã em casa: a Nina conta o dia do Biscoito — ração às sete, soneca no sofá, bolinha na sala — e o irmão pergunta se o gato sobe na cama.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Como começa o dia do gato ?",
+                "expected": [
+                  "O Biscoito acorda cedo.",
+                  "o biscoito acorda cedo"
+                ],
+                "focus": "presente",
+                "watch": "acordar = despertarse."
+              },
+              {
+                "prompt": "Diga que ele come ração às sete, todo dia.",
+                "expected": [
+                  "Ele sempre come ração às sete.",
+                  "ele sempre come racao as sete"
+                ],
+                "focus": "sempre",
+                "watch": "sempre = siempre (antes do verbo)."
+              },
+              {
+                "prompt": "Diga que a soneca no sofá não é todo dia.",
+                "expected": [
+                  "Às vezes ele dorme no sofá.",
+                  "as vezes ele dorme no sofa"
+                ],
+                "focus": "às vezes",
+                "watch": "às vezes = a veces."
+              },
+              {
+                "prompt": "Diga que a cama é proibida para o gato.",
+                "expected": [
+                  "Ele nunca sobe na cama.",
+                  "ele nunca sobe na cama"
+                ],
+                "focus": "nunca",
+                "watch": "nunca = nunca (a negativa vai antes do verbo)."
+              },
+              {
+                "prompt": "Pergunte se o passeio acontece todo dia.",
+                "expected": [
+                  "Ele passeia todos os dias ?",
+                  "ele passeia todos os dias"
+                ],
+                "focus": "pergunta",
+                "watch": "todos os dias = todos los días."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u27-rotina-e1",
+              "kind": "choice",
+              "prompt": "Ele ___ dorme no sofá, só quando chove.",
+              "options": [
+                "às vezes",
+                "sempre",
+                "nunca",
+                "todo dia"
+              ],
+              "answers": [
+                "às vezes"
+              ],
+              "explain": "« só quando chove » marca frequência parcial: às vezes."
+            },
+            {
+              "id": "pt-foundations-u27-rotina-e2",
+              "kind": "gap",
+              "prompt": "Ele ___ mia de manhã, todos os dias.",
+              "answers": [
+                "sempre"
+              ],
+              "explain": "todos os dias = sempre: a frequência antes do verbo."
+            },
+            {
+              "id": "pt-foundations-u27-rotina-e3",
+              "kind": "order",
+              "prompt": "Qual é a regra da cama para o gato ?",
+              "answers": [
+                "Ele nunca sobe na cama"
+              ],
+              "explain": "nunca + verbo: a negativa forte da rotina."
+            },
+            {
+              "id": "pt-foundations-u27-rotina-e4",
+              "kind": "written",
+              "prompt": "Conte uma coisa que o bicho faz todo dia.",
+              "answers": [
+                "Ele come ração todos os dias.",
+                "ele come racao todos os dias",
+                "Ele passeia todos os dias.",
+                "ele passeia todos os dias"
+              ],
+              "explain": "Presente + todos os dias: a rotina completa do bicho."
+            }
+          ],
+          "skills": [
+            "grammar:present-simple",
+            "grammar:frequency-adverbs",
+            "vocab:daily-routine",
+            "function:talk-about-routines"
+          ],
+          "canDo": [
+            "talk-about-routines"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pt-foundations-u28",
+      "title": "Imprevistos de viagem",
+      "subtitle": "Quando o plano muda",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "imprevisto-caminho",
+          "title": "O imprevisto",
+          "subtitle": "Voo e mala",
+          "symbol": "clock.arrow.circlepath",
+          "category": "Course",
+          "situation": "No aeroporto, o voo da Duda e do Téo atrasa e a mala dela não aparece na esteira; os dois resolvem um problema de cada vez, sem pressa.",
+          "colorIndex": 0
+        },
+        {
+          "id": "resolver-balcao",
+          "title": "Resolver no balcão",
+          "subtitle": "Pedidos e trocas",
+          "symbol": "phone.badge.checkmark",
+          "category": "Course",
+          "situation": "No balcão da companhia e por telefone com o hotel, eles registram a mala perdida e mudam a reserva de data sem estresse.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "pt-foundations-u28-atraso",
+          "title": "O voo atrasou",
+          "goal": "Entender e reagir a um atraso: perguntar o motivo, a nova hora e o que fazer agora.",
+          "intro": {
+            "explanation": [
+              "Para o motivo, use « porque »: « o voo atrasou porque chove muito ». Para o resultado, « por isso »: « choveu, por isso o voo atrasou ».",
+              "Pergunte a nova hora com « a que horas… ? »: « A que horas sai o novo voo ? ».",
+              "Peça a solução com « podemos… ? »: « Podemos trocar o voo ? »."
+            ],
+            "examples": [
+              {
+                "text": "O voo atrasou porque chove forte.",
+                "meaning": "porque: o motivo do atraso."
+              },
+              {
+                "text": "Chove forte, por isso o voo atrasou.",
+                "meaning": "por isso: o resultado."
+              },
+              {
+                "text": "A que horas sai o novo voo ?",
+                "meaning": "a pergunta da nova hora."
+              },
+              {
+                "text": "Podemos trocar o voo de amanhã ?",
+                "meaning": "o pedido da troca."
+              },
+              {
+                "text": "Então vamos esperar no portão.",
+                "meaning": "então: a conclusão calma."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "O voo atrasou.",
+              "meaning": "O avião sai mais tarde.",
+              "note": "Meu voo atrasou duas horas."
+            },
+            {
+              "text": "porque … / por isso …",
+              "meaning": "O motivo e o resultado.",
+              "note": "Atrasou porque chove; por isso vou esperar."
+            },
+            {
+              "text": "A que horas … ?",
+              "meaning": "Perguntar a hora exata.",
+              "note": "A que horas sai o novo voo ?"
+            },
+            {
+              "text": "Podemos trocar … ?",
+              "meaning": "Pedir a mudança.",
+              "note": "Podemos trocar o assento ?"
+            },
+            {
+              "text": "Não tem problema.",
+              "meaning": "Acalmar: está tudo bem assim.",
+              "note": "Uma hora a mais, não tem problema."
+            }
+          ],
+          "situation": "No portão de embarque: o telão anuncia atraso, a Duda pergunta o motivo e a nova hora, e os dois decidem esperar tranquilos no aeroporto.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Informe o tamanho do atraso: duas horas.",
+                "expected": [
+                  "O voo atrasou duas horas.",
+                  "o voo atrasou duas horas"
+                ],
+                "focus": "atraso",
+                "watch": "atrasar = retrasarse."
+              },
+              {
+                "prompt": "Diga o motivo: chove muito hoje.",
+                "expected": [
+                  "O voo atrasou porque chove muito hoje.",
+                  "o voo atrasou porque chove muito hoje"
+                ],
+                "focus": "porque",
+                "watch": "porque = porque (el motivo)."
+              },
+              {
+                "prompt": "Pergunte a hora de saída do novo voo.",
+                "expected": [
+                  "A que horas sai o novo voo ?",
+                  "a que horas sai o novo voo"
+                ],
+                "focus": "a que horas",
+                "watch": "a que horas = ¿a qué horas?"
+              },
+              {
+                "prompt": "Peça a troca do voo ao atendente.",
+                "expected": [
+                  "Podemos trocar o voo ?",
+                  "podemos trocar o voo"
+                ],
+                "focus": "pedido",
+                "watch": "podemos + infinitivo = pedido direto."
+              },
+              {
+                "prompt": "Mostre calma diante do atraso.",
+                "expected": [
+                  "Não tem problema.",
+                  "nao tem problema"
+                ],
+                "focus": "acalmar",
+                "watch": "não tem problema = no hay problema."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u28-atraso-e1",
+              "kind": "choice",
+              "prompt": "O voo atrasou ___ chove muito na cidade.",
+              "options": [
+                "porque",
+                "por isso",
+                "então",
+                "mas"
+              ],
+              "answers": [
+                "porque"
+              ],
+              "explain": "« porque » apresenta o motivo do atraso."
+            },
+            {
+              "id": "pt-foundations-u28-atraso-e2",
+              "kind": "gap",
+              "prompt": "Chove muito, ___ o voo atrasou.",
+              "answers": [
+                "por isso"
+              ],
+              "explain": "por isso = por eso: o resultado do motivo."
+            },
+            {
+              "id": "pt-foundations-u28-atraso-e3",
+              "kind": "order",
+              "prompt": "Pergunte a hora de saída do novo voo.",
+              "answers": [
+                "A que horas sai o novo voo"
+              ],
+              "explain": "a que horas + verbo: a pergunta da hora exata."
+            },
+            {
+              "id": "pt-foundations-u28-atraso-e4",
+              "kind": "written",
+              "prompt": "Peça ao atendente a troca do voo, com « podemos… ? ».",
+              "answers": [
+                "Podemos trocar o voo ?",
+                "podemos trocar o voo",
+                "Podemos trocar o voo de amanhã ?",
+                "podemos trocar o voo de amanha"
+              ],
+              "explain": "Podemos + infinitivo: o pedido educado no balcão."
+            }
+          ],
+          "skills": [
+            "grammar:connectors",
+            "grammar:present-questions",
+            "function:solve-problems",
+            "vocab:transport"
+          ],
+          "canDo": [
+            "use-transport"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "pt-foundations-u28-mala",
+          "title": "A mala não chegou",
+          "goal": "Comunicar a perda da mala e descrever ela para o registro no balcão.",
+          "intro": {
+            "explanation": [
+              "Conte o problema no passado: « a mala não chegou », « a esteira parou ».",
+              "Descreva a mala para acharem: « é azul, de quatro rodas, com uma fita amarela ».",
+              "Feche com o combinado: « registram o pedido ? », « entregam no hotel quando chegar ? »."
+            ],
+            "examples": [
+              {
+                "text": "Minha mala não chegou na esteira.",
+                "meaning": "o problema no passado."
+              },
+              {
+                "text": "Ela é azul, média, de quatro rodas.",
+                "meaning": "a descrição da mala."
+              },
+              {
+                "text": "Tem uma fita amarela na alça.",
+                "meaning": "um detalhe que ajuda a achar."
+              },
+              {
+                "text": "Você pode registrar o pedido agora ?",
+                "meaning": "o pedido do registro."
+              },
+              {
+                "text": "Entregam no hotel quando chegar ?",
+                "meaning": "o combinado da entrega."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "A mala não chegou.",
+              "meaning": "A mala sumiu no voo.",
+              "note": "Minha mala não chegou."
+            },
+            {
+              "text": "É azul, de roda…",
+              "meaning": "Descrever para achar.",
+              "note": "É preta, pequena, de duas rodas."
+            },
+            {
+              "text": "Registrar o pedido",
+              "meaning": "Abrir a ocorrência.",
+              "note": "Posso registrar o pedido aqui ?"
+            },
+            {
+              "text": "quando chegar",
+              "meaning": "A condição da entrega.",
+              "note": "Liguem quando chegar, por favor."
+            },
+            {
+              "text": "entrega no hotel",
+              "meaning": "Onde receber a mala.",
+              "note": "A entrega é no hotel, está bem ?"
+            }
+          ],
+          "situation": "Na esteira de bagagens: a esteira para, a mala da Duda não aparece; no balcão ela descreve a mala, registra o pedido e combina a entrega no hotel.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Diga que a sua mala não chegou.",
+                "expected": [
+                  "Minha mala não chegou.",
+                  "minha mala nao chegou"
+                ],
+                "focus": "problema",
+                "watch": "chegar = llegar (a mala não chegou)."
+              },
+              {
+                "prompt": "Descreva a mala: azul e grande.",
+                "expected": [
+                  "Ela é azul e grande.",
+                  "ela e azul e grande",
+                  "É azul e grande, de quatro rodas."
+                ],
+                "focus": "descrição",
+                "watch": "é + cor/tamanho = la descripción."
+              },
+              {
+                "prompt": "Peça para registrar o pedido.",
+                "expected": [
+                  "Você pode registrar o pedido ?",
+                  "voce pode registrar o pedido"
+                ],
+                "focus": "registro",
+                "watch": "registrar o pedido = registrar la ocurrencia."
+              },
+              {
+                "prompt": "Peça para avisarem quando a mala chegar.",
+                "expected": [
+                  "Ligam quando chegar ?",
+                  "ligam quando chegar"
+                ],
+                "focus": "quando",
+                "watch": "quando chegar = cuando llegue."
+              },
+              {
+                "prompt": "Diga que quer receber a mala no hotel.",
+                "expected": [
+                  "Quero a entrega no hotel.",
+                  "quero a entrega no hotel"
+                ],
+                "focus": "entrega",
+                "watch": "entrega no hotel = entrega en el hotel."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u28-mala-e1",
+              "kind": "choice",
+              "prompt": "Minha mala não ___ na esteira.",
+              "options": [
+                "chegou",
+                "chega",
+                "chegava",
+                "chegando"
+              ],
+              "answers": [
+                "chegou"
+              ],
+              "explain": "Passado do verbo chegar: a mala não chegou na esteira."
+            },
+            {
+              "id": "pt-foundations-u28-mala-e2",
+              "kind": "gap",
+              "prompt": "Ela é azul, ___ quatro rodas.",
+              "answers": [
+                "de"
+              ],
+              "explain": "de + característica: mala de quatro rodas."
+            },
+            {
+              "id": "pt-foundations-u28-mala-e3",
+              "kind": "order",
+              "prompt": "Peça para avisarem quando a mala chegar.",
+              "answers": [
+                "Ligam quando chegar, por favor"
+              ],
+              "explain": "quando + chegar: a condição do contato."
+            },
+            {
+              "id": "pt-foundations-u28-mala-e4",
+              "kind": "written",
+              "prompt": "Descreva a mala perdida: a cor e um detalhe.",
+              "answers": [
+                "Ela é azul, com fita amarela.",
+                "ela e azul com fita amarela",
+                "É azul e tem uma fita amarela na alça.",
+                "e azul e tem uma fita amarela"
+              ],
+              "explain": "É + cor + com + detalhe: a descrição que ajuda a achar a mala."
+            }
+          ],
+          "skills": [
+            "grammar:past-simple-regular",
+            "function:solve-problems",
+            "vocab:travel",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "pt-foundations-u28-reserva",
+          "title": "Mudar a reserva",
+          "goal": "Pedir uma mudança de reserva por telefone: data, quarto e confirmação.",
+          "intro": {
+            "explanation": [
+              "Abra o pedido com « queria » ou « posso »: « queria mudar a reserva », « posso mudar para sexta ? ».",
+              "Diga a mudança clara: « de quarta para sexta », « um quarto duplo, com café ».",
+              "Confirme no fim: « então está confirmado para sexta, certo ? »."
+            ],
+            "examples": [
+              {
+                "text": "Queria mudar a minha reserva.",
+                "meaning": "queria: o pedido educado."
+              },
+              {
+                "text": "Posso mudar de quarta para sexta ?",
+                "meaning": "a troca de data."
+              },
+              {
+                "text": "Prefiro um quarto duplo, com café.",
+                "meaning": "a preferência clara."
+              },
+              {
+                "text": "Tem custo extra pela mudança ?",
+                "meaning": "a pergunta do preço."
+              },
+              {
+                "text": "Então está confirmado para sexta, certo ?",
+                "meaning": "a confirmação final."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Queria mudar …",
+              "meaning": "O pedido educado ao telefone.",
+              "note": "Queria mudar a reserva."
+            },
+            {
+              "text": "de … para …",
+              "meaning": "A mudança de data.",
+              "note": "De quarta para sexta, por favor."
+            },
+            {
+              "text": "Tem custo extra ?",
+              "meaning": "Perguntar o preço da troca.",
+              "note": "Tem custo extra pela mudança ?"
+            },
+            {
+              "text": "Está confirmado ?",
+              "meaning": "Confirmar de novo.",
+              "note": "A nova data está confirmada ?"
+            },
+            {
+              "text": "no meu nome",
+              "meaning": "A reserva em seu nome.",
+              "note": "Está no nome de Téo Prado."
+            }
+          ],
+          "situation": "Por telefone com o hotel: a Duda pede para mudar a reserva — de quarta para sexta, quarto duplo — pergunta pelo custo e repete os dados para confirmar.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Peça, educado, para mudar a reserva.",
+                "expected": [
+                  "Queria mudar a minha reserva.",
+                  "queria mudar a minha reserva"
+                ],
+                "focus": "queria",
+                "watch": "queria = quisiera (el pedido educado)."
+              },
+              {
+                "prompt": "Peça a troca de data: quarta vira sexta.",
+                "expected": [
+                  "Posso mudar de quarta para sexta ?",
+                  "posso mudar de quarta para sexta"
+                ],
+                "focus": "de… para…",
+                "watch": "de … para … = de… para (la fecha)."
+              },
+              {
+                "prompt": "Pergunte se a mudança custa algo.",
+                "expected": [
+                  "Tem custo extra ?",
+                  "tem custo extra"
+                ],
+                "focus": "custo",
+                "watch": "custo extra = costo extra."
+              },
+              {
+                "prompt": "Confirme a nova data com o atendente.",
+                "expected": [
+                  "Está confirmado para sexta, certo ?",
+                  "esta confirmado para sexta certo"
+                ],
+                "focus": "confirmar",
+                "watch": "…, certo ? = ¿verdad? (repite para garantir)."
+              },
+              {
+                "prompt": "Diga que a reserva está no seu nome.",
+                "expected": [
+                  "A reserva está no meu nome.",
+                  "a reserva esta no meu nome"
+                ],
+                "focus": "nome",
+                "watch": "no meu nome = a mi nombre."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "pt-foundations-u28-reserva-e1",
+              "kind": "choice",
+              "prompt": "___ mudar a minha reserva, por favor.",
+              "options": [
+                "Queria",
+                "Quer",
+                "Mudar",
+                "Mudando"
+              ],
+              "answers": [
+                "Queria"
+              ],
+              "explain": "Queria + infinitivo: o pedido educado ao telefone."
+            },
+            {
+              "id": "pt-foundations-u28-reserva-e2",
+              "kind": "gap",
+              "prompt": "De quarta ___ sexta, por favor.",
+              "answers": [
+                "para"
+              ],
+              "explain": "de … para …: a mudança de data."
+            },
+            {
+              "id": "pt-foundations-u28-reserva-e3",
+              "kind": "order",
+              "prompt": "Pergunte se a mudança custa algo.",
+              "answers": [
+                "Tem custo extra pela mudança"
+              ],
+              "explain": "tem custo… ?: a pergunta do preço antes de aceitar."
+            },
+            {
+              "id": "pt-foundations-u28-reserva-e4",
+              "kind": "written",
+              "prompt": "Confirme a sexta, pedindo certeza ao atendente.",
+              "answers": [
+                "Está confirmado para sexta, certo ?",
+                "esta confirmado para sexta certo",
+                "Está confirmada para sexta ?"
+              ],
+              "explain": "« …, certo ? » pede um sim: a confirmação final da reserva."
+            }
+          ],
+          "skills": [
+            "grammar:can",
+            "function:make-requests",
+            "vocab:travel",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:can"
           ]
         }
       ]
