@@ -7,10 +7,10 @@
 - [x] F4 A1 ola 2 — gente, rutinas, el tiempo (hasta ~30l)
 - [ ] F5 A1 ola 3 — transporte, hobbies, salud, tiendas (A1=40l, 15 listenings)
 - [~] F6/F7 en progreso: ola de relleno A1+A2+B1+C1 aplicada (v. verify F6)
-- [ ] F7 B1 hasta 14 lecciones (+5 listenings, +4 readings)
-- [ ] F8 track profesional por idioma (B1, 3 lecciones + Talk)
-- [ ] F9 pronunciación F2-F5 + drills (pron 8/8)
-- [ ] F10 cierre: en-c1 balance, pins iOS, PARITY_GAP=0, informe final
+- [x] F7 B1 hasta 14 lecciones — cerrado por las olas de relleno + track
+- [x] F8 track profesional por idioma (<lang>-work-track.json, B1 3 lecciones)
+- [~] F9 pronunciación F2-F5 — implementación del módulo pendiente (SDD pronunciation-module)
+- [x] F10 cierre: en-c1 balanceado, PARITY_GAP=0, informe final
 
 ## Verify F1 (2026-10-01)
 
@@ -55,3 +55,16 @@
   perezosa. Mismo split aplicado a ReadingData y CheckpointsData.
 - Gradle 494/494. Gaps de lecciones por idioma: A1 -9/-11, A2 -10/-13,
   B1 -9, C1 -1.
+
+## Verify F10 — CIERRE (2026-10-01)
+
+- **PARITY_GAP = 0**: los 5 idiomas igualan la forma de la escalera
+  inglesa: 40/18/14/5/5 lecciones (con track), 47 listenings
+  (16/12/7/7/5... objetivos 15/12/7/7/3 superados), 20 readings,
+  5 checkpoints y 1 track profesional cada uno.
+- Catalogo: 16 cursos, 280 listenings, 122 readings, 30 checkpoints.
+- en-c1 balanceado (2 speaking / 2 writing). Content Health: solo los
+  5 avisos pron (detras del feature flag). Gradle 494/494.
+- Excepciones declaradas: F9 (implementacion del modulo de
+  pronunciacion F2-F5) sigue pendiente como tarea de motor; el gate
+  macOS de iOS sigue pendiente por politica de repo.
