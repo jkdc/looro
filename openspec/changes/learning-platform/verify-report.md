@@ -206,3 +206,22 @@ Verificado con la suite completa en verde tras el cambio.
 - macOS gate; pron skills 5 sin contenido (módulo feature-flagged);
   balance del checkpoint en-c1; listenings B1+ y más readings para los
   5 idiomas; checkpoints B1 por idioma.
+
+## Ola B1 multiidioma (2026-10-01, d9e18fe — con la skill looro-content)
+
+- Listenings: 2 B1 por idioma (diálogo, 90-120 palabras), atados a las
+  unidades B1; 10 por idioma (6 A1 · 2 A2 · 2 B1).
+- Readings: primer B1 por idioma (el viaje inolvidable); 3 por idioma.
+- Checkpoints: B1 × 5 idiomas (16 preguntas; reparto gramática 7 ·
+  vocabulario 3 · función 2 · escrita 2 · oral 2, umbrales ≥3 en las
+  categorías con umbral). 20 checkpoints en el catálogo.
+- Validadores: los 4 exportadores `--check` in sync · content_health
+  en los 7 avisos aceptados · unittests python 98/98 · cross-platform
+  green · Android 494/494 (con pipefail; pins de conteo a 10 en ambos
+  mirrors, incluido el espejo Swift que había quedado en 6).
+
+## Still open (transversal)
+
+- macOS gate; pron skills 5 sin contenido (módulo feature-flagged);
+  balance del checkpoint en-c1; listenings/readings B2 para los 5
+  idiomas; checkpoints B2 por idioma; segundo reading B1.
