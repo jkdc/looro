@@ -182,3 +182,27 @@ Verificado con la suite completa en verde tras el cambio.
 - Volume growth: A1 30→40 (doc target), B2/C1 listenings, tracks 6-8
   (doc §12 remaining), and extending the other 5 languages beyond A1.
 
+
+## Wave multiidioma (2026-10-01, dbed393 + 4b077fe)
+
+- Cursos: es 7 unidades/17 lecciones · fr 6/13 · it/de/pt 6/12 — todos
+  con mercado (A1), comparaciones/planes (A2) y experiencias (B1).
+- Listenings: 8 por idioma (6 A1 + 2 A2 nuevos: piso y plan del finde).
+- Readings: primeros 2 por idioma (A1+A2); 32 en total.
+- Checkpoints: A1+A2 × 5 idiomas (16 preguntas, umbrales 70/60/60,
+  todas las categorías ≥2/16). 15 checkpoints en el catálogo.
+- Content Health: 7 avisos, todos preexistentes y aceptados (5 pron
+  tras feature flag, 2 de balance en el c1 inglés).
+- Android **494/494** (3 nuevos: multilang listening/reading +
+  CheckpointCoverageTest) · cross-platform green · exportadores en sync.
+- Nota de proceso: tres ejecuciones previas "verdes" eran falsos
+  positivos del pipe con `tail` (exit code enmascarado); re-ejecutadas
+  con `pipefail` y arreglados los 3 fallos reales (shape de las 8
+  lecciones de mercado, conteo por idioma de listenings, assert de
+  niveles de checkpoint).
+
+## Still open (transversal, actualizado)
+
+- macOS gate; pron skills 5 sin contenido (módulo feature-flagged);
+  balance del checkpoint en-c1; listenings B1+ y más readings para los
+  5 idiomas; checkpoints B1 por idioma.
