@@ -255,6 +255,89 @@
           "explain": "Ich sage Peru."
         }
       ]
+    },
+    {
+      "id": "de-read-kolumne-autofrei",
+      "languageID": "de",
+      "title": "Kolumne: Autofrei!",
+      "level": "B2",
+      "topic": "meinung",
+      "unitID": "de-foundations-u8",
+      "text": "Ich finde, wir sollten die Innenstadt autofrei machen. Einerseits würde der Lärm sinken: Die Anwohner des Platzes fordern seit Jahren Ruhe. Andererseits würde die Verschmutzung sinken – sie übersteigt längst die erlaubten Grenzen. Es stimmt, dass der Handel Kunden verlieren fürchtet, aber die Zahlen anderer Städte sagen das Gegenteil: Wo das Auto verschwindet, gehen die Leute mehr spazieren und kaufen mehr. Die Firma, deren Bericht letzten Monat veröffentlicht wurde, hat 15 % mehr Umsatz in autofreien Straßen berechnet. Aus all dem verteidige ich die Maßnahme: Hätten wir den Mut, sie ein Jahr zu versuchen, wollten wir nie zurück.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-kolumne-autofrei-q1",
+          "kind": "choice",
+          "prompt": "Was ist die These der Kolumne ?",
+          "answers": [
+            "Innenstadt autofrei"
+          ],
+          "explain": "« Wir sollten die Innenstadt autofrei machen ».",
+          "options": [
+            "Innenstadt autofrei",
+            "Autobahn verbreitern",
+            "Fahrräder verbieten",
+            "Parkhaus bauen"
+          ]
+        },
+        {
+          "id": "de-read-kolumne-autofrei-q2",
+          "kind": "written",
+          "prompt": "Was übersteigt längst die Grenzen ?",
+          "answers": [
+            "die verschmutzung"
+          ],
+          "explain": "Die Verschmutzung übersteigt die Grenzen."
+        },
+        {
+          "id": "de-read-kolumne-autofrei-q3",
+          "kind": "choice",
+          "prompt": "Wovor hat der Handel Angst ?",
+          "answers": [
+            "Kunden verlieren"
+          ],
+          "explain": "Er fürchtet, Kunden zu verlieren.",
+          "options": [
+            "Kunden verlieren",
+            "Mehr Steuern zahlen",
+            "Im Sommer schließen",
+            "Umziehen"
+          ]
+        },
+        {
+          "id": "de-read-kolumne-autofrei-q4",
+          "kind": "written",
+          "prompt": "Wie viel mehr Umsatz in autofreien Straßen ?",
+          "answers": [
+            "15%",
+            "15 %",
+            "fünfzehn prozent"
+          ],
+          "explain": "15 % mehr Umsatz."
+        },
+        {
+          "id": "de-read-kolumne-autofrei-q5",
+          "kind": "choice",
+          "prompt": "Was schlägt der Autor am Ende vor ?",
+          "answers": [
+            "Ein Jahr versuchen"
+          ],
+          "explain": "« …sie ein Jahr zu versuchen ».",
+          "options": [
+            "Ein Jahr versuchen",
+            "Den Plan vergessen",
+            "Mehr bestrafen",
+            "Nochmal wählen"
+          ]
+        }
+      ]
     }
   ]
 }

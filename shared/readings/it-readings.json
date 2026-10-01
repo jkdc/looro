@@ -259,6 +259,91 @@
           "explain": "Io rispondo il Perù."
         }
       ]
+    },
+    {
+      "id": "it-read-colonna-pedonale",
+      "languageID": "it",
+      "title": "Colonna: pedonalizziamo",
+      "level": "B2",
+      "topic": "opinione",
+      "unitID": "it-foundations-u8",
+      "text": "Penso che dovremmo pedonalizzare il centro. Da un lato, calerebbe il rumore: i residenti della piazza chiedono silenzio da anni. Dall'altro, calerebbe l'inquinamento, che supera già i limiti legali. È vero che i negozianti temono di perdere clienti, ma i numeri di altre città dicono il contrario: dove sparisce l'auto, la gente cammina di più e compra di più. La società il cui rapporto è stato pubblicato il mese scorso ha calcolato un 15 % di vendite in più nelle strade senza traffico. Per tutto questo, difendo la misura: se avessimo il coraggio di provarla un anno, non vorremmo più tornare indietro.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-colonna-pedonale-q1",
+          "kind": "choice",
+          "prompt": "Qual è la tesi della colonna ?",
+          "answers": [
+            "Pedonalizzare il centro"
+          ],
+          "explain": "« Penso che dovremmo pedonalizzare il centro ».",
+          "options": [
+            "Pedonalizzare il centro",
+            "Allargare l'autostrada",
+            "Vietare le bici",
+            "Costruire un parcheggio"
+          ]
+        },
+        {
+          "id": "it-read-colonna-pedonale-q2",
+          "kind": "written",
+          "prompt": "Cosa supera già i limiti legali ?",
+          "answers": [
+            "l'inquinamento",
+            "inquinamento"
+          ],
+          "explain": "L'inquinamento supera i limiti legali."
+        },
+        {
+          "id": "it-read-colonna-pedonale-q3",
+          "kind": "choice",
+          "prompt": "Di cosa hanno paura i negozianti ?",
+          "answers": [
+            "Di perdere clienti"
+          ],
+          "explain": "Temono di perdere clienti.",
+          "options": [
+            "Di perdere clienti",
+            "Di pagare più tasse",
+            "Di chiudere d'estate",
+            "Di traslocare"
+          ]
+        },
+        {
+          "id": "it-read-colonna-pedonale-q4",
+          "kind": "written",
+          "prompt": "Quanto in più venderebbero le strade senza traffico ?",
+          "answers": [
+            "15%",
+            "un 15%",
+            "quindici per cento",
+            "15 per cento"
+          ],
+          "explain": "Un 15 % di vendite in più."
+        },
+        {
+          "id": "it-read-colonna-pedonale-q5",
+          "kind": "choice",
+          "prompt": "Cosa propone l'autore alla fine ?",
+          "answers": [
+            "Provarla un anno"
+          ],
+          "explain": "« Se avessimo il coraggio di provarla un anno ».",
+          "options": [
+            "Provarla un anno",
+            "Dimenticare il piano",
+            "Multare di più",
+            "Votare ancora"
+          ]
+        }
+      ]
     }
   ]
 }

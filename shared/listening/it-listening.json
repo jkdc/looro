@@ -939,6 +939,175 @@
           "explain": "« Di non averlo fatto prima »."
         }
       ]
+    },
+    {
+      "id": "it-listen-trattativa-tavolo",
+      "languageID": "it",
+      "title": "La trattativa del tavolo",
+      "level": "B2",
+      "topic": "negoziazione",
+      "unitID": "it-foundations-u7",
+      "text": "Su un'app di usato, Chiara vuole un tavolo di legno da 80 euro. « E se chiudessimo a 60 ? », propone. Il venditore rifiuta: « Solo se la ritiri oggi ». Chiara riflette: « Le darei 65 se aggiunge la sedia ». « Impossibile », ride lui, « ma le lascerei il tavolo a 70 e glielo salirei al piano ». Chiara non dubita: « Lo salirebbe da solo ? ». « Ho una carriola », risponde. « Affare fatto », dice lei, e aggiunge: « Se è bello come in foto, le lascio cinque stelle ».",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-trattativa-tavolo-q1",
+          "kind": "choice",
+          "prompt": "Quanto chiede il venditore ?",
+          "answers": [
+            "80 euro"
+          ],
+          "explain": "Il tavolo costa 80 euro.",
+          "options": [
+            "80 euro",
+            "60 euro",
+            "70 euro",
+            "65 euro"
+          ]
+        },
+        {
+          "id": "it-listen-trattativa-tavolo-q2",
+          "kind": "written",
+          "prompt": "Cosa propone Chiara all'inizio ?",
+          "answers": [
+            "60 euro",
+            "sessanta euro",
+            "chiudere a 60"
+          ],
+          "explain": "« E se chiudessimo a 60 ? »."
+        },
+        {
+          "id": "it-listen-trattativa-tavolo-q3",
+          "kind": "choice",
+          "prompt": "Che condizione mette il venditore ?",
+          "answers": [
+            "Ritirarla oggi"
+          ],
+          "explain": "« Solo se la ritiri oggi ».",
+          "options": [
+            "Ritirarla oggi",
+            "Pagare in contanti",
+            "Lasciare cinque stelle",
+            "Tornare domani"
+          ]
+        },
+        {
+          "id": "it-listen-trattativa-tavolo-q4",
+          "kind": "choice",
+          "prompt": "Cosa offre il venditore per 70 ?",
+          "answers": [
+            "Salire il tavolo al piano"
+          ],
+          "explain": "« Glielo salirei al piano ».",
+          "options": [
+            "Salire il tavolo al piano",
+            "Aggiungere la sedia",
+            "Scendere a 60",
+            "Prestare la carriola"
+          ]
+        },
+        {
+          "id": "it-listen-trattativa-tavolo-q5",
+          "kind": "written",
+          "prompt": "Cosa promette Chiara se il tavolo le piace ?",
+          "answers": [
+            "cinque stelle",
+            "5 stelle",
+            "una recensione di cinque stelle"
+          ],
+          "explain": "Cinque stelle."
+        }
+      ]
+    },
+    {
+      "id": "it-listen-notizia-quartiere",
+      "languageID": "it",
+      "title": "La notizia del quartiere",
+      "level": "B2",
+      "topic": "notizie",
+      "unitID": "it-foundations-u8",
+      "text": "Al mercato, Giulia e Paolo commentano quello che si dice. « Si dice che pedonalizzeranno la via principale », racconta Giulia. « Di nuovo ? », ride Paolo. « La notizia che ho letto dice che partono in primavera ». Secondo il comune, sarebbe solo il sabato, ma i negozianti, il cui fatturato dipenderebbe dal turismo, sono già scesi in piazza. « È vero che il rumore calerebbe », ammette Paolo, « ma, e il parcheggio ? ». Giulia difende la misura: « Da un lato, più gente camminerebbe; dall'altro, gli autobus arriverebbero all'angolo ». Non la decidono, ma promettono di riparlarne quando uscirà il piano.",
+      "skills": [
+        "listening:inference",
+        "grammar:relative-clauses",
+        "grammar:passive-intro",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-notizia-quartiere-q1",
+          "kind": "choice",
+          "prompt": "Cosa si dice della via principale ?",
+          "answers": [
+            "Che la pedonalizzeranno"
+          ],
+          "explain": "« Si dice che pedonalizzeranno la via principale ».",
+          "options": [
+            "Che la pedonalizzeranno",
+            "Che la allargheranno",
+            "Che la chiuderanno",
+            "Che cambierà nome"
+          ]
+        },
+        {
+          "id": "it-listen-notizia-quartiere-q2",
+          "kind": "written",
+          "prompt": "Quando partirebbe ?",
+          "answers": [
+            "in primavera",
+            "primavera"
+          ],
+          "explain": "« La notizia che ho letto dice che partono in primavera »."
+        },
+        {
+          "id": "it-listen-notizia-quartiere-q3",
+          "kind": "choice",
+          "prompt": "Cosa dice il comune ?",
+          "answers": [
+            "Solo il sabato"
+          ],
+          "explain": "Secondo il comune, sarebbe solo il sabato.",
+          "options": [
+            "Solo il sabato",
+            "Tutti i giorni",
+            "Solo d'estate",
+            "I festivi"
+          ]
+        },
+        {
+          "id": "it-listen-notizia-quartiere-q4",
+          "kind": "choice",
+          "prompt": "Chi è sceso in piazza ?",
+          "answers": [
+            "I negozianti"
+          ],
+          "explain": "I negozianti sono già scesi in piazza.",
+          "options": [
+            "I negozianti",
+            "I residenti",
+            "I tassisti",
+            "Il comune"
+          ]
+        },
+        {
+          "id": "it-listen-notizia-quartiere-q5",
+          "kind": "written",
+          "prompt": "Cosa promettono Giulia e Paolo ?",
+          "answers": [
+            "di riparlarne",
+            "ripdirlo",
+            "riparlarne quando uscira il piano"
+          ],
+          "explain": "Promettono di riparlarne quando uscirà il piano."
+        }
+      ]
     }
   ]
 }

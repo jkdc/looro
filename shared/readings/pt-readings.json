@@ -260,6 +260,90 @@
           "explain": "Eu digo Peru."
         }
       ]
+    },
+    {
+      "id": "pt-read-coluna-peatonal",
+      "languageID": "pt",
+      "title": "Coluna: peatonalizemos",
+      "level": "B2",
+      "topic": "opinião",
+      "unitID": "pt-foundations-u8",
+      "text": "Acho que deveríamos peatonalizar o centro. Por um lado, o barulho cairia: os moradores da praça pedem silêncio há anos. Por outro, a poluição cairia — ela já passa dos limites legais. É verdade que o comércio teme perder clientes, mas os números de outras cidades dizem o contrário: onde o carro desaparece, a gente caminha mais e compra mais. A empresa cujo relatório foi publicado no mês passado calculou 15 % mais vendas nas ruas sem carros. Por tudo isso, defendo a medida: se tivéssemos coragem de testá-la por um ano, não ia querer voltar atrás.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-read-coluna-peatonal-q1",
+          "kind": "choice",
+          "prompt": "Qual é a tese da coluna ?",
+          "answers": [
+            "Peatonalizar o centro"
+          ],
+          "explain": "« Deveríamos peatonalizar o centro ».",
+          "options": [
+            "Peatonalizar o centro",
+            "Alargar a rodovia",
+            "Proibir bicicletas",
+            "Construir um estacionamento"
+          ]
+        },
+        {
+          "id": "pt-read-coluna-peatonal-q2",
+          "kind": "written",
+          "prompt": "O que já passa dos limites legais ?",
+          "answers": [
+            "a poluicao",
+            "a poluição"
+          ],
+          "explain": "A poluição já passa dos limites legais."
+        },
+        {
+          "id": "pt-read-coluna-peatonal-q3",
+          "kind": "choice",
+          "prompt": "De que o comércio teme ?",
+          "answers": [
+            "Perder clientes"
+          ],
+          "explain": "O comércio teme perder clientes.",
+          "options": [
+            "Perder clientes",
+            "Pagar mais impostos",
+            "Fechar no verão",
+            "Mudar de cidade"
+          ]
+        },
+        {
+          "id": "pt-read-coluna-peatonal-q4",
+          "kind": "written",
+          "prompt": "Quanto mais vendas nas ruas sem carros ?",
+          "answers": [
+            "15%",
+            "15 %",
+            "quinze por cento"
+          ],
+          "explain": "15 % mais vendas."
+        },
+        {
+          "id": "pt-read-coluna-peatonal-q5",
+          "kind": "choice",
+          "prompt": "O que o autor propõe no fim ?",
+          "answers": [
+            "Testar por um ano"
+          ],
+          "explain": "« Testá-la por um ano ».",
+          "options": [
+            "Testar por um ano",
+            "Esquecer o plano",
+            "Multar mais",
+            "Votar de novo"
+          ]
+        }
+      ]
     }
   ]
 }

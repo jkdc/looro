@@ -964,6 +964,176 @@
           "explain": "«De no haberlo hecho antes»."
         }
       ]
+    },
+    {
+      "id": "es-listen-regateo-mesa",
+      "languageID": "es",
+      "title": "El regateo de la mesa",
+      "level": "B2",
+      "topic": "negocios",
+      "unitID": "es-foundations-u8",
+      "text": "En una app de segunda mano, Clara quiere una mesa de madera que cuesta 80 euros. « ¿Y si nos viéramos en 60 ? », propone ella. El vendedor no acepta: « Solo si te la llevas hoy ». Clara lo piensa: « Te daría 65 si incluyes la silla ». « Imposible », ríe él, « pero te dejaría la mesa en 70 y te la subiría al piso ». Clara no lo duda: « ¿La subirías tú sola ? ». « Tengo un carro », responde. « Trato hecho », dice ella, y añade: « Si me gusta tanto como en la foto, te dejo una reseña de cinco estrellas ».",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-regateo-mesa-q1",
+          "kind": "choice",
+          "prompt": "¿Cuánto pide el vendedor por la mesa ?",
+          "answers": [
+            "80 euros"
+          ],
+          "explain": "La mesa cuesta 80 euros.",
+          "options": [
+            "80 euros",
+            "60 euros",
+            "70 euros",
+            "65 euros"
+          ]
+        },
+        {
+          "id": "es-listen-regateo-mesa-q2",
+          "kind": "written",
+          "prompt": "¿Qué propone Clara primero ?",
+          "answers": [
+            "60 euros",
+            "sesenta euros",
+            "nos vieramos en 60",
+            "nos viéramos en 60"
+          ],
+          "explain": "« ¿Y si nos viéramos en 60 ? »."
+        },
+        {
+          "id": "es-listen-regateo-mesa-q3",
+          "kind": "choice",
+          "prompt": "¿Qué condición pone el vendedor ?",
+          "answers": [
+            "Llevarla hoy"
+          ],
+          "explain": "« Solo si te la llevas hoy ».",
+          "options": [
+            "Llevarla hoy",
+            "Pagar en efectivo",
+            "Añadir una reseña",
+            "Volver mañana"
+          ]
+        },
+        {
+          "id": "es-listen-regateo-mesa-q4",
+          "kind": "choice",
+          "prompt": "¿Qué ofrece el vendedor por 70 ?",
+          "answers": [
+            "Subirle la mesa al piso"
+          ],
+          "explain": "« Te la subiría al piso ».",
+          "options": [
+            "Subirle la mesa al piso",
+            "Añadir la silla",
+            "Bajar a 60",
+            "Darle un carro"
+          ]
+        },
+        {
+          "id": "es-listen-regateo-mesa-q5",
+          "kind": "written",
+          "prompt": "¿Qué promete Clara si le gusta ?",
+          "answers": [
+            "una resena de cinco estrellas",
+            "una reseña de cinco estrellas",
+            "resena cinco estrellas"
+          ],
+          "explain": "Una reseña de cinco estrellas."
+        }
+      ]
+    },
+    {
+      "id": "es-listen-noticia-barrio",
+      "languageID": "es",
+      "title": "La noticia del barrio",
+      "level": "B2",
+      "topic": "noticias",
+      "unitID": "es-foundations-u9",
+      "text": "En el mercado, Ana y Luis comentan lo que se dice. « Se dice que van a peatonalizar la calle Mayor », cuenta Ana. « ¿Otra vez ? », se ríe Luis. « La noticia que leí dice que empiezan en primavera ». Según el ayuntamiento, serían solo los sábados, pero los comerciantes, cuyo negocio dependería del turismo, ya se han manifestado. « Es cierto que bajaría el ruido », reconoce Luis, « pero, ¿y el aparcamiento ? ». Ana defiende la medida: « Por un lado, más gente caminaría; por otro, los autobuses llegarían a la puerta ». Se quedan sin resolverlo, pero prometen volver a hablarlo cuando se publique el plan.",
+      "skills": [
+        "listening:inference",
+        "grammar:relative-clauses",
+        "grammar:passive-intro",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-noticia-barrio-q1",
+          "kind": "choice",
+          "prompt": "¿Qué se dice de la calle Mayor ?",
+          "answers": [
+            "Que la peatonalizarán"
+          ],
+          "explain": "« Se dice que van a peatonalizar la calle Mayor ».",
+          "options": [
+            "Que la peatonalizarán",
+            "Que la ampliarán",
+            "Que la cerrarán",
+            "Que cambiará de nombre"
+          ]
+        },
+        {
+          "id": "es-listen-noticia-barrio-q2",
+          "kind": "written",
+          "prompt": "¿Cuándo empezarían ?",
+          "answers": [
+            "en primavera",
+            "primavera"
+          ],
+          "explain": "« La noticia que leí dice que empiezan en primavera »."
+        },
+        {
+          "id": "es-listen-noticia-barrio-q3",
+          "kind": "choice",
+          "prompt": "¿Qué dice el ayuntamiento ?",
+          "answers": [
+            "Solo los sábados"
+          ],
+          "explain": "Según el ayuntamiento, serían solo los sábados.",
+          "options": [
+            "Solo los sábados",
+            "Todos los días",
+            "Solo en verano",
+            "Los festivos"
+          ]
+        },
+        {
+          "id": "es-listen-noticia-barrio-q4",
+          "kind": "choice",
+          "prompt": "¿Quién se ha manifestado ?",
+          "answers": [
+            "Los comerciantes"
+          ],
+          "explain": "Los comerciantes ya se han manifestado.",
+          "options": [
+            "Los comerciantes",
+            "Los vecinos",
+            "Los taxistas",
+            "El ayuntamiento"
+          ]
+        },
+        {
+          "id": "es-listen-noticia-barrio-q5",
+          "kind": "written",
+          "prompt": "¿Qué prometen Ana y Luis ?",
+          "answers": [
+            "volver a hablarlo",
+            "hablarlo otra vez",
+            "volverlo a hablar"
+          ],
+          "explain": "Prometen volver a hablarlo cuando se publique el plan."
+        }
+      ]
     }
   ]
 }

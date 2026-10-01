@@ -382,6 +382,158 @@ public enum DeFoundationsU6 {
                             Exercise(id: "de-b1-antes-ahora-e4", kind: "written", prompt: "Sag, was sich geändert hat: heute arbeitest du von zu Hause.", options: [], answers: ["heute arbeite ich von zu hause"], explain: "heute + Präsens.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
 }
 
+public enum DeFoundationsU7 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u7", title: "Meinungen und Nuancen", subtitle: "Wenn ich hätte…", level: "B2", themes: [
+                    ConversationTheme("de-b2-hypothese", "Unmögliche Pläne", "Wenn ich Zeit hätte", "sparkles", "Course", "Ihr debattiert, was ihr mit unendlich viel Zeit machen würdet, dann ein echter Kompromiss.", 0),
+                    ConversationTheme("de-b2-handel", "Das Feilschen", "Wären Sie bei 50 dabei ?", "handshake", "Course", "Ihr verhandelt einen Gebrauchtkauf: Angebot, Bedingungen, Abschluss.", 1)], lessons: [
+            Lesson(id: "de-foundations-u7-hypothetisch", title: "Wenn ich Zeit hätte…", goal: "Über das Irreale sprechen: wenn + Konjunktiv II (hätte/käme), dann würde + Infinitiv.",
+                intro: LessonIntro(explanation: [
+                            "Die irrealen Bedingung: « Wenn ich mehr Zeit hätte, würde ich mehr reisen ». wenn + Konjunktiv II (hätte), dann würde + Infinitiv.",
+                            "Bei haben/sein oft ohne würde: « Wenn ich Zeit hätte… », « Wenn ich dort wäre… ».",
+                            "So klingen Ratschläge höflich: « An deiner Stelle würde ich es versuchen »."], examples: [
+                            ExampleLine(text: "Wenn ich mehr Zeit hätte, würde ich mehr reisen.", meaning: "Irrealis der Gegenwart."),
+                            ExampleLine(text: "An deiner Stelle würde ich es versuchen.", meaning: "Höflicher Rat."),
+                            ExampleLine(text: "Wenn ich könnte, würde ich den Job wechseln.", meaning: "können → könnte."),
+                            ExampleLine(text: "Würdest du dich am Freitag treffen ?", meaning: "Vorsichtiger Vorschlag."),
+                            ExampleLine(text: "Nicht, dass ich nicht will – ich könnte nicht.", meaning: "Nuance wollen/können.")]),
+                expressions: [
+                            TargetExpression(text: "wenn … hätte/käme, …", meaning: "Irrealis.", note: "Wenn ich Zeit hätte…"),
+                            TargetExpression(text: "würde + Infinitiv", meaning: "Konjunktiv II.", note: "…würde ich reisen."),
+                            TargetExpression(text: "könnte / wäre / hätte", meaning: "starke Formen.", note: "Wenn ich könnte…"),
+                            TargetExpression(text: "an deiner Stelle würde ich…", meaning: "Rat.", note: "…es versuchen."),
+                            TargetExpression(text: "wenn wir…-en … ?", meaning: "Vorschlag.", note: "Wenn wir es probierten ?")],
+                situation: "Ihr debattiert unmögliche Pläne: mehr Zeit, ein anderer Job, eine andere Stadt – dann ein echter Kompromiss für diesen Monat.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Deine Hypothese: wenn du mehr Zeit hättest, würdest du mehr reisen.", expected: ["Wenn ich mehr Zeit hatte wurde ich mehr reisen", "Wenn ich mehr Zeit hätte, würde ich mehr reisen"], focus: "wenn + Konjunktiv II", watch: "hätte… würde + Infinitiv."),
+                                PracticeQuestion(prompt: "Höflicher Rat: an deiner Stelle würde ich es versuchen.", expected: ["An deiner Stelle wurde ich es versuchen", "An deiner Stelle würde ich es versuchen"], focus: "an deiner Stelle", watch: "…würde ich + Infinitiv."),
+                                PracticeQuestion(prompt: "Sag, dass du, wenn du könntest, den Job wechseln würdest.", expected: ["Wenn ich konnte wurde ich den Job wechseln", "Wenn ich könnte, würde ich den Job wechseln"], focus: "könnte/würde", watch: "Wenn ich könnte… würde ich…"),
+                                PracticeQuestion(prompt: "Vorschlag: würdest du dich am Freitag treffen ?", expected: ["Wurdest du dich am Freitag treffen", "Würdest du dich am Freitag treffen ?"], focus: "würdest du", watch: "Frage mit Konjunktiv II."),
+                                PracticeQuestion(prompt: "Nuance: nicht, dass ich nicht will – ich könnte nicht.", expected: ["Nicht dass ich nicht will ich konnte nicht", "Nicht, dass ich nicht will – ich könnte nicht"], focus: "nicht, dass", watch: "Kontrast wollen/können.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u7-hypothetisch-e1", kind: "choice", prompt: "Wenn ich mehr Zeit ___, würde ich mehr reisen.", options: ["hätte", "habe", "hatte", "haben würde"], answers: ["hätte"], explain: "Konjunktiv II von haben: hätte."),
+                            Exercise(id: "de-foundations-u7-hypothetisch-e2", kind: "gap", prompt: "Wenn ich könnte, ___ ich den Job wechseln. (werden)", options: [], answers: ["würde", "wuerde"], explain: "würde + Infinitiv am Satzende-Bereich."),
+                            Exercise(id: "de-foundations-u7-hypothetisch-e3", kind: "order", prompt: "Rat: an deiner Stelle würde ich es versuchen.", options: [], answers: ["An deiner Stelle würde ich es versuchen"], explain: "an deiner Stelle + würde."),
+                            Exercise(id: "de-foundations-u7-hypothetisch-e4", kind: "written", prompt: "Deine Hypothese: wenn du könntest, würdest du den Job wechseln.", options: [], answers: ["wenn ich konnte wurde ich den job wechseln", "wenn ich könnte, würde ich den job wechseln", "wenn ich konnte wurde ich den job wechseln"], explain: "Wenn + Konjunktiv II + würde.")], skills: ["grammar:second-conditional", "function:express-opinion", "speaking:justify-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-irregular", "grammar:connectors"]),
+            Lesson(id: "de-foundations-u7-register", title: "Man sagt…", goal: "Wiedergeben, was andere behaupten: unpersönlich mit « man » und Passiv mit « werden ».",
+                intro: LessonIntro(explanation: [
+                            "Unpersönlich: « Man sagt, dass sich das Viertel ändert ». Niemand tritt als Quelle auf.",
+                            "Passiv: « Das Konzert wurde abgesagt », « Die Tickets sind ausverkauft ». Sprach der Nachrichten.",
+                            "Das Passiv (wurde + Partizip II) hebt das Register; « man » bleibt Alltag."], examples: [
+                            ExampleLine(text: "Man sagt, dass sich das Viertel ändert.", meaning: "Unpersönlich: Gerücht."),
+                            ExampleLine(text: "Das Konzert wurde wegen des Regens abgesagt.", meaning: "Passiv Präteritum."),
+                            ExampleLine(text: "Die Tickets sind ausverkauft.", meaning: "Zustandspassiv (sein)."),
+                            ExampleLine(text: "Alle Züge wurden gestrichen.", meaning: "Offizielle Meldung."),
+                            ExampleLine(text: "Laut Rathaus verzögern sich die Bauarbeiten.", meaning: "Quelle + Verb.")]),
+                expressions: [
+                            TargetExpression(text: "man sagt, dass…", meaning: "Gerücht.", note: "…sich das Viertel ändert."),
+                            TargetExpression(text: "wurde + Partizip II", meaning: "Passiv.", note: "wurde abgesagt."),
+                            TargetExpression(text: "sind + Partizip II", meaning: "Zustand.", note: "sind ausverkauft."),
+                            TargetExpression(text: "laut + Quelle", meaning: "Zitieren.", note: "laut Rathaus."),
+                            TargetExpression(text: "es heißt, …", meaning: "Offiziell.", note: "es heißt, der Bau…")],
+                situation: "Ihr besprecht die Nachrichten im Viertel: was man sagt, was beschlossen wurde und welcher Quelle ihr weniger vertraut.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Gib das Gerücht weiter: man sagt, dass sich das Viertel ändert.", expected: ["Man sagt dass sich das Viertel andert", "Man sagt, dass sich das Viertel ändert"], focus: "man sagt", watch: "Unpersönlich, kein Subjekt."),
+                                PracticeQuestion(prompt: "Meldung: das Konzert wurde wegen des Regens abgesagt.", expected: ["Das Konzert wurde wegen des Regens abgesagt"], focus: "wurde abgesagt", watch: "Passiv Präteritum."),
+                                PracticeQuestion(prompt: "Sag, dass die Tickets ausverkauft sind.", expected: ["Die Tickets sind ausverkauft"], focus: "sind ausverkauft", watch: "Zustandspassiv."),
+                                PracticeQuestion(prompt: "Nenne die Quelle: laut Rathaus verzögern sich die Bauarbeiten.", expected: ["Laut Rathaus verzogern sich die Bauarbeiten", "Laut Rathaus verzögern sich die Bauarbeiten"], focus: "laut", watch: "laut + Quelle."),
+                                PracticeQuestion(prompt: "Sag, dass alle Züge gestrichen wurden.", expected: ["Alle Zuge wurden gestrichen", "Alle Züge wurden gestrichen"], focus: "wurden gestrichen", watch: "Passiv Plural.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u7-register-e1", kind: "choice", prompt: "___ sagt, dass sich das Viertel ändert.", options: ["Man", "Es", "Sie", "Das"], answers: ["Man"], explain: "Unpersönlich: man sagt."),
+                            Exercise(id: "de-foundations-u7-register-e2", kind: "gap", prompt: "Das Konzert wurde wegen des Regens ___. (absagen)", options: [], answers: ["abgesagt"], explain: "wurde + Partizip II: abgesagt."),
+                            Exercise(id: "de-foundations-u7-register-e3", kind: "order", prompt: "Meldung: alle Züge wurden gestrichen.", options: [], answers: ["Alle Züge wurden gestrichen"], explain: "Passiv Präteritum."),
+                            Exercise(id: "de-foundations-u7-register-e4", kind: "written", prompt: "Gerücht über den neuen Markt: du hast es gehört.", options: [], answers: ["man sagt dass ein neuer markt aufmacht", "man sagt, dass ein neuer markt aufmacht"], explain: "Man sagt, dass…")], skills: ["grammar:passive-intro", "grammar:present-perfect", "function:express-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-regular", "grammar:verb-be"]),
+            Lesson(id: "de-foundations-u7-verhandeln", title: "Wären Sie bei 50 dabei ?", goal: "Ein Abkommen verhandeln: vorschlagen mit Konjunktiv II, Bedingungen stellen, abschließen.",
+                intro: LessonIntro(explanation: [
+                            "Vorschlagen: « Wären Sie bei 50 dabei ? », « Ich würde Ihnen 60 geben, wenn Sie den Transport übernehmen ».",
+                            "Bedingungen: « Nur wenn es heute geliefert wird », « Im Gegenzug möchte ich die Garantie ».",
+                            "Abschließen: « Abgemacht », « Einverstanden – aber unter einer Bedingung »."], examples: [
+                            ExampleLine(text: "Wären Sie bei 50 dabei ?", meaning: "Vorschlag mit Konjunktiv."),
+                            ExampleLine(text: "Ich würde 60 geben, wenn Sie transportieren.", meaning: "würde + wenn + Gegenwart."),
+                            ExampleLine(text: "Nur wenn es heute kommt.", meaning: "Harte Bedingung."),
+                            ExampleLine(text: "Im Gegenzug die Garantie.", meaning: "Gegenvorschlag."),
+                            ExampleLine(text: "Abgemacht.", meaning: "Abschluss.")]),
+                expressions: [
+                            TargetExpression(text: "wären Sie bei … dabei ?", meaning: "Vorschlagen.", note: "…bei 50 ?"),
+                            TargetExpression(text: "ich würde …, wenn …", meaning: "Bedingungen.", note: "…60 geben, wenn…"),
+                            TargetExpression(text: "nur wenn…", meaning: "Harte Bedingung.", note: "nur wenn heute."),
+                            TargetExpression(text: "im Gegenzug, …", meaning: "Gegenvorschlag.", note: "…die Garantie."),
+                            TargetExpression(text: "abgemacht", meaning: "Abschließen.", note: "nach der Einigung.")],
+                situation: "Ihr feilscht um einen Gebrauchtisch: hoher Auftakt, Bedingungen, Treffpunkt in der Mitte.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Schlage vor: wären Sie bei 50 dabei ?", expected: ["Waren Sie bei 50 dabei", "Wären Sie bei 50 dabei ?"], focus: "wären Sie", watch: "Konjunktiv II: wären."),
+                                PracticeQuestion(prompt: "Bedingtes Angebot: ich würde Ihnen 60 geben, wenn Sie den Transport übernehmen.", expected: ["Ich wurde ihnen 60 geben wenn sie den transport ubernehmen", "Ich würde Ihnen 60 geben, wenn Sie den Transport übernehmen"], focus: "würde…wenn", watch: "würde + wenn + Gegenwart."),
+                                PracticeQuestion(prompt: "Harte Bedingung: nur wenn es heute geliefert wird.", expected: ["Nur wenn es heute geliefert wird"], focus: "nur wenn", watch: "nur wenn + Passiv."),
+                                PracticeQuestion(prompt: "Gegenvorschlag: im Gegenzug möchte ich die Garantie.", expected: ["Im Gegenzug mochte ich die garantie", "Im Gegenzug möchte ich die Garantie"], focus: "im Gegenzug", watch: "Im Gegenzug + wollen."),
+                                PracticeQuestion(prompt: "Schließt den Deal ab.", expected: ["Abgemacht", "Abgemacht !", "Abgemacht."], focus: "abgemacht", watch: "Feste Abschlussformel.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u7-verhandeln-e1", kind: "choice", prompt: "___ Sie bei 50 dabei ?", options: ["Wären", "Sind", "Waren", "Werden"], answers: ["Wären"], explain: "Konjunktiv II von sein: wären."),
+                            Exercise(id: "de-foundations-u7-verhandeln-e2", kind: "gap", prompt: "Ich ___ Ihnen 60 geben, wenn Sie transportieren. (werden)", options: [], answers: ["würde", "wuerde"], explain: "würde + Infinitiv."),
+                            Exercise(id: "de-foundations-u7-verhandeln-e3", kind: "order", prompt: "Bedingung: nur wenn es heute geliefert wird.", options: [], answers: ["Nur wenn es heute geliefert wird"], explain: "nur wenn + Passiv."),
+                            Exercise(id: "de-foundations-u7-verhandeln-e4", kind: "written", prompt: "Schließt den Deal ab, aber mit Vorbehalt.", options: [], answers: ["einverstanden aber unter einer bedingung", "einverstanden, aber unter einer bedingung"], explain: "Einverstanden, aber…")], skills: ["function:negotiate", "grammar:second-conditional", "speaking:negotiate", "grammar:connectors"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum DeFoundationsU8 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u8", title: "Medien und Argument", subtitle: "Die Nachricht, die…", level: "B2", themes: [
+                    ConversationTheme("de-b2-nachrichten", "Nachrichtenwoche", "Was gesagt wurde", "newspaper", "Course", "Ihr fasst die Woche mit Relativsätzen zusammen: wer, wo, was.", 0),
+                    ConversationTheme("de-b2-kolumne", "Deine Kolumne", "Einerseits… andererseits…", "pencil", "Course", "Ihr schreibt eine Kolumne über die autofreie Innenstadt.", 1)], lessons: [
+            Lesson(id: "de-foundations-u7-relativsaetze", title: "Die Nachricht, die ich gelesen habe", goal: "Nachrichten mit Relativsätzen erzählen: der/die/das, wo, deren.",
+                intro: LessonIntro(explanation: [
+                            "Der Relativsatz passt sich an: « Die Nachricht, die ich gelesen habe… », « Der Journalist, der ihn interviewt hat… ».",
+                            "« Wo » für Orte: « Der Platz, wo sie demonstriert haben ». « Deren » für Besitz: « Die Firma, deren Chef zurückgetreten ist ».",
+                            "In Nachrichten verdichten Relativsätze: wer, wo, was."], examples: [
+                            ExampleLine(text: "Die Nachricht, die ich gelesen habe, sagt…", meaning: "Relativsatz (Objekt)."),
+                            ExampleLine(text: "Der Journalist, der ihn interviewt hat, trat zurück.", meaning: "Relativsatz (Subjekt)."),
+                            ExampleLine(text: "Der Platz, wo sie demonstriert haben, ist zentral.", meaning: "wo + Ort."),
+                            ExampleLine(text: "Die Firma, deren Chef zurücktrat, reagierte.", meaning: "deren = Besitz."),
+                            ExampleLine(text: "Alles, was ich weiß, kommt vom Radio.", meaning: "alles, was + Verb.")]),
+                expressions: [
+                            TargetExpression(text: "der/die/das … , der/die/das …", meaning: "Relativpronomen.", note: "die Nachricht, die…"),
+                            TargetExpression(text: "… , wo …", meaning: "Ort.", note: "der Platz, wo…"),
+                            TargetExpression(text: "deren + Nomen", meaning: "Besitz.", note: "die Firma, deren Chef…"),
+                            TargetExpression(text: "alles, was…", meaning: "Verallgemeinern.", note: "alles, was ich weiß."),
+                            TargetExpression(text: "Komma vor Relativsatz", meaning: "Rechtschreibung.", note: "immer mit Komma.")],
+                situation: "Ihr fasst eine Nachrichtewoche zusammen: die Story, die euch traf, die Person, die sprach, und der Ort, wo es passierte.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Fasse zusammen: die Nachricht, die ich gelesen habe, sagt, dass das Museum longer öffnet.", expected: ["Die Nachricht die ich gelesen habe sagt dass das museum langer offnet", "Die Nachricht, die ich gelesen habe, sagt, dass das Museum länger öffnet"], focus: "die ich gelesen habe", watch: "Relativsatz zur Nachricht."),
+                                PracticeQuestion(prompt: "Wer: der Journalist, der ihn interviewt hat, trat zurück.", expected: ["Der Journalist der ihn interviewt hat trat zuruck", "Der Journalist, der ihn interviewt hat, trat zurück"], focus: "der ihn interviewt hat", watch: "Relativsatz Subjekt."),
+                                PracticeQuestion(prompt: "Ort: der Platz, wo sie demonstriert haben, ist zentral.", expected: ["Der Platz wo sie demonstriert haben ist zentral", "Der Platz, wo sie demonstriert haben, ist zentral"], focus: "wo", watch: "wo + Ort."),
+                                PracticeQuestion(prompt: "Besitz: die Firma, deren Chef zurücktrat, reagierte.", expected: ["Die Firma deren Chef zurucktrat reagierte", "Die Firma, deren Chef zurücktrat, reagierte"], focus: "deren", watch: "deren + Nomen."),
+                                PracticeQuestion(prompt: "Verallgemeinere: alles, was ich weiß, kommt vom Radio.", expected: ["Alles was ich weiss kommt vom radio", "Alles, was ich weiß, kommt vom Radio"], focus: "alles, was", watch: "alles, was + Verb.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u7-relativsaetze-e1", kind: "choice", prompt: "Die Nachricht, ___ ich gelesen habe, ist wichtig.", options: ["die", "der", "das", "den"], answers: ["die"], explain: "die Nachricht (fem): die."),
+                            Exercise(id: "de-foundations-u7-relativsaetze-e2", kind: "gap", prompt: "Der Platz, ___ sie demonstriert haben, ist zentral.", options: [], answers: ["wo"], explain: "Ort: wo + Relativsatz, immer mit Komma davor."),
+                            Exercise(id: "de-foundations-u7-relativsaetze-e3", kind: "order", prompt: "Subjekt: der Journalist, der ihn interviewt hat, trat zurück.", options: [], answers: ["Der Journalist, der ihn interviewt hat, trat zurück"], explain: "Relativsatz Subjekt."),
+                            Exercise(id: "de-foundations-u7-relativsaetze-e4", kind: "written", prompt: "Deine Nachricht: die Nachricht, die ich gelesen habe, sagt, dass die Straße geschlossen wird.", options: [], answers: ["die nachricht die ich gelesen habe sagt dass die strasse geschlossen wird", "die nachricht, die ich gelesen habe, sagt, dass die strasse geschlossen wird"], explain: "Relativsatz + Passiv.")], skills: ["grammar:relative-clauses", "grammar:present-perfect", "function:express-opinion", "vocab:work"], canDo: ["express-opinion"], prerequisites: ["grammar:present-perfect"]),
+            Lesson(id: "de-foundations-u7-argumentieren", title: "Einerseits… andererseits…", goal: "Eine Meinung strukturiert schreiben und verteidigen: These, Argumente, Einräumung, Schluss.",
+                intro: LessonIntro(explanation: [
+                            "Struktur: These (« Ich finde, wir sollten die Innenstadt autofrei machen »), Argumente (« einerseits…, andererseits… »), Einräumung (« es stimmt, dass…, aber… »).",
+                            "Die Einräumung schafft Glaubwürdigkeit: du erkennst die Gegenseite an, bevor du antwortest.",
+                            "Schluss mit Gewicht: « Aus all dem verteidige ich die Maßnahme »."], examples: [
+                            ExampleLine(text: "Ich finde, wir sollten die Innenstadt autofrei machen.", meaning: "These."),
+                            ExampleLine(text: "Einerseits sinkt die Verschmutzung.", meaning: "Argument 1."),
+                            ExampleLine(text: "Andererseits leidet der Handel.", meaning: "Argument 2 (gegen)."),
+                            ExampleLine(text: "Es stimmt, dass es unbequem ist, aber die Zahlen sagen etwas anderes.", meaning: "Einräumung + Antwort."),
+                            ExampleLine(text: "Aus all dem verteidige ich die Maßnahme.", meaning: "Schluss.")]),
+                expressions: [
+                            TargetExpression(text: "ich finde, wir sollten…", meaning: "These.", note: "…autofrei machen."),
+                            TargetExpression(text: "einerseits… andererseits…", meaning: "Argumente.", note: "die zwei Seiten."),
+                            TargetExpression(text: "es stimmt, dass…, aber…", meaning: "Einräumung.", note: "anerkennen und antworten."),
+                            TargetExpression(text: "die Zahlen sagen…", meaning: "Beweis.", note: "Autoritätsargument."),
+                            TargetExpression(text: "aus all dem, …", meaning: "Schluss.", note: "formeller Abschluss.")],
+                situation: "Ihr schreibt eine Meinungskolumne über die autofreie Innenstadt: These, zwei Seiten, Einräumung, Schluss.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "These: ich finde, wir sollten die Innenstadt autofrei machen.", expected: ["Ich finde wir sollten die innenstadt autofrei machen", "Ich finde, wir sollten die Innenstadt autofrei machen"], focus: "ich finde", watch: "These + sollen."),
+                                PracticeQuestion(prompt: "Argument 1: einerseits sinkt die Verschmutzung.", expected: ["Einerseits sinkt die verschmutzung", "Einerseits sinkt die Verschmutzung"], focus: "einerseits", watch: "Erstes Argument."),
+                                PracticeQuestion(prompt: "Gegenargument: andererseits leidet der Handel.", expected: ["Andererseits leidet der handel", "Andererseits leidet der Handel"], focus: "andererseits", watch: "Zweite Seite."),
+                                PracticeQuestion(prompt: "Räum ein: es stimmt, dass es unbequem ist, aber die Zahlen sagen etwas anderes.", expected: ["Es stimmt dass es unbequem ist aber die zahlen sagen etwas anderes", "Es stimmt, dass es unbequem ist, aber die Zahlen sagen etwas anderes"], focus: "es stimmt, dass", watch: "Einräumung + aber."),
+                                PracticeQuestion(prompt: "Schließe: aus all dem verteidige ich die Maßnahme.", expected: ["Aus all dem verteidige ich die massnahme", "Aus all dem verteidige ich die Maßnahme"], focus: "aus all dem", watch: "Formeller Schluss.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u7-argumentieren-e1", kind: "choice", prompt: "___ sinkt die Verschmutzung; ___ leidet der Handel.", options: ["Einerseits / andererseits", "Erstens / zweitens", "Vor / nach", "Weil / aber"], answers: ["Einerseits / andererseits"], explain: "Die zwei Seiten."),
+                            Exercise(id: "de-foundations-u7-argumentieren-e2", kind: "gap", prompt: "Es stimmt, dass es unbequem ist, ___ die Zahlen sagen etwas anderes.", options: [], answers: ["aber", "doch"], explain: "Einräumung + Kontrast."),
+                            Exercise(id: "de-foundations-u7-argumentieren-e3", kind: "order", prompt: "Schluss: aus all dem verteidige ich die Maßnahme.", options: [], answers: ["Aus all dem verteidige ich die Maßnahme"], explain: "aus all dem."),
+                            Exercise(id: "de-foundations-u7-argumentieren-e4", kind: "written", prompt: "Deine These zum ÖPNV-Ausbau (Straßenbahn).", options: [], answers: ["ich finde wir sollten die strassenbahn verlangern", "ich finde, wir sollten die straßenbahn verlängern"], explain: "Ich finde, wir sollten…")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
 public enum EnBusinessU1 {
     public static let unit: CourseUnit = CourseUnit(id: "en-business-u1", title: "Clients & deals", subtitle: "Pitch, negotiate, confirm", level: "B1", themes: [
                     ConversationTheme("sales-pitch", "The sales pitch", "Ninety seconds of value", "chart.bar", "Course", "You pitch your service to a skeptical client: problem, solution, proof — then handle the first objection.", 0),
@@ -4027,6 +4179,158 @@ public enum EsFoundationsU7 {
                             Exercise(id: "es-foundations-u7-plan-e4", kind: "written", prompt: "Di lo que vas a hacer el fin de semana: descansar.", options: [], answers: ["voy a descansar", "voy a descansar el fin de semana"], explain: "voy a + infinitivo.")], skills: ["grammar:going-to", "function:make-future-plans", "grammar:future-forms", "vocab:social-expressions"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
 }
 
+public enum EsFoundationsU8 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u8", title: "Opiniones y matices", subtitle: "Si tuviera…", level: "B2", themes: [
+                    ConversationTheme("es-b2-hipotesis", "Planes imposibles", "Si tuviera tiempo", "sparkles", "Course", "Debatís qué haríais con tiempo libre infinito y proponéis un compromiso real.", 0),
+                    ConversationTheme("es-b2-trato", "El regateo", "¿Y si lo dejamos en 50?", "handshake", "Course", "Negociáis una compra de segunda mano: oferta, condiciones y cierre.", 1)], lessons: [
+            Lesson(id: "es-foundations-u8-hipotetico", title: "Si tuviera tiempo…", goal: "Opinar sobre hipótesis con el condicional compuesto (si + imperfecto de subjuntivo, …ría).",
+                intro: LessonIntro(explanation: [
+                            "La hipótesis irreal: « Si tuviera tiempo, viajaría más ». La parte con « si » va en imperfecto de subjuntivo; la otra, en condicional (-ría).",
+                            "Nunca « si + condicional »: se dice « si tuviera », no « si tendría ».",
+                            "Sirve para opinar con tacto: « Yo en tu lugar lo intentaría », « No es que no quiera; es que no podría »."], examples: [
+                            ExampleLine(text: "Si tuviera más tiempo, viajaría más.", meaning: "Hipótesis irreal."),
+                            ExampleLine(text: "Yo en tu lugar lo intentaría.", meaning: "Consejo con tacto."),
+                            ExampleLine(text: "Si pudiera, cambiaría de trabajo.", meaning: "poder → pudiera / podría."),
+                            ExampleLine(text: "¿Y si nos viéramos el jueves?", meaning: "Propuesta suave."),
+                            ExampleLine(text: "No es que no quiera; es que no podría.", meaning: "Matiz: querer vs poder.")]),
+                expressions: [
+                            TargetExpression(text: "Si + imperfecto de subjuntivo, …ría", meaning: "Hipótesis.", note: "Si tuviera…, viajaría."),
+                            TargetExpression(text: "tener → tuviera", meaning: "Subjuntivo clave.", note: "Si tuviera tiempo."),
+                            TargetExpression(text: "poder → pudiera", meaning: "Subjuntivo clave.", note: "Si pudiera, lo haría."),
+                            TargetExpression(text: "Yo en tu lugar, …ría", meaning: "Consejo.", note: "…lo intentaría."),
+                            TargetExpression(text: "¿Y si + imperfecto…?", meaning: "Propuesta.", note: "¿Y si lo probáramos ?")],
+                situation: "Debatís planes imposibles: con más tiempo, con otro trabajo, en otra ciudad — y proponéis un compromiso real para este mes.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di tu hipótesis: si tuvieras más tiempo, viajarías más.", expected: ["Si tuviera mas tiempo viajaria mas", "Si tuviera más tiempo, viajaría más"], focus: "si tuviera…ría", watch: "Imperfecto de subjuntivo + condicional."),
+                                PracticeQuestion(prompt: "Da un consejo con tacto: en mi lugar lo intentaría.", expected: ["Yo en tu lugar lo intentaría", "En tu lugar lo intentaría"], focus: "en tu lugar", watch: "Yo en tu lugar + condicional."),
+                                PracticeQuestion(prompt: "Di que si pudieras, cambiarías de trabajo.", expected: ["Si pudiera cambiaria de trabajo", "Si pudiera, cambiaría de trabajo"], focus: "pudiera/podría", watch: "poder: pudiera… cambiaría."),
+                                PracticeQuestion(prompt: "Propón suave: ¿y si nos viéramos el jueves?", expected: ["Y si nos viéramos el jueves", "¿Y si nos viéramos el jueves ?"], focus: "¿y si…?", watch: "¿Y si + imperfecto de subjuntivo ?"),
+                                PracticeQuestion(prompt: "Matico: no es que no quiera; es que no podría.", expected: ["No es que no quiera es que no podria", "No es que no quiera; es que no podría"], focus: "no es que…", watch: "Contraste querer/poder.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u8-hipotetico-e1", kind: "choice", prompt: "Si ___ más tiempo, viajaría más.", options: ["tuviera", "tendría", "tengo", "tenía"], answers: ["tuviera"], explain: "Con « si » irreal: imperfecto de subjuntivo."),
+                            Exercise(id: "es-foundations-u8-hipotetico-e2", kind: "gap", prompt: "Si pudiera, ___ de trabajo. (cambiar, condicional)", options: [], answers: ["cambiaría", "cambiaria"], explain: "pudiera + condicional: cambiaría."),
+                            Exercise(id: "es-foundations-u8-hipotetico-e3", kind: "order", prompt: "Consejo con tacto: yo en tu lugar lo intentaría.", options: [], answers: ["Yo en tu lugar lo intentaría"], explain: "en tu lugar + condicional."),
+                            Exercise(id: "es-foundations-u8-hipotetico-e4", kind: "written", prompt: "Tu hipótesis con el trabajo: si pudieras, cambiarías de trabajo.", options: [], answers: ["si pudiera cambiaria de trabajo", "si pudiera, cambiaría de trabajo", "si pudieras cambiaria de trabajo"], explain: "Si pudiera, cambiaría de trabajo.")], skills: ["grammar:second-conditional", "function:express-opinion", "speaking:justify-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-irregular", "grammar:connectors"]),
+            Lesson(id: "es-foundations-u8-registro", title: "Se dice que…", goal: "Hablar de lo que otros afirman: estilo impersonal con « se » y pasiva con « ser + participio ».",
+                intro: LessonIntro(explanation: [
+                            "El impersonal: « Se dice que el barrio cambia ». No importa quién lo dice.",
+                            "La pasiva con participio: « El concierto fue cancelado », « Las entradas se han agotado ». Común en noticias.",
+                            "El registro sube con la pasiva y baja con el impersonal: noticias « oficiales » frente a rumor de barrio."], examples: [
+                            ExampleLine(text: "Se dice que el barrio va a cambiar.", meaning: "Impersonal: rumor."),
+                            ExampleLine(text: "El concierto fue cancelado por la lluvia.", meaning: "Pasiva + agente."),
+                            ExampleLine(text: "Las entradas se han agotado.", meaning: "Pasiva refleja."),
+                            ExampleLine(text: "Se han cancelado todos los trenes.", meaning: "Noticia oficial."),
+                            ExampleLine(text: "Según el ayuntamiento, se retrasará la obra.", meaning: "Fuente + impersonal.")]),
+                expressions: [
+                            TargetExpression(text: "Se dice que…", meaning: "Rumor.", note: "…el barrio va a cambiar."),
+                            TargetExpression(text: "fue/será + participio", meaning: "Pasiva.", note: "fue cancelado."),
+                            TargetExpression(text: "se han + participio", meaning: "Pasiva refleja.", note: "se han agotado."),
+                            TargetExpression(text: "Según + fuente", meaning: "Citar.", note: "Según el ayuntamiento."),
+                            TargetExpression(text: "se retrasará / se cancelará", meaning: "Futuro impersonal.", note: "noticias.")],
+                situation: "Comentáis las noticias del barrio: qué se dice, qué se ha decidido y qué fuente creéis menos.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Transmite el rumor: se dice que el barrio va a cambiar.", expected: ["Se dice que el barrio va a cambiar"], focus: "se dice que", watch: "Impersonal, sin sujeto."),
+                                PracticeQuestion(prompt: "Noticia: el concierto fue cancelado por la lluvia.", expected: ["El concierto fue cancelado por la lluvia"], focus: "fue cancelado", watch: "ser + participio + por."),
+                                PracticeQuestion(prompt: "Di que las entradas se han agotado.", expected: ["Las entradas se han agotado"], focus: "se han agotado", watch: "Pasiva refleja con participio."),
+                                PracticeQuestion(prompt: "Cita la fuente: según el ayuntamiento, se retrasará la obra.", expected: ["Segun el ayuntamiento se retrasara la obra", "Según el ayuntamiento, se retrasará la obra"], focus: "según", watch: "Según + fuente."),
+                                PracticeQuestion(prompt: "Di que se han cancelado todos los trenes.", expected: ["Se han cancelado todos los trenes"], focus: "se han cancelado", watch: "Pasiva refleja plural.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u8-registro-e1", kind: "choice", prompt: "___ dice que el barrio va a cambiar.", options: ["Se", "Es", "Hay", "Lo"], answers: ["Se"], explain: "Impersonal: se dice que."),
+                            Exercise(id: "es-foundations-u8-registro-e2", kind: "gap", prompt: "El concierto fue ___ por la lluvia. (cancelar)", options: [], answers: ["cancelado"], explain: "ser + participio: cancelado."),
+                            Exercise(id: "es-foundations-u8-registro-e3", kind: "order", prompt: "Noticia: se han cancelado los trenes.", options: [], answers: ["Se han cancelado todos los trenes"], explain: "se han + participio."),
+                            Exercise(id: "es-foundations-u8-registro-e4", kind: "written", prompt: "Rumor del barrio: hablará de un mercado nuevo que abrirá.", options: [], answers: ["se dice que abrira un mercado nuevo", "se dice que abrirán un mercado nuevo"], explain: "Se dice que + futuro.")], skills: ["grammar:passive-intro", "grammar:present-perfect", "function:express-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-regular", "grammar:verb-be"]),
+            Lesson(id: "es-foundations-u8-negociar", title: "¿Y si lo dejamos en 50?", goal: "Negociar un acuerdo: proponer con condicional, poner condiciones y cerrar.",
+                intro: LessonIntro(explanation: [
+                            "Proponer: « ¿Y si lo dejáramos en 50 ? », « Yo te daría 60 si incluyes el transporte ».",
+                            "Poner condiciones: « Solo si me lo entregas hoy », « A cambio, te pido… ».",
+                            "Cerrar: « Trato hecho », « De acuerdo, pero con una condición »."], examples: [
+                            ExampleLine(text: "¿Y si lo dejáramos en 50 ?", meaning: "Propuesta con subjuntivo."),
+                            ExampleLine(text: "Te daría 60 si incluyes el transporte.", meaning: "Condicional + condición."),
+                            ExampleLine(text: "Solo si me lo entregas hoy.", meaning: "Condición dura."),
+                            ExampleLine(text: "A cambio, te pido la garantía.", meaning: "Contraoferta."),
+                            ExampleLine(text: "Trato hecho.", meaning: "Cierre.")]),
+                expressions: [
+                            TargetExpression(text: "¿Y si lo dejáramos en…?", meaning: "Proponer precio.", note: "dejáramos en 50."),
+                            TargetExpression(text: "…ría si + presente", meaning: "Condiciones.", note: "te daría 60 si…"),
+                            TargetExpression(text: "solo si…", meaning: "Condición dura.", note: "solo si es hoy."),
+                            TargetExpression(text: "a cambio, …", meaning: "Contraoferta.", note: "a cambio, la garantía."),
+                            TargetExpression(text: "trato hecho", meaning: "Cerrar.", note: "tras el acuerdo.")],
+                situation: "Regateáis una mesa de segunda mano: abrís alto, ofrecéis con condiciones y cerráis a mitad de camino.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Propone precio: ¿y si lo dejáramos en 50?", expected: ["Y si lo dejaramos en 50", "¿Y si lo dejáramos en 50 ?"], focus: "¿y si…?", watch: "dejáramos: subjuntivo de propuesta."),
+                                PracticeQuestion(prompt: "Ofrece con condición: te daría 60 si incluyes el transporte.", expected: ["Te daria 60 si incluyes el transporte", "Te daría 60 si incluyes el transporte"], focus: "daría si", watch: "Condicional + si + presente."),
+                                PracticeQuestion(prompt: "Pon condición dura: solo si me lo entregas hoy.", expected: ["Solo si me lo entregas hoy"], focus: "solo si", watch: "Solo si + presente."),
+                                PracticeQuestion(prompt: "Contraoferta: a cambio, te pido la garantía.", expected: ["A cambio te pido la garantia", "A cambio, te pido la garantía"], focus: "a cambio", watch: "A cambio + petición."),
+                                PracticeQuestion(prompt: "Cierra el trato.", expected: ["Trato hecho", "De acuerdo"], focus: "trato hecho", watch: "Frase fija de cierre.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u8-negociar-e1", kind: "choice", prompt: "¿Y si lo ___ en 50 ?", options: ["dejáramos", "dejamos ayer", "dejaríamos que", "dejar"], answers: ["dejáramos"], explain: "Propuesta: dejáramos (subjuntivo)."),
+                            Exercise(id: "es-foundations-u8-negociar-e2", kind: "gap", prompt: "Te ___ 60 si incluyes el transporte. (dar, condicional)", options: [], answers: ["daría", "daria"], explain: "daría + si + presente."),
+                            Exercise(id: "es-foundations-u8-negociar-e3", kind: "order", prompt: "Condición dura: solo si me lo entregas hoy.", options: [], answers: ["Solo si me lo entregas hoy"], explain: "solo si + presente."),
+                            Exercise(id: "es-foundations-u8-negociar-e4", kind: "written", prompt: "Cierra el trato poniendo un pero.", options: [], answers: ["de acuerdo pero con una condicion", "de acuerdo, pero con una condición"], explain: "De acuerdo, pero…")], skills: ["function:negotiate", "grammar:second-conditional", "speaking:negotiate", "grammar:connectors"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum EsFoundationsU9 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u9", title: "Medios y argumento", subtitle: "La noticia que leí", level: "B2", themes: [
+                    ConversationTheme("es-b2-noticias", "Semana de noticias", "Lo que se dijo", "newspaper", "Course", "Resumís la semana con relativos: quién, dónde y qué pasó.", 0),
+                    ConversationTheme("es-b2-columna", "Tu columna", "Por un lado… por otro…", "pencil", "Course", "Escribís una columna de opinión sobre peatonalizar el centro.", 1)], lessons: [
+            Lesson(id: "es-foundations-u9-relativos", title: "La noticia que leí", goal: "Contar noticias con oraciones de relativo: que, quien, donde, cuyo.",
+                intro: LessonIntro(explanation: [
+                            "La relativa explica el sustantivo: « La noticia que leí dice que… », « El periodista quien lo entrevistó… ».",
+                            "« Donde » para lugares: « La plaza donde se manifestaron ». « Cuyo » para posesión: « la empresa cuyo director dimitió ».",
+                            "En noticias, las relativas comprimen información: quién, dónde, qué pasó."], examples: [
+                            ExampleLine(text: "La noticia que leí dice que…", meaning: "Relativa de objeto."),
+                            ExampleLine(text: "El periodista que lo entrevistó dimitió.", meaning: "Relativa de sujeto."),
+                            ExampleLine(text: "La plaza donde se manifestaron es céntrica.", meaning: "donde + lugar."),
+                            ExampleLine(text: "La empresa cuyo director dimitió reaccionó.", meaning: "cuyo = posesión."),
+                            ExampleLine(text: "Todo lo que sé viene de la radio.", meaning: "todo lo que + verbo.")]),
+                expressions: [
+                            TargetExpression(text: "el/la que…", meaning: "Relativa.", note: "la noticia que leí."),
+                            TargetExpression(text: "quien…", meaning: "Persona.", note: "quien lo entrevistó."),
+                            TargetExpression(text: "donde…", meaning: "Lugar.", note: "la plaza donde…"),
+                            TargetExpression(text: "cuyo/a…", meaning: "Posesión.", note: "la empresa cuyo director…"),
+                            TargetExpression(text: "todo lo que…", meaning: "Generalizar.", note: "todo lo que sé.")],
+                situation: "Resumís una semana de noticias: la historia que más impactó, la persona que habló y el lugar donde pasó.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Resume: la noticia que leíste dice que el museo amplía horarios.", expected: ["La noticia que lei dice que el museo amplia horarios", "La noticia que leí dice que el museo amplía horarios"], focus: "que leí", watch: "Relativa sobre la noticia."),
+                                PracticeQuestion(prompt: "Di quién: el periodista que lo entrevistó dimitió.", expected: ["El periodista que lo entrevistó dimitió"], focus: "que lo entrevistó", watch: "Relativa de sujeto."),
+                                PracticeQuestion(prompt: "Lugar: la plaza donde se manifestaron es céntrica.", expected: ["La plaza donde se manifestaron es centrica", "La plaza donde se manifestaron es céntrica"], focus: "donde", watch: "donde + lugar."),
+                                PracticeQuestion(prompt: "Posesión: la empresa cuyo director dimitió reaccionó.", expected: ["La empresa cuyo director dimitió reacciono", "La empresa cuyo director dimitió reaccionó"], focus: "cuyo", watch: "cuyo + sustantivo."),
+                                PracticeQuestion(prompt: "Generaliza: todo lo que sé viene de la radio.", expected: ["Todo lo que se viene de la radio", "Todo lo que sé viene de la radio"], focus: "todo lo que", watch: "todo lo que + verbo.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u9-relativos-e1", kind: "choice", prompt: "La noticia ___ leí dice que amplían el museo.", options: ["que", "quien", "cuyo", "donde"], answers: ["que"], explain: "Cosa: la noticia que leí."),
+                            Exercise(id: "es-foundations-u9-relativos-e2", kind: "gap", prompt: "La plaza ___ se manifestaron es céntrica.", options: [], answers: ["donde"], explain: "Lugar: donde."),
+                            Exercise(id: "es-foundations-u9-relativos-e3", kind: "order", prompt: "Sujeto: el periodista que lo entrevistó dimitió.", options: [], answers: ["El periodista que lo entrevistó dimitió"], explain: "Relativa de sujeto."),
+                            Exercise(id: "es-foundations-u9-relativos-e4", kind: "written", prompt: "Cuenta tu noticia: la noticia que leíste dice que cerrarán la calle.", options: [], answers: ["la noticia que lei dice que cerraran la calle", "la noticia que leí dice que cerrarán la calle"], explain: "La noticia que + pretérito.")], skills: ["grammar:relative-clauses", "grammar:present-perfect", "function:express-opinion", "vocab:work"], canDo: ["express-opinion"], prerequisites: ["grammar:present-perfect"]),
+            Lesson(id: "es-foundations-u9-argumentar", title: "Por un lado… por otro…", goal: "Escribir y defender una opinión estructurada: tesis, argumentos, concesión y conclusión.",
+                intro: LessonIntro(explanation: [
+                            "Estructura: tesis (« Creo que las ciudades deberían peatonalizarse »), argumentos (« por un lado…, por otro lado… »), concesión (« es cierto que…, pero… »).",
+                            "La concesión te da credibilidad: reconoces la parte contraria antes de rebatirla.",
+                            "Conclusión con peso: « Por todo ello, defiendo que… »."], examples: [
+                            ExampleLine(text: "Creo que deberíamos peatonalizar el centro.", meaning: "Tesis."),
+                            ExampleLine(text: "Por un lado, baja la contaminación.", meaning: "Argumento 1."),
+                            ExampleLine(text: "Por otro lado, perjudica al comercio.", meaning: "Argumento 2 (contrario)."),
+                            ExampleLine(text: "Es cierto que…, pero los datos dicen otra cosa.", meaning: "Concesión + rebote."),
+                            ExampleLine(text: "Por todo ello, defiendo la medida.", meaning: "Conclusión.")]),
+                expressions: [
+                            TargetExpression(text: "Creo que + condicional", meaning: "Tesis.", note: "deberíamos peatonalizar."),
+                            TargetExpression(text: "por un lado… por otro lado…", meaning: "Argumentos.", note: "encadenan dos caras."),
+                            TargetExpression(text: "es cierto que…, pero…", meaning: "Concesión.", note: "reconocer y rebatir."),
+                            TargetExpression(text: "los datos dicen…", meaning: "Evidencia.", note: "argumento de autoridad."),
+                            TargetExpression(text: "por todo ello, …", meaning: "Conclusión.", note: "cierre formal.")],
+                situation: "Escribís un mini-artículo de opinión sobre peatonalizar el centro: tesis, dos caras, concesión y cierre.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Tesis: creo que deberíamos peatonalizar el centro.", expected: ["Creo que deberiamos peatonalizar el centro", "Creo que deberíamos peatonalizar el centro"], focus: "creo que", watch: "Creo que + deberíamos."),
+                                PracticeQuestion(prompt: "Argumento 1: por un lado, baja la contaminación.", expected: ["Por un lado baja la contaminacion", "Por un lado, baja la contaminación"], focus: "por un lado", watch: "Primer argumento."),
+                                PracticeQuestion(prompt: "Argumento contrario: por otro lado, perjudica al comercio.", expected: ["Por otro lado perjudica al comercio", "Por otro lado, perjudica al comercio"], focus: "por otro lado", watch: "Segunda cara."),
+                                PracticeQuestion(prompt: "Concede: es cierto que es incómodo, pero los datos dicen otra cosa.", expected: ["Es cierto que es incomodo pero los datos dicen otra cosa", "Es cierto que es incómodo, pero los datos dicen otra cosa"], focus: "es cierto que", watch: "Concesión + pero."),
+                                PracticeQuestion(prompt: "Cierra: por todo ello, defiendo la medida.", expected: ["Por todo ello defiendo la medida", "Por todo ello, defiendo la medida"], focus: "por todo ello", watch: "Conclusión formal.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u9-argumentar-e1", kind: "choice", prompt: "___ un lado, baja la contaminación.", options: ["Por", "Para", "En", "Con"], answers: ["Por"], explain: "por un lado = primer argumento."),
+                            Exercise(id: "es-foundations-u9-argumentar-e2", kind: "gap", prompt: "Es cierto que es incómodo, ___ los datos dicen otra cosa.", options: [], answers: ["pero", "aunque"], explain: "Concesión + contraste."),
+                            Exercise(id: "es-foundations-u9-argumentar-e3", kind: "order", prompt: "Conclusión: por todo ello, defiendo la medida.", options: [], answers: ["Por todo ello defiendo la medida"], explain: "por todo ello + presente."),
+                            Exercise(id: "es-foundations-u9-argumentar-e4", kind: "written", prompt: "Tu tesis sobre ampliar el tranvía.", options: [], answers: ["creo que deberiamos ampliar el tranvia", "creo que deberíamos ampliar el tranvía"], explain: "Creo que + deberíamos.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
 public enum FrFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Lyon. Meet the learner, exchange names, countries and jobs using the verb être.", 0),
@@ -4436,6 +4740,158 @@ public enum FrFoundationsU6 {
                             Exercise(id: "fr-b1-antes-ahora-e4", kind: "written", prompt: "Dis ce qui a changé : maintenant tu travailles de chez toi.", options: [], answers: ["maintenant je travaille de chez moi", "maintenant je travaille chez moi"], explain: "maintenant + présent.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
 }
 
+public enum FrFoundationsU7 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u7", title: "Opinions et nuances", subtitle: "Si j'avais…", level: "B2", themes: [
+                    ConversationTheme("fr-b2-hypothese", "Plans impossibles", "Si j'avais le temps", "sparkles", "Course", "Vous débatez de ce que vous feriez avec du temps infini, puis un vrai compromis.", 0),
+                    ConversationTheme("fr-b2-marche", "Le marchandage", "Et si on se retrouvait à 50 ?", "handshake", "Course", "Vous négociez un achat d'occasion : offre, conditions, accord.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u7-hypothetique", title: "Si j'avais le temps…", goal: "Opiner sur l'irréel : si + imparfait, puis le conditionnel.",
+                intro: LessonIntro(explanation: [
+                            "L'hypothèse irréelle : « Si j'avais plus de temps, je voyagerais plus ». Si + imparfait, puis conditionnel (-rais).",
+                            "Jamais « si + conditionnel » : on dit « si j'avais », pas « si j'aurais ».",
+                            "Pour conseiller avec tact : « À ta place, j'essaierais », « Ce n'est pas que je ne veux pas ; c'est que je ne peux pas »."], examples: [
+                            ExampleLine(text: "Si j'avais plus de temps, je voyagerais plus.", meaning: "Irréel du présent."),
+                            ExampleLine(text: "À ta place, j'essaierais.", meaning: "Conseil avec tact."),
+                            ExampleLine(text: "Si je pouvais, je changerais de travail.", meaning: "pouvoir → pouvais / pourrais."),
+                            ExampleLine(text: "Et si on se voyait jeudi ?", meaning: "Proposition douce."),
+                            ExampleLine(text: "Ce n'est pas que je ne veux pas ; je ne peux pas.", meaning: "Nuance vouloir/pouvoir.")]),
+                expressions: [
+                            TargetExpression(text: "si + imparfait, …-rais", meaning: "Hypothèse.", note: "Si j'avais…, je voyagerais."),
+                            TargetExpression(text: "avoir → avais", meaning: "Imparfait clé.", note: "Si j'avais le temps."),
+                            TargetExpression(text: "pouvoir → pouvais", meaning: "Imparfait clé.", note: "Si je pouvais, je le ferais."),
+                            TargetExpression(text: "à ta place, je …-rais", meaning: "Conseil.", note: "…j'essaierais."),
+                            TargetExpression(text: "et si + imparfait ?", meaning: "Proposition.", note: "Et si on essayait ?")],
+                situation: "Vous débnez des plans impossibles : plus de temps, un autre métier, une autre ville — puis un vrai compromis pour ce mois-ci.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ton hypothèse : si tu avais plus de temps, tu voyagerais plus.", expected: ["Si j'avais plus de temps je voyagerais plus", "Si j'avais plus de temps, je voyagerais plus"], focus: "si + imparfait", watch: "Imparfait puis conditionnel."),
+                                PracticeQuestion(prompt: "Conseil avec tact : à ta place, j'essaierais.", expected: ["A ta place j'essaierais", "À ta place, j'essaierais", "À ta place j'essaierais"], focus: "à ta place", watch: "À ta place + conditionnel."),
+                                PracticeQuestion(prompt: "Dis que si tu pouvais, tu changerais de travail.", expected: ["Si je pouvais je changerais de travail", "Si je pouvais, je changerais de travail"], focus: "pouvais/pourrais", watch: "Si je pouvais… je changerais."),
+                                PracticeQuestion(prompt: "Propose : et si on se voyait jeudi ?", expected: ["Et si on se voyait jeudi", "Et si on se voyait jeudi ?"], focus: "et si… ?", watch: "Et si + imparfait."),
+                                PracticeQuestion(prompt: "Nuance : ce n'est pas que je ne veux pas ; c'est que je ne peux pas.", expected: ["Ce n'est pas que je ne veux pas c'est que je ne peux pas", "Ce n'est pas que je ne veux pas ; c'est que je ne peux pas"], focus: "ce n'est pas que", watch: "Nuance avec point-virgule.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u7-hypothetique-e1", kind: "choice", prompt: "Si ___ plus de temps, je voyagerais plus.", options: ["j'avais", "j'aurais", "j'ai", "j'avais eu"], answers: ["j'avais"], explain: "Si + imparfait, jamais si + conditionnel."),
+                            Exercise(id: "fr-foundations-u7-hypothetique-e2", kind: "gap", prompt: "Si je pouvais, je ___ de travail. (changer, conditionnel)", options: [], answers: ["changerais", "changerais pas"], explain: "Si je pouvais… je changerais."),
+                            Exercise(id: "fr-foundations-u7-hypothetique-e3", kind: "order", prompt: "Conseil : à ta place, j'essaierais.", options: [], answers: ["À ta place, j'essaierais"], explain: "à ta place + conditionnel."),
+                            Exercise(id: "fr-foundations-u7-hypothetique-e4", kind: "written", prompt: "Ton hypothèse : si tu pouvais, tu changerais de travail.", options: [], answers: ["si je pouvais je changerais de travail", "si je pouvais, je changerais de travail"], explain: "Si + imparfait + conditionnel.")], skills: ["grammar:second-conditional", "function:express-opinion", "speaking:justify-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-irregular", "grammar:connectors"]),
+            Lesson(id: "fr-foundations-u7-registre", title: "On dit que…", goal: "Rapporter ce que d'autres affirment : l'impersonnel avec « on » et la voix passive.",
+                intro: LessonIntro(explanation: [
+                            "L'impersonnel : « On dit que le quartier change ». On ne sait pas qui parle.",
+                            "La voix passive : « Le concert a été annulé », « Les billets sont épuisés ». Langage des infos.",
+                            "La passive monte le registre ; « on » le garde courant."], examples: [
+                            ExampleLine(text: "On dit que le quartier va changer.", meaning: "Impersonnel : rumeur."),
+                            ExampleLine(text: "Le concert a été annulé à cause de la pluie.", meaning: "Passé composé passif."),
+                            ExampleLine(text: "Les billets sont épuisés.", meaning: "Passif d'état."),
+                            ExampleLine(text: "Tous les trains ont été supprimés.", meaning: "Info officielle."),
+                            ExampleLine(text: "D'après la mairie, les travaux prendront du retard.", meaning: "Source + futur.")]),
+                expressions: [
+                            TargetExpression(text: "on dit que…", meaning: "Rumeur.", note: "…le quartier va changer."),
+                            TargetExpression(text: "a été + participe", meaning: "Passif.", note: "a été annulé."),
+                            TargetExpression(text: "est/sont + participe", meaning: "État.", note: "sont épuisés."),
+                            TargetExpression(text: "d'après + source", meaning: "Citer.", note: "d'après la mairie."),
+                            TargetExpression(text: "il est prévu que…", meaning: "Officiel.", note: "…les travaux…")],
+                situation: "Vous commentez les infos du quartier : ce qu'on dit, ce qui a été décidé et quelle source vous croyez le moins.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Transmets la rumeur : on dit que le quartier va changer.", expected: ["On dit que le quartier va changer"], focus: "on dit que", watch: "Impersonnel, pas de sujet."),
+                                PracticeQuestion(prompt: "Info : le concert a été annulé à cause de la pluie.", expected: ["Le concert a ete annule a cause de la pluie", "Le concert a été annulé à cause de la pluie"], focus: "a été annulé", watch: "Passé composé passif."),
+                                PracticeQuestion(prompt: "Dis que les billets sont épuisés.", expected: ["Les billets sont epuises", "Les billets sont épuisés"], focus: "sont épuisés", watch: "Passif d'état."),
+                                PracticeQuestion(prompt: "Cite la source : d'après la mairie, les travaux prendront du retard.", expected: ["D'apres la mairie les travaux prendront du retard", "D'après la mairie, les travaux prendront du retard"], focus: "d'après", watch: "D'après + source."),
+                                PracticeQuestion(prompt: "Dis que tous les trains ont été supprimés.", expected: ["Tous les trains ont ete supprimes", "Tous les trains ont été supprimés"], focus: "ont été supprimés", watch: "Passif + participe.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u7-registre-e1", kind: "choice", prompt: "___ dit que le quartier va changer.", options: ["On", "Il", "Ça", "Ils"], answers: ["On"], explain: "Impersonnel : on dit que."),
+                            Exercise(id: "fr-foundations-u7-registre-e2", kind: "gap", prompt: "Le concert a été ___ à cause de la pluie. (annuler)", options: [], answers: ["annulé", "annule"], explain: "a été + participe passé."),
+                            Exercise(id: "fr-foundations-u7-registre-e3", kind: "order", prompt: "Info : tous les trains ont été supprimés.", options: [], answers: ["Tous les trains ont été supprimés"], explain: "Passé composé passif."),
+                            Exercise(id: "fr-foundations-u7-registre-e4", kind: "written", prompt: "Rumeur : un marché va ouvrir, tu l'as entendu dire.", options: [], answers: ["on dit qu'un nouveau marche va ouvrir", "on dit qu'un nouveau marché va ouvrir"], explain: "On dit que + futur proche.")], skills: ["grammar:passive-intro", "grammar:present-perfect", "function:express-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-regular", "grammar:verb-be"]),
+            Lesson(id: "fr-foundations-u7-negocier", title: "Et si on se retrouvait à 50 ?", goal: "Négocier un accord : proposer au conditionnel, poser des conditions, conclure.",
+                intro: LessonIntro(explanation: [
+                            "Proposer : « Et si on se retrouvait à 50 ? », « Je vous donnerais 60 si vous incluez le transport ».",
+                            "Poser des conditions : « Seulement si c'est livré aujourd'hui », « En échange, je veux la garantie ».",
+                            "Conclure : « Marché conclu », « D'accord, mais avec une condition »."], examples: [
+                            ExampleLine(text: "Et si on se retrouvait à 50 ?", meaning: "Proposition à l'imparfait."),
+                            ExampleLine(text: "Je vous donnerais 60 si vous incluez le transport.", meaning: "Conditionnel + si + présent."),
+                            ExampleLine(text: "Seulement si c'est livré aujourd'hui.", meaning: "Condition ferme."),
+                            ExampleLine(text: "En échange, je veux la garantie.", meaning: "Contre-offre."),
+                            ExampleLine(text: "Marché conclu.", meaning: "Conclusion.")]),
+                expressions: [
+                            TargetExpression(text: "et si + imparfait ?", meaning: "Proposer.", note: "Et si on se retrouvait à… ?"),
+                            TargetExpression(text: "je …-rais si + présent", meaning: "Conditions.", note: "je vous donnerais 60 si…"),
+                            TargetExpression(text: "seulement si…", meaning: "Condition ferme.", note: "seulement si c'est aujourd'hui."),
+                            TargetExpression(text: "en échange, …", meaning: "Contre-offre.", note: "…la garantie."),
+                            TargetExpression(text: "marché conclu", meaning: "Conclure.", note: "après l'accord.")],
+                situation: "Vous marchandez une table d'occasion : première offre haute, offres conditionnelles, puis terrain d'entente.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Propose : et si on se retrouvait à 50 ?", expected: ["Et si on se retrouvait a 50", "Et si on se retrouvait à 50 ?", "Et si on se retrouvait à 50"], focus: "et si + imparfait", watch: "se retrouvait : proposition."),
+                                PracticeQuestion(prompt: "Offre conditionnelle : je vous donnerais 60 si vous incluez le transport.", expected: ["Je vous donnerais 60 si vous incluez le transport"], focus: "donnerais si", watch: "Conditionnel + si + présent."),
+                                PracticeQuestion(prompt: "Condition ferme : seulement si c'est livré aujourd'hui.", expected: ["Seulement si c'est livre aujourd'hui", "Seulement si c'est livré aujourd'hui"], focus: "seulement si", watch: "Si + présent."),
+                                PracticeQuestion(prompt: "Contre-offre : en échange, je veux la garantie.", expected: ["En echange je veux la garantie", "En échange, je veux la garantie"], focus: "en échange", watch: "En échange + présent."),
+                                PracticeQuestion(prompt: "Conclus l'accord.", expected: ["Marche conclu", "Marché conclu"], focus: "marché conclu", watch: "Formule fixe.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u7-negocier-e1", kind: "choice", prompt: "Et si on se ___ à 50 ?", options: ["retrouvait", "retrouvera", "retrouvé", "retrouver"], answers: ["retrouvait"], explain: "Proposition : et si + imparfait."),
+                            Exercise(id: "fr-foundations-u7-negocier-e2", kind: "gap", prompt: "Je vous ___ 60 si vous incluez le transport. (donner, conditionnel)", options: [], answers: ["donnerais", "donnerai pas"], explain: "Conditionnel présent : donnerais."),
+                            Exercise(id: "fr-foundations-u7-negocier-e3", kind: "order", prompt: "Condition : seulement si c'est livré aujourd'hui.", options: [], answers: ["Seulement si c'est livré aujourd'hui"], explain: "seulement si + présent."),
+                            Exercise(id: "fr-foundations-u7-negocier-e4", kind: "written", prompt: "Concluez, mais avec une réserve.", options: [], answers: ["d'accord mais avec une condition", "d'accord, mais avec une condition"], explain: "D'accord, mais…")], skills: ["function:negotiate", "grammar:second-conditional", "speaking:negotiate", "grammar:connectors"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum FrFoundationsU8 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u8", title: "Médias et argument", subtitle: "La nouvelle que j'ai lue", level: "B2", themes: [
+                    ConversationTheme("fr-b2-actu", "Semaine d'actu", "Ce qui s'est dit", "newspaper", "Course", "Vous résumez la semaine avec des relatives : qui, où, quoi.", 0),
+                    ConversationTheme("fr-b2-chronique", "Ta chronique", "D'un côté… de l'autre…", "pencil", "Course", "Vous écrivez une chronique sur la piétonnisation du centre.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u7-relatives", title: "La nouvelle que j'ai lue", goal: "Raconter l'actualité avec les relatives : qui, que, où, dont.",
+                intro: LessonIntro(explanation: [
+                            "La relative précise le nom : « La nouvelle que j'ai lue dit que… », « Le journaliste qui l'a interviewé… ».",
+                            "« Où » pour les lieux : « La place où ils ont manifesté ». « Dont » remplit « de + qqch » : « l'affaire dont tout le monde parle ».",
+                            "Dans les infos, les relatives compressent : qui, où, quoi."], examples: [
+                            ExampleLine(text: "La nouvelle que j'ai lue dit que…", meaning: "Relative objet."),
+                            ExampleLine(text: "Le journaliste qui l'a interviewé a démissionné.", meaning: "Relative sujet."),
+                            ExampleLine(text: "La place où ils ont manifesté est centrale.", meaning: "où + lieu."),
+                            ExampleLine(text: "L'affaire dont tout le monde parle a rebondi.", meaning: "dont = de + ça."),
+                            ExampleLine(text: "Tout ce que je sais vient de la radio.", meaning: "tout ce que + verbe.")]),
+                expressions: [
+                            TargetExpression(text: "le/la que…", meaning: "Relative.", note: "la nouvelle que j'ai lue."),
+                            TargetExpression(text: "qui…", meaning: "Sujet/personne.", note: "qui l'a interviewé."),
+                            TargetExpression(text: "où…", meaning: "Lieu.", note: "la place où…"),
+                            TargetExpression(text: "dont…", meaning: "de + qqch.", note: "l'affaire dont…"),
+                            TargetExpression(text: "tout ce que…", meaning: "Généraliser.", note: "tout ce que je sais.")],
+                situation: "Vous résumez une semaine d'actualité : l'histoire qui vous a marqué, la personne qui a parlé et le lieu où c'est arrivé.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Résume : la nouvelle que tu as lue dit que le musée agrandit ses horaires.", expected: ["La nouvelle que j'ai lue dit que le musee agrandit ses horaires", "La nouvelle que j'ai lue dit que le musée agrandit ses horaires"], focus: "que j'ai lue", watch: "Relative sur la nouvelle."),
+                                PracticeQuestion(prompt: "Dis qui : le journaliste qui l'a interviewé a démissionné.", expected: ["Le journaliste qui l'a interviewe a demissionne", "Le journaliste qui l'a interviewé a démissionné"], focus: "qui l'a interviewé", watch: "Relative sujet."),
+                                PracticeQuestion(prompt: "Lieu : la place où ils ont manifesté est centrale.", expected: ["La place ou ils ont manifeste est centrale", "La place où ils ont manifesté est centrale"], focus: "où", watch: "où + lieu."),
+                                PracticeQuestion(prompt: "Dont : l'affaire dont tout le monde parle a rebondi.", expected: ["L'affaire dont tout le monde parle a rebondi"], focus: "dont", watch: "dont = de + ça."),
+                                PracticeQuestion(prompt: "Généralise : tout ce que je sais vient de la radio.", expected: ["Tout ce que je sais vient de la radio"], focus: "tout ce que", watch: "tout ce que + verbe.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u7-relatives-e1", kind: "choice", prompt: "La nouvelle ___ j'ai lue dit que le musée s'agrandit.", options: ["que", "qui", "dont", "où"], answers: ["que"], explain: "Objet : la nouvelle que j'ai lue."),
+                            Exercise(id: "fr-foundations-u7-relatives-e2", kind: "gap", prompt: "La place ___ ils ont manifesté est centrale.", options: [], answers: ["où", "ou"], explain: "Lieu : où."),
+                            Exercise(id: "fr-foundations-u7-relatives-e3", kind: "order", prompt: "Sujet : le journaliste qui l'a interviewé a démissionné.", options: [], answers: ["Le journaliste qui l'a interviewé a démissionné"], explain: "Relative sujet."),
+                            Exercise(id: "fr-foundations-u7-relatives-e4", kind: "written", prompt: "Ton info : une rue va fermer (utilise « la nouvelle que j'ai lue »).", options: [], answers: ["la nouvelle que j'ai lue dit que la rue fermera", "la nouvelle que j'ai lue dit que la rue va fermer"], explain: "La nouvelle que + passé composé.")], skills: ["grammar:relative-clauses", "grammar:present-perfect", "function:express-opinion", "vocab:work"], canDo: ["express-opinion"], prerequisites: ["grammar:present-perfect"]),
+            Lesson(id: "fr-foundations-u7-argumenter", title: "D'un côté… de l'autre…", goal: "Écrire et défendre une opinion structurée : thèse, arguments, concession, conclusion.",
+                intro: LessonIntro(explanation: [
+                            "Structure : thèse (« Je pense qu'on devrait piétonniser le centre »), arguments (« d'un côté…, de l'autre… »), concession (« c'est vrai que…, mais… »).",
+                            "La concession crédibilise : tu reconnais l'argument adverse avant de le répondre.",
+                            "Conclusion avec poids : « Pour tout cela, je défends la mesure »."], examples: [
+                            ExampleLine(text: "Je pense qu'on devrait piétonniser le centre.", meaning: "Thèse."),
+                            ExampleLine(text: "D'un côté, la pollution baisse.", meaning: "Argument 1."),
+                            ExampleLine(text: "De l'autre, le commerce souffre.", meaning: "Argument 2 (contraire)."),
+                            ExampleLine(text: "C'est vrai que c'est gênant, mais les chiffres disent autre chose.", meaning: "Concession + réponse."),
+                            ExampleLine(text: "Pour tout cela, je défends la mesure.", meaning: "Conclusion.")]),
+                expressions: [
+                            TargetExpression(text: "je pense qu'on devrait…", meaning: "Thèse.", note: "…piétonniser."),
+                            TargetExpression(text: "d'un côté… de l'autre…", meaning: "Arguments.", note: "les deux faces."),
+                            TargetExpression(text: "c'est vrai que…, mais…", meaning: "Concession.", note: "reconnaître puis répondre."),
+                            TargetExpression(text: "les chiffres disent…", meaning: "Preuve.", note: "argument d'autorité."),
+                            TargetExpression(text: "pour tout cela, …", meaning: "Conclusion.", note: "registre soutenu.")],
+                situation: "Vous écrivez une chronique d'opinion sur la piétonnisation du centre : thèse, deux faces, concession et conclusion.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Thèse : je pense qu'on devrait piétonniser le centre.", expected: ["Je pense qu'on devrait pietonniser le centre", "Je pense qu'on devrait piétonniser le centre"], focus: "je pense que", watch: "Thèse + devoir."),
+                                PracticeQuestion(prompt: "Argument 1 : d'un côté, la pollution baisse.", expected: ["D'un cote la pollution baisse", "D'un côté, la pollution baisse"], focus: "d'un côté", watch: "Premier argument."),
+                                PracticeQuestion(prompt: "Argument contraire : de l'autre, le commerce souffre.", expected: ["De l'autre le commerce souffre", "De l'autre, le commerce souffre"], focus: "de l'autre", watch: "Seconde face."),
+                                PracticeQuestion(prompt: "Concède : c'est vrai que c'est gênant, mais les chiffres disent autre chose.", expected: ["C'est vrai que c'est genant mais les chiffres disent autre chose", "C'est vrai que c'est gênant, mais les chiffres disent autre chose"], focus: "c'est vrai que", watch: "Concession + mais."),
+                                PracticeQuestion(prompt: "Conclus : pour tout cela, je défends la mesure.", expected: ["Pour tout cela je defends la mesure", "Pour tout cela, je défends la mesure"], focus: "pour tout cela", watch: "Conclusion formelle.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u7-argumenter-e1", kind: "choice", prompt: "___ un côté, la pollution baisse.", options: ["D'", "Pour", "Dans", "Par"], answers: ["D'"], explain: "d'un côté = premier argument."),
+                            Exercise(id: "fr-foundations-u7-argumenter-e2", kind: "gap", prompt: "C'est vrai que c'est gênant, ___ les chiffres disent autre chose.", options: [], answers: ["mais"], explain: "Concession + contraste."),
+                            Exercise(id: "fr-foundations-u7-argumenter-e3", kind: "order", prompt: "Conclusion : pour tout cela, je défends la mesure.", options: [], answers: ["Pour tout cela, je défends la mesure"], explain: "pour tout cela."),
+                            Exercise(id: "fr-foundations-u7-argumenter-e4", kind: "written", prompt: "Ta thèse sur l'extension du tramway.", options: [], answers: ["je pense qu'on devrait prolonger le tramway", "je pense qu'on devrait agrandir le tram"], explain: "Je pense qu'on devrait…")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
 public enum ItFoundationsU1 {
     public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u1", title: "First sentences", subtitle: "Say who you are", level: "A1", themes: [
                     ConversationTheme("lang-exchange", "Language-exchange café", "Meet and greet", "person.2", "Course", "You are at a friendly language-exchange café in Roma. Meet the learner, exchange names, countries and jobs using the verb essere.", 0),
@@ -4815,6 +5271,158 @@ public enum ItFoundationsU6 {
                             Exercise(id: "it-b1-antes-ahora-e2", kind: "gap", prompt: "Era stancante, ___ mi sono trasferito. (conseguenza)", options: [], answers: ["quindi"], explain: "quindi = conseguenza."),
                             Exercise(id: "it-b1-antes-ahora-e3", kind: "order", prompt: "Contrasta: prima fumavi, adesso corri.", options: [], answers: ["Prima fumavo adesso corro"], explain: "prima + imperfetto, adesso + presente."),
                             Exercise(id: "it-b1-antes-ahora-e4", kind: "written", prompt: "Di cosa è cambiato: adesso lavori da casa.", options: [], answers: ["adesso lavoro da casa"], explain: "adesso + presente.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
+}
+
+public enum ItFoundationsU7 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u7", title: "Opinioni e sfumature", subtitle: "Se avessi…", level: "B2", themes: [
+                    ConversationTheme("it-b2-ipotesi", "Piani impossibili", "Se avessi tempo", "sparkles", "Course", "Debatete cosa fareste con tempo infinito, poi un compromesso vero.", 0),
+                    ConversationTheme("it-b2-trattativa", "La trattativa", "E se chiudiamo a 50 ?", "handshake", "Course", "Negoziate un acquisto usato: offerta, condizioni, accordo.", 1)], lessons: [
+            Lesson(id: "it-foundations-u7-ipotetico", title: "Se avessi tempo…", goal: "Parlare dell'irreale: se + congiuntivo imperfetto, poi il condizionale.",
+                intro: LessonIntro(explanation: [
+                            "L'ipotesi irrealistica: « Se avessi più tempo, viaggerei di più ». Se + congiuntivo imperfetto, poi condizionale (-rei).",
+                            "Mai « se + condizionale »: si dice « se avessi », non « se avrei ».",
+                            "Per consigliare con tatto: « Al posto tuo ci proverei », « Non è che non voglia; è che non potrei »."], examples: [
+                            ExampleLine(text: "Se avessi più tempo, viaggerei di più.", meaning: "Irreale del presente."),
+                            ExampleLine(text: "Al posto tuo ci proverei.", meaning: "Consiglio con tatto."),
+                            ExampleLine(text: "Se potessi, cambierei lavoro.", meaning: "potere → potessi / potrei."),
+                            ExampleLine(text: "E se ci vedessimo giovedì ?", meaning: "Proposta morbida."),
+                            ExampleLine(text: "Non è che non voglia; è che non potrei.", meaning: "Sfumatura volere/potere.")]),
+                expressions: [
+                            TargetExpression(text: "se + congiuntivo imp., …rei", meaning: "Ipotesi.", note: "Se avessi…, viaggerei."),
+                            TargetExpression(text: "avere → avessi", meaning: "Congiuntivo chiave.", note: "Se avessi tempo."),
+                            TargetExpression(text: "potere → potessi", meaning: "Congiuntivo chiave.", note: "Se potessi, lo farei."),
+                            TargetExpression(text: "al posto tuo, …rei", meaning: "Consiglio.", note: "…ci proverei."),
+                            TargetExpression(text: "e se + congiuntivo ?", meaning: "Proposta.", note: "E se provassimo ?")],
+                situation: "Debatete piani impossibili: più tempo, un altro lavoro, un'altra città — poi un compromesso vero per questo mese.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "La tua ipotesi: se avessi più tempo, viaggerei di più.", expected: ["Se avessi piu tempo viaggerei di piu", "Se avessi più tempo, viaggerei di più"], focus: "se + congiuntivo", watch: "Congiuntivo imperfetto + condizionale."),
+                                PracticeQuestion(prompt: "Consiglio con tatto: al posto tuo ci proverei.", expected: ["Al posto tuo ci proverei"], focus: "al posto tuo", watch: "Al posto tuo + condizionale."),
+                                PracticeQuestion(prompt: "Di che se potessi, cambieresti lavoro.", expected: ["Se potessi cambierei lavoro", "Se potessi, cambierei lavoro"], focus: "potessi/potrei", watch: "Se potessi… cambierei."),
+                                PracticeQuestion(prompt: "Proponi: e se ci vedessimo giovedì ?", expected: ["E se ci vedessimo giovedi", "E se ci vedessimo giovedì ?", "E se ci vedessimo giovedì"], focus: "e se… ?", watch: "E se + congiuntivo imperfetto."),
+                                PracticeQuestion(prompt: "Sfuma: non è che non voglia; è che non potrei.", expected: ["Non e che non voglia e che non potrei", "Non è che non voglia; è che non potrei"], focus: "non è che", watch: "Contrasto volere/potere.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u7-ipotetico-e1", kind: "choice", prompt: "Se ___ più tempo, viaggerei di più.", options: ["avessi", "avrei", "ho", "avevo"], answers: ["avessi"], explain: "Con « se » irrealistico: congiuntivo imperfetto."),
+                            Exercise(id: "it-foundations-u7-ipotetico-e2", kind: "gap", prompt: "Se potessi, ___ lavoro. (cambiare, condizionale)", options: [], answers: ["cambierei"], explain: "Se potessi + condizionale: cambierei."),
+                            Exercise(id: "it-foundations-u7-ipotetico-e3", kind: "order", prompt: "Consiglio: al posto tuo ci proverei.", options: [], answers: ["Al posto tuo ci proverei"], explain: "al posto tuo + condizionale."),
+                            Exercise(id: "it-foundations-u7-ipotetico-e4", kind: "written", prompt: "La tua ipotesi col lavoro (potere + cambiare).", options: [], answers: ["se potessi cambierei lavoro", "se potessi, cambierei lavoro"], explain: "Se + congiuntivo + condizionale.")], skills: ["grammar:second-conditional", "function:express-opinion", "speaking:justify-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-irregular", "grammar:connectors"]),
+            Lesson(id: "it-foundations-u7-registro", title: "Si dice che…", goal: "Riportare ciò che altri affermano: il si impersonale e il passivo.",
+                intro: LessonIntro(explanation: [
+                            "L'impersonale: « Si dice che il quartiere cambi ». Non conta chi lo dice.",
+                            "Il passivo: « Il concerto è stato cancellato », « I biglietti sono esauriti ». Il linguaggio delle notizie.",
+                            "Il passivo alza il registro; il si lo tiene quotidiano."], examples: [
+                            ExampleLine(text: "Si dice che il quartiere cambierà.", meaning: "Impersonale: voce di corridoio."),
+                            ExampleLine(text: "Il concerto è stato cancellato per la pioggia.", meaning: "Passivo + causa."),
+                            ExampleLine(text: "I biglietti sono esauriti.", meaning: "Passivo di stato."),
+                            ExampleLine(text: "Tutti i treni sono stati soppressi.", meaning: "Notizia ufficiale."),
+                            ExampleLine(text: "Secondo il comune, i lavori slitteranno.", meaning: "Fonte + futuro.")]),
+                expressions: [
+                            TargetExpression(text: "si dice che…", meaning: "Voce.", note: "…il quartiere cambierà."),
+                            TargetExpression(text: "è stato + participio", meaning: "Passivo.", note: "è stato cancellato."),
+                            TargetExpression(text: "sono + participio", meaning: "Stato.", note: "sono esauriti."),
+                            TargetExpression(text: "secondo + fonte", meaning: "Citare.", note: "secondo il comune."),
+                            TargetExpression(text: "si prevede che…", meaning: "Ufficiale.", note: "…i lavori…")],
+                situation: "Commentate le notizie del quartiere: cosa si dice, cosa è stato deciso e quale fonte credete meno.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Riporta la voce: si dice che il quartiere cambierà.", expected: ["Si dice che il quartiere cambiara", "Si dice che il quartiere cambierà"], focus: "si dice che", watch: "Impersonale, senza soggetto."),
+                                PracticeQuestion(prompt: "Notizia: il concerto è stato cancellato per la pioggia.", expected: ["Il concerto e stato cancellato per la pioggia", "Il concerto è stato cancellato per la pioggia"], focus: "è stato cancellato", watch: "Passivo: essere + participio."),
+                                PracticeQuestion(prompt: "Di che i biglietti sono esauriti.", expected: ["I biglietti sono esauriti"], focus: "sono esauriti", watch: "Passivo di stato."),
+                                PracticeQuestion(prompt: "Cita la fonte: secondo il comune, i lavori slitteranno.", expected: ["Secondo il comune i lavori slitteranno"], focus: "secondo", watch: "Secondo + fonte."),
+                                PracticeQuestion(prompt: "Di che tutti i treni sono stati soppressi.", expected: ["Tutti i treni sono stati soppressi"], focus: "sono stati soppressi", watch: "Passivo plurale.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u7-registro-e1", kind: "choice", prompt: "___ dice che il quartiere cambierà.", options: ["Si", "È", "Ce", "Lo"], answers: ["Si"], explain: "Impersonale: si dice che."),
+                            Exercise(id: "it-foundations-u7-registro-e2", kind: "gap", prompt: "Il concerto è stato ___ per la pioggia. (cancellare)", options: [], answers: ["cancellato"], explain: "essere + participio: cancellato."),
+                            Exercise(id: "it-foundations-u7-registro-e3", kind: "order", prompt: "Notizia: tutti i treni sono stati soppressi.", options: [], answers: ["Tutti i treni sono stati soppressi"], explain: "Passivo plurale."),
+                            Exercise(id: "it-foundations-u7-registro-e4", kind: "written", prompt: "Voce di corridoio: un mercato nuovo aprirà, tu l'hai sentito dire.", options: [], answers: ["si dice che aprira un mercato nuovo", "si dice che aprirà un mercato nuovo"], explain: "Si dice che + futuro.")], skills: ["grammar:passive-intro", "grammar:present-perfect", "function:express-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-regular", "grammar:verb-be"]),
+            Lesson(id: "it-foundations-u7-negozare", title: "E se chiudiamo a 50 ?", goal: "Negoziare un accordo: proporre col condizionale, mettere condizioni, chiudere.",
+                intro: LessonIntro(explanation: [
+                            "Proporre: « E se chiudessimo a 50 ? », « Le darei 60 se include il trasporto ».",
+                            "Mettere condizioni: « Solo se consegna oggi », « In cambio, voglio la garanzia ».",
+                            "Chiudere: « Affare fatto », « D'accordo, ma a una condizione »."], examples: [
+                            ExampleLine(text: "E se chiudessimo a 50 ?", meaning: "Proposta col congiuntivo."),
+                            ExampleLine(text: "Le darei 60 se include il trasporto.", meaning: "Condizionale + se + presente."),
+                            ExampleLine(text: "Solo se consegna oggi.", meaning: "Condizione ferma."),
+                            ExampleLine(text: "In cambio, voglio la garanzia.", meaning: "Controproposta."),
+                            ExampleLine(text: "Affare fatto.", meaning: "Chiusura.")]),
+                expressions: [
+                            TargetExpression(text: "e se + congiuntivo ?", meaning: "Proporre.", note: "E se chiudessimo a… ?"),
+                            TargetExpression(text: "…rei se + presente", meaning: "Condizioni.", note: "le darei 60 se…"),
+                            TargetExpression(text: "solo se…", meaning: "Condizione ferma.", note: "solo se è oggi."),
+                            TargetExpression(text: "in cambio, …", meaning: "Controproposta.", note: "…la garanzia."),
+                            TargetExpression(text: "affare fatto", meaning: "Chiudere.", note: "dopo l'accordo.")],
+                situation: "Trattate un tavolo di seconda mano: aprite alti, offrite con condizioni e chiudete a metà strada.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Proponi: e se chiudessimo a 50 ?", expected: ["E se chiudessimo a 50", "E se chiudessimo a 50 ?"], focus: "e se… ?", watch: "Chiudessimo: proposta."),
+                                PracticeQuestion(prompt: "Offri con condizione: le darei 60 se include il trasporto.", expected: ["Le darei 60 se include il trasporto"], focus: "darei se", watch: "Condizionale + se + presente."),
+                                PracticeQuestion(prompt: "Condizione ferma: solo se consegna oggi.", expected: ["Solo se consegna oggi"], focus: "solo se", watch: "Solo se + presente."),
+                                PracticeQuestion(prompt: "Controproposta: in cambio, voglio la garanzia.", expected: ["In cambio voglio la garanzia", "In cambio, voglio la garanzia"], focus: "in cambio", watch: "In cambio + richiesta."),
+                                PracticeQuestion(prompt: "Chiudi l'accordo.", expected: ["Affare fatto", "D'accordo"], focus: "affare fatto", watch: "Formula fissa di chiusura.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u7-negozare-e1", kind: "choice", prompt: "E se ___ a 50 ?", options: ["chiudessimo", "chiuderemo", "chiuso", "chiudiamo"], answers: ["chiudessimo"], explain: "Proposta: e se + congiuntivo."),
+                            Exercise(id: "it-foundations-u7-negozare-e2", kind: "gap", prompt: "Le ___ 60 se include il trasporto. (dare, condizionale)", options: [], answers: ["darei"], explain: "Condizionale presente: darei."),
+                            Exercise(id: "it-foundations-u7-negozare-e3", kind: "order", prompt: "Condizione: solo se consegna oggi.", options: [], answers: ["Solo se consegna oggi"], explain: "solo se + presente."),
+                            Exercise(id: "it-foundations-u7-negozare-e4", kind: "written", prompt: "Chiudi l'accordo, ma con una riserva.", options: [], answers: ["d'accordo ma a una condizione", "d'accordo, ma a una condizione"], explain: "D'accordo, ma…")], skills: ["function:negotiate", "grammar:second-conditional", "speaking:negotiate", "grammar:connectors"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum ItFoundationsU8 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u8", title: "Media e argomenti", subtitle: "La notizia che ho letto", level: "B2", themes: [
+                    ConversationTheme("it-b2-notizie", "Settimana di notizie", "Quello che si è detto", "newspaper", "Course", "Riassumete la settimana con i relativi: chi, dove, cosa.", 0),
+                    ConversationTheme("it-b2-colonna", "La tua colonna", "Da un lato… dall'altro…", "pencil", "Course", "Scrivete una colonna sulla pedonalizzazione del centro.", 1)], lessons: [
+            Lesson(id: "it-foundations-u7-relativi", title: "La notizia che ho letto", goal: "Raccontare notizie con i relativi: che, chi, dove, il cui.",
+                intro: LessonIntro(explanation: [
+                            "Il relativo spiega il nome: « La notizia che ho letto dice che… », « Il giornalista che l'ha intervistata… ».",
+                            "« Dove » per i luoghi: « La piazza dove hanno manifestato ». « Il cui » per il possesso: « l'azienda il cui direttore si è dimesso ».",
+                            "Nelle notizie i relativi comprimono: chi, dove, cosa."], examples: [
+                            ExampleLine(text: "La notizia che ho letto dice che…", meaning: "Relativo oggetto."),
+                            ExampleLine(text: "Il giornalista che l'ha intervistata si è dimesso.", meaning: "Relativo soggetto."),
+                            ExampleLine(text: "La piazza dove hanno manifestato è centrale.", meaning: "dove + luogo."),
+                            ExampleLine(text: "L'azienda il cui direttore si è dimesso ha reagito.", meaning: "il cui = possesso."),
+                            ExampleLine(text: "Tutto ciò che so viene dalla radio.", meaning: "tutto ciò che + verbo.")]),
+                expressions: [
+                            TargetExpression(text: "il/la che…", meaning: "Relativo.", note: "la notizia che ho letto."),
+                            TargetExpression(text: "chi…", meaning: "Persona.", note: "chi l'ha intervistata."),
+                            TargetExpression(text: "dove…", meaning: "Luogo.", note: "la piazza dove…"),
+                            TargetExpression(text: "il cui / la cui", meaning: "Possesso.", note: "l'azienda il cui direttore…"),
+                            TargetExpression(text: "tutto ciò che…", meaning: "Generalizzare.", note: "tutto ciò che so.")],
+                situation: "Riassumete una settimana di notizie: la storia che vi ha colpito, la persona che ha parlato e il luogo dove è successo.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Riassumi: la notizia che ho letto dice che il museo allarga gli orari.", expected: ["La notizia che ho letto dice che il museo allarga gli orari"], focus: "che ho letto", watch: "Relativo sulla notizia."),
+                                PracticeQuestion(prompt: "Di chi: il giornalista che l'ha intervistata si è dimesso.", expected: ["Il giornalista che l'ha intervistata si e dimesso", "Il giornalista che l'ha intervistata si è dimesso"], focus: "che l'ha intervistata", watch: "Relativo soggetto."),
+                                PracticeQuestion(prompt: "Luogo: la piazza dove hanno manifestato è centrale.", expected: ["La piazza dove hanno manifestato e centrale", "La piazza dove hanno manifestato è centrale"], focus: "dove", watch: "dove + luogo."),
+                                PracticeQuestion(prompt: "Possesso: l'azienda il cui direttore si è dimesso ha reagito.", expected: ["L'azienda il cui direttore si e dimesso ha reagito", "L'azienda il cui direttore si è dimesso ha reagito"], focus: "il cui", watch: "il cui + sostantivo."),
+                                PracticeQuestion(prompt: "Generalizza: tutto ciò che so viene dalla radio.", expected: ["Tutto cio che so viene dalla radio", "Tutto ciò che so viene dalla radio"], focus: "tutto ciò che", watch: "tutto ciò che + verbo.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u7-relativi-e1", kind: "choice", prompt: "La notizia ___ ho letto dice che il museo si allarga.", options: ["che", "chi", "il cui", "dove"], answers: ["che"], explain: "Cosa: la notizia che ho letto."),
+                            Exercise(id: "it-foundations-u7-relativi-e2", kind: "gap", prompt: "La piazza ___ hanno manifestato è centrale.", options: [], answers: ["dove"], explain: "Luogo: dove."),
+                            Exercise(id: "it-foundations-u7-relativi-e3", kind: "order", prompt: "Soggetto: il giornalista che l'ha intervistata si è dimesso.", options: [], answers: ["Il giornalista che l'ha intervistata si è dimesso"], explain: "Relativo soggetto."),
+                            Exercise(id: "it-foundations-u7-relativi-e4", kind: "written", prompt: "La tua notizia: una strada chiuderà (usa « la notizia che ho letto »).", options: [], answers: ["la notizia che ho letto dice che chiuderanno la strada"], explain: "La notizia che + passato prossimo.")], skills: ["grammar:relative-clauses", "grammar:present-perfect", "function:express-opinion", "vocab:work"], canDo: ["express-opinion"], prerequisites: ["grammar:present-perfect"]),
+            Lesson(id: "it-foundations-u7-argomentare", title: "Da un lato… dall'altro…", goal: "Scrivere e difendere un'opinione strutturata: tesi, argomenti, concessione, conclusione.",
+                intro: LessonIntro(explanation: [
+                            "Struttura: tesi (« Penso che dovremmo pedonalizzare il centro »), argomenti (« da un lato…, dall'altro… »), concessione (« è vero che…, ma… »).",
+                            "La concessione dà credibilità: riconosci la parte avversa prima di rispondere.",
+                            "Conclusione con peso: « Per tutto questo, difendo la misura »."], examples: [
+                            ExampleLine(text: "Penso che dovremmo pedonalizzare il centro.", meaning: "Tesi."),
+                            ExampleLine(text: "Da un lato, cala l'inquinamento.", meaning: "Argomento 1."),
+                            ExampleLine(text: "Dall'altro, il commercio ne risente.", meaning: "Argomento 2 (contrario)."),
+                            ExampleLine(text: "È vero che è scomodo, ma i numeri dicono altro.", meaning: "Concessione + risposta."),
+                            ExampleLine(text: "Per tutto questo, difendo la misura.", meaning: "Conclusione.")]),
+                expressions: [
+                            TargetExpression(text: "penso che + congiuntivo", meaning: "Tesi.", note: "…dovremmo pedonalizzare."),
+                            TargetExpression(text: "da un lato… dall'altro…", meaning: "Argomenti.", note: "le due facce."),
+                            TargetExpression(text: "è vero che…, ma…", meaning: "Concessione.", note: "riconoscere e rispondere."),
+                            TargetExpression(text: "i numeri dicono…", meaning: "Prova.", note: "argomento d'autorità."),
+                            TargetExpression(text: "per tutto questo, …", meaning: "Conclusione.", note: "registro alto.")],
+                situation: "Scrivete una colonnina d'opinione sulla pedonalizzazione del centro: tesi, due facce, concessione e chiusura.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Tesi: penso che dovremmo pedonalizzare il centro.", expected: ["Penso che dovremmo pedonalizzare il centro"], focus: "penso che", watch: "Tesi + dovere."),
+                                PracticeQuestion(prompt: "Argomento 1: da un lato, cala l'inquinamento.", expected: ["Da un lato cala l'inquinamento", "Da un lato, cala l'inquinamento"], focus: "da un lato", watch: "Primo argomento."),
+                                PracticeQuestion(prompt: "Argomento contrario: dall'altro, il commercio ne risente.", expected: ["Dall'altro il commercio ne risente", "Dall'altro, il commercio ne risente"], focus: "dall'altro", watch: "Seconda faccia."),
+                                PracticeQuestion(prompt: "Concedi: è vero che è scomodo, ma i numeri dicono altro.", expected: ["E vero che e scomodo ma i numeri dicono altro", "È vero che è scomodo, ma i numeri dicono altro"], focus: "è vero che", watch: "Concessione + ma."),
+                                PracticeQuestion(prompt: "Chiudi: per tutto questo, difendo la misura.", expected: ["Per tutto questo difendo la misura", "Per tutto questo, difendo la misura"], focus: "per tutto questo", watch: "Conclusione formale.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u7-argomentare-e1", kind: "choice", prompt: "___ un lato, cala l'inquinamento.", options: ["Da", "Per", "In", "Con"], answers: ["Da"], explain: "da un lato = primo argomento."),
+                            Exercise(id: "it-foundations-u7-argomentare-e2", kind: "gap", prompt: "È vero che è scomodo, ___ i numeri dicono altro.", options: [], answers: ["ma"], explain: "Concessione + contrasto."),
+                            Exercise(id: "it-foundations-u7-argomentare-e3", kind: "order", prompt: "Conclusione: per tutto questo, difendo la misura.", options: [], answers: ["Per tutto questo, difendo la misura"], explain: "per tutto questo."),
+                            Exercise(id: "it-foundations-u7-argomentare-e4", kind: "written", prompt: "La tua tesi sul prolungamento del tram.", options: [], answers: ["penso che dovremmo allungare il tram", "penso che dovremmo prolungare la tramvia"], explain: "Penso che + dovremmo.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum PtFoundationsU1 {
@@ -5198,6 +5806,158 @@ public enum PtFoundationsU6 {
                             Exercise(id: "pt-b1-antes-ahora-e4", kind: "written", prompt: "Diga o que mudou: agora você trabalha de casa.", options: [], answers: ["agora trabalho de casa", "agora trabalho em casa"], explain: "agora + presente.")], skills: ["grammar:used-to", "grammar:connectors", "function:express-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:used-to"])])
 }
 
+public enum PtFoundationsU7 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u7", title: "Opiniões e nuances", subtitle: "Se eu tivesse…", level: "B2", themes: [
+                    ConversationTheme("pt-b2-hipotese", "Planos impossíveis", "Se eu tivesse tempo", "sparkles", "Course", "Vocês debatem o que fariam com tempo infinito, depois um compromisso real.", 0),
+                    ConversationTheme("pt-b2-pechincha", "A pechincha", "E se combinarmos em 50 ?", "handshake", "Course", "Vocês negociam uma compra usada: oferta, condições, acordo.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u7-hipotetico", title: "Se eu tivesse tempo…", goal: "Falar do irreal: se + pretérito imperfeito do subjuntivo, depois o condicional.",
+                intro: LessonIntro(explanation: [
+                            "A hipótese irreal: « Se eu tivesse mais tempo, viajaria mais ». Se + imperfeito do subjuntivo, depois condicional (-ria).",
+                            "Nunca « se + condicional »: diz-se « se eu tivesse », não « se eu teria ».",
+                            "Para aconselhar com jeito: « No seu lugar, eu tentaria », « Não é que eu não queira; é que eu não poderia »."], examples: [
+                            ExampleLine(text: "Se eu tivesse mais tempo, viajaria mais.", meaning: "Irreal do presente."),
+                            ExampleLine(text: "No seu lugar, eu tentaria.", meaning: "Conselho com jeito."),
+                            ExampleLine(text: "Se eu pudesse, mudaria de emprego.", meaning: "poder → pudesse / poderia."),
+                            ExampleLine(text: "E se a gente se visse na quinta ?", meaning: "Proposta suave."),
+                            ExampleLine(text: "Não é que eu não queira; é que eu não poderia.", meaning: "Nuance querer/poder.")]),
+                expressions: [
+                            TargetExpression(text: "se + imperfeito do subj., …ria", meaning: "Hipótese.", note: "Se tivesse…, viajaria."),
+                            TargetExpression(text: "ter → tivesse", meaning: "Subjuntivo-chave.", note: "Se tivesse tempo."),
+                            TargetExpression(text: "poder → pudesse", meaning: "Subjuntivo-chave.", note: "Se pudesse, faria."),
+                            TargetExpression(text: "no seu lugar, …ria", meaning: "Conselho.", note: "…eu tentaria."),
+                            TargetExpression(text: "e se + imperfeito…?", meaning: "Proposta.", note: "E se a gente tentasse ?")],
+                situation: "Vocês debatem planos impossíveis: mais tempo, outro emprego, outra cidade — e propõem um compromisso real para este mês.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sua hipótese: se eu tivesse mais tempo, viajaria mais.", expected: ["Se eu tivesse mais tempo viajaria mais", "Se eu tivesse mais tempo, viajaria mais"], focus: "se + subjuntivo", watch: "Imperfeito do subjuntivo + condicional."),
+                                PracticeQuestion(prompt: "Conselho com jeito: no seu lugar, eu tentaria.", expected: ["No seu lugar eu tentaria", "No seu lugar, eu tentaria"], focus: "no seu lugar", watch: "No seu lugar + condicional."),
+                                PracticeQuestion(prompt: "Diga que se pudesse, mudaria de emprego.", expected: ["Se pudesse mudaria de emprego", "Se pudesse, mudaria de emprego"], focus: "pudesse/poderia", watch: "Se pudesse… mudaria."),
+                                PracticeQuestion(prompt: "Proponha: e se a gente se visse na quinta ?", expected: ["E se a gente se visse na quinta", "E se a gente se visse na quinta ?"], focus: "e se… ?", watch: "E se + imperfeito do subjuntivo."),
+                                PracticeQuestion(prompt: "Dê o matiz: não é que eu não queira; é que eu não poderia.", expected: ["Nao e que eu nao queira e que eu nao poderia", "Não é que eu não queira; é que eu não poderia"], focus: "não é que", watch: "Contraste querer/poder.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u7-hipotetico-e1", kind: "choice", prompt: "Se eu ___ mais tempo, viajaria mais.", options: ["tivesse", "teria", "tenho", "tinha"], answers: ["tivesse"], explain: "Com « se » irreal: imperfeito do subjuntivo."),
+                            Exercise(id: "pt-foundations-u7-hipotetico-e2", kind: "gap", prompt: "Se pudesse, ___ de emprego. (mudar, condicional)", options: [], answers: ["mudaria"], explain: "Se pudesse + condicional: mudaria."),
+                            Exercise(id: "pt-foundations-u7-hipotetico-e3", kind: "order", prompt: "Conselho: no seu lugar, eu tentaria.", options: [], answers: ["No seu lugar, eu tentaria"], explain: "no seu lugar + condicional."),
+                            Exercise(id: "pt-foundations-u7-hipotetico-e4", kind: "written", prompt: "Sua hipótese com o emprego (poder + mudar).", options: [], answers: ["se pudesse mudaria de emprego", "se pudesse, mudaria de emprego"], explain: "Se + subjuntivo + condicional.")], skills: ["grammar:second-conditional", "function:express-opinion", "speaking:justify-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-irregular", "grammar:connectors"]),
+            Lesson(id: "pt-foundations-u7-registro", title: "Diz-se que…", goal: "Relatar o que outros afirmam: a voz passiva e o sujeito indeterminado.",
+                intro: LessonIntro(explanation: [
+                            "Passiva com « ser + particípio »: « O show foi cancelado », « Os ingressos estão esgotados ». Linguagem de notícia.",
+                            "Sujeito indeterminado: « Dizem que o bairro vai mudar », « Diz-se que… ». Não importa quem fala.",
+                            "A passiva sobe o registro; o « dizem que » fica do dia a dia."], examples: [
+                            ExampleLine(text: "Dizem que o bairro vai mudar.", meaning: "Indeterminado: boato."),
+                            ExampleLine(text: "O show foi cancelado por causa da chuva.", meaning: "Passiva + agente."),
+                            ExampleLine(text: "Os ingressos estão esgotados.", meaning: "Passiva de estado."),
+                            ExampleLine(text: "Todos os trens foram cancelados.", meaning: "Notícia oficial."),
+                            ExampleLine(text: "Segundo a prefeitura, a obra vai atrasar.", meaning: "Fonte + futuro.")]),
+                expressions: [
+                            TargetExpression(text: "dizem que / diz-se que…", meaning: "Boato.", note: "…o bairro vai mudar."),
+                            TargetExpression(text: "foi/será + particípio", meaning: "Passiva.", note: "foi cancelado."),
+                            TargetExpression(text: "estão + particípio", meaning: "Estado.", note: "estão esgotados."),
+                            TargetExpression(text: "segundo + fonte", meaning: "Citar.", note: "segundo a prefeitura."),
+                            TargetExpression(text: "está previsto que…", meaning: "Oficial.", note: "…a obra…")],
+                situation: "Vocês comentam as notícias do bairro: o que se diz, o que foi decidido e em qual fonte vocês menos acreditam.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Espalhe o boato: dizem que o bairro vai mudar.", expected: ["Dizem que o bairro vai mudar"], focus: "dizem que", watch: "Indeterminado, sem sujeito."),
+                                PracticeQuestion(prompt: "Notícia: o show foi cancelado por causa da chuva.", expected: ["O show foi cancelado por causa da chuva"], focus: "foi cancelado", watch: "ser + particípio."),
+                                PracticeQuestion(prompt: "Diga que os ingressos estão esgotados.", expected: ["Os ingressos estão esgotados"], focus: "estão esgotados", watch: "Passiva de estado."),
+                                PracticeQuestion(prompt: "Cite a fonte: segundo a prefeitura, a obra vai atrasar.", expected: ["Segundo a prefeitura a obra vai atrasar"], focus: "segundo", watch: "Segundo + fonte."),
+                                PracticeQuestion(prompt: "Diga que todos os trens foram cancelados.", expected: ["Todos os trens foram cancelados"], focus: "foram cancelados", watch: "Passiva plural.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u7-registro-e1", kind: "choice", prompt: "___ dizem que o bairro vai mudar.", options: ["(", "Eles", "As pessoas", "Todo mundo"], answers: ["("], explain: "Sujeito indeterminado: sem pronome antes — « Dizem que… »."),
+                            Exercise(id: "pt-foundations-u7-registro-e2", kind: "gap", prompt: "O show foi ___ por causa da chuva. (cancelar)", options: [], answers: ["cancelado"], explain: "ser + particípio: cancelado."),
+                            Exercise(id: "pt-foundations-u7-registro-e3", kind: "order", prompt: "Notícia: todos os trens foram cancelados.", options: [], answers: ["Todos os trens foram cancelados"], explain: "Passiva plural."),
+                            Exercise(id: "pt-foundations-u7-registro-e4", kind: "written", prompt: "Boato: uma feira nova vai abrir, você ouviu falar.", options: [], answers: ["dizem que vai abrir uma feira nova"], explain: "Dizem que + futuro.")], skills: ["grammar:passive-intro", "grammar:present-perfect", "function:express-opinion", "grammar:connectors"], canDo: ["express-opinion"], prerequisites: ["grammar:past-simple-regular", "grammar:verb-be"]),
+            Lesson(id: "pt-foundations-u7-negociar", title: "E se combinarmos em 50 ?", goal: "Negociar um acordo: propor com condicional, pôr condições e fechar.",
+                intro: LessonIntro(explanation: [
+                            "Propor: « E se combinarmos em 50 ? », « Eu lhe daria 60 se você incluir o frete ».",
+                            "Condições: « Só se entregar hoje », « Em troca, quero a garantia ».",
+                            "Fechar: « Fechado », « De acordo, mas com uma condição »."], examples: [
+                            ExampleLine(text: "E se combinarmos em 50 ?", meaning: "Proposta."),
+                            ExampleLine(text: "Eu lhe daria 60 se você incluir o frete.", meaning: "Condicional + se + presente."),
+                            ExampleLine(text: "Só se entregar hoje.", meaning: "Condição dura."),
+                            ExampleLine(text: "Em troca, quero a garantia.", meaning: "Contraproposta."),
+                            ExampleLine(text: "Fechado.", meaning: "Fechamento.")]),
+                expressions: [
+                            TargetExpression(text: "e se + futuro de subjuntivo… ?", meaning: "Propor.", note: "E se combinarmos… ?"),
+                            TargetExpression(text: "…ria se + presente", meaning: "Condições.", note: "lhe daria 60 se…"),
+                            TargetExpression(text: "só se…", meaning: "Condição dura.", note: "só se for hoje."),
+                            TargetExpression(text: "em troca, …", meaning: "Contraproposta.", note: "…a garantia."),
+                            TargetExpression(text: "fechado", meaning: "Fechar.", note: "depois do acordo.")],
+                situation: "Vocês pechincham uma mesa de segunda mão: abrem alto, oferecem com condições e fecham no meio do caminho.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Proponha: e se combinarmos em 50 ?", expected: ["E se combinarmos em 50", "E se combinarmos em 50 ?"], focus: "e se… ?", watch: "Proposta com futuro do subjuntivo."),
+                                PracticeQuestion(prompt: "Oferta com condição: eu lhe daria 60 se você incluir o frete.", expected: ["Eu lhe daria 60 se voce incluir o frete", "Eu lhe daria 60 se você incluir o frete"], focus: "daria se", watch: "Condicional + se + presente."),
+                                PracticeQuestion(prompt: "Condição dura: só se entregar hoje.", expected: ["So se entregar hoje", "Só se entregar hoje"], focus: "só se", watch: "Só se + futuro do subjuntivo."),
+                                PracticeQuestion(prompt: "Contraproposta: em troca, quero a garantia.", expected: ["Em troca quero a garantia", "Em troca, quero a garantia"], focus: "em troca", watch: "Em troca + pedido."),
+                                PracticeQuestion(prompt: "Feche o negócio.", expected: ["Fechado", "De acordo"], focus: "fechado", watch: "Frase fixa de fechamento.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u7-negociar-e1", kind: "choice", prompt: "E se ___ em 50 ?", options: ["combinarmos", "combinaremos", "combinado", "combinamos"], answers: ["combinarmos"], explain: "Futuro do subjuntivo: combinarmos."),
+                            Exercise(id: "pt-foundations-u7-negociar-e2", kind: "gap", prompt: "Eu lhe ___ 60 se você incluir o frete. (dar, condicional)", options: [], answers: ["daria"], explain: "Condicional presente: daria."),
+                            Exercise(id: "pt-foundations-u7-negociar-e3", kind: "order", prompt: "Condição: só se entregar hoje.", options: [], answers: ["Só se entregar hoje"], explain: "só se + subjuntivo."),
+                            Exercise(id: "pt-foundations-u7-negociar-e4", kind: "written", prompt: "Feche o negócio, mas com uma ressalva.", options: [], answers: ["de acordo mas com uma condicao", "de acordo, mas com uma condição"], explain: "De acordo, mas…")], skills: ["function:negotiate", "grammar:second-conditional", "speaking:negotiate", "grammar:connectors"], canDo: ["solve-everyday-problems"], prerequisites: ["grammar:connectors"])])
+}
+
+public enum PtFoundationsU8 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u8", title: "Mídia e argumento", subtitle: "A notícia que li", level: "B2", themes: [
+                    ConversationTheme("pt-b2-noticias", "Semana de notícias", "O que se disse", "newspaper", "Course", "Vocês resumem a semana com relativas: quem, onde, o quê.", 0),
+                    ConversationTheme("pt-b2-coluna", "Sua coluna", "Por um lado… por outro…", "pencil", "Course", "Vocês escrevem uma coluna sobre peatonalizar o centro.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u7-relativas", title: "A notícia que li", goal: "Contar notícias com orações relativas: que, quem, onde, cujo.",
+                intro: LessonIntro(explanation: [
+                            "A relativa explica o substantivo: « A notícia que li diz que… », « O jornalista que o entrevistou… ».",
+                            "« Onde » para lugares: « A praça onde se manifestaram ». « Cujo » para posse: « a empresa cujo diretor renunciou ».",
+                            "Em notícias, as relativas comprimem: quem, onde, o quê."], examples: [
+                            ExampleLine(text: "A notícia que li diz que…", meaning: "Relativa de objeto."),
+                            ExampleLine(text: "O jornalista que o entrevistou renunciou.", meaning: "Relativa de sujeito."),
+                            ExampleLine(text: "A praça onde se manifestaram é central.", meaning: "onde + lugar."),
+                            ExampleLine(text: "A empresa cujo diretor renunciou reagiu.", meaning: "cujo = posse."),
+                            ExampleLine(text: "Tudo o que sei vem do rádio.", meaning: "tudo o que + verbo.")]),
+                expressions: [
+                            TargetExpression(text: "o/a que…", meaning: "Relativa.", note: "a notícia que li."),
+                            TargetExpression(text: "quem…", meaning: "Pessoa.", note: "quem o entrevistou."),
+                            TargetExpression(text: "onde…", meaning: "Lugar.", note: "a praça onde…"),
+                            TargetExpression(text: "cujo/a…", meaning: "Posse.", note: "a empresa cujo diretor…"),
+                            TargetExpression(text: "tudo o que…", meaning: "Generalizar.", note: "tudo o que sei.")],
+                situation: "Vocês resumem uma semana de notícias: a história que marcou, a pessoa que falou e o lugar onde aconteceu.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Resuma: a notícia que li diz que o museu amplia os horários.", expected: ["A noticia que li diz que o museu amplia os horarios", "A notícia que li diz que o museu amplia os horários"], focus: "que li", watch: "Relativa sobre a notícia."),
+                                PracticeQuestion(prompt: "Diga quem: o jornalista que o entrevistou renunciou.", expected: ["O jornalista que o entrevistou renunciou"], focus: "que o entrevistou", watch: "Relativa de sujeito."),
+                                PracticeQuestion(prompt: "Lugar: a praça onde se manifestaram é central.", expected: ["A praca onde se manifestaram e central", "A praça onde se manifestaram é central"], focus: "onde", watch: "onde + lugar."),
+                                PracticeQuestion(prompt: "Posse: a empresa cujo diretor renunciou reagiu.", expected: ["A empresa cujo diretor renunciou reagiu"], focus: "cujo", watch: "cujo + substantivo."),
+                                PracticeQuestion(prompt: "Generalize: tudo o que sei vem do rádio.", expected: ["Tudo o que sei vem do radio", "Tudo o que sei vem do rádio"], focus: "tudo o que", watch: "tudo o que + verbo.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u7-relativas-e1", kind: "choice", prompt: "A notícia ___ li diz que o museu amplia.", options: ["que", "quem", "cujo", "onde"], answers: ["que"], explain: "Coisa: a notícia que li."),
+                            Exercise(id: "pt-foundations-u7-relativas-e2", kind: "gap", prompt: "A praça ___ se manifestaram é central.", options: [], answers: ["onde"], explain: "Lugar: onde."),
+                            Exercise(id: "pt-foundations-u7-relativas-e3", kind: "order", prompt: "Sujeito: o jornalista que o entrevistou renunciou.", options: [], answers: ["O jornalista que o entrevistou renunciou"], explain: "Relativa de sujeito."),
+                            Exercise(id: "pt-foundations-u7-relativas-e4", kind: "written", prompt: "Sua notícia: uma rua vai fechar (use « a notícia que li »).", options: [], answers: ["a notícia que li diz que fecharão a rua", "a noticia que li diz que fecharao a rua"], explain: "A notícia que + pretérito.")], skills: ["grammar:relative-clauses", "grammar:present-perfect", "function:express-opinion", "vocab:work"], canDo: ["express-opinion"], prerequisites: ["grammar:present-perfect"]),
+            Lesson(id: "pt-foundations-u7-argumentar", title: "Por um lado… por outro…", goal: "Escrever e defender uma opinião estruturada: tese, argumentos, concessão e conclusão.",
+                intro: LessonIntro(explanation: [
+                            "Estrutura: tese (« Acho que deveríamos peatonalizar o centro »), argumentos (« por um lado…, por outro… »), concessão (« é verdade que…, mas… »).",
+                            "A concessão dá credibilidade: você reconhece o outro lado antes de responder.",
+                            "Conclusão com peso: « Por tudo isso, defendo a medida »."], examples: [
+                            ExampleLine(text: "Acho que deveríamos peatonalizar o centro.", meaning: "Tese."),
+                            ExampleLine(text: "Por um lado, a poluição cai.", meaning: "Argumento 1."),
+                            ExampleLine(text: "Por outro, o comércio sofre.", meaning: "Argumento 2 (contrário)."),
+                            ExampleLine(text: "É verdade que é incômodo, mas os números dizem outra coisa.", meaning: "Concessão + resposta."),
+                            ExampleLine(text: "Por tudo isso, defendo a medida.", meaning: "Conclusão.")]),
+                expressions: [
+                            TargetExpression(text: "acho que + deveríamos…", meaning: "Tese.", note: "…peatonalizar."),
+                            TargetExpression(text: "por um lado… por outro…", meaning: "Argumentos.", note: "as duas faces."),
+                            TargetExpression(text: "é verdade que…, mas…", meaning: "Concessão.", note: "reconhecer e responder."),
+                            TargetExpression(text: "os números dizem…", meaning: "Prova.", note: "argumento de autoridade."),
+                            TargetExpression(text: "por tudo isso, …", meaning: "Conclusão.", note: "fecho formal.")],
+                situation: "Vocês escrevem uma coluna de opinião sobre peatonalizar o centro: tese, duas faces, concessão e fecho.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Tese: acho que deveríamos peatonalizar o centro.", expected: ["Acho que deveriamos peatonalizar o centro", "Acho que deveríamos peatonalizar o centro"], focus: "acho que", watch: "Acho que + deveríamos."),
+                                PracticeQuestion(prompt: "Argumento 1: por um lado, a poluição cai.", expected: ["Por um lado a poluicao cai", "Por um lado, a poluição cai"], focus: "por um lado", watch: "Primeiro argumento."),
+                                PracticeQuestion(prompt: "Argumento contrário: por outro, o comércio sofre.", expected: ["Por outro o comercio sofre", "Por outro, o comércio sofre"], focus: "por outro", watch: "Segunda face."),
+                                PracticeQuestion(prompt: "Conceda: é verdade que é incômodo, mas os números dizem outra coisa.", expected: ["E verdade que e incomodo mas os numeros dizem outra coisa", "É verdade que é incômodo, mas os números dizem outra coisa"], focus: "é verdade que", watch: "Concessão + mas."),
+                                PracticeQuestion(prompt: "Feche: por tudo isso, defendo a medida.", expected: ["Por tudo isso defendo a medida", "Por tudo isso, defendo a medida"], focus: "por tudo isso", watch: "Conclusão formal.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u7-argumentar-e1", kind: "choice", prompt: "___ um lado, a poluição cai.", options: ["Por", "Para", "Em", "Com"], answers: ["Por"], explain: "por um lado = primeiro argumento."),
+                            Exercise(id: "pt-foundations-u7-argumentar-e2", kind: "gap", prompt: "É verdade que é incômodo, ___ os números dizem outra coisa.", options: [], answers: ["mas", "porém"], explain: "Concessão + contraste."),
+                            Exercise(id: "pt-foundations-u7-argumentar-e3", kind: "order", prompt: "Conclusão: por tudo isso, defendo a medida.", options: [], answers: ["Por tudo isso, defendo a medida"], explain: "por tudo isso."),
+                            Exercise(id: "pt-foundations-u7-argumentar-e4", kind: "written", prompt: "Sua tese sobre ampliar o metrô.", options: [], answers: ["acho que deveriamos ampliar o metro", "acho que deveríamos ampliar o metrô"], explain: "Acho que + deveríamos.")], skills: ["writing:argument", "grammar:connectors", "function:express-opinion", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
@@ -5205,7 +5965,9 @@ DeFoundationsU2.unit,
 DeFoundationsU3.unit,
 DeFoundationsU4.unit,
 DeFoundationsU5.unit,
-DeFoundationsU6.unit
+DeFoundationsU6.unit,
+DeFoundationsU7.unit,
+DeFoundationsU8.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -5258,7 +6020,9 @@ EsFoundationsU3.unit,
 EsFoundationsU4.unit,
 EsFoundationsU5.unit,
 EsFoundationsU6.unit,
-EsFoundationsU7.unit
+EsFoundationsU7.unit,
+EsFoundationsU8.unit,
+EsFoundationsU9.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
@@ -5266,7 +6030,9 @@ FrFoundationsU2.unit,
 FrFoundationsU3.unit,
 FrFoundationsU4.unit,
 FrFoundationsU5.unit,
-FrFoundationsU6.unit
+FrFoundationsU6.unit,
+FrFoundationsU7.unit,
+FrFoundationsU8.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
@@ -5274,7 +6040,9 @@ ItFoundationsU2.unit,
 ItFoundationsU3.unit,
 ItFoundationsU4.unit,
 ItFoundationsU5.unit,
-ItFoundationsU6.unit
+ItFoundationsU6.unit,
+ItFoundationsU7.unit,
+ItFoundationsU8.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
@@ -5282,7 +6050,9 @@ PtFoundationsU2.unit,
 PtFoundationsU3.unit,
 PtFoundationsU4.unit,
 PtFoundationsU5.unit,
-PtFoundationsU6.unit
+PtFoundationsU6.unit,
+PtFoundationsU7.unit,
+PtFoundationsU8.unit
         ]),
     ]
 }

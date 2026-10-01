@@ -2364,6 +2364,906 @@
           ]
         }
       ]
+    },
+    {
+      "id": "fr-foundations-u7",
+      "title": "Opinions et nuances",
+      "subtitle": "Si j'avais…",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "fr-b2-hypothese",
+          "title": "Plans impossibles",
+          "subtitle": "Si j'avais le temps",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Vous débatez de ce que vous feriez avec du temps infini, puis un vrai compromis.",
+          "colorIndex": 0
+        },
+        {
+          "id": "fr-b2-marche",
+          "title": "Le marchandage",
+          "subtitle": "Et si on se retrouvait à 50 ?",
+          "symbol": "handshake",
+          "category": "Course",
+          "situation": "Vous négociez un achat d'occasion : offre, conditions, accord.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u7-hypothetique",
+          "title": "Si j'avais le temps…",
+          "goal": "Opiner sur l'irréel : si + imparfait, puis le conditionnel.",
+          "intro": {
+            "explanation": [
+              "L'hypothèse irréelle : « Si j'avais plus de temps, je voyagerais plus ». Si + imparfait, puis conditionnel (-rais).",
+              "Jamais « si + conditionnel » : on dit « si j'avais », pas « si j'aurais ».",
+              "Pour conseiller avec tact : « À ta place, j'essaierais », « Ce n'est pas que je ne veux pas ; c'est que je ne peux pas »."
+            ],
+            "examples": [
+              {
+                "text": "Si j'avais plus de temps, je voyagerais plus.",
+                "meaning": "Irréel du présent."
+              },
+              {
+                "text": "À ta place, j'essaierais.",
+                "meaning": "Conseil avec tact."
+              },
+              {
+                "text": "Si je pouvais, je changerais de travail.",
+                "meaning": "pouvoir → pouvais / pourrais."
+              },
+              {
+                "text": "Et si on se voyait jeudi ?",
+                "meaning": "Proposition douce."
+              },
+              {
+                "text": "Ce n'est pas que je ne veux pas ; je ne peux pas.",
+                "meaning": "Nuance vouloir/pouvoir."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "si + imparfait, …-rais",
+              "meaning": "Hypothèse.",
+              "note": "Si j'avais…, je voyagerais."
+            },
+            {
+              "text": "avoir → avais",
+              "meaning": "Imparfait clé.",
+              "note": "Si j'avais le temps."
+            },
+            {
+              "text": "pouvoir → pouvais",
+              "meaning": "Imparfait clé.",
+              "note": "Si je pouvais, je le ferais."
+            },
+            {
+              "text": "à ta place, je …-rais",
+              "meaning": "Conseil.",
+              "note": "…j'essaierais."
+            },
+            {
+              "text": "et si + imparfait ?",
+              "meaning": "Proposition.",
+              "note": "Et si on essayait ?"
+            }
+          ],
+          "situation": "Vous débnez des plans impossibles : plus de temps, un autre métier, une autre ville — puis un vrai compromis pour ce mois-ci.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ton hypothèse : si tu avais plus de temps, tu voyagerais plus.",
+                "expected": [
+                  "Si j'avais plus de temps je voyagerais plus",
+                  "Si j'avais plus de temps, je voyagerais plus"
+                ],
+                "focus": "si + imparfait",
+                "watch": "Imparfait puis conditionnel."
+              },
+              {
+                "prompt": "Conseil avec tact : à ta place, j'essaierais.",
+                "expected": [
+                  "A ta place j'essaierais",
+                  "À ta place, j'essaierais",
+                  "À ta place j'essaierais"
+                ],
+                "focus": "à ta place",
+                "watch": "À ta place + conditionnel."
+              },
+              {
+                "prompt": "Dis que si tu pouvais, tu changerais de travail.",
+                "expected": [
+                  "Si je pouvais je changerais de travail",
+                  "Si je pouvais, je changerais de travail"
+                ],
+                "focus": "pouvais/pourrais",
+                "watch": "Si je pouvais… je changerais."
+              },
+              {
+                "prompt": "Propose : et si on se voyait jeudi ?",
+                "expected": [
+                  "Et si on se voyait jeudi",
+                  "Et si on se voyait jeudi ?"
+                ],
+                "focus": "et si… ?",
+                "watch": "Et si + imparfait."
+              },
+              {
+                "prompt": "Nuance : ce n'est pas que je ne veux pas ; c'est que je ne peux pas.",
+                "expected": [
+                  "Ce n'est pas que je ne veux pas c'est que je ne peux pas",
+                  "Ce n'est pas que je ne veux pas ; c'est que je ne peux pas"
+                ],
+                "focus": "ce n'est pas que",
+                "watch": "Nuance avec point-virgule."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u7-hypothetique-e1",
+              "kind": "choice",
+              "prompt": "Si ___ plus de temps, je voyagerais plus.",
+              "answers": [
+                "j'avais"
+              ],
+              "explain": "Si + imparfait, jamais si + conditionnel.",
+              "options": [
+                "j'avais",
+                "j'aurais",
+                "j'ai",
+                "j'avais eu"
+              ]
+            },
+            {
+              "id": "fr-foundations-u7-hypothetique-e2",
+              "kind": "gap",
+              "prompt": "Si je pouvais, je ___ de travail. (changer, conditionnel)",
+              "answers": [
+                "changerais",
+                "changerais pas"
+              ],
+              "explain": "Si je pouvais… je changerais."
+            },
+            {
+              "id": "fr-foundations-u7-hypothetique-e3",
+              "kind": "order",
+              "prompt": "Conseil : à ta place, j'essaierais.",
+              "answers": [
+                "À ta place, j'essaierais"
+              ],
+              "explain": "à ta place + conditionnel."
+            },
+            {
+              "id": "fr-foundations-u7-hypothetique-e4",
+              "kind": "written",
+              "prompt": "Ton hypothèse : si tu pouvais, tu changerais de travail.",
+              "answers": [
+                "si je pouvais je changerais de travail",
+                "si je pouvais, je changerais de travail"
+              ],
+              "explain": "Si + imparfait + conditionnel."
+            }
+          ],
+          "skills": [
+            "grammar:second-conditional",
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular",
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "fr-foundations-u7-registre",
+          "title": "On dit que…",
+          "goal": "Rapporter ce que d'autres affirment : l'impersonnel avec « on » et la voix passive.",
+          "intro": {
+            "explanation": [
+              "L'impersonnel : « On dit que le quartier change ». On ne sait pas qui parle.",
+              "La voix passive : « Le concert a été annulé », « Les billets sont épuisés ». Langage des infos.",
+              "La passive monte le registre ; « on » le garde courant."
+            ],
+            "examples": [
+              {
+                "text": "On dit que le quartier va changer.",
+                "meaning": "Impersonnel : rumeur."
+              },
+              {
+                "text": "Le concert a été annulé à cause de la pluie.",
+                "meaning": "Passé composé passif."
+              },
+              {
+                "text": "Les billets sont épuisés.",
+                "meaning": "Passif d'état."
+              },
+              {
+                "text": "Tous les trains ont été supprimés.",
+                "meaning": "Info officielle."
+              },
+              {
+                "text": "D'après la mairie, les travaux prendront du retard.",
+                "meaning": "Source + futur."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "on dit que…",
+              "meaning": "Rumeur.",
+              "note": "…le quartier va changer."
+            },
+            {
+              "text": "a été + participe",
+              "meaning": "Passif.",
+              "note": "a été annulé."
+            },
+            {
+              "text": "est/sont + participe",
+              "meaning": "État.",
+              "note": "sont épuisés."
+            },
+            {
+              "text": "d'après + source",
+              "meaning": "Citer.",
+              "note": "d'après la mairie."
+            },
+            {
+              "text": "il est prévu que…",
+              "meaning": "Officiel.",
+              "note": "…les travaux…"
+            }
+          ],
+          "situation": "Vous commentez les infos du quartier : ce qu'on dit, ce qui a été décidé et quelle source vous croyez le moins.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Transmets la rumeur : on dit que le quartier va changer.",
+                "expected": [
+                  "On dit que le quartier va changer"
+                ],
+                "focus": "on dit que",
+                "watch": "Impersonnel, pas de sujet."
+              },
+              {
+                "prompt": "Info : le concert a été annulé à cause de la pluie.",
+                "expected": [
+                  "Le concert a ete annule a cause de la pluie",
+                  "Le concert a été annulé à cause de la pluie"
+                ],
+                "focus": "a été annulé",
+                "watch": "Passé composé passif."
+              },
+              {
+                "prompt": "Dis que les billets sont épuisés.",
+                "expected": [
+                  "Les billets sont epuises",
+                  "Les billets sont épuisés"
+                ],
+                "focus": "sont épuisés",
+                "watch": "Passif d'état."
+              },
+              {
+                "prompt": "Cite la source : d'après la mairie, les travaux prendront du retard.",
+                "expected": [
+                  "D'apres la mairie les travaux prendront du retard",
+                  "D'après la mairie, les travaux prendront du retard"
+                ],
+                "focus": "d'après",
+                "watch": "D'après + source."
+              },
+              {
+                "prompt": "Dis que tous les trains ont été supprimés.",
+                "expected": [
+                  "Tous les trains ont ete supprimes",
+                  "Tous les trains ont été supprimés"
+                ],
+                "focus": "ont été supprimés",
+                "watch": "Passif + participe."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u7-registre-e1",
+              "kind": "choice",
+              "prompt": "___ dit que le quartier va changer.",
+              "answers": [
+                "On"
+              ],
+              "explain": "Impersonnel : on dit que.",
+              "options": [
+                "On",
+                "Il",
+                "Ça",
+                "Ils"
+              ]
+            },
+            {
+              "id": "fr-foundations-u7-registre-e2",
+              "kind": "gap",
+              "prompt": "Le concert a été ___ à cause de la pluie. (annuler)",
+              "answers": [
+                "annulé",
+                "annule"
+              ],
+              "explain": "a été + participe passé."
+            },
+            {
+              "id": "fr-foundations-u7-registre-e3",
+              "kind": "order",
+              "prompt": "Info : tous les trains ont été supprimés.",
+              "answers": [
+                "Tous les trains ont été supprimés"
+              ],
+              "explain": "Passé composé passif."
+            },
+            {
+              "id": "fr-foundations-u7-registre-e4",
+              "kind": "written",
+              "prompt": "Rumeur : un marché va ouvrir, tu l'as entendu dire.",
+              "answers": [
+                "on dit qu'un nouveau marche va ouvrir",
+                "on dit qu'un nouveau marché va ouvrir"
+              ],
+              "explain": "On dit que + futur proche."
+            }
+          ],
+          "skills": [
+            "grammar:passive-intro",
+            "grammar:present-perfect",
+            "function:express-opinion",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular",
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "fr-foundations-u7-negocier",
+          "title": "Et si on se retrouvait à 50 ?",
+          "goal": "Négocier un accord : proposer au conditionnel, poser des conditions, conclure.",
+          "intro": {
+            "explanation": [
+              "Proposer : « Et si on se retrouvait à 50 ? », « Je vous donnerais 60 si vous incluez le transport ».",
+              "Poser des conditions : « Seulement si c'est livré aujourd'hui », « En échange, je veux la garantie ».",
+              "Conclure : « Marché conclu », « D'accord, mais avec une condition »."
+            ],
+            "examples": [
+              {
+                "text": "Et si on se retrouvait à 50 ?",
+                "meaning": "Proposition à l'imparfait."
+              },
+              {
+                "text": "Je vous donnerais 60 si vous incluez le transport.",
+                "meaning": "Conditionnel + si + présent."
+              },
+              {
+                "text": "Seulement si c'est livré aujourd'hui.",
+                "meaning": "Condition ferme."
+              },
+              {
+                "text": "En échange, je veux la garantie.",
+                "meaning": "Contre-offre."
+              },
+              {
+                "text": "Marché conclu.",
+                "meaning": "Conclusion."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "et si + imparfait ?",
+              "meaning": "Proposer.",
+              "note": "Et si on se retrouvait à… ?"
+            },
+            {
+              "text": "je …-rais si + présent",
+              "meaning": "Conditions.",
+              "note": "je vous donnerais 60 si…"
+            },
+            {
+              "text": "seulement si…",
+              "meaning": "Condition ferme.",
+              "note": "seulement si c'est aujourd'hui."
+            },
+            {
+              "text": "en échange, …",
+              "meaning": "Contre-offre.",
+              "note": "…la garantie."
+            },
+            {
+              "text": "marché conclu",
+              "meaning": "Conclure.",
+              "note": "après l'accord."
+            }
+          ],
+          "situation": "Vous marchandez une table d'occasion : première offre haute, offres conditionnelles, puis terrain d'entente.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Propose : et si on se retrouvait à 50 ?",
+                "expected": [
+                  "Et si on se retrouvait a 50",
+                  "Et si on se retrouvait à 50 ?",
+                  "Et si on se retrouvait à 50"
+                ],
+                "focus": "et si + imparfait",
+                "watch": "se retrouvait : proposition."
+              },
+              {
+                "prompt": "Offre conditionnelle : je vous donnerais 60 si vous incluez le transport.",
+                "expected": [
+                  "Je vous donnerais 60 si vous incluez le transport"
+                ],
+                "focus": "donnerais si",
+                "watch": "Conditionnel + si + présent."
+              },
+              {
+                "prompt": "Condition ferme : seulement si c'est livré aujourd'hui.",
+                "expected": [
+                  "Seulement si c'est livre aujourd'hui",
+                  "Seulement si c'est livré aujourd'hui"
+                ],
+                "focus": "seulement si",
+                "watch": "Si + présent."
+              },
+              {
+                "prompt": "Contre-offre : en échange, je veux la garantie.",
+                "expected": [
+                  "En echange je veux la garantie",
+                  "En échange, je veux la garantie"
+                ],
+                "focus": "en échange",
+                "watch": "En échange + présent."
+              },
+              {
+                "prompt": "Conclus l'accord.",
+                "expected": [
+                  "Marche conclu",
+                  "Marché conclu"
+                ],
+                "focus": "marché conclu",
+                "watch": "Formule fixe."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u7-negocier-e1",
+              "kind": "choice",
+              "prompt": "Et si on se ___ à 50 ?",
+              "answers": [
+                "retrouvait"
+              ],
+              "explain": "Proposition : et si + imparfait.",
+              "options": [
+                "retrouvait",
+                "retrouvera",
+                "retrouvé",
+                "retrouver"
+              ]
+            },
+            {
+              "id": "fr-foundations-u7-negocier-e2",
+              "kind": "gap",
+              "prompt": "Je vous ___ 60 si vous incluez le transport. (donner, conditionnel)",
+              "answers": [
+                "donnerais",
+                "donnerai pas"
+              ],
+              "explain": "Conditionnel présent : donnerais."
+            },
+            {
+              "id": "fr-foundations-u7-negocier-e3",
+              "kind": "order",
+              "prompt": "Condition : seulement si c'est livré aujourd'hui.",
+              "answers": [
+                "Seulement si c'est livré aujourd'hui"
+              ],
+              "explain": "seulement si + présent."
+            },
+            {
+              "id": "fr-foundations-u7-negocier-e4",
+              "kind": "written",
+              "prompt": "Concluez, mais avec une réserve.",
+              "answers": [
+                "d'accord mais avec une condition",
+                "d'accord, mais avec une condition"
+              ],
+              "explain": "D'accord, mais…"
+            }
+          ],
+          "skills": [
+            "function:negotiate",
+            "grammar:second-conditional",
+            "speaking:negotiate",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-foundations-u8",
+      "title": "Médias et argument",
+      "subtitle": "La nouvelle que j'ai lue",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "fr-b2-actu",
+          "title": "Semaine d'actu",
+          "subtitle": "Ce qui s'est dit",
+          "symbol": "newspaper",
+          "category": "Course",
+          "situation": "Vous résumez la semaine avec des relatives : qui, où, quoi.",
+          "colorIndex": 0
+        },
+        {
+          "id": "fr-b2-chronique",
+          "title": "Ta chronique",
+          "subtitle": "D'un côté… de l'autre…",
+          "symbol": "pencil",
+          "category": "Course",
+          "situation": "Vous écrivez une chronique sur la piétonnisation du centre.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "fr-foundations-u7-relatives",
+          "title": "La nouvelle que j'ai lue",
+          "goal": "Raconter l'actualité avec les relatives : qui, que, où, dont.",
+          "intro": {
+            "explanation": [
+              "La relative précise le nom : « La nouvelle que j'ai lue dit que… », « Le journaliste qui l'a interviewé… ».",
+              "« Où » pour les lieux : « La place où ils ont manifesté ». « Dont » remplit « de + qqch » : « l'affaire dont tout le monde parle ».",
+              "Dans les infos, les relatives compressent : qui, où, quoi."
+            ],
+            "examples": [
+              {
+                "text": "La nouvelle que j'ai lue dit que…",
+                "meaning": "Relative objet."
+              },
+              {
+                "text": "Le journaliste qui l'a interviewé a démissionné.",
+                "meaning": "Relative sujet."
+              },
+              {
+                "text": "La place où ils ont manifesté est centrale.",
+                "meaning": "où + lieu."
+              },
+              {
+                "text": "L'affaire dont tout le monde parle a rebondi.",
+                "meaning": "dont = de + ça."
+              },
+              {
+                "text": "Tout ce que je sais vient de la radio.",
+                "meaning": "tout ce que + verbe."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "le/la que…",
+              "meaning": "Relative.",
+              "note": "la nouvelle que j'ai lue."
+            },
+            {
+              "text": "qui…",
+              "meaning": "Sujet/personne.",
+              "note": "qui l'a interviewé."
+            },
+            {
+              "text": "où…",
+              "meaning": "Lieu.",
+              "note": "la place où…"
+            },
+            {
+              "text": "dont…",
+              "meaning": "de + qqch.",
+              "note": "l'affaire dont…"
+            },
+            {
+              "text": "tout ce que…",
+              "meaning": "Généraliser.",
+              "note": "tout ce que je sais."
+            }
+          ],
+          "situation": "Vous résumez une semaine d'actualité : l'histoire qui vous a marqué, la personne qui a parlé et le lieu où c'est arrivé.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Résume : la nouvelle que tu as lue dit que le musée agrandit ses horaires.",
+                "expected": [
+                  "La nouvelle que j'ai lue dit que le musee agrandit ses horaires",
+                  "La nouvelle que j'ai lue dit que le musée agrandit ses horaires"
+                ],
+                "focus": "que j'ai lue",
+                "watch": "Relative sur la nouvelle."
+              },
+              {
+                "prompt": "Dis qui : le journaliste qui l'a interviewé a démissionné.",
+                "expected": [
+                  "Le journaliste qui l'a interviewe a demissionne",
+                  "Le journaliste qui l'a interviewé a démissionné"
+                ],
+                "focus": "qui l'a interviewé",
+                "watch": "Relative sujet."
+              },
+              {
+                "prompt": "Lieu : la place où ils ont manifesté est centrale.",
+                "expected": [
+                  "La place ou ils ont manifeste est centrale",
+                  "La place où ils ont manifesté est centrale"
+                ],
+                "focus": "où",
+                "watch": "où + lieu."
+              },
+              {
+                "prompt": "Dont : l'affaire dont tout le monde parle a rebondi.",
+                "expected": [
+                  "L'affaire dont tout le monde parle a rebondi"
+                ],
+                "focus": "dont",
+                "watch": "dont = de + ça."
+              },
+              {
+                "prompt": "Généralise : tout ce que je sais vient de la radio.",
+                "expected": [
+                  "Tout ce que je sais vient de la radio"
+                ],
+                "focus": "tout ce que",
+                "watch": "tout ce que + verbe."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u7-relatives-e1",
+              "kind": "choice",
+              "prompt": "La nouvelle ___ j'ai lue dit que le musée s'agrandit.",
+              "answers": [
+                "que"
+              ],
+              "explain": "Objet : la nouvelle que j'ai lue.",
+              "options": [
+                "que",
+                "qui",
+                "dont",
+                "où"
+              ]
+            },
+            {
+              "id": "fr-foundations-u7-relatives-e2",
+              "kind": "gap",
+              "prompt": "La place ___ ils ont manifesté est centrale.",
+              "answers": [
+                "où",
+                "ou"
+              ],
+              "explain": "Lieu : où."
+            },
+            {
+              "id": "fr-foundations-u7-relatives-e3",
+              "kind": "order",
+              "prompt": "Sujet : le journaliste qui l'a interviewé a démissionné.",
+              "answers": [
+                "Le journaliste qui l'a interviewé a démissionné"
+              ],
+              "explain": "Relative sujet."
+            },
+            {
+              "id": "fr-foundations-u7-relatives-e4",
+              "kind": "written",
+              "prompt": "Ton info : une rue va fermer (utilise « la nouvelle que j'ai lue »).",
+              "answers": [
+                "la nouvelle que j'ai lue dit que la rue fermera",
+                "la nouvelle que j'ai lue dit que la rue va fermer"
+              ],
+              "explain": "La nouvelle que + passé composé."
+            }
+          ],
+          "skills": [
+            "grammar:relative-clauses",
+            "grammar:present-perfect",
+            "function:express-opinion",
+            "vocab:work"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "fr-foundations-u7-argumenter",
+          "title": "D'un côté… de l'autre…",
+          "goal": "Écrire et défendre une opinion structurée : thèse, arguments, concession, conclusion.",
+          "intro": {
+            "explanation": [
+              "Structure : thèse (« Je pense qu'on devrait piétonniser le centre »), arguments (« d'un côté…, de l'autre… »), concession (« c'est vrai que…, mais… »).",
+              "La concession crédibilise : tu reconnais l'argument adverse avant de le répondre.",
+              "Conclusion avec poids : « Pour tout cela, je défends la mesure »."
+            ],
+            "examples": [
+              {
+                "text": "Je pense qu'on devrait piétonniser le centre.",
+                "meaning": "Thèse."
+              },
+              {
+                "text": "D'un côté, la pollution baisse.",
+                "meaning": "Argument 1."
+              },
+              {
+                "text": "De l'autre, le commerce souffre.",
+                "meaning": "Argument 2 (contraire)."
+              },
+              {
+                "text": "C'est vrai que c'est gênant, mais les chiffres disent autre chose.",
+                "meaning": "Concession + réponse."
+              },
+              {
+                "text": "Pour tout cela, je défends la mesure.",
+                "meaning": "Conclusion."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "je pense qu'on devrait…",
+              "meaning": "Thèse.",
+              "note": "…piétonniser."
+            },
+            {
+              "text": "d'un côté… de l'autre…",
+              "meaning": "Arguments.",
+              "note": "les deux faces."
+            },
+            {
+              "text": "c'est vrai que…, mais…",
+              "meaning": "Concession.",
+              "note": "reconnaître puis répondre."
+            },
+            {
+              "text": "les chiffres disent…",
+              "meaning": "Preuve.",
+              "note": "argument d'autorité."
+            },
+            {
+              "text": "pour tout cela, …",
+              "meaning": "Conclusion.",
+              "note": "registre soutenu."
+            }
+          ],
+          "situation": "Vous écrivez une chronique d'opinion sur la piétonnisation du centre : thèse, deux faces, concession et conclusion.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Thèse : je pense qu'on devrait piétonniser le centre.",
+                "expected": [
+                  "Je pense qu'on devrait pietonniser le centre",
+                  "Je pense qu'on devrait piétonniser le centre"
+                ],
+                "focus": "je pense que",
+                "watch": "Thèse + devoir."
+              },
+              {
+                "prompt": "Argument 1 : d'un côté, la pollution baisse.",
+                "expected": [
+                  "D'un cote la pollution baisse",
+                  "D'un côté, la pollution baisse"
+                ],
+                "focus": "d'un côté",
+                "watch": "Premier argument."
+              },
+              {
+                "prompt": "Argument contraire : de l'autre, le commerce souffre.",
+                "expected": [
+                  "De l'autre le commerce souffre",
+                  "De l'autre, le commerce souffre"
+                ],
+                "focus": "de l'autre",
+                "watch": "Seconde face."
+              },
+              {
+                "prompt": "Concède : c'est vrai que c'est gênant, mais les chiffres disent autre chose.",
+                "expected": [
+                  "C'est vrai que c'est genant mais les chiffres disent autre chose",
+                  "C'est vrai que c'est gênant, mais les chiffres disent autre chose"
+                ],
+                "focus": "c'est vrai que",
+                "watch": "Concession + mais."
+              },
+              {
+                "prompt": "Conclus : pour tout cela, je défends la mesure.",
+                "expected": [
+                  "Pour tout cela je defends la mesure",
+                  "Pour tout cela, je défends la mesure"
+                ],
+                "focus": "pour tout cela",
+                "watch": "Conclusion formelle."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "fr-foundations-u7-argumenter-e1",
+              "kind": "choice",
+              "prompt": "___ un côté, la pollution baisse.",
+              "answers": [
+                "D'"
+              ],
+              "explain": "d'un côté = premier argument.",
+              "options": [
+                "D'",
+                "Pour",
+                "Dans",
+                "Par"
+              ]
+            },
+            {
+              "id": "fr-foundations-u7-argumenter-e2",
+              "kind": "gap",
+              "prompt": "C'est vrai que c'est gênant, ___ les chiffres disent autre chose.",
+              "answers": [
+                "mais"
+              ],
+              "explain": "Concession + contraste."
+            },
+            {
+              "id": "fr-foundations-u7-argumenter-e3",
+              "kind": "order",
+              "prompt": "Conclusion : pour tout cela, je défends la mesure.",
+              "answers": [
+                "Pour tout cela, je défends la mesure"
+              ],
+              "explain": "pour tout cela."
+            },
+            {
+              "id": "fr-foundations-u7-argumenter-e4",
+              "kind": "written",
+              "prompt": "Ta thèse sur l'extension du tramway.",
+              "answers": [
+                "je pense qu'on devrait prolonger le tramway",
+                "je pense qu'on devrait agrandir le tram"
+              ],
+              "explain": "Je pense qu'on devrait…"
+            }
+          ],
+          "skills": [
+            "writing:argument",
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

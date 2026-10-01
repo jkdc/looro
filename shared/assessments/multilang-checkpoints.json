@@ -3532,6 +3532,1150 @@
           "explain": "Opinião + porque + motivo."
         }
       ]
+    },
+    {
+      "id": "checkpoint-es-b2",
+      "languageID": "es",
+      "level": "B2",
+      "title": "B2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-es-b2-q1",
+          "kind": "choice",
+          "skill": "grammar:second-conditional",
+          "prompt": "Si ___ más tiempo, viajaría más.",
+          "answers": [
+            "tuviera"
+          ],
+          "explain": "Si irreal: imperfecto de subjuntivo.",
+          "options": [
+            "tuviera",
+            "tendría",
+            "tengo",
+            "tenía"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b2-q2",
+          "kind": "gap",
+          "skill": "grammar:second-conditional",
+          "prompt": "Si pudiera, ___ de trabajo. (cambiar)",
+          "answers": [
+            "cambiaría",
+            "cambiaria"
+          ],
+          "explain": "Si pudiera + condicional."
+        },
+        {
+          "id": "checkpoint-es-b2-q3",
+          "kind": "choice",
+          "skill": "grammar:passive-intro",
+          "prompt": "El concierto ___ cancelado por la lluvia.",
+          "answers": [
+            "fue"
+          ],
+          "explain": "Pasiva: ser + participio.",
+          "options": [
+            "fue",
+            "es siendo",
+            "ha siendo",
+            "ser"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b2-q4",
+          "kind": "choice",
+          "skill": "grammar:relative-clauses",
+          "prompt": "La noticia ___ leí dice lo contrario.",
+          "answers": [
+            "que"
+          ],
+          "explain": "Cosa: la noticia que leí.",
+          "options": [
+            "que",
+            "quien",
+            "cuyo",
+            "donde"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b2-q5",
+          "kind": "gap",
+          "skill": "grammar:relative-clauses",
+          "prompt": "La plaza ___ se manifestaron es céntrica.",
+          "answers": [
+            "donde"
+          ],
+          "explain": "Lugar: donde."
+        },
+        {
+          "id": "checkpoint-es-b2-q6",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Ganaba bien, ___ no tenía vida.",
+          "answers": [
+            "pero",
+            "sino",
+            "aunque"
+          ],
+          "explain": "Contraste: pero."
+        },
+        {
+          "id": "checkpoint-es-b2-q7",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Este barrio es ___ tranquilo ___ el centro.",
+          "answers": [
+            "más / que"
+          ],
+          "explain": "Comparativo: más … que.",
+          "options": [
+            "más / que",
+            "muy / que",
+            "más / como",
+            "tan / que"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b2-q8",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , es la mejor opción.",
+          "answers": [
+            "Para mí"
+          ],
+          "explain": "Para mí + opinión.",
+          "options": [
+            "Para mí",
+            "Por mí",
+            "A mí",
+            "Conmigo"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b2-q9",
+          "kind": "written",
+          "skill": "function:negotiate",
+          "prompt": "Propón cerrar a 50 con una condición.",
+          "answers": [
+            "te daria 50 si lo llevas hoy",
+            "te daría 50 si lo llevas hoy",
+            "y si lo dejamos en 50",
+            "¿y si lo dejamos en 50 ?"
+          ],
+          "explain": "Te daría 50 si… / ¿Y si lo dejamos en 50?"
+        },
+        {
+          "id": "checkpoint-es-b2-q10",
+          "kind": "choice",
+          "skill": "vocab:work",
+          "prompt": "Persona que dirige una reunión de trabajo:",
+          "answers": [
+            "el jefe"
+          ],
+          "explain": "El jefe dirige.",
+          "options": [
+            "el jefe",
+            "el vecino",
+            "el cliente",
+            "el repartidor"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b2-q11",
+          "kind": "gap",
+          "skill": "vocab:work",
+          "prompt": "Trabajo con un ___ de cinco personas. (equipo)",
+          "answers": [
+            "equipo"
+          ],
+          "explain": "equipo = team."
+        },
+        {
+          "id": "checkpoint-es-b2-q12",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "«¿Te ___ bien el viernes?» — «Perfecto».",
+          "answers": [
+            "viene"
+          ],
+          "explain": "¿Te viene bien? = ¿Te sirve?",
+          "options": [
+            "viene",
+            "vas",
+            "haces",
+            "estás"
+          ]
+        },
+        {
+          "id": "checkpoint-es-b2-q13",
+          "kind": "written",
+          "skill": "writing:argument",
+          "prompt": "Da tu tesis y un argumento sobre el transporte público.",
+          "answers": [
+            "creo que deberiamos ampliar el metro porque es mas limpio",
+            "creo que deberíamos ampliar el metro porque es más limpio",
+            "creo que el metro deberia ampliarse",
+            "deberiamos ampliar el metro"
+          ],
+          "explain": "Tesis + porque + razón."
+        },
+        {
+          "id": "checkpoint-es-b2-q14",
+          "kind": "written",
+          "skill": "writing:email",
+          "prompt": "Escribe una línea de email formal para pedir información.",
+          "answers": [
+            "le escribo para pedir informacion sobre",
+            "le escribo para pedir información sobre",
+            "quisiera pedir informacion sobre",
+            "quisiera pedir información sobre"
+          ],
+          "explain": "Le escribo para… / Quisiera…"
+        },
+        {
+          "id": "checkpoint-es-b2-q15",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Opina y justifica: prefiero el pueblo porque es tranquilo.",
+          "answers": [
+            "prefiero el pueblo porque es tranquilo",
+            "me gusta mas el pueblo porque es tranquilo",
+            "prefiero el pueblo porque es mas tranquilo"
+          ],
+          "explain": "Opinión + porque + razón."
+        },
+        {
+          "id": "checkpoint-es-b2-q16",
+          "kind": "written",
+          "skill": "speaking:negotiate",
+          "prompt": "Responde cediendo a medias: acepto, pero con una condición.",
+          "answers": [
+            "acepto pero con una condicion",
+            "acepto, pero con una condición",
+            "de acuerdo pero con una condicion",
+            "de acuerdo, pero con una condición"
+          ],
+          "explain": "Acepto, pero…"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-fr-b2",
+      "languageID": "fr",
+      "level": "B2",
+      "title": "B2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-fr-b2-q1",
+          "kind": "choice",
+          "skill": "grammar:second-conditional",
+          "prompt": "Si ___ plus de temps, je voyagerais plus.",
+          "answers": [
+            "j'avais"
+          ],
+          "explain": "Si + imparfait, jamais si + conditionnel.",
+          "options": [
+            "j'avais",
+            "j'aurais",
+            "j'ai",
+            "j'avais eu"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b2-q2",
+          "kind": "gap",
+          "skill": "grammar:second-conditional",
+          "prompt": "Si je pouvais, je ___ de travail. (changer)",
+          "answers": [
+            "changerais",
+            "changerais bien"
+          ],
+          "explain": "Si je pouvais + conditionnel."
+        },
+        {
+          "id": "checkpoint-fr-b2-q3",
+          "kind": "choice",
+          "skill": "grammar:passive-intro",
+          "prompt": "Le concert ___ été annulé à cause de la pluie.",
+          "answers": [
+            "a"
+          ],
+          "explain": "Passé composé passif : a été + participe.",
+          "options": [
+            "a",
+            "est",
+            "avait",
+            "sera pas"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b2-q4",
+          "kind": "choice",
+          "skill": "grammar:relative-clauses",
+          "prompt": "La nouvelle ___ j'ai lue dit le contraire.",
+          "answers": [
+            "que"
+          ],
+          "explain": "Objet : la nouvelle que j'ai lue.",
+          "options": [
+            "que",
+            "qui",
+            "dont",
+            "où"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b2-q5",
+          "kind": "gap",
+          "skill": "grammar:relative-clauses",
+          "prompt": "La place ___ ils ont manifesté est centrale.",
+          "answers": [
+            "où",
+            "ou"
+          ],
+          "explain": "Lieu : où."
+        },
+        {
+          "id": "checkpoint-fr-b2-q6",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Je gagnais bien, ___ je n'avais pas de vie.",
+          "answers": [
+            "mais"
+          ],
+          "explain": "Contraste : mais."
+        },
+        {
+          "id": "checkpoint-fr-b2-q7",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Ce quartier est ___ calme ___ le centre.",
+          "answers": [
+            "plus / que"
+          ],
+          "explain": "Comparatif : plus … que.",
+          "options": [
+            "plus / que",
+            "très / que",
+            "plus / comme",
+            "aussi / que"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b2-q8",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , c'est la meilleure option.",
+          "answers": [
+            "Pour moi"
+          ],
+          "explain": "Pour moi + opinion.",
+          "options": [
+            "Pour moi",
+            "Par moi",
+            "À moi",
+            "Avec moi"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b2-q9",
+          "kind": "written",
+          "skill": "function:negotiate",
+          "prompt": "Propose de conclure à 50 avec une condition.",
+          "answers": [
+            "je vous donnerais 50 si vous livrez aujourd'hui",
+            "et si on se retrouvait a 50",
+            "et si on se retrouvait à 50 ?"
+          ],
+          "explain": "Je vous donnerais 50 si… / Et si on se retrouvait à 50 ?"
+        },
+        {
+          "id": "checkpoint-fr-b2-q10",
+          "kind": "choice",
+          "skill": "vocab:work",
+          "prompt": "Personne qui dirige une réunion de travail :",
+          "answers": [
+            "le chef"
+          ],
+          "explain": "Le chef dirige.",
+          "options": [
+            "le chef",
+            "le voisin",
+            "le client",
+            "le livreur"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b2-q11",
+          "kind": "gap",
+          "skill": "vocab:work",
+          "prompt": "Je travaille dans une ___ de cinq personnes. (équipe)",
+          "answers": [
+            "équipe",
+            "equipe"
+          ],
+          "explain": "équipe = team."
+        },
+        {
+          "id": "checkpoint-fr-b2-q12",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Ça ___ samedi ? » — « Parfait ».",
+          "answers": [
+            "te va"
+          ],
+          "explain": "Ça te va ? = Ça te convient ?",
+          "options": [
+            "te va",
+            "tu vas",
+            "tu fais",
+            "tu es"
+          ]
+        },
+        {
+          "id": "checkpoint-fr-b2-q13",
+          "kind": "written",
+          "skill": "writing:argument",
+          "prompt": "Donne ta thèse et un argument sur les transports publics.",
+          "answers": [
+            "je pense qu'on devrait prolonger le metro parce que c'est plus propre",
+            "je pense qu'on devrait prolonger le métro parce que c'est plus propre",
+            "on devrait prolonger le metro"
+          ],
+          "explain": "Thèse + parce que + raison."
+        },
+        {
+          "id": "checkpoint-fr-b2-q14",
+          "kind": "written",
+          "skill": "writing:email",
+          "prompt": "Écris une ligne d'e-mail formel pour demander une information.",
+          "answers": [
+            "je vous ecris pour demander des informations sur",
+            "je vous écris pour demander des informations sur",
+            "je souhaiterais demander des informations sur"
+          ],
+          "explain": "Je vous écris pour… / Je souhaiterais…"
+        },
+        {
+          "id": "checkpoint-fr-b2-q15",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Donne ton avis et justifie : je préfère le village parce que c'est calme.",
+          "answers": [
+            "je prefere le village parce que c'est calme",
+            "je préfère le village parce que c'est calme",
+            "j'aime plus le village parce que c'est calme"
+          ],
+          "explain": "Avis + parce que + raison."
+        },
+        {
+          "id": "checkpoint-fr-b2-q16",
+          "kind": "written",
+          "skill": "speaking:negotiate",
+          "prompt": "Réponds en cédant à moitié : d'accord, mais à une condition.",
+          "answers": [
+            "d'accord mais a une condition",
+            "d'accord, mais à une condition",
+            "d'accord mais avec une condition",
+            "d'accord, mais avec une condition"
+          ],
+          "explain": "D'accord, mais…"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-it-b2",
+      "languageID": "it",
+      "level": "B2",
+      "title": "B2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-it-b2-q1",
+          "kind": "choice",
+          "skill": "grammar:second-conditional",
+          "prompt": "Se ___ più tempo, viaggerei di più.",
+          "answers": [
+            "avessi"
+          ],
+          "explain": "Se + congiuntivo imperfetto, mai se + condizionale.",
+          "options": [
+            "avessi",
+            "avrei",
+            "ho",
+            "avevo"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b2-q2",
+          "kind": "gap",
+          "skill": "grammar:second-conditional",
+          "prompt": "Se potessi, ___ lavoro. (cambiare)",
+          "answers": [
+            "cambierei"
+          ],
+          "explain": "Se potessi + condizionale."
+        },
+        {
+          "id": "checkpoint-it-b2-q3",
+          "kind": "choice",
+          "skill": "grammar:passive-intro",
+          "prompt": "Il concerto ___ stato cancellato per la pioggia.",
+          "answers": [
+            "è"
+          ],
+          "explain": "Passivo: essere + participio.",
+          "options": [
+            "è",
+            "ha",
+            "era",
+            "sarà no"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b2-q4",
+          "kind": "choice",
+          "skill": "grammar:relative-clauses",
+          "prompt": "La notizia ___ ho letto dice il contrario.",
+          "answers": [
+            "che"
+          ],
+          "explain": "Cosa: la notizia che ho letto.",
+          "options": [
+            "che",
+            "chi",
+            "il cui",
+            "dove"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b2-q5",
+          "kind": "gap",
+          "skill": "grammar:relative-clauses",
+          "prompt": "La piazza ___ hanno manifestato è centrale.",
+          "answers": [
+            "dove"
+          ],
+          "explain": "Luogo: dove."
+        },
+        {
+          "id": "checkpoint-it-b2-q6",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Guadagnavo bene, ___ non avevo vita.",
+          "answers": [
+            "ma",
+            "però"
+          ],
+          "explain": "Contrasto: ma."
+        },
+        {
+          "id": "checkpoint-it-b2-q7",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Questo quartiere è ___ tranquillo ___ il centro.",
+          "answers": [
+            "più / che"
+          ],
+          "explain": "Comparativo: più … che.",
+          "options": [
+            "più / che",
+            "molto / che",
+            "più / come",
+            "così / che"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b2-q8",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , è la migliore opzione.",
+          "answers": [
+            "Per me"
+          ],
+          "explain": "Per me + opinione.",
+          "options": [
+            "Per me",
+            "Da me",
+            "A me",
+            "Con me"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b2-q9",
+          "kind": "written",
+          "skill": "function:negotiate",
+          "prompt": "Proponi di chiudere a 50 con una condizione.",
+          "answers": [
+            "le darei 50 se consegna oggi",
+            "e se chiudessimo a 50",
+            "e se chiudessimo a 50 ?"
+          ],
+          "explain": "Le darei 50 se… / E se chiudessimo a 50 ?"
+        },
+        {
+          "id": "checkpoint-it-b2-q10",
+          "kind": "choice",
+          "skill": "vocab:work",
+          "prompt": "Persona che dirige una riunione di lavoro:",
+          "answers": [
+            "il capo"
+          ],
+          "explain": "Il capo dirige.",
+          "options": [
+            "il capo",
+            "il vicino",
+            "il cliente",
+            "il fattorino"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b2-q11",
+          "kind": "gap",
+          "skill": "vocab:work",
+          "prompt": "Lavoro in un ___ di cinque persone. (squadra)",
+          "answers": [
+            "squadra"
+          ],
+          "explain": "squadra = equipo."
+        },
+        {
+          "id": "checkpoint-it-b2-q12",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Sabato ti ___ ? » — « Perfetto ».",
+          "answers": [
+            "va"
+          ],
+          "explain": "Ti va ? = Ti conviene ?",
+          "options": [
+            "va",
+            "vai",
+            "fai",
+            "stai"
+          ]
+        },
+        {
+          "id": "checkpoint-it-b2-q13",
+          "kind": "written",
+          "skill": "writing:argument",
+          "prompt": "Dai la tua tesi e un argomento sui mezzi pubblici.",
+          "answers": [
+            "penso che dovremmo allungare la metro perche e piu pulita",
+            "penso che dovremmo allungare la metro perché è più pulita",
+            "dovremmo allungare la metro"
+          ],
+          "explain": "Tesi + perché + motivo."
+        },
+        {
+          "id": "checkpoint-it-b2-q14",
+          "kind": "written",
+          "skill": "writing:email",
+          "prompt": "Scrivi una riga di email formale per chiedere un'informazione.",
+          "answers": [
+            "le scrivo per chiedere informazioni su",
+            "vorrei chiedere informazioni su",
+            "le scrivo per chiedere un'informazione su"
+          ],
+          "explain": "Le scrivo per… / Vorrei…"
+        },
+        {
+          "id": "checkpoint-it-b2-q15",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Dai il tuo parere e giustifica: preferisco il paese perché è tranquillo.",
+          "answers": [
+            "preferisco il paese perche e tranquillo",
+            "preferisco il paese perché è tranquillo",
+            "mi piace piu il paese perché è tranquillo"
+          ],
+          "explain": "Parere + perché + motivo."
+        },
+        {
+          "id": "checkpoint-it-b2-q16",
+          "kind": "written",
+          "skill": "speaking:negotiate",
+          "prompt": "Rispondi cedendo a metà: d'accordo, ma a una condizione.",
+          "answers": [
+            "d'accordo ma a una condizione",
+            "d'accordo, ma a una condizione",
+            "d'accordo ma con una condizione"
+          ],
+          "explain": "D'accordo, ma…"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-de-b2",
+      "languageID": "de",
+      "level": "B2",
+      "title": "B2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-de-b2-q1",
+          "kind": "choice",
+          "skill": "grammar:second-conditional",
+          "prompt": "Wenn ich mehr Zeit ___, würde ich mehr reisen.",
+          "answers": [
+            "hätte"
+          ],
+          "explain": "Konjunktiv II: hätte.",
+          "options": [
+            "hätte",
+            "habe",
+            "hatte",
+            "habe würde"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b2-q2",
+          "kind": "gap",
+          "skill": "grammar:second-conditional",
+          "prompt": "Wenn ich könnte, ___ ich den Job wechseln. (werden)",
+          "answers": [
+            "würde",
+            "wuerde"
+          ],
+          "explain": "würde + Infinitiv."
+        },
+        {
+          "id": "checkpoint-de-b2-q3",
+          "kind": "choice",
+          "skill": "grammar:passive-intro",
+          "prompt": "Das Konzert wurde wegen des Regens ___.",
+          "answers": [
+            "abgesagt"
+          ],
+          "explain": "Passiv: wurde + Partizip II.",
+          "options": [
+            "abgesagt",
+            "absagen",
+            "absagt",
+            "abzusagen"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b2-q4",
+          "kind": "choice",
+          "skill": "grammar:relative-clauses",
+          "prompt": "Die Nachricht, ___ ich gelesen habe, sagt das Gegenteil.",
+          "answers": [
+            "die"
+          ],
+          "explain": "die Nachricht (fem): die.",
+          "options": [
+            "die",
+            "der",
+            "das",
+            "den"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b2-q5",
+          "kind": "gap",
+          "skill": "grammar:relative-clauses",
+          "prompt": "Der Platz, ___ sie demonstriert haben, ist zentral.",
+          "answers": [
+            "wo"
+          ],
+          "explain": "Ort: wo."
+        },
+        {
+          "id": "checkpoint-de-b2-q6",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Ich habe gut verdient, ___ ich hatte kein Leben.",
+          "answers": [
+            "aber",
+            "doch"
+          ],
+          "explain": "Kontrast: aber."
+        },
+        {
+          "id": "checkpoint-de-b2-q7",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Dieses Viertel ist ___ ruhig ___ das Zentrum.",
+          "answers": [
+            "ruhiger / als"
+          ],
+          "explain": "Komparativ: ruhiger … als.",
+          "options": [
+            "ruhiger / als",
+            "sehr / als",
+            "ruhiger / wie",
+            "so / wie"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b2-q8",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ ist es die beste Option.",
+          "answers": [
+            "Für mich"
+          ],
+          "explain": "Für mich + Meinung.",
+          "options": [
+            "Für mich",
+            "Von mir",
+            "Bei mir",
+            "Mit mir"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b2-q9",
+          "kind": "written",
+          "skill": "function:negotiate",
+          "prompt": "Schlage vor, bei 50 abzuschließen – mit Bedingung.",
+          "answers": [
+            "ich wurde ihnen 50 geben wenn sie heute liefern",
+            "ich würde ihnen 50 geben, wenn sie heute liefern",
+            "waren sie bei 50 dabei",
+            "wären sie bei 50 dabei ?"
+          ],
+          "explain": "Ich würde 50 geben, wenn… / Wären Sie bei 50 dabei ?"
+        },
+        {
+          "id": "checkpoint-de-b2-q10",
+          "kind": "choice",
+          "skill": "vocab:work",
+          "prompt": "Person, die ein Arbeitstreffen leitet:",
+          "answers": [
+            "der Chef"
+          ],
+          "explain": "Der Chef leitet.",
+          "options": [
+            "der Chef",
+            "der Nachbar",
+            "der Kunde",
+            "der Bote"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b2-q11",
+          "kind": "gap",
+          "skill": "vocab:work",
+          "prompt": "Ich arbeite in einem ___ von fünf Personen. (Team)",
+          "answers": [
+            "team"
+          ],
+          "explain": "Team = equipo."
+        },
+        {
+          "id": "checkpoint-de-b2-q12",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« ___ Samstag ? » — « Perfekt ».",
+          "answers": [
+            "Passt dir"
+          ],
+          "explain": "Passt dir Samstag ? = passt es dir ?",
+          "options": [
+            "Passt dir",
+            "Gehst du",
+            "Machst du",
+            "Bist du"
+          ]
+        },
+        {
+          "id": "checkpoint-de-b2-q13",
+          "kind": "written",
+          "skill": "writing:argument",
+          "prompt": "Nenne deine These und ein Argument zum ÖPNV.",
+          "answers": [
+            "ich finde wir sollten die ubahn verlangern weil sie sauberer ist",
+            "ich finde, wir sollten die ubahn verlängern, weil sie sauberer ist",
+            "wir sollten die ubahn verlangern"
+          ],
+          "explain": "These + weil + Grund."
+        },
+        {
+          "id": "checkpoint-de-b2-q14",
+          "kind": "written",
+          "skill": "writing:email",
+          "prompt": "Schreibe eine Zeile einer formellen E-Mail, um nachzufragen.",
+          "answers": [
+            "ich schreibe ihnen um informationen zu bekommen",
+            "ich mochte nach informationen fragen",
+            "ich schreibe ihnen, weil ich informationen brauche"
+          ],
+          "explain": "Ich schreibe Ihnen, um… / Ich möchte…"
+        },
+        {
+          "id": "checkpoint-de-b2-q15",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Gib deine Meinung und begründe: ich wohne lieber im Dorf, weil es ruhig ist.",
+          "answers": [
+            "ich wohne lieber im dorf weil es ruhig ist",
+            "ich mag das dorf mehr weil es ruhig ist",
+            "ich finde das dorf besser weil es ruhig ist"
+          ],
+          "explain": "Meinung + weil + Grund."
+        },
+        {
+          "id": "checkpoint-de-b2-q16",
+          "kind": "written",
+          "skill": "speaking:negotiate",
+          "prompt": "Antworte mit halbem Zugeständnis: einverstanden, aber unter einer Bedingung.",
+          "answers": [
+            "einverstanden aber unter einer bedingung",
+            "einverstanden, aber unter einer bedingung",
+            "abgemacht aber mit einer bedingung"
+          ],
+          "explain": "Einverstanden, aber…"
+        }
+      ]
+    },
+    {
+      "id": "checkpoint-pt-b2",
+      "languageID": "pt",
+      "level": "B2",
+      "title": "B2 checkpoint",
+      "thresholds": {
+        "overall": 70,
+        "grammar": 60,
+        "vocab": 60
+      },
+      "questions": [
+        {
+          "id": "checkpoint-pt-b2-q1",
+          "kind": "choice",
+          "skill": "grammar:second-conditional",
+          "prompt": "Se eu ___ mais tempo, viajaria mais.",
+          "answers": [
+            "tivesse"
+          ],
+          "explain": "Se + imperfeito do subjuntivo, nunca se + condicional.",
+          "options": [
+            "tivesse",
+            "teria",
+            "tenho",
+            "tinha"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b2-q2",
+          "kind": "gap",
+          "skill": "grammar:second-conditional",
+          "prompt": "Se pudesse, ___ de emprego. (mudar)",
+          "answers": [
+            "mudaria"
+          ],
+          "explain": "Se pudesse + condicional."
+        },
+        {
+          "id": "checkpoint-pt-b2-q3",
+          "kind": "choice",
+          "skill": "grammar:passive-intro",
+          "prompt": "O show ___ cancelado por causa da chuva.",
+          "answers": [
+            "foi"
+          ],
+          "explain": "Passiva: ser + particípio.",
+          "options": [
+            "foi",
+            "está sendo",
+            "tem sido",
+            "ser"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b2-q4",
+          "kind": "choice",
+          "skill": "grammar:relative-clauses",
+          "prompt": "A notícia ___ li diz o contrário.",
+          "answers": [
+            "que"
+          ],
+          "explain": "Coisa: a notícia que li.",
+          "options": [
+            "que",
+            "quem",
+            "cujo",
+            "onde"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b2-q5",
+          "kind": "gap",
+          "skill": "grammar:relative-clauses",
+          "prompt": "A praça ___ se manifestaram é central.",
+          "answers": [
+            "onde"
+          ],
+          "explain": "Lugar: onde."
+        },
+        {
+          "id": "checkpoint-pt-b2-q6",
+          "kind": "gap",
+          "skill": "grammar:connectors",
+          "prompt": "Ganhava bem, ___ não tinha vida.",
+          "answers": [
+            "mas",
+            "porém",
+            "contudo"
+          ],
+          "explain": "Contraste: mas."
+        },
+        {
+          "id": "checkpoint-pt-b2-q7",
+          "kind": "choice",
+          "skill": "grammar:comparatives",
+          "prompt": "Este bairro é ___ tranquilo ___ o centro.",
+          "answers": [
+            "mais / do que"
+          ],
+          "explain": "Comparativo: mais … do que.",
+          "options": [
+            "mais / do que",
+            "muito / do que",
+            "mais / como",
+            "tão / quanto"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b2-q8",
+          "kind": "choice",
+          "skill": "function:express-opinion",
+          "prompt": "___ , é a melhor opção.",
+          "answers": [
+            "Para mim"
+          ],
+          "explain": "Para mim + opinião.",
+          "options": [
+            "Para mim",
+            "Por mim",
+            "A mim",
+            "Comigo"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b2-q9",
+          "kind": "written",
+          "skill": "function:negotiate",
+          "prompt": "Proponha fechar em 50 com uma condição.",
+          "answers": [
+            "eu lhe daria 50 se voce entregar hoje",
+            "eu lhe daria 50 se você entregar hoje",
+            "e se combinarmos em 50",
+            "e se combinarmos em 50 ?"
+          ],
+          "explain": "Eu lhe daria 50 se… / E se combinarmos em 50 ?"
+        },
+        {
+          "id": "checkpoint-pt-b2-q10",
+          "kind": "choice",
+          "skill": "vocab:work",
+          "prompt": "Pessoa que dirige uma reunião de trabalho:",
+          "answers": [
+            "o chefe"
+          ],
+          "explain": "O chefe dirige.",
+          "options": [
+            "o chefe",
+            "o vizinho",
+            "o cliente",
+            "o entregador"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b2-q11",
+          "kind": "gap",
+          "skill": "vocab:work",
+          "prompt": "Trabalho num ___ de cinco pessoas. (equipe)",
+          "answers": [
+            "equipe",
+            "time"
+          ],
+          "explain": "equipe/time = equipo."
+        },
+        {
+          "id": "checkpoint-pt-b2-q12",
+          "kind": "choice",
+          "skill": "vocab:social-expressions",
+          "prompt": "« Sábado ___ para você ? » — « Perfeito ».",
+          "answers": [
+            "fica"
+          ],
+          "explain": "Fica para você ? = Serve ?",
+          "options": [
+            "fica",
+            "vai",
+            "faz",
+            "está"
+          ]
+        },
+        {
+          "id": "checkpoint-pt-b2-q13",
+          "kind": "written",
+          "skill": "writing:argument",
+          "prompt": "Dê sua tese e um argumento sobre o transporte público.",
+          "answers": [
+            "acho que deveriamos ampliar o metro porque e mais limpo",
+            "acho que deveríamos ampliar o metrô porque é mais limpo",
+            "deveriamos ampliar o metro"
+          ],
+          "explain": "Tese + porque + motivo."
+        },
+        {
+          "id": "checkpoint-pt-b2-q14",
+          "kind": "written",
+          "skill": "writing:email",
+          "prompt": "Escreva uma linha de email formal para pedir uma informação.",
+          "answers": [
+            "escrevo para pedir informacoes sobre",
+            "escrevo para pedir informações sobre",
+            "gostaria de pedir informacoes sobre"
+          ],
+          "explain": "Escrevo para… / Gostaria de…"
+        },
+        {
+          "id": "checkpoint-pt-b2-q15",
+          "kind": "written",
+          "skill": "speaking:justify-opinion",
+          "prompt": "Dê sua opinião e justifique: prefiro o interior porque é tranquilo.",
+          "answers": [
+            "prefiro o interior porque e tranquilo",
+            "prefiro o interior porque é tranquilo",
+            "gosto mais do interior porque e tranquilo"
+          ],
+          "explain": "Opinião + porque + motivo."
+        },
+        {
+          "id": "checkpoint-pt-b2-q16",
+          "kind": "written",
+          "skill": "speaking:negotiate",
+          "prompt": "Responda cedendo pela metade: de acordo, mas com uma condição.",
+          "answers": [
+            "de acordo mas com uma condicao",
+            "de acordo, mas com uma condição",
+            "fechado mas com uma condicao"
+          ],
+          "explain": "De acordo, mas…"
+        }
+      ]
     }
   ]
 }

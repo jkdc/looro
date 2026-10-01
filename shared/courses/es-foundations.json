@@ -3042,6 +3042,902 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-foundations-u8",
+      "title": "Opiniones y matices",
+      "subtitle": "Si tuviera…",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "es-b2-hipotesis",
+          "title": "Planes imposibles",
+          "subtitle": "Si tuviera tiempo",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Debatís qué haríais con tiempo libre infinito y proponéis un compromiso real.",
+          "colorIndex": 0
+        },
+        {
+          "id": "es-b2-trato",
+          "title": "El regateo",
+          "subtitle": "¿Y si lo dejamos en 50?",
+          "symbol": "handshake",
+          "category": "Course",
+          "situation": "Negociáis una compra de segunda mano: oferta, condiciones y cierre.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u8-hipotetico",
+          "title": "Si tuviera tiempo…",
+          "goal": "Opinar sobre hipótesis con el condicional compuesto (si + imperfecto de subjuntivo, …ría).",
+          "intro": {
+            "explanation": [
+              "La hipótesis irreal: « Si tuviera tiempo, viajaría más ». La parte con « si » va en imperfecto de subjuntivo; la otra, en condicional (-ría).",
+              "Nunca « si + condicional »: se dice « si tuviera », no « si tendría ».",
+              "Sirve para opinar con tacto: « Yo en tu lugar lo intentaría », « No es que no quiera; es que no podría »."
+            ],
+            "examples": [
+              {
+                "text": "Si tuviera más tiempo, viajaría más.",
+                "meaning": "Hipótesis irreal."
+              },
+              {
+                "text": "Yo en tu lugar lo intentaría.",
+                "meaning": "Consejo con tacto."
+              },
+              {
+                "text": "Si pudiera, cambiaría de trabajo.",
+                "meaning": "poder → pudiera / podría."
+              },
+              {
+                "text": "¿Y si nos viéramos el jueves?",
+                "meaning": "Propuesta suave."
+              },
+              {
+                "text": "No es que no quiera; es que no podría.",
+                "meaning": "Matiz: querer vs poder."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Si + imperfecto de subjuntivo, …ría",
+              "meaning": "Hipótesis.",
+              "note": "Si tuviera…, viajaría."
+            },
+            {
+              "text": "tener → tuviera",
+              "meaning": "Subjuntivo clave.",
+              "note": "Si tuviera tiempo."
+            },
+            {
+              "text": "poder → pudiera",
+              "meaning": "Subjuntivo clave.",
+              "note": "Si pudiera, lo haría."
+            },
+            {
+              "text": "Yo en tu lugar, …ría",
+              "meaning": "Consejo.",
+              "note": "…lo intentaría."
+            },
+            {
+              "text": "¿Y si + imperfecto…?",
+              "meaning": "Propuesta.",
+              "note": "¿Y si lo probáramos ?"
+            }
+          ],
+          "situation": "Debatís planes imposibles: con más tiempo, con otro trabajo, en otra ciudad — y proponéis un compromiso real para este mes.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di tu hipótesis: si tuvieras más tiempo, viajarías más.",
+                "expected": [
+                  "Si tuviera mas tiempo viajaria mas",
+                  "Si tuviera más tiempo, viajaría más"
+                ],
+                "focus": "si tuviera…ría",
+                "watch": "Imperfecto de subjuntivo + condicional."
+              },
+              {
+                "prompt": "Da un consejo con tacto: en mi lugar lo intentaría.",
+                "expected": [
+                  "Yo en tu lugar lo intentaría",
+                  "En tu lugar lo intentaría"
+                ],
+                "focus": "en tu lugar",
+                "watch": "Yo en tu lugar + condicional."
+              },
+              {
+                "prompt": "Di que si pudieras, cambiarías de trabajo.",
+                "expected": [
+                  "Si pudiera cambiaria de trabajo",
+                  "Si pudiera, cambiaría de trabajo"
+                ],
+                "focus": "pudiera/podría",
+                "watch": "poder: pudiera… cambiaría."
+              },
+              {
+                "prompt": "Propón suave: ¿y si nos viéramos el jueves?",
+                "expected": [
+                  "Y si nos viéramos el jueves",
+                  "¿Y si nos viéramos el jueves ?"
+                ],
+                "focus": "¿y si…?",
+                "watch": "¿Y si + imperfecto de subjuntivo ?"
+              },
+              {
+                "prompt": "Matico: no es que no quiera; es que no podría.",
+                "expected": [
+                  "No es que no quiera es que no podria",
+                  "No es que no quiera; es que no podría"
+                ],
+                "focus": "no es que…",
+                "watch": "Contraste querer/poder."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u8-hipotetico-e1",
+              "kind": "choice",
+              "prompt": "Si ___ más tiempo, viajaría más.",
+              "answers": [
+                "tuviera"
+              ],
+              "explain": "Con « si » irreal: imperfecto de subjuntivo.",
+              "options": [
+                "tuviera",
+                "tendría",
+                "tengo",
+                "tenía"
+              ]
+            },
+            {
+              "id": "es-foundations-u8-hipotetico-e2",
+              "kind": "gap",
+              "prompt": "Si pudiera, ___ de trabajo. (cambiar, condicional)",
+              "answers": [
+                "cambiaría",
+                "cambiaria"
+              ],
+              "explain": "pudiera + condicional: cambiaría."
+            },
+            {
+              "id": "es-foundations-u8-hipotetico-e3",
+              "kind": "order",
+              "prompt": "Consejo con tacto: yo en tu lugar lo intentaría.",
+              "answers": [
+                "Yo en tu lugar lo intentaría"
+              ],
+              "explain": "en tu lugar + condicional."
+            },
+            {
+              "id": "es-foundations-u8-hipotetico-e4",
+              "kind": "written",
+              "prompt": "Tu hipótesis con el trabajo: si pudieras, cambiarías de trabajo.",
+              "answers": [
+                "si pudiera cambiaria de trabajo",
+                "si pudiera, cambiaría de trabajo",
+                "si pudieras cambiaria de trabajo"
+              ],
+              "explain": "Si pudiera, cambiaría de trabajo."
+            }
+          ],
+          "skills": [
+            "grammar:second-conditional",
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular",
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-foundations-u8-registro",
+          "title": "Se dice que…",
+          "goal": "Hablar de lo que otros afirman: estilo impersonal con « se » y pasiva con « ser + participio ».",
+          "intro": {
+            "explanation": [
+              "El impersonal: « Se dice que el barrio cambia ». No importa quién lo dice.",
+              "La pasiva con participio: « El concierto fue cancelado », « Las entradas se han agotado ». Común en noticias.",
+              "El registro sube con la pasiva y baja con el impersonal: noticias « oficiales » frente a rumor de barrio."
+            ],
+            "examples": [
+              {
+                "text": "Se dice que el barrio va a cambiar.",
+                "meaning": "Impersonal: rumor."
+              },
+              {
+                "text": "El concierto fue cancelado por la lluvia.",
+                "meaning": "Pasiva + agente."
+              },
+              {
+                "text": "Las entradas se han agotado.",
+                "meaning": "Pasiva refleja."
+              },
+              {
+                "text": "Se han cancelado todos los trenes.",
+                "meaning": "Noticia oficial."
+              },
+              {
+                "text": "Según el ayuntamiento, se retrasará la obra.",
+                "meaning": "Fuente + impersonal."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Se dice que…",
+              "meaning": "Rumor.",
+              "note": "…el barrio va a cambiar."
+            },
+            {
+              "text": "fue/será + participio",
+              "meaning": "Pasiva.",
+              "note": "fue cancelado."
+            },
+            {
+              "text": "se han + participio",
+              "meaning": "Pasiva refleja.",
+              "note": "se han agotado."
+            },
+            {
+              "text": "Según + fuente",
+              "meaning": "Citar.",
+              "note": "Según el ayuntamiento."
+            },
+            {
+              "text": "se retrasará / se cancelará",
+              "meaning": "Futuro impersonal.",
+              "note": "noticias."
+            }
+          ],
+          "situation": "Comentáis las noticias del barrio: qué se dice, qué se ha decidido y qué fuente creéis menos.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Transmite el rumor: se dice que el barrio va a cambiar.",
+                "expected": [
+                  "Se dice que el barrio va a cambiar"
+                ],
+                "focus": "se dice que",
+                "watch": "Impersonal, sin sujeto."
+              },
+              {
+                "prompt": "Noticia: el concierto fue cancelado por la lluvia.",
+                "expected": [
+                  "El concierto fue cancelado por la lluvia"
+                ],
+                "focus": "fue cancelado",
+                "watch": "ser + participio + por."
+              },
+              {
+                "prompt": "Di que las entradas se han agotado.",
+                "expected": [
+                  "Las entradas se han agotado"
+                ],
+                "focus": "se han agotado",
+                "watch": "Pasiva refleja con participio."
+              },
+              {
+                "prompt": "Cita la fuente: según el ayuntamiento, se retrasará la obra.",
+                "expected": [
+                  "Segun el ayuntamiento se retrasara la obra",
+                  "Según el ayuntamiento, se retrasará la obra"
+                ],
+                "focus": "según",
+                "watch": "Según + fuente."
+              },
+              {
+                "prompt": "Di que se han cancelado todos los trenes.",
+                "expected": [
+                  "Se han cancelado todos los trenes"
+                ],
+                "focus": "se han cancelado",
+                "watch": "Pasiva refleja plural."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u8-registro-e1",
+              "kind": "choice",
+              "prompt": "___ dice que el barrio va a cambiar.",
+              "answers": [
+                "Se"
+              ],
+              "explain": "Impersonal: se dice que.",
+              "options": [
+                "Se",
+                "Es",
+                "Hay",
+                "Lo"
+              ]
+            },
+            {
+              "id": "es-foundations-u8-registro-e2",
+              "kind": "gap",
+              "prompt": "El concierto fue ___ por la lluvia. (cancelar)",
+              "answers": [
+                "cancelado"
+              ],
+              "explain": "ser + participio: cancelado."
+            },
+            {
+              "id": "es-foundations-u8-registro-e3",
+              "kind": "order",
+              "prompt": "Noticia: se han cancelado los trenes.",
+              "answers": [
+                "Se han cancelado todos los trenes"
+              ],
+              "explain": "se han + participio."
+            },
+            {
+              "id": "es-foundations-u8-registro-e4",
+              "kind": "written",
+              "prompt": "Rumor del barrio: hablará de un mercado nuevo que abrirá.",
+              "answers": [
+                "se dice que abrira un mercado nuevo",
+                "se dice que abrirán un mercado nuevo"
+              ],
+              "explain": "Se dice que + futuro."
+            }
+          ],
+          "skills": [
+            "grammar:passive-intro",
+            "grammar:present-perfect",
+            "function:express-opinion",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular",
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "es-foundations-u8-negociar",
+          "title": "¿Y si lo dejamos en 50?",
+          "goal": "Negociar un acuerdo: proponer con condicional, poner condiciones y cerrar.",
+          "intro": {
+            "explanation": [
+              "Proponer: « ¿Y si lo dejáramos en 50 ? », « Yo te daría 60 si incluyes el transporte ».",
+              "Poner condiciones: « Solo si me lo entregas hoy », « A cambio, te pido… ».",
+              "Cerrar: « Trato hecho », « De acuerdo, pero con una condición »."
+            ],
+            "examples": [
+              {
+                "text": "¿Y si lo dejáramos en 50 ?",
+                "meaning": "Propuesta con subjuntivo."
+              },
+              {
+                "text": "Te daría 60 si incluyes el transporte.",
+                "meaning": "Condicional + condición."
+              },
+              {
+                "text": "Solo si me lo entregas hoy.",
+                "meaning": "Condición dura."
+              },
+              {
+                "text": "A cambio, te pido la garantía.",
+                "meaning": "Contraoferta."
+              },
+              {
+                "text": "Trato hecho.",
+                "meaning": "Cierre."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Y si lo dejáramos en…?",
+              "meaning": "Proponer precio.",
+              "note": "dejáramos en 50."
+            },
+            {
+              "text": "…ría si + presente",
+              "meaning": "Condiciones.",
+              "note": "te daría 60 si…"
+            },
+            {
+              "text": "solo si…",
+              "meaning": "Condición dura.",
+              "note": "solo si es hoy."
+            },
+            {
+              "text": "a cambio, …",
+              "meaning": "Contraoferta.",
+              "note": "a cambio, la garantía."
+            },
+            {
+              "text": "trato hecho",
+              "meaning": "Cerrar.",
+              "note": "tras el acuerdo."
+            }
+          ],
+          "situation": "Regateáis una mesa de segunda mano: abrís alto, ofrecéis con condiciones y cerráis a mitad de camino.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Propone precio: ¿y si lo dejáramos en 50?",
+                "expected": [
+                  "Y si lo dejaramos en 50",
+                  "¿Y si lo dejáramos en 50 ?"
+                ],
+                "focus": "¿y si…?",
+                "watch": "dejáramos: subjuntivo de propuesta."
+              },
+              {
+                "prompt": "Ofrece con condición: te daría 60 si incluyes el transporte.",
+                "expected": [
+                  "Te daria 60 si incluyes el transporte",
+                  "Te daría 60 si incluyes el transporte"
+                ],
+                "focus": "daría si",
+                "watch": "Condicional + si + presente."
+              },
+              {
+                "prompt": "Pon condición dura: solo si me lo entregas hoy.",
+                "expected": [
+                  "Solo si me lo entregas hoy"
+                ],
+                "focus": "solo si",
+                "watch": "Solo si + presente."
+              },
+              {
+                "prompt": "Contraoferta: a cambio, te pido la garantía.",
+                "expected": [
+                  "A cambio te pido la garantia",
+                  "A cambio, te pido la garantía"
+                ],
+                "focus": "a cambio",
+                "watch": "A cambio + petición."
+              },
+              {
+                "prompt": "Cierra el trato.",
+                "expected": [
+                  "Trato hecho",
+                  "De acuerdo"
+                ],
+                "focus": "trato hecho",
+                "watch": "Frase fija de cierre."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u8-negociar-e1",
+              "kind": "choice",
+              "prompt": "¿Y si lo ___ en 50 ?",
+              "answers": [
+                "dejáramos"
+              ],
+              "explain": "Propuesta: dejáramos (subjuntivo).",
+              "options": [
+                "dejáramos",
+                "dejamos ayer",
+                "dejaríamos que",
+                "dejar"
+              ]
+            },
+            {
+              "id": "es-foundations-u8-negociar-e2",
+              "kind": "gap",
+              "prompt": "Te ___ 60 si incluyes el transporte. (dar, condicional)",
+              "answers": [
+                "daría",
+                "daria"
+              ],
+              "explain": "daría + si + presente."
+            },
+            {
+              "id": "es-foundations-u8-negociar-e3",
+              "kind": "order",
+              "prompt": "Condición dura: solo si me lo entregas hoy.",
+              "answers": [
+                "Solo si me lo entregas hoy"
+              ],
+              "explain": "solo si + presente."
+            },
+            {
+              "id": "es-foundations-u8-negociar-e4",
+              "kind": "written",
+              "prompt": "Cierra el trato poniendo un pero.",
+              "answers": [
+                "de acuerdo pero con una condicion",
+                "de acuerdo, pero con una condición"
+              ],
+              "explain": "De acuerdo, pero…"
+            }
+          ],
+          "skills": [
+            "function:negotiate",
+            "grammar:second-conditional",
+            "speaking:negotiate",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u9",
+      "title": "Medios y argumento",
+      "subtitle": "La noticia que leí",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "es-b2-noticias",
+          "title": "Semana de noticias",
+          "subtitle": "Lo que se dijo",
+          "symbol": "newspaper",
+          "category": "Course",
+          "situation": "Resumís la semana con relativos: quién, dónde y qué pasó.",
+          "colorIndex": 0
+        },
+        {
+          "id": "es-b2-columna",
+          "title": "Tu columna",
+          "subtitle": "Por un lado… por otro…",
+          "symbol": "pencil",
+          "category": "Course",
+          "situation": "Escribís una columna de opinión sobre peatonalizar el centro.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u9-relativos",
+          "title": "La noticia que leí",
+          "goal": "Contar noticias con oraciones de relativo: que, quien, donde, cuyo.",
+          "intro": {
+            "explanation": [
+              "La relativa explica el sustantivo: « La noticia que leí dice que… », « El periodista quien lo entrevistó… ».",
+              "« Donde » para lugares: « La plaza donde se manifestaron ». « Cuyo » para posesión: « la empresa cuyo director dimitió ».",
+              "En noticias, las relativas comprimen información: quién, dónde, qué pasó."
+            ],
+            "examples": [
+              {
+                "text": "La noticia que leí dice que…",
+                "meaning": "Relativa de objeto."
+              },
+              {
+                "text": "El periodista que lo entrevistó dimitió.",
+                "meaning": "Relativa de sujeto."
+              },
+              {
+                "text": "La plaza donde se manifestaron es céntrica.",
+                "meaning": "donde + lugar."
+              },
+              {
+                "text": "La empresa cuyo director dimitió reaccionó.",
+                "meaning": "cuyo = posesión."
+              },
+              {
+                "text": "Todo lo que sé viene de la radio.",
+                "meaning": "todo lo que + verbo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "el/la que…",
+              "meaning": "Relativa.",
+              "note": "la noticia que leí."
+            },
+            {
+              "text": "quien…",
+              "meaning": "Persona.",
+              "note": "quien lo entrevistó."
+            },
+            {
+              "text": "donde…",
+              "meaning": "Lugar.",
+              "note": "la plaza donde…"
+            },
+            {
+              "text": "cuyo/a…",
+              "meaning": "Posesión.",
+              "note": "la empresa cuyo director…"
+            },
+            {
+              "text": "todo lo que…",
+              "meaning": "Generalizar.",
+              "note": "todo lo que sé."
+            }
+          ],
+          "situation": "Resumís una semana de noticias: la historia que más impactó, la persona que habló y el lugar donde pasó.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Resume: la noticia que leíste dice que el museo amplía horarios.",
+                "expected": [
+                  "La noticia que lei dice que el museo amplia horarios",
+                  "La noticia que leí dice que el museo amplía horarios"
+                ],
+                "focus": "que leí",
+                "watch": "Relativa sobre la noticia."
+              },
+              {
+                "prompt": "Di quién: el periodista que lo entrevistó dimitió.",
+                "expected": [
+                  "El periodista que lo entrevistó dimitió"
+                ],
+                "focus": "que lo entrevistó",
+                "watch": "Relativa de sujeto."
+              },
+              {
+                "prompt": "Lugar: la plaza donde se manifestaron es céntrica.",
+                "expected": [
+                  "La plaza donde se manifestaron es centrica",
+                  "La plaza donde se manifestaron es céntrica"
+                ],
+                "focus": "donde",
+                "watch": "donde + lugar."
+              },
+              {
+                "prompt": "Posesión: la empresa cuyo director dimitió reaccionó.",
+                "expected": [
+                  "La empresa cuyo director dimitió reacciono",
+                  "La empresa cuyo director dimitió reaccionó"
+                ],
+                "focus": "cuyo",
+                "watch": "cuyo + sustantivo."
+              },
+              {
+                "prompt": "Generaliza: todo lo que sé viene de la radio.",
+                "expected": [
+                  "Todo lo que se viene de la radio",
+                  "Todo lo que sé viene de la radio"
+                ],
+                "focus": "todo lo que",
+                "watch": "todo lo que + verbo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u9-relativos-e1",
+              "kind": "choice",
+              "prompt": "La noticia ___ leí dice que amplían el museo.",
+              "answers": [
+                "que"
+              ],
+              "explain": "Cosa: la noticia que leí.",
+              "options": [
+                "que",
+                "quien",
+                "cuyo",
+                "donde"
+              ]
+            },
+            {
+              "id": "es-foundations-u9-relativos-e2",
+              "kind": "gap",
+              "prompt": "La plaza ___ se manifestaron es céntrica.",
+              "answers": [
+                "donde"
+              ],
+              "explain": "Lugar: donde."
+            },
+            {
+              "id": "es-foundations-u9-relativos-e3",
+              "kind": "order",
+              "prompt": "Sujeto: el periodista que lo entrevistó dimitió.",
+              "answers": [
+                "El periodista que lo entrevistó dimitió"
+              ],
+              "explain": "Relativa de sujeto."
+            },
+            {
+              "id": "es-foundations-u9-relativos-e4",
+              "kind": "written",
+              "prompt": "Cuenta tu noticia: la noticia que leíste dice que cerrarán la calle.",
+              "answers": [
+                "la noticia que lei dice que cerraran la calle",
+                "la noticia que leí dice que cerrarán la calle"
+              ],
+              "explain": "La noticia que + pretérito."
+            }
+          ],
+          "skills": [
+            "grammar:relative-clauses",
+            "grammar:present-perfect",
+            "function:express-opinion",
+            "vocab:work"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "es-foundations-u9-argumentar",
+          "title": "Por un lado… por otro…",
+          "goal": "Escribir y defender una opinión estructurada: tesis, argumentos, concesión y conclusión.",
+          "intro": {
+            "explanation": [
+              "Estructura: tesis (« Creo que las ciudades deberían peatonalizarse »), argumentos (« por un lado…, por otro lado… »), concesión (« es cierto que…, pero… »).",
+              "La concesión te da credibilidad: reconoces la parte contraria antes de rebatirla.",
+              "Conclusión con peso: « Por todo ello, defiendo que… »."
+            ],
+            "examples": [
+              {
+                "text": "Creo que deberíamos peatonalizar el centro.",
+                "meaning": "Tesis."
+              },
+              {
+                "text": "Por un lado, baja la contaminación.",
+                "meaning": "Argumento 1."
+              },
+              {
+                "text": "Por otro lado, perjudica al comercio.",
+                "meaning": "Argumento 2 (contrario)."
+              },
+              {
+                "text": "Es cierto que…, pero los datos dicen otra cosa.",
+                "meaning": "Concesión + rebote."
+              },
+              {
+                "text": "Por todo ello, defiendo la medida.",
+                "meaning": "Conclusión."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Creo que + condicional",
+              "meaning": "Tesis.",
+              "note": "deberíamos peatonalizar."
+            },
+            {
+              "text": "por un lado… por otro lado…",
+              "meaning": "Argumentos.",
+              "note": "encadenan dos caras."
+            },
+            {
+              "text": "es cierto que…, pero…",
+              "meaning": "Concesión.",
+              "note": "reconocer y rebatir."
+            },
+            {
+              "text": "los datos dicen…",
+              "meaning": "Evidencia.",
+              "note": "argumento de autoridad."
+            },
+            {
+              "text": "por todo ello, …",
+              "meaning": "Conclusión.",
+              "note": "cierre formal."
+            }
+          ],
+          "situation": "Escribís un mini-artículo de opinión sobre peatonalizar el centro: tesis, dos caras, concesión y cierre.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Tesis: creo que deberíamos peatonalizar el centro.",
+                "expected": [
+                  "Creo que deberiamos peatonalizar el centro",
+                  "Creo que deberíamos peatonalizar el centro"
+                ],
+                "focus": "creo que",
+                "watch": "Creo que + deberíamos."
+              },
+              {
+                "prompt": "Argumento 1: por un lado, baja la contaminación.",
+                "expected": [
+                  "Por un lado baja la contaminacion",
+                  "Por un lado, baja la contaminación"
+                ],
+                "focus": "por un lado",
+                "watch": "Primer argumento."
+              },
+              {
+                "prompt": "Argumento contrario: por otro lado, perjudica al comercio.",
+                "expected": [
+                  "Por otro lado perjudica al comercio",
+                  "Por otro lado, perjudica al comercio"
+                ],
+                "focus": "por otro lado",
+                "watch": "Segunda cara."
+              },
+              {
+                "prompt": "Concede: es cierto que es incómodo, pero los datos dicen otra cosa.",
+                "expected": [
+                  "Es cierto que es incomodo pero los datos dicen otra cosa",
+                  "Es cierto que es incómodo, pero los datos dicen otra cosa"
+                ],
+                "focus": "es cierto que",
+                "watch": "Concesión + pero."
+              },
+              {
+                "prompt": "Cierra: por todo ello, defiendo la medida.",
+                "expected": [
+                  "Por todo ello defiendo la medida",
+                  "Por todo ello, defiendo la medida"
+                ],
+                "focus": "por todo ello",
+                "watch": "Conclusión formal."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u9-argumentar-e1",
+              "kind": "choice",
+              "prompt": "___ un lado, baja la contaminación.",
+              "answers": [
+                "Por"
+              ],
+              "explain": "por un lado = primer argumento.",
+              "options": [
+                "Por",
+                "Para",
+                "En",
+                "Con"
+              ]
+            },
+            {
+              "id": "es-foundations-u9-argumentar-e2",
+              "kind": "gap",
+              "prompt": "Es cierto que es incómodo, ___ los datos dicen otra cosa.",
+              "answers": [
+                "pero",
+                "aunque"
+              ],
+              "explain": "Concesión + contraste."
+            },
+            {
+              "id": "es-foundations-u9-argumentar-e3",
+              "kind": "order",
+              "prompt": "Conclusión: por todo ello, defiendo la medida.",
+              "answers": [
+                "Por todo ello defiendo la medida"
+              ],
+              "explain": "por todo ello + presente."
+            },
+            {
+              "id": "es-foundations-u9-argumentar-e4",
+              "kind": "written",
+              "prompt": "Tu tesis sobre ampliar el tranvía.",
+              "answers": [
+                "creo que deberiamos ampliar el tranvia",
+                "creo que deberíamos ampliar el tranvía"
+              ],
+              "explain": "Creo que + deberíamos."
+            }
+          ],
+          "skills": [
+            "writing:argument",
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -942,6 +942,176 @@
           "explain": "« De ne pas l'avoir fait plus tôt »."
         }
       ]
+    },
+    {
+      "id": "fr-listen-marche-table",
+      "languageID": "fr",
+      "title": "Le marchandage de la table",
+      "level": "B2",
+      "topic": "négociation",
+      "unitID": "fr-foundations-u7",
+      "text": "Sur une app d'occasion, Camille veut une table en bois à 80 euros. « Et si on se retrouvait à 60 ? », propose-t-elle. Le vendeur refuse : « Seulement si vous la prenez aujourd'hui ». Camille réfléchit : « Je vous donnerais 65 si vous ajoutez la chaise ». « Impossible », rit-il, « mais je vous laisserais la table à 70 et je vous la monterais à l'étage ». Camille n'hésite pas : « Vous la monteriez tout seul ? ». « J'ai un diable », répond-il. « Marché conclu », dit-elle, et elle ajoute : « Si elle est aussi belle que sur la photo, je laisse cinq étoiles ».",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-marche-table-q1",
+          "kind": "choice",
+          "prompt": "Combien le vendeur demande-t-il ?",
+          "answers": [
+            "80 euros"
+          ],
+          "explain": "La table coûte 80 euros.",
+          "options": [
+            "80 euros",
+            "60 euros",
+            "70 euros",
+            "65 euros"
+          ]
+        },
+        {
+          "id": "fr-listen-marche-table-q2",
+          "kind": "written",
+          "prompt": "Que propose Camille d'abord ?",
+          "answers": [
+            "60 euros",
+            "soixante euros",
+            "se retrouver a 60",
+            "se retrouver à 60"
+          ],
+          "explain": "« Et si on se retrouvait à 60 ? »."
+        },
+        {
+          "id": "fr-listen-marche-table-q3",
+          "kind": "choice",
+          "prompt": "Quelle condition le vendeur pose-t-il ?",
+          "answers": [
+            "La prendre aujourd'hui"
+          ],
+          "explain": "« Seulement si vous la prenez aujourd'hui ».",
+          "options": [
+            "La prendre aujourd'hui",
+            "Payer en espèces",
+            "Laisser cinq étoiles",
+            "Revenir demain"
+          ]
+        },
+        {
+          "id": "fr-listen-marche-table-q4",
+          "kind": "choice",
+          "prompt": "Qu'offre le vendeur pour 70 ?",
+          "answers": [
+            "Monter la table à l'étage"
+          ],
+          "explain": "« Je vous la monterais à l'étage ».",
+          "options": [
+            "Monter la table à l'étage",
+            "Ajouter la chaise",
+            "Descendre à 60",
+            "Prêter un diable"
+          ]
+        },
+        {
+          "id": "fr-listen-marche-table-q5",
+          "kind": "written",
+          "prompt": "Que promet Camille si la table plaît ?",
+          "answers": [
+            "cinq etoiles",
+            "cinq étoiles",
+            "une note de cinq etoiles"
+          ],
+          "explain": "Cinq étoiles."
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-info-quartier",
+      "languageID": "fr",
+      "title": "L'info du quartier",
+      "level": "B2",
+      "topic": "actualité",
+      "unitID": "fr-foundations-u8",
+      "text": "Au marché, Anaïs et Marc commentent ce qu'on dit. « On dit qu'ils vont piétonniser la rue principale », raconte Anaïs. « Encore ? », rit Marc. « La nouvelle que j'ai lue dit que ça commence au printemps ». D'après la mairie, ce serait seulement le samedi, mais les commerçants, dont le chiffre d'affaires dépendrait du tourisme, ont déjà manifesté. « C'est vrai que le bruit baisserait », concède Marc, « mais, et le parking ? ». Anaïs défend la mesure : « D'un côté, plus de gens marcheraient ; de l'autre, les bus s'arrêteraient à la porte ». Ils ne trancheent pas, mais promettent d'en reparler quand le plan sera publié.",
+      "skills": [
+        "listening:inference",
+        "grammar:relative-clauses",
+        "grammar:passive-intro",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-info-quartier-q1",
+          "kind": "choice",
+          "prompt": "Que dit-on de la rue principale ?",
+          "answers": [
+            "Qu'on la piétonnisera"
+          ],
+          "explain": "« On dit qu'ils vont piétonniser la rue principale ».",
+          "options": [
+            "Qu'on la piétonnisera",
+            "Qu'on l'élargira",
+            "Qu'on la fermera",
+            "Qu'on la rebaptisera"
+          ]
+        },
+        {
+          "id": "fr-listen-info-quartier-q2",
+          "kind": "written",
+          "prompt": "Quand est-ce que ça commencerait ?",
+          "answers": [
+            "au printemps",
+            "printemps"
+          ],
+          "explain": "« La nouvelle que j'ai lue dit que ça commence au printemps »."
+        },
+        {
+          "id": "fr-listen-info-quartier-q3",
+          "kind": "choice",
+          "prompt": "Que dit la mairie ?",
+          "answers": [
+            "Seulement le samedi"
+          ],
+          "explain": "D'après la mairie, ce serait seulement le samedi.",
+          "options": [
+            "Seulement le samedi",
+            "Tous les jours",
+            "Seulement en été",
+            "Les jours fériés"
+          ]
+        },
+        {
+          "id": "fr-listen-info-quartier-q4",
+          "kind": "choice",
+          "prompt": "Qui a manifesté ?",
+          "answers": [
+            "Les commerçants"
+          ],
+          "explain": "Les commerçants ont déjà manifesté.",
+          "options": [
+            "Les commerçants",
+            "Les habitants",
+            "Les taxi",
+            "La mairie"
+          ]
+        },
+        {
+          "id": "fr-listen-info-quartier-q5",
+          "kind": "written",
+          "prompt": "Que promettent Anaïs et Marc ?",
+          "answers": [
+            "d'en reparler",
+            "en reparler",
+            "reparler du plan"
+          ],
+          "explain": "Ils promettent d'en reparler quand le plan sera publié."
+        }
+      ]
     }
   ]
 }

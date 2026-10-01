@@ -938,6 +938,176 @@
           "explain": "« Dass ich es nicht früher gemacht habe »."
         }
       ]
+    },
+    {
+      "id": "de-listen-handel-tisch",
+      "languageID": "de",
+      "title": "Das Feilschen um den Tisch",
+      "level": "B2",
+      "topic": "verhandeln",
+      "unitID": "de-foundations-u7",
+      "text": "Auf einer Gebraucht-App will Lena einen Holztisch für 80 Euro. « Wären Sie bei 60 dabei ? », fragt sie. Der Verkäufer lehnt ab: « Nur wenn Sie ihn heute abholen ». Lena überlegt: « Ich würde 65 geben, wenn Sie den Stuhl dazugeben ». « Unmöglich », lacht er, « aber ich würde Ihnen den Tisch für 70 lassen und ihn Ihnen hochtragen ». Lena zögert nicht: « Würden Sie ihn allein hochtragen ? ». « Ich habe einen Handwagen », antwortet er. « Abgemacht », sagt sie, und fügt hinzu: « Wenn er so schön ist wie auf dem Foto, gibt es fünf Sterne ».",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-handel-tisch-q1",
+          "kind": "choice",
+          "prompt": "Wie viel verlangt der Verkäufer ?",
+          "answers": [
+            "80 Euro"
+          ],
+          "explain": "Der Tisch kostet 80 Euro.",
+          "options": [
+            "80 Euro",
+            "60 Euro",
+            "70 Euro",
+            "65 Euro"
+          ]
+        },
+        {
+          "id": "de-listen-handel-tisch-q2",
+          "kind": "written",
+          "prompt": "Was schlägt Lena zuerst vor ?",
+          "answers": [
+            "60 euro",
+            "bei 60 dabei",
+            "sechzig euro"
+          ],
+          "explain": "« Wären Sie bei 60 dabei ? »."
+        },
+        {
+          "id": "de-listen-handel-tisch-q3",
+          "kind": "choice",
+          "prompt": "Welche Bedingung stellt der Verkäufer ?",
+          "answers": [
+            "Heute abholen"
+          ],
+          "explain": "« Nur wenn Sie ihn heute abholen ».",
+          "options": [
+            "Heute abholen",
+            "Bar bezahlen",
+            "Fünf Sterne geben",
+            "Morgen kommen"
+          ]
+        },
+        {
+          "id": "de-listen-handel-tisch-q4",
+          "kind": "choice",
+          "prompt": "Was bietet der Verkäufer für 70 ?",
+          "answers": [
+            "Den Tisch hochtragen"
+          ],
+          "explain": "« Ich würde ihn Ihnen hochtragen ».",
+          "options": [
+            "Den Tisch hochtragen",
+            "Den Stuhl dazugeben",
+            "Auf 60 sinken",
+            "Einen Handwagen leihen"
+          ]
+        },
+        {
+          "id": "de-listen-handel-tisch-q5",
+          "kind": "written",
+          "prompt": "Was verspricht Lena, wenn der Tisch gefällt ?",
+          "answers": [
+            "funf sterne",
+            "fünf sterne",
+            "5 sterne"
+          ],
+          "explain": "Fünf Sterne."
+        }
+      ]
+    },
+    {
+      "id": "de-listen-nachricht-viertel",
+      "languageID": "de",
+      "title": "Die Nachricht im Viertel",
+      "level": "B2",
+      "topic": "nachrichten",
+      "unitID": "de-foundations-u8",
+      "text": "Am Markt besprechen Hannah und Tom, was man sagt. « Man sagt, sie machen die Hauptstraße autofrei », erzählt Hannah. « Schon wieder ? », lacht Tom. « Die Nachricht, die ich gelesen habe, sagt, dass es im Frühling beginnt ». Laut Rathaus wäre es nur am Samstag, aber die Händler, deren Umsatz vom Tourismus abhinge, haben schon demonstriert. « Es stimmt, dass der Lärm sinken würde », räumt Tom ein, « aber, und die Parkplätze ? ». Hannah verteidigt die Maßnahme: « Einerseits würden mehr Leute laufen; andererseits hielten die Busse direkt vor der Tür ». Sie entscheiden es nicht, aber versprechen, wieder darüber zu sprechen, wenn der Plan veröffentlicht wird.",
+      "skills": [
+        "listening:inference",
+        "grammar:relative-clauses",
+        "grammar:passive-intro",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-nachricht-viertel-q1",
+          "kind": "choice",
+          "prompt": "Was sagt man über die Hauptstraße ?",
+          "answers": [
+            "Dass sie autofrei wird"
+          ],
+          "explain": "« Man sagt, sie machen die Hauptstraße autofrei ».",
+          "options": [
+            "Dass sie autofrei wird",
+            "Dass sie breiter wird",
+            "Dass sie geschlossen wird",
+            "Dass sie umbenannt wird"
+          ]
+        },
+        {
+          "id": "de-listen-nachricht-viertel-q2",
+          "kind": "written",
+          "prompt": "Wann würde es beginnen ?",
+          "answers": [
+            "im fruhling",
+            "im frühling",
+            "frühling"
+          ],
+          "explain": "« …dass es im Frühling beginnt »."
+        },
+        {
+          "id": "de-listen-nachricht-viertel-q3",
+          "kind": "choice",
+          "prompt": "Was sagt das Rathaus ?",
+          "answers": [
+            "Nur am Samstag"
+          ],
+          "explain": "Laut Rathaus wäre es nur am Samstag.",
+          "options": [
+            "Nur am Samstag",
+            "An allen Tagen",
+            "Nur im Sommer",
+            "An Feiertagen"
+          ]
+        },
+        {
+          "id": "de-listen-nachricht-viertel-q4",
+          "kind": "choice",
+          "prompt": "Wer hat demonstriert ?",
+          "answers": [
+            "Die Händler"
+          ],
+          "explain": "Die Händler haben schon demonstriert.",
+          "options": [
+            "Die Händler",
+            "Die Anwohner",
+            "Die Taxifahrer",
+            "Das Rathaus"
+          ]
+        },
+        {
+          "id": "de-listen-nachricht-viertel-q5",
+          "kind": "written",
+          "prompt": "Was versprechen Hannah und Tom ?",
+          "answers": [
+            "daruber zu sprechen",
+            "darüber zu sprechen",
+            "wieder daruber sprechen"
+          ],
+          "explain": "Sie versprechen, wieder darüber zu sprechen."
+        }
+      ]
     }
   ]
 }

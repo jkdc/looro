@@ -2196,6 +2196,906 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-foundations-u7",
+      "title": "Meinungen und Nuancen",
+      "subtitle": "Wenn ich hätte…",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "de-b2-hypothese",
+          "title": "Unmögliche Pläne",
+          "subtitle": "Wenn ich Zeit hätte",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Ihr debattiert, was ihr mit unendlich viel Zeit machen würdet, dann ein echter Kompromiss.",
+          "colorIndex": 0
+        },
+        {
+          "id": "de-b2-handel",
+          "title": "Das Feilschen",
+          "subtitle": "Wären Sie bei 50 dabei ?",
+          "symbol": "handshake",
+          "category": "Course",
+          "situation": "Ihr verhandelt einen Gebrauchtkauf: Angebot, Bedingungen, Abschluss.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u7-hypothetisch",
+          "title": "Wenn ich Zeit hätte…",
+          "goal": "Über das Irreale sprechen: wenn + Konjunktiv II (hätte/käme), dann würde + Infinitiv.",
+          "intro": {
+            "explanation": [
+              "Die irrealen Bedingung: « Wenn ich mehr Zeit hätte, würde ich mehr reisen ». wenn + Konjunktiv II (hätte), dann würde + Infinitiv.",
+              "Bei haben/sein oft ohne würde: « Wenn ich Zeit hätte… », « Wenn ich dort wäre… ».",
+              "So klingen Ratschläge höflich: « An deiner Stelle würde ich es versuchen »."
+            ],
+            "examples": [
+              {
+                "text": "Wenn ich mehr Zeit hätte, würde ich mehr reisen.",
+                "meaning": "Irrealis der Gegenwart."
+              },
+              {
+                "text": "An deiner Stelle würde ich es versuchen.",
+                "meaning": "Höflicher Rat."
+              },
+              {
+                "text": "Wenn ich könnte, würde ich den Job wechseln.",
+                "meaning": "können → könnte."
+              },
+              {
+                "text": "Würdest du dich am Freitag treffen ?",
+                "meaning": "Vorsichtiger Vorschlag."
+              },
+              {
+                "text": "Nicht, dass ich nicht will – ich könnte nicht.",
+                "meaning": "Nuance wollen/können."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "wenn … hätte/käme, …",
+              "meaning": "Irrealis.",
+              "note": "Wenn ich Zeit hätte…"
+            },
+            {
+              "text": "würde + Infinitiv",
+              "meaning": "Konjunktiv II.",
+              "note": "…würde ich reisen."
+            },
+            {
+              "text": "könnte / wäre / hätte",
+              "meaning": "starke Formen.",
+              "note": "Wenn ich könnte…"
+            },
+            {
+              "text": "an deiner Stelle würde ich…",
+              "meaning": "Rat.",
+              "note": "…es versuchen."
+            },
+            {
+              "text": "wenn wir…-en … ?",
+              "meaning": "Vorschlag.",
+              "note": "Wenn wir es probierten ?"
+            }
+          ],
+          "situation": "Ihr debattiert unmögliche Pläne: mehr Zeit, ein anderer Job, eine andere Stadt – dann ein echter Kompromiss für diesen Monat.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Deine Hypothese: wenn du mehr Zeit hättest, würdest du mehr reisen.",
+                "expected": [
+                  "Wenn ich mehr Zeit hatte wurde ich mehr reisen",
+                  "Wenn ich mehr Zeit hätte, würde ich mehr reisen"
+                ],
+                "focus": "wenn + Konjunktiv II",
+                "watch": "hätte… würde + Infinitiv."
+              },
+              {
+                "prompt": "Höflicher Rat: an deiner Stelle würde ich es versuchen.",
+                "expected": [
+                  "An deiner Stelle wurde ich es versuchen",
+                  "An deiner Stelle würde ich es versuchen"
+                ],
+                "focus": "an deiner Stelle",
+                "watch": "…würde ich + Infinitiv."
+              },
+              {
+                "prompt": "Sag, dass du, wenn du könntest, den Job wechseln würdest.",
+                "expected": [
+                  "Wenn ich konnte wurde ich den Job wechseln",
+                  "Wenn ich könnte, würde ich den Job wechseln"
+                ],
+                "focus": "könnte/würde",
+                "watch": "Wenn ich könnte… würde ich…"
+              },
+              {
+                "prompt": "Vorschlag: würdest du dich am Freitag treffen ?",
+                "expected": [
+                  "Wurdest du dich am Freitag treffen",
+                  "Würdest du dich am Freitag treffen ?"
+                ],
+                "focus": "würdest du",
+                "watch": "Frage mit Konjunktiv II."
+              },
+              {
+                "prompt": "Nuance: nicht, dass ich nicht will – ich könnte nicht.",
+                "expected": [
+                  "Nicht dass ich nicht will ich konnte nicht",
+                  "Nicht, dass ich nicht will – ich könnte nicht"
+                ],
+                "focus": "nicht, dass",
+                "watch": "Kontrast wollen/können."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u7-hypothetisch-e1",
+              "kind": "choice",
+              "prompt": "Wenn ich mehr Zeit ___, würde ich mehr reisen.",
+              "answers": [
+                "hätte"
+              ],
+              "explain": "Konjunktiv II von haben: hätte.",
+              "options": [
+                "hätte",
+                "habe",
+                "hatte",
+                "haben würde"
+              ]
+            },
+            {
+              "id": "de-foundations-u7-hypothetisch-e2",
+              "kind": "gap",
+              "prompt": "Wenn ich könnte, ___ ich den Job wechseln. (werden)",
+              "answers": [
+                "würde",
+                "wuerde"
+              ],
+              "explain": "würde + Infinitiv am Satzende-Bereich."
+            },
+            {
+              "id": "de-foundations-u7-hypothetisch-e3",
+              "kind": "order",
+              "prompt": "Rat: an deiner Stelle würde ich es versuchen.",
+              "answers": [
+                "An deiner Stelle würde ich es versuchen"
+              ],
+              "explain": "an deiner Stelle + würde."
+            },
+            {
+              "id": "de-foundations-u7-hypothetisch-e4",
+              "kind": "written",
+              "prompt": "Deine Hypothese: wenn du könntest, würdest du den Job wechseln.",
+              "answers": [
+                "wenn ich konnte wurde ich den job wechseln",
+                "wenn ich könnte, würde ich den job wechseln",
+                "wenn ich konnte wurde ich den job wechseln"
+              ],
+              "explain": "Wenn + Konjunktiv II + würde."
+            }
+          ],
+          "skills": [
+            "grammar:second-conditional",
+            "function:express-opinion",
+            "speaking:justify-opinion",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular",
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "de-foundations-u7-register",
+          "title": "Man sagt…",
+          "goal": "Wiedergeben, was andere behaupten: unpersönlich mit « man » und Passiv mit « werden ».",
+          "intro": {
+            "explanation": [
+              "Unpersönlich: « Man sagt, dass sich das Viertel ändert ». Niemand tritt als Quelle auf.",
+              "Passiv: « Das Konzert wurde abgesagt », « Die Tickets sind ausverkauft ». Sprach der Nachrichten.",
+              "Das Passiv (wurde + Partizip II) hebt das Register; « man » bleibt Alltag."
+            ],
+            "examples": [
+              {
+                "text": "Man sagt, dass sich das Viertel ändert.",
+                "meaning": "Unpersönlich: Gerücht."
+              },
+              {
+                "text": "Das Konzert wurde wegen des Regens abgesagt.",
+                "meaning": "Passiv Präteritum."
+              },
+              {
+                "text": "Die Tickets sind ausverkauft.",
+                "meaning": "Zustandspassiv (sein)."
+              },
+              {
+                "text": "Alle Züge wurden gestrichen.",
+                "meaning": "Offizielle Meldung."
+              },
+              {
+                "text": "Laut Rathaus verzögern sich die Bauarbeiten.",
+                "meaning": "Quelle + Verb."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "man sagt, dass…",
+              "meaning": "Gerücht.",
+              "note": "…sich das Viertel ändert."
+            },
+            {
+              "text": "wurde + Partizip II",
+              "meaning": "Passiv.",
+              "note": "wurde abgesagt."
+            },
+            {
+              "text": "sind + Partizip II",
+              "meaning": "Zustand.",
+              "note": "sind ausverkauft."
+            },
+            {
+              "text": "laut + Quelle",
+              "meaning": "Zitieren.",
+              "note": "laut Rathaus."
+            },
+            {
+              "text": "es heißt, …",
+              "meaning": "Offiziell.",
+              "note": "es heißt, der Bau…"
+            }
+          ],
+          "situation": "Ihr besprecht die Nachrichten im Viertel: was man sagt, was beschlossen wurde und welcher Quelle ihr weniger vertraut.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Gib das Gerücht weiter: man sagt, dass sich das Viertel ändert.",
+                "expected": [
+                  "Man sagt dass sich das Viertel andert",
+                  "Man sagt, dass sich das Viertel ändert"
+                ],
+                "focus": "man sagt",
+                "watch": "Unpersönlich, kein Subjekt."
+              },
+              {
+                "prompt": "Meldung: das Konzert wurde wegen des Regens abgesagt.",
+                "expected": [
+                  "Das Konzert wurde wegen des Regens abgesagt"
+                ],
+                "focus": "wurde abgesagt",
+                "watch": "Passiv Präteritum."
+              },
+              {
+                "prompt": "Sag, dass die Tickets ausverkauft sind.",
+                "expected": [
+                  "Die Tickets sind ausverkauft"
+                ],
+                "focus": "sind ausverkauft",
+                "watch": "Zustandspassiv."
+              },
+              {
+                "prompt": "Nenne die Quelle: laut Rathaus verzögern sich die Bauarbeiten.",
+                "expected": [
+                  "Laut Rathaus verzogern sich die Bauarbeiten",
+                  "Laut Rathaus verzögern sich die Bauarbeiten"
+                ],
+                "focus": "laut",
+                "watch": "laut + Quelle."
+              },
+              {
+                "prompt": "Sag, dass alle Züge gestrichen wurden.",
+                "expected": [
+                  "Alle Zuge wurden gestrichen",
+                  "Alle Züge wurden gestrichen"
+                ],
+                "focus": "wurden gestrichen",
+                "watch": "Passiv Plural."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u7-register-e1",
+              "kind": "choice",
+              "prompt": "___ sagt, dass sich das Viertel ändert.",
+              "answers": [
+                "Man"
+              ],
+              "explain": "Unpersönlich: man sagt.",
+              "options": [
+                "Man",
+                "Es",
+                "Sie",
+                "Das"
+              ]
+            },
+            {
+              "id": "de-foundations-u7-register-e2",
+              "kind": "gap",
+              "prompt": "Das Konzert wurde wegen des Regens ___. (absagen)",
+              "answers": [
+                "abgesagt"
+              ],
+              "explain": "wurde + Partizip II: abgesagt."
+            },
+            {
+              "id": "de-foundations-u7-register-e3",
+              "kind": "order",
+              "prompt": "Meldung: alle Züge wurden gestrichen.",
+              "answers": [
+                "Alle Züge wurden gestrichen"
+              ],
+              "explain": "Passiv Präteritum."
+            },
+            {
+              "id": "de-foundations-u7-register-e4",
+              "kind": "written",
+              "prompt": "Gerücht über den neuen Markt: du hast es gehört.",
+              "answers": [
+                "man sagt dass ein neuer markt aufmacht",
+                "man sagt, dass ein neuer markt aufmacht"
+              ],
+              "explain": "Man sagt, dass…"
+            }
+          ],
+          "skills": [
+            "grammar:passive-intro",
+            "grammar:present-perfect",
+            "function:express-opinion",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular",
+            "grammar:verb-be"
+          ]
+        },
+        {
+          "id": "de-foundations-u7-verhandeln",
+          "title": "Wären Sie bei 50 dabei ?",
+          "goal": "Ein Abkommen verhandeln: vorschlagen mit Konjunktiv II, Bedingungen stellen, abschließen.",
+          "intro": {
+            "explanation": [
+              "Vorschlagen: « Wären Sie bei 50 dabei ? », « Ich würde Ihnen 60 geben, wenn Sie den Transport übernehmen ».",
+              "Bedingungen: « Nur wenn es heute geliefert wird », « Im Gegenzug möchte ich die Garantie ».",
+              "Abschließen: « Abgemacht », « Einverstanden – aber unter einer Bedingung »."
+            ],
+            "examples": [
+              {
+                "text": "Wären Sie bei 50 dabei ?",
+                "meaning": "Vorschlag mit Konjunktiv."
+              },
+              {
+                "text": "Ich würde 60 geben, wenn Sie transportieren.",
+                "meaning": "würde + wenn + Gegenwart."
+              },
+              {
+                "text": "Nur wenn es heute kommt.",
+                "meaning": "Harte Bedingung."
+              },
+              {
+                "text": "Im Gegenzug die Garantie.",
+                "meaning": "Gegenvorschlag."
+              },
+              {
+                "text": "Abgemacht.",
+                "meaning": "Abschluss."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "wären Sie bei … dabei ?",
+              "meaning": "Vorschlagen.",
+              "note": "…bei 50 ?"
+            },
+            {
+              "text": "ich würde …, wenn …",
+              "meaning": "Bedingungen.",
+              "note": "…60 geben, wenn…"
+            },
+            {
+              "text": "nur wenn…",
+              "meaning": "Harte Bedingung.",
+              "note": "nur wenn heute."
+            },
+            {
+              "text": "im Gegenzug, …",
+              "meaning": "Gegenvorschlag.",
+              "note": "…die Garantie."
+            },
+            {
+              "text": "abgemacht",
+              "meaning": "Abschließen.",
+              "note": "nach der Einigung."
+            }
+          ],
+          "situation": "Ihr feilscht um einen Gebrauchtisch: hoher Auftakt, Bedingungen, Treffpunkt in der Mitte.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Schlage vor: wären Sie bei 50 dabei ?",
+                "expected": [
+                  "Waren Sie bei 50 dabei",
+                  "Wären Sie bei 50 dabei ?"
+                ],
+                "focus": "wären Sie",
+                "watch": "Konjunktiv II: wären."
+              },
+              {
+                "prompt": "Bedingtes Angebot: ich würde Ihnen 60 geben, wenn Sie den Transport übernehmen.",
+                "expected": [
+                  "Ich wurde ihnen 60 geben wenn sie den transport ubernehmen",
+                  "Ich würde Ihnen 60 geben, wenn Sie den Transport übernehmen"
+                ],
+                "focus": "würde…wenn",
+                "watch": "würde + wenn + Gegenwart."
+              },
+              {
+                "prompt": "Harte Bedingung: nur wenn es heute geliefert wird.",
+                "expected": [
+                  "Nur wenn es heute geliefert wird"
+                ],
+                "focus": "nur wenn",
+                "watch": "nur wenn + Passiv."
+              },
+              {
+                "prompt": "Gegenvorschlag: im Gegenzug möchte ich die Garantie.",
+                "expected": [
+                  "Im Gegenzug mochte ich die garantie",
+                  "Im Gegenzug möchte ich die Garantie"
+                ],
+                "focus": "im Gegenzug",
+                "watch": "Im Gegenzug + wollen."
+              },
+              {
+                "prompt": "Schließt den Deal ab.",
+                "expected": [
+                  "Abgemacht",
+                  "Abgemacht !",
+                  "Abgemacht."
+                ],
+                "focus": "abgemacht",
+                "watch": "Feste Abschlussformel."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u7-verhandeln-e1",
+              "kind": "choice",
+              "prompt": "___ Sie bei 50 dabei ?",
+              "answers": [
+                "Wären"
+              ],
+              "explain": "Konjunktiv II von sein: wären.",
+              "options": [
+                "Wären",
+                "Sind",
+                "Waren",
+                "Werden"
+              ]
+            },
+            {
+              "id": "de-foundations-u7-verhandeln-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ Ihnen 60 geben, wenn Sie transportieren. (werden)",
+              "answers": [
+                "würde",
+                "wuerde"
+              ],
+              "explain": "würde + Infinitiv."
+            },
+            {
+              "id": "de-foundations-u7-verhandeln-e3",
+              "kind": "order",
+              "prompt": "Bedingung: nur wenn es heute geliefert wird.",
+              "answers": [
+                "Nur wenn es heute geliefert wird"
+              ],
+              "explain": "nur wenn + Passiv."
+            },
+            {
+              "id": "de-foundations-u7-verhandeln-e4",
+              "kind": "written",
+              "prompt": "Schließt den Deal ab, aber mit Vorbehalt.",
+              "answers": [
+                "einverstanden aber unter einer bedingung",
+                "einverstanden, aber unter einer bedingung"
+              ],
+              "explain": "Einverstanden, aber…"
+            }
+          ],
+          "skills": [
+            "function:negotiate",
+            "grammar:second-conditional",
+            "speaking:negotiate",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u8",
+      "title": "Medien und Argument",
+      "subtitle": "Die Nachricht, die…",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "de-b2-nachrichten",
+          "title": "Nachrichtenwoche",
+          "subtitle": "Was gesagt wurde",
+          "symbol": "newspaper",
+          "category": "Course",
+          "situation": "Ihr fasst die Woche mit Relativsätzen zusammen: wer, wo, was.",
+          "colorIndex": 0
+        },
+        {
+          "id": "de-b2-kolumne",
+          "title": "Deine Kolumne",
+          "subtitle": "Einerseits… andererseits…",
+          "symbol": "pencil",
+          "category": "Course",
+          "situation": "Ihr schreibt eine Kolumne über die autofreie Innenstadt.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u7-relativsaetze",
+          "title": "Die Nachricht, die ich gelesen habe",
+          "goal": "Nachrichten mit Relativsätzen erzählen: der/die/das, wo, deren.",
+          "intro": {
+            "explanation": [
+              "Der Relativsatz passt sich an: « Die Nachricht, die ich gelesen habe… », « Der Journalist, der ihn interviewt hat… ».",
+              "« Wo » für Orte: « Der Platz, wo sie demonstriert haben ». « Deren » für Besitz: « Die Firma, deren Chef zurückgetreten ist ».",
+              "In Nachrichten verdichten Relativsätze: wer, wo, was."
+            ],
+            "examples": [
+              {
+                "text": "Die Nachricht, die ich gelesen habe, sagt…",
+                "meaning": "Relativsatz (Objekt)."
+              },
+              {
+                "text": "Der Journalist, der ihn interviewt hat, trat zurück.",
+                "meaning": "Relativsatz (Subjekt)."
+              },
+              {
+                "text": "Der Platz, wo sie demonstriert haben, ist zentral.",
+                "meaning": "wo + Ort."
+              },
+              {
+                "text": "Die Firma, deren Chef zurücktrat, reagierte.",
+                "meaning": "deren = Besitz."
+              },
+              {
+                "text": "Alles, was ich weiß, kommt vom Radio.",
+                "meaning": "alles, was + Verb."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "der/die/das … , der/die/das …",
+              "meaning": "Relativpronomen.",
+              "note": "die Nachricht, die…"
+            },
+            {
+              "text": "… , wo …",
+              "meaning": "Ort.",
+              "note": "der Platz, wo…"
+            },
+            {
+              "text": "deren + Nomen",
+              "meaning": "Besitz.",
+              "note": "die Firma, deren Chef…"
+            },
+            {
+              "text": "alles, was…",
+              "meaning": "Verallgemeinern.",
+              "note": "alles, was ich weiß."
+            },
+            {
+              "text": "Komma vor Relativsatz",
+              "meaning": "Rechtschreibung.",
+              "note": "immer mit Komma."
+            }
+          ],
+          "situation": "Ihr fasst eine Nachrichtewoche zusammen: die Story, die euch traf, die Person, die sprach, und der Ort, wo es passierte.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Fasse zusammen: die Nachricht, die ich gelesen habe, sagt, dass das Museum longer öffnet.",
+                "expected": [
+                  "Die Nachricht die ich gelesen habe sagt dass das museum langer offnet",
+                  "Die Nachricht, die ich gelesen habe, sagt, dass das Museum länger öffnet"
+                ],
+                "focus": "die ich gelesen habe",
+                "watch": "Relativsatz zur Nachricht."
+              },
+              {
+                "prompt": "Wer: der Journalist, der ihn interviewt hat, trat zurück.",
+                "expected": [
+                  "Der Journalist der ihn interviewt hat trat zuruck",
+                  "Der Journalist, der ihn interviewt hat, trat zurück"
+                ],
+                "focus": "der ihn interviewt hat",
+                "watch": "Relativsatz Subjekt."
+              },
+              {
+                "prompt": "Ort: der Platz, wo sie demonstriert haben, ist zentral.",
+                "expected": [
+                  "Der Platz wo sie demonstriert haben ist zentral",
+                  "Der Platz, wo sie demonstriert haben, ist zentral"
+                ],
+                "focus": "wo",
+                "watch": "wo + Ort."
+              },
+              {
+                "prompt": "Besitz: die Firma, deren Chef zurücktrat, reagierte.",
+                "expected": [
+                  "Die Firma deren Chef zurucktrat reagierte",
+                  "Die Firma, deren Chef zurücktrat, reagierte"
+                ],
+                "focus": "deren",
+                "watch": "deren + Nomen."
+              },
+              {
+                "prompt": "Verallgemeinere: alles, was ich weiß, kommt vom Radio.",
+                "expected": [
+                  "Alles was ich weiss kommt vom radio",
+                  "Alles, was ich weiß, kommt vom Radio"
+                ],
+                "focus": "alles, was",
+                "watch": "alles, was + Verb."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u7-relativsaetze-e1",
+              "kind": "choice",
+              "prompt": "Die Nachricht, ___ ich gelesen habe, ist wichtig.",
+              "answers": [
+                "die"
+              ],
+              "explain": "die Nachricht (fem): die.",
+              "options": [
+                "die",
+                "der",
+                "das",
+                "den"
+              ]
+            },
+            {
+              "id": "de-foundations-u7-relativsaetze-e2",
+              "kind": "gap",
+              "prompt": "Der Platz, ___ sie demonstriert haben, ist zentral.",
+              "answers": [
+                "wo"
+              ],
+              "explain": "Ort: wo + Relativsatz, immer mit Komma davor."
+            },
+            {
+              "id": "de-foundations-u7-relativsaetze-e3",
+              "kind": "order",
+              "prompt": "Subjekt: der Journalist, der ihn interviewt hat, trat zurück.",
+              "answers": [
+                "Der Journalist, der ihn interviewt hat, trat zurück"
+              ],
+              "explain": "Relativsatz Subjekt."
+            },
+            {
+              "id": "de-foundations-u7-relativsaetze-e4",
+              "kind": "written",
+              "prompt": "Deine Nachricht: die Nachricht, die ich gelesen habe, sagt, dass die Straße geschlossen wird.",
+              "answers": [
+                "die nachricht die ich gelesen habe sagt dass die strasse geschlossen wird",
+                "die nachricht, die ich gelesen habe, sagt, dass die strasse geschlossen wird"
+              ],
+              "explain": "Relativsatz + Passiv."
+            }
+          ],
+          "skills": [
+            "grammar:relative-clauses",
+            "grammar:present-perfect",
+            "function:express-opinion",
+            "vocab:work"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:present-perfect"
+          ]
+        },
+        {
+          "id": "de-foundations-u7-argumentieren",
+          "title": "Einerseits… andererseits…",
+          "goal": "Eine Meinung strukturiert schreiben und verteidigen: These, Argumente, Einräumung, Schluss.",
+          "intro": {
+            "explanation": [
+              "Struktur: These (« Ich finde, wir sollten die Innenstadt autofrei machen »), Argumente (« einerseits…, andererseits… »), Einräumung (« es stimmt, dass…, aber… »).",
+              "Die Einräumung schafft Glaubwürdigkeit: du erkennst die Gegenseite an, bevor du antwortest.",
+              "Schluss mit Gewicht: « Aus all dem verteidige ich die Maßnahme »."
+            ],
+            "examples": [
+              {
+                "text": "Ich finde, wir sollten die Innenstadt autofrei machen.",
+                "meaning": "These."
+              },
+              {
+                "text": "Einerseits sinkt die Verschmutzung.",
+                "meaning": "Argument 1."
+              },
+              {
+                "text": "Andererseits leidet der Handel.",
+                "meaning": "Argument 2 (gegen)."
+              },
+              {
+                "text": "Es stimmt, dass es unbequem ist, aber die Zahlen sagen etwas anderes.",
+                "meaning": "Einräumung + Antwort."
+              },
+              {
+                "text": "Aus all dem verteidige ich die Maßnahme.",
+                "meaning": "Schluss."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ich finde, wir sollten…",
+              "meaning": "These.",
+              "note": "…autofrei machen."
+            },
+            {
+              "text": "einerseits… andererseits…",
+              "meaning": "Argumente.",
+              "note": "die zwei Seiten."
+            },
+            {
+              "text": "es stimmt, dass…, aber…",
+              "meaning": "Einräumung.",
+              "note": "anerkennen und antworten."
+            },
+            {
+              "text": "die Zahlen sagen…",
+              "meaning": "Beweis.",
+              "note": "Autoritätsargument."
+            },
+            {
+              "text": "aus all dem, …",
+              "meaning": "Schluss.",
+              "note": "formeller Abschluss."
+            }
+          ],
+          "situation": "Ihr schreibt eine Meinungskolumne über die autofreie Innenstadt: These, zwei Seiten, Einräumung, Schluss.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "These: ich finde, wir sollten die Innenstadt autofrei machen.",
+                "expected": [
+                  "Ich finde wir sollten die innenstadt autofrei machen",
+                  "Ich finde, wir sollten die Innenstadt autofrei machen"
+                ],
+                "focus": "ich finde",
+                "watch": "These + sollen."
+              },
+              {
+                "prompt": "Argument 1: einerseits sinkt die Verschmutzung.",
+                "expected": [
+                  "Einerseits sinkt die verschmutzung",
+                  "Einerseits sinkt die Verschmutzung"
+                ],
+                "focus": "einerseits",
+                "watch": "Erstes Argument."
+              },
+              {
+                "prompt": "Gegenargument: andererseits leidet der Handel.",
+                "expected": [
+                  "Andererseits leidet der handel",
+                  "Andererseits leidet der Handel"
+                ],
+                "focus": "andererseits",
+                "watch": "Zweite Seite."
+              },
+              {
+                "prompt": "Räum ein: es stimmt, dass es unbequem ist, aber die Zahlen sagen etwas anderes.",
+                "expected": [
+                  "Es stimmt dass es unbequem ist aber die zahlen sagen etwas anderes",
+                  "Es stimmt, dass es unbequem ist, aber die Zahlen sagen etwas anderes"
+                ],
+                "focus": "es stimmt, dass",
+                "watch": "Einräumung + aber."
+              },
+              {
+                "prompt": "Schließe: aus all dem verteidige ich die Maßnahme.",
+                "expected": [
+                  "Aus all dem verteidige ich die massnahme",
+                  "Aus all dem verteidige ich die Maßnahme"
+                ],
+                "focus": "aus all dem",
+                "watch": "Formeller Schluss."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u7-argumentieren-e1",
+              "kind": "choice",
+              "prompt": "___ sinkt die Verschmutzung; ___ leidet der Handel.",
+              "answers": [
+                "Einerseits / andererseits"
+              ],
+              "explain": "Die zwei Seiten.",
+              "options": [
+                "Einerseits / andererseits",
+                "Erstens / zweitens",
+                "Vor / nach",
+                "Weil / aber"
+              ]
+            },
+            {
+              "id": "de-foundations-u7-argumentieren-e2",
+              "kind": "gap",
+              "prompt": "Es stimmt, dass es unbequem ist, ___ die Zahlen sagen etwas anderes.",
+              "answers": [
+                "aber",
+                "doch"
+              ],
+              "explain": "Einräumung + Kontrast."
+            },
+            {
+              "id": "de-foundations-u7-argumentieren-e3",
+              "kind": "order",
+              "prompt": "Schluss: aus all dem verteidige ich die Maßnahme.",
+              "answers": [
+                "Aus all dem verteidige ich die Maßnahme"
+              ],
+              "explain": "aus all dem."
+            },
+            {
+              "id": "de-foundations-u7-argumentieren-e4",
+              "kind": "written",
+              "prompt": "Deine These zum ÖPNV-Ausbau (Straßenbahn).",
+              "answers": [
+                "ich finde wir sollten die strassenbahn verlangern",
+                "ich finde, wir sollten die straßenbahn verlängern"
+              ],
+              "explain": "Ich finde, wir sollten…"
+            }
+          ],
+          "skills": [
+            "writing:argument",
+            "grammar:connectors",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        }
+      ]
     }
   ]
 }

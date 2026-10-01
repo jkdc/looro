@@ -259,6 +259,89 @@
           "explain": "Je réponds le Pérou."
         }
       ]
+    },
+    {
+      "id": "fr-read-chronique-pietonne",
+      "languageID": "fr",
+      "title": "Chronique : piétonnisons",
+      "level": "B2",
+      "topic": "opinion",
+      "unitID": "fr-foundations-u8",
+      "text": "Je pense qu'on devrait piétonniser le centre. D'un côté, le bruit baisserait : les habitants de la place réclament du calme depuis des années. De l'autre, la pollution baisserait, elle qui dépasse déjà les seuils légaux. C'est vrai que les commerçants craignent de perdre des clients, mais les chiffres d'autres villes disent le contraire : là où la voiture disparaît, les gens marchent plus et achètent plus. La société dont le rapport a été publié le mois dernier a calculé 15 % de ventes en plus dans les rues sans voitures. Pour tout cela, je défends la mesure : si nous avions le courage de l'essayer un an, nous ne voudrions plus revenir en arrière.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-read-chronique-pietonne-q1",
+          "kind": "choice",
+          "prompt": "Quelle est la thèse de la chronique ?",
+          "answers": [
+            "Piétonniser le centre"
+          ],
+          "explain": "« Je pense qu'on devrait piétonniser le centre ».",
+          "options": [
+            "Piétonniser le centre",
+            "Élargir l'autoroute",
+            "Interdire les vélos",
+            "Construire un parking"
+          ]
+        },
+        {
+          "id": "fr-read-chronique-pietonne-q2",
+          "kind": "written",
+          "prompt": "Qu'est-ce qui dépasse les seuils légaux ?",
+          "answers": [
+            "la pollution"
+          ],
+          "explain": "La pollution dépasse déjà les seuils légaux."
+        },
+        {
+          "id": "fr-read-chronique-pietonne-q3",
+          "kind": "choice",
+          "prompt": "De quoi les commerçants ont-ils peur ?",
+          "answers": [
+            "De perdre des clients"
+          ],
+          "explain": "Ils craignent de perdre des clients.",
+          "options": [
+            "De perdre des clients",
+            "De payer plus d'impôts",
+            "De fermer en été",
+            "De déménager"
+          ]
+        },
+        {
+          "id": "fr-read-chronique-pietonne-q4",
+          "kind": "written",
+          "prompt": "Combien de ventes en plus dans les rues sans voitures ?",
+          "answers": [
+            "15%",
+            "15 %",
+            "quinze pour cent"
+          ],
+          "explain": "15 % de ventes en plus."
+        },
+        {
+          "id": "fr-read-chronique-pietonne-q5",
+          "kind": "choice",
+          "prompt": "Que propose l'auteur à la fin ?",
+          "answers": [
+            "L'essayer un an"
+          ],
+          "explain": "« Si nous avions le courage de l'essayer un an ».",
+          "options": [
+            "L'essayer un an",
+            "Oublier le plan",
+            "Punir plus",
+            "Voter encore"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -259,6 +259,91 @@
           "explain": "Cada vez que alguien pregunta, yo digo Perú."
         }
       ]
+    },
+    {
+      "id": "es-read-columna-peatonal",
+      "languageID": "es",
+      "title": "Columna: peatonalicemos",
+      "level": "B2",
+      "topic": "opinión",
+      "unitID": "es-foundations-u9",
+      "text": "Creo que deberíamos peatonalizar el centro. Por un lado, bajaría el ruido: los vecinos de la plaza llevan años pidiendo silencio. Por otro lado, bajaría la contaminación, que ya supera los límites legales. Es cierto que el comercio teme perder clientes, pero los datos de otras ciudades dicen lo contrario: donde el coche desaparece, la gente camina más y compra más. La empresa cuyo informe publicaron el mes pasado calculó un 15 % más de ventas en calles sin tráfico. Por todo ello, defiendo la medida: si tuviéramos el valor de probarlo un año, no querríamos volver atrás.",
+      "skills": [
+        "reading:inference",
+        "writing:argument",
+        "grammar:connectors",
+        "grammar:second-conditional"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-columna-peatonal-q1",
+          "kind": "choice",
+          "prompt": "¿Cuál es la tesis de la columna ?",
+          "answers": [
+            "Peatonalizar el centro"
+          ],
+          "explain": "« Creo que deberíamos peatonalizar el centro ».",
+          "options": [
+            "Peatonalizar el centro",
+            "Ampliar la autopista",
+            "Prohibir bicis",
+            "Construir un parking"
+          ]
+        },
+        {
+          "id": "es-read-columna-peatonal-q2",
+          "kind": "written",
+          "prompt": "¿Qué supera los límites legales ?",
+          "answers": [
+            "la contaminacion",
+            "la contaminación"
+          ],
+          "explain": "La contaminación ya supera los límites legales."
+        },
+        {
+          "id": "es-read-columna-peatonal-q3",
+          "kind": "choice",
+          "prompt": "¿Qué teme el comercio ?",
+          "answers": [
+            "Perder clientes"
+          ],
+          "explain": "El comercio teme perder clientes.",
+          "options": [
+            "Perder clientes",
+            "Pagar más impuestos",
+            "Cerrar en verano",
+            "Mudar de ciudad"
+          ]
+        },
+        {
+          "id": "es-read-columna-peatonal-q4",
+          "kind": "written",
+          "prompt": "¿Cuánto más venderían las calles sin tráfico ?",
+          "answers": [
+            "15%",
+            "un 15%",
+            "quince por ciento",
+            "15 por ciento"
+          ],
+          "explain": "Un 15 % más de ventas."
+        },
+        {
+          "id": "es-read-columna-peatonal-q5",
+          "kind": "choice",
+          "prompt": "¿Qué propone la autora al final ?",
+          "answers": [
+            "Probarlo un año"
+          ],
+          "explain": "« Si tuviéramos el valor de probarlo un año ».",
+          "options": [
+            "Probarlo un año",
+            "Olvidar el plan",
+            "Multar más",
+            "Votar de nuevo"
+          ]
+        }
+      ]
     }
   ]
 }

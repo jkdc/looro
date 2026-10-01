@@ -943,6 +943,173 @@
           "explain": "« De não ter feito isso antes »."
         }
       ]
+    },
+    {
+      "id": "pt-listen-pechincha-mesa",
+      "languageID": "pt",
+      "title": "A pechincha da mesa",
+      "level": "B2",
+      "topic": "negociação",
+      "unitID": "pt-foundations-u7",
+      "text": "Num aplicativo de usados, Bia quer uma mesa de madeira por 80 reais. « E se combinarmos em 60 ? », propõe ela. O vendedor recusa: « Só se você levar hoje ». Bia pensa: « Eu lhe daria 65 se incluir a cadeira ». « Impossível », ri ele, « mas eu deixaria a mesa por 70 e a subitaria para você ». Bia não hesita: « Você a subiria sozinho ? ». « Tenho um carrinho », responde. « Fechado », diz ela, e acrescenta: « Se ela for tão bonita quanto na foto, você ganha cinco estrelas ».",
+      "skills": [
+        "listening:inference",
+        "function:negotiate",
+        "grammar:second-conditional",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-listen-pechincha-mesa-q1",
+          "kind": "choice",
+          "prompt": "Quanto o vendedor pede ?",
+          "answers": [
+            "80 reais"
+          ],
+          "explain": "A mesa custa 80 reais.",
+          "options": [
+            "80 reais",
+            "60 reais",
+            "70 reais",
+            "65 reais"
+          ]
+        },
+        {
+          "id": "pt-listen-pechincha-mesa-q2",
+          "kind": "written",
+          "prompt": "O que Bia propõe primeiro ?",
+          "answers": [
+            "60 reais",
+            "sessenta reais",
+            "combinar em 60"
+          ],
+          "explain": "« E se combinarmos em 60 ? »."
+        },
+        {
+          "id": "pt-listen-pechincha-mesa-q3",
+          "kind": "choice",
+          "prompt": "Que condição o vendedor põe ?",
+          "answers": [
+            "Levar hoje"
+          ],
+          "explain": "« Só se você levar hoje ».",
+          "options": [
+            "Levar hoje",
+            "Pagar à vista",
+            "Dar cinco estrelas",
+            "Voltar amanhã"
+          ]
+        },
+        {
+          "id": "pt-listen-pechincha-mesa-q4",
+          "kind": "choice",
+          "prompt": "O que o vendedor oferece por 70 ?",
+          "answers": [
+            "Subir a mesa"
+          ],
+          "explain": "« Eu a subitaria para você ».",
+          "options": [
+            "Subir a mesa",
+            "Incluir a cadeira",
+            "Baixar para 60",
+            "Emprestar o carrinho"
+          ]
+        },
+        {
+          "id": "pt-listen-pechincha-mesa-q5",
+          "kind": "written",
+          "prompt": "O que Bia promete se gostar ?",
+          "answers": [
+            "cinco estrelas",
+            "5 estrelas"
+          ],
+          "explain": "Cinco estrelas."
+        }
+      ]
+    },
+    {
+      "id": "pt-listen-noticia-bairro",
+      "languageID": "pt",
+      "title": "A notícia do bairro",
+      "level": "B2",
+      "topic": "notícias",
+      "unitID": "pt-foundations-u8",
+      "text": "Na feira, Camila e Rafael comentam o que se diz. « Dizem que vão peatonalizar a rua principal », conta Camila. « De novo ? », ri Rafael. « A notícia que li diz que começa na primavera ». Segundo a prefeitura, seria só aos sábados, mas os comerciantes, cujo faturamento dependeria do turismo, já se manifestaram. « É verdade que o barulho cairia », admite Rafael, « mas, e o estacionamento ? ». Camila defende a medida: « Por um lado, mais gente caminharia; por outro, os ônibus parariam na porta ». Eles não decidem nada, mas prometem voltar a falar disso quando o plano sair.",
+      "skills": [
+        "listening:inference",
+        "grammar:relative-clauses",
+        "grammar:passive-intro",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "pt-listen-noticia-bairro-q1",
+          "kind": "choice",
+          "prompt": "O que dizem da rua principal ?",
+          "answers": [
+            "Que será peatonalizada"
+          ],
+          "explain": "« Dizem que vão peatonalizar a rua principal ».",
+          "options": [
+            "Que será peatonalizada",
+            "Que será alargada",
+            "Que será fechada",
+            "Que mudará de nome"
+          ]
+        },
+        {
+          "id": "pt-listen-noticia-bairro-q2",
+          "kind": "written",
+          "prompt": "Quando começaria ?",
+          "answers": [
+            "na primavera",
+            "primavera"
+          ],
+          "explain": "« A notícia que li diz que começa na primavera »."
+        },
+        {
+          "id": "pt-listen-noticia-bairro-q3",
+          "kind": "choice",
+          "prompt": "O que diz a prefeitura ?",
+          "answers": [
+            "Só aos sábados"
+          ],
+          "explain": "Seria só aos sábados.",
+          "options": [
+            "Só aos sábados",
+            "Todos os dias",
+            "Só no verão",
+            "Nos feriados"
+          ]
+        },
+        {
+          "id": "pt-listen-noticia-bairro-q4",
+          "kind": "choice",
+          "prompt": "Quem se manifestou ?",
+          "answers": [
+            "Os comerciantes"
+          ],
+          "explain": "Os comerciantes já se manifestaram.",
+          "options": [
+            "Os comerciantes",
+            "Os moradores",
+            "Os taxistas",
+            "A prefeitura"
+          ]
+        },
+        {
+          "id": "pt-listen-noticia-bairro-q5",
+          "kind": "written",
+          "prompt": "O que Camila e Rafael prometem ?",
+          "answers": [
+            "voltar a falar disso",
+            "falar disso de novo"
+          ],
+          "explain": "Prometem voltar a falar disso quando o plano sair."
+        }
+      ]
     }
   ]
 }
