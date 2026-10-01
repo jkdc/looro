@@ -870,6 +870,91 @@
           ]
         }
       ]
+    },
+    {
+      "id": "es-read-cadena-mensajes",
+      "languageID": "es",
+      "title": "La cadena de mensajes",
+      "level": "A2",
+      "topic": "mensajes",
+      "unitID": "es-foundations-u18",
+      "text": "El grupo del insti tiene un chat para organizar el cumpleaños de Nora. Carlos escribe: «El sábado vamos a hacerle una fiesta sorpresa. Yo voy a comprar el pastel». Laura responde: «Perfecto, yo llevo los globos, pero voy a llegar tarde, es que trabajo hasta las ocho». Pablo escribe: «¿Y la música? Llevo el altavoz». Nadie contesta, así que Pablo insiste: «¿Me leéis?». Entonces Nora responde con un emoji de pastel: ella está en el grupo y ya lo sabe. Carlos borra el mensaje… demasiado tarde. El sábado, cuando llega el pastel, Nora sonríe y dice: «¡Qué sorpresa!».",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "vocab:social-expressions",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-read-cadena-mensajes-q1",
+          "kind": "choice",
+          "prompt": "¿Para qué es el chat?",
+          "answers": [
+            "Para el cumpleaños de Nora"
+          ],
+          "explain": "El chat es para organizar el cumpleaños de Nora.",
+          "options": [
+            "Para el cumpleaños de Nora",
+            "Para estudiar juntos",
+            "Para organizar un viaje",
+            "Para el partido del sábado"
+          ]
+        },
+        {
+          "id": "es-read-cadena-mensajes-q2",
+          "kind": "choice",
+          "prompt": "¿Qué va a comprar Carlos?",
+          "answers": [
+            "El pastel"
+          ],
+          "explain": "«Yo voy a comprar el pastel».",
+          "options": [
+            "El pastel",
+            "Los globos",
+            "El altavoz",
+            "Las bebidas"
+          ]
+        },
+        {
+          "id": "es-read-cadena-mensajes-q3",
+          "kind": "written",
+          "prompt": "¿Por qué va a llegar tarde Laura?",
+          "answers": [
+            "porque trabaja hasta las ocho",
+            "trabaja hasta las ocho",
+            "es que trabaja hasta las ocho"
+          ],
+          "explain": "«Voy a llegar tarde, es que trabajo hasta las ocho»."
+        },
+        {
+          "id": "es-read-cadena-mensajes-q4",
+          "kind": "choice",
+          "prompt": "¿Cómo se entera Nora de la fiesta?",
+          "answers": [
+            "Responde en el mismo chat"
+          ],
+          "explain": "Nora responde con un emoji: está en el grupo y ya lo sabe.",
+          "options": [
+            "Responde en el mismo chat",
+            "Carlos se lo dice",
+            "Lee el pastel",
+            "Laura la llama"
+          ]
+        },
+        {
+          "id": "es-read-cadena-mensajes-q5",
+          "kind": "written",
+          "prompt": "¿Qué lleva Pablo a la fiesta?",
+          "answers": [
+            "el altavoz",
+            "El altavoz",
+            "un altavoz"
+          ],
+          "explain": "«Llevo el altavoz»."
+        }
+      ]
     }
   ]
 }

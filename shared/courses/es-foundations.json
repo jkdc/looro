@@ -4491,6 +4491,183 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "es-foundations-u10-debatir",
+          "title": "De acuerdo en desacuerdo",
+          "goal": "Discrepar con tacto: reconocer el punto del otro antes de contradecirlo.",
+          "intro": {
+            "explanation": [
+              "La discrepancia cortés arranca reconociendo: «Entiendo tu punto, pero…». Lo que va antes del pero suaviza.",
+              "Es discutible pone el no en modo debate: «Es discutible; los datos dicen otra cosa».",
+              "Para no cerrar la conversación: «No lo veo así, precisamente porque…». La justificación evita el choque de creencias."
+            ],
+            "examples": [
+              {
+                "text": "Entiendo tu punto, pero no lo comparto.",
+                "meaning": "Reconocer y discrepar."
+              },
+              {
+                "text": "Es discutible; los datos dicen otra cosa.",
+                "meaning": "Discrepar con evidencia."
+              },
+              {
+                "text": "Veo por dónde vas, aunque no lo veo así.",
+                "meaning": "Matiza el desacuerdo."
+              },
+              {
+                "text": "No lo veo así, precisamente porque faltan plazos.",
+                "meaning": "Justificar el no."
+              },
+              {
+                "text": "De acuerdo en el fondo, no en la forma.",
+                "meaning": "Acordar parcialmente."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "entiendo tu punto, pero…",
+              "meaning": "Reconocer antes de discrepar.",
+              "note": "Entiendo tu punto, pero faltan datos."
+            },
+            {
+              "text": "es discutible",
+              "meaning": "Pone el no en debate.",
+              "note": "Es discutible, aunque entiendo la idea."
+            },
+            {
+              "text": "veo por dónde vas, aunque…",
+              "meaning": "Suaviza el desacuerdo.",
+              "note": "aunque no comparto el paso siguiente."
+            },
+            {
+              "text": "no lo veo así",
+              "meaning": "Discrepar directo.",
+              "note": "No lo veo así, precisamente porque…"
+            },
+            {
+              "text": "de acuerdo en el fondo, no en la forma",
+              "meaning": "Acuerdo parcial.",
+              "note": "separa el qué del cómo."
+            }
+          ],
+          "situation": "En una reunión, discrepáis sobre el calendario: reconoces el argumento del otro, pero defiendes el tuyo con datos y dejáis la conversación abierta.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Discrepa con tacto: reconocer y no compartir.",
+                "expected": [
+                  "Entiendo tu punto, pero no lo comparto",
+                  "entiendo tu punto pero no lo comparto"
+                ],
+                "focus": "entiendo tu punto",
+                "watch": "Reconocer suaviza el no."
+              },
+              {
+                "prompt": "Di que la idea está abierta a debate.",
+                "expected": [
+                  "Es discutible",
+                  "es discutible",
+                  "Me parece discutible"
+                ],
+                "focus": "discutible",
+                "watch": "es discutible abre el debate, no lo cierra."
+              },
+              {
+                "prompt": "Suaviza: ver su intención y discrepar.",
+                "expected": [
+                  "Veo por dónde vas, aunque no lo veo así",
+                  "veo por donde vas aunque no lo veo asi"
+                ],
+                "focus": "veo por dónde vas",
+                "watch": "aunque introduce tu matiz."
+              },
+              {
+                "prompt": "Justifica tu no: faltan plazos.",
+                "expected": [
+                  "No lo veo así, precisamente porque faltan plazos",
+                  "no lo veo asi precisamente porque faltan plazos"
+                ],
+                "focus": "precisamente porque",
+                "watch": "La justificación evita el choque."
+              },
+              {
+                "prompt": "Acuerda a medias: el fondo sí, la forma no.",
+                "expected": [
+                  "De acuerdo en el fondo, no en la forma",
+                  "de acuerdo en el fondo no en la forma"
+                ],
+                "focus": "en el fondo",
+                "watch": "Separa el qué del cómo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u10-debatir-e1",
+              "kind": "choice",
+              "prompt": "Entiendo tu punto, ___ no lo comparto.",
+              "explain": "El pero traslada el peso a tu postura.",
+              "options": [
+                "pero",
+                "porque",
+                "así que",
+                "además"
+              ],
+              "answers": [
+                "pero"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-debatir-e2",
+              "kind": "gap",
+              "prompt": "Es ___; los datos dicen otra cosa. (abre el debate)",
+              "explain": "Es discutible: el no en modo debate.",
+              "answers": [
+                "discutible",
+                "Discutible"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-debatir-e3",
+              "kind": "choice",
+              "prompt": "¿Qué fórmula reconoce el argumento del otro antes de discrepar?",
+              "explain": "Reconocer el punto del otro es la cortesía clave.",
+              "options": [
+                "Entiendo tu punto",
+                "Estás equivocado",
+                "No me interesa",
+                "Cambia de tema"
+              ],
+              "answers": [
+                "Entiendo tu punto"
+              ]
+            },
+            {
+              "id": "es-foundations-u10-debatir-e4",
+              "kind": "written",
+              "prompt": "Discrepa del calendario con tacto y justifica.",
+              "explain": "Reconocer + pero + causa: discrepancia con tacto.",
+              "answers": [
+                "no lo veo así, precisamente porque faltan plazos",
+                "no lo veo asi precisamente porque faltan plazos",
+                "entiendo tu punto, pero faltan plazos"
+              ]
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:sustained-conversation",
+            "grammar:connectors",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -7737,6 +7914,1644 @@
           ],
           "prerequisites": [
             "grammar:frequency-adverbs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u17",
+      "title": "A la mesa",
+      "subtitle": "Comer fuera",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "en-el-restaurante",
+          "title": "En el restaurante",
+          "subtitle": "Pedir comida",
+          "symbol": "fork.knife",
+          "category": "Course",
+          "situation": "Pedís mesa y comida: quieres, para mí… y preguntar qué hay.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-carta",
+          "title": "La carta",
+          "subtitle": "Platos y la cuenta",
+          "symbol": "takeout.bag",
+          "category": "Course",
+          "situation": "Miráis la carta, preguntáis qué lleva cada plato y pedís la cuenta.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u17-restaurante",
+          "title": "En el restaurante",
+          "goal": "Pedir en un restaurante: quiero…, para mí…, y preguntar qué hay.",
+          "intro": {
+            "explanation": [
+              "Para pedir usamos querer: «Quiero una ensalada». Y para cortesía, por favor: «Un café, por favor».",
+              "«Para mí…» marca tu plato cuando coméis en grupo: «Para mí, el pollo». «Para beber, un agua».",
+              "Para preguntar qué hay: «¿Qué tiene de primero?». El camarero responde: «Tenemos paella y sopa»."
+            ],
+            "examples": [
+              {
+                "text": "Quiero una ensalada, por favor.",
+                "meaning": "Pedir tu plato."
+              },
+              {
+                "text": "Para mí, un bocadillo.",
+                "meaning": "Tu plato en grupo."
+              },
+              {
+                "text": "¿Qué tiene de segundo?",
+                "meaning": "Preguntar al camarero."
+              },
+              {
+                "text": "Tenemos pescado y pollo.",
+                "meaning": "El camarero responde."
+              },
+              {
+                "text": "¿Me trae el menú, por favor?",
+                "meaning": "Pedir la carta."
+              },
+              {
+                "text": "Quiero agua, por favor.",
+                "meaning": "Pedir una bebida."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "quiero + comida",
+              "meaning": "Pedir algo.",
+              "note": "Quiero una sopa."
+            },
+            {
+              "text": "para mí, …",
+              "meaning": "Tu pedido en grupo.",
+              "note": "Para mí, el pollo."
+            },
+            {
+              "text": "¿Qué tiene …?",
+              "meaning": "Preguntar qué hay.",
+              "note": "¿Qué tiene de postre?"
+            },
+            {
+              "text": "por favor",
+              "meaning": "Cortesía al pedir.",
+              "note": "Un café, por favor."
+            },
+            {
+              "text": "¿Me trae …?",
+              "meaning": "Pedir algo a la mesa.",
+              "note": "¿Me trae más pan?"
+            }
+          ],
+          "situation": "Estás en un restaurante con amigos: pides una ensalada, preguntas qué hay de segundo y pides más pan.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pide una ensalada con cortesía.",
+                "expected": [
+                  "Quiero una ensalada, por favor",
+                  "quiero una ensalada por favor"
+                ],
+                "focus": "quiero",
+                "watch": "quiero + comida + por favor."
+              },
+              {
+                "prompt": "En grupo, di que tu plato es el pollo.",
+                "expected": [
+                  "Para mí, el pollo",
+                  "para mi el pollo"
+                ],
+                "focus": "para mí",
+                "watch": "para mí lleva tilde."
+              },
+              {
+                "prompt": "Pregunta al camarero qué hay de primero.",
+                "expected": [
+                  "¿Qué tiene de primero?",
+                  "¿Que tiene de primero?"
+                ],
+                "focus": "¿qué tiene?",
+                "watch": "qué con tilde en preguntas."
+              },
+              {
+                "prompt": "Pide el menú.",
+                "expected": [
+                  "¿Me trae el menú, por favor?",
+                  "¿Me trae el menu por favor?"
+                ],
+                "focus": "¿me trae?",
+                "watch": "menú lleva tilde."
+              },
+              {
+                "prompt": "Di que quieres agua.",
+                "expected": [
+                  "Quiero agua",
+                  "quiero agua",
+                  "Quiero un agua"
+                ],
+                "focus": "quiero",
+                "watch": "un agua: agua es masculino."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u17-restaurante-e1",
+              "kind": "choice",
+              "prompt": "Quiero ___ ensalada y un agua.",
+              "explain": "Ensalada es femenino: una ensalada.",
+              "options": [
+                "una",
+                "un",
+                "unos",
+                "unas"
+              ],
+              "answers": [
+                "una"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-restaurante-e2",
+              "kind": "gap",
+              "prompt": "___ mí, el pollo con patatas.",
+              "explain": "«Para mí» marca tu plato; mí lleva tilde.",
+              "answers": [
+                "Para",
+                "para"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-restaurante-e3",
+              "kind": "order",
+              "prompt": "Pregunta al camarero qué hay de postre.",
+              "explain": "¿Qué tiene…? pregunta lo que hay.",
+              "answers": [
+                "¿Qué tiene de postre?"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-restaurante-e4",
+              "kind": "written",
+              "prompt": "Pide un café con cortesía.",
+              "explain": "por favor añade cortesía; café lleva tilde.",
+              "answers": [
+                "Un café, por favor",
+                "un cafe por favor",
+                "Quiero un café, por favor"
+              ]
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u17-carta",
+          "title": "La carta",
+          "goal": "Leer la carta: platos y bebidas, y preguntar qué lleva cada plato.",
+          "intro": {
+            "explanation": [
+              "La carta ordena la comida: de primero, de segundo y de postre. «De segundo, merluza».",
+              "Para saber los ingredientes: «¿Qué lleva la paella?». Se responde con lleva: «Lleva arroz y marisco».",
+              "Las bebidas van de beber: «¿Qué quieren de beber?». «Dos aguas y un zumo»."
+            ],
+            "examples": [
+              {
+                "text": "¿Qué lleva el gazpacho?",
+                "meaning": "Preguntar los ingredientes."
+              },
+              {
+                "text": "Lleva tomate y pepino.",
+                "meaning": "Responder con lleva."
+              },
+              {
+                "text": "De segundo quiero merluza.",
+                "meaning": "Elegir en la carta."
+              },
+              {
+                "text": "¿Qué hay de postre?",
+                "meaning": "Preguntar por los postres."
+              },
+              {
+                "text": "Para beber, dos aguas.",
+                "meaning": "Pedir bebidas."
+              },
+              {
+                "text": "¿Qué lleva la ensalada?",
+                "meaning": "Preguntar por un plato."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Qué lleva …?",
+              "meaning": "Preguntar los ingredientes.",
+              "note": "¿Qué lleva la ensalada?"
+            },
+            {
+              "text": "lleva + ingrediente",
+              "meaning": "Los ingredientes del plato.",
+              "note": "Lleva atún y cebolla."
+            },
+            {
+              "text": "de primero / de segundo",
+              "meaning": "Los platos en orden.",
+              "note": "De segundo, tortilla."
+            },
+            {
+              "text": "de postre",
+              "meaning": "El final de la comida.",
+              "note": "¿Qué hay de postre?"
+            },
+            {
+              "text": "de beber",
+              "meaning": "Las bebidas.",
+              "note": "¿Qué quieren de beber?"
+            }
+          ],
+          "situation": "Miráis la carta: preguntas qué lleva el arroz, eliges de segundo y pedís dos refrescos y un agua.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pregunta qué lleva la sopa.",
+                "expected": [
+                  "¿Qué lleva la sopa?",
+                  "¿Que lleva la sopa?"
+                ],
+                "focus": "¿qué lleva?",
+                "watch": "qué con tilde en preguntas."
+              },
+              {
+                "prompt": "Di que la ensalada lleva tomate y atún.",
+                "expected": [
+                  "La ensalada lleva tomate y atún",
+                  "la ensalada lleva tomate y atun"
+                ],
+                "focus": "lleva",
+                "watch": "atún lleva tilde."
+              },
+              {
+                "prompt": "Elige la tortilla de segundo.",
+                "expected": [
+                  "De segundo, tortilla",
+                  "de segundo tortilla",
+                  "De segundo quiero tortilla"
+                ],
+                "focus": "de segundo",
+                "watch": "de segundo marca el plato."
+              },
+              {
+                "prompt": "Pregunta qué hay de postre.",
+                "expected": [
+                  "¿Qué hay de postre?",
+                  "¿Que hay de postre?"
+                ],
+                "focus": "de postre",
+                "watch": "hay = existe."
+              },
+              {
+                "prompt": "Pide dos refrescos para beber.",
+                "expected": [
+                  "Dos refrescos, por favor",
+                  "Para beber, dos refrescos",
+                  "para beber dos refrescos"
+                ],
+                "focus": "de beber",
+                "watch": "refresco: bebida fría."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u17-carta-e1",
+              "kind": "choice",
+              "prompt": "¿Qué ___ la paella? — Arroz, pollo y marisco.",
+              "explain": "Lleva habla de los ingredientes de un plato.",
+              "options": [
+                "lleva",
+                "come",
+                "toma",
+                "bebe"
+              ],
+              "answers": [
+                "lleva"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-carta-e2",
+              "kind": "gap",
+              "prompt": "___ segundo quiero merluza.",
+              "explain": "De primero / de segundo ordenan la comida.",
+              "answers": [
+                "De",
+                "de"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-carta-e3",
+              "kind": "order",
+              "prompt": "Pregunta por los ingredientes del gazpacho.",
+              "explain": "¿Qué lleva…? pregunta los ingredientes.",
+              "answers": [
+                "¿Qué lleva el gazpacho?"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-carta-e4",
+              "kind": "written",
+              "prompt": "Sois dos en la mesa y queréis agua: ¿qué pides?",
+              "explain": "aguas en plural: dos aguas.",
+              "answers": [
+                "Dos aguas, por favor",
+                "dos aguas",
+                "Para beber, dos aguas"
+              ]
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "es-foundations-u17-cuenta",
+          "title": "La cuenta",
+          "goal": "Pedir la cuenta, preguntar el total y pagar: tarjeta, efectivo y propina.",
+          "intro": {
+            "explanation": [
+              "Al terminar: «La cuenta, por favor». El camarero dice el total con son: «Son veintidós euros».",
+              "Para pagar: «¿Puedo pagar con tarjeta?». En efectivo: «Pago en efectivo».",
+              "La propina es opcional en España: «El cambio es para usted» y el camarero lo agradece."
+            ],
+            "examples": [
+              {
+                "text": "La cuenta, por favor.",
+                "meaning": "Pedir la cuenta."
+              },
+              {
+                "text": "¿Cuánto es?",
+                "meaning": "Preguntar el total."
+              },
+              {
+                "text": "Son dieciocho euros.",
+                "meaning": "El camarero dice el total."
+              },
+              {
+                "text": "¿Puedo pagar con tarjeta?",
+                "meaning": "Preguntar por el pago."
+              },
+              {
+                "text": "El cambio es para usted.",
+                "meaning": "Dejar propina."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "la cuenta, por favor",
+              "meaning": "Pedir la cuenta.",
+              "note": "La cuenta, por favor."
+            },
+            {
+              "text": "¿Cuánto es?",
+              "meaning": "Preguntar el total.",
+              "note": "¿Cuánto es todo?"
+            },
+            {
+              "text": "son … euros",
+              "meaning": "El total.",
+              "note": "Son veinte euros."
+            },
+            {
+              "text": "con tarjeta / en efectivo",
+              "meaning": "Formas de pago.",
+              "note": "¿Puedo pagar en efectivo?"
+            },
+            {
+              "text": "el cambio es para usted",
+              "meaning": "Dejar propina.",
+              "note": "El cambio es para usted."
+            }
+          ],
+          "situation": "Termináis la cena: pides la cuenta, son veinticuatro euros, pagas con tarjeta y dejas el cambio al camarero.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Pide la cuenta con cortesía.",
+                "expected": [
+                  "La cuenta, por favor",
+                  "la cuenta por favor"
+                ],
+                "focus": "la cuenta",
+                "watch": "por favor al final."
+              },
+              {
+                "prompt": "Pregunta el total.",
+                "expected": [
+                  "¿Cuánto es?",
+                  "¿Cuanto es?",
+                  "¿Cuánto es todo?"
+                ],
+                "focus": "¿cuánto?",
+                "watch": "cuánto con tilde en preguntas."
+              },
+              {
+                "prompt": "Di el total: veinte euros.",
+                "expected": [
+                  "Son veinte euros",
+                  "son veinte euros"
+                ],
+                "focus": "son",
+                "watch": "son + precio: son veinte euros."
+              },
+              {
+                "prompt": "Pregunta si puedes pagar con tarjeta.",
+                "expected": [
+                  "¿Puedo pagar con tarjeta?",
+                  "Puedo pagar con tarjeta"
+                ],
+                "focus": "¿puedo…?",
+                "watch": "puedo + infinitivo."
+              },
+              {
+                "prompt": "Di que el cambio es para el camarero.",
+                "expected": [
+                  "El cambio es para el camarero",
+                  "el cambio es para usted"
+                ],
+                "focus": "para usted",
+                "watch": "usted: cortesía al camarero."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u17-cuenta-e1",
+              "kind": "choice",
+              "prompt": "—¿Cuánto es? —___ veintidós euros.",
+              "explain": "Los precios van con ser: son veintidós euros.",
+              "options": [
+                "Son",
+                "Es",
+                "Están",
+                "Hay"
+              ],
+              "answers": [
+                "Son"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-cuenta-e2",
+              "kind": "gap",
+              "prompt": "¿Puedo pagar ___ tarjeta?",
+              "explain": "pagar con tarjeta / en efectivo.",
+              "answers": [
+                "con",
+                "Con"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-cuenta-e3",
+              "kind": "order",
+              "prompt": "Termináis de cenar: ¿qué dices para que traigan el ticket?",
+              "explain": "Frase fija para pedir la cuenta.",
+              "answers": [
+                "La cuenta, por favor"
+              ]
+            },
+            {
+              "id": "es-foundations-u17-cuenta-e4",
+              "kind": "written",
+              "prompt": "Pregunta por el precio total.",
+              "explain": "¿Cuánto es? con tilde.",
+              "answers": [
+                "¿Cuánto es?",
+                "¿Cuanto es?",
+                "¿Cuánto es todo?"
+              ]
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "grammar:quantities",
+            "vocab:food",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u18",
+      "title": "Quedar bien",
+      "subtitle": "Invitaciones y planes",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "propuestas",
+          "title": "¿Vienes?",
+          "subtitle": "Propuestas y excusas",
+          "symbol": "calendar.badge.clock",
+          "category": "Course",
+          "situation": "Proponéis planes de semana: alguien se apunta, alguien pone una excusa.",
+          "colorIndex": 0
+        },
+        {
+          "id": "el-regalo",
+          "title": "El regalo",
+          "subtitle": "Planes con ir a",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "Organizáis un regalo de cumpleaños: qué vais a comprarle y cuándo.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u18-propuestas",
+          "title": "¿Vienes o prefieres…?",
+          "goal": "Hacer propuestas y responder: aceptar, dudar o preferir otra cosa.",
+          "intro": {
+            "explanation": [
+              "Para proponer: «¿Vienes al cine?» o «¿Por qué no vamos a la playa?». La pregunta suaviza el plan.",
+              "También proponemos con ir a: «Vamos a ir de excursión el sábado, ¿te apuntas?».",
+              "Para responder: aceptas «Vale, me apunto», dudas «Déjame pensarlo» o prefieres «Prefiero quedar el domingo»."
+            ],
+            "examples": [
+              {
+                "text": "¿Vienes al cine esta tarde?",
+                "meaning": "Proponer un plan."
+              },
+              {
+                "text": "¿Por qué no vamos a la playa?",
+                "meaning": "Proponer con ¿por qué no…?"
+              },
+              {
+                "text": "Vale, me apunto.",
+                "meaning": "Aceptar."
+              },
+              {
+                "text": "No sé, déjame pensarlo.",
+                "meaning": "Dudar."
+              },
+              {
+                "text": "Prefiero quedar el domingo.",
+                "meaning": "Preferir otra cosa."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¿Vienes a…?",
+              "meaning": "Invitar a un plan.",
+              "note": "¿Vienes a cenar?"
+            },
+            {
+              "text": "¿Por qué no + presente?",
+              "meaning": "Proponer.",
+              "note": "¿Por qué no lo probamos?"
+            },
+            {
+              "text": "me apunto",
+              "meaning": "Aceptar un plan.",
+              "note": "¡Me apunto!"
+            },
+            {
+              "text": "déjame pensarlo",
+              "meaning": "Dudar.",
+              "note": "Déjame pensarlo y te digo."
+            },
+            {
+              "text": "prefiero + infinitivo",
+              "meaning": "Preferir.",
+              "note": "Prefiero ir en tren."
+            }
+          ],
+          "situation": "Propones plan de sábado a tu grupo: cine o excursión; unos se apuntan y otros prefieren el domingo.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Propón el cine para esta tarde.",
+                "expected": [
+                  "¿Vienes al cine esta tarde?",
+                  "Vienes al cine esta tarde"
+                ],
+                "focus": "¿vienes…?",
+                "watch": "Vienes + a + plan."
+              },
+              {
+                "prompt": "Propón ir a la playa con ¿por qué no?",
+                "expected": [
+                  "¿Por qué no vamos a la playa?",
+                  "¿Por que no vamos a la playa?"
+                ],
+                "focus": "¿por qué no?",
+                "watch": "por qué con tilde."
+              },
+              {
+                "prompt": "Acepta el plan.",
+                "expected": [
+                  "Vale, me apunto",
+                  "Me apunto",
+                  "Vale me apunto"
+                ],
+                "focus": "me apunto",
+                "watch": "me apunto = acepto."
+              },
+              {
+                "prompt": "Di que necesitas pensarlo.",
+                "expected": [
+                  "Déjame pensarlo",
+                  "dejame pensarlo",
+                  "No sé, déjame pensarlo"
+                ],
+                "focus": "déjame",
+                "watch": "déjame lleva tilde."
+              },
+              {
+                "prompt": "Di que prefieres quedar en casa.",
+                "expected": [
+                  "Prefiero quedarme en casa",
+                  "prefiero quedar en casa"
+                ],
+                "focus": "prefiero",
+                "watch": "prefiero + infinitivo."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u18-propuestas-e1",
+              "kind": "choice",
+              "prompt": "¿Por qué no ___ al museo el sábado?",
+              "explain": "¿Por qué no + presente? propone un plan.",
+              "options": [
+                "vamos",
+                "vamos a",
+                "fuimos",
+                "iremos"
+              ],
+              "answers": [
+                "vamos"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-propuestas-e2",
+              "kind": "gap",
+              "prompt": "¿Te ___ al concierto del viernes?",
+              "explain": "¿Te apuntas? invita a unirse al plan.",
+              "answers": [
+                "apuntas",
+                "Apuntas"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-propuestas-e3",
+              "kind": "order",
+              "prompt": "Acepta la propuesta para ir de excursión.",
+              "explain": "me apunto = aceptar el plan.",
+              "answers": [
+                "Vale, me apunto a la excursión"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-propuestas-e4",
+              "kind": "written",
+              "prompt": "Di que prefieres ir el domingo.",
+              "explain": "prefiero + infinitivo.",
+              "answers": [
+                "prefiero ir el domingo",
+                "Prefiero ir el domingo"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-suggestions",
+            "grammar:going-to",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "es-foundations-u18-excusa",
+          "title": "Qué pena, no puedo",
+          "goal": "Aceptar y rechazar invitaciones con excusas amables: qué pena, es que…, lo siento.",
+          "intro": {
+            "explanation": [
+              "Para rechazar con tacto, la pena va primero: «¡Qué pena! No puedo ir».",
+              "La excusa se introduce con es que: «Es que tengo que trabajar». Suaviza el no.",
+              "El rechazo deja el plan abierto con conectores: «Entonces, ¿el sábado?», «Tengo fiesta, así que no puedo»."
+            ],
+            "examples": [
+              {
+                "text": "¡Qué pena! No puedo ir.",
+                "meaning": "Rechazar con pena."
+              },
+              {
+                "text": "Es que tengo que trabajar.",
+                "meaning": "Explicar la excusa."
+              },
+              {
+                "text": "Lo siento, tengo planes.",
+                "meaning": "Rechazar corto."
+              },
+              {
+                "text": "Entonces, ¿el sábado?",
+                "meaning": "Dejar el plan abierto."
+              },
+              {
+                "text": "Tengo fiesta, así que no puedo.",
+                "meaning": "así que + consecuencia."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "¡qué pena!",
+              "meaning": "Lamenta el no.",
+              "note": "¡Qué pena, no puedo!"
+            },
+            {
+              "text": "es que…",
+              "meaning": "Introduce la excusa.",
+              "note": "Es que estoy resfriado."
+            },
+            {
+              "text": "lo siento",
+              "meaning": "Rechazar amable.",
+              "note": "Lo siento, no puedo."
+            },
+            {
+              "text": "tengo que + infinitivo",
+              "meaning": "Obligación.",
+              "note": "Tengo que estudiar."
+            },
+            {
+              "text": "¿el finde que viene?",
+              "meaning": "Reprogramar.",
+              "note": "¿Mejor el finde que viene?"
+            }
+          ],
+          "situation": "Te invitan a un concierto el jueves, pero trabajas hasta las diez: rechazas con pena y propones el sábado.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Rechaza la invitación con pena.",
+                "expected": [
+                  "¡Qué pena, no puedo!",
+                  "Qué pena, no puedo",
+                  "que pena no puedo"
+                ],
+                "focus": "qué pena",
+                "watch": "qué con tilde."
+              },
+              {
+                "prompt": "Da tu excusa: trabajar.",
+                "expected": [
+                  "Es que tengo que trabajar",
+                  "es que tengo que trabajar"
+                ],
+                "focus": "es que",
+                "watch": "es que + excusa."
+              },
+              {
+                "prompt": "Rechaza corto y amable.",
+                "expected": [
+                  "Lo siento, no puedo",
+                  "lo siento no puedo"
+                ],
+                "focus": "lo siento",
+                "watch": "lo siento + no puedo."
+              },
+              {
+                "prompt": "Propón el fin de semana que viene.",
+                "expected": [
+                  "¿El finde que viene?",
+                  "¿Mejor el finde que viene?",
+                  "¿El fin de semana que viene?"
+                ],
+                "focus": "que viene",
+                "watch": "finde = fin de semana."
+              },
+              {
+                "prompt": "Di que tienes planes, con así que.",
+                "expected": [
+                  "Tengo planes, así que no puedo",
+                  "tengo planes asi que no puedo"
+                ],
+                "focus": "así que",
+                "watch": "así lleva tilde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u18-excusa-e1",
+              "kind": "choice",
+              "prompt": "___ pena, mañana no puedo.",
+              "explain": "¡Qué pena! lleva tilde: lamenta el no.",
+              "options": [
+                "Qué",
+                "Que",
+                "Cuál",
+                "Cómo"
+              ],
+              "answers": [
+                "Qué"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-excusa-e2",
+              "kind": "gap",
+              "prompt": "Lo siento, ___ que tengo que estudiar.",
+              "explain": "es que + excusa suaviza el no.",
+              "answers": [
+                "es",
+                "Es"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-excusa-e3",
+              "kind": "order",
+              "prompt": "Rechaza y deja un plan para después.",
+              "explain": "Entonces retoma el plan; mejor propone otra fecha.",
+              "answers": [
+                "Entonces, ¿mejor el sábado?"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-excusa-e4",
+              "kind": "written",
+              "prompt": "Di que no puedes ir porque tienes que trabajar.",
+              "explain": "porque / es que introducen la causa.",
+              "answers": [
+                "no puedo ir porque tengo que trabajar",
+                "No puedo ir porque tengo que trabajar",
+                "es que tengo que trabajar"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:make-suggestions",
+            "grammar:present-simple",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "es-foundations-u18-regalo",
+          "title": "El regalo perfecto",
+          "goal": "Planear un regalo con ir a: qué vais a comprarle, dónde y para quién.",
+          "intro": {
+            "explanation": [
+              "El plan del regalo va con ir a + infinitivo: «Voy a comprarle un libro».",
+              "El pronombre se pega al infinitivo: «comprarle», «regalarle». Le = a él o a ella.",
+              "Para organizaros: «¿Qué le vamos a regalar?». «Vamos a mirar en la tienda nueva»."
+            ],
+            "examples": [
+              {
+                "text": "Voy a comprarle un libro.",
+                "meaning": "Tu plan de regalo."
+              },
+              {
+                "text": "Vamos a regalarle unas flores.",
+                "meaning": "El plan del grupo."
+              },
+              {
+                "text": "¿Qué le vamos a regalar?",
+                "meaning": "Preguntar por el plan."
+              },
+              {
+                "text": "Voy a mirar en la tienda nueva.",
+                "meaning": "Buscar el regalo."
+              },
+              {
+                "text": "Le va a encantar.",
+                "meaning": "Predecir su reacción."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ir a + infinitivo",
+              "meaning": "Futuro cercano.",
+              "note": "Voy a comprarle algo."
+            },
+            {
+              "text": "comprarle / regalarle",
+              "meaning": "le pegado al infinitivo.",
+              "note": "Voy a regalarle un reloj."
+            },
+            {
+              "text": "le va a encantar",
+              "meaning": "Predecir su reacción.",
+              "note": "Le va a encantar, seguro."
+            },
+            {
+              "text": "¿qué le vamos a regalar?",
+              "meaning": "Preguntar el plan.",
+              "note": "¿Qué le vamos a regalar a Lucía?"
+            },
+            {
+              "text": "es una sorpresa",
+              "meaning": "Guardar el secreto.",
+              "note": "Shh, es una sorpresa."
+            }
+          ],
+          "situation": "El cumpleaños de Lucía es el sábado: vais a regalarle unos auriculares; tú vas a mirarlos hoy a la tienda nueva.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Di tu plan: comprarle un libro.",
+                "expected": [
+                  "Voy a comprarle un libro",
+                  "voy a comprarle un libro"
+                ],
+                "focus": "voy a",
+                "watch": "comprar + le = comprarle."
+              },
+              {
+                "prompt": "Pregunta qué vais a regalarle a Lucía.",
+                "expected": [
+                  "¿Qué le vamos a regalar a Lucía?",
+                  "¿Que le vamos a regalar a Lucia?"
+                ],
+                "focus": "¿qué le…?",
+                "watch": "qué con tilde."
+              },
+              {
+                "prompt": "Di que vais a regalarle flores.",
+                "expected": [
+                  "Vamos a regalarle flores",
+                  "vamos a regalarle flores"
+                ],
+                "focus": "regalarle",
+                "watch": "regalar + le."
+              },
+              {
+                "prompt": "Predice su reacción: encantar.",
+                "expected": [
+                  "Le va a encantar",
+                  "le va a encantar",
+                  "Seguro que le va a encantar"
+                ],
+                "focus": "le va a encantar",
+                "watch": "le = a Lucía."
+              },
+              {
+                "prompt": "Guarda el secreto.",
+                "expected": [
+                  "Es una sorpresa",
+                  "es una sorpresa"
+                ],
+                "focus": "sorpresa",
+                "watch": "Shh, es una sorpresa."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u18-regalo-e1",
+              "kind": "choice",
+              "prompt": "Le ___ a encantar.",
+              "explain": "le va a encantar: la tercera persona.",
+              "options": [
+                "va",
+                "voy",
+                "van",
+                "vas"
+              ],
+              "answers": [
+                "va"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-regalo-e2",
+              "kind": "gap",
+              "prompt": "Vamos a ___ unas flores. (regalar + le)",
+              "explain": "regalar + le = regalarle, pegado al infinitivo.",
+              "answers": [
+                "regalarle",
+                "Regalarle"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-regalo-e3",
+              "kind": "order",
+              "prompt": "Di qué vas a hacer con el dinero del grupo.",
+              "explain": "voy a + comprarle: plan de regalo.",
+              "answers": [
+                "Voy a comprarle un libro"
+              ]
+            },
+            {
+              "id": "es-foundations-u18-regalo-e4",
+              "kind": "written",
+              "prompt": "Pregunta al grupo por el regalo de tu jefe.",
+              "explain": "le vamos a regalar: futuro cercano.",
+              "answers": [
+                "¿Qué le vamos a regalar?",
+                "¿Que le vamos a regalar?",
+                "qué le vamos a regalar"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:social-expressions",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-foundations-u19",
+      "title": "Contar historias",
+      "subtitle": "Pasado y anécdotas",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "lo-que-paso",
+          "title": "Lo que pasó",
+          "subtitle": "Enlazar hechos",
+          "symbol": "book",
+          "category": "Course",
+          "situation": "Contáis un día de viaje hecho un desastre: primero, después y al final.",
+          "colorIndex": 0
+        },
+        {
+          "id": "el-giro",
+          "title": "El giro",
+          "subtitle": "Sorpresa y anécdotas",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Narráis con giros inesperados y reaccionáis a las anécdotas de otros.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "es-foundations-u19-narrar",
+          "title": "Lo que pasó",
+          "goal": "Enlazar hechos pasados en orden: primero…, después…, al final….",
+          "intro": {
+            "explanation": [
+              "La narración ordena los hechos: «Primero fuimos a la estación; después compramos los billetes».",
+              "Los irregulares del pasado aparecen siempre: fui, hicimos, vimos. «Primero fui yo».",
+              "Al final cierras con el resultado: «Al final, perdimos el tren, pero nos reímos mucho»."
+            ],
+            "examples": [
+              {
+                "text": "Primero fuimos a la estación.",
+                "meaning": "Abre la secuencia."
+              },
+              {
+                "text": "Después compramos los billetes.",
+                "meaning": "El segundo hecho."
+              },
+              {
+                "text": "Luego corrimos al andén.",
+                "meaning": "Luego = después."
+              },
+              {
+                "text": "El tren no esperó a nadie.",
+                "meaning": "Un hecho del pasado."
+              },
+              {
+                "text": "Al final nos reímos mucho.",
+                "meaning": "Cierra la historia."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "primero, …",
+              "meaning": "El primer hecho.",
+              "note": "Primero fuimos al hotel."
+            },
+            {
+              "text": "después / luego",
+              "meaning": "El siguiente paso.",
+              "note": "Después cenamos en el puerto."
+            },
+            {
+              "text": "al final, …",
+              "meaning": "El cierre o resultado.",
+              "note": "Al final llegó tarde."
+            },
+            {
+              "text": "fui / hicimos / vimos",
+              "meaning": "Irregulares frecuentes.",
+              "note": "Hicimos un viaje largo."
+            },
+            {
+              "text": "pero / así que",
+              "meaning": "Conectan el giro.",
+              "note": "Llovió, así que volvimos."
+            }
+          ],
+          "situation": "Cuentas un día de viaje con sustos: primero el retraso, después la lluvia y, al final, un atardecer increíble.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Abre tu historia: ir al hotel primero.",
+                "expected": [
+                  "Primero fuimos al hotel",
+                  "primero fuimos al hotel"
+                ],
+                "focus": "primero",
+                "watch": "fuimos: ir en pasado."
+              },
+              {
+                "prompt": "Di el segundo hecho: cenar en el puerto.",
+                "expected": [
+                  "Después cenamos en el puerto",
+                  "Luego cenamos en el puerto"
+                ],
+                "focus": "después",
+                "watch": "después / luego conectan."
+              },
+              {
+                "prompt": "Di el giro: llovió, así que volvisteis.",
+                "expected": [
+                  "Llovió, así que volvimos",
+                  "llovio asi que volvimos"
+                ],
+                "focus": "así que",
+                "watch": "así que + consecuencia."
+              },
+              {
+                "prompt": "Cierra: reíros mucho.",
+                "expected": [
+                  "Al final nos reímos mucho",
+                  "al final nos reimos mucho"
+                ],
+                "focus": "al final",
+                "watch": "al final cierra la historia."
+              },
+              {
+                "prompt": "Di lo que visteis en el museo: una expo rara.",
+                "expected": [
+                  "Vimos una exposición rara",
+                  "vimos una expo rara",
+                  "En el museo vimos una exposición rara"
+                ],
+                "focus": "vimos",
+                "watch": "vimos: ver en pasado."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u19-narrar-e1",
+              "kind": "choice",
+              "prompt": "___ fuimos a la estación; después, a comprar agua.",
+              "explain": "Primero abre la secuencia; después encadena.",
+              "options": [
+                "Primero",
+                "Al final",
+                "Luego",
+                "Después"
+              ],
+              "answers": [
+                "Primero"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-narrar-e2",
+              "kind": "gap",
+              "prompt": "El tren no ___ a esperar. (esperar, pasado)",
+              "explain": "esperó: pasado con tilde en la última sílaba.",
+              "answers": [
+                "esperó",
+                "espero",
+                "Esperó"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-narrar-e3",
+              "kind": "order",
+              "prompt": "Cierra tu historia del viaje.",
+              "explain": "Al final + resultado cierra la narración.",
+              "answers": [
+                "Al final nos reímos mucho"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-narrar-e4",
+              "kind": "written",
+              "prompt": "Di que fuisteis a la playa y después comisteis paella.",
+              "explain": "fuimos: irregular; comimos: regular del pasado.",
+              "answers": [
+                "fuimos a la playa y luego comimos paella",
+                "Fuimos a la playa y luego comimos paella",
+                "fuimos a la playa y comimos paella"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "grammar:past-simple-irregular",
+            "grammar:connectors",
+            "grammar:past-simple-regular"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "es-foundations-u19-sorpresa",
+          "title": "El giro inesperado",
+          "goal": "Narrar con sorpresa: de repente…, resultó que…, resultó ser…",
+          "intro": {
+            "explanation": [
+              "El giro llega con de repente: «Y de repente, se fue la luz». Cambia el ritmo de la historia.",
+              "Resultó que revela la verdad escondida: «Resultó que el ladrón era el vecino».",
+              "Para enganchar: «No te imaginas lo que pasó». Y el clímax: «Lo mejor de todo fue el final»."
+            ],
+            "examples": [
+              {
+                "text": "Y de repente, se fue la luz.",
+                "meaning": "El giro."
+              },
+              {
+                "text": "Resultó que era el vecino.",
+                "meaning": "Revela la verdad."
+              },
+              {
+                "text": "Resultó ser una fiesta.",
+                "meaning": "La sorpresa final."
+              },
+              {
+                "text": "Lo mejor de todo fue el final.",
+                "meaning": "Anuncia el clímax."
+              },
+              {
+                "text": "No te imaginas lo que pasó.",
+                "meaning": "Engancha al oyente."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "de repente",
+              "meaning": "Giro sin aviso.",
+              "note": "De repente, empezó a llover."
+            },
+            {
+              "text": "resultó que…",
+              "meaning": "Revela la verdad.",
+              "note": "Resultó que era gratis."
+            },
+            {
+              "text": "resultó ser…",
+              "meaning": "La revelación con ser.",
+              "note": "Resultó ser su hermano."
+            },
+            {
+              "text": "lo mejor de todo",
+              "meaning": "Anuncia el clímax.",
+              "note": "Lo mejor de todo fue la cena."
+            },
+            {
+              "text": "no te imaginas…",
+              "meaning": "Engancha.",
+              "note": "No te imaginas quién llamó."
+            }
+          ],
+          "situation": "Cuentas la noche en que se fue la luz en el hostal y, de repente, todos bajaron a la terraza: resultó ser una fiesta del barrio.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Cuenta el giro: se fue la luz.",
+                "expected": [
+                  "Y de repente, se fue la luz",
+                  "De repente se fue la luz",
+                  "de repente se fue la luz"
+                ],
+                "focus": "de repente",
+                "watch": "de repente + pasado."
+              },
+              {
+                "prompt": "Revela la verdad: era gratis.",
+                "expected": [
+                  "Resultó que era gratis",
+                  "resulto que era gratis"
+                ],
+                "focus": "resultó que",
+                "watch": "resultó lleva tilde."
+              },
+              {
+                "prompt": "Di que resultó ser su hermano.",
+                "expected": [
+                  "Resultó ser su hermano",
+                  "resulto ser su hermano"
+                ],
+                "focus": "resultó ser",
+                "watch": "resultó ser + persona."
+              },
+              {
+                "prompt": "Anuncia el clímax: la cena.",
+                "expected": [
+                  "Lo mejor de todo fue la cena",
+                  "lo mejor de todo fue la cena"
+                ],
+                "focus": "lo mejor de todo",
+                "watch": "anuncia el momento fuerte."
+              },
+              {
+                "prompt": "Engancha al oyente: quién llamó.",
+                "expected": [
+                  "No te imaginas quién llamó",
+                  "no te imaginas quien llamo"
+                ],
+                "focus": "no te imaginas",
+                "watch": "quién y llamó llevan tilde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u19-sorpresa-e1",
+              "kind": "choice",
+              "prompt": "Estábamos cenando y, ___, se fue la luz.",
+              "explain": "De repente marca el giro sin aviso.",
+              "options": [
+                "de repente",
+                "de verdad",
+                "de nuevo",
+                "de nada"
+              ],
+              "answers": [
+                "de repente"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-sorpresa-e2",
+              "kind": "gap",
+              "prompt": "___ que el concierto era gratis. (revelar la verdad)",
+              "explain": "Resultó que + la verdad escondida.",
+              "answers": [
+                "Resultó",
+                "resultó",
+                "Resulto"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-sorpresa-e3",
+              "kind": "order",
+              "prompt": "Engancha al oyente antes de contar el final.",
+              "explain": "No te imaginas… engancha al oyente.",
+              "answers": [
+                "No te imaginas lo que pasó"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-sorpresa-e4",
+              "kind": "written",
+              "prompt": "Revela la sorpresa: era el vecino.",
+              "explain": "Resultó que / resultó ser + la verdad.",
+              "answers": [
+                "resultó que era el vecino",
+                "resulto que era el vecino",
+                "resultó ser el vecino"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "grammar:connectors",
+            "grammar:past-simple-irregular",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular"
+          ]
+        },
+        {
+          "id": "es-foundations-u19-anecdotas",
+          "title": "La anécdota del verano",
+          "goal": "Contar una anécdota y reaccionar a la de otros: no me digas, ¿y luego?, qué fuerte.",
+          "intro": {
+            "explanation": [
+              "La anécdota es una historia corta y graciosa: contexto, giro y remate. «Pues mira, me pasó en agosto».",
+              "Para reaccionar: «¡No me digas!», «¿Y luego?», «¡Qué fuerte!». Animan a seguir contando.",
+              "El giro con me pega el susto a ti: «Se me cayó el móvil», «Se me olvidó la cartera»."
+            ],
+            "examples": [
+              {
+                "text": "Pues mira, me pasó en agosto.",
+                "meaning": "Abre la anécdota."
+              },
+              {
+                "text": "Estaba en la cola del bus.",
+                "meaning": "El contexto."
+              },
+              {
+                "text": "Se me cayó el móvil al suelo.",
+                "meaning": "El giro."
+              },
+              {
+                "text": "¿Y luego?",
+                "meaning": "Pide más historia."
+              },
+              {
+                "text": "¡No me digas!",
+                "meaning": "Reacciona con sorpresa."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "pues mira, …",
+              "meaning": "Abre la anécdota.",
+              "note": "Pues mira, me pasó ayer."
+            },
+            {
+              "text": "se me cayó / se me olvidó",
+              "meaning": "El giro con me.",
+              "note": "Se me olvidó la cartera."
+            },
+            {
+              "text": "¿y luego?",
+              "meaning": "Pide el siguiente hecho.",
+              "note": "¿Y luego? ¿Qué hiciste?"
+            },
+            {
+              "text": "no me digas",
+              "meaning": "Sorpresa del oyente.",
+              "note": "¡No me digas!"
+            },
+            {
+              "text": "qué fuerte / qué vergüenza",
+              "meaning": "Reacciones.",
+              "note": "¡Qué vergüenza, tío!"
+            }
+          ],
+          "situation": "En la terraza, cuentas que se te cayó el móvil al mar en agosto; tu amigo no lo puede creer y quiere saber qué pasó después.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Abre tu anécdota de agosto.",
+                "expected": [
+                  "Pues mira, me pasó en agosto",
+                  "pues mira me paso en agosto"
+                ],
+                "focus": "pues mira",
+                "watch": "pasó lleva tilde."
+              },
+              {
+                "prompt": "Di el giro: se te cayó el móvil.",
+                "expected": [
+                  "Se me cayó el móvil",
+                  "se me cayo el movil"
+                ],
+                "focus": "se me cayó",
+                "watch": "se me cayó: el giro con me."
+              },
+              {
+                "prompt": "Pide el siguiente paso de la historia.",
+                "expected": [
+                  "¿Y luego?",
+                  "¿Y luego qué?",
+                  "y luego"
+                ],
+                "focus": "¿y luego?",
+                "watch": "¿Y luego? pide más historia."
+              },
+              {
+                "prompt": "Reacciona con sorpresa.",
+                "expected": [
+                  "¡No me digas!",
+                  "No me digas",
+                  "no me digas"
+                ],
+                "focus": "no me digas",
+                "watch": "Reacción de sorpresa."
+              },
+              {
+                "prompt": "Reacciona fuerte: qué vergüenza.",
+                "expected": [
+                  "¡Qué vergüenza!",
+                  "Que vergüenza",
+                  "qué verguenza"
+                ],
+                "focus": "qué vergüenza",
+                "watch": "qué con tilde."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "es-foundations-u19-anecdotas-e1",
+              "kind": "choice",
+              "prompt": "—Se me cayó el móvil al mar. —¡No ___ digas!",
+              "explain": "No me digas: fórmula de sorpresa del oyente.",
+              "options": [
+                "me",
+                "te",
+                "se",
+                "le"
+              ],
+              "answers": [
+                "me"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-anecdotas-e2",
+              "kind": "gap",
+              "prompt": "¿Y ___? Cuéntame el final. (pedir el siguiente hecho)",
+              "explain": "¿Y luego? pide el siguiente paso de la historia.",
+              "answers": [
+                "luego",
+                "Luego"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-anecdotas-e3",
+              "kind": "order",
+              "prompt": "Abre la anécdota del verano.",
+              "explain": "Pues mira + contexto abre la anécdota.",
+              "answers": [
+                "Pues mira, me pasó en agosto"
+              ]
+            },
+            {
+              "id": "es-foundations-u19-anecdotas-e4",
+              "kind": "written",
+              "prompt": "Di que olvidaste las llaves en la playa.",
+              "explain": "se me olvidaron: el giro con me.",
+              "answers": [
+                "se me olvidaron las llaves en la playa",
+                "se me olvidaron las llaves",
+                "olvidé las llaves en la playa",
+                "olvide las llaves en la playa"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "vocab:social-expressions",
+            "grammar:past-simple-regular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
           ]
         }
       ]

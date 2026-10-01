@@ -3639,6 +3639,177 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "it-foundations-u9-dibattere",
+          "title": "D’accordo nel disaccordo",
+          "goal": "Dissentire con tatto: riconoscere il punto dell’altro e restare nella propria posizione.",
+          "intro": {
+            "explanation": [
+              "Il dissenso con tatto riconosce prima e obietta poi: « Capisco il suo punto, però i dati dicono altro ».",
+              "« Sono d’accordo in parte » divide la posizione: « Sì alla forma, no ai tempi ». « Quanto ai costi » isola il dissenso in un punto solo.",
+              "« Pur + gerundio » concede senza cedere: « Pur condividendo l’obiettivo, la strada mi sembra diversa ». Poi si chiude: « Cerchiamo un punto comune »."
+            ],
+            "examples": [
+              {
+                "text": "Capisco il suo punto, però i dati dicono altro.",
+                "meaning": "Riconoscere, poi dissentire."
+              },
+              {
+                "text": "Sono d’accordo in parte: la forma sì, i tempi no.",
+                "meaning": "Accordo parziale."
+              },
+              {
+                "text": "Quanto ai costi, resto della mia idea.",
+                "meaning": "Limitare il dissenso a un punto."
+              },
+              {
+                "text": "Pur condividendo l’obiettivo, la strada mi sembra diversa.",
+                "meaning": "Concessione + dissenso."
+              },
+              {
+                "text": "Proviamo a trovare un punto comune.",
+                "meaning": "Chiudere in modo costruttivo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "capisco il suo punto",
+              "meaning": "Riconoscere l’altro.",
+              "note": "Capisco il suo punto, però…"
+            },
+            {
+              "text": "sono d’accordo in parte",
+              "meaning": "Accordo parziale.",
+              "note": "Sì alla forma, no ai tempi."
+            },
+            {
+              "text": "quanto a…",
+              "meaning": "Limitare al punto.",
+              "note": "Quanto ai costi, ho riserve."
+            },
+            {
+              "text": "pur + gerundio",
+              "meaning": "Concedere senza cedere.",
+              "note": "Pur condividendo, mi fermo."
+            },
+            {
+              "text": "un punto comune",
+              "meaning": "Chiudere insieme.",
+              "note": "Cerchiamo un punto comune."
+            }
+          ],
+          "situation": "In riunione un collega propone di tagliare i test: riconosci i suoi motivi, dissentite con tatto e chiudete con una proposta condivisa.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Riconosci il punto del collega prima di obiettare (formula con « punto »).",
+                "expected": [
+                  "capisco il suo punto però i tempi sono stretti",
+                  "capisco il suo punto ma servono dati",
+                  "capisco il suo punto però resto scettico"
+                ],
+                "focus": "capisco il suo punto",
+                "watch": "Prima il riconoscimento, poi il però."
+              },
+              {
+                "prompt": "Dai un accordo parziale: la forma sì, i tempi no (formula con « in parte »).",
+                "expected": [
+                  "sono d’accordo in parte la forma sì i tempi no",
+                  "sono d’accordo in parte pero i tempi no"
+                ],
+                "focus": "in parte",
+                "watch": "Accordo parziale, non totale."
+              },
+              {
+                "prompt": "Limita il tuo dissenso ai costi (formula con « quanto »).",
+                "expected": [
+                  "quanto ai costi non sono convinto",
+                  "quanto ai costi esprimo riserve"
+                ],
+                "focus": "quanto a",
+                "watch": "Quanto a + tema: isola il dissenso."
+              },
+              {
+                "prompt": "Concedi l’obiettivo ma dissentisci sulla strada (formula con « pur »).",
+                "expected": [
+                  "pur condividendo l’obiettivo la strada mi sembra diversa",
+                  "pur condividendo l’obiettivo preferisco un’altra strada"
+                ],
+                "focus": "pur + gerundio",
+                "watch": "Pur condividendo = aunque comparto."
+              },
+              {
+                "prompt": "Chiudi cercando una base condivisa (formula con « comune »).",
+                "expected": [
+                  "proviamo a trovare un punto comune",
+                  "cerchiamo un punto comune sui test"
+                ],
+                "focus": "punto comune",
+                "watch": "La chiusura evita lo scontro."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u9-dibattere-e1",
+              "kind": "choice",
+              "prompt": "« Capisco ___ punto, però i dati dicono altro. »",
+              "options": [
+                "il suo",
+                "il mio",
+                "il loro",
+                "di lui"
+              ],
+              "answers": [
+                "il suo"
+              ],
+              "explain": "Riconoscere la posizione dell’altro: il suo punto."
+            },
+            {
+              "id": "it-foundations-u9-dibattere-e2",
+              "kind": "gap",
+              "prompt": "Sono d’accordo ___: la forma sì, i tempi no.",
+              "answers": [
+                "in parte"
+              ],
+              "explain": "Accordo parziale: in parte."
+            },
+            {
+              "id": "it-foundations-u9-dibattere-e3",
+              "kind": "written",
+              "prompt": "Concedi l’obiettivo ma dissentisci sulla strada: apri con « pur ».",
+              "answers": [
+                "pur condividendo l’obiettivo la strada mi sembra diversa",
+                "pur condividendo l’obiettivo preferisco un’altra strada"
+              ],
+              "explain": "Pur + gerundio = concessione, poi il dissenso."
+            },
+            {
+              "id": "it-foundations-u9-dibattere-e4",
+              "kind": "written",
+              "prompt": "Chiudi il dibattito cercando una base condivisa (formula con « punto »).",
+              "answers": [
+                "proviamo a trovare un punto comune",
+                "cerchiamo un punto comune",
+                "cerchiamo un punto comune sui tempi"
+              ],
+              "explain": "Punto comune = chiusura costruttiva."
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:sustained-conversation",
+            "grammar:connectors",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -6965,6 +7136,1694 @@
           ],
           "prerequisites": [
             "grammar:frequency-adverbs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u16",
+      "title": "A tavola",
+      "subtitle": "Mangiare fuori",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "al-ristorante",
+          "title": "Al ristorante",
+          "subtitle": "Vorrei…",
+          "symbol": "fork.knife",
+          "category": "Course",
+          "situation": "Siete al ristorante: ordinate antipasto, primo e da bere, con cortesia.",
+          "colorIndex": 0
+        },
+        {
+          "id": "menu-e-conto",
+          "title": "Il menù e il conto",
+          "subtitle": "Quanto fa ?",
+          "symbol": "takeout.bag",
+          "category": "Course",
+          "situation": "Leggete il menù, chiedete cosa c’è e pagate il conto con gli amici.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u16-ristorante",
+          "title": "Al ristorante",
+          "goal": "Ordinare al ristorante con vorrei e prendere, con cortesia.",
+          "intro": {
+            "explanation": [
+              "Per ordinare usa vorrei + piatto: « Vorrei le tagliatelle, per favore ». È gentile e non suona come un ordine.",
+              "Altro modo comune: prendere. « Io prendo la pizza ». Il cameriere chiede: « Che cosa prende ? ».",
+              "Vuoi un consiglio ? Chiedi: « Cosa mi consiglia ? ». E la cortesia chiude sempre: « per favore » e « grazie »."
+            ],
+            "examples": [
+              {
+                "text": "Vorrei le tagliatelle, per favore.",
+                "meaning": "Ordinare con cortesia."
+              },
+              {
+                "text": "Io prendo la pizza.",
+                "meaning": "Altro modo di ordinare: prendere."
+              },
+              {
+                "text": "Che cosa prende ?",
+                "meaning": "Il cameriere chiede."
+              },
+              {
+                "text": "Cosa mi consiglia ?",
+                "meaning": "Chiedere un consiglio."
+              },
+              {
+                "text": "Per me, solo un primo.",
+                "meaning": "Ordinare per due: per me / per lui."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Vorrei …",
+              "meaning": "Ordinare con cortesia.",
+              "note": "Vorrei un caffè."
+            },
+            {
+              "text": "Prendo …",
+              "meaning": "Altro modo: prendere.",
+              "note": "Prendo il pesce."
+            },
+            {
+              "text": "Che cosa prende ?",
+              "meaning": "Il cameriere chiede.",
+              "note": "Che cosa prende, signora ?"
+            },
+            {
+              "text": "Cosa mi consiglia ?",
+              "meaning": "Chiedere un consiglio.",
+              "note": "Cosa mi consiglia di dolce ?"
+            },
+            {
+              "text": "per favore / grazie",
+              "meaning": "La cortesia a tavola.",
+              "note": "Un caffè, per favore."
+            }
+          ],
+          "situation": "Sei al ristorante con un’amica: il cameriere arriva, ordinate antipasto, primo e da bere.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Ordina con cortesia: le tagliatelle.",
+                "expected": [
+                  "Vorrei le tagliatelle, per favore.",
+                  "Vorrei le tagliatelle.",
+                  "Io vorrei le tagliatelle."
+                ],
+                "focus": "vorrei",
+                "watch": "vorrei = quisiera."
+              },
+              {
+                "prompt": "Il cameriere ti chiede: rispondi che prendi la pizza.",
+                "expected": [
+                  "Prendo la pizza.",
+                  "Io prendo la pizza."
+                ],
+                "focus": "prendo",
+                "watch": "prendere = tomar."
+              },
+              {
+                "prompt": "Chiedi un consiglio al cameriere.",
+                "expected": [
+                  "Cosa mi consiglia ?",
+                  "Che cosa mi consiglia ?"
+                ],
+                "focus": "consiglia",
+                "watch": "consigliare = recomendar."
+              },
+              {
+                "prompt": "Dì cosa prende il tuo amico: lui, il pesce.",
+                "expected": [
+                  "Lui prende il pesce.",
+                  "Il mio amico prende il pesce."
+                ],
+                "focus": "lui prende",
+                "watch": "terza persona: prende."
+              },
+              {
+                "prompt": "Ordina da bere: un’acqua naturale.",
+                "expected": [
+                  "Vorrei un’acqua naturale.",
+                  "Prendo un’acqua naturale.",
+                  "Un’acqua naturale, per favore."
+                ],
+                "focus": "vorrei + bere",
+                "watch": "un’acqua: elisione."
+              },
+              {
+                "prompt": "Chiedi gentilmente il menù.",
+                "expected": [
+                  "Il menù, per favore.",
+                  "Vorrei il menù, per favore."
+                ],
+                "focus": "per favore",
+                "watch": "la cortesia chiude la frase."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u16-ristorante-e1",
+              "kind": "choice",
+              "prompt": "___ le tagliatelle, per favore.",
+              "options": [
+                "Vorrei",
+                "Voglio",
+                "Vuoi",
+                "Devo"
+              ],
+              "answers": [
+                "Vorrei"
+              ],
+              "explain": "Ordinare con cortesia: vorrei + piatto."
+            },
+            {
+              "id": "it-foundations-u16-ristorante-e2",
+              "kind": "gap",
+              "prompt": "Io ___ la pizza margherita. (prendere, io)",
+              "answers": [
+                "prendo"
+              ],
+              "explain": "prendere: io prendo."
+            },
+            {
+              "id": "it-foundations-u16-ristorante-e3",
+              "kind": "order",
+              "prompt": "Chiedi un consiglio al cameriere.",
+              "answers": [
+                "Cosa mi consiglia"
+              ],
+              "explain": "Cosa + mi + consiglia."
+            },
+            {
+              "id": "it-foundations-u16-ristorante-e4",
+              "kind": "written",
+              "prompt": "Ordina un caffè con cortesia.",
+              "answers": [
+                "vorrei un caffè per favore",
+                "vorrei un caffè",
+                "prendo un caffè per favore"
+              ],
+              "explain": "vorrei + piatto + per favore."
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u16-menu",
+          "title": "Il menù",
+          "goal": "Leggere il menù: piatti, bevande e chiedere cosa c’è.",
+          "intro": {
+            "explanation": [
+              "Nel menù i piatti seguono un ordine: « antipasto », « primo », « secondo », « dolce ». « Come primo prendo le penne ».",
+              "Le bevande: « un’acqua naturale » (senza gas) o « frizzante » (con gas). « Per bere, un’acqua frizzante ».",
+              "Per chiedere cosa hanno: « Cosa c’è come dolce ? ». La risposta: « C’è il tiramisù » o « Ci sono le lasagne »."
+            ],
+            "examples": [
+              {
+                "text": "Cosa c’è come primo ?",
+                "meaning": "Chiedere i piatti."
+              },
+              {
+                "text": "Ci sono le lasagne.",
+                "meaning": "Rispondere al plurale."
+              },
+              {
+                "text": "Come secondo, il pesce.",
+                "meaning": "Ordinare per portata."
+              },
+              {
+                "text": "Per bere, un’acqua frizzante.",
+                "meaning": "Ordinare da bere."
+              },
+              {
+                "text": "C’è anche il tiramisù.",
+                "meaning": "I dolci di oggi."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "l’antipasto / il primo",
+              "meaning": "I piatti in ordine.",
+              "note": "Come primo, le penne."
+            },
+            {
+              "text": "il secondo / il dolce",
+              "meaning": "Dopo il primo.",
+              "note": "Come secondo, il pesce."
+            },
+            {
+              "text": "Cosa c’è … ?",
+              "meaning": "Chiedere cosa hanno.",
+              "note": "Cosa c’è come dolce ?"
+            },
+            {
+              "text": "un’acqua naturale / frizzante",
+              "meaning": "Senza o con gas.",
+              "note": "Un’acqua naturale, per favore."
+            },
+            {
+              "text": "per bere / per mangiare",
+              "meaning": "Da bere / da mangiare.",
+              "note": "Per bere, il vino."
+            }
+          ],
+          "situation": "Leggi il menù con Marco: chiedete cosa c’è come primo, come secondo e da bere.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiedi al cameriere quali primi ci sono.",
+                "expected": [
+                  "Cosa c’è come primo ?",
+                  "Che cosa c’è come primo ?",
+                  "Cosa c’e come primo ?"
+                ],
+                "focus": "cosa c’è",
+                "watch": "c’è = hay."
+              },
+              {
+                "prompt": "Dì cosa c’è come primo: le lasagne.",
+                "expected": [
+                  "Ci sono le lasagne.",
+                  "Ci sono lasagne."
+                ],
+                "focus": "ci sono",
+                "watch": "plurale → ci sono."
+              },
+              {
+                "prompt": "Ordina da bere: acqua con gas.",
+                "expected": [
+                  "Un’acqua frizzante, per favore.",
+                  "Vorrei un’acqua frizzante.",
+                  "Un’acqua frizzante."
+                ],
+                "focus": "frizzante",
+                "watch": "frizzante = con gas."
+              },
+              {
+                "prompt": "Dì cosa prendi come secondo: il pesce.",
+                "expected": [
+                  "Come secondo prendo il pesce.",
+                  "Prendo il pesce come secondo."
+                ],
+                "focus": "come secondo",
+                "watch": "secondo = plato principal."
+              },
+              {
+                "prompt": "Chiedi quali dolci sono disponibili.",
+                "expected": [
+                  "Cosa c’è come dolce ?",
+                  "Cosa c’e come dolce ?"
+                ],
+                "focus": "dolce",
+                "watch": "dolce = postre."
+              },
+              {
+                "prompt": "Di’ al tuo amico che oggi, tra i dolci, c’è il tiramisù.",
+                "expected": [
+                  "C’è anche il tiramisù.",
+                  "Oggi c’è il tiramisù.",
+                  "Ce anche il tiramisu."
+                ],
+                "focus": "c’è anche",
+                "watch": "anche = también."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u16-menu-e1",
+              "kind": "choice",
+              "prompt": "Bevi senza gas: un’acqua ___.",
+              "options": [
+                "naturale",
+                "frizzante",
+                "gassata",
+                "dolce"
+              ],
+              "answers": [
+                "naturale"
+              ],
+              "explain": "Acqua naturale = senza gas."
+            },
+            {
+              "id": "it-foundations-u16-menu-e2",
+              "kind": "gap",
+              "prompt": "Come primo ___ le lasagne. (prendere, noi)",
+              "answers": [
+                "prendiamo"
+              ],
+              "explain": "prendere, noi: prendiamo."
+            },
+            {
+              "id": "it-foundations-u16-menu-e3",
+              "kind": "order",
+              "prompt": "Chiedi cosa hanno come primo.",
+              "answers": [
+                "Cosa c’è come primo"
+              ],
+              "explain": "Cosa c’è + come + piatto."
+            },
+            {
+              "id": "it-foundations-u16-menu-e4",
+              "kind": "written",
+              "prompt": "Ordina da bere: un’acqua naturale.",
+              "answers": [
+                "un’acqua naturale per favore",
+                "un acqua naturale per favore",
+                "vorrei un’acqua naturale"
+              ],
+              "explain": "un’acqua + naturale, con per favore."
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "it-foundations-u16-conto",
+          "title": "Il conto",
+          "goal": "Chiedere il conto, pagare e lasciare la mancia.",
+          "intro": {
+            "explanation": [
+              "Per pagare chiami il cameriere: « Il conto, per favore ». E chiedi il totale: « Quanto fa ? ».",
+              "Paghi « in contanti » o « con la carta ». Chiedi: « Posso pagare con la carta ? » — « Certo, signore ».",
+              "La mancia in Italia è piccola e facoltativa: « Tenga il resto ». E tra amici: « Oggi offro io ! »."
+            ],
+            "examples": [
+              {
+                "text": "Il conto, per favore.",
+                "meaning": "Chiedere di pagare."
+              },
+              {
+                "text": "Quanto fa ?",
+                "meaning": "Chiedere il totale."
+              },
+              {
+                "text": "Posso pagare con la carta ?",
+                "meaning": "Chiedere il metodo di pagamento."
+              },
+              {
+                "text": "Tenga il resto.",
+                "meaning": "Lasciare la mancia."
+              },
+              {
+                "text": "Oggi offro io !",
+                "meaning": "Pagare per tutti."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Il conto, per favore.",
+              "meaning": "Chiedere di pagare.",
+              "note": "Il conto, per favore !"
+            },
+            {
+              "text": "Quanto fa ?",
+              "meaning": "Qual è il totale ?",
+              "note": "Quanto fa in tutto ?"
+            },
+            {
+              "text": "in contanti / con la carta",
+              "meaning": "Due modi di pagare.",
+              "note": "Pago con la carta."
+            },
+            {
+              "text": "Tenga il resto.",
+              "meaning": "La mancia: il resto è suo.",
+              "note": "Tenga il resto, grazie."
+            },
+            {
+              "text": "Oggi offro io.",
+              "meaning": "Pagare per gli amici.",
+              "note": "Oggi offro io, festeggio !"
+            }
+          ],
+          "situation": "Finite la cena con Luca: chiedi il conto, chiedi quanto fa e Luca lascia una piccola mancia.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Chiama il cameriere per pagare.",
+                "expected": [
+                  "Il conto, per favore.",
+                  "Il conto per favore.",
+                  "Posso avere il conto ?"
+                ],
+                "focus": "il conto",
+                "watch": "conto = la cuenta."
+              },
+              {
+                "prompt": "Chiedi quanto è in totale.",
+                "expected": [
+                  "Quanto fa ?",
+                  "Quanto fa in tutto ?",
+                  "Quanto costa ?"
+                ],
+                "focus": "quanto fa",
+                "watch": "quanto fa = cuánto es."
+              },
+              {
+                "prompt": "Chiedi se puoi pagare con la carta.",
+                "expected": [
+                  "Posso pagare con la carta ?",
+                  "Posso pagare con la carta ?"
+                ],
+                "focus": "posso",
+                "watch": "posso = puedo."
+              },
+              {
+                "prompt": "Dì che paghi in contanti.",
+                "expected": [
+                  "Pago in contanti.",
+                  "Io pago in contanti."
+                ],
+                "focus": "in contanti",
+                "watch": "contanti = efectivo."
+              },
+              {
+                "prompt": "Lascia la mancia: il resto per il cameriere.",
+                "expected": [
+                  "Tenga il resto.",
+                  "Tenga il resto, grazie."
+                ],
+                "focus": "tenga",
+                "watch": "tenga = quédese con ello (formal)."
+              },
+              {
+                "prompt": "Dì che oggi paghi tu per tutti.",
+                "expected": [
+                  "Oggi offro io !",
+                  "Oggi offro io."
+                ],
+                "focus": "offro",
+                "watch": "offrire = invitar a pagar."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u16-conto-e1",
+              "kind": "choice",
+              "prompt": "Chiami il cameriere: « ___, per favore ! »",
+              "options": [
+                "Il conto",
+                "Il menù",
+                "La mancia",
+                "Il resto"
+              ],
+              "answers": [
+                "Il conto"
+              ],
+              "explain": "Per pagare si chiede il conto."
+            },
+            {
+              "id": "it-foundations-u16-conto-e2",
+              "kind": "gap",
+              "prompt": "Quanto ___ in tutto ? (fare, 3ª persona)",
+              "answers": [
+                "fa"
+              ],
+              "explain": "Quanto fa ? chiede il totale."
+            },
+            {
+              "id": "it-foundations-u16-conto-e3",
+              "kind": "order",
+              "prompt": "Chiedi di pagare con la carta.",
+              "answers": [
+                "Posso pagare con la carta"
+              ],
+              "explain": "Posso + infinito + con la carta."
+            },
+            {
+              "id": "it-foundations-u16-conto-e4",
+              "kind": "written",
+              "prompt": "Lascia la mancia: il resto è per il cameriere.",
+              "answers": [
+                "tenga il resto",
+                "tenga il resto grazie",
+                "tienia il resto"
+              ],
+              "explain": "Tenga il resto = la mancia."
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "grammar:quantities",
+            "vocab:food",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u17",
+      "title": "Stare bene insieme",
+      "subtitle": "Inviti e sorprese",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "proposte-inviti",
+          "title": "Vieni o preferisci… ?",
+          "subtitle": "Facciamo… ?",
+          "symbol": "calendar.badge.clock",
+          "category": "Course",
+          "situation": "Organizzate il weekend: proposte, inviti accettati e rifiutati con gentilezza.",
+          "colorIndex": 0
+        },
+        {
+          "id": "il-regalo",
+          "title": "Il regalo perfetto",
+          "subtitle": "Andiamo a comprare…",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "Preparate una sorpresa per il compleanno di un’amica: regalo, torta e festa.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u17-proposte",
+          "title": "Vieni o preferisci… ?",
+          "goal": "Fare proposte con facciamo e ti va di, e rispondere.",
+          "intro": {
+            "explanation": [
+              "Per proporre un’attività: facciamo / andiamo + attività. « Facciamo una passeggiata ? » propone e chiede insieme.",
+              "Più gentile: ti va di + infinito. « Ti va di venire al cinema ? ». Per la scelta: « Preferisci il sabato ? ».",
+              "Per rispondere: « Volentieri ! » è un sì contento, « Va bene » è un sì tranquillo. E i progetti: « Domani andiamo a visitare il museo »."
+            ],
+            "examples": [
+              {
+                "text": "Facciamo una passeggiata ?",
+                "meaning": "Proporre un’attività."
+              },
+              {
+                "text": "Ti va di venire al cinema ?",
+                "meaning": "Proposta gentile."
+              },
+              {
+                "text": "Preferisci il sabato o la domenica ?",
+                "meaning": "Chiedere la scelta."
+              },
+              {
+                "text": "Volentieri !",
+                "meaning": "Accettare con piacere."
+              },
+              {
+                "text": "Domani andiamo a pranzo da me.",
+                "meaning": "Progetto: andare a + infinito."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Facciamo … ?",
+              "meaning": "Proporre insieme.",
+              "note": "Facciamo una pizza ?"
+            },
+            {
+              "text": "Ti va di… ?",
+              "meaning": "Proposta gentile.",
+              "note": "Ti va di uscire ?"
+            },
+            {
+              "text": "Preferisci … ?",
+              "meaning": "Chiedere la scelta.",
+              "note": "Preferisci sabato ?"
+            },
+            {
+              "text": "Volentieri !",
+              "meaning": "Sì, con piacere.",
+              "note": "Volentieri, alle otto !"
+            },
+            {
+              "text": "andare a + infinito",
+              "meaning": "Progetti per domani.",
+              "note": "Andiamo a vedere il museo."
+            }
+          ],
+          "situation": "Organizzate il weekend in quattro messaggi: Giulia propone, tu accetti e fissate un orario.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Proponi una passeggiata.",
+                "expected": [
+                  "Facciamo una passeggiata ?",
+                  "Facciamo una passeggiata ?"
+                ],
+                "focus": "facciamo",
+                "watch": "facciamo… ? = ¿lo hacemos?"
+              },
+              {
+                "prompt": "Proponi gentilmente di andare al cinema.",
+                "expected": [
+                  "Ti va di andare al cinema ?",
+                  "Ti va di venire al cinema ?"
+                ],
+                "focus": "ti va di",
+                "watch": "ti va di + infinito."
+              },
+              {
+                "prompt": "Accetta con entusiasmo.",
+                "expected": [
+                  "Volentieri !"
+                ],
+                "focus": "volentieri",
+                "watch": "volentieri = con gusto."
+              },
+              {
+                "prompt": "Chiedi se preferisce sabato.",
+                "expected": [
+                  "Preferisci sabato ?",
+                  "Preferisci il sabato ?"
+                ],
+                "focus": "preferisci",
+                "watch": "preferire = preferir."
+              },
+              {
+                "prompt": "Dì il tuo progetto: domani, visitare il museo.",
+                "expected": [
+                  "Domani andiamo a visitare il museo.",
+                  "Domani vado a visitare il museo."
+                ],
+                "focus": "andare a",
+                "watch": "andare a + infinito = plan."
+              },
+              {
+                "prompt": "Accetta e fissa l’ora: alle otto.",
+                "expected": [
+                  "Va bene, alle otto !",
+                  "Volentieri, alle otto !"
+                ],
+                "focus": "va bene",
+                "watch": "va bene = está bien."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u17-proposte-e1",
+              "kind": "choice",
+              "prompt": "___ una pizza stasera ?",
+              "options": [
+                "Facciamo",
+                "Faccio",
+                "Fate",
+                "Stiamo"
+              ],
+              "answers": [
+                "Facciamo"
+              ],
+              "explain": "Proporre con noi: facciamo… ?"
+            },
+            {
+              "id": "it-foundations-u17-proposte-e2",
+              "kind": "gap",
+              "prompt": "Ti ___ di venire al mare ? (andare bene, a te)",
+              "answers": [
+                "va"
+              ],
+              "explain": "ti va di + infinito."
+            },
+            {
+              "id": "it-foundations-u17-proposte-e3",
+              "kind": "order",
+              "prompt": "Accetta e fissa l’ora: alle nove.",
+              "answers": [
+                "Va bene alle nove"
+              ],
+              "explain": "Va bene + ora."
+            },
+            {
+              "id": "it-foundations-u17-proposte-e4",
+              "kind": "written",
+              "prompt": "Dì il tuo progetto per domani: andare a nuotare.",
+              "answers": [
+                "domani vado a nuotare",
+                "domani andiamo a nuotare"
+              ],
+              "explain": "andare a + infinito per i progetti."
+            }
+          ],
+          "skills": [
+            "function:make-suggestions",
+            "grammar:going-to",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "it-foundations-u17-scusa",
+          "title": "Peccato, non posso",
+          "goal": "Accettare e rifiutare inviti con gentilezza, con una scusa.",
+          "intro": {
+            "explanation": [
+              "Accetti con piacere: « Volentieri, vengo ! ». Rifiuti con gentilezza: « Peccato, non posso ».",
+              "La scusa ammorbidisce il no: « Devo lavorare », « Ho un impegno ». Poi ripari: « Facciamo domenica ? ».",
+              "I connettivi tengono il messaggio insieme: « vengo, però arrivo in ritardo », « non posso, quindi facciamo dopo »."
+            ],
+            "examples": [
+              {
+                "text": "Peccato, non posso.",
+                "meaning": "Rifiutare con dispiacere."
+              },
+              {
+                "text": "Devo lavorare sabato.",
+                "meaning": "Scusa semplice."
+              },
+              {
+                "text": "Facciamo domenica prossima ?",
+                "meaning": "Riparare il no."
+              },
+              {
+                "text": "Grazie, vengo !",
+                "meaning": "Accettare l’invito."
+              },
+              {
+                "text": "Vengo, però arrivo in ritardo.",
+                "meaning": "Sì con una condizione."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Peccato !",
+              "meaning": "Che dispiacere.",
+              "note": "Peccato, devo studiare."
+            },
+            {
+              "text": "non posso",
+              "meaning": "Rifiutare.",
+              "note": "Non posso, ho un impegno."
+            },
+            {
+              "text": "ho un impegno",
+              "meaning": "Scusa generica.",
+              "note": "Ho un impegno di lavoro."
+            },
+            {
+              "text": "la settimana prossima",
+              "meaning": "Riparare più tardi.",
+              "note": "Facciamola la settimana prossima ?"
+            },
+            {
+              "text": "però / quindi",
+              "meaning": "Connettivi semplici.",
+              "note": "Vengo, però tardi."
+            }
+          ],
+          "situation": "Paolo ti invita a una cena ma devi rifiutare: scusati, dai un motivo e proponete un altro giorno.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Rifiuta con dispiacere.",
+                "expected": [
+                  "Peccato, non posso.",
+                  "Che peccato, non posso."
+                ],
+                "focus": "peccato",
+                "watch": "peccato = lástima."
+              },
+              {
+                "prompt": "Dai una scusa di lavoro.",
+                "expected": [
+                  "Non posso, devo lavorare.",
+                  "Devo lavorare sabato.",
+                  "Peccato, devo lavorare."
+                ],
+                "focus": "devo",
+                "watch": "dovere = deber."
+              },
+              {
+                "prompt": "Ripara: proponi la domenica.",
+                "expected": [
+                  "Facciamo domenica ?",
+                  "E se facciamo la domenica ?"
+                ],
+                "focus": "facciamo… ?",
+                "watch": "ripari con una proposta."
+              },
+              {
+                "prompt": "Accetta l’invito.",
+                "expected": [
+                  "Grazie, vengo !",
+                  "Volentieri, vengo !"
+                ],
+                "focus": "vengo",
+                "watch": "vengo = acepto."
+              },
+              {
+                "prompt": "Accetta ma avvisa: arrivi in ritardo.",
+                "expected": [
+                  "Vengo, però arrivo in ritardo.",
+                  "Vengo, ma arrivo in ritardo."
+                ],
+                "focus": "però",
+                "watch": "però = pero (contraste)."
+              },
+              {
+                "prompt": "Di’ che è un dispiacere ma hai un impegno.",
+                "expected": [
+                  "Peccato, ho un impegno.",
+                  "Che peccato, ho un impegno."
+                ],
+                "focus": "ho un impegno",
+                "watch": "scusa generica."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u17-scusa-e1",
+              "kind": "choice",
+              "prompt": "___, non posso: devo lavorare.",
+              "options": [
+                "Peccato",
+                "Volentieri",
+                "Ci vediamo",
+                "Grazie mille"
+              ],
+              "answers": [
+                "Peccato"
+              ],
+              "explain": "Peccato introduce il dispiacere."
+            },
+            {
+              "id": "it-foundations-u17-scusa-e2",
+              "kind": "gap",
+              "prompt": "Vengo, ___ arrivo un po’ in ritardo. (contrasto)",
+              "answers": [
+                "però",
+                "pero"
+              ],
+              "explain": "però = contrasto."
+            },
+            {
+              "id": "it-foundations-u17-scusa-e3",
+              "kind": "order",
+              "prompt": "Rifiuta e dai la scusa: devi studiare.",
+              "answers": [
+                "Peccato devo studiare"
+              ],
+              "explain": "Peccato + scusa."
+            },
+            {
+              "id": "it-foundations-u17-scusa-e4",
+              "kind": "written",
+              "prompt": "Ripara il no: proponi la settimana prossima.",
+              "answers": [
+                "facciamo la settimana prossima",
+                "e se facciamo la settimana prossima",
+                "facciamola la settimana prossima"
+              ],
+              "explain": "Ripari con una proposta nuova."
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:make-suggestions",
+            "grammar:present-simple",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "it-foundations-u17-regalo",
+          "title": "Il regalo perfetto",
+          "goal": "Parlare di progetti di regalo con andare a + infinito.",
+          "intro": {
+            "explanation": [
+              "I progetti già decisi usano andare a + infinito: « Domani vado a comprare il regalo ».",
+              "La domanda: « Che cosa le vai a regalare ? ». Per i gusti: « Le piace la fotografia ».",
+              "Si organizza: « Vado a cercare un libro di foto », « Luca va a preparare la torta », « Le facciamo una sorpresa »."
+            ],
+            "examples": [
+              {
+                "text": "Domani andiamo a comprare il regalo.",
+                "meaning": "Progetto deciso."
+              },
+              {
+                "text": "Che cosa le vai a regalare ?",
+                "meaning": "Chiedere il progetto."
+              },
+              {
+                "text": "Le piace la fotografia.",
+                "meaning": "I gusti di lei."
+              },
+              {
+                "text": "Vado a cercare un libro di foto.",
+                "meaning": "Progetto: cercare."
+              },
+              {
+                "text": "Luca va a preparare la torta.",
+                "meaning": "Il progetto di Luca."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "andare a + infinito",
+              "meaning": "Progetto già deciso.",
+              "note": "Vado a comprare il regalo."
+            },
+            {
+              "text": "Che cosa vai a… ?",
+              "meaning": "Chiedere i progetti.",
+              "note": "Che cosa vai a regalare ?"
+            },
+            {
+              "text": "Le piace…",
+              "meaning": "I gusti di lei.",
+              "note": "Le piace la musica."
+            },
+            {
+              "text": "andare a cercare",
+              "meaning": "Progetto di ricerca.",
+              "note": "Vado a cercare un libro."
+            },
+            {
+              "text": "fare una sorpresa",
+              "meaning": "Regalo segreto.",
+              "note": "Le facciamo una sorpresa."
+            }
+          ],
+          "situation": "Per il compleanno di Sara: decidete il regalo, guardate i negozi e organizzate la sorpresa per sabato.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Dì il tuo progetto: comprare il regalo domani.",
+                "expected": [
+                  "Domani vado a comprare il regalo.",
+                  "Vado a comprare il regalo domani."
+                ],
+                "focus": "vado a",
+                "watch": "andare a + infinito."
+              },
+              {
+                "prompt": "Chiedi a Marco che cosa va a regalare.",
+                "expected": [
+                  "Che cosa vai a regalare ?",
+                  "Che cosa le vai a regalare ?"
+                ],
+                "focus": "vai a",
+                "watch": "domanda: che cosa + vai a… ?"
+              },
+              {
+                "prompt": "Dì i gusti di Sara: la fotografia.",
+                "expected": [
+                  "Le piace la fotografia.",
+                  "A Sara piace la fotografia."
+                ],
+                "focus": "le piace",
+                "watch": "piacere: le piace."
+              },
+              {
+                "prompt": "Dì il tuo progetto: cercare un libro di foto.",
+                "expected": [
+                  "Vado a cercare un libro di foto.",
+                  "Vado a cercare un libro di fotografia."
+                ],
+                "focus": "vado a cercare",
+                "watch": "cercare = buscar."
+              },
+              {
+                "prompt": "Dì il progetto di Luca: preparare la torta.",
+                "expected": [
+                  "Luca va a preparare la torta."
+                ],
+                "focus": "va a",
+                "watch": "terza persona: va a."
+              },
+              {
+                "prompt": "Proponi la sorpresa a Sara.",
+                "expected": [
+                  "Le facciamo una sorpresa.",
+                  "Facciamo una sorpresa a Sara."
+                ],
+                "focus": "fare una sorpresa",
+                "watch": "sorpresa = sorpresa."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u17-regalo-e1",
+              "kind": "choice",
+              "prompt": "Domani ___ a comprare il regalo.",
+              "options": [
+                "vado",
+                "vada",
+                "andare",
+                "vanno"
+              ],
+              "answers": [
+                "vado"
+              ],
+              "explain": "Io + andare a + infinito: vado a."
+            },
+            {
+              "id": "it-foundations-u17-regalo-e2",
+              "kind": "gap",
+              "prompt": "Che cosa ___ a regalare a Sara ? (tu)",
+              "answers": [
+                "vai"
+              ],
+              "explain": "tu vai a + infinito."
+            },
+            {
+              "id": "it-foundations-u17-regalo-e3",
+              "kind": "order",
+              "prompt": "Dì i gusti di Sara: la fotografia.",
+              "answers": [
+                "Le piace la fotografia"
+              ],
+              "explain": "Le piace + cosa."
+            },
+            {
+              "id": "it-foundations-u17-regalo-e4",
+              "kind": "written",
+              "prompt": "Dì il tuo progetto: cercare un regalo per lei.",
+              "answers": [
+                "vado a cercare un regalo per lei",
+                "vado a cercarle un regalo"
+              ],
+              "explain": "vado a cercare + oggetto."
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:social-expressions",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "it-foundations-u18",
+      "title": "Raccontare storie",
+      "subtitle": "Fatti in fila",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "fatti-in-ordine",
+          "title": "Quello che è successo",
+          "subtitle": "Prima, poi, alla fine",
+          "symbol": "book",
+          "category": "Course",
+          "situation": "Raccontate una giornata disastrosa: i fatti in ordine, dal treno perso all’arrivo in ritardo.",
+          "colorIndex": 0
+        },
+        {
+          "id": "la-svolta",
+          "title": "La svolta inaspettata",
+          "subtitle": "All’improvviso…",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Un aneddoto con un colpo di scena: sorprendete e fatevi sorprendere.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "it-foundations-u18-narrare",
+          "title": "Quello che è successo",
+          "goal": "Collegare i fatti passati con prima, poi, dopo, alla fine.",
+          "intro": {
+            "explanation": [
+              "Per raccontare metti i fatti in fila: « prima » apre, « poi » e « dopo » continuano, « alla fine » chiude. « Prima ho perso il treno, poi ho preso il bus ».",
+              "I fatti vanno al passato prossimo: « ho perso », « abbiamo chiamato », « sono arrivato ».",
+              "Alcuni participi sono irregolari: « ho fatto », « ho letto », « ho bevuto ». « Prima ho bevuto un caffè, poi ho letto il giornale »."
+            ],
+            "examples": [
+              {
+                "text": "Prima ho perso il treno.",
+                "meaning": "Il primo fatto."
+              },
+              {
+                "text": "Poi ho chiamato Luca.",
+                "meaning": "Il secondo fatto."
+              },
+              {
+                "text": "Dopo abbiamo preso un taxi.",
+                "meaning": "Ancora un fatto."
+              },
+              {
+                "text": "Alla fine sono arrivato in ritardo.",
+                "meaning": "Il risultato."
+              },
+              {
+                "text": "Che disastro !",
+                "meaning": "Commento alla storia."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "prima",
+              "meaning": "Il primo fatto.",
+              "note": "Prima ho mangiato."
+            },
+            {
+              "text": "poi / dopo",
+              "meaning": "Il fatto successivo.",
+              "note": "Poi sono uscito."
+            },
+            {
+              "text": "alla fine",
+              "meaning": "Il risultato.",
+              "note": "Alla fine ho vinto."
+            },
+            {
+              "text": "ho perso / ho preso",
+              "meaning": "Participi irregolari.",
+              "note": "perdere→perso, prendere→preso."
+            },
+            {
+              "text": "Che disastro !",
+              "meaning": "Reagire alla storia.",
+              "note": "Che disastro, il mio giorno !"
+            }
+          ],
+          "situation": "Racconti la tua mattina disastrosa: treno perso, bus preso, taxi e arrivo in ritardo al lavoro.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Inizia la storia: prima, il treno perso.",
+                "expected": [
+                  "Prima ho perso il treno."
+                ],
+                "focus": "prima",
+                "watch": "prima = primer hecho."
+              },
+              {
+                "prompt": "Continua: poi, la chiamata a Luca.",
+                "expected": [
+                  "Poi ho chiamato Luca."
+                ],
+                "focus": "poi",
+                "watch": "poi = después."
+              },
+              {
+                "prompt": "Ancora un fatto: dopo, il taxi preso insieme.",
+                "expected": [
+                  "Dopo abbiamo preso un taxi."
+                ],
+                "focus": "dopo",
+                "watch": "dopo = luego."
+              },
+              {
+                "prompt": "Chiudi: l’arrivo in ritardo.",
+                "expected": [
+                  "Alla fine sono arrivato in ritardo.",
+                  "Alla fine sono arrivata in ritardo."
+                ],
+                "focus": "alla fine",
+                "watch": "alla fine ciude la storia."
+              },
+              {
+                "prompt": "Racconta due fatti: prima il caffè, poi il giornale.",
+                "expected": [
+                  "Prima ho bevuto il caffè, poi ho letto il giornale.",
+                  "Prima ho bevuto un caffè e poi ho letto il giornale."
+                ],
+                "focus": "prima… poi",
+                "watch": "due fatti in ordine."
+              },
+              {
+                "prompt": "Reagisci alla storia di Luca: è un disastro.",
+                "expected": [
+                  "Che disastro !",
+                  "Che disastro, Luca !"
+                ],
+                "focus": "che disastro",
+                "watch": "reazione simpatica."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u18-narrare-e1",
+              "kind": "choice",
+              "prompt": "___ ho perso il treno, poi ho preso il bus.",
+              "options": [
+                "Prima",
+                "Alla fine",
+                "Poi",
+                "Dopo"
+              ],
+              "answers": [
+                "Prima"
+              ],
+              "explain": "Il primo fatto → prima."
+            },
+            {
+              "id": "it-foundations-u18-narrare-e2",
+              "kind": "gap",
+              "prompt": "Ho ___ il treno. (perdere, participio)",
+              "answers": [
+                "perso"
+              ],
+              "explain": "perdere → perso."
+            },
+            {
+              "id": "it-foundations-u18-narrare-e3",
+              "kind": "order",
+              "prompt": "Chiudi la storia: l’arrivo in ritardo.",
+              "answers": [
+                "Alla fine sono arrivato in ritardo"
+              ],
+              "explain": "Alla fine + risultato."
+            },
+            {
+              "id": "it-foundations-u18-narrare-e4",
+              "kind": "written",
+              "prompt": "Racconta il secondo fatto: dopo, la pizza mangiata.",
+              "answers": [
+                "dopo ho mangiato una pizza",
+                "poi ho mangiato una pizza",
+                "dopo ho mangiato pizza"
+              ],
+              "explain": "dopo/poi + passato prossimo."
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "grammar:past-simple-irregular",
+            "grammar:connectors",
+            "grammar:past-simple-regular"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "it-foundations-u18-sorpresa",
+          "title": "La svolta inaspettata",
+          "goal": "Raccontare con sorpresa: all’improvviso, si è scoperto che.",
+          "intro": {
+            "explanation": [
+              "La svolta si annuncia con « all’improvviso »: « Parlavamo tranquilli quando, all’improvviso, è entrato il capo ».",
+              "« Si è scoperto che » rivela il segreto: « Si è scoperto che era il suo compleanno ».",
+              "Le reazioni tengono viva la storia: « Non ci credo ! », « Sul serio ? », « E poi che è successo ? »."
+            ],
+            "examples": [
+              {
+                "text": "Parlavamo quando, all’improvviso, è suonato il telefono.",
+                "meaning": "La svolta."
+              },
+              {
+                "text": "Si è scoperto che era il suo compleanno.",
+                "meaning": "Il segreto rivelato."
+              },
+              {
+                "text": "Non ci credo !",
+                "meaning": "Reazione forte."
+              },
+              {
+                "text": "Sul serio ?",
+                "meaning": "Chiedere conferma."
+              },
+              {
+                "text": "E poi che è successo ?",
+                "meaning": "Rilanciare la storia."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "all’improvviso",
+              "meaning": "La svolta, senza preavviso.",
+              "note": "All’improvviso è piovuto."
+            },
+            {
+              "text": "si è scoperto che…",
+              "meaning": "Il segreto rivelato.",
+              "note": "Si è scoperto che era lui."
+            },
+            {
+              "text": "Non ci credo !",
+              "meaning": "Reazione di sorpresa.",
+              "note": "Non ci credo, sul serio !"
+            },
+            {
+              "text": "sul serio",
+              "meaning": "Davvero ?",
+              "note": "Sul serio ? Non è possibile !"
+            },
+            {
+              "text": "che è successo ?",
+              "meaning": "Chiedere il seguito.",
+              "note": "E poi che è successo ?"
+            }
+          ],
+          "situation": "Racconti la festa a sorpresa per Elena: una scusa inventata, poi la svolta e la reazione di tutti.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Racconta la scena: parlavate, e poi è entrato il capo.",
+                "expected": [
+                  "Parlavamo quando è entrato il capo.",
+                  "Stavamo parlando quando è entrato il capo."
+                ],
+                "focus": "quando",
+                "watch": "il contesto all’imperfetto + il fatto improvviso."
+              },
+              {
+                "prompt": "Aggiungi la svolta: la pioggia, di colpo.",
+                "expected": [
+                  "All’improvviso è piovuto.",
+                  "E all’improvviso è piovuto."
+                ],
+                "focus": "all’improvviso",
+                "watch": "all’improvviso = de repente."
+              },
+              {
+                "prompt": "Rivela: il compleanno di Elena, scoperto da tutti.",
+                "expected": [
+                  "Si è scoperto che era il suo compleanno."
+                ],
+                "focus": "si è scoperto",
+                "watch": "si è scoperto che + frase."
+              },
+              {
+                "prompt": "Reagisci con sorpresa forte.",
+                "expected": [
+                  "Non ci credo !",
+                  "Ma non ci credo !"
+                ],
+                "focus": "non ci credo",
+                "watch": "reazione di sorpresa."
+              },
+              {
+                "prompt": "Chiedi conferma, in due parole.",
+                "expected": [
+                  "Sul serio ?",
+                  "Davvero ?"
+                ],
+                "focus": "sul serio",
+                "watch": "sul serio = ¿en serio?"
+              },
+              {
+                "prompt": "Chiedi il seguito della storia.",
+                "expected": [
+                  "E poi che è successo ?",
+                  "Che è successo dopo ?"
+                ],
+                "focus": "che è successo",
+                "watch": "chiedere il seguito."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u18-sorpresa-e1",
+              "kind": "choice",
+              "prompt": "Parlavamo quando, ___, è entrato Luca.",
+              "options": [
+                "all’improvviso",
+                "alla fine",
+                "prima",
+                "per caso"
+              ],
+              "answers": [
+                "all’improvviso"
+              ],
+              "explain": "La svolta inaspettata → all’improvviso."
+            },
+            {
+              "id": "it-foundations-u18-sorpresa-e2",
+              "kind": "gap",
+              "prompt": "Si ___ scoperto che il regalo era per Marco. (essere)",
+              "answers": [
+                "è",
+                "e"
+              ],
+              "explain": "si è scoperto che + frase."
+            },
+            {
+              "id": "it-foundations-u18-sorpresa-e3",
+              "kind": "order",
+              "prompt": "Reagisci con sorpresa e chiedi conferma.",
+              "answers": [
+                "Non ci credo sul serio"
+              ],
+              "explain": "Non ci credo + sul serio."
+            },
+            {
+              "id": "it-foundations-u18-sorpresa-e4",
+              "kind": "written",
+              "prompt": "Rivela il segreto con la formula che contiene « scoperto »: Luca organizzava la festa.",
+              "answers": [
+                "si è scoperto che luca organizzava la festa",
+                "si e scoperto che luca organizzava la festa"
+              ],
+              "explain": "si è scoperto che + frase al passato."
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "grammar:connectors",
+            "grammar:past-simple-irregular",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular"
+          ]
+        },
+        {
+          "id": "it-foundations-u18-aneddoti",
+          "title": "L’aneddoto dell’estate",
+          "goal": "Raccontare un aneddoto e reagire a quello di un amico.",
+          "intro": {
+            "explanation": [
+              "L’aneddoto è una storia vera e divertente: apri con tempo e luogo. « Quest’estate, al mare, è successa una cosa incredibile ».",
+              "Chi ascolta reagisce: « Non mi dire ! » chiede di continuare, « E poi ? » chiede il seguito.",
+              "Si chiude con un commento: « Che figura ! », « Meno male che c’era Luca »."
+            ],
+            "examples": [
+              {
+                "text": "Quest’estate, al mare, è successa una cosa incredibile.",
+                "meaning": "Aprire l’aneddoto."
+              },
+              {
+                "text": "Non mi dire !",
+                "meaning": "Reazione: continua !"
+              },
+              {
+                "text": "E poi ?",
+                "meaning": "Chiedere il seguito."
+              },
+              {
+                "text": "Che figura !",
+                "meaning": "Reazione simpatica."
+              },
+              {
+                "text": "Meno male che c’era Luca.",
+                "meaning": "Chiusa con sollievo."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "è successa una cosa incredibile",
+              "meaning": "Aprire l’aneddoto.",
+              "note": "È successa una cosa incredibile."
+            },
+            {
+              "text": "Non mi dire !",
+              "meaning": "Sorpresa: continua !",
+              "note": "Non mi dire, e poi ?"
+            },
+            {
+              "text": "E poi ?",
+              "meaning": "Chiedere il seguito.",
+              "note": "E poi che hai fatto ?"
+            },
+            {
+              "text": "Che figura !",
+              "meaning": "Reazione simpatica.",
+              "note": "Che figura, quel tuffo !"
+            },
+            {
+              "text": "meno male che…",
+              "meaning": "Sollievo alla fine.",
+              "note": "Meno male che c’era il cellulare."
+            }
+          ],
+          "situation": "Al bar racconti il tuffo goffo dell’estate; Marco reagisce con sorpresa e poi ti chiede il seguito.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Apri l’aneddoto: quest’estate, al mare, qualcosa d’incredibile.",
+                "expected": [
+                  "Quest’estate al mare è successa una cosa incredibile.",
+                  "Quest’estate, al mare, è successa una cosa incredibile."
+                ],
+                "focus": "è successa",
+                "watch": "apri con tempo e luogo."
+              },
+              {
+                "prompt": "Reagisci alla storia di Marco: continua !",
+                "expected": [
+                  "Non mi dire !",
+                  "Non mi dire, continua !"
+                ],
+                "focus": "non mi dire",
+                "watch": "non mi dire = ¡no me digas!"
+              },
+              {
+                "prompt": "Chiedi il seguito.",
+                "expected": [
+                  "E poi ?",
+                  "E poi che hai fatto ?",
+                  "E dopo ?"
+                ],
+                "focus": "e poi",
+                "watch": "e poi = ¿y luego?"
+              },
+              {
+                "prompt": "Reagisci a una figura.",
+                "expected": [
+                  "Che figura !",
+                  "Che figura, Marco !"
+                ],
+                "focus": "che figura",
+                "watch": "che figura = qué vergüenza."
+              },
+              {
+                "prompt": "Chiusa con sollievo: il cellulare c’era.",
+                "expected": [
+                  "Meno male che c’era il cellulare.",
+                  "Meno male che avevo il cellulare."
+                ],
+                "focus": "meno male che",
+                "watch": "meno male = menos mal."
+              },
+              {
+                "prompt": "Racconta il fatto: il tuffo goffo.",
+                "expected": [
+                  "Ho fatto un tuffo goffo.",
+                  "Ho fatto un tuffo ridicolo."
+                ],
+                "focus": "ho fatto",
+                "watch": "fare → fatto."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "it-foundations-u18-aneddoti-e1",
+              "kind": "choice",
+              "prompt": "« ___ ! Continua, ti prego. »",
+              "options": [
+                "Non mi dire",
+                "Lo so già",
+                "Taci",
+                "Non raccontare"
+              ],
+              "answers": [
+                "Non mi dire"
+              ],
+              "explain": "Reazione che chiede di continuare."
+            },
+            {
+              "id": "it-foundations-u18-aneddoti-e2",
+              "kind": "gap",
+              "prompt": "E ___, che hai fatto ? (dopo)",
+              "answers": [
+                "poi"
+              ],
+              "explain": "E poi ? chiede il seguito."
+            },
+            {
+              "id": "it-foundations-u18-aneddoti-e3",
+              "kind": "order",
+              "prompt": "Apri l’aneddoto dell’estate: al mare, qualcosa d’incredibile.",
+              "answers": [
+                "Quest’estate al mare è successa una cosa incredibile"
+              ],
+              "explain": "Tempo + luogo + è successa."
+            },
+            {
+              "id": "it-foundations-u18-aneddoti-e4",
+              "kind": "written",
+              "prompt": "Chiusa con sollievo: il cellulare c’era.",
+              "answers": [
+                "meno male che c’era il cellulare",
+                "meno male che c era il cellulare",
+                "meno male che avevo il cellulare"
+              ],
+              "explain": "meno male che + sollievo."
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "vocab:social-expressions",
+            "grammar:past-simple-regular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
           ]
         }
       ]

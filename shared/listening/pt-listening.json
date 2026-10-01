@@ -2018,6 +2018,402 @@
         "grammar:frequency-adverbs"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-jantar-surpresa",
+      "languageID": "pt",
+      "title": "O jantar de surpresa",
+      "level": "A1",
+      "topic": "restaurante",
+      "unitID": "pt-foundations-u16",
+      "text": "É sexta-feira. A Ana e o Leo esperam a Bia num restaurante. É um jantar de surpresa pelo aniversário dela. A Ana pede uma pizza margherita e um suco de laranja. O Leo quer a lasanha e uma água sem gelo. « Mais alguma coisa ? », pergunta o garçom. « Só o pudim, por favor », diz a Ana. A Bia chega às oito e vê as velas na sobremesa. Ela chora de alegria. No fim, o Leo pede a conta e cada um deixa a gorjeta.",
+      "questions": [
+        {
+          "id": "pt-listen-jantar-surpresa-q1",
+          "kind": "choice",
+          "prompt": "O que a Ana pede ?",
+          "options": [
+            "Uma pizza e um suco",
+            "Uma lasanha e uma água",
+            "Um pudim",
+            "Uma água com gelo"
+          ],
+          "answers": [
+            "Uma pizza e um suco"
+          ],
+          "explain": "A Ana pede uma pizza margherita e um suco de laranja."
+        },
+        {
+          "id": "pt-listen-jantar-surpresa-q2",
+          "kind": "choice",
+          "prompt": "O que o Leo quer ?",
+          "options": [
+            "A lasanha",
+            "A pizza",
+            "O pudim",
+            "O suco"
+          ],
+          "answers": [
+            "A lasanha"
+          ],
+          "explain": "O Leo quer a lasanha e uma água sem gelo."
+        },
+        {
+          "id": "pt-listen-jantar-surpresa-q3",
+          "kind": "written",
+          "prompt": "A que horas a Bia chega ?",
+          "answers": [
+            "as oito",
+            "às oito",
+            "oito horas"
+          ],
+          "explain": "A Bia chega às oito."
+        },
+        {
+          "id": "pt-listen-jantar-surpresa-q4",
+          "kind": "choice",
+          "prompt": "O que a Bia vê na sobremesa ?",
+          "options": [
+            "As velas",
+            "A conta",
+            "O cardápio",
+            "A gorjeta"
+          ],
+          "answers": [
+            "As velas"
+          ],
+          "explain": "Vê as velas na sobremesa e chora de alegria."
+        },
+        {
+          "id": "pt-listen-jantar-surpresa-q5",
+          "kind": "written",
+          "prompt": "O que o Leo pede no fim ?",
+          "answers": [
+            "a conta",
+            "pede a conta",
+            "a conta por favor"
+          ],
+          "explain": "No fim, o Leo pede a conta."
+        },
+        {
+          "id": "pt-listen-jantar-surpresa-q6",
+          "kind": "choice",
+          "prompt": "Como é o jantar ?",
+          "options": [
+            "De surpresa",
+            "De trabalho",
+            "Com o garçom",
+            "Em casa"
+          ],
+          "answers": [
+            "De surpresa"
+          ],
+          "explain": "É um jantar de surpresa pelo aniversário da Bia."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:food",
+        "function:order-food"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-plano-aniversario",
+      "languageID": "pt",
+      "title": "O plano de aniversário",
+      "level": "A2",
+      "topic": "planos",
+      "unitID": "pt-foundations-u17",
+      "text": "A Duda liga para o Téo para combinar a festa de aniversário da Bia, que vai ser no sábado. « Vamos fazer uma surpresa ? », pergunta a Duda. O Téo aceita, mas não pode de manhã, porque vai almoçar com a avó. Então vão se encontrar às três na casa da Duda: ela vai fazer o bolo, e o Téo vai comprar as bebidas e as velas. A Lu vai levar o presente e vai embrulhar com papel colorido. A Bia não pode saber de nada. « Que horas ela chega ? », pergunta o Téo. « Oito, mas vamos estar prontos às sete », responde a Duda.",
+      "questions": [
+        {
+          "id": "pt-listen-plano-aniversario-q1",
+          "kind": "choice",
+          "prompt": "Para quem é a festa ?",
+          "options": [
+            "Para a Bia",
+            "Para a Duda",
+            "Para a avó",
+            "Para a Lu"
+          ],
+          "answers": [
+            "Para a Bia"
+          ],
+          "explain": "A festa de aniversário da Bia."
+        },
+        {
+          "id": "pt-listen-plano-aniversario-q2",
+          "kind": "choice",
+          "prompt": "Por que o Téo não pode de manhã ?",
+          "options": [
+            "Vai almoçar com a avó",
+            "Vai viajar",
+            "Vai trabalhar",
+            "Vai ao médico"
+          ],
+          "answers": [
+            "Vai almoçar com a avó"
+          ],
+          "explain": "Não pode de manhã, porque vai almoçar com a avó."
+        },
+        {
+          "id": "pt-listen-plano-aniversario-q3",
+          "kind": "written",
+          "prompt": "A que horas vão se encontrar ?",
+          "answers": [
+            "as tres",
+            "às três",
+            "tres horas"
+          ],
+          "explain": "Vão se encontrar às três na casa da Duda."
+        },
+        {
+          "id": "pt-listen-plano-aniversario-q4",
+          "kind": "written",
+          "prompt": "O que o Téo vai comprar ?",
+          "answers": [
+            "as bebidas e as velas",
+            "bebidas e velas"
+          ],
+          "explain": "O Téo vai comprar as bebidas e as velas."
+        },
+        {
+          "id": "pt-listen-plano-aniversario-q5",
+          "kind": "choice",
+          "prompt": "O que a Lu vai fazer com o presente ?",
+          "options": [
+            "Vai embrulhar com papel colorido",
+            "Vai comprar outro",
+            "Vai esconder na casa dela",
+            "Vai entregar antes"
+          ],
+          "answers": [
+            "Vai embrulhar com papel colorido"
+          ],
+          "explain": "A Lu vai embrulhar o presente com papel colorido."
+        },
+        {
+          "id": "pt-listen-plano-aniversario-q6",
+          "kind": "written",
+          "prompt": "A que horas a Bia chega ?",
+          "answers": [
+            "as oito",
+            "às oito",
+            "oito"
+          ],
+          "explain": "« Oito », responde a Duda."
+        }
+      ],
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [
+        "vocab:social-expressions"
+      ]
+    },
+    {
+      "id": "pt-listen-episodio-verao",
+      "languageID": "pt",
+      "title": "O episódio do verão",
+      "level": "B1",
+      "topic": "histórias",
+      "unitID": "pt-foundations-u18",
+      "text": "Deixa eu contar o episódio do verão. Fui passar uma semana na casa da minha tia em Paraty. No segundo dia, resolvi conhecer as praias de barco, mas perdi o último horário. Fiquei na praça, sem plano. De repente, um senhor que vendia coco me chamou: ele tinha um barquinho e ofereceu um passeio. Desconfiei no começo, mas acabei que aceitei. E não é que foi o melhor passeio da viagem ? Ele me levou a uma praia deserta, só com tartarugas e vento. Quando voltei, contei tudo para a minha tia. « Não me diga ! », ela gritou. « Sozinha com um estranho ? Aí eu passei mal ». No fim, demos risada até chorar.",
+      "questions": [
+        {
+          "id": "pt-listen-episodio-verao-q1",
+          "kind": "choice",
+          "prompt": "O que aconteceu no segundo dia ?",
+          "options": [
+            "Perdeu o último horário do barco",
+            "Choveu o dia todo",
+            "A tia ficou doente",
+            "O barco quebrou"
+          ],
+          "answers": [
+            "Perdeu o último horário do barco"
+          ],
+          "explain": "Resolvi conhecer as praias de barco, mas perdi o último horário."
+        },
+        {
+          "id": "pt-listen-episodio-verao-q2",
+          "kind": "choice",
+          "prompt": "Quem ofereceu o passeio ?",
+          "options": [
+            "Um senhor que vendia coco",
+            "A tia dela",
+            "Um guia da praia",
+            "Ninguém"
+          ],
+          "answers": [
+            "Um senhor que vendia coco"
+          ],
+          "explain": "Um senhor que vendia coco tinha um barquinho e ofereceu um passeio."
+        },
+        {
+          "id": "pt-listen-episodio-verao-q3",
+          "kind": "written",
+          "prompt": "Como a narradora reagiu no começo ?",
+          "answers": [
+            "ficou desconfiada",
+            "desconfiou",
+            "desconfiada"
+          ],
+          "explain": "Desconfiei no começo, mas acabei que aceitei."
+        },
+        {
+          "id": "pt-listen-episodio-verao-q4",
+          "kind": "written",
+          "prompt": "O que tinha na praia deserta ?",
+          "answers": [
+            "tartarugas e vento",
+            "tartarugas"
+          ],
+          "explain": "Uma praia deserta, só com tartarugas e vento."
+        },
+        {
+          "id": "pt-listen-episodio-verao-q5",
+          "kind": "choice",
+          "prompt": "Como a tia reage à história ?",
+          "options": [
+            "Se assusta e não acredita",
+            "Diz que já sabia",
+            "Quer ir no barquinho",
+            "Ri na hora"
+          ],
+          "answers": [
+            "Se assusta e não acredita"
+          ],
+          "explain": "« Não me diga ! Sozinha com um estranho ? Aí eu passei mal »."
+        },
+        {
+          "id": "pt-listen-episodio-verao-q6",
+          "kind": "choice",
+          "prompt": "Como a história termina ?",
+          "options": [
+            "Rindo até chorar",
+            "Brigando com a tia",
+            "Voltando ao barco",
+            "Ficando na praça"
+          ],
+          "answers": [
+            "Rindo até chorar"
+          ],
+          "explain": "No fim, demos risada até chorar."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:past-simple-irregular",
+        "grammar:connectors"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "pt-listen-debate-jeito",
+      "languageID": "pt",
+      "title": "Debate: discordar com jeito",
+      "level": "C1",
+      "topic": "debate",
+      "unitID": "pt-foundations-u9",
+      "text": "No programa de hoje, Helena e Caio debatem a proposta de proibir celulares nas escolas. Helena abre: « Eu vejo com simpatia a medida; a distração custa caro ». Caio não vai por aí: « Entendo o seu ponto, mas proibir não ensina a usar ». Helena concede um terreno: « Até certo ponto; por outro lado, ninguém aprende algoritmo em sala de aula ». Caio pesa: « Por um lado, os dados te dão razão; por outro, proibição vira má fama do colégio ». No fim, não há vencedor: « Concordo em discordar », resume Helena. O mediador agradece e adianta a pauta da próxima semana: tela ou caderno, o que forma melhor leitor ?",
+      "questions": [
+        {
+          "id": "pt-listen-debate-jeito-q1",
+          "kind": "choice",
+          "prompt": "Qual é a proposta em debate ?",
+          "options": [
+            "Proibir celulares na escola",
+            "Proibir provas",
+            "Aumentar as férias",
+            "Mudar o uniforme"
+          ],
+          "answers": [
+            "Proibir celulares na escola"
+          ],
+          "explain": "A proposta em debate: proibir celulares nas escolas."
+        },
+        {
+          "id": "pt-listen-debate-jeito-q2",
+          "kind": "choice",
+          "prompt": "Como Helena abre o debate ?",
+          "options": [
+            "Vê com simpatia a medida",
+            "Rejeita a proposta",
+            "Muda de assunto",
+            "Pede dados"
+          ],
+          "answers": [
+            "Vê com simpatia a medida"
+          ],
+          "explain": "« Eu vejo com simpatia a medida »."
+        },
+        {
+          "id": "pt-listen-debate-jeito-q3",
+          "kind": "written",
+          "prompt": "Qual é o contra-argumento do Caio ?",
+          "answers": [
+            "proibir não ensina a usar",
+            "proibir nao ensina a usar",
+            "proibição não ensina"
+          ],
+          "explain": "« Entendo o seu ponto, mas proibir não ensina a usar »."
+        },
+        {
+          "id": "pt-listen-debate-jeito-q4",
+          "kind": "choice",
+          "prompt": "O que Helena concede ao Caio ?",
+          "options": [
+            "Até certo ponto ele tem razão",
+            "Que a distração não existe",
+            "Que celulares ensinam tudo",
+            "Que a proposta é perfeita"
+          ],
+          "answers": [
+            "Até certo ponto ele tem razão"
+          ],
+          "explain": "« Até certo ponto; por outro lado… »."
+        },
+        {
+          "id": "pt-listen-debate-jeito-q5",
+          "kind": "written",
+          "prompt": "Como o debate termina ?",
+          "answers": [
+            "concordo em discordar",
+            "sem vencedor",
+            "não há vencedor",
+            "nao ha vencedor"
+          ],
+          "explain": "« Concordo em discordar »: não há vencedor."
+        },
+        {
+          "id": "pt-listen-debate-jeito-q6",
+          "kind": "choice",
+          "prompt": "Qual é a pauta da próxima semana ?",
+          "options": [
+            "Tela ou caderno",
+            "Salário dos professores",
+            "A reforma da escola",
+            "Notas e exames"
+          ],
+          "answers": [
+            "Tela ou caderno"
+          ],
+          "explain": "O mediador adianta: tela ou caderno, o que forma melhor leitor ?"
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": []
     }
   ]
 }

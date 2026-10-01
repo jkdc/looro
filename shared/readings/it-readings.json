@@ -900,6 +900,95 @@
           "explain": "« Guarda il tabellone giallo: lì trovi tutti gli orari »."
         }
       ]
+    },
+    {
+      "id": "it-read-fila-messaggi",
+      "languageID": "it",
+      "title": "La fila di messaggi",
+      "level": "A2",
+      "topic": "inviti",
+      "unitID": "it-foundations-u17",
+      "text": "Sara: Ciao Marco ! Sabato è il compleanno di Giulia. Le facciamo una sorpresa ? / Marco: Volentieri ! Cosa le regaliamo ? / Sara: Le piace la fotografia. Vado a cercare un libro di foto. Tu ? / Marco: Io vado a preparare la torta al cioccolato. Peccato: sabato lavoro fino alle sette. / Sara: Nessun problema: la festa è alle otto, da Luca. / Marco: Perfetto, ci sono ! Ma Giulia non sa niente, vero ? / Sara: Shh… è una sorpresa !",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "vocab:social-expressions",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-read-fila-messaggi-q1",
+          "kind": "choice",
+          "prompt": "Chi compie gli anni ?",
+          "options": [
+            "Giulia",
+            "Sara",
+            "Marco",
+            "Luca"
+          ],
+          "answers": [
+            "Giulia"
+          ],
+          "explain": "Sabato è il compleanno di Giulia."
+        },
+        {
+          "id": "it-read-fila-messaggi-q2",
+          "kind": "choice",
+          "prompt": "Cosa va a preparare Marco ?",
+          "options": [
+            "La torta al cioccolato",
+            "Un libro di foto",
+            "I fiori",
+            "La musica"
+          ],
+          "answers": [
+            "La torta al cioccolato"
+          ],
+          "explain": "Io vado a preparare la torta al cioccolato."
+        },
+        {
+          "id": "it-read-fila-messaggi-q3",
+          "kind": "written",
+          "prompt": "A che ora è la festa ?",
+          "answers": [
+            "alle otto",
+            "otto",
+            "8"
+          ],
+          "explain": "La festa è alle otto, da Luca."
+        },
+        {
+          "id": "it-read-fila-messaggi-q4",
+          "kind": "choice",
+          "prompt": "Perché Marco dice « peccato » ?",
+          "options": [
+            "Lavora fino alle sette",
+            "Non ha la macchina",
+            "È a letto malato",
+            "Viene in ritardo"
+          ],
+          "answers": [
+            "Lavora fino alle sette"
+          ],
+          "explain": "Peccato: sabato lavoro fino alle sette."
+        },
+        {
+          "id": "it-read-fila-messaggi-q5",
+          "kind": "choice",
+          "prompt": "Giulia sa della festa ?",
+          "options": [
+            "No, è una sorpresa",
+            "Sì, organizza lei",
+            "Sì, ha scritto lei",
+            "Solo Luca lo sa"
+          ],
+          "answers": [
+            "No, è una sorpresa"
+          ],
+          "explain": "« Giulia non sa niente, vero ? » « Shh… è una sorpresa ! »"
+        }
+      ]
     }
   ]
 }

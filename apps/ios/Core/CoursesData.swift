@@ -621,7 +621,35 @@ public enum DeFoundationsU9 {
                             Exercise(id: "de-foundations-u9-prasentieren-e1", kind: "choice", prompt: "Einstieg mit Struktur: ___ gehe ich auf den Hintergrund ein, danach zeige ich die Optionen.", options: ["Zunächst", "Deshalb", "Trotzdem", "Stattdessen"], answers: ["Zunächst"], explain: "« zunächst » kündigt den ersten Schritt des Vortrags an."),
                             Exercise(id: "de-foundations-u9-prasentieren-e2", kind: "gap", prompt: "Die Zahlen sinken, ___ müssen wir handeln. (Folgerung ziehen)", options: [], answers: ["folglich", "daher", "deshalb"], explain: "Folglich/daher + Hauptsatz: die Folgerung wird besiegelt."),
                             Exercise(id: "de-foundations-u9-prasentieren-e3", kind: "order", prompt: "Abschluss des Vortrags: benenne den Kern – eine Empfehlung, die klar bleibt.", options: [], answers: ["Zusammenfassend bleibt eine klare Empfehlung"], explain: "zusammenfassend + bleiben + Kern in einem Satz."),
-                            Exercise(id: "de-foundations-u9-prasentieren-e4", kind: "written", prompt: "Fasse in einem Schlusssatz zusammen: die Pilotphase ist die richtige Wahl (mit « zusammenfassend »).", options: [], answers: ["zusammenfassend spricht alles fur eine pilotphase", "zusammenfassend spricht alles für eine pilotphase"], explain: "Zusammenfassend + Bewertung: die eine Botschaft.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+                            Exercise(id: "de-foundations-u9-prasentieren-e4", kind: "written", prompt: "Fasse in einem Schlusssatz zusammen: die Pilotphase ist die richtige Wahl (mit « zusammenfassend »).", options: [], answers: ["zusammenfassend spricht alles fur eine pilotphase", "zusammenfassend spricht alles für eine pilotphase"], explain: "Zusammenfassend + Bewertung: die eine Botschaft.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "de-foundations-u9-debattieren", title: "Einig im Uneinig", goal: "Höflich widersprechen: Zustimmung signalisieren und dann den eigenen Standpunkt setzen.",
+                intro: LessonIntro(explanation: [
+                            "Der klassische konzessive Einstieg: « Ich verstehe Ihren Punkt, aber… » — erst Verständnis zeigen, dann folgt der Widerspruch.",
+                            "Variationen desselben Musters: « Da bin ich ganz bei Ihnen, dennoch… », « Das mag stimmen, allerdings… » — stets Anerkennung plus Aber.",
+                            "Schärfer, doch gewahrt: « Dem kann ich so nicht zustimmen, denn die Zahlen sagen etwas anderes. » Der denn-Satz liefert das Argument."], examples: [
+                            ExampleLine(text: "Ich verstehe Ihren Punkt, aber die Datenlage ist eine andere.", meaning: "Verständnis + Widerspruch."),
+                            ExampleLine(text: "Da bin ich ganz bei Ihnen, dennoch halte ich den Vorschlag für riskant.", meaning: "dennoch: formell kontrastierend."),
+                            ExampleLine(text: "Das mag stimmen, allerdings nur für den städtischen Raum.", meaning: "Einräumen und zugleich begrenzen."),
+                            ExampleLine(text: "Dem kann ich so nicht zustimmen, denn die Zahlen sagen etwas anderes.", meaning: "Sachliche, argumentierte Ablehnung."),
+                            ExampleLine(text: "Einerseits leuchtet mir das ein, andererseits fehlt die Evaluation.", meaning: "Abwägen in der Debatte.")]),
+                expressions: [
+                            TargetExpression(text: "ich verstehe Ihren Punkt, aber…", meaning: "Konzessiver Widerspruch.", note: "…aber die Datenlage ist anders."),
+                            TargetExpression(text: "da bin ich ganz bei Ihnen, dennoch…", meaning: "Einverständnis + Kontra.", note: "dennoch = trotzdem, formell."),
+                            TargetExpression(text: "das mag stimmen, allerdings…", meaning: "Einräumen + begrenzen.", note: "allerdings nur zum Teil."),
+                            TargetExpression(text: "dem kann ich so nicht zustimmen", meaning: "Sachlicher Widerspruch.", note: "…, denn …"),
+                            TargetExpression(text: "einerseits … andererseits…", meaning: "Abwägen.", note: "beide Seiten benennen.")],
+                situation: "In der Runde lobt man den Vorschlag, Sie sehen es anders: erst würdigen Sie das Argument, dann widersprechen Sie mit Daten — freundlich, aber unmissverständlich.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Widersprechen Sie höflich: Sie verstehen den Punkt, aber die Datenlage ist anders.", expected: ["ich verstehe ihren punkt aber die datenlage ist eine andere", "Ich verstehe Ihren Punkt, aber die Datenlage ist eine andere."], focus: "ich verstehe ihren punkt", watch: "Erst Verständnis, dann aber."),
+                                PracticeQuestion(prompt: "Stimmen Sie zunächst zu und halten dennoch den Vorschlag für riskant.", expected: ["Da bin ich ganz bei Ihnen, dennoch halte ich den Vorschlag für riskant.", "da bin ich ganz bei ihnen dennoch halte ich den vorschlag fur riskant"], focus: "dennoch", watch: "Einverständnis + dennoch."),
+                                PracticeQuestion(prompt: "Räumen Sie ein und begrenzen Sie: stimmt, aber nur für den städtischen Raum.", expected: ["Das mag stimmen, allerdings nur für den städtischen Raum.", "das mag stimmen allerdings nur für den städtischen raum", "das mag stimmen allerdings nur fur den stadtischen raum"], focus: "das mag stimmen", watch: "Einräumen mit allerdings."),
+                                PracticeQuestion(prompt: "Widersprechen Sie sachlich und nennen Sie die Zahlen als Grund.", expected: ["Dem kann ich so nicht zustimmen, denn die Zahlen sagen etwas anderes.", "dem kann ich so nicht zustimmen denn die zahlen sagen etwas anderes"], focus: "dem kann ich so nicht zustimmen", watch: "denn + Argument."),
+                                PracticeQuestion(prompt: "Wägen Sie ab: einleuchtend einerseits, fehlende Evaluation andererseits.", expected: ["Einerseits leuchtet mir das ein, andererseits fehlt die Evaluation.", "einerseits leuchtet mir das ein andererseits fehlt die evaluation"], focus: "einerseits … andererseits", watch: "Beide Seiten benennen.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u9-debattieren-e1", kind: "choice", prompt: "Widerspruch mit Verständnis: « Ich verstehe Ihren Punkt, ___ die Zahlen widersprechen Ihnen. »", options: ["aber", "denn", "sondern", "also"], answers: ["aber"], explain: "aber nach dem Verständnis: der konzessive Widerspruch."),
+                            Exercise(id: "de-foundations-u9-debattieren-e2", kind: "gap", prompt: "Da bin ich ganz bei Ihnen, ___ halte ich den Plan für riskant. (formeller Kontrast)", options: [], answers: ["dennoch"], explain: "dennoch verbindet Zustimmung und Widerspruch formell."),
+                            Exercise(id: "de-foundations-u9-debattieren-e3", kind: "order", prompt: "Widersprechen Sie mit Verständnis: die Zahlen sprechen dagegen.", options: [], answers: ["Ich verstehe Ihren Punkt aber die Zahlen widersprechen"], explain: "Erst Verständnis, dann Kontra mit aber."),
+                            Exercise(id: "de-foundations-u9-debattieren-e4", kind: "written", prompt: "Räumen Sie ein und begrenzen Sie: stimmt, aber nur im städtischen Raum.", options: [], answers: ["das mag stimmen allerdings nur im stadtischen raum", "das mag stimmen allerdings nur für den städtischen raum", "das mag stimmen allerdings nur fur den stadtischen raum"], explain: "« Das mag stimmen, allerdings… » räumt ein und begrenzt zugleich.")], skills: ["function:express-opinion", "speaking:sustained-conversation", "grammar:connectors", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum DeFoundationsU10 {
@@ -1162,6 +1190,276 @@ public enum DeFoundationsU15 {
                             Exercise(id: "de-foundations-u15-gewohnheiten-e2", kind: "gap", prompt: "Ich esse ___ Fast Food. Ich mag es nicht.", options: [], answers: ["nie"], explain: "Ich mag es nicht = 0 % = nie."),
                             Exercise(id: "de-foundations-u15-gewohnheiten-e3", kind: "order", prompt: "Sagst, dass du oft draußen zu Fuß gehst.", options: [], answers: ["Ich gehe oft spazieren"], explain: "spazieren gehen: ich gehe oft spazieren — gesund und einfach."),
                             Exercise(id: "de-foundations-u15-gewohnheiten-e4", kind: "written", prompt: "Sagst, wie oft du Obst isst. (jeden Tag)", options: [], answers: ["ich esse jeden tag obst", "Ich esse jeden Tag Obst."], explain: "jeden Tag = immer: ich esse jeden Tag Obst.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
+public enum DeFoundationsU16 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u16", title: "Am Tisch", subtitle: "Essen gehen", level: "A1", themes: [
+                    ConversationTheme("im-restaurant", "Im Restaurant", "Ich nehme …", "fork.knife", "Course", "Lena und Kim essen im Café: die Kellnerin fragt, was sie möchten — und alle bestellen.", 0),
+                    ConversationTheme("die-karte", "Die Karte", "Was ist in … ?", "takeout.bag", "Course", "Auf der Karte stehen Vorspeisen, Hauptgerichte und Getränke. Was ist in der Suppe ? Fragt nach.", 1)], lessons: [
+            Lesson(id: "de-foundations-u16-restaurant", title: "Im Restaurant", goal: "Im Restaurant bestellen: was man möchte, höflich sagen.",
+                intro: LessonIntro(explanation: [
+                            "Bestellen mit ich nehme: « Ich nehme die Tomatensuppe. » Und zum Nachbarn: « Und für dich ? »",
+                            "Höflicher ist möchte: « Ich möchte einen Kaffee, bitte. » möchte steht wie ein Modalverb: ich möchte, du möchtest, Sie möchten.",
+                            "Die Kellnerin fragt: « Was möchten Sie ? » — Antwort kurz: « Ein Wasser, bitte. »"], examples: [
+                            ExampleLine(text: "Ich nehme den Salat.", meaning: "Bestellen: ich nehme + Akkusativ."),
+                            ExampleLine(text: "Ich möchte einen Kaffee, bitte.", meaning: "Höflich: möchte + Akkusativ."),
+                            ExampleLine(text: "Was nimmst du ?", meaning: "Frage am Tisch."),
+                            ExampleLine(text: "Ein Wasser für mich, bitte.", meaning: "Beim Bestellen: ein Wasser statt eines."),
+                            ExampleLine(text: "Und für dich ?", meaning: "Zurückfragen am Tisch.")]),
+                expressions: [
+                            TargetExpression(text: "Ich nehme …", meaning: "Bestellen.", note: "Ich nehme die Suppe."),
+                            TargetExpression(text: "Ich möchte …", meaning: "Wünschen.", note: "möchte + Akkusativ: einen Kaffee"),
+                            TargetExpression(text: "Was nimmst du ?", meaning: "Fragen.", note: "nehmen → du nimmst (a → ä)"),
+                            TargetExpression(text: "… , bitte !", meaning: "Höflich.", note: "Ein Wasser, bitte !"),
+                            TargetExpression(text: "Und für dich ?", meaning: "Zurückfragen.", note: "höflich: Und für Sie ?")],
+                situation: "Lena und Kim sitzen im Café. Die Kellnerin fragt: « Was möchten Sie ? » — Lena möchte Suppe, Kim nimmt Salat, und beide trinken Wasser.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Bestelle: du nimmst die Tomatensuppe.", expected: ["Ich nehme die Tomatensuppe.", "ich nehme die tomatensuppe"], focus: "ich nehme", watch: "nehmen → ich nehme."),
+                                PracticeQuestion(prompt: "Bestelle höflich: einen Kaffee.", expected: ["Ich möchte einen Kaffee, bitte.", "ich möchte einen kaffee bitte", "Ich moechte einen Kaffee, bitte."], focus: "ich möchte", watch: "der Kaffee → einen Kaffee (Akkusativ)."),
+                                PracticeQuestion(prompt: "Frag deine Freundin am Tisch, was sie nimmt.", expected: ["Was nimmst du ?", "was nimmst du"], focus: "was nimmst du", watch: "nehmen → du nimmst (a → ä)."),
+                                PracticeQuestion(prompt: "Bestelle ein Wasser, ganz ohne Artikelwort.", expected: ["Ein Wasser, bitte.", "ein wasser bitte"], focus: "ein wasser", watch: "Bestellung kurz: ein Wasser, bitte."),
+                                PracticeQuestion(prompt: "Frag zurück: und deine Freundin ?", expected: ["Und für dich ?", "und fur dich", "und für dich"], focus: "und für dich", watch: "für + dich (Akkusativ).")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u16-restaurant-e1", kind: "choice", prompt: "Kellnerin: « Was ___ Sie ? »", options: ["möchten", "möchte", "nimmst", "ist"], answers: ["möchten"], explain: "Sie möchten: möchten für Sie und wir."),
+                            Exercise(id: "de-foundations-u16-restaurant-e2", kind: "gap", prompt: "Ich ___ die Tomatensuppe. (bestellen — mit nehmen)", options: [], answers: ["nehme"], explain: "nehmen → ich nehme: so bestellt man."),
+                            Exercise(id: "de-foundations-u16-restaurant-e3", kind: "order", prompt: "Bestelle höflich einen Orangensaft.", options: [], answers: ["Ich möchte einen Orangensaft, bitte"], explain: "möchte + Akkusativ + bitte: die höfliche Bestellung."),
+                            Exercise(id: "de-foundations-u16-restaurant-e4", kind: "written", prompt: "Sag, was du isst: du nimmst den Salat.", options: [], answers: ["ich nehme den salat", "ich moechte den salat", "ich möchte den salat", "ich nehme einen salat"], explain: "Bestellen mit nehmen oder möchte: ich nehme den Salat.")], skills: ["function:order-food", "vocab:food", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u16-karte", title: "Die Karte", goal: "Die Karte lesen: Gerichte und Getränke nennen und fragen, was drin ist.",
+                intro: LessonIntro(explanation: [
+                            "Die Karte hat Gänge: die Vorspeise, das Hauptgericht, der Nachtisch. Getränke: das Wasser, der Saft, der Kaffee.",
+                            "Fragen, was drin ist: « Was ist in der Suppe ? » — « Tomaten und Kartoffeln. » in + Dativ: in der Suppe, im Salat.",
+                            "Antwort im Plural mit sind: « Im Salat sind Tomaten und Käse. »"], examples: [
+                            ExampleLine(text: "Die Karte, bitte.", meaning: "Nach der Karte fragen."),
+                            ExampleLine(text: "Was ist in der Suppe ?", meaning: "Nach den Zutaten fragen."),
+                            ExampleLine(text: "Im Salat sind Tomaten und Käse.", meaning: "Plural: sind — im = in dem."),
+                            ExampleLine(text: "Die Vorspeise ist eine kleine Suppe.", meaning: "Vorspeise = erster Gang."),
+                            ExampleLine(text: "Was nehmt ihr zu trinken ?", meaning: "Nach den Getränken fragen.")]),
+                expressions: [
+                            TargetExpression(text: "die Vorspeise / das Hauptgericht / der Nachtisch", meaning: "Die Gänge der Karte.", note: "Nachtisch = postre."),
+                            TargetExpression(text: "Was ist in … ?", meaning: "Nach den Zutaten fragen.", note: "Was ist in der Soße ?"),
+                            TargetExpression(text: "in der Suppe / im Salat", meaning: "in + Dativ.", note: "im = in dem."),
+                            TargetExpression(text: "zu trinken / zu essen", meaning: "Getränke / Essen.", note: "Was gibt es zu trinken ?"),
+                            TargetExpression(text: "Wie schmeckt es ?", meaning: "Nach dem Geschmack fragen.", note: "Es schmeckt gut !")],
+                situation: "Zuerst kommt die Karte: Vorspeise, Hauptgericht, Nachtisch. Kim fragt, was in der Suppe ist, Lena fragt, was es zu trinken gibt.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Frag, was in der Suppe ist.", expected: ["Was ist in der Suppe ?", "was ist in der suppe"], focus: "was ist in", watch: "in + Dativ: in der Suppe."),
+                                PracticeQuestion(prompt: "Sag, was im Salat ist: Tomaten und Käse.", expected: ["Im Salat sind Tomaten und Käse.", "im salat sind tomaten und käse", "Im Salat sind Tomaten und Kaese."], focus: "im salat sind", watch: "Plural: sind."),
+                                PracticeQuestion(prompt: "Frag, was es zu trinken gibt.", expected: ["Was gibt es zu trinken ?", "was gibt es zu trinken"], focus: "zu trinken", watch: "zu + Infinitiv: zu trinken."),
+                                PracticeQuestion(prompt: "Sag, was du trinkst: einen Apfelsaft.", expected: ["Ich nehme einen Apfelsaft.", "ich nehme einen apfelsaft", "Ich moechte einen Apfelsaft.", "Ich möchte einen Apfelsaft."], focus: "ich nehme", watch: "der Saft → einen Saft (Akkusativ)."),
+                                PracticeQuestion(prompt: "Frag, wie die Suppe schmeckt.", expected: ["Wie schmeckt die Suppe ?", "wie schmeckt die suppe", "Wie schmeckt es ?"], focus: "wie schmeckt", watch: "schmecken: Wie schmeckt es ?")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u16-karte-e1", kind: "choice", prompt: "___ ist in der Suppe ?", options: ["Was", "Wo", "Wie", "Wer"], answers: ["Was"], explain: "Nach den Zutaten fragen: Was ist in … ?"),
+                            Exercise(id: "de-foundations-u16-karte-e2", kind: "gap", prompt: "Im Salat ___ Tomaten und Käse.", options: [], answers: ["sind"], explain: "Plural: sind — im Salat sind Tomaten."),
+                            Exercise(id: "de-foundations-u16-karte-e3", kind: "order", prompt: "Frag, was in der Soße ist.", options: [], answers: ["Was ist in der Soße"], explain: "Was ist in + Dativ: so fragt man nach Zutaten."),
+                            Exercise(id: "de-foundations-u16-karte-e4", kind: "written", prompt: "Sag, was du zu trinken nimmst. (ein Mineralwasser)", options: [], answers: ["ich nehme ein mineralwasser", "ich moechte ein mineralwasser", "ich möchte ein mineralwasser"], explain: "Getränk bestellen: ich nehme ein Mineralwasser.")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "grammar:present-simple"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "de-foundations-u16-rechnung", title: "Die Rechnung", goal: "Um die Rechnung bitten, zusammen oder getrennt zahlen und Trinkgeld geben.",
+                intro: LessonIntro(explanation: [
+                            "Um die Rechnung bitten: « Die Rechnung, bitte ! » oder « Ich möchte zahlen. »",
+                            "Die Kellnerin fragt: « Zusammen oder getrennt ? » — zusammen = alle zahlen alles, getrennt = jeder zahlt für sich.",
+                            "Der Betrag: « Das macht vierundzwanzig Euro. » Trinkgeld gibt man so: « Stimmt so. » — der Kellner behält den Rest."], examples: [
+                            ExampleLine(text: "Die Rechnung, bitte !", meaning: "So bittet man um die Rechnung."),
+                            ExampleLine(text: "Ich möchte zahlen.", meaning: "Auch möglich: zahlen, bitte."),
+                            ExampleLine(text: "Zusammen oder getrennt ?", meaning: "Die Standardfrage am Tisch."),
+                            ExampleLine(text: "Das macht 24 Euro.", meaning: "Der Betrag."),
+                            ExampleLine(text: "Stimmt so.", meaning: "Trinkgeld: kein Wechselgeld nötig.")]),
+                expressions: [
+                            TargetExpression(text: "Die Rechnung, bitte !", meaning: "Um die Rechnung bitten.", note: "auch: zahlen, bitte !"),
+                            TargetExpression(text: "Ich möchte zahlen.", meaning: "Zahlen.", note: "auch: wir möchten zahlen"),
+                            TargetExpression(text: "Zusammen oder getrennt ?", meaning: "Am Tisch fragen.", note: "getrennt = jeder für sich"),
+                            TargetExpression(text: "Das macht … Euro.", meaning: "Der Betrag.", note: "Das macht vierundzwanzig Euro."),
+                            TargetExpression(text: "Stimmt so.", meaning: "Trinkgeld geben.", note: "der Kellner behält den Rest")],
+                situation: "Das Essen ist fertig. Lena ruft: « Die Rechnung, bitte ! » — « Zusammen oder getrennt ? » — « Getrennt, bitte. » Kim gibt Trinkgeld: « Stimmt so. »",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Bittet um die Rechnung.", expected: ["Die Rechnung, bitte !", "die rechnung bitte", "Ich möchte zahlen.", "ich mochte zahlen"], focus: "die rechnung", watch: "Die Rechnung, bitte !"),
+                                PracticeQuestion(prompt: "Fragt am Tisch: alles zusammen oder jeder für sich ?", expected: ["Zusammen oder getrennt ?", "zusammen oder getrennt"], focus: "zusammen oder getrennt", watch: "Die Standardfrage am Tisch."),
+                                PracticeQuestion(prompt: "Sagt, dass jeder für sich zahlt.", expected: ["Getrennt, bitte.", "getrennt bitte", "Wir zahlen getrennt."], focus: "getrennt", watch: "getrennt = jeder für sich."),
+                                PracticeQuestion(prompt: "Sagt den Betrag: 24 Euro.", expected: ["Das macht 24 Euro.", "das macht vierundzwanzig euro", "Das macht vierundzwanzig Euro."], focus: "das macht", watch: "Der Betrag: das macht … Euro."),
+                                PracticeQuestion(prompt: "Gebt Trinkgeld: kein Wechselgeld nötig.", expected: ["Stimmt so.", "stimmt so"], focus: "stimmt so", watch: "« Stimmt so » = der Rest ist Trinkgeld.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u16-rechnung-e1", kind: "choice", prompt: "« Die ___, bitte ! » (ihr wollt zahlen)", options: ["Rechnung", "Karte", "Speise", "Küche"], answers: ["Rechnung"], explain: "Die Rechnung, bitte ! = so bittet man um Zahlen."),
+                            Exercise(id: "de-foundations-u16-rechnung-e2", kind: "gap", prompt: "Das ___ zwölf Euro.", options: [], answers: ["macht"], explain: "Der Betrag: das macht zwölf Euro."),
+                            Exercise(id: "de-foundations-u16-rechnung-e3", kind: "order", prompt: "Bittet höflich um die Rechnung.", options: [], answers: ["Die Rechnung bitte"], explain: "Die Rechnung, bitte ! — kurze, höfliche Formel."),
+                            Exercise(id: "de-foundations-u16-rechnung-e4", kind: "written", prompt: "Ihr zahlt zusammen und gebt Trinkgeld. Was sagt ihr ?", options: [], answers: ["stimmt so", "stimmt so danke"], explain: "« Stimmt so » = der Rest ist Trinkgeld.")], skills: ["function:order-food", "grammar:quantities", "vocab:food", "vocab:social-expressions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum DeFoundationsU17 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u17", title: "Gut ausmachen", subtitle: "Pläne und Geschenke", level: "A2", themes: [
+                    ConversationTheme("vorschlaege", "Vorschläge", "Kommst du oder lieber… ?", "calendar.badge.clock", "Course", "Ihr plant das Wochenende: Kino, Kochen, Spaziergang — wer schlägt was vor, wer sagt ab ?", 0),
+                    ConversationTheme("das-geschenk", "Das Geschenk", "Was wirst du schenken ?", "gift", "Course", "Emma hat bald Geburtstag. Ihr plant Geschenk und Party mit werden + Infinitiv.", 1)], lessons: [
+            Lesson(id: "de-foundations-u17-vorschlaege", title: "Kommst du oder lieber… ?", goal: "Vorschläge machen (Wollen wir… ?, Lust auf… ?) und Pläne mit werden antworten.",
+                intro: LessonIntro(explanation: [
+                            "Vorschläge mit Wollen wir … ?: « Wollen wir am Samstag ins Kino gehen ? » Oder ganz locker: « Lust auf Pizza ? »",
+                            "Zwei Ideen stellt man mit oder lieber … ? gegenüber: « Kaffee oder lieber Tee ? » — so bietest du eine Alternative an.",
+                            "Antworten: « Gute idée ! » — nein: « Gute Idee ! » oder « Ja, gern ! ». Den eigenen Plan sagst du mit werden + Infinitiv: « Ich werde kochen. »"], examples: [
+                            ExampleLine(text: "Wollen wir am Samstag ins Kino gehen ?", meaning: "Der Standard-Vorschlag."),
+                            ExampleLine(text: "Lust auf Pizza heute Abend ?", meaning: "Locker, unter Freunden."),
+                            ExampleLine(text: "Ins Kino oder lieber ins Café ?", meaning: "oder lieber = die Alternative."),
+                            ExampleLine(text: "Ich werde Salat machen.", meaning: "werden + Infinitiv am Ende."),
+                            ExampleLine(text: "Was wirst du mitbringen ?", meaning: "Nach dem Plan fragen.")]),
+                expressions: [
+                            TargetExpression(text: "Wollen wir … ?", meaning: "Vorschlag.", note: "Wollen wir bowlen ?"),
+                            TargetExpression(text: "Lust auf … ?", meaning: "Locker fragen.", note: "Lust auf Eis ?"),
+                            TargetExpression(text: "oder lieber … ?", meaning: "Alternative anbieten.", note: "Kaffee oder lieber Tee ?"),
+                            TargetExpression(text: "Gute Idee !", meaning: "Zusagen.", note: "auch: Ja, gern !"),
+                            TargetExpression(text: "Ich werde … + Infinitiv", meaning: "Den Plan sagen.", note: "Ich werde kochen.")],
+                situation: "Ihr plant den Samstag: zuerst Kino, dann Kochen. Am Ende steht der Plan — ihr werdet zusammen kochen und danach ins Kino gehen.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Schlage das Kino für Samstag vor.", expected: ["Wollen wir am Samstag ins Kino gehen ?", "wollen wir am samstag ins kino gehen"], focus: "wollen wir", watch: "Wollen wir … + Infinitiv ?"),
+                                PracticeQuestion(prompt: "Frag locker, ob sie Lust auf Eis hat.", expected: ["Lust auf Eis ?", "lust auf eis", "Hast du Lust auf Eis ?"], focus: "lust auf", watch: "Lust auf + Akkusativ."),
+                                PracticeQuestion(prompt: "Du hast Kaffee angeboten. Frag, ob Tee lieber ist.", expected: ["Kaffee oder lieber Tee ?", "kaffee oder lieber tee", "Oder lieber Tee ?"], focus: "oder lieber", watch: "oder lieber … ? = Alternative."),
+                                PracticeQuestion(prompt: "Sag zu, mit Begeisterung.", expected: ["Gute Idee !", "gute idee", "Ja, gern !"], focus: "gute idee", watch: "Zusagen: Gute Idee !"),
+                                PracticeQuestion(prompt: "Sag deinen Plan: du wirst kochen.", expected: ["Ich werde kochen.", "ich werde kochen"], focus: "ich werde", watch: "werden + Infinitiv am Ende.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u17-vorschlaege-e1", kind: "choice", prompt: "___ wir am Samstag bowlen gehen ?", options: ["Wollen", "Werden", "Mögen", "Sind"], answers: ["Wollen"], explain: "Der Vorschlag: Wollen wir … + Infinitiv ?"),
+                            Exercise(id: "de-foundations-u17-vorschlaege-e2", kind: "gap", prompt: "Ich ___ am Sonntag den Tisch decken. (Plan)", options: [], answers: ["werde"], explain: "werden + Infinitiv am Ende: ich werde decken."),
+                            Exercise(id: "de-foundations-u17-vorschlaege-e3", kind: "order", prompt: "Schlage Pizza vor, ganz locker.", options: [], answers: ["Lust auf Pizza heute Abend"], explain: "Lust auf … ? ist der lockere Vorschlag unter Freunden."),
+                            Exercise(id: "de-foundations-u17-vorschlaege-e4", kind: "written", prompt: "Frag nach zwei Alternativen: Kino oder Café.", options: [], answers: ["kino oder lieber café", "kino oder lieber cafe", "ins kino oder lieber ins cafe"], explain: "oder lieber … ? stellt die Alternative.")], skills: ["function:make-suggestions", "grammar:going-to", "vocab:social-expressions", "grammar:present-simple"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "de-foundations-u17-entschuldigung", title: "Schade, ich kann nicht", goal: "Einladungen annehmen und höflich ablehnen — mit Grund (weil/denn) und Alternative.",
+                intro: LessonIntro(explanation: [
+                            "Zusagen geht kurz und warm: « Ja, gerne ! » oder « Ich bin dabei. »",
+                            "Absagen mit Bedauern: « Schade, ich kann nicht. » Höflich bleibt die Absage mit Grund: « Ich kann leider nicht, weil ich arbeiten muss. »",
+                            "Der Grund: weil + Verb am Ende, denn + normale Reihenfolge: « …, denn ich habe keine Zeit. » Danach eine Alternative: « Geht Sonntag auch ? »"], examples: [
+                            ExampleLine(text: "Ja, gerne ! Ich bin dabei.", meaning: "Die Zusage."),
+                            ExampleLine(text: "Schade, ich kann nicht.", meaning: "Die kurze Absage."),
+                            ExampleLine(text: "Ich kann leider nicht, weil ich arbeiten muss.", meaning: "weil + Verb am Ende."),
+                            ExampleLine(text: "Ich habe keine Zeit, denn ich lerne für die Prüfung.", meaning: "denn + normale Reihenfolge."),
+                            ExampleLine(text: "Geht es am Sonntag auch ?", meaning: "Alternative anbieten.")]),
+                expressions: [
+                            TargetExpression(text: "Ich bin dabei !", meaning: "Zusagen.", note: "auch: gerne !"),
+                            TargetExpression(text: "Schade !", meaning: "Bedauern.", note: "Schade, vielleicht nächstes Mal."),
+                            TargetExpression(text: "…, weil … muss", meaning: "Grund mit weil.", note: "weil ich arbeiten muss"),
+                            TargetExpression(text: "…, denn …", meaning: "Grund mit denn.", note: "denn ich habe keine Zeit"),
+                            TargetExpression(text: "Geht … auch ?", meaning: "Alternative.", note: "Geht Sonntag auch ?")],
+                situation: "Paul ist eingeladen, aber er arbeitet am Samstag. Er sagt höflich ab, nennt den Grund mit weil und fragt nach einer Alternative am Sonntag.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag zu, mit Begeisterung.", expected: ["Ja, gerne !", "ja gerne", "Ich bin dabei !", "ich bin dabei"], focus: "ja gerne", watch: "Zusagen: Ja, gerne !"),
+                                PracticeQuestion(prompt: "Sag ab, kurz und mit Bedauern.", expected: ["Schade, ich kann nicht.", "schade ich kann nicht", "Schade, ich kann leider nicht."], focus: "schade", watch: "Schade + ich kann (leider) nicht."),
+                                PracticeQuestion(prompt: "Gib den Grund mit weil: du musst arbeiten.", expected: ["Ich kann nicht, weil ich arbeiten muss.", "ich kann nicht weil ich arbeiten muss"], focus: "weil", watch: "weil + Verb am Ende."),
+                                PracticeQuestion(prompt: "Gib den Grund mit denn: du lernst.", expected: ["Ich habe keine Zeit, denn ich lerne.", "ich habe keine zeit denn ich lerne"], focus: "denn", watch: "denn + normale Reihenfolge."),
+                                PracticeQuestion(prompt: "Biete Sonntag als Alternative an.", expected: ["Geht es am Sonntag auch ?", "geht es am sonntag auch", "Geht Sonntag auch ?"], focus: "geht es … auch", watch: "Alternative: Geht Sonntag auch ?")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u17-entschuldigung-e1", kind: "choice", prompt: "« Schade, ich ___ leider nicht. »", options: ["kann", "will", "mag", "darf"], answers: ["kann"], explain: "Die Absage: ich kann leider nicht."),
+                            Exercise(id: "de-foundations-u17-entschuldigung-e2", kind: "gap", prompt: "Ich kann nicht, ___ ich arbeiten muss.", options: [], answers: ["weil"], explain: "weil + Nebensatz: das Verb steht am Ende."),
+                            Exercise(id: "de-foundations-u17-entschuldigung-e3", kind: "order", prompt: "Lehne ab und nenne den Grund mit weil: du hast eine Prüfung.", options: [], answers: ["Ich kann nicht weil ich eine Prüfung habe"], explain: "Erst die Absage, dann der Grund mit weil."),
+                            Exercise(id: "de-foundations-u17-entschuldigung-e4", kind: "written", prompt: "Sag ab und biete eine Alternative am Sonntag.", options: [], answers: ["schade geht es am sonntag auch", "ich kann nicht geht es am sonntag auch", "ich kann leider nicht am sonntag"], explain: "Erst Absage, dann Alternative: Geht es am Sonntag auch ?")], skills: ["vocab:social-expressions", "function:make-suggestions", "grammar:present-simple", "grammar:connectors"], canDo: ["make-future-plans"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "de-foundations-u17-geschenk", title: "Das perfekte Geschenk", goal: "Geschenkpläne mit werden + Infinitiv sagen: was ihr verschenkt und kauft.",
+                intro: LessonIntro(explanation: [
+                            "Pläne mit werden + Infinitiv: « Ich werde ihr ein Buch schenken. » Der Infinitiv steht am Satzende.",
+                            "Fragen: « Was wirst du Emma schenken ? » — « Ich werde ihr eine Kette kaufen. » ihr/ihm = für sie/ihn (Dativ).",
+                            "Geschenkverben mit werden: verschenken, kaufen, bestellen, einpacken: « Wir werden alles rechtzeitig bestellen. »"], examples: [
+                            ExampleLine(text: "Ich werde ihr ein Buch schenken.", meaning: "Plan: werden + Infinitiv am Ende."),
+                            ExampleLine(text: "Was wirst du Emma schenken ?", meaning: "Frage nach dem Geschenk."),
+                            ExampleLine(text: "Er wird ihr Blumen kaufen.", meaning: "kaufen im Futur."),
+                            ExampleLine(text: "Wir werden eine Party organisieren.", meaning: "wir werden + Infinitiv."),
+                            ExampleLine(text: "Ich packe das Geschenk später ein.", meaning: "einpacken: trennbares Verb.")]),
+                expressions: [
+                            TargetExpression(text: "werden + Infinitiv", meaning: "Pläne für die Zukunft.", note: "ich werde, du wirst, er wird"),
+                            TargetExpression(text: "schenken / kaufen / bestellen", meaning: "Geschenkverben.", note: "Ich werde ein Buch schenken."),
+                            TargetExpression(text: "Was wirst du … schenken ?", meaning: "Nach dem Geschenk fragen.", note: "ihm/ihr = Dativ"),
+                            TargetExpression(text: "eine Idee haben", meaning: "Den Plan geben.", note: "Ich habe eine Idee: ein Kochbuch !"),
+                            TargetExpression(text: "rechtzeitig", meaning: "pünktlich genug.", note: "Wir bestellen rechtzeitig.")],
+                situation: "Emma wird zwanzig. Ihr plant: Paul wird ihr ein Kochbuch schenken, Mia wird Kerzen kaufen, und ihr werdet den Kuchen übernehmen.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Sag deinen Geschenkplan: ein Buch für Emma.", expected: ["Ich werde Emma ein Buch schenken.", "ich werde emma ein buch schenken", "Ich werde ihr ein Buch schenken."], focus: "ich werde", watch: "werden + Infinitiv am Ende."),
+                                PracticeQuestion(prompt: "Frag Paul, was er Emma schenkt. (werden)", expected: ["Was wirst du Emma schenken ?", "was wirst du emma schenken", "Was wirst du ihr schenken ?"], focus: "wirst du", watch: "du wirst: Frage nach dem Plan."),
+                                PracticeQuestion(prompt: "Sag, dass Mia Kerzen kaufen wird.", expected: ["Mia wird Kerzen kaufen.", "mia wird kerzen kaufen"], focus: "mia wird", watch: "er/sie wird + Infinitiv."),
+                                PracticeQuestion(prompt: "Sagt euren Plan: ihr organisiert die Party.", expected: ["Wir werden eine Party organisieren.", "wir werden eine party organisieren"], focus: "wir werden", watch: "wir werden + Infinitiv."),
+                                PracticeQuestion(prompt: "Sag, dass du rechtzeitig bestellst. (werden)", expected: ["Ich werde rechtzeitig bestellen.", "ich werde rechtzeitig bestellen"], focus: "rechtzeitig", watch: "rechtzeitig bestellen = nicht zu spät.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u17-geschenk-e1", kind: "choice", prompt: "Emma hat Geburtstag. Ich ___ ihr ein Buch schenken.", options: ["werde", "will", "möchte", "habe"], answers: ["werde"], explain: "werden + Infinitiv am Ende: ich werde schenken."),
+                            Exercise(id: "de-foundations-u17-geschenk-e2", kind: "gap", prompt: "Was ___ du ihm schenken ?", options: [], answers: ["wirst"], explain: "du wirst: die Frage nach dem Geschenkplan."),
+                            Exercise(id: "de-foundations-u17-geschenk-e3", kind: "order", prompt: "Sagt euren Plan: ihr kauft Blumen für die Party.", options: [], answers: ["Wir werden Blumen für die Party kaufen"], explain: "werden + Infinitiv am Ende: so sagt man den Plan."),
+                            Exercise(id: "de-foundations-u17-geschenk-e4", kind: "written", prompt: "Sag, was du zum Geburtstag planst. (Konzertkarten)", options: [], answers: ["ich werde konzertkarten kaufen", "ich werde ihr konzertkarten kaufen", "ich werde meiner mutter konzertkarten kaufen"], explain: "Plan mit werden: ich werde … kaufen.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "function:go-shopping"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
+public enum DeFoundationsU18 {
+    public static let unit: CourseUnit = CourseUnit(id: "de-foundations-u18", title: "Geschichten erzählen", subtitle: "Erlebt und erzählt", level: "B1", themes: [
+                    ConversationTheme("de-b1-was-passiert-ist", "Was passiert ist", "Zuerst, dann, am Ende", "book", "Course", "Ihr erzählt vom Wochenende in Berlin: wer zuerst losfuhr, was dann passierte und wie es am Ende ausging.", 0),
+                    ConversationTheme("de-b1-die-wendung", "Die Wendung", "Plötzlich…", "sparkles", "Course", "Eine Geschichte wird spannend: plötzlich klingelte es, und es stellte sich heraus… Ihr übt den Überraschungsmoment.", 1)], lessons: [
+            Lesson(id: "de-foundations-u18-erzaehlen", title: "Was passiert ist", goal: "Erlebtes erzählen: Fakten in der Reihenfolge verbinden — zuerst, dann, am Ende.",
+                intro: LessonIntro(explanation: [
+                            "Die Erzählzeit ist das Präteritum: « Ich fuhr nach Berlin. Ich traf Lara. » Regelmäßige Verben enden auf -te: ich machte, sie wohnte.",
+                            "Die Reihenfolge liefern die Konnektoren: zuerst → dann → danach → am Ende: « Zuerst fuhr ich los, dann regnete es, am Ende schien die Sonne. »",
+                            "Kurze Fakten nebeneinander klingen wie ein Bericht: « Der Zug kam um acht. Ich wartete am Bahnsteig. Nichts passierte. »"], examples: [
+                            ExampleLine(text: "Zuerst fuhr ich nach Berlin.", meaning: "fahren → fuhr (stark)."),
+                            ExampleLine(text: "Dann traf ich Lara am Bahnhof.", meaning: "treffen → traf."),
+                            ExampleLine(text: "Danach gingen wir ins Museum.", meaning: "gehen → gingen."),
+                            ExampleLine(text: "Am Ende war alles gut.", meaning: "war: das Erzähl-Verb."),
+                            ExampleLine(text: "Es regnete den ganzen Tag.", meaning: "regnen → regnete (regelmäßig).")]),
+                expressions: [
+                            TargetExpression(text: "zuerst", meaning: "Schritt eins.", note: "Zuerst fuhr ich los."),
+                            TargetExpression(text: "dann / danach", meaning: "Der nächste Schritt.", note: "Dann kam der Bus."),
+                            TargetExpression(text: "am Ende", meaning: "Der Ausgang.", note: "Am Ende war alles gut."),
+                            TargetExpression(text: "fuhr / traf / kam", meaning: "Starke Präterita.", note: "fahren→fuhr, treffen→traf"),
+                            TargetExpression(text: "machte / wohnte / regnete", meaning: "Schwache Präterita auf -te.", note: "ich machte es gestern.")],
+                situation: "Ihr erzählt euer Berlin-Wochenende: zuerst die Fahrt, dann der Regen, danach das Museum — und am Ende ein Sonnentag.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Erzähle Schritt eins: du fuhst nach Berlin.", expected: ["Zuerst fuhr ich nach Berlin.", "zuerst fuhr ich nach berlin", "Ich fuhr zuerst nach Berlin."], focus: "zuerst", watch: "fahren → fuhr."),
+                                PracticeQuestion(prompt: "Erzähle weiter: du trafst Lara.", expected: ["Dann traf ich Lara.", "dann traf ich lara"], focus: "dann", watch: "treffen → traf."),
+                                PracticeQuestion(prompt: "Sag, dass ihr danach ins Museum gingt.", expected: ["Danach gingen wir ins Museum.", "danach gingen wir ins museum"], focus: "danach", watch: "gehen → gingen."),
+                                PracticeQuestion(prompt: "Erzähle den Ausgang: alles war gut.", expected: ["Am Ende war alles gut.", "am ende war alles gut"], focus: "am ende", watch: "am Ende + Präteritum."),
+                                PracticeQuestion(prompt: "Erzähle das Wetter: es regnete den ganzen Tag.", expected: ["Es regnete den ganzen Tag.", "es regnete den ganzen tag", "Danach regnete es."], focus: "regnete", watch: "regnen → regnete (regelmäßig).")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u18-erzaehlen-e1", kind: "choice", prompt: "___ fuhr ich nach Berlin.", options: ["Zuerst", "Am Ende", "Danach", "Plötzlich"], answers: ["Zuerst"], explain: "Zuerst markiert Schritt eins der Erzählung."),
+                            Exercise(id: "de-foundations-u18-erzaehlen-e2", kind: "gap", prompt: "Ich ___ Lara am Bahnhof. (treffen, Präteritum)", options: [], answers: ["traf"], explain: "treffen → traf: starkes Präteritum."),
+                            Exercise(id: "de-foundations-u18-erzaehlen-e3", kind: "order", prompt: "Erzähle den Ausgang der Geschichte.", options: [], answers: ["Am Ende war alles gut"], explain: "am Ende + Präteritum: so schließt man die Geschichte."),
+                            Exercise(id: "de-foundations-u18-erzaehlen-e4", kind: "written", prompt: "Erzähle: du gingst danach ins Museum.", options: [], answers: ["danach ging ich ins museum", "danach gingen wir ins museum"], explain: "gehen → ging/gingen im Präteritum.")], skills: ["function:tell-a-story", "grammar:past-simple-irregular", "grammar:connectors", "grammar:past-simple-regular"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "de-foundations-u18-ueberraschung", title: "Die überraschende Wendung", goal: "Spannend erzählen: den Überraschungsmoment mit plötzlich und es stellte sich heraus bauen.",
+                intro: LessonIntro(explanation: [
+                            "Der Wendepunkt kommt mit plötzlich oder auf einmal: « Plötzlich stand er vor der Tür. »",
+                            "Die Auflösung liefert die feste Formel es stellte sich heraus, dass … = später erfuhr man die Wahrheit: « Es stellte sich heraus, dass er mein neuer Nachbar war. »",
+                            "Spannung entsteht mit kurzen Sätzen im Präteritum: « Das Telefon klingelte. Niemand ging ran. »"], examples: [
+                            ExampleLine(text: "Plötzlich stand er vor der Tür.", meaning: "stehen → stand."),
+                            ExampleLine(text: "Auf einmal begann es zu regnen.", meaning: "beginnen → begann."),
+                            ExampleLine(text: "Es stellte sich heraus, dass sie Geschwister waren.", meaning: "Die Auflösung."),
+                            ExampleLine(text: "Das Telefon klingelte. Niemand ging ran.", meaning: "Kurze Sätze bauen Spannung."),
+                            ExampleLine(text: "Ich traute meinen Augen nicht.", meaning: "glauben-artig regelmäßig: traute.")]),
+                expressions: [
+                            TargetExpression(text: "plötzlich / auf einmal", meaning: "Der Wendepunkt.", note: "Plötzlich klingelte es."),
+                            TargetExpression(text: "es stellte sich heraus, dass…", meaning: "Die Auflösung.", note: "…dass alles anders war."),
+                            TargetExpression(text: "stand / begann / ging", meaning: "Starke Präterita.", note: "stehen→stand, beginnen→begann"),
+                            TargetExpression(text: "Ich traute meinen Augen nicht.", meaning: "Staunen.", note: "traute: regelmäßig."),
+                            TargetExpression(text: "und dann ?", meaning: "Spannung aufbauen.", note: "Und dann kam der Clou.")],
+                situation: "Ihr erzählt die Geschichte mit dem Fremden an der Tür: erst Stille, dann klingelte es plötzlich — und es stellte sich heraus, dass er der neue Nachbar war.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Erzähle den Wendepunkt: das Telefon klingelte.", expected: ["Plötzlich klingelte das Telefon.", "plotzlich klingelte das telefon", "Auf einmal klingelte das Telefon."], focus: "plötzlich", watch: "plötzlich / auf einmal + Präteritum."),
+                                PracticeQuestion(prompt: "Sag die Auflösung: er war dein neuer Nachbar.", expected: ["Es stellte sich heraus, dass er mein neuer Nachbar war.", "es stellte sich heraus dass er mein neuer nachbar war"], focus: "es stellte sich heraus", watch: "Die feste Formel mit dass."),
+                                PracticeQuestion(prompt: "Erzähle: es begann zu regnen. (auf einmal)", expected: ["Auf einmal begann es zu regnen.", "auf einmal begann es zu regnen"], focus: "auf einmal", watch: "beginnen → begann."),
+                                PracticeQuestion(prompt: "Sag, dass du deinen Augen nicht traust.", expected: ["Ich traute meinen Augen nicht.", "ich traute meinen augen nicht"], focus: "traute", watch: "trauen → traute (regelmäßig)."),
+                                PracticeQuestion(prompt: "Frag gespannt weiter.", expected: ["Und dann ?", "und dann", "Wie ging es weiter ?"], focus: "und dann", watch: "Und dann ? hält die Erzählung in Gang.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u18-ueberraschung-e1", kind: "choice", prompt: "« ___ stellte sich heraus, dass er mein Nachbar war. »", options: ["Es", "Er", "Da", "Man"], answers: ["Es"], explain: "Die feste Formel: es stellte sich heraus, dass…"),
+                            Exercise(id: "de-foundations-u18-ueberraschung-e2", kind: "gap", prompt: "Plötzlich ___ er vor der Tür. (stehen, Präteritum)", options: [], answers: ["stand"], explain: "stehen → stand: der Wendepunkt."),
+                            Exercise(id: "de-foundations-u18-ueberraschung-e3", kind: "order", prompt: "Erzähle den Überraschungsmoment: das Telefon.", options: [], answers: ["Plötzlich klingelte das Telefon"], explain: "plötzlich + Präteritum: Spannung in einem Satz."),
+                            Exercise(id: "de-foundations-u18-ueberraschung-e4", kind: "written", prompt: "Sag die Auflösung: der Fremde war Emmas Bruder.", options: [], answers: ["es stellte sich heraus dass der fremde emmas bruder war", "es stellte sich heraus, dass der fremde emmas bruder war"], explain: "es stellte sich heraus, dass… bringt die Auflösung.")], skills: ["function:tell-a-story", "grammar:connectors", "grammar:past-simple-irregular", "vocab:social-expressions"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"]),
+            Lesson(id: "de-foundations-u18-anekdoten", title: "Die Sommerepisode", goal: "Anekdoten erzählen und reagieren: nicht zu fassen, und dann ?",
+                intro: LessonIntro(explanation: [
+                            "Die Anekdote ist ein kurzes Erlebnis, lustig erzählt: « Im Sommer arbeitete ich in einem Café. Ein Gast bestellte elfmal Cappuccino. »",
+                            "Reagieren hält die Geschichte am Laufen: « Nicht zu fassen ! », « Und dann ? », « Wie ging es aus ? »",
+                            "Der Schluss gehört dazu: « Am Ende lachte nur noch jeder. » — so endet die Anekdote."], examples: [
+                            ExampleLine(text: "Im Sommer arbeitete ich in einem Café.", meaning: "arbeiten → arbeitete (regelmäßig)."),
+                            ExampleLine(text: "Ein Gast bestellte elfmal Cappuccino.", meaning: "bestellen → bestellte."),
+                            ExampleLine(text: "Nicht zu fassen !", meaning: "Ungläubig reagieren."),
+                            ExampleLine(text: "Und dann ? Was machte der Gast ?", meaning: "Nachfragen hält die Spannung."),
+                            ExampleLine(text: "Am Ende lachte nur noch jeder.", meaning: "Der Ausgang.")]),
+                expressions: [
+                            TargetExpression(text: "Nicht zu fassen !", meaning: "Ungläubigkeit.", note: "auch: Unglaublich !"),
+                            TargetExpression(text: "Und dann ?", meaning: "Weiter erzählen lassen.", note: "gespannt nachhaken"),
+                            TargetExpression(text: "Wie ging es aus ?", meaning: "Nach dem Ausgang fragen.", note: "ausgehen → es ging gut aus"),
+                            TargetExpression(text: "das Beste kommt noch", meaning: "Ankündigung.", note: "Aber das Beste kommt noch."),
+                            TargetExpression(text: "Am Ende …", meaning: "Der Schluss.", note: "Am Ende lachten alle.")],
+                situation: "Tim erzählt die Sommerepisode vom Café: der Gast mit den elf Cappuccinos. Kim hört gespannt zu und reagiert: « Nicht zu fassen ! Und dann ? »",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Erzähle den Anfang: du arbeitetest im Sommer im Café.", expected: ["Im Sommer arbeitete ich in einem Café.", "im sommer arbeitete ich in einem cafe"], focus: "arbeitete", watch: "arbeiten → arbeitete."),
+                                PracticeQuestion(prompt: "Erzähle das Kuriosum: elfmal Cappuccino.", expected: ["Ein Gast bestellte elfmal Cappuccino.", "ein gast bestellte elfmal cappuccino"], focus: "bestellte", watch: "bestellen → bestellte."),
+                                PracticeQuestion(prompt: "Reagiere ungläubig.", expected: ["Nicht zu fassen !", "nicht zu fassen", "Unglaublich !"], focus: "nicht zu fassen", watch: "Nicht zu fassen ! = unglaublich !"),
+                                PracticeQuestion(prompt: "Frag gespannt nach dem Ausgang.", expected: ["Wie ging es aus ?", "wie ging es aus", "Und dann ?"], focus: "wie ging es aus", watch: "Wie ging es aus ?"),
+                                PracticeQuestion(prompt: "Erzähle den Schluss: alle lachten.", expected: ["Am Ende lachte nur noch jeder.", "am ende lachte jeder", "Alle lachten am Ende."], focus: "am ende", watch: "Der Ausgang mit am Ende.")]),
+                exercises: [
+                            Exercise(id: "de-foundations-u18-anekdoten-e1", kind: "choice", prompt: "« ___ zu fassen ! » (Ungläubigkeit)", options: ["Nicht", "Kein", "Nie", "Niemals"], answers: ["Nicht"], explain: "Die Reaktion: Nicht zu fassen !"),
+                            Exercise(id: "de-foundations-u18-anekdoten-e2", kind: "gap", prompt: "Im Sommer ___ ich in einem Café. (arbeiten, Präteritum)", options: [], answers: ["arbeitete"], explain: "arbeiten → arbeitete: regelmäßig auf -te."),
+                            Exercise(id: "de-foundations-u18-anekdoten-e3", kind: "order", prompt: "Erzähle das Kuriosum: der Gast, elfmal Cappuccino.", options: [], answers: ["Ein Gast bestellte elfmal Cappuccino"], explain: "bestellte: das Präteritum des Kuriosums."),
+                            Exercise(id: "de-foundations-u18-anekdoten-e4", kind: "written", prompt: "Frag nach dem Ausgang der Geschichte.", options: [], answers: ["wie ging es aus", "wie ist es ausgegangen"], explain: "Wie ging es aus ? — so fragt man nach dem Ausgang.")], skills: ["function:tell-a-story", "vocab:social-expressions", "grammar:past-simple-regular", "function:describe-past-events"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"])])
 }
 
 public enum EnBusinessU1 {
@@ -5048,7 +5346,35 @@ public enum EsFoundationsU10 {
                             Exercise(id: "es-foundations-u10-presentar-e1", kind: "choice", prompt: "___ empezar, repasemos los números del trimestre.", options: ["Para", "Por", "Al", "En"], answers: ["Para"], explain: "Para empezar: fórmula de apertura."),
                             Exercise(id: "es-foundations-u10-presentar-e2", kind: "gap", prompt: "La propuesta tiene ventajas; ___, exige presupuesto y tiempo. (conector que añade otra cara)", options: [], answers: ["por otra parte", "por otro lado"], explain: "Por otra parte / por otro lado: añaden un argumento nuevo."),
                             Exercise(id: "es-foundations-u10-presentar-e3", kind: "choice", prompt: "¿Cuál de estas fórmulas sirve para cerrar una intervención ?", options: ["En resumen", "Para empezar", "En primer lugar", "A esto se añade"], answers: ["En resumen"], explain: "En resumen anuncia la conclusión; las demás organizan la secuencia."),
-                            Exercise(id: "es-foundations-u10-presentar-e4", kind: "written", prompt: "Cierra la presentación de tu propuesta con la fórmula de resumen.", options: [], answers: ["en resumen la propuesta avanza pero en enero", "en resumen, la propuesta avanza, pero en enero", "para concluir la propuesta avanza pero en enero"], explain: "En resumen + una sola idea: cierre de discurso.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+                            Exercise(id: "es-foundations-u10-presentar-e4", kind: "written", prompt: "Cierra la presentación de tu propuesta con la fórmula de resumen.", options: [], answers: ["en resumen la propuesta avanza pero en enero", "en resumen, la propuesta avanza, pero en enero", "para concluir la propuesta avanza pero en enero"], explain: "En resumen + una sola idea: cierre de discurso.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "es-foundations-u10-debatir", title: "De acuerdo en desacuerdo", goal: "Discrepar con tacto: reconocer el punto del otro antes de contradecirlo.",
+                intro: LessonIntro(explanation: [
+                            "La discrepancia cortés arranca reconociendo: «Entiendo tu punto, pero…». Lo que va antes del pero suaviza.",
+                            "Es discutible pone el no en modo debate: «Es discutible; los datos dicen otra cosa».",
+                            "Para no cerrar la conversación: «No lo veo así, precisamente porque…». La justificación evita el choque de creencias."], examples: [
+                            ExampleLine(text: "Entiendo tu punto, pero no lo comparto.", meaning: "Reconocer y discrepar."),
+                            ExampleLine(text: "Es discutible; los datos dicen otra cosa.", meaning: "Discrepar con evidencia."),
+                            ExampleLine(text: "Veo por dónde vas, aunque no lo veo así.", meaning: "Matiza el desacuerdo."),
+                            ExampleLine(text: "No lo veo así, precisamente porque faltan plazos.", meaning: "Justificar el no."),
+                            ExampleLine(text: "De acuerdo en el fondo, no en la forma.", meaning: "Acordar parcialmente.")]),
+                expressions: [
+                            TargetExpression(text: "entiendo tu punto, pero…", meaning: "Reconocer antes de discrepar.", note: "Entiendo tu punto, pero faltan datos."),
+                            TargetExpression(text: "es discutible", meaning: "Pone el no en debate.", note: "Es discutible, aunque entiendo la idea."),
+                            TargetExpression(text: "veo por dónde vas, aunque…", meaning: "Suaviza el desacuerdo.", note: "aunque no comparto el paso siguiente."),
+                            TargetExpression(text: "no lo veo así", meaning: "Discrepar directo.", note: "No lo veo así, precisamente porque…"),
+                            TargetExpression(text: "de acuerdo en el fondo, no en la forma", meaning: "Acuerdo parcial.", note: "separa el qué del cómo.")],
+                situation: "En una reunión, discrepáis sobre el calendario: reconoces el argumento del otro, pero defiendes el tuyo con datos y dejáis la conversación abierta.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Discrepa con tacto: reconocer y no compartir.", expected: ["Entiendo tu punto, pero no lo comparto", "entiendo tu punto pero no lo comparto"], focus: "entiendo tu punto", watch: "Reconocer suaviza el no."),
+                                PracticeQuestion(prompt: "Di que la idea está abierta a debate.", expected: ["Es discutible", "es discutible", "Me parece discutible"], focus: "discutible", watch: "es discutible abre el debate, no lo cierra."),
+                                PracticeQuestion(prompt: "Suaviza: ver su intención y discrepar.", expected: ["Veo por dónde vas, aunque no lo veo así", "veo por donde vas aunque no lo veo asi"], focus: "veo por dónde vas", watch: "aunque introduce tu matiz."),
+                                PracticeQuestion(prompt: "Justifica tu no: faltan plazos.", expected: ["No lo veo así, precisamente porque faltan plazos", "no lo veo asi precisamente porque faltan plazos"], focus: "precisamente porque", watch: "La justificación evita el choque."),
+                                PracticeQuestion(prompt: "Acuerda a medias: el fondo sí, la forma no.", expected: ["De acuerdo en el fondo, no en la forma", "de acuerdo en el fondo no en la forma"], focus: "en el fondo", watch: "Separa el qué del cómo.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u10-debatir-e1", kind: "choice", prompt: "Entiendo tu punto, ___ no lo comparto.", options: ["pero", "porque", "así que", "además"], answers: ["pero"], explain: "El pero traslada el peso a tu postura."),
+                            Exercise(id: "es-foundations-u10-debatir-e2", kind: "gap", prompt: "Es ___; los datos dicen otra cosa. (abre el debate)", options: [], answers: ["discutible", "Discutible"], explain: "Es discutible: el no en modo debate."),
+                            Exercise(id: "es-foundations-u10-debatir-e3", kind: "choice", prompt: "¿Qué fórmula reconoce el argumento del otro antes de discrepar?", options: ["Entiendo tu punto", "Estás equivocado", "No me interesa", "Cambia de tema"], answers: ["Entiendo tu punto"], explain: "Reconocer el punto del otro es la cortesía clave."),
+                            Exercise(id: "es-foundations-u10-debatir-e4", kind: "written", prompt: "Discrepa del calendario con tacto y justifica.", options: [], answers: ["no lo veo así, precisamente porque faltan plazos", "no lo veo asi precisamente porque faltan plazos", "entiendo tu punto, pero faltan plazos"], explain: "Reconocer + pero + causa: discrepancia con tacto.")], skills: ["function:express-opinion", "speaking:sustained-conversation", "grammar:connectors", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum EsFoundationsU11 {
@@ -5589,6 +5915,278 @@ public enum EsFoundationsU16 {
                             Exercise(id: "es-foundations-u16-habitos-e2", kind: "gap", prompt: "Es una costumbre de cada día: ___ desayuno yogur.", options: [], answers: ["Siempre"], explain: "Cada día: siempre desayuno yogur."),
                             Exercise(id: "es-foundations-u16-habitos-e3", kind: "order", prompt: "Habla de tu hábito con la fruta: cada mañana.", options: [], answers: ["Siempre desayuno fruta"], explain: "Cada mañana: siempre + desayuno + fruta."),
                             Exercise(id: "es-foundations-u16-habitos-e4", kind: "written", prompt: "Habla del agua: es tu bebida de cada día.", options: [], answers: ["Bebo agua todos los días", "bebo agua todos los dias", "Tomo agua todos los días", "tomo agua todos los dias"], explain: "Cada día = todos los días: bebo agua todos los días.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
+public enum EsFoundationsU17 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u17", title: "A la mesa", subtitle: "Comer fuera", level: "A1", themes: [
+                    ConversationTheme("en-el-restaurante", "En el restaurante", "Pedir comida", "fork.knife", "Course", "Pedís mesa y comida: quieres, para mí… y preguntar qué hay.", 0),
+                    ConversationTheme("la-carta", "La carta", "Platos y la cuenta", "takeout.bag", "Course", "Miráis la carta, preguntáis qué lleva cada plato y pedís la cuenta.", 1)], lessons: [
+            Lesson(id: "es-foundations-u17-restaurante", title: "En el restaurante", goal: "Pedir en un restaurante: quiero…, para mí…, y preguntar qué hay.",
+                intro: LessonIntro(explanation: [
+                            "Para pedir usamos querer: «Quiero una ensalada». Y para cortesía, por favor: «Un café, por favor».",
+                            "«Para mí…» marca tu plato cuando coméis en grupo: «Para mí, el pollo». «Para beber, un agua».",
+                            "Para preguntar qué hay: «¿Qué tiene de primero?». El camarero responde: «Tenemos paella y sopa»."], examples: [
+                            ExampleLine(text: "Quiero una ensalada, por favor.", meaning: "Pedir tu plato."),
+                            ExampleLine(text: "Para mí, un bocadillo.", meaning: "Tu plato en grupo."),
+                            ExampleLine(text: "¿Qué tiene de segundo?", meaning: "Preguntar al camarero."),
+                            ExampleLine(text: "Tenemos pescado y pollo.", meaning: "El camarero responde."),
+                            ExampleLine(text: "¿Me trae el menú, por favor?", meaning: "Pedir la carta."),
+                            ExampleLine(text: "Quiero agua, por favor.", meaning: "Pedir una bebida.")]),
+                expressions: [
+                            TargetExpression(text: "quiero + comida", meaning: "Pedir algo.", note: "Quiero una sopa."),
+                            TargetExpression(text: "para mí, …", meaning: "Tu pedido en grupo.", note: "Para mí, el pollo."),
+                            TargetExpression(text: "¿Qué tiene …?", meaning: "Preguntar qué hay.", note: "¿Qué tiene de postre?"),
+                            TargetExpression(text: "por favor", meaning: "Cortesía al pedir.", note: "Un café, por favor."),
+                            TargetExpression(text: "¿Me trae …?", meaning: "Pedir algo a la mesa.", note: "¿Me trae más pan?")],
+                situation: "Estás en un restaurante con amigos: pides una ensalada, preguntas qué hay de segundo y pides más pan.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pide una ensalada con cortesía.", expected: ["Quiero una ensalada, por favor", "quiero una ensalada por favor"], focus: "quiero", watch: "quiero + comida + por favor."),
+                                PracticeQuestion(prompt: "En grupo, di que tu plato es el pollo.", expected: ["Para mí, el pollo", "para mi el pollo"], focus: "para mí", watch: "para mí lleva tilde."),
+                                PracticeQuestion(prompt: "Pregunta al camarero qué hay de primero.", expected: ["¿Qué tiene de primero?", "¿Que tiene de primero?"], focus: "¿qué tiene?", watch: "qué con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Pide el menú.", expected: ["¿Me trae el menú, por favor?", "¿Me trae el menu por favor?"], focus: "¿me trae?", watch: "menú lleva tilde."),
+                                PracticeQuestion(prompt: "Di que quieres agua.", expected: ["Quiero agua", "quiero agua", "Quiero un agua"], focus: "quiero", watch: "un agua: agua es masculino.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u17-restaurante-e1", kind: "choice", prompt: "Quiero ___ ensalada y un agua.", options: ["una", "un", "unos", "unas"], answers: ["una"], explain: "Ensalada es femenino: una ensalada."),
+                            Exercise(id: "es-foundations-u17-restaurante-e2", kind: "gap", prompt: "___ mí, el pollo con patatas.", options: [], answers: ["Para", "para"], explain: "«Para mí» marca tu plato; mí lleva tilde."),
+                            Exercise(id: "es-foundations-u17-restaurante-e3", kind: "order", prompt: "Pregunta al camarero qué hay de postre.", options: [], answers: ["¿Qué tiene de postre?"], explain: "¿Qué tiene…? pregunta lo que hay."),
+                            Exercise(id: "es-foundations-u17-restaurante-e4", kind: "written", prompt: "Pide un café con cortesía.", options: [], answers: ["Un café, por favor", "un cafe por favor", "Quiero un café, por favor"], explain: "por favor añade cortesía; café lleva tilde.")], skills: ["function:order-food", "vocab:food", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u17-carta", title: "La carta", goal: "Leer la carta: platos y bebidas, y preguntar qué lleva cada plato.",
+                intro: LessonIntro(explanation: [
+                            "La carta ordena la comida: de primero, de segundo y de postre. «De segundo, merluza».",
+                            "Para saber los ingredientes: «¿Qué lleva la paella?». Se responde con lleva: «Lleva arroz y marisco».",
+                            "Las bebidas van de beber: «¿Qué quieren de beber?». «Dos aguas y un zumo»."], examples: [
+                            ExampleLine(text: "¿Qué lleva el gazpacho?", meaning: "Preguntar los ingredientes."),
+                            ExampleLine(text: "Lleva tomate y pepino.", meaning: "Responder con lleva."),
+                            ExampleLine(text: "De segundo quiero merluza.", meaning: "Elegir en la carta."),
+                            ExampleLine(text: "¿Qué hay de postre?", meaning: "Preguntar por los postres."),
+                            ExampleLine(text: "Para beber, dos aguas.", meaning: "Pedir bebidas."),
+                            ExampleLine(text: "¿Qué lleva la ensalada?", meaning: "Preguntar por un plato.")]),
+                expressions: [
+                            TargetExpression(text: "¿Qué lleva …?", meaning: "Preguntar los ingredientes.", note: "¿Qué lleva la ensalada?"),
+                            TargetExpression(text: "lleva + ingrediente", meaning: "Los ingredientes del plato.", note: "Lleva atún y cebolla."),
+                            TargetExpression(text: "de primero / de segundo", meaning: "Los platos en orden.", note: "De segundo, tortilla."),
+                            TargetExpression(text: "de postre", meaning: "El final de la comida.", note: "¿Qué hay de postre?"),
+                            TargetExpression(text: "de beber", meaning: "Las bebidas.", note: "¿Qué quieren de beber?")],
+                situation: "Miráis la carta: preguntas qué lleva el arroz, eliges de segundo y pedís dos refrescos y un agua.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pregunta qué lleva la sopa.", expected: ["¿Qué lleva la sopa?", "¿Que lleva la sopa?"], focus: "¿qué lleva?", watch: "qué con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di que la ensalada lleva tomate y atún.", expected: ["La ensalada lleva tomate y atún", "la ensalada lleva tomate y atun"], focus: "lleva", watch: "atún lleva tilde."),
+                                PracticeQuestion(prompt: "Elige la tortilla de segundo.", expected: ["De segundo, tortilla", "de segundo tortilla", "De segundo quiero tortilla"], focus: "de segundo", watch: "de segundo marca el plato."),
+                                PracticeQuestion(prompt: "Pregunta qué hay de postre.", expected: ["¿Qué hay de postre?", "¿Que hay de postre?"], focus: "de postre", watch: "hay = existe."),
+                                PracticeQuestion(prompt: "Pide dos refrescos para beber.", expected: ["Dos refrescos, por favor", "Para beber, dos refrescos", "para beber dos refrescos"], focus: "de beber", watch: "refresco: bebida fría.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u17-carta-e1", kind: "choice", prompt: "¿Qué ___ la paella? — Arroz, pollo y marisco.", options: ["lleva", "come", "toma", "bebe"], answers: ["lleva"], explain: "Lleva habla de los ingredientes de un plato."),
+                            Exercise(id: "es-foundations-u17-carta-e2", kind: "gap", prompt: "___ segundo quiero merluza.", options: [], answers: ["De", "de"], explain: "De primero / de segundo ordenan la comida."),
+                            Exercise(id: "es-foundations-u17-carta-e3", kind: "order", prompt: "Pregunta por los ingredientes del gazpacho.", options: [], answers: ["¿Qué lleva el gazpacho?"], explain: "¿Qué lleva…? pregunta los ingredientes."),
+                            Exercise(id: "es-foundations-u17-carta-e4", kind: "written", prompt: "Sois dos en la mesa y queréis agua: ¿qué pides?", options: [], answers: ["Dos aguas, por favor", "dos aguas", "Para beber, dos aguas"], explain: "aguas en plural: dos aguas.")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "grammar:present-simple"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "es-foundations-u17-cuenta", title: "La cuenta", goal: "Pedir la cuenta, preguntar el total y pagar: tarjeta, efectivo y propina.",
+                intro: LessonIntro(explanation: [
+                            "Al terminar: «La cuenta, por favor». El camarero dice el total con son: «Son veintidós euros».",
+                            "Para pagar: «¿Puedo pagar con tarjeta?». En efectivo: «Pago en efectivo».",
+                            "La propina es opcional en España: «El cambio es para usted» y el camarero lo agradece."], examples: [
+                            ExampleLine(text: "La cuenta, por favor.", meaning: "Pedir la cuenta."),
+                            ExampleLine(text: "¿Cuánto es?", meaning: "Preguntar el total."),
+                            ExampleLine(text: "Son dieciocho euros.", meaning: "El camarero dice el total."),
+                            ExampleLine(text: "¿Puedo pagar con tarjeta?", meaning: "Preguntar por el pago."),
+                            ExampleLine(text: "El cambio es para usted.", meaning: "Dejar propina.")]),
+                expressions: [
+                            TargetExpression(text: "la cuenta, por favor", meaning: "Pedir la cuenta.", note: "La cuenta, por favor."),
+                            TargetExpression(text: "¿Cuánto es?", meaning: "Preguntar el total.", note: "¿Cuánto es todo?"),
+                            TargetExpression(text: "son … euros", meaning: "El total.", note: "Son veinte euros."),
+                            TargetExpression(text: "con tarjeta / en efectivo", meaning: "Formas de pago.", note: "¿Puedo pagar en efectivo?"),
+                            TargetExpression(text: "el cambio es para usted", meaning: "Dejar propina.", note: "El cambio es para usted.")],
+                situation: "Termináis la cena: pides la cuenta, son veinticuatro euros, pagas con tarjeta y dejas el cambio al camarero.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pide la cuenta con cortesía.", expected: ["La cuenta, por favor", "la cuenta por favor"], focus: "la cuenta", watch: "por favor al final."),
+                                PracticeQuestion(prompt: "Pregunta el total.", expected: ["¿Cuánto es?", "¿Cuanto es?", "¿Cuánto es todo?"], focus: "¿cuánto?", watch: "cuánto con tilde en preguntas."),
+                                PracticeQuestion(prompt: "Di el total: veinte euros.", expected: ["Son veinte euros", "son veinte euros"], focus: "son", watch: "son + precio: son veinte euros."),
+                                PracticeQuestion(prompt: "Pregunta si puedes pagar con tarjeta.", expected: ["¿Puedo pagar con tarjeta?", "Puedo pagar con tarjeta"], focus: "¿puedo…?", watch: "puedo + infinitivo."),
+                                PracticeQuestion(prompt: "Di que el cambio es para el camarero.", expected: ["El cambio es para el camarero", "el cambio es para usted"], focus: "para usted", watch: "usted: cortesía al camarero.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u17-cuenta-e1", kind: "choice", prompt: "—¿Cuánto es? —___ veintidós euros.", options: ["Son", "Es", "Están", "Hay"], answers: ["Son"], explain: "Los precios van con ser: son veintidós euros."),
+                            Exercise(id: "es-foundations-u17-cuenta-e2", kind: "gap", prompt: "¿Puedo pagar ___ tarjeta?", options: [], answers: ["con", "Con"], explain: "pagar con tarjeta / en efectivo."),
+                            Exercise(id: "es-foundations-u17-cuenta-e3", kind: "order", prompt: "Termináis de cenar: ¿qué dices para que traigan el ticket?", options: [], answers: ["La cuenta, por favor"], explain: "Frase fija para pedir la cuenta."),
+                            Exercise(id: "es-foundations-u17-cuenta-e4", kind: "written", prompt: "Pregunta por el precio total.", options: [], answers: ["¿Cuánto es?", "¿Cuanto es?", "¿Cuánto es todo?"], explain: "¿Cuánto es? con tilde.")], skills: ["function:order-food", "grammar:quantities", "vocab:food", "vocab:social-expressions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum EsFoundationsU18 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u18", title: "Quedar bien", subtitle: "Invitaciones y planes", level: "A2", themes: [
+                    ConversationTheme("propuestas", "¿Vienes?", "Propuestas y excusas", "calendar.badge.clock", "Course", "Proponéis planes de semana: alguien se apunta, alguien pone una excusa.", 0),
+                    ConversationTheme("el-regalo", "El regalo", "Planes con ir a", "gift", "Course", "Organizáis un regalo de cumpleaños: qué vais a comprarle y cuándo.", 1)], lessons: [
+            Lesson(id: "es-foundations-u18-propuestas", title: "¿Vienes o prefieres…?", goal: "Hacer propuestas y responder: aceptar, dudar o preferir otra cosa.",
+                intro: LessonIntro(explanation: [
+                            "Para proponer: «¿Vienes al cine?» o «¿Por qué no vamos a la playa?». La pregunta suaviza el plan.",
+                            "También proponemos con ir a: «Vamos a ir de excursión el sábado, ¿te apuntas?».",
+                            "Para responder: aceptas «Vale, me apunto», dudas «Déjame pensarlo» o prefieres «Prefiero quedar el domingo»."], examples: [
+                            ExampleLine(text: "¿Vienes al cine esta tarde?", meaning: "Proponer un plan."),
+                            ExampleLine(text: "¿Por qué no vamos a la playa?", meaning: "Proponer con ¿por qué no…?"),
+                            ExampleLine(text: "Vale, me apunto.", meaning: "Aceptar."),
+                            ExampleLine(text: "No sé, déjame pensarlo.", meaning: "Dudar."),
+                            ExampleLine(text: "Prefiero quedar el domingo.", meaning: "Preferir otra cosa.")]),
+                expressions: [
+                            TargetExpression(text: "¿Vienes a…?", meaning: "Invitar a un plan.", note: "¿Vienes a cenar?"),
+                            TargetExpression(text: "¿Por qué no + presente?", meaning: "Proponer.", note: "¿Por qué no lo probamos?"),
+                            TargetExpression(text: "me apunto", meaning: "Aceptar un plan.", note: "¡Me apunto!"),
+                            TargetExpression(text: "déjame pensarlo", meaning: "Dudar.", note: "Déjame pensarlo y te digo."),
+                            TargetExpression(text: "prefiero + infinitivo", meaning: "Preferir.", note: "Prefiero ir en tren.")],
+                situation: "Propones plan de sábado a tu grupo: cine o excursión; unos se apuntan y otros prefieren el domingo.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Propón el cine para esta tarde.", expected: ["¿Vienes al cine esta tarde?", "Vienes al cine esta tarde"], focus: "¿vienes…?", watch: "Vienes + a + plan."),
+                                PracticeQuestion(prompt: "Propón ir a la playa con ¿por qué no?", expected: ["¿Por qué no vamos a la playa?", "¿Por que no vamos a la playa?"], focus: "¿por qué no?", watch: "por qué con tilde."),
+                                PracticeQuestion(prompt: "Acepta el plan.", expected: ["Vale, me apunto", "Me apunto", "Vale me apunto"], focus: "me apunto", watch: "me apunto = acepto."),
+                                PracticeQuestion(prompt: "Di que necesitas pensarlo.", expected: ["Déjame pensarlo", "dejame pensarlo", "No sé, déjame pensarlo"], focus: "déjame", watch: "déjame lleva tilde."),
+                                PracticeQuestion(prompt: "Di que prefieres quedar en casa.", expected: ["Prefiero quedarme en casa", "prefiero quedar en casa"], focus: "prefiero", watch: "prefiero + infinitivo.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u18-propuestas-e1", kind: "choice", prompt: "¿Por qué no ___ al museo el sábado?", options: ["vamos", "vamos a", "fuimos", "iremos"], answers: ["vamos"], explain: "¿Por qué no + presente? propone un plan."),
+                            Exercise(id: "es-foundations-u18-propuestas-e2", kind: "gap", prompt: "¿Te ___ al concierto del viernes?", options: [], answers: ["apuntas", "Apuntas"], explain: "¿Te apuntas? invita a unirse al plan."),
+                            Exercise(id: "es-foundations-u18-propuestas-e3", kind: "order", prompt: "Acepta la propuesta para ir de excursión.", options: [], answers: ["Vale, me apunto a la excursión"], explain: "me apunto = aceptar el plan."),
+                            Exercise(id: "es-foundations-u18-propuestas-e4", kind: "written", prompt: "Di que prefieres ir el domingo.", options: [], answers: ["prefiero ir el domingo", "Prefiero ir el domingo"], explain: "prefiero + infinitivo.")], skills: ["function:make-suggestions", "grammar:going-to", "vocab:social-expressions", "grammar:present-simple"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "es-foundations-u18-excusa", title: "Qué pena, no puedo", goal: "Aceptar y rechazar invitaciones con excusas amables: qué pena, es que…, lo siento.",
+                intro: LessonIntro(explanation: [
+                            "Para rechazar con tacto, la pena va primero: «¡Qué pena! No puedo ir».",
+                            "La excusa se introduce con es que: «Es que tengo que trabajar». Suaviza el no.",
+                            "El rechazo deja el plan abierto con conectores: «Entonces, ¿el sábado?», «Tengo fiesta, así que no puedo»."], examples: [
+                            ExampleLine(text: "¡Qué pena! No puedo ir.", meaning: "Rechazar con pena."),
+                            ExampleLine(text: "Es que tengo que trabajar.", meaning: "Explicar la excusa."),
+                            ExampleLine(text: "Lo siento, tengo planes.", meaning: "Rechazar corto."),
+                            ExampleLine(text: "Entonces, ¿el sábado?", meaning: "Dejar el plan abierto."),
+                            ExampleLine(text: "Tengo fiesta, así que no puedo.", meaning: "así que + consecuencia.")]),
+                expressions: [
+                            TargetExpression(text: "¡qué pena!", meaning: "Lamenta el no.", note: "¡Qué pena, no puedo!"),
+                            TargetExpression(text: "es que…", meaning: "Introduce la excusa.", note: "Es que estoy resfriado."),
+                            TargetExpression(text: "lo siento", meaning: "Rechazar amable.", note: "Lo siento, no puedo."),
+                            TargetExpression(text: "tengo que + infinitivo", meaning: "Obligación.", note: "Tengo que estudiar."),
+                            TargetExpression(text: "¿el finde que viene?", meaning: "Reprogramar.", note: "¿Mejor el finde que viene?")],
+                situation: "Te invitan a un concierto el jueves, pero trabajas hasta las diez: rechazas con pena y propones el sábado.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Rechaza la invitación con pena.", expected: ["¡Qué pena, no puedo!", "Qué pena, no puedo", "que pena no puedo"], focus: "qué pena", watch: "qué con tilde."),
+                                PracticeQuestion(prompt: "Da tu excusa: trabajar.", expected: ["Es que tengo que trabajar", "es que tengo que trabajar"], focus: "es que", watch: "es que + excusa."),
+                                PracticeQuestion(prompt: "Rechaza corto y amable.", expected: ["Lo siento, no puedo", "lo siento no puedo"], focus: "lo siento", watch: "lo siento + no puedo."),
+                                PracticeQuestion(prompt: "Propón el fin de semana que viene.", expected: ["¿El finde que viene?", "¿Mejor el finde que viene?", "¿El fin de semana que viene?"], focus: "que viene", watch: "finde = fin de semana."),
+                                PracticeQuestion(prompt: "Di que tienes planes, con así que.", expected: ["Tengo planes, así que no puedo", "tengo planes asi que no puedo"], focus: "así que", watch: "así lleva tilde.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u18-excusa-e1", kind: "choice", prompt: "___ pena, mañana no puedo.", options: ["Qué", "Que", "Cuál", "Cómo"], answers: ["Qué"], explain: "¡Qué pena! lleva tilde: lamenta el no."),
+                            Exercise(id: "es-foundations-u18-excusa-e2", kind: "gap", prompt: "Lo siento, ___ que tengo que estudiar.", options: [], answers: ["es", "Es"], explain: "es que + excusa suaviza el no."),
+                            Exercise(id: "es-foundations-u18-excusa-e3", kind: "order", prompt: "Rechaza y deja un plan para después.", options: [], answers: ["Entonces, ¿mejor el sábado?"], explain: "Entonces retoma el plan; mejor propone otra fecha."),
+                            Exercise(id: "es-foundations-u18-excusa-e4", kind: "written", prompt: "Di que no puedes ir porque tienes que trabajar.", options: [], answers: ["no puedo ir porque tengo que trabajar", "No puedo ir porque tengo que trabajar", "es que tengo que trabajar"], explain: "porque / es que introducen la causa.")], skills: ["vocab:social-expressions", "function:make-suggestions", "grammar:present-simple", "grammar:connectors"], canDo: ["make-future-plans"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "es-foundations-u18-regalo", title: "El regalo perfecto", goal: "Planear un regalo con ir a: qué vais a comprarle, dónde y para quién.",
+                intro: LessonIntro(explanation: [
+                            "El plan del regalo va con ir a + infinitivo: «Voy a comprarle un libro».",
+                            "El pronombre se pega al infinitivo: «comprarle», «regalarle». Le = a él o a ella.",
+                            "Para organizaros: «¿Qué le vamos a regalar?». «Vamos a mirar en la tienda nueva»."], examples: [
+                            ExampleLine(text: "Voy a comprarle un libro.", meaning: "Tu plan de regalo."),
+                            ExampleLine(text: "Vamos a regalarle unas flores.", meaning: "El plan del grupo."),
+                            ExampleLine(text: "¿Qué le vamos a regalar?", meaning: "Preguntar por el plan."),
+                            ExampleLine(text: "Voy a mirar en la tienda nueva.", meaning: "Buscar el regalo."),
+                            ExampleLine(text: "Le va a encantar.", meaning: "Predecir su reacción.")]),
+                expressions: [
+                            TargetExpression(text: "ir a + infinitivo", meaning: "Futuro cercano.", note: "Voy a comprarle algo."),
+                            TargetExpression(text: "comprarle / regalarle", meaning: "le pegado al infinitivo.", note: "Voy a regalarle un reloj."),
+                            TargetExpression(text: "le va a encantar", meaning: "Predecir su reacción.", note: "Le va a encantar, seguro."),
+                            TargetExpression(text: "¿qué le vamos a regalar?", meaning: "Preguntar el plan.", note: "¿Qué le vamos a regalar a Lucía?"),
+                            TargetExpression(text: "es una sorpresa", meaning: "Guardar el secreto.", note: "Shh, es una sorpresa.")],
+                situation: "El cumpleaños de Lucía es el sábado: vais a regalarle unos auriculares; tú vas a mirarlos hoy a la tienda nueva.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Di tu plan: comprarle un libro.", expected: ["Voy a comprarle un libro", "voy a comprarle un libro"], focus: "voy a", watch: "comprar + le = comprarle."),
+                                PracticeQuestion(prompt: "Pregunta qué vais a regalarle a Lucía.", expected: ["¿Qué le vamos a regalar a Lucía?", "¿Que le vamos a regalar a Lucia?"], focus: "¿qué le…?", watch: "qué con tilde."),
+                                PracticeQuestion(prompt: "Di que vais a regalarle flores.", expected: ["Vamos a regalarle flores", "vamos a regalarle flores"], focus: "regalarle", watch: "regalar + le."),
+                                PracticeQuestion(prompt: "Predice su reacción: encantar.", expected: ["Le va a encantar", "le va a encantar", "Seguro que le va a encantar"], focus: "le va a encantar", watch: "le = a Lucía."),
+                                PracticeQuestion(prompt: "Guarda el secreto.", expected: ["Es una sorpresa", "es una sorpresa"], focus: "sorpresa", watch: "Shh, es una sorpresa.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u18-regalo-e1", kind: "choice", prompt: "Le ___ a encantar.", options: ["va", "voy", "van", "vas"], answers: ["va"], explain: "le va a encantar: la tercera persona."),
+                            Exercise(id: "es-foundations-u18-regalo-e2", kind: "gap", prompt: "Vamos a ___ unas flores. (regalar + le)", options: [], answers: ["regalarle", "Regalarle"], explain: "regalar + le = regalarle, pegado al infinitivo."),
+                            Exercise(id: "es-foundations-u18-regalo-e3", kind: "order", prompt: "Di qué vas a hacer con el dinero del grupo.", options: [], answers: ["Voy a comprarle un libro"], explain: "voy a + comprarle: plan de regalo."),
+                            Exercise(id: "es-foundations-u18-regalo-e4", kind: "written", prompt: "Pregunta al grupo por el regalo de tu jefe.", options: [], answers: ["¿Qué le vamos a regalar?", "¿Que le vamos a regalar?", "qué le vamos a regalar"], explain: "le vamos a regalar: futuro cercano.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "function:go-shopping"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
+public enum EsFoundationsU19 {
+    public static let unit: CourseUnit = CourseUnit(id: "es-foundations-u19", title: "Contar historias", subtitle: "Pasado y anécdotas", level: "B1", themes: [
+                    ConversationTheme("lo-que-paso", "Lo que pasó", "Enlazar hechos", "book", "Course", "Contáis un día de viaje hecho un desastre: primero, después y al final.", 0),
+                    ConversationTheme("el-giro", "El giro", "Sorpresa y anécdotas", "sparkles", "Course", "Narráis con giros inesperados y reaccionáis a las anécdotas de otros.", 1)], lessons: [
+            Lesson(id: "es-foundations-u19-narrar", title: "Lo que pasó", goal: "Enlazar hechos pasados en orden: primero…, después…, al final….",
+                intro: LessonIntro(explanation: [
+                            "La narración ordena los hechos: «Primero fuimos a la estación; después compramos los billetes».",
+                            "Los irregulares del pasado aparecen siempre: fui, hicimos, vimos. «Primero fui yo».",
+                            "Al final cierras con el resultado: «Al final, perdimos el tren, pero nos reímos mucho»."], examples: [
+                            ExampleLine(text: "Primero fuimos a la estación.", meaning: "Abre la secuencia."),
+                            ExampleLine(text: "Después compramos los billetes.", meaning: "El segundo hecho."),
+                            ExampleLine(text: "Luego corrimos al andén.", meaning: "Luego = después."),
+                            ExampleLine(text: "El tren no esperó a nadie.", meaning: "Un hecho del pasado."),
+                            ExampleLine(text: "Al final nos reímos mucho.", meaning: "Cierra la historia.")]),
+                expressions: [
+                            TargetExpression(text: "primero, …", meaning: "El primer hecho.", note: "Primero fuimos al hotel."),
+                            TargetExpression(text: "después / luego", meaning: "El siguiente paso.", note: "Después cenamos en el puerto."),
+                            TargetExpression(text: "al final, …", meaning: "El cierre o resultado.", note: "Al final llegó tarde."),
+                            TargetExpression(text: "fui / hicimos / vimos", meaning: "Irregulares frecuentes.", note: "Hicimos un viaje largo."),
+                            TargetExpression(text: "pero / así que", meaning: "Conectan el giro.", note: "Llovió, así que volvimos.")],
+                situation: "Cuentas un día de viaje con sustos: primero el retraso, después la lluvia y, al final, un atardecer increíble.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Abre tu historia: ir al hotel primero.", expected: ["Primero fuimos al hotel", "primero fuimos al hotel"], focus: "primero", watch: "fuimos: ir en pasado."),
+                                PracticeQuestion(prompt: "Di el segundo hecho: cenar en el puerto.", expected: ["Después cenamos en el puerto", "Luego cenamos en el puerto"], focus: "después", watch: "después / luego conectan."),
+                                PracticeQuestion(prompt: "Di el giro: llovió, así que volvisteis.", expected: ["Llovió, así que volvimos", "llovio asi que volvimos"], focus: "así que", watch: "así que + consecuencia."),
+                                PracticeQuestion(prompt: "Cierra: reíros mucho.", expected: ["Al final nos reímos mucho", "al final nos reimos mucho"], focus: "al final", watch: "al final cierra la historia."),
+                                PracticeQuestion(prompt: "Di lo que visteis en el museo: una expo rara.", expected: ["Vimos una exposición rara", "vimos una expo rara", "En el museo vimos una exposición rara"], focus: "vimos", watch: "vimos: ver en pasado.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u19-narrar-e1", kind: "choice", prompt: "___ fuimos a la estación; después, a comprar agua.", options: ["Primero", "Al final", "Luego", "Después"], answers: ["Primero"], explain: "Primero abre la secuencia; después encadena."),
+                            Exercise(id: "es-foundations-u19-narrar-e2", kind: "gap", prompt: "El tren no ___ a esperar. (esperar, pasado)", options: [], answers: ["esperó", "espero", "Esperó"], explain: "esperó: pasado con tilde en la última sílaba."),
+                            Exercise(id: "es-foundations-u19-narrar-e3", kind: "order", prompt: "Cierra tu historia del viaje.", options: [], answers: ["Al final nos reímos mucho"], explain: "Al final + resultado cierra la narración."),
+                            Exercise(id: "es-foundations-u19-narrar-e4", kind: "written", prompt: "Di que fuisteis a la playa y después comisteis paella.", options: [], answers: ["fuimos a la playa y luego comimos paella", "Fuimos a la playa y luego comimos paella", "fuimos a la playa y comimos paella"], explain: "fuimos: irregular; comimos: regular del pasado.")], skills: ["function:tell-a-story", "grammar:past-simple-irregular", "grammar:connectors", "grammar:past-simple-regular"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "es-foundations-u19-sorpresa", title: "El giro inesperado", goal: "Narrar con sorpresa: de repente…, resultó que…, resultó ser…",
+                intro: LessonIntro(explanation: [
+                            "El giro llega con de repente: «Y de repente, se fue la luz». Cambia el ritmo de la historia.",
+                            "Resultó que revela la verdad escondida: «Resultó que el ladrón era el vecino».",
+                            "Para enganchar: «No te imaginas lo que pasó». Y el clímax: «Lo mejor de todo fue el final»."], examples: [
+                            ExampleLine(text: "Y de repente, se fue la luz.", meaning: "El giro."),
+                            ExampleLine(text: "Resultó que era el vecino.", meaning: "Revela la verdad."),
+                            ExampleLine(text: "Resultó ser una fiesta.", meaning: "La sorpresa final."),
+                            ExampleLine(text: "Lo mejor de todo fue el final.", meaning: "Anuncia el clímax."),
+                            ExampleLine(text: "No te imaginas lo que pasó.", meaning: "Engancha al oyente.")]),
+                expressions: [
+                            TargetExpression(text: "de repente", meaning: "Giro sin aviso.", note: "De repente, empezó a llover."),
+                            TargetExpression(text: "resultó que…", meaning: "Revela la verdad.", note: "Resultó que era gratis."),
+                            TargetExpression(text: "resultó ser…", meaning: "La revelación con ser.", note: "Resultó ser su hermano."),
+                            TargetExpression(text: "lo mejor de todo", meaning: "Anuncia el clímax.", note: "Lo mejor de todo fue la cena."),
+                            TargetExpression(text: "no te imaginas…", meaning: "Engancha.", note: "No te imaginas quién llamó.")],
+                situation: "Cuentas la noche en que se fue la luz en el hostal y, de repente, todos bajaron a la terraza: resultó ser una fiesta del barrio.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Cuenta el giro: se fue la luz.", expected: ["Y de repente, se fue la luz", "De repente se fue la luz", "de repente se fue la luz"], focus: "de repente", watch: "de repente + pasado."),
+                                PracticeQuestion(prompt: "Revela la verdad: era gratis.", expected: ["Resultó que era gratis", "resulto que era gratis"], focus: "resultó que", watch: "resultó lleva tilde."),
+                                PracticeQuestion(prompt: "Di que resultó ser su hermano.", expected: ["Resultó ser su hermano", "resulto ser su hermano"], focus: "resultó ser", watch: "resultó ser + persona."),
+                                PracticeQuestion(prompt: "Anuncia el clímax: la cena.", expected: ["Lo mejor de todo fue la cena", "lo mejor de todo fue la cena"], focus: "lo mejor de todo", watch: "anuncia el momento fuerte."),
+                                PracticeQuestion(prompt: "Engancha al oyente: quién llamó.", expected: ["No te imaginas quién llamó", "no te imaginas quien llamo"], focus: "no te imaginas", watch: "quién y llamó llevan tilde.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u19-sorpresa-e1", kind: "choice", prompt: "Estábamos cenando y, ___, se fue la luz.", options: ["de repente", "de verdad", "de nuevo", "de nada"], answers: ["de repente"], explain: "De repente marca el giro sin aviso."),
+                            Exercise(id: "es-foundations-u19-sorpresa-e2", kind: "gap", prompt: "___ que el concierto era gratis. (revelar la verdad)", options: [], answers: ["Resultó", "resultó", "Resulto"], explain: "Resultó que + la verdad escondida."),
+                            Exercise(id: "es-foundations-u19-sorpresa-e3", kind: "order", prompt: "Engancha al oyente antes de contar el final.", options: [], answers: ["No te imaginas lo que pasó"], explain: "No te imaginas… engancha al oyente."),
+                            Exercise(id: "es-foundations-u19-sorpresa-e4", kind: "written", prompt: "Revela la sorpresa: era el vecino.", options: [], answers: ["resultó que era el vecino", "resulto que era el vecino", "resultó ser el vecino"], explain: "Resultó que / resultó ser + la verdad.")], skills: ["function:tell-a-story", "grammar:connectors", "grammar:past-simple-irregular", "vocab:social-expressions"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"]),
+            Lesson(id: "es-foundations-u19-anecdotas", title: "La anécdota del verano", goal: "Contar una anécdota y reaccionar a la de otros: no me digas, ¿y luego?, qué fuerte.",
+                intro: LessonIntro(explanation: [
+                            "La anécdota es una historia corta y graciosa: contexto, giro y remate. «Pues mira, me pasó en agosto».",
+                            "Para reaccionar: «¡No me digas!», «¿Y luego?», «¡Qué fuerte!». Animan a seguir contando.",
+                            "El giro con me pega el susto a ti: «Se me cayó el móvil», «Se me olvidó la cartera»."], examples: [
+                            ExampleLine(text: "Pues mira, me pasó en agosto.", meaning: "Abre la anécdota."),
+                            ExampleLine(text: "Estaba en la cola del bus.", meaning: "El contexto."),
+                            ExampleLine(text: "Se me cayó el móvil al suelo.", meaning: "El giro."),
+                            ExampleLine(text: "¿Y luego?", meaning: "Pide más historia."),
+                            ExampleLine(text: "¡No me digas!", meaning: "Reacciona con sorpresa.")]),
+                expressions: [
+                            TargetExpression(text: "pues mira, …", meaning: "Abre la anécdota.", note: "Pues mira, me pasó ayer."),
+                            TargetExpression(text: "se me cayó / se me olvidó", meaning: "El giro con me.", note: "Se me olvidó la cartera."),
+                            TargetExpression(text: "¿y luego?", meaning: "Pide el siguiente hecho.", note: "¿Y luego? ¿Qué hiciste?"),
+                            TargetExpression(text: "no me digas", meaning: "Sorpresa del oyente.", note: "¡No me digas!"),
+                            TargetExpression(text: "qué fuerte / qué vergüenza", meaning: "Reacciones.", note: "¡Qué vergüenza, tío!")],
+                situation: "En la terraza, cuentas que se te cayó el móvil al mar en agosto; tu amigo no lo puede creer y quiere saber qué pasó después.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Abre tu anécdota de agosto.", expected: ["Pues mira, me pasó en agosto", "pues mira me paso en agosto"], focus: "pues mira", watch: "pasó lleva tilde."),
+                                PracticeQuestion(prompt: "Di el giro: se te cayó el móvil.", expected: ["Se me cayó el móvil", "se me cayo el movil"], focus: "se me cayó", watch: "se me cayó: el giro con me."),
+                                PracticeQuestion(prompt: "Pide el siguiente paso de la historia.", expected: ["¿Y luego?", "¿Y luego qué?", "y luego"], focus: "¿y luego?", watch: "¿Y luego? pide más historia."),
+                                PracticeQuestion(prompt: "Reacciona con sorpresa.", expected: ["¡No me digas!", "No me digas", "no me digas"], focus: "no me digas", watch: "Reacción de sorpresa."),
+                                PracticeQuestion(prompt: "Reacciona fuerte: qué vergüenza.", expected: ["¡Qué vergüenza!", "Que vergüenza", "qué verguenza"], focus: "qué vergüenza", watch: "qué con tilde.")]),
+                exercises: [
+                            Exercise(id: "es-foundations-u19-anecdotas-e1", kind: "choice", prompt: "—Se me cayó el móvil al mar. —¡No ___ digas!", options: ["me", "te", "se", "le"], answers: ["me"], explain: "No me digas: fórmula de sorpresa del oyente."),
+                            Exercise(id: "es-foundations-u19-anecdotas-e2", kind: "gap", prompt: "¿Y ___? Cuéntame el final. (pedir el siguiente hecho)", options: [], answers: ["luego", "Luego"], explain: "¿Y luego? pide el siguiente paso de la historia."),
+                            Exercise(id: "es-foundations-u19-anecdotas-e3", kind: "order", prompt: "Abre la anécdota del verano.", options: [], answers: ["Pues mira, me pasó en agosto"], explain: "Pues mira + contexto abre la anécdota."),
+                            Exercise(id: "es-foundations-u19-anecdotas-e4", kind: "written", prompt: "Di que olvidaste las llaves en la playa.", options: [], answers: ["se me olvidaron las llaves en la playa", "se me olvidaron las llaves", "olvidé las llaves en la playa", "olvide las llaves en la playa"], explain: "se me olvidaron: el giro con me.")], skills: ["function:tell-a-story", "vocab:social-expressions", "grammar:past-simple-regular", "function:describe-past-events"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"])])
 }
 
 public enum FrFoundationsU1 {
@@ -6239,7 +6837,35 @@ public enum FrFoundationsU9 {
                             Exercise(id: "fr-foundations-u9-presenter-e1", kind: "choice", prompt: "___ commencer, deux mots sur le contexte.", options: ["Pour", "Par", "Chez", "Vers"], answers: ["Pour"], explain: "Pour commencer : ouverture standard d'exposé."),
                             Exercise(id: "fr-foundations-u9-presenter-e2", kind: "gap", prompt: "En ___, le projet est rentable dès la deuxième année. (synonyme de « bilan », avec accent)", options: [], answers: ["résumé", "resume"], explain: "En résumé : le bilan avant la conclusion."),
                             Exercise(id: "fr-foundations-u9-presenter-e3", kind: "choice", prompt: "Si vous le ___ , je passerai à vos questions.", options: ["permettez", "pouvez", "savez", "voudrez"], answers: ["permettez"], explain: "Si vous le permettez : formule figée et polie."),
-                            Exercise(id: "fr-foundations-u9-presenter-e4", kind: "written", prompt: "Transition : tu passes maintenant aux chiffres.", options: [], answers: ["j'en viens maintenant aux chiffres", "j'en viens a present aux chiffres", "j'en viens à présent aux chiffres"], explain: "J'en viens à : transition qui prévient l'auditeur.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+                            Exercise(id: "fr-foundations-u9-presenter-e4", kind: "written", prompt: "Transition : tu passes maintenant aux chiffres.", options: [], answers: ["j'en viens maintenant aux chiffres", "j'en viens a present aux chiffres", "j'en viens à présent aux chiffres"], explain: "J'en viens à : transition qui prévient l'auditeur.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "fr-foundations-u9-debattre", title: "D'accord pour ne pas être d'accord", goal: "Exprimer un désaccord poli : comprendre l'autre, concéder un point, puis opposer sans casser le dialogue.",
+                intro: LessonIntro(explanation: [
+                            "Le désaccord poli commence par la reconnaissance : « Je comprends votre point, mais… » — on valide avant d'opposer.",
+                            "On module l'opposition : « Je vois les choses autrement » est plus doux que « vous avez tort », que l'on ne prononce jamais au C1.",
+                            "Le connecteur porte la nuance : « cela dit », « sans pour autant » concèdent sans abandonner la position ; le doute se dit au subjonctif : « je ne suis pas certain que cet argument tienne »."], examples: [
+                            ExampleLine(text: "Je comprends votre point, mais les chiffres disent autre chose.", meaning: "Accorder puis opposer."),
+                            ExampleLine(text: "Je vois les choses autrement.", meaning: "Le désaccord sans affrontement."),
+                            ExampleLine(text: "Cela dit, l'exemple reste discutable.", meaning: "La concession mesurée."),
+                            ExampleLine(text: "Je ne suis pas certain que cet argument tienne.", meaning: "Le doute élégant (subjonctif)."),
+                            ExampleLine(text: "Restons d'accord pour ne pas être d'accord.", meaning: "Le désaccord serein.")]),
+                expressions: [
+                            TargetExpression(text: "je comprends votre point, mais…", meaning: "Valider avant d'opposer.", note: "Jamais « vous avez tort »."),
+                            TargetExpression(text: "je vois les choses autrement", meaning: "Désaccorder poliment.", note: "Plus doux que « pas du tout »."),
+                            TargetExpression(text: "cela dit", meaning: "Concéder sans céder.", note: "Après un accord partiel."),
+                            TargetExpression(text: "je ne suis pas certain que + subjonctif", meaning: "Douter élégamment.", note: "…que cet argument tienne."),
+                            TargetExpression(text: "sans pour autant", meaning: "Limiter la portée de son accord.", note: "J'accepte le fond, sans pour autant la forme.")],
+                situation: "En réunion, un collègue défend une réorganisation : vous reprenez son argument, vous concédez un point, puis vous opposez une réserve précise — sans jamais le vexer.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Reconnais l'argument de ton collègue avant de t'y opposer.", expected: ["Je comprends votre point, mais…", "Je comprends votre point de vue, mais je garde des réserves"], focus: "je comprends votre point", watch: "on valide, puis le « mais » arrive."),
+                                PracticeQuestion(prompt: "Désaccorde-toi sans agressivité.", expected: ["Je vois les choses autrement", "Je vois les choses différemment"], focus: "je vois les choses autrement", watch: "autrement : l'adverbe attendu ici."),
+                                PracticeQuestion(prompt: "Concède avec « cela dit » : l'idée est séduisante mais chère.", expected: ["L'idée est séduisante, cela dit elle est chère", "Cela dit, l'idée reste coûteuse"], focus: "cela dit", watch: "le connecteur ouvre ou suit la phrase."),
+                                PracticeQuestion(prompt: "Doute de la solidité d'un argument (verbe tenir).", expected: ["Je ne suis pas certain que cet argument tienne", "Je ne suis pas sûr que cet argument tienne"], focus: "subjonctif", watch: "tenir → tienne après « ne pas être certain que »."),
+                                PracticeQuestion(prompt: "Accepte le fond mais limite ton accord (formule en « pour »).", expected: ["J'accepte le fond, sans pour autant la méthode", "Sans pour autant être convaincu"], focus: "sans pour autant", watch: "formule figée : sans pour autant + nom / infinitif.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u9-debattre-e1", kind: "choice", prompt: "___ votre point, mais le calendrier me semble irréaliste.", options: ["Je comprends", "Tu comprends", "On comprendra", "Je comprenais"], answers: ["Je comprends"], explain: "« Je comprends votre point » : la reconnaissance standard avant le « mais »."),
+                            Exercise(id: "fr-foundations-u9-debattre-e2", kind: "gap", prompt: "Cet argument est séduisant ; ___ dit, il coûte trop cher. (connecteur)", options: [], answers: ["cela"], explain: "Cela dit : la concession qui prépare l'objection."),
+                            Exercise(id: "fr-foundations-u9-debattre-e3", kind: "choice", prompt: "Je ne suis pas certain que cet argument ___ . (verbe : tenir)", options: ["tienne", "tient", "tenait", "tiendrait"], answers: ["tienne"], explain: "Après « ne pas être certain que », le subjonctif : tienne."),
+                            Exercise(id: "fr-foundations-u9-debattre-e4", kind: "written", prompt: "Ton collègue a raison sur le fond, pas sur la forme. Limite ton accord avec la formule en « pour ».", options: [], answers: ["sans pour autant", "j'accepte le fond sans pour autant la forme", "sans pour autant être convaincu"], explain: "Sans pour autant : l'accord borné, précis, diplomatique.")], skills: ["function:express-opinion", "speaking:sustained-conversation", "grammar:connectors", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum FrFoundationsU10 {
@@ -6780,6 +7406,276 @@ public enum FrFoundationsU15 {
                             Exercise(id: "fr-foundations-u15-habitudes-e2", kind: "gap", prompt: "Je ne fume ___, c'est mauvais pour la santé.", options: [], answers: ["jamais"], explain: "ne…jamais = 0 %."),
                             Exercise(id: "fr-foundations-u15-habitudes-e3", kind: "order", prompt: "Bonne habitude : le sport, chaque matin. Dis-le.", options: [], answers: ["Je fais du sport le matin"], explain: "faire du sport + le moment."),
                             Exercise(id: "fr-foundations-u15-habitudes-e4", kind: "written", prompt: "Donne deux bonnes habitudes avec toujours et jamais.", options: [], answers: ["je bois toujours de l'eau et je ne fume jamais", "je bois toujours de l'eau, je ne fume jamais", "je bois toujours de l'eau et je ne fume jamais !"], explain: "toujours + jamais : deux habitudes saines.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
+public enum FrFoundationsU16 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u16", title: "À table", subtitle: "Manger dehors", level: "A1", themes: [
+                    ConversationTheme("au-restaurant", "Au restaurant", "Commander", "fork.knife", "Course", "Vous déjeunez en terrasse avec Léa : le serveur arrive, vous demandez une table, puis chacun commande plat et boisson.", 0),
+                    ConversationTheme("carte-et-addition", "La carte et l'addition", "Plats, boissons, pourboire", "takeout.bag", "Course", "Vous lisez la carte, vous demandez ce qu'il y a dans les plats, puis vous payez et laissez un petit pourboire.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u16-restaurant", title: "Au restaurant", goal: "Commander un plat et une boisson au restaurant avec je voudrais et je prends.",
+                intro: LessonIntro(explanation: [
+                            "Pour commander poliment, on dit « je voudrais » : « Je voudrais le menu, s'il vous plaît. »",
+                            "« Je prends » marche aussi : « Je prends une quiche. » Et pour demander : « Vous avez une table pour deux ? »",
+                            "Le serveur relance : « Et comme boisson ? » On répond simplement : « Une eau gazeuse. »"], examples: [
+                            ExampleLine(text: "Je voudrais le menu, s'il vous plaît.", meaning: "Commander poliment."),
+                            ExampleLine(text: "Je prends une quiche lorraine.", meaning: "Commander avec prendre."),
+                            ExampleLine(text: "Vous avez une table pour deux ?", meaning: "Demander une table."),
+                            ExampleLine(text: "Et comme boisson ?", meaning: "Le serveur relance."),
+                            ExampleLine(text: "Pour moi, une eau gazeuse.", meaning: "Commander pour quelqu'un.")]),
+                expressions: [
+                            TargetExpression(text: "je voudrais + plat", meaning: "Commander poliment.", note: "Je voudrais une quiche."),
+                            TargetExpression(text: "je prends + plat", meaning: "Commander simplement.", note: "Je prends le menu."),
+                            TargetExpression(text: "Vous avez … ?", meaning: "Demander ce qui existe.", note: "Vous avez une terrasse ?"),
+                            TargetExpression(text: "et comme boisson ?", meaning: "Le serveur relance.", note: "Un jus d'orange."),
+                            TargetExpression(text: "une table pour deux", meaning: "Le nombre de personnes.", note: "pour trois, pour quatre.")],
+                situation: "Vous êtes en terrasse avec Léa : le serveur arrive, vous demandez une table pour deux, puis chacun commande plat et boisson.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demandez poliment le menu.", expected: ["Je voudrais le menu, s'il vous plaît.", "Je voudrais le menu", "Je voudrais le menu, s'il vous plait"], focus: "je voudrais", watch: "voudrais = vouloir, version polie."),
+                                PracticeQuestion(prompt: "Commandez la quiche avec le verbe prendre.", expected: ["Je prends la quiche.", "Je prends la quiche lorraine."], focus: "je prends", watch: "je prends, avec un s."),
+                                PracticeQuestion(prompt: "Demandez au serveur une table pour deux.", expected: ["Vous avez une table pour deux ?", "Une table pour deux, s'il vous plaît ?"], focus: "vous avez", watch: "question simple : vous avez … ?"),
+                                PracticeQuestion(prompt: "Le serveur demande la boisson : répondez (eau gazeuse).", expected: ["Une eau gazeuse.", "Pour moi, une eau gazeuse."], focus: "comme boisson", watch: "on peut enlever le verbe."),
+                                PracticeQuestion(prompt: "Dites ce que Léa commande : le poulet.", expected: ["Elle prend le poulet.", "Léa prend le poulet.", "Elle voudrait le poulet."], focus: "elle prend", watch: "elle prend, comme je prends.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u16-restaurant-e1", kind: "choice", prompt: "Le serveur demande : « Vous voulez ? » Tu réponds poliment : « ___ une quiche, s'il vous plaît. »", options: ["Je voudrais", "Je suis", "J'ai", "Je vais"], answers: ["Je voudrais"], explain: "Je voudrais = je veux, mais plus poli : la formule du restaurant."),
+                            Exercise(id: "fr-foundations-u16-restaurant-e2", kind: "gap", prompt: "Je ___ le menu du jour. (verbe : prendre)", options: [], answers: ["prends"], explain: "Je prends : prendre à la 1re personne, avec un s."),
+                            Exercise(id: "fr-foundations-u16-restaurant-e3", kind: "order", prompt: "Commandez une table pour deux, poliment.", options: [], answers: ["Vous avez une table pour deux"], explain: "Vous avez + nom : la question simple du restaurant."),
+                            Exercise(id: "fr-foundations-u16-restaurant-e4", kind: "written", prompt: "Tu veux un café. Dis-le au serveur.", options: [], answers: ["je voudrais un café", "je voudrais un cafe", "je prends un café", "je prends un cafe"], explain: "Je voudrais ou je prends + boisson : on commande.")], skills: ["function:order-food", "vocab:food", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u16-menu", title: "La carte", goal: "Lire la carte : plats et boissons, et demander ce qu'il y a dans un plat.",
+                intro: LessonIntro(explanation: [
+                            "La carte liste les plats : entrée, plat, dessert — et les boissons : eau, jus, café.",
+                            "Pour connaître les ingrédients : « Qu'est-ce qu'il y a dans la quiche ? »",
+                            "On répond avec il y a : « Il y a des œufs, du fromage et des lardons. »"], examples: [
+                            ExampleLine(text: "Qu'est-ce qu'il y a dans la quiche ?", meaning: "Demander les ingrédients."),
+                            ExampleLine(text: "Il y a des tomates et du fromage.", meaning: "La réponse avec il y a."),
+                            ExampleLine(text: "Je voudrais une carafe d'eau.", meaning: "L'eau du robinet, gratuite."),
+                            ExampleLine(text: "Comme dessert, il y a une tarte aux pommes.", meaning: "Le dessert du jour."),
+                            ExampleLine(text: "Vous avez un plat sans viande ?", meaning: "Demander autre chose.")]),
+                expressions: [
+                            TargetExpression(text: "qu'est-ce qu'il y a dans … ?", meaning: "Demander les ingrédients.", note: "…dans la soupe ?"),
+                            TargetExpression(text: "il y a du / de la / des", meaning: "Les ingrédients.", note: "du pain, de la salade, des frites."),
+                            TargetExpression(text: "une carafe d'eau", meaning: "L'eau gratuite.", note: "on la demande sans payer."),
+                            TargetExpression(text: "l'entrée / le plat / le dessert", meaning: "Les trois services.", note: "on choisit sur la carte."),
+                            TargetExpression(text: "sans viande", meaning: "Végétarien.", note: "un plat sans viande.")],
+                situation: "Vous lisez la carte : qu'est-ce qu'il y a dans la soupe ? Et dans le sandwich ? Vous demandez, le serveur répond.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demandez ce qu'il y a dans la soupe.", expected: ["Qu'est-ce qu'il y a dans la soupe ?", "Qu'est-ce qu'il y a dans la soupe"], focus: "qu'est-ce qu'il y a", watch: "question figée pour les ingrédients."),
+                                PracticeQuestion(prompt: "Répondez : tomates et fromage.", expected: ["Il y a des tomates et du fromage.", "Dans la salade, il y a des tomates et du fromage."], focus: "il y a", watch: "du + masculin, de la + féminin, des + pluriel."),
+                                PracticeQuestion(prompt: "Demandez de l'eau du robinet.", expected: ["Une carafe d'eau, s'il vous plaît.", "Je voudrais une carafe d'eau."], focus: "carafe d'eau", watch: "la carafe est gratuite."),
+                                PracticeQuestion(prompt: "Le dessert est la tarte aux pommes. Dites-le.", expected: ["Comme dessert, il y a une tarte aux pommes.", "Il y a une tarte aux pommes comme dessert."], focus: "le dessert", watch: "comme dessert introduit."),
+                                PracticeQuestion(prompt: "Vous ne mangez pas de viande. Demandez un plat adapté.", expected: ["Vous avez un plat sans viande ?", "Il y a un plat sans viande ?"], focus: "sans viande", watch: "sans + nom, sans article.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u16-menu-e1", kind: "choice", prompt: "« ___ qu'il y a dans la soupe ? »", options: ["Qu'est-ce", "Que est-ce", "Quel est-ce", "Quoi"], answers: ["Qu'est-ce"], explain: "Qu'est-ce qu'il y a : la question pour connaître les ingrédients."),
+                            Exercise(id: "fr-foundations-u16-menu-e2", kind: "gap", prompt: "Il y a ___ fromage dans la quiche. (article + masculin)", options: [], answers: ["du"], explain: "Du fromage : l'article partitif au masculin."),
+                            Exercise(id: "fr-foundations-u16-menu-e3", kind: "order", prompt: "Demandez les ingrédients de la quiche.", options: [], answers: ["Qu'est-ce qu'il y a dans la quiche"], explain: "Qu'est-ce qu'il y a dans + plat : la question type."),
+                            Exercise(id: "fr-foundations-u16-menu-e4", kind: "written", prompt: "Dites ce qu'il y a dans la salade : tomates et fromage.", options: [], answers: ["il y a des tomates et du fromage", "dans la salade, il y a des tomates et du fromage"], explain: "Il y a + du / de la / des + ingrédient.")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "grammar:present-simple"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "fr-foundations-u16-addition", title: "L'addition", goal: "Payer : demander l'addition, le total, et laisser un petit pourboire.",
+                intro: LessonIntro(explanation: [
+                            "Pour payer : « L'addition, s'il vous plaît. » C'est la phrase magique de la fin du repas.",
+                            "On paye ensemble ou séparément : « On paye ensemble. » « On paye séparément. »",
+                            "Le pourboire est petit en France : « Gardez la monnaie. » = un petit merci pour le serveur."], examples: [
+                            ExampleLine(text: "L'addition, s'il vous plaît.", meaning: "Demander à payer."),
+                            ExampleLine(text: "On paye séparément.", meaning: "Chacun sa part."),
+                            ExampleLine(text: "Vous acceptez la carte ?", meaning: "Payer par carte."),
+                            ExampleLine(text: "Ça fait combien ?", meaning: "Demander le prix total."),
+                            ExampleLine(text: "Gardez la monnaie.", meaning: "Laisser un pourboire.")]),
+                expressions: [
+                            TargetExpression(text: "l'addition, s'il vous plaît", meaning: "Payer.", note: "la fin du repas."),
+                            TargetExpression(text: "on paye ensemble / séparément", meaning: "La façon de payer.", note: "ensemble = tous les deux."),
+                            TargetExpression(text: "ça fait combien ?", meaning: "Le total.", note: "Ça fait 24 euros."),
+                            TargetExpression(text: "par carte / en espèces", meaning: "Le moyen de paiement.", note: "carte = CB."),
+                            TargetExpression(text: "gardez la monnaie", meaning: "Le pourboire.", note: "un petit merci.")],
+                situation: "Le repas est fini : vous demandez l'addition, le total, vous payez par carte et vous laissez la monnaie au serveur.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Le repas est fini. Demandez la note.", expected: ["L'addition, s'il vous plaît.", "L'addition, s'il vous plait"], focus: "l'addition", watch: "l'addition = la note."),
+                                PracticeQuestion(prompt: "Vous payez chacun de votre côté. Dites-le.", expected: ["On paye séparément.", "On paie séparément."], focus: "séparément", watch: "deux orthographes : paye / paie."),
+                                PracticeQuestion(prompt: "Demandez le prix total.", expected: ["Ça fait combien ?", "C'est combien ?"], focus: "ça fait combien", watch: "ça fait + prix."),
+                                PracticeQuestion(prompt: "Demandez si vous pouvez payer par CB.", expected: ["Vous acceptez la carte ?", "Je peux payer par carte ?"], focus: "par carte", watch: "carte = CB."),
+                                PracticeQuestion(prompt: "Le serveur rend 3 euros. Laissez-les en pourboire.", expected: ["Gardez la monnaie.", "Gardez la monnaie, merci !"], focus: "le pourboire", watch: "gardez = pour vous.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u16-addition-e1", kind: "choice", prompt: "« ___, s'il vous plaît ! » Tu veux payer et partir.", options: ["L'addition", "La commande", "La carte", "La table"], answers: ["L'addition"], explain: "L'addition = la note qu'on demande à la fin du repas."),
+                            Exercise(id: "fr-foundations-u16-addition-e2", kind: "gap", prompt: "On paye ___ : chacun sa part. (contraire d'ensemble)", options: [], answers: ["séparément", "separement"], explain: "On paye séparément : chacun paye sa part."),
+                            Exercise(id: "fr-foundations-u16-addition-e3", kind: "order", prompt: "Demandez le prix total au serveur.", options: [], answers: ["Ça fait combien"], explain: "Ça fait combien ? : le total, simplement."),
+                            Exercise(id: "fr-foundations-u16-addition-e4", kind: "written", prompt: "Le serveur rend la monnaie : dis-lui de la garder.", options: [], answers: ["gardez la monnaie", "gardez la monnaie, merci"], explain: "Gardez la monnaie : un petit pourboire pour le serveur.")], skills: ["function:order-food", "grammar:quantities", "vocab:food", "vocab:social-expressions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum FrFoundationsU17 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u17", title: "Bien se retrouver", subtitle: "Invitations et projets", level: "A2", themes: [
+                    ConversationTheme("on-se-voit", "On se voit ?", "Propositions et réponses", "calendar.badge.clock", "Course", "Vous fixez un rendez-vous avec Léa : proposer une sortie, accepter, refuser poliment et reprogrammer.", 0),
+                    ConversationTheme("le-cadeau", "Le cadeau", "Nos projets", "gift", "Course", "L'anniversaire de Mai approche : vous prévoyez le cadeau et la fête avec aller + infinitif.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u17-propositions", title: "Tu viens ou tu préfères… ?", goal: "Proposer une sortie et offrir un choix : on va…, ça te dit ?, tu préfères… ?",
+                intro: LessonIntro(explanation: [
+                            "Pour proposer : « On va au cinéma samedi, ça te dit ? » — aller + infinitif annonce le projet.",
+                            "L'alternative : « Tu viens samedi ou tu préfères dimanche ? » — tu préfères donne le choix.",
+                            "Pour répondre : « Bonne idée ! », « Volontiers ! », « Ça marche ! »"], examples: [
+                            ExampleLine(text: "On va au cinéma samedi, ça te dit ?", meaning: "La proposition."),
+                            ExampleLine(text: "Tu viens samedi ou tu préfères dimanche ?", meaning: "Proposer un choix."),
+                            ExampleLine(text: "Tu préfères manger dehors ?", meaning: "tu préfères + infinitif."),
+                            ExampleLine(text: "Bonne idée ! On y va.", meaning: "Accepter."),
+                            ExampleLine(text: "Ça marche, à quelle heure ?", meaning: "Accepter et organiser.")]),
+                expressions: [
+                            TargetExpression(text: "on va + infinitif ?", meaning: "Proposer une sortie.", note: "On va au marché ?"),
+                            TargetExpression(text: "ça te dit ?", meaning: "Ça t'intéresse ?", note: "très courant à l'oral."),
+                            TargetExpression(text: "tu préfères + infinitif", meaning: "Offrir un choix.", note: "Tu préfères rester ici ?"),
+                            TargetExpression(text: "bonne idée !", meaning: "Accepter.", note: "Super idée !"),
+                            TargetExpression(text: "à quelle heure ?", meaning: "Fixer l'heure.", note: "À huit heures ?")],
+                situation: "Vous organisez samedi avec Léa : cinéma ou marché, midi ou soir — vous proposez, elle choisit.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Propose le cinéma samedi (ça te dit ?).", expected: ["On va au cinéma samedi, ça te dit ?", "On va au cinéma samedi ?"], focus: "ça te dit", watch: "aller + infinitif pour le projet."),
+                                PracticeQuestion(prompt: "Propose un choix : samedi ou dimanche.", expected: ["Tu viens samedi ou tu préfères dimanche ?", "Samedi ou dimanche ?"], focus: "tu préfères", watch: "tu préfères + jour ou + infinitif."),
+                                PracticeQuestion(prompt: "Accepte avec enthousiasme.", expected: ["Bonne idée !", "Super, bonne idée !", "Volontiers !"], focus: "accepter", watch: "bonne idée !"),
+                                PracticeQuestion(prompt: "Demande l'heure du rendez-vous.", expected: ["À quelle heure ?", "À quelle heure on se retrouve ?"], focus: "à quelle heure", watch: "à + heure."),
+                                PracticeQuestion(prompt: "Dis ce que préfère Mai : manger dehors.", expected: ["Elle préfère manger dehors.", "Mai préfère manger dehors."], focus: "préfère + infinitif", watch: "préfère + infinitif, sans préposition.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u17-propositions-e1", kind: "choice", prompt: "On ___ au marché samedi, ça te dit ?", options: ["va", "vais", "vas", "allez"], answers: ["va"], explain: "On va : aller à la 3e personne du singulier avec on."),
+                            Exercise(id: "fr-foundations-u17-propositions-e2", kind: "gap", prompt: "Tu viens ou tu ___ manger dehors ? (verbe : préférer)", options: [], answers: ["préfères", "preferes"], explain: "Tu préfères + infinitif : l'alternative polie."),
+                            Exercise(id: "fr-foundations-u17-propositions-e3", kind: "order", prompt: "Propose le cinéma samedi.", options: [], answers: ["On va au cinéma samedi"], explain: "On va + lieu + moment : la proposition de base."),
+                            Exercise(id: "fr-foundations-u17-propositions-e4", kind: "written", prompt: "Accepte la proposition de Léa avec enthousiasme.", options: [], answers: ["bonne idée", "bonne idee", "super idée", "volontiers"], explain: "Bonne idée ! ou volontiers ! : on accepte.")], skills: ["function:make-suggestions", "grammar:going-to", "vocab:social-expressions", "grammar:present-simple"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "fr-foundations-u17-excuse", title: "Dommage, je ne peux pas", goal: "Accepter ou refuser une invitation poliment, et proposer une autre date.",
+                intro: LessonIntro(explanation: [
+                            "Pour refuser poliment : « Dommage, je ne peux pas. » — dommage exprime le regret.",
+                            "On explique avec parce que : « Je ne peux pas venir parce que je travaille. »",
+                            "Pour garder le contact : « Une autre fois ? » « La semaine prochaine ? »"], examples: [
+                            ExampleLine(text: "Dommage, je ne peux pas venir.", meaning: "Refuser avec regret."),
+                            ExampleLine(text: "Je suis désolée, je travaille samedi.", meaning: "Refuser avec l'excuse."),
+                            ExampleLine(text: "Avec plaisir !", meaning: "Accepter chaleureusement."),
+                            ExampleLine(text: "Je ne peux pas parce que je suis fatigué.", meaning: "L'excuse avec parce que."),
+                            ExampleLine(text: "Une autre fois, promis !", meaning: "Reproposer.")]),
+                expressions: [
+                            TargetExpression(text: "dommage, …", meaning: "C'est un regret.", note: "Dommage !"),
+                            TargetExpression(text: "je ne peux pas + infinitif", meaning: "Le refus.", note: "Je ne peux pas venir."),
+                            TargetExpression(text: "je suis désolé(e)", meaning: "S'excuser.", note: "désolée pour les femmes."),
+                            TargetExpression(text: "parce que + phrase", meaning: "L'excuse.", note: "parce que je travaille."),
+                            TargetExpression(text: "une autre fois ?", meaning: "Reproposer.", note: "La semaine prochaine ?")],
+                situation: "Léa invite Karim samedi : il accepte avec plaisir, mais Mai refuse — elle travaille — et propose la semaine prochaine.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Refuse l'invitation avec dommage.", expected: ["Dommage, je ne peux pas.", "Dommage, je ne peux pas venir."], focus: "dommage", watch: "dommage + je ne peux pas."),
+                                PracticeQuestion(prompt: "Excuse-toi : tu travailles samedi.", expected: ["Je suis désolé, je travaille samedi.", "Désolée, je travaille samedi."], focus: "désolé(e)", watch: "désolé (homme) / désolée (femme)."),
+                                PracticeQuestion(prompt: "Explique ton refus : tu es malade.", expected: ["Je ne peux pas venir parce que je suis malade.", "Je suis malade, je ne peux pas venir."], focus: "parce que", watch: "parce que + l'excuse."),
+                                PracticeQuestion(prompt: "Accepte chaleureusement.", expected: ["Avec plaisir !", "Oui, avec plaisir !"], focus: "avec plaisir", watch: "l'acceptation polie."),
+                                PracticeQuestion(prompt: "Repropose : la semaine prochaine.", expected: ["Une autre fois ? La semaine prochaine ?", "La semaine prochaine ?"], focus: "une autre fois", watch: "on repropose pour garder le contact.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u17-excuse-e1", kind: "choice", prompt: "« ___, je ne peux pas. » Tu regrettes vraiment.", options: ["Dommage", "Content", "Bonne idée", "Avec plaisir"], answers: ["Dommage"], explain: "Dommage exprime le regret avant le refus."),
+                            Exercise(id: "fr-foundations-u17-excuse-e2", kind: "gap", prompt: "Je ne peux pas venir ___ je travaille. (l'excuse)", options: [], answers: ["parce que"], explain: "Parce que introduit l'excuse."),
+                            Exercise(id: "fr-foundations-u17-excuse-e3", kind: "order", prompt: "Refuse poliment : tu es malade.", options: [], answers: ["Je ne peux pas venir parce que je suis malade"], explain: "Refus + parce que + excuse : la formule complète."),
+                            Exercise(id: "fr-foundations-u17-excuse-e4", kind: "written", prompt: "Tu acceptes l'invitation de Léa. Réponds chaleureusement.", options: [], answers: ["avec plaisir", "oui, avec plaisir", "avec plaisir !"], explain: "Avec plaisir : l'acceptation chaleureuse.")], skills: ["vocab:social-expressions", "function:make-suggestions", "grammar:present-simple", "grammar:connectors"], canDo: ["make-future-plans"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "fr-foundations-u17-cadeau", title: "Le cadeau parfait", goal: "Prévoir un cadeau et la fête : qu'est-ce qu'on va lui offrir ?",
+                intro: LessonIntro(explanation: [
+                            "Le projet avec aller : « On va lui offrir un livre. » — aller + infinitif dit le futur proche.",
+                            "Lui = à la personne du cadeau : « On va lui offrir » = à Mai, à Karim…",
+                            "Pour décider : « Qu'est-ce qu'on va lui offrir ? » Et pour prédire : « Elle va adorer ! »"], examples: [
+                            ExampleLine(text: "Qu'est-ce qu'on va lui offrir ?", meaning: "Poser la question du cadeau."),
+                            ExampleLine(text: "Je vais lui acheter un livre.", meaning: "Le projet avec aller."),
+                            ExampleLine(text: "On va lui offrir des fleurs.", meaning: "offrir à quelqu'un."),
+                            ExampleLine(text: "Elle va adorer !", meaning: "Prédire la joie."),
+                            ExampleLine(text: "Tu vas chercher le gâteau ?", meaning: "Organiser la fête.")]),
+                expressions: [
+                            TargetExpression(text: "qu'est-ce qu'on va + infinitif ?", meaning: "Décider ensemble.", note: "…va lui offrir ?"),
+                            TargetExpression(text: "aller + infinitif", meaning: "Le futur proche.", note: "Je vais acheter."),
+                            TargetExpression(text: "lui offrir / lui acheter", meaning: "Le cadeau à quelqu'un.", note: "lui = à Mai."),
+                            TargetExpression(text: "elle va adorer", meaning: "La prédiction.", note: "il va aimer."),
+                            TargetExpression(text: "aller chercher", meaning: "Aller récupérer.", note: "aller chercher le gâteau.")],
+                situation: "L'anniversaire de Mai est samedi : qu'est-ce qu'on va lui offrir ? Un livre, des fleurs ? Et qui va chercher le gâteau ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Demande quel cadeau on va donner à Mai.", expected: ["Qu'est-ce qu'on va lui offrir ?", "Qu'est-ce qu'on va offrir à Mai ?"], focus: "lui offrir", watch: "lui = à Mai."),
+                                PracticeQuestion(prompt: "Dis ton projet : tu vas acheter un livre.", expected: ["Je vais lui acheter un livre.", "Je vais acheter un livre."], focus: "je vais", watch: "aller + infinitif."),
+                                PracticeQuestion(prompt: "Propose les fleurs.", expected: ["On va lui offrir des fleurs.", "Et des fleurs ?"], focus: "on va", watch: "on va + infinitif."),
+                                PracticeQuestion(prompt: "Prédis la joie de Mai.", expected: ["Elle va adorer !", "Elle va adorer son cadeau."], focus: "elle va adorer", watch: "aller + infinitif pour prédire."),
+                                PracticeQuestion(prompt: "Organise : Karim doit récupérer le gâteau. Dis-le.", expected: ["Karim va chercher le gâteau.", "Tu vas chercher le gâteau, Karim ?"], focus: "aller chercher", watch: "aller chercher = récupérer.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u17-cadeau-e1", kind: "choice", prompt: "Qu'est-ce qu'on ___ lui offrir ?", options: ["va", "vais", "vas", "allez"], answers: ["va"], explain: "On va + infinitif : le projet du groupe."),
+                            Exercise(id: "fr-foundations-u17-cadeau-e2", kind: "gap", prompt: "Je ___ lui acheter un livre. (verbe aller, futur proche)", options: [], answers: ["vais"], explain: "Je vais + infinitif : le futur proche."),
+                            Exercise(id: "fr-foundations-u17-cadeau-e3", kind: "order", prompt: "Parle de ton projet cadeau : les fleurs.", options: [], answers: ["On va lui offrir des fleurs"], explain: "On va + lui + infinitif + cadeau."),
+                            Exercise(id: "fr-foundations-u17-cadeau-e4", kind: "written", prompt: "Mai reçoit son cadeau : prédis sa joie.", options: [], answers: ["elle va adorer", "elle va adorer !", "elle va aimer"], explain: "Elle va adorer : aller + infinitif pour prédire.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "function:go-shopping"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
+public enum FrFoundationsU18 {
+    public static let unit: CourseUnit = CourseUnit(id: "fr-foundations-u18", title: "Raconter des histoires", subtitle: "Récits au passé", level: "B1", themes: [
+                    ConversationTheme("le-recit", "Le récit", "Enchaîner les faits", "book", "Course", "Vous racontez votre journée à Lyon : d'abord le train, ensuite le musée, enfin le retour tardif.", 0),
+                    ConversationTheme("le-rebondissement", "Le rebondissement", "Surprise et réactions", "sparkles", "Course", "Soudain, il s'est avéré que… : l'histoire prend un tour inattendu et vos amis réagissent.", 1)], lessons: [
+            Lesson(id: "fr-foundations-u18-narrer", title: "Ce qui s'est passé", goal: "Enchaîner les faits d'une histoire passée : d'abord, ensuite, enfin.",
+                intro: LessonIntro(explanation: [
+                            "Pour raconter, on met les faits dans l'ordre : « D'abord, on a pris le train. Ensuite, on a visité le musée. »",
+                            "Le passé composé raconte l'action : « j'ai visité » (verbes en -er), « j'ai fait » (participes irréguliers).",
+                            "La fin de l'histoire : « Enfin, on est rentrés tard. » — enfin conclut le récit."], examples: [
+                            ExampleLine(text: "D'abord, on a pris le train.", meaning: "Le premier fait."),
+                            ExampleLine(text: "Ensuite, on a visité le musée.", meaning: "Le fait suivant."),
+                            ExampleLine(text: "Puis il a commencé à pleuvoir.", meaning: "puis = ensuite."),
+                            ExampleLine(text: "J'ai fait une longue balade.", meaning: "Participe irrégulier : faire → fait."),
+                            ExampleLine(text: "Enfin, on est rentrés à minuit.", meaning: "Le dernier fait.")]),
+                expressions: [
+                            TargetExpression(text: "d'abord", meaning: "Le premier fait.", note: "D'abord, je me suis levé."),
+                            TargetExpression(text: "ensuite / puis", meaning: "Le fait suivant.", note: "Ensuite, on a déjeuné."),
+                            TargetExpression(text: "enfin", meaning: "Le dernier fait.", note: "Enfin, on est rentrés."),
+                            TargetExpression(text: "j'ai visité / regardé", meaning: "Passé composé en -er.", note: "mangé, marché, écouté."),
+                            TargetExpression(text: "j'ai fait / vu / pris", meaning: "Participes irréguliers.", note: "faire→fait, voir→vu, prendre→pris.")],
+                situation: "Vous racontez votre journée à Lyon : le train, le musée, la pluie, le retour tardif — chaque chose à sa place.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Commence ton récit : tu as pris le train.", expected: ["D'abord, on a pris le train.", "D'abord, j'ai pris le train."], focus: "d'abord", watch: "d'abord ouvre le récit."),
+                                PracticeQuestion(prompt: "Continue : vous avez visité le musée.", expected: ["Ensuite, on a visité le musée.", "Puis on a visité le musée."], focus: "ensuite", watch: "ensuite ou puis."),
+                                PracticeQuestion(prompt: "Raconte la pluie, avec le verbe commencer.", expected: ["Puis il a commencé à pleuvoir.", "Ensuite il a commencé à pleuvoir."], focus: "il a commencé", watch: "commencer → commencé."),
+                                PracticeQuestion(prompt: "Termine : vous êtes rentrés à minuit.", expected: ["Enfin, on est rentrés à minuit.", "Finalement, on est rentrés à minuit."], focus: "enfin", watch: "enfin clôt le récit."),
+                                PracticeQuestion(prompt: "Dis ce que tu as fait : visiter la ville.", expected: ["J'ai visité la ville.", "On a visité la ville."], focus: "j'ai visité", watch: "avoir + participe.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u18-narrer-e1", kind: "choice", prompt: "___ , on a pris le train. (le premier fait)", options: ["D'abord", "Enfin", "Ensuite", "Donc"], answers: ["D'abord"], explain: "D'abord annonce le premier fait du récit."),
+                            Exercise(id: "fr-foundations-u18-narrer-e2", kind: "gap", prompt: "Ensuite, on a ___ le musée. (verbe : visiter, participe passé)", options: [], answers: ["visité", "visite"], explain: "Avoir + participe passé : visité."),
+                            Exercise(id: "fr-foundations-u18-narrer-e3", kind: "order", prompt: "Termine ton récit : le retour à minuit.", options: [], answers: ["Enfin on est rentrés à minuit"], explain: "Enfin + passé composé : la clôture du récit."),
+                            Exercise(id: "fr-foundations-u18-narrer-e4", kind: "written", prompt: "Raconte ton week-end à la mer : le bateau.", options: [], answers: ["j'ai fait du bateau", "on a fait du bateau", "j'ai fait une balade en bateau"], explain: "Avoir + fait : le participe irrégulier de faire.")], skills: ["function:tell-a-story", "grammar:past-simple-irregular", "grammar:connectors", "grammar:past-simple-regular"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "fr-foundations-u18-surprise", title: "Le rebondissement", goal: "Donner du piquant à l'histoire : soudain, il s'est avéré que…, et personne ne s'y attendait.",
+                intro: LessonIntro(explanation: [
+                            "Le rebondissement arrive avec « soudain » : « Soudain, le train s'est arrêté. »",
+                            "« Il s'est avéré que » révèle la vérité : « Il s'est avéré que c'était le mauvais quai. »",
+                            "Pour finir en surprise : « Et devinez ce qui s'est passé ? » « Personne ne s'y attendait ! »"], examples: [
+                            ExampleLine(text: "Soudain, le train s'est arrêté.", meaning: "L'événement surprise."),
+                            ExampleLine(text: "Il s'est avéré que c'était le mauvais quai.", meaning: "La vérité révélée."),
+                            ExampleLine(text: "Tout à coup, il a commencé à pleuvoir.", meaning: "tout à coup = soudain."),
+                            ExampleLine(text: "Et devinez qui on a vu là-bas ?", meaning: "Faire monter la tension."),
+                            ExampleLine(text: "Personne ne s'y attendait !", meaning: "La réaction de surprise.")]),
+                expressions: [
+                            TargetExpression(text: "soudain / tout à coup", meaning: "La surprise soudaine.", note: "Soudain, tout a changé."),
+                            TargetExpression(text: "il s'est avéré que + phrase", meaning: "La vérité apparaît.", note: "Il s'est avéré qu'il avait raison."),
+                            TargetExpression(text: "et devinez … ?", meaning: "Capter l'attention.", note: "Devinez ce qui s'est passé !"),
+                            TargetExpression(text: "personne ne s'y attendait", meaning: "La surprise générale.", note: "s'attendre à quelque chose."),
+                            TargetExpression(text: "au final", meaning: "Conclure l'histoire.", note: "Au final, tout a bien fini.")],
+                situation: "Votre train s'est arrêté en pleine campagne : soudain, une annonce ; il s'est avéré que… — racontez, vos amis n'en reviennent pas.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Raconte la surprise : le train s'est arrêté (soudain).", expected: ["Soudain, le train s'est arrêté.", "Tout à coup, le train s'est arrêté."], focus: "soudain", watch: "soudain casse le rythme du récit."),
+                                PracticeQuestion(prompt: "Révèle la vérité : c'était le mauvais quai.", expected: ["Il s'est avéré que c'était le mauvais quai.", "Il s'est avéré que c'était le mauvais quai !"], focus: "il s'est avéré que", watch: "la formule du rebondissement."),
+                                PracticeQuestion(prompt: "Fais monter la tension avec une question.", expected: ["Et devinez ce qui s'est passé ?", "Et devinez qui on a rencontré ?"], focus: "et devinez", watch: "la question qui accroche."),
+                                PracticeQuestion(prompt: "Dis la surprise générale.", expected: ["Personne ne s'y attendait !", "Personne ne s'y attendait."], focus: "s'y attendre", watch: "ne s'y attendait pas = surprise."),
+                                PracticeQuestion(prompt: "Conclus : tout a bien fini.", expected: ["Au final, tout a bien fini.", "Finalement, tout a bien fini."], focus: "au final", watch: "au final clôt l'histoire.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u18-surprise-e1", kind: "choice", prompt: "___ , le train s'est arrêté en pleine campagne.", options: ["Soudain", "Ensuite", "D'abord", "Enfin"], answers: ["Soudain"], explain: "Soudain introduit l'événement surprise du récit."),
+                            Exercise(id: "fr-foundations-u18-surprise-e2", kind: "gap", prompt: "Il s'est ___ que le guide parlait chinois. (verbe : s'avérer)", options: [], answers: ["avéré", "avere"], explain: "Il s'est avéré que : la formule de la révélation."),
+                            Exercise(id: "fr-foundations-u18-surprise-e3", kind: "order", prompt: "Raconte le rebondissement avec la formule de la révélation.", options: [], answers: ["Il s'est avéré que c'était le mauvais quai"], explain: "Il s'est avéré que + révélation au passé."),
+                            Exercise(id: "fr-foundations-u18-surprise-e4", kind: "written", prompt: "Tes amis n'en reviennent pas : dis la surprise générale.", options: [], answers: ["personne ne s'y attendait", "personne ne sy attendait", "personne ne s'y attendait !"], explain: "Personne ne s'y attendait ! : la surprise collective.")], skills: ["function:tell-a-story", "grammar:connectors", "grammar:past-simple-irregular", "vocab:social-expressions"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"]),
+            Lesson(id: "fr-foundations-u18-anecdotes", title: "L'anecdote de l'été", goal: "Raconter une anecdote et réagir à celle des autres : sans blague !, et puis ?",
+                intro: LessonIntro(explanation: [
+                            "L'anecdote se lance : « Tu sais ce qui m'est arrivé cet été ? »",
+                            "Pour réagir : « Sans blague ! » (c'est vrai ?), « Non mais sérieux ? » — l'étonnement amusé.",
+                            "Pour relancer le récit : « Et puis ? » « Et après ? » — on veut la suite."], examples: [
+                            ExampleLine(text: "Tu sais ce qui m'est arrivé cet été ?", meaning: "Lancer l'anecdote."),
+                            ExampleLine(text: "Sans blague !", meaning: "Réagir avec étonnement."),
+                            ExampleLine(text: "Et puis ? Raconte !", meaning: "Demander la suite."),
+                            ExampleLine(text: "J'ai rencontré un acteur connu.", meaning: "Le cœur de l'anecdote."),
+                            ExampleLine(text: "Non mais sérieux ?", meaning: "Douter en riant.")]),
+                expressions: [
+                            TargetExpression(text: "tu sais ce qui m'est arrivé ?", meaning: "Ouvrir l'anecdote.", note: "…cet été, à Nice."),
+                            TargetExpression(text: "sans blague !", meaning: "C'est incroyable !", note: "réaction très courante."),
+                            TargetExpression(text: "et puis ?", meaning: "Relancer le récit.", note: "Et après ?"),
+                            TargetExpression(text: "non mais sérieux ?", meaning: "Douter en riant.", note: "sérieusement ?"),
+                            TargetExpression(text: "quelle histoire !", meaning: "Commenter la fin.", note: "C'était fou.")],
+                situation: "Au café, vous racontez votre été : la rencontre improbable à Nice — vos amis réagissent : sans blague !, et puis ?",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Lance ton anecdote de l'été.", expected: ["Tu sais ce qui m'est arrivé cet été ?", "Tu sais ce qui m'est arrivé ?"], focus: "lancer l'anecdote", watch: "tu sais + ce qui m'est arrivé."),
+                                PracticeQuestion(prompt: "Réagis avec étonnement à l'histoire de Karim.", expected: ["Sans blague !", "Sans blague ! C'est pas vrai."], focus: "sans blague", watch: "sans blague = c'est vrai ?"),
+                                PracticeQuestion(prompt: "Demande la suite de l'histoire.", expected: ["Et puis ?", "Et après ? Raconte !"], focus: "et puis", watch: "la relance classique."),
+                                PracticeQuestion(prompt: "Doute en riant de son histoire.", expected: ["Non mais sérieux ?", "Sérieux ?"], focus: "non mais sérieux", watch: "le doute amusé."),
+                                PracticeQuestion(prompt: "Commente la fin : c'était incroyable.", expected: ["Quelle histoire !", "Quelle histoire, quand même !"], focus: "quelle histoire", watch: "quelle + nom : l'exclamation.")]),
+                exercises: [
+                            Exercise(id: "fr-foundations-u18-anecdotes-e1", kind: "choice", prompt: "« ___ ! » Tu n'as pas cru l'histoire de Karim.", options: ["Sans blague", "Bonne idée", "Avec plaisir", "Tout à fait"], answers: ["Sans blague"], explain: "Sans blague ! : je n'ai pas cru, c'est incroyable."),
+                            Exercise(id: "fr-foundations-u18-anecdotes-e2", kind: "gap", prompt: "« Et ___ ? » Tu veux connaître la suite de l'histoire.", options: [], answers: ["puis"], explain: "Et puis ? : la relance du récit."),
+                            Exercise(id: "fr-foundations-u18-anecdotes-e3", kind: "order", prompt: "Lance ton anecdote de l'été.", options: [], answers: ["Tu sais ce qui m'est arrivé cet été"], explain: "Tu sais + ce qui m'est arrivé : l'ouverture type."),
+                            Exercise(id: "fr-foundations-u18-anecdotes-e4", kind: "written", prompt: "Commente la fin du récit : c'était incroyable.", options: [], answers: ["quelle histoire", "quelle histoire !", "sans blague"], explain: "Quelle histoire ! : le commentaire admiratif.")], skills: ["function:tell-a-story", "vocab:social-expressions", "grammar:past-simple-regular", "function:describe-past-events"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"])])
 }
 
 public enum ItFoundationsU1 {
@@ -7402,7 +8298,35 @@ public enum ItFoundationsU9 {
                             Exercise(id: "it-foundations-u9-presentare-e1", kind: "choice", prompt: "« ___ iniziare, un dato: le iscrizioni sono cresciute. »", options: ["Per", "In", "A", "Da"], answers: ["Per"], explain: "Locuzione d'apertura: per iniziare."),
                             Exercise(id: "it-foundations-u9-presentare-e2", kind: "gap", prompt: "___ sintesi, il bilancio della prova è positivo. (preposizione semplice)", options: [], answers: ["In"], explain: "In sintesi comprime i punti."),
                             Exercise(id: "it-foundations-u9-presentare-e3", kind: "written", prompt: "Apri il tuo intervento sulle vendite con la locuzione d'apertura seguita da un dato.", options: [], answers: ["per iniziare ecco i dati sulle vendite", "per iniziare un dato le vendite sono cresciute", "per iniziare le vendite sono cresciute del dieci per cento"], explain: "Per iniziare + dato."),
-                            Exercise(id: "it-foundations-u9-presentare-e4", kind: "written", prompt: "Chiudi il tuo intervento chiedendo due settimane per il prototipo: apri con la locuzione di chiusura.", options: [], answers: ["per concludere chiediamo due settimane per il prototipo", "per concludere vi chiedo due settimane per il prototipo", "per concludere servono due settimane per il prototipo"], explain: "Per concludere + richiesta precisa.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+                            Exercise(id: "it-foundations-u9-presentare-e4", kind: "written", prompt: "Chiudi il tuo intervento chiedendo due settimane per il prototipo: apri con la locuzione di chiusura.", options: [], answers: ["per concludere chiediamo due settimane per il prototipo", "per concludere vi chiedo due settimane per il prototipo", "per concludere servono due settimane per il prototipo"], explain: "Per concludere + richiesta precisa.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "it-foundations-u9-dibattere", title: "D’accordo nel disaccordo", goal: "Dissentire con tatto: riconoscere il punto dell’altro e restare nella propria posizione.",
+                intro: LessonIntro(explanation: [
+                            "Il dissenso con tatto riconosce prima e obietta poi: « Capisco il suo punto, però i dati dicono altro ».",
+                            "« Sono d’accordo in parte » divide la posizione: « Sì alla forma, no ai tempi ». « Quanto ai costi » isola il dissenso in un punto solo.",
+                            "« Pur + gerundio » concede senza cedere: « Pur condividendo l’obiettivo, la strada mi sembra diversa ». Poi si chiude: « Cerchiamo un punto comune »."], examples: [
+                            ExampleLine(text: "Capisco il suo punto, però i dati dicono altro.", meaning: "Riconoscere, poi dissentire."),
+                            ExampleLine(text: "Sono d’accordo in parte: la forma sì, i tempi no.", meaning: "Accordo parziale."),
+                            ExampleLine(text: "Quanto ai costi, resto della mia idea.", meaning: "Limitare il dissenso a un punto."),
+                            ExampleLine(text: "Pur condividendo l’obiettivo, la strada mi sembra diversa.", meaning: "Concessione + dissenso."),
+                            ExampleLine(text: "Proviamo a trovare un punto comune.", meaning: "Chiudere in modo costruttivo.")]),
+                expressions: [
+                            TargetExpression(text: "capisco il suo punto", meaning: "Riconoscere l’altro.", note: "Capisco il suo punto, però…"),
+                            TargetExpression(text: "sono d’accordo in parte", meaning: "Accordo parziale.", note: "Sì alla forma, no ai tempi."),
+                            TargetExpression(text: "quanto a…", meaning: "Limitare al punto.", note: "Quanto ai costi, ho riserve."),
+                            TargetExpression(text: "pur + gerundio", meaning: "Concedere senza cedere.", note: "Pur condividendo, mi fermo."),
+                            TargetExpression(text: "un punto comune", meaning: "Chiudere insieme.", note: "Cerchiamo un punto comune.")],
+                situation: "In riunione un collega propone di tagliare i test: riconosci i suoi motivi, dissentite con tatto e chiudete con una proposta condivisa.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Riconosci il punto del collega prima di obiettare (formula con « punto »).", expected: ["capisco il suo punto però i tempi sono stretti", "capisco il suo punto ma servono dati", "capisco il suo punto però resto scettico"], focus: "capisco il suo punto", watch: "Prima il riconoscimento, poi il però."),
+                                PracticeQuestion(prompt: "Dai un accordo parziale: la forma sì, i tempi no (formula con « in parte »).", expected: ["sono d’accordo in parte la forma sì i tempi no", "sono d’accordo in parte pero i tempi no"], focus: "in parte", watch: "Accordo parziale, non totale."),
+                                PracticeQuestion(prompt: "Limita il tuo dissenso ai costi (formula con « quanto »).", expected: ["quanto ai costi non sono convinto", "quanto ai costi esprimo riserve"], focus: "quanto a", watch: "Quanto a + tema: isola il dissenso."),
+                                PracticeQuestion(prompt: "Concedi l’obiettivo ma dissentisci sulla strada (formula con « pur »).", expected: ["pur condividendo l’obiettivo la strada mi sembra diversa", "pur condividendo l’obiettivo preferisco un’altra strada"], focus: "pur + gerundio", watch: "Pur condividendo = aunque comparto."),
+                                PracticeQuestion(prompt: "Chiudi cercando una base condivisa (formula con « comune »).", expected: ["proviamo a trovare un punto comune", "cerchiamo un punto comune sui test"], focus: "punto comune", watch: "La chiusura evita lo scontro.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u9-dibattere-e1", kind: "choice", prompt: "« Capisco ___ punto, però i dati dicono altro. »", options: ["il suo", "il mio", "il loro", "di lui"], answers: ["il suo"], explain: "Riconoscere la posizione dell’altro: il suo punto."),
+                            Exercise(id: "it-foundations-u9-dibattere-e2", kind: "gap", prompt: "Sono d’accordo ___: la forma sì, i tempi no.", options: [], answers: ["in parte"], explain: "Accordo parziale: in parte."),
+                            Exercise(id: "it-foundations-u9-dibattere-e3", kind: "written", prompt: "Concedi l’obiettivo ma dissentisci sulla strada: apri con « pur ».", options: [], answers: ["pur condividendo l’obiettivo la strada mi sembra diversa", "pur condividendo l’obiettivo preferisco un’altra strada"], explain: "Pur + gerundio = concessione, poi il dissenso."),
+                            Exercise(id: "it-foundations-u9-dibattere-e4", kind: "written", prompt: "Chiudi il dibattito cercando una base condivisa (formula con « punto »).", options: [], answers: ["proviamo a trovare un punto comune", "cerchiamo un punto comune", "cerchiamo un punto comune sui tempi"], explain: "Punto comune = chiusura costruttiva.")], skills: ["function:express-opinion", "speaking:sustained-conversation", "grammar:connectors", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum ItFoundationsU10 {
@@ -7952,6 +8876,285 @@ public enum ItFoundationsU15 {
                             Exercise(id: "it-foundations-u15-abitudini-e2", kind: "gap", prompt: "Fumo zero volte: non fumo ___.", options: [], answers: ["mai"], explain: "Non + verbo + mai: frequenza zero."),
                             Exercise(id: "it-foundations-u15-abitudini-e3", kind: "order", prompt: "Dì che fai colazione la mattina, tutti i giorni: usa sempre.", options: [], answers: ["La mattina faccio sempre colazione"], explain: "Tempo + verbo + sempre + oggetto."),
                             Exercise(id: "it-foundations-u15-abitudini-e4", kind: "written", prompt: "Descrivi una tua abitudine sana: usa sempre o mai.", options: [], answers: ["Faccio sempre colazione.", "Non fumo mai.", "Bevo sempre molta acqua.", "Non mangio mai dolci."], explain: "Verbo + sempre oppure non + verbo + mai.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
+}
+
+public enum ItFoundationsU16 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u16", title: "A tavola", subtitle: "Mangiare fuori", level: "A1", themes: [
+                    ConversationTheme("al-ristorante", "Al ristorante", "Vorrei…", "fork.knife", "Course", "Siete al ristorante: ordinate antipasto, primo e da bere, con cortesia.", 0),
+                    ConversationTheme("menu-e-conto", "Il menù e il conto", "Quanto fa ?", "takeout.bag", "Course", "Leggete il menù, chiedete cosa c’è e pagate il conto con gli amici.", 1)], lessons: [
+            Lesson(id: "it-foundations-u16-ristorante", title: "Al ristorante", goal: "Ordinare al ristorante con vorrei e prendere, con cortesia.",
+                intro: LessonIntro(explanation: [
+                            "Per ordinare usa vorrei + piatto: « Vorrei le tagliatelle, per favore ». È gentile e non suona come un ordine.",
+                            "Altro modo comune: prendere. « Io prendo la pizza ». Il cameriere chiede: « Che cosa prende ? ».",
+                            "Vuoi un consiglio ? Chiedi: « Cosa mi consiglia ? ». E la cortesia chiude sempre: « per favore » e « grazie »."], examples: [
+                            ExampleLine(text: "Vorrei le tagliatelle, per favore.", meaning: "Ordinare con cortesia."),
+                            ExampleLine(text: "Io prendo la pizza.", meaning: "Altro modo di ordinare: prendere."),
+                            ExampleLine(text: "Che cosa prende ?", meaning: "Il cameriere chiede."),
+                            ExampleLine(text: "Cosa mi consiglia ?", meaning: "Chiedere un consiglio."),
+                            ExampleLine(text: "Per me, solo un primo.", meaning: "Ordinare per due: per me / per lui.")]),
+                expressions: [
+                            TargetExpression(text: "Vorrei …", meaning: "Ordinare con cortesia.", note: "Vorrei un caffè."),
+                            TargetExpression(text: "Prendo …", meaning: "Altro modo: prendere.", note: "Prendo il pesce."),
+                            TargetExpression(text: "Che cosa prende ?", meaning: "Il cameriere chiede.", note: "Che cosa prende, signora ?"),
+                            TargetExpression(text: "Cosa mi consiglia ?", meaning: "Chiedere un consiglio.", note: "Cosa mi consiglia di dolce ?"),
+                            TargetExpression(text: "per favore / grazie", meaning: "La cortesia a tavola.", note: "Un caffè, per favore.")],
+                situation: "Sei al ristorante con un’amica: il cameriere arriva, ordinate antipasto, primo e da bere.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Ordina con cortesia: le tagliatelle.", expected: ["Vorrei le tagliatelle, per favore.", "Vorrei le tagliatelle.", "Io vorrei le tagliatelle."], focus: "vorrei", watch: "vorrei = quisiera."),
+                                PracticeQuestion(prompt: "Il cameriere ti chiede: rispondi che prendi la pizza.", expected: ["Prendo la pizza.", "Io prendo la pizza."], focus: "prendo", watch: "prendere = tomar."),
+                                PracticeQuestion(prompt: "Chiedi un consiglio al cameriere.", expected: ["Cosa mi consiglia ?", "Che cosa mi consiglia ?"], focus: "consiglia", watch: "consigliare = recomendar."),
+                                PracticeQuestion(prompt: "Dì cosa prende il tuo amico: lui, il pesce.", expected: ["Lui prende il pesce.", "Il mio amico prende il pesce."], focus: "lui prende", watch: "terza persona: prende."),
+                                PracticeQuestion(prompt: "Ordina da bere: un’acqua naturale.", expected: ["Vorrei un’acqua naturale.", "Prendo un’acqua naturale.", "Un’acqua naturale, per favore."], focus: "vorrei + bere", watch: "un’acqua: elisione."),
+                                PracticeQuestion(prompt: "Chiedi gentilmente il menù.", expected: ["Il menù, per favore.", "Vorrei il menù, per favore."], focus: "per favore", watch: "la cortesia chiude la frase.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u16-ristorante-e1", kind: "choice", prompt: "___ le tagliatelle, per favore.", options: ["Vorrei", "Voglio", "Vuoi", "Devo"], answers: ["Vorrei"], explain: "Ordinare con cortesia: vorrei + piatto."),
+                            Exercise(id: "it-foundations-u16-ristorante-e2", kind: "gap", prompt: "Io ___ la pizza margherita. (prendere, io)", options: [], answers: ["prendo"], explain: "prendere: io prendo."),
+                            Exercise(id: "it-foundations-u16-ristorante-e3", kind: "order", prompt: "Chiedi un consiglio al cameriere.", options: [], answers: ["Cosa mi consiglia"], explain: "Cosa + mi + consiglia."),
+                            Exercise(id: "it-foundations-u16-ristorante-e4", kind: "written", prompt: "Ordina un caffè con cortesia.", options: [], answers: ["vorrei un caffè per favore", "vorrei un caffè", "prendo un caffè per favore"], explain: "vorrei + piatto + per favore.")], skills: ["function:order-food", "vocab:food", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u16-menu", title: "Il menù", goal: "Leggere il menù: piatti, bevande e chiedere cosa c’è.",
+                intro: LessonIntro(explanation: [
+                            "Nel menù i piatti seguono un ordine: « antipasto », « primo », « secondo », « dolce ». « Come primo prendo le penne ».",
+                            "Le bevande: « un’acqua naturale » (senza gas) o « frizzante » (con gas). « Per bere, un’acqua frizzante ».",
+                            "Per chiedere cosa hanno: « Cosa c’è come dolce ? ». La risposta: « C’è il tiramisù » o « Ci sono le lasagne »."], examples: [
+                            ExampleLine(text: "Cosa c’è come primo ?", meaning: "Chiedere i piatti."),
+                            ExampleLine(text: "Ci sono le lasagne.", meaning: "Rispondere al plurale."),
+                            ExampleLine(text: "Come secondo, il pesce.", meaning: "Ordinare per portata."),
+                            ExampleLine(text: "Per bere, un’acqua frizzante.", meaning: "Ordinare da bere."),
+                            ExampleLine(text: "C’è anche il tiramisù.", meaning: "I dolci di oggi.")]),
+                expressions: [
+                            TargetExpression(text: "l’antipasto / il primo", meaning: "I piatti in ordine.", note: "Come primo, le penne."),
+                            TargetExpression(text: "il secondo / il dolce", meaning: "Dopo il primo.", note: "Come secondo, il pesce."),
+                            TargetExpression(text: "Cosa c’è … ?", meaning: "Chiedere cosa hanno.", note: "Cosa c’è come dolce ?"),
+                            TargetExpression(text: "un’acqua naturale / frizzante", meaning: "Senza o con gas.", note: "Un’acqua naturale, per favore."),
+                            TargetExpression(text: "per bere / per mangiare", meaning: "Da bere / da mangiare.", note: "Per bere, il vino.")],
+                situation: "Leggi il menù con Marco: chiedete cosa c’è come primo, come secondo e da bere.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiedi al cameriere quali primi ci sono.", expected: ["Cosa c’è come primo ?", "Che cosa c’è come primo ?", "Cosa c’e come primo ?"], focus: "cosa c’è", watch: "c’è = hay."),
+                                PracticeQuestion(prompt: "Dì cosa c’è come primo: le lasagne.", expected: ["Ci sono le lasagne.", "Ci sono lasagne."], focus: "ci sono", watch: "plurale → ci sono."),
+                                PracticeQuestion(prompt: "Ordina da bere: acqua con gas.", expected: ["Un’acqua frizzante, per favore.", "Vorrei un’acqua frizzante.", "Un’acqua frizzante."], focus: "frizzante", watch: "frizzante = con gas."),
+                                PracticeQuestion(prompt: "Dì cosa prendi come secondo: il pesce.", expected: ["Come secondo prendo il pesce.", "Prendo il pesce come secondo."], focus: "come secondo", watch: "secondo = plato principal."),
+                                PracticeQuestion(prompt: "Chiedi quali dolci sono disponibili.", expected: ["Cosa c’è come dolce ?", "Cosa c’e come dolce ?"], focus: "dolce", watch: "dolce = postre."),
+                                PracticeQuestion(prompt: "Di’ al tuo amico che oggi, tra i dolci, c’è il tiramisù.", expected: ["C’è anche il tiramisù.", "Oggi c’è il tiramisù.", "Ce anche il tiramisu."], focus: "c’è anche", watch: "anche = también.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u16-menu-e1", kind: "choice", prompt: "Bevi senza gas: un’acqua ___.", options: ["naturale", "frizzante", "gassata", "dolce"], answers: ["naturale"], explain: "Acqua naturale = senza gas."),
+                            Exercise(id: "it-foundations-u16-menu-e2", kind: "gap", prompt: "Come primo ___ le lasagne. (prendere, noi)", options: [], answers: ["prendiamo"], explain: "prendere, noi: prendiamo."),
+                            Exercise(id: "it-foundations-u16-menu-e3", kind: "order", prompt: "Chiedi cosa hanno come primo.", options: [], answers: ["Cosa c’è come primo"], explain: "Cosa c’è + come + piatto."),
+                            Exercise(id: "it-foundations-u16-menu-e4", kind: "written", prompt: "Ordina da bere: un’acqua naturale.", options: [], answers: ["un’acqua naturale per favore", "un acqua naturale per favore", "vorrei un’acqua naturale"], explain: "un’acqua + naturale, con per favore.")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "grammar:present-simple"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "it-foundations-u16-conto", title: "Il conto", goal: "Chiedere il conto, pagare e lasciare la mancia.",
+                intro: LessonIntro(explanation: [
+                            "Per pagare chiami il cameriere: « Il conto, per favore ». E chiedi il totale: « Quanto fa ? ».",
+                            "Paghi « in contanti » o « con la carta ». Chiedi: « Posso pagare con la carta ? » — « Certo, signore ».",
+                            "La mancia in Italia è piccola e facoltativa: « Tenga il resto ». E tra amici: « Oggi offro io ! »."], examples: [
+                            ExampleLine(text: "Il conto, per favore.", meaning: "Chiedere di pagare."),
+                            ExampleLine(text: "Quanto fa ?", meaning: "Chiedere il totale."),
+                            ExampleLine(text: "Posso pagare con la carta ?", meaning: "Chiedere il metodo di pagamento."),
+                            ExampleLine(text: "Tenga il resto.", meaning: "Lasciare la mancia."),
+                            ExampleLine(text: "Oggi offro io !", meaning: "Pagare per tutti.")]),
+                expressions: [
+                            TargetExpression(text: "Il conto, per favore.", meaning: "Chiedere di pagare.", note: "Il conto, per favore !"),
+                            TargetExpression(text: "Quanto fa ?", meaning: "Qual è il totale ?", note: "Quanto fa in tutto ?"),
+                            TargetExpression(text: "in contanti / con la carta", meaning: "Due modi di pagare.", note: "Pago con la carta."),
+                            TargetExpression(text: "Tenga il resto.", meaning: "La mancia: il resto è suo.", note: "Tenga il resto, grazie."),
+                            TargetExpression(text: "Oggi offro io.", meaning: "Pagare per gli amici.", note: "Oggi offro io, festeggio !")],
+                situation: "Finite la cena con Luca: chiedi il conto, chiedi quanto fa e Luca lascia una piccola mancia.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Chiama il cameriere per pagare.", expected: ["Il conto, per favore.", "Il conto per favore.", "Posso avere il conto ?"], focus: "il conto", watch: "conto = la cuenta."),
+                                PracticeQuestion(prompt: "Chiedi quanto è in totale.", expected: ["Quanto fa ?", "Quanto fa in tutto ?", "Quanto costa ?"], focus: "quanto fa", watch: "quanto fa = cuánto es."),
+                                PracticeQuestion(prompt: "Chiedi se puoi pagare con la carta.", expected: ["Posso pagare con la carta ?", "Posso pagare con la carta ?"], focus: "posso", watch: "posso = puedo."),
+                                PracticeQuestion(prompt: "Dì che paghi in contanti.", expected: ["Pago in contanti.", "Io pago in contanti."], focus: "in contanti", watch: "contanti = efectivo."),
+                                PracticeQuestion(prompt: "Lascia la mancia: il resto per il cameriere.", expected: ["Tenga il resto.", "Tenga il resto, grazie."], focus: "tenga", watch: "tenga = quédese con ello (formal)."),
+                                PracticeQuestion(prompt: "Dì che oggi paghi tu per tutti.", expected: ["Oggi offro io !", "Oggi offro io."], focus: "offro", watch: "offrire = invitar a pagar.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u16-conto-e1", kind: "choice", prompt: "Chiami il cameriere: « ___, per favore ! »", options: ["Il conto", "Il menù", "La mancia", "Il resto"], answers: ["Il conto"], explain: "Per pagare si chiede il conto."),
+                            Exercise(id: "it-foundations-u16-conto-e2", kind: "gap", prompt: "Quanto ___ in tutto ? (fare, 3ª persona)", options: [], answers: ["fa"], explain: "Quanto fa ? chiede il totale."),
+                            Exercise(id: "it-foundations-u16-conto-e3", kind: "order", prompt: "Chiedi di pagare con la carta.", options: [], answers: ["Posso pagare con la carta"], explain: "Posso + infinito + con la carta."),
+                            Exercise(id: "it-foundations-u16-conto-e4", kind: "written", prompt: "Lascia la mancia: il resto è per il cameriere.", options: [], answers: ["tenga il resto", "tenga il resto grazie", "tienia il resto"], explain: "Tenga il resto = la mancia.")], skills: ["function:order-food", "grammar:quantities", "vocab:food", "vocab:social-expressions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum ItFoundationsU17 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u17", title: "Stare bene insieme", subtitle: "Inviti e sorprese", level: "A2", themes: [
+                    ConversationTheme("proposte-inviti", "Vieni o preferisci… ?", "Facciamo… ?", "calendar.badge.clock", "Course", "Organizzate il weekend: proposte, inviti accettati e rifiutati con gentilezza.", 0),
+                    ConversationTheme("il-regalo", "Il regalo perfetto", "Andiamo a comprare…", "gift", "Course", "Preparate una sorpresa per il compleanno di un’amica: regalo, torta e festa.", 1)], lessons: [
+            Lesson(id: "it-foundations-u17-proposte", title: "Vieni o preferisci… ?", goal: "Fare proposte con facciamo e ti va di, e rispondere.",
+                intro: LessonIntro(explanation: [
+                            "Per proporre un’attività: facciamo / andiamo + attività. « Facciamo una passeggiata ? » propone e chiede insieme.",
+                            "Più gentile: ti va di + infinito. « Ti va di venire al cinema ? ». Per la scelta: « Preferisci il sabato ? ».",
+                            "Per rispondere: « Volentieri ! » è un sì contento, « Va bene » è un sì tranquillo. E i progetti: « Domani andiamo a visitare il museo »."], examples: [
+                            ExampleLine(text: "Facciamo una passeggiata ?", meaning: "Proporre un’attività."),
+                            ExampleLine(text: "Ti va di venire al cinema ?", meaning: "Proposta gentile."),
+                            ExampleLine(text: "Preferisci il sabato o la domenica ?", meaning: "Chiedere la scelta."),
+                            ExampleLine(text: "Volentieri !", meaning: "Accettare con piacere."),
+                            ExampleLine(text: "Domani andiamo a pranzo da me.", meaning: "Progetto: andare a + infinito.")]),
+                expressions: [
+                            TargetExpression(text: "Facciamo … ?", meaning: "Proporre insieme.", note: "Facciamo una pizza ?"),
+                            TargetExpression(text: "Ti va di… ?", meaning: "Proposta gentile.", note: "Ti va di uscire ?"),
+                            TargetExpression(text: "Preferisci … ?", meaning: "Chiedere la scelta.", note: "Preferisci sabato ?"),
+                            TargetExpression(text: "Volentieri !", meaning: "Sì, con piacere.", note: "Volentieri, alle otto !"),
+                            TargetExpression(text: "andare a + infinito", meaning: "Progetti per domani.", note: "Andiamo a vedere il museo.")],
+                situation: "Organizzate il weekend in quattro messaggi: Giulia propone, tu accetti e fissate un orario.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Proponi una passeggiata.", expected: ["Facciamo una passeggiata ?", "Facciamo una passeggiata ?"], focus: "facciamo", watch: "facciamo… ? = ¿lo hacemos?"),
+                                PracticeQuestion(prompt: "Proponi gentilmente di andare al cinema.", expected: ["Ti va di andare al cinema ?", "Ti va di venire al cinema ?"], focus: "ti va di", watch: "ti va di + infinito."),
+                                PracticeQuestion(prompt: "Accetta con entusiasmo.", expected: ["Volentieri !"], focus: "volentieri", watch: "volentieri = con gusto."),
+                                PracticeQuestion(prompt: "Chiedi se preferisce sabato.", expected: ["Preferisci sabato ?", "Preferisci il sabato ?"], focus: "preferisci", watch: "preferire = preferir."),
+                                PracticeQuestion(prompt: "Dì il tuo progetto: domani, visitare il museo.", expected: ["Domani andiamo a visitare il museo.", "Domani vado a visitare il museo."], focus: "andare a", watch: "andare a + infinito = plan."),
+                                PracticeQuestion(prompt: "Accetta e fissa l’ora: alle otto.", expected: ["Va bene, alle otto !", "Volentieri, alle otto !"], focus: "va bene", watch: "va bene = está bien.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u17-proposte-e1", kind: "choice", prompt: "___ una pizza stasera ?", options: ["Facciamo", "Faccio", "Fate", "Stiamo"], answers: ["Facciamo"], explain: "Proporre con noi: facciamo… ?"),
+                            Exercise(id: "it-foundations-u17-proposte-e2", kind: "gap", prompt: "Ti ___ di venire al mare ? (andare bene, a te)", options: [], answers: ["va"], explain: "ti va di + infinito."),
+                            Exercise(id: "it-foundations-u17-proposte-e3", kind: "order", prompt: "Accetta e fissa l’ora: alle nove.", options: [], answers: ["Va bene alle nove"], explain: "Va bene + ora."),
+                            Exercise(id: "it-foundations-u17-proposte-e4", kind: "written", prompt: "Dì il tuo progetto per domani: andare a nuotare.", options: [], answers: ["domani vado a nuotare", "domani andiamo a nuotare"], explain: "andare a + infinito per i progetti.")], skills: ["function:make-suggestions", "grammar:going-to", "vocab:social-expressions", "grammar:present-simple"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "it-foundations-u17-scusa", title: "Peccato, non posso", goal: "Accettare e rifiutare inviti con gentilezza, con una scusa.",
+                intro: LessonIntro(explanation: [
+                            "Accetti con piacere: « Volentieri, vengo ! ». Rifiuti con gentilezza: « Peccato, non posso ».",
+                            "La scusa ammorbidisce il no: « Devo lavorare », « Ho un impegno ». Poi ripari: « Facciamo domenica ? ».",
+                            "I connettivi tengono il messaggio insieme: « vengo, però arrivo in ritardo », « non posso, quindi facciamo dopo »."], examples: [
+                            ExampleLine(text: "Peccato, non posso.", meaning: "Rifiutare con dispiacere."),
+                            ExampleLine(text: "Devo lavorare sabato.", meaning: "Scusa semplice."),
+                            ExampleLine(text: "Facciamo domenica prossima ?", meaning: "Riparare il no."),
+                            ExampleLine(text: "Grazie, vengo !", meaning: "Accettare l’invito."),
+                            ExampleLine(text: "Vengo, però arrivo in ritardo.", meaning: "Sì con una condizione.")]),
+                expressions: [
+                            TargetExpression(text: "Peccato !", meaning: "Che dispiacere.", note: "Peccato, devo studiare."),
+                            TargetExpression(text: "non posso", meaning: "Rifiutare.", note: "Non posso, ho un impegno."),
+                            TargetExpression(text: "ho un impegno", meaning: "Scusa generica.", note: "Ho un impegno di lavoro."),
+                            TargetExpression(text: "la settimana prossima", meaning: "Riparare più tardi.", note: "Facciamola la settimana prossima ?"),
+                            TargetExpression(text: "però / quindi", meaning: "Connettivi semplici.", note: "Vengo, però tardi.")],
+                situation: "Paolo ti invita a una cena ma devi rifiutare: scusati, dai un motivo e proponete un altro giorno.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Rifiuta con dispiacere.", expected: ["Peccato, non posso.", "Che peccato, non posso."], focus: "peccato", watch: "peccato = lástima."),
+                                PracticeQuestion(prompt: "Dai una scusa di lavoro.", expected: ["Non posso, devo lavorare.", "Devo lavorare sabato.", "Peccato, devo lavorare."], focus: "devo", watch: "dovere = deber."),
+                                PracticeQuestion(prompt: "Ripara: proponi la domenica.", expected: ["Facciamo domenica ?", "E se facciamo la domenica ?"], focus: "facciamo… ?", watch: "ripari con una proposta."),
+                                PracticeQuestion(prompt: "Accetta l’invito.", expected: ["Grazie, vengo !", "Volentieri, vengo !"], focus: "vengo", watch: "vengo = acepto."),
+                                PracticeQuestion(prompt: "Accetta ma avvisa: arrivi in ritardo.", expected: ["Vengo, però arrivo in ritardo.", "Vengo, ma arrivo in ritardo."], focus: "però", watch: "però = pero (contraste)."),
+                                PracticeQuestion(prompt: "Di’ che è un dispiacere ma hai un impegno.", expected: ["Peccato, ho un impegno.", "Che peccato, ho un impegno."], focus: "ho un impegno", watch: "scusa generica.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u17-scusa-e1", kind: "choice", prompt: "___, non posso: devo lavorare.", options: ["Peccato", "Volentieri", "Ci vediamo", "Grazie mille"], answers: ["Peccato"], explain: "Peccato introduce il dispiacere."),
+                            Exercise(id: "it-foundations-u17-scusa-e2", kind: "gap", prompt: "Vengo, ___ arrivo un po’ in ritardo. (contrasto)", options: [], answers: ["però", "pero"], explain: "però = contrasto."),
+                            Exercise(id: "it-foundations-u17-scusa-e3", kind: "order", prompt: "Rifiuta e dai la scusa: devi studiare.", options: [], answers: ["Peccato devo studiare"], explain: "Peccato + scusa."),
+                            Exercise(id: "it-foundations-u17-scusa-e4", kind: "written", prompt: "Ripara il no: proponi la settimana prossima.", options: [], answers: ["facciamo la settimana prossima", "e se facciamo la settimana prossima", "facciamola la settimana prossima"], explain: "Ripari con una proposta nuova.")], skills: ["vocab:social-expressions", "function:make-suggestions", "grammar:present-simple", "grammar:connectors"], canDo: ["make-future-plans"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "it-foundations-u17-regalo", title: "Il regalo perfetto", goal: "Parlare di progetti di regalo con andare a + infinito.",
+                intro: LessonIntro(explanation: [
+                            "I progetti già decisi usano andare a + infinito: « Domani vado a comprare il regalo ».",
+                            "La domanda: « Che cosa le vai a regalare ? ». Per i gusti: « Le piace la fotografia ».",
+                            "Si organizza: « Vado a cercare un libro di foto », « Luca va a preparare la torta », « Le facciamo una sorpresa »."], examples: [
+                            ExampleLine(text: "Domani andiamo a comprare il regalo.", meaning: "Progetto deciso."),
+                            ExampleLine(text: "Che cosa le vai a regalare ?", meaning: "Chiedere il progetto."),
+                            ExampleLine(text: "Le piace la fotografia.", meaning: "I gusti di lei."),
+                            ExampleLine(text: "Vado a cercare un libro di foto.", meaning: "Progetto: cercare."),
+                            ExampleLine(text: "Luca va a preparare la torta.", meaning: "Il progetto di Luca.")]),
+                expressions: [
+                            TargetExpression(text: "andare a + infinito", meaning: "Progetto già deciso.", note: "Vado a comprare il regalo."),
+                            TargetExpression(text: "Che cosa vai a… ?", meaning: "Chiedere i progetti.", note: "Che cosa vai a regalare ?"),
+                            TargetExpression(text: "Le piace…", meaning: "I gusti di lei.", note: "Le piace la musica."),
+                            TargetExpression(text: "andare a cercare", meaning: "Progetto di ricerca.", note: "Vado a cercare un libro."),
+                            TargetExpression(text: "fare una sorpresa", meaning: "Regalo segreto.", note: "Le facciamo una sorpresa.")],
+                situation: "Per il compleanno di Sara: decidete il regalo, guardate i negozi e organizzate la sorpresa per sabato.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Dì il tuo progetto: comprare il regalo domani.", expected: ["Domani vado a comprare il regalo.", "Vado a comprare il regalo domani."], focus: "vado a", watch: "andare a + infinito."),
+                                PracticeQuestion(prompt: "Chiedi a Marco che cosa va a regalare.", expected: ["Che cosa vai a regalare ?", "Che cosa le vai a regalare ?"], focus: "vai a", watch: "domanda: che cosa + vai a… ?"),
+                                PracticeQuestion(prompt: "Dì i gusti di Sara: la fotografia.", expected: ["Le piace la fotografia.", "A Sara piace la fotografia."], focus: "le piace", watch: "piacere: le piace."),
+                                PracticeQuestion(prompt: "Dì il tuo progetto: cercare un libro di foto.", expected: ["Vado a cercare un libro di foto.", "Vado a cercare un libro di fotografia."], focus: "vado a cercare", watch: "cercare = buscar."),
+                                PracticeQuestion(prompt: "Dì il progetto di Luca: preparare la torta.", expected: ["Luca va a preparare la torta."], focus: "va a", watch: "terza persona: va a."),
+                                PracticeQuestion(prompt: "Proponi la sorpresa a Sara.", expected: ["Le facciamo una sorpresa.", "Facciamo una sorpresa a Sara."], focus: "fare una sorpresa", watch: "sorpresa = sorpresa.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u17-regalo-e1", kind: "choice", prompt: "Domani ___ a comprare il regalo.", options: ["vado", "vada", "andare", "vanno"], answers: ["vado"], explain: "Io + andare a + infinito: vado a."),
+                            Exercise(id: "it-foundations-u17-regalo-e2", kind: "gap", prompt: "Che cosa ___ a regalare a Sara ? (tu)", options: [], answers: ["vai"], explain: "tu vai a + infinito."),
+                            Exercise(id: "it-foundations-u17-regalo-e3", kind: "order", prompt: "Dì i gusti di Sara: la fotografia.", options: [], answers: ["Le piace la fotografia"], explain: "Le piace + cosa."),
+                            Exercise(id: "it-foundations-u17-regalo-e4", kind: "written", prompt: "Dì il tuo progetto: cercare un regalo per lei.", options: [], answers: ["vado a cercare un regalo per lei", "vado a cercarle un regalo"], explain: "vado a cercare + oggetto.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "function:go-shopping"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
+public enum ItFoundationsU18 {
+    public static let unit: CourseUnit = CourseUnit(id: "it-foundations-u18", title: "Raccontare storie", subtitle: "Fatti in fila", level: "B1", themes: [
+                    ConversationTheme("fatti-in-ordine", "Quello che è successo", "Prima, poi, alla fine", "book", "Course", "Raccontate una giornata disastrosa: i fatti in ordine, dal treno perso all’arrivo in ritardo.", 0),
+                    ConversationTheme("la-svolta", "La svolta inaspettata", "All’improvviso…", "sparkles", "Course", "Un aneddoto con un colpo di scena: sorprendete e fatevi sorprendere.", 1)], lessons: [
+            Lesson(id: "it-foundations-u18-narrare", title: "Quello che è successo", goal: "Collegare i fatti passati con prima, poi, dopo, alla fine.",
+                intro: LessonIntro(explanation: [
+                            "Per raccontare metti i fatti in fila: « prima » apre, « poi » e « dopo » continuano, « alla fine » chiude. « Prima ho perso il treno, poi ho preso il bus ».",
+                            "I fatti vanno al passato prossimo: « ho perso », « abbiamo chiamato », « sono arrivato ».",
+                            "Alcuni participi sono irregolari: « ho fatto », « ho letto », « ho bevuto ». « Prima ho bevuto un caffè, poi ho letto il giornale »."], examples: [
+                            ExampleLine(text: "Prima ho perso il treno.", meaning: "Il primo fatto."),
+                            ExampleLine(text: "Poi ho chiamato Luca.", meaning: "Il secondo fatto."),
+                            ExampleLine(text: "Dopo abbiamo preso un taxi.", meaning: "Ancora un fatto."),
+                            ExampleLine(text: "Alla fine sono arrivato in ritardo.", meaning: "Il risultato."),
+                            ExampleLine(text: "Che disastro !", meaning: "Commento alla storia.")]),
+                expressions: [
+                            TargetExpression(text: "prima", meaning: "Il primo fatto.", note: "Prima ho mangiato."),
+                            TargetExpression(text: "poi / dopo", meaning: "Il fatto successivo.", note: "Poi sono uscito."),
+                            TargetExpression(text: "alla fine", meaning: "Il risultato.", note: "Alla fine ho vinto."),
+                            TargetExpression(text: "ho perso / ho preso", meaning: "Participi irregolari.", note: "perdere→perso, prendere→preso."),
+                            TargetExpression(text: "Che disastro !", meaning: "Reagire alla storia.", note: "Che disastro, il mio giorno !")],
+                situation: "Racconti la tua mattina disastrosa: treno perso, bus preso, taxi e arrivo in ritardo al lavoro.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Inizia la storia: prima, il treno perso.", expected: ["Prima ho perso il treno."], focus: "prima", watch: "prima = primer hecho."),
+                                PracticeQuestion(prompt: "Continua: poi, la chiamata a Luca.", expected: ["Poi ho chiamato Luca."], focus: "poi", watch: "poi = después."),
+                                PracticeQuestion(prompt: "Ancora un fatto: dopo, il taxi preso insieme.", expected: ["Dopo abbiamo preso un taxi."], focus: "dopo", watch: "dopo = luego."),
+                                PracticeQuestion(prompt: "Chiudi: l’arrivo in ritardo.", expected: ["Alla fine sono arrivato in ritardo.", "Alla fine sono arrivata in ritardo."], focus: "alla fine", watch: "alla fine ciude la storia."),
+                                PracticeQuestion(prompt: "Racconta due fatti: prima il caffè, poi il giornale.", expected: ["Prima ho bevuto il caffè, poi ho letto il giornale.", "Prima ho bevuto un caffè e poi ho letto il giornale."], focus: "prima… poi", watch: "due fatti in ordine."),
+                                PracticeQuestion(prompt: "Reagisci alla storia di Luca: è un disastro.", expected: ["Che disastro !", "Che disastro, Luca !"], focus: "che disastro", watch: "reazione simpatica.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u18-narrare-e1", kind: "choice", prompt: "___ ho perso il treno, poi ho preso il bus.", options: ["Prima", "Alla fine", "Poi", "Dopo"], answers: ["Prima"], explain: "Il primo fatto → prima."),
+                            Exercise(id: "it-foundations-u18-narrare-e2", kind: "gap", prompt: "Ho ___ il treno. (perdere, participio)", options: [], answers: ["perso"], explain: "perdere → perso."),
+                            Exercise(id: "it-foundations-u18-narrare-e3", kind: "order", prompt: "Chiudi la storia: l’arrivo in ritardo.", options: [], answers: ["Alla fine sono arrivato in ritardo"], explain: "Alla fine + risultato."),
+                            Exercise(id: "it-foundations-u18-narrare-e4", kind: "written", prompt: "Racconta il secondo fatto: dopo, la pizza mangiata.", options: [], answers: ["dopo ho mangiato una pizza", "poi ho mangiato una pizza", "dopo ho mangiato pizza"], explain: "dopo/poi + passato prossimo.")], skills: ["function:tell-a-story", "grammar:past-simple-irregular", "grammar:connectors", "grammar:past-simple-regular"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "it-foundations-u18-sorpresa", title: "La svolta inaspettata", goal: "Raccontare con sorpresa: all’improvviso, si è scoperto che.",
+                intro: LessonIntro(explanation: [
+                            "La svolta si annuncia con « all’improvviso »: « Parlavamo tranquilli quando, all’improvviso, è entrato il capo ».",
+                            "« Si è scoperto che » rivela il segreto: « Si è scoperto che era il suo compleanno ».",
+                            "Le reazioni tengono viva la storia: « Non ci credo ! », « Sul serio ? », « E poi che è successo ? »."], examples: [
+                            ExampleLine(text: "Parlavamo quando, all’improvviso, è suonato il telefono.", meaning: "La svolta."),
+                            ExampleLine(text: "Si è scoperto che era il suo compleanno.", meaning: "Il segreto rivelato."),
+                            ExampleLine(text: "Non ci credo !", meaning: "Reazione forte."),
+                            ExampleLine(text: "Sul serio ?", meaning: "Chiedere conferma."),
+                            ExampleLine(text: "E poi che è successo ?", meaning: "Rilanciare la storia.")]),
+                expressions: [
+                            TargetExpression(text: "all’improvviso", meaning: "La svolta, senza preavviso.", note: "All’improvviso è piovuto."),
+                            TargetExpression(text: "si è scoperto che…", meaning: "Il segreto rivelato.", note: "Si è scoperto che era lui."),
+                            TargetExpression(text: "Non ci credo !", meaning: "Reazione di sorpresa.", note: "Non ci credo, sul serio !"),
+                            TargetExpression(text: "sul serio", meaning: "Davvero ?", note: "Sul serio ? Non è possibile !"),
+                            TargetExpression(text: "che è successo ?", meaning: "Chiedere il seguito.", note: "E poi che è successo ?")],
+                situation: "Racconti la festa a sorpresa per Elena: una scusa inventata, poi la svolta e la reazione di tutti.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Racconta la scena: parlavate, e poi è entrato il capo.", expected: ["Parlavamo quando è entrato il capo.", "Stavamo parlando quando è entrato il capo."], focus: "quando", watch: "il contesto all’imperfetto + il fatto improvviso."),
+                                PracticeQuestion(prompt: "Aggiungi la svolta: la pioggia, di colpo.", expected: ["All’improvviso è piovuto.", "E all’improvviso è piovuto."], focus: "all’improvviso", watch: "all’improvviso = de repente."),
+                                PracticeQuestion(prompt: "Rivela: il compleanno di Elena, scoperto da tutti.", expected: ["Si è scoperto che era il suo compleanno."], focus: "si è scoperto", watch: "si è scoperto che + frase."),
+                                PracticeQuestion(prompt: "Reagisci con sorpresa forte.", expected: ["Non ci credo !", "Ma non ci credo !"], focus: "non ci credo", watch: "reazione di sorpresa."),
+                                PracticeQuestion(prompt: "Chiedi conferma, in due parole.", expected: ["Sul serio ?", "Davvero ?"], focus: "sul serio", watch: "sul serio = ¿en serio?"),
+                                PracticeQuestion(prompt: "Chiedi il seguito della storia.", expected: ["E poi che è successo ?", "Che è successo dopo ?"], focus: "che è successo", watch: "chiedere il seguito.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u18-sorpresa-e1", kind: "choice", prompt: "Parlavamo quando, ___, è entrato Luca.", options: ["all’improvviso", "alla fine", "prima", "per caso"], answers: ["all’improvviso"], explain: "La svolta inaspettata → all’improvviso."),
+                            Exercise(id: "it-foundations-u18-sorpresa-e2", kind: "gap", prompt: "Si ___ scoperto che il regalo era per Marco. (essere)", options: [], answers: ["è", "e"], explain: "si è scoperto che + frase."),
+                            Exercise(id: "it-foundations-u18-sorpresa-e3", kind: "order", prompt: "Reagisci con sorpresa e chiedi conferma.", options: [], answers: ["Non ci credo sul serio"], explain: "Non ci credo + sul serio."),
+                            Exercise(id: "it-foundations-u18-sorpresa-e4", kind: "written", prompt: "Rivela il segreto con la formula che contiene « scoperto »: Luca organizzava la festa.", options: [], answers: ["si è scoperto che luca organizzava la festa", "si e scoperto che luca organizzava la festa"], explain: "si è scoperto che + frase al passato.")], skills: ["function:tell-a-story", "grammar:connectors", "grammar:past-simple-irregular", "vocab:social-expressions"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"]),
+            Lesson(id: "it-foundations-u18-aneddoti", title: "L’aneddoto dell’estate", goal: "Raccontare un aneddoto e reagire a quello di un amico.",
+                intro: LessonIntro(explanation: [
+                            "L’aneddoto è una storia vera e divertente: apri con tempo e luogo. « Quest’estate, al mare, è successa una cosa incredibile ».",
+                            "Chi ascolta reagisce: « Non mi dire ! » chiede di continuare, « E poi ? » chiede il seguito.",
+                            "Si chiude con un commento: « Che figura ! », « Meno male che c’era Luca »."], examples: [
+                            ExampleLine(text: "Quest’estate, al mare, è successa una cosa incredibile.", meaning: "Aprire l’aneddoto."),
+                            ExampleLine(text: "Non mi dire !", meaning: "Reazione: continua !"),
+                            ExampleLine(text: "E poi ?", meaning: "Chiedere il seguito."),
+                            ExampleLine(text: "Che figura !", meaning: "Reazione simpatica."),
+                            ExampleLine(text: "Meno male che c’era Luca.", meaning: "Chiusa con sollievo.")]),
+                expressions: [
+                            TargetExpression(text: "è successa una cosa incredibile", meaning: "Aprire l’aneddoto.", note: "È successa una cosa incredibile."),
+                            TargetExpression(text: "Non mi dire !", meaning: "Sorpresa: continua !", note: "Non mi dire, e poi ?"),
+                            TargetExpression(text: "E poi ?", meaning: "Chiedere il seguito.", note: "E poi che hai fatto ?"),
+                            TargetExpression(text: "Che figura !", meaning: "Reazione simpatica.", note: "Che figura, quel tuffo !"),
+                            TargetExpression(text: "meno male che…", meaning: "Sollievo alla fine.", note: "Meno male che c’era il cellulare.")],
+                situation: "Al bar racconti il tuffo goffo dell’estate; Marco reagisce con sorpresa e poi ti chiede il seguito.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Apri l’aneddoto: quest’estate, al mare, qualcosa d’incredibile.", expected: ["Quest’estate al mare è successa una cosa incredibile.", "Quest’estate, al mare, è successa una cosa incredibile."], focus: "è successa", watch: "apri con tempo e luogo."),
+                                PracticeQuestion(prompt: "Reagisci alla storia di Marco: continua !", expected: ["Non mi dire !", "Non mi dire, continua !"], focus: "non mi dire", watch: "non mi dire = ¡no me digas!"),
+                                PracticeQuestion(prompt: "Chiedi il seguito.", expected: ["E poi ?", "E poi che hai fatto ?", "E dopo ?"], focus: "e poi", watch: "e poi = ¿y luego?"),
+                                PracticeQuestion(prompt: "Reagisci a una figura.", expected: ["Che figura !", "Che figura, Marco !"], focus: "che figura", watch: "che figura = qué vergüenza."),
+                                PracticeQuestion(prompt: "Chiusa con sollievo: il cellulare c’era.", expected: ["Meno male che c’era il cellulare.", "Meno male che avevo il cellulare."], focus: "meno male che", watch: "meno male = menos mal."),
+                                PracticeQuestion(prompt: "Racconta il fatto: il tuffo goffo.", expected: ["Ho fatto un tuffo goffo.", "Ho fatto un tuffo ridicolo."], focus: "ho fatto", watch: "fare → fatto.")]),
+                exercises: [
+                            Exercise(id: "it-foundations-u18-aneddoti-e1", kind: "choice", prompt: "« ___ ! Continua, ti prego. »", options: ["Non mi dire", "Lo so già", "Taci", "Non raccontare"], answers: ["Non mi dire"], explain: "Reazione che chiede di continuare."),
+                            Exercise(id: "it-foundations-u18-aneddoti-e2", kind: "gap", prompt: "E ___, che hai fatto ? (dopo)", options: [], answers: ["poi"], explain: "E poi ? chiede il seguito."),
+                            Exercise(id: "it-foundations-u18-aneddoti-e3", kind: "order", prompt: "Apri l’aneddoto dell’estate: al mare, qualcosa d’incredibile.", options: [], answers: ["Quest’estate al mare è successa una cosa incredibile"], explain: "Tempo + luogo + è successa."),
+                            Exercise(id: "it-foundations-u18-aneddoti-e4", kind: "written", prompt: "Chiusa con sollievo: il cellulare c’era.", options: [], answers: ["meno male che c’era il cellulare", "meno male che c era il cellulare", "meno male che avevo il cellulare"], explain: "meno male che + sollievo.")], skills: ["function:tell-a-story", "vocab:social-expressions", "grammar:past-simple-regular", "function:describe-past-events"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"])])
 }
 
 public enum PtFoundationsU1 {
@@ -8574,7 +9777,35 @@ public enum PtFoundationsU9 {
                             Exercise(id: "pt-foundations-u9-apresentar-e1", kind: "choice", prompt: "___ encerrar, conto com o apoio de vocês.", options: ["Para", "Ao", "Em", "No"], answers: ["Para"], explain: "Fecho de fala: para encerrar."),
                             Exercise(id: "pt-foundations-u9-apresentar-e2", kind: "gap", prompt: "___ isso, passo ao próximo ponto. (particípio de dizer)", options: [], answers: ["dito"], explain: "Particípio como conector: dito isso."),
                             Exercise(id: "pt-foundations-u9-apresentar-e3", kind: "order", prompt: "Sintetize o balanço do ano para a diretoria.", options: [], answers: ["Resumindo, os números nos favorecem"], explain: "Resumindo + conclusão."),
-                            Exercise(id: "pt-foundations-u9-apresentar-e4", kind: "written", prompt: "Abra sua fala agradecendo quem veio.", options: [], answers: ["para comecar obrigado pela presenca de todos", "para começar, obrigado pela presença de todos"], explain: "Para começar + agradecimento.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"])])
+                            Exercise(id: "pt-foundations-u9-apresentar-e4", kind: "written", prompt: "Abra sua fala agradecendo quem veio.", options: [], answers: ["para comecar obrigado pela presenca de todos", "para começar, obrigado pela presença de todos"], explain: "Para começar + agradecimento.")], skills: ["speaking:sustained-conversation", "function:talk-about-work", "grammar:connectors", "vocab:work"], canDo: ["talk-about-work"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "pt-foundations-u9-debater", title: "De acordo em desacordo", goal: "Discordar com jeito: reconhecer o ponto do outro e marcar a diferença.",
+                intro: LessonIntro(explanation: [
+                            "Discordar sem brigar: primeiro reconheça, depois marque. « Entendo o seu ponto, mas vejo por outro ângulo ».",
+                            "Suavize com conectores: « por um lado… por outro… », « até certo ponto ». « Até certo ponto concordo; por outro lado, o prazo não fecha ».",
+                            "Feche o desacordo com respeito: « Concordo em discordar ». « Fica registrado o meu voto contrário »."], examples: [
+                            ExampleLine(text: "Entendo o seu ponto, mas discordo do tamanho.", meaning: "Reconhecer + marcar."),
+                            ExampleLine(text: "Por um lado, é mais barato; por outro, demora mais.", meaning: "Pesar os lados."),
+                            ExampleLine(text: "Até certo ponto, você tem razão.", meaning: "Concordância parcial."),
+                            ExampleLine(text: "Não é bem assim: os dados dizem outra coisa.", meaning: "Discordar com base."),
+                            ExampleLine(text: "Concordo em discordar, com carinho.", meaning: "Fechar com respeito.")]),
+                expressions: [
+                            TargetExpression(text: "entendo o seu ponto, mas…", meaning: "Reconhecer antes de discordar.", note: "Entendo o seu ponto, mas…"),
+                            TargetExpression(text: "por um lado… por outro…", meaning: "Pesar os lados.", note: "Por um lado sim; por outro, não."),
+                            TargetExpression(text: "até certo ponto", meaning: "Concordância parcial.", note: "Até certo ponto, procede."),
+                            TargetExpression(text: "não é bem assim", meaning: "Discordar com base.", note: "Não é bem assim, veja os dados."),
+                            TargetExpression(text: "concordo em discordar", meaning: "Fechar o desacordo.", note: "Fica a nossa diferença.")],
+                situation: "Num debate da empresa, vocês discordam do formato do evento: cada um reconhece o ponto do outro e defende o seu — sem desgastar a relação.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Discorde reconhecendo o ponto do outro: o projeto é bom, mas caro.", expected: ["Entendo o seu ponto, mas o projeto é caro.", "Entendo o seu ponto, mas discordo do preço."], focus: "entendo o seu ponto", watch: "reconhecer + mas."),
+                                PracticeQuestion(prompt: "Pese os lados: mais barato, porém demorado.", expected: ["Por um lado, é mais barato; por outro, é demorado.", "Por um lado é mais barato por outro é demorado"], focus: "por um lado/por outro", watch: "estrutura em dois tempos."),
+                                PracticeQuestion(prompt: "Dê uma concordância parcial.", expected: ["Até certo ponto, você tem razão.", "ate certo ponto voce tem razao"], focus: "até certo ponto", watch: "concordância parcial."),
+                                PracticeQuestion(prompt: "Discorde com base nos dados.", expected: ["Não é bem assim: os dados dizem outra coisa.", "Não é bem assim."], focus: "não é bem assim", watch: "discordar com base."),
+                                PracticeQuestion(prompt: "Feche o desacordo com respeito.", expected: ["Concordo em discordar.", "Concordo em discordar, com respeito."], focus: "concordo em discordar", watch: "fecho elegante.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u9-debater-e1", kind: "choice", prompt: "___ o seu ponto, mas o prazo não fecha.", options: ["Entendo", "Recuso", "Ignoro", "Duvido"], answers: ["Entendo"], explain: "Entendo o seu ponto, mas…: discordar com jeito."),
+                            Exercise(id: "pt-foundations-u9-debater-e2", kind: "gap", prompt: "Por um ___, é mais barato; por outro, demora.", options: [], answers: ["lado"], explain: "por um lado… por outro…: pesar os lados."),
+                            Exercise(id: "pt-foundations-u9-debater-e3", kind: "order", prompt: "Discorde com jeito: reconheça e marque a diferença.", options: [], answers: ["Entendo o seu ponto mas discordo"], explain: "reconhecer + mas: o desacordo elegante."),
+                            Exercise(id: "pt-foundations-u9-debater-e4", kind: "written", prompt: "Feche o desacordo com respeito.", options: [], answers: ["concordo em discordar", "Concordo em discordar."], explain: "Concordo em discordar: fecho respeitoso.")], skills: ["function:express-opinion", "speaking:sustained-conversation", "grammar:connectors", "speaking:justify-opinion"], canDo: ["express-opinion"], prerequisites: ["grammar:connectors"])])
 }
 
 public enum PtFoundationsU10 {
@@ -9117,6 +10348,276 @@ public enum PtFoundationsU15 {
                             Exercise(id: "pt-foundations-u15-habitos-e4", kind: "written", prompt: "Diga quantas horas você dorme: oito.", options: [], answers: ["Durmo oito horas.", "Eu durmo oito horas.", "durmo oito horas"], explain: "durmo + horas.")], skills: ["grammar:frequency-adverbs", "function:talk-about-routines", "vocab:health", "vocab:daily-routine"], canDo: ["talk-about-routines"], prerequisites: ["grammar:frequency-adverbs"])])
 }
 
+public enum PtFoundationsU16 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u16", title: "À mesa", subtitle: "Comer fora", level: "A1", themes: [
+                    ConversationTheme("restaurante-pedido", "No restaurante", "Pedir comida", "fork.knife", "Course", "A Ana e o Leo almoçam num restaurante simples: escolhem à mesa e pedem ao garçom, cada um o seu prato.", 0),
+                    ConversationTheme("cardapio-conta", "O cardápio e a conta", "Pratos, bebidas e pagamento", "takeout.bag", "Course", "Escolhem o prato no cardápio, perguntam o que tem e, no fim, pedem a conta e deixam a gorjeta.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u16-restaurante", title: "No restaurante", goal: "Pedir comida no restaurante com eu quero e para mim.",
+                intro: LessonIntro(explanation: [
+                            "Para pedir, use « eu quero » ou « para mim ». « Eu quero o frango ». « Para mim, um suco ».",
+                            "Com educação, junte « por favor » e agradeça com « obrigado/obrigada ». « Uma água, por favor ».",
+                            "O garçom pergunta: « O que vocês querem ? ». Você responde com « quero »: « Quero o prato do dia »."], examples: [
+                            ExampleLine(text: "Eu quero o frango com arroz.", meaning: "Pedido simples."),
+                            ExampleLine(text: "Para mim, uma água sem gelo.", meaning: "para mim = para mí."),
+                            ExampleLine(text: "Uma pizza, por favor.", meaning: "por favor suaviza."),
+                            ExampleLine(text: "O cardápio, por favor ?", meaning: "Pedir o menu."),
+                            ExampleLine(text: "Mais alguma coisa ? — Não, obrigado.", meaning: "O garçom pergunta.")]),
+                expressions: [
+                            TargetExpression(text: "Eu quero …", meaning: "Pedir comida.", note: "Eu quero o peixe."),
+                            TargetExpression(text: "Para mim, …", meaning: "Pedir para você.", note: "Para mim, um suco."),
+                            TargetExpression(text: "…, por favor", meaning: "Pedido educado.", note: "Uma água, por favor."),
+                            TargetExpression(text: "O cardápio, por favor ?", meaning: "Pedir o menu.", note: "Para escolher."),
+                            TargetExpression(text: "obrigado / obrigada", meaning: "Agradecer (homem/mulher).", note: "Obrigada, está ótimo.")],
+                situation: "A Ana e o Leo almoçam num restaurante simples: o garçom traz o cardápio e cada um pede o seu prato.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Peça o frango com arroz.", expected: ["Eu quero o frango com arroz.", "Quero o frango com arroz.", "quero o frango com arroz"], focus: "eu quero", watch: "quero = quiero."),
+                                PracticeQuestion(prompt: "Peça uma água sem gelo para você. (use para mim)", expected: ["Para mim, uma água sem gelo.", "para mim uma agua sem gelo"], focus: "para mim", watch: "para mim = para mí."),
+                                PracticeQuestion(prompt: "Peça uma pizza com educação.", expected: ["Uma pizza, por favor.", "Quero uma pizza, por favor."], focus: "por favor", watch: "por favor suaviza o pedido."),
+                                PracticeQuestion(prompt: "Pergunte se tem suco de laranja.", expected: ["Tem suco de laranja ?", "Vocês têm suco de laranja ?"], focus: "tem … ?", watch: "pergunta com tem."),
+                                PracticeQuestion(prompt: "O garçom pergunta: mais alguma coisa ? Recuse com educação.", expected: ["Não, obrigado.", "Não, obrigada.", "Nada, obrigado."], focus: "recusar", watch: "obrigado (homem) / obrigada (mulher).")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u16-restaurante-e1", kind: "choice", prompt: "___ o frango com arroz. (pedido)", options: ["Quero", "Tenho", "Faço", "Vejo"], answers: ["Quero"], explain: "Eu quero + comida: pedido direto."),
+                            Exercise(id: "pt-foundations-u16-restaurante-e2", kind: "gap", prompt: "Para ___, uma água sem gelo.", options: [], answers: ["mim"], explain: "para mim = para mí: pedido para você."),
+                            Exercise(id: "pt-foundations-u16-restaurante-e3", kind: "order", prompt: "Peça uma água ao garçom.", options: [], answers: ["Uma água por favor"], explain: "pedido + por favor: educado."),
+                            Exercise(id: "pt-foundations-u16-restaurante-e4", kind: "written", prompt: "Peça o cardápio ao garçom.", options: [], answers: ["O cardápio, por favor.", "o cardapio por favor", "cardapio por favor"], explain: "O cardápio, por favor: pedido do menu.")], skills: ["function:order-food", "vocab:food", "grammar:present-simple", "function:ask-simple-questions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u16-cardapio", title: "O cardápio", goal: "Ler o cardápio e perguntar o que tem: pratos, bebidas e sobremesas.",
+                intro: LessonIntro(explanation: [
+                            "O cardápio tem partes: « entrada », « prato principal », « sobremesa » e « bebidas ». « O suco fica em bebidas ».",
+                            "Para perguntar: « O que tem ? » ou « Tem … ? ». « Tem frango ? — Tem, com arroz ou batata ».",
+                            "Escolher com « qual ». « Qual é o prato do dia ? » — e o garçom responde: « É a moqueca »."], examples: [
+                            ExampleLine(text: "O que tem no cardápio ?", meaning: "Pergunta geral."),
+                            ExampleLine(text: "Tem peixe hoje ?", meaning: "Tem + prato ?"),
+                            ExampleLine(text: "Qual é o prato do dia ?", meaning: "qual = cuál."),
+                            ExampleLine(text: "Quero o frango sem batata.", meaning: "sem = sin."),
+                            ExampleLine(text: "De sobremesa, tem pudim ?", meaning: "sobremesa = postre.")]),
+                expressions: [
+                            TargetExpression(text: "O que tem ?", meaning: "Perguntar o que existe.", note: "O que tem de sobremesa ?"),
+                            TargetExpression(text: "Tem … ?", meaning: "Perguntar por um item.", note: "Tem suco de laranja ?"),
+                            TargetExpression(text: "Qual é o prato do dia ?", meaning: "Perguntar a sugestão.", note: "Hoje é a moqueca."),
+                            TargetExpression(text: "com / sem", meaning: "Com ou sem ingrediente.", note: "café sem açúcar."),
+                            TargetExpression(text: "de sobremesa", meaning: "Para o fim da refeição.", note: "De sobremesa, quero pudim.")],
+                situation: "No balcão da padaria e na mesa do restaurante: a Ana lê o cardápio, pergunta o que tem e escolhe sem açúcar.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Pergunte o que tem no cardápio.", expected: ["O que tem no cardápio ?", "o que tem no cardapio", "o que tem"], focus: "o que tem", watch: "o que tem = ¿qué hay ?"),
+                                PracticeQuestion(prompt: "Pergunte se tem peixe hoje.", expected: ["Tem peixe hoje ?", "tem peixe hoje"], focus: "tem … ?", watch: "Tem + prato ?"),
+                                PracticeQuestion(prompt: "Pergunte a sugestão do dia.", expected: ["Qual é o prato do dia ?", "qual e o prato do dia"], focus: "qual", watch: "qual = cuál."),
+                                PracticeQuestion(prompt: "Peça um café sem açúcar.", expected: ["Um café sem açúcar, por favor.", "Quero um café sem açúcar.", "um cafe sem acucar"], focus: "sem", watch: "sem = sin."),
+                                PracticeQuestion(prompt: "Pergunte a sobremesa: tem pudim ?", expected: ["De sobremesa, tem pudim ?", "Tem pudim de sobremesa ?"], focus: "de sobremesa", watch: "sobremesa = postre.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u16-cardapio-e1", kind: "choice", prompt: "___ é o prato do dia ?", options: ["Qual", "O que", "Tem", "Quanto"], answers: ["Qual"], explain: "Qual = cuál: perguntar entre opções."),
+                            Exercise(id: "pt-foundations-u16-cardapio-e2", kind: "gap", prompt: "Tem pudim ___ sobremesa ?", options: [], answers: ["de"], explain: "de sobremesa = de postre."),
+                            Exercise(id: "pt-foundations-u16-cardapio-e3", kind: "order", prompt: "Pergunte o que tem.", options: [], answers: ["O que tem no cardapio"], explain: "O que tem ? pergunta o que existe."),
+                            Exercise(id: "pt-foundations-u16-cardapio-e4", kind: "written", prompt: "Peça um café sem açúcar.", options: [], answers: ["um café sem açúcar, por favor", "um cafe sem acucar", "quero um café sem açúcar"], explain: "sem = sin: café sem açúcar.")], skills: ["function:order-food", "vocab:food", "grammar:present-questions", "grammar:present-simple"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"]),
+            Lesson(id: "pt-foundations-u16-conta", title: "A conta", goal: "Pedir a conta, perguntar quanto é e deixar a gorjeta.",
+                intro: LessonIntro(explanation: [
+                            "No fim, chame o garçom: « A conta, por favor ». « Pode trazer a conta ? » também funciona.",
+                            "Pergunte o preço: « Quanto é ? ». Para o pagamento: « Pode ser cartão ? » ou « Podemos pagar separado ? ».",
+                            "No Brasil, a gorjeta de dez por cento costuma vir na conta: « Já está incluída a gorjeta ? »."], examples: [
+                            ExampleLine(text: "A conta, por favor.", meaning: "Pedido da conta."),
+                            ExampleLine(text: "Quanto é ?", meaning: "quanto é = cuánto es."),
+                            ExampleLine(text: "Pode ser cartão ?", meaning: "cartão = tarjeta."),
+                            ExampleLine(text: "Podemos pagar separado ?", meaning: "Dividir a conta."),
+                            ExampleLine(text: "A gorjeta já está incluída ?", meaning: "gorjeta = propina.")]),
+                expressions: [
+                            TargetExpression(text: "A conta, por favor", meaning: "Pedir a conta.", note: "Ao garçom, no fim."),
+                            TargetExpression(text: "Quanto é ?", meaning: "Perguntar o preço.", note: "Quanto é o jantar ?"),
+                            TargetExpression(text: "Pode ser cartão ?", meaning: "Forma de pagamento.", note: "Ou em dinheiro ?"),
+                            TargetExpression(text: "pagar separado / juntos", meaning: "Dividir ou não.", note: "Cada um paga o seu."),
+                            TargetExpression(text: "a gorjeta", meaning: "Dez por cento, no Brasil.", note: "Deixa a gorjeta na mesa.")],
+                situation: "O jantar acaba: o Leo pede a conta, pergunta o preço, cada um paga a sua parte e deixa a gorjeta.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Peça a conta ao garçom.", expected: ["A conta, por favor.", "Pode trazer a conta ?"], focus: "a conta", watch: "a conta = la cuenta."),
+                                PracticeQuestion(prompt: "Pergunte o preço do jantar.", expected: ["Quanto é ?", "Quanto custa ?"], focus: "quanto é", watch: "quanto é = cuánto es."),
+                                PracticeQuestion(prompt: "Pergunte se pode pagar com cartão.", expected: ["Pode ser cartão ?", "Posso pagar com cartão ?"], focus: "cartão", watch: "cartão = tarjeta."),
+                                PracticeQuestion(prompt: "Diga que cada um paga a sua parte.", expected: ["Podemos pagar separado ?", "Vamos pagar separado."], focus: "separado", watch: "separado = por separado."),
+                                PracticeQuestion(prompt: "Pergunte se a gorjeta já vem na conta.", expected: ["A gorjeta já está incluída ?", "Já está incluída a gorjeta ?"], focus: "gorjeta", watch: "gorjeta = propina.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u16-conta-e1", kind: "choice", prompt: "Quanto ___ o almoço ?", options: ["é", "tem", "faz", "quer"], answers: ["é"], explain: "Quanto é ? pergunta o preço."),
+                            Exercise(id: "pt-foundations-u16-conta-e2", kind: "gap", prompt: "Podemos pagar ___ ? (cada um o seu)", options: [], answers: ["separado"], explain: "pagar separado = cada um paga o seu."),
+                            Exercise(id: "pt-foundations-u16-conta-e3", kind: "order", prompt: "Pergunte o preço do jantar.", options: [], answers: ["Quanto é o jantar"], explain: "Quanto é ? pergunta o preço."),
+                            Exercise(id: "pt-foundations-u16-conta-e4", kind: "written", prompt: "Chame o garçom no fim da refeição.", options: [], answers: ["A conta, por favor.", "a conta por favor", "pode trazer a conta"], explain: "A conta, por favor: pedido clássico.")], skills: ["function:order-food", "grammar:quantities", "vocab:food", "vocab:social-expressions"], canDo: ["order-food"], prerequisites: ["grammar:present-simple"])])
+}
+
+public enum PtFoundationsU17 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u17", title: "Combinar bem", subtitle: "Convites e planos", level: "A2", themes: [
+                    ConversationTheme("combinar-planos", "Combinar o dia", "Propostas e respostas", "calendar.badge.clock", "Course", "Vocês combinam o fim de semana: propostas com vem/vamos, aceites e uma recusa com que pena.", 0),
+                    ConversationTheme("presente-perfeito", "O presente perfeito", "Planos de presente", "gift", "Course", "A turma planeja o presente de aniversário da Bia com ir + infinitivo: cada um vai levar uma coisa.", 1)], lessons: [
+            Lesson(id: "pt-foundations-u17-propostas", title: "Vem ou prefere… ?", goal: "Fazer propostas e responder: vem com a gente, vamos…, prefere….",
+                intro: LessonIntro(explanation: [
+                            "Para propor: « Vem com a gente ! » ou « Vamos + infinitivo ». « Vamos tomar um café ? ».",
+                            "Dar opções: « Prefere sábado ou domingo ? ». A resposta: « Prefiro sábado » ou « Pode ser ».",
+                            "Futuro próximo com ir: « Vou sim, vou adorar ». « Eles vão chegar às nove »."], examples: [
+                            ExampleLine(text: "Vem com a gente ao cinema ?", meaning: "Convite direto."),
+                            ExampleLine(text: "Vamos almoçar juntos ?", meaning: "vamos + infinitivo."),
+                            ExampleLine(text: "Prefere sábado ou domingo ?", meaning: "prefere = prefieres."),
+                            ExampleLine(text: "Pode ser. Que horas ?", meaning: "Aceitar e perguntar."),
+                            ExampleLine(text: "Eu vou sim, vou adorar.", meaning: "Futuro: ir + infinitivo.")]),
+                expressions: [
+                            TargetExpression(text: "Vem com a gente !", meaning: "Convidar.", note: "Vem com a gente à praia !"),
+                            TargetExpression(text: "Vamos + infinitivo ?", meaning: "Propor algo.", note: "Vamos tomar um café ?"),
+                            TargetExpression(text: "Prefere … ou … ?", meaning: "Dar opções.", note: "Prefere pizza ou sushi ?"),
+                            TargetExpression(text: "Pode ser.", meaning: "Aceitar.", note: "Pode ser, às oito."),
+                            TargetExpression(text: "que horas ?", meaning: "Perguntar a hora.", note: "Que horas vamos ?")],
+                situation: "Vocês combinam o fim de semana: praia ou museu, sábado ou domingo — e cada um responde com o seu plano.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Convide seu amigo para a praia.", expected: ["Vem com a gente à praia ?", "Vem com a gente para a praia."], focus: "vem com a gente", watch: "convite com vem."),
+                                PracticeQuestion(prompt: "Proponha tomar um café.", expected: ["Vamos tomar um café ?", "vamos tomar um cafe"], focus: "vamos", watch: "vamos + infinitivo."),
+                                PracticeQuestion(prompt: "Dê as opções: sábado ou domingo.", expected: ["Prefere sábado ou domingo ?", "Você prefere sábado ou domingo ?"], focus: "prefere", watch: "prefere = prefieres."),
+                                PracticeQuestion(prompt: "Aceite e pergunte a hora.", expected: ["Pode ser. Que horas ?", "Pode ser, que horas ?"], focus: "pode ser", watch: "pode ser = puede ser."),
+                                PracticeQuestion(prompt: "Diga no futuro: você vai adorar o show.", expected: ["Você vai adorar o show.", "Vai adorar o show.", "voce vai adorar o show"], focus: "ir + infinitivo", watch: "vai + adorar.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u17-propostas-e1", kind: "choice", prompt: "___ com a gente ao parque ?", options: ["Vem", "Vai", "Prefere", "Tem"], answers: ["Vem"], explain: "Vem com a gente: convite."),
+                            Exercise(id: "pt-foundations-u17-propostas-e2", kind: "gap", prompt: "Vamos ___ um filme hoje ? (ver)", options: [], answers: ["ver"], explain: "vamos + infinitivo: proposta."),
+                            Exercise(id: "pt-foundations-u17-propostas-e3", kind: "order", prompt: "Dê as opções: pizza ou sushi.", options: [], answers: ["Prefere pizza ou sushi"], explain: "Prefere … ou … ? dá opções."),
+                            Exercise(id: "pt-foundations-u17-propostas-e4", kind: "written", prompt: "Diga no futuro: você vai dançar na festa.", options: [], answers: ["vou dançar na festa", "eu vou dançar na festa", "vou dancar na festa"], explain: "ir + infinitivo: vou dançar.")], skills: ["function:make-suggestions", "grammar:going-to", "vocab:social-expressions", "grammar:present-simple"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"]),
+            Lesson(id: "pt-foundations-u17-desculpa", title: "Que pena, não posso", goal: "Aceitar e recusar convites com desculpa: posso, não posso, que pena.",
+                intro: LessonIntro(explanation: [
+                            "Aceitar: « Posso sim ! », « Obrigado pelo convite ». Recusar: « Não posso, desculpa ».",
+                            "A desculpa vem com porque: « Não posso, porque vou viajar ». Ou com obrigação: « Tenho que trabalhar ».",
+                            "Reagir à recusa: « Que pena ! ». E propor outra data: « Outro dia então ? »."], examples: [
+                            ExampleLine(text: "Posso sim, obrigada pelo convite.", meaning: "Aceitar."),
+                            ExampleLine(text: "Que pena, não posso sábado.", meaning: "Recusar."),
+                            ExampleLine(text: "Não posso, porque vou viajar.", meaning: "porque + desculpa."),
+                            ExampleLine(text: "Tenho que trabalhar até tarde.", meaning: "ter que + infinitivo."),
+                            ExampleLine(text: "Outro dia então ?", meaning: "Repropor a data.")]),
+                expressions: [
+                            TargetExpression(text: "Posso sim.", meaning: "Aceitar o convite.", note: "Posso sim, até lá."),
+                            TargetExpression(text: "Não posso, desculpa.", meaning: "Recusar.", note: "desculpa = perdón."),
+                            TargetExpression(text: "Que pena !", meaning: "Reagir à recusa.", note: "Que pena, fica para a próxima."),
+                            TargetExpression(text: "tenho que + infinitivo", meaning: "Obrigação.", note: "Tenho que estudar."),
+                            TargetExpression(text: "outro dia então ?", meaning: "Repropor a data.", note: "Outro dia então ?")],
+                situation: "A turma combina o sábado: dois aceitam na hora, um recusa com desculpa — e o grupo marca outro dia.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Aceite o convite para o cinema.", expected: ["Posso sim, obrigada.", "Aceito, obrigada pelo convite.", "posso sim"], focus: "posso sim", watch: "aceitar com posso."),
+                                PracticeQuestion(prompt: "Recuse o convite de sábado.", expected: ["Que pena, não posso sábado.", "Não posso sábado, desculpa."], focus: "não posso", watch: "recusar com não posso."),
+                                PracticeQuestion(prompt: "Dê a desculpa: você vai viajar.", expected: ["Não posso, porque vou viajar.", "Vou viajar."], focus: "porque", watch: "porque + desculpa."),
+                                PracticeQuestion(prompt: "Diga a obrigação: estudar.", expected: ["Tenho que estudar.", "Não posso, tenho que estudar."], focus: "tenho que", watch: "ter que + infinitivo."),
+                                PracticeQuestion(prompt: "Reaja à recusa e proponha outro dia.", expected: ["Que pena ! Outro dia então ?", "Outro dia então ?"], focus: "outro dia", watch: "repropor com então.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u17-desculpa-e1", kind: "choice", prompt: "Que ___, não posso ir.", options: ["pena", "alegria", "sorte", "força"], answers: ["pena"], explain: "Que pena: reação a uma recusa."),
+                            Exercise(id: "pt-foundations-u17-desculpa-e2", kind: "gap", prompt: "Não posso, ___ vou visitar minha avó. (desculpa)", options: [], answers: ["porque"], explain: "porque + desculpa: a razão."),
+                            Exercise(id: "pt-foundations-u17-desculpa-e3", kind: "order", prompt: "Diga a obrigação com estudar.", options: [], answers: ["Tenho que estudar hoje"], explain: "ter que + infinitivo: obrigação."),
+                            Exercise(id: "pt-foundations-u17-desculpa-e4", kind: "written", prompt: "Recuse e proponha outra data.", options: [], answers: ["Que pena, outro dia então ?", "que pena outro dia entao"], explain: "Que pena + proposta: recusa educada.")], skills: ["vocab:social-expressions", "function:make-suggestions", "grammar:present-simple", "grammar:connectors"], canDo: ["make-future-plans"], prerequisites: ["grammar:connectors"]),
+            Lesson(id: "pt-foundations-u17-presente", title: "O presente perfeito", goal: "Planejar o presente com ir + infinitivo: o que cada um vai fazer.",
+                intro: LessonIntro(explanation: [
+                            "Futuro próximo: ir + infinitivo. « Eu vou comprar o bolo ». « Ela vai escolher o presente ».",
+                            "Dividir tarefas: « Quem vai levar as velas ? ». Responda: « Eu vou levar ».",
+                            "Para o presente: « Vamos embrulhar com papel de presente ». « Vai ser uma surpresa »."], examples: [
+                            ExampleLine(text: "Eu vou comprar o bolo.", meaning: "vou + comprar."),
+                            ExampleLine(text: "Quem vai levar as velas ?", meaning: "Dividir tarefas."),
+                            ExampleLine(text: "Eu vou pagar a minha parte.", meaning: "parte = parte."),
+                            ExampleLine(text: "Vamos embrulhar o presente.", meaning: "vamos + embrulhar."),
+                            ExampleLine(text: "Vai ser uma surpresa.", meaning: "ser no futuro.")]),
+                expressions: [
+                            TargetExpression(text: "vou + infinitivo", meaning: "O que você vai fazer.", note: "Vou comprar o bolo."),
+                            TargetExpression(text: "quem vai … ?", meaning: "Dividir tarefas.", note: "Quem vai levar as velas ?"),
+                            TargetExpression(text: "levar / trazer", meaning: "Levar para lá, trazer para cá.", note: "Vou levar o presente."),
+                            TargetExpression(text: "a parte", meaning: "Quota de cada um.", note: "Cada um paga a sua parte."),
+                            TargetExpression(text: "de surpresa", meaning: "Sem a pessoa saber.", note: "É uma festa de surpresa.")],
+                situation: "Para o aniversário da Bia: um vai comprar o bolo, outro as bebidas — e cada um paga a sua parte.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Diga no futuro: você vai comprar o bolo.", expected: ["Eu vou comprar o bolo.", "Vou comprar o bolo."], focus: "vou", watch: "ir + infinitivo."),
+                                PracticeQuestion(prompt: "Pergunte quem vai levar as velas.", expected: ["Quem vai levar as velas ?", "quem vai levar as velas"], focus: "quem vai", watch: "quem vai = quién va a."),
+                                PracticeQuestion(prompt: "Diga que cada um vai pagar a sua parte.", expected: ["Cada um vai pagar a sua parte.", "cada um vai pagar a sua parte"], focus: "a parte", watch: "parte = parte."),
+                                PracticeQuestion(prompt: "Proponha embrulhar o presente.", expected: ["Vamos embrulhar o presente.", "Vamos embrulhar o presente juntos."], focus: "vamos", watch: "vamos + infinitivo."),
+                                PracticeQuestion(prompt: "Diga que vai ser uma surpresa.", expected: ["Vai ser uma surpresa.", "vai ser uma surpresa"], focus: "vai ser", watch: "ser no futuro.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u17-presente-e1", kind: "choice", prompt: "Eu ___ comprar o presente hoje.", options: ["vou", "vai", "vamos", "vão"], answers: ["vou"], explain: "eu + vou + infinitivo: futuro próximo."),
+                            Exercise(id: "pt-foundations-u17-presente-e2", kind: "gap", prompt: "Quem vai ___ as velas ? (levar)", options: [], answers: ["levar"], explain: "ir + infinitivo: vai + levar."),
+                            Exercise(id: "pt-foundations-u17-presente-e3", kind: "order", prompt: "Diga no futuro: cada um paga a sua parte.", options: [], answers: ["Cada um vai pagar a sua parte"], explain: "cada um + vai + infinitivo."),
+                            Exercise(id: "pt-foundations-u17-presente-e4", kind: "written", prompt: "Diga no futuro: você vai levar as bebidas.", options: [], answers: ["vou levar as bebidas", "eu vou levar as bebidas"], explain: "vou + levar: futuro próximo.")], skills: ["grammar:going-to", "function:make-future-plans", "vocab:social-expressions", "function:go-shopping"], canDo: ["make-future-plans"], prerequisites: ["grammar:going-to"])])
+}
+
+public enum PtFoundationsU18 {
+    public static let unit: CourseUnit = CourseUnit(id: "pt-foundations-u18", title: "Contar histórias", subtitle: "O passado em ação", level: "B1", themes: [
+                    ConversationTheme("contar-passado", "O que aconteceu", "Fatos em ordem", "book", "Course", "Vocês contam o que aconteceu no fim de semana: primeiro, depois, no fim — com aqueles pretéritos irregulares.", 0),
+                    ConversationTheme("virada-surpresa", "A virada", "Surpresa e reação", "sparkles", "Course", "Uma história com virada: de repente tudo muda, e os amigos reagem — não me diga !", 1)], lessons: [
+            Lesson(id: "pt-foundations-u18-narrar", title: "O que aconteceu", goal: "Ligar fatos do passado: primeiro, depois, no fim.",
+                intro: LessonIntro(explanation: [
+                            "Para ordenar a história: « primeiro… depois… no fim… ». « Primeiro peguei o ônibus, depois perdi a carteira, no fim cheguei atrasado ».",
+                            "Os irregulares aparecem o tempo todo: « fui », « vi », « fiz », « disse ». « Fui à praia e vi um golfinho ».",
+                            "Os regulares terminam em -ei/-ou/-amos: « falei », « morou », « chegamos ». « Chegamos cedo e conversamos muito »."], examples: [
+                            ExampleLine(text: "Primeiro, tomei café da manhã.", meaning: "Ordem: primeiro."),
+                            ExampleLine(text: "Depois, fui ao trabalho.", meaning: "ir → fui."),
+                            ExampleLine(text: "No fim, dei uma volta no parque.", meaning: "dar → dei."),
+                            ExampleLine(text: "Vi uma cena estranha.", meaning: "ver → vi."),
+                            ExampleLine(text: "Fiz tudo que planejei.", meaning: "fazer → fiz.")]),
+                expressions: [
+                            TargetExpression(text: "primeiro …", meaning: "O primeiro fato.", note: "Primeiro, acordei cedo."),
+                            TargetExpression(text: "depois …", meaning: "A sequência.", note: "Depois, saí de casa."),
+                            TargetExpression(text: "no fim …", meaning: "O resultado.", note: "No fim, deu tudo certo."),
+                            TargetExpression(text: "fui / vi / fiz / disse", meaning: "Irregulares-chave.", note: "Fui, vi e voltei."),
+                            TargetExpression(text: "deu tudo certo", meaning: "Resultado positivo.", note: "No fim, deu tudo certo.")],
+                situation: "Na segunda-feira, cada um conta o fim de semana: o que fez primeiro, o que veio depois e como terminou.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Comece a história: acordei cedo. (primeiro)", expected: ["Primeiro, acordei cedo.", "Primeiro acordei cedo"], focus: "primeiro", watch: "primeiro abre a ordem."),
+                                PracticeQuestion(prompt: "Ligue com depois: você foi ao mercado.", expected: ["Depois, fui ao mercado.", "Depois fui ao mercado"], focus: "depois", watch: "depois = después."),
+                                PracticeQuestion(prompt: "Feche com no fim: deu tudo certo.", expected: ["No fim, deu tudo certo.", "No fim deu tudo certo"], focus: "no fim", watch: "no fim cierra la historia."),
+                                PracticeQuestion(prompt: "Diga no passado: você foi à praia e viu um golfinho.", expected: ["Fui à praia e vi um golfinho.", "fui a praia e vi um golfinho"], focus: "fui/vi", watch: "ir → fui, ver → vi."),
+                                PracticeQuestion(prompt: "Diga no passado: você fez tudo que planejou.", expected: ["Fiz tudo que planejei.", "fiz tudo que planejei"], focus: "fiz", watch: "fazer → fiz.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u18-narrar-e1", kind: "choice", prompt: "Primeiro ___ ao mercado, depois voltei para casa.", options: ["fui", "vou", "ia", "vai"], answers: ["fui"], explain: "ir → fui no pretérito."),
+                            Exercise(id: "pt-foundations-u18-narrar-e2", kind: "gap", prompt: "Depois, ___ uma cena estranha. (ver)", options: [], answers: ["vi"], explain: "ver → vi no pretérito."),
+                            Exercise(id: "pt-foundations-u18-narrar-e3", kind: "order", prompt: "Ordene o resultado com no fim.", options: [], answers: ["No fim deu tudo certo"], explain: "no fim + resultado."),
+                            Exercise(id: "pt-foundations-u18-narrar-e4", kind: "written", prompt: "Conte no passado: você foi ao cinema e viu um filme bom.", options: [], answers: ["Fui ao cinema e vi um filme bom.", "fui ao cinema e vi um filme bom"], explain: "fui + vi: irregulares no passado.")], skills: ["function:tell-a-story", "grammar:past-simple-irregular", "grammar:connectors", "grammar:past-simple-regular"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"]),
+            Lesson(id: "pt-foundations-u18-sorpresa", title: "A virada inesperada", goal: "Narrar com surpresa: de repente, acabou que.",
+                intro: LessonIntro(explanation: [
+                            "A virada entra com « de repente ». « De repente, o carro parou ».",
+                            "O resultado fecha com « acabou que ». « Acabou que ninguém se machucou ».",
+                            "Reforce a surpresa: « não é que… ». « Não é que choveu no fim ? »."], examples: [
+                            ExampleLine(text: "De repente, as luzes se apagaram.", meaning: "A virada."),
+                            ExampleLine(text: "Acabou que rimos todos.", meaning: "Resultado: acabou que."),
+                            ExampleLine(text: "Não é que ele apareceu no fim ?", meaning: "Surpresa reforçada."),
+                            ExampleLine(text: "Fiquei sem palavras.", meaning: "Reação pessoal."),
+                            ExampleLine(text: "E aí ninguém esperava.", meaning: "Surpresa coletiva.")]),
+                expressions: [
+                            TargetExpression(text: "de repente", meaning: "De pronto.", note: "De repente, começou a chover."),
+                            TargetExpression(text: "acabou que …", meaning: "Resultado final.", note: "Acabou que deu certo."),
+                            TargetExpression(text: "não é que … ?", meaning: "Reforçar a surpresa.", note: "Não é que ele voltou ?"),
+                            TargetExpression(text: "ficar sem palavras", meaning: "Reação forte.", note: "Fiquei sem palavras."),
+                            TargetExpression(text: "ninguém esperava", meaning: "Surpresa coletiva.", note: "Ninguém esperava aquilo.")],
+                situation: "O Rafa conta a viagem que deu errado — até que, de repente, tudo mudou e ninguém esperava o final.",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Narre a virada: começou a chover. (de repente)", expected: ["De repente, começou a chover.", "de repente comecou a chover"], focus: "de repente", watch: "de repente = de pronto."),
+                                PracticeQuestion(prompt: "Dê o resultado: todos riram. (acabou que)", expected: ["Acabou que todos riram.", "acabou que todos riram"], focus: "acabou que", watch: "acabou que = al final."),
+                                PracticeQuestion(prompt: "Reforce a surpresa: ele voltou. (não é que)", expected: ["Não é que ele voltou ?", "nao e que ele voltou"], focus: "não é que", watch: "não é que reforça a surpresa."),
+                                PracticeQuestion(prompt: "Diga a reação: você ficou sem palavras.", expected: ["Fiquei sem palavras.", "fiquei sem palavras"], focus: "ficar sem palavras", watch: "reação forte."),
+                                PracticeQuestion(prompt: "Diga que ninguém esperava aquilo.", expected: ["Ninguém esperava aquilo.", "ninguem esperava aquilo"], focus: "ninguém esperava", watch: "surpresa coletiva.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u18-sorpresa-e1", kind: "choice", prompt: "___, o ônibus parou no meio da rua.", options: ["De repente", "No fim", "Primeiro", "Antes"], answers: ["De repente"], explain: "De repente: a virada da história."),
+                            Exercise(id: "pt-foundations-u18-sorpresa-e2", kind: "gap", prompt: "___ que ninguém se machucou. (resultado)", options: [], answers: ["acabou"], explain: "acabou que + resultado."),
+                            Exercise(id: "pt-foundations-u18-sorpresa-e3", kind: "order", prompt: "Narre a surpresa: ele voltou.", options: [], answers: ["Não é que ele voltou"], explain: "não é que… ? reforça a surpresa."),
+                            Exercise(id: "pt-foundations-u18-sorpresa-e4", kind: "written", prompt: "Dê o resultado da história: todos riram.", options: [], answers: ["Acabou que todos riram.", "acabou que todos riram"], explain: "acabou que + resultado.")], skills: ["function:tell-a-story", "grammar:connectors", "grammar:past-simple-irregular", "vocab:social-expressions"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-irregular"]),
+            Lesson(id: "pt-foundations-u18-anedotas", title: "O episódio do verão", goal: "Contar uma anedota e reagir: não me diga, e aí ?",
+                intro: LessonIntro(explanation: [
+                            "Abra a anedota situando no tempo: « No verão passado, fui… ». « No verão passado, fui ao Nordeste ».",
+                            "As reações do ouvinte puxam a história: « Não me diga ! », « Sério ? », « E aí ? ».",
+                            "Feche com o resultado avaliado: « E foi a melhor viagem da década »."], examples: [
+                            ExampleLine(text: "No verão passado, fui ao Nordeste.", meaning: "Situar no tempo."),
+                            ExampleLine(text: "E aí, o que aconteceu ?", meaning: "Puxar a história."),
+                            ExampleLine(text: "Não me diga !", meaning: "Reação de surpresa."),
+                            ExampleLine(text: "Sério ? Conta mais !", meaning: "Pedir detalhes."),
+                            ExampleLine(text: "Foi a melhor viagem da década.", meaning: "Fecho com avaliação.")]),
+                expressions: [
+                            TargetExpression(text: "no verão passado", meaning: "Situar no tempo.", note: "No verão passado, fui…"),
+                            TargetExpression(text: "e aí ?", meaning: "Puxar a história.", note: "E aí, o que deu ?"),
+                            TargetExpression(text: "não me diga !", meaning: "Surpresa do ouvinte.", note: "Não me diga ! Sério ?"),
+                            TargetExpression(text: "conta mais !", meaning: "Pedir detalhes.", note: "Conta mais, eu quero ouvir."),
+                            TargetExpression(text: "foi a melhor …", meaning: "Fecho com avaliação.", note: "Foi a melhor festa do ano.")],
+                situation: "No terraço, a Nina conta o episódio do verão e os amigos reagem: sério ?, conta mais, não me diga !",
+                practice: LessonPractice(questions: [
+                                PracticeQuestion(prompt: "Situe a anedota: no verão passado, você foi à praia.", expected: ["No verão passado, fui à praia.", "no verao passado fui a praia"], focus: "no verão passado", watch: "situar no tempo."),
+                                PracticeQuestion(prompt: "Puxe a história do seu amigo.", expected: ["E aí ? O que aconteceu ?", "E aí, o que aconteceu ?"], focus: "e aí", watch: "e aí puxa a história."),
+                                PracticeQuestion(prompt: "Reaja com surpresa.", expected: ["Não me diga !", "Sério ? Não me diga !"], focus: "não me diga", watch: "reação de surpresa."),
+                                PracticeQuestion(prompt: "Peça mais detalhes.", expected: ["Conta mais !", "Conta mais, por favor."], focus: "conta mais", watch: "pedir detalhes."),
+                                PracticeQuestion(prompt: "Feche com avaliação: a melhor festa do ano.", expected: ["Foi a melhor festa do ano.", "foi a melhor festa do ano"], focus: "foi a melhor", watch: "fecho com avaliação.")]),
+                exercises: [
+                            Exercise(id: "pt-foundations-u18-anedotas-e1", kind: "choice", prompt: "___, o que aconteceu na viagem ?", options: ["E aí", "No fim", "De repente", "Por isso"], answers: ["E aí"], explain: "E aí ? puxa a história."),
+                            Exercise(id: "pt-foundations-u18-anedotas-e2", kind: "gap", prompt: "Não me ___ ! (reação de surpresa)", options: [], answers: ["diga"], explain: "não me diga: surpresa do ouvinte."),
+                            Exercise(id: "pt-foundations-u18-anedotas-e3", kind: "order", prompt: "Feche a anedota com avaliação: a melhor viagem da década.", options: [], answers: ["Foi a melhor viagem da década"], explain: "foi a melhor + …: fecho avaliativo."),
+                            Exercise(id: "pt-foundations-u18-anedotas-e4", kind: "written", prompt: "Peça mais detalhes ao seu amigo.", options: [], answers: ["conta mais", "conta mais, por favor."], explain: "Conta mais: pedir detalhes.")], skills: ["function:tell-a-story", "vocab:social-expressions", "grammar:past-simple-regular", "function:describe-past-events"], canDo: ["tell-a-story"], prerequisites: ["grammar:past-simple-regular"])])
+}
+
     public static let all: [Course] = [
         Course(id: "de-foundations", languageID: "de", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real German: the structures every sentence uses, practised out loud in small conversations.", units: [
 DeFoundationsU1.unit,
@@ -9133,7 +10634,10 @@ DeFoundationsU11.unit,
 DeFoundationsU12.unit,
 DeFoundationsU13.unit,
 DeFoundationsU14.unit,
-DeFoundationsU15.unit
+DeFoundationsU15.unit,
+DeFoundationsU16.unit,
+DeFoundationsU17.unit,
+DeFoundationsU18.unit
         ]),
         Course(id: "en-business-track", languageID: "en", title: "Business English", subtitle: "Professional track", symbol: "briefcase", description: "The English of sales, negotiation and client work — proposals, numbers and relationships, practised out loud.", units: [
 EnBusinessU1.unit
@@ -9195,7 +10699,10 @@ EsFoundationsU12.unit,
 EsFoundationsU13.unit,
 EsFoundationsU14.unit,
 EsFoundationsU15.unit,
-EsFoundationsU16.unit
+EsFoundationsU16.unit,
+EsFoundationsU17.unit,
+EsFoundationsU18.unit,
+EsFoundationsU19.unit
         ]),
         Course(id: "fr-foundations", languageID: "fr", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real French: the structures every sentence uses, practised out loud in small conversations.", units: [
 FrFoundationsU1.unit,
@@ -9212,7 +10719,10 @@ FrFoundationsU11.unit,
 FrFoundationsU12.unit,
 FrFoundationsU13.unit,
 FrFoundationsU14.unit,
-FrFoundationsU15.unit
+FrFoundationsU15.unit,
+FrFoundationsU16.unit,
+FrFoundationsU17.unit,
+FrFoundationsU18.unit
         ]),
         Course(id: "it-foundations", languageID: "it", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Italian: the structures every sentence uses, practised out loud in small conversations.", units: [
 ItFoundationsU1.unit,
@@ -9229,7 +10739,10 @@ ItFoundationsU11.unit,
 ItFoundationsU12.unit,
 ItFoundationsU13.unit,
 ItFoundationsU14.unit,
-ItFoundationsU15.unit
+ItFoundationsU15.unit,
+ItFoundationsU16.unit,
+ItFoundationsU17.unit,
+ItFoundationsU18.unit
         ]),
         Course(id: "pt-foundations", languageID: "pt", title: "Foundations", subtitle: "Start from zero", symbol: "graduationcap", description: "Your first real Brazilian Portuguese: the structures every sentence uses, practised out loud in small conversations.", units: [
 PtFoundationsU1.unit,
@@ -9246,7 +10759,10 @@ PtFoundationsU11.unit,
 PtFoundationsU12.unit,
 PtFoundationsU13.unit,
 PtFoundationsU14.unit,
-PtFoundationsU15.unit
+PtFoundationsU15.unit,
+PtFoundationsU16.unit,
+PtFoundationsU17.unit,
+PtFoundationsU18.unit
         ]),
     ]
 }

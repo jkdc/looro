@@ -842,6 +842,88 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-read-nachrichtenverlauf",
+      "languageID": "de",
+      "title": "Der Nachrichtenverlauf",
+      "level": "A2",
+      "topic": "nachrichten",
+      "unitID": "de-foundations-u17",
+      "text": "Gruppe « Emmas Geburtstag », Samstagvormittag. Paul: « Hallo ihr zwei ! Habt ihr das Kochbuch schon gekauft ? » Mia: « Ja, gestern gekauft. Ich werde es heute einpacken. Und du bringst die Getränke ? » Paul: « Klar. Anna kann leider nicht kommen. Sie schreibt: Schade, ich muss arbeiten, weil ein Kunde kommt. » Mia: « Mmh, schade. Sie kommt doch sonst immer. » Paul: « Vielleicht geht es am Sonntag — ich frage nach. » Mia: « Gute Idee ! Ich werde dann den Kuchen holen. Bis heute Abend ! » Paul: « Bis dann ! Emma weiß von nichts. »",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "vocab:social-expressions",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-read-nachrichtenverlauf-q1",
+          "kind": "choice",
+          "prompt": "Was wurde schon gekauft ?",
+          "explain": "« Habt ihr das Kochbuch schon gekauft ? » — « Ja, gestern gekauft ».",
+          "answers": [
+            "Das Kochbuch"
+          ],
+          "options": [
+            "Das Kochbuch",
+            "Der Kuchen",
+            "Die Getränke",
+            "Ballons"
+          ]
+        },
+        {
+          "id": "de-read-nachrichtenverlauf-q2",
+          "kind": "written",
+          "prompt": "Was wird Mia heute einpacken ?",
+          "explain": "« Ich werde es heute einpacken » — das Kochbuch.",
+          "answers": [
+            "das kochbuch",
+            "das buch"
+          ]
+        },
+        {
+          "id": "de-read-nachrichtenverlauf-q3",
+          "kind": "choice",
+          "prompt": "Warum kommt Anna nicht ?",
+          "explain": "« Ich muss arbeiten, weil ein Kunde kommt ».",
+          "answers": [
+            "Sie muss arbeiten"
+          ],
+          "options": [
+            "Sie muss arbeiten",
+            "Sie ist krank",
+            "Sie hat keine Zeit für die Gruppe",
+            "Sie weiß von nichts"
+          ]
+        },
+        {
+          "id": "de-read-nachrichtenverlauf-q4",
+          "kind": "choice",
+          "prompt": "Was fragt Paul bei Anna nach ?",
+          "explain": "« Vielleicht geht es am Sonntag — ich frage nach ».",
+          "answers": [
+            "Ob es am Sonntag geht"
+          ],
+          "options": [
+            "Ob es am Sonntag geht",
+            "Ob sie den Kuchen holt",
+            "Ob sie das Kochbuch kauft",
+            "Ob sie Getränke bringt"
+          ]
+        },
+        {
+          "id": "de-read-nachrichtenverlauf-q5",
+          "kind": "written",
+          "prompt": "Wer holt den Kuchen ?",
+          "explain": "« Ich werde dann den Kuchen holen », schreibt Mia.",
+          "answers": [
+            "mia"
+          ]
+        }
+      ]
     }
   ]
 }

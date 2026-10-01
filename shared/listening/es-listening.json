@@ -1989,6 +1989,410 @@
         "grammar:frequency-adverbs"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "es-listen-cena-sorpresa",
+      "languageID": "es",
+      "title": "Una cena de sorpresa",
+      "level": "A1",
+      "topic": "restaurantes",
+      "unitID": "es-foundations-u17",
+      "text": "Es el cumpleaños de Marta. Sus amigos organizan una cena de sorpresa en un restaurante del centro. La carta tiene paella, gazpacho y tortilla. Los amigos piden tres menús y dos jarras de agua. Marta no sabe nada: cree que es una cena normal con su amiga Laura. A las nueve, Marta entra en el restaurante y todos cantan: «¡Sorpresa!». El camarero trae un pastel con velas y dice: «El pastel es de la casa». Marta llora de alegría.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:food",
+        "function:order-food"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-cena-sorpresa-q1",
+          "kind": "choice",
+          "prompt": "¿Quién organiza la cena?",
+          "answers": [
+            "Sus amigos"
+          ],
+          "explain": "Sus amigos organizan una cena de sorpresa.",
+          "options": [
+            "Sus amigos",
+            "Su familia",
+            "Laura",
+            "El camarero"
+          ]
+        },
+        {
+          "id": "es-listen-cena-sorpresa-q2",
+          "kind": "choice",
+          "prompt": "¿Qué hay en la carta?",
+          "answers": [
+            "Paella, gazpacho y tortilla"
+          ],
+          "explain": "La carta tiene paella, gazpacho y tortilla.",
+          "options": [
+            "Paella, gazpacho y tortilla",
+            "Sopa y ensalada",
+            "Pasta y pizza",
+            "Solo postres"
+          ]
+        },
+        {
+          "id": "es-listen-cena-sorpresa-q3",
+          "kind": "written",
+          "prompt": "¿Qué piden para beber?",
+          "answers": [
+            "dos jarras de agua",
+            "jarras de agua",
+            "agua"
+          ],
+          "explain": "Piden dos jarras de agua."
+        },
+        {
+          "id": "es-listen-cena-sorpresa-q4",
+          "kind": "choice",
+          "prompt": "¿Qué cree Marta al principio?",
+          "answers": [
+            "Que es una cena normal"
+          ],
+          "explain": "Cree que es una cena normal con su amiga Laura.",
+          "options": [
+            "Que es una cena normal",
+            "Que es su cumpleaños",
+            "Que Laura no viene",
+            "Que el restaurante está cerrado"
+          ]
+        },
+        {
+          "id": "es-listen-cena-sorpresa-q5",
+          "kind": "written",
+          "prompt": "¿A qué hora entra Marta?",
+          "answers": [
+            "a las nueve",
+            "las nueve",
+            "nueve"
+          ],
+          "explain": "A las nueve, Marta entra en el restaurante."
+        },
+        {
+          "id": "es-listen-cena-sorpresa-q6",
+          "kind": "choice",
+          "prompt": "¿Quién trae el pastel?",
+          "answers": [
+            "El camarero"
+          ],
+          "explain": "El camarero trae un pastel con velas.",
+          "options": [
+            "El camarero",
+            "Laura",
+            "Un amigo",
+            "La madre de Marta"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-listen-plan-cumpleanos",
+      "languageID": "es",
+      "title": "El plan del cumpleaños",
+      "level": "A2",
+      "topic": "planes",
+      "unitID": "es-foundations-u18",
+      "text": "Marta llama a Daniel para organizar el cumpleaños de su amiga Vega, que es el jueves. Marta va a reservar una mesa en un restaurante mexicano, pero prefiere preguntar primero si Vega puede ese día. Daniel se va a encargar del regalo: va a comprarle unos libros, porque Vega lee muchísimo. Van a quedar a las nueve en la puerta del restaurante, y Daniel va a llegar un poco antes con el regalo escondido en la mochila. Marta se ríe: si Vega pregunta por qué van al restaurante, van a decirle que es porque sí.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-plan-cumpleanos-q1",
+          "kind": "choice",
+          "prompt": "¿De quién es el cumpleaños?",
+          "answers": [
+            "De Vega"
+          ],
+          "explain": "Es el cumpleaños de Vega, la amiga de Marta.",
+          "options": [
+            "De Vega",
+            "De Marta",
+            "De Daniel",
+            "De la madre de Marta"
+          ]
+        },
+        {
+          "id": "es-listen-plan-cumpleanos-q2",
+          "kind": "written",
+          "prompt": "¿Qué va a hacer Marta primero?",
+          "answers": [
+            "reservar una mesa",
+            "reservar mesa",
+            "va a reservar una mesa"
+          ],
+          "explain": "Marta va a reservar una mesa en un restaurante mexicano."
+        },
+        {
+          "id": "es-listen-plan-cumpleanos-q3",
+          "kind": "choice",
+          "prompt": "¿Qué va a comprarle Daniel?",
+          "answers": [
+            "Unos libros"
+          ],
+          "explain": "Va a comprarle unos libros, porque Vega lee muchísimo.",
+          "options": [
+            "Unos libros",
+            "Una mochila",
+            "Una mesa",
+            "Un pastel"
+          ]
+        },
+        {
+          "id": "es-listen-plan-cumpleanos-q4",
+          "kind": "choice",
+          "prompt": "¿Por qué elige Daniel libros?",
+          "answers": [
+            "Porque Vega lee muchísimo"
+          ],
+          "explain": "«…porque Vega lee muchísimo».",
+          "options": [
+            "Porque Vega lee muchísimo",
+            "Porque son baratos",
+            "Porque no hay tiendas",
+            "Porque Vega lo pide"
+          ]
+        },
+        {
+          "id": "es-listen-plan-cumpleanos-q5",
+          "kind": "written",
+          "prompt": "¿A qué hora van a quedar?",
+          "answers": [
+            "a las nueve",
+            "las nueve",
+            "nueve"
+          ],
+          "explain": "Van a quedar a las nueve en la puerta del restaurante."
+        },
+        {
+          "id": "es-listen-plan-cumpleanos-q6",
+          "kind": "choice",
+          "prompt": "¿Dónde va a esconder Daniel el regalo?",
+          "answers": [
+            "En la mochila"
+          ],
+          "explain": "Con el regalo escondido en la mochila.",
+          "options": [
+            "En la mochila",
+            "En el coche",
+            "En el restaurante",
+            "En casa de Marta"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-listen-anecdota-verano",
+      "languageID": "es",
+      "title": "La anécdota del concierto",
+      "level": "B1",
+      "topic": "anécdotas",
+      "unitID": "es-foundations-u19",
+      "text": "Marcos cuenta su anécdota del verano. «Pues mira, fui a un concierto en Valencia con mi prima. Llegamos con mucha antelación y comimos en un bar cerca. De repente, mi prima gritó: ¡el ticket! Lo dejó en el bar, así que volvió corriendo mientras yo guardaba el sitio en la cola. Resultó que un camarero encontró el ticket y me lo trajo hasta el recinto. Al final, mi prima entró justo a tiempo y la banda estrenó su canción favorita. Cuando se lo conté a mi madre, no me creyó: dijo que esas cosas solo me pasan a mí».",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:past-simple-irregular",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-anecdota-verano-q1",
+          "kind": "choice",
+          "prompt": "¿Dónde pasó la anécdota?",
+          "answers": [
+            "En Valencia"
+          ],
+          "explain": "«Fui a un concierto en Valencia con mi prima».",
+          "options": [
+            "En Valencia",
+            "En el bar",
+            "En casa de su madre",
+            "En un pueblo"
+          ]
+        },
+        {
+          "id": "es-listen-anecdota-verano-q2",
+          "kind": "written",
+          "prompt": "¿Qué se dejó la prima en el bar?",
+          "answers": [
+            "el ticket",
+            "El ticket",
+            "la entrada"
+          ],
+          "explain": "«¡El ticket! Lo dejó en el bar»."
+        },
+        {
+          "id": "es-listen-anecdota-verano-q3",
+          "kind": "choice",
+          "prompt": "¿Quién encontró el ticket?",
+          "answers": [
+            "Un camarero"
+          ],
+          "explain": "«Resultó que un camarero encontró el ticket».",
+          "options": [
+            "Un camarero",
+            "La madre de Marcos",
+            "Un guardia",
+            "La prima"
+          ]
+        },
+        {
+          "id": "es-listen-anecdota-verano-q4",
+          "kind": "choice",
+          "prompt": "¿Qué hizo Marcos mientras su prima volvía?",
+          "answers": [
+            "Guardó el sitio en la cola"
+          ],
+          "explain": "«Volvió corriendo mientras yo guardaba el sitio en la cola».",
+          "options": [
+            "Guardó el sitio en la cola",
+            "Volvió al bar",
+            "Compró otro ticket",
+            "Entró sin ticket"
+          ]
+        },
+        {
+          "id": "es-listen-anecdota-verano-q5",
+          "kind": "written",
+          "prompt": "¿Qué canción sonó al final?",
+          "answers": [
+            "su canción favorita",
+            "la canción favorita",
+            "canción favorita"
+          ],
+          "explain": "«La banda estrenó su canción favorita»."
+        },
+        {
+          "id": "es-listen-anecdota-verano-q6",
+          "kind": "choice",
+          "prompt": "¿Cómo reaccionó la madre?",
+          "answers": [
+            "No le creyó"
+          ],
+          "explain": "«No me creyó: esas cosas solo me pasan a mí».",
+          "options": [
+            "No le creyó",
+            "Se enfadó",
+            "Lloró",
+            "Fue al concierto"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "es-listen-debate-tacto",
+      "languageID": "es",
+      "title": "Discrepar sin romper",
+      "level": "C1",
+      "topic": "debate",
+      "unitID": "es-foundations-u10",
+      "text": "En el programa «Contrapunto», dos invitados debaten sobre prohibir los coches en el centro. «Creo que la medida es necesaria; la contaminación se ha doblado», arranca Elena. «Entiendo tu punto, pero la gente vive en el centro de paso: primero el transporte público», responde Juan. «Es discutible —matiza ella—, precisamente porque el bus ya duplica su frecuencia». El moderador interviene: «Veo por dónde van ambos: de acuerdo en el fondo, no en el calendario». Juan sonríe: «No lo veo así, pero prometo no volver a aparcar en la plaza». Elena remata: «Y yo prometo no dar nunca más por cerrado un debate a las diez de la noche».",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "es-listen-debate-tacto-q1",
+          "kind": "choice",
+          "prompt": "¿Qué se debate?",
+          "answers": [
+            "Prohibir los coches en el centro"
+          ],
+          "explain": "Debaten sobre prohibir los coches en el centro.",
+          "options": [
+            "Prohibir los coches en el centro",
+            "El precio del bus",
+            "La contaminación de la playa",
+            "El calendario escolar"
+          ]
+        },
+        {
+          "id": "es-listen-debate-tacto-q2",
+          "kind": "choice",
+          "prompt": "¿Cuál es la postura de Elena?",
+          "answers": [
+            "La medida es necesaria"
+          ],
+          "explain": "«La medida es necesaria; la contaminación se ha doblado».",
+          "options": [
+            "La medida es necesaria",
+            "Primero el transporte público",
+            "No hay contaminación",
+            "Es discutible"
+          ]
+        },
+        {
+          "id": "es-listen-debate-tacto-q3",
+          "kind": "choice",
+          "prompt": "¿Cómo responde Juan a Elena?",
+          "answers": [
+            "«Entiendo tu punto, pero…»"
+          ],
+          "explain": "«Entiendo tu punto, pero la gente vive en el centro de paso».",
+          "options": [
+            "«Entiendo tu punto, pero…»",
+            "«No me interesa tu opinión»",
+            "«Estás equivocada por completo»",
+            "«Cambiemos de tema»"
+          ]
+        },
+        {
+          "id": "es-listen-debate-tacto-q4",
+          "kind": "written",
+          "prompt": "¿Por qué dice Elena que es discutible?",
+          "answers": [
+            "porque el bus ya duplica su frecuencia",
+            "el bus ya duplica su frecuencia",
+            "porque el bus duplica su frecuencia"
+          ],
+          "explain": "«Es discutible, precisamente porque el bus ya duplica su frecuencia»."
+        },
+        {
+          "id": "es-listen-debate-tacto-q5",
+          "kind": "choice",
+          "prompt": "¿En qué están de acuerdo ambos, según el moderador?",
+          "answers": [
+            "En el fondo, no en el calendario"
+          ],
+          "explain": "«De acuerdo en el fondo, no en el calendario».",
+          "options": [
+            "En el fondo, no en el calendario",
+            "En nada",
+            "En el precio del transporte",
+            "En prohibir todo"
+          ]
+        },
+        {
+          "id": "es-listen-debate-tacto-q6",
+          "kind": "choice",
+          "prompt": "¿Qué tono tiene el debate al final?",
+          "answers": [
+            "Cordial, con humor"
+          ],
+          "explain": "Las promesas con humor cierran el debate en tono cordial.",
+          "options": [
+            "Cordial, con humor",
+            "Enfrentado",
+            "Triste",
+            "Indiferente"
+          ]
+        }
+      ]
     }
   ]
 }

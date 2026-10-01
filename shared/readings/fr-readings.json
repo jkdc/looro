@@ -865,6 +865,106 @@
           "explain": "Je prends toujours le métro de huit heures."
         }
       ]
+    },
+    {
+      "id": "fr-read-fil-de-messages",
+      "languageID": "fr",
+      "title": "Le fil de messages",
+      "level": "A2",
+      "topic": "messages",
+      "unitID": "fr-foundations-u17",
+      "text": "Léa : Salut Karim ! On va au ciné samedi, ça te dit ?\nKarim : Dommage, je ne peux pas. Je vais aider ma sœur à déménager.\nLéa : Et Mai, elle vient ?\nKarim : Elle va venir, mais elle préfère la fin de journée.\nLéa : Parfait. On va se retrouver à 19 heures devant le cinéma, puis on va manger une pizza.\nKarim : Super. Et pour l'anniversaire de Mai ? Je vais chercher un livre sur les voyages.\nLéa : Bonne idée ! Moi, je vais lui offrir des fleurs. C'est une surprise !\nKarim : Promis, je ne dis rien. À samedi !",
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "vocab:social-expressions",
+        "grammar:going-to"
+      ],
+      "exposureSkills": [
+        "function:make-suggestions"
+      ],
+      "questions": [
+        {
+          "id": "fr-read-fil-de-messages-q1",
+          "kind": "choice",
+          "prompt": "Pourquoi Karim refuse samedi ?",
+          "answers": [
+            "Il aide sa sœur à déménager"
+          ],
+          "explain": "Je vais aider ma sœur à déménager, écrit Karim.",
+          "options": [
+            "Il aide sa sœur à déménager",
+            "Il est malade",
+            "Il travaille",
+            "Il n'aime pas le cinéma"
+          ]
+        },
+        {
+          "id": "fr-read-fil-de-messages-q2",
+          "kind": "choice",
+          "prompt": "À quelle heure le groupe se retrouve-t-il ?",
+          "answers": [
+            "À 19 heures"
+          ],
+          "explain": "On va se retrouver à 19 heures devant le cinéma.",
+          "options": [
+            "À 19 heures",
+            "À 17 heures",
+            "À 21 heures",
+            "À 7 heures"
+          ]
+        },
+        {
+          "id": "fr-read-fil-de-messages-q3",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Léa va offrir à Mai ?",
+          "answers": [
+            "des fleurs",
+            "fleurs"
+          ],
+          "explain": "Moi, je vais lui offrir des fleurs, écrit Léa."
+        },
+        {
+          "id": "fr-read-fil-de-messages-q4",
+          "kind": "choice",
+          "prompt": "Que va faire Karim pour le cadeau ?",
+          "answers": [
+            "Il va chercher un livre"
+          ],
+          "explain": "Je vais chercher un livre sur les voyages.",
+          "options": [
+            "Il va chercher un livre",
+            "Il va faire un gâteau",
+            "Il va acheter des fleurs",
+            "Il ne donne rien"
+          ]
+        },
+        {
+          "id": "fr-read-fil-de-messages-q5",
+          "kind": "choice",
+          "prompt": "Pourquoi Léa écrit-elle « C'est une surprise ! » ?",
+          "answers": [
+            "Mai ne doit pas savoir pour les fleurs"
+          ],
+          "explain": "Le cadeau doit rester secret jusqu'à l'anniversaire.",
+          "options": [
+            "Mai ne doit pas savoir pour les fleurs",
+            "Léa organise une fête chez elle",
+            "Karim offre aussi des fleurs",
+            "Mai déteste les surprises"
+          ]
+        },
+        {
+          "id": "fr-read-fil-de-messages-q6",
+          "kind": "written",
+          "prompt": "Après le film, qu'est-ce que le groupe va manger ?",
+          "answers": [
+            "une pizza",
+            "pizza"
+          ],
+          "explain": "Puis on va manger une pizza, écrit Léa."
+        }
+      ]
     }
   ]
 }

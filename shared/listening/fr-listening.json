@@ -2002,6 +2002,406 @@
           "explain": "Buvez toujours beaucoup d'eau !"
         }
       ]
+    },
+    {
+      "id": "fr-listen-diner-surprise",
+      "languageID": "fr",
+      "title": "Le dîner surprise",
+      "level": "A1",
+      "topic": "restaurant",
+      "unitID": "fr-foundations-u16",
+      "text": "C'est samedi. Karim invite Léa au restaurant, c'est une surprise. Ils prennent une table pour deux en terrasse. Léa veut une pizza, mais il n'y a pas de pizza : elle prend une quiche. Karim commande le poulet avec des frites. Comme boisson, ils prennent une carafe d'eau et un jus d'orange. Après le repas, Karim demande l'addition. Léa veut payer, mais c'est Karim qui paye : c'est son cadeau d'anniversaire. Léa est très contente.",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:food",
+        "function:order-food"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-diner-surprise-q1",
+          "kind": "choice",
+          "prompt": "Où est-ce que Karim invite Léa ?",
+          "answers": [
+            "Au restaurant"
+          ],
+          "explain": "Karim invite Léa au restaurant, c'est une surprise.",
+          "options": [
+            "Au restaurant",
+            "Au cinéma",
+            "À la maison",
+            "Au parc"
+          ]
+        },
+        {
+          "id": "fr-listen-diner-surprise-q2",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Léa prend finalement ?",
+          "answers": [
+            "Une quiche"
+          ],
+          "explain": "Il n'y a pas de pizza, alors elle prend une quiche.",
+          "options": [
+            "Une quiche",
+            "Une pizza",
+            "Une salade",
+            "Le poulet"
+          ]
+        },
+        {
+          "id": "fr-listen-diner-surprise-q3",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Karim commande comme plat ?",
+          "answers": [
+            "le poulet",
+            "poulet",
+            "le poulet avec des frites"
+          ],
+          "explain": "Karim commande le poulet avec des frites."
+        },
+        {
+          "id": "fr-listen-diner-surprise-q4",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qu'ils prennent comme boisson ?",
+          "answers": [
+            "Une carafe d'eau et un jus d'orange"
+          ],
+          "explain": "Ils prennent une carafe d'eau et un jus d'orange.",
+          "options": [
+            "Une carafe d'eau et un jus d'orange",
+            "Deux cafés",
+            "Deux sodas",
+            "Un thé et un café"
+          ]
+        },
+        {
+          "id": "fr-listen-diner-surprise-q5",
+          "kind": "written",
+          "prompt": "Qui paye l'addition ?",
+          "answers": [
+            "karim",
+            "c'est karim"
+          ],
+          "explain": "Léa veut payer, mais c'est Karim qui paye."
+        },
+        {
+          "id": "fr-listen-diner-surprise-q6",
+          "kind": "choice",
+          "prompt": "Pourquoi Karim paye ?",
+          "answers": [
+            "C'est son cadeau d'anniversaire"
+          ],
+          "explain": "Le repas est le cadeau d'anniversaire de Léa.",
+          "options": [
+            "C'est son cadeau d'anniversaire",
+            "Léa n'a pas d'argent",
+            "Le repas est gratuit",
+            "C'est Léa qui invite"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-plan-anniversaire",
+      "languageID": "fr",
+      "title": "Le plan anniversaire",
+      "level": "A2",
+      "topic": "invitations",
+      "unitID": "fr-foundations-u17",
+      "text": "Samedi, c'est l'anniversaire de Mai. Karim appelle Léa pour organiser la surprise. Il va acheter un livre sur les voyages, parce que Mai adore partir. Léa, elle, va lui offrir des fleurs et un gâteau au chocolat : elle va passer à la boulangerie vendredi soir. Ils vont se retrouver chez Karim à sept heures et décorer le salon avant son arrivée. Léa ne peut pas rester tard, parce qu'elle travaille tôt dimanche, mais elle va venir quand même. Mai ne sait rien : elle va arriver à sept heures et demie. Et là, surprise !",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [
+        "grammar:future-forms"
+      ],
+      "questions": [
+        {
+          "id": "fr-listen-plan-anniversaire-q1",
+          "kind": "choice",
+          "prompt": "C'est l'anniversaire de qui samedi ?",
+          "answers": [
+            "De Mai"
+          ],
+          "explain": "Samedi, c'est l'anniversaire de Mai.",
+          "options": [
+            "De Mai",
+            "De Léa",
+            "De Karim",
+            "Du frère de Karim"
+          ]
+        },
+        {
+          "id": "fr-listen-plan-anniversaire-q2",
+          "kind": "choice",
+          "prompt": "Qu'est-ce que Karim va acheter ?",
+          "answers": [
+            "Un livre sur les voyages"
+          ],
+          "explain": "Il va acheter un livre sur les voyages, parce que Mai adore partir.",
+          "options": [
+            "Un livre sur les voyages",
+            "Des fleurs",
+            "Un gâteau au chocolat",
+            "Des décorations"
+          ]
+        },
+        {
+          "id": "fr-listen-plan-anniversaire-q3",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Léa va offrir ?",
+          "answers": [
+            "des fleurs et un gâteau",
+            "des fleurs et un gâteau au chocolat",
+            "des fleurs"
+          ],
+          "explain": "Léa va offrir des fleurs et un gâteau au chocolat."
+        },
+        {
+          "id": "fr-listen-plan-anniversaire-q4",
+          "kind": "choice",
+          "prompt": "Pourquoi Léa ne reste pas tard ?",
+          "answers": [
+            "Elle travaille tôt dimanche"
+          ],
+          "explain": "Elle travaille tôt dimanche, mais elle vient quand même.",
+          "options": [
+            "Elle travaille tôt dimanche",
+            "Elle n'aime pas les fêtes",
+            "Elle est malade",
+            "Elle habite loin"
+          ]
+        },
+        {
+          "id": "fr-listen-plan-anniversaire-q5",
+          "kind": "written",
+          "prompt": "À quelle heure Mai arrive-t-elle ?",
+          "answers": [
+            "sept heures et demie",
+            "7h30"
+          ],
+          "explain": "Elle va arriver à sept heures et demie."
+        },
+        {
+          "id": "fr-listen-plan-anniversaire-q6",
+          "kind": "choice",
+          "prompt": "Où vont-ils décorer ?",
+          "answers": [
+            "Le salon de Karim"
+          ],
+          "explain": "Ils vont se retrouver chez Karim et décorer le salon.",
+          "options": [
+            "Le salon de Karim",
+            "La cuisine de Léa",
+            "Le jardin",
+            "Un restaurant"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-anecdote-ete",
+      "languageID": "fr",
+      "title": "L'anecdote de l'été",
+      "level": "B1",
+      "topic": "récits",
+      "unitID": "fr-foundations-u18",
+      "text": "Cet été, Théo est allé à Marseille rendre visite à sa cousine. D'abord, tout s'est bien passé : ils ont visité le Vieux-Port et mangé des moules face à la mer. Ensuite, sur le chemin du retour, sa voiture est tombée en panne sur l'autoroute. Soudain, un camion s'est arrêté derrière lui, et un homme est descendu avec une grande boîte. Théo a cru qu'il allait lui vendre quelque chose. Mais il s'est avéré que cet homme réparait les voitures bénévolement le week-end : il a retrouvé Théo sur la route en vingt minutes. Au final, Théo est rentré plus tard que prévu, mais avec une belle histoire à raconter. « Sans blague ! », lui a dit sa cousine.",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:past-simple-irregular",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [
+        "vocab:social-expressions"
+      ],
+      "questions": [
+        {
+          "id": "fr-listen-anecdote-ete-q1",
+          "kind": "choice",
+          "prompt": "Pourquoi Théo est-il allé à Marseille ?",
+          "answers": [
+            "Pour rendre visite à sa cousine"
+          ],
+          "explain": "Il est allé à Marseille rendre visite à sa cousine.",
+          "options": [
+            "Pour rendre visite à sa cousine",
+            "Pour travailler",
+            "Pour voir un match",
+            "Pour déménager"
+          ]
+        },
+        {
+          "id": "fr-listen-anecdote-ete-q2",
+          "kind": "choice",
+          "prompt": "Qu'est-ce qui s'est passé sur le chemin du retour ?",
+          "answers": [
+            "Sa voiture est tombée en panne"
+          ],
+          "explain": "Sa voiture est tombée en panne sur l'autoroute.",
+          "options": [
+            "Sa voiture est tombée en panne",
+            "Il a perdu son téléphone",
+            "Il a manqué le train",
+            "Il a oublié son sac"
+          ]
+        },
+        {
+          "id": "fr-listen-anecdote-ete-q3",
+          "kind": "written",
+          "prompt": "Qu'est-ce que Théo a cru au début ?",
+          "answers": [
+            "qu'il allait lui vendre quelque chose",
+            "que l'homme allait lui vendre quelque chose"
+          ],
+          "explain": "Théo a cru que l'homme allait lui vendre quelque chose."
+        },
+        {
+          "id": "fr-listen-anecdote-ete-q4",
+          "kind": "choice",
+          "prompt": "Que faisait l'homme du camion ?",
+          "answers": [
+            "Il réparait les voitures bénévolement"
+          ],
+          "explain": "Il s'est avéré qu'il réparait les voitures bénévolement le week-end.",
+          "options": [
+            "Il réparait les voitures bénévolement",
+            "Il vendait des pièces",
+            "Il cherchait du travail",
+            "Il faisait un contrôle"
+          ]
+        },
+        {
+          "id": "fr-listen-anecdote-ete-q5",
+          "kind": "written",
+          "prompt": "En combien de temps l'homme a-t-il retrouvé Théo sur la route ?",
+          "answers": [
+            "vingt minutes",
+            "20 minutes",
+            "vingt"
+          ],
+          "explain": "L'homme a retrouvé Théo sur la route en vingt minutes."
+        },
+        {
+          "id": "fr-listen-anecdote-ete-q6",
+          "kind": "choice",
+          "prompt": "Quelle a été la réaction de la cousine ?",
+          "answers": [
+            "Sans blague !"
+          ],
+          "explain": "« Sans blague ! », lui a dit sa cousine.",
+          "options": [
+            "Sans blague !",
+            "Et puis ?",
+            "Bonne idée !",
+            "Avec plaisir !"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fr-listen-debat-tacte",
+      "languageID": "fr",
+      "title": "Débat : le tact qui dispute",
+      "level": "C1",
+      "topic": "débats",
+      "unitID": "fr-foundations-u9",
+      "text": "Sur une chaîne d'information, un débat vif mais courtois oppose Nadia Belkacem, économiste, à Gérard Vasseur, chef d'entreprise : la semaine de quatre jours. Nadia ouvre : « Je comprends votre point : la productivité par heure progresse. Cela dit, nos données montrent que les gains restent inégalement répartis. » Gérard enchaîne : « Je vois les choses autrement. Sans pour autant nier la fatigue des salariés, je crains que la mesure ne pénalise les PME. » Le modérateur reformule : « Autrement dit, vous vous accordez sur le diagnostic, mais pas sur le remède ? » Tous deux le concèdent. Nadia tempère : « Je ne suis pas certaine que la comparaison internationale soit transposable, mais je resterai attentive à vos résultats. » Vingt minutes de désaccord poli, sans une once d'agressivité.",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "fr-listen-debat-tacte-q1",
+          "kind": "choice",
+          "prompt": "Quel est le sujet du débat ?",
+          "answers": [
+            "La semaine de quatre jours"
+          ],
+          "explain": "Le débat porte sur la semaine de quatre jours.",
+          "options": [
+            "La semaine de quatre jours",
+            "Les salaires des PME",
+            "La productivité par heure",
+            "La comparaison internationale"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-tacte-q2",
+          "kind": "written",
+          "prompt": "Avec quelle formule Nadia reconnaît-elle d'abord l'argument adverse ?",
+          "answers": [
+            "je comprends votre point",
+            "je comprend votre point"
+          ],
+          "explain": "« Je comprends votre point » : la reconnaissance avant l'objection."
+        },
+        {
+          "id": "fr-listen-debat-tacte-q3",
+          "kind": "choice",
+          "prompt": "Que craint Gérard ?",
+          "answers": [
+            "Que la mesure pénalise les PME"
+          ],
+          "explain": "Je crains que la mesure ne pénalise les PME.",
+          "options": [
+            "Que la mesure pénalise les PME",
+            "Que les salariés soient fatigués",
+            "Que la productivité baisse par heure",
+            "Que les données soient fausses"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-tacte-q4",
+          "kind": "choice",
+          "prompt": "Sur quoi les deux invités s'accordent-ils ?",
+          "answers": [
+            "Le diagnostic"
+          ],
+          "explain": "Vous vous accordez sur le diagnostic, mais pas sur le remède.",
+          "options": [
+            "Le diagnostic",
+            "Le remède",
+            "Le calendrier",
+            "Les salaires"
+          ]
+        },
+        {
+          "id": "fr-listen-debat-tacte-q5",
+          "kind": "written",
+          "prompt": "Quelle réserve finale Nadia formule-t-elle ?",
+          "answers": [
+            "la comparaison internationale n'est peut-être pas transposable",
+            "je ne suis pas certaine que la comparaison soit transposable",
+            "la comparaison n'est pas transposable"
+          ],
+          "explain": "« Je ne suis pas certaine que la comparaison internationale soit transposable »."
+        },
+        {
+          "id": "fr-listen-debat-tacte-q6",
+          "kind": "choice",
+          "prompt": "Comment le commentaire final décrit-il le débat ?",
+          "answers": [
+            "Poli et documenté"
+          ],
+          "explain": "Vingt minutes de désaccord poli, sans une once d'agressivité.",
+          "options": [
+            "Poli et documenté",
+            "Agressif",
+            "Confus",
+            "Superficiel"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -879,6 +879,92 @@
           "explain": "O horário fica na parede da estação."
         }
       ]
+    },
+    {
+      "id": "pt-read-fila-mensagens",
+      "languageID": "pt",
+      "title": "A fila de mensagens da festa",
+      "level": "A2",
+      "topic": "mensagens",
+      "unitID": "pt-foundations-u17",
+      "text": "Mensagens do grupo « Festa da Bia ». Duda: Pessoal, a festa vai ser sábado, na minha casa. Eu vou fazer o bolo de chocolate. Téo: Que legal ! Eu vou comprar as bebidas. Que horas começamos ? Lu: Que pena, gente… não posso sábado, vou visitar meus pais no interior. Duda: Que pena, Lu ! Outro dia a gente comemora juntos. Téo: Combinado. A Bia não pode saber — vai ser uma surpresa ! Lu: Ela vai amar. Boa festa pra vocês !",
+      "questions": [
+        {
+          "id": "pt-read-fila-mensagens-q1",
+          "kind": "choice",
+          "prompt": "Quando vai ser a festa ?",
+          "options": [
+            "No sábado",
+            "No domingo",
+            "Na sexta",
+            "No interior"
+          ],
+          "answers": [
+            "No sábado"
+          ],
+          "explain": "A festa vai ser sábado, na casa da Duda."
+        },
+        {
+          "id": "pt-read-fila-mensagens-q2",
+          "kind": "written",
+          "prompt": "O que a Duda vai fazer ?",
+          "answers": [
+            "o bolo",
+            "o bolo de chocolate",
+            "fazer o bolo"
+          ],
+          "explain": "Eu vou fazer o bolo de chocolate."
+        },
+        {
+          "id": "pt-read-fila-mensagens-q3",
+          "kind": "choice",
+          "prompt": "Por que a Lu não pode ir ?",
+          "options": [
+            "Vai visitar os pais",
+            "Vai trabalhar",
+            "Vai estudar",
+            "Vai ao médico"
+          ],
+          "answers": [
+            "Vai visitar os pais"
+          ],
+          "explain": "Não posso sábado, vou visitar meus pais no interior."
+        },
+        {
+          "id": "pt-read-fila-mensagens-q4",
+          "kind": "choice",
+          "prompt": "Quantas pessoas vão à festa ?",
+          "options": [
+            "Duas",
+            "Três",
+            "Quatro",
+            "Nenhuma"
+          ],
+          "answers": [
+            "Duas"
+          ],
+          "explain": "A Lu não vai: só a Duda e o Téo vão à festa."
+        },
+        {
+          "id": "pt-read-fila-mensagens-q5",
+          "kind": "written",
+          "prompt": "O que a Bia não pode saber ?",
+          "answers": [
+            "a festa",
+            "da festa",
+            "a surpresa",
+            "que tem festa"
+          ],
+          "explain": "A Bia não pode saber: vai ser uma surpresa !"
+        }
+      ],
+      "skills": [
+        "reading:detail",
+        "reading:inference",
+        "vocab:social-expressions",
+        "grammar:going-to"
+      ],
+      "exposureSkills": []
     }
   ]
 }

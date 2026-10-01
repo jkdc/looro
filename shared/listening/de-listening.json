@@ -1950,6 +1950,390 @@
           ]
         }
       ]
+    },
+    {
+      "id": "de-listen-ueberraschungsfest",
+      "languageID": "de",
+      "title": "Das Überraschungsfest",
+      "level": "A1",
+      "topic": "essen",
+      "unitID": "de-foundations-u16",
+      "text": "Es ist Freitag. Sascha hat morgen Geburtstag, aber er weiß nichts. Anna ruft im Restaurant Adler an: « Wir möchten einen Tisch für zehn Personen reservieren. » — « Kein Problem », sagt der Kellner. « Was möchten Sie essen ? » — « Zehn Pizzen, bitte. Und was ist in der Pizza Funghi ? » — « Pilze und Käse. » Am Samstag kommen alle um sechs, Sascha um sieben. Alle rufen: « Überraschung ! » Sascha freut sich sehr: « Ihr seid die besten Freunde ! »",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:food",
+        "function:order-food"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-ueberraschungsfest-q1",
+          "kind": "choice",
+          "prompt": "Wann hat Sascha Geburtstag ?",
+          "explain": "Es ist Freitag, und Sascha hat morgen Geburtstag.",
+          "answers": [
+            "Morgen"
+          ],
+          "options": [
+            "Morgen",
+            "Heute",
+            "Am Freitag",
+            "Nächste Woche"
+          ]
+        },
+        {
+          "id": "de-listen-ueberraschungsfest-q2",
+          "kind": "written",
+          "prompt": "Wen ruft Anna an ?",
+          "explain": "Anna ruft im Restaurant Adler an.",
+          "answers": [
+            "im restaurant adler",
+            "restaurant adler",
+            "das restaurant adler"
+          ]
+        },
+        {
+          "id": "de-listen-ueberraschungsfest-q3",
+          "kind": "written",
+          "prompt": "Was möchten sie essen ?",
+          "explain": "« Zehn Pizzen, bitte », sagt Anna.",
+          "answers": [
+            "zehn pizzen",
+            "10 pizzen",
+            "zehn pizza"
+          ]
+        },
+        {
+          "id": "de-listen-ueberraschungsfest-q4",
+          "kind": "choice",
+          "prompt": "Was ist in der Pizza Funghi ?",
+          "explain": "« Pilze und Käse », sagt der Kellner.",
+          "answers": [
+            "Pilze und Käse"
+          ],
+          "options": [
+            "Pilze und Käse",
+            "Schinken und Käse",
+            "Tomaten und Salat",
+            "Nur Käse"
+          ]
+        },
+        {
+          "id": "de-listen-ueberraschungsfest-q5",
+          "kind": "written",
+          "prompt": "Wann kommen die Freunde ?",
+          "explain": "Am Samstag kommen alle um sechs.",
+          "answers": [
+            "um sechs",
+            "um 6",
+            "um sechs uhr"
+          ]
+        },
+        {
+          "id": "de-listen-ueberraschungsfest-q6",
+          "kind": "choice",
+          "prompt": "Wie findet Sascha die Party ?",
+          "explain": "Er freut sich sehr und dankt seinen Freunden.",
+          "answers": [
+            "Er freut sich sehr"
+          ],
+          "options": [
+            "Er freut sich sehr",
+            "Er ist müde",
+            "Er möchte zahlen",
+            "Er geht nach Hause"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-geburtstagsplan",
+      "languageID": "de",
+      "title": "Der Geburtstagsplan",
+      "level": "A2",
+      "topic": "geschenke",
+      "unitID": "de-foundations-u17",
+      "text": "Mia und Paul planen Emmas Geburtstag am Samstag. « Was werden wir ihr schenken ? », fragt Mia. « Ich werde ein Kochbuch kaufen — sie kocht so gern », sagt Paul. « Gute Idee ! Ich bestelle eine Kerze und Ballons. » Dann wird Mia still: « Ich kann leider nicht kommen, weil ich am Samstag arbeiten muss. » « Schade », sagt Paul, « aber am Abend feiern wir in der Pizzeria Sonne. Kommst du danach ? » « Klar, ab acht Uhr bin ich dabei. » Am Ende lachen sie: Emma weiß von nichts.",
+      "skills": [
+        "listening:gist",
+        "listening:inference",
+        "grammar:going-to",
+        "vocab:social-expressions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-geburtstagsplan-q1",
+          "kind": "choice",
+          "prompt": "Was wird Paul Emma schenken ?",
+          "explain": "« Ich werde ein Kochbuch kaufen — sie kocht so gern ».",
+          "answers": [
+            "Ein Kochbuch"
+          ],
+          "options": [
+            "Ein Kochbuch",
+            "Kerzen und Ballons",
+            "Eine Kette",
+            "Konzertkarten"
+          ]
+        },
+        {
+          "id": "de-listen-geburtstagsplan-q2",
+          "kind": "written",
+          "prompt": "Was bestellt Mia ?",
+          "explain": "« Ich bestelle eine Kerze und Ballons. »",
+          "answers": [
+            "eine kerze und ballons",
+            "kerze und ballons",
+            "eine kerze, ballons"
+          ]
+        },
+        {
+          "id": "de-listen-geburtstagsplan-q3",
+          "kind": "written",
+          "prompt": "Warum kann Mia nicht kommen ?",
+          "explain": "Sie muss am Samstag arbeiten.",
+          "answers": [
+            "weil sie arbeiten muss",
+            "sie muss arbeiten",
+            "arbeiten"
+          ]
+        },
+        {
+          "id": "de-listen-geburtstagsplan-q4",
+          "kind": "choice",
+          "prompt": "Wo feiern sie am Abend ?",
+          "explain": "« … am Abend feiern wir in der Pizzeria Sonne ».",
+          "answers": [
+            "In der Pizzeria Sonne"
+          ],
+          "options": [
+            "In der Pizzeria Sonne",
+            "Zu Hause",
+            "Im Restaurant Adler",
+            "Im Park"
+          ]
+        },
+        {
+          "id": "de-listen-geburtstagsplan-q5",
+          "kind": "written",
+          "prompt": "Wann ist Mia dabei ?",
+          "explain": "« Ab acht Uhr bin ich dabei. »",
+          "answers": [
+            "ab acht uhr",
+            "ab 8 uhr",
+            "nach acht uhr"
+          ]
+        },
+        {
+          "id": "de-listen-geburtstagsplan-q6",
+          "kind": "choice",
+          "prompt": "Was erfährt Emma noch nicht ?",
+          "explain": "Emma weiß von nichts — sie soll überrascht sein.",
+          "answers": [
+            "Von der Party"
+          ],
+          "options": [
+            "Von der Party",
+            "Von dem Kochbuch",
+            "Von der Arbeit",
+            "Von den Ballons"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-sommerepisode",
+      "languageID": "de",
+      "title": "Die Sommerepisode",
+      "level": "B1",
+      "topic": "erlebnisse",
+      "unitID": "de-foundations-u18",
+      "text": "Kim trifft Tim im Park. « Du wolltest doch was erzählen », sagt Kim. Tim nickt: « Letzten Sommer arbeitete ich in einem Café am See. Einmal bestellte ein Gast elfmal Cappuccino — einen nach dem anderen. » « Nicht zu fassen ! », ruft Kim. « Und dann ? » « Ich brachte alle Tassen hinaus. Plötzlich stand seine ganze Familie auf und verteilte den Kaffee an die Passanten am Weg. » « Was ? Warum ? » « Es stellte sich heraus, dass er seinen siebzigsten Geburtstag feierte und jedem eine Freude machen wollte. Am Ende lachte der ganze See. » Kim schüttelt den Kopf: « Solche Geschichten passieren nur dir. »",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:past-simple-irregular",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-sommerepisode-q1",
+          "kind": "choice",
+          "prompt": "Wo arbeitete Tim letzten Sommer ?",
+          "explain": "« Letzten Sommer arbeitete ich in einem Café am See ».",
+          "answers": [
+            "In einem Café am See"
+          ],
+          "options": [
+            "In einem Café am See",
+            "In einem Park",
+            "In einer Bäckerei",
+            "Auf einem Boot"
+          ]
+        },
+        {
+          "id": "de-listen-sommerepisode-q2",
+          "kind": "written",
+          "prompt": "Was bestellte der Gast ?",
+          "explain": "Einmal bestellte ein Gast elfmal Cappuccino.",
+          "answers": [
+            "elfmal cappuccino",
+            "elf cappuccinos",
+            "elfmal cappuccino"
+          ]
+        },
+        {
+          "id": "de-listen-sommerepisode-q3",
+          "kind": "choice",
+          "prompt": "Wer stand plötzlich auf ?",
+          "explain": "« Plötzlich stand seine ganze Familie auf ».",
+          "answers": [
+            "Seine ganze Familie"
+          ],
+          "options": [
+            "Seine ganze Familie",
+            "Die Passanten",
+            "Kim und Tim",
+            "Der Chef des Cafés"
+          ]
+        },
+        {
+          "id": "de-listen-sommerepisode-q4",
+          "kind": "written",
+          "prompt": "Warum machte der Gast das ?",
+          "explain": "Er feierte seinen siebzigsten Geburtstag und wollte jedem eine Freude machen.",
+          "answers": [
+            "geburtstag",
+            "er feierte seinen siebzigsten geburtstag",
+            "siebzigster geburtstag"
+          ]
+        },
+        {
+          "id": "de-listen-sommerepisode-q5",
+          "kind": "choice",
+          "prompt": "Wie endete die Geschichte ?",
+          "explain": "« Am Ende lachte der ganze See ».",
+          "answers": [
+            "Alle lachten"
+          ],
+          "options": [
+            "Alle lachten",
+            "Die Familie ging wütend",
+            "Tim verlor den Job",
+            "Es begann zu regnen"
+          ]
+        },
+        {
+          "id": "de-listen-sommerepisode-q6",
+          "kind": "choice",
+          "prompt": "Was meint Kim mit ihrem Schluss ?",
+          "explain": "« Solche Geschichten passieren nur dir » — scherzhaft: nur Tim erlebt so etwas.",
+          "answers": [
+            "Tim erlebt solche Dinge oft"
+          ],
+          "options": [
+            "Tim erlebt solche Dinge oft",
+            "Tim soll aufhören zu arbeiten",
+            "Tim lügt",
+            "Tim mag keinen Kaffee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-listen-debatte-takt",
+      "languageID": "de",
+      "title": "Debatte mit Takt",
+      "level": "C1",
+      "topic": "debatte",
+      "unitID": "de-foundations-u9",
+      "text": "In der Sendung « Punkt kontra Punkt » streiten Hana Berger und Robert Falk über autofreie Innenstädte. Falk beginnt: « Der Handel wird leiden, das ist doch klar. » Berger bleibt ruhig: « Ich verstehe die Sorge, aber die Zahlen aus anderen Städten widersprechen ihr. » Falk schärft nach: « Das mag stimmen, allerdings handelt es sich um Großstädte. » — « Da bin ich ganz bei Ihnen », sagt Berger, « dennoch war auch Freiburg vor zwanzig Jahren skeptisch. » Der Moderator greift ein: « Sie widersprechen sich höflich — wie geht das ? » Berger lacht: « Erst würdigen, dann kontern. Und nie den Menschen, immer die Position angreifen. » Falk nickt: « Daran könnte ich mich gewöhnen. »",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "de-listen-debatte-takt-q1",
+          "kind": "choice",
+          "prompt": "Welche Sorge äußert Falk zuerst ?",
+          "explain": "« Der Handel wird leiden, das ist doch klar ».",
+          "answers": [
+            "Der Handel wird leiden"
+          ],
+          "options": [
+            "Der Handel wird leiden",
+            "Die Luft wird schlechter",
+            "Die Stadt wird lauter",
+            "Die Mieten steigen"
+          ]
+        },
+        {
+          "id": "de-listen-debatte-takt-q2",
+          "kind": "written",
+          "prompt": "Wie beginnt Berger ihren Widerspruch ?",
+          "explain": "« Ich verstehe die Sorge, aber… » — erst Verständnis, dann Kontra.",
+          "answers": [
+            "ich verstehe die sorge",
+            "ich verstehe ihre sorge"
+          ]
+        },
+        {
+          "id": "de-listen-debatte-takt-q3",
+          "kind": "choice",
+          "prompt": "Was räumt Falk ein und begrenzt er zugleich ?",
+          "explain": "« Das mag stimmen, allerdings handelt es sich um Großstädte ».",
+          "answers": [
+            "Dass die Zahlen stimmen, aber nur für Großstädte"
+          ],
+          "options": [
+            "Dass die Zahlen stimmen, aber nur für Großstädte",
+            "Dass Freiburg skeptisch war",
+            "Dass der Handel leidet",
+            "Dass Berger recht hat"
+          ]
+        },
+        {
+          "id": "de-listen-debatte-takt-q4",
+          "kind": "written",
+          "prompt": "Welches Beispiel nennt Berger ?",
+          "explain": "« Dennoch war auch Freiburg vor zwanzig Jahren skeptisch ».",
+          "answers": [
+            "freiburg"
+          ]
+        },
+        {
+          "id": "de-listen-debatte-takt-q5",
+          "kind": "choice",
+          "prompt": "Was empfiehlt Berger für den höflichen Widerspruch ?",
+          "explain": "« Erst würdigen, dann kontern. Und nie den Menschen, immer die Position angreifen ».",
+          "answers": [
+            "Erst würdigen, dann die Position angreifen"
+          ],
+          "options": [
+            "Erst würdigen, dann die Position angreifen",
+            "Immer den Menschen angreifen",
+            "Nie widersprechen",
+            "Lauter werden"
+          ]
+        },
+        {
+          "id": "de-listen-debatte-takt-q6",
+          "kind": "written",
+          "prompt": "Wie reagiert Falk am Ende ?",
+          "explain": "« Daran könnte ich mich gewöhnen » — er erkennt Bergers Takt halb im Scherz an.",
+          "answers": [
+            "daran könnte ich mich gewöhnen",
+            "daran konnte ich mich gewohnen"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -3632,6 +3632,176 @@
           "prerequisites": [
             "grammar:connectors"
           ]
+        },
+        {
+          "id": "de-foundations-u9-debattieren",
+          "title": "Einig im Uneinig",
+          "goal": "Höflich widersprechen: Zustimmung signalisieren und dann den eigenen Standpunkt setzen.",
+          "intro": {
+            "explanation": [
+              "Der klassische konzessive Einstieg: « Ich verstehe Ihren Punkt, aber… » — erst Verständnis zeigen, dann folgt der Widerspruch.",
+              "Variationen desselben Musters: « Da bin ich ganz bei Ihnen, dennoch… », « Das mag stimmen, allerdings… » — stets Anerkennung plus Aber.",
+              "Schärfer, doch gewahrt: « Dem kann ich so nicht zustimmen, denn die Zahlen sagen etwas anderes. » Der denn-Satz liefert das Argument."
+            ],
+            "examples": [
+              {
+                "text": "Ich verstehe Ihren Punkt, aber die Datenlage ist eine andere.",
+                "meaning": "Verständnis + Widerspruch."
+              },
+              {
+                "text": "Da bin ich ganz bei Ihnen, dennoch halte ich den Vorschlag für riskant.",
+                "meaning": "dennoch: formell kontrastierend."
+              },
+              {
+                "text": "Das mag stimmen, allerdings nur für den städtischen Raum.",
+                "meaning": "Einräumen und zugleich begrenzen."
+              },
+              {
+                "text": "Dem kann ich so nicht zustimmen, denn die Zahlen sagen etwas anderes.",
+                "meaning": "Sachliche, argumentierte Ablehnung."
+              },
+              {
+                "text": "Einerseits leuchtet mir das ein, andererseits fehlt die Evaluation.",
+                "meaning": "Abwägen in der Debatte."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "ich verstehe Ihren Punkt, aber…",
+              "meaning": "Konzessiver Widerspruch.",
+              "note": "…aber die Datenlage ist anders."
+            },
+            {
+              "text": "da bin ich ganz bei Ihnen, dennoch…",
+              "meaning": "Einverständnis + Kontra.",
+              "note": "dennoch = trotzdem, formell."
+            },
+            {
+              "text": "das mag stimmen, allerdings…",
+              "meaning": "Einräumen + begrenzen.",
+              "note": "allerdings nur zum Teil."
+            },
+            {
+              "text": "dem kann ich so nicht zustimmen",
+              "meaning": "Sachlicher Widerspruch.",
+              "note": "…, denn …"
+            },
+            {
+              "text": "einerseits … andererseits…",
+              "meaning": "Abwägen.",
+              "note": "beide Seiten benennen."
+            }
+          ],
+          "situation": "In der Runde lobt man den Vorschlag, Sie sehen es anders: erst würdigen Sie das Argument, dann widersprechen Sie mit Daten — freundlich, aber unmissverständlich.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Widersprechen Sie höflich: Sie verstehen den Punkt, aber die Datenlage ist anders.",
+                "expected": [
+                  "ich verstehe ihren punkt aber die datenlage ist eine andere",
+                  "Ich verstehe Ihren Punkt, aber die Datenlage ist eine andere."
+                ],
+                "focus": "ich verstehe ihren punkt",
+                "watch": "Erst Verständnis, dann aber."
+              },
+              {
+                "prompt": "Stimmen Sie zunächst zu und halten dennoch den Vorschlag für riskant.",
+                "expected": [
+                  "Da bin ich ganz bei Ihnen, dennoch halte ich den Vorschlag für riskant.",
+                  "da bin ich ganz bei ihnen dennoch halte ich den vorschlag fur riskant"
+                ],
+                "focus": "dennoch",
+                "watch": "Einverständnis + dennoch."
+              },
+              {
+                "prompt": "Räumen Sie ein und begrenzen Sie: stimmt, aber nur für den städtischen Raum.",
+                "expected": [
+                  "Das mag stimmen, allerdings nur für den städtischen Raum.",
+                  "das mag stimmen allerdings nur für den städtischen raum",
+                  "das mag stimmen allerdings nur fur den stadtischen raum"
+                ],
+                "focus": "das mag stimmen",
+                "watch": "Einräumen mit allerdings."
+              },
+              {
+                "prompt": "Widersprechen Sie sachlich und nennen Sie die Zahlen als Grund.",
+                "expected": [
+                  "Dem kann ich so nicht zustimmen, denn die Zahlen sagen etwas anderes.",
+                  "dem kann ich so nicht zustimmen denn die zahlen sagen etwas anderes"
+                ],
+                "focus": "dem kann ich so nicht zustimmen",
+                "watch": "denn + Argument."
+              },
+              {
+                "prompt": "Wägen Sie ab: einleuchtend einerseits, fehlende Evaluation andererseits.",
+                "expected": [
+                  "Einerseits leuchtet mir das ein, andererseits fehlt die Evaluation.",
+                  "einerseits leuchtet mir das ein andererseits fehlt die evaluation"
+                ],
+                "focus": "einerseits … andererseits",
+                "watch": "Beide Seiten benennen."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u9-debattieren-e1",
+              "kind": "choice",
+              "prompt": "Widerspruch mit Verständnis: « Ich verstehe Ihren Punkt, ___ die Zahlen widersprechen Ihnen. »",
+              "explain": "aber nach dem Verständnis: der konzessive Widerspruch.",
+              "answers": [
+                "aber"
+              ],
+              "options": [
+                "aber",
+                "denn",
+                "sondern",
+                "also"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-debattieren-e2",
+              "kind": "gap",
+              "prompt": "Da bin ich ganz bei Ihnen, ___ halte ich den Plan für riskant. (formeller Kontrast)",
+              "explain": "dennoch verbindet Zustimmung und Widerspruch formell.",
+              "answers": [
+                "dennoch"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-debattieren-e3",
+              "kind": "order",
+              "prompt": "Widersprechen Sie mit Verständnis: die Zahlen sprechen dagegen.",
+              "explain": "Erst Verständnis, dann Kontra mit aber.",
+              "answers": [
+                "Ich verstehe Ihren Punkt aber die Zahlen widersprechen"
+              ]
+            },
+            {
+              "id": "de-foundations-u9-debattieren-e4",
+              "kind": "written",
+              "prompt": "Räumen Sie ein und begrenzen Sie: stimmt, aber nur im städtischen Raum.",
+              "explain": "« Das mag stimmen, allerdings… » räumt ein und begrenzt zugleich.",
+              "answers": [
+                "das mag stimmen allerdings nur im stadtischen raum",
+                "das mag stimmen allerdings nur für den städtischen raum",
+                "das mag stimmen allerdings nur fur den stadtischen raum"
+              ]
+            }
+          ],
+          "skills": [
+            "function:express-opinion",
+            "speaking:sustained-conversation",
+            "grammar:connectors",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
         }
       ]
     },
@@ -6849,6 +7019,1634 @@
           ],
           "prerequisites": [
             "grammar:frequency-adverbs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u16",
+      "title": "Am Tisch",
+      "subtitle": "Essen gehen",
+      "level": "A1",
+      "themes": [
+        {
+          "id": "im-restaurant",
+          "title": "Im Restaurant",
+          "subtitle": "Ich nehme …",
+          "symbol": "fork.knife",
+          "category": "Course",
+          "situation": "Lena und Kim essen im Café: die Kellnerin fragt, was sie möchten — und alle bestellen.",
+          "colorIndex": 0
+        },
+        {
+          "id": "die-karte",
+          "title": "Die Karte",
+          "subtitle": "Was ist in … ?",
+          "symbol": "takeout.bag",
+          "category": "Course",
+          "situation": "Auf der Karte stehen Vorspeisen, Hauptgerichte und Getränke. Was ist in der Suppe ? Fragt nach.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u16-restaurant",
+          "title": "Im Restaurant",
+          "goal": "Im Restaurant bestellen: was man möchte, höflich sagen.",
+          "intro": {
+            "explanation": [
+              "Bestellen mit ich nehme: « Ich nehme die Tomatensuppe. » Und zum Nachbarn: « Und für dich ? »",
+              "Höflicher ist möchte: « Ich möchte einen Kaffee, bitte. » möchte steht wie ein Modalverb: ich möchte, du möchtest, Sie möchten.",
+              "Die Kellnerin fragt: « Was möchten Sie ? » — Antwort kurz: « Ein Wasser, bitte. »"
+            ],
+            "examples": [
+              {
+                "text": "Ich nehme den Salat.",
+                "meaning": "Bestellen: ich nehme + Akkusativ."
+              },
+              {
+                "text": "Ich möchte einen Kaffee, bitte.",
+                "meaning": "Höflich: möchte + Akkusativ."
+              },
+              {
+                "text": "Was nimmst du ?",
+                "meaning": "Frage am Tisch."
+              },
+              {
+                "text": "Ein Wasser für mich, bitte.",
+                "meaning": "Beim Bestellen: ein Wasser statt eines."
+              },
+              {
+                "text": "Und für dich ?",
+                "meaning": "Zurückfragen am Tisch."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich nehme …",
+              "meaning": "Bestellen.",
+              "note": "Ich nehme die Suppe."
+            },
+            {
+              "text": "Ich möchte …",
+              "meaning": "Wünschen.",
+              "note": "möchte + Akkusativ: einen Kaffee"
+            },
+            {
+              "text": "Was nimmst du ?",
+              "meaning": "Fragen.",
+              "note": "nehmen → du nimmst (a → ä)"
+            },
+            {
+              "text": "… , bitte !",
+              "meaning": "Höflich.",
+              "note": "Ein Wasser, bitte !"
+            },
+            {
+              "text": "Und für dich ?",
+              "meaning": "Zurückfragen.",
+              "note": "höflich: Und für Sie ?"
+            }
+          ],
+          "situation": "Lena und Kim sitzen im Café. Die Kellnerin fragt: « Was möchten Sie ? » — Lena möchte Suppe, Kim nimmt Salat, und beide trinken Wasser.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Bestelle: du nimmst die Tomatensuppe.",
+                "expected": [
+                  "Ich nehme die Tomatensuppe.",
+                  "ich nehme die tomatensuppe"
+                ],
+                "focus": "ich nehme",
+                "watch": "nehmen → ich nehme."
+              },
+              {
+                "prompt": "Bestelle höflich: einen Kaffee.",
+                "expected": [
+                  "Ich möchte einen Kaffee, bitte.",
+                  "ich möchte einen kaffee bitte",
+                  "Ich moechte einen Kaffee, bitte."
+                ],
+                "focus": "ich möchte",
+                "watch": "der Kaffee → einen Kaffee (Akkusativ)."
+              },
+              {
+                "prompt": "Frag deine Freundin am Tisch, was sie nimmt.",
+                "expected": [
+                  "Was nimmst du ?",
+                  "was nimmst du"
+                ],
+                "focus": "was nimmst du",
+                "watch": "nehmen → du nimmst (a → ä)."
+              },
+              {
+                "prompt": "Bestelle ein Wasser, ganz ohne Artikelwort.",
+                "expected": [
+                  "Ein Wasser, bitte.",
+                  "ein wasser bitte"
+                ],
+                "focus": "ein wasser",
+                "watch": "Bestellung kurz: ein Wasser, bitte."
+              },
+              {
+                "prompt": "Frag zurück: und deine Freundin ?",
+                "expected": [
+                  "Und für dich ?",
+                  "und fur dich",
+                  "und für dich"
+                ],
+                "focus": "und für dich",
+                "watch": "für + dich (Akkusativ)."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u16-restaurant-e1",
+              "kind": "choice",
+              "prompt": "Kellnerin: « Was ___ Sie ? »",
+              "explain": "Sie möchten: möchten für Sie und wir.",
+              "answers": [
+                "möchten"
+              ],
+              "options": [
+                "möchten",
+                "möchte",
+                "nimmst",
+                "ist"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-restaurant-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ die Tomatensuppe. (bestellen — mit nehmen)",
+              "explain": "nehmen → ich nehme: so bestellt man.",
+              "answers": [
+                "nehme"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-restaurant-e3",
+              "kind": "order",
+              "prompt": "Bestelle höflich einen Orangensaft.",
+              "explain": "möchte + Akkusativ + bitte: die höfliche Bestellung.",
+              "answers": [
+                "Ich möchte einen Orangensaft, bitte"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-restaurant-e4",
+              "kind": "written",
+              "prompt": "Sag, was du isst: du nimmst den Salat.",
+              "explain": "Bestellen mit nehmen oder möchte: ich nehme den Salat.",
+              "answers": [
+                "ich nehme den salat",
+                "ich moechte den salat",
+                "ich möchte den salat",
+                "ich nehme einen salat"
+              ]
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-simple",
+            "function:ask-simple-questions"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u16-karte",
+          "title": "Die Karte",
+          "goal": "Die Karte lesen: Gerichte und Getränke nennen und fragen, was drin ist.",
+          "intro": {
+            "explanation": [
+              "Die Karte hat Gänge: die Vorspeise, das Hauptgericht, der Nachtisch. Getränke: das Wasser, der Saft, der Kaffee.",
+              "Fragen, was drin ist: « Was ist in der Suppe ? » — « Tomaten und Kartoffeln. » in + Dativ: in der Suppe, im Salat.",
+              "Antwort im Plural mit sind: « Im Salat sind Tomaten und Käse. »"
+            ],
+            "examples": [
+              {
+                "text": "Die Karte, bitte.",
+                "meaning": "Nach der Karte fragen."
+              },
+              {
+                "text": "Was ist in der Suppe ?",
+                "meaning": "Nach den Zutaten fragen."
+              },
+              {
+                "text": "Im Salat sind Tomaten und Käse.",
+                "meaning": "Plural: sind — im = in dem."
+              },
+              {
+                "text": "Die Vorspeise ist eine kleine Suppe.",
+                "meaning": "Vorspeise = erster Gang."
+              },
+              {
+                "text": "Was nehmt ihr zu trinken ?",
+                "meaning": "Nach den Getränken fragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "die Vorspeise / das Hauptgericht / der Nachtisch",
+              "meaning": "Die Gänge der Karte.",
+              "note": "Nachtisch = postre."
+            },
+            {
+              "text": "Was ist in … ?",
+              "meaning": "Nach den Zutaten fragen.",
+              "note": "Was ist in der Soße ?"
+            },
+            {
+              "text": "in der Suppe / im Salat",
+              "meaning": "in + Dativ.",
+              "note": "im = in dem."
+            },
+            {
+              "text": "zu trinken / zu essen",
+              "meaning": "Getränke / Essen.",
+              "note": "Was gibt es zu trinken ?"
+            },
+            {
+              "text": "Wie schmeckt es ?",
+              "meaning": "Nach dem Geschmack fragen.",
+              "note": "Es schmeckt gut !"
+            }
+          ],
+          "situation": "Zuerst kommt die Karte: Vorspeise, Hauptgericht, Nachtisch. Kim fragt, was in der Suppe ist, Lena fragt, was es zu trinken gibt.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Frag, was in der Suppe ist.",
+                "expected": [
+                  "Was ist in der Suppe ?",
+                  "was ist in der suppe"
+                ],
+                "focus": "was ist in",
+                "watch": "in + Dativ: in der Suppe."
+              },
+              {
+                "prompt": "Sag, was im Salat ist: Tomaten und Käse.",
+                "expected": [
+                  "Im Salat sind Tomaten und Käse.",
+                  "im salat sind tomaten und käse",
+                  "Im Salat sind Tomaten und Kaese."
+                ],
+                "focus": "im salat sind",
+                "watch": "Plural: sind."
+              },
+              {
+                "prompt": "Frag, was es zu trinken gibt.",
+                "expected": [
+                  "Was gibt es zu trinken ?",
+                  "was gibt es zu trinken"
+                ],
+                "focus": "zu trinken",
+                "watch": "zu + Infinitiv: zu trinken."
+              },
+              {
+                "prompt": "Sag, was du trinkst: einen Apfelsaft.",
+                "expected": [
+                  "Ich nehme einen Apfelsaft.",
+                  "ich nehme einen apfelsaft",
+                  "Ich moechte einen Apfelsaft.",
+                  "Ich möchte einen Apfelsaft."
+                ],
+                "focus": "ich nehme",
+                "watch": "der Saft → einen Saft (Akkusativ)."
+              },
+              {
+                "prompt": "Frag, wie die Suppe schmeckt.",
+                "expected": [
+                  "Wie schmeckt die Suppe ?",
+                  "wie schmeckt die suppe",
+                  "Wie schmeckt es ?"
+                ],
+                "focus": "wie schmeckt",
+                "watch": "schmecken: Wie schmeckt es ?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u16-karte-e1",
+              "kind": "choice",
+              "prompt": "___ ist in der Suppe ?",
+              "explain": "Nach den Zutaten fragen: Was ist in … ?",
+              "answers": [
+                "Was"
+              ],
+              "options": [
+                "Was",
+                "Wo",
+                "Wie",
+                "Wer"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-karte-e2",
+              "kind": "gap",
+              "prompt": "Im Salat ___ Tomaten und Käse.",
+              "explain": "Plural: sind — im Salat sind Tomaten.",
+              "answers": [
+                "sind"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-karte-e3",
+              "kind": "order",
+              "prompt": "Frag, was in der Soße ist.",
+              "explain": "Was ist in + Dativ: so fragt man nach Zutaten.",
+              "answers": [
+                "Was ist in der Soße"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-karte-e4",
+              "kind": "written",
+              "prompt": "Sag, was du zu trinken nimmst. (ein Mineralwasser)",
+              "explain": "Getränk bestellen: ich nehme ein Mineralwasser.",
+              "answers": [
+                "ich nehme ein mineralwasser",
+                "ich moechte ein mineralwasser",
+                "ich möchte ein mineralwasser"
+              ]
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "vocab:food",
+            "grammar:present-questions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "de-foundations-u16-rechnung",
+          "title": "Die Rechnung",
+          "goal": "Um die Rechnung bitten, zusammen oder getrennt zahlen und Trinkgeld geben.",
+          "intro": {
+            "explanation": [
+              "Um die Rechnung bitten: « Die Rechnung, bitte ! » oder « Ich möchte zahlen. »",
+              "Die Kellnerin fragt: « Zusammen oder getrennt ? » — zusammen = alle zahlen alles, getrennt = jeder zahlt für sich.",
+              "Der Betrag: « Das macht vierundzwanzig Euro. » Trinkgeld gibt man so: « Stimmt so. » — der Kellner behält den Rest."
+            ],
+            "examples": [
+              {
+                "text": "Die Rechnung, bitte !",
+                "meaning": "So bittet man um die Rechnung."
+              },
+              {
+                "text": "Ich möchte zahlen.",
+                "meaning": "Auch möglich: zahlen, bitte."
+              },
+              {
+                "text": "Zusammen oder getrennt ?",
+                "meaning": "Die Standardfrage am Tisch."
+              },
+              {
+                "text": "Das macht 24 Euro.",
+                "meaning": "Der Betrag."
+              },
+              {
+                "text": "Stimmt so.",
+                "meaning": "Trinkgeld: kein Wechselgeld nötig."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Die Rechnung, bitte !",
+              "meaning": "Um die Rechnung bitten.",
+              "note": "auch: zahlen, bitte !"
+            },
+            {
+              "text": "Ich möchte zahlen.",
+              "meaning": "Zahlen.",
+              "note": "auch: wir möchten zahlen"
+            },
+            {
+              "text": "Zusammen oder getrennt ?",
+              "meaning": "Am Tisch fragen.",
+              "note": "getrennt = jeder für sich"
+            },
+            {
+              "text": "Das macht … Euro.",
+              "meaning": "Der Betrag.",
+              "note": "Das macht vierundzwanzig Euro."
+            },
+            {
+              "text": "Stimmt so.",
+              "meaning": "Trinkgeld geben.",
+              "note": "der Kellner behält den Rest"
+            }
+          ],
+          "situation": "Das Essen ist fertig. Lena ruft: « Die Rechnung, bitte ! » — « Zusammen oder getrennt ? » — « Getrennt, bitte. » Kim gibt Trinkgeld: « Stimmt so. »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Bittet um die Rechnung.",
+                "expected": [
+                  "Die Rechnung, bitte !",
+                  "die rechnung bitte",
+                  "Ich möchte zahlen.",
+                  "ich mochte zahlen"
+                ],
+                "focus": "die rechnung",
+                "watch": "Die Rechnung, bitte !"
+              },
+              {
+                "prompt": "Fragt am Tisch: alles zusammen oder jeder für sich ?",
+                "expected": [
+                  "Zusammen oder getrennt ?",
+                  "zusammen oder getrennt"
+                ],
+                "focus": "zusammen oder getrennt",
+                "watch": "Die Standardfrage am Tisch."
+              },
+              {
+                "prompt": "Sagt, dass jeder für sich zahlt.",
+                "expected": [
+                  "Getrennt, bitte.",
+                  "getrennt bitte",
+                  "Wir zahlen getrennt."
+                ],
+                "focus": "getrennt",
+                "watch": "getrennt = jeder für sich."
+              },
+              {
+                "prompt": "Sagt den Betrag: 24 Euro.",
+                "expected": [
+                  "Das macht 24 Euro.",
+                  "das macht vierundzwanzig euro",
+                  "Das macht vierundzwanzig Euro."
+                ],
+                "focus": "das macht",
+                "watch": "Der Betrag: das macht … Euro."
+              },
+              {
+                "prompt": "Gebt Trinkgeld: kein Wechselgeld nötig.",
+                "expected": [
+                  "Stimmt so.",
+                  "stimmt so"
+                ],
+                "focus": "stimmt so",
+                "watch": "« Stimmt so » = der Rest ist Trinkgeld."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u16-rechnung-e1",
+              "kind": "choice",
+              "prompt": "« Die ___, bitte ! » (ihr wollt zahlen)",
+              "explain": "Die Rechnung, bitte ! = so bittet man um Zahlen.",
+              "answers": [
+                "Rechnung"
+              ],
+              "options": [
+                "Rechnung",
+                "Karte",
+                "Speise",
+                "Küche"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-rechnung-e2",
+              "kind": "gap",
+              "prompt": "Das ___ zwölf Euro.",
+              "explain": "Der Betrag: das macht zwölf Euro.",
+              "answers": [
+                "macht"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-rechnung-e3",
+              "kind": "order",
+              "prompt": "Bittet höflich um die Rechnung.",
+              "explain": "Die Rechnung, bitte ! — kurze, höfliche Formel.",
+              "answers": [
+                "Die Rechnung bitte"
+              ]
+            },
+            {
+              "id": "de-foundations-u16-rechnung-e4",
+              "kind": "written",
+              "prompt": "Ihr zahlt zusammen und gebt Trinkgeld. Was sagt ihr ?",
+              "explain": "« Stimmt so » = der Rest ist Trinkgeld.",
+              "answers": [
+                "stimmt so",
+                "stimmt so danke"
+              ]
+            }
+          ],
+          "skills": [
+            "function:order-food",
+            "grammar:quantities",
+            "vocab:food",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "order-food"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u17",
+      "title": "Gut ausmachen",
+      "subtitle": "Pläne und Geschenke",
+      "level": "A2",
+      "themes": [
+        {
+          "id": "vorschlaege",
+          "title": "Vorschläge",
+          "subtitle": "Kommst du oder lieber… ?",
+          "symbol": "calendar.badge.clock",
+          "category": "Course",
+          "situation": "Ihr plant das Wochenende: Kino, Kochen, Spaziergang — wer schlägt was vor, wer sagt ab ?",
+          "colorIndex": 0
+        },
+        {
+          "id": "das-geschenk",
+          "title": "Das Geschenk",
+          "subtitle": "Was wirst du schenken ?",
+          "symbol": "gift",
+          "category": "Course",
+          "situation": "Emma hat bald Geburtstag. Ihr plant Geschenk und Party mit werden + Infinitiv.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u17-vorschlaege",
+          "title": "Kommst du oder lieber… ?",
+          "goal": "Vorschläge machen (Wollen wir… ?, Lust auf… ?) und Pläne mit werden antworten.",
+          "intro": {
+            "explanation": [
+              "Vorschläge mit Wollen wir … ?: « Wollen wir am Samstag ins Kino gehen ? » Oder ganz locker: « Lust auf Pizza ? »",
+              "Zwei Ideen stellt man mit oder lieber … ? gegenüber: « Kaffee oder lieber Tee ? » — so bietest du eine Alternative an.",
+              "Antworten: « Gute idée ! » — nein: « Gute Idee ! » oder « Ja, gern ! ». Den eigenen Plan sagst du mit werden + Infinitiv: « Ich werde kochen. »"
+            ],
+            "examples": [
+              {
+                "text": "Wollen wir am Samstag ins Kino gehen ?",
+                "meaning": "Der Standard-Vorschlag."
+              },
+              {
+                "text": "Lust auf Pizza heute Abend ?",
+                "meaning": "Locker, unter Freunden."
+              },
+              {
+                "text": "Ins Kino oder lieber ins Café ?",
+                "meaning": "oder lieber = die Alternative."
+              },
+              {
+                "text": "Ich werde Salat machen.",
+                "meaning": "werden + Infinitiv am Ende."
+              },
+              {
+                "text": "Was wirst du mitbringen ?",
+                "meaning": "Nach dem Plan fragen."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Wollen wir … ?",
+              "meaning": "Vorschlag.",
+              "note": "Wollen wir bowlen ?"
+            },
+            {
+              "text": "Lust auf … ?",
+              "meaning": "Locker fragen.",
+              "note": "Lust auf Eis ?"
+            },
+            {
+              "text": "oder lieber … ?",
+              "meaning": "Alternative anbieten.",
+              "note": "Kaffee oder lieber Tee ?"
+            },
+            {
+              "text": "Gute Idee !",
+              "meaning": "Zusagen.",
+              "note": "auch: Ja, gern !"
+            },
+            {
+              "text": "Ich werde … + Infinitiv",
+              "meaning": "Den Plan sagen.",
+              "note": "Ich werde kochen."
+            }
+          ],
+          "situation": "Ihr plant den Samstag: zuerst Kino, dann Kochen. Am Ende steht der Plan — ihr werdet zusammen kochen und danach ins Kino gehen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Schlage das Kino für Samstag vor.",
+                "expected": [
+                  "Wollen wir am Samstag ins Kino gehen ?",
+                  "wollen wir am samstag ins kino gehen"
+                ],
+                "focus": "wollen wir",
+                "watch": "Wollen wir … + Infinitiv ?"
+              },
+              {
+                "prompt": "Frag locker, ob sie Lust auf Eis hat.",
+                "expected": [
+                  "Lust auf Eis ?",
+                  "lust auf eis",
+                  "Hast du Lust auf Eis ?"
+                ],
+                "focus": "lust auf",
+                "watch": "Lust auf + Akkusativ."
+              },
+              {
+                "prompt": "Du hast Kaffee angeboten. Frag, ob Tee lieber ist.",
+                "expected": [
+                  "Kaffee oder lieber Tee ?",
+                  "kaffee oder lieber tee",
+                  "Oder lieber Tee ?"
+                ],
+                "focus": "oder lieber",
+                "watch": "oder lieber … ? = Alternative."
+              },
+              {
+                "prompt": "Sag zu, mit Begeisterung.",
+                "expected": [
+                  "Gute Idee !",
+                  "gute idee",
+                  "Ja, gern !"
+                ],
+                "focus": "gute idee",
+                "watch": "Zusagen: Gute Idee !"
+              },
+              {
+                "prompt": "Sag deinen Plan: du wirst kochen.",
+                "expected": [
+                  "Ich werde kochen.",
+                  "ich werde kochen"
+                ],
+                "focus": "ich werde",
+                "watch": "werden + Infinitiv am Ende."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u17-vorschlaege-e1",
+              "kind": "choice",
+              "prompt": "___ wir am Samstag bowlen gehen ?",
+              "explain": "Der Vorschlag: Wollen wir … + Infinitiv ?",
+              "answers": [
+                "Wollen"
+              ],
+              "options": [
+                "Wollen",
+                "Werden",
+                "Mögen",
+                "Sind"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-vorschlaege-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ am Sonntag den Tisch decken. (Plan)",
+              "explain": "werden + Infinitiv am Ende: ich werde decken.",
+              "answers": [
+                "werde"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-vorschlaege-e3",
+              "kind": "order",
+              "prompt": "Schlage Pizza vor, ganz locker.",
+              "explain": "Lust auf … ? ist der lockere Vorschlag unter Freunden.",
+              "answers": [
+                "Lust auf Pizza heute Abend"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-vorschlaege-e4",
+              "kind": "written",
+              "prompt": "Frag nach zwei Alternativen: Kino oder Café.",
+              "explain": "oder lieber … ? stellt die Alternative.",
+              "answers": [
+                "kino oder lieber café",
+                "kino oder lieber cafe",
+                "ins kino oder lieber ins cafe"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-suggestions",
+            "grammar:going-to",
+            "vocab:social-expressions",
+            "grammar:present-simple"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        },
+        {
+          "id": "de-foundations-u17-entschuldigung",
+          "title": "Schade, ich kann nicht",
+          "goal": "Einladungen annehmen und höflich ablehnen — mit Grund (weil/denn) und Alternative.",
+          "intro": {
+            "explanation": [
+              "Zusagen geht kurz und warm: « Ja, gerne ! » oder « Ich bin dabei. »",
+              "Absagen mit Bedauern: « Schade, ich kann nicht. » Höflich bleibt die Absage mit Grund: « Ich kann leider nicht, weil ich arbeiten muss. »",
+              "Der Grund: weil + Verb am Ende, denn + normale Reihenfolge: « …, denn ich habe keine Zeit. » Danach eine Alternative: « Geht Sonntag auch ? »"
+            ],
+            "examples": [
+              {
+                "text": "Ja, gerne ! Ich bin dabei.",
+                "meaning": "Die Zusage."
+              },
+              {
+                "text": "Schade, ich kann nicht.",
+                "meaning": "Die kurze Absage."
+              },
+              {
+                "text": "Ich kann leider nicht, weil ich arbeiten muss.",
+                "meaning": "weil + Verb am Ende."
+              },
+              {
+                "text": "Ich habe keine Zeit, denn ich lerne für die Prüfung.",
+                "meaning": "denn + normale Reihenfolge."
+              },
+              {
+                "text": "Geht es am Sonntag auch ?",
+                "meaning": "Alternative anbieten."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Ich bin dabei !",
+              "meaning": "Zusagen.",
+              "note": "auch: gerne !"
+            },
+            {
+              "text": "Schade !",
+              "meaning": "Bedauern.",
+              "note": "Schade, vielleicht nächstes Mal."
+            },
+            {
+              "text": "…, weil … muss",
+              "meaning": "Grund mit weil.",
+              "note": "weil ich arbeiten muss"
+            },
+            {
+              "text": "…, denn …",
+              "meaning": "Grund mit denn.",
+              "note": "denn ich habe keine Zeit"
+            },
+            {
+              "text": "Geht … auch ?",
+              "meaning": "Alternative.",
+              "note": "Geht Sonntag auch ?"
+            }
+          ],
+          "situation": "Paul ist eingeladen, aber er arbeitet am Samstag. Er sagt höflich ab, nennt den Grund mit weil und fragt nach einer Alternative am Sonntag.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag zu, mit Begeisterung.",
+                "expected": [
+                  "Ja, gerne !",
+                  "ja gerne",
+                  "Ich bin dabei !",
+                  "ich bin dabei"
+                ],
+                "focus": "ja gerne",
+                "watch": "Zusagen: Ja, gerne !"
+              },
+              {
+                "prompt": "Sag ab, kurz und mit Bedauern.",
+                "expected": [
+                  "Schade, ich kann nicht.",
+                  "schade ich kann nicht",
+                  "Schade, ich kann leider nicht."
+                ],
+                "focus": "schade",
+                "watch": "Schade + ich kann (leider) nicht."
+              },
+              {
+                "prompt": "Gib den Grund mit weil: du musst arbeiten.",
+                "expected": [
+                  "Ich kann nicht, weil ich arbeiten muss.",
+                  "ich kann nicht weil ich arbeiten muss"
+                ],
+                "focus": "weil",
+                "watch": "weil + Verb am Ende."
+              },
+              {
+                "prompt": "Gib den Grund mit denn: du lernst.",
+                "expected": [
+                  "Ich habe keine Zeit, denn ich lerne.",
+                  "ich habe keine zeit denn ich lerne"
+                ],
+                "focus": "denn",
+                "watch": "denn + normale Reihenfolge."
+              },
+              {
+                "prompt": "Biete Sonntag als Alternative an.",
+                "expected": [
+                  "Geht es am Sonntag auch ?",
+                  "geht es am sonntag auch",
+                  "Geht Sonntag auch ?"
+                ],
+                "focus": "geht es … auch",
+                "watch": "Alternative: Geht Sonntag auch ?"
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u17-entschuldigung-e1",
+              "kind": "choice",
+              "prompt": "« Schade, ich ___ leider nicht. »",
+              "explain": "Die Absage: ich kann leider nicht.",
+              "answers": [
+                "kann"
+              ],
+              "options": [
+                "kann",
+                "will",
+                "mag",
+                "darf"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-entschuldigung-e2",
+              "kind": "gap",
+              "prompt": "Ich kann nicht, ___ ich arbeiten muss.",
+              "explain": "weil + Nebensatz: das Verb steht am Ende.",
+              "answers": [
+                "weil"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-entschuldigung-e3",
+              "kind": "order",
+              "prompt": "Lehne ab und nenne den Grund mit weil: du hast eine Prüfung.",
+              "explain": "Erst die Absage, dann der Grund mit weil.",
+              "answers": [
+                "Ich kann nicht weil ich eine Prüfung habe"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-entschuldigung-e4",
+              "kind": "written",
+              "prompt": "Sag ab und biete eine Alternative am Sonntag.",
+              "explain": "Erst Absage, dann Alternative: Geht es am Sonntag auch ?",
+              "answers": [
+                "schade geht es am sonntag auch",
+                "ich kann nicht geht es am sonntag auch",
+                "ich kann leider nicht am sonntag"
+              ]
+            }
+          ],
+          "skills": [
+            "vocab:social-expressions",
+            "function:make-suggestions",
+            "grammar:present-simple",
+            "grammar:connectors"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:connectors"
+          ]
+        },
+        {
+          "id": "de-foundations-u17-geschenk",
+          "title": "Das perfekte Geschenk",
+          "goal": "Geschenkpläne mit werden + Infinitiv sagen: was ihr verschenkt und kauft.",
+          "intro": {
+            "explanation": [
+              "Pläne mit werden + Infinitiv: « Ich werde ihr ein Buch schenken. » Der Infinitiv steht am Satzende.",
+              "Fragen: « Was wirst du Emma schenken ? » — « Ich werde ihr eine Kette kaufen. » ihr/ihm = für sie/ihn (Dativ).",
+              "Geschenkverben mit werden: verschenken, kaufen, bestellen, einpacken: « Wir werden alles rechtzeitig bestellen. »"
+            ],
+            "examples": [
+              {
+                "text": "Ich werde ihr ein Buch schenken.",
+                "meaning": "Plan: werden + Infinitiv am Ende."
+              },
+              {
+                "text": "Was wirst du Emma schenken ?",
+                "meaning": "Frage nach dem Geschenk."
+              },
+              {
+                "text": "Er wird ihr Blumen kaufen.",
+                "meaning": "kaufen im Futur."
+              },
+              {
+                "text": "Wir werden eine Party organisieren.",
+                "meaning": "wir werden + Infinitiv."
+              },
+              {
+                "text": "Ich packe das Geschenk später ein.",
+                "meaning": "einpacken: trennbares Verb."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "werden + Infinitiv",
+              "meaning": "Pläne für die Zukunft.",
+              "note": "ich werde, du wirst, er wird"
+            },
+            {
+              "text": "schenken / kaufen / bestellen",
+              "meaning": "Geschenkverben.",
+              "note": "Ich werde ein Buch schenken."
+            },
+            {
+              "text": "Was wirst du … schenken ?",
+              "meaning": "Nach dem Geschenk fragen.",
+              "note": "ihm/ihr = Dativ"
+            },
+            {
+              "text": "eine Idee haben",
+              "meaning": "Den Plan geben.",
+              "note": "Ich habe eine Idee: ein Kochbuch !"
+            },
+            {
+              "text": "rechtzeitig",
+              "meaning": "pünktlich genug.",
+              "note": "Wir bestellen rechtzeitig."
+            }
+          ],
+          "situation": "Emma wird zwanzig. Ihr plant: Paul wird ihr ein Kochbuch schenken, Mia wird Kerzen kaufen, und ihr werdet den Kuchen übernehmen.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Sag deinen Geschenkplan: ein Buch für Emma.",
+                "expected": [
+                  "Ich werde Emma ein Buch schenken.",
+                  "ich werde emma ein buch schenken",
+                  "Ich werde ihr ein Buch schenken."
+                ],
+                "focus": "ich werde",
+                "watch": "werden + Infinitiv am Ende."
+              },
+              {
+                "prompt": "Frag Paul, was er Emma schenkt. (werden)",
+                "expected": [
+                  "Was wirst du Emma schenken ?",
+                  "was wirst du emma schenken",
+                  "Was wirst du ihr schenken ?"
+                ],
+                "focus": "wirst du",
+                "watch": "du wirst: Frage nach dem Plan."
+              },
+              {
+                "prompt": "Sag, dass Mia Kerzen kaufen wird.",
+                "expected": [
+                  "Mia wird Kerzen kaufen.",
+                  "mia wird kerzen kaufen"
+                ],
+                "focus": "mia wird",
+                "watch": "er/sie wird + Infinitiv."
+              },
+              {
+                "prompt": "Sagt euren Plan: ihr organisiert die Party.",
+                "expected": [
+                  "Wir werden eine Party organisieren.",
+                  "wir werden eine party organisieren"
+                ],
+                "focus": "wir werden",
+                "watch": "wir werden + Infinitiv."
+              },
+              {
+                "prompt": "Sag, dass du rechtzeitig bestellst. (werden)",
+                "expected": [
+                  "Ich werde rechtzeitig bestellen.",
+                  "ich werde rechtzeitig bestellen"
+                ],
+                "focus": "rechtzeitig",
+                "watch": "rechtzeitig bestellen = nicht zu spät."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u17-geschenk-e1",
+              "kind": "choice",
+              "prompt": "Emma hat Geburtstag. Ich ___ ihr ein Buch schenken.",
+              "explain": "werden + Infinitiv am Ende: ich werde schenken.",
+              "answers": [
+                "werde"
+              ],
+              "options": [
+                "werde",
+                "will",
+                "möchte",
+                "habe"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-geschenk-e2",
+              "kind": "gap",
+              "prompt": "Was ___ du ihm schenken ?",
+              "explain": "du wirst: die Frage nach dem Geschenkplan.",
+              "answers": [
+                "wirst"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-geschenk-e3",
+              "kind": "order",
+              "prompt": "Sagt euren Plan: ihr kauft Blumen für die Party.",
+              "explain": "werden + Infinitiv am Ende: so sagt man den Plan.",
+              "answers": [
+                "Wir werden Blumen für die Party kaufen"
+              ]
+            },
+            {
+              "id": "de-foundations-u17-geschenk-e4",
+              "kind": "written",
+              "prompt": "Sag, was du zum Geburtstag planst. (Konzertkarten)",
+              "explain": "Plan mit werden: ich werde … kaufen.",
+              "answers": [
+                "ich werde konzertkarten kaufen",
+                "ich werde ihr konzertkarten kaufen",
+                "ich werde meiner mutter konzertkarten kaufen"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:going-to",
+            "function:make-future-plans",
+            "vocab:social-expressions",
+            "function:go-shopping"
+          ],
+          "canDo": [
+            "make-future-plans"
+          ],
+          "prerequisites": [
+            "grammar:going-to"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "de-foundations-u18",
+      "title": "Geschichten erzählen",
+      "subtitle": "Erlebt und erzählt",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "de-b1-was-passiert-ist",
+          "title": "Was passiert ist",
+          "subtitle": "Zuerst, dann, am Ende",
+          "symbol": "book",
+          "category": "Course",
+          "situation": "Ihr erzählt vom Wochenende in Berlin: wer zuerst losfuhr, was dann passierte und wie es am Ende ausging.",
+          "colorIndex": 0
+        },
+        {
+          "id": "de-b1-die-wendung",
+          "title": "Die Wendung",
+          "subtitle": "Plötzlich…",
+          "symbol": "sparkles",
+          "category": "Course",
+          "situation": "Eine Geschichte wird spannend: plötzlich klingelte es, und es stellte sich heraus… Ihr übt den Überraschungsmoment.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "de-foundations-u18-erzaehlen",
+          "title": "Was passiert ist",
+          "goal": "Erlebtes erzählen: Fakten in der Reihenfolge verbinden — zuerst, dann, am Ende.",
+          "intro": {
+            "explanation": [
+              "Die Erzählzeit ist das Präteritum: « Ich fuhr nach Berlin. Ich traf Lara. » Regelmäßige Verben enden auf -te: ich machte, sie wohnte.",
+              "Die Reihenfolge liefern die Konnektoren: zuerst → dann → danach → am Ende: « Zuerst fuhr ich los, dann regnete es, am Ende schien die Sonne. »",
+              "Kurze Fakten nebeneinander klingen wie ein Bericht: « Der Zug kam um acht. Ich wartete am Bahnsteig. Nichts passierte. »"
+            ],
+            "examples": [
+              {
+                "text": "Zuerst fuhr ich nach Berlin.",
+                "meaning": "fahren → fuhr (stark)."
+              },
+              {
+                "text": "Dann traf ich Lara am Bahnhof.",
+                "meaning": "treffen → traf."
+              },
+              {
+                "text": "Danach gingen wir ins Museum.",
+                "meaning": "gehen → gingen."
+              },
+              {
+                "text": "Am Ende war alles gut.",
+                "meaning": "war: das Erzähl-Verb."
+              },
+              {
+                "text": "Es regnete den ganzen Tag.",
+                "meaning": "regnen → regnete (regelmäßig)."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "zuerst",
+              "meaning": "Schritt eins.",
+              "note": "Zuerst fuhr ich los."
+            },
+            {
+              "text": "dann / danach",
+              "meaning": "Der nächste Schritt.",
+              "note": "Dann kam der Bus."
+            },
+            {
+              "text": "am Ende",
+              "meaning": "Der Ausgang.",
+              "note": "Am Ende war alles gut."
+            },
+            {
+              "text": "fuhr / traf / kam",
+              "meaning": "Starke Präterita.",
+              "note": "fahren→fuhr, treffen→traf"
+            },
+            {
+              "text": "machte / wohnte / regnete",
+              "meaning": "Schwache Präterita auf -te.",
+              "note": "ich machte es gestern."
+            }
+          ],
+          "situation": "Ihr erzählt euer Berlin-Wochenende: zuerst die Fahrt, dann der Regen, danach das Museum — und am Ende ein Sonnentag.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Erzähle Schritt eins: du fuhst nach Berlin.",
+                "expected": [
+                  "Zuerst fuhr ich nach Berlin.",
+                  "zuerst fuhr ich nach berlin",
+                  "Ich fuhr zuerst nach Berlin."
+                ],
+                "focus": "zuerst",
+                "watch": "fahren → fuhr."
+              },
+              {
+                "prompt": "Erzähle weiter: du trafst Lara.",
+                "expected": [
+                  "Dann traf ich Lara.",
+                  "dann traf ich lara"
+                ],
+                "focus": "dann",
+                "watch": "treffen → traf."
+              },
+              {
+                "prompt": "Sag, dass ihr danach ins Museum gingt.",
+                "expected": [
+                  "Danach gingen wir ins Museum.",
+                  "danach gingen wir ins museum"
+                ],
+                "focus": "danach",
+                "watch": "gehen → gingen."
+              },
+              {
+                "prompt": "Erzähle den Ausgang: alles war gut.",
+                "expected": [
+                  "Am Ende war alles gut.",
+                  "am ende war alles gut"
+                ],
+                "focus": "am ende",
+                "watch": "am Ende + Präteritum."
+              },
+              {
+                "prompt": "Erzähle das Wetter: es regnete den ganzen Tag.",
+                "expected": [
+                  "Es regnete den ganzen Tag.",
+                  "es regnete den ganzen tag",
+                  "Danach regnete es."
+                ],
+                "focus": "regnete",
+                "watch": "regnen → regnete (regelmäßig)."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u18-erzaehlen-e1",
+              "kind": "choice",
+              "prompt": "___ fuhr ich nach Berlin.",
+              "explain": "Zuerst markiert Schritt eins der Erzählung.",
+              "answers": [
+                "Zuerst"
+              ],
+              "options": [
+                "Zuerst",
+                "Am Ende",
+                "Danach",
+                "Plötzlich"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-erzaehlen-e2",
+              "kind": "gap",
+              "prompt": "Ich ___ Lara am Bahnhof. (treffen, Präteritum)",
+              "explain": "treffen → traf: starkes Präteritum.",
+              "answers": [
+                "traf"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-erzaehlen-e3",
+              "kind": "order",
+              "prompt": "Erzähle den Ausgang der Geschichte.",
+              "explain": "am Ende + Präteritum: so schließt man die Geschichte.",
+              "answers": [
+                "Am Ende war alles gut"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-erzaehlen-e4",
+              "kind": "written",
+              "prompt": "Erzähle: du gingst danach ins Museum.",
+              "explain": "gehen → ging/gingen im Präteritum.",
+              "answers": [
+                "danach ging ich ins museum",
+                "danach gingen wir ins museum"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "grammar:past-simple-irregular",
+            "grammar:connectors",
+            "grammar:past-simple-regular"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
+          ]
+        },
+        {
+          "id": "de-foundations-u18-ueberraschung",
+          "title": "Die überraschende Wendung",
+          "goal": "Spannend erzählen: den Überraschungsmoment mit plötzlich und es stellte sich heraus bauen.",
+          "intro": {
+            "explanation": [
+              "Der Wendepunkt kommt mit plötzlich oder auf einmal: « Plötzlich stand er vor der Tür. »",
+              "Die Auflösung liefert die feste Formel es stellte sich heraus, dass … = später erfuhr man die Wahrheit: « Es stellte sich heraus, dass er mein neuer Nachbar war. »",
+              "Spannung entsteht mit kurzen Sätzen im Präteritum: « Das Telefon klingelte. Niemand ging ran. »"
+            ],
+            "examples": [
+              {
+                "text": "Plötzlich stand er vor der Tür.",
+                "meaning": "stehen → stand."
+              },
+              {
+                "text": "Auf einmal begann es zu regnen.",
+                "meaning": "beginnen → begann."
+              },
+              {
+                "text": "Es stellte sich heraus, dass sie Geschwister waren.",
+                "meaning": "Die Auflösung."
+              },
+              {
+                "text": "Das Telefon klingelte. Niemand ging ran.",
+                "meaning": "Kurze Sätze bauen Spannung."
+              },
+              {
+                "text": "Ich traute meinen Augen nicht.",
+                "meaning": "glauben-artig regelmäßig: traute."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "plötzlich / auf einmal",
+              "meaning": "Der Wendepunkt.",
+              "note": "Plötzlich klingelte es."
+            },
+            {
+              "text": "es stellte sich heraus, dass…",
+              "meaning": "Die Auflösung.",
+              "note": "…dass alles anders war."
+            },
+            {
+              "text": "stand / begann / ging",
+              "meaning": "Starke Präterita.",
+              "note": "stehen→stand, beginnen→begann"
+            },
+            {
+              "text": "Ich traute meinen Augen nicht.",
+              "meaning": "Staunen.",
+              "note": "traute: regelmäßig."
+            },
+            {
+              "text": "und dann ?",
+              "meaning": "Spannung aufbauen.",
+              "note": "Und dann kam der Clou."
+            }
+          ],
+          "situation": "Ihr erzählt die Geschichte mit dem Fremden an der Tür: erst Stille, dann klingelte es plötzlich — und es stellte sich heraus, dass er der neue Nachbar war.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Erzähle den Wendepunkt: das Telefon klingelte.",
+                "expected": [
+                  "Plötzlich klingelte das Telefon.",
+                  "plotzlich klingelte das telefon",
+                  "Auf einmal klingelte das Telefon."
+                ],
+                "focus": "plötzlich",
+                "watch": "plötzlich / auf einmal + Präteritum."
+              },
+              {
+                "prompt": "Sag die Auflösung: er war dein neuer Nachbar.",
+                "expected": [
+                  "Es stellte sich heraus, dass er mein neuer Nachbar war.",
+                  "es stellte sich heraus dass er mein neuer nachbar war"
+                ],
+                "focus": "es stellte sich heraus",
+                "watch": "Die feste Formel mit dass."
+              },
+              {
+                "prompt": "Erzähle: es begann zu regnen. (auf einmal)",
+                "expected": [
+                  "Auf einmal begann es zu regnen.",
+                  "auf einmal begann es zu regnen"
+                ],
+                "focus": "auf einmal",
+                "watch": "beginnen → begann."
+              },
+              {
+                "prompt": "Sag, dass du deinen Augen nicht traust.",
+                "expected": [
+                  "Ich traute meinen Augen nicht.",
+                  "ich traute meinen augen nicht"
+                ],
+                "focus": "traute",
+                "watch": "trauen → traute (regelmäßig)."
+              },
+              {
+                "prompt": "Frag gespannt weiter.",
+                "expected": [
+                  "Und dann ?",
+                  "und dann",
+                  "Wie ging es weiter ?"
+                ],
+                "focus": "und dann",
+                "watch": "Und dann ? hält die Erzählung in Gang."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u18-ueberraschung-e1",
+              "kind": "choice",
+              "prompt": "« ___ stellte sich heraus, dass er mein Nachbar war. »",
+              "explain": "Die feste Formel: es stellte sich heraus, dass…",
+              "answers": [
+                "Es"
+              ],
+              "options": [
+                "Es",
+                "Er",
+                "Da",
+                "Man"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-ueberraschung-e2",
+              "kind": "gap",
+              "prompt": "Plötzlich ___ er vor der Tür. (stehen, Präteritum)",
+              "explain": "stehen → stand: der Wendepunkt.",
+              "answers": [
+                "stand"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-ueberraschung-e3",
+              "kind": "order",
+              "prompt": "Erzähle den Überraschungsmoment: das Telefon.",
+              "explain": "plötzlich + Präteritum: Spannung in einem Satz.",
+              "answers": [
+                "Plötzlich klingelte das Telefon"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-ueberraschung-e4",
+              "kind": "written",
+              "prompt": "Sag die Auflösung: der Fremde war Emmas Bruder.",
+              "explain": "es stellte sich heraus, dass… bringt die Auflösung.",
+              "answers": [
+                "es stellte sich heraus dass der fremde emmas bruder war",
+                "es stellte sich heraus, dass der fremde emmas bruder war"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "grammar:connectors",
+            "grammar:past-simple-irregular",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular"
+          ]
+        },
+        {
+          "id": "de-foundations-u18-anekdoten",
+          "title": "Die Sommerepisode",
+          "goal": "Anekdoten erzählen und reagieren: nicht zu fassen, und dann ?",
+          "intro": {
+            "explanation": [
+              "Die Anekdote ist ein kurzes Erlebnis, lustig erzählt: « Im Sommer arbeitete ich in einem Café. Ein Gast bestellte elfmal Cappuccino. »",
+              "Reagieren hält die Geschichte am Laufen: « Nicht zu fassen ! », « Und dann ? », « Wie ging es aus ? »",
+              "Der Schluss gehört dazu: « Am Ende lachte nur noch jeder. » — so endet die Anekdote."
+            ],
+            "examples": [
+              {
+                "text": "Im Sommer arbeitete ich in einem Café.",
+                "meaning": "arbeiten → arbeitete (regelmäßig)."
+              },
+              {
+                "text": "Ein Gast bestellte elfmal Cappuccino.",
+                "meaning": "bestellen → bestellte."
+              },
+              {
+                "text": "Nicht zu fassen !",
+                "meaning": "Ungläubig reagieren."
+              },
+              {
+                "text": "Und dann ? Was machte der Gast ?",
+                "meaning": "Nachfragen hält die Spannung."
+              },
+              {
+                "text": "Am Ende lachte nur noch jeder.",
+                "meaning": "Der Ausgang."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Nicht zu fassen !",
+              "meaning": "Ungläubigkeit.",
+              "note": "auch: Unglaublich !"
+            },
+            {
+              "text": "Und dann ?",
+              "meaning": "Weiter erzählen lassen.",
+              "note": "gespannt nachhaken"
+            },
+            {
+              "text": "Wie ging es aus ?",
+              "meaning": "Nach dem Ausgang fragen.",
+              "note": "ausgehen → es ging gut aus"
+            },
+            {
+              "text": "das Beste kommt noch",
+              "meaning": "Ankündigung.",
+              "note": "Aber das Beste kommt noch."
+            },
+            {
+              "text": "Am Ende …",
+              "meaning": "Der Schluss.",
+              "note": "Am Ende lachten alle."
+            }
+          ],
+          "situation": "Tim erzählt die Sommerepisode vom Café: der Gast mit den elf Cappuccinos. Kim hört gespannt zu und reagiert: « Nicht zu fassen ! Und dann ? »",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Erzähle den Anfang: du arbeitetest im Sommer im Café.",
+                "expected": [
+                  "Im Sommer arbeitete ich in einem Café.",
+                  "im sommer arbeitete ich in einem cafe"
+                ],
+                "focus": "arbeitete",
+                "watch": "arbeiten → arbeitete."
+              },
+              {
+                "prompt": "Erzähle das Kuriosum: elfmal Cappuccino.",
+                "expected": [
+                  "Ein Gast bestellte elfmal Cappuccino.",
+                  "ein gast bestellte elfmal cappuccino"
+                ],
+                "focus": "bestellte",
+                "watch": "bestellen → bestellte."
+              },
+              {
+                "prompt": "Reagiere ungläubig.",
+                "expected": [
+                  "Nicht zu fassen !",
+                  "nicht zu fassen",
+                  "Unglaublich !"
+                ],
+                "focus": "nicht zu fassen",
+                "watch": "Nicht zu fassen ! = unglaublich !"
+              },
+              {
+                "prompt": "Frag gespannt nach dem Ausgang.",
+                "expected": [
+                  "Wie ging es aus ?",
+                  "wie ging es aus",
+                  "Und dann ?"
+                ],
+                "focus": "wie ging es aus",
+                "watch": "Wie ging es aus ?"
+              },
+              {
+                "prompt": "Erzähle den Schluss: alle lachten.",
+                "expected": [
+                  "Am Ende lachte nur noch jeder.",
+                  "am ende lachte jeder",
+                  "Alle lachten am Ende."
+                ],
+                "focus": "am ende",
+                "watch": "Der Ausgang mit am Ende."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "de-foundations-u18-anekdoten-e1",
+              "kind": "choice",
+              "prompt": "« ___ zu fassen ! » (Ungläubigkeit)",
+              "explain": "Die Reaktion: Nicht zu fassen !",
+              "answers": [
+                "Nicht"
+              ],
+              "options": [
+                "Nicht",
+                "Kein",
+                "Nie",
+                "Niemals"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-anekdoten-e2",
+              "kind": "gap",
+              "prompt": "Im Sommer ___ ich in einem Café. (arbeiten, Präteritum)",
+              "explain": "arbeiten → arbeitete: regelmäßig auf -te.",
+              "answers": [
+                "arbeitete"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-anekdoten-e3",
+              "kind": "order",
+              "prompt": "Erzähle das Kuriosum: der Gast, elfmal Cappuccino.",
+              "explain": "bestellte: das Präteritum des Kuriosums.",
+              "answers": [
+                "Ein Gast bestellte elfmal Cappuccino"
+              ]
+            },
+            {
+              "id": "de-foundations-u18-anekdoten-e4",
+              "kind": "written",
+              "prompt": "Frag nach dem Ausgang der Geschichte.",
+              "explain": "Wie ging es aus ? — so fragt man nach dem Ausgang.",
+              "answers": [
+                "wie ging es aus",
+                "wie ist es ausgegangen"
+              ]
+            }
+          ],
+          "skills": [
+            "function:tell-a-story",
+            "vocab:social-expressions",
+            "grammar:past-simple-regular",
+            "function:describe-past-events"
+          ],
+          "canDo": [
+            "tell-a-story"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-regular"
           ]
         }
       ]

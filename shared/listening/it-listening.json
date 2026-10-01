@@ -2013,6 +2013,413 @@
         "grammar:frequency-adverbs"
       ],
       "exposureSkills": []
+    },
+    {
+      "id": "it-listen-cena-sorpresa",
+      "languageID": "it",
+      "title": "Una cena a sorpresa",
+      "level": "A1",
+      "topic": "ristorante",
+      "unitID": "it-foundations-u16",
+      "text": "È sabato sera. Marco porta Anna al ristorante: è il suo compleanno, la cena è una sorpresa. Il cameriere chiede: « Che cosa prende ? ». Marco prende le tagliatelle, Anna preferisce la pizza. Per bere ordinano un’acqua naturale e un vino rosso. Il cameriere porta anche il tiramisù, il dolce preferito di Anna. Marco chiede il conto: « Quanto fa ? » « Venticinque euro. » Paga in contanti e lascia la mancia: « Tenga il resto ! ». Anna sorride: « Che bella sorpresa ! »",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "vocab:food",
+        "function:order-food"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-cena-sorpresa-q1",
+          "kind": "choice",
+          "prompt": "Dove sono Marco e Anna ?",
+          "options": [
+            "Al ristorante",
+            "A casa",
+            "Al bar",
+            "In pizzeria"
+          ],
+          "answers": [
+            "Al ristorante"
+          ],
+          "explain": "Marco porta Anna al ristorante."
+        },
+        {
+          "id": "it-listen-cena-sorpresa-q2",
+          "kind": "choice",
+          "prompt": "Cosa prende Anna ?",
+          "options": [
+            "La pizza",
+            "Le tagliatelle",
+            "Il pesce",
+            "Il vino"
+          ],
+          "answers": [
+            "La pizza"
+          ],
+          "explain": "Anna preferisce la pizza."
+        },
+        {
+          "id": "it-listen-cena-sorpresa-q3",
+          "kind": "written",
+          "prompt": "Per bere, cosa ordinano ?",
+          "answers": [
+            "un'acqua naturale e un vino rosso",
+            "acqua naturale e vino rosso",
+            "acqua e vino rosso"
+          ],
+          "explain": "Ordinano un’acqua naturale e un vino rosso."
+        },
+        {
+          "id": "it-listen-cena-sorpresa-q4",
+          "kind": "choice",
+          "prompt": "Quanto fa il conto ?",
+          "options": [
+            "Venticinque euro",
+            "Quindici euro",
+            "Trenta euro",
+            "Cinque euro"
+          ],
+          "answers": [
+            "Venticinque euro"
+          ],
+          "explain": "« Quanto fa ? » « Venticinque euro. »"
+        },
+        {
+          "id": "it-listen-cena-sorpresa-q5",
+          "kind": "choice",
+          "prompt": "Come paga Marco ?",
+          "options": [
+            "In contanti",
+            "Con la carta",
+            "Con il telefono",
+            "Non paga"
+          ],
+          "answers": [
+            "In contanti"
+          ],
+          "explain": "Paga in contanti e lascia la mancia."
+        },
+        {
+          "id": "it-listen-cena-sorpresa-q6",
+          "kind": "choice",
+          "prompt": "Perché Marco porta Anna al ristorante ?",
+          "options": [
+            "È il compleanno di Anna",
+            "È il compleanno di Marco",
+            "È sabato",
+            "Anna invita Marco"
+          ],
+          "answers": [
+            "È il compleanno di Anna"
+          ],
+          "explain": "È il suo compleanno: la cena è una sorpresa."
+        }
+      ]
+    },
+    {
+      "id": "it-listen-piano-compleanno",
+      "languageID": "it",
+      "title": "Il piano per il compleanno",
+      "level": "A2",
+      "topic": "inviti",
+      "unitID": "it-foundations-u17",
+      "text": "Sabato è il compleanno di Giulia, e lei non sa niente. Sara chiama Marco per organizzare la sorpresa. « Cosa le andiamo a regalare ? » chiede Marco. « Le piace la fotografia: vado a cercare un libro di foto », risponde Sara. « Io vado a preparare la torta: al cioccolato, la sua preferita. » « Perfetto. E la festa ? » « È una sorpresa: alle otto, da Luca. Io porto i fiori, tu la musica. » « D’accordo. Peccato: sabato lavoro fino alle sei. » « Nessun problema: la festa comincia dopo. » « Va bene. Sarà una bella festa ! »",
+      "skills": [
+        "listening:gist",
+        "listening:detail",
+        "grammar:going-to",
+        "function:make-suggestions"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-piano-compleanno-q1",
+          "kind": "choice",
+          "prompt": "Di chi è il compleanno ?",
+          "options": [
+            "Di Giulia",
+            "Di Sara",
+            "Di Marco",
+            "Di Luca"
+          ],
+          "answers": [
+            "Di Giulia"
+          ],
+          "explain": "Sabato è il compleanno di Giulia."
+        },
+        {
+          "id": "it-listen-piano-compleanno-q2",
+          "kind": "choice",
+          "prompt": "Cosa va a cercare Sara ?",
+          "options": [
+            "Un libro di foto",
+            "Una torta",
+            "I fiori",
+            "La musica"
+          ],
+          "answers": [
+            "Un libro di foto"
+          ],
+          "explain": "Le piace la fotografia: vado a cercare un libro di foto."
+        },
+        {
+          "id": "it-listen-piano-compleanno-q3",
+          "kind": "written",
+          "prompt": "Che torta va a preparare Marco ?",
+          "answers": [
+            "al cioccolato",
+            "torta al cioccolato",
+            "di cioccolato"
+          ],
+          "explain": "Vado a preparare la torta: al cioccolato."
+        },
+        {
+          "id": "it-listen-piano-compleanno-q4",
+          "kind": "choice",
+          "prompt": "A che ora è la festa ?",
+          "options": [
+            "Alle otto",
+            "Alle nove",
+            "Alle sette",
+            "Alle dieci"
+          ],
+          "answers": [
+            "Alle otto"
+          ],
+          "explain": "È una sorpresa: alle otto, da Luca."
+        },
+        {
+          "id": "it-listen-piano-compleanno-q5",
+          "kind": "choice",
+          "prompt": "Dov’è la festa ?",
+          "options": [
+            "Da Luca",
+            "Da Sara",
+            "Da Marco",
+            "A casa di Giulia"
+          ],
+          "answers": [
+            "Da Luca"
+          ],
+          "explain": "Alle otto, da Luca."
+        },
+        {
+          "id": "it-listen-piano-compleanno-q6",
+          "kind": "written",
+          "prompt": "Chi porta i fiori ?",
+          "answers": [
+            "sara",
+            "sara li porta"
+          ],
+          "explain": "« Io porto i fiori », risponde Sara."
+        }
+      ]
+    },
+    {
+      "id": "it-listen-aneddoto-estate",
+      "languageID": "it",
+      "title": "L'aneddoto dell'estate",
+      "level": "B1",
+      "topic": "racconti",
+      "unitID": "it-foundations-u18",
+      "text": "Al bar, Martina racconta l’aneddoto dell’estate. « Quest’estate, in Sardegna, è successa una cosa incredibile. Prima ho perso il traghetto della sera, poi ho dormito in auto, al campeggio. All’improvviso è arrivato un ragazzo con una torcia: si è scoperto che era il gestore. Mi ha offerto un posto nella tavola calda… » « Non mi dire ! » « E poi sono rimasta una settimana: ho lavorato, ho nuotato e ho fatto amicizia con sua sorella. » « E poi ? Sei tornata a casa ? » « Certo, ma meno male che il traghetto è ripartito: l’auto non partiva più ! » Martina ride: « Che disastro, ma che bella estate ».",
+      "skills": [
+        "listening:inference",
+        "listening:detail",
+        "grammar:past-simple-irregular",
+        "grammar:connectors"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-aneddoto-estate-q1",
+          "kind": "choice",
+          "prompt": "Cosa è successo prima ?",
+          "options": [
+            "Ha perso il traghetto",
+            "Ha dormito in auto",
+            "Ha fatto amicizia",
+            "È rimasta una settimana"
+          ],
+          "answers": [
+            "Ha perso il traghetto"
+          ],
+          "explain": "« Prima ho perso il traghetto della sera »."
+        },
+        {
+          "id": "it-listen-aneddoto-estate-q2",
+          "kind": "written",
+          "prompt": "Dove ha dormito la prima notte ?",
+          "answers": [
+            "in auto",
+            "nella sua auto",
+            "in macchina"
+          ],
+          "explain": "Poi ho dormito in auto, al campeggio."
+        },
+        {
+          "id": "it-listen-aneddoto-estate-q3",
+          "kind": "choice",
+          "prompt": "Chi è il ragazzo con la torcia ?",
+          "options": [
+            "Il gestore del campeggio",
+            "Un turista",
+            "Un suo amico",
+            "Un poliziotto"
+          ],
+          "answers": [
+            "Il gestore del campeggio"
+          ],
+          "explain": "Si è scoperto che era il gestore."
+        },
+        {
+          "id": "it-listen-aneddoto-estate-q4",
+          "kind": "choice",
+          "prompt": "Quanto è rimasta in Sardegna ?",
+          "options": [
+            "Una settimana",
+            "Un mese",
+            "Due giorni",
+            "Tutta l’estate"
+          ],
+          "answers": [
+            "Una settimana"
+          ],
+          "explain": "« Sono rimasta una settimana »."
+        },
+        {
+          "id": "it-listen-aneddoto-estate-q5",
+          "kind": "choice",
+          "prompt": "Com’è finita l’estate, per Martina ?",
+          "options": [
+            "Un disastro, ma bella",
+            "Terribile e noiosa",
+            "Da dimenticare",
+            "Solo lavoro"
+          ],
+          "answers": [
+            "Un disastro, ma bella"
+          ],
+          "explain": "« Che disastro, ma che bella estate »."
+        },
+        {
+          "id": "it-listen-aneddoto-estate-q6",
+          "kind": "choice",
+          "prompt": "Che reazione ha l’amico durante la storia ?",
+          "options": [
+            "Sorpresa e curiosità",
+            "Noia",
+            "Paura",
+            "Delusione"
+          ],
+          "answers": [
+            "Sorpresa e curiosità"
+          ],
+          "explain": "« Non mi dire ! » e « E poi ? » chiedono il seguito."
+        }
+      ]
+    },
+    {
+      "id": "it-listen-dibattito-tatto",
+      "languageID": "it",
+      "title": "Il dibattito con tatto",
+      "level": "C1",
+      "topic": "opinioni",
+      "unitID": "it-foundations-u9",
+      "text": "Apertura in studio: la questione del ritorno in ufficio. Con noi Elena Ricci, responsabile delle risorse umane, e Tommaso Galli, delegato dei dipendenti. Signora Ricci, Lei propone tre giorni in presenza. « Sì. Capisco il punto di chi ama la casa, però la collaborazione si impara di persona: i nuovi, in particolare, si formano meglio in ufficio ». Galli dissentisce con tatto: « Pur condividendo l’obiettivo, i dati del settore dicono altro: la produttività non è calata. Sono d’accordo in parte sulla formazione; quanto al resto, preferisco fidarmi dei team ». Ricci conclude: « Proviamo allora con due giorni, e tra sei mesi valutiamo insieme ». « Su questo », risponde Galli, « troviamo subito un punto comune ».",
+      "skills": [
+        "listening:inference",
+        "listening:connected-speech",
+        "grammar:connectors",
+        "function:express-opinion"
+      ],
+      "exposureSkills": [],
+      "questions": [
+        {
+          "id": "it-listen-dibattito-tatto-q1",
+          "kind": "choice",
+          "prompt": "Che proposta fa Ricci ?",
+          "options": [
+            "Tre giorni in presenza",
+            "Solo lavoro da casa",
+            "Ritorno completo a tempo pieno",
+            "Eliminare l’ufficio"
+          ],
+          "answers": [
+            "Tre giorni in presenza"
+          ],
+          "explain": "« Lei propone tre giorni in presenza »."
+        },
+        {
+          "id": "it-listen-dibattito-tatto-q2",
+          "kind": "choice",
+          "prompt": "Chi, secondo Ricci, si forma meglio in ufficio ?",
+          "options": [
+            "I nuovi assunti",
+            "I dirigenti",
+            "I team esperti",
+            "I delegati"
+          ],
+          "answers": [
+            "I nuovi assunti"
+          ],
+          "explain": "« I nuovi, in particolare, si formano meglio in ufficio »."
+        },
+        {
+          "id": "it-listen-dibattito-tatto-q3",
+          "kind": "written",
+          "prompt": "Che dicono i dati del settore, secondo Galli ?",
+          "answers": [
+            "la produttività non è calata",
+            "la produttivita non e calata",
+            "la produttivita non e calata"
+          ],
+          "explain": "« I dati del settore dicono altro: la produttività non è calata »."
+        },
+        {
+          "id": "it-listen-dibattito-tatto-q4",
+          "kind": "choice",
+          "prompt": "Su cosa Galli è d’accordo in parte ?",
+          "options": [
+            "Sulla formazione",
+            "Sui trasporti",
+            "Sui computer",
+            "Sui team"
+          ],
+          "answers": [
+            "Sulla formazione"
+          ],
+          "explain": "« Sono d’accordo in parte sulla formazione »."
+        },
+        {
+          "id": "it-listen-dibattito-tatto-q5",
+          "kind": "written",
+          "prompt": "Che compromesso propone Ricci alla fine ?",
+          "answers": [
+            "due giorni",
+            "provare con due giorni",
+            "due giorni e valutiamo tra sei mesi"
+          ],
+          "explain": "« Proviamo allora con due giorni »."
+        },
+        {
+          "id": "it-listen-dibattito-tatto-q6",
+          "kind": "choice",
+          "prompt": "Che tono ha il dibattito ?",
+          "options": [
+            "Cortese e costruttivo",
+            "Aspro e velato",
+            "Indifferente",
+            "Umoristico"
+          ],
+          "answers": [
+            "Cortese e costruttivo"
+          ],
+          "explain": "« Capisco il punto », « punto comune »: dissenso con tatto."
+        }
+      ]
     }
   ]
 }
