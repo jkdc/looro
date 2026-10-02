@@ -6,18 +6,23 @@ import { ServiceError } from './errors.js';
 
 /** Token billing proxy: relays a non-streaming OpenAI-compatible completion
     call (v1 contract; `stream: true` is rejected) to the configured provider
-    using the server key, meters provider-reported usage
-    against the caller's nanoUSD wallet at the active rate version, and refuses
-    accounts without the BYOK unlock. Grace is bounded: a single call whose
-    real cost exceeds the balance settles at the real cost (floor zero) so the
-    reply is never wasted, but a zero balance refuses the next call. */
-export interface TokenProxyConfig { providerURL: string; providerKey: string; maxTokens: number }
+    using the server key, meters provider-reported usage against the caller's
+    nanoUSD wallet at the active rate version, refuses accounts without the
+    BYOK unlock, and caps concurrent relays per account
+    (`PROXY_MAX_CONCURRENT`, default 2) so one account cannot monopolise the
+    server key. Grace is bounded: a single call whose real cost exceeds the
+    balance settles at the real cost (floor zero) so the reply is never
+    wasted, but a zero balance refuses the next call. */
+export interface TokenProxyConfig { providerURL: string; providerKey: string; maxTokens: number; maxConcurrentPerAccount: number }
 
 export const tokenProxyConfig = (env: NodeJS.ProcessEnv): TokenProxyConfig | undefined => {
   const providerURL = env.PROXY_PROVIDER_URL, providerKey = env.PROXY_PROVIDER_KEY;
   if (!providerURL || !providerKey) return undefined;
   try { new URL(providerURL); } catch { throw new Error('PROXY_PROVIDER_URL must be an absolute URL.'); }
-  return { providerURL, providerKey, maxTokens: Number(env.PROXY_MAX_TOKENS ?? 4_000) };
+  const maxConcurrentPerAccount = Number(env.PROXY_MAX_CONCURRENT ?? 2);
+  if (!Number.isSafeInteger(maxConcurrentPerAccount) || maxConcurrentPerAccount < 1)
+    throw new Error('PROXY_MAX_CONCURRENT must be a positive integer.');
+  return { providerURL, providerKey, maxTokens: Number(env.PROXY_MAX_TOKENS ?? 4_000), maxConcurrentPerAccount };
 };
 
 const inputEstimate = (body: { messages?: unknown[]; input?: unknown }) => {
@@ -35,6 +40,11 @@ export async function activeRateVersion(db: Database): Promise<RateVersion> {
 }
 
 export class TokenProxy {
+  /** In-flight relay count per account. The cap check and increment are
+      synchronous (no await between them), so the count is exact within this
+      single process. */
+  readonly #inFlight = new Map<string, number>();
+
   constructor(readonly db: Database, readonly config: TokenProxyConfig, readonly fetchFn: typeof fetch = fetch) {}
 
   async availableBalance(accountID: string): Promise<bigint> {
@@ -48,6 +58,23 @@ export class TokenProxy {
     // so it is rejected before the provider is ever called. Clients send
     // `stream: false` — the app engines' OpenAICompatibleEngine does.
     if (body.stream === true) throw new ServiceError('streaming_unsupported_v1', 400);
+    // Per-account concurrency cap, ahead of the wallet and provider path: one
+    // account must not monopolise the shared server key.
+    const inFlight = this.#inFlight.get(accountID) ?? 0;
+    if (inFlight >= this.config.maxConcurrentPerAccount) throw new ServiceError('account_busy', 429);
+    this.#inFlight.set(accountID, inFlight + 1);
+    try {
+      return await this.#meteredRelay(accountID, body);
+    } finally {
+      const remaining = (this.#inFlight.get(accountID) ?? 1) - 1;
+      if (remaining <= 0) this.#inFlight.delete(accountID); else this.#inFlight.set(accountID, remaining);
+    }
+  }
+
+  /** Balance admission, the provider call and metered settlement. Every exit
+      path — including thrown metering errors — lands in relay()'s finally, so
+      the concurrency slot always frees. */
+  async #meteredRelay(accountID: string, body: Record<string, unknown>): Promise<{ status: number; payload: Record<string, unknown> }> {
     const balance = await this.availableBalance(accountID);
     if (balance <= 0n) throw new ServiceError('token_balance_exhausted', 402);
     const rate = await activeRateVersion(this.db);

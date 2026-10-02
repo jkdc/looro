@@ -8,8 +8,8 @@
  *
  * Phases: warmup → steady authenticated reads → unauthenticated challenge
  * writes → burst spike → proxy completions. Reports RPS and latency percentiles
- * per phase; the proxy phase also counts 402 (token_balance_exhausted) and
- * 403 (unlock_required) outcomes.
+ * per phase; the proxy phase also counts 402 (token_balance_exhausted),
+ * 403 (unlock_required) and 429 (account_busy) outcomes.
  * The local Postgres is a single docker container: results are a relative
  * regression signal, not an absolute production capacity number.
  *
@@ -111,8 +111,8 @@ async function proxySample(token) {
 function proxyReport(name, results, wallSeconds) {
   const ok = results.filter(r => r.status === 200).map(r => r.ms).sort((a, b) => a - b);
   const count = (status) => results.filter(r => r.status === status).length;
-  return { name, requests: results.length, ok: ok.length, exhausted402: count(402), locked403: count(403),
-    errors: results.length - ok.length - count(402) - count(403),
+  return { name, requests: results.length, ok: ok.length, exhausted402: count(402), locked403: count(403), busy429: count(429),
+    errors: results.length - ok.length - count(402) - count(403) - count(429),
     rps: +(results.length / wallSeconds).toFixed(1),
     p50: +pct(ok, 50).toFixed(1), p95: +pct(ok, 95).toFixed(1), p99: +pct(ok, 99).toFixed(1),
     max: ok.length ? +ok[ok.length - 1].toFixed(1) : null };

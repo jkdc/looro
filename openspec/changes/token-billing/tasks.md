@@ -11,7 +11,8 @@
 ## Task 2 — Proxy endpoint (backend)
 
 - [x] 2.1 `/v1/proxy/responses` relay: session auth, `unlock_required` 403,
-      admission caps, per-account concurrency.
+      admission caps, per-account concurrency cap (`PROXY_MAX_CONCURRENT`,
+      default 2, `429 account_busy`).
 - [x] 2.2 Metering: settle with provider usage × pinned rateVersion;
       402 on zero balance with bounded single-call grace; metering tests.
 - [x] 2.3 Streaming pass-through or documented non-streaming v1. (Sanctioned
