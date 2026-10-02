@@ -1539,8 +1539,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         return saved
     }
     fun removeExpression(text: String) {
-        RecallEngine.remove(archive, text)
-        archive = archive.copy(expressions = archive.expressions.toMutableList()) // reassign so the notebook UI recomposes
+        // Copy first, mutate the copy: RecallEngine.remove mutates the list in
+        // place, and the state setter skips element-wise-equal writes.
+        val next = archive.copy(expressions = archive.expressions.toMutableList())
+        RecallEngine.remove(next, text)
+        archive = next
         persist()
     }
     fun gradeRecall(text: String, correct: Boolean) { RecallEngine.grade(archive, text, correct, nowSeconds()); persist() }
