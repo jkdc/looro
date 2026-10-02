@@ -58,7 +58,7 @@ export class PlayMinuteProvider implements MinuteDeliveryAdapter {
     if (!sameHash(saved.account_hash, accountHash) || !sameHash(saved.order_hash, orderHash)) throw new ServiceError('play_binding_configuration_changed', 409);
     return { orderID: order.id, obfuscatedAccountID: accountHash, obfuscatedProfileID: orderHash };
   }
-  async #facts(token: string, expectedOrderID?: string, accountID?: string): Promise<{ evidence: VerifiedMinutePurchase; consumptionState: string }> {
+  async #facts(token: string, expectedOrderID?: string, accountID?: string): Promise<{ evidence: VerifiedMinutePurchase; consumptionState: string; entitlementKind: string }> {
     const purchase = await this.transport.purchase(this.merchant, token);
     if (!purchase || typeof purchase.obfuscatedExternalProfileId !== 'string' || !/^[a-f0-9]{64}$/.test(purchase.obfuscatedExternalProfileId)) throw new ServiceError('play_purchase_binding_invalid', 409);
     const binding = (await this.db.query('SELECT * FROM minute_play_order_bindings WHERE order_hash=$1', [purchase.obfuscatedExternalProfileId])).rows[0];
@@ -112,7 +112,8 @@ export class PlayMinuteProvider implements MinuteDeliveryAdapter {
     const snapshot = { orderID: order.id, tokenHash: providerHash(token), state, refundedMinor, total: Number(order.total_minor) };
     return { evidence: { provider: this.provider, environment: this.environment, merchant: this.merchant, orderID: order.id,
       transactionID: token, eventID: `play-snapshot:${providerHash(JSON.stringify(snapshot))}`, providerProduct: order.provider_product,
-      quantity: 1, currency: order.currency, totalMinor: Number(order.total_minor), state, refundedMinor }, consumptionState: details.consumptionState };
+      quantity: 1, currency: order.currency, totalMinor: Number(order.total_minor), state, refundedMinor }, consumptionState: details.consumptionState,
+      entitlementKind: order.entitlement_kind };
   }
   async verify(input: unknown): Promise<VerifiedMinutePurchase> {
     if (!input || typeof input !== 'object') throw new ServiceError('invalid_play_verification');
@@ -146,6 +147,8 @@ export class PlayMinuteProvider implements MinuteDeliveryAdapter {
   async complete(orderID: string): Promise<void> {
     const token = await this.vault.read(orderID, this), facts = await this.#facts(token, orderID);
     if (facts.evidence.state !== 'purchased') throw new ServiceError('play_delivery_state_changed', 409);
+    // The BYOK unlock is a non-consumable one-time product: acknowledgment ends delivery.
+    if (facts.entitlementKind === 'byok_unlock') return;
     if (facts.consumptionState === 'CONSUMPTION_STATE_CONSUMED') return;
     await this.transport.consume(this.merchant, facts.evidence.providerProduct, token);
   }

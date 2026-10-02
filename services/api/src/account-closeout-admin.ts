@@ -24,14 +24,21 @@ export async function accountCloseoutReport(db: Database, accountID: string) {
     const orders = (await sql.query(`SELECT o.id,o.provider,o.environment,
       r.order_id IS NOT NULL AS has_receipt,
       j.order_id IS NOT NULL AND j.state<>'done' AS delivery_pending,
-      CASE WHEN o.entitlement_kind='ai_value' THEN v.order_id IS NULL ELSE m.order_id IS NULL END AS unverified,
-      CASE WHEN o.entitlement_kind='ai_value' THEN v.state='pending' ELSE m.state='pending' END AS pending,
-      CASE WHEN o.entitlement_kind='ai_value' THEN v.state='voided' ELSE m.state='voided' END AS voided,
+      CASE WHEN o.entitlement_kind='ai_value' THEN v.order_id IS NULL
+        WHEN o.entitlement_kind IN ('byok_unlock','token_pack') THEN k.order_id IS NULL
+        ELSE m.order_id IS NULL END AS unverified,
+      CASE WHEN o.entitlement_kind='ai_value' THEN v.state='pending'
+        WHEN o.entitlement_kind IN ('byok_unlock','token_pack') THEN k.state='pending'
+        ELSE m.state='pending' END AS pending,
+      CASE WHEN o.entitlement_kind='ai_value' THEN v.state='voided'
+        WHEN o.entitlement_kind IN ('byok_unlock','token_pack') THEN k.state='voided'
+        ELSE m.state='voided' END AS voided,
       COALESCE(m.recovered_ms<LEAST(m.reversal_target_ms,m.granted_ms),false) AS minute_refund_due
       FROM minute_purchase_orders o
       LEFT JOIN minute_provider_receipts r ON r.order_id=o.id
       LEFT JOIN minute_provider_jobs j ON j.order_id=o.id
       LEFT JOIN ai_value_purchase_transactions v ON v.order_id=o.id
+      LEFT JOIN pack_purchase_transactions k ON k.order_id=o.id
       LEFT JOIN minute_purchase_transactions m ON m.order_id=o.id
       WHERE o.account_id=$1 ORDER BY o.id LIMIT 1001`, [accountID])).rows;
     const blockers = {

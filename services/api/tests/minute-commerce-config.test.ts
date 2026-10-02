@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash, generateKeyPairSync } from 'node:crypto';
 import { makeAIValueProduct } from '../src/ai-value-purchases.js';
+import { makePackProduct } from '../src/pack-products.js';
 import { configuredMinuteCommerce } from '../src/minute-commerce-config.js';
 
 const privateKey = generateKeyPairSync('rsa', { modulusLength: 2048 }).privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
@@ -81,6 +82,28 @@ test('sales require explicit activation and approval of the exact immutable cata
     await assert.rejects(configuredMinuteCommerce(f.db, f.env), configError);
     await f.approve(); await f.file('CATALOG_FILE', { version: 1, products: [] }); await f.approve();
     await assert.rejects(configuredMinuteCommerce(f.db, f.env), configError);
+  } finally { await f.clean(); }
+});
+
+test('pack catalogs only map provider products onto the approved code constants', async () => {
+  const f = await fixture();
+  try {
+    f.env.APP_MINUTE_SALES_ENABLED = 'true';
+    const packProduct = makePackProduct({ provider: 'stripe', environment: 'test', merchant: 'acct_configfixture', sku: 'pack',
+      providerProduct: 'price_packfixture', currency: 'usd', totalMinor: 499, entitlementKind: 'token_pack', creditNanoUSD: '2160000000' });
+    const unlockProduct = makePackProduct({ provider: 'stripe', environment: 'test', merchant: 'acct_configfixture', sku: 'unlock',
+      providerProduct: 'price_unlockfixture', currency: 'usd', totalMinor: 699, entitlementKind: 'byok_unlock', creditNanoUSD: '0' });
+    await f.file('CATALOG_FILE', { version: 3, products: [packProduct, unlockProduct] }); await f.approve();
+    const service = (await configuredMinuteCommerce(f.db, f.env, f.dependencies))!;
+    assert.equal(service.salesEnabled, true);
+    assert.deepEqual(service.packPurchases.products('stripe'), [packProduct, unlockProduct]);
+    assert.deepEqual(service.aiPurchases.products('stripe'), []);
+    await service.runner.stop();
+    for (const tampered of [{ ...packProduct, totalMinor: 998 }, { ...packProduct, creditNanoUSD: '999' },
+      { ...unlockProduct, entitlementKind: 'token_pack' as const }]) {
+      await f.file('CATALOG_FILE', { version: 3, products: [tampered] }); await f.approve();
+      await assert.rejects(configuredMinuteCommerce(f.db, f.env), configError);
+    }
   } finally { await f.clean(); }
 });
 

@@ -114,7 +114,7 @@ integration('the actual runtime role creates, fulfills and refunds AI orders wit
   try{
     const member=await f.account();
     await f.db.query(`CREATE ROLE ${role};GRANT USAGE ON SCHEMA ${f.schema} TO ${role};GRANT SELECT,UPDATE ON accounts TO ${role}`);
-    for(const file of ['minute-runtime-grants.sql','minute-purchase-runtime-grants.sql','actual-value-runtime-grants.sql']){
+    for(const file of ['minute-runtime-grants.sql','minute-purchase-runtime-grants.sql','actual-value-runtime-grants.sql','pack-runtime-grants.sql']){
       const grants=await readFile(new URL(`../operations/${file}`,import.meta.url),'utf8');
       await f.db.query(grants.replaceAll('app_runtime',role));
     }

@@ -5,6 +5,7 @@ import { ServiceError } from './errors.js';
 import { quoteAITopUp, estimatedConversationMilliseconds, type ProcessingCost } from './ai-top-up-pricing.js';
 import { type MinutePurchases, type MinutePurchaseStatus, type MinutePurchaseVerifier, type PurchaseProvider,
   type PurchaseScope, type VerifiedMinutePurchase } from './minute-purchases.js';
+import type { PackPurchases, PackPurchaseStatus } from './pack-products.js';
 
 const uuid = /^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
 const identifier = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/;
@@ -198,6 +199,8 @@ export class AIValuePurchases {
       if (order.provider!==provider || order.environment!==evidence.environment || order.merchant!==evidence.merchant || order.provider_product!==evidence.providerProduct ||
         order.currency!==evidence.currency || Number(order.total_minor)!==evidence.totalMinor) throw new ServiceError('ai_value_purchase_mismatch',409);
       if ((await sql.query(`SELECT 1 FROM minute_purchase_transactions WHERE provider=$1 AND environment=$2 AND merchant=$3 AND transaction_hash=$4`,
+        [provider,evidence.environment,evidence.merchant,evidence.transactionHash])).rowCount ||
+        (await sql.query(`SELECT 1 FROM pack_purchase_transactions WHERE provider=$1 AND environment=$2 AND merchant=$3 AND transaction_hash=$4`,
         [provider,evidence.environment,evidence.merchant,evidence.transactionHash])).rowCount) throw new ServiceError('purchase_transaction_conflict',409);
       await lockWallet(sql,order.account_id);
       const duplicate=(await sql.query(`SELECT evidence_hash FROM minute_purchase_events WHERE provider=$1 AND environment=$2 AND merchant=$3 AND event_hash=$4`,
@@ -235,13 +238,14 @@ export class AIValuePurchases {
 /** Webhook, Play recovery and durable worker share one authoritative verification before dispatch. */
 export class PurchaseFulfillmentRouter {
   readonly #verifiers=new Map<PurchaseProvider,MinutePurchaseVerifier>();
-  constructor(readonly db:Database,readonly minutes:MinutePurchases,readonly ai:AIValuePurchases,verifiers:readonly MinutePurchaseVerifier[]) {
+  constructor(readonly db:Database,readonly minutes:MinutePurchases,readonly ai:AIValuePurchases,verifiers:readonly MinutePurchaseVerifier[],
+    readonly packs?:PackPurchases) {
     for (const verifier of verifiers) {
       if (!scopeValid(verifier) || typeof verifier.verify!=='function' || this.#verifiers.has(verifier.provider)) throw new ServiceError('invalid_purchase_verifier');
       this.#verifiers.set(verifier.provider,Object.freeze({provider:verifier.provider,environment:verifier.environment,merchant:verifier.merchant,verify:verifier.verify.bind(verifier)}));
     }
   }
-  async reconcile(provider:PurchaseProvider,input:unknown):Promise<MinutePurchaseStatus|AIValuePurchaseStatus> {
+  async reconcile(provider:PurchaseProvider,input:unknown):Promise<MinutePurchaseStatus|AIValuePurchaseStatus|PackPurchaseStatus> {
     const verifier=this.#verifiers.get(provider);if (!verifier) throw new ServiceError('purchase_verification_unavailable',503);
     let evidence:VerifiedMinutePurchase;
     try {evidence=await verifier.verify(input);}catch {throw new ServiceError('purchase_verification_failed',502);}
@@ -249,6 +253,10 @@ export class PurchaseFulfillmentRouter {
     const row=(await this.db.query('SELECT entitlement_kind FROM minute_purchase_orders WHERE id=$1',[evidence.orderID])).rows[0];
     if (row?.entitlement_kind==='ai_value') return this.ai.applyVerifiedEvidence(provider,evidence);
     if (row?.entitlement_kind==='minutes') return this.minutes.applyVerifiedEvidence(provider,evidence);
+    if (row?.entitlement_kind==='byok_unlock' || row?.entitlement_kind==='token_pack') {
+      if (!this.packs) throw new ServiceError('unmapped_purchase',409);
+      return this.packs.applyVerifiedEvidence(provider,evidence);
+    }
     throw new ServiceError('unmapped_purchase',409);
   }
 }

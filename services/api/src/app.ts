@@ -18,6 +18,7 @@ import { startGuestMinutes, linkGuestMinutes, UnconfiguredGuestMinuteAttestor, t
 import { AI_REPORT_BODY_LIMIT, AI_REPORT_PATH, reportNetwork, type AIReports } from './feedback.js';
 import { stripeOrderByKey, type MinutePurchases } from './minute-purchases.js';
 import type { AIValuePurchases, PurchaseFulfillmentRouter } from './ai-value-purchases.js';
+import type { PackPurchases } from './pack-products.js';
 import { STRIPE_MINUTES_WEBHOOK_PATH, STRIPE_WEBHOOK_BODY_LIMIT, type StripeMinuteProvider } from './stripe-minute-provider.js';
 import type { PlayMinuteProvider } from './play-minute-provider.js';
 import { HOSTED_HELPER_BODY_LIMIT, type HostedHelpers } from './hosted-helpers.js';
@@ -39,7 +40,7 @@ import type { SubscriptionBilling } from './subscription-billing.js';
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
   onStartupDiagnostic?: (diagnostic: StartupDiagnostic) => void | Promise<void>;
   hostedHelpers?: HostedHelpers;
-  minuteCommerce?: { purchases: MinutePurchases; aiPurchases?: AIValuePurchases; fulfillment?: PurchaseFulfillmentRouter;
+  minuteCommerce?: { purchases: MinutePurchases; aiPurchases?: AIValuePurchases; packPurchases?: PackPurchases; fulfillment?: PurchaseFulfillmentRouter;
     stripe?: StripeMinuteProvider; play?: PlayMinuteProvider };
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
   tokenProxy?: TokenProxy,
@@ -77,6 +78,10 @@ export function createApp(services: Services) {
     if (kind === 'ai_value') {
       if (!commerce.aiPurchases) throw new ServiceError('ai_value_purchases_unavailable', 503);
       return commerce.aiPurchases.status(account, id);
+    }
+    if (kind === 'byok_unlock' || kind === 'token_pack') {
+      if (!commerce.packPurchases) throw new ServiceError('pack_purchases_unavailable', 503);
+      return commerce.packPurchases.status(account, id);
     }
     return commerce.purchases.status(account, id);
   };
@@ -506,11 +511,14 @@ export function createApp(services: Services) {
   app.get('/v1/minutes/products', async request => {
     const provider = (request.query as Record<string, unknown>).provider;
     if (provider !== 'stripe' && provider !== 'play') throw new ServiceError('invalid_purchase_provider');
-    if (services.minuteCommerce?.aiPurchases) {
-      const products = services.minuteCommerce.aiPurchases.products(provider);
-      return { available: products.length > 0, billingBasis: 'actual-ai-usage', products: products.map(({ merchant: _merchant, provider: _provider, ...product }) => product) };
+    const commerce = services.minuteCommerce;
+    if (commerce?.aiPurchases || commerce?.packPurchases) {
+      const products = [...(commerce.aiPurchases?.products(provider) ?? []), ...(commerce.packPurchases?.products(provider) ?? [])];
+      return { available: products.length > 0,
+        billingBasis: products.length > 0 && products.every(product => product.entitlementKind !== 'ai_value') ? 'prepaid-service-credit' : 'actual-ai-usage',
+        products: products.map(({ merchant: _merchant, provider: _provider, ...product }) => product) };
     }
-    const products = services.minuteCommerce?.purchases.products(provider) ?? [];
+    const products = commerce?.purchases.products(provider) ?? [];
     return { available: products.length > 0, billingBasis: 'connected-conversation-time', products: products.map(product => ({
       sku: product.sku, providerProduct: product.providerProduct, minutes: product.minutes,
       currency: product.currency, totalMinor: product.totalMinor, environment: product.environment
@@ -524,7 +532,12 @@ export function createApp(services: Services) {
     if (typeof key !== 'string') throw new ServiceError('idempotency_key_required');
     const commerce = services.minuteCommerce;
     if (!commerce || !commerce[provider]) throw new ServiceError('minute_purchases_unavailable', 503);
-    const order = await (commerce.aiPurchases ?? commerce.purchases).createOrder(account, provider, stringField(body, 'sku', 128), key);
+    const sku = stringField(body, 'sku', 128);
+    // A pack SKU is owned by the pack catalog even when pack sales are disabled,
+    // so the dedicated unavailable error surfaces instead of a catalog miss.
+    const packs = commerce.packPurchases;
+    const service = packs && packs.hasProduct(provider, sku) ? packs : (commerce.aiPurchases ?? commerce.purchases);
+    const order = await service.createOrder(account, provider, sku, key);
     const payment = provider === 'stripe' ? await commerce.stripe!.checkout(account, order.orderID)
       : await commerce.play!.prepare(account, order.orderID);
     if ('entitlementKind' in order) {

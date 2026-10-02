@@ -4,9 +4,9 @@
 
 - [x] 1.1 Migration: `entitlements`, `rate_versions`; ledger `rate_version`
       column; indexes.
-- [ ] 1.2 Play + Stripe pack products wired into existing purchase delivery
+- [x] 1.2 Play + Stripe pack products wired into existing purchase delivery
       paths with reconciliation tests.
-- [ ] 1.3 Docker suite green.
+- [x] 1.3 Docker suite green.
 
 ## Task 2 — Proxy endpoint (backend)
 

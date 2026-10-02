@@ -227,6 +227,8 @@ export class MinutePurchases {
         purchasedOrder.provider_product !== evidence.providerProduct || purchasedOrder.currency !== evidence.currency ||
         Number(purchasedOrder.total_minor) !== evidence.totalMinor) throw new ServiceError('minute_purchase_mismatch', 409);
       if ((await sql.query(`SELECT 1 FROM ai_value_purchase_transactions WHERE provider=$1 AND environment=$2
+        AND merchant=$3 AND transaction_hash=$4`, [provider,evidence.environment,evidence.merchant,evidence.transactionHash])).rowCount ||
+        (await sql.query(`SELECT 1 FROM pack_purchase_transactions WHERE provider=$1 AND environment=$2
         AND merchant=$3 AND transaction_hash=$4`, [provider,evidence.environment,evidence.merchant,evidence.transactionHash])).rowCount)
         throw new ServiceError('purchase_transaction_conflict',409);
       await lockMinuteWallet(sql, purchasedOrder.account_id, false);

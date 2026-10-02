@@ -142,7 +142,11 @@ export async function deleteAccount(db: Database, account: string, appleRevoker?
     const unresolvedValueOrder = (await sql.query(`SELECT 1 FROM minute_purchase_orders o
       LEFT JOIN ai_value_purchase_transactions p ON p.order_id=o.id WHERE o.account_id=$1 AND o.entitlement_kind='ai_value'
       AND (p.order_id IS NULL OR p.state='pending') LIMIT 1`, [account])).rowCount;
-    if (unresolvedMinuteOrder || unresolvedValueOrder || Number(minutes?.reserved_ms ?? 0) > 0 || (minutePurchase && Number(minutes?.balance_ms ?? 0) > 0))
+    const unresolvedPackOrder = (await sql.query(`SELECT 1 FROM minute_purchase_orders o
+      LEFT JOIN pack_purchase_transactions p ON p.order_id=o.id WHERE o.account_id=$1
+      AND o.entitlement_kind IN ('byok_unlock','token_pack')
+      AND (p.order_id IS NULL OR p.state='pending') LIMIT 1`, [account])).rowCount;
+    if (unresolvedMinuteOrder || unresolvedValueOrder || unresolvedPackOrder || Number(minutes?.reserved_ms ?? 0) > 0 || (minutePurchase && Number(minutes?.balance_ms ?? 0) > 0))
       throw new ServiceError('unresolved_billing', 409);
     const apple = (await sql.query("SELECT subject FROM identities WHERE account_id=$1 AND provider='apple'", [account])).rows[0];
     if (apple) {
