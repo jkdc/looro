@@ -208,6 +208,34 @@ integration('sandbox pack purchases cannot fund public conversations or consume 
     assert.equal(row.balance_nano,'2160000000');assert.equal(row.sandbox_balance_nano,'0');
   }finally{await f.cleanup();}
 });
+integration('a test-environment unlock records fulfillment but never grants the real unlock; a live one does',async()=>{
+  const f=await fixture();try{
+    const member=await f.account();
+    const sandboxPacks=new PackPurchases(f.db,{catalog:[makePackProduct(input('byok_unlock','test'))],verifiers:[{provider:'stripe',
+      environment:'test',merchant:'acct_syntheticpack',verify:async(key:unknown)=>f.evidence.get(key as string)!}],salesEnabled:true});
+    const order=await sandboxPacks.createOrder(member,'stripe',f.unlockProduct.sku,randomUUID());
+    const sandboxProof={provider:'stripe' as const,environment:'test' as const,merchant:'acct_syntheticpack',orderID:order.orderID,
+      transactionID:`synthetic:${randomUUID()}`,eventID:`snapshot:${randomUUID()}`,providerProduct:f.unlockProduct.providerProduct,quantity:1,
+      currency:'usd',totalMinor:BYOK_UNLOCK_PRICE_MINOR,state:'purchased' as const,refundedMinor:0};
+    f.evidence.set('sandbox-unlock',sandboxProof);
+    const status=await sandboxPacks.reconcile('stripe','sandbox-unlock');
+    assert.equal(status.state,'purchased');assert.equal(status.fulfillmentRecorded,false);assert.equal(status.unlockedAt,null);
+    assert.equal(await f.unlockedAt(member),null);
+    assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count,'0');
+    // A later void of the sandbox receipt is a no-op on the real flag.
+    f.evidence.set('sandbox-unlock-refund',{...sandboxProof,eventID:`snapshot:${randomUUID()}`,state:'voided' as const});
+    await sandboxPacks.reconcile('stripe','sandbox-unlock-refund');
+    assert.equal(await f.unlockedAt(member),null);
+    // The identical purchase in the live environment grants the real unlock, set-once.
+    const live=await f.order('byok_unlock',member),liveProof=f.proof(live);
+    await f.router.reconcile('stripe',liveProof.key);
+    const granted=(await f.unlockedAt(member))!.toISOString();assert.ok(granted);
+    assert.equal((await f.packs.status(member,live.orderID)).fulfillmentRecorded,true);
+    await f.router.reconcile('stripe',f.proof(live,{transactionID:liveProof.value.transactionID,eventID:`snapshot:${randomUUID()}`}).key);
+    assert.equal((await f.unlockedAt(member))!.toISOString(),granted);
+    assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count,'1');
+  }finally{await f.cleanup();}
+});
 integration('one provider transaction cannot cross pack, AI value and minute orders',async()=>{
   const f=await fixture();try{
     const member=await f.account(),pack=await f.order('token_pack',member),aiOrder=await f.ai.createOrder(member,'stripe','synthetic-ai',randomUUID()),

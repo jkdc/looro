@@ -23,32 +23,33 @@ const network = { 'x-app-client-ip': '192.0.2.118', 'x-app-proxy-token': proxy.p
 const stripeSecret = 'whsec_' + 'syntheticfixture'.repeat(3);
 const stripeKey = 'sk_test_' + 'syntheticfixture'.repeat(3);
 const rootURL = '/v1/minutes/orders';
-const unlock = makePackProduct({ provider: 'stripe', environment: 'test', merchant: 'acct_httpfixture', sku: 'fixture-unlock',
-  providerProduct: 'price_http_unlock', currency: 'usd', totalMinor: BYOK_UNLOCK_PRICE_MINOR, entitlementKind: 'byok_unlock', creditNanoUSD: '0' });
-const pack = makePackProduct({ provider: 'stripe', environment: 'test', merchant: 'acct_httpfixture', sku: 'fixture-pack',
-  providerProduct: 'price_http_pack', currency: 'usd', totalMinor: TOKEN_PACK_PRICE_MINOR, entitlementKind: 'token_pack',
-  creditNanoUSD: TOKEN_PACK_CREDIT_NANO.toString() });
-const playUnlock = { ...unlock, provider: 'play' as const, merchant: 'com.jkdc.app.httpfixture', providerProduct: 'http_unlock' };
-const playPack = { ...pack, provider: 'play' as const, merchant: 'com.jkdc.app.httpfixture', providerProduct: 'http_pack' };
-const prices: Record<string, number> = { [unlock.providerProduct]: BYOK_UNLOCK_PRICE_MINOR, [pack.providerProduct]: TOKEN_PACK_PRICE_MINOR };
+const prices: Record<string, number> = { price_http_unlock: BYOK_UNLOCK_PRICE_MINOR, price_http_pack: TOKEN_PACK_PRICE_MINOR };
 const clone = <T,>(value: T): T => structuredClone(value);
-async function fixture(options: { salesEnabled?: boolean; packEnabled?: boolean } = {}) {
+async function fixture(options: { salesEnabled?: boolean; packEnabled?: boolean; environment?: 'test' | 'live' } = {}) {
+  const environment = options.environment ?? 'test', live = environment === 'live';
+  const unlock = makePackProduct({ provider: 'stripe', environment, merchant: 'acct_httpfixture', sku: 'fixture-unlock',
+    providerProduct: 'price_http_unlock', currency: 'usd', totalMinor: BYOK_UNLOCK_PRICE_MINOR, entitlementKind: 'byok_unlock', creditNanoUSD: '0' });
+  const pack = makePackProduct({ provider: 'stripe', environment, merchant: 'acct_httpfixture', sku: 'fixture-pack',
+    providerProduct: 'price_http_pack', currency: 'usd', totalMinor: TOKEN_PACK_PRICE_MINOR, entitlementKind: 'token_pack',
+    creditNanoUSD: TOKEN_PACK_CREDIT_NANO.toString() });
+  const playUnlock = { ...unlock, provider: 'play' as const, merchant: 'com.jkdc.app.httpfixture', providerProduct: 'http_unlock' };
+  const playPack = { ...pack, provider: 'play' as const, merchant: 'com.jkdc.app.httpfixture', providerProduct: 'http_pack' };
   const schema = `pack_http_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
   url.searchParams.set('options', `-c search_path=${schema}`);
   const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
   const vault = new MinuteReceiptVault(db, 'test-key', new Map([['test-key', randomBytes(32)]]));
   const sessions = new Map<string, any>(), refunded = new Map<string, number>();
+  const stripeKey = `sk_${environment}_` + 'syntheticfixture'.repeat(3);
   const stripeSDK = new Stripe(stripeKey);
-  const amountOf = (id: string) => prices[[...sessions.values()].find(s => s.id === id)?.line_price ?? ''] ?? 0;
   let createCount = 0, playFacts: any, consumeCalls = 0;
   const transport: StripeMinuteTransport = {
     account: async () => ({ id: 'acct_httpfixture' }),
-    price: async id => ({ id, active: true, livemode: false, currency: 'usd', unit_amount: prices[id] ?? 0, type: 'one_time' }) as any,
+    price: async id => ({ id, active: true, livemode: live, currency: 'usd', unit_amount: prices[id] ?? 0, type: 'one_time' }) as any,
     create: async params => {
       createCount++; const orderID = params.client_reference_id!, priceID = params.line_items![0]!.price as string, amount = prices[priceID]!;
       const id = `cs_test_${orderID.replaceAll('-', '')}`;
       const existing = sessions.get(id); if (existing) return clone(existing);
-      const session = { id, status: 'open', mode: 'payment', livemode: false, payment_status: 'unpaid', line_price: priceID,
+      const session = { id, status: 'open', mode: 'payment', livemode: live, payment_status: 'unpaid', line_price: priceID,
         client_reference_id: orderID, metadata: { app_minute_order: orderID }, currency: 'usd', amount_total: amount,
         payment_intent: `pi_${orderID.replaceAll('-', '')}`, url: `https://checkout.stripe.com/c/pay/${id}` };
       sessions.set(id, session); return clone(session) as any;
@@ -57,20 +58,20 @@ async function fixture(options: { salesEnabled?: boolean; packEnabled?: boolean 
     lines: async id => { const session = sessions.get(id); return { data: [{ quantity: 1, price: { id: session.line_price },
       currency: 'usd', amount_total: session.amount_total }], has_more: false } as any; },
     sessionsForIntent: async id => ({ data: [...sessions.values()].filter(s => s.payment_intent === id).map(clone), has_more: false }) as any,
-    intent: async id => { const session = [...sessions.values()].find(s => s.payment_intent === id)!; return { id, livemode: false,
+    intent: async id => { const session = [...sessions.values()].find(s => s.payment_intent === id)!; return { id, livemode: live,
       status: 'succeeded', currency: 'usd', amount_received: session.amount_total, metadata: session.metadata, latest_charge: `ch_${id.slice(3)}` } as any; },
     charge: async id => { const session = [...sessions.values()].find(s => s.payment_intent === `pi_${id.slice(3)}`)!; return { id, status: 'succeeded',
-      livemode: false, paid: true, captured: true, amount: session.amount_total, currency: 'usd', payment_intent: `pi_${id.slice(3)}`, disputed: false } as any; },
+      livemode: live, paid: true, captured: true, amount: session.amount_total, currency: 'usd', payment_intent: `pi_${id.slice(3)}`, disputed: false } as any; },
     refunds: async intent => ({ data: refunded.get(intent) ? [{ id: `re_${intent.slice(3)}`, payment_intent: intent, currency: 'usd',
       status: 'succeeded', amount: refunded.get(intent) }] : [], has_more: false }) as any,
     verifyEvent: (raw, signature) => stripeSDK.webhooks.constructEvent(raw, signature, stripeSecret),
   };
   const stripe = new StripeMinuteProvider(db, vault, { secretKey: stripeKey, webhookSecret: stripeSecret, accountID: 'acct_httpfixture',
-    webOrigin: 'https://app.example.test', checkoutEnabled: true }, transport);
+    environment, allowLive: live, webOrigin: 'https://app.example.test', checkoutEnabled: true }, transport);
   const playTotals: Record<string, { units: string; nanos: number }> = {
     [playUnlock.providerProduct]: { units: '6', nanos: 990_000_000 }, [playPack.providerProduct]: { units: '4', nanos: 990_000_000 } };
   const play = new PlayMinuteProvider(db, vault, { packageName: 'com.jkdc.app.httpfixture', bindingKey: Buffer.alloc(32, 8),
-    currencyExponents: { usd: 2 }, purchasesEnabled: true }, {
+    environment, allowLive: live, currencyExponents: { usd: 2 }, purchasesEnabled: true }, {
     purchase: async () => clone(playFacts),
     order: async (_merchant: string, orderId: string) => ({ orderId, purchaseToken: playFacts.token, state: 'PROCESSED',
       total: { currencyCode: 'USD', ...playTotals[playFacts.productLineItem[0].productId] },
@@ -108,7 +109,7 @@ async function fixture(options: { salesEnabled?: boolean; packEnabled?: boolean 
       session.payment_status = state === 'paid' ? 'paid' : 'unpaid';
       if (refund) refunded.set(session.payment_intent, refund);
       const payload = JSON.stringify({ id: `evt_${randomUUID().replaceAll('-', '')}`, object: 'event', type: state === 'expired' ? 'checkout.session.expired' : 'checkout.session.completed',
-        livemode: false, account: 'acct_httpfixture', data: { object: { id: session.id } } }, null, 2);
+        livemode: live, account: 'acct_httpfixture', data: { object: { id: session.id } } }, null, 2);
       return { payload, signature: stripeSDK.webhooks.generateTestHeaderString({ payload, secret: stripeSecret }) };
     },
     async webhook(event: { payload: string; signature: string }) {
@@ -116,7 +117,7 @@ async function fixture(options: { salesEnabled?: boolean; packEnabled?: boolean 
     },
     bindPlay(order: any, product: { providerProduct: string }) {
       const token = `synthetic-http-token.${randomUUID()}`;
-      playFacts = { token, orderId: 'GPA.1234-5678-9012-34567', testPurchaseContext: { fopType: 'TEST' },
+      playFacts = { token, orderId: 'GPA.1234-5678-9012-34567', ...(live ? {} : { testPurchaseContext: { fopType: 'TEST' } }),
         purchaseStateContext: { purchaseState: 'PURCHASED' }, obfuscatedExternalAccountId: order.payment.obfuscatedAccountID,
         obfuscatedExternalProfileId: order.payment.obfuscatedProfileID,
         productLineItem: [{ productId: product.providerProduct, productOfferDetails: { quantity: 1, refundableQuantity: 1, consumptionState: 'CONSUMPTION_STATE_YET_TO_BE_CONSUMED' } }] };
@@ -153,32 +154,48 @@ integration('disabled pack sales hide the catalog but a configured catalog still
   } finally { await f.cleanup(); }
 });
 
-integration('Stripe webhook delivers the unlock once, replays idempotently and refunds clear it', async () => {
+integration('a Stripe test-mode unlock purchase records the order but never grants the real entitlement', async () => {
   const f = await fixture();
   try {
-    const account = await f.account(), other = await f.account(), order = await f.order(account, 'fixture-unlock');
+    const account = await f.account(), order = await f.order(account, 'fixture-unlock');
     assert.equal(order.entitlementKind, 'byok_unlock'); assert.equal(order.creditNanoUSD, '0'); assert.equal(order.totalMinor, 699);
+    const event = f.stripeEvent(order.orderID);
+    assert.equal((await f.webhook(event)).statusCode, 200);
+    assert.equal((await f.webhook(event)).statusCode, 200);
+    const status = (await f.app.inject({ url: `${rootURL}/${order.orderID}`, headers: account.headers })).json();
+    assert.equal(status.state, 'purchased'); assert.equal(status.fulfillmentRecorded, false); assert.equal(status.unlockedAt, null);
+    assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count, '0');
+    const refund = f.stripeEvent(order.orderID, 'paid', 699);
+    assert.equal((await f.webhook(refund)).statusCode, 200);
+    assert.equal((await f.webhook(refund)).statusCode, 200);
+    assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count, '0');
+    // A refunded sandbox unlock never traps the account.
+    const result = await deleteAccount(f.db, account.id);
+    assert.equal(result.retainedFinancialRecords, true);
+    await assert.rejects(authenticate(f.db, account.headers.authorization), { code: 'sign_in_required' });
+  } finally { await f.cleanup(); }
+});
+
+integration('a Stripe live-mode unlock webhook grants the real unlock once, idempotently, and refunds clear it', async () => {
+  const f = await fixture({ environment: 'live' });
+  try {
+    const account = await f.account(), other = await f.account(), order = await f.order(account, 'fixture-unlock');
     assert.equal((await f.app.inject({ url: `${rootURL}/${order.orderID}`, headers: other.headers })).statusCode, 404);
     const event = f.stripeEvent(order.orderID);
     assert.equal((await f.webhook(event)).statusCode, 200);
     assert.equal((await f.webhook(event)).statusCode, 200);
     const status = (await f.app.inject({ url: `${rootURL}/${order.orderID}`, headers: account.headers })).json();
     assert.equal(status.state, 'purchased'); assert.equal(status.fulfillmentRecorded, true);
-    assert.equal(typeof status.unlockedAt, 'string'); assert.equal(status.grantedNanoUSD, '0');
+    assert.equal(typeof status.unlockedAt, 'string');
     const entitlement = (await f.db.query('SELECT unlock_source,unlock_order_id,unlocked_at FROM entitlements WHERE account_id=$1', [account.id])).rows[0];
     assert.equal(entitlement.unlock_source, 'stripe'); assert.equal(entitlement.unlock_order_id, order.orderID);
     assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count, '1');
-    const refund = f.stripeEvent(order.orderID, 'paid', 699);
-    assert.equal((await f.webhook(refund)).statusCode, 200);
-    assert.equal((await f.webhook(refund)).statusCode, 200);
+    // The full refund revokes this order's own grant.
+    await f.webhook(f.stripeEvent(order.orderID, 'paid', 699));
     const refundedStatus = (await f.app.inject({ url: `${rootURL}/${order.orderID}`, headers: account.headers })).json();
     assert.equal(refundedStatus.state, 'purchased'); assert.equal(refundedStatus.fulfillmentRecorded, false); assert.equal(refundedStatus.unlockedAt, null);
     assert.equal((await f.db.query('SELECT unlocked_at FROM entitlements WHERE account_id=$1', [account.id])).rows[0].unlocked_at, null);
     assert.equal((await f.db.query('SELECT count(*) FROM ledger')).rows[0].count, '0');
-    // A fully refunded unlock never traps the account: deletion resolves after refund.
-    const result = await deleteAccount(f.db, account.id);
-    assert.equal(result.retainedFinancialRecords, true);
-    await assert.rejects(authenticate(f.db, account.headers.authorization), { code: 'sign_in_required' });
   } finally { await f.cleanup(); }
 });
 
@@ -214,17 +231,18 @@ integration('Stripe webhook credits the token pack once with the pinned rate ver
 integration('Play delivers the non-consumable unlock without consumption and the consumable pack with it', async () => {
   const f = await fixture();
   try {
-    const account = await f.account(), unlockOrder = await f.order(account, 'fixture-unlock', 'play'), token = f.bindPlay(unlockOrder, playUnlock);
+    const account = await f.account(), unlockOrder = await f.order(account, 'fixture-unlock', 'play'), token = f.bindPlay(unlockOrder, { providerProduct: 'http_unlock' });
     for (let count = 0; count < 2; count++) {
       const result = await f.app.inject({ method: 'POST', url: `${rootURL}/${unlockOrder.orderID}/play`, headers: account.headers, payload: { purchaseToken: token } });
       assert.equal(result.statusCode, 200, result.body); assert.equal(result.json().entitlementKind, 'byok_unlock');
-      assert.equal(result.json().fulfillmentRecorded, true);
+      // A test-environment receipt records the purchase but grants no real unlock.
+      assert.equal(result.json().fulfillmentRecorded, false); assert.equal(result.json().unlockedAt, null);
     }
     await f.drain();
     assert.equal(f.consumeCalls, 0); // The unlock is a non-consumable one-time product.
-    assert.ok((await f.db.query('SELECT unlocked_at FROM entitlements WHERE account_id=$1', [account.id])).rows[0].unlocked_at);
+    assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count, '0');
     assert.equal((await f.db.query('SELECT count(*) FROM ledger')).rows[0].count, '0');
-    const packAccount = await f.account(), packOrder = await f.order(packAccount, 'fixture-pack', 'play'), packToken = f.bindPlay(packOrder, playPack);
+    const packAccount = await f.account(), packOrder = await f.order(packAccount, 'fixture-pack', 'play'), packToken = f.bindPlay(packOrder, { providerProduct: 'http_pack' });
     const result = await f.app.inject({ method: 'POST', url: `${rootURL}/${packOrder.orderID}/play`, headers: packAccount.headers, payload: { purchaseToken: packToken } });
     assert.equal(result.statusCode, 200, result.body); assert.equal(result.json().entitlementKind, 'token_pack');
     assert.equal(result.json().grantedNanoUSD, '2160000000');

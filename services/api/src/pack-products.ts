@@ -197,7 +197,10 @@ export class PackPurchases {
         if (order.entitlement_kind==='token_pack') {
           if (state==='purchased' && granted===0n) await appendEntry(sql,order.account_id,`pack-purchase:${order.id}`,'purchase',credit,0n,order.rate_version,
             order.environment==='test'?credit:0n);
-        } else if (state==='purchased') {
+        } else if (state==='purchased' && order.environment==='live') {
+          // Sandbox provenance, mirroring the pack and AI-value split: only a
+          // live-environment purchase may set the real proxy-gating unlock. A
+          // test receipt records state on the transaction row only.
           // Set-once: the first verified purchase wins; replays and later orders are no-ops.
           await sql.query(`INSERT INTO entitlements(account_id,unlocked_at,unlock_source,unlock_order_id) VALUES($1,now(),$2,$3)
             ON CONFLICT (account_id) DO NOTHING`,[order.account_id,provider,order.id]);
