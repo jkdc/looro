@@ -29,7 +29,9 @@ struct RootView: View {
             Tab("Learn", systemImage: "graduationcap", value: 2) {
                 shell { CoursesView(coordinator: coordinator) { tab = 0 } }
             }
-            Tab("Words", systemImage: "book", value: 3) { shell { WordsView(coordinator: coordinator) } }
+            Tab("Words", systemImage: "book", value: 3) {
+                shell { WordsView(coordinator: coordinator, onOpenLessons: { tab = 2 }, onOpenTalk: { tab = 0 }) }
+            }
             Tab("Listen", systemImage: "headphones", value: 4) { shell { ListeningView(coordinator: coordinator) } }
         }
         .tint(AppColor.ink)

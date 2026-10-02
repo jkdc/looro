@@ -174,6 +174,10 @@ struct CurrentTopicView: View {
 
 struct WordsView: View {
     let coordinator: ConversationCoordinator
+    /// Empty-state CTAs; RootView wires them to the Learn and Talk tabs,
+    /// mirroring Android's onOpenLessons/onOpenTalk.
+    var onOpenLessons: () -> Void = {}
+    var onOpenTalk: () -> Void = {}
     @State private var search = ""
     @State private var selected: WordState?
     @State private var sessions = false
@@ -222,9 +226,20 @@ struct WordsView: View {
                 HStack { Text("1 · Fragile"); Spacer(); Text("2 · Growing"); Spacer(); Text("3 · Steady") }.font(.caption).foregroundStyle(AppColor.secondary)
                 Text("The bars estimate spoken recall, not permanent mastery. Using a word with visible meanings counts as supported practice.").font(.footnote).foregroundStyle(AppColor.secondary)
                 Text("Saved expressions").font(.system(.title3, design: .rounded, weight: .semibold))
+                    .accessibilityAddTraits(.isHeader)
                 if expressions.isEmpty {
-                    Text("Save expressions from a lesson or the dictionary and they will return for recall.")
-                        .font(.subheadline).foregroundStyle(AppColor.secondary)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Save expressions from a lesson or the dictionary and they will return for recall.")
+                            .font(.subheadline).foregroundStyle(AppColor.secondary)
+                        HStack(spacing: 10) {
+                            Button { onOpenLessons() } label: { Text("Practise a lesson").frame(maxWidth: .infinity) }
+                                .buttonStyle(.borderedProminent).tint(AppColor.sage).foregroundStyle(AppColor.ink)
+                                .accessibilityIdentifier("words-cta-lessons")
+                            Button { onOpenTalk() } label: { Text("Start talking").frame(maxWidth: .infinity) }
+                                .buttonStyle(.borderedProminent).tint(AppColor.sage).foregroundStyle(AppColor.ink)
+                                .accessibilityIdentifier("words-cta-talk")
+                        }
+                    }
                 } else {
                     LazyVStack(spacing: 12) {
                         ForEach(expressions, id: \.self) { expression in
@@ -232,6 +247,7 @@ struct WordsView: View {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text(expression.text).font(.system(.title2, design: .rounded, weight: .medium))
                                     Text(expression.meaning).font(.subheadline).foregroundStyle(AppColor.secondary)
+                                    Text(sourceLabel(expression.source)).font(.caption2).foregroundStyle(AppColor.secondary)
                                 }
                                 Spacer(minLength: 10)
                                 VStack(alignment: .trailing, spacing: 8) {
@@ -258,6 +274,15 @@ struct WordsView: View {
             .sheet(item: $selected) { word in WordDetailView(word: word, store: coordinator.store) }
             .sheet(isPresented: $sessions) { SessionHistoryView(store: coordinator.store) }
             .sheet(isPresented: $practising) { WritingPracticeView(store: coordinator.store) }
+    }
+
+    /// Where the expression came from — mirror of Android's expressionSourceLabel.
+    private func sourceLabel(_ source: String) -> String {
+        switch source {
+        case "lesson": return "From a lesson"
+        case "lookup": return "Saved by you"
+        default: return source
+        }
     }
 }
 
