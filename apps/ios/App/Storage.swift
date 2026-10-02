@@ -127,6 +127,15 @@ import LearningCore
         persist()
     }
     func hideWord(_ id: String) { archive.preferences.hiddenWords.append(id); persist() }
+    /// Saves a looked-up phrase into the spaced-recall notebook — the single
+    /// expression store (RecallEngine upsert on the (language, text) key, then
+    /// persist). Returns false when a new entry cannot fit.
+    func saveLookupExpression(text: String, meaning: String) -> Bool {
+        let saved = RecallEngine.saveLookup(&archive, text: text, meaning: meaning,
+                                            now: Date.now.timeIntervalSinceReferenceDate)
+        if saved { persist() }
+        return saved
+    }
     func correctPassage(sessionID: UUID, passageID: String, text: String) {
         guard let index = archive.sessions.firstIndex(where: { $0.id == sessionID }),
               let passage = archive.sessions[index].passages.first(where: { $0.id == passageID && $0.speaker == .user }) else { return }

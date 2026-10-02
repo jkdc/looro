@@ -22,7 +22,9 @@ struct RootView: View {
         TabView(selection: $tab) {
             Tab("Talk", systemImage: "waveform", value: 0) { shell { TalkView(coordinator: coordinator) } }
             Tab("Themes", systemImage: "square.grid.2x2", value: 1) {
-                shell { ThemesView(coordinator: coordinator) { theme in coordinator.chooseTheme(theme); tab = 0 } }
+                shell { ThemesView(coordinator: coordinator,
+                                   choose: { theme in coordinator.chooseTheme(theme); tab = 0 },
+                                   practiseScenario: { scenario in coordinator.chooseScenario(scenario); tab = 0 }) }
             }
             Tab("Learn", systemImage: "graduationcap", value: 2) {
                 shell { CoursesView(coordinator: coordinator) { tab = 0 } }
@@ -36,6 +38,12 @@ struct RootView: View {
             AIConsentView(agree: { coordinator.acceptAIConsent() }, decline: { coordinator.declineAIConsent() })
         }
         .fullScreenCover(isPresented: $onboarding) { OnboardingView(coordinator: coordinator) { coordinator.store.updatePreferences { $0.hasOnboarded = true }; onboarding = false } }
+        // Situation review (mirrors Android AppRoot: the review sheet sits above
+        // the error dialog); swipe-down dismisses through dismissScenarioReview().
+        .sheet(item: Binding(get: { coordinator.scenarioReviewState },
+                             set: { if $0 == nil { coordinator.dismissScenarioReview() } })) { state in
+            ScenarioReviewSheet(state: state, coordinator: coordinator) { coordinator.practiseAgain(); tab = 0 }
+        }
         .alert("A little interruption", isPresented: Binding(get: { coordinator.error != nil || coordinator.store.error != nil }, set: { if !$0 { coordinator.error = nil; coordinator.store.error = nil } })) {
             Button("OK", role: .cancel) { coordinator.error = nil; coordinator.store.error = nil }
         } message: { Text(coordinator.error ?? coordinator.store.error ?? "") }

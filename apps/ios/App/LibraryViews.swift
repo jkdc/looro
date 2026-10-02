@@ -5,12 +5,19 @@ import LearningCore
 struct ThemesView: View {
     let coordinator: ConversationCoordinator
     let choose: (ConversationTheme?) -> Void
+    /// Marks a situation (curated or the learner's own) as the next practice and
+    /// returns to the talk screen; the coordinator handles consent and the mic.
+    let practiseScenario: (Scenario) -> Void
     @State private var search = ""
     @State private var category = "All"
     @State private var current = false
+    @State private var custom = false
     @Environment(\.dynamicTypeSize) private var typeSize
     private var themes: [ConversationTheme] {
         coordinator.language.themes.filter { (category == "All" || $0.category == category) && (search.isEmpty || $0.title.localizedCaseInsensitiveContains(search) || $0.category.localizedCaseInsensitiveContains(search)) }
+    }
+    private var scenarios: [Scenario] {
+        Scenarios.shared.filter { search.isEmpty || $0.title.localizedCaseInsensitiveContains(search) || $0.subtitle.localizedCaseInsensitiveContains(search) || $0.category.localizedCaseInsensitiveContains(search) }
     }
     private var categories: [String] { coordinator.language.themes.map(\.category).reduce(into: ["All"]) { if !$0.contains($1) { $0.append($1) } } }
     var body: some View {
@@ -45,10 +52,87 @@ struct ThemesView: View {
                     }
                 }
                 if themes.isEmpty { ContentUnavailableView.search(text: search) }
+                if !scenarios.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Practise a situation").font(.system(.title2, design: .rounded, weight: .semibold))
+                        Text("A guided rehearsal, then a review of your mistakes.").font(.subheadline).foregroundStyle(AppColor.secondary)
+                    }
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 260 : 150), spacing: 12)], spacing: 12) {
+                        ForEach(scenarios, id: \.id) { scenario in
+                            Button { practiseScenario(scenario) } label: {
+                                VStack(alignment: .leading, spacing: 28) {
+                                    Image(systemName: Self.symbol(scenario.id)).font(.system(size: 28, weight: .light)).foregroundStyle(AppColor.secondary)
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text(scenario.title).font(.system(.headline, design: .rounded))
+                                        Text(scenario.subtitle).font(.caption).foregroundStyle(AppColor.secondary)
+                                    }
+                                }.frame(maxWidth: .infinity, minHeight: 142, alignment: .leading).padding(19)
+                                    .background(AppColor.panels[scenario.colorIndex], in: RoundedRectangle(cornerRadius: 27))
+                            }.buttonStyle(.plain).accessibilityIdentifier("scenario-\(scenario.id)")
+                        }
+                    }
+                    Button { custom = true } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "sparkles").font(.system(size: 24, weight: .light)).foregroundStyle(AppColor.secondary)
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text("Your own situation").font(.system(.headline, design: .rounded))
+                                Text("Describe it and we’ll rehearse it").font(.caption).foregroundStyle(AppColor.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "arrow.up.right").font(.subheadline).foregroundStyle(AppColor.secondary)
+                        }.padding(22).frame(maxWidth: .infinity)
+                            .background(AppColor.butter.opacity(0.8), in: RoundedRectangle(cornerRadius: 26))
+                    }.buttonStyle(.plain).accessibilityIdentifier("scenario-custom")
+                }
             }.padding(24)
         }.foregroundStyle(AppColor.ink)
             .searchable(text: $search, prompt: "Find a conversation")
             .sheet(isPresented: $current) { CurrentTopicView(coordinator: coordinator) { choose(coordinator.selectedTheme) } }
+            .sheet(isPresented: $custom) { CustomScenarioView(coordinator: coordinator, practise: practiseScenario) }
+    }
+
+    /// The Core catalog carries Android glyph names; iOS mirrors the same card
+    /// icons with the closest SF Symbols (same mapping as Android's scenarioSymbol).
+    private static func symbol(_ id: String) -> String {
+        switch id {
+        case "job_interview": "star"
+        case "presentation": "mic"
+        case "sports": "sun"
+        case "restaurant": "fork.knife"
+        case "doctor": "leaf"
+        case "phone_call": "waveform"
+        case "small_talk": "cup.and.saucer"
+        case "shopping": "square.grid.2x2"
+        default: "sparkles"
+        }
+    }
+}
+
+/// The learner's own free-text situation: sanitized by `Scenarios.custom` before
+/// it reaches the coordinator. Mirror of Android's CustomScenarioDialog.
+struct CustomScenarioView: View {
+    let coordinator: ConversationCoordinator
+    let practise: (Scenario) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var goal = ""
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 22) {
+                    PageHeading(eyebrow: "Your own situation", title: "What would you like to practise?", subtitle: "A job interview, asking for the bill, talking about your team…")
+                    TextField("Describe the situation", text: Binding(get: { goal }, set: { goal = String($0.prefix(160)) }), axis: .vertical)
+                        .lineLimit(2...4).padding(18).background(.white, in: RoundedRectangle(cornerRadius: 20))
+                        .accessibilityIdentifier("scenario-custom-input")
+                    Button { practise(Scenarios.custom(goal)); dismiss() } label: {
+                        HStack { Text("Practise this"); Spacer(); Image(systemName: "waveform") }
+                            .font(.headline).padding(18).background(AppColor.orange, in: Capsule())
+                    }.disabled(goal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .accessibilityIdentifier("scenario-custom-start")
+                    Text("Your description stays on this device and is used only to guide the practice.").font(.footnote).foregroundStyle(AppColor.secondary)
+                }.padding(26)
+            }.background(AppColor.cream).foregroundStyle(AppColor.ink)
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+        }.presentationDetents([.medium, .large])
     }
 }
 

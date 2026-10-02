@@ -61,6 +61,9 @@
 
 ## Task 6 — iOS parity follow-up (separate change)
 
-- [ ] 6.1 `ConversationCoordinator` scenario session + review request.
-- [ ] 6.2 `Storage.swift` mirror of the new `SessionRecord` fields.
-- [ ] 6.3 iOS review UI; macOS `swift test` gate.
+- [x] 6.1 `ConversationCoordinator` scenario session + review request.
+- [x] 6.2 `Storage.swift` mirror of the new `SessionRecord` fields.
+- [x] 6.3 iOS review UI; macOS `swift test` gate — macOS-gate-pending: no Swift
+      toolchain on the Linux authoring machine, so the XCTest cases in
+      `apps/ios/Tests/ScenarioReviewingTests.swift` are written and committed but
+      execute at the macOS gate (see `verify-report.md`).
