@@ -656,7 +656,7 @@ enum ScenarioReviewState: Equatable {
         return FinalAssessmentResult(sessionID: snapshot.id, languageID: snapshot.languageID, assessment: proposed,
                                      inputTokens: result.usage.input, outputTokens: result.usage.output, searchCalls: result.usage.searches)
     }
-    private enum ScenarioReviewError: Error { case timedOut, notJSON }
+    private enum ScenarioReviewError: Error { case timedOut, notJSON, closeUnconfirmed }
     /// Wire schema for the review helper: strengths/errors/keyPhrases/retryFocus with
     /// the validator's caps; mirror of Android's scenarioReviewSchema().
     private nonisolated static func scenarioReviewSchema() -> [String: Any] {
@@ -690,10 +690,27 @@ enum ScenarioReviewState: Equatable {
         let input = TeachingPolicy.reviewContext(snapshot)
         let schema = scenarioReviewSchema()
         if let hosted {
+            // The server accepts post-close helpers only for a confirmed-closed session,
+            // so wait for the close that closeHostedSession() issued before calling
+            // (Android gates identically via closeAndConfirm) instead of racing it.
+            try await awaitHostedClose(client: hosted.client, sessionID: hosted.sessionID, session: hosted.session)
             return try await hosted.client.hostedHelper(sessionID: hosted.sessionID, purpose: .scenarioReview,
                                                         instructions: instructions, input: input, schema: schema, session: hosted.session)
         }
         return try await router.respond(purpose: .scenarioReview, instructions: instructions, input: input, schema: schema)
+    }
+    /// Reuses closeHostedSession()'s confirmation poll (8 s budget, 500 ms interval):
+    /// a poll error or a budget timeout throws, failing the review cleanly inside
+    /// the 120 s window rather than hitting the server before the close is confirmed.
+    private nonisolated static func awaitHostedClose(client: ManagedAccountClient, sessionID: String,
+                                                     session: ManagedAccountSession) async throws {
+        let deadline = Date().addingTimeInterval(8)
+        while Date() < deadline {
+            let status = try await client.hostedStatus(sessionID: sessionID, session: session)
+            if status.isClosed { return }
+            try await Task.sleep(for: .milliseconds(500))
+        }
+        throw ScenarioReviewError.closeUnconfirmed
     }
     /// Races the review against the 120 s post-close helper window: a later answer
     /// must surface as an explicit Failed (Android's withTimeout(POST_END_MILLIS)
