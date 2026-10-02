@@ -11,6 +11,8 @@ public enum UsageEvents {
     public static let themeSelected = "theme_selected"
     public static let lessonStarted = "lesson_started"
     public static let lessonCompleted = "lesson_completed"
+    public static let scenarioStarted = "scenario_started"
+    public static let scenarioCompleted = "scenario_completed"
     public static let assessmentCompleted = "assessment_completed"
     public static let practiceCompleted = "practice_completed"
     public static let wordLookup = "word_lookup"
@@ -21,7 +23,7 @@ public enum UsageEvents {
     public static let paywallViewed = "paywall_viewed"
 
     public static let all: [String] = [appOpen, sessionStarted, sessionEnded, sessionResumed, themeSelected,
-        lessonStarted, lessonCompleted, assessmentCompleted, practiceCompleted, wordLookup,
+        lessonStarted, lessonCompleted, scenarioStarted, scenarioCompleted, assessmentCompleted, practiceCompleted, wordLookup,
         replayUsed, ttsSpeedChanged, helpRequested, reportRequested, paywallViewed]
 }
 

@@ -284,7 +284,8 @@ public struct Archive: Codable, Sendable {
     public static let maximumCompletions = 2_000
     public static let maximumErrors = 100
     static let completionKinds: Set<String> = ["lesson", "conversation_theme", "exercise_set", "listening",
-                                               "reading", "recall_round", "words_practice", "assessment"]
+                                               "reading", "recall_round", "words_practice", "assessment",
+                                               "scenario_practice"]
     // Generous text caps, far above a real conversation, so a crafted backup cannot stall Markdown rendering.
     // Write sites clamp to these too, so a long model reply can never make a saved session fail validation here.
     public static let maximumTitleCharacters = 200

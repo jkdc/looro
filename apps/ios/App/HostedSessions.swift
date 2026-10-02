@@ -83,6 +83,7 @@ enum HelperPurpose: String {
     case meaning, assessment, lookup, delegation
     case typedReply = "typed_reply"
     case topic
+    case scenarioReview = "scenario_review"
 }
 
 /// One route for every learning call: the backend helpers channel while a

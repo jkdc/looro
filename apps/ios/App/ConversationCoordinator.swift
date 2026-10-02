@@ -5,12 +5,29 @@ import AVFoundation
 import UIKit
 import LearningCore
 
+/// Post-session review lifecycle for situation practice (mode="scenario"), bound
+/// to the session that produced it — mirror of Android's ScenarioReviewState.
+enum ScenarioReviewState: Equatable {
+    case preparing(sessionID: UUID, scenarioID: String, scenarioTitle: String)
+    case ready(sessionID: UUID, scenarioID: String, scenarioTitle: String, review: ScenarioReview)
+    case failed(sessionID: UUID, scenarioID: String, scenarioTitle: String)
+
+    var sessionID: UUID {
+        switch self {
+        case .preparing(let sessionID, _, _): sessionID
+        case .ready(let sessionID, _, _, _): sessionID
+        case .failed(let sessionID, _, _): sessionID
+        }
+    }
+}
+
 @MainActor @Observable final class ConversationCoordinator {
     let store: LearningStore
     private(set) var state: ConnectionState = .idle
     private(set) var session: SessionRecord?
     var selectedTheme: ConversationTheme?
     var selectedLesson: Lesson?
+    private(set) var selectedScenario: Scenario?
     enum ConversationProvider { case personalKey, hostedMinutes }
     private(set) var activeProvider: ConversationProvider = .personalKey
     private var hostedSessionID: String?
@@ -85,6 +102,8 @@ import LearningCore
     private let transport = LiveTransport()
     private var connectionTask: Task<Void, Never>?
     private var assessmentTask: Task<Void, Never>?
+    private var scenarioReviewTask: Task<Void, Never>?
+    private(set) var scenarioReviewState: ScenarioReviewState?
     private var delegationTasks: [String: Task<Void, Never>] = [:]
     private var closeTask: Task<Void, Never>?
     private var durationTask: Task<Void, Never>?
@@ -184,11 +203,15 @@ import LearningCore
         let prefersHosted = hostedUIAvailable && hostedPreferences.prefersHostedMinutes
         if !prefersHosted, !CredentialStore.hasKey { showSettings = true; return }
         cancelReset(); meanings.reset()
+        scenarioReviewTask?.cancel(); scenarioReviewState = nil
         error = nil; notice = nil; lastAssessmentKey = ""
         lastLanguageCheck = ""; pendingCommands = [:]
         state = .connecting; isMuted = false
-        var record = SessionRecord(languageID: language.id, themeID: selectedTheme?.id, title: selectedLesson?.title ?? selectedTheme?.title, lessonID: selectedLesson?.id)
+        var record = SessionRecord(languageID: language.id, themeID: selectedTheme?.id,
+            title: selectedLesson?.title ?? selectedScenario?.title ?? selectedTheme?.title,
+            lessonID: selectedLesson?.id, scenarioID: selectedScenario?.id)
         if selectedLesson != nil { record.mode = "lesson" }
+        else if selectedScenario != nil { record.mode = "scenario" }
         else if store.preferences.listeningPractice == true { record.mode = "listening" }
         if let pendingTopic { record.topics = [pendingTopic] }
         session = record; store.save(record)
@@ -199,6 +222,9 @@ import LearningCore
             if let course = lessonCourse(lesson.id) { lessonProps["courseID"] = .string(course.id) }
             usageReporter.record(UsageEvents.lessonStarted, props: lessonProps)
         }
+        if record.isScenario, let scenarioID = record.scenarioID {
+            usageReporter.record(UsageEvents.scenarioStarted, props: ["scenarioID": .string(scenarioID)])
+        }
         let generation = record.id
         let learner = store.learner
         // Each new conversation starts fresh; learned vocabulary and difficulty still carry forward.
@@ -206,6 +232,11 @@ import LearningCore
         let instructions: String
         if let selectedLesson {
             instructions = TeachingPolicy.lessonPractice(lesson: selectedLesson, language: language)
+        } else if let selectedScenario {
+            instructions = TeachingPolicy.scenarioPractice(scenario: selectedScenario, language: language, learner: learner,
+                interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage,
+                slowSpeech: store.preferences.effectiveSpeechRate() < 1.0, skillFocus: store.errorFocus(),
+                previousErrors: previousScenarioErrors(selectedScenario.id))
         } else {
             instructions = TeachingPolicy.voice(language: language, learner: learner, theme: selectedTheme, interests: store.preferences.interests, meaningLanguage: store.preferences.meaningLanguage, slowSpeech: store.preferences.effectiveSpeechRate() < 1.0, skillFocus: store.errorFocus())
         }
@@ -305,8 +336,9 @@ import LearningCore
         cancelReset(); languageGeneration = UUID()
         connectionTask?.cancel(); closeTask?.cancel(); durationTask?.cancel()
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
+        scenarioReviewTask?.cancel(); scenarioReviewState = nil
         delegationTasks.values.forEach { $0.cancel() }; delegationTasks.removeAll()
-        session = nil; selectedTheme = nil; selectedLesson = nil; pendingTopic = nil
+        session = nil; selectedTheme = nil; selectedLesson = nil; selectedScenario = nil; pendingTopic = nil
         working = false; notice = nil; error = nil
         lastAssessmentKey = ""; lastLanguageCheck = ""; pendingCommands = [:]
         inputLevel = 0; outputLevel = 0; state = .idle; isMuted = false
@@ -327,6 +359,38 @@ import LearningCore
         selectedTheme = nil; pendingTopic = nil
         selectedLesson = lesson
     }
+    /// Marks a situation (curated or the learner's own) as the next practice; the
+    /// caller handles consent and the microphone. No hot-switch while running.
+    func chooseScenario(_ scenario: Scenario) {
+        guard !isRunning else { return }
+        if session != nil { resetConversation() }
+        selectedTheme = nil; selectedLesson = nil; pendingTopic = nil
+        selectedScenario = scenario
+    }
+    /// Most recent reviewed attempt at this situation feeds the next prompt, so
+    /// the coach deliberately drills the errors that were actually made.
+    private func previousScenarioErrors(_ scenarioID: String) -> String {
+        guard let review = store.archive.sessions.last(where: {
+            $0.scenarioID == scenarioID && $0.scenarioReview?.errors.isEmpty == false
+        })?.scenarioReview else { return "" }
+        return ScenarioReviewing.previousErrors(review)
+    }
+    func dismissScenarioReview() { scenarioReviewTask?.cancel(); scenarioReviewState = nil }
+    /// Restarts the reviewed situation immediately; the review's verified errors
+    /// flow back into the new session's prompt via previousScenarioErrors.
+    func practiseAgain() {
+        let scenarioID: String
+        switch scenarioReviewState {
+        case .ready(_, let id, _, _), .failed(_, let id, _): scenarioID = id
+        default: return
+        }
+        guard let scenario = (selectedScenario?.id == scenarioID) ? selectedScenario : Scenarios.byID(scenarioID) else { return }
+        guard !isRunning else { return }
+        scenarioReviewTask?.cancel(); scenarioReviewState = nil
+        resetConversation()
+        chooseScenario(scenario)
+        start()
+    }
     func chooseTheme(_ theme: ConversationTheme?) {
         if !isRunning, session != nil { resetConversation() }
         selectedTheme = theme
@@ -346,6 +410,7 @@ import LearningCore
     func deleteLearningData() {
         guard !isRunning else { return }
         meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
+        scenarioReviewTask?.cancel(); scenarioReviewState = nil
         resetConversation()
         store.deleteAll()
     }
@@ -406,6 +471,15 @@ import LearningCore
                     userTurns: ended.passages.filter { $0.speaker == .user }.count))]
             if let themeID = ended.themeID { endedProps["themeID"] = .string(themeID) }
             usageReporter.record(UsageEvents.sessionEnded, props: endedProps)
+            if ended.isScenario, let scenarioID = ended.scenarioID {
+                store.recordCompletion(kind: ProgressEngine.scenarioPractice, itemID: scenarioID)
+                usageReporter.record(UsageEvents.scenarioCompleted, props: [
+                    "scenarioID": .string(scenarioID),
+                    "durationBucket": .int(UsageBuckets.duration(seconds: Int(
+                        (ended.endedAt?.timeIntervalSince(ended.startedAt) ?? 0).rounded()))),
+                    "turnsBucket": .int(UsageBuckets.turns(
+                        userTurns: ended.passages.filter { $0.speaker == .user }.count))])
+            }
             if let lessonID = ended.lessonID {
                 var lessonProps = ["lessonID": UsageProp.string(lessonID)]
                 if let course = lessonCourse(lessonID) { lessonProps["courseID"] = .string(course.id) }
@@ -414,8 +488,19 @@ import LearningCore
         }
         Task { [weak self] in await self?.usageReporter.flush() }
         syncProgress()
+        // The scenario review rides the hosted helpers channel after close, so the
+        // binding is captured before closeHostedSession() clears the live one.
+        let hostedHelpers: (client: ManagedAccountClient, session: ManagedAccountSession, sessionID: String)?
+        if let (client, _) = managed, let token = hostedSessionToken, let sessionID = hostedSessionID {
+            hostedHelpers = (client, token, sessionID)
+        } else {
+            hostedHelpers = nil
+        }
         if hostedSessionID != nil { closeHostedSession() }
-        if let session { finalAssessments.submit(session) }
+        if let session {
+            finalAssessments.submit(session)
+            if session.isScenario { requestScenarioReview(session, hosted: hostedHelpers) }
+        }
         scheduleTranslation(); scheduleReset()
         if !final, session?.providerID != nil { notice = "Conversation saved. Final voice usage is unconfirmed." }
         if backgroundTask != .invalid { UIApplication.shared.endBackgroundTask(backgroundTask); backgroundTask = .invalid }
@@ -455,6 +540,8 @@ import LearningCore
             session?.voiceSeconds = 15
             if let lessonID = session?.lessonID, let lesson = CourseRegistry.lesson(id: lessonID) {
                 append("instructions", TeachingPolicy.lessonOpening(lesson: lesson, language: language))
+            } else if session?.isScenario == true {
+                append("instructions", TeachingPolicy.scenarioOpening(language: language))
             } else if session?.isListening == true {
                 append("instructions", TeachingPolicy.listeningStory(language: language))
             } else {
@@ -511,7 +598,7 @@ import LearningCore
         guard !isRunning else { return }
         cancelReset(); meanings.reset(); saveTask?.cancel(); saveTask = nil
         languageGeneration = UUID()
-        session = nil; selectedTheme = nil; selectedLesson = nil; pendingTopic = nil
+        session = nil; selectedTheme = nil; selectedLesson = nil; selectedScenario = nil; pendingTopic = nil
         notice = nil; error = nil; working = false; isMuted = false
         inputLevel = 0; outputLevel = 0; state = .idle
     }
@@ -569,6 +656,60 @@ import LearningCore
         return FinalAssessmentResult(sessionID: snapshot.id, languageID: snapshot.languageID, assessment: proposed,
                                      inputTokens: result.usage.input, outputTokens: result.usage.output, searchCalls: result.usage.searches)
     }
+    private enum ScenarioReviewError: Error { case timedOut, notJSON }
+    /// Wire schema for the review helper: strengths/errors/keyPhrases/retryFocus with
+    /// the validator's caps; mirror of Android's scenarioReviewSchema().
+    private nonisolated static func scenarioReviewSchema() -> [String: Any] {
+        func string(maxLength: Int? = nil) -> [String: Any] {
+            var schema: [String: Any] = ["type": "string"]
+            if let maxLength { schema["maxLength"] = maxLength }
+            return schema
+        }
+        func object(_ fields: [String: Any]) -> [String: Any] {
+            ["type": "object", "properties": fields, "required": fields.keys.sorted(), "additionalProperties": false]
+        }
+        return object([
+            "strengths": ["type": "array", "maxItems": ScenarioReviewing.maximumStrengths, "items": string(maxLength: 200)],
+            "errors": ["type": "array", "maxItems": ScenarioReviewing.maximumErrors,
+                       "items": object([
+                           "quote": string(maxLength: 200), "correction": string(maxLength: 200),
+                           "kind": ["type": "string", "enum": ScenarioReviewing.kinds.sorted()],
+                           "note": string(maxLength: 200),
+                           "sourceIDs": ["type": "array", "maxItems": ScenarioReviewing.maximumSourceIDs, "items": string()]])],
+            "keyPhrases": ["type": "array", "maxItems": ScenarioReviewing.maximumKeyPhrases,
+                           "items": object(["phrase": string(maxLength: 120), "meaning": string(maxLength: 160)])],
+            "retryFocus": string(maxLength: 200)])
+    }
+    /// The review request itself: a hosted session rides the helpers channel's
+    /// post-close window, the personal-key path is a plain chat completion with the
+    /// schema embedded. Mirror of Android's teaching() dispatcher split.
+    private nonisolated static func scenarioReviewResult(router: HelperRouter,
+                                                         hosted: (client: ManagedAccountClient, session: ManagedAccountSession, sessionID: String)?,
+                                                         snapshot: SessionRecord, language: LanguageModule, meaningLanguage: String) async throws -> APIResult {
+        let instructions = TeachingPolicy.scenarioReview(language: language, meaningLanguage: meaningLanguage)
+        let input = TeachingPolicy.reviewContext(snapshot)
+        let schema = scenarioReviewSchema()
+        if let hosted {
+            return try await hosted.client.hostedHelper(sessionID: hosted.sessionID, purpose: .scenarioReview,
+                                                        instructions: instructions, input: input, schema: schema, session: hosted.session)
+        }
+        return try await router.respond(purpose: .scenarioReview, instructions: instructions, input: input, schema: schema)
+    }
+    /// Races the review against the 120 s post-close helper window: a later answer
+    /// must surface as an explicit Failed (Android's withTimeout(POST_END_MILLIS)
+    /// and TimeoutCancellationException), never leave the sheet preparing forever.
+    private nonisolated static func withReviewTimeout(_ operation: @escaping @Sendable () async throws -> APIResult) async throws -> APIResult {
+        try await withThrowingTaskGroup(of: APIResult.self) { group in
+            group.addTask { try await operation() }
+            group.addTask {
+                try await Task.sleep(for: .seconds(120))
+                throw ScenarioReviewError.timedOut
+            }
+            guard let result = try await group.next() else { throw ScenarioReviewError.timedOut }
+            group.cancelAll()
+            return result
+        }
+    }
     private func scheduleAssessment() {
         assessmentTask?.cancel()
         assessmentTask = Task { [weak self] in
@@ -591,6 +732,54 @@ import LearningCore
             catch {
                 // The passage remains saved without unverified learning evidence.
                 // Assessment status does not belong in the conversation interface.
+            }
+        }
+    }
+    /// Runs once after a situation session ends: the review helper grades the
+    /// whole learner transcript against a strict schema, the client verifies
+    /// every quote against the real fragments, and the result is stored on the
+    /// session and surfaced through scenarioReviewState. Bound to the session,
+    /// not to any UI generation; hosted sessions ride the same 120 s post-close
+    /// helper window as the final assessment. Mirror of Android's
+    /// maybeGenerateScenarioReview.
+    private func requestScenarioReview(_ snapshot: SessionRecord,
+                                       hosted: (client: ManagedAccountClient, session: ManagedAccountSession, sessionID: String)?) {
+        guard let scenarioID = snapshot.scenarioID,
+              snapshot.passages.filter({ $0.speaker == .user }).count >= 2 else { return }
+        let scenario = selectedScenario?.id == scenarioID ? selectedScenario : Scenarios.byID(scenarioID)
+        let title = scenario?.title ?? snapshot.title
+        scenarioReviewTask?.cancel()
+        scenarioReviewState = .preparing(sessionID: snapshot.id, scenarioID: scenarioID, scenarioTitle: title)
+        let meaningLanguage = store.preferences.meaningLanguage
+        scenarioReviewTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                guard let module = LanguageRegistry.module(for: snapshot.languageID) else { throw ArchiveError.unsupportedLanguage }
+                // A local avoids reading the MainActor-isolated router inside the @Sendable closure.
+                let router = self.helperRouter
+                let result = try await Self.withReviewTimeout {
+                    try await Self.scenarioReviewResult(router: router, hosted: hosted,
+                                                        snapshot: snapshot, language: module, meaningLanguage: meaningLanguage)
+                }
+                guard let parsed = ScenarioReviewing.parse(result.text) else { throw ScenarioReviewError.notJSON }
+                let review = ScenarioReviewing.validate(parsed, session: snapshot)
+                // Store through the single-writer path even if the learner already moved
+                // on; only the visible state transition stays bound to this session.
+                if var stored = self.store.archive.sessions.first(where: { $0.id == snapshot.id }) {
+                    stored.scenarioReview = review
+                    self.store.save(stored)
+                    if self.session?.id == stored.id { self.session = stored }
+                }
+                if case .preparing(let sessionID, _, _)? = self.scenarioReviewState, sessionID == snapshot.id {
+                    self.scenarioReviewState = .ready(sessionID: sessionID, scenarioID: scenarioID, scenarioTitle: title, review: review)
+                }
+            } catch is CancellationError {
+                // A new conversation or an explicit dismiss took over; it owns the state.
+            } catch let error as URLError where error.code == .cancelled { }
+            catch {
+                if case .preparing(let sessionID, _, _)? = self.scenarioReviewState, sessionID == snapshot.id {
+                    self.scenarioReviewState = .failed(sessionID: sessionID, scenarioID: scenarioID, scenarioTitle: title)
+                }
             }
         }
     }
@@ -646,7 +835,8 @@ import LearningCore
             // and a local avoids the force unwrap across suspension.
             guard let current = session else { return }
             let lesson = session?.lessonID.flatMap { CourseRegistry.lesson(id: $0) }
-            let result = try await helperRouter.respond(purpose: .typedReply, instructions: TeachingPolicy.typedReply(language: language, lesson: lesson), input: TeachingPolicy.context(current))
+            let scenario = session?.scenarioID.flatMap { id in selectedScenario?.id == id ? selectedScenario : Scenarios.byID(id) }
+            let result = try await helperRouter.respond(purpose: .typedReply, instructions: TeachingPolicy.typedReply(language: language, lesson: lesson, scenario: scenario), input: TeachingPolicy.context(current))
             guard session?.id == snapshot.id, state == .active else { return }
             addUsage(result.usage)
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
