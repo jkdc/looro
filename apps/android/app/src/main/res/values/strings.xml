@@ -123,6 +123,34 @@
     <string name="topics_current_theme_subtitle">From the world today</string>
     <string name="topics_from_conversation">From our conversation</string>
 
+    <!-- Situations (guided speaking practice) -->
+    <string name="scenarios_section_title">Practise a situation</string>
+    <string name="scenarios_section_subtitle">A guided rehearsal, then a review of your mistakes.</string>
+    <string name="scenarios_custom_card_title">Your own situation</string>
+    <string name="scenarios_custom_card_subtitle">Describe it and we\'ll rehearse it</string>
+    <string name="scenarios_custom_eyebrow">Your own situation</string>
+    <string name="scenarios_custom_title">What would you like to practise?</string>
+    <string name="scenarios_custom_subtitle">A job interview, asking for the bill, talking about your team…</string>
+    <string name="scenarios_custom_placeholder">Describe the situation</string>
+    <string name="scenarios_custom_start">Practise this</string>
+    <string name="scenarios_custom_note">Your description stays on this device and is used only to guide the practice.</string>
+    <string name="review_title">Your review</string>
+    <string name="review_preparing">Preparing your review…</string>
+    <string name="review_preparing_note">We are listening back to your practice.</string>
+    <string name="review_failed_title">The review could not be prepared</string>
+    <string name="review_failed_body">Your practice is saved. Try again after your next attempt.</string>
+    <string name="review_scenario_label">Situation: %1$s</string>
+    <string name="review_retry_title">For next time</string>
+    <string name="review_strengths_title">What went well</string>
+    <string name="review_errors_title">To polish</string>
+    <string name="review_you_said">You said</string>
+    <string name="review_better">Better</string>
+    <string name="review_key_phrases_title">Key phrases</string>
+    <string name="review_phrase_save">Save</string>
+    <string name="review_phrase_saved">Saved</string>
+    <string name="review_practise_again">Practise again</string>
+    <string name="review_done">Done</string>
+
     <!-- Words screen -->
     <string name="words_tab_title">Words</string>
     <string name="words_eyebrow">Little by little · %1$s</string>

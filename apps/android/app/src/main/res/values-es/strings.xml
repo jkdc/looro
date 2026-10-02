@@ -123,6 +123,34 @@
     <string name="topics_current_theme_subtitle">Actualidad</string>
     <string name="topics_from_conversation">Durante la conversación</string>
 
+    <!-- Situations (guided speaking practice) -->
+    <string name="scenarios_section_title">Practica una situación</string>
+    <string name="scenarios_section_subtitle">Un ensayo guiado y, al final, repaso de tus errores.</string>
+    <string name="scenarios_custom_card_title">Tu propia situación</string>
+    <string name="scenarios_custom_card_subtitle">Descríbela y la ensayamos</string>
+    <string name="scenarios_custom_eyebrow">Tu propia situación</string>
+    <string name="scenarios_custom_title">¿Qué te gustaría practicar?</string>
+    <string name="scenarios_custom_subtitle">Una entrevista de trabajo, pedir la cuenta, hablar de tu equipo…</string>
+    <string name="scenarios_custom_placeholder">Describe la situación</string>
+    <string name="scenarios_custom_start">Practicar esto</string>
+    <string name="scenarios_custom_note">Tu descripción se queda en este dispositivo y solo se usa para guiar la práctica.</string>
+    <string name="review_title">Tu repaso</string>
+    <string name="review_preparing">Preparando tu repaso…</string>
+    <string name="review_preparing_note">Estamos escuchando tu práctica de nuevo.</string>
+    <string name="review_failed_title">No se pudo preparar el repaso</string>
+    <string name="review_failed_body">Tu práctica queda guardada. Inténtalo de nuevo tras tu próximo intento.</string>
+    <string name="review_scenario_label">Situación: %1$s</string>
+    <string name="review_retry_title">Para la próxima</string>
+    <string name="review_strengths_title">Lo que hiciste bien</string>
+    <string name="review_errors_title">Para pulir</string>
+    <string name="review_you_said">Dijiste</string>
+    <string name="review_better">Mejor</string>
+    <string name="review_key_phrases_title">Frases clave</string>
+    <string name="review_phrase_save">Guardar</string>
+    <string name="review_phrase_saved">Guardada</string>
+    <string name="review_practise_again">Practicar otra vez</string>
+    <string name="review_done">Hecho</string>
+
     <!-- Words screen -->
     <string name="words_tab_title">Palabras</string>
     <string name="words_eyebrow">Poco a poco · %1$s</string>

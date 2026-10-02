@@ -25,7 +25,8 @@ object ProgressEngine {
     const val RECALL_ROUND = "recall_round"
     const val WORDS_PRACTICE = "words_practice"
     const val ASSESSMENT = "assessment"
-    val kinds = listOf(LESSON, CONVERSATION_THEME, EXERCISE_SET, LISTENING, READING, PRONUNCIATION, RECALL_ROUND, WORDS_PRACTICE, ASSESSMENT)
+    const val SCENARIO_PRACTICE = "scenario_practice"
+    val kinds = listOf(LESSON, CONVERSATION_THEME, EXERCISE_SET, LISTENING, READING, PRONUNCIATION, RECALL_ROUND, WORDS_PRACTICE, ASSESSMENT, SCENARIO_PRACTICE)
 
     private val SLUG = Regex("[a-z0-9][a-z0-9_-]{0,63}")
 

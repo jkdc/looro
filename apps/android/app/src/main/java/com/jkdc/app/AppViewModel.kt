@@ -75,6 +75,19 @@ internal fun requestErrorReference(error: Throwable): String? = safeRequestError
     else -> null
 })
 
+/** Post-session review lifecycle for situation practice (mode="scenario"). */
+sealed interface ScenarioReviewState {
+    val sessionID: String
+    val scenarioID: String
+    val scenarioTitle: String
+    data class Preparing(override val sessionID: String, override val scenarioID: String,
+        override val scenarioTitle: String) : ScenarioReviewState
+    data class Ready(override val sessionID: String, override val scenarioID: String,
+        override val scenarioTitle: String, val review: ScenarioReview) : ScenarioReviewState
+    data class Failed(override val sessionID: String, override val scenarioID: String,
+        override val scenarioTitle: String) : ScenarioReviewState
+}
+
 /** Whether the failure means the learner needs to add or fix their OpenAI key in Settings. */
 internal fun errorNeedsKeySetup(e: Throwable): Boolean =
     e is APIClient.APIException.MissingKey || (e is APIClient.APIException.Http && e.status == 401)
@@ -111,6 +124,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var partialUserTranscript by mutableStateOf<String?>(null); private set
     var selectedTheme by mutableStateOf<ConversationTheme?>(null); private set
     var selectedLesson by mutableStateOf<Lesson?>(null); private set
+    var selectedScenario by mutableStateOf<Scenario?>(null); private set
     var lookupResult by mutableStateOf<String?>(null); private set
     var lookupError by mutableStateOf<String?>(null); private set
     var lookupLoading by mutableStateOf(false); private set
@@ -577,6 +591,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private var resetJob: Job? = null
     private var assessmentJob: Job? = null
     private var actionJob: Job? = null
+    var scenarioReviewState by mutableStateOf<ScenarioReviewState?>(null); private set
+    private var scenarioReviewJob: Job? = null
     private val meanings = MeaningController(viewModelScope, canRetryFailure = HostedHelperRetry::canRetryAtBoundary,
         retryDelay = HostedHelperRetry::automaticDelay) { request ->
         if (archive.preferences.aiConsentVersion != 1) throw IllegalStateException("AI processing consent is required.")
@@ -1124,6 +1140,36 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     fun lessonAttempts(lessonID: String): Int = archive.lessons.firstOrNull { it.lessonID == lessonID }?.attempts ?: 0
 
+    /** Marks a situation (curated or the learner's own) as the next practice; the
+        caller handles consent and the microphone. No hot-switch while running. */
+    fun chooseScenario(scenario: Scenario) {
+        if (isRunning) return
+        if (!isRunning && session != null) resetConversation()
+        selectedTheme = null; selectedLesson = null; topicResult = null
+        selectedScenario = scenario
+    }
+
+    /** Most recent reviewed attempt at this situation feeds the next prompt, so
+        the coach deliberately drills the errors that were actually made. */
+    private fun previousScenarioErrors(scenarioID: String): String = archive.sessions
+        .lastOrNull { it.scenarioID == scenarioID && it.scenarioReview?.errors?.isNotEmpty() == true }
+        ?.scenarioReview?.let(ScenarioReviewing::previousErrors) ?: ""
+
+    fun dismissScenarioReview() { scenarioReviewJob?.cancel(); scenarioReviewState = null }
+
+    /** Restarts the reviewed situation immediately; the review's verified errors
+        flow back into the new session's prompt via previousScenarioErrors. */
+    fun practiseAgain() {
+        val scenarioID = (scenarioReviewState as? ScenarioReviewState.Ready)?.scenarioID
+            ?: (scenarioReviewState as? ScenarioReviewState.Failed)?.scenarioID ?: return
+        val scenario = selectedScenario?.takeIf { it.id == scenarioID } ?: Scenarios.byID(scenarioID) ?: return
+        if (isRunning) return
+        scenarioReviewJob?.cancel(); scenarioReviewState = null
+        resetConversation()
+        chooseScenario(scenario)
+        start()
+    }
+
     /** Replay the tutor's last spoken passage. In a voice session it goes through
         the transport (which pauses the mic, like a normal reply); otherwise the
         card reader speaks it — no microphone is live in typed sessions. */
@@ -1221,7 +1267,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (isRunning || state == "connecting") return
         val saved = archive.sessions.firstOrNull { it.id == id } ?: return
         resetConversation()
-        selectedTheme = null; selectedLesson = null; topicResult = null
+        selectedTheme = null; selectedLesson = null; selectedScenario = null; topicResult = null
         session = saved.copy(
             fragments = saved.fragments.toMutableList(),
             assessments = saved.assessments.toMutableList(),
@@ -1297,11 +1343,18 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun newSession(voice: Boolean, id: String = UUID.randomUUID().toString()) {
         generation++; resetJob?.cancel(); assessmentJob?.cancel(); actionJob?.cancel(); clearLookup(); working = false; meanings.reset()
+        scenarioReviewJob?.cancel(); scenarioReviewState = null
         dismissError(); notice = null; isMuted = false
         voiceSession = voice; lastActivity = nowSeconds()
-        val record = SessionRecord(id = id, languageID = language.id, themeID = selectedTheme?.id, title = selectedLesson?.title ?: selectedTheme?.title ?: language.defaultTitle,
-            mode = if (selectedLesson != null) "lesson" else if (voice && archive.preferences.listeningPractice == true) "listening" else null,
-            lessonID = selectedLesson?.id)
+        val record = SessionRecord(id = id, languageID = language.id, themeID = selectedTheme?.id,
+            title = selectedLesson?.title ?: selectedScenario?.title ?: selectedTheme?.title ?: language.defaultTitle,
+            mode = when {
+                selectedLesson != null -> "lesson"
+                selectedScenario != null -> "scenario"
+                voice && archive.preferences.listeningPractice == true -> "listening"
+                else -> null
+            },
+            lessonID = selectedLesson?.id, scenarioID = selectedScenario?.id)
         topicResult?.takeIf { it.languageID == language.id && selectedTheme?.id == "current" }?.let { record.topics += it }
         session = record; save(record)
     }
@@ -1347,9 +1400,22 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 put("lessonID", lessonID); lessonCourseID(lessonID)?.let { put("courseID", it) }
             }
         }
+        session?.takeIf { it.isScenario }?.scenarioID?.let { scenarioID ->
+            usageReporter.record(UsageEvents.SCENARIO_STARTED) { put("scenarioID", scenarioID) }
+        }
         val id = session!!.id
         val module = language
-        val instructions = selectedLesson?.let { TeachingPolicy.lessonPractice(it, module) } ?: TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0, skillFocus = errorFocus())
+        val lesson = selectedLesson
+        val scenario = selectedScenario
+        val instructions = when {
+            lesson != null -> TeachingPolicy.lessonPractice(lesson, module)
+            scenario != null -> TeachingPolicy.scenarioPractice(scenario, module, learner, archive.preferences.interests,
+                archive.preferences.meaningLanguage, slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0,
+                skillFocus = errorFocus(), previousErrors = previousScenarioErrors(scenario.id))
+            else -> TeachingPolicy.voice(module, learner, selectedTheme, archive.preferences.interests,
+                archive.preferences.meaningLanguage, slowSpeech = archive.preferences.effectiveSpeechRate() < 1.0,
+                skillFocus = errorFocus())
+        }
         val history = ConversationHistory.messages(session)
         if (!localVoice && choice == ConversationProvider.HOSTED_MINUTES) accountChangeBlocked = true
         connectionJob = viewModelScope.launch {
@@ -1416,10 +1482,19 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         session?.takeIf { !it.isLesson }?.themeID?.takeIf { it.isNotBlank() }?.let { recordCompletion(ProgressEngine.CONVERSATION_THEME, it) }
         session?.let { ended ->
             val seconds = ((ended.endedAt ?: nowSeconds()) - ended.startedAt).toInt().coerceAtLeast(0)
+            val userTurns = ended.passages.count { it.speaker == Speaker.user }
             usageReporter.record(UsageEvents.SESSION_ENDED) {
                 put("durationBucket", UsageBuckets.duration(seconds))
-                put("turnsBucket", UsageBuckets.turns(ended.passages.count { it.speaker == Speaker.user }))
+                put("turnsBucket", UsageBuckets.turns(userTurns))
                 ended.themeID?.let { put("themeID", it) }
+            }
+            ended.takeIf { it.isScenario }?.scenarioID?.let { scenarioID ->
+                recordCompletion(ProgressEngine.SCENARIO_PRACTICE, scenarioID)
+                usageReporter.record(UsageEvents.SCENARIO_COMPLETED) {
+                    put("scenarioID", scenarioID)
+                    put("durationBucket", UsageBuckets.duration(seconds))
+                    put("turnsBucket", UsageBuckets.turns(userTurns))
+                }
             }
             ended.lessonID?.let { lessonID ->
                 usageReporter.record(UsageEvents.LESSON_COMPLETED) {
@@ -1435,6 +1510,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 hostedBindings.ended(it.id); reconcileHostedSessions(); finishHostedAssessment(clone(it))
             } else finalAssessments.submit(clone(it))
         }
+        session?.takeIf { it.isScenario }?.let { maybeGenerateScenarioReview(clone(it)) }
         scheduleTranslation(utteranceComplete = true)
         resetJob = viewModelScope.launch { delay(15000); if (state == "ended") resetConversation() }
     }
@@ -1472,7 +1548,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun resetConversation() {
         if (isRunning) return
         generation++; resetJob?.cancel(); actionJob?.cancel(); clearLookup(); assessmentJob?.cancel(); languageCheckJob?.cancel(); meanings.reset()
-        session = null; selectedTheme = null; selectedLesson = null; topicResult = null
+        session = null; selectedTheme = null; selectedLesson = null; selectedScenario = null; topicResult = null
         notice = null; working = false; state = "idle"; voiceSession = false
         partialUserTranscript = null
     }
@@ -1493,6 +1569,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 val lesson = session?.lessonID?.let { CourseRegistry.lesson(it) }
                 command("instructions", when {
                     lesson != null -> TeachingPolicy.lessonOpening(lesson, language)
+                    session?.isScenario == true -> TeachingPolicy.scenarioOpening(language)
                     session?.isListening == true -> TeachingPolicy.listeningStory(language)
                     else -> TeachingPolicy.greeting(language, selectedTheme)
                 }); startDurationChecks()
@@ -1639,6 +1716,76 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         job.start()
     }
 
+    @Serializable private data class ScenarioReviewResponse(val strengths: List<String> = emptyList(),
+        val errors: List<ReviewedError> = emptyList(), val keyPhrases: List<ReviewedPhrase> = emptyList(),
+        val retryFocus: String = "")
+    private fun scenarioReviewSchema(): JsonObject {
+        fun string(maxLength: Int? = null) = buildJsonObject {
+            put("type", "string"); maxLength?.let { put("maxLength", it) }
+        }
+        fun obj(fields: Map<String, JsonElement>) = buildJsonObject {
+            put("type", "object"); put("properties", JsonObject(fields)); put("required", JsonArray(fields.keys.map(::JsonPrimitive))); put("additionalProperties", false)
+        }
+        return obj(mapOf(
+            "strengths" to buildJsonObject { put("type", "array"); put("maxItems", ScenarioReviewing.MAXIMUM_STRENGTHS); put("items", string(200)) },
+            "errors" to buildJsonObject {
+                put("type", "array"); put("maxItems", ScenarioReviewing.MAXIMUM_ERRORS)
+                put("items", obj(mapOf(
+                    "quote" to string(200), "correction" to string(200),
+                    "kind" to buildJsonObject { put("type", "string"); put("enum", JsonArray(ScenarioReviewing.KINDS.map(::JsonPrimitive))) },
+                    "note" to string(200),
+                    "sourceIDs" to buildJsonObject { put("type", "array"); put("maxItems", ScenarioReviewing.MAXIMUM_SOURCE_IDS); put("items", string()) },
+                )))
+            },
+            "keyPhrases" to buildJsonObject {
+                put("type", "array"); put("maxItems", ScenarioReviewing.MAXIMUM_KEY_PHRASES)
+                put("items", obj(mapOf("phrase" to string(120), "meaning" to string(160))))
+            },
+            "retryFocus" to string(200),
+        ))
+    }
+
+    /** Runs once after a situation session ends: the review helper grades the
+        whole learner transcript against a strict schema, the client verifies
+        every quote against the real fragments, and the result is stored on the
+        session and surfaced in the review sheet. Hosted sessions ride the same
+        120 s post-end window as the final assessment. */
+    private fun maybeGenerateScenarioReview(snapshot: SessionRecord) {
+        val scenarioID = snapshot.scenarioID ?: return
+        if (snapshot.passages.count { it.speaker == Speaker.user } < 2) return
+        val title = selectedScenario?.takeIf { it.id == scenarioID }?.title
+            ?: Scenarios.byID(scenarioID)?.title ?: snapshot.title
+        scenarioReviewJob?.cancel()
+        scenarioReviewState = ScenarioReviewState.Preparing(snapshot.id, scenarioID, title)
+        scenarioReviewJob = viewModelScope.launch {
+            try {
+                val module = LanguageRegistry.get(snapshot.languageID) ?: throw IllegalStateException("Unsupported language.")
+                val result = withTimeout(HostedConversationBindings.POST_END_MILLIS) {
+                    teaching(snapshot.id, HelperPurpose.SCENARIO_REVIEW, UUID.randomUUID().toString(),
+                        TeachingPolicy.scenarioReview(module, archive.preferences.meaningLanguage),
+                        TeachingPolicy.reviewContext(snapshot), scenarioReviewSchema())
+                }
+                val parsed = ScenarioReviewing.parse(result.text) ?: throw IllegalStateException("scenario review was not valid JSON")
+                val review = ScenarioReviewing.validate(parsed, snapshot)
+                archive.sessions.firstOrNull { it.id == snapshot.id }?.let { stored ->
+                    stored.scenarioReview = review
+                    save(stored)
+                    if (session?.id == stored.id) session = clone(stored)
+                }
+                if (storageReady) persistAndWait()
+                if ((scenarioReviewState as? ScenarioReviewState.Preparing)?.sessionID == snapshot.id)
+                    scenarioReviewState = ScenarioReviewState.Ready(snapshot.id, scenarioID, title, review)
+            } catch (timeout: TimeoutCancellationException) {
+                if ((scenarioReviewState as? ScenarioReviewState.Preparing)?.sessionID == snapshot.id)
+                    scenarioReviewState = ScenarioReviewState.Failed(snapshot.id, scenarioID, title)
+            } catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: Exception) {
+                if ((scenarioReviewState as? ScenarioReviewState.Preparing)?.sessionID == snapshot.id)
+                    scenarioReviewState = ScenarioReviewState.Failed(snapshot.id, scenarioID, title)
+            }
+        }
+    }
+
     private fun scheduleAssessment() {
         // Local LLM: per-turn assessments are full generations; running them
         // after every user turn starves the conversation. Final assessments
@@ -1708,7 +1855,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         actionJob = viewModelScope.launch {
             try {
                 val lesson = session?.lessonID?.let { CourseRegistry.lesson(it) }
-                val instructions = if (voiceSession) TeachingPolicy.typedReply(language, lesson) else TeachingPolicy.voice(language, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, skillFocus = errorFocus()) + "\n" + TeachingPolicy.typedReply(language, lesson)
+                val scenario = session?.scenarioID?.let { id -> selectedScenario?.takeIf { it.id == id } ?: Scenarios.byID(id) }
+                val instructions = when {
+                    voiceSession -> TeachingPolicy.typedReply(language, lesson, scenario)
+                    scenario != null -> TeachingPolicy.scenarioPractice(scenario, language, learner, archive.preferences.interests,
+                        archive.preferences.meaningLanguage, skillFocus = errorFocus(), previousErrors = previousScenarioErrors(scenario.id)) +
+                        "\n" + TeachingPolicy.typedReply(language, lesson, scenario)
+                    else -> TeachingPolicy.voice(language, learner, selectedTheme, archive.preferences.interests, archive.preferences.meaningLanguage, skillFocus = errorFocus()) + "\n" + TeachingPolicy.typedReply(language, lesson)
+                }
                 val result = teaching(id, HelperPurpose.TYPED_REPLY, UUID.randomUUID().toString(), instructions, helperContext(session!!))
                 if (token != generation || session?.id != id || state != "active") return@launch
                 updateSession { addUsage(it, result.usage) }

@@ -278,6 +278,13 @@ fun AppRoot(
                 }
             }
 
+            vm.scenarioReviewState?.let { reviewState ->
+                ScenarioReviewSheet(reviewState,
+                    onDismiss = vm::dismissScenarioReview,
+                    onPractiseAgain = { vm.practiseAgain(); tab = 0 },
+                    onSavePhrase = { phrase, meaning -> vm.saveLookupExpression(phrase, meaning) })
+            }
+
             vm.error?.let { message ->
                 AlertDialog(
                     onDismissRequest = vm::dismissError,

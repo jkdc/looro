@@ -8,7 +8,7 @@ import { appendEntry, lockPaidWallet, lockWallet, reservePaidInTransaction, sett
 export const HOSTED_HELPER_MODEL = 'gpt-5.6-luna';
 export const HOSTED_HELPER_RATE_VERSION = `${RATE_VERSION}-helper-cache-write-long-context-v1`;
 export const HOSTED_HELPER_BODY_LIMIT = 65_536;
-export const HOSTED_HELPER_PURPOSES = ['meaning', 'assessment', 'lookup', 'delegation', 'typed_reply', 'topic', 'help'] as const;
+export const HOSTED_HELPER_PURPOSES = ['meaning', 'assessment', 'lookup', 'delegation', 'typed_reply', 'topic', 'help', 'scenario_review'] as const;
 export type HostedHelperPurpose = typeof HOSTED_HELPER_PURPOSES[number];
 type JSONValue = null | boolean | number | string | JSONValue[] | { [key: string]: JSONValue };
 type JSONObject = { [key: string]: JSONValue };
@@ -82,7 +82,7 @@ export function parseHostedHelperInput(body: unknown): HostedHelperInput {
     !validText(body.instructions, 16_384) || !validText(body.input, 24_576) || (body.search !== undefined && typeof body.search !== 'boolean')) throw invalid();
   if (body.search === true && body.purpose !== 'delegation' && body.purpose !== 'topic') throw invalid();
   if (body.schema !== undefined) {
-    if (body.purpose !== 'assessment') throw invalid();
+    if (body.purpose !== 'assessment' && body.purpose !== 'scenario_review') throw invalid();
     validateSchema(body.schema);
     if ((body.schema as JSONObject).type !== 'object' || Buffer.byteLength(JSON.stringify(body.schema)) > 12_288) throw invalid();
   }
@@ -212,7 +212,7 @@ export class HostedHelpers {
       let budget = (await sql.query('SELECT * FROM hosted_helper_sessions WHERE session_id=$1 FOR UPDATE', [sessionID])).rows[0];
       const post = budget ? budget.post_session_ms : this.config.postSessionMilliseconds;
       const active = session.state === 'active' && !session.close_requested_at && now < session.deadline.getTime();
-      const afterConversation = ['assessment', 'meaning', 'lookup'].includes(input.purpose) && session.state === 'closed' && session.helper_closed_at &&
+      const afterConversation = ['assessment', 'meaning', 'lookup', 'scenario_review'].includes(input.purpose) && session.state === 'closed' && session.helper_closed_at &&
         now < session.helper_closed_at.getTime() + post && now < session.deadline.getTime() + post;
       if ((!active && !afterConversation) || (budget && (budget.activation_pending || budget.state !== 'open' || now >= budget.expires_at.getTime())))
         throw new ServiceError('helper_session_window_closed', 409);

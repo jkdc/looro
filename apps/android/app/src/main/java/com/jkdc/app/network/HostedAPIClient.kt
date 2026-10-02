@@ -163,7 +163,8 @@ class HostedAPIClient internal constructor(
         schema: JsonObject?, search: Boolean, purpose: HelperPurpose): APIResult {
         if (!validText(instructions, 16_384) || !validText(input, 24_576) ||
             (search && purpose !in listOf(HelperPurpose.DELEGATION, HelperPurpose.TOPIC)) ||
-            ((schema != null) != (purpose == HelperPurpose.ASSESSMENT)) || (schema?.toString()?.utf8Size() ?: 0) > 12_288)
+            ((schema != null) != (purpose in listOf(HelperPurpose.ASSESSMENT, HelperPurpose.SCENARIO_REVIEW))) ||
+            (schema?.toString()?.utf8Size() ?: 0) > 12_288)
             throw HostedFailure.InvalidRequest
         val id = UUID.randomUUID().toString()
         val body = buildJsonObject {

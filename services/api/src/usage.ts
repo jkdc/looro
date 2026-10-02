@@ -39,7 +39,9 @@ export const USAGE_CATALOG = {
   tts_speed_changed: { rate: { kind: 'enum', values: ['0.6', '0.8', '1.0', '1.2'] } },
   help_requested: {},
   report_requested: {},
-  paywall_viewed: { surface: { kind: 'enum', values: ['talk', 'settings'] } }
+  paywall_viewed: { surface: { kind: 'enum', values: ['talk', 'settings'] } },
+  scenario_started: { scenarioID: slug },
+  scenario_completed: { scenarioID: slug, durationBucket: buckets(5), turnsBucket: buckets(5) }
 } as const satisfies Record<string, Record<string, PropSpec>>;
 
 export type UsageEventName = keyof typeof USAGE_CATALOG;

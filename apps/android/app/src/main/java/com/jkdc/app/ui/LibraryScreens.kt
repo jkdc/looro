@@ -62,6 +62,8 @@ import androidx.compose.ui.window.Dialog
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.ConversationTheme
+import com.jkdc.app.core.Scenario
+import com.jkdc.app.core.Scenarios
 import com.jkdc.app.core.TopicBrief
 import com.jkdc.app.core.WordPractice
 import com.jkdc.app.core.WordState
@@ -74,10 +76,14 @@ fun TopicsScreen(vm: AppViewModel, onChoose: () -> Unit, onCurrentTopic: (String
     var search by rememberSaveable { mutableStateOf("") }
     var category by rememberSaveable { mutableStateOf("All") }
     var current by rememberSaveable { mutableStateOf(false) }
+    var custom by rememberSaveable { mutableStateOf(false) }
     val categories = remember(vm.language.id) { listOf("All") + vm.language.themes.map { it.category }.distinct() }
     val themes = vm.language.themes.filter {
         (category == "All" || it.category == category) &&
             (search.isBlank() || it.title.contains(search, true) || it.subtitle.contains(search, true) || it.category.contains(search, true))
+    }
+    val scenarios = Scenarios.shared.filter {
+        search.isBlank() || it.title.contains(search, true) || it.subtitle.contains(search, true) || it.category.contains(search, true)
     }
 
     LazyVerticalGrid(columns = GridCells.Adaptive(if (LocalDensity.current.fontScale > 1.3f) 260.dp else 150.dp),
@@ -121,10 +127,87 @@ fun TopicsScreen(vm: AppViewModel, onChoose: () -> Unit, onCurrentTopic: (String
         if (themes.isEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
             Text(stringResource(R.string.topics_no_results), color = AppColors.Secondary, modifier = Modifier.padding(vertical = 28.dp))
         }
+        if (scenarios.isNotEmpty()) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Column(Modifier.padding(top = 16.dp, bottom = 2.dp), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Text(stringResource(R.string.scenarios_section_title), style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.semantics { heading() })
+                    Text(stringResource(R.string.scenarios_section_subtitle), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                }
+            }
+            itemsIndexed(scenarios, key = { _, scenario -> "scenario-${scenario.id}" }) { index, scenario ->
+                ScenarioCard(scenario, index) { vm.chooseScenario(scenario); onChoose() }
+            }
+            item(span = { GridItemSpan(maxLineSpan) }, key = "scenario-custom") {
+                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { custom = true },
+                    shape = RoundedCornerShape(26.dp), color = AppColors.Butter.copy(alpha = .8f)) {
+                    Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        AppIcon(AppSymbol.Sparkles, color = AppColors.Secondary)
+                        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                            Text(stringResource(R.string.scenarios_custom_card_title), style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(R.string.scenarios_custom_card_subtitle), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        }
+                        AppIcon(AppSymbol.ChevronRight, Modifier.size(19.dp), color = AppColors.Secondary)
+                    }
+                }
+            }
+        }
     }
     if (current) CurrentTopicDialog(vm, onDismiss = { current = false }, onFind = onCurrentTopic, onDiscuss = {
         vm.discuss(it); current = false; onChoose()
     })
+    if (custom) CustomScenarioDialog(vm, onDismiss = { custom = false }, onStart = onChoose)
+}
+
+@Composable
+private fun ScenarioCard(scenario: Scenario, index: Int, onClick: () -> Unit) {
+    Surface(
+        modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).testTag("scenario-${scenario.id}"),
+        shape = RoundedCornerShape(26.dp),
+        color = AppColors.Panels.getOrElse(scenario.colorIndex) { AppColors.Panels[index % AppColors.Panels.size] },
+    ) {
+        Column(Modifier.fillMaxWidth().heightIn(min = 180.dp).padding(19.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) {
+            AppIcon(scenarioSymbol(scenario.id), Modifier.size(31.dp), color = AppColors.Secondary)
+            Column(verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                Text(scenario.title, style = MaterialTheme.typography.titleMedium)
+                Text(scenario.subtitle, color = AppColors.Secondary, style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+@Composable
+private fun CustomScenarioDialog(vm: AppViewModel, onDismiss: () -> Unit, onStart: () -> Unit) {
+    var goal by rememberSaveable { mutableStateOf("") }
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(shape = RoundedCornerShape(28.dp), color = AppColors.Surface) {
+            Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                PageHeading(stringResource(R.string.scenarios_custom_eyebrow), stringResource(R.string.scenarios_custom_title),
+                    stringResource(R.string.scenarios_custom_subtitle))
+                AppTextField(goal, { goal = it.take(160) }, modifier = Modifier.fillMaxWidth().testTag("scenario-custom-input"),
+                    label = { Text(stringResource(R.string.scenarios_custom_placeholder)) }, minLines = 2, maxLines = 4)
+                Button(onClick = { vm.chooseScenario(Scenarios.custom(goal)); onStart() },
+                    enabled = goal.isNotBlank(), modifier = Modifier.fillMaxWidth().testTag("scenario-custom-start"),
+                    colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {
+                    Text(stringResource(R.string.scenarios_custom_start))
+                }
+                Text(stringResource(R.string.scenarios_custom_note), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                AppTextButton(onClick = onDismiss, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.common_close)) }
+            }
+        }
+    }
+}
+
+private fun scenarioSymbol(id: String) = when (id) {
+    "job_interview" -> AppSymbol.Star
+    "presentation" -> AppSymbol.Mic
+    "sports" -> AppSymbol.Sun
+    "restaurant" -> AppSymbol.Food
+    "doctor" -> AppSymbol.Leaf
+    "phone_call" -> AppSymbol.Wave
+    "small_talk" -> AppSymbol.Coffee
+    "shopping" -> AppSymbol.Themes
+    else -> AppSymbol.Sparkles
 }
 
 @Composable

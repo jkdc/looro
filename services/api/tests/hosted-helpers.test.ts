@@ -56,6 +56,20 @@ test('helper body fixes provider, persistence, tier, output and tools independen
   assert.deepEqual(search.tools, [{ type: 'web_search', search_context_size: 'low' }]); assert.equal(search.max_tool_calls, 1);
 });
 
+test('scenario review rides the assessment schema path without opening search', () => {
+  const reviewSchema = { type: 'object', properties: { retryFocus: { type: 'string', maxLength: 200 } }, required: ['retryFocus'], additionalProperties: false };
+  const parsed = parseHostedHelperInput(input({ purpose: 'scenario_review', schema: reviewSchema }));
+  assert.equal(parsed.schema?.type, 'object');
+  const body = hostedHelperBody(parseHostedHelperInput(input({ purpose: 'scenario_review', schema: reviewSchema })));
+  assert.equal(body.max_output_tokens, 2200); assert.equal(body.text?.format.strict, true);
+  const plain = parseHostedHelperInput(input({ purpose: 'scenario_review' }));
+  assert.equal(plain.schema, undefined);
+  for (const invalid of [input({ purpose: 'scenario_review', search: true }),
+    input({ purpose: 'scenario_review', schema: { ...reviewSchema, $ref: 'https://untrusted.test' } }),
+    input({ purpose: 'scenario_review', schema: { ...reviewSchema, additionalProperties: true } })])
+    assert.throws(() => parseHostedHelperInput(invalid), { code: 'invalid_hosted_helper_request' });
+});
+
 test('helper pricing handles cache reads, cache writes and the long-context threshold', () => {
   assert.equal(hostedHelperCost({ inputTokens: 100, cachedInputTokens: 20, cacheWriteTokens: 30, outputTokens: 40, searchCalls: 1 }), 10_065_900n);
   assert.equal(hostedHelperCost({ inputTokens: 272_000, cachedInputTokens: 0, cacheWriteTokens: 0, outputTokens: 10, searchCalls: 0 }), 54_412_000n);
@@ -279,12 +293,12 @@ integration('provider limit violations record the actual liability and stop new 
   assert.equal(f.transport.calls.length, 1);
 });
 
-integration('meaning, lookup and final assessment work briefly after close; new conversation work does not', async () => {
+integration('meaning, lookup, final assessment and scenario review work briefly after close; new conversation work does not', async () => {
   const f = await seed();
   await db!.query("UPDATE hosted_sessions SET state='closed' WHERE id=$1", [f.sessionID]);
   await db!.query("UPDATE minute_reservations SET state='settled',used_ms=1000 WHERE id=$1", [f.reservationID]);
-  for (const purpose of ['meaning', 'lookup', 'assessment']) {
-    await f.controller().request(f.account, f.sessionID, input({ purpose, ...(purpose === 'assessment' ? { schema: schemaValue } : {}) }));
+  for (const purpose of ['meaning', 'lookup', 'assessment', 'scenario_review']) {
+    await f.controller().request(f.account, f.sessionID, input({ purpose, ...(purpose === 'assessment' || purpose === 'scenario_review' ? { schema: schemaValue } : {}) }));
   }
   for (const purpose of ['topic', 'typed_reply', 'help', 'delegation'])
     await assert.rejects(f.controller().request(f.account, f.sessionID, input({ purpose })), { code: 'helper_session_window_closed' });

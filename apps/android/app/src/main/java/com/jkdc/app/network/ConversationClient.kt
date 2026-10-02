@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 enum class HelperPurpose(val wireValue: String) {
     MEANING("meaning"), ASSESSMENT("assessment"), LOOKUP("lookup"), DELEGATION("delegation"),
-    TYPED_REPLY("typed_reply"), TOPIC("topic"), HELP("help")
+    TYPED_REPLY("typed_reply"), TOPIC("topic"), HELP("help"), SCENARIO_REVIEW("scenario_review")
 }
 
 interface TeachingClient {

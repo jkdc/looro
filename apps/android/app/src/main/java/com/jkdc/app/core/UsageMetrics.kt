@@ -30,11 +30,13 @@ object UsageEvents {
     const val PAYWALL_VIEWED = "paywall_viewed"
     const val EXERCISE_COMPLETED = "exercise_completed"
     const val LISTENING_COMPLETED = "listening_completed"
+    const val SCENARIO_STARTED = "scenario_started"
+    const val SCENARIO_COMPLETED = "scenario_completed"
 
     val all = listOf(APP_OPEN, SESSION_STARTED, SESSION_ENDED, SESSION_RESUMED, THEME_SELECTED,
         LESSON_STARTED, LESSON_COMPLETED, ASSESSMENT_COMPLETED, PRACTICE_COMPLETED, WORD_LOOKUP,
         REPLAY_USED, TTS_SPEED_CHANGED, HELP_REQUESTED, REPORT_REQUESTED, PAYWALL_VIEWED,
-        EXERCISE_COMPLETED, LISTENING_COMPLETED)
+        EXERCISE_COMPLETED, LISTENING_COMPLETED, SCENARIO_STARTED, SCENARIO_COMPLETED)
 }
 
 /** Coarse buckets shared with Core/UsageMetrics.swift; never exact durations,

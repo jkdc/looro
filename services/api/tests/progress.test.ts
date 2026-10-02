@@ -29,11 +29,13 @@ test('the parser accepts representative entries from every progress family', () 
     entry({ itemID: 'cafe-morning', bestScore: 60 }, 'listening'),
     entry({ itemID: 'hola', attempts: 12 }, 'recall_round'),
     entry({ itemID: 'ser-vs-estar', attempts: 3, bestScore: 100 }, 'words_practice'),
-    entry({ itemID: 'en-foundations-u1', attempts: 2 }, 'assessment')
+    entry({ itemID: 'en-foundations-u1', attempts: 2 }, 'assessment'),
+    entry({ itemID: 'job_interview' }, 'scenario_practice')
   ]));
-  assert.equal(parsed.entries.length, 7);
+  assert.equal(parsed.entries.length, 8);
   assert.equal(parsed.entries[3]!.kind, 'listening');
   assert.equal(parsed.entries[4]!.attempts, 12);
+  assert.equal(parsed.entries[7]!.kind, 'scenario_practice');
 });
 
 test('the parser rejects anything outside the closed ledger shape', () => {
@@ -53,7 +55,7 @@ test('the parser rejects anything outside the closed ledger shape', () => {
     assert.throws(() => parseProgressBatch(invalid));
   }
   assert.deepEqual([...PROGRESS_KINDS].sort(), ['assessment', 'conversation_theme', 'exercise_set',
-    'lesson', 'listening', 'pronunciation', 'reading', 'recall_round', 'words_practice']);
+    'lesson', 'listening', 'pronunciation', 'reading', 'recall_round', 'scenario_practice', 'words_practice']);
 });
 
 integration('entries merge monotonically and replays change nothing', async () => {
