@@ -38,5 +38,5 @@
 - [x] Android: `testDebugUnitTest` + `lintDebug` + `assembleDebug`
 - [x] Backend: `npm run check && npm test` (docker recipe)
 - [x] Scripts: unittest discover + both exporters `--check`
-- [ ] iOS core `swift test` declared macOS-gate-pending
+- [x] iOS core `swift test` declared macOS-gate-pending
 - [x] `informe-progreso-listening-2026-09-28.md` + verify report

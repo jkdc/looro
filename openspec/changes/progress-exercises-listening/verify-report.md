@@ -46,6 +46,8 @@ run in this session; anything not run is listed as a pending gate, not claimed.
 - **macOS gate**: `swift test` for the mirrored core (ProgressEngine,
   ExerciseEngine, ListeningData, Archive changes) + iOS app build via
   xcodebuild — required before any release, same policy as all prior changes.
+  Declared macOS-gate-pending on 2026-10-02: the iOS core suite runs at the
+  macOS gate (no Swift toolchain on this Linux machine).
 - **Device gate**: final pass on Joaquín's Pixel 9 (real microphone, voice and
   user history). The emulator stays running with the test state.
 
