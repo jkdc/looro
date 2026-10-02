@@ -14,9 +14,11 @@
 - **T2 (core):** `RecallEngine` (Kotlin + Swift mirror): idempotent lesson
   seeding, lookup save/upsert, remove, due-queue ordering, ladder grading
   (1/1/4/14 days; lapse → bar 1).
-- **T3 (Android complete):** Learn tab recall card, typed
+- **T3 (Android, 2026-09-22):** Learn tab recall card, typed
   recall session, saved-expressions section in Words, save-for-recall in the
-  lookup sheet. EN/ES strings in lockstep (262/262 → 279/279).
+  lookup sheet. EN/ES strings in lockstep (262/262 → 279/279). *(The Words
+  saved-expressions section was later deleted at `033252c` — see the parity
+  note in the iOS round below.)*
 - **Emulator battery (fresh install):** onboarding → L1 practice with GLM →
   session end seeds expressions → Recall card shows "7 expressions ready" →
   typed recall grades ("Correct!" verdict, Continue) → Words notebook lists
@@ -37,11 +39,18 @@
   `recall_round` completion. EN copy byte-matched to Android `strings.xml`
   (recall_* family, verified programmatically).
 - **Notebook under Words** ("Saved expressions" section in `WordsView`):
-  saved expressions (most recent first, like `notebookExpressions`),
-  recall bars, Remove action via `LearningStore.removeExpression`; empty
-  state copy from `words_expressions_empty`. Bars + due cadence carry the due
-  state, as on Android's shipped notebook rows (no extra due label shipped
-  there either).
+  saved expressions (most recent first), recall bars, Remove action via
+  `LearningStore.removeExpression`; empty state copy from
+  `words_expressions_empty`. Bars carry the due state; no extra due label
+  (per design.md). **Parity note (corrected):** this section mirrors the
+  change's design.md, not Android at HEAD — Android's saved-expressions
+  section was deleted from `LibraryScreens.kt` at `033252c` and its
+  replacement never landed: `words_expressions_heading/_empty`,
+  `words_expression_remove` and the intended `words_source_*` /
+  `words_empty_cta_*` strings are defined but referenced by zero Kotlin
+  files, and `notebookExpressions()`/`removeExpression()` are UI-dead.
+  Android currently saves expressions with no way to view or remove them;
+  iOS now leads parity on this surface (Android repair tracked separately).
 - **Wiring:** `Storage.recordLessonAttempt` now seeds the lesson's target
   expressions through `RecallEngine.seedFromLesson` (mirror of Android's
   `recordLessonAttempt`); save-for-recall already existed on iOS via
