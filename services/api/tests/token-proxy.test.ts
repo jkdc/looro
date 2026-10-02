@@ -6,6 +6,7 @@ import { connectDatabase } from '../src/db.js';
 import { migrate } from '../src/migrate.js';
 import { appendEntry } from '../src/ledger.js';
 import { transaction } from '../src/db.js';
+import { ServiceError } from '../src/errors.js';
 import { TokenProxy, tokenProxyConfig } from '../src/token-proxy.js';
 
 const databaseURL = process.env.TEST_DATABASE_URL;
@@ -67,6 +68,24 @@ integration('relay meters provider usage at the active rate version and debits t
   await assert.rejects(proxy.relay(account, { messages: [] }), /token_balance_exhausted/);
   assert.equal(calls, before);
   await new Promise<void>(resolve => provider.close(() => resolve()));
+});
+
+integration('relay rejects streaming requests before admission or the provider call', async () => {
+  const schema = `token_test_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  const account = randomUUID();
+  await db.query('INSERT INTO accounts(id) VALUES($1)', [account]);
+  await db.query('INSERT INTO wallets(account_id, balance_nano) VALUES($1,$2)', [account, '10000000']);
+  // No provider server is started on purpose: the v1 contract refuses
+  // `stream: true` before admission, so a provider must never be contacted.
+  const proxy = new TokenProxy(db, { ...CONFIG, providerURL: 'http://127.0.0.1:9/v1/chat/completions' });
+  await assert.rejects(
+    proxy.relay(account, { model: 'stub', stream: true, messages: [{ role: 'user', content: 'Hi' }] }),
+    (error: ServiceError) => error.code === 'streaming_unsupported_v1' && error.status === 400,
+  );
+  const wallet = (await db.query('SELECT balance_nano FROM wallets WHERE account_id=$1', [account])).rows[0];
+  assert.equal(BigInt(wallet.balance_nano), 10_000_000n);
 });
 
 integration('estimate refuses calls the balance cannot plausibly cover', async () => {

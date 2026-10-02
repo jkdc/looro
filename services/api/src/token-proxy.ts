@@ -4,8 +4,9 @@ import { transaction } from './db.js';
 import { appendEntry } from './ledger.js';
 import { ServiceError } from './errors.js';
 
-/** Token billing proxy: relays an OpenAI-compatible completion call to the
-    configured provider using the server key, meters provider-reported usage
+/** Token billing proxy: relays a non-streaming OpenAI-compatible completion
+    call (v1 contract; `stream: true` is rejected) to the configured provider
+    using the server key, meters provider-reported usage
     against the caller's nanoUSD wallet at the active rate version, and refuses
     accounts without the BYOK unlock. Grace is bounded: a single call whose
     real cost exceeds the balance settles at the real cost (floor zero) so the
@@ -42,6 +43,11 @@ export class TokenProxy {
   }
 
   async relay(accountID: string, body: Record<string, unknown>): Promise<{ status: number; payload: Record<string, unknown> }> {
+    // v1 is non-streaming by contract: a streaming request would return SSE text
+    // that the JSON metering path cannot parse (and its usage arrives in chunks),
+    // so it is rejected before the provider is ever called. Clients send
+    // `stream: false` — the app engines' OpenAICompatibleEngine does.
+    if (body.stream === true) throw new ServiceError('streaming_unsupported_v1', 400);
     const balance = await this.availableBalance(accountID);
     if (balance <= 0n) throw new ServiceError('token_balance_exhausted', 402);
     const rate = await activeRateVersion(this.db);

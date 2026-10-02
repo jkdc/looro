@@ -14,8 +14,11 @@
       admission caps, per-account concurrency.
 - [x] 2.2 Metering: settle with provider usage × pinned rateVersion;
       402 on zero balance with bounded single-call grace; metering tests.
-- [ ] 2.3 Streaming pass-through or documented non-streaming v1.
-- [ ] 2.4 Docker suite green; load phase added to `loadtest.mjs`.
+- [x] 2.3 Streaming pass-through or documented non-streaming v1. (Sanctioned
+      alternative shipped: non-streaming v1; `stream: true` → 400
+      `streaming_unsupported_v1`; contract in docs/token-billing.md.)
+- [x] 2.4 Docker suite green; load phase added to `loadtest.mjs`
+      (`proxy-completions` against a stub provider only).
 
 ## Task 3 — Apps (both platforms)
 
