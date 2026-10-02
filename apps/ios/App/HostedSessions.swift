@@ -103,10 +103,19 @@ enum HelperPurpose: String {
     }
     func clearHosted() { hostedSessionID = nil; client = nil; session = nil }
 
-    /// Routes learning calls through the token-billing proxy until cleared. The
-    /// bearer is captured at selection time; callers pass a fresh session token
-    /// when one is (re)issued. An active hosted session still wins: its helpers
-    /// ride the included minutes rather than the token wallet.
+    /// Routes learning calls through the token-billing proxy until cleared.
+    ///
+    /// Bearer lifecycle contract (the wiring Task 5 must honor — the eager-bearer
+    /// form was chosen over Kotlin's per-request session read, so re-attach and
+    /// clear are mandatory, not optional):
+    /// 1. ATTACH here when the learner selects Palique (tokens), with the
+    ///    `ManagedAccountConfiguration.origin` and a token read from
+    ///    `ManagedAccountKeychain(scope: configuration.storageScope)`.
+    /// 2. RE-ATTACH whenever the app session is (re)issued (sign-in, renewal) —
+    ///    the captured bearer goes stale at `session.expiresAt`.
+    /// 3. CLEAR via `clearHostedProxy()` on sign-out or account switch; otherwise
+    ///    the engine keeps sending a dead token and every call fails with
+    ///    `Failure.signInRequired` (fail-closed, never a wrong account's wallet).
     func useHostedProxy(origin: URL, bearer: String) {
         proxy = HostedProxyEngine(origin: origin, bearer: bearer)
     }
@@ -129,7 +138,7 @@ enum HelperPurpose: String {
             let result = try await proxy.respond(instructions: instructions, input: input,
                                                  schema: schemaJSON, search: search)
             return APIResult(text: result.text, sources: [],
-                             APIUsage(input: result.inputTokens, output: result.outputTokens))
+                             usage: APIUsage(input: result.inputTokens, output: result.outputTokens))
         }
         return try await api.respond(instructions: instructions, input: input, schema: schema, search: search)
     }
@@ -204,9 +213,9 @@ extension ManagedAccountClient {
         }
         let usage = json["usage"] as? [String: Any] ?? [:]
         return APIResult(text: text, sources: sources,
-                         APIUsage(input: usage["inputTokens"] as? Int ?? 0,
-                                  output: usage["outputTokens"] as? Int ?? 0,
-                                  searches: usage["searchCalls"] as? Int ?? 0))
+                         usage: APIUsage(input: usage["inputTokens"] as? Int ?? 0,
+                                         output: usage["outputTokens"] as? Int ?? 0,
+                                         searches: usage["searchCalls"] as? Int ?? 0))
     }
 
     private func hostedData(_ path: String, method: String, jsonBody: [String: Any]?, session: ManagedAccountSession?,

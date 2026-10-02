@@ -98,6 +98,13 @@ Error bodies carry a safe `error.code` only.
 Both URL and key must be set or the proxy stays off. Compose forwards both
 from the environment; keep the key out of the repository.
 
+**Client model contract:** the apps' `hosted-proxy` engines hardcode
+`model: "MiniMax-M2"` in the relayed body and the proxy forwards the body
+verbatim, so `PROXY_PROVIDER_URL` must serve an OpenAI-compatible endpoint
+exposing a model with that id (MiniMax, or an aggregator that maps it) — a
+mismatch surfaces to clients as `502 provider_error`. Billing is unaffected:
+provider failures are rejected before settlement, so nothing ever debits.
+
 ## Packs and pricing
 
 Approved launch prices (Joaquín, 2026-09) are **server constants** in

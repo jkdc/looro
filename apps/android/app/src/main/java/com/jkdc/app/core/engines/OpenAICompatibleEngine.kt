@@ -134,8 +134,12 @@ class OpenAICompatibleEngine(
             put("stream", false)
         }.toString()
 
-        val url = (baseUrl ?: config.defaultBaseUrl.toHttpUrl()).newBuilder()
-            .addPathSegments(completionsPath).build()
+        // HOSTED_PROXY never carries a defaultBaseUrl (the origin is runtime
+        // configuration); a blank resolved URL must fail clearly, not with a raw
+        // IllegalArgumentException from "".toHttpUrl().
+        val resolved = baseUrl ?: config.defaultBaseUrl.takeIf { it.isNotBlank() }?.toHttpUrl()
+            ?: throw EngineException("${config.id} engine needs a base URL (no default configured for ${config.id})")
+        val url = resolved.newBuilder().addPathSegments(completionsPath).build()
         val request = Request.Builder()
             .url(url)
             .header("Authorization", "Bearer $key")

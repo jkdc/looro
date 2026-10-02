@@ -183,4 +183,19 @@ class HostedProxyEngineTest {
     fun `hosted-proxy exposes no environment key so gates do not demand one`() {
         assertNull(engine.keyEnvVar)
     }
+
+    @Test
+    fun `blank default base URL fails with a clear engine error`() = runTest {
+        // Credential resolves (key check runs first); the failure must come from
+        // the missing URL, not a raw IllegalArgumentException.
+        val noOrigin = OpenAICompatibleEngine(RemoteEngineConfig.HOSTED_PROXY, deps(),
+            client = OkHttpClient(), credential = { "a".repeat(43) })
+        try {
+            noOrigin.respond("i", "in")
+            fail("expected EngineException")
+        } catch (e: EngineException) {
+            assertTrue(e.message!!.contains("hosted-proxy engine needs a base URL"))
+        }
+        assertEquals(0, server.requestCount)
+    }
 }
