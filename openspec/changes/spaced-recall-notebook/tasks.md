@@ -16,9 +16,13 @@
 ## Task 3 — Recall + notebook UI
 
 - [x] 3.1 Learn tab recall card + recall session (typed v1) on Android.
-- [ ] 3.2 iOS mirror; project regenerated if needed. *(PENDING — the only
-      open task; Android shipped, core Swift mirror + tests already written.)*
-- [x] 3.3 Notebook tab under Words (Android; iOS pending with 3.2).
+- [x] 3.2 iOS mirror; project regenerated if needed. *(Recall card, typed
+      recall session and "Saved expressions" notebook under Words in
+      `apps/ios/App/RecallViews.swift`, wired through CoursesViews,
+      LibraryViews and Storage; `RecallEngineTests` exist in
+      `apps/ios/Tests/` — macOS compile/test gate pending, device e2e
+      pending.)*
+- [x] 3.3 Notebook tab under Words (Android; iOS mirrored with 3.2).
 - [x] 3.4 EN/ES strings parity; `assembleDebug`; full JVM suites.
 
 ## Task 4 — Record close

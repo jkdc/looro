@@ -68,6 +68,11 @@ import LearningCore
             lessons.append(LessonState(lessonID: lessonID, attempts: 1, lastSeen: Date.now.timeIntervalSince1970))
         }
         archive.lessons = lessons
+        // Lesson practice seeds the lesson's target expressions into the
+        // spaced-recall notebook (idempotent; mirrors Android recordLessonAttempt).
+        if let lesson = CourseRegistry.lesson(id: lessonID) {
+            RecallEngine.seedFromLesson(&archive, lesson: lesson, now: Date.now.timeIntervalSinceReferenceDate)
+        }
         recordCompletion(kind: ProgressEngine.lesson, itemID: lessonID)
     }
 
@@ -135,6 +140,16 @@ import LearningCore
                                             now: Date.now.timeIntervalSinceReferenceDate)
         if saved { persist() }
         return saved
+    }
+    /// Grades a typed recall attempt on the RecallEngine ladder, then persists.
+    func gradeRecall(text: String, correct: Bool) {
+        RecallEngine.grade(&archive, text: text, correct: correct, now: Date.now.timeIntervalSinceReferenceDate)
+        persist()
+    }
+    /// Removes an expression from the notebook (mirrors Android's removeExpression).
+    func removeExpression(text: String) {
+        RecallEngine.remove(&archive, text: text)
+        persist()
     }
     func correctPassage(sessionID: UUID, passageID: String, text: String) {
         guard let index = archive.sessions.firstIndex(where: { $0.id == sessionID }),

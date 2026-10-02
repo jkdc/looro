@@ -10,13 +10,17 @@ struct CoursesView: View {
     var onThemeChosen: () -> Void
     @State private var openLessonID: String?
     @State private var exercisesOpen = false
+    @State private var recallOpen = false
     @State private var audioOn = true
     @State private var reader = LessonReader()
 
     var body: some View {
         let courses = CourseRegistry.forLanguage(coordinator.language.id)
+        let dueRecall = RecallEngine.dueCount(coordinator.store.archive, now: Date.now.timeIntervalSinceReferenceDate)
         Group {
-            if let id = openLessonID, let lesson = CourseRegistry.lesson(id: id), exercisesOpen {
+            if recallOpen {
+                RecallSessionView(store: coordinator.store, onBack: { recallOpen = false })
+            } else if let id = openLessonID, let lesson = CourseRegistry.lesson(id: id), exercisesOpen {
                 ExerciseView(coordinator: coordinator, lesson: lesson, onBack: { exercisesOpen = false })
             } else if let id = openLessonID, let lesson = CourseRegistry.lesson(id: id) {
                 LessonDetailView(coordinator: coordinator, lesson: lesson, audioOn: $audioOn, reader: reader,
@@ -41,6 +45,9 @@ struct CoursesView: View {
                         PageHeading(eyebrow: "Your course", title: "Learn it step by step",
                                     subtitle: "Read a short lesson, then practise it in a real conversation.")
                         LanguageSwitcher(coordinator: coordinator)
+                        if dueRecall > 0 {
+                            RecallCardView(count: dueRecall) { recallOpen = true }
+                        }
                         ForEach(courses) { course in
                             VStack(alignment: .leading, spacing: 14) {
                                 HStack(spacing: 12) {

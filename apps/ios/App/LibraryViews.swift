@@ -181,6 +181,11 @@ struct WordsView: View {
     private var learner: LearnerState { coordinator.store.learner }
     private var words: [WordState] { learner.words.filter { search.isEmpty || $0.lemma.localizedCaseInsensitiveContains(search) || $0.meaning.localizedCaseInsensitiveContains(search) } }
     private var dueCount: Int { learner.words.filter { $0.dueAt < .now }.count }
+    /// The spaced-recall notebook: saved expressions, most recently seen first
+    /// (mirrors Android's notebookExpressions).
+    private var expressions: [ExpressionState] {
+        (coordinator.store.archive.expressions ?? []).sorted { $0.lastSeen > $1.lastSeen }
+    }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
@@ -216,6 +221,30 @@ struct WordsView: View {
                 }
                 HStack { Text("1 · Fragile"); Spacer(); Text("2 · Growing"); Spacer(); Text("3 · Steady") }.font(.caption).foregroundStyle(AppColor.secondary)
                 Text("The bars estimate spoken recall, not permanent mastery. Using a word with visible meanings counts as supported practice.").font(.footnote).foregroundStyle(AppColor.secondary)
+                Text("Saved expressions").font(.system(.title3, design: .rounded, weight: .semibold))
+                if expressions.isEmpty {
+                    Text("Save expressions from a lesson or the dictionary and they will return for recall.")
+                        .font(.subheadline).foregroundStyle(AppColor.secondary)
+                } else {
+                    LazyVStack(spacing: 12) {
+                        ForEach(expressions, id: \.self) { expression in
+                            HStack(spacing: 18) {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(expression.text).font(.system(.title2, design: .rounded, weight: .medium))
+                                    Text(expression.meaning).font(.subheadline).foregroundStyle(AppColor.secondary)
+                                }
+                                Spacer(minLength: 10)
+                                VStack(alignment: .trailing, spacing: 8) {
+                                    RecallBars(count: expression.bars)
+                                    Button("Remove") { coordinator.store.removeExpression(text: expression.text) }
+                                        .font(.footnote)
+                                        .accessibilityIdentifier("expression-remove-\(expression.text)")
+                                }
+                            }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
+                                .background(AppColor.butter, in: RoundedRectangle(cornerRadius: 20))
+                        }
+                    }
+                }
                 if !learner.capabilities.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Finding your voice").font(.system(.title3, design: .rounded, weight: .semibold))

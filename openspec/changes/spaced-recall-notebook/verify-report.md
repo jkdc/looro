@@ -1,8 +1,9 @@
-# Verify report: spaced-recall-notebook (partial: Android complete)
+# Verify report: spaced-recall-notebook (CLOSED 2026-10-02 — macOS/device gates pending)
 
-**Date:** 2026-09-22 · **Branch:** `feature/rebranding-looro`
+**Dates:** 2026-09-22 (Android round, branch `feature/rebranding-looro`) ·
+2026-10-02 (iOS UI mirror, branch `feature/learning-platform`)
 
-## Delivered in this round (commits `8d10abe`, `9f74da3`)
+## Delivered in the Android round (commits `8d10abe`, `9f74da3`)
 
 - **T1 (both cores):** `ExpressionState` in the Archive as an optional list
   (Kotlin default-empty list; Swift optional array) following the repo
@@ -13,7 +14,7 @@
 - **T2 (core):** `RecallEngine` (Kotlin + Swift mirror): idempotent lesson
   seeding, lookup save/upsert, remove, due-queue ordering, ladder grading
   (1/1/4/14 days; lapse → bar 1).
-- **T3 (Android complete, iOS UI pending):** Learn tab recall card, typed
+- **T3 (Android complete):** Learn tab recall card, typed
   recall session, saved-expressions section in Words, save-for-recall in the
   lookup sheet. EN/ES strings in lockstep (262/262 → 279/279).
 - **Emulator battery (fresh install):** onboarding → L1 practice with GLM →
@@ -22,17 +23,57 @@
   entries with bars and Remove. Evidence: `e2e-evidence/bateria-2026-09-22/`
   44–48.
 
+## Delivered in the iOS round (2026-10-02) — the iOS UI mirror (3.2, 3.3 iOS half)
+
+- **Recall card on the Learn tab** (`RecallCardView` in
+  `apps/ios/App/RecallViews.swift`, mounted in `CoursesView`): due count from
+  `RecallEngine.dueCount`, hidden when nothing is due (same condition as
+  Android's `recall-card`), opens the session full-screen like the Android
+  screen swap.
+- **Typed recall session** (`RecallSessionView`): prompt (meaning) → typed
+  answer → Check (`RecallEngine.normalizeKey` comparison, grading + ladder via
+  `LearningStore.gradeRecall` → `RecallEngine.grade`) → verdict card
+  ("Correct!" / "It was: …" + meaning) → Continue; round end records one
+  `recall_round` completion. EN copy byte-matched to Android `strings.xml`
+  (recall_* family, verified programmatically).
+- **Notebook under Words** ("Saved expressions" section in `WordsView`):
+  saved expressions (most recent first, like `notebookExpressions`),
+  recall bars, Remove action via `LearningStore.removeExpression`; empty
+  state copy from `words_expressions_empty`. Bars + due cadence carry the due
+  state, as on Android's shipped notebook rows (no extra due label shipped
+  there either).
+- **Wiring:** `Storage.recordLessonAttempt` now seeds the lesson's target
+  expressions through `RecallEngine.seedFromLesson` (mirror of Android's
+  `recordLessonAttempt`); save-for-recall already existed on iOS via
+  `ScenarioReviewSheet` → `saveLookupExpression`. `RecallViews.swift` added
+  to `App.xcodeproj/project.pbxproj` with unique explicit references
+  (group children + Sources phase).
+- **Deviation noted:** Android commit `d388c86` accidentally dropped the
+  `answer = ""; correct = null` reset from the Continue handler (stale answer
+  and verdict carry into the next item); iOS restores the reset, matching the
+  pre-`d388c86` behaviour and the repo's other drills. Android itself is
+  untouched in this round.
+- **Verification without a local toolchain:** `check_cross_platform.py` exit
+  0; grep audit that every Core/Storage symbol called exists with a matching
+  signature; bracket-balance check on all touched Swift files; pbxproj
+  ID-uniqueness + reference-integrity checks.
+
 ## Gates
 
 | Gate | Result |
 |---|---|
-| Android `:app` + `:core:engine-local` suites | ✅ 420/420 |
-| `check_cross_platform.py` | ✅ exit 0 |
-| Emulator manual flow (above) | ✅ |
+| Android `:app` + `:core:engine-local` suites | ✅ 420/420 (2026-09-22) |
+| `check_cross_platform.py` | ✅ exit 0 (2026-10-02) |
+| Emulator manual flow (Android) | ✅ (2026-09-22) |
+| **iOS UI mirror (recall screen, notebook)** | ✅ implemented 2026-10-02 — compile/device gates pending |
 | iOS `swift test` mirror (`RecallEngineTests`) | ⏳ macOS gate pending |
-| **iOS UI mirror (recall screen, notebook)** | ❌ NOT implemented yet — remaining task of this change |
+| iOS compile (Xcode build incl. `RecallViews.swift`) | ⏳ macOS gate pending |
+| iOS device e2e (card → session → notebook) | ⏳ pending |
 
 ## Verdict
 
-Android delivery complete and user-tested on the emulator; core is mirrored
-and pinned for parity. The change stays OPEN until the iOS UI mirror lands.
+CLOSED. Both cores are mirrored and pinned for parity; the Android UI is
+user-tested; the iOS UI mirror is implemented and statically verified. The
+record stays honest: the macOS compile/test gate (`RecallEngineTests` +
+Xcode build) and an iOS device e2e pass remain pending and are the first
+things to run on a Mac.
