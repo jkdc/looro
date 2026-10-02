@@ -67,6 +67,7 @@ import com.jkdc.app.core.Scenarios
 import com.jkdc.app.core.TopicBrief
 import com.jkdc.app.core.WordPractice
 import com.jkdc.app.core.WordState
+import com.jkdc.app.core.RecallEngine
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -305,6 +306,43 @@ fun WordsScreen(vm: AppViewModel, onOpenLessons: () -> Unit = {}, onOpenTalk: ()
         item {
             AppSearchField(search, { search = it.take(80) }, stringResource(R.string.words_search_placeholder))
         }
+        item {
+            Text(stringResource(R.string.words_expressions_heading), style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.semantics { heading() })
+        }
+        val expressions = vm.notebookExpressions()
+        if (expressions.isEmpty()) item {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.words_expressions_empty), style = MaterialTheme.typography.bodyMedium, color = AppColors.Secondary)
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Button(onClick = onOpenLessons, modifier = Modifier.weight(1f).testTag("words-cta-lessons"),
+                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Sage, contentColor = AppColors.Ink)) {
+                        Text(stringResource(R.string.words_empty_cta_lessons))
+                    }
+                    Button(onClick = onOpenTalk, modifier = Modifier.weight(1f).testTag("words-cta-talk"),
+                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Sage, contentColor = AppColors.Ink)) {
+                        Text(stringResource(R.string.words_empty_cta_talk))
+                    }
+                }
+            }
+        } else items(expressions, key = { RecallEngine.expressionKey(it.text, it.languageID) }) { expression ->
+            Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), color = AppColors.Butter) {
+                Row(Modifier.padding(18.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(expression.text, style = MaterialTheme.typography.titleLarge)
+                        Text(expression.meaning, color = AppColors.Secondary)
+                        Text(expressionSourceLabel(expression.source), style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                    }
+                    Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                        RecallBars(expression.bars)
+                        AppTextButton(onClick = { vm.removeExpression(expression.text) },
+                            modifier = Modifier.testTag("expression-remove-" + expression.text)) {
+                            Text(stringResource(R.string.words_expression_remove))
+                        }
+                    }
+                }
+            }
+        }
         if (words.isEmpty()) item {
             Surface(shape = RoundedCornerShape(28.dp), color = AppColors.Sage) {
                 Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -466,6 +504,13 @@ private fun wordLabel(value: String) = when (value) {
     "Fragile" -> stringResource(R.string.words_recall_fragile)
     "Growing" -> stringResource(R.string.words_recall_growing)
     "Steady" -> stringResource(R.string.words_recall_steady)
+    else -> value
+}
+
+@Composable
+private fun expressionSourceLabel(value: String) = when (value) {
+    "lesson" -> stringResource(R.string.words_source_lesson)
+    "lookup" -> stringResource(R.string.words_source_lookup)
     else -> value
 }
 

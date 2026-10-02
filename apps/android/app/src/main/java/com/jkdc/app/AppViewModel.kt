@@ -1538,7 +1538,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (saved) persist()
         return saved
     }
-    fun removeExpression(text: String) { RecallEngine.remove(archive, text); persist() }
+    fun removeExpression(text: String) {
+        RecallEngine.remove(archive, text)
+        archive = archive.copy(expressions = archive.expressions.toMutableList()) // reassign so the notebook UI recomposes
+        persist()
+    }
     fun gradeRecall(text: String, correct: Boolean) { RecallEngine.grade(archive, text, correct, nowSeconds()); persist() }
     private fun fail(message: String, needsKeySetup: Boolean = false) { finish(false); resetJob?.cancel(); state = "failed"; presentError(message, needsKeySetup) }
     private fun fail(e: Throwable, @StringRes fallback: Int) {

@@ -91,9 +91,9 @@ fun RecallScreen(vm: AppViewModel, onBack: () -> Unit) {
                             Text(stringResource(R.string.recall_check))
                         }
                         true -> RecallVerdict(stringResource(R.string.recall_correct), item,
-                            onContinue = { index += 1; finishRound(correct, index, queue.size, correctCount, vm) })
+                            onContinue = { index += 1; finishRound(correct, index, queue.size, correctCount, vm); answer = ""; correct = null })
                         false -> RecallVerdict(stringResource(R.string.recall_answer_was, item.text), item,
-                            onContinue = { index += 1; finishRound(correct, index, queue.size, correctCount, vm) })
+                            onContinue = { index += 1; finishRound(correct, index, queue.size, correctCount, vm); answer = ""; correct = null })
                     }
                 }
             }
