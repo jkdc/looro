@@ -43,6 +43,11 @@ data class RemoteEngineConfig(
             keyEnvVar = "ZHIPUAI_API_KEY",
             extraBody = buildJsonObject { put("thinking", buildJsonObject { put("type", "disabled") }) },
         )
+        // The Palique token proxy relays the body verbatim to the operator's
+        // provider (`PROXY_PROVIDER_URL`), so the model must match that provider;
+        // the seeded rate version 2026-09-minimax-m pins MiniMax M as the launch
+        // provider. Auth is the app session bearer, never an environment key.
+        val HOSTED_PROXY = RemoteEngineConfig("hosted-proxy", "", "MiniMax-M2", "")
     }
 }
 
@@ -66,15 +71,31 @@ class OpenAICompatibleEngine(
         .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
         .build(),
     private val baseUrl: HttpUrl? = null,
+    /** Path appended to [baseUrl]; the proxy relays `v1/proxy/responses` instead
+        of the default OpenAI-compatible `chat/completions`. */
+    private val completionsPath: String = "chat/completions",
+    /** Credential overriding [deps.keyLookup]: the hosted-proxy engine passes the
+        app session bearer (the same AccountSessionStore the hosted client reads),
+        so no second token store and no environment variable exist for it. */
+    private val credential: (suspend () -> String?)? = null,
+    /** Turns 402/403/429 proxy rejections into readable messages instead of a raw payload dump. */
+    private val proxyErrorMessages: Boolean = false,
 ) : TeachingClient {
 
     private val json = Json { ignoreUnknownKeys = true }
 
+    companion object {
+        /** Shown when the hosted-proxy engine has no valid app session to authenticate with. */
+        const val PROXY_SIGN_IN_MESSAGE = "Sign in to your Palique account to use Palique (tokens)."
+    }
+
     /** The in-flight HTTP call, tracked so [cancelInFlight] can abort a hung request. */
     private val inFlight = AtomicReference<Call?>()
 
-    /** Lets callers (e.g. readiness gates) check this engine's key without a network round trip. */
-    override val keyEnvVar: String? get() = config.keyEnvVar
+    /** Lets callers (e.g. readiness gates) check this engine's key without a network round trip.
+        A credential-backed engine (hosted-proxy) authenticates by account session, so no
+        environment key exists and gates must not demand one. */
+    override val keyEnvVar: String? get() = if (credential != null) null else config.keyEnvVar
 
     /** Cancels the in-flight HTTP call, if any, so session teardown is not held by a hung request. */
     override fun cancelInFlight() {
@@ -88,8 +109,12 @@ class OpenAICompatibleEngine(
         search: Boolean,
         purpose: HelperPurpose?,
     ): APIResult = withContext(Dispatchers.IO) {
-        val key = deps.keyLookup(config.keyEnvVar)
-            ?: throw EngineException("${config.id} engine needs the ${config.keyEnvVar} environment variable or system property")
+        val key = if (credential != null) {
+            credential.invoke() ?: throw EngineException(PROXY_SIGN_IN_MESSAGE)
+        } else {
+            deps.keyLookup(config.keyEnvVar)
+                ?: throw EngineException("${config.id} engine needs the ${config.keyEnvVar} environment variable or system property")
+        }
 
         val systemPrompt = if (schema != null) {
             "$instructions\n\nRespond with exactly one JSON object conforming to this JSON schema:\n$schema"
@@ -110,7 +135,7 @@ class OpenAICompatibleEngine(
         }.toString()
 
         val url = (baseUrl ?: config.defaultBaseUrl.toHttpUrl()).newBuilder()
-            .addPathSegments("chat/completions").build()
+            .addPathSegments(completionsPath).build()
         val request = Request.Builder()
             .url(url)
             .header("Authorization", "Bearer $key")
@@ -132,6 +157,7 @@ class OpenAICompatibleEngine(
         result.use { response ->
             val payload = response.body?.string().orEmpty()
             if (!response.isSuccessful) {
+                if (proxyErrorMessages) throw proxyFailure(response.code, payload)
                 throw EngineException(
                     "${config.id} engine HTTP ${response.code}: ${payload.take(200)}",
                     retryable = response.code in listOf(429) || response.code >= 500,
@@ -139,6 +165,21 @@ class OpenAICompatibleEngine(
             }
             parseResponse(payload)
         }
+    }
+
+    /** Readable mirror of the proxy's error matrix (docs/token-billing.md): the
+        EngineException message is what the voice transport surfaces to the UI. */
+    private fun proxyFailure(status: Int, payload: String): EngineException {
+        val readable = when (status) {
+            402 -> "Your Palique token balance is used up. Buy more tokens to keep practising."
+            403 -> "Palique (tokens) needs a one-time unlock purchase before this account can use it."
+            429 -> "Palique (tokens) is still handling a previous request. Try again in a moment."
+            else -> null
+        }
+        return EngineException(
+            readable ?: "${config.id} engine HTTP $status: ${payload.take(200)}",
+            retryable = status == 429 || status >= 500,
+        )
     }
 
     internal fun parseResponse(payload: String): APIResult {

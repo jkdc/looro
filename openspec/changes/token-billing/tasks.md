@@ -23,7 +23,7 @@
 
 ## Task 3 — Apps (both platforms)
 
-- [ ] 3.1 `hosted-proxy` engine in the factory (Kotlin + Swift mirror).
+- [x] 3.1 `hosted-proxy` engine in the factory (Kotlin + Swift mirror).
 - [ ] 3.2 Settings "Palique (tokens)" row, paywall, pack purchase sheet; EN/ES
       strings parity.
 - [ ] 3.3 JVM tests + `check_cross_platform.py` + assembleDebug; iOS mirrored

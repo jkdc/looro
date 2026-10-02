@@ -1,6 +1,7 @@
 package com.jkdc.app.core.engines
 
 import android.content.Context
+import com.jkdc.app.core.AccountSession
 import com.jkdc.app.network.APIClient
 import kotlinx.serialization.json.Json
 
@@ -20,6 +21,9 @@ class ConversationEngineDeps(
     /** Resolves provider key environment variable names to key material, or null. */
     val keyLookup: (String) -> String?,
     val json: Json,
+    /** Reads the signed-in app account session (the same AccountSessionStore the
+        hosted client uses); the hosted-proxy engine authenticates with it. */
+    val readSession: (suspend () -> AccountSession?)? = null,
 ) {
     companion object {
         /** Default key lookup: environment first, then JVM system properties (unit tests). */

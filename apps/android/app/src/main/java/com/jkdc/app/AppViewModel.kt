@@ -150,6 +150,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val api = APIClient(credentials)
     private val engineOverrides = com.jkdc.app.core.engines.EngineOverridesStore(application)
     private val engineSelection = com.jkdc.app.core.engines.LocalEngineSelectionStore(application)
+    // Declared before engineDeps: the hosted-proxy engine resolves its bearer
+    // from this store — the same one the hosted client authenticates with.
+    private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
+    private val accountConfiguration = ManagedAccountConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN, BuildConfig.GOOGLE_SERVER_CLIENT_ID)
+    private val memberSessions = accountConfiguration?.let { AccountSessionStore(application, it.origin.toString()) }
 
     /** User override first, then environment, then the deployed bundled key. */
     private val engineKeyLookup: (String) -> String? = { name ->
@@ -163,6 +168,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         api,
         keyLookup = engineKeyLookup,
         json = json,
+        readSession = memberSessions?.let { it::read },
     )
     private val conversationEngine: TeachingClient =
         if (BuildConfig.CONVERSATION_ENGINE == "openai") {
@@ -213,9 +219,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val transport: VoiceTransport
         get() = if (BuildConfig.CONVERSATION_ENGINE == "openai") liveTransport else localTransport
     private val providerStore = ConversationProviderStore(application)
-    private val hostedConfiguration = HostedConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN)
-    private val accountConfiguration = ManagedAccountConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN, BuildConfig.GOOGLE_SERVER_CLIENT_ID)
-    private val memberSessions = accountConfiguration?.let { AccountSessionStore(application, it.origin.toString()) }
     private val guests = hostedConfiguration?.let { config ->
         GuestMinuteController(GuestInstallationStore(application, config.origin.toString()), GuestMinuteClient(config), {
             java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(ByteArray(32).also(java.security.SecureRandom()::nextBytes))

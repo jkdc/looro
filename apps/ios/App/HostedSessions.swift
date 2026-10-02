@@ -87,13 +87,15 @@ enum HelperPurpose: String {
 }
 
 /// One route for every learning call: the backend helpers channel while a
-/// hosted session is active, the personal-key client otherwise. Prompts are
-/// identical on both paths.
+/// hosted session is active, the token-billing proxy when the learner selected
+/// Palique (tokens), the personal-key client otherwise. Prompts are identical
+/// on all three paths.
 @MainActor final class HelperRouter {
     private let api: APIClient
     private(set) var hostedSessionID: String?
     private var client: ManagedAccountClient?
     private var session: ManagedAccountSession?
+    private var proxy: HostedProxyEngine?
     init(api: APIClient) { self.api = api }
 
     func useHosted(sessionID: String, client: ManagedAccountClient, session: ManagedAccountSession) {
@@ -101,12 +103,33 @@ enum HelperPurpose: String {
     }
     func clearHosted() { hostedSessionID = nil; client = nil; session = nil }
 
+    /// Routes learning calls through the token-billing proxy until cleared. The
+    /// bearer is captured at selection time; callers pass a fresh session token
+    /// when one is (re)issued. An active hosted session still wins: its helpers
+    /// ride the included minutes rather than the token wallet.
+    func useHostedProxy(origin: URL, bearer: String) {
+        proxy = HostedProxyEngine(origin: origin, bearer: bearer)
+    }
+    func clearHostedProxy() { proxy = nil }
+
     func respond(purpose: HelperPurpose, instructions: String, input: String,
                  schema: [String: Any]? = nil, search: Bool = false) async throws -> APIResult {
         if let hostedSessionID, let client, let session {
             return try await client.hostedHelper(sessionID: hostedSessionID, purpose: purpose,
                                                  instructions: instructions, input: input,
                                                  schema: schema, search: search, session: session)
+        }
+        if let proxy {
+            // The proxy takes an OpenAI-compatible chat-completions body; the
+            // schema travels as its serialized JSON (json_object mode + embedded
+            // in the system prompt, like the Android compatible engines). The
+            // proxy path is text-only, so sources are always empty.
+            let schemaJSON = schema.flatMap { try? JSONSerialization.data(withJSONObject: $0) }
+                .flatMap { String(data: $0, encoding: .utf8) }
+            let result = try await proxy.respond(instructions: instructions, input: input,
+                                                 schema: schemaJSON, search: search)
+            return APIResult(text: result.text, sources: [],
+                             APIUsage(input: result.inputTokens, output: result.outputTokens))
         }
         return try await api.respond(instructions: instructions, input: input, schema: schema, search: search)
     }
@@ -214,9 +237,17 @@ struct HostedPreferenceStore {
     private let defaults: UserDefaults
     init(defaults: UserDefaults = .standard) { self.defaults = defaults }
     private static let key = "hostedMinutesPreferred"
+    private static let proxyKey = "hostedProxyPreferred"
     var prefersHostedMinutes: Bool {
         get { defaults.bool(forKey: Self.key) }
         set { defaults.set(newValue, forKey: Self.key) }
+    }
+    /// The "Palique (tokens)" engine selection, mirroring Android's local engine
+    /// selection store; the choice applies to the next conversation. Nothing
+    /// sets it yet — the Settings row lands with the token-billing UI task.
+    var prefersHostedProxy: Bool {
+        get { defaults.bool(forKey: Self.proxyKey) }
+        set { defaults.set(newValue, forKey: Self.proxyKey) }
     }
     static var hostedFlagEnabled: Bool {
         let value = Bundle.main.object(forInfoDictionaryKey: "AppHostedMinutesEnabled")

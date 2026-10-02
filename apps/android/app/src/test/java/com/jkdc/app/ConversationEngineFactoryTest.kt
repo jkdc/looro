@@ -13,6 +13,7 @@ class ConversationEngineFactoryTest {
         assertEquals("openai", ConversationEngineFactory.validate("OpenAI"))
         assertEquals("deepseek", ConversationEngineFactory.validate(" deepseek "))
         assertEquals("glm", ConversationEngineFactory.validate("GLM"))
+        assertEquals("hosted-proxy", ConversationEngineFactory.validate("Hosted-Proxy"))
     }
 
     @Test
@@ -25,6 +26,7 @@ class ConversationEngineFactoryTest {
             assertTrue(e.message!!.contains("openai"))
             assertTrue(e.message!!.contains("deepseek"))
             assertTrue(e.message!!.contains("glm"))
+            assertTrue(e.message!!.contains("hosted-proxy"))
         }
     }
 
@@ -34,6 +36,7 @@ class ConversationEngineFactoryTest {
         assertTrue("openai" in ids)
         assertTrue("deepseek" in ids)
         assertTrue("glm" in ids)
+        assertTrue("hosted-proxy" in ids)
     }
 
     @Test
