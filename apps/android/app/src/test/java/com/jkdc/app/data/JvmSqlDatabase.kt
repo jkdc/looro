@@ -13,6 +13,8 @@ import java.sql.Types
  */
 class JvmSqlDatabase(val connection: Connection) : SqlDatabase {
 
+    private var inTransaction = false
+
     override fun exec(statement: String) {
         connection.createStatement().use { it.execute(statement) }
     }
@@ -28,11 +30,41 @@ class JvmSqlDatabase(val connection: Connection) : SqlDatabase {
         }
     }
 
-    override fun query(sql: String, args: List<Any?>): List<Row> =
-        connection.prepareStatement(sql).use { st ->
+    override fun query(sql: String, args: List<Any?>): List<Row> {
+        requireNonNullArgs(args)
+        return connection.prepareStatement(sql).use { st ->
             bind(st, args)
             st.executeQuery().use { rs -> buildList { while (rs.next()) add(rs.row()) } }
         }
+    }
+
+    override fun update(sql: String, args: List<Any?>): Long {
+        requireNonNullArgs(args)
+        return connection.prepareStatement(sql).use { st ->
+            bind(st, args)
+            st.executeUpdate().toLong()
+        }
+    }
+
+    override fun <T> transaction(block: (SqlDatabase) -> T): T {
+        check(!inTransaction) { "nested transactions are not supported" }
+        exec("BEGIN IMMEDIATE")
+        inTransaction = true
+        try {
+            val result = block(this)
+            exec("COMMIT")
+            return result
+        } catch (failure: Throwable) {
+            try {
+                exec("ROLLBACK")
+            } catch (rollback: Throwable) {
+                failure.addSuppressed(rollback)
+            }
+            throw failure
+        } finally {
+            inTransaction = false
+        }
+    }
 
     private fun bind(st: PreparedStatement, args: List<Any?>) {
         args.forEachIndexed { i, value ->

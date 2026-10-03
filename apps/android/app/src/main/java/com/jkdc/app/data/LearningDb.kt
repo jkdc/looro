@@ -32,5 +32,8 @@ object LearningDb {
 
         override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) =
             error("Learning schema has no upgrade path yet (found $oldVersion, want $newVersion)")
+
+        override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) =
+            error("Learning schema never downgrades (found $oldVersion, want $newVersion)")
     }
 }

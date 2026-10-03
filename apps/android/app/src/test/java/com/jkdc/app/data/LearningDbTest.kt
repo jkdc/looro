@@ -49,5 +49,45 @@ class LearningDbTest {
         }
     }
 
+    @Test fun updateReportsAffectedRowsOnTheJvmBackend() {
+        db.insert("meta", mapOf("key" to "a", "value" to "1"))
+        db.insert("meta", mapOf("key" to "b", "value" to "1"))
+        db.insert("meta", mapOf("key" to "c", "value" to "2"))
+        assertEquals(2L, db.update("UPDATE meta SET value = '9' WHERE value = ?", listOf("1")))
+        assertEquals(2L, db.query("SELECT COUNT(*) AS n FROM meta WHERE value = '9'").single()["n"])
+    }
+
+    @Test fun transactionCommitsTheWorkDoneInsideTheBlock() {
+        db.transaction { it.insert("meta", mapOf("key" to "k", "value" to "kept")) }
+        assertEquals("kept", db.query("SELECT value FROM meta WHERE key = 'k'").single()["value"])
+    }
+
+    @Test fun transactionRollsBackOnFailureAndRejectsNesting() {
+        assertThrows(IllegalStateException::class.java) {
+            db.transaction { d ->
+                d.insert("meta", mapOf("key" to "k", "value" to "lost"))
+                error("boom")
+            }
+        }
+        assertEquals(0L, count("meta"))
+        assertThrows(IllegalStateException::class.java) {
+            db.transaction { it.transaction { } }
+        }
+        assertEquals(0L, count("meta"))
+    }
+
+    @Test fun nullBindArgumentsAreRejectedOnQueryAndUpdate() {
+        db.insert("meta", mapOf("key" to "k", "value" to "v"))
+        assertThrows(IllegalArgumentException::class.java) {
+            db.query("SELECT value FROM meta WHERE key != ?", listOf<Any?>(null))
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            db.update("UPDATE meta SET value = 'x' WHERE key != ?", listOf<Any?>(null))
+        }
+        // inserts still carry null values: that is column data, not a comparison
+        db.insert("completions", mapOf("kind" to "lesson", "item_id" to "i1", "at" to 1.0, "language_id" to null))
+        assertEquals(1L, count("completions"))
+    }
+
     private fun count(table: String) = db.query("SELECT COUNT(*) AS n FROM $table").single()["n"]
 }

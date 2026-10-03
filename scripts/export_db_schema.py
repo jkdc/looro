@@ -40,6 +40,8 @@ def split_statements(sql_text):
 
     A ';' ends a statement only when it is outside single-quoted strings
     (with SQL's '' escape) and outside -- line / /* block */ comments.
+    Quoted identifiers ("name", `name`, [name]) are NOT honored — the
+    canonical schema quotes none — and a ';' inside them would split.
     Every statement keeps its interior newlines and loses the trailing ';'.
     """
     statements = []

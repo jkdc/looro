@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteDatabase
  */
 class AndroidSqlDatabase(private val db: SQLiteDatabase) : SqlDatabase {
 
+    private var inTransaction = false
+
     override fun exec(statement: String) = db.execSQL(statement)
 
     override fun insert(table: String, row: Map<String, Any?>, strategy: ConflictStrategy): Long {
@@ -31,12 +33,36 @@ class AndroidSqlDatabase(private val db: SQLiteDatabase) : SqlDatabase {
     // rawQuery binds only strings; SQLite's column affinity makes the text
     // form of a number compare equal to the number, which is all the store
     // needs (ids and key columns are TEXT anyway).
-    override fun query(sql: String, args: List<Any?>): List<Row> =
-        db.rawQuery(sql, args.map(Any?::toString).toTypedArray()).use { cursor ->
+    override fun query(sql: String, args: List<Any?>): List<Row> {
+        requireNonNullArgs(args)
+        return db.rawQuery(sql, args.map(Any?::toString).toTypedArray()).use { cursor ->
             buildList {
                 while (cursor.moveToNext()) add(cursor.row())
             }
         }
+    }
+
+    // execSQL runs any DML but reports no affected row count, so Android
+    // always returns -1 here (JVM reports the count; see SqlDatabase.update).
+    override fun update(sql: String, args: List<Any?>): Long {
+        requireNonNullArgs(args)
+        db.execSQL(sql, args.toTypedArray())
+        return -1L
+    }
+
+    override fun <T> transaction(block: (SqlDatabase) -> T): T {
+        check(!inTransaction) { "nested transactions are not supported" }
+        inTransaction = true
+        db.beginTransaction()
+        try {
+            val result = block(this)
+            db.setTransactionSuccessful()
+            return result
+        } finally {
+            inTransaction = false
+            db.endTransaction() // rolls back unless setTransactionSuccessful ran
+        }
+    }
 
     private fun Cursor.row(): Row {
         val names = columnNames.toList()
