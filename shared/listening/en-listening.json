@@ -2962,7 +2962,7 @@
       "level": "B1",
       "topic": "home",
       "unitID": "en-foundations-done",
-      "text": "Flat 4C was finally being renovated, and Marta had one week to organise it. 'I'm having the kitchen repainted on Monday,' she told her brother Leo, 'and I'm getting the plumber to look at the shower on Tuesday.' 'Are you doing any of it yourself?' Leo laughed. 'I'm paying professionals to do it — that's the point,' Marta said. 'I've been putting this off for a year.' The painters finished on Wednesday, but the plumber arrived, set up his tools and disappeared. Marta followed him up with three phone calls and an online form, and finally got him to come back on Thursday. 'Did he carry out the full inspection?' Leo asked on Friday. 'The whole flat — pipes, boiler, taps. And tomorrow the cleaners are coming, so I don't have to do anything at all.' 'You mean you don't have to do anything yourself,' Leo said. 'Exactly,' said Marta. 'That's what money is for.'",
+      "text": "Flat 4C was finally being renovated, and Marta had one week to organise it. 'I'm having the kitchen repainted on Monday,' she told her brother Leo, 'and I'm getting the plumber to look at the shower on Tuesday.' 'Are you doing any of it yourself?' Leo laughed. 'I'm paying professionals to do it — that's the point,' Marta said. 'I've been putting this off for a year.' The painters finished on Wednesday, but the plumber arrived, set up his tools and disappeared. Marta followed up with three phone calls and an online form, and finally got him to come back on Thursday. 'Did he carry out the full inspection?' Leo asked on Friday. 'The whole flat — pipes, boiler, taps. And tomorrow the cleaners are coming, so I don't have to do anything at all.' 'You mean you don't have to do anything yourself,' Leo said. 'Exactly,' said Marta. 'That's what money is for.'",
       "questions": [
         {
           "id": "en-listen-flat-renovation-q1",
@@ -3014,7 +3014,7 @@
             "three calls and an online form",
             "by calling three times and filling in an online form"
           ],
-          "explain": "She followed him up with three phone calls and an online form."
+          "explain": "She followed up with three phone calls and an online form."
         },
         {
           "id": "en-listen-flat-renovation-q5",
@@ -4470,7 +4470,7 @@
         {
           "id": "en-listen-pitch-night-q4",
           "kind": "choice",
-          "prompt": "Why does Jonas distrust the third presenter?",
+          "prompt": "Why does Priya distrust the third presenter?",
           "options": [
             "The chart had no scale, so the numbers can't be checked",
             "The presenter spoke too fast",
