@@ -13,6 +13,11 @@ import com.jkdc.app.core.engines.EngineException
 import com.jkdc.app.core.engines.ConversationEngineFactory
 import com.jkdc.app.core.voice.LocalVoiceTransport
 import com.jkdc.app.core.voice.VoiceTransport
+import com.jkdc.app.data.AssessmentTicketsDao
+import com.jkdc.app.data.AssessmentTicketRow
+import com.jkdc.app.data.LearningDbStore
+import com.jkdc.app.data.LearningDbWriter
+import com.jkdc.app.data.SqlDatabase
 import com.jkdc.app.network.*
 import java.util.UUID
 import kotlinx.coroutines.*
@@ -146,6 +151,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val isVoiceSession get() = voiceSession
 
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
+    /** Legacy JSON store — the runtime fail-safe path when learning.db cannot
+        serve (jsonMode) and the phase-D backup/import source. */
     private val repository = LearningRepository(application)
     private val credentials = CredentialStore(application)
 
@@ -338,7 +345,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS)
         archive = archive.copy(completions = marks.toMutableList())
         bumpLedgerRevision()
-        persist()
+        // the site re-sorts and truncates: the ledger is rewritten in archive
+        // order (LearningDbWriter.completions), not appended
+        persist { db -> LearningDbWriter.completions(db, marks) }
     }
 
     /** Pronunciation drill state: the target currently being listened to and
@@ -500,9 +509,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             val current = errors[skill]
             errors[skill] = SkillError(skill, (current?.count ?: 0) + 1, now, prompt.take(120))
         }
-        archive = archive.copy(errors = errors.values.sortedByDescending { it.count }
-            .take(ArchiveCodec.MAXIMUM_ERRORS).toMutableList())
-        persist()
+        val memory = errors.values.sortedByDescending { it.count }
+            .take(ArchiveCodec.MAXIMUM_ERRORS).toMutableList()
+        archive = archive.copy(errors = memory)
+        // the site re-sorts and truncates: the error memory is rewritten in
+        // archive order (LearningDbWriter.skillErrors), not upserted in place
+        persist { db -> LearningDbWriter.skillErrors(db, memory) }
     }
 
     /** Repeated-error patterns for the current language, strongest first. */
@@ -545,7 +557,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val session = memberSessions?.read() ?: guests?.availableSession() ?: return@launch
                 val remote = client.fetch(session)
-                if (remote != null && mergeRemoteProgress(remote)) { bumpLedgerRevision(); persist() }
+                if (remote != null && mergeRemoteProgress(remote)) bumpLedgerRevision()
                 client.send(session, progressBatchJson())
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
@@ -568,7 +580,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }.toString()
 
-    /** Returns true when the pull changed the archive. */
+    /** Returns true when the pull changed the archive. ProgressSync.mergeRemote
+        updates lessons in place or appends them, and appends unseen marks —
+        so the mirror upserts the changed/appended lessons and inserts the
+        appended marks (append-only: no re-sort, rowid order stays archive
+        order). */
     private fun mergeRemoteProgress(body: String): Boolean {
         val rows = try { json.parseToJsonElement(body).jsonObject.getValue("progress").jsonArray
             .map { it.jsonObject } } catch (_: Exception) { return false }
@@ -583,12 +599,33 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             RemoteProgress(kind, itemID, firstAt, lastAt, attempts, bestScore, language)
         }
         if (merged.isEmpty()) return false
+        val lessonsBefore = archive.lessons.toList()
+        val markCountBefore = archive.completions.orEmpty().size
         archive = ProgressSync.mergeRemote(archive, merged, language.id)
+        val changedLessons = archive.lessons.filterIndexed { i, lesson ->
+            i >= lessonsBefore.size || lesson != lessonsBefore[i]
+        }
+        val appendedMarks = archive.completions.orEmpty().drop(markCountBefore)
+        persist { db -> LearningDbWriter.progressMerged(db, changedLessons, appendedMarks) }
         return true
     }
 
-    private data class SaveRequest(val snapshot: LearningSnapshot, val completion: CompletableDeferred<Unit>? = null)
-    private val writes = Channel<SaveRequest>(Channel.UNLIMITED)
+    /** One mutation site's directed durable write, run in FIFO order on the
+        IO dispatcher (see the [writes] consumer). In JSON fail-safe mode the
+        work is the legacy full-snapshot JSON save instead. */
+    private class WriteRequest(val work: () -> Unit, val completion: CompletableDeferred<Unit>? = null)
+    private val writes = Channel<WriteRequest>(Channel.UNLIMITED)
+
+    /**
+     * The learning database (phase C). Opened once at startup with the
+     * one-way learning.json migration; [LearningDbStore.jsonMode] means this
+     * run serves the legacy [repository] JSON path instead — its `db` throws,
+     * so DB-mode-only code can never write to a database the next launch
+     * would not read. Null until startup finished; every write is gated on
+     * [storageReady], which only turns true with a store in place.
+     */
+    private var store: LearningDbStore? = null
+    private val jsonMode: Boolean get() = store?.jsonMode == true
     private var storageReady = false
     private var finalAssessmentTickets: List<FinalAssessmentTicket> = emptyList()
     private val recoveredAssessmentIDs = mutableSetOf<String>()
@@ -633,13 +670,49 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
     private val transportSignals = Channel<TransportSignal>(Channel.UNLIMITED)
 
+    /**
+     * Opens the learning store (one-way learning.json migration included) and
+     * produces the working archive plus the retry-ledger.
+     *
+     * Database mode: LearningDbStore.loadInitialArchive (the store applies
+     * unfinished-session recovery before this returns) and a ledger rebuilt
+     * from the assessment_tickets rows — the table stores a ticket's
+     * attempts/lastAttemptAt but not its passageID/revisionKey (schema v1),
+     * so the matching half is re-derived from the session's current
+     * recoverable passage, the same passage a fresh recovery enqueue would
+     * target. A row without one is ledger residue (its enqueue removal
+     * branch runs on the session's next save) and is dropped.
+     *
+     * JSON fail-safe mode: the legacy LearningRepository JSON path serves
+     * this run, unchanged, with full tickets from the file.
+     */
+    private fun loadLearningState(): Triple<Archive, List<FinalAssessmentTicket>, LearningDbStore> {
+        val opened = LearningDbStore.open(getApplication())
+        if (opened.jsonMode) {
+            android.util.Log.w("LearningDbStore",
+                "learning.db unavailable; staying on the JSON path: ${opened.jsonModeNotice}")
+            val snapshot = repository.load()
+            return Triple(snapshot.archive, snapshot.finalAssessments, opened)
+        }
+        val exported = opened.recoverUnfinishedSessions(opened.loadInitialArchive())
+        val rows = AssessmentTicketsDao.all(opened.db).associateBy { it.sessionID }
+        val ledger = exported.sessions.mapNotNull { session ->
+            val passage = FinalAssessmentRecovery.passage(session) ?: return@mapNotNull null
+            val row = rows[session.id] ?: return@mapNotNull null
+            FinalAssessmentTicket(session.id, passage.id, passage.revisionKey, row.attempts, row.lastAttemptAt)
+        }
+        return Triple(exported, ledger, opened)
+    }
+
     init {
         guests?.let { controller -> viewModelScope.launch { controller.state.collect { guestState = it } } }
         viewModelScope.launch {
             try {
-                val loaded = withContext(Dispatchers.IO) { repository.load() to credentials.hasKey }
-                archive = loaded.first.archive
-                val providers = providerStore.read(if (loaded.second) ConversationProvider.PERSONAL_KEY else ConversationProvider.HOSTED_MINUTES)
+                val loaded = withContext(Dispatchers.IO) { loadLearningState() }
+                store = loaded.third
+                archive = loaded.first
+                if (loaded.third.jsonMode) notice = loaded.third.jsonModeNotice
+                val providers = providerStore.read(if (credentials.hasKey) ConversationProvider.PERSONAL_KEY else ConversationProvider.HOSTED_MINUTES)
                 hostedSessionIDs = providers.hostedIDs
                 pendingHostedOwnerID = providers.pendingOwnerID
                 accountChangeBlocked = providers.pendingOwnerID != null
@@ -647,8 +720,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     clear = { owner -> clearAcknowledgedGuestMarker(owner) },
                     onFailure = { presentError(getApplication<Application>().getString(R.string.error_guest_secure_storage_unavailable)) })
                 conversationProvider = providers.selection
-                finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.first.finalAssessments, hostedSessionIDs)
-                hasKey = loaded.second
+                finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
+                hasKey = credentials.hasKey
                 storageReady = true
                 usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
                 usageReporter.record(UsageEvents.APP_OPEN)
@@ -663,21 +736,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             } finally { loadingHistory = false }
         }
         viewModelScope.launch {
-            for (first in writes) {
-                var latest = first
-                val completions = mutableListOf<CompletableDeferred<Unit>>()
-                first.completion?.let(completions::add)
-                // Coalesce transcript deltas while preserving every requested durability barrier.
-                while (true) {
-                    val next = writes.tryReceive().getOrNull() ?: break
-                    latest = next
-                    next.completion?.let(completions::add)
-                }
+            for (request in writes) {
                 try {
-                    withContext(Dispatchers.IO) { repository.save(latest.snapshot) }
-                    completions.forEach { it.complete(Unit) }
+                    withContext(Dispatchers.IO) { request.work() }
+                    request.completion?.complete(Unit)
                 } catch (error: Exception) {
-                    completions.forEach { it.completeExceptionally(error) }
+                    request.completion?.completeExceptionally(error)
                     if (error is CancellationException) throw error
                     presentError(getApplication<Application>().getString(R.string.error_save_progress_failed))
                 }
@@ -715,9 +779,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             else if (!storageReady || !hasKey || archive.preferences.aiConsentVersion != 1 || current == null ||
                 ticket == null || !FinalAssessmentRecovery.canAttempt(ticket, current, nowSeconds())) false
             else {
+                val attempted = ticket.copy(attempts = ticket.attempts + 1, lastAttemptAt = nowSeconds())
                 finalAssessmentTickets = finalAssessmentTickets.map {
-                    if (it == ticket) it.copy(attempts = it.attempts + 1, lastAttemptAt = nowSeconds()) else it
+                    if (it == ticket) attempted else it
                 }
+                persist { db -> LearningDbWriter.ticketAttempted(db,
+                    AssessmentTicketRow(attempted.sessionID, attempted.attempts, attempted.lastAttemptAt)) }
                 persistAndWait()
                 true
             }
@@ -754,19 +821,70 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         archive.copy(sessions = archive.sessions.toMutableList(), preferences = archive.preferences.copy()),
         finalAssessmentTickets.toList(),
     )
-    private fun persist() {
-        if (storageReady) writes.trySend(SaveRequest(persistenceSnapshot()))
+
+    /**
+     * Enqueues ONE mutation site's directed write ([write] receives the open
+     * learning database; build it from captured data, never from live view
+     * state — it runs later, on IO). Nothing beyond the site's own tables is
+     * persisted. In JSON fail-safe mode the site's write is replaced by the
+     * legacy full-snapshot JSON save — exactly the pre-cutover behavior —
+     * with the snapshot built here, on the caller thread.
+     */
+    private fun persist(write: (SqlDatabase) -> Unit = { }) {
+        if (!storageReady) return
+        val work: () -> Unit
+        if (jsonMode) {
+            val snapshot = persistenceSnapshot()
+            work = { repository.save(snapshot) }
+        } else {
+            val target = store!!.db
+            work = { write(target) }
+        }
+        writes.trySend(WriteRequest(work))
     }
+
+    /** Durability barrier: resumes after every write enqueued before it (and
+        itself) has landed. */
     private suspend fun persistAndWait() {
         check(storageReady)
         val completion = CompletableDeferred<Unit>()
-        writes.send(SaveRequest(persistenceSnapshot(), completion))
+        val work: () -> Unit = if (jsonMode) {
+            val snapshot = persistenceSnapshot()
+            ({ repository.save(snapshot) })
+        } else {
+            ({ })
+        }
+        writes.send(WriteRequest(work, completion))
         completion.await()
     }
+
+    /**
+     * One session's archive replacement plus its durable mirror. The updated
+     * session is appended to archive.sessions (always the last position); a
+     * session that previously sat in the middle of the list (a resumed older
+     * conversation continued) moves its row too, so export order stays equal
+     * to archive order — see LearningDbWriter.session. The retry-ledger diff
+     * (ConversationProviderPolicy.enqueueRecovery) is mirrored onto the
+     * session's assessment_tickets row.
+     */
     private fun save(s: SessionRecord) {
+        val ledgerBefore = finalAssessmentTickets.firstOrNull { it.sessionID == s.id }
         finalAssessmentTickets = ConversationProviderPolicy.enqueueRecovery(s, finalAssessmentTickets, hostedSessionIDs)
+        val ledgerAfter = finalAssessmentTickets.firstOrNull { it.sessionID == s.id }
+        val ticketChanged = when {
+            ledgerAfter == null -> ledgerBefore != null
+            ledgerBefore == null -> true
+            else -> ledgerBefore.attempts != ledgerAfter.attempts ||
+                ledgerBefore.lastAttemptAt != ledgerAfter.lastAttemptAt
+        }
+        val existingIndex = archive.sessions.indexOfFirst { it.id == s.id }
+        val moveToEnd = existingIndex >= 0 && existingIndex != archive.sessions.size - 1
         archive = archive.copy(sessions = (archive.sessions.filterNot { it.id == s.id } + clone(s)).toMutableList())
-        persist()
+        val record = archive.sessions.last()
+        persist { db ->
+            LearningDbWriter.session(db, record, moveToEnd, ticketChanged,
+                ledgerAfter?.let { AssessmentTicketRow(it.sessionID, it.attempts, it.lastAttemptAt) })
+        }
     }
     private fun updateSession(change: (SessionRecord) -> Unit) {
         val current = session ?: return
@@ -1118,8 +1236,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         generation++; meanings.reset()
         if (languageChanged) resetConversation()
         val previousPreferences = archive.preferences
-        archive = archive.copy(preferences = preferences.copy(interests = preferences.interests.take(500)))
-        persist(); scheduleTranslation(); recoverFinalAssessments(); refreshHostedReadiness()
+        val stored = preferences.copy(interests = preferences.interests.take(500))
+        archive = archive.copy(preferences = stored)
+        persist { db -> LearningDbWriter.preferences(db, stored) }
+        scheduleTranslation(); recoverFinalAssessments(); refreshHostedReadiness()
         if (previousPreferences.speechRate != preferences.speechRate) usageReporter.record(UsageEvents.TTS_SPEED_CHANGED) {
             put("rate", SpeechRates.idOf(preferences.speechRate))
         }
@@ -1263,7 +1383,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         .filter { it.kind == ProgressEngine.LISTENING && it.itemID == ProgressEngine.completionKey(itemID) }
         .maxOfOrNull { it.bestScore }
     fun toggleMeaning() {
-        archive = archive.copy(preferences = archive.preferences.copy(meaningVisible = !archive.preferences.meaningVisible)); persist()
+        val stored = archive.preferences.copy(meaningVisible = !archive.preferences.meaningVisible)
+        archive = archive.copy(preferences = stored)
+        persist { db -> LearningDbWriter.preferences(db, stored) }
         meanings.reset()
         if (archive.preferences.meaningVisible) scheduleTranslation()
     }
@@ -1523,39 +1645,91 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         scheduleTranslation(utteranceComplete = true)
         resetJob = viewModelScope.launch { delay(15000); if (state == "ended") resetConversation() }
     }
-    /** One attempt per finished practice session; mastery is never claimed here. */
+    /** One attempt per finished practice session; mastery is never claimed here.
+        The mirror carries the lesson counters, the whole (re-sorted) ledger and
+        every expression RecallEngine.seedFromLesson left in the archive — its
+        adoptions and appends, in seeding order (LearningDbWriter.lessonAttempt). */
     private fun recordLessonAttempt(lessonID: String) {
         val lessons = archive.lessons.toMutableList()
         val i = lessons.indexOfFirst { it.lessonID == lessonID }
-        if (i >= 0) lessons[i] = lessons[i].copy(attempts = lessons[i].attempts + 1, lastSeen = nowSeconds())
-        else lessons += LessonState(lessonID = lessonID, attempts = 1, lastSeen = nowSeconds())
-        archive = archive.copy(lessons = lessons, completions = ((archive.completions ?: mutableListOf()) +
+        val updated = if (i >= 0) lessons[i].copy(attempts = lessons[i].attempts + 1, lastSeen = nowSeconds())
+        else LessonState(lessonID = lessonID, attempts = 1, lastSeen = nowSeconds())
+        if (i >= 0) lessons[i] = updated else lessons += updated
+        val marks = ((archive.completions ?: mutableListOf()) +
             CompletionMark(ProgressEngine.LESSON, lessonID, nowSeconds(), 0, language.id))
-            .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS).toMutableList())
+            .sortedByDescending { it.at }.take(ArchiveCodec.MAXIMUM_COMPLETIONS).toMutableList()
+        archive = archive.copy(lessons = lessons, completions = marks)
         bumpLedgerRevision()
         CourseRegistry.lesson(lessonID)?.let { RecallEngine.seedFromLesson(archive, it, nowSeconds()) }
-        persist()
+        val seeded = CourseRegistry.lesson(lessonID)?.expressions.orEmpty().mapNotNull { expression ->
+            val key = RecallEngine.normalizeKey(expression.text)
+            if (key.isEmpty()) null
+            else archive.expressions.firstOrNull {
+                RecallEngine.normalizeKey(it.text) == key &&
+                    (it.languageID == language.id || it.languageID == null)
+            }
+        }.distinctBy { RecallEngine.expressionKey(it.text, it.languageID) }
+        persist { db -> LearningDbWriter.lessonAttempt(db, updated, marks, seeded) }
     }
 
     // Spaced recall (spaced-recall-notebook): expressions seeded from lessons and
-    // saved lookups, scheduled by RecallEngine on the word-bar ladder.
+    // saved lookups, scheduled by RecallEngine on the word-bar ladder. Every read
+    // here comes from the working copy — writes land asynchronously, so a
+    // read-your-writes source is what keeps a just-graded card out of the next
+    // queue — and RecallEngine already scopes due()/dueCount() to the learning
+    // language plus its legacy NULL entries, which is exactly
+    // LearningDbReader.dueExpressions' projection (pinned per flow by
+    // LearningCutoverFlowTest).
     fun dueRecallCount(): Int = RecallEngine.dueCount(archive, nowSeconds())
     fun recallQueue(): List<ExpressionState> = RecallEngine.due(archive, nowSeconds())
-    fun notebookExpressions(): List<ExpressionState> = archive.expressions.sortedByDescending { it.lastSeen }
+
+    /** The notebook is per learning language (product decision: the
+        all-languages view was the bug) — the language's rows plus the legacy
+        NULL-language entries RecallEngine keeps reachable everywhere, i.e.
+        LearningDbReader.expressionsFor(db, language.id)'s projection read
+        from the working copy, newest use first. */
+    fun notebookExpressions(): List<ExpressionState> = archive.expressions
+        .filter { it.languageID == null || it.languageID == language.id }
+        .sortedByDescending { it.lastSeen }
+
     fun saveLookupExpression(text: String, meaning: String): Boolean {
+        val key = RecallEngine.normalizeKey(text)
+        val index = archive.expressions.indexOfFirst {
+            RecallEngine.normalizeKey(it.text) == key &&
+                (it.languageID == language.id || it.languageID == null)
+        }
         val saved = RecallEngine.saveLookup(archive, text, meaning, nowSeconds())
-        if (saved) persist()
+        if (saved) {
+            // the engine replaced in place (index) or appended (last); either
+            // way that one post-engine state is the site's whole DB write
+            val state = if (index >= 0) archive.expressions[index] else archive.expressions.last()
+            persist { db -> LearningDbWriter.expressionUpserted(db, state) }
+        }
         return saved
     }
+
     fun removeExpression(text: String) {
         // Copy first, mutate the copy: RecallEngine.remove mutates the list in
         // place, and the state setter skips element-wise-equal writes.
         val next = archive.copy(expressions = archive.expressions.toMutableList())
         RecallEngine.remove(next, text)
         archive = next
-        persist()
+        val module = language.id
+        persist { db -> LearningDbWriter.expressionRemoved(db, text, module) }
     }
-    fun gradeRecall(text: String, correct: Boolean) { RecallEngine.grade(archive, text, correct, nowSeconds()); persist() }
+
+    fun gradeRecall(text: String, correct: Boolean) {
+        val key = RecallEngine.normalizeKey(text)
+        val index = archive.expressions.indexOfFirst {
+            RecallEngine.normalizeKey(it.text) == key &&
+                (it.languageID == language.id || it.languageID == null)
+        }
+        RecallEngine.grade(archive, text, correct, nowSeconds())
+        if (index >= 0) {
+            val state = archive.expressions[index]
+            persist { db -> LearningDbWriter.expressionUpserted(db, state) }
+        }
+    }
     private fun fail(message: String, needsKeySetup: Boolean = false) { finish(false); resetJob?.cancel(); state = "failed"; presentError(message, needsKeySetup) }
     private fun fail(e: Throwable, @StringRes fallback: Int) {
         fail(resolveMessage(e, fallback), errorNeedsKeySetup(e))
@@ -1954,12 +2128,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (isRunning) return
         if (reportState.value.selection?.sessionID == id) reports.dismiss()
         finalAssessments.cancel(id); hostedFinalAssessmentJobs.remove(id)?.cancel(); hostedBindings.forgetLearning(id)
+        val hadTicket = finalAssessmentTickets.any { it.sessionID == id }
         finalAssessmentTickets = finalAssessmentTickets.filterNot { it.sessionID == id }
         if (session?.id == id) resetConversation()
-        archive = archive.copy(sessions = archive.sessions.filterNot { it.id == id }.toMutableList()); persist()
+        archive = archive.copy(sessions = archive.sessions.filterNot { it.id == id }.toMutableList())
+        persist { db -> LearningDbWriter.sessionDeleted(db, id, hadTicket) }
     }
+
     fun hideWord(id: String) {
-        archive = archive.copy(preferences = archive.preferences.copy(hiddenWords = (archive.preferences.hiddenWords + id).distinct())); persist()
+        val stored = archive.preferences.copy(hiddenWords = (archive.preferences.hiddenWords + id).distinct())
+        archive = archive.copy(preferences = stored)
+        persist { db -> LearningDbWriter.preferences(db, stored) }
     }
     fun correctPassage(sessionID: String, passageID: String, text: String) {
         if (isRunning) return
@@ -1975,12 +2154,30 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         finalAssessments.cancelAll(); hostedSessionIDs.forEach(hostedBindings::forgetLearning)
         hostedFinalAssessmentJobs.values.toList().forEach { it.cancel() }; hostedFinalAssessmentJobs.clear(); resetConversation()
         finalAssessmentTickets = emptyList()
-        archive = archive.copy(sessions = mutableListOf(), preferences = archive.preferences.copy(hiddenWords = emptyList())); persist()
+        val stored = archive.preferences.copy(hiddenWords = emptyList())
+        archive = archive.copy(sessions = mutableListOf(), preferences = stored)
+        // faithful to the previous full-archive write: sessions (with their
+        // fragments, by cascade) and the retry ledger go; lessons, expressions,
+        // completions and skill errors are not this site's learning data
+        persist { db -> LearningDbWriter.learningDataDeleted(db, stored) }
     }
     fun exportData(): String = ArchiveCodec.encode(archive)
     fun importData(data: String): Boolean {
         if (isRunning || !storageReady) return false
-        return try { archive = ArchiveCodec.merge(archive, prepareImportedArchive(data)); bumpLedgerRevision(); persist(); notice = getApplication<Application>().getString(R.string.notice_backup_imported); true }
+        return try {
+            val incoming = prepareImportedArchive(data)
+            if (jsonMode) {
+                archive = ArchiveCodec.merge(archive, incoming)
+                persist()
+            } else {
+                // restore path (the merger is restore-only): the codec merges
+                // against the database and the working copy becomes the
+                // persisted projection
+                archive = LearningDbWriter.archiveRestored(store!!.db, incoming)
+            }
+            bumpLedgerRevision()
+            notice = getApplication<Application>().getString(R.string.notice_backup_imported); true
+        }
         catch (_: Exception) { presentError(getApplication<Application>().getString(R.string.error_import_failed)); false }
     }
     override fun onCleared() { hostedBindings.disableHelpers(); transport.disconnect(); super.onCleared() }

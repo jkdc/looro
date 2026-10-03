@@ -340,6 +340,15 @@ object ExpressionsDao {
         return true
     }
 
+    /** Deletes every row visible to [languageID] for [text]'s norm_key — the
+        language row AND any legacy NULL-language row — exactly what
+        RecallEngine.remove removes from the archive (its predicate is
+        language-or-legacy). Returns the removed row count (JVM only; -1 on
+        Android). */
+    fun removeVisible(db: SqlDatabase, text: String, languageID: String): Long =
+        db.update("DELETE FROM expressions WHERE norm_key = ? AND (language_id = ? OR language_id IS NULL)",
+            listOf(RecallEngine.normalizeKey(text), languageID))
+
     /** All expressions in insertion order (legacy NULL rows wherever the
         archive listed them). */
     fun all(db: SqlDatabase): List<ExpressionState> =
@@ -450,6 +459,17 @@ object CompletionsDao {
                 languageID = row.textOrNull("language_id"),
             )
         }
+
+    /** Rewrites the table to exactly [marks], in list order (callers inside a
+        transaction use this directly — transactions do not nest). The runtime
+        ledger re-sorts by `at` descending and truncates on every append
+        (recordCompletion), so an insert-only write would drift from the
+        archive's order and cap; the archive's ledger IS the table's content,
+        and rowid order must equal list order for export to rebuild it. */
+    fun replaceAllInTx(db: SqlDatabase, marks: List<CompletionMark>) {
+        db.exec("DELETE FROM completions")
+        marks.forEach { add(db, it) }
+    }
 }
 
 /** Repeated-error patterns keyed by skill, kept to the newest
@@ -477,6 +497,16 @@ object SkillErrorsDao {
         db.query("SELECT * FROM skill_errors ORDER BY rowid").map { row ->
             SkillError(row.text("skill_id"), row.int("count"), row.real("last_at"), row.text("last_prompt"))
         }
+
+    /** Rewrites the table to exactly [errors], in list order (callers inside a
+        transaction use this directly — transactions do not nest). The runtime
+        error memory re-sorts by count descending and truncates on every hit
+        (recordExerciseMistake), so the archive's list IS the table's content
+        and rowid order must equal list order for export to rebuild it. */
+    fun replaceAllInTx(db: SqlDatabase, errors: List<SkillError>) {
+        db.exec("DELETE FROM skill_errors")
+        errors.forEach { upsert(db, it) }
+    }
 }
 
 /** One queued usage event plus its durable row id ([PendingUsageEvent.id] is
@@ -543,6 +573,12 @@ object AssessmentTicketsDao {
         db.query("SELECT * FROM assessment_tickets ORDER BY rowid").map { row ->
             AssessmentTicketRow(row.text("session_id"), row.int("attempts"), row.realOrNull("last_attempt_at"))
         }
+
+    /** Removes one session's ticket — the mirror of FinalAssessmentRecovery
+        enqueue's removal branch and of the ledger filters in deleteSession. */
+    fun delete(db: SqlDatabase, sessionID: String) {
+        db.update("DELETE FROM assessment_tickets WHERE session_id = ?", listOf(sessionID))
+    }
 
     fun clear(db: SqlDatabase) {
         db.exec("DELETE FROM assessment_tickets")
