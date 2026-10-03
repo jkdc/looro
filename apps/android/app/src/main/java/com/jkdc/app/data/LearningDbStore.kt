@@ -39,10 +39,22 @@ import kotlinx.serialization.json.jsonObject
  *  - read the JSON bytes → [ArchiveCodec.decode] → decode the
  *    `androidFinalAssessments` retry ledger with LearningRepository.load's
  *    exact validation — all before any write;
+ *  - retry hygiene: with the gate open, any learning rows already in the
+ *    database are residue of an earlier ABORTED attempt (import commits
+ *    before the bookkeeping does), and [ArchiveMapper.import] is insert-only
+ *    — it never deletes — so they are CLEARED first, in their own
+ *    transaction: the eight learning tables + the mastery meta rows
+ *    (preferences and the non-mastery meta rows are not learning data and
+ *    stay untouched). This keeps a retry count-stable in ALL cases, including
+ *    a JSON that legitimately evolved between attempts (the user deleted
+ *    expressions, pruned skill errors while the app served the JSON path). A
+ *    committed migration — hash present — never reaches this and is never
+ *    cleared;
  *  - the archive itself lands through [ArchiveMapper.import] (atomic by
  *    construction — never [ArchiveMerger], which is restore-only; its single
  *    transaction is the migration's only content transaction, and the
- *    transaction wrapper does not nest, so the bookkeeping gets its own);
+ *    transaction wrapper does not nest, so the pre-import clear and the
+ *    bookkeeping each get their own);
  *  - one bookkeeping transaction: the retry-ledger rows + COUNT VERIFICATION
  *    against the decoded source (sessions, fragments, lessons, expressions,
  *    completions, skill errors, mastery meta rows, schema flags, tickets,
@@ -56,13 +68,18 @@ import kotlinx.serialization.json.jsonObject
  *    the hash gate simply ignores it on every later launch.
  *
  * Crash windows and aborts are all safe. Before the hash is committed the
- * JSON stays the authority: an abort leaves the store in JSON mode (the
- * imported archive content of an aborted migration may remain committed in
- * the database, but without migration_hash nothing ever reads it), and the
- * next launch retries — a re-import over already-imported content is
- * count-stable, pinned by ArchiveMapperTest. A crash after the commit leaves
- * the hash, so the next launch is in database mode and never re-migrates —
- * a learning.json that reappears later is IGNORED, not merged again.
+ * JSON stays the authority: an abort leaves the store in JSON mode, and the
+ * residue an aborted attempt leaves in the database (its import commits
+ * before the bookkeeping) is unreachable without migration_hash — and is
+ * cleared before the next attempt. That clear is what makes a retry
+ * count-stable against an EVOLVED JSON: while the app served the JSON path
+ * the archive could legitimately change (expressions deleted, skill errors
+ * pruned), and a plain re-import over the stale rows would mismatch its
+ * counts on every later launch — the wedge. Clearing first lets the retry
+ * succeed with the evolved counts (pinned by LearningDbStoreTest's retry
+ * regression). A crash after the commit leaves the hash, so the next launch
+ * is in database mode and never re-migrates — a learning.json that
+ * reappears later is IGNORED, not merged again.
  *
  * Fail-safe contract for Task 2: [open] never throws while learning.json
  * exists. When the database cannot be opened or the migration aborts (corrupt
@@ -72,8 +89,9 @@ import kotlinx.serialization.json.jsonObject
  * the intact file) and surface the notice. In JSON mode [db] throws, so no
  * code can write to a database the next launch would not read. The migration
  * retries on the next launch because the hash gate only closes after a
- * verified commit. Without a JSON to fall back to, [open] rethrows — there is
- * no data to serve either way.
+ * verified commit. Without a JSON to fall back to, [open] RETHROWS (a
+ * database that cannot open included): there is no data to serve either way,
+ * and a silent jsonMode would strand a session's work with no durable copy.
  *
  * Known fail-safe trigger, accepted by design: an archive holding two
  * completions that differ only by language at the same instant passes
@@ -176,18 +194,25 @@ class LearningDbStore private constructor(
 
         /** Production entry point: open (or create) learning.db and migrate
          *  learning.json when due. Never throws while a learning.json exists
-         *  to fall back on — see the fail-safe contract in the class KDoc. */
+         *  to fall back on — see the fail-safe contract in the class KDoc.
+         *  Without one, a failed open (a database that cannot open included)
+         *  RETHROWS: jsonMode would promise a fallback that cannot serve
+         *  anything and silently drop the session's work on the next
+         *  launch. */
         fun open(context: Context, clock: () -> Double = ::nowSeconds): LearningDbStore {
             val files = androidFiles(context)
             return try {
                 open(LearningDb.open(context), files, clock)
             } catch (failure: Exception) {
+                if (!files.learningJsonExists()) throw failure
                 jsonMode(files, failure)
             }
         }
 
         /** Platform-free core of [open] (the JVM-testable seam): the caller
-         *  supplies the opened database and the file operations. */
+         *  supplies the opened database and the file operations. Same
+         *  fail-safe split: jsonMode while a learning.json exists, rethrow
+         *  without one. */
         fun open(database: SqlDatabase, files: Files, clock: () -> Double = ::nowSeconds): LearningDbStore {
             return try {
                 if (MetaDao.get(database, MIGRATION_HASH_KEY) == null && files.learningJsonExists()) {
@@ -195,9 +220,14 @@ class LearningDbStore private constructor(
                 }
                 LearningDbStore(database, clock, jsonMode = false, jsonModeNotice = null)
             } catch (failure: Exception) {
-                // Migration aborted (or the database broke underneath it): the
-                // import transaction rolled back, the JSON is untouched, and
-                // the hash gate stays open so the next launch retries.
+                // Migration aborted (or the database broke underneath it):
+                // the content writes rolled back, the JSON is untouched, and
+                // the hash gate stays open so the next launch retries (the
+                // pre-import clear keeps the retry count-stable — see the
+                // KDoc). Without the JSON fallback there is nothing to serve:
+                // rethrow instead of a jsonMode that would drop the session's
+                // work.
+                if (!files.learningJsonExists()) throw failure
                 jsonMode(files, failure)
             }
         }
@@ -214,8 +244,13 @@ class LearningDbStore private constructor(
             val encoded = bytes.toString(Charsets.UTF_8)
             val archive = ArchiveCodec.decode(encoded)
             val tickets = decodeTickets(encoded)
+            // retry hygiene (see the KDoc): the gate is open, so any learning
+            // rows in the database are an earlier ABORTED attempt's residue —
+            // import is insert-only, so without this clear a JSON that evolved
+            // between attempts could never satisfy count verification again
+            clearLearningTables(database)
             // the archive in import's own single transaction (the transaction
-            // wrapper does not nest — see the KDoc for the two-step split)
+            // wrapper does not nest — see the KDoc for the three-step split)
             ArchiveMapper.import(archive, database)
             database.transaction { tx ->
                 tickets.forEach { ticket ->
@@ -234,6 +269,25 @@ class LearningDbStore private constructor(
                 // stranded learning.json is ignored on every later launch.
                 // Failing the migration here would discard a verified commit.
                 println("LearningDbStore: committed migration but could not rename learning.json — $cleanup")
+            }
+        }
+
+        /** Deletes every learning row — everything [ArchiveMapper.import] can
+         *  write, plus the mastery meta rows it replaces — so a retry starts
+         *  from the same empty state as a fresh install and count verification
+         *  sees only the current JSON's content. preferences and the
+         *  non-mastery meta rows are not learning data and stay untouched.
+         *  Only ever called with the gate open (no migration_hash): a
+         *  committed migration's rows are never cleared. Fragments get their
+         *  own DELETE although sessions would cascade — explicit over
+         *  FK-dependent. */
+        private fun clearLearningTables(db: SqlDatabase) {
+            db.transaction { tx ->
+                for (table in listOf("fragments", "sessions", "expressions", "lesson_state",
+                        "completions", "skill_errors", "usage_outbox", "assessment_tickets")) {
+                    tx.update("DELETE FROM $table")
+                }
+                tx.exec("DELETE FROM meta WHERE key LIKE '${MetaDao.MASTERY_PREFIX}%'")
             }
         }
 
@@ -310,8 +364,19 @@ class LearningDbStore private constructor(
                 }
                 override fun renameLearningJsonToMigrated() {
                     val migrated = File(base.path + ".migrated")
-                    if (base.exists()) check(base.renameTo(migrated)) { "could not rename $base to $migrated" }
-                    else check(File(base.path + ".bak").renameTo(File(base.path + ".migrated.bak"))) {
+                    val backup = File(base.path + ".bak")
+                    if (base.exists()) {
+                        check(base.renameTo(migrated)) { "could not rename $base to $migrated" }
+                        // A leftover AtomicFile .bak is stale the moment the
+                        // base is gone: openRead RESTORES backup → base before
+                        // reading, so the bytes just migrated are the base's.
+                        // Leaving it would keep learningJsonExists() true
+                        // forever (a .bak without a base still counts as a
+                        // fallback), re-arming the migration on every launch.
+                        if (backup.exists()) check(backup.delete()) {
+                            "could not remove the stale learning.json backup"
+                        }
+                    } else check(backup.renameTo(File(base.path + ".migrated.bak"))) {
                         "could not rename the learning.json backup"
                     }
                 }

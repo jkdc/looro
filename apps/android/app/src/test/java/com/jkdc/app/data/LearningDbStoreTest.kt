@@ -31,11 +31,14 @@ import org.junit.rules.TemporaryFolder
  * LearningDbStore on real SQLite (sqlite-jdbc) with the file operations backed
  * by a real temp directory: the one-way learning.json migration (counts
  * verified against the pinned case-basic fixture), the hash gate that keeps a
- * reappearing JSON ignored, the fail-safe mode for corrupt input or verified
- * count mismatches, and the unfinished-session recovery that must behave
- * exactly like LearningRepository.load + FinalAssessmentRecovery.enqueue do
- * today. The production Android wiring (LearningDb.open + AtomicFile) is a
- * one-liner exercised by the e2e task, not here.
+ * reappearing JSON ignored, the retry that must recover (clearing an aborted
+ * attempt's residue) when the JSON evolved between attempts, the fail-safe
+ * mode for corrupt, oversized input or verified count mismatches, the rethrow
+ * when there is no JSON to fall back on, and the unfinished-session recovery
+ * that must behave exactly like LearningRepository.load +
+ * FinalAssessmentRecovery.enqueue do today. The production Android wiring
+ * (LearningDb.open + AtomicFile) is a one-liner exercised by the e2e task,
+ * not here.
  */
 class LearningDbStoreTest {
     private val now = 812_700_000.0
@@ -128,6 +131,24 @@ class LearningDbStoreTest {
         assertEquals(0L, count("sessions"))
     }
 
+    @Test fun oversizeJsonEngagesFailSafeAndLeavesTheFileUntouched() {
+        // one byte past the cap: the store's guard fires before any decode,
+        // mirroring LearningRepository's streamed read of the same limit
+        val bytes = ByteArray(ArchiveCodec.MAXIMUM_ENCODED_BYTES + 1)
+        val files = TempJsonFiles(tmp.newFolder(), bytes)
+        val store = storeOver(files)
+        assertTrue("an oversized learning.json must fail safe", store.jsonMode)
+        assertNotNull(store.jsonModeNotice)
+        assertThrows("the database must be unreachable in JSON mode",
+            IllegalArgumentException::class.java) { store.db }
+
+        assertTrue("the oversized file is never touched", files.json.exists())
+        assertTrue(files.json.readBytes().contentEquals(bytes))
+        assertFalse(files.migrated.exists())
+        assertNull(MetaDao.get(db, LearningDbStore.MIGRATION_HASH_KEY))
+        assertEquals(0L, count("sessions"))
+    }
+
     @Test fun countMismatchFromSameInstantCrossLanguageCompletionsAbortsMigration() {
         // a codec-VALID archive whose completions only differ by language at
         // the same instant: the completions primary key keeps one, so verified
@@ -154,6 +175,46 @@ class LearningDbStoreTest {
         assertEquals(3L, count("meta"))
         assertEquals(3L, count("sessions"))
         assertEquals(5L, count("completions"))
+    }
+
+    @Test fun retryAfterAnAbortedMigrationClearsResidueAndMigratesAnEvolvedJson() {
+        val files = TempJsonFiles(tmp.newFolder(), fixtureBytes("case-basic.json"))
+
+        // launch 1 dies in the two-transaction window: import's rows are
+        // committed, the bookkeeping (and its hash) never ran — the gate is
+        // open over residue. ArchiveMapper.import IS the migration's content
+        // transaction, so this is exactly the state a crash there leaves.
+        val crashed = ArchiveCodec.decode(fixture("case-basic.json"))
+        ArchiveMapper.import(crashed, db)
+        assertEquals(4L, count("expressions"))
+        assertNull(MetaDao.get(db, LearningDbStore.MIGRATION_HASH_KEY))
+
+        // the JSON path keeps serving the app, so the archive legitimately
+        // evolves: the user deletes a saved expression (skill errors are
+        // pruned the same way)
+        val evolved = ArchiveCodec.decode(fixture("case-basic.json"))
+        evolved.expressions.removeAt(0)
+        val evolvedBytes = ArchiveCodec.encode(evolved).toByteArray()
+        files.rewriteJson(evolvedBytes)
+
+        // launch 2, same database: the gate is open but the stale rows are
+        // still there — the retry must clear them and migrate the EVOLVED
+        // counts. Without the pre-import clear, import (insert-only) leaves
+        // the residue's fourth expression behind and verifyCounts mismatches
+        // on every later launch: the permanent jsonMode wedge.
+        val second = storeOver(files)
+        assertFalse("a retry over an evolved JSON must succeed, not wedge", second.jsonMode)
+        assertNull(second.jsonModeNotice)
+        assertEquals("the commit point hashes the EVOLVED bytes", sha256(evolvedBytes),
+            MetaDao.get(db, LearningDbStore.MIGRATION_HASH_KEY))
+        assertEquals(3L, count("expressions"))
+        assertEquals("the residue is gone with the clear, not unioned", 5L, count("completions"))
+        assertEquals(3L, count("sessions"))
+        assertEquals("2 mastery + migrated_at + hash + schema_flags", 5L, count("meta"))
+        val projection = evolved.copy(
+            lessons = evolved.lessons.map { it.copy(bars = 0, dueAt = 0.0) }.toMutableList())
+        assertEquals("the database holds exactly the evolved archive", projection,
+            second.loadInitialArchive())
     }
 
     @Test fun retryLedgerTicketsMigrateIntoAssessmentTickets() {
@@ -264,6 +325,20 @@ class LearningDbStoreTest {
         assertNull(store.jsonModeNotice)
         assertEquals(Archive(), store.loadInitialArchive())
         assertNull(MetaDao.get(db, LearningDbStore.MIGRATION_HASH_KEY))
+    }
+
+    @Test fun aBrokenDatabaseWithoutJsonRethrowsInsteadOfJsonMode() {
+        // the fail-safe contract's boundary: jsonMode promises a learning.json
+        // fallback that still owns the data. With NO file and a database that
+        // cannot serve, open must RETHROW — a silent jsonMode would strand the
+        // session's work with no durable copy (dropped on the next launch).
+        val dir = tmp.newFolder()
+        val dead = DriverManager.getConnection("jdbc:sqlite:${File(dir, "learning.db").path}")
+        dead.close()
+        val files = TempJsonFiles(dir, jsonBytes = null)
+        assertThrows(Exception::class.java) {
+            LearningDbStore.open(JvmSqlDatabase(dead), files) { now }
+        }
     }
 
     // -- helpers -----------------------------------------------------------
