@@ -1,6 +1,7 @@
 package com.jkdc.app
 
 import android.app.Application
+import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,12 +14,21 @@ import com.jkdc.app.core.engines.EngineException
 import com.jkdc.app.core.engines.ConversationEngineFactory
 import com.jkdc.app.core.voice.LocalVoiceTransport
 import com.jkdc.app.core.voice.VoiceTransport
+import com.jkdc.app.data.AndroidSqlDatabase
 import com.jkdc.app.data.AssessmentTicketsDao
 import com.jkdc.app.data.AssessmentTicketRow
+import com.jkdc.app.data.BackupManager
+import com.jkdc.app.data.InvalidBackup
+import com.jkdc.app.data.LearningDb
 import com.jkdc.app.data.LearningDbStore
 import com.jkdc.app.data.LearningDbWriter
 import com.jkdc.app.data.SqlDatabase
+import com.jkdc.app.data.VerificationHandle
+import com.jkdc.app.data.VerificationOpener
 import com.jkdc.app.network.*
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -2179,6 +2189,184 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             notice = getApplication<Application>().getString(R.string.notice_backup_imported); true
         }
         catch (_: Exception) { presentError(getApplication<Application>().getString(R.string.error_import_failed)); false }
+    }
+
+    // -- Phase D: learning.db backup/restore + per-language delete -----------
+    // (data-layer task; the Settings SAF wiring and the string resources are
+    // the next task — result notices are inline literals for now, the same
+    // convention as LearningDbStore's jsonModeNotice.)
+
+    /** The live learning database file (LearningDb.open's canonical path). */
+    private fun databaseFile(): File =
+        getApplication<Application>().getDatabasePath(LearningDb.NAME)
+
+    /** The Android half of BackupManager's verification seam: a short-lived
+        second connection over a candidate file (the exported copy or the
+        incoming backup), closed by BackupManager after the checks. */
+    private fun verificationOpener() = VerificationOpener { file ->
+        val raw = SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READWRITE)
+        val opened = AndroidSqlDatabase(raw)
+        opened.exec("PRAGMA foreign_keys = ON")
+        VerificationHandle(opened) { raw.close() }
+    }
+
+    /** Removes stale journal siblings before a replaced file is opened — the
+        incoming bytes are self-contained (export checkpoints the WAL), so a
+        leftover -wal/-shm/-journal from the previous database must not be
+        replayed over them. */
+    private fun deleteJournalSiblings(dbFile: File) {
+        for (suffix in listOf("-wal", "-shm", "-journal")) File(dbFile.path + suffix).delete()
+    }
+
+    /**
+     * Writes the whole learning database to [output] (Settings → SAF). Drains
+     * every pending write first (FIFO channel — the checkpoint must see the
+     * latest commit), then BackupManager checkpoints (WAL TRUNCATE), copies
+     * the file bytes and verifies the copy by opening it before declaring
+     * success. The legacy JSON-mode store has no database to back up.
+     */
+    suspend fun exportDbTo(output: OutputStream): Boolean {
+        if (!storageReady || store == null) return false
+        if (jsonMode) {
+            notice = "El respaldo de la base de datos no está disponible: la app está usando el archivo JSON de aprendizaje."
+            return false
+        }
+        return try {
+            persistAndWait()
+            withContext(Dispatchers.IO) {
+                BackupManager.exportTo(store!!.db, databaseFile(), output, verificationOpener())
+            }
+            notice = "Copia de la base de datos exportada."
+            true
+        } catch (e: CancellationException) { throw e }
+        catch (e: Exception) {
+            android.util.Log.w("BackupManager", "database export failed", e)
+            notice = "No se pudo exportar la copia de la base de datos."
+            false
+        }
+    }
+
+    /**
+     * Restores a learning database from [input] (a BackupManager-exported
+     * .db). The live database is NEVER destroyed unless validation fully
+     * passed, and the reopened store is the only source of the working copy:
+     *
+     *  1. read the bounded bytes and validate them against a THROWAWAY copy
+     *     (integrity, user_version, foreign keys, canonical tables) — any
+     *     InvalidBackup surfaces its user-facing notice and touches nothing;
+     *  2. drain pending writes, close the live connection, set the current
+     *     file aside (learning.db.preimport), clear stale journal siblings;
+     *  3. install the bytes (temp file + same-directory rename, atomic) and
+     *     reload the store exactly like startup (open → one-shot export →
+     *     unfinished-session recovery → retry ledger → recovery re-arm);
+     *  4. on ANY failure after step 2: put the previous file back and reload
+     *     it — the learner keeps the database they had.
+     */
+    suspend fun importDbFrom(input: InputStream): Boolean {
+        if (isRunning || !storageReady || store == null) return false
+        if (jsonMode) {
+            notice = "La restauración de la base de datos no está disponible: la app está usando el archivo JSON de aprendizaje."
+            return false
+        }
+        val dbFile = databaseFile()
+        return try {
+            val bytes = withContext(Dispatchers.IO) {
+                val workDir = dbFile.parentFile ?: error("learning database has no parent directory")
+                BackupManager.readValidatedBackup(input, workDir, verificationOpener())
+            }
+            persistAndWait()
+            withContext(Dispatchers.IO) {
+                val keep = File(dbFile.path + ".preimport")
+                store!!.db.close()
+                try {
+                    check(dbFile.renameTo(keep)) { "could not set aside the current database" }
+                    deleteJournalSiblings(dbFile)
+                    BackupManager.installDatabase(dbFile, bytes)
+                    reloadAfterImport()
+                    keep.delete()
+                } catch (failure: Throwable) {
+                    // Put the previous database back before surfacing anything.
+                    runCatching { dbFile.delete() }
+                    check(keep.exists() && keep.renameTo(dbFile)) {
+                        "could not restore the previous database after a failed import"
+                    }
+                    deleteJournalSiblings(dbFile)
+                    runCatching { reloadAfterImport() }.onFailure { restoreFailure ->
+                        storageReady = false; store = null
+                        restoreFailure.addSuppressed(failure)
+                        throw restoreFailure
+                    }
+                    throw failure
+                }
+            }
+            bumpLedgerRevision()
+            notice = "Respaldo restaurado: los datos de aprendizaje fueron reemplazados por la copia importada."
+            true
+        }
+        catch (e: CancellationException) { throw e }
+        catch (e: InvalidBackup) {
+            android.util.Log.w("BackupManager", "database import rejected: ${e.message}")
+            notice = e.message; false
+        }
+        catch (e: Exception) {
+            android.util.Log.w("BackupManager", "database import failed", e)
+            notice = "No se pudo restaurar el respaldo de la base de datos."
+            false
+        }
+    }
+
+    /** The post-import reload — exactly the startup path, keeping
+        storageReady semantics: a reload that cannot serve flips them off so
+        no write lands on a store the next launch would not read. */
+    private fun reloadAfterImport() {
+        try {
+            val loaded = loadLearningState()
+            store = loaded.third
+            archive = loaded.first
+            finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
+            recoverFinalAssessments()
+        } catch (failure: Exception) {
+            storageReady = false; store = null
+            throw failure
+        }
+    }
+
+    /**
+     * Deletes one language's learning data — the database transaction in
+     * [BackupManager.deleteLearningDataForLanguage] mirrored onto the working
+     * copy archive (the SAME rows, so export(DB) == archive keeps holding):
+     * the language's sessions (fragments ride along), completions and
+     * expressions (legacy NULL-language entries conserved on both sides) and
+     * lesson_state rows whose lesson id starts with the language prefix.
+     * Runtime hygiene mirrors deleteSession per removed session and
+     * deleteLearningData overall: cancel pending assessments, forget hosted
+     * learning, drop the retry-ledger entries, reset the conversation when it
+     * belongs to the language. mastery meta and skill errors key on
+     * language-neutral skill ids and stay, like the usage outbox.
+     */
+    fun deleteLearningDataForLanguage(languageID: String) {
+        if (isRunning || !storageReady) return
+        reports.dismiss()
+        val doomed = archive.sessions.filter { it.languageID == languageID }
+        val doomedIDs = doomed.map { it.id }.toSet()
+        doomed.forEach { doomedSession ->
+            finalAssessments.cancel(doomedSession.id)
+            hostedFinalAssessmentJobs.remove(doomedSession.id)?.cancel()
+            hostedBindings.forgetLearning(doomedSession.id)
+        }
+        if (session?.languageID == languageID) resetConversation()
+        finalAssessmentTickets = finalAssessmentTickets.filterNot { it.sessionID in doomedIDs }
+        archive = archive.copy(
+            sessions = archive.sessions.filterNot { it.languageID == languageID }.toMutableList(),
+            completions = archive.completions.orEmpty()
+                .filterNot { it.languageID == languageID }.takeIf { it.isNotEmpty() }?.toMutableList(),
+            expressions = archive.expressions.filterNot { it.languageID == languageID }.toMutableList(),
+            lessons = archive.lessons.filterNot { it.lessonID.startsWith("$languageID-") }.toMutableList(),
+        )
+        bumpLedgerRevision()
+        persist { db -> BackupManager.deleteLearningDataForLanguage(db, languageID) }
+        val name = LanguageRegistry.get(languageID)?.name ?: languageID
+        notice = "Se eliminaron los datos de aprendizaje de $name."
     }
     override fun onCleared() { hostedBindings.disableHelpers(); transport.disconnect(); super.onCleared() }
 }

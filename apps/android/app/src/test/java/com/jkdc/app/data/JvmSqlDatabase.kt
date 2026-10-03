@@ -66,6 +66,8 @@ class JvmSqlDatabase(val connection: Connection) : SqlDatabase {
         }
     }
 
+    override fun close() = connection.close()
+
     private fun bind(st: PreparedStatement, args: List<Any?>) {
         args.forEachIndexed { i, value ->
             when (value) {

@@ -53,6 +53,16 @@ interface SqlDatabase {
      * single-threaded, like SQLiteDatabase itself.
      */
     fun <T> transaction(block: (SqlDatabase) -> T): T
+
+    /**
+     * Closes the underlying connection. One call site only: the database
+     * backup/restore flow ([BackupManager] via the store's owner) closes the
+     * live database BEFORE an imported backup file replaces it, then reopens
+     * a fresh store — writing to a replaced file through the old connection
+     * would land on the unlinked inode and vanish. Using a closed database
+     * throws (SQLite "already closed" from both backends).
+     */
+    fun close()
 }
 
 /** Shared guard: a null bind argument would bind the literal "null" on Android

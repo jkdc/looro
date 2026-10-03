@@ -64,6 +64,10 @@ class AndroidSqlDatabase(private val db: SQLiteDatabase) : SqlDatabase {
         }
     }
 
+    // SQLiteOpenHelper's close path checkpoints and removes the -wal/-shm
+    // siblings, which is exactly the state the backup replace wants.
+    override fun close() = db.close()
+
     private fun Cursor.row(): Row {
         val names = columnNames.toList()
         val values = (0 until columnCount).map { index ->
