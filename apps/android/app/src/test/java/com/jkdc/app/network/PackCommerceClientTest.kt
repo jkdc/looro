@@ -26,10 +26,14 @@ class PackCommerceClientTest {
     // Credit in the launch pack is a server constant (pack-products.ts): the
     // client echoes it, it never computes it.
     private val packOrder = """{"orderID":"$id","sku":"palique-tokens","providerProduct":"palique_tokens","currency":"usd","totalMinor":499,"environment":"test","entitlementKind":"token_pack","creditNanoUSD":"2160000000","payment":{"orderID":"$id","obfuscatedAccountID":"${"b".repeat(64)}","obfuscatedProfileID":"${"c".repeat(64)}"}}"""
-    private val sandboxUnlockStatus = """{"orderID":"$id","entitlementKind":"byok_unlock","state":"purchased","grantedNanoUSD":"0","reversedNanoUSD":"0","reversalOutstandingNanoUSD":"0","fulfillmentRecorded":false,"unlockedAt":null}"""
+    private val sandboxUnlockStatus = """{"orderID":"$id","entitlementKind":"byok_unlock","state":"purchased","grantedNanoUSD":"0","reversedNanoUSD":"0","reversalOutstandingNanoUSD":"0","fulfillmentRecorded":false,"unlockedAt":null,"environment":"test"}"""
     private val liveUnlockStatus = sandboxUnlockStatus.replace("\"fulfillmentRecorded\":false", "\"fulfillmentRecorded\":true")
         .replace("\"unlockedAt\":null", "\"unlockedAt\":\"2026-10-02T10:00:00.000Z\"")
-    private val packStatus = """{"orderID":"$id","entitlementKind":"token_pack","state":"purchased","grantedNanoUSD":"2160000000","reversedNanoUSD":"0","reversalOutstandingNanoUSD":"0","fulfillmentRecorded":true,"unlockedAt":null}"""
+        .replace("\"environment\":\"test\"", "\"environment\":\"live\"")
+    private val refundedUnlockStatus = sandboxUnlockStatus
+        .replace("\"environment\":\"test\"", "\"environment\":\"live\"")
+        .replace("\"reversalOutstandingNanoUSD\":\"0\"", "\"reversalOutstandingNanoUSD\":\"6990000000\"")
+    private val packStatus = """{"orderID":"$id","entitlementKind":"token_pack","state":"purchased","grantedNanoUSD":"2160000000","reversedNanoUSD":"0","reversalOutstandingNanoUSD":"0","fulfillmentRecorded":true,"unlockedAt":null,"environment":"test"}"""
 
     @Before fun setup() {
         server = MockWebServer(); server.start()
@@ -88,15 +92,24 @@ class PackCommerceClientTest {
         assertEquals(PACK_UNLOCK_KIND, sandbox.entitlementKind)
         assertFalse(sandbox.fulfillmentRecorded)
         assertEquals(0, sandbox.grantedMilliseconds)
+        assertEquals("test", sandbox.environment)
         server.enqueue(MockResponse().setBody(liveUnlockStatus))
         val live = api.status(session, id)
         assertTrue(live.fulfillmentRecorded)
         assertEquals("2026-10-02T10:00:00.000Z", live.unlockedAt)
+        assertEquals("live", live.environment)
+        // A refunded live unlock carries its money-returned evidence (699 minor
+        // → 6_990_000_000 nano) so the controller words REVERSED, never sandbox.
+        server.enqueue(MockResponse().setBody(refundedUnlockStatus))
+        val refunded = api.status(session, id)
+        assertEquals(6_990_000_000L, refunded.reversalOutstandingNanoUSD)
+        assertEquals("live", refunded.environment)
         server.enqueue(MockResponse().setBody(packStatus))
         val credited = api.status(session, id)
         assertEquals(PACK_TOKEN_KIND, credited.entitlementKind)
         assertEquals(2_160_000_000L, credited.grantedNanoUSD)
         assertTrue(credited.fulfillmentRecorded)
+        assertEquals(0, credited.reversalOutstandingNanoUSD)
     }
     @Test fun malformedPackFieldsFailClosed() = runBlocking {
         for (body in listOf(
@@ -104,7 +117,12 @@ class PackCommerceClientTest {
             packProduct.replace("\"creditNanoUSD\":\"2160000000\"", "\"creditNanoUSD\":\"2160000000.0\""),
             packProduct.replace("\"entitlementKind\":\"token_pack\"", "\"entitlementKind\":\"ai_value\",\"minutes\":30"),
             sandboxUnlockStatus.replace("\"grantedNanoUSD\":\"0\"", "\"grantedNanoUSD\":\"many\""),
-            sandboxUnlockStatus.replace("\"reversalOutstandingNanoUSD\":\"0\"", "\"reversalOutstandingNanoUSD\":\"5\""),
+            // Only the unlock may carry a non-zero outstanding reversal.
+            packStatus.replace("\"reversalOutstandingNanoUSD\":\"0\"", "\"reversalOutstandingNanoUSD\":\"5\""),
+            sandboxUnlockStatus.replace("\"reversalOutstandingNanoUSD\":\"0\"", "\"reversalOutstandingNanoUSD\":\"-1\""),
+            // Every pack status echoes its order's environment for the sandbox rule.
+            sandboxUnlockStatus.replace(",\"environment\":\"test\"", ""),
+            sandboxUnlockStatus.replace("\"environment\":\"test\"", "\"environment\":\"sandbox\""),
             sandboxUnlockStatus.replace("\"fulfillmentRecorded\":false", "\"fulfillmentRecorded\":true"),
             packStatus.replace("\"fulfillmentRecorded\":true", "\"fulfillmentRecorded\":false"))) {
             if (body.contains("totalMinor") && body.contains("providerProduct")) {

@@ -149,13 +149,14 @@ class MinuteCommerceClient internal constructor(private val origin: HttpUrl, tra
         val kind = (body["entitlementKind"] as? JsonPrimitive)?.takeIf { it.isString }?.content
         if (kind in PACK_KINDS) {
             // Pack statuses (PackPurchaseStatus) carry nanoUSD money fields and no
-            // credit field; a non-zero outstanding reversal is never sent today.
-            if ((body["reversalOutstandingNanoUSD"] as? JsonPrimitive)?.takeIf { it.isString }?.content != "0")
-                throw MinuteCommerceFailure.InvalidResponse
+            // credit field. Only the unlock ever carries a non-zero outstanding
+            // reversal (its refund evidence), and the echoed environment gates the
+            // sandbox notice; the constructor invariants enforce both fail-closed.
             val unlockedAt = (body["unlockedAt"] as? JsonPrimitive)?.takeIf { it.isString }?.content?.takeIf { it.isNotEmpty() }
             return MinutePurchaseStatus(body.text("orderID"), body.text("state"), 0, 0, 0, body.boolean("fulfillmentRecorded"),
                 entitlementKind = kind, grantedNanoUSD = body.nanoField("grantedNanoUSD"),
-                reversedNanoUSD = body.nanoField("reversedNanoUSD"), unlockedAt = unlockedAt)
+                reversedNanoUSD = body.nanoField("reversedNanoUSD"), unlockedAt = unlockedAt,
+                reversalOutstandingNanoUSD = body.nanoField("reversalOutstandingNanoUSD"), environment = body.text("environment"))
         }
         val ai = if (kind == "ai_value") AIValueFulfillment(body.text("grantedNanoUSD"),
             body.text("reversedNanoUSD"), body.text("reversalOutstandingNanoUSD")) else null

@@ -72,7 +72,8 @@ data class MinuteOrder(val orderID: String, val minutes: Int, val currency: Stri
 data class MinutePurchaseStatus(val orderID: String, val state: String, val grantedMilliseconds: Long,
     val reversedMilliseconds: Long, val reversalOutstandingMilliseconds: Long, val fulfillmentRecorded: Boolean,
     val aiValue: AIValueFulfillment? = null, val entitlementKind: String? = null,
-    val grantedNanoUSD: Long = 0, val reversedNanoUSD: Long = 0, val unlockedAt: String? = null) {
+    val grantedNanoUSD: Long = 0, val reversedNanoUSD: Long = 0, val unlockedAt: String? = null,
+    val reversalOutstandingNanoUSD: Long = 0, val environment: String? = null) {
     val isPack: Boolean get() = entitlementKind != null
     init {
         require(minuteUUID.matches(orderID) && state in listOf("created", "pending", "purchased", "voided"))
@@ -83,16 +84,23 @@ data class MinutePurchaseStatus(val orderID: String, val state: String, val gran
         if (entitlementKind == null) {
             require(fulfillmentRecorded == (aiValue?.recorded ?: (grantedMilliseconds > 0)))
             require(aiValue == null || (grantedMilliseconds == 0L && reversedMilliseconds == 0L && reversalOutstandingMilliseconds == 0L))
-            require(grantedNanoUSD == 0L && reversedNanoUSD == 0L && unlockedAt == null)
+            require(grantedNanoUSD == 0L && reversedNanoUSD == 0L && unlockedAt == null &&
+                reversalOutstandingNanoUSD == 0L && environment == null)
         } else {
             // Pack statuses mirror pack-products.ts: money fields are nanoUSD, and
             // only a live-environment unlock is ever recorded as fulfilled.
             require(entitlementKind in PACK_KINDS && aiValue == null &&
                 grantedMilliseconds == 0L && reversedMilliseconds == 0L && reversalOutstandingMilliseconds == 0L)
             require(grantedNanoUSD >= 0 && reversedNanoUSD in 0..grantedNanoUSD)
+            // The unlock carries its refund evidence as the outstanding reversal
+            // (money back in nanoUSD; packs reverse credit immediately, so theirs
+            // is always 0), and every pack status echoes its order's environment
+            // so the sandbox notice stays a test-mode-only rule.
+            require(reversalOutstandingNanoUSD >= 0 && (entitlementKind == PACK_UNLOCK_KIND || reversalOutstandingNanoUSD == 0L))
+            require(environment == "test" || environment == "live")
             require(unlockedAt == null || (entitlementKind == PACK_UNLOCK_KIND && unlockedAt.length <= 40))
             require(fulfillmentRecorded == if (entitlementKind == PACK_UNLOCK_KIND) unlockedAt != null else grantedNanoUSD > 0)
-            require(state !in listOf("created", "pending") || (grantedNanoUSD == 0L && unlockedAt == null))
+            require(state !in listOf("created", "pending") || (grantedNanoUSD == 0L && unlockedAt == null && reversalOutstandingNanoUSD == 0L))
         }
     }
 }

@@ -3,7 +3,7 @@ import { transaction, type Database } from './db.js';
 import { appendEntry, lockWallet } from './ledger.js';
 import { ServiceError } from './errors.js';
 import { refundedAIValue } from './ai-value-purchases.js';
-import type { MinutePurchases, MinutePurchaseVerifier, PurchaseProvider, PurchaseScope,
+import type { MinutePurchases, MinutePurchaseVerifier, PurchaseProvider, PurchaseEnvironment, PurchaseScope,
   VerifiedMinutePurchase } from './minute-purchases.js';
 
 const uuid = /^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i;
@@ -34,6 +34,9 @@ export interface PackProduct extends PurchaseScope {
 export interface PackOrder extends PackProduct { readonly orderID: string }
 export interface PackPurchaseStatus {
   readonly orderID: string; readonly entitlementKind: PackEntitlementKind;
+  /** The order's purchase environment, echoed so clients keep the sandbox
+   * notice strictly for test-environment orders. */
+  readonly environment: PurchaseEnvironment;
   readonly state: 'created'|'pending'|'purchased'|'voided';
   readonly grantedNanoUSD: string; readonly reversedNanoUSD: string; readonly reversalOutstandingNanoUSD: string;
   readonly fulfillmentRecorded: boolean;
@@ -70,11 +73,21 @@ function mappedOrder(row: any): PackOrder {
     providerProduct:row.provider_product,currency:row.currency,totalMinor:Number(row.total_minor),
     entitlementKind:row.entitlement_kind,creditNanoUSD:BigInt(row.credit_nano).toString()};
 }
-const purchaseStatus=(id:string,kind:PackEntitlementKind,row?:any,unlockedAt?:Date|string|null):PackPurchaseStatus=>({
-  orderID:id,entitlementKind:kind,state:row?.state??'created',grantedNanoUSD:String(row?.granted_nano??0),
-  reversedNanoUSD:String(row?.reversed_nano??0),reversalOutstandingNanoUSD:'0',
-  fulfillmentRecorded:kind==='byok_unlock'?Boolean(unlockedAt):BigInt(row?.granted_nano??0)>0n,
-  unlockedAt:kind==='byok_unlock'&&unlockedAt?new Date(unlockedAt).toISOString():null});
+const purchaseStatus=(id:string,kind:PackEntitlementKind,environment:PurchaseEnvironment,row?:any,
+  unlockedAt?:Date|string|null):PackPurchaseStatus=>{
+  // Refund evidence rides the outstanding-reversal slot. Token packs reverse
+  // credit immediately, so theirs is genuinely always 0; the binary unlock
+  // instead revokes atomically with the refund, and the money returned (the
+  // refunded amount, or the full price on a void) is the only evidence a
+  // client can word a REVERSED notice from — without it a live refunded
+  // unlock is indistinguishable from a sandbox receipt.
+  const refundMinor=Number(row?.refunded_minor??0);
+  const outstanding=kind==='byok_unlock'&&row?.state&&(row.state==='voided'||refundMinor>0)
+    ?BigInt(row.state==='voided'?Number(row.total_minor):refundMinor)*10_000_000n:0n;
+  return {orderID:id,entitlementKind:kind,environment,state:row?.state??'created',grantedNanoUSD:String(row?.granted_nano??0),
+    reversedNanoUSD:String(row?.reversed_nano??0),reversalOutstandingNanoUSD:outstanding.toString(),
+    fulfillmentRecorded:kind==='byok_unlock'?Boolean(unlockedAt):BigInt(row?.granted_nano??0)>0n,
+    unlockedAt:kind==='byok_unlock'&&unlockedAt?new Date(unlockedAt).toISOString():null};};
 function evidenceValid(e:VerifiedMinutePurchase,scope:PurchaseScope) {
   if (!scopeValid(e) || scopeKey(e)!==scopeKey(scope) || !uuid.test(e.orderID) ||
     typeof e.transactionID!=='string' || !/^[\x21-\x7e]{1,4096}$/.test(e.transactionID) ||
@@ -146,12 +159,12 @@ export class PackPurchases {
   }
   async status(accountID:string,orderID:string):Promise<PackPurchaseStatus> {
     if (!uuid.test(accountID) || !uuid.test(orderID)) throw new ServiceError('purchase_not_found',404);
-    const found=(await this.db.query(`SELECT p.*,e.unlocked_at,q.kind FROM minute_purchase_orders o JOIN accounts a ON a.id=o.account_id
+    const found=(await this.db.query(`SELECT p.*,e.unlocked_at,q.kind,o.environment,o.total_minor FROM minute_purchase_orders o JOIN accounts a ON a.id=o.account_id
       JOIN pack_purchase_quotes q ON q.order_id=o.id LEFT JOIN pack_purchase_transactions p ON p.order_id=o.id
       LEFT JOIN entitlements e ON e.account_id=o.account_id AND e.unlock_order_id=o.id
       WHERE o.id=$1 AND o.account_id=$2 AND o.entitlement_kind IN ('byok_unlock','token_pack') AND a.deleted_at IS NULL`,[orderID,accountID])).rows[0];
     if (!found) throw new ServiceError('purchase_not_found',404);
-    return purchaseStatus(orderID,found.kind,found.order_id?found:undefined,found.unlocked_at);
+    return purchaseStatus(orderID,found.kind,found.environment,found.order_id?found:undefined,found.unlocked_at);
   }
   async reconcile(provider:PurchaseProvider,input:unknown):Promise<PackPurchaseStatus> {
     const verifier=this.#verifiers.get(provider); if (!verifier) throw new ServiceError('purchase_verification_unavailable',503);
@@ -201,9 +214,12 @@ export class PackPurchases {
           // Sandbox provenance, mirroring the pack and AI-value split: only a
           // live-environment purchase may set the real proxy-gating unlock. A
           // test receipt records state on the transaction row only.
-          // Set-once: the first verified purchase wins; replays and later orders are no-ops.
+          // Set-once against an active unlock (a paid or campaign row keeps its
+          // unlocked_at), but a refund cleared the row: re-purchasing must
+          // re-grant it instead of charging $6.99 into a permanent dead end.
           await sql.query(`INSERT INTO entitlements(account_id,unlocked_at,unlock_source,unlock_order_id) VALUES($1,now(),$2,$3)
-            ON CONFLICT (account_id) DO NOTHING`,[order.account_id,provider,order.id]);
+            ON CONFLICT (account_id) DO UPDATE SET unlocked_at=EXCLUDED.unlocked_at,unlock_source=EXCLUDED.unlock_source,
+            unlock_order_id=EXCLUDED.unlock_order_id WHERE entitlements.unlocked_at IS NULL`,[order.account_id,provider,order.id]);
         }
         const refund=Math.max(Number(purchase.refunded_minor),evidence.refundedMinor);
         if (order.entitlement_kind==='token_pack') {
@@ -226,9 +242,10 @@ export class PackPurchases {
         await sql.query(`INSERT INTO minute_purchase_events(id,order_id,provider,environment,merchant,event_hash,evidence_hash,state,refunded_minor)
           VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`,[randomUUID(),order.id,provider,evidence.environment,evidence.merchant,evidence.eventHash,evidenceHash,evidence.state,evidence.refundedMinor]);
       }
-      const row=(await sql.query(`SELECT p.*,e.unlocked_at FROM pack_purchase_transactions p
+      const row=(await sql.query(`SELECT p.*,e.unlocked_at,o.environment,o.total_minor FROM pack_purchase_transactions p
+        JOIN minute_purchase_orders o ON o.id=p.order_id
         LEFT JOIN entitlements e ON e.account_id=p.account_id AND e.unlock_order_id=p.order_id WHERE p.order_id=$1`,[order.id])).rows[0];
-      return purchaseStatus(order.id,order.kind,row,row?.unlocked_at);
+      return purchaseStatus(order.id,order.kind,order.environment,row,row?.unlocked_at);
     });
   }
 }

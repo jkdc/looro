@@ -28,8 +28,8 @@ final class TokensCommerceTests: XCTestCase {
     private func serverStatus(orderID: String, kind: String, state: String,
                               granted: String = "0", reversed: String = "0",
                               recorded: Bool, unlockedAt: String? = nil,
-                              outstanding: String = "0") -> [String: Any] {
-        ["orderID": orderID, "entitlementKind": kind, "state": state, "grantedNanoUSD": granted,
+                              outstanding: String = "0", environment: String = "test") -> [String: Any] {
+        ["orderID": orderID, "entitlementKind": kind, "environment": environment, "state": state, "grantedNanoUSD": granted,
          "reversedNanoUSD": reversed, "reversalOutstandingNanoUSD": outstanding,
          "fulfillmentRecorded": recorded, "unlockedAt": unlockedAt ?? NSNull()]
     }
@@ -71,8 +71,10 @@ final class TokensCommerceTests: XCTestCase {
 
     /// The documented server test-mode contract: a `purchased` unlock with
     /// `fulfillmentRecorded: false` records state but never unlocks — that is a
-    /// sandbox notice, NOT a verification failure. Live evidence and credited
-    /// packs are ADDED; money back is REVERSED; nothing else is pending.
+    /// sandbox notice, NOT a verification failure, and only for test-environment
+    /// orders. Live evidence and credited packs are ADDED; money back (a
+    /// refunded live unlock's reversal evidence) is REVERSED; nothing else is
+    /// pending.
     func testStatusNoticeMappingMirrorsAndroidIncludingSandboxRule() throws {
         let orderID = "123e4567-e89b-12d3-a456-426614174000"
         func notice(_ fields: [String: Any]) throws -> TokenPackNotice {
@@ -81,22 +83,34 @@ final class TokensCommerceTests: XCTestCase {
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "token_pack", state: "created", recorded: false)), .pending)
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "token_pack", state: "pending", recorded: false)), .pending)
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                               granted: "2160000000", recorded: true)), .added)
+                                               granted: "2160000000", recorded: true, environment: "live")), .added)
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
                                                recorded: true, unlockedAt: "2026-10-02T10:00:00.000Z")), .added)
-        // The sandbox rule.
+        // The sandbox rule: a test-environment unlock purchase only.
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
                                                recorded: false)), .sandboxRecorded)
+        // A live unlock purchased with no fulfillment and no refund evidence is
+        // NOT the sandbox case; it failed verification (or was bought while
+        // already unlocked — either way it is not "recorded for sandbox").
+        XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
+                                               recorded: false, environment: "live")), .verificationFailed)
+        // A live unlocked-then-refunded order carries money-returned evidence
+        // (699 minor → 6_990_000_000 nano) and words REVERSED, never sandbox.
+        let refunded = try status(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
+                                               recorded: false, environment: "live", outstanding: "6990000000"))
+        try refunded.validate()
+        XCTAssertEqual(refunded.reversalOutstandingNano, 6_990_000_000)
+        XCTAssertEqual(TokenPackNotice.notice(for: refunded), .reversed)
         // A pack that never credited is not a sandbox case; it failed verification.
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                               recorded: false)), .verificationFailed)
+                                               recorded: false, environment: "live")), .verificationFailed)
         // Reversal wins over fulfillment, mirroring Android's applyStatus order.
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                               granted: "2160000000", reversed: "10", recorded: true)), .reversed)
+                                               granted: "2160000000", reversed: "10", recorded: true, environment: "live")), .reversed)
         // A voided unlock refund clears the entitlement server-side (unlockedAt
         // is nulled), so the reversal is visible through state alone.
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "byok_unlock", state: "voided",
-                                               recorded: false)), .reversed)
+                                               recorded: false, environment: "live")), .reversed)
     }
 
     /// Regression for the ai_value merge: the server ALWAYS merges non-pack
@@ -142,46 +156,66 @@ final class TokensCommerceTests: XCTestCase {
                                                         recorded: true))) // no unlockedAt ⇒ never "recorded"
         // (b) 0 <= reversed <= granted.
         XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                                        granted: "10", reversed: "11", recorded: true)))
-        // (c) created/pending carry no credit and no unlock timestamp.
+                                                        granted: "10", reversed: "11", recorded: true, environment: "live")))
+        // (c) created/pending carry no credit, no unlock timestamp and no refund evidence.
         XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "pending",
-                                                        granted: "5", recorded: false)))
+                                                        granted: "5", recorded: false, environment: "live")))
         // Precise (c) violation: otherwise-consistent pending unlock with a timestamp.
         XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "byok_unlock", state: "pending",
                                                         granted: "0", recorded: true,
                                                         unlockedAt: "2026-10-02T10:00:00.000Z")))
+        // Precise (c) violation, refund flavor: a pending unlock already claiming money back.
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "byok_unlock", state: "pending",
+                                                        granted: "0", recorded: false, outstanding: "6990000000")))
         // (d) unlockedAt only ever rides the unlock, bounded at 40 characters.
         XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                                        granted: "2160000000", recorded: true,
+                                                        granted: "2160000000", recorded: true, environment: "live",
                                                         unlockedAt: "2026-10-02T10:00:00.000Z")))
         XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
                                                         recorded: true, unlockedAt: String(repeating: "a", count: 41))))
+        // (e) only the unlock carries refund evidence: a pack outstanding stays "0".
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                                        granted: "2160000000", recorded: true, environment: "live",
+                                                        outstanding: "10")))
+        // (f) the echoed environment gates the sandbox notice, so it must be real.
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
+                                                        recorded: false, environment: "sandbox")))
         // The clean pending and credited shapes still validate.
-        let pending = try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "pending", recorded: false))
+        let pending = try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "pending", recorded: false, environment: "live"))
         XCTAssertTrue(pending.isPending)
         let credited = try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                                  granted: "2160000000", recorded: true))
+                                                  granted: "2160000000", recorded: true, environment: "live"))
         XCTAssertEqual(credited.grantedNano, 2_160_000_000)
     }
 
     func testStatusParsingFailsClosedOnUnexpectedShapes() throws {
         let orderID = "123e4567-e89b-12d3-a456-426614174000"
-        // A non-zero outstanding reversal is never sent today.
+        // A pack (immediate reversal) never carries an outstanding reversal, and
+        // a missing or unknown environment never decodes/validates.
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                                     granted: "1", recorded: true, outstanding: "1")).validate())
+                                                     granted: "1", recorded: true, environment: "live", outstanding: "1")).validate())
+        var noEnvironment = serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                         granted: "1", recorded: true, environment: "live")
+        noEnvironment.removeValue(forKey: "environment")
+        XCTAssertThrowsError(try status(noEnvironment))
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "ai_value", state: "purchased",
-                                                     recorded: true)).validate())
+                                                     recorded: true, environment: "live")).validate())
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "refunded",
-                                                     recorded: true)).validate())
+                                                     recorded: true, environment: "live")).validate())
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                                     granted: "-1", recorded: true)).validate())
+                                                     granted: "-1", recorded: true, environment: "live")).validate())
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                                     granted: "10000000000000000", recorded: true)).validate())
+                                                     granted: "10000000000000000", recorded: true, environment: "live")).validate())
         XCTAssertThrowsError(try status(serverStatus(orderID: "not-a-uuid", kind: "token_pack", state: "purchased",
-                                                     recorded: true)).validate())
+                                                     recorded: true, environment: "live")).validate())
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
                                                      granted: "0", recorded: false, unlockedAt: "")).validate())
-        let parsed = try status(serverStatus(orderID: orderID.uppercased(), kind: "token_pack", state: "pending", recorded: false))
+        // The unlock's refund evidence is a legitimate part of the shape now.
+        let refunded = try status(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
+                                               granted: "0", recorded: false, environment: "live", outstanding: "6990000000"))
+        try refunded.validate()
+        XCTAssertEqual(refunded.reversalOutstandingNano, 6_990_000_000)
+        let parsed = try status(serverStatus(orderID: orderID.uppercased(), kind: "token_pack", state: "pending", recorded: false, environment: "live"))
         try parsed.validate()
         XCTAssertTrue(parsed.isPending)
         XCTAssertEqual(parsed.kind, .tokenPack)

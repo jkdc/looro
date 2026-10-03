@@ -117,11 +117,15 @@ integration('unlock delivery is set-once: replays and later orders never move th
     assert.deepEqual(await f.entitlement(member),granted);
     const status=await f.packs.status(member,first.orderID);
     assert.equal(status.fulfillmentRecorded,true);assert.equal(status.unlockedAt,new Date(granted.unlocked_at).toISOString());
+    assert.equal(status.environment,'live');assert.equal(status.reversalOutstandingNanoUSD,'0');
+    // A second paid unlock over the still-active one is a no-op: no re-grant,
+    // no refund evidence, just an unfulfilled order.
     const second=await f.order('byok_unlock',member);
     await f.router.reconcile('stripe',f.proof(second).key);
     assert.deepEqual(await f.entitlement(member),granted);
     const secondStatus=await f.packs.status(member,second.orderID);
     assert.equal(secondStatus.fulfillmentRecorded,false);assert.equal(secondStatus.unlockedAt,null);
+    assert.equal(secondStatus.reversalOutstandingNanoUSD,'0');
   }finally{await f.cleanup();}
 });
 integration('pending then cancelled unlock never grants and a late purchased event cannot resurrect it',async()=>{
@@ -140,13 +144,19 @@ integration('unlock refunds revoke only the revoked order grant and never a camp
     const campaign=await f.account();
     await f.db.query(`INSERT INTO entitlements(account_id,unlocked_at,unlock_source) VALUES($1,now(),'campaign')`,[campaign]);
     const order=await f.order('byok_unlock',campaign),proof=f.proof(order);
+    // A paid unlock over an active campaign grant is a no-op: the re-grant
+    // upsert only ever fires on a cleared row.
     await f.router.reconcile('stripe',proof.key);
     const before=await f.entitlement(campaign);
     assert.equal(before.unlock_source,'campaign');assert.equal(before.unlock_order_id,null);
     await f.router.reconcile('stripe',f.proof(order,{transactionID:proof.value.transactionID,state:'voided'}).key);
     const kept=await f.entitlement(campaign);
     assert.equal(kept.unlock_source,'campaign');assert.ok(kept.unlocked_at);
-    assert.equal((await f.packs.status(campaign,order.orderID)).fulfillmentRecorded,false);
+    const voided=await f.packs.status(campaign,order.orderID);
+    assert.equal(voided.fulfillmentRecorded,false);assert.equal(voided.state,'voided');
+    // A void returns the full price: that money-returned evidence is what
+    // clients word the reversal notice from.
+    assert.equal(voided.reversalOutstandingNanoUSD,String(BYOK_UNLOCK_PRICE_MINOR*10_000_000));
   }finally{await f.cleanup();}
 });
 integration('a purchased unlock refund clears the entitlement and stale purchases cannot restore it',async()=>{
@@ -158,10 +168,42 @@ integration('a purchased unlock refund clears the entitlement and stale purchase
     assert.equal(await f.unlockedAt(member),null);
     const status=await f.packs.status(member,order.orderID);
     assert.equal(status.fulfillmentRecorded,false);assert.equal(status.unlockedAt,null);assert.equal(status.state,'purchased');
+    // The money-returned evidence rides the outstanding-reversal slot in nanoUSD.
+    assert.equal(status.environment,'live');assert.equal(status.reversalOutstandingNanoUSD,'1000000000');
     await f.packs.reconcile('stripe',purchase.key);assert.equal(await f.unlockedAt(member),null);
     await f.packs.reconcile('stripe',f.proof(order,{transactionID:purchase.value.transactionID,eventID:`snapshot:${randomUUID()}`}).key);
     assert.equal(await f.unlockedAt(member),null);
     assert.equal((await f.db.query('SELECT count(*) FROM ledger')).rows[0].count,'0');
+  }finally{await f.cleanup();}
+});
+integration('a refunded live unlock re-grants on re-purchase and stale replays never steal the new grant',async()=>{
+  const f=await fixture();try{
+    const member=await f.account(),first=await f.order('byok_unlock',member),purchase=f.proof(first);
+    const bought=await f.packs.reconcile('stripe',purchase.key);
+    assert.equal(bought.environment,'live');assert.equal(bought.fulfillmentRecorded,true);
+    // A full money refund with the state still 'purchased' revokes the unlock
+    // and exposes the evidence (699 minor → 6_990_000_000 nano).
+    const refunded=await f.packs.reconcile('stripe',f.proof(first,{transactionID:purchase.value.transactionID,
+      refundedMinor:BYOK_UNLOCK_PRICE_MINOR}).key);
+    assert.equal(await f.unlockedAt(member),null);
+    assert.equal(refunded.state,'purchased');assert.equal(refunded.fulfillmentRecorded,false);
+    assert.equal(refunded.unlockedAt,null);assert.equal(refunded.reversalOutstandingNanoUSD,'6990000000');
+    // Re-purchasing after the refund re-grants the same row — never a paid dead end.
+    const second=await f.order('byok_unlock',member),secondProof=f.proof(second);
+    const rebought=await f.packs.reconcile('stripe',secondProof.key);
+    assert.ok(await f.unlockedAt(member));
+    assert.equal(rebought.fulfillmentRecorded,true);assert.equal(rebought.reversalOutstandingNanoUSD,'0');
+    assert.equal((await f.entitlement(member)).unlock_order_id,second.orderID);
+    assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count,'1');
+    // A stale replay of the refunded first order cannot steal the new grant.
+    await f.packs.reconcile('stripe',f.proof(first,{transactionID:purchase.value.transactionID,
+      eventID:`snapshot:${randomUUID()}`,refundedMinor:BYOK_UNLOCK_PRICE_MINOR}).key);
+    assert.equal((await f.entitlement(member)).unlock_order_id,second.orderID);assert.ok(await f.unlockedAt(member));
+    // Replaying the re-granting event itself is idempotent.
+    const replay=await f.packs.reconcile('stripe',f.proof(second,{transactionID:secondProof.value.transactionID,
+      eventID:`snapshot:${randomUUID()}`}).key);
+    assert.equal(replay.fulfillmentRecorded,true);
+    assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count,'1');
   }finally{await f.cleanup();}
 });
 integration('partial and full pack refunds are cumulative and stale provider snapshots cannot restore credit',async()=>{
@@ -302,6 +344,16 @@ integration('the actual runtime role fulfills and refunds pack orders without en
     const refunded=await packs.reconcile('stripe',f.proof(order,{transactionID:proof.value.transactionID,state:'voided'}).key);
     assert.equal(refunded.reversedNanoUSD,'2160000000');
     assert.equal((await paidAIBalance(runtime,member)).balanceNanoUSD,'0');
+    // The refund→re-purchase re-grant stays inside the granted entitlements
+    // columns (unlocked_at/unlock_source/unlock_order_id): refund, then buy again.
+    const unlockOrder=await packs.createOrder(member,'stripe',f.unlockProduct.sku,randomUUID()),unlockProof=f.proof(unlockOrder);
+    await packs.reconcile('stripe',unlockProof.key);
+    await packs.reconcile('stripe',f.proof(unlockOrder,{transactionID:unlockProof.value.transactionID,state:'voided'}).key);
+    assert.equal((await f.db.query('SELECT unlocked_at FROM entitlements WHERE account_id=$1',[member])).rows[0].unlocked_at,null);
+    const again=await packs.createOrder(member,'stripe',f.unlockProduct.sku,randomUUID());
+    const reganted=await packs.reconcile('stripe',f.proof(again).key);
+    assert.equal(reganted.fulfillmentRecorded,true);
+    assert.ok((await f.db.query('SELECT unlocked_at FROM entitlements WHERE account_id=$1',[member])).rows[0].unlocked_at);
     // The runtime role cannot rewrite the immutable quote, the event journal or another order's unlock.
     await assert.rejects(runtime.query(`UPDATE pack_purchase_quotes SET credit_nano=1 WHERE order_id=$1`,[order.orderID]),/permission denied/);
     await assert.rejects(runtime.query(`DELETE FROM entitlements WHERE account_id=$1`,[member]),/permission denied/);

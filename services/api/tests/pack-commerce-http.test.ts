@@ -190,10 +190,12 @@ integration('a Stripe live-mode unlock webhook grants the real unlock once, idem
     const entitlement = (await f.db.query('SELECT unlock_source,unlock_order_id,unlocked_at FROM entitlements WHERE account_id=$1', [account.id])).rows[0];
     assert.equal(entitlement.unlock_source, 'stripe'); assert.equal(entitlement.unlock_order_id, order.orderID);
     assert.equal((await f.db.query('SELECT count(*) FROM entitlements')).rows[0].count, '1');
-    // The full refund revokes this order's own grant.
+    // The full refund revokes this order's own grant and is reported as
+    // money-returned evidence, so clients word a reversal notice, not sandbox copy.
     await f.webhook(f.stripeEvent(order.orderID, 'paid', 699));
     const refundedStatus = (await f.app.inject({ url: `${rootURL}/${order.orderID}`, headers: account.headers })).json();
     assert.equal(refundedStatus.state, 'purchased'); assert.equal(refundedStatus.fulfillmentRecorded, false); assert.equal(refundedStatus.unlockedAt, null);
+    assert.equal(refundedStatus.environment, 'live'); assert.equal(refundedStatus.reversalOutstandingNanoUSD, '6990000000');
     assert.equal((await f.db.query('SELECT unlocked_at FROM entitlements WHERE account_id=$1', [account.id])).rows[0].unlocked_at, null);
     assert.equal((await f.db.query('SELECT count(*) FROM ledger')).rows[0].count, '0');
   } finally { await f.cleanup(); }

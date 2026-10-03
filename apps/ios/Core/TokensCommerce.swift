@@ -20,7 +20,10 @@ public enum TokenPackKind: String, Sendable, CaseIterable {
 /// Why the last commerce operation ended, as the sheet words it. The sandbox
 /// case is the documented server test-mode contract: a `purchased` unlock with
 /// `fulfillmentRecorded: false` records state but never unlocks (the server
-/// gates the entitlement on live evidence), so it is a notice, never an error.
+/// gates the entitlement on live evidence), so it is a notice, never an error —
+/// and it applies to test-environment orders only. A live unlocked order whose
+/// unlock was later refunded carries the money-returned evidence instead and
+/// words as `reversed`.
 public enum TokenPackNotice: Equatable, Sendable {
     case added, pending, reversed
     case sandboxRecorded
@@ -28,9 +31,9 @@ public enum TokenPackNotice: Equatable, Sendable {
 
     public static func notice(for status: TokenPackStatus) -> TokenPackNotice {
         if status.state == "created" || status.state == "pending" { return .pending }
-        if status.state == "voided" || status.reversedNano > 0 { return .reversed }
+        if status.state == "voided" || status.reversedNano > 0 || status.reversalOutstandingNano > 0 { return .reversed }
         if status.fulfillmentRecorded { return .added }
-        if status.kind == .byokUnlock && status.state == "purchased" { return .sandboxRecorded }
+        if status.kind == .byokUnlock && status.state == "purchased" && status.environment == "test" { return .sandboxRecorded }
         return .verificationFailed
     }
 }
@@ -108,11 +111,14 @@ public struct TokenPackProduct: Equatable, Sendable {
 }
 
 /// Pack order status from `/v1/minutes/orders/:id` (PackPurchaseStatus). Money
-/// fields are quoted BigInt strings; a non-zero outstanding reversal is never
-/// sent today and fails closed. Same strict shape as `ManagedWallet`.
+/// fields are quoted BigInt strings. Only the unlock ever carries a non-zero
+/// `reversalOutstandingNanoUSD` — its refund evidence (money back in nanoUSD;
+/// a void returns the full price), because a token pack reverses its credit
+/// immediately through `reversedNanoUSD`. Same strict shape as `ManagedWallet`.
 public struct TokenPackStatus: Decodable, Equatable, Sendable {
     public let orderID: String
     public let entitlementKind: String
+    public let environment: String
     public let state: String
     public let grantedNanoUSD: String
     public let reversedNanoUSD: String
@@ -120,44 +126,49 @@ public struct TokenPackStatus: Decodable, Equatable, Sendable {
     public let fulfillmentRecorded: Bool
     public let unlockedAt: String?
 
-    public init(orderID: String, entitlementKind: String, state: String, grantedNanoUSD: String,
+    public init(orderID: String, entitlementKind: String, environment: String, state: String, grantedNanoUSD: String,
                 reversedNanoUSD: String, reversalOutstandingNanoUSD: String,
                 fulfillmentRecorded: Bool, unlockedAt: String?) {
-        self.orderID = orderID; self.entitlementKind = entitlementKind; self.state = state
+        self.orderID = orderID; self.entitlementKind = entitlementKind; self.environment = environment; self.state = state
         self.grantedNanoUSD = grantedNanoUSD; self.reversedNanoUSD = reversedNanoUSD
         self.reversalOutstandingNanoUSD = reversalOutstandingNanoUSD
         self.fulfillmentRecorded = fulfillmentRecorded; self.unlockedAt = unlockedAt
     }
 
     public func validate() throws {
-        // The four cross-checks of Android's `MinutePurchaseStatus` pack branch
+        // The cross-checks of Android's `MinutePurchaseStatus` pack branch
         // (MinutePurchases.kt), mirrored exactly so a tampered status can never
         // reach the notice mapping as a plausible "added":
         //   (a) fulfillmentRecorded == (unlock ? unlockedAt != nil : granted > 0)
-        //   (b) 0 <= reversedNanoUSD <= grantedNanoUSD (non-negativity is the digit regex)
-        //   (c) created/pending ⇒ grantedNanoUSD == 0 && unlockedAt == nil
+        //   (b) 0 <= reversedNanoUSD <= grantedNanoUSD
+        //   (c) created/pending ⇒ grantedNanoUSD == 0 && unlockedAt == nil && no outstanding reversal
         //   (d) unlockedAt only ever rides the unlock, bounded at 40 characters
-        // A non-zero outstanding reversal is never sent today and the unlock is
-        // a binary entitlement (never carries granted credit server-side); an
-        // empty `unlockedAt` string is likewise never sent, so both fail closed.
+        //   (e) only the unlock carries refund evidence; a pack's outstanding stays "0"
+        //   (f) the echoed environment is a real purchase environment (it gates the sandbox notice)
+        // A non-zero pack outstanding and an empty `unlockedAt` string are
+        // likewise never sent, so both fail closed.
         guard let kind = TokenPackKind.parse(entitlementKind),
               orderID.range(of: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
                             options: .regularExpression) != nil,
               ["created", "pending", "purchased", "voided"].contains(state),
+              environment == "test" || environment == "live",
               grantedNanoUSD.range(of: TokenPackProduct.nanoUSDPattern, options: .regularExpression) != nil,
               reversedNanoUSD.range(of: TokenPackProduct.nanoUSDPattern, options: .regularExpression) != nil,
-              reversalOutstandingNanoUSD == "0",
+              reversalOutstandingNanoUSD.range(of: TokenPackProduct.nanoUSDPattern, options: .regularExpression) != nil,
+              kind != .tokenPack || reversalOutstandingNanoUSD == "0",
               unlockedAt == nil || (kind == .byokUnlock && !unlockedAt!.isEmpty && unlockedAt!.count <= 40),
               let grantedNano = Int64(grantedNanoUSD),
+              let outstandingNano = Int64(reversalOutstandingNanoUSD),
               reversedNano <= grantedNano,
               fulfillmentRecorded == (kind == .byokUnlock ? unlockedAt != nil : grantedNano > 0),
-              !(state == "created" || state == "pending") || (grantedNano == 0 && unlockedAt == nil)
+              !(state == "created" || state == "pending") || (grantedNano == 0 && unlockedAt == nil && outstandingNano == 0)
         else { throw ManagedAccountError.invalidResponse }
     }
 
     public var kind: TokenPackKind? { TokenPackKind.parse(entitlementKind) }
     public var grantedNano: Int64? { Int64(grantedNanoUSD) }
     public var reversedNano: Int64 { Int64(reversedNanoUSD) ?? 0 }
+    public var reversalOutstandingNano: Int64 { Int64(reversalOutstandingNanoUSD) ?? 0 }
     public var isPending: Bool { state == "created" || state == "pending" }
 }
 

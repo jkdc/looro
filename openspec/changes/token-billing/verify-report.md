@@ -52,8 +52,6 @@
 - **No GET entitlement route for an unlock badge:** Android/iOS learn the unlock
   only from purchase outcomes; a locked account shows an empty-balance chip
   until a purchase answer arrives.
-- **Unlock status shape lacks refund evidence:** a live refunded unlock renders
-  the sandbox copy.
 - **iOS purchase-plumbing v1 deltas:** no persisted order recovery across
   launches; no StoreKit/Play purchase path (checkout URL only); no
   payment-return deep link; the purchase gate reuses the hosted flag; 402/403
@@ -63,6 +61,38 @@
   to 2 unless the operator adds the env by hand.
 - **Multi-instance deployments need a shared-store cap:** the per-account
   concurrency limiter is in-process, so N instances mean N× the cap.
+
+## Fix wave (post-close review, 2026-10-02)
+
+Two known gaps from the close were fixed and re-verified; they are removed from
+the list above:
+
+- **Unlock refund evidence (was "unlock status lacks refund evidence" — a live
+  refunded unlock rendered the sandbox copy):** `PackPurchaseStatus` now echoes
+  the order's `environment` and reports unlock refund evidence through
+  `reversalOutstandingNanoUSD` (previously hardcoded `"0"`): the money returned
+  in nanoUSD (refunded minor × 10⁷, the full price on a void), while token
+  packs keep `"0"` because their credit reversal is immediate and expressed in
+  `reversedNanoUSD`. Android (`MinutePurchaseStatus` invariants +
+  `MinuteCommerceClient` parsing, both purchase controllers) and iOS
+  (`TokenPackStatus.validate` + notice mapping) mirror the shape exactly and
+  map the evidence to their existing REVERSED notices; the sandbox copy now
+  applies strictly to `environment == "test"` orders.
+- **Refund → re-purchase dead end:** the unlock grant upsert
+  (`pack-products.ts`) changed from `ON CONFLICT DO NOTHING` to
+  `DO UPDATE SET unlocked_at/unlock_source/unlock_order_id … WHERE
+  entitlements.unlocked_at IS NULL` — a refunded (cleared) row re-grants on
+  re-purchase, while an active paid or campaign unlock is never overwritten
+  and replay idempotency is unchanged. `operations/pack-runtime-grants.sql`
+  already granted `UPDATE` on exactly those columns, so the runtime role
+  fulfills the re-grant without entitlements-history permission (covered by
+  the runtime-role integration test).
+
+Minor app fixes in the same wave: iOS `ConversationCoordinator` resets
+`proxyActionAvailable` on generic error presentation (mirror of Android's
+`presentError` resetting `errorTokensBlock`), and Android's
+`MinutePurchaseSheet` filters to minute products so token unlock/pack cards
+only appear in `TokensPurchaseSheet`.
 
 ## Verdict
 

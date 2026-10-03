@@ -158,15 +158,17 @@ class MinutePurchaseController(
     }
     private fun applyStatus(result: MinutePurchaseStatus) {
         val reversed = result.reversedMilliseconds > 0 || result.reversedNanoUSD > 0 || result.reversalOutstandingMilliseconds > 0 ||
-            result.aiValue?.reversed == true
+            result.reversalOutstandingNanoUSD > 0 || result.aiValue?.reversed == true
         mutable.value = mutable.value.copy(purchaseInProgress = result.state in listOf("created", "pending"), notice = when {
             result.state in listOf("created", "pending") -> MinutePurchaseNotice.PENDING
             result.state == "voided" || reversed -> MinutePurchaseNotice.REVERSED
             result.fulfillmentRecorded -> MinutePurchaseNotice.ADDED
             // A sandbox (test-mode) unlock purchase records state but never unlocks
             // (services/api pack-products.ts gates the unlock on live evidence).
-            // That is the server's contract, not a verification failure.
-            result.entitlementKind == PACK_UNLOCK_KIND && result.state == "purchased" -> MinutePurchaseNotice.SANDBOX_RECORDED
+            // That is the server's contract, not a verification failure — and a
+            // live refunded unlock carries reversal evidence, wording REVERSED.
+            result.entitlementKind == PACK_UNLOCK_KIND && result.state == "purchased" && result.environment == "test" ->
+                MinutePurchaseNotice.SANDBOX_RECORDED
             else -> MinutePurchaseNotice.VERIFICATION_FAILED
         })
     }

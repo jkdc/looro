@@ -201,13 +201,16 @@ class StripeMinutePurchaseController(
     }
     private fun applyStatus(status: MinutePurchaseStatus) {
         if (!status.isPack && status.aiValue == null) throw MinuteCommerceFailure.InvalidResponse
-        val reversed = status.reversedNanoUSD > 0 || status.aiValue?.reversed == true
+        val reversed = status.reversedNanoUSD > 0 || status.reversalOutstandingNanoUSD > 0 || status.aiValue?.reversed == true
         mutable.value = mutable.value.copy(notice = when {
             status.state in listOf("created", "pending") -> MinutePurchaseNotice.PENDING
             status.state == "voided" || reversed -> MinutePurchaseNotice.REVERSED
             status.fulfillmentRecorded -> MinutePurchaseNotice.ADDED
-            // Sandbox unlock orders record state but never unlock: contract, not an error.
-            status.entitlementKind == PACK_UNLOCK_KIND && status.state == "purchased" -> MinutePurchaseNotice.SANDBOX_RECORDED
+            // Sandbox unlock orders record state but never unlock: contract, not an
+            // error — a live-environment order never takes this branch (a refunded
+            // live unlock carries reversal evidence and words REVERSED above).
+            status.entitlementKind == PACK_UNLOCK_KIND && status.state == "purchased" && status.environment == "test" ->
+                MinutePurchaseNotice.SANDBOX_RECORDED
             else -> MinutePurchaseNotice.VERIFICATION_FAILED
         })
     }
