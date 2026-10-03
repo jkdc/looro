@@ -94,33 +94,13 @@ struct ManagedAccountClient {
     // checkout URL opens externally and status is polled by hand. Catalog and
     // order parsing is strict and lives in LearningCore (TokensCommerce.swift).
 
-    /// Pack entries riding `GET /v1/minutes/products?provider=stripe`. Non-pack
-    /// items (today `ai_value`, which iOS has no surface for) are skipped; a
+    /// Pack entries riding `GET /v1/minutes/products?provider=stripe`. The parse
+    /// lives in `TokenPackProduct.parseCatalog` (LearningCore): non-pack items
+    /// (today `ai_value`, which iOS has no surface for) are skipped, while a
     /// malformed pack entry fails the whole catalog closed, like Android.
     func packCatalog(session: ManagedAccountSession) async throws -> [TokenPackProduct] {
-        struct Wire: Decodable {
-            struct Item: Decodable {
-                let sku: String?, providerProduct: String?, currency: String?
-                let totalMinor: Int?, environment: String?
-                let entitlementKind: String?, creditNanoUSD: String?
-            }
-            let products: [Item]?
-        }
-        let wire: Wire = try await request("/v1/minutes/products", method: "GET",
-                                           query: ["provider": "stripe"], session: session)
-        guard let items = wire.products, items.count <= 100 else { throw ManagedAccountError.invalidResponse }
-        var packs: [TokenPackProduct] = []
-        for item in items {
-            guard item.entitlementKind.map(TokenPackKind.parse(_:)) != nil else { continue }
-            guard let pack = TokenPackProduct.parse(sku: item.sku, providerProduct: item.providerProduct,
-                                                    currency: item.currency, totalMinor: item.totalMinor,
-                                                    environment: item.environment,
-                                                    entitlementKind: item.entitlementKind,
-                                                    creditNanoUSD: item.creditNanoUSD),
-                  !packs.contains(where: { $0.sku == pack.sku })
-            else { throw ManagedAccountError.invalidResponse }
-            packs.append(pack)
-        }
+        let data = try await rawRequest("/v1/minutes/products", query: ["provider": "stripe"], session: session)
+        guard let packs = TokenPackProduct.parseCatalog(data) else { throw ManagedAccountError.invalidResponse }
         return packs
     }
 
@@ -160,13 +140,19 @@ struct ManagedAccountClient {
     }
 
     /// Pack order status; `TokenPackStatus.validate()` enforces the BigInt-string
-    /// money shape and the never-sent outstanding-reversal rule.
+    /// money shape and Android's four status cross-checks.
     func packStatus(session: ManagedAccountSession, orderID: String) async throws -> TokenPackStatus {
-        let status: TokenPackStatus = try await send(try configuration.orderEndpoint(orderID), method: "GET",
-                                                     session: session)
-        try status.validate()
-        guard status.orderID.lowercased() == orderID.lowercased() else { throw ManagedAccountError.invalidResponse }
-        return status
+        let data = try await sendData(try configuration.orderEndpoint(orderID), method: "GET", session: session)
+        do {
+            let status = try JSONDecoder().decode(TokenPackStatus.self, from: data)
+            try status.validate()
+            guard status.orderID.lowercased() == orderID.lowercased() else { throw ManagedAccountError.invalidResponse }
+            return status
+        } catch let error as ManagedAccountError {
+            throw error
+        } catch {
+            throw ManagedAccountError.invalidResponse
+        }
     }
 
     func profile(session: ManagedAccountSession) async throws -> ManagedAccountProfile {
@@ -187,12 +173,20 @@ struct ManagedAccountClient {
     private func request<T: Decodable>(_ path: String, method: String, body: [String: String]? = nil,
                                         session: ManagedAccountSession? = nil,
                                         query: [String: String]? = nil, idempotencyKey: String? = nil) async throws -> T {
-        try await send(try configuration.endpoint(path, query: query ?? [:]), method: method, body: body,
-                       session: session, idempotencyKey: idempotencyKey)
+        let data = try await sendData(try configuration.endpoint(path, query: query ?? [:]), method: method, body: body,
+                                      session: session, idempotencyKey: idempotencyKey)
+        do { return try JSONDecoder().decode(T.self, from: data) }
+        catch { throw ManagedAccountError.invalidResponse }
     }
 
-    private func send<T: Decodable>(_ url: URL, method: String, body: [String: String]? = nil,
-                                    session: ManagedAccountSession? = nil, idempotencyKey: String? = nil) async throws -> T {
+    /// Raw variant for routes parsed in LearningCore (`TokenPackProduct.parseCatalog`).
+    private func rawRequest(_ path: String, method: String = "GET", query: [String: String]? = nil,
+                            session: ManagedAccountSession? = nil) async throws -> Data {
+        try await sendData(try configuration.endpoint(path, query: query ?? [:]), method: method, session: session)
+    }
+
+    private func sendData(_ url: URL, method: String, body: [String: String]? = nil,
+                          session: ManagedAccountSession? = nil, idempotencyKey: String? = nil) async throws -> Data {
         var request = URLRequest(url: url)
         request.httpMethod = method; request.setValue("application/json", forHTTPHeaderField: "Accept")
         if let body {
@@ -206,14 +200,13 @@ struct ManagedAccountClient {
         }
         let (data, response) = try await http.send(request)
         guard (200...299).contains(response.statusCode) else {
-            if response.statusCode == 401 { throw ManagedAccountError.server("sign_in_required") }
+            struct Failure: Decodable { struct Detail: Decodable { let code: String }; let error: Detail }
             let code = (try? JSONDecoder().decode(Failure.self, from: data))?.error.code ?? "service_unavailable"
             // Only a small allowlist is displayed. Never surface raw provider/server response text.
             let safe = ["unresolved_billing", "rate_limit", "apple_sign_in_not_ready", "apple_revocation_not_configured", "invalid_challenge", "identity_provider_not_configured"]
             throw ManagedAccountError.server(safe.contains(code) ? code : "service_unavailable")
         }
-        do { return try JSONDecoder().decode(T.self, from: data) }
-        catch { throw ManagedAccountError.invalidResponse }
+        return data
     }
 }
 

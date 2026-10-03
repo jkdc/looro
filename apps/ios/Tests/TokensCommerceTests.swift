@@ -93,8 +93,75 @@ final class TokensCommerceTests: XCTestCase {
         // Reversal wins over fulfillment, mirroring Android's applyStatus order.
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
                                                granted: "2160000000", reversed: "10", recorded: true)), .reversed)
+        // A voided unlock refund clears the entitlement server-side (unlockedAt
+        // is nulled), so the reversal is visible through state alone.
         XCTAssertEqual(try notice(serverStatus(orderID: orderID, kind: "byok_unlock", state: "voided",
-                                               recorded: false, unlockedAt: "2026-10-02T10:00:00.000Z")), .reversed)
+                                               recorded: false)), .reversed)
+    }
+
+    /// Regression for the ai_value merge: the server ALWAYS merges non-pack
+    /// products into /v1/minutes/products (services/api app.ts), so the catalog
+    /// must skip them — and still fail closed on a tampered pack entry.
+    func testCatalogParseSkipsNonPackItemsAndFailsClosedOnTamperedPacks() throws {
+        let aiItem: [String: Any] = ["sku": "palique-ai-small", "providerProduct": "ai_stripe",
+                                     "currency": "usd", "totalMinor": 499, "environment": "live",
+                                     "entitlementKind": "ai_value", "estimate": true,
+                                     "aiValueNanoUSD": "1000000"]
+        let kindless: [String: Any] = ["sku": "legacy-minutes", "minutes": 60]
+        let mixed = try JSONSerialization.data(withJSONObject: [
+            "available": true, "billingBasis": "actual-ai-usage", "products": [unlock, aiItem, pack, kindless]])
+        let packs = try XCTUnwrap(TokenPackProduct.parseCatalog(mixed))
+        XCTAssertEqual(packs.map(\.sku), [unlock["sku"] as! String, pack["sku"] as! String])
+        // A pack-kind item deviating from the server constants kills the catalog.
+        var tampered = pack; tampered["creditNanoUSD"] = "0"
+        let tamperedPayload = try JSONSerialization.data(withJSONObject: ["products": [unlock, aiItem, tampered]])
+        XCTAssertNil(TokenPackProduct.parseCatalog(tamperedPayload))
+        // Structural deviations fail closed as well.
+        XCTAssertNil(TokenPackProduct.parseCatalog(Data("{\"unexpected\":true}".utf8)))
+        XCTAssertNil(TokenPackProduct.parseCatalog(Data("{\"products\":{\"sku\":\"x\"}}".utf8)))
+        let many = try JSONSerialization.data(withJSONObject: ["products": Array(repeating: pack, count: 101)])
+        XCTAssertNil(TokenPackProduct.parseCatalog(many))
+        let duplicate = try JSONSerialization.data(withJSONObject: ["products": [pack, pack]])
+        XCTAssertNil(TokenPackProduct.parseCatalog(duplicate))
+    }
+
+    /// Android's four pack-status cross-checks (MinutePurchases.kt): a tampered
+    /// status must throw, never reach the notice mapping as a plausible "added".
+    func testStatusCrossChecksFailClosedOnTamperedPayloads() throws {
+        let orderID = "123e4567-e89b-12d3-a456-426614174000"
+        func validated(_ fields: [String: Any]) throws -> TokenPackStatus {
+            let parsed = try status(fields); try parsed.validate(); return parsed
+        }
+        // (a) fulfillmentRecorded must equal (unlock ? unlockedAt != nil : granted > 0):
+        // the reviewer's tampered "added" example.
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                                        granted: "0", recorded: true)))
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                                        granted: "2160000000", recorded: false)))
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
+                                                        recorded: true))) // no unlockedAt ⇒ never "recorded"
+        // (b) 0 <= reversed <= granted.
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                                        granted: "10", reversed: "11", recorded: true)))
+        // (c) created/pending carry no credit and no unlock timestamp.
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "pending",
+                                                        granted: "5", recorded: false)))
+        // Precise (c) violation: otherwise-consistent pending unlock with a timestamp.
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "byok_unlock", state: "pending",
+                                                        granted: "0", recorded: true,
+                                                        unlockedAt: "2026-10-02T10:00:00.000Z")))
+        // (d) unlockedAt only ever rides the unlock, bounded at 40 characters.
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                                        granted: "2160000000", recorded: true,
+                                                        unlockedAt: "2026-10-02T10:00:00.000Z")))
+        XCTAssertThrowsError(try validated(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
+                                                        recorded: true, unlockedAt: String(repeating: "a", count: 41))))
+        // The clean pending and credited shapes still validate.
+        let pending = try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "pending", recorded: false))
+        XCTAssertTrue(pending.isPending)
+        let credited = try validated(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                                  granted: "2160000000", recorded: true))
+        XCTAssertEqual(credited.grantedNano, 2_160_000_000)
     }
 
     func testStatusParsingFailsClosedOnUnexpectedShapes() throws {
@@ -106,14 +173,14 @@ final class TokensCommerceTests: XCTestCase {
                                                      recorded: true)).validate())
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "refunded",
                                                      recorded: true)).validate())
-        XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
-                                                     granted: "9", recorded: false)).validate())
-        XCTAssertThrowsError(try status(serverStatus(orderID: "not-a-uuid", kind: "token_pack", state: "purchased",
-                                                     recorded: true)).validate())
-        XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
-                                                     recorded: true, unlockedAt: "")).validate())
         XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
                                                      granted: "-1", recorded: true)).validate())
+        XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "token_pack", state: "purchased",
+                                                     granted: "10000000000000000", recorded: true)).validate())
+        XCTAssertThrowsError(try status(serverStatus(orderID: "not-a-uuid", kind: "token_pack", state: "purchased",
+                                                     recorded: true)).validate())
+        XCTAssertThrowsError(try status(serverStatus(orderID: orderID, kind: "byok_unlock", state: "purchased",
+                                                     granted: "0", recorded: false, unlockedAt: "")).validate())
         let parsed = try status(serverStatus(orderID: orderID.uppercased(), kind: "token_pack", state: "pending", recorded: false))
         try parsed.validate()
         XCTAssertTrue(parsed.isPending)
@@ -124,12 +191,16 @@ final class TokensCommerceTests: XCTestCase {
         XCTAssertEqual(TokenCheckoutURL.checked("https://checkout.stripe.com/c/pay/cs_test_a0B9xY"),
                        URL(string: "https://checkout.stripe.com/c/pay/cs_test_a0B9xY"))
         XCTAssertNotNil(TokenCheckoutURL.checked("https://checkout.stripe.com/c/pay/cs_live_Zz9"))
+        // Stripe's own resumption fragments ride the URL verbatim (Android's
+        // pinned test accepts one); only a query is rejected.
+        let fragment = "https://checkout.stripe.com/c/pay/cs_test_a#fidkdWxOYHwnPyd1blppbHNgWjA0"
+        XCTAssertEqual(TokenCheckoutURL.checked(fragment), URL(string: fragment))
         for candidate in [
             "http://checkout.stripe.com/c/pay/cs_test_a", "https://evil.example/c/pay/cs_test_a",
             "https://checkout.stripe.com:443/c/pay/cs_test_a", "https://user:pass@checkout.stripe.com/c/pay/cs_test_a",
             "https://checkout.stripe.com/c/pay/cs_test_a?guided=true", "https://checkout.stripe.com/other/cs_test_a",
             "https://checkout.stripe.com/c/pay/cs_sandbox_a", "checkout.stripe.com/c/pay/cs_test_a",
-            "https://checkout.stripe.com/c/pay/cs_test_a#anchor", "https://checkout.stripe.com/c/pay/cs_test_a b",
+            "https://checkout.stripe.com/c/pay/cs_test_a b",
             String(repeating: "https://checkout.stripe.com/c/pay/cs_test_", count: 300)
         ] { XCTAssertNil(TokenCheckoutURL.checked(candidate), candidate) }
     }

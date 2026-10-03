@@ -48,7 +48,7 @@ public struct TokenPackProduct: Equatable, Sendable {
     public let kind: TokenPackKind
     public let creditNanoUSD: Int64
 
-    static let identifierPattern = "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+    public static let identifierPattern = "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
     static let nanoUSDPattern = "^[0-9]{1,16}$"
 
     /// Strict parse of one catalog item; `nil` on any deviation. Items whose
@@ -72,6 +72,36 @@ public struct TokenPackProduct: Equatable, Sendable {
         return TokenPackProduct(sku: sku, providerProduct: providerProduct, currency: currency,
                                 totalMinor: totalMinor, environment: environment, kind: kind,
                                 creditNanoUSD: nano)
+    }
+
+    /// Strict parse of the `/v1/minutes/products` payload for the pack surface.
+    /// Pack-only leniency, mirroring Android's split: items without a pack-kind
+    /// `entitlementKind` — today `ai_value`, which iOS has no surface for, and
+    /// which the server always merges into this response — are skipped rather
+    /// than failing the pack cards, while any pack-kind item deviating from the
+    /// server constants fails the whole catalog closed (Android throws
+    /// `InvalidResponse` for a malformed pack entry too). `nil` on structural
+    /// deviation: missing `products` array, more than 100 items, duplicate
+    /// pack SKUs.
+    public static func parseCatalog(_ data: Data) -> [TokenPackProduct]? {
+        guard let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              let items = json["products"] as? [[String: Any]], items.count <= 100
+        else { return nil }
+        var packs: [TokenPackProduct] = []
+        for item in items {
+            guard let kind = (item["entitlementKind"] as? String).flatMap(TokenPackKind.parse) else { continue }
+            guard let pack = TokenPackProduct.parse(sku: item["sku"] as? String,
+                                                    providerProduct: item["providerProduct"] as? String,
+                                                    currency: item["currency"] as? String,
+                                                    totalMinor: item["totalMinor"] as? Int,
+                                                    environment: item["environment"] as? String,
+                                                    entitlementKind: kind.rawValue,
+                                                    creditNanoUSD: item["creditNanoUSD"] as? String),
+                  !packs.contains(where: { $0.sku == pack.sku })
+            else { return nil }
+            packs.append(pack)
+        }
+        return packs
     }
 
     public var isUnlock: Bool { kind == .byokUnlock }
@@ -100,6 +130,16 @@ public struct TokenPackStatus: Decodable, Equatable, Sendable {
     }
 
     public func validate() throws {
+        // The four cross-checks of Android's `MinutePurchaseStatus` pack branch
+        // (MinutePurchases.kt), mirrored exactly so a tampered status can never
+        // reach the notice mapping as a plausible "added":
+        //   (a) fulfillmentRecorded == (unlock ? unlockedAt != nil : granted > 0)
+        //   (b) 0 <= reversedNanoUSD <= grantedNanoUSD (non-negativity is the digit regex)
+        //   (c) created/pending ⇒ grantedNanoUSD == 0 && unlockedAt == nil
+        //   (d) unlockedAt only ever rides the unlock, bounded at 40 characters
+        // A non-zero outstanding reversal is never sent today and the unlock is
+        // a binary entitlement (never carries granted credit server-side); an
+        // empty `unlockedAt` string is likewise never sent, so both fail closed.
         guard let kind = TokenPackKind.parse(entitlementKind),
               orderID.range(of: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
                             options: .regularExpression) != nil,
@@ -107,12 +147,12 @@ public struct TokenPackStatus: Decodable, Equatable, Sendable {
               grantedNanoUSD.range(of: TokenPackProduct.nanoUSDPattern, options: .regularExpression) != nil,
               reversedNanoUSD.range(of: TokenPackProduct.nanoUSDPattern, options: .regularExpression) != nil,
               reversalOutstandingNanoUSD == "0",
-              unlockedAt == nil || !unlockedAt!.isEmpty
+              unlockedAt == nil || (kind == .byokUnlock && !unlockedAt!.isEmpty && unlockedAt!.count <= 40),
+              let grantedNano = Int64(grantedNanoUSD),
+              reversedNano <= grantedNano,
+              fulfillmentRecorded == (kind == .byokUnlock ? unlockedAt != nil : grantedNano > 0),
+              !(state == "created" || state == "pending") || (grantedNano == 0 && unlockedAt == nil)
         else { throw ManagedAccountError.invalidResponse }
-        // The unlock is a binary entitlement: it never carries granted credit.
-        if kind == .byokUnlock, let nano = Int64(grantedNanoUSD), nano != 0 {
-            throw ManagedAccountError.invalidResponse
-        }
     }
 
     public var kind: TokenPackKind? { TokenPackKind.parse(entitlementKind) }
@@ -122,8 +162,10 @@ public struct TokenPackStatus: Decodable, Equatable, Sendable {
 }
 
 /// A validated Stripe checkout URL, mirror of Android's `StripeCheckoutURL.checked`:
-/// only `https://checkout.stripe.com/c/pay/cs_(test|live)_…`, no port, no user
-/// info, no query — a tampered or relayed URL can never open.
+/// only `https://checkout.stripe.com/c/pay/cs_(test|live)_…`, no port and no user
+/// info, no query — but the URL's `#` fragment is kept (Android's own pinned test
+/// accepts one: real Stripe checkout URLs carry a `#fidkd…` resumption fragment
+/// and the server passes `session.url` through verbatim).
 public enum TokenCheckoutURL {
     public static func checked(_ value: String) -> URL? {
         // Mirror of Android's checks: bounded length, no whitespace or control
@@ -136,7 +178,7 @@ public enum TokenCheckoutURL {
               let components = URLComponents(string: value),
               components.scheme == "https", components.host == "checkout.stripe.com",
               components.port == nil, components.user == nil, components.password == nil,
-              components.query == nil, components.fragment == nil,
+              components.query == nil,
               components.path.range(of: "^/c/pay/cs_(test|live)_[A-Za-z0-9]+$", options: .regularExpression) != nil
         else { return nil }
         return URL(string: value)

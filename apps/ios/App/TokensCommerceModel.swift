@@ -22,7 +22,6 @@ import LearningCore
     private(set) var buying = false
     private(set) var checkingStatus = false
     private(set) var purchaseOpened = false
-    private(set) var purchasePending = false
     private(set) var signedIn = false
     private(set) var notice: TokenPackNotice?
     /// True when the catalog route answered with no pack items (or failed).
@@ -59,8 +58,11 @@ import LearningCore
             signedIn = false; wallet = nil; return
         }
         signedIn = true; busy = true; defer { busy = false }
-        wallet = try? await client.wallet(session: session)
+        // The hint is assigned only while the same account session is still in
+        // the Keychain, so a slow read can never publish another account's wallet.
+        let freshWallet = try? await client.wallet(session: session)
         guard stillCurrent(session) else { return }
+        wallet = freshWallet
         do {
             let catalog = try await client.packCatalog(session: session)
             guard stillCurrent(session) else { return }
@@ -110,9 +112,14 @@ import LearningCore
             let status = try await client.packStatus(session: session, orderID: orderID)
             guard stillCurrent(session) else { return }
             let outcome = TokenPackNotice.notice(for: status)
-            purchasePending = status.isPending
             notice = outcome
-            if outcome == .added { wallet = try? await client.wallet(session: session) }
+            // A credited pack or a live unlock changes the wallet hint (Android's
+            // onBalanceChanged); assigned only while the session is still current.
+            if outcome == .added {
+                let freshWallet = try? await client.wallet(session: session)
+                guard stillCurrent(session) else { return }
+                wallet = freshWallet
+            }
         } catch {
             guard stillCurrent(session) else { return }
             if authLoss(error) { signedIn = false }
