@@ -1,0 +1,22 @@
+{
+  "tables": {
+    "meta": 1,
+    "preferences": 1,
+    "sessions": 0,
+    "fragments": 0,
+    "expressions": 0,
+    "lesson_state": 0,
+    "completions": 0,
+    "skill_errors": 0,
+    "usage_outbox": 0,
+    "assessment_tickets": 0
+  },
+  "invariants": [
+    "a freshly created archive yields exactly one meta row ('schema_flags') and one preferences row",
+    "preferences.learning_language_id is the platform default 'nb' (LanguageRegistry.defaultID)",
+    "the legacy-nullable preferences columns stay NULL (ai_consent_version, slow_speech, listening_practice, usage_metrics_enabled, stt_engine, pronunciation_enabled)",
+    "preferences.speech_rate IS NULL so the effective speech rate falls back at read time (0.8 when slow_speech, else 1.0)",
+    "sessions, fragments, expressions, lesson_state, completions and skill_errors are all empty",
+    "no expressions row with language_id IS NULL exists in the empty case"
+  ]
+}

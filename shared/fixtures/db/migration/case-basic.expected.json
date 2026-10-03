@@ -1,0 +1,31 @@
+{
+  "tables": {
+    "meta": 3,
+    "preferences": 1,
+    "sessions": 3,
+    "fragments": 9,
+    "expressions": 4,
+    "lesson_state": 2,
+    "completions": 5,
+    "skill_errors": 2,
+    "usage_outbox": 0,
+    "assessment_tickets": 0
+  },
+  "invariants": [
+    "preferences holds exactly one row (preferences.id = 1) with learning_language_id 'es' and every nullable preferences column populated (none NULL)",
+    "sessions.language_id covers exactly the two archive languages 'es' and 'fr'",
+    "exactly 1 finished conversation session in 'es' with ended_at NOT NULL, theme_id 'restaurant', 4 fragments and usage_final = 1",
+    "exactly 1 unfinished lesson session with ended_at IS NULL and sessions.lesson_id 'es-foundations-u1-ser'",
+    "exactly 1 scenario session in 'fr' with sessions.scenario_id 'fr-cafe-ordering' and sessions.scenario_review_json NOT NULL",
+    "at least 1 fragments row with revision > 0 and fragments.previous_texts != '[]'",
+    "the finished session's sessions.translations_json holds exactly 1 entry keyed by a fragments.id",
+    "at least 1 expressions row with expressions.language_id IS NULL (legacy adoptable in every language)",
+    "at least 2 expressions rows share expressions.norm_key 'important' across 2 distinct non-null expressions.language_id values",
+    "at least 1 completions row with completions.language_id IS NULL (legacy global activity)",
+    "completions.kind values all come from the shared ledger catalog (lesson, listening, reading, scenario_practice, conversation_theme)",
+    "every fragments.session_id references an existing sessions.id (ON DELETE CASCADE)",
+    "meta holds the 'schema_flags' row plus one 'mastery:<skill>' row per masteryCache entry",
+    "usage_outbox and assessment_tickets stay empty after an archive migration (platform-local queues, never encoded in the archive)",
+    "the scenario session's review_created_at equals the createdAt inside its sessions.scenario_review_json"
+  ]
+}

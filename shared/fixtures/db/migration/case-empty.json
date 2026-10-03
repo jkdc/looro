@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "sessions": [],
+  "preferences": {
+    "learningLanguageID": "nb",
+    "meaningVisible": true,
+    "meaningLanguage": "English",
+    "sessionMinutes": 15,
+    "hiddenWords": [],
+    "interests": "",
+    "hasOnboarded": false,
+    "aiConsentVersion": null,
+    "slowSpeech": null,
+    "listeningPractice": null,
+    "speechRate": null,
+    "usageMetricsEnabled": null,
+    "sttEngine": null,
+    "pronunciationEnabled": null
+  },
+  "lessons": [],
+  "expressions": [],
+  "completions": null,
+  "errors": null,
+  "masteryCache": null
+}
