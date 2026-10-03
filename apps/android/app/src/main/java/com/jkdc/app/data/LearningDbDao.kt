@@ -143,6 +143,11 @@ object SessionsDao {
     fun all(db: SqlDatabase): List<SessionRecord> =
         db.query("SELECT * FROM sessions ORDER BY rowid").map { SessionsDao.session(it, db) }
 
+    /** Sessions of one learning language in insertion order. */
+    fun byLanguage(db: SqlDatabase, languageID: String): List<SessionRecord> =
+        db.query("SELECT * FROM sessions WHERE language_id = ? ORDER BY rowid", listOf(languageID))
+            .map { SessionsDao.session(it, db) }
+
     private fun session(row: Row, db: SqlDatabase): SessionRecord {
         val id = row.text("id")
         return SessionRecord(
@@ -339,6 +344,20 @@ object ExpressionsDao {
         archive listed them). */
     fun all(db: SqlDatabase): List<ExpressionState> =
         db.query("SELECT * FROM expressions ORDER BY rowid").map(::expression)
+
+    /** Expressions visible in [languageID]: its own rows plus the legacy
+        NULL-language entries RecallEngine keeps reachable everywhere,
+        insertion order. */
+    fun byLanguage(db: SqlDatabase, languageID: String): List<ExpressionState> =
+        db.query("SELECT * FROM expressions WHERE language_id = ? OR language_id IS NULL ORDER BY rowid",
+            listOf(languageID)).map(::expression)
+
+    /** RecallEngine.due over the table: the language's rows plus legacy NULL
+        entries, bars < 3, dueAt reached, oldest due first. `ORDER BY due_at,
+        rowid` reproduces the engine's stable sort over rowid order. */
+    fun due(db: SqlDatabase, languageID: String, now: Double): List<ExpressionState> =
+        db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) " +
+            "AND bars < 3 AND due_at <= ? ORDER BY due_at, rowid", listOf(languageID, now)).map(::expression)
 
     private fun count(db: SqlDatabase): Long = db.query("SELECT COUNT(*) AS n FROM expressions").single().long("n")
 
