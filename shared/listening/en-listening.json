@@ -2956,6 +2956,206 @@
       ]
     },
     {
+      "id": "en-listen-flat-renovation",
+      "languageID": "en",
+      "title": "The flat renovation",
+      "level": "B1",
+      "topic": "home",
+      "unitID": "en-foundations-done",
+      "text": "Flat 4C was finally being renovated, and Marta had one week to organise it. 'I'm having the kitchen repainted on Monday,' she told her brother Leo, 'and I'm getting the plumber to look at the shower on Tuesday.' 'Are you doing any of it yourself?' Leo laughed. 'I'm paying professionals to do it — that's the point,' Marta said. 'I've been putting this off for a year.' The painters finished on Wednesday, but the plumber arrived, set up his tools and disappeared. Marta followed him up with three phone calls and an online form, and finally got him to come back on Thursday. 'Did he carry out the full inspection?' Leo asked on Friday. 'The whole flat — pipes, boiler, taps. And tomorrow the cleaners are coming, so I don't have to do anything at all.' 'You mean you don't have to do anything yourself,' Leo said. 'Exactly,' said Marta. 'That's what money is for.'",
+      "questions": [
+        {
+          "id": "en-listen-flat-renovation-q1",
+          "kind": "choice",
+          "prompt": "What is Marta doing this week?",
+          "options": [
+            "Organising her flat's renovation",
+            "Moving to a new flat",
+            "Working as a plumber",
+            "Helping her brother paint"
+          ],
+          "answers": [
+            "Organising her flat's renovation"
+          ],
+          "explain": "Flat 4C was finally being renovated, and Marta had one week to organise it."
+        },
+        {
+          "id": "en-listen-flat-renovation-q2",
+          "kind": "written",
+          "prompt": "Who is painting the kitchen?",
+          "answers": [
+            "professional painters",
+            "painters",
+            "professionals"
+          ],
+          "explain": "'I'm having the kitchen repainted' — professionals do it, not Marta."
+        },
+        {
+          "id": "en-listen-flat-renovation-q3",
+          "kind": "choice",
+          "prompt": "What had Marta been putting off for a year?",
+          "options": [
+            "The renovation",
+            "A holiday",
+            "An online form",
+            "The full inspection"
+          ],
+          "answers": [
+            "The renovation"
+          ],
+          "explain": "'I've been putting this off for a year' — the whole renovation."
+        },
+        {
+          "id": "en-listen-flat-renovation-q4",
+          "kind": "written",
+          "prompt": "How did Marta finally get the plumber to come back?",
+          "answers": [
+            "three phone calls and an online form",
+            "three calls and an online form",
+            "by calling three times and filling in an online form"
+          ],
+          "explain": "She followed him up with three phone calls and an online form."
+        },
+        {
+          "id": "en-listen-flat-renovation-q5",
+          "kind": "choice",
+          "prompt": "What did the full inspection cover?",
+          "options": [
+            "Pipes, boiler and taps",
+            "Only the shower",
+            "The kitchen paint",
+            "The windows"
+          ],
+          "answers": [
+            "Pipes, boiler and taps"
+          ],
+          "explain": "'The whole flat — pipes, boiler, taps.'"
+        },
+        {
+          "id": "en-listen-flat-renovation-q6",
+          "kind": "choice",
+          "prompt": "What does Marta mean by 'That's what money is for'?",
+          "options": [
+            "Paying others so she doesn't do the work herself",
+            "Saving for the future",
+            "Buying new furniture",
+            "Tip the workers well"
+          ],
+          "answers": [
+            "Paying others so she doesn't do the work herself"
+          ],
+          "explain": "She pays professionals so she doesn't have to do anything herself."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:causative-have",
+        "grammar:phrasal-verbs",
+        "vocab:work"
+      ],
+      "exposureSkills": []
+    },
+    {
+      "id": "en-listen-wrong-platform",
+      "languageID": "en",
+      "title": "The wrong platform",
+      "level": "B1",
+      "topic": "travel",
+      "unitID": "en-foundations-problems",
+      "text": "'You look exhausted,' said Tom. 'I am,' said Ana. 'I wish I had checked the platform board. I took the 6:12 to the north station instead of the south one.' 'No! So you missed the warm-up.' 'If I had looked up, I would have seen the notice — the southbound train was leaving from platform 2, not 9. I only realised when we crossed the river.' 'What did you do then?' 'I got off at the next stop and took a taxi. If the traffic had been normal, I'd have arrived before eight. But there was a football match, so I walked in at half past nine, hot and furious.' 'At least you made it for the main act.' 'True. And honestly, if I hadn't taken the wrong train, I wouldn't have seen the river at sunset. If only every mistake came with a view.' Tom laughed. 'So the lesson is: check the board, but keep a little curiosity.'",
+      "questions": [
+        {
+          "id": "en-listen-wrong-platform-q1",
+          "kind": "choice",
+          "prompt": "What went wrong for Ana?",
+          "options": [
+            "She took the wrong train",
+            "She missed the last train",
+            "She lost her ticket",
+            "The concert was cancelled"
+          ],
+          "answers": [
+            "She took the wrong train"
+          ],
+          "explain": "She took the 6:12 to the north station instead of the south one."
+        },
+        {
+          "id": "en-listen-wrong-platform-q2",
+          "kind": "written",
+          "prompt": "What does Ana wish she had checked?",
+          "answers": [
+            "the platform board",
+            "the board",
+            "the platform display"
+          ],
+          "explain": "'I wish I had checked the platform board.'"
+        },
+        {
+          "id": "en-listen-wrong-platform-q3",
+          "kind": "choice",
+          "prompt": "Why was she late even after taking a taxi?",
+          "options": [
+            "A football match made the traffic terrible",
+            "The taxi broke down",
+            "The driver didn't know the venue",
+            "It started to rain heavily"
+          ],
+          "answers": [
+            "A football match made the traffic terrible"
+          ],
+          "explain": "There was a football match, so the taxi didn't help enough."
+        },
+        {
+          "id": "en-listen-wrong-platform-q4",
+          "kind": "choice",
+          "prompt": "When did Ana finally arrive?",
+          "options": [
+            "At half past nine",
+            "Before eight",
+            "At 6:12",
+            "At midnight"
+          ],
+          "answers": [
+            "At half past nine"
+          ],
+          "explain": "She walked in at half past nine, hot and furious."
+        },
+        {
+          "id": "en-listen-wrong-platform-q5",
+          "kind": "written",
+          "prompt": "What good thing came out of the mistake?",
+          "answers": [
+            "she saw the river at sunset",
+            "the river at sunset",
+            "seeing the river at sunset"
+          ],
+          "explain": "'If I hadn't taken the wrong train, I wouldn't have seen the river at sunset.'"
+        },
+        {
+          "id": "en-listen-wrong-platform-q6",
+          "kind": "choice",
+          "prompt": "What lesson does Tom draw?",
+          "options": [
+            "Check the board, but stay curious",
+            "Never take taxis",
+            "Always arrive an hour early",
+            "Concerts aren't worth it"
+          ],
+          "answers": [
+            "Check the board, but stay curious"
+          ],
+          "explain": "'Check the board, but keep a little curiosity.'"
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:wish-clauses",
+        "grammar:third-conditional",
+        "vocab:feelings"
+      ],
+      "exposureSkills": []
+    },
+    {
       "id": "en-listen-grandpas-garden",
       "languageID": "en",
       "title": "Grandpa's garden",
@@ -4216,6 +4416,106 @@
       "exposureSkills": [
         "grammar:used-to"
       ]
+    },
+    {
+      "id": "en-listen-pitch-night",
+      "languageID": "en",
+      "title": "After the pitch night",
+      "level": "B2",
+      "topic": "work",
+      "unitID": "en-foundations-innovation",
+      "text": "'Did you catch the pitch night?' asked Priya. 'Three start-ups, ninety seconds each.' 'I saw the first two,' said Jonas. 'The one everyone is talking about is Corner — it is believed to have signed two hospital chains already.' 'That rumour again. It's said that the founders met at a robotics lab, but nobody can confirm it, and no deal has been officially announced.' 'Even so, they're bound to attract offers after that demo. A pill dispenser that calls the pharmacy itself? That's likely to reshape the whole care market.' 'Likely, perhaps — but the third presenter worried me. If the numbers can't be checked, the valuation can't be trusted either. It is widely assumed that they doubled their users last year, but their chart had no scale on it.' 'So who are you backing?' 'Corner, cautiously. The technology works and the team is credible. As for the rest, it is expected that the truth will come out in the due diligence.'",
+      "questions": [
+        {
+          "id": "en-listen-pitch-night-q1",
+          "kind": "choice",
+          "prompt": "What event are Priya and Jonas discussing?",
+          "options": [
+            "A start-up pitch night",
+            "A hospital conference",
+            "A robotics competition",
+            "A product recall"
+          ],
+          "answers": [
+            "A start-up pitch night"
+          ],
+          "explain": "Three start-ups, ninety seconds each — the pitch night."
+        },
+        {
+          "id": "en-listen-pitch-night-q2",
+          "kind": "written",
+          "prompt": "What is Corner believed to have signed?",
+          "answers": [
+            "two hospital chains",
+            "deals with two hospital chains",
+            "hospital chains"
+          ],
+          "explain": "'It is believed to have signed two hospital chains already.'"
+        },
+        {
+          "id": "en-listen-pitch-night-q3",
+          "kind": "choice",
+          "prompt": "What has not been officially announced?",
+          "options": [
+            "The deal",
+            "The demo",
+            "Where the founders met",
+            "The user numbers"
+          ],
+          "answers": [
+            "The deal"
+          ],
+          "explain": "Nobody can confirm the rumour; no deal has been officially announced."
+        },
+        {
+          "id": "en-listen-pitch-night-q4",
+          "kind": "choice",
+          "prompt": "Why does Jonas distrust the third presenter?",
+          "options": [
+            "The chart had no scale, so the numbers can't be checked",
+            "The presenter spoke too fast",
+            "The product didn't work",
+            "The team is too young"
+          ],
+          "answers": [
+            "The chart had no scale, so the numbers can't be checked"
+          ],
+          "explain": "If the numbers can't be checked, the valuation can't be trusted either."
+        },
+        {
+          "id": "en-listen-pitch-night-q5",
+          "kind": "written",
+          "prompt": "What does the pill dispenser do, according to Jonas?",
+          "answers": [
+            "it calls the pharmacy itself",
+            "calls the pharmacy itself",
+            "calls the pharmacy"
+          ],
+          "explain": "'A pill dispenser that calls the pharmacy itself.'"
+        },
+        {
+          "id": "en-listen-pitch-night-q6",
+          "kind": "choice",
+          "prompt": "What does 'they're bound to attract offers' express?",
+          "options": [
+            "A high degree of certainty",
+            "A rumour",
+            "A doubt about the demo",
+            "A warning against investing"
+          ],
+          "answers": [
+            "A high degree of certainty"
+          ],
+          "explain": "Bound to = Jonas considers it almost certain."
+        }
+      ],
+      "skills": [
+        "listening:inference",
+        "grammar:passive-reporting",
+        "grammar:speculation",
+        "vocab:work"
+      ],
+      "exposureSkills": []
     },
     {
       "id": "en-listen-podcast-nuance",

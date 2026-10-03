@@ -4,9 +4,9 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ReadingContentTest {
-    @Test fun `twenty-two readings are registered for english with closed shapes`() {
+    @Test fun `twenty-five readings are registered for english with closed shapes`() {
         val texts = ReadingRegistry.forLanguage("en")
-        assertEquals(22, texts.size)
+        assertEquals(25, texts.size)
         for (text in texts) {
             assertTrue(text.id, text.text.split(" ").size in 40..220)
             assertTrue(text.id, text.questions.size >= 4)

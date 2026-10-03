@@ -2,9 +2,9 @@ import XCTest
 @testable import LearningCore
 
 final class ListeningContentTests: XCTestCase {
-    func testFortyFourTextsAreRegisteredForEnglishWithClosedShapes() {
+    func testFortySevenTextsAreRegisteredForEnglishWithClosedShapes() {
         let texts = ListeningRegistry.forLanguage("en")
-        XCTAssertEqual(44, texts.count)
+        XCTAssertEqual(47, texts.count)
         for text in texts {
             XCTAssertTrue((40 ... 200).contains(text.text.split(separator: " ").count), text.id)
             XCTAssertGreaterThanOrEqual(text.questions.count, 5, text.id)
@@ -59,11 +59,12 @@ final class ListeningContentTests: XCTestCase {
         XCTAssertEqual(["en-foundations-experiences", "en-foundations-experiences",
                         "en-foundations-connections", "en-foundations-connections",
                         "en-foundations-change", "en-foundations-change",
-                        "en-foundations-telling"],
+                        "en-foundations-telling", "en-foundations-done", "en-foundations-problems"],
                        texts.filter { $0.level == "B1" }.map(\.unitID))
         XCTAssertEqual(["en-foundations-viewpoints", "en-foundations-viewpoints",
                         "en-foundations-viewpoints", "en-foundations-viewpoints",
-                        "en-foundations-viewpoints", "en-foundations-media"],
+                        "en-foundations-viewpoints", "en-foundations-viewpoints",
+                        "en-foundations-media", "en-foundations-innovation"],
                        texts.filter { $0.level == "B2" }.map(\.unitID))
         XCTAssertEqual(["en-foundations-nuance", "en-foundations-nuance", "en-foundations-nuance"],
                        texts.filter { $0.level == "C1" }.map(\.unitID))
