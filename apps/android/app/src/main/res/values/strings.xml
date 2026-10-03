@@ -454,4 +454,26 @@
     <string name="words_expression_remove">Remove</string>
     <string name="lookup_save">Save for recall</string>
     <string name="lookup_saved">Saved</string>
+    <string name="tokens_row_title">Palique (tokens)</string>
+    <string name="tokens_row_hint">Prepaid tokens for the hosted model</string>
+    <string name="tokens_sheet_title">Palique (tokens)</string>
+    <string name="tokens_sheet_intro">Unlock once, then prepay small token packs. The hosted model answers with the app’s key; your voice never leaves the device.</string>
+    <string name="tokens_balance_chip">%1$s of prepaid tokens available</string>
+    <string name="tokens_balance_empty">No prepaid tokens left</string>
+    <string name="tokens_exhausted">Your token balance ran out. Choose a pack below to keep going.</string>
+    <string name="tokens_unlock_card_title">Unlock Palique (tokens)</string>
+    <string name="tokens_unlock_card_detail">One-time purchase. Unlocks the hosted model for this account.</string>
+    <string name="tokens_pack_card_title">Token pack</string>
+    <string name="tokens_pack_card_credit">%1$s of prepaid service credit</string>
+    <string name="tokens_credit_disclosure">Tokens are prepaid service credit for the hosted model. They are not currency and hold no cash value. Usage is metered per call — there is no unlimited option.</string>
+    <string name="tokens_sign_in">Sign in to buy tokens</string>
+    <string name="tokens_sign_in_detail">Your tokens stay with your account. Your conversations stay on this device.</string>
+    <string name="tokens_sign_in_again">Sign in to confirm your purchases and see your tokens.</string>
+    <string name="tokens_unavailable">Token packs aren’t available right now. Please check again later.</string>
+    <string name="tokens_loading">Checking token packs…</string>
+    <string name="tokens_pending">Your payment is pending. Your tokens will appear once it is complete.</string>
+    <string name="tokens_added">Your tokens are ready. Let’s keep talking.</string>
+    <string name="tokens_sandbox">Purchase recorded in the sandbox store. It stays a test purchase until the live listing is used.</string>
+    <string name="tokens_one_time">One-time purchase · No subscription</string>
+    <string name="tokens_error_action">Get tokens</string>
 </resources>

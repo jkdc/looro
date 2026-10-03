@@ -22,10 +22,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jkdc.app.R
+import com.jkdc.app.core.PACK_TOKEN_KIND
+import com.jkdc.app.core.PACK_UNLOCK_KIND
 import com.jkdc.app.core.PurchaseChannel
 import com.jkdc.app.core.MinutePack
 import com.jkdc.app.core.MinutePurchaseNotice
 import com.jkdc.app.core.MinutePurchaseState
+import com.jkdc.app.core.tokenCreditText
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.NumberFormat
@@ -121,21 +124,33 @@ fun MinutePurchaseSheet(
 }
 
 @Composable
-private fun MinutePackCard(pack: MinutePack, enabled: Boolean, onBuy: () -> Unit) {
-    val minutes = pack.aiValue?.let { value -> stringResource(R.string.paid_pack_estimate,
-        NumberFormat.getNumberInstance().apply { maximumFractionDigits = 1; roundingMode = RoundingMode.DOWN }
-            .format(value.estimatedMilliseconds / 60_000.0)) }
-        ?: pluralStringResource(R.plurals.minute_purchases_pack_minutes, pack.minutes, NumberFormat.getIntegerInstance().format(pack.minutes))
-    val action = stringResource(R.string.minute_purchases_pack_action, minutes, pack.formattedPrice)
+internal fun MinutePackCard(pack: MinutePack, enabled: Boolean, onBuy: () -> Unit) {
+    // Token-billing pack products (unlock / token pack) render their own copy;
+    // minute and AI-value packs keep the minutes/estimate title.
+    val title = if (pack.isPack) {
+        stringResource(if (pack.entitlementKind == PACK_TOKEN_KIND) R.string.tokens_pack_card_title else R.string.tokens_unlock_card_title)
+    } else {
+        pack.aiValue?.let { value -> stringResource(R.string.paid_pack_estimate,
+            NumberFormat.getNumberInstance().apply { maximumFractionDigits = 1; roundingMode = RoundingMode.DOWN }
+                .format(value.estimatedMilliseconds / 60_000.0)) }
+            ?: pluralStringResource(R.plurals.minute_purchases_pack_minutes, pack.minutes, NumberFormat.getIntegerInstance().format(pack.minutes))
+    }
+    val detail = when {
+        pack.entitlementKind == PACK_TOKEN_KIND -> stringResource(R.string.tokens_pack_card_credit, tokenCreditText(pack.creditNanoUSD))
+        pack.entitlementKind == PACK_UNLOCK_KIND -> stringResource(R.string.tokens_unlock_card_detail)
+        pack.aiValue != null -> stringResource(R.string.paid_balance_detail)
+        else -> null
+    }
+    val action = stringResource(R.string.minute_purchases_pack_action, title, pack.formattedPrice)
     Surface(onClick = onBuy, enabled = enabled, shape = RoundedCornerShape(26.dp),
         color = Color.White.copy(alpha = if (enabled) .88f else .60f),
         border = BorderStroke(1.dp, Color.White), modifier = Modifier.fillMaxWidth().testTag("minute-purchase-pack-${pack.sku}")
             .semantics { contentDescription = action }) {
         // A vertical card preserves full localized prices and long text at larger font sizes.
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(minutes, style = MaterialTheme.typography.headlineMedium, color = AppColors.Ink)
-            pack.aiValue?.let { value ->
-                Text(stringResource(R.string.paid_balance_detail), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+            Text(title, style = MaterialTheme.typography.headlineMedium, color = AppColors.Ink)
+            detail?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary) }
+            if (!pack.isPack) pack.aiValue?.let { value ->
                 val quote = value.quote
                 val money = NumberFormat.getCurrencyInstance().apply { currency = java.util.Currency.getInstance(quote.currency.uppercase(java.util.Locale.ROOT)) }
                 val feePercent = NumberFormat.getNumberInstance().apply { maximumFractionDigits = 2 }
@@ -184,4 +199,5 @@ private fun MinutePurchaseNotice.textResource() = when (this) {
     MinutePurchaseNotice.ADDED -> R.string.minute_purchases_added
     MinutePurchaseNotice.REVERSED -> R.string.minute_purchases_reversed
     MinutePurchaseNotice.VERIFICATION_FAILED -> R.string.minute_purchases_verification_failed
+    MinutePurchaseNotice.SANDBOX_RECORDED -> R.string.tokens_sandbox
 }

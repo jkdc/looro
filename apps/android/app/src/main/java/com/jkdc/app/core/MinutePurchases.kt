@@ -9,13 +9,33 @@ internal val minuteIdentifier = Regex("[A-Za-z0-9][A-Za-z0-9._:-]{0,199}")
 internal fun validPurchaseToken(value: String) = value.length in 1..4096 && value.all { it.code in 33..126 }
 private const val MAX_MINUTE_MS = 86_400_000L
 
+/** Token-billing catalog kinds (services/api pack-products.ts). The unlock is a
+    one-time purchase; the token pack credits prepaid nanoUSD service credit.
+    Prices and credit are server constants — the client never does pack math:
+    the unlock always echoes credit 0, the pack its fixed nanoUSD credit. */
+const val PACK_UNLOCK_KIND = "byok_unlock"
+const val PACK_TOKEN_KIND = "token_pack"
+internal val PACK_KINDS = setOf(PACK_UNLOCK_KIND, PACK_TOKEN_KIND)
+internal val nanoUSDString = Regex("[0-9]{1,16}")
+internal fun validPackCredit(kind: String, creditNanoUSD: Long) =
+    (kind == PACK_TOKEN_KIND && creditNanoUSD > 0) || (kind == PACK_UNLOCK_KIND && creditNanoUSD == 0L)
+
 data class MinuteProduct(val sku: String, val providerProduct: String, val minutes: Int,
-    val currency: String, val totalMinor: Long, val environment: String, val aiValue: AIValueEntitlement? = null) {
+    val currency: String, val totalMinor: Long, val environment: String, val aiValue: AIValueEntitlement? = null,
+    val entitlementKind: String? = null, val creditNanoUSD: Long = 0) {
+    val isPack: Boolean get() = entitlementKind != null
     init {
         require(sku.length <= 128 && minuteIdentifier.matches(sku) && minuteIdentifier.matches(providerProduct))
-        require(minutes > 0 && (aiValue != null || minutes <= 1440) && Regex("[a-z]{3}").matches(currency) && totalMinor in 1..100_000_000)
+        require(Regex("[a-z]{3}").matches(currency) && totalMinor in 1..100_000_000)
         require(environment == "test" || environment == "live")
-        require(aiValue == null || (aiValue.quote.currency == currency && aiValue.quote.totalMinor == totalMinor && aiValue.displayMinutes == minutes))
+        if (entitlementKind == null) {
+            require(minutes > 0 && (aiValue != null || minutes <= 1440) && creditNanoUSD == 0L)
+            require(aiValue == null || (aiValue.quote.currency == currency && aiValue.quote.totalMinor == totalMinor && aiValue.displayMinutes == minutes))
+        } else {
+            // Pack catalog entries carry no minute math of their own: kind, price
+            // and credit are validated server constants echoed back verbatim.
+            require(entitlementKind in PACK_KINDS && minutes == 0 && aiValue == null && validPackCredit(entitlementKind, creditNanoUSD))
+        }
     }
     fun expectedMicros(): Long? = try {
         val exponent = Currency.getInstance(currency.uppercase(Locale.ROOT)).defaultFractionDigits
@@ -33,26 +53,47 @@ data class PlayOrderBinding(val orderID: String, val obfuscatedAccountID: String
     override fun toString() = "PlayOrderBinding(redacted)"
 }
 data class MinuteOrder(val orderID: String, val minutes: Int, val currency: String, val totalMinor: Long, val payment: PlayOrderBinding,
-    val aiValue: AIValueEntitlement? = null) {
+    val aiValue: AIValueEntitlement? = null, val entitlementKind: String? = null, val creditNanoUSD: Long = 0) {
     init {
-        require(minuteUUID.matches(orderID) && payment.orderID == orderID && minutes > 0 && (aiValue != null || minutes <= 1440))
+        require(minuteUUID.matches(orderID) && payment.orderID == orderID)
         require(Regex("[a-z]{3}").matches(currency) && totalMinor in 1..100_000_000)
-        require(aiValue == null || (aiValue.quote.currency == currency && aiValue.quote.totalMinor == totalMinor && aiValue.displayMinutes == minutes))
+        if (entitlementKind == null) {
+            require(minutes > 0 && (aiValue != null || minutes <= 1440) && creditNanoUSD == 0L)
+            require(aiValue == null || (aiValue.quote.currency == currency && aiValue.quote.totalMinor == totalMinor && aiValue.displayMinutes == minutes))
+        } else {
+            require(entitlementKind in PACK_KINDS && minutes == 0 && aiValue == null && validPackCredit(entitlementKind, creditNanoUSD))
+        }
     }
-    fun matches(product: MinuteProduct) = minutes == product.minutes && currency == product.currency && totalMinor == product.totalMinor && aiValue == product.aiValue
+    fun matches(product: MinuteProduct) = minutes == product.minutes && currency == product.currency &&
+        totalMinor == product.totalMinor && aiValue == product.aiValue &&
+        entitlementKind == product.entitlementKind && creditNanoUSD == product.creditNanoUSD
     override fun toString() = "MinuteOrder(redacted)"
 }
 data class MinutePurchaseStatus(val orderID: String, val state: String, val grantedMilliseconds: Long,
     val reversedMilliseconds: Long, val reversalOutstandingMilliseconds: Long, val fulfillmentRecorded: Boolean,
-    val aiValue: AIValueFulfillment? = null) {
+    val aiValue: AIValueFulfillment? = null, val entitlementKind: String? = null,
+    val grantedNanoUSD: Long = 0, val reversedNanoUSD: Long = 0, val unlockedAt: String? = null) {
+    val isPack: Boolean get() = entitlementKind != null
     init {
         require(minuteUUID.matches(orderID) && state in listOf("created", "pending", "purchased", "voided"))
         require(grantedMilliseconds in 0..MAX_MINUTE_MS && grantedMilliseconds % 60_000L == 0L)
         require(reversedMilliseconds in 0..grantedMilliseconds && reversalOutstandingMilliseconds in 0..(grantedMilliseconds - reversedMilliseconds))
-        require(fulfillmentRecorded == (aiValue?.recorded ?: (grantedMilliseconds > 0)))
-        require(aiValue == null || (grantedMilliseconds == 0L && reversedMilliseconds == 0L && reversalOutstandingMilliseconds == 0L))
         require(state !in listOf("created", "pending") || !fulfillmentRecorded)
         require(state !in listOf("created", "pending") || grantedMilliseconds == 0L)
+        if (entitlementKind == null) {
+            require(fulfillmentRecorded == (aiValue?.recorded ?: (grantedMilliseconds > 0)))
+            require(aiValue == null || (grantedMilliseconds == 0L && reversedMilliseconds == 0L && reversalOutstandingMilliseconds == 0L))
+            require(grantedNanoUSD == 0L && reversedNanoUSD == 0L && unlockedAt == null)
+        } else {
+            // Pack statuses mirror pack-products.ts: money fields are nanoUSD, and
+            // only a live-environment unlock is ever recorded as fulfilled.
+            require(entitlementKind in PACK_KINDS && aiValue == null &&
+                grantedMilliseconds == 0L && reversedMilliseconds == 0L && reversalOutstandingMilliseconds == 0L)
+            require(grantedNanoUSD >= 0 && reversedNanoUSD in 0..grantedNanoUSD)
+            require(unlockedAt == null || (entitlementKind == PACK_UNLOCK_KIND && unlockedAt.length <= 40))
+            require(fulfillmentRecorded == if (entitlementKind == PACK_UNLOCK_KIND) unlockedAt != null else grantedNanoUSD > 0)
+            require(state !in listOf("created", "pending") || (grantedNanoUSD == 0L && unlockedAt == null))
+        }
     }
 }
 interface MinuteCommerceService {

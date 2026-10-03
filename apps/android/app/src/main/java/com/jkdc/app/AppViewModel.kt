@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.jkdc.app.core.*
 import com.jkdc.app.core.engines.ConversationEngineDeps
+import com.jkdc.app.core.engines.EngineException
 import com.jkdc.app.core.engines.ConversationEngineFactory
 import com.jkdc.app.core.voice.LocalVoiceTransport
 import com.jkdc.app.core.voice.VoiceTransport
@@ -111,6 +112,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     var error by mutableStateOf<String?>(null); private set
     var errorNeedsKeySetup by mutableStateOf(false); private set
     var errorNeedsAccountSignIn by mutableStateOf(false); private set
+
+    /** Set when the failing call was the token proxy refusing (402 balance /
+        403 unlock): the UI offers the matching purchase surface. */
+    var errorTokensBlock by mutableStateOf<TokenProxyBlock?>(null); private set
     var notice by mutableStateOf<String?>(null); private set
     var meaning by mutableStateOf(""); private set
     var pendingLookupOpen by mutableStateOf(false)
@@ -779,12 +784,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         return requestErrorReference(e)?.let { message + "\n\n" + app.getString(R.string.hosted_error_reference, it) } ?: message
     }
     private fun presentError(message: String, needsKeySetup: Boolean = false) {
-        error = message; errorNeedsKeySetup = needsKeySetup; errorNeedsAccountSignIn = false
+        error = message; errorNeedsKeySetup = needsKeySetup; errorNeedsAccountSignIn = false; errorTokensBlock = null
     }
     private fun presentError(e: Throwable, @StringRes fallback: Int) {
         android.util.Log.e("AppLocalEngine", "voice/teaching failure: ${e.javaClass.simpleName}: ${e.message}", e)
         presentError(resolveMessage(e, fallback), errorNeedsKeySetup(e))
         errorNeedsAccountSignIn = needsAccountRecovery(e)
+        errorTokensBlock = (e as? EngineException)?.proxyBlock
     }
     /**
      * Remote-compatible engines (deepseek/glm) never use the OpenAI credential
@@ -1070,7 +1076,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         catch (_: Exception) { false }
     }
 
-    fun dismissError() { error = null; errorNeedsKeySetup = false; errorNeedsAccountSignIn = false }
+    fun dismissError() { error = null; errorNeedsKeySetup = false; errorNeedsAccountSignIn = false; errorTokensBlock = null }
     fun clearLookup() {
         lookupGeneration++
         lookupJob?.cancel()
@@ -1554,6 +1560,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private fun fail(e: Throwable, @StringRes fallback: Int) {
         fail(resolveMessage(e, fallback), errorNeedsKeySetup(e))
         errorNeedsAccountSignIn = needsAccountRecovery(e)
+        errorTokensBlock = (e as? EngineException)?.proxyBlock
     }
     fun resetConversation() {
         if (isRunning) return

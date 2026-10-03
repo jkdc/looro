@@ -77,7 +77,16 @@ fun AppRoot(
     var showSettings by rememberSaveable { mutableStateOf(false) }
     var pendingThemeSwitch by remember { mutableStateOf(false) }
     var showMinutes by rememberSaveable { mutableStateOf(false) }
-    BackHandler(enabled = tab != 0 && !showSettings && !showAccount && !showMinutes) { tab = 0 }
+    var showTokens by rememberSaveable { mutableStateOf(false) }
+    var tokensExhausted by rememberSaveable { mutableStateOf(false) }
+    // Display hint only (GET /v1/wallet via the purchase view model); null when
+    // billing is disabled, signed out, or the read failed.
+    val tokensWallet = purchases?.tokenWallet?.collectAsStateWithLifecycle()?.value
+    val tokensBalanceHint = tokensWallet?.let {
+        stringResource(if (it.availableNanoUSD > 0) R.string.tokens_balance_chip else R.string.tokens_balance_empty,
+            com.jkdc.app.core.tokenCreditText(it.availableNanoUSD))
+    }
+    BackHandler(enabled = tab != 0 && !showSettings && !showAccount && !showMinutes && !showTokens) { tab = 0 }
     fun perform(action: CloudAction) {
         when (action) {
             CloudAction.StartVoice -> if (!vm.needsMinuteAccess()) onRequestMicrophone()
@@ -214,7 +223,11 @@ fun AppRoot(
                             account.refresh(); showAccount = true
                         }) else null, onResume = { id ->
                             vm.resumeSession(id); showSettings = false; tab = 0
-                        }, onDismiss = { showSettings = false })
+                        }, onDismiss = { showSettings = false },
+                            onTokensPurchase = if (purchases?.enabled == true) ({
+                                tokensExhausted = false; purchases.refresh(); showTokens = true
+                            }) else null,
+                            tokensBalanceHint = tokensBalanceHint)
                     }
                 }
             }
@@ -269,6 +282,14 @@ fun AppRoot(
                     onDismiss = { showMinutes = false; account.refresh() },
                     accountBusy = accountTransitionBusy || accountState.busy)
             }
+            if (showTokens && purchases?.enabled == true && account != null) {
+                val purchaseState by purchases.state.collectAsStateWithLifecycle()
+                val accountState by account.state.collectAsStateWithLifecycle()
+                TokensPurchaseSheet(purchaseState, tokensWallet, tokensExhausted, accountState.signedIn, onBuyMinutes,
+                    onSignIn = onGoogleSignIn, onRefresh = purchases::refresh,
+                    onDismiss = { showTokens = false; tokensExhausted = false; account.refresh() },
+                    accountBusy = accountTransitionBusy || accountState.busy)
+            }
 
             reportState.selection?.let { selected ->
                 androidx.compose.runtime.key(reportState.generation) {
@@ -290,14 +311,21 @@ fun AppRoot(
                     onDismissRequest = vm::dismissError,
                     title = { Text(stringResource(R.string.error_dialog_title)) },
                     text = { Text(message) },
-                    confirmButton = { AppTextButton(onClick = vm::dismissError) { Text(stringResource(R.string.common_ok)) } },
-                    dismissButton = if (vm.errorNeedsKeySetup) ({
-                        AppTextButton(onClick = { vm.dismissError(); showSettings = true }) { Text(stringResource(R.string.error_go_to_settings)) }
-                    }) else if (vm.errorNeedsAccountSignIn && account?.configuration != null) ({
-                        AppTextButton(onClick = { vm.dismissError(); account.refresh(); showAccount = true }) {
-                            Text(stringResource(R.string.account_title))
-                        }
-                    }) else null,
+                confirmButton = { AppTextButton(onClick = vm::dismissError) { Text(stringResource(R.string.common_ok)) } },
+                dismissButton = if (vm.errorNeedsKeySetup) ({
+                    AppTextButton(onClick = { vm.dismissError(); showSettings = true }) { Text(stringResource(R.string.error_go_to_settings)) }
+                }) else if (vm.errorNeedsAccountSignIn && account?.configuration != null) ({
+                    AppTextButton(onClick = { vm.dismissError(); account.refresh(); showAccount = true }) {
+                        Text(stringResource(R.string.account_title))
+                    }
+                }) else if (vm.errorTokensBlock != null && purchases?.enabled == true) ({
+                    // 402 balance exhausted and 403 unlock both resolve in the tokens
+                    // sheet: paywall cards for the unlock, packs for the balance.
+                    AppTextButton(onClick = {
+                        tokensExhausted = vm.errorTokensBlock == com.jkdc.app.core.TokenProxyBlock.BALANCE_EXHAUSTED
+                        vm.dismissError(); purchases.refresh(); showTokens = true
+                    }) { Text(stringResource(R.string.tokens_error_action)) }
+                }) else null,
                 )
             }
         }

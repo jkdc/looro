@@ -38,15 +38,30 @@ class MinuteCommerceClient internal constructor(private val origin: HttpUrl, tra
     override suspend fun catalog(): MinuteCatalog = decoded {
         val body = request("GET", "minutes/products", providerQuery = true)
         val basis = body.text("billingBasis")
-        if (basis !in listOf("connected-conversation-time", "actual-ai-usage")) throw MinuteCommerceFailure.InvalidResponse
+        if (basis !in listOf("connected-conversation-time", "actual-ai-usage", "prepaid-service-credit")) throw MinuteCommerceFailure.InvalidResponse
         val products = body["products"] as? JsonArray ?: throw MinuteCommerceFailure.InvalidResponse
         if (products.size > 100) throw MinuteCommerceFailure.InvalidResponse
         MinuteCatalog(body.boolean("available"), products.map { value ->
             val item = value as? JsonObject ?: throw MinuteCommerceFailure.InvalidResponse
-            val ai = if (basis == "actual-ai-usage") parseAIValue(item) else null
-            MinuteProduct(item.text("sku"), item.text("providerProduct"), ai?.displayMinutes ?: item.count("minutes", 1440).toInt(), item.text("currency"),
-                item.count("totalMinor", 100_000_000), item.text("environment"), ai)
+            val kind = (item["entitlementKind"] as? JsonPrimitive)?.takeIf { it.isString }?.content
+            if (kind in PACK_KINDS) parsePackProduct(item, kind!!)
+            else if (basis == "prepaid-service-credit") throw MinuteCommerceFailure.InvalidResponse
+            else {
+                val ai = if (basis == "actual-ai-usage") parseAIValue(item) else null
+                MinuteProduct(item.text("sku"), item.text("providerProduct"), ai?.displayMinutes ?: item.count("minutes", 1440).toInt(), item.text("currency"),
+                    item.count("totalMinor", 100_000_000), item.text("environment"), ai)
+            }
         })
+    }
+    /** Pack catalog entries echo server constants (kind, price, credit); any
+        arithmetic of our own is forbidden, so the fields are validated as-is. */
+    private fun parsePackProduct(item: JsonObject, kind: String): MinuteProduct {
+        val credit = (item["creditNanoUSD"] as? JsonPrimitive)?.takeIf { it.isString }?.content
+            ?: throw MinuteCommerceFailure.InvalidResponse
+        val nano = credit.toLongOrNull()?.takeIf { it >= 0 && nanoUSDString.matches(credit) }
+            ?: throw MinuteCommerceFailure.InvalidResponse
+        return MinuteProduct(item.text("sku"), item.text("providerProduct"), 0, item.text("currency"),
+            item.count("totalMinor", 100_000_000), item.text("environment"), entitlementKind = kind, creditNanoUSD = nano)
     }
     override suspend fun create(session: AccountSession, sku: String, idempotencyKey: String): MinuteOrder = decoded {
         if (channel != PurchaseChannel.PLAY) throw MinuteCommerceFailure.Unavailable
@@ -54,9 +69,15 @@ class MinuteCommerceClient internal constructor(private val origin: HttpUrl, tra
             throw MinuteCommerceFailure.InvalidResponse
         val body = request("POST", "minutes/orders", session, buildJsonObject { put("provider", "play"); put("sku", sku) }, idempotencyKey)
         val payment = body["payment"] as? JsonObject ?: throw MinuteCommerceFailure.InvalidResponse
-        val ai = if (body["entitlementKind"] == JsonPrimitive("ai_value")) parseAIValue(body) else null
-        MinuteOrder(body.text("orderID"), ai?.displayMinutes ?: body.count("minutes", 1440).toInt(), body.text("currency"), body.count("totalMinor", 100_000_000),
-            PlayOrderBinding(payment.text("orderID"), payment.text("obfuscatedAccountID"), payment.text("obfuscatedProfileID")), ai)
+        val binding = PlayOrderBinding(payment.text("orderID"), payment.text("obfuscatedAccountID"), payment.text("obfuscatedProfileID"))
+        val pack = packFields(body)
+        if (pack != null) MinuteOrder(body.text("orderID"), 0, body.text("currency"), body.count("totalMinor", 100_000_000), binding,
+            entitlementKind = pack.first, creditNanoUSD = pack.second)
+        else {
+            val ai = if (body["entitlementKind"] == JsonPrimitive("ai_value")) parseAIValue(body) else null
+            MinuteOrder(body.text("orderID"), ai?.displayMinutes ?: body.count("minutes", 1440).toInt(), body.text("currency"),
+                body.count("totalMinor", 100_000_000), binding, ai)
+        }
     }
     override suspend fun createStripe(session: AccountSession, sku: String, idempotencyKey: String): StripeMinuteOrder = decoded {
         if (channel != PurchaseChannel.STRIPE) throw MinuteCommerceFailure.Unavailable
@@ -65,11 +86,26 @@ class MinuteCommerceClient internal constructor(private val origin: HttpUrl, tra
         val body = request("POST", "minutes/orders", session,
             buildJsonObject { put("provider", "stripe"); put("sku", sku) }, idempotencyKey)
         val payment = body["payment"] as? JsonObject ?: throw MinuteCommerceFailure.InvalidResponse
-        val ai = parseAIValue(body)
-        val order = StripeMinuteOrder(body.text("orderID"), body.text("currency"), body.count("totalMinor", 100_000_000),
-            StripeCheckoutURL.checked(payment.text("checkoutURL")), ai)
+        val checkout = StripeCheckoutURL.checked(payment.text("checkoutURL"))
+        val pack = packFields(body)
+        val order = if (pack != null)
+            StripeMinuteOrder(body.text("orderID"), body.text("currency"), body.count("totalMinor", 100_000_000), checkout,
+                entitlementKind = pack.first, creditNanoUSD = pack.second)
+        else
+            StripeMinuteOrder(body.text("orderID"), body.text("currency"), body.count("totalMinor", 100_000_000), checkout, parseAIValue(body))
         if (payment.text("orderID") != order.orderID) throw MinuteCommerceFailure.InvalidResponse
         return@decoded order
+    }
+    /** Order bodies for pack SKUs carry the entitlement kind and the credited
+        nanoUSD instead of minutes; anything else is not a pack order. */
+    private fun packFields(body: JsonObject): Pair<String, Long>? {
+        val kind = (body["entitlementKind"] as? JsonPrimitive)?.takeIf { it.isString }?.content ?: return null
+        if (kind !in PACK_KINDS) return null
+        val credit = (body["creditNanoUSD"] as? JsonPrimitive)?.takeIf { it.isString }?.content
+            ?: throw MinuteCommerceFailure.InvalidResponse
+        val nano = credit.toLongOrNull()?.takeIf { it >= 0 && nanoUSDString.matches(credit) }
+            ?: throw MinuteCommerceFailure.InvalidResponse
+        return kind to nano
     }
     override suspend fun findStripeOrder(session: AccountSession, idempotencyKey: String): String? = decoded {
         if (channel != PurchaseChannel.STRIPE) throw MinuteCommerceFailure.Unavailable
@@ -102,14 +138,37 @@ class MinuteCommerceClient internal constructor(private val origin: HttpUrl, tra
         val body = request("GET", "minutes", session)
         json.decodeFromJsonElement<MinuteBalance>(body)
     }
+    /** Display hint only: the prepaid token wallet (GET /v1/wallet). No caching
+        happens here; callers keep the value in memory for the current surface. */
+    suspend fun tokenWallet(session: AccountSession): TokenWallet = decoded {
+        val body = request("GET", "wallet", session)
+        TokenWallet.parse(body.text("currency"), body.text("balanceNanoUSD"), body.text("reservedNanoUSD"),
+            body.text("availableNanoUSD")) ?: throw MinuteCommerceFailure.InvalidResponse
+    }
     private fun parseStatus(body: JsonObject): MinutePurchaseStatus {
-        val ai = if (body["entitlementKind"] == JsonPrimitive("ai_value")) AIValueFulfillment(body.text("grantedNanoUSD"),
+        val kind = (body["entitlementKind"] as? JsonPrimitive)?.takeIf { it.isString }?.content
+        if (kind in PACK_KINDS) {
+            // Pack statuses (PackPurchaseStatus) carry nanoUSD money fields and no
+            // credit field; a non-zero outstanding reversal is never sent today.
+            if ((body["reversalOutstandingNanoUSD"] as? JsonPrimitive)?.takeIf { it.isString }?.content != "0")
+                throw MinuteCommerceFailure.InvalidResponse
+            val unlockedAt = (body["unlockedAt"] as? JsonPrimitive)?.takeIf { it.isString }?.content?.takeIf { it.isNotEmpty() }
+            return MinutePurchaseStatus(body.text("orderID"), body.text("state"), 0, 0, 0, body.boolean("fulfillmentRecorded"),
+                entitlementKind = kind, grantedNanoUSD = body.nanoField("grantedNanoUSD"),
+                reversedNanoUSD = body.nanoField("reversedNanoUSD"), unlockedAt = unlockedAt)
+        }
+        val ai = if (kind == "ai_value") AIValueFulfillment(body.text("grantedNanoUSD"),
             body.text("reversedNanoUSD"), body.text("reversalOutstandingNanoUSD")) else null
         return MinutePurchaseStatus(body.text("orderID"), body.text("state"),
             if (ai == null) body.count("grantedMilliseconds", 86_400_000) else 0,
             if (ai == null) body.count("reversedMilliseconds", 86_400_000) else 0,
             if (ai == null) body.count("reversalOutstandingMilliseconds", 86_400_000) else 0,
             body.boolean("fulfillmentRecorded"), ai)
+    }
+    /** Server money fields are quoted BigInt strings; anything else fails closed. */
+    private fun JsonObject.nanoField(key: String): Long {
+        val raw = (this[key] as? JsonPrimitive)?.takeIf { it.isString }?.content ?: throw MinuteCommerceFailure.InvalidResponse
+        return raw.toLongOrNull()?.takeIf { it >= 0 && nanoUSDString.matches(raw) } ?: throw MinuteCommerceFailure.InvalidResponse
     }
     private fun parseAIValue(body: JsonObject): AIValueEntitlement {
         if (body.text("entitlementKind") != "ai_value" || body.text("billingBasis") != "actual-ai-usage" ||

@@ -1,5 +1,6 @@
 package com.jkdc.app.core.engines
 
+import com.jkdc.app.core.TokenProxyBlock
 import com.jkdc.app.network.APIResult
 import com.jkdc.app.network.APIUsage
 import com.jkdc.app.network.HelperPurpose
@@ -172,8 +173,14 @@ class OpenAICompatibleEngine(
     }
 
     /** Readable mirror of the proxy's error matrix (docs/token-billing.md): the
-        EngineException message is what the voice transport surfaces to the UI. */
+        EngineException message is what the voice transport surfaces to the UI,
+        and proxyBlock routes 402/403 to the matching commerce surface. */
     private fun proxyFailure(status: Int, payload: String): EngineException {
+        val block = when (status) {
+            402 -> TokenProxyBlock.BALANCE_EXHAUSTED
+            403 -> TokenProxyBlock.UNLOCK_REQUIRED
+            else -> null
+        }
         val readable = when (status) {
             402 -> "Your Palique token balance is used up. Buy more tokens to keep practising."
             403 -> "Palique (tokens) needs a one-time unlock purchase before this account can use it."
@@ -183,6 +190,7 @@ class OpenAICompatibleEngine(
         return EngineException(
             readable ?: "${config.id} engine HTTP $status: ${payload.take(200)}",
             retryable = status == 429 || status >= 500,
+            proxyBlock = block,
         )
     }
 

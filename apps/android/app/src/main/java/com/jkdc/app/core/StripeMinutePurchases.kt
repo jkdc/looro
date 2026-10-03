@@ -33,9 +33,15 @@ class StripeCheckoutURL private constructor(val value: String, val environment: 
     override fun toString() = "StripeCheckoutURL(redacted)"
 }
 class StripeMinuteOrder(val orderID: String, val currency: String, val totalMinor: Long,
-    val checkout: StripeCheckoutURL, val aiValue: AIValueEntitlement) {
-    init { require(minuteUUID.matches(orderID) && currency == aiValue.quote.currency && totalMinor == aiValue.quote.totalMinor) }
-    fun matches(product: MinuteProduct) = currency == product.currency && totalMinor == product.totalMinor && aiValue == product.aiValue
+    val checkout: StripeCheckoutURL, val aiValue: AIValueEntitlement? = null, val entitlementKind: String? = null,
+    val creditNanoUSD: Long = 0) {
+    init {
+        require(minuteUUID.matches(orderID))
+        if (entitlementKind == null) require(aiValue != null && currency == aiValue.quote.currency && totalMinor == aiValue.quote.totalMinor)
+        else require(entitlementKind in PACK_KINDS && aiValue == null && validPackCredit(entitlementKind, creditNanoUSD))
+    }
+    fun matches(product: MinuteProduct) = currency == product.currency && totalMinor == product.totalMinor &&
+        aiValue == product.aiValue && entitlementKind == product.entitlementKind && creditNanoUSD == product.creditNanoUSD
     override fun toString() = "StripeMinuteOrder(redacted)"
 }
 interface StripeCommerceService {
@@ -178,21 +184,30 @@ class StripeMinutePurchaseController(
     }
     private suspend fun loadCatalog() {
         val catalog = api.catalog(); open()
-        if (catalog.products.any { it.environment != expectedEnvironment || it.aiValue == null }) throw MinuteCommerceFailure.InvalidResponse
+        // Pack catalog entries (unlock / token pack) ride the same products
+        // endpoint with no AI quote; only non-pack Stripe products need a quote.
+        if (catalog.products.any { it.environment != expectedEnvironment || (it.aiValue == null && !it.isPack) }) throw MinuteCommerceFailure.InvalidResponse
         products = catalog.products.associateBy { it.sku }
         mutable.value = mutable.value.copy(available = catalog.available, packs = catalog.products.map { product ->
-            val quote = product.aiValue!!.quote
-            val price = NumberFormat.getCurrencyInstance().apply { currency = Currency.getInstance(quote.currency.uppercase(Locale.ROOT)) }
-                .format(BigDecimal.valueOf(product.totalMinor, quote.currencyExponent))
-            MinutePack(product.sku, product.minutes, price, product.aiValue)
+            if (product.isPack) MinutePack(product.sku, product.minutes, minorUnitsPriceText(product.currency, product.totalMinor),
+                entitlementKind = product.entitlementKind, creditNanoUSD = product.creditNanoUSD)
+            else {
+                val quote = product.aiValue!!.quote
+                val price = NumberFormat.getCurrencyInstance().apply { currency = Currency.getInstance(quote.currency.uppercase(Locale.ROOT)) }
+                    .format(BigDecimal.valueOf(product.totalMinor, quote.currencyExponent))
+                MinutePack(product.sku, product.minutes, price, product.aiValue)
+            }
         })
     }
     private fun applyStatus(status: MinutePurchaseStatus) {
-        if (status.aiValue == null) throw MinuteCommerceFailure.InvalidResponse
+        if (!status.isPack && status.aiValue == null) throw MinuteCommerceFailure.InvalidResponse
+        val reversed = status.reversedNanoUSD > 0 || status.aiValue?.reversed == true
         mutable.value = mutable.value.copy(notice = when {
             status.state in listOf("created", "pending") -> MinutePurchaseNotice.PENDING
-            status.state == "voided" || status.aiValue.reversed -> MinutePurchaseNotice.REVERSED
+            status.state == "voided" || reversed -> MinutePurchaseNotice.REVERSED
             status.fulfillmentRecorded -> MinutePurchaseNotice.ADDED
+            // Sandbox unlock orders record state but never unlock: contract, not an error.
+            status.entitlementKind == PACK_UNLOCK_KIND && status.state == "purchased" -> MinutePurchaseNotice.SANDBOX_RECORDED
             else -> MinutePurchaseNotice.VERIFICATION_FAILED
         })
     }

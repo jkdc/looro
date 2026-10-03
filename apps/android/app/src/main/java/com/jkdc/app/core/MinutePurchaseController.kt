@@ -10,8 +10,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-enum class MinutePurchaseNotice { UNAVAILABLE, SIGN_IN_REQUIRED, PRICE_CHANGED, CANCELED, PENDING, VERIFYING, ADDED, REVERSED, VERIFICATION_FAILED }
-data class MinutePack(val sku: String, val minutes: Int, val formattedPrice: String, val aiValue: AIValueEntitlement? = null)
+enum class MinutePurchaseNotice { UNAVAILABLE, SIGN_IN_REQUIRED, PRICE_CHANGED, CANCELED, PENDING, VERIFYING, ADDED, REVERSED, VERIFICATION_FAILED, SANDBOX_RECORDED }
+data class MinutePack(val sku: String, val minutes: Int, val formattedPrice: String, val aiValue: AIValueEntitlement? = null,
+    val entitlementKind: String? = null, val creditNanoUSD: Long = 0) {
+    val isPack: Boolean get() = entitlementKind != null
+    init { require(!isPack || (entitlementKind in PACK_KINDS && minutes == 0 && aiValue == null && validPackCredit(entitlementKind!!, creditNanoUSD))) }
+}
+
+/** Store-formatted price for catalog entries with no store offer yet (Stripe
+    pack cards); minor units → currency text via the currency's exponent. */
+internal fun minorUnitsPriceText(currency: String, totalMinor: Long): String {
+    val exponent = try { java.util.Currency.getInstance(currency.uppercase(java.util.Locale.ROOT)).defaultFractionDigits }
+    catch (_: IllegalArgumentException) { return "" }
+    if (exponent !in 0..3) return ""
+    return java.text.NumberFormat.getCurrencyInstance().apply { this.currency = java.util.Currency.getInstance(currency.uppercase(java.util.Locale.ROOT)) }
+        .format(java.math.BigDecimal.valueOf(totalMinor, exponent))
+}
 data class MinutePurchaseState(val busy: Boolean = false, val available: Boolean = false, val packs: List<MinutePack> = emptyList(),
     val balance: MinuteBalance? = null, val purchaseInProgress: Boolean = false, val notice: MinutePurchaseNotice? = null,
     val channel: PurchaseChannel = PurchaseChannel.PLAY)
@@ -100,7 +114,9 @@ class MinutePurchaseController(
             matches.singleOrNull()?.let { product.sku to (product to it) }
         }.toMap()
         mutable.value = mutable.value.copy(available = products.isNotEmpty(),
-            packs = products.values.map { (product, offer) -> MinutePack(product.sku, product.minutes, offer.formattedPrice, product.aiValue) })
+            packs = products.values.map { (product, offer) ->
+                MinutePack(product.sku, product.minutes, offer.formattedPrice, product.aiValue, product.entitlementKind, product.creditNanoUSD)
+            })
     }
     private suspend fun processEvent(event: MinuteStoreEvent) {
         try {
@@ -141,10 +157,16 @@ class MinutePurchaseController(
             notice = if (pending) MinutePurchaseNotice.PENDING else if (verificationFailed) MinutePurchaseNotice.VERIFICATION_FAILED else mutable.value.notice)
     }
     private fun applyStatus(result: MinutePurchaseStatus) {
+        val reversed = result.reversedMilliseconds > 0 || result.reversedNanoUSD > 0 || result.reversalOutstandingMilliseconds > 0 ||
+            result.aiValue?.reversed == true
         mutable.value = mutable.value.copy(purchaseInProgress = result.state in listOf("created", "pending"), notice = when {
             result.state in listOf("created", "pending") -> MinutePurchaseNotice.PENDING
-            result.state == "voided" || result.reversedMilliseconds > 0 || result.reversalOutstandingMilliseconds > 0 || result.aiValue?.reversed == true -> MinutePurchaseNotice.REVERSED
+            result.state == "voided" || reversed -> MinutePurchaseNotice.REVERSED
             result.fulfillmentRecorded -> MinutePurchaseNotice.ADDED
+            // A sandbox (test-mode) unlock purchase records state but never unlocks
+            // (services/api pack-products.ts gates the unlock on live evidence).
+            // That is the server's contract, not a verification failure.
+            result.entitlementKind == PACK_UNLOCK_KIND && result.state == "purchased" -> MinutePurchaseNotice.SANDBOX_RECORDED
             else -> MinutePurchaseNotice.VERIFICATION_FAILED
         })
     }

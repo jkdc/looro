@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -79,7 +80,8 @@ import androidx.compose.material3.Switch
 
 @Composable
 fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit, onReviewConsent: () -> Unit,
-                   onAccount: (() -> Unit)? = null, onResume: (String) -> Unit = {}, onDismiss: () -> Unit = {}) {
+                   onAccount: (() -> Unit)? = null, onResume: (String) -> Unit = {}, onDismiss: () -> Unit = {},
+                   onTokensPurchase: (() -> Unit)? = null, tokensBalanceHint: String? = null) {
     var advanced by rememberSaveable { mutableStateOf(false) }
     var keyDialog by rememberSaveable { mutableStateOf(false) }
     var deleteKey by rememberSaveable { mutableStateOf(false) }
@@ -275,6 +277,27 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                                             Text(stringResource(R.string.engine_key_remove), color = AppColors.Secondary)
                                         }
                                     }
+                                }
+                            }
+                            // Commercial surface for the hosted-proxy engine ("Palique (tokens)").
+                            // Engine SELECTION is the factory row above; this row is only the
+                            // paywall/pack entry, with the server's balance display hint.
+                            if (onTokensPurchase != null) {
+                                SettingsDivider()
+                                Row(Modifier.fillMaxWidth().clickable(enabled = !vm.isRunning) { onTokensPurchase() }
+                                        .padding(horizontal = 16.dp, vertical = 12.dp).testTag("settings-tokens-row"),
+                                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    Column(Modifier.weight(1f)) {
+                                        Text(stringResource(R.string.tokens_row_title), style = MaterialTheme.typography.bodyLarge, color = AppColors.Ink)
+                                        Text(stringResource(R.string.tokens_row_hint), style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                    }
+                                    tokensBalanceHint?.let { hint ->
+                                        Surface(color = AppColors.Peach.copy(alpha = .7f), shape = RoundedCornerShape(50)) {
+                                            Text(hint, Modifier.padding(horizontal = 10.dp, vertical = 5.dp).testTag("settings-tokens-balance"),
+                                                style = MaterialTheme.typography.labelSmall, color = AppColors.Ink)
+                                        }
+                                    }
+                                    AppIcon(AppSymbol.ChevronRight, Modifier.size(13.dp), color = AppColors.Secondary.copy(alpha = .6f))
                                 }
                             }
                         }

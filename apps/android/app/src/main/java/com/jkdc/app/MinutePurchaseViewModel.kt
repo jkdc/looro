@@ -122,6 +122,7 @@ class MinutePurchaseViewModel(application: Application) : AndroidViewModel(appli
         onBalanceChanged = {
             walletOwner.value = access!!.accountID
             mutableBalanceChanges.tryEmit(Unit)
+            refreshTokenWallet()
         }) else null
     private val stripeController = if (enabled && channel == PurchaseChannel.STRIPE) StripeMinutePurchaseController(
         MinuteCommerceClient(configuration!!, PurchaseChannel.STRIPE),
@@ -130,6 +131,7 @@ class MinutePurchaseViewModel(application: Application) : AndroidViewModel(appli
         onBalanceChanged = {
             walletOwner.value = access!!.accountID
             mutableBalanceChanges.tryEmit(Unit)
+            refreshTokenWallet()
         }) else null
     private val purchaseState = controller?.state ?: stripeController?.state
     val state: StateFlow<MinutePurchaseState> = purchaseState?.let { purchases ->
@@ -137,6 +139,26 @@ class MinutePurchaseViewModel(application: Application) : AndroidViewModel(appli
             value.copy(balance = value.balance.takeIf { selected != null && selected == owner })
         }.stateIn(viewModelScope, SharingStarted.Eagerly, MinutePurchaseState(channel = channel))
     } ?: MutableStateFlow(MinutePurchaseState(channel = channel)).asStateFlow()
+
+    // Display hint for the "Palique (tokens)" row (GET /v1/wallet). Memory-only,
+    // refetched on foreground/account changes; never persisted (design: no
+    // offline balance caching beyond a display hint).
+    private val walletReads = if (enabled) MinuteCommerceClient(configuration!!) else null
+    private val mutableTokenWallet = MutableStateFlow<TokenWallet?>(null)
+    val tokenWallet: StateFlow<TokenWallet?> = mutableTokenWallet.asStateFlow()
+    private fun refreshTokenWallet() {
+        val client = walletReads ?: return
+        viewModelScope.launch {
+            val member = try { access?.read() }
+                catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { null }
+            if (member == null || access?.accountID != member.accountID) { mutableTokenWallet.value = null; return@launch }
+            val wallet = try { client.tokenWallet(member) } catch (cancelled: CancellationException) { throw cancelled }
+                catch (_: Exception) { null }
+            // A slow read must never show a previous account's wallet.
+            if (access?.accountID == member.accountID) mutableTokenWallet.value = wallet
+        }
+    }
 
     /** Retained ViewModel flows only. Never pass an Activity-bound combined flow here. */
     fun bindAccountState(account: StateFlow<AccountState>, transitionBusy: StateFlow<Boolean>) {
@@ -146,13 +168,15 @@ class MinutePurchaseViewModel(application: Application) : AndroidViewModel(appli
     fun onForeground(account: AccountState) {
         selectAccount(account)
         viewModelScope.launch { controller?.onForeground(); stripeController?.onForeground() }
+        refreshTokenWallet()
     }
     /** Call when membership or account-operation state changes, including sign-out and deletion. */
     fun onAccountChanged(account: AccountState) {
         val changed = selectAccount(account)
         if (changed) viewModelScope.launch { controller?.onForeground(); stripeController?.onForeground() }
+        if (changed) refreshTokenWallet()
     }
-    fun refresh() { viewModelScope.launch { controller?.refresh(); stripeController?.refresh() } }
+    fun refresh() { viewModelScope.launch { controller?.refresh(); stripeController?.refresh() }; refreshTokenWallet() }
     fun launch(activity: Activity, sku: String) {
         if (!enabled) return
         val permit = launchGate.begin() ?: return

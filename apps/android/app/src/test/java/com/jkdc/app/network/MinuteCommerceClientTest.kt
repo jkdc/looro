@@ -62,7 +62,7 @@ class MinuteCommerceClientTest {
         server.enqueue(MockResponse().setBody(body))
         val result = stripe.createStripe(session, "synthetic-value", id)
         assertEquals(url, result.checkout.value)
-        assertEquals(39, result.aiValue.quote.processingEstimateMinor)
+        assertEquals(39, result.aiValue!!.quote.processingEstimateMinor)
         assertFalse(result.toString().contains("cs_test"))
         val request = server.takeRequest()
         assertEquals("/v1/minutes/orders", request.path)

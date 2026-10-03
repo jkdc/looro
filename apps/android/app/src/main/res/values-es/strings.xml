@@ -454,4 +454,26 @@
     <string name="words_expression_remove">Quitar</string>
     <string name="lookup_save">Guardar para repasar</string>
     <string name="lookup_saved">Guardada</string>
+    <string name="tokens_row_title">Palique (tokens)</string>
+    <string name="tokens_row_hint">Tokens prepagados para el modelo hospedado</string>
+    <string name="tokens_sheet_title">Palique (tokens)</string>
+    <string name="tokens_sheet_intro">Desbloquea una vez y recarga paquetes pequeños de tokens. El modelo hospedado responde con la clave de la app; tu voz nunca sale del dispositivo.</string>
+    <string name="tokens_balance_chip">%1$s en tokens prepagados disponibles</string>
+    <string name="tokens_balance_empty">No quedan tokens prepagados</string>
+    <string name="tokens_exhausted">Se agotó tu saldo de tokens. Elige un paquete abajo para continuar.</string>
+    <string name="tokens_unlock_card_title">Desbloquear Palique (tokens)</string>
+    <string name="tokens_unlock_card_detail">Compra única. Desbloquea el modelo hospedado para esta cuenta.</string>
+    <string name="tokens_pack_card_title">Paquete de tokens</string>
+    <string name="tokens_pack_card_credit">%1$s en servicio prepagado</string>
+    <string name="tokens_credit_disclosure">Los tokens son servicio prepagado para el modelo hospedado. No son dinero y no tienen valor de cambio. El uso se mide por llamada: no existe opción ilimitada.</string>
+    <string name="tokens_sign_in">Inicia sesión para comprar tokens</string>
+    <string name="tokens_sign_in_detail">Tus tokens se quedan con tu cuenta. Tus conversaciones se quedan en este dispositivo.</string>
+    <string name="tokens_sign_in_again">Inicia sesión para confirmar tus compras y ver tus tokens.</string>
+    <string name="tokens_unavailable">Los paquetes de tokens no están disponibles ahora. Inténtalo de nuevo más tarde.</string>
+    <string name="tokens_loading">Buscando paquetes de tokens…</string>
+    <string name="tokens_pending">Tu pago está pendiente. Tus tokens aparecerán cuando se complete.</string>
+    <string name="tokens_added">Tus tokens están listos. Sigamos hablando.</string>
+    <string name="tokens_sandbox">Compra registrada en la tienda de pruebas. Seguirá siendo una compra de prueba hasta usar la ficha en producción.</string>
+    <string name="tokens_one_time">Compra única · Sin suscripción</string>
+    <string name="tokens_error_action">Conseguir tokens</string>
 </resources>
