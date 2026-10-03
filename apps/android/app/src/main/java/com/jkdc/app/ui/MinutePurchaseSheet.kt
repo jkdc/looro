@@ -48,6 +48,10 @@ fun MinutePurchaseSheet(
     val checking = state.busy || state.notice == MinutePurchaseNotice.VERIFYING
     val needsSignIn = !signedIn || state.notice == MinutePurchaseNotice.SIGN_IN_REQUIRED
     val canChoose = state.available && !checking && !state.purchaseInProgress && !accountBusy && !needsSignIn
+    // The minutes sheet sells minutes (and their AI-value estimates) only; the
+    // token unlock/pack cards belong to the dedicated TokensPurchaseSheet, which
+    // filters the shared controller state the other way around.
+    val minutePacks = state.packs.filter { !it.isPack }
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = AppColors.Cream,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Box(Modifier.fillMaxWidth().fillMaxHeight(.90f).testTag("minute-purchase-sheet")) {
@@ -78,10 +82,10 @@ fun MinutePurchaseSheet(
                             .testTag("minute-purchase-minimum"))
                     if (!needsSignIn) state.balance?.let { PaidBalanceText(it) }
                     Column(Modifier.widthIn(max = 520.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        state.packs.forEach { pack ->
+                        minutePacks.forEach { pack ->
                             MinutePackCard(pack, enabled = canChoose, onBuy = { onBuy(pack.sku) })
                         }
-                        if (state.packs.isEmpty()) Surface(color = Color.White.copy(alpha = .72f), shape = RoundedCornerShape(26.dp)) {
+                        if (minutePacks.isEmpty()) Surface(color = Color.White.copy(alpha = .72f), shape = RoundedCornerShape(26.dp)) {
                             Text(stringResource(if (checking) R.string.minute_purchases_loading else R.string.minute_purchases_unavailable),
                                 Modifier.fillMaxWidth().padding(24.dp).testTag("minute-purchase-empty"),
                                 style = MaterialTheme.typography.bodyMedium, color = AppColors.Secondary, textAlign = TextAlign.Center)
@@ -109,7 +113,7 @@ fun MinutePurchaseSheet(
                             Text(text, style = MaterialTheme.typography.bodyMedium, color = AppColors.Secondary)
                         }
                     }
-                    if (state.packs.isNotEmpty()) Text(stringResource(R.string.minute_purchases_one_time),
+                    if (minutePacks.isNotEmpty()) Text(stringResource(R.string.minute_purchases_one_time),
                         style = MaterialTheme.typography.labelMedium, color = AppColors.Secondary, textAlign = TextAlign.Center)
                     Text(stringResource(if (state.channel == PurchaseChannel.STRIPE) R.string.minute_purchases_stripe_terms else R.string.minute_purchases_play_terms), style = MaterialTheme.typography.bodySmall,
                         color = AppColors.Secondary, textAlign = TextAlign.Center)

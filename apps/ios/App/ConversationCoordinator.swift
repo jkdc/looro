@@ -342,8 +342,11 @@ enum ScenarioReviewState: Equatable {
     }
     /// Routes token-proxy 402/403 failures to the paywall instead of a dead end:
     /// 402 balance → exhausted banner, 403 unlock → paywall cards. 429 stays a
-    /// plain retryable message, exactly like Android's errorTokensBlock.
+    /// plain retryable message, exactly like Android's errorTokensBlock. The
+    /// paywall route is recomputed from the current failure only, so a stale
+    /// block never leaks into the next presented error.
     private func noteProxyBlock(_ failure: Error) {
+        proxyActionAvailable = false
         guard let failure = failure as? HostedProxyEngine.Failure else { return }
         switch failure {
         case .balanceExhausted: proxyActionAvailable = true; tokensExhaustedBanner = true
@@ -602,6 +605,9 @@ enum ScenarioReviewState: Equatable {
         if backgroundTask != .invalid { UIApplication.shared.endBackgroundTask(backgroundTask); backgroundTask = .invalid }
     }
     private func fail(_ message: String) {
+        // Generic error presentation (Android's presentError): a plain failure
+        // never keeps a previous proxy block's "Get tokens" action.
+        proxyActionAvailable = false
         error = message; session?.endReason = "Connection failed"
         finish(final: false); cancelReset(); state = .failed
     }
