@@ -24,13 +24,13 @@
 ## Task 3 — Apps (both platforms)
 
 - [x] 3.1 `hosted-proxy` engine in the factory (Kotlin + Swift mirror).
-- [ ] 3.2 Settings "Palique (tokens)" row, paywall, pack purchase sheet; EN/ES
+- [x] 3.2 Settings "Palique (tokens)" row, paywall, pack purchase sheet; EN/ES
       strings parity.
-- [ ] 3.3 JVM tests + `check_cross_platform.py` + assembleDebug; iOS mirrored
-      (macOS gate).
+- [x] 3.3 JVM tests + `check_cross_platform.py` + assembleDebug; iOS mirrored
+      (macOS compile/test gate pending — see verify-report.md).
 
 ## Task 4 — Operator + record close
 
-- [ ] 4.1 Admin browse exposes entitlements/metering (no new dashboard).
+- [x] 4.1 Admin browse exposes entitlements/metering (no new dashboard).
 - [x] 4.2 verify-report.md with honest gates (Play products need console
       access; prices need final approval).

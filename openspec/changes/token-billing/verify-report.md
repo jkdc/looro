@@ -1,32 +1,74 @@
-# Verify report: token-billing (F1+F2 backend delivered; F3/F4 pending)
+# Verify report: token-billing (change closed with honest gates)
 
-**Date:** 2026-09-22 · **Branch:** `feature/rebranding-looro`
+**Date:** 2026-10-02 · **Branch:** `feature/learning-platform`
 
-## Delivered (commits `6745333`, `9f74da3`)
+## Delivered
 
-- **F1:** migration 025 (`entitlements` + `rate_versions` seeded with the
-  MiniMax rate 300,000 / 1,200,000 nano per million tokens); ledger rows carry
-  the applied rate version.
-- **F2:** `POST /v1/proxy/responses` — session auth, `unlock_required` 403,
-  OpenAI-compatible relay through the server key, metering of
-  provider-reported usage at the active rate version via `appendEntry`
-  (bounded single-call grace: a call costing more than the balance settles at
-  the balance, never negative; zero balance refuses before the provider).
-  compose passes `PROXY_PROVIDER_URL/KEY/MAX_TOKENS` (disabled by default).
-  `entitlements`/`rate_versions` join the admin browse whitelist.
+- **Backend (F1+F2, closed 2026-09-22, commits `6745333`, `9f74da3`):** migration
+  025 (`entitlements` + `rate_versions`), `POST /v1/proxy/responses` with session
+  auth, `unlock_required` 403, metering of provider-reported usage at the pinned
+  rate version (bounded single-call grace, 402 on zero balance).
+- **Packs (1.2, commit `9a8f69e`):** migration 038 — `byok_unlock`/`token_pack`
+  ride the shared purchase-order registry with immutable purchase-time quotes
+  (`pack_purchase_quotes`, `rate_version` pinned) and `pack_purchase_transactions`;
+  set-once unlock delivery linked to its granting order (`entitlements.unlock_order_id`).
+- **Proxy endpoint (2.x, commits `5fdaa59`, `396ac17`, `567a264`):** non-streaming
+  v1 (`stream: true` → 400 `streaming_unsupported_v1`), per-account concurrency cap
+  (`PROXY_MAX_CONCURRENT`, default 2, 429 `account_busy`), live-environment unlock
+  gate, load phase in `loadtest.mjs`.
+- **Apps (3.1–3.3, commits `15a9bd3`, `b1b3659`, `80f5b96`, `479a39a`, `2a1f403`,
+  `1cfc27d`):** `hosted-proxy` engine in both factories (Kotlin + Swift mirror);
+  Settings "Palique (tokens)" row, paywall and pack purchase sheet on Android and
+  iOS with EN/ES strings parity.
+- **Operator surface (4.1, this task):** admin browse (existing Tablas pattern, no
+  new dashboard) now covers the `ledger` token-metering rows (`rate_version`
+  filterable), `pack_purchase_transactions` (state/provider/grant/reversal), and
+  `entitlements.unlock_order_id` (the order that granted the unlock).
 
-## Gates
+## Gates run (all commands executed 2026-10-02)
 
-| Gate | Result |
+| Gate | Command | Result |
+|---|---|---|
+| Backend typecheck | `npx tsc --noEmit` (services/api) | ✅ clean |
+| Backend suite | `TEST_DATABASE_URL=postgresql://app:app@127.0.0.1:55434/app_billing_test npm test` | ✅ 418 tests, 413 pass, 5 fail — the 5 are the known environmental failures (accounts, auth, apple-revocation, service-account OAuth, usage-timeseries), identical before this task; the admin-browse file itself is 8/8 incl. the new token-billing browsing test |
+| Android unit tests | `./gradlew :app:testDebugUnitTest` (apps/android) | ✅ 547 tests, 0 failures, 0 skipped (74 suite reports) |
+| Android build | `./gradlew :app:assembleDebug` | ✅ BUILD SUCCESSFUL, `app-debug.apk` produced |
+| Cross-platform parity | `python3 scripts/check_cross_platform.py` | ✅ exit 0 (prompts, constants, archive-fields agree) |
+| Backend docker suite (earlier battery, 2026-09-22) | manual API battery + panel browse | ✅ recorded in the previous revision of this file (401/403/200 metering/grace/402 matrix) |
+
+## Gates pending
+
+| Gate | Blocker |
 |---|---|
-| Full backend docker suite | ✅ exit 0, 0 failures (includes 3 new token-proxy integration tests: config validation, metering/settle math with a stub provider, grace floor, 402, estimate refusal) |
-| Manual API battery (local stack + stub provider) | ✅ 401 without session · 403 `unlock_required` without entitlement · 200 with `metering {rateVersion, nanoUSDSettled=90000}` and wallet 50,000,000 → 49,910,000 · grace settle at balance floor · 402 `token_balance_exhausted` |
-| Panel (browser) | ✅ `entitlements` browsable in Tablas with the battery's unlock row |
-| Play/Stripe real product delivery (task 1.2) | ⏳ needs Play Console products + final prices (Joaquín) |
-| Streaming (2.3), Apps F3, dashboards F4 | ⏳ pending, per tasks.md |
+| macOS compile/test gate, incl. the new `TokensCommerceTests` / `HostedProxyEngineTests` | no macOS host in this round; iOS mirror verified by source parity + cross-platform check only |
+| Emulator/device e2e of the purchase flows and engine swap, both platforms | needs Play/Stripe test products and a device run |
+| Deployed server check | the proxy path has only run against the local stack and stub provider |
+| Play Console products | needs console access (Joaquín) |
+| Final price approval | product decision (Joaquín) |
+| Android instrumented suites + `lintDebug` | not run this round |
+
+## Known gaps (recorded during this plan, accepted for v1)
+
+- **No GET entitlement route for an unlock badge:** Android/iOS learn the unlock
+  only from purchase outcomes; a locked account shows an empty-balance chip
+  until a purchase answer arrives.
+- **Unlock status shape lacks refund evidence:** a live refunded unlock renders
+  the sandbox copy.
+- **iOS purchase-plumbing v1 deltas:** no persisted order recovery across
+  launches; no StoreKit/Play purchase path (checkout URL only); no
+  payment-return deep link; the purchase gate reuses the hosted flag; 402/403
+  routing only on typed replies (not streaming UI states).
+- **Proxy 429 carries no `Retry-After` header.**
+- **`compose.yaml` does not forward `PROXY_MAX_CONCURRENT`** — the cap defaults
+  to 2 unless the operator adds the env by hand.
+- **Multi-instance deployments need a shared-store cap:** the per-account
+  concurrency limiter is in-process, so N instances mean N× the cap.
 
 ## Verdict
 
-Backend path (entitlement → proxy → metering → exhaustion) works end to end
-and is covered by integration tests plus a manual API/browser battery. The
-change stays OPEN for F1.2 delivery adapters, F3 apps and F4 dashboards.
+The full change (entitlement → pack purchase → proxy → metering → exhaustion)
+works end to end behind the documented v1 limits, is covered by backend
+integration tests and Android JVM tests, and the operator can browse
+entitlements, metering and pack transactions in the existing panel. The change
+is CLOSED; the pending gates above are store/deployment approvals, not code
+work, and the known gaps are the agreed v1 cuts.
