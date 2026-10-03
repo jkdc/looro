@@ -10,7 +10,7 @@
 - [x] F-V2 A1 es/fr/it/de/pt +1 unidad (comida/mercado) — **superado con
       evidencia**: unidad de mercado presente en los 5 (`es-foundations-u6`
       "En el mercado", `fr-foundations-u5` "Au marché", `it-foundations-u5`
-      "Al mercado", `de-foundations-u5` "Einkaufen", `pt-foundations-u5`
+      "Al mercato", `de-foundations-u5` "Einkaufen", `pt-foundations-u5`
       "Na feira"), con A1 = 40 lecciones en los seis foundations. Misma
       evidencia que F-V1.
 - [x] F-V3 B1 inglés +2 unidades — shipped en `bb609cf` (+ fix `fe8fbf3`):
