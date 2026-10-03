@@ -252,8 +252,9 @@ struct HostedPreferenceStore {
         set { defaults.set(newValue, forKey: Self.key) }
     }
     /// The "Palique (tokens)" engine selection, mirroring Android's local engine
-    /// selection store; the choice applies to the next conversation. Nothing
-    /// sets it yet — the Settings row lands with the token-billing UI task.
+    /// selection store; the choice applies to the next conversation. Set from
+    /// Settings (`ConversationCoordinator.selectTokensEngine`), which also owns
+    /// the ATTACH / RE-ATTACH / CLEAR lifecycle documented on HelperRouter.
     var prefersHostedProxy: Bool {
         get { defaults.bool(forKey: Self.proxyKey) }
         set { defaults.set(newValue, forKey: Self.proxyKey) }

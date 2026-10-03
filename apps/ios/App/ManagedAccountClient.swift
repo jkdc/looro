@@ -87,6 +87,88 @@ struct ManagedAccountClient {
         let result: ManagedWallet = try await request("/v1/wallet", method: "GET", session: session)
         try result.validate(); return result
     }
+
+    // MARK: Palique (tokens) pack commerce
+    // The Stripe-checkout mirror of Android's MinuteCommerceClient pack routes:
+    // the iOS build has no Play Billing and no StoreKit plumbing, so the server
+    // checkout URL opens externally and status is polled by hand. Catalog and
+    // order parsing is strict and lives in LearningCore (TokensCommerce.swift).
+
+    /// Pack entries riding `GET /v1/minutes/products?provider=stripe`. Non-pack
+    /// items (today `ai_value`, which iOS has no surface for) are skipped; a
+    /// malformed pack entry fails the whole catalog closed, like Android.
+    func packCatalog(session: ManagedAccountSession) async throws -> [TokenPackProduct] {
+        struct Wire: Decodable {
+            struct Item: Decodable {
+                let sku: String?, providerProduct: String?, currency: String?
+                let totalMinor: Int?, environment: String?
+                let entitlementKind: String?, creditNanoUSD: String?
+            }
+            let products: [Item]?
+        }
+        let wire: Wire = try await request("/v1/minutes/products", method: "GET",
+                                           query: ["provider": "stripe"], session: session)
+        guard let items = wire.products, items.count <= 100 else { throw ManagedAccountError.invalidResponse }
+        var packs: [TokenPackProduct] = []
+        for item in items {
+            guard item.entitlementKind.map(TokenPackKind.parse(_:)) != nil else { continue }
+            guard let pack = TokenPackProduct.parse(sku: item.sku, providerProduct: item.providerProduct,
+                                                    currency: item.currency, totalMinor: item.totalMinor,
+                                                    environment: item.environment,
+                                                    entitlementKind: item.entitlementKind,
+                                                    creditNanoUSD: item.creditNanoUSD),
+                  !packs.contains(where: { $0.sku == pack.sku })
+            else { throw ManagedAccountError.invalidResponse }
+            packs.append(pack)
+        }
+        return packs
+    }
+
+    /// `POST /v1/minutes/orders` for a pack SKU on the Stripe channel: the quoted
+    /// order constants are re-validated against the same invariants as the
+    /// catalog AND against the catalog entry the learner chose (mirror of
+    /// Android's `StripeMinuteOrder.matches`), the echoed payment order must
+    /// match, and only a checked `checkout.stripe.com` URL is ever returned.
+    func createPackOrder(session: ManagedAccountSession, sku: String, expecting: TokenPackProduct,
+                         idempotencyKey: String)
+        async throws -> (orderID: String, checkout: URL) {
+        struct Wire: Decodable {
+            let orderID: String?, sku: String?, providerProduct: String?, currency: String?
+            let totalMinor: Int?, environment: String?
+            let entitlementKind: String?, creditNanoUSD: String?
+            struct Payment: Decodable { let orderID: String?, checkoutURL: String? }
+            let payment: Payment?
+        }
+        guard sku.count <= 128,
+              sku.range(of: TokenPackProduct.identifierPattern, options: .regularExpression) != nil,
+              idempotencyKey.range(of: "^[A-Za-z0-9._:-]{8,128}$", options: .regularExpression) != nil
+        else { throw ManagedAccountError.invalidResponse }
+        let wire: Wire = try await request("/v1/minutes/orders", method: "POST",
+                                           body: ["provider": "stripe", "sku": sku], session: session,
+                                           idempotencyKey: idempotencyKey)
+        guard let pack = TokenPackProduct.parse(sku: wire.sku, providerProduct: wire.providerProduct,
+                                                currency: wire.currency, totalMinor: wire.totalMinor,
+                                                environment: wire.environment,
+                                                entitlementKind: wire.entitlementKind,
+                                                creditNanoUSD: wire.creditNanoUSD),
+              pack == expecting,
+              let payment = wire.payment, payment.orderID == wire.orderID,
+              let orderID = wire.orderID,
+              let checkout = TokenCheckoutURL.checked(payment.checkoutURL ?? "")
+        else { throw ManagedAccountError.invalidResponse }
+        return (orderID: orderID, checkout: checkout)
+    }
+
+    /// Pack order status; `TokenPackStatus.validate()` enforces the BigInt-string
+    /// money shape and the never-sent outstanding-reversal rule.
+    func packStatus(session: ManagedAccountSession, orderID: String) async throws -> TokenPackStatus {
+        let status: TokenPackStatus = try await send(try configuration.orderEndpoint(orderID), method: "GET",
+                                                     session: session)
+        try status.validate()
+        guard status.orderID.lowercased() == orderID.lowercased() else { throw ManagedAccountError.invalidResponse }
+        return status
+    }
+
     func profile(session: ManagedAccountSession) async throws -> ManagedAccountProfile {
         let result: ManagedAccountProfile = try await request("/v1/account", method: "GET", session: session)
         try result.validate(session: session); return result
@@ -103,13 +185,21 @@ struct ManagedAccountClient {
         guard result.deleted else { throw ManagedAccountError.invalidResponse }
     }
     private func request<T: Decodable>(_ path: String, method: String, body: [String: String]? = nil,
-                                        session: ManagedAccountSession? = nil) async throws -> T {
-        var request = URLRequest(url: try configuration.endpoint(path))
+                                        session: ManagedAccountSession? = nil,
+                                        query: [String: String]? = nil, idempotencyKey: String? = nil) async throws -> T {
+        try await send(try configuration.endpoint(path, query: query ?? [:]), method: method, body: body,
+                       session: session, idempotencyKey: idempotencyKey)
+    }
+
+    private func send<T: Decodable>(_ url: URL, method: String, body: [String: String]? = nil,
+                                    session: ManagedAccountSession? = nil, idempotencyKey: String? = nil) async throws -> T {
+        var request = URLRequest(url: url)
         request.httpMethod = method; request.setValue("application/json", forHTTPHeaderField: "Accept")
         if let body {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = try JSONEncoder().encode(body)
         }
+        if let idempotencyKey { request.setValue(idempotencyKey, forHTTPHeaderField: "Idempotency-Key") }
         if let session {
             guard session.isUsable(scope: configuration.storageScope) else { throw ManagedAccountError.server("sign_in_required") }
             request.setValue("Bearer " + session.accessToken, forHTTPHeaderField: "Authorization")

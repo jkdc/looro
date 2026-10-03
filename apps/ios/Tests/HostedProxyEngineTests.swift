@@ -71,6 +71,8 @@ final class HostedProxyEngineTests: XCTestCase {
     /// The failure wording must match Android's `OpenAICompatibleEngine.proxyFailure`
     /// and `PROXY_SIGN_IN_MESSAGE` character for character.
     func testProxyErrorMappingIsReadableAndMirrorsAndroid() throws {
+        // 401 (expired/revoked bearer) fails closed with the same sign-in surface.
+        XCTAssertEqual(HostedProxyEngine.failure(status: 401, data: Data("{}".utf8)), .signInRequired)
         XCTAssertEqual(HostedProxyEngine.failure(status: 402, data: Data("{}".utf8)), .balanceExhausted)
         XCTAssertEqual(try XCTUnwrap(HostedProxyEngine.Failure.balanceExhausted.errorDescription),
                        "Your Palique token balance is used up. Buy more tokens to keep practising.")

@@ -449,8 +449,16 @@ struct SettingsView: View {
     @State private var deleting = false
     @State private var notices = false
     @State private var showingAPIKey = false
+    @State private var tokens = TokensCommerceModel(configuration: ManagedAccountConfiguration.load())
     private var store: LearningStore { coordinator.store }
     private var totalVoiceSeconds: Double { store.sessions.reduce(0) { $0 + $1.voiceSeconds } }
+    /// Server display hint for the tokens row (GET /v1/wallet): nil when signed
+    /// out or the read failed — never a cached balance.
+    private var tokensChip: String? {
+        guard !tokens.showSignIn, let wallet = tokens.wallet, let nano = Int64(wallet.availableNanoUSD) else { return nil }
+        return nano > 0 ? String(format: "%@ of prepaid tokens available", tokenCreditText(nano) ?? "")
+                        : "No prepaid tokens left"
+    }
     var body: some View {
         NavigationStack {
             Form {
@@ -493,10 +501,13 @@ struct SettingsView: View {
                             Label("Account", systemImage: "person.crop.circle")
                         }.disabled(coordinator.isRunning).accessibilityIdentifier("managed-account-settings")
                         if coordinator.hostedUIAvailable {
-                            Picker("Conversation", selection: Binding(get: { coordinator.prefersHostedMinutes },
-                                                                      set: { coordinator.prefersHostedMinutes = $0 })) {
-                                Text("Your OpenAI key").tag(false)
-                                Text("Included minutes").tag(true)
+                            Picker("Conversation", selection: Binding(get: { coordinator.engineSelection },
+                                                                      set: { coordinator.selectEngine($0) })) {
+                                Text("Your OpenAI key").tag(ConversationCoordinator.EngineSelection.personalKey)
+                                if coordinator.tokensUIAvailable {
+                                    Text("Palique (tokens)").tag(ConversationCoordinator.EngineSelection.tokens)
+                                }
+                                Text("Included minutes").tag(ConversationCoordinator.EngineSelection.hostedMinutes)
                             }.disabled(coordinator.isRunning).accessibilityIdentifier("conversation-provider")
                             if coordinator.prefersHostedMinutes {
                                 let balance = coordinator.hostedBalance
@@ -505,6 +516,33 @@ struct SettingsView: View {
                                      : "No included minutes left.")
                                     .font(.footnote).foregroundStyle(AppColor.secondary)
                             }
+                        }
+                        // Commercial surface for the hosted-proxy engine ("Palique
+                        // (tokens)"): engine SELECTION is the picker above; this row
+                        // is only the paywall/pack entry with the server's balance
+                        // display hint. Hidden when the hosted surface is disabled.
+                        if coordinator.tokensUIAvailable {
+                            Button {
+                                coordinator.showTokensSheet = true
+                            } label: {
+                                HStack(spacing: 10) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Palique (tokens)")
+                                        Text("Prepaid tokens for the hosted model")
+                                            .font(.footnote).foregroundStyle(AppColor.secondary)
+                                    }
+                                    Spacer()
+                                    if let chip = tokensChip {
+                                        Text(chip).font(.caption).weight(.medium)
+                                            .padding(.horizontal, 10).padding(.vertical, 5)
+                                            .background(AppColor.peach.opacity(0.7), in: Capsule())
+                                            .accessibilityIdentifier("settings-tokens-balance")
+                                    }
+                                    Image(systemName: "chevron.right").font(.caption2).foregroundStyle(AppColor.secondary)
+                                }
+                            }.buttonStyle(.plain)
+                                .disabled(coordinator.isRunning)
+                                .accessibilityIdentifier("settings-tokens-row")
                         }
                     }
                 }
@@ -580,6 +618,11 @@ struct SettingsView: View {
                 try store.importData(Archive.readImportData(from: url)); message = "Your backup has been imported."
             } catch { message = error.localizedDescription }
         }
+        .sheet(isPresented: Binding(get: { coordinator.showTokensSheet },
+                                    set: { if !$0 { coordinator.dismissTokensSheet(); Task { await tokens.refresh() } } })) {
+            TokensPurchaseSheet(coordinator: coordinator)
+        }
+        .task { await tokens.refresh() }
         .confirmationDialog("Delete all learning data on this phone?", isPresented: $deleting, titleVisibility: .visible) {
             Button("Delete all learning data", role: .destructive) { coordinator.deleteLearningData() }
         } message: { Text("This removes conversations, vocabulary and progress. Export a backup first if you want to keep them. Your API key and preferences remain.") }

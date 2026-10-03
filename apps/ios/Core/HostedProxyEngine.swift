@@ -124,6 +124,9 @@ public struct HostedProxyEngine: Sendable {
 
     static func failure(status: Int, data: Data) -> Failure {
         switch status {
+        // A 401 means the captured bearer expired or was revoked; the surface is
+        // the same fail-closed sign-in message as an empty bearer.
+        case 401: return .signInRequired
         case 402: return .balanceExhausted
         case 403: return .unlockRequired
         case 429: return .accountBusy

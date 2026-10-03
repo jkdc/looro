@@ -54,11 +54,36 @@ public struct ManagedAccountConfiguration: Equatable, Sendable {
         self.googleRedirectURI = googleRedirect; self.appleClientID = appleClientID
     }
 
-    public func endpoint(_ path: String) throws -> URL {
-        let allowed = ["/v1/auth/challenge", "/v1/auth/exchange", "/v1/wallet", "/v1/auth/sign-out", "/v1/account"]
+    public func endpoint(_ path: String, query: [String: String] = [:]) throws -> URL {
+        let allowed = ["/v1/auth/challenge", "/v1/auth/exchange", "/v1/wallet", "/v1/auth/sign-out", "/v1/account",
+                       // Pack commerce (Palique (tokens)): the catalog, order creation
+                       // and status routes ride the same origin and session store.
+                       "/v1/minutes/products", "/v1/minutes/orders"]
         guard allowed.contains(path), var c = URLComponents(url: origin, resolvingAgainstBaseURL: false)
         else { throw ManagedAccountError.unavailable }
         c.path = path
+        if !query.isEmpty {
+            let names = query.keys.sorted()
+            c.queryItems = names.map { URLQueryItem(name: $0, value: query[$0]) }
+        }
+        guard let result = c.url else { throw ManagedAccountError.unavailable }
+        return result
+    }
+
+    /// `GET /v1/minutes/orders/:id` with the server's UUID shape enforced locally
+    /// (mirror of Android's `validateID`): the order identifier is the only
+    /// client-supplied path segment, so it can never carry a route traversal.
+    public func orderEndpoint(_ orderID: String) throws -> URL {
+        let lowered = orderID.lowercased()
+        guard lowered.range(of: "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+                            options: .regularExpression) != nil
+        else { throw ManagedAccountError.invalidResponse }
+        // Built directly: the exact-match allowlist in endpoint(_:) cannot carry
+        // a per-order path.
+        guard var c = URLComponents(url: origin, resolvingAgainstBaseURL: false) else {
+            throw ManagedAccountError.unavailable
+        }
+        c.path = "/v1/minutes/orders/\(lowered)"
         guard let result = c.url else { throw ManagedAccountError.unavailable }
         return result
     }

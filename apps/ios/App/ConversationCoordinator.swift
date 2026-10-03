@@ -83,6 +83,26 @@ enum ScenarioReviewState: Equatable {
     var prefersHostedMinutes: Bool {
         didSet { hostedPreferences.prefersHostedMinutes = prefersHostedMinutes }
     }
+    /// The "Palique (tokens)" engine selection (mirror of Android's local engine
+    /// selection store): the learning calls route through the token-billing
+    /// proxy, the voice channel still rides the personal key or hosted minutes.
+    private(set) var prefersHostedProxy: Bool {
+        didSet { hostedPreferences.prefersHostedProxy = prefersHostedProxy }
+    }
+    enum EngineSelection { case personalKey, hostedMinutes, tokens }
+    var engineSelection: EngineSelection {
+        prefersHostedProxy ? .tokens : (prefersHostedMinutes ? .hostedMinutes : .personalKey)
+    }
+    /// The commercial "Palique (tokens)" surface follows the hosted flag and a
+    /// managed configuration, like the hosted-minutes UI.
+    var tokensUIAvailable: Bool { HostedPreferenceStore.hostedFlagEnabled && managed != nil }
+    var showTokensSheet = false
+    /// True while the sheet was opened from a 402 proxy block (exhausted banner).
+    private(set) var tokensExhaustedBanner = false
+    /// Set with `error` when the failure was a token-proxy 402/403 block: the
+    /// error alert gains a "Get tokens" action (mirror of Android's
+    /// errorTokensBlock route into the paywall sheet).
+    private(set) var proxyActionAvailable = false
     private(set) var inputLevel = 0.0
     private(set) var outputLevel = 0.0
     private(set) var isMuted = false
@@ -125,6 +145,7 @@ enum ScenarioReviewState: Equatable {
         let router = HelperRouter(api: api); self.helperRouter = router
         managed = ManagedAccountConfiguration.load().map { (ManagedAccountClient(configuration: $0), $0) }
         prefersHostedMinutes = hostedPreferences.prefersHostedMinutes
+        prefersHostedProxy = hostedPreferences.prefersHostedProxy
         finalAssessments = FinalAssessmentQueue { snapshot, passage in
             guard store.preferences.aiConsentVersion == AIProcessingConsent.version || AudioVerification.requested else { throw AIProcessingConsent.ConsentError.required }
             return try await Self.assess(router: router, snapshot: snapshot, passage: passage)
@@ -158,6 +179,11 @@ enum ScenarioReviewState: Equatable {
         observers.append(NotificationCenter.default.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] notification in
             guard let raw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt, raw == AVAudioSession.InterruptionType.began.rawValue else { return }
             Task { @MainActor in self?.end(reason: "Audio interrupted") }
+        })
+        // Sign-in / sign-out / deletion / forced expiry: re-arm or disarm the
+        // token proxy so it never rides a dead bearer across an account switch.
+        observers.append(NotificationCenter.default.addObserver(forName: .managedAccountSessionChanged, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.accountSessionChanged() }
         })
         refreshUsageEnabled()
         usageReporter.record(UsageEvents.appOpen)
@@ -201,6 +227,10 @@ enum ScenarioReviewState: Equatable {
         if ProcessInfo.processInfo.arguments.contains("--preview") { showSettings = true; return }
         #endif
         let prefersHosted = hostedUIAvailable && hostedPreferences.prefersHostedMinutes
+        // RE-ATTACH per the HelperRouter.useHostedProxy contract: the captured
+        // bearer expires with the app session (≤24h), so every conversation
+        // re-reads the fresh token before it is captured for the session.
+        if prefersHostedProxy { attachHostedProxy() }
         if !prefersHosted, !CredentialStore.hasKey { showSettings = true; return }
         cancelReset(); meanings.reset()
         scenarioReviewTask?.cancel(); scenarioReviewState = nil
@@ -253,6 +283,72 @@ enum ScenarioReviewState: Equatable {
                 guard self.session?.id == generation, self.state == .connecting || self.state == .active else { return }
                 self.fail(error.localizedDescription)
             }
+        }
+    }
+    /// Selects or deselects Palique (tokens) as the learning engine (Settings).
+    /// The choice applies to the next conversation; ATTACH happens here per the
+    /// HelperRouter.useHostedProxy contract, CLEAR when deselected.
+    ///
+    /// The proxy path drops `search` silently (HostedProxyEngine carries no
+    /// web-search tool): lookups and topics on Palique (tokens) answer without
+    /// sources, and callers must never promise citations on this engine.
+    func selectTokensEngine(_ enabled: Bool) {
+        guard !isRunning else { return }
+        prefersHostedProxy = enabled
+        if enabled {
+            prefersHostedMinutes = false
+            attachHostedProxy()
+        } else {
+            helperRouter.clearHostedProxy()
+        }
+    }
+    /// Three-way Settings picker binding: Palique (tokens) wins over hosted
+    /// minutes, so hosted minutes are never spent while tokens are selected.
+    func selectEngine(_ selection: EngineSelection) {
+        guard !isRunning else { return }
+        selectTokensEngine(selection == .tokens)
+        if selection != .tokens { prefersHostedMinutes = selection == .hostedMinutes }
+    }
+    /// ATTACH / RE-ATTACH the token-billing proxy with a fresh bearer read from
+    /// the account Keychain (HelperRouter.useHostedProxy contract). Without the
+    /// hosted surface or a usable session the engine is CLEARED instead, so the
+    /// router can never hold a dead or wrong account's token — the next call
+    /// fails closed.
+    private func attachHostedProxy() {
+        guard tokensUIAvailable,
+              let configuration = managed?.configuration,
+              let token = try? ManagedAccountKeychain(scope: configuration.storageScope).load() else {
+            helperRouter.clearHostedProxy(); return
+        }
+        helperRouter.useHostedProxy(origin: configuration.origin, bearer: token.accessToken)
+    }
+    /// RE-ATTACH after a fresh sign-in, CLEAR after sign-out, deletion or forced
+    /// expiry — the Keychain read decides which. Never called while a
+    /// conversation is running (the notification only arrives between sessions).
+    private func accountSessionChanged() {
+        guard prefersHostedProxy else { return }
+        attachHostedProxy()
+    }
+    /// The error alert's "Get tokens" action: opens the paywall sheet with the
+    /// exhausted banner still set when the block was a 402.
+    func presentTokensFromError() {
+        error = nil
+        proxyActionAvailable = false
+        showTokensSheet = true
+    }
+    func dismissTokensSheet() {
+        showTokensSheet = false
+        tokensExhaustedBanner = false
+    }
+    /// Routes token-proxy 402/403 failures to the paywall instead of a dead end:
+    /// 402 balance → exhausted banner, 403 unlock → paywall cards. 429 stays a
+    /// plain retryable message, exactly like Android's errorTokensBlock.
+    private func noteProxyBlock(_ failure: Error) {
+        guard let failure = failure as? HostedProxyEngine.Failure else { return }
+        switch failure {
+        case .balanceExhausted: proxyActionAvailable = true; tokensExhaustedBanner = true
+        case .unlockRequired: proxyActionAvailable = true; tokensExhaustedBanner = false
+        default: break
         }
     }
     /// Resolves the conversation provider: hosted minutes when explicitly
@@ -858,7 +954,11 @@ enum ScenarioReviewState: Equatable {
             addUsage(result.usage)
             append("thinking", "The learner typed (data): \(String(clean.prefix(650)))")
             append("commentary", result.text); scheduleAssessment(); save()
-        } catch { if session?.id == snapshot.id { self.error = error.localizedDescription } }
+        } catch {
+            // A token-proxy block keeps the message but gains the paywall route.
+            noteProxyBlock(error)
+            if session?.id == snapshot.id { self.error = error.localizedDescription }
+        }
     }
     func lookup(word: String, sentence: String) async throws -> String {
         guard hasAIConsent else { throw AIProcessingConsent.ConsentError.required }

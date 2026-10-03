@@ -2,6 +2,15 @@ import Foundation
 import Observation
 import LearningCore
 
+/// Posted (main actor) whenever the local account session appears, changes or
+/// disappears: sign-in, sign-out, deletion, forced expiry. Listeners re-read
+/// the Keychain — it stays the only source of truth. The token-billing proxy
+/// uses this to re-attach its bearer on a fresh session and clear on sign-out
+/// or account switch, per the HelperRouter.useHostedProxy contract.
+extension Notification.Name {
+    static let managedAccountSessionChanged = Notification.Name("com.jkdc.app.managedAccountSessionChanged")
+}
+
 @MainActor @Observable
 final class ManagedAccountStore {
     let configuration: ManagedAccountConfiguration?
@@ -53,6 +62,7 @@ final class ManagedAccountStore {
             let result = try await client.profile(session: newSession)
             guard gate.accepts(token) else { return }
             profile = result
+            announceSessionChange()
         }
     }
     func refresh() {
@@ -73,6 +83,7 @@ final class ManagedAccountStore {
             guard gate.accepts(token) else { return }
             try keychain.remove()
             self.session = nil; profile = nil
+            announceSessionChange()
             if remoteFailed { message = "Signed out on this iPhone. We couldn’t reach Palique to revoke other sessions; they expire within 24 hours." }
         }
     }
@@ -88,6 +99,7 @@ final class ManagedAccountStore {
             try await client.delete(session: session, appleCode: code)
             guard gate.accepts(token) else { return }
             self.session = nil; profile = nil
+            announceSessionChange()
             do { try keychain.remove() }
             catch {
                 message = "Account deleted. Palique couldn’t clear its local secure sign-in record. Unlock this iPhone and reopen Account to clear it."
@@ -101,6 +113,11 @@ final class ManagedAccountStore {
         guard session == nil else { return }
         gate.cancel(); operation?.cancel(); identity.cancel(); operation = nil; isBusy = false
     }
+    /// Announces the Keychain truth so listeners (the token proxy engine) can
+    /// re-attach or clear without polling.
+    private func announceSessionChange() {
+        NotificationCenter.default.post(name: .managedAccountSessionChanged, object: nil)
+    }
     private func run(_ body: @escaping @MainActor (UInt64) async throws -> Void) {
         let token = gate.begin(); isBusy = true; message = nil
         operation = Task { [self] in
@@ -111,6 +128,7 @@ final class ManagedAccountStore {
                 if error as? ManagedAccountError == .server("sign_in_required") {
                     session = nil; profile = nil
                     do { try keychain?.remove() } catch { message = Self.message(for: error); return }
+                    announceSessionChange()
                 }
                 if error as? ManagedAccountError != .cancelled, !(error is CancellationError) {
                     message = Self.message(for: error)

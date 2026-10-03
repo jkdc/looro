@@ -36,6 +36,13 @@ struct RootView: View {
         }
         .tint(AppColor.ink)
         .sheet(isPresented: $coordinator.showSettings) { SettingsView(coordinator: coordinator) }
+        // Error-alert route into the paywall. While the Settings sheet is up it
+        // presents its own tokens sheet (the row lives there); this binding only
+        // presents when Settings is closed.
+        .sheet(isPresented: Binding(get: { coordinator.showTokensSheet && !coordinator.showSettings },
+                                    set: { if !$0 { coordinator.dismissTokensSheet() } })) {
+            TokensPurchaseSheet(coordinator: coordinator)
+        }
         .sheet(isPresented: $coordinator.showAIConsent, onDismiss: { coordinator.resumeAfterAIConsent() }) {
             AIConsentView(agree: { coordinator.acceptAIConsent() }, decline: { coordinator.declineAIConsent() })
         }
@@ -48,6 +55,11 @@ struct RootView: View {
         }
         .alert("A little interruption", isPresented: Binding(get: { coordinator.error != nil || coordinator.store.error != nil }, set: { if !$0 { coordinator.error = nil; coordinator.store.error = nil } })) {
             Button("OK", role: .cancel) { coordinator.error = nil; coordinator.store.error = nil }
+            // A token-proxy 402/403 offers the paywall route, mirroring
+            // Android's error dialog with its "Get tokens" action.
+            if coordinator.proxyActionAvailable {
+                Button("Get tokens") { coordinator.presentTokensFromError() }
+            }
         } message: { Text(coordinator.error ?? coordinator.store.error ?? "") }
         .onAppear {
             let arguments = ProcessInfo.processInfo.arguments
