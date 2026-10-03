@@ -201,6 +201,11 @@ class LearningDbStore private constructor(
          *  launch. */
         fun open(context: Context, clock: () -> Double = ::nowSeconds): LearningDbStore {
             val files = androidFiles(context)
+            val adopted = adoptPreimportDatabase(context.getDatabasePath(LearningDb.NAME))
+            if (adopted) {
+                println("LearningDbStore: adopted stranded learning.db.preimport " +
+                    "(an import died between the two renames; the previous database is back)")
+            }
             return try {
                 open(LearningDb.open(context), files, clock)
             } catch (failure: Exception) {
@@ -236,6 +241,40 @@ class LearningDbStore private constructor(
             println("LearningDbStore: staying on learning.json — ${failure.javaClass.simpleName}: ${failure.message}")
             return LearningDbStore(database = null, clock = { nowSeconds() }, jsonMode = true,
                 jsonModeNotice = "No se pudo migrar el respaldo local: la app seguirá usando el archivo JSON de aprendizaje.")
+        }
+
+        /**
+         * Crash recovery for the phase-D restore window: the import flow
+         * (AppViewModel.importDbFrom) closes the store, stages the imported
+         * bytes beside the live file, renames the live learning.db aside
+         * (learning.db.preimport) and then renames the staged bytes into
+         * place — two back-to-back renames. A process death between them can
+         * strand the learner's ENTIRE history in learning.db.preimport with
+         * no learning.db on disk (the next open would create a fresh empty
+         * one). Adoption runs before every open: only when the live file is
+         * MISSING and the keep-copy exists (the exact crash signature — after
+         * a completed import both exist, and the installed bytes must win)
+         * is the previous database renamed back, so the launch resumes on
+         * the data it had; a leftover adoption failure leaves both files in
+         * place for the next launch and logs instead of throwing.
+         * Platform-free so JVM tests exercise the crash window directly.
+         *
+         * @return true when a stranded keep-copy was adopted.
+         */
+        internal fun adoptPreimportDatabase(dbFile: File): Boolean {
+            try {
+                val keep = File(dbFile.path + ".preimport")
+                if (dbFile.exists() || !keep.exists()) return false
+                check(keep.renameTo(dbFile)) { "could not adopt $keep back to $dbFile" }
+                return true
+            } catch (recovery: Exception) {
+                // Never block the launch here: without adoption the open
+                // creates an empty database while the stranded copy stays on
+                // disk for the next attempt (and the JSON migration, if any,
+                // is still gated off by its own hash).
+                println("LearningDbStore: could not adopt learning.db.preimport — $recovery")
+                return false
+            }
         }
 
         private fun migrate(database: SqlDatabase, files: Files, clock: () -> Double) {

@@ -62,10 +62,12 @@ data class LanguageDeletion(
  *     backup from a newer schema must never be applied by an older app)
  *   - the ten canonical tables of shared/db/schema.sql present
  *
- * and only then writes the bytes to the destination stream. A checkpoint
- * that cannot finish (concurrent reader holds the WAL) or a live write that
- * races the file read is exactly what this verification exists to catch —
- * export either produces a verified-good file or fails loudly.
+ * and only then writes the bytes to the destination stream. The verification
+ * proves the copy's INTEGRITY, not its freshness: freshness is the
+ * checkpoint's job, so the (busy, log, checkpointed) row is checked and a
+ * checkpoint that could not finish (busy != 0 — a concurrent reader or
+ * writer held the WAL) fails the export loudly instead of shipping a stale
+ * backup that would still verify clean.
  *
  * WAL note: Android's framework SQLite opens databases in WAL mode by
  * default (API 28+), where a plain file copy would silently miss commits
@@ -81,10 +83,14 @@ data class LanguageDeletion(
  * a corrupt file, a future-schema backup or a database without the learning
  * tables is rejected BEFORE the caller touches the live database. The
  * caller (AppViewModel) owns the live-file dance: quiesce writes, close the
- * store ([SqlDatabase.close]), set the previous file aside, [installDatabase]
- * (temp file + same-directory rename, atomic on POSIX), reopen the store —
- * and put the previous file back if anything in that sequence fails. The
- * current database is never destroyed unless validation fully passed.
+ * store ([SqlDatabase.close]), [stageDatabase] the new bytes beside the
+ * live file, set the previous file aside, [installDatabase] the staged file
+ * over it (same-directory rename, atomic on POSIX), reopen the store — and
+ * put the previous file back if anything in that sequence fails (never by
+ * deleting: the keep-copy's rename atomically replaces whatever is in
+ * place). The current database is never destroyed unless validation fully
+ * passed, and a crash between the two renames strands it as
+ * learning.db.preimport, which LearningDbStore adopts back at startup.
  *
  * [deleteLearningDataForLanguage] implements the per-language delete in ONE
  * transaction:
@@ -142,10 +148,17 @@ object BackupManager {
                  openForVerify: VerificationOpener) {
         // Framework SQLite runs WAL by default: fold learning.db-wal into the
         // main file so the bytes below are the whole story. A no-op in
-        // rollback-journal mode (the JVM test backend). The row (busy, log,
-        // checkpointed) is deliberately read and dropped — running it through
-        // query() keeps the call portable across both backends.
-        database.query("PRAGMA wal_checkpoint(TRUNCATE)")
+        // rollback-journal mode (the JVM test backend: busy = 0, log = -1,
+        // checkpointed = -1). busy != 0 means the truncate could not finish
+        // (a concurrent reader/writer held the WAL) — the copy would be VALID
+        // (verification catches integrity) but possibly STALE (it cannot
+        // catch freshness), so the export fails loudly instead. Reading the
+        // row through query() keeps the call portable across both backends.
+        val checkpoint = database.query("PRAGMA wal_checkpoint(TRUNCATE)")
+        if (checkpoint.isNotEmpty() && checkpoint.first()["busy"] != 0L) {
+            error("learning.db WAL checkpoint did not complete (busy); " +
+                "the export would miss the newest commits — retry with no pending writes")
+        }
         val bytes = databaseFile.readBytes()
         val copy = File(databaseFile.parentFile, databaseFile.name + ".backup-verify")
         try {
@@ -227,20 +240,33 @@ object BackupManager {
     }
 
     /**
-     * Installs verified backup [bytes] at [target]: write to a same-directory
-     * temp file, then rename over [target] (atomic on POSIX filesystems —
-     * readers either see the whole old file or the whole new one). Callers
-     * set the previous file aside FIRST (rename it away) so a failure here
-     * leaves the old bytes intact.
+     * Step one of the crash-safe install: writes [bytes] to [staged]
+     * (target.path + ".install-tmp") WITHOUT touching the live database file.
+     * Between [stageDatabase] and [installDatabase] BOTH files exist, so a
+     * process death in that window leaves the previous database intact (and
+     * a leftover staged file that the next install overwrites). Callers
+     * clean a failed stage's leftover up themselves.
      */
+    fun stageDatabase(staged: File, bytes: ByteArray) {
+        staged.writeBytes(bytes)
+    }
+
+    /**
+     * Step two: renames the staged bytes over [target] (atomic on POSIX —
+     * readers see the whole old file or the whole new one). Callers set the
+     * previous file aside FIRST (rename it away) so a failure here leaves
+     * the old bytes recoverable as learning.db.preimport — which
+     * LearningDbStore adopts back at startup after a crash.
+     */
+    fun installDatabase(staged: File, target: File) {
+        if (!staged.renameTo(target)) error("could not move the staged backup into place at $target")
+    }
+
+    /** Convenience two-step install in one call (stage + swap). */
     fun installDatabase(target: File, bytes: ByteArray) {
         val staged = File(target.path + ".install-tmp")
-        try {
-            staged.writeBytes(bytes)
-            if (!staged.renameTo(target)) error("could not move the backup into place at $target")
-        } finally {
-            staged.delete()
-        }
+        stageDatabase(staged, bytes)
+        installDatabase(staged, target)
     }
 
     /**
@@ -265,7 +291,8 @@ object BackupManager {
                 listOf(languageID))
             val expressions = tx.update("DELETE FROM expressions WHERE language_id = ?",
                 listOf(languageID))
-            val lessonStates = tx.update("DELETE FROM lesson_state WHERE lesson_id LIKE ?",
+            val lessonStates = tx.update(
+                "DELETE FROM lesson_state WHERE lesson_id LIKE ? ESCAPE '\\'",
                 listOf(lessonPattern))
             LanguageDeletion(sessions, fragments, completions, expressions, lessonStates, tickets)
             // usage_outbox, meta, preferences, skill_errors: deliberately
@@ -274,20 +301,25 @@ object BackupManager {
     }
 
     /**
-     * The lesson_state selector for [languageID]: '<languageID>-%'. The
-     * prefix is derived, never hardcoded — and verified at runtime against
-     * the actual [CourseRegistry] content, exactly as the shared/courses JSON
-     * pins it today: every authored lesson id begins with its language id
-     * plus a dash (en-foundations-u1-to-be, en-care-u1-appointment,
-     * es-work-u1-reuniones, de-foundations-u1-sein), so the language prefix
-     * alone selects exactly this language's lesson_state rows — including
-     * stale rows left by courses since removed from the catalog, which
-     * per-course prefixes would miss. A language with no registry courses
-     * falls back to the plain language prefix (the brief's explicit-arg
-     * shape). If a future content change breaks the invariant, the require
-     * fails loudly and the delete aborts instead of deleting the wrong rows.
-     * Registry language ids are plain lowercase slugs, so no LIKE escaping
-     * is needed.
+     * The lesson_state selector for [languageID]: '<languageID>-%', with
+     * LIKE wildcards in the id escaped (defense in depth — registry ids are
+     * plain lowercase slugs today, so `%`/`_` never occur, but an unescaped
+     * `_` would silently over-match other languages' lesson rows). The
+     * prefix itself is derived, never hardcoded — and verified at runtime
+     * against the actual [CourseRegistry] content, exactly as the
+     * shared/courses JSON pins it today: every authored lesson id begins
+     * with its language id plus a dash (en-foundations-u1-to-be,
+     * en-care-u1-appointment, es-work-u1-reuniones, de-foundations-u1-sein),
+     * so the language prefix alone selects exactly this language's
+     * lesson_state rows — including stale rows left by courses since removed
+     * from the catalog, which per-course prefixes would miss. A language
+     * with no registry courses falls back to the plain language prefix (the
+     * brief's explicit-arg shape). If a future content change breaks the
+     * invariant, the require fails loudly and the delete aborts instead of
+     * deleting the wrong rows. Case sensitivity: SQL LIKE is
+     * ASCII-case-insensitive while the working-copy purge matches with
+     * `startsWith` — acceptable divergence because registry ids (and every
+     * authored lesson id) are lowercase-only, pinned by [CourseRegistry].
      */
     internal fun lessonStatePattern(languageID: String): String {
         val lessonIDs = CourseRegistry.forLanguage(languageID)
@@ -296,6 +328,15 @@ object BackupManager {
             "lesson ids no longer start with \"$languageID-\"; " +
                 "the per-language lesson_state delete prefix is wrong"
         }
-        return "$languageID-%"
+        return escapeLike("$languageID-") + "%"
+    }
+
+    /** Escapes the LIKE wildcards for the `ESCAPE '\'` clause on the
+        per-language delete. Backslash itself is escaped first. */
+    private fun escapeLike(text: String): String = buildString {
+        for (character in text) {
+            if (character == '\\' || character == '%' || character == '_') append('\\')
+            append(character)
+        }
     }
 }

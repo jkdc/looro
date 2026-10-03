@@ -2254,13 +2254,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      *  1. read the bounded bytes and validate them against a THROWAWAY copy
      *     (integrity, user_version, foreign keys, canonical tables) — any
      *     InvalidBackup surfaces its user-facing notice and touches nothing;
-     *  2. drain pending writes, close the live connection, set the current
-     *     file aside (learning.db.preimport), clear stale journal siblings;
-     *  3. install the bytes (temp file + same-directory rename, atomic) and
-     *     reload the store exactly like startup (open → one-shot export →
+     *  2. drain pending writes, close the live connection, STAGE the new
+     *     bytes beside the live file (both files exist from here on), set
+     *     the current file aside (learning.db.preimport), clear stale
+     *     journal siblings, then swap the staged bytes in — two back-to-back
+     *     renames; a crash between them strands the old file as
+     *     learning.db.preimport, which LearningDbStore adopts back at the
+     *     next startup;
+     *  3. reload the store exactly like startup (open → one-shot export →
      *     unfinished-session recovery → retry ledger → recovery re-arm);
-     *  4. on ANY failure after step 2: put the previous file back and reload
-     *     it — the learner keeps the database they had.
+     *  4. on ANY failure after step 2: put the previous file back (the
+     *     keep-copy's rename atomically replaces whatever is in place — this
+     *     code path never deletes a database file) and reload it — the
+     *     learner keeps the database they had. If even the keep-copy cannot
+     *     be restored, the store is marked unusable rather than opening an
+     *     empty database over lost data.
      */
     suspend fun importDbFrom(input: InputStream): Boolean {
         if (isRunning || !storageReady || store == null) return false
@@ -2277,26 +2285,42 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             persistAndWait()
             withContext(Dispatchers.IO) {
                 val keep = File(dbFile.path + ".preimport")
+                val staged = File(dbFile.path + ".install-tmp")
                 store!!.db.close()
                 try {
+                    // stage FIRST: the live file is not moved aside until the
+                    // replacement is fully on disk beside it
+                    BackupManager.stageDatabase(staged, bytes)
                     check(dbFile.renameTo(keep)) { "could not set aside the current database" }
                     deleteJournalSiblings(dbFile)
-                    BackupManager.installDatabase(dbFile, bytes)
+                    BackupManager.installDatabase(staged, dbFile)
                     reloadAfterImport()
                     keep.delete()
                 } catch (failure: Throwable) {
-                    // Put the previous database back before surfacing anything.
-                    runCatching { dbFile.delete() }
-                    check(keep.exists() && keep.renameTo(dbFile)) {
-                        "could not restore the previous database after a failed import"
+                    // This path NEVER deletes a database file: dbFile may be
+                    // the intact original (the set-aside rename failed) or
+                    // gone (the swap failed) — either way the keep-copy's
+                    // rename is what recovers it, atomically replacing
+                    // whatever is in place.
+                    var restored = true
+                    if (keep.exists()) {
+                        restored = keep.renameTo(dbFile)
+                        if (restored) deleteJournalSiblings(dbFile)
                     }
-                    deleteJournalSiblings(dbFile)
-                    runCatching { reloadAfterImport() }.onFailure { restoreFailure ->
+                    if (restored) {
+                        runCatching { reloadAfterImport() }.onFailure { reloadFailure ->
+                            storageReady = false; store = null
+                            reloadFailure.addSuppressed(failure)
+                            throw reloadFailure
+                        }
+                    } else {
+                        // The previous file cannot come back: refuse to serve
+                        // rather than open an empty database over lost data.
                         storageReady = false; store = null
-                        restoreFailure.addSuppressed(failure)
-                        throw restoreFailure
                     }
                     throw failure
+                } finally {
+                    staged.delete()
                 }
             }
             bumpLedgerRevision()
@@ -2317,10 +2341,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     /** The post-import reload — exactly the startup path, keeping
         storageReady semantics: a reload that cannot serve flips them off so
-        no write lands on a store the next launch would not read. */
+        no write lands on a store the next launch would not read. The check
+        on jsonMode keeps a verified database that somehow fails open (with a
+        legacy learning.json present) from reporting success while the app is
+        actually serving the JSON fail-safe — the import did NOT take. */
     private fun reloadAfterImport() {
         try {
             val loaded = loadLearningState()
+            check(!loaded.third.jsonMode) {
+                "the restored database failed to open; the JSON fail-safe took over"
+            }
             store = loaded.third
             archive = loaded.first
             finalAssessmentTickets = ConversationProviderPolicy.recoveryTickets(loaded.second, hostedSessionIDs)
@@ -2345,7 +2375,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      * language-neutral skill ids and stay, like the usage outbox.
      */
     fun deleteLearningDataForLanguage(languageID: String) {
-        if (isRunning || !storageReady) return
+        // A refusal is surfaced, never silent: the Settings row must not look
+        // broken when the guard fires (inline literals; the settings-UI task
+        // extracts them to resources together with the others).
+        if (isRunning) {
+            notice = "No se pueden eliminar los datos ahora: hay una conversación en curso."
+            return
+        }
+        if (!storageReady) {
+            notice = "No se pueden eliminar los datos ahora: el almacenamiento todavía se está preparando."
+            return
+        }
         reports.dismiss()
         val doomed = archive.sessions.filter { it.languageID == languageID }
         val doomedIDs = doomed.map { it.id }.toSet()

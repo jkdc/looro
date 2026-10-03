@@ -16,6 +16,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -26,7 +27,8 @@ import org.junit.rules.TemporaryFolder
  * BackupManager on real SQLite (sqlite-jdbc), file-backed like the production
  * database: the export→wipe→import roundtrip that must hand back the original
  * archive, the validation gate (corrupt bytes, a future user_version, a
- * database without the canonical tables) and the per-language delete whose
+ * database without the canonical tables), the crash-safe stage-then-swap
+ * install with its startup adoption, and the per-language delete whose
  * survivors pin the semantics — other languages, legacy NULL-language rows
  * and the languageless queues stay exactly where they were.
  */
@@ -227,6 +229,86 @@ class BackupManagerTest {
             3L, count(reopened, "sessions"))
         assertEquals("de lesson_state rows went with the prefix",
             0, LessonStateDao.all(reopened).count { it.lessonID.startsWith("de-") })
+    }
+
+    // -- crash-safe install (stage-then-swap) ---------------------------------
+
+    @Test fun stageAndSwapKeepsTheLiveFileUntilTheSwap() {
+        val dir = tmp.newFolder()
+        val dbFile = File(dir, "learning.db")
+        val db = fileBacked(dbFile.path)
+        seed(db)
+        val before = dbFile.readBytes()
+        db.close()
+
+        // the incoming backup: a verified export of a second, empty database
+        val freshFile = File(dir, "fresh.db")
+        val fresh = fileBacked(freshFile.path)
+        val outgoing = ByteArrayOutputStream()
+        BackupManager.exportTo(fresh, freshFile, outgoing, opener())
+        fresh.close()
+        val incoming = outgoing.toByteArray()
+
+        val staged = File(dbFile.path + ".install-tmp")
+        BackupManager.stageDatabase(staged, incoming)
+        assertTrue("the staged bytes exist beside the live file", staged.exists())
+        assertTrue("the live file is untouched until the swap",
+            dbFile.readBytes().contentEquals(before))
+
+        BackupManager.installDatabase(staged, dbFile)
+        assertFalse("the swap consumes the staged file", staged.exists())
+        assertTrue("the live file now holds the incoming bytes",
+            dbFile.readBytes().contentEquals(incoming))
+    }
+
+    @Test fun startupAdoptionRecoversAStrandedPreimportAfterACrashInTheRestoreWindow() {
+        val dir = tmp.newFolder()
+        val dbFile = File(dir, "learning.db")
+        val db = fileBacked(dbFile.path)
+        seed(db)
+        val original = ArchiveMapper.export(db)
+        db.close()
+
+        // the exact crash signature: the live file was renamed aside and the
+        // process died before the staged bytes were swapped in
+        val keep = File(dbFile.path + ".preimport")
+        assertTrue(dbFile.renameTo(keep))
+        assertFalse(dbFile.exists())
+
+        assertTrue("the stranded previous database is adopted back",
+            LearningDbStore.adoptPreimportDatabase(dbFile))
+        assertTrue(dbFile.exists())
+        assertFalse("adoption is a rename, not a copy", keep.exists())
+        assertEquals("the learner keeps the data they had",
+            original, ArchiveMapper.export(fileBacked(dbFile.path)))
+
+        // both files missing: a fresh install, nothing to adopt
+        assertFalse(LearningDbStore.adoptPreimportDatabase(File(dir, "absent.db")))
+
+        // a completed import (both files exist): the installed bytes win and
+        // a leftover keep-copy is never touched by adoption
+        val live = fileBacked(dbFile.path)
+        LessonStateDao.upsert(live, LessonState("en-foundations-u1-to-be", attempts = 9, lastSeen = 1.0))
+        val staleKeep = File(dbFile.path + ".preimport").apply { writeBytes(ByteArray(1)) }
+        assertFalse("adoption must not run when the live file exists",
+            LearningDbStore.adoptPreimportDatabase(dbFile))
+        assertTrue("the stale keep-copy is left alone", staleKeep.exists())
+    }
+
+    // -- LIKE-wildcard defense in the per-language delete ----------------------
+
+    @Test fun deleteByLanguageEscapesLikeWildcardsInThePrefix() {
+        val db = LearningDb.openJvm()
+        connections += (db as JvmSqlDatabase).connection
+        // an unescaped '_' is a single-char wildcard: a pattern built from
+        // the id "zz_z" would also match "zzaz-…" and delete rows that are
+        // not the language's — the ESCAPE clause must keep it literal
+        LessonStateDao.upsert(db, LessonState("zz_z-lesson", attempts = 1, lastSeen = 10.0))
+        LessonStateDao.upsert(db, LessonState("zzaz-lesson", attempts = 2, lastSeen = 20.0))
+        assertEquals("zz\\_z-%", BackupManager.lessonStatePattern("zz_z"))
+
+        BackupManager.deleteLearningDataForLanguage(db, "zz_z")
+        assertEquals(listOf("zzaz-lesson"), LessonStateDao.all(db).map { it.lessonID })
     }
 
     // -- lesson_state prefix derivation ---------------------------------------
