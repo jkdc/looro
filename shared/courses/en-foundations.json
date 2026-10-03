@@ -13914,7 +13914,7 @@
                   "Could you fill in this form, please?"
                 ],
                 "focus": "fill in",
-                "watch": "fill in + the form: BrE also says fill it out in AmE."
+                "watch": "fill in + the form: BrE prefers fill in; AmE prefers fill out."
               },
               {
                 "prompt": "Promise to chase the client's reply tomorrow. (follow up)",
@@ -14637,7 +14637,7 @@
               "explain": "how about + -ing: the light proposal.",
               "options": [
                 "How",
-                "What",
+                "Shall",
                 "If",
                 "Would"
               ],
@@ -15814,9 +15814,8 @@
           ],
           "skills": [
             "grammar:relative-clauses",
-            "grammar:connectors",
-            "function:express-opinion",
-            "writing:argument"
+            "function:talk-about-work",
+            "function:express-opinion"
           ],
           "canDo": [
             "express-opinion"
@@ -16090,7 +16089,7 @@
                 "prompt": "Rule out that launch date — the team only started last week. (can't)",
                 "expected": [
                   "That can't be the launch date.",
-                  "That cant be the launch date."
+                  "That can't be the date."
                 ],
                 "focus": "can't be",
                 "watch": "can't be = impossible; might not be would only mean doubtful."
