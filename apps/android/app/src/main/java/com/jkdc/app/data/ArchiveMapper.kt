@@ -19,35 +19,42 @@ val ArchiveJson: Json = Json { ignoreUnknownKeys = true; encodeDefaults = true; 
  * Maps between the in-memory [Archive] struct and learning-database rows.
  * The structs do not change; the database is the durable form.
  *
- * [import] writes the archive into the tables without wiping them first —
- * restoring over an existing database upserts by key and leaves rows the
- * archive does not mention (and the platform-local usage_outbox /
- * assessment_tickets queues) untouched. Merging concurrent archives stays
- * ArchiveCodec.merge's job. It also writes the 'schema_flags' meta row and
- * one 'mastery:<key>' meta row per masteryCache entry.
+ * [import] writes the archive inside ONE transaction — either the whole
+ * archive lands or nothing does (and no session's fragment rewrite can
+ * observe a half-applied import). It upserts by key without wiping tables,
+ * so restoring over an existing database leaves rows the archive does not
+ * mention (and the platform-local usage_outbox / assessment_tickets queues)
+ * untouched; replacing vs merging at restore time is the caller's decision.
+ * Mastery meta rows are the exception: the archive's masteryCache IS the
+ * table's mastery content, so they are deleted and re-inserted. Merging
+ * concurrent archives stays ArchiveCodec.merge's job.
  *
- * [export] rebuilds the archive from the rows in insertion order; list
- * order is preserved through rowid (fragments through sort_index). Empty
- * collections canonicalize to null for completions/errors/masteryCache,
+ * [export] rebuilds the archive with rows in first-insertion order (rowid;
+ * fragments by sort_index). That order is stable for the life of the
+ * database because this layer updates rows in place — INSERT OR REPLACE,
+ * which reassigns rowids and would let export order drift, is never used.
+ * Empty collections canonicalize to null for completions/errors/masteryCache,
  * matching ArchiveCodec's own canonical form, and lesson_state rows read
  * back with bars = 0 and dueAt = 0.0 (schema v1 does not store them).
  */
 object ArchiveMapper {
     fun import(archive: Archive, db: SqlDatabase) {
-        PreferencesDao.put(db, archive.preferences)
-        archive.sessions.forEach { session ->
-            SessionsDao.upsert(db, session)
-            FragmentsDao.replaceBySession(db, session.id, session.fragments)
+        db.transaction { tx ->
+            PreferencesDao.put(tx, archive.preferences)
+            archive.sessions.forEach { session ->
+                SessionsDao.upsert(tx, session)
+                FragmentsDao.replaceInTx(tx, session.id, session.fragments)
+            }
+            archive.lessons.forEach { LessonStateDao.upsert(tx, it) }
+            // adoptLegacy = false: an import preserves the archive verbatim, so a
+            // legacy null-language expression and a language expression with the
+            // same norm_key coexist as two rows instead of one adopted row.
+            archive.expressions.forEach { ExpressionsDao.upsert(tx, it, adoptLegacy = false) }
+            archive.completions?.forEach { CompletionsDao.add(tx, it) }
+            archive.errors?.forEach { SkillErrorsDao.upsert(tx, it) }
+            MetaDao.replaceMastery(tx, archive.masteryCache ?: emptyMap())
+            MetaDao.ensureSchemaFlags(tx)
         }
-        archive.lessons.forEach { LessonStateDao.upsert(db, it) }
-        // adoptLegacy = false: an import preserves the archive verbatim, so a
-        // legacy null-language expression and a language expression with the
-        // same norm_key coexist as two rows instead of one adopted row.
-        archive.expressions.forEach { ExpressionsDao.upsert(db, it, adoptLegacy = false) }
-        archive.completions?.forEach { CompletionsDao.add(db, it) }
-        archive.errors?.forEach { SkillErrorsDao.upsert(db, it) }
-        MetaDao.putMastery(db, archive.masteryCache ?: emptyMap())
-        MetaDao.ensureSchemaFlags(db)
     }
 
     fun export(db: SqlDatabase): Archive {

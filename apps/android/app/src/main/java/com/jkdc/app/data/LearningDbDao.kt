@@ -42,12 +42,40 @@ internal fun decodeStringList(json: String): List<String> =
 internal fun encodeStringList(value: List<String>): String =
     ArchiveJson.encodeToString(ListSerializer(String.serializer()), value)
 
-/** Preferences occupy exactly one row (preferences.id = 1, CHECK-pinned) and
-    carry all fourteen Models.kt fields — the seven v2 fields NOT NULL, the
-    seven legacy-nullable fields NULL when unset. */
+/**
+ * UPDATE with NULL assignments spelled as literals. [SqlDatabase.update]
+ * rejects null bind arguments, and updates must clear columns too (an ended
+ * session going back to ended_at IS NULL), so absent values become
+ * `column = NULL` while present ones bind. Column names come only from the
+ * fixed per-table row builders in this file, never from user data.
+ */
+private fun updateRow(db: SqlDatabase, table: String, row: Map<String, Any?>,
+                      where: String, whereArgs: List<Any?>) {
+    val sets = StringBuilder()
+    val args = mutableListOf<Any?>()
+    for ((column, value) in row) {
+        if (sets.isNotEmpty()) sets.append(", ")
+        if (value == null) sets.append(column).append(" = NULL")
+        else { sets.append(column).append(" = ?"); args.add(value) }
+    }
+    db.update("UPDATE $table SET $sets WHERE $where", args + whereArgs)
+}
+
+/**
+ * DAOs for the learning database (schema v1).
+ *
+ * Contract for everything below: keyed writes are select-then-update/insert.
+ * This layer NEVER uses INSERT OR REPLACE — REPLACE re-inserts the row (a
+ * fresh rowid, which would make export order drift) and its internal DELETE
+ * fires foreign-key cascades, so REPLACE-ing a session would silently wipe
+ * its fragments. Rowids are therefore stable for the life of a row and
+ * ORDER BY rowid reads back insertion order forever.
+ */
 object PreferencesDao {
     fun put(db: SqlDatabase, p: Preferences) {
-        db.insert("preferences", row(p), ConflictStrategy.REPLACE)
+        val exists = db.query("SELECT 1 AS matched FROM preferences WHERE id = 1").isNotEmpty()
+        if (exists) updateRow(db, "preferences", row(p), "id = 1", emptyList())
+        else db.insert("preferences", row(p))
     }
 
     /** null when the learner has no preferences row yet (fresh database). */
@@ -96,8 +124,14 @@ object PreferencesDao {
     ScenarioReview.createdAt for cheap queries only — reads always decode the
     JSON column, which stays the source of truth. */
 object SessionsDao {
+    /** Select-then-update/insert: never REPLACE, whose internal DELETE would
+        cascade-destroy the session's fragments (fragments.session_id ON
+        DELETE CASCADE) on every session-end token/endedAt update. */
     fun upsert(db: SqlDatabase, session: SessionRecord) {
-        db.insert("sessions", row(session), ConflictStrategy.REPLACE)
+        val exists = db.query("SELECT 1 AS matched FROM sessions WHERE id = ?",
+            listOf(session.id)).isNotEmpty()
+        if (exists) updateRow(db, "sessions", row(session), "id = ?", listOf(session.id))
+        else db.insert("sessions", row(session))
     }
 
     /** Fragments go with it (fragments.session_id ON DELETE CASCADE). */
@@ -169,17 +203,21 @@ object SessionsDao {
 /** Fragments belong to one session and keep their list position in
     sort_index; [replaceBySession] rewrites the session's whole transcript
     (delete + insert) inside one transaction so a crash can never leave half
-    a transcript behind. */
+    a transcript behind. [replaceInTx] is the same rewrite for callers that
+    already run inside a transaction (ArchiveMapper.import) — transactions
+    do not nest. */
 object FragmentsDao {
     fun bySession(db: SqlDatabase, sessionID: String): List<Fragment> =
         db.query("SELECT * FROM fragments WHERE session_id = ? ORDER BY sort_index", listOf(sessionID))
             .map(::fragment)
 
     fun replaceBySession(db: SqlDatabase, sessionID: String, fragments: List<Fragment>) {
-        db.transaction { tx ->
-            tx.update("DELETE FROM fragments WHERE session_id = ?", listOf(sessionID))
-            fragments.forEachIndexed { index, f -> tx.insert("fragments", row(sessionID, index, f)) }
-        }
+        db.transaction { tx -> replaceInTx(tx, sessionID, fragments) }
+    }
+
+    internal fun replaceInTx(db: SqlDatabase, sessionID: String, fragments: List<Fragment>) {
+        db.update("DELETE FROM fragments WHERE session_id = ?", listOf(sessionID))
+        fragments.forEachIndexed { index, f -> db.insert("fragments", row(sessionID, index, f)) }
     }
 
     private fun fragment(row: Row): Fragment = Fragment(
@@ -215,15 +253,23 @@ object FragmentsDao {
  * Saved expressions keyed on (norm_key, language_id) with norm_key =
  * [RecallEngine.normalizeKey]. The schema keeps NULL language rows distinct
  * (legacy entries, visible and adoptable in every language — RecallEngine
- * semantics), which has two consequences this upsert preserves:
+ * semantics), which shapes this upsert in three ways:
  *
- *  - ADOPTION: when a language row is written and no exact (norm_key,
- *    language) row exists but a legacy (norm_key, NULL) row does, the legacy
- *    row is retargeted in place to the new language instead of duplicated —
- *    the same adopt-or-create RecallEngine.seedFromLesson/saveLookup perform.
- *    Its lesson_id column is left untouched, because adoption in the engine
- *    copies the legacy entry and only changes the language (and the meaning
- *    when blank, which the caller's state already carries).
+ *  - EXACT MATCH: an existing (norm_key, language) row is UPDATEd in place —
+ *    INSERT OR REPLACE cannot see a NULL-language conflict (NULLs are
+ *    distinct in the key) and would duplicate every legacy row on re-import,
+ *    producing an archive whose duplicate expressionKeys ArchiveCodec
+ *    rejects.
+ *  - ADOPTION: when a language row is written, no exact row exists but legacy
+ *    (norm_key, NULL) row(s) do, the first legacy row (rowid order) is
+ *    retargeted to the new language — exactly the adopt RecallEngine
+ *    performs (seedFromLesson, saveLookup): only languageID changes, plus a
+ *    meaning fill-in when the legacy meaning is blank; text, source,
+ *    lesson_id, bars, attempts, lastSeen and dueAt stay the legacy entry's,
+ *    never the incoming state's. If several legacy rows share the norm_key
+ *    (the PK cannot prevent them), they collapse into that one row with
+ *    ArchiveCodec.merge's semantics (max bars/attempts/lastSeen/dueAt, first
+ *    non-blank meaning, first non-null lesson_id).
  *  - COEXISTENCE: importers that must preserve an archive verbatim pass
  *    adoptLegacy = false, so a legacy row and a language row with the same
  *    norm_key stay two rows, exactly the two expressionKeys ArchiveCodec
@@ -231,7 +277,7 @@ object FragmentsDao {
  *
  * The [RecallEngine.MAXIMUM_EXPRESSIONS] notebook cap is enforced here:
  * brand-new keys past the cap are a silent no-op returning false, while
- * updates to existing keys always land. Returns true when a row was written.
+ * updates and adoptions always land. Returns true when a row was written.
  */
 object ExpressionsDao {
     fun upsert(db: SqlDatabase, expression: ExpressionState, adoptLegacy: Boolean = true): Boolean {
@@ -244,25 +290,48 @@ object ExpressionsDao {
                 listOf(normKey, expression.languageID)).isNotEmpty()
         }
         if (exactExists) {
-            db.insert("expressions", row(normKey, expression), ConflictStrategy.REPLACE)
+            // language_id already matches the key; the row() value for it is
+            // rewritten as-is (NULL literal or bound) and lesson_id may clear.
+            updateRow(db, "expressions", row(normKey, expression),
+                if (expression.languageID == null) "norm_key = ? AND language_id IS NULL"
+                else "norm_key = ? AND language_id = ?",
+                if (expression.languageID == null) listOf(normKey) else listOf(normKey, expression.languageID))
             return true
         }
-        if (expression.languageID != null && adoptLegacy) {
-            val legacy = db.query(
-                "SELECT 1 AS matched FROM expressions WHERE norm_key = ? AND language_id IS NULL", listOf(normKey))
-            if (legacy.isNotEmpty()) {
-                // Retarget the legacy row; lesson_id is intentionally left as-is.
-                db.update(
-                    "UPDATE expressions SET language_id = ?, text = ?, meaning = ?, source = ?, " +
-                        "bars = ?, attempts = ?, last_seen = ?, due_at = ? " +
-                        "WHERE norm_key = ? AND language_id IS NULL",
-                    listOf(expression.languageID, expression.text, expression.meaning, expression.source,
-                        expression.bars, expression.attempts, expression.lastSeen, expression.dueAt, normKey))
-                return true
-            }
-        }
+        if (expression.languageID != null && adoptLegacy &&
+            adoptLegacyRows(db, normKey, expression, expression.languageID)) return true
         if (count(db) >= RecallEngine.MAXIMUM_EXPRESSIONS) return false
         db.insert("expressions", row(normKey, expression))
+        return true
+    }
+
+    /** Engine-faithful adoption of the first legacy row, collapsing any
+        duplicate legacy rows into it. Returns false when none exist. */
+    private fun adoptLegacyRows(db: SqlDatabase, normKey: String, incoming: ExpressionState,
+                                languageID: String): Boolean {
+        val legacy = db.query(
+            "SELECT rowid AS rid, meaning, lesson_id, bars, attempts, last_seen, due_at " +
+                "FROM expressions WHERE norm_key = ? AND language_id IS NULL ORDER BY rowid",
+            listOf(normKey))
+        if (legacy.isEmpty()) return false
+        val keptId = legacy.first().long("rid")
+        // languageID is the only semantic change (RecallEngine adoption); the
+        // meaning fills a blank legacy meaning (saveLookup). The remaining
+        // values come from the legacy rows themselves — max across them, which
+        // is the row's own value in the single-row case — never the incoming.
+        val meaning = legacy.map { it.text("meaning") }.firstOrNull { it.isNotBlank() }
+            ?: incoming.meaning
+        val lessonID = legacy.mapNotNull { it.textOrNull("lesson_id") }.firstOrNull()
+        db.update(
+            "UPDATE expressions SET language_id = ?, meaning = ?, bars = ?, attempts = ?, " +
+                "last_seen = ?, due_at = ? WHERE rowid = ?",
+            listOf(languageID, meaning,
+                legacy.maxOf { it.int("bars") }, legacy.maxOf { it.int("attempts") },
+                legacy.maxOf { it.real("last_seen") }, legacy.maxOf { it.real("due_at") }, keptId))
+        if (lessonID == null) db.exec("UPDATE expressions SET lesson_id = NULL WHERE rowid = $keptId")
+        else db.update("UPDATE expressions SET lesson_id = ? WHERE rowid = ?", listOf(lessonID, keptId))
+        db.update("DELETE FROM expressions WHERE norm_key = ? AND language_id IS NULL AND rowid != ?",
+            listOf(normKey, keptId))
         return true
     }
 
@@ -304,11 +373,15 @@ object ExpressionsDao {
     read back as zero (shared/db/schema.sql, lesson_state). */
 object LessonStateDao {
     fun upsert(db: SqlDatabase, state: LessonState) {
-        db.insert("lesson_state", mapOf(
+        val exists = db.query("SELECT 1 AS matched FROM lesson_state WHERE lesson_id = ?",
+            listOf(state.lessonID)).isNotEmpty()
+        val row = mapOf<String, Any?>(
             "lesson_id" to state.lessonID,
             "attempts" to state.attempts,
             "last_seen" to state.lastSeen,
-        ), ConflictStrategy.REPLACE)
+        )
+        if (exists) updateRow(db, "lesson_state", row, "lesson_id = ?", listOf(state.lessonID))
+        else db.insert("lesson_state", row)
     }
 
     fun all(db: SqlDatabase): List<LessonState> =
@@ -327,13 +400,15 @@ object LessonStateDao {
  * Completion marks (the append-only progress ledger), insert-or-ignore on the
  * (kind, item_id, at) primary key.
  *
- * DEDUP POLICY — languageID is stored on the row but is NOT part of the key,
- * unlike the inherited ArchiveCodec completionKey (kind|itemID|at|languageID).
- * Two marks that differ only by language are distinct to the archive but
- * collide in the table, and the first mark stored wins: writers append in
- * ArchiveCodec.merge's at-descending order, so "first" is the newest mark —
- * the same keep-newest outcome the archive's cap produces. A later mark at a
- * genuinely different `at` is its own row. Returns true when the mark landed.
+ * DEDUP POLICY — schema-pinned, and honestly narrower than the archive: the
+ * inherited ArchiveCodec completionKey is kind|itemID|at|languageID, so merge
+ * and validate keep TWO marks that differ only by language at the same
+ * instant. This table's primary key (kind, item_id, at) cannot — the first
+ * mark stored wins and the other is dropped, whichever order that happens to
+ * be. Writers append in ArchiveCodec.merge's at-descending order, so for
+ * merge-produced archives the survivor is the newest of the two, but that is
+ * an artifact of write order, not an equivalent semantic. A genuinely
+ * different `at` is always its own row. Returns true when the mark landed.
  */
 object CompletionsDao {
     fun add(db: SqlDatabase, mark: CompletionMark): Boolean =
@@ -360,15 +435,20 @@ object CompletionsDao {
 /** Repeated-error patterns keyed by skill, kept to the newest
     [ArchiveCodec.MAXIMUM_ERRORS] rows by count — the same top-100 cap
     ArchiveCodec.merge applies, with rowid breaking count ties the same stable
-    way merge's insertion-ordered sort does. */
+    way merge's insertion-ordered sort does. Updates are in-place (no
+    REPLACE), so rows keep their insertion-order rowid. */
 object SkillErrorsDao {
     fun upsert(db: SqlDatabase, error: SkillError) {
-        db.insert("skill_errors", mapOf(
+        val exists = db.query("SELECT 1 AS matched FROM skill_errors WHERE skill_id = ?",
+            listOf(error.skillID)).isNotEmpty()
+        val row = mapOf<String, Any?>(
             "skill_id" to error.skillID,
             "count" to error.count,
             "last_at" to error.lastAt,
             "last_prompt" to error.lastPrompt,
-        ), ConflictStrategy.REPLACE)
+        )
+        if (exists) updateRow(db, "skill_errors", row, "skill_id = ?", listOf(error.skillID))
+        else db.insert("skill_errors", row)
         db.exec("DELETE FROM skill_errors WHERE skill_id NOT IN " +
             "(SELECT skill_id FROM skill_errors ORDER BY count DESC, rowid LIMIT ${ArchiveCodec.MAXIMUM_ERRORS})")
     }
@@ -428,11 +508,15 @@ data class AssessmentTicketRow(val sessionID: String, val attempts: Int, val las
 
 object AssessmentTicketsDao {
     fun upsert(db: SqlDatabase, ticket: AssessmentTicketRow) {
-        db.insert("assessment_tickets", mapOf(
+        val exists = db.query("SELECT 1 AS matched FROM assessment_tickets WHERE session_id = ?",
+            listOf(ticket.sessionID)).isNotEmpty()
+        val row = mapOf<String, Any?>(
             "session_id" to ticket.sessionID,
             "attempts" to ticket.attempts,
             "last_attempt_at" to ticket.lastAttemptAt,
-        ), ConflictStrategy.REPLACE)
+        )
+        if (exists) updateRow(db, "assessment_tickets", row, "session_id = ?", listOf(ticket.sessionID))
+        else db.insert("assessment_tickets", row)
     }
 
     fun all(db: SqlDatabase): List<AssessmentTicketRow> =
@@ -452,13 +536,20 @@ object MetaDao {
     const val MASTERY_PREFIX = "mastery:"
 
     fun put(db: SqlDatabase, key: String, value: String) {
-        db.insert("meta", mapOf("key" to key, "value" to value), ConflictStrategy.REPLACE)
+        val exists = db.query("SELECT 1 AS matched FROM meta WHERE key = ?", listOf(key)).isNotEmpty()
+        if (exists) updateRow(db, "meta", mapOf("key" to key, "value" to value), "key = ?", listOf(key))
+        else db.insert("meta", mapOf("key" to key, "value" to value))
     }
 
     fun get(db: SqlDatabase, key: String): String? =
         db.query("SELECT value FROM meta WHERE key = ?", listOf(key)).firstOrNull()?.text("value")
 
-    fun putMastery(db: SqlDatabase, mastery: Map<String, Int>) {
+    /** The archive's mastery cache IS the table's mastery content: existing
+        mastery rows are removed first so a re-import never leaves stale
+        skills behind (export = the archive, not a union). Callers inside a
+        transaction (ArchiveMapper.import) make that atomic. */
+    fun replaceMastery(db: SqlDatabase, mastery: Map<String, Int>) {
+        db.exec("DELETE FROM meta WHERE key LIKE '$MASTERY_PREFIX%'")
         mastery.forEach { (skill, level) -> put(db, "$MASTERY_PREFIX$skill", level.toString()) }
     }
 
@@ -467,8 +558,8 @@ object MetaDao {
         db.query("SELECT key, value FROM meta WHERE key LIKE '$MASTERY_PREFIX%' ORDER BY key")
             .associate { it.text("key").removePrefix(MASTERY_PREFIX) to it.text("value").toInt() }
 
-    /** Writes the schema-flags row once (INSERT OR IGNORE); v1 has no flags. */
+    /** Writes the schema-flags row once; v1 has no flags. */
     fun ensureSchemaFlags(db: SqlDatabase) {
-        db.insert("meta", mapOf("key" to SCHEMA_FLAGS_KEY, "value" to "{}"), ConflictStrategy.IGNORE)
+        if (get(db, SCHEMA_FLAGS_KEY) == null) put(db, SCHEMA_FLAGS_KEY, "{}")
     }
 }

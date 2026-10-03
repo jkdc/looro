@@ -59,16 +59,35 @@ class LearningDbDaoTest {
         assertEquals(0L, count("fragments"))
     }
 
+    @Test fun sessionUpsertUpdatesInPlaceAndNeverTouchesFragments() {
+        db.insert("sessions", mapOf("id" to "s1", "language_id" to "es", "started_at" to 0.0, "title" to "Hola",
+            "provider_id" to "p1", "ended_at" to 10.0, "end_reason" to "done"))
+        val fragment = Fragment(id = "f1", speaker = Speaker.user, text = "hola", startMS = 0, endMS = 10)
+        FragmentsDao.replaceBySession(db, "s1", listOf(fragment))
+        // a session-end style update that also CLEARS nullable columns
+        val updated = SessionsDao.all(db).single().copy(
+            providerID = null, endedAt = null, endReason = null, inputTokens = 42, outputTokens = 7,
+            searchCalls = 1, usageFinal = true, title = "Cambiado")
+        SessionsDao.upsert(db, updated)
+        assertEquals(updated, SessionsDao.all(db).single())
+        // INSERT OR REPLACE would have cascade-deleted this row
+        assertEquals(listOf(fragment), FragmentsDao.bySession(db, "s1"))
+        assertNull(db.query("SELECT provider_id FROM sessions WHERE id = 's1'").single()["provider_id"])
+    }
+
     @Test fun expressionsUpsertNormalizesTheKeyAndReplacesInPlace() {
         val expression = ExpressionState(text = "  Hola ", meaning = "hello", source = "lookup", dueAt = 5.0,
             languageID = "es")
         assertTrue(ExpressionsDao.upsert(db, expression))
         assertEquals("hola", db.query("SELECT norm_key FROM expressions").single()["norm_key"])
+        val rowIdBefore = db.query("SELECT rowid AS rid FROM expressions").single().long("rid")
         assertTrue(ExpressionsDao.upsert(db, expression.copy(text = "Hola", bars = 2)))
         val rows = ExpressionsDao.all(db)
         assertEquals(1, rows.size)
         assertEquals("Hola", rows.single().text)
         assertEquals(2, rows.single().bars)
+        // updated in place, never REPLACE-d: the rowid (export order) is stable
+        assertEquals(rowIdBefore, db.query("SELECT rowid AS rid FROM expressions").single().long("rid"))
     }
 
     @Test fun expressionsUpsertAdoptsALegacyNullLanguageRowInPlace() {
@@ -76,17 +95,58 @@ class LearningDbDaoTest {
             lastSeen = 10.0, dueAt = 20.0, languageID = null)
         assertTrue(ExpressionsDao.upsert(db, legacy))
         val legacyRowId = db.query("SELECT rowid AS rid FROM expressions").single().long("rid")
-        // what the engine hands over after RecallEngine adoption: the legacy
-        // entry retargeted to the current language
-        assertTrue(ExpressionsDao.upsert(db, legacy.copy(languageID = "es")))
+        // what saveLookup hands over after adopting: the language retargeted and a
+        // fresh lookup state — the legacy row's progress must survive untouched
+        val incoming = legacy.copy(bars = 0, attempts = 0, lastSeen = 0.0, dueAt = 500.0,
+            meaning = "hi", languageID = "es")
+        assertTrue(ExpressionsDao.upsert(db, incoming))
         val rows = ExpressionsDao.all(db)
         assertEquals(1, rows.size)
         val adopted = rows.single()
         assertEquals("es", adopted.languageID)
+        // engine-faithful: only the language (and a blank meaning) change
         assertEquals(2, adopted.bars)
         assertEquals(3, adopted.attempts)
+        assertEquals(10.0, adopted.lastSeen, 0.0)
+        assertEquals(20.0, adopted.dueAt, 0.0)
+        assertEquals("hello", adopted.meaning)
         // adopted in place, not duplicated and reinserted
         assertEquals(legacyRowId, db.query("SELECT rowid AS rid FROM expressions").single().long("rid"))
+    }
+
+    @Test fun expressionsAdoptionFillsOnlyABlankLegacyMeaning() {
+        assertTrue(ExpressionsDao.upsert(db, ExpressionState(text = "hola", meaning = "", source = "lookup",
+            bars = 1, dueAt = 5.0, languageID = null)))
+        assertTrue(ExpressionsDao.upsert(db, ExpressionState(text = "hola", meaning = "hello", source = "lookup",
+            dueAt = 9.0, languageID = "es")))
+        val adopted = ExpressionsDao.all(db).single()
+        assertEquals("hello", adopted.meaning) // blank legacy meaning takes the incoming one
+        assertEquals(1, adopted.bars)          // legacy scheduling still wins
+        assertEquals(5.0, adopted.dueAt, 0.0)
+    }
+
+    @Test fun expressionsAdoptionCollapsesDuplicateLegacyRowsIntoOne() {
+        // the PK keeps NULLs distinct and cannot stop duplicate legacy rows
+        db.insert("expressions", mapOf(
+            "norm_key" to "hola", "language_id" to null, "text" to "hola", "meaning" to "",
+            "source" to "lookup", "bars" to 1, "attempts" to 1, "last_seen" to 5.0, "due_at" to 10.0))
+        db.insert("expressions", mapOf(
+            "norm_key" to "hola", "language_id" to null, "text" to "Hola", "meaning" to "hello",
+            "source" to "lookup", "bars" to 2, "attempts" to 3, "last_seen" to 10.0, "due_at" to 20.0,
+            "lesson_id" to "l1"))
+        assertTrue(ExpressionsDao.upsert(db, ExpressionState(text = "hola", meaning = "hi", source = "lookup",
+            bars = 0, dueAt = 500.0, languageID = "es")))
+        val merged = ExpressionsDao.all(db)
+        assertEquals(1, merged.size)
+        // ArchiveCodec.merge semantics across the collapsed rows, engine semantics vs the incoming
+        assertEquals("es", merged.single().languageID)
+        assertEquals("hola", merged.single().text)     // kept row (rowid order) wins
+        assertEquals(2, merged.single().bars)
+        assertEquals(3, merged.single().attempts)
+        assertEquals(10.0, merged.single().lastSeen, 0.0)
+        assertEquals(20.0, merged.single().dueAt, 0.0)
+        assertEquals("hello", merged.single().meaning) // first non-blank meaning
+        assertEquals("l1", merged.single().lessonID)   // first non-null lesson
     }
 
     @Test fun importedLegacyAndLanguageExpressionsCoexistWithoutAdoption() {
@@ -181,9 +241,11 @@ class LearningDbDaoTest {
         MetaDao.put(db, "k", "v1")
         MetaDao.put(db, "k", "v2")
         assertEquals("v2", MetaDao.get(db, "k"))
-        MetaDao.putMastery(db, mapOf("grammar:articles" to 2, "function:describe-people" to 1))
+        MetaDao.replaceMastery(db, mapOf("grammar:articles" to 2, "function:describe-people" to 1))
         assertEquals(mapOf("grammar:articles" to 2, "function:describe-people" to 1), MetaDao.mastery(db))
-        assertEquals(1L, db.query("SELECT COUNT(*) AS n FROM meta WHERE key LIKE 'mastery:%' AND value = '2'").single()["n"])
+        // replace semantics: a re-import with fewer skills drops the stale rows
+        MetaDao.replaceMastery(db, mapOf("grammar:articles" to 3))
+        assertEquals(mapOf("grammar:articles" to 3), MetaDao.mastery(db))
     }
 
     private fun count(table: String): Long = db.query("SELECT COUNT(*) AS n FROM $table").single().long("n")
