@@ -64,10 +64,6 @@ final class ManagedAccountHTTP: NSObject, URLSessionTaskDelegate, @unchecked Sen
 }
 
 struct ManagedAccountClient {
-    private struct Failure: Decodable {
-        struct Detail: Decodable { let code: String }
-        let error: Detail
-    }
     let configuration: ManagedAccountConfiguration
     let http: ManagedAccountHTTP
     init(configuration: ManagedAccountConfiguration) { self.configuration = configuration; http = ManagedAccountHTTP() }
@@ -200,6 +196,10 @@ struct ManagedAccountClient {
         }
         let (data, response) = try await http.send(request)
         guard (200...299).contains(response.statusCode) else {
+            // A 401 means the bearer died (expiry, revocation, remote sign-out):
+            // surface sign_in_required directly — the safe-code allowlist does
+            // not carry it, and stale-session sweeps depend on the exact code.
+            if response.statusCode == 401 { throw ManagedAccountError.server("sign_in_required") }
             struct Failure: Decodable { struct Detail: Decodable { let code: String }; let error: Detail }
             let code = (try? JSONDecoder().decode(Failure.self, from: data))?.error.code ?? "service_unavailable"
             // Only a small allowlist is displayed. Never surface raw provider/server response text.
