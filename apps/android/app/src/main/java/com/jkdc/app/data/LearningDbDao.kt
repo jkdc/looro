@@ -425,8 +425,9 @@ object LessonStateDao {
  * instant. This table's primary key (kind, item_id, at) cannot — the first
  * mark stored wins and the other is dropped, whichever order that happens to
  * be. Writers append in ArchiveCodec.merge's at-descending order, so for
- * merge-produced archives the survivor is the newest of the two, but that is
- * an artifact of write order, not an equivalent semantic. A genuinely
+ * merge-produced archives the survivor is the first in merge order (stable
+ * position for equal at), but that is an artifact of write order, not an
+ * equivalent semantic. A genuinely
  * different `at` is always its own row. Returns true when the mark landed.
  */
 object CompletionsDao {

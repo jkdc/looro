@@ -54,6 +54,9 @@ import com.jkdc.app.core.ArchiveCodec
  * callers see exactly what the database now holds.
  */
 object ArchiveMerger {
+    /** RESTORE/IMPORT path only (phase D backup import, settings import).
+        Never call per-turn at runtime — it rewrites all content tables; normal
+        runtime writes go through the DAO upserts (phase C). */
     fun apply(db: SqlDatabase, incoming: Archive): Archive = db.transaction { tx ->
         val merged = ArchiveCodec.merge(ArchiveMapper.export(tx), incoming)
         rewriteInTx(tx, merged)
