@@ -7,12 +7,12 @@ import java.io.InputStream
 import java.io.OutputStream
 
 /**
- * Raised when an incoming database backup fails validation. The message is
- * the user-facing notice (an inline literal, like LearningDbStore's
- * jsonModeNotice — the settings UI task owns extracting these to resources),
- * so [AppViewModel] can surface it verbatim.
+ * Raised when an incoming database backup fails validation. The [issue] is
+ * the typed reason; [AppViewModel] resolves the user-facing notice resource
+ * from it.
  */
-class InvalidBackup(message: String, cause: Throwable? = null) : Exception(message, cause)
+class InvalidBackup(val issue: BackupManager.BackupIssue, cause: Throwable? = null) :
+    Exception(issue.name, cause)
 
 /**
  * A short-lived [SqlDatabase] over an arbitrary SQLite FILE — never the
@@ -120,6 +120,25 @@ data class LanguageDeletion(
 object BackupManager {
     const val MAXIMUM_DATABASE_BYTES: Int = 64 * 1024 * 1024
 
+    /**
+     * Why a database backup was rejected by the validation gate. The ViewModel
+     * maps each reason to its string resource (values/strings.xml +
+     * values-es/), so the user-facing copy lives with every other notice and
+     * never as an inline literal in the data layer.
+     */
+    enum class BackupIssue {
+        /** Not a SQLite file, or failed integrity / foreign-key / version checks. */
+        CORRUPT,
+        /** A backup from a newer schema must never be applied by an older app. */
+        FUTURE_VERSION,
+        /** A well-formed database that is not a learning database. */
+        MISSING_TABLES,
+        /** Zero bytes. */
+        EMPTY,
+        /** Over [MAXIMUM_DATABASE_BYTES]. */
+        TOO_LARGE,
+    }
+
     /** The ten tables shared/db/schema.sql creates, pinned by
         scripts/check_db_schema.py. A backup missing any of them is not a
         learning database. */
@@ -129,13 +148,8 @@ object BackupManager {
         "assessment_tickets",
     )
 
-    // User-facing rejection notices (inline literals; the settings-UI task
-    // extracts them to string resources).
-    const val NOTICE_CORRUPT = "El archivo no es una base de datos de aprendizaje válida."
-    const val NOTICE_FUTURE_VERSION =
-        "El respaldo pertenece a una versión más nueva de la app. Actualiza la aplicación e inténtalo de nuevo."
-    const val NOTICE_MISSING_TABLES = "Al respaldo le faltan tablas de la base de datos de aprendizaje."
-    const val NOTICE_EMPTY = "El archivo de respaldo está vacío."
+    // User-facing rejection copy lives in the string resources; the gate
+    // throws [InvalidBackup] with the typed [BackupIssue] instead.
 
     /**
      * Copies the live [databaseFile] behind [database] to [output], verbatim
@@ -175,8 +189,8 @@ object BackupManager {
      * The import gate: reads at most [MAXIMUM_DATABASE_BYTES] from [input],
      * verifies the bytes as a learning database through a throwaway copy in
      * [workDir] (same checks as [exportTo]), and only then hands them back
-     * for [installDatabase]. Throws [InvalidBackup] with the user-facing
-     * notice otherwise — the live database is not even open at this point.
+     * for [installDatabase]. Throws [InvalidBackup] with the typed
+     * [BackupIssue] otherwise — the live database is not even open here.
      */
     fun readValidatedBackup(input: InputStream, workDir: File,
                             openForVerify: VerificationOpener): ByteArray {
@@ -186,14 +200,14 @@ object BackupManager {
             while (true) {
                 val count = stream.read(buffer)
                 if (count < 0) break
-                if (output.size() + count > MAXIMUM_DATABASE_BYTES) {
-                    throw InvalidBackup("El respaldo de la base de datos es demasiado grande.")
-                }
-                output.write(buffer, 0, count)
+            if (output.size() + count > MAXIMUM_DATABASE_BYTES) {
+                throw InvalidBackup(BackupIssue.TOO_LARGE)
             }
-            output.toByteArray()
+            output.write(buffer, 0, count)
         }
-        if (bytes.isEmpty()) throw InvalidBackup(NOTICE_EMPTY)
+        output.toByteArray()
+    }
+    if (bytes.isEmpty()) throw InvalidBackup(BackupIssue.EMPTY)
         val copy = File.createTempFile("backup-import-verify", ".db", workDir)
         try {
             copy.writeBytes(bytes)
@@ -209,31 +223,31 @@ object BackupManager {
         val handle = try {
             openForVerify.open(candidate)
         } catch (failure: Exception) {
-            throw InvalidBackup(NOTICE_CORRUPT, failure)
+            throw InvalidBackup(BackupIssue.CORRUPT, failure)
         }
         try {
             val db = handle.db
             val integrity = try {
                 db.query("PRAGMA integrity_check")
             } catch (failure: Exception) {
-                throw InvalidBackup(NOTICE_CORRUPT, failure)
+                throw InvalidBackup(BackupIssue.CORRUPT, failure)
             }
             if (integrity.size != 1 || integrity.single().values.single() != "ok") {
-                throw InvalidBackup(NOTICE_CORRUPT)
+                throw InvalidBackup(BackupIssue.CORRUPT)
             }
             val version = try {
                 db.query("PRAGMA user_version").single().values.single() as Long
             } catch (failure: Exception) {
-                throw InvalidBackup(NOTICE_CORRUPT, failure)
+                throw InvalidBackup(BackupIssue.CORRUPT, failure)
             }
-            if (version > LearningDb.VERSION) throw InvalidBackup(NOTICE_FUTURE_VERSION)
-            if (version != LearningDb.VERSION.toLong()) throw InvalidBackup(NOTICE_CORRUPT)
+            if (version > LearningDb.VERSION) throw InvalidBackup(BackupIssue.FUTURE_VERSION)
+            if (version != LearningDb.VERSION.toLong()) throw InvalidBackup(BackupIssue.CORRUPT)
             if (db.query("PRAGMA foreign_key_check").isNotEmpty()) {
-                throw InvalidBackup(NOTICE_CORRUPT)
+                throw InvalidBackup(BackupIssue.CORRUPT)
             }
             val tables = db.query(
                 "SELECT name FROM sqlite_master WHERE type = 'table'").map { it.text("name") }
-            if (!CANONICAL_TABLES.all { it in tables }) throw InvalidBackup(NOTICE_MISSING_TABLES)
+            if (!CANONICAL_TABLES.all { it in tables }) throw InvalidBackup(BackupIssue.MISSING_TABLES)
         } finally {
             handle.close()
         }

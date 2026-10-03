@@ -105,6 +105,30 @@ class MainActivity : ComponentActivity() {
                     }.onFailure { showFailure(it) }
                 }
             }
+            // The learning.db backup: a whole SQLite file, so the SAF contract
+            // pins the .db mime and accepts the generic binary type document
+            // providers actually report. The ViewModel's notice is the single
+            // source of the result copy (success and every refusal).
+            val exportDbLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/x-sqlite3")) { uri ->
+                if (uri != null) lifecycleScope.launch {
+                    runCatching {
+                        withContext(Dispatchers.IO) {
+                            contentResolver.openOutputStream(uri, "wt")?.use { output -> vm.exportDbTo(output) } ?: false
+                        }
+                    }.onSuccess { exported -> showBackupResult(exported) }
+                        .onFailure { showFailure(it) }
+                }
+            }
+            val importDbLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+                if (uri != null) lifecycleScope.launch {
+                    runCatching {
+                        withContext(Dispatchers.IO) {
+                            contentResolver.openInputStream(uri)?.use { input -> vm.importDbFrom(input) } ?: false
+                        }
+                    }.onSuccess { restored -> showBackupResult(restored) }
+                        .onFailure { showFailure(it) }
+                }
+            }
 
             AppStartup(loading = vm.loadingHistory) {
             AppRoot(
@@ -122,6 +146,11 @@ class MainActivity : ComponentActivity() {
                 onOpenAppSettings = if (microphonePermanentlyDenied) ({ openAppSettings() }) else null,
                 onExport = { exportLauncher.launch("Palique-learning-backup.json") },
                 onImport = { importLauncher.launch(arrayOf("application/json", "text/plain")) },
+                onExportDb = {
+                    val stamp = java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US).format(java.util.Date())
+                    exportDbLauncher.launch("palique-backup-$stamp.db")
+                },
+                onImportDb = { importDbLauncher.launch(arrayOf("application/x-sqlite3", "application/octet-stream")) },
                 account = account,
                 onGoogleSignIn = ::signInWithGoogle,
                 onSignOut = { changeAccount(delete = false) },
@@ -228,5 +257,17 @@ class MainActivity : ComponentActivity() {
 
     private fun showFailure(error: Throwable) {
         Toast.makeText(this, error.localizedMessage ?: getString(R.string.common_operation_failed), Toast.LENGTH_LONG).show()
+    }
+
+    /** Database backup results surface the ViewModel's notice — it is set on
+        success and on every refusal (busy conversation, storage not ready,
+        rejected file), so one path reports both outcomes. */
+    private fun showBackupResult(success: Boolean) {
+        val message = vm.notice
+        when {
+            success && message != null -> Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            !success && message != null -> Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+            else -> Toast.makeText(this, getString(R.string.common_operation_failed), Toast.LENGTH_LONG).show()
+        }
     }
 }

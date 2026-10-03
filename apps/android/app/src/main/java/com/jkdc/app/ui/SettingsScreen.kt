@@ -1,6 +1,7 @@
 package com.jkdc.app.ui
 
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -23,6 +24,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -81,11 +84,15 @@ import androidx.compose.material3.Switch
 @Composable
 fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit, onReviewConsent: () -> Unit,
                    onAccount: (() -> Unit)? = null, onResume: (String) -> Unit = {}, onDismiss: () -> Unit = {},
-                   onTokensPurchase: (() -> Unit)? = null, tokensBalanceHint: String? = null) {
+                   onTokensPurchase: (() -> Unit)? = null, tokensBalanceHint: String? = null,
+                   onExportDb: () -> Unit = {}, onImportDb: () -> Unit = {}) {
     var advanced by rememberSaveable { mutableStateOf(false) }
     var keyDialog by rememberSaveable { mutableStateOf(false) }
     var deleteKey by rememberSaveable { mutableStateOf(false) }
     var deleteAll by rememberSaveable { mutableStateOf(false) }
+    var deleteLanguageDialog by rememberSaveable { mutableStateOf(false) }
+    var languageDeleteConfirm by rememberSaveable { mutableStateOf(false) }
+    var deleteLanguageTarget by rememberSaveable { mutableStateOf(vm.language.id) }
     var permissionDetails by rememberSaveable { mutableStateOf(false) }
     var revokeConsent by rememberSaveable { mutableStateOf(false) }
     var notices by rememberSaveable { mutableStateOf(false) }
@@ -384,6 +391,22 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
                 }
             }
             item {
+                // The learning.db backup (whole SQLite file, verified on both
+                // ends) and the per-language delete. The legacy JSON entries
+                // above stay this phase; the retirement is a later task.
+                SettingsGroup(stringResource(R.string.settings_db_section_title), stringResource(R.string.settings_db_section_footer)) {
+                    SettingsRow(stringResource(R.string.settings_export_db), enabled = !vm.isRunning, symbol = SettingsSymbol.EXPORT,
+                        tint = AppColors.Secondary, modifier = Modifier.testTag("settings-export-db"), onClick = onExportDb)
+                    SettingsDivider()
+                    SettingsRow(stringResource(R.string.settings_import_db), enabled = !vm.isRunning, symbol = SettingsSymbol.IMPORT,
+                        tint = AppColors.Secondary, modifier = Modifier.testTag("settings-import-db"), onClick = onImportDb)
+                    SettingsDivider()
+                    SettingsRow(stringResource(R.string.settings_delete_language_data), enabled = !vm.isRunning,
+                        tint = AppColors.Red, modifier = Modifier.testTag("settings-delete-language"),
+                        onClick = { deleteLanguageDialog = true })
+                }
+            }
+            item {
                 SettingsGroup(stringResource(R.string.settings_section_help_privacy)) {
                     SettingsRow(stringResource(R.string.common_privacy_policy), tint = AppColors.Secondary,
                         onClick = { open("https://app.example/privacy/") })
@@ -441,6 +464,38 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
     if (deleteAll) ConfirmDialog(stringResource(R.string.settings_delete_all_confirm_title), stringResource(R.string.settings_delete_all_confirm_message), stringResource(R.string.settings_delete_all_confirm_button), {
         vm.deleteLearningData(); deleteAll = false
     }, { deleteAll = false })
+    if (deleteLanguageDialog) AlertDialog(
+        onDismissRequest = { deleteLanguageDialog = false },
+        title = { Text(stringResource(R.string.settings_delete_language_title)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                LanguageRegistry.all.forEach { language ->
+                    Row(Modifier.fillMaxWidth().clickable(enabled = !vm.isRunning) { deleteLanguageTarget = language.id }
+                            .testTag("settings-delete-language-${language.id}").padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected = deleteLanguageTarget == language.id, onClick = null, enabled = !vm.isRunning)
+                        Text(language.settingsTitle, style = MaterialTheme.typography.bodyLarge,
+                            color = AppColors.Ink, modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
+            }
+        },
+        confirmButton = { AppTextButton(onClick = { deleteLanguageDialog = false; languageDeleteConfirm = true },
+            enabled = !vm.isRunning) { Text(stringResource(R.string.common_continue)) } },
+        dismissButton = { AppTextButton(onClick = { deleteLanguageDialog = false }) { Text(stringResource(R.string.common_cancel)) } },
+    )
+    if (languageDeleteConfirm) {
+        val languageName = LanguageRegistry.get(deleteLanguageTarget)?.name ?: deleteLanguageTarget
+        ConfirmDialog(stringResource(R.string.settings_delete_language_confirm_title, languageName),
+            stringResource(R.string.settings_delete_language_confirm_message, languageName),
+            stringResource(R.string.settings_delete_language_confirm_button, languageName), {
+                vm.deleteLearningDataForLanguage(deleteLanguageTarget)
+                languageDeleteConfirm = false
+                // The ViewModel surfaces success and every refusal through its
+                // notice; the sheet has no inline notice row, so toast it.
+                vm.notice?.let { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
+            }, { languageDeleteConfirm = false })
+    }
     if (revokeConsent) ConfirmDialog(stringResource(R.string.settings_revoke_consent_confirm_title),
         stringResource(R.string.settings_revoke_consent_confirm_message), stringResource(R.string.settings_revoke_consent_button), {
             vm.updatePreferences(vm.archive.preferences.copy(aiConsentVersion = null)); revokeConsent = false

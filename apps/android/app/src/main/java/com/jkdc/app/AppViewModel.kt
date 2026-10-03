@@ -61,6 +61,18 @@ internal fun errorMessageRes(e: Throwable): Int = when (e) {
     else -> 0
 }
 
+/** Maps a database-backup rejection to its user-facing string resource: the
+    data layer throws typed [BackupIssue]s and this is the only place the
+    user-facing copy is chosen (EN in values/, ES in values-es/). */
+@StringRes
+internal fun backupNoticeRes(issue: BackupManager.BackupIssue): Int = when (issue) {
+    BackupManager.BackupIssue.CORRUPT -> R.string.notice_backup_invalid
+    BackupManager.BackupIssue.FUTURE_VERSION -> R.string.notice_backup_future_version
+    BackupManager.BackupIssue.MISSING_TABLES -> R.string.notice_backup_missing_tables
+    BackupManager.BackupIssue.EMPTY -> R.string.notice_backup_empty
+    BackupManager.BackupIssue.TOO_LARGE -> R.string.notice_backup_too_large
+}
+
 @StringRes
 internal fun hostedErrorMessageRes(failure: HostedFailure): Int = when (failure) {
     HostedFailure.SignInRequired -> R.string.hosted_sign_in_again
@@ -2192,9 +2204,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // -- Phase D: learning.db backup/restore + per-language delete -----------
-    // (data-layer task; the Settings SAF wiring and the string resources are
-    // the next task — result notices are inline literals for now, the same
-    // convention as LearningDbStore's jsonModeNotice.)
+    // (data-layer task; the Settings SAF wiring lives in MainActivity +
+    // SettingsScreen. Result notices are string resources — EN in values/,
+    // ES in values-es/ — resolved here at set time.)
+
+    /** User-facing refusal shared by the backup/restore/delete guards. */
+    private fun refuseBusyNotice(): Boolean {
+        notice = getApplication<Application>().getString(R.string.notice_data_conversation_active)
+        return false
+    }
+
+    /** User-facing refusal while the storage stack is still coming up. */
+    private fun refuseStorageNotice(): Boolean {
+        notice = getApplication<Application>().getString(R.string.notice_data_storage_preparing)
+        return false
+    }
 
     /** The live learning database file (LearningDb.open's canonical path). */
     private fun databaseFile(): File =
@@ -2226,9 +2250,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      * success. The legacy JSON-mode store has no database to back up.
      */
     suspend fun exportDbTo(output: OutputStream): Boolean {
-        if (!storageReady || store == null) return false
+        if (isRunning) return refuseBusyNotice()
+        if (!storageReady || store == null) return refuseStorageNotice()
         if (jsonMode) {
-            notice = "El respaldo de la base de datos no está disponible: la app está usando el archivo JSON de aprendizaje."
+            notice = getApplication<Application>().getString(R.string.notice_db_export_unavailable)
             return false
         }
         return try {
@@ -2236,12 +2261,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             withContext(Dispatchers.IO) {
                 BackupManager.exportTo(store!!.db, databaseFile(), output, verificationOpener())
             }
-            notice = "Copia de la base de datos exportada."
+            notice = getApplication<Application>().getString(R.string.notice_db_exported)
             true
         } catch (e: CancellationException) { throw e }
         catch (e: Exception) {
             android.util.Log.w("BackupManager", "database export failed", e)
-            notice = "No se pudo exportar la copia de la base de datos."
+            notice = getApplication<Application>().getString(R.string.notice_db_export_failed)
             false
         }
     }
@@ -2271,9 +2296,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      *     empty database over lost data.
      */
     suspend fun importDbFrom(input: InputStream): Boolean {
-        if (isRunning || !storageReady || store == null) return false
+        if (isRunning) return refuseBusyNotice()
+        if (!storageReady || store == null) return refuseStorageNotice()
         if (jsonMode) {
-            notice = "La restauración de la base de datos no está disponible: la app está usando el archivo JSON de aprendizaje."
+            notice = getApplication<Application>().getString(R.string.notice_db_import_unavailable)
             return false
         }
         val dbFile = databaseFile()
@@ -2324,17 +2350,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
             bumpLedgerRevision()
-            notice = "Respaldo restaurado: los datos de aprendizaje fueron reemplazados por la copia importada."
+            notice = getApplication<Application>().getString(R.string.notice_db_restored)
             true
         }
         catch (e: CancellationException) { throw e }
         catch (e: InvalidBackup) {
-            android.util.Log.w("BackupManager", "database import rejected: ${e.message}")
-            notice = e.message; false
+            android.util.Log.w("BackupManager", "database import rejected: ${e.issue}")
+            notice = getApplication<Application>().getString(backupNoticeRes(e.issue)); false
         }
         catch (e: Exception) {
             android.util.Log.w("BackupManager", "database import failed", e)
-            notice = "No se pudo restaurar el respaldo de la base de datos."
+            notice = getApplication<Application>().getString(R.string.notice_db_restore_failed)
             false
         }
     }
@@ -2376,16 +2402,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun deleteLearningDataForLanguage(languageID: String) {
         // A refusal is surfaced, never silent: the Settings row must not look
-        // broken when the guard fires (inline literals; the settings-UI task
-        // extracts them to resources together with the others).
-        if (isRunning) {
-            notice = "No se pueden eliminar los datos ahora: hay una conversación en curso."
-            return
-        }
-        if (!storageReady) {
-            notice = "No se pueden eliminar los datos ahora: el almacenamiento todavía se está preparando."
-            return
-        }
+        // broken when the guard fires.
+        if (isRunning) { refuseBusyNotice(); return }
+        if (!storageReady) { refuseStorageNotice(); return }
         reports.dismiss()
         val doomed = archive.sessions.filter { it.languageID == languageID }
         val doomedIDs = doomed.map { it.id }.toSet()
@@ -2406,7 +2425,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         bumpLedgerRevision()
         persist { db -> BackupManager.deleteLearningDataForLanguage(db, languageID) }
         val name = LanguageRegistry.get(languageID)?.name ?: languageID
-        notice = "Se eliminaron los datos de aprendizaje de $name."
+        notice = getApplication<Application>().getString(R.string.notice_language_data_deleted, name)
     }
     override fun onCleared() { hostedBindings.disableHelpers(); transport.disconnect(); super.onCleared() }
 }

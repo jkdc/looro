@@ -6,6 +6,7 @@
     <string name="common_close">Cerrar</string>
     <string name="common_save">Guardar</string>
     <string name="common_delete">Eliminar</string>
+    <string name="common_continue">Continuar</string>
     <string name="common_privacy_policy">Política de privacidad</string>
     <string name="common_terms_of_use">Condiciones de uso</string>
     <string name="common_contact_support">Contactar con soporte</string>
@@ -229,6 +230,31 @@
     <string name="settings_key_dialog_field_label">Nueva clave</string>
     <string name="settings_backup_exported_toast">Copia exportada</string>
     <string name="settings_backup_imported_toast">Copia importada</string>
+
+    <!-- Copia de seguridad de la base de datos (learning.db) -->
+    <string name="settings_db_section_title">Copia de seguridad (base de datos)</string>
+    <string name="settings_db_section_footer">Un archivo .db con todo lo que guarda tu aprendizaje: conversaciones, palabras, lecciones y progreso. Restaurar una copia reemplaza lo que hay en este dispositivo por el contenido del archivo. Solo en este dispositivo: no hay sincronización en la nube.</string>
+    <string name="settings_export_db">Exportar copia de base de datos (.db)</string>
+    <string name="settings_import_db">Restaurar copia de base de datos (.db)</string>
+    <string name="settings_delete_language_data">Eliminar los datos de un idioma</string>
+    <string name="settings_delete_language_title">¿Qué idioma eliminar?</string>
+    <string name="settings_delete_language_confirm_title">¿Eliminar los datos de aprendizaje de %1$s?</string>
+    <string name="settings_delete_language_confirm_message">Se borrarán las conversaciones, palabras y progreso de lecciones de %1$s. Los demás idiomas, tu clave y tus preferencias se conservan. Exporta una copia antes si quieres guardarlos.</string>
+    <string name="settings_delete_language_confirm_button">Eliminar datos de %1$s</string>
+    <string name="notice_db_export_unavailable">La copia de la base de datos no está disponible: la app está usando el archivo JSON de aprendizaje.</string>
+    <string name="notice_db_exported">Copia de la base de datos exportada.</string>
+    <string name="notice_db_export_failed">No se pudo exportar la copia de la base de datos.</string>
+    <string name="notice_db_import_unavailable">La restauración de la base de datos no está disponible: la app está usando el archivo JSON de aprendizaje.</string>
+    <string name="notice_db_restored">Respaldo restaurado: los datos de aprendizaje fueron reemplazados por la copia importada.</string>
+    <string name="notice_db_restore_failed">No se pudo restaurar el respaldo de la base de datos.</string>
+    <string name="notice_data_conversation_active">Hay una conversación en curso. Termina antes de cambiar tus datos.</string>
+    <string name="notice_data_storage_preparing">El almacenamiento todavía se está preparando. Inténtalo de nuevo en un momento.</string>
+    <string name="notice_language_data_deleted">Se eliminaron los datos de aprendizaje de %1$s.</string>
+    <string name="notice_backup_invalid">El archivo no es una base de datos de aprendizaje válida.</string>
+    <string name="notice_backup_future_version">El respaldo pertenece a una versión más nueva de la app. Actualiza la aplicación e inténtalo de nuevo.</string>
+    <string name="notice_backup_missing_tables">Al respaldo le faltan tablas de la base de datos de aprendizaje.</string>
+    <string name="notice_backup_empty">El archivo de respaldo está vacío.</string>
+    <string name="notice_backup_too_large">El respaldo de la base de datos es demasiado grande.</string>
 
     <!-- History -->
     <string name="theme_switch_title">¿Terminar la conversación actual?</string>

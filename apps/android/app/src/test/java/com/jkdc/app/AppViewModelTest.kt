@@ -7,6 +7,7 @@ import com.jkdc.app.core.ArchiveCodec
 import com.jkdc.app.core.Fragment
 import com.jkdc.app.core.SessionRecord
 import com.jkdc.app.core.Speaker
+import com.jkdc.app.data.BackupManager
 import com.jkdc.app.network.APIClient
 import com.jkdc.app.network.CredentialStore
 import org.junit.Assert.assertEquals
@@ -70,6 +71,13 @@ class AppViewModelTest {
 
     @Test fun unmappedThrowableHasNoResource() {
         assertEquals(0, errorMessageRes(IllegalStateException("unexpected")))
+    }
+
+    @Test fun everyBackupRejectionReasonMapsToADistinctNonZeroResource() {
+        val ids = BackupManager.BackupIssue.entries.map { backupNoticeRes(it) }
+        ids.forEach { assertTrue("expected a resource for every backup issue", it != 0) }
+        assertEquals("distinct rejection reasons must map to distinct resources",
+            ids.size, ids.toSet().size)
     }
 
     @Test fun onlyMissingKeyAndUnauthorizedNeedKeySetup() {

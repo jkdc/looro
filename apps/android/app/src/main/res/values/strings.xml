@@ -6,6 +6,7 @@
     <string name="common_close">Close</string>
     <string name="common_save">Save</string>
     <string name="common_delete">Delete</string>
+    <string name="common_continue">Continue</string>
     <string name="common_privacy_policy">Privacy policy</string>
     <string name="common_terms_of_use">Terms of use</string>
     <string name="common_contact_support">Contact support</string>
@@ -229,6 +230,31 @@
     <string name="settings_key_dialog_field_label">New key</string>
     <string name="settings_backup_exported_toast">Backup exported</string>
     <string name="settings_backup_imported_toast">Backup imported</string>
+
+    <!-- Database backup (learning.db) -->
+    <string name="settings_db_section_title">Backup (database)</string>
+    <string name="settings_db_section_footer">One .db file with everything your learning holds: conversations, words, lessons and progress. Restoring a backup replaces what is on this device with the file\'s contents. This device only — there is no cloud sync.</string>
+    <string name="settings_export_db">Export database backup (.db)</string>
+    <string name="settings_import_db">Restore database backup (.db)</string>
+    <string name="settings_delete_language_data">Delete a language\'s learning data</string>
+    <string name="settings_delete_language_title">Delete which language?</string>
+    <string name="settings_delete_language_confirm_title">Delete %1$s learning data?</string>
+    <string name="settings_delete_language_confirm_message">This removes the %1$s conversations, words and lesson progress. Other languages, your key and your preferences remain. Export a backup first if you want to keep them.</string>
+    <string name="settings_delete_language_confirm_button">Delete %1$s data</string>
+    <string name="notice_db_export_unavailable">Database backup isn\'t available: the app is using the legacy JSON learning file.</string>
+    <string name="notice_db_exported">Database backup exported.</string>
+    <string name="notice_db_export_failed">The database backup couldn\'t be exported.</string>
+    <string name="notice_db_import_unavailable">Database restore isn\'t available: the app is using the legacy JSON learning file.</string>
+    <string name="notice_db_restored">Backup restored: your learning data was replaced with the imported copy.</string>
+    <string name="notice_db_restore_failed">The database backup couldn\'t be restored.</string>
+    <string name="notice_data_conversation_active">A conversation is in progress. End it before changing your data.</string>
+    <string name="notice_data_storage_preparing">Storage is still being prepared. Try again in a moment.</string>
+    <string name="notice_language_data_deleted">%1$s learning data deleted.</string>
+    <string name="notice_backup_invalid">That file isn\'t a valid learning database.</string>
+    <string name="notice_backup_future_version">This backup is from a newer version of the app. Update the app and try again.</string>
+    <string name="notice_backup_missing_tables">The backup is missing learning database tables.</string>
+    <string name="notice_backup_empty">The backup file is empty.</string>
+    <string name="notice_backup_too_large">The database backup is too large.</string>
 
     <!-- History -->
     <string name="theme_switch_title">End the current conversation?</string>

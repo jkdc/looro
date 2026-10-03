@@ -61,6 +61,8 @@ fun AppRoot(
     onOpenAppSettings: (() -> Unit)?,
     onExport: () -> Unit,
     onImport: () -> Unit,
+    onExportDb: () -> Unit = {},
+    onImportDb: () -> Unit = {},
     account: AccountViewModel? = null,
     onGoogleSignIn: () -> Unit = {},
     onSignOut: () -> Unit = {},
@@ -224,6 +226,7 @@ fun AppRoot(
                         }) else null, onResume = { id ->
                             vm.resumeSession(id); showSettings = false; tab = 0
                         }, onDismiss = { showSettings = false },
+                            onExportDb = onExportDb, onImportDb = onImportDb,
                             onTokensPurchase = if (purchases?.enabled == true) ({
                                 tokensExhausted = false; purchases.refresh(); showTokens = true
                             }) else null,

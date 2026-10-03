@@ -105,7 +105,7 @@ class BackupManagerTest {
                 "esto no es una base de datos sqlite".toByteArray().inputStream(),
                 tmp.newFolder(), opener())
         }
-        assertEquals(BackupManager.NOTICE_CORRUPT, thrown.message)
+        assertEquals(BackupManager.BackupIssue.CORRUPT, thrown.issue)
     }
 
     @Test fun importRejectsAnOversizedBackup() {
@@ -114,7 +114,7 @@ class BackupManagerTest {
                 ByteArrayInputStream(ByteArray(BackupManager.MAXIMUM_DATABASE_BYTES + 1)),
                 tmp.newFolder(), opener())
         }
-        assertTrue(thrown.message!!.contains("demasiado grande"))
+        assertEquals(BackupManager.BackupIssue.TOO_LARGE, thrown.issue)
     }
 
     @Test fun importRejectsAFutureSchemaVersion() {
@@ -126,7 +126,7 @@ class BackupManagerTest {
         val thrown = assertThrows(InvalidBackup::class.java) {
             BackupManager.readValidatedBackup(file.inputStream(), tmp.newFolder(), opener())
         }
-        assertEquals(BackupManager.NOTICE_FUTURE_VERSION, thrown.message)
+        assertEquals(BackupManager.BackupIssue.FUTURE_VERSION, thrown.issue)
     }
 
     @Test fun importRejectsADatabaseWithoutTheCanonicalTables() {
@@ -140,7 +140,7 @@ class BackupManagerTest {
         val thrown = assertThrows(InvalidBackup::class.java) {
             BackupManager.readValidatedBackup(file.inputStream(), tmp.newFolder(), opener())
         }
-        assertEquals(BackupManager.NOTICE_MISSING_TABLES, thrown.message)
+        assertEquals(BackupManager.BackupIssue.MISSING_TABLES, thrown.issue)
     }
 
     // -- per-language delete --------------------------------------------------
