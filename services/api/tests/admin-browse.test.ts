@@ -187,6 +187,49 @@ integration('metrics snapshot and timeseries summarize synthetic activity with z
   await assert.rejects(timeseries(db!, 'nope', 30));
 });
 
+integration('token-billing rows are browsable: entitlements, metering ledger and pack transactions', async () => {
+  const account = randomUUID(), order = randomUUID();
+  await db!.query('INSERT INTO accounts(id,email) VALUES($1,$2)', [account, 'packs@example.test']);
+  // The pack quote is enforced by a deferred constraint trigger, so order and quote share one transaction.
+  await transaction(db!, async sql => {
+    await sql.query(`INSERT INTO minute_purchase_orders(id,account_id,idempotency_key,provider,environment,merchant,sku,provider_product,currency,total_minor,entitlement_kind)
+      VALUES($1,$2,'pack-order','play','test','merchant','token_pack_1m','prod.pack','usd',499,'token_pack')`, [order, account]);
+    await sql.query(`INSERT INTO pack_purchase_quotes(order_id,kind,credit_nano,rate_version)
+      VALUES($1,'token_pack',1000000000,'2026-09-minimax-m')`, [order]);
+  });
+  await db!.query(`INSERT INTO pack_purchase_transactions(order_id,account_id,provider,environment,merchant,transaction_hash,state,credit_nano,granted_nano)
+    VALUES($1,$2,'play','test','merchant',$3,'purchased',1000000000,1000000000)`, [order, account, 'c'.repeat(64)]);
+  await db!.query(`INSERT INTO entitlements(account_id,unlocked_at,unlock_source,unlock_order_id) VALUES($1,now(),'play',$2)`, [account, order]);
+  await db!.query(`INSERT INTO ledger(id,account_id,reference,kind,balance_delta_nano,reserved_delta_nano,rate_version)
+    VALUES($1,$2,'pack:purchase','purchase',1000000000,0,'2026-09-minimax-m')`, [randomUUID(), account]);
+  await db!.query(`INSERT INTO ledger(id,account_id,reference,kind,balance_delta_nano,reserved_delta_nano,rate_version)
+    VALUES($1,$2,$3,'settle',-90000,0,'2026-09-minimax-m')`, [randomUUID(), account, `settlement:${order}`]);
+  const token = await adminCookie();
+  const service = app();
+  const headers = { cookie: adminCookieHeader(token), 'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': proxyToken };
+  try {
+    const entitlement = await service.inject({ method: 'GET', url: '/v1/admin/browse/entitlements?q_unlock_source=eq:play', headers });
+    assert.equal(entitlement.statusCode, 200);
+    assert.equal(entitlement.json().total, 1);
+    assert.equal(entitlement.json().rows[0]!.unlock_order_id, order);
+    const metering = await service.inject({ method: 'GET',
+      url: '/v1/admin/browse/ledger?q_rate_version=eq:2026-09-minimax-m&sort=created_at&dir=asc', headers });
+    assert.equal(metering.statusCode, 200);
+    assert.equal(metering.json().total, 2);
+    assert.deepEqual(metering.json().rows.map((row: { kind: string }) => row.kind), ['purchase', 'settle']);
+    assert.equal(metering.json().rows[1]!.balance_delta_nano, '-90000');
+    const unpriced = await service.inject({ method: 'GET', url: '/v1/admin/browse/ledger?q_rate_version=is-null:', headers });
+    assert.equal(unpriced.json().total, 0);
+    const packs = await service.inject({ method: 'GET', url: '/v1/admin/browse/pack_purchase_transactions?q_state=eq:purchased', headers });
+    assert.equal(packs.statusCode, 200);
+    assert.equal(packs.json().total, 1);
+    assert.equal(packs.json().rows[0]!.order_id, order);
+    assert.equal(packs.json().rows[0]!.granted_nano, '1000000000');
+    const catalog = await service.inject({ method: 'GET', url: '/v1/admin/browse', headers });
+    for (const name of ['entitlements', 'ledger', 'pack_purchase_transactions']) assert.ok(catalog.json().tables[name], name);
+  } finally { await service.close(); }
+});
+
 integration('unauthenticated browsing fails closed', async () => {
   const service = app();
   try {

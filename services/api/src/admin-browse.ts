@@ -54,10 +54,11 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
   },
   entitlements: {
     table: 'entitlements',
-    description: 'Desbloqueo BYOK y origen de la compra (token-billing).',
+    description: 'Desbloqueo BYOK con su origen de compra y la orden que lo otorgó (token-billing).',
     columns: {
       account_id: column('uuid', uuidFilters), unlocked_at: column('timestamptz', []),
-      unlock_source: column('text', []), created_at: column('timestamptz', [])
+      unlock_source: column('text', ['eq']), unlock_order_id: column('uuid', uuidFilters),
+      created_at: column('timestamptz', [])
     },
     orderable: ['created_at', 'account_id'], defaultOrder: { column: 'created_at', direction: 'desc' }
   },
@@ -69,6 +70,19 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
       nano_per_million_output: column('bigint', numberFilters), valid_from: column('timestamptz', [])
     },
     orderable: ['valid_from'], defaultOrder: { column: 'valid_from', direction: 'desc' }
+  },
+  ledger: {
+    table: 'ledger',
+    description: 'Asientos inmutables de nanoUSD: compras de paquetes y liquidaciones de tokens con su versión de tarifa.',
+    columns: {
+      id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
+      reference: column('text', textFilters), kind: column('text', ['eq', 'in']),
+      balance_delta_nano: column('bigint', numberFilters), reserved_delta_nano: column('bigint', numberFilters),
+      sandbox_delta_nano: column('bigint', numberFilters),
+      rate_version: column('text', ['eq', 'is-null', 'not-null']),
+      created_at: column('timestamptz', timeFilters)
+    },
+    orderable: ['created_at', 'kind', 'account_id'], defaultOrder: { column: 'created_at', direction: 'desc' }
   },
   minute_wallets: {
     table: 'minute_wallets',
@@ -128,6 +142,20 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
       created_at: column('timestamptz', timeFilters)
     },
     orderable: ['created_at', 'total_minor', 'account_id'], defaultOrder: { column: 'created_at', direction: 'desc' }
+  },
+  pack_purchase_transactions: {
+    table: 'pack_purchase_transactions',
+    description: 'Transacciones de tienda de desbloqueos y paquetes de tokens, con su abono y reversa.',
+    columns: {
+      order_id: column('uuid', uuidFilters), account_id: column('uuid', uuidFilters),
+      provider: column('text', ['eq']), environment: column('text', ['eq']),
+      merchant: column('text', ['eq']), transaction_hash: column('text', ['eq', 'contains']),
+      state: column('text', ['eq']), credit_nano: column('bigint', numberFilters),
+      granted_nano: column('bigint', numberFilters), refunded_minor: column('bigint', numberFilters),
+      reversed_nano: column('bigint', numberFilters), created_at: column('timestamptz', timeFilters),
+      updated_at: column('timestamptz', timeFilters)
+    },
+    orderable: ['created_at', 'updated_at', 'state'], defaultOrder: { column: 'created_at', direction: 'desc' }
   },
   checkout_orders: {
     table: 'checkout_orders',
