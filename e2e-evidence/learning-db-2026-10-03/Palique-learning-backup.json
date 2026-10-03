@@ -1,0 +1,473 @@
+{
+    "schemaVersion": 2,
+    "sessions": [
+        {
+            "id": "7f6c2a1e-58d4-4b3a-9e2f-0c8d1a4b6e90",
+            "languageID": "es",
+            "providerID": "hosted-8f31c2a4",
+            "startedAt": 8.1257376E8,
+            "endedAt": 8.1257736E8,
+            "themeID": "restaurant",
+            "title": "En el restaurante",
+            "fragments": [
+                {
+                    "id": "11a1b2c3-4d5e-4f60-8718-9a0b1c2d3e40",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "¡Hola! Bienvenido de nuevo. ¿Qué tal el fin de semana?",
+                    "startMS": 0,
+                    "endMS": 2600,
+                    "receivedAt": 8.12573765E8,
+                    "meaningVisible": false,
+                    "typed": false
+                },
+                {
+                    "id": "22b2c3d4-5e6f-4a71-9829-ab1c2d3e4f51",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "user",
+                    "text": "Muy bien, gracias. Hoy quiero practicar cómo reservar una mesa.",
+                    "startMS": 2800,
+                    "endMS": 7300,
+                    "receivedAt": 8.12573771E8,
+                    "meaningVisible": false,
+                    "typed": true
+                },
+                {
+                    "id": "33c3d4e5-6f70-4b82-a93a-bc2d3e4f5a62",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "Perfecto. Puedes decir: «Quisiera reservar una mesa para dos personas».",
+                    "startMS": 7500,
+                    "endMS": 12600,
+                    "receivedAt": 8.12573778E8,
+                    "meaningVisible": true,
+                    "typed": false
+                },
+                {
+                    "id": "44d4e5f6-7081-4c93-ba4b-cd3e4f5a6b73",
+                    "revision": 1,
+                    "previousTexts": [
+                        "Quisiera reservar una mesa para dos personas."
+                    ],
+                    "speaker": "assistant",
+                    "text": "Quisiera reservar una mesa para dos, por favor.",
+                    "startMS": 12800,
+                    "endMS": 17400,
+                    "receivedAt": 8.12573785E8,
+                    "meaningVisible": false,
+                    "typed": false
+                }
+            ],
+            "assessments": [
+                {
+                    "passageID": "22b2c3d4-5e6f-4a71-9829-ab1c2d3e4f51",
+                    "revisionKey": "22b2c3d4-5e6f-4a71-9829-ab1c2d3e4f51:0",
+                    "outcome": "success",
+                    "suggestedLevel": 3,
+                    "nextGoal": "Practice polite requests with the conditional",
+                    "capability": "B1",
+                    "words": [
+                        {
+                            "lemma": "reservar",
+                            "meaning": "to book, to reserve",
+                            "form": "quiero practicar cómo reservar una mesa",
+                            "kind": "independent",
+                            "confidence": 0.8,
+                            "sourceIDs": [
+                                "22b2c3d4-5e6f-4a71-9829-ab1c2d3e4f51"
+                            ],
+                            "quote": "Hoy quiero practicar cómo reservar una mesa.",
+                            "language": "es"
+                        }
+                    ],
+                    "createdAt": 8.12577361E8,
+                    "context": "free"
+                }
+            ],
+            "translations": {
+                "11a1b2c3-4d5e-4f60-8718-9a0b1c2d3e40": "Hello! Welcome back. How was your weekend?",
+                "44d4e5f6-7081-4c93-ba4b-cd3e4f5a6b73": "I would like to book a table for two, please."
+            },
+            "topics": [
+                {
+                    "id": "d6f27039-8b1a-4e42-93c4-b5a6c7d8e9f0",
+                    "languageID": "es",
+                    "query": "formal ways to book a table in Spanish",
+                    "text": "Para reservar una mesa en un registro formal se usa «quisiera» o «me gustaría» seguido del infinitivo: «Quisiera reservar una mesa para dos».",
+                    "sources": [
+                        {
+                            "title": "Courteous requests in Spanish",
+                            "url": "https://example.com/spanish-polite-requests"
+                        }
+                    ],
+                    "retrievedAt": 8.1257377E8
+                }
+            ],
+            "voiceSeconds": 640.5,
+            "usageFinal": true,
+            "inputTokens": 4231,
+            "outputTokens": 1893,
+            "searchCalls": 1,
+            "endReason": "user",
+            "mode": null,
+            "lessonID": null,
+            "scenarioID": null,
+            "scenarioReview": null
+        },
+        {
+            "id": "a3d94b12-6f57-4c08-b1a2-93e4f5a6b7c8",
+            "languageID": "es",
+            "providerID": null,
+            "startedAt": 8.1262E8,
+            "endedAt": 8.12751059562E8,
+            "themeID": null,
+            "title": "The verb ser",
+            "fragments": [
+                {
+                    "id": "55e5f6a7-8192-4da4-cb5c-de4f5a6b7c84",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "Vamos a practicar el verbo ser. Di: «Yo soy de Argentina».",
+                    "startMS": 0,
+                    "endMS": 3000,
+                    "receivedAt": 8.12620005E8,
+                    "meaningVisible": false,
+                    "typed": false
+                },
+                {
+                    "id": "66f6a7b8-92a3-4eb5-dc6d-ef5a6b7c8d95",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "user",
+                    "text": "Yo soy de Argentina.",
+                    "startMS": 3300,
+                    "endMS": 4900,
+                    "receivedAt": 8.12620012E8,
+                    "meaningVisible": false,
+                    "typed": false
+                }
+            ],
+            "assessments": [],
+            "translations": {},
+            "topics": [],
+            "voiceSeconds": 122.0,
+            "usageFinal": false,
+            "inputTokens": 318,
+            "outputTokens": 142,
+            "searchCalls": 0,
+            "endReason": "App closed before finalization",
+            "mode": "lesson",
+            "lessonID": "es-foundations-u1-ser",
+            "scenarioID": null,
+            "scenarioReview": null
+        },
+        {
+            "id": "c5e16f28-7a09-4d31-82b3-a4f5b6c7d8e9",
+            "languageID": "fr",
+            "providerID": "hosted-2b7d09e1",
+            "startedAt": 8.1249E8,
+            "endedAt": 8.1249096E8,
+            "themeID": null,
+            "title": "Commander au café",
+            "fragments": [
+                {
+                    "id": "77a7b8c9-a3b4-4fc6-ed7e-fa6b7c8d9ea6",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "Bonjour ! Bienvenue au café. Qu'est-ce que je vous sers ?",
+                    "startMS": 0,
+                    "endMS": 3100,
+                    "receivedAt": 8.12490004E8,
+                    "meaningVisible": false,
+                    "typed": false
+                },
+                {
+                    "id": "88b8c9da-b4c5-4ad7-fe8f-ab7c8d9eafb7",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "user",
+                    "text": "Je veux un café, s'il te plaît",
+                    "startMS": 3400,
+                    "endMS": 5600,
+                    "receivedAt": 8.12490011E8,
+                    "meaningVisible": true,
+                    "typed": false
+                },
+                {
+                    "id": "99c9daeb-c5d6-4be8-af9a-bc8d9eafb0c8",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "Très bien, un café pour vous. Autre chose ?",
+                    "startMS": 5900,
+                    "endMS": 8700,
+                    "receivedAt": 8.12490018E8,
+                    "meaningVisible": false,
+                    "typed": false
+                }
+            ],
+            "assessments": [],
+            "translations": {},
+            "topics": [],
+            "voiceSeconds": 420.0,
+            "usageFinal": true,
+            "inputTokens": 2100,
+            "outputTokens": 980,
+            "searchCalls": 0,
+            "endReason": "user",
+            "mode": "scenario",
+            "lessonID": null,
+            "scenarioID": "fr-cafe-ordering",
+            "scenarioReview": {
+                "createdAt": 8.12490975E8,
+                "strengths": [
+                    "Ordered a drink unaided",
+                    "Reacted naturally to the waiter's follow-up question"
+                ],
+                "errors": [
+                    {
+                        "quote": "Je veux un café, s'il te plaît",
+                        "correction": "Je voudrais un café, s'il vous plaît",
+                        "kind": "register",
+                        "note": "With a stranger use «vous» and soften the request with «je voudrais».",
+                        "sourceIDs": [
+                            "88b8c9da-b4c5-4ad7-fe8f-ab7c8d9eafb7"
+                        ]
+                    }
+                ],
+                "keyPhrases": [
+                    {
+                        "phrase": "l'addition, s'il vous plaît",
+                        "meaning": "the check, please"
+                    }
+                ],
+                "retryFocus": "Soften requests with «je voudrais» and keep the formal register throughout"
+            }
+        },
+        {
+            "id": "eab1501f-dcab-4583-8935-3cd040bf7402",
+            "languageID": "es",
+            "providerID": "7ecc6743-f0d0-4a1b-8d10-d64ac6bd2f7c",
+            "startedAt": 8.12751983313E8,
+            "endedAt": 8.12752271217E8,
+            "themeID": null,
+            "title": "A little Spanish",
+            "fragments": [
+                {
+                    "id": "750c3fe0-63e6-4722-be5e-0046f48d47e1",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "¡Hola! ¿Cómo estás hoy? Me llamo Palique y estoy encantado de hablar contigo. ¿Te gusta cocinar?",
+                    "startMS": 7628,
+                    "endMS": 8128,
+                    "receivedAt": 8.127519909879999E8,
+                    "meaningVisible": true,
+                    "typed": false
+                },
+                {
+                    "id": "702dcf46-7371-499b-94b4-7784b1632ead",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "user",
+                    "text": "Hola,",
+                    "startMS": 104111,
+                    "endMS": 104112,
+                    "receivedAt": 8.127520874260001E8,
+                    "meaningVisible": true,
+                    "typed": true
+                },
+                {
+                    "id": "d55bf7ec-f2e4-4467-bde7-6e3a070fbced",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "¡Hola! ¿Cómo estás hoy? Me llamo Palique y estoy encantado de hablar contigo. ¿Te gusta cocinar?",
+                    "startMS": 107104,
+                    "endMS": 107604,
+                    "receivedAt": 8.12752090461E8,
+                    "meaningVisible": true,
+                    "typed": false
+                },
+                {
+                    "id": "417fd221-eaeb-4a76-8c84-abf0ca1dcb5e",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "user",
+                    "text": "Me gusta elarroz con pollo",
+                    "startMS": 225768,
+                    "endMS": 225769,
+                    "receivedAt": 8.12752209082E8,
+                    "meaningVisible": true,
+                    "typed": true
+                },
+                {
+                    "id": "a00faee5-339d-4ab3-9aca-38c858ab2622",
+                    "revision": 0,
+                    "previousTexts": [],
+                    "speaker": "assistant",
+                    "text": "¡Hola! Me gusta el arroz con pollo también. ¿Cómo lo preparas tú?",
+                    "startMS": 228404,
+                    "endMS": 228904,
+                    "receivedAt": 8.127522117609999E8,
+                    "meaningVisible": true,
+                    "typed": false
+                }
+            ],
+            "assessments": [],
+            "translations": {},
+            "topics": [],
+            "voiceSeconds": 281.781,
+            "usageFinal": false,
+            "inputTokens": 493,
+            "outputTokens": 51,
+            "searchCalls": 0,
+            "endReason": "App closed before finalization",
+            "mode": "listening",
+            "lessonID": null,
+            "scenarioID": null,
+            "scenarioReview": null
+        }
+    ],
+    "preferences": {
+        "learningLanguageID": "fr",
+        "meaningVisible": true,
+        "meaningLanguage": "English",
+        "sessionMinutes": 15,
+        "hiddenWords": [
+            "es|hola|hello",
+            "es|reservar|to book"
+        ],
+        "interests": "cooking, travel, football",
+        "hasOnboarded": true,
+        "aiConsentVersion": 1,
+        "slowSpeech": false,
+        "listeningPractice": true,
+        "speechRate": 0.85,
+        "usageMetricsEnabled": true,
+        "sttEngine": "system",
+        "pronunciationEnabled": false
+    },
+    "lessons": [
+        {
+            "lessonID": "es-foundations-u1-ser",
+            "bars": 0,
+            "attempts": 3,
+            "lastSeen": 8.125392E8,
+            "dueAt": 0.0
+        },
+        {
+            "lessonID": "fr-foundations-u1-etre",
+            "bars": 0,
+            "attempts": 5,
+            "lastSeen": 8.1254784E8,
+            "dueAt": 0.0
+        }
+    ],
+    "expressions": [
+        {
+            "text": "Buenos días",
+            "meaning": "Good morning",
+            "source": "lookup",
+            "lessonID": null,
+            "bars": 2,
+            "attempts": 5,
+            "lastSeen": 8.124048E8,
+            "dueAt": 8.124912E8,
+            "languageID": null
+        },
+        {
+            "text": "important",
+            "meaning": "importante",
+            "source": "lesson",
+            "lessonID": "es-foundations-u1-ser",
+            "bars": 1,
+            "attempts": 2,
+            "lastSeen": 8.125392E8,
+            "dueAt": 8.126256E8,
+            "languageID": "es"
+        },
+        {
+            "text": "important",
+            "meaning": "important",
+            "source": "lesson",
+            "lessonID": "fr-foundations-u1-etre",
+            "bars": 2,
+            "attempts": 4,
+            "lastSeen": 8.1254784E8,
+            "dueAt": 8.1263424E8,
+            "languageID": "fr"
+        },
+        {
+            "text": "¿Qué tal?",
+            "meaning": "How is it going?",
+            "source": "lookup",
+            "lessonID": null,
+            "bars": 0,
+            "attempts": 0,
+            "lastSeen": 0.0,
+            "dueAt": 0.0,
+            "languageID": "es"
+        }
+    ],
+    "completions": [
+        {
+            "kind": "lesson",
+            "itemID": "es-foundations-u1-ser",
+            "at": 8.125774E8,
+            "bestScore": 92,
+            "languageID": "es"
+        },
+        {
+            "kind": "listening",
+            "itemID": "es-listen-cafe-morning",
+            "at": 8.12548E8,
+            "bestScore": 100,
+            "languageID": "es"
+        },
+        {
+            "kind": "reading",
+            "itemID": "es-read-grupo-caminata",
+            "at": 8.124656E8,
+            "bestScore": 88,
+            "languageID": "es"
+        },
+        {
+            "kind": "scenario_practice",
+            "itemID": "fr-cafe-ordering",
+            "at": 8.1249098E8,
+            "bestScore": 85,
+            "languageID": "fr"
+        },
+        {
+            "kind": "conversation_theme",
+            "itemID": "restaurant",
+            "at": 8.02E8,
+            "bestScore": 0,
+            "languageID": null
+        }
+    ],
+    "errors": [
+        {
+            "skillID": "grammar:articles",
+            "count": 7,
+            "lastAt": 8.1257736E8,
+            "lastPrompt": "Completa: «___ mesa» (el/la)"
+        },
+        {
+            "skillID": "function:describe-people",
+            "count": 3,
+            "lastAt": 8.123792E8,
+            "lastPrompt": "Describe a tu mejor amigo en una frase"
+        }
+    ],
+    "masteryCache": {
+        "function:describe-people": 1,
+        "grammar:articles": 2
+    }
+}
