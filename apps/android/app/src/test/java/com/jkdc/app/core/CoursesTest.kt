@@ -9,15 +9,15 @@ class CoursesTest {
         assertEquals(6, courses.size)
         val course = courses.first { it.id == "en-foundations" }
         assertEquals("en-foundations", course.id)
-        assertEquals(27, course.units.size)
-        assertEquals(82, course.units.sumOf { it.lessons.size })
+        assertEquals(30, course.units.size)
+        assertEquals(91, course.units.sumOf { it.lessons.size })
         assertTrue(course.units.first().themes.size >= 2)
     }
 
     @Test fun `every unit carries its level label`() {
         val levels = CourseRegistry.forLanguage("en").first { it.id == "en-foundations" }.units.map { it.level }
         assertTrue(levels.all { it.isNotBlank() })
-        assertEquals(listOf("A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A2", "A2", "A2", "A2", "A2", "A2", "B1", "B1", "B1", "B1", "B2", "B2", "C1"), levels)
+        assertEquals(listOf("A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A2", "A2", "A2", "A2", "A2", "A2", "B1", "B1", "B1", "B1", "B1", "B1", "B2", "B2", "B2", "C1"), levels)
     }
 
     @Test fun `the five English professional tracks are registered`() {

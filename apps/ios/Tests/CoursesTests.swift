@@ -7,8 +7,8 @@ final class CoursesTests: XCTestCase {
         let courses = CourseRegistry.forLanguage("en").filter { $0.id == "en-foundations" }
         XCTAssertEqual(courses.count, 1)
         let course = courses[0]
-        XCTAssertEqual(course.units.count, 27)
-        XCTAssertEqual(course.units.reduce(0) { $0 + $1.lessons.count }, 82)
+        XCTAssertEqual(course.units.count, 30)
+        XCTAssertEqual(course.units.reduce(0) { $0 + $1.lessons.count }, 91)
         XCTAssertGreaterThanOrEqual(course.units[0].themes.count, 2)
         // Every language carries exactly one foundations course plus its work track.
         for language in ["en", "es", "fr", "it", "de", "pt"] {

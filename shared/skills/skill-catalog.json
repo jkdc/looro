@@ -118,6 +118,13 @@
       ]
     },
     {
+      "id": "grammar:causative-have",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-irregular"
+      ]
+    },
+    {
       "id": "grammar:comparatives",
       "category": "grammar",
       "prerequisites": [
@@ -221,6 +228,13 @@
       "category": "grammar",
       "prerequisites": [
         "grammar:past-simple-regular"
+      ]
+    },
+    {
+      "id": "grammar:passive-reporting",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:passive-intro"
       ]
     },
     {
@@ -347,6 +361,13 @@
       ]
     },
     {
+      "id": "grammar:speculation",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:modal-must-have-to"
+      ]
+    },
+    {
       "id": "grammar:subject-pronouns",
       "category": "grammar",
       "prerequisites": [
@@ -366,6 +387,13 @@
       "prerequisites": [
         "grammar:articles",
         "grammar:plurals"
+      ]
+    },
+    {
+      "id": "grammar:third-conditional",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:second-conditional"
       ]
     },
     {
@@ -393,6 +421,13 @@
       "id": "grammar:verb-be",
       "category": "grammar",
       "prerequisites": []
+    },
+    {
+      "id": "grammar:wish-clauses",
+      "category": "grammar",
+      "prerequisites": [
+        "grammar:past-simple-irregular"
+      ]
     },
     {
       "id": "listening:connected-speech",

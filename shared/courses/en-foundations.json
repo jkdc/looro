@@ -13625,6 +13625,1073 @@
       ]
     },
     {
+      "id": "en-foundations-done",
+      "title": "Getting things done",
+      "subtitle": "Causatives, phrasal verbs, favours",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "the-renovation",
+          "title": "The renovation",
+          "subtitle": "Outsource it",
+          "symbol": "hammer",
+          "category": "Course",
+          "situation": "Your flat needs work: painters, plumbers, a cleaner — you arrange for all of it and none of it is done by you. The causative is the language of a busy week.",
+          "colorIndex": 0
+        },
+        {
+          "id": "the-favour-list",
+          "title": "The favour list",
+          "subtitle": "Ask and delegate",
+          "symbol": "checklist",
+          "category": "Course",
+          "situation": "A mountain of small tasks stands between you and Friday: you chase, delegate and ask nicely until every line is crossed off.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-done-causative",
+          "title": "Have it done",
+          "goal": "Stop doing everything yourself: have something done and get someone to do it.",
+          "intro": {
+            "explanation": [
+              "When someone does a service FOR you, use have + object + participle: \"I had the flat painted\" — you organised it; a painter held the brush.",
+              "Get works the same way, one notch more informal: \"I got the car repaired yesterday\" — same meaning, friendlier tone.",
+              "For people you persuade or allow, switch to get someone TO do, make someone do, let someone do: \"I got my brother to help\" / \"She made me redo it\" / \"He let me leave early\"."
+            ],
+            "examples": [
+              {
+                "text": "I had the walls painted last week.",
+                "meaning": "have + object + participle: a painter did it."
+              },
+              {
+                "text": "We're getting a new kitchen fitted.",
+                "meaning": "Arranged and in progress."
+              },
+              {
+                "text": "You should get that tooth looked at.",
+                "meaning": "get + object + participle: classic advice."
+              },
+              {
+                "text": "She had her bag stolen in Madrid.",
+                "meaning": "The causative also reports things done TO you."
+              },
+              {
+                "text": "I got my neighbour to look at the boiler.",
+                "meaning": "get + person + TO + verb: persuaded."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "have + object + participle",
+              "meaning": "The service causative.",
+              "note": "I had my hair cut."
+            },
+            {
+              "text": "get + object + participle",
+              "meaning": "The informal twin.",
+              "note": "I got the car fixed."
+            },
+            {
+              "text": "get someone to do something",
+              "meaning": "Persuade them.",
+              "note": "I got him to sign it."
+            },
+            {
+              "text": "make someone do something",
+              "meaning": "Force them — no to.",
+              "note": "She made me redo the report."
+            },
+            {
+              "text": "let someone do something",
+              "meaning": "Allow them — no to.",
+              "note": "He let me leave early."
+            }
+          ],
+          "situation": "You narrate a gloriously lazy week: the painter painted, the mechanic repaired, the cleaner cleaned — and you take the credit for all of it in flawless causative English.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Say the painter painted your flat last week. (have)",
+                "expected": [
+                  "I had the flat painted last week."
+                ],
+                "focus": "have something done",
+                "watch": "have + object + participle — you never touched a brush."
+              },
+              {
+                "prompt": "Report the mechanic repaired your car yesterday. (get, informal)",
+                "expected": [
+                  "I got the car repaired yesterday.",
+                  "I got my car repaired yesterday."
+                ],
+                "focus": "get something done",
+                "watch": "get works like have here — one notch more informal."
+              },
+              {
+                "prompt": "Advise a friend about that painful tooth. (get)",
+                "expected": [
+                  "You should get that tooth looked at.",
+                  "Get that tooth looked at."
+                ],
+                "focus": "get + advice",
+                "watch": "get + object + participle is the natural advice frame."
+              },
+              {
+                "prompt": "Say you persuaded your brother to help you move.",
+                "expected": [
+                  "I got my brother to help me move.",
+                  "I got my brother to help."
+                ],
+                "focus": "get someone to",
+                "watch": "get + person + TO + verb: got my brother TO help."
+              },
+              {
+                "prompt": "Complain: someone stole your wallet on the metro. (have)",
+                "expected": [
+                  "I had my wallet stolen on the metro."
+                ],
+                "focus": "bad-news causative",
+                "watch": "have something done also reports things done TO you — no thief named."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-done-causative-e1",
+              "kind": "choice",
+              "prompt": "I ___ my hair cut every month.",
+              "explain": "have + object + participle: the barber does the cutting.",
+              "options": [
+                "have",
+                "make",
+                "let",
+                "do"
+              ],
+              "answers": [
+                "have"
+              ]
+            },
+            {
+              "id": "en-foundations-done-causative-e2",
+              "kind": "gap",
+              "prompt": "We ___ the roof repaired last spring. (have, past)",
+              "explain": "Past of have: had the roof repaired — a roofer did it.",
+              "answers": [
+                "had"
+              ]
+            },
+            {
+              "id": "en-foundations-done-causative-e3",
+              "kind": "order",
+              "prompt": "Report the finished repair.",
+              "explain": "get + object + participle: the informal service causative.",
+              "answers": [
+                "I got the car repaired yesterday"
+              ]
+            },
+            {
+              "id": "en-foundations-done-causative-e4",
+              "kind": "written",
+              "prompt": "Say your brother finally agreed to help you.",
+              "explain": "get someone to do something: persuaded, not forced.",
+              "answers": [
+                "i got my brother to help",
+                "i got my brother to help me",
+                "i got my brother to help me move"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:causative-have",
+            "vocab:work",
+            "function:talk-about-work",
+            "function:make-requests"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular"
+          ]
+        },
+        {
+          "id": "en-foundations-done-phrasals",
+          "title": "Phrasal verbs at work",
+          "goal": "Run your tasks like a native: put off, set up, carry out, fill in, follow up.",
+          "intro": {
+            "explanation": [
+              "Task phrasal verbs pair an action with its result: put off (delay), carry out (do as planned), set up (arrange), fill in (complete a form).",
+              "The particle can move: \"put the meeting off\" and \"put off the meeting\" both work — but with a pronoun only one order survives: \"put it off\", never \"put off it\".",
+              "A task isn't finished until someone chases it: \"I'll follow up on Friday\" — follow up means check back, politely."
+            ],
+            "examples": [
+              {
+                "text": "Let's put the meeting off until Monday.",
+                "meaning": "Delay it — Monday is safer."
+              },
+              {
+                "text": "I'll set up the call for Thursday.",
+                "meaning": "Arrange it."
+              },
+              {
+                "text": "The team carried out the plan perfectly.",
+                "meaning": "Did it exactly as intended."
+              },
+              {
+                "text": "Can you fill in this form and sign it?",
+                "meaning": "Complete it."
+              },
+              {
+                "text": "No reply yet — I'll follow up tomorrow.",
+                "meaning": "Chase it, politely."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "put off / put it off",
+              "meaning": "Delay — usually what we avoid.",
+              "note": "Don't put off the dentist."
+            },
+            {
+              "text": "set up / set it up",
+              "meaning": "Arrange.",
+              "note": "I'll set up a call."
+            },
+            {
+              "text": "carry out / carry it out",
+              "meaning": "Do as planned.",
+              "note": "They carried out the tests."
+            },
+            {
+              "text": "fill in / fill it in",
+              "meaning": "Complete a form.",
+              "note": "Fill in sections 1 and 2."
+            },
+            {
+              "text": "follow up on",
+              "meaning": "Chase politely.",
+              "note": "I'll follow up on Monday."
+            }
+          ],
+          "situation": "Monday stand-up, six tasks on the board: delay one, arrange two, complete a form, carry out the plan — and promise to follow up on the rest before Friday.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Delay the meeting to Monday. (put off)",
+                "expected": [
+                  "Let's put the meeting off until Monday.",
+                  "I'll put the meeting off until Monday."
+                ],
+                "focus": "put off",
+                "watch": "With a pronoun only one order works: put IT off."
+              },
+              {
+                "prompt": "Arrange a call for Thursday. (set up)",
+                "expected": [
+                  "I'll set up the call for Thursday.",
+                  "I'll set up a call for Thursday."
+                ],
+                "focus": "set up",
+                "watch": "set up = arrange: the call exists once you set it up."
+              },
+              {
+                "prompt": "Say the team did the plan exactly as intended. (carry out)",
+                "expected": [
+                  "The team carried out the plan perfectly.",
+                  "The team carried out the plan."
+                ],
+                "focus": "carry out",
+                "watch": "carry out = perform to the letter: plans, tests, orders."
+              },
+              {
+                "prompt": "Ask someone to complete a form.",
+                "expected": [
+                  "Can you fill in this form?",
+                  "Could you fill in this form, please?"
+                ],
+                "focus": "fill in",
+                "watch": "fill in + the form: BrE also says fill it out in AmE."
+              },
+              {
+                "prompt": "Promise to chase the client's reply tomorrow. (follow up)",
+                "expected": [
+                  "I'll follow up tomorrow.",
+                  "I'll follow up with the client tomorrow."
+                ],
+                "focus": "follow up",
+                "watch": "follow up on/with = check back without nagging."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-done-phrasals-e1",
+              "kind": "choice",
+              "prompt": "We keep ___ the decision — just decide today.",
+              "explain": "put off = delay: they keep delaying the decision.",
+              "options": [
+                "putting off",
+                "putting on",
+                "carrying out",
+                "setting up"
+              ],
+              "answers": [
+                "putting off"
+              ]
+            },
+            {
+              "id": "en-foundations-done-phrasals-e2",
+              "kind": "gap",
+              "prompt": "I'll ___ up the meeting room for ten o'clock. (set)",
+              "explain": "set up = arrange: chairs, screen, coffee.",
+              "answers": [
+                "set"
+              ]
+            },
+            {
+              "id": "en-foundations-done-phrasals-e3",
+              "kind": "order",
+              "prompt": "Say you'll arrange the Thursday call.",
+              "explain": "set up + the arrangement: set up the call.",
+              "answers": [
+                "I will set up the call for Thursday"
+              ]
+            },
+            {
+              "id": "en-foundations-done-phrasals-e4",
+              "kind": "written",
+              "prompt": "Tell your boss you checked back with the client.",
+              "explain": "follow up with/on = chase politely.",
+              "answers": [
+                "i followed up with the client",
+                "i followed up on the client",
+                "i followed up"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:phrasal-verbs",
+            "vocab:work",
+            "function:talk-about-work",
+            "speaking:short-answer"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:present-simple"
+          ]
+        },
+        {
+          "id": "en-foundations-done-requests",
+          "title": "Asking nicely",
+          "goal": "Get to yes without ordering people around: layered requests and polite permissions.",
+          "intro": {
+            "explanation": [
+              "Softer request = longer request: \"Can you help?\" → \"Could you possibly help?\" → \"Do you think you could help?\" — each layer adds doubt, which reads as respect.",
+              "\"Would you mind + -ing\" is the politest request in English: \"Would you mind opening the window?\" — and natives answer it with \"Not at all\", because the question asks about the mind, not the window.",
+              "Permissions climb the same ladder: \"May I…?\" is formal, \"Is it OK if I…?\" is neutral, \"Do you mind if I…?\" is careful."
+            ],
+            "examples": [
+              {
+                "text": "Could you possibly send me the file today?",
+                "meaning": "possibly adds the doubt that softens it."
+              },
+              {
+                "text": "Would you mind taking over the call?",
+                "meaning": "mind + -ing: the polite classic."
+              },
+              {
+                "text": "Do you think you could cover for me on Friday?",
+                "meaning": "The polite heavy-lifter."
+              },
+              {
+                "text": "Is it OK if I leave a bit early today?",
+                "meaning": "Neutral permission."
+              },
+              {
+                "text": "Not at all — go ahead.",
+                "meaning": "The natural yes to a would-you-mind."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "Could you possibly …?",
+              "meaning": "Softer than can you.",
+              "note": "Could you possibly email me the invoice?"
+            },
+            {
+              "text": "Would you mind + -ing?",
+              "meaning": "The polite classic.",
+              "note": "Would you mind waiting outside?"
+            },
+            {
+              "text": "Do you think you could …?",
+              "meaning": "Loads of doubt = loads of respect.",
+              "note": "Do you think you could help me move?"
+            },
+            {
+              "text": "Is it OK if I …?",
+              "meaning": "Neutral permission.",
+              "note": "Is it OK if I open the window?"
+            },
+            {
+              "text": "Not at all.",
+              "meaning": "The yes to 'would you mind'.",
+              "note": "Not at all — go ahead."
+            }
+          ],
+          "situation": "One overloaded afternoon: you ask a colleague to swap a shift, a stranger to watch your laptop and your boss to let you leave early — each request lands on its correct rung of the politeness ladder.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Politely ask a colleague to send you a file today.",
+                "expected": [
+                  "Could you possibly send me the file today?",
+                  "Could you possibly send the file today?"
+                ],
+                "focus": "could you possibly",
+                "watch": "possibly is the softener — could you alone sounds brisker."
+              },
+              {
+                "prompt": "Ask your flatmate to turn the music down — very politely. (mind)",
+                "expected": [
+                  "Would you mind turning the music down?"
+                ],
+                "focus": "would you mind + -ing",
+                "watch": "mind + -ing: turning, never mind turn."
+              },
+              {
+                "prompt": "Ask a coworker to cover your shift — extra politely.",
+                "expected": [
+                  "Do you think you could cover my shift?",
+                  "Do you think you could cover my shift on Friday?"
+                ],
+                "focus": "do you think you could",
+                "watch": "Maximum doubt, maximum politeness — perfect for big favours."
+              },
+              {
+                "prompt": "Ask your teacher for permission to leave early — neutral.",
+                "expected": [
+                  "Is it OK if I leave early?",
+                  "Is it OK if I leave early today?"
+                ],
+                "focus": "is it OK if",
+                "watch": "is it OK if + present simple: no will after if."
+              },
+              {
+                "prompt": "Someone asks: \"Would you mind waiting?\" Say yes — politely.",
+                "expected": [
+                  "Not at all.",
+                  "No, not at all.",
+                  "Not at all, no problem."
+                ],
+                "focus": "not at all",
+                "watch": "A bare yes means YES, I DO mind — the idiomatic yes is Not at all."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-done-requests-e1",
+              "kind": "choice",
+              "prompt": "Would you ___ closing the window? It's freezing.",
+              "explain": "would you mind + -ing: the politest request frame.",
+              "options": [
+                "mind",
+                "like",
+                "want",
+                "let"
+              ],
+              "answers": [
+                "mind"
+              ]
+            },
+            {
+              "id": "en-foundations-done-requests-e2",
+              "kind": "gap",
+              "prompt": "Could you ___ send me the report tonight? (possible)",
+              "explain": "possibly softens could you into a polite request.",
+              "answers": [
+                "possibly"
+              ]
+            },
+            {
+              "id": "en-foundations-done-requests-e3",
+              "kind": "order",
+              "prompt": "Ask permission to open the window (neutral).",
+              "explain": "is it OK if + present: the neutral permission ask.",
+              "answers": [
+                "Is it OK if I open the window"
+              ]
+            },
+            {
+              "id": "en-foundations-done-requests-e4",
+              "kind": "written",
+              "prompt": "Politely ask a visitor to wait a moment. (mind)",
+              "explain": "would you mind + -ing: waiting, not wait.",
+              "answers": [
+                "would you mind waiting",
+                "would you mind waiting a moment"
+              ]
+            }
+          ],
+          "skills": [
+            "function:make-requests",
+            "grammar:gerunds-infinitives",
+            "vocab:social-expressions",
+            "speaking:short-answer"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:gerunds-infinitives"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-problems",
+      "title": "Dealing with problems",
+      "subtitle": "Regret, what-ifs, solutions",
+      "level": "B1",
+      "themes": [
+        {
+          "id": "the-wrong-train",
+          "title": "The wrong train",
+          "subtitle": "Regret and what-ifs",
+          "symbol": "tram",
+          "category": "Course",
+          "situation": "You took the wrong train, missed the warm-up and arrived flustered: now you can say exactly what you wish you had done — and what you would do differently.",
+          "colorIndex": 0
+        },
+        {
+          "id": "the-shared-flat",
+          "title": "The shared flat",
+          "subtitle": "Negotiate peace",
+          "symbol": "house",
+          "category": "Course",
+          "situation": "Dishes pile up, bills run late, music plays loud: you and your flatmate negotiate a deal you can both actually keep.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-problems-wish",
+          "title": "I wish & If only",
+          "goal": "Say what you regret: I wish I had known, if only I hadn't sent it.",
+          "intro": {
+            "explanation": [
+              "Regret about the present uses wish + past simple: \"I wish I had more time\" — I don't have it, and the past tense draws the gap.",
+              "Regret about the past moves one step further back, wish + had + participle: \"I wish I had studied\" — too late now, and the sentence knows it.",
+              "If only is wish with the volume up: \"If only I hadn't sent that email!\" — identical grammar, stronger feeling."
+            ],
+            "examples": [
+              {
+                "text": "I wish I had more time.",
+                "meaning": "Present regret: I don't have it."
+              },
+              {
+                "text": "I wish I knew her number.",
+                "meaning": "Present: I don't know it."
+              },
+              {
+                "text": "I wish I had left earlier.",
+                "meaning": "Past regret: I left late."
+              },
+              {
+                "text": "If only I hadn't said that.",
+                "meaning": "Loud regret about the past."
+              },
+              {
+                "text": "I wish it would stop raining.",
+                "meaning": "wish + would: you want a change."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "I wish + past simple",
+              "meaning": "Present regret.",
+              "note": "I wish I knew."
+            },
+            {
+              "text": "I wish + had + participle",
+              "meaning": "Past regret.",
+              "note": "I wish I had known."
+            },
+            {
+              "text": "If only …",
+              "meaning": "Wish, one notch louder.",
+              "note": "If only I had studied!"
+            },
+            {
+              "text": "I wish … wouldn't …",
+              "meaning": "Annoyance at other people.",
+              "note": "I wish he wouldn't interrupt."
+            },
+            {
+              "text": "I wish it would …",
+              "meaning": "Wanting a change.",
+              "note": "I wish it would stop raining."
+            }
+          ],
+          "situation": "The morning after the wrong train: you list everything you wish you had checked, everything you wish you hadn't said, and one thing you wish would change by next week.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "You don't have a car. Say it with regret. (wish)",
+                "expected": [
+                  "I wish I had a car."
+                ],
+                "focus": "wish + past",
+                "watch": "wish + past simple for present gaps: I wish I HAD one."
+              },
+              {
+                "prompt": "You didn't study. Say it with regret. (wish)",
+                "expected": [
+                  "I wish I had studied.",
+                  "I wish I had studied more."
+                ],
+                "focus": "wish + had + participle",
+                "watch": "One step further back than the past: had + participle."
+              },
+              {
+                "prompt": "You sent an angry email. Blame yourself — loudly. (if only)",
+                "expected": [
+                  "If only I hadn't sent that email.",
+                  "If only I hadn't sent it."
+                ],
+                "focus": "if only + hadn't",
+                "watch": "if only + past perfect is wish at full volume."
+              },
+              {
+                "prompt": "Your brother interrupts every call. Complain about him. (wish … wouldn't)",
+                "expected": [
+                  "I wish he wouldn't interrupt me.",
+                  "I wish my brother wouldn't interrupt."
+                ],
+                "focus": "wish + wouldn't",
+                "watch": "wish + wouldn't targets other people's habits, not fate."
+              },
+              {
+                "prompt": "It rains every single day. Want a change. (wish)",
+                "expected": [
+                  "I wish it would stop raining.",
+                  "I wish it would stop raining soon."
+                ],
+                "focus": "wish + would",
+                "watch": "wish + would: the change you want from the world."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-problems-wish-e1",
+              "kind": "choice",
+              "prompt": "I wish I ___ more time.",
+              "explain": "wish + past simple: the gap between want and have.",
+              "options": [
+                "had",
+                "have",
+                "would have",
+                "will have"
+              ],
+              "answers": [
+                "had"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-wish-e2",
+              "kind": "gap",
+              "prompt": "I wish I ___ known sooner. (regret about the past)",
+              "explain": "wish + had + participle: the past-regret engine.",
+              "answers": [
+                "had"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-wish-e3",
+              "kind": "order",
+              "prompt": "Say you regret not studying.",
+              "explain": "wish + had + participle: past regret.",
+              "answers": [
+                "I wish I had studied"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-wish-e4",
+              "kind": "written",
+              "prompt": "Strongly regret sending that angry email. (if only)",
+              "explain": "if only + hadn't + participle: loud past regret.",
+              "answers": [
+                "if only i hadnt sent that email",
+                "if only i hadnt sent it",
+                "if only i hadnt sent the email"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:wish-clauses",
+            "grammar:past-simple-irregular",
+            "vocab:feelings",
+            "function:express-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:past-simple-irregular"
+          ]
+        },
+        {
+          "id": "en-foundations-problems-hypothetical",
+          "title": "The what-if machine",
+          "goal": "Replay the past and imagine the present: second and third conditionals side by side.",
+          "intro": {
+            "explanation": [
+              "Second conditional = unreal present: \"If I had a car, I would drive there\" — if + past, would + verb, for now and the future.",
+              "Third conditional = the past replay: \"If I had checked the timetable, I wouldn't have missed the train\" — if + had + participle, would have + participle.",
+              "The time word chooses the grammar: now → second, yesterday → third. Mixing is allowed across time: \"If I had saved then, I would be rich now\"."
+            ],
+            "examples": [
+              {
+                "text": "If I had a car, I would drive there.",
+                "meaning": "Unreal present."
+              },
+              {
+                "text": "If I were you, I would complain.",
+                "meaning": "were for everyone — the advice template."
+              },
+              {
+                "text": "If I had checked the timetable, I wouldn't have missed the train.",
+                "meaning": "Unreal past."
+              },
+              {
+                "text": "If we had left earlier, we would have caught it.",
+                "meaning": "The replay: same result, better start."
+              },
+              {
+                "text": "If I had saved then, I would be rich now.",
+                "meaning": "Mixed: past cause, present result."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "If + past, would + verb",
+              "meaning": "Unreal present.",
+              "note": "If I knew, I would say."
+            },
+            {
+              "text": "If I were you, I would …",
+              "meaning": "The advice template.",
+              "note": "If I were you, I'd apologise."
+            },
+            {
+              "text": "If + had + participle, would have + participle",
+              "meaning": "Unreal past.",
+              "note": "If I had known, I would have called."
+            },
+            {
+              "text": "I wouldn't have … if …",
+              "meaning": "The replay, reversed.",
+              "note": "I wouldn't have missed it if…"
+            },
+            {
+              "text": "… would be … now",
+              "meaning": "Past cause, present result.",
+              "note": "If I had slept, I would be fine now."
+            }
+          ],
+          "situation": "You run the wrong-train disaster through the what-if machine twice: once as present advice (what you would do if it happened again) and once as a full past replay (what would have changed).",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "You don't have a car. Imagine you do: you drive there. (second conditional)",
+                "expected": [
+                  "If I had a car, I would drive there.",
+                  "If I had a car, I'd drive there."
+                ],
+                "focus": "second conditional",
+                "watch": "if + past, would + verb: unreal, not past in time."
+              },
+              {
+                "prompt": "Advise a friend to complain. (if I were you)",
+                "expected": [
+                  "If I were you, I would complain.",
+                  "If I were you, I'd complain."
+                ],
+                "focus": "if I were you",
+                "watch": "were for every subject: the fixed advice form."
+              },
+              {
+                "prompt": "You didn't check the timetable and missed the train. Replay it.",
+                "expected": [
+                  "If I had checked the timetable, I wouldn't have missed the train.",
+                  "If I had checked the timetable, I would not have missed the train."
+                ],
+                "focus": "third conditional",
+                "watch": "had + participle, would have + participle: the past gets a second draft."
+              },
+              {
+                "prompt": "You left late and missed it. Replay with an earlier start.",
+                "expected": [
+                  "If we had left earlier, we would have caught it.",
+                  "If we had left earlier, we would have caught the train."
+                ],
+                "focus": "past replay",
+                "watch": "Same frame: if we had left, we would have caught."
+              },
+              {
+                "prompt": "You didn't sleep — and now you're tired. Past cause, present result.",
+                "expected": [
+                  "If I had slept, I wouldn't be tired now.",
+                  "If I had slept, I would be fine now."
+                ],
+                "focus": "mixed conditional",
+                "watch": "If + had + participle (past), would + verb (now): mixed across time."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-problems-hypothetical-e1",
+              "kind": "choice",
+              "prompt": "If I ___ you, I would complain right now.",
+              "explain": "if I were you: were for everyone in the advice form.",
+              "options": [
+                "were",
+                "was being",
+                "would be",
+                "am"
+              ],
+              "answers": [
+                "were"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-hypothetical-e2",
+              "kind": "gap",
+              "prompt": "If I had known, I ___ have called you.",
+              "explain": "third conditional: would have + participle.",
+              "answers": [
+                "would"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-hypothetical-e3",
+              "kind": "order",
+              "prompt": "Replay the past: earlier start, better ending.",
+              "explain": "if + had + participle, would have + participle.",
+              "answers": [
+                "If we had left earlier we would have caught it"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-hypothetical-e4",
+              "kind": "written",
+              "prompt": "Unreal present: you don't speak French. Say what would happen at the interview. (get the job)",
+              "explain": "if + past, would + verb: the second conditional.",
+              "answers": [
+                "if i spoke french i would get the job",
+                "if i spoke french i would get it"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:third-conditional",
+            "grammar:second-conditional",
+            "function:solve-problems",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:second-conditional",
+            "grammar:past-simple-irregular"
+          ]
+        },
+        {
+          "id": "en-foundations-problems-negotiating",
+          "title": "Meeting in the middle",
+          "goal": "Turn a standoff into a deal: propose, condition, concede, confirm.",
+          "intro": {
+            "explanation": [
+              "Propose with questions, not orders: \"What if I covered Saturday?\" / \"How about splitting the bills?\" — a proposal disguised as a question is easier to accept.",
+              "Condition your offers so nobody loses face: \"If you took the bills, I'd handle the cooking\" — the past tense keeps the trade hypothetical.",
+              "Close the deal out loud: \"So we agree: I cook, you clean.\" A deal nobody repeats is a deal that evaporates by Thursday."
+            ],
+            "examples": [
+              {
+                "text": "What if I covered your shift on Saturday?",
+                "meaning": "The proposal-as-question."
+              },
+              {
+                "text": "How about splitting the bills fifty-fifty?",
+                "meaning": "how about + -ing: lighter touch."
+              },
+              {
+                "text": "If you took the bins out, I'd do the cooking.",
+                "meaning": "The conditional trade."
+              },
+              {
+                "text": "I see your point, but weekends are tight for me.",
+                "meaning": "Concede, then hold your line."
+              },
+              {
+                "text": "So we agree: I cook, you clean.",
+                "meaning": "Lock it in out loud."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "What if I …?",
+              "meaning": "The proposal.",
+              "note": "What if I went first?"
+            },
+            {
+              "text": "How about + -ing?",
+              "meaning": "The lighter offer.",
+              "note": "How about splitting it?"
+            },
+            {
+              "text": "If you … , I'd …",
+              "meaning": "The trade.",
+              "note": "If you drove, I'd pay for petrol."
+            },
+            {
+              "text": "I see your point, but …",
+              "meaning": "Concede and hold.",
+              "note": "…but Fridays are impossible."
+            },
+            {
+              "text": "So we agree: …",
+              "meaning": "Lock it in.",
+              "note": "So we agree: fifty-fifty."
+            }
+          ],
+          "situation": "Flat summit, three items on the table — dishes, bills, music: you open with a proposal, trade a conditional offer, concede one point gracefully and close with a deal you both repeat.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Offer to cover your flatmate's Saturday shift. (what if)",
+                "expected": [
+                  "What if I covered your shift on Saturday?",
+                  "What if I cover your shift on Saturday?"
+                ],
+                "focus": "what if + past",
+                "watch": "What if I covered…? — the past tense softens; it isn't past in time."
+              },
+              {
+                "prompt": "Propose splitting the bills — light touch. (how about)",
+                "expected": [
+                  "How about splitting the bills fifty-fifty?",
+                  "How about splitting the bills?"
+                ],
+                "focus": "how about + -ing",
+                "watch": "how about + -ing: splitting, never how about to split."
+              },
+              {
+                "prompt": "Trade: she takes the bills, you do the cooking. (if … would)",
+                "expected": [
+                  "If you took the bills, I'd do the cooking.",
+                  "If you took the bills, I would do the cooking."
+                ],
+                "focus": "conditional trade",
+                "watch": "if + past, would + verb: the offer stays hypothetical, so nobody loses face."
+              },
+              {
+                "prompt": "Accept half her argument — but hold your ground on weekends.",
+                "expected": [
+                  "I see your point, but weekends are tight for me.",
+                  "I see your point, but weekends don't work for me."
+                ],
+                "focus": "concede + but",
+                "watch": "I see your point buys goodwill; but holds the line."
+              },
+              {
+                "prompt": "Close the deal: you cook, she cleans.",
+                "expected": [
+                  "So we agree: I cook, you clean.",
+                  "So we agree — I cook, you clean."
+                ],
+                "focus": "confirm out loud",
+                "watch": "Deals survive when both people say them back."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-problems-negotiating-e1",
+              "kind": "choice",
+              "prompt": "___ about ordering pizza instead of cooking?",
+              "explain": "how about + -ing: the light proposal.",
+              "options": [
+                "How",
+                "What",
+                "If",
+                "Would"
+              ],
+              "answers": [
+                "How"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-negotiating-e2",
+              "kind": "gap",
+              "prompt": "If you ___ the dishes, I'd take out the bins. (do, past)",
+              "explain": "if + past simple keeps the trade hypothetical.",
+              "answers": [
+                "did"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-negotiating-e3",
+              "kind": "order",
+              "prompt": "Concede, then hold your ground.",
+              "explain": "I see your point, but + your limit.",
+              "answers": [
+                "I see your point but weekends are tight"
+              ]
+            },
+            {
+              "id": "en-foundations-problems-negotiating-e4",
+              "kind": "written",
+              "prompt": "Lock in the deal: you drive, she pays for petrol.",
+              "explain": "so we agree: + the deal, repeated out loud.",
+              "answers": [
+                "so we agree i drive you pay for petrol",
+                "so we agree i drive and she pays for petrol"
+              ]
+            }
+          ],
+          "skills": [
+            "function:negotiate",
+            "grammar:second-conditional",
+            "grammar:connectors",
+            "speaking:negotiate",
+            "vocab:social-expressions"
+          ],
+          "canDo": [
+            "solve-everyday-problems"
+          ],
+          "prerequisites": [
+            "grammar:connectors",
+            "grammar:second-conditional"
+          ]
+        }
+      ]
+    },
+    {
       "id": "en-foundations-viewpoints",
       "title": "Viewpoints",
       "subtitle": "Argue, report, imagine",
@@ -14561,6 +15628,532 @@
           ],
           "prerequisites": [
             "grammar:first-conditional"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "en-foundations-innovation",
+      "title": "Innovation & change",
+      "subtitle": "Ideas, reports, predictions",
+      "level": "B2",
+      "themes": [
+        {
+          "id": "the-pitch-night",
+          "title": "The pitch night",
+          "subtitle": "Sell the idea",
+          "symbol": "lightbulb",
+          "category": "Course",
+          "situation": "Start-up night: ninety seconds, three judges, one idea — you compress its whole history into a single clause and claim the credit precisely.",
+          "colorIndex": 0
+        },
+        {
+          "id": "the-forecast-desk",
+          "title": "The forecast desk",
+          "subtitle": "Report and predict",
+          "symbol": "chart.line.uptrend.xyaxis",
+          "category": "Course",
+          "situation": "The tech desk, 8:30: attribute every rumour, hedge every forecast and commit to nothing you cannot defend by lunchtime.",
+          "colorIndex": 1
+        }
+      ],
+      "lessons": [
+        {
+          "id": "en-foundations-innovation-relative-clauses",
+          "title": "Clauses that do the work",
+          "goal": "Pack a whole story into one clause: participle clauses, preposition + whom, non-defining asides.",
+          "intro": {
+            "explanation": [
+              "Participle clauses compress: \"a company founded in a garage\" = that was founded; \"the engineer running the demo\" = who is running — fewer words, same story.",
+              "Formal English attaches the preposition to a pronoun: \"the colleague with whom I built it\"; everyday English splits it: \"the colleague I built it with\" — both correct, different registers.",
+              "Non-defining clauses comment between commas: \"Our first product, which failed in 2019, taught us everything\" — delete the clause and the sentence still stands."
+            ],
+            "examples": [
+              {
+                "text": "It's a company founded in a garage.",
+                "meaning": "founded = that was founded."
+              },
+              {
+                "text": "She's the engineer running the demo.",
+                "meaning": "running = who is running."
+              },
+              {
+                "text": "The investor with whom we signed left yesterday.",
+                "meaning": "Preposition + whom: formal register."
+              },
+              {
+                "text": "Our first product, which failed in 2019, taught us everything.",
+                "meaning": "The aside between commas."
+              },
+              {
+                "text": "The market it aims at is huge.",
+                "meaning": "Everyday split preposition."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "noun + founded/built/launched in …",
+              "meaning": "Compressed history.",
+              "note": "a start-up founded in 2020"
+            },
+            {
+              "text": "noun + running/leading …",
+              "meaning": "Compressed present.",
+              "note": "the team running the pilot"
+            },
+            {
+              "text": "with/at/to whom/which …",
+              "meaning": "Formal attachment.",
+              "note": "the partner with whom we signed"
+            },
+            {
+              "text": ", which …,",
+              "meaning": "The aside between commas.",
+              "note": "The idea, which seemed crazy, worked."
+            },
+            {
+              "text": "the … it aims at",
+              "meaning": "Everyday split.",
+              "note": "the niche it aims at"
+            }
+          ],
+          "situation": "Ninety seconds before the pitch: you rebuild your key sentence so the company's history, the team and the market each fit inside one tight clause.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Compress: a company that was founded in 2019.",
+                "expected": [
+                  "a company founded in 2019",
+                  "It's a company founded in 2019."
+                ],
+                "focus": "participle clause",
+                "watch": "founded = that was founded: one word fewer, same facts."
+              },
+              {
+                "prompt": "Compress: the engineer who is running the demo.",
+                "expected": [
+                  "the engineer running the demo",
+                  "She's the engineer running the demo."
+                ],
+                "focus": "present participle",
+                "watch": "-ing carries the present inside the clause."
+              },
+              {
+                "prompt": "Formal register: mention the investor you signed with.",
+                "expected": [
+                  "The investor with whom we signed left yesterday.",
+                  "the investor with whom we signed"
+                ],
+                "focus": "preposition + whom",
+                "watch": "Formal English keeps the preposition glued to whom."
+              },
+              {
+                "prompt": "Add the aside: the product failed in 2019 — and it taught you everything.",
+                "expected": [
+                  "Our first product, which failed in 2019, taught us everything."
+                ],
+                "focus": ", which …,",
+                "watch": "Non-defining: commas on both sides; the sentence stands without it."
+              },
+              {
+                "prompt": "Everyday style: name the market they aim at.",
+                "expected": [
+                  "The market they aim at is huge.",
+                  "The market it aims at is huge."
+                ],
+                "focus": "split preposition",
+                "watch": "Everyday English leaves the preposition at the end."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-innovation-relative-clauses-e1",
+              "kind": "choice",
+              "prompt": "The start-up ___ in a garage is now worth millions.",
+              "explain": "Past participle clause: founded = that was founded.",
+              "options": [
+                "founded",
+                "found",
+                "founding",
+                "was founded"
+              ],
+              "answers": [
+                "founded"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-relative-clauses-e2",
+              "kind": "gap",
+              "prompt": "She's the engineer ___ the demo right now. (run, -ing)",
+              "explain": "Present participle: running = who is running.",
+              "answers": [
+                "running"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-relative-clauses-e3",
+              "kind": "order",
+              "prompt": "The formal aside about the failed first product.",
+              "explain": "Non-defining clause: the aside that sits between commas.",
+              "answers": [
+                "Our first product which failed in 2019 taught us everything"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-relative-clauses-e4",
+              "kind": "written",
+              "prompt": "Formal register: name the partner you built it with.",
+              "explain": "Preposition + whom: the formal attachment.",
+              "answers": [
+                "the partner with whom i built it",
+                "the colleague with whom i built it"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:relative-clauses",
+            "grammar:connectors",
+            "function:express-opinion",
+            "writing:argument"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:relative-clauses"
+          ]
+        },
+        {
+          "id": "en-foundations-innovation-reporting",
+          "title": "It is said that…",
+          "goal": "Report without sourcing: passive reporting frames for rumours, deals and resignations.",
+          "intro": {
+            "explanation": [
+              "Two passive frames carry every rumour: \"It is said that the deal is close\" (the front door) and \"The deal is said to be close\" (the headline door) — same whisper, two windows.",
+              "Past events shift inside the infinitive: \"She is thought to have turned down the offer\" — to have + participle holds the past.",
+              "The passive keeps the reporter out: \"It has been reported that two firms will merge\" — nobody said it; it is reported. That distance is the point."
+            ],
+            "examples": [
+              {
+                "text": "It is said that the deal is close.",
+                "meaning": "Front-door frame."
+              },
+              {
+                "text": "The deal is said to be close.",
+                "meaning": "The same rumour, flipped to headline form."
+              },
+              {
+                "text": "It is believed that costs will fall.",
+                "meaning": "A belief with no believer."
+              },
+              {
+                "text": "She is thought to have turned down the offer.",
+                "meaning": "Past inside to have + participle."
+              },
+              {
+                "text": "It has been reported that two firms will merge.",
+                "meaning": "News-desk distance."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "It is said/believed that …",
+              "meaning": "Report without a source.",
+              "note": "It is said that…"
+            },
+            {
+              "text": "X is said to be …",
+              "meaning": "The rumour, flipped.",
+              "note": "The deal is said to be close."
+            },
+            {
+              "text": "X is thought to have + participle",
+              "meaning": "Flip a past claim.",
+              "note": "He is thought to have left."
+            },
+            {
+              "text": "It is reported that …",
+              "meaning": "News-desk distance.",
+              "note": "It is reported that…"
+            },
+            {
+              "text": "X is expected to + verb",
+              "meaning": "Someone's prediction, no someone.",
+              "note": "Prices are expected to rise."
+            }
+          ],
+          "situation": "Morning tech desk, three rumours and one resignation: you reframe each claim twice — it is said that… for the intro, is said to be… for the headline.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Report: the deal is close — people say so. (front door)",
+                "expected": [
+                  "It is said that the deal is close."
+                ],
+                "focus": "it is said that",
+                "watch": "it is said that + full clause: no source, no blame."
+              },
+              {
+                "prompt": "Same rumour — flip it to headline form. (the deal)",
+                "expected": [
+                  "The deal is said to be close."
+                ],
+                "focus": "is said to be",
+                "watch": "X is said to be + the claim: the headline door."
+              },
+              {
+                "prompt": "Report the belief: costs will fall. (believe)",
+                "expected": [
+                  "It is believed that costs will fall."
+                ],
+                "focus": "it is believed",
+                "watch": "it is believed that: belief without a believer."
+              },
+              {
+                "prompt": "She turned down the offer — people think so. Flip it.",
+                "expected": [
+                  "She is thought to have turned down the offer."
+                ],
+                "focus": "is thought to have + participle",
+                "watch": "to have + participle: the past lives inside the infinitive."
+              },
+              {
+                "prompt": "Report the prediction: prices will rise. (expect)",
+                "expected": [
+                  "Prices are expected to rise."
+                ],
+                "focus": "are expected to",
+                "watch": "Nobody predicts; it is expected — the passive keeps hands clean."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-innovation-reporting-e1",
+              "kind": "choice",
+              "prompt": "It ___ said that the merger is off.",
+              "explain": "it is said that: the present passive reporting frame.",
+              "options": [
+                "is",
+                "has",
+                "was being",
+                "does"
+              ],
+              "answers": [
+                "is"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-reporting-e2",
+              "kind": "gap",
+              "prompt": "The CEO is ___ to have resigned. (report)",
+              "explain": "is reported to have + participle: past claim, flipped.",
+              "answers": [
+                "reported"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-reporting-e3",
+              "kind": "order",
+              "prompt": "Flip the rumour to headline form.",
+              "explain": "X is said to be + the claim: the headline door.",
+              "answers": [
+                "The deal is said to be close"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-reporting-e4",
+              "kind": "written",
+              "prompt": "Report the belief: the start-up will fail.",
+              "explain": "it is believed that + the claim.",
+              "answers": [
+                "it is believed that the start-up will fail",
+                "it is believed the start-up will fail"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:passive-reporting",
+            "grammar:passive-intro",
+            "vocab:work",
+            "function:talk-about-work"
+          ],
+          "canDo": [
+            "talk-about-work"
+          ],
+          "prerequisites": [
+            "grammar:passive-intro"
+          ]
+        },
+        {
+          "id": "en-foundations-innovation-speculation",
+          "title": "Likely, unlikely, bound to",
+          "goal": "Forecast with calibrated confidence: may well, is likely to, is bound to, can't be.",
+          "intro": {
+            "explanation": [
+              "Rank your confidence: might well < may well < is likely to < is bound to — from \"possible\" to \"inevitable, given the evidence\".",
+              "Modal + adverb slides the dial: \"could easily fail\", \"may well succeed\", \"can't possibly work\" — the adverb carries the attitude.",
+              "Ruling things out has its own form: \"That can't be the launch date — the team only started last week\" — can't be means impossible, not merely doubtful."
+            ],
+            "examples": [
+              {
+                "text": "The app is likely to take off among students.",
+                "meaning": "likely to + verb: probable."
+              },
+              {
+                "text": "A buyout is unlikely before summer.",
+                "meaning": "unlikely: probable that it won't."
+              },
+              {
+                "text": "The deal may well collapse.",
+                "meaning": "may well: a solid possibility."
+              },
+              {
+                "text": "It's bound to happen — the tech already exists.",
+                "meaning": "bound to: inevitable."
+              },
+              {
+                "text": "That can't be the final figure.",
+                "meaning": "can't be: rule it out."
+              }
+            ]
+          },
+          "expressions": [
+            {
+              "text": "be likely / unlikely to …",
+              "meaning": "The forecast dial.",
+              "note": "Prices are likely to rise."
+            },
+            {
+              "text": "may / might well + verb",
+              "meaning": "A solid possibility.",
+              "note": "It may well work."
+            },
+            {
+              "text": "be bound to + verb",
+              "meaning": "Inevitable, given the evidence.",
+              "note": "It's bound to sell."
+            },
+            {
+              "text": "can't be …",
+              "meaning": "Impossible — rule it out.",
+              "note": "That can't be right."
+            },
+            {
+              "text": "could easily + verb",
+              "meaning": "One nudge from happening.",
+              "note": "It could easily fail."
+            }
+          ],
+          "situation": "Forecast meeting, three products on the docket: one is likely to fly, one is bound to stall, one you simply rule out — and every verdict carries its exact confidence level.",
+          "practice": {
+            "questions": [
+              {
+                "prompt": "Forecast: the app takes off among students — probable. (likely)",
+                "expected": [
+                  "The app is likely to take off among students.",
+                  "The app is likely to take off."
+                ],
+                "focus": "be likely to",
+                "watch": "be + likely + to + verb: the workhorse forecast."
+              },
+              {
+                "prompt": "A buyout probably won't happen before summer. (unlikely)",
+                "expected": [
+                  "A buyout is unlikely before summer.",
+                  "A buyout is unlikely to happen before summer."
+                ],
+                "focus": "unlikely",
+                "watch": "unlikely before a noun phrase, or unlikely to + verb — both native."
+              },
+              {
+                "prompt": "Say the deal might genuinely collapse. (may well)",
+                "expected": [
+                  "The deal may well collapse."
+                ],
+                "focus": "may well",
+                "watch": "may well = a real possibility, stronger than might."
+              },
+              {
+                "prompt": "The tech already exists: call the launch inevitable. (bound to)",
+                "expected": [
+                  "It's bound to happen.",
+                  "The launch is bound to happen."
+                ],
+                "focus": "bound to",
+                "watch": "bound to = inevitable, given the evidence."
+              },
+              {
+                "prompt": "Rule out that launch date — the team only started last week. (can't)",
+                "expected": [
+                  "That can't be the launch date.",
+                  "That cant be the launch date."
+                ],
+                "focus": "can't be",
+                "watch": "can't be = impossible; might not be would only mean doubtful."
+              }
+            ]
+          },
+          "exercises": [
+            {
+              "id": "en-foundations-innovation-speculation-e1",
+              "kind": "choice",
+              "prompt": "The start-up is ___ to succeed, but nothing is certain yet.",
+              "explain": "be likely to + verb: probable — which is why certainty is excluded.",
+              "options": [
+                "likely",
+                "bound",
+                "sure",
+                "must"
+              ],
+              "answers": [
+                "likely"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-speculation-e2",
+              "kind": "gap",
+              "prompt": "It ___ well fail — the prototype barely works. (possibility)",
+              "explain": "may/might well: a solid possibility.",
+              "answers": [
+                "may",
+                "might"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-speculation-e3",
+              "kind": "order",
+              "prompt": "Rule out that figure.",
+              "explain": "can't be = impossible, not merely doubtful.",
+              "answers": [
+                "That cant be the final figure"
+              ]
+            },
+            {
+              "id": "en-foundations-innovation-speculation-e4",
+              "kind": "written",
+              "prompt": "Forecast the rise in prices: probable. (likely)",
+              "explain": "be likely to + verb: the calibrated forecast.",
+              "answers": [
+                "prices are likely to rise",
+                "prices are likely to go up"
+              ]
+            }
+          ],
+          "skills": [
+            "grammar:speculation",
+            "grammar:modal-must-have-to",
+            "function:express-opinion",
+            "speaking:justify-opinion"
+          ],
+          "canDo": [
+            "express-opinion"
+          ],
+          "prerequisites": [
+            "grammar:modal-must-have-to"
           ]
         }
       ]
