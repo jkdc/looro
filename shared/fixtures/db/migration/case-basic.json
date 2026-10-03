@@ -61,8 +61,8 @@
       ],
       "assessments": [
         {
-          "passageID": "44d4e5f6-7081-4c93-ba4b-cd3e4f5a6b73",
-          "revisionKey": "44d4e5f6-7081-4c93-ba4b-cd3e4f5a6b73:1",
+          "passageID": "22b2c3d4-5e6f-4a71-9829-ab1c2d3e4f51",
+          "revisionKey": "22b2c3d4-5e6f-4a71-9829-ab1c2d3e4f51:0",
           "outcome": "success",
           "suggestedLevel": 3,
           "nextGoal": "Practice polite requests with the conditional",
@@ -71,11 +71,11 @@
             {
               "lemma": "reservar",
               "meaning": "to book, to reserve",
-              "form": "quisiera reservar",
+              "form": "quiero practicar cómo reservar una mesa",
               "kind": "independent",
               "confidence": 0.8,
-              "sourceIDs": ["44d4e5f6-7081-4c93-ba4b-cd3e4f5a6b73"],
-              "quote": "Quisiera reservar una mesa para dos, por favor.",
+              "sourceIDs": ["22b2c3d4-5e6f-4a71-9829-ab1c2d3e4f51"],
+              "quote": "Hoy quiero practicar cómo reservar una mesa.",
               "language": "es"
             }
           ],
@@ -84,6 +84,7 @@
         }
       ],
       "translations": {
+        "11a1b2c3-4d5e-4f60-8718-9a0b1c2d3e40": "Hello! Welcome back. How was your weekend?",
         "44d4e5f6-7081-4c93-ba4b-cd3e4f5a6b73": "I would like to book a table for two, please."
       },
       "topics": [

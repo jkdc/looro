@@ -52,6 +52,29 @@ class SchemaTest(unittest.TestCase):
         self.assertTrue(any(i.startswith('FORBIDDEN_TABLE: ') and "'words'" in i
                             for i in issues), issues)
 
+    def test_removed_foreign_key_fails_constraints(self):
+        mutated = re.sub(r'\s+REFERENCES sessions\(id\) ON DELETE CASCADE', '',
+                         check_db_schema.SCHEMA.read_text(), count=1)
+        self.assertNotEqual(mutated, check_db_schema.SCHEMA.read_text())
+        conn = check_db_schema.build_schema(mutated)
+        issues = check_db_schema.check_constraints(conn, mutated)
+        self.assertTrue(any(i.startswith('FOREIGN_KEY_DRIFT: fragments')
+                            and "'sessions'" in i and "'CASCADE'" in i
+                            for i in issues), issues)
+
+    def test_removed_check_constraint_fails_constraints(self):
+        mutated = re.sub(r'\s+CHECK \(id = 1\)', '',
+                         check_db_schema.SCHEMA.read_text(), count=1)
+        conn = check_db_schema.build_schema(mutated)
+        issues = check_db_schema.check_constraints(conn, mutated)
+        self.assertTrue(any("MISSING_CONSTRAINT: preferences must define "
+                            "'CHECK (id = 1)'" in i for i in issues), issues)
+
+    def test_pinned_constraints_pass(self):
+        schema_text = check_db_schema.SCHEMA.read_text()
+        issues = check_db_schema.check_constraints(self.conn, schema_text)
+        self.assertEqual([], issues)
+
     def test_fixtures_are_valid(self):
         tables, indexes = check_db_schema.read_inventory(self.conn)
         self.assertEqual([],

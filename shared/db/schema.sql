@@ -223,7 +223,8 @@ CREATE TABLE assessment_tickets (
 
 -- assessment_tickets: FinalAssessmentTicket, one per session at most
 -- (FinalAssessmentRecovery keeps the newest). passageID/revisionKey are not
--- stored: canAttempt re-derives them from the session's current final
--- passage, exactly like FinalAssessmentTicket.matches.
+-- stored: like FinalAssessmentTicket.matches, a ticket whose transcript
+-- changed after enqueue silently stops matching, so v1 loses stale-ticket
+-- detection rather than surfacing it.
 
 PRAGMA user_version = 1;

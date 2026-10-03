@@ -8,6 +8,10 @@ Checks:
 - PRAGMA user_version is 1
 - every table/column/index matches the PINNED inventory below (type,
   NOT NULL, PK position, DEFAULT) — any delta is a clear, named failure
+- the PINNED constraints hold: PRAGMA foreign_key_list must match exactly
+  (fragments.session_id -> sessions.id, ON DELETE CASCADE) and the required
+  SQL constraints (preferences CHECK, user_version pragma) must be present
+  in the stored schema
 - no `words` table exists (words are a LearningEngine projection; learner
   hidden words live in preferences.hidden_words)
 - migration fixtures under shared/fixtures/db/migration: every
@@ -154,6 +158,23 @@ INDEXES = [
     ('outbox_pending', 'usage_outbox', ['dispatched', 'at']),
 ]
 
+# Pinned constraints.
+#
+# (child_table, parent_table, [(from_col, to_col)], on_delete) — compared
+# EXACTLY against PRAGMA foreign_key_list for every pinned table, so removing
+# the FK, re-pointing it, or weakening ON DELETE CASCADE all fail.
+FOREIGN_KEYS = [
+    ('fragments', 'sessions', [('session_id', 'id')], 'CASCADE'),
+]
+
+# (table or None for the schema source, required SQL substring) — asserted by
+# inspecting the stored CREATE statement in sqlite_master.sql (or the raw
+# schema source for schema-level directives).
+REQUIRED_CONSTRAINTS = [
+    ('preferences', 'CHECK (id = 1)'),
+    (None, 'PRAGMA user_version = 1;'),
+]
+
 # ---------------------------------------------------------------------------
 # Archive v2 shape (Models.kt field names — the JSON uses the Kotlin/Swift
 # property names verbatim; there is no @SerialName on these classes).
@@ -297,6 +318,62 @@ def check_words_guard(tables):
 
 
 # ---------------------------------------------------------------------------
+# Pinned constraints (foreign keys + required SQL constraints)
+
+
+def read_foreign_keys(conn):
+    """Derive {table: sorted [(parent_table, ((from, to), ...), on_delete)]}
+    from PRAGMA foreign_key_list for every pinned table."""
+    fks = {}
+    for table in TABLES:
+        rows = list(conn.execute(f'PRAGMA foreign_key_list("{table}")'))
+        if not rows:
+            continue
+        # Row shape: (id, seq, table, from, to, on_update, on_delete, match);
+        # composite foreign keys repeat the id across seq-ordered rows.
+        grouped = {}
+        for fk_id, seq, parent, col_from, col_to, _upd, on_delete, _match in rows:
+            grouped.setdefault(fk_id, {'table': parent, 'on_delete': on_delete,
+                                       'cols': []})
+            grouped[fk_id]['cols'].append((seq, col_from, col_to))
+        entries = []
+        for group in grouped.values():
+            cols = tuple((f, t) for _s, f, t in sorted(group['cols']))
+            entries.append((group['table'], cols, group['on_delete']))
+        fks[table] = sorted(entries)
+    return fks
+
+
+def check_constraints(conn, schema_text):
+    """Assert the pinned constraint inventory exactly: every pinned foreign
+    key present with its exact target/columns/on_delete (and nothing extra),
+    and every required SQL constraint present in the stored CREATE
+    statements (or the raw schema source)."""
+    issues = []
+    actual = read_foreign_keys(conn)
+    expected = {}
+    for child, parent, cols, on_delete in FOREIGN_KEYS:
+        expected.setdefault(child, []).append((parent, tuple(cols), on_delete))
+    for table in TABLES:
+        exp = sorted(expected.get(table, []))
+        act = actual.get(table, [])
+        if exp != act:
+            issues.append(f"FOREIGN_KEY_DRIFT: {table} expected foreign keys {exp}, "
+                          f"found {act}")
+    for table, needle in REQUIRED_CONSTRAINTS:
+        if table is None:
+            if needle not in schema_text:
+                issues.append(f"MISSING_CONSTRAINT: the schema source must contain "
+                              f"{needle!r}")
+            continue
+        row = conn.execute("SELECT sql FROM sqlite_master WHERE type = 'table' "
+                           "AND name = ?", (table,)).fetchone()
+        if row is None or row[0] is None or needle not in row[0]:
+            issues.append(f"MISSING_CONSTRAINT: {table} must define {needle!r}")
+    return issues
+
+
+# ---------------------------------------------------------------------------
 # Migration fixtures
 
 
@@ -417,7 +494,8 @@ def check_fixtures(fixture_dir, tables):
     """Validate every migration fixture in fixture_dir against the live
     inventory `tables` ({table: [column tuples]})."""
     issues = []
-    cases = sorted(p for p in fixture_dir.glob('*.json') if not p.name.endswith('.expected.json'))
+    cases = sorted(p for p in fixture_dir.glob('case-*.json')
+                   if not p.name.endswith('.expected.json'))
     expecteds = sorted(fixture_dir.glob('*.expected.json'))
     if not cases:
         issues.append(f"FIXTURE_MISSING: no case-*.json archives in {fixture_dir}")
@@ -455,13 +533,19 @@ def print_inventory(conn):
             print(f"  {cname:<24} {ctype:<8} {' '.join(flags)}")
     for idx_name, table, cols in sorted(indexes):
         print(f"index {idx_name} ON {table} ({', '.join(cols)})")
+    for table, fks in sorted(read_foreign_keys(conn).items()):
+        for parent, cols, on_delete in fks:
+            pairs = ', '.join(f'{f} -> {t}' for f, t in cols)
+            print(f"foreign key {table} ({pairs}) REFERENCES {parent} "
+                  f"ON DELETE {on_delete}")
 
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
     print_only = '--print-inventory' in argv
+    schema_text = SCHEMA.read_text()
     try:
-        conn = build_schema(SCHEMA.read_text())
+        conn = build_schema(schema_text)
     except (sqlite3.Error, OSError) as exc:
         print(f"DB Schema: schema failed to execute: {exc}")
         return 1
@@ -474,12 +558,14 @@ def main(argv=None):
     issues = []
     issues += check_user_version(conn)
     issues += check_inventory(tables, indexes)
+    issues += check_constraints(conn, schema_text)
     issues += check_words_guard(tables)
     issues += check_fixtures(FIXTURES, tables)
 
     print(f"DB Schema: {SCHEMA.relative_to(ROOT)} — "
           f"user_version {conn.execute('PRAGMA user_version').fetchone()[0]}, "
           f"{len(tables)} tables, {len(indexes)} indexes, "
+          f"{sum(len(v) for v in read_foreign_keys(conn).values())} foreign keys, "
           f"fixtures: {len(list(FIXTURES.glob('*.json')))} files")
     if issues:
         print(f"DB Schema: {len(issues)} issue(s) found\n")
