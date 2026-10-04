@@ -15,10 +15,14 @@ import com.jkdc.app.core.SessionRecord
 import com.jkdc.app.core.SkillError
 import com.jkdc.app.core.Speaker
 import com.jkdc.app.core.TopicBrief
+import com.jkdc.app.core.UsageBuckets
+import com.jkdc.app.core.UsageEvents
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import kotlin.math.roundToLong
 
 /**
@@ -148,7 +152,7 @@ object SessionsDao {
         db.query("SELECT * FROM sessions WHERE language_id = ? ORDER BY rowid", listOf(languageID))
             .map { SessionsDao.session(it, db) }
 
-    private fun session(row: Row, db: SqlDatabase): SessionRecord {
+    internal fun session(row: Row, db: SqlDatabase): SessionRecord {
         val id = row.text("id")
         return SessionRecord(
             id = id,
@@ -617,5 +621,91 @@ object MetaDao {
     /** Writes the schema-flags row once; v1 has no flags. */
     fun ensureSchemaFlags(db: SqlDatabase) {
         if (get(db, SCHEMA_FLAGS_KEY) == null) put(db, SCHEMA_FLAGS_KEY, "{}")
+    }
+}
+
+/** One conversation-search result: the session to open plus a short context
+    window around the best match (the same snippet the iOS mirror produces —
+    markers '«'/'»' wrap the matched token, '…' marks elided text). */
+data class SearchHit(val session: SessionRecord, val snippet: String)
+
+/**
+ * Full-text conversation search over the fragments FTS index (schema v2).
+ * MATCH resolves rowids in fragments_fts, the JOIN walks back to the
+ * fragment's session, the language filter rides the session (a fragment has
+ * no language of its own), and results order newest-conversation-first with
+ * [limit] capping SESSIONS, not fragment matches: rows come back one per
+ * matching fragment (snippet() must ride the plain MATCH query — SQLite
+ * refuses it under a GROUP BY) and this DAO collapses each session to its
+ * first matching fragment in transcript order. The query is a plain user
+ * string: every whitespace-separated token becomes a quoted prefix term, so
+ * FTS5 syntax characters in the input can neither throw nor widen the match.
+ */
+object SearchDao {
+    const val SNIPPET_START = "«"
+    const val SNIPPET_END = "»"
+    const val SNIPPET_ELLIPSIS = "…"
+    const val DEFAULT_LIMIT = 20
+
+    fun search(db: SqlDatabase, query: String, languageID: String,
+               limit: Int = DEFAULT_LIMIT): List<SearchHit> {
+        val match = matchQuery(query)
+        if (match.isEmpty() || limit <= 0) return emptyList()
+        val hits = mutableListOf<SearchHit>()
+        val seen = HashSet<String>()
+        for (row in db.query(
+            "SELECT s.*, snippet(fragments_fts, 0, ?, ?, ?, 16) AS fts_snippet " +
+                "FROM fragments_fts " +
+                "JOIN fragments ON fragments.rowid = fragments_fts.rowid " +
+                "JOIN sessions s ON s.id = fragments.session_id " +
+                "WHERE fragments_fts MATCH ? AND s.language_id = ? " +
+                "ORDER BY s.started_at DESC, fragments.rowid",
+            listOf(SNIPPET_START, SNIPPET_END, SNIPPET_ELLIPSIS, match, languageID),
+        )) {
+            // one hit per session: the first (newest conversation, earliest
+            // fragment) match decides the snippet
+            if (seen.add(row.text("id"))) {
+                hits.add(SearchHit(SessionsDao.session(row, db), row.text("fts_snippet")))
+                if (hits.size == limit) break
+            }
+        }
+        return hits
+    }
+
+    /** "qué tal HO?" → "\"qué\"* \"tal\"* \"HO?\"*" — quoted prefix terms
+        only: no raw FTS5 operator from the user ever reaches MATCH, and a
+        blank (or only-blank) query searches nothing. */
+    internal fun matchQuery(query: String): String =
+        query.split(Regex("\\s+"))
+            .mapNotNull { token -> token.replace("\"", "").takeIf { it.isNotBlank() } }
+            .joinToString(" ") { token -> "\"$token\"*" }
+}
+
+/**
+ * The archive_health usage event: one coarse, content-free heartbeat per
+ * install per day (its props are [UsageBuckets.dbBytes]/[UsageBuckets.sessions]
+ * bucket strings — never exact sizes or counts), recorded at startup into the
+ * DURABLE usage_outbox through the write channel, so it survives a failed
+ * flush alongside every other queued event. The 24h cadence keys off the
+ * meta 'last_health_at' row (unix milliseconds as TEXT, the caller's clock);
+ * the metrics-enabled choice stays the caller's (it has the live preferences).
+ */
+object ArchiveHealth {
+    const val LAST_HEALTH_AT_KEY = "last_health_at"
+    const val CADENCE_MILLISECONDS: Long = 24 * 60 * 60_000L
+
+    /** Enqueues the event and stamps the cadence marker when the last one is
+        missing or older than [CADENCE_MILLISECONDS]; returns whether it ran. */
+    fun recordIfDue(db: SqlDatabase, nowUnixMillis: Long, dbBytes: Long,
+                    sessionCount: Int): Boolean {
+        val last = MetaDao.get(db, LAST_HEALTH_AT_KEY)?.toLongOrNull()
+        if (last != null && nowUnixMillis - last < CADENCE_MILLISECONDS) return false
+        UsageOutboxDao.enqueue(db, UsageEvents.ARCHIVE_HEALTH, nowUnixMillis,
+            buildJsonObject {
+                put("dbBytesBucket", UsageBuckets.dbBytes(dbBytes))
+                put("sessionsBucket", UsageBuckets.sessions(sessionCount))
+            })
+        MetaDao.put(db, LAST_HEALTH_AT_KEY, nowUnixMillis.toString())
+        return true
     }
 }

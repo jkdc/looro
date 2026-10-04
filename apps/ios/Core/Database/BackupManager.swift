@@ -100,9 +100,12 @@ public struct LanguageDeletion: Equatable, Sendable {
  *
  *   - `PRAGMA integrity_check` → exactly one row, "ok"
  *   - `PRAGMA foreign_key_check` → no rows
- *   - `PRAGMA user_version` == `LearningDatabase.version` (1 — a frozen
+ *   - `PRAGMA user_version` in 1...`LearningDatabase.version` (a
+ *     CURRENT-schema backup installs as-is; a v1 backup — every shipped
+ *     release before the FTS migration — also passes and migrates on the
+ *     next open, because the opener's upgrade path reaches the current
  *     schema; a backup from a newer schema must never be applied by an
- *     older app)
+ *     older app, and a file at user_version 0 was never a learning database)
  *   - the ten canonical tables of shared/db/schema.sql present
  *
  * and only then hands the bytes back. The verification proves the copy's
@@ -261,7 +264,10 @@ public enum BackupManager {
             guard let version = try db.query("PRAGMA user_version").first?.values.first as? Int64
             else { throw InvalidBackup(.corrupt) }
             if version > Int64(LearningDatabase.version) { throw InvalidBackup(.futureVersion) }
-            if version != Int64(LearningDatabase.version) { throw InvalidBackup(.corrupt) }
+            // v1 is still a learning database: the gate accepts it and the
+            // post-install open migrates it in place (LearningDatabase.upgrade
+            // — fragments keep their text, the FTS index 'rebuild' covers them).
+            if version < 1 { throw InvalidBackup(.corrupt) }
             if try !db.query("PRAGMA foreign_key_check").isEmpty { throw InvalidBackup(.corrupt) }
             let tables = try db.query("SELECT name FROM sqlite_master WHERE type = 'table'")
                 .map { $0.text("name") }

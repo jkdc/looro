@@ -1,6 +1,22 @@
 -- ===========================================================================
--- Looro/Palique — canonical learning database, schema v1
+-- Looro/Palique — canonical learning database, schema v2
 -- ===========================================================================
+
+-- Version history
+-- ---------------
+--   v1  Initial frozen schema: ten tables (meta, preferences, sessions,
+--       fragments, expressions, lesson_state, completions, skill_errors,
+--       usage_outbox, assessment_tickets), one foreign key, four indexes.
+--   v2  Full-text search over conversation transcripts: the FTS5
+--       external-content virtual table fragments_fts (content = fragments)
+--       plus the three triggers that keep it in sync, and a one-time
+--       'rebuild' that indexes every fragment a v1 database already held.
+--       No existing table or column changed.
+--
+-- Fresh databases run every statement below in order and end at
+-- PRAGMA user_version = 2. Openers upgrade an existing database by applying
+-- only the statements between its own user_version's PRAGMA and the next
+-- one (see the v2 block's own comment), then setting user_version.
 --
 -- Source of truth for every field: apps/android/.../core/Models.kt
 -- (SessionRecord, Fragment, ExpressionState, CompletionMark, Preferences,
@@ -9,12 +25,12 @@
 -- (FinalAssessmentTicket).
 --
 -- This file must execute VERBATIM on a fresh database from both platforms:
---   - Android: AndroidX SQLite (API 24+ ships SQLite 3.19)
+--   - Android: AndroidX SQLite (API 26+ ships SQLite 3.18, FTS5 available)
 --   - iOS: GRDB
 -- Therefore it uses only portable SQL: no STRICT tables, no generated
 -- columns, no RETURNING, no WITHOUT ROWID. Openers run it once when
--- `PRAGMA user_version` is 0 and must then find it set to 1 (the script
--- ends with `PRAGMA user_version = 1;`).
+-- `PRAGMA user_version` is 0 and must then find it set to 2 (the script
+-- ends with `PRAGMA user_version = 2;`).
 --
 -- Conventions
 -- -----------
@@ -228,3 +244,44 @@ CREATE TABLE assessment_tickets (
 -- detection rather than surfacing it.
 
 PRAGMA user_version = 1;
+
+-- ===========================================================================
+-- v2 — full-text search over conversation transcripts
+-- ===========================================================================
+--
+-- fragments_fts is an EXTERNAL-CONTENT FTS5 index over fragments.text: it
+-- stores only the inverted index (the text itself stays in fragments), so
+-- it adds no duplicate content and must be kept in sync by the three
+-- triggers below — exactly the "external content table" pattern from the
+-- SQLite FTS5 documentation. The upgrade path (a database already at
+-- user_version 1) applies exactly this block: the CREATE VIRTUAL TABLE,
+-- the three triggers, and the one-time 'rebuild' command that indexes
+-- every fragment the database already held. Fresh installs run the same
+-- statements (the 'rebuild' is a no-op on an empty fragments table).
+
+CREATE VIRTUAL TABLE fragments_fts USING fts5(
+    text,
+    content='fragments',
+    content_rowid='rowid'
+);
+
+CREATE TRIGGER fragments_fts_insert AFTER INSERT ON fragments BEGIN
+    INSERT INTO fragments_fts(rowid, text) VALUES (new.rowid, new.text);
+END;
+
+CREATE TRIGGER fragments_fts_delete AFTER DELETE ON fragments BEGIN
+    INSERT INTO fragments_fts(fragments_fts, rowid, text)
+        VALUES ('delete', old.rowid, old.text);
+END;
+
+CREATE TRIGGER fragments_fts_update AFTER UPDATE OF text ON fragments BEGIN
+    INSERT INTO fragments_fts(fragments_fts, rowid, text)
+        VALUES ('delete', old.rowid, old.text);
+    INSERT INTO fragments_fts(rowid, text) VALUES (new.rowid, new.text);
+END;
+
+-- One-time index fill: 'rebuild' re-reads every fragments row through the
+-- content option, so a v1→v2 upgrade can search the history it already had.
+INSERT INTO fragments_fts(fragments_fts) VALUES('rebuild');
+
+PRAGMA user_version = 2;

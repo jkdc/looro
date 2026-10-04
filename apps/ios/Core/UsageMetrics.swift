@@ -21,10 +21,11 @@ public enum UsageEvents {
     public static let helpRequested = "help_requested"
     public static let reportRequested = "report_requested"
     public static let paywallViewed = "paywall_viewed"
+    public static let archiveHealth = "archive_health"
 
     public static let all: [String] = [appOpen, sessionStarted, sessionEnded, sessionResumed, themeSelected,
         lessonStarted, lessonCompleted, scenarioStarted, scenarioCompleted, assessmentCompleted, practiceCompleted, wordLookup,
-        replayUsed, ttsSpeedChanged, helpRequested, reportRequested, paywallViewed]
+        replayUsed, ttsSpeedChanged, helpRequested, reportRequested, paywallViewed, archiveHealth]
 }
 
 /// Coarse buckets shared with the Android core; never exact durations, counts or
@@ -60,6 +61,43 @@ public enum UsageBuckets {
         case 20..<40: 1
         default: 0
         }
+    }
+
+    /// archive_health's database-size bucket: a coarse ordinal string, never
+    /// exact bytes (mirrored by the Android UsageBuckets and the API catalog).
+    public static func dbBytes(_ bytes: Int64) -> String {
+        switch bytes {
+        case ...0: "empty"
+        case ..<(1 << 20): "<1mb"
+        case ..<(10 << 20): "1-10mb"
+        case ..<(100 << 20): "10-100mb"
+        default: ">=100mb"
+        }
+    }
+
+    /// archive_health's session-count bucket, same coarse-string rule.
+    public static func sessions(_ count: Int) -> String {
+        switch count {
+        case ...0: "0"
+        case ...10: "1-10"
+        case ...50: "11-50"
+        case ...200: "51-200"
+        default: ">200"
+        }
+    }
+}
+
+/// The archive_health heartbeat's cadence half (the Android mirror lives in
+/// the data-layer `ArchiveHealth` object): one coarse, content-free event per
+/// install per day, keyed off the meta 'last_health_at' row.
+public enum ArchiveHealth {
+    public static let cadenceMilliseconds: Int64 = 24 * 60 * 60_000
+    public static let lastHealthAtKey = "last_health_at"
+
+    /// True when the last event is missing or older than the cadence.
+    public static func isDue(lastAtMilliseconds: Int64?, nowMilliseconds: Int64) -> Bool {
+        guard let lastAtMilliseconds else { return true }
+        return nowMilliseconds - lastAtMilliseconds >= cadenceMilliseconds
     }
 }
 

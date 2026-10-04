@@ -1,11 +1,14 @@
 package com.jkdc.app.data
 
+import com.jkdc.app.core.ArchiveCodec
 import com.jkdc.app.core.CompletionMark
 import com.jkdc.app.core.ExpressionState
 import com.jkdc.app.core.Fragment
 import com.jkdc.app.core.Preferences
 import com.jkdc.app.core.SkillError
 import com.jkdc.app.core.Speaker
+import com.jkdc.app.core.UsageEvents
+import java.io.File
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import java.sql.Connection
@@ -246,6 +249,92 @@ class LearningDbDaoTest {
         // replace semantics: a re-import with fewer skills drops the stale rows
         MetaDao.replaceMastery(db, mapOf("grammar:articles" to 3))
         assertEquals(mapOf("grammar:articles" to 3), MetaDao.mastery(db))
+    }
+
+    // -- conversation search (schema v2) --------------------------------------
+
+    /** The shared case-basic fixture, imported for real: two es sessions
+        ("En el restaurante" 812573760, "The verb ser" 812620000 — newer) and
+        one fr session ("Commander au café"). */
+    private fun importCaseBasic() {
+        val decoded = ArchiveCodec.decode(
+            File("../../../shared/fixtures/db/migration/case-basic.json").readText())
+        ArchiveMapper.import(decoded.copy(
+            lessons = decoded.lessons.map { it.copy(bars = 0, dueAt = 0.0) }.toMutableList()), db)
+    }
+
+    @Test fun searchMatchesFixtureFragmentsFiltersByLanguageAndOrdersNewestFirst() {
+        importCaseBasic()
+        // a word from the older es conversation, in es: exactly that session
+        // (the word matches TWO of its fragments; the session is ONE hit)
+        val reservar = SearchDao.search(db, "reservar", "es")
+        assertEquals(listOf("En el restaurante"), reservar.map { it.session.title })
+        assertEquals(1, reservar.size)
+        assertTrue("the snippet wraps the match",
+            reservar.single().snippet.contains("«reservar"))
+        // the same word from the fr conversation is invisible to es...
+        assertEquals(0, SearchDao.search(db, "café", "es").size)
+        // ...and found in fr
+        assertEquals(listOf("Commander au café"), SearchDao.search(db, "café", "fr").map { it.session.title })
+        // a token present in both es sessions: newest conversation first
+        val de = SearchDao.search(db, "de", "es")
+        assertEquals(listOf("The verb ser", "En el restaurante"), de.map { it.session.title })
+    }
+
+    @Test fun searchLimitsPrefixMatchesAndNeverThrowsOnFtsSyntax() {
+        importCaseBasic()
+        // LIMIT caps sessions, not fragment matches
+        assertEquals(1, SearchDao.search(db, "de", "es", limit = 1).size)
+        assertEquals(0, SearchDao.search(db, "de", "es", limit = 0).size)
+        // prefix search: "reser" finds "reservar"
+        assertEquals(1, SearchDao.search(db, "reser", "es").size)
+        // FTS5 operator characters cannot throw or widen the match: every
+        // token is quoted, so parentheses and the NEAR keyword stay inert
+        assertEquals(0, SearchDao.search(db, "\"", "es").size)
+        assertEquals(0, SearchDao.search(db, "  ", "es").size)
+        assertEquals(0, SearchDao.search(db, "NEAR", "es").size)
+        assertEquals(1, SearchDao.search(db, "\"(reservar)\"", "es").size)
+        // case- and accent-insensitive (unicode61 diacrits off by default)
+        assertEquals(1, SearchDao.search(db, "RESERVÁR", "es").size)
+    }
+
+    @Test fun searchMatchQueryQuotesEveryTokenAsAPrefixTerm() {
+        assertEquals("\"qué\"* \"tal\"*", SearchDao.matchQuery("qué tal"))
+        assertEquals("\"HO?\"*", SearchDao.matchQuery("  \"HO?\" "))
+        assertEquals("", SearchDao.matchQuery("  \"\"  "))
+    }
+
+    // -- archive_health heartbeat ---------------------------------------------
+
+    @Test fun archiveHealthRecordsOncePerCadenceIntoTheDurableOutbox() {
+        val start = 1_700_000_000_000L
+        // first launch: no meta row yet -> records, with the bucketed props
+        assertTrue(ArchiveHealth.recordIfDue(db, start, dbBytes = 5 * 1024 * 1024, sessionCount = 7))
+        val pending = UsageOutboxDao.pending(db)
+        assertEquals(1, pending.size)
+        val event = pending.single().event
+        assertEquals(UsageEvents.ARCHIVE_HEALTH, event.name)
+        assertEquals(start, event.at)
+        assertEquals(buildJsonObject {
+            put("dbBytesBucket", "1-10mb")
+            put("sessionsBucket", "1-10")
+        }, event.props)
+        assertEquals(start.toString(), MetaDao.get(db, ArchiveHealth.LAST_HEALTH_AT_KEY))
+        // inside the 24h cadence: a no-op, and nothing new lands
+        assertFalse(ArchiveHealth.recordIfDue(db, start + ArchiveHealth.CADENCE_MILLISECONDS - 1,
+            dbBytes = 5 * 1024 * 1024, sessionCount = 7))
+        assertEquals(1, UsageOutboxDao.pending(db).size)
+        // past the cadence: records again and moves the marker
+        val next = start + ArchiveHealth.CADENCE_MILLISECONDS
+        assertTrue(ArchiveHealth.recordIfDue(db, next, dbBytes = 250 * 1024 * 1024, sessionCount = 500))
+        val second = UsageOutboxDao.pending(db).last().event
+        assertEquals(buildJsonObject {
+            put("dbBytesBucket", ">=100mb")
+            put("sessionsBucket", ">200")
+        }, second.props)
+        assertEquals(next.toString(), MetaDao.get(db, ArchiveHealth.LAST_HEALTH_AT_KEY))
+        // an unknown name can never sneak into the queue: the event is in the catalog
+        assertTrue(UsageEvents.ARCHIVE_HEALTH in UsageEvents.all)
     }
 
     private fun count(table: String): Long = db.query("SELECT COUNT(*) AS n FROM $table").single().long("n")

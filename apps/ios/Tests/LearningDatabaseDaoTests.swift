@@ -335,10 +335,122 @@ final class LearningDatabaseDaoTests: XCTestCase {
         XCTAssertEqual(["grammar:articles": 3], try MetaDao.mastery(db))
     }
 
+    // MARK: conversation search (schema v2)
+
+    /// The shared case-basic fixture's shape, seeded directly: two es
+    /// sessions ("En el restaurante" older, "The verb ser" newer) and one fr
+    /// session ("Commander au café"). Session ids are UUID strings — the DAO
+    /// re-parses them.
+    private func seedSearchFixtures() throws {
+        func session(_ id: String, _ languageID: String, _ title: String,
+                     _ startedAt: Double) throws {
+            var record = SessionRecord(languageID: languageID, themeID: nil, title: title,
+                                       lessonID: nil, scenarioID: nil)
+            record.id = UUID(uuidString: id)!
+            record.startedAt = Date(timeIntervalSinceReferenceDate: startedAt)
+            try SessionsDao.upsert(db, record)
+        }
+        func fragment(_ id: String, _ sessionID: String, _ text: String) throws {
+            var fragment = Fragment(speaker: .user, text: text, startMS: 0, endMS: 10)
+            fragment.id = id
+            try FragmentsDao.replaceBySession(db, sessionID, [fragment])
+        }
+        try session("00000000-0000-0000-0000-000000000001", "es", "En el restaurante", 812_573_760)
+        try fragment("f1", "00000000-0000-0000-0000-000000000001",
+                     "Hola de nuevo. Quisiera reservar una mesa para dos personas")
+        try fragment("f2", "00000000-0000-0000-0000-000000000001",
+                     "Quisiera reservar una mesa, por favor")
+        try session("00000000-0000-0000-0000-000000000002", "es", "The verb ser", 812_620_000)
+        try fragment("f3", "00000000-0000-0000-0000-000000000002", "Yo soy de Argentina")
+        try session("00000000-0000-0000-0000-000000000003", "fr", "Commander au café", 812_490_000)
+        try fragment("f4", "00000000-0000-0000-0000-000000000003",
+                     "Je veux un café, s'il vous plaît")
+    }
+
+    func testSearchMatchesFragmentsFiltersByLanguageAndOrdersNewestFirst() throws {
+        try seedSearchFixtures()
+        // a word matching TWO fragments of ONE session: exactly one hit
+        let reservar = try SearchDao.search(db, "reservar", languageID: "es")
+        XCTAssertEqual(["00000000-0000-0000-0000-000000000001"],
+                       reservar.map { $0.session.id.uuidString })
+        XCTAssertTrue(reservar.first!.snippet.contains("«reservar"),
+                      "the snippet wraps the match, got \(reservar.first!.snippet)")
+        // a word from the fr conversation is invisible to es, found in fr
+        // (accent-folded by the tokenizer)
+        XCTAssertEqual(0, try SearchDao.search(db, "café", languageID: "es").count)
+        XCTAssertEqual(["00000000-0000-0000-0000-000000000003"],
+                       try SearchDao.search(db, "café", languageID: "fr")
+                           .map { $0.session.id.uuidString })
+        // a token present in both es sessions: newest conversation first
+        XCTAssertEqual(["00000000-0000-0000-0000-000000000002",
+                        "00000000-0000-0000-0000-000000000001"],
+                       try SearchDao.search(db, "de", languageID: "es")
+                           .map { $0.session.id.uuidString })
+    }
+
+    func testSearchLimitsPrefixMatchesAndNeverThrowsOnFtsSyntax() throws {
+        try seedSearchFixtures()
+        // LIMIT caps sessions, not fragment matches
+        XCTAssertEqual(1, try SearchDao.search(db, "de", languageID: "es", limit: 1).count)
+        XCTAssertEqual(0, try SearchDao.search(db, "de", languageID: "es", limit: 0).count)
+        // prefix search
+        XCTAssertEqual(1, try SearchDao.search(db, "reser", languageID: "es").count)
+        // FTS5 operator characters cannot throw or widen the match: every
+        // token is quoted, so parentheses and the NEAR keyword stay inert
+        XCTAssertEqual(0, try SearchDao.search(db, "\"", languageID: "es").count)
+        XCTAssertEqual(0, try SearchDao.search(db, "  ", languageID: "es").count)
+        XCTAssertEqual(0, try SearchDao.search(db, "NEAR", languageID: "es").count)
+        XCTAssertEqual(1, try SearchDao.search(db, "\"(reservar)\"", languageID: "es").count)
+        // the sanitizer's shape
+        XCTAssertEqual("\"qué\"* \"tal\"* \"HO?\"*", SearchDao.matchQuery("qué tal \"HO?\""))
+        XCTAssertEqual("", SearchDao.matchQuery("  \"\"  "))
+    }
+
+    // MARK: archive_health heartbeat
+
+    func testArchiveHealthRecordsOncePerCadenceIntoTheDurableOutbox() throws {
+        let start: Int64 = 1_700_000_000_000
+        // first launch: no meta row yet -> records, with the bucketed props
+        XCTAssertTrue(try ArchiveHealthDao.recordIfDue(db, nowUnixMilliseconds: start,
+                                                       dbBytes: 5 << 20, sessionCount: 7))
+        var pending = try UsageOutboxDao.pending(db)
+        XCTAssertEqual(1, pending.count)
+        XCTAssertEqual(UsageEvents.archiveHealth, pending[0].event.name)
+        XCTAssertEqual(start, pending[0].event.at)
+        XCTAssertEqual("1-10mb", stringProp(pending[0].event.props, "dbBytesBucket"))
+        XCTAssertEqual("1-10", stringProp(pending[0].event.props, "sessionsBucket"))
+        XCTAssertEqual(String(start), try MetaDao.get(db, ArchiveHealth.lastHealthAtKey))
+        // inside the 24h cadence: a no-op, and nothing new lands
+        XCTAssertFalse(try ArchiveHealthDao.recordIfDue(
+            db, nowUnixMilliseconds: start + ArchiveHealth.cadenceMilliseconds - 1,
+            dbBytes: 5 << 20, sessionCount: 7))
+        XCTAssertEqual(1, try UsageOutboxDao.pending(db).count)
+        // past the cadence: records again and moves the marker
+        let next = start + ArchiveHealth.cadenceMilliseconds
+        XCTAssertTrue(try ArchiveHealthDao.recordIfDue(db, nowUnixMilliseconds: next,
+                                                       dbBytes: 250 << 20, sessionCount: 500))
+        pending = try UsageOutboxDao.pending(db)
+        XCTAssertEqual(">=100mb", stringProp(pending[1].event.props, "dbBytesBucket"))
+        XCTAssertEqual(">200", stringProp(pending[1].event.props, "sessionsBucket"))
+        XCTAssertEqual(String(next), try MetaDao.get(db, ArchiveHealth.lastHealthAtKey))
+        // the event is in the closed catalog, and the cadence boundaries hold
+        XCTAssertTrue(UsageEvents.all.contains(UsageEvents.archiveHealth))
+        XCTAssertTrue(ArchiveHealth.isDue(lastAtMilliseconds: nil, nowMilliseconds: start))
+        XCTAssertFalse(ArchiveHealth.isDue(lastAtMilliseconds: start,
+                                           nowMilliseconds: start + ArchiveHealth.cadenceMilliseconds - 1))
+        XCTAssertTrue(ArchiveHealth.isDue(lastAtMilliseconds: start,
+                                          nowMilliseconds: start + ArchiveHealth.cadenceMilliseconds))
+    }
+
     // MARK: helpers
 
     private func count(_ table: String) throws -> Int64 {
         return try db.query("SELECT COUNT(*) AS n FROM \(table)").first!.long("n")
+    }
+
+    private func stringProp(_ props: [String: UsageProp]?, _ key: String) -> String {
+        guard case .string(let value)? = props?[key] else { return "" }
+        return value
     }
 
     private func intProp(_ props: [String: UsageProp]?, _ key: String) -> Int? {

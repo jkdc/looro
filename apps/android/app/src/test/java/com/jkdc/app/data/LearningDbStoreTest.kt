@@ -358,14 +358,21 @@ class LearningDbStoreTest {
         target.query("SELECT COUNT(*) AS n FROM $table").single().long("n")
 
     /** The restart twin of LearningDb.openJvm for a file-backed path: applies
-     *  the canonical schema only when the database file is brand new. */
+     *  the canonical schema when the database file is brand new and the
+     *  pinned upgrade deltas when it predates LearningDb.VERSION — exactly
+     *  what the Helper's onCreate/onUpgrade do. */
     private fun openJvmFileBacked(path: String): SqlDatabase {
         val connection = DriverManager.getConnection("jdbc:sqlite:$path")
         fileConnections += connection
         val target = JvmSqlDatabase(connection)
         target.exec("PRAGMA foreign_keys = ON")
-        if (target.query("PRAGMA user_version").single().values.single() == 0L) {
-            for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) target.exec(statement)
+        when (val found = target.query("PRAGMA user_version").single().values.single()) {
+            0L -> for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) target.exec(statement)
+            LearningDb.VERSION.toLong() -> {}
+            else -> {
+                target.transaction { LearningDb.upgrade(it, (found as Long).toInt()) }
+                target.exec("PRAGMA user_version = ${LearningDb.VERSION}")
+            }
         }
         return target
     }

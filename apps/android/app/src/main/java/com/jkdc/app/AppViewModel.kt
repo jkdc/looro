@@ -14,6 +14,7 @@ import com.jkdc.app.core.engines.EngineException
 import com.jkdc.app.core.engines.ConversationEngineFactory
 import com.jkdc.app.core.voice.LocalVoiceTransport
 import com.jkdc.app.core.voice.VoiceTransport
+import com.jkdc.app.data.ArchiveHealth
 import com.jkdc.app.data.AndroidSqlDatabase
 import com.jkdc.app.data.AssessmentTicketsDao
 import com.jkdc.app.data.AssessmentTicketRow
@@ -748,6 +749,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
                 usageReporter.record(UsageEvents.APP_OPEN)
                 viewModelScope.launch { usageReporter.flush() }
+                // The daily archive_health heartbeat rides the durable usage_outbox
+                // through the write channel, so it survives a failed flush with the
+                // rest of the queue; cadence and opt-out below.
+                if (usageReporter.enabled) {
+                    val dbFile = getApplication<Application>().getDatabasePath(LearningDb.NAME)
+                    val sessionCount = archive.sessions.size
+                    persist { db ->
+                        ArchiveHealth.recordIfDue(db, System.currentTimeMillis(),
+                            dbFile.length(), sessionCount)
+                    }
+                }
                 syncProgress()
                 recoverFinalAssessments()
                 refreshHostedReadiness()

@@ -14,7 +14,7 @@ class UsageMetricsTest {
 
     @Test fun catalogMatchesTheServerContract() {
         // The API's CHECK constraint and USAGE_CATALOG pin this list; a rename here is a cross-platform break.
-        assertEquals(19, UsageEvents.all.size)
+        assertEquals(20, UsageEvents.all.size)
         assertEquals(UsageEvents.all.distinct().size, UsageEvents.all.size)
         assertTrue(UsageEvents.all.all { it.matches("[a-z_]+".toRegex()) })
     }
@@ -24,6 +24,18 @@ class UsageMetricsTest {
         assertEquals(3, UsageBuckets.duration(899)); assertEquals(5, UsageBuckets.duration(1800))
         assertEquals(0, UsageBuckets.turns(2)); assertEquals(2, UsageBuckets.turns(19)); assertEquals(5, UsageBuckets.turns(61))
         assertEquals(4, UsageBuckets.score(95)); assertEquals(2, UsageBuckets.score(40)); assertEquals(0, UsageBuckets.score(19))
+        // archive_health: ordinal bucket strings, never exact bytes or counts
+        assertEquals("empty", UsageBuckets.dbBytes(0))
+        assertEquals("<1mb", UsageBuckets.dbBytes(1))
+        assertEquals("1-10mb", UsageBuckets.dbBytes(1 shl 20))
+        assertEquals("10-100mb", UsageBuckets.dbBytes(10 shl 20))
+        assertEquals(">=100mb", UsageBuckets.dbBytes(100 shl 20))
+        assertEquals("0", UsageBuckets.sessions(0))
+        assertEquals("1-10", UsageBuckets.sessions(1))
+        assertEquals("1-10", UsageBuckets.sessions(10))
+        assertEquals("11-50", UsageBuckets.sessions(11))
+        assertEquals("51-200", UsageBuckets.sessions(200))
+        assertEquals(">200", UsageBuckets.sessions(201))
     }
 
     @Test fun outboxKeepsOrderDeduplicatesAndRespectsCapacity() {

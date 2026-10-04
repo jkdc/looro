@@ -138,7 +138,7 @@ public enum SessionsDao {
             .map { try session($0, db) }
     }
 
-    private static func session(_ row: SqlRow, _ db: SqlDatabase) throws -> SessionRecord {
+    static func session(_ row: SqlRow, _ db: SqlDatabase) throws -> SessionRecord {
         let id = row.text("id")
         var session = SessionRecord(
             languageID: row.text("language_id"),
@@ -748,5 +748,96 @@ public enum MetaDao {
         if try get(db, schemaFlagsKey) == nil {
             try put(db, schemaFlagsKey, "{}")
         }
+    }
+}
+
+// MARK: SearchDao
+
+/// One conversation-search result: the session to open plus a short context
+/// window around the best match (the same snippet the Kotlin mirror produces
+/// — markers '«'/'»' wrap the matched token, '…' marks elided text).
+public struct SearchHit {
+    public let session: SessionRecord
+    public let snippet: String
+}
+
+/// Full-text conversation search over the fragments FTS index (schema v2) —
+/// the Swift mirror of the Kotlin `SearchDao`. MATCH resolves rowids in
+/// fragments_fts, the JOIN walks back to the fragment's session, the language
+/// filter rides the session (a fragment has no language of its own), and
+/// results order newest-conversation-first with `limit` capping SESSIONS,
+/// not fragment matches: rows come back one per matching fragment (snippet()
+/// must ride the plain MATCH query — SQLite refuses it under a GROUP BY) and
+/// this DAO collapses each session to its first matching fragment in
+/// transcript order. The query is a plain user string: every
+/// whitespace-separated token becomes a quoted prefix term, so FTS5 syntax
+/// characters in the input can neither throw nor widen the match.
+public enum SearchDao {
+    public static let snippetStart = "«"
+    public static let snippetEnd = "»"
+    public static let snippetEllipsis = "…"
+    public static let defaultLimit = 20
+
+    public static func search(_ db: SqlDatabase, _ query: String, languageID: String,
+                              limit: Int = defaultLimit) throws -> [SearchHit] {
+        let match = matchQuery(query)
+        if match.isEmpty || limit <= 0 { return [] }
+        var hits: [SearchHit] = []
+        var seen = Set<String>()
+        for row in try db.query(
+            "SELECT s.*, snippet(fragments_fts, 0, ?, ?, ?, 16) AS fts_snippet "
+                + "FROM fragments_fts "
+                + "JOIN fragments ON fragments.rowid = fragments_fts.rowid "
+                + "JOIN sessions s ON s.id = fragments.session_id "
+                + "WHERE fragments_fts MATCH ? AND s.language_id = ? "
+                + "ORDER BY s.started_at DESC, fragments.rowid",
+            args: [snippetStart, snippetEnd, snippetEllipsis, match, languageID]) {
+            // one hit per session: the first (newest conversation, earliest
+            // fragment) match decides the snippet
+            if seen.insert(row.text("id")).inserted {
+                hits.append(SearchHit(session: try SessionsDao.session(row, db),
+                                      snippet: row.text("fts_snippet")))
+                if hits.count == limit { break }
+            }
+        }
+        return hits
+    }
+
+    /// "qué tal HO?" → "\"qué\"* \"tal\"* \"HO?\"*" — quoted prefix terms
+    /// only: no raw FTS5 operator from the user ever reaches MATCH, and a
+    /// blank (or only-blank) query searches nothing.
+    static func matchQuery(_ query: String) -> String {
+        return query.split(whereSeparator: \.isWhitespace)
+            .compactMap { token -> String? in
+                let cleaned = String(token).replacingOccurrences(of: "\"", with: "")
+                return cleaned.isEmpty ? nil : cleaned
+            }
+            .map { "\"\($0)\"*" }
+            .joined(separator: " ")
+    }
+}
+
+// MARK: ArchiveHealthDao
+
+/// The archive_health usage event: one coarse, content-free heartbeat per
+/// install per day (its props are `UsageBuckets.dbBytes`/`.sessions` bucket
+/// strings — never exact sizes or counts), recorded into the DURABLE
+/// usage_outbox, so it survives a failed flush alongside every other queued
+/// event. The 24h cadence keys off the meta 'last_health_at' row (unix
+/// milliseconds as TEXT); the metrics-enabled choice stays the caller's.
+public enum ArchiveHealthDao {
+    @discardableResult
+    public static func recordIfDue(_ db: SqlDatabase, nowUnixMilliseconds: Int64,
+                                   dbBytes: Int64, sessionCount: Int) throws -> Bool {
+        let last = try MetaDao.get(db, ArchiveHealth.lastHealthAtKey).flatMap { Int64($0) }
+        if !ArchiveHealth.isDue(lastAtMilliseconds: last, nowMilliseconds: nowUnixMilliseconds) {
+            return false
+        }
+        _ = try UsageOutboxDao.enqueue(db, UsageEvents.archiveHealth, nowUnixMilliseconds, [
+            "dbBytesBucket": .string(UsageBuckets.dbBytes(dbBytes)),
+            "sessionsBucket": .string(UsageBuckets.sessions(sessionCount)),
+        ])
+        try MetaDao.put(db, ArchiveHealth.lastHealthAtKey, String(nowUnixMilliseconds))
+        return true
     }
 }

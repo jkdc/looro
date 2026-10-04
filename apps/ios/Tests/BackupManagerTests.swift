@@ -242,6 +242,40 @@ final class BackupManagerTests: XCTestCase {
         }
     }
 
+    func testImportAcceptsAV1BackupWhichMigratesOnTheNextOpen() throws {
+        // the shipped-release backup: schema v1 with a real transcript, no FTS
+        let directory = try makeDirectory()
+        let v1URL = directory.appendingPathComponent("v1.db")
+        let v1 = try LearningDatabase.openV1(at: v1URL.path)
+        XCTAssertEqual(Int64(1), try v1.query("PRAGMA user_version").first!.long("user_version"))
+        let sessionID = UUID()
+        _ = try v1.insert("sessions", ["id": sessionID.uuidString, "language_id": "es",
+                                       "started_at": 1.0, "title": "Historia"])
+        _ = try v1.insert("fragments", ["id": "f1", "session_id": sessionID.uuidString,
+                                        "sort_index": 0, "speaker": "user",
+                                        "text": "palabra buscable", "revision": 0,
+                                        "start_ms": 0, "end_ms": 1, "received_at": 1.0])
+        XCTAssertThrowsError(try v1.query(
+            "SELECT rowid FROM fragments_fts WHERE fragments_fts MATCH 'buscable'"))
+        v1.close()
+
+        // the gate accepts v1 (a v1 backup migrates on open) and hands the
+        // exact bytes back
+        let bytes = try BackupManager.readValidatedBackup(
+            from: v1URL, workDirectory: directory,
+            openForVerify: BackupManager.openForVerification)
+
+        // install + reopen: the open migrates in place and the transcript the
+        // v1 file already held is searchable through the FTS index
+        let live = directory.appendingPathComponent("learning.db")
+        try BackupManager.installDatabase(live, bytes: bytes)
+        let reopened = try fileBacked(live)
+        XCTAssertEqual(Int64(LearningDatabase.version),
+                       try reopened.query("PRAGMA user_version").first!.long("user_version"))
+        XCTAssertEqual([sessionID], try SearchDao.search(reopened, "buscable", languageID: "es")
+            .map { $0.session.id })
+    }
+
     // MARK: per-language delete
 
     func testDeleteByLanguageKeepsOtherLanguagesLegacyRowsAndQueues() throws {

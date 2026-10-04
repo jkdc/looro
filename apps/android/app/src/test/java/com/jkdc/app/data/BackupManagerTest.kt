@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.SQLException
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -141,6 +142,38 @@ class BackupManagerTest {
             BackupManager.readValidatedBackup(file.inputStream(), tmp.newFolder(), opener())
         }
         assertEquals(BackupManager.BackupIssue.MISSING_TABLES, thrown.issue)
+    }
+
+    @Test fun importAcceptsAV1BackupWhichMigratesOnTheNextOpen() {
+        // the shipped-release backup: schema v1 with a real transcript, no FTS
+        val v1File = File(tmp.newFolder(), "v1.db")
+        val v1 = LearningDb.openJvmV1(DriverManager.getConnection("jdbc:sqlite:${v1File.path}"))
+        connections += (v1 as JvmSqlDatabase).connection
+        v1.insert("sessions", mapOf("id" to "s1", "language_id" to "es", "started_at" to 1.0,
+            "title" to "Historia"))
+        v1.insert("fragments", mapOf("id" to "f1", "session_id" to "s1", "sort_index" to 0,
+            "speaker" to "user", "text" to "palabra buscable", "revision" to 0,
+            "start_ms" to 0L, "end_ms" to 1L, "received_at" to 1.0))
+        assertEquals(1L, v1.query("PRAGMA user_version").single().values.single())
+        assertThrows(SQLException::class.java) {
+            v1.query("SELECT rowid FROM fragments_fts WHERE fragments_fts MATCH 'buscable'")
+        }
+
+        // the gate accepts v1 (a v1 backup migrates on open) and hands the
+        // exact bytes back
+        val bytes = v1File.readBytes()
+        val validated = BackupManager.readValidatedBackup(
+            ByteArrayInputStream(bytes), tmp.newFolder(), opener())
+        assertTrue(validated.contentEquals(bytes))
+
+        // install + reopen: the open migrates in place and the transcript the
+        // v1 file already held is searchable through the FTS index
+        val live = File(tmp.newFolder(), "learning.db")
+        BackupManager.installDatabase(live, validated)
+        val reopened = fileBacked(live.path)
+        assertEquals(LearningDb.VERSION.toLong(),
+            reopened.query("PRAGMA user_version").single().values.single())
+        assertEquals(listOf("s1"), SearchDao.search(reopened, "buscable", "es").map { it.session.id })
     }
 
     // -- per-language delete --------------------------------------------------
@@ -335,8 +368,16 @@ class BackupManagerTest {
         connections += connection
         val target = JvmSqlDatabase(connection)
         target.exec("PRAGMA foreign_keys = ON")
-        if (target.query("PRAGMA user_version").single().values.single() == 0L) {
-            for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) target.exec(statement)
+        when (val found = target.query("PRAGMA user_version").single().values.single()) {
+            0L -> for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) target.exec(statement)
+            // already current
+            LearningDb.VERSION.toLong() -> {}
+            // what the Helper's onUpgrade does on the first open after an
+            // import of an older (v1) backup
+            else -> {
+                target.transaction { LearningDb.upgrade(it, (found as Long).toInt()) }
+                target.exec("PRAGMA user_version = ${LearningDb.VERSION}")
+            }
         }
         return target
     }

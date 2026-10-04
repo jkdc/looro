@@ -124,6 +124,33 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         }
     }
     var jsonMode: Bool { dbStore.jsonMode }
+
+    /// The learning database file's size in bytes (0 when unavailable): the
+    /// coarse dbBytesBucket input of the daily archive_health heartbeat.
+    var databaseByteCount: Int64 {
+        guard let databaseURL else { return 0 }
+        let attributes = try? FileManager.default.attributesOfItem(atPath: databaseURL.path)
+        return (attributes?[.size] as? Int64) ?? 0
+    }
+
+    /// The daily archive_health heartbeat's gate (the cadence marker lives in
+    /// meta): returns true exactly when the caller should now enqueue the
+    /// event — no marker yet, or the last one older than
+    /// `ArchiveHealth.cadenceMilliseconds` — and stamps the marker so later
+    /// callers in the same window skip. JSON fail-safe mode has no database
+    /// to serve from, so the heartbeat never fires there.
+    func beginArchiveHealthIfDue(
+        nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)) -> Bool {
+        guard !dbStore.jsonMode else { return false }
+        do {
+            return try ArchiveHealthDao.recordIfDue(
+                dbStore.db, nowUnixMilliseconds: nowUnixMilliseconds,
+                dbBytes: databaseByteCount, sessionCount: archive.sessions.count)
+        } catch {
+            print("LearningStore: archive_health gate failed — \(error)")
+            return false
+        }
+    }
     private static func learningDatabaseURL() throws -> URL {
         let base = URL.applicationSupportDirectory
         try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)

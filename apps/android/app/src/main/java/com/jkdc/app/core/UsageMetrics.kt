@@ -32,11 +32,13 @@ object UsageEvents {
     const val LISTENING_COMPLETED = "listening_completed"
     const val SCENARIO_STARTED = "scenario_started"
     const val SCENARIO_COMPLETED = "scenario_completed"
+    const val ARCHIVE_HEALTH = "archive_health"
 
     val all = listOf(APP_OPEN, SESSION_STARTED, SESSION_ENDED, SESSION_RESUMED, THEME_SELECTED,
         LESSON_STARTED, LESSON_COMPLETED, ASSESSMENT_COMPLETED, PRACTICE_COMPLETED, WORD_LOOKUP,
         REPLAY_USED, TTS_SPEED_CHANGED, HELP_REQUESTED, REPORT_REQUESTED, PAYWALL_VIEWED,
-        EXERCISE_COMPLETED, LISTENING_COMPLETED, SCENARIO_STARTED, SCENARIO_COMPLETED)
+        EXERCISE_COMPLETED, LISTENING_COMPLETED, SCENARIO_STARTED, SCENARIO_COMPLETED,
+        ARCHIVE_HEALTH)
 }
 
 /** Coarse buckets shared with Core/UsageMetrics.swift; never exact durations,
@@ -52,6 +54,25 @@ object UsageBuckets {
 
     fun score(percent: Int): Int = when {
         percent >= 80 -> 4; percent >= 60 -> 3; percent >= 40 -> 2; percent >= 20 -> 1; else -> 0
+    }
+
+    /** archive_health's database-size bucket: a coarse ordinal string, never
+        exact bytes (mirrored by Core/UsageMetrics.swift and the API catalog). */
+    fun dbBytes(bytes: Long): String = when {
+        bytes <= 0 -> "empty"
+        bytes < 1 shl 20 -> "<1mb"
+        bytes < 10 shl 20 -> "1-10mb"
+        bytes < 100 shl 20 -> "10-100mb"
+        else -> ">=100mb"
+    }
+
+    /** archive_health's session-count bucket, same coarse-string rule. */
+    fun sessions(count: Int): String = when {
+        count <= 0 -> "0"
+        count <= 10 -> "1-10"
+        count <= 50 -> "11-50"
+        count <= 200 -> "51-200"
+        else -> ">200"
     }
 }
 

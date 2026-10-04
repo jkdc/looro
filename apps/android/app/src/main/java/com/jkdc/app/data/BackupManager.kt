@@ -58,8 +58,12 @@ data class LanguageDeletion(
  *
  *   - `PRAGMA integrity_check` → exactly one row, "ok"
  *   - `PRAGMA foreign_key_check` → no rows
- *   - `PRAGMA user_version` == [LearningDb.VERSION] (1 — a frozen schema; a
- *     backup from a newer schema must never be applied by an older app)
+ *   - `PRAGMA user_version` in 1..[LearningDb.VERSION] (a CURRENT-schema
+ *     backup installs as-is; a v1 backup — every shipped release before the
+ *     FTS migration — also passes and migrates on the next open, because the
+ *     opener's upgrade path reaches the current schema; a backup from a
+ *     newer schema must never be applied by an older app, and a file at
+ *     user_version 0 was never a learning database)
  *   - the ten canonical tables of shared/db/schema.sql present
  *
  * and only then writes the bytes to the destination stream. The verification
@@ -241,7 +245,10 @@ object BackupManager {
                 throw InvalidBackup(BackupIssue.CORRUPT, failure)
             }
             if (version > LearningDb.VERSION) throw InvalidBackup(BackupIssue.FUTURE_VERSION)
-            if (version != LearningDb.VERSION.toLong()) throw InvalidBackup(BackupIssue.CORRUPT)
+            // v1 is still a learning database: the gate accepts it and the
+            // post-install open migrates it in place (LearningDb.upgrade —
+            // fragments keep their text, the FTS index 'rebuild' covers them).
+            if (version < 1) throw InvalidBackup(BackupIssue.CORRUPT)
             if (db.query("PRAGMA foreign_key_check").isNotEmpty()) {
                 throw InvalidBackup(BackupIssue.CORRUPT)
             }

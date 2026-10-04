@@ -5,13 +5,16 @@ migration fixtures so any drift fails loudly and offline.
 Checks:
 - shared/db/schema.sql executes verbatim in an in-memory SQLite database
   (the same portable SQL AndroidX SQLite and GRDB must accept)
-- PRAGMA user_version is 1
+- PRAGMA user_version is 2
 - every table/column/index matches the PINNED inventory below (type,
   NOT NULL, PK position, DEFAULT) — any delta is a clear, named failure
 - the PINNED constraints hold: PRAGMA foreign_key_list must match exactly
   (fragments.session_id -> sessions.id, ON DELETE CASCADE) and the required
   SQL constraints (preferences CHECK, user_version pragma) must be present
   in the stored schema
+- the PINNED virtual table (fragments_fts, the FTS5 external-content search
+  index) and the three sync triggers exist with exactly the declared shape,
+  read straight from sqlite_master
 - no `words` table exists (words are a LearningEngine projection; learner
   hidden words live in preferences.hidden_words)
 - migration fixtures under shared/fixtures/db/migration: every
@@ -33,7 +36,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / 'shared/db/schema.sql'
 FIXTURES = ROOT / 'shared/fixtures/db/migration'
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 # ---------------------------------------------------------------------------
 # Pinned inventory.
@@ -172,8 +175,36 @@ FOREIGN_KEYS = [
 # schema source for schema-level directives).
 REQUIRED_CONSTRAINTS = [
     ('preferences', 'CHECK (id = 1)'),
-    (None, 'PRAGMA user_version = 1;'),
+    (None, 'PRAGMA user_version = 2;'),
 ]
+
+# ---------------------------------------------------------------------------
+# Pinned virtual tables and triggers (schema v2).
+#
+# PRAGMA table_info cannot describe a virtual table's options, and triggers
+# are not tables at all — both are pinned straight from their stored
+# sqlite_master statements: the name must exist with the right type and its
+# stored CREATE must contain every pinned substring (verbatim: SQLite keeps
+# the original spelling).
+#
+# The four internal FTS5 shadow tables (fragments_fts_data, _idx, _docsize,
+# _config — an external-content table keeps no _content of its own) are
+# SQLite internals like sqlite_sequence: the table inventory skips them, so
+# they can drift only by the virtual table itself changing shape. A trigger
+# body that stops keeping the index in sync is caught functionally by the
+# exporter's smoke test and the app-side search tests; here the trigger must
+# exist, target fragments, and carry its event.
+
+VIRTUAL_TABLES = {
+    'fragments_fts': ('CREATE VIRTUAL TABLE', 'USING fts5',
+                      "content='fragments'", "content_rowid='rowid'"),
+}
+
+TRIGGERS = {
+    'fragments_fts_insert': ('fragments', 'AFTER INSERT'),
+    'fragments_fts_delete': ('fragments', 'AFTER DELETE'),
+    'fragments_fts_update': ('fragments', 'AFTER UPDATE OF text'),
+}
 
 # ---------------------------------------------------------------------------
 # Archive v2 shape (Models.kt field names — the JSON uses the Kotlin/Swift
@@ -241,18 +272,29 @@ def build_schema(sql_text, connection=None):
 
 def read_inventory(conn):
     """Derive {table: [(column, type, notnull, pk, default)]} and the set of
-    (name, table, columns) explicitly-created indexes from a live schema."""
+    (name, table, columns) explicitly-created indexes from a live schema.
+
+    Internal tables are skipped: SQLite's own sqlite_* entries and the FTS5
+    shadow tables of every pinned virtual table (fragments_fts_data and
+    friends — implementation details of the FTS5 module, like
+    sqlite_sequence). The virtual tables themselves are also skipped here:
+    PRAGMA table_info cannot describe their options, so they are pinned
+    separately from sqlite_master by check_virtual_tables."""
     tables = {}
     names = [r[0] for r in conn.execute(
         "SELECT name FROM sqlite_master WHERE type = 'table' "
         "AND name NOT LIKE 'sqlite_%' ORDER BY name")]
     for name in names:
+        if is_internal_table(name):
+            continue
         # PRAGMA table_info rows: (cid, name, type, notnull, dflt_value, pk)
         cols = [(r[1], r[2], r[3], r[5], r[4])
                 for r in conn.execute(f'PRAGMA table_info("{name}")')]
         tables[name] = cols
     indexes = set()
     for name in names:
+        if is_internal_table(name):
+            continue
         for row in conn.execute(f'PRAGMA index_list("{name}")'):
             idx_name, origin = row[1], row[3]
             if origin != 'c':  # 'c' = explicitly CREATE INDEX'd
@@ -260,6 +302,16 @@ def read_inventory(conn):
             cols = [r[2] for r in conn.execute(f"PRAGMA index_info('{idx_name}')")]
             indexes.add((idx_name, name, tuple(cols)))
     return tables, indexes
+
+
+def is_internal_table(name):
+    """True for the internal tables the pinned inventory must not describe:
+    sqlite_* internals and the FTS5 shadow tables of the pinned virtual
+    tables (fragments_fts_data / _idx / _content / _docsize / _config)."""
+    if name.startswith('sqlite_'):
+        return True
+    return any(name == virtual or name.startswith(virtual + '_')
+               for virtual in VIRTUAL_TABLES)
 
 
 def check_user_version(conn):
@@ -315,6 +367,71 @@ def check_words_guard(tables):
                 "LearningEngine projection of content + progress, never persisted; "
                 "learner hidden words live in preferences.hidden_words"]
     return []
+
+
+# ---------------------------------------------------------------------------
+# Pinned virtual tables and triggers
+
+
+def read_virtual_tables(conn):
+    """Derive {name: stored CREATE VIRTUAL TABLE sql} for the pinned virtual
+    tables (None when the table is absent)."""
+    sqls = {}
+    for name in VIRTUAL_TABLES:
+        row = conn.execute("SELECT sql FROM sqlite_master WHERE type = 'table' "
+                           "AND name = ?", (name,)).fetchone()
+        sqls[name] = row[0] if row is not None else None
+    return sqls
+
+
+def read_triggers(conn):
+    """Derive {name: stored CREATE TRIGGER sql} for every trigger in the
+    schema (type = 'trigger'), used both for the exact pinned set and to
+    flag anything unexpected."""
+    return {row[0]: row[1] for row in conn.execute(
+        "SELECT name, sql FROM sqlite_master WHERE type = 'trigger'")}
+
+
+def check_virtual_tables(conn):
+    """Every pinned virtual table must exist and its stored CREATE VIRTUAL
+    TABLE must carry every pinned substring (the module and the external
+    content options) — a virtual table silently swapped to a plain table,
+    re-pointed at the wrong content table, or dropped outright fails here."""
+    issues = []
+    sqls = read_virtual_tables(conn)
+    for name, needles in VIRTUAL_TABLES.items():
+        sql = sqls.get(name)
+        if sql is None:
+            issues.append(f"MISSING_VIRTUAL_TABLE: '{name}' is pinned but absent "
+                          f"from sqlite_master (type = 'table')")
+            continue
+        for needle in needles:
+            if needle not in sql:
+                issues.append(f"VIRTUAL_TABLE_DRIFT: {name} is missing "
+                              f"{needle!r} in its stored CREATE statement")
+    return issues
+
+
+def check_triggers(conn):
+    """The trigger set must match the pinned one EXACTLY: every pinned
+    trigger present, targeting its table with its event, and nothing else
+    defined (a stray trigger would fire writes the schema never declared)."""
+    issues = []
+    actual = read_triggers(conn)
+    for name, (table, event) in TRIGGERS.items():
+        sql = actual.get(name)
+        if sql is None:
+            issues.append(f"MISSING_TRIGGER: '{name}' is pinned but absent "
+                          f"from sqlite_master (type = 'trigger')")
+            continue
+        if f'ON {table}' not in sql:
+            issues.append(f"TRIGGER_DRIFT: {name} must target {table!r} "
+                          f"(found no 'ON {table}' in its stored CREATE statement)")
+        if event not in sql:
+            issues.append(f"TRIGGER_DRIFT: {name} must be a {event!r} trigger")
+    for name in sorted(set(actual) - set(TRIGGERS)):
+        issues.append(f"UNEXPECTED_TRIGGER: '{name}' is not in the pinned inventory")
+    return issues
 
 
 # ---------------------------------------------------------------------------
@@ -559,12 +676,16 @@ def main(argv=None):
     issues += check_user_version(conn)
     issues += check_inventory(tables, indexes)
     issues += check_constraints(conn, schema_text)
+    issues += check_virtual_tables(conn)
+    issues += check_triggers(conn)
     issues += check_words_guard(tables)
     issues += check_fixtures(FIXTURES, tables)
 
     print(f"DB Schema: {SCHEMA.relative_to(ROOT)} — "
           f"user_version {conn.execute('PRAGMA user_version').fetchone()[0]}, "
           f"{len(tables)} tables, {len(indexes)} indexes, "
+          f"{len(VIRTUAL_TABLES)} virtual tables, "
+          f"{len(read_triggers(conn))} triggers, "
           f"{sum(len(v) for v in read_foreign_keys(conn).values())} foreign keys, "
           f"fixtures: {len(list(FIXTURES.glob('*.json')))} files")
     if issues:

@@ -75,6 +75,85 @@ class SchemaTest(unittest.TestCase):
         issues = check_db_schema.check_constraints(self.conn, schema_text)
         self.assertEqual([], issues)
 
+    # -- schema v2: the pinned FTS5 virtual table and its sync triggers ------
+
+    def test_pinned_virtual_table_and_triggers_pass(self):
+        self.assertEqual([], check_db_schema.check_virtual_tables(self.conn))
+        self.assertEqual([], check_db_schema.check_triggers(self.conn))
+
+    def test_shadow_tables_are_internal_to_the_inventory(self):
+        tables, _ = check_db_schema.read_inventory(self.conn)
+        # fragments_fts itself and its five FTS5 shadow tables are pinned or
+        # skipped, never inventory drift; the pinned count stays at ten.
+        self.assertEqual(10, len(tables))
+        self.assertNotIn('fragments_fts', tables)
+        self.assertTrue(check_db_schema.is_internal_table('fragments_fts'))
+        self.assertTrue(check_db_schema.is_internal_table('fragments_fts_data'))
+        self.assertTrue(check_db_schema.is_internal_table('fragments_fts_config'))
+        self.assertFalse(check_db_schema.is_internal_table('fragments'))
+
+    def test_dropped_virtual_table_and_triggers_fail(self):
+        # the coherent "no FTS" mutation: a v1-shaped schema. Both pins must
+        # name every missing object.
+        mutated = re.sub(r'\nCREATE VIRTUAL TABLE fragments_fts.*?user_version = 2;',
+                         '\nPRAGMA user_version = 2;',
+                         check_db_schema.SCHEMA.read_text(), count=1, flags=re.S)
+        self.assertNotEqual(mutated, check_db_schema.SCHEMA.read_text())
+        conn = check_db_schema.build_schema(mutated)
+        virtual_issues = check_db_schema.check_virtual_tables(conn)
+        trigger_issues = check_db_schema.check_triggers(conn)
+        self.assertTrue(any("MISSING_VIRTUAL_TABLE: 'fragments_fts'" in i
+                            for i in virtual_issues), virtual_issues)
+        for name in ('fragments_fts_insert', 'fragments_fts_delete',
+                     'fragments_fts_update'):
+            self.assertTrue(any(f"MISSING_TRIGGER: '{name}'" in i
+                                for i in trigger_issues), trigger_issues)
+
+    def test_stripped_content_options_fail_virtual_table_pin(self):
+        # still a valid fts5 table, but no longer external content: the pin
+        # must catch the lost options without the schema failing to build
+        mutated = re.sub(r",\n    content='fragments',\n    content_rowid='rowid'\n",
+                         '\n', check_db_schema.SCHEMA.read_text(), count=1)
+        self.assertNotEqual(mutated, check_db_schema.SCHEMA.read_text())
+        conn = check_db_schema.build_schema(mutated)
+        issues = check_db_schema.check_virtual_tables(conn)
+        self.assertTrue(any('VIRTUAL_TABLE_DRIFT: fragments_fts is missing '
+                            '"content=\'fragments\'"' in i for i in issues), issues)
+        self.assertTrue(any('VIRTUAL_TABLE_DRIFT: fragments_fts is missing '
+                            '"content_rowid=\'rowid\'"' in i for i in issues), issues)
+
+    def test_dropped_trigger_fails_trigger_pin(self):
+        mutated = re.sub(r'\nCREATE TRIGGER fragments_fts_update.*?END;\n', '\n',
+                         check_db_schema.SCHEMA.read_text(), count=1, flags=re.S)
+        conn = check_db_schema.build_schema(mutated)
+        issues = check_db_schema.check_triggers(conn)
+        self.assertTrue(any("MISSING_TRIGGER: 'fragments_fts_update'" in i
+                            for i in issues), issues)
+
+    def test_mutated_trigger_event_fails_trigger_pin(self):
+        # a valid trigger with the wrong event: the pin must catch both the
+        # missing AFTER on the insert trigger and the lost 'OF text' on the
+        # update trigger (the column the index actually tracks)
+        mutated = check_db_schema.SCHEMA.read_text().replace(
+            'AFTER INSERT ON fragments', 'BEFORE INSERT ON fragments', 1)
+        mutated = mutated.replace('AFTER UPDATE OF text ON fragments',
+                                  'AFTER UPDATE ON fragments', 1)
+        conn = check_db_schema.build_schema(mutated)
+        issues = check_db_schema.check_triggers(conn)
+        self.assertTrue(any("TRIGGER_DRIFT: fragments_fts_insert must be a "
+                            "'AFTER INSERT' trigger" in i for i in issues), issues)
+        self.assertTrue(any("TRIGGER_DRIFT: fragments_fts_update must be a "
+                            "'AFTER UPDATE OF text' trigger" in i for i in issues), issues)
+
+    def test_unexpected_trigger_fails_trigger_pin(self):
+        conn = check_db_schema.build_schema(
+            check_db_schema.SCHEMA.read_text()
+            + "\nCREATE TRIGGER meta_spy AFTER INSERT ON meta BEGIN\n"
+              "    SELECT 1;\nEND;\n")
+        issues = check_db_schema.check_triggers(conn)
+        self.assertTrue(any("UNEXPECTED_TRIGGER: 'meta_spy'" in i for i in issues),
+                        issues)
+
     def test_fixtures_are_valid(self):
         tables, indexes = check_db_schema.read_inventory(self.conn)
         self.assertEqual([],

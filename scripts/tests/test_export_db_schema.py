@@ -13,10 +13,12 @@ class SplitTest(unittest.TestCase):
             export_db_schema.SCHEMA.read_text())
 
     def test_schema_splits_into_pinned_statements(self):
-        self.assertEqual(15, len(self.statements))
+        # 14 v1 tables/indexes + PRAGMA v1 + the 5 v2 statements + PRAGMA v2
+        self.assertEqual(21, len(self.statements))
         self.assertTrue(self.statements[0].startswith('CREATE TABLE meta'))
-        self.assertTrue(self.statements[-1].startswith('PRAGMA user_version'))
-        self.assertEqual([], [s for s in self.statements if ';' in s])
+        self.assertEqual('PRAGMA user_version = 1', self.statements[14])
+        self.assertEqual('PRAGMA user_version = 2', self.statements[-1])
+        self.assertEqual([], [s for s in self.statements if s.rstrip().endswith(';')])
 
     def test_every_pinned_statement_is_accounted_for(self):
         joined = '\n'.join(self.statements)
@@ -26,8 +28,34 @@ class SplitTest(unittest.TestCase):
                        'CREATE TABLE completions', 'CREATE TABLE skill_errors',
                        'CREATE TABLE usage_outbox', 'CREATE TABLE assessment_tickets',
                        'CREATE INDEX fragments_session', 'CREATE INDEX expressions_due',
-                       'CREATE INDEX completions_lang', 'CREATE INDEX outbox_pending'):
+                       'CREATE INDEX completions_lang', 'CREATE INDEX outbox_pending',
+                       'CREATE VIRTUAL TABLE fragments_fts',
+                       'CREATE TRIGGER fragments_fts_insert',
+                       'CREATE TRIGGER fragments_fts_delete',
+                       'CREATE TRIGGER fragments_fts_update',
+                       "INSERT INTO fragments_fts(fragments_fts) VALUES('rebuild')"):
             self.assertIn(needle, joined)
+
+    def test_trigger_bodies_stay_one_statement(self):
+        for statement in self.statements:
+            if not statement.startswith('CREATE TRIGGER'):
+                continue
+            self.assertTrue(statement.rstrip().endswith('END'), statement)
+            self.assertEqual(1, statement.count('END'), statement)
+        update = next(s for s in self.statements
+                      if s.startswith('CREATE TRIGGER fragments_fts_update'))
+        # the update body holds BOTH the unindex and the reindex statements
+        self.assertEqual(2, update.count('INSERT INTO fragments_fts'))
+
+    def test_version_deltas_split_at_the_pragmas(self):
+        deltas = export_db_schema.version_deltas(self.statements)
+        self.assertEqual([2], sorted(deltas))
+        self.assertEqual(5, len(deltas[2]))
+        self.assertTrue(deltas[2][0].startswith('CREATE VIRTUAL TABLE fragments_fts'))
+        self.assertEqual(3, sum(1 for s in deltas[2] if s.startswith('CREATE TRIGGER')))
+        self.assertTrue(deltas[2][-1].startswith("INSERT INTO fragments_fts"))
+        # neither the v1 nor the v2 PRAGMA rides along: openers set it themselves
+        self.assertEqual([], [s for s in deltas[2] if s.startswith('PRAGMA')])
 
     def test_semicolons_inside_strings_and_comments_do_not_split(self):
         sql = ("INSERT INTO meta VALUES ('a;b'); -- a comment; with a semicolon\n"
@@ -46,13 +74,18 @@ class SplitTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'without a terminating'):
             export_db_schema.split_statements('PRAGMA user_version = 1')
 
-    def test_smoke_test_executes_every_statement_and_ends_at_version_one(self):
+    def test_smoke_test_executes_every_statement_ends_at_version_two_and_searches(self):
         conn = export_db_schema.smoke_test(self.statements)
         self.assertEqual(export_db_schema.SCHEMA_VERSION,
                          conn.execute('PRAGMA user_version').fetchone()[0])
         self.assertEqual(1, conn.execute(
             "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' "
             "AND name = 'fragments'").fetchone()[0])
+        # the smoke test already exercised the sync triggers; the virtual
+        # table is the pinned shape
+        self.assertIn("content='fragments'", conn.execute(
+            "SELECT sql FROM sqlite_master WHERE name = 'fragments_fts'"
+        ).fetchone()[0])
 
     def test_smoke_test_fails_when_the_pragma_is_missing(self):
         without_pragma = self.statements[:-1]
@@ -65,13 +98,17 @@ class KotlinTest(unittest.TestCase):
         self.assertEqual('"a\\\\b\\"c\\$d\\n"', export_db_schema.kotlin_string('a\\b"c$d\n'))
 
     def test_generated_source_is_plain_kotlin_with_the_statement_list(self):
+        statements = export_db_schema.split_statements(
+            export_db_schema.SCHEMA.read_text())
         source = export_db_schema.generate_kotlin(
-            export_db_schema.split_statements(export_db_schema.SCHEMA.read_text()))
+            statements, export_db_schema.version_deltas(statements))
         self.assertIn('package com.jkdc.app.data', source)
         self.assertIn('object SchemaData', source)
         self.assertIn('val LEARNING_SCHEMA_STATEMENTS: List<String> = listOf(', source)
-        self.assertIn('const val SCHEMA_VERSION = 1', source)
-        self.assertIn('"PRAGMA user_version = 1"', source)
+        self.assertIn('const val SCHEMA_VERSION = 2', source)
+        self.assertIn('"PRAGMA user_version = 2"', source)
+        self.assertIn('val SCHEMA_UPGRADES: Map<Int, List<String>> = mapOf(', source)
+        self.assertIn('2 to listOf(', source)
 
 
 class SwiftTest(unittest.TestCase):
@@ -82,13 +119,16 @@ class SwiftTest(unittest.TestCase):
     def test_generated_source_is_swift_with_the_same_statement_list(self):
         statements = export_db_schema.split_statements(
             export_db_schema.SCHEMA.read_text())
-        source = export_db_schema.generate_swift(statements)
+        source = export_db_schema.generate_swift(
+            statements, export_db_schema.version_deltas(statements))
         self.assertIn('public enum SchemaData', source)
         self.assertIn('public static let learningSchemaStatements: [String] = [', source)
-        self.assertIn('public static let schemaVersion = 1', source)
-        self.assertIn('"PRAGMA user_version = 1"', source)
+        self.assertIn('public static let schemaVersion = 2', source)
+        self.assertIn('public static let schemaUpgrades: [Int: [String]] = [', source)
+        self.assertIn('"PRAGMA user_version = 2"', source)
         # the Kotlin and Swift literals carry exactly the same statements
-        kotlin = export_db_schema.generate_kotlin(statements)
+        kotlin = export_db_schema.generate_kotlin(
+            statements, export_db_schema.version_deltas(statements))
         for statement in statements:
             self.assertIn(export_db_schema.swift_string(statement), source)
             self.assertIn(export_db_schema.kotlin_string(statement), kotlin)

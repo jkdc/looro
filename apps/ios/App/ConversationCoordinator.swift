@@ -188,6 +188,16 @@ enum ScenarioReviewState: Equatable {
         refreshUsageEnabled()
         usageReporter.record(UsageEvents.appOpen)
         Task { await usageReporter.flush() }
+        // The daily archive_health heartbeat: gated by the same metrics
+        // choice as every other event, cadence-marked in meta, and queued
+        // through the durable usage_outbox so it survives a failed flush.
+        if usageReporter.enabled, store.beginArchiveHealthIfDue() {
+            usageReporter.record(UsageEvents.archiveHealth, props: [
+                "dbBytesBucket": .string(UsageBuckets.dbBytes(store.databaseByteCount)),
+                "sessionsBucket": .string(UsageBuckets.sessions(store.archive.sessions.count)),
+            ])
+            Task { await usageReporter.flush() }
+        }
         syncProgress()
     }
     deinit {

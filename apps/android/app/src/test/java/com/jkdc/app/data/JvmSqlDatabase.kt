@@ -112,3 +112,25 @@ fun LearningDb.openJvm(
     for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) db.exec(statement)
     return db
 }
+
+/**
+ * LearningDb.open for JVM tests at SCHEMA v1: the canonical statements MINUS
+ * the v2 upgrade delta, with user_version left at 1 — the exact database the
+ * shipped v1 opener produced, so the upgrade paths (and the v1 backup gate)
+ * have a real v1 database to migrate. Register the connection for cleanup in
+ * the test (`connections += (db as JvmSqlDatabase).connection`), like the
+ * other file-backed helpers do.
+ */
+fun LearningDb.openJvmV1(
+    connection: Connection = DriverManager.getConnection("jdbc:sqlite::memory:"),
+): SqlDatabase {
+    val db = JvmSqlDatabase(connection)
+    db.exec("PRAGMA foreign_keys = ON")
+    val v2Delta = SchemaData.SCHEMA_UPGRADES.getValue(2).toHashSet()
+    for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) {
+        if (statement.startsWith("PRAGMA user_version") || statement in v2Delta) continue
+        db.exec(statement)
+    }
+    db.exec("PRAGMA user_version = 1")
+    return db
+}

@@ -3,8 +3,10 @@
 
 Reads the canonical schema (the single source of truth, validated by
 check_db_schema.py), splits it into top-level statements — a ';' ends a
-statement only when it is outside single-quoted strings and comments — and
-generates two files holding the same statement list for the platform openers:
+statement only when it is outside single-quoted strings and comments, and
+inside a CREATE TRIGGER body only after its final END (the trigger's own
+interior statements keep their semicolons) — and generates two files holding
+the same statement list for the platform openers:
 
 - apps/android/.../data/SchemaData.kt, a plain Kotlin object holding
   LEARNING_SCHEMA_STATEMENTS for both production openers (AndroidX SQLite)
@@ -12,11 +14,18 @@ generates two files holding the same statement list for the platform openers:
 - apps/ios/Core/Database/SchemaData.swift, a Swift enumeration holding
   learningSchemaStatements for the GRDB opener.
 
-The PRAGMA user_version = 1 stays as its own final statement.
+The PRAGMA user_version = 2 stays as its own final statement. Both files also
+carry SCHEMA_UPGRADES / schemaUpgrades: the per-version statement deltas an
+ALREADY-INSTALLED database applies on upgrade — the statements between the
+previous `PRAGMA user_version = N-1` and this version's block (the closing
+PRAGMA excluded; the platform opener sets user_version itself). Fresh
+installs run the full list; onUpgrade and onCreate therefore converge on the
+same end state, from the one source.
 
 Every run also smoke-tests the split: each statement must execute, in order,
-against python sqlite3 in memory, and the database must end at user_version 1.
-This is the same portable SQL Android and iOS must accept verbatim.
+against python sqlite3 in memory, the database must end at user_version 2,
+and the FTS index must answer a MATCH over a row written through the sync
+triggers. This is the same portable SQL Android and iOS must accept verbatim.
 
 Modes:
 - default : regenerate SchemaData.kt and SchemaData.swift (after the smoke
@@ -26,6 +35,7 @@ Modes:
 """
 import argparse
 import pathlib
+import re
 import sqlite3
 import sys
 
@@ -35,7 +45,10 @@ OUT = ROOT / ('apps/android/app/src/main/java/com/jkdc/app/'
               'data/SchemaData.kt')
 SWIFT_OUT = ROOT / 'apps/ios/Core/Database/SchemaData.swift'
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+
+_PRAGMA_VERSION = re.compile(r'PRAGMA\s+user_version\s*=\s*(\d+)',
+                             re.IGNORECASE)
 
 
 # ---------------------------------------------------------------------------
@@ -46,7 +59,13 @@ def split_statements(sql_text):
     """Split schema SQL into its top-level statements, dropping comments.
 
     A ';' ends a statement only when it is outside single-quoted strings
-    (with SQL's '' escape) and outside -- line / /* block */ comments.
+    (with SQL's '' escape) and outside -- line / /* block */ comments — and,
+    inside a CREATE TRIGGER body, only after the body's final END: the
+    trigger's interior statements keep their semicolons and stay one
+    statement (they must be exec'd whole). The terminator test is "the
+    statement so far ends with the token END", so a body may not end a line
+    on an END that is not the body's final one (a CASE ... END inside the
+    last body statement, say) — the canonical schema has no such body.
     Quoted identifiers ("name", `name`, [name]) are NOT honored — the
     canonical schema quotes none — and a ';' inside them would split.
     Every statement keeps its interior newlines and loses the trailing ';'.
@@ -81,6 +100,11 @@ def split_statements(sql_text):
             i = end + 2
         elif ch == ';':
             statement = ''.join(buffer).strip()
+            in_trigger = statement.upper().startswith('CREATE TRIGGER')
+            if in_trigger and not statement.upper().endswith('END'):
+                buffer.append(';')  # an interior trigger statement: keep going
+                i += 1
+                continue
             if statement:
                 statements.append(statement)
             buffer = []
@@ -97,12 +121,40 @@ def split_statements(sql_text):
 
 
 # ---------------------------------------------------------------------------
+# Version deltas
+
+
+def version_deltas(statements):
+    """Map {version: [upgrade statements]} for versions >= 2: the statements
+    between the previous `PRAGMA user_version = N-1` and this version's own
+    PRAGMA (both boundary PRAGMAs excluded — the closing one because the
+    opener sets user_version itself, the opening one because it belongs to
+    the previous install). Version 1 is the fresh-install baseline and has
+    no delta."""
+    deltas = {}
+    current = None
+    for statement in statements:
+        match = _PRAGMA_VERSION.fullmatch(statement)
+        if match:
+            version = int(match.group(1))
+            if version >= 2:
+                deltas[version] = current or []
+            current = []
+            continue
+        if current is not None:
+            current.append(statement)
+    return deltas
+
+
+# ---------------------------------------------------------------------------
 # Smoke test: the split statements must rebuild the schema on their own
 
 
 def smoke_test(statements):
     """Execute each statement, in order, in an in-memory SQLite database and
-    assert the final PRAGMA user_version. Returns the connection."""
+    assert the final PRAGMA user_version plus one end-to-end round of the
+    FTS sync triggers (insert → MATCH, edit → old token gone). Returns the
+    connection."""
     conn = sqlite3.connect(':memory:')
     conn.execute('PRAGMA foreign_keys = ON;')
     for statement in statements:
@@ -111,6 +163,21 @@ def smoke_test(statements):
     if version != SCHEMA_VERSION:
         raise ValueError(f'smoke test failed: expected user_version '
                          f'{SCHEMA_VERSION}, found {version}')
+    conn.execute("INSERT INTO sessions (id, language_id, started_at, title) "
+                 "VALUES ('smoke', 'es', 0, 'smoke')")
+    conn.execute("INSERT INTO fragments (id, session_id, sort_index, speaker, "
+                 "text, revision, start_ms, end_ms, received_at) "
+                 "VALUES ('f', 'smoke', 0, 'user', 'Humo de prueba', 0, 0, 1, 0)")
+    if not conn.execute("SELECT rowid FROM fragments_fts "
+                        "WHERE fragments_fts MATCH 'humo'").fetchall():
+        raise ValueError('smoke test failed: fragments_fts does not answer '
+                         'MATCH after the sync triggers ran')
+    conn.execute("UPDATE fragments SET text = 'Cambio limpio' WHERE id = 'f'")
+    if conn.execute("SELECT rowid FROM fragments_fts "
+                    "WHERE fragments_fts MATCH 'humo'").fetchall():
+        raise ValueError('smoke test failed: fragments_fts kept a stale token '
+                         'after an edit')
+    conn.execute('DELETE FROM sessions')
     return conn
 
 
@@ -126,9 +193,14 @@ def kotlin_string(text):
     return f'"{escaped}"'
 
 
-def generate_kotlin(statements):
-    """Render SchemaData.kt for the given statements."""
+def generate_kotlin(statements, deltas):
+    """Render SchemaData.kt for the given statements and upgrade deltas."""
     literals = ',\n'.join(f'        {kotlin_string(s)}' for s in statements)
+    upgrades = ',\n'.join(
+        f'        {version} to listOf(\n' +
+        ',\n'.join(f'            {kotlin_string(s)}' for s in delta) +
+        ',\n        )'
+        for version, delta in sorted(deltas.items()))
     return f"""// Generated by scripts/export_db_schema.py from shared/db/schema.sql; edit the schema, not this file.
 // {len(statements)} top-level statements; the last one sets PRAGMA user_version = {SCHEMA_VERSION}.
 
@@ -136,13 +208,21 @@ package com.jkdc.app.data
 
 /** The canonical learning database schema (v{SCHEMA_VERSION}), split into top-level
  *  statements: the one list both production and test openers execute, in order,
- *  to build or upgrade a fresh learning database. */
+ *  to build a fresh learning database. */
 object SchemaData {{
     /** Schema this file was exported from; matches LearningDb.VERSION. */
     const val SCHEMA_VERSION = {SCHEMA_VERSION}
 
     val LEARNING_SCHEMA_STATEMENTS: List<String> = listOf(
 {literals},
+    )
+
+    /** The upgrade deltas, keyed by TARGET schema version: the statements an
+     *  already-installed database at version - 1 applies to reach [version]
+     *  (the opener then sets PRAGMA user_version itself). A version without
+     *  an entry here only ever exists as a fresh install (v1). */
+    val SCHEMA_UPGRADES: Map<Int, List<String>> = mapOf(
+{upgrades},
     )
 }}
 """
@@ -161,21 +241,34 @@ def swift_string(text):
     return f'"{escaped}"'
 
 
-def generate_swift(statements):
-    """Render SchemaData.swift for the given statements."""
+def generate_swift(statements, deltas):
+    """Render SchemaData.swift for the given statements and upgrade deltas."""
     literals = ',\n'.join(f'        {swift_string(s)}' for s in statements)
+    upgrades = ',\n'.join(
+        f'        {version}: [\n' +
+        ',\n'.join(f'            {swift_string(s)}' for s in delta) +
+        ',\n        ]'
+        for version, delta in sorted(deltas.items()))
     return f"""// Generated by scripts/export_db_schema.py from shared/db/schema.sql; edit the schema, not this file.
 // {len(statements)} top-level statements; the last one sets PRAGMA user_version = {SCHEMA_VERSION}.
 
 /// The canonical learning database schema (v{SCHEMA_VERSION}), split into top-level
 /// statements: the one list both production and test openers execute, in order,
-/// to build or upgrade a fresh learning database.
+/// to build a fresh learning database.
 public enum SchemaData {{
     /// Schema this file was exported from; matches LearningDatabase.version.
     public static let schemaVersion = {SCHEMA_VERSION}
 
     public static let learningSchemaStatements: [String] = [
 {literals},
+    ]
+
+    /// The upgrade deltas, keyed by TARGET schema version: the statements an
+    /// already-installed database at version - 1 applies to reach `version`
+    /// (the opener then sets PRAGMA user_version itself). A version without
+    /// an entry here only ever exists as a fresh install (v1).
+    public static let schemaUpgrades: [Int: [String]] = [
+{upgrades},
     ]
 }}
 """
@@ -190,11 +283,13 @@ def main(argv=None):
 
     try:
         statements = split_statements(SCHEMA.read_text())
+        deltas = version_deltas(statements)
         smoke_test(statements)
     except (sqlite3.Error, ValueError, OSError) as exc:
         print(f"DB Schema export: schema failed to split or execute: {exc}")
         return 1
-    generated = {'kotlin': generate_kotlin(statements), 'swift': generate_swift(statements)}
+    generated = {'kotlin': generate_kotlin(statements, deltas),
+                 'swift': generate_swift(statements, deltas)}
     outputs = {'kotlin': OUT, 'swift': SWIFT_OUT}
 
     if args.check:
