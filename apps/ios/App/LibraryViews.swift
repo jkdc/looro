@@ -387,6 +387,18 @@ struct BackupDocument: FileDocument {
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper { FileWrapper(regularFileWithContents: data) }
 }
 
+/// The whole learning database (.db bytes) as a FileDocument — the phase-F
+/// database backup's export payload, beside the JSON archive's
+/// `BackupDocument` (kept until H retires it).
+struct DatabaseBackupDocument: FileDocument {
+    static var databaseBackupType: UTType { UTType(filenameExtension: "db") ?? .data }
+    static var readableContentTypes: [UTType] { [databaseBackupType] }
+    var data: Data
+    init(data: Data) { self.data = data }
+    init(configuration: ReadConfiguration) throws { data = configuration.file.regularFileContents ?? Data() }
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper { FileWrapper(regularFileWithContents: data) }
+}
+
 struct EditableTranscriptView: View {
     let sessionID: UUID
     let store: LearningStore
@@ -450,10 +462,26 @@ struct SettingsView: View {
     @State private var importing = false
     @State private var backup: BackupDocument?
     @State private var deleting = false
+    @State private var exportingDb = false
+    @State private var importingDb = false
+    @State private var dbBackup: DatabaseBackupDocument?
+    @State private var deletingLanguage = false
+    @State private var confirmingLanguageDelete = false
+    @State private var deleteLanguageTarget = ""
     @State private var notices = false
     @State private var showingAPIKey = false
     @State private var tokens = TokensCommerceModel(configuration: ManagedAccountConfiguration.load())
     private var store: LearningStore { coordinator.store }
+    private var deleteLanguageName: String {
+        LanguageRegistry.module(for: deleteLanguageTarget)?.name ?? deleteLanguageTarget
+    }
+    /// palique-backup-YYYYMMDD.db — the suggested .db backup name (the
+    /// Android SAF suggested name's mirror).
+    private static let backupStamp: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        return formatter
+    }()
     private var totalVoiceSeconds: Double { store.sessions.reduce(0) { $0 + $1.voiceSeconds } }
     /// Server display hint for the tokens row (GET /v1/wallet): nil when signed
     /// out or the read failed — never a cached balance.
@@ -596,6 +624,23 @@ struct SettingsView: View {
                     Text("Backups include transcripts and learning evidence, never your API key. Import adds only conversations this iPhone doesn’t have, keeping their original IDs; existing conversations stay unchanged. There is no cloud sync.")
                 }
                 Section {
+                    Button("Export database backup (.db)", systemImage: "square.and.arrow.up") {
+                        if let data = store.exportDb() {
+                            dbBackup = DatabaseBackupDocument(data: data); exportingDb = true
+                        } else {
+                            message = store.error ?? "The database backup couldn’t be exported."
+                            store.error = nil
+                        }
+                    }
+                    .disabled(coordinator.isRunning).accessibilityIdentifier("settings-export-db")
+                    Button("Restore database backup (.db)", systemImage: "square.and.arrow.down") { importingDb = true }
+                        .disabled(coordinator.isRunning).accessibilityIdentifier("settings-import-db")
+                    Button("Delete a language’s learning data", role: .destructive) { deletingLanguage = true }
+                        .disabled(coordinator.isRunning).accessibilityIdentifier("settings-delete-language")
+                } header: { Text("Backup (database)") } footer: {
+                    Text("One .db file with everything your learning holds: conversations, words, lessons and progress. Restoring a backup replaces what is on this device with the file’s contents. This device only — there is no cloud sync.")
+                }
+                Section {
                     Link("Privacy policy", destination: URL(string: "https://app.example/privacy/")!)
                         .accessibilityIdentifier("settings-privacy-policy")
                     Link("Terms of use", destination: URL(string: "https://app.example/terms/")!)
@@ -621,6 +666,20 @@ struct SettingsView: View {
                 try store.importData(Archive.readImportData(from: url)); message = "Your backup has been imported."
             } catch { message = error.localizedDescription }
         }
+        .fileExporter(isPresented: $exportingDb, document: dbBackup,
+                      contentType: DatabaseBackupDocument.databaseBackupType,
+                      defaultFilename: "palique-backup-\(Self.backupStamp.string(from: .now)).db") { result in if case .failure(let error) = result { message = error.localizedDescription } }
+        .fileImporter(isPresented: $importingDb, allowedContentTypes: [DatabaseBackupDocument.databaseBackupType]) { result in
+            do {
+                let url = try result.get(); let granted = url.startAccessingSecurityScopedResource(); defer { if granted { url.stopAccessingSecurityScopedResource() } }
+                if store.importDb(from: url) {
+                    message = "Backup restored: your learning data was replaced with the imported copy."
+                } else {
+                    message = store.error ?? "The database backup couldn’t be restored."
+                    store.error = nil
+                }
+            } catch { message = error.localizedDescription }
+        }
         .sheet(isPresented: Binding(get: { coordinator.showTokensSheet },
                                     set: { if !$0 { coordinator.dismissTokensSheet(); Task { await tokens.refresh() } } })) {
             TokensPurchaseSheet(coordinator: coordinator)
@@ -629,6 +688,31 @@ struct SettingsView: View {
         .confirmationDialog("Delete all learning data on this phone?", isPresented: $deleting, titleVisibility: .visible) {
             Button("Delete all learning data", role: .destructive) { coordinator.deleteLearningData() }
         } message: { Text("This removes conversations, vocabulary and progress. Export a backup first if you want to keep them. Your API key and preferences remain.") }
+        .confirmationDialog("Delete which language?", isPresented: $deletingLanguage, titleVisibility: .visible) {
+            ForEach(LanguageRegistry.all) { language in
+                Button(language.settingsTitle, role: .destructive) {
+                    deleteLanguageTarget = language.id
+                    // The confirm step presents after the picker's dismissal
+                    // settles — a same-tick re-presentation is dropped.
+                    DispatchQueue.main.async { confirmingLanguageDelete = true }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .confirmationDialog("Delete \(deleteLanguageName) learning data?", isPresented: $confirmingLanguageDelete, titleVisibility: .visible) {
+            Button("Delete \(deleteLanguageName) data", role: .destructive) {
+                if coordinator.deleteLearningDataForLanguage(deleteLanguageTarget) {
+                    message = "\(deleteLanguageName) learning data deleted."
+                } else {
+                    message = coordinator.store.error ?? coordinator.error
+                        ?? "The learning data couldn’t be deleted."
+                    coordinator.store.error = nil; coordinator.error = nil
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This removes the \(deleteLanguageName) conversations, words and lesson progress. Other languages, your key and your preferences remain. Export a backup first if you want to keep them.")
+        }
         .sheet(isPresented: $notices) {
             NavigationStack {
                 ScrollView { Text(Bundle.main.url(forResource: "ThirdPartyNotices", withExtension: "txt").flatMap { try? String(contentsOf: $0, encoding: .utf8) } ?? "Notices unavailable.").font(.footnote).padding(24).textSelection(.enabled) }

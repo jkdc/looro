@@ -513,6 +513,24 @@ enum ScenarioReviewState: Equatable {
         resetConversation()
         store.deleteAll()
     }
+    /// Deletes one language's learning data (Settings → Backup (database)):
+    /// deleteLearningData's runtime hygiene scoped to the language — pending
+    /// assessments and in-flight saves cancelled, the conversation reset only
+    /// when it belongs to the language — then the store's working-copy purge
+    /// plus database transaction. The busy refusal is surfaced, never silent,
+    /// like Android's — though the Settings rows are disabled while a
+    /// conversation runs, so it only fires off-UI.
+    @discardableResult
+    func deleteLearningDataForLanguage(_ id: String) -> Bool {
+        guard !isRunning else {
+            error = "A conversation is in progress. End it before changing your data."
+            return false
+        }
+        meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
+        scenarioReviewTask?.cancel(); scenarioReviewState = nil
+        if session?.languageID == id { resetConversation() }
+        return store.deleteLearningDataForLanguage(id)
+    }
     func toggleMeaning() {
         store.updatePreferences { $0.meaningVisible.toggle() }
         if store.preferences.meaningVisible { scheduleTranslation() }

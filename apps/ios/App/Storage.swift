@@ -60,11 +60,17 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     let container: ModelContainer
     private var document: StoredArchive?
     private let migrationBackupURL: URL?
-    /// The learning database (phase E). Opened once at init with the one-way
-    /// SwiftData-payload migration; `jsonMode` means this run serves the
-    /// legacy SwiftData path instead — `db` throws, so DB-mode-only code can
-    /// never write to a database the next launch would not read.
-    private let dbStore: LearningDbStore
+    /// The learning database file (nil on the in-memory store): the path the
+    /// phase-F backup/restore swaps bytes under, and the path
+    /// `LearningDbStore.open` adopted `learning.db.preimport` back into.
+    private let databaseURL: URL?
+    /// The learning database (phase E). Opened at init with the one-way
+    /// SwiftData-payload migration and RE-opened by a successful
+    /// `importDb` — the store is always the one source of the working copy;
+    /// `jsonMode` means this run serves the legacy SwiftData path instead —
+    /// `db` throws, so DB-mode-only code can never write to a database the
+    /// next launch would not read.
+    private var dbStore: LearningDbStore
     init(inMemory: Bool = false) throws {
         migrationBackupURL = inMemory ? nil : URL.applicationSupportDirectory
             .appendingPathComponent("Palique", isDirectory: true)
@@ -81,9 +87,12 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             document = created
         }
         if inMemory {
+            databaseURL = nil
             dbStore = try LearningDbStore.open(database: try LearningDatabase.openInMemory())
         } else {
-            dbStore = try LearningDbStore.open(at: try Self.learningDatabaseURL().path,
+            let url = try Self.learningDatabaseURL()
+            databaseURL = url
+            dbStore = try LearningDbStore.open(at: url.path,
                                                source: SwiftDataMigrationSource(container: container))
         }
         if dbStore.jsonMode {
@@ -371,12 +380,14 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
     /// Removes the on-disk SwiftData store (the default store plus its write-ahead files), the learning
     /// database and the migration backup, so the next init starts from an empty record. Only for the
-    /// startup failure screen, behind the user’s explicit confirmation.
+    /// startup failure screen, behind the user’s explicit confirmation. The phase-F install/verify
+    /// leftovers (a staged or verification copy a crash could strand) go too.
     static func eraseStore() throws {
         let base = URL.applicationSupportDirectory
         for path in ["default.store", "default.store-shm", "default.store-wal", "Palique/before-language-modules.json",
                      LearningDatabase.name, LearningDatabase.name + "-wal", LearningDatabase.name + "-shm",
-                     LearningDatabase.name + ".preimport"] {
+                     LearningDatabase.name + ".preimport", LearningDatabase.name + ".install-tmp",
+                     LearningDatabase.name + ".backup-verify"] {
             do { try FileManager.default.removeItem(at: base.appendingPathComponent(path)) }
             catch CocoaError.fileNoSuchFile { /* Fresh installations have no store yet. */ }
         }
@@ -394,6 +405,251 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             archive = try LearningDbWriter.archiveRestored(dbStore.db, imported)
         }
     }
+
+    // MARK: phase F — learning.db backup/restore + per-language delete
+    // (the Swift mirror of Android's AppViewModel exportDbTo/importDbFrom/
+    // deleteLearningDataForLanguage. The iOS store's directed writes are
+    // synchronous on the main actor, so — unlike the Android FIFO channel —
+    // there is nothing to drain before the bytes move.) Every method here
+    // follows the Android notice contract: it returns false/nil after a
+    // refusal or failure and surfaces the user-facing copy on `error`
+    // (RootView's alert); success clears the slot and lets the caller speak.
+
+    // The refusal/failure notices (EN inline literals — iOS keeps no string
+    // tables). Android parity: values/strings.xml's notice_db_* family, with
+    // "legacy JSON learning file" worded as the iOS reality (the SwiftData
+    // fallback this session keeps using).
+    private static let databaseUnavailableExportNotice =
+        "Database backup isn’t available: this session is using the previous local store."
+    private static let databaseUnavailableRestoreNotice =
+        "Database restore isn’t available: this session is using the previous local store."
+    private static let databaseUnavailableDeleteNotice = databaseUnavailableExportNotice
+    private static let storagePreparingNotice =
+        "Storage is still being prepared. Try again in a moment."
+    private static let exportFailedNotice = "The database backup couldn’t be exported."
+    private static let restoreFailedNotice = "The database backup couldn’t be restored."
+
+    /// The user-facing rejection copy for each validation issue — the mirror
+    /// of Android's `backupNoticeRes` string-resource table.
+    private static func notice(for issue: BackupIssue) -> String {
+        switch issue {
+        case .corrupt: return "That file isn’t a valid learning database."
+        case .futureVersion:
+            return "This backup is from a newer version of the app. Update the app and try again."
+        case .missingTables: return "The backup is missing learning database tables."
+        case .empty: return "The backup file is empty."
+        case .tooLarge: return "The database backup is too large."
+        }
+    }
+
+    /// The whole learning database as verified .db bytes — the mirror of
+    /// Android's `exportDbTo`: BackupManager checkpoints the WAL, copies the
+    /// file and verifies the COPY before handing the bytes over. Returns nil
+    /// after a refusal or failure — the notice is on `error`. The legacy
+    /// SwiftData fail-safe has no database to back up.
+    func exportDb() -> Data? {
+        guard !dbStore.jsonMode else {
+            error = Self.databaseUnavailableExportNotice
+            return nil
+        }
+        guard let databaseURL else {
+            error = Self.storagePreparingNotice
+            return nil
+        }
+        do {
+            let bytes = try BackupManager.exportTo(try dbStore.db, databaseFile: databaseURL,
+                                                   openForVerify: BackupManager.openForVerification)
+            error = nil
+            return bytes
+        } catch {
+            print("LearningStore: database export failed — \(error)")
+            self.error = Self.exportFailedNotice
+            return nil
+        }
+    }
+
+    /// Writes the verified .db backup to `url`. Returns false after a
+    /// refusal or failure — the notice is on `error`.
+    @discardableResult
+    func exportDb(to url: URL) -> Bool {
+        guard let bytes = exportDb() else { return false }
+        do {
+            try bytes.write(to: url, options: [.atomic])
+            return true
+        } catch {
+            print("LearningStore: database export failed — \(error)")
+            self.error = Self.exportFailedNotice
+            return false
+        }
+    }
+
+    /**
+     * Restores a learning database from `url` (a BackupManager-exported
+     * .db). The live database is NEVER destroyed unless validation fully
+     * passed, and the reopened store is the only source of the working copy:
+     *
+     *  1. read the bounded bytes and validate them against a THROWAWAY copy
+     *     (integrity, user_version, foreign keys, canonical tables) — any
+     *     InvalidBackup surfaces its user-facing notice and touches nothing;
+     *  2. close the live connection, STAGE the new bytes beside the live
+     *     file (both files exist from here on), set the current file aside
+     *     (learning.db.preimport), clear stale journal siblings, then swap
+     *     the staged bytes in — two back-to-back renames; a crash between
+     *     them strands the old file as learning.db.preimport, which
+     *     LearningDbStore adopts back at the next startup;
+     *  3. reload the store exactly like startup (open → one-shot export →
+     *     unfinished-session recovery); the reloaded store rejects the JSON
+     *     fail-safe, so a database that somehow fails open (with the legacy
+     *     record present) can never report success while the app is actually
+     *     serving it — the import did NOT take;
+     *  4. on ANY failure after step 2: put the previous file back (the
+     *     keep-copy's rename atomically replaces whatever is in place — this
+     *     path never deletes a database file) and reload it — the learner
+     *     keeps the database they had. If even the keep-copy cannot be
+     *     restored, the closed store refuses every write rather than letting
+     *     one land on a database the next launch would not read.
+     *
+     * Returns false after a refusal or failure — the notice is on `error`.
+     */
+    @discardableResult
+    func importDb(from url: URL) -> Bool {
+        guard !dbStore.jsonMode else {
+            error = Self.databaseUnavailableRestoreNotice
+            return false
+        }
+        guard let databaseURL else {
+            error = Self.storagePreparingNotice
+            return false
+        }
+        do {
+            let bytes = try BackupManager.readValidatedBackup(
+                from: url, workDirectory: databaseURL.deletingLastPathComponent(),
+                openForVerify: BackupManager.openForVerification)
+            let keep = URL(fileURLWithPath: databaseURL.path + ".preimport")
+            let staged = URL(fileURLWithPath: databaseURL.path + ".install-tmp")
+            defer { try? FileManager.default.removeItem(at: staged) }
+            try dbStore.db.close()
+            do {
+                // stage FIRST: the live file is not moved aside until the
+                // replacement is fully on disk beside it
+                try BackupManager.stageDatabase(staged, bytes: bytes)
+                try FileManager.default.renameItem(at: databaseURL, to: keep)
+                Self.deleteJournalSiblings(of: databaseURL)
+                try BackupManager.installDatabase(staged, target: databaseURL)
+                try reloadAfterImport()
+                try? FileManager.default.removeItem(at: keep)
+            } catch {
+                // This path NEVER deletes a database file: databaseURL may be
+                // the intact original (the set-aside rename failed) or gone
+                // (the swap failed) — either way the keep-copy's rename is
+                // what recovers it, atomically replacing whatever is in
+                // place. renameItem itself throws, so both of its outcomes
+                // arrive here and are handled the same way.
+                var restored = true
+                if FileManager.default.fileExists(atPath: keep.path) {
+                    restored = (try? FileManager.default.renameItem(at: keep, to: databaseURL)) != nil
+                    if restored { Self.deleteJournalSiblings(of: databaseURL) }
+                }
+                if restored {
+                    do { try reloadAfterImport() }
+                    catch let reloadFailure {
+                        // The previous database is back but cannot serve:
+                        // the closed store refuses every write; the next
+                        // launch opens the original file fresh.
+                        throw reloadFailure
+                    }
+                }
+                // (A keep-copy that cannot come back stays on disk, where
+                // the next launch's adoption puts it back — the store keeps
+                // refusing writes through its closed connection.)
+                throw error
+            }
+            error = nil
+            return true
+        } catch let failure as InvalidBackup {
+            print("LearningStore: database import rejected — \(failure.issue)")
+            error = Self.notice(for: failure.issue)
+            return false
+        } catch {
+            print("LearningStore: database import failed — \(error)")
+            self.error = Self.restoreFailedNotice
+            return false
+        }
+    }
+
+    /// The post-import reload — exactly the startup path, keeping the
+    /// reopened store the only source of the working copy (open → one-shot
+    /// export → unfinished-session recovery, the recovery persisted like
+    /// init does it). `dbStore` is reassigned only when the whole reload
+    /// succeeded, so a failure leaves the closed connection in place — every
+    /// write through it throws, which is the store's refuse-to-serve state.
+    private func reloadAfterImport() throws {
+        guard let databaseURL else {
+            throw LearningDbStore.LearningDbStoreError.jsonModeUnavailable(
+                "the learning database file is not known (in-memory store)")
+        }
+        let reloaded = try LearningDbStore.open(at: databaseURL.path,
+                                                source: SwiftDataMigrationSource(container: container))
+        guard !reloaded.jsonMode else {
+            throw LearningDbStore.LearningDbStoreError.jsonModeUnavailable(
+                "the restored database failed to open; the JSON fail-safe took over")
+        }
+        archive = try reloaded.recoverUnfinishedSessions(try reloaded.loadInitialArchive())
+        dbStore = reloaded
+    }
+
+    /// Removes stale journal siblings before a replaced file is opened — the
+    /// incoming bytes are self-contained (export checkpoints the WAL), so a
+    /// leftover -wal/-shm/-journal from the previous database must not be
+    /// replayed over them.
+    private static func deleteJournalSiblings(of dbURL: URL) {
+        for suffix in ["-wal", "-shm", "-journal"] {
+            try? FileManager.default.removeItem(at: URL(fileURLWithPath: dbURL.path + suffix))
+        }
+    }
+
+    /**
+     * Deletes one language's learning data — the database transaction in
+     * `BackupManager.deleteLearningDataForLanguage` mirrored onto the
+     * working copy archive (the SAME rows, so export(DB) == archive keeps
+     * holding): the language's sessions (fragments ride along), completions
+     * and expressions (legacy NULL-language entries conserved on both
+     * sides) and lesson_state rows whose lesson id starts with the language
+     * prefix — the plain `hasPrefix`, not the LIKE pattern (escaping is a
+     * SQL-only concern). `onSessionInvalidation` fires per removed session,
+     * like deleteSession. Mastery meta and skill errors key on
+     * language-neutral skill ids and stay, like the usage outbox.
+     *
+     * Returns false after a refusal or failure — the notice is on `error`.
+     */
+    @discardableResult
+    func deleteLearningDataForLanguage(_ id: String) -> Bool {
+        guard !dbStore.jsonMode else {
+            error = Self.databaseUnavailableDeleteNotice
+            return false
+        }
+        let doomedIDs = Set(archive.sessions.filter { $0.languageID == id }.map(\.id))
+        doomedIDs.forEach { onSessionInvalidation?($0) }
+        archive.sessions.removeAll { $0.languageID == id }
+        let completions = (archive.completions ?? []).filter { $0.languageID != id }
+        archive.completions = completions.isEmpty ? nil : completions
+        archive.expressions = (archive.expressions ?? []).filter { $0.languageID != id }
+        archive.lessons = (archive.lessons ?? []).filter { !$0.lessonID.hasPrefix("\(id)-") }
+        do {
+            _ = try BackupManager.deleteLearningDataForLanguage(try dbStore.db, languageID: id)
+            error = nil
+            return true
+        } catch {
+            // The working copy was purged but the transaction kept the
+            // database's rows: reload the persisted projection so
+            // export(DB) == archive holds again, then surface.
+            archive = (try? dbStore.loadInitialArchive()) ?? archive
+            print("LearningStore: per-language delete failed — \(error)")
+            self.error = "Palique couldn’t delete the language’s learning data. Please try again."
+            return false
+        }
+    }
+
     /// One mutation site's directed durable write: in database mode `work`
     /// persists ONLY what the site just changed, on the spot (the writes are
     /// small, single-statement transactions and the store already ran its
