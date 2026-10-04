@@ -31,12 +31,14 @@ test('the batch parser accepts a representative batch from each catalog family',
     event({ props: { mode: 'recall', scoreBucket: 4 } }, 'practice_completed'),
     event({ props: { source: 'talk' } }, 'word_lookup'),
     event({ props: { rate: '0.8' } }, 'tts_speed_changed'),
-    event({ props: { surface: 'talk' } }, 'paywall_viewed')
+    event({ props: { surface: 'talk' } }, 'paywall_viewed'),
+    event({ props: { dbBytesBucket: '1-10mb', sessionsBucket: '11-50' } }, 'archive_health')
   ] });
-  assert.equal(batch.events.length, 9);
+  assert.equal(batch.events.length, 10);
   assert.equal(batch.events[1]!.name, 'session_started');
   assert.deepEqual(batch.events[0]!.props, {});
   assert.equal(batch.events[3]!.props.courseID, 'english-foundations');
+  assert.deepEqual(batch.events[9]!.props, { dbBytesBucket: '1-10mb', sessionsBucket: '11-50' });
 });
 
 test('the batch parser rejects anything outside the closed catalog', () => {
@@ -64,7 +66,11 @@ test('the batch parser rejects anything outside the closed catalog', () => {
     { platform: 'android', appVersion: '1', events: [event({ props: { themeID: 'Hello World' } }, 'theme_selected')] },
     { platform: 'android', appVersion: '1', events: [event({ props: { courseID: 'x'.repeat(65) } }, 'lesson_started')] },
     { platform: 'android', appVersion: '1', events: [event({ props: { passed: 'yes' } }, 'assessment_completed')] },
-    { platform: 'android', appVersion: '1', events: [event({ props: { mode: 'recall' } }, 'practice_completed')] }
+    { platform: 'android', appVersion: '1', events: [event({ props: { mode: 'recall' } }, 'practice_completed')] },
+    { platform: 'android', appVersion: '1', events: [event({ props: { dbBytesBucket: 'huge' } }, 'archive_health')] },
+    { platform: 'android', appVersion: '1', events: [event({ props: { dbBytesBucket: 3 } }, 'archive_health')] },
+    { platform: 'android', appVersion: '1', events: [event({ props: { dbBytesBucket: '1-10mb', sessionsBucket: 'tons' } }, 'archive_health')] },
+    { platform: 'android', appVersion: '1', events: [event({ props: {} }, 'archive_health')] }
   ]) {
     assert.throws(() => parseUsageBatch(invalid));
   }

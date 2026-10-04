@@ -41,7 +41,11 @@ export const USAGE_CATALOG = {
   report_requested: {},
   paywall_viewed: { surface: { kind: 'enum', values: ['talk', 'settings'] } },
   scenario_started: { scenarioID: slug },
-  scenario_completed: { scenarioID: slug, durationBucket: buckets(5), turnsBucket: buckets(5) }
+  scenario_completed: { scenarioID: slug, durationBucket: buckets(5), turnsBucket: buckets(5) },
+  // One coarse heartbeat per install per day (the client gates the cadence):
+  // ordinal size/count buckets, never exact bytes or session numbers.
+  archive_health: { dbBytesBucket: { kind: 'enum', values: ['empty', '<1mb', '1-10mb', '10-100mb', '>=100mb'] },
+    sessionsBucket: { kind: 'enum', values: ['0', '1-10', '11-50', '51-200', '>200'] } }
 } as const satisfies Record<string, Record<string, PropSpec>>;
 
 export type UsageEventName = keyof typeof USAGE_CATALOG;
