@@ -1,0 +1,169 @@
+--------- beginning of system
+10-04 22:37:43.907   695  1837 W ActivityTaskManager: callingPackage for (uid=2000, pid=347) has no WPC
+--------- beginning of main
+10-04 22:37:43.908   695  1837 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@50dceee9 does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-04 22:37:43.908   695  1837 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_OVERRIDE
+10-04 22:37:43.909   695  1837 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_USER_ASPECT_RATIO_FULLSCREEN_OVERRIDE
+10-04 22:37:43.909   695  1837 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_RESIZEABLE_ACTIVITY_OVERRIDES
+10-04 22:37:43.909   695  1837 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_MIN_ASPECT_RATIO_OVERRIDE
+10-04 22:37:43.911   695  1837 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ALLOW_ORIENTATION_OVERRIDE
+10-04 22:37:43.912   552   603 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+10-04 22:37:43.915   695  1837 I ActivityTaskManager: START u0 {flg=0x10000000 xflg=0x5 cmp=com.jkdc.palique.android/com.jkdc.app.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+10-04 22:37:43.915   938  1001 V WindowManagerShell: Transition requested (#26): android.os.BinderProxy@8aee85c TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=99 effectiveUid=10217 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.jkdc.palique.android/com.jkdc.app.MainActivity } baseActivity=ComponentInfo{com.jkdc.palique.android/com.jkdc.app.MainActivity} topActivity=ComponentInfo{com.jkdc.palique.android/com.jkdc.app.MainActivity} origActivity=null realActivity=ComponentInfo{com.jkdc.palique.android/com.jkdc.app.MainActivity} numActivities=1 lastActiveTime=77549909 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@6d2765} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{d98bc3a com.jkdc.app.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(284, 660 - 796, 1740) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1080, 2400) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 26 }
+10-04 22:37:43.915   938  1001 D ShellSplitScreen: logExit: no-op, mLoggerSessionId is null
+10-04 22:37:43.915  1081  1081 W SplitSelectStateCtor: Missing session instanceIds
+10-04 22:37:43.915  1081  1081 D StatsLog: LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED
+10-04 22:37:43.917   695  1159 I AppsFilter: interaction: PackageSetting{8c9542f dev.intervalforge.interval_forge.dev/10218} -> PackageSetting{919490a com.jkdc.palique.android/10217} BLOCKED
+10-04 22:37:43.917   695  1159 I AppsFilter: interaction: PackageSetting{26d8083 com.android.microdroid.empty_payload/10215} -> PackageSetting{919490a com.jkdc.palique.android/10217} BLOCKED
+10-04 22:37:43.919   938  1001 D WindowManagerShell: setLauncherKeepClearAreaHeight: visible=false, height=527
+10-04 22:37:43.919   695   719 V GrammaticalInflectionUtils: AttributionSource: android.content.AttributionSource@50dceee9 does not have READ_SYSTEM_GRAMMATICAL_GENDER permission.
+10-04 22:37:43.922   695   895 D BackgroundInstallControlService: Package event received: 0
+10-04 22:37:43.927   938  1031 I ndroid.systemui: AssetManager2(0x72414ab81118) locale list changing from [] to [en-US]
+10-04 22:37:43.928   695  1837 D CompatChangeReporter: Compat change id reported: 377864165; UID 10217; state: ENABLED
+10-04 22:37:43.931   552   552 I BpBinder: onLastStrongRef automatically unlinking death recipients: 
+10-04 22:37:43.937   480   480 D Zygote  : Forked child process 350
+10-04 22:37:43.938   695   726 I ActivityManager: Start proc 350:com.jkdc.palique.android/u0a217 for next-top-activity {com.jkdc.palique.android/com.jkdc.app.MainActivity}
+10-04 22:37:43.938   695   726 I ActivityManager: ProcessObserver broadcast disabled
+10-04 22:37:43.945   938  1032 W HWUI    : Image decoding logging dropped!
+10-04 22:37:43.967   350   350 I palique.android: Late-enabling -Xcheck:jni
+10-04 22:37:43.987   695   716 V WindowManager: Sent Transition (#26) createdAt=10-04 22:37:43.909 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=99 effectiveUid=10217 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=com.jkdc.palique.android/com.jkdc.app.MainActivity } baseActivity=ComponentInfo{com.jkdc.palique.android/com.jkdc.app.MainActivity} topActivity=ComponentInfo{com.jkdc.palique.android/com.jkdc.app.MainActivity} origActivity=null realActivity=ComponentInfo{com.jkdc.palique.android/com.jkdc.app.MainActivity} numActivities=1 lastActiveTime=77549909 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{5218ec8 Task{985f25f #99 type=standard A=10217:com.jkdc.palique.android}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 0 - 0, 0) topActivityInfo=ActivityInfo{f7aeb61 com.jkdc.app.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isTopActivityNoDisplay=false isSleeping=false locusId=null displayAreaFeatureId=1 isTopActivityTransparent=false isActivityStackTransparent=false lastNonFullscreenBounds=Rect(284, 660 - 796, 1740) capturedLink=null capturedLinkTimestamp=0 requestedVisibleTypes=-9 topActivityRequestOpenInBrowserEducationTimestamp=0 appCompatTaskInfo=AppCompatTaskInfo { topActivityInSizeCompat=false eligibleForLetterboxEducation= false isLetterboxEducationEnabled= true isLetterboxDoubleTapEnabled= false eligibleForUserAspectRatioButton= false topActivityBoundsLetterboxed= false isFromLetterboxDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 topActivityAppBounds=Rect(0, 0 - 1080, 2400) isUserFullscreenOverrideEnabled=false isSystemFullscreenOverrideEnabled=false hasMinAspectRatioOverride=false topActivityLetterboxBounds=null cameraCompatTaskInfo=CameraCompatTaskInfo { freeformCameraCompatMode=inactive}} topActivityMainWindowFrame=null}, pipChange = null, remoteTransition = null, displayChange = null, flags = 0, debugId = 26 }
+10-04 22:37:43.988   938   949 V WindowManagerShell: onTransitionReady(transaction=2985002277448)
+10-04 22:37:43.988   695   716 V WindowManager:     startWCT=WindowContainerTransaction { changes= {} hops= [] errorCallbackToken=null taskFragmentOrganizer=null }
+10-04 22:37:43.988   695   716 V WindowManager:     info={id=26 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+10-04 22:37:43.988   695   716 V WindowManager:         {WCT{RemoteToken{5218ec8 Task{985f25f #99 type=standard A=10217:com.jkdc.palique.android}}} m=OPEN f=NONE leash=Surface(name=Task=99)/@0xa1e08ba sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},
+10-04 22:37:43.988   695   716 V WindowManager:         {WCT{RemoteToken{1033876 Task{d071dc4 #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x8c8d95f sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},
+10-04 22:37:43.988   695   716 V WindowManager:         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{93f35f7 showWhenLocked=false})/@0x4c34e95 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}
+10-04 22:37:43.988   695   716 V WindowManager:     ]}
+10-04 22:37:43.988   938  1001 V WindowManagerShell: onTransitionReady (#26) android.os.BinderProxy@8aee85c: {id=26 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[
+10-04 22:37:43.988   938  1001 V WindowManagerShell:         {m=OPEN f=NONE leash=Surface(name=Task=99)/@0x2afb978 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},
+10-04 22:37:43.988   938  1001 V WindowManagerShell:         {m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xa24b851 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},
+10-04 22:37:43.988   938  1001 V WindowManagerShell:         {m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{93f35f7 showWhenLocked=false})/@0x17158b6 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}
+10-04 22:37:43.988   938  1001 V WindowManagerShell:     ]}
+10-04 22:37:43.989   938  1001 V WindowManagerShell: Playing animation for (#26) android.os.BinderProxy@8aee85c@0
+10-04 22:37:43.989   938  1001 V ShellRecents: RecentsTransitionHandler.startAnimation: no controller found
+10-04 22:37:43.989   938  1001 V WindowManagerShell: Transition doesn't have explicit remote, search filters for match for {id=26 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=NONE leash=Surface(name=Task=99)/@0x2afb978 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},{m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xa24b851 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},{m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{93f35f7 showWhenLocked=false})/@0x17158b6 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}]}
+10-04 22:37:43.989   938  1001 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=undefined independent=true modes=[CLOSE,TO_BACK] flags=IN_TASK_WITH_EMBEDDED_ACTIVITY mustBeTask=false order=ANY topActivity=null launchCookie=null taskFragmentToken=android.os.BinderProxy@d3b8d45 windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@fc45c9a, appThread = android.app.IApplicationThread$Stub$Proxy@3ee89cb, debugName = overlayBackTransition }}
+10-04 22:37:43.990   938  1001 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x0 checks=[{atype=dream independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{atype=home independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@88eb5a8, appThread = android.app.IApplicationThread$Stub$Proxy@80cb8c1, debugName = LauncherToDream }}
+10-04 22:37:43.990   938  1001 V WindowManagerShell:  Checking filter Pair{{types=[] flags=0x0] notFlags=0x100 checks=[{atype=home independent=true modes=[OPEN,TO_FRONT] flags=NONE mustBeTask=false order=TOP topActivity=ComponentInfo{com.google.android.apps.nexuslauncher/com.google.android.apps.nexuslauncher.NexusLauncherActivity} launchCookie=null windowingMode=undefined},{atype=standard independent=true modes=[CLOSE,TO_BACK] flags=NONE mustBeTask=false order=ANY topActivity=null launchCookie=null windowingMode=undefined},{NOT atype=undefined independent=true modes=[] flags=NONE mustBeTask=true order=ANY topActivity=null launchCookie=null customAnim=true windowingMode=undefined}]} RemoteTransition { remoteTransition = android.window.IRemoteTransition$Stub$Proxy@3fba866, appThread = android.app.IApplicationThread$Stub$Proxy@459f7a7, debugName = QuickstepLaunchHome }}
+10-04 22:37:43.990   938  1001 V WindowManagerShell:  Delegate animation for (#26) to null
+10-04 22:37:43.990   938  1001 V WindowManagerShell: start default transition animation, info = {id=26 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{m=OPEN f=NONE leash=Surface(name=Task=99)/@0x2afb978 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},{m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xa24b851 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0 taskParent=-1},{m=TO_BACK f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{93f35f7 showWhenLocked=false})/@0x17158b6 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) epz=Point(1080, 2400) d=0}]}
+10-04 22:37:43.990   938  1001 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@a2b888d animAttr=0x13 type=OPEN isEntrance=false
+10-04 22:37:43.991   938  1001 V WindowManagerShell: loadAnimation: anim=android.view.animation.AnimationSet@2324a42 animAttr=0x12 type=OPEN isEntrance=true
+10-04 22:37:43.991   938  1001 V WindowManagerShell:  animated by com.android.wm.shell.transition.DefaultTransitionHandler@6a8f58f
+10-04 22:37:43.999   938  1001 V WindowManagerShell: Transition animation finished (aborted=false), notifying core (#26) android.os.BinderProxy@8aee85c@0
+10-04 22:37:44.000   695   716 V WindowManager: Finish Transition (#26): created at 10-04 22:37:43.909 collect-started=0.032ms request-sent=4.746ms started=9.425ms ready=75.35ms sent=77.038ms commit=12.213ms finished=90.366ms
+10-04 22:37:44.001   938  1001 V WindowManagerShell: Track 0 became idle
+10-04 22:37:44.001  1081  1081 D VRI[NexusLauncherActivity]: visibilityChanged oldVisibility=true newVisibility=false
+10-04 22:37:44.001   938  1001 V WindowManagerShell: All active transition animations finished
+10-04 22:37:44.010   350   350 I palique.android: Using CollectorTypeCMC GC.
+10-04 22:37:44.011   350   350 W palique.android: Unexpected CPU variant for x86: x86_64.
+10-04 22:37:44.011   350   350 W palique.android: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+10-04 22:37:44.013   560   582 I adbd    : jdwp connection from 350
+10-04 22:37:44.014  1081  1081 D NexusLauncherModelDelegate: notifySmartspaceEvent: SmartspaceTargetEvent{mSmartspaceTarget=null, mSmartspaceActionId='null', mEventType=7}
+10-04 22:37:44.022   350   350 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+10-04 22:37:44.023   695  1776 W ActivityTaskManager: takeTaskSnapshot: taskId=89 not found or not visible
+10-04 22:37:44.034   695   895 D BackgroundInstallControlService: Package event received: 0
+10-04 22:37:44.232   926   926 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+10-04 22:37:44.530   350   350 D nativeloader: Configuring clns-9 for other apk /data/app/~~7kKCJ3dKYQGYORl1zRb_wQ==/com.jkdc.palique.android-aslyXk2C1JQSqa5RtEjhdw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~7kKCJ3dKYQGYORl1zRb_wQ==/com.jkdc.palique.android-aslyXk2C1JQSqa5RtEjhdw==/lib/x86_64:/data/app/~~7kKCJ3dKYQGYORl1zRb_wQ==/com.jkdc.palique.android-aslyXk2C1JQSqa5RtEjhdw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.jkdc.palique.android
+10-04 22:37:44.537   350   350 I palique.android: AssetManager2(0x72414ab35df8) locale list changing from [] to [en-US]
+10-04 22:37:44.541   350   350 V GraphicsEnvironment: Currently set values for:
+10-04 22:37:44.541   350   350 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+10-04 22:37:44.541   350   350 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+10-04 22:37:44.541   350   350 V GraphicsEnvironment: com.jkdc.palique.android is not listed in per-application setting
+10-04 22:37:44.542   350   350 V GraphicsEnvironment: ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+10-04 22:37:44.542   350   350 V GraphicsEnvironment: com.jkdc.palique.android is not listed in ANGLE allowlist or settings, returning default
+10-04 22:37:44.542   350   350 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+10-04 22:37:44.568   695  1776 W OptProp : Cannot read opt property android.window.PROPERTY_COMPAT_ENABLE_FAKE_FOCUS
+10-04 22:37:44.569   695   895 D BackgroundInstallControlService: Package event received: 0
+10-04 22:37:44.569   695   895 D BackgroundInstallControlService: Package event received: 0
+10-04 22:37:44.571   350   446 I DisplayManager: Choreographer implicitly registered for the refresh rate.
+10-04 22:37:44.573   350   350 I palique.android: AssetManager2(0x72414ab30cb8) locale list changing from [] to [en-US]
+10-04 22:37:44.601   350   350 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+10-04 22:37:44.611   350   446 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+10-04 22:37:44.611   350   446 I EGL_emulation: Opening libGLESv2_emulation.so
+10-04 22:37:44.618   350   446 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+10-04 22:37:44.619   350   446 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-04 22:37:44.624   350   350 D CompatChangeReporter: Compat change id reported: 377864165; UID 10217; state: ENABLED
+10-04 22:37:44.626   350   350 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+10-04 22:37:44.646   350   350 W HWUI    : Image decoding logging dropped!
+10-04 22:37:44.808   350   350 D nativeloader: Load /data/app/~~7kKCJ3dKYQGYORl1zRb_wQ==/com.jkdc.palique.android-aslyXk2C1JQSqa5RtEjhdw==/base.apk!/lib/x86_64/libapp_whisper.so using class loader ns clns-9 (caller=/data/app/~~7kKCJ3dKYQGYORl1zRb_wQ==/com.jkdc.palique.android-aslyXk2C1JQSqa5RtEjhdw==/base.apk!classes2.dex): ok
+10-04 22:37:44.816   350   350 D AudioSystem: onNewServiceWithAdapter: media.audio_flinger service obtained 0x72419ab56770
+10-04 22:37:44.816   350   350 D AudioSystem: getService: checking for service media.audio_flinger: 0x72421abd7a90
+10-04 22:37:44.864   350   350 W HWUI    : Unknown dataspace 0
+10-04 22:37:44.875   695  1776 D CoreBackPreview: Window{b985d3c u0 com.jkdc.palique.android/com.jkdc.app.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@5686c1a, mPriority=-1, mIsAnimationCallback=false, mOverrideBehavior=0}
+10-04 22:37:45.328   695   716 I ActivityTaskManager: Displayed com.jkdc.palique.android/com.jkdc.app.MainActivity for user 0: +1s415ms
+10-04 22:37:45.334   350   361 I HWUI    : Davey! duration=749ms; Flags=1, FrameTimelineVsyncId=637033, IntendedVsync=77550576430773, Vsync=77550859764095, InputEventId=0, HandleInputStart=77550869671261, AnimationStart=77550869675821, PerformTraversalsStart=77550869792625, DrawStart=77551231731838, FrameDeadline=77550593097439, FrameStartTime=77550869443666, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=77551241930530, SyncStart=77551242814382, IssueDrawCommandsStart=77551242891929, SwapBuffers=77551306742757, FrameCompleted=77551326601275, DequeueBufferDuration=5890, QueueBufferDuration=489993, GpuCompleted=77551326601275, SwapBuffersCompleted=77551314789325, DisplayPresentTime=0, CommandSubmissionCompleted=77551306742757, 
+10-04 22:37:45.347  1081  1081 D BaseDepthController: setSurface:
+10-04 22:37:45.347  1081  1081 D BaseDepthController: 	mWaitingOnSurfaceValidity: false
+10-04 22:37:45.347  1081  1081 D BaseDepthController: 	mBaseSurface: null
+10-04 22:37:45.347  1081  1081 D BaseDepthController: mSurface is null and mCurrentBlur is: 0
+10-04 22:37:45.356  1081  1081 D StateManager: goToState - fromState: Normal, toState: Normal, partial trace:
+10-04 22:37:45.356  1081  1081 D StateManager: 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:4)
+10-04 22:37:45.356  1081  1081 D StateManager: 	at com.android.launcher3.statemanager.StateManager.moveToRestState(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:1)
+10-04 22:37:45.356  1081  1081 D StateManager: 	at com.android.launcher3.statemanager.StatefulActivity.onStop(go/retraceme 72a59688580715d19f0e415c69e80376c2f062d1648c80db6730905005a27c20:34)
+10-04 22:37:45.357  1081  1081 D StatsLog: LAUNCHER_ONSTOP
+10-04 22:37:45.359  1081  1081 D StatsLog: LAUNCHER_GOOGLE_SEARCH_RESTORE_LIST_SIZE_AFTER_ACTIVITY_RESTART
+10-04 22:37:45.361   695   808 I ImeTracker: com.jkdc.palique.android:e6ff0469: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-04 22:37:45.365   350   350 D InsetsController: hide(ime(), fromIme=false)
+10-04 22:37:45.365   350   350 I ImeTracker: com.jkdc.palique.android:e6ff0469: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+10-04 22:37:45.365  1347  1347 I SubtypeOperator: SubtypeOperator$1.onUnbindInput():43 
+10-04 22:37:45.371  1347  1347 I SubtypeOperator: SubtypeOperator$1.onBindInput():33 
+10-04 22:37:45.374  1347  1347 I GoogleInputMethodService: GoogleInputMethodService.onFinishInput():2404 
+10-04 22:37:45.374   695  1773 I ImeTracker: system_server:1bdeb2c1: onRequestHide at ORIGIN_SERVER reason IME_REQUESTED_CHANGED_LISTENER fromUser false
+10-04 22:37:45.377   695   719 I ImeTracker: system_server:1bdeb2c1: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-04 22:37:45.379   695   895 D BackgroundInstallControlService: Package event received: 0
+10-04 22:37:45.380  1266  1278 I FontLog : (REDACTED) Received query %s, URI %s
+10-04 22:37:45.378  1347  1347 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1552 onStartInput(EditorInfo{EditorInfo{packageName=com.jkdc.palique.android, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-04 22:37:45.380  1347  1347 I LatinInputMethodServiceBase: LatinInputMethodServiceBase.updateInputViewCoverNavigation():360 Update input view padding, isNavbarOverInputWindow=true, bottom inset=63
+10-04 22:37:45.382  1347 29696 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatusInternal():119 repeatCheckTimes = 0, locked = false
+10-04 22:37:45.382  1347 29696 I Module  : DeviceLockedStatusModuleProvider$Module.updateDeviceLockedStatusInternal():119 repeatCheckTimes = 1, locked = false
+10-04 22:37:45.383  1266  1278 I FontLog : (REDACTED) Query [%s] resolved to %s
+10-04 22:37:45.385   695  1159 W PackageConfigPersister: App-specific configuration not found for packageName: com.jkdc.palique.android and userId: 0
+10-04 22:37:45.387  1266  1278 I FontLog : (REDACTED) Fetch %s end status %s
+10-04 22:37:45.391  1266  1278 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+10-04 22:37:45.396  1266  1278 I FontLog : (REDACTED) Pulling font file for id = %d, cache size = %d
+10-04 22:37:45.429  1081  1097 W s.nexuslauncher: Reducing the number of considered missed Gc histogram windows from 145 to 100
+10-04 22:37:45.432  1081  1099 W System  : A resource failed to call release. 
+10-04 22:37:45.432  1081  1099 W System  : A resource failed to call release. 
+10-04 22:37:45.432  1081  1099 W System  : A resource failed to call release. 
+10-04 22:37:45.442   350   356 I palique.android: Compiler allocated 5042KB to compile void android.view.ViewRootImpl.performTraversals()
+10-04 22:37:45.558   695   706 I system_server: Background concurrent mark compact GC freed 23MB AllocSpace bytes, 18(360KB) LOS objects, 41% free, 34MB/58MB, paused 844us,1.946ms total 238.076ms
+10-04 22:37:45.565   695   708 W System  : A resource failed to call release. 
+10-04 22:37:45.888   695  1550 E TaskPersister: File error accessing recents directory (directory doesn't exist?).
+10-04 22:37:47.854  1077  1225 D SatelliteController: iisInCarrierRoamingNbIotNtn: satellite is disabled
+10-04 22:37:48.555   460   460 W dumpsys : Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: package
+10-04 22:37:48.612  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/base.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+10-04 22:37:48.615  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_AdsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+10-04 22:37:48.617  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_CronetDynamite_installtime.odex) is kOatUpToDate with filter 'speed-profile' executable 'false'
+10-04 22:37:48.619  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_DynamiteLoader_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+10-04 22:37:48.621  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_DynamiteModulesA_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+10-04 22:37:48.623  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_DynamiteModulesC_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+10-04 22:37:48.625  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_GoogleCertificates_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+10-04 22:37:48.628  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_MapsDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+10-04 22:37:48.630  3098  3124 I artd    : GetBestInfo: odex next to the dex file (/data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/oat/x86_64/split_MeasurementDynamite_installtime.odex) is kOatUpToDate with filter 'speed' executable 'false'
+10-04 22:37:48.632  3098  3124 I artd    : GetBestInfo: /data/app/~~4BpG4YeIG9KvegtV6fBcXQ==/com.google.android.gms-tCTTRaOJfuTYnqdHz7ibUw==/split_maps_core_dynamite_ondemand.apk has no usable artifacts
+10-04 22:37:48.633  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.633  3098  3124 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000001/CronetDynamite.apk has no usable artifacts
+10-04 22:37:48.636  3098  3124 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000b/dl-Appsearch.optional_250834100800.apk has no usable artifacts
+10-04 22:37:48.636  3098  3124 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.apk has no usable artifacts
+10-04 22:37:48.636  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.637  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.637  3098  3124 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/00000005/GoogleCertificates.apk has no usable artifacts
+10-04 22:37:48.637  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.638  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.638  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.639  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.640  3098  3124 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000d/dl-VisionOcr.optional_250834100000.apk has no usable artifacts
+10-04 22:37:48.642  3098  3124 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000e/dl-MlkitOcrCommon.optional_250834100800.apk has no usable artifacts
+10-04 22:37:48.642  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.644  3098  3124 I artd    : GetBestInfo: /data/user_de/0/com.google.android.gms/app_chimera/m/0000000a/dl-MlkitBarcodeUi.optional_250834100800.apk has no usable artifacts
+10-04 22:37:48.644  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:48.645  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~rW0UKcYAzCJPbmUVl0U29A==/com.android.vending-ZpTxv_LCd7SQaDrG0_Cmkg==/base.apk, fd=-1
+10-04 22:37:48.645  3098  3124 W artd    : Could not get dex checksums for location /data/app/~~-BfvKFI_M092YHqb6NzBsw==/com.google.android.gms-IIaX4yds98Rs-8cOZcTRpQ==/base.apk, fd=-1
+10-04 22:37:50.833   350   463 D ProfileInstaller: Installing profile for com.jkdc.palique.android
+10-04 22:37:52.169   926   926 I wpa_supplicant: wlan0: CTRL-EVENT-BEACON-LOSS 
+10-04 22:37:54.070   469   469 W screencap: Thread Pool max thread count is 0. Cannot cache binder as linkToDeath cannot be implemented. serviceName: SurfaceFlingerAIDL
+10-04 22:37:54.071   469   469 W BpBinder: Linking to death on android.gui.ISurfaceComposer but there are no threads (yet?) listening to incoming transactions. See ProcessState::startThreadPool and ProcessState::setThreadPoolMaxThreadCount. Generally you should setup the binder threadpool before other initialization steps.
+10-04 22:37:54.071   469   469 W ProcessState: Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-04 22:37:54.086   552   603 E HwcComposer: getLuts failed Status(-8, EX_SERVICE_SPECIFIC): '8: '
+10-04 22:37:54.086   552   603 E HWComposer: getLuts: getLuts failed for display 4619827259835644672: UNSUPPORTED (8)
