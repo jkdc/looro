@@ -56,7 +56,7 @@ class ReportHistoryTest {
         compose.runOnIdle {
             assertEquals(ReportDelivery.UNAVAILABLE, vm.reportState.value.delivery)
             assertEquals("es", vm.reportState.value.selection?.languageID)
-            assertFalse(vm.exportData().contains("ai-report-v1"))
+            assertFalse(ArchiveCodec.encode(vm.archive).contains("ai-report-v1"))
         }
     }
 }

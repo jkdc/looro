@@ -12,8 +12,8 @@ Checks:
   (fragments.session_id -> sessions.id, ON DELETE CASCADE) and the required
   SQL constraints (preferences CHECK, user_version pragma) must be present
   in the stored schema
-- the PINNED virtual table (fragments_fts, the FTS5 external-content search
-  index) and the three sync triggers exist with exactly the declared shape,
+- the PINNED virtual table (fragments_fts, the FTS4 external-content search
+  index) and the four sync triggers exist with exactly the declared shape,
   read straight from sqlite_master
 - no `words` table exists (words are a LearningEngine projection; learner
   hidden words live in preferences.hidden_words)
@@ -279,9 +279,9 @@ def read_inventory(conn):
     """Derive {table: [(column, type, notnull, pk, default)]} and the set of
     (name, table, columns) explicitly-created indexes from a live schema.
 
-    Internal tables are skipped: SQLite's own sqlite_* entries and the FTS5
+    Internal tables are skipped: SQLite's own sqlite_* entries and the FTS4
     shadow tables of every pinned virtual table (fragments_fts_data and
-    friends — implementation details of the FTS5 module, like
+    friends — implementation details of the FTS4 module, like
     sqlite_sequence). The virtual tables themselves are also skipped here:
     PRAGMA table_info cannot describe their options, so they are pinned
     separately from sqlite_master by check_virtual_tables."""
@@ -311,8 +311,9 @@ def read_inventory(conn):
 
 def is_internal_table(name):
     """True for the internal tables the pinned inventory must not describe:
-    sqlite_* internals and the FTS5 shadow tables of the pinned virtual
-    tables (fragments_fts_data / _idx / _content / _docsize / _config)."""
+    sqlite_* internals and the FTS4 shadow tables of the pinned virtual
+    tables (fragments_fts_data / _content / _segments / _segdir / _docsize /
+    _stat)."""
     if name.startswith('sqlite_'):
         return True
     return any(name == virtual or name.startswith(virtual + '_')

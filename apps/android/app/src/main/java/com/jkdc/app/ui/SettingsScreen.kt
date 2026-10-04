@@ -85,7 +85,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 
 @Composable
-fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit, onReviewConsent: () -> Unit,
+fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -> Unit,
                    onAccount: (() -> Unit)? = null, onResume: (String) -> Unit = {}, onDismiss: () -> Unit = {},
                    onTokensPurchase: (() -> Unit)? = null, tokensBalanceHint: String? = null,
                    onExportDb: () -> Unit = {}, onImportDb: () -> Unit = {}) {
@@ -377,9 +377,9 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
             }
             item {
                 SettingsGroup(stringResource(R.string.settings_section_your_data), stringResource(R.string.settings_backup_footer)) {
-                    SettingsRow(stringResource(R.string.settings_export_backup), enabled = !vm.isRunning, symbol = SettingsSymbol.EXPORT,
-                        tint = AppColors.Secondary, onClick = onExport)
-                    SettingsDivider()
+                    // The legacy JSON import stays (restore path); the JSON
+                    // export row is retired — the .db backup below is the way
+                    // to take data out.
                     SettingsRow(stringResource(R.string.settings_import_backup), enabled = !vm.isRunning, symbol = SettingsSymbol.IMPORT,
                         tint = AppColors.Secondary, onClick = onImport)
                     SettingsDivider()
@@ -395,8 +395,8 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
             }
             item {
                 // The learning.db backup (whole SQLite file, verified on both
-                // ends) and the per-language delete. The legacy JSON entries
-                // above stay this phase; the retirement is a later task.
+                // ends) and the per-language delete. The JSON import above is
+                // the legacy restore path only; export is the .db file.
                 SettingsGroup(stringResource(R.string.settings_db_section_title), stringResource(R.string.settings_db_section_footer)) {
                     SettingsRow(stringResource(R.string.settings_export_db), enabled = !vm.isRunning, symbol = SettingsSymbol.EXPORT,
                         tint = AppColors.Secondary, modifier = Modifier.testTag("settings-export-db"), onClick = onExportDb)

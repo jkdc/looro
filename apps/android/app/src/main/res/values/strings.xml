@@ -205,7 +205,6 @@
     <string name="settings_revoke_consent_button">Withdraw permission</string>
     <string name="settings_review_consent_button">Review and accept</string>
     <string name="settings_section_your_data">Your words belong to you</string>
-    <string name="settings_export_backup">Export learning backup</string>
     <string name="settings_import_backup">Import learning backup</string>
     <string name="settings_backup_footer">Backups include transcripts and learning evidence, never your API key. Import adds conversations with new IDs. Existing conversations stay unchanged. There is no cloud sync.</string>
     <string name="settings_delete_all_data">Delete all conversations and learning</string>
@@ -228,7 +227,6 @@
     <string name="settings_key_dialog_title">OpenAI API key</string>
     <string name="settings_key_dialog_note">Stored encrypted by Android and never included in backups.</string>
     <string name="settings_key_dialog_field_label">New key</string>
-    <string name="settings_backup_exported_toast">Backup exported</string>
     <string name="settings_backup_imported_toast">Backup imported</string>
 
     <!-- Database backup (learning.db) -->

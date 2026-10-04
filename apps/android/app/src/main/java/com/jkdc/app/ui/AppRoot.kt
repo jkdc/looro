@@ -59,7 +59,6 @@ fun AppRoot(
     microphoneMessage: String?,
     onRequestMicrophone: () -> Unit,
     onOpenAppSettings: (() -> Unit)?,
-    onExport: () -> Unit,
     onImport: () -> Unit,
     onExportDb: () -> Unit = {},
     onImportDb: () -> Unit = {},
@@ -219,7 +218,7 @@ fun AppRoot(
                 ModalBottomSheet(onDismissRequest = { showSettings = false }, containerColor = AppColors.Cream,
                     sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
                     Column(Modifier.fillMaxHeight(.94f)) {
-                        SettingsScreen(vm, onExport, onImport, onReviewConsent = {
+                        SettingsScreen(vm, onImport, onReviewConsent = {
                             vm.pendingCloudAction = null; showConsent = true
                         }, onAccount = if (account?.configuration != null) ({
                             account.refresh(); showAccount = true

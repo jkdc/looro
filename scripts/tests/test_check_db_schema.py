@@ -75,7 +75,7 @@ class SchemaTest(unittest.TestCase):
         issues = check_db_schema.check_constraints(self.conn, schema_text)
         self.assertEqual([], issues)
 
-    # -- schema v2: the pinned FTS5 virtual table and its sync triggers ------
+    # -- schema v2: the pinned FTS4 virtual table and its sync triggers ------
 
     def test_pinned_virtual_table_and_triggers_pass(self):
         self.assertEqual([], check_db_schema.check_virtual_tables(self.conn))

@@ -412,17 +412,9 @@ struct SessionHistoryView: View {
     }
 }
 
-struct BackupDocument: FileDocument {
-    static var readableContentTypes: [UTType] { [.json] }
-    var data: Data
-    init(data: Data) { self.data = data }
-    init(configuration: ReadConfiguration) throws { data = configuration.file.regularFileContents ?? Data() }
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper { FileWrapper(regularFileWithContents: data) }
-}
-
 /// The whole learning database (.db bytes) as a FileDocument — the phase-F
-/// database backup's export payload, beside the JSON archive's
-/// `BackupDocument` (kept until H retires it).
+/// database backup's export payload (the JSON archive's `BackupDocument`
+/// was retired with the JSON export in phase H).
 struct DatabaseBackupDocument: FileDocument {
     static var databaseBackupType: UTType { UTType(filenameExtension: "db") ?? .data }
     static var readableContentTypes: [UTType] { [databaseBackupType] }
@@ -491,9 +483,7 @@ struct SettingsView: View {
     @State private var key = ""
     @State private var hasKey = CredentialStore.hasKey
     @State private var message: String?
-    @State private var exporting = false
     @State private var importing = false
-    @State private var backup: BackupDocument?
     @State private var deleting = false
     @State private var exportingDb = false
     @State private var importingDb = false
@@ -648,9 +638,9 @@ struct SettingsView: View {
                     Text("Voice estimate uses $0.05/min as of 11 September 2026. Translation, teaching and search cost extra. Interrupted requests can be billed without a usage record here. Your OpenAI dashboard is authoritative. The time limit is local, not a billing cap.")
                 }
                 Section {
-                    Button("Export learning backup", systemImage: "square.and.arrow.up") {
-                        do { backup = BackupDocument(data: try store.exportData()); exporting = true } catch { message = error.localizedDescription }
-                    }
+                    // The legacy JSON import stays (restore path); the JSON
+                    // export button is retired — the .db backup below is the
+                    // way to take data out.
                     Button("Import learning backup", systemImage: "square.and.arrow.down") { importing = true }.disabled(coordinator.isRunning)
                     Button("Delete all conversations and learning", role: .destructive) { deleting = true }.disabled(coordinator.isRunning)
                 } header: { Text("Your words belong to you") } footer: {
@@ -692,7 +682,6 @@ struct SettingsView: View {
                 .navigationTitle("Make yourself comfortable").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { key = ""; dismiss() } } }
         }
-        .fileExporter(isPresented: $exporting, document: backup, contentType: .json, defaultFilename: "Palique-learning-backup") { result in if case .failure(let error) = result { message = error.localizedDescription } }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.json]) { result in
             do {
                 let url = try result.get(); let granted = url.startAccessingSecurityScopedResource(); defer { if granted { url.stopAccessingSecurityScopedResource() } }

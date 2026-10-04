@@ -2229,7 +2229,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         // completions and skill errors are not this site's learning data
         persist { db -> LearningDbWriter.learningDataDeleted(db, stored) }
     }
-    fun exportData(): String = ArchiveCodec.encode(archive)
     fun importData(data: String): Boolean {
         if (isRunning || !storageReady) return false
         return try {

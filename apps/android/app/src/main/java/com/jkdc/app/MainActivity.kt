@@ -85,16 +85,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-                if (uri != null) lifecycleScope.launch {
-                    runCatching {
-                        val encoded = vm.exportData()
-                        withContext(Dispatchers.IO) { writeBoundedUtf8(uri, encoded) }
-                    }.onSuccess {
-                        Toast.makeText(this@MainActivity, getString(R.string.settings_backup_exported_toast), Toast.LENGTH_SHORT).show()
-                    }.onFailure { showFailure(it) }
-                }
-            }
+            // The JSON import stays the legacy restore path (ArchiveMerger);
+            // JSON export is retired — the .db backup below is the backup.
             val importLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
                 if (uri != null) lifecycleScope.launch {
                     runCatching {
@@ -144,7 +136,6 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 onOpenAppSettings = if (microphonePermanentlyDenied) ({ openAppSettings() }) else null,
-                onExport = { exportLauncher.launch("Palique-learning-backup.json") },
                 onImport = { importLauncher.launch(arrayOf("application/json", "text/plain")) },
                 onExportDb = {
                     val stamp = java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US).format(java.util.Date())
@@ -238,13 +229,6 @@ class MainActivity : ComponentActivity() {
             return output.toString(StandardCharsets.UTF_8.name())
         }
         error(getString(R.string.error_file_open_failed))
-    }
-
-    private fun writeBoundedUtf8(uri: Uri, text: String) {
-        val data = text.toByteArray(StandardCharsets.UTF_8)
-        require(data.size <= ArchiveCodec.MAXIMUM_ENCODED_BYTES) { getString(R.string.error_backup_too_large) }
-        contentResolver.openOutputStream(uri, "wt")?.use { it.write(data) }
-            ?: error(getString(R.string.error_file_open_failed))
     }
 
     private fun openAppSettings() {

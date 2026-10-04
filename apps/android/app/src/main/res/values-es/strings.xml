@@ -205,7 +205,6 @@
     <string name="settings_revoke_consent_button">Retirar permiso</string>
     <string name="settings_review_consent_button">Revisar y aceptar</string>
     <string name="settings_section_your_data">Tus datos</string>
-    <string name="settings_export_backup">Exportar copia de aprendizaje</string>
     <string name="settings_import_backup">Importar copia de aprendizaje</string>
     <string name="settings_backup_footer">La copia incluye conversaciones y progreso, pero nunca tu clave. La importación acepta hasta 30 MB y conserva los registros existentes.</string>
     <string name="settings_delete_all_data">Eliminar conversaciones y aprendizaje</string>
@@ -228,7 +227,6 @@
     <string name="settings_key_dialog_title">Clave de OpenAI</string>
     <string name="settings_key_dialog_note">Se guarda cifrada por Android y no forma parte de las copias.</string>
     <string name="settings_key_dialog_field_label">Nueva clave</string>
-    <string name="settings_backup_exported_toast">Copia exportada</string>
     <string name="settings_backup_imported_toast">Copia importada</string>
 
     <!-- Copia de seguridad de la base de datos (learning.db) -->
