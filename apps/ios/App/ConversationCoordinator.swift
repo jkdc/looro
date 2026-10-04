@@ -531,6 +531,35 @@ enum ScenarioReviewState: Equatable {
         if session?.languageID == id { resetConversation() }
         return store.deleteLearningDataForLanguage(id)
     }
+    /// Generation guard for in-flight deferred saves: bumped whenever the
+    /// durable store's content is replaced wholesale (the restore swap), so a
+    /// task that captured the previous generation never writes a stale
+    /// session into the fresh copy. Plain cancellation stays the debounced
+    /// save's stop signal, and the scenario review still stores on a
+    /// dismissed sheet ("even if the learner already moved on") — only a
+    /// swapped database may not be written.
+    @ObservationIgnored private var dataGeneration = UUID()
+    /// Restores a learning database (Settings → Backup (database)) — the
+    /// quiesce Android's importDbFrom gets from persistAndWait(): with the
+    /// conversation over, three deferred writers can still fire, and a stale
+    /// session save landing after the swap would pollute the freshly restored
+    /// copy and break the "restore replaces what is on this device" promise.
+    /// The iOS directed writes are synchronous, so the drain is: stop every
+    /// deferred writer (the debounced save, the conversation-mid assessment,
+    /// the meaning lookups, the scenario review) and invalidate in-flight
+    /// saves through the generation guard; the store's importDb then
+    /// invalidates the final-assessment jobs exactly like deleteAll does.
+    @discardableResult
+    func importDb(from url: URL) -> Bool {
+        guard !isRunning else {
+            error = "A conversation is in progress. End it before changing your data."
+            return false
+        }
+        meanings.reset(); assessmentTask?.cancel(); saveTask?.cancel(); saveTask = nil
+        scenarioReviewTask?.cancel(); scenarioReviewState = nil
+        dataGeneration = UUID()
+        return store.importDb(from: url)
+    }
     func toggleMeaning() {
         store.updatePreferences { $0.meaningVisible.toggle() }
         if store.preferences.meaningVisible { scheduleTranslation() }
@@ -890,6 +919,12 @@ enum ScenarioReviewState: Equatable {
         let meaningLanguage = store.preferences.meaningLanguage
         scenarioReviewTask = Task { [weak self] in
             guard let self else { return }
+            // A dismissed sheet still stores the review (the site below keeps
+            // it "even if the learner already moved on"), but a wholesale
+            // data replacement (the restore swap) must not be written by a
+            // task that predates it — cancellation alone cannot tell the two
+            // apart, the generation can.
+            let generation = self.dataGeneration
             do {
                 guard let module = LanguageRegistry.module(for: snapshot.languageID) else { throw ArchiveError.unsupportedLanguage }
                 // A local avoids reading the MainActor-isolated router inside the @Sendable closure.
@@ -900,6 +935,11 @@ enum ScenarioReviewState: Equatable {
                 }
                 guard let parsed = ScenarioReviewing.parse(result.text) else { throw ScenarioReviewError.notJSON }
                 let review = ScenarioReviewing.validate(parsed, session: snapshot)
+                // The generation guard, not cancellation, decides this write:
+                // a dismissed sheet must still store the review, while a task
+                // that predates the restore swap must never write into the
+                // freshly restored database.
+                guard generation == self.dataGeneration else { return }
                 // Store through the single-writer path even if the learner already moved
                 // on; only the visible state transition stays bound to this session.
                 if var stored = self.store.archive.sessions.first(where: { $0.id == snapshot.id }) {

@@ -189,6 +189,16 @@ final class BackupManagerTests: XCTestCase {
             try BackupManager.readValidatedBackup(from: file, workDirectory: directory,
                                                   openForVerify: BackupManager.openForVerification)
         }
+        // A file that cannot even be opened is not a validation rejection:
+        // the failure propagates raw (the Kotlin mirror's plain exception),
+        // and the store maps it to the generic restore-failed notice.
+        let missing = directory.appendingPathComponent("absent.db")
+        XCTAssertThrowsError(try BackupManager.readValidatedBackup(
+            from: missing, workDirectory: directory,
+            openForVerify: BackupManager.openForVerification)) { error in
+            XCTAssertFalse(error is InvalidBackup,
+                           "an unreadable file is not a validation rejection")
+        }
     }
 
     func testImportRejectsAnOversizedBackup() throws {

@@ -193,6 +193,9 @@ public final class LearningDbStore {
     /// The legacy recovery's passage rule, shared with the runtime
     /// FinalAssessmentQueue's submit guard: the newest user passage that is
     /// long enough to assess and carries no matching assessment yet.
+    /// Keep in sync with that guard — the two are the startup-recovery and
+    /// runtime halves of one rule, and the recovery's ticket/removal branch
+    /// assumes the queue would reach the same passage.
     public static func recoverablePassage(_ session: SessionRecord) -> Passage? {
         guard session.endedAt != nil,
               let passage = session.passages.last(where: { $0.speaker == .user }) else { return nil }

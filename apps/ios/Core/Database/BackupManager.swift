@@ -223,13 +223,14 @@ public enum BackupManager {
      * verifies the bytes as a learning database through a throwaway copy in
      * `workDirectory` (same checks as `exportTo`), and only then hands them
      * back for `installDatabase`. Throws `InvalidBackup` with the typed
-     * `BackupIssue` otherwise — the live database is not even open here.
+     * `BackupIssue` otherwise — the live database is not even open here. A
+     * file that cannot be opened at all is NOT a validation rejection: its
+     * own (platform) error propagates raw, for the caller's generic failure
+     * notice — the Kotlin mirror's plain exception.
      */
     public static func readValidatedBackup(from url: URL, workDirectory: URL,
                                            openForVerify: (URL) throws -> SqlDatabase = BackupManager.openForVerification) throws -> Data {
-        let file: FileHandle
-        do { file = try FileHandle(forReadingFrom: url) }
-        catch { throw InvalidBackup(.empty, cause: error) }
+        let file = try FileHandle(forReadingFrom: url)
         defer { try? file.close() }
         var data = Data()
         while true {

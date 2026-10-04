@@ -44,6 +44,10 @@ public struct FinalAssessmentResult: Sendable {
     deinit { for job in jobs.values { job.request.cancel(); job.timer.cancel() } }
 
     @discardableResult public func submit(_ session: SessionRecord) -> Bool {
+        // Keep in sync with LearningDbStore.recoverablePassage — the two are
+        // the runtime and startup-recovery halves of one rule: the newest
+        // user passage that is long enough to assess and carries no matching
+        // assessment yet.
         guard session.endedAt != nil, jobs[session.id] == nil,
               let passage = session.passages.last(where: { $0.speaker == .user }), passage.text.count >= 3,
               !session.assessments.contains(where: { $0.passageID == passage.id && $0.revisionKey == passage.revisionKey }) else { return false }

@@ -672,7 +672,7 @@ struct SettingsView: View {
         .fileImporter(isPresented: $importingDb, allowedContentTypes: [DatabaseBackupDocument.databaseBackupType]) { result in
             do {
                 let url = try result.get(); let granted = url.startAccessingSecurityScopedResource(); defer { if granted { url.stopAccessingSecurityScopedResource() } }
-                if store.importDb(from: url) {
+                if coordinator.importDb(from: url) {
                     message = "Backup restored: your learning data was replaced with the imported copy."
                 } else {
                     message = store.error ?? "The database backup couldn’t be restored."

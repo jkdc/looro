@@ -468,21 +468,6 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         }
     }
 
-    /// Writes the verified .db backup to `url`. Returns false after a
-    /// refusal or failure — the notice is on `error`.
-    @discardableResult
-    func exportDb(to url: URL) -> Bool {
-        guard let bytes = exportDb() else { return false }
-        do {
-            try bytes.write(to: url, options: [.atomic])
-            return true
-        } catch {
-            print("LearningStore: database export failed — \(error)")
-            self.error = Self.exportFailedNotice
-            return false
-        }
-    }
-
     /**
      * Restores a learning database from `url` (a BackupManager-exported
      * .db). The live database is NEVER destroyed unless validation fully
@@ -525,6 +510,14 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             let bytes = try BackupManager.readValidatedBackup(
                 from: url, workDirectory: databaseURL.deletingLastPathComponent(),
                 openForVerify: BackupManager.openForVerification)
+            // Validation passed — now quiesce the platform queues exactly
+            // like deleteAll's first step (and Android's order: validate,
+            // then drain): firing onSessionInvalidation per current session
+            // cancels the final-assessment queue's pending jobs, so a late
+            // assessment can never land on the freshly restored copy. The
+            // debounced save, the meaning lookups and the scenario review
+            // are the coordinator's half of the quiesce.
+            archive.sessions.forEach { onSessionInvalidation?($0.id) }
             let keep = URL(fileURLWithPath: databaseURL.path + ".preimport")
             let staged = URL(fileURLWithPath: databaseURL.path + ".install-tmp")
             defer { try? FileManager.default.removeItem(at: staged) }
