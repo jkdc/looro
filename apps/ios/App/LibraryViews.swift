@@ -185,10 +185,13 @@ struct WordsView: View {
     private var learner: LearnerState { coordinator.store.learner }
     private var words: [WordState] { learner.words.filter { search.isEmpty || $0.lemma.localizedCaseInsensitiveContains(search) || $0.meaning.localizedCaseInsensitiveContains(search) } }
     private var dueCount: Int { learner.words.filter { $0.dueAt < .now }.count }
-    /// The spaced-recall notebook: saved expressions, most recently seen first
-    /// (mirrors Android's notebookExpressions).
+    /// The spaced-recall notebook: saved expressions, most recently seen first —
+    /// per learning language (the implemented product decision on both
+    /// platforms; the all-languages view was the bug): the language's rows
+    /// plus the legacy NULL-language entries (mirrors Android's
+    /// notebookExpressions).
     private var expressions: [ExpressionState] {
-        (coordinator.store.archive.expressions ?? []).sorted { $0.lastSeen > $1.lastSeen }
+        coordinator.store.notebookExpressions
     }
     var body: some View {
         ScrollView {
