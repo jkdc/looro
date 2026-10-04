@@ -17,6 +17,9 @@ import com.jkdc.app.core.ConversationProvider
 import com.jkdc.app.core.MinuteBalance
 import com.jkdc.app.ui.AccountSheet
 import com.jkdc.app.ui.AppTheme
+import com.jkdc.app.ui.DELETION_SUPPORT_EMAIL
+import com.jkdc.app.ui.DELETION_SUPPORT_MAILTO
+import com.jkdc.app.ui.DELETION_SUPPORT_URL
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test

@@ -68,7 +68,7 @@ checker docstrings and test comment (pins were already correct).
 | Gate | Command | Result |
 |---|---|---|
 | Android unit tests | `./gradlew :app:testDebugUnitTest` (apps/android) | ✅ **632 tests, 0 failures, 0 skipped** (82 suite XML reports), BUILD SUCCESSFUL |
-| Android instrumented sources | `:app:compileUiTestAndroidTestSources` | ❌ 6 pre-existing errors in `AccountSheetTest.kt` (`DELETION_SUPPORT_*` unresolved since the brand-constants commit `08cb1ad`) — reproduced at HEAD `b307d29` without the H edits; not from this change, recorded for the follow-up ledger |
+| Android instrumented sources | `:app:compileUiTestAndroidTestSources` | ✅ BUILD SUCCESSFUL after the H fix round — it had 6 errors (`AccountSheetTest.kt` referenced the `DELETION_SUPPORT_*` constants with no import, broken since `b391e8b`, reproduced at HEAD `b307d29` before the fix; see fix round below) |
 | Python scripts suite | `python3 -m unittest discover -s scripts/tests` | ✅ **132 tests, OK** |
 | Schema checker | `python3 scripts/check_db_schema.py` | ✅ exit 0 — user_version 2, 10 tables, 4 indexes, 1 virtual table, 4 triggers, 1 FK, 4 fixtures, "no issues found" |
 | Schema exporter | `python3 scripts/export_db_schema.py --check` | ✅ exit 0 — both generated sources up to date (22 statements, user_version 2) |
@@ -88,7 +88,7 @@ committed captures; per-phase green suites (109→121→132 Python, 547→632 JV
 | **macOS compile/test gate** — ALL iOS Swift from this change (E+F+G layers, backup, search, and the H export removal) has never been compiled | no macOS host in this round; iOS verified by source parity + `check_cross_platform.py` only |
 | iOS on-device e2e (migration, `.db` backup/restore, search) | needs the macOS build first, then a device run |
 | `archive_health` positive-path emission on device | the honest emission only fires on the cutover path of a managed-origin build |
-| Android instrumented suites (`uiTest` variant) | blocked upstream by the pre-existing `AccountSheetTest` break (see gates run) + needs a device |
+| Android instrumented suites (`uiTest` variant) | sources now compile (break fixed, see fix round); running them still needs a device/emulator run |
 
 ## Known follow-ups (deliberate, recorded — not defects of this change)
 
@@ -105,10 +105,27 @@ committed captures; per-phase green suites (109→121→132 Python, 547→632 JV
 - **Notebook cross-language remove:** the per-language delete leaves
   notebook rows of other languages untouched by design; whether the remove
   should be cross-language is still an open decision.
-- **Pre-existing `AccountSheetTest` break:** the `uiTest` androidTest
-  variant stopped compiling at brand-constants `08cb1ad` (constants moved to
-  `AccountDeletionSupportDialog.kt` are unresolved from the test source
-  set); outside learning-db, listed so it doesn't surprise the next e2e run.
+
+## Fix round (post-close review, 2026-10-04)
+
+One Important + three minors from review, one commit:
+
+- **Attribution corrected (Important):** the androidTest break was first
+  attributed to brand-constants `08cb1ad`; the real origin is `b391e8b`
+  ("refactor(android): brand-free structure"), which put `AccountSheetTest`
+  at its current package referencing the `DELETION_SUPPORT_*` constants with
+  no import (`08cb1ad` only changed two display strings). `b391e8b`'s own
+  message claimed "androidTest compile green (394 tests)" — false.
+- **Break fixed:** the three missing imports
+  (`com.jkdc.app.ui.DELETION_SUPPORT_EMAIL/_MAILTO/_URL`) added to
+  `AccountSheetTest.kt`; `:app:compileUiTestAndroidTestSources` now compiles
+  green (this removes the follow-up that previously sat in this list).
+- **Checker shadow-table wording:** the docstrings still named
+  `fragments_fts_data` (FTS5-only) and `_content` (absent for external-
+  content FTS4); corrected to the real shadows verified against a live
+  schema: `fragments_fts_segments/_segdir/_docsize/_stat`
+  (in `read_inventory`, `is_internal_table`, and the pinned-tables comment).
+- **`tasks.md` H row** now carries its commit hashes like every other phase.
 
 ## Verdict
 

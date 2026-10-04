@@ -192,7 +192,8 @@ REQUIRED_CONSTRAINTS = [
 # external-content sync pattern for it: BEFORE DELETE / BEFORE UPDATE remove
 # the index entry while the content row is still readable, AFTER INSERT /
 # AFTER UPDATE index the new text). The internal FTS4 shadow tables
-# (fragments_fts_content/_segments/_segdir/_docsize/_stat) are SQLite
+# (fragments_fts_segments/_segdir/_docsize/_stat — external content keeps no
+# _content copy) are SQLite
 # internals like sqlite_sequence: the table inventory skips them, so they
 # can drift only by the virtual table itself changing shape. A trigger body
 # that stops keeping the index in sync is caught functionally by the
@@ -280,7 +281,7 @@ def read_inventory(conn):
     (name, table, columns) explicitly-created indexes from a live schema.
 
     Internal tables are skipped: SQLite's own sqlite_* entries and the FTS4
-    shadow tables of every pinned virtual table (fragments_fts_data and
+    shadow tables of every pinned virtual table (fragments_fts_segments and
     friends — implementation details of the FTS4 module, like
     sqlite_sequence). The virtual tables themselves are also skipped here:
     PRAGMA table_info cannot describe their options, so they are pinned
@@ -312,8 +313,8 @@ def read_inventory(conn):
 def is_internal_table(name):
     """True for the internal tables the pinned inventory must not describe:
     sqlite_* internals and the FTS4 shadow tables of the pinned virtual
-    tables (fragments_fts_data / _content / _segments / _segdir / _docsize /
-    _stat)."""
+    tables (fragments_fts_segments / _segdir / _docsize / _stat — external
+    content keeps no _content, and _data would be FTS5-only)."""
     if name.startswith('sqlite_'):
         return True
     return any(name == virtual or name.startswith(virtual + '_')

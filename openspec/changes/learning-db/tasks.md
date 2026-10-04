@@ -31,7 +31,9 @@ marca al cierre de cada fase.
       FTS5→FTS4 en review; e2e de búsqueda en emulador.
 - [x] H Cierre: retirar export JSON v2, limpieza del canal full-archive,
       docs, verify-report honesto + informe.
-      — JSON export retirado de la UI en ambas plataformas (import legacy
+      — 47c2884, cf69ff2 + fix ronda 1 (atribución del break androidTest
+      corregida a b391e8b, import añadido, shadow tables del checker);
+      JSON export retirado de la UI en ambas plataformas (import legacy
       conservado); wording FTS5→FTS4 barrido; verify-report + informe con
       la batería final de la sesión.
 

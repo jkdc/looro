@@ -123,7 +123,12 @@ pins ya eran correctos).
   producción (el plan evoluciona: su retiro se decidirá con datos);
   acoplamiento position-diff de ProgressSync en `mergeRemote`; decisión
   abierta sobre el remove cross-language del notebook.
-- **Descubierto en H, pre-existente**: la variante androidTest `uiTest` no
-  compila desde el pase de branding (`08cb1ad`: `DELETION_SUPPORT_*`
-  no resueltos en `AccountSheetTest`) — fuera de learning-db, anotado para
-  la próxima ronda de e2e instrumental.
+- **Fix ronda 1 (review del cierre)**: corregida la atribución del break
+  androidTest — el origen real es `b391e8b` ("refactor(android): brand-free
+  structure"), que dejó `AccountSheetTest` referenciando las constantes
+  `DELETION_SUPPORT_*` sin import (08cb1ad solo cambió dos strings de
+  pantalla; el mensaje de b391e8b afirmaba falsamente "androidTest compile
+  green"). El break queda ARREGLADO en la misma ronda: los tres imports
+  añadidos y `:app:compileUiTestAndroidTestSources` compila verde. También
+  corregido el wording de shadow tables del checker (las reales, verificadas
+  contra un esquema vivo: `fragments_fts_segments/_segdir/_docsize/_stat`).
