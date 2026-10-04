@@ -13,8 +13,8 @@ class SplitTest(unittest.TestCase):
             export_db_schema.SCHEMA.read_text())
 
     def test_schema_splits_into_pinned_statements(self):
-        # 14 v1 tables/indexes + PRAGMA v1 + the 5 v2 statements + PRAGMA v2
-        self.assertEqual(21, len(self.statements))
+        # 14 v1 tables/indexes + PRAGMA v1 + the 6 v2 statements + PRAGMA v2
+        self.assertEqual(22, len(self.statements))
         self.assertTrue(self.statements[0].startswith('CREATE TABLE meta'))
         self.assertEqual('PRAGMA user_version = 1', self.statements[14])
         self.assertEqual('PRAGMA user_version = 2', self.statements[-1])
@@ -30,9 +30,10 @@ class SplitTest(unittest.TestCase):
                        'CREATE INDEX fragments_session', 'CREATE INDEX expressions_due',
                        'CREATE INDEX completions_lang', 'CREATE INDEX outbox_pending',
                        'CREATE VIRTUAL TABLE fragments_fts',
-                       'CREATE TRIGGER fragments_fts_insert',
-                       'CREATE TRIGGER fragments_fts_delete',
-                       'CREATE TRIGGER fragments_fts_update',
+                       'CREATE TRIGGER fragments_fts_after_insert',
+                       'CREATE TRIGGER fragments_fts_after_update',
+                       'CREATE TRIGGER fragments_fts_before_delete',
+                       'CREATE TRIGGER fragments_fts_before_update',
                        "INSERT INTO fragments_fts(fragments_fts) VALUES('rebuild')"):
             self.assertIn(needle, joined)
 
@@ -42,17 +43,13 @@ class SplitTest(unittest.TestCase):
                 continue
             self.assertTrue(statement.rstrip().endswith('END'), statement)
             self.assertEqual(1, statement.count('END'), statement)
-        update = next(s for s in self.statements
-                      if s.startswith('CREATE TRIGGER fragments_fts_update'))
-        # the update body holds BOTH the unindex and the reindex statements
-        self.assertEqual(2, update.count('INSERT INTO fragments_fts'))
 
     def test_version_deltas_split_at_the_pragmas(self):
         deltas = export_db_schema.version_deltas(self.statements)
         self.assertEqual([2], sorted(deltas))
-        self.assertEqual(5, len(deltas[2]))
+        self.assertEqual(6, len(deltas[2]))
         self.assertTrue(deltas[2][0].startswith('CREATE VIRTUAL TABLE fragments_fts'))
-        self.assertEqual(3, sum(1 for s in deltas[2] if s.startswith('CREATE TRIGGER')))
+        self.assertEqual(4, sum(1 for s in deltas[2] if s.startswith('CREATE TRIGGER')))
         self.assertTrue(deltas[2][-1].startswith("INSERT INTO fragments_fts"))
         # neither the v1 nor the v2 PRAGMA rides along: openers set it themselves
         self.assertEqual([], [s for s in deltas[2] if s.startswith('PRAGMA')])

@@ -288,52 +288,56 @@ class LearningDbDaoTest {
         assertEquals(0, SearchDao.search(db, "de", "es", limit = 0).size)
         // prefix search: "reser" finds "reservar"
         assertEquals(1, SearchDao.search(db, "reser", "es").size)
-        // FTS5 operator characters cannot throw or widen the match: every
-        // token is quoted, so parentheses and the NEAR keyword stay inert
+        // FTS4 operator characters cannot throw or widen the match: the
+        // sanitizer strips them, and a trailing star defuses the keywords
         assertEquals(0, SearchDao.search(db, "\"", "es").size)
         assertEquals(0, SearchDao.search(db, "  ", "es").size)
         assertEquals(0, SearchDao.search(db, "NEAR", "es").size)
         assertEquals(1, SearchDao.search(db, "\"(reservar)\"", "es").size)
+        // the OR keyword is defused (terms AND together; no fragment holds both)
+        assertEquals(0, SearchDao.search(db, "mesa OR fibra", "es").size)
         // case- and accent-insensitive (unicode61 diacrits off by default)
         assertEquals(1, SearchDao.search(db, "RESERVÁR", "es").size)
     }
 
-    @Test fun searchMatchQueryQuotesEveryTokenAsAPrefixTerm() {
-        assertEquals("\"qué\"* \"tal\"*", SearchDao.matchQuery("qué tal"))
-        assertEquals("\"HO?\"*", SearchDao.matchQuery("  \"HO?\" "))
+    @Test fun searchMatchQueryEmitsBarePrefixTermsOnly() {
+        assertEquals("qué* tal*", SearchDao.matchQuery("qué tal"))
+        assertEquals("HO*", SearchDao.matchQuery("  \"HO?\" "))
         assertEquals("", SearchDao.matchQuery("  \"\"  "))
+        // a term with the trailing star can never parse as a live FTS4 keyword
+        assertEquals("NEAR* OR* NOT* AND*", SearchDao.matchQuery("NEAR OR NOT AND"))
     }
 
     // -- archive_health heartbeat ---------------------------------------------
 
-    @Test fun archiveHealthRecordsOncePerCadenceIntoTheDurableOutbox() {
+    @Test fun archiveHealthClaimsTheDailySlotAndNeverTouchesTheDurableOutbox() {
         val start = 1_700_000_000_000L
-        // first launch: no meta row yet -> records, with the bucketed props
-        assertTrue(ArchiveHealth.recordIfDue(db, start, dbBytes = 5 * 1024 * 1024, sessionCount = 7))
-        val pending = UsageOutboxDao.pending(db)
-        assertEquals(1, pending.size)
-        val event = pending.single().event
-        assertEquals(UsageEvents.ARCHIVE_HEALTH, event.name)
-        assertEquals(start, event.at)
+        // first launch: no meta row yet -> the claim returns the bucketed props
+        // the caller records through its UsageReporter
+        val props = ArchiveHealth.claimIfDue(db, start, dbBytes = 5 * 1024 * 1024,
+            sessionCount = 7)!!
         assertEquals(buildJsonObject {
             put("dbBytesBucket", "1-10mb")
             put("sessionsBucket", "1-10")
-        }, event.props)
+        }, props)
         assertEquals(start.toString(), MetaDao.get(db, ArchiveHealth.LAST_HEALTH_AT_KEY))
-        // inside the 24h cadence: a no-op, and nothing new lands
-        assertFalse(ArchiveHealth.recordIfDue(db, start + ArchiveHealth.CADENCE_MILLISECONDS - 1,
+        // the durable outbox has no drain yet, so the heartbeat never lands there
+        assertEquals(0L, count("usage_outbox"))
+        // inside the 24h cadence: no claim, no new marker
+        assertNull(ArchiveHealth.claimIfDue(db, start + ArchiveHealth.CADENCE_MILLISECONDS - 1,
             dbBytes = 5 * 1024 * 1024, sessionCount = 7))
-        assertEquals(1, UsageOutboxDao.pending(db).size)
-        // past the cadence: records again and moves the marker
+        assertEquals(start.toString(), MetaDao.get(db, ArchiveHealth.LAST_HEALTH_AT_KEY))
+        // past the cadence: claims again and moves the marker
         val next = start + ArchiveHealth.CADENCE_MILLISECONDS
-        assertTrue(ArchiveHealth.recordIfDue(db, next, dbBytes = 250 * 1024 * 1024, sessionCount = 500))
-        val second = UsageOutboxDao.pending(db).last().event
+        val second = ArchiveHealth.claimIfDue(db, next, dbBytes = 250 * 1024 * 1024,
+            sessionCount = 500)!!
         assertEquals(buildJsonObject {
             put("dbBytesBucket", ">=100mb")
             put("sessionsBucket", ">200")
-        }, second.props)
+        }, second)
         assertEquals(next.toString(), MetaDao.get(db, ArchiveHealth.LAST_HEALTH_AT_KEY))
-        // an unknown name can never sneak into the queue: the event is in the catalog
+        assertEquals(0L, count("usage_outbox"))
+        // the event is in the closed catalog
         assertTrue(UsageEvents.ARCHIVE_HEALTH in UsageEvents.all)
     }
 

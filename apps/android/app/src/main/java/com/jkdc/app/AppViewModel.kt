@@ -749,15 +749,30 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 usageReporter.enabled = archive.preferences.usageMetricsEnabled != false && usageClient != null
                 usageReporter.record(UsageEvents.APP_OPEN)
                 viewModelScope.launch { usageReporter.flush() }
-                // The daily archive_health heartbeat rides the durable usage_outbox
-                // through the write channel, so it survives a failed flush with the
-                // rest of the queue; cadence and opt-out below.
-                if (usageReporter.enabled) {
-                    val dbFile = getApplication<Application>().getDatabasePath(LearningDb.NAME)
+                // The daily archive_health heartbeat: claim the 24h slot (meta
+                // 'last_health_at') and record the event through the in-memory
+                // reporter — the only queue anything actually uploads. The
+                // durable usage_outbox is deliberately NOT touched: nothing
+                // drains it yet. A crash just delays the next heartbeat.
+                if (usageReporter.enabled && !jsonMode) {
+                    val database = store!!.db
                     val sessionCount = archive.sessions.size
-                    persist { db ->
-                        ArchiveHealth.recordIfDue(db, System.currentTimeMillis(),
-                            dbFile.length(), sessionCount)
+                    viewModelScope.launch {
+                        val props = withContext(Dispatchers.IO) {
+                            val dbFile = getApplication<Application>().getDatabasePath(LearningDb.NAME)
+                            // the un-checkpointed -wal rides along: the sample
+                            // feeds a coarse bucket, and an undersized reading
+                            // would hide real growth
+                            val bytes = dbFile.length() + File(dbFile.path + "-wal").length()
+                            ArchiveHealth.claimIfDue(database, System.currentTimeMillis(),
+                                bytes, sessionCount)
+                        }
+                        if (props != null) {
+                            usageReporter.record(UsageEvents.ARCHIVE_HEALTH) {
+                                props.forEach { (key, value) -> put(key, value) }
+                            }
+                            viewModelScope.launch { usageReporter.flush() }
+                        }
                     }
                 }
                 syncProgress()

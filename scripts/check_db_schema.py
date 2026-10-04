@@ -187,23 +187,28 @@ REQUIRED_CONSTRAINTS = [
 # stored CREATE must contain every pinned substring (verbatim: SQLite keeps
 # the original spelling).
 #
-# The four internal FTS5 shadow tables (fragments_fts_data, _idx, _docsize,
-# _config — an external-content table keeps no _content of its own) are
-# SQLite internals like sqlite_sequence: the table inventory skips them, so
-# they can drift only by the virtual table itself changing shape. A trigger
-# body that stops keeping the index in sync is caught functionally by the
+# FTS4 — not FTS5 — because Android's framework SQLite enables the
+# FTS3/FTS4 module only (the four triggers implement the documented
+# external-content sync pattern for it: BEFORE DELETE / BEFORE UPDATE remove
+# the index entry while the content row is still readable, AFTER INSERT /
+# AFTER UPDATE index the new text). The internal FTS4 shadow tables
+# (fragments_fts_content/_segments/_segdir/_docsize/_stat) are SQLite
+# internals like sqlite_sequence: the table inventory skips them, so they
+# can drift only by the virtual table itself changing shape. A trigger body
+# that stops keeping the index in sync is caught functionally by the
 # exporter's smoke test and the app-side search tests; here the trigger must
 # exist, target fragments, and carry its event.
 
 VIRTUAL_TABLES = {
-    'fragments_fts': ('CREATE VIRTUAL TABLE', 'USING fts5',
-                      "content='fragments'", "content_rowid='rowid'"),
+    'fragments_fts': ('CREATE VIRTUAL TABLE', 'USING fts4',
+                      "content='fragments'", "tokenize='unicode61'"),
 }
 
 TRIGGERS = {
-    'fragments_fts_insert': ('fragments', 'AFTER INSERT'),
-    'fragments_fts_delete': ('fragments', 'AFTER DELETE'),
-    'fragments_fts_update': ('fragments', 'AFTER UPDATE OF text'),
+    'fragments_fts_after_insert': ('fragments', 'AFTER INSERT'),
+    'fragments_fts_after_update': ('fragments', 'AFTER UPDATE OF text'),
+    'fragments_fts_before_delete': ('fragments', 'BEFORE DELETE'),
+    'fragments_fts_before_update': ('fragments', 'BEFORE UPDATE OF text'),
 }
 
 # ---------------------------------------------------------------------------

@@ -25,11 +25,10 @@ final class LearningDatabaseTests: XCTestCase {
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
             .map { $0.text("name") }
         // fragments_fts is the pinned v2 virtual table; fragments_fts_* are its
-        // FTS5 shadow tables (SQLite internals, like sqlite_sequence — an
-        // external-content table keeps no _content of its own).
+        // FTS4 shadow tables (SQLite internals, like sqlite_sequence).
         XCTAssertEqual(["assessment_tickets", "completions", "expressions", "fragments",
-                        "fragments_fts", "fragments_fts_config", "fragments_fts_data",
-                        "fragments_fts_docsize", "fragments_fts_idx",
+                        "fragments_fts", "fragments_fts_docsize", "fragments_fts_segdir",
+                        "fragments_fts_segments", "fragments_fts_stat",
                         "lesson_state", "meta", "preferences", "sessions", "skill_errors",
                         "usage_outbox"],
                        tables)
@@ -37,9 +36,16 @@ final class LearningDatabaseTests: XCTestCase {
                        "words must never be stored; hidden words live in preferences")
         let virtual = try db.query(
             "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'fragments_fts'").first!
-        XCTAssertTrue(virtual.text("sql").contains("USING fts5"))
+        // FTS4 — not FTS5 — because Android's framework SQLite enables the
+        // FTS3/FTS4 module only (GRDB's bundled SQLite ships both, so this
+        // assertion is what keeps a future edit from regressing to FTS5).
+        XCTAssertTrue(virtual.text("sql").contains("USING fts4"))
         XCTAssertTrue(virtual.text("sql").contains("content='fragments'"))
-        XCTAssertEqual(["fragments_fts_delete", "fragments_fts_insert", "fragments_fts_update"],
+        XCTAssertTrue(virtual.text("sql").contains("tokenize='unicode61'"))
+        XCTAssertFalse(virtual.text("sql").contains("fts5"),
+                       "FTS5 does not exist in the Android framework build")
+        XCTAssertEqual(["fragments_fts_after_insert", "fragments_fts_after_update",
+                        "fragments_fts_before_delete", "fragments_fts_before_update"],
                        try db.query("SELECT name FROM sqlite_master WHERE type = 'trigger' ORDER BY name")
                            .map { $0.text("name") })
     }

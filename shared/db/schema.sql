@@ -7,11 +7,11 @@
 --   v1  Initial frozen schema: ten tables (meta, preferences, sessions,
 --       fragments, expressions, lesson_state, completions, skill_errors,
 --       usage_outbox, assessment_tickets), one foreign key, four indexes.
---   v2  Full-text search over conversation transcripts: the FTS5
---       external-content virtual table fragments_fts (content = fragments)
---       plus the three triggers that keep it in sync, and a one-time
---       'rebuild' that indexes every fragment a v1 database already held.
---       No existing table or column changed.
+--   v2  Full-text search over conversation transcripts: the FTS4
+--       external-content virtual table fragments_fts (content = fragments,
+--       unicode61 tokenizer) plus the four triggers that keep it in sync,
+--       and a one-time 'rebuild' that indexes every fragment a v1 database
+--       already held. No existing table or column changed.
 --
 -- Fresh databases run every statement below in order and end at
 -- PRAGMA user_version = 2. Openers upgrade an existing database by applying
@@ -25,7 +25,9 @@
 -- (FinalAssessmentTicket).
 --
 -- This file must execute VERBATIM on a fresh database from both platforms:
---   - Android: AndroidX SQLite (API 26+ ships SQLite 3.18, FTS5 available)
+--   - Android: AndroidX SQLite (API 26+ ships SQLite 3.18; the framework
+--     build enables the FTS3/FTS4 module with the unicode61 tokenizer — FTS5
+--     is NOT in the framework build, which is why v2 uses fts4)
 --   - iOS: GRDB
 -- Therefore it uses only portable SQL: no STRICT tables, no generated
 -- columns, no RETURNING, no WITHOUT ROWID. Openers run it once when
@@ -249,35 +251,48 @@ PRAGMA user_version = 1;
 -- v2 — full-text search over conversation transcripts
 -- ===========================================================================
 --
--- fragments_fts is an EXTERNAL-CONTENT FTS5 index over fragments.text: it
+-- fragments_fts is an EXTERNAL-CONTENT FTS4 index over fragments.text: it
 -- stores only the inverted index (the text itself stays in fragments), so
--- it adds no duplicate content and must be kept in sync by the three
--- triggers below — exactly the "external content table" pattern from the
--- SQLite FTS5 documentation. The upgrade path (a database already at
--- user_version 1) applies exactly this block: the CREATE VIRTUAL TABLE,
--- the three triggers, and the one-time 'rebuild' command that indexes
--- every fragment the database already held. Fresh installs run the same
--- statements (the 'rebuild' is a no-op on an empty fragments table).
+-- it adds no duplicate content. FTS4 — not FTS5 — is the portable choice:
+-- Android's framework SQLite enables the FTS3/FTS4 module only (one module;
+-- `fts4` is its current name), so FTS5 does not exist on device and every
+-- install would fail to open. The module ships everywhere else the schema
+-- must run: iOS (GRDB's bundled SQLite), sqlite-jdbc (the Android JVM-test
+-- backend) and CPython (the checker). The unicode61 tokenizer keeps
+-- searching case- and accent-insensitive.
+--
+-- External-content FTS4 cannot keep itself in sync, and it reads the
+-- ORIGINAL text from the content table while unindexing — which is why the
+-- documented sync pattern is FOUR triggers: the BEFORE DELETE / BEFORE
+-- UPDATE triggers remove the index entry while the content row is still
+-- readable, and the AFTER INSERT / AFTER UPDATE triggers index the new
+-- text. (FTS5's single-'delete'-command trigger pattern does not exist
+-- here.) The upgrade path (a database already at user_version 1) applies
+-- exactly this block: the CREATE VIRTUAL TABLE, the four triggers, and the
+-- one-time 'rebuild' command that indexes every fragment the database
+-- already held. Fresh installs run the same statements (the 'rebuild' is a
+-- no-op on an empty fragments table).
 
-CREATE VIRTUAL TABLE fragments_fts USING fts5(
+CREATE VIRTUAL TABLE fragments_fts USING fts4(
     text,
     content='fragments',
-    content_rowid='rowid'
+    tokenize='unicode61'
 );
 
-CREATE TRIGGER fragments_fts_insert AFTER INSERT ON fragments BEGIN
-    INSERT INTO fragments_fts(rowid, text) VALUES (new.rowid, new.text);
+CREATE TRIGGER fragments_fts_after_insert AFTER INSERT ON fragments BEGIN
+    INSERT INTO fragments_fts(docid, text) VALUES (new.rowid, new.text);
 END;
 
-CREATE TRIGGER fragments_fts_delete AFTER DELETE ON fragments BEGIN
-    INSERT INTO fragments_fts(fragments_fts, rowid, text)
-        VALUES ('delete', old.rowid, old.text);
+CREATE TRIGGER fragments_fts_before_delete BEFORE DELETE ON fragments BEGIN
+    DELETE FROM fragments_fts WHERE docid = old.rowid;
 END;
 
-CREATE TRIGGER fragments_fts_update AFTER UPDATE OF text ON fragments BEGIN
-    INSERT INTO fragments_fts(fragments_fts, rowid, text)
-        VALUES ('delete', old.rowid, old.text);
-    INSERT INTO fragments_fts(rowid, text) VALUES (new.rowid, new.text);
+CREATE TRIGGER fragments_fts_before_update BEFORE UPDATE OF text ON fragments BEGIN
+    DELETE FROM fragments_fts WHERE docid = old.rowid;
+END;
+
+CREATE TRIGGER fragments_fts_after_update AFTER UPDATE OF text ON fragments BEGIN
+    INSERT INTO fragments_fts(docid, text) VALUES (new.rowid, new.text);
 END;
 
 -- One-time index fill: 'rebuild' re-reads every fragments row through the

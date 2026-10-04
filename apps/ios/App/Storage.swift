@@ -133,22 +133,28 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         return (attributes?[.size] as? Int64) ?? 0
     }
 
-    /// The daily archive_health heartbeat's gate (the cadence marker lives in
-    /// meta): returns true exactly when the caller should now enqueue the
-    /// event — no marker yet, or the last one older than
-    /// `ArchiveHealth.cadenceMilliseconds` — and stamps the marker so later
-    /// callers in the same window skip. JSON fail-safe mode has no database
-    /// to serve from, so the heartbeat never fires there.
-    func beginArchiveHealthIfDue(
-        nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)) -> Bool {
-        guard !dbStore.jsonMode else { return false }
+    /// The daily archive_health heartbeat's gate: returns the bucketed props
+    /// to record through the usage reporter exactly when the meta
+    /// 'last_health_at' marker is missing or older than
+    /// `ArchiveHealth.cadenceMilliseconds` (the marker is stamped here — the
+    /// one durable write, a single meta row, no transaction needed — so a
+    /// crash just delays the next heartbeat to the next due window). The
+    /// event itself must NOT go into the durable usage_outbox: nothing drains
+    /// that queue yet, so rows would grow forever. JSON fail-safe mode has no
+    /// database to serve from, so the heartbeat never fires there.
+    func claimArchiveHealth(
+        nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)
+    ) -> [String: UsageProp]? {
+        guard !dbStore.jsonMode else { return nil }
         do {
-            return try ArchiveHealthDao.recordIfDue(
+            // GRDB opens the learning database in rollback-journal mode, so
+            // the main file is the whole size story (Android adds -wal).
+            return try ArchiveHealthDao.claimIfDue(
                 dbStore.db, nowUnixMilliseconds: nowUnixMilliseconds,
                 dbBytes: databaseByteCount, sessionCount: archive.sessions.count)
         } catch {
             print("LearningStore: archive_health gate failed — \(error)")
-            return false
+            return nil
         }
     }
     private static func learningDatabaseURL() throws -> URL {

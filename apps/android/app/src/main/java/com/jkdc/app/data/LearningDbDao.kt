@@ -630,16 +630,20 @@ object MetaDao {
 data class SearchHit(val session: SessionRecord, val snippet: String)
 
 /**
- * Full-text conversation search over the fragments FTS index (schema v2).
- * MATCH resolves rowids in fragments_fts, the JOIN walks back to the
- * fragment's session, the language filter rides the session (a fragment has
- * no language of its own), and results order newest-conversation-first with
- * [limit] capping SESSIONS, not fragment matches: rows come back one per
- * matching fragment (snippet() must ride the plain MATCH query — SQLite
- * refuses it under a GROUP BY) and this DAO collapses each session to its
- * first matching fragment in transcript order. The query is a plain user
- * string: every whitespace-separated token becomes a quoted prefix term, so
- * FTS5 syntax characters in the input can neither throw nor widen the match.
+ * Full-text conversation search over the fragments FTS index (schema v2,
+ * the FTS4 external-content table). MATCH resolves docids in fragments_fts
+ * (an external-content FTS4 table's rowid IS the content row's rowid), the
+ * JOIN walks back to the fragment's session, the language filter rides the
+ * session (a fragment has no language of its own), and results order
+ * newest-conversation-first with [limit] capping SESSIONS, not fragment
+ * matches: rows come back one per matching fragment (snippet() must ride the
+ * plain MATCH query — SQLite refuses it under a GROUP BY) and this DAO
+ * collapses each session to its first matching fragment in transcript order.
+ * snippet() is FTS4's six-argument form (table, start, end, ellipsis,
+ * column, tokens); it reads the original text through the content option.
+ * The query is a plain user string, sanitized into bare prefix terms (see
+ * [matchQuery]) so FTS4 syntax characters can neither throw nor widen the
+ * match.
  */
 object SearchDao {
     const val SNIPPET_START = "«"
@@ -654,7 +658,7 @@ object SearchDao {
         val hits = mutableListOf<SearchHit>()
         val seen = HashSet<String>()
         for (row in db.query(
-            "SELECT s.*, snippet(fragments_fts, 0, ?, ?, ?, 16) AS fts_snippet " +
+            "SELECT s.*, snippet(fragments_fts, ?, ?, ?, 0, 16) AS fts_snippet " +
                 "FROM fragments_fts " +
                 "JOIN fragments ON fragments.rowid = fragments_fts.rowid " +
                 "JOIN sessions s ON s.id = fragments.session_id " +
@@ -672,40 +676,49 @@ object SearchDao {
         return hits
     }
 
-    /** "qué tal HO?" → "\"qué\"* \"tal\"* \"HO?\"*" — quoted prefix terms
-        only: no raw FTS5 operator from the user ever reaches MATCH, and a
-        blank (or only-blank) query searches nothing. */
+    /** "qué tal HO?" → "qué* tal* HO*" — one BARE prefix term per token:
+        FTS4 has no escaped quoting (a quoted phrase matches whole tokens
+        only — the prefix star is ignored inside quotes), and a term that
+        carries the trailing star can never parse as the NEAR/OR/AND/NOT
+        keywords, while the operator symbols ( ) : ^ - are stripped outright.
+        A blank (or only-blank) query searches nothing. */
     internal fun matchQuery(query: String): String =
         query.split(Regex("\\s+"))
-            .mapNotNull { token -> token.replace("\"", "").takeIf { it.isNotBlank() } }
-            .joinToString(" ") { token -> "\"$token\"*" }
+            .mapNotNull { token ->
+                token.filter { it.isLetterOrDigit() }.takeIf { it.isNotEmpty() }
+            }
+            .joinToString(" ") { token -> "$token*" }
 }
 
 /**
  * The archive_health usage event: one coarse, content-free heartbeat per
- * install per day (its props are [UsageBuckets.dbBytes]/[UsageBuckets.sessions]
- * bucket strings — never exact sizes or counts), recorded at startup into the
- * DURABLE usage_outbox through the write channel, so it survives a failed
- * flush alongside every other queued event. The 24h cadence keys off the
- * meta 'last_health_at' row (unix milliseconds as TEXT, the caller's clock);
- * the metrics-enabled choice stays the caller's (it has the live preferences).
+ * install per day (the returned props are [UsageBuckets.dbBytes]/
+ * [UsageBuckets.sessions] bucket strings — never exact sizes or counts).
+ * The event itself rides the app's in-memory UsageReporter — the only queue
+ * anything actually drains and uploads — so the durable usage_outbox is NOT
+ * touched here: writing it there would grow forever (it has no consumer
+ * yet). The 24h cadence keys off the meta 'last_health_at' row (unix
+ * milliseconds as TEXT); the metrics-enabled choice stays the caller's.
  */
 object ArchiveHealth {
     const val LAST_HEALTH_AT_KEY = "last_health_at"
     const val CADENCE_MILLISECONDS: Long = 24 * 60 * 60_000L
 
-    /** Enqueues the event and stamps the cadence marker when the last one is
-        missing or older than [CADENCE_MILLISECONDS]; returns whether it ran. */
-    fun recordIfDue(db: SqlDatabase, nowUnixMillis: Long, dbBytes: Long,
-                    sessionCount: Int): Boolean {
+    /** Claims the daily slot: when the last marker is missing or older than
+        [CADENCE_MILLISECONDS], stamps the marker and returns the bucketed
+        props for the caller to record through its UsageReporter; otherwise
+        returns null. A crash after the claim simply delays the next
+        heartbeat to the next due window — acceptable for a heartbeat. The
+        ONLY durable write is that single meta row (a put), atomic on its
+        own — no transaction required. */
+    fun claimIfDue(db: SqlDatabase, nowUnixMillis: Long, dbBytes: Long,
+                   sessionCount: Int): JsonObject? {
         val last = MetaDao.get(db, LAST_HEALTH_AT_KEY)?.toLongOrNull()
-        if (last != null && nowUnixMillis - last < CADENCE_MILLISECONDS) return false
-        UsageOutboxDao.enqueue(db, UsageEvents.ARCHIVE_HEALTH, nowUnixMillis,
-            buildJsonObject {
-                put("dbBytesBucket", UsageBuckets.dbBytes(dbBytes))
-                put("sessionsBucket", UsageBuckets.sessions(sessionCount))
-            })
+        if (last != null && nowUnixMillis - last < CADENCE_MILLISECONDS) return null
         MetaDao.put(db, LAST_HEALTH_AT_KEY, nowUnixMillis.toString())
-        return true
+        return buildJsonObject {
+            put("dbBytesBucket", UsageBuckets.dbBytes(dbBytes))
+            put("sessionsBucket", UsageBuckets.sessions(sessionCount))
+        }
     }
 }

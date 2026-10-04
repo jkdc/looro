@@ -395,44 +395,45 @@ final class LearningDatabaseDaoTests: XCTestCase {
         XCTAssertEqual(0, try SearchDao.search(db, "de", languageID: "es", limit: 0).count)
         // prefix search
         XCTAssertEqual(1, try SearchDao.search(db, "reser", languageID: "es").count)
-        // FTS5 operator characters cannot throw or widen the match: every
-        // token is quoted, so parentheses and the NEAR keyword stay inert
+        // FTS4 operator characters cannot throw or widen the match: the
+        // sanitizer strips them, and a trailing star defuses the keywords
         XCTAssertEqual(0, try SearchDao.search(db, "\"", languageID: "es").count)
         XCTAssertEqual(0, try SearchDao.search(db, "  ", languageID: "es").count)
         XCTAssertEqual(0, try SearchDao.search(db, "NEAR", languageID: "es").count)
         XCTAssertEqual(1, try SearchDao.search(db, "\"(reservar)\"", languageID: "es").count)
+        // the OR keyword is defused (terms AND together; no fragment holds both)
+        XCTAssertEqual(0, try SearchDao.search(db, "mesa OR fibra", languageID: "es").count)
         // the sanitizer's shape
-        XCTAssertEqual("\"qué\"* \"tal\"* \"HO?\"*", SearchDao.matchQuery("qué tal \"HO?\""))
+        XCTAssertEqual("qué* tal* HO*", SearchDao.matchQuery("qué tal \"HO?\""))
         XCTAssertEqual("", SearchDao.matchQuery("  \"\"  "))
     }
 
     // MARK: archive_health heartbeat
 
-    func testArchiveHealthRecordsOncePerCadenceIntoTheDurableOutbox() throws {
+    func testArchiveHealthClaimsTheDailySlotAndNeverTouchesTheDurableOutbox() throws {
         let start: Int64 = 1_700_000_000_000
-        // first launch: no meta row yet -> records, with the bucketed props
-        XCTAssertTrue(try ArchiveHealthDao.recordIfDue(db, nowUnixMilliseconds: start,
-                                                       dbBytes: 5 << 20, sessionCount: 7))
-        var pending = try UsageOutboxDao.pending(db)
-        XCTAssertEqual(1, pending.count)
-        XCTAssertEqual(UsageEvents.archiveHealth, pending[0].event.name)
-        XCTAssertEqual(start, pending[0].event.at)
-        XCTAssertEqual("1-10mb", stringProp(pending[0].event.props, "dbBytesBucket"))
-        XCTAssertEqual("1-10", stringProp(pending[0].event.props, "sessionsBucket"))
+        // first launch: no meta row yet -> the claim returns the bucketed props
+        // the caller records through its UsageReporter
+        let props = try ArchiveHealthDao.claimIfDue(db, nowUnixMilliseconds: start,
+                                                    dbBytes: 5 << 20, sessionCount: 7)!
+        XCTAssertEqual("1-10mb", stringProp(props, "dbBytesBucket"))
+        XCTAssertEqual("1-10", stringProp(props, "sessionsBucket"))
         XCTAssertEqual(String(start), try MetaDao.get(db, ArchiveHealth.lastHealthAtKey))
-        // inside the 24h cadence: a no-op, and nothing new lands
-        XCTAssertFalse(try ArchiveHealthDao.recordIfDue(
+        // the durable outbox has no drain yet, so the heartbeat never lands there
+        XCTAssertEqual(Int64(0), try count("usage_outbox"))
+        // inside the 24h cadence: no claim, no new marker
+        XCTAssertNil(try ArchiveHealthDao.claimIfDue(
             db, nowUnixMilliseconds: start + ArchiveHealth.cadenceMilliseconds - 1,
             dbBytes: 5 << 20, sessionCount: 7))
-        XCTAssertEqual(1, try UsageOutboxDao.pending(db).count)
-        // past the cadence: records again and moves the marker
+        XCTAssertEqual(String(start), try MetaDao.get(db, ArchiveHealth.lastHealthAtKey))
+        // past the cadence: claims again and moves the marker
         let next = start + ArchiveHealth.cadenceMilliseconds
-        XCTAssertTrue(try ArchiveHealthDao.recordIfDue(db, nowUnixMilliseconds: next,
-                                                       dbBytes: 250 << 20, sessionCount: 500))
-        pending = try UsageOutboxDao.pending(db)
-        XCTAssertEqual(">=100mb", stringProp(pending[1].event.props, "dbBytesBucket"))
-        XCTAssertEqual(">200", stringProp(pending[1].event.props, "sessionsBucket"))
+        let second = try ArchiveHealthDao.claimIfDue(db, nowUnixMilliseconds: next,
+                                                     dbBytes: 250 << 20, sessionCount: 500)!
+        XCTAssertEqual(">=100mb", stringProp(second, "dbBytesBucket"))
+        XCTAssertEqual(">200", stringProp(second, "sessionsBucket"))
         XCTAssertEqual(String(next), try MetaDao.get(db, ArchiveHealth.lastHealthAtKey))
+        XCTAssertEqual(Int64(0), try count("usage_outbox"))
         // the event is in the closed catalog, and the cadence boundaries hold
         XCTAssertTrue(UsageEvents.all.contains(UsageEvents.archiveHealth))
         XCTAssertTrue(ArchiveHealth.isDue(lastAtMilliseconds: nil, nowMilliseconds: start))

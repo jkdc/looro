@@ -761,17 +761,20 @@ public struct SearchHit {
     public let snippet: String
 }
 
-/// Full-text conversation search over the fragments FTS index (schema v2) —
-/// the Swift mirror of the Kotlin `SearchDao`. MATCH resolves rowids in
-/// fragments_fts, the JOIN walks back to the fragment's session, the language
-/// filter rides the session (a fragment has no language of its own), and
-/// results order newest-conversation-first with `limit` capping SESSIONS,
-/// not fragment matches: rows come back one per matching fragment (snippet()
-/// must ride the plain MATCH query — SQLite refuses it under a GROUP BY) and
-/// this DAO collapses each session to its first matching fragment in
-/// transcript order. The query is a plain user string: every
-/// whitespace-separated token becomes a quoted prefix term, so FTS5 syntax
-/// characters in the input can neither throw nor widen the match.
+/// Full-text conversation search over the fragments FTS index (schema v2,
+/// the FTS4 external-content table) — the Swift mirror of the Kotlin
+/// `SearchDao`. MATCH resolves docids in fragments_fts (an external-content
+/// FTS4 table's rowid IS the content row's rowid), the JOIN walks back to the
+/// fragment's session, the language filter rides the session (a fragment has
+/// no language of its own), and results order newest-conversation-first with
+/// `limit` capping SESSIONS, not fragment matches: rows come back one per
+/// matching fragment (snippet() must ride the plain MATCH query — SQLite
+/// refuses it under a GROUP BY) and this DAO collapses each session to its
+/// first matching fragment in transcript order. snippet() is FTS4's
+/// six-argument form (table, start, end, ellipsis, column, tokens); it reads
+/// the original text through the content option. The query is a plain user
+/// string, sanitized into bare prefix terms (see `matchQuery`) so FTS4
+/// syntax characters can neither throw nor widen the match.
 public enum SearchDao {
     public static let snippetStart = "«"
     public static let snippetEnd = "»"
@@ -785,7 +788,7 @@ public enum SearchDao {
         var hits: [SearchHit] = []
         var seen = Set<String>()
         for row in try db.query(
-            "SELECT s.*, snippet(fragments_fts, 0, ?, ?, ?, 16) AS fts_snippet "
+            "SELECT s.*, snippet(fragments_fts, ?, ?, ?, 0, 16) AS fts_snippet "
                 + "FROM fragments_fts "
                 + "JOIN fragments ON fragments.rowid = fragments_fts.rowid "
                 + "JOIN sessions s ON s.id = fragments.session_id "
@@ -803,16 +806,19 @@ public enum SearchDao {
         return hits
     }
 
-    /// "qué tal HO?" → "\"qué\"* \"tal\"* \"HO?\"*" — quoted prefix terms
-    /// only: no raw FTS5 operator from the user ever reaches MATCH, and a
-    /// blank (or only-blank) query searches nothing.
+    /// "qué tal HO?" → "qué* tal* HO*" — one BARE prefix term per token:
+    /// FTS4 has no escaped quoting (a quoted phrase matches whole tokens
+    /// only — the prefix star is ignored inside quotes), and a term that
+    /// carries the trailing star can never parse as the NEAR/OR/AND/NOT
+    /// keywords, while the operator symbols ( ) : ^ - are stripped outright.
+    /// A blank (or only-blank) query searches nothing.
     static func matchQuery(_ query: String) -> String {
         return query.split(whereSeparator: \.isWhitespace)
             .compactMap { token -> String? in
-                let cleaned = String(token).replacingOccurrences(of: "\"", with: "")
+                let cleaned = String(token).filter { $0.isLetter || $0.isNumber }
                 return cleaned.isEmpty ? nil : cleaned
             }
-            .map { "\"\($0)\"*" }
+            .map { "\($0)*" }
             .joined(separator: " ")
     }
 }
@@ -820,24 +826,30 @@ public enum SearchDao {
 // MARK: ArchiveHealthDao
 
 /// The archive_health usage event: one coarse, content-free heartbeat per
-/// install per day (its props are `UsageBuckets.dbBytes`/`.sessions` bucket
-/// strings — never exact sizes or counts), recorded into the DURABLE
-/// usage_outbox, so it survives a failed flush alongside every other queued
-/// event. The 24h cadence keys off the meta 'last_health_at' row (unix
-/// milliseconds as TEXT); the metrics-enabled choice stays the caller's.
+/// install per day (the returned props are `UsageBuckets.dbBytes`/`.sessions`
+/// bucket strings — never exact sizes or counts). The event itself rides the
+/// app's in-memory UsageReporter — the only queue anything actually drains
+/// and uploads — so the durable usage_outbox is NOT touched here: writing it
+/// there would grow forever (it has no consumer yet). The 24h cadence keys
+/// off the meta 'last_health_at' row (unix milliseconds as TEXT); the
+/// metrics-enabled choice stays the caller's.
 public enum ArchiveHealthDao {
-    @discardableResult
-    public static func recordIfDue(_ db: SqlDatabase, nowUnixMilliseconds: Int64,
-                                   dbBytes: Int64, sessionCount: Int) throws -> Bool {
+    /// Claims the daily slot: when the last marker is missing or older than
+    /// the cadence, stamps the marker and returns the bucketed props for the
+    /// caller to record through its UsageReporter; otherwise returns nil. A
+    /// crash after the claim simply delays the next heartbeat to the next due
+    /// window — acceptable for a heartbeat. The ONLY durable write is that
+    /// single meta row (a put), atomic on its own — no transaction required.
+    public static func claimIfDue(_ db: SqlDatabase, nowUnixMilliseconds: Int64,
+                                  dbBytes: Int64, sessionCount: Int) throws -> [String: UsageProp]? {
         let last = try MetaDao.get(db, ArchiveHealth.lastHealthAtKey).flatMap { Int64($0) }
         if !ArchiveHealth.isDue(lastAtMilliseconds: last, nowMilliseconds: nowUnixMilliseconds) {
-            return false
+            return nil
         }
-        _ = try UsageOutboxDao.enqueue(db, UsageEvents.archiveHealth, nowUnixMilliseconds, [
+        try MetaDao.put(db, ArchiveHealth.lastHealthAtKey, String(nowUnixMilliseconds))
+        return [
             "dbBytesBucket": .string(UsageBuckets.dbBytes(dbBytes)),
             "sessionsBucket": .string(UsageBuckets.sessions(sessionCount)),
-        ])
-        try MetaDao.put(db, ArchiveHealth.lastHealthAtKey, String(nowUnixMilliseconds))
-        return true
+        ]
     }
 }
