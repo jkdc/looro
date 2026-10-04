@@ -142,4 +142,6 @@ Read [how the language architecture works](docs/language-architecture.md) and [h
 
 The native WebRTC package is pinned to [stasel/WebRTC 152.0.0](https://github.com/stasel/WebRTC/tree/152.0.0). The app bundles [third-party notices](apps/ios/App/ThirdPartyNotices.txt) and the SDK’s privacy manifest. Review upstream notices when changing the dependency.
 
+The iOS learning-database driver is pinned to [groue/GRDB.swift 7.8.0](https://github.com/groue/GRDB.swift/tree/7.8.0); the schema it opens is generated from [shared/db/schema.sql](shared/db/schema.sql). Review upstream notices when changing the dependency.
+
 Palique is released under the [MIT License](LICENSE). Third-party components retain their own licenses. The Palique name and logo identify the original project; the software license does not grant trademark rights.

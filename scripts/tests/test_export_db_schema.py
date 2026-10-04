@@ -73,7 +73,28 @@ class KotlinTest(unittest.TestCase):
         self.assertIn('const val SCHEMA_VERSION = 1', source)
         self.assertIn('"PRAGMA user_version = 1"', source)
 
-    def test_check_mode_passes_on_the_committed_file(self):
+
+class SwiftTest(unittest.TestCase):
+    def test_string_literal_escapes_swift_specials_but_not_the_dollar(self):
+        self.assertEqual('"a\\\\b\\"c$d\\n\\t"',
+                         export_db_schema.swift_string('a\\b"c$d\n\t'))
+
+    def test_generated_source_is_swift_with_the_same_statement_list(self):
+        statements = export_db_schema.split_statements(
+            export_db_schema.SCHEMA.read_text())
+        source = export_db_schema.generate_swift(statements)
+        self.assertIn('public enum SchemaData', source)
+        self.assertIn('public static let learningSchemaStatements: [String] = [', source)
+        self.assertIn('public static let schemaVersion = 1', source)
+        self.assertIn('"PRAGMA user_version = 1"', source)
+        # the Kotlin and Swift literals carry exactly the same statements
+        kotlin = export_db_schema.generate_kotlin(statements)
+        for statement in statements:
+            self.assertIn(export_db_schema.swift_string(statement), source)
+            self.assertIn(export_db_schema.kotlin_string(statement), kotlin)
+        self.assertEqual(source.count('\\n'), kotlin.count('\\n'))
+
+    def test_check_mode_passes_on_the_committed_files(self):
         self.assertEqual(0, export_db_schema.main(['--check']))
 
 
