@@ -99,8 +99,9 @@ fun AppTextField(value: String, onValueChange: (String) -> Unit, modifier: Modif
 }
 
 @Composable
-fun AppSearchField(value: String, onValueChange: (String) -> Unit, placeholder: String) {
-    OutlinedTextField(value, onValueChange, modifier = Modifier.fillMaxWidth(), singleLine = true,
+fun AppSearchField(value: String, onValueChange: (String) -> Unit, placeholder: String,
+                   modifier: Modifier = Modifier) {
+    OutlinedTextField(value, onValueChange, modifier = modifier.fillMaxWidth(), singleLine = true,
         placeholder = { Text(placeholder, style = MaterialTheme.typography.bodyLarge) },
         leadingIcon = { AppIcon(AppSymbol.Search, Modifier.size(21.dp)) }, shape = CircleShape,
         textStyle = MaterialTheme.typography.bodyLarge,

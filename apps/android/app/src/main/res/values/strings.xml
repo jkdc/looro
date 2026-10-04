@@ -263,6 +263,8 @@
     <string name="theme_switch_keep">Keep the current one</string>
     <string name="conversations_continue">Continue</string>
     <string name="history_section_title">Past conversations</string>
+    <string name="history_search_placeholder">Search conversations</string>
+    <string name="history_search_no_results">No conversations match your search.</string>
     <string name="history_empty">Your conversations will appear here.</string>
     <string name="history_delete_session_confirm_title">Delete this conversation and its learning evidence?</string>
     <string name="history_speaker_you">YOU</string>

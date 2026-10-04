@@ -23,6 +23,8 @@ import com.jkdc.app.data.InvalidBackup
 import com.jkdc.app.data.LearningDb
 import com.jkdc.app.data.LearningDbStore
 import com.jkdc.app.data.LearningDbWriter
+import com.jkdc.app.data.SearchDao
+import com.jkdc.app.data.SearchHit
 import com.jkdc.app.data.SqlDatabase
 import com.jkdc.app.data.VerificationHandle
 import com.jkdc.app.data.VerificationOpener
@@ -1439,6 +1441,23 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (archive.preferences.meaningVisible) scheduleTranslation()
     }
     fun toggleMute() { if (state == "active" && voiceSession) { isMuted = !isMuted; transport.mute(isMuted) } }
+
+    /** Phase G conversation search: the FTS index over the opened learning
+        database, scoped to the current learning language (SearchDao is the
+        single search contract; the iOS mirror rides the same SQL). Null when
+        no database serves this run (JSON fail-safe mode or storage still
+        opening) — the history sheet then keeps its plain list. Never throws:
+        a failed search reads as no results rather than breaking the sheet.
+        Reads run on IO against the one shared connection, so they serialize
+        behind the write channel's writes instead of racing them. */
+    suspend fun searchConversations(query: String): List<SearchHit>? {
+        if (!storageReady || jsonMode) return null
+        val database = store?.db ?: return null
+        val languageID = language.id
+        return withContext(Dispatchers.IO) {
+            runCatching { SearchDao.search(database, query, languageID) }.getOrNull()
+        }
+    }
 
     /** Reopen a past conversation as the active session. Continuation is typed
         (voice always starts a fresh conversation); new turns append to the same

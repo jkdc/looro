@@ -356,26 +356,59 @@ struct SessionHistoryView: View {
     let store: LearningStore
     @State private var selected: SessionRecord?
     @State private var deleting: SessionRecord?
+    // Conversation search (phase G): a blank query keeps the plain history
+    // list; a non-blank one swaps the list for FTS results (the snippet
+    // carries the markers «»/… from SearchDao, rendered plainly). A pure
+    // read, so it stays available while a conversation runs.
+    @State private var query = ""
     @Environment(\.dismiss) private var dismiss
+    private var searching: Bool { !query.trimmingCharacters(in: .whitespaces).isEmpty }
     var body: some View {
         NavigationStack {
             List {
-                if store.learningSessions.isEmpty { Text("Your \(store.language.name) conversations will appear here.").foregroundStyle(AppColor.secondary) }
-                ForEach(store.learningSessions) { session in
-                    Button { selected = session } label: {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(session.title).font(.headline)
-                            Text(session.startedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(AppColor.secondary)
-                        }.padding(.vertical, 8)
-                    }.swipeActions { Button("Delete", role: .destructive) { deleting = session }.disabled(session.endedAt == nil) }
+                if searching {
+                    searchResults
+                } else {
+                    if store.learningSessions.isEmpty { Text("Your \(store.language.name) conversations will appear here.").foregroundStyle(AppColor.secondary) }
+                    ForEach(store.learningSessions) { session in
+                        Button { selected = session } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(session.title).font(.headline)
+                                Text(session.startedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(AppColor.secondary)
+                            }.padding(.vertical, 8)
+                        }.swipeActions { Button("Delete", role: .destructive) { deleting = session }.disabled(session.endedAt == nil) }
+                    }
                 }
             }.scrollContentBackground(.hidden).background(AppColor.cream)
                 .navigationTitle("Past conversations").navigationBarTitleDisplayMode(.inline)
+                .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search conversations")
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }.sheet(item: $selected) { session in EditableTranscriptView(sessionID: session.id, store: store) }
             .confirmationDialog("Delete this conversation and its learning evidence?", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } })) {
                 Button("Delete conversation", role: .destructive) { if let deleting { store.deleteSession(deleting.id) }; deleting = nil }
             }
+    }
+
+    /// The FTS hits for the current query: title, snippet with the «»/…
+    /// markers, date; tapping opens that conversation's transcript — the same
+    /// navigation as tapping a history row. Empty query text (whitespace only
+    /// never reaches here) with no hits shows the no-results state.
+    @ViewBuilder private var searchResults: some View {
+        let hits = store.searchConversations(query)
+        if hits.isEmpty {
+            Text("No conversations match your search.").foregroundStyle(AppColor.secondary)
+                .accessibilityIdentifier("history-search-empty")
+        } else {
+            ForEach(hits, id: \.session.id) { hit in
+                Button { selected = hit.session } label: {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(hit.session.title).font(.headline)
+                        Text(hit.snippet).font(.subheadline)
+                        Text(hit.session.startedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(AppColor.secondary)
+                    }.padding(.vertical, 8)
+                }.accessibilityIdentifier("history-search-\(hit.session.id)")
+            }
+        }
     }
 }
 

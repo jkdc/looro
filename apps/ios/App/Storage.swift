@@ -167,6 +167,22 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     var sessions: [SessionRecord] { archive.sessions.sorted { $0.startedAt > $1.startedAt } }
     var learningSessions: [SessionRecord] { sessions.filter { $0.languageID == language.id } }
     var learner: LearnerState { LearningEngine.project(archive.sessions, languageID: language.id, hiddenWords: archive.preferences.hiddenWords) }
+
+    /// Phase G conversation search: the FTS index over the learning database,
+    /// scoped to the learning language (`SearchDao` is the single search
+    /// contract; the Kotlin mirror rides the same SQL). Empty in JSON
+    /// fail-safe mode (no index serves this run) or when the query fails —
+    /// the history view keeps showing the plain list rather than erroring.
+    func searchConversations(_ query: String) -> [SearchHit] {
+        guard !dbStore.jsonMode else { return [] }
+        do {
+            return try SearchDao.search(dbStore.db, query, languageID: language.id)
+        } catch {
+            print("LearningStore: conversation search failed — \(error)")
+            return []
+        }
+    }
+
     func selectLanguage(_ id: String) {
         guard LanguageRegistry.module(for: id) != nil else { return }
         archive.preferences.learningLanguageID = id

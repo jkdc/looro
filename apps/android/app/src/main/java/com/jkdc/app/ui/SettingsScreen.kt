@@ -42,6 +42,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.TextButton
@@ -51,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +73,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import com.jkdc.app.BuildConfig
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
+import com.jkdc.app.data.SearchHit
 import com.jkdc.app.core.LanguageRegistry
 import com.jkdc.app.core.ConversationProvider
 import com.jkdc.app.core.MeaningLanguages
@@ -509,28 +512,64 @@ fun SettingsScreen(vm: AppViewModel, onExport: () -> Unit, onImport: () -> Unit,
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsHistorySheet(vm: AppViewModel, onDismiss: () -> Unit, onSelect: (SessionRecord) -> Unit, onDelete: (SessionRecord) -> Unit, onResume: (String) -> Unit = {}) {
+    // Conversation search (phase G): a blank query keeps the plain history
+    // list; a non-blank one swaps the list for FTS results after a short
+    // debounce (LaunchedEffect cancels and restarts on every keystroke).
+    var query by rememberSaveable { mutableStateOf("") }
+    var results by remember { mutableStateOf<List<SearchHit>?>(null) }
+    LaunchedEffect(query) {
+        if (query.isBlank()) { results = null; return@LaunchedEffect }
+        delay(250)
+        results = vm.searchConversations(query)
+    }
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = AppColors.Cream,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(Modifier.fillMaxHeight(.9f)) {
             SettingsSheetHeader(stringResource(R.string.history_section_title), onDismiss)
+            AppSearchField(query, { query = it.take(200) }, stringResource(R.string.history_search_placeholder),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp).testTag("history-search-input"))
             LazyColumn(Modifier.weight(1f).testTag("settings-history-list"), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                val history = vm.archive.sessions.filter { it.languageID == vm.language.id }.sortedByDescending { it.startedAt }
-                if (history.isEmpty()) item {
-                    Text(stringResource(R.string.history_empty), style = MaterialTheme.typography.bodyLarge, color = AppColors.Secondary,
-                        modifier = Modifier.padding(16.dp))
-                }
-                items(history, key = { it.id }) { session ->
-                    SettingsGroup {
-                        Column(Modifier.fillMaxWidth().clickable { onSelect(session) }.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                            Text(session.title, style = MaterialTheme.typography.titleMedium)
-                            Text("${LanguageRegistry.get(session.languageID)?.name ?: session.languageID} · ${formatDate(session.startedAt)}",
-                                color = AppColors.Secondary, style = MaterialTheme.typography.bodySmall)
+                if (query.isNotBlank()) {
+                    // Results mode. The snippet carries the FTS markers («» around
+                    // the match, … for elided text) rendered plainly; tap opens the
+                    // conversation's transcript — the same navigation as tapping a
+                    // history row. A pure read, so it stays available while a
+                    // conversation runs.
+                    val hits = results.orEmpty()
+                    if (results != null && hits.isEmpty()) item {
+                        Text(stringResource(R.string.history_search_no_results), style = MaterialTheme.typography.bodyLarge, color = AppColors.Secondary,
+                            modifier = Modifier.padding(16.dp).testTag("history-search-empty"))
+                    }
+                    items(hits, key = { it.session.id }) { hit ->
+                        SettingsGroup {
+                            Column(Modifier.fillMaxWidth().clickable { onSelect(hit.session) }.padding(16.dp)
+                                    .testTag("history-search-result-${hit.session.id}"),
+                                verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                Text(hit.session.title, style = MaterialTheme.typography.titleMedium)
+                                Text(hit.snippet, style = MaterialTheme.typography.bodyMedium)
+                                Text(formatDate(hit.session.startedAt), color = AppColors.Secondary, style = MaterialTheme.typography.bodySmall)
+                            }
                         }
-                        SettingsDivider()
-                        SettingsRow(stringResource(R.string.conversations_continue), enabled = !vm.isRunning, onClick = { onResume(session.id) })
-                        SettingsDivider()
-                        SettingsRow(stringResource(R.string.common_delete), enabled = !vm.isRunning, tint = AppColors.Red, onClick = { onDelete(session) })
+                    }
+                } else {
+                    val history = vm.archive.sessions.filter { it.languageID == vm.language.id }.sortedByDescending { it.startedAt }
+                    if (history.isEmpty()) item {
+                        Text(stringResource(R.string.history_empty), style = MaterialTheme.typography.bodyLarge, color = AppColors.Secondary,
+                            modifier = Modifier.padding(16.dp))
+                    }
+                    items(history, key = { it.id }) { session ->
+                        SettingsGroup {
+                            Column(Modifier.fillMaxWidth().clickable { onSelect(session) }.padding(16.dp), verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                                Text(session.title, style = MaterialTheme.typography.titleMedium)
+                                Text("${LanguageRegistry.get(session.languageID)?.name ?: session.languageID} · ${formatDate(session.startedAt)}",
+                                    color = AppColors.Secondary, style = MaterialTheme.typography.bodySmall)
+                            }
+                            SettingsDivider()
+                            SettingsRow(stringResource(R.string.conversations_continue), enabled = !vm.isRunning, onClick = { onResume(session.id) })
+                            SettingsDivider()
+                            SettingsRow(stringResource(R.string.common_delete), enabled = !vm.isRunning, tint = AppColors.Red, onClick = { onDelete(session) })
+                        }
                     }
                 }
             }
