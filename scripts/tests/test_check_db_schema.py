@@ -83,13 +83,16 @@ class SchemaTest(unittest.TestCase):
 
     def test_shadow_tables_are_internal_to_the_inventory(self):
         tables, _ = check_db_schema.read_inventory(self.conn)
-        # fragments_fts itself and its FTS4 shadow tables are pinned or
-        # skipped, never inventory drift; the pinned count stays at ten.
+        # fragments_fts itself and its FTS4 external-content shadow tables
+        # (_segments/_segdir/_docsize/_stat — external content keeps no
+        # _content, and _data would be FTS5-only) are pinned or skipped,
+        # never inventory drift; the pinned count stays at ten.
         self.assertEqual(10, len(tables))
         self.assertNotIn('fragments_fts', tables)
         self.assertTrue(check_db_schema.is_internal_table('fragments_fts'))
-        self.assertTrue(check_db_schema.is_internal_table('fragments_fts_data'))
-        self.assertTrue(check_db_schema.is_internal_table('fragments_fts_content'))
+        for shadow in ('fragments_fts_segments', 'fragments_fts_segdir',
+                       'fragments_fts_docsize', 'fragments_fts_stat'):
+            self.assertTrue(check_db_schema.is_internal_table(shadow))
         self.assertFalse(check_db_schema.is_internal_table('fragments'))
 
     def test_dropped_virtual_table_and_triggers_fail(self):

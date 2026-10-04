@@ -75,7 +75,7 @@ checker docstrings and test comment (pins were already correct).
 | Cross-platform parity | `python3 scripts/check_cross_platform.py` | ✅ exit 0 |
 | Backend typecheck | `npx tsc --noEmit` (services/api) | ✅ clean |
 | Backend suite | `TEST_DATABASE_URL=postgresql://app:app@127.0.0.1:55434/app_billing_test npm test` | ✅ **419 tests, 414 pass, 5 fail** — exactly the 5 known environmental failures (`accounts.test.ts`, `auth.test.ts`, `apple-revocation.test.ts`, service-account OAuth signing, usage-timeseries daily-actives), identical before this change |
-| Strings parity (Android, after H removals) | key-set diff `values/` vs `values-es/` | ✅ **465 = 465**, symmetric (removed `settings_export_backup` + `settings_backup_exported_toast` from both locales; iOS UI copy is hardcoded, no strings files) |
+| Strings parity (Android, after H removals) | key-set diff `values/` vs `values-es/` | ✅ **465 = 465**, symmetric — the final state (465 → 467 after G added 2 search keys per locale → 465 after H removed the 2 orphaned keys `settings_export_backup` + `settings_backup_exported_toast` from both locales; iOS UI copy is hardcoded, no strings files) |
 
 Cumulative session gates recorded in the phase SDD reports: Android e2e on
 the emulator for cutover (C), backup/restore (D) and search (G) with

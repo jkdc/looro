@@ -2,9 +2,10 @@
 
 Ejecución SDD de la migración del almacenamiento de aprendizaje a SQLite
 canónico (`shared/db/schema.sql` → Room/GRDB), en 8 fases secuenciales con
-revisión y fix loop por fase. Rama `feature/learning-platform`; **28 commits**
-(A-H); HEAD al cierre: H. El JSON deja de ser el runtime store para siempre:
-queda solo como ruta de IMPORT legacy y como red de seguridad (`jsonMode`).
+revisión y fix loop por fase. Rama `feature/learning-platform`; **29 commits**
+(A-H); HEAD al cierre: `4e1c750`. El JSON deja de ser el runtime store para
+siempre: queda solo como ruta de IMPORT legacy y como red de seguridad
+(`jsonMode`).
 
 ## Fase A — Fundaciones (e9f9d7f, 48c3dbf)
 
@@ -79,7 +80,7 @@ el SQLite del dispositivo empíricamente. En H se barrió el último wording
 "FTS5" residual de los docstrings del checker y del comentario del test (los
 pins ya eran correctos).
 
-## Fase H — Cierre (esta sesión)
+## Fase H — Cierre (47c2884, cf69ff2; fix ronda 4e1c750)
 
 - **Retiro del export JSON en ambas plataformas**: fila "Export learning
   backup" fuera de Settings en Android (con su launcher SAF
@@ -105,8 +106,9 @@ pins ya eran correctos).
 - Server: `npx tsc --noEmit` limpio; `npm test` contra PG 17 local —
   **419 tests, 414 pass, 5 fallos = los 5 ambientales conocidos** (accounts,
   auth, apple-revocation, service-account OAuth, usage-timeseries).
-- Strings: paridad EN/ES **465 = 465** simétrica tras retirar 2 claves
-  huérfanas por locale.
+- Strings: paridad EN/ES **465 = 465** simétrica — estado final (465 → 467
+  tras las 2 claves de búsqueda de G por locale → 465 tras retirar en H 2
+  claves huérfanas por locale).
 - E2E de sesión (fases C/D/G, capturas commiteadas): cutover, backup/
   restauración y búsqueda verificados en emulador Android.
 

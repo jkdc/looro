@@ -48,8 +48,11 @@ marca al cierre de cada fase.
 - Backup nuevo = fichero `.db` (user_version); import JSON v2 se mantiene.
 - Semántica de merge: paridad obligatoria con `ArchiveCodec.merge` sobre los
   fixtures (upsert por claves, más-reciente-gana).
-- Caps y poda POR idioma (expresiones 2.000/idioma; sesiones por idioma);
-  notebook y todas las lecturas de UI siempre `WHERE language = ?`.
+- Caps GLOBALES, fieles al motor (expresiones 2.000 como `ArchiveCodec`/
+  `RecallEngine`; Android e iOS lo implementan igual) — los caps POR idioma
+  quedan como follow-up explícito, no defecto; lo que SÍ es por idioma:
+  todas las lecturas de UI (`WHERE language = ?`) y el borrado por idioma
+  (`deleteLearningDataForLanguage`, una transacción).
 - Sync al server: sin cambios. Privacidad: solo-local, sin cloud (igual que hoy).
 - La migración falla dura si los conteos no cuadran; nunca borra el JSON
   original; ofrece export previo en UI la primera vez.
