@@ -89,6 +89,24 @@ final class LearningDatabaseTests: XCTestCase {
         XCTAssertEqual(Int64(1), try db.query("SELECT best_score FROM completions").first!.long("best_score"))
     }
 
+    func testInsertCarriesNullColumnsAlongsideValues() throws {
+        // the row's [String: Any?] values are optionals inside the dictionary:
+        // a present-key nil must bind as SQL NULL while its neighbors bind as
+        // data (a boxed Optional here would make every insert throw)
+        _ = try db.insert("completions", [
+            "kind": "lesson", "item_id": "es-foundations-u1-ser", "at": 100.0,
+            "best_score": 90, "language_id": nil,
+        ])
+        let row = try db.query(
+            "SELECT kind, item_id, at, best_score, language_id FROM completions").first!
+        XCTAssertEqual("lesson", row.text("kind"))
+        XCTAssertEqual("es-foundations-u1-ser", row.text("item_id"))
+        XCTAssertEqual(100.0, row.real("at"))
+        XCTAssertEqual(90, row.int("best_score"))
+        XCTAssertNil(row["language_id"])
+        XCTAssertNil(row.textOrNull("language_id"))
+    }
+
     func testUpdateReportsAffectedRows() throws {
         _ = try db.insert("meta", ["key": "a", "value": "1"])
         _ = try db.insert("meta", ["key": "b", "value": "1"])
@@ -101,6 +119,14 @@ final class LearningDatabaseTests: XCTestCase {
     func testTransactionCommitsTheWorkDoneInsideTheBlock() throws {
         _ = try db.transaction { tx in try tx.insert("meta", ["key": "k", "value": "kept"]) }
         XCTAssertEqual("kept", try db.query("SELECT value FROM meta WHERE key = 'k'").first!.text("value"))
+    }
+
+    func testTransactionReturnsTheBlockResultEvenWhenItIsNil() throws {
+        // T may itself be Optional; a nil result must come back as nil
+        let value: String? = try db.transaction { _ -> String? in nil }
+        XCTAssertNil(value)
+        let kept: String? = try db.transaction { _ -> String? in "kept" }
+        XCTAssertEqual("kept", kept)
     }
 
     func testTransactionRollsBackOnFailureAndRejectsNesting() throws {

@@ -48,6 +48,10 @@ public enum LearningDatabase {
     private static func configuration() -> Configuration {
         let configuration = Configuration()
         configuration.foreignKeysEnabled = true
+        // One connection for reads and writes alike, like the single-connection
+        // Kotlin backends (DatabaseQueue enforces this too); using the database
+        // after close() then fails with a clean SQLITE_MISUSE throw.
+        configuration.maximumReaderCount = 1
         return configuration
     }
 

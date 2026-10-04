@@ -63,6 +63,9 @@ public enum SqlDatabaseError: Error, Equatable, CustomStringConvertible {
     case nestedTransaction
     /// A bind or row value the backend cannot carry.
     case unsupportedValue(String)
+    /// The transaction body neither produced a result nor threw — an internal
+    /// invariant violation, never reachable with GRDB's commit/rollback contract.
+    case transactionProducedNoResult
 
     public var description: String {
         switch self {
@@ -72,6 +75,8 @@ public enum SqlDatabaseError: Error, Equatable, CustomStringConvertible {
             return "nested transactions are not supported"
         case .unsupportedValue(let detail):
             return "Unsupported SQLite value: \(detail)"
+        case .transactionProducedNoResult:
+            return "transaction block produced no result"
         }
     }
 }
@@ -150,11 +155,12 @@ func requireNonNullArgs(_ args: [Any?]) throws {
 }
 
 /**
- * The one [SqlDatabase] implementation, over GRDB's DatabaseQueue. Outside a
- * transaction every call runs on the queue (reads on a reader, writes on the
- * writer); inside `transaction` all calls run on the one connection GRDB
- * handed the transaction, so the block's `SqlDatabase` behaves exactly like
- * the Kotlin backends' single connection.
+ * The one [SqlDatabase] implementation, over GRDB's DatabaseQueue. Every call
+ * runs on the queue's single serialized connection — inside `transaction` on
+ * the very connection GRDB handed the transaction — so this behaves exactly
+ * like the Kotlin backends' single connection, and using the database after
+ * `close()` fails cleanly (SQLITE_MISUSE) instead of reaching a torn-down
+ * reader connection.
  */
 public final class GRDBDatabase: SqlDatabase {
 
@@ -168,7 +174,7 @@ public final class GRDBDatabase: SqlDatabase {
     }
 
     public func exec(_ statement: String) throws {
-        try withDatabase { try $0.execute(sql: statement) }
+        try withConnection { try $0.execute(sql: statement) }
     }
 
     public func insert(_ table: String, _ row: [String: Any?], strategy: ConflictStrategy) throws -> Int64 {
@@ -177,9 +183,12 @@ public final class GRDBDatabase: SqlDatabase {
             + "(\(columns.joined(separator: ", "))) "
             + "VALUES (\(columns.map { _ in "?" }.joined(separator: ", ")))"
         let bindings = try columns.map { column in
-            try bindable(row[column], column: column)
+            // `?? nil` flattens the dictionary's Any?? subscript: a present-key
+            // nil must reach bindable as .none (SQL NULL), not as a boxed
+            // Optional that no switch case would match.
+            try bindable(row[column] ?? nil, column: column)
         }
-        return try withDatabase { db in
+        return try withConnection { db in
             try db.execute(sql: sql, arguments: StatementArguments(bindings))
             // A swallowed INSERT OR IGNORE reports zero changes while
             // lastInsertedRowID would still hold the previous insert's id,
@@ -193,7 +202,7 @@ public final class GRDBDatabase: SqlDatabase {
         let bindings = try args.map { try bindable($0) }
         // GRDB Row materializes fully inside the block, so the returned
         // values are safe to use afterwards.
-        return try withReadDatabase { db in
+        return try withConnection { db in
             try Row.fetchAll(db, sql: sql, arguments: StatementArguments(bindings)).map(SqlRow.init(row:))
         }
     }
@@ -201,7 +210,7 @@ public final class GRDBDatabase: SqlDatabase {
     public func update(_ sql: String, args: [Any?]) throws -> Int64 {
         try requireNonNullArgs(args)
         let bindings = try args.map { try bindable($0) }
-        return try withDatabase { db in
+        return try withConnection { db in
             try db.execute(sql: sql, arguments: StatementArguments(bindings))
             return Int64(db.changesCount)
         }
@@ -210,6 +219,7 @@ public final class GRDBDatabase: SqlDatabase {
     public func transaction<T>(_ block: (SqlDatabase) throws -> T) throws -> T {
         guard activeDatabase == nil else { throw SqlDatabaseError.nestedTransaction }
         var result: T?
+        var completed = false
         // writeWithoutTransaction, because GRDB's write() would open its own
         // transaction around the explicit BEGIN IMMEDIATE below.
         try queue.writeWithoutTransaction { db in
@@ -219,11 +229,18 @@ public final class GRDBDatabase: SqlDatabase {
                 self.activeDatabase = db
                 defer { self.activeDatabase = nil }
                 result = try block(self)
+                completed = true
                 return .commit
             }
         }
-        // set whenever inTransaction returned; a failed block rethrew instead
-        return result!
+        // A failed block rethrows from inTransaction, so a normal return
+        // implies the block assigned its result; `let value = result` then
+        // only unwraps the outer optional and keeps a nil T (and a nil result
+        // of an Optional T) intact.
+        guard completed, let value = result else {
+            throw SqlDatabaseError.transactionProducedNoResult
+        }
+        return value
     }
 
     public func close() {
@@ -233,16 +250,13 @@ public final class GRDBDatabase: SqlDatabase {
     // MARK: plumbing
 
     /// Runs on the transaction's connection inside a transaction, else on the
-    /// writer (every write goes through GRDB's serialized writer).
-    private func withDatabase<T>(_ body: (Database) throws -> T) throws -> T {
+    /// queue's single serialized writer connection — reads included, the
+    /// one-connection contract of the Kotlin backends. Post-close access then
+    /// reaches sqlite3_prepare_v3's connection check and throws SQLITE_MISUSE
+    /// instead of dereferencing a closed reader.
+    private func withConnection<T>(_ body: (Database) throws -> T) throws -> T {
         if let active = activeDatabase { return try body(active) }
-        return try queue.write(body)
-    }
-
-    /// Same as `withDatabase`, but reads outside a transaction use a reader.
-    private func withReadDatabase<T>(_ body: (Database) throws -> T) throws -> T {
-        if let active = activeDatabase { return try body(active) }
-        return try queue.read(body)
+        return try queue.writeWithoutTransaction(body)
     }
 
     /// Narrows one bind value to the SQLite types the protocol carries,
