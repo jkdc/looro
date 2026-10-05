@@ -431,6 +431,69 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
         // text; the mirror deletes both.
         write { try LearningDbWriter.expressionRemoved($0, text, languageID) }
     }
+    /// One remove-languages dialog row (AppViewModel.expressionLanguageStats's
+    /// mirror), computed from the working copy — every notebook read is
+    /// read-your-writes — with the DAO's order (count descending, named
+    /// languages alphabetical within a tie, the legacy bucket last), so the
+    /// dialog shows exactly what a confirm would purge.
+    func expressionLanguageStats() -> [ExpressionLanguageStats] {
+        let grouped = Dictionary(grouping: archive.expressions ?? [], by: { $0.languageID })
+        return grouped.map { languageID, rows in
+            ExpressionLanguageStats(
+                languageID: languageID,
+                count: rows.count,
+                approxBytes: rows.reduce(Int64(0)) {
+                    $0 + Int64($1.text.utf8.count + $1.meaning.utf8.count)
+                })
+        }
+        .sorted { lhs, rhs in
+            if lhs.count != rhs.count { return lhs.count > rhs.count }
+            switch (lhs.languageID, rhs.languageID) {
+            case let (l?, r?): return l < r
+            case (.some, .none): return true   // named languages before legacy
+            default: return false
+            }
+        }
+    }
+    /// The notebook's "Remove languages…" action (mirrors Android's
+    /// removeExpressionLanguages): deletes every row whose language_id is in
+    /// `selected` EXACTLY (nil selects the legacy NULL-language bucket) on
+    /// both sides of the cutover invariant — the ExpressionsDao transaction
+    /// per language and the SAME predicate on the working copy. Legacy rows
+    /// only go when explicitly selected; deleting a language never takes the
+    /// shared legacy bucket with it. Returns false after a refusal or
+    /// failure — the notice is on `error`.
+    @discardableResult
+    func removeExpressionLanguages(_ selected: [String?]) -> Bool {
+        guard !dbStore.jsonMode else {
+            error = Self.databaseUnavailableDeleteNotice
+            return false
+        }
+        let doomed = Set(selected.compactMap { $0 })
+        let includeLegacy = selected.contains(nil)
+        archive.expressions = (archive.expressions ?? []).filter { expression in
+            if let id = expression.languageID { return !doomed.contains(id) }
+            return !includeLegacy
+        }
+        do {
+            for id in doomed.sorted() {
+                _ = try ExpressionsDao.deleteExpressionsForLanguage(try dbStore.db, languageID: id)
+            }
+            if includeLegacy {
+                _ = try ExpressionsDao.deleteExpressionsLegacy(try dbStore.db)
+            }
+            error = nil
+            return true
+        } catch {
+            // The working copy was purged but a transaction kept its rows:
+            // reload the persisted projection so export(DB) == archive holds
+            // again, then surface.
+            archive = (try? dbStore.loadInitialArchive()) ?? archive
+            print("LearningStore: expression-language removal failed — \(error)")
+            self.error = "Palique couldn’t remove the selected expressions. Please try again."
+            return false
+        }
+    }
     func correctPassage(sessionID: UUID, passageID: String, text: String) {
         guard let index = archive.sessions.firstIndex(where: { $0.id == sessionID }),
               let passage = archive.sessions[index].passages.first(where: { $0.id == passageID && $0.speaker == .user }) else { return }

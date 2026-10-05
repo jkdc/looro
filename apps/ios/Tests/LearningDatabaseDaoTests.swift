@@ -253,6 +253,60 @@ final class LearningDatabaseDaoTests: XCTestCase {
         XCTAssertEqual(["legacy"], try ExpressionsDao.due(db, "fr", 200.0).map(\.text))
     }
 
+    func testExpressionsDeleteForLanguageIsExactAndLegacyStaysSelectable() throws {
+        func seed(_ text: String, _ languageID: String?) throws {
+            XCTAssertTrue(try ExpressionsDao.upsert(db, ExpressionState(text: text, meaning: "m",
+                                                                        source: "lookup", dueAt: 1.0,
+                                                                        languageID: languageID),
+                                                    adoptLegacy: false))
+        }
+        try seed("perro", "es"); try seed("hola", "es"); try seed("chien", "fr"); try seed("bonjour", "fr")
+        try seed("ciao", nil)
+        // The language delete is EXACT (language_id = ?): es goes, fr and the
+        // legacy NULL bucket stay — deleting one language never takes the
+        // shared legacy entries along.
+        XCTAssertEqual(Int64(2), try ExpressionsDao.deleteExpressionsForLanguage(db, languageID: "es"))
+        XCTAssertEqual(["fr", "fr", nil],
+                       try ExpressionsDao.all(db).map(\.languageID).sorted { ($0 ?? "~") < ($1 ?? "~") })
+        // An unknown language is a no-op (0 rows affected).
+        XCTAssertEqual(Int64(0), try ExpressionsDao.deleteExpressionsForLanguage(db, languageID: "de"))
+        // The legacy bucket is its own delete (the dialog's selectable
+        // "No language (legacy)" row) and never rode the language delete.
+        XCTAssertEqual(Int64(1), try ExpressionsDao.deleteExpressionsLegacy(db))
+        XCTAssertEqual(["fr", "fr"], try ExpressionsDao.all(db).map(\.languageID))
+        XCTAssertEqual(Int64(0), try ExpressionsDao.deleteExpressionsLegacy(db))
+    }
+
+    func testExpressionStatsByLanguageListsOnlyLanguagesWithDataCountDescWithUtf8Bytes() throws {
+        // Empty database: no languages to remove, no rows at all.
+        XCTAssertTrue(try ExpressionsDao.expressionStatsByLanguage(db).isEmpty)
+        func seed(_ text: String, _ meaning: String, _ languageID: String?) throws {
+            XCTAssertTrue(try ExpressionsDao.upsert(db, ExpressionState(text: text, meaning: meaning,
+                                                                        source: "lookup", dueAt: 1.0,
+                                                                        languageID: languageID),
+                                                    adoptLegacy: false))
+        }
+        // es: 2 rows, 8 + 12 bytes ("canción" carries the two-byte ó — UTF-8
+        // BYTE lengths, not character counts); fr: 3 rows, 25 bytes; legacy:
+        // 1 row, 6 bytes.
+        try seed("perro", "dog", "es")
+        try seed("canción", "song", "es")
+        try seed("chien", "dog", "fr")
+        try seed("chat", "cat", "fr")
+        try seed("oiseau", "bird", "fr")
+        try seed("ciao", "hi", nil)
+        XCTAssertEqual(
+            [
+                ExpressionLanguageStats(languageID: "fr", count: 3, approxBytes: 25),
+                ExpressionLanguageStats(languageID: "es", count: 2, approxBytes: 20),
+                ExpressionLanguageStats(languageID: nil, count: 1, approxBytes: 6),
+            ],
+            try ExpressionsDao.expressionStatsByLanguage(db))
+        // A language with no rows never appears ("it" was never seeded).
+        XCTAssertEqual(Set(["fr", "es", nil]),
+                       Set(try ExpressionsDao.expressionStatsByLanguage(db).map(\.languageID)))
+    }
+
     func testCompletionsIgnoreDuplicateInstantsAndLanguageStaysOutOfTheKey() throws {
         let mark = CompletionMark(kind: "lesson", itemID: "es-foundations-u1-ser", at: 100.0, bestScore: 90,
                                   languageID: "es")

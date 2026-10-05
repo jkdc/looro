@@ -18,7 +18,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 enum class AppSymbol { Wave, Themes, Words, Settings, Mic, MicOff, Captions, Transcript, End,
-    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music, Pause, Play, Headphones, Star }
+    Keyboard, Sparkles, ArrowUp, ChevronDown, Back, Search, Close, Check, Leaf, ChevronRight, Coffee, Globe, Sun, Food, Music, Pause, Play, Headphones, Star, Trash }
 
 /** Original, consistently weighted artwork; no platform-dependent text glyphs. */
 @Composable
@@ -99,6 +99,10 @@ fun AppIcon(symbol: AppSymbol, modifier: Modifier = Modifier, color: Color = App
                     lineTo(16.4f,13.8f); lineTo(17.5f,19.9f); lineTo(12f,17f); lineTo(6.5f,19.9f); lineTo(7.6f,13.8f)
                     lineTo(3.2f,9.6f); lineTo(9.3f,8.7f); close() }
                     if (filled) drawPath(star, color) else drawPath(star, color, style = stroke) }
+                AppSymbol.Trash -> { line(4f,6f,20f,6f); line(9f,6f,9f,4f); line(15f,6f,15f,4f); line(9f,4f,15f,4f)
+                    path { moveTo(6f,6f); lineTo(7f,20f); quadraticTo(7f,21f,8f,21f); lineTo(16f,21f)
+                        quadraticTo(17f,21f,17f,20f); lineTo(18f,6f) }
+                    line(10f,10f,10.4f,17f); line(14f,10f,13.6f,17f) }
             }
         }
     }

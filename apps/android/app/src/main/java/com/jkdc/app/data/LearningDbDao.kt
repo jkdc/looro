@@ -290,6 +290,16 @@ object FragmentsDao {
  * brand-new keys past the cap are a silent no-op returning false, while
  * updates and adoptions always land. Returns true when a row was written.
  */
+data class ExpressionLanguageStats(
+    /** The language's registry id, or null for the legacy NULL-language
+        bucket (the dialog's "No language (legacy)" row). */
+    val languageID: String?,
+    /** Rows the language (or the legacy bucket) holds. */
+    val count: Int,
+    /** Approximate UTF-8 payload size: sum of text+meaning byte lengths. */
+    val approxBytes: Long,
+)
+
 object ExpressionsDao {
     fun upsert(db: SqlDatabase, expression: ExpressionState, adoptLegacy: Boolean = true): Boolean {
         val normKey = RecallEngine.normalizeKey(expression.text)
@@ -373,6 +383,49 @@ object ExpressionsDao {
     fun due(db: SqlDatabase, languageID: String, now: Double): List<ExpressionState> =
         db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) " +
             "AND bars < 3 AND due_at <= ? ORDER BY due_at, rowid", listOf(languageID, now)).map(::expression)
+
+    /**
+     * Deletes the notebook rows of ONE language — `language_id = ?` EXACT.
+     * The legacy NULL-language entries are CONSERVED: they are visible (and
+     * adoptable) in every language, so removing one language's rows must not
+     * take the shared legacy bucket along — the same split
+     * BackupManager.deleteLearningDataForLanguage draws for the whole-language
+     * wipe, narrowed to expressions. One transaction; returns the affected
+     * row count (JVM only; -1 on Android's backend, like every
+     * [SqlDatabase.update] there). Legacy rows go through
+     * [deleteExpressionsLegacy], which takes a different predicate (IS NULL
+     * cannot ride a bind argument).
+     */
+    fun deleteExpressionsForLanguage(db: SqlDatabase, languageID: String): Long =
+        db.transaction { tx -> tx.update("DELETE FROM expressions WHERE language_id = ?",
+            listOf(languageID)) }
+
+    /** The legacy bucket's delete — the selectable "No language (legacy)" row
+        of the notebook's remove-languages dialog. Same contract as
+        [deleteExpressionsForLanguage]: one transaction, affected count
+        (JVM only; -1 on Android). */
+    fun deleteExpressionsLegacy(db: SqlDatabase): Long =
+        db.transaction { tx -> tx.update("DELETE FROM expressions WHERE language_id IS NULL") }
+
+    /**
+     * Per-language notebook size for the remove-languages dialog: one
+     * [ExpressionLanguageStats] row per language THAT HAS data (an empty
+     * language is nothing to remove), the legacy NULL bucket included as a
+     * `languageID == null` row when it holds rows. approxBytes is the UTF-8
+     * payload size — `LENGTH(CAST(x AS BLOB))` is byte length in SQLite,
+     * where plain LENGTH on TEXT counts characters — summed over text and
+     * meaning. Ordered by count descending, ties broken deterministically:
+     * named languages alphabetical first, the legacy bucket last.
+     */
+    fun expressionStatsByLanguage(db: SqlDatabase): List<ExpressionLanguageStats> =
+        db.query(
+            "SELECT language_id, COUNT(*) AS n, " +
+                "SUM(LENGTH(CAST(text AS BLOB)) + LENGTH(CAST(meaning AS BLOB))) AS bytes " +
+                "FROM expressions GROUP BY language_id " +
+                "ORDER BY n DESC, language_id IS NULL, language_id")
+            .map { row ->
+                ExpressionLanguageStats(row.textOrNull("language_id"), row.int("n"), row.long("bytes"))
+            }
 
     private fun count(db: SqlDatabase): Long = db.query("SELECT COUNT(*) AS n FROM expressions").single().long("n")
 

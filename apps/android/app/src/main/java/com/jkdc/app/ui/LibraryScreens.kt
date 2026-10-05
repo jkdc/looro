@@ -3,6 +3,8 @@ package com.jkdc.app.ui
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,10 +34,13 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -49,6 +54,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
@@ -62,6 +68,7 @@ import androidx.compose.ui.window.Dialog
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.ConversationTheme
+import com.jkdc.app.core.LanguageRegistry
 import com.jkdc.app.core.Scenario
 import com.jkdc.app.core.Scenarios
 import com.jkdc.app.core.TopicBrief
@@ -71,6 +78,8 @@ import com.jkdc.app.core.RecallEngine
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+import android.widget.Toast
 
 @Composable
 fun TopicsScreen(vm: AppViewModel, onChoose: () -> Unit, onCurrentTopic: (String) -> Unit) {
@@ -289,6 +298,7 @@ fun WordsScreen(vm: AppViewModel, onOpenLessons: () -> Unit = {}, onOpenTalk: ()
     var search by rememberSaveable { mutableStateOf("") }
     var selected by remember { mutableStateOf<WordState?>(null) }
     var practising by rememberSaveable { mutableStateOf(false) }
+    var removingLanguages by remember { mutableStateOf(false) }
     val words = vm.learner.words.filter { search.isBlank() || it.lemma.contains(search, true) || it.meaning.contains(search, true) }
     val dueCount = vm.learner.words.count { it.dueAt < com.jkdc.app.core.nowSeconds() }
     LazyColumn(
@@ -307,8 +317,19 @@ fun WordsScreen(vm: AppViewModel, onOpenLessons: () -> Unit = {}, onOpenTalk: ()
             AppSearchField(search, { search = it.take(80) }, stringResource(R.string.words_search_placeholder))
         }
         item {
-            Text(stringResource(R.string.words_expressions_heading), style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.semantics { heading() })
+            // The heading row carries the notebook-wide "Remove languages…"
+            // action (trash icon): opens the multi-language removal dialog.
+            // Enabled only when some language (or the legacy bucket) has
+            // expressions — an empty notebook has nothing to remove.
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.words_expressions_heading), style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f).semantics { heading() })
+                IconButton(onClick = { removingLanguages = true },
+                    enabled = vm.expressionLanguageStats().isNotEmpty(),
+                    modifier = Modifier.testTag("expressions-remove-languages")) {
+                    AppIcon(AppSymbol.Trash, description = stringResource(R.string.words_remove_languages_title))
+                }
+            }
         }
         val expressions = vm.notebookExpressions()
         if (expressions.isEmpty()) item {
@@ -383,8 +404,81 @@ fun WordsScreen(vm: AppViewModel, onOpenLessons: () -> Unit = {}, onOpenTalk: ()
         item { Spacer(Modifier.height(24.dp)) }
     }
     selected?.let { word -> WordDialog(word, onRemove = { vm.hideWord(word.id); selected = null }, onDismiss = { selected = null }) }
+    if (removingLanguages) RemoveLanguagesDialog(vm, onDismiss = { removingLanguages = false })
     if (practising) WritingPracticeSheet(vm, onDismiss = { practising = false })
 }
+
+/**
+ * The notebook's "Remove languages…" dialog: one checkbox row per language
+ * THAT HAS expressions (count + approximate KB; the legacy NULL-language
+ * rows appear as the selectable "No language (legacy)" row when they hold
+ * data), a select-all helper, and a danger confirm naming the selection —
+ * disabled until at least one row is checked. On confirm the ViewModel
+ * deletes the selected languages' rows on both sides of the cutover
+ * invariant (ExpressionsDao transactions + the same working-copy predicate)
+ * and the notice is toasted — this screen has no inline notice row, exactly
+ * like the settings delete flows.
+ */
+@Composable
+private fun RemoveLanguagesDialog(vm: AppViewModel, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val rows = vm.expressionLanguageStats()
+    var checked by remember { mutableStateOf(emptySet<String?>()) }
+    fun toggle(languageID: String?) {
+        checked = if (languageID in checked) checked - languageID else checked + languageID
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.words_remove_languages_title)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState()).testTag("remove-languages-dialog")) {
+                rows.forEach { row ->
+                    val languageName = row.languageID
+                        ?.let { LanguageRegistry.get(it)?.name ?: it }
+                        ?: stringResource(R.string.words_remove_languages_legacy)
+                    Row(Modifier.fillMaxWidth()
+                            .clickable { toggle(row.languageID) }
+                            .testTag("remove-languages-row-" + (row.languageID ?: "legacy"))
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Checkbox(checked = row.languageID in checked, onCheckedChange = null)
+                        Column(Modifier.padding(start = 8.dp)) {
+                            Text(languageName, style = MaterialTheme.typography.bodyLarge, color = AppColors.Ink)
+                            Text(
+                                stringResource(R.string.words_remove_languages_count, row.count) + " · " +
+                                    stringResource(R.string.words_remove_languages_kb, formatKB(row.approxBytes)),
+                                style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        }
+                    }
+                }
+                AppTextButton(onClick = { checked = rows.map { it.languageID }.toSet() },
+                    modifier = Modifier.testTag("remove-languages-select-all")) {
+                    Text(stringResource(R.string.words_remove_languages_select_all))
+                }
+            }
+        },
+        confirmButton = {
+            val names = rows.filter { it.languageID in checked }.map { row ->
+                row.languageID?.let { LanguageRegistry.get(it)?.name ?: it }
+                    ?: stringResource(R.string.words_remove_languages_legacy)
+            }
+            AppTextButton(onClick = {
+                vm.removeExpressionLanguages(rows.filter { it.languageID in checked }.map { it.languageID })
+                vm.notice?.let { Toast.makeText(context, it, Toast.LENGTH_LONG).show() }
+                onDismiss()
+            }, enabled = checked.isNotEmpty(), modifier = Modifier.testTag("remove-languages-confirm")) {
+                if (names.isEmpty()) Text(stringResource(R.string.words_expression_remove), color = AppColors.Red)
+                else Text(stringResource(R.string.words_remove_languages_confirm_button, names.joinToString(", ")),
+                    color = AppColors.Red)
+            }
+        },
+        dismissButton = { AppTextButton(onClick = onDismiss) { Text(stringResource(R.string.common_cancel)) } },
+    )
+}
+
+/** The dialog's approximate size: KB with one decimal (UTF-8 byte lengths,
+ *  the DAO's approxBytes — a projection, not a file size). */
+private fun formatKB(bytes: Long): String = String.format(Locale.getDefault(), "%.1f", bytes / 1024.0)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

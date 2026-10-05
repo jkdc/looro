@@ -417,4 +417,69 @@ class LearningCutoverFlowTest {
         assertEquals(listOf(300.0, 200.0, 150.0, 100.0), export().completions!!.map { it.at })
         assertEquals(state, export())
     }
+
+    // ------------------------------------------------------------------
+    // Flow 7 — removeExpressionLanguages: the notebook's multi-language
+    // removal dialog. The dialog reads the working copy, so the SAME stats
+    // projection must come out of both sides, and the deletes must keep
+    // export(DB) == archive while conserving every non-selected bucket.
+    // ------------------------------------------------------------------
+    @Test fun notebookLanguageRemovalKeepsExportEqualToTheArchiveAndLegacySelectable() {
+        var state = startFrom(Archive(preferences = Preferences(learningLanguageID = "es"),
+            expressions = mutableListOf(
+                ExpressionState(text = "perro", meaning = "dog", source = "lookup", lastSeen = 1.0, dueAt = 2.0, languageID = "es"),
+                ExpressionState(text = "canción", meaning = "song", source = "lesson", lastSeen = 2.0, dueAt = 3.0, languageID = "es"),
+                ExpressionState(text = "chien", meaning = "dog", source = "lookup", lastSeen = 3.0, dueAt = 4.0, languageID = "fr"),
+                ExpressionState(text = "hola", meaning = "", source = "lookup", lastSeen = 4.0, dueAt = 5.0, languageID = null),
+                ExpressionState(text = "ciao", meaning = "hi", source = "lookup", lastSeen = 5.0, dueAt = 6.0, languageID = null))))
+
+        /** AppViewModel.expressionLanguageStats — the dialog's rows. */
+        fun stats(target: Archive): List<ExpressionLanguageStats> = target.expressions
+            .groupBy { it.languageID }
+            .map { (languageID, rows) -> ExpressionLanguageStats(
+                languageID, rows.size,
+                rows.sumOf { (it.text.toByteArray(Charsets.UTF_8).size +
+                    it.meaning.toByteArray(Charsets.UTF_8).size).toLong() }) }
+            .sortedWith(compareByDescending<ExpressionLanguageStats> { it.count }
+                .thenBy { it.languageID == null }
+                .thenBy { it.languageID ?: "" })
+
+        /** AppViewModel.removeExpressionLanguages' two halves: the SAME
+            predicate purges the working copy; the per-language DAO
+            transactions (legacy via its own delete) run against the DB. */
+        fun runRemoval(languageIDs: Collection<String?>) {
+            state = state.copy(expressions = state.expressions.filterNot {
+                (it.languageID != null && it.languageID in languageIDs) ||
+                    (null in languageIDs && it.languageID == null)
+            }.toMutableList())
+            languageIDs.filterNotNull().forEach { ExpressionsDao.deleteExpressionsForLanguage(db, it) }
+            if (null in languageIDs) ExpressionsDao.deleteExpressionsLegacy(db)
+        }
+
+        // the dialog's rows equal the durable projection (count desc, named
+        // languages before the legacy bucket within a tie — UTF-8 byte sizes:
+        // es 8+12=20, legacy 4+0+4+2=10, fr 5+3=8)
+        assertEquals(stats(state), ExpressionsDao.expressionStatsByLanguage(db))
+        assertEquals(
+            listOf(
+                ExpressionLanguageStats("es", 2, 20L),
+                ExpressionLanguageStats(null, 2, 10L),
+                ExpressionLanguageStats("fr", 1, 8L),
+            ),
+            ExpressionsDao.expressionStatsByLanguage(db))
+
+        // delete the current language: es goes EXACTLY (both rows), the fr
+        // rows and the shared legacy bucket stay on both sides
+        runRemoval(listOf<String?>("es"))
+        assertEquals(state, export())
+        assertEquals(listOf("chien", "hola", "ciao"), export().expressions.map { it.text })
+        assertTrue(state.expressions.none { it.languageID == "es" })
+
+        // the legacy bucket is selectable on its own and a multi-select takes
+        // several buckets in one dialog pass — same predicate both sides
+        runRemoval(listOf<String?>("fr", null))
+        assertEquals(state, export())
+        assertTrue(export().expressions.isEmpty())
+        assertTrue(ExpressionsDao.expressionStatsByLanguage(db).isEmpty())
+    }
 }

@@ -182,6 +182,7 @@ struct WordsView: View {
     @State private var selected: WordState?
     @State private var sessions = false
     @State private var practising = false
+    @State private var removingLanguages = false
     private var learner: LearnerState { coordinator.store.learner }
     private var words: [WordState] { learner.words.filter { search.isEmpty || $0.lemma.localizedCaseInsensitiveContains(search) || $0.meaning.localizedCaseInsensitiveContains(search) } }
     private var dueCount: Int { learner.words.filter { $0.dueAt < .now }.count }
@@ -228,8 +229,24 @@ struct WordsView: View {
                 }
                 HStack { Text("1 · Fragile"); Spacer(); Text("2 · Growing"); Spacer(); Text("3 · Steady") }.font(.caption).foregroundStyle(AppColor.secondary)
                 Text("The bars estimate spoken recall, not permanent mastery. Using a word with visible meanings counts as supported practice.").font(.footnote).foregroundStyle(AppColor.secondary)
-                Text("Saved expressions").font(.system(.title3, design: .rounded, weight: .semibold))
-                    .accessibilityAddTraits(.isHeader)
+                HStack(alignment: .center) {
+                    Text("Saved expressions").font(.system(.title3, design: .rounded, weight: .semibold))
+                        .accessibilityAddTraits(.isHeader)
+                    Spacer(minLength: 10)
+                    // The notebook-wide "Remove languages…" action (trash
+                    // icon): opens the multi-language removal sheet. Enabled
+                    // only when some language (or the legacy bucket) has
+                    // expressions — an empty notebook has nothing to remove.
+                    Button {
+                        removingLanguages = true
+                    } label: {
+                        Image(systemName: "trash").font(.system(size: 15, weight: .medium))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(coordinator.store.expressionLanguageStats().isEmpty)
+                    .accessibilityIdentifier("expressions-remove-languages")
+                    .accessibilityLabel("Remove languages…")
+                }
                 if expressions.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Save expressions from a lesson or the dictionary and they will return for recall.")
@@ -277,6 +294,7 @@ struct WordsView: View {
             .sheet(item: $selected) { word in WordDetailView(word: word, store: coordinator.store) }
             .sheet(isPresented: $sessions) { SessionHistoryView(store: coordinator.store) }
             .sheet(isPresented: $practising) { WritingPracticeView(store: coordinator.store) }
+            .sheet(isPresented: $removingLanguages) { RemoveLanguagesSheet(store: coordinator.store) }
     }
 
     /// Where the expression came from — mirror of Android's expressionSourceLabel.
@@ -285,6 +303,76 @@ struct WordsView: View {
         case "lesson": return "From a lesson"
         case "lookup": return "Saved by you"
         default: return source
+        }
+    }
+}
+
+/// The notebook's "Remove languages…" sheet (mirror of Android's
+/// RemoveLanguagesDialog): one checkbox row per language THAT HAS expressions
+/// (count + approximate KB; the legacy NULL-language rows appear as the
+/// selectable "No language (legacy)" row when they hold data), a select-all
+/// helper, and a danger confirm naming the selection — disabled until at
+/// least one row is checked. On confirm the store deletes the selected
+/// languages' rows on both sides of the cutover invariant; on failure the
+/// store's error surfaces through the root alert.
+struct RemoveLanguagesSheet: View {
+    let store: LearningStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var checked: Set<String?> = []
+
+    private var stats: [ExpressionLanguageStats] { store.expressionLanguageStats() }
+
+    private func rowName(_ languageID: String?) -> String {
+        languageID.flatMap { LanguageRegistry.module(for: $0)?.name } ?? "No language (legacy)"
+    }
+
+    private var selectedNames: String {
+        stats.filter { checked.contains($0.languageID) }.map { rowName($0.languageID) }.joined(separator: ", ")
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(stats.indices, id: \.self) { index in
+                        let row = stats[index]
+                        Button {
+                            if checked.contains(row.languageID) { checked.remove(row.languageID) } else { checked.insert(row.languageID) }
+                        } label: {
+                            HStack(spacing: 14) {
+                                Image(systemName: checked.contains(row.languageID) ? "checkmark.square.fill" : "square")
+                                    .font(.system(size: 18))
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(rowName(row.languageID))
+                                    Text("\(row.count) expressions · \(String(format: "%.1f", Double(row.approxBytes) / 1024.0)) KB")
+                                        .font(.footnote).foregroundStyle(AppColor.secondary)
+                                }
+                                Spacer(minLength: 10)
+                            }.padding(.vertical, 10)
+                        }.buttonStyle(.plain)
+                        .accessibilityIdentifier("remove-languages-row-\(row.languageID ?? "legacy")")
+                        Divider().overlay(AppColor.peach)
+                    }
+                    Button("Select all") { checked = Set(stats.map { $0.languageID }) }
+                        .font(.footnote).padding(.top, 8)
+                        .accessibilityIdentifier("remove-languages-select-all")
+                }.padding(24)
+            }
+            .navigationTitle("Remove languages…")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        _ = store.removeExpressionLanguages(stats.filter { checked.contains($0.languageID) }.map { $0.languageID })
+                        dismiss()
+                    } label: {
+                        Text(checked.isEmpty ? "Remove" : "Remove \(selectedNames)").foregroundStyle(.red)
+                    }
+                    .disabled(checked.isEmpty)
+                    .accessibilityIdentifier("remove-languages-confirm")
+                }
+            }
         }
     }
 }

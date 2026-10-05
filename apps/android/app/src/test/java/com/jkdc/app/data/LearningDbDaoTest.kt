@@ -178,6 +178,55 @@ class LearningDbDaoTest {
         assertNull(db.query("SELECT norm_key FROM expressions WHERE norm_key = 'new'").firstOrNull())
     }
 
+    @Test fun expressionsDeleteForLanguageIsExactAndLegacyStaysSelectable() {
+        fun seed(text: String, languageID: String?) {
+            assertTrue(ExpressionsDao.upsert(db, ExpressionState(text = text, meaning = "m", source = "lookup",
+                dueAt = 1.0, languageID = languageID), adoptLegacy = false))
+        }
+        seed("perro", "es"); seed("hola", "es"); seed("chien", "fr"); seed("bonjour", "fr")
+        seed("ciao", null)
+        // the language delete is EXACT (language_id = ?): es goes, fr and the
+        // legacy NULL bucket stay — deleting one language never takes the
+        // shared legacy entries along
+        assertEquals(2L, ExpressionsDao.deleteExpressionsForLanguage(db, "es"))
+        assertEquals(listOf("fr", "fr", null),
+            ExpressionsDao.all(db).map { it.languageID }.sortedBy { it ?: "~" })
+        // an unknown language is a no-op (0 rows affected)
+        assertEquals(0L, ExpressionsDao.deleteExpressionsForLanguage(db, "de"))
+        // the legacy bucket is its own delete (the dialog's selectable
+        // "No language (legacy)" row) and never rode the language delete
+        assertEquals(1L, ExpressionsDao.deleteExpressionsLegacy(db))
+        assertEquals(listOf("fr", "fr"), ExpressionsDao.all(db).map { it.languageID })
+        assertEquals(0L, ExpressionsDao.deleteExpressionsLegacy(db))
+    }
+
+    @Test fun expressionStatsByLanguageListsOnlyLanguagesWithDataCountDescWithUtf8Bytes() {
+        // empty database: no languages to remove, no rows at all
+        assertTrue(ExpressionsDao.expressionStatsByLanguage(db).isEmpty())
+        fun seed(text: String, meaning: String, languageID: String?) {
+            assertTrue(ExpressionsDao.upsert(db, ExpressionState(text = text, meaning = meaning,
+                source = "lookup", dueAt = 1.0, languageID = languageID), adoptLegacy = false))
+        }
+        // es: 2 rows, 8 + 12 bytes ("canción" carries the two-byte ó
+        // — UTF-8 BYTE lengths, not character counts); fr: 3 rows, 25 bytes;
+        // legacy: 1 row, 6 bytes
+        seed("perro", "dog", "es")
+        seed("canción", "song", "es")
+        seed("chien", "dog", "fr")
+        seed("chat", "cat", "fr")
+        seed("oiseau", "bird", "fr")
+        seed("ciao", "hi", null)
+        assertEquals(
+            listOf(
+                ExpressionLanguageStats(languageID = "fr", count = 3, approxBytes = 25L),
+                ExpressionLanguageStats(languageID = "es", count = 2, approxBytes = 20L),
+                ExpressionLanguageStats(languageID = null, count = 1, approxBytes = 6L),
+            ),
+            ExpressionsDao.expressionStatsByLanguage(db))
+        // a language with no rows never appears ("it" was never seeded)
+        assertEquals(setOf("fr", "es", null), ExpressionsDao.expressionStatsByLanguage(db).map { it.languageID }.toSet())
+    }
+
     @Test fun completionsIgnoreDuplicateInstantsAndLanguageStaysOutOfTheKey() {
         val mark = CompletionMark(kind = "lesson", itemID = "es-foundations-u1-ser", at = 100.0, bestScore = 90,
             languageID = "es")

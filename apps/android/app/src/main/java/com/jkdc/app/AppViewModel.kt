@@ -19,6 +19,8 @@ import com.jkdc.app.data.AndroidSqlDatabase
 import com.jkdc.app.data.AssessmentTicketsDao
 import com.jkdc.app.data.AssessmentTicketRow
 import com.jkdc.app.data.BackupManager
+import com.jkdc.app.data.ExpressionLanguageStats
+import com.jkdc.app.data.ExpressionsDao
 import com.jkdc.app.data.InvalidBackup
 import com.jkdc.app.data.LearningDb
 import com.jkdc.app.data.LearningDbStore
@@ -1817,6 +1819,60 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         archive = next
         val module = language.id
         persist { db -> LearningDbWriter.expressionRemoved(db, text, module) }
+    }
+
+    /**
+     * One remove-languages dialog row: the language (null = the legacy
+     * NULL-language bucket), its notebook row count and its approximate UTF-8
+     * payload — [ExpressionsDao.expressionStatsByLanguage]'s shape, computed
+     * from the working copy (every notebook read is read-your-writes: writes
+     * land asynchronously, and the dialog must show exactly what a confirm
+     * would purge).
+     */
+    fun expressionLanguageStats(): List<ExpressionLanguageStats> =
+        archive.expressions
+            .groupBy { it.languageID }
+            .map { (languageID, rows) -> ExpressionLanguageStats(
+                languageID, rows.size,
+                rows.sumOf { (it.text.toByteArray(Charsets.UTF_8).size +
+                    it.meaning.toByteArray(Charsets.UTF_8).size).toLong() }) }
+            // the DAO's order: count desc, named languages alphabetical, the
+            // legacy bucket last (LearningCutoverFlowTest pins the equality)
+            .sortedWith(compareByDescending<ExpressionLanguageStats> { it.count }
+                .thenBy { it.languageID == null }
+                .thenBy { it.languageID ?: "" })
+
+    /**
+     * The notebook's "Remove languages…" action: deletes every row whose
+     * language_id is in [selected] EXACTLY (null selects the legacy
+     * NULL-language bucket), on both sides of the cutover invariant — the
+     * [ExpressionsDao] transaction per language and the SAME predicate on the
+     * working copy, so export(DB) == archive keeps holding. Legacy rows are
+     * only removed when explicitly selected (null in [selected]); deleting a
+     * language never takes the shared legacy bucket with it. Per-language
+     * transactions (not one batch): a crash between them can only leave rows
+     * that REAPPEAR at the next startup export — never a silent loss.
+     */
+    fun removeExpressionLanguages(selected: Collection<String?>) {
+        if (selected.isEmpty()) return
+        if (!storageReady) { refuseStorageNotice(); return }
+        val doomedLanguages = selected.filterNotNull().toSet()
+        val includeLegacy = null in selected
+        // Copy first: the state setter skips element-wise-equal writes.
+        archive = archive.copy(expressions = archive.expressions.filterNot {
+            (it.languageID != null && it.languageID in doomedLanguages) ||
+                (includeLegacy && it.languageID == null)
+        }.toMutableList())
+        persist { db ->
+            doomedLanguages.forEach { ExpressionsDao.deleteExpressionsForLanguage(db, it) }
+            if (includeLegacy) ExpressionsDao.deleteExpressionsLegacy(db)
+        }
+        val names = selected.map { languageID ->
+            languageID?.let { LanguageRegistry.get(it)?.name ?: it }
+                ?: getApplication<Application>().getString(R.string.words_remove_languages_legacy)
+        }
+        notice = getApplication<Application>().getString(
+            R.string.notice_expressions_languages_removed, names.joinToString(", "))
     }
 
     fun gradeRecall(text: String, correct: Boolean) {

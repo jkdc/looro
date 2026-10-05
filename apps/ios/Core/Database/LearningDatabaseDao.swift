@@ -253,6 +253,23 @@ public enum FragmentsDao {
     }
 }
 
+// MARK: ExpressionLanguageStats
+
+/// One remove-languages dialog row (mirror of the Kotlin data class): the
+/// language (nil = the legacy NULL-language bucket), its notebook row count
+/// and its approximate UTF-8 payload (text+meaning byte lengths).
+public struct ExpressionLanguageStats: Equatable {
+    public let languageID: String?
+    public let count: Int
+    public let approxBytes: Int64
+
+    public init(languageID: String?, count: Int, approxBytes: Int64) {
+        self.languageID = languageID
+        self.count = count
+        self.approxBytes = approxBytes
+    }
+}
+
 // MARK: ExpressionsDao
 
 /// Saved expressions keyed on (norm_key, language_id) with norm_key =
@@ -385,6 +402,50 @@ public enum ExpressionsDao {
     public static func due(_ db: SqlDatabase, _ languageID: String, _ now: Double) throws -> [ExpressionState] {
         return try db.query("SELECT * FROM expressions WHERE (language_id = ? OR language_id IS NULL) "
             + "AND bars < 3 AND due_at <= ? ORDER BY due_at, rowid", args: [languageID, now]).map(expression)
+    }
+
+    /// Deletes the notebook rows of ONE language — `language_id = ?` EXACT.
+    /// The legacy NULL-language entries are CONSERVED: they are visible (and
+    /// adoptable) in every language, so removing one language's rows must not
+    /// take the shared legacy bucket along — the same split
+    /// `BackupManager.deleteLearningDataForLanguage` draws for the
+    /// whole-language wipe, narrowed to expressions. One transaction; returns
+    /// the affected row count. Legacy rows go through `deleteExpressionsLegacy`,
+    /// which takes a different predicate (IS NULL cannot ride a bind argument).
+    @discardableResult
+    public static func deleteExpressionsForLanguage(_ db: SqlDatabase, languageID: String) throws -> Int64 {
+        return try db.transaction { tx in
+            try tx.update("DELETE FROM expressions WHERE language_id = ?", args: [languageID])
+        }
+    }
+
+    /// The legacy bucket's delete — the selectable "No language (legacy)" row
+    /// of the notebook's remove-languages dialog. Same contract as
+    /// `deleteExpressionsForLanguage`: one transaction, affected count.
+    @discardableResult
+    public static func deleteExpressionsLegacy(_ db: SqlDatabase) throws -> Int64 {
+        return try db.transaction { tx in
+            try tx.update("DELETE FROM expressions WHERE language_id IS NULL", args: [])
+        }
+    }
+
+    /// Per-language notebook size for the remove-languages dialog: one
+    /// `ExpressionLanguageStats` row per language THAT HAS data (an empty
+    /// language is nothing to remove), the legacy NULL bucket included as a
+    /// `languageID == nil` row when it holds rows. approxBytes is the UTF-8
+    /// payload size — `LENGTH(CAST(x AS BLOB))` is byte length in SQLite,
+    /// where plain LENGTH on TEXT counts characters — summed over text and
+    /// meaning. Ordered by count descending, ties broken deterministically:
+    /// named languages alphabetical first, the legacy bucket last.
+    public static func expressionStatsByLanguage(_ db: SqlDatabase) throws -> [ExpressionLanguageStats] {
+        return try db.query(
+            "SELECT language_id, COUNT(*) AS n, "
+                + "SUM(LENGTH(CAST(text AS BLOB)) + LENGTH(CAST(meaning AS BLOB))) AS bytes "
+                + "FROM expressions GROUP BY language_id "
+                + "ORDER BY n DESC, language_id IS NULL, language_id").map { row in
+            ExpressionLanguageStats(languageID: row.textOrNull("language_id"),
+                                    count: row.int("n"), approxBytes: row.long("bytes"))
+        }
     }
 
     private static func count(_ db: SqlDatabase) throws -> Int64 {

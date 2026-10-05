@@ -248,6 +248,7 @@
     <string name="notice_data_conversation_active">A conversation is in progress. End it before changing your data.</string>
     <string name="notice_data_storage_preparing">Storage is still being prepared. Try again in a moment.</string>
     <string name="notice_language_data_deleted">%1$s learning data deleted.</string>
+    <string name="notice_expressions_languages_removed">Removed expressions for %1$s.</string>
     <string name="notice_backup_invalid">That file isn\'t a valid learning database.</string>
     <string name="notice_backup_future_version">This backup is from a newer version of the app. Update the app and try again.</string>
     <string name="notice_backup_missing_tables">The backup is missing learning database tables.</string>
@@ -478,6 +479,12 @@
     <string name="words_expressions_heading">Saved expressions</string>
     <string name="words_expressions_empty">Save expressions from a lesson or the dictionary and they will return for recall.</string>
     <string name="words_expression_remove">Remove</string>
+    <string name="words_remove_languages_title">Remove languages…</string>
+    <string name="words_remove_languages_count">%1$d expressions</string>
+    <string name="words_remove_languages_kb">%1$s KB</string>
+    <string name="words_remove_languages_legacy">No language (legacy)</string>
+    <string name="words_remove_languages_select_all">Select all</string>
+    <string name="words_remove_languages_confirm_button">Remove %1$s</string>
     <string name="lookup_save">Save for recall</string>
     <string name="lookup_saved">Saved</string>
     <string name="tokens_row_title">Palique (tokens)</string>

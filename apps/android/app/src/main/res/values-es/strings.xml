@@ -248,6 +248,7 @@
     <string name="notice_data_conversation_active">Hay una conversación en curso. Termina antes de cambiar tus datos.</string>
     <string name="notice_data_storage_preparing">El almacenamiento todavía se está preparando. Inténtalo de nuevo en un momento.</string>
     <string name="notice_language_data_deleted">Se eliminaron los datos de aprendizaje de %1$s.</string>
+    <string name="notice_expressions_languages_removed">Expresiones eliminadas de %1$s.</string>
     <string name="notice_backup_invalid">El archivo no es una base de datos de aprendizaje válida.</string>
     <string name="notice_backup_future_version">El respaldo pertenece a una versión más nueva de la app. Actualiza la aplicación e inténtalo de nuevo.</string>
     <string name="notice_backup_missing_tables">Al respaldo le faltan tablas de la base de datos de aprendizaje.</string>
@@ -478,6 +479,12 @@
     <string name="words_expressions_heading">Expresiones guardadas</string>
     <string name="words_expressions_empty">Guarda expresiones desde una lección o el diccionario y volverán para repasar.</string>
     <string name="words_expression_remove">Quitar</string>
+    <string name="words_remove_languages_title">Eliminar idiomas…</string>
+    <string name="words_remove_languages_count">%1$d expresiones</string>
+    <string name="words_remove_languages_kb">%1$s KB</string>
+    <string name="words_remove_languages_legacy">Sin idioma (heredado)</string>
+    <string name="words_remove_languages_select_all">Seleccionar todo</string>
+    <string name="words_remove_languages_confirm_button">Eliminar %1$s</string>
     <string name="lookup_save">Guardar para repasar</string>
     <string name="lookup_saved">Guardada</string>
     <string name="tokens_row_title">Palique (tokens)</string>

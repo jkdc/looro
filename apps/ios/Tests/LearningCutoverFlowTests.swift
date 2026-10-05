@@ -335,6 +335,86 @@ final class LearningCutoverFlowTests: XCTestCase {
             .first!.long("n"))
     }
 
+    // MARK: flow 4b — removeExpressionLanguages (the notebook's multi-language
+    // removal dialog). The dialog reads the working copy, so the SAME stats
+    // projection must come out of both sides, and the deletes must keep
+    // export(DB) == archive while conserving every non-selected bucket.
+
+    func testNotebookLanguageRemovalKeepsExportEqualToTheArchiveAndLegacySelectable() throws {
+        var state = startFrom(fixture {
+            $0.preferences.learningLanguageID = "es"
+            $0.expressions = [
+                ExpressionState(text: "perro", meaning: "dog", source: "lookup", lastSeen: 1.0, dueAt: 2.0, languageID: "es"),
+                ExpressionState(text: "canción", meaning: "song", source: "lesson", lastSeen: 2.0, dueAt: 3.0, languageID: "es"),
+                ExpressionState(text: "chien", meaning: "dog", source: "lookup", lastSeen: 3.0, dueAt: 4.0, languageID: "fr"),
+                ExpressionState(text: "hola", meaning: "", source: "lookup", lastSeen: 4.0, dueAt: 5.0),
+                ExpressionState(text: "ciao", meaning: "hi", source: "lookup", lastSeen: 5.0, dueAt: 6.0),
+            ]
+        })
+
+        /// LearningStore.expressionLanguageStats — the dialog's rows.
+        func stats(_ target: Archive) -> [ExpressionLanguageStats] {
+            let grouped = Dictionary(grouping: target.expressions ?? [], by: { $0.languageID })
+            return grouped.map { languageID, rows in
+                ExpressionLanguageStats(
+                    languageID: languageID, count: rows.count,
+                    approxBytes: rows.reduce(Int64(0)) { $0 + Int64($1.text.utf8.count + $1.meaning.utf8.count) })
+            }
+            .sorted { lhs, rhs in
+                if lhs.count != rhs.count { return lhs.count > rhs.count }
+                switch (lhs.languageID, rhs.languageID) {
+                case let (l?, r?): return l < r
+                case (.some, .none): return true
+                default: return false
+                }
+            }
+        }
+
+        /// The site's two halves for removeExpressionLanguages: the SAME
+        /// predicate purges the working copy; the per-language DAO
+        /// transactions (legacy via its own delete) run against the DB.
+        func runRemoval(_ languageIDs: [String?]) throws {
+            let doomed = Set(languageIDs.compactMap { $0 })
+            let includeLegacy = languageIDs.contains(nil)
+            state.expressions = (state.expressions ?? []).filter { expression in
+                if let id = expression.languageID { return !doomed.contains(id) }
+                return !includeLegacy
+            }
+            for id in doomed.sorted() {
+                _ = try ExpressionsDao.deleteExpressionsForLanguage(db, languageID: id)
+            }
+            if includeLegacy {
+                _ = try ExpressionsDao.deleteExpressionsLegacy(db)
+            }
+        }
+
+        // The dialog's rows equal the durable projection (count desc, named
+        // languages before the legacy bucket within a tie — UTF-8 byte sizes:
+        // es 8+12=20, legacy 4+0+4+2=10, fr 5+3=8).
+        XCTAssertEqual(stats(state), try ExpressionsDao.expressionStatsByLanguage(db))
+        XCTAssertEqual(
+            [
+                ExpressionLanguageStats(languageID: "es", count: 2, approxBytes: 20),
+                ExpressionLanguageStats(languageID: nil, count: 2, approxBytes: 10),
+                ExpressionLanguageStats(languageID: "fr", count: 1, approxBytes: 8),
+            ],
+            try ExpressionsDao.expressionStatsByLanguage(db))
+
+        // Delete the current language: es goes EXACTLY (both rows), the fr
+        // rows and the shared legacy bucket stay on both sides.
+        try runRemoval(["es"])
+        try assertExportEquals(state)
+        XCTAssertEqual(["chien", "ciao", "hola"], (state.expressions ?? []).map(\.text).sorted())
+        XCTAssertFalse((state.expressions ?? []).contains { $0.languageID == "es" })
+
+        // The legacy bucket is selectable on its own and a multi-select takes
+        // several buckets in one dialog pass — same predicate both sides.
+        try runRemoval(["fr", nil])
+        try assertExportEquals(state)
+        XCTAssertTrue((state.expressions ?? []).isEmpty)
+        XCTAssertTrue(try ExpressionsDao.expressionStatsByLanguage(db).isEmpty)
+    }
+
     // MARK: flow 5 — mistakes, remote pull, wipe, restore
 
     func testMistakeMemoryProgressPullAndWipeStayConsistent() throws {

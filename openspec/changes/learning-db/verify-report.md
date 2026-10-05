@@ -105,6 +105,7 @@ committed captures; per-phase green suites (109→121→132 Python, 547→632 JV
 - **Notebook cross-language remove:** the per-language delete leaves
   notebook rows of other languages untouched by design; whether the remove
   should be cross-language is still an open decision.
+- Caps: DECIDED 2026-10-05 by Joaquín — stay GLOBAL (2000 total across languages, engine-faithful); per-language reads/delete delivered; per-language caps discarded.
 
 ## Fix round (post-close review, 2026-10-04)
 
