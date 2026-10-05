@@ -1855,6 +1855,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun removeExpressionLanguages(selected: Collection<String?>) {
         if (selected.isEmpty()) return
+        // No isRunning guard, deliberately: expressions are not session-coupled
+        // (seeding happens at session end), so a mid-conversation removal is
+        // user intent and both sides stay consistent via the shared predicate.
         if (!storageReady) { refuseStorageNotice(); return }
         val doomedLanguages = selected.filterNotNull().toSet()
         val includeLegacy = null in selected

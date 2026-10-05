@@ -102,9 +102,12 @@ committed captures; per-phase green suites (109→121→132 Python, 547→632 JV
   until real-world data says otherwise. This supersedes the old plan line.
 - **`mergeRemote` ProgressSync position-diff coupling:** the merge path
   still couples to the position diff; decoupling is a separate design task.
-- **Notebook cross-language remove:** the per-language delete leaves
-  notebook rows of other languages untouched by design; whether the remove
-  should be cross-language is still an open decision.
+- **Notebook cross-language remove:** DELIVERED 2026-10-05 (`4ac1d29`) —
+  the notebook's "Remove languages…" action brings the multi-select dialog
+  per Joaquín's decision. Remaining open bit only: other learning data
+  (sessions, completions, lesson_state) still deletes whole-language via
+  `deleteLearningDataForLanguage`, while expressions now have their own
+  scoped, multi-language flow.
 - Caps: DECIDED 2026-10-05 by Joaquín — stay GLOBAL (2000 total across languages, engine-faithful); per-language reads/delete delivered; per-language caps discarded.
 
 ## Fix round (post-close review, 2026-10-04)

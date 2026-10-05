@@ -469,6 +469,10 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             error = Self.databaseUnavailableDeleteNotice
             return false
         }
+        // No conversation-in-flight guard, deliberately (Android likewise has
+        // no isRunning guard): expressions are not session-coupled (seeding
+        // happens at session end), so a mid-conversation removal is user
+        // intent and both sides stay consistent via the shared predicate.
         let doomed = Set(selected.compactMap { $0 })
         let includeLegacy = selected.contains(nil)
         archive.expressions = (archive.expressions ?? []).filter { expression in
