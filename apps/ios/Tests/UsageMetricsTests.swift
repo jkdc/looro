@@ -7,6 +7,9 @@ import XCTest
 /// successful send, stay pending on failure, read ≤200 rows per flush and
 /// never make a POST exceed the server's 100-event batch cap.
 final class UsageMetricsTests: XCTestCase {
+    /// A random install uuid as the meta 'install_id' row stores it.
+    private let installA = "0f3e9d2c-1b4a-4c8d-9e2f-a1b2c3d4e5f6"
+
     /// The durable-outbox stub: rows leave `rows` only through markDispatched,
     /// exactly like DB rows leave dispatched = 0.
     private final class DurableStub {
@@ -15,10 +18,11 @@ final class UsageMetricsTests: XCTestCase {
         var requestedCap = 0
         var nextRowId: Int64 = 1
 
-        func enqueue(_ name: String, _ props: [String: UsageProp] = [:]) {
+        func enqueue(_ name: String, _ props: [String: UsageProp] = [:],
+                     installID: String = "0f3e9d2c-1b4a-4c8d-9e2f-a1b2c3d4e5f6") {
             let rowId = nextRowId; nextRowId += 1
             rows.append(DurableUsageEvent(rowId: rowId, event: PendingUsageEvent(
-                id: UUID(uuidString: durableUsageEventID(rowId: rowId))!,
+                id: UUID(uuidString: durableUsageEventID(installID: installID, rowId: rowId))!,
                 name: name, at: 5_000, props: props)))
         }
 
@@ -44,6 +48,22 @@ final class UsageMetricsTests: XCTestCase {
     private func stringProp(_ props: [String: UsageProp]?, _ key: String) -> String? {
         guard case .string(let value)? = props?[key] else { return nil }
         return value
+    }
+
+    func testDurableIdsFoldTheInstallIntoTheFreeHexGroupsAndStayGloballyUnique() {
+        // the server's client-id unique index spans ALL installs: the free
+        // groups must carry a per-install random component, not just the rowid
+        let installB = "7c2a1b0d-3e4f-4a5b-8c9d-0e1f2a3b4c5d"
+        let a = durableUsageEventID(installID: installA, rowId: 1)
+        let b = durableUsageEventID(installID: installB, rowId: 1)
+        XCTAssertNotEqual(a, b) // two fresh installs' rowid 1 can no longer collide
+        XCTAssertEqual(a, durableUsageEventID(installID: installA, rowId: 1)) // stable per (install, row)
+        XCTAssertTrue(isUUIDV4(a.lowercased())) // the server accepts UUID-V4 ids only
+        XCTAssertTrue(isUUIDV4(b.lowercased()))
+        XCTAssertEqual("0f3e9d2c-1b4a", String(a.prefix(13))) // install hex in the free groups...
+        XCTAssertEqual("7c2a1b0d-3e4f", String(b.prefix(13)))
+        XCTAssertEqual("-4000-8000-", String(a.dropFirst(13).prefix(11))) // ...markers fixed...
+        XCTAssertEqual("000000000001", String(a.suffix(12))) // ...rowid in the tail
     }
 
     func testFlushUploadsDurableRowsAndMarksThemDispatchedWithoutAnInMemoryRecord() async {

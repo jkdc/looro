@@ -23,7 +23,8 @@ import org.junit.Test
 
 /** DAO semantics on a real SQLite (sqlite-jdbc): upsert identities, the
  *  expressions cap and legacy adoption, the completions dedup policy, the
- *  skill-error top-100 trim and the usage-outbox epoch conversion. */
+ *  skill-error top-100 trim, the usage-outbox epoch conversion and its
+ *  install-scoped wire ids. */
 class LearningDbDaoTest {
     private val connection: Connection = DriverManager.getConnection("jdbc:sqlite::memory:")
     private val db = LearningDb.openJvm(connection)
@@ -220,10 +221,19 @@ class LearningDbDaoTest {
         assertEquals(1_727_859_600_123L, pending[1].event.at)
         assertEquals("app_open", pending[1].event.name)
         assertEquals(props, pending[1].event.props)
-        assertEquals("00000000-0000-4000-8000-000000000001", pending[0].event.id) // the rowid becomes the event id
-        // ...in the UUID-V4 shape the server's usage endpoint accepts
-        assertTrue(pending.all { it.event.id.matches(
-            Regex("[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) })
+        // the rowid rides the 12-hex tail of a GLOBALLY unique id: the free
+        // groups carry the persisted meta 'install_id' (the server's
+        // client-id unique index spans installs), dash-spliced 8+4; the
+        // version/variant markers stay 4/8
+        val id = pending[0].event.id
+        assertTrue(id.matches(
+            Regex("[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")))
+        val install = MetaDao.get(db, UsageOutboxDao.INSTALL_ID_KEY)!!
+            .filter { it.isDigit() || it.lowercaseChar() in 'a'..'f' }
+            .take(12).lowercase()
+        assertEquals("${install.take(8)}-${install.takeLast(4)}-4000-8000-000000000001", id)
+        // stable per (install, row): client retries replay the same id
+        assertEquals(pending.map { it.event.id }, UsageOutboxDao.pending(db).map { it.event.id })
         UsageOutboxDao.markDispatched(db, listOf(first))
         assertEquals(listOf(second), UsageOutboxDao.pending(db).map { it.rowId })
         assertEquals(2L, count("usage_outbox"))

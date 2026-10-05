@@ -782,8 +782,10 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 // 'last_health_at') and write the event as ONE durable
                 // usage_outbox row — no in-memory double-record; the flush
                 // (this one or a later run's) drains it, so a close right
-                // after this line loses nothing. A crash just delays the next
-                // heartbeat to the next due window.
+                // after this line loses nothing. Two accepted loss windows
+                // delay the heartbeat to the next due window: a crash after
+                // the claim, and a failed enqueue (the marker is already
+                // stamped).
                 if (usageReporter.enabled && !jsonMode) {
                     val database = store!!.db
                     val sessionCount = archive.sessions.size

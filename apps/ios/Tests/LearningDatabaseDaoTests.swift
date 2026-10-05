@@ -3,7 +3,8 @@ import XCTest
 
 /// DAO semantics on a real SQLite (GRDB in-memory): upsert identities, the
 /// expressions cap and legacy adoption, the completions dedup policy, the
-/// skill-error top-100 trim and the usage-outbox epoch conversion — the Swift
+/// skill-error top-100 trim, the usage-outbox epoch conversion and its
+/// install-scoped wire ids — the Swift
 /// mirror of Android's `LearningDbDaoTest`.
 final class LearningDatabaseDaoTests: XCTestCase {
     private var db: SqlDatabase!
@@ -303,16 +304,25 @@ final class LearningDatabaseDaoTests: XCTestCase {
         XCTAssertEqual(Int64(1_727_859_600_123), pending.last?.event.at)
         XCTAssertEqual("app_open", pending.last?.event.name)
         XCTAssertEqual(3, intProp(pending.last?.event.props, "bucket"))
-        XCTAssertEqual("00000000-0000-4000-8000-000000000001",
-                       pending.first?.event.id.uuidString) // the rowid becomes the event id…
-        // …in the UUID-V4 shape the server's usage endpoint accepts
+        // the rowid rides the 12-hex tail of a GLOBALLY unique id: the free
+        // groups carry the persisted meta 'install_id' (the server's
+        // client-id unique index spans installs), dash-spliced 8+4; the
+        // version/variant markers stay 4/8
         let uuidV4 = try! NSRegularExpression(
             pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
-        XCTAssertTrue(pending.allSatisfy { queued in
-            let id = queued.event.id.uuidString.lowercased()
+        func matchesV4(_ id: String) -> Bool {
             let range = NSRange(id.startIndex..., in: id)
             return uuidV4.firstMatch(in: id, range: range) != nil
-        })
+        }
+        let id = pending.first!.event.id.uuidString.lowercased()
+        XCTAssertTrue(matchesV4(id))
+        let stored = try MetaDao.get(db, UsageOutboxDao.installIDKey) ?? ""
+        let install = String(stored.filter(\.isHexDigit).prefix(12).lowercased())
+        XCTAssertEqual("\(install.prefix(8))-\(install.suffix(4))-4000-8000-000000000001", id)
+        // stable per (install, row): client retries replay the same id
+        XCTAssertEqual(pending.map(\.event.id),
+                       try UsageOutboxDao.pending(db).map(\.event.id))
+        XCTAssertTrue(pending.allSatisfy { matchesV4($0.event.id.uuidString.lowercased()) })
         try UsageOutboxDao.markDispatched(db, [first])
         XCTAssertEqual([second], try UsageOutboxDao.pending(db).map(\.rowId))
         XCTAssertEqual(Int64(2), try count("usage_outbox"))

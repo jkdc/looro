@@ -141,15 +141,22 @@ public func usageBatchJSON(platform: String, appVersion: String, events: [Pendin
     return String(data: data, encoding: .utf8)
 }
 
-/// The durable usage_outbox row's wire id: a deterministic UUID-V4-shaped
-/// string (00000000-0000-4000-8000-<12 hex of the rowid>) — the server's
-/// usage endpoint accepts UUID-V4 event ids only (services/api/src/usage.ts
-/// UUID_V4), and the stable id makes client retries dedupe server-side
-/// (ON CONFLICT (client_event_id) DO NOTHING). Rowids beyond 48 bits truncate
-/// into the hex tail; a collision would at worst drop one heartbeat.
-public func durableUsageEventID(rowId: Int64) -> String {
-    let hex = String(rowId & 0xFFFF_FFFF_FFFF, radix: 16)
-    return "00000000-0000-4000-8000-" + String(repeating: "0", count: 12 - hex.count) + hex
+/// The durable usage_outbox row's wire id: a deterministic, GLOBALLY unique
+/// UUID-V4-shaped string. The server's client-id unique index
+/// (usage_events_client_id_idx) spans ALL installs, so the free hex groups
+/// fold in an install-scoped random component — groups 1+2 (8+4 hex) carry
+/// the first 12 hex of the meta 'install_id' UUID (48 bits, persisted per
+/// install, dash-spliced back into UUID shape) — while the rowid keeps the
+/// 12-hex tail and the version (4) / variant (8) markers stay fixed.
+/// Deterministic per (install, row), so client retries replay the same id
+/// and the server dedupes them (ON CONFLICT (client_event_id) DO NOTHING);
+/// different installs can no longer collide.
+public func durableUsageEventID(installID: String, rowId: Int64) -> String {
+    let install = String(installID.filter { $0.isHexDigit }.prefix(12)
+        .lowercased().padding(toLength: 12, withPad: "0", startingAt: 0))
+    let row = String(rowId & 0xFFFF_FFFF_FFFF, radix: 16)
+    return "\(install.prefix(8))-\(install.suffix(4))-4000-8000-"
+        + String(repeating: "0", count: 12 - row.count) + row
 }
 
 /// One durable outbox row: the wire event plus the durable row id the drain

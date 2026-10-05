@@ -24,6 +24,7 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import java.util.UUID
 import kotlin.math.roundToLong
 
 /**
@@ -516,8 +517,9 @@ object SkillErrorsDao {
 
 /** One queued usage event plus its durable row id ([PendingUsageEvent.id] is
     a client-generated string the schema does not store; the rowid takes over
-    as identity and its [durableUsageEventID] form becomes the id used on the
-    wire — stable across restarts, so client retries dedupe server-side). */
+    as identity and its [durableUsageEventID] form — folded with this
+    install's random 'install_id' — becomes the id used on the wire, stable
+    per (install, row) so client retries dedupe server-side). */
 data class QueuedUsageEvent(val rowId: Long, val event: PendingUsageEvent)
 
 /**
@@ -526,6 +528,20 @@ data class QueuedUsageEvent(val rowId: Long, val event: PendingUsageEvent)
  * rule), applied here on write and reversed on read.
  */
 object UsageOutboxDao {
+    /** The per-install random component of every durable wire id, persisted in
+        meta on first use (the server's client-id unique index spans ALL
+        installs, so rowid-only ids from fresh installs would collide). */
+    const val INSTALL_ID_KEY = "install_id"
+
+    /** Reads the persisted install id, generating a random UUID on first use;
+        re-reads after the put so a concurrent first drain derives from exactly
+        what is persisted (last write wins). */
+    fun installID(db: SqlDatabase): String {
+        MetaDao.get(db, INSTALL_ID_KEY)?.let { return it }
+        MetaDao.put(db, INSTALL_ID_KEY, UUID.randomUUID().toString())
+        return MetaDao.get(db, INSTALL_ID_KEY) ?: error("install_id write lost")
+    }
+
     fun enqueue(db: SqlDatabase, name: String, atUnixMillis: Long,
                 props: JsonObject = JsonObject(emptyMap())): Long =
         db.insert("usage_outbox", mapOf(
@@ -535,20 +551,22 @@ object UsageOutboxDao {
         ))
 
     /** Undispatched events, oldest first. */
-    fun pending(db: SqlDatabase): List<QueuedUsageEvent> =
-        db.query("SELECT rowid AS row_id, name, at, props_json FROM usage_outbox " +
+    fun pending(db: SqlDatabase): List<QueuedUsageEvent> {
+        val install = installID(db)
+        return db.query("SELECT rowid AS row_id, name, at, props_json FROM usage_outbox " +
             "WHERE dispatched = 0 ORDER BY at, row_id").map { row ->
             val rowId = row.long("row_id")
             QueuedUsageEvent(
                 rowId = rowId,
                 event = PendingUsageEvent(
-                    id = durableUsageEventID(rowId),
+                    id = durableUsageEventID(install, rowId),
                     name = row.text("name"),
                     at = ((row.real("at") + APPLE_EPOCH_UNIX_SECONDS) * 1000.0).roundToLong(),
                     props = ArchiveJson.decodeFromString(JsonObject.serializer(), row.text("props_json")),
                 ),
             )
         }
+    }
 
     fun markDispatched(db: SqlDatabase, rowIds: Collection<Long>) {
         if (rowIds.isEmpty()) return
@@ -710,9 +728,11 @@ object ArchiveHealth {
     /** Claims the daily slot: when the last marker is missing or older than
         [CADENCE_MILLISECONDS], stamps the marker and returns the bucketed
         props for the caller to enqueue as the durable usage_outbox row; else
-        returns null. A crash after the claim simply delays the next
-        heartbeat to the next due window — acceptable for a heartbeat. The
-        ONLY durable write here is that single meta row (a put), atomic on
+        returns null. TWO loss windows are accepted for a heartbeat, both
+        simply delaying the next heartbeat to the next due window: a crash
+        after the claim, and a FAILED OUTBOX ENQUEUE after it (the marker is
+        already stamped, so that heartbeat is skipped until the next window).
+        The ONLY durable write here is that single meta row (a put), atomic on
         its own — no transaction required. */
     fun claimIfDue(db: SqlDatabase, nowUnixMillis: Long, dbBytes: Long,
                    sessionCount: Int): JsonObject? {

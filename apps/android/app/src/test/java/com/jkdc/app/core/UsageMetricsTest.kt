@@ -7,6 +7,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -105,6 +106,10 @@ class UsageMetricsTest {
 
     // -- the durable usage_outbox drain (schema v2) ---------------------------
 
+    /** A random install uuid as the meta 'install_id' row stores it. */
+    private val installA = "0f3e9d2c-1b4a-4c8d-9e2f-a1b2c3d4e5f6"
+    private val installB = "7c2a1b0d-3e4f-4a5b-8c9d-0e1f2a3b4c5d"
+
     /** The durable-outbox stub: rows leave [rows] only through markDispatched,
         exactly like DB rows leave dispatched = 0. */
     private class StubDurableOutbox : DurableUsageOutbox {
@@ -113,10 +118,11 @@ class UsageMetricsTest {
         var nextRowId = 1L
         var requestedCap = 0
 
-        fun enqueue(name: String, props: JsonObject = JsonObject(emptyMap())) {
+        fun enqueue(name: String, props: JsonObject = JsonObject(emptyMap()),
+                    installID: String = "0f3e9d2c-1b4a-4c8d-9e2f-a1b2c3d4e5f6") {
             val rowId = nextRowId++
             rows += DurableUsageEvent(rowId, PendingUsageEvent(
-                durableUsageEventID(rowId), name, 5_000, props))
+                durableUsageEventID(installID, rowId), name, 5_000, props))
         }
 
         override suspend fun pending(cap: Int): List<DurableUsageEvent> {
@@ -128,6 +134,31 @@ class UsageMetricsTest {
             dispatched += rowIds
             rows = rows.filterNot { it.rowId in rowIds }
         }
+    }
+
+    @Test fun durableIdsFoldTheInstallIntoTheFreeHexGroupsAndStayGloballyUnique() {
+        // the server's client-id unique index spans ALL installs: the free
+        // groups must carry a per-install random component, not just the rowid
+        val a = durableUsageEventID(installA, 1L)
+        val b = durableUsageEventID(installB, 1L)
+        assertNotEquals(a, b) // two fresh installs' rowid 1 can no longer collide
+        assertEquals(a, durableUsageEventID(installA, 1L)) // stable per (install, row): retries dedupe
+        val v4 = Regex("[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")
+        assertTrue(listOf(a, b).all { it.matches(v4) }) // the server accepts UUID-V4 ids only
+        assertEquals("0f3e9d2c-1b4a", a.take(13)) // install hex in the free groups...
+        assertEquals("7c2a1b0d-3e4f", b.take(13))
+        assertEquals("-4000-8000-", a.substring(13, 24)) // ...version/variant markers fixed...
+        assertEquals("000000000001", a.takeLast(12)) // ...rowid in the tail
+    }
+
+    @Test fun outboxSurvivesConcurrentRecorders() {
+        val box = UsageOutbox(capacity = 100)
+        val threads = (1..4).map { t ->
+            Thread { repeat(250) { i -> box.record("t$t-$i", UsageEvents.APP_OPEN, 1_000) } }
+        }
+        threads.forEach { it.start() }
+        threads.forEach { it.join() }
+        assertEquals(100, box.size) // capacity capped, no lost-update corruption
     }
 
     @Test fun flushUploadsDurableRowsAndMarksThemDispatchedWithoutAnInMemoryRecord() {

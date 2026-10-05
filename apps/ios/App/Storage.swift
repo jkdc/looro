@@ -141,8 +141,10 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     /// just delays the next heartbeat to the next due window). The caller
     /// then writes the heartbeat's durable row (`enqueueDurableUsageEvent`) —
     /// the queue UsageReporter.flush drains, so a close between claim and
-    /// upload loses nothing. JSON fail-safe mode has no database to serve
-    /// from, so the heartbeat never fires there.
+    /// upload loses nothing. TWO accepted loss windows delay the heartbeat to
+    /// the next due window: a crash after the claim, and a failed enqueue
+    /// (the marker is already stamped). JSON fail-safe mode has no database
+    /// to serve from, so the heartbeat never fires there.
     func claimArchiveHealth(
         nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)
     ) -> [String: UsageProp]? {

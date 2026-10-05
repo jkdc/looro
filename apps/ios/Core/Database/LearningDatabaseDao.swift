@@ -555,15 +555,16 @@ public enum SkillErrorsDao {
 
 /// One queued usage event plus its durable row id. `PendingUsageEvent.id` is
 /// a client-generated UUID the schema does not store; the rowid takes over as
-/// identity and its `durableUsageEventID` form (a deterministic UUID-V4-shaped
-/// string, the only shape the server accepts) becomes the id used on the wire.
+/// identity and its `durableUsageEventID` form — folded with this install's
+/// random 'install_id' — becomes the id used on the wire, stable per
+/// (install, row) so client retries dedupe server-side.
 public struct QueuedUsageEvent {
     public let rowId: Int64
     public let event: PendingUsageEvent
 
     /// The deterministic UUID form of a rowid (see `durableUsageEventID`).
-    static func eventID(forRowId rowId: Int64) -> UUID {
-        UUID(uuidString: durableUsageEventID(rowId: rowId))!
+    static func eventID(forRowId rowId: Int64, installID: String) -> UUID {
+        UUID(uuidString: durableUsageEventID(installID: installID, rowId: rowId))!
     }
 }
 
@@ -574,6 +575,20 @@ public enum UsageOutboxDao {
     /// Unix seconds behind Apple-epoch seconds (Date.timeIntervalSinceReferenceDate);
     /// the schema's APPLE_EPOCH_UNIX_SECONDS on the Kotlin side.
     static let appleEpochUnixSeconds = 978_307_200.0
+
+    /// The per-install random component of every durable wire id, persisted in
+    /// meta on first use (the server's client-id unique index spans ALL
+    /// installs, so rowid-only ids from fresh installs would collide).
+    public static let installIDKey = "install_id"
+
+    /// Reads the persisted install id, generating a random UUID on first use;
+    /// re-reads after the put so a concurrent first drain derives from exactly
+    /// what is persisted (last write wins).
+    public static func installID(_ db: SqlDatabase) throws -> String {
+        if let stored = try MetaDao.get(db, installIDKey) { return stored }
+        try MetaDao.put(db, installIDKey, UUID().uuidString)
+        return (try MetaDao.get(db, installIDKey)) ?? ""
+    }
 
     @discardableResult
     public static func enqueue(_ db: SqlDatabase, _ name: String, _ atUnixMillis: Int64,
@@ -587,13 +602,14 @@ public enum UsageOutboxDao {
 
     /// Undispatched events, oldest first.
     public static func pending(_ db: SqlDatabase) throws -> [QueuedUsageEvent] {
+        let installID = try Self.installID(db)
         return try db.query("SELECT rowid AS row_id, name, at, props_json FROM usage_outbox "
             + "WHERE dispatched = 0 ORDER BY at, row_id").map { row in
             let rowId = row.long("row_id")
             return QueuedUsageEvent(
                 rowId: rowId,
                 event: PendingUsageEvent(
-                    id: QueuedUsageEvent.eventID(forRowId: rowId),
+                    id: QueuedUsageEvent.eventID(forRowId: rowId, installID: installID),
                     name: row.text("name"),
                     at: Int64(((row.real("at") + appleEpochUnixSeconds) * 1000.0).rounded()),
                     props: try props(row.text("props_json"))))
@@ -835,10 +851,12 @@ public enum ArchiveHealthDao {
     /// Claims the daily slot: when the last marker is missing or older than
     /// the cadence, stamps the marker and returns the bucketed props for the
     /// caller to enqueue as the durable usage_outbox row; otherwise returns
-    /// nil. A crash after the claim simply delays the next heartbeat to the
-    /// next due window — acceptable for a heartbeat. The ONLY durable write
-    /// here is that single meta row (a put), atomic on its own — no
-    /// transaction required.
+    /// nil. TWO loss windows are accepted for a heartbeat, both simply
+    /// delaying the next heartbeat to the next due window: a crash after the
+    /// claim, and a FAILED OUTBOX ENQUEUE after it (the marker is already
+    /// stamped, so that heartbeat is skipped until the next window). The ONLY
+    /// durable write here is that single meta row (a put), atomic on its own
+    /// — no transaction required.
     public static func claimIfDue(_ db: SqlDatabase, nowUnixMilliseconds: Int64,
                                   dbBytes: Int64, sessionCount: Int) throws -> [String: UsageProp]? {
         let last = try MetaDao.get(db, ArchiveHealth.lastHealthAtKey).flatMap { Int64($0) }

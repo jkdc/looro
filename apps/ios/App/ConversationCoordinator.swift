@@ -204,6 +204,9 @@ enum ScenarioReviewState: Equatable {
         // 'last_health_at') and write the event as ONE durable usage_outbox
         // row — no in-memory double-record; a flush (this one or a later
         // run's) drains it, so a close right after this line loses nothing.
+        // Two accepted loss windows delay the heartbeat to the next due
+        // window: a crash after the claim, and a failed enqueue (the marker
+        // is already stamped).
         if usageReporter.enabled, let healthProps = store.claimArchiveHealth() {
             store.enqueueDurableUsageEvent(UsageEvents.archiveHealth,
                 atUnixMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000),

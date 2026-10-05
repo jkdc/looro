@@ -99,14 +99,22 @@ fun usageBatchJson(platform: String, appVersion: String, events: List<PendingUsa
         })
     }.toString()
 
-/** The durable usage_outbox row's wire id: a deterministic UUID-V4-shaped
-    string (00000000-0000-4000-8000-<12 hex of the rowid>) — the server's
-    usage endpoint accepts UUID-V4 event ids only (services/api/src/usage.ts
-    UUID_V4), and the stable id makes client retries dedupe server-side
-    (ON CONFLICT (client_event_id) DO NOTHING). Rowids beyond 48 bits truncate
-    into the hex tail; a collision would at worst drop one heartbeat. */
-fun durableUsageEventID(rowId: Long): String =
-    "00000000-0000-4000-8000-" + (rowId and 0xFFFF_FFFF_FFFFL).toString(16).padStart(12, '0')
+/** The durable usage_outbox row's wire id: a deterministic, GLOBALLY unique
+    UUID-V4-shaped string. The server's client-id unique index
+    (usage_events_client_id_idx) spans ALL installs, so the free hex groups
+    fold in an install-scoped random component — groups 1+2 (8+4 hex) carry
+    the first 12 hex of the meta 'install_id' UUID (48 bits, persisted per
+    install, dash-spliced back into UUID shape) — while the rowid keeps the
+    12-hex tail and the version (4) / variant (8) markers stay fixed.
+    Deterministic per (install, row), so client retries replay the same id
+    and the server dedupes them (ON CONFLICT (client_event_id) DO NOTHING);
+    different installs can no longer collide. */
+fun durableUsageEventID(installID: String, rowId: Long): String {
+    val install = installID.filter { it.isDigit() || it.lowercaseChar() in 'a'..'f' }
+        .take(12).padEnd(12, '0').lowercase()
+    val row = (rowId and 0xFFFF_FFFF_FFFFL).toString(16).padStart(12, '0')
+    return "${install.take(8)}-${install.takeLast(4)}-4000-8000-$row"
+}
 
 /** One durable outbox row: the wire event plus the durable row id the drain
     releases once the row's batch is delivered (the data layer's
@@ -128,36 +136,41 @@ interface DurableUsageOutbox {
 }
 
 /** Durable, bounded queue of content-free usage events (the final-assessment-ticket
-    pattern): age-pruned, capacity-capped, order-preserving when a flush fails. */
+    pattern): age-pruned, capacity-capped, order-preserving when a flush fails.
+    Locked like Core/UsageMetrics.swift's NSLock mirror — flushes launch from
+    several lifecycle sites, and the durable drain rides them. */
 class UsageOutbox(
     private val capacity: Int = 2_000,
     private val ttlMilliseconds: Long = 7 * 24 * 60 * 60_000L,
 ) {
+    private val lock = Any()
     private val pending = ArrayDeque<PendingUsageEvent>()
 
-    val size: Int get() = pending.size
-    fun snapshot(): List<PendingUsageEvent> = pending.toList()
+    val size: Int get() = synchronized(lock) { pending.size }
+    fun snapshot(): List<PendingUsageEvent> = synchronized(lock) { pending.toList() }
 
     fun record(id: String, name: String, at: Long, props: JsonObject = JsonObject(emptyMap())) {
-        if (name !in UsageEvents.all) return
-        if (pending.any { it.id == id }) return
-        pending.addLast(PendingUsageEvent(id, name, at, props))
-        while (pending.size > capacity) pending.removeFirst()
+        synchronized(lock) {
+            if (name !in UsageEvents.all) return
+            if (pending.any { it.id == id }) return
+            pending.addLast(PendingUsageEvent(id, name, at, props))
+            while (pending.size > capacity) pending.removeFirst()
+        }
     }
 
     fun prune(now: Long) {
-        pending.removeAll { now - it.at > ttlMilliseconds }
+        synchronized(lock) { pending.removeAll { now - it.at > ttlMilliseconds } }
     }
 
     /** Removes the oldest events for sending; put them back with [restore] on failure. */
-    fun take(batch: Int): List<PendingUsageEvent> {
+    fun take(batch: Int): List<PendingUsageEvent> = synchronized(lock) {
         val taken = mutableListOf<PendingUsageEvent>()
         while (taken.size < batch && pending.isNotEmpty()) taken += pending.removeFirst()
-        return taken
+        taken
     }
 
     fun restore(events: List<PendingUsageEvent>) {
-        for (event in events.reversed()) pending.addFirst(event)
+        synchronized(lock) { for (event in events.reversed()) pending.addFirst(event) }
     }
 }
 
