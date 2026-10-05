@@ -134,14 +134,15 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
 
     /// The daily archive_health heartbeat's gate: returns the bucketed props
-    /// to record through the usage reporter exactly when the meta
+    /// to write as the durable usage_outbox row exactly when the meta
     /// 'last_health_at' marker is missing or older than
-    /// `ArchiveHealth.cadenceMilliseconds` (the marker is stamped here — the
-    /// one durable write, a single meta row, no transaction needed — so a
-    /// crash just delays the next heartbeat to the next due window). The
-    /// event itself must NOT go into the durable usage_outbox: nothing drains
-    /// that queue yet, so rows would grow forever. JSON fail-safe mode has no
-    /// database to serve from, so the heartbeat never fires there.
+    /// `ArchiveHealth.cadenceMilliseconds` (the marker is stamped here — one
+    /// durable write, a single meta row, no transaction needed — so a crash
+    /// just delays the next heartbeat to the next due window). The caller
+    /// then writes the heartbeat's durable row (`enqueueDurableUsageEvent`) —
+    /// the queue UsageReporter.flush drains, so a close between claim and
+    /// upload loses nothing. JSON fail-safe mode has no database to serve
+    /// from, so the heartbeat never fires there.
     func claimArchiveHealth(
         nowUnixMilliseconds: Int64 = Int64(Date.now.timeIntervalSince1970 * 1000)
     ) -> [String: UsageProp]? {
@@ -156,6 +157,40 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             print("LearningStore: archive_health gate failed — \(error)")
             return nil
         }
+    }
+
+    /// Writes one durable usage_outbox row (the archive_health heartbeat's
+    /// single record — no in-memory double-write; UsageReporter.flush drains
+    /// it, so a close right after this loses nothing). JSON fail-safe mode
+    /// has no database. Never throws: a failed write just skips a heartbeat.
+    func enqueueDurableUsageEvent(_ name: String, atUnixMilliseconds: Int64,
+                                  props: [String: UsageProp] = [:]) {
+        guard !dbStore.jsonMode else { return }
+        do { try UsageOutboxDao.enqueue(dbStore.db, name, atUnixMilliseconds, props) }
+        catch { print("LearningStore: usage_outbox enqueue failed — \(error)") }
+    }
+
+    /// The durable usage_outbox drain, read half (UsageReporter's closures):
+    /// up to `cap` undispatched rows, oldest first. Empty in JSON fail-safe
+    /// mode. Never throws: a drain failure must not break the telemetry flush.
+    func pendingDurableUsageEvents(cap: Int) -> [DurableUsageEvent] {
+        guard !dbStore.jsonMode else { return [] }
+        do {
+            return try UsageOutboxDao.pending(dbStore.db).prefix(cap)
+                .map { DurableUsageEvent(rowId: $0.rowId, event: $0.event) }
+        } catch {
+            print("LearningStore: usage_outbox drain read failed — \(error)")
+            return []
+        }
+    }
+
+    /// The drain's delivery mark: runs after a successful upload; a failure
+    /// just re-sends the same rows on the next flush (their stable
+    /// rowid-derived ids dedupe server-side). Never throws.
+    func markDurableUsageEventsDispatched(_ rowIds: [Int64]) {
+        guard !dbStore.jsonMode else { return }
+        do { try UsageOutboxDao.markDispatched(dbStore.db, rowIds) }
+        catch { print("LearningStore: usage_outbox dispatch mark failed — \(error)") }
     }
     private static func learningDatabaseURL() throws -> URL {
         let base = URL.applicationSupportDirectory

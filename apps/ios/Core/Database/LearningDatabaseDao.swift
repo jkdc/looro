@@ -555,18 +555,15 @@ public enum SkillErrorsDao {
 
 /// One queued usage event plus its durable row id. `PendingUsageEvent.id` is
 /// a client-generated UUID the schema does not store; the rowid takes over as
-/// identity and becomes the id used on the wire. Kotlin's event id is the
-/// rowid as a string; iOS's is a UUID, so the rowid is embedded in a
-/// deterministic UUID (its low 12 hex digits) instead.
+/// identity and its `durableUsageEventID` form (a deterministic UUID-V4-shaped
+/// string, the only shape the server accepts) becomes the id used on the wire.
 public struct QueuedUsageEvent {
     public let rowId: Int64
     public let event: PendingUsageEvent
 
-    /// The deterministic UUID form of a rowid: 00000000-0000-0000-0000-<12 hex digits>.
+    /// The deterministic UUID form of a rowid (see `durableUsageEventID`).
     static func eventID(forRowId rowId: Int64) -> UUID {
-        let hex = String(max(rowId, 0), radix: 16).uppercased()
-        let padded = String(repeating: "0", count: max(0, 12 - hex.count)) + hex
-        return UUID(uuidString: "00000000-0000-0000-0000-\(padded)")!
+        UUID(uuidString: durableUsageEventID(rowId: rowId))!
     }
 }
 
@@ -827,19 +824,21 @@ public enum SearchDao {
 
 /// The archive_health usage event: one coarse, content-free heartbeat per
 /// install per day (the returned props are `UsageBuckets.dbBytes`/`.sessions`
-/// bucket strings — never exact sizes or counts). The event itself rides the
-/// app's in-memory UsageReporter — the only queue anything actually drains
-/// and uploads — so the durable usage_outbox is NOT touched here: writing it
-/// there would grow forever (it has no consumer yet). The 24h cadence keys
-/// off the meta 'last_health_at' row (unix milliseconds as TEXT); the
-/// metrics-enabled choice stays the caller's.
+/// bucket strings — never exact sizes or counts). claimIfDue only claims the
+/// 24h slot (meta 'last_health_at') and returns the bucketed props; the
+/// CALLER writes the durable usage_outbox row (`UsageOutboxDao.enqueue`) —
+/// the queue UsageReporter.flush drains, so the heartbeat survives an app
+/// close between claim and upload. The 24h cadence keys off the meta row
+/// (unix milliseconds as TEXT); the metrics-enabled choice stays the
+/// caller's.
 public enum ArchiveHealthDao {
     /// Claims the daily slot: when the last marker is missing or older than
     /// the cadence, stamps the marker and returns the bucketed props for the
-    /// caller to record through its UsageReporter; otherwise returns nil. A
-    /// crash after the claim simply delays the next heartbeat to the next due
-    /// window — acceptable for a heartbeat. The ONLY durable write is that
-    /// single meta row (a put), atomic on its own — no transaction required.
+    /// caller to enqueue as the durable usage_outbox row; otherwise returns
+    /// nil. A crash after the claim simply delays the next heartbeat to the
+    /// next due window — acceptable for a heartbeat. The ONLY durable write
+    /// here is that single meta row (a put), atomic on its own — no
+    /// transaction required.
     public static func claimIfDue(_ db: SqlDatabase, nowUnixMilliseconds: Int64,
                                   dbBytes: Int64, sessionCount: Int) throws -> [String: UsageProp]? {
         let last = try MetaDao.get(db, ArchiveHealth.lastHealthAtKey).flatMap { Int64($0) }

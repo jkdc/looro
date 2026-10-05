@@ -17,6 +17,7 @@ import com.jkdc.app.core.Speaker
 import com.jkdc.app.core.TopicBrief
 import com.jkdc.app.core.UsageBuckets
 import com.jkdc.app.core.UsageEvents
+import com.jkdc.app.core.durableUsageEventID
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -515,7 +516,8 @@ object SkillErrorsDao {
 
 /** One queued usage event plus its durable row id ([PendingUsageEvent.id] is
     a client-generated string the schema does not store; the rowid takes over
-    as identity and becomes the id used on the wire). */
+    as identity and its [durableUsageEventID] form becomes the id used on the
+    wire — stable across restarts, so client retries dedupe server-side). */
 data class QueuedUsageEvent(val rowId: Long, val event: PendingUsageEvent)
 
 /**
@@ -540,7 +542,7 @@ object UsageOutboxDao {
             QueuedUsageEvent(
                 rowId = rowId,
                 event = PendingUsageEvent(
-                    id = rowId.toString(),
+                    id = durableUsageEventID(rowId),
                     name = row.text("name"),
                     at = ((row.real("at") + APPLE_EPOCH_UNIX_SECONDS) * 1000.0).roundToLong(),
                     props = ArchiveJson.decodeFromString(JsonObject.serializer(), row.text("props_json")),
@@ -694,11 +696,12 @@ object SearchDao {
  * The archive_health usage event: one coarse, content-free heartbeat per
  * install per day (the returned props are [UsageBuckets.dbBytes]/
  * [UsageBuckets.sessions] bucket strings — never exact sizes or counts).
- * The event itself rides the app's in-memory UsageReporter — the only queue
- * anything actually drains and uploads — so the durable usage_outbox is NOT
- * touched here: writing it there would grow forever (it has no consumer
- * yet). The 24h cadence keys off the meta 'last_health_at' row (unix
- * milliseconds as TEXT); the metrics-enabled choice stays the caller's.
+ * claimIfDue only claims the 24h slot (meta 'last_health_at') and returns the
+ * bucketed props; the CALLER writes the durable usage_outbox row
+ * ([UsageOutboxDao.enqueue]) — the queue UsageReporter.flush drains, so the
+ * heartbeat survives an app close between claim and upload. The 24h cadence
+ * keys off the meta row (unix milliseconds as TEXT); the metrics-enabled
+ * choice stays the caller's.
  */
 object ArchiveHealth {
     const val LAST_HEALTH_AT_KEY = "last_health_at"
@@ -706,11 +709,11 @@ object ArchiveHealth {
 
     /** Claims the daily slot: when the last marker is missing or older than
         [CADENCE_MILLISECONDS], stamps the marker and returns the bucketed
-        props for the caller to record through its UsageReporter; otherwise
+        props for the caller to enqueue as the durable usage_outbox row; else
         returns null. A crash after the claim simply delays the next
         heartbeat to the next due window — acceptable for a heartbeat. The
-        ONLY durable write is that single meta row (a put), atomic on its
-        own — no transaction required. */
+        ONLY durable write here is that single meta row (a put), atomic on
+        its own — no transaction required. */
     fun claimIfDue(db: SqlDatabase, nowUnixMillis: Long, dbBytes: Long,
                    sessionCount: Int): JsonObject? {
         val last = MetaDao.get(db, LAST_HEALTH_AT_KEY)?.toLongOrNull()

@@ -220,7 +220,10 @@ class LearningDbDaoTest {
         assertEquals(1_727_859_600_123L, pending[1].event.at)
         assertEquals("app_open", pending[1].event.name)
         assertEquals(props, pending[1].event.props)
-        assertEquals("1", pending[0].event.id) // the rowid becomes the event id
+        assertEquals("00000000-0000-4000-8000-000000000001", pending[0].event.id) // the rowid becomes the event id
+        // ...in the UUID-V4 shape the server's usage endpoint accepts
+        assertTrue(pending.all { it.event.id.matches(
+            Regex("[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}")) })
         UsageOutboxDao.markDispatched(db, listOf(first))
         assertEquals(listOf(second), UsageOutboxDao.pending(db).map { it.rowId })
         assertEquals(2L, count("usage_outbox"))
@@ -310,10 +313,10 @@ class LearningDbDaoTest {
 
     // -- archive_health heartbeat ---------------------------------------------
 
-    @Test fun archiveHealthClaimsTheDailySlotAndNeverTouchesTheDurableOutbox() {
+    @Test fun archiveHealthClaimsTheDailySlotOncePerWindow() {
         val start = 1_700_000_000_000L
         // first launch: no meta row yet -> the claim returns the bucketed props
-        // the caller records through its UsageReporter
+        // the caller enqueues as the durable usage_outbox row
         val props = ArchiveHealth.claimIfDue(db, start, dbBytes = 5 * 1024 * 1024,
             sessionCount = 7)!!
         assertEquals(buildJsonObject {
@@ -321,7 +324,8 @@ class LearningDbDaoTest {
             put("sessionsBucket", "1-10")
         }, props)
         assertEquals(start.toString(), MetaDao.get(db, ArchiveHealth.LAST_HEALTH_AT_KEY))
-        // the durable outbox has no drain yet, so the heartbeat never lands there
+        // the claim itself never writes the outbox row — that is the caller's
+        // single durable write
         assertEquals(0L, count("usage_outbox"))
         // inside the 24h cadence: no claim, no new marker
         assertNull(ArchiveHealth.claimIfDue(db, start + ArchiveHealth.CADENCE_MILLISECONDS - 1,
@@ -339,6 +343,36 @@ class LearningDbDaoTest {
         assertEquals(0L, count("usage_outbox"))
         // the event is in the closed catalog
         assertTrue(UsageEvents.ARCHIVE_HEALTH in UsageEvents.all)
+    }
+
+    @Test fun archiveHealthHeartbeatLandsAsExactlyOneDurableRowPerWindow() {
+        // the AppViewModel site, replayed: claim the 24h slot, then write the
+        // durable row — the ONLY record of the heartbeat (no in-memory
+        // double-write; UsageReporter.flush drains it, core-side tested)
+        val start = 1_700_000_000_000L
+        val props = ArchiveHealth.claimIfDue(db, start, dbBytes = 5 * 1024 * 1024,
+            sessionCount = 7)!!
+        UsageOutboxDao.enqueue(db, UsageEvents.ARCHIVE_HEALTH, start, props)
+        var pending = UsageOutboxDao.pending(db)
+        assertEquals(1, pending.size)
+        assertEquals("archive_health", pending.single().event.name)
+        assertEquals(start, pending.single().event.at)
+        assertEquals(props, pending.single().event.props)
+        // a close before the next flush loses nothing: the row is still
+        // pending in a later run and drains then
+        // inside the window: no claim -> no second row
+        assertNull(ArchiveHealth.claimIfDue(db, start + ArchiveHealth.CADENCE_MILLISECONDS - 1,
+            dbBytes = 5 * 1024 * 1024, sessionCount = 7))
+        assertEquals(1L, count("usage_outbox"))
+        // next window: exactly one more row, both still undispatched (the
+        // drain marks them only after a successful upload)
+        val next = start + ArchiveHealth.CADENCE_MILLISECONDS
+        val secondProps = ArchiveHealth.claimIfDue(db, next, dbBytes = 250 * 1024 * 1024,
+            sessionCount = 500)!!
+        UsageOutboxDao.enqueue(db, UsageEvents.ARCHIVE_HEALTH, next, secondProps)
+        pending = UsageOutboxDao.pending(db)
+        assertEquals(2, pending.size)
+        assertEquals(2L, count("usage_outbox"))
     }
 
     private fun count(table: String): Long = db.query("SELECT COUNT(*) AS n FROM $table").single().long("n")

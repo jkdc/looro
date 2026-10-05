@@ -35,8 +35,20 @@ enum ScenarioReviewState: Equatable {
     private var managed: (client: ManagedAccountClient, configuration: ManagedAccountConfiguration)?
     /// Content-free usage telemetry (LearningCore.UsageMetrics). Sends only with a
     /// live managed bearer; otherwise events stay queued until the next flush.
+    /// The durable closures are the usage_outbox drain: the store owns the
+    /// learning database, so the closures hop to it (it is MainActor-isolated)
+    /// and degrade to an empty drain in JSON fail-safe mode.
     private lazy var usageReporter = UsageReporter(platform: "ios",
         appVersion: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "",
+        durable: DurableUsageOutbox(
+            pending: { [weak self] cap in
+                guard let store = self?.store else { return [] }
+                return await store.pendingDurableUsageEvents(cap: cap)
+            },
+            markDispatched: { [weak self] rowIds in
+                guard let store = self?.store else { return }
+                await store.markDurableUsageEventsDispatched(rowIds)
+            }),
         send: { [weak self] batch, _ in
             guard let configuration = self?.managed?.configuration,
                   let client = UsageClient(configuration: configuration),
@@ -189,11 +201,13 @@ enum ScenarioReviewState: Equatable {
         usageReporter.record(UsageEvents.appOpen)
         Task { await usageReporter.flush() }
         // The daily archive_health heartbeat: claim the 24h slot (meta
-        // 'last_health_at') and record the event ONCE through the in-memory
-        // reporter — the only queue anything actually uploads; the durable
-        // usage_outbox is deliberately not touched (nothing drains it yet).
+        // 'last_health_at') and write the event as ONE durable usage_outbox
+        // row — no in-memory double-record; a flush (this one or a later
+        // run's) drains it, so a close right after this line loses nothing.
         if usageReporter.enabled, let healthProps = store.claimArchiveHealth() {
-            usageReporter.record(UsageEvents.archiveHealth, props: healthProps)
+            store.enqueueDurableUsageEvent(UsageEvents.archiveHealth,
+                atUnixMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000),
+                props: healthProps)
             Task { await usageReporter.flush() }
         }
         syncProgress()

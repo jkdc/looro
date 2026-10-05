@@ -303,8 +303,16 @@ final class LearningDatabaseDaoTests: XCTestCase {
         XCTAssertEqual(Int64(1_727_859_600_123), pending.last?.event.at)
         XCTAssertEqual("app_open", pending.last?.event.name)
         XCTAssertEqual(3, intProp(pending.last?.event.props, "bucket"))
-        XCTAssertEqual("00000000-0000-0000-0000-000000000001",
-                       pending.first?.event.id.uuidString) // the rowid becomes the event id
+        XCTAssertEqual("00000000-0000-4000-8000-000000000001",
+                       pending.first?.event.id.uuidString) // the rowid becomes the event id…
+        // …in the UUID-V4 shape the server's usage endpoint accepts
+        let uuidV4 = try! NSRegularExpression(
+            pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$")
+        XCTAssertTrue(pending.allSatisfy { queued in
+            let id = queued.event.id.uuidString.lowercased()
+            let range = NSRange(id.startIndex..., in: id)
+            return uuidV4.firstMatch(in: id, range: range) != nil
+        })
         try UsageOutboxDao.markDispatched(db, [first])
         XCTAssertEqual([second], try UsageOutboxDao.pending(db).map(\.rowId))
         XCTAssertEqual(Int64(2), try count("usage_outbox"))
@@ -410,16 +418,17 @@ final class LearningDatabaseDaoTests: XCTestCase {
 
     // MARK: archive_health heartbeat
 
-    func testArchiveHealthClaimsTheDailySlotAndNeverTouchesTheDurableOutbox() throws {
+    func testArchiveHealthClaimsTheDailySlotOncePerWindow() throws {
         let start: Int64 = 1_700_000_000_000
         // first launch: no meta row yet -> the claim returns the bucketed props
-        // the caller records through its UsageReporter
+        // the caller enqueues as the durable usage_outbox row
         let props = try ArchiveHealthDao.claimIfDue(db, nowUnixMilliseconds: start,
                                                     dbBytes: 5 << 20, sessionCount: 7)!
         XCTAssertEqual("1-10mb", stringProp(props, "dbBytesBucket"))
         XCTAssertEqual("1-10", stringProp(props, "sessionsBucket"))
         XCTAssertEqual(String(start), try MetaDao.get(db, ArchiveHealth.lastHealthAtKey))
-        // the durable outbox has no drain yet, so the heartbeat never lands there
+        // the claim itself never writes the outbox row — that is the caller's
+        // single durable write
         XCTAssertEqual(Int64(0), try count("usage_outbox"))
         // inside the 24h cadence: no claim, no new marker
         XCTAssertNil(try ArchiveHealthDao.claimIfDue(
@@ -441,6 +450,39 @@ final class LearningDatabaseDaoTests: XCTestCase {
                                            nowMilliseconds: start + ArchiveHealth.cadenceMilliseconds - 1))
         XCTAssertTrue(ArchiveHealth.isDue(lastAtMilliseconds: start,
                                           nowMilliseconds: start + ArchiveHealth.cadenceMilliseconds))
+    }
+
+    func testArchiveHealthHeartbeatLandsAsExactlyOneDurableRowPerWindow() throws {
+        // the ConversationCoordinator site, replayed: claim the 24h slot, then
+        // write the durable row — the ONLY record of the heartbeat (no
+        // in-memory double-record; UsageReporter.flush drains it, tested in
+        // UsageMetricsTests)
+        let start: Int64 = 1_700_000_000_000
+        let props = try ArchiveHealthDao.claimIfDue(db, nowUnixMilliseconds: start,
+                                                    dbBytes: 5 << 20, sessionCount: 7)!
+        _ = try UsageOutboxDao.enqueue(db, UsageEvents.archiveHealth, start, props)
+        var pending = try UsageOutboxDao.pending(db)
+        XCTAssertEqual(1, pending.count)
+        XCTAssertEqual("archive_health", pending.first?.event.name)
+        XCTAssertEqual(start, pending.first?.event.at)
+        XCTAssertEqual("1-10mb", stringProp(pending.first?.event.props, "dbBytesBucket"))
+        XCTAssertEqual("1-10", stringProp(pending.first?.event.props, "sessionsBucket"))
+        // a close before the next flush loses nothing: the row is still
+        // pending in a later run and drains then
+        // inside the window: no claim -> no second row
+        XCTAssertNil(try ArchiveHealthDao.claimIfDue(
+            db, nowUnixMilliseconds: start + ArchiveHealth.cadenceMilliseconds - 1,
+            dbBytes: 5 << 20, sessionCount: 7))
+        XCTAssertEqual(Int64(1), try count("usage_outbox"))
+        // next window: exactly one more row, both still undispatched (the
+        // drain marks them only after a successful upload)
+        let next = start + ArchiveHealth.cadenceMilliseconds
+        let secondProps = try ArchiveHealthDao.claimIfDue(db, nowUnixMilliseconds: next,
+                                                          dbBytes: 250 << 20, sessionCount: 500)!
+        _ = try UsageOutboxDao.enqueue(db, UsageEvents.archiveHealth, next, secondProps)
+        pending = try UsageOutboxDao.pending(db)
+        XCTAssertEqual(2, pending.count)
+        XCTAssertEqual(Int64(2), try count("usage_outbox"))
     }
 
     // MARK: helpers

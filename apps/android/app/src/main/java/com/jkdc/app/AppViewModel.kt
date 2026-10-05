@@ -26,6 +26,7 @@ import com.jkdc.app.data.LearningDbWriter
 import com.jkdc.app.data.SearchDao
 import com.jkdc.app.data.SearchHit
 import com.jkdc.app.data.SqlDatabase
+import com.jkdc.app.data.UsageOutboxDao
 import com.jkdc.app.data.VerificationHandle
 import com.jkdc.app.data.VerificationOpener
 import com.jkdc.app.network.*
@@ -310,8 +311,34 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // then the guest grant's; without either, events simply stay queued.
     private val usageClient = accountConfiguration?.let(::UsageClient)
     private val progressClient = accountConfiguration?.let(::ProgressClient)
+    // The durable usage_outbox drain: the C2 writer path owns the open
+    // database, so the adapter reads/marks usage_outbox around `store` on IO
+    // and degrades to an empty drain while no store serves the run (startup,
+    // JSON fail-safe mode). It never throws: a drain failure must not break
+    // the telemetry flush.
+    private val durableOutbox = object : DurableUsageOutbox {
+        override suspend fun pending(cap: Int): List<DurableUsageEvent> {
+            if (jsonMode) return emptyList()
+            val database = store?.db ?: return emptyList()
+            return withContext(Dispatchers.IO) {
+                runCatching {
+                    UsageOutboxDao.pending(database).take(cap)
+                        .map { DurableUsageEvent(it.rowId, it.event) }
+                }.getOrDefault(emptyList())
+            }
+        }
+
+        override suspend fun markDispatched(rowIds: List<Long>) {
+            if (jsonMode) return
+            val database = store?.db ?: return
+            withContext(Dispatchers.IO) {
+                runCatching { UsageOutboxDao.markDispatched(database, rowIds) }
+            }
+        }
+    }
     private val usageReporter = UsageReporter(platform = "android", appVersion = appVersionName(),
-        send = { batch, _ -> sendUsage(batch) })
+        send = { batch, _ -> sendUsage(batch) },
+        durable = durableOutbox)
 
     private fun appVersionName(): String = runCatching {
         val context = getApplication<Application>()
@@ -752,10 +779,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                 usageReporter.record(UsageEvents.APP_OPEN)
                 viewModelScope.launch { usageReporter.flush() }
                 // The daily archive_health heartbeat: claim the 24h slot (meta
-                // 'last_health_at') and record the event through the in-memory
-                // reporter — the only queue anything actually uploads. The
-                // durable usage_outbox is deliberately NOT touched: nothing
-                // drains it yet. A crash just delays the next heartbeat.
+                // 'last_health_at') and write the event as ONE durable
+                // usage_outbox row — no in-memory double-record; the flush
+                // (this one or a later run's) drains it, so a close right
+                // after this line loses nothing. A crash just delays the next
+                // heartbeat to the next due window.
                 if (usageReporter.enabled && !jsonMode) {
                     val database = store!!.db
                     val sessionCount = archive.sessions.size
@@ -770,8 +798,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                                 bytes, sessionCount)
                         }
                         if (props != null) {
-                            usageReporter.record(UsageEvents.ARCHIVE_HEALTH) {
-                                props.forEach { (key, value) -> put(key, value) }
+                            withContext(Dispatchers.IO) {
+                                runCatching {
+                                    UsageOutboxDao.enqueue(database, UsageEvents.ARCHIVE_HEALTH,
+                                        System.currentTimeMillis(), props)
+                                }
                             }
                             viewModelScope.launch { usageReporter.flush() }
                         }

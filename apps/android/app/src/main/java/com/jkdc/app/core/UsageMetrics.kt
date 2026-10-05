@@ -99,6 +99,34 @@ fun usageBatchJson(platform: String, appVersion: String, events: List<PendingUsa
         })
     }.toString()
 
+/** The durable usage_outbox row's wire id: a deterministic UUID-V4-shaped
+    string (00000000-0000-4000-8000-<12 hex of the rowid>) — the server's
+    usage endpoint accepts UUID-V4 event ids only (services/api/src/usage.ts
+    UUID_V4), and the stable id makes client retries dedupe server-side
+    (ON CONFLICT (client_event_id) DO NOTHING). Rowids beyond 48 bits truncate
+    into the hex tail; a collision would at worst drop one heartbeat. */
+fun durableUsageEventID(rowId: Long): String =
+    "00000000-0000-4000-8000-" + (rowId and 0xFFFF_FFFF_FFFFL).toString(16).padStart(12, '0')
+
+/** One durable outbox row: the wire event plus the durable row id the drain
+    releases once the row's batch is delivered (the data layer's
+    QueuedUsageEvent — event.id already encodes [durableUsageEventID]). */
+data class DurableUsageEvent(val rowId: Long, val event: PendingUsageEvent)
+
+/** The durable usage_outbox drain (schema v2's table): implemented by the
+    layer that owns the learning database and injected into [UsageReporter] —
+    core stays DB-free, the adapter runs its reads/marks on its own dispatcher
+    and degrades to an empty drain when no database serves the run (JSON
+    fail-safe mode). */
+interface DurableUsageOutbox {
+    /** Up to [cap] undispatched rows, oldest first. */
+    suspend fun pending(cap: Int): List<DurableUsageEvent>
+
+    /** Runs after the rows' batch was delivered; a crash before it re-sends
+        the same rows, whose stable ids dedupe server-side. */
+    suspend fun markDispatched(rowIds: List<Long>)
+}
+
 /** Durable, bounded queue of content-free usage events (the final-assessment-ticket
     pattern): age-pruned, capacity-capped, order-preserving when a flush fails. */
 class UsageOutbox(
@@ -142,6 +170,9 @@ class UsageReporter(
     private val newID: () -> String = { UUID.randomUUID().toString() },
     private val clock: () -> Long = System::currentTimeMillis,
     private val send: suspend (batch: String, events: List<PendingUsageEvent>) -> Boolean,
+    /** The durable usage_outbox drain (null: no durable queue — pure
+        in-memory callers, tests without a database). */
+    private val durable: DurableUsageOutbox? = null,
 ) {
     /** The user's metrics choice; wiring keeps this in step with preferences. */
     @Volatile var enabled: Boolean = false
@@ -151,17 +182,35 @@ class UsageReporter(
         outbox.record(newID(), name, clock(), buildJsonObject(props))
     }
 
-    /** Returns true when every taken batch was delivered. */
+    /** Returns true when every taken batch was delivered. The durable
+        usage_outbox drains through the SAME POST batches: one capped read
+        per flush, its rows topping each batch up to [batch] (a POST never
+        exceeds [batch] events — the server rejects larger batches), with
+        markDispatched only after that upload succeeded. On failure the rows
+        stay pending (dispatched = 0) and the next flush — this run or a
+        later one — retries them. */
     suspend fun flush(batch: Int = 100): Boolean {
         outbox.prune(clock())
+        var durableLeft = durable?.pending(DURABLE_BATCH) ?: emptyList()
         var delivered = true
         while (true) {
             val events = outbox.take(batch)
-            if (events.isEmpty()) break
-            if (!send(usageBatchJson(platform, appVersion, events), events)) {
+            val durableBatch = durableLeft.take(batch - events.size)
+            durableLeft = durableLeft.drop(durableBatch.size)
+            if (events.isEmpty() && durableBatch.isEmpty()) break
+            val merged = events + durableBatch.map { it.event }
+            if (send(usageBatchJson(platform, appVersion, merged), merged)) {
+                if (durableBatch.isNotEmpty()) durable?.markDispatched(durableBatch.map { it.rowId })
+            } else {
                 outbox.restore(events); delivered = false; break
             }
         }
         return delivered
+    }
+
+    companion object {
+        /** Durable rows read per flush (the brief's cap): bounds the drain's
+            DB read while leaving older rows for later flushes. */
+        const val DURABLE_BATCH = 200
     }
 }

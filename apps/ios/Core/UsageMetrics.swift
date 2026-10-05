@@ -141,6 +141,43 @@ public func usageBatchJSON(platform: String, appVersion: String, events: [Pendin
     return String(data: data, encoding: .utf8)
 }
 
+/// The durable usage_outbox row's wire id: a deterministic UUID-V4-shaped
+/// string (00000000-0000-4000-8000-<12 hex of the rowid>) — the server's
+/// usage endpoint accepts UUID-V4 event ids only (services/api/src/usage.ts
+/// UUID_V4), and the stable id makes client retries dedupe server-side
+/// (ON CONFLICT (client_event_id) DO NOTHING). Rowids beyond 48 bits truncate
+/// into the hex tail; a collision would at worst drop one heartbeat.
+public func durableUsageEventID(rowId: Int64) -> String {
+    let hex = String(rowId & 0xFFFF_FFFF_FFFF, radix: 16)
+    return "00000000-0000-4000-8000-" + String(repeating: "0", count: 12 - hex.count) + hex
+}
+
+/// One durable outbox row: the wire event plus the durable row id the drain
+/// releases once the row's batch is delivered (the data layer's
+/// QueuedUsageEvent — event.id already encodes durableUsageEventID).
+public struct DurableUsageEvent: Sendable {
+    public let rowId: Int64
+    public let event: PendingUsageEvent
+
+    public init(rowId: Int64, event: PendingUsageEvent) {
+        self.rowId = rowId; self.event = event
+    }
+}
+
+/// The durable usage_outbox drain (schema v2's table): implemented by the
+/// layer that owns the learning database (the app's LearningStore closures)
+/// and injected into UsageReporter — core stays DB-free, the closures hop to
+/// the store's isolation and degrade to an empty drain in JSON fail-safe mode.
+public struct DurableUsageOutbox {
+    public var pending: (_ cap: Int) async -> [DurableUsageEvent]
+    public var markDispatched: (_ rowIds: [Int64]) async -> Void
+
+    public init(pending: @escaping (_ cap: Int) async -> [DurableUsageEvent],
+                markDispatched: @escaping (_ rowIds: [Int64]) async -> Void) {
+        self.pending = pending; self.markDispatched = markDispatched
+    }
+}
+
 /// Bounded queue of content-free usage events: age-pruned, capacity-capped,
 /// order-preserving when a flush fails.
 public final class UsageOutbox: @unchecked Sendable {
@@ -187,15 +224,22 @@ public final class UsageOutbox: @unchecked Sendable {
 /// Records and ships content-free usage events. Recording never throws and
 /// never blocks a feature; a failed flush keeps events queued for next time.
 public final class UsageReporter: @unchecked Sendable {
+    /// Durable rows read per flush (the brief's cap): bounds the drain's DB
+    /// read while leaving older rows for later flushes.
+    public static let durableBatch = 200
+
     public var enabled = false
     private let platform: String
     private let appVersion: String
     private let outbox: UsageOutbox
+    private let durable: DurableUsageOutbox?
     private let send: (String, [PendingUsageEvent]) async -> Bool
 
     public init(platform: String, appVersion: String, outbox: UsageOutbox = UsageOutbox(),
+                durable: DurableUsageOutbox? = nil,
                 send: @escaping (String, [PendingUsageEvent]) async -> Bool) {
-        self.platform = platform; self.appVersion = appVersion; self.outbox = outbox; self.send = send
+        self.platform = platform; self.appVersion = appVersion; self.outbox = outbox
+        self.durable = durable; self.send = send
     }
 
     public func record(_ name: String, props: [String: UsageProp] = [:]) {
@@ -203,15 +247,24 @@ public final class UsageReporter: @unchecked Sendable {
         outbox.record(id: UUID(), name: name, at: Int64(Date.now.timeIntervalSince1970 * 1000), props: props)
     }
 
-    /// Returns true when every taken batch was delivered.
+    /// Returns true when every taken batch was delivered. The durable
+    /// usage_outbox drains through the SAME POST batches: one capped read per
+    /// flush, its rows topping each batch up to `batch` (a POST never exceeds
+    /// `batch` events — the server rejects larger batches), with
+    /// markDispatched only after that upload succeeded. On failure the rows
+    /// stay pending (dispatched = 0) and the next flush retries them.
     public func flush(batch: Int = 100) async -> Bool {
         outbox.prune(nowMilliseconds: Int64(Date.now.timeIntervalSince1970 * 1000))
+        var durableLeft = await durable?.pending(Self.durableBatch) ?? []
         var delivered = true
         while true {
             let events = outbox.take(batch)
-            guard !events.isEmpty else { break }
-            guard let body = usageBatchJSON(platform: platform, appVersion: appVersion, events: events),
-                  await send(body, events)
+            let durableTake = Array(durableLeft.prefix(max(0, batch - events.count)))
+            durableLeft.removeFirst(durableTake.count)
+            if events.isEmpty && durableTake.isEmpty { break }
+            let merged = events + durableTake.map(\.event)
+            guard let body = usageBatchJSON(platform: platform, appVersion: appVersion, events: merged),
+                  await send(body, merged)
             else {
                 outbox.restore(events); delivered = false; break
             }
