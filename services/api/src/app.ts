@@ -1,5 +1,5 @@
 import Fastify, { type FastifyRequest } from 'fastify';
-import { createHmac, randomUUID } from 'node:crypto';
+import { createHash, createHmac, randomUUID } from 'node:crypto';
 import type { PoolClient } from 'pg';
 import { transaction, type Database } from './db.js';
 import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
@@ -34,6 +34,7 @@ import { normalizeAccessEmail } from './access-requests.js';
 import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForAccount, activeSubscription,
   updateSubscriptionConfig } from './subscriptions.js';
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
+import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
 
@@ -51,7 +52,7 @@ const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/au
   '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
 // These routes carry no client network identity: requiring trusted-proxy headers would 503 them,
 // and behind a proxy they all share one socket address, so they also skip the shared limiter.
-const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products']);
+const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products', '/v1/level-tests/current']);
 const objectBody = (request: FastifyRequest): Record<string, unknown> => {
   if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body) || Buffer.isBuffer(request.body)) throw new ServiceError('invalid_request');
   return request.body as Record<string, unknown>;
@@ -191,6 +192,21 @@ export function createApp(services: Services) {
     searchPerCallNanoUSD: '10000000', paymentFees: 'quoted separately at checkout', hostedVoiceAvailable: featureState().hostedVoice,
     consumerUnit: 'prepaid-ai-value', consumerBillingBasis: 'actual-ai-usage', freeAllowanceUnit:'conversation-minutes',
     paidMinuteEstimatesOnly:true,minutePacks: [], minutePurchasesAvailable: false }));
+  // Weekly level-verification test (level-tests v2): static composed content,
+  // no auth and no user data — the exam is graded on device. Same deterministic
+  // rotation as the apps' bundled pools (golden tests pin the equality); an
+  // ETag lets cached clients skip the body until the week rolls over.
+  app.get('/v1/level-tests/current', async (request, reply) => {
+    const query = request.query as Record<string, unknown>;
+    if (typeof query.language !== 'string' || typeof query.level !== 'string')
+      throw new ServiceError('invalid_request');
+    const composed = composeWeekly(query.language, query.level);
+    if (!composed) throw new ServiceError('level_test_unavailable', 404);
+    const etag = `"${createHash('sha256').update(JSON.stringify(composed)).digest('hex')}"`;
+    reply.header('ETag', etag).header('Cache-Control', 'public, max-age=3600');
+    if (request.headers['if-none-match'] === etag) return reply.code(304).send();
+    return composed;
+  });
   app.route({ method: ['POST', 'OPTIONS'], url: ACCESS_REQUEST_PATH, bodyLimit: 1024,
     onRequest: async (request, reply) => {
       const access = services.accessRequests;
@@ -591,12 +607,13 @@ export function createApp(services: Services) {
     return (services.minuteCommerce.fulfillment ?? services.minuteCommerce.purchases).reconcile('play', { kind: 'recovery', accountID: account, purchaseToken: body.purchaseToken });
   });
   app.get('/v1/wallet', async request => {
-    const wallet = (await db.query(`SELECT w.balance_nano,w.reserved_nano FROM auth_sessions s JOIN accounts a ON a.id=s.account_id
-      JOIN wallets w ON w.account_id=a.id WHERE s.token_hash=$1 AND s.expires_at>now() AND s.revoked_at IS NULL AND a.deleted_at IS NULL`,
+    const wallet = (await db.query(`SELECT w.balance_nano,w.reserved_nano,e.unlocked_at,e.unlock_source FROM auth_sessions s JOIN accounts a ON a.id=s.account_id
+      JOIN wallets w ON w.account_id=a.id LEFT JOIN entitlements e ON e.account_id=a.id WHERE s.token_hash=$1 AND s.expires_at>now() AND s.revoked_at IS NULL AND a.deleted_at IS NULL`,
     [bearerHash(request.headers.authorization)])).rows[0];
     if (!wallet) throw new ServiceError('sign_in_required', 401);
     return { currency: 'USD', balanceNanoUSD: wallet.balance_nano, reservedNanoUSD: wallet.reserved_nano,
-      availableNanoUSD: (BigInt(wallet.balance_nano) - BigInt(wallet.reserved_nano)).toString() };
+      availableNanoUSD: (BigInt(wallet.balance_nano) - BigInt(wallet.reserved_nano)).toString(),
+      unlocked: Boolean(wallet.unlocked_at), unlockSource: wallet.unlocked_at ? wallet.unlock_source ?? null : null };
   });
   app.post('/v1/auth/sign-out', { bodyLimit: 1024 }, async request => {
     if (Object.keys(objectBody(request)).length) throw new ServiceError('invalid_request');

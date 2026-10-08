@@ -29,13 +29,15 @@ object ConversationEngineFactory {
         "openai" to { deps -> OpenAIEngineAdapter(deps.openai) },
         "deepseek" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.DEEPSEEK, deps) },
         "glm" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM, deps) },
+        "glm-4.5" to { deps -> OpenAICompatibleEngine(RemoteEngineConfig.GLM_45, deps) },
         "hosted-proxy" to { deps -> hostedProxy(deps) },
     )
 
     val available: List<EngineInfo> = listOf(
         EngineInfo("openai", "OpenAI (personal key)"),
         EngineInfo("deepseek", "DeepSeek API"),
-        EngineInfo("glm", "Zhipu GLM API"),
+        EngineInfo("glm", "Zhipu GLM 5.3 Flash"),
+        EngineInfo("glm-4.5", "Zhipu GLM 4.5 Flash"),
         EngineInfo("hosted-proxy", "Palique (tokens)"),
     )
 

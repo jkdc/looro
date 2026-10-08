@@ -62,11 +62,11 @@ I still need to do on the phone. I will start the first live conversation.
 
 Updating an earlier checkout? The iPhone project now lives in `apps/ios/`. Before opening it, follow the [local-settings migration steps](docs/run-on-iphone.md#update-an-earlier-checkout) to preserve your signing team, account configuration and existing app identity.
 
-1. Clone [jkdc/palique](https://github.com/jkdc/palique), or download its ZIP. Open `apps/ios/Palique.xcodeproj`.
+1. Clone [jkdc/palique](https://github.com/jkdc/palique), or download its ZIP. Open `apps/ios/App.xcodeproj`.
 2. In Xcode, open **Settings → Accounts** and add your Apple Account.
-3. Select the **Palique** target, open **Signing & Capabilities**, enable automatic signing, and choose your team. For your own fork, replace the bundle identifier with a unique value such as `com.yourname.palique`. Keep that value stable for later updates.
+3. Select the **App** target, open **Signing & Capabilities**, enable automatic signing, and choose your team. For your own fork, replace the bundle identifier with a unique value such as `com.yourname.palique`. Keep that value stable for later updates.
 4. Connect and unlock your iPhone. Trust the Mac if prompted. Turn on **Settings → Privacy & Security → Developer Mode** on the phone, restart, and confirm the setting.
-5. Select **Palique** as the scheme and your iPhone as the destination, then click **Run**. If iOS asks you to trust the developer, do so in **Settings → General → VPN & Device Management**.
+5. Select **App** as the scheme and your iPhone as the destination, then click **Run**. If iOS asks you to trust the developer, do so in **Settings → General → VPN & Device Management**.
 6. Choose your learning and subtitle languages in the welcome screens. In **Settings → Advanced → Use your own API key**, save your own OpenAI project key. Start a conversation and allow microphone access.
 
 You should hear Palique greet you in your chosen language. You can now disconnect your phone from the Mac and use Wi-Fi or cellular.
@@ -99,7 +99,7 @@ OpenAI bills your project for voice, text and search. The app’s usage display 
 
 ## Planned public service
 
-Hosted free conversations and minute purchases are **not active**. Optional Google sign-in exists on iPhone; Android account integration is in progress. The [API foundation](services/api/README.md) contains identity verification, audited minute allowances and guest transfers, plus the earlier sandbox payment support. [Minute controls](docs/conversation-minutes.md) describe what is implemented and what remains disabled. Its runbook lists the remaining work before commercial activation. No shared provider key belongs in this repository or a distributed app binary.
+Hosted free conversations and minute purchases are **not active**. Optional Google sign-in exists on iPhone and is implemented on Android (same account service, encrypted Keystore session, guest-minute transfer on sign-in), with a real production sign-in still to be verified on an installed Android build. The [API foundation](services/api/README.md) contains identity verification, audited minute allowances and guest transfers, plus the earlier sandbox payment support. [Minute controls](docs/conversation-minutes.md) describe what is implemented and what remains disabled. Its runbook lists the remaining work before commercial activation. No shared provider key belongs in this repository or a distributed app binary.
 
 A public TestFlight link and App Store listing are not yet available. [Release preparation](release/README.md) records the outstanding requirements.
 
@@ -109,7 +109,7 @@ From the repository root:
 
 ```sh
 swift test --package-path apps/ios
-xcodebuild -project apps/ios/Palique.xcodeproj -scheme Palique \
+xcodebuild -project apps/ios/App.xcodeproj -scheme App \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath .build/DerivedData \
   CODE_SIGNING_ALLOWED=NO ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build

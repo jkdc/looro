@@ -126,6 +126,14 @@ fun SettingsScreen(vm: AppViewModel, onImport: () -> Unit, onReviewConsent: () -
                         vm.updatePreferences(prefs.copy(meaningLanguage = it))
                     }
                     SettingsDivider()
+                    // Instructions language (placement-test): what language explains
+                    // helpers like the level test. Subtitles = today's behaviour.
+                    SettingsChoiceRow(stringResource(R.string.settings_instructions), vm.instructionsLanguage, vm.instructionsLanguage,
+                        listOf(com.jkdc.app.core.InstructionsLanguageStore.SUBTITLES to stringResource(R.string.placement_instructions_subtitles),
+                            "en" to "English", "es" to "Español"), "settings-instructions-language", !vm.isRunning) {
+                        vm.chooseInstructionsLanguage(it)
+                    }
+                    SettingsDivider()
                     val rate = prefs.speechRate ?: 1.0
                     SettingsChoiceRow(stringResource(R.string.settings_speech_rate),
                         stringResource(when (rate) {

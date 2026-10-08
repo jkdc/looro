@@ -84,6 +84,28 @@ export const BROWSE_TABLES: Record<string, BrowseTable> = {
     },
     orderable: ['created_at', 'kind', 'account_id'], defaultOrder: { column: 'created_at', direction: 'desc' }
   },
+  proxy_usage: {
+    table: 'proxy_usage',
+    description: 'Uso del proxy de tokens por llamada: tokens reportados por el proveedor, estimación de admisión, coste y liquidado.',
+    columns: {
+      account_id: column('uuid', uuidFilters), rate_version: column('text', ['eq']),
+      input_tokens: column('bigint', numberFilters), output_tokens: column('bigint', numberFilters),
+      estimate_nano: column('bigint', numberFilters), cost_nano: column('bigint', numberFilters),
+      settled_nano: column('bigint', numberFilters), ledger_reference: column('text', textFilters),
+      created_at: column('timestamptz', timeFilters)
+    },
+    orderable: ['created_at', 'settled_nano', 'account_id'], defaultOrder: { column: 'created_at', direction: 'desc' }
+  },
+  token_admin_audit: {
+    table: 'token_admin_audit',
+    description: 'Auditoría inmutable de concesiones de operador: unlock de campaña y saldo nanoUSD asignado (tokens-admin).',
+    columns: {
+      actor: column('text', textFilters), action: column('text', ['eq']),
+      account_id: column('uuid', uuidFilters), reference: column('text', textFilters),
+      detail: column('jsonb', []), created_at: column('timestamptz', timeFilters)
+    },
+    orderable: ['created_at', 'action'], defaultOrder: { column: 'created_at', direction: 'desc' }
+  },
   minute_wallets: {
     table: 'minute_wallets',
     description: 'Carteras de minutos de conversación (milisegundos).',

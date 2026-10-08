@@ -7,55 +7,26 @@
 │  APRENDER                               │  ← PageHeading (eyebrow + título + subtítulo)
 │  Tu curso, paso a paso                  │
 ├─────────────────────────────────────────┤
-│  ┌─────────────────────────────────────┐│
-│  │ 🔄 Repaso — 12 palabras pendientes  ││  ← Recall card (solo si hay palabras vencidas)
-│  └─────────────────────────────────────┘│     Tap → abre RecallScreen
+│  [Repaso — N pendientes]                │  ← Recall card (solo si hay vencidas)
+│  [Checkpoint listo]                     │  ← Checkpoint card (solo si está listo; SIEMPRE arriba)
+│  [Tu entrenamiento de hoy + chips 5-20] │  ← Daily Plan card
 ├─────────────────────────────────────────┤
-│  ┌─────────────────────────────────────┐│
-│  │ Tu entrenamiento de hoy             ││  ← Daily Plan card
-│  │ [5 min] [10 min] [15 min] [20 min]  ││     Chips de presupuesto
-│  │ ♜ Repasa tus palabras      3 min    ││     Pasos: recall → lesson → listen/read
-│  │ ✦ Siguiente lección: Present cont 5││
-│  │ 🎧 Un listening sin reproducir 5   ││
-│  └─────────────────────────────────────┘│
+│  (A1) (A2) (B1) (B2) (C1)               │  ← LevelBar STICKY: selector CEFR (Busuu-style);
+│         ^nivel actual en naranja        │     nivel completado lleva ✓; solo se ve UN nivel
 ├─────────────────────────────────────────┤
-│  ┌─────────────────────────────────────┐│
-│  │ 🎓 Foundations                      ││  ← Course card (Foundations)
-│  │ Start from zero                     ││
-│  │ ◉ Nivel 3 · En marcha               ││  ← LevelCard (gamificación 0-10)
-│  │ ▓▓▓▓▓▓░░░░ 12 pts · 3 lecc · 0 list ││  ← Barra de progreso
-│  │ Completed: 17%                      ││
-│  ├─────────────────────────────────────┤│
-│  │ ┌─ A1 ─────────────────────────────┐││  ← Unidades agrupadas por nivel CEFR
-│  │ │ ★★★ First sentences    3 lecc   │││     Cada unidad: themes + lessons
-│  │ │ ★★  People & things     3 lecc   │││
-│  │ │ ★   Everyday actions    3 lecc   │││
-│  │ │ ★   Getting around      3 lecc   │││
-│  │ │ ★   Right now           3 lecc   │││
-│  │ │ ...                              │││
-│  │ ├─ A2 ─────────────────────────────┐││
-│  │ │ ...                              │││
-│  │ ├─ B1 ─────────────────────────────┐││
-│  │ │ ...                              │││
-│  │ ├─ B2 ─────────────────────────────┐││
-│  │ │ ...                              │││
-│  │ ├─ C1 ─────────────────────────────┐││
-│  │ │ ...                              │││
-│  │ └──────────────────────────────────┘││
-│  ├─────────────────────────────────────┤│
-│  │ 💼 English for Work                 ││  ← Segundo curso (track profesional)
-│  │ Professional track                  ││
-│  │ ◉ Nivel 1 · First steps             ││
-│  │ ...                                 ││
-│  └─────────────────────────────────────┘│
-├─────────────────────────────────────────┤
-│  ┌─────────────────────────────────────┐│
-│  │ ✦ A1 checkpoint                     ││  ← Checkpoint card (si todas las
-│  │ Every lesson done — show what you   ││     lecciones del nivel están hechas)
-│  │ can do.                             ││
-│  └─────────────────────────────────────┘│
+│  Foundations                            │  ← CourseLabel (etiqueta del curso en ese nivel)
+│  ◉ Nivel 3 · barra de puntos            │  ← LevelCard (solo curso con lección recomendada)
+│  ▾ First sentences        1/3 lecc ∨    │  ← Unidad (sin badge CEFR: el nivel ya está arriba)
+│      · The verb "ser"      Practised 3× │  ← Solo la unidad activa expande sus lecciones
+│  ▸ Mi día a día           0/3 lecc >    │
+│  ▸ La comida              0/3 lecc >    │
 └─────────────────────────────────────────┘
 ```
+
+El catálogo dejó de ser una lista infinita: cada nivel CEFR es una vista
+independiente (secciones estilo Duolingo) con selector explícito y fijado
+(estilo Busuu). El nivel por defecto es el de la lección recomendada. La
+selección de nivel y de unidad expandida sobreviven a rotación/navegación.
 
 ## Componentes y de dónde sacan los datos
 

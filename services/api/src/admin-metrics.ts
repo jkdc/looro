@@ -3,14 +3,17 @@ import { ServiceError } from './errors.js';
 
 // Fixed read-only analytics. No client text ever becomes SQL: only the set name
 // (validated) and the clamped day count reach the queries.
-export const TIMESERIES_SETS = ['overview', 'growth', 'voice', 'economy', 'usage'] as const;
+export const TIMESERIES_SETS = ['overview', 'growth', 'voice', 'economy', 'usage', 'tokens'] as const;
 export type TimeseriesSet = (typeof TIMESERIES_SETS)[number];
 
 interface SeriesMetric { name: string; label: string; unit: 'count' | 'minor' | 'milliseconds' | 'nano'; sql: string }
 
 // $1 is the clamped day count; every metric returns one row per UTC day, zero-filled.
+// The label is emitted as calendar text from the database: a JS Date round-trip
+// shifts every label a day back on hosts east of UTC (pg parses DATE as local
+// midnight, toISOString then lands on the previous day).
 const daily = (inner: string, value = 'count(*)::int') =>
-  `SELECT d::date AS day, COALESCE(m.value, 0) AS value
+  `SELECT to_char(d, 'YYYY-MM-DD') AS day, COALESCE(m.value, 0) AS value
    FROM generate_series(now()::date - ($1::int - 1), now()::date, interval '1 day') d
    LEFT JOIN (SELECT ${inner} GROUP BY 1) m ON m.day = d::date ORDER BY d::date`;
 
@@ -82,6 +85,16 @@ const SERIES: Record<TimeseriesSet, SeriesMetric[]> = {
       sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'word_lookup' AND created_at >= now()::date - ($1::int - 1)`) },
     { name: 'replays', label: 'Repeticiones en voz alta', unit: 'count',
       sql: daily(`created_at::date AS day, count(*)::int AS value FROM usage_events WHERE name = 'replay_used' AND created_at >= now()::date - ($1::int - 1)`) }
+  ],
+  tokens: [
+    { name: 'proxy_calls', label: 'Llamadas al proxy de tokens', unit: 'count',
+      sql: daily(`created_at::date AS day, count(*)::int AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'input_tokens', label: 'Tokens de entrada', unit: 'count',
+      sql: daily(`created_at::date AS day, COALESCE(sum(input_tokens), 0)::bigint AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'output_tokens', label: 'Tokens de salida', unit: 'count',
+      sql: daily(`created_at::date AS day, COALESCE(sum(output_tokens), 0)::bigint AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) },
+    { name: 'settled_nano', label: 'nanoUSD liquidados', unit: 'nano',
+      sql: daily(`created_at::date AS day, COALESCE(sum(settled_nano), 0)::bigint AS value FROM proxy_usage WHERE created_at >= now()::date - ($1::int - 1)`) }
   ]
 };
 
@@ -94,7 +107,7 @@ export async function timeseries(db: Database, set: string, requestedDays: numbe
   const metrics = SERIES[set as TimeseriesSet]!;
   const results = await Promise.all(metrics.map(async metric => ({
     ...metric, points: (await db.query(metric.sql, [days])).rows.map(row => ({
-      day: (row.day as Date).toISOString().slice(0, 10), value: Number(row.value)
+      day: String(row.day), value: Number(row.value)
     }))
   })));
   return { set: set as TimeseriesSet, days, series: results.map(({ name, label, unit, points }) => ({ name, label, unit, points })) };

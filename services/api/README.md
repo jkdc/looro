@@ -84,7 +84,7 @@ All monetary strings are integer **nanoUSD**: 1 USD = 1,000,000,000 nanoUSD. A d
 | --- | --- | --- |
 | `POST /v1/auth/challenge` | Empty JSON object | `challengeID`, `nonce`, `expiresInSeconds` |
 | `POST /v1/auth/exchange` | `provider`, `idToken`, `challengeID` | `accountID`, `accessToken`, `expiresInSeconds` |
-| `GET /v1/wallet` | Bearer token | `currency`, `balanceNanoUSD`, `reservedNanoUSD`, `availableNanoUSD` |
+| `GET /v1/wallet` | Bearer token | `currency`, `balanceNanoUSD`, `reservedNanoUSD`, `availableNanoUSD`, `unlocked`, `unlockSource` |
 | `GET /v1/minutes` | Guest or member bearer token | Exact time balance, reservation and available milliseconds |
 | `POST /v1/guest/minutes` | Verified guest attestation proof | Guest session and remaining allowance; disabled without a verified adapter |
 | `POST /v1/minutes/welcome` | Member token and account-bound attestation proof | Claims the signup offer once within allocation budgets |
@@ -144,6 +144,8 @@ docker compose -p app-foundation-smoke -f tests/compose.smoke.yaml down --volume
 - Separate migration and runtime database privileges; add financial backup/restore verification, operational alerts without content, and tested provider-level spending protection.
 
 Local verification on 12 September 2026: TypeScript build and checks passed. **42 tests passed with no skips** on local PostgreSQL 14 and inside the built Node 22 container against PostgreSQL 17. They cover ledger races, Checkout retry/mapping/deletion races, signed raw webhooks, JWTs, Apple revocation, and HTTP/WebSocket voice metering and recovery. The container started with a read-only filesystem, dropped capabilities, and a localhost-only port; its database-readiness endpoint passed. Dependency audit reported zero known vulnerabilities. No paid provider calls or real payments were made.
+
+On 6 October 2026 the suite had grown to **446 tests with no skips and no failures** (local PostgreSQL 17, Node 20; CI runs Node 22). That round also fixed a real dashboard bug the tests exposed: timeseries day labels went through a JS Date round-trip and shifted a day back on hosts east of UTC (`src/admin-metrics.ts` now emits the calendar label from the database), and the ten-thousand-accounts check chunks its bulk INSERT/DELETE below the 10s statement timeout instead of relying on host speed.
 
 
 ## Provider contracts

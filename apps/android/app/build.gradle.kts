@@ -29,7 +29,7 @@ val appConversationEngine = (
         ?: System.getenv("APP_CONVERSATION_ENGINE")
         ?: "openai"
     ).trim().lowercase()
-val validConversationEngines = listOf("openai", "deepseek", "glm")
+val validConversationEngines = listOf("openai", "deepseek", "glm", "glm-4.5")
 require(appConversationEngine in validConversationEngines) {
     "app.conversationEngine must be one of $validConversationEngines (got '$appConversationEngine')"
 }

@@ -36,10 +36,26 @@ data class RemoteEngineConfig(
 ) {
     companion object {
         val DEEPSEEK = RemoteEngineConfig("deepseek", "https://api.deepseek.com/v1/", "deepseek-chat", "DEEPSEEK_API_KEY")
-        // Zhipu z.ai (international) platform; glm-4.5-flash is their free flash model.
+        // Zhipu z.ai (international) platform. Both models ride the coding-plan
+        // endpoint: coding-plan keys carry no general platform balance, so the
+        // default /api/paas/v4 answers 1113 (insufficient balance) even for
+        // paid models, while the coding endpoint serves both flashes.
         val GLM = RemoteEngineConfig(
             id = "glm",
-            defaultBaseUrl = "https://api.z.ai/api/paas/v4/",
+            defaultBaseUrl = "https://api.z.ai/api/coding/paas/v4/",
+            defaultModel = "glm-5.3-flash",
+            keyEnvVar = "ZHIPUAI_API_KEY",
+            // GLM-5.3 always thinks: the API rejects `thinking.type=disabled`
+            // (error 1210), so the lowest effort level is requested instead.
+            extraBody = buildJsonObject {
+                put("thinking", buildJsonObject { put("type", "enabled"); put("level", "low") })
+            },
+        )
+        // The free-tier flash model, selectable from Settings. Unlike 5.3 it
+        // supports switching thinking off, and shares one rate-limit pool.
+        val GLM_45 = RemoteEngineConfig(
+            id = "glm-4.5",
+            defaultBaseUrl = "https://api.z.ai/api/coding/paas/v4/",
             defaultModel = "glm-4.5-flash",
             keyEnvVar = "ZHIPUAI_API_KEY",
             extraBody = buildJsonObject { put("thinking", buildJsonObject { put("type", "disabled") }) },

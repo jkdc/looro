@@ -31,12 +31,44 @@ arrives in the final chunk, which the JSON metering path cannot parse.
 `OpenAICompatibleEngine` (the `hosted-proxy` engine) already does; any other
 client must too. A later change may add SSE pass-through.
 
+## Metering
+
+After the stream gate and the cap above, two wallet checks run before the provider:
+
+1. Available balance = `balance_nano - reserved_nano`; `<= 0` →
+   `402 token_balance_exhausted`.
+2. Pre-call estimate = input estimate (body size / 4 chars + 256 tokens) at the
+   input rate, plus `PROXY_MAX_TOKENS` (default 4,000) output tokens at the
+   output rate; estimate above balance → `402 token_balance_exhausted`.
+
+After the provider replies, its reported usage is **validated strictly** — both
+counts present, integers within the safe range, non-negative — and then settled
+at the **active rate version** (`rate_versions`, latest `valid_from`): usage ×
+rate, debited through the ledger (`settle` entry, `rate_version` column) so
+every balance stays auditable. A success reply whose usage fails validation is
+refused as `502 provider_error` **before settlement**: nothing debits, the
+reply is not returned, and a misreporting provider can never become an
+unbilled usage channel. Every successful relay — including a zero-cost report —
+also writes a durable `proxy_usage` row (token counts, the admission estimate,
+computed cost, settled amount) tied to its settle ledger entry when there was
+one; the admin timeseries set `tokens` and the `proxy_usage` browse table
+aggregate it per day and per account. Grace is bounded: a single call costing
+more than the balance still returns the reply and settles at the balance
+(never negative) — but a zero balance refuses the next call.
+
+Rate versions: settlement always converts usage at the rate version **active at
+call time**, so a new `rate_versions` row changes what existing balances buy
+going forward. The rate version pinned on a pack's quote and ledger entries is
+purchase provenance for audit; it does not freeze the tariff for the balance.
+
 ## Auth and unlock
 
 - Bearer session token (same `authorization` header as every account route).
 - Without a verified BYOK unlock: `403 unlock_required`. The unlock is set
   once by a **live-environment** `byok_unlock` purchase (sandbox receipts
-  record state but never unlock); a campaign grant can also set it.
+  record state but never unlock); a campaign grant can also set it (see
+  [Operator grants](#operator-grants-no-store-purchase)). Clients read the
+  current state from `GET /v1/wallet` (`unlocked`, `unlockSource`).
 - Without `PROXY_PROVIDER_URL`/`PROXY_PROVIDER_KEY` configured the route
   answers `503 proxy_unavailable` — the proxy is disabled, not degraded.
 
@@ -80,7 +112,7 @@ Seeded rate `2026-09-minimax-m`: 300,000 nano per million input tokens
 | 401 | auth codes | Missing/invalid session token |
 | 402 | `token_balance_exhausted` | Zero balance, or estimate above balance |
 | 403 | `unlock_required` | Account has no verified BYOK unlock |
-| 502 | `provider_error` | Provider returned 4xx/5xx (key and body stay server-side) |
+| 502 | `provider_error` | Provider returned 4xx/5xx, or a success reply whose usage cannot be metered (missing/malformed/negative counts — refused before settlement, nothing debits) |
 | 429 | `account_busy` | Per-account in-flight cap (`PROXY_MAX_CONCURRENT`) exceeded |
 | 503 | `proxy_unavailable` | `PROXY_PROVIDER_URL`/`KEY` not configured, or `rate_versions` empty (no active rate) |
 
@@ -118,6 +150,38 @@ validated against them, so a tampered catalog cannot sell a different product:
 Both flow through the same server-verified purchase reconciliation as minutes
 (Stripe/Play evidence, idempotency, reversal); pack credit requires reconciled
 cash provenance before ordering.
+
+## Operator grants (no store purchase)
+
+Access and balance can be assigned by the local operator with the `tokens-admin`
+CLI — same standing as `minutes-admin`, no HTTP route creates unlock or journal
+state. Every mutation reads JSON on stdin, carries an `actor` and a `reason`,
+and writes the immutable `token_admin_audit` table (browsable in the panel).
+
+```sh
+npm run tokens-admin -- show <accountID>
+echo '{"accountID":"<uuid>","actor":"joaquin","reason":"campaign pilot"}' \
+  | npm run tokens-admin -- grant-unlock
+echo '{"accountID":"<uuid>","actor":"joaquin","reason":"campaign pilot","grantID":"pilot-1","creditNanoUSD":"2160000000"}' \
+  | npm run tokens-admin -- grant-balance
+```
+
+- **`grant-unlock`** sets the unlock with `unlock_source='campaign'`, the slot
+  the schema reserved for it. Set-once like the purchase path: an active unlock
+  (paid or campaign) is never overwritten; a row cleared by a refund can be
+  re-granted. `unlock_order_id` stays NULL — no store order owns it.
+- **`revoke-unlock`** clears only a campaign unlock. A paid unlock clears
+  exclusively through its own refund/void machinery.
+- **`grant-balance`** credits the wallet through an immutable ledger entry
+  (`purchase` kind, sandbox delta zero, active rate version as provenance),
+  referenced `campaign-grant:<grantID>`: a replay of the same `grantID` is a
+  no-op and a conflicting reuse is a 409. The credit is spendable at the token
+  proxy; it is not store cash, so it does not by itself satisfy the
+  cash-provenance gates of the paid voice and helper paths.
+- Grants target signed-in member accounts only — guest installation identities
+  are refused.
+- **`show`** prints the wallet, unlock state and 30-day proxy usage for one
+  account.
 
 ## Load signal
 

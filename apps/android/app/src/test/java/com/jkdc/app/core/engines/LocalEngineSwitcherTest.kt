@@ -9,6 +9,7 @@ import kotlinx.serialization.json.JsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LocalEngineSwitcherTest {
@@ -59,10 +60,12 @@ class LocalEngineSwitcherTest {
     }
 
     @Test fun `key env vars map to their engine ids`() {
-        assertEquals("deepseek", localEngineIdForKeyEnv("DEEPSEEK_API_KEY"))
-        assertEquals("glm", localEngineIdForKeyEnv("ZHIPUAI_API_KEY"))
-        assertNull(localEngineIdForKeyEnv("OPENAI_API_KEY"))
+        assertEquals(listOf("deepseek"), localEngineIdsForKeyEnv("DEEPSEEK_API_KEY"))
+        // Both Zhipu flashes share one key environment variable.
+        assertEquals(listOf("glm", "glm-4.5"), localEngineIdsForKeyEnv("ZHIPUAI_API_KEY"))
+        assertTrue(localEngineIdsForKeyEnv("OPENAI_API_KEY").isEmpty())
         assertEquals("DEEPSEEK_API_KEY", localEngineKeyEnv("deepseek"))
+        assertEquals("ZHIPUAI_API_KEY", localEngineKeyEnv("glm-4.5"))
         assertNull(localEngineKeyEnv("openai"))
     }
 }

@@ -1,5 +1,6 @@
 package com.jkdc.app.ui
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -33,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -45,7 +49,6 @@ import com.jkdc.app.R
 import com.jkdc.app.core.ConversationTheme
 import com.jkdc.app.core.PronunciationEngine
 import com.jkdc.app.core.Course
-import com.jkdc.app.core.CourseProgress
 import com.jkdc.app.core.CourseRegistry
 import com.jkdc.app.core.CourseUnit
 import com.jkdc.app.core.DailyPlanEngine
@@ -88,7 +91,37 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                 style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 8.dp))
         }
     } else {
-        LazyColumn(Modifier.fillMaxSize().testTag("learn-screen").padding(horizontal = 24.dp),
+        // ---- CEFR level context, resolved before the list DSL (its lambda is
+        // not a composable scope). Default: the placement suggestion when one
+        // exists (suggest, never fix), else the recommended lesson's level,
+        // else the first level with anything left to do. ----
+        var placementOpen by rememberSaveable { mutableStateOf(false) }
+        var levelTestLevel by rememberSaveable { mutableStateOf<String?>(null) }
+        // Re-read on return from the test: a fresh result must replace the card text.
+        val placementSuggestion = remember(placementOpen) { vm.placementSuggestion() }
+        val recommended = vm.recommendedLesson()
+        val recommendedUnit = courses.asSequence().flatMap { it.units }.firstOrNull { unit -> unit.lessons.any { it.id == recommended?.id } }
+        val levels = remember(courses) { courses.asSequence().flatMap { it.units }.map { it.level }.distinct().sortedBy(::cefrRank).toList() }
+        val defaultLevel = remember(levels, recommendedUnit, progress.second, placementSuggestion) {
+            placementSuggestion?.band
+                ?: recommendedUnit?.level
+                ?: levels.firstOrNull { level -> courses.asSequence().flatMap { it.units }.filter { it.level == level }
+                    .any { unit -> unit.lessons.any { it.id !in progress.second } } }
+                ?: levels.firstOrNull()
+        }
+        var savedLevel by rememberSaveable { mutableStateOf<String?>(null) }
+        val selectedLevel = savedLevel?.takeIf { it in levels } ?: defaultLevel ?: levels.firstOrNull() ?: "A1"
+        val completedLevels = remember(levels, progress.second) {
+            levels.filter { level -> courses.asSequence().flatMap { it.units }.filter { it.level == level }
+                .flatMap { it.lessons }.let { lessons -> lessons.any() && lessons.all { it.id in progress.second } } }
+        }
+        if (placementOpen) {
+            PlacementScreen(vm, onBack = { placementOpen = false },
+                onApplyBand = { band -> savedLevel = band; placementOpen = false })
+        } else if (levelTestLevel != null) {
+            LevelTestScreen(vm, level = levelTestLevel!!, onBack = { levelTestLevel = null },
+                onApplyBand = { band -> savedLevel = band; levelTestLevel = null })
+        } else LazyColumn(Modifier.fillMaxSize().testTag("learn-screen").padding(horizontal = 24.dp),
             contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.learn_eyebrow), stringResource(R.string.learn_title),
                 stringResource(R.string.learn_subtitle), Modifier.padding(top = 20.dp, bottom = 6.dp)) }
@@ -105,12 +138,9 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                     }
                 }
             }
-            item(key = "daily-plan") { DailyPlanCard(vm, onRecall = { recallOpen = true }, onLesson = { id -> openLessonID = id; vm.stopLessonReading() }) }
-            items(courses.size, key = { courses[it].id }) { index ->
-                CourseCard(vm, courses[index], progress.first.courses.firstOrNull { it.courseID == courses[index].id },
-                    progress.second, onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
-            }
             vm.checkpointReady()?.let { checkpoint ->
+                // A ready checkpoint is the most time-sensitive item on the page:
+                // it rides directly under the heading, never below the catalog.
                 item(key = checkpoint.id) {
                     Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { openCheckpointID = checkpoint.id }
                         .testTag("checkpoint-card"), shape = RoundedCornerShape(26.dp), color = AppColors.Butter) {
@@ -125,8 +155,109 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                     }
                 }
             }
+            item(key = "daily-plan") { DailyPlanCard(vm, onRecall = { recallOpen = true }, onLesson = { id -> openLessonID = id; vm.stopLessonReading() }) }
+            if (vm.placementBank != null) item(key = "placement-entry") {
+                // Free, optional level test: suggests the starting level, never gates.
+                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { placementOpen = true }
+                    .testTag("placement-card"), shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
+                    Row(Modifier.padding(22.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        AppIcon(AppSymbol.Search, Modifier.size(24.dp), color = AppColors.Secondary)
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(R.string.placement_entry_title), style = MaterialTheme.typography.titleMedium)
+                            Text(placementSuggestion?.let { suggestion ->
+                                stringResource(R.string.placement_entry_cta_result, suggestion.band,
+                                    java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(java.util.Date(suggestion.at)))
+                            } ?: stringResource(R.string.placement_entry_cta),
+                                style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        }
+                        AppIcon(AppSymbol.ChevronRight, Modifier.size(16.dp), color = AppColors.Secondary.copy(alpha = .6f))
+                    }
+                }
+            }
+            // ---- CEFR level catalog: one level at a time ----
+            // Duolingo-style sections (you never scroll across levels) with a
+            // Busuu-style explicit level picker that stays pinned while the
+            // learner browses the catalog below it.
+            stickyHeader(key = "level-bar") {
+                LevelBar(levels, selectedLevel, completedLevels, onSelect = { savedLevel = it })
+            }
+            if (vm.levelTestPool(selectedLevel) != null) item(key = "leveltest-entry") {
+                val history = remember(selectedLevel) { vm.levelTestHistory(selectedLevel) }
+                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { levelTestLevel = selectedLevel }
+                    .testTag("leveltest-card"), shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
+                    Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        AppIcon(AppSymbol.Check, Modifier.size(24.dp), color = AppColors.Secondary)
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(R.string.leveltest_entry_title, selectedLevel), style = MaterialTheme.typography.titleMedium)
+                            Text(history?.let { last ->
+                                stringResource(R.string.leveltest_entry_cta_result, last.overall,
+                                    java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(java.util.Date(last.at)))
+                            } ?: stringResource(R.string.leveltest_entry_cta),
+                                style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        }
+                        AppIcon(AppSymbol.ChevronRight, Modifier.size(16.dp), color = AppColors.Secondary.copy(alpha = .6f))
+                    }
+                }
+            }
+            courses.forEach { course ->
+                val unitsAtLevel = course.units.filter { it.level == selectedLevel }
+                if (unitsAtLevel.isNotEmpty()) {
+                    item(key = "course-${course.id}") {
+                        CourseLabel(course)
+                    }
+                    if (unitsAtLevel.any { it.id == recommendedUnit?.id }) {
+                        item(key = "level-stats-${course.id}") { LevelCard(vm.levelStats(course)) }
+                    }
+                    unitsAtLevel.forEach { unit ->
+                        item(key = "${course.id}:${unit.id}") {
+                            UnitSection(vm, unit, vm.levelStats(course), progress.second, recommended?.id,
+                                onOpen = { id -> openLessonID = id; vm.stopLessonReading() })
+                        }
+                    }
+                }
+            }
         }
     }
+}
+
+/** CEFR sort key: A1 < A2 < B1 < B2 < C1 < C2, unknown shapes sort last. */
+private fun cefrRank(level: String): Int {
+    val letter = level.firstOrNull()?.uppercaseChar()?.let { it - 'A' + 1 } ?: return 99
+    val digit = level.drop(1).toIntOrNull() ?: return 99
+    return letter * 10 + digit
+}
+
+/** Pinned CEFR picker. Selected level filled; a fully completed level carries
+    a check so the ladder reads as progress, not just navigation. */
+@Composable
+private fun LevelBar(levels: List<String>, selected: String?, completedLevels: List<String>, onSelect: (String) -> Unit) {
+    Surface(Modifier.fillMaxWidth().testTag("level-bar"), color = AppColors.Cream) {
+        Row(Modifier.padding(vertical = 8.dp).horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            levels.forEach { level ->
+                val isSelected = level == selected
+                val isDone = level in completedLevels
+                Surface(Modifier.clickable(role = Role.Button, enabled = level != selected) { onSelect(level) }
+                        .testTag("level-$level"),
+                    shape = RoundedCornerShape(50),
+                    color = if (isSelected) AppColors.Orange else AppColors.CreamRaised) {
+                    Row(Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+                        if (isDone && !isSelected) AppIcon(AppSymbol.Check, Modifier.size(12.dp), color = AppColors.Secondary)
+                        Text(level, style = MaterialTheme.typography.titleSmall,
+                            color = if (isSelected) AppColors.Ink else AppColors.Secondary)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** One course's name over its units inside the level view. */
+@Composable
+private fun CourseLabel(course: Course) {
+    Text(course.title, style = MaterialTheme.typography.titleSmall, color = AppColors.Secondary,
+        modifier = Modifier.semantics { heading() }.testTag("course-label-" + course.id))
 }
 
 @Composable
@@ -147,29 +278,6 @@ private fun LanguageSwitcher(vm: AppViewModel) {
     }
 }
 
-@Composable
-private fun CourseCard(vm: AppViewModel, course: Course, courseProgress: CourseProgress?,
-                       doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
-    val level = remember(course.id) { vm.levelStats(course) }
-    Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
-        Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                AppIcon(AppSymbol.Sparkles, Modifier.size(28.dp), color = AppColors.Secondary)
-                Column {
-                    Text(course.title, style = MaterialTheme.typography.titleMedium)
-                    Text(course.subtitle, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
-                }
-            }
-            Text(course.description, style = MaterialTheme.typography.bodyMedium)
-            courseProgress?.takeIf { it.lessonsTotal > 0 }?.let {
-                Text(stringResource(R.string.learn_course_percent, it.percent),
-                    style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
-            }
-            LevelCard(level)
-            course.units.forEach { unit -> UnitSection(vm, unit, level, doneLessonIDs, onOpen) }
-        }
-    }
-}
 
 @Composable
 private fun LevelCard(stats: LevelStats) {
@@ -206,7 +314,11 @@ private fun DailyPlanCard(vm: AppViewModel, onRecall: () -> Unit, onLesson: (Str
         shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.plan_title), style = MaterialTheme.typography.titleMedium)
+                // Weighted but not filling: the budget chips keep their intrinsic
+                // width (measured first) and the title wraps instead of squeezing
+                // the chips into vertical text on narrow screens.
+                Text(stringResource(R.string.plan_title), style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f, fill = false))
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     DailyPlanEngine.BUDGETS.forEach { option ->
                         Surface(Modifier.clickable(role = Role.Button) { budget = option }.testTag("plan-budget-" + option),
@@ -214,7 +326,7 @@ private fun DailyPlanCard(vm: AppViewModel, onRecall: () -> Unit, onLesson: (Str
                             color = if (option == budget) AppColors.Secondary else AppColors.Cream) {
                             Text(stringResource(R.string.plan_minutes, option),
                                 Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                                style = MaterialTheme.typography.labelSmall,
+                                style = MaterialTheme.typography.labelSmall, maxLines = 1, softWrap = false,
                                 color = if (option == budget) AppColors.Cream else AppColors.Secondary)
                         }
                     }
@@ -253,33 +365,44 @@ private fun DailyPlanCard(vm: AppViewModel, onRecall: () -> Unit, onLesson: (Str
 
 @Composable
 private fun UnitSection(vm: AppViewModel, unit: CourseUnit, level: LevelStats,
-                        doneLessonIDs: Set<String>, onOpen: (String) -> Unit) {
+                        doneLessonIDs: Set<String>, recommendedID: String?, onOpen: (String) -> Unit) {
+    // The pinned level bar above is the CEFR context; unit rows never repeat
+    // it. Only the unit holding the recommended lesson lists its lessons.
+    val hasRecommendation = unit.lessons.any { it.id == recommendedID }
+    var expanded by rememberSaveable(unit.id) { mutableStateOf(hasRecommendation) }
+    val chevron by animateFloatAsState(if (expanded) 90f else 0f, label = "unit-chevron")
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(Modifier.fillMaxWidth().clickable(role = Role.Button) { expanded = !expanded }
+                .padding(horizontal = 10.dp, vertical = 8.dp).testTag("unit-" + unit.id),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(unit.title, style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.semantics { heading() }.weight(1f))
-            if (unit.lessons.isNotEmpty()) Text(stringResource(R.string.learn_course_percent,
-                unit.lessons.count { it.id in doneLessonIDs } * 100 / unit.lessons.size),
+            Text(stringResource(R.string.learn_unit_progress,
+                unit.lessons.count { it.id in doneLessonIDs }, unit.lessons.size),
                 style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+            AppIcon(AppSymbol.ChevronRight, Modifier.size(14.dp).graphicsLayer { rotationZ = chevron },
+                color = AppColors.Secondary.copy(alpha = .6f))
         }
-        val recommendedID = vm.recommendedLesson()?.id
-        unit.lessons.forEach { lesson ->
-            val attempts = vm.lessonAttempts(lesson.id)
-            val tier = level.mastery.firstOrNull { it.lessonID == lesson.id }?.tier ?: 0
-            Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { onOpen(lesson.id) }.testTag("lesson-" + lesson.id),
-                shape = RoundedCornerShape(18.dp), color = AppColors.Cream) {
-                Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Text(lesson.title, style = MaterialTheme.typography.titleSmall)
-                            if (recommendedID == lesson.id && attempts == 0) Text(stringResource(R.string.learn_recommended),
-                                style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+        if (expanded) {
+            val recommendedIDInUnit = recommendedID
+            unit.lessons.forEach { lesson ->
+                val attempts = vm.lessonAttempts(lesson.id)
+                val tier = level.mastery.firstOrNull { it.lessonID == lesson.id }?.tier ?: 0
+                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { onOpen(lesson.id) }.testTag("lesson-" + lesson.id),
+                    shape = RoundedCornerShape(18.dp), color = AppColors.Cream) {
+                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Text(lesson.title, style = MaterialTheme.typography.titleSmall)
+                                if (recommendedIDInUnit == lesson.id && attempts == 0) Text(stringResource(R.string.learn_recommended),
+                                    style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                            }
+                            Text(lesson.goal, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
                         }
-                        Text(lesson.goal, style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                        if (tier > 0) LessonStars(tier)
+                        Text(if (attempts == 0) stringResource(R.string.lesson_new) else stringResource(R.string.lesson_attempts, attempts),
+                            style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                     }
-                    if (tier > 0) LessonStars(tier)
-                    Text(if (attempts == 0) stringResource(R.string.lesson_new) else stringResource(R.string.lesson_attempts, attempts),
-                        style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
                 }
             }
         }

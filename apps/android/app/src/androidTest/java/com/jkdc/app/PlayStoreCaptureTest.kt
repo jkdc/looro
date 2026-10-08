@@ -36,6 +36,7 @@ import org.junit.Assert.*
 import org.junit.rules.RuleChain
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
+import kotlinx.coroutines.runBlocking
 import org.junit.runners.model.Statement
 import java.io.File
 
@@ -71,7 +72,7 @@ class PlayStoreCaptureTest {
         vm = compose.awaitHistoryLoaded()
         compose.runOnIdle {
             original = vm.archive.preferences.copy()
-            assertTrue(vm.importData(ArchiveCodec.encode(Archive(sessions = records.toMutableList()))))
+            assertTrue(runBlocking { vm.importData(ArchiveCodec.encode(Archive(sessions = records.toMutableList()))) })
             vm.updatePreferences(original.copy(learningLanguageID = "es", meaningLanguage = "English",
                 meaningVisible = true, hasOnboarded = true, aiConsentVersion = null))
         }

@@ -12,7 +12,10 @@ import { ServiceError } from './errors.js';
     (`PROXY_MAX_CONCURRENT`, default 2) so one account cannot monopolise the
     server key. Grace is bounded: a single call whose real cost exceeds the
     balance settles at the real cost (floor zero) so the reply is never
-    wasted, but a zero balance refuses the next call. */
+    wasted, but a zero balance refuses the next call. A success reply whose
+    usage cannot be metered is refused rather than served free, and every
+    successful relay leaves a durable `proxy_usage` row with the token counts
+    and what they cost. */
 export interface TokenProxyConfig { providerURL: string; providerKey: string; maxTokens: number; maxConcurrentPerAccount: number }
 
 export const tokenProxyConfig = (env: NodeJS.ProcessEnv): TokenProxyConfig | undefined => {
@@ -28,6 +31,20 @@ export const tokenProxyConfig = (env: NodeJS.ProcessEnv): TokenProxyConfig | und
 const inputEstimate = (body: { messages?: unknown[]; input?: unknown }) => {
   const text = typeof body === 'object' && body !== null ? JSON.stringify(body) : '';
   return Math.ceil(text.length / 4) + 256;
+};
+
+const usageToken = (value: unknown): bigint | null =>
+  typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER ? BigInt(value) : null;
+
+/** Provider-reported usage, strictly validated: both counts must be present,
+    integers within the safe range and non-negative. Anything else returns
+    null so the caller can fail closed instead of settling a guess. */
+export const providerUsage = (payload: unknown): { inputTokens: bigint; outputTokens: bigint } | null => {
+  const usage = payload && typeof payload === 'object' && 'usage' in payload ? (payload as { usage: unknown }).usage : undefined;
+  if (!usage || typeof usage !== 'object' || Array.isArray(usage)) return null;
+  const fields = usage as Record<string, unknown>;
+  const inputTokens = usageToken(fields.prompt_tokens), outputTokens = usageToken(fields.completion_tokens);
+  return inputTokens === null || outputTokens === null ? null : { inputTokens, outputTokens };
 };
 
 export interface RateVersion { id: string; nanoPerMillionInput: bigint; nanoPerMillionOutput: bigint }
@@ -92,16 +109,27 @@ export class TokenProxy {
       throw new ServiceError('provider_error', 502);
     }
     const payload = await response.json() as Record<string, unknown>;
-    const usage = payload.usage as { prompt_tokens?: number; completion_tokens?: number } | undefined;
-    const inputTokens = BigInt(usage?.prompt_tokens ?? 0), outputTokens = BigInt(usage?.completion_tokens ?? 0);
-    const cost = inputTokens * rate.nanoPerMillionInput / 1_000_000n + outputTokens * rate.nanoPerMillionOutput / 1_000_000n;
+    const usage = providerUsage(payload);
+    // A success reply the server cannot meter is refused, not served free:
+    // settlement is the only honest cost boundary, and a provider that omits
+    // or corrupts its usage must never become an unbilled usage channel.
+    // Nothing debits and the reply is not returned.
+    if (!usage) throw new ServiceError('provider_error', 502);
+    const cost = usage.inputTokens * rate.nanoPerMillionInput / 1_000_000n
+      + usage.outputTokens * rate.nanoPerMillionOutput / 1_000_000n;
     const settled = cost > balance ? balance : cost;
-    if (settled > 0n) {
+    const reference = `proxy:${randomUUID()}`;
+    await transaction(this.db, async sql => {
       // appendEntry applies the wallet delta itself; the ledger row is the audit trail.
-      await transaction(this.db, async sql => {
-        await appendEntry(sql, accountID, `proxy:${randomUUID()}`, 'settle', -settled, 0n, rate.id);
-      });
-    }
+      if (settled > 0n) await appendEntry(sql, accountID, reference, 'settle', -settled, 0n, rate.id);
+      // Durable usage record: the token counts and what they cost, tied to the
+      // settle entry when there was one. A zero-cost call is recorded without
+      // a ledger row, so usage reporting never depends on money movement.
+      await sql.query(`INSERT INTO proxy_usage(id,account_id,rate_version,input_tokens,output_tokens,estimate_nano,cost_nano,settled_nano,ledger_reference)
+        VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+      [randomUUID(), accountID, rate.id, usage.inputTokens.toString(), usage.outputTokens.toString(),
+        estimate.toString(), cost.toString(), settled.toString(), settled > 0n ? reference : null]);
+    });
     return { status: 200, payload: { ...payload, metering: { rateVersion: rate.id, nanoUSDSettled: settled.toString() } } };
   }
 }

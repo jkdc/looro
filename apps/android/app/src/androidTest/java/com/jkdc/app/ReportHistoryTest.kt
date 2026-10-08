@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlinx.coroutines.runBlocking
 import java.util.UUID
 
 /** Uses the isolated UI-test app with reporting/network configuration blank. */
@@ -28,7 +29,7 @@ class ReportHistoryTest {
         vm = compose.awaitHistoryLoaded()
         compose.runOnIdle {
             originalPreferences = vm.archive.preferences.copy()
-            assertTrue(vm.importData(ArchiveCodec.encode(Archive(sessions = mutableListOf(session)))))
+            assertTrue(runBlocking { vm.importData(ArchiveCodec.encode(Archive(sessions = mutableListOf(session)))) })
             vm.updatePreferences(originalPreferences!!.copy(hasOnboarded = true))
         }
     }

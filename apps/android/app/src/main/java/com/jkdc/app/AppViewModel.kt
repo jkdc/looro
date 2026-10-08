@@ -184,6 +184,70 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = LearningRepository(application)
     private val credentials = CredentialStore(application)
 
+    // ---- Placement test (placement-test): free, optional, suggestion-only. ----
+    private val placementResultStore by lazy { com.jkdc.app.core.PlacementResultStore(application) }
+    private val instructionsLanguageStore by lazy { com.jkdc.app.core.InstructionsLanguageStore(application) }
+
+    val placementBank: com.jkdc.app.core.PlacementBank? get() = com.jkdc.app.core.PlacementRegistry.forLanguage(language.id)
+    fun placementSuggestion(): com.jkdc.app.core.PlacementResult? = placementResultStore.get(language.id)
+
+    fun savePlacementResult(result: com.jkdc.app.core.PlacementResult) {
+        placementResultStore.save(result)
+        // The synced audit trail is one assessment completion per test version;
+        // a self-assessed result (test abandoned) stays local only.
+        if (result.source == com.jkdc.app.core.PlacementResult.SOURCE_TEST)
+            recordCompletion(ProgressEngine.ASSESSMENT, "placement-${result.languageID}-v${result.version}", result.corePercent)
+    }
+
+    var instructionsLanguage: String by mutableStateOf(instructionsLanguageStore.get())
+        private set
+    fun chooseInstructionsLanguage(value: String) {
+        instructionsLanguageStore.set(value)
+        instructionsLanguage = value
+    }
+
+    /** Starting band for the placement ladder: the recommended lesson's level
+        when there is any progress, else the first level with pending lessons,
+        else A1. */
+    fun placementStartBand(): String {
+        val courses = CourseRegistry.forLanguage(language.id)
+        recommendedLesson()?.let { lesson ->
+            courses.firstOrNull { course -> course.units.any { unit -> unit.lessons.any { it.id == lesson.id } } }
+                ?.let { course -> course.units.firstOrNull { unit -> unit.lessons.any { it.id == lesson.id } }?.level?.let { return it } }
+        }
+        val done = completedLessonIDs()
+        courses.asSequence().flatMap { it.units }.map { it.level }.distinct()
+            .firstOrNull { level -> courses.asSequence().flatMap { it.units }.filter { it.level == level }
+                .any { unit -> unit.lessons.any { it.id !in done } } }
+            ?.let { return it }
+        return PlacementEngine.FLOOR
+    }
+
+    // ---- Level verification tests (level-tests): weekly, per level, suggestion-only. ----
+    private val levelTestHistoryStore by lazy { com.jkdc.app.core.LevelTestHistoryStore(application) }
+
+    fun levelTestPool(level: String): com.jkdc.app.core.LevelTestLevel? =
+        com.jkdc.app.core.LevelTestsRegistry.level(language.id, level)
+    fun levelTestHistory(level: String): com.jkdc.app.core.LevelTestResult? =
+        levelTestHistoryStore.get(language.id, level)
+    fun saveLevelTestResult(result: com.jkdc.app.core.LevelTestResult) {
+        levelTestHistoryStore.save(result)
+        // One synced `assessment` completion per attempt (slug-safe: lowercase level).
+        recordCompletion(ProgressEngine.ASSESSMENT,
+            "levelcheck-${result.languageID}-${result.level.lowercase()}", result.overall)
+    }
+
+    /** Speaks a placement listening stimulus with the learning-language voice,
+        independent of the lesson read-aloud switch. */
+    fun speakPlacement(text: String) {
+        if (text.isBlank()) return
+        viewModelScope.launch {
+            if (!lessonReader.initialize() || !lessonReader.setLanguage(language.locale)) return@launch
+            lessonReader.setSpeechRate(archive.preferences.effectiveSpeechRate().toFloat())
+            lessonReader.speak(text)
+        }
+    }
+
     private val voiceManualTurnStore by lazy {
         com.jkdc.app.core.voice.VoiceManualTurnStore(getApplication())
     }
@@ -196,10 +260,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val accountConfiguration = ManagedAccountConfiguration.parse(BuildConfig.MANAGED_API_ORIGIN, BuildConfig.GOOGLE_SERVER_CLIENT_ID)
     private val memberSessions = accountConfiguration?.let { AccountSessionStore(application, it.origin.toString()) }
 
-    /** User override first, then environment, then the deployed bundled key. */
+    /** User override first, then environment, then the deployed bundled key.
+        An env var can back several engines (both Zhipu flashes share
+        ZHIPUAI_API_KEY): any engine-scoped override for it applies. */
     private val engineKeyLookup: (String) -> String? = { name ->
-        val engineId = com.jkdc.app.core.engines.localEngineIdForKeyEnv(name)
-        engineId?.let { engineOverrides.customKey(it) }
+        val engineIds = com.jkdc.app.core.engines.localEngineIdsForKeyEnv(name)
+        engineIds.firstNotNullOfOrNull { engineOverrides.customKey(it) }
             ?: System.getenv(name)
             ?: com.jkdc.app.core.engines.ApiKeysStore.get(application, name)
     }
@@ -1801,11 +1867,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             RecallEngine.normalizeKey(it.text) == key &&
                 (it.languageID == language.id || it.languageID == null)
         }
-        val saved = RecallEngine.saveLookup(archive, text, meaning, nowSeconds())
+        // Copy first, mutate the copy: the engine mutates the list in place
+        // (replace or append) and the state setter skips element-wise-equal
+        // writes — removeExpression's same discipline.
+        val next = archive.copy(expressions = archive.expressions.toMutableList())
+        val saved = RecallEngine.saveLookup(next, text, meaning, nowSeconds())
         if (saved) {
+            archive = next
             // the engine replaced in place (index) or appended (last); either
             // way that one post-engine state is the site's whole DB write
-            val state = if (index >= 0) archive.expressions[index] else archive.expressions.last()
+            val state = if (index >= 0) next.expressions[index] else next.expressions.last()
             persist { db -> LearningDbWriter.expressionUpserted(db, state) }
         }
         return saved
@@ -1884,10 +1955,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             RecallEngine.normalizeKey(it.text) == key &&
                 (it.languageID == language.id || it.languageID == null)
         }
-        RecallEngine.grade(archive, text, correct, nowSeconds())
+        // Copy first, mutate the copy: grade edits the matched row's fields in
+        // place and the state setter skips element-wise-equal writes, so the
+        // matched row is detached from the published copy before grading.
+        val next = archive.copy(expressions = archive.expressions.toMutableList())
+        if (index >= 0) next.expressions[index] = next.expressions[index].copy()
+        RecallEngine.grade(next, text, correct, nowSeconds())
+        archive = next
         if (index >= 0) {
-            val state = archive.expressions[index]
-            persist { db -> LearningDbWriter.expressionUpserted(db, state) }
+            persist { db -> LearningDbWriter.expressionUpserted(db, next.expressions[index]) }
         }
     }
     private fun fail(message: String, needsKeySetup: Boolean = false) { finish(false); resetJob?.cancel(); state = "failed"; presentError(message, needsKeySetup) }
@@ -2321,19 +2397,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         // completions and skill errors are not this site's learning data
         persist { db -> LearningDbWriter.learningDataDeleted(db, stored) }
     }
-    fun importData(data: String): Boolean {
+    suspend fun importData(data: String): Boolean {
         if (isRunning || !storageReady) return false
         return try {
-            val incoming = prepareImportedArchive(data)
-            if (jsonMode) {
-                archive = ArchiveCodec.merge(archive, incoming)
-                persist()
-            } else {
-                // restore path (the merger is restore-only): the codec merges
-                // against the database and the working copy becomes the
-                // persisted projection
-                archive = LearningDbWriter.archiveRestored(store!!.db, incoming)
+            // Decode, merge and the whole-database restore transaction are
+            // heavy: run them off the main thread (importDbFrom's dispatcher
+            // contract). The state writes stay in the caller's context.
+            val imported = withContext(Dispatchers.IO) {
+                val incoming = prepareImportedArchive(data)
+                if (jsonMode) {
+                    ArchiveCodec.merge(archive, incoming)
+                } else {
+                    // restore path (the merger is restore-only): the codec merges
+                    // against the database and the working copy becomes the
+                    // persisted projection
+                    LearningDbWriter.archiveRestored(store!!.db, incoming)
+                }
             }
+            archive = imported
+            if (jsonMode) persist()
             bumpLedgerRevision()
             notice = getApplication<Application>().getString(R.string.notice_backup_imported); true
         }

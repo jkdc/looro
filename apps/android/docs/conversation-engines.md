@@ -10,7 +10,8 @@ AppViewModel.teaching()
         └── ConversationEngineFactory  ← the only construction point
               ├── "openai"   (default) OpenAIEngineAdapter → existing APIClient
               ├── "deepseek"          OpenAICompatibleEngine → api.deepseek.com/v1
-              └── "glm"               OpenAICompatibleEngine → api.z.ai/api/paas/v4
+              ├── "glm"               OpenAICompatibleEngine → api.z.ai/api/coding/paas/v4 · glm-5.3-flash (thinking low)
+              └── "glm-4.5"           OpenAICompatibleEngine → api.z.ai/api/coding/paas/v4 · glm-4.5-flash (thinking off)
 ```
 
 Adding a provider in the future = one registry row in `ConversationEngineFactory`

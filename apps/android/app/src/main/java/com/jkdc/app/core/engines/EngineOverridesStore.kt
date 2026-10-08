@@ -95,12 +95,15 @@ class EngineOverridesStore(
     private fun entry(engineId: String) = "custom_key_$engineId"
 }
 
-private val keyEnvToEngine = listOf(RemoteEngineConfig.DEEPSEEK, RemoteEngineConfig.GLM)
-    .associate { it.keyEnvVar to it.id }
+private val keyEnvBindings = listOf(RemoteEngineConfig.DEEPSEEK, RemoteEngineConfig.GLM, RemoteEngineConfig.GLM_45)
+    .map { it.keyEnvVar to it.id }
 
-/** Maps a provider's key environment variable to its engine id; null when the
-    env var does not belong to a local provider (e.g. the OpenAI credential). */
-fun localEngineIdForKeyEnv(keyEnvVar: String): String? = keyEnvToEngine[keyEnvVar]
+/** Maps a provider's key environment variable to its engine ids; empty when
+    the env var does not belong to a local provider (e.g. the OpenAI
+    credential). Several engines can share one env var: both Zhipu engines
+    read ZHIPUAI_API_KEY. */
+fun localEngineIdsForKeyEnv(keyEnvVar: String): List<String> =
+    keyEnvBindings.filter { it.first == keyEnvVar }.map { it.second }
 
 fun localEngineKeyEnv(engineId: String): String? =
-    keyEnvToEngine.entries.firstOrNull { it.value == engineId }?.key
+    keyEnvBindings.firstOrNull { it.second == engineId }?.first

@@ -808,6 +808,13 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
             try work(dbStore.db)
             error = nil
         } catch {
+            // The working copy already holds the site's mutation but the
+            // transaction kept the database's rows: reload the persisted
+            // projection so export(DB) == archive holds again, then surface —
+            // the same recovery as removeExpressionLanguages and the
+            // per-language delete.
+            archive = (try? dbStore.loadInitialArchive()) ?? archive
+            print("LearningStore: directed write failed — \(error)")
             self.error = "Palique couldn’t save your progress. Please export a backup and try again."
         }
     }

@@ -6,7 +6,7 @@ Run commands from the repository root unless a step changes directory. The iPhon
 
 ```sh
 swift test --package-path apps/ios
-xcodebuild -project apps/ios/Palique.xcodeproj -scheme Palique \
+xcodebuild -project apps/ios/App.xcodeproj -scheme App \
   -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath .build/DerivedData \
   CODE_SIGNING_ALLOWED=NO ARCHS=arm64 ONLY_ACTIVE_ARCH=YES build
@@ -15,7 +15,7 @@ xcodebuild -project apps/ios/Palique.xcodeproj -scheme Palique \
 Create an iPhone 17 simulator in Xcode’s **Devices and Simulators** window. If you name it `iPhone 17`, run UI tests with:
 
 ```sh
-xcodebuild -project apps/ios/Palique.xcodeproj -scheme Palique \
+xcodebuild -project apps/ios/App.xcodeproj -scheme App \
   -destination 'platform=iOS Simulator,name=iPhone 17,arch=arm64' \
   -derivedDataPath .build/DerivedData \
   CODE_SIGNING_ALLOWED=NO ARCHS=arm64 ONLY_ACTIVE_ARCH=YES \

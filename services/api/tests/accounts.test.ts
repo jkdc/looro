@@ -186,12 +186,23 @@ integration('concurrent signup for the same subject creates one account and wall
 integration('new and existing subjects can sign in after ten thousand active accounts', async () => {
   const subject = randomUUID(), existing = await session(subject);
   const count = Number((await db!.query('SELECT count(*) AS count FROM accounts WHERE deleted_at IS NULL')).rows[0].count);
-  const inserted = await db!.query('INSERT INTO accounts(id) SELECT gen_random_uuid() FROM generate_series(1,$1) RETURNING id', [10_000 - count]);
+  // Chunked statements: one 10k-row INSERT or DELETE can outlive the pool's
+  // 10s statement_timeout on a loaded host (57014) and strand the bulk rows.
+  const inserted: string[] = [];
+  for (let done = 0; done < 10_000 - count; done += 1_000) {
+    const batch = await db!.query('INSERT INTO accounts(id) SELECT gen_random_uuid() FROM generate_series($1::int,$2::int) RETURNING id',
+      [done + 1, Math.min(done + 1_000, 10_000 - count)]);
+    inserted.push(...batch.rows.map(row => row.id as string));
+  }
   try {
     assert.notEqual((await session()).accountID, existing.accountID);
     assert.equal((await session(subject)).accountID, existing.accountID);
     assert.equal(Number((await db!.query('SELECT count(*) AS count FROM accounts WHERE deleted_at IS NULL')).rows[0].count), 10_001);
-  } finally { await db!.query('DELETE FROM accounts WHERE id=ANY($1::uuid[])', [inserted.rows.map(row => row.id)]); }
+  } finally {
+    for (let start = 0; start < inserted.length; start += 1_000) {
+      await db!.query('DELETE FROM accounts WHERE id=ANY($1::uuid[])', [inserted.slice(start, start + 1_000)]);
+    }
+  }
 });
 integration('revoked sessions cannot authorize a later delete, and a failed Apple revoke leaves the account intact', async () => {
   const value = await session(), authorization = `Bearer ${value.accessToken}`;
