@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "levels": [
+    {
+      "level": "A1",
+      "languageID": "*",
+      "canDoAnchor": "Puede usar frases sencillas: presentarse, hacer preguntas básicas y hablar de su familia y su ciudad.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "presente de indicativo",
+            "ser y estar básicos",
+            "artículos y plurales",
+            "preguntas básicas",
+            "posesivos",
+            "vocabulario cotidiano"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            50,
+            90
+          ],
+          "registro": "cotidiano",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            35,
+            70
+          ],
+          "formato": "monólogo breve o diálogo de dos turnos"
+        },
+        "writing": {
+          "promptInInstructionLanguage": true,
+          "answers": "1-3 variantes aceptadas"
+        }
+      },
+      "forbidden": [
+        "pasatiempos del pasado con pretérito perfecto compuesto",
+        "ironía",
+        "registro formal",
+        "temas políticos"
+      ]
+    },
+    {
+      "level": "A2",
+      "languageID": "*",
+      "canDoAnchor": "Puede con lo cotidiano: compras, viajes, hechos simples del pasado y planes.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "pasado simple",
+            "comparativos",
+            "futuro perifrástico",
+            "cuantificadores",
+            "preposiciones de tiempo",
+            "rutinas"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            60,
+            100
+          ],
+          "registro": "cotidiano",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            40,
+            80
+          ],
+          "formato": "diálogo de dos o tres turnos"
+        },
+        "writing": {
+          "promptInInstructionLanguage": true,
+          "answers": "1-3 variantes aceptadas"
+        }
+      },
+      "forbidden": [
+        "subjuntivo",
+        "condicionales compuestos",
+        "ironía",
+        "temas políticos"
+      ]
+    },
+    {
+      "level": "B1",
+      "languageID": "*",
+      "canDoAnchor": "Puede dar opiniones y manejar la mayoría de situaciones al viajar.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "opiniones",
+            "primer y segundo condicional",
+            "conectores",
+            "pasado narrativo",
+            "relative clauses",
+            "deducciones con modales"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            70,
+            120
+          ],
+          "registro": "cotidiano o laboral",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            50,
+            90
+          ],
+          "formato": "diálogo con opiniones"
+        },
+        "writing": {
+          "promptInInstructionLanguage": true,
+          "answers": "1-3 variantes aceptadas"
+        }
+      },
+      "forbidden": [
+        "subjuntivo pluscuamperfecto",
+        "inversión estilística",
+        "ironía compleja",
+        "jerga muy local"
+      ]
+    },
+    {
+      "level": "B2",
+      "languageID": "*",
+      "canDoAnchor": "Puede defender un punto y entender textos y discursos complejos.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "pasiva",
+            "estilo indirecto",
+            "tercer condicional",
+            "verbos compuestos",
+            "cláusulas relativas",
+            "deseos e hipótesis"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            80,
+            140
+          ],
+          "registro": "formal o narrativo",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            50,
+            100
+          ],
+          "formato": "presentación o entrevista"
+        },
+        "writing": {
+          "promptInInstructionLanguage": true,
+          "answers": "1-3 variantes aceptadas"
+        }
+      },
+      "forbidden": [
+        "inversión estilística",
+        "coloquialismos muy locales",
+        "ironía compleja"
+      ]
+    },
+    {
+      "level": "C1",
+      "languageID": "*",
+      "canDoAnchor": "Usa el idioma con fluidez para fines matizados y profesionales.",
+      "poolTarget": {
+        "recognition": 24,
+        "writing": 6,
+        "readingPassages": 4,
+        "listeningPassages": 4
+      },
+      "examShape": {
+        "recognition": 12,
+        "writing": 3,
+        "readingPassages": 2,
+        "readingPerPassage": 3,
+        "listeningPassages": 2,
+        "listeningPerPassage": 2
+      },
+      "sections": {
+        "recognition": {
+          "mix": {
+            "choice": 16,
+            "gap": 8
+          },
+          "skills": [
+            "inversión",
+            "oraciones hendidas",
+            "colocaciones avanzadas",
+            "modalidad matizada",
+            "conectores formales",
+            "elipsis"
+          ],
+          "options": 4
+        },
+        "reading": {
+          "words": [
+            100,
+            180
+          ],
+          "registro": "formal o literario",
+          "questions": 3
+        },
+        "listening": {
+          "words": [
+            60,
+            120
+          ],
+          "formato": "discurso o entrevista"
+        },
+        "writing": {
+          "promptInInstructionLanguage": true,
+          "answers": "1-3 variantes aceptadas"
+        }
+      },
+      "forbidden": [
+        "temas cotidianos simples",
+        "ironía compleja sin contexto"
+      ]
+    }
+  ]
+}

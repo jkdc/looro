@@ -35,6 +35,8 @@ import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForA
   updateSubscriptionConfig } from './subscriptions.js';
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
 import { composeWeekly, levelTestLevels } from './level-tests.js';
+import { approvedWeeklyLevelTest } from './level-tests-llm.js';
+import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
 
@@ -52,7 +54,7 @@ const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/au
   '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
 // These routes carry no client network identity: requiring trusted-proxy headers would 503 them,
 // and behind a proxy they all share one socket address, so they also skip the shared limiter.
-const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products', '/v1/level-tests/current']);
+const proxyExemptPaths = new Set(['/payment-return', '/readyz', '/v1/pricing', '/v1/minutes/products', '/v1/level-tests/current', '/v1/level-tests/generated', '/v1/level-tests/hybrid']);
 const objectBody = (request: FastifyRequest): Record<string, unknown> => {
   if (!request.body || typeof request.body !== 'object' || Array.isArray(request.body) || Buffer.isBuffer(request.body)) throw new ServiceError('invalid_request');
   return request.body as Record<string, unknown>;
@@ -206,6 +208,44 @@ export function createApp(services: Services) {
     reply.header('ETag', etag).header('Cache-Control', 'public, max-age=3600');
     if (request.headers['if-none-match'] === etag) return reply.code(304).send();
     return composed;
+  });
+  // LLM-only: an approved generated week or 404 — never a deterministic fallback.
+  const queryVariant = (value: unknown): number => {
+    if (typeof value !== 'string' || value === '') return 1 + Math.floor(Math.random() * 3);
+    const parsed = Number(value);
+    return Number.isSafeInteger(parsed) && parsed >= 1 && parsed <= 5 ? parsed : 1;
+  };
+  app.get('/v1/level-tests/generated', async (request, reply) => {
+    const query = request.query as Record<string, unknown>;
+    if (typeof query.language !== 'string' || typeof query.level !== 'string')
+      throw new ServiceError('invalid_request');
+    const variant = queryVariant(query.variant);
+    const composed = await approvedWeeklyLevelTest(db, query.language, query.level, variant);
+    if (!composed) throw new ServiceError('level_test_not_generated', 404);
+    const etag = `"${createHash('sha256').update(JSON.stringify(composed)).digest('hex')}"`;
+    reply.header('ETag', etag).header('Cache-Control', 'public, max-age=600');
+    if (request.headers['if-none-match'] === etag) return reply.code(304).send();
+    return composed;
+  });
+  // Hybrid: the generated week when one exists, else the deterministic composition.
+  app.get('/v1/level-tests/hybrid', async (request, reply) => {
+    const query = request.query as Record<string, unknown>;
+    if (typeof query.language !== 'string' || typeof query.level !== 'string')
+      throw new ServiceError('invalid_request');
+    const variant = queryVariant(query.variant);
+    const generated = await approvedWeeklyLevelTest(db, query.language, query.level, variant);
+    if (generated) {
+      const etag = `"${createHash('sha256').update(JSON.stringify(generated)).digest('hex')}"`;
+      reply.header('ETag', etag).header('Cache-Control', 'public, max-age=600');
+      if (request.headers['if-none-match'] === etag) return reply.code(304).send();
+      return { ...generated, source: 'llm' };
+    }
+    const composed = composeWeekly(query.language, query.level);
+    if (!composed) throw new ServiceError('level_test_unavailable', 404);
+    const etag = `"${createHash('sha256').update(JSON.stringify(composed)).digest('hex')}"`;
+    reply.header('ETag', etag).header('Cache-Control', 'public, max-age=600');
+    if (request.headers['if-none-match'] === etag) return reply.code(304).send();
+    return { ...composed, source: 'deterministic' };
   });
   app.route({ method: ['POST', 'OPTIONS'], url: ACCESS_REQUEST_PATH, bodyLimit: 1024,
     onRequest: async (request, reply) => {
@@ -412,6 +452,45 @@ export function createApp(services: Services) {
     await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'hosted_session.close', sessionID, reason,
       { state: outcome.state }));
     return reply.send(outcome);
+  });
+  // LLM provider configuration for weekly level-test generation (level-tests-llm).
+  app.get('/v1/admin/llm-config', async request => {
+    const admin = await adminOnly(request);
+    void admin;
+    const view = await readLlmConfigView(db, process.env);
+    return { ...view, providers: LLM_PROVIDER_CATALOG };
+  });
+  app.put('/v1/admin/llm-config', { bodyLimit: 8192 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    const allowed = ['provider', 'baseUrl', 'model', 'apiKey', 'label', 'publishMode', 'verifyMode', 'variants'];
+    if (Object.keys(body).some(key => !allowed.includes(key))) throw new ServiceError('invalid_request');
+    try {
+      const result = await upsertLlmConfig(db, process.env, body as Record<string, unknown>);
+      await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'llm_config.update',
+        'llm_provider_configs', typeof body.provider === 'string' ? body.provider : 'settings',
+        { keys: Object.keys(body) }));
+      return reply.send(result);
+    } catch (error) {
+      if (error instanceof ConfigError) throw new ServiceError(error.code, error.status);
+      throw error;
+    }
+  });
+  app.post('/v1/admin/llm-config/test', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request);
+    void admin;
+    try {
+      const config = await storedConfigForTest(db, process.env);
+      const replyTransport = await fetch(`${config.baseUrl.replace(/\/$/, '')}/chat/completions`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
+        body: JSON.stringify({ model: config.model, messages: [{ role: 'user', content: 'Reply with OK.' }] }),
+      });
+      return reply.send({ ok: replyTransport.ok, status: replyTransport.status });
+    } catch {
+      return reply.code(502).send({ ok: false, error: 'llm_unreachable' });
+    }
   });
   app.get('/v1/feedback/capabilities', async () => ({ aiReports: Boolean(services.aiReports?.config) }));
   app.post(AI_REPORT_PATH, { bodyLimit: AI_REPORT_BODY_LIMIT }, async (request, reply) => {

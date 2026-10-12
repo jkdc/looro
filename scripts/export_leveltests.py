@@ -132,6 +132,11 @@ def emit_kotlin(banks, package_line):
     return '\n'.join(lines) + '\n'
 
 
+def exam_models():
+    path = ROOT / 'shared/leveltests/exam-models.json'
+    return json.loads(path.read_text())
+
+
 def emit_typescript(banks):
     """Server mirror of the pools (services/api): the weekly endpoint composes
     from the same content, and its composer must match the Kotlin engine
@@ -159,7 +164,8 @@ def emit_typescript(banks):
     sanitized = [{**{k: v for k, v in bank.items() if k != 'schemaVersion'},
                   'levels': [{**level, 'pool': [clean(item) for item in level['pool']]}
                              for level in bank['levels']]} for bank in banks]
-    lines.append(json.dumps(sanitized, ensure_ascii=False, separators=(',', ':')) + ';')
+    lines.append(json.dumps(sanitized, ensure_ascii=False, separators=(',', ':')) + ';\n')
+    lines.append('export const EXAM_MODELS = ' + json.dumps(exam_models(), ensure_ascii=False, separators=(',', ':')) + ';\n')
     return '\n'.join(lines) + '\n'
 
 

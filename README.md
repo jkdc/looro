@@ -24,6 +24,36 @@ cd apps/android
 ./gradlew :app:testDebugUnitTest :core:engine-local:testDebugUnitTest :app:lintDebug :app:assembleDebug
 ```
 
+## Local development with Docker (Makefile)
+
+The whole backend runs in Docker with a single command: PostgreSQL, schema migrations, the API, the operator admin panel and Caddy. From the repository root:
+
+```sh
+make up          # build and start the stack
+make health      # check /healthz and /readyz
+```
+
+Once it is up:
+
+- **API**: `https://localhost/healthz` (Caddy issues an internal certificate, so browsers will ask you to trust it once and `curl` needs `-k`).
+- **Admin panel**: `https://admin.localhost` — dashboards, table browser and audited operator actions. Login is local-only; create your operator account first with `make admin-add USER=<name> EMAIL=<you@example.test>` and set its password with `make admin-passwd ADMIN_ID=<id>`.
+- Data persists in the named Docker volumes `postgres_data` and `caddy_data`; `make down` stops the stack without touching them.
+
+`make help` lists every target. The most useful ones:
+
+| Target | What it does |
+| --- | --- |
+| `make up` / `make down` | Start / stop the local stack (data is kept) |
+| `make logs` / `make status` | API logs and container status |
+| `make psql` | psql console against the local database |
+| `make migrate` | Apply pending migrations |
+| `make test-api` | Full API integration suite in an isolated smoke stack (never touches your local data) |
+| `make check` | Cross-platform contracts CI runs (generated content, Swift↔Kotlin) |
+| `make android-build` / `android-install` / `android-run` | Build, install and launch the debug APK on a connected device |
+| `make ios-build` / `ios-test` / `ios-device` | iOS simulator build, simulator test suite, install on a connected iPhone |
+
+The mobile apps do not run in Docker — they build natively because they need Xcode (macOS) and the Android SDK on the host. Everything else (backend, admin panel, database, tests) goes through the Makefile.
+
 ## Get started
 
 You need a Mac with Xcode 26 or later, an iPhone running iOS 26.1 or later, an Apple Account, and an OpenAI API project with billing and access to GPT-Live-1 and GPT-5.6 Luna. A ChatGPT subscription does not provide API credit.

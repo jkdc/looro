@@ -51,3 +51,10 @@ apps/android/local-models/
 *.gguf
 *.bin
 apps/android/core/engine-local/.cxx/
+# Local AI runtime state
+.atl/
+
+# ZCode session artifacts
+.zcode/
+.codegraph/
+docs/reports/

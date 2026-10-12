@@ -1,0 +1,97 @@
+schema: spec-driven
+
+context: |
+  Project: Looro (native language-learning clients with a modular service backend).
+  Architecture: SwiftUI/Swift core on iOS, Kotlin/Compose on Android, TypeScript/Fastify/PostgreSQL API.
+  Workspace: generated contracts and pedagogical content are checked by Python tooling and CI.
+  Persistence: OpenSpec file artifacts are authoritative for this workspace.
+  Testing: Strict TDD is disabled because no single explicit workspace command covers every client and service.
+  Constraints: preserve existing historical changes and distinguish unavailable native/database checks from passing checks.
+
+projects:
+  - path: .
+    stack: Python workspace tooling, generated contracts, and cross-platform validation
+    test_command: "make check"
+    test_layers: "Python unit checks; exporter freshness checks; cross-platform contract checks"
+    coverage_command: ""
+    quality_tools: "No dedicated workspace linter, type checker, or formatter command detected"
+    additional_commands: "make test-api (isolated backend smoke stack); make android-build; make ios-test"
+  - path: services/api
+    stack: TypeScript 7 / Node.js 22 / Fastify / PostgreSQL
+    test_command: "npm test"
+    test_layers: "Node test runner unit and integration tests; PostgreSQL-backed tests in CI/smoke compose"
+    coverage_command: ""
+    quality_tools: "TypeScript compiler: npm run check; build: npm run build"
+  - path: apps/android
+    stack: Kotlin 2.1 / Jetpack Compose / Android Gradle Plugin
+    test_command: "./gradlew :app:testDebugUnitTest :core:engine-local:testDebugUnitTest"
+    test_layers: "JVM unit tests; instrumentation/UI tests via uiTest build type"
+    coverage_command: ""
+    quality_tools: "Android lint and debug build: ./gradlew :app:lintDebug :app:assembleDebug"
+  - path: apps/ios
+    stack: Swift 6 / SwiftUI application / Swift Package Manager learning core
+    test_command: "swift test --package-path apps/ios"
+    test_layers: "LearningCore package tests; application/UI tests require Xcode project tooling"
+    coverage_command: ""
+    quality_tools: "No separate linter, type checker, or formatter command detected; app build uses xcodebuild"
+
+testing:
+  strict_tdd: false
+  detected: "2026-10-12"
+  workspace_test_command: ""
+  strict_tdd_reason: "No explicit workspace-level command covers the root contract checks, API, Android, and iOS projects together. Project-local commands are preserved below."
+  projects:
+    - path: .
+      unit: "python3 -m unittest discover -s scripts/tests -t ."
+      integration: "make test-api (Docker/PostgreSQL smoke stack; not run during initialization)"
+      e2e: ""
+      coverage: ""
+      linter: ""
+      type_checker: ""
+      formatter: ""
+    - path: services/api
+      unit: "npm test (tsx --test --test-concurrency=1 tests/*.test.ts)"
+      integration: "CI and smoke compose run PostgreSQL-backed tests; requires database environment"
+      e2e: ""
+      coverage: ""
+      linter: ""
+      type_checker: "npm run check"
+      formatter: ""
+    - path: apps/android
+      unit: "./gradlew :app:testDebugUnitTest :core:engine-local:testDebugUnitTest"
+      integration: ""
+      e2e: "./gradlew :app:connectedUiTest (device/emulator required)"
+      coverage: ""
+      linter: "./gradlew :app:lintDebug"
+      type_checker: ""
+      formatter: ""
+    - path: apps/ios
+      unit: "swift test --package-path apps/ios"
+      integration: "xcodebuild application build (macOS/Xcode required)"
+      e2e: "xcodebuild ... test (iOS Simulator required)"
+      coverage: ""
+      linter: ""
+      type_checker: ""
+      formatter: ""
+
+rules:
+  proposal:
+    - Include rollback or containment notes for changes affecting billing, sync, deletion, or provider integration.
+    - Treat the audit report at docs/reports/project-audit-2026-10-12.md as evidence and preserve its limitations.
+  specs:
+    - Use Given/When/Then scenarios and RFC 2119 keywords (MUST, SHALL, SHOULD, MAY).
+    - Keep cross-platform wire units, epochs, limits, and merge semantics explicit.
+  design:
+    - Document architecture decisions with rationale and bounded integration consequences.
+    - Include sequence diagrams for complex sync, billing, provider, or migration flows.
+  tasks:
+    - Group tasks by phase and keep each task completable in one session.
+    - Keep tests, fixtures, generated contracts, and documentation with the behavior they verify.
+  apply:
+    - Follow existing native-client, API, migration, and generated-content patterns.
+    - Strict TDD is disabled; do not claim native, database, provider, or remote CI checks that were not actually run.
+  verify:
+    - Use the applicable project-local checks and report unavailable environments honestly.
+    - No single workspace test or build command is configured; do not infer one.
+  archive:
+    - Warn before merging destructive deltas or changing historical audit artifacts.
