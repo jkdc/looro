@@ -38,9 +38,41 @@ missing original values are not reconstructed from today's bundled content.
 A future migration/recovery policy must distinguish these legacy generations.
 
 ETag remains HTTP representation revalidation, not historical lookup. This change
-adds no by-ID route, account attempts, cloud sync, publication approval, or client
-persistence; those are subsequent work units. Existing deterministic golden vectors
+adds no by-ID retrieval, account attempts, cloud sync, or client persistence;
+those are subsequent work units. Existing deterministic golden vectors
 and HTTP selection/404/304 behavior remain covered by the API tests.
+
+## Generation and publication policy
+
+Structural validation runs even when semantic judging is off. The pool must meet
+the model's section and passage-question minimums, choice-answer rules, supported
+kinds, deduplication and passage constraints. The judge receives the exact source
+passage for comprehension questions. Rejected questions are removed before variant
+composition; the surviving pool is validated again. In strict mode, transport/schema
+errors, missing/duplicate/unrequested verdict IDs, or a post-removal minimum shortfall
+prevent persistence/publication. Complete `flagged` verdicts remain advisory in strict
+mode too. In flag mode a failed/incomplete judge is advisory and is recorded in review;
+it never bypasses structural minimums. Off disables only semantic judging.
+
+`publishMode=review` stores private drafts; public selectors only select approved rows.
+An authenticated administrator can call
+`POST /v1/admin/level-tests/<generationId>/approve` with `{ "reason": "Reviewed content" }`.
+The existing cookie and Origin policy applies. Approval owns the entire generation
+and all its variants, not one variant. It locks the draft, checks the full snapshot
+against its validated pool and hash/identity, then transitions and audits atomically.
+An already-approved retry is idempotent and does not add a second audit action.
+Old incomplete drafts are not silently upgraded to the full snapshot contract.
+`publishMode=auto` publishes only after the same generation-time structural/judge
+gates; it does not bypass strict failures.
+
+Admin configuration GET and generation share DB-first effective settings. Partial
+PUT preserves omitted settings/provider/URL/model/credential, including strict → flag
+→ off transitions. Provider/settings changes commit together under a configuration
+lock. Switching an existing provider requires an explicit key, URL and model rather
+than forwarding its credential implicitly. Secrets remain encrypted and GET only
+returns a hint. Empty optional environment URL/model fields use provider defaults.
+The existing connection-test route tests the saved effective config, not pending form
+values; form changes and review UI are outside this work unit.
 
 ## Checking and rollback
 
@@ -53,3 +85,9 @@ Rollback removes the snapshot helper/composer integration and corresponding test
 and documentation as one unit. No database migration is introduced. Already stored
 new variants retain extra JSON fields that the former serving code ignores;
 rolling back serving would lose their frozen-grading behavior until restored.
+
+For the publication-policy work unit, revert the generator/validator/admin settings,
+approval service and route together with their policy tests and this section. No
+database migration was added. Reverting code must not delete or silently unapprove
+already-published rows or their audit records. Fake SQL tests do not prove PostgreSQL
+locks, transaction isolation or audit atomicity; those require the DB integration gate.

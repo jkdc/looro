@@ -66,7 +66,7 @@ const sectionTransport = (overrides?: Partial<Record<string, unknown>>) =>
     if (user.includes('"section":"writing"') || user.includes('production items'))
       return stubReply(overrides?.writing ?? goodPool.writing);
     // Judge call: approve everything.
-    return stubReply({ items: [] });
+    return stubReply({ items: (JSON.parse(user) as { id: string }[]).map(item => ({ id: item.id, verdict: 'ok' })) });
   };
 
 const judgeRejectingFirst = () => async (_config: unknown, messages: { role: string; content: string }[]) => {

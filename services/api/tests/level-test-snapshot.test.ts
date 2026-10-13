@@ -11,7 +11,7 @@ const THRESHOLDS = { overall: 70, recognition: 60, reading: 50, listening: 50,
   writing: 50, grammar: 60, vocab: 60 };
 const ENV = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'fake-key',
   LEVELTEST_PUBLISH_MODE: 'auto', LEVELTEST_VERIFY: 'off', LEVELTEST_VARIANTS: '2' };
-const question = (kind = 'choice') => ({ kind, prompt: 'She ___ a doctor.',
+const question = (kind = 'choice', seed = 'example') => ({ kind, prompt: `${seed}: She ___ a doctor.`,
   options: kind === 'choice' ? ['is', 'are', 'am'] : [], answers: ['is'],
   explain: 'She takes is.', unitID: 'en-foundations-u1' });
 const transport = async (_config: unknown, messages: { role: string; content: string }[]) => {
@@ -19,11 +19,10 @@ const transport = async (_config: unknown, messages: { role: string; content: st
   const section = user.includes('vocabulary and grammar') ? 'recognition'
     : user.includes('reading passages') ? 'reading'
     : user.includes('listening passages') ? 'listening' : 'writing';
-  const item = question(section === 'writing' ? 'gap' : 'choice');
   const body = section === 'reading' || section === 'listening'
-    ? Array.from({ length: 2 }, (_, index) => ({ title: `Passage ${index}`, text: `Passage text ${index}.`,
-      items: Array.from({ length: section === 'reading' ? 3 : 2 }, () => item) }))
-    : Array.from({ length: section === 'writing' ? 3 : 12 }, () => item);
+    ? Array.from({ length: 2 }, (_, index) => ({ title: `Passage ${index}`, text: `${section} passage ${index}. She is working at the local school and has a meeting today. The teacher will travel by train to visit her family after work. She has bought the ticket and will leave tomorrow morning.`,
+      items: Array.from({ length: section === 'reading' ? 3 : 2 }, (_, questionIndex) => question('choice', `${section}-${index}-${questionIndex}`)) }))
+    : Array.from({ length: section === 'writing' ? 3 : 12 }, (_, index) => question(section === 'writing' ? 'gap' : 'choice', `${section}-${index}`));
   return { content: JSON.stringify(body), tokensIn: 0, tokensOut: 0 };
 };
 
@@ -154,8 +153,8 @@ test('force regeneration changes generation identity and preserves retired conte
 
 test('current and hybrid retain legacy HTTP fields and pinned ETag revalidation', async () => {
   const { db } = storedWeeks();
-  await generateWeeklyLevelTest({ db, env: ENV, transport },
-    { languageID: 'en', level: 'A1', now: new Date() });
+  assert.equal((await generateWeeklyLevelTest({ db, env: ENV, transport },
+    { languageID: 'en', level: 'A1', now: new Date() })).status, 'approved');
   const app = createApp({ db, auth: {} });
   try {
     for (const url of ['/v1/level-tests/current?language=en&level=B1',
@@ -165,6 +164,7 @@ test('current and hybrid retain legacy HTTP fields and pinned ETag revalidation'
       assert.equal(first.statusCode, 200);
       const body = first.json();
       assert.equal(typeof body.examId, 'string');
+      assert.equal(body.source, url.includes('level=A1') ? 'llm' : 'deterministic');
       assert.equal(body.schemaVersion, 1);
       assert.equal(body.version, 1);
       assert.equal(body.items.length, 25);

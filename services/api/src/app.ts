@@ -36,6 +36,7 @@ import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForA
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
+import { approveGeneratedWeek } from './level-tests-publication.js';
 import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
@@ -454,6 +455,13 @@ export function createApp(services: Services) {
     return reply.send(outcome);
   });
   // LLM provider configuration for weekly level-test generation (level-tests-llm).
+  app.post('/v1/admin/level-tests/:generationId/approve', { bodyLimit: 1024 }, async request => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
+    const id = uuid((request.params as { generationId: string }).generationId);
+    return approveGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
+  });
   app.get('/v1/admin/llm-config', async request => {
     const admin = await adminOnly(request);
     void admin;

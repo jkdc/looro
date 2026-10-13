@@ -5,6 +5,8 @@ import { EXAM_MODELS, LEVEL_TEST_BANKS, type LevelTestContentItem, type LevelTes
 import { chatCompletion, extractJson, resolveLlmConfig, type ChatReply, type ResolvedLlmConfig } from './llm-config.js';
 import { expiresAt, weekIndex } from './level-tests.js';
 import { identifySnapshot, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
+import { levelTestSettings } from './level-test-settings.js';
+export { levelTestSettings } from './level-test-settings.js';
 import { validateGeneratedPool, type GeneratedPool, type RawGeneratedItem } from './level-tests-validate.js';
 
 /** Weekly level-verification test generation (level-tests-llm): four
@@ -237,11 +239,12 @@ async function generateSection(
 
 async function judgeSection(
   call: LlmCall, config: ResolvedLlmConfig, section: SectionName,
-  languageID: string, level: string, items: RawGeneratedItem[],
+  languageID: string, level: string, items: (RawGeneratedItem & { passageText?: string })[],
 ): Promise<{ id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string }[]> {
   const langName = LANGUAGE_NAMES[languageID] ?? languageID;
   const system = `You are a strict exam reviewer for CEFR ${level} ${langName} tests. For EVERY item decide: is the marked answer uniquely correct, are all distractors clearly wrong, is the difficulty plausible? Reply ONLY JSON: {"items":[{"id":"...","verdict":"ok"|"flagged"|"reject","reason":"one sentence"}]}.`;
-  const user = JSON.stringify(items.map(item => ({ id: item.id, prompt: item.prompt, options: item.options, answers: item.answers, explain: item.explain })));
+  const user = JSON.stringify(items.map(item => ({ id: item.id, kind: item.kind, prompt: item.prompt,
+    options: item.options, answers: item.answers, explain: item.explain, passageText: item.passageText })));
   const reply = await call(config, [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }]);
   return parseVerdicts(reply);
 }
@@ -301,7 +304,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   }
 
   // ---- combine into a pool ----
-  const pool: GeneratedPool = { recognition: [], writing: [], readingPassages: [], listeningPassages: [] };
+  let pool: GeneratedPool = { recognition: [], writing: [], readingPassages: [], listeningPassages: [] };
   const recognitionResult = sectionResults.get('recognition');
   const readingResult = sectionResults.get('reading');
   const listeningResult = sectionResults.get('listening');
@@ -320,28 +323,46 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
 
   assignProvisionalIds(pool);
 
-  // Check minimums: the exam needs enough valid items to compose from.
-  if (pool.recognition.length < SECTION_SPECS.recognition.count ||
-      pool.readingPassages.length < SECTION_SPECS.reading.count ||
-      pool.listeningPassages.length < SECTION_SPECS.listening.count ||
-      pool.writing.length < SECTION_SPECS.writing.count) {
-    return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut, errors };
-  }
+  const validate = () => validateGeneratedPool({ recognition: pool.recognition, writing: pool.writing,
+    reading: pool.readingPassages, listening: pool.listeningPassages }, model.examShape, languageID);
+  const initial = validate();
+  if (!initial.ok) return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut,
+    errors: initial.errors.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
+  pool = initial.pool;
 
-  // ---- judge per section ----
   const settings = await levelTestSettings(deps.db, deps.env);
-  let review: { id: string; verdict: string; reason?: string }[] | undefined;
-  if (settings.verifyMode !== 'off') {
-    review = [];
-    for (const section of SECTION_ORDER) {
-      const items = sectionItems(pool, section);
-      if (!items.length) continue;
-      try {
-        const verdicts = await judgeSection(call, config, section, languageID, level, items);
-        review.push(...verdicts.filter(v => v.verdict !== 'ok')
-          .map(v => ({ id: v.id, verdict: v.verdict, reason: v.reason })));
-      } catch { /* judge is advisory: a failure doesn't block the exam */ }
+  const review: JudgeVerdict[] = [], rejected = new Set<string>();
+  if (settings.verifyMode !== 'off') for (const section of SECTION_ORDER) {
+    const items = sectionItems(pool, section);
+    try {
+      const verdicts = await judgeSection(call, config, section, languageID, level, items);
+      const expected = new Set(items.map(item => item.id)), seen = new Set<string>();
+      for (const verdict of verdicts) {
+        if (!expected.has(verdict.id) || seen.has(verdict.id)) throw new Error('judge_invalid_ids');
+        seen.add(verdict.id);
+      }
+      const missing = items.filter(item => !seen.has(item.id!));
+      if (missing.length && settings.verifyMode === 'strict') throw new Error('judge_incomplete');
+      review.push(...verdicts, ...missing.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_incomplete' })));
+      for (const verdict of verdicts) if (verdict.verdict === 'reject') rejected.add(verdict.id);
+    } catch {
+      if (settings.verifyMode === 'strict') return { status: 'failed', languageID, level, weekId,
+        tokensIn, tokensOut, errors: [`${section}: judge_failed_or_incomplete`] };
+      review.push(...items.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_unavailable' })));
     }
+  }
+  if (rejected.size) {
+    pool.recognition = pool.recognition.filter(item => !rejected.has(item.id));
+    pool.writing = pool.writing.filter(item => !rejected.has(item.id));
+    for (const section of ['reading', 'listening'] as const) {
+      const key = section === 'reading' ? 'readingPassages' : 'listeningPassages';
+      pool[key] = pool[key].map(passage => ({ ...passage, items: passage.items.filter(item => !rejected.has(item.id)) }))
+        .filter(passage => passage.items.length >= (model.examShape[`${section}PerPassage`] ?? (section === 'reading' ? 3 : 2)));
+    }
+    const trimmed = validate();
+    if (!trimmed.ok) return { status: 'failed', languageID, level, weekId, tokensIn, tokensOut,
+      errors: trimmed.errors.map(error => `${error.section}: ${error.code}: ${error.detail}`) };
+    pool = trimmed.pool;
   }
 
   const generationId = randomUUID();
@@ -360,11 +381,11 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     variants: variants.length, tokensIn, tokensOut };
 }
 
-function sectionItems(pool: GeneratedPool, section: SectionName): RawGeneratedItem[] {
+function sectionItems(pool: GeneratedPool, section: SectionName): (RawGeneratedItem & { passageText?: string })[] {
   if (section === 'recognition') return pool.recognition;
   if (section === 'writing') return pool.writing;
-  if (section === 'reading') return pool.readingPassages.flatMap(p => p.items);
-  if (section === 'listening') return pool.listeningPassages.flatMap(p => p.items);
+  if (section === 'reading') return pool.readingPassages.flatMap(p => p.items.map(item => ({ ...item, passageText: p.text })));
+  if (section === 'listening') return pool.listeningPassages.flatMap(p => p.items.map(item => ({ ...item, passageText: p.text })));
   return [];
 }
 
@@ -382,9 +403,9 @@ interface JudgeVerdict { id: string; verdict: 'ok' | 'flagged' | 'reject'; reaso
 
 function parseVerdicts(reply: ChatReply): JudgeVerdict[] {
   const parsed = extractJson(reply.content) as { items?: { id?: unknown; verdict?: unknown; reason?: unknown }[] };
-  const items = Array.isArray(parsed.items) ? parsed.items : [];
-  return items.filter(entry => entry && typeof entry.id === 'string' &&
-      typeof entry.verdict === 'string' && ['ok', 'flagged', 'reject'].includes(entry.verdict))
+  if (!Array.isArray(parsed?.items) || parsed.items.some(entry => !entry || typeof entry.id !== 'string' ||
+      !['ok', 'flagged', 'reject'].includes(entry.verdict as string))) throw new Error('judge_invalid_schema');
+  return parsed.items
     .map(entry => ({ id: entry.id as string, verdict: entry.verdict as 'ok' | 'flagged' | 'reject',
       reason: typeof entry.reason === 'string' ? entry.reason : undefined }));
 }
@@ -424,16 +445,16 @@ function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: num
       .filter(passage => passage.id.startsWith('llm-reading-'));
     const readingChunks = chunk(readingOrder, shape.readingPassages);
     const readingBlock = readingChunks[weekId % readingChunks.length] ?? readingOrder;
-    const readingIds = readingBlock.map(passage => passage.id);
+    const readingIds = (readingBlock.length === shape.readingPassages ? readingBlock : readingOrder.slice(0, shape.readingPassages)).map(passage => passage.id);
     const listeningOrder = stablePassageOrder(flat, 'listening', shape.listeningPerPassage, salt)
       .filter(passage => !readingIds.includes(passage.id));
     const listeningChunks = chunk(listeningOrder, shape.listeningPassages);
     const listeningBlock = listeningChunks[weekId % listeningChunks.length] ?? listeningOrder;
-    const listeningIds = listeningBlock.map(passage => passage.id);
+    const listeningIds = (listeningBlock.length === shape.listeningPassages ? listeningBlock : listeningOrder.slice(0, shape.listeningPassages)).map(passage => passage.id);
     const items = [
       ...recognition,
-      ...flat.filter(item => item.section === 'reading' && readingIds.includes(item.passageId ?? '')),
-      ...flat.filter(item => item.section === 'listening' && listeningIds.includes(item.passageId ?? '')),
+      ...readingIds.flatMap(id => flat.filter(item => item.section === 'reading' && item.passageId === id).slice(0, shape.readingPerPassage)),
+      ...listeningIds.flatMap(id => flat.filter(item => item.section === 'listening' && item.passageId === id).slice(0, shape.listeningPerPassage)),
       ...writing,
     ];
     variants.push({ variant, items, passages: passages.filter(passage =>
@@ -506,28 +527,6 @@ async function currentWeekRow(sql: PoolClient | Database, languageID: string, le
   const rows = await sql.query(`SELECT status, variants FROM level_test_weeks
     WHERE language_id=$1 AND level=$2 AND week_index=$3`, [languageID, level, weekId]);
   return rows.rows[0] as { status: string; variants: unknown[] } | undefined;
-}
-
-export async function levelTestSettings(db: Database, env: NodeJS.ProcessEnv) {
-  const defaults = {
-    publishMode: env.LEVELTEST_PUBLISH_MODE === 'auto' ? 'auto' : 'review',
-    verifyMode: env.LEVELTEST_VERIFY === 'strict' ? 'strict' : env.LEVELTEST_VERIFY === 'off' ? 'off' : 'flag',
-    variants: clampVariants(Number(env.LEVELTEST_VARIANTS ?? 3)),
-  };
-  try {
-    const rows = await db.query('SELECT publish_mode, verify_mode, variants FROM level_test_settings WHERE singleton');
-    const row = rows.rows[0] as { publish_mode?: string; verify_mode?: string; variants?: number } | undefined;
-    if (!row) return defaults;
-    return {
-      publishMode: row.publish_mode ?? defaults.publishMode,
-      verifyMode: row.verify_mode ?? defaults.verifyMode,
-      variants: clampVariants(row.variants ?? defaults.variants),
-    };
-  } catch { return defaults; }
-}
-
-function clampVariants(value: number): number {
-  return Number.isSafeInteger(value) && value >= 1 && value <= 5 ? value : 3;
 }
 
 async function persistWeek(db: Database, input: {
