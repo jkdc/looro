@@ -153,6 +153,15 @@ test('partial model PUT preserves provider, URL and encrypted credential', async
   assert.deepEqual([v.provider, v.baseUrl, v.model], ['glm', 'https://provider.example/v1', 'new']);
   assert.equal(state.config!.api_key_encrypted, encrypted);
 });
+test('blank API key fields preserve the saved credential on provider updates', async () => {
+  for (const apiKey of ['', '  \t ']) {
+    const { db, state } = database(), encrypted = encryptSecret('saved-provider-key', ENV)!;
+    state.config = { provider: 'openai', label: 'Saved label', base_url: 'https://provider.example/v1', model: 'old', api_key_encrypted: encrypted };
+    await upsertLlmConfig(db, ENV, { model: 'new', apiKey });
+    const view = await readLlmConfigView(db, ENV);
+    assert.equal(view.model, 'new'); assert.equal(state.config!.api_key_encrypted, encrypted);
+  }
+});
 test('provider switching cannot implicitly forward an environment credential', async () => {
   const { db, state } = database();
   await assert.rejects(upsertLlmConfig(db, ENV, { provider: 'glm' }));

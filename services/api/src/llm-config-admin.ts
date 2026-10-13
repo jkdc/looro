@@ -47,7 +47,8 @@ export async function upsertLlmConfig(db: Database, env: NodeJS.ProcessEnv, upda
         throw new ConfigError('invalid_llm_config');
       const baseUrl = field(update.baseUrl, current?.base_url ?? (env.LEVELTEST_LLM_URL || LLM_PRESETS[provider].baseUrl));
       const model = field(update.model, current?.model ?? (env.LEVELTEST_LLM_MODEL || LLM_PRESETS[provider].models[0] || ''));
-      const apiKey = update.apiKey === undefined ? undefined : field(update.apiKey, '');
+      const apiKey = update.apiKey === undefined ||
+        (!switched && typeof update.apiKey === 'string' && !update.apiKey.trim()) ? undefined : field(update.apiKey, '');
       const encrypted = apiKey ? encryptSecret(apiKey, env) : current?.api_key_encrypted ??
         (env.LEVELTEST_LLM_API_KEY ? encryptSecret(env.LEVELTEST_LLM_API_KEY, env) : undefined);
       if (!encrypted) throw new ConfigError('llm_master_key_missing', 503);
