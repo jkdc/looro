@@ -4,6 +4,7 @@ import type { PoolClient } from 'pg';
 import { EXAM_MODELS, LEVEL_TEST_BANKS, type LevelTestContentItem, type LevelTestSection } from './level-tests-content.generated.js';
 import { chatCompletion, extractJson, resolveLlmConfig, type ChatReply, type ResolvedLlmConfig } from './llm-config.js';
 import { expiresAt, weekIndex } from './level-tests.js';
+import { identifySnapshot, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
 import { validateGeneratedPool, type GeneratedPool, type RawGeneratedItem } from './level-tests-validate.js';
 
 /** Weekly level-verification test generation (level-tests-llm): four
@@ -196,7 +197,7 @@ async function generateSection(
     // Passages: each element has { title?, text, items: [{kind, prompt, options, answers, explain}] }
     const passages: { title: string; text: string; items: LevelTestContentItem[] }[] = [];
     for (const passage of parsed) {
-      const p = passage as { title?: string; text?: string; items?: { kind?: string; prompt?: string; options?: string[]; answers?: string[]; explain?: string }[] };
+      const p = passage as { title?: string; text?: string; items?: { kind?: string; prompt?: string; options?: string[]; answers?: string[]; explain?: string; unitID?: string }[] };
       const passageText = typeof p.text === 'string' ? p.text.trim() : '';
       const rawItems = Array.isArray(p.items) ? p.items : [];
       if (!passageText || !rawItems.length) continue;
@@ -207,6 +208,7 @@ async function generateSection(
         options: Array.isArray(raw.options) ? raw.options : [],
         answers: Array.isArray(raw.answers) ? raw.answers : [],
         explain: raw.explain ?? '',
+        unitID: typeof raw.unitID === 'string' ? raw.unitID : undefined,
       }));
       if (passageItems.length < 2) continue;
       passages.push({ title: p.title ?? '', text: passageText, items: passageItems });
@@ -218,7 +220,7 @@ async function generateSection(
   }
 
   // recognition / writing: flat item arrays
-  const items: LevelTestContentItem[] = parsed.map((item: { kind?: string; prompt?: string; options?: string[]; answers?: string[]; explain?: string }, index: number) => ({
+  const items: LevelTestContentItem[] = parsed.map((item: { kind?: string; prompt?: string; options?: string[]; answers?: string[]; explain?: string; unitID?: string }, index: number) => ({
     id: `pending-${index}`,
     section: section as LevelTestSection,
     kind: item.kind ?? 'choice',
@@ -226,6 +228,7 @@ async function generateSection(
     options: Array.isArray(item.options) ? item.options : [],
     answers: Array.isArray(item.answers) ? item.answers : [],
     explain: item.explain ?? '',
+    unitID: typeof item.unitID === 'string' ? item.unitID : undefined,
   }));
   return { section, items, errors };
 }
@@ -341,11 +344,15 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     }
   }
 
-  const variants = composeVariants(pool, model, weekId, settings.variants);
+  const generationId = randomUUID();
+  const variants = composeVariants(pool, model, weekId, settings.variants).map(variant =>
+    identifySnapshot({ schemaVersion: 1, languageID, level, version: 1, weekId,
+      expiresAt: expiresAt(options.now ?? new Date()), thresholds: thresholdsFor(languageID, level),
+      ...variant }, 'llm', generationId));
   const status = settings.publishMode === 'auto' ? 'approved' : 'draft';
   const approvedBy = settings.publishMode === 'auto' ? 'system:auto' : null;
 
-  await persistWeek(deps.db, { languageID, level, weekId, pool, variants, status,
+  await persistWeek(deps.db, { generationId, languageID, level, weekId, pool, variants, status,
     model: config.model, generator: `llm:${config.provider}`, review,
     tokensIn, tokensOut, approvedBy, verifyMode: settings.verifyMode, force: options.force === true });
 
@@ -395,8 +402,8 @@ function assignProvisionalIds(pool: GeneratedPool): void {
 
 /** The K variants: same stable-hash block rotation as the deterministic
     composer, with the variant index salted into the hash. */
-function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): unknown[] {
-  const variants: unknown[] = [];
+function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: number, count: number): GeneratedVariant[] {
+  const variants: GeneratedVariant[] = [];
   const flat = flattenPool(pool);
   const shape = {
     recognition: model.examShape.recognition ?? 12, writing: model.examShape.writing ?? 3,
@@ -405,7 +412,7 @@ function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: num
   };
   const passages = [
     ...pool.readingPassages.map((passage, index) => ({ id: `llm-reading-${index + 1}`, title: passage.title, text: passage.text })),
-    ...pool.listeningPassages.map((passage, index) => ({ id: `llm-listening-${index + 1}`, text: passage.text })),
+    ...pool.listeningPassages.map((passage, index) => ({ id: `llm-listening-${index + 1}`, title: passage.title, text: passage.text })),
   ];
   for (let variant = 1; variant <= count; variant++) {
     const salt = `v${variant}`;
@@ -436,7 +443,9 @@ function composeVariants(pool: GeneratedPool, model: ExamModelEntry, weekId: num
   return variants;
 }
 
-interface FlatItem { id: string; section: LevelTestSection | string; prompt: string;
+interface GeneratedVariant extends Pick<SnapshotContent, 'items' | 'passages' | 'readingPassageIds' | 'listeningPassageIds'> { variant: number }
+
+interface FlatItem { id: string; section: LevelTestSection; kind: string; prompt: string;
   options: string[]; answers: string[]; explain: string; unitID?: string; passageId?: string; speech?: string }
 
 function flattenPool(pool: GeneratedPool): FlatItem[] {
@@ -445,10 +454,11 @@ function flattenPool(pool: GeneratedPool): FlatItem[] {
     const itemSpeech = item.speech ?? undefined;
     items.push({
       id: typeof item.id === 'string' ? item.id : `pending-${items.length}`,
-      section, prompt: typeof item.prompt === 'string' ? item.prompt : '',
+      section, kind: item.kind ?? 'choice', prompt: typeof item.prompt === 'string' ? item.prompt : '',
       options: Array.isArray(item.options) ? item.options : [],
       answers: Array.isArray(item.answers) ? item.answers : [],
       explain: typeof item.explain === 'string' ? item.explain : '',
+      unitID: typeof item.unitID === 'string' ? item.unitID : undefined,
       passageId: item.passageId ?? passageId, speech: itemSpeech ?? speech,
     });
   };
@@ -521,7 +531,7 @@ function clampVariants(value: number): number {
 }
 
 async function persistWeek(db: Database, input: {
-  languageID: string; level: string; weekId: number;
+  generationId: string; languageID: string; level: string; weekId: number;
   pool: GeneratedPool; variants: unknown[]; status: string;
   model: string; generator: string; review: unknown[] | undefined;
   tokensIn: number; tokensOut: number; approvedBy: string | null;
@@ -540,31 +550,37 @@ async function persistWeek(db: Database, input: {
     await sql.query(`INSERT INTO level_test_weeks(id, language_id, level, week_index, source, status, pool, variants,
       generator, model, prompt_version, judge_version, judge_mode, review, tokens_in, tokens_out, approved_at, approved_by)
       VALUES($1,$2,$3,$4,'llm',$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
-      [randomUUID(), input.languageID, input.level, input.weekId, input.status, JSON.stringify(input.pool),
+      [input.generationId, input.languageID, input.level, input.weekId, input.status, JSON.stringify(input.pool),
        JSON.stringify(input.variants), input.generator, input.model, PROMPT_VERSION, JUDGE_VERSION,
        input.verifyMode, JSON.stringify(input.review ?? []), input.tokensIn, input.tokensOut,
        input.status === 'approved' ? new Date() : null, input.approvedBy]);
   });
 }
 
-export interface ServedLevelTest { schemaVersion: number; languageID: string; level: string; version: number;
-  weekId: number; expiresAt: string; thresholds: Record<string, number>; variant: number;
-  passages: unknown; readingPassageIds: string[]; listeningPassageIds: string[]; items: unknown[] }
+export interface ServedLevelTest extends SnapshotContent, Partial<SnapshotMetadata> {
+  variant: number;
+  /** Legacy rows did not freeze grading metadata; keep their original wire behavior. */
+  legacy?: true;
+}
 
 export async function approvedWeeklyLevelTest(db: Database, languageID: string, level: string,
     variant: number, now: Date = new Date()): Promise<ServedLevelTest | undefined> {
   const weekId = weekIndex(now);
-  const rows = await db.query(`SELECT pool, variants FROM level_test_weeks
+  const rows = await db.query(`SELECT id, pool, variants FROM level_test_weeks
     WHERE language_id=$1 AND level=$2 AND week_index=$3 AND status='approved'`,
     [languageID, level, weekId]);
-  const row = rows.rows[0] as { thresholds: Record<string, number>;
-    variants: { variant: number; items: unknown[]; passages: unknown;
-    readingPassageIds: string[]; listeningPassageIds: string[] }[] } | undefined;
+  const row = rows.rows[0] as { id: string; variants: ServedLevelTest[] } | undefined;
   if (!row || !Array.isArray(row.variants) || !row.variants.length) return undefined;
   const chosen = row.variants.find(entry => entry.variant === variant) ?? row.variants[0];
   if (!chosen) return undefined;
+  // New generations store the complete snapshot once. Never resolve its thresholds
+  // or composition against the current bundle when serving the persisted variant.
+  if (chosen.examId && chosen.contentHash) return chosen;
+  // Do not invent grading values for legacy generations that never stored them.
+  // Their missing kind/threshold fields need an explicit future migration policy.
   return { schemaVersion: 1, languageID, level, version: 1, weekId, expiresAt: expiresAt(now),
-    thresholds: row.thresholds ?? {}, variant: chosen.variant,
+    thresholds: {}, variant: chosen.variant, legacy: true,
+    generationId: row.id, examId: `${row.id}:v${chosen.variant}`,
     passages: chosen.passages, readingPassageIds: chosen.readingPassageIds,
     listeningPassageIds: chosen.listeningPassageIds, items: chosen.items };
 }

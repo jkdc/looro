@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { LEVEL_TEST_BANKS, type LevelTestContentBank, type LevelTestContentItem,
   type LevelTestContentLevel, type LevelTestContentPassage } from './level-tests-content.generated.js';
+import { identifySnapshot, type ExamSnapshot } from './level-test-snapshot.js';
 type ContentSection = LevelTestContentItem['section'];
 
 /** Weekly level-verification endpoint (level-tests v2): composes THIS week's
@@ -18,11 +19,8 @@ const LISTENING_PASSAGES = 2;
 const LISTENING_PER_PASSAGE = 2;
 const WRITING_COUNT = 3;
 
-export interface ComposedItem { id: string; section: ContentSection; kind: string; prompt: string;
-  options?: string[]; answers: string[]; explain: string; unitID?: string; passageId?: string; speech?: string }
-export interface ComposedLevelTest { schemaVersion: number; languageID: string; level: string; version: number;
-  weekId: number; expiresAt: string; thresholds: Record<string, number>;
-  passages: LevelTestContentPassage[]; readingPassageIds: string[]; listeningPassageIds: string[]; items: ComposedItem[] }
+export type ComposedItem = LevelTestContentItem;
+export type ComposedLevelTest = ExamSnapshot;
 
 const stableHash = (version: number, value: string): string =>
   createHash('sha256').update(`${version}|${value}`).digest('hex');
@@ -108,9 +106,9 @@ export function composeWeekly(languageID: string, level: string, now: Date = new
     .sort((a, b) => byString(a.passageId ?? '', b.passageId ?? '') ||
       byString(stableHash(version, a.id), stableHash(version, b.id)));
 
-  return { schemaVersion: 1, languageID, level, version, weekId, expiresAt: expiresAt(now),
+  return identifySnapshot({ schemaVersion: 1, languageID, level, version, weekId, expiresAt: expiresAt(now),
     thresholds: content.thresholds, passages: content.passages,
     readingPassageIds: readingIds, listeningPassageIds: listeningIds,
-    items: [...recognition, ...readingItems, ...listeningItems, ...writing] as ComposedItem[] };
+    items: [...recognition, ...readingItems, ...listeningItems, ...writing] as ComposedItem[] }, 'deterministic');
 }
 
