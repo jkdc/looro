@@ -391,7 +391,7 @@ assessed. Do not create a second evidence-only commit before that assessment.
 
 ### T03 Android Docker verification (2026-10-14)
 
-Work-unit commit: `39d4d89bd2247bc07580d42ba64b6908bd676061` (`feat(exams): persist local exam attempts`).
+Work-unit commit: `8ff9635fc11080a48f5ba0fd2d43c834d62bfb90` (`feat(exams): persist local exam attempts`).
 
 Environment: `eclipse-temurin:17-jdk-jammy@sha256:43f4431cc895d37ceb115e2e1f160545ec45caee9c1cb4246fc6bb879d58aeda`, AGP 8.10.1,
 Gradle Wrapper 8.11.1, Android platform 36, Build Tools 35.0.0, NDK 27.0.12077973,
