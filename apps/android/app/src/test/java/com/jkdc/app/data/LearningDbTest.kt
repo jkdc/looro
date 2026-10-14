@@ -17,18 +17,19 @@ class LearningDbTest {
 
     @After fun closeConnection() { connection.close() }
 
-    @Test fun schemaOpensAtVersionTwoWithExactlyThePinnedTables() {
-        assertEquals(2L, db.query("PRAGMA user_version").single().values.single())
+    @Test fun schemaOpensAtVersionThreeWithExactlyThePinnedTables() {
+        assertEquals(3L, db.query("PRAGMA user_version").single().values.single())
         val tables = db.query(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
             .map { it["name"] as String }
         // fragments_fts is the pinned v2 virtual table; fragments_fts_* are its
         // FTS4 shadow tables (SQLite internals, like sqlite_sequence).
-        assertEquals(listOf("assessment_tickets", "completions", "expressions", "fragments",
+        assertEquals(listOf("assessment_tickets", "completions", "exam_answers", "exam_attempts",
+            "exam_results", "exam_snapshot_ids", "exam_snapshots", "exam_sync_outbox",
+            "expressions", "fragments",
             "fragments_fts", "fragments_fts_docsize", "fragments_fts_segdir",
             "fragments_fts_segments", "fragments_fts_stat",
-            "lesson_state", "meta", "preferences", "sessions", "skill_errors",
-            "usage_outbox"), tables)
+            "lesson_state", "meta", "preferences", "sessions", "skill_errors", "usage_outbox"), tables)
         assertFalse("words must never be stored; hidden words live in preferences", tables.contains("words"))
         val virtual = db.query(
             "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'fragments_fts'")
@@ -41,7 +42,8 @@ class LearningDbTest {
         assertTrue(virtual.contains("tokenize='unicode61'"))
         assertFalse("FTS5 does not exist in the Android framework build",
             virtual.contains("fts5"))
-        assertEquals(listOf("fragments_fts_after_insert", "fragments_fts_after_update",
+        assertEquals(listOf("exam_snapshot_ids_no_update", "exam_snapshots_no_update",
+            "fragments_fts_after_insert", "fragments_fts_after_update",
             "fragments_fts_before_delete", "fragments_fts_before_update"),
             db.query("SELECT name FROM sqlite_master WHERE type = 'trigger' ORDER BY name")
                 .map { it["name"] as String })
@@ -94,7 +96,7 @@ class LearningDbTest {
             // the delta, then the recorded version
             v1.transaction { LearningDb.upgrade(it, 1) }
             v1.exec("PRAGMA user_version = ${LearningDb.VERSION}")
-            assertEquals(2L, v1.query("PRAGMA user_version").single().values.single())
+            assertEquals(3L, v1.query("PRAGMA user_version").single().values.single())
             // the 'rebuild' indexed the fragment v1 already had, and a NEW write
             // (the insert trigger) is searchable too
             assertEquals(listOf("s1"), SearchDao.search(v1, "heredada", "es").map { it.session.id })
@@ -122,6 +124,97 @@ class LearningDbTest {
 
     @Test fun foreignKeysAreEnforcedOnTheConnection() {
         assertEquals(1L, db.query("PRAGMA foreign_keys").single().values.single())
+    }
+
+    @Test fun startingAndSavingAnExamKeepsItsSnapshotAnswersPositionAndOutboxTogether() {
+        val started = ExamHistoryDao.start(db, sampleSnapshot("exam-1", "content-1"),
+            ExamAttemptRecord("attempt-1", "exam-1", startedAt = 10.0))
+        assertEquals("{\"question\":\"frozen\"}", started.snapshot.text("content_json"))
+        assertEquals("in_progress", started.attempt.text("state"))
+        assertEquals("created", db.query("SELECT event_type FROM exam_sync_outbox").single().text("event_type"))
+        assertEquals(2L, ExamHistoryDao.saveAnswer(db, "attempt-1", "q1", "{\"answer\":\"a\"}", 1, 11.0))
+        val resumed = ExamHistoryDao.load(db, "attempt-1")!!
+        assertEquals(1L, resumed.attempt.long("position"))
+        assertEquals("{\"answer\":\"a\"}", resumed.answers.single().text("response_json"))
+        assertEquals(2L, db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox").single().long("n"))
+    }
+
+    @Test fun completionIsAtomicAndIdempotentButCannotReplaceTheOriginalResult() {
+        ExamHistoryDao.start(db, sampleSnapshot("exam-2", "content-2"),
+            ExamAttemptRecord("attempt-2", "exam-2", startedAt = 20.0))
+        val result = "{\"score\":80,\"verdicts\":[true]}"
+        assertTrue(ExamHistoryDao.complete(db, "attempt-2", result, 30.0))
+        assertFalse(ExamHistoryDao.complete(db, "attempt-2", result, 31.0))
+        assertThrows(IllegalStateException::class.java) {
+            ExamHistoryDao.complete(db, "attempt-2", "{\"score\":90}", 32.0)
+        }
+        val history = ExamHistoryDao.load(db, "attempt-2")!!
+        assertEquals("completed", history.attempt.text("state"))
+        assertEquals(result, history.result!!.text("result_json"))
+        assertEquals(2L, db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox").single().long("n"))
+    }
+
+    @Test fun failedProgressOutboxRollsBackTheAnswerAndPosition() {
+        ExamHistoryDao.start(db, sampleSnapshot("exam-progress", "content-progress"),
+            ExamAttemptRecord("attempt-progress", "exam-progress", startedAt = 21.0))
+        db.exec("CREATE TRIGGER reject_progress BEFORE INSERT ON exam_sync_outbox " +
+            "WHEN new.event_type = 'progress' BEGIN SELECT RAISE(ABORT, 'test failure'); END")
+        assertThrows(SQLException::class.java) {
+            ExamHistoryDao.saveAnswer(db, "attempt-progress", "q1", "{\"answer\":\"lost\"}", 9, 22.0)
+        }
+        val history = ExamHistoryDao.load(db, "attempt-progress")!!
+        assertEquals(0L, history.attempt.long("position"))
+        assertEquals(1L, history.attempt.long("revision"))
+        assertTrue(history.answers.isEmpty())
+        assertEquals(1L, count("exam_sync_outbox"))
+    }
+
+    @Test fun failedCompletionOutboxRollsBackTheResultAndState() {
+        ExamHistoryDao.start(db, sampleSnapshot("exam-complete", "content-complete"),
+            ExamAttemptRecord("attempt-complete", "exam-complete", startedAt = 23.0))
+        db.exec("CREATE TRIGGER reject_completion BEFORE INSERT ON exam_sync_outbox " +
+            "WHEN new.event_type = 'completed' BEGIN SELECT RAISE(ABORT, 'test failure'); END")
+        assertThrows(SQLException::class.java) {
+            ExamHistoryDao.complete(db, "attempt-complete", "{\"score\":80}", 24.0)
+        }
+        val history = ExamHistoryDao.load(db, "attempt-complete")!!
+        assertEquals("in_progress", history.attempt.text("state"))
+        assertEquals(null, history.result)
+        assertEquals(1L, history.attempt.long("revision"))
+    }
+
+    @Test fun localHistoryReadsAreScopedToTheActiveAccount() {
+        ExamHistoryDao.start(db, sampleSnapshot("exam-owner-a", "content-owner-a"),
+            ExamAttemptRecord("attempt-owner-a", "exam-owner-a", "account-a", 25.0))
+        assertEquals("account-a", ExamHistoryDao.load(db, "attempt-owner-a", "account-a")!!
+            .attempt.text("owner_account_id"))
+        assertEquals(null, ExamHistoryDao.load(db, "attempt-owner-a", "account-b"))
+        assertEquals(null, ExamHistoryDao.load(db, "attempt-owner-a"))
+    }
+
+    @Test fun failedOutboxInsertRollsBackAnExamStart() {
+        db.exec("CREATE TRIGGER reject_exam_outbox BEFORE INSERT ON exam_sync_outbox BEGIN " +
+            "SELECT RAISE(ABORT, 'test failure'); END")
+        assertThrows(SQLException::class.java) {
+            ExamHistoryDao.start(db, sampleSnapshot("exam-3", "content-3"),
+                ExamAttemptRecord("attempt-3", "exam-3", startedAt = 40.0))
+        }
+        assertEquals(0L, (count("exam_snapshots") as Number).toLong())
+        assertEquals(0L, (count("exam_snapshot_ids") as Number).toLong())
+        assertEquals(0L, (count("exam_attempts") as Number).toLong())
+    }
+
+    @Test fun equalContentSnapshotsRetainDistinctExamIDs() {
+        val first = sampleSnapshot("exam-a", "content-shared")
+        val firstAttempt = ExamAttemptRecord("attempt-a", "exam-a", startedAt = 50.0)
+        ExamHistoryDao.start(db, first, firstAttempt)
+        ExamHistoryDao.start(db, first, firstAttempt)
+        ExamHistoryDao.start(db, first.copy(examID = "exam-b"),
+            ExamAttemptRecord("attempt-b", "exam-b", startedAt = 51.0))
+        assertEquals(1L, (count("exam_snapshots") as Number).toLong())
+        assertEquals(2L, (count("exam_snapshot_ids") as Number).toLong())
+        assertEquals(2L, (count("exam_sync_outbox") as Number).toLong())
+        assertEquals("exam-b", ExamHistoryDao.load(db, "attempt-b")!!.attempt.text("exam_id"))
     }
 
     @Test fun deletingASessionCascadesToItsFragments() {
@@ -184,4 +277,8 @@ class LearningDbTest {
     }
 
     private fun count(table: String) = db.query("SELECT COUNT(*) AS n FROM $table").single()["n"]
+
+    private fun sampleSnapshot(examID: String, contentID: String) = ExamSnapshotRecord(
+        examID, contentID, "hash-$contentID", 1, 1, 1, "bundled", "es", "B1", 202641,
+        "{\"question\":\"frozen\"}", 1.0)
 }

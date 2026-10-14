@@ -9,7 +9,13 @@
     "completions": 5,
     "skill_errors": 2,
     "usage_outbox": 0,
-    "assessment_tickets": 0
+    "assessment_tickets": 0,
+    "exam_snapshots": 0,
+    "exam_snapshot_ids": 0,
+    "exam_attempts": 0,
+    "exam_answers": 0,
+    "exam_results": 0,
+    "exam_sync_outbox": 0
   },
   "invariants": [
     "preferences holds exactly one row (preferences.id = 1) with learning_language_id 'es' and every nullable preferences column populated (none NULL)",

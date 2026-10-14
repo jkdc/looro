@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Looro/Palique — canonical learning database, schema v2
+-- Looro/Palique — canonical learning database, schema v3
 -- ===========================================================================
 
 -- Version history
@@ -12,9 +12,13 @@
 --       unicode61 tokenizer) plus the four triggers that keep it in sync,
 --       and a one-time 'rebuild' that indexes every fragment a v1 database
 --       already held. No existing table or column changed.
+--   v3  Immutable, content-deduplicated exam snapshots with examId aliases;
+--       durable attempts, revisioned answers, original results and a dedicated
+--       sync outbox. Existing rows are untouched; legacy summaries are not
+--       backfilled because their original questions and answers are unavailable.
 --
 -- Fresh databases run every statement below in order and end at
--- PRAGMA user_version = 2. Openers upgrade an existing database by applying
+-- PRAGMA user_version = 3. Openers upgrade an existing database by applying
 -- only the statements between its own user_version's PRAGMA and the next
 -- one (see the v2 block's own comment), then setting user_version.
 --
@@ -31,8 +35,8 @@
 --   - iOS: GRDB
 -- Therefore it uses only portable SQL: no STRICT tables, no generated
 -- columns, no RETURNING, no WITHOUT ROWID. Openers run it once when
--- `PRAGMA user_version` is 0 and must then find it set to 2 (the script
--- ends with `PRAGMA user_version = 2;`).
+-- `PRAGMA user_version` is 0 and must then find it set to 3 (the script
+-- ends with `PRAGMA user_version = 3;`).
 --
 -- Conventions
 -- -----------
@@ -56,8 +60,12 @@
 --                 - completions.language_id NULL  -> counts as global
 --                   activity in the progress ledger.
 --               New writes always carry a language id.
--- Foreign keys: exactly one, fragments.session_id -> sessions.id
---               ON DELETE CASCADE. Openers MUST enable enforcement at
+-- Foreign keys: fragments.session_id -> sessions.id ON DELETE CASCADE;
+--               exam_snapshot_ids.content_id -> exam_snapshots.content_id
+--                 ON DELETE RESTRICT;
+--               exam_attempts.exam_id -> exam_snapshot_ids.exam_id ON DELETE RESTRICT;
+--               exam_answers/result/outbox.attempt_id -> exam_attempts.attempt_id
+--                 ON DELETE CASCADE. Openers MUST enable enforcement at
 --               connection open: `PRAGMA foreign_keys = ON;`
 --               (AndroidX: SQLiteOpenHelper.onConfigure;
 --               GRDB: Configuration.foreignKeysEnabled = true).
@@ -300,3 +308,94 @@ END;
 INSERT INTO fragments_fts(fragments_fts) VALUES('rebuild');
 
 PRAGMA user_version = 2;
+
+-- ===========================================================================
+-- v3 — immutable exam snapshots and durable local attempts
+-- ===========================================================================
+--
+-- The JSON payload preserves the full exam contract, including bundled content,
+-- passages and grading thresholds. `content_id` deduplicates identical content;
+-- `exam_snapshot_ids` keeps each immutable examId/generation alias so deduplication
+-- never discards publication identity. Attempts refer to an examId, not the
+-- current week or bundle. Answers are keyed by question ID and attempt revision,
+-- not a mutable display index. The result payload freezes original verdicts and
+-- grading rules. This outbox is intentionally separate from content-free usage.
+
+CREATE TABLE exam_snapshots (
+    content_id       TEXT PRIMARY KEY,
+    content_hash     TEXT NOT NULL UNIQUE,
+    schema_version   INTEGER NOT NULL CHECK (schema_version > 0),
+    content_revision INTEGER NOT NULL CHECK (content_revision > 0),
+    grading_version  INTEGER NOT NULL CHECK (grading_version > 0),
+    source           TEXT NOT NULL CHECK (source IN ('bundled', 'deterministic', 'llm')),
+    language_id      TEXT NOT NULL,
+    level            TEXT NOT NULL,
+    week_id          INTEGER NOT NULL CHECK (week_id > 0),
+    content_json     TEXT NOT NULL,
+    created_at       REAL NOT NULL
+);
+
+CREATE TABLE exam_snapshot_ids (
+    exam_id    TEXT PRIMARY KEY,
+    content_id TEXT NOT NULL REFERENCES exam_snapshots(content_id) ON DELETE RESTRICT,
+    created_at REAL NOT NULL
+);
+
+CREATE TABLE exam_attempts (
+    attempt_id       TEXT PRIMARY KEY,
+    exam_id          TEXT NOT NULL REFERENCES exam_snapshot_ids(exam_id) ON DELETE RESTRICT,
+    owner_account_id TEXT NULL,
+    state            TEXT NOT NULL CHECK (state IN ('in_progress', 'completed')),
+    sync_state       TEXT NOT NULL CHECK (sync_state IN ('local_only', 'pending', 'synced', 'conflict')),
+    position         INTEGER NOT NULL DEFAULT 0 CHECK (position >= 0),
+    revision         INTEGER NOT NULL CHECK (revision > 0),
+    started_at       REAL NOT NULL,
+    updated_at       REAL NOT NULL,
+    completed_at     REAL NULL,
+    CHECK ((state = 'in_progress' AND completed_at IS NULL) OR
+           (state = 'completed' AND completed_at IS NOT NULL))
+);
+
+CREATE INDEX exam_attempts_owner_updated ON exam_attempts(owner_account_id, updated_at);
+
+CREATE TABLE exam_answers (
+    attempt_id    TEXT NOT NULL REFERENCES exam_attempts(attempt_id) ON DELETE CASCADE,
+    question_id   TEXT NOT NULL,
+    revision      INTEGER NOT NULL CHECK (revision > 0),
+    response_json TEXT NOT NULL,
+    saved_at      REAL NOT NULL,
+    PRIMARY KEY (attempt_id, question_id, revision)
+);
+
+CREATE TABLE exam_results (
+    attempt_id  TEXT PRIMARY KEY REFERENCES exam_attempts(attempt_id) ON DELETE CASCADE,
+    result_json TEXT NOT NULL,
+    recorded_at REAL NOT NULL
+);
+
+CREATE TABLE exam_sync_outbox (
+    event_id        TEXT PRIMARY KEY,
+    attempt_id      TEXT NOT NULL REFERENCES exam_attempts(attempt_id) ON DELETE CASCADE,
+    revision        INTEGER NOT NULL CHECK (revision > 0),
+    event_type      TEXT NOT NULL CHECK (event_type IN ('created', 'progress', 'completed')),
+    payload_json    TEXT NOT NULL,
+    delivery_state  TEXT NOT NULL DEFAULT 'pending'
+        CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged')),
+    created_at      REAL NOT NULL,
+    acknowledged_at REAL NULL,
+    UNIQUE (attempt_id, revision),
+    CHECK ((delivery_state = 'acknowledged' AND acknowledged_at IS NOT NULL) OR
+           (delivery_state != 'acknowledged' AND acknowledged_at IS NULL))
+);
+
+CREATE INDEX exam_sync_outbox_pending ON exam_sync_outbox(delivery_state, created_at);
+
+CREATE TRIGGER exam_snapshots_no_update BEFORE UPDATE ON exam_snapshots BEGIN
+    SELECT RAISE(ABORT, 'exam snapshots are immutable');
+END;
+
+CREATE TRIGGER exam_snapshot_ids_no_update BEFORE UPDATE ON exam_snapshot_ids BEGIN
+    SELECT RAISE(ABORT, 'exam snapshot identities are immutable');
+END;
+
+PRAGMA user_version = 3;

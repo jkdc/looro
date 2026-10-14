@@ -34,7 +34,7 @@ publish malformed questions or duplicate billable work across schedulers/CLI.
 | Chain strategy / user selection | `feature-branch-chain` |
 | Local integration | Explicitly requested final local merge into `feature/learning-platform` |
 | Remote authorization | None: no push, PR creation, remote execution, or deployment |
-| Current worker authorization | T02 only: backend validation/judge/settings/publication, tests/documentation, local work-unit commit and progress mirror; T03 and later tasks need parent dispatch |
+| Current parent authorization | Full plan T01–T14 authorized by the active user goal; parent-controlled implementation resumes at T03. No delegated writes. |
 
 The approved requirement source remains the original checkout's untracked report:
 `/home/joaquin/Proyectos/looro-test/looro/informe-plan-pendientes-2026-10-13.md`.
@@ -77,6 +77,8 @@ Source implementation dispatch and local integration remain parent-controlled.
 - Project/root runner: `make check` (configured project test command).
 - `testing.workspace_test_command` is empty: `make check` is not evidence that all
   native/API suites ran. Do not infer all-platform coverage or invoke `sdd-init`.
+- Android JVM verification is reproducible through the pinned Docker runner;
+  do not install JDK, Gradle, or Android SDK on the host for this work.
 
 Commands below are inventory, NOT execution evidence. Run only commands applicable
 to the dispatched work unit and available authorized environment, in stated cwd.
@@ -86,7 +88,8 @@ to the dispatched work unit and available authorized environment, in stated cwd.
 | Repository root | `make check`; `python3 -m unittest discover -s scripts/tests -t .` |
 | Root additional targets | `make test-api`; `make android-build`; `make ios-test` |
 | `services/api` | `npm run check`; `npm run build`; `npm test` |
-| `apps/android` JVM | `./gradlew :app:testDebugUnitTest :core:engine-local:testDebugUnitTest` |
+| `apps/android` JVM | `apps/android/docker/test-unit.sh` (Docker; invokes the Gradle Wrapper tasks below) |
+| Android Gradle tasks inside the container | `./gradlew --no-daemon :app:testDebugUnitTest :core:engine-local:testDebugUnitTest` |
 | `apps/android` quality | `./gradlew :app:lintDebug :app:assembleDebug` |
 | `apps/android` UI | `./gradlew :app:connectedUiTest` — device/emulator required |
 | Root exporter freshness | `python3 scripts/export_placement.py --check`; `python3 scripts/export_leveltests.py --check` |
@@ -125,17 +128,20 @@ recorded below. Preparation is not completion; no task is checked at initializat
   stable stored identity and new identity on regeneration; never recompose remote.
   Parent scope clarification: by-ID historical API is T04, not T01.
   Checks: API typecheck/build/unit+applicable integration; cross-platform fixtures.
-- [ ] **T02 — Enforce structural validation, judge policy, settings, publication.**
+- [x] **T02 — Enforce structural validation, judge policy, settings, publication.**
   Phase P0; report §4, 9/T02. Files: level-tests validation/generator/config/admin API.
   Prove rejected items excluded, strict judge failure/incompleteness/minimum shortfall
   blocks publication, flag advisory, drafts private until approved, faithful save/reload
   and partial settings updates including strict → flag → off.
   Checks: API typecheck/build/unit+applicable integration.
-- [ ] **T03 — Add durable local snapshots, attempts, answers, result, and outbox.**
-  Phase P1; report §3, 9/T03. Files: shared SQL/exporters, both platform DAOs/writers,
-  backup/restore/erase paths. Prove atomic start before first question, answer/position
-  rollback, immutable result and idempotent completion; legacy stays summary-only.
-  Checks: root schema/contracts/Python, JVM database tests, Swift database gate.
+- [x] **T03 — Add durable local snapshots, attempts, answers, result, and outbox.**
+  Phase P1; report §3, 9/T03. Files: shared SQL/exporters, Android/iOS DAOs/writers,
+  backup/restore/erase paths. Prove atomic start, answer/position rollback, immutable
+  result/idempotent completion; legacy stays summary-only. Android and shared-schema
+  acceptance verified. Per explicit user decision L9, retain Swift implementation but
+  exclude Swift test execution from this task closure; Swift behavior remains unverified.
+  Checks: 136 Python tests; schema/export; Android app 672/672 and engine-local 11/11;
+  fresh-scratch independent verification; v1/v2 backup checks pass.
 - [ ] **T04 — Add owner-scoped cloud attempts and immutable retrieval.**
   Phase P2; report §4, 9/T04. Files: proposed exam-attempts API/migrations/tests.
   Prove account authorization, bounded pagination/bytes, no dangling snapshot refs,
@@ -233,17 +239,17 @@ No PR or remote branch is created by this document or current authorization.
 | Slice | Boundary / commits | Measured authored lines | State |
 |---|---|---:|---|
 | S0 | Branch point a836e8269a2d77cd6a081bc635a59439510c0e89 | 0 | Initial boundary |
-| S1 | T01 commit 9106881b4c637dc296b030aad5b404533c0739e7 | 378 (352 additions + 26 deletions; no generated changes) | Functional checks recorded; risk medium; native review deferred to slice close |
+| S1 | T01 9106881b4c637dc296b030aad5b404533c0739e7 + T02 13d65ebef8e1db626dbfb5971a910435a7eeb6c1 + R3-001 correction cc5ce58724fc09d427cc7d2a7d11f3bd1405a29f | 1441 (378 + 1051 + 12; no generated changes) | Native four-lens review approved and acknowledged for corrected candidate; see T02 evidence below |
 
 No final child-branch or PR boundaries are fabricated now. Parent records actual
 coherent boundaries and local work-unit commit IDs as implementation progresses.
 
 ## Progress, verification, and recovery handoff
 
-- Completed implementation tasks: **1/14** (T01); **13/14 remain**.
-- Latest work-unit commit: `9106881b4c637dc296b030aad5b404533c0739e7`.
-- Measured authored total: **378** changed lines; initial task-document preparation
-  is not included in the source work-unit count.
+- Completed implementation tasks: **3/14** (T01–T03); **11/14 remain**.
+- Latest work-unit commit: `cc5ce58724fc09d427cc7d2a7d11f3bd1405a29f` (bounded T02 review correction).
+- Measured committed authored total: **1441** changed lines (378 T01 + 1051 T02 + 12 correction lines).
+  T02 includes the initial 376-line recovery document; generated changes: 0.
 - Read configuration: strict_tdd=false; Standard Mode and exact runners above.
 - Worktree observed clean at the branch point before this document was created.
 - Original report is untracked in the original checkout and must remain untouched.
@@ -314,8 +320,11 @@ fresh native STATUS against the exact committed slice and follow its returned in
 
 ### T02 proof and containment
 
-Behavior commit: pending local work-unit commit after the checks below; do not close
-T02 until its immutable commit ID is recorded. Functional verification is complete.
+Behavior commit: `13d65ebef8e1db626dbfb5971a910435a7eeb6c1`
+(`fix(level-tests): enforce validation and publication policy`).
+Measured: 11 files, 885 additions + 166 deletions = **1051 authored changed lines**;
+376 are the newly tracked recovery document. Generated changes: 0.
+Functional verification, correction, local commits, and the native review transaction are complete.
 Changes: shared persisted effective settings; serialized transactional partial PUT;
 always-on structural validation; complete strict verdicts; reject removal and final
 minimum revalidation; exact source passages supplied to comprehension judges;
@@ -341,7 +350,10 @@ not implicitly forward a saved or environment credential.
 | API: `npm run check` | Exit 0; TypeScript check passed after correcting inferred passage-map key type. |
 | API: `npm run build` | Exit 0; TypeScript build passed. |
 | API: `npm test` | Exit 0; 498 tests: 139 passed, 0 failed, 359 skipped (356 explicitly require TEST_DATABASE_URL; 3 have no emitted reason). |
-| Root: `git diff --check` before documentation update | Exit 0. Final staged whitespace check required before commit. |
+| Root: `git diff --cached --check` before commit | Exit 0; exact 11-file candidate staged and measured. |
+| API policy regression after review correction | Docker focused suite: 26 passed, 0 failed; `npm run check`: exit 0; full API suite: 499 tests, 140 passed, 0 failed, 359 skipped (DB unavailable). |
+| Independent R3-001 verification | Docker scratch copy: 26 policy tests passed, API check exit 0, same-provider blank-key HTTP probe preserved ciphertext, provider switch blank-key probes rejected without state changes. |
+| Native review | Four lenses found R3-001; bounded correction commit `cc5ce58724fc09d427cc7d2a7d11f3bd1405a29f`; targeted validator approved; exact acknowledgement burned lineage `review-2f5bac97bd94bf8c`. |
 
 Runtime boundary: actual Fastify inject exercises authenticated settings save/reload,
 CSRF Origin rejection, unauthenticated approval rejection, private draft/public
@@ -371,6 +383,52 @@ document; disclose that authored documentation in its count rather than excludin
 The approximately 400-line task heuristic is advisory: validation/publication/settings
 and their boundary tests are kept together instead of omitting proof for size savings.
 
-**Next step:** finish the T02 local commit, record its SHA/count and mirror this full
-file; then stop for parent risk assessment/reconciliation. T03 is the next implementation
-task but is not authorized for this worker. No merge, push, PR or deployment.
+Dependency reuse: the temporary node_modules symlink resolved to the unchanged
+original checkout dependency tree and was removed before commit; no installation.
+The committed recovery file includes all functional proof; this post-commit SHA/status
+update remains uncommitted by parent instruction until the behavior candidate is
+assessed. Do not create a second evidence-only commit before that assessment.
+
+### T03 Android Docker verification (2026-10-14)
+
+Work-unit commit: `39d4d89bd2247bc07580d42ba64b6908bd676061` (`feat(exams): persist local exam attempts`).
+
+Environment: `eclipse-temurin:17-jdk-jammy@sha256:43f4431cc895d37ceb115e2e1f160545ec45caee9c1cb4246fc6bb879d58aeda`, AGP 8.10.1,
+Gradle Wrapper 8.11.1, Android platform 36, Build Tools 35.0.0, NDK 27.0.12077973,
+CMake 3.22.1. Android CLI archive revision 15859902 is SHA-256 checked in the
+Dockerfile. Gradle cache persists in Docker volume `looro-gradle-cache`.
+
+| Command | Observed result |
+|---|---|
+| `apps/android/docker/test-unit.sh` | Exit 0; `:app:testDebugUnitTest`: 672 passed, 0 failed/skipped; `:core:engine-local:testDebugUnitTest`: 11 passed, 0 failed/skipped. Full JVM suite completed in 53 seconds after cache warm-up. |
+| Focused T03 app suites (`LearningDbTest`, `BackupManagerTest`, `LearningCutoverFlowTest`, `LearningDbStoreTest`, `ArchiveMapperTest`) in Docker | Exit 0; all selected classes passed. |
+| Root Python/schema checks in Docker | 136 Python tests passed; schema checker and generated-source freshness passed (v3, 16 tables, 33 statements). |
+| `bash -n apps/android/docker/test-unit.sh`; `git diff --check` | Exit 0. |
+
+Independent verification in a fresh Docker scratch copy also passed: the full runner executed all 683 Android JVM tests (672 app + 11 engine-local), Python/schema checks passed, and `git diff --check` was clean. Parent spot-check reran both Gradle tasks in the pinned image: `BUILD SUCCESSFUL` (43 tasks, 42 up-to-date). The warning below remains non-fatal.
+
+The initial Android run exposed 15 failures: JVM Android JSON stubs returned null for
+chained `JSONObject.put`, the v1 fixture accidentally included v3 tables, two row
+count assertions still expected ten tables, and a trigger-name assertion differed
+from the schema. These were corrected; the focused suites and subsequent complete
+Android JVM suite passed. A non-fatal SDK XML v4 compatibility warning from the
+current command-line tools remains. Per the explicit L9 scope decision, Swift verification is excluded from T03
+closure while the Swift implementation is retained. Swift behavior remains unverified;
+this is not evidence of iOS correctness. Android/shared-schema acceptance is complete.
+
+**Next step:** Proceed to T04. Swift verification remains deferred and is not claimed.
+No push, PR, deployment, or merge to `main`.
+
+## Log
+
+- L1 (2026-10-13), original request: “implementa los cambios que se exponene en el documento informe-plan-pendientes-2026-10-13.md”.
+- L2 (2026-10-13), user constraint: “todos los comando debes lanzarlos via docker. continua con lo que sigue con 1. revisar este cambio”.
+- L3 (2026-10-13), user branch constraint: “feature-branch-chain pero despues hay que volver a la misma rama sobre la que estabamos y mergear los cambios sobre esta, no sobre main”.
+- L4 (2026-10-13), user authorized review-provider transmission: “te doy autorizacion para hacerlo”. The targeted native validator approved the corrected candidate and exact acknowledgement burned its authority; this is review evidence, not delivery authorization.
+- L5 (2026-10-13), parent resumes T03 from the approved report. Mapping confirmed current Android/iOS schema is v2; migrations are generated from `shared/db/schema.sql`; both platform transaction APIs use `BEGIN IMMEDIATE` and do not allow nested transactions. T03 must cover schema, both stores, backups, restore, erase, and legacy summary compatibility before completion.
+- L6 (2026-10-13), route: direct inline implementation after one read-only explorer mapped the cross-platform data surfaces; T03 is one coordinated persistence behavior with shared schema and no disjoint write units. It is high risk because it adds persisted records, a schema migration, account-sensitive local data, and backup/erase behavior; use an independent verifier after T03's own checks.
+
+- L7 (2026-10-13), T03 implementation added schema v3, immutable snapshots/IDs, attempt/answer/result/outbox tables, Android/iOS DAOs and writer/delete/backup integration. Independent review caught v1/v2 backups rejected by the v3 inventory; fixed with version-aware ten/sixteen-table validation and v2 regressions; scoped recheck confirmed fix. Python suite 136/136 and schema/export checks pass. Native Kotlin/Swift suites unavailable in local Docker images; keep T03 open pending those checks. Engram full mirror pending synchronization.
+- L8 (2026-10-14), user request verbatim: “Te autorizo expresamente a descargar imágenes Docker oficiales y las dependencias necesarias para crear un entorno reproducible de ejecución de tests Kotlin/Android en Linux. Condiciones: Todos los comandos de compilación y tests deben ejecutarse dentro de Docker. Prioriza una imagen oficial con JDK 17 o 21, según los requisitos reales del proyecto. Si los tests requieren Android SDK, crea un Dockerfile específico con las herramientas y versiones necesarias. Utiliza el Gradle Wrapper del repositorio. No instales JDK, Gradle ni Android SDK directamente en el host. Prioriza tests unitarios JVM de Android que no necesiten emulador. Mantén cachés persistentes de Gradle para acelerar las siguientes ejecuciones. Documenta cómo reproducir las pruebas mediante Docker. Ejecuta las suites Android de T03 y registra los resultados reales. Mantén T03 abierta si alguna prueba obligatoria sigue sin poder ejecutarse. Puedes descargar las imágenes y dependencias necesarias, pero no hagas commit ni merge hasta completar las verificaciones y comunicarme los resultados. No hace falta resolver Swift en este paso. Prioriza desbloquear Kotlin/Android.” Docker runner creado; Android suites pasan (672 app + 11 engine-local); T03 sigue abierta porque Swift Core es obligatoria y no se ejecutó. No se hizo commit/merge. |
+
+- L9 (2026-10-14), user scope decision verbatim: “si conservalos y continua hasta terminar las siguientes fases”. Interpreted with the preceding instruction (“descartamos esa parte”) as retain current Swift code but exclude Swift test execution from T03 acceptance. Swift remains explicitly unverified; do not treat this as iOS validation. Continue the already authorized feature plan from T04.

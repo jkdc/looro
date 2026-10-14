@@ -14,7 +14,7 @@ IOS_SIMULATOR := iPhone 17
 
 .DEFAULT_GOAL := help
 .PHONY: help up down restart logs status health migrate psql admin-cli admin-add \
-  admin-passwd admin-open test-api smoke-up smoke-down android-build android-install \
+  admin-passwd admin-open test-api smoke-up smoke-down android-build android-test-docker android-install \
   android-run android-logcat ios-build ios-test ios-device check clean
 
 help: ## Muestra esta ayuda
@@ -92,8 +92,11 @@ clean: ## Para el stack y elimina contenedores de humo
 
 # ---- Android (nativo; necesita SDK 36 y Java 17) ---------------------------
 
-android-build: ## Compila APK debug con tests unitarios y lint
+android-build: ## Compila APK debug con tests unitarios y lint (SDK/JDK del host)
 	$(GRADLE) :app:testDebugUnitTest :core:engine-local:testDebugUnitTest :app:lintDebug :app:assembleDebug
+
+android-test-docker: ## Ejecuta las suites JVM Android dentro de Docker con cache Gradle persistente
+	apps/android/docker/test-unit.sh
 
 android-install: ## Instala el APK debug en el dispositivo/emulador conectado
 	adb install -r apps/android/app/build/outputs/apk/debug/app-debug.apk

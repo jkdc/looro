@@ -126,9 +126,9 @@ fun LearningDb.openJvmV1(
 ): SqlDatabase {
     val db = JvmSqlDatabase(connection)
     db.exec("PRAGMA foreign_keys = ON")
-    val v2Delta = SchemaData.SCHEMA_UPGRADES.getValue(2).toHashSet()
+    val futureDeltas = SchemaData.SCHEMA_UPGRADES.values.flatten().toHashSet()
     for (statement in SchemaData.LEARNING_SCHEMA_STATEMENTS) {
-        if (statement.startsWith("PRAGMA user_version") || statement in v2Delta) continue
+        if (statement.startsWith("PRAGMA user_version") || statement in futureDeltas) continue
         db.exec(statement)
     }
     db.exec("PRAGMA user_version = 1")

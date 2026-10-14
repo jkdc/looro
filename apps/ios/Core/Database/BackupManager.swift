@@ -74,20 +74,25 @@ public struct LanguageDeletion: Equatable, Sendable {
     public var expressions: Int64
     public var lessonStates: Int64
     public var tickets: Int64
+    public var examAttempts: Int64
+    public var examSnapshots: Int64
 
     public init(sessions: Int64, fragments: Int64, completions: Int64,
-                expressions: Int64, lessonStates: Int64, tickets: Int64) {
+                expressions: Int64, lessonStates: Int64, tickets: Int64,
+                examAttempts: Int64 = 0, examSnapshots: Int64 = 0) {
         self.sessions = sessions
         self.fragments = fragments
         self.completions = completions
         self.expressions = expressions
         self.lessonStates = lessonStates
         self.tickets = tickets
+        self.examAttempts = examAttempts
+        self.examSnapshots = examSnapshots
     }
 }
 
 /**
- * Phase-F database backup/restore for the learning database (schema v1) —
+ * Phase-F database backup/restore for the learning database (schema v3) —
  * the Swift mirror of the Kotlin `BackupManager`. File-level, unlike the
  * JSON archive backup: the .db bytes travel whole, so everything the JSON
  * backup never carried (the usage_outbox queue, the platform's
@@ -167,14 +172,18 @@ public struct LanguageDeletion: Equatable, Sendable {
 public enum BackupManager {
     public static let maximumDatabaseBytes = 64 * 1024 * 1024
 
-    /// The ten tables shared/db/schema.sql creates, pinned by
+    /// The sixteen tables shared/db/schema.sql creates, pinned by
     /// scripts/check_db_schema.py. A backup missing any of them is not a
     /// learning database.
     public static let canonicalTables: [String] = [
         "meta", "preferences", "sessions", "fragments", "expressions",
         "lesson_state", "completions", "skill_errors", "usage_outbox",
-        "assessment_tickets",
+        "assessment_tickets", "exam_snapshots", "exam_snapshot_ids",
+        "exam_attempts", "exam_answers", "exam_results", "exam_sync_outbox",
     ]
+
+    /// Tables present before schema v3 introduced durable exam history.
+    private static let legacyCanonicalTables = Array(canonicalTables.prefix(10))
 
     // User-facing rejection copy lives with the App-layer notices; the gate
     // throws `InvalidBackup` with the typed `BackupIssue` instead.
@@ -271,7 +280,8 @@ public enum BackupManager {
             if try !db.query("PRAGMA foreign_key_check").isEmpty { throw InvalidBackup(.corrupt) }
             let tables = try db.query("SELECT name FROM sqlite_master WHERE type = 'table'")
                 .map { $0.text("name") }
-            if !canonicalTables.allSatisfy({ tables.contains($0) }) { throw InvalidBackup(.missingTables) }
+            let requiredTables = version >= 3 ? canonicalTables : legacyCanonicalTables
+            if !requiredTables.allSatisfy({ tables.contains($0) }) { throw InvalidBackup(.missingTables) }
         } catch let failure as InvalidBackup {
             throw failure
         } catch {
@@ -343,9 +353,23 @@ public enum BackupManager {
             let lessonStates = try tx.update(
                 "DELETE FROM lesson_state WHERE lesson_id LIKE ? ESCAPE '\\'",
                 args: [lessonPattern])
+            let examAttempts = try tx.query("SELECT COUNT(*) AS n FROM exam_attempts WHERE exam_id IN " +
+                "(SELECT i.exam_id FROM exam_snapshot_ids i JOIN exam_snapshots s ON s.content_id = i.content_id " +
+                "WHERE s.language_id = ?)", args: [languageID]).first!.long("n")
+            _ = try tx.update("DELETE FROM exam_attempts WHERE exam_id IN (SELECT i.exam_id FROM exam_snapshot_ids i " +
+                "JOIN exam_snapshots s ON s.content_id = i.content_id WHERE s.language_id = ?)", args: [languageID])
+            _ = try tx.update("DELETE FROM exam_snapshot_ids WHERE content_id IN " +
+                "(SELECT content_id FROM exam_snapshots WHERE language_id = ?)", args: [languageID])
+            let examSnapshots = try tx.query("SELECT COUNT(*) AS n FROM exam_snapshots WHERE language_id = ? " +
+                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
+                args: [languageID]).first!.long("n")
+            _ = try tx.update("DELETE FROM exam_snapshots WHERE language_id = ? " +
+                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
+                args: [languageID])
             return LanguageDeletion(sessions: sessions, fragments: fragments,
                                     completions: completions, expressions: expressions,
-                                    lessonStates: lessonStates, tickets: tickets)
+                                    lessonStates: lessonStates, tickets: tickets,
+                                    examAttempts: examAttempts, examSnapshots: examSnapshots)
             // usage_outbox, meta, preferences, skill_errors: deliberately
             // untouched — see the enum doc.
         }

@@ -64,7 +64,7 @@ class LearningDbStoreTest {
         // meta table carrying the two migration bookkeeping rows on top
         val expected = Json.parseToJsonElement(fixture("case-basic.expected.json"))
             .jsonObject.getValue("tables").jsonObject
-        assertEquals(10, expected.size)
+        assertEquals(16, expected.size)
         expected.forEach { (table, rowCount) ->
             if (table == "meta") return@forEach
             assertEquals("row count of $table", rowCount.jsonPrimitive.long, count(table))
