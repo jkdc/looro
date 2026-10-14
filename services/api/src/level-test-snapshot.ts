@@ -12,7 +12,7 @@ export interface SnapshotContent {
 export interface SnapshotMetadata {
   examId: string; contentId: string; contentHash: string;
   contentRevision: number; gradingVersion: number;
-  source: 'deterministic' | 'llm'; generationId?: string;
+  source: 'bundled' | 'deterministic' | 'llm'; generationId?: string;
 }
 export type ExamSnapshot = SnapshotContent & SnapshotMetadata;
 

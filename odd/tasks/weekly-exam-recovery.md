@@ -142,11 +142,16 @@ recorded below. Preparation is not completion; no task is checked at initializat
   exclude Swift test execution from this task closure; Swift behavior remains unverified.
   Checks: 136 Python tests; schema/export; Android app 672/672 and engine-local 11/11;
   fresh-scratch independent verification; v1/v2 backup checks pass.
-- [ ] **T04 — Add owner-scoped cloud attempts and immutable retrieval.**
+- [x] **T04 — Add owner-scoped cloud attempts and immutable retrieval.**
   Phase P2; report §4, 9/T04. Files: proposed exam-attempts API/migrations/tests.
   Prove account authorization, bounded pagination/bytes, no dangling snapshot refs,
   validated private bundled upload, published/private separation and retired retention.
   Checks: API typecheck/build/unit+PostgreSQL integration when available.
+  Proof: API Docker build passes; focused PostgreSQL integration passes 4/4.
+  Independent review found and drove a bounded correction for retired public lookup
+  and malformed choice snapshots; exact regressions were observed RED then GREEN.
+  Full API suite is not clean: test image lacks migration/operations SQL assets and
+  a later hosted-paid test hung; no full-suite pass is claimed.
 - [ ] **T05 — Implement durable sync, ACK idempotence, CAS, and conflicts.**
   Phase P2; report §§1, 4–6, 9/T05. Files: dedicated exam sync clients/outbox and API.
   Prove duplicate event retry, lost ACK, stale ACK with new edits, concurrent devices,
@@ -262,6 +267,27 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
   document plus its locator; read back local file and full observation, reconcile.
 - On resume: mem_context → project/feature search → full observation → actual file;
   refresh testing mode/source and reconcile proof before next unfinished task.
+
+### T04 implementation routing and scope ruling
+
+- Route: direct inline implementation after bounded CodeGraph mapping; one required
+  read-only explorer mapped T04 API/auth/migration/test surfaces. The exact configured
+  `gpt-6.1-luna` worker ID is unavailable in this runtime; per the user's instruction
+  to assign what is needed, the closest available `gpt-6-luna` ran at high effort.
+- Ruling: T04 owns immutable exam content and private attempt persistence/retrieval,
+  account ownership, bounded request/page sizes, validation, FK integrity, and public
+  published-by-ID retrieval. T05 remains responsible for update-event replay,
+  revision CAS, ACK/outbox synchronization semantics, and divergent-device conflicts;
+  this boundary avoids prematurely inventing T05's conflict protocol while allowing
+  T04 to prove uploads do not create dangling or public private snapshots.
+- Keep retired generated rows retrievable through an owned attempt's frozen snapshot;
+  public exam-ID lookup serves only currently approved content. Do not delete retired
+  generations while attempts reference them.
+- Ruling: account deletion must remove private exam attempts, aliases, and snapshots
+  in the same existing account-deletion transaction, including when financial records
+  require retaining a redacted account row; a signed-out account is not deleted.
+- T04-specific test runner: API Node test suite and PostgreSQL integration through
+  Docker. No project test/build command will run on the host.
 
 ### T01 proof and containment
 
@@ -432,3 +458,5 @@ No push, PR, deployment, or merge to `main`.
 - L8 (2026-10-14), user request verbatim: “Te autorizo expresamente a descargar imágenes Docker oficiales y las dependencias necesarias para crear un entorno reproducible de ejecución de tests Kotlin/Android en Linux. Condiciones: Todos los comandos de compilación y tests deben ejecutarse dentro de Docker. Prioriza una imagen oficial con JDK 17 o 21, según los requisitos reales del proyecto. Si los tests requieren Android SDK, crea un Dockerfile específico con las herramientas y versiones necesarias. Utiliza el Gradle Wrapper del repositorio. No instales JDK, Gradle ni Android SDK directamente en el host. Prioriza tests unitarios JVM de Android que no necesiten emulador. Mantén cachés persistentes de Gradle para acelerar las siguientes ejecuciones. Documenta cómo reproducir las pruebas mediante Docker. Ejecuta las suites Android de T03 y registra los resultados reales. Mantén T03 abierta si alguna prueba obligatoria sigue sin poder ejecutarse. Puedes descargar las imágenes y dependencias necesarias, pero no hagas commit ni merge hasta completar las verificaciones y comunicarme los resultados. No hace falta resolver Swift en este paso. Prioriza desbloquear Kotlin/Android.” Docker runner creado; Android suites pasan (672 app + 11 engine-local); T03 sigue abierta porque Swift Core es obligatoria y no se ejecutó. No se hizo commit/merge. |
 
 - L9 (2026-10-14), user scope decision verbatim: “si conservalos y continua hasta terminar las siguientes fases”. Interpreted with the preceding instruction (“descartamos esa parte”) as retain current Swift code but exclude Swift test execution from T03 acceptance. Swift remains explicitly unverified; do not treat this as iOS validation. Continue the already authorized feature plan from T04.
+- L10 (2026-10-14), user instruction verbatim: “continua y asigna lo que necesitas”. Runtime rejected configured odd-explorer model `gpt-6.1-luna`; user authorized assigning the closest available model, so bounded read-only mapping used `gpt-6-luna` at high effort. T04 scope ruling separates initial private persistence/retrieval from T05 replay/CAS/conflict sync.
+- L11 (2026-10-14), independent T04 verification found public ID retrieval included retired generations and upload validation accepted a choice without options. Added regression assertions, observed both fail (2/4 focused tests), restricted public retrieval to approved rows and enforced at least two choice options with accepted answers among them; focused PostgreSQL suite passed 4/4 and API TypeScript build passed in Docker. Full API suite remains partially blocked by test-image asset packaging and an unrelated hosted-paid test hang; no clean full-suite claim.

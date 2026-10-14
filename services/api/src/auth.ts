@@ -153,6 +153,11 @@ export async function deleteAccount(db: Database, account: string, appleRevoker?
       if (!appleRevoker || !authorizationCode) throw new ServiceError('apple_revocation_not_configured', 503);
       await appleRevoker.revoke(account, authorizationCode, apple.subject);
     }
+    // Exam attempts contain private answers and must not survive explicit account
+    // deletion, including the redacted-account path used for financial retention.
+    await sql.query('DELETE FROM level_test_attempts WHERE account_id=$1', [account]);
+    await sql.query('DELETE FROM level_test_attempt_snapshot_ids WHERE account_id=$1', [account]);
+    await sql.query('DELETE FROM level_test_attempt_snapshots WHERE account_id=$1', [account]);
     await sql.query('DELETE FROM identities WHERE account_id=$1', [account]);
     await sql.query('DELETE FROM auth_sessions WHERE account_id=$1', [account]);
     // Unused promotional time is forfeited on deletion; it must not trap a free account.

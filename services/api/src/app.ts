@@ -4,6 +4,7 @@ import type { PoolClient } from 'pg';
 import { transaction, type Database } from './db.js';
 import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
 import { HelperSessionLimitError, ServiceError } from './errors.js';
+import { registerLevelTestAttemptRoutes } from './level-test-attempts.js';
 import { applyStripeEvent, STRIPE_WEBHOOK_PATH, type SandboxPayments } from './payments.js';
 import { RATE_VERSION } from './pricing.js';
 import { aiPricingPolicy } from './ai-top-up-pricing.js';
@@ -179,6 +180,7 @@ export function createApp(services: Services) {
     }
     reply.code(status).send({ error: { code } });
   });
+  registerLevelTestAttemptRoutes(app, db);
   const featureState=()=>{
     const hostedVoice=Boolean(services.hosted?.available && (!services.hosted.minuteFunded || services.hostedHelpers));
     const livePayments=['stripe','play'].some(provider=>services.minuteCommerce?.aiPurchases?.products(provider as 'stripe'|'play').some(product=>product.environment==='live'));
