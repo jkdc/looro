@@ -152,6 +152,9 @@ recorded below. Preparation is not completion; no task is checked at initializat
   and malformed choice snapshots; exact regressions were observed RED then GREEN.
   Full API suite is not clean: test image lacks migration/operations SQL assets and
   a later hosted-paid test hung; no full-suite pass is claimed.
+  Commit: `2542ef0` (`feat(level-tests): persist private cloud exam attempts`).
+  Native review: approved and acknowledged; target `sha256:746d15f0290842aa80119da1e41109e1d2bb7bcdcfba65af11b2095a4a2b2cfb`, authority burned. One non-blocking WARNING `R3-001` remains at `services/api/src/level-test-attempts.ts:119` for later follow-up.
+  Risk: item 1 (new persisted account-owned exam history) and item 2 (authenticated private routes and deletion cleanup).
 - [ ] **T05 — Implement durable sync, ACK idempotence, CAS, and conflicts.**
   Phase P2; report §§1, 4–6, 9/T05. Files: dedicated exam sync clients/outbox and API.
   Prove duplicate event retry, lost ACK, stale ACK with new edits, concurrent devices,
@@ -246,14 +249,16 @@ No PR or remote branch is created by this document or current authorization.
 | S0 | Branch point a836e8269a2d77cd6a081bc635a59439510c0e89 | 0 | Initial boundary |
 | S1 | T01 9106881b4c637dc296b030aad5b404533c0739e7 + T02 13d65ebef8e1db626dbfb5971a910435a7eeb6c1 + R3-001 correction cc5ce58724fc09d427cc7d2a7d11f3bd1405a29f | 1441 (378 + 1051 + 12; no generated changes) | Native four-lens review approved and acknowledged for corrected candidate; see T02 evidence below |
 
+| S2 | T04 `2542ef0` | 564 (no generated changes) | Native three-lens review approved and acknowledged; one non-blocking WARNING `R3-001`; full API suite blocked as recorded above |
+
 No final child-branch or PR boundaries are fabricated now. Parent records actual
 coherent boundaries and local work-unit commit IDs as implementation progresses.
 
 ## Progress, verification, and recovery handoff
 
-- Completed implementation tasks: **3/14** (T01–T03); **11/14 remain**.
-- Latest work-unit commit: `cc5ce58724fc09d427cc7d2a7d11f3bd1405a29f` (bounded T02 review correction).
-- Measured committed authored total: **1441** changed lines (378 T01 + 1051 T02 + 12 correction lines).
+- Completed implementation tasks: **4/14** (T01–T04); **10/14 remain**.
+- Latest work-unit commit: `2542ef0` (T04 private cloud attempts).
+- Measured committed authored total: **2005** changed lines (1441 through T02 + 564 T04; no generated changes).
   T02 includes the initial 376-line recovery document; generated changes: 0.
 - Read configuration: strict_tdd=false; Standard Mode and exact runners above.
 - Worktree observed clean at the branch point before this document was created.
@@ -460,3 +465,4 @@ No push, PR, deployment, or merge to `main`.
 - L9 (2026-10-14), user scope decision verbatim: “si conservalos y continua hasta terminar las siguientes fases”. Interpreted with the preceding instruction (“descartamos esa parte”) as retain current Swift code but exclude Swift test execution from T03 acceptance. Swift remains explicitly unverified; do not treat this as iOS validation. Continue the already authorized feature plan from T04.
 - L10 (2026-10-14), user instruction verbatim: “continua y asigna lo que necesitas”. Runtime rejected configured odd-explorer model `gpt-6.1-luna`; user authorized assigning the closest available model, so bounded read-only mapping used `gpt-6-luna` at high effort. T04 scope ruling separates initial private persistence/retrieval from T05 replay/CAS/conflict sync.
 - L11 (2026-10-14), independent T04 verification found public ID retrieval included retired generations and upload validation accepted a choice without options. Added regression assertions, observed both fail (2/4 focused tests), restricted public retrieval to approved rows and enforced at least two choice options with accepted answers among them; focused PostgreSQL suite passed 4/4 and API TypeScript build passed in Docker. Full API suite remains partially blocked by test-image asset packaging and an unrelated hosted-paid test hang; no clean full-suite claim.
+- L12 (2026-10-15), user selected “revisar este cambio”. Gentle AI completed the exact high-risk three-lens review for T04 target `sha256:746d15f0290842aa80119da1e41109e1d2bb7bcdcfba65af11b2095a4a2b2cfb`; final capture approved and exact acknowledgement burned authority. One non-blocking `R3-001` WARNING at `services/api/src/level-test-attempts.ts:119` remains follow-up; no correction required.
