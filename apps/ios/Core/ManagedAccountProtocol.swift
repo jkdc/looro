@@ -58,7 +58,8 @@ public struct ManagedAccountConfiguration: Equatable, Sendable {
         let allowed = ["/v1/auth/challenge", "/v1/auth/exchange", "/v1/wallet", "/v1/auth/sign-out", "/v1/account",
                        // Pack commerce (Palique (tokens)): the catalog, order creation
                        // and status routes ride the same origin and session store.
-                       "/v1/minutes/products", "/v1/minutes/orders"]
+                       "/v1/minutes/products", "/v1/minutes/orders",
+                       "/v1/level-test-attempts/events", "/v1/level-test-attempts/sync"]
         guard allowed.contains(path), var c = URLComponents(url: origin, resolvingAgainstBaseURL: false)
         else { throw ManagedAccountError.unavailable }
         c.path = path

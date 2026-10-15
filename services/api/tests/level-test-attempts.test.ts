@@ -159,3 +159,77 @@ integration('attempt history pages are bounded and reject malformed cursors', as
     assert.equal(invalidCursor.statusCode, 400);
   } finally { await app.close(); }
 });
+
+integration('attempt events replay their original ACK and reject stale or altered retries', async () => {
+  const owner = await account(), other = await account(), snapshot = bundledSnapshot(), uploaded = attempt(snapshot);
+  const app = createApp({ db: db!, auth: {} });
+  try {
+    const headers = { authorization: owner.authorization };
+    const initial = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync', headers,
+      payload: { snapshots: [snapshot], attempts: [uploaded] } });
+    assert.equal(initial.statusCode, 200, initial.body);
+    const eventId = randomUUID();
+    const event = { eventId, attemptId: uploaded.attemptId, baseRevision: 1, revision: 2,
+      type: 'progress', payload: { questionId: snapshot.items[0]!.id, response: { value: 'answer' },
+        position: 2, updatedAt: '2026-10-07T12:01:00.000Z' } };
+    const send = (authorization: string, body: unknown) => app.inject({ method: 'POST',
+      url: '/v1/level-test-attempts/events', headers: { authorization }, payload: { events: [body] } });
+    const [accepted, replayed] = await Promise.all([
+      send(owner.authorization, event), send(owner.authorization, event),
+    ]);
+    assert.equal(accepted.statusCode, 200, accepted.body);
+    assert.equal(replayed.statusCode, 200, replayed.body);
+    assert.deepEqual(accepted.json().acks, [{ eventId, attemptId: uploaded.attemptId, revision: 2, status: 'accepted' }]);
+    assert.deepEqual(replayed.json(), accepted.json());
+
+    const changedReplay = await send(owner.authorization, { ...event, payload: { ...event.payload, position: 3 } });
+    assert.equal(changedReplay.statusCode, 409);
+    const staleCompetingEvent = await send(owner.authorization, { ...event, eventId: randomUUID(),
+      payload: { ...event.payload, position: 4 } });
+    assert.equal(staleCompetingEvent.statusCode, 409);
+    assert.equal(staleCompetingEvent.json().conflict.attempt.revision, 2);
+    const takeover = await send(owner.authorization, { eventId: randomUUID(), attemptId: uploaded.attemptId,
+      baseRevision: 2, revision: 3, type: 'takeover', payload: { updatedAt: '2026-10-07T12:02:00.000Z' } });
+    assert.equal(takeover.statusCode, 200, takeover.body);
+    const fork = { ...uploaded, attemptId: randomUUID(), revision: 2, position: 4,
+      answers: [{ questionId: snapshot.items[0]!.id, revision: 2, response: { value: 'local divergent edit' } }] };
+    const forked = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync', headers,
+      payload: { snapshots: [snapshot], attempts: [fork] } });
+    assert.equal(forked.statusCode, 200, forked.body);
+    const forkDetail = await app.inject({ method: 'GET', url: `/v1/level-test-attempts/${fork.attemptId}`, headers });
+    assert.deepEqual(forkDetail.json().attempt, fork);
+    const foreignReplay = await send(other.authorization, event);
+    assert.equal(foreignReplay.statusCode, 404);
+    const detail = await app.inject({ method: 'GET', url: `/v1/level-test-attempts/${uploaded.attemptId}`, headers });
+    assert.equal(detail.statusCode, 200);
+    assert.equal(detail.json().attempt.position, 2);
+    assert.equal(detail.json().attempt.revision, 3);
+    assert.equal(detail.json().attempt.answers.length, 1);
+  } finally { await app.close(); }
+});
+
+integration('completed attempts reject later answer events and completion is replay-safe', async () => {
+  const owner = await account(), snapshot = bundledSnapshot(), uploaded = attempt(snapshot);
+  const app = createApp({ db: db!, auth: {} });
+  try {
+    const headers = { authorization: owner.authorization };
+    const initial = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync', headers,
+      payload: { snapshots: [snapshot], attempts: [uploaded] } });
+    assert.equal(initial.statusCode, 200, initial.body);
+    const completion = { eventId: randomUUID(), attemptId: uploaded.attemptId, baseRevision: 1, revision: 2,
+      type: 'completed', payload: { result: { score: 80 }, completedAt: '2026-10-07T12:02:00.000Z' } };
+    const send = (event: unknown) => app.inject({ method: 'POST', url: '/v1/level-test-attempts/events', headers,
+      payload: { events: [event] } });
+    const accepted = await send(completion);
+    assert.equal(accepted.statusCode, 200, accepted.body);
+    assert.deepEqual((await send(completion)).json(), accepted.json());
+    const progress = { eventId: randomUUID(), attemptId: uploaded.attemptId, baseRevision: 2, revision: 3,
+      type: 'progress', payload: { questionId: snapshot.items[0]!.id, response: { value: 'later' },
+        position: 3, updatedAt: '2026-10-07T12:03:00.000Z' } };
+    const rejected = await send(progress);
+    assert.equal(rejected.statusCode, 409);
+    const detail = await app.inject({ method: 'GET', url: `/v1/level-test-attempts/${uploaded.attemptId}`, headers });
+    assert.equal(detail.json().attempt.state, 'completed');
+    assert.deepEqual(detail.json().attempt.result, { score: 80 });
+  } finally { await app.close(); }
+});

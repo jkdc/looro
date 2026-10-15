@@ -45,7 +45,7 @@ OUT = ROOT / ('apps/android/app/src/main/java/com/jkdc/app/'
               'data/SchemaData.kt')
 SWIFT_OUT = ROOT / 'apps/ios/Core/Database/SchemaData.swift'
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 5
 
 _PRAGMA_VERSION = re.compile(r'PRAGMA\s+user_version\s*=\s*(\d+)',
                              re.IGNORECASE)

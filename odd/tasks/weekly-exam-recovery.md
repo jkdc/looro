@@ -160,6 +160,93 @@ recorded below. Preparation is not completion; no task is checked at initializat
   Prove duplicate event retry, lost ACK, stale ACK with new edits, concurrent devices,
   immutable submitted answers/results, explicit takeover/fork resolution, owner isolation.
   Checks: API and platform state-machine tests with fake transport; DB transaction tests.
+
+### T05 implementation routing and scope ruling
+
+- Route: direct inline after the completed read-only T05 mapping. The API's T04
+  authenticated snapshot/attempt persistence, Android/iOS transactional outboxes,
+  and schema are already mapped; this is one cross-platform sync contract, not
+  independent write units. Keep code, tests, migration, and this record in its
+  work-unit commit. All build/test commands run inside Docker; do not run Swift
+  commands on Linux or claim iOS verification without macOS.
+- T04's batch endpoint remains initial immutable snapshot/attempt creation only.
+  T05 adds a dedicated event-sync contract: a stable event ID plus attempt ID,
+  base revision, new revision, event kind, and payload; the server atomically
+  records the event and conditionally applies its state transition. ACK is issued
+  only after commit and replay of the same event returns its original ACK; reusing
+  an event ID with different bytes is rejected. A stale base revision returns an
+  explicit conflict containing server-confirmed state; it never merges or applies
+  last-write-wins. A submitted result is immutable.
+- Local ACK handling is compare-and-set on event ID and revision: acknowledge only
+  the exact delivered event/revision, preserving later outbox rows. The client
+  exposes conflict resolution as explicit operations: continue from the confirmed
+  server revision (takeover) or fork the divergent local state into a new attempt;
+  no automatic reset, overwrite, or cross-account upload. Transport/session owner
+  must still match the attempt owner before draining.
+- T05 proof covers server transaction/replay/CAS/owner behavior and testable local
+  outbox ACK state transitions through fake transport. Android tests run in Docker;
+  Swift source/tests may be retained but cannot be reported verified in this Linux
+  environment. Any unresolved acceptance proof remains explicitly open.
+
+### T05 implementation progress (not closed)
+
+- Added migration `043_level_test_attempt_events.sql` and authenticated
+  `POST /v1/level-test-attempts/events`: one event per request; SHA-256 canonical
+  payload ledger, transaction-scoped event-ID advisory lock, commit-before-ACK,
+  byte-identical replay ACK, changed-payload rejection, revision CAS, confirmed
+  server branch on stale conflict, immutable completion, and explicit takeover
+  event. Divergent forks use a new attempt ID through T04's immutable creation API.
+- Android and Swift DAOs now list owner-scoped pending outbox events, ACK only an
+  exact attempt/event/revision under the matching account, preserve newer pending
+  edits, and mark conflicts. Local answer/completion mutations return owned attempts
+  to `pending` (anonymous attempts remain `local_only`). Android and iOS authenticated
+  HTTP clients expose the fixed event-sync endpoint; Android fake-transport test
+  covers endpoint/session/payload binding. API contract is in
+  `services/api/docs/level-test-attempt-sync.md`.
+- Android now drains outbox events on session restore/sign-in, preserves the owner
+  captured for the drain, verifies exact ACK identity/revision, and sends a local
+  fork as a new ID with its retained answers and frozen snapshot. Normal creation
+  remains revision 1 followed by ordered event delivery.
+- Independent high-risk verification reproduced two local defects and one missing
+  acceptance: a later conflict retained the old takeover resolution; JSON `null`
+  created a result row for an unfinished attempt; platform fork resolution was
+  absent. Corrected both DAO implementations. The explicit fork now supersedes old
+  pending source events transactionally; its Android end-to-end test verifies upload
+  without manual SQL repair. Android and Swift regression tests were added.
+- Independent bounded recheck passes all three blockers in a fresh scratch copy:
+  repeated takeover, nullable unfinished result, and fork upload without manual DB
+  repair. Android full JVM run with `--rerun-tasks` passes 693 tests (682 app + 11
+  engine-local); JUnit XML confirms 0 failures/errors/skips. Docker API checks pass:
+  typecheck, focused PostgreSQL suite 6/6, independent transaction probes 7/7, and
+  no-DB suite 506 tests (140 pass, 366 skipped, 0 fail). Python schema/export suite
+  passes 136/136; generated schema checks are clean at user_version 5. `git diff
+  --check` is clean. Swift tests were not run on Linux per explicit user constraint;
+  Swift source and tests remain unverified.
+- Implementation and acceptance proof are complete. Still open only: final task/mirror
+  reconciliation, work-unit commit, native risk assessment and any consented review
+  lifecycle. Keep the checklist open until those are observed.
+
+### T05 continuation ruling
+
+- Ruling: keep the local divergent attempt intact when a server CAS conflict arrives,
+  and persist the server-confirmed attempt as a separate conflict branch before
+  offering resolution. Explicit takeover adopts the server branch; explicit fork
+  preserves the local branch as a new attempt. This costs one bounded local conflict
+  record per attempt but prevents either branch from disappearing before a choice.
+- Ruling: the `created` outbox event uses T04's authenticated immutable `/sync`
+  endpoint with its frozen snapshot and initial attempt; only after that acceptance
+  is the exact creation row ACKed. Subsequent progress/completion events use T05's
+  event endpoint in revision order. This is necessary because the event endpoint
+  deliberately accepts only mutations of an already-created attempt.
+- Android and iOS authenticated clients now expose the fixed T04 initial-attempt
+  sync route as well as T05 event sync. Android's MockWebServer test verifies the
+  owner bearer, exact route, and one-snapshot/one-attempt envelope. This is a
+  transport seam only, not a production outbox drain or conflict-resolution flow.
+- Android client regression was observed RED before adding `syncExamAttempt`
+  (unresolved method), then the focused MockWebServer class passed 10/10 in the
+  pinned Docker test image. A concurrent first Gradle invocation held the shared
+  cache lock; after it exited, the focused run completed successfully. The Docker
+  `git diff --check` is clean. The full Android suite has not yet been rerun.
 - [ ] **T06 — Implement Android defensive fetch, cache, and frozen selection.**
   Phase P3; report §5, 9/T06. Files: proposed remote client/snapshot adapter/store.
   Prove total five-second deadline, propagated cancellation, invalid schemas/IDs/passages,
@@ -256,7 +343,8 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
 
 ## Progress, verification, and recovery handoff
 
-- Completed implementation tasks: **4/14** (T01–T04); **10/14 remain**.
+- Completed implementation tasks: **4/14** (T01–T04); **10/14 remain**. T05 is in
+  progress and remains unchecked pending the platform drain/conflict-resolution proof.
 - Latest work-unit commit: `2542ef0` (T04 private cloud attempts).
 - Measured committed authored total: **2005** changed lines (1441 through T02 + 564 T04; no generated changes).
   T02 includes the initial 376-line recovery document; generated changes: 0.

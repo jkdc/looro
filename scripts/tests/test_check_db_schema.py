@@ -28,7 +28,7 @@ class SchemaTest(unittest.TestCase):
         self.assertEqual([], check_db_schema.check_inventory(tables, indexes))
         self.assertTrue({
             'exam_snapshots', 'exam_snapshot_ids', 'exam_attempts',
-            'exam_answers', 'exam_results', 'exam_sync_outbox',
+            'exam_answers', 'exam_results', 'exam_sync_outbox', 'exam_sync_conflicts',
         }.issubset(tables))
 
     def test_unpinned_exam_snapshot_trigger_fails_contract(self):
@@ -45,7 +45,7 @@ class SchemaTest(unittest.TestCase):
     def test_exam_outbox_state_constraint_is_pinned(self):
         schema = check_db_schema.SCHEMA.read_text()
         mutated = schema.replace(
-            "CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged'))", "")
+            "CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged', 'superseded'))", "")
         self.assertNotEqual(schema, mutated)
         conn = check_db_schema.build_schema(mutated)
         issues = check_db_schema.check_constraints(conn, mutated)
@@ -116,7 +116,7 @@ class SchemaTest(unittest.TestCase):
         # (_segments/_segdir/_docsize/_stat — external content keeps no
         # _content, and _data would be FTS5-only) are pinned or skipped,
         # never inventory drift; the current learning-table count is sixteen.
-        self.assertEqual(16, len(tables))
+        self.assertEqual(17, len(tables))
         self.assertNotIn('fragments_fts', tables)
         self.assertTrue(check_db_schema.is_internal_table('fragments_fts'))
         for shadow in ('fragments_fts_segments', 'fragments_fts_segdir',

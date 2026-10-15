@@ -17,6 +17,7 @@ const SNAPSHOT_KEYS = new Set(['schemaVersion', 'languageID', 'level', 'version'
   'contentId', 'contentHash', 'contentRevision', 'gradingVersion', 'source', 'generationId']);
 const ATTEMPT_KEYS = new Set(['attemptId', 'examId', 'state', 'position', 'revision', 'startedAt',
   'updatedAt', 'completedAt', 'answers', 'result']);
+const EVENT_KEYS = new Set(['eventId', 'attemptId', 'baseRevision', 'revision', 'type', 'payload']);
 
 type Row = Record<string, any>;
 type SnapshotRecord = { exam: ExamSnapshot; content: Record<string, unknown>; metadata: Record<string, unknown> };
@@ -177,6 +178,83 @@ function parseLimit(value: unknown): number {
 
 function asISO(value: string | Date): string { return value instanceof Date ? value.toISOString() : new Date(value).toISOString(); }
 
+type AttemptEvent = { eventId: string; attemptId: string; baseRevision: number; revision: number;
+  type: 'progress' | 'completed' | 'takeover'; payload: Record<string, unknown> };
+
+function validateEvent(value: unknown): AttemptEvent {
+  if (!isRecord(value) || !exactKeys(value, EVENT_KEYS) || !UUID.test(value.eventId) || !UUID.test(value.attemptId) ||
+      !positiveInteger(value.baseRevision) || value.revision !== value.baseRevision + 1 ||
+      !['progress', 'completed', 'takeover'].includes(value.type) || !isRecord(value.payload))
+    throw new ServiceError('invalid_exam_event', 400);
+  const payload = value.payload;
+  if (value.type === 'progress') {
+    if (!exactKeys(payload, new Set(['questionId', 'response', 'position', 'updatedAt'])) ||
+        typeof payload.questionId !== 'string' || payload.questionId.length < 1 || payload.questionId.length > 128 ||
+        !isRecord(payload.response) || !nonNegativeInteger(payload.position) || payload.position > 1000 ||
+        !isoDate(payload.updatedAt)) throw new ServiceError('invalid_exam_event', 400);
+  } else if (value.type === 'completed' && (!exactKeys(payload, new Set(['result', 'completedAt'])) || !isRecord(payload.result) ||
+      !isoDate(payload.completedAt))) throw new ServiceError('invalid_exam_event', 400);
+  else if (value.type === 'takeover' && (!exactKeys(payload, new Set(['updatedAt'])) || !isoDate(payload.updatedAt)))
+    throw new ServiceError('invalid_exam_event', 400);
+  return value as AttemptEvent;
+}
+
+async function applyAttemptEvent(db: Database, accountID: string, event: AttemptEvent) {
+  const eventHash = createHash('sha256').update(stableJSON(event)).digest('hex');
+  return transaction(db, async sql => {
+    await sql.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [`${accountID}:${event.eventId}`]);
+    const priorEvent = (await sql.query(`SELECT event_hash,ack_json FROM level_test_attempt_events
+      WHERE account_id=$1 AND event_id=$2`, [accountID, event.eventId])).rows[0];
+    if (priorEvent) {
+      if (priorEvent.event_hash !== eventHash) return { status: 'event_conflict' as const };
+      return { status: 'accepted' as const, ack: priorEvent.ack_json };
+    }
+    const attemptRow = (await sql.query(`SELECT attempt_json FROM level_test_attempts
+      WHERE account_id=$1 AND attempt_id=$2 FOR UPDATE`, [accountID, event.attemptId])).rows[0];
+    if (!attemptRow) return { status: 'not_found' as const };
+    const current = attemptRow.attempt_json as Record<string, any>;
+    if (current.revision !== event.baseRevision) return { status: 'stale' as const, attempt: current };
+    if (current.state !== 'in_progress') return { status: 'stale' as const, attempt: current };
+
+    let updated: Record<string, any>;
+    if (event.type === 'progress') {
+      const snapshotRow = (await sql.query(`SELECT s.content_json FROM level_test_attempts a
+        JOIN level_test_attempt_snapshot_ids i ON i.account_id=a.account_id AND i.exam_id=a.exam_id
+        JOIN level_test_attempt_snapshots s ON s.account_id=i.account_id AND s.content_id=i.content_id
+        WHERE a.account_id=$1 AND a.attempt_id=$2`, [accountID, event.attemptId])).rows[0];
+      const snapshot = snapshotRow?.content_json as Record<string, any> | undefined;
+      if (!snapshot?.items?.some((item: Record<string, unknown>) => item.id === event.payload.questionId))
+        throw new ServiceError('invalid_exam_event', 400);
+      const answers = Array.isArray(current.answers) ? current.answers.filter((answer: Record<string, unknown>) =>
+        answer.questionId !== event.payload.questionId) : [];
+      answers.push({ questionId: event.payload.questionId, revision: event.revision, response: event.payload.response });
+      updated = { ...current, position: event.payload.position, revision: event.revision,
+        updatedAt: event.payload.updatedAt, answers };
+    } else if (event.type === 'completed') {
+      const completedAt = event.payload.completedAt as string;
+      if (new Date(completedAt) < new Date(current.startedAt)) throw new ServiceError('invalid_exam_event', 400);
+      updated = { ...current, state: 'completed', revision: event.revision, updatedAt: completedAt,
+        completedAt, result: event.payload.result };
+    } else {
+      const updatedAt = event.payload.updatedAt as string;
+      if (new Date(updatedAt) < new Date(current.updatedAt)) throw new ServiceError('invalid_exam_event', 400);
+      updated = { ...current, revision: event.revision, updatedAt };
+    }
+    const changed = await sql.query(`UPDATE level_test_attempts SET state=$3,position=$4,revision=$5,updated_at=$6,
+        completed_at=$7,answers=$8::jsonb,result=$9::jsonb,attempt_json=$10::jsonb
+      WHERE account_id=$1 AND attempt_id=$2 AND revision=$11 RETURNING attempt_id`,
+    [accountID, event.attemptId, updated.state, updated.position, updated.revision, updated.updatedAt,
+      updated.completedAt ?? null, JSON.stringify(updated.answers), updated.result == null ? null : JSON.stringify(updated.result),
+      JSON.stringify(updated), event.baseRevision]);
+    if (!changed.rowCount) return { status: 'stale' as const, attempt: current };
+    const ack = { eventId: event.eventId, attemptId: event.attemptId, revision: event.revision, status: 'accepted' };
+    await sql.query(`INSERT INTO level_test_attempt_events(account_id,event_id,attempt_id,revision,event_hash,ack_json)
+      VALUES($1,$2,$3,$4,$5,$6::jsonb)`, [accountID, event.eventId, event.attemptId, event.revision,
+      eventHash, JSON.stringify(ack)]);
+    return { status: 'accepted' as const, ack };
+  });
+}
+
 async function persistAttemptBatch(db: Database, accountID: string,
     batch: { snapshots: SnapshotRecord[]; attempts: Record<string, any>[] }): Promise<{ attemptId: string; revision: number }[]> {
   return transaction(db, async sql => {
@@ -243,6 +321,19 @@ export function registerLevelTestAttemptRoutes(app: FastifyInstance, db: Databas
     const batch = validateBatch(requestObject(request));
     const accepted = await persistAttemptBatch(db, accountID, batch);
     return { accepted };
+  });
+
+  app.post('/v1/level-test-attempts/events', { bodyLimit: MAX_BODY_BYTES }, async (request, reply) => {
+    const accountID = await authenticate(db, request.headers.authorization);
+    const body = requestObject(request);
+    if (!exactKeys(body, new Set(['events'])) || !Array.isArray(body.events) || body.events.length !== 1)
+      throw new ServiceError('invalid_request', 400);
+    const event = validateEvent(body.events[0]);
+    const result = await applyAttemptEvent(db, accountID, event);
+    if (result.status === 'not_found') throw new ServiceError('exam_attempt_not_found', 404);
+    if (result.status === 'stale') return reply.code(409).send({ error: 'exam_attempt_conflict', conflict: { attempt: result.attempt } });
+    if (result.status === 'event_conflict') throw new ServiceError('exam_event_conflict', 409);
+    return { acks: [result.ack] };
   });
 
   app.get('/v1/level-test-attempts', async request => {

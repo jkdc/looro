@@ -2,9 +2,17 @@ package com.jkdc.app.data
 
 import java.util.UUID
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.longOrNull
+import kotlinx.serialization.json.doubleOrNull
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.put
 
 /** Durable, device-local exam history. JSON payloads are immutable snapshots of
@@ -40,6 +48,211 @@ data class ExamHistory(
 
 /** Transactional persistence for the local-first exam lifecycle. */
 object ExamHistoryDao {
+    /** Returns only the authenticated owner's durable pending events, in revision order. */
+    fun pendingOutbox(db: SqlDatabase, ownerAccountID: String): List<Row> = db.query(
+        "SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
+            "WHERE a.owner_account_id = ? AND o.delivery_state = 'pending' " +
+            "ORDER BY o.created_at, o.attempt_id, o.revision", listOf(ownerAccountID)
+    )
+
+    /** Acknowledges exactly one server-confirmed event; newer edits remain pending. */
+    fun acknowledgeOutbox(db: SqlDatabase, ownerAccountID: String, attemptID: String,
+                         eventID: String, revision: Long, acknowledgedAt: Double): Boolean = db.transaction { tx ->
+        val event = tx.query("SELECT o.delivery_state FROM exam_sync_outbox o JOIN exam_attempts a " +
+            "ON a.attempt_id = o.attempt_id WHERE o.event_id = ? AND o.attempt_id = ? AND o.revision = ? " +
+            "AND a.owner_account_id = ?", listOf(eventID, attemptID, revision, ownerAccountID)).singleOrNull()
+            ?: return@transaction false
+        if (event.text("delivery_state") != "acknowledged") {
+            val changed = tx.update("UPDATE exam_sync_outbox SET delivery_state = 'acknowledged', acknowledged_at = ? " +
+                "WHERE event_id = ? AND attempt_id = ? AND revision = ? AND delivery_state IN ('pending','in_flight')",
+                listOf(acknowledgedAt, eventID, attemptID, revision))
+            if (changed != 1L) return@transaction false
+        }
+        tx.update("UPDATE exam_attempts SET sync_state = CASE WHEN EXISTS (" +
+                "SELECT 1 FROM exam_sync_outbox WHERE attempt_id = ? AND delivery_state IN ('pending','in_flight')" +
+            ") THEN 'pending' ELSE 'synced' END WHERE attempt_id = ? AND owner_account_id = ? AND sync_state != 'conflict'",
+            listOf(attemptID, attemptID, ownerAccountID))
+        true
+    }
+
+    /** Preserves the local branch by marking it conflicted; callers must persist the server version separately. */
+    fun markConflict(db: SqlDatabase, ownerAccountID: String, attemptID: String): Boolean = db.transaction { tx ->
+        tx.update("UPDATE exam_attempts SET sync_state = 'conflict' WHERE attempt_id = ? AND owner_account_id = ?",
+            listOf(attemptID, ownerAccountID)) == 1L
+    }
+
+    /** Stores the server branch beside a frozen copy of local state before exposing a conflict. */
+    fun persistConflict(db: SqlDatabase, ownerAccountID: String, attemptID: String,
+                        serverAttemptJSON: String, receivedAt: Double): Boolean = db.transaction { tx ->
+        val server = runCatching { Json.parseToJsonElement(serverAttemptJSON).jsonObject }.getOrNull() ?: return@transaction false
+        val serverID = server["attemptId"]?.jsonPrimitive?.contentOrNull
+        val serverRevision = server["revision"]?.jsonPrimitive?.intOrNull
+        if (serverID != attemptID || serverRevision == null || serverRevision < 1) return@transaction false
+        val attempt = tx.query("SELECT * FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ?",
+            listOf(attemptID, ownerAccountID)).singleOrNull() ?: return@transaction false
+        val localAnswers = tx.query("SELECT question_id, revision, response_json FROM exam_answers " +
+            "WHERE attempt_id = ? ORDER BY revision, question_id", listOf(attemptID)).map { row ->
+            buildJsonObject {
+                put("questionId", row.text("question_id")); put("revision", row.long("revision"))
+                put("response", Json.parseToJsonElement(row.text("response_json")))
+            }
+        }
+        val localResult = tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?", listOf(attemptID)).singleOrNull()
+        val local = buildJsonObject {
+            put("attempt", buildJsonObject {
+                put("attemptId", attemptID); put("examId", attempt.text("exam_id")); put("state", attempt.text("state"))
+                put("position", attempt.long("position")); put("revision", attempt.long("revision"))
+                put("startedAt", attempt.real("started_at")); put("updatedAt", attempt.real("updated_at"))
+                attempt.realOrNull("completed_at")?.let { put("completedAt", it) }
+            })
+            put("answers", kotlinx.serialization.json.JsonArray(localAnswers))
+            localResult?.let { put("result", Json.parseToJsonElement(it.text("result_json"))) }
+        }
+        val existing = tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND owner_account_id = ?",
+            listOf(attemptID, ownerAccountID)).isNotEmpty()
+        if (existing) {
+            tx.update("UPDATE exam_sync_conflicts SET server_revision = ?, server_attempt_json = ?, " +
+                "local_attempt_json = ?, received_at = ?, resolution = NULL, resolved_at = NULL " +
+                "WHERE attempt_id = ? AND owner_account_id = ?",
+                listOf(serverRevision, serverAttemptJSON, local.toString(), receivedAt, attemptID, ownerAccountID))
+        } else {
+            tx.insert("exam_sync_conflicts", mapOf("attempt_id" to attemptID, "owner_account_id" to ownerAccountID,
+                "server_revision" to serverRevision, "server_attempt_json" to serverAttemptJSON,
+                "local_attempt_json" to local.toString(), "received_at" to receivedAt))
+        }
+        tx.update("UPDATE exam_attempts SET sync_state = 'conflict' WHERE attempt_id = ? AND owner_account_id = ?",
+            listOf(attemptID, ownerAccountID)) == 1L
+    }
+
+    fun conflict(db: SqlDatabase, ownerAccountID: String, attemptID: String): Row? = db.query(
+        "SELECT * FROM exam_sync_conflicts WHERE attempt_id = ? AND owner_account_id = ?",
+        listOf(attemptID, ownerAccountID)).singleOrNull()
+
+    /** Explicitly adopts the confirmed server branch and queues a revision-guarded takeover event. */
+    fun resolveConflictTakeover(db: SqlDatabase, ownerAccountID: String, attemptID: String,
+                                resolvedAt: Double): Boolean = db.transaction { tx ->
+        val conflict = tx.query("SELECT server_attempt_json FROM exam_sync_conflicts " +
+            "WHERE attempt_id = ? AND owner_account_id = ? AND resolution IS NULL", listOf(attemptID, ownerAccountID)).singleOrNull()
+            ?: return@transaction false
+        val server = runCatching { Json.parseToJsonElement(conflict.text("server_attempt_json")).jsonObject }.getOrNull()
+            ?: return@transaction false
+        val serverID = server["attemptId"]?.jsonPrimitive?.contentOrNull
+        val examID = server["examId"]?.jsonPrimitive?.contentOrNull
+        val revision = server["revision"]?.jsonPrimitive?.longOrNull
+        val position = server["position"]?.jsonPrimitive?.intOrNull
+        val state = server["state"]?.jsonPrimitive?.contentOrNull
+        val startedAt = server["startedAt"]?.jsonPrimitive?.contentOrNull?.let(::parseISOSeconds)
+        val updatedAt = server["updatedAt"]?.jsonPrimitive?.contentOrNull?.let(::parseISOSeconds)
+        if (serverID != attemptID || examID.isNullOrBlank() || revision == null || revision < 1 || position == null || position < 0 ||
+            state !in setOf("in_progress", "completed") || startedAt == null || updatedAt == null) return@transaction false
+        val answers = server["answers"]?.jsonArray ?: return@transaction false
+        if (state == "completed" && server["result"] !is JsonObject) return@transaction false
+        val preparedAnswers = runCatching { answers.map { value ->
+            val answer = value.jsonObject
+            Triple(answer.getValue("questionId").jsonPrimitive.content,
+                answer.getValue("revision").jsonPrimitive.longOrNull ?: error("Missing answer revision"),
+                answer.getValue("response"))
+        } }.getOrNull() ?: return@transaction false
+        val completedAt = server["completedAt"]?.jsonPrimitive?.contentOrNull?.let(::parseISOSeconds)
+        if (state == "completed" && completedAt == null) return@transaction false
+        tx.update("UPDATE exam_sync_outbox SET delivery_state = 'superseded' WHERE attempt_id = ? " +
+            "AND delivery_state IN ('pending','in_flight')", listOf(attemptID))
+        tx.update("DELETE FROM exam_answers WHERE attempt_id = ?", listOf(attemptID))
+        tx.update("DELETE FROM exam_results WHERE attempt_id = ?", listOf(attemptID))
+        preparedAnswers.forEach { (questionID, answerRevision, response) ->
+            tx.insert("exam_answers", mapOf("attempt_id" to attemptID, "question_id" to questionID,
+                "revision" to answerRevision, "response_json" to response.toString(), "saved_at" to updatedAt))
+        }
+        (server["result"] as? JsonObject)?.let { result ->
+            tx.insert("exam_results", mapOf("attempt_id" to attemptID, "result_json" to result.toString(),
+                "recorded_at" to (completedAt ?: updatedAt)))
+        }
+        val syncState = if (state == "completed") "synced" else "pending"
+        val localRevision = if (state == "completed") revision else revision + 1
+        val updateSQL = if (completedAt == null) {
+            "UPDATE exam_attempts SET state = ?, sync_state = ?, position = ?, revision = ?, " +
+                "started_at = ?, updated_at = ?, completed_at = NULL WHERE attempt_id = ? AND owner_account_id = ?"
+        } else {
+            "UPDATE exam_attempts SET state = ?, sync_state = ?, position = ?, revision = ?, " +
+                "started_at = ?, updated_at = ?, completed_at = ? WHERE attempt_id = ? AND owner_account_id = ?"
+        }
+        val updateArgs = if (completedAt == null) listOf(state, syncState, position, localRevision,
+            startedAt, updatedAt, attemptID, ownerAccountID) else listOf(state, syncState, position, revision,
+            startedAt, updatedAt, completedAt, attemptID, ownerAccountID)
+        if (tx.update(updateSQL, updateArgs) != 1L)
+            return@transaction false
+        if (state == "in_progress") {
+            val eventAt = maxOf(resolvedAt, updatedAt)
+            enqueue(tx, attemptID, revision + 1, "takeover", buildJsonObject {
+                put("updatedAt", isoTimestamp(eventAt))
+            }.toString(), eventAt)
+        }
+        tx.update("UPDATE exam_sync_conflicts SET resolution = 'takeover', resolved_at = ? " +
+            "WHERE attempt_id = ? AND owner_account_id = ? AND resolution IS NULL", listOf(resolvedAt, attemptID, ownerAccountID)) == 1L
+    }
+
+    /** Forks the retained local conflict branch into a new immutable attempt identity. */
+    fun resolveConflictFork(db: SqlDatabase, ownerAccountID: String, attemptID: String,
+                            forkAttemptID: String, forkedAt: Double): Boolean = db.transaction { tx ->
+        if (forkAttemptID.isBlank() || forkAttemptID == attemptID) return@transaction false
+        val conflict = tx.query("SELECT local_attempt_json FROM exam_sync_conflicts WHERE attempt_id = ? " +
+            "AND owner_account_id = ? AND resolution IS NULL", listOf(attemptID, ownerAccountID)).singleOrNull()
+            ?: return@transaction false
+        val local = runCatching { Json.parseToJsonElement(conflict.text("local_attempt_json")).jsonObject }.getOrNull()
+            ?: return@transaction false
+        val old = local["attempt"]?.jsonObject ?: return@transaction false
+        val source = tx.query("SELECT a.*, i.content_id FROM exam_attempts a JOIN exam_snapshot_ids i " +
+            "ON i.exam_id = a.exam_id WHERE a.attempt_id = ? AND a.owner_account_id = ?",
+            listOf(attemptID, ownerAccountID)).singleOrNull() ?: return@transaction false
+        tx.update("UPDATE exam_sync_outbox SET delivery_state = 'superseded' WHERE attempt_id = ? " +
+            "AND delivery_state IN ('pending','in_flight')", listOf(attemptID))
+        val contentID = source.text("content_id")
+        val snapshot = tx.query("SELECT * FROM exam_snapshots WHERE content_id = ?", listOf(contentID)).singleOrNull()
+            ?: return@transaction false
+        val state = old["state"]?.jsonPrimitive?.contentOrNull ?: return@transaction false
+        if (state !in setOf("in_progress", "completed")) return@transaction false
+        val position = old["position"]?.jsonPrimitive?.intOrNull ?: return@transaction false
+        val completedAt = old["completedAt"]?.jsonPrimitive?.doubleOrNull
+        val result = local["result"] as? JsonObject
+        if (state == "completed" && (completedAt == null || result == null)) return@transaction false
+        val latest = (local["answers"] as? JsonArray).orEmpty().mapNotNull { value ->
+            runCatching { value.jsonObject }.getOrNull()
+        }.groupBy { it["questionId"]?.jsonPrimitive?.contentOrNull ?: return@transaction false }
+            .values.map { rows -> rows.maxBy { it["revision"]?.jsonPrimitive?.longOrNull ?: 0L } }
+        val preparedAnswers = latest.map { answer ->
+            val questionID = answer["questionId"]?.jsonPrimitive?.contentOrNull ?: return@transaction false
+            val response = answer["response"] ?: return@transaction false
+            questionID to response.toString()
+        }
+        val content = Json.parseToJsonElement(snapshot.text("content_json"))
+        val snapshotPayload = buildJsonObject {
+            content.jsonObject.forEach { (key, value) -> put(key, value) }
+            put("examId", source.text("exam_id")); put("contentId", contentID)
+            put("contentHash", snapshot.text("content_hash")); put("schemaVersion", snapshot.long("schema_version"))
+            put("contentRevision", snapshot.long("content_revision")); put("gradingVersion", snapshot.long("grading_version"))
+            put("source", snapshot.text("source")); put("languageID", snapshot.text("language_id"))
+            put("level", snapshot.text("level")); put("weekId", snapshot.long("week_id"))
+        }
+        val inserted = tx.insert("exam_attempts", mapOf("attempt_id" to forkAttemptID,
+            "exam_id" to source.text("exam_id"), "owner_account_id" to ownerAccountID, "state" to state,
+            "sync_state" to "pending", "position" to position, "revision" to 1,
+            "started_at" to source.real("started_at"), "updated_at" to forkedAt, "completed_at" to completedAt))
+        if (inserted == -1L) return@transaction false
+        preparedAnswers.forEach { (questionID, responseJSON) ->
+            tx.insert("exam_answers", mapOf("attempt_id" to forkAttemptID, "question_id" to questionID,
+                "revision" to 1, "response_json" to responseJSON, "saved_at" to forkedAt))
+        }
+        result?.let { tx.insert("exam_results", mapOf("attempt_id" to forkAttemptID,
+            "result_json" to it.toString(), "recorded_at" to (completedAt ?: forkedAt))) }
+        enqueue(tx, forkAttemptID, 1, "created", buildJsonObject {
+            put("attemptId", forkAttemptID); put("examId", source.text("exam_id")); put("snapshot", snapshotPayload)
+            put("forkedLocalState", true)
+        }.toString(), forkedAt)
+        check(tx.update("UPDATE exam_sync_conflicts SET resolution = 'fork', resolved_at = ? WHERE attempt_id = ? " +
+            "AND owner_account_id = ? AND resolution IS NULL", listOf(forkedAt, attemptID, ownerAccountID)) == 1L)
+        true
+    }
+
     fun start(db: SqlDatabase, snapshot: ExamSnapshotRecord, attempt: ExamAttemptRecord): ExamHistory {
         require(snapshot.schemaVersion > 0 && snapshot.contentRevision > 0 && snapshot.gradingVersion > 0)
         val snapshotContent = snapshot.contentJSON.parseJSONObject()
@@ -115,7 +328,8 @@ object ExamHistoryDao {
             val revision = attempt.long("revision") + 1
             tx.insert("exam_answers", mapOf("attempt_id" to attemptID, "question_id" to questionID,
                 "revision" to revision, "response_json" to responseJSON, "saved_at" to savedAt))
-            tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ? " +
+            tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ?, " +
+                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
                 listOf(position, revision, savedAt, attemptID, revision - 1))
             check(tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
@@ -146,7 +360,8 @@ object ExamHistoryDao {
             val revision = attempt.long("revision") + 1
             tx.insert("exam_results", mapOf("attempt_id" to attemptID,
                 "result_json" to resultJSON, "recorded_at" to completedAt))
-            tx.update("UPDATE exam_attempts SET state = 'completed', revision = ?, updated_at = ?, completed_at = ? " +
+            tx.update("UPDATE exam_attempts SET state = 'completed', revision = ?, updated_at = ?, completed_at = ?, " +
+                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
                 listOf(revision, completedAt, completedAt, attemptID, revision - 1))
             check(tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
@@ -190,4 +405,12 @@ object ExamHistoryDao {
 
     private fun String.parseJSONObject(): JsonObject = Json.parseToJsonElement(this) as? JsonObject
         ?: throw IllegalArgumentException("Exam history payload must be a JSON object")
+
+    private fun parseISOSeconds(value: String): Double? = runCatching {
+        java.time.Instant.parse(value).toEpochMilli() / 1000.0
+    }.getOrNull()
+
+    private fun isoTimestamp(seconds: Double): String = java.time.format.DateTimeFormatter
+        .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(java.time.ZoneOffset.UTC)
+        .format(java.time.Instant.ofEpochMilli((seconds * 1000).toLong()))
 }

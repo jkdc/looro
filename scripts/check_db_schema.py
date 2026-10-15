@@ -36,7 +36,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / 'shared/db/schema.sql'
 FIXTURES = ROOT / 'shared/fixtures/db/migration'
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 5
 
 # ---------------------------------------------------------------------------
 # Pinned inventory.
@@ -203,6 +203,16 @@ TABLES = {
         ('created_at', 'REAL', 1, 0, None),
         ('acknowledged_at', 'REAL', 0, 0, None),
     ],
+    'exam_sync_conflicts': [
+        ('attempt_id', 'TEXT', 0, 1, None),
+        ('owner_account_id', 'TEXT', 1, 0, None),
+        ('server_revision', 'INTEGER', 1, 0, None),
+        ('server_attempt_json', 'TEXT', 1, 0, None),
+        ('local_attempt_json', 'TEXT', 1, 0, None),
+        ('received_at', 'REAL', 1, 0, None),
+        ('resolution', 'TEXT', 0, 0, None),
+        ('resolved_at', 'REAL', 0, 0, None),
+    ],
 }
 
 # (name, table, columns) — explicitly created indexes only.
@@ -227,6 +237,7 @@ FOREIGN_KEYS = [
     ('exam_answers', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
     ('exam_results', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
     ('exam_sync_outbox', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
+    ('exam_sync_conflicts', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
 ]
 
 # (table or None for the schema source, required SQL substring) — asserted by
@@ -237,9 +248,11 @@ REQUIRED_CONSTRAINTS = [
     ('exam_snapshots', "CHECK (source IN ('bundled', 'deterministic', 'llm'))"),
     ('exam_attempts', "CHECK (state IN ('in_progress', 'completed'))"),
     ('exam_attempts', "CHECK (sync_state IN ('local_only', 'pending', 'synced', 'conflict'))"),
-    ('exam_sync_outbox', "CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged'))"),
-    ('exam_sync_outbox', 'UNIQUE (attempt_id, revision)'),
-    (None, 'PRAGMA user_version = 3;'),
+    ('exam_sync_outbox', "CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged', 'superseded'))"),
+    ('exam_sync_outbox', "CHECK (event_type IN ('created', 'progress', 'completed', 'takeover'))"),
+    ('exam_sync_conflicts', 'CHECK (server_revision > 0)'),
+    ('exam_sync_conflicts', "CHECK (resolution IS NULL OR resolution IN ('takeover', 'fork'))"),
+    (None, 'PRAGMA user_version = 5;'),
 ]
 
 # ---------------------------------------------------------------------------

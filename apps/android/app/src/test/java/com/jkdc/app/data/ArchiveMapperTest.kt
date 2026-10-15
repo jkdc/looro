@@ -97,7 +97,7 @@ class ArchiveMapperTest {
     @Test fun importMatchesThePinnedExpectedRowCounts() {
         val expected = Json.parseToJsonElement(fixture("case-basic.expected.json"))
             .jsonObject.getValue("tables").jsonObject
-        assertEquals(16, expected.size)
+        assertEquals(17, expected.size)
         ArchiveMapper.import(ArchiveCodec.decode(fixture("case-basic.json")), db)
         expected.forEach { (table, rowCount) ->
             assertEquals("row count of $table", rowCount.jsonPrimitive.long,

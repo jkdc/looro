@@ -15,7 +15,8 @@
     "exam_attempts": 0,
     "exam_answers": 0,
     "exam_results": 0,
-    "exam_sync_outbox": 0
+    "exam_sync_outbox": 0,
+    "exam_sync_conflicts": 0
   },
   "invariants": [
     "a freshly created archive yields exactly one meta row ('schema_flags') and one preferences row",

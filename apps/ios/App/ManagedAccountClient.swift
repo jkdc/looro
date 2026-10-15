@@ -100,6 +100,21 @@ struct ManagedAccountClient {
         return packs
     }
 
+    /// Uploads one already-persisted exam outbox event using the owning account session.
+    func syncExamEvent(session: ManagedAccountSession, eventEnvelope: Data) async throws -> Data {
+        guard !eventEnvelope.isEmpty, eventEnvelope.count <= 256_000 else { throw ManagedAccountError.invalidResponse }
+        return try await sendData(try configuration.endpoint("/v1/level-test-attempts/events"),
+                                  method: "POST", rawBody: eventEnvelope, session: session,
+                                  preserveExamConflict: true)
+    }
+
+    /// Creates a frozen snapshot and initial attempt before revision events are sent.
+    func syncExamAttempt(session: ManagedAccountSession, requestEnvelope: Data) async throws -> Data {
+        guard !requestEnvelope.isEmpty, requestEnvelope.count <= 256_000 else { throw ManagedAccountError.invalidResponse }
+        return try await sendData(try configuration.endpoint("/v1/level-test-attempts/sync"),
+                                  method: "POST", rawBody: requestEnvelope, session: session)
+    }
+
     /// `POST /v1/minutes/orders` for a pack SKU on the Stripe channel: the quoted
     /// order constants are re-validated against the same invariants as the
     /// catalog AND against the catalog entry the learner chose (mirror of
@@ -181,10 +196,15 @@ struct ManagedAccountClient {
         try await sendData(try configuration.endpoint(path, query: query ?? [:]), method: method, session: session)
     }
 
-    private func sendData(_ url: URL, method: String, body: [String: String]? = nil,
-                          session: ManagedAccountSession? = nil, idempotencyKey: String? = nil) async throws -> Data {
+    private func sendData(_ url: URL, method: String, body: [String: String]? = nil, rawBody: Data? = nil,
+                          session: ManagedAccountSession? = nil, idempotencyKey: String? = nil,
+                          preserveExamConflict: Bool = false) async throws -> Data {
         var request = URLRequest(url: url)
         request.httpMethod = method; request.setValue("application/json", forHTTPHeaderField: "Accept")
+        if let rawBody {
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = rawBody
+        }
         if let body {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = try JSONEncoder().encode(body)
@@ -196,6 +216,12 @@ struct ManagedAccountClient {
         }
         let (data, response) = try await http.send(request)
         guard (200...299).contains(response.statusCode) else {
+            if preserveExamConflict, response.statusCode == 409,
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               json["error"] as? String == "exam_attempt_conflict",
+               let conflict = json["conflict"] as? [String: Any], conflict["attempt"] is [String: Any] {
+                return data
+            }
             // A 401 means the bearer died (expiry, revocation, remote sign-out):
             // surface sign_in_required directly — the safe-code allowlist does
             // not carry it, and stale-session sweeps depend on the exact code.

@@ -14,22 +14,23 @@ class SplitTest(unittest.TestCase):
 
     def test_schema_splits_into_pinned_statements(self):
         # 14 v1 tables/indexes + PRAGMA v1 + the 6 v2 statements + PRAGMA v2
-        # + the 10 v3 objects + PRAGMA v3.
-        self.assertEqual(33, len(self.statements))
+        # + the 10 v3 objects + PRAGMA v3 + conflict table v4 + PRAGMA v4
+        # + eight v5 outbox migration statements + PRAGMA v5.
+        self.assertEqual(44, len(self.statements))
         self.assertTrue(self.statements[0].startswith('CREATE TABLE meta'))
         self.assertEqual('PRAGMA user_version = 1', self.statements[14])
         self.assertEqual('PRAGMA user_version = 2', self.statements[21])
-        self.assertEqual('PRAGMA user_version = 3', self.statements[-1])
+        self.assertEqual('PRAGMA user_version = 5', self.statements[-1])
         self.assertEqual([], [s for s in self.statements if s.rstrip().endswith(';')])
 
-    def test_v3_exam_attempt_tables_exist_in_a_fresh_schema(self):
+    def test_v5_exam_attempt_tables_exist_in_a_fresh_schema(self):
         conn = export_db_schema.smoke_test(self.statements)
         tables = {row[0] for row in conn.execute(
             "SELECT name FROM sqlite_master WHERE type = 'table'")}
-        self.assertEqual(3, conn.execute('PRAGMA user_version').fetchone()[0])
+        self.assertEqual(5, conn.execute('PRAGMA user_version').fetchone()[0])
         self.assertTrue({
             'exam_snapshots', 'exam_snapshot_ids', 'exam_attempts', 'exam_answers',
-            'exam_results', 'exam_sync_outbox',
+            'exam_results', 'exam_sync_outbox', 'exam_sync_conflicts',
         }.issubset(tables))
 
     def test_every_pinned_statement_is_accounted_for(self):
@@ -42,6 +43,7 @@ class SplitTest(unittest.TestCase):
                        'CREATE TABLE exam_snapshots', 'CREATE TABLE exam_snapshot_ids',
                        'CREATE TABLE exam_attempts', 'CREATE TABLE exam_answers',
                        'CREATE TABLE exam_results', 'CREATE TABLE exam_sync_outbox',
+                       'CREATE TABLE exam_sync_conflicts',
                        'CREATE INDEX fragments_session', 'CREATE INDEX expressions_due',
                        'CREATE INDEX completions_lang', 'CREATE INDEX outbox_pending',
                        'CREATE INDEX exam_attempts_owner_updated',
@@ -65,13 +67,17 @@ class SplitTest(unittest.TestCase):
 
     def test_version_deltas_split_at_the_pragmas(self):
         deltas = export_db_schema.version_deltas(self.statements)
-        self.assertEqual([2, 3], sorted(deltas))
+        self.assertEqual([2, 3, 4, 5], sorted(deltas))
         self.assertEqual(6, len(deltas[2]))
         self.assertTrue(deltas[2][0].startswith('CREATE VIRTUAL TABLE fragments_fts'))
         self.assertEqual(4, sum(1 for s in deltas[2] if s.startswith('CREATE TRIGGER')))
         self.assertTrue(deltas[2][-1].startswith("INSERT INTO fragments_fts"))
         self.assertEqual(10, len(deltas[3]))
         self.assertTrue(deltas[3][0].startswith('CREATE TABLE exam_snapshots'))
+        self.assertEqual(1, len(deltas[4]))
+        self.assertTrue(deltas[4][0].startswith('CREATE TABLE exam_sync_conflicts'))
+        self.assertEqual(8, len(deltas[5]))
+        self.assertTrue(deltas[5][0].startswith('DROP INDEX exam_sync_outbox_pending'))
         # no migration PRAGMA rides along: openers set versions transactionally
         self.assertEqual([], [s for s in deltas[2] if s.startswith('PRAGMA')])
         self.assertEqual([], [s for s in deltas[3] if s.startswith('PRAGMA')])
@@ -124,8 +130,8 @@ class KotlinTest(unittest.TestCase):
         self.assertIn('package com.jkdc.app.data', source)
         self.assertIn('object SchemaData', source)
         self.assertIn('val LEARNING_SCHEMA_STATEMENTS: List<String> = listOf(', source)
-        self.assertIn('const val SCHEMA_VERSION = 3', source)
-        self.assertIn('"PRAGMA user_version = 3"', source)
+        self.assertIn('const val SCHEMA_VERSION = 5', source)
+        self.assertIn('"PRAGMA user_version = 5"', source)
         self.assertIn('val SCHEMA_UPGRADES: Map<Int, List<String>> = mapOf(', source)
         self.assertIn('2 to listOf(', source)
         self.assertIn('3 to listOf(', source)
@@ -143,9 +149,9 @@ class SwiftTest(unittest.TestCase):
             statements, export_db_schema.version_deltas(statements))
         self.assertIn('public enum SchemaData', source)
         self.assertIn('public static let learningSchemaStatements: [String] = [', source)
-        self.assertIn('public static let schemaVersion = 3', source)
+        self.assertIn('public static let schemaVersion = 5', source)
         self.assertIn('public static let schemaUpgrades: [Int: [String]] = [', source)
-        self.assertIn('"PRAGMA user_version = 3"', source)
+        self.assertIn('"PRAGMA user_version = 5"', source)
         # the Kotlin and Swift literals carry exactly the same statements
         kotlin = export_db_schema.generate_kotlin(
             statements, export_db_schema.version_deltas(statements))

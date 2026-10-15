@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Looro/Palique — canonical learning database, schema v3
+-- Looro/Palique — canonical learning database, schema v5
 -- ===========================================================================
 
 -- Version history
@@ -18,7 +18,7 @@
 --       backfilled because their original questions and answers are unavailable.
 --
 -- Fresh databases run every statement below in order and end at
--- PRAGMA user_version = 3. Openers upgrade an existing database by applying
+-- PRAGMA user_version = 4. Openers upgrade an existing database by applying
 -- only the statements between its own user_version's PRAGMA and the next
 -- one (see the v2 block's own comment), then setting user_version.
 --
@@ -35,8 +35,8 @@
 --   - iOS: GRDB
 -- Therefore it uses only portable SQL: no STRICT tables, no generated
 -- columns, no RETURNING, no WITHOUT ROWID. Openers run it once when
--- `PRAGMA user_version` is 0 and must then find it set to 3 (the script
--- ends with `PRAGMA user_version = 3;`).
+-- `PRAGMA user_version` is 0 and must then find it set to 5 (the script
+-- ends with `PRAGMA user_version = 4;`).
 --
 -- Conventions
 -- -----------
@@ -377,13 +377,12 @@ CREATE TABLE exam_sync_outbox (
     event_id        TEXT PRIMARY KEY,
     attempt_id      TEXT NOT NULL REFERENCES exam_attempts(attempt_id) ON DELETE CASCADE,
     revision        INTEGER NOT NULL CHECK (revision > 0),
-    event_type      TEXT NOT NULL CHECK (event_type IN ('created', 'progress', 'completed')),
+    event_type      TEXT NOT NULL CHECK (event_type IN ('created', 'progress', 'completed', 'takeover')),
     payload_json    TEXT NOT NULL,
     delivery_state  TEXT NOT NULL DEFAULT 'pending'
-        CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged')),
+        CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged', 'superseded')),
     created_at      REAL NOT NULL,
     acknowledged_at REAL NULL,
-    UNIQUE (attempt_id, revision),
     CHECK ((delivery_state = 'acknowledged' AND acknowledged_at IS NOT NULL) OR
            (delivery_state != 'acknowledged' AND acknowledged_at IS NULL))
 );
@@ -399,3 +398,45 @@ CREATE TRIGGER exam_snapshot_ids_no_update BEFORE UPDATE ON exam_snapshot_ids BE
 END;
 
 PRAGMA user_version = 3;
+
+-- ===========================================================================
+-- v4 — persist both branches while an account-owned sync conflict is unresolved
+-- ===========================================================================
+
+CREATE TABLE exam_sync_conflicts (
+    attempt_id          TEXT PRIMARY KEY REFERENCES exam_attempts(attempt_id) ON DELETE CASCADE,
+    owner_account_id    TEXT NOT NULL,
+    server_revision     INTEGER NOT NULL CHECK (server_revision > 0),
+    server_attempt_json TEXT NOT NULL,
+    local_attempt_json  TEXT NOT NULL,
+    received_at         REAL NOT NULL
+);
+
+PRAGMA user_version = 4;
+
+-- ===========================================================================
+-- v5 — allow explicit branch takeover and retire obsolete local events honestly
+-- ===========================================================================
+
+DROP INDEX exam_sync_outbox_pending;
+ALTER TABLE exam_sync_outbox RENAME TO exam_sync_outbox_v4;
+CREATE TABLE exam_sync_outbox (
+    event_id        TEXT PRIMARY KEY,
+    attempt_id      TEXT NOT NULL REFERENCES exam_attempts(attempt_id) ON DELETE CASCADE,
+    revision        INTEGER NOT NULL CHECK (revision > 0),
+    event_type      TEXT NOT NULL CHECK (event_type IN ('created', 'progress', 'completed', 'takeover')),
+    payload_json    TEXT NOT NULL,
+    delivery_state  TEXT NOT NULL DEFAULT 'pending'
+        CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged', 'superseded')),
+    created_at      REAL NOT NULL,
+    acknowledged_at REAL NULL,
+    CHECK ((delivery_state = 'acknowledged' AND acknowledged_at IS NOT NULL) OR
+           (delivery_state != 'acknowledged' AND acknowledged_at IS NULL))
+);
+INSERT INTO exam_sync_outbox SELECT * FROM exam_sync_outbox_v4;
+DROP TABLE exam_sync_outbox_v4;
+CREATE INDEX exam_sync_outbox_pending ON exam_sync_outbox(delivery_state, created_at);
+ALTER TABLE exam_sync_conflicts ADD COLUMN resolution TEXT NULL
+    CHECK (resolution IS NULL OR resolution IN ('takeover', 'fork'));
+ALTER TABLE exam_sync_conflicts ADD COLUMN resolved_at REAL NULL;
+PRAGMA user_version = 5;
