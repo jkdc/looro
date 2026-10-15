@@ -17,7 +17,7 @@ import kotlinx.serialization.json.*
 class ExamAttemptOutboxSync(
     private val sendCreation: suspend (AccountSession, JsonObject, JsonObject) -> JsonObject,
     private val sendEvent: suspend (AccountSession, JsonObject) -> JsonObject,
-    private val acknowledge: (String, String, String, Long, Double) -> Boolean,
+    private val acknowledge: (String, String, String, Long, Long, Double) -> Boolean,
     private val conflict: (String, String, String, Double) -> Boolean,
 ) {
     suspend fun drain(db: SqlDatabase, session: AccountSession, now: () -> Double = { System.currentTimeMillis() / 1000.0 }) {
@@ -26,9 +26,16 @@ class ExamAttemptOutboxSync(
             val attemptID = event.text("attempt_id")
             val eventID = event.text("event_id")
             val revision = event.long("revision")
+            val stillPending = db.query("SELECT o.delivery_state FROM exam_sync_outbox o JOIN exam_attempts a " +
+                "ON a.attempt_id = o.attempt_id WHERE o.event_id = ? AND o.attempt_id = ? AND o.revision = ? " +
+                "AND a.owner_account_id = ?", listOf(eventID, attemptID, revision, session.accountID))
+                .singleOrNull()?.text("delivery_state") == "pending"
+            if (!stillPending) continue
             val eventTime = event.real("created_at")
+            var acceptedAttemptRevision = revision
             val result = if (event.text("event_type") == "created") {
                 val (snapshot, attempt) = initialPayload(db, event)
+                acceptedAttemptRevision = attempt["revision"]?.jsonPrimitive?.longOrNull ?: return
                 sendCreation(session, snapshot, attempt)
             } else {
                 val parsed = Json.parseToJsonElement(event.text("payload_json")).jsonObject
@@ -54,7 +61,7 @@ class ExamAttemptOutboxSync(
                 result["accepted"]?.jsonArray?.any { value ->
                     val accepted = value.jsonObject
                     accepted["attemptId"]?.jsonPrimitive?.content == attemptID &&
-                        accepted["revision"]?.jsonPrimitive?.longOrNull == revision
+                        accepted["revision"]?.jsonPrimitive?.longOrNull == acceptedAttemptRevision
                 } == true
             } else {
                 val returnedConflict = result["conflict"]?.jsonObject?.get("attempt") as? JsonObject
@@ -70,7 +77,8 @@ class ExamAttemptOutboxSync(
                         ack["status"]?.jsonPrimitive?.content == "accepted"
                 } == true
             }
-            if (!confirmed || !acknowledge(session.accountID, attemptID, eventID, revision, now())) return
+            if (!confirmed || !acknowledge(session.accountID, attemptID, eventID, revision,
+                    acceptedAttemptRevision, now())) return
         }
     }
 
@@ -79,6 +87,11 @@ class ExamAttemptOutboxSync(
         val forkedLocalState = runCatching {
             Json.parseToJsonElement(event.text("payload_json")).jsonObject["forkedLocalState"]?.jsonPrimitive?.booleanOrNull == true
         }.getOrDefault(false)
+        if (forkedLocalState) {
+            val payload = Json.parseToJsonElement(event.text("payload_json")).jsonObject
+            val snapshot = payload.getValue("snapshot").jsonObject
+            payload["initialAttempt"]?.jsonObject?.let { return snapshot to it }
+        }
         val attempt = db.query("SELECT a.*, i.content_id FROM exam_attempts a " +
             "JOIN exam_snapshot_ids i ON i.exam_id = a.exam_id WHERE a.attempt_id = ?", listOf(attemptID)).single()
         val snapshot = db.query("SELECT * FROM exam_snapshots WHERE content_id = ?", listOf(attempt.text("content_id"))).single()

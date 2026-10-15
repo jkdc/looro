@@ -31,9 +31,9 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
     private val examOutboxSync = ExamAttemptOutboxSync(
         sendCreation = { session, snapshot, attempt -> accountClient!!.syncExamAttempt(session, snapshot, attempt) },
         sendEvent = { session, event -> accountClient!!.syncExamEvent(session, event) },
-        acknowledge = { owner, attempt, event, revision, at ->
+        acknowledge = { owner, attempt, event, revision, acceptedRevision, at ->
             val db = LearningDb.open(application)
-            try { ExamHistoryDao.acknowledgeOutbox(db, owner, attempt, event, revision, at) }
+            try { ExamHistoryDao.acknowledgeOutbox(db, owner, attempt, event, revision, at, acceptedRevision) }
             finally { db.close() }
         },
         conflict = { owner, attempt, server, at ->

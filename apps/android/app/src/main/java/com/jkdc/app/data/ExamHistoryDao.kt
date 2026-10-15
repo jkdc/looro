@@ -52,21 +52,38 @@ object ExamHistoryDao {
     fun pendingOutbox(db: SqlDatabase, ownerAccountID: String): List<Row> = db.query(
         "SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
             "WHERE a.owner_account_id = ? AND o.delivery_state = 'pending' " +
-            "ORDER BY o.created_at, o.attempt_id, o.revision", listOf(ownerAccountID)
+            "ORDER BY o.attempt_id, o.revision", listOf(ownerAccountID)
     )
 
     /** Acknowledges exactly one server-confirmed event; newer edits remain pending. */
     fun acknowledgeOutbox(db: SqlDatabase, ownerAccountID: String, attemptID: String,
-                         eventID: String, revision: Long, acknowledgedAt: Double): Boolean = db.transaction { tx ->
-        val event = tx.query("SELECT o.delivery_state FROM exam_sync_outbox o JOIN exam_attempts a " +
+                         eventID: String, revision: Long, acknowledgedAt: Double,
+                         acceptedAttemptRevision: Long = revision): Boolean = db.transaction { tx ->
+        val event = tx.query("SELECT o.delivery_state, o.event_type FROM exam_sync_outbox o JOIN exam_attempts a " +
             "ON a.attempt_id = o.attempt_id WHERE o.event_id = ? AND o.attempt_id = ? AND o.revision = ? " +
             "AND a.owner_account_id = ?", listOf(eventID, attemptID, revision, ownerAccountID)).singleOrNull()
             ?: return@transaction false
+        if (acceptedAttemptRevision < revision ||
+            (acceptedAttemptRevision > revision && event.text("event_type") != "created")) return@transaction false
+        val currentRevision = tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ?",
+            listOf(attemptID, ownerAccountID)).singleOrNull()?.long("revision") ?: return@transaction false
+        if (acceptedAttemptRevision > currentRevision) return@transaction false
         if (event.text("delivery_state") != "acknowledged") {
-            val changed = tx.update("UPDATE exam_sync_outbox SET delivery_state = 'acknowledged', acknowledged_at = ? " +
+            tx.update("UPDATE exam_sync_outbox SET delivery_state = 'acknowledged', acknowledged_at = ? " +
                 "WHERE event_id = ? AND attempt_id = ? AND revision = ? AND delivery_state IN ('pending','in_flight')",
                 listOf(acknowledgedAt, eventID, attemptID, revision))
-            if (changed != 1L) return@transaction false
+            val acknowledged = tx.query("SELECT 1 AS found FROM exam_sync_outbox WHERE event_id = ? AND attempt_id = ? " +
+                "AND revision = ? AND delivery_state = 'acknowledged'", listOf(eventID, attemptID, revision)).isNotEmpty()
+            if (!acknowledged) return@transaction false
+        }
+        if (acceptedAttemptRevision > revision) {
+            tx.update("UPDATE exam_sync_outbox SET delivery_state = 'superseded' WHERE attempt_id = ? " +
+                "AND event_id != ? AND revision > ? AND revision <= ? AND delivery_state IN ('pending','in_flight')",
+                listOf(attemptID, eventID, revision, acceptedAttemptRevision))
+            val coveredPending = tx.query("SELECT 1 AS found FROM exam_sync_outbox WHERE attempt_id = ? " +
+                "AND revision > ? AND revision <= ? AND delivery_state IN ('pending','in_flight')",
+                listOf(attemptID, revision, acceptedAttemptRevision)).isNotEmpty()
+            if (coveredPending) return@transaction false
         }
         tx.update("UPDATE exam_attempts SET sync_state = CASE WHEN EXISTS (" +
                 "SELECT 1 FROM exam_sync_outbox WHERE attempt_id = ? AND delivery_state IN ('pending','in_flight')" +
@@ -78,7 +95,9 @@ object ExamHistoryDao {
     /** Preserves the local branch by marking it conflicted; callers must persist the server version separately. */
     fun markConflict(db: SqlDatabase, ownerAccountID: String, attemptID: String): Boolean = db.transaction { tx ->
         tx.update("UPDATE exam_attempts SET sync_state = 'conflict' WHERE attempt_id = ? AND owner_account_id = ?",
-            listOf(attemptID, ownerAccountID)) == 1L
+            listOf(attemptID, ownerAccountID))
+        tx.query("SELECT 1 AS found FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ? AND sync_state = 'conflict'",
+            listOf(attemptID, ownerAccountID)).isNotEmpty()
     }
 
     /** Stores the server branch beside a frozen copy of local state before exposing a conflict. */
@@ -121,7 +140,9 @@ object ExamHistoryDao {
                 "local_attempt_json" to local.toString(), "received_at" to receivedAt))
         }
         tx.update("UPDATE exam_attempts SET sync_state = 'conflict' WHERE attempt_id = ? AND owner_account_id = ?",
-            listOf(attemptID, ownerAccountID)) == 1L
+            listOf(attemptID, ownerAccountID))
+        tx.query("SELECT 1 AS found FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ? AND sync_state = 'conflict'",
+            listOf(attemptID, ownerAccountID)).isNotEmpty()
     }
 
     fun conflict(db: SqlDatabase, ownerAccountID: String, attemptID: String): Row? = db.query(
@@ -179,7 +200,10 @@ object ExamHistoryDao {
         val updateArgs = if (completedAt == null) listOf(state, syncState, position, localRevision,
             startedAt, updatedAt, attemptID, ownerAccountID) else listOf(state, syncState, position, revision,
             startedAt, updatedAt, completedAt, attemptID, ownerAccountID)
-        if (tx.update(updateSQL, updateArgs) != 1L)
+        tx.update(updateSQL, updateArgs)
+        val storedRevision = tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ? AND owner_account_id = ? " +
+            "AND state = ?", listOf(attemptID, ownerAccountID, state)).singleOrNull()?.long("revision")
+        if (storedRevision != localRevision)
             return@transaction false
         if (state == "in_progress") {
             val eventAt = maxOf(resolvedAt, updatedAt)
@@ -188,7 +212,9 @@ object ExamHistoryDao {
             }.toString(), eventAt)
         }
         tx.update("UPDATE exam_sync_conflicts SET resolution = 'takeover', resolved_at = ? " +
-            "WHERE attempt_id = ? AND owner_account_id = ? AND resolution IS NULL", listOf(resolvedAt, attemptID, ownerAccountID)) == 1L
+            "WHERE attempt_id = ? AND owner_account_id = ? AND resolution IS NULL", listOf(resolvedAt, attemptID, ownerAccountID))
+        tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND owner_account_id = ? AND resolution = 'takeover'",
+            listOf(attemptID, ownerAccountID)).isNotEmpty()
     }
 
     /** Forks the retained local conflict branch into a new immutable attempt identity. */
@@ -233,6 +259,19 @@ object ExamHistoryDao {
             put("source", snapshot.text("source")); put("languageID", snapshot.text("language_id"))
             put("level", snapshot.text("level")); put("weekId", snapshot.long("week_id"))
         }
+        val initialAttemptPayload = buildJsonObject {
+            put("attemptId", forkAttemptID); put("examId", source.text("exam_id")); put("state", state)
+            put("position", position); put("revision", 1)
+            put("startedAt", isoTimestamp(source.real("started_at"))); put("updatedAt", isoTimestamp(forkedAt))
+            completedAt?.let { put("completedAt", isoTimestamp(it)) }
+            put("answers", JsonArray(preparedAnswers.map { (questionID, responseJSON) ->
+                buildJsonObject {
+                    put("questionId", questionID); put("revision", 1)
+                    put("response", Json.parseToJsonElement(responseJSON))
+                }
+            }))
+            result?.let { put("result", it) }
+        }
         val inserted = tx.insert("exam_attempts", mapOf("attempt_id" to forkAttemptID,
             "exam_id" to source.text("exam_id"), "owner_account_id" to ownerAccountID, "state" to state,
             "sync_state" to "pending", "position" to position, "revision" to 1,
@@ -246,10 +285,12 @@ object ExamHistoryDao {
             "result_json" to it.toString(), "recorded_at" to (completedAt ?: forkedAt))) }
         enqueue(tx, forkAttemptID, 1, "created", buildJsonObject {
             put("attemptId", forkAttemptID); put("examId", source.text("exam_id")); put("snapshot", snapshotPayload)
-            put("forkedLocalState", true)
+            put("forkedLocalState", true); put("initialAttempt", initialAttemptPayload)
         }.toString(), forkedAt)
-        check(tx.update("UPDATE exam_sync_conflicts SET resolution = 'fork', resolved_at = ? WHERE attempt_id = ? " +
-            "AND owner_account_id = ? AND resolution IS NULL", listOf(forkedAt, attemptID, ownerAccountID)) == 1L)
+        tx.update("UPDATE exam_sync_conflicts SET resolution = 'fork', resolved_at = ? WHERE attempt_id = ? " +
+            "AND owner_account_id = ? AND resolution IS NULL", listOf(forkedAt, attemptID, ownerAccountID))
+        check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND owner_account_id = ? " +
+            "AND resolution = 'fork'", listOf(attemptID, ownerAccountID)).isNotEmpty())
         true
     }
 

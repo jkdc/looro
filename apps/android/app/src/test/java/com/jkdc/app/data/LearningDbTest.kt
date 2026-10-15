@@ -224,6 +224,38 @@ class LearningDbTest {
         assertEquals("conflict", db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = 'attempt-sync'").single().text("sync_state"))
     }
 
+    @Test fun examSyncDaoDoesNotDependOnAndroidUpdateRowCounts() {
+        val owner = "account-no-row-count"
+        ExamHistoryDao.start(db, sampleSnapshot("exam-no-count", "content-no-count"),
+            ExamAttemptRecord("attempt-no-count", "exam-no-count", owner, 40.0))
+        val androidContract = NoUpdateCountDatabase(db)
+        val created = db.query("SELECT event_id FROM exam_sync_outbox WHERE attempt_id = ?", listOf("attempt-no-count"))
+            .single().text("event_id")
+        assertTrue(ExamHistoryDao.acknowledgeOutbox(androidContract, owner, "attempt-no-count", created, 1, 41.0))
+        assertEquals("synced", db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = ?", listOf("attempt-no-count"))
+            .single().text("sync_state"))
+
+        val server = """{"attemptId":"attempt-no-count","examId":"exam-no-count","revision":4,"state":"in_progress","position":0,"startedAt":"1970-01-01T00:00:40.000Z","updatedAt":"1970-01-01T00:00:42.000Z","answers":[],"result":null}"""
+        assertTrue(ExamHistoryDao.persistConflict(androidContract, owner, "attempt-no-count", server, 42.0))
+        assertTrue(ExamHistoryDao.resolveConflictTakeover(androidContract, owner, "attempt-no-count", 43.0))
+        assertEquals("takeover", db.query("SELECT event_type FROM exam_sync_outbox WHERE attempt_id = ? AND delivery_state = 'pending'",
+            listOf("attempt-no-count")).single().text("event_type"))
+
+        assertTrue(ExamHistoryDao.persistConflict(androidContract, owner, "attempt-no-count",
+            server.replace("\"revision\":4", "\"revision\":6"), 44.0))
+        assertTrue(ExamHistoryDao.resolveConflictFork(androidContract, owner, "attempt-no-count", "attempt-no-count-fork", 45.0))
+    }
+
+    @Test fun pendingOutboxOrdersEachAttemptByRevisionInsteadOfWallClock() {
+        val owner = "account-clock-rollback"
+        ExamHistoryDao.start(db, sampleSnapshot("exam-clock", "content-clock"),
+            ExamAttemptRecord("attempt-clock", "exam-clock", owner, 100.0))
+        ExamHistoryDao.saveAnswer(db, "attempt-clock", "q1", "{\"answer\":1}", 1, 101.0)
+        ExamHistoryDao.saveAnswer(db, "attempt-clock", "q1", "{\"answer\":2}", 1, 99.0)
+        assertEquals(listOf(1L, 2L, 3L), ExamHistoryDao.pendingOutbox(db, owner)
+            .map { it.long("revision") })
+    }
+
     @Test fun aConflictPersistsBothLocalAndServerBranchesBeforeResolution() {
         ExamHistoryDao.start(db, sampleSnapshot("exam-branch", "content-branch"),
             ExamAttemptRecord("attempt-branch", "exam-branch", "account-branch", 40.0))
@@ -295,7 +327,9 @@ class LearningDbTest {
         assertEquals("fork", ExamHistoryDao.conflict(db, forkOwner, "attempt-fork-source")!!.text("resolution"))
         assertEquals(2L, db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox WHERE attempt_id = 'attempt-fork-source' " +
             "AND delivery_state = 'superseded'").single().long("n"))
+        assertEquals(2L, ExamHistoryDao.saveAnswer(db, "attempt-fork-copy", "q1", "{\"answer\":\"later\"}", 1, 44.0))
         var uploadedAttempt: kotlinx.serialization.json.JsonObject? = null
+        val sentEvents = mutableListOf<kotlinx.serialization.json.JsonObject>()
         val sync = ExamAttemptOutboxSync(
             sendCreation = { _, _, attempt ->
                 uploadedAttempt = attempt
@@ -303,9 +337,15 @@ class LearningDbTest {
                     put("attemptId", "attempt-fork-copy"); put("revision", 1)
                 }) }) }
             },
-            sendEvent = { _, _ -> error("Fork creation must upload the complete branch in the initial attempt") },
-            acknowledge = { account, id, event, revision, at ->
-                ExamHistoryDao.acknowledgeOutbox(db, account, id, event, revision, at)
+            sendEvent = { _, event ->
+                sentEvents += event
+                buildJsonObject { put("acks", buildJsonArray { add(buildJsonObject {
+                    put("eventId", event.getValue("eventId")); put("attemptId", event.getValue("attemptId"))
+                    put("revision", event.getValue("revision")); put("status", "accepted")
+                }) }) }
+            },
+            acknowledge = { account, id, event, revision, acceptedRevision, at ->
+                ExamHistoryDao.acknowledgeOutbox(db, account, id, event, revision, at, acceptedRevision)
             },
             conflict = { _, _, _, _ -> error("Unexpected conflict") },
         )
@@ -313,6 +353,49 @@ class LearningDbTest {
         val uploadedAnswer = uploadedAttempt!!["answers"]!!.jsonArray.single().jsonObject
         assertEquals("q1", uploadedAnswer["questionId"]!!.jsonPrimitive.content)
         assertTrue(uploadedAnswer["response"].toString().contains("local"))
+        assertEquals(1L, uploadedAttempt!!["revision"]!!.jsonPrimitive.content.toLong())
+        assertEquals(2L, sentEvents.single()["revision"]!!.jsonPrimitive.content.toLong())
+        assertTrue(sentEvents.single()["payload"].toString().contains("later"))
+    }
+
+    @Test fun legacyForkCreationEventWithoutFrozenAttemptStillReplays() = runBlocking {
+        val owner = "11111111-1111-4111-8111-111111111111"
+        ExamHistoryDao.start(db, sampleSnapshot("exam-fork-legacy", "content-fork-legacy"),
+            ExamAttemptRecord("attempt-fork-source-legacy", "exam-fork-legacy", owner, 40.0))
+        ExamHistoryDao.saveAnswer(db, "attempt-fork-source-legacy", "q1", "{\"answer\":\"local\"}", 2, 41.0)
+        val server = """{"attemptId":"attempt-fork-source-legacy","examId":"exam-fork-legacy","revision":3,"state":"in_progress","position":1,"startedAt":"1970-01-01T00:00:40.000Z","updatedAt":"1970-01-01T00:00:42.000Z","answers":[],"result":null}"""
+        assertTrue(ExamHistoryDao.persistConflict(db, owner, "attempt-fork-source-legacy", server, 42.0))
+        assertTrue(ExamHistoryDao.resolveConflictFork(db, owner, "attempt-fork-source-legacy", "attempt-fork-legacy", 43.0))
+        val payload = kotlinx.serialization.json.Json.parseToJsonElement(
+            db.query("SELECT payload_json FROM exam_sync_outbox WHERE attempt_id = 'attempt-fork-legacy' AND event_type = 'created'").single().text("payload_json")
+        ).jsonObject - "initialAttempt"
+        assertEquals("true", payload["forkedLocalState"]?.jsonPrimitive?.content)
+        assertEquals(1, db.query("SELECT question_id FROM exam_answers WHERE attempt_id = 'attempt-fork-legacy'").size)
+        db.transaction { tx ->
+            tx.update("UPDATE exam_sync_outbox SET payload_json = ? WHERE attempt_id = ? AND event_type = 'created'",
+                listOf(kotlinx.serialization.json.JsonObject(payload).toString(), "attempt-fork-legacy"))
+        }
+        assertEquals(2L, ExamHistoryDao.saveAnswer(db, "attempt-fork-legacy", "q1", "{\"answer\":\"later\"}", 1, 43.5))
+        var uploaded: kotlinx.serialization.json.JsonObject? = null
+        val sync = ExamAttemptOutboxSync(
+            sendCreation = { _, _, attempt ->
+                uploaded = attempt
+                buildJsonObject { put("accepted", buildJsonArray { add(buildJsonObject {
+                    put("attemptId", "attempt-fork-legacy"); put("revision", attempt.getValue("revision"))
+                }) }) }
+            },
+            sendEvent = { _, _ -> error("The accepted creation snapshot must cover its earlier edits") },
+            acknowledge = { account, id, event, revision, acceptedRevision, at ->
+                ExamHistoryDao.acknowledgeOutbox(db, account, id, event, revision, at, acceptedRevision)
+            },
+            conflict = { _, _, _, _ -> error("Unexpected conflict") },
+        )
+
+        sync.drain(db, AccountSession(owner, "A".repeat(43), 9_999_999_999_999L)) { 44.0 }
+
+        assertEquals(2L, uploaded!!.getValue("revision").jsonPrimitive.content.toLong())
+        assertTrue(uploaded!!.getValue("answers").jsonArray.isNotEmpty())
+        assertEquals("synced", db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = 'attempt-fork-legacy'").single().text("sync_state"))
     }
 
     @Test fun outboxSyncCreatesInitialAttemptThenSendsRevisionEventsAndAcknowledgesExactRows() = runBlocking {
@@ -344,8 +427,8 @@ class LearningDbTest {
                     })
                 }) }
             },
-            acknowledge = { account, id, event, revision, at ->
-                ExamHistoryDao.acknowledgeOutbox(db, account, id, event, revision, at)
+            acknowledge = { account, id, event, revision, acceptedRevision, at ->
+                ExamHistoryDao.acknowledgeOutbox(db, account, id, event, revision, at, acceptedRevision)
             },
             conflict = { _, _, _, _ -> error("Unexpected conflict") },
         )
@@ -441,6 +524,20 @@ class LearningDbTest {
     }
 
     private fun count(table: String) = db.query("SELECT COUNT(*) AS n FROM $table").single()["n"]
+
+    private class NoUpdateCountDatabase(private val delegate: SqlDatabase) : SqlDatabase {
+        override fun exec(statement: String) = delegate.exec(statement)
+        override fun insert(table: String, row: Map<String, Any?>, strategy: ConflictStrategy) =
+            delegate.insert(table, row, strategy)
+        override fun query(sql: String, args: List<Any?>) = delegate.query(sql, args)
+        override fun update(sql: String, args: List<Any?>): Long {
+            delegate.update(sql, args)
+            return -1L
+        }
+        override fun <T> transaction(block: (SqlDatabase) -> T): T =
+            delegate.transaction { tx -> block(NoUpdateCountDatabase(tx)) }
+        override fun close() = delegate.close()
+    }
 
     private fun sampleSnapshot(examID: String, contentID: String) = ExamSnapshotRecord(
         examID, contentID, "hash-$contentID", 1, 1, 1, "bundled", "es", "B1", 202641,

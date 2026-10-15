@@ -344,8 +344,9 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
 ## Progress, verification, and recovery handoff
 
 - Completed implementation tasks: **4/14** (T01–T04); **10/14 remain**. T05 is in
-  progress and remains unchecked pending the platform drain/conflict-resolution proof.
-- Latest work-unit commit: `2542ef0` (T04 private cloud attempts).
+  progress; the identified Android sync defects are corrected and independently
+  verified, but T05 remains open pending an achievable native review/receipt.
+- Latest work-unit commit: `ca849a888ca72558b228156ffd2f2c39c8de25f1` (T05 durable attempt sync; native review remains unacknowledged).
 - Measured committed authored total: **2005** changed lines (1441 through T02 + 564 T04; no generated changes).
   T02 includes the initial 376-line recovery document; generated changes: 0.
 - Read configuration: strict_tdd=false; Standard Mode and exact runners above.
@@ -381,6 +382,50 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
   require retaining a redacted account row; a signed-out account is not deleted.
 - T04-specific test runner: API Node test suite and PostgreSQL integration through
   Docker. No project test/build command will run on the host.
+
+### T05 review-finding corrections (2026-10-15)
+
+The existing T05 candidate `ca849a888ca72558b228156ffd2f2c39c8de25f1` was reviewed
+as-is. The advisory review found three defects; these uncommitted corrections do
+not rewrite or split the candidate commit:
+
+- Android DAO no longer treats `SqlDatabase.update()` as an affected-row count;
+  it confirms ACK, conflict, takeover, and fork transitions through transactional
+  readback, compatible with Android's documented `-1` result.
+- Fork creation now stores its exact revision-1 attempt payload in the durable
+  creation event. Later edits are sent as later revision events, not folded into
+  the retry payload.
+- Android and Swift outboxes sort by attempt identity and revision, not wall-clock
+  `created_at`, so clock rollback cannot reorder dependent events.
+
+| Verification | Observed result |
+|---|---|
+| New regression tests — RED before behavior fixes | Both row-count and clock-order tests failed as expected. Fork test failed on the mutable creation revision before immutable payload capture was implemented. |
+| Android focused regressions in Docker | 3 passed, 0 failures/errors/skips. |
+| Full Android JVM app suite in Docker (`:app:testDebugUnitTest`) | 684 passed, 0 failures/errors/skips. |
+| Independent verifier, fresh Docker scratch with Android `update() == -1` wrapper | 27 `LearningDbTest` tests passed, including ACK/takeover/fork persisted-state probes. |
+| `git diff --check` in Docker | Exit 0. |
+
+Swift source mirrors the revision-order correction but was not executed, per the
+user's Linux verification scope. The earlier API tests remain the T05 API evidence;
+this correction changed only Android/iOS local persistence and payload replay.
+The first native review of this corrected candidate found one repeated blocker:
+pre-upgrade fork creation events do not contain `initialAttempt`. Replay now falls
+back to reconstructing the legacy fork from local persisted data. If an offline edit
+already advanced that fork before its first upload, the uploaded current revision is
+accepted as the creation snapshot and earlier outbox rows it covers are atomically
+superseded; the drain skips rows no longer pending. Newly written fork events still
+use their frozen revision-1 payload and send later revisions separately.
+
+| Follow-up verification | Observed result |
+|---|---|
+| Legacy fork without `initialAttempt`, edited offline before first upload; frozen new fork; normal creation/event flow | Focused Docker Android tests: 3 passed, 0 failures/errors/skips. |
+| Full Android JVM app suite after legacy ACK correction | Docker `:app:testDebugUnitTest`: 685 passed, 0 failures/errors/skips. |
+| Independent verifier | Recheck requested for the realistic pre-upgrade event plus post-upgrade offline edit; pending. |
+| Native Gentle AI review | High-risk review found R1-001/R3-001/R4-001 (same legacy-event defect); bounded correction applied. Targeted native validation, final captures, acknowledgement and receipt remain pending. |
+
+Do not report T05 complete or the native review as approved until the independent
+verification and exact native review acknowledgement are observed.
 
 ### T01 proof and containment
 
@@ -554,3 +599,4 @@ No push, PR, deployment, or merge to `main`.
 - L10 (2026-10-14), user instruction verbatim: “continua y asigna lo que necesitas”. Runtime rejected configured odd-explorer model `gpt-6.1-luna`; user authorized assigning the closest available model, so bounded read-only mapping used `gpt-6-luna` at high effort. T04 scope ruling separates initial private persistence/retrieval from T05 replay/CAS/conflict sync.
 - L11 (2026-10-14), independent T04 verification found public ID retrieval included retired generations and upload validation accepted a choice without options. Added regression assertions, observed both fail (2/4 focused tests), restricted public retrieval to approved rows and enforced at least two choice options with accepted answers among them; focused PostgreSQL suite passed 4/4 and API TypeScript build passed in Docker. Full API suite remains partially blocked by test-image asset packaging and an unrelated hosted-paid test hang; no clean full-suite claim.
 - L12 (2026-10-15), user selected “revisar este cambio”. Gentle AI completed the exact high-risk three-lens review for T04 target `sha256:746d15f0290842aa80119da1e41109e1d2bb7bcdcfba65af11b2095a4a2b2cfb`; final capture approved and exact acknowledgement burned authority. One non-blocking `R3-001` WARNING at `services/api/src/level-test-attempts.ts:119` remains follow-up; no correction required.
+- L13 (2026-10-15), user request verbatim: “resuelve los problemas encontrados”. Fixed the Android update-count contract, immutable fork creation retry payload, and revision ordering independent of wall-clock time. RED was observed for each regression, focused Android tests passed 3/3, full Android JVM app suite passed 684/684, and independent fresh-scratch verification passed 27/27 under Android's `-1` update-count semantics. No commit/merge. The prior native review remains blocked by candidate context budget, with no receipt.

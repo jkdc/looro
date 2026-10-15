@@ -61,7 +61,7 @@ public enum ExamHistoryDao {
     public static func pendingOutbox(_ db: SqlDatabase, ownerAccountID: String) throws -> [SqlRow] {
         try db.query("SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
             "WHERE a.owner_account_id = ? AND o.delivery_state = 'pending' " +
-            "ORDER BY o.created_at, o.attempt_id, o.revision", args: [ownerAccountID])
+            "ORDER BY o.attempt_id, o.revision", args: [ownerAccountID])
     }
 
     /// Acknowledges exactly one server-confirmed event and preserves newer pending edits.
