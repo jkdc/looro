@@ -227,8 +227,8 @@ recorded below. Preparation is not completion; no task is checked at initializat
 - [x] **T06 — Implement Android defensive fetch, cache, and frozen selection (functional verification complete).**
   Phase P3; report §5, 9/T06. SDD: `openspec/changes/t06-android-remote-level-test-selection/`;
   plan: `docs/superpowers/plans/2026-10-16-t06-remote-level-test-selection.md`.
-  Prove timeout/cancel/validation/304/frozen selection. Docker: app 705/705, engine 11/11; independent S1–S5 and probes 6/6; spot-check 14. Functional acceptance complete; lint/APK deferred until final verification because Whisper CMakeLists is absent. No fetch. Commit 96a8384dea8d6fc6703988122b36698f3ebf8bdf. Risk 4.
-- [ ] **T07 — Implement Android autosave, resume, history, review, restore (implementation and JVM verification complete; work-unit commit pending).**
+  Prove timeout/cancel/validation/304/frozen selection. Docker: app 705/705, engine 11/11; independent S1–S5 and probes 6/6; spot-check 14. Functional acceptance complete; lint/APK deferred until final verification because Whisper CMakeLists is absent. No fetch. Commit 96a8384dea8d6fc6703988122b36698f3ebf8bdf (1,014 authored changed lines). Risk 4.
+- [x] **T07 — Implement Android autosave, resume, history, review, restore.**
   Phase P3; report §§3, 5, 9/T07. Files: ViewModel/Learn/LevelTest UI and store.
   Prove kill/reopen by attempt ID, DB-save failure visibility, no double submit/completion,
   UTC week/year rollover, updated bundle restore, force-generated old attempt review.
@@ -237,7 +237,8 @@ recorded below. Preparation is not completion; no task is checked at initializat
   identical retry preserving revision/outbox. Historical score, answer verdict and
   explanation survive DB reopen; history shows date and legacy summary-only label.
   Compose instrumentation and lint/APK are deferred to final verification per L10;
-  Whisper submodule was not fetched. Risk 1 and 4.
+  Whisper submodule was not fetched. Commit `11e3cf6` (1,111 authored changed lines).
+  Risk 1 and 4.
 ### T07 implementation routing
 
 Route direct inline;
@@ -326,18 +327,19 @@ No PR or remote branch is created by this document or current authorization.
 | S1 | T01 9106881b4c637dc296b030aad5b404533c0739e7 + T02 13d65ebef8e1db626dbfb5971a910435a7eeb6c1 + R3-001 correction cc5ce58724fc09d427cc7d2a7d11f3bd1405a29f | 1441 (378 + 1051 + 12; no generated changes) | Native four-lens review approved and acknowledged for corrected candidate; see T02 evidence below |
 
 | S2 | T04 `2542ef0` | 564 (no generated changes) | Native three-lens review approved and acknowledged; one non-blocking WARNING `R3-001`; full API suite blocked as recorded above |
+| S3 | T06 `96a8384` + T07 `11e3cf6` | 2,125 (no generated changes) | Local feature-branch slice; lint/APK/UI native checks are deferred to final verification by user instruction; no PR/push |
 
 No final child-branch or PR boundaries are fabricated now. Parent records actual
 coherent boundaries and local work-unit commit IDs as implementation progresses.
 
 ## Progress, verification, and recovery handoff
 
-- Completed implementation tasks: **6/14** (T01–T06); T07 functional verification is
-  complete and its work-unit commit is being recorded; **7/14 will remain after T07 closes**.
+- Completed implementation tasks: **7/14** (T01–T07); **7/14 remain** (T08–T14).
   Android lint/APK and Compose instrumentation have been deferred to final verification
   by the user's instruction; Whisper is not a phase blocker.
 - Latest T05 behavior commit: `6bc1696`; later T05 verification docs: `9c2b931`.
-- Measured committed authored total: **2005** changed lines (1441 through T02 + 564 T04; no generated changes).
+- Latest completed work unit: T07 `11e3cf6`.
+- Measured committed authored total: **4,130** changed lines (2,005 through T05 + 1,014 T06 + 1,111 T07; no generated changes).
   T02 includes the initial 376-line recovery document; generated changes: 0.
 - Read configuration: strict_tdd=false; Standard Mode and exact runners above.
 - Worktree observed clean at the branch point before this document was created.

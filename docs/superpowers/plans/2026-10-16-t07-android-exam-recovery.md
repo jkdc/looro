@@ -70,7 +70,7 @@
 - [x] Run Android JVM tasks in pinned Docker; record actual outcomes. `lintDebug`, APK and instrumented UI checks are deferred until all development phases per user instruction; the known missing Whisper submodule will be revisited then.
 - [x] Run `git diff --check` and inspect changed-file scope from Docker.
 - [x] Run independent high-risk verification in fresh scratch and parent spot-check.
-- [ ] Create one coherent Conventional Commit; record exact SHA, checks, Risk line, and pending gates.
+- [x] Create one coherent Conventional Commit; record exact SHA, checks, Risk line, and pending gates.
 
 ## Verification evidence
 
@@ -78,3 +78,7 @@
 - Full JVM suite: 712 app + 11 engine tests passed, zero failures/errors/skips.
 - Independent fresh-scratch review passed S1–S6 invariants; local database file reopen preserved snapshot, position, stored score, original verdict and explanation.
 - UI instrumentation and lint/APK are deferred until the final phase; no Whisper submodule download was attempted.
+- Work-unit commit: `11e3cf6` (`feat(android): persist and recover weekly exam attempts`). The 1,111 authored-line change is one cohesive persistence-and-review behavior with tests and docs; splitting its atomic completion behavior by file would weaken the review boundary.
+- Runtime harness: `N/A` for a connected Android device in this Docker JVM-only verification; the transaction lifecycle is covered by SQLite JVM tests and independent failure-injection probes.
+- Rollback boundary: revert T07 commit `11e3cf6` to remove the Android attempt resume/history UI and repository changes without reverting prior T06 or T05 units.
+- Risk: item 1 (durable exam/result persistence) and item 4 (ordered asynchronous writes and completion retry).

@@ -18,6 +18,7 @@ summary-only para resultados legacy.
   canónico, fallo/rollback, retry sin mutación de revisión/outbox, reopen por ID,
   snapshot histórico y review original.
 - `git diff --check`: **PASS**.
+- Work-unit commit: `11e3cf6` — `feat(android): persist and recover weekly exam attempts`.
 
 ## Límites aplazados
 
@@ -27,3 +28,6 @@ no en T07. El intento previo de lint/APK falló al configurar CMake porque falta
 submódulo `whisper.cpp/CMakeLists.txt`; no se descargará ni intentará restaurar ahora.
 No se afirma prueba nativa de proceso/Compose ni recuperación entre dispositivos
 para T07; la recuperación entre dispositivos corresponde a T12.
+
+**Risk:** item 1 (durable persisted exam results) and item 4 (asynchronous write
+ordering and retry idempotence).

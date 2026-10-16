@@ -13,3 +13,4 @@
 - `lintDebug`, APK y pruebas Android instrumentadas quedan aplazadas por decisión del usuario hasta completar las demás fases; el entorno todavía carece de `whisper.cpp/CMakeLists.txt`. No se intentó obtenerlo.
 - La UI Compose de historial/revisión fue inspeccionada por el verificador independiente; no se afirma una ejecución instrumentada de los flujos UI.
 - Riesgo: item 1 (persistencia durable de exámenes/results), item 4 (orden de escrituras y estado de Compose).
+- Commit de trabajo: `11e3cf6` (`feat(android): persist and recover weekly exam attempts`).
