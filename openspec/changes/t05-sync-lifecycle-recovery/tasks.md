@@ -55,7 +55,7 @@ Interface: receipt key (account_id, attempt_id); immutable canonical request fin
 - [x] Commit c8b60fc as fix(level-tests): replay immutable attempt creation acknowledgements.
 
 ### Task 2: Retry-stable monotonic timestamps
-Route: inline. Status: implemented; focused checks green; full API integration check unresolved; Swift unverified on Linux. Risk: item 1 (persisted state) and item 3 (wire behavior). Commit: pending.
+Route: inline. Status: implemented; focused checks green; full API integration check unresolved; Swift unverified on Linux. Risk: item 1 (persisted state) and item 3 (wire behavior). Commit: ce37ae0.
 Files:
 - Modify services/api/src/level-test-attempts.ts and services/api/tests/level-test-attempts.test.ts.
 - Modify apps/android/app/src/main/java/com/jkdc/app/data/ExamHistoryDao.kt and apps/android/app/src/test/java/com/jkdc/app/data/ExamHistorySyncTest.kt.
@@ -65,18 +65,18 @@ Interface: freeze effective time with each outbox event; enforce max(startedAt, 
 - [x] Add Swift mirror regression test; not executable on this Linux host.
 - [x] Record RED, then implement monotonic Android/iOS local timestamps and API normalization while retaining raw event hash inputs.
 - [x] Focused API sync tests passed 8/8; full Android Docker JVM suites passed. Full API suite failed on unrelated missing SQL files in dist and voice_worker_already_running, then stalled after test 212 and was interrupted; Swift remains unverified.
-- [ ] Commit as fix(level-tests): clamp attempt event timestamps monotonically.
+- [x] Commit ce37ae0 as fix(level-tests): clamp attempt event timestamps monotonically.
 
 ### Task 3: Per-attempt conflict isolation in Android drain
-Route: inline. Status: pending. Risk: item 4 (async ordering and starvation). Commit: pending.
+Route: inline. Status: implemented; focused regression and full Android JVM suites passed. Risk: item 4 (async ordering and starvation). Commit: pending.
 Files:
 - Modify apps/android/app/src/main/java/com/jkdc/app/network/ExamAttemptOutboxSync.kt and apps/android/app/src/main/java/com/jkdc/app/data/ExamHistoryDao.kt.
-- Create/update apps/android/app/src/test/java/com/jkdc/app/network/ExamAttemptOutboxSyncTest.kt.
+- Extend apps/android/app/src/test/java/com/jkdc/app/data/LearningDbTest.kt using the existing SQLite and outbox-sync fixtures.
 Interface: pending event selection excludes attempts with unresolved conflict; a confirmed conflict skips remaining events for that attempt only; transport/unknown failures retain existing safe stop/retry behavior.
-- [ ] Add regression with conflicting A followed by later A event and valid B event; assert A later event is unsent and B is sent.
-- [ ] Add regression that a later drain does not resend unresolved A.
-- [ ] Run focused test and observe current implementation fail; implement per-attempt pause and continue behavior.
-- [ ] Run focused test and full Android Docker JVM suites.
+- [x] Add regression with conflicting A followed by later A event and valid B event; assert A later event remains pending and B is sent.
+- [x] Add regression that a later drain does not resend unresolved A.
+- [x] Observe RED on the current early-return behavior, then implement per-attempt pause and continue behavior.
+- [x] Focused T3 regression passed; full Android Docker JVM suites passed (43 tasks, BUILD SUCCESSFUL).
 - [ ] Commit as fix(android): isolate conflicted exam attempts during sync.
 
 ### Task 4: Atomic fork from latest local branch
@@ -110,3 +110,6 @@ Self-review: S1-S4 each map to one task; task interfaces agree; five review-focu
 Focused Docker PostgreSQL test reproduced the expected RED (initial retry returned 409, expected 200); after the implementation, the focused attempt-sync file passed 7/7 and the Docker image TypeScript build passed. The full make test-api run reported unrelated missing runtime SQL files under /app/dist and voice_worker_already_running in hosted-paid tests, then remained active without progress; it was interrupted after more than two minutes.
 
 Ruling: use the focused Docker attempt-sync suite for per-task TDD evidence and keep the full API integration suite as an unresolved final check — the full runner's unrelated failures obscure the T05 tests, while the focused suite directly reaches the changed route. Cost if wrong: a cross-suite integration interaction could remain undetected.
+
+### L6 — Task 2 progress
+Focused API sync tests passed 8/8 and full Android Docker JVM suites passed; Swift mirror remains unexecuted on Linux. The full API suite again reported unrelated missing SQL files under `/app/dist` and `voice_worker_already_running`, then stalled at test 212 and was interrupted. T2 is implemented and committed as ce37ae0, but the required full API suite remains unresolved.

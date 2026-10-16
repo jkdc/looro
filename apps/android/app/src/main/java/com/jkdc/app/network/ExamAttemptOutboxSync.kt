@@ -22,13 +22,16 @@ class ExamAttemptOutboxSync(
 ) {
     suspend fun drain(db: SqlDatabase, session: AccountSession, now: () -> Double = { System.currentTimeMillis() / 1000.0 }) {
         val events = ExamHistoryDao.pendingOutbox(db, session.accountID)
+        val conflictedAttempts = mutableSetOf<String>()
         for (event in events) {
             val attemptID = event.text("attempt_id")
+            if (attemptID in conflictedAttempts) continue
             val eventID = event.text("event_id")
             val revision = event.long("revision")
             val stillPending = db.query("SELECT o.delivery_state FROM exam_sync_outbox o JOIN exam_attempts a " +
                 "ON a.attempt_id = o.attempt_id WHERE o.event_id = ? AND o.attempt_id = ? AND o.revision = ? " +
-                "AND a.owner_account_id = ?", listOf(eventID, attemptID, revision, session.accountID))
+                "AND a.owner_account_id = ? AND a.sync_state != 'conflict'",
+                listOf(eventID, attemptID, revision, session.accountID))
                 .singleOrNull()?.text("delivery_state") == "pending"
             if (!stillPending) continue
             val eventTime = event.real("created_at")
@@ -66,8 +69,9 @@ class ExamAttemptOutboxSync(
             } else {
                 val returnedConflict = result["conflict"]?.jsonObject?.get("attempt") as? JsonObject
                 if (returnedConflict != null) {
-                    conflict(session.accountID, attemptID, returnedConflict.toString(), now())
-                    return
+                    if (!conflict(session.accountID, attemptID, returnedConflict.toString(), now())) return
+                    conflictedAttempts += attemptID
+                    continue
                 }
                 result["acks"]?.jsonArray?.any { value ->
                     val ack = value.jsonObject

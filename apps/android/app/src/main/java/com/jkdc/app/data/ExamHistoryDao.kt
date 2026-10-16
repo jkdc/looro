@@ -51,7 +51,7 @@ object ExamHistoryDao {
     /** Returns only the authenticated owner's durable pending events, in revision order. */
     fun pendingOutbox(db: SqlDatabase, ownerAccountID: String): List<Row> = db.query(
         "SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
-            "WHERE a.owner_account_id = ? AND o.delivery_state = 'pending' " +
+            "WHERE a.owner_account_id = ? AND a.sync_state != 'conflict' AND o.delivery_state = 'pending' " +
             "ORDER BY o.attempt_id, o.revision", listOf(ownerAccountID)
     )
 

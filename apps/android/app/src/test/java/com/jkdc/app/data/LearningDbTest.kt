@@ -456,6 +456,74 @@ class LearningDbTest {
         assertEquals("synced", db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = 'attempt-fork-retry'").single().text("sync_state"))
     }
 
+    @Test fun conflictPausesOnlyItsAttemptAndKeepsItPausedAcrossDrains() = runBlocking {
+        val owner = "11111111-1111-4111-8111-111111111111"
+        val attemptA = "attempt-conflict-a"
+        val attemptB = "attempt-conflict-b"
+        ExamHistoryDao.start(db, sampleSnapshot("exam-conflict-a", "content-conflict-a"),
+            ExamAttemptRecord(attemptA, "exam-conflict-a", owner, 100.0))
+        ExamHistoryDao.start(db, sampleSnapshot("exam-conflict-b", "content-conflict-b"),
+            ExamAttemptRecord(attemptB, "exam-conflict-b", owner, 100.0))
+        for (attemptID in listOf(attemptA, attemptB)) {
+            val created = ExamHistoryDao.pendingOutbox(db, owner).single {
+                it.text("attempt_id") == attemptID && it.text("event_type") == "created"
+            }
+            assertTrue(ExamHistoryDao.acknowledgeOutbox(db, owner, attemptID, created.text("event_id"),
+                created.long("revision"), 101.0, 1))
+        }
+        ExamHistoryDao.saveAnswer(db, attemptA, "q1", "{\"answer\":\"a1\"}", 1, 102.0)
+        ExamHistoryDao.saveAnswer(db, attemptA, "q2", "{\"answer\":\"a2\"}", 2, 103.0)
+        ExamHistoryDao.saveAnswer(db, attemptB, "q1", "{\"answer\":\"b1\"}", 1, 102.0)
+
+        val sent = mutableListOf<String>()
+        val sync = ExamAttemptOutboxSync(
+            sendCreation = { _, _, _ -> error("Creation events were already acknowledged") },
+            sendEvent = { _, event ->
+                val id = event.getValue("attemptId").jsonPrimitive.content
+                val eventID = event.getValue("eventId").jsonPrimitive.content
+                sent += eventID
+                if (id == attemptA && event.getValue("revision").jsonPrimitive.content.toLong() == 2L) {
+                    buildJsonObject { put("conflict", buildJsonObject { put("attempt", buildJsonObject {
+                        put("attemptId", attemptA); put("revision", 9)
+                    }) }) }
+                } else {
+                    buildJsonObject { put("acks", buildJsonArray { add(buildJsonObject {
+                        put("eventId", eventID); put("attemptId", id)
+                        put("revision", event.getValue("revision")); put("status", "accepted")
+                    }) }) }
+                }
+            },
+            acknowledge = { account, id, event, revision, acceptedRevision, at ->
+                ExamHistoryDao.acknowledgeOutbox(db, account, id, event, revision, at, acceptedRevision)
+            },
+            conflict = { account, id, _, _ -> ExamHistoryDao.markConflict(db, account, id) },
+        )
+        val session = AccountSession(owner, "A".repeat(43), 9_999_999_999_999L)
+
+        val bEventID = ExamHistoryDao.pendingOutbox(db, owner).single {
+            it.text("attempt_id") == attemptB && it.text("event_type") == "progress"
+        }.text("event_id")
+
+        sync.drain(db, session) { 104.0 }
+        val aStates = db.query("SELECT revision, delivery_state FROM exam_sync_outbox WHERE attempt_id = ? " +
+            "AND event_type = 'progress' ORDER BY revision", listOf(attemptA))
+        assertEquals(listOf(2L, 3L), aStates.map { it.long("revision") })
+        assertEquals(listOf("pending", "pending"), aStates.map { it.text("delivery_state") })
+        assertTrue(sent.contains(bEventID))
+        assertEquals("acknowledged", db.query("SELECT delivery_state FROM exam_sync_outbox WHERE event_id = ?",
+            listOf(bEventID)).single().text("delivery_state"))
+        assertTrue(ExamHistoryDao.pendingOutbox(db, owner).none { it.text("attempt_id") == attemptA })
+        assertEquals("conflict", db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = ?", listOf(attemptA))
+            .single().text("sync_state"))
+
+        val sentAfterConflict = sent.toList()
+        sync.drain(db, session) { 105.0 }
+        assertEquals(sentAfterConflict, sent)
+        assertEquals(listOf("pending", "pending"), db.query(
+            "SELECT delivery_state FROM exam_sync_outbox WHERE attempt_id = ? AND event_type = 'progress' ORDER BY revision",
+            listOf(attemptA)).map { it.text("delivery_state") })
+    }
+
     @Test fun outboxSyncCreatesInitialAttemptThenSendsRevisionEventsAndAcknowledgesExactRows() = runBlocking {
         val owner = "11111111-1111-4111-8111-111111111111"
         val attemptID = "22222222-2222-4222-8222-222222222222"
