@@ -80,7 +80,7 @@ Interface: pending event selection excludes attempts with unresolved conflict; a
 - [x] Commit dc9fc19 as fix(android): isolate conflicted exam attempts during sync.
 
 ### Task 4: Atomic fork from latest local branch
-Route: inline. Status: implemented; focused and full Android JVM suites passed; Swift unverified on Linux. Risk: item 1 (durable local data) and item 4 (transaction/concurrency). Commit: pending.
+Route: inline. Status: implemented; focused and full Android JVM suites passed; Swift unverified on Linux. Risk: item 1 (durable local data) and item 4 (transaction/concurrency). Commit: 6bc1696 (`fix(exams): fork the latest local conflict state atomically`).
 Files:
 - Modify apps/android/app/src/main/java/com/jkdc/app/data/ExamHistoryDao.kt and apps/android/app/src/test/java/com/jkdc/app/data/ExamHistorySyncTest.kt.
 - Modify iOS ExamHistoryDao.swift and ExamHistoryDaoTests.swift.
@@ -90,7 +90,7 @@ Interface: transaction reads current source, latest answers, position, completio
 - [x] Add equivalent Swift DAO tests; execution remains unavailable on Linux.
 - [x] Implement fork from live source rows and latest answer revisions; freeze creation event with snapshot/current state, preserve unresolved conflict status, and reject writes to forked source identity.
 - [x] Focused T4 Android tests passed 3/3; full Android JVM suites passed (43 actionable tasks, BUILD SUCCESSFUL); Swift tests unexecuted on Linux.
-- [ ] Commit as fix(exams): fork the latest local conflict state atomically.
+- [x] Commit as fix(exams): fork the latest local conflict state atomically (6bc1696).
 
 ## Log
 
