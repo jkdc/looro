@@ -341,23 +341,24 @@ public enum ExamHistoryDao {
             throw ExamHistoryError.invalidJSON
         }
         return try db.transaction { tx in
-            guard let attempt = try tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?",
+            guard let attempt = try tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?",
                                              args: [attemptID]).first else { throw ExamHistoryError.missingAttempt }
             guard attempt.text("state") == "in_progress" else { throw ExamHistoryError.completedAttempt }
+            let effectiveAt = max(savedAt, attempt.real("started_at"), attempt.real("updated_at"))
             let revision = attempt.long("revision") + 1
             _ = try tx.insert("exam_answers", ["attempt_id": attemptID, "question_id": questionID,
-                "revision": revision, "response_json": responseJSON, "saved_at": savedAt])
+                "revision": revision, "response_json": responseJSON, "saved_at": effectiveAt])
             _ = try tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ?, " +
                 "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
-                args: [position, revision, savedAt, attemptID, revision - 1])
+                args: [position, revision, effectiveAt, attemptID, revision - 1])
             guard try tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?",
                                args: [attemptID]).first?.long("revision") == revision else {
                 throw ExamHistoryError.concurrentAttemptChange
             }
             try enqueue(tx, attemptID: attemptID, revision: revision, type: "progress",
                         payload: jsonString(["attemptId": attemptID, "questionId": questionID,
-                                             "response": response, "position": position]), at: savedAt)
+                                             "response": response, "position": position]), at: effectiveAt)
             return revision
         }
     }
@@ -368,7 +369,7 @@ public enum ExamHistoryDao {
                                 completedAt: Double) throws -> Bool {
         guard let result = object(resultJSON) else { throw ExamHistoryError.invalidJSON }
         return try db.transaction { tx in
-            guard let attempt = try tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?",
+            guard let attempt = try tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?",
                                              args: [attemptID]).first else { throw ExamHistoryError.missingAttempt }
             if attempt.text("state") == "completed" {
                 guard let existing = try tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?",
@@ -376,20 +377,21 @@ public enum ExamHistoryDao {
                 guard existing.text("result_json") == resultJSON else { throw ExamHistoryError.immutableResultConflict }
                 return false
             }
+            let effectiveAt = max(completedAt, attempt.real("started_at"), attempt.real("updated_at"))
             let revision = attempt.long("revision") + 1
             _ = try tx.insert("exam_results", ["attempt_id": attemptID,
-                "result_json": resultJSON, "recorded_at": completedAt])
+                "result_json": resultJSON, "recorded_at": effectiveAt])
             _ = try tx.update("UPDATE exam_attempts SET state = 'completed', revision = ?, updated_at = ?, " +
                 "completed_at = ?, sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
-                args: [revision, completedAt, completedAt, attemptID, revision - 1])
+                args: [revision, effectiveAt, effectiveAt, attemptID, revision - 1])
             guard let updated = try tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?",
                                              args: [attemptID]).first,
                   updated.text("state") == "completed", updated.long("revision") == revision else {
                 throw ExamHistoryError.concurrentAttemptChange
             }
             try enqueue(tx, attemptID: attemptID, revision: revision, type: "completed",
-                        payload: jsonString(["attemptId": attemptID, "result": result]), at: completedAt)
+                        payload: jsonString(["attemptId": attemptID, "result": result]), at: effectiveAt)
             return true
         }
     }

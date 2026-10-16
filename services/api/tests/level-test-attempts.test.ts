@@ -275,3 +275,39 @@ integration('initial creation retry replays its immutable ACK after another devi
     assert.equal(detail.json().attempt.position, 2);
   } finally { await app.close(); }
 });
+
+integration('attempt event timestamps never regress and exact retries preserve the original ACK', async () => {
+  const owner = await account(), snapshot = bundledSnapshot(), created = attempt(snapshot), app = createApp({ db: db!, auth: {} });
+  try {
+    const headers = { authorization: owner.authorization };
+    const create = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync', headers,
+      payload: { snapshots: [snapshot], attempts: [created] } });
+    assert.equal(create.statusCode, 200, create.body);
+    const send = (event: unknown) => app.inject({ method: 'POST', url: '/v1/level-test-attempts/events', headers,
+      payload: { events: [event] } });
+    const beforeStart = { eventId: randomUUID(), attemptId: created.attemptId, baseRevision: 1, revision: 2,
+      type: 'progress', payload: { questionId: snapshot.items[0]!.id, response: { value: 'before start' },
+        position: 1, updatedAt: '2026-10-07T11:59:00.000Z' } };
+    const first = await send(beforeStart);
+    assert.equal(first.statusCode, 200, first.body);
+    assert.deepEqual(await send(beforeStart).then(response => response.json()), first.json());
+
+    const regressed = { eventId: randomUUID(), attemptId: created.attemptId, baseRevision: 2, revision: 3,
+      type: 'progress', payload: { questionId: snapshot.items[0]!.id, response: { value: 'before last update' },
+        position: 2, updatedAt: '2026-10-07T12:00:30.000Z' } };
+    const second = await send(regressed);
+    assert.equal(second.statusCode, 200, second.body);
+
+    const completion = { eventId: randomUUID(), attemptId: created.attemptId, baseRevision: 3, revision: 4,
+      type: 'completed', payload: { result: { score: 90 }, completedAt: '2026-10-07T12:00:20.000Z' } };
+    const completed = await send(completion);
+    assert.equal(completed.statusCode, 200, completed.body);
+    assert.deepEqual(await send(completion).then(response => response.json()), completed.json());
+    const detail = await app.inject({ method: 'GET',
+      url: '/v1/level-test-attempts/' + created.attemptId, headers });
+    assert.equal(detail.statusCode, 200, detail.body);
+    assert.equal(detail.json().attempt.updatedAt, '2026-10-07T12:00:30.000Z');
+    assert.equal(detail.json().attempt.completedAt, '2026-10-07T12:00:30.000Z');
+    assert.equal(detail.json().attempt.revision, 4);
+  } finally { await app.close(); }
+});

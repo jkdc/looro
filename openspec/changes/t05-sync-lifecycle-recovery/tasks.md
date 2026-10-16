@@ -41,7 +41,7 @@ Full authority: specs/level-test-attempt-sync/spec.md. Spec approved by user on 
 ## Tasks
 
 ### Task 1: Immutable API creation receipt
-Route: inline. Status: implementation and focused verification complete; full API suite unresolved. Risk: item 1 (durable server records) and item 3 (consumed API contract). Commit: pending.
+Route: inline. Status: implemented; focused verification passed; full API suite unresolved. Risk: item 1 (durable server records) and item 3 (consumed API contract). Commit: c8b60fc.
 Files:
 - Create services/api/migrations/044_level_test_attempt_creation_receipts.sql.
 - Modify services/api/src/level-test-attempts.ts.
@@ -52,19 +52,19 @@ Interface: receipt key (account_id, attempt_id); immutable canonical request fin
 - [x] Run the focused Docker PostgreSQL attempt suite; RED reproduced exam_attempt_conflict (409 where the replay must return 200). The full make test-api attempt hit unrelated runner failures before completion; see L5.
 - [x] Add additive owner-cascaded receipt migration and transactionally persist/read stable receipt without modifying current attempt on replay.
 - [x] Focused Docker PostgreSQL attempt suite: 7/7 passed; image build/TypeScript compile passed. Full make test-api remains unresolved due the failures recorded in L5.
-- [ ] Commit as fix(level-tests): replay immutable attempt creation acknowledgements.
+- [x] Commit c8b60fc as fix(level-tests): replay immutable attempt creation acknowledgements.
 
 ### Task 2: Retry-stable monotonic timestamps
-Route: inline. Status: pending. Risk: item 1 (persisted state) and item 3 (wire behavior). Commit: pending.
+Route: inline. Status: implemented; focused checks green; full API integration check unresolved; Swift unverified on Linux. Risk: item 1 (persisted state) and item 3 (wire behavior). Commit: pending.
 Files:
 - Modify services/api/src/level-test-attempts.ts and services/api/tests/level-test-attempts.test.ts.
 - Modify apps/android/app/src/main/java/com/jkdc/app/data/ExamHistoryDao.kt and apps/android/app/src/test/java/com/jkdc/app/data/ExamHistorySyncTest.kt.
 - Modify apps/ios/Core/Database/ExamHistoryDao.swift and apps/ios/Tests/ExamHistoryDaoTests.swift.
 Interface: freeze effective time with each outbox event; enforce max(startedAt, prior effective time, received event time) server-side while preserving event hash over original wire event.
-- [ ] Add failing API and Android DAO regression tests for rollback before start and before prior effective timestamp.
-- [ ] Add Swift mirror regression tests (not executable on this Linux host).
-- [ ] Run focused API/Android tests and record RED; implement monotonic client persistence and server projection normalization.
-- [ ] Run focused tests then full make test-api and make android-test-docker; report Swift verification unavailable.
+- [x] Add failing API and Android DAO regression tests; observed RED before implementation (API 500 instead of 200; Android assertion failure on clock rollback).
+- [x] Add Swift mirror regression test; not executable on this Linux host.
+- [x] Record RED, then implement monotonic Android/iOS local timestamps and API normalization while retaining raw event hash inputs.
+- [x] Focused API sync tests passed 8/8; full Android Docker JVM suites passed. Full API suite failed on unrelated missing SQL files in dist and voice_worker_already_running, then stalled after test 212 and was interrupted; Swift remains unverified.
 - [ ] Commit as fix(level-tests): clamp attempt event timestamps monotonically.
 
 ### Task 3: Per-attempt conflict isolation in Android drain

@@ -363,16 +363,17 @@ object ExamHistoryDao {
         require(questionID.isNotBlank() && position >= 0)
         val response = responseJSON.parseJSONObject()
         return db.transaction { tx ->
-            val attempt = tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
+            val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
                 .singleOrNull() ?: error("Exam attempt does not exist")
             check(attempt.text("state") == "in_progress") { "Completed exam attempts are immutable" }
+            val effectiveAt = maxOf(savedAt, attempt.real("started_at"), attempt.real("updated_at"))
             val revision = attempt.long("revision") + 1
             tx.insert("exam_answers", mapOf("attempt_id" to attemptID, "question_id" to questionID,
-                "revision" to revision, "response_json" to responseJSON, "saved_at" to savedAt))
+                "revision" to revision, "response_json" to responseJSON, "saved_at" to effectiveAt))
             tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ?, " +
                 "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
-                listOf(position, revision, savedAt, attemptID, revision - 1))
+                listOf(position, revision, effectiveAt, attemptID, revision - 1))
             check(tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
                 .single().long("revision") == revision) { "Exam attempt changed concurrently" }
             val payload = buildJsonObject {
@@ -381,7 +382,7 @@ object ExamHistoryDao {
                 put("response", response)
                 put("position", JsonPrimitive(position))
             }.toString()
-            enqueue(tx, attemptID, revision, "progress", payload, savedAt)
+            enqueue(tx, attemptID, revision, "progress", payload, effectiveAt)
             revision
         }
     }
@@ -390,7 +391,7 @@ object ExamHistoryDao {
     fun complete(db: SqlDatabase, attemptID: String, resultJSON: String, completedAt: Double): Boolean {
         val resultContent = resultJSON.parseJSONObject()
         return db.transaction { tx ->
-            val attempt = tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
+            val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
                 .singleOrNull() ?: error("Exam attempt does not exist")
             if (attempt.text("state") == "completed") {
                 val existing = tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?", listOf(attemptID))
@@ -398,13 +399,14 @@ object ExamHistoryDao {
                 check(existing.text("result_json") == resultJSON) { "Completed exam result cannot be changed" }
                 return@transaction false
             }
+            val effectiveAt = maxOf(completedAt, attempt.real("started_at"), attempt.real("updated_at"))
             val revision = attempt.long("revision") + 1
             tx.insert("exam_results", mapOf("attempt_id" to attemptID,
-                "result_json" to resultJSON, "recorded_at" to completedAt))
+                "result_json" to resultJSON, "recorded_at" to effectiveAt))
             tx.update("UPDATE exam_attempts SET state = 'completed', revision = ?, updated_at = ?, completed_at = ?, " +
                 "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
-                listOf(revision, completedAt, completedAt, attemptID, revision - 1))
+                listOf(revision, effectiveAt, effectiveAt, attemptID, revision - 1))
             check(tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
                 .single().let { it.text("state") == "completed" && it.long("revision") == revision }) {
                 "Exam attempt changed concurrently"
@@ -412,7 +414,7 @@ object ExamHistoryDao {
             enqueue(tx, attemptID, revision, "completed", buildJsonObject {
                 put("attemptId", JsonPrimitive(attemptID))
                 put("result", resultContent)
-            }.toString(), completedAt)
+            }.toString(), effectiveAt)
             true
         }
     }

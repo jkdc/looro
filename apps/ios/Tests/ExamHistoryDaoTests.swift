@@ -21,6 +21,37 @@ final class ExamHistoryDaoTests: XCTestCase {
         XCTAssertEqual(Int64(2), try db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox").first!.long("n"))
     }
 
+    func testClockRollbackCannotRegressPersistedAttemptOrOutboxTime() throws {
+        _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-clock", "content-clock"),
+            attempt: ExamAttemptRecord(attemptID: "attempt-clock", examID: "exam-clock", startedAt: 100))
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-clock", questionID: "q1",
+            responseJSON: "{\"answer\":\"one\"}", position: 1, savedAt: 99)
+        XCTAssertEqual(100, try db.query("SELECT updated_at FROM exam_attempts WHERE attempt_id = 'attempt-clock'")
+            .first!.real("updated_at"))
+        XCTAssertEqual(100, try db.query("SELECT saved_at FROM exam_answers WHERE attempt_id = 'attempt-clock'")
+            .first!.real("saved_at"))
+        XCTAssertEqual(100, try db.query("SELECT created_at FROM exam_sync_outbox WHERE event_type = 'progress'")
+            .first!.real("created_at"))
+
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-clock", questionID: "q1",
+            responseJSON: "{\"answer\":\"two\"}", position: 2, savedAt: 105)
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-clock", questionID: "q1",
+            responseJSON: "{\"answer\":\"three\"}", position: 3, savedAt: 104)
+        XCTAssertEqual([100, 105, 105], try db.query(
+            "SELECT created_at FROM exam_sync_outbox WHERE event_type = 'progress' ORDER BY revision").map {
+                $0.real("created_at")
+            })
+
+        XCTAssertTrue(try ExamHistoryDao.complete(db, attemptID: "attempt-clock",
+            resultJSON: "{\"score\":90}", completedAt: 104))
+        let completed = try db.query("SELECT updated_at, completed_at FROM exam_attempts " +
+                                     "WHERE attempt_id = 'attempt-clock'").first!
+        XCTAssertEqual(105, completed.real("updated_at"))
+        XCTAssertEqual(105, completed.real("completed_at"))
+        XCTAssertEqual(105, try db.query("SELECT created_at FROM exam_sync_outbox WHERE event_type = 'completed'")
+            .first!.real("created_at"))
+    }
+
     func testCompletionIsIdempotentAndTheOriginalResultCannotBeReplaced() throws {
         _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-2", "content-2"),
             attempt: ExamAttemptRecord(attemptID: "attempt-2", examID: "exam-2", startedAt: 20))

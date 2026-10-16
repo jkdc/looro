@@ -177,6 +177,9 @@ function parseLimit(value: unknown): number {
 }
 
 function asISO(value: string | Date): string { return value instanceof Date ? value.toISOString() : new Date(value).toISOString(); }
+function latestISODate(...values: string[]): string {
+  return new Date(Math.max(...values.map(value => new Date(value).getTime()))).toISOString();
+}
 
 type AttemptEvent = { eventId: string; attemptId: string; baseRevision: number; revision: number;
   type: 'progress' | 'completed' | 'takeover'; payload: Record<string, unknown> };
@@ -229,15 +232,13 @@ async function applyAttemptEvent(db: Database, accountID: string, event: Attempt
         answer.questionId !== event.payload.questionId) : [];
       answers.push({ questionId: event.payload.questionId, revision: event.revision, response: event.payload.response });
       updated = { ...current, position: event.payload.position, revision: event.revision,
-        updatedAt: event.payload.updatedAt, answers };
+        updatedAt: latestISODate(event.payload.updatedAt as string, current.updatedAt, current.startedAt), answers };
     } else if (event.type === 'completed') {
-      const completedAt = event.payload.completedAt as string;
-      if (new Date(completedAt) < new Date(current.startedAt)) throw new ServiceError('invalid_exam_event', 400);
+      const completedAt = latestISODate(event.payload.completedAt as string, current.updatedAt, current.startedAt);
       updated = { ...current, state: 'completed', revision: event.revision, updatedAt: completedAt,
         completedAt, result: event.payload.result };
     } else {
-      const updatedAt = event.payload.updatedAt as string;
-      if (new Date(updatedAt) < new Date(current.updatedAt)) throw new ServiceError('invalid_exam_event', 400);
+      const updatedAt = latestISODate(event.payload.updatedAt as string, current.updatedAt, current.startedAt);
       updated = { ...current, revision: event.revision, updatedAt };
     }
     const changed = await sql.query(`UPDATE level_test_attempts SET state=$3,position=$4,revision=$5,updated_at=$6,
