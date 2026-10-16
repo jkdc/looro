@@ -398,6 +398,64 @@ class LearningDbTest {
         assertEquals("synced", db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = 'attempt-fork-legacy'").single().text("sync_state"))
     }
 
+    @Test fun legacyForkCreationRetryKeepsSnapshotAfterLostAckAndOfflineEdit() = runBlocking {
+        val owner = "11111111-1111-4111-8111-111111111111"
+        ExamHistoryDao.start(db, sampleSnapshot("exam-fork-retry", "content-fork-retry"),
+            ExamAttemptRecord("attempt-fork-source-retry", "exam-fork-retry", owner, 40.0))
+        ExamHistoryDao.saveAnswer(db, "attempt-fork-source-retry", "q1", "{\"answer\":\"original\"}", 2, 41.0)
+        val server = """{"attemptId":"attempt-fork-source-retry","examId":"exam-fork-retry","revision":3,"state":"in_progress","position":1,"startedAt":"1970-01-01T00:00:40.000Z","updatedAt":"1970-01-01T00:00:42.000Z","answers":[],"result":null}"""
+        assertTrue(ExamHistoryDao.persistConflict(db, owner, "attempt-fork-source-retry", server, 42.0))
+        assertTrue(ExamHistoryDao.resolveConflictFork(db, owner, "attempt-fork-source-retry", "attempt-fork-retry", 43.0))
+        db.transaction { tx ->
+            val row = tx.query("SELECT payload_json FROM exam_sync_outbox WHERE attempt_id = ? AND event_type = 'created'", listOf("attempt-fork-retry")).single()
+            val payload = kotlinx.serialization.json.Json.parseToJsonElement(row.text("payload_json")).jsonObject - "initialAttempt"
+            tx.update("UPDATE exam_sync_outbox SET payload_json = ? WHERE attempt_id = ? AND event_type = 'created'",
+                listOf(kotlinx.serialization.json.JsonObject(payload).toString(), "attempt-fork-retry"))
+        }
+        var firstCreation: kotlinx.serialization.json.JsonObject? = null
+        var creationCalls = 0
+        fun sync() = ExamAttemptOutboxSync(
+            sendCreation = { _, _, attempt ->
+                creationCalls++
+                if (firstCreation == null) {
+                    firstCreation = attempt
+                    error("Simulated lost creation ACK")
+                }
+                assertEquals(firstCreation, attempt)
+                buildJsonObject { put("accepted", buildJsonArray { add(buildJsonObject {
+                    put("attemptId", "attempt-fork-retry"); put("revision", attempt.getValue("revision"))
+                }) }) }
+            },
+            sendEvent = { _, event ->
+                assertEquals(2L, event.getValue("revision").jsonPrimitive.content.toLong())
+                assertTrue(event.getValue("payload").toString().contains("edited-after-lost-ack"))
+                buildJsonObject { put("acks", buildJsonArray { add(buildJsonObject {
+                    put("eventId", event.getValue("eventId")); put("attemptId", event.getValue("attemptId"))
+                    put("revision", event.getValue("revision")); put("status", "accepted")
+                }) }) }
+            },
+            acknowledge = { account, id, event, revision, acceptedRevision, at ->
+                ExamHistoryDao.acknowledgeOutbox(db, account, id, event, revision, at, acceptedRevision)
+            },
+            conflict = { _, _, _, _ -> error("Unexpected conflict") },
+        )
+
+        var lostAck = false
+        try {
+            sync().drain(db, AccountSession(owner, "A".repeat(43), 9_999_999_999_999L)) { 44.0 }
+        } catch (_: IllegalStateException) {
+            lostAck = true
+        }
+        assertTrue(lostAck)
+        ExamHistoryDao.saveAnswer(db, "attempt-fork-retry", "q1", "{\"answer\":\"edited-after-lost-ack\"}", 1, 44.5)
+        sync().drain(db, AccountSession(owner, "A".repeat(43), 9_999_999_999_999L)) { 45.0 }
+
+        assertEquals(2, creationCalls)
+        assertEquals(1L, firstCreation!!.getValue("revision").jsonPrimitive.content.toLong())
+        assertTrue(firstCreation!!.getValue("answers").jsonArray.single().toString().contains("original"))
+        assertEquals("synced", db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = 'attempt-fork-retry'").single().text("sync_state"))
+    }
+
     @Test fun outboxSyncCreatesInitialAttemptThenSendsRevisionEventsAndAcknowledgesExactRows() = runBlocking {
         val owner = "11111111-1111-4111-8111-111111111111"
         val attemptID = "22222222-2222-4222-8222-222222222222"

@@ -83,52 +83,58 @@ class ExamAttemptOutboxSync(
     }
 
     private fun initialPayload(db: SqlDatabase, event: Row): Pair<JsonObject, JsonObject> {
-        val attemptID = event.text("attempt_id")
-        val forkedLocalState = runCatching {
-            Json.parseToJsonElement(event.text("payload_json")).jsonObject["forkedLocalState"]?.jsonPrimitive?.booleanOrNull == true
-        }.getOrDefault(false)
-        if (forkedLocalState) {
-            val payload = Json.parseToJsonElement(event.text("payload_json")).jsonObject
-            val snapshot = payload.getValue("snapshot").jsonObject
-            payload["initialAttempt"]?.jsonObject?.let { return snapshot to it }
-        }
-        val attempt = db.query("SELECT a.*, i.content_id FROM exam_attempts a " +
-            "JOIN exam_snapshot_ids i ON i.exam_id = a.exam_id WHERE a.attempt_id = ?", listOf(attemptID)).single()
-        val snapshot = db.query("SELECT * FROM exam_snapshots WHERE content_id = ?", listOf(attempt.text("content_id"))).single()
-        val content = Json.parseToJsonElement(snapshot.text("content_json")).jsonObject
-        val answers = if (forkedLocalState) db.query("SELECT question_id, revision, response_json FROM exam_answers WHERE attempt_id = ? " +
-            "AND revision = (SELECT MAX(a2.revision) FROM exam_answers a2 WHERE a2.attempt_id = exam_answers.attempt_id " +
-            "AND a2.question_id = exam_answers.question_id) ORDER BY question_id", listOf(attemptID)).map { answer ->
-            buildJsonObject {
-                put("questionId", answer.text("question_id")); put("revision", answer.long("revision"))
-                put("response", Json.parseToJsonElement(answer.text("response_json")))
+        return db.transaction { tx ->
+            val attemptID = event.text("attempt_id")
+            val storedPayload = Json.parseToJsonElement(event.text("payload_json")).jsonObject
+            val forkedLocalState = storedPayload["forkedLocalState"]?.jsonPrimitive?.booleanOrNull == true
+            if (forkedLocalState) {
+                val snapshot = storedPayload.getValue("snapshot").jsonObject
+                storedPayload["initialAttempt"]?.jsonObject?.let { return@transaction snapshot to it }
             }
-        } else emptyList()
-        val fullSnapshot = JsonObject(content + mapOf(
-            "examId" to JsonPrimitive(attempt.text("exam_id")),
-            "contentId" to JsonPrimitive(snapshot.text("content_id")),
-            "contentHash" to JsonPrimitive(snapshot.text("content_hash")),
-            "schemaVersion" to JsonPrimitive(snapshot.long("schema_version")),
-            "contentRevision" to JsonPrimitive(snapshot.long("content_revision")),
-            "gradingVersion" to JsonPrimitive(snapshot.long("grading_version")),
-            "source" to JsonPrimitive(snapshot.text("source")),
-            "languageID" to JsonPrimitive(snapshot.text("language_id")),
-            "level" to JsonPrimitive(snapshot.text("level")),
-            "weekId" to JsonPrimitive(snapshot.long("week_id")),
-        ))
-        val started = iso(attempt.real("started_at"))
-        val initialAttempt = buildJsonObject {
-            put("attemptId", attemptID); put("examId", attempt.text("exam_id"))
-            put("state", if (forkedLocalState) attempt.text("state") else "in_progress")
-            put("position", if (forkedLocalState) attempt.long("position") else 0)
-            put("revision", if (forkedLocalState) attempt.long("revision") else 1)
-            put("startedAt", started); put("updatedAt", if (forkedLocalState) iso(attempt.real("updated_at")) else started)
-            if (forkedLocalState) attempt.realOrNull("completed_at")?.let { put("completedAt", iso(it)) }
-            put("answers", JsonArray(answers))
-            if (forkedLocalState) db.query("SELECT result_json FROM exam_results WHERE attempt_id = ?", listOf(attemptID)).singleOrNull()
-                ?.let { put("result", Json.parseToJsonElement(it.text("result_json"))) }
+            val attempt = tx.query("SELECT a.*, i.content_id FROM exam_attempts a " +
+                "JOIN exam_snapshot_ids i ON i.exam_id = a.exam_id WHERE a.attempt_id = ?", listOf(attemptID)).single()
+            val snapshotRow = tx.query("SELECT * FROM exam_snapshots WHERE content_id = ?", listOf(attempt.text("content_id"))).single()
+            val content = Json.parseToJsonElement(snapshotRow.text("content_json")).jsonObject
+            val answers = if (forkedLocalState) tx.query("SELECT question_id, revision, response_json FROM exam_answers WHERE attempt_id = ? " +
+                "AND revision = (SELECT MAX(a2.revision) FROM exam_answers a2 WHERE a2.attempt_id = exam_answers.attempt_id " +
+                "AND a2.question_id = exam_answers.question_id) ORDER BY question_id", listOf(attemptID)).map { answer ->
+                buildJsonObject {
+                    put("questionId", answer.text("question_id")); put("revision", answer.long("revision"))
+                    put("response", Json.parseToJsonElement(answer.text("response_json")))
+                }
+            } else emptyList()
+            val fullSnapshot = JsonObject(content + mapOf(
+                "examId" to JsonPrimitive(attempt.text("exam_id")),
+                "contentId" to JsonPrimitive(snapshotRow.text("content_id")),
+                "contentHash" to JsonPrimitive(snapshotRow.text("content_hash")),
+                "schemaVersion" to JsonPrimitive(snapshotRow.long("schema_version")),
+                "contentRevision" to JsonPrimitive(snapshotRow.long("content_revision")),
+                "gradingVersion" to JsonPrimitive(snapshotRow.long("grading_version")),
+                "source" to JsonPrimitive(snapshotRow.text("source")),
+                "languageID" to JsonPrimitive(snapshotRow.text("language_id")),
+                "level" to JsonPrimitive(snapshotRow.text("level")),
+                "weekId" to JsonPrimitive(snapshotRow.long("week_id")),
+            ))
+            val started = iso(attempt.real("started_at"))
+            val initialAttempt = buildJsonObject {
+                put("attemptId", attemptID); put("examId", attempt.text("exam_id"))
+                put("state", if (forkedLocalState) attempt.text("state") else "in_progress")
+                put("position", if (forkedLocalState) attempt.long("position") else 0)
+                put("revision", if (forkedLocalState) attempt.long("revision") else 1)
+                put("startedAt", started); put("updatedAt", if (forkedLocalState) iso(attempt.real("updated_at")) else started)
+                if (forkedLocalState) attempt.realOrNull("completed_at")?.let { put("completedAt", iso(it)) }
+                put("answers", JsonArray(answers))
+                if (forkedLocalState) tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?", listOf(attemptID)).singleOrNull()
+                    ?.let { put("result", Json.parseToJsonElement(it.text("result_json"))) }
+            }
+            if (forkedLocalState) {
+                val frozenPayload = JsonObject(storedPayload + ("initialAttempt" to initialAttempt))
+                tx.update("UPDATE exam_sync_outbox SET payload_json = ? WHERE event_id = ? AND attempt_id = ? " +
+                    "AND event_type = 'created' AND delivery_state = 'pending'",
+                    listOf(frozenPayload.toString(), event.text("event_id"), attemptID))
+            }
+            fullSnapshot to initialAttempt
         }
-        return fullSnapshot to initialAttempt
     }
 
     private fun iso(seconds: Double): String = ISO.format(Instant.ofEpochMilli((seconds * 1000).toLong()))

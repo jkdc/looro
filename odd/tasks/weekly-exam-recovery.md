@@ -420,9 +420,18 @@ use their frozen revision-1 payload and send later revisions separately.
 | Follow-up verification | Observed result |
 |---|---|
 | Legacy fork without `initialAttempt`, edited offline before first upload; frozen new fork; normal creation/event flow | Focused Docker Android tests: 3 passed, 0 failures/errors/skips. |
-| Full Android JVM app suite after legacy ACK correction | Docker `:app:testDebugUnitTest`: 685 passed, 0 failures/errors/skips. |
-| Independent verifier | Recheck requested for the realistic pre-upgrade event plus post-upgrade offline edit; pending. |
+| Full Android JVM app suite after lost-ACK correction | Docker `:app:testDebugUnitTest`: 686 passed, 0 failures/errors/skips. |
+| Independent verifier | Fresh scratch Docker probe passed: identical creation payload after lost ACK, later offline edit delivered separately, local answer retained, and outbox drained. |
 | Native Gentle AI review | High-risk review found R1-001/R3-001/R4-001 (same legacy-event defect); bounded correction applied. Targeted native validation, final captures, acknowledgement and receipt remain pending. |
+
+The subsequent advisory review found a narrower retry gap: if the first legacy
+creation request reached the server but its ACK was lost, then the user edited
+offline before retry, the retry reconstructed a changed creation payload and the
+server rejected it as immutable. `initialPayload` now reconstructs and durably
+stores `initialAttempt` in the pending creation outbox row within the same SQLite
+transaction before transport. Retries reuse those exact bytes; the later edit is
+sent as its own revision event. The new regression test observed RED before this
+fix, then passed together with the existing legacy creation replay test (2/2).
 
 Do not report T05 complete or the native review as approved until the independent
 verification and exact native review acknowledgement are observed.
@@ -600,3 +609,4 @@ No push, PR, deployment, or merge to `main`.
 - L11 (2026-10-14), independent T04 verification found public ID retrieval included retired generations and upload validation accepted a choice without options. Added regression assertions, observed both fail (2/4 focused tests), restricted public retrieval to approved rows and enforced at least two choice options with accepted answers among them; focused PostgreSQL suite passed 4/4 and API TypeScript build passed in Docker. Full API suite remains partially blocked by test-image asset packaging and an unrelated hosted-paid test hang; no clean full-suite claim.
 - L12 (2026-10-15), user selected “revisar este cambio”. Gentle AI completed the exact high-risk three-lens review for T04 target `sha256:746d15f0290842aa80119da1e41109e1d2bb7bcdcfba65af11b2095a4a2b2cfb`; final capture approved and exact acknowledgement burned authority. One non-blocking `R3-001` WARNING at `services/api/src/level-test-attempts.ts:119` remains follow-up; no correction required.
 - L13 (2026-10-15), user request verbatim: “resuelve los problemas encontrados”. Fixed the Android update-count contract, immutable fork creation retry payload, and revision ordering independent of wall-clock time. RED was observed for each regression, focused Android tests passed 3/3, full Android JVM app suite passed 684/684, and independent fresh-scratch verification passed 27/27 under Android's `-1` update-count semantics. No commit/merge. The prior native review remains blocked by candidate context budget, with no receipt.
+- L14 (2026-10-16), user request verbatim: “resuelvelo y vuelve a verificar despues”. Fixed the legacy lost-first-ACK plus offline-edit case by persisting the reconstructed initial attempt transactionally before sending; retries replay the frozen snapshot and transmit later edits as revision events. Observed the new regression fail before the fix, then focused tests passed 2/2; full Android JVM app suite passed 686/686; independent fresh-scratch Docker verification passed. No commit history rewrite, commit, push, or merge. Native RDD receipt remains pending.
