@@ -205,25 +205,13 @@ recorded below. Preparation is not completion; no task is checked at initializat
 
 ### T05 continuation ruling
 
-- Ruling: keep the local divergent attempt intact when a server CAS conflict arrives,
-  and persist the server-confirmed attempt as a separate conflict branch before
-  offering resolution. Explicit takeover adopts the server branch; explicit fork
-  preserves the local branch as a new attempt. This costs one bounded local conflict
-  record per attempt but prevents either branch from disappearing before a choice.
-- Ruling: the `created` outbox event uses T04's authenticated immutable `/sync`
-  endpoint with its frozen snapshot and initial attempt; only after that acceptance
-  is the exact creation row ACKed. Subsequent progress/completion events use T05's
-  event endpoint in revision order. This is necessary because the event endpoint
-  deliberately accepts only mutations of an already-created attempt.
-- Android and iOS authenticated clients now expose the fixed T04 initial-attempt
-  sync route as well as T05 event sync. Android's MockWebServer test verifies the
-  owner bearer, exact route, and one-snapshot/one-attempt envelope. This is a
-  transport seam only, not a production outbox drain or conflict-resolution flow.
-- Android client regression was observed RED before adding `syncExamAttempt`
-  (unresolved method), then the focused MockWebServer class passed 10/10 in the
-  pinned Docker test image. A concurrent first Gradle invocation held the shared
-  cache lock; after it exited, the focused run completed successfully. The Docker
-  `git diff --check` is clean. The full Android suite has not yet been rerun.
+- Preserve both divergent branches on CAS conflict: takeover adopts server-confirmed
+  state; fork retains local state as a new attempt. Creation uses T04's authenticated
+  immutable `/sync` payload before ACK; progress/completion then use T05 events in
+  revision order.
+- Android/iOS clients expose both sync routes. Android MockWebServer regression was
+  RED before `syncExamAttempt` and passed 10/10 after; this proves transport only,
+  not production outbox draining or conflict resolution.
 - [x] **T06 — Implement Android defensive fetch, cache, and frozen selection (functional verification complete).**
   Phase P3; report §5, 9/T06. SDD: `openspec/changes/t06-android-remote-level-test-selection/`;
   plan: `docs/superpowers/plans/2026-10-16-t06-remote-level-test-selection.md`.
@@ -360,24 +348,13 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
 
 ### T04 implementation routing and scope ruling
 
-- Route: direct inline implementation after bounded CodeGraph mapping; one required
-  read-only explorer mapped T04 API/auth/migration/test surfaces. The exact configured
-  `gpt-6.1-luna` worker ID is unavailable in this runtime; per the user's instruction
-  to assign what is needed, the closest available `gpt-6-luna` ran at high effort.
-- Ruling: T04 owns immutable exam content and private attempt persistence/retrieval,
-  account ownership, bounded request/page sizes, validation, FK integrity, and public
-  published-by-ID retrieval. T05 remains responsible for update-event replay,
-  revision CAS, ACK/outbox synchronization semantics, and divergent-device conflicts;
-  this boundary avoids prematurely inventing T05's conflict protocol while allowing
-  T04 to prove uploads do not create dangling or public private snapshots.
-- Keep retired generated rows retrievable through an owned attempt's frozen snapshot;
-  public exam-ID lookup serves only currently approved content. Do not delete retired
-  generations while attempts reference them.
-- Ruling: account deletion must remove private exam attempts, aliases, and snapshots
-  in the same existing account-deletion transaction, including when financial records
-  require retaining a redacted account row; a signed-out account is not deleted.
-- T04-specific test runner: API Node test suite and PostgreSQL integration through
-  Docker. No project test/build command will run on the host.
+- Route: direct inline after one read-only API/auth/schema mapper. T04 owns immutable
+  snapshots, private owner-scoped attempts, validation and bounded retrieval; T05 owns
+  event replay, revision CAS, ACK/outbox and device conflicts.
+- Retired generated content stays available through owned frozen attempts, but public
+  ID lookup exposes approved content only. Account deletion removes private attempts,
+  aliases and snapshots in its existing transaction; sign-out is not deletion.
+- API/PostgreSQL tests run through Docker; no project command runs on the host.
 
 ### T05 review-finding corrections (2026-10-15)
 
