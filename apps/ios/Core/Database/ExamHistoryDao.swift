@@ -140,67 +140,81 @@ public enum ExamHistoryDao {
                      args: [attemptID, ownerAccountID]).first
     }
 
-    /// Forks the retained local conflict branch into a new immutable attempt identity.
+    /// Forks the latest local conflict branch into a new immutable attempt identity.
     @discardableResult
     public static func resolveConflictFork(_ db: SqlDatabase, ownerAccountID: String, attemptID: String,
                                            forkAttemptID: String, forkedAt: Double) throws -> Bool {
         try db.transaction { tx in
-        guard !forkAttemptID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-              forkAttemptID != attemptID,
-              let conflict = try tx.query("SELECT local_attempt_json FROM exam_sync_conflicts WHERE attempt_id = ? " +
-                "AND owner_account_id = ? AND resolution IS NULL", args: [attemptID, ownerAccountID]).first,
-              let local = object(conflict.text("local_attempt_json")),
-              let old = local["attempt"] as? [String: Any],
-              let source = try tx.query("SELECT a.*, i.content_id FROM exam_attempts a JOIN exam_snapshot_ids i " +
-                "ON i.exam_id = a.exam_id WHERE a.attempt_id = ? AND a.owner_account_id = ?",
-                args: [attemptID, ownerAccountID]).first,
-              let snapshot = try tx.query("SELECT * FROM exam_snapshots WHERE content_id = ?",
-                args: [source.text("content_id")]).first,
-              let state = old["state"] as? String, ["in_progress", "completed"].contains(state),
-              let position = (old["position"] as? NSNumber)?.intValue else { return false }
-        _ = try tx.update("UPDATE exam_sync_outbox SET delivery_state = 'superseded' WHERE attempt_id = ? " +
-            "AND delivery_state IN ('pending','in_flight')", args: [attemptID])
-        let completedAt = (old["completedAt"] as? NSNumber)?.doubleValue
-        let result = local["result"] as? [String: Any]
-        if state == "completed" && (completedAt == nil || result == nil) { return false }
-        let answers = local["answers"] as? [[String: Any]] ?? []
-        var latest: [String: [String: Any]] = [:]
-        for answer in answers {
-            guard let question = answer["questionId"] as? String, answer["response"] != nil else { return false }
-            let revision = (answer["revision"] as? NSNumber)?.int64Value ?? 0
-            if revision > ((latest[question]?["revision"] as? NSNumber)?.int64Value ?? -1) { latest[question] = answer }
-        }
-        let prepared = latest.compactMap { question, answer -> (String, String)? in
-            guard let response = answer["response"] as? [String: Any] else { return nil }
-            return (question, jsonString(response))
-        }
-        guard prepared.count == latest.count, let content = object(snapshot.text("content_json")) else { return false }
-        let inserted = try tx.insert("exam_attempts", ["attempt_id": forkAttemptID,
-            "exam_id": source.text("exam_id"), "owner_account_id": ownerAccountID, "state": state,
-            "sync_state": "pending", "position": position, "revision": 1,
-            "started_at": source.real("started_at"), "updated_at": forkedAt, "completed_at": completedAt])
-        guard inserted != -1 else { return false }
-        for (question, responseJSON) in prepared {
-            _ = try tx.insert("exam_answers", ["attempt_id": forkAttemptID, "question_id": question,
-                "revision": 1, "response_json": responseJSON,
-                "saved_at": forkedAt])
-        }
-        if let result {
-            _ = try tx.insert("exam_results", ["attempt_id": forkAttemptID, "result_json": jsonString(result),
-                "recorded_at": completedAt ?? forkedAt])
-        }
-        let fullSnapshot = content.merging(["examId": source.text("exam_id"), "contentId": snapshot.text("content_id"),
-            "contentHash": snapshot.text("content_hash"), "schemaVersion": snapshot.int("schema_version"),
-            "contentRevision": snapshot.int("content_revision"), "gradingVersion": snapshot.int("grading_version"),
-            "source": snapshot.text("source"), "languageID": snapshot.text("language_id"),
-            "level": snapshot.text("level"), "weekId": snapshot.long("week_id")]) { _, new in new }
-        try Self.enqueue(tx, attemptID: forkAttemptID, revision: 1, type: "created",
-            payload: jsonString(["attemptId": forkAttemptID, "examId": source.text("exam_id"), "snapshot": fullSnapshot]), at: forkedAt)
-        guard try tx.update("UPDATE exam_sync_conflicts SET resolution = 'fork', resolved_at = ? WHERE attempt_id = ? " +
-            "AND owner_account_id = ? AND resolution IS NULL", args: [forkedAt, attemptID, ownerAccountID]) == 1 else {
-            throw ExamHistoryError.conflictResolutionFailed
-        }
-        return true
+            guard !forkAttemptID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                  forkAttemptID != attemptID,
+                  try tx.query("SELECT 1 AS found FROM exam_attempts WHERE attempt_id = ?", args: [forkAttemptID]).first == nil,
+                  try tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? " +
+                    "AND owner_account_id = ? AND resolution IS NULL", args: [attemptID, ownerAccountID]).first != nil,
+                  let source = try tx.query("SELECT a.*, i.content_id FROM exam_attempts a JOIN exam_snapshot_ids i " +
+                    "ON i.exam_id = a.exam_id WHERE a.attempt_id = ? AND a.owner_account_id = ?",
+                    args: [attemptID, ownerAccountID]).first,
+                  let snapshot = try tx.query("SELECT * FROM exam_snapshots WHERE content_id = ?",
+                    args: [source.text("content_id")]).first else { return false }
+            let state = source.text("state")
+            guard ["in_progress", "completed"].contains(state) else { return false }
+            let position = source.int("position")
+            let completedAt = source.realOrNull("completed_at")
+            let result = try tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?", args: [attemptID])
+                .first.flatMap { object($0.text("result_json")) }
+            if state == "completed" && (completedAt == nil || result == nil) { return false }
+            if state == "in_progress" && result != nil { return false }
+            let answerRows = try tx.query("SELECT a.question_id, a.response_json FROM exam_answers a " +
+                "WHERE a.attempt_id = ? AND a.revision = (SELECT MAX(a2.revision) FROM exam_answers a2 " +
+                "WHERE a2.attempt_id = a.attempt_id AND a2.question_id = a.question_id) ORDER BY a.question_id",
+                args: [attemptID])
+            var prepared: [(String, String, Any)] = []
+            for answer in answerRows {
+                guard let response = object(answer.text("response_json")) else { return false }
+                prepared.append((answer.text("question_id"), answer.text("response_json"), response))
+            }
+            guard let content = object(snapshot.text("content_json")) else { return false }
+            let effectiveAt = max(forkedAt, source.real("started_at"), source.real("updated_at"))
+            let initialAttempt: [String: Any] = [
+                "attemptId": forkAttemptID, "examId": source.text("exam_id"), "state": state,
+                "position": position, "revision": 1,
+                "startedAt": isoTimestamp(source.real("started_at")), "updatedAt": isoTimestamp(effectiveAt),
+                "completedAt": completedAt.map(isoTimestamp) as Any? ?? NSNull(),
+                "answers": prepared.map { ["questionId": $0.0, "revision": 1, "response": $0.2] },
+                "result": result as Any? ?? NSNull()
+            ]
+            let fullSnapshot = content.merging(["examId": source.text("exam_id"), "contentId": snapshot.text("content_id"),
+                "contentHash": snapshot.text("content_hash"), "schemaVersion": snapshot.int("schema_version"),
+                "contentRevision": snapshot.int("content_revision"), "gradingVersion": snapshot.int("grading_version"),
+                "source": snapshot.text("source"), "languageID": snapshot.text("language_id"),
+                "level": snapshot.text("level"), "weekId": snapshot.long("week_id")]) { _, new in new }
+            guard try tx.insert("exam_attempts", ["attempt_id": forkAttemptID,
+                "exam_id": source.text("exam_id"), "owner_account_id": ownerAccountID, "state": state,
+                "sync_state": "pending", "position": position, "revision": 1,
+                "started_at": source.real("started_at"), "updated_at": effectiveAt, "completed_at": completedAt]) != -1 else {
+                return false
+            }
+            for answer in prepared {
+                guard try tx.insert("exam_answers", ["attempt_id": forkAttemptID, "question_id": answer.0,
+                    "revision": 1, "response_json": answer.1, "saved_at": effectiveAt]) != -1 else {
+                    throw ExamHistoryError.conflictResolutionFailed
+                }
+            }
+            if let result {
+                guard try tx.insert("exam_results", ["attempt_id": forkAttemptID,
+                    "result_json": jsonString(result), "recorded_at": completedAt ?? effectiveAt]) != -1 else {
+                    throw ExamHistoryError.conflictResolutionFailed
+                }
+            }
+            try Self.enqueue(tx, attemptID: forkAttemptID, revision: 1, type: "created",
+                payload: jsonString(["attemptId": forkAttemptID, "examId": source.text("exam_id"),
+                    "snapshot": fullSnapshot, "forkedLocalState": true, "initialAttempt": initialAttempt]), at: effectiveAt)
+            _ = try tx.update("UPDATE exam_sync_outbox SET delivery_state = 'superseded' WHERE attempt_id = ? " +
+                "AND delivery_state IN ('pending','in_flight')", args: [attemptID])
+            guard try tx.update("UPDATE exam_sync_conflicts SET resolution = 'fork', resolved_at = ? WHERE attempt_id = ? " +
+                "AND owner_account_id = ? AND resolution IS NULL", args: [effectiveAt, attemptID, ownerAccountID]) == 1 else {
+                throw ExamHistoryError.conflictResolutionFailed
+            }
+            return true
         }
     }
 
@@ -343,13 +357,17 @@ public enum ExamHistoryDao {
         return try db.transaction { tx in
             guard let attempt = try tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?",
                                              args: [attemptID]).first else { throw ExamHistoryError.missingAttempt }
+            guard try tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
+                               args: [attemptID]).first == nil else { throw ExamHistoryError.completedAttempt }
             guard attempt.text("state") == "in_progress" else { throw ExamHistoryError.completedAttempt }
             let effectiveAt = max(savedAt, attempt.real("started_at"), attempt.real("updated_at"))
             let revision = attempt.long("revision") + 1
             _ = try tx.insert("exam_answers", ["attempt_id": attemptID, "question_id": questionID,
                 "revision": revision, "response_json": responseJSON, "saved_at": effectiveAt])
             _ = try tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ?, " +
-                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
+                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' " +
+                "WHEN EXISTS (SELECT 1 FROM exam_sync_conflicts c WHERE c.attempt_id = exam_attempts.attempt_id " +
+                "AND c.resolution IS NULL) THEN 'conflict' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
                 args: [position, revision, effectiveAt, attemptID, revision - 1])
             guard try tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?",
@@ -371,6 +389,8 @@ public enum ExamHistoryDao {
         return try db.transaction { tx in
             guard let attempt = try tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?",
                                              args: [attemptID]).first else { throw ExamHistoryError.missingAttempt }
+            guard try tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
+                               args: [attemptID]).first == nil else { throw ExamHistoryError.completedAttempt }
             if attempt.text("state") == "completed" {
                 guard let existing = try tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?",
                                                   args: [attemptID]).first else { throw ExamHistoryError.missingResult }
@@ -382,7 +402,9 @@ public enum ExamHistoryDao {
             _ = try tx.insert("exam_results", ["attempt_id": attemptID,
                 "result_json": resultJSON, "recorded_at": effectiveAt])
             _ = try tx.update("UPDATE exam_attempts SET state = 'completed', revision = ?, updated_at = ?, " +
-                "completed_at = ?, sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
+                "completed_at = ?, sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' " +
+                "WHEN EXISTS (SELECT 1 FROM exam_sync_conflicts c WHERE c.attempt_id = exam_attempts.attempt_id " +
+                "AND c.resolution IS NULL) THEN 'conflict' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
                 args: [revision, effectiveAt, effectiveAt, attemptID, revision - 1])
             guard let updated = try tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?",

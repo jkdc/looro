@@ -68,7 +68,7 @@ Interface: freeze effective time with each outbox event; enforce max(startedAt, 
 - [x] Commit ce37ae0 as fix(level-tests): clamp attempt event timestamps monotonically.
 
 ### Task 3: Per-attempt conflict isolation in Android drain
-Route: inline. Status: implemented; focused regression and full Android JVM suites passed. Risk: item 4 (async ordering and starvation). Commit: pending.
+Route: inline. Status: implemented; focused regression and full Android JVM suites passed. Risk: item 4 (async ordering and starvation). Commit: dc9fc19.
 Files:
 - Modify apps/android/app/src/main/java/com/jkdc/app/network/ExamAttemptOutboxSync.kt and apps/android/app/src/main/java/com/jkdc/app/data/ExamHistoryDao.kt.
 - Extend apps/android/app/src/test/java/com/jkdc/app/data/LearningDbTest.kt using the existing SQLite and outbox-sync fixtures.
@@ -77,19 +77,19 @@ Interface: pending event selection excludes attempts with unresolved conflict; a
 - [x] Add regression that a later drain does not resend unresolved A.
 - [x] Observe RED on the current early-return behavior, then implement per-attempt pause and continue behavior.
 - [x] Focused T3 regression passed; full Android Docker JVM suites passed (43 tasks, BUILD SUCCESSFUL).
-- [ ] Commit as fix(android): isolate conflicted exam attempts during sync.
+- [x] Commit dc9fc19 as fix(android): isolate conflicted exam attempts during sync.
 
 ### Task 4: Atomic fork from latest local branch
-Route: inline. Status: pending. Risk: item 1 (durable local data) and item 4 (transaction/concurrency). Commit: pending.
+Route: inline. Status: implemented; focused and full Android JVM suites passed; Swift unverified on Linux. Risk: item 1 (durable local data) and item 4 (transaction/concurrency). Commit: pending.
 Files:
 - Modify apps/android/app/src/main/java/com/jkdc/app/data/ExamHistoryDao.kt and apps/android/app/src/test/java/com/jkdc/app/data/ExamHistorySyncTest.kt.
 - Modify iOS ExamHistoryDao.swift and ExamHistoryDaoTests.swift.
 - Update services/api/docs/level-test-attempt-sync.md if lifecycle guidance requires it.
 Interface: transaction reads current source, latest answers, position, completion/result and original snapshot; inserts new fork identity plus immutable creation event; only after all inserts succeed does it retire represented source events and mark source forked; writes to forked source fail.
-- [ ] Add Android regression for answer/position/result edited after conflict capture, fork failure rollback, and source write rejection.
-- [ ] Add equivalent Swift DAO tests; execution remains unavailable on Linux.
-- [ ] Run failing Android regression; implement atomic current-state fork and source immutability in both DAOs.
-- [ ] Run Android focused/full Docker tests; record Swift as unexecuted, not passing.
+- [x] Add Android regression for answer/position/result edited after conflict capture, fork failure rollback on conflicting identity, and source write rejection; initial tests reproduced stale conflict snapshot behavior, lost conflict status, source mutation, and non-atomic failure effects.
+- [x] Add equivalent Swift DAO tests; execution remains unavailable on Linux.
+- [x] Implement fork from live source rows and latest answer revisions; freeze creation event with snapshot/current state, preserve unresolved conflict status, and reject writes to forked source identity.
+- [x] Focused T4 Android tests passed 3/3; full Android JVM suites passed (43 actionable tasks, BUILD SUCCESSFUL); Swift tests unexecuted on Linux.
 - [ ] Commit as fix(exams): fork the latest local conflict state atomically.
 
 ## Log
@@ -113,3 +113,9 @@ Ruling: use the focused Docker attempt-sync suite for per-task TDD evidence and 
 
 ### L6 — Task 2 progress
 Focused API sync tests passed 8/8 and full Android Docker JVM suites passed; Swift mirror remains unexecuted on Linux. The full API suite again reported unrelated missing SQL files under `/app/dist` and `voice_worker_already_running`, then stalled at test 212 and was interrupted. T2 is implemented and committed as ce37ae0, but the required full API suite remains unresolved.
+
+### L7 — Task 3 evidence
+The T3 regression first failed because the current drain returned after attempt A conflicted, preventing B from being sent. After adding conflict-scoped selection and continuing other attempts, the focused test and full Android JVM suites passed. Commit dc9fc19.
+
+### L8 — Task 4 implementation and verification
+Android RED tests reproduced stale conflict snapshot data, conflict-state loss after offline edits, and writes still accepted on a forked source. The rollback test was refined to simulate a real fork-ID collision; the source events and conflict resolution remain unchanged after rejection. Fork now snapshots current attempt/answer/result rows and frozen snapshot in one transaction, records a retry-stable creation event, retires source events only after new identity/event creation, and prevents subsequent source writes. Focused T4 tests passed 3/3; full Android JVM suite passed (43 actionable tasks, BUILD SUCCESSFUL). Equivalent Swift changes/tests are present but unexecuted because this host is Linux.

@@ -217,52 +217,52 @@ object ExamHistoryDao {
             listOf(attemptID, ownerAccountID)).isNotEmpty()
     }
 
-    /** Forks the retained local conflict branch into a new immutable attempt identity. */
+    /** Forks the latest local conflict branch into a new immutable attempt identity. */
     fun resolveConflictFork(db: SqlDatabase, ownerAccountID: String, attemptID: String,
                             forkAttemptID: String, forkedAt: Double): Boolean = db.transaction { tx ->
         if (forkAttemptID.isBlank() || forkAttemptID == attemptID) return@transaction false
-        val conflict = tx.query("SELECT local_attempt_json FROM exam_sync_conflicts WHERE attempt_id = ? " +
-            "AND owner_account_id = ? AND resolution IS NULL", listOf(attemptID, ownerAccountID)).singleOrNull()
-            ?: return@transaction false
-        val local = runCatching { Json.parseToJsonElement(conflict.text("local_attempt_json")).jsonObject }.getOrNull()
-            ?: return@transaction false
-        val old = local["attempt"]?.jsonObject ?: return@transaction false
+        if (tx.query("SELECT 1 AS found FROM exam_attempts WHERE attempt_id = ?", listOf(forkAttemptID)).isNotEmpty())
+            return@transaction false
+        if (tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? " +
+                "AND owner_account_id = ? AND resolution IS NULL", listOf(attemptID, ownerAccountID)).isEmpty())
+            return@transaction false
         val source = tx.query("SELECT a.*, i.content_id FROM exam_attempts a JOIN exam_snapshot_ids i " +
             "ON i.exam_id = a.exam_id WHERE a.attempt_id = ? AND a.owner_account_id = ?",
             listOf(attemptID, ownerAccountID)).singleOrNull() ?: return@transaction false
-        tx.update("UPDATE exam_sync_outbox SET delivery_state = 'superseded' WHERE attempt_id = ? " +
-            "AND delivery_state IN ('pending','in_flight')", listOf(attemptID))
-        val contentID = source.text("content_id")
-        val snapshot = tx.query("SELECT * FROM exam_snapshots WHERE content_id = ?", listOf(contentID)).singleOrNull()
-            ?: return@transaction false
-        val state = old["state"]?.jsonPrimitive?.contentOrNull ?: return@transaction false
+        val snapshot = tx.query("SELECT * FROM exam_snapshots WHERE content_id = ?",
+            listOf(source.text("content_id"))).singleOrNull() ?: return@transaction false
+        val state = source.text("state")
         if (state !in setOf("in_progress", "completed")) return@transaction false
-        val position = old["position"]?.jsonPrimitive?.intOrNull ?: return@transaction false
-        val completedAt = old["completedAt"]?.jsonPrimitive?.doubleOrNull
-        val result = local["result"] as? JsonObject
+        val position = source.long("position").toInt()
+        val completedAt = source.realOrNull("completed_at")
+        val resultRow = tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?",
+            listOf(attemptID)).singleOrNull()
+        val result = resultRow?.text("result_json")?.parseJSONObject()
         if (state == "completed" && (completedAt == null || result == null)) return@transaction false
-        val latest = (local["answers"] as? JsonArray).orEmpty().mapNotNull { value ->
-            runCatching { value.jsonObject }.getOrNull()
-        }.groupBy { it["questionId"]?.jsonPrimitive?.contentOrNull ?: return@transaction false }
-            .values.map { rows -> rows.maxBy { it["revision"]?.jsonPrimitive?.longOrNull ?: 0L } }
-        val preparedAnswers = latest.map { answer ->
-            val questionID = answer["questionId"]?.jsonPrimitive?.contentOrNull ?: return@transaction false
-            val response = answer["response"] ?: return@transaction false
-            questionID to response.toString()
+        if (state == "in_progress" && result != null) return@transaction false
+        val preparedAnswers = tx.query(
+            "SELECT a.question_id, a.response_json FROM exam_answers a WHERE a.attempt_id = ? AND a.revision = " +
+                "(SELECT MAX(a2.revision) FROM exam_answers a2 WHERE a2.attempt_id = a.attempt_id " +
+                "AND a2.question_id = a.question_id) ORDER BY a.question_id", listOf(attemptID)).map { answer ->
+            val responseJSON = answer.text("response_json")
+            responseJSON.parseJSONObject()
+            answer.text("question_id") to responseJSON
         }
-        val content = Json.parseToJsonElement(snapshot.text("content_json"))
+        val effectiveAt = maxOf(forkedAt, source.real("started_at"), source.real("updated_at"))
+        val contentID = source.text("content_id")
+        val content = Json.parseToJsonElement(snapshot.text("content_json")).jsonObject
         val snapshotPayload = buildJsonObject {
-            content.jsonObject.forEach { (key, value) -> put(key, value) }
+            content.forEach { (key, value) -> put(key, value) }
             put("examId", source.text("exam_id")); put("contentId", contentID)
             put("contentHash", snapshot.text("content_hash")); put("schemaVersion", snapshot.long("schema_version"))
             put("contentRevision", snapshot.long("content_revision")); put("gradingVersion", snapshot.long("grading_version"))
             put("source", snapshot.text("source")); put("languageID", snapshot.text("language_id"))
             put("level", snapshot.text("level")); put("weekId", snapshot.long("week_id"))
         }
-        val initialAttemptPayload = buildJsonObject {
+        val initialAttempt = buildJsonObject {
             put("attemptId", forkAttemptID); put("examId", source.text("exam_id")); put("state", state)
             put("position", position); put("revision", 1)
-            put("startedAt", isoTimestamp(source.real("started_at"))); put("updatedAt", isoTimestamp(forkedAt))
+            put("startedAt", isoTimestamp(source.real("started_at"))); put("updatedAt", isoTimestamp(effectiveAt))
             completedAt?.let { put("completedAt", isoTimestamp(it)) }
             put("answers", JsonArray(preparedAnswers.map { (questionID, responseJSON) ->
                 buildJsonObject {
@@ -275,22 +275,32 @@ object ExamHistoryDao {
         val inserted = tx.insert("exam_attempts", mapOf("attempt_id" to forkAttemptID,
             "exam_id" to source.text("exam_id"), "owner_account_id" to ownerAccountID, "state" to state,
             "sync_state" to "pending", "position" to position, "revision" to 1,
-            "started_at" to source.real("started_at"), "updated_at" to forkedAt, "completed_at" to completedAt))
+            "started_at" to source.real("started_at"), "updated_at" to effectiveAt, "completed_at" to completedAt))
         if (inserted == -1L) return@transaction false
         preparedAnswers.forEach { (questionID, responseJSON) ->
-            tx.insert("exam_answers", mapOf("attempt_id" to forkAttemptID, "question_id" to questionID,
-                "revision" to 1, "response_json" to responseJSON, "saved_at" to forkedAt))
+            check(tx.insert("exam_answers", mapOf("attempt_id" to forkAttemptID, "question_id" to questionID,
+                "revision" to 1, "response_json" to responseJSON, "saved_at" to effectiveAt)) != -1L) {
+                "Could not persist forked exam answer"
+            }
         }
-        result?.let { tx.insert("exam_results", mapOf("attempt_id" to forkAttemptID,
-            "result_json" to it.toString(), "recorded_at" to (completedAt ?: forkedAt))) }
+        result?.let { value ->
+            check(tx.insert("exam_results", mapOf("attempt_id" to forkAttemptID,
+                "result_json" to value.toString(), "recorded_at" to (completedAt ?: effectiveAt))) != -1L) {
+                "Could not persist forked exam result"
+            }
+        }
         enqueue(tx, forkAttemptID, 1, "created", buildJsonObject {
             put("attemptId", forkAttemptID); put("examId", source.text("exam_id")); put("snapshot", snapshotPayload)
-            put("forkedLocalState", true); put("initialAttempt", initialAttemptPayload)
-        }.toString(), forkedAt)
+            put("forkedLocalState", true); put("initialAttempt", initialAttempt)
+        }.toString(), effectiveAt)
+        tx.update("UPDATE exam_sync_outbox SET delivery_state = 'superseded' WHERE attempt_id = ? " +
+            "AND delivery_state IN ('pending','in_flight')", listOf(attemptID))
         tx.update("UPDATE exam_sync_conflicts SET resolution = 'fork', resolved_at = ? WHERE attempt_id = ? " +
-            "AND owner_account_id = ? AND resolution IS NULL", listOf(forkedAt, attemptID, ownerAccountID))
+            "AND owner_account_id = ? AND resolution IS NULL", listOf(effectiveAt, attemptID, ownerAccountID))
         check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND owner_account_id = ? " +
-            "AND resolution = 'fork'", listOf(attemptID, ownerAccountID)).isNotEmpty())
+            "AND resolution = 'fork'", listOf(attemptID, ownerAccountID)).isNotEmpty()) {
+            "Could not mark source exam attempt as forked"
+        }
         true
     }
 
@@ -365,13 +375,17 @@ object ExamHistoryDao {
         return db.transaction { tx ->
             val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
                 .singleOrNull() ?: error("Exam attempt does not exist")
+            check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
+                listOf(attemptID)).isEmpty()) { "Forked exam attempts are immutable" }
             check(attempt.text("state") == "in_progress") { "Completed exam attempts are immutable" }
             val effectiveAt = maxOf(savedAt, attempt.real("started_at"), attempt.real("updated_at"))
             val revision = attempt.long("revision") + 1
             tx.insert("exam_answers", mapOf("attempt_id" to attemptID, "question_id" to questionID,
                 "revision" to revision, "response_json" to responseJSON, "saved_at" to effectiveAt))
             tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ?, " +
-                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
+                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' " +
+                "WHEN EXISTS (SELECT 1 FROM exam_sync_conflicts c WHERE c.attempt_id = exam_attempts.attempt_id " +
+                "AND c.resolution IS NULL) THEN 'conflict' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
                 listOf(position, revision, effectiveAt, attemptID, revision - 1))
             check(tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
@@ -393,6 +407,8 @@ object ExamHistoryDao {
         return db.transaction { tx ->
             val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
                 .singleOrNull() ?: error("Exam attempt does not exist")
+            check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
+                listOf(attemptID)).isEmpty()) { "Forked exam attempts are immutable" }
             if (attempt.text("state") == "completed") {
                 val existing = tx.query("SELECT result_json FROM exam_results WHERE attempt_id = ?", listOf(attemptID))
                     .singleOrNull() ?: error("Completed exam has no result")
@@ -404,7 +420,9 @@ object ExamHistoryDao {
             tx.insert("exam_results", mapOf("attempt_id" to attemptID,
                 "result_json" to resultJSON, "recorded_at" to effectiveAt))
             tx.update("UPDATE exam_attempts SET state = 'completed', revision = ?, updated_at = ?, completed_at = ?, " +
-                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' ELSE 'pending' END " +
+                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' " +
+                "WHEN EXISTS (SELECT 1 FROM exam_sync_conflicts c WHERE c.attempt_id = exam_attempts.attempt_id " +
+                "AND c.resolution IS NULL) THEN 'conflict' ELSE 'pending' END " +
                 "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
                 listOf(revision, effectiveAt, effectiveAt, attemptID, revision - 1))
             check(tx.query("SELECT state, revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))

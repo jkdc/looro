@@ -259,6 +259,78 @@ final class ExamHistoryDaoTests: XCTestCase {
             args: ["attempt-fork-copy"]).first!.text("event_type"))
     }
 
+    func testForkUsesLatestLocalAnswersPositionAndResultAfterConflictCapture() throws {
+        _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-fork-latest", "content-fork-latest"),
+            attempt: ExamAttemptRecord(attemptID: "attempt-fork-latest", examID: "exam-fork-latest",
+                ownerAccountID: "account-fork-latest", startedAt: 40))
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-fork-latest", questionID: "q1",
+            responseJSON: "{\"answer\":\"before-conflict\"}", position: 1, savedAt: 41)
+        let server = "{\"attemptId\":\"attempt-fork-latest\",\"examId\":\"exam-fork-latest\",\"revision\":3,\"state\":\"in_progress\",\"position\":0,\"startedAt\":\"1970-01-01T00:00:40.000Z\",\"updatedAt\":\"1970-01-01T00:00:42.000Z\",\"answers\":[],\"result\":null}"
+        XCTAssertTrue(try ExamHistoryDao.persistConflict(db, ownerAccountID: "account-fork-latest",
+            attemptID: "attempt-fork-latest", serverAttemptJSON: server, receivedAt: 42))
+
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-fork-latest", questionID: "q1",
+            responseJSON: "{\"answer\":\"after-conflict\"}", position: 3, savedAt: 43)
+        XCTAssertEqual("conflict", try db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = ?",
+            args: ["attempt-fork-latest"]).first!.text("sync_state"))
+        XCTAssertTrue(try ExamHistoryDao.complete(db, attemptID: "attempt-fork-latest",
+            resultJSON: "{\"score\":91}", completedAt: 44))
+        XCTAssertEqual("conflict", try db.query("SELECT sync_state FROM exam_attempts WHERE attempt_id = ?",
+            args: ["attempt-fork-latest"]).first!.text("sync_state"))
+
+        XCTAssertTrue(try ExamHistoryDao.resolveConflictFork(db, ownerAccountID: "account-fork-latest",
+            attemptID: "attempt-fork-latest", forkAttemptID: "attempt-fork-latest-copy", forkedAt: 45))
+        let fork = try XCTUnwrap(ExamHistoryDao.load(db, attemptID: "attempt-fork-latest-copy",
+            ownerAccountID: "account-fork-latest"))
+        XCTAssertEqual("completed", fork.attempt.text("state"))
+        XCTAssertEqual(3, fork.attempt.long("position"))
+        XCTAssertTrue(fork.answers.first!.text("response_json").contains("after-conflict"))
+        XCTAssertTrue(fork.result!.text("result_json").contains("91"))
+        XCTAssertEqual("fork", try ExamHistoryDao.conflict(db, ownerAccountID: "account-fork-latest",
+            attemptID: "attempt-fork-latest")?.text("resolution"))
+    }
+
+    func testForkedSourceRejectsLaterAnswerAndCompletionWrites() throws {
+        _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-fork-immutable", "content-fork-immutable"),
+            attempt: ExamAttemptRecord(attemptID: "attempt-fork-immutable", examID: "exam-fork-immutable",
+                ownerAccountID: "account-fork-immutable", startedAt: 40))
+        let server = "{\"attemptId\":\"attempt-fork-immutable\",\"examId\":\"exam-fork-immutable\",\"revision\":2,\"state\":\"in_progress\",\"position\":0,\"startedAt\":\"1970-01-01T00:00:40.000Z\",\"updatedAt\":\"1970-01-01T00:00:42.000Z\",\"answers\":[],\"result\":null}"
+        XCTAssertTrue(try ExamHistoryDao.persistConflict(db, ownerAccountID: "account-fork-immutable",
+            attemptID: "attempt-fork-immutable", serverAttemptJSON: server, receivedAt: 42))
+        XCTAssertTrue(try ExamHistoryDao.resolveConflictFork(db, ownerAccountID: "account-fork-immutable",
+            attemptID: "attempt-fork-immutable", forkAttemptID: "attempt-fork-immutable-copy", forkedAt: 43))
+
+        XCTAssertThrowsError(try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-fork-immutable",
+            questionID: "q1", responseJSON: "{\"answer\":\"late\"}", position: 1, savedAt: 44))
+        XCTAssertThrowsError(try ExamHistoryDao.complete(db, attemptID: "attempt-fork-immutable",
+            resultJSON: "{\"score\":70}", completedAt: 44))
+        XCTAssertEqual(1, try db.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?",
+            args: ["attempt-fork-immutable"]).first!.long("revision"))
+    }
+
+    func testRejectedForkLeavesSourceOutboxAndConflictUntouched() throws {
+        _ = try ExamHistoryDao.start(db, snapshot: snapshot("exam-fork-rollback", "content-fork-rollback"),
+            attempt: ExamAttemptRecord(attemptID: "attempt-fork-rollback", examID: "exam-fork-rollback",
+                ownerAccountID: "account-fork-rollback", startedAt: 40))
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "attempt-fork-rollback", questionID: "q1",
+            responseJSON: "{\"answer\":\"local\"}", position: 1, savedAt: 41)
+        let server = "{\"attemptId\":\"attempt-fork-rollback\",\"examId\":\"exam-fork-rollback\",\"revision\":2,\"state\":\"in_progress\",\"position\":0,\"startedAt\":\"1970-01-01T00:00:40.000Z\",\"updatedAt\":\"1970-01-01T00:00:42.000Z\",\"answers\":[],\"result\":null}"
+        XCTAssertTrue(try ExamHistoryDao.persistConflict(db, ownerAccountID: "account-fork-rollback",
+            attemptID: "attempt-fork-rollback", serverAttemptJSON: server, receivedAt: 42))
+        try db.update("UPDATE exam_sync_conflicts SET local_attempt_json = ? WHERE attempt_id = ?",
+            args: ["{\"attempt\":{\"state\":\"invalid\",\"position\":1},\"answers\":[],\"result\":null}",
+                   "attempt-fork-rollback"])
+
+        XCTAssertFalse(try ExamHistoryDao.resolveConflictFork(db, ownerAccountID: "account-fork-rollback",
+            attemptID: "attempt-fork-rollback", forkAttemptID: "attempt-fork-rollback-copy", forkedAt: 43))
+        XCTAssertTrue(try db.query("SELECT 1 AS found FROM exam_attempts WHERE attempt_id = ?",
+            args: ["attempt-fork-rollback-copy"]).isEmpty)
+        XCTAssertTrue(try db.query("SELECT delivery_state FROM exam_sync_outbox WHERE attempt_id = ?",
+            args: ["attempt-fork-rollback"]).allSatisfy { $0.text("delivery_state") == "pending" })
+        XCTAssertNil(try ExamHistoryDao.conflict(db, ownerAccountID: "account-fork-rollback",
+            attemptID: "attempt-fork-rollback")?.textOrNull("resolution"))
+    }
+
     private func snapshot(_ examID: String, _ contentID: String) -> ExamSnapshotRecord {
         ExamSnapshotRecord(examID: examID, contentID: contentID, contentHash: "hash-\(contentID)",
             schemaVersion: 1, contentRevision: 1, gradingVersion: 1, source: "bundled",
