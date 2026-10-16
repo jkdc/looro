@@ -34,7 +34,7 @@ publish malformed questions or duplicate billable work across schedulers/CLI.
 | Chain strategy / user selection | `feature-branch-chain` |
 | Local integration | Explicitly requested final local merge into `feature/learning-platform` |
 | Remote authorization | None: no push, PR creation, remote execution, or deployment |
-| Current parent authorization | Full plan T01–T14 authorized by the active user goal; parent-controlled implementation resumes at T03. No delegated writes. |
+| Current parent authorization | User authorized autonomous execution of all remaining tasks through T14 using Superpowers SDD and explicitly left Gentle AI aside. Current work resumes at T06; no push, PR, or merge to main. |
 
 The approved requirement source remains the original checkout's untracked report:
 `/home/joaquin/Proyectos/looro-test/looro/informe-plan-pendientes-2026-10-13.md`.
@@ -155,11 +155,18 @@ recorded below. Preparation is not completion; no task is checked at initializat
   Commit: `2542ef0` (`feat(level-tests): persist private cloud exam attempts`).
   Native review: approved and acknowledged; target `sha256:746d15f0290842aa80119da1e41109e1d2bb7bcdcfba65af11b2095a4a2b2cfb`, authority burned. One non-blocking WARNING `R3-001` remains at `services/api/src/level-test-attempts.ts:119` for later follow-up.
   Risk: item 1 (new persisted account-owned exam history) and item 2 (authenticated private routes and deletion cleanup).
-- [ ] **T05 — Implement durable sync, ACK idempotence, CAS, and conflicts.**
-  Phase P2; report §§1, 4–6, 9/T05. Files: dedicated exam sync clients/outbox and API.
-  Prove duplicate event retry, lost ACK, stale ACK with new edits, concurrent devices,
-  immutable submitted answers/results, explicit takeover/fork resolution, owner isolation.
-  Checks: API and platform state-machine tests with fake transport; DB transaction tests.
+- [x] **T05 — Implement durable sync, ACK idempotence, CAS, and conflicts.**
+  Phase P2; report §§1, 4–6, 9/T05. Implemented across `c8b60fc`, `ce37ae0`,
+  `dc9fc19`, `6bc1696`, and `8e83b9f`. Proved duplicate replay, lost ACK, stale ACK
+  with new edits, concurrent-device CAS, immutable results, explicit takeover/fork,
+  and owner isolation. Android full JVM and independent scratch checks pass; API
+  focused PostgreSQL suites pass (6/6) and focused client contract tests pass (8/8).
+  Broad API suite remains environmentally non-clean (missing SQL assets in test image
+  and unrelated hosted-worker overlap); no full-suite pass is claimed. Swift execution
+  remains explicitly excluded on Linux. Gentle AI native review is out of scope per the
+  current workflow decision; this is not an approval/receipt claim.
+  Risk: item 1 (durable owner-scoped attempt/outbox records) and item 4 (cross-device
+  concurrent state transitions).
 
 ### T05 implementation routing and scope ruling
 
@@ -188,43 +195,13 @@ recorded below. Preparation is not completion; no task is checked at initializat
   Swift source/tests may be retained but cannot be reported verified in this Linux
   environment. Any unresolved acceptance proof remains explicitly open.
 
-### T05 implementation progress (not closed)
+### T05 implementation progress (functional implementation complete; see task status)
 
-- Added migration `043_level_test_attempt_events.sql` and authenticated
-  `POST /v1/level-test-attempts/events`: one event per request; SHA-256 canonical
-  payload ledger, transaction-scoped event-ID advisory lock, commit-before-ACK,
-  byte-identical replay ACK, changed-payload rejection, revision CAS, confirmed
-  server branch on stale conflict, immutable completion, and explicit takeover
-  event. Divergent forks use a new attempt ID through T04's immutable creation API.
-- Android and Swift DAOs now list owner-scoped pending outbox events, ACK only an
-  exact attempt/event/revision under the matching account, preserve newer pending
-  edits, and mark conflicts. Local answer/completion mutations return owned attempts
-  to `pending` (anonymous attempts remain `local_only`). Android and iOS authenticated
-  HTTP clients expose the fixed event-sync endpoint; Android fake-transport test
-  covers endpoint/session/payload binding. API contract is in
-  `services/api/docs/level-test-attempt-sync.md`.
-- Android now drains outbox events on session restore/sign-in, preserves the owner
-  captured for the drain, verifies exact ACK identity/revision, and sends a local
-  fork as a new ID with its retained answers and frozen snapshot. Normal creation
-  remains revision 1 followed by ordered event delivery.
-- Independent high-risk verification reproduced two local defects and one missing
-  acceptance: a later conflict retained the old takeover resolution; JSON `null`
-  created a result row for an unfinished attempt; platform fork resolution was
-  absent. Corrected both DAO implementations. The explicit fork now supersedes old
-  pending source events transactionally; its Android end-to-end test verifies upload
-  without manual SQL repair. Android and Swift regression tests were added.
-- Independent bounded recheck passes all three blockers in a fresh scratch copy:
-  repeated takeover, nullable unfinished result, and fork upload without manual DB
-  repair. Android full JVM run with `--rerun-tasks` passes 693 tests (682 app + 11
-  engine-local); JUnit XML confirms 0 failures/errors/skips. Docker API checks pass:
-  typecheck, focused PostgreSQL suite 6/6, independent transaction probes 7/7, and
-  no-DB suite 506 tests (140 pass, 366 skipped, 0 fail). Python schema/export suite
-  passes 136/136; generated schema checks are clean at user_version 5. `git diff
-  --check` is clean. Swift tests were not run on Linux per explicit user constraint;
-  Swift source and tests remain unverified.
-- Implementation and acceptance proof are complete. Still open only: final task/mirror
-  reconciliation, work-unit commit, native risk assessment and any consented review
-  lifecycle. Keep the checklist open until those are observed.
+- Added the authenticated event endpoint and migration with canonical event hashes, transaction-scoped idempotency, commit-before-ACK, revision CAS, immutable completion and takeover. Identical replay returns the original ACK; changed payloads reject.
+- Android/iOS stores and clients persist owner-scoped outbox events, preserve edits after a stale ACK, and support explicit conflict/takeover/fork. Android drains only for the captured owner and persists immutable initial-create retry payloads before sending.
+- Independent verification found and corrected repeated-takeover state, nullable unfinished results, missing platform fork resolution, and legacy lost-create-ACK plus later offline edits. Regressions were observed before fixes and passed in a fresh scratch verification.
+- Android JVM: 686 app tests passed in the final T05 run; focused sync tests and independent Docker verification passed. API focused PostgreSQL tests 6/6 and client contract tests 8/8 pass; a broader no-DB run reported 140 passed, 366 skipped, 0 failed. Full API suite remains non-clean because the test image lacks SQL assets and an unrelated hosted-worker test stalled. Schema/export checks 136/136; Swift tests remain unrun on Linux.
+- User selected Superpowers SDD and left Gentle AI aside. No native review approval/receipt is claimed. Functional implementation is complete; known verification limitations remain recorded here.
 
 ### T05 continuation ruling
 
@@ -247,11 +224,12 @@ recorded below. Preparation is not completion; no task is checked at initializat
   pinned Docker test image. A concurrent first Gradle invocation held the shared
   cache lock; after it exited, the focused run completed successfully. The Docker
   `git diff --check` is clean. The full Android suite has not yet been rerun.
-- [ ] **T06 — Implement Android defensive fetch, cache, and frozen selection.**
-  Phase P3; report §5, 9/T06. Files: proposed remote client/snapshot adapter/store.
+- [ ] **T06 — Implement Android defensive fetch, cache, and frozen selection (implementation complete; verification pending).**
+  Phase P3; report §5, 9/T06. SDD: `openspec/changes/t06-android-remote-level-test-selection/`;
+  plan: `docs/superpowers/plans/2026-10-16-t06-remote-level-test-selection.md`.
   Prove total five-second deadline, propagated cancellation, invalid schemas/IDs/passages,
   valid/invalid 304, fixed variant and late fetch after answering cannot replace exam.
-  Checks: JVM parser/client/cache/state-machine tests, lint/build.
+  Checks: parser/client/cache/state-machine JVM proof passed; app suite 705/705 and engine-local 11/11 pass in Docker. Lint and assembleDebug were rerun on the final candidate and are blocked before app checks because whisper.cpp/CMakeLists.txt is missing from this checkout; T06 stays open until dependency restoration and independent verification. Risk: item 4 (network refresh ordering and frozen selections).
 - [ ] **T07 — Implement Android autosave, resume, history, review, restore.**
   Phase P3; report §§3, 5, 9/T07. Files: ViewModel/Learn/LevelTest UI and store.
   Prove kill/reopen by attempt ID, DB-save failure visibility, no double submit/completion,
@@ -343,10 +321,9 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
 
 ## Progress, verification, and recovery handoff
 
-- Completed implementation tasks: **4/14** (T01–T04); **10/14 remain**. T05 is in
-  progress; the identified Android sync defects are corrected and independently
-  verified, but T05 remains open pending an achievable native review/receipt.
-- Latest work-unit commit: `ca849a888ca72558b228156ffd2f2c39c8de25f1` (T05 durable attempt sync; native review remains unacknowledged).
+- Completed implementation tasks: **5/14** (T01–T05); **9/14 remain**. T05 functional
+  scope is complete with the broad API-suite and Swift limitations recorded above.
+- Latest T05 behavior commit: `6bc1696`; later T05 verification docs: `9c2b931`.
 - Measured committed authored total: **2005** changed lines (1441 through T02 + 564 T04; no generated changes).
   T02 includes the initial 376-line recovery document; generated changes: 0.
 - Read configuration: strict_tdd=false; Standard Mode and exact runners above.
@@ -589,7 +566,7 @@ current command-line tools remains. Per the explicit L9 scope decision, Swift ve
 closure while the Swift implementation is retained. Swift behavior remains unverified;
 this is not evidence of iOS correctness. Android/shared-schema acceptance is complete.
 
-**Next step:** Proceed to T04. Swift verification remains deferred and is not claimed.
+**Next step:** Implement T06 under the approved Android-only SDD. Swift verification remains deferred and is not claimed.
 No push, PR, deployment, or merge to `main`.
 
 ## Log
@@ -611,3 +588,5 @@ No push, PR, deployment, or merge to `main`.
 - L13 (2026-10-15), user request verbatim: “resuelve los problemas encontrados”. Fixed the Android update-count contract, immutable fork creation retry payload, and revision ordering independent of wall-clock time. RED was observed for each regression, focused Android tests passed 3/3, full Android JVM app suite passed 684/684, and independent fresh-scratch verification passed 27/27 under Android's `-1` update-count semantics. No commit/merge. The prior native review remains blocked by candidate context budget, with no receipt.
 - L14 (2026-10-16), user request verbatim: “resuelvelo y vuelve a verificar despues”. Fixed the legacy lost-first-ACK plus offline-edit case by persisting the reconstructed initial attempt transactionally before sending; retries replay the frozen snapshot and transmit later edits as revision events. Observed the new regression fail before the fix, then focused tests passed 2/2; full Android JVM app suite passed 686/686; independent fresh-scratch Docker verification passed. Normal commit `8e83b9faa5f9423338aa5e8ed5b1a2ee3e2ec007` was created without rewriting history, pushing, or merging. Native RDD receipt remains pending.
 - L15 (2026-10-16), user request verbatim: “completa lo que falta excepto el punto 3”. Re-ran the full Android JVM suite with `--rerun-tasks`: BUILD SUCCESSFUL. Native assessment of `b3f1e5b..8e83b9f` returned medium/under-budget, then explicit preflight STATUS produced a START invocation. The exact provider-issued START failed before authority creation with `invalid_request`, `mutation_outcome: not_started`, cause `unexpected review start argument "commit"`; current `review start --help` documents `--committed-only` as a valueless flag while STATUS emitted `--committed-only=true`. Fresh selectorless STATUS still reoffered that invocation. No native authority or receipt was created; stop pending runtime correction. Swift remains excluded as requested.
+
+- L16 (2026-10-16), user instruction verbatim: “adelante, sigue con el trabajo de forma autónoma hasta completar todas las tareas”. The user selected Superpowers SDD and explicitly left Gentle AI aside; continue T06–T14 without routine approvals, while preserving real product/operational blockers and reporting unavailable verification honestly. T05 is treated functionally complete without claiming a native review receipt.

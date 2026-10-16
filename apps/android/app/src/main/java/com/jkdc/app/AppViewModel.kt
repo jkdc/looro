@@ -36,6 +36,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.Serializable
@@ -225,9 +226,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     // ---- Level verification tests (level-tests): weekly, per level, suggestion-only. ----
     private val levelTestHistoryStore by lazy { com.jkdc.app.core.LevelTestHistoryStore(application) }
+    private val levelTestCatalogRepository by lazy {
+        LevelTestCatalogRepository(
+            BuildConfig.MANAGED_API_ORIGIN.toHttpUrlOrNull(),
+            LevelTestCatalogCache(File(application.cacheDir, "level-test-catalog")),
+        )
+    }
 
     fun levelTestPool(level: String): com.jkdc.app.core.LevelTestLevel? =
         com.jkdc.app.core.LevelTestsRegistry.level(language.id, level)
+    internal fun levelTestSelection(level: String): LevelTestSelection? =
+        levelTestCatalogRepository.select(language.id, level)
+    fun refreshLevelTestCatalog(level: String) {
+        val languageID = language.id
+        viewModelScope.launch { levelTestCatalogRepository.refresh(languageID, level) }
+    }
     fun levelTestHistory(level: String): com.jkdc.app.core.LevelTestResult? =
         levelTestHistoryStore.get(language.id, level)
     fun saveLevelTestResult(result: com.jkdc.app.core.LevelTestResult) {

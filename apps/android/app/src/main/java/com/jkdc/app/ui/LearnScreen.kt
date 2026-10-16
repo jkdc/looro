@@ -111,6 +111,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
         }
         var savedLevel by rememberSaveable { mutableStateOf<String?>(null) }
         val selectedLevel = savedLevel?.takeIf { it in levels } ?: defaultLevel ?: levels.firstOrNull() ?: "A1"
+        LaunchedEffect(vm.language.id, selectedLevel) { vm.refreshLevelTestCatalog(selectedLevel) }
         val completedLevels = remember(levels, progress.second) {
             levels.filter { level -> courses.asSequence().flatMap { it.units }.filter { it.level == level }
                 .flatMap { it.lessons }.let { lessons -> lessons.any() && lessons.all { it.id in progress.second } } }

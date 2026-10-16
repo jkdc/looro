@@ -51,9 +51,9 @@ import com.jkdc.app.core.LevelTestSection
     and always visible on the level's card. */
 @Composable
 fun LevelTestScreen(vm: AppViewModel, level: String, onBack: () -> Unit, onApplyBand: (String) -> Unit) {
-    val testLevel = vm.levelTestPool(level) ?: run { onBack(); return }
-    val weekIndex = LevelTestEngine.weekIndex()
-    val exam = remember(testLevel, weekIndex) { LevelTestEngine.compose(testLevel, weekIndex) }
+    val selection = remember(vm, level) { vm.levelTestSelection(level) } ?: run { onBack(); return }
+    val testLevel = selection.level
+    val exam = selection.exam
     var attempts by rememberSaveable { mutableStateOf(listOf<String>()) }
     var submitted by rememberSaveable { mutableStateOf(false) }
     var result by remember { mutableStateOf<LevelTestResult?>(null) }
