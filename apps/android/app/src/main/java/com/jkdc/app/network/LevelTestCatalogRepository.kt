@@ -89,15 +89,8 @@ internal class LevelTestCatalogRepository(
         try { LevelTestSnapshotAdapter.decode(body, language, level, weekID, VARIANT) }
         catch (_: InvalidLevelTestSnapshot) { null }
 
-    private fun bundledSelection(level: LevelTestLevel, weekID: Long) = LevelTestSelection(
-        level = level,
-        exam = LevelTestEngine.compose(level, weekID),
-        examID = null,
-        contentID = null,
-        source = "bundled",
-        variant = null,
-        expiresAt = null,
-    )
+    private fun bundledSelection(level: LevelTestLevel, weekID: Long) =
+        LevelTestSnapshotAdapter.fromBundled(level, LevelTestEngine.compose(level, weekID))
 
     private fun publish(key: String, status: LevelTestCatalogStatus): LevelTestCatalogStatus {
         mutableStatuses.value = mutableStatuses.value + (key to status)

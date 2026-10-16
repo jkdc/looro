@@ -9,6 +9,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -88,7 +90,11 @@ class LevelTestCatalogRepositoryTest {
         val cache = ReadCountingCache()
         val repository = LevelTestCatalogRepository(origin = null, cache = cache)
 
-        assertEquals("bundled", repository.select("en", "A1", 202642L)?.source)
+        val selection = requireNotNull(repository.select("en", "A1", 202642L))
+        assertEquals("bundled", selection.source)
+        assertNotNull(selection.examID)
+        assertNotNull(selection.contentID)
+        assertTrue(selection.snapshotJSON.isNotBlank())
         assertEquals(0, cache.reads)
     }
 

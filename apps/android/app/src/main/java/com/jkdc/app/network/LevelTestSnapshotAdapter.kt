@@ -11,10 +11,13 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.IsoFields
+import java.security.MessageDigest
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 internal class InvalidLevelTestSnapshot : IllegalArgumentException("invalid_level_test_snapshot")
 
@@ -26,6 +29,7 @@ internal data class LevelTestSelection(
     val source: String,
     val variant: Int?,
     val expiresAt: Instant?,
+    val snapshotJSON: String = "",
 )
 
 /** Maps the server’s already-composed snapshot without reordering or recomposing questions. */
@@ -45,7 +49,18 @@ internal object LevelTestSnapshotAdapter {
         val json = try { kotlinx.serialization.json.Json.parseToJsonElement(body) as? JsonObject ?: invalid() }
             catch (_: InvalidLevelTestSnapshot) { throw InvalidLevelTestSnapshot() }
             catch (_: Exception) { invalid() }
-        return adapt(json, language, level, weekID, variant)
+        return adapt(json, language, level, weekID, variant).copy(snapshotJSON = body)
+    }
+
+    /** Restores an attempt from its immutable persisted wire snapshot, independent of today's catalog. */
+    fun restore(snapshotJSON: String): LevelTestSelection {
+        if (snapshotJSON.toByteArray(Charsets.UTF_8).size > MAX_BODY_BYTES) invalid()
+        val snapshot = try { kotlinx.serialization.json.Json.parseToJsonElement(snapshotJSON) as? JsonObject ?: invalid() }
+            catch (_: InvalidLevelTestSnapshot) { throw InvalidLevelTestSnapshot() }
+            catch (_: Exception) { invalid() }
+        val variant = snapshot["variant"]?.let(::int) ?: 1
+        return decode(snapshotJSON, string(snapshot["languageID"]), string(snapshot["level"]),
+            long(snapshot["weekId"]), variant)
     }
 
     fun adapt(snapshot: JsonObject, language: String, level: String, weekID: Long, variant: Int): LevelTestSelection {
@@ -53,10 +68,10 @@ internal object LevelTestSnapshotAdapter {
             string(snapshot["languageID"]) != language || string(snapshot["level"]) != level ||
             long(snapshot["weekId"]) != weekID || variant !in 1..5) invalid()
 
-        val source = string(snapshot["source"]).takeIf { it == "deterministic" || it == "llm" } ?: invalid()
+        val source = string(snapshot["source"]).takeIf { it == "bundled" || it == "deterministic" || it == "llm" } ?: invalid()
         val snapshotVariant = snapshot["variant"]?.let(::int)
         if (snapshotVariant != null && snapshotVariant != variant ||
-            snapshotVariant == null && (source != "deterministic" || variant != 1)) invalid()
+            snapshotVariant == null && (source == "llm" || variant != 1)) invalid()
 
         val version = int(snapshot["version"]).takeIf { it > 0 } ?: invalid()
         val contentRevision = int(snapshot["contentRevision"]).takeIf { it > 0 } ?: invalid()
@@ -65,6 +80,11 @@ internal object LevelTestSnapshotAdapter {
         val contentID = string(snapshot["contentId"]).takeIf { it.isNotBlank() && it.length <= 256 } ?: invalid()
         val hash = string(snapshot["contentHash"])
         if (!hash.matches(Regex("[a-f0-9]{64}")) || contentID != "sha256:$hash") invalid()
+        val payloadHash = MessageDigest.getInstance("SHA-256")
+            .digest(canonical(JsonObject(snapshot - setOf("examId", "generationId", "contentId", "contentHash")))
+                .toString().toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        if (hash != payloadHash) invalid()
         val expiresAt = parseExpiry(string(snapshot["expiresAt"]), weekID)
 
         val thresholdsJson = snapshot["thresholds"] as? JsonObject ?: invalid()
@@ -103,7 +123,56 @@ internal object LevelTestSnapshotAdapter {
         val localLevel = LevelTestLevel(language, level, version, thresholds, passages, items)
         val exam = LevelTestEngine.Exam(weekID, level, items, passageById, readingIDs, listeningIDs)
         if (contentRevision != version || gradingVersion <= 0) invalid()
-        return LevelTestSelection(localLevel, exam, examID, contentID, source, variant, expiresAt)
+        return LevelTestSelection(
+            localLevel, exam, examID, contentID, source, variant, expiresAt,
+            kotlinx.serialization.json.Json.encodeToString(JsonObject.serializer(), snapshot),
+        )
+    }
+
+    /** Builds the same immutable v1 payload accepted by the API for an offline bundled exam. */
+    fun fromBundled(level: LevelTestLevel, exam: LevelTestEngine.Exam): LevelTestSelection {
+        val year = (exam.weekIndex / 100).toInt()
+        val week = (exam.weekIndex % 100).toInt()
+        if (week !in 1..53) invalid()
+        val expires = try {
+            LocalDate.of(year, 1, 4).with(IsoFields.WEEK_OF_WEEK_BASED_YEAR, week.toLong())
+                .with(DayOfWeek.MONDAY).plusWeeks(1).atStartOfDay().toInstant(ZoneOffset.UTC)
+        } catch (_: Exception) { invalid() }
+        val payload = buildJsonObject {
+            put("schemaVersion", 1); put("languageID", level.languageID); put("level", level.level)
+            put("version", level.version); put("weekId", exam.weekIndex)
+            put("expiresAt", expires.toString())
+            put("thresholds", buildJsonObject { level.thresholds.toSortedMap().forEach { (key, value) -> put(key, value) } })
+            put("passages", JsonArray(exam.passageById.values.sortedBy { it.id }.map { passage -> buildJsonObject {
+                put("id", passage.id); put("title", passage.title); put("text", passage.text)
+            } }))
+            put("readingPassageIds", JsonArray(exam.readingPassageIds.map(::JsonPrimitive)))
+            put("listeningPassageIds", JsonArray(exam.listeningPassageIds.map(::JsonPrimitive)))
+            put("items", JsonArray(exam.items.map { item -> buildJsonObject {
+                put("id", item.id); put("section", item.section.name.lowercase())
+                put("kind", item.exercise.kind); put("prompt", item.exercise.prompt)
+                put("options", JsonArray(item.exercise.options.map(::JsonPrimitive)))
+                put("answers", JsonArray(item.exercise.answers.map(::JsonPrimitive)))
+                put("explain", item.exercise.explain)
+                item.unitID?.let { put("unitID", it) }; item.passageId?.let { put("passageId", it) }
+                item.speech?.let { put("speech", it) }
+            } }))
+            put("contentRevision", level.version); put("gradingVersion", 1); put("source", "bundled")
+        }
+        val hash = MessageDigest.getInstance("SHA-256").digest(canonical(payload).toString().toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        val contentID = "sha256:$hash"
+        val snapshot = JsonObject(payload + mapOf(
+            "examId" to JsonPrimitive(contentID), "contentId" to JsonPrimitive(contentID),
+            "contentHash" to JsonPrimitive(hash),
+        ))
+        return adapt(snapshot, level.languageID, level.level, exam.weekIndex, 1)
+    }
+
+    private fun canonical(element: JsonElement): JsonElement = when (element) {
+        is JsonObject -> JsonObject(element.toSortedMap().mapValues { canonical(it.value) })
+        is JsonArray -> JsonArray(element.map(::canonical))
+        else -> element
     }
 
     private fun parseItem(element: JsonElement, passages: Map<String, LevelTestPassage>): LevelTestItem {

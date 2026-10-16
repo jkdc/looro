@@ -1,9 +1,14 @@
 package com.jkdc.app.network
 
 import com.jkdc.app.core.LevelTestSection
+import com.jkdc.app.core.LevelTestEngine
+import com.jkdc.app.core.LevelTestsRegistry
+import java.security.MessageDigest
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -27,6 +32,59 @@ class LevelTestSnapshotAdapterTest {
         assertEquals(listOf("read-a", "read-b"), selection.exam.readingPassageIds)
         assertEquals(listOf("listen-a", "listen-b"), selection.exam.listeningPassageIds)
         assertEquals(LevelTestSection.RECOGNITION, selection.exam.items.first().section)
+    }
+
+    @Test
+    fun `decoded snapshot retains the exact canonical JSON used for future sync`() {
+        val raw = kotlinx.serialization.json.Json.encodeToString(JsonObject.serializer(), snapshot())
+        val selection = LevelTestSnapshotAdapter.decode(raw, "en", "A1", expectedWeek, 1)
+
+        assertEquals(raw, selection.snapshotJSON)
+    }
+
+    @Test
+    fun `stored snapshot restores the same immutable exam and server identity`() {
+        val raw = kotlinx.serialization.json.Json.encodeToString(JsonObject.serializer(), snapshot())
+        val restored = LevelTestSnapshotAdapter.restore(raw)
+
+        assertEquals(raw, restored.snapshotJSON)
+        assertEquals("exam-1", restored.examID)
+        assertEquals("server-q-0", restored.exam.items.first().id)
+        assertEquals("Question 0", restored.exam.items.first().exercise.prompt)
+    }
+
+    @Test
+    fun `bundled selection produces a server-compatible immutable snapshot`() {
+        val level = requireNotNull(LevelTestsRegistry.level("en", "A1"))
+        val selection = LevelTestSnapshotAdapter.fromBundled(level, LevelTestEngine.compose(level, expectedWeek))
+        val json = kotlinx.serialization.json.Json.parseToJsonElement(selection.snapshotJSON).jsonObject
+
+        assertEquals("bundled", json.getValue("source").jsonPrimitive.content)
+        assertEquals(selection.contentID, json.getValue("contentId").jsonPrimitive.content)
+        assertEquals(selection.examID, selection.contentID)
+        assertEquals(64, json.getValue("contentHash").jsonPrimitive.content.length)
+        val hashInput = JsonObject(json - setOf("examId", "contentId", "contentHash"))
+        val canonicalHash = MessageDigest.getInstance("SHA-256")
+            .digest(canonical(hashInput).toString().toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        assertEquals("sha256:$canonicalHash", selection.contentID)
+        assertEquals(expectedWeek, selection.exam.weekIndex)
+        assertEquals(25, selection.exam.items.size)
+    }
+
+    @Test
+    fun `payload changes with stale declared hash reject the entire snapshot`() {
+        val changed = snapshot().toMutableMap().apply {
+            val items = (getValue("items") as JsonArray).toMutableList()
+            items[0] = (items[0] as JsonObject).toMutableMap().apply {
+                put("prompt", JsonPrimitive("Changed after hashing"))
+            }.let(::JsonObject)
+            put("items", JsonArray(items))
+        }
+
+        assertThrows(InvalidLevelTestSnapshot::class.java) {
+            LevelTestSnapshotAdapter.adapt(JsonObject(changed), "en", "A1", expectedWeek, 1)
+        }
     }
 
     @Test
@@ -125,7 +183,7 @@ class LevelTestSnapshotAdapterTest {
                 })
             }
         }
-        return buildJsonObject {
+        val unsignedSnapshot = buildJsonObject {
             put("schemaVersion", 1)
             put("languageID", "en")
             put("level", "A1")
@@ -143,11 +201,27 @@ class LevelTestSnapshotAdapterTest {
             put("items", items)
             put("variant", 1)
             put("examId", "exam-1")
-            put("contentId", "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-            put("contentHash", "a".repeat(64))
+            put("generationId", "generation-1")
+            put("contentId", "sha256:pending")
+            put("contentHash", "pending")
             put("contentRevision", 1)
             put("gradingVersion", 1)
             put("source", "llm")
         }
+        val payloadHash = MessageDigest.getInstance("SHA-256")
+            .digest(canonical(JsonObject(unsignedSnapshot - setOf("examId", "generationId", "contentId", "contentHash")))
+                .toString().toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        return JsonObject(unsignedSnapshot + mapOf(
+            "contentId" to JsonPrimitive("sha256:$payloadHash"),
+            "contentHash" to JsonPrimitive(payloadHash),
+        ))
     }
+
+    private fun canonical(element: kotlinx.serialization.json.JsonElement): kotlinx.serialization.json.JsonElement =
+        when (element) {
+            is JsonObject -> JsonObject(element.toSortedMap().mapValues { canonical(it.value) })
+            is JsonArray -> JsonArray(element.map(::canonical))
+            else -> element
+        }
 }

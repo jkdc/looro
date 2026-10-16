@@ -250,6 +250,80 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             "levelcheck-${result.languageID}-${result.level.lowercase()}", result.overall)
     }
 
+    internal suspend fun startLevelTestAttempt(
+        selection: LevelTestSelection,
+        attemptID: String,
+    ): com.jkdc.app.data.LevelTestAttemptStore.Restored {
+        var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
+        persistDbAndWait { db ->
+            val attempts = com.jkdc.app.data.LevelTestAttemptStore(db)
+            val started = attempts.start(selection, attemptID = attemptID)
+            restored = attempts.load(started.attempt["attempt_id"] as String)
+        }
+        return checkNotNull(restored) { "Started exam attempt could not be reloaded" }
+    }
+
+    internal suspend fun saveLevelTestAnswer(attemptID: String, questionID: String, response: String, position: Int) {
+        persistDbAndWait { db ->
+            com.jkdc.app.data.LevelTestAttemptStore(db).saveAnswer(
+                attemptID, questionID, response, position, System.currentTimeMillis() / 1000.0)
+        }
+    }
+
+    internal suspend fun loadLevelTestAttempt(attemptID: String): com.jkdc.app.data.LevelTestAttemptStore.Restored? {
+        var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
+        persistDbAndWait { db -> restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID) }
+        return restored
+    }
+
+    internal suspend fun levelTestAttemptHistory(
+        languageID: String,
+        level: String,
+    ): List<com.jkdc.app.data.LevelTestAttemptStore.Restored> {
+        var attempts = emptyList<com.jkdc.app.data.LevelTestAttemptStore.Restored>()
+        persistDbAndWait { db -> attempts = com.jkdc.app.data.LevelTestAttemptStore(db).list(languageID, level) }
+        return attempts
+    }
+
+    internal suspend fun completeLevelTestAttempt(
+        attemptID: String,
+        selection: LevelTestSelection,
+        responses: Map<String, String>,
+        position: Int,
+        result: com.jkdc.app.core.LevelTestResult,
+    ) {
+        val completedAt = System.currentTimeMillis() / 1000.0
+        val resultJSON = kotlinx.serialization.json.buildJsonObject {
+            put("languageID", result.languageID); put("level", result.level); put("weekId", result.weekIndex)
+            put("overall", result.overall)
+            put("sections", kotlinx.serialization.json.buildJsonObject {
+                result.sections.forEach { (name, score) -> put(name, score) }
+            })
+            put("passed", result.passed); result.nextBand?.let { put("nextBand", it) }
+            put("weakSections", kotlinx.serialization.json.JsonArray(result.weakSections.map(::JsonPrimitive)) )
+            put("weakUnitIDs", kotlinx.serialization.json.JsonArray(result.weakUnitIDs.map(::JsonPrimitive)))
+            put("questionReviews", kotlinx.serialization.json.JsonArray(selection.exam.items.map { item ->
+                val response = responses[item.id].orEmpty()
+                buildJsonObject {
+                    put("questionId", item.id); put("response", response)
+                    put("acceptedAnswers", kotlinx.serialization.json.JsonArray(item.exercise.answers.map(::JsonPrimitive)))
+                    put("correct", ExerciseEngine.isCorrect(item.exercise, response))
+                    put("explanation", item.exercise.explain)
+                    item.passageId?.let { put("passageId", it) }
+                }
+            }))
+            put("at", result.at)
+        }.toString()
+        persistDbAndWait { db ->
+            val attempts = com.jkdc.app.data.LevelTestAttemptStore(db)
+            check(responses.keys.all { questionID -> selection.exam.items.any { it.id == questionID } }) {
+                "Answer belongs to a different exam snapshot"
+            }
+            attempts.complete(attemptID, resultJSON, completedAt, responses, position)
+        }
+        saveLevelTestResult(result)
+    }
+
     /** Speaks a placement listening stimulus with the learning-language voice,
         independent of the lesson read-aloud switch. */
     fun speakPlacement(text: String) {
@@ -1020,6 +1094,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             ({ })
         }
         writes.send(WriteRequest(work, completion))
+        completion.await()
+    }
+
+    /** Exam attempts require the SQLite contract; JSON fail-safe mode cannot claim durable recovery. */
+    private suspend fun persistDbAndWait(write: (SqlDatabase) -> Unit) {
+        check(storageReady) { "Learning storage is not ready" }
+        check(!jsonMode) { "Durable exam history is unavailable in JSON fail-safe mode" }
+        val target = checkNotNull(store?.db) { "Learning database is unavailable" }
+        val completion = CompletableDeferred<Unit>()
+        writes.send(WriteRequest({ write(target) }, completion))
         completion.await()
     }
 

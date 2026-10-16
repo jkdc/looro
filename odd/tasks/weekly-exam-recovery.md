@@ -224,17 +224,28 @@ recorded below. Preparation is not completion; no task is checked at initializat
   pinned Docker test image. A concurrent first Gradle invocation held the shared
   cache lock; after it exited, the focused run completed successfully. The Docker
   `git diff --check` is clean. The full Android suite has not yet been rerun.
-- [ ] **T06 — Implement Android defensive fetch, cache, and frozen selection (implementation complete; verification pending).**
+- [x] **T06 — Implement Android defensive fetch, cache, and frozen selection (functional verification complete).**
   Phase P3; report §5, 9/T06. SDD: `openspec/changes/t06-android-remote-level-test-selection/`;
   plan: `docs/superpowers/plans/2026-10-16-t06-remote-level-test-selection.md`.
-  Prove total five-second deadline, propagated cancellation, invalid schemas/IDs/passages,
-  valid/invalid 304, fixed variant and late fetch after answering cannot replace exam.
-  Check: Docker scratch S1–S5; app 705/705, engine-local 11/11, probes 6/6; parent spot-check 14/14. S6 partial: lint/APK blocked before app tasks by missing whisper CMakeLists; no Git remote fetch. T06 stays open pending dependency restoration/rerun. Commit: 96a8384dea8d6fc6703988122b36698f3ebf8bdf. Risk: item 4 (async selection).
-- [ ] **T07 — Implement Android autosave, resume, history, review, restore.**
+  Prove timeout/cancel/validation/304/frozen selection. Docker: app 705/705, engine 11/11; independent S1–S5 and probes 6/6; spot-check 14. Functional acceptance complete; lint/APK deferred until final verification because Whisper CMakeLists is absent. No fetch. Commit 96a8384dea8d6fc6703988122b36698f3ebf8bdf. Risk 4.
+- [ ] **T07 — Implement Android autosave, resume, history, review, restore (implementation and JVM verification complete; work-unit commit pending).**
   Phase P3; report §§3, 5, 9/T07. Files: ViewModel/Learn/LevelTest UI and store.
   Prove kill/reopen by attempt ID, DB-save failure visibility, no double submit/completion,
   UTC week/year rollover, updated bundle restore, force-generated old attempt review.
-  Checks: JVM/instrumentation UI as applicable, lint/build; mocks rather than real LLM.
+  Checks: focused store/snapshot tests pass; full Docker JVM suite 712 app + 11 engine pass;
+  independent fresh-scratch verification passed S1–S6, including atomic rollback and
+  identical retry preserving revision/outbox. Historical score, answer verdict and
+  explanation survive DB reopen; history shows date and legacy summary-only label.
+  Compose instrumentation and lint/APK are deferred to final verification per L10;
+  Whisper submodule was not fetched. Risk 1 and 4.
+### T07 implementation routing
+
+Route direct inline;
+  one cohesive persistence/UI lifecycle, no disjoint writer unit; independent verifier
+  used because data persistence and async ordering are high risk. The task is naturally
+  above the advisory ~400-line review heuristic because transaction semantics, retries,
+  snapshot identity, learner-facing history and regression tests must remain one coherent
+  deliverable; no cosmetic split was introduced.
 - [ ] **T08 — Add Swift placement/level-test exporters, engines, shared goldens.**
   Phase P4; report §6, 9/T08. Files: exporters, proposed Core models/data/engines/tests.
   Prove output freshness, SHA-256 and ISO-week parity, B1 week 202641 golden,
@@ -321,8 +332,10 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
 
 ## Progress, verification, and recovery handoff
 
-- Completed implementation tasks: **5/14** (T01–T05); **9/14 remain**. T05 functional
-  scope is complete with the broad API-suite and Swift limitations recorded above.
+- Completed implementation tasks: **6/14** (T01–T06); T07 functional verification is
+  complete and its work-unit commit is being recorded; **7/14 will remain after T07 closes**.
+  Android lint/APK and Compose instrumentation have been deferred to final verification
+  by the user's instruction; Whisper is not a phase blocker.
 - Latest T05 behavior commit: `6bc1696`; later T05 verification docs: `9c2b931`.
 - Measured committed authored total: **2005** changed lines (1441 through T02 + 564 T04; no generated changes).
   T02 includes the initial 376-line recovery document; generated changes: 0.
@@ -338,6 +351,10 @@ coherent boundaries and local work-unit commit IDs as implementation progresses.
   document plus its locator; read back local file and full observation, reconcile.
 - On resume: mem_context → project/feature search → full observation → actual file;
   refresh testing mode/source and reconcile proof before next unfinished task.
+
+### User correction — verification timing
+
+- **L10 (2026-10-16), verbatim:** “lo de wishper lo puedes dejar para cuando acabemos todas las fases de desarrollo, no me parece esencial para ahora y no hace más que bloquear”. Defer the Whisper-dependent lint/APK build until all implementation phases have completed; do not fetch the missing submodule to advance development.
 
 ### T04 implementation routing and scope ruling
 
@@ -570,6 +587,8 @@ this is not evidence of iOS correctness. Android/shared-schema acceptance is com
 No push, PR, deployment, or merge to `main`.
 
 ## Log
+
+- L17: resumed T07 after T06 verification; inline after bounded map/spot-check. SDD under openspec/t07 and docs/superpowers. Preserve remote hash; bundled uses API canonical hash; reuse T03 DAO/FIFO. Risk 1,4.
 
 - L1 (2026-10-13), original request: “implementa los cambios que se exponene en el documento informe-plan-pendientes-2026-10-13.md”.
 - L2 (2026-10-13), user constraint: “todos los comando debes lanzarlos via docker. continua con lo que sigue con 1. revisar este cambio”.

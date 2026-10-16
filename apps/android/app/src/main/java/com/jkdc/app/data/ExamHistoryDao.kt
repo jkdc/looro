@@ -371,38 +371,18 @@ object ExamHistoryDao {
     fun saveAnswer(db: SqlDatabase, attemptID: String, questionID: String, responseJSON: String,
                    position: Int, savedAt: Double): Long {
         require(questionID.isNotBlank() && position >= 0)
-        val response = responseJSON.parseJSONObject()
-        return db.transaction { tx ->
-            val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
-                .singleOrNull() ?: error("Exam attempt does not exist")
-            check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
-                listOf(attemptID)).isEmpty()) { "Forked exam attempts are immutable" }
-            check(attempt.text("state") == "in_progress") { "Completed exam attempts are immutable" }
-            val effectiveAt = maxOf(savedAt, attempt.real("started_at"), attempt.real("updated_at"))
-            val revision = attempt.long("revision") + 1
-            tx.insert("exam_answers", mapOf("attempt_id" to attemptID, "question_id" to questionID,
-                "revision" to revision, "response_json" to responseJSON, "saved_at" to effectiveAt))
-            tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ?, " +
-                "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' " +
-                "WHEN EXISTS (SELECT 1 FROM exam_sync_conflicts c WHERE c.attempt_id = exam_attempts.attempt_id " +
-                "AND c.resolution IS NULL) THEN 'conflict' ELSE 'pending' END " +
-                "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
-                listOf(position, revision, effectiveAt, attemptID, revision - 1))
-            check(tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
-                .single().long("revision") == revision) { "Exam attempt changed concurrently" }
-            val payload = buildJsonObject {
-                put("attemptId", JsonPrimitive(attemptID))
-                put("questionId", JsonPrimitive(questionID))
-                put("response", response)
-                put("position", JsonPrimitive(position))
-            }.toString()
-            enqueue(tx, attemptID, revision, "progress", payload, effectiveAt)
-            revision
-        }
+        return db.transaction { tx -> saveAnswerInTransaction(tx, attemptID, questionID, responseJSON, position, savedAt) }
     }
 
     /** Completion is immutable and safely repeatable only for the same result. */
-    fun complete(db: SqlDatabase, attemptID: String, resultJSON: String, completedAt: Double): Boolean {
+    fun complete(
+        db: SqlDatabase,
+        attemptID: String,
+        resultJSON: String,
+        completedAt: Double,
+        finalAnswers: Map<String, String> = emptyMap(),
+        position: Int? = null,
+    ): Boolean {
         val resultContent = resultJSON.parseJSONObject()
         return db.transaction { tx ->
             val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
@@ -415,8 +395,16 @@ object ExamHistoryDao {
                 check(existing.text("result_json") == resultJSON) { "Completed exam result cannot be changed" }
                 return@transaction false
             }
-            val effectiveAt = maxOf(completedAt, attempt.real("started_at"), attempt.real("updated_at"))
-            val revision = attempt.long("revision") + 1
+            val answerTime = maxOf(completedAt, attempt.real("started_at"), attempt.real("updated_at"))
+            finalAnswers.forEach { (questionID, response) ->
+                saveAnswerInTransaction(tx, attemptID, questionID,
+                    buildJsonObject { put("value", JsonPrimitive(response)) }.toString(),
+                    position ?: tx.query("SELECT position FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
+                        .single().int("position"), answerTime)
+            }
+            val current = tx.query("SELECT revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID)).single()
+            val effectiveAt = maxOf(completedAt, current.real("started_at"), current.real("updated_at"))
+            val revision = current.long("revision") + 1
             tx.insert("exam_results", mapOf("attempt_id" to attemptID,
                 "result_json" to resultJSON, "recorded_at" to effectiveAt))
             tx.update("UPDATE exam_attempts SET state = 'completed', revision = ?, updated_at = ?, completed_at = ?, " +
@@ -435,6 +423,43 @@ object ExamHistoryDao {
             }.toString(), effectiveAt)
             true
         }
+    }
+
+    private fun saveAnswerInTransaction(
+        tx: SqlDatabase,
+        attemptID: String,
+        questionID: String,
+        responseJSON: String,
+        position: Int,
+        savedAt: Double,
+    ): Long {
+        require(questionID.isNotBlank() && position >= 0)
+        val response = responseJSON.parseJSONObject()
+        val attempt = tx.query("SELECT state, revision, started_at, updated_at FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
+            .singleOrNull() ?: error("Exam attempt does not exist")
+        check(tx.query("SELECT 1 AS found FROM exam_sync_conflicts WHERE attempt_id = ? AND resolution = 'fork'",
+            listOf(attemptID)).isEmpty()) { "Forked exam attempts are immutable" }
+        check(attempt.text("state") == "in_progress") { "Completed exam attempts are immutable" }
+        val effectiveAt = maxOf(savedAt, attempt.real("started_at"), attempt.real("updated_at"))
+        val revision = attempt.long("revision") + 1
+        tx.insert("exam_answers", mapOf("attempt_id" to attemptID, "question_id" to questionID,
+            "revision" to revision, "response_json" to responseJSON, "saved_at" to effectiveAt))
+        tx.update("UPDATE exam_attempts SET position = ?, revision = ?, updated_at = ?, " +
+            "sync_state = CASE WHEN owner_account_id IS NULL THEN 'local_only' " +
+            "WHEN EXISTS (SELECT 1 FROM exam_sync_conflicts c WHERE c.attempt_id = exam_attempts.attempt_id " +
+            "AND c.resolution IS NULL) THEN 'conflict' ELSE 'pending' END " +
+            "WHERE attempt_id = ? AND state = 'in_progress' AND revision = ?",
+            listOf(position, revision, effectiveAt, attemptID, revision - 1))
+        check(tx.query("SELECT revision FROM exam_attempts WHERE attempt_id = ?", listOf(attemptID))
+            .single().long("revision") == revision) { "Exam attempt changed concurrently" }
+        val payload = buildJsonObject {
+            put("attemptId", JsonPrimitive(attemptID))
+            put("questionId", JsonPrimitive(questionID))
+            put("response", response)
+            put("position", JsonPrimitive(position))
+        }.toString()
+        enqueue(tx, attemptID, revision, "progress", payload, effectiveAt)
+        return revision
     }
 
     fun load(db: SqlDatabase, attemptID: String, ownerAccountID: String? = null): ExamHistory? {
