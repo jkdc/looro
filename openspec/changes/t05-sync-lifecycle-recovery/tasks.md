@@ -119,3 +119,8 @@ The T3 regression first failed because the current drain returned after attempt 
 
 ### L8 — Task 4 implementation and verification
 Android RED tests reproduced stale conflict snapshot data, conflict-state loss after offline edits, and writes still accepted on a forked source. The rollback test was refined to simulate a real fork-ID collision; the source events and conflict resolution remain unchanged after rejection. Fork now snapshots current attempt/answer/result rows and frozen snapshot in one transaction, records a retry-stable creation event, retires source events only after new identity/event creation, and prevents subsequent source writes. Focused T4 tests passed 3/3; full Android JVM suite passed (43 actionable tasks, BUILD SUCCESSFUL). Equivalent Swift changes/tests are present but unexecuted because this host is Linux.
+
+### L9 — Independent whole-feature verification
+A fresh-context verifier inspected committed candidate a05fd77 against baseline 75fb86a using a read-only Docker scratch copy. Verdicts: S1-S4 passed on the executable platform(s); Android fork probes 3/3 and full Android JVM suites (702 tests, zero failures) passed; API focused suite 8/8 passed and baseline focused suite 6/6 passed. Scratch-only checks confirmed snapshot equality, unchanged exam-table hashes after fork-ID collision, and rollback after injected outbox insertion failure. Swift remains unexecuted on Linux.
+
+Native RDD remains unavailable: assessment reports high risk/review_due but cannot build its temporary index because the shared worktree metadata is read-only; selectorless STATUS failed safely before review start with mutation_outcome=not_started. No native receipt or approval is claimed. Full API suite remains unresolved per L5/L6.
