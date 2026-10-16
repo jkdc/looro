@@ -229,7 +229,7 @@ recorded below. Preparation is not completion; no task is checked at initializat
   plan: `docs/superpowers/plans/2026-10-16-t06-remote-level-test-selection.md`.
   Prove total five-second deadline, propagated cancellation, invalid schemas/IDs/passages,
   valid/invalid 304, fixed variant and late fetch after answering cannot replace exam.
-  Checks: parser/client/cache/state-machine JVM proof passed; app suite 705/705 and engine-local 11/11 pass in Docker. Lint and assembleDebug were rerun on the final candidate and are blocked before app checks because whisper.cpp/CMakeLists.txt is missing from this checkout; T06 stays open until dependency restoration and independent verification. Risk: item 4 (network refresh ordering and frozen selections).
+  Check: Docker scratch S1–S5; app 705/705, engine-local 11/11, probes 6/6; parent spot-check 14/14. S6 partial: lint/APK blocked before app tasks by missing whisper CMakeLists; no Git remote fetch. T06 stays open pending dependency restoration/rerun. Commit: 96a8384dea8d6fc6703988122b36698f3ebf8bdf. Risk: item 4 (async selection).
 - [ ] **T07 — Implement Android autosave, resume, history, review, restore.**
   Phase P3; report §§3, 5, 9/T07. Files: ViewModel/Learn/LevelTest UI and store.
   Prove kill/reopen by attempt ID, DB-save failure visibility, no double submit/completion,
