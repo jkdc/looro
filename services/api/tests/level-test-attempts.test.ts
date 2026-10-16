@@ -77,12 +77,17 @@ integration('private attempt upload is authenticated, owner-scoped, and restores
 
     await assert.rejects(db!.query(`DELETE FROM level_test_attempt_snapshots WHERE account_id=$1 AND content_id=$2`,
       [owner.accountID, snapshot.contentId]));
+    await assert.rejects(db!.query(`UPDATE level_test_attempt_creation_receipts SET request_hash=$3
+      WHERE account_id=$1 AND attempt_id=$2`, [owner.accountID, uploaded.attemptId, '0'.repeat(64)]));
+    await assert.rejects(db!.query(`UPDATE level_test_attempt_creation_receipts SET ack_json='{}'::jsonb
+      WHERE account_id=$1 AND attempt_id=$2`, [owner.accountID, uploaded.attemptId]));
     await deleteAccount(db!, owner.accountID, undefined, undefined, owner.authorization);
     const deletedRows = await db!.query(`SELECT
       (SELECT count(*)::int FROM level_test_attempts WHERE account_id=$1) AS attempts,
       (SELECT count(*)::int FROM level_test_attempt_snapshot_ids WHERE account_id=$1) AS identities,
-      (SELECT count(*)::int FROM level_test_attempt_snapshots WHERE account_id=$1) AS snapshots`, [owner.accountID]);
-    assert.deepEqual(deletedRows.rows[0], { attempts: 0, identities: 0, snapshots: 0 });
+      (SELECT count(*)::int FROM level_test_attempt_snapshots WHERE account_id=$1) AS snapshots,
+      (SELECT count(*)::int FROM level_test_attempt_creation_receipts WHERE account_id=$1) AS receipts`, [owner.accountID]);
+    assert.deepEqual(deletedRows.rows[0], { attempts: 0, identities: 0, snapshots: 0, receipts: 0 });
   } finally { await app.close(); }
 });
 
@@ -231,5 +236,42 @@ integration('completed attempts reject later answer events and completion is rep
     const detail = await app.inject({ method: 'GET', url: `/v1/level-test-attempts/${uploaded.attemptId}`, headers });
     assert.equal(detail.json().attempt.state, 'completed');
     assert.deepEqual(detail.json().attempt.result, { score: 80 });
+  } finally { await app.close(); }
+});
+
+
+integration('initial creation retry replays its immutable ACK after another device advances the attempt', async () => {
+  const owner = await account(), snapshot = bundledSnapshot(), created = attempt(snapshot), app = createApp({ db: db!, auth: {} });
+  try {
+    const headers = { authorization: owner.authorization };
+    const create = (value: typeof created) => app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync', headers,
+      payload: { snapshots: [snapshot], attempts: [value] } });
+    const first = await create(created);
+    assert.equal(first.statusCode, 200, first.body);
+    assert.deepEqual(first.json().accepted, [{ attemptId: created.attemptId, revision: 1 }]);
+
+    const advance = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/events', headers,
+      payload: { events: [{ eventId: randomUUID(), attemptId: created.attemptId, baseRevision: 1, revision: 2,
+        type: 'progress', payload: { questionId: snapshot.items[0]!.id, response: { value: 'device B' },
+          position: 2, updatedAt: '2026-10-07T12:01:00.000Z' } }] } });
+    assert.equal(advance.statusCode, 200, advance.body);
+
+    const retry = await create(created);
+    assert.equal(retry.statusCode, 200, retry.body);
+    assert.deepEqual(retry.json().accepted, [{ attemptId: created.attemptId, revision: 1 }]);
+
+    const stale = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/events', headers,
+      payload: { events: [{ eventId: randomUUID(), attemptId: created.attemptId, baseRevision: 1, revision: 2,
+        type: 'progress', payload: { questionId: snapshot.items[0]!.id, response: { value: 'device A' },
+          position: 3, updatedAt: '2026-10-07T12:02:00.000Z' } }] } });
+    assert.equal(stale.statusCode, 409);
+    assert.equal(stale.json().conflict.attempt.revision, 2);
+
+    const changed = await create({ ...created, position: 7 });
+    assert.equal(changed.statusCode, 409);
+    const detail = await app.inject({ method: 'GET', url: `/v1/level-test-attempts/${created.attemptId}`, headers });
+    assert.equal(detail.statusCode, 200, detail.body);
+    assert.equal(detail.json().attempt.revision, 2);
+    assert.equal(detail.json().attempt.position, 2);
   } finally { await app.close(); }
 });

@@ -42,3 +42,15 @@ Each request contains exactly one event, is limited by the route's 256 KB body
 bound, and returns one ACK only after its transaction commits. Restore continues
 through the authenticated paginated attempt-history routes. Operational logs must
 not include event payloads, answers, results, or bearer tokens.
+
+
+## Initial creation receipt
+
+The first accepted upload for an account-owned attempt atomically stores an
+immutable receipt containing a SHA-256 fingerprint of the canonical attempt
+payload and its snapshot identity/metadata, plus the original creation ACK.
+Repeating the same creation request returns that ACK even after later events
+advance the mutable attempt. Reusing the owner-scoped attempt ID with different
+creation data returns 409 and does not overwrite either record. Receipt rows
+cascade with their attempt when the account is deleted. Their contents are not
+returned by history APIs and must not be logged.

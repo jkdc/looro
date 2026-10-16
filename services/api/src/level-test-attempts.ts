@@ -278,7 +278,15 @@ async function persistAttemptBatch(db: Database, accountID: string,
           throw new ServiceError('exam_snapshot_conflict', 409);
       }
     }
+    const accepted: { attemptId: string; revision: number }[] = [];
+    const snapshots = new Map(batch.snapshots.map(snapshot => [snapshot.exam.examId, snapshot]));
     for (const attempt of batch.attempts) {
+      const snapshot = snapshots.get(attempt.examId)!;
+      const requestHash = createHash('sha256').update(stableJSON({
+        attempt,
+        snapshot: { examId: snapshot.exam.examId, contentId: snapshot.exam.contentId,
+          contentHash: snapshot.exam.contentHash, metadata: snapshot.metadata },
+      })).digest('hex');
       const inserted = await sql.query(`INSERT INTO level_test_attempts(account_id,attempt_id,exam_id,state,position,revision,
           started_at,updated_at,completed_at,answers,result,attempt_json)
         VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11::jsonb,$12::jsonb)
@@ -287,13 +295,29 @@ async function persistAttemptBatch(db: Database, accountID: string,
         attempt.startedAt, attempt.updatedAt, attempt.completedAt ?? null,
         JSON.stringify(attempt.answers), attempt.result == null ? null : JSON.stringify(attempt.result), JSON.stringify(attempt)]);
       if (!inserted.rowCount) {
+        const receipt = (await sql.query(`SELECT request_hash,ack_json FROM level_test_attempt_creation_receipts
+          WHERE account_id=$1 AND attempt_id=$2`, [accountID, attempt.attemptId])).rows[0];
+        if (receipt) {
+          if (receipt.request_hash !== requestHash) throw new ServiceError('exam_attempt_conflict', 409);
+          accepted.push(receipt.ack_json);
+          continue;
+        }
         const prior = (await sql.query(`SELECT exam_id,attempt_json FROM level_test_attempts
           WHERE account_id=$1 AND attempt_id=$2`, [accountID, attempt.attemptId])).rows[0];
         if (!prior || prior.exam_id !== attempt.examId || stableJSON(prior.attempt_json) !== stableJSON(attempt))
           throw new ServiceError('exam_attempt_conflict', 409);
       }
+      const ack = { attemptId: attempt.attemptId, revision: attempt.revision };
+      await sql.query(`INSERT INTO level_test_attempt_creation_receipts(account_id,attempt_id,request_hash,ack_json)
+        VALUES($1,$2,$3,$4::jsonb) ON CONFLICT(account_id,attempt_id) DO NOTHING`,
+      [accountID, attempt.attemptId, requestHash, JSON.stringify(ack)]);
+      const storedReceipt = (await sql.query(`SELECT request_hash,ack_json FROM level_test_attempt_creation_receipts
+        WHERE account_id=$1 AND attempt_id=$2`, [accountID, attempt.attemptId])).rows[0];
+      if (!storedReceipt || storedReceipt.request_hash !== requestHash)
+        throw new ServiceError('exam_attempt_conflict', 409);
+      accepted.push(storedReceipt.ack_json);
     }
-    return batch.attempts.map(attempt => ({ attemptId: attempt.attemptId, revision: attempt.revision }));
+    return accepted;
   });
 }
 
