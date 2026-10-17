@@ -253,7 +253,7 @@ Route direct inline;
   and no blind reissue after unknown external LLM outcome.
   Checks: API typecheck/build/unit; distributed-lock DB integration when available.
   Risk: item 4 (scheduler/CLI concurrency and cancellation ordering) and item 5 (API Docker/config behavior); independent verifier passed the bounded outcome-uncertainty recheck.
-- [ ] **T11 — Add effective-config panel and audited draft approval.**
+- [ ] **T11 — Add effective-config panel and audited draft approval.** Route inline; SDD c7d5fe4 committed; awaiting spec review.
   Phase P5; report §8, 9/T11. Files: admin static UI and admin API.
   Prove save/reload, masked secrets, unsaved form not claimed tested, saved-config
   connection semantics, bounded test, admin auth/Origin, approval gates and job status.
@@ -685,3 +685,6 @@ No push, PR, deployment, or merge to `main`.
 - User said “continua” after the concrete T11 design proposal, authorizing progression. The report acceptance remains authoritative: effective saved configuration, save-first semantics, bounded provider test, admin/Origin protection, audited private-draft moderation, and distinct scheduler/job status.
 - Added the T11 OpenSpec proposal/design/tasks/spec. Design chooses a minimal static-panel extension, existing admin/publication contracts, bounded draft/job read models, and Docker-run Playwright E2E with stubbed provider because no browser runner exists. No source implementation or Swift verification was started.
 - Next gate: user reviews/approves the written spec; then prepare the implementation plan before code changes.
+
+### L39 — 2026-10-17 — T11 design commit recorded
+- Recorded T11 inline route and specification commit c7d5fe4 in the ledger. The source implementation remains gated on written-spec review and the following implementation plan.
