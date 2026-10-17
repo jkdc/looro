@@ -680,3 +680,8 @@ No push, PR, deployment, or merge to `main`.
 
 ### L37 — 2026-10-17
 - Re-verificación independiente acotada sobre b84be55: PASS en ambos hallazgos originales. Interrupción de body: una llamada, estado durable unknown, sin examen persistido y cero llamadas tras reinicio. Judge en strict y flag: cuatro llamadas de generación más un judge, estado unknown attempts=1, sin persistencia y cero llamadas tras reinicio. No hubo barrido nuevo; suite completa 524/524 ya validada. T10 cerrado en el ledger.
+
+### L38 — 2026-10-17 — T11 design prepared
+- User said “continua” after the concrete T11 design proposal, authorizing progression. The report acceptance remains authoritative: effective saved configuration, save-first semantics, bounded provider test, admin/Origin protection, audited private-draft moderation, and distinct scheduler/job status.
+- Added the T11 OpenSpec proposal/design/tasks/spec. Design chooses a minimal static-panel extension, existing admin/publication contracts, bounded draft/job read models, and Docker-run Playwright E2E with stubbed provider because no browser runner exists. No source implementation or Swift verification was started.
+- Next gate: user reviews/approves the written spec; then prepare the implementation plan before code changes.
