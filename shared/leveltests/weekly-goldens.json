@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "vectors": [
+    {
+      "languageID": "en",
+      "level": "B1",
+      "weekIndex": 202641,
+      "items": [
+        "en-business-u1-negotiation-e3", "en-care-u1-appointment-e3", "en-care-u1-instructions-e2",
+        "en-hosp-u1-complaints-e1", "en-foundations-connections-first-conditional-e1", "en-business-u1-followup-e3",
+        "en-foundations-experiences-used-to-e3", "en-foundations-change-phrasals-e2", "en-foundations-telling-collocations-e3",
+        "en-hosp-u1-checkin-e3", "en-foundations-change-will-e1", "en-foundations-done-phrasals-e2",
+        "en-listen-job-change-q2#r", "en-listen-job-change-q3#r", "en-listen-job-change-q1#r",
+        "en-listen-never-been-q2#r", "en-listen-never-been-q3#r", "en-listen-never-been-q1#r",
+        "en-listen-monday-predictions-q1#l", "en-listen-monday-predictions-q2#l",
+        "en-listen-news-swap-q1#l", "en-listen-news-swap-q2#l",
+        "en-foundations-connections-suggestions-e4", "en-foundations-telling-reacting-e4", "en-hosp-u1-checkin-e4"
+      ],
+      "readingPassageIDs": ["en-listen-never-been", "en-listen-job-change"],
+      "listeningPassageIDs": ["en-listen-monday-predictions", "en-listen-news-swap"]
+    }
+  ]
+}

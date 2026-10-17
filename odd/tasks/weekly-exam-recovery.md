@@ -34,7 +34,7 @@ publish malformed questions or duplicate billable work across schedulers/CLI.
 | Chain strategy / user selection | `feature-branch-chain` |
 | Local integration | Explicitly requested final local merge into `feature/learning-platform` |
 | Remote authorization | None: no push, PR creation, remote execution, or deployment |
-| Current parent authorization | User authorized autonomous execution of all remaining tasks through T14 using Superpowers SDD and explicitly left Gentle AI aside. Current work resumes at T06; no push, PR, or merge to main. |
+| Current parent authorization | User authorized autonomous execution of all remaining tasks through T14 using Superpowers SDD and explicitly left Gentle AI aside. Current work resumes at T08; per L19, all Swift test execution is deferred to the final verification after implementation tasks T01–T14. No push, PR, or merge to main. |
 
 The approved requirement source remains the original checkout's untracked report:
 `/home/joaquin/Proyectos/looro-test/looro/informe-plan-pendientes-2026-10-13.md`.
@@ -62,8 +62,7 @@ Source implementation dispatch and local integration remain parent-controlled.
   structure; strict judging fails closed, drafts require approval before publication.
 - Scheduler stays off by default; UTC one-shot scheduling, pre-call distributed
   exclusion, preserved drafts, bounded retries/shutdown, no live `/proc` env switch.
-- iOS must match Android's offline and remote attempt/review/restore lifecycle;
-  Swift Core tests do not prove App/UI. Missing macOS/native/DB checks stay pending.
+- iOS must match Android's offline and remote attempt/review/restore lifecycle. Implement Swift during its assigned tasks, but defer every Swift Core/App/UI test to one final verification batch after T01–T14 implementation; do not claim those checks passed earlier.
 - Preserve existing unrelated changes and historical artifacts. No content authoring,
   credentials, real LLM calls, remote transfer, or production activation is authorized.
 - Technical artifacts default to English; extend existing UI language where appropriate.
@@ -239,12 +238,12 @@ Route direct inline;
   Phase P4; report §6, 9/T08. Files: exporters, proposed Core models/data/engines/tests.
   Prove output freshness, SHA-256 and ISO-week parity, B1 week 202641 golden,
   grading equivalence, placement result/instruction preference integration.
-  Checks: root Python/exporter/contracts and Swift Core gate.
+  Implementation checks: root Python/exporter/contracts; Swift Core test gate deferred to final verification after all implementation phases (L19). Keep T08 open for that final proof.
 - [ ] **T09 — Implement full iOS storage, navigation, UI, sync, restore parity.**
   Phase P4; report §6, 9/T09. Files: Core/Database, App storage/views/clients, project.
   Prove generated/bundled exact snapshots, kill/reopen/review, owner switch/conflict,
   restore; do not substitute Core tests for native App/UI checks.
-  Checks: normalization then Swift Core, xcodebuild App and UI gates on macOS.
+  Implementation checks: normalization and non-Swift checks as applicable; defer Swift Core and xcodebuild App/UI execution to final verification after all implementation phases (L19). Keep Swift proof pending until then.
 - [ ] **T10 — Add disabled scheduler and complete Compose configuration.**
   Phase P5; report §7, 9/T10. Files: scheduler/main/compose and fake-clock tests.
   Prove UTC next-run recalculation, missed-run recovery, input bounds, preserved drafts,
@@ -271,8 +270,7 @@ Route direct inline;
   failed/skipped/pending check and final diff/commit evidence; no claim of verified
   iOS without macOS. Merge locally into feature/learning-platform only after applicable
   verification/review and parent approval of readiness. Deployment remains unauthorized.
-  Checks: applicable command inventory, clean scope and local merge evidence;
-  native review only under effective user-owned RDD mode/returned consent.
+  Checks: run the deferred Swift Core/App/UI verification batch and Whisper-dependent checks, then the applicable command inventory, clean scope and authorized local integration evidence; native review only under effective user-owned RDD mode/returned consent.
 
 ## Delivery forecast and slice boundaries
 
@@ -567,7 +565,7 @@ No push, PR, deployment, or merge to `main`.
 
 ## Log
 
-- L17: resumed T07 after T06 verification; inline after bounded map/spot-check. SDD under openspec/t07 and docs/superpowers. Preserve remote hash; bundled uses API canonical hash; reuse T03 DAO/FIFO. Risk 1,4.
+- L17: resumed T07 inline; SDD under openspec/t07, API hash retained, T03 DAO/FIFO reused; risk 1,4.
 
 - L1 (2026-10-13), original request: “implementa los cambios que se exponene en el documento informe-plan-pendientes-2026-10-13.md”.
 - L2 (2026-10-13), user constraint: “todos los comando debes lanzarlos via docker. continua con lo que sigue con 1. revisar este cambio”.
@@ -588,3 +586,6 @@ No push, PR, deployment, or merge to `main`.
 - L15 (2026-10-16), user request verbatim: “completa lo que falta excepto el punto 3”. Re-ran the full Android JVM suite with `--rerun-tasks`: BUILD SUCCESSFUL. Native assessment of `b3f1e5b..8e83b9f` returned medium/under-budget, then explicit preflight STATUS produced a START invocation. The exact provider-issued START failed before authority creation with `invalid_request`, `mutation_outcome: not_started`, cause `unexpected review start argument "commit"`; current `review start --help` documents `--committed-only` as a valueless flag while STATUS emitted `--committed-only=true`. Fresh selectorless STATUS still reoffered that invocation. No native authority or receipt was created; stop pending runtime correction. Swift remains excluded as requested.
 
 - L16 (2026-10-16), user instruction verbatim: “adelante, sigue con el trabajo de forma autónoma hasta completar todas las tareas”. The user selected Superpowers SDD and explicitly left Gentle AI aside; continue T06–T14 without routine approvals, while preserving real product/operational blockers and reporting unavailable verification honestly. T05 is treated functionally complete without claiming a native review receipt.
+- L18 (2026-10-16): T08 inline implementation adds Swift exporters/engines, UserDefaults preference store, and shared golden. Python 138/138, API 4/4, Android focused test and isolated Swift bank-decode/engine smoke pass. Full SwiftPM gate fails on Linux CryptoKit and unchanged CheckpointsData syntax; real SHA golden remains pending. Whisper deferred to final checks.
+
+- L19 (2026-10-17), user instruction verbatim: “debemos continuar con lo que sigue y dejar toda la parte de swift sin probar hasta más adelante. por tanto debemos seguir con las siguientes fases. apuntatelo para las siguientes fases. swift se implementa pero se prueba al final cuando ya esté todo”. Implement Swift in T08/T09 and any later applicable work, but defer all Swift Core/App/UI test execution to the final verification batch after the other T01–T14 implementation phases. Do not mark Swift checks passed before that batch; keep Whisper deferred as previously instructed.

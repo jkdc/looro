@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 function assertEquals(actual: unknown, expected: unknown, message?: string): void { assert.deepEqual(actual, expected, message); }
 function assertTrue(condition: unknown, message?: string): void { assert.ok(condition, message); }
 import { createApp } from '../src/app.js';
@@ -9,30 +10,20 @@ import { composeWeekly, expiresAt, levelTestLevels, weekIndex } from '../src/lev
 /** Golden parity with the Kotlin engine (LevelTestEngineTest's golden vector):
     both composers MUST produce the identical weekly exam, or app and server
     drift apart. B1, English, ISO week 202641. */
-const GOLDEN_ITEMS = [
-  'en-business-u1-negotiation-e3', 'en-care-u1-appointment-e3', 'en-care-u1-instructions-e2',
-  'en-hosp-u1-complaints-e1', 'en-foundations-connections-first-conditional-e1', 'en-business-u1-followup-e3',
-  'en-foundations-experiences-used-to-e3', 'en-foundations-change-phrasals-e2', 'en-foundations-telling-collocations-e3',
-  'en-hosp-u1-checkin-e3', 'en-foundations-change-will-e1', 'en-foundations-done-phrasals-e2',
-  'en-listen-job-change-q2#r', 'en-listen-job-change-q3#r', 'en-listen-job-change-q1#r',
-  'en-listen-never-been-q2#r', 'en-listen-never-been-q3#r', 'en-listen-never-been-q1#r',
-  'en-listen-monday-predictions-q1#l', 'en-listen-monday-predictions-q2#l',
-  'en-listen-news-swap-q1#l', 'en-listen-news-swap-q2#l',
-  'en-foundations-connections-suggestions-e4', 'en-foundations-telling-reacting-e4', 'en-hosp-u1-checkin-e4',
-];
-const GOLDEN_READING = ['en-listen-never-been', 'en-listen-job-change'];
-const GOLDEN_LISTENING = ['en-listen-monday-predictions', 'en-listen-news-swap'];
+const GOLDEN = JSON.parse(readFileSync(new URL('../../../shared/leveltests/weekly-goldens.json', import.meta.url), 'utf8'))
+  .vectors[0] as { languageID: string; level: string; weekIndex: number; items: string[];
+    readingPassageIDs: string[]; listeningPassageIDs: string[] };
 
 test('golden parity: the server composes the same weekly exam as the app', () => {
   // ISO week 41 of 2026 = Mon 2026-10-05 .. Sun 2026-10-11.
   const now = new Date('2026-10-07T12:00:00Z');
-  assertEquals(weekIndex(now), 202641);
-  const composed = composeWeekly('en', 'B1', now);
+  assertEquals(weekIndex(now), GOLDEN.weekIndex);
+  const composed = composeWeekly(GOLDEN.languageID, GOLDEN.level, now);
   assert.ok(composed);
-  assertEquals(composed.items.map(item => item.id), GOLDEN_ITEMS);
-  assertEquals(composed.readingPassageIds, GOLDEN_READING);
-  assertEquals(composed.listeningPassageIds, GOLDEN_LISTENING);
-  assertEquals(composed.weekId, 202641);
+  assertEquals(composed.items.map(item => item.id), GOLDEN.items);
+  assertEquals(composed.readingPassageIds, GOLDEN.readingPassageIDs);
+  assertEquals(composed.listeningPassageIds, GOLDEN.listeningPassageIDs);
+  assertEquals(composed.weekId, GOLDEN.weekIndex);
   assertEquals(composed.expiresAt, '2026-10-12T00:00:00.000Z');
 });
 

@@ -100,7 +100,7 @@ public struct PracticeQuestion: Hashable, Sendable {
 
 /// Authored offline drill. `kind` is one of ExerciseEngine's choice/gap/order/written;
 /// `options` is filled for choice only; `<name>` spans in answers accept any text.
-public struct Exercise: Identifiable, Hashable, Sendable {
+public struct Exercise: Codable, Identifiable, Hashable, Sendable {
     public var id: String
     public var kind: String
     public var prompt: String
