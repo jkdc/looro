@@ -688,3 +688,8 @@ No push, PR, deployment, or merge to `main`.
 
 ### L39 — 2026-10-17 — T11 design commit recorded
 - Recorded T11 inline route and specification commit c7d5fe4 in the ledger. The source implementation remains gated on written-spec review and the following implementation plan.
+
+### L40 — 2026-10-17 — T11 planning map and lifecycle question
+- User said “continua” after the written T11 spec, approving that stage. Targeted Docker mapping found the weekly-row constraint permits only draft/approved/retired (); rejection needs a new lifecycle state or would be conflated with retirement. Generation currently blocks on any existing week unless forced, so rejection and same-week regeneration semantics affect retained data and possible provider spend.
+- The admin panel is served by Caddy, while the current smoke Compose stack has no Caddy or admin session bootstrap.  exposes only /; process-local status needs a read-only seam. CodeGraph returned unrelated/stale symbols, so the bounded follow-up used Docker file reads.
+- Open product question before finalizing implementation plan: retain a distinct rejected row and prohibit automatic same-week retry (requiring explicit force), or allow a new same-week generation after rejection while preserving the rejected record. No source changes made.
