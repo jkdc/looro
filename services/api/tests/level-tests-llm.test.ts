@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createApp } from '../src/app.js';
 import { connectDatabase, transaction, type Database } from '../src/db.js';
 import { validateGeneratedPool } from '../src/level-tests-validate.js';
-import { encryptSecret, decryptSecret, maskKey, resolveLlmConfig } from '../src/llm-config.js';
+import { encryptSecret, decryptSecret, maskKey, resolveLlmConfig, LlmTransportError } from '../src/llm-config.js';
 import { generateWeeklyLevelTest } from '../src/level-tests-llm.js';
 
 const ENV_BASE: NodeJS.ProcessEnv = {
@@ -194,3 +194,24 @@ integration('strict judge removes rejected items and approves the trimmed exam',
   assert.ok(history.rows.length >= 1);
 });
 
+
+
+integration('unknown judge transport outcome stops generation in flag and strict modes', async db => {
+  for (const verifyMode of ['flag', 'strict'] as const) {
+    let calls = 0;
+    const outcome = await generateWeeklyLevelTest({
+      db,
+      env: { ...ENV_BASE, LEVELTEST_VERIFY: verifyMode },
+      transport: async (_config, messages) => {
+        calls += 1;
+        const system = messages.find(message => message.role === 'system')?.content ?? '';
+        if (system.includes('strict exam reviewer')) throw new LlmTransportError('llm_outcome_unknown');
+        return sectionTransport()(_config, messages);
+      },
+    }, { languageID: 'fr', level: 'A1', weekIndex: 998001 });
+    assert.equal(outcome.status, 'failed');
+    assert.ok(outcome.errors?.some(error => error.includes('llm_outcome_unknown')));
+    assert.equal(calls, 5);
+    assert.equal((await db.query(`SELECT 1 FROM level_test_weeks WHERE language_id='fr' AND level='A1' AND week_index=998001`)).rowCount, 0);
+  }
+});

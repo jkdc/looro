@@ -347,8 +347,10 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
       if (missing.length && settings.verifyMode === 'strict') throw new Error('judge_incomplete');
       review.push(...verdicts, ...missing.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_incomplete' })));
       for (const verdict of verdicts) if (verdict.verdict === 'reject') rejected.add(verdict.id);
-    } catch {
-      if (settings.verifyMode === 'strict') return { status: 'failed', languageID, level, weekId,
+    } catch (error) {
+      if (options.signal?.aborted || (error instanceof LlmTransportError && error.code === "llm_outcome_unknown"))
+        return { status: "failed", languageID, level, weekId, tokensIn, tokensOut, errors: ["llm_outcome_unknown"] };
+      if (settings.verifyMode === "strict") return { status: "failed", languageID, level, weekId,
         tokensIn, tokensOut, errors: [`${section}: judge_failed_or_incomplete`] };
       review.push(...items.map(item => ({ id: item.id!, verdict: 'flagged' as const, reason: 'judge_unavailable' })));
     }

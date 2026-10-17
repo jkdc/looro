@@ -112,10 +112,12 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
     throw new LlmTransportError('llm_outcome_unknown');
   }
   if (!response.ok) throw new LlmTransportError(`llm_http_${response.status}`);
-  const payload = await response.json() as {
-    choices?: { message?: { content?: string } }[];
-    usage?: { prompt_tokens?: number; completion_tokens?: number };
-  };
+  let payload: { choices?: { message?: { content?: string } }[]; usage?: { prompt_tokens?: number; completion_tokens?: number } };
+  try {
+    payload = await response.json() as typeof payload;
+  } catch {
+    throw new LlmTransportError("llm_outcome_unknown");
+  }
   const content = payload.choices?.[0]?.message?.content;
   if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply');
   return { content, tokensIn: payload.usage?.prompt_tokens ?? 0, tokensOut: payload.usage?.completion_tokens ?? 0 };

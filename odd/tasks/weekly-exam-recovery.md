@@ -672,3 +672,7 @@ No push, PR, deployment, or merge to `main`.
 
 ### L35 — 2026-10-17
 - T10 implementado inline: scheduler UTC one-shot apagado por defecto; config estricta y timeout total; PostgreSQL session advisory lock más job state durable compartido por CLI/API; UNKNOWN no se reintenta sin --force; AbortSignal llega al fetch; shutdown drena antes de cerrar DB. Verificación en stack Docker limpio: build API y focused 13/13; suite completa 522/522 tras completar el Docker test image con migrations/operations y mounts read-only shared/apps. No hubo llamadas a proveedor. Falta revisión independiente de alto riesgo antes de marcar T10 cerrado.
+
+
+### L36 — 2026-10-17
+- Verificador independiente detectó T10 incompleto: response.json() podía fallar después de recibir headers y el fallo incierto del judge se descartaba en verifyMode flag y strict. Añadidas regresiones RED; la corrección clasifica el fallo de body como llm_outcome_unknown sin reintento, y ambos modos de judge paran sin persistir ni volver a invocar al proveedor. Build/tests focalizados Docker: 11/11; suite API completa en PostgreSQL efímero: 524/524. Se pidió una única re-verificación independiente acotada a esos blockers; T10 permanece abierto hasta su resultado.
