@@ -245,13 +245,14 @@ Route direct inline;
   restore; do not substitute Core tests for native App/UI checks.
   Implementation checks: normalization and non-Swift checks as applicable; defer Swift Core and xcodebuild App/UI execution to final verification after all implementation phases (L19). Keep Swift proof pending until then.
   Route: direct inline after bounded iOS mapping; implement account-bound sync/restore and history UI. T09 account/persisted data changes are high-risk and require independent verification.
-- [ ] **T10 — Add disabled scheduler and complete Compose configuration.**
+- [x] **T10 — Add disabled scheduler and complete Compose configuration.** Commits: `1aa322f`, `b84be55`.
   Phase P5; report §7, 9/T10. Files: scheduler/main/compose and fake-clock tests.
   Route: direct inline; one cohesive scheduling and claim lifecycle, with no disjoint writer unit.
   Prove UTC next-run recalculation, missed-run recovery, input bounds, preserved drafts,
   per-combination failure isolation, shutdown, pre-call exclusion across replicas/CLI,
   and no blind reissue after unknown external LLM outcome.
   Checks: API typecheck/build/unit; distributed-lock DB integration when available.
+  Risk: item 4 (scheduler/CLI concurrency and cancellation ordering) and item 5 (API Docker/config behavior); independent verifier passed the bounded outcome-uncertainty recheck.
 - [ ] **T11 — Add effective-config panel and audited draft approval.**
   Phase P5; report §8, 9/T11. Files: admin static UI and admin API.
   Prove save/reload, masked secrets, unsaved form not claimed tested, saved-config
@@ -676,3 +677,6 @@ No push, PR, deployment, or merge to `main`.
 
 ### L36 — 2026-10-17
 - Verificador independiente detectó T10 incompleto: response.json() podía fallar después de recibir headers y el fallo incierto del judge se descartaba en verifyMode flag y strict. Añadidas regresiones RED; la corrección clasifica el fallo de body como llm_outcome_unknown sin reintento, y ambos modos de judge paran sin persistir ni volver a invocar al proveedor. Build/tests focalizados Docker: 11/11; suite API completa en PostgreSQL efímero: 524/524. Se pidió una única re-verificación independiente acotada a esos blockers; T10 permanece abierto hasta su resultado.
+
+### L37 — 2026-10-17
+- Re-verificación independiente acotada sobre b84be55: PASS en ambos hallazgos originales. Interrupción de body: una llamada, estado durable unknown, sin examen persistido y cero llamadas tras reinicio. Judge en strict y flag: cuatro llamadas de generación más un judge, estado unknown attempts=1, sin persistencia y cero llamadas tras reinicio. No hubo barrido nuevo; suite completa 524/524 ya validada. T10 cerrado en el ledger.

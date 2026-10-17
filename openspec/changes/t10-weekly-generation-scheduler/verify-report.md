@@ -28,4 +28,4 @@ Date: 2026-10-17
 - Correction: response-body read failure now becomes llm_outcome_unknown without retry. A judge unknown outcome stops both verification modes, returns llm_outcome_unknown, and prevents persistence or subsequent provider calls.
 - Regression checks were observed RED before the correction and GREEN afterward.
 - Corrected focused Docker tests: 11 passed, 0 failed. Full API Docker suite: 524 passed, 0 failed, 0 skipped.
-- Independent verifier bounded recheck: pending; do not close T10 until it returns.
+- Independent verifier bounded recheck on b84be55: PASS for both original blockers. In a fresh candidate archive and PostgreSQL database, body interruption produced one fetch, durable unknown state, no week, and zero calls on restart. Strict and flag judge interruption each stopped after four generation calls plus the first judge; both persisted unknown with attempts=1, no week, and zero calls on restart. The verifier ran only these probes, not another full suite.
