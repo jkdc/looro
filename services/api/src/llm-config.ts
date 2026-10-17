@@ -91,43 +91,34 @@ export async function resolveLlmConfig(db: Database, env: NodeJS.ProcessEnv): Pr
 export interface ChatMessage { role: 'system' | 'user'; content: string }
 export interface ChatReply { content: string; tokensIn: number; tokensOut: number }
 
-/** One OpenAI-compatible chat completion against the resolved provider.
-    Long generations (reasoning models writing a full pool) can exceed
-    undici's default 5-minute headers timeout, so each call retries once on
-    transient network errors. HTTP >=400 responses are NOT retried here —
-    the caller decides (the CLI retries whole sections). */
-// Long generations with reasoning models can take >5 min to first byte —
-// undici's default headers timeout aborts them mid-flight.
+/** One OpenAI-compatible chat completion. Any transport error after invocation
+    has an unknown provider-side outcome and must not be retried automatically. */
+// Long generations with reasoning models can take >5 min to first byte.
 const llmAgent = new Agent({ headersTimeout: 900_000, bodyTimeout: 900_000 });
 
 export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMessage[],
-                                     fetchFn: typeof fetch = fetch): Promise<ChatReply> {
+                                     fetchFn: typeof fetch = fetch, signal?: AbortSignal): Promise<ChatReply> {
   const url = `${config.baseUrl.replace(/\/$/, '')}/chat/completions`;
-  let lastNetworkError: unknown = null;
-  for (let attempt = 0; attempt < 2; attempt++) {
-    if (attempt > 0) await new Promise(resolve => setTimeout(resolve, 2000));
-    let response: Response;
-    try {
-      response = await fetchFn(url, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
-        body: JSON.stringify({ model: config.model, messages, temperature: 0.4, stream: false }),
-        dispatcher: llmAgent,
-      } as RequestInit & { dispatcher: Agent });
-    } catch (error) {
-      lastNetworkError = error;
-      continue;
-    }
-    if (!response.ok) throw new LlmTransportError(`llm_http_${response.status}`);
-    const payload = await response.json() as {
-      choices?: { message?: { content?: string } }[];
-      usage?: { prompt_tokens?: number; completion_tokens?: number };
-    };
-    const content = payload.choices?.[0]?.message?.content;
-    if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply');
-    return { content, tokensIn: payload.usage?.prompt_tokens ?? 0, tokensOut: payload.usage?.completion_tokens ?? 0 };
+  let response: Response;
+  try {
+    response = await fetchFn(url, {
+      method: 'POST',
+      signal,
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
+      body: JSON.stringify({ model: config.model, messages, temperature: 0.4, stream: false }),
+      dispatcher: llmAgent,
+    } as RequestInit & { dispatcher: Agent });
+  } catch {
+    throw new LlmTransportError('llm_outcome_unknown');
   }
-  throw new LlmTransportError(`llm_network_error: ${String(lastNetworkError)}`);
+  if (!response.ok) throw new LlmTransportError(`llm_http_${response.status}`);
+  const payload = await response.json() as {
+    choices?: { message?: { content?: string } }[];
+    usage?: { prompt_tokens?: number; completion_tokens?: number };
+  };
+  const content = payload.choices?.[0]?.message?.content;
+  if (typeof content !== 'string' || !content.trim()) throw new LlmTransportError('llm_empty_reply');
+  return { content, tokensIn: payload.usage?.prompt_tokens ?? 0, tokensOut: payload.usage?.completion_tokens ?? 0 };
 }
 
 export class LlmTransportError extends Error {

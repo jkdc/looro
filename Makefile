@@ -5,8 +5,8 @@
 # administración y Caddy con un solo comando.
 
 SHELL := /bin/bash
-COMPOSE := docker compose -f services/api/compose.yaml
-SMOKE := docker compose -p looro-smoke -f services/api/tests/compose.smoke.yaml
+COMPOSE := docker compose --project-directory $(CURDIR)/services/api -f $(CURDIR)/services/api/compose.yaml
+SMOKE := docker compose --project-directory $(CURDIR)/services/api/tests -p looro-smoke -f $(CURDIR)/services/api/tests/compose.smoke.yaml
 GRADLE := cd apps/android && ./gradlew
 XCODEPROJ := apps/ios/App.xcodeproj
 # Nombre del simulador usado por ios-test (docs/build-and-test.md).

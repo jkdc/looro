@@ -5,7 +5,7 @@ import type { Database } from '../src/db.js';
 import { AuthAdmission } from '../src/auth-admission.js';
 import { adminAuthConfig, adminCookieHeader } from '../src/admin-auth.js';
 import { digest } from '../src/auth.js';
-import { encryptSecret, maskKey } from '../src/llm-config.js';
+import { encryptSecret, maskKey, LlmTransportError } from '../src/llm-config.js';
 import { readLlmConfigView, upsertLlmConfig } from '../src/llm-config-admin.js';
 import { generateWeeklyLevelTest } from '../src/level-tests-llm.js';
 import { identifySnapshot, type ExamSnapshot } from '../src/level-test-snapshot.js';
@@ -77,6 +77,33 @@ function database() {
 }
 const generate = (db: Database, env = ENV, call = transport()) =>
   generateWeeklyLevelTest({ db, env, transport: call }, { languageID: 'en', level: 'A1', now: NOW });
+
+test('an unknown provider outcome is not retried by the section loop', async () => {
+  const { db } = database();
+  let calls = 0;
+  const outcome = await generate(db, ENV, async () => {
+    calls += 1;
+    throw new LlmTransportError('llm_outcome_unknown');
+  });
+  assert.equal(outcome.status, 'failed');
+  assert.equal(calls, 1);
+});
+
+test('a scheduled generation preserves an existing draft unless force is explicit', async () => {
+  const { db, state } = database();
+  const draft = { id: 'draft-id', language_id: 'en', level: 'A1', week_index: 202642,
+    status: 'draft', variants: [{ variant: 1, items: [], passages: [] }], pool: { recognition: [] } } as Row;
+  state.weeks.push(draft);
+  let calls = 0;
+  const outcome = await generate(db, ENV, async () => {
+    calls += 1;
+    return { content: '{}', tokensIn: 0, tokensOut: 0 };
+  });
+  assert.equal(outcome.status, 'exists');
+  assert.equal(calls, 0);
+  assert.equal(state.weeks.length, 1);
+  assert.equal(state.weeks[0]?.id, 'draft-id');
+});
 
 for (const mutation of ['invalid answer', 'unknown kind', 'short reading block']) test(`structural gate with judge off: ${mutation}`, async () => {
   const { db, state } = database(), content = pool();

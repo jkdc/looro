@@ -2,7 +2,7 @@ import { randomUUID, createHash } from 'node:crypto';
 import { transaction, type Database } from './db.js';
 import type { PoolClient } from 'pg';
 import { EXAM_MODELS, LEVEL_TEST_BANKS, type LevelTestContentItem, type LevelTestSection } from './level-tests-content.generated.js';
-import { chatCompletion, extractJson, resolveLlmConfig, type ChatReply, type ResolvedLlmConfig } from './llm-config.js';
+import { chatCompletion, extractJson, resolveLlmConfig, LlmTransportError, type ChatReply, type ResolvedLlmConfig } from './llm-config.js';
 import { expiresAt, weekIndex } from './level-tests.js';
 import { identifySnapshot, type SnapshotContent, type SnapshotMetadata } from './level-test-snapshot.js';
 import { levelTestSettings } from './level-test-settings.js';
@@ -170,11 +170,11 @@ interface SectionResult {
   errors: string[];
 }
 
-type LlmCall = (config: ResolvedLlmConfig, messages: { role: 'system' | 'user'; content: string }[]) => Promise<ChatReply>;
+type LlmCall = (config: ResolvedLlmConfig, messages: { role: 'system' | 'user'; content: string }[], signal?: AbortSignal) => Promise<ChatReply>;
 
 async function generateSection(
   call: LlmCall, config: ResolvedLlmConfig, section: SectionName,
-  languageID: string, level: string, model: ExamModelEntry, weekId: number,
+  languageID: string, level: string, model: ExamModelEntry, weekId: number, signal?: AbortSignal,
 ): Promise<SectionResult> {
   const spec = SECTION_SPECS[section];
   const fewShot = fewShotFor(languageID, level, section);
@@ -183,7 +183,7 @@ async function generateSection(
   const errors: string[] = [];
   let lastReply: ChatReply | undefined;
   for (let attempt = 0; attempt <= MAX_SECTION_RETRIES && !lastReply; attempt++) {
-    const reply = await call(config, messages);
+    const reply = await call(config, messages, signal);
     if (attempt > 0) {
       // Directed retry: add the previous errors as feedback.
       messages.push({ role: 'user', content: `Previous attempt failed validation: ${errors.join('; ')}. Please fix and try again.` });
@@ -239,13 +239,13 @@ async function generateSection(
 
 async function judgeSection(
   call: LlmCall, config: ResolvedLlmConfig, section: SectionName,
-  languageID: string, level: string, items: (RawGeneratedItem & { passageText?: string })[],
+  languageID: string, level: string, items: (RawGeneratedItem & { passageText?: string })[], signal?: AbortSignal,
 ): Promise<{ id: string; verdict: 'ok' | 'flagged' | 'reject'; reason?: string }[]> {
   const langName = LANGUAGE_NAMES[languageID] ?? languageID;
   const system = `You are a strict exam reviewer for CEFR ${level} ${langName} tests. For EVERY item decide: is the marked answer uniquely correct, are all distractors clearly wrong, is the difficulty plausible? Reply ONLY JSON: {"items":[{"id":"...","verdict":"ok"|"flagged"|"reject","reason":"one sentence"}]}.`;
   const user = JSON.stringify(items.map(item => ({ id: item.id, kind: item.kind, prompt: item.prompt,
     options: item.options, answers: item.answers, explain: item.explain, passageText: item.passageText })));
-  const reply = await call(config, [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }]);
+  const reply = await call(config, [{ role: 'system' as const, content: system }, { role: 'user' as const, content: user }], signal);
   return parseVerdicts(reply);
 }
 
@@ -259,7 +259,7 @@ export interface GenerateDeps {
 
 export interface GenerateOptions {
   languageID: string; level: string;
-  weekIndex?: number; force?: boolean; now?: Date;
+  weekIndex?: number; force?: boolean; now?: Date; signal?: AbortSignal;
 }
 export interface GenerationOutcome {
   status: 'approved' | 'draft' | 'exists' | 'failed';
@@ -274,15 +274,15 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   if (!model) return { status: 'failed', languageID, level, weekId, errors: ['no exam model'] };
 
   const existing = await currentWeekRow(deps.db, languageID, level, weekId);
-  if (existing?.status === 'approved' && !options.force)
+  if (existing && !options.force)
     return { status: 'exists', languageID, level, weekId, variants: (existing.variants as unknown[]).length };
 
   const config = await resolveLlmConfig(deps.db, deps.env);
   if (!config) return { status: 'failed', languageID, level, weekId, errors: ['no llm configuration'] };
-  const call = deps.transport ?? ((resolved, messages) => chatCompletion(resolved, messages));
+  const call = deps.transport ?? ((resolved, messages, signal) => chatCompletion(resolved, messages, fetch, signal));
 
   const errors: string[] = [];
-  let tokensIn = 0, tokensOut = 0;
+  let tokensIn = 0, tokensOut = 0, unknownOutcome = false;
 
   // ---- generate sections independently ----
   const sectionResults = new Map<SectionName, SectionResult>();
@@ -290,16 +290,18 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     let result: SectionResult | undefined;
     for (let attempt = 0; attempt <= MAX_SECTION_RETRIES && !result; attempt++) {
       try {
-        result = await generateSection(call, config, section, languageID, level, model, weekId);
+        result = await generateSection(call, config, section, languageID, level, model, weekId, options.signal);
         if (result.errors.length) {
           errors.push(...result.errors);
           if (attempt < MAX_SECTION_RETRIES) result = undefined; // retry
         }
       } catch (error) {
         errors.push(`${section} attempt ${attempt + 1}: ${error instanceof Error ? error.message : String(error)}`);
+        if (error instanceof LlmTransportError && error.code === 'llm_outcome_unknown') { unknownOutcome = true; break; }
         if (attempt >= MAX_SECTION_RETRIES) break;
       }
     }
+    if (unknownOutcome) return { status: 'failed', languageID, level, weekId, errors };
     if (result) sectionResults.set(section, result);
   }
 
@@ -335,7 +337,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
   if (settings.verifyMode !== 'off') for (const section of SECTION_ORDER) {
     const items = sectionItems(pool, section);
     try {
-      const verdicts = await judgeSection(call, config, section, languageID, level, items);
+      const verdicts = await judgeSection(call, config, section, languageID, level, items, options.signal);
       const expected = new Set(items.map(item => item.id)), seen = new Set<string>();
       for (const verdict of verdicts) {
         if (!expected.has(verdict.id) || seen.has(verdict.id)) throw new Error('judge_invalid_ids');

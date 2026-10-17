@@ -5,7 +5,9 @@ RUN npm ci
 COPY tsconfig.json ./
 COPY src ./src
 COPY tests ./tests
-RUN npm run build
+COPY migrations ./migrations
+COPY operations ./operations
+RUN npm run build && cp -R migrations dist/migrations && cp -R operations dist/operations
 
 FROM node:22-alpine
 ENV NODE_ENV=production
