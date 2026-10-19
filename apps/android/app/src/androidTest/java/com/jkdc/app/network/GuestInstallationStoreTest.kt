@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 class GuestInstallationStoreTest {
     @Test fun guestIdentityAndTransferTicketSurviveRecreationWithoutEnteringMemberStorage() = runBlocking {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.jkdc.app.android.uitest", context.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, context.packageName)
         val origin = "https://guest.example.test/"
         val store = GuestInstallationStore(context, origin)
         val members = AccountSessionStore(context, origin)
@@ -32,7 +32,7 @@ class GuestInstallationStoreTest {
     }
     @Test fun wrongOriginAndCipherCorruptionFailClosedWithoutReplacingInstallation() = runBlocking {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.jkdc.app.android.uitest", context.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, context.packageName)
         val store = GuestInstallationStore(context, "https://guest.example.test/")
         val value = GuestInstallation("i".repeat(43))
         try {

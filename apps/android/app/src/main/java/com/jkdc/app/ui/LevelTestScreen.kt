@@ -106,10 +106,11 @@ fun LevelTestScreen(
     }
 
     val context = LocalContext.current
-    val localized = remember(vm.instructionsLanguage) {
+    val currentConfiguration = androidx.compose.ui.platform.LocalConfiguration.current
+    val localized = remember(vm.instructionsLanguage, currentConfiguration) {
         val locale = when (vm.instructionsLanguage) { "en" -> java.util.Locale("en"); "es" -> java.util.Locale("es"); else -> null }
         locale ?: return@remember null
-        val configuration = android.content.res.Configuration(context.resources.configuration)
+        val configuration = android.content.res.Configuration(currentConfiguration)
         configuration.setLocale(locale)
         context.createConfigurationContext(configuration)
     }

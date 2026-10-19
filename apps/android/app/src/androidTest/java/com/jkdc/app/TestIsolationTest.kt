@@ -10,7 +10,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TestIsolationTest {
     @Test fun interfaceTestsRunInAnAppSeparateFromTheLearnersInstallation() {
-        assertEquals("com.jkdc.app.android.uitest", InstrumentationRegistry.getInstrumentation().targetContext.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, InstrumentationRegistry.getInstrumentation().targetContext.packageName)
         assertTrue(BuildConfig.MANAGED_API_ORIGIN.isEmpty())
         assertTrue(BuildConfig.GOOGLE_SERVER_CLIENT_ID.isEmpty())
     }

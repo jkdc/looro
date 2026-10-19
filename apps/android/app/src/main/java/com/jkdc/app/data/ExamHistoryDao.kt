@@ -3,6 +3,7 @@ package com.jkdc.app.data
 import java.util.UUID
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
@@ -302,6 +303,108 @@ object ExamHistoryDao {
             "Could not mark source exam attempt as forked"
         }
         true
+    }
+
+    /**
+     * Insert-only import of one server-confirmed attempt with its frozen
+     * snapshot (cross-device/reinstall restore). An attempt that already exists
+     * locally is never overwritten and an anonymous local identity is left
+     * untouched; returns false when the attempt was skipped. No upload events
+     * are created: the server already confirmed this state.
+     * The snapshot JSON must carry its content-addressed identity
+     * (contentId = "sha256:" + 64-hex contentHash, examId present) and must
+     * rehydrate through [com.jkdc.app.network.LevelTestSnapshotAdapter.restore].
+     */
+    fun restorePage(db: SqlDatabase, ownerAccountID: String, snapshotJSON: String, attemptJSON: String): Boolean {
+        require(ownerAccountID.isNotBlank()) { "restore requires an owning account" }
+        val content = Json.parseToJsonElement(snapshotJSON).jsonObject
+        val attempt = Json.parseToJsonElement(attemptJSON).jsonObject
+        val examID = content.getValue("examId").jsonPrimitive.content
+        val contentID = content.getValue("contentId").jsonPrimitive.content
+        val contentHash = content.getValue("contentHash").jsonPrimitive.content
+        require(examID.isNotBlank() && Regex("^sha256:[a-f0-9]{64}$").matches(contentID) &&
+            contentHash == contentID.removePrefix("sha256:")) { "restore snapshot identity mismatch" }
+        require(content.getValue("schemaVersion").jsonPrimitive.content == "1") { "unsupported snapshot schema" }
+        val attemptID = attempt.getValue("attemptId").jsonPrimitive.content
+        val state = attempt.getValue("state").jsonPrimitive.content
+        require(state in setOf("in_progress", "completed")) { "invalid restored state" }
+        val revision = attempt.getValue("revision").jsonPrimitive.content.toLong()
+        require(revision > 0) { "invalid restored revision" }
+        val startedAt = java.time.Instant.parse(attempt.getValue("startedAt").jsonPrimitive.content)
+        val updatedAt = java.time.Instant.parse(attempt.getValue("updatedAt").jsonPrimitive.content)
+        require(!updatedAt.isBefore(startedAt)) { "restored timestamps out of order" }
+        val completedAt = attempt["completedAt"]?.takeIf { it !is JsonNull }
+            ?.let { java.time.Instant.parse(it.jsonPrimitive.content) }
+        if (state == "completed") require(completedAt != null && !completedAt.isBefore(startedAt)) { "completed restore needs a valid completion time" }
+        val answers = attempt.getValue("answers").jsonArray
+        require(answers.size <= 100) { "restored answers out of bounds" }
+        val result = attempt["result"]?.takeIf { it is JsonObject }
+        if (state == "completed") require(result != null) { "completed restore needs its frozen result" }
+
+        // The frozen content must rehydrate before anything is written.
+        com.jkdc.app.network.LevelTestSnapshotAdapter.restore(snapshotJSON)
+
+        val record = ExamSnapshotRecord(
+            examID = examID, contentID = contentID, contentHash = contentHash,
+            schemaVersion = 1,
+            contentRevision = content.getValue("contentRevision").jsonPrimitive.content.toInt(),
+            gradingVersion = content.getValue("gradingVersion").jsonPrimitive.content.toInt(),
+            source = content.getValue("source").jsonPrimitive.content,
+            languageID = content.getValue("languageID").jsonPrimitive.content,
+            level = content.getValue("level").jsonPrimitive.content,
+            weekID = content.getValue("weekId").jsonPrimitive.content.toLong(),
+            contentJSON = snapshotJSON, createdAt = System.currentTimeMillis() / 1000.0,
+        )
+        var imported = false
+        db.transaction { tx ->
+            tx.insert("exam_snapshots", mapOf(
+                "content_id" to record.contentID, "content_hash" to record.contentHash,
+                "schema_version" to record.schemaVersion, "content_revision" to record.contentRevision,
+                "grading_version" to record.gradingVersion, "source" to record.source,
+                "language_id" to record.languageID, "level" to record.level,
+                "week_id" to record.weekID, "content_json" to record.contentJSON,
+                "created_at" to record.createdAt,
+            ), ConflictStrategy.IGNORE)
+            val stored = tx.query("SELECT * FROM exam_snapshots WHERE content_hash = ?",
+                listOf(record.contentHash)).singleOrNull()
+                ?: error("Restored snapshot insert was not durable")
+            check(stored.text("content_json") == snapshotJSON &&
+                stored.text("content_id") == record.contentID) {
+                "Content hash already belongs to a different immutable exam snapshot"
+            }
+            tx.insert("exam_snapshot_ids", mapOf(
+                "exam_id" to examID, "content_id" to stored.text("content_id"),
+                "created_at" to record.createdAt,
+            ), ConflictStrategy.IGNORE)
+            val inserted = tx.insert("exam_attempts", mapOf(
+                "attempt_id" to attemptID, "exam_id" to examID,
+                "owner_account_id" to ownerAccountID, "state" to state,
+                "sync_state" to "synced", "position" to attempt.getValue("position").jsonPrimitive.content.toInt(),
+                "revision" to revision,
+                "started_at" to startedAt.toEpochMilli() / 1000.0,
+                "updated_at" to updatedAt.toEpochMilli() / 1000.0,
+                "completed_at" to completedAt?.toEpochMilli()?.toDouble()?.div(1000.0),
+            ), ConflictStrategy.IGNORE)
+            imported = inserted > 0
+            if (imported) {
+                for (answer in answers) {
+                    val row = answer.jsonObject
+                    tx.insert("exam_answers", mapOf(
+                        "attempt_id" to attemptID, "question_id" to row.getValue("questionId").jsonPrimitive.content,
+                        "revision" to row.getValue("revision").jsonPrimitive.content.toLong(),
+                        "response_json" to row.getValue("response").jsonObject.toString(),
+                        "saved_at" to updatedAt.toEpochMilli() / 1000.0,
+                    ))
+                }
+                if (result != null) {
+                    tx.insert("exam_results", mapOf(
+                        "attempt_id" to attemptID, "result_json" to result.toString(),
+                        "recorded_at" to (completedAt ?: updatedAt).toEpochMilli() / 1000.0,
+                    ))
+                }
+            }
+        }
+        return imported
     }
 
     fun start(db: SqlDatabase, snapshot: ExamSnapshotRecord, attempt: ExamAttemptRecord): ExamHistory {

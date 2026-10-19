@@ -23,6 +23,7 @@ class HostedConfiguration private constructor(val origin: HttpUrl) {
     companion object {
         fun parse(value: String): HostedConfiguration? {
             val url = value.toHttpUrlOrNull() ?: return null
+            if (url.isLocalDebugOrigin()) return HostedConfiguration(url)
             if (url.scheme != "https" || url.username.isNotEmpty() || url.password.isNotEmpty() || url.port != 443 ||
                 url.encodedPath != "/" || url.query != null || url.fragment != null ||
                 url.host == "openai.com" || url.host.endsWith(".openai.com")) return null

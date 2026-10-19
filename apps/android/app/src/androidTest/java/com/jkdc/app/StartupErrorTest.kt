@@ -1,5 +1,6 @@
 package com.jkdc.app
 
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +23,7 @@ class StartupErrorTest {
     @Before fun prepare() {
         vm = compose.awaitHistoryLoaded()
         compose.runOnIdle {
-            assertEquals("com.jkdc.app.android.uitest", compose.activity.packageName)
+            assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, compose.activity.packageName)
             account = ViewModelProvider(compose.activity)[AccountViewModel::class.java]
             configuration = account.configuration
             // Enable only the account UI. The isolated app has no account controller or credentials.

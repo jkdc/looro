@@ -257,11 +257,20 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
         persistDbAndWait { db ->
             val attempts = com.jkdc.app.data.LevelTestAttemptStore(db)
-            val started = attempts.start(selection, attemptID = attemptID)
-            restored = attempts.load(started.attempt["attempt_id"] as String)
+            // Attempts started under a signed-in account belong to it from birth
+            // (the outbox drains per owner); anonymous attempts stay local until
+            // an explicit claim — never silently bound by a later sign-in.
+            val started = attempts.start(selection, attemptID = attemptID,
+                ownerAccountID = examOwnerID.value)
+            restored = attempts.load(started.attempt["attempt_id"] as String, examOwnerID.value)
         }
         return checkNotNull(restored) { "Started exam attempt could not be reloaded" }
     }
+
+    /** The signed-in account for new exam attempts; MainActivity mirrors the
+        account state here. Null keeps attempts anonymous (local-only). */
+    private val examOwnerID = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+    fun setExamOwner(accountID: String?) { examOwnerID.value = accountID }
 
     internal suspend fun saveLevelTestAnswer(attemptID: String, questionID: String, response: String, position: Int) {
         persistDbAndWait { db ->
@@ -272,7 +281,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     internal suspend fun loadLevelTestAttempt(attemptID: String): com.jkdc.app.data.LevelTestAttemptStore.Restored? {
         var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
-        persistDbAndWait { db -> restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID) }
+        persistDbAndWait { db ->
+            restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID, examOwnerID.value)
+        }
         return restored
     }
 

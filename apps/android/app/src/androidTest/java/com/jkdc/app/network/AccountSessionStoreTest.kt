@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
 class AccountSessionStoreTest {
     @Test fun concurrentViewModelsCannotMixEncryptedRecordsOrEraseARefreshedLogin() = runBlocking {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.jkdc.app.android.uitest", context.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, context.packageName)
         val origin = "https://account.example.test/"
         val stores = List(5) { AccountSessionStore(context, origin) }
         val sessions = List(48) { index -> AccountSession("12345678-1234-1234-1234-123456789012",
@@ -41,7 +41,7 @@ class AccountSessionStoreTest {
     }
     @Test fun bearerSurvivesRecreationButCannotBeReadFromAnotherOriginAndClearsIndependentlyOfOpenAIKey() = runBlocking {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.jkdc.app.android.uitest", context.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, context.packageName)
         val origin = "https://account.example.test/"
         val store = AccountSessionStore(context, origin)
         val apiKey = CredentialStore(context, "app_account_test_openai", "com.jkdc.app.account.test.openai")

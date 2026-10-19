@@ -210,14 +210,14 @@ object BackupManager {
             while (true) {
                 val count = stream.read(buffer)
                 if (count < 0) break
-            if (output.size() + count > MAXIMUM_DATABASE_BYTES) {
-                throw InvalidBackup(BackupIssue.TOO_LARGE)
+                if (output.size() + count > MAXIMUM_DATABASE_BYTES) {
+                    throw InvalidBackup(BackupIssue.TOO_LARGE)
+                }
+                output.write(buffer, 0, count)
             }
-            output.write(buffer, 0, count)
+            output.toByteArray()
         }
-        output.toByteArray()
-    }
-    if (bytes.isEmpty()) throw InvalidBackup(BackupIssue.EMPTY)
+        if (bytes.isEmpty()) throw InvalidBackup(BackupIssue.EMPTY)
         val copy = File.createTempFile("backup-import-verify", ".db", workDir)
         try {
             copy.writeBytes(bytes)
