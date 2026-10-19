@@ -8,6 +8,7 @@ import { digest } from '../src/auth.js';
 import { encryptSecret, maskKey, LlmTransportError } from '../src/llm-config.js';
 import { readLlmConfigView, upsertLlmConfig } from '../src/llm-config-admin.js';
 import { generateWeeklyLevelTest } from '../src/level-tests-llm.js';
+import { parseLevelTestSchedulerConfig } from '../src/level-tests-scheduler.js';
 import { identifySnapshot, type ExamSnapshot } from '../src/level-test-snapshot.js';
 
 const NOW = new Date(), TOKEN = 'E'.repeat(43), ADMIN = '00000000-0000-4000-8000-000000000001';
@@ -41,7 +42,7 @@ type Row = Record<string, unknown> & { id: string; language_id: string; level: s
   status: string; variants: Record<string, unknown>[] };
 /** Fake external SQL only; generation, settings, admission/auth and HTTP handlers are real. */
 function database() {
-  const state = { weeks: [] as Row[], settings: undefined as Record<string, unknown> | undefined,
+  const state: { weeks: Row[]; jobs: Record<string, unknown>[]; settings?: Record<string, unknown>; config?: Record<string, unknown>; audit: unknown[][] } = { weeks: [] as Row[], jobs: [], settings: undefined as Record<string, unknown> | undefined,
     config: undefined as Record<string, unknown> | undefined, audit: [] as unknown[][] };
   let saved: typeof state | undefined;
   const query = async (sql: string, v: unknown[] = []) => {
@@ -54,6 +55,7 @@ function database() {
     if (sql.startsWith('INSERT INTO auth_rate_limits')) return result([{ hits: 1 }]);
     if (sql.includes('FROM admin_sessions')) return result(v[0] === digest(TOKEN) ? [{ admin_id: ADMIN, email: 'operator@example.test' }] : []);
     if (sql.startsWith('INSERT INTO admin_actions')) { state.audit.push(v); return result(); }
+    if (sql.includes('FROM level_test_generation_jobs')) return result(state.jobs);
     if (sql.includes('FROM llm_provider_configs')) return result(state.config ? [state.config] : []);
     if (sql.includes('FROM level_test_settings')) return result(state.settings ? [state.settings] : []);
     if (sql.startsWith('UPDATE llm_provider_configs')) return result();
@@ -61,6 +63,10 @@ function database() {
       state.config = { provider: v[0], label: v[1], base_url: v[2], model: v[3], api_key_encrypted: v[4] }; return result(); }
     if (sql.startsWith('INSERT INTO level_test_settings')) {
       state.settings = { publish_mode: v[0], verify_mode: v[1], variants: v[2] }; return result(); }
+    if (sql.includes("status IN ('draft','rejected')")) return result([...state.weeks]
+      .filter(row => row.status === 'draft' || row.status === 'rejected')
+      .sort((a, b) => (b.created_at as Date).getTime() - (a.created_at as Date).getTime())
+      .slice(v[1] as number, (v[1] as number) + (v[0] as number)));
     if (sql.startsWith('SELECT') && sql.includes('FROM level_test_weeks')) return result(sql.includes('WHERE id=')
       ? state.weeks.filter(row => row.id === v[0]) : state.weeks.filter(row => row.language_id === v[0]
         && row.level === v[1] && row.week_index === v[2] && (!sql.includes("status='approved'") || row.status === 'approved')));
@@ -68,6 +74,16 @@ function database() {
       state.weeks.push({ id: v[0] as string, language_id: v[1] as string, level: v[2] as string,
         week_index: v[3] as number, status: v[4] as string, pool: JSON.parse(v[5] as string), variants: JSON.parse(v[6] as string),
         judge_mode: v[11], review: JSON.parse(v[12] as string) }); return result(); }
+    if (sql.startsWith("UPDATE level_test_weeks") && sql.includes("status=" + String.fromCharCode(39) + "retired" + String.fromCharCode(39))) {
+      for (const row of state.weeks.filter(row => row.language_id === v[0] && row.level === v[1]
+        && row.week_index === v[2] && row.status !== "retired")) row.status = "retired";
+      return result();
+    }
+    if (sql.startsWith('UPDATE level_test_weeks') && sql.includes("status='rejected'")) {
+      const row = state.weeks.find(row => row.id === v[0]);
+      if (row) row.status = 'rejected';
+      return result(row ? [row] : []);
+    }
     if (sql.startsWith('UPDATE level_test_weeks') && sql.includes("status='approved'")) {
       const row = state.weeks.find(row => row.id === v[0]);
       if (row) { row.status = 'approved'; row.approved_by = v[1]; } return result(row ? [row] : []); }
@@ -103,6 +119,24 @@ test('a scheduled generation preserves an existing draft unless force is explici
   assert.equal(calls, 0);
   assert.equal(state.weeks.length, 1);
   assert.equal(state.weeks[0]?.id, 'draft-id');
+});
+
+test("rejected week blocks generation unless force retires the row", async () => {
+  const { db, state } = database();
+  state.weeks.push({ id: "rejected-id", language_id: "en", level: "A1", week_index: 202642,
+    status: "rejected", variants: [{ variant: 1, items: [], passages: [] }], pool: { recognition: [] } } as Row);
+  let calls = 0;
+  const call = async (...args: Parameters<ReturnType<typeof transport>>) => { calls += 1; return transport()(...args); };
+  const blocked = await generate(db, ENV, call);
+  assert.equal(blocked.status, "exists");
+  assert.equal(calls, 0);
+  assert.equal(state.weeks[0]!.status, "rejected");
+  const forced = await generateWeeklyLevelTest({ db, env: ENV, transport: call },
+    { languageID: "en", level: "A1", now: NOW, force: true });
+  assert.equal(forced.status, "approved");
+  assert.equal(state.weeks[0]!.status, "retired");
+  assert.equal(state.weeks.length, 2);
+  assert.equal(calls > 0, true);
 });
 
 for (const mutation of ['invalid answer', 'unknown kind', 'short reading block']) test(`structural gate with judge off: ${mutation}`, async () => {
@@ -199,8 +233,8 @@ test('invalid settings do not partly persist a combined provider update', async 
   await assert.rejects(upsertLlmConfig(db, ENV, { provider: 'openai', model: 'new', verifyMode: 'invalid' }));
   assert.equal(state.config!.model, 'old');
 });
-function adminApp(db: Database) { const config = adminAuthConfig(ADMIN_ENV)!;
-  return createApp({ db, auth: {}, admin: { services: { db, config }, admission: new AuthAdmission(db, config) } }); }
+function adminApp(db: Database, extra: Record<string, unknown> = {}) { const config = adminAuthConfig(ADMIN_ENV)!;
+  return createApp({ db, auth: {}, ...extra, admin: { services: { db, config }, admission: new AuthAdmission(db, config) } }); }
 test('authenticated settings save/reload reflects persisted values and retains omitted fields', async () => {
   const { db, state } = database(); state.settings = { publish_mode: 'auto', verify_mode: 'strict', variants: 5 };
   const app = adminApp(db);
@@ -235,6 +269,104 @@ test('draft is private until authenticated generation-level approval; replay aud
     assert.equal((await app.inject({ method: 'GET', url: publicUrl })).statusCode, 200);
   } finally { await app.close(); }
 });
+test('draft rejection is authenticated, retained, audited once, and replay-safe', async () => {
+  const { db, state } = database();
+  assert.equal((await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' })).status, 'draft');
+  const url = `/v1/admin/level-tests/${state.weeks[0]!.id}/reject`, app = adminApp(db);
+  try {
+    assert.equal((await app.inject({ method: 'POST', url, headers: { ...headers, cookie: '' }, payload: { reason: 'Not acceptable' } })).statusCode, 401);
+    assert.equal((await app.inject({ method: 'POST', url, headers: { ...headers, origin: 'https://evil.example' }, payload: { reason: 'Not acceptable' } })).statusCode, 403);
+    for (let i = 0; i < 2; i++) assert.equal((await app.inject({ method: 'POST', url, headers, payload: { reason: 'Not acceptable' } })).statusCode, 200);
+    assert.equal(state.weeks[0]!.status, 'rejected');
+    assert.equal(state.audit.length, 1);
+  } finally { await app.close(); }
+});
+
+test('admin draft list is bounded, private, paginated, and excludes account attempts', async () => {
+  const { db, state } = database();
+  state.weeks.push(
+    { id: '00000000-0000-4000-8000-000000000011', language_id: 'en', level: 'A1', week_index: 202642, status: 'draft', variants: [], pool: {}, created_at: NOW, attempts: [{ accountID: 'private' }] } as Row,
+    { id: '00000000-0000-4000-8000-000000000012', language_id: 'es', level: 'A1', week_index: 202642, status: 'rejected', variants: [], pool: {}, created_at: new Date(NOW.getTime()-1000) } as Row,
+  );
+  const app = adminApp(db);
+  try {
+    const url = '/v1/admin/level-tests/drafts?limit=1&offset=0';
+    assert.equal((await app.inject({ method: 'GET', url, headers: { ...headers, cookie: '' } })).statusCode, 401);
+    assert.equal((await app.inject({ method: 'GET', url, headers: { ...headers, origin: 'https://evil.example' } })).statusCode, 403);
+    const response = await app.inject({ method: 'GET', url, headers });
+    assert.equal(response.statusCode, 200);
+    const body = response.json();
+    assert.equal(body.items.length, 1);
+    assert.equal(body.items[0].id, '00000000-0000-4000-8000-000000000011');
+    assert.equal(JSON.stringify(body).includes('accountID'), false);
+    assert.equal(body.limit, 1);
+    const second = await app.inject({ method: 'GET', url: '/v1/admin/level-tests/drafts?limit=1&offset=1', headers });
+    assert.equal(second.statusCode, 200);
+    assert.equal(second.json().items[0].id, '00000000-0000-4000-8000-000000000012');
+    assert.equal((await app.inject({ method: 'GET', url: '/v1/admin/level-tests/drafts?limit=101', headers })).statusCode, 400);
+  } finally { await app.close(); }
+});
+
+test('admin generation status separates configured schedule from this process and redacts job fields', async () => {
+  const { db, state } = database();
+  const config = parseLevelTestSchedulerConfig({ LEVELTEST_GENERATE_ENABLED: 'true' });
+  state.jobs = [{ language_id: 'en', level: 'A1', week_index: 202642, state: 'unknown', attempts: 1,
+    error_code: 'llm_outcome_unknown', started_at: NOW, finished_at: NOW, updated_at: NOW,
+    prompt: 'secret prompt', api_key: 'secret key' }];
+  const app = adminApp(db, { generationStatus: { config, isStarted: () => false } });
+  try {
+    const url = '/v1/admin/level-tests/status';
+    assert.equal((await app.inject({ method: 'GET', url, headers: { ...headers, cookie: '' } })).statusCode, 401);
+    assert.equal((await app.inject({ method: 'GET', url, headers: { ...headers, origin: 'https://evil.example' } })).statusCode, 403);
+    const response = await app.inject({ method: 'GET', url, headers });
+    assert.equal(response.statusCode, 200);
+    const body = response.json();
+    assert.equal(body.schedule.enabled, true);
+    assert.equal(body.scheduler.activeInProcess, false);
+    assert.equal(body.latestJob.status, 'unknown');
+    assert.equal(JSON.stringify(body).includes('secret'), false);
+    assert.equal(JSON.stringify(body).includes('prompt'), false);
+  } finally { await app.close(); }
+});
+
+test('connection test requires persisted settings even when environment credentials exist', async () => {
+  const { db } = database(); const app = adminApp(db); const originalFetch = globalThis.fetch; let calls = 0;
+  globalThis.fetch = async () => { calls += 1; return new Response(null, { status: 200 }); };
+  try {
+    const response = await app.inject({ method: 'POST', url: '/v1/admin/llm-config/test', headers, payload: {} });
+    assert.equal(response.statusCode, 404);
+    assert.equal(calls, 0);
+  } finally { globalThis.fetch = originalFetch; await app.close(); }
+});
+
+test('connection test times out and cancels the unread provider body', async () => {
+  const { db, state } = database();
+  state.config = { provider: 'openai', base_url: 'https://provider.example/v1', model: 'saved-model',
+    api_key_encrypted: encryptSecret('saved-provider-key', ENV), is_active: true };
+  const originalFetch = globalThis.fetch, originalMasterKey = process.env.LEVELTEST_LLM_MASTER_KEY; let canceled = false;
+  process.env.LEVELTEST_LLM_MASTER_KEY = ENV.LEVELTEST_LLM_MASTER_KEY;
+  const app = adminApp(db, { llmTestTimeoutMs: 5 });
+  globalThis.fetch = async (_input, init) => await new Promise((_resolve, reject) =>
+    init?.signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true }));
+  try {
+    const timeout = await app.inject({ method: 'POST', url: '/v1/admin/llm-config/test', headers, payload: {} });
+    assert.equal(timeout.statusCode, 502, timeout.payload);
+    assert.equal(timeout.json().error, 'llm_test_timeout');
+    assert.equal(state.audit.length, 1);
+    assert.equal(state.audit[0]![2], 'llm_config.test');
+    assert.equal(String(state.audit[0]![5]).includes('saved-provider-key'), false);
+    globalThis.fetch = async () => new Response(new ReadableStream({ cancel() { canceled = true; } }), { status: 200 });
+    const bounded = await app.inject({ method: 'POST', url: '/v1/admin/llm-config/test', headers, payload: {} });
+    assert.equal(bounded.statusCode, 200);
+    assert.equal(bounded.json().status, 200);
+    assert.equal(canceled, true);
+    assert.equal(state.audit.length, 2);
+    assert.equal(String(state.audit[1]![5]).includes('saved-provider-key'), false);
+    assert.equal(JSON.stringify(bounded.json()).includes('saved-provider-key'), false);
+  } finally { globalThis.fetch = originalFetch; await app.close();
+    if (originalMasterKey === undefined) delete process.env.LEVELTEST_LLM_MASTER_KEY; else process.env.LEVELTEST_LLM_MASTER_KEY = originalMasterKey; }
+});
+
 test('approval rejects tampered variants without publishing or auditing', async () => {
   const { db, state } = database(); await generate(db, { ...ENV, LEVELTEST_PUBLISH_MODE: 'review' });
   (state.weeks[0]!.variants[0]!.items as unknown[]).pop(); const app = adminApp(db);

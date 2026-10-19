@@ -1,5 +1,5 @@
 import { transaction, type Database } from './db.js';
-import { encryptSecret, isLlmProvider, maskKey, resolveLlmConfig, LLM_PRESETS, type LlmProvider } from './llm-config.js';
+import { decryptSecret, encryptSecret, isLlmProvider, maskKey, resolveLlmConfig, LLM_PRESETS, type LlmProvider, type ResolvedLlmConfig } from './llm-config.js';
 import { levelTestSettings, type LevelTestSettings } from './level-test-settings.js';
 
 export interface PublicLlmConfigView extends LevelTestSettings {
@@ -74,10 +74,14 @@ function field(value: unknown, fallback: string): string {
   if (typeof value === 'string' && value.trim()) return value.trim();
   throw new ConfigError('invalid_llm_config');
 }
-export async function storedConfigForTest(db: Database, env: NodeJS.ProcessEnv) {
-  const config = await resolveLlmConfig(db, env);
-  if (!config) throw new ConfigError('llm_config_missing', 404);
-  return config;
+export async function storedConfigForTest(db: Database, env: NodeJS.ProcessEnv): Promise<ResolvedLlmConfig> {
+  const row = (await db.query("SELECT provider, base_url, model, api_key_encrypted FROM llm_provider_configs " +
+    "WHERE is_active ORDER BY updated_at DESC LIMIT 1")).rows[0] as
+    { provider: unknown; base_url: string; model: string; api_key_encrypted: string } | undefined;
+  if (!row || !isLlmProvider(row.provider)) throw new ConfigError('llm_config_missing', 404);
+  const apiKey = decryptSecret(row.api_key_encrypted, env);
+  if (!apiKey || !row.base_url || !row.model) throw new ConfigError('llm_config_unavailable', 503);
+  return { provider: row.provider, baseUrl: row.base_url, model: row.model, apiKey };
 }
 export class ConfigError extends Error {
   constructor(public code: string, public status: number = 400) { super(code); }

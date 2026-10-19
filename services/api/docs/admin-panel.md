@@ -22,6 +22,12 @@ so the panel's attack surface never depends on an external IdP.
   minute campaigns, waitlist deletion, forced close of an active hosted
   session. Every mutation requires a reason and writes both the domain audit
   (e.g. `minute_policy_audit`) and `admin_actions`.
+- **Weekly exam operations** (`#level-tests`): effective saved LLM settings,
+  save-first connection checks, paginated private draft moderation (approval and
+  rejection are audited), and safe latest-job/scheduler status. Rejected rows
+  remain retained and block ordinary same-week regeneration; replacement requires
+  the existing explicit force operation. Connection checks never display or read
+  provider response bodies and are time-bounded.
 - **Welcome policy** (`#política`): the same audited policy change the CLI
   performs, with version conflict detection.
 

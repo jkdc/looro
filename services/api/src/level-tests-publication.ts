@@ -93,3 +93,18 @@ function canPublish(row: Generation): boolean {
     return true;
   } catch { return false; }
 }
+
+export async function rejectGeneratedWeek(db: Database, id: string, adminID: string, reason: string) {
+  if (reason.trim().length < 3 || reason.length > 500 || /[\x00-\x1f]/.test(reason))
+    throw new ServiceError('admin_reason_required');
+  return transaction(db, async sql => {
+    const row = (await sql.query('SELECT id, status FROM level_test_weeks WHERE id=$1 FOR UPDATE', [id]))
+      .rows[0] as { id: string; status: string } | undefined;
+    if (!row) throw new ServiceError('level_test_not_found', 404);
+    if (row.status === 'rejected') return { generationId: id, rejected: true, alreadyRejected: true };
+    if (row.status !== 'draft') throw new ServiceError('level_test_not_rejectable', 409);
+    await sql.query("UPDATE level_test_weeks SET status='rejected' WHERE id=$1 AND status='draft'", [id]);
+    await recordAdminAction(sql, adminID, 'level_test.reject', id, reason, {});
+    return { generationId: id, rejected: true, alreadyRejected: false };
+  });
+}

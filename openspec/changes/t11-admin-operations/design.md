@@ -10,6 +10,9 @@ Show provider, model, base URL, masked key hint, and publish/verify/variants fro
 
 Generation status combines safe durable job fields with this process scheduler state and configured schedule. Label configured/enabled separately from active in this process; inactivity here does not imply other replicas are inactive. Never expose secrets, prompts, raw provider bodies, or student history.
 
+## Rejection lifecycle ruling
+A rejection is a durable moderation outcome, not retirement. Add a distinct audited rejected status for drafts and retain the row. Because the live-week uniqueness constraint excludes only retired, a rejected row continues to block same-week non-forced generation. The existing explicit force path retires the prior row and creates a replacement; the audit record remains. Replaying rejection is idempotent and does not duplicate the audit event. This preserves operator intent and avoids accidental provider spend.
+
 ## Security and UI state
 Use existing cookies and Origin enforcement; no invented CSRF header. Make loading, empty, stale, saving, testing, moderation, and error states explicit. Prevent duplicate mutations while pending and refresh server state after success. Enforce authorization, Origin, pagination, and response limits on every route. Audit configuration mutations and moderation. Connection-test audit metadata is limited to actor, provider/model identifiers, time, and safe outcome.
 

@@ -1,0 +1,19 @@
+# Admin-panel site for the browser E2E: HTTP loopback only (the API accepts a
+# loopback http origin with ADMIN_ALLOW_LOCAL_LOOPBACK=true), same shape as the
+# production Caddyfile: /v1/admin/* proxied with the trusted-proxy headers,
+# static panel from the mounted volume.
+http://127.0.0.1 {
+	handle /v1/admin/* {
+		reverse_proxy api:8080 {
+			header_up X-App-Client-IP {remote_host}
+			header_up X-App-Proxy-Token {$ADMIN_PROXY_TOKEN}
+		}
+	}
+	handle {
+		root * /srv/admin-ui
+		@html path *.html
+		header @html Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

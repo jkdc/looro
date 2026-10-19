@@ -19,6 +19,7 @@ export interface SchedulerClock {
 }
 export interface LevelTestScheduler {
   start(): void;
+  isStarted(): boolean;
   stop(): Promise<void>;
 }
 interface SchedulerDeps {
@@ -158,6 +159,7 @@ export function createLevelTestScheduler(deps: SchedulerDeps): LevelTestSchedule
   };
 
   return {
+    isStarted: () => started && deps.config.enabled,
     start() {
       if (started) return;
       started = true;

@@ -114,7 +114,7 @@ try {
         console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId: jobWeek, status: result.status, errorCode: result.errors?.[0] ?? 'generation_failed' }));
     }, (languageID, level, code) => console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId, status: 'failed', errorCode: code })), undefined, timeoutMs);
   } });
-  const app = createApp({ db, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
+  const app = createApp({ db, generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false }, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
     googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
     minuteCommerce, accessRequests, accounts, admin, aiReports,guestMinuteAttestor,
     subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,
