@@ -13,10 +13,13 @@ const DEFAULT_PAGE_SIZE = 20;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const PUBLIC_EXAM_ID = /^([0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}):v([1-5])$/i;
 const SNAPSHOT_KEYS = new Set(['schemaVersion', 'languageID', 'level', 'version', 'weekId', 'expiresAt',
-  'thresholds', 'passages', 'readingPassageIds', 'listeningPassageIds', 'items', 'variant', 'examId',
-  'contentId', 'contentHash', 'contentRevision', 'gradingVersion', 'source', 'generationId']);
+  'thresholds', 'passages', 'readingPassageIds', 'listeningPassageIds', 'items', 'examId',
+  'contentId', 'contentHash', 'contentRevision', 'gradingVersion', 'source']);
+const SNAPSHOT_OPTIONAL_KEYS = new Set(['variant', 'generationId']);
 const ATTEMPT_KEYS = new Set(['attemptId', 'examId', 'state', 'position', 'revision', 'startedAt',
   'updatedAt', 'completedAt', 'answers', 'result']);
+const ITEM_REQUIRED_KEYS = new Set(['id', 'section', 'kind', 'prompt', 'answers', 'explain']);
+const ITEM_OPTIONAL_KEYS = new Set(['options', 'unitID', 'passageId', 'speech']);
 const EVENT_KEYS = new Set(['eventId', 'attemptId', 'baseRevision', 'revision', 'type', 'payload']);
 
 type Row = Record<string, any>;
@@ -28,6 +31,14 @@ function isRecord(value: unknown): value is Record<string, any> {
 }
 function badSnapshot(): never { throw new ServiceError('invalid_exam_snapshot', 400); }
 function badAttempt(): never { throw new ServiceError('invalid_exam_attempt', 400); }
+/** Required keys must be present; the listed optional keys may be absent (the
+    wire format drops undefined fields, so a deterministic exam legitimately
+    carries no variant/passageId/speech/unitID). Anything else is rejected. */
+function keysWithin(value: Record<string, unknown>, required: Set<string>, optional: Set<string>): boolean {
+  const present = new Set(Object.keys(value).filter(key => value[key] !== undefined));
+  if (!Array.from(required).every(key => present.has(key))) return false;
+  return Array.from(present).every(key => required.has(key) || optional.has(key));
+}
 function exactKeys(value: Record<string, unknown>, keys: Set<string>): boolean {
   return Object.keys(value).every(key => keys.has(key));
 }
@@ -38,28 +49,40 @@ function canonical(value: any): any {
   return value;
 }
 function stableJSON(value: unknown): string { return JSON.stringify(canonical(value)); }
+/** Any parseable ISO-8601 instant: clients legitimately serialize with or
+    without fractional seconds (the Android adapter emits no-millis forms). */
 function isoDate(value: unknown): value is string {
   if (typeof value !== 'string') return false;
-  const date = new Date(value);
-  return Number.isFinite(date.getTime()) && date.toISOString() === value;
+  return Number.isFinite(new Date(value).getTime());
+}
+/** Client-supplied timestamps feed ORDER BY updated_at pagination, so a far-future
+    clock (honest skew or malicious) must not pin attempts at the top of a history
+    forever. 48h matches the progress ledger's future-skew tolerance. (R3-001) */
+const FUTURE_SKEW_MILLISECONDS = 48 * 3_600_000;
+function boundedISODate(value: unknown): value is string {
+  return isoDate(value) && new Date(value).getTime() <= Date.now() + FUTURE_SKEW_MILLISECONDS;
 }
 function positiveInteger(value: unknown): value is number { return Number.isSafeInteger(value) && Number(value) > 0; }
 function nonNegativeInteger(value: unknown): value is number { return Number.isSafeInteger(value) && Number(value) >= 0; }
 
 function validateSnapshot(value: unknown): SnapshotRecord {
-  if (!isRecord(value) || !exactKeys(value, SNAPSHOT_KEYS) ||
-      value.schemaVersion !== 1 || !positiveInteger(value.version) ||
-      !positiveInteger(value.contentRevision) || !positiveInteger(value.gradingVersion) ||
-      !Number.isSafeInteger(value.weekId) || value.weekId < 200001 || !isoDate(value.expiresAt) ||
-      typeof value.languageID !== 'string' || !/^[a-z]{2,3}(?:-[A-Z]{2})?$/.test(value.languageID) ||
+  if (!isRecord(value) || !keysWithin(value, SNAPSHOT_KEYS, SNAPSHOT_OPTIONAL_KEYS)) badSnapshot();
+  else if (value.schemaVersion !== 1 || !positiveInteger(value.version) ||
+      !positiveInteger(value.contentRevision) || !positiveInteger(value.gradingVersion)) badSnapshot();
+  else if (!Number.isSafeInteger(value.weekId) || value.weekId < 200001 || !isoDate(value.expiresAt)) badSnapshot();
+  else if (typeof value.languageID !== 'string' || !/^[a-z]{2,3}(?:-[A-Z]{2})?$/.test(value.languageID) ||
       typeof value.level !== 'string' || !/^[A-C][12]$/.test(value.level) ||
-      !['bundled', 'deterministic', 'llm'].includes(value.source) ||
-      typeof value.examId !== 'string' || value.examId.length < 1 || value.examId.length > 128 ||
+      !['bundled', 'deterministic', 'llm'].includes(value.source)) badSnapshot();
+  else if (typeof value.examId !== 'string' || value.examId.length < 1 || value.examId.length > 128 ||
       typeof value.contentHash !== 'string' || !/^[a-f0-9]{64}$/.test(value.contentHash) ||
-      value.contentId !== `sha256:${value.contentHash}` || !isRecord(value.thresholds) ||
-      Object.keys(value.thresholds).length < 1 || Object.values(value.thresholds).some(threshold =>
-        typeof threshold !== 'number' || !Number.isFinite(threshold) || threshold < 0 || threshold > 100) ||
-      !Array.isArray(value.passages) || value.passages.length > 10 ||
+      value.contentId !== `sha256:${value.contentHash}`) badSnapshot();
+  else if (!isRecord(value.thresholds) || Object.keys(value.thresholds).length < 1 ||
+      Object.values(value.thresholds).some(threshold =>
+        typeof threshold !== 'number' || !Number.isFinite(threshold) || threshold < 0 || threshold > 100)) badSnapshot();
+  // The bound matches what the compose/hybrid endpoints publish: the full
+  // bank passage list travels with every exam snapshot (15+ passages per
+  // bank), only the referenced ids select the exam's two passages.
+  else if (!Array.isArray(value.passages) || value.passages.length > 200 ||
       !Array.isArray(value.readingPassageIds) || !Array.isArray(value.listeningPassageIds) ||
       !Array.isArray(value.items) || value.items.length < 1 || value.items.length > 100) badSnapshot();
 
@@ -79,7 +102,7 @@ function validateSnapshot(value: unknown): SnapshotRecord {
   }
   const questionIDs = new Set<string>();
   for (const item of value.items) {
-    if (!isRecord(item) || !exactKeys(item, new Set(['id', 'section', 'kind', 'prompt', 'options', 'answers', 'explain', 'unitID', 'passageId', 'speech'])) ||
+    if (!isRecord(item) || !keysWithin(item, ITEM_REQUIRED_KEYS, ITEM_OPTIONAL_KEYS) ||
         typeof item.id !== 'string' || item.id.length < 1 || item.id.length > 128 || questionIDs.has(item.id) ||
         !['recognition', 'reading', 'listening', 'writing'].includes(item.section) ||
         !['choice', 'gap', 'written', 'order'].includes(item.kind) || typeof item.prompt !== 'string' ||
@@ -116,10 +139,10 @@ function validateAttempt(value: unknown, snapshots: Map<string, SnapshotRecord>)
   if (!isRecord(value) || !exactKeys(value, ATTEMPT_KEYS) || !UUID.test(value.attemptId) ||
       typeof value.examId !== 'string' || value.examId.length < 1 || value.examId.length > 128 ||
       !['in_progress', 'completed'].includes(value.state) || !nonNegativeInteger(value.position) || value.position > 1000 ||
-      !positiveInteger(value.revision) || !isoDate(value.startedAt) || !isoDate(value.updatedAt) ||
+      !positiveInteger(value.revision) || !boundedISODate(value.startedAt) || !boundedISODate(value.updatedAt) ||
       new Date(value.updatedAt) < new Date(value.startedAt) || !Array.isArray(value.answers) || value.answers.length > 100 ||
       (value.state === 'in_progress' && (value.completedAt !== undefined && value.completedAt !== null || value.result !== undefined && value.result !== null)) ||
-      (value.state === 'completed' && (!isoDate(value.completedAt) || new Date(value.completedAt) < new Date(value.startedAt) || !isRecord(value.result)))) badAttempt();
+      (value.state === 'completed' && (!boundedISODate(value.completedAt) || new Date(value.completedAt) < new Date(value.startedAt) || !isRecord(value.result)))) badAttempt();
   const snapshot = snapshots.get(value.examId);
   if (!snapshot) badAttempt();
   const questionIDs = new Set(snapshot.exam.items.map(item => item.id));
@@ -194,10 +217,10 @@ function validateEvent(value: unknown): AttemptEvent {
     if (!exactKeys(payload, new Set(['questionId', 'response', 'position', 'updatedAt'])) ||
         typeof payload.questionId !== 'string' || payload.questionId.length < 1 || payload.questionId.length > 128 ||
         !isRecord(payload.response) || !nonNegativeInteger(payload.position) || payload.position > 1000 ||
-        !isoDate(payload.updatedAt)) throw new ServiceError('invalid_exam_event', 400);
+        !boundedISODate(payload.updatedAt)) throw new ServiceError('invalid_exam_event', 400);
   } else if (value.type === 'completed' && (!exactKeys(payload, new Set(['result', 'completedAt'])) || !isRecord(payload.result) ||
-      !isoDate(payload.completedAt))) throw new ServiceError('invalid_exam_event', 400);
-  else if (value.type === 'takeover' && (!exactKeys(payload, new Set(['updatedAt'])) || !isoDate(payload.updatedAt)))
+      !boundedISODate(payload.completedAt))) throw new ServiceError('invalid_exam_event', 400);
+  else if (value.type === 'takeover' && (!exactKeys(payload, new Set(['updatedAt'])) || !boundedISODate(payload.updatedAt)))
     throw new ServiceError('invalid_exam_event', 400);
   return value as AttemptEvent;
 }

@@ -91,6 +91,54 @@ integration('private attempt upload is authenticated, owner-scoped, and restores
   } finally { await app.close(); }
 });
 
+integration('uploads accept the deterministic wire shape (optional keys absent)', async () => {
+  const owner = await account(), snapshot = bundledSnapshot(), uploaded = attempt(snapshot);
+  // Emulate the wire format: JSON drops keys whose value is undefined (a
+  // deterministic exam carries no variant/generationId and its items omit
+  // unitID/passageId/speech), so the parsed payload below is exactly what a
+  // client uploads for a bundled/deterministic exam.
+  const wire = JSON.parse(JSON.stringify({ snapshots: [snapshot], attempts: [uploaded] }));
+  const snapshotKeys = Object.keys(wire.snapshots[0]);
+  assert.ok(!snapshotKeys.includes('variant'), 'deterministic wire must not carry variant');
+  const app = createApp({ db: db!, auth: {} });
+  try {
+    const upload = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync',
+      headers: { authorization: owner.authorization }, payload: wire });
+    assert.equal(upload.statusCode, 200, upload.body);
+    assert.deepEqual(upload.json().accepted, [{ attemptId: uploaded.attemptId, revision: 1 }]);
+  } finally { await app.close(); }
+});
+
+integration('attempt and event timestamps reject far-future clocks (R3-001)', async () => {
+  const owner = await account(), snapshot = bundledSnapshot();
+  const app = createApp({ db: db!, auth: {} });
+  try {
+    const farFuture = new Date(Date.now() + 90 * 24 * 3_600_000).toISOString();
+    const pinned = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync',
+      headers: { authorization: owner.authorization },
+      payload: { snapshots: [snapshot], attempts: [{ ...attempt(snapshot), updatedAt: farFuture }] } });
+    assert.equal(pinned.statusCode, 400, pinned.body);
+    const honest = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/sync',
+      headers: { authorization: owner.authorization },
+      payload: { snapshots: [snapshot], attempts: [attempt(snapshot)] } });
+    assert.equal(honest.statusCode, 200, honest.body);
+    const localAttemptID = (honest.json().accepted as { attemptId: string }[])[0]!.attemptId;
+    const questionID = (snapshot.items as { id: string }[])[0]!.id;
+    const futureEvent = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/events',
+      headers: { authorization: owner.authorization },
+      payload: { events: [{ eventId: randomUUID(), attemptId: localAttemptID, baseRevision: 1, revision: 2,
+        type: 'progress', payload: { questionId: questionID, response: { answer: 'x' }, position: 1, updatedAt: farFuture } }] } });
+    assert.equal(futureEvent.statusCode, 400, futureEvent.body);
+    // The bounded attempt still progresses with an honest timestamp.
+    const okEvent = await app.inject({ method: 'POST', url: '/v1/level-test-attempts/events',
+      headers: { authorization: owner.authorization },
+      payload: { events: [{ eventId: randomUUID(), attemptId: localAttemptID, baseRevision: 1, revision: 2,
+        type: 'progress', payload: { questionId: questionID, response: { answer: 'x' }, position: 1,
+          updatedAt: new Date().toISOString() } }] } });
+    assert.equal(okEvent.statusCode, 200, okEvent.body);
+  } finally { await app.close(); }
+});
+
 integration('snapshot uploads reject invalid hashes and dangling attempt references atomically', async () => {
   const owner = await account(), snapshot = bundledSnapshot(), uploaded = attempt(snapshot), app = createApp({ db: db!, auth: {} });
   try {
