@@ -43,6 +43,15 @@ public struct ExamHistory {
     public let result: SqlRow?
 }
 
+public struct ExamRestoreRecord {
+    public let snapshot: ExamSnapshotRecord
+    public let attemptJSON: String
+
+    public init(snapshot: ExamSnapshotRecord, attemptJSON: String) {
+        self.snapshot = snapshot; self.attemptJSON = attemptJSON
+    }
+}
+
 public enum ExamHistoryError: Error, Equatable {
     case invalidJSON
     case immutableSnapshotConflict
@@ -60,7 +69,7 @@ public enum ExamHistoryDao {
     /// Lists only the authenticated owner's durable pending events in revision order.
     public static func pendingOutbox(_ db: SqlDatabase, ownerAccountID: String) throws -> [SqlRow] {
         try db.query("SELECT o.* FROM exam_sync_outbox o JOIN exam_attempts a ON a.attempt_id = o.attempt_id " +
-            "WHERE a.owner_account_id = ? AND o.delivery_state = 'pending' " +
+            "WHERE a.owner_account_id = ? AND a.sync_state != 'conflict' AND o.delivery_state = 'pending' " +
             "ORDER BY o.attempt_id, o.revision", args: [ownerAccountID])
     }
 
@@ -334,9 +343,17 @@ public enum ExamHistoryDao {
                 throw ExamHistoryError.immutableAttemptConflict
             }
             if inserted != -1 {
+                let initialAttempt: [String: Any] = [
+                    "attemptId": attempt.attemptID, "examId": attempt.examID, "state": "in_progress",
+                    "position": 0, "revision": storedAttempt.long("revision"),
+                    "startedAt": isoTimestamp(storedAttempt.real("started_at")),
+                    "updatedAt": isoTimestamp(storedAttempt.real("updated_at")),
+                    "completedAt": NSNull(), "answers": [], "result": NSNull()
+                ]
                 try enqueue(tx, attemptID: attempt.attemptID, revision: storedAttempt.long("revision"),
                             type: "created", payload: jsonString(["attemptId": attempt.attemptID,
-                            "examId": attempt.examID, "snapshot": snapshotObject]), at: attempt.startedAt)
+                            "examId": attempt.examID, "snapshot": snapshotObject,
+                            "initialAttempt": initialAttempt]), at: attempt.startedAt)
             }
         }
         guard let history = try load(db, attemptID: attempt.attemptID,
@@ -344,6 +361,130 @@ public enum ExamHistoryDao {
             throw ExamHistoryError.missingAttempt
         }
         return history
+    }
+
+    /// Imports one server-owned page atomically without creating upload events or replacing local data.
+    @discardableResult
+    public static func restorePage(_ db: SqlDatabase, records: [ExamRestoreRecord],
+                                   ownerAccountID: String, restoredAt: Double) throws -> [Bool] {
+        guard !records.isEmpty, records.count <= 10,
+              Set(records.compactMap { object($0.attemptJSON)?["attemptId"] as? String }).count == records.count else {
+            throw ExamHistoryError.invalidJSON
+        }
+        return try db.transaction { tx in
+            try records.map { record in
+                try restoreOne(tx, snapshot: record.snapshot, attemptJSON: record.attemptJSON,
+                               ownerAccountID: ownerAccountID, restoredAt: restoredAt)
+            }
+        }
+    }
+
+    /// Single-record compatibility entry point; page restore uses one shared transaction.
+    @discardableResult
+    public static func restore(_ db: SqlDatabase, snapshot: ExamSnapshotRecord, attemptJSON: String,
+                               ownerAccountID: String, restoredAt: Double) throws -> Bool {
+        try restorePage(db, records: [ExamRestoreRecord(snapshot: snapshot, attemptJSON: attemptJSON)],
+                        ownerAccountID: ownerAccountID, restoredAt: restoredAt).first ?? false
+    }
+
+    private static func restoreOne(_ tx: SqlDatabase, snapshot: ExamSnapshotRecord, attemptJSON: String,
+                                   ownerAccountID: String, restoredAt: Double) throws -> Bool {
+        guard !ownerAccountID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let content = object(snapshot.contentJSON), content["examId"] as? String == snapshot.examID,
+              content["contentId"] as? String == snapshot.contentID,
+              content["contentHash"] as? String == snapshot.contentHash,
+              content["schemaVersion"] as? Int == snapshot.schemaVersion,
+              content["contentRevision"] as? Int == snapshot.contentRevision,
+              content["gradingVersion"] as? Int == snapshot.gradingVersion,
+              content["source"] as? String == snapshot.source,
+              content["languageID"] as? String == snapshot.languageID,
+              content["level"] as? String == snapshot.level,
+              (content["weekId"] as? NSNumber)?.int64Value == snapshot.weekID,
+              snapshot.contentID == "sha256:" + snapshot.contentHash,
+              snapshot.contentHash.range(of: "^[a-f0-9]{64}$", options: .regularExpression) != nil,
+              let remote = object(attemptJSON),
+              Set(remote.keys) == Set(["attemptId", "examId", "state", "position", "revision",
+                  "startedAt", "updatedAt", "completedAt", "answers", "result"]),
+              let attemptID = remote["attemptId"] as? String, UUID(uuidString: attemptID) != nil,
+              remote["examId"] as? String == snapshot.examID,
+              let state = remote["state"] as? String, ["in_progress", "completed"].contains(state),
+              let position = (remote["position"] as? NSNumber)?.intValue, (0...1000).contains(position),
+              let revision = (remote["revision"] as? NSNumber)?.int64Value, revision > 0,
+              let startedAt = parseISO(remote["startedAt"] as? String),
+              let updatedAt = parseISO(remote["updatedAt"] as? String), updatedAt >= startedAt,
+              let answers = remote["answers"] as? [[String: Any]], answers.count <= 100 else {
+            throw ExamHistoryError.invalidJSON
+        }
+        let completedAt = parseISO(remote["completedAt"] as? String)
+        let result = remote["result"] as? [String: Any]
+        guard (state == "in_progress" && completedAt == nil && result == nil) ||
+              (state == "completed" && completedAt != nil && completedAt! >= startedAt && result != nil) else {
+            throw ExamHistoryError.invalidJSON
+        }
+        guard let items = content["items"] as? [[String: Any]] else { throw ExamHistoryError.invalidJSON }
+        let validQuestionIDs = Set(items.compactMap { $0["id"] as? String })
+        var prepared: [(String, Int64, String)] = []
+        var answerKeys = Set<String>()
+        for answer in answers {
+            guard let questionID = answer["questionId"] as? String, validQuestionIDs.contains(questionID),
+                  let answerRevision = (answer["revision"] as? NSNumber)?.int64Value,
+                  answerRevision > 0, answerRevision <= revision, let response = answer["response"],
+                  let bytes = try? JSONSerialization.data(withJSONObject: response,
+                      options: [.sortedKeys, .fragmentsAllowed]),
+                  let responseJSON = String(data: bytes, encoding: .utf8),
+                  answerKeys.insert("\(answerRevision):\(questionID)").inserted else {
+                throw ExamHistoryError.invalidJSON
+            }
+            prepared.append((questionID, answerRevision, responseJSON))
+        }
+        let resultJSON = result.map(jsonString)
+        // Attempt identity collisions are never resolved by overwriting either owner.
+        guard try tx.query("SELECT 1 AS found FROM exam_attempts WHERE attempt_id = ?",
+                           args: [attemptID]).isEmpty else { return false }
+        _ = try tx.insert("exam_snapshots", [
+            "content_id": snapshot.contentID, "content_hash": snapshot.contentHash,
+            "schema_version": snapshot.schemaVersion, "content_revision": snapshot.contentRevision,
+            "grading_version": snapshot.gradingVersion, "source": snapshot.source,
+            "language_id": snapshot.languageID, "level": snapshot.level, "week_id": snapshot.weekID,
+            "content_json": snapshot.contentJSON, "created_at": restoredAt,
+        ], strategy: .ignore)
+        guard let stored = try tx.query("SELECT * FROM exam_snapshots WHERE content_hash = ?",
+                                        args: [snapshot.contentHash]).first,
+              stored.text("content_json") == snapshot.contentJSON,
+              stored.text("content_id") == snapshot.contentID,
+              stored.int("schema_version") == snapshot.schemaVersion,
+              stored.int("content_revision") == snapshot.contentRevision,
+              stored.int("grading_version") == snapshot.gradingVersion,
+              stored.text("source") == snapshot.source,
+              stored.text("language_id") == snapshot.languageID,
+              stored.text("level") == snapshot.level,
+              stored.long("week_id") == snapshot.weekID else {
+            throw ExamHistoryError.immutableSnapshotConflict
+        }
+        _ = try tx.insert("exam_snapshot_ids", ["exam_id": snapshot.examID,
+            "content_id": snapshot.contentID, "created_at": snapshot.createdAt], strategy: .ignore)
+        guard try tx.query("SELECT content_id FROM exam_snapshot_ids WHERE exam_id = ?",
+                           args: [snapshot.examID]).first?.text("content_id") == snapshot.contentID else {
+            throw ExamHistoryError.immutableSnapshotConflict
+        }
+        guard try tx.insert("exam_attempts", [
+            "attempt_id": attemptID, "exam_id": snapshot.examID, "owner_account_id": ownerAccountID,
+            "state": state, "sync_state": "synced", "position": position, "revision": revision,
+            "started_at": startedAt, "updated_at": updatedAt, "completed_at": completedAt
+        ]) != -1 else { return false }
+        for answer in prepared {
+            guard try tx.insert("exam_answers", ["attempt_id": attemptID, "question_id": answer.0,
+                "revision": answer.1, "response_json": answer.2, "saved_at": updatedAt]) != -1 else {
+                throw ExamHistoryError.immutableAttemptConflict
+            }
+        }
+        if let resultJSON, let completedAt {
+            guard try tx.insert("exam_results", ["attempt_id": attemptID,
+                "result_json": resultJSON, "recorded_at": completedAt]) != -1 else {
+                throw ExamHistoryError.immutableResultConflict
+            }
+        }
+        return true
     }
 
     /// Answer, position, revision and outbox event share one SQLite transaction.
@@ -376,7 +517,8 @@ public enum ExamHistoryDao {
             }
             try enqueue(tx, attemptID: attemptID, revision: revision, type: "progress",
                         payload: jsonString(["attemptId": attemptID, "questionId": questionID,
-                                             "response": response, "position": position]), at: effectiveAt)
+                                             "response": response, "position": position,
+                                             "updatedAt": isoTimestamp(effectiveAt)]), at: effectiveAt)
             return revision
         }
     }
@@ -413,7 +555,8 @@ public enum ExamHistoryDao {
                 throw ExamHistoryError.concurrentAttemptChange
             }
             try enqueue(tx, attemptID: attemptID, revision: revision, type: "completed",
-                        payload: jsonString(["attemptId": attemptID, "result": result]), at: effectiveAt)
+                        payload: jsonString(["attemptId": attemptID, "result": result,
+                                             "completedAt": isoTimestamp(effectiveAt)]), at: effectiveAt)
             return true
         }
     }
@@ -439,6 +582,22 @@ public enum ExamHistoryDao {
             "WHERE a.attempt_id = ? ORDER BY a.saved_at, a.question_id", args: [attemptID, attemptID])
         let result = try db.query("SELECT * FROM exam_results WHERE attempt_id = ?", args: [attemptID]).first
         return ExamHistory(attempt: attempt, snapshot: snapshot, answers: answers, result: result)
+    }
+
+    /// Returns only local rows or rows owned by the explicitly selected account.
+    /// The caller must pass the current session's account ID; nil never means all accounts.
+    public static func history(_ db: SqlDatabase, ownerAccountID: String? = nil) throws -> [ExamHistory] {
+        let rows: [SqlRow]
+        if let ownerAccountID {
+            rows = try db.query("SELECT attempt_id FROM exam_attempts WHERE owner_account_id = ? " +
+                                "ORDER BY updated_at DESC, attempt_id DESC", args: [ownerAccountID])
+        } else {
+            rows = try db.query("SELECT attempt_id FROM exam_attempts WHERE owner_account_id IS NULL " +
+                                "ORDER BY updated_at DESC, attempt_id DESC")
+        }
+        return try rows.compactMap { row in
+            try load(db, attemptID: row.text("attempt_id"), ownerAccountID: ownerAccountID)
+        }
     }
 
     private static func enqueue(_ db: SqlDatabase, attemptID: String, revision: Int64,

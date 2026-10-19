@@ -125,6 +125,69 @@ final class SwiftDataMigrationSource: LearningMigrationSource {
     }
     var jsonMode: Bool { dbStore.jsonMode }
 
+    /// Starts a frozen exam snapshot and its initial outbox record atomically.
+    func startExam(snapshot: ExamSnapshotRecord, attempt: ExamAttemptRecord) throws -> ExamHistory {
+        try ExamHistoryDao.start(dbStore.db, snapshot: snapshot, attempt: attempt)
+    }
+
+    /// Persists the latest answer and position in the same transaction as its sync event.
+    func saveExamAnswer(attemptID: String, questionID: String, responseJSON: String,
+                        position: Int, savedAt: Double = Date.now.timeIntervalSince1970) throws -> Int64 {
+        try ExamHistoryDao.saveAnswer(dbStore.db, attemptID: attemptID, questionID: questionID,
+                                      responseJSON: responseJSON, position: position, savedAt: savedAt)
+    }
+
+    /// Persists the original grading result once; later identical completion is idempotent.
+    func completeExam(attemptID: String, resultJSON: String,
+                      completedAt: Double = Date.now.timeIntervalSince1970) throws -> Bool {
+        try ExamHistoryDao.complete(dbStore.db, attemptID: attemptID, resultJSON: resultJSON,
+                                    completedAt: completedAt)
+    }
+
+    /// Local history is isolated to the active account; nil selects anonymous attempts only.
+    func examHistory(ownerAccountID: String? = nil) throws -> [ExamHistory] {
+        try ExamHistoryDao.history(dbStore.db, ownerAccountID: ownerAccountID)
+    }
+
+    /// Loads an attempt only inside the requested local/account ownership boundary.
+    func examAttempt(attemptID: String, ownerAccountID: String? = nil) throws -> ExamHistory? {
+        try ExamHistoryDao.load(dbStore.db, attemptID: attemptID, ownerAccountID: ownerAccountID)
+    }
+
+    func pendingExamOutbox(ownerAccountID: String) throws -> [SqlRow] {
+        try ExamHistoryDao.pendingOutbox(dbStore.db, ownerAccountID: ownerAccountID)
+    }
+
+    func acknowledgeExamOutbox(ownerAccountID: String, attemptID: String, eventID: String,
+                               revision: Int64, acknowledgedAt: Double) throws -> Bool {
+        try ExamHistoryDao.acknowledgeOutbox(dbStore.db, ownerAccountID: ownerAccountID, attemptID: attemptID,
+            eventID: eventID, revision: revision, acknowledgedAt: acknowledgedAt)
+    }
+
+    func persistExamConflict(ownerAccountID: String, attemptID: String, serverAttemptJSON: String,
+                             receivedAt: Double) throws -> Bool {
+        try ExamHistoryDao.persistConflict(dbStore.db, ownerAccountID: ownerAccountID, attemptID: attemptID,
+            serverAttemptJSON: serverAttemptJSON, receivedAt: receivedAt)
+    }
+
+    func restoreExamAttempts(records: [ExamRestoreRecord], ownerAccountID: String,
+                             restoredAt: Double = Date.now.timeIntervalSince1970) throws -> [Bool] {
+        try ExamHistoryDao.restorePage(dbStore.db, records: records,
+                                       ownerAccountID: ownerAccountID, restoredAt: restoredAt)
+    }
+
+    func forkExamConflict(ownerAccountID: String, attemptID: String, forkAttemptID: String,
+                          forkedAt: Double = Date.now.timeIntervalSince1970) throws -> Bool {
+        try ExamHistoryDao.resolveConflictFork(dbStore.db, ownerAccountID: ownerAccountID,
+            attemptID: attemptID, forkAttemptID: forkAttemptID, forkedAt: forkedAt)
+    }
+
+    func takeOverExamConflict(ownerAccountID: String, attemptID: String,
+                              resolvedAt: Double = Date.now.timeIntervalSince1970) throws -> Bool {
+        try ExamHistoryDao.resolveConflictTakeover(dbStore.db, ownerAccountID: ownerAccountID,
+            attemptID: attemptID, resolvedAt: resolvedAt)
+    }
+
     /// The learning database file's size in bytes (0 when unavailable): the
     /// coarse dbBytesBucket input of the daily archive_health heartbeat.
     var databaseByteCount: Int64 {

@@ -28,7 +28,7 @@ final class ManagedAccountIdentity: NSObject, ASWebAuthenticationPresentationCon
         else { throw ManagedAccountError.unavailable }
         anchor = window
     }
-    func google(configuration: ManagedAccountConfiguration, nonce: String, http: ManagedAccountHTTP) async throws -> Credential {
+    func google(configuration: ManagedAccountConfiguration, nonce: String, http: any ManagedAccountRequestTransport) async throws -> Credential {
         try prepareAnchor()
         let flow = try ManagedGoogleAuthorization(configuration: configuration, verifier: Self.random(), state: Self.random(), nonce: nonce)
         let callback: URL = try await withCheckedThrowingContinuation { continuation in
@@ -58,7 +58,7 @@ final class ManagedAccountIdentity: NSObject, ASWebAuthenticationPresentationCon
         var request = URLRequest(url: URL(string: "https://oauth2.googleapis.com/token")!)
         request.httpMethod = "POST"; request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = flow.tokenBody(code: code)
-        let (data, response) = try await http.send(request)
+        let (data, response) = try await http.send(request, limit: 65_536)
         struct Token: Decodable { let id_token: String }
         guard response.statusCode == 200, let token = try? JSONDecoder().decode(Token.self, from: data),
               !token.id_token.isEmpty, token.id_token.utf8.count <= 16_384 else { throw ManagedAccountError.invalidResponse }

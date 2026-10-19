@@ -132,6 +132,352 @@ final class AppUITests: XCTestCase {
         let app = XCUIApplication(); app.launchArguments = ["--preview"] + (ended ? ["--ended-conversation"] : [])
         app.launch(); return app
     }
+    private func launchAccountRecoveryFixture(scenario: String, account: String = "A") -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = [
+            "--preview",
+            "--exam-recovery-ui-test=\(scenario)",
+            "--exam-recovery-account=\(account)",
+        ]
+        app.launch()
+        return app
+    }
+
+    private func waitForExamSyncToFinish(_ app: XCUIApplication) {
+        let button = app.buttons["weekly-exam-sync"]
+        XCTAssertTrue(button.waitForExistence(timeout: 5))
+        expectation(for: NSPredicate(format: "isEnabled == true"), evaluatedWith: button)
+        waitForExpectations(timeout: 10)
+    }
+
+    func testPreviewWithoutRecoveryFixtureHidesAuthenticatedExamActions() {
+        let app = launch()
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        XCTAssertFalse(app.buttons["weekly-exam-sync"].exists)
+        XCTAssertFalse(app.buttons["weekly-exam-restore"].exists)
+    }
+
+    func testKnownRecoveryFixtureExposesAuthenticatedExamActions() {
+        let app = launchAccountRecoveryFixture(scenario: "restore")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        XCTAssertTrue(app.buttons["weekly-exam-sync"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["weekly-exam-restore"].exists)
+    }
+
+    func testUnknownRecoveryFixtureFailsClosed() {
+        let app = launchAccountRecoveryFixture(scenario: "unknown", account: "C")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        XCTAssertFalse(app.buttons["weekly-exam-sync"].exists)
+        XCTAssertFalse(app.buttons["weekly-exam-restore"].exists)
+    }
+
+    func testRecoveryFixtureRestoresPaginatedHistoryAndOriginalResult() {
+        let app = launchAccountRecoveryFixture(scenario: "restore")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        app.buttons["weekly-exam-restore"].tap()
+
+        let first = app.buttons["exam-history-70000000-0000-4000-8000-000000000001"]
+        let second = app.buttons["exam-history-70000000-0000-4000-8000-000000000002"]
+        let retired = app.buttons["exam-history-70000000-0000-4000-8000-000000000003"]
+        XCTAssertTrue(first.waitForExistence(timeout: 10))
+        XCTAssertTrue(second.waitForExistence(timeout: 10))
+        XCTAssertTrue(retired.waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["A1 · week 202641"].exists)
+        // The retired generated week restores from its own frozen snapshot.
+        XCTAssertTrue(app.staticTexts["A1 · week 202639"].exists)
+        // History sorts by updatedAt DESC: the tapped attempt may sit below the
+        // fold now that the page holds three rows.
+        app.swipeDown()
+        first.tap()
+        let result = app.staticTexts["weekly-exam-result"]
+        XCTAssertTrue(result.waitForExistence(timeout: 5))
+        XCTAssertEqual(result.label, "Score: 100% · Passed")
+        // Every restored question keeps its own saved answer from the frozen
+        // attempt (the review lists all items with their original answers).
+        let savedAnswer = app.staticTexts.matching(
+            NSPredicate(format: "label BEGINSWITH %@", "Your answer:")).firstMatch
+        XCTAssertTrue(savedAnswer.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["weekly-exam-attempt-back"].exists)
+        app.buttons["weekly-exam-attempt-back"].tap()
+        retired.tap()
+        XCTAssertTrue(app.staticTexts["weekly-exam-result"].waitForExistence(timeout: 5))
+    }
+
+    func testRecoveryFixtureConflictTakeoverAdoptsServerAnswer() {
+        let app = launchAccountRecoveryFixture(scenario: "conflict-takeover")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        app.buttons["weekly-exam-start-en-A1"].tap()
+        XCTAssertTrue(app.staticTexts["weekly-exam-current-prompt"].waitForExistence(timeout: 10))
+        app.buttons["weekly-exam-attempt-back"].tap()
+        app.buttons["weekly-exam-sync"].tap()
+        waitForExamSyncToFinish(app)
+
+        let attempt = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(attempt.waitForExistence(timeout: 10))
+        attempt.tap()
+        let option = app.buttons.matching(identifier: "weekly-exam-option").firstMatch
+        if option.waitForExistence(timeout: 1) { option.tap() }
+        else {
+            let answer = app.descendants(matching: .any)
+                .matching(identifier: "weekly-exam-written-answer").firstMatch
+            XCTAssertTrue(answer.waitForExistence(timeout: 5))
+            answer.tap()
+            answer.typeText("A divergent local answer")
+        }
+        app.buttons["weekly-exam-save"].tap()
+        app.buttons["weekly-exam-attempt-back"].tap()
+        app.buttons["weekly-exam-sync"].tap()
+
+        let takeover = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-conflict-takeover-")
+        ).firstMatch
+        XCTAssertTrue(takeover.waitForExistence(timeout: 10))
+        takeover.tap()
+        XCTAssertFalse(app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-conflict-takeover-")
+        ).firstMatch.waitForExistence(timeout: 1))
+
+        // Adoption is observable: the reopened attempt shows the account's
+        // server-confirmed answer, never the divergent local one.
+        let adopted = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(adopted.waitForExistence(timeout: 5))
+        adopted.tap()
+        let serverAnswer = app.staticTexts.matching(
+            NSPredicate(format: "label == %@", "Your answer: Server-confirmed takeover answer")
+        ).firstMatch
+        XCTAssertTrue(serverAnswer.waitForExistence(timeout: 10))
+        XCTAssertFalse(app.staticTexts.matching(
+            NSPredicate(format: "label == %@", "Your answer: A divergent local answer")
+        ).firstMatch.exists)
+    }
+
+    func testRecoveryFixtureOfflineSyncStaysPendingAndLocal() {
+        let app = launchAccountRecoveryFixture(scenario: "sync-unavailable")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        app.buttons["weekly-exam-start-en-A1"].tap()
+        XCTAssertTrue(app.staticTexts["weekly-exam-current-prompt"].waitForExistence(timeout: 10))
+        app.buttons["weekly-exam-attempt-back"].tap()
+
+        // The network is dead: the creation event can never leave the device.
+        app.buttons["weekly-exam-sync"].tap()
+        let message = app.staticTexts["weekly-exam-sync-message"]
+        XCTAssertTrue(message.waitForExistence(timeout: 10))
+
+        // The attempt stays visible as pending — saved locally, NOT protected
+        // by the cloud — and never leaks to another account.
+        let pending = app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS %@", "waiting to sync")).firstMatch
+        XCTAssertTrue(pending.waitForExistence(timeout: 5))
+        let attempt = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(attempt.exists)
+        app.buttons["exam-recovery-switch-account"].tap()
+        XCTAssertFalse(attempt.waitForExistence(timeout: 2))
+        app.buttons["exam-recovery-switch-account"].tap()
+        XCTAssertTrue(attempt.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts.matching(
+            NSPredicate(format: "label CONTAINS %@", "waiting to sync")).firstMatch.exists)
+    }
+
+    func testRecoveryFixtureInFlightAccountSwitchNeverRendersForeignRows() {
+        let app = launchAccountRecoveryFixture(scenario: "restore-race")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        // The first restore page is delayed by the fixture: switch accounts
+        // while the response is in flight.
+        app.buttons["weekly-exam-restore"].tap()
+        app.buttons["exam-recovery-switch-account"].tap()
+
+        // The retained response for owner A must never render under owner B —
+        // not during the flight and not after it lands.
+        let anyHistory = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertFalse(anyHistory.waitForExistence(timeout: 4))
+
+        // Owner A's data is intact: restoring under the right owner works.
+        app.buttons["exam-recovery-switch-account"].tap()
+        app.buttons["weekly-exam-restore"].tap()
+        XCTAssertTrue(anyHistory.waitForExistence(timeout: 15))
+        XCTAssertTrue(app.staticTexts["A1 · week 202641"].exists)
+    }
+
+    func testRecoveryFixtureAccountSwitchHidesOtherOwnersHistory() {
+        let app = launchAccountRecoveryFixture(scenario: "account-isolation")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        let start = app.buttons["weekly-exam-start-en-A1"]
+        XCTAssertTrue(start.waitForExistence(timeout: 5))
+        start.tap()
+        XCTAssertTrue(app.staticTexts["weekly-exam-current-prompt"].waitForExistence(timeout: 10))
+        app.buttons["weekly-exam-attempt-back"].tap()
+
+        let ownerAHistory = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(ownerAHistory.waitForExistence(timeout: 5))
+        app.buttons["exam-recovery-switch-account"].tap()
+        XCTAssertFalse(ownerAHistory.waitForExistence(timeout: 1))
+        app.buttons["weekly-exam-sync"].tap()
+        XCTAssertFalse(app.staticTexts["weekly-exam-sync-message"].waitForExistence(timeout: 2))
+        app.buttons["exam-recovery-switch-account"].tap()
+        XCTAssertTrue(ownerAHistory.waitForExistence(timeout: 5))
+    }
+
+    func testRecoveryFixtureConflictRequiresExplicitFork() {
+        let app = launchAccountRecoveryFixture(scenario: "conflict-fork")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        app.buttons["weekly-exam-start-en-A1"].tap()
+        XCTAssertTrue(app.staticTexts["weekly-exam-current-prompt"].waitForExistence(timeout: 10))
+        app.buttons["weekly-exam-attempt-back"].tap()
+        app.buttons["weekly-exam-sync"].tap()
+        waitForExamSyncToFinish(app)
+
+        let attempt = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(attempt.waitForExistence(timeout: 10))
+        attempt.tap()
+        let writtenAnswer = app.descendants(matching: .any)
+            .matching(identifier: "weekly-exam-written-answer").firstMatch
+        if writtenAnswer.exists {
+            writtenAnswer.tap()
+            writtenAnswer.typeText("A local answer")
+        } else {
+            let option = app.buttons.matching(identifier: "weekly-exam-option").firstMatch
+            XCTAssertTrue(option.waitForExistence(timeout: 5))
+            option.tap()
+        }
+        app.buttons["weekly-exam-save"].tap()
+        app.buttons["weekly-exam-attempt-back"].tap()
+        app.buttons["weekly-exam-sync"].tap()
+
+        let conflict = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-conflict-fork-")
+        ).firstMatch
+        XCTAssertTrue(conflict.waitForExistence(timeout: 10))
+        conflict.tap()
+        XCTAssertEqual(app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).count, 2)
+    }
+
+    func testRecoveryFixtureConflictAllowsExplicitAccountTakeover() {
+        let app = launchAccountRecoveryFixture(scenario: "conflict-takeover")
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        app.buttons["weekly-exam-start-en-A1"].tap()
+        XCTAssertTrue(app.staticTexts["weekly-exam-current-prompt"].waitForExistence(timeout: 10))
+        app.buttons["weekly-exam-attempt-back"].tap()
+        app.buttons["weekly-exam-sync"].tap()
+        waitForExamSyncToFinish(app)
+
+        let attempt = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(attempt.waitForExistence(timeout: 10))
+        attempt.tap()
+        let option = app.buttons.matching(identifier: "weekly-exam-option").firstMatch
+        if option.waitForExistence(timeout: 1) { option.tap() }
+        else {
+            let answer = app.descendants(matching: .any)
+                .matching(identifier: "weekly-exam-written-answer").firstMatch
+            XCTAssertTrue(answer.waitForExistence(timeout: 5))
+            answer.tap()
+            answer.typeText("A divergent local answer")
+        }
+        app.buttons["weekly-exam-save"].tap()
+        app.buttons["weekly-exam-attempt-back"].tap()
+        app.buttons["weekly-exam-sync"].tap()
+
+        let takeover = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-conflict-takeover-")
+        ).firstMatch
+        XCTAssertTrue(takeover.waitForExistence(timeout: 10))
+        takeover.tap()
+        XCTAssertFalse(app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-conflict-takeover-")
+        ).firstMatch.waitForExistence(timeout: 1))
+    }
+
+    func testLearnExposesWeeklyExamEntry() {
+        let app = launch()
+        app.tabBars.buttons["Learn"].tap()
+        let entry = app.buttons["weekly-exams-entry"]
+        XCTAssertTrue(entry.waitForExistence(timeout: 5))
+        entry.tap()
+        XCTAssertTrue(app.staticTexts["weekly-exam-title"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["No saved exams yet"].exists)
+    }
+    func testWeeklyExamAttemptCanBeReopenedFromHistory() {
+        let app = launch()
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+
+        let start = app.buttons["weekly-exam-start-en-A1"]
+        XCTAssertTrue(start.waitForExistence(timeout: 5))
+        start.tap()
+        let prompt = app.staticTexts["weekly-exam-current-prompt"]
+        XCTAssertTrue(prompt.waitForExistence(timeout: 10))
+        let originalPrompt = prompt.label
+
+        app.buttons["weekly-exam-attempt-back"].tap()
+        let savedAttempt = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(savedAttempt.waitForExistence(timeout: 5))
+        savedAttempt.tap()
+        XCTAssertTrue(prompt.waitForExistence(timeout: 5))
+        XCTAssertEqual(prompt.label, originalPrompt)
+    }
+
+    func testCompletedExamReviewKeepsOriginalResultAfterHistoryReopen() {
+        let app = launch()
+        app.tabBars.buttons["Learn"].tap()
+        app.buttons["weekly-exams-entry"].tap()
+        app.buttons["weekly-exam-start-en-A1"].tap()
+
+        for _ in 0..<25 {
+            let save = app.buttons["weekly-exam-save"]
+            XCTAssertTrue(save.waitForExistence(timeout: 5))
+            let writtenAnswer = app.descendants(matching: .any)
+                .matching(identifier: "weekly-exam-written-answer").firstMatch
+            if writtenAnswer.exists {
+                writtenAnswer.tap()
+                writtenAnswer.typeText("A saved historical answer")
+            } else {
+                let option = app.buttons.matching(identifier: "weekly-exam-option").firstMatch
+                XCTAssertTrue(option.waitForExistence(timeout: 5))
+                option.tap()
+            }
+            save.tap()
+        }
+
+        let result = app.staticTexts["weekly-exam-result"]
+        XCTAssertTrue(result.waitForExistence(timeout: 10))
+        let originalResult = result.label
+        app.buttons["weekly-exam-attempt-back"].tap()
+        let savedAttempt = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH %@", "exam-history-")
+        ).firstMatch
+        XCTAssertTrue(savedAttempt.waitForExistence(timeout: 5))
+        savedAttempt.tap()
+        XCTAssertTrue(result.waitForExistence(timeout: 5))
+        XCTAssertEqual(result.label, originalResult)
+    }
+
     func testGreetingAndMeaningToggle() {
         let app = launch()
         XCTAssertTrue(app.staticTexts["target-caption"].waitForExistence(timeout: 10))
