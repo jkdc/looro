@@ -97,6 +97,7 @@ fun LevelTestScreen(
     var savingResult by remember { mutableStateOf(false) }
     var submissionFailed by remember { mutableStateOf(false) }
     var unansweredMarked by remember(screenKey) { mutableStateOf(false) }
+    var showConfirmDialog by remember(screenKey) { mutableStateOf(false) }
     val infoExpanded = remember { mutableStateMapOf<LevelTestSection, Boolean>() }
     val unansweredCount = exam.items.count { attempts.getOrElse(exam.items.indexOf(it)) { "" }.isBlank() }
     val savingQuestions = remember { mutableStateMapOf<String, Int>() }
@@ -205,12 +206,13 @@ fun LevelTestScreen(
 
     fun submit() {
         if (submitted || savingResult) return
-        if (!unansweredMarked && unansweredCount > 0) {
+        if (unansweredCount > 0 && !unansweredMarked) {
             unansweredMarked = true
             val firstUnanswered = exam.items.indexOfFirst { attempts.getOrElse(exam.items.indexOf(it)) { "" }.isBlank() }
             if (firstUnanswered >= 0) scope.launch {
                 listState.animateScrollToItem(questionListPositions[firstUnanswered])
             }
+            showConfirmDialog = true
             return
         }
         savingResult = true
@@ -247,6 +249,31 @@ fun LevelTestScreen(
             SoftRoundButton(AppSymbol.Back, strings.t(R.string.common_back), onClick = onBack, diameter = 44.dp)
             Spacer(Modifier.weight(1f))
             Text(strings.t(R.string.leveltest_title), style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+        }
+        if (showConfirmDialog) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { showConfirmDialog = false },
+                title = { Text(strings.t(R.string.leveltest_confirm_title),
+                    modifier = Modifier.testTag("leveltest-confirm-title")) },
+                text = { Text(strings.t(R.string.leveltest_confirm_message, unansweredCount)) },
+                confirmButton = {
+                    TextButton(onClick = { showConfirmDialog = false; submit() },
+                        modifier = Modifier.testTag("leveltest-confirm-finish")) {
+                        Text(strings.t(R.string.leveltest_confirm_finish), color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        showConfirmDialog = false
+                        unansweredMarked = true
+                        scope.launch {
+                            val firstUnanswered = exam.items.indexOfFirst { attempts.getOrElse(exam.items.indexOf(it)) { "" }.isBlank() }
+                            if (firstUnanswered >= 0) listState.animateScrollToItem(questionListPositions[firstUnanswered])
+                        }
+                    }, modifier = Modifier.testTag("leveltest-confirm-continue")) {
+                        Text(strings.t(R.string.leveltest_confirm_continue))
+                    }
+                })
         }
         LazyColumn(state = listState, contentPadding = PaddingValues(bottom = 140.dp), verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxWidth()) {
@@ -355,10 +382,8 @@ fun LevelTestScreen(
                         Text(strings.t(when {
                             savingResult -> R.string.leveltest_saving_result
                             submissionFailed -> R.string.leveltest_retry
-                            unansweredMarked && unansweredCount > 0 ->
-                                R.string.leveltest_confirm_submit
                             else -> R.string.leveltest_submit
-                        }, unansweredCount))
+                        }))
                     }
                     if (submissionFailed) Text(strings.t(R.string.leveltest_attempt_save_failed),
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
