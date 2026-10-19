@@ -11,7 +11,7 @@ import { aiPricingPolicy } from './ai-top-up-pricing.js';
 import { conversationBalance } from './conversation-balance.js';
 import { trialEligibility, UnconfiguredAttestor, type TrialAttestor } from './trial.js';
 import type { HostedVoice } from './hosted-voice.js';
-import { ACCESS_REQUEST_PATH, trustedClientNetwork, type AccessRequests } from './access-requests.js';
+import { ACCESS_REQUEST_PATH, isPrivateAddress, trustedClientNetwork, type AccessRequests } from './access-requests.js';
 import { TokenProxy } from './token-proxy.js';
 import type { AuthAdmission } from './auth-admission.js';
 import { claimWelcomeMinutes, minuteBalance, UnconfiguredMinuteAttestor, type MinuteAttestor } from './minutes.js';
@@ -156,9 +156,12 @@ export function createApp(services: Services) {
       // a direct loopback client has no proxy to sign its headers, so its socket
       // address IS its network identity. Production never sees loopback clients.
       const remoteAddress = request.raw.socket.remoteAddress ?? request.ip;
-      const allowLoopback = 'allowLocalLoopback' in proxy && proxy.allowLocalLoopback === true &&
-        ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(remoteAddress);
-      try { network = trustedClientNetwork(request.headers, remoteAddress, proxy.proxyToken, allowLoopback); }
+      // Lab mode: direct clients without proxy headers are keyed by socket
+      // address — loopback, or any private address so a physical device on the
+      // same WiFi can participate (the phone arrives from the LAN, not loopback).
+      const allowDirect = 'allowLocalLoopback' in proxy && proxy.allowLocalLoopback === true &&
+        isPrivateAddress(remoteAddress);
+      try { network = trustedClientNetwork(request.headers, remoteAddress, proxy.proxyToken, allowDirect); }
       catch { throw new ServiceError('trusted_proxy_required', 503); }
       networkKey = createHmac('sha256', Buffer.from(proxy.hmacKey, 'hex')).update(network).digest('hex');
     }

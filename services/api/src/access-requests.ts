@@ -63,13 +63,26 @@ function canonicalIP(value: string): string {
   return `${full.slice(0, 4).map(part => part.padStart(4, '0')).join(':')}::/64`;
 }
 
+export function isPrivateAddress(address: string): boolean {
+  const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(address);
+  const ip: string = mapped ? (mapped[1] as string) : address;
+  if (ip === '127.0.0.1' || ip === '::1') return true;
+  const octets = ip.split('.').map(Number);
+  if (octets.length !== 4 || octets.some(o => !Number.isSafeInteger(o) || o < 0 || o > 255)) return false;
+  return octets[0] === 10 || (octets[0] === 172 && (octets[1] as number) >= 16 && (octets[1] as number) <= 31) ||
+    (octets[0] === 192 && octets[1] === 168);
+}
+
 export function trustedClientNetwork(headers: IncomingHttpHeaders, remoteAddress: string, proxyToken: string, allowLoopback = false): string {
   const supplied = headers['x-app-proxy-token'], address = headers['x-app-client-ip'];
   if (typeof supplied === 'string' && typeof address === 'string') {
     const actual = Buffer.from(supplied), expected = Buffer.from(proxyToken);
     if (actual.length === expected.length && timingSafeEqual(actual, expected)) return canonicalIP(address);
   }
-  if (allowLoopback && ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(remoteAddress)) return canonicalIP(remoteAddress);
+  // Local lab mode (env-gated, never on in production): direct clients without
+  // proxy headers are trusted by their socket address — loopback, or any RFC
+  // 1918 private address so a physical device on the same WiFi can participate.
+  if (allowLoopback && isPrivateAddress(remoteAddress)) return canonicalIP(remoteAddress);
   throw new ServiceError('access_request_proxy_not_ready', 503);
 }
 
