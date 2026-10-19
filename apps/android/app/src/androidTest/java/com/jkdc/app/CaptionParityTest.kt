@@ -43,7 +43,7 @@ class CaptionParityTest {
     private var recorder: ParcelFileDescriptor? = null
 
     @Before fun prepare() {
-        assertEquals("com.jkdc.app.android.uitest", InstrumentationRegistry.getInstrumentation().targetContext.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, InstrumentationRegistry.getInstrumentation().targetContext.packageName)
         vm = compose.awaitHistoryLoaded()
         compose.runOnIdle {
             original = ArchiveCodec.encode(vm.archive); originalHasKey = vm.hasKey

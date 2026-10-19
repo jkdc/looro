@@ -3,6 +3,7 @@ import LearningCore
 
 struct RootView: View {
     @State private var coordinator: ConversationCoordinator
+    @State private var accountStore = ManagedAccountStore()
     @State private var tab = 0
     @State private var onboarding = false
     @Environment(\.scenePhase) private var scenePhase
@@ -35,7 +36,9 @@ struct RootView: View {
             Tab("Listen", systemImage: "headphones", value: 4) { shell { ListeningView(coordinator: coordinator) } }
         }
         .tint(AppColor.ink)
-        .sheet(isPresented: $coordinator.showSettings) { SettingsView(coordinator: coordinator) }
+        .sheet(isPresented: $coordinator.showSettings) {
+            SettingsView(coordinator: coordinator, accountStore: accountStore)
+        }
         // Error-alert route into the paywall. While the Settings sheet is up it
         // presents its own tokens sheet (the row lives there); this binding only
         // presents when Settings is closed.

@@ -1,0 +1,68 @@
+# T11 browser E2E (admin operations)
+
+Real-browser end-to-end verification of the admin operations surface: rendered
+effective configuration, save/reload, save-first connection-test semantics,
+audited draft moderation (approve/reject with mandatory reason), scheduler
+status wording, and publication into the public catalog. No real LLM provider,
+no external traffic, no production data.
+
+## What runs where
+
+| Piece | Where | Why |
+|---|---|---|
+| PostgreSQL 17, API build, migrations, stub LLM provider, Caddy panel, bootstrap | Docker (`compose.yaml` in this directory) | The project rule: every project service runs in Docker. Test-only secrets live in the compose file for this disposable stack. |
+| Chromium + Playwright driver | Host browser, from the **already-cached** `~/.cache/ms-playwright/chromium-*` and an existing local `playwright-core` install | No Docker browser image is cached and no image/dependency downloads were authorized; the host cache already exists, so this runner needs zero downloads. |
+
+## Reproduce
+
+```sh
+cd services/api/tests/browser
+docker compose -f compose.yaml up --build -d database migrate api stub-llm caddy bootstrap
+# wait for bootstrap to finish (operator + two draft weeks seeded):
+docker compose -f compose.yaml logs -f bootstrap     # "draft weeks seeded..." then Ctrl-C
+
+# from the repository root:
+node services/api/tests/browser/admin-e2e.mjs
+
+docker compose -f services/api/tests/browser/compose.yaml down -v   # tear down
+```
+
+Environment overrides: `E2E_PANEL_ORIGIN` (default `http://127.0.0.1:8090`),
+`E2E_API_ORIGIN` (default `http://127.0.0.1:8081`), `E2E_EVIDENCE_DIR`
+(default `e2e-evidence/t11-browser-e2e`), `PLAYWRIGHT_CORE_PATH` (a
+playwright-core install; the script also tries
+`~/.hermes/hermes-agent/node_modules/playwright-core`).
+
+Screenshots of every asserted state land in the evidence directory.
+
+## Seeded state (bootstrap.mjs)
+
+- Local operator `e2e-operator` / `e2e-browser-password` (loopback http origin
+  allowed via `ADMIN_ALLOW_LOCAL_LOOPBACK=true`; the panel binds
+  `http://127.0.0.1:8090`, the API's public port is `127.0.0.1:8081`).
+- Two private draft weeks for the current ISO week: `en/A1` (approved by the
+  E2E) and `en/A2` (rejected by the E2E). Pools are hand-written English
+  content that passes the same structural validator approval re-runs.
+- `LEVELTEST_GENERATE_ENABLED=false`: the panel must show the scheduler as
+  configured=No and in-process=No.
+- Stub provider at `http://stub-llm:9999/v1` inside the Docker network; the
+  saved-configuration connection test targets it and must answer HTTP 200.
+
+## What is asserted
+
+1. Local operator login establishes a session.
+2. The effective-configuration card renders server values (env defaults before
+   the first save), and the connection test is disabled without a persisted key.
+3. Save persists the provider/model/base URL/key/verify/variants and the
+   re-rendered card shows the stored values plus a masked key hint.
+4. A dirty form disables the connection test with the explicit
+   "Hay cambios sin guardar" warning; reverting re-enables it.
+5. The connection test exercises the SAVED configuration and succeeds against
+   the stub provider.
+6. Scheduler status distinguishes configured (No) from in-process activity (No).
+7. Draft listing shows both drafts; approval with a too-short reason is refused;
+   approval with a real reason moves the row to `approved`; rejection moves the
+   other row to `rejected` and the rejection is retained.
+8. After approval, `GET /v1/level-tests/generated?language=en&level=A1` serves
+   the week (25 items, content-addressed identity, thresholds); the rejected
+   `en/A2` week keeps returning 404.

@@ -97,6 +97,7 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
         // else the first level with anything left to do. ----
         var placementOpen by rememberSaveable { mutableStateOf(false) }
         var levelTestLevel by rememberSaveable { mutableStateOf<String?>(null) }
+        var levelTestAttemptID by rememberSaveable { mutableStateOf<String?>(null) }
         // Re-read on return from the test: a fresh result must replace the card text.
         val placementSuggestion = remember(placementOpen) { vm.placementSuggestion() }
         val recommended = vm.recommendedLesson()
@@ -111,6 +112,17 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
         }
         var savedLevel by rememberSaveable { mutableStateOf<String?>(null) }
         val selectedLevel = savedLevel?.takeIf { it in levels } ?: defaultLevel ?: levels.firstOrNull() ?: "A1"
+        var attemptHistoryRefresh by remember { mutableStateOf(0) }
+        var attemptHistory by remember(vm.language.id, selectedLevel) {
+            mutableStateOf(emptyList<com.jkdc.app.data.LevelTestAttemptStore.Restored>())
+        }
+        LaunchedEffect(vm.language.id, selectedLevel) { vm.refreshLevelTestCatalog(selectedLevel) }
+        LaunchedEffect(vm.language.id, selectedLevel, vm.loadingHistory, attemptHistoryRefresh) {
+            if (!vm.loadingHistory) {
+                attemptHistory = runCatching { vm.levelTestAttemptHistory(vm.language.id, selectedLevel) }
+                    .getOrDefault(emptyList())
+            }
+        }
         val completedLevels = remember(levels, progress.second) {
             levels.filter { level -> courses.asSequence().flatMap { it.units }.filter { it.level == level }
                 .flatMap { it.lessons }.let { lessons -> lessons.any() && lessons.all { it.id in progress.second } } }
@@ -119,8 +131,9 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             PlacementScreen(vm, onBack = { placementOpen = false },
                 onApplyBand = { band -> savedLevel = band; placementOpen = false })
         } else if (levelTestLevel != null) {
-            LevelTestScreen(vm, level = levelTestLevel!!, onBack = { levelTestLevel = null },
-                onApplyBand = { band -> savedLevel = band; levelTestLevel = null })
+            LevelTestScreen(vm, level = levelTestLevel!!, resumeAttemptID = levelTestAttemptID,
+                onBack = { levelTestLevel = null; levelTestAttemptID = null; attemptHistoryRefresh++ },
+                onApplyBand = { band -> savedLevel = band; levelTestLevel = null; levelTestAttemptID = null; attemptHistoryRefresh++ })
         } else LazyColumn(Modifier.fillMaxSize().testTag("learn-screen").padding(horizontal = 24.dp),
             contentPadding = PaddingValues(top = 12.dp, bottom = 120.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             item { PageHeading(stringResource(R.string.learn_eyebrow), stringResource(R.string.learn_title),
@@ -183,7 +196,9 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
             }
             if (vm.levelTestPool(selectedLevel) != null) item(key = "leveltest-entry") {
                 val history = remember(selectedLevel) { vm.levelTestHistory(selectedLevel) }
-                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) { levelTestLevel = selectedLevel }
+                Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) {
+                    levelTestAttemptID = null; levelTestLevel = selectedLevel
+                }
                     .testTag("leveltest-card"), shape = RoundedCornerShape(26.dp), color = AppColors.Surface.copy(alpha = .85f)) {
                     Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         AppIcon(AppSymbol.Check, Modifier.size(24.dp), color = AppColors.Secondary)
@@ -194,8 +209,46 @@ fun LearnScreen(vm: AppViewModel, onPractice: (String) -> Unit, onThemeChosen: (
                                     java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(java.util.Date(last.at)))
                             } ?: stringResource(R.string.leveltest_entry_cta),
                                 style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                            if (history != null && attemptHistory.none { it.result != null }) {
+                                Text(stringResource(R.string.leveltest_review_summary_only),
+                                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                            }
                         }
                         AppIcon(AppSymbol.ChevronRight, Modifier.size(16.dp), color = AppColors.Secondary.copy(alpha = .6f))
+                    }
+                }
+            }
+            if (attemptHistory.isNotEmpty()) item(key = "leveltest-history-title") {
+                Text(stringResource(R.string.leveltest_history_title), style = MaterialTheme.typography.titleSmall,
+                    color = AppColors.Secondary, modifier = Modifier.padding(top = 4.dp))
+            }
+            attemptHistory.forEach { attempt ->
+                item(key = "leveltest-history-${attempt.attemptID}") {
+                    val detail = attempt.result?.let { stringResource(R.string.leveltest_attempt_result, it.overall) }
+                        ?: stringResource(R.string.leveltest_attempt_in_progress)
+                    val syncLabel = when (attempt.syncState) {
+                        "synced" -> R.string.leveltest_attempt_synced
+                        "pending" -> R.string.leveltest_attempt_pending
+                        "conflict" -> R.string.leveltest_attempt_conflict
+                        else -> R.string.leveltest_attempt_local
+                    }
+                    Surface(Modifier.fillMaxWidth().clickable(role = Role.Button) {
+                        levelTestAttemptID = attempt.attemptID; levelTestLevel = selectedLevel
+                    }.testTag("leveltest-history-${attempt.attemptID}"),
+                        shape = RoundedCornerShape(20.dp), color = AppColors.Surface.copy(alpha = .7f)) {
+                        Row(Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text(detail, style = MaterialTheme.typography.bodyMedium)
+                                Text(stringResource(R.string.leveltest_attempt_started,
+                                    java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM,
+                                        java.text.DateFormat.SHORT).format(java.util.Date(attempt.startedAt))),
+                                    style = MaterialTheme.typography.bodySmall, color = AppColors.Secondary)
+                                Text(stringResource(syncLabel), style = MaterialTheme.typography.bodySmall,
+                                    color = AppColors.Secondary)
+                            }
+                            AppIcon(AppSymbol.ChevronRight, Modifier.size(16.dp), color = AppColors.Secondary.copy(alpha = .6f))
+                        }
                     }
                 }
             }

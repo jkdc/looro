@@ -19,7 +19,7 @@ public enum LearningDatabaseError: Error, Equatable, CustomStringConvertible {
 }
 
 /**
- * Opens the learner's learning database (schema v2, shared/db/schema.sql via
+ * Opens the learner's learning database (schema v5, shared/db/schema.sql via
  * `SchemaData`) — the Swift mirror of the Kotlin `LearningDb` opener. The
  * schema moves in ORDERED MIGRATION STEPS keyed by `PRAGMA user_version`
  * (the schema's own versioning mechanism, pinned by the checker):
@@ -27,8 +27,8 @@ public enum LearningDatabaseError: Error, Equatable, CustomStringConvertible {
  *   - step 1: the v1 statements (the canonical list up to and including its
  *     `PRAGMA user_version = 1`);
  *   - step 2+: one entry per exporter-pinned upgrade delta
- *     (`SchemaData.schemaUpgrades`), e.g. v2's FTS index + sync triggers +
- *     one-time 'rebuild'.
+ *     (`SchemaData.schemaUpgrades`), including v2's FTS index and v3's exam
+ *     snapshot and attempt tables.
  *
  * A FRESH database (user_version 0) runs every step inside ONE transaction,
  * which the closer completes by recording `version`; any other installed
@@ -43,7 +43,7 @@ public enum LearningDatabaseError: Error, Equatable, CustomStringConvertible {
  */
 public enum LearningDatabase {
     /// Bump only together with a migration; shared/db/schema.sql pins the shape.
-    public static let version = 2
+    public static let version = 5
     public static let name = "learning.db"
 
     /// The ordered migration steps (see the KDoc). The v1 slice is cut at the

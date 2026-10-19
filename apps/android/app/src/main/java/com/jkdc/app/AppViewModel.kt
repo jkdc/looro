@@ -36,6 +36,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.UUID
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.Serializable
@@ -225,9 +226,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     // ---- Level verification tests (level-tests): weekly, per level, suggestion-only. ----
     private val levelTestHistoryStore by lazy { com.jkdc.app.core.LevelTestHistoryStore(application) }
+    private val levelTestCatalogRepository by lazy {
+        LevelTestCatalogRepository(
+            BuildConfig.MANAGED_API_ORIGIN.toHttpUrlOrNull(),
+            LevelTestCatalogCache(File(application.cacheDir, "level-test-catalog")),
+        )
+    }
 
     fun levelTestPool(level: String): com.jkdc.app.core.LevelTestLevel? =
         com.jkdc.app.core.LevelTestsRegistry.level(language.id, level)
+    internal fun levelTestSelection(level: String): LevelTestSelection? =
+        levelTestCatalogRepository.select(language.id, level)
+    fun refreshLevelTestCatalog(level: String) {
+        val languageID = language.id
+        viewModelScope.launch { levelTestCatalogRepository.refresh(languageID, level) }
+    }
     fun levelTestHistory(level: String): com.jkdc.app.core.LevelTestResult? =
         levelTestHistoryStore.get(language.id, level)
     fun saveLevelTestResult(result: com.jkdc.app.core.LevelTestResult) {
@@ -235,6 +248,91 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         // One synced `assessment` completion per attempt (slug-safe: lowercase level).
         recordCompletion(ProgressEngine.ASSESSMENT,
             "levelcheck-${result.languageID}-${result.level.lowercase()}", result.overall)
+    }
+
+    internal suspend fun startLevelTestAttempt(
+        selection: LevelTestSelection,
+        attemptID: String,
+    ): com.jkdc.app.data.LevelTestAttemptStore.Restored {
+        var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
+        persistDbAndWait { db ->
+            val attempts = com.jkdc.app.data.LevelTestAttemptStore(db)
+            // Attempts started under a signed-in account belong to it from birth
+            // (the outbox drains per owner); anonymous attempts stay local until
+            // an explicit claim — never silently bound by a later sign-in.
+            val started = attempts.start(selection, attemptID = attemptID,
+                ownerAccountID = examOwnerID.value)
+            restored = attempts.load(started.attempt["attempt_id"] as String, examOwnerID.value)
+        }
+        return checkNotNull(restored) { "Started exam attempt could not be reloaded" }
+    }
+
+    /** The signed-in account for new exam attempts; MainActivity mirrors the
+        account state here. Null keeps attempts anonymous (local-only). */
+    private val examOwnerID = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+    fun setExamOwner(accountID: String?) { examOwnerID.value = accountID }
+
+    internal suspend fun saveLevelTestAnswer(attemptID: String, questionID: String, response: String, position: Int) {
+        persistDbAndWait { db ->
+            com.jkdc.app.data.LevelTestAttemptStore(db).saveAnswer(
+                attemptID, questionID, response, position, System.currentTimeMillis() / 1000.0)
+        }
+    }
+
+    internal suspend fun loadLevelTestAttempt(attemptID: String): com.jkdc.app.data.LevelTestAttemptStore.Restored? {
+        var restored: com.jkdc.app.data.LevelTestAttemptStore.Restored? = null
+        persistDbAndWait { db ->
+            restored = com.jkdc.app.data.LevelTestAttemptStore(db).load(attemptID, examOwnerID.value)
+        }
+        return restored
+    }
+
+    internal suspend fun levelTestAttemptHistory(
+        languageID: String,
+        level: String,
+    ): List<com.jkdc.app.data.LevelTestAttemptStore.Restored> {
+        var attempts = emptyList<com.jkdc.app.data.LevelTestAttemptStore.Restored>()
+        persistDbAndWait { db -> attempts = com.jkdc.app.data.LevelTestAttemptStore(db).list(languageID, level) }
+        return attempts
+    }
+
+    internal suspend fun completeLevelTestAttempt(
+        attemptID: String,
+        selection: LevelTestSelection,
+        responses: Map<String, String>,
+        position: Int,
+        result: com.jkdc.app.core.LevelTestResult,
+    ) {
+        val completedAt = System.currentTimeMillis() / 1000.0
+        val resultJSON = kotlinx.serialization.json.buildJsonObject {
+            put("languageID", result.languageID); put("level", result.level); put("weekId", result.weekIndex)
+            put("overall", result.overall)
+            put("sections", kotlinx.serialization.json.buildJsonObject {
+                result.sections.forEach { (name, score) -> put(name, score) }
+            })
+            put("passed", result.passed); result.nextBand?.let { put("nextBand", it) }
+            put("weakSections", kotlinx.serialization.json.JsonArray(result.weakSections.map(::JsonPrimitive)) )
+            put("weakUnitIDs", kotlinx.serialization.json.JsonArray(result.weakUnitIDs.map(::JsonPrimitive)))
+            put("questionReviews", kotlinx.serialization.json.JsonArray(selection.exam.items.map { item ->
+                val response = responses[item.id].orEmpty()
+                buildJsonObject {
+                    put("questionId", item.id); put("response", response)
+                    put("acceptedAnswers", kotlinx.serialization.json.JsonArray(item.exercise.answers.map(::JsonPrimitive)))
+                    put("correct", ExerciseEngine.isCorrect(item.exercise, response))
+                    put("explanation", item.exercise.explain)
+                    item.passageId?.let { put("passageId", it) }
+                }
+            }))
+            put("at", result.at)
+        }.toString()
+        persistDbAndWait { db ->
+            val attempts = com.jkdc.app.data.LevelTestAttemptStore(db)
+            check(responses.keys.all { questionID -> selection.exam.items.any { it.id == questionID } }) {
+                "Answer belongs to a different exam snapshot"
+            }
+            attempts.complete(attemptID, resultJSON, completedAt, responses, position)
+        }
+        saveLevelTestResult(result)
     }
 
     /** Speaks a placement listening stimulus with the learning-language voice,
@@ -1007,6 +1105,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             ({ })
         }
         writes.send(WriteRequest(work, completion))
+        completion.await()
+    }
+
+    /** Exam attempts require the SQLite contract; JSON fail-safe mode cannot claim durable recovery. */
+    private suspend fun persistDbAndWait(write: (SqlDatabase) -> Unit) {
+        check(storageReady) { "Learning storage is not ready" }
+        check(!jsonMode) { "Durable exam history is unavailable in JSON fail-safe mode" }
+        val target = checkNotNull(store?.db) { "Learning database is unavailable" }
+        val completion = CompletableDeferred<Unit>()
+        writes.send(WriteRequest({ write(target) }, completion))
         completion.await()
     }
 

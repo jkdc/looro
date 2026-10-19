@@ -58,7 +58,11 @@ public struct ManagedAccountConfiguration: Equatable, Sendable {
         let allowed = ["/v1/auth/challenge", "/v1/auth/exchange", "/v1/wallet", "/v1/auth/sign-out", "/v1/account",
                        // Pack commerce (Palique (tokens)): the catalog, order creation
                        // and status routes ride the same origin and session store.
-                       "/v1/minutes/products", "/v1/minutes/orders"]
+                       "/v1/minutes/products", "/v1/minutes/orders",
+                       // Weekly exam recovery: event sync, initial attempt creation,
+                       // the paginated owner-scoped history and the public exam fetch.
+                       "/v1/level-test-attempts/events", "/v1/level-test-attempts/sync",
+                       "/v1/level-test-attempts", "/v1/level-tests/hybrid"]
         guard allowed.contains(path), var c = URLComponents(url: origin, resolvingAgainstBaseURL: false)
         else { throw ManagedAccountError.unavailable }
         c.path = path
@@ -84,6 +88,22 @@ public struct ManagedAccountConfiguration: Equatable, Sendable {
             throw ManagedAccountError.unavailable
         }
         c.path = "/v1/minutes/orders/\(lowered)"
+        guard let result = c.url else { throw ManagedAccountError.unavailable }
+        return result
+    }
+
+    /// `GET /v1/level-test-attempts/:attemptId` — one owned attempt with its
+    /// frozen snapshot. The attempt identifier is the only client-supplied
+    /// path segment, so it gets the same UUID shape guard as orderEndpoint.
+    public func examAttemptEndpoint(_ attemptID: String) throws -> URL {
+        let lowered = attemptID.lowercased()
+        guard lowered.range(of: "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+                            options: .regularExpression) != nil
+        else { throw ManagedAccountError.invalidResponse }
+        guard var c = URLComponents(url: origin, resolvingAgainstBaseURL: false) else {
+            throw ManagedAccountError.unavailable
+        }
+        c.path = "/v1/level-test-attempts/\(lowered)"
         guard let result = c.url else { throw ManagedAccountError.unavailable }
         return result
     }

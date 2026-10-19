@@ -5,6 +5,12 @@ import com.jkdc.app.core.LevelTestEngine
 import com.jkdc.app.core.LevelTestItem
 import com.jkdc.app.core.LevelTestSection
 import com.jkdc.app.core.LevelTestsRegistry
+import java.io.File
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.int
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -18,6 +24,18 @@ import org.junit.Test
 class LevelTestEngineTest {
 
     private val english = LevelTestsRegistry.forLanguage("en")!!
+
+    private fun weeklyGolden() = run {
+        var directory: File? = File(System.getProperty("user.dir")!!).canonicalFile
+        while (true) {
+            val current = directory ?: break
+            val fixture = File(current, "shared/leveltests/weekly-goldens.json")
+            if (fixture.isFile) return@run Json.parseToJsonElement(fixture.readText())
+                .jsonObject["vectors"]!!.jsonArray.first().jsonObject
+            directory = current.parentFile
+        }
+        error("weekly golden fixture not found from ${System.getProperty("user.dir")}")
+    }
 
     @Test
     fun `banks ship for en and es with a1 a2 b1 only`() {
@@ -42,24 +60,15 @@ class LevelTestEngineTest {
 
     @Test
     fun `golden vector pins the shared weekly contract for B1 week 202641`() {
-        // This vector is asserted byte-for-byte by the server's TypeScript
-        // composer too (tests/level-tests.test.ts): the shared rotation
-        // contract between app and backend.
-        val level = english.levels.first { it.level == "B1" }
-        val exam = LevelTestEngine.compose(level, 202641L)
-        assertEquals(
-            listOf("en-business-u1-negotiation-e3", "en-care-u1-appointment-e3", "en-care-u1-instructions-e2",
-                "en-hosp-u1-complaints-e1", "en-foundations-connections-first-conditional-e1", "en-business-u1-followup-e3",
-                "en-foundations-experiences-used-to-e3", "en-foundations-change-phrasals-e2", "en-foundations-telling-collocations-e3",
-                "en-hosp-u1-checkin-e3", "en-foundations-change-will-e1", "en-foundations-done-phrasals-e2",
-                "en-listen-job-change-q2#r", "en-listen-job-change-q3#r", "en-listen-job-change-q1#r",
-                "en-listen-never-been-q2#r", "en-listen-never-been-q3#r", "en-listen-never-been-q1#r",
-                "en-listen-monday-predictions-q1#l", "en-listen-monday-predictions-q2#l",
-                "en-listen-news-swap-q1#l", "en-listen-news-swap-q2#l",
-                "en-foundations-connections-suggestions-e4", "en-foundations-telling-reacting-e4", "en-hosp-u1-checkin-e4"),
-            exam.items.map { it.id })
-        assertEquals(listOf("en-listen-never-been", "en-listen-job-change"), exam.readingPassageIds)
-        assertEquals(listOf("en-listen-monday-predictions", "en-listen-news-swap"), exam.listeningPassageIds)
+        val golden = weeklyGolden()
+        val language = golden.getValue("languageID").jsonPrimitive.content
+        val levelID = golden.getValue("level").jsonPrimitive.content
+        val week = golden.getValue("weekIndex").jsonPrimitive.int.toLong()
+        val level = LevelTestsRegistry.level(language, levelID)!!
+        val exam = LevelTestEngine.compose(level, week)
+        assertEquals(golden.getValue("items").jsonArray.map { it.jsonPrimitive.content }, exam.items.map { it.id })
+        assertEquals(golden.getValue("readingPassageIDs").jsonArray.map { it.jsonPrimitive.content }, exam.readingPassageIds)
+        assertEquals(golden.getValue("listeningPassageIDs").jsonArray.map { it.jsonPrimitive.content }, exam.listeningPassageIds)
     }
 
     @Test

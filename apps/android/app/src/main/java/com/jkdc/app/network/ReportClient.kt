@@ -18,6 +18,7 @@ class ReportConfiguration private constructor(val origin: HttpUrl) {
     companion object {
         fun parse(origin: String): ReportConfiguration? {
             val url = origin.toHttpUrlOrNull() ?: return null
+            if (url.isLocalDebugOrigin()) return ReportConfiguration(url)
             if (url.scheme != "https" || url.username.isNotEmpty() || url.password.isNotEmpty() ||
                 url.encodedPath != "/" || url.query != null || url.fragment != null || url.port != 443) return null
             return ReportConfiguration(url)

@@ -17,6 +17,7 @@ class MinuteCommerceConfiguration private constructor(val origin: HttpUrl) {
     companion object {
         fun parse(value: String): MinuteCommerceConfiguration? {
             val url = value.toHttpUrlOrNull() ?: return null
+            if (url.isLocalDebugOrigin()) return MinuteCommerceConfiguration(url)
             if (url.scheme != "https" || url.username.isNotEmpty() || url.password.isNotEmpty() || url.port != 443 ||
                 url.encodedPath != "/" || url.query != null || url.fragment != null || url.host == "openai.com" || url.host.endsWith(".openai.com")) return null
             return MinuteCommerceConfiguration(url)

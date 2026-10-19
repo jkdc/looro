@@ -4,7 +4,7 @@ import LearningCore
 
 /// Ready for a Settings navigation destination when managed accounts are configured.
 struct ManagedAccountView: View {
-    @State private var store = ManagedAccountStore()
+    let store: ManagedAccountStore
     @State private var confirmDeletion = false
     var body: some View {
         ScrollView {

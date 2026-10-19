@@ -1,130 +1,88 @@
-import type { PoolClient } from 'pg';
 import { transaction, type Database } from './db.js';
-import { decryptSecret, encryptSecret, isLlmProvider, keyHint, maskKey, resolveLlmConfig,
-  LLM_PRESETS, type LlmProvider } from './llm-config.js';
+import { decryptSecret, encryptSecret, isLlmProvider, maskKey, resolveLlmConfig, LLM_PRESETS, type LlmProvider, type ResolvedLlmConfig } from './llm-config.js';
+import { levelTestSettings, type LevelTestSettings } from './level-test-settings.js';
 
-/** Admin API shapes for the LLM provider configuration (level-tests-llm).
-    The stored API key is never returned: responses carry a masked hint only,
-    and every mutation is audited by the caller via `admin_actions`. */
-
-export interface PublicLlmConfigView {
+export interface PublicLlmConfigView extends LevelTestSettings {
   provider: LlmProvider; baseUrl: string; model: string; keyHint: string | null;
-  publishMode: 'review' | 'auto'; verifyMode: 'flag' | 'strict' | 'off'; variants: number;
 }
 export interface LlmConfigUpdate {
   provider?: unknown; baseUrl?: unknown; model?: unknown; apiKey?: unknown; label?: unknown;
   publishMode?: unknown; verifyMode?: unknown; variants?: unknown;
 }
-
 export const LLM_PROVIDER_CATALOG = Object.entries(LLM_PRESETS).map(([provider, preset]) => ({
   provider, baseUrl: preset.baseUrl, models: preset.models }));
 
+/** Show the same effective provider/settings that generation resolves; never return a secret. */
 export async function readLlmConfigView(db: Database, env: NodeJS.ProcessEnv): Promise<PublicLlmConfigView> {
-  const defaults = defaultSettings(env);
-  const view: PublicLlmConfigView = {
-    provider: env.LEVELTEST_LLM_PROVIDER && isLlmProvider(env.LEVELTEST_LLM_PROVIDER)
-      ? env.LEVELTEST_LLM_PROVIDER : 'openai',
-    baseUrl: env.LEVELTEST_LLM_URL || LLM_PRESETS.openai.baseUrl,
-    model: env.LEVELTEST_LLM_MODEL || LLM_PRESETS.openai.models[0] || 'gpt-5.6-luna',
-    keyHint: env.LEVELTEST_LLM_API_KEY ? maskKey(env.LEVELTEST_LLM_API_KEY) : null,
-    publishMode: defaults.publishMode, verifyMode: defaults.verifyMode, variants: defaults.variants,
-  };
-  try {
-    const rows = await db.query(`SELECT provider, base_url, model, api_key_encrypted FROM llm_provider_configs
-      WHERE is_active ORDER BY updated_at DESC LIMIT 1`);
-    const row = rows.rows[0] as { provider: LlmProvider; base_url: string; model: string;
-      api_key_encrypted: string } | undefined;
-    if (!row) return view;
-    const key = decryptSecret(row.api_key_encrypted, env);
-    return { ...view, provider: row.provider, baseUrl: row.base_url, model: row.model,
-      keyHint: key ? maskKey(key) : view.keyHint };
-  } catch { return view; }
+  const settings = await levelTestSettings(db, env), config = await resolveLlmConfig(db, env);
+  const provider = config?.provider ?? (isLlmProvider(env.LEVELTEST_LLM_PROVIDER) ? env.LEVELTEST_LLM_PROVIDER : 'openai');
+  return { ...settings, provider, baseUrl: config?.baseUrl ?? (env.LEVELTEST_LLM_URL || LLM_PRESETS[provider].baseUrl),
+    model: config?.model ?? (env.LEVELTEST_LLM_MODEL || LLM_PRESETS[provider].models[0] || ''),
+    keyHint: config ? maskKey(config.apiKey) : null };
 }
-
 export interface UpsertResult { updated: boolean }
 
-/** Upserts the active provider config and/or the settings. Fails closed with
-    `llm_master_key_missing` when a key is submitted but the env master key is
-    absent or malformed. */
-export async function upsertLlmConfig(db: Database, env: NodeJS.ProcessEnv,
-                                      update: LlmConfigUpdate): Promise<UpsertResult> {
-  const settings = defaultSettings(env);
-  let touched = false;
-  if (update.provider !== undefined || update.baseUrl !== undefined || update.model !== undefined ||
-      update.apiKey !== undefined) {
-    const provider = typeof update.provider === 'string' && isLlmProvider(update.provider)
-      ? update.provider : undefined;
-    if (!provider) throw new ConfigError('invalid_llm_provider');
-    const preset = LLM_PRESETS[provider];
-    const baseUrl = typeof update.baseUrl === 'string' && update.baseUrl.trim()
-      ? update.baseUrl.trim() : preset.baseUrl;
-    const model = typeof update.model === 'string' && update.model.trim()
-      ? update.model.trim() : preset.models[0] || '';
-    const apiKey = typeof update.apiKey === 'string' && update.apiKey.trim() ? update.apiKey.trim() : null;
-    if (!baseUrl || !model) throw new ConfigError('invalid_llm_config');
-    await transaction(db, async sql => {
-      const encrypted = apiKey ? encryptSecret(apiKey, env)
-        : await storedKey(sql, provider);
+/** Serialize partial configuration updates and commit provider/settings together. */
+export async function upsertLlmConfig(db: Database, env: NodeJS.ProcessEnv, update: LlmConfigUpdate): Promise<UpsertResult> {
+  const providerTouched = ['provider', 'baseUrl', 'model', 'apiKey', 'label'].some(key => update[key as keyof LlmConfigUpdate] !== undefined);
+  const settingsTouched = ['publishMode', 'verifyMode', 'variants'].some(key => update[key as keyof LlmConfigUpdate] !== undefined);
+  if (!providerTouched && !settingsTouched) throw new ConfigError('invalid_llm_config');
+  if (update.publishMode !== undefined && !['auto', 'review'].includes(update.publishMode as string) ||
+      update.verifyMode !== undefined && !['strict', 'flag', 'off'].includes(update.verifyMode as string) ||
+      update.variants !== undefined && !(typeof update.variants === 'number' && Number.isSafeInteger(update.variants) && update.variants >= 1 && update.variants <= 5))
+    throw new ConfigError('invalid_llm_config');
+  await transaction(db, async sql => {
+    await sql.query("SELECT pg_advisory_xact_lock(hashtext('level-test-config'))");
+    if (providerTouched) {
+      const current = (await sql.query(`SELECT provider, label, base_url, model, api_key_encrypted FROM llm_provider_configs
+        WHERE is_active ORDER BY updated_at DESC LIMIT 1 FOR UPDATE`)).rows[0] as
+        { provider: LlmProvider; label: string; base_url: string; model: string; api_key_encrypted: string } | undefined;
+      const effectiveProvider = current?.provider ??
+        (isLlmProvider(env.LEVELTEST_LLM_PROVIDER) ? env.LEVELTEST_LLM_PROVIDER : 'openai');
+      const provider = update.provider === undefined ? effectiveProvider : update.provider;
+      if (!isLlmProvider(provider)) throw new ConfigError('invalid_llm_provider');
+      const switched = effectiveProvider !== provider;
+      // Switching providers must not forward an old credential or endpoint implicitly.
+      if (switched && (update.apiKey === undefined || update.baseUrl === undefined || update.model === undefined))
+        throw new ConfigError('invalid_llm_config');
+      const baseUrl = field(update.baseUrl, current?.base_url ?? (env.LEVELTEST_LLM_URL || LLM_PRESETS[provider].baseUrl));
+      const model = field(update.model, current?.model ?? (env.LEVELTEST_LLM_MODEL || LLM_PRESETS[provider].models[0] || ''));
+      const apiKey = update.apiKey === undefined ||
+        (!switched && typeof update.apiKey === 'string' && !update.apiKey.trim()) ? undefined : field(update.apiKey, '');
+      const encrypted = apiKey ? encryptSecret(apiKey, env) : current?.api_key_encrypted ??
+        (env.LEVELTEST_LLM_API_KEY ? encryptSecret(env.LEVELTEST_LLM_API_KEY, env) : undefined);
       if (!encrypted) throw new ConfigError('llm_master_key_missing', 503);
+      const label = update.label === undefined ? current?.label ?? `${provider} · ${model}` : field(update.label, '').slice(0, 100);
       await sql.query('UPDATE llm_provider_configs SET is_active=false WHERE is_active');
       await sql.query(`INSERT INTO llm_provider_configs(id, provider, label, base_url, model, api_key_encrypted, is_active)
         VALUES(gen_random_uuid(), $1, $2, $3, $4, $5, true)
         ON CONFLICT (provider, base_url, model) DO UPDATE SET label=$2, api_key_encrypted=$5,
-          is_active=true, updated_at=now()`, [provider, labelFor(update.label, provider), baseUrl, model, encrypted]);
-    });
-    touched = true;
-  }
-  if (update.publishMode !== undefined || update.verifyMode !== undefined || update.variants !== undefined) {
-    const publish = update.publishMode === 'auto' ? 'auto' : update.publishMode === 'review' ? 'review' : settings.publishMode;
-    const verify = update.verifyMode === 'strict' || update.verifyMode === 'off'
-      ? update.verifyMode as 'strict' | 'off' : settings.verifyMode;
-    const variants = typeof update.variants === 'number' && Number.isSafeInteger(update.variants) &&
-      update.variants >= 1 && update.variants <= 5 ? update.variants : settings.variants;
-    await transaction(db, async sql => {
+          is_active=true, updated_at=now()`, [provider, label, baseUrl, model, encrypted]);
+    }
+    if (settingsTouched) {
+      const current = await levelTestSettings(sql, env);
       await sql.query(`INSERT INTO level_test_settings(singleton, publish_mode, verify_mode, variants)
         VALUES(true, $1, $2, $3)
         ON CONFLICT (singleton) DO UPDATE SET publish_mode=$1, verify_mode=$2, variants=$3`,
-        [publish, verify, variants]);
-    });
-    touched = true;
-  }
-  if (!touched) throw new ConfigError('invalid_llm_config');
+      [update.publishMode ?? current.publishMode, update.verifyMode ?? current.verifyMode, update.variants ?? current.variants]);
+    }
+  });
   return { updated: true };
 }
-
-export async function storedConfigForTest(db: Database, env: NodeJS.ProcessEnv) {
-  const config = await resolveLlmConfig(db, env);
-  if (!config) throw new ConfigError('llm_config_missing', 404);
-  return config;
+function field(value: unknown, fallback: string): string {
+  if (value === undefined && fallback) return fallback;
+  if (typeof value === 'string' && value.trim()) return value.trim();
+  throw new ConfigError('invalid_llm_config');
 }
-
+export async function storedConfigForTest(db: Database, env: NodeJS.ProcessEnv): Promise<ResolvedLlmConfig> {
+  const row = (await db.query("SELECT provider, base_url, model, api_key_encrypted FROM llm_provider_configs " +
+    "WHERE is_active ORDER BY updated_at DESC LIMIT 1")).rows[0] as
+    { provider: unknown; base_url: string; model: string; api_key_encrypted: string } | undefined;
+  if (!row || !isLlmProvider(row.provider)) throw new ConfigError('llm_config_missing', 404);
+  const apiKey = decryptSecret(row.api_key_encrypted, env);
+  if (!apiKey || !row.base_url || !row.model) throw new ConfigError('llm_config_unavailable', 503);
+  return { provider: row.provider, baseUrl: row.base_url, model: row.model, apiKey };
+}
 export class ConfigError extends Error {
   constructor(public code: string, public status: number = 400) { super(code); }
-}
-
-// ---- internals ----
-
-function labelFor(label: unknown, provider: LlmProvider): string {
-  if (typeof label === 'string' && label.trim()) return label.trim().slice(0, 100);
-  const preset = LLM_PRESETS[provider];
-  return `${provider} · ${preset.models[0] ?? 'custom'}`;
-}
-
-function defaultSettings(env: NodeJS.ProcessEnv) {
-  return {
-    publishMode: env.LEVELTEST_PUBLISH_MODE === 'auto' ? 'auto' as const : 'review' as const,
-    verifyMode: env.LEVELTEST_VERIFY === 'strict' ? 'strict' as const :
-      env.LEVELTEST_VERIFY === 'off' ? 'off' as const : 'flag' as const,
-    variants: clampVariants(Number(env.LEVELTEST_VARIANTS ?? 3)),
-  };
-}
-
-function clampVariants(value: number): number {
-  return Number.isSafeInteger(value) && value >= 1 && value <= 5 ? value : 3;
-}
-
-async function storedKey(sql: PoolClient, provider: LlmProvider): Promise<string | undefined> {
-  const rows = await sql.query(`SELECT api_key_encrypted FROM llm_provider_configs
-    WHERE is_active AND provider=$1 LIMIT 1`, [provider]);
-  return (rows.rows[0] as { api_key_encrypted?: string } | undefined)?.api_key_encrypted;
 }

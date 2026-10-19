@@ -1,0 +1,94 @@
+# Isolated browser-E2E stack (T11 task 5). Real API + PostgreSQL + Caddy panel
+# + a stub LLM provider. Test-only secrets, no production environment, no
+# external traffic: the stub provider only answers inside this Docker network.
+#
+# The browser itself runs on the host (Playwright with the already-cached
+# chromium at ~/.cache/ms-playwright) because no browser image is cached in
+# Docker; see README.md and admin-e2e.mjs.
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: app_browser_e2e
+      POSTGRES_USER: app_e2e
+      POSTGRES_PASSWORD: browser-e2e-isolated-only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_e2e -d app_browser_e2e"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+  migrate:
+    image: app-server-browser:local
+    build: ../..
+    environment:
+      DATABASE_URL: postgresql://app_e2e:browser-e2e-isolated-only@database:5432/app_browser_e2e
+    command: ["node", "dist/src/migrate.js"]
+    depends_on:
+      database:
+        condition: service_healthy
+  api:
+    image: app-server-browser:local
+    build: ../..
+    environment:
+      DATABASE_URL: postgresql://app_e2e:browser-e2e-isolated-only@database:5432/app_browser_e2e
+      PUBLIC_ORIGIN: http://localhost:8091
+      # Test-only secrets for this disposable stack (documented in README.md).
+      ADMIN_HMAC_KEY: "1111111111111111111111111111111111111111111111111111111111111111"
+      ADMIN_PROXY_TOKEN: "2222222222222222222222222222222222222222222222222222222222222222"
+      ADMIN_PUBLIC_ORIGIN: http://127.0.0.1:8090
+      ADMIN_ALLOW_LOCAL_LOOPBACK: "true"
+      LEVELTEST_LLM_MASTER_KEY: "3333333333333333333333333333333333333333333333333333333333333333"
+      # The scheduler stays OFF: the panel must show configured=false.
+      LEVELTEST_GENERATE_ENABLED: "false"
+    ports: ["127.0.0.1:8081:8080"]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+  stub-llm:
+    image: app-server-browser:local
+    volumes:
+      - ./stub-llm.mjs:/stub.mjs:ro
+    command: ["node", "/stub.mjs"]
+  seed-generate:
+    image: app-server-browser:local
+    environment:
+      DATABASE_URL: postgresql://app_e2e:browser-e2e-isolated-only@database:5432/app_browser_e2e
+      # The generation CLI talks to the stub provider inside this network only.
+      LEVELTEST_LLM_PROVIDER: "openai"
+      LEVELTEST_LLM_URL: http://stub-llm:9999/v1
+      LEVELTEST_LLM_API_KEY: sk-seed-local-only
+      LEVELTEST_LLM_MASTER_KEY: "3333333333333333333333333333333333333333333333333333333333333333"
+      LEVELTEST_PUBLISH_MODE: review
+      LEVELTEST_VERIFY: "off"
+      LEVELTEST_VARIANTS: "1"
+    command: ["node", "dist/src/level-tests-generate.js", "--langs", "en", "--levels", "A1,A2"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      stub-llm:
+        condition: service_started
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      ADMIN_PROXY_TOKEN: "2222222222222222222222222222222222222222222222222222222222222222"
+    ports: ["127.0.0.1:8090:80"]
+    volumes:
+      - ./Caddyfile.browser:/etc/caddy/Caddyfile:ro
+      - ../../admin-ui:/srv/admin-ui:ro
+    depends_on: [api]
+  bootstrap:
+    image: app-server-browser:local
+    volumes:
+      - ./bootstrap.mjs:/app/bootstrap.mjs:ro
+    working_dir: /app
+    environment:
+      DATABASE_URL: postgresql://app_e2e:browser-e2e-isolated-only@database:5432/app_browser_e2e
+    command: ["node", "/app/bootstrap.mjs"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully

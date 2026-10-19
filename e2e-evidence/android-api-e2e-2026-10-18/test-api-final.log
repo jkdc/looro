@@ -1,0 +1,3342 @@
+docker compose --project-directory /home/joaquin/Proyectos/looro-test/looro-worktrees/weekly-exam-recovery/services/api/tests -p looro-smoke -f /home/joaquin/Proyectos/looro-test/looro-worktrees/weekly-exam-recovery/services/api/tests/compose.smoke.yaml up --build -d api
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.17kB done
+#1 DONE 0.0s
+
+#2 [migrate internal] load build definition from Dockerfile
+#2 transferring dockerfile: 566B done
+#2 DONE 0.0s
+
+#3 [migrate internal] load metadata for docker.io/library/node:22-alpine
+#3 DONE 0.0s
+
+#4 [migrate internal] load .dockerignore
+#4 transferring context: 91B done
+#4 DONE 0.0s
+
+#5 [migrate build  1/10] FROM docker.io/library/node:22-alpine
+#5 DONE 0.0s
+
+#6 [api internal] load build context
+#6 transferring context: 9.09kB 0.0s done
+#6 DONE 0.0s
+
+#7 [api build  7/10] COPY tests ./tests
+#7 CACHED
+
+#8 [api build  6/10] COPY src ./src
+#8 CACHED
+
+#9 [api stage-1 5/6] COPY --from=build /app/dist ./dist
+#9 CACHED
+
+#10 [api build 10/10] RUN npm run build && cp -R migrations dist/migrations && cp -R operations dist/operations
+#10 CACHED
+
+#11 [api build  9/10] COPY operations ./operations
+#11 CACHED
+
+#12 [api build  5/10] COPY tsconfig.json ./
+#12 CACHED
+
+#13 [api build  8/10] COPY migrations ./migrations
+#13 CACHED
+
+#14 [api stage-1 4/6] RUN npm ci --omit=dev && npm cache clean --force
+#14 CACHED
+
+#15 [api build  2/10] WORKDIR /app
+#15 CACHED
+
+#16 [api build  3/10] COPY package*.json ./
+#16 CACHED
+
+#17 [api build  4/10] RUN npm ci
+#17 CACHED
+
+#18 [api stage-1 6/6] COPY migrations ./migrations
+#18 CACHED
+
+#19 [api] exporting to image
+#19 exporting layers done
+#19 writing image sha256:acf5a22ab2743045d1afeeda2c2469bfd078a35baca42a5e4bb0cec7c4d68d77
+#19 writing image sha256:acf5a22ab2743045d1afeeda2c2469bfd078a35baca42a5e4bb0cec7c4d68d77 0.0s done
+#19 naming to docker.io/library/app-server-smoke:local done
+#19 DONE 0.1s
+
+#20 [migrate] exporting to image
+#20 exporting layers done
+#20 writing image sha256:3aefbf8d556a123b448c3171eab65a668ae19bbdac6ab83a952ca0b2cf4259a1 done
+#20 naming to docker.io/library/app-server-smoke:local 0.0s done
+#20 DONE 0.1s
+
+#21 [migrate] resolving provenance for metadata file
+#21 DONE 0.0s
+
+#22 [api] resolving provenance for metadata file
+#22 DONE 0.0s
+ app-server-smoke:local  Built
+ app-server-smoke:local  Built
+ Network looro-smoke_default  Creating
+ Network looro-smoke_default  Created
+ Volume "looro-smoke_smoke_data"  Creating
+ Volume "looro-smoke_smoke_data"  Created
+ Container looro-smoke-database-1  Creating
+ Container looro-smoke-database-1  Created
+ Container looro-smoke-migrate-1  Creating
+ Container looro-smoke-migrate-1  Created
+ Container looro-smoke-api-1  Creating
+ Container looro-smoke-api-1  Created
+ Container looro-smoke-database-1  Starting
+ Container looro-smoke-database-1  Started
+ Container looro-smoke-database-1  Waiting
+ Container looro-smoke-database-1  Healthy
+ Container looro-smoke-migrate-1  Starting
+ Container looro-smoke-migrate-1  Started
+ Container looro-smoke-migrate-1  Waiting
+ Container looro-smoke-migrate-1  Exited
+ Container looro-smoke-api-1  Starting
+ Container looro-smoke-api-1  Started
+docker compose --project-directory /home/joaquin/Proyectos/looro-test/looro-worktrees/weekly-exam-recovery/services/api/tests -p looro-smoke -f /home/joaquin/Proyectos/looro-test/looro-worktrees/weekly-exam-recovery/services/api/tests/compose.smoke.yaml run --rm tests
+ Container looro-smoke-database-1  Running
+TAP version 13
+# Subtest: access requests require explicit activation and separate secrets; local origins are exact loopback only
+ok 1 - access requests require explicit activation and separate secrets; local origins are exact loopback only
+  ---
+  duration_ms: 77.541357
+  type: 'test'
+  ...
+# Subtest: email normalization accepts ordinary plus addresses and rejects unsafe or unsupported forms
+ok 2 - email normalization accepts ordinary plus addresses and rejects unsafe or unsupported forms
+  ---
+  duration_ms: 9.295603
+  type: 'test'
+  ...
+# Subtest: disabled access endpoint fails closed without database work
+ok 3 - disabled access endpoint fails closed without database work
+  ---
+  duration_ms: 152.690596
+  type: 'test'
+  ...
+# Subtest: HTTP access creation and duplicate refresh have identical generic responses and retain only declared fields
+ok 4 - HTTP access creation and duplicate refresh have identical generic responses and retain only declared fields
+  ---
+  duration_ms: 66.18032
+  type: 'test'
+  ...
+# Subtest: origin and preflight rules run before parsing or storing body data
+ok 5 - origin and preflight rules run before parsing or storing body data
+  ---
+  duration_ms: 39.484849
+  type: 'test'
+  ...
+# Subtest: invalid schema, consent, source, JSON, media type and oversized bodies never persist
+ok 6 - invalid schema, consent, source, JSON, media type and oversized bodies never persist
+  ---
+  duration_ms: 44.382643
+  type: 'test'
+  ...
+# Subtest: spoofed forwarding headers cannot replace the proxy secret; IPv6 address variants share one limit
+ok 7 - spoofed forwarding headers cannot replace the proxy secret; IPv6 address variants share one limit
+  ---
+  duration_ms: 69.274854
+  type: 'test'
+  ...
+# Subtest: durable rate limits survive app instances, commit rejected attempts, and allow other addresses
+ok 8 - durable rate limits survive app instances, commit rejected attempts, and allow other addresses
+  ---
+  duration_ms: 89.663237
+  type: 'test'
+  ...
+# Subtest: simultaneous submissions respect per-address allowance and deduplicate atomically
+ok 9 - simultaneous submissions respect per-address allowance and deduplicate atomically
+  ---
+  duration_ms: 78.754592
+  type: 'test'
+  ...
+# Subtest: network rejections cannot drain shared waitlist quotas, including concurrent attempts at the last allowance
+ok 10 - network rejections cannot drain shared waitlist quotas, including concurrent attempts at the last allowance
+  ---
+  duration_ms: 204.861058
+  type: 'test'
+  ...
+# Subtest: an exhausted waitlist hour does not consume the next hours daily allowance
+ok 11 - an exhausted waitlist hour does not consume the next hours daily allowance
+  ---
+  duration_ms: 63.945492
+  type: 'test'
+  ...
+# Subtest: honeypot returns success without storing email and still consumes the abuse budget
+ok 12 - honeypot returns success without storing email and still consumes the abuse budget
+  ---
+  duration_ms: 13.658113
+  type: 'test'
+  ...
+# Subtest: global request and daily signup caps stop distinct addresses without leaking existing membership
+ok 13 - global request and daily signup caps stop distinct addresses without leaking existing membership
+  ---
+  duration_ms: 37.036161
+  type: 'test'
+  ...
+# Subtest: storage cap remains bounded under concurrent requests
+ok 14 - storage cap remains bounded under concurrent requests
+  ---
+  duration_ms: 676.781078
+  type: 'test'
+  ...
+# Subtest: launch traffic above the old daily and hourly limits can still join without resetting counters
+ok 15 - launch traffic above the old daily and hourly limits can still join without resetting counters
+  ---
+  duration_ms: 55.532
+  type: 'test'
+  ...
+# Subtest: private export excludes expired rows, protects file permissions, and deletion and pruning are idempotent
+ok 16 - private export excludes expired rows, protects file permissions, and deletion and pruning are idempotent
+  ---
+  duration_ms: 35.058069
+  type: 'test'
+  ...
+# Subtest: database errors return a generic unavailable response without input or database detail
+ok 17 - database errors return a generic unavailable response without input or database detail
+  ---
+  duration_ms: 34.747642
+  type: 'test'
+  ...
+# Subtest: closeout inspection rejects invalid selectors before accessing the database
+ok 18 - closeout inspection rejects invalid selectors before accessing the database
+  ---
+  duration_ms: 2.472074
+  type: 'test'
+  ...
+# Subtest: support closeout report exposes no signup identity and does not mutate the account
+ok 19 - support closeout report exposes no signup identity and does not mutate the account
+  ---
+  duration_ms: 1195.46448
+  type: 'test'
+  ...
+# Subtest: support closeout report distinguishes spend, debt and retained holds without changing them
+ok 20 - support closeout report distinguishes spend, debt and retained holds without changing them
+  ---
+  duration_ms: 964.125532
+  type: 'test'
+  ...
+# Subtest: support closeout report identifies receiptless orders and distinguishes confirmed full reversal
+ok 21 - support closeout report identifies receiptless orders and distinguishes confirmed full reversal
+  ---
+  duration_ms: 1023.707401
+  type: 'test'
+  ...
+# Subtest: accounts remain disabled without an explicit switch and independent valid secrets
+ok 22 - accounts remain disabled without an explicit switch and independent valid secrets
+  ---
+  duration_ms: 20.683332
+  type: 'test'
+  ...
+# Subtest: disabled account routes reject before database access and advertise no sign-in providers
+ok 23 - disabled account routes reject before database access and advertise no sign-in providers
+  ---
+  duration_ms: 104.921676
+  type: 'test'
+  ...
+# Subtest: signed Google HTTP signup reads the same profile from PostgreSQL, signs out, signs in again and completely deletes the empty account
+ok 24 - signed Google HTTP signup reads the same profile from PostgreSQL, signs out, signs in again and completely deletes the empty account
+  ---
+  duration_ms: 154.857403
+  type: 'test'
+  ...
+# Subtest: Android-only configuration signs the same Google subject into its existing iPhone account
+ok 25 - Android-only configuration signs the same Google subject into its existing iPhone account
+  ---
+  duration_ms: 64.109948
+  type: 'test'
+  ...
+# Subtest: conversation recovery renews only its owner without creating or signing out another account
+ok 26 - conversation recovery renews only its owner without creating or signing out another account
+  ---
+  duration_ms: 110.247807
+  type: 'test'
+  ...
+# Subtest: Apple HTTP signup stays blocked without revocation support; enabled test adapter revokes before deletion
+ok 27 - Apple HTTP signup stays blocked without revocation support; enabled test adapter revokes before deletion
+  ---
+  duration_ms: 78.911213
+  type: 'test'
+  ...
+# Subtest: sign-in keeps at most ten active sessions and refreshes verified email without changing identity
+ok 28 - sign-in keeps at most ten active sessions and refreshes verified email without changing identity
+  ---
+  duration_ms: 146.723113
+  type: 'test'
+  ...
+# Subtest: concurrent signup for the same subject creates one account and wallet, while challenge replay stays single-use
+ok 29 - concurrent signup for the same subject creates one account and wallet, while challenge replay stays single-use
+  ---
+  duration_ms: 77.709147
+  type: 'test'
+  ...
+# Subtest: new and existing subjects can sign in after ten thousand active accounts
+ok 30 - new and existing subjects can sign in after ten thousand active accounts
+  ---
+  duration_ms: 12999.866082
+  type: 'test'
+  ...
+# Subtest: revoked sessions cannot authorize a later delete, and a failed Apple revoke leaves the account intact
+ok 31 - revoked sessions cannot authorize a later delete, and a failed Apple revoke leaves the account intact
+  ---
+  duration_ms: 45.748372
+  type: 'test'
+  ...
+# Subtest: deleting an account with resolved financial history removes PII while retaining the immutable journal
+ok 32 - deleting an account with resolved financial history removes PII while retaining the immutable journal
+  ---
+  duration_ms: 36.597105
+  type: 'test'
+  ...
+# Subtest: auth quotas persist across instances, reject spoofed headers, and prune short-lived identifiers
+ok 33 - auth quotas persist across instances, reject spoofed headers, and prune short-lived identifiers
+  ---
+  duration_ms: 36.832471
+  type: 'test'
+  ...
+# Subtest: HTTP invalid tokens and unknown body fields never create identity records or reflect token content
+ok 34 - HTTP invalid tokens and unknown body fields never create identity records or reflect token content
+  ---
+  duration_ms: 52.453088
+  type: 'test'
+  ...
+# Subtest: the global challenge budget bounds distinct networks and returns a safe HTTP retry response
+ok 35 - the global challenge budget bounds distinct networks and returns a safe HTTP retry response
+  ---
+  duration_ms: 36.637527
+  type: 'test'
+  ...
+# Subtest: encoded auth routes share admission limits and reject missing trusted proxy headers before database handlers
+ok 36 - encoded auth routes share admission limits and reject missing trusted proxy headers before database handlers
+  ---
+  duration_ms: 42.293721
+  type: 'test'
+  ...
+# Subtest: concurrent requests rejected by one network cannot consume the last shared challenge allowance
+ok 37 - concurrent requests rejected by one network cannot consume the last shared challenge allowance
+  ---
+  duration_ms: 156.61493
+  type: 'test'
+  ...
+# Subtest: public read throttling uses authenticated client networks instead of the shared proxy socket
+ok 38 - public read throttling uses authenticated client networks instead of the shared proxy socket
+  ---
+  duration_ms: 52.406525
+  type: 'test'
+  ...
+# Subtest: welcome policy update writes both audits atomically and refuses stale versions
+ok 39 - welcome policy update writes both audits atomically and refuses stale versions
+  ---
+  duration_ms: 351.573655
+  type: 'test'
+  ...
+# Subtest: single-user campaigns prepare and apply grant audited minutes
+ok 40 - single-user campaigns prepare and apply grant audited minutes
+  ---
+  duration_ms: 197.010111
+  type: 'test'
+  ...
+# Subtest: waitlist deletion is audited and missing entries return 404
+ok 41 - waitlist deletion is audited and missing entries return 404
+  ---
+  duration_ms: 174.090845
+  type: 'test'
+  ...
+# Subtest: operator force close marks the session and the action is audited
+ok 42 - operator force close marks the session and the action is audited
+  ---
+  duration_ms: 181.429441
+  type: 'test'
+  ...
+# Subtest: write actions fail closed without the hosted service or a foreign origin
+ok 43 - write actions fail closed without the hosted service or a foreign origin
+  ---
+  duration_ms: 158.104363
+  type: 'test'
+  ...
+# Subtest: admin auth configuration validates secrets and origin
+ok 44 - admin auth configuration validates secrets and origin
+  ---
+  duration_ms: 71.47574
+  type: 'test'
+  ...
+# Subtest: password hashing uses scrypt with per-hash salt and constant comparison
+ok 45 - password hashing uses scrypt with per-hash salt and constant comparison
+  ---
+  duration_ms: 180.027487
+  type: 'test'
+  ...
+# Subtest: mutating admin routes reject foreign origins and accept exact or absent ones
+ok 46 - mutating admin routes reject foreign origins and accept exact or absent ones
+  ---
+  duration_ms: 12.267542
+  type: 'test'
+  ...
+# Subtest: disabled or missing admin surface fails closed
+ok 47 - disabled or missing admin surface fails closed
+  ---
+  duration_ms: 103.068927
+  type: 'test'
+  ...
+# Subtest: login registers a session cookie only for local administrators with valid credentials
+ok 48 - login registers a session cookie only for local administrators with valid credentials
+  ---
+  duration_ms: 434.362256
+  type: 'test'
+  ...
+# Subtest: challenges are single-use and malformed logins are refused
+ok 49 - challenges are single-use and malformed logins are refused
+  ---
+  duration_ms: 159.560271
+  type: 'test'
+  ...
+# Subtest: disabled administrators are refused and lose live sessions
+ok 50 - disabled administrators are refused and lose live sessions
+  ---
+  duration_ms: 216.97359
+  type: 'test'
+  ...
+# Subtest: only three live sessions survive and sign-out revokes
+ok 51 - only three live sessions survive and sign-out revokes
+  ---
+  duration_ms: 340.354793
+  type: 'test'
+  ...
+# Subtest: the session endpoint converts a bearer into the cookie form without new authority
+ok 52 - the session endpoint converts a bearer into the cookie form without new authority
+  ---
+  duration_ms: 123.384543
+  type: 'test'
+  ...
+# Subtest: admin and app tokens never cross the boundary
+ok 53 - admin and app tokens never cross the boundary
+  ---
+  duration_ms: 98.052056
+  type: 'test'
+  ...
+# Subtest: admin admission limits are strict and return Retry-After
+ok 54 - admin admission limits are strict and return Retry-After
+  ---
+  duration_ms: 235.270161
+  type: 'test'
+  ...
+# Subtest: browse query builder rejects unknown tables, columns, operators and magnitudes
+ok 55 - browse query builder rejects unknown tables, columns, operators and magnitudes
+  ---
+  duration_ms: 208.718939
+  type: 'test'
+  ...
+# Subtest: every configured table is a plain declared table with whitelisted orderable columns
+ok 56 - every configured table is a plain declared table with whitelisted orderable columns
+  ---
+  duration_ms: 107.796431
+  type: 'test'
+  ...
+# Subtest: browse returns schema, totals, filters and ordered pages
+ok 57 - browse returns schema, totals, filters and ordered pages
+  ---
+  duration_ms: 281.229612
+  type: 'test'
+  ...
+# Subtest: browse injection battery stays literal or rejects
+ok 58 - browse injection battery stays literal or rejects
+  ---
+  duration_ms: 215.814453
+  type: 'test'
+  ...
+# Subtest: auth session browsing never exposes token hashes
+ok 59 - auth session browsing never exposes token hashes
+  ---
+  duration_ms: 143.811911
+  type: 'test'
+  ...
+# Subtest: metrics snapshot and timeseries summarize synthetic activity with zero-filled days
+ok 60 - metrics snapshot and timeseries summarize synthetic activity with zero-filled days
+  ---
+  duration_ms: 177.22153
+  type: 'test'
+  ...
+# Subtest: token-billing rows are browsable: entitlements, metering ledger and pack transactions
+ok 61 - token-billing rows are browsable: entitlements, metering ledger and pack transactions
+  ---
+  duration_ms: 213.628715
+  type: 'test'
+  ...
+# Subtest: unauthenticated browsing fails closed
+ok 62 - unauthenticated browsing fails closed
+  ---
+  duration_ms: 146.515637
+  type: 'test'
+  ...
+# Subtest: the usage timeseries set renders distinct daily actives per metric
+ok 63 - the usage timeseries set renders distinct daily actives per metric
+  ---
+  duration_ms: 154.877654
+  type: 'test'
+  ...
+# Subtest: usage overview derives KPIs, top features and signup-cohort retention
+ok 64 - usage overview derives KPIs, top features and signup-cohort retention
+  ---
+  duration_ms: 69.069945
+  type: 'test'
+  ...
+# Subtest: administrators are registered per provider subject and duplicates are refused
+ok 65 - administrators are registered per provider subject and duplicates are refused
+  ---
+  duration_ms: 86.691324
+  type: 'test'
+  ...
+# Subtest: invalid registrations are refused before any query matters
+ok 66 - invalid registrations are refused before any query matters
+  ---
+  duration_ms: 12.969838
+  type: 'test'
+  ...
+# Subtest: disabling an administrator revokes live sessions immediately
+ok 67 - disabling an administrator revokes live sessions immediately
+  ---
+  duration_ms: 27.692055
+  type: 'test'
+  ...
+# Subtest: admin action audit rows are append-only
+ok 68 - admin action audit rows are append-only
+  ---
+  duration_ms: 22.013579
+  type: 'test'
+  ...
+# Subtest: audit reasons are validated
+ok 69 - audit reasons are validated
+  ---
+  duration_ms: 17.117315
+  type: 'test'
+  ...
+# Subtest: a quote preserves the AI value and itemizes the configurable 15% fee
+ok 70 - a quote preserves the AI value and itemizes the configurable 15% fee
+  ---
+  duration_ms: 1.877421
+  type: 'test'
+  ...
+# Subtest: synthetic processing rates apply to the full charge and do not erode AI funds
+ok 71 - synthetic processing rates apply to the full charge and do not erode AI funds
+  ---
+  duration_ms: 0.194014
+  type: 'test'
+  ...
+# Subtest: rounding preserves every minor unit for small top-ups and percentage-based store fees
+ok 72 - rounding preserves every minor unit for small top-ups and percentage-based store fees
+  ---
+  duration_ms: 0.423234
+  type: 'test'
+  ...
+# Subtest: invalid rates and overflowing quotes cannot create offers
+ok 73 - invalid rates and overflowing quotes cannot create offers
+  ---
+  duration_ms: 1.235855
+  type: 'test'
+  ...
+# Subtest: display estimates depend on the stated usage rate and never change prepaid value
+ok 74 - display estimates depend on the stated usage rate and never change prepaid value
+  ---
+  duration_ms: 0.222858
+  type: 'test'
+  ...
+# Subtest: pricing changes are audited, versioned and leave previously calculated quotes intact
+ok 75 - pricing changes are audited, versioned and leave previously calculated quotes intact
+  ---
+  duration_ms: 963.869806
+  type: 'test'
+  ...
+# Subtest: AI quote computes only the reviewed allocation, separate fees and a conservative non-entitlement estimate
+ok 76 - AI quote computes only the reviewed allocation, separate fees and a conservative non-entitlement estimate
+  ---
+  duration_ms: 3.086061
+  type: 'test'
+  ...
+# Subtest: catalog rejects claimed nano, minute estimate or fee totals that differ from reviewed quote arithmetic
+ok 77 - catalog rejects claimed nano, minute estimate or fee totals that differ from reviewed quote arithmetic
+  ---
+  duration_ms: 1.679578
+  type: 'test'
+  ...
+# Subtest: partial refund reverses only the original AI allocation proportion, rounded once, never checkout fees
+ok 78 - partial refund reverses only the original AI allocation proportion, rounded once, never checkout fees
+  ---
+  duration_ms: 0.270571
+  type: 'test'
+  ...
+# Subtest: default-off AI sales and guest exclusion never create payable orders
+ok 79 - default-off AI sales and guest exclusion never create payable orders
+  ---
+  duration_ms: 973.589869
+  type: 'test'
+  ...
+# Subtest: immutable order snapshots survive fee changes and reject tampering or missing quote
+ok 80 - immutable order snapshots survive fee changes and reject tampering or missing quote
+  ---
+  duration_ms: 1067.699473
+  type: 'test'
+  ...
+# Subtest: unverified cash blocks both new checkout and pending checkout retries while existing receipts can resolve
+ok 81 - unverified cash blocks both new checkout and pending checkout retries while existing receipts can resolve
+  ---
+  duration_ms: 1031.862792
+  type: 'test'
+  ...
+# Subtest: the actual runtime role creates, fulfills and refunds AI orders without permission to edit pricing policy
+ok 82 - the actual runtime role creates, fulfills and refunds AI orders without permission to edit pricing policy
+  ---
+  duration_ms: 1265.883486
+  type: 'test'
+  ...
+# Subtest: verified purchase and concurrent replay add exact AI allocation once and no fixed minutes
+ok 83 - verified purchase and concurrent replay add exact AI allocation once and no fixed minutes
+  ---
+  duration_ms: 1081.688339
+  type: 'test'
+  ...
+# Subtest: pending, cancellation before fulfillment and late purchased event never create usable cash
+ok 84 - pending, cancellation before fulfillment and late purchased event never create usable cash
+  ---
+  duration_ms: 1020.770767
+  type: 'test'
+  ...
+# Subtest: partial and full refunds are cumulative and stale provider snapshots cannot restore AI value
+ok 85 - partial and full refunds are cumulative and stale provider snapshots cannot restore AI value
+  ---
+  duration_ms: 976.812109
+  type: 'test'
+  ...
+# Subtest: refund while reserved preserves the hold and later top-ups first repay actual AI debt
+ok 86 - refund while reserved preserves the hold and later top-ups first repay actual AI debt
+  ---
+  duration_ms: 961.839315
+  type: 'test'
+  ...
+# Subtest: sandbox value and sandbox refunds cannot fund public conversations or consume real value
+ok 87 - sandbox value and sandbox refunds cannot fund public conversations or consume real value
+  ---
+  duration_ms: 957.677747
+  type: 'test'
+  ...
+# Subtest: mismatched evidence and one receipt crossing historical and AI-value orders are rejected
+ok 88 - mismatched evidence and one receipt crossing historical and AI-value orders are rejected
+  ---
+  duration_ms: 988.261602
+  type: 'test'
+  ...
+# Subtest: same event identity with changed facts fails without modifying paid value
+ok 89 - same event identity with changed facts fails without modifying paid value
+  ---
+  duration_ms: 964.213958
+  type: 'test'
+  ...
+# Subtest: encrypted receipt and delivery retry use the shared router without granting the AI allocation twice
+ok 90 - encrypted receipt and delivery retry use the shared router without granting the AI allocation twice
+  ---
+  duration_ms: 907.453269
+  type: 'test'
+  ...
+# Subtest: legacy Stripe sandbox grants and refunds cannot become public paid funds after the schema upgrade
+ok 91 - legacy Stripe sandbox grants and refunds cannot become public paid funds after the schema upgrade
+  ---
+  duration_ms: 920.079597
+  type: 'test'
+  ...
+# Subtest: Apple deletion exchanges a fresh code, verifies its subject, signs ES256 client auth, then revokes refresh token
+ok 92 - Apple deletion exchanges a fresh code, verifies its subject, signs ES256 client auth, then revokes refresh token
+  ---
+  duration_ms: 16.582754
+  type: 'test'
+  ...
+# Subtest: Apple revocation key is validated before enabling Apple signup
+ok 93 - Apple revocation key is validated before enabling Apple signup
+  ---
+  duration_ms: 1.293314
+  type: 'test'
+  ...
+# Subtest: Apple tokens from a different account or audience cannot authorize deletion
+ok 94 - Apple tokens from a different account or audience cannot authorize deletion
+  ---
+  duration_ms: 6.000977
+  type: 'test'
+  ...
+# Subtest: Apple token exchange and revocation errors are safe and never treated as deletion success
+ok 95 - Apple token exchange and revocation errors are safe and never treated as deletion success
+  ---
+  duration_ms: 6.39731
+  type: 'test'
+  ...
+# Subtest: Google ID token signature, audience, issuer and nonce are verified
+ok 96 - Google ID token signature, audience, issuer and nonce are verified
+  ---
+  duration_ms: 15.455427
+  type: 'test'
+  ...
+# Subtest: signed tokens for another client or nonce are rejected
+ok 97 - signed tokens for another client or nonce are rejected
+  ---
+  duration_ms: 3.540937
+  type: 'test'
+  ...
+# Subtest: missing nonce and untrusted signatures are rejected
+ok 98 - missing nonce and untrusted signatures are rejected
+  ---
+  duration_ms: 45.784917
+  type: 'test'
+  ...
+# Subtest: Apple issuer is separate and email can use a private relay address
+ok 99 - Apple issuer is separate and email can use a private relay address
+  ---
+  duration_ms: 2.624307
+  type: 'test'
+  ...
+# Subtest: unverified email is not persisted as verified identity data
+ok 100 - unverified email is not persisted as verified identity data
+  ---
+  duration_ms: 2.180185
+  type: 'test'
+  ...
+# Subtest: expired and stale identity tokens are rejected
+ok 101 - expired and stale identity tokens are rejected
+  ---
+  duration_ms: 2.483672
+  type: 'test'
+  ...
+# Subtest: Google authorized party and multiple audiences cannot authorize another client
+ok 102 - Google authorized party and multiple audiences cannot authorize another client
+  ---
+  duration_ms: 5.362828
+  type: 'test'
+  ...
+# Subtest: Android Google tokens require their server audience and an allowlisted Android party
+ok 103 - Android Google tokens require their server audience and an allowlisted Android party
+  ---
+  duration_ms: 11.501218
+  type: 'test'
+  ...
+# Subtest: unexpected provider email content is never retained
+ok 104 - unexpected provider email content is never retained
+  ---
+  duration_ms: 5.03531
+  type: 'test'
+  ...
+# Subtest: combined balance preserves free time and excludes sandbox cash, holds and refunded value
+ok 105 - combined balance preserves free time and excludes sandbox cash, holds and refunded value
+  ---
+  duration_ms: 942.773696
+  type: 'test'
+  ...
+# Subtest: guest balance does not require a cash wallet or expose paid admission
+ok 106 - guest balance does not require a cash wallet or expose paid admission
+  ---
+  duration_ms: 868.360359
+  type: 'test'
+  ...
+# Subtest: concurrent reservations cannot overspend one wallet
+ok 107 - concurrent reservations cannot overspend one wallet
+  ---
+  duration_ms: 101.749886
+  type: 'test'
+  ...
+# Subtest: idempotent reserve and settle record one charge and release unused allowance
+ok 108 - idempotent reserve and settle record one charge and release unused allowance
+  ---
+  duration_ms: 40.736981
+  type: 'test'
+  ...
+# Subtest: over-reservation usage is rejected; release is idempotent
+ok 109 - over-reservation usage is rejected; release is idempotent
+  ---
+  duration_ms: 29.392979
+  type: 'test'
+  ...
+# Subtest: journal cannot be edited or deleted in PostgreSQL
+ok 110 - journal cannot be edited or deleted in PostgreSQL
+  ---
+  duration_ms: 14.137691
+  type: 'test'
+  ...
+# Subtest: duplicate webhook deliveries and distinct paid event IDs credit exactly once
+ok 111 - duplicate webhook deliveries and distinct paid event IDs credit exactly once
+  ---
+  duration_ms: 47.625781
+  type: 'test'
+  ...
+# Subtest: wrong amount and unpaid checkouts never fund a wallet
+ok 112 - wrong amount and unpaid checkouts never fund a wallet
+  ---
+  duration_ms: 16.961057
+  type: 'test'
+  ...
+# Subtest: refund before payment retries; partial/full refunds and paid replay cannot double-credit
+ok 113 - refund before payment retries; partial/full refunds and paid replay cannot double-credit
+  ---
+  duration_ms: 48.893123
+  type: 'test'
+  ...
+# Subtest: a chargeback after consumption makes the wallet unavailable without erasing history
+ok 114 - a chargeback after consumption makes the wallet unavailable without erasing history
+  ---
+  duration_ms: 39.706043
+  type: 'test'
+  ...
+# Subtest: nonce challenges are single-use and account sessions are revoked on deletion
+ok 115 - nonce challenges are single-use and account sessions are revoked on deletion
+  ---
+  duration_ms: 53.287488
+  type: 'test'
+  ...
+# Subtest: a signed raw HTTP webhook funds its mapped order and replay remains idempotent
+ok 116 - a signed raw HTTP webhook funds its mapped order and replay remains idempotent
+  ---
+  duration_ms: 129.624255
+  type: 'test'
+  ...
+# Subtest: different provider subjects with the same email remain separate accounts
+ok 117 - different provider subjects with the same email remain separate accounts
+  ---
+  duration_ms: 23.096941
+  type: 'test'
+  ...
+# Subtest: checkout retries retrieve the mapped session after Stripe idempotency expiry
+ok 118 - checkout retries retrieve the mapped session after Stripe idempotency expiry
+  ---
+  duration_ms: 26.113762
+  type: 'test'
+  ...
+# Subtest: checkout disables adaptive currency pricing so the quoted USD amount stays fixed
+ok 119 - checkout disables adaptive currency pricing so the quoted USD amount stays fixed
+  ---
+  duration_ms: 19.55869
+  type: 'test'
+  ...
+# Subtest: expired mapped checkout and old uncertain creates never create another payable session
+ok 120 - expired mapped checkout and old uncertain creates never create another payable session
+  ---
+  duration_ms: 20.912392
+  type: 'test'
+  ...
+# Subtest: account deletion preserves pending payments and funded value; deleted accounts cannot reserve or buy
+ok 121 - account deletion preserves pending payments and funded value; deleted accounts cannot reserve or buy
+  ---
+  duration_ms: 39.37908
+  type: 'test'
+  ...
+# Subtest: a newly created checkout whose mapping conflicts is expired and never returned
+ok 122 - a newly created checkout whose mapping conflicts is expired and never returned
+  ---
+  duration_ms: 18.585595
+  type: 'test'
+  ...
+# Subtest: racing checkout creation and deletion cannot leave a payable order on a deleted account
+ok 123 - racing checkout creation and deletion cannot leave a payable order on a deleted account
+  ---
+  duration_ms: 18.077559
+  type: 'test'
+  ...
+# Subtest: HTTP reporting is unavailable by default and advertises no capability
+ok 124 - HTTP reporting is unavailable by default and advertises no capability
+  ---
+  duration_ms: 179.177985
+  type: 'test'
+  ...
+# Subtest: HTTP capability does not require an account and report failures never expose database details
+ok 125 - HTTP capability does not require an account and report failures never expose database details
+  ---
+  duration_ms: 40.177241
+  type: 'test'
+  ...
+# Subtest: HTTP accepts only deliberate preview fields and returns a receipt without text or identity
+ok 126 - HTTP accepts only deliberate preview fields and returns a receipt without text or identity
+  ---
+  duration_ms: 45.340581
+  type: 'test'
+  ...
+# Subtest: HTTP rejects invented proxy identities and ignores untrusted forwarded addresses
+ok 127 - HTTP rejects invented proxy identities and ignores untrusted forwarded addresses
+  ---
+  duration_ms: 47.090078
+  type: 'test'
+  ...
+# Subtest: HTTP rejects extra history, identity, credentials, missing consent and overlong excerpts
+ok 128 - HTTP rejects extra history, identity, credentials, missing consent and overlong excerpts
+  ---
+  duration_ms: 30.750143
+  type: 'test'
+  ...
+# Subtest: HTTP applies its smaller body limit and rejects malformed JSON before storing a report
+ok 129 - HTTP applies its smaller body limit and rejects malformed JSON before storing a report
+  ---
+  duration_ms: 30.414071
+  type: 'test'
+  ...
+# Subtest: HTTP explicit retry is idempotent while durable limits survive app recreation and encoded routes
+ok 130 - HTTP explicit retry is idempotent while durable limits survive app recreation and encoded routes
+  ---
+  duration_ms: 97.971002
+  type: 'test'
+  ...
+# Subtest: reporting requires explicit activation and distinct protected secrets
+ok 131 - reporting requires explicit activation and distinct protected secrets
+  ---
+  duration_ms: 51.552159
+  type: 'test'
+  ...
+# Subtest: disabled reporting and invalid network identity fail before database work
+ok 132 - disabled reporting and invalid network identity fail before database work
+  ---
+  duration_ms: 9.751809
+  type: 'test'
+  ...
+# Subtest: reports accept only bounded selected text, known reasons and explicit consent
+ok 133 - reports accept only bounded selected text, known reasons and explicit consent
+  ---
+  duration_ms: 10.628464
+  type: 'test'
+  ...
+# Subtest: common provider, bearer, JWT and Palique token shapes are rejected without reflecting them
+ok 134 - common provider, bearer, JWT and Palique token shapes are rejected without reflecting them
+  ---
+  duration_ms: 8.033259
+  type: 'test'
+  ...
+# Subtest: network reference comes from a trusted proxy and rotates daily without storing an IP
+ok 135 - network reference comes from a trusted proxy and rotates daily without storing an IP
+  ---
+  duration_ms: 8.921028
+  type: 'test'
+  ...
+# Subtest: deliberate report stores only previewed fields with fixed thirty-day expiry
+ok 136 - deliberate report stores only previewed fields with fixed thirty-day expiry
+  ---
+  duration_ms: 21.944311
+  type: 'test'
+  ...
+# Subtest: explicit retry is idempotent and never returns or replaces existing content
+ok 137 - explicit retry is idempotent and never returns or replaces existing content
+  ---
+  duration_ms: 24.0743
+  type: 'test'
+  ...
+# Subtest: persistent network limit survives service instances and denied attempts preserve other networks quota
+ok 138 - persistent network limit survives service instances and denied attempts preserve other networks quota
+  ---
+  duration_ms: 53.005179
+  type: 'test'
+  ...
+# Subtest: global hourly quota admits at most its final slot under concurrent distinct networks
+ok 139 - global hourly quota admits at most its final slot under concurrent distinct networks
+  ---
+  duration_ms: 67.518168
+  type: 'test'
+  ...
+# Subtest: daily network and global quotas remain independent of hourly limits
+ok 140 - daily network and global quotas remain independent of hourly limits
+  ---
+  duration_ms: 34.495649
+  type: 'test'
+  ...
+# Subtest: retention cleanup deletes only expired reports and counters
+ok 141 - retention cleanup deletes only expired reports and counters
+  ---
+  duration_ms: 28.369211
+  type: 'test'
+  ...
+# Subtest: runtime submits without reading reports and can only prune expired content
+ok 142 - runtime submits without reading reports and can only prune expired content
+  ---
+  duration_ms: 99.906881
+  type: 'test'
+  ...
+# Subtest: review view stays inaccessible after default privileges and broad grant refreshes
+ok 143 - review view stays inaccessible after default privileges and broad grant refreshes
+  ---
+  duration_ms: 117.919078
+  type: 'test'
+  ...
+# Subtest: guest access needs no signup identity and cannot access member-only operations
+ok 144 - guest access needs no signup identity and cannot access member-only operations
+  ---
+  duration_ms: 955.547658
+  type: 'test'
+  ...
+# Subtest: guests can read their minutes without a configured signup provider
+ok 145 - guests can read their minutes without a configured signup provider
+  ---
+  duration_ms: 1049.655205
+  type: 'test'
+  ...
+# Subtest: concurrent guest retries resume one allowance rather than issuing another
+ok 146 - concurrent guest retries resume one allowance rather than issuing another
+  ---
+  duration_ms: 1031.089213
+  type: 'test'
+  ...
+# Subtest: signing in preserves remaining guest time exactly once and retires guest access
+ok 147 - signing in preserves remaining guest time exactly once and retires guest access
+  ---
+  duration_ms: 933.769918
+  type: 'test'
+  ...
+# Subtest: linking waits for the funded guest conversation to settle and never loses its hold
+ok 148 - linking waits for the funded guest conversation to settle and never loses its hold
+  ---
+  duration_ms: 921.052303
+  type: 'test'
+  ...
+# Subtest: a guest grant cannot be stolen by another member or stacked with a second trial
+ok 149 - a guest grant cannot be stolen by another member or stacked with a second trial
+  ---
+  duration_ms: 927.467193
+  type: 'test'
+  ...
+# Subtest: guest and signed-in welcome claims consume the same allocation budget
+ok 150 - guest and signed-in welcome claims consume the same allocation budget
+  ---
+  duration_ms: 938.262825
+  type: 'test'
+  ...
+# Subtest: all-user campaigns target registered accounts, not anonymous trial records
+ok 151 - all-user campaigns target registered accounts, not anonymous trial records
+  ---
+  duration_ms: 986.842368
+  type: 'test'
+  ...
+# Subtest: deferred ownership survives guest expiry, isolates members, preserves holds and finalizes once
+ok 152 - deferred ownership survives guest expiry, isolates members, preserves holds and finalizes once
+  ---
+  duration_ms: 1077.950603
+  type: 'test'
+  ...
+# Subtest: two members racing to bind one guest cannot reassign ownership or duplicate transfer
+ok 153 - two members racing to bind one guest cannot reassign ownership or duplicate transfer
+  ---
+  duration_ms: 1039.037743
+  type: 'test'
+  ...
+# Subtest: welcome claims racing a deferred binding never stack a second allowance on that member
+ok 154 - welcome claims racing a deferred binding never stack a second allowance on that member
+  ---
+  duration_ms: 966.383181
+  type: 'test'
+  ...
+# Subtest: background finalization is bounded, skips unsettled guests, and handles multiple bindings without stacking
+ok 155 - background finalization is bounded, skips unsettled guests, and handles multiple bindings without stacking
+  ---
+  duration_ms: 1058.977508
+  type: 'test'
+  ...
+# Subtest: member sign-out preserves deferred ownership and deletion never receives a late grant
+ok 156 - member sign-out preserves deferred ownership and deletion never receives a late grant
+  ---
+  duration_ms: 1067.19909
+  type: 'test'
+  ...
+# Subtest: tokenless recovery is bound to the requested guest across multiple devices
+ok 157 - tokenless recovery is bound to the requested guest across multiple devices
+  ---
+  duration_ms: 1127.82706
+  type: 'test'
+  ...
+# Subtest: an expired bearer without an accepted binding cannot link until the same installation resumes
+ok 158 - an expired bearer without an accepted binding cannot link until the same installation resumes
+  ---
+  duration_ms: 1045.607442
+  type: 'test'
+  ...
+# Subtest: helper input allows only bounded transient teaching fields and the Android schema subset
+ok 159 - helper input allows only bounded transient teaching fields and the Android schema subset
+  ---
+  duration_ms: 660.663138
+  type: 'test'
+  ...
+# Subtest: helper body fixes provider, persistence, tier, output and tools independently of the caller
+ok 160 - helper body fixes provider, persistence, tier, output and tools independently of the caller
+  ---
+  duration_ms: 98.631145
+  type: 'test'
+  ...
+# Subtest: scenario review rides the assessment schema path without opening search
+ok 161 - scenario review rides the assessment schema path without opening search
+  ---
+  duration_ms: 117.868014
+  type: 'test'
+  ...
+# Subtest: helper pricing handles cache reads, cache writes and the long-context threshold
+ok 162 - helper pricing handles cache reads, cache writes and the long-context threshold
+  ---
+  duration_ms: 106.163408
+  type: 'test'
+  ...
+# Subtest: helper configuration has no implicit launch budget and fails closed outside the allowlist
+ok 163 - helper configuration has no implicit launch budget and fails closed outside the allowlist
+  ---
+  duration_ms: 100.53539
+  type: 'test'
+  ...
+# Subtest: helper funding and one-shot attempt are committed before the provider call, with no content stored
+ok 164 - helper funding and one-shot attempt are committed before the provider call, with no content stored
+  ---
+  duration_ms: 147.287631
+  type: 'test'
+  ...
+# Subtest: ownership, deleted accounts and a reversed minute reservation cannot authorize a provider call
+ok 165 - ownership, deleted accounts and a reversed minute reservation cannot authorize a provider call
+  ---
+  duration_ms: 154.764196
+  type: 'test'
+  ...
+# Subtest: dollar-funded voice sessions cannot use minute-funded helpers
+ok 166 - dollar-funded voice sessions cannot use minute-funded helpers
+  ---
+  duration_ms: 127.879887
+  type: 'test'
+  ...
+# Subtest: duplicate IDs across concurrent controllers can never create a second provider charge
+ok 167 - duplicate IDs across concurrent controllers can never create a second provider charge
+  ---
+  duration_ms: 165.172762
+  type: 'test'
+  ...
+# Subtest: session helper budget and limits are immutable when later configuration changes
+ok 168 - session helper budget and limits are immutable when later configuration changes
+  ---
+  duration_ms: 152.503598
+  type: 'test'
+  ...
+# Subtest: voice admission reserves a fixed helper budget before provider setup and adopts the actual activation deadline once
+ok 169 - voice admission reserves a fixed helper budget before provider setup and adopts the actual activation deadline once
+  ---
+  duration_ms: 232.704404
+  type: 'test'
+  ...
+# Subtest: a helper reservation participates in the caller transaction rollback
+ok 170 - a helper reservation participates in the caller transaction rollback
+  ---
+  duration_ms: 136.196511
+  type: 'test'
+  ...
+# Subtest: concurrent session budgets share the same aggregate funding cap atomically
+ok 171 - concurrent session budgets share the same aggregate funding cap atomically
+  ---
+  duration_ms: 161.024128
+  type: 'test'
+  ...
+# Subtest: concurrency and search counts are persistent while actual settled cost releases per-request room
+ok 172 - concurrency and search counts are persistent while actual settled cost releases per-request room
+  ---
+  duration_ms: 153.784055
+  type: 'test'
+  ...
+# Subtest: small helper allowance cannot make an unfunded search request
+ok 173 - small helper allowance cannot make an unfunded search request
+  ---
+  duration_ms: 126.594077
+  type: 'test'
+  ...
+# Subtest: global concurrency is enforced across distinct owners and controller instances
+ok 174 - global concurrency is enforced across distinct owners and controller instances
+  ---
+  duration_ms: 172.333721
+  type: 'test'
+  ...
+# Subtest: uncertain attempts are never retried and retain funding after their active concurrency deadline
+ok 175 - uncertain attempts are never retried and retain funding after their active concurrency deadline
+  ---
+  duration_ms: 185.517021
+  type: 'test'
+  ...
+# Subtest: provider timeout aborts once and leaves a durable uncertain hold
+ok 176 - provider timeout aborts once and leaves a durable uncertain hold
+  ---
+  duration_ms: 172.98856
+  type: 'test'
+  ...
+# Subtest: malformed provider usage cannot release funding; known refusals and incomplete outputs settle only trusted usage
+ok 177 - malformed provider usage cannot release funding; known refusals and incomplete outputs settle only trusted usage
+  ---
+  duration_ms: 192.138967
+  type: 'test'
+  ...
+# Subtest: provider limit violations record the actual liability and stop new helper admissions
+ok 178 - provider limit violations record the actual liability and stop new helper admissions
+  ---
+  duration_ms: 169.480249
+  type: 'test'
+  ...
+# Subtest: meaning, lookup, final assessment and scenario review work briefly after close; new conversation work does not
+ok 179 - meaning, lookup, final assessment and scenario review work briefly after close; new conversation work does not
+  ---
+  duration_ms: 215.348759
+  type: 'test'
+  ...
+# Subtest: post-conversation access ends at its original window even when a new gateway raises the setting
+ok 180 - post-conversation access ends at its original window even when a new gateway raises the setting
+  ---
+  duration_ms: 226.564206
+  type: 'test'
+  ...
+# Subtest: expiry frees unused budget but keeps settled cost and unresolved holds
+ok 181 - expiry frees unused budget but keeps settled cost and unresolved holds
+  ---
+  duration_ms: 167.902803
+  type: 'test'
+  ...
+# Subtest: helper runtime privileges allow settlement but forbid rewriting budgets, attempts or entitlements
+ok 182 - helper runtime privileges allow settlement but forbid rewriting budgets, attempts or entitlements
+  ---
+  duration_ms: 309.232939
+  type: 'test'
+  ...
+# Subtest: earned helpers cannot front-load a ten-minute reservation and grow only from authoritative voice time
+ok 183 - earned helpers cannot front-load a ten-minute reservation and grow only from authoritative voice time
+  ---
+  duration_ms: 176.706372
+  type: 'test'
+  ...
+# Subtest: earned request limits persist across gateways and do not borrow unconsumed voice time
+ok 184 - earned request limits persist across gateways and do not borrow unconsumed voice time
+  ---
+  duration_ms: 197.513719
+  type: 'test'
+  ...
+# Subtest: earned request retry metadata uses the persisted policy and never records a rejected attempt
+ok 185 - earned request retry metadata uses the persisted policy and never records a rejected attempt
+  ---
+  duration_ms: 190.392139
+  type: 'test'
+  ...
+# Subtest: twenty-four shared requests per minute retain the same earned dollar budget
+ok 186 - twenty-four shared requests per minute retain the same earned dollar budget
+  ---
+  duration_ms: 201.027109
+  type: 'test'
+  ...
+# Subtest: confirmed close makes an exhausted earned request allowance non-retryable
+ok 187 - confirmed close makes an exhausted earned request allowance non-retryable
+  ---
+  duration_ms: 163.539582
+  type: 'test'
+  ...
+# Subtest: earned request retry is withheld when the active deadline cannot accommodate new capacity
+ok 188 - earned request retry is withheld when the active deadline cannot accommodate new capacity
+  ---
+  duration_ms: 154.177326
+  type: 'test'
+  ...
+# Subtest: final count and search ceilings never advise waiting for more voice time
+ok 189 - final count and search ceilings never advise waiting for more voice time
+  ---
+  duration_ms: 177.592711
+  type: 'test'
+  ...
+# Subtest: helper admission retry delay rejects unbounded or malformed values
+ok 190 - helper admission retry delay rejects unbounded or malformed values
+  ---
+  duration_ms: 99.772021
+  type: 'test'
+  ...
+# Subtest: sub-minimum residues cannot spend the full fifteen-second helper allowance
+ok 191 - sub-minimum residues cannot spend the full fifteen-second helper allowance
+  ---
+  duration_ms: 131.344243
+  type: 'test'
+  ...
+# Subtest: final close and expiry preserve pending and uncertain earned-helper costs without refreshing their window
+ok 192 - final close and expiry preserve pending and uncertain earned-helper costs without refreshing their window
+  ---
+  duration_ms: 149.524486
+  type: 'test'
+  ...
+# Subtest: hosted HTTP routes advertise no usable conversation path without both configured services
+ok 193 - hosted HTTP routes advertise no usable conversation path without both configured services
+  ---
+  duration_ms: 161.52016
+  type: 'test'
+  ...
+# Subtest: hosted HTTP authenticates guest ownership, recovers uncertain sessions and bounds helper bodies
+ok 194 - hosted HTTP authenticates guest ownership, recovers uncertain sessions and bounds helper bodies
+  ---
+  duration_ms: 999.219698
+  type: 'test'
+  ...
+# Subtest: paid admission defaults off and cannot spend sandbox or unreviewed cash
+ok 195 - paid admission defaults off and cannot spend sandbox or unreviewed cash
+  ---
+  duration_ms: 718.413911
+  type: 'test'
+  ...
+# Subtest: paid sessions require a member even if a guest has a cash wallet
+ok 196 - paid sessions require a member even if a guest has a cash wallet
+  ---
+  duration_ms: 123.907736
+  type: 'test'
+  ...
+# Subtest: free minutes are selected before paid value and never convert mid-conversation
+ok 197 - free minutes are selected before paid value and never convert mid-conversation
+  ---
+  duration_ms: 260.908716
+  type: 'test'
+  ...
+# Subtest: paid limits accept one to sixty minutes and use fifteen minutes by default
+ok 198 - paid limits accept one to sixty minutes and use fifteen minutes by default
+  ---
+  duration_ms: 241.108908
+  type: 'test'
+  ...
+# Subtest: a small funded balance shrinks the paid duration and exposes the minimum hold
+ok 199 - a small funded balance shrinks the paid duration and exposes the minimum hold
+  ---
+  duration_ms: 215.073211
+  type: 'test'
+  ...
+# Subtest: known voice and helper usage debit their exact separate costs and release unused holds
+ok 200 - known voice and helper usage debit their exact separate costs and release unused holds
+  ---
+  duration_ms: 245.234323
+  type: 'test'
+  ...
+# Subtest: unknown helper usage keeps only its request hold after the voice and helper window end
+ok 201 - unknown helper usage keeps only its request hold after the voice and helper window end
+  ---
+  duration_ms: 235.531094
+  type: 'test'
+  ...
+# Subtest: late known helper completion after expiry releases its unused hold without reopening the pool
+ok 202 - late known helper completion after expiry releases its unused hold without reopening the pool
+  ---
+  duration_ms: 227.781298
+  type: 'test'
+  ...
+# Subtest: cash refunds stop the call and deny new helpers while sandbox refunds cannot consume paid backing
+ok 203 - cash refunds stop the call and deny new helpers while sandbox refunds cannot consume paid backing
+  ---
+  duration_ms: 236.879292
+  type: 'test'
+  ...
+# Subtest: uncertain paid creation keeps its voice hold and cannot start a replacement
+ok 204 - uncertain paid creation keeps its voice hold and cannot start a replacement
+  ---
+  duration_ms: 142.380253
+  type: 'test'
+  ...
+# Subtest: cancellation before the provider boundary releases both paid holds without charging
+ok 205 - cancellation before the provider boundary releases both paid holds without charging
+  ---
+  duration_ms: 162.645659
+  type: 'test'
+  ...
+# Subtest: voice overrun preserves the authorized hold and records actual cost for reconciliation
+ok 206 - voice overrun preserves the authorized hold and records actual cost for reconciliation
+  ---
+  duration_ms: 197.156225
+  type: 'test'
+  ...
+# Subtest: helper overrun preserves its hold and records authoritative counters without charging beyond it
+ok 207 - helper overrun preserves its hold and records authoritative counters without charging beyond it
+  ---
+  duration_ms: 176.947505
+  type: 'test'
+  ...
+# Subtest: paid funding mode, duration and helper reservation bindings are immutable
+ok 208 - paid funding mode, duration and helper reservation bindings are immutable
+  ---
+  duration_ms: 210.552302
+  type: 'test'
+  ...
+# Subtest: a refused helper answer still settles its verified provider cost exactly once
+ok 209 - a refused helper answer still settles its verified provider cost exactly once
+  ---
+  duration_ms: 205.850179
+  type: 'test'
+  ...
+# Subtest: the restricted runtime settles paid helpers while provenance and funding history stay protected
+ok 210 - the restricted runtime settles paid helpers while provenance and funding history stay protected
+  ---
+  duration_ms: 443.18649
+  type: 'test'
+  ...
+# Subtest: a legacy cash experiment quarantines only its owner before a later public paid deployment
+ok 211 - a legacy cash experiment quarantines only its owner before a later public paid deployment
+  ---
+  duration_ms: 177.634719
+  type: 'test'
+  ...
+# Subtest: a pending guest transfer cannot freeze the verified member paid wallet or change its charge
+ok 212 - a pending guest transfer cannot freeze the verified member paid wallet or change its charge
+  ---
+  duration_ms: 268.900345
+  type: 'test'
+  ...
+# Subtest: helper transport pins the provider destination and forwards cancellation without retries
+ok 213 - helper transport pins the provider destination and forwards cancellation without retries
+  ---
+  duration_ms: 28.038764
+  type: 'test'
+  ...
+# Subtest: helper transport rejects oversized and failed responses without leaking bodies or retrying
+ok 214 - helper transport rejects oversized and failed responses without leaking bodies or retrying
+  ---
+  duration_ms: 4.473436
+  type: 'test'
+  ...
+# Subtest: operator recovery restores only the hold, retains unknown cost and exposure, and is idempotent
+ok 215 - operator recovery restores only the hold, retains unknown cost and exposure, and is idempotent
+  ---
+  duration_ms: 996.995418
+  type: 'test'
+  ...
+# Subtest: operator recovery refuses fresh, observed, provider-identified, or mismatched sessions
+ok 216 - operator recovery refuses fresh, observed, provider-identified, or mismatched sessions
+  ---
+  duration_ms: 934.861143
+  type: 'test'
+  ...
+# Subtest: runtime role cannot invoke support recovery or alter its audit records
+ok 217 - runtime role cannot invoke support recovery or alter its audit records
+  ---
+  duration_ms: 964.694833
+  type: 'test'
+  ...
+# Subtest: minute admission reserves helpers before any provider call and rolls back an unfunded conversation
+ok 218 - minute admission reserves helpers before any provider call and rolls back an unfunded conversation
+  ---
+  duration_ms: 1017.62682
+  type: 'test'
+  ...
+# Subtest: sign-out records a durable stop before revocation so a discarded bearer cannot strand live audio
+ok 219 - sign-out records a durable stop before revocation so a discarded bearer cannot strand live audio
+  ---
+  duration_ms: 1056.970198
+  type: 'test'
+  ...
+# Subtest: voice admission counts existing helper liability and activates its original budget with the real deadline
+ok 220 - voice admission counts existing helper liability and activates its original budget with the real deadline
+  ---
+  duration_ms: 1034.501588
+  type: 'test'
+  ...
+# Subtest: real HTTP/WebSocket adapter meters snapshots once, releases hold, and retains no conversation content
+ok 221 - real HTTP/WebSocket adapter meters snapshots once, releases hold, and retains no conversation content
+  ---
+  duration_ms: 1033.191931
+  type: 'test'
+  ...
+# Subtest: concurrent starts and a second worker cannot create duplicate funded sessions
+ok 222 - concurrent starts and a second worker cannot create duplicate funded sessions
+  ---
+  duration_ms: 978.493923
+  type: 'test'
+  ...
+# Subtest: 600-second deadline forces close and HTTP fallback; missing final usage keeps hold and blocks further funding
+ok 223 - 600-second deadline forces close and HTTP fallback; missing final usage keeps hold and blocks further funding
+  ---
+  duration_ms: 1066.02998
+  type: 'test'
+  ...
+# Subtest: recovery reattaches the saved provider ID and closes without creating again
+ok 224 - recovery reattaches the saved provider ID and closes without creating again
+  ---
+  duration_ms: 1096.28995
+  type: 'test'
+  ...
+# Subtest: a refund during speech triggers closure and reconciles usage without restoring reversed credits
+ok 225 - a refund during speech triggers closure and reconciles usage without restoring reversed credits
+  ---
+  duration_ms: 985.320536
+  type: 'test'
+  ...
+# Subtest: sideband loss never accepts client usage or releases the reservation on an HTTP hangup alone
+ok 226 - sideband loss never accepts client usage or releases the reservation on an HTTP hangup alone
+  ---
+  duration_ms: 1086.121024
+  type: 'test'
+  ...
+# Subtest: operator allowlist and lifetime funding cap are enforced before a provider create
+ok 227 - operator allowlist and lifetime funding cap are enforced before a provider create
+  ---
+  duration_ms: 1066.843483
+  type: 'test'
+  ...
+# Subtest: uncertain billed creation is never retried and its hold survives worker recovery
+ok 228 - uncertain billed creation is never retried and its hold survives worker recovery
+  ---
+  duration_ms: 974.214896
+  type: 'test'
+  ...
+# Subtest: regressing final usage does not settle or refund a hold; trusted reconciliation can finish later
+ok 229 - regressing final usage does not settle or refund a hold; trusted reconciliation can finish later
+  ---
+  duration_ms: 1045.867354
+  type: 'test'
+  ...
+# Subtest: minute mode snapshots a 15-second minimum and settles it once from trusted final usage
+ok 230 - minute mode snapshots a 15-second minimum and settles it once from trusted final usage
+  ---
+  duration_ms: 1069.658733
+  type: 'test'
+  ...
+# Subtest: minute deadline closes at the available remainder, keeps an uncertain hold, and absorbs cutoff overrun
+ok 231 - minute deadline closes at the available remainder, keeps an uncertain hold, and absorbs cutoff overrun
+  ---
+  duration_ms: 1062.598353
+  type: 'test'
+  ...
+# Subtest: minute-funded recovery closes the original provider session and settles its reservation once
+ok 232 - minute-funded recovery closes the original provider session and settles its reservation once
+  ---
+  duration_ms: 1056.930325
+  type: 'test'
+  ...
+# Subtest: minute mode never releases a hold after an uncertain provider create
+ok 233 - minute mode never releases a hold after an uncertain provider create
+  ---
+  duration_ms: 1006.700062
+  type: 'test'
+  ...
+# Subtest: short minute remainders receive a separate setup window and authoritative usage cutoff
+ok 234 - short minute remainders receive a separate setup window and authoritative usage cutoff
+  ---
+  duration_ms: 965.56008
+  type: 'test'
+  ...
+# Subtest: zero-second finalized sessions consume the minimum and cannot restart a ten-minute grant indefinitely
+ok 235 - zero-second finalized sessions consume the minimum and cannot restart a ten-minute grant indefinitely
+  ---
+  duration_ms: 2504.497196
+  type: 'test'
+  ...
+# Subtest: the final sub-minimum residue is charged once without a negative minute wallet
+ok 236 - the final sub-minimum residue is charged once without a negative minute wallet
+  ---
+  duration_ms: 1023.694004
+  type: 'test'
+  ...
+# Subtest: pre-provider cancellation releases all funding and records no minimum or provider charge
+ok 237 - pre-provider cancellation releases all funding and records no minimum or provider charge
+  ---
+  duration_ms: 984.418007
+  type: 'test'
+  ...
+# Subtest: worker recovery cancels an admitted minute session that durably never attempted provider creation
+ok 238 - worker recovery cancels an admitted minute session that durably never attempted provider creation
+  ---
+  duration_ms: 1016.784538
+  type: 'test'
+  ...
+# Subtest: a short close releases unearned helper liability before another conversation is admitted
+ok 239 - a short close releases unearned helper liability before another conversation is admitted
+  ---
+  duration_ms: 1036.837373
+  type: 'test'
+  ...
+# Subtest: existing connected-time sessions retain their immutable original minimum policy
+ok 240 - existing connected-time sessions retain their immutable original minimum policy
+  ---
+  duration_ms: 1026.007034
+  type: 'test'
+  ...
+# Subtest: refunding a minute purchase during speech closes and recovers released time atomically
+ok 241 - refunding a minute purchase during speech closes and recovers released time atomically
+  ---
+  duration_ms: 1094.190295
+  type: 'test'
+  ...
+# Subtest: explicit HTTP rejection releases legacy funding and permits a new attempt without reusing its key
+ok 242 - explicit HTTP rejection releases legacy funding and permits a new attempt without reusing its key
+  ---
+  duration_ms: 975.17174
+  type: 'test'
+  ...
+# Subtest: explicit HTTP rejection releases minutes funding and permits a new attempt without reusing its key
+ok 243 - explicit HTTP rejection releases minutes funding and permits a new attempt without reusing its key
+  ---
+  duration_ms: 1036.892221
+  type: 'test'
+  ...
+# Subtest: explicit HTTP rejection releases paid funding and permits a new attempt without reusing its key
+ok 244 - explicit HTTP rejection releases paid funding and permits a new attempt without reusing its key
+  ---
+  duration_ms: 991.821032
+  type: 'test'
+  ...
+# Subtest: timeout-status remains uncertain and keeps minute and helper holds
+ok 245 - timeout-status remains uncertain and keeps minute and helper holds
+  ---
+  duration_ms: 976.764414
+  type: 'test'
+  ...
+# Subtest: server-status remains uncertain and keeps minute and helper holds
+ok 246 - server-status remains uncertain and keeps minute and helper holds
+  ---
+  duration_ms: 935.661719
+  type: 'test'
+  ...
+# Subtest: transport remains uncertain and keeps minute and helper holds
+ok 247 - transport remains uncertain and keeps minute and helper holds
+  ---
+  duration_ms: 957.151456
+  type: 'test'
+  ...
+# Subtest: malformed-success remains uncertain and keeps minute and helper holds
+ok 248 - malformed-success remains uncertain and keeps minute and helper holds
+  ---
+  duration_ms: 981.42533
+  type: 'test'
+  ...
+# Subtest: a settlement database failure rolls back all releases and logs only its category
+ok 249 - a settlement database failure rolls back all releases and logs only its category
+  ---
+  duration_ms: 982.726619
+  type: 'test'
+  ...
+# Subtest: rejection diagnostics reject unsafe metadata and never include provider body text
+ok 250 - rejection diagnostics reject unsafe metadata and never include provider body text
+  ---
+  duration_ms: 1.193659
+  type: 'test'
+  ...
+# Subtest: an attach rejection after successful create keeps its confirmed provider hold
+ok 251 - an attach rejection after successful create keeps its confirmed provider hold
+  ---
+  duration_ms: 1023.44395
+  type: 'test'
+  ...
+# Subtest: the real HTTP adapter recognizes explicit client rejection status without retaining its body
+ok 252 - the real HTTP adapter recognizes explicit client rejection status without retaining its body
+  ---
+  duration_ms: 996.339387
+  type: 'test'
+  ...
+# Subtest: a late provider result cannot reopen a session closed by operator recovery
+ok 253 - a late provider result cannot reopen a session closed by operator recovery
+  ---
+  duration_ms: 938.804547
+  type: 'test'
+  ...
+# Subtest: signed-in International English uses free minutes and settles the conversation
+ok 254 - signed-in International English uses free minutes and settles the conversation
+  ---
+  duration_ms: 1017.008952
+  type: 'test'
+  ...
+# Subtest: unconfigured trial and hosted voice fail closed without database or provider access
+ok 255 - unconfigured trial and hosted voice fail closed without database or provider access
+  ---
+  duration_ms: 119.485827
+  type: 'test'
+  ...
+# Subtest: Stripe signature validates the original bytes and rejects mutation, old timestamps and live events
+ok 256 - Stripe signature validates the original bytes and rejects mutation, old timestamps and live events
+  ---
+  duration_ms: 6.789902
+  type: 'test'
+  ...
+# Subtest: webhook route verifies raw bytes before doing any database work
+ok 257 - webhook route verifies raw bytes before doing any database work
+  ---
+  duration_ms: 23.633005
+  type: 'test'
+  ...
+# Subtest: webhooks and public routes answer without proxy headers while client routes stay gated and limited
+ok 258 - webhooks and public routes answer without proxy headers while client routes stay gated and limited
+  ---
+  duration_ms: 155.372801
+  type: 'test'
+  ...
+# Subtest: the webhook routes admit payloads up to the provider signature ceiling instead of failing transport first
+ok 259 - the webhook routes admit payloads up to the provider signature ceiling instead of failing transport first
+  ---
+  duration_ms: 21.884691
+  type: 'test'
+  ...
+# Subtest: all native locales reach the provider with the intended regional speech target
+ok 260 - all native locales reach the provider with the intended regional speech target
+  ---
+  duration_ms: 88.081104
+  type: 'test'
+  ...
+# Subtest: hosted admission accepts every locale shipped by Android and iOS
+ok 261 - hosted admission accepts every locale shipped by Android and iOS
+  ---
+  duration_ms: 8.739637
+  type: 'test'
+  ...
+# Subtest: private attempt upload is authenticated, owner-scoped, and restores its frozen snapshot
+ok 262 - private attempt upload is authenticated, owner-scoped, and restores its frozen snapshot
+  ---
+  duration_ms: 390.838582
+  type: 'test'
+  ...
+# Subtest: uploads accept the deterministic wire shape (optional keys absent)
+ok 263 - uploads accept the deterministic wire shape (optional keys absent)
+  ---
+  duration_ms: 70.646849
+  type: 'test'
+  ...
+# BAD_ATTEMPT Error
+#     at badAttempt (file:///app/dist/src/level-test-attempts.js:26:54)
+#     at validateAttempt (file:///app/dist/src/level-test-attempts.js:152:9)
+#     at file:///app/dist/src/level-test-attempts.js:184:54
+#     at Array.map (<anonymous>)
+#     at validateBatch (file:///app/dist/src/level-test-attempts.js:184:37)
+#     at Object.<anonymous> (file:///app/dist/src/level-test-attempts.js:388:23)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+# Subtest: attempt and event timestamps reject far-future clocks (R3-001)
+ok 264 - attempt and event timestamps reject far-future clocks (R3-001)
+  ---
+  duration_ms: 72.640763
+  type: 'test'
+  ...
+# REJECT Error
+#     at badSnapshot (file:///app/dist/src/level-test-attempts.js:25:50)
+#     at validateSnapshot (file:///app/dist/src/level-test-attempts.js:79:9)
+#     at Array.map (<anonymous>)
+#     at validateBatch (file:///app/dist/src/level-test-attempts.js:177:39)
+#     at Object.<anonymous> (file:///app/dist/src/level-test-attempts.js:388:23)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+# REJECT Error
+#     at badSnapshot (file:///app/dist/src/level-test-attempts.js:25:50)
+#     at validateSnapshot (file:///app/dist/src/level-test-attempts.js:121:13)
+#     at Array.map (<anonymous>)
+#     at validateBatch (file:///app/dist/src/level-test-attempts.js:177:39)
+#     at Object.<anonymous> (file:///app/dist/src/level-test-attempts.js:388:23)
+#     at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+# Subtest: snapshot uploads reject invalid hashes and dangling attempt references atomically
+ok 265 - snapshot uploads reject invalid hashes and dangling attempt references atomically
+  ---
+  duration_ms: 44.262327
+  type: 'test'
+  ...
+# Subtest: published exam IDs resolve immutable approved variants but not retired generations
+ok 266 - published exam IDs resolve immutable approved variants but not retired generations
+  ---
+  duration_ms: 44.551368
+  type: 'test'
+  ...
+# Subtest: attempt history pages are bounded and reject malformed cursors
+ok 267 - attempt history pages are bounded and reject malformed cursors
+  ---
+  duration_ms: 70.956697
+  type: 'test'
+  ...
+# Subtest: attempt events replay their original ACK and reject stale or altered retries
+ok 268 - attempt events replay their original ACK and reject stale or altered retries
+  ---
+  duration_ms: 111.762738
+  type: 'test'
+  ...
+# Subtest: completed attempts reject later answer events and completion is replay-safe
+ok 269 - completed attempts reject later answer events and completion is replay-safe
+  ---
+  duration_ms: 60.550314
+  type: 'test'
+  ...
+# Subtest: initial creation retry replays its immutable ACK after another device advances the attempt
+ok 270 - initial creation retry replays its immutable ACK after another device advances the attempt
+  ---
+  duration_ms: 70.003184
+  type: 'test'
+  ...
+# Subtest: attempt event timestamps never regress and exact retries preserve the original ACK
+ok 271 - attempt event timestamps never regress and exact retries preserve the original ACK
+  ---
+  duration_ms: 68.591588
+  type: 'test'
+  ...
+# Subtest: deterministic snapshots add stable identity without changing the existing exam contract
+ok 272 - deterministic snapshots add stable identity without changing the existing exam contract
+  ---
+  duration_ms: 33.60033
+  type: 'test'
+  ...
+# Subtest: snapshot identity changes when accepted solutions change without a content version bump
+ok 273 - snapshot identity changes when accepted solutions change without a content version bump
+  ---
+  duration_ms: 15.727501
+  type: 'test'
+  ...
+# Subtest: new generated snapshots preserve types, unit references, passages and effective thresholds
+ok 274 - new generated snapshots preserve types, unit references, passages and effective thresholds
+  ---
+  duration_ms: 30.452343
+  type: 'test'
+  ...
+# Subtest: stored generated grading survives later bundled threshold edits
+ok 275 - stored generated grading survives later bundled threshold edits
+  ---
+  duration_ms: 4.171398
+  type: 'test'
+  ...
+# Subtest: force regeneration changes generation identity and preserves retired content
+ok 276 - force regeneration changes generation identity and preserves retired content
+  ---
+  duration_ms: 9.81725
+  type: 'test'
+  ...
+# Subtest: current and hybrid retain legacy HTTP fields and pinned ETag revalidation
+ok 277 - current and hybrid retain legacy HTTP fields and pinned ETag revalidation
+  ---
+  duration_ms: 133.197541
+  type: 'test'
+  ...
+# Subtest: snapshot hashing is idempotent across JSON round trips and ignores prior identity metadata
+ok 278 - snapshot hashing is idempotent across JSON round trips and ignores prior identity metadata
+  ---
+  duration_ms: 5.050447
+  type: 'test'
+  ...
+# Subtest: object-key order is irrelevant but option, passage and threshold changes alter content identity
+ok 279 - object-key order is irrelevant but option, passage and threshold changes alter content identity
+  ---
+  duration_ms: 12.58879
+  type: 'test'
+  ...
+# Subtest: legacy generated rows keep their original content without invented grading metadata
+ok 280 - legacy generated rows keep their original content without invented grading metadata
+  ---
+  duration_ms: 0.681394
+  type: 'test'
+  ...
+# Subtest: generation job lock excludes a competing CLI or scheduler before provider calls
+ok 281 - generation job lock excludes a competing CLI or scheduler before provider calls
+  ---
+  duration_ms: 56.220212
+  type: 'test'
+  ...
+# Subtest: an unknown durable provider outcome is never automatically reissued
+ok 282 - an unknown durable provider outcome is never automatically reissued
+  ---
+  duration_ms: 28.704562
+  type: 'test'
+  ...
+# Subtest: AES-256-GCM key encryption round-trips and rejects tampering
+ok 283 - AES-256-GCM key encryption round-trips and rejects tampering
+  ---
+  duration_ms: 2.951349
+  type: 'test'
+  ...
+# Subtest: config resolution prefers the DB config and falls back to env
+ok 284 - config resolution prefers the DB config and falls back to env
+  ---
+  duration_ms: 17.588373
+  type: 'test'
+  ...
+# Subtest: gate 1 accepts a well-formed pool and rejects broken items
+ok 285 - gate 1 accepts a well-formed pool and rejects broken items
+  ---
+  duration_ms: 6.352911
+  type: 'test'
+  ...
+# Subtest: generation persists approved variants and the endpoints serve them
+ok 286 - generation persists approved variants and the endpoints serve them
+  ---
+  duration_ms: 223.895127
+  type: 'test'
+  ...
+# Subtest: strict judge removes rejected items and approves the trimmed exam
+ok 287 - strict judge removes rejected items and approves the trimmed exam
+  ---
+  duration_ms: 29.685479
+  type: 'test'
+  ...
+# Subtest: unknown judge transport outcome stops generation in flag and strict modes
+ok 288 - unknown judge transport outcome stops generation in flag and strict modes
+  ---
+  duration_ms: 20.943367
+  type: 'test'
+  ...
+# Subtest: an unknown provider outcome is not retried by the section loop
+ok 289 - an unknown provider outcome is not retried by the section loop
+  ---
+  duration_ms: 3.499657
+  type: 'test'
+  ...
+# Subtest: a scheduled generation preserves an existing draft unless force is explicit
+ok 290 - a scheduled generation preserves an existing draft unless force is explicit
+  ---
+  duration_ms: 0.40788
+  type: 'test'
+  ...
+# Subtest: rejected week blocks generation unless force retires the row
+ok 291 - rejected week blocks generation unless force retires the row
+  ---
+  duration_ms: 23.469818
+  type: 'test'
+  ...
+# Subtest: structural gate with judge off: invalid answer
+ok 292 - structural gate with judge off: invalid answer
+  ---
+  duration_ms: 1.452605
+  type: 'test'
+  ...
+# Subtest: structural gate with judge off: unknown kind
+ok 293 - structural gate with judge off: unknown kind
+  ---
+  duration_ms: 1.249134
+  type: 'test'
+  ...
+# Subtest: structural gate with judge off: short reading block
+ok 294 - structural gate with judge off: short reading block
+  ---
+  duration_ms: 1.343268
+  type: 'test'
+  ...
+# Subtest: strict judge transport blocks publication
+ok 295 - strict judge transport blocks publication
+  ---
+  duration_ms: 1.101067
+  type: 'test'
+  ...
+# Subtest: strict judge incomplete blocks publication
+ok 296 - strict judge incomplete blocks publication
+  ---
+  duration_ms: 0.961682
+  type: 'test'
+  ...
+# Subtest: strict judge duplicate blocks publication
+ok 297 - strict judge duplicate blocks publication
+  ---
+  duration_ms: 1.533758
+  type: 'test'
+  ...
+# Subtest: strict judge unknown blocks publication
+ok 298 - strict judge unknown blocks publication
+  ---
+  duration_ms: 2.134608
+  type: 'test'
+  ...
+# Subtest: strict removes rejects, keeps ids/unit references and composes exactly 25 surviving items
+ok 299 - strict removes rejects, keeps ids/unit references and composes exactly 25 surviving items
+  ---
+  duration_ms: 8.118131
+  type: 'test'
+  ...
+# Subtest: strict rejects cannot publish an undersized exam
+ok 300 - strict rejects cannot publish an undersized exam
+  ---
+  duration_ms: 2.500524
+  type: 'test'
+  ...
+# Subtest: flag rejects cannot publish an undersized exam
+ok 301 - flag rejects cannot publish an undersized exam
+  ---
+  duration_ms: 2.21189
+  type: 'test'
+  ...
+# Subtest: flag judge failure is advisory and visible in review
+ok 302 - flag judge failure is advisory and visible in review
+  ---
+  duration_ms: 8.509057
+  type: 'test'
+  ...
+# Subtest: strict flags are advisory when every item has a valid verdict
+ok 303 - strict flags are advisory when every item has a valid verdict
+  ---
+  duration_ms: 2.948095
+  type: 'test'
+  ...
+# Subtest: reading and listening judges receive the exact source passage
+ok 304 - reading and listening judges receive the exact source passage
+  ---
+  duration_ms: 3.500556
+  type: 'test'
+  ...
+# Subtest: empty optional environment URL/model use provider defaults in GET and partial PUT
+ok 305 - empty optional environment URL/model use provider defaults in GET and partial PUT
+  ---
+  duration_ms: 5.571895
+  type: 'test'
+  ...
+# Subtest: GET and partial settings PUT preserve DB values through strict to flag to off
+ok 306 - GET and partial settings PUT preserve DB values through strict to flag to off
+  ---
+  duration_ms: 0.925146
+  type: 'test'
+  ...
+# Subtest: partial model PUT preserves provider, URL and encrypted credential
+ok 307 - partial model PUT preserves provider, URL and encrypted credential
+  ---
+  duration_ms: 1.099566
+  type: 'test'
+  ...
+# Subtest: blank API key fields preserve the saved credential on provider updates
+ok 308 - blank API key fields preserve the saved credential on provider updates
+  ---
+  duration_ms: 0.742907
+  type: 'test'
+  ...
+# Subtest: provider switching cannot implicitly forward an environment credential
+ok 309 - provider switching cannot implicitly forward an environment credential
+  ---
+  duration_ms: 0.465111
+  type: 'test'
+  ...
+# Subtest: invalid settings do not partly persist a combined provider update
+ok 310 - invalid settings do not partly persist a combined provider update
+  ---
+  duration_ms: 0.478308
+  type: 'test'
+  ...
+# Subtest: authenticated settings save/reload reflects persisted values and retains omitted fields
+ok 311 - authenticated settings save/reload reflects persisted values and retains omitted fields
+  ---
+  duration_ms: 136.436798
+  type: 'test'
+  ...
+# Subtest: approval cannot upgrade an incomplete strict draft
+ok 312 - approval cannot upgrade an incomplete strict draft
+  ---
+  duration_ms: 41.64316
+  type: 'test'
+  ...
+# Subtest: draft is private until authenticated generation-level approval; replay audits once
+ok 313 - draft is private until authenticated generation-level approval; replay audits once
+  ---
+  duration_ms: 45.029362
+  type: 'test'
+  ...
+# Subtest: draft rejection is authenticated, retained, audited once, and replay-safe
+ok 314 - draft rejection is authenticated, retained, audited once, and replay-safe
+  ---
+  duration_ms: 34.884284
+  type: 'test'
+  ...
+# Subtest: admin draft list is bounded, private, paginated, and excludes account attempts
+ok 315 - admin draft list is bounded, private, paginated, and excludes account attempts
+  ---
+  duration_ms: 17.530056
+  type: 'test'
+  ...
+# Subtest: admin generation status separates configured schedule from this process and redacts job fields
+ok 316 - admin generation status separates configured schedule from this process and redacts job fields
+  ---
+  duration_ms: 15.878509
+  type: 'test'
+  ...
+# Subtest: connection test requires persisted settings even when environment credentials exist
+ok 317 - connection test requires persisted settings even when environment credentials exist
+  ---
+  duration_ms: 15.052134
+  type: 'test'
+  ...
+# Subtest: connection test times out and cancels the unread provider body
+ok 318 - connection test times out and cancels the unread provider body
+  ---
+  duration_ms: 32.093387
+  type: 'test'
+  ...
+# Subtest: approval rejects tampered variants without publishing or auditing
+ok 319 - approval rejects tampered variants without publishing or auditing
+  ---
+  duration_ms: 22.49856
+  type: 'test'
+  ...
+# Subtest: approval checks section against the validated pool even with a matching hash
+ok 320 - approval checks section against the validated pool even with a matching hash
+  ---
+  duration_ms: 25.029913
+  type: 'test'
+  ...
+# Subtest: approval checks passage against the validated pool even with a matching hash
+ok 321 - approval checks passage against the validated pool even with a matching hash
+  ---
+  duration_ms: 31.453553
+  type: 'test'
+  ...
+# Subtest: approval checks variant against the validated pool even with a matching hash
+ok 322 - approval checks variant against the validated pool even with a matching hash
+  ---
+  duration_ms: 15.538243
+  type: 'test'
+  ...
+# Subtest: next scheduled run is the next configured ISO weekday and hour in UTC
+ok 323 - next scheduled run is the next configured ISO weekday and hour in UTC
+  ---
+  duration_ms: 1.832598
+  type: 'test'
+  ...
+# Subtest: scheduler configuration is disabled by default and rejects invalid or duplicate bounds
+ok 324 - scheduler configuration is disabled by default and rejects invalid or duplicate bounds
+  ---
+  duration_ms: 2.162553
+  type: 'test'
+  ...
+# Subtest: disabled scheduler creates no timer and does not run generation
+ok 325 - disabled scheduler creates no timer and does not run generation
+  ---
+  duration_ms: 0.704362
+  type: 'test'
+  ...
+# Subtest: startup after the weekly instant recovers only the current ISO week then schedules the next run
+ok 326 - startup after the weekly instant recovers only the current ISO week then schedules the next run
+  ---
+  duration_ms: 1.877918
+  type: 'test'
+  ...
+# Subtest: scheduler recalculates its next one-shot timer after a delayed run completes
+ok 327 - scheduler recalculates its next one-shot timer after a delayed run completes
+  ---
+  duration_ms: 0.763632
+  type: 'test'
+  ...
+# Subtest: per-combination failure does not prevent remaining language-level jobs
+ok 328 - per-combination failure does not prevent remaining language-level jobs
+  ---
+  duration_ms: 1.206133
+  type: 'test'
+  ...
+# Subtest: shutdown aborts and drains active generation before stop resolves
+ok 329 - shutdown aborts and drains active generation before stop resolves
+  ---
+  duration_ms: 0.767612
+  type: 'test'
+  ...
+# Subtest: generation timeout aborts the active week and re-arms one future timer
+ok 330 - generation timeout aborts the active week and re-arms one future timer
+  ---
+  duration_ms: 0.840677
+  type: 'test'
+  ...
+# Subtest: scheduler enforces a single timeout across the complete week run
+ok 331 - scheduler enforces a single timeout across the complete week run
+  ---
+  duration_ms: 0.742277
+  type: 'test'
+  ...
+# Subtest: golden parity: the server composes the same weekly exam as the app
+ok 332 - golden parity: the server composes the same weekly exam as the app
+  ---
+  duration_ms: 12.35702
+  type: 'test'
+  ...
+# Subtest: composition is deterministic, disjoint per exam and bounded per week
+ok 333 - composition is deterministic, disjoint per exam and bounded per week
+  ---
+  duration_ms: 18.083716
+  type: 'test'
+  ...
+# Subtest: the HTTP route serves the weekly test with ETag revalidation and fails closed
+ok 334 - the HTTP route serves the weekly test with ETag revalidation and fails closed
+  ---
+  duration_ms: 151.622784
+  type: 'test'
+  ...
+# Subtest: levels ship only where the harvest meets the minimums
+ok 335 - levels ship only where the harvest meets the minimums
+  ---
+  duration_ms: 0.426167
+  type: 'test'
+  ...
+# Subtest: hosted context accepts bounded language-teaching instructions and only prior text messages
+ok 336 - hosted context accepts bounded language-teaching instructions and only prior text messages
+  ---
+  duration_ms: 3.392311
+  type: 'test'
+  ...
+# Subtest: hosted context rejects provider settings, non-text history and invalid or oversized Unicode before funding
+ok 337 - hosted context rejects provider settings, non-text history and invalid or oversized Unicode before funding
+  ---
+  duration_ms: 1.671461
+  type: 'test'
+  ...
+# Subtest: chat completion does not reissue after an unknown transport outcome
+ok 338 - chat completion does not reissue after an unknown transport outcome
+  ---
+  duration_ms: 1.802619
+  type: 'test'
+  ...
+# Subtest: chat completion forwards cancellation to the provider transport
+ok 339 - chat completion forwards cancellation to the provider transport
+  ---
+  duration_ms: 0.332325
+  type: 'test'
+  ...
+# Subtest: chat completion does not retry when the response body fails after headers
+ok 340 - chat completion does not retry when the response body fails after headers
+  ---
+  duration_ms: 0.308805
+  type: 'test'
+  ...
+# Subtest: fresh migrations validate after committing DDL and permit a concurrent writer lock during the scan
+ok 341 - fresh migrations validate after committing DDL and permit a concurrent writer lock during the scan
+  ---
+  duration_ms: 1118.279104
+  type: 'test'
+  ...
+# Subtest: a crash after schema commit leaves validation retryable without replaying applied migrations
+ok 342 - a crash after schema commit leaves validation retryable without replaying applied migrations
+  ---
+  duration_ms: 967.246468
+  type: 'test'
+  ...
+# Subtest: already deployed validated 019-021 history is unchanged and its constraint is not scanned again
+ok 343 - already deployed validated 019-021 history is unchanged and its constraint is not scanned again
+  ---
+  duration_ms: 1000.745129
+  type: 'test'
+  ...
+# Subtest: failed validation preserves applied history and enforces new writes until repaired and retried
+ok 344 - failed validation preserves applied history and enforces new writes until repaired and retried
+  ---
+  duration_ms: 1024.224969
+  type: 'test'
+  ...
+# Subtest: concurrent migration runners serialize schema changes and converge on a validated constraint
+ok 345 - concurrent migration runners serialize schema changes and converge on a validated constraint
+  ---
+  duration_ms: 1055.530057
+  type: 'test'
+  ...
+# Subtest: failure validating the second constraint retries both scans without replaying schema migrations
+ok 346 - failure validating the second constraint retries both scans without replaying schema migrations
+  ---
+  duration_ms: 991.497293
+  type: 'test'
+  ...
+# Subtest: commerce remains absent on defaults and never reads credentials, queries DB or starts network work
+ok 347 - commerce remains absent on defaults and never reads credentials, queries DB or starts network work
+  ---
+  duration_ms: 2.715762
+  type: 'test'
+  ...
+# Subtest: protected configuration constructs optional providers without opening sales or starting timers
+ok 348 - protected configuration constructs optional providers without opening sales or starting timers
+  ---
+  duration_ms: 21.077824
+  type: 'test'
+  ...
+# Subtest: sales require explicit activation and approval of the exact immutable catalog bytes
+ok 349 - sales require explicit activation and approval of the exact immutable catalog bytes
+  ---
+  duration_ms: 20.49501
+  type: 'test'
+  ...
+# Subtest: pack catalogs only map provider products onto the approved code constants
+ok 350 - pack catalogs only map provider products onto the approved code constants
+  ---
+  duration_ms: 13.82868
+  type: 'test'
+  ...
+# Subtest: live environment needs its separate gate and environment-matched keys and quotes
+ok 351 - live environment needs its separate gate and environment-matched keys and quotes
+  ---
+  duration_ms: 13.381451
+  type: 'test'
+  ...
+# Subtest: restricted Stripe keys retain environment validation and do not open sales
+ok 352 - restricted Stripe keys retain environment validation and do not open sales
+  ---
+  duration_ms: 12.639318
+  type: 'test'
+  ...
+# Subtest: configuration rejects public files, symlinks, hard links, oversized input and malformed JSON without exposing contents
+ok 353 - configuration rejects public files, symlinks, hard links, oversized input and malformed JSON without exposing contents
+  ---
+  duration_ms: 16.006339
+  type: 'test'
+  ...
+# Subtest: Play fixes the permanent Android package and requires complete existing service credentials and currency exponents
+ok 354 - Play fixes the permanent Android package and requires complete existing service credentials and currency exponents
+  ---
+  duration_ms: 24.946364
+  type: 'test'
+  ...
+# Subtest: receipt rotation retains historical keys and scopes; missing configuration fails before work starts
+ok 355 - receipt rotation retains historical keys and scopes; missing configuration fails before work starts
+  ---
+  duration_ms: 15.940977
+  type: 'test'
+  ...
+# Subtest: unexpected fields, mismatched product bindings, partial providers and invalid runner limits fail closed
+ok 356 - unexpected fields, mismatched product bindings, partial providers and invalid runner limits fail closed
+  ---
+  duration_ms: 25.508009
+  type: 'test'
+  ...
+# Subtest: Managed Payments mode is an explicit boolean and configuration remains side-effect free
+ok 357 - Managed Payments mode is an explicit boolean and configuration remains side-effect free
+  ---
+  duration_ms: 10.870924
+  type: 'test'
+  ...
+# Subtest: commerce defaults advertise no products and reject writes before database access when accounts are disabled
+ok 358 - commerce defaults advertise no products and reject writes before database access when accounts are disabled
+  ---
+  duration_ms: 131.5322
+  type: 'test'
+  ...
+# Subtest: enabled accounts with absent commerce still cannot order, and disabled sales expose an empty catalog
+ok 359 - enabled accounts with absent commerce still cannot order, and disabled sales expose an empty catalog
+  ---
+  duration_ms: 1947.626197
+  type: 'test'
+  ...
+# Subtest: catalog is public while guests and unauthenticated callers cannot create, inspect or verify orders
+ok 360 - catalog is public while guests and unauthenticated callers cannot create, inspect or verify orders
+  ---
+  duration_ms: 946.430054
+  type: 'test'
+  ...
+# Subtest: order creation trusts the server quote and authenticated account; retries preserve one purchase binding
+ok 361 - order creation trusts the server quote and authenticated account; retries preserve one purchase binding
+  ---
+  duration_ms: 1045.600416
+  type: 'test'
+  ...
+# Subtest: Play HTTP submission rejects identity overrides and malformed or oversized tokens before persistence
+ok 362 - Play HTTP submission rejects identity overrides and malformed or oversized tokens before persistence
+  ---
+  duration_ms: 1133.967065
+  type: 'test'
+  ...
+# Subtest: Stripe minute webhook preserves signed raw bytes, rejects mutation and replays settlement safely
+ok 363 - Stripe minute webhook preserves signed raw bytes, rejects mutation and replays settlement safely
+  ---
+  duration_ms: 1011.703993
+  type: 'test'
+  ...
+# Subtest: the HTTP error boundary maps only the known refund-debt database exception to safe 409
+ok 364 - the HTTP error boundary maps only the known refund-debt database exception to safe 409
+  ---
+  duration_ms: 1041.812379
+  type: 'test'
+  ...
+# Subtest: deletion rejects unconfirmed, pending and funded minute orders without dropping identity or sessions
+ok 365 - deletion rejects unconfirmed, pending and funded minute orders without dropping identity or sessions
+  ---
+  duration_ms: 1078.678659
+  type: 'test'
+  ...
+# Subtest: deletion blocks outstanding refund debt even when the minute wallet is empty
+ok 366 - deletion blocks outstanding refund debt even when the minute wallet is empty
+  ---
+  duration_ms: 1129.549175
+  type: 'test'
+  ...
+# Subtest: resolved canceled or spent minute orders retain only an opaque account tombstone on deletion
+ok 367 - resolved canceled or spent minute orders retain only an opaque account tombstone on deletion
+  ---
+  duration_ms: 1222.325928
+  type: 'test'
+  ...
+# Subtest: signup-only deletion removes empty wallets and all signup data completely
+ok 368 - signup-only deletion removes empty wallets and all signup data completely
+  ---
+  duration_ms: 980.267472
+  type: 'test'
+  ...
+# Subtest: order creation racing deletion cannot produce an unowned payable order
+ok 369 - order creation racing deletion cannot produce an unowned payable order
+  ---
+  duration_ms: 960.146267
+  type: 'test'
+  ...
+# Subtest: AI-value HTTP catalog, owned quote, signed settlement and refund preserve exact fee snapshot
+ok 370 - AI-value HTTP catalog, owned quote, signed settlement and refund preserve exact fee snapshot
+  ---
+  duration_ms: 1084.023314
+  type: 'test'
+  ...
+# Subtest: AI-value Play HTTP recovery verifies binding and restores no fixed minutes after reinstall
+ok 371 - AI-value Play HTTP recovery verifies binding and restores no fixed minutes after reinstall
+  ---
+  duration_ms: 1078.890942
+  type: 'test'
+  ...
+# Subtest: account deletion blocks pending AI orders and paid balances, but retains resolved refunded orders without identity
+ok 372 - account deletion blocks pending AI orders and paid balances, but retains resolved refunded orders without identity
+  ---
+  duration_ms: 1021.068534
+  type: 'test'
+  ...
+# Subtest: durable Stripe key recovery is owner-bound for minute orders
+ok 373 - durable Stripe key recovery is owner-bound for minute orders
+  ---
+  duration_ms: 1090.817093
+  type: 'test'
+  ...
+# Subtest: durable Stripe key recovery is owner-bound for AI value orders
+ok 374 - durable Stripe key recovery is owner-bound for AI value orders
+  ---
+  duration_ms: 1111.368321
+  type: 'test'
+  ...
+# Subtest: Stripe key recovery validates inputs, membership and trusted admission before exposing an order
+ok 375 - Stripe key recovery validates inputs, membership and trusted admission before exposing an order
+  ---
+  duration_ms: 1137.194636
+  type: 'test'
+  ...
+# Subtest: lost create responses remain recoverable after the Stripe idempotency window and with sales disabled
+ok 376 - lost create responses remain recoverable after the Stripe idempotency window and with sales disabled
+  ---
+  duration_ms: 982.80157
+  type: 'test'
+  ...
+# Subtest: mapped expired Stripe sessions reconcile to voided without a webhook or customer retry
+ok 377 - mapped expired Stripe sessions reconcile to voided without a webhook or customer retry
+  ---
+  duration_ms: 1050.617314
+  type: 'test'
+  ...
+# Subtest: runner has no automatic work, coalesces overlap and stops after draining one active delivery
+ok 378 - runner has no automatic work, coalesces overlap and stops after draining one active delivery
+  ---
+  duration_ms: 1.619694
+  type: 'test'
+  ...
+# Subtest: runner bounds each cycle and reports only fixed error codes while continuing independent reconciliation
+ok 379 - runner bounds each cycle and reports only fixed error codes while continuing independent reconciliation
+  ---
+  duration_ms: 1.366518
+  type: 'test'
+  ...
+# Subtest: runner observer failures and provider failures cannot create unhandled background work
+ok 380 - runner observer failures and provider failures cannot create unhandled background work
+  ---
+  duration_ms: 1.599713
+  type: 'test'
+  ...
+# Subtest: Play void pages resume their exact persisted window after a failure and restart
+ok 381 - Play void pages resume their exact persisted window after a failure and restart
+  ---
+  duration_ms: 964.728996
+  type: 'test'
+  ...
+# Subtest: two reconciler instances cannot fetch or advance the same Play page concurrently
+ok 382 - two reconciler instances cannot fetch or advance the same Play page concurrently
+  ---
+  duration_ms: 959.944792
+  type: 'test'
+  ...
+# Subtest: void history expiration and stalled pagination preserve the checkpoint and require recovery
+ok 383 - void history expiration and stalled pagination preserve the checkpoint and require recovery
+  ---
+  duration_ms: 1057.515033
+  type: 'test'
+  ...
+# Subtest: void polling overlaps the prior checkpoint and cannot rewind its durable completed watermark
+ok 384 - void polling overlaps the prior checkpoint and cannot rewind its durable completed watermark
+  ---
+  duration_ms: 988.976995
+  type: 'test'
+  ...
+# Subtest: provider configuration stays absent when missing and requires explicit live activation
+ok 385 - provider configuration stays absent when missing and requires explicit live activation
+  ---
+  duration_ms: 7.658443
+  type: 'test'
+  ...
+# Subtest: Stripe checkout snapshots the server quote and persists its reference before exposing the URL
+ok 386 - Stripe checkout snapshots the server quote and persists its reference before exposing the URL
+  ---
+  duration_ms: 1015.943499
+  type: 'test'
+  ...
+# Subtest: Stripe wrong merchant, changed price and old uncertain checkout attempts cannot open a new payment
+ok 387 - Stripe wrong merchant, changed price and old uncertain checkout attempts cannot open a new payment
+  ---
+  duration_ms: 970.504028
+  type: 'test'
+  ...
+# Subtest: signed Stripe completion is re-fetched and duplicate webhooks cannot grant twice
+ok 388 - signed Stripe completion is re-fetched and duplicate webhooks cannot grant twice
+  ---
+  duration_ms: 1011.194789
+  type: 'test'
+  ...
+# Subtest: Stripe accepts successful partial refunds only and handles full refunds and disputes
+ok 389 - Stripe accepts successful partial refunds only and handles full refunds and disputes
+  ---
+  duration_ms: 1036.665474
+  type: 'test'
+  ...
+# Subtest: receipt encryption binds ciphertext to order and scope, retains old decryption keys and never stores plaintext
+ok 390 - receipt encryption binds ciphertext to order and scope, retains old decryption keys and never stores plaintext
+  ---
+  duration_ms: 973.50335
+  type: 'test'
+  ...
+# Subtest: a crash after receipt storage is recovered by the delivery worker
+ok 391 - a crash after receipt storage is recovered by the delivery worker
+  ---
+  duration_ms: 1040.239272
+  type: 'test'
+  ...
+# Subtest: Play verifies stable account and order binding, paid amount and test environment before granting
+ok 392 - Play verifies stable account and order binding, paid amount and test environment before granting
+  ---
+  duration_ms: 986.156539
+  type: 'test'
+  ...
+# Subtest: Play pending payments never grant or consume; consumption retries do not grant twice
+ok 393 - Play pending payments never grant or consume; consumption retries do not grant twice
+  ---
+  duration_ms: 1037.694566
+  type: 'test'
+  ...
+# Subtest: Play partial refunds use successful order history; full void polling survives stale purchase responses
+ok 394 - Play partial refunds use successful order history; full void polling survives stale purchase responses
+  ---
+  duration_ms: 1047.929693
+  type: 'test'
+  ...
+# Subtest: Play full refund prevents consumption even if the purchase-state endpoint has not caught up
+ok 395 - Play full refund prevents consumption even if the purchase-state endpoint has not caught up
+  ---
+  duration_ms: 991.024619
+  type: 'test'
+  ...
+# Subtest: an uncertain Play consume response retries from authoritative consumed state without another consume
+ok 396 - an uncertain Play consume response retries from authoritative consumed state without another consume
+  ---
+  duration_ms: 1003.67161
+  type: 'test'
+  ...
+# Subtest: expired delivery leases resume and notifications received during a lease remain scheduled
+ok 397 - expired delivery leases resume and notifications received during a lease remain scheduled
+  ---
+  duration_ms: 1008.938893
+  type: 'test'
+  ...
+# Subtest: Google transport uses fixed encoded endpoints, authenticated empty consumption and bounded responses
+ok 398 - Google transport uses fixed encoded endpoints, authenticated empty consumption and bounded responses
+  ---
+  duration_ms: 7.865199
+  type: 'test'
+  ...
+# Subtest: service-account OAuth signs the exact audience/scope and coalesces token refresh without exposing provider errors
+ok 399 - service-account OAuth signs the exact audience/scope and coalesces token refresh without exposing provider errors
+  ---
+  duration_ms: 91.754839
+  type: 'test'
+  ...
+# Subtest: restricted runtime can store encrypted receipts and process jobs but cannot rewrite bindings
+ok 400 - restricted runtime can store encrypted receipts and process jobs but cannot rewrite bindings
+  ---
+  duration_ms: 1062.578988
+  type: 'test'
+  ...
+# Subtest: gross tax-inclusive refunds normalize conservatively into the original price basis
+ok 401 - gross tax-inclusive refunds normalize conservatively into the original price basis
+  ---
+  duration_ms: 0.393577
+  type: 'test'
+  ...
+# Subtest: provider gross bounds stay separate from catalog bases and retain exact large refund arithmetic
+ok 402 - provider gross bounds stay separate from catalog bases and retain exact large refund arithmetic
+  ---
+  duration_ms: 0.291627
+  type: 'test'
+  ...
+# Subtest: taxed provider totals above the catalog ceiling persist and refund at the exact original base
+ok 403 - taxed provider totals above the catalog ceiling persist and refund at the exact original base
+  ---
+  duration_ms: 1096.564062
+  type: 'test'
+  ...
+# Subtest: Managed Payments pins mode before creation and excludes unsupported Stripe parameters
+ok 404 - Managed Payments pins mode before creation and excludes unsupported Stripe parameters
+  ---
+  duration_ms: 965.330508
+  type: 'test'
+  ...
+# Subtest: Managed taxed paid totals, local presentment, partial and full Link refunds preserve one entitlement
+ok 405 - Managed taxed paid totals, local presentment, partial and full Link refunds preserve one entitlement
+  ---
+  duration_ms: 1056.225501
+  type: 'test'
+  ...
+# Subtest: Managed verification rejects downgrade, missing binding, malformed tax, wrong currency and inconsistent presentment
+ok 406 - Managed verification rejects downgrade, missing binding, malformed tax, wrong currency and inconsistent presentment
+  ---
+  duration_ms: 967.101809
+  type: 'test'
+  ...
+# Subtest: standard historical orders remain standard after Managed Payments is enabled
+ok 407 - standard historical orders remain standard after Managed Payments is enabled
+  ---
+  duration_ms: 943.800597
+  type: 'test'
+  ...
+# Subtest: Managed tax and payment fees never become spendable AI value and full gross refund reverses exactly once
+ok 408 - Managed tax and payment fees never become spendable AI value and full gross refund reverses exactly once
+  ---
+  duration_ms: 1061.322835
+  type: 'test'
+  ...
+# Subtest: Managed refunds reject foreign charges, over-refunds and untrusted currencies
+ok 409 - Managed refunds reject foreign charges, over-refunds and untrusted currencies
+  ---
+  duration_ms: 962.035002
+  type: 'test'
+  ...
+# Subtest: Managed local-method py charges and pyr refunds retain all scoped amount checks
+ok 410 - Managed local-method py charges and pyr refunds retain all scoped amount checks
+  ---
+  duration_ms: 1010.64757
+  type: 'test'
+  ...
+# Subtest: minute catalog is explicit, bound to a provider environment and validates exact quantities and prices
+ok 411 - minute catalog is explicit, bound to a provider environment and validates exact quantities and prices
+  ---
+  duration_ms: 3.584716
+  type: 'test'
+  ...
+# Subtest: refund calculations use the immutable total and cannot overflow or credit fractional milliseconds
+ok 412 - refund calculations use the immutable total and cannot overflow or credit fractional milliseconds
+  ---
+  duration_ms: 0.876755
+  type: 'test'
+  ...
+# Subtest: new sales are disabled by default, and guests cannot buy
+ok 413 - new sales are disabled by default, and guests cannot buy
+  ---
+  duration_ms: 1026.611275
+  type: 'test'
+  ...
+# Subtest: catalog snapshots and idempotency bind one account to one immutable quote
+ok 414 - catalog snapshots and idempotency bind one account to one immutable quote
+  ---
+  duration_ms: 1051.989678
+  type: 'test'
+  ...
+# Subtest: client assertions cannot bypass the injected server verifier or change price, scope, quantity or binding
+ok 415 - client assertions cannot bypass the injected server verifier or change price, scope, quantity or binding
+  ---
+  duration_ms: 996.346653
+  type: 'test'
+  ...
+# Subtest: pending grants nothing; concurrent completion and duplicate notifications grant exactly once
+ok 416 - pending grants nothing; concurrent completion and duplicate notifications grant exactly once
+  ---
+  duration_ms: 1301.765619
+  type: 'test'
+  ...
+# Subtest: transaction reuse across accounts and event ID reuse with altered evidence are rejected atomically
+ok 417 - transaction reuse across accounts and event ID reuse with altered evidence are rejected atomically
+  ---
+  duration_ms: 985.232772
+  type: 'test'
+  ...
+# Subtest: one order cannot be fulfilled with two different provider transactions
+ok 418 - one order cannot be fulfilled with two different provider transactions
+  ---
+  duration_ms: 1062.682163
+  type: 'test'
+  ...
+# Subtest: cumulative partial refunds round once, ignore stale amounts, and cannot debit twice
+ok 419 - cumulative partial refunds round once, ignore stale amounts, and cannot debit twice
+  ---
+  duration_ms: 1081.764575
+  type: 'test'
+  ...
+# Subtest: refund evidence arriving before completion is applied in one transaction with no spendable window
+ok 420 - refund evidence arriving before completion is applied in one transaction with no spendable window
+  ---
+  duration_ms: 955.956823
+  type: 'test'
+  ...
+# Subtest: cancellation before payment and voiding after payment stay terminal despite reordered notifications
+ok 421 - cancellation before payment and voiding after payment stay terminal despite reordered notifications
+  ---
+  duration_ms: 971.954112
+  type: 'test'
+  ...
+# Subtest: refund during a call preserves reserved funds and blocks new spending until reconciliation
+ok 422 - refund during a call preserves reserved funds and blocks new spending until reconciliation
+  ---
+  duration_ms: 962.637382
+  type: 'test'
+  ...
+# Subtest: spent refunded time becomes explicit shortfall; a future purchase recovers it without overdraft
+ok 423 - spent refunded time becomes explicit shortfall; a future purchase recovers it without overdraft
+  ---
+  duration_ms: 1017.968383
+  type: 'test'
+  ...
+# Subtest: a refund racing a reservation never leaves a negative or underfunded wallet
+ok 424 - a refund racing a reservation never leaves a negative or underfunded wallet
+  ---
+  duration_ms: 1050.35107
+  type: 'test'
+  ...
+# Subtest: failed wallet writes roll back the purchase and event, so retry can fulfill it exactly once
+ok 425 - failed wallet writes roll back the purchase and event, so retry can fulfill it exactly once
+  ---
+  duration_ms: 965.443528
+  type: 'test'
+  ...
+# Subtest: restricted runtime can fulfill and reverse but cannot rewrite order snapshots or event history
+ok 426 - restricted runtime can fulfill and reverse but cannot rewrite order snapshots or event history
+  ---
+  duration_ms: 1055.105837
+  type: 'test'
+  ...
+# Subtest: restricted runtime can serve signup and minute usage but cannot change operator policy or grants
+ok 427 - restricted runtime can serve signup and minute usage but cannot change operator policy or grants
+  ---
+  duration_ms: 1275.302881
+  type: 'test'
+  ...
+# Subtest: minute packs use exact integer conversation time
+ok 428 - minute packs use exact integer conversation time
+  ---
+  duration_ms: 2.061541
+  type: 'test'
+  ...
+# Subtest: welcome policy is disabled until configured, audited and protected against stale edits
+ok 429 - welcome policy is disabled until configured, audited and protected against stale edits
+  ---
+  duration_ms: 1064.722436
+  type: 'test'
+  ...
+# Subtest: changing the new-user allowance preserves existing offers and issued minutes
+ok 430 - changing the new-user allowance preserves existing offers and issued minutes
+  ---
+  duration_ms: 1015.013228
+  type: 'test'
+  ...
+# Subtest: concurrent welcome claims cannot overrun the budget or grant the same proof twice
+ok 431 - concurrent welcome claims cannot overrun the budget or grant the same proof twice
+  ---
+  duration_ms: 1015.721518
+  type: 'test'
+  ...
+# Subtest: bulk grants freeze recipients, require confirmation and are safe to retry
+ok 432 - bulk grants freeze recipients, require confirmation and are safe to retry
+  ---
+  duration_ms: 979.836128
+  type: 'test'
+  ...
+# Subtest: a large campaign resumes after its first batch without granting twice
+ok 433 - a large campaign resumes after its first batch without granting twice
+  ---
+  duration_ms: 1516.135201
+  type: 'test'
+  ...
+# Subtest: grant validation rejects missing users and a campaign exceeding its explicit budget
+ok 434 - grant validation rejects missing users and a campaign exceeding its explicit budget
+  ---
+  duration_ms: 941.965222
+  type: 'test'
+  ...
+# Subtest: reservations serialize spending and settlement debits exact time once
+ok 435 - reservations serialize spending and settlement debits exact time once
+  ---
+  duration_ms: 1017.048663
+  type: 'test'
+  ...
+# Subtest: free account deletion forfeits gifts, while active calls and paid time require closeout
+ok 436 - free account deletion forfeits gifts, while active calls and paid time require closeout
+  ---
+  duration_ms: 1034.9248
+  type: 'test'
+  ...
+# Subtest: signup captures one offer and signing in again cannot refresh it
+ok 437 - signup captures one offer and signing in again cannot refresh it
+  ---
+  duration_ms: 942.156825
+  type: 'test'
+  ...
+# Subtest: minute API requires identity, exposes no grant route and leaves purchases unavailable
+ok 438 - minute API requires identity, exposes no grant route and leaves purchases unavailable
+  ---
+  duration_ms: 1129.715731
+  type: 'test'
+  ...
+# Subtest: pack products are publicly advertised through the established catalog endpoint
+ok 439 - pack products are publicly advertised through the established catalog endpoint
+  ---
+  duration_ms: 1087.361123
+  type: 'test'
+  ...
+# Subtest: disabled pack sales hide the catalog but a configured catalog still routes order errors
+ok 440 - disabled pack sales hide the catalog but a configured catalog still routes order errors
+  ---
+  duration_ms: 961.44008
+  type: 'test'
+  ...
+# Subtest: a Stripe test-mode unlock purchase records the order but never grants the real entitlement
+ok 441 - a Stripe test-mode unlock purchase records the order but never grants the real entitlement
+  ---
+  duration_ms: 1156.018258
+  type: 'test'
+  ...
+# Subtest: a Stripe live-mode unlock webhook grants the real unlock once, idempotently, and refunds clear it
+ok 442 - a Stripe live-mode unlock webhook grants the real unlock once, idempotently, and refunds clear it
+  ---
+  duration_ms: 1070.162787
+  type: 'test'
+  ...
+# Subtest: Stripe webhook credits the token pack once with the pinned rate version and refunds reverse it
+ok 443 - Stripe webhook credits the token pack once with the pinned rate version and refunds reverse it
+  ---
+  duration_ms: 1128.761855
+  type: 'test'
+  ...
+# Subtest: Play delivers the non-consumable unlock without consumption and the consumable pack with it
+ok 444 - Play delivers the non-consumable unlock without consumption and the consumable pack with it
+  ---
+  duration_ms: 1141.818409
+  type: 'test'
+  ...
+# Subtest: pack products are code constants: approved price, credit and kind resist catalog tampering
+ok 445 - pack products are code constants: approved price, credit and kind resist catalog tampering
+  ---
+  duration_ms: 3.452278
+  type: 'test'
+  ...
+# Subtest: default-off pack sales still dispatch and guests can never order packs
+ok 446 - default-off pack sales still dispatch and guests can never order packs
+  ---
+  duration_ms: 1010.394554
+  type: 'test'
+  ...
+# Subtest: pack orders pin an immutable quote with credit and rate version; unlock pins no rate
+ok 447 - pack orders pin an immutable quote with credit and rate version; unlock pins no rate
+  ---
+  duration_ms: 1055.403399
+  type: 'test'
+  ...
+# Subtest: verified pack purchase and concurrent replays credit the exact nano once with the pinned rate version
+ok 448 - verified pack purchase and concurrent replays credit the exact nano once with the pinned rate version
+  ---
+  duration_ms: 1137.895608
+  type: 'test'
+  ...
+# Subtest: unlock delivery is set-once: replays and later orders never move the unlock
+ok 449 - unlock delivery is set-once: replays and later orders never move the unlock
+  ---
+  duration_ms: 1035.263951
+  type: 'test'
+  ...
+# Subtest: pending then cancelled unlock never grants and a late purchased event cannot resurrect it
+ok 450 - pending then cancelled unlock never grants and a late purchased event cannot resurrect it
+  ---
+  duration_ms: 954.965373
+  type: 'test'
+  ...
+# Subtest: unlock refunds revoke only the revoked order grant and never a campaign unlock
+ok 451 - unlock refunds revoke only the revoked order grant and never a campaign unlock
+  ---
+  duration_ms: 953.649998
+  type: 'test'
+  ...
+# Subtest: a purchased unlock refund clears the entitlement and stale purchases cannot restore it
+ok 452 - a purchased unlock refund clears the entitlement and stale purchases cannot restore it
+  ---
+  duration_ms: 999.708317
+  type: 'test'
+  ...
+# Subtest: a refunded live unlock re-grants on re-purchase and stale replays never steal the new grant
+ok 453 - a refunded live unlock re-grants on re-purchase and stale replays never steal the new grant
+  ---
+  duration_ms: 1019.958048
+  type: 'test'
+  ...
+# Subtest: partial and full pack refunds are cumulative and stale provider snapshots cannot restore credit
+ok 454 - partial and full pack refunds are cumulative and stale provider snapshots cannot restore credit
+  ---
+  duration_ms: 966.194148
+  type: 'test'
+  ...
+# Subtest: refund while reserved preserves the hold and later pack tops up first repay actual debt
+ok 455 - refund while reserved preserves the hold and later pack tops up first repay actual debt
+  ---
+  duration_ms: 1034.932594
+  type: 'test'
+  ...
+# Subtest: sandbox pack purchases cannot fund public conversations or consume real value
+ok 456 - sandbox pack purchases cannot fund public conversations or consume real value
+  ---
+  duration_ms: 989.148927
+  type: 'test'
+  ...
+# Subtest: a test-environment unlock records fulfillment but never grants the real unlock; a live one does
+ok 457 - a test-environment unlock records fulfillment but never grants the real unlock; a live one does
+  ---
+  duration_ms: 936.446347
+  type: 'test'
+  ...
+# Subtest: one provider transaction cannot cross pack, AI value and minute orders
+ok 458 - one provider transaction cannot cross pack, AI value and minute orders
+  ---
+  duration_ms: 949.679693
+  type: 'test'
+  ...
+# Subtest: mismatched evidence is rejected before any pack state changes
+ok 459 - mismatched evidence is rejected before any pack state changes
+  ---
+  duration_ms: 950.756012
+  type: 'test'
+  ...
+# Subtest: the router routes pack kinds and reports unmapped orders when packs are absent
+ok 460 - the router routes pack kinds and reports unmapped orders when packs are absent
+  ---
+  duration_ms: 954.19912
+  type: 'test'
+  ...
+# Subtest: encrypted receipt and delivery retry grant the pack exactly once through the shared worker
+ok 461 - encrypted receipt and delivery retry grant the pack exactly once through the shared worker
+  ---
+  duration_ms: 958.596283
+  type: 'test'
+  ...
+# Subtest: the actual runtime role fulfills and refunds pack orders without entitlements-history permission
+ok 462 - the actual runtime role fulfills and refunds pack orders without entitlements-history permission
+  ---
+  duration_ms: 1039.923317
+  type: 'test'
+  ...
+# Subtest: reinstall recovery resolves the provider binding without a local order ID and grants exactly once
+ok 463 - reinstall recovery resolves the provider binding without a local order ID and grants exactly once
+  ---
+  duration_ms: 1115.16328
+  type: 'test'
+  ...
+# Subtest: recovery requires a real active member and bounded tokens before provider work
+ok 464 - recovery requires a real active member and bounded tokens before provider work
+  ---
+  duration_ms: 930.797802
+  type: 'test'
+  ...
+# Subtest: a valid token cannot be recovered into a different account or redirected using client fields
+ok 465 - a valid token cannot be recovered into a different account or redirected using client fields
+  ---
+  duration_ms: 921.097021
+  type: 'test'
+  ...
+# Subtest: recovery rechecks both provider bindings and original product, amount, currency and environment
+ok 466 - recovery rechecks both provider bindings and original product, amount, currency and environment
+  ---
+  duration_ms: 960.257836
+  type: 'test'
+  ...
+# Subtest: recovered pending purchases wait and survive a restart before verified completion and consumption
+ok 467 - recovered pending purchases wait and survive a restart before verified completion and consumption
+  ---
+  duration_ms: 1009.85554
+  type: 'test'
+  ...
+# Subtest: recovery after refund cannot restore voided time and remains available while new sales are paused
+ok 468 - recovery after refund cannot restore voided time and remains available while new sales are paused
+  ---
+  duration_ms: 1099.830355
+  type: 'test'
+  ...
+# Subtest: ten minutes plus regular teaching/search costs $0.5480
+ok 469 - ten minutes plus regular teaching/search costs $0.5480
+  ---
+  duration_ms: 1.808237
+  type: 'test'
+  ...
+# Subtest: cached input is separated from normal input and monetary values remain integers
+ok 470 - cached input is separated from normal input and monetary values remain integers
+  ---
+  duration_ms: 1.328348
+  type: 'test'
+  ...
+# Subtest: invalid provider quantities cannot become wallet debits
+ok 471 - invalid provider quantities cannot become wallet debits
+  ---
+  duration_ms: 1.954497
+  type: 'test'
+  ...
+# Subtest: voice snapshots coalesce and 600 seconds requests closure exactly once
+ok 472 - voice snapshots coalesce and 600 seconds requests closure exactly once
+  ---
+  duration_ms: 0.429749
+  type: 'test'
+  ...
+# Subtest: meter rejects a different attached session or regressing final usage
+ok 473 - meter rejects a different attached session or regressing final usage
+  ---
+  duration_ms: 0.439162
+  type: 'test'
+  ...
+# Subtest: the ledger requires an account bearer, guests included
+ok 474 - the ledger requires an account bearer, guests included
+  ---
+  duration_ms: 182.184238
+  type: 'test'
+  ...
+# Subtest: a guest sync is stored and reading back returns only that account, never the bearer
+ok 475 - a guest sync is stored and reading back returns only that account, never the bearer
+  ---
+  duration_ms: 47.445395
+  type: 'test'
+  ...
+# Subtest: replayed syncs merge monotonically over HTTP
+ok 476 - replayed syncs merge monotonically over HTTP
+  ---
+  duration_ms: 37.068375
+  type: 'test'
+  ...
+# Subtest: off-catalog entries, oversized batches and oversized bodies fail closed
+ok 477 - off-catalog entries, oversized batches and oversized bodies fail closed
+  ---
+  duration_ms: 38.002458
+  type: 'test'
+  ...
+# Subtest: the parser accepts representative entries from every progress family
+ok 478 - the parser accepts representative entries from every progress family
+  ---
+  duration_ms: 70.23742
+  type: 'test'
+  ...
+# Subtest: the parser rejects anything outside the closed ledger shape
+ok 479 - the parser rejects anything outside the closed ledger shape
+  ---
+  duration_ms: 9.774715
+  type: 'test'
+  ...
+# Subtest: entries merge monotonically and replays change nothing
+ok 480 - entries merge monotonically and replays change nothing
+  ---
+  duration_ms: 29.916828
+  type: 'test'
+  ...
+# Subtest: kinds and items stay independent and account deletion cascades
+ok 481 - kinds and items stay independent and account deletion cascades
+  ---
+  duration_ms: 42.887317
+  type: 'test'
+  ...
+# Subtest: the same item earned in two languages is two rows
+ok 482 - the same item earned in two languages is two rows
+  ---
+  duration_ms: 17.951398
+  type: 'test'
+  ...
+# Subtest: installation proof stores only a scoped hash and rejects identity overrides
+ok 483 - installation proof stores only a scoped hash and rejects identity overrides
+  ---
+  duration_ms: 4.068713
+  type: 'test'
+  ...
+# Subtest: USD budget exhaustion is a normal response and signup remains available with no hidden minute cap
+ok 484 - USD budget exhaustion is a normal response and signup remains available with no hidden minute cap
+  ---
+  duration_ms: 1188.908478
+  type: 'test'
+  ...
+# Subtest: installation renewal preserves spent allowance after token expiry and trial shutdown
+ok 485 - installation renewal preserves spent allowance after token expiry and trial shutdown
+  ---
+  duration_ms: 1106.126849
+  type: 'test'
+  ...
+# Subtest: purchased minutes add to remaining free time and guest linking preserves the exact allowance once
+ok 486 - purchased minutes add to remaining free time and guest linking preserves the exact allowance once
+  ---
+  duration_ms: 1218.001677
+  type: 'test'
+  ...
+# Subtest: an existing member login retires a duplicate guest without adding another trial or blocking its paid balance
+ok 487 - an existing member login retires a duplicate guest without adding another trial or blocking its paid balance
+  ---
+  duration_ms: 1277.233232
+  type: 'test'
+  ...
+# Subtest: public calls and earned teaching continue across old test caps with an empty allowlist
+ok 488 - public calls and earned teaching continue across old test caps with an empty allowlist
+  ---
+  duration_ms: 1103.926446
+  type: 'test'
+  ...
+# Subtest: an uncertain guest session blocks its owner while another funded account can converse
+ok 489 - an uncertain guest session blocks its owner while another funded account can converse
+  ---
+  duration_ms: 1119.707679
+  type: 'test'
+  ...
+# Subtest: sandbox consumption and refunds cannot hide or seize subsequently funded minutes
+ok 490 - sandbox consumption and refunds cannot hide or seize subsequently funded minutes
+  ---
+  duration_ms: 1165.394062
+  type: 'test'
+  ...
+# Subtest: public settlement preserves sandbox balance and live refunds retain their cutoff
+ok 491 - public settlement preserves sandbox balance and live refunds retain their cutoff
+  ---
+  duration_ms: 1144.694261
+  type: 'test'
+  ...
+# Subtest: ambiguous legacy sandbox balances require audited reconciliation without changing the total
+ok 492 - ambiguous legacy sandbox balances require audited reconciliation without changing the total
+  ---
+  duration_ms: 1018.976589
+  type: 'test'
+  ...
+# Subtest: opt-in deferred login permits member gifts while guest closure remains pending and rejects new guest calls
+ok 493 - opt-in deferred login permits member gifts while guest closure remains pending and rejects new guest calls
+  ---
+  duration_ms: 1144.038869
+  type: 'test'
+  ...
+# Subtest: conversation rejection returns a generated reference and retains the original failure contract
+ok 494 - conversation rejection returns a generated reference and retains the original failure contract
+  ---
+  duration_ms: 120.081158
+  type: 'test'
+  ...
+# Subtest: an observer failure cannot change account authentication or start a provider request
+ok 495 - an observer failure cannot change account authentication or start a provider request
+  ---
+  duration_ms: 18.329686
+  type: 'test'
+  ...
+# Subtest: diagnostics contain fixed operation names and allowlisted failure categories only
+ok 496 - diagnostics contain fixed operation names and allowlisted failure categories only
+  ---
+  duration_ms: 0.253925
+  type: 'test'
+  ...
+# Subtest: a rejected asynchronous observer cannot become an unhandled rejection
+ok 497 - a rejected asynchronous observer cannot become an unhandled rejection
+  ---
+  duration_ms: 18.300004
+  type: 'test'
+  ...
+# Subtest: plan catalog exposes versioned config and public tiers
+ok 498 - plan catalog exposes versioned config and public tiers
+  ---
+  duration_ms: 119.486021
+  type: 'test'
+  ...
+# Subtest: subscription config updates are versioned, reason-required and audited
+ok 499 - subscription config updates are versioned, reason-required and audited
+  ---
+  duration_ms: 170.862964
+  type: 'test'
+  ...
+# Subtest: period grants are idempotent and respect the rollover cap
+ok 500 - period grants are idempotent and respect the rollover cap
+  ---
+  duration_ms: 57.14993
+  type: 'test'
+  ...
+# Subtest: the free drip runs once per month and not for subscribed accounts
+ok 501 - the free drip runs once per month and not for subscribed accounts
+  ---
+  duration_ms: 54.808551
+  type: 'test'
+  ...
+# Subtest: the minutes endpoint enriches the balance with subscription state
+ok 502 - the minutes endpoint enriches the balance with subscription state
+  ---
+  duration_ms: 82.072796
+  type: 'test'
+  ...
+# Subtest: stripe subscription webhooks upsert state and grant once per delivery
+ok 503 - stripe subscription webhooks upsert state and grant once per delivery
+  ---
+  duration_ms: 72.573556
+  type: 'test'
+  ...
+# Subtest: the subscription checkout endpoint requires configuration and a tier
+ok 504 - the subscription checkout endpoint requires configuration and a tier
+  ---
+  duration_ms: 51.003752
+  type: 'test'
+  ...
+# Subtest: tokenProxyConfig requires both URL and key
+ok 505 - tokenProxyConfig requires both URL and key
+  ---
+  duration_ms: 2.067255
+  type: 'test'
+  ...
+# Subtest: relay meters provider usage at the active rate version and debits the wallet
+ok 506 - relay meters provider usage at the active rate version and debits the wallet
+  ---
+  duration_ms: 657.285663
+  type: 'test'
+  ...
+# Subtest: a zero-cost usage report records usage without a ledger entry
+ok 507 - a zero-cost usage report records usage without a ledger entry
+  ---
+  duration_ms: 571.565998
+  type: 'test'
+  ...
+# Subtest: a success reply whose usage cannot be metered is refused with nothing debited or recorded
+ok 508 - a success reply whose usage cannot be metered is refused with nothing debited or recorded
+  ---
+  duration_ms: 569.477605
+  type: 'test'
+  ...
+# Subtest: relay rejects streaming requests before wallet admission, the provider call, or any debit
+ok 509 - relay rejects streaming requests before wallet admission, the provider call, or any debit
+  ---
+  duration_ms: 561.695304
+  type: 'test'
+  ...
+# Subtest: per-account cap refuses a second concurrent call for one account while another proceeds, and frees on settle
+ok 510 - per-account cap refuses a second concurrent call for one account while another proceeds, and frees on settle
+  ---
+  duration_ms: 552.411542
+  type: 'test'
+  ...
+# Subtest: estimate refuses calls the balance cannot plausibly cover
+ok 511 - estimate refuses calls the balance cannot plausibly cover
+  ---
+  duration_ms: 528.264601
+  type: 'test'
+  ...
+# Subtest: the tokens timeseries set aggregates daily calls, token counts and settled nanoUSD
+ok 512 - the tokens timeseries set aggregates daily calls, token counts and settled nanoUSD
+  ---
+  duration_ms: 533.508501
+  type: 'test'
+  ...
+# Subtest: grant-unlock assigns the campaign unlock once, idempotently, without overwriting a paid unlock
+ok 513 - grant-unlock assigns the campaign unlock once, idempotently, without overwriting a paid unlock
+  ---
+  duration_ms: 617.840899
+  type: 'test'
+  ...
+# Subtest: campaign grants refuse guest accounts, deleted accounts and unknown accounts
+ok 514 - campaign grants refuse guest accounts, deleted accounts and unknown accounts
+  ---
+  duration_ms: 537.213845
+  type: 'test'
+  ...
+# Subtest: revoke-unlock clears only the campaign unlock
+ok 515 - revoke-unlock clears only the campaign unlock
+  ---
+  duration_ms: 596.655298
+  type: 'test'
+  ...
+# Subtest: grant-balance credits the wallet through the ledger, idempotently, and rejects conflicting reuse
+ok 516 - grant-balance credits the wallet through the ledger, idempotently, and rejects conflicting reuse
+  ---
+  duration_ms: 538.701943
+  type: 'test'
+  ...
+# Subtest: tokenAccountSummary reports wallet, unlock and 30-day usage
+ok 517 - tokenAccountSummary reports wallet, unlock and 30-day usage
+  ---
+  duration_ms: 541.026751
+  type: 'test'
+  ...
+# Subtest: assigned unlock and balance open the HTTP proxy route end to end
+ok 518 - assigned unlock and balance open the HTTP proxy route end to end
+  ---
+  duration_ms: 714.169088
+  type: 'test'
+  ...
+# Subtest: ingestion requires an account bearer, guests included
+ok 519 - ingestion requires an account bearer, guests included
+  ---
+  duration_ms: 198.989748
+  type: 'test'
+  ...
+# Subtest: a guest batch is accepted and stored without echoing identity or content
+ok 520 - a guest batch is accepted and stored without echoing identity or content
+  ---
+  duration_ms: 51.289736
+  type: 'test'
+  ...
+# Subtest: a replayed batch stays idempotent over HTTP
+ok 521 - a replayed batch stays idempotent over HTTP
+  ---
+  duration_ms: 34.64743
+  type: 'test'
+  ...
+# Subtest: off-catalog names, oversized batches and oversized bodies fail closed
+ok 522 - off-catalog names, oversized batches and oversized bodies fail closed
+  ---
+  duration_ms: 47.066366
+  type: 'test'
+  ...
+# Subtest: the batch parser accepts a representative batch from each catalog family
+ok 523 - the batch parser accepts a representative batch from each catalog family
+  ---
+  duration_ms: 85.259737
+  type: 'test'
+  ...
+# Subtest: the batch parser rejects anything outside the closed catalog
+ok 524 - the batch parser rejects anything outside the closed catalog
+  ---
+  duration_ms: 11.830407
+  type: 'test'
+  ...
+# Subtest: the SQL name check and the TS catalog stay pinned together
+ok 525 - the SQL name check and the TS catalog stay pinned together
+  ---
+  duration_ms: 11.377116
+  type: 'test'
+  ...
+# Subtest: ingest stores the batch once and replays are idempotent
+ok 526 - ingest stores the batch once and replays are idempotent
+  ---
+  duration_ms: 20.924103
+  type: 'test'
+  ...
+# Subtest: a completed account deletion takes its usage events with it
+ok 527 - a completed account deletion takes its usage events with it
+  ---
+  duration_ms: 42.096878
+  type: 'test'
+  ...
+# Subtest: stored events cannot be rewritten but the retention prune deletes old ones
+ok 528 - stored events cannot be rewritten but the retention prune deletes old ones
+  ---
+  duration_ms: 37.04344
+  type: 'test'
+  ...
+# Subtest: unfunded free offers fail atomically without creating a guest or entitlement
+ok 529 - unfunded free offers fail atomically without creating a guest or entitlement
+  ---
+  duration_ms: 982.313742
+  type: 'test'
+  ...
+# Subtest: concurrent claims respect dollar caps and spending or resuming cannot replenish them
+ok 530 - concurrent claims respect dollar caps and spending or resuming cannot replenish them
+  ---
+  duration_ms: 1079.968257
+  type: 'test'
+  ...
+# Subtest: funding changes retain the original reserve and require reviewed policy versions
+ok 531 - funding changes retain the original reserve and require reviewed policy versions
+  ---
+  duration_ms: 1081.789049
+  type: 'test'
+  ...
+# Subtest: daily funding resets at UTC midnight while the lifetime reserve remains consumed
+ok 532 - daily funding resets at UTC midnight while the lifetime reserve remains consumed
+  ---
+  duration_ms: 956.015839
+  type: 'test'
+  ...
+1..532
+# tests 532
+# suites 0
+# pass 532
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 271938.180208
+docker compose --project-directory /home/joaquin/Proyectos/looro-test/looro-worktrees/weekly-exam-recovery/services/api/tests -p looro-smoke -f /home/joaquin/Proyectos/looro-test/looro-worktrees/weekly-exam-recovery/services/api/tests/compose.smoke.yaml down --volumes
+ Container looro-smoke-api-1  Stopping
+ Container looro-smoke-api-1  Stopped
+ Container looro-smoke-api-1  Removing
+ Container looro-smoke-api-1  Removed
+ Container looro-smoke-migrate-1  Stopping
+ Container looro-smoke-migrate-1  Stopped
+ Container looro-smoke-migrate-1  Removing
+ Container looro-smoke-migrate-1  Removed
+ Container looro-smoke-database-1  Stopping
+ Container looro-smoke-database-1  Stopped
+ Container looro-smoke-database-1  Removing
+ Container looro-smoke-database-1  Removed
+ Volume looro-smoke_smoke_data  Removing
+ Network looro-smoke_default  Removing
+ Network looro-smoke_default  Removed
+ Volume looro-smoke_smoke_data  Removed

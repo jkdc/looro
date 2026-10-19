@@ -4,6 +4,7 @@ import type { PoolClient } from 'pg';
 import { transaction, type Database } from './db.js';
 import { accountProfile, authenticate, bearerHash, createChallenge, deleteAccount, exchangeIdentity, hasGoogleSignIn, signOut, verifyIdentity, type AppleRevoker, type AuthConfig } from './auth.js';
 import { HelperSessionLimitError, ServiceError } from './errors.js';
+import { registerLevelTestAttemptRoutes } from './level-test-attempts.js';
 import { applyStripeEvent, STRIPE_WEBHOOK_PATH, type SandboxPayments } from './payments.js';
 import { RATE_VERSION } from './pricing.js';
 import { aiPricingPolicy } from './ai-top-up-pricing.js';
@@ -36,9 +37,11 @@ import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForA
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
+import { approveGeneratedWeek, rejectGeneratedWeek } from './level-tests-publication.js';
 import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
+import type { LevelTestSchedulerConfig } from './level-tests-scheduler.js';
 
 export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPayments; attestor?: TrialAttestor; minuteAttestor?: MinuteAttestor; guestMinuteAttestor?: GuestMinuteAttestor; appleRevoker?: AppleRevoker; hosted?: HostedVoice; accessRequests?: AccessRequests; aiReports?: AIReports;
   onStartupDiagnostic?: (diagnostic: StartupDiagnostic) => void | Promise<void>;
@@ -48,7 +51,9 @@ export interface Services { db: Database; auth: AuthConfig; payments?: SandboxPa
   accounts?: { admission: AuthAdmission; identityVerifier?: typeof verifyIdentity },
   tokenProxy?: TokenProxy,
   subscriptions?: SubscriptionBilling,
-  admin?: { services: AdminAuthServices; admission: AuthAdmission } }
+  admin?: { services: AdminAuthServices; admission: AuthAdmission };
+  generationStatus?: { config: LevelTestSchedulerConfig; isStarted: () => boolean };
+  llmTestTimeoutMs?: number }
 const accountPaths = new Set(['/v1/auth/challenge', '/v1/auth/exchange', '/v1/auth/sign-out', '/v1/account', '/v1/wallet', '/v1/minutes/welcome', '/v1/minutes/link-guest',
   '/v1/minutes/orders', '/v1/minutes/orders/by-key/:key', '/v1/minutes/orders/:id', '/v1/minutes/orders/:id/play', '/v1/minutes/play/recover',
   '/v1/subscriptions/plans', '/v1/subscriptions/mine', '/v1/subscriptions/checkout']);
@@ -147,7 +152,13 @@ export function createApp(services: Services) {
     const proxy = services.accounts?.admission.config ?? services.accessRequests?.config;
     if (proxy) {
       let network: string;
-      try { network = trustedClientNetwork(request.headers, request.raw.socket.remoteAddress ?? request.ip, proxy.proxyToken); }
+      // Local development (ACCOUNTS_ALLOW_LOCAL_LOOPBACK / local waitlist origin):
+      // a direct loopback client has no proxy to sign its headers, so its socket
+      // address IS its network identity. Production never sees loopback clients.
+      const remoteAddress = request.raw.socket.remoteAddress ?? request.ip;
+      const allowLoopback = 'allowLocalLoopback' in proxy && proxy.allowLocalLoopback === true &&
+        ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(remoteAddress);
+      try { network = trustedClientNetwork(request.headers, remoteAddress, proxy.proxyToken, allowLoopback); }
       catch { throw new ServiceError('trusted_proxy_required', 503); }
       networkKey = createHmac('sha256', Buffer.from(proxy.hmacKey, 'hex')).update(network).digest('hex');
     }
@@ -178,6 +189,7 @@ export function createApp(services: Services) {
     }
     reply.code(status).send({ error: { code } });
   });
+  registerLevelTestAttemptRoutes(app, db);
   const featureState=()=>{
     const hostedVoice=Boolean(services.hosted?.available && (!services.hosted.minuteFunded || services.hostedHelpers));
     const livePayments=['stripe','play'].some(provider=>services.minuteCommerce?.aiPurchases?.products(provider as 'stripe'|'play').some(product=>product.environment==='live'));
@@ -291,6 +303,12 @@ export function createApp(services: Services) {
   const assertAdminCsrf = (request: FastifyRequest) => {
     if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
     assertAdminOrigin(request.headers, services.admin.services.config.allowedOrigin, request.method);
+  };
+  const assertAdminPageOrigin = (request: FastifyRequest) => {
+    if (!services.admin) throw new ServiceError('admin_panel_unavailable', 503);
+    const origin = request.headers.origin;
+    if (origin !== undefined && origin !== services.admin.services.config.allowedOrigin)
+      throw new ServiceError('admin_origin_required', 403);
   };
   app.post('/v1/admin/auth/challenge', { bodyLimit: 1024 }, async request => {
     assertAdminCsrf(request);
@@ -454,6 +472,64 @@ export function createApp(services: Services) {
     return reply.send(outcome);
   });
   // LLM provider configuration for weekly level-test generation (level-tests-llm).
+  app.get('/v1/admin/level-tests/status', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const config = services.generationStatus?.config;
+    const latest = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, started_at, finished_at, updated_at " +
+      "FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1")).rows[0] as
+      { language_id: string; level: string; week_index: number; state: string; attempts: number;
+        error_code: string | null; started_at: Date | null; finished_at: Date | null; updated_at: Date } | undefined;
+    const iso = (value: Date | null | undefined) => value instanceof Date ? value.toISOString() : null;
+    reply.header('cache-control', 'no-store');
+    return {
+      schedule: config ? { enabled: config.enabled, day: config.day, hour: config.hour,
+        languages: config.languages, levels: config.levels, timeoutMs: config.timeoutMs }
+        : { enabled: false, day: null, hour: null, languages: [], levels: [], timeoutMs: null },
+      scheduler: { activeInProcess: services.generationStatus?.isStarted() ?? false },
+      latestJob: latest ? { languageID: latest.language_id, level: latest.level, weekId: latest.week_index,
+        status: latest.state, attempts: latest.attempts, errorCode: latest.error_code,
+        startedAt: iso(latest.started_at), finishedAt: iso(latest.finished_at), updatedAt: iso(latest.updated_at) } : null
+    };
+  });
+  app.get('/v1/admin/level-tests/drafts', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const query = request.query as Record<string, unknown>;
+    const pageNumber = (value: unknown, fallback: number, max: number) => {
+      if (value === undefined) return fallback;
+      if (typeof value !== 'string' || !/^(0|[1-9][0-9]*)$/.test(value)) throw new ServiceError('invalid_request');
+      const parsed = Number(value);
+      if (!Number.isSafeInteger(parsed) || parsed > max) throw new ServiceError('invalid_request');
+      return parsed;
+    };
+    const limit = pageNumber(query.limit, 50, 100);
+    if (limit < 1) throw new ServiceError('invalid_request');
+    const offset = pageNumber(query.offset, 0, 100_000);
+    const rows = (await db.query("SELECT id, language_id, level, week_index, status, pool, variants, judge_mode, review, created_at " +
+      "FROM level_test_weeks WHERE status IN ('draft','rejected') " +
+      "ORDER BY created_at DESC, id DESC LIMIT $1 OFFSET $2", [limit, offset])).rows;
+    reply.header('cache-control', 'no-store');
+    return { items: rows.map(row => ({ id: row.id, languageID: row.language_id, level: row.level,
+      weekId: row.week_index, status: row.status, pool: row.pool, variants: row.variants,
+      judgeMode: row.judge_mode, review: row.review,
+      createdAt: row.created_at instanceof Date ? row.created_at.toISOString() : row.created_at })),
+    limit, offset };
+  });
+  app.post('/v1/admin/level-tests/:generationId/reject', { bodyLimit: 1024 }, async request => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
+    const id = uuid((request.params as { generationId: string }).generationId);
+    return rejectGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
+  });
+  app.post('/v1/admin/level-tests/:generationId/approve', { bodyLimit: 1024 }, async request => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
+    const id = uuid((request.params as { generationId: string }).generationId);
+    return approveGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
+  });
   app.get('/v1/admin/llm-config', async request => {
     const admin = await adminOnly(request);
     void admin;
@@ -479,16 +555,38 @@ export function createApp(services: Services) {
   app.post('/v1/admin/llm-config/test', { bodyLimit: 4096 }, async (request, reply) => {
     assertAdminCsrf(request);
     const admin = await adminOnly(request);
-    void admin;
     try {
       const config = await storedConfigForTest(db, process.env);
-      const replyTransport = await fetch(`${config.baseUrl.replace(/\/$/, '')}/chat/completions`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
-        body: JSON.stringify({ model: config.model, messages: [{ role: 'user', content: 'Reply with OK.' }] }),
-      });
-      return reply.send({ ok: replyTransport.ok, status: replyTransport.status });
-    } catch {
+      const auditOutcome = async (outcome: string, status: number | null) => {
+        try {
+          await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'llm_config.test',
+            config.provider, `Connection test ${outcome}`, { provider: config.provider, model: config.model, outcome, status }));
+        } catch { throw new ServiceError('admin_audit_unavailable', 503); }
+      };
+      const controller = new AbortController();
+      let timedOut = false;
+      const timeoutMs = Math.min(services.llmTestTimeoutMs ?? 8_000, 30_000);
+      const timer = setTimeout(() => { timedOut = true; controller.abort(new Error('llm_test_timeout')); }, timeoutMs);
+      try {
+        const replyTransport = await fetch(`${config.baseUrl.replace(/\/$/, '')}/chat/completions`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
+          body: JSON.stringify({ model: config.model, messages: [{ role: 'user', content: 'Reply with OK.' }] }),
+          signal: controller.signal,
+        });
+        const outcome = { ok: replyTransport.ok, status: replyTransport.status };
+        controller.abort(new Error('llm_test_complete'));
+        void replyTransport.body?.cancel().catch(() => undefined);
+        await auditOutcome(replyTransport.ok ? 'ok' : 'provider_rejected', replyTransport.status);
+        return reply.send(outcome);
+      } catch {
+        const outcome = timedOut ? 'timeout' : 'unreachable';
+        await auditOutcome(outcome, null);
+        return reply.code(502).send({ ok: false, error: timedOut ? 'llm_test_timeout' : 'llm_unreachable' });
+      } finally { clearTimeout(timer); }
+    } catch (error) {
+      if (error instanceof ConfigError) throw new ServiceError(error.code, error.status);
+      if (error instanceof ServiceError) throw error;
       return reply.code(502).send({ ok: false, error: 'llm_unreachable' });
     }
   });

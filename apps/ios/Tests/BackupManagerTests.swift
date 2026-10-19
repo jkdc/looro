@@ -111,6 +111,13 @@ final class BackupManagerTests: XCTestCase {
         return archive
     }
 
+    private func sampleExam(_ examID: String, _ contentID: String, _ language: String) -> ExamSnapshotRecord {
+        ExamSnapshotRecord(examID: examID, contentID: contentID, contentHash: "hash-\(contentID)",
+            schemaVersion: 1, contentRevision: 1, gradingVersion: 1, source: "bundled",
+            languageID: language, level: "B1", weekID: 202641,
+            contentJSON: "{\"question\":\"frozen\"}", createdAt: 1)
+    }
+
     /// Imports the archive, then adds the languageless platform queues:
     /// retry-ledger rows (including an orphan whose session row does not
     /// exist — the delete's LEFT-JOIN semantics must keep it) and two
@@ -134,6 +141,10 @@ final class BackupManagerTests: XCTestCase {
         let dbURL = directory.appendingPathComponent("learning.db")
         let db = try fileBacked(dbURL)
         try seed(db)
+        _ = try ExamHistoryDao.start(db, snapshot: sampleExam("backup-exam", "backup-content", "en"),
+            attempt: ExamAttemptRecord(attemptID: "backup-attempt", examID: "backup-exam", startedAt: 12))
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "backup-attempt", questionID: "q1",
+            responseJSON: "{\"answer\":\"saved\"}", position: 1, savedAt: 13)
         let original = try ArchiveMapper.export(db)
 
         // GRDB's DatabaseQueue runs rollback-journal (delete) mode by default,
@@ -160,6 +171,9 @@ final class BackupManagerTests: XCTestCase {
         let restored = try fileBacked(dbURL)
         XCTAssertEqual(try original.encoded(), try ArchiveMapper.export(restored).encoded(),
                        "the roundtrip hands back the original archive")
+        let restoredExam = try ExamHistoryDao.load(restored, attemptID: "backup-attempt")!
+        XCTAssertEqual("{\"question\":\"frozen\"}", restoredExam.snapshot.text("content_json"))
+        XCTAssertEqual("{\"answer\":\"saved\"}", restoredExam.answers.first!.text("response_json"))
     }
 
     func testExportIsDeterministicAndItsCopyPassesTheImportGate() throws {
@@ -276,12 +290,30 @@ final class BackupManagerTests: XCTestCase {
             .map { $0.session.id })
     }
 
+    func testImportAcceptsAV2BackupWithoutExamTables() throws {
+        let directory = try makeDirectory()
+        let url = directory.appendingPathComponent("v2.db")
+        let db = try LearningDatabase.openV1(at: url.path)
+        try db.exec("PRAGMA user_version = 2")
+        db.close()
+        let bytes = try BackupManager.readValidatedBackup(
+            from: url, workDirectory: directory,
+            openForVerify: BackupManager.openForVerification)
+        XCTAssertEqual(bytes, try Data(contentsOf: url))
+    }
+
     // MARK: per-language delete
 
     func testDeleteByLanguageKeepsOtherLanguagesLegacyRowsAndQueues() throws {
         let db = try LearningDatabase.openInMemory()
         databases.append(db)
         let seeded = try seed(db)
+        _ = try ExamHistoryDao.start(db, snapshot: sampleExam("en-exam", "en-content", "en"),
+            attempt: ExamAttemptRecord(attemptID: "en-attempt", examID: "en-exam", startedAt: 10))
+        _ = try ExamHistoryDao.start(db, snapshot: sampleExam("es-exam", "es-content", "es"),
+            attempt: ExamAttemptRecord(attemptID: "es-attempt", examID: "es-exam", startedAt: 11))
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "en-attempt", questionID: "q1",
+            responseJSON: "{\"answer\":\"private\"}", position: 0, savedAt: 12)
 
         let deletion = try BackupManager.deleteLearningDataForLanguage(db, languageID: "en")
         XCTAssertEqual(Int64(2), deletion.sessions)
@@ -290,6 +322,11 @@ final class BackupManagerTests: XCTestCase {
         XCTAssertEqual(Int64(1), deletion.expressions)
         XCTAssertEqual(Int64(2), deletion.lessonStates)
         XCTAssertEqual(Int64(1), deletion.tickets)
+        XCTAssertEqual(Int64(1), deletion.examAttempts)
+        XCTAssertEqual(Int64(1), deletion.examSnapshots)
+        XCTAssertEqual(Int64(1), try count(db, "exam_attempts"))
+        XCTAssertEqual(Int64(1), try count(db, "exam_snapshots"))
+        XCTAssertEqual("es-attempt", try db.query("SELECT attempt_id FROM exam_attempts").first!.text("attempt_id"))
 
         // the survivors, row by row
         XCTAssertEqual([sES1.uuidString],

@@ -1,5 +1,6 @@
 import { connectDatabase } from './db.js';
-import { generateWeeklyLevelTest } from './level-tests-llm.js';
+import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
+import { weekIndex } from './level-tests.js';
 
 /** Weekly LLM generation CLI (level-tests-llm, cron option A):
     `npm run leveltests-generate [--force] [--langs en,es] [--levels A1,B1]`
@@ -28,14 +29,13 @@ try {
       // Pace the calls: the coding plan has RPM limits.
       await new Promise(resolve => setTimeout(resolve, 5000));
       try {
-        const outcome = await generateWeeklyLevelTest(
-          { db, env: process.env }, { languageID, level, force: flag('--force') });
+        const outcome = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekIndex(new Date()), force: flag('--force') });
         summary.push(outcome);
-        if (outcome.status === 'failed') failures += 1;
+        if (['failed', 'unknown'].includes(outcome.status)) failures += 1;
         console.error(`${languageID}/${level}: ${outcome.status}${outcome.errors?.length ? ` — ${outcome.errors.join('; ')}` : ''}`);
       } catch (error) {
         failures += 1;
-        console.error(`${languageID}/${level}: failed — ${error instanceof Error ? error.message : error}`);
+        console.error(`${languageID}/${level}: failed — generation_failed`);
       }
     }
   }

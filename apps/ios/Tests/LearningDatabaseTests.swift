@@ -19,14 +19,16 @@ final class LearningDatabaseTests: XCTestCase {
 
     // MARK: opener
 
-    func testSchemaOpensAtVersionTwoWithExactlyThePinnedTables() throws {
-        XCTAssertEqual(Int64(2), try db.query("PRAGMA user_version").first!.long("user_version"))
+    func testSchemaOpensAtVersionThreeWithExactlyThePinnedTables() throws {
+        XCTAssertEqual(Int64(3), try db.query("PRAGMA user_version").first!.long("user_version"))
         let tables = try db.query(
             "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
             .map { $0.text("name") }
         // fragments_fts is the pinned v2 virtual table; fragments_fts_* are its
         // FTS4 shadow tables (SQLite internals, like sqlite_sequence).
-        XCTAssertEqual(["assessment_tickets", "completions", "expressions", "fragments",
+        XCTAssertEqual(["assessment_tickets", "completions", "exam_answers", "exam_attempts",
+                        "exam_results", "exam_snapshot_ids", "exam_snapshots", "exam_sync_outbox",
+                        "expressions", "fragments",
                         "fragments_fts", "fragments_fts_docsize", "fragments_fts_segdir",
                         "fragments_fts_segments", "fragments_fts_stat",
                         "lesson_state", "meta", "preferences", "sessions", "skill_errors",
@@ -44,7 +46,8 @@ final class LearningDatabaseTests: XCTestCase {
         XCTAssertTrue(virtual.text("sql").contains("tokenize='unicode61'"))
         XCTAssertFalse(virtual.text("sql").contains("fts5"),
                        "FTS5 does not exist in the Android framework build")
-        XCTAssertEqual(["fragments_fts_after_insert", "fragments_fts_after_update",
+        XCTAssertEqual(["exam_snapshot_ids_immutable_update", "exam_snapshots_immutable_update",
+                        "fragments_fts_after_insert", "fragments_fts_after_update",
                         "fragments_fts_before_delete", "fragments_fts_before_update"],
                        try db.query("SELECT name FROM sqlite_master WHERE type = 'trigger' ORDER BY name")
                            .map { $0.text("name") })
@@ -118,11 +121,11 @@ final class LearningDatabaseTests: XCTestCase {
 
     func testUpgradeRejectsVersionsItCannotReach() throws {
         XCTAssertThrowsError(try LearningDatabase.upgrade(db, from: 0)) { error in
-            XCTAssertEqual(LearningDatabaseError.noUpgradePath(found: 0, want: 2),
+            XCTAssertEqual(LearningDatabaseError.noUpgradePath(found: 0, want: 3),
                            error as? LearningDatabaseError)
         }
         XCTAssertThrowsError(try LearningDatabase.upgrade(db, from: LearningDatabase.version)) { error in
-            XCTAssertEqual(LearningDatabaseError.noUpgradePath(found: 2, want: 2),
+            XCTAssertEqual(LearningDatabaseError.noUpgradePath(found: 3, want: 3),
                            error as? LearningDatabaseError)
         }
     }

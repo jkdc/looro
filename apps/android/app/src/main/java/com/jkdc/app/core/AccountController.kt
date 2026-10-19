@@ -30,6 +30,20 @@ class AccountController(
     private val lock = Mutex()
     private var session: AccountSession? = null
 
+    /** Test harness only (DEBUG builds): adopt a bearer minted directly against
+        a local API, skipping every OAuth round-trip. Release builds refuse. */
+    suspend fun debugSignIn(accountID: String, accessToken: String) {
+        if (!com.jkdc.app.BuildConfig.DEBUG) throw AccountFailure.Http(403, "debug_only")
+        operation {
+            val newSession = AccountSession(accountID, accessToken, now() + 3_600_000L)
+            withContext(NonCancellable) {
+                storage.save(newSession)
+                session = newSession
+                mutable.value = mutable.value.copy(accountID = newSession.accountID, email = null, minutes = null)
+            }
+            refreshAccount(newSession)
+        }
+    }
     suspend fun restore() = operation {
         val stored = storage.read()
         if (stored != null && !stored.isValid(now())) { storage.clear(); return@operation }

@@ -567,6 +567,7 @@ struct EditableTranscriptView: View {
 
 struct SettingsView: View {
     let coordinator: ConversationCoordinator
+    let accountStore: ManagedAccountStore
     @Environment(\.dismiss) private var dismiss
     @State private var key = ""
     @State private var hasKey = CredentialStore.hasKey
@@ -639,7 +640,7 @@ struct SettingsView: View {
                 } header: { Text("Just your pace") } footer: { Text(coordinator.isRunning ? "End this conversation to switch languages. Each language keeps its own words and progress." : "Each language keeps its own words and progress. Palique finds your pace through conversation. Slower speech applies to new conversations. Listening practice tells a short story without meaning subtitles — the written story stays on screen, and you can still look words up.") }
                 if ManagedAccountConfiguration.load() != nil {
                     Section {
-                        NavigationLink { ManagedAccountView() } label: {
+                        NavigationLink { ManagedAccountView(store: accountStore) } label: {
                             Label("Account", systemImage: "person.crop.circle")
                         }.disabled(coordinator.isRunning).accessibilityIdentifier("managed-account-settings")
                         if coordinator.hostedUIAvailable {

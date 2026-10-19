@@ -43,10 +43,12 @@ data class LanguageDeletion(
     val expressions: Long,
     val lessonStates: Long,
     val tickets: Long,
+    val examAttempts: Long = 0,
+    val examSnapshots: Long = 0,
 )
 
 /**
- * Phase-D database backup/restore for the learning database (schema v1).
+ * Phase-D database backup/restore for the learning database (schema v3).
  * File-level, unlike the JSON archive backup: the .db bytes travel whole, so
  * everything the JSON backup never carried (the usage_outbox queue, the
  * platform's assessment_tickets rows, the mastery meta rows) moves with it.
@@ -143,14 +145,18 @@ object BackupManager {
         TOO_LARGE,
     }
 
-    /** The ten tables shared/db/schema.sql creates, pinned by
+    /** The sixteen tables shared/db/schema.sql creates, pinned by
         scripts/check_db_schema.py. A backup missing any of them is not a
         learning database. */
     val CANONICAL_TABLES: List<String> = listOf(
         "meta", "preferences", "sessions", "fragments", "expressions",
         "lesson_state", "completions", "skill_errors", "usage_outbox",
-        "assessment_tickets",
+        "assessment_tickets", "exam_snapshots", "exam_snapshot_ids",
+        "exam_attempts", "exam_answers", "exam_results", "exam_sync_outbox",
     )
+
+    /** Tables present before schema v3 introduced durable exam history. */
+    private val LEGACY_CANONICAL_TABLES = CANONICAL_TABLES.take(10)
 
     // User-facing rejection copy lives in the string resources; the gate
     // throws [InvalidBackup] with the typed [BackupIssue] instead.
@@ -204,14 +210,14 @@ object BackupManager {
             while (true) {
                 val count = stream.read(buffer)
                 if (count < 0) break
-            if (output.size() + count > MAXIMUM_DATABASE_BYTES) {
-                throw InvalidBackup(BackupIssue.TOO_LARGE)
+                if (output.size() + count > MAXIMUM_DATABASE_BYTES) {
+                    throw InvalidBackup(BackupIssue.TOO_LARGE)
+                }
+                output.write(buffer, 0, count)
             }
-            output.write(buffer, 0, count)
+            output.toByteArray()
         }
-        output.toByteArray()
-    }
-    if (bytes.isEmpty()) throw InvalidBackup(BackupIssue.EMPTY)
+        if (bytes.isEmpty()) throw InvalidBackup(BackupIssue.EMPTY)
         val copy = File.createTempFile("backup-import-verify", ".db", workDir)
         try {
             copy.writeBytes(bytes)
@@ -254,7 +260,8 @@ object BackupManager {
             }
             val tables = db.query(
                 "SELECT name FROM sqlite_master WHERE type = 'table'").map { it.text("name") }
-            if (!CANONICAL_TABLES.all { it in tables }) throw InvalidBackup(BackupIssue.MISSING_TABLES)
+            val requiredTables = if (version >= 3) CANONICAL_TABLES else LEGACY_CANONICAL_TABLES
+            if (!requiredTables.all { it in tables }) throw InvalidBackup(BackupIssue.MISSING_TABLES)
         } finally {
             handle.close()
         }
@@ -315,7 +322,21 @@ object BackupManager {
             val lessonStates = tx.update(
                 "DELETE FROM lesson_state WHERE lesson_id LIKE ? ESCAPE '\\'",
                 listOf(lessonPattern))
-            LanguageDeletion(sessions, fragments, completions, expressions, lessonStates, tickets)
+            val examAttempts = tx.query("SELECT COUNT(*) AS n FROM exam_attempts WHERE exam_id IN " +
+                "(SELECT i.exam_id FROM exam_snapshot_ids i JOIN exam_snapshots s ON s.content_id = i.content_id " +
+                "WHERE s.language_id = ?)", listOf(languageID)).single().long("n")
+            tx.update("DELETE FROM exam_attempts WHERE exam_id IN (SELECT i.exam_id FROM exam_snapshot_ids i " +
+                "JOIN exam_snapshots s ON s.content_id = i.content_id WHERE s.language_id = ?)", listOf(languageID))
+            tx.update("DELETE FROM exam_snapshot_ids WHERE content_id IN " +
+                "(SELECT content_id FROM exam_snapshots WHERE language_id = ?)", listOf(languageID))
+            val examSnapshots = tx.query("SELECT COUNT(*) AS n FROM exam_snapshots WHERE language_id = ? " +
+                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
+                listOf(languageID)).single().long("n")
+            tx.update("DELETE FROM exam_snapshots WHERE language_id = ? " +
+                "AND NOT EXISTS (SELECT 1 FROM exam_snapshot_ids i WHERE i.content_id = exam_snapshots.content_id)",
+                listOf(languageID))
+            LanguageDeletion(sessions, fragments, completions, expressions, lessonStates, tickets,
+                examAttempts, examSnapshots)
             // usage_outbox, meta, preferences, skill_errors: deliberately
             // untouched — see the class KDoc.
         }

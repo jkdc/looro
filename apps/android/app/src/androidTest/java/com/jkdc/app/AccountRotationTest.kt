@@ -1,5 +1,6 @@
 package com.jkdc.app
 
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.ViewModelProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,7 +15,7 @@ class AccountRotationTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
 
     @Test fun accountSettlementAndItsBusyGuardSurviveActivityRecreation() {
-        assertEquals("com.jkdc.app.android.uitest", compose.activity.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, compose.activity.packageName)
         compose.awaitHistoryLoaded()
         val account = compose.runOnUiThread { ViewModelProvider(compose.activity)[AccountViewModel::class.java] }
         val settled = CompletableDeferred<Boolean>()

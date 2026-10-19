@@ -24,6 +24,11 @@ final class ManagedAccountTests: XCTestCase {
         XCTAssertEqual(try config(api: "https://accounts.example.test/").origin.absoluteString, "https://accounts.example.test")
         XCTAssertThrowsError(try config().endpoint("https://attacker.example.test/v1/wallet"))
         XCTAssertThrowsError(try config().endpoint("//attacker.example.test"))
+        XCTAssertEqual(try config().endpoint("/v1/level-test-attempts/events").path,
+                       "/v1/level-test-attempts/events")
+        XCTAssertEqual(try config().endpoint("/v1/level-test-attempts/sync").path,
+                       "/v1/level-test-attempts/sync")
+        XCTAssertThrowsError(try config().endpoint("/v1/level-test-attempts/other"))
     }
     func testGoogleCanBeConfiguredWithoutAppleCapability() throws {
         let google = try ManagedAccountConfiguration(apiURL: "https://accounts.example.test", googleClientID: client,

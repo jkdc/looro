@@ -132,6 +132,9 @@ public enum LearningDbWriter {
     /// site touches, faithful to the previous full-archive write.
     public static func learningDataDeleted(_ db: SqlDatabase, _ preferences: Preferences) throws {
         try db.transaction { tx in
+            try tx.exec("DELETE FROM exam_attempts")
+            try tx.exec("DELETE FROM exam_snapshot_ids")
+            try tx.exec("DELETE FROM exam_snapshots")
             try tx.exec("DELETE FROM sessions")
             try AssessmentTicketsDao.clear(tx)
             try PreferencesDao.put(tx, preferences)
@@ -167,6 +170,30 @@ public enum LearningDbWriter {
             try rewriteInTx(tx, merged)
             return try ArchiveMapper.export(tx)
         }
+    }
+
+    /// Persists the immutable snapshot, attempt and create event before the UI
+    /// is allowed to reveal the first question.
+    @discardableResult
+    public static func examStarted(_ db: SqlDatabase, snapshot: ExamSnapshotRecord,
+                                   attempt: ExamAttemptRecord) throws -> ExamHistory {
+        try ExamHistoryDao.start(db, snapshot: snapshot, attempt: attempt)
+    }
+
+    /// Saves answer and next position with a durable outbox event atomically.
+    @discardableResult
+    public static func examAnswerSaved(_ db: SqlDatabase, attemptID: String, questionID: String,
+                                       responseJSON: String, position: Int, savedAt: Double) throws -> Int64 {
+        try ExamHistoryDao.saveAnswer(db, attemptID: attemptID, questionID: questionID,
+                                      responseJSON: responseJSON, position: position, savedAt: savedAt)
+    }
+
+    /// Persists the original grading exactly once; byte-identical retries are no-ops.
+    @discardableResult
+    public static func examCompleted(_ db: SqlDatabase, attemptID: String,
+                                     resultJSON: String, completedAt: Double) throws -> Bool {
+        try ExamHistoryDao.complete(db, attemptID: attemptID, resultJSON: resultJSON,
+                                    completedAt: completedAt)
     }
 
     /// The Kotlin `ArchiveMerger.rewriteInTx`: the merged archive is written

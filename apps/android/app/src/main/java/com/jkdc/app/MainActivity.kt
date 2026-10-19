@@ -58,6 +58,16 @@ class MainActivity : ComponentActivity() {
         )
         purchases.bindAccountState(account.state, account.transitionBusy)
         lifecycleScope.launch {
+            account.state.collect { state -> vm.setExamOwner(state.accountID) }
+        }
+        // Test harness only (DEBUG builds): adopt a bearer seeded directly into
+        // the local API database, skipping OAuth. Release ignores the extras.
+        if (BuildConfig.DEBUG) {
+            val accountID = intent.getStringExtra("debug.accountID")
+            val token = intent.getStringExtra("debug.accountToken")
+            if (!accountID.isNullOrBlank() && !token.isNullOrBlank()) account.debugSignIn(accountID, token)
+        }
+        lifecycleScope.launch {
             combine(account.state, account.transitionBusy) { state, changing -> state.copy(busy = state.busy || changing) }
                 .collect { state -> purchases.onAccountChanged(state); vm.onAccountChanged(state) }
         }

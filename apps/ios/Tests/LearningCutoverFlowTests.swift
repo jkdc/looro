@@ -462,6 +462,14 @@ final class LearningCutoverFlowTests: XCTestCase {
         XCTAssertEqual(3, state.lessons!.first { $0.lessonID == lesson.id }!.attempts)
 
         // deleteAll: sessions + ledger + hidden words; the rest stays
+        _ = try ExamHistoryDao.start(db,
+            snapshot: ExamSnapshotRecord(examID: "flow-exam", contentID: "flow-content", contentHash: "flow-hash",
+                schemaVersion: 1, contentRevision: 1, gradingVersion: 1, source: "bundled",
+                languageID: "es", level: "B1", weekID: 202641,
+                contentJSON: "{\"question\":\"frozen\"}", createdAt: 1),
+            attempt: ExamAttemptRecord(attemptID: "flow-attempt", examID: "flow-exam", startedAt: now))
+        _ = try ExamHistoryDao.saveAnswer(db, attemptID: "flow-attempt", questionID: "q1",
+            responseJSON: "{\"answer\":\"private\"}", position: 1, savedAt: now + 1)
         var stored = state.preferences
         stored.hiddenWords = []
         state.sessions = []
@@ -469,6 +477,10 @@ final class LearningCutoverFlowTests: XCTestCase {
         try LearningDbWriter.learningDataDeleted(db, stored)
         try assertExportEquals(state)
         XCTAssertEqual(Int64(0), try db.query("SELECT COUNT(*) AS n FROM sessions").first!.long("n"))
+        XCTAssertEqual(Int64(0), try db.query("SELECT COUNT(*) AS n FROM exam_attempts").first!.long("n"))
+        XCTAssertEqual(Int64(0), try db.query("SELECT COUNT(*) AS n FROM exam_answers").first!.long("n"))
+        XCTAssertEqual(Int64(0), try db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox").first!.long("n"))
+        XCTAssertEqual(Int64(0), try db.query("SELECT COUNT(*) AS n FROM exam_snapshots").first!.long("n"))
         XCTAssertEqual(1, state.lessons!.count, "lessons are not this site's learning data")
 
         // importData (restore path): the merger's projection becomes the new

@@ -129,6 +129,9 @@ object LearningDbWriter {
         data the site touches, faithful to the previous full-archive write. */
     fun learningDataDeleted(db: SqlDatabase, preferences: Preferences) {
         db.transaction { tx ->
+            tx.exec("DELETE FROM exam_attempts")
+            tx.exec("DELETE FROM exam_snapshot_ids")
+            tx.exec("DELETE FROM exam_snapshots")
             tx.exec("DELETE FROM sessions")
             AssessmentTicketsDao.clear(tx)
             PreferencesDao.put(tx, preferences)
@@ -155,4 +158,18 @@ object LearningDbWriter {
         here so the site mapping table names one place per flow. */
     fun archiveRestored(db: SqlDatabase, incoming: Archive): Archive =
         ArchiveMerger.apply(db, incoming)
+
+    /** Starts only after the immutable snapshot, attempt, and create outbox
+        record have committed; callers must await this before showing a question. */
+    fun examStarted(db: SqlDatabase, snapshot: ExamSnapshotRecord, attempt: ExamAttemptRecord): ExamHistory =
+        ExamHistoryDao.start(db, snapshot, attempt)
+
+    /** Autosave the response and next visible position as one durable unit. */
+    fun examAnswerSaved(db: SqlDatabase, attemptID: String, questionID: String,
+                        responseJSON: String, position: Int, savedAt: Double): Long =
+        ExamHistoryDao.saveAnswer(db, attemptID, questionID, responseJSON, position, savedAt)
+
+    /** Freeze the original graded result; identical retries are no-ops. */
+    fun examCompleted(db: SqlDatabase, attemptID: String, resultJSON: String, completedAt: Double): Boolean =
+        ExamHistoryDao.complete(db, attemptID, resultJSON, completedAt)
 }

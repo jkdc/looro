@@ -17,6 +17,7 @@ class ManagedAccountConfiguration private constructor(val origin: HttpUrl, val g
     companion object {
         fun parse(origin: String, clientID: String): ManagedAccountConfiguration? {
             val url = origin.toHttpUrlOrNull() ?: return null
+            if (url.isLocalDebugOrigin()) return ManagedAccountConfiguration(url, clientID)
             if (url.scheme != "https" || url.username.isNotEmpty() || url.password.isNotEmpty() ||
                 url.encodedPath != "/" || url.query != null || url.fragment != null || url.port != 443 ||
                 !Regex("[0-9]+-[a-z0-9]+\\.apps\\.googleusercontent\\.com").matches(clientID)) return null
@@ -52,11 +53,45 @@ class ManagedAccountClient internal constructor(private val origin: HttpUrl, tra
     override suspend fun delete(session: AccountSession) {
         if (request("DELETE", "account", session)["deleted"] != JsonPrimitive(true)) throw AccountFailure.InvalidResponse
     }
+
+    /** Sends one durable exam outbox event under its owning account session. */
+    suspend fun syncExamEvent(session: AccountSession, event: JsonObject): JsonObject =
+        request("POST", "level-test-attempts/events", session, buildJsonObject {
+            put("events", JsonArray(listOf(event)))
+        }, preserveExamConflict = true)
+
+    /** Creates the immutable server snapshot and initial attempt before revision events are sent. */
+    suspend fun syncExamAttempt(session: AccountSession, snapshot: JsonObject, attempt: JsonObject): JsonObject =
+        request("POST", "level-test-attempts/sync", session, buildJsonObject {
+            put("snapshots", JsonArray(listOf(snapshot)))
+            put("attempts", JsonArray(listOf(attempt)))
+        })
+
+    /** Restores one bounded page (10) of this account's exam history. The caller
+        must validate and import each record insert-only before showing it. */
+    suspend fun examAttemptsPage(session: AccountSession, cursor: String?): JsonObject {
+        val url = origin.newBuilder().addPathSegments("v1/level-test-attempts")
+            .addQueryParameter("limit", "10")
+            .apply { if (cursor != null) addQueryParameter("cursor", cursor) }.build()
+        return request("GET", url, session)
+    }
+
+    /** Fetches one owned attempt with its frozen snapshot. */
+    suspend fun examAttemptDetail(session: AccountSession, attemptID: String): JsonObject {
+        require(Regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
+            .matches(attemptID)) { "invalid attempt id" }
+        return request("GET", "level-test-attempts/$attemptID", session)
+    }
     private inline fun <reified T> decode(value: JsonObject): T = try { json.decodeFromJsonElement<T>(value) }
         catch (_: Exception) { throw AccountFailure.InvalidResponse }
 
-    private suspend fun request(method: String, path: String, session: AccountSession? = null, body: JsonObject = buildJsonObject {}): JsonObject {
-        val request = Request.Builder().url(origin.newBuilder().addPathSegments("v1/$path").build())
+    private suspend fun request(method: String, path: String, session: AccountSession? = null,
+                                body: JsonObject = buildJsonObject {}, preserveExamConflict: Boolean = false): JsonObject =
+        request(method, origin.newBuilder().addPathSegments("v1/$path").build(), session, body, preserveExamConflict)
+
+    private suspend fun request(method: String, url: HttpUrl, session: AccountSession? = null,
+                                body: JsonObject = buildJsonObject {}, preserveExamConflict: Boolean = false): JsonObject {
+        val request = Request.Builder().url(url)
             .header("Accept", "application/json").header("Cache-Control", "no-store")
             .apply { session?.let { header("Authorization", "Bearer ${it.accessToken}") } }
             .method(method, if (method == "GET") null else body.toString().toRequestBody("application/json".toMediaType())).build()
@@ -73,8 +108,16 @@ class ManagedAccountClient internal constructor(private val origin: HttpUrl, tra
                             val payload = readBounded(it)
                             val parsed = try { json.parseToJsonElement(payload).jsonObject } catch (_: Exception) { null }
                             if (!it.isSuccessful) {
-                                val code = ((parsed?.get("error") as? JsonObject)?.get("code") as? JsonPrimitive)?.contentOrNull
+                                val errorValue = parsed?.get("error")
+                                val code = (((errorValue as? JsonObject)?.get("code") as? JsonPrimitive)?.contentOrNull
+                                    ?: (errorValue as? JsonPrimitive)?.contentOrNull)
                                     ?.takeIf { value -> value.length <= 80 && Regex("[a-z_]+").matches(value) }
+                                if (preserveExamConflict && it.code == 409 && code == "exam_attempt_conflict") {
+                                    val conflict = parsed?.get("conflict") as? JsonObject
+                                    val attempt = conflict?.get("attempt") as? JsonObject
+                                    if (attempt != null) return@use buildJsonObject { put("conflict", buildJsonObject { put("attempt", attempt) }) }
+                                    throw AccountFailure.InvalidResponse
+                                }
                                 throw AccountFailure.Http(it.code, code, safeRequestErrorReference(it.header("X-Palique-Error-Reference")))
                             }
                             parsed ?: throw AccountFailure.InvalidResponse

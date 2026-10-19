@@ -73,10 +73,11 @@ fun PlacementScreen(vm: AppViewModel, onBack: () -> Unit, onApplyBand: (String) 
     DisposableEffect(Unit) { onDispose { vm.stopLessonReading() } }
 
     val context = LocalContext.current
-    val localized = remember(vm.instructionsLanguage) {
+    val currentConfiguration = androidx.compose.ui.platform.LocalConfiguration.current
+    val localized = remember(vm.instructionsLanguage, currentConfiguration) {
         val locale = when (vm.instructionsLanguage) { "en" -> Locale("en"); "es" -> Locale("es"); else -> null }
         locale ?: return@remember null
-        val configuration = Configuration(context.resources.configuration)
+        val configuration = android.content.res.Configuration(currentConfiguration)
         configuration.setLocale(locale)
         context.createConfigurationContext(configuration)
     }

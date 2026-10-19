@@ -10,6 +10,7 @@ const NAV = [
   { id: 'usage', label: 'Uso', icon: 'ti-activity' },
   { id: 'browse', label: 'Tablas', icon: 'ti-table' },
   { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings' },
+  { id: 'level-tests', label: 'Generación de exámenes', icon: 'ti-book' },
   { id: 'plans', label: 'Planes', icon: 'ti-crown' },
   { id: 'campaigns', label: 'Campañas', icon: 'ti-gift' },
   { id: 'audit', label: 'Auditoría', icon: 'ti-shield-check' }
@@ -290,6 +291,101 @@ async function renderBrowse(container, fixedTable) {
   await mountTable();
 }
 
+async function renderLevelTestOperations(container, draftOffset = 0) {
+  const [config, status, drafts] = await Promise.all([
+    api('/v1/admin/llm-config'), api('/v1/admin/level-tests/status'),
+    api('/v1/admin/level-tests/drafts?limit=50&offset=' + draftOffset)
+  ]);
+  const providers = config.providers.map(item =>
+    '<option value="' + escapeHtml(item.provider) + '"' + (item.provider === config.provider ? ' selected' : '') + '>' + escapeHtml(item.provider) + '</option>').join('');
+  const keyPlaceholder = config.keyHint ? 'Guardada: ' + escapeHtml(config.keyHint) + ' · vacío conserva la clave' : 'Sin clave persistida';
+  const job = status.latestJob;
+  const jobHtml = job
+    ? '<hr><strong>Último job:</strong> ' + escapeHtml(job.status) + ' · ' + escapeHtml(job.languageID) + ' ' + escapeHtml(job.level) +
+      ' · semana ' + escapeHtml(job.weekId) + '<div class="text-secondary small">Actualizado: ' + escapeHtml(job.updatedAt || '—') +
+      ' · intentos: ' + escapeHtml(job.attempts) + ' · error: ' + escapeHtml(job.errorCode || '—') + '</div>'
+    : '<hr><div class="text-secondary">Todavía no hay jobs registrados.</div>';
+  const rows = drafts.items.map(row =>
+    '<tr><td>' + escapeHtml(row.weekId) + '</td><td>' + escapeHtml(row.languageID) + '</td><td>' + escapeHtml(row.level) +
+    '</td><td>' + escapeHtml(row.status) + '</td><td>' + escapeHtml(row.variants.length) + '</td><td>' + escapeHtml(row.createdAt || '—') +
+    '</td><td class="text-end"><button class="btn btn-sm btn-outline-secondary me-1" data-draft-detail="' + escapeHtml(row.id) + '">Ver</button>' +
+    (row.status === 'draft' ? '<button class="btn btn-sm btn-success me-1" data-draft-approve="' + escapeHtml(row.id) +
+      '">Aprobar</button><button class="btn btn-sm btn-outline-danger" data-draft-reject="' + escapeHtml(row.id) + '">Rechazar</button>' : '') +
+    '</td></tr>').join('') || '<tr><td colspan="7" class="text-secondary">No hay borradores en esta página.</td></tr>';
+  container.innerHTML = `<div class="row row-cards">
+    <div class="col-lg-7"><div class="card"><div class="card-header"><h3 class="card-title">Configuración efectiva</h3></div><div class="card-body">
+      <div class="alert alert-info">Los valores proceden del servidor. La prueba usa solo la configuración guardada.</div>
+      <div class="row g-3">
+        <div class="col-md-6"><label class="form-label" for="lt-provider">Proveedor</label><select class="form-select" id="lt-provider">${providers}</select></div>
+        <div class="col-md-6"><label class="form-label" for="lt-model">Modelo</label><input class="form-control" id="lt-model" maxlength="200" value="${escapeHtml(config.model)}"></div>
+        <div class="col-12"><label class="form-label" for="lt-base-url">URL base</label><input class="form-control" id="lt-base-url" maxlength="500" value="${escapeHtml(config.baseUrl)}"></div>
+        <div class="col-12"><label class="form-label" for="lt-api-key">Clave API</label><input class="form-control" id="lt-api-key" type="password" autocomplete="new-password" placeholder="${keyPlaceholder}"></div>
+        <div class="col-md-4"><label class="form-label" for="lt-publish">Publicación</label><select class="form-select" id="lt-publish"><option value="review" ${config.publishMode === 'review' ? 'selected' : ''}>Revisión</option><option value="auto" ${config.publishMode === 'auto' ? 'selected' : ''}>Automática</option></select></div>
+        <div class="col-md-4"><label class="form-label" for="lt-verify">Verificación</label><select class="form-select" id="lt-verify"><option value="strict" ${config.verifyMode === 'strict' ? 'selected' : ''}>Estricta</option><option value="flag" ${config.verifyMode === 'flag' ? 'selected' : ''}>Marcar</option><option value="off" ${config.verifyMode === 'off' ? 'selected' : ''}>Desactivada</option></select></div>
+        <div class="col-md-4"><label class="form-label" for="lt-variants">Variantes</label><input class="form-control" id="lt-variants" type="number" min="1" max="5" value="${escapeHtml(config.variants)}"></div>
+      </div>
+      <div class="mt-3 d-flex flex-wrap gap-2"><button class="btn btn-primary" id="lt-save">Guardar y recargar</button><button class="btn btn-outline-primary" id="lt-test" ${config.keyHint ? '' : 'disabled'}>Probar conexión guardada</button><span class="text-secondary align-self-center" id="lt-dirty">La prueba solo utiliza la configuración guardada.</span></div>
+    </div></div></div>
+    <div class="col-lg-5"><div class="card"><div class="card-header"><h3 class="card-title">Scheduler y última generación</h3></div><div class="card-body">
+      <div class="d-flex justify-content-between"><span>Configurado</span><strong>${status.schedule.enabled ? 'Sí' : 'No'}</strong></div>
+      <div class="d-flex justify-content-between"><span>Scheduler activo en este proceso</span><strong>${status.scheduler.activeInProcess ? 'Sí' : 'No'}</strong></div>
+      <div class="text-secondary small mt-2">La actividad local no indica el estado de otras réplicas.</div>${jobHtml}
+    </div></div></div>
+    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Borradores privados</h3></div><div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Creado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-footer d-flex justify-content-between align-items-center">
+      <button class="btn btn-sm btn-outline-secondary" id="draft-prev" ${drafts.offset === 0 ? 'disabled' : ''}>Anterior</button>
+      <span class="text-secondary small">Borradores ${drafts.offset + 1}–${drafts.offset + drafts.items.length}</span>
+      <button class="btn btn-sm btn-outline-secondary" id="draft-next" ${drafts.items.length < drafts.limit ? 'disabled' : ''}>Siguiente</button>
+    </div></div></div></div>`;
+  const fields = ['provider', 'model', 'base-url', 'api-key', 'publish', 'verify', 'variants'];
+  const formValue = () => ({ provider: $('#lt-provider').value, model: $('#lt-model').value, baseUrl: $('#lt-base-url').value,
+    apiKey: $('#lt-api-key').value, publishMode: $('#lt-publish').value, verifyMode: $('#lt-verify').value, variants: Number($('#lt-variants').value) });
+  const initial = { provider: config.provider, model: config.model, baseUrl: config.baseUrl,
+    publishMode: config.publishMode, verifyMode: config.verifyMode, variants: config.variants };
+  const isDirty = () => { const value = formValue(); return Boolean(value.apiKey) || Object.keys(initial).some(key => value[key] !== initial[key]); };
+  const refreshDirty = () => {
+    const dirty = isDirty();
+    $('#lt-test').disabled = dirty || !config.keyHint;
+    $('#lt-dirty').textContent = dirty ? 'Hay cambios sin guardar; no se probarán.' : 'La prueba solo utiliza la configuración guardada.';
+  };
+  fields.forEach(field => { const input = $('#lt-' + field); input.addEventListener('input', refreshDirty); input.addEventListener('change', refreshDirty); });
+  $('#lt-save').onclick = async () => {
+    const value = formValue(), payload = { provider: value.provider, model: value.model, baseUrl: value.baseUrl,
+      publishMode: value.publishMode, verifyMode: value.verifyMode, variants: value.variants };
+    if (value.apiKey) payload.apiKey = value.apiKey;
+    const button = $('#lt-save'); button.disabled = true;
+    try { await api('/v1/admin/llm-config', { method: 'PUT', body: JSON.stringify(payload) });
+      toast('Configuración guardada'); await renderLevelTestOperations(container); }
+    catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
+  };
+  $('#lt-test').onclick = async () => {
+    if (isDirty() || !config.keyHint) return refreshDirty();
+    const button = $('#lt-test'); button.disabled = true; button.textContent = 'Probando…';
+    try { const result = await api('/v1/admin/llm-config/test', { method: 'POST', body: '{}' });
+      toast(result.ok ? 'Conexión correcta (HTTP ' + result.status + ')' : 'El proveedor respondió HTTP ' + result.status, result.ok ? 'success' : 'warning');
+    } catch (error) { toast('Prueba no disponible: ' + (error.code || error.message), 'warning'); }
+    finally { button.textContent = 'Probar conexión guardada'; button.disabled = isDirty() || !config.keyHint; }
+  };
+  $('#draft-prev').onclick = () => { if (drafts.offset > 0) void renderLevelTestOperations(container, Math.max(0, drafts.offset - drafts.limit)); };
+  $('#draft-next').onclick = () => { if (drafts.items.length === drafts.limit) void renderLevelTestOperations(container, drafts.offset + drafts.limit); };
+  container.querySelectorAll('[data-draft-detail]').forEach(button => button.onclick = () => {
+    const row = drafts.items.find(item => item.id === button.dataset.draftDetail);
+    if (row) detail('Borrador ' + row.languageID + ' ' + row.level + ' · ' + row.weekId,
+      { pool: row.pool, variants: row.variants, judgeMode: row.judgeMode, review: row.review });
+  });
+  for (const action of ['approve', 'reject']) container.querySelectorAll('[data-draft-' + action + ']').forEach(button => button.onclick = async () => {
+    const property = 'draft' + action[0].toUpperCase() + action.slice(1);
+    const row = drafts.items.find(item => item.id === button.dataset[property]);
+    if (!row) return;
+    const decision = await ask(action === 'approve' ? 'Aprobar borrador' : 'Rechazar borrador', row.id);
+    if (!decision.reason || decision.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
+    button.disabled = true;
+    try { await api('/v1/admin/level-tests/' + encodeURIComponent(row.id) + '/' + action,
+      { method: 'POST', body: JSON.stringify({ reason: decision.reason }) });
+      toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado'); await renderLevelTestOperations(container); }
+    catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
+  });
+}
+
 /* ---- forms ---- */
 async function renderPolicy(container) {
   const policy = await api('/v1/admin/policy/welcome');
@@ -501,6 +597,7 @@ const VIEWS = {
   usage: { title: 'Uso de la app', render: renderUsage },
   browse: { title: 'Explorador de tablas', render: container => renderBrowse(container, null) },
   policy: { title: 'Política de bienvenida', render: renderPolicy },
+  'level-tests': { title: 'Generación de exámenes', render: renderLevelTestOperations },
   plans: { title: 'Planes y suscripciones', render: renderPlans },
   campaigns: { title: 'Campañas', render: renderCampaigns },
   audit: { title: 'Auditoría de acciones', render: container => renderBrowse(container, 'admin_actions') }

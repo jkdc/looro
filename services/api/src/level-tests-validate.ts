@@ -63,9 +63,12 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
   const listeningPassages = arrayed(raw.listening);
 
   const seenPrompts = new Set<string>();
+  const seenIds = new Set<string>();
   const acceptItem = (section: LevelTestSection, bucket: LevelTestContentItem[], item: RawGeneratedItem, index: number): boolean => {
     const where = `${section}[${index}]`;
     const kind = item.kind ?? (Array.isArray(item.options) ? 'choice' : 'written');
+    if (!['choice', 'gap', 'written', 'order'].includes(kind)) return fail(where, 'kind', 'unsupported exercise kind');
+    if (item.id && item.id !== 'pending' && seenIds.has(item.id)) return fail(where, 'id', 'duplicate item id');
     const prompt = typeof item.prompt === 'string' ? item.prompt.trim() : '';
     const answers = strings(item.answers);
     if (!prompt || prompt.length > 500) return fail(where, 'prompt', 'missing or oversized prompt');
@@ -87,8 +90,10 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
     if (!looksLikeTargetLanguage(`${prompt} ${answers.join(' ')}`, targetLanguage))
       return fail(where, 'language', 'the item does not look like the target language');
     seenPrompts.add(fingerprint);
+    if (item.id) seenIds.add(item.id);
     bucket.push({
-      id: 'pending', section: section as LevelTestSection, kind, prompt,
+      id: item.id ?? 'pending', section: section as LevelTestSection, kind, prompt,
+      unitID: item.unitID ?? undefined, passageId: item.passageId ?? undefined, speech: item.speech ?? undefined,
       options: kind === 'choice' ? options : [], answers, explain,
     });
     return true;
@@ -114,17 +119,17 @@ export function validateGeneratedPool(pool: unknown, examShape: Record<string, n
     target.push({ title: typeof passage.title === 'string' ? passage.title : '', text, items: bucket });
     return true;
   };
-  readingPassages.forEach((passage, index) => acceptPassage('reading', 30, 220, 2, passage, index));
-  listeningPassages.forEach((passage, index) => acceptPassage('listening', 20, 200, 2, passage, index));
+  readingPassages.forEach((passage, index) => acceptPassage('reading', 30, 220, shape.readingPerPassage, passage, index));
+  listeningPassages.forEach((passage, index) => acceptPassage('listening', 20, 200, shape.listeningPerPassage, passage, index));
 
   // Section minimums: the exam shape must be coverable by the validated pool.
   if (clean.recognition.length < Math.max(MINIMUMS.recognition, shape.recognition))
     errors.push({ section: 'recognition', code: 'minimum', detail: `${clean.recognition.length} valid items` });
   if (clean.writing.length < Math.max(MINIMUMS.writing, shape.writing))
     errors.push({ section: 'writing', code: 'minimum', detail: `${clean.writing.length} valid items` });
-  if (clean.readingPassages.length < MINIMUMS.readingPassages)
+  if (clean.readingPassages.length < Math.max(MINIMUMS.readingPassages, shape.readingPassages))
     errors.push({ section: 'reading', code: 'minimum', detail: `${clean.readingPassages.length} valid passages` });
-  if (clean.listeningPassages.length < MINIMUMS.listeningPassages)
+  if (clean.listeningPassages.length < Math.max(MINIMUMS.listeningPassages, shape.listeningPassages))
     errors.push({ section: 'listening', code: 'minimum', detail: `${clean.listeningPassages.length} valid passages` });
 
   // Disjoint blocks per exam are enforced at composition; here we also refuse

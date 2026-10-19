@@ -368,11 +368,19 @@ class LearningCutoverFlowTest {
         assertEquals(3, state.lessons.single { it.lessonID == lesson.id }.attempts)
 
         // deleteLearningData: sessions + ledger + hidden words; the rest stays
+        ExamHistoryDao.start(db, ExamSnapshotRecord("flow-exam", "flow-content", "flow-hash", 1,
+            1, 1, "bundled", "es", "B1", 202641, "{\"question\":\"frozen\"}", 1.0),
+            ExamAttemptRecord("flow-attempt", "flow-exam", startedAt = now))
+        ExamHistoryDao.saveAnswer(db, "flow-attempt", "q1", "{\"answer\":\"private\"}", 1, now + 1)
         val stored = state.preferences.copy(hiddenWords = emptyList())
         state = state.copy(sessions = mutableListOf(), preferences = stored)
         LearningDbWriter.learningDataDeleted(db, stored)
         assertEquals(state, export())
         assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM sessions").single().long("n"))
+        assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_attempts").single().long("n"))
+        assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_answers").single().long("n"))
+        assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_sync_outbox").single().long("n"))
+        assertEquals(0L, db.query("SELECT COUNT(*) AS n FROM exam_snapshots").single().long("n"))
         assertEquals("lessons are not this site's learning data", 1, state.lessons.size)
 
         // importData (restore path): the merger's projection becomes the new

@@ -36,7 +36,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / 'shared/db/schema.sql'
 FIXTURES = ROOT / 'shared/fixtures/db/migration'
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 5
 
 # ---------------------------------------------------------------------------
 # Pinned inventory.
@@ -151,6 +151,68 @@ TABLES = {
         ('attempts', 'INTEGER', 1, 0, '0'),
         ('last_attempt_at', 'REAL', 0, 0, None),
     ],
+    'exam_snapshots': [
+        ('content_id', 'TEXT', 0, 1, None),
+        ('content_hash', 'TEXT', 1, 0, None),
+        ('schema_version', 'INTEGER', 1, 0, None),
+        ('content_revision', 'INTEGER', 1, 0, None),
+        ('grading_version', 'INTEGER', 1, 0, None),
+        ('source', 'TEXT', 1, 0, None),
+        ('language_id', 'TEXT', 1, 0, None),
+        ('level', 'TEXT', 1, 0, None),
+        ('week_id', 'INTEGER', 1, 0, None),
+        ('content_json', 'TEXT', 1, 0, None),
+        ('created_at', 'REAL', 1, 0, None),
+    ],
+    'exam_snapshot_ids': [
+        ('exam_id', 'TEXT', 0, 1, None),
+        ('content_id', 'TEXT', 1, 0, None),
+        ('created_at', 'REAL', 1, 0, None),
+    ],
+    'exam_attempts': [
+        ('attempt_id', 'TEXT', 0, 1, None),
+        ('exam_id', 'TEXT', 1, 0, None),
+        ('owner_account_id', 'TEXT', 0, 0, None),
+        ('state', 'TEXT', 1, 0, None),
+        ('sync_state', 'TEXT', 1, 0, None),
+        ('position', 'INTEGER', 1, 0, '0'),
+        ('revision', 'INTEGER', 1, 0, None),
+        ('started_at', 'REAL', 1, 0, None),
+        ('updated_at', 'REAL', 1, 0, None),
+        ('completed_at', 'REAL', 0, 0, None),
+    ],
+    'exam_answers': [
+        ('attempt_id', 'TEXT', 1, 1, None),
+        ('question_id', 'TEXT', 1, 2, None),
+        ('revision', 'INTEGER', 1, 3, None),
+        ('response_json', 'TEXT', 1, 0, None),
+        ('saved_at', 'REAL', 1, 0, None),
+    ],
+    'exam_results': [
+        ('attempt_id', 'TEXT', 0, 1, None),
+        ('result_json', 'TEXT', 1, 0, None),
+        ('recorded_at', 'REAL', 1, 0, None),
+    ],
+    'exam_sync_outbox': [
+        ('event_id', 'TEXT', 0, 1, None),
+        ('attempt_id', 'TEXT', 1, 0, None),
+        ('revision', 'INTEGER', 1, 0, None),
+        ('event_type', 'TEXT', 1, 0, None),
+        ('payload_json', 'TEXT', 1, 0, None),
+        ('delivery_state', 'TEXT', 1, 0, "'pending'"),
+        ('created_at', 'REAL', 1, 0, None),
+        ('acknowledged_at', 'REAL', 0, 0, None),
+    ],
+    'exam_sync_conflicts': [
+        ('attempt_id', 'TEXT', 0, 1, None),
+        ('owner_account_id', 'TEXT', 1, 0, None),
+        ('server_revision', 'INTEGER', 1, 0, None),
+        ('server_attempt_json', 'TEXT', 1, 0, None),
+        ('local_attempt_json', 'TEXT', 1, 0, None),
+        ('received_at', 'REAL', 1, 0, None),
+        ('resolution', 'TEXT', 0, 0, None),
+        ('resolved_at', 'REAL', 0, 0, None),
+    ],
 }
 
 # (name, table, columns) — explicitly created indexes only.
@@ -159,6 +221,8 @@ INDEXES = [
     ('expressions_due', 'expressions', ['language_id', 'due_at']),
     ('completions_lang', 'completions', ['language_id', 'at']),
     ('outbox_pending', 'usage_outbox', ['dispatched', 'at']),
+    ('exam_attempts_owner_updated', 'exam_attempts', ['owner_account_id', 'updated_at']),
+    ('exam_sync_outbox_pending', 'exam_sync_outbox', ['delivery_state', 'created_at']),
 ]
 
 # Pinned constraints.
@@ -168,6 +232,12 @@ INDEXES = [
 # the FK, re-pointing it, or weakening ON DELETE CASCADE all fail.
 FOREIGN_KEYS = [
     ('fragments', 'sessions', [('session_id', 'id')], 'CASCADE'),
+    ('exam_snapshot_ids', 'exam_snapshots', [('content_id', 'content_id')], 'RESTRICT'),
+    ('exam_attempts', 'exam_snapshot_ids', [('exam_id', 'exam_id')], 'RESTRICT'),
+    ('exam_answers', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
+    ('exam_results', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
+    ('exam_sync_outbox', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
+    ('exam_sync_conflicts', 'exam_attempts', [('attempt_id', 'attempt_id')], 'CASCADE'),
 ]
 
 # (table or None for the schema source, required SQL substring) — asserted by
@@ -175,7 +245,14 @@ FOREIGN_KEYS = [
 # schema source for schema-level directives).
 REQUIRED_CONSTRAINTS = [
     ('preferences', 'CHECK (id = 1)'),
-    (None, 'PRAGMA user_version = 2;'),
+    ('exam_snapshots', "CHECK (source IN ('bundled', 'deterministic', 'llm'))"),
+    ('exam_attempts', "CHECK (state IN ('in_progress', 'completed'))"),
+    ('exam_attempts', "CHECK (sync_state IN ('local_only', 'pending', 'synced', 'conflict'))"),
+    ('exam_sync_outbox', "CHECK (delivery_state IN ('pending', 'in_flight', 'acknowledged', 'superseded'))"),
+    ('exam_sync_outbox', "CHECK (event_type IN ('created', 'progress', 'completed', 'takeover'))"),
+    ('exam_sync_conflicts', 'CHECK (server_revision > 0)'),
+    ('exam_sync_conflicts', "CHECK (resolution IS NULL OR resolution IN ('takeover', 'fork'))"),
+    (None, 'PRAGMA user_version = 5;'),
 ]
 
 # ---------------------------------------------------------------------------
@@ -210,6 +287,8 @@ TRIGGERS = {
     'fragments_fts_after_update': ('fragments', 'AFTER UPDATE OF text'),
     'fragments_fts_before_delete': ('fragments', 'BEFORE DELETE'),
     'fragments_fts_before_update': ('fragments', 'BEFORE UPDATE OF text'),
+    'exam_snapshots_no_update': ('exam_snapshots', 'BEFORE UPDATE'),
+    'exam_snapshot_ids_no_update': ('exam_snapshot_ids', 'BEFORE UPDATE'),
 }
 
 # ---------------------------------------------------------------------------

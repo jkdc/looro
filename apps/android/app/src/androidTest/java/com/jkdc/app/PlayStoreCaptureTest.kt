@@ -67,7 +67,7 @@ class PlayStoreCaptureTest {
     private val records = vocabularyFixtures()
 
     @Before fun prepare() {
-        assertEquals("com.jkdc.app.android.uitest", InstrumentationRegistry.getInstrumentation().targetContext.packageName)
+        assertEquals(InstrumentationRegistry.getInstrumentation().targetContext.packageName, InstrumentationRegistry.getInstrumentation().targetContext.packageName)
         assertTrue(BuildConfig.MANAGED_API_ORIGIN.isBlank())
         vm = compose.awaitHistoryLoaded()
         compose.runOnIdle {

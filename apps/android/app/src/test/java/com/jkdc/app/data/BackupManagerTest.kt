@@ -49,6 +49,9 @@ class BackupManagerTest {
         val dbFile = File(dir, "learning.db")
         val db = fileBacked(dbFile.path)
         seed(db)
+        ExamHistoryDao.start(db, sampleExam("backup-exam", "backup-content", "en"),
+            ExamAttemptRecord("backup-attempt", "backup-exam", startedAt = 12.0))
+        ExamHistoryDao.saveAnswer(db, "backup-attempt", "q1", "{\"answer\":\"saved\"}", 1, 13.0)
         val original = ArchiveMapper.export(db)
 
         // The JVM backend's premise for the export checkpoint: xerial uses
@@ -77,6 +80,9 @@ class BackupManagerTest {
         val restored = fileBacked(dbFile.path)
         assertEquals("the roundtrip hands back the original archive",
             original, ArchiveMapper.export(restored))
+        val restoredExam = ExamHistoryDao.load(restored, "backup-attempt")!!
+        assertEquals("{\"question\":\"frozen\"}", restoredExam.snapshot.text("content_json"))
+        assertEquals("{\"answer\":\"saved\"}", restoredExam.answers.single().text("response_json"))
     }
 
     @Test fun exportIsDeterministicAndItsCopyPassesTheImportGate() {
@@ -176,12 +182,31 @@ class BackupManagerTest {
         assertEquals(listOf("s1"), SearchDao.search(reopened, "buscable", "es").map { it.session.id })
     }
 
+    @Test fun importAcceptsAV2BackupWithoutExamTables() {
+        val file = File(tmp.newFolder(), "v2.db")
+        val db = LearningDb.openJvmV1(DriverManager.getConnection("jdbc:sqlite:${file.path}"))
+        connections += (db as JvmSqlDatabase).connection
+        db.transaction { tx ->
+            LearningDb.upgrade(tx, 1)
+            tx.exec("PRAGMA user_version = 2")
+        }
+        val bytes = file.readBytes()
+        val validated = BackupManager.readValidatedBackup(
+            ByteArrayInputStream(bytes), tmp.newFolder(), opener())
+        assertTrue(validated.contentEquals(bytes))
+    }
+
     // -- per-language delete --------------------------------------------------
 
     @Test fun deleteByLanguageKeepsOtherLanguagesLegacyRowsAndQueues() {
         val db = LearningDb.openJvm()
         connections += (db as JvmSqlDatabase).connection
         val seeded = seed(db)
+        ExamHistoryDao.start(db, sampleExam("en-exam", "en-content", "en"),
+            ExamAttemptRecord("en-attempt", "en-exam", startedAt = 10.0))
+        ExamHistoryDao.start(db, sampleExam("es-exam", "es-content", "es"),
+            ExamAttemptRecord("es-attempt", "es-exam", startedAt = 11.0))
+        ExamHistoryDao.saveAnswer(db, "en-attempt", "q1", "{\"answer\":\"private\"}", 0, 12.0)
 
         val deletion = BackupManager.deleteLearningDataForLanguage(db, "en")
         assertEquals(2L, deletion.sessions)
@@ -190,6 +215,11 @@ class BackupManagerTest {
         assertEquals(1L, deletion.expressions)
         assertEquals(2L, deletion.lessonStates)
         assertEquals(1L, deletion.tickets)
+        assertEquals(1L, deletion.examAttempts)
+        assertEquals(1L, deletion.examSnapshots)
+        assertEquals(1L, count(db, "exam_attempts"))
+        assertEquals(1L, count(db, "exam_snapshots"))
+        assertEquals("es-attempt", db.query("SELECT attempt_id FROM exam_attempts").single().text("attempt_id"))
 
         // the survivors, row by row
         assertEquals(listOf("s-es-1"), db.query("SELECT id FROM sessions ORDER BY rowid").map { it.text("id") })
@@ -455,6 +485,10 @@ class BackupManagerTest {
         UsageOutboxDao.enqueue(db, "lesson_completed", 1_700_000_001_000)
         return archive
     }
+
+    private fun sampleExam(examID: String, contentID: String, language: String) = ExamSnapshotRecord(
+        examID, contentID, "hash-$contentID", 1, 1, 1, "bundled", language, "B1", 202641,
+        "{\"question\":\"frozen\"}", 1.0)
 
     private fun count(target: SqlDatabase, table: String): Long =
         target.query("SELECT COUNT(*) AS n FROM $table").single().long("n")

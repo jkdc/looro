@@ -18,6 +18,8 @@ import { HostedHelpers } from './hosted-helpers.js';
 import { OpenAIHostedResponses } from './hosted-responses-transport.js';
 import { InstallationGuestMinuteAttestor } from './guest-minutes.js';
 import { SubscriptionBilling } from './subscription-billing.js';
+import { createLevelTestScheduler, parseLevelTestSchedulerConfig, runLevelTestCombinations } from './level-tests-scheduler.js';
+import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
 
 const databaseURL = process.env.DATABASE_URL;
 if (!databaseURL) { console.error('DATABASE_URL is required.'); process.exit(1); }
@@ -25,7 +27,9 @@ const db = connectDatabase(databaseURL);
 let hosted: HostedVoice | undefined;
 let hostedHelpers: HostedHelpers | undefined;
 let minuteCommerce: Awaited<ReturnType<typeof configuredMinuteCommerce>>;
+let generationScheduler: ReturnType<typeof createLevelTestScheduler> | undefined;
 try {
+  const generationConfig = parseLevelTestSchedulerConfig(process.env);
   const origin = new URL(process.env.PUBLIC_ORIGIN ?? 'http://localhost:8080');
   if (origin.username || origin.password || (origin.protocol !== 'https:' && !(origin.protocol === 'http:' && origin.hostname === 'localhost')))
     throw new Error();
@@ -103,7 +107,14 @@ try {
     throw new Error('Android Google identity configuration is incomplete.');
   if (accounts && !hasGoogleSignIn({ googleClientID: process.env.GOOGLE_CLIENT_ID, googleAndroidServerClientID, googleAndroidClientIDs }) &&
     !(appleClient && appleRevoker)) throw new Error('No account identity provider configured.');
-  const app = createApp({ db, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
+  if (generationConfig.enabled) generationScheduler = createLevelTestScheduler({ config: generationConfig, runWeek: async (weekId, signal, timeoutMs) => {
+    await runLevelTestCombinations(generationConfig, weekId, signal, async (languageID, level, jobWeek, jobSignal) => {
+      const result = await runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: jobWeek, signal: jobSignal });
+      if (result.status === 'failed' || result.status === 'unknown')
+        console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId: jobWeek, status: result.status, errorCode: result.errors?.[0] ?? 'generation_failed' }));
+    }, (languageID, level, code) => console.warn(JSON.stringify({ event: 'level_test_generation_job', languageID, level, weekId, status: 'failed', errorCode: code })), undefined, timeoutMs);
+  } });
+  const app = createApp({ db, generationStatus: { config: generationConfig, isStarted: () => generationScheduler?.isStarted() ?? false }, auth: { googleClientID: process.env.GOOGLE_CLIENT_ID, appleClientID: appleClient,
     googleAndroidServerClientID, googleAndroidClientIDs }, payments, appleRevoker, hosted, hostedHelpers,
     minuteCommerce, accessRequests, accounts, admin, aiReports,guestMinuteAttestor,
     subscriptions: minuteCommerce?.stripe ? new SubscriptionBilling(db, minuteCommerce.stripe.transport,
@@ -124,14 +135,15 @@ try {
     .catch(()=>{console.error('Guest allowance transfer retry failed.');}).finally(()=>{guestLinkFlight=undefined;});};
   const guestLinkCleanup=setInterval(retryGuestLinks,60_000);guestLinkCleanup.unref();retryGuestLinks();
   const close = async () => {
-    clearInterval(cleanup);clearInterval(guestLinkCleanup);await guestLinkFlight; await app.close(); await hosted?.stop(); await minuteCommerce?.runner.stop();
+    clearInterval(cleanup);clearInterval(guestLinkCleanup);await generationScheduler?.stop();await guestLinkFlight; await app.close(); await hosted?.stop(); await minuteCommerce?.runner.stop();
     await db.end(); process.exit(0);
   };
   process.on('SIGTERM', close); process.on('SIGINT', close);
   await app.listen({ port: Number(process.env.PORT ?? 8080), host: '0.0.0.0' });
   minuteCommerce?.runner.start();
+  generationScheduler?.start();
   console.info('Palique API is running.');
 } catch {
   console.error('Palique could not start. Check configuration; no secret values are logged.');
-  await hosted?.stop(); await minuteCommerce?.runner.stop(); await db.end(); process.exitCode = 1;
+  await generationScheduler?.stop(); await hosted?.stop(); await minuteCommerce?.runner.stop(); await db.end(); process.exitCode = 1;
 }

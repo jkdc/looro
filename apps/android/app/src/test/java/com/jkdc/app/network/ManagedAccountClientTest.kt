@@ -47,6 +47,46 @@ class ManagedAccountClientTest {
         try { api.profile(session); fail("followed redirect") } catch (error: AccountFailure.Http) { assertEquals(307, error.status) }
         assertEquals(1, server.requestCount)
     }
+    @Test fun examOutboxEventUsesTheOwningSessionAndFixedSyncEndpoint() = runBlocking {
+        server.enqueue(MockResponse().setBody("""{"acks":[{"eventId":"11111111-1111-4111-8111-111111111111","attemptId":"22222222-2222-4222-8222-222222222222","revision":2,"status":"accepted"}]}"""))
+        val event = buildJsonObject {
+            put("eventId", "11111111-1111-4111-8111-111111111111")
+            put("attemptId", "22222222-2222-4222-8222-222222222222")
+            put("baseRevision", 1); put("revision", 2); put("type", "progress")
+            put("payload", buildJsonObject { put("questionId", "q-1"); put("response", buildJsonObject { put("value", "x") }); put("position", 1); put("updatedAt", "2026-10-07T12:00:00.000Z") })
+        }
+        assertEquals(1, api.syncExamEvent(session, event)["acks"]!!.jsonArray.size)
+        val request = server.takeRequest()
+        assertEquals("/v1/level-test-attempts/events", request.path)
+        assertEquals("Bearer ${session.accessToken}", request.getHeader("Authorization"))
+        val body = Json.parseToJsonElement(request.body.readUtf8()).jsonObject
+        assertEquals(event, body["events"]!!.jsonArray.single().jsonObject)
+    }
+    @Test fun staleExamEventReturnsConfirmedServerAttemptInsteadOfGenericHttpFailure() = runBlocking {
+        server.enqueue(MockResponse().setResponseCode(409).setBody("""{"error":"exam_attempt_conflict","conflict":{"attempt":{"attemptId":"22222222-2222-4222-8222-222222222222","revision":3}}}"""))
+        val event = buildJsonObject {
+            put("eventId", "11111111-1111-4111-8111-111111111111")
+            put("attemptId", "22222222-2222-4222-8222-222222222222")
+            put("baseRevision", 1); put("revision", 2); put("type", "progress")
+            put("payload", buildJsonObject { put("questionId", "q-1"); put("response", buildJsonObject { put("value", "x") }); put("position", 1); put("updatedAt", "2026-10-07T12:00:00.000Z") })
+        }
+        val result = api.syncExamEvent(session, event)
+        assertEquals(3, result["conflict"]!!.jsonObject["attempt"]!!.jsonObject["revision"]!!.jsonPrimitive.int)
+        assertEquals("/v1/level-test-attempts/events", server.takeRequest().path)
+    }
+    @Test fun examCreationUsesImmutableAttemptSyncBeforeEventUpdates() = runBlocking {
+        server.enqueue(MockResponse().setBody("""{"accepted":[{"attemptId":"$id","revision":1}]}"""))
+        val snapshot = buildJsonObject { put("examId", "exam-1"); put("contentHash", "a".repeat(64)) }
+        val attempt = buildJsonObject { put("attemptId", id); put("examId", "exam-1"); put("revision", 1) }
+        val response = api.syncExamAttempt(session, snapshot, attempt)
+        assertEquals(id, response["accepted"]!!.jsonArray.single().jsonObject["attemptId"]!!.jsonPrimitive.content)
+        val request = server.takeRequest()
+        assertEquals("/v1/level-test-attempts/sync", request.path)
+        assertEquals("Bearer ${session.accessToken}", request.getHeader("Authorization"))
+        val body = Json.parseToJsonElement(request.body.readUtf8()).jsonObject
+        assertEquals(snapshot, body["snapshots"]!!.jsonArray.single().jsonObject)
+        assertEquals(attempt, body["attempts"]!!.jsonArray.single().jsonObject)
+    }
     @Test fun recoveryBindsTheExpectedOwnerBeforeTheServerCanIssueAnotherAccountToken() = runBlocking {
         server.enqueue(MockResponse().setResponseCode(409).setBody("""{"error":{"code":"same_account_required"}}"""))
         try {
