@@ -365,3 +365,27 @@ versiones de adb cruzadas ni instalaciones en el host.
 Con esto, T14 solo mantiene abiertos los ítems que exigen hardware/entornos
 externos: la tanda Swift en macOS y el juicio final de `CaptionParityTest` en
 un emulador acelerado.
+
+### 9.8 Adenda 2026-10-19 — despliegue en móvil físico vía WiFi
+
+La app se desplegó también en el **Pixel 9 físico** del usuario (misma WiFi que
+el PC, API local en Docker escuchando en `0.0.0.0:8080`):
+
+- Datos previos preservados: el teléfono ya tenía la app del 7 de octubre con
+  **28 conversaciones/264 mensajes**; backup por `run-as tar`, reinstalación y
+  restauración, con **migración automática de esquema 2→5** en el primer
+  arranque y todo el histórico intacto.
+- Contrato extendido para el laboratorio: `ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true`
+  ahora confía clientes directos de **cualquier dirección privada RFC 1918**
+  (no solo loopback) en el limiter compartido y la admisión de cuentas, de modo
+  que un móvil en la misma WiFi alcanza el API sin cabeceras de proxy.
+  Seguros en producción: el flag es opt-in explícito y detrás de Caddy ningún
+  cliente llega por dirección privada.
+- Verificado en vivo: `GET /v1/account` autenticado desde el móvil, catálogo
+  de exámenes y **drain en directo** — un intento nuevo iniciado en el móvil
+  (`6456ac38`) apareció en el servidor con sus eventos de progreso aceptados
+  (revisión avanzando mientras se usa). Evidencia:
+  `e2e-evidence/android-phone-2026-10-19/` (captura, BD del móvil, dump SQL
+  del servidor).
+- Commits: `b2b4a3a` en la rama del worktree, integrado en
+  `feature/learning-platform` (merge `e31eb3f`).
