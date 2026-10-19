@@ -564,6 +564,10 @@
     <string name="leveltest_answer_placeholder">Escribe tu respuesta…</string>
     <string name="leveltest_unanswered_chip">Sin responder</string>
     <string name="leveltest_confirm_submit">Entregar igualmente (%1$d sin responder)</string>
+    <string name="leveltest_confirm_title">¿Finalizar el examen?</string>
+    <string name="leveltest_confirm_message">Te faltan %1$d ejercicios por contestar. Contarán como incorrectas.</string>
+    <string name="leveltest_confirm_finish">Finalizar examen</string>
+    <string name="leveltest_confirm_continue">Continuar</string>
     <string name="leveltest_answer_label">Tu respuesta (en inglés)</string>
     <string name="leveltest_submit">Entregar el test</string>
     <string name="leveltest_submit_hint">Responde todo lo que puedas: las respuestas en blanco cuentan como fallos.</string>

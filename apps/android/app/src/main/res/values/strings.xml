@@ -564,6 +564,10 @@
     <string name="leveltest_answer_placeholder">Write your answer…</string>
     <string name="leveltest_unanswered_chip">Unanswered</string>
     <string name="leveltest_confirm_submit">Submit anyway (%1$d unanswered)</string>
+    <string name="leveltest_confirm_title">Finish the exam?</string>
+    <string name="leveltest_confirm_message">You still have %1$d unanswered questions. Unanswered questions count as wrong.</string>
+    <string name="leveltest_confirm_finish">Finish exam</string>
+    <string name="leveltest_confirm_continue">Keep answering</string>
     <string name="leveltest_answer_label">Your answer (in English)</string>
     <string name="leveltest_submit">Submit test</string>
     <string name="leveltest_submit_hint">Answer everything you can — blank answers count as wrong.</string>
