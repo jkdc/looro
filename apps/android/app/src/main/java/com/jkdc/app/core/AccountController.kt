@@ -35,7 +35,8 @@ class AccountController(
     suspend fun debugSignIn(accountID: String, accessToken: String) {
         if (!com.jkdc.app.BuildConfig.DEBUG) throw AccountFailure.Http(403, "debug_only")
         operation {
-            val newSession = AccountSession(accountID, accessToken, now() + 3_600_000L)
+            // 24h: the debug session outlives a play session on the emulator.
+            val newSession = AccountSession(accountID, accessToken, now() + 86_400_000L)
             withContext(NonCancellable) {
                 storage.save(newSession)
                 session = newSession

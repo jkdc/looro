@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup — Examen de nivel rediseñado (Palique)</title>
+<style>
+  /* Paleta oficial de la app (Design.kt) */
+  :root {
+    --cream: #FFF9EE; --cream-raised: #FFFDF8; --surface: #FFFFFF;
+    --surface-bright: #FFF2E6; --ink: #362A22; --secondary: #735B4A;
+    --orange: #FF8A4D; --peach: #FFE3CF; --lilac: #EEE6FA;
+    --sage: #EAEFD6; --butter: #FFF1C7; --red: #B34B3F;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--cream); color: var(--ink);
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    max-width: 480px; margin: 0 auto; padding: 24px 24px 140px;
+  }
+  .phone { border: 8px solid #2b2b2b; border-radius: 28px; overflow: hidden;
+           background: var(--cream); box-shadow: 0 8px 40px rgba(0,0,0,.25); }
+  .topbar { display: flex; align-items: center; padding: 14px 20px 4px; }
+  .back { width: 44px; height: 44px; border-radius: 22px; background: var(--peach);
+          display: grid; place-items: center; font-size: 20px; }
+  .topbar span { margin-left: auto; color: var(--secondary); font-size: 12px; letter-spacing: .08em; }
+  .inner { padding: 12px 24px 140px; display: flex; flex-direction: column; gap: 16px; }
+  h1 { font-size: 26px; }
+  .subtitle { color: var(--secondary); font-size: 13px; }
+
+  /* Cabecera de sección con info */
+  .section { margin-top: 10px; }
+  .section-head { display: flex; align-items: center; gap: 10px; }
+  .section-head h2 { font-size: 15px; color: var(--secondary); text-transform: capitalize; flex: 1; }
+  .info-btn { width: 30px; height: 30px; border-radius: 15px; border: 1.5px solid var(--secondary);
+              background: transparent; color: var(--secondary); font-weight: 700; cursor: pointer; }
+  .info-btn.open { background: var(--secondary); color: var(--cream); }
+  .section-info { background: var(--butter); border-radius: 12px; padding: 10px 14px;
+                  font-size: 13px; line-height: 1.45; border: 1px solid #F2DFA0; }
+
+  /* Tarjeta de pregunta */
+  .q { background: var(--cream-raised); border: 1px solid #EBDFD2; border-radius: 16px; padding: 14px; }
+  .q.unanswered { border: 2px solid var(--red); }
+  .q-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .num { min-width: 26px; height: 26px; border-radius: 13px; background: var(--peach);
+         display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+  .chip-section { font-size: 11px; color: var(--secondary); background: var(--surface-bright);
+                  padding: 2px 8px; border-radius: 8px; }
+  .q p.prompt { font-size: 16px; line-height: 1.4; }
+  .chip-unanswered { display: none; margin-top: 8px; font-size: 12px; color: #fff;
+                     background: var(--red); padding: 3px 10px; border-radius: 8px; width: fit-content; }
+  .q.unanswered .chip-unanswered { display: inline-block; }
+
+  /* Opciones de elección */
+  .options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .option { display: flex; align-items: center; gap: 10px; padding: 12px;
+            background: var(--surface); border: 1.5px solid #D9C9BC; border-radius: 12px;
+            cursor: pointer; font-size: 15px; }
+  .option .mark { width: 20px; height: 20px; border-radius: 10px; border: 1.5px solid #D9C9BC; flex: none; }
+  .option.chosen { background: var(--secondary); border-color: var(--secondary); color: var(--cream); }
+  .option.chosen .mark { border-color: var(--cream); background: var(--cream); }
+  .option.chosen .mark::after { content: '✓'; display: block; text-align: center; color: var(--secondary);
+                                font-size: 13px; line-height: 19px; font-weight: 900; }
+
+  /* Entrada de texto escrita */
+  .written { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .written label { font-size: 12px; color: var(--secondary); }
+  .written .box { background: var(--surface); border: 1.5px solid var(--secondary);
+                  border-radius: 12px; padding: 12px; min-height: 52px; font-size: 16px; color: var(--ink); }
+  .written .box .ph { color: #B9A99C; }
+  .written .box.focused { border-width: 2px; padding: 11px; }
+
+  /* Escucha con reproductor */
+  .listen { background: var(--lilac); border-radius: 16px; padding: 14px; }
+  .listen .player { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+  .play-btn { width: 52px; height: 52px; border-radius: 26px; border: none; background: var(--orange);
+              color: #fff; font-size: 20px; cursor: pointer; flex: none; }
+  .play-btn.playing { background: var(--ink); }
+  .timeline { flex: 1; }
+  .bar { height: 6px; background: #DCCDF0; border-radius: 3px; position: relative; cursor: pointer; }
+  .bar .fill { position: absolute; inset: 0 60% 0 0; background: var(--secondary); border-radius: 3px; }
+  .bar .knob { position: absolute; left: 40%; top: -6px; width: 18px; height: 18px; border-radius: 9px;
+               background: var(--ink); border: 2px solid var(--cream); }
+  .times { display: flex; justify-content: space-between; font-size: 11px; color: var(--secondary); margin-top: 4px; }
+
+  /* Entrega */
+  .submit { width: 100%; padding: 15px; border: none; border-radius: 16px; background: var(--orange);
+            color: var(--ink); font-size: 16px; font-weight: 700; cursor: pointer; }
+  .submit.confirm { background: var(--red); color: #fff; }
+  .hint { font-size: 12px; color: var(--secondary); margin-top: 6px; }
+  .legend { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--red);
+            background: #F7E3E0; padding: 8px 12px; border-radius: 10px; }
+  .legend .dot { width: 14px; height: 14px; border: 2px solid var(--red); border-radius: 5px; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="topbar"><div class="back">←</div><span>COMPROBACIÓN</span></div>
+  <div class="inner">
+    <div>
+      <h1>Comprobación de nivel</h1>
+      <div class="subtitle">Examen de nivel A1 · esta semana</div>
+    </div>
+
+    <!-- Sección 1: vocabulario con info abierta -->
+    <div class="section">
+      <div class="section-head">
+        <h2>Vocabulario y gramática</h2>
+        <button class="info-btn open">i</button>
+      </div>
+      <div class="section-info">Elige la opción correcta o escribe la palabra o frase que falta, en inglés.</div>
+    </div>
+
+    <!-- Pregunta escrita respondida -->
+    <div class="q">
+      <div class="q-head"><div class="num">1</div><div class="chip-section">Vocabulario</div></div>
+      <p class="prompt">She ___ a doctor.</p>
+      <div class="options">
+        <div class="option chosen"><div class="mark"></div>is</div>
+        <div class="option"><div class="mark"></div>are</div>
+        <div class="option"><div class="mark"></div>am</div>
+        <div class="option"><div class="mark"></div>be</div>
+      </div>
+    </div>
+
+    <!-- Pregunta escrita con input visible -->
+    <div class="q">
+      <div class="q-head"><div class="num">2</div><div class="chip-section">Vocabulario</div></div>
+      <p class="prompt">Order the soup.</p>
+      <div class="written">
+        <label>Tu respuesta (en inglés)</label>
+        <div class="box focused">The soup, pl<span style="border-right:2px solid var(--orange)">&nbsp;</span></div>
+      </div>
+    </div>
+
+    <!-- Sección de escucha con reproductor -->
+    <div class="section">
+      <div class="section-head">
+        <h2>Comprensión oral</h2>
+        <button class="info-btn">i</button>
+      </div>
+    </div>
+    <div class="listen">
+      <div style="font-size:14px;font-weight:600;">Escucha el pasaje</div>
+      <div class="player">
+        <button class="play-btn playing">■</button>
+        <div class="timeline">
+          <div class="bar"><div class="fill"></div><div class="knob"></div></div>
+          <div class="times"><span>0:12</span><span>0:19</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pregunta sin responder (marcada) -->
+    <div class="q unanswered">
+      <div class="q-head"><div class="num">13</div><div class="chip-section">Vocabulario</div></div>
+      <p class="prompt">Ask about a bank.</p>
+      <div class="chip-unanswered">Sin responder</div>
+      <div class="written">
+        <label>Tu respuesta (en inglés)</label>
+        <div class="box"><span class="ph">Escribe tu respuesta…</span></div>
+      </div>
+    </div>
+
+    <!-- Entrega en dos pasos -->
+    <div>
+      <button class="submit confirm">Entregar igualmente (2 sin responder)</button>
+      <div class="hint">Las respuestas en blanco cuentan como incorrectas. Puedes entregar cuando quieras.</div>
+      <div class="legend" style="margin-top:10px;"><span class="dot"></span> Las preguntas marcadas en rojo están sin responder.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

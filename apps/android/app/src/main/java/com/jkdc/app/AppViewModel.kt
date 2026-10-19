@@ -1629,6 +1629,25 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         listeningPlaying = false
     }
 
+    /** Listens from an arbitrary point of the passage: TTS cannot seek, so the
+        utterance restarts from the word nearest the requested fraction. */
+    fun playListeningFrom(text: String, startFraction: Float) {
+        if (text.isBlank()) return
+        val clamped = startFraction.coerceIn(0f, 0.95f)
+        val boundary = text.lastIndexOf(' ', (text.length * clamped).toInt().coerceAtLeast(0))
+        val remainder = text.substring(if (boundary > 0) boundary + 1 else 0).trim()
+        if (remainder.isBlank()) { stopListeningText(); return }
+        stopListeningText()
+        lessonReadJob = viewModelScope.launch {
+            if (!lessonReader.initialize() || !lessonReader.setLanguage(language.locale)) {
+                listeningPlaying = false; return@launch
+            }
+            lessonReader.setSpeechRate(archive.preferences.effectiveSpeechRate().toFloat())
+            listeningPlaying = true
+            try { lessonReader.speak(remainder) } finally { listeningPlaying = false }
+        }
+    }
+
     /** A finished listening exercise: one ledger mark with the score, one telemetry event. */
     fun listeningCompleted(itemID: String, correct: Int, total: Int) {
         if (total <= 0) return

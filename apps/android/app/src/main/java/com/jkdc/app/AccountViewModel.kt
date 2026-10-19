@@ -78,6 +78,8 @@ class AccountViewModel(application: Application) : AndroidViewModel(application)
             }
         } catch (cancelled: CancellationException) {
             throw cancelled
+        } catch (httpError: com.jkdc.app.core.AccountFailure.Http) {
+            android.util.Log.e("ExamRecovery", "drain failed: HTTP ${httpError.status} ${httpError.code}")
         } catch (drainError: Exception) {
             android.util.Log.e("ExamRecovery", "drain failed", drainError)
         }
