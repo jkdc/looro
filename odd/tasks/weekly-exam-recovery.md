@@ -786,3 +786,8 @@ No push, PR, deployment, or merge to `main`.
   - The three pre-fix "drain failed" log lines visible in history are from before the limiter/admission fix; the current passes show the phone's events flowing without failures.
 - Evidence: `e2e-evidence/android-phone-2026-10-19/` (screen capture, phone DB, server SQL dump).
 - Security note carried in the report: `ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true` now trusts direct RFC 1918 clients for client-keyed rate limiting/admission; never enable it in production.
+
+### L63 — 2026-10-19 (finish-exam confirmation dialog per user feedback)
+- User feedback from playing on the phone: the submit button appeared dead when questions were unanswered. Replaced the silent two-tap flow with an explicit AlertDialog: "¿Finalizar el examen? / Te faltan N ejercicios por contestar" with Finalizar (submits, blanks counted wrong) and Continuar (dismisses, keeps the red unanswered markings and scrolls to the first gap). Strings EN/ES.
+- Verified on the emulator end-to-end: answer 1 → submit → dialog with the count → Keep answering closes it → submit again → dialog reappears → Finish exam submits with blanks counted wrong; review screen shows "No answer / Needs review" per blank; drain uploaded everything (0 failures, server shows 2 completed attempts).
+- Verified: JVM suites + lint 0 + assembleDebug green; deployed to the windowed emulator.
