@@ -1,6 +1,7 @@
 package com.jkdc.app.data
 
 import java.util.UUID
+import com.jkdc.app.network.LevelTestSnapshotAdapter
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
@@ -426,7 +427,13 @@ object ExamHistoryDao {
             val storedSnapshot = tx.query(
                 "SELECT * FROM exam_snapshots WHERE content_hash = ?", listOf(snapshot.contentHash)
             ).singleOrNull() ?: error("Exam snapshot insert was not durable")
-            check(storedSnapshot.text("content_json") == snapshot.contentJSON &&
+            // Identity by CANONICAL CONTENT, not by serialization bytes: the
+            // same exam may have been stored from a different JSON encoding
+            // (server serializer vs app serializer), which still hashes equal.
+            val sameCanonicalContent = storedSnapshot.text("content_json") == snapshot.contentJSON ||
+                LevelTestSnapshotAdapter.canonicalHash(storedSnapshot.text("content_json")) ==
+                    LevelTestSnapshotAdapter.canonicalHash(snapshot.contentJSON)
+            check(sameCanonicalContent &&
                 storedSnapshot.text("content_id") == snapshot.contentID &&
                 storedSnapshot.int("schema_version") == snapshot.schemaVersion &&
                 storedSnapshot.int("content_revision") == snapshot.contentRevision &&
@@ -437,6 +444,7 @@ object ExamHistoryDao {
                 storedSnapshot.long("week_id") == snapshot.weekID) {
                 "Content hash already belongs to a different immutable exam snapshot"
             }
+
             tx.insert("exam_snapshot_ids", mapOf(
                 "exam_id" to snapshot.examID, "content_id" to storedSnapshot.text("content_id"),
                 "created_at" to snapshot.createdAt,

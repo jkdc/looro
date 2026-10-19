@@ -1,7 +1,11 @@
 package com.jkdc.app.ui
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,11 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.Composable
@@ -39,6 +46,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import com.jkdc.app.AppViewModel
 import com.jkdc.app.R
 import com.jkdc.app.core.ExerciseEngine
@@ -88,6 +96,9 @@ fun LevelTestScreen(
     var retryStart by remember { mutableStateOf(0) }
     var savingResult by remember { mutableStateOf(false) }
     var submissionFailed by remember { mutableStateOf(false) }
+    var unansweredMarked by remember(screenKey) { mutableStateOf(false) }
+    val infoExpanded = remember { mutableStateMapOf<LevelTestSection, Boolean>() }
+    val unansweredCount = exam.items.count { attempts.getOrElse(exam.items.indexOf(it)) { "" }.isBlank() }
     val savingQuestions = remember { mutableStateMapOf<String, Int>() }
     val failedQuestions = remember { mutableStateMapOf<String, Boolean>() }
     val saveVersions = remember { mutableStateMapOf<String, Int>() }
@@ -102,6 +113,24 @@ fun LevelTestScreen(
             if (item.passageId != null && previous?.passageId != item.passageId) listPosition++
             listPosition++
             listPosition - 1
+        }
+    }
+
+    // Listening playback state: which passage is playing and the estimated
+    // progress through it (the TTS engine exposes no native timeline).
+    var listeningPassage by remember { mutableStateOf<String?>(null) }
+    var listeningProgress by remember { mutableStateOf(0f) }
+    val listeningTotalSeconds = (((listeningPassage?.length ?: 0) / 11.0).coerceIn(2.0, 300.0)).toFloat()
+    LaunchedEffect(vm.listeningPlaying, listeningPassage) {
+        val text = listeningPassage
+        if (!vm.listeningPlaying || text == null) { listeningProgress = 0f; return@LaunchedEffect }
+        val totalMillis = (text.length / 11.0 * 1000).toLong().coerceIn(2_000, 300_000)
+        val startedAt = System.currentTimeMillis()
+        while (vm.listeningPlaying) {
+            listeningProgress = ((System.currentTimeMillis() - startedAt).toFloat() / totalMillis)
+                .coerceIn(0f, 1f)
+            if (listeningProgress >= 1f) break
+            kotlinx.coroutines.delay(100)
         }
     }
 
@@ -152,7 +181,8 @@ fun LevelTestScreen(
             attempts = restored.selection.exam.items.map { restored.responses[it.id].orEmpty() }
             result = restored.result
             submitted = restored.result != null
-        } catch (_: Exception) {
+        } catch (startError: Exception) {
+            android.util.Log.e("ExamRecovery", "exam start failed", startError)
             startFailed = true
         }
     }
@@ -175,6 +205,14 @@ fun LevelTestScreen(
 
     fun submit() {
         if (submitted || savingResult) return
+        if (!unansweredMarked && unansweredCount > 0) {
+            unansweredMarked = true
+            val firstUnanswered = exam.items.indexOfFirst { attempts.getOrElse(exam.items.indexOf(it)) { "" }.isBlank() }
+            if (firstUnanswered >= 0) scope.launch {
+                listState.animateScrollToItem(questionListPositions[firstUnanswered])
+            }
+            return
+        }
         savingResult = true
         submissionFailed = false
         val final = pendingResult ?: LevelTestEngine.gradeByAttempts(testLevel, exam, attempts)
@@ -204,7 +242,7 @@ fun LevelTestScreen(
         return
     }
 
-    Column(Modifier.fillMaxWidth().testTag("leveltest-screen").padding(horizontal = 24.dp)) {
+    Column(Modifier.fillMaxWidth().imePadding().testTag("leveltest-screen").padding(horizontal = 24.dp)) {
         Row(Modifier.fillMaxWidth().padding(top = 14.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             SoftRoundButton(AppSymbol.Back, strings.t(R.string.common_back), onClick = onBack, diameter = 44.dp)
             Spacer(Modifier.weight(1f))
@@ -227,10 +265,9 @@ fun LevelTestScreen(
                     if (item.section != lastSection) {
                         lastSection = item.section
                         item(key = "header-" + item.section.name) {
-                            Text(sectionLabel(item.section, strings), style = MaterialTheme.typography.titleSmall,
-                                color = AppColors.Secondary, modifier = Modifier
-                                    .padding(top = 8.dp)
-                                    .semantics { heading() })
+                            SectionHeader(section = item.section, strings = strings,
+                                expanded = infoExpanded[item.section] == true,
+                                onToggle = { infoExpanded[item.section] = !(infoExpanded[item.section] ?: false) })
                         }
                     }
                     // Reading passages show their text; listening passages play it.
@@ -249,17 +286,42 @@ fun LevelTestScreen(
                         }
                         if (item.section == LevelTestSection.LISTENING && passage != null) {
                             item(key = "listen-" + passage.id) {
+                                val playingThis = vm.listeningPlaying && listeningPassage == passage.text
                                 Surface(Modifier.fillMaxWidth(), shape = RoundedCornerShape(18.dp), color = AppColors.Lilac) {
-                                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                                        Column(Modifier.weight(1f)) {
+                                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                                        Column(Modifier.fillMaxWidth()) {
                                             Text(strings.t(R.string.leveltest_listen_prompt), style = MaterialTheme.typography.titleSmall)
                                             Text(strings.t(R.string.leveltest_listen_hint), style = MaterialTheme.typography.bodySmall,
                                                 color = AppColors.Secondary)
                                         }
-                                        OutlinedButton(onClick = { vm.speakPlacement(passage.text) },
-                                            modifier = Modifier.testTag("leveltest-replay-" + passage.id)) {
-                                            Text(strings.t(R.string.leveltest_listen_play))
+                                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                            Button(onClick = {
+                                                    if (playingThis) vm.stopListeningText()
+                                                    else { listeningPassage = passage.text; vm.playListeningText(passage.text) }
+                                                },
+                                                modifier = Modifier.testTag("leveltest-replay-" + passage.id),
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = if (playingThis) AppColors.Ink else AppColors.Orange,
+                                                    contentColor = if (playingThis) AppColors.Cream else AppColors.Ink)) {
+                                                Text(strings.t(if (playingThis) R.string.leveltest_listen_stop
+                                                    else R.string.leveltest_listen_play))
+                                            }
+                                            if (playingThis) {
+                                                Column(Modifier.weight(1f)) {
+                                                    Slider(value = listeningProgress, onValueChange = { fraction ->
+                                                        listeningPassage = passage.text
+                                                        vm.playListeningFrom(passage.text, fraction)
+                                                    }, modifier = Modifier.fillMaxWidth()
+                                                        .testTag("leveltest-listen-seek"))
+                                                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                                        Text(listenSecondsLabel(listeningProgress * listeningTotalSeconds),
+                                                            style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                                                        Text(listenSecondsLabel(listeningTotalSeconds),
+                                                            style = MaterialTheme.typography.labelSmall, color = AppColors.Secondary)
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -267,36 +329,36 @@ fun LevelTestScreen(
                         }
                     }
                     item(key = item.id) {
-                        LevelTestQuestion(item = item, attempt = attempts.getOrElse(index) { "" },
-                            localized = localized, enabled = !savingResult && pendingResult == null, onAttempt = { value ->
+                        val answer = attempts.getOrElse(index) { "" }
+                        val markedUnanswered = unansweredMarked && answer.isBlank() &&
+                            !savingQuestions.containsKey(item.id)
+                        LevelTestQuestion(item = item, number = index + 1, attempt = answer,
+                            localized = localized, enabled = !savingResult && pendingResult == null,
+                            markedUnanswered = markedUnanswered, saveFailed = failedQuestions.containsKey(item.id),
+                            onAttempt = { value ->
+                                unansweredMarked = false
                                 attempts = attempts.toMutableList().also { list ->
                                     while (list.size <= index) list.add("")
                                     list[index] = value
                                 }
                                 persistQuestion(index, value)
                             })
-                        if (attempts.getOrElse(index) { "" }.isNotBlank()) {
-                            val saveLabel = when {
-                                savingQuestions.containsKey(item.id) -> R.string.leveltest_attempt_saving_answer
-                                failedQuestions.containsKey(item.id) -> R.string.leveltest_attempt_save_failed
-                                else -> R.string.leveltest_attempt_answer_saved
-                            }
-                            Text(strings.t(saveLabel), style = MaterialTheme.typography.labelSmall,
-                                color = if (failedQuestions.containsKey(item.id)) MaterialTheme.colorScheme.error else AppColors.Secondary,
-                                modifier = Modifier.padding(start = 4.dp))
-                        }
                     }
                 }
                 item {
-                    Button(onClick = ::submit, enabled = !savingResult &&
-                        (pendingResult != null || attempts.count { it.isNotBlank() } == exam.items.size),
+                    Button(onClick = ::submit,
+                        enabled = !savingResult && !submitted && attempts.any { it.isNotBlank() },
                         modifier = Modifier.fillMaxWidth().testTag("leveltest-submit"),
-                        colors = ButtonDefaults.buttonColors(containerColor = AppColors.Orange, contentColor = AppColors.Ink)) {
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (unansweredMarked && unansweredCount > 0) AppColors.Red else AppColors.Orange,
+                            contentColor = if (unansweredMarked && unansweredCount > 0) AppColors.Cream else AppColors.Ink)) {
                         Text(strings.t(when {
                             savingResult -> R.string.leveltest_saving_result
                             submissionFailed -> R.string.leveltest_retry
+                            unansweredMarked && unansweredCount > 0 ->
+                                R.string.leveltest_confirm_submit
                             else -> R.string.leveltest_submit
-                        }))
+                        }, unansweredCount))
                     }
                     if (submissionFailed) Text(strings.t(R.string.leveltest_attempt_save_failed),
                         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
@@ -387,30 +449,117 @@ fun LevelTestScreen(
 }
 
 @Composable
-private fun LevelTestQuestion(item: LevelTestItem, attempt: String, localized: android.content.Context?, enabled: Boolean,
+private fun LevelTestQuestion(item: LevelTestItem, number: Int, attempt: String,
+                              localized: android.content.Context?, enabled: Boolean,
+                              markedUnanswered: Boolean, saveFailed: Boolean,
                               onAttempt: (String) -> Unit) {
     val context = LocalContext.current
     fun text(resId: Int): String = localized?.getString(resId) ?: context.getString(resId)
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth().testTag("leveltest-q-" + item.id)) {
-        Text(item.exercise.prompt, style = MaterialTheme.typography.bodyLarge)
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()
+        .testTag("leveltest-q-" + item.id)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.Top) {
+            // Question number badge: anchors the eye and pairs with the review list.
+            Text(number.toString(), style = MaterialTheme.typography.labelLarge,
+                color = AppColors.Ink, modifier = Modifier
+                    .background(AppColors.Peach, RoundedCornerShape(11.dp))
+                    .padding(horizontal = 8.dp, vertical = 4.dp))
+            Text(item.exercise.prompt, style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f).padding(top = 3.dp))
+        }
+        if (markedUnanswered) {
+            Text(text(R.string.leveltest_unanswered_chip), style = MaterialTheme.typography.labelSmall,
+                color = AppColors.Cream, modifier = Modifier
+                    .background(AppColors.Red, RoundedCornerShape(8.dp))
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+                    .testTag("leveltest-unanswered-" + item.id))
+        }
         if (item.exercise.kind == ExerciseEngine.CHOICE) {
-            item.exercise.options.forEach { option ->
-                val chosen = option == attempt
-                Surface(Modifier.fillMaxWidth().clickable(enabled = enabled, role = Role.Button) { onAttempt(option) },
-                    shape = RoundedCornerShape(12.dp),
-                    color = if (chosen) AppColors.Secondary else AppColors.Cream) {
-                    Text(option, Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = if (chosen) AppColors.Cream else AppColors.Ink)
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                item.exercise.options.forEach { option ->
+                    val chosen = option == attempt
+                    Surface(
+                        Modifier.fillMaxWidth().clickable(enabled = enabled, role = Role.Button) { onAttempt(option) }
+                            .testTag("leveltest-option-" + option),
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (chosen) AppColors.Secondary else AppColors.Surface,
+                        border = BorderStroke(
+                            if (chosen) 0.dp else 1.dp,
+                            if (chosen) androidx.compose.ui.graphics.Color.Transparent
+                            else AppColors.Secondary.copy(alpha = 0.40f))) {
+                        Row(Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text(if (chosen) "✓" else "",
+                                style = MaterialTheme.typography.labelLarge,
+                                color = AppColors.Cream, modifier = Modifier.testTag("leveltest-option-mark"))
+                            Text(option, style = MaterialTheme.typography.bodyMedium,
+                                color = if (chosen) AppColors.Cream else AppColors.Ink)
+                        }
+                    }
                 }
             }
         } else {
-            BasicTextField(value = attempt, onValueChange = onAttempt, enabled = enabled, minLines = 1, maxLines = 2,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = AppColors.Ink),
-                cursorBrush = SolidColor(AppColors.Secondary),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).testTag("leveltest-attempt"))
+            val borderColor = when {
+                markedUnanswered -> AppColors.Red
+                attempt.isNotBlank() -> AppColors.Secondary.copy(alpha = 0.55f)
+                else -> AppColors.Secondary.copy(alpha = 0.35f)
+            }
+            Surface(shape = RoundedCornerShape(12.dp), color = AppColors.Surface,
+                border = BorderStroke(1.5.dp, borderColor),
+                modifier = Modifier.fillMaxWidth().testTag("leveltest-written-box")) {
+                BasicTextField(value = attempt, onValueChange = onAttempt, enabled = enabled,
+                    minLines = 2, maxLines = 4,
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = AppColors.Ink),
+                    cursorBrush = SolidColor(AppColors.Secondary),
+                    decorationBox = { inner ->
+                        Box(Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {
+                            if (attempt.isBlank()) Text(text(R.string.leveltest_answer_placeholder),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = AppColors.Secondary.copy(alpha = 0.55f))
+                            inner()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().testTag("leveltest-attempt"))
+            }
+            if (saveFailed) Text(text(R.string.leveltest_attempt_save_failed),
+                style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
         }
     }
+}
+
+@Composable
+private fun SectionHeader(section: LevelTestSection, strings: Strings, expanded: Boolean, onToggle: () -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(top = 8.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(sectionLabel(section, strings), style = MaterialTheme.typography.titleSmall,
+                color = AppColors.Secondary, modifier = Modifier
+                    .weight(1f)
+                    .semantics { heading() })
+            TextButton(onClick = onToggle,
+                modifier = Modifier.testTag("leveltest-info-" + section.name),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 2.dp)) {
+                Text(strings.t(if (expanded) R.string.leveltest_info_hide else R.string.leveltest_info_show),
+                    style = MaterialTheme.typography.labelLarge)
+            }
+        }
+        AnimatedVisibility(visible = expanded) {
+            Text(sectionInfo(section, strings), style = MaterialTheme.typography.bodySmall,
+                color = AppColors.Secondary, modifier = Modifier.padding(bottom = 4.dp))
+        }
+    }
+}
+
+private fun sectionInfo(section: LevelTestSection, strings: Strings): String = when (section) {
+    LevelTestSection.RECOGNITION -> strings.t(R.string.leveltest_info_recognition)
+    LevelTestSection.READING -> strings.t(R.string.leveltest_info_reading)
+    LevelTestSection.LISTENING -> strings.t(R.string.leveltest_info_listening)
+    LevelTestSection.WRITING -> strings.t(R.string.leveltest_info_writing)
+}
+
+private fun listenSecondsLabel(seconds: Float): String {
+    val total = seconds.roundToInt().coerceAtLeast(0)
+    return "%d:%02d".format(total / 60, total % 60)
 }
 
 private class Strings(private val fallback: android.content.Context, private val localized: android.content.Context?) {

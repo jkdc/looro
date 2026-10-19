@@ -554,6 +554,17 @@
     <string name="leveltest_listen_prompt">Listen to the passage</string>
     <string name="leveltest_listen_hint">You can replay it as many times as you need.</string>
     <string name="leveltest_listen_play">Play</string>
+    <string name="leveltest_listen_stop">Stop</string>
+    <string name="leveltest_info_show">What\'s expected</string>
+    <string name="leveltest_info_hide">Hide</string>
+    <string name="leveltest_info_recognition">Choose the correct option, or write the missing word, in English.</string>
+    <string name="leveltest_info_reading">Read the passage, then answer the questions that follow it.</string>
+    <string name="leveltest_info_listening">Play the audio as many times as you need and answer. Drag the bar to move within the audio.</string>
+    <string name="leveltest_info_writing">Write the requested phrase in English — a short answer is fine.</string>
+    <string name="leveltest_answer_placeholder">Write your answer…</string>
+    <string name="leveltest_unanswered_chip">Unanswered</string>
+    <string name="leveltest_confirm_submit">Submit anyway (%1$d unanswered)</string>
+    <string name="leveltest_answer_label">Your answer (in English)</string>
     <string name="leveltest_submit">Submit test</string>
     <string name="leveltest_submit_hint">Answer everything you can — blank answers count as wrong.</string>
     <string name="leveltest_attempt_starting">Saving this exam on this device…</string>

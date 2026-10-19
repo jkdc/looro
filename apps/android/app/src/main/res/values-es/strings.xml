@@ -554,6 +554,17 @@
     <string name="leveltest_listen_prompt">Escucha el pasaje</string>
     <string name="leveltest_listen_hint">Puedes repetirlo cuantas veces necesites.</string>
     <string name="leveltest_listen_play">Reproducir</string>
+    <string name="leveltest_listen_stop">Detener</string>
+    <string name="leveltest_info_show">Qué se pide</string>
+    <string name="leveltest_info_hide">Ocultar</string>
+    <string name="leveltest_info_recognition">Elige la opción correcta o escribe la palabra que falta, en inglés.</string>
+    <string name="leveltest_info_reading">Lee el texto y responde a las preguntas que lo acompañan.</string>
+    <string name="leveltest_info_listening">Escucha el audio cuantas veces necesites y responde. Arrastra la barra para moverte dentro del audio.</string>
+    <string name="leveltest_info_writing">Escribe la frase que se pide en inglés — una respuesta corta vale.</string>
+    <string name="leveltest_answer_placeholder">Escribe tu respuesta…</string>
+    <string name="leveltest_unanswered_chip">Sin responder</string>
+    <string name="leveltest_confirm_submit">Entregar igualmente (%1$d sin responder)</string>
+    <string name="leveltest_answer_label">Tu respuesta (en inglés)</string>
     <string name="leveltest_submit">Entregar el test</string>
     <string name="leveltest_submit_hint">Responde todo lo que puedas: las respuestas en blanco cuentan como fallos.</string>
     <string name="leveltest_attempt_starting">Guardando este examen en el dispositivo…</string>

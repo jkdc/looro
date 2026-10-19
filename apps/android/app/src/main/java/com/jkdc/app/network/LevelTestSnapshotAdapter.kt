@@ -12,6 +12,8 @@ import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.temporal.IsoFields
 import java.security.MessageDigest
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -174,6 +176,20 @@ internal object LevelTestSnapshotAdapter {
         is JsonArray -> JsonArray(element.map(::canonical))
         else -> element
     }
+
+    /** Canonical hash of a snapshot's content: identical exams serialized by
+     *  different producers (server JSON vs app-built JsonObject) hash equal
+     *  even when their bytes differ. Null when [contentJSON] is not a valid
+     *  snapshot object. */
+    internal fun canonicalHash(contentJSON: String): String? = try {
+        val payload = Json.parseToJsonElement(contentJSON).jsonObject
+        val content = JsonObject(payload.filterKeys { key ->
+            key !in setOf("examId", "generationId", "contentId", "contentHash")
+        })
+        MessageDigest.getInstance("SHA-256")
+            .digest(canonical(content).toString().toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+    } catch (_: Exception) { null }
 
     private fun parseItem(element: JsonElement, passages: Map<String, LevelTestPassage>): LevelTestItem {
         val obj = element as? JsonObject ?: invalid()
