@@ -54,6 +54,104 @@ Once it is up:
 
 The mobile apps do not run in Docker — they build natively because they need Xcode (macOS) and the Android SDK on the host. Everything else (backend, admin panel, database, tests) goes through the Makefile.
 
+## API endpoints for local testing
+
+Everything the backend serves hangs off the API port. With `make up` the API is
+behind Caddy at `https://localhost` (add `-k` to curl for the internal
+certificate); with the phone/emulator lab stack below it is plain
+`http://<PC-IP>:8080`. Public paths need no auth; paths marked **Bearer**
+need `Authorization: Bearer <token>` from a signed-in account.
+
+Health and catalog (public):
+
+| Method & path | What it is |
+| --- | --- |
+| `GET /healthz` · `GET /readyz` | Liveness and database readiness |
+| `GET /v1/pricing` | Price catalog (nanoUSD rates, voice, text) |
+| `GET /v1/level-tests/current?language=en&level=A1` | This week's deterministic exam (bundled banks) |
+| `GET /v1/level-tests/generated?language=en&level=A1&variant=1` | This week's LLM-generated exam (404 until generated and approved) |
+| `GET /v1/level-tests/hybrid?language=en&level=A1` | Generated exam when available, deterministic otherwise (what the apps fetch) |
+| `GET /v1/level-tests/exams/<examId>` | A published exam snapshot by content id |
+| `GET /v1/minutes/products?provider=stripe` | Purchasable minute packs |
+| `GET /v1/auth/providers` | Sign-in providers configured on this deployment |
+
+```sh
+curl -s http://127.0.0.1:8080/v1/level-tests/hybrid?language=en&level=A1 | head -c 200
+```
+
+Accounts and money (Bearer auth; guest paths noted):
+
+| Method & path | What it is |
+| --- | --- |
+| `POST /v1/auth/challenge` → `POST /v1/auth/exchange` | Google/Apple sign-in handshake (mints the bearer) |
+| `GET /v1/account` · `GET /v1/minutes` · `GET /v1/wallet` | Profile, conversation-minutes balance, payment wallet |
+| `POST /v1/minutes/welcome` · `POST /v1/guest/minutes` | Welcome grant (attestation-gated); guest trial minutes |
+| `GET /v1/minutes/products` · `POST /v1/minutes/orders` · `GET /v1/minutes/orders/:id` | Pack catalog, checkout, order status |
+| `GET /v1/subscriptions/plans` · `GET /v1/subscriptions/mine` · `POST /v1/subscriptions/checkout` | Subscription tiers and state |
+| `DELETE /v1/account` · `POST /v1/auth/sign-out` | Delete (with revocation) and sign out |
+| `POST /v1/checkout` · `POST /v1/trial/eligibility` | Sandbox card checkout and trial attestation |
+
+Learning sync (Bearer auth — what the exam-recovery feature uses):
+
+| Method & path | What it is |
+| --- | --- |
+| `GET /v1/progress` · `POST /v1/progress` | Cumulative learning progress ledger (monotonic merge) |
+| `POST /v1/usage/events` | Content-free usage telemetry |
+| `POST /v1/level-test-attempts/sync` | Create exam attempts with their frozen snapshots (idempotent per attempt) |
+| `POST /v1/level-test-attempts/events` | Append attempt progress/completion events (CAS by revision, 409 on divergence) |
+| `GET /v1/level-test-attempts?limit=10&cursor=…` | Own attempt history, bounded pages with opaque cursor |
+| `GET /v1/level-test-attempts/:attemptId` | One own attempt with its frozen snapshot |
+
+```sh
+TOKEN=…   # bearer from a signed-in account
+curl -s -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8080/v1/level-test-attempts?limit=10
+curl -s -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'   -d '{"entries":[…]}' http://127.0.0.1:8080/v1/progress
+```
+
+Also served (Bearer unless noted): `POST /v1/feedback/ai` (in-app AI reports),
+`POST /v1/access-requests` (public waitlist), `GET /v1/feedback/capabilities`,
+`/v1/live/*` (hosted voice sessions, gated), `/v1/proxy/responses` (token-billing
+proxy, unlock required), and the sandbox `POST /v1/checkout` +
+`POST /v1/stripe-webhook` pair when Stripe test keys are configured.
+
+The operator panel (browser at the admin origin) drives `/v1/admin/*`:
+dashboards, table browser, welcome policy, subscription plans, minute
+campaigns, LLM provider config with connection test, and the level-test
+moderation surface (status, private drafts, audited approve/reject).
+
+### Phone/emulator lab against the Docker API
+
+The Android debug build accepts an `app.apiOrigin` Gradle property and, in
+debug builds only, http origins on the local network plus a deterministic
+sign-in seam for a seeded account (24-hour session):
+
+```sh
+# 1. API + database with accounts enabled (host network, LAN-reachable)
+docker run -d --name lab-db -e POSTGRES_DB=app -e POSTGRES_USER=app   -e POSTGRES_PASSWORD=local-only -p 127.0.0.1:5439:5432 postgres:17-alpine
+docker run --rm --network host -e DATABASE_URL=postgresql://app:local-only@127.0.0.1:5439/app   app-server-local:dev node dist/src/migrate.js
+docker run -d --name lab-api --network host   -e DATABASE_URL=postgresql://app:local-only@127.0.0.1:5439/app -e PORT=8080   -e PUBLIC_ORIGIN=http://localhost:8080 -e ACCOUNTS_ENABLED=true   -e ACCOUNTS_HMAC_KEY=<64-hex> -e ACCOUNTS_PROXY_TOKEN=<64-hex>   -e ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true   -e GOOGLE_CLIENT_ID=1234567890-abc.apps.googleusercontent.com   -e GOOGLE_ANDROID_SERVER_CLIENT_ID=1234567890-def.apps.googleusercontent.com   -e GOOGLE_ANDROID_CLIENT_IDS=1234567890-def.apps.googleusercontent.com   --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges   app-server-local:dev node dist/src/main.js
+
+# 2. Seed a lab account whose bearer the app can adopt (debug builds only)
+TOKEN=$(node -e "console.log(require('crypto').randomBytes(32).toString('base64url').slice(0,43))")
+HASH=$(node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "$TOKEN")
+docker exec -i lab-db psql -U app -d app <<SQL
+INSERT INTO accounts(id, email) VALUES(gen_random_uuid(), 'lab@example.test');
+INSERT INTO auth_sessions(id, account_id, token_hash, expires_at)
+  SELECT gen_random_uuid(), id, '$HASH', now() + interval '7 days' FROM accounts WHERE email='lab@example.test';
+SQL
+
+# 3. Build the APK pointed at the PC's LAN IP and install it
+cd apps/android && ./gradlew -Papp.apiOrigin=http://<PC-LAN-IP>:8080 :app:assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+
+# 4. Launch the app adopting that bearer (debug builds only)
+adb shell am start -n com.jkdc.palique.android/com.jkdc.app.MainActivity   --es debug.accountID <account-uuid> --es debug.accountToken "$TOKEN"
+```
+
+`ACCOUNTS_ALLOW_LOCAL_LOOPBACK=true` also lets direct clients without proxy
+headers use the API from the machine itself or the local network — a lab-only
+convenience; never enable it in production.
+
 ## Get started
 
 You need a Mac with Xcode 26 or later, an iPhone running iOS 26.1 or later, an Apple Account, and an OpenAI API project with billing and access to GPT-Live-1 and GPT-5.6 Luna. A ChatGPT subscription does not provide API credit.
