@@ -125,7 +125,9 @@ export async function levelTestAttemptDetail(db: Database, accountId: string, at
   const row = (await db.query(`SELECT a.account_id, a.attempt_id, acc.email, a.exam_id,
     s.content_json->>'source' AS source, s.content_json->>'languageID' AS language_id,
     s.content_json->>'level' AS level, (s.content_json->>'weekId')::int AS week_id,
-    a.state, a.started_at, a.updated_at, a.completed_at, a.answers, a.result ${ATTEMPT_JOIN}
+    a.state, a.started_at, a.updated_at, a.completed_at,
+    a.result->>'overall' AS overall, a.result->>'passed' AS passed, a.result->'sections' AS sections,
+    a.answers, a.result ${ATTEMPT_JOIN}
     WHERE a.account_id=$1 AND a.attempt_id=$2`, [accountId, attemptId])).rows[0] as
     Record<string, unknown> | undefined;
   if (!row) return undefined;

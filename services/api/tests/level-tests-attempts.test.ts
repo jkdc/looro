@@ -138,3 +138,30 @@ integration('results are admin-only and page-origin gated', async () => {
     headers: { ...headers, cookie: (await session()).cookie, origin: 'https://evil.example' } });
   assert.equal(foreign.statusCode, 403);
 });
+
+integration('the attempt detail returns answers and the full result', async () => {
+  const account = await seedAccount('dave@example.test');
+  const exam = await seedExam(account);
+  const attempt = await seedAttempt(account, exam, { overall: 66, passed: true });
+  const response = await app().inject({ method: 'GET',
+    url: `/v1/admin/level-test-attempts/${account}/${attempt}`, headers: await session() });
+  assert.equal(response.statusCode, 200);
+  const body = response.json();
+  assert.deepEqual(body.answers, []);
+  assert.equal(body.result.questionReviews, undefined);
+  assert.equal(body.overall, 66);
+});
+
+integration('the attempt detail answers 404 for unknown or cross-account pairs', async () => {
+  const account = await seedAccount('erin@example.test'), other = await seedAccount('frank@example.test');
+  const exam = await seedExam(account);
+  await seedAttempt(account, exam, { overall: 66, passed: true });
+  const attempt = (await db!.query('SELECT attempt_id FROM level_test_attempts')).rows[0].attempt_id as string;
+  const cross = await app().inject({ method: 'GET',
+    url: `/v1/admin/level-test-attempts/${other}/${attempt}`, headers: await session() });
+  assert.equal(cross.statusCode, 404);
+  assert.equal(cross.json().error?.code, 'level_test_attempt_not_found');
+  const unknown = await app().inject({ method: 'GET',
+    url: `/v1/admin/level-test-attempts/${account}/${randomUUID()}`, headers: await session() });
+  assert.equal(unknown.statusCode, 404);
+});
