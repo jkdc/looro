@@ -573,11 +573,13 @@ export function createApp(services: Services) {
       try {
         const replyTransport = await fetch(`${config.baseUrl.replace(/\/$/, '')}/chat/completions`, {
           method: 'POST',
-          headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
+          headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}`,
+            'x-opencode-session': request.id, 'user-agent': 'palique-api/1.0' },
           body: JSON.stringify({ model: config.model, messages: [{ role: 'user', content: 'Reply with OK.' }] }),
           signal: controller.signal,
         });
-        const outcome = { ok: replyTransport.ok, status: replyTransport.status };
+        const outcome = { ok: replyTransport.ok, status: replyTransport.status,
+          detail: replyTransport.ok ? undefined : (await replyTransport.text()).slice(0, 500) };
         controller.abort(new Error('llm_test_complete'));
         void replyTransport.body?.cancel().catch(() => undefined);
         await auditOutcome(replyTransport.ok ? 'ok' : 'provider_rejected', replyTransport.status);

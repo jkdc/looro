@@ -279,6 +279,8 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
 
   const config = await resolveLlmConfig(deps.db, deps.env);
   if (!config) return { status: 'failed', languageID, level, weekId, errors: ['no llm configuration'] };
+  // One stable gateway session per generation run; reused as the generation id.
+  config.sessionID = randomUUID();
   const call = deps.transport ?? ((resolved, messages, signal) => chatCompletion(resolved, messages, fetch, signal));
 
   const errors: string[] = [];
@@ -369,7 +371,7 @@ export async function generateWeeklyLevelTest(deps: GenerateDeps, options: Gener
     pool = trimmed.pool;
   }
 
-  const generationId = randomUUID();
+  const generationId = config.sessionID!;
   const variants = composeVariants(pool, model, weekId, settings.variants).map(variant =>
     identifySnapshot({ schemaVersion: 1, languageID, level, version: 1, weekId,
       expiresAt: expiresAt(options.now ?? new Date()), thresholds: thresholdsFor(languageID, level),

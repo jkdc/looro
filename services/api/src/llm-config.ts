@@ -1,9 +1,9 @@
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes, randomUUID } from 'node:crypto';
 import { Agent } from 'undici';
 import type { Database } from './db.js';
 
 /** LLM provider configuration for weekly level-test generation
-    (level-tests-llm): presets (openai / glm z.ai / opencode gateway),
+    (level-tests-llm): presets (openai / glm z.ai / opencode go gateway),
     AES-256-GCM-encrypted API keys stored in `llm_provider_configs`,
     resolution DB-active → env, and one OpenAI-compatible chat transport.
     Keys never leave this module in clear: callers receive a resolved config
@@ -14,9 +14,12 @@ export type LlmProvider = 'openai' | 'glm' | 'opencode';
 export interface LlmProviderPreset { baseUrl: string; models: string[] }
 
 export const LLM_PRESETS: Record<LlmProvider, LlmProviderPreset> = {
-  openai: { baseUrl: 'https://api.openai.com/v1', models: ['gpt-5.6-luna'] },
-  glm: { baseUrl: 'https://api.z.ai/api/paas/v4/', models: ['glm-4.5-flash', 'glm-5.3-flash'] },
-  opencode: { baseUrl: '', models: [] }, // gateway URL is deployment configuration
+  openai: { baseUrl: 'https://api.openai.com/v1', models: ['gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol',
+    'gpt-6.1-sol', 'gpt-6-sol', 'gpt-6-luna', 'gpt-6-astra', 'gpt-5.5'] },
+  glm: { baseUrl: 'https://api.z.ai/api/paas/v4/', models: ['glm-4.5-flash', 'glm-4.7-flash', 'glm-4.6', 'glm-4.7',
+    'glm-5', 'glm-5.1', 'glm-5.2', 'glm-5.3', 'glm-5.3-flash', 'glm-5.3-flashx'] },
+  opencode: { baseUrl: 'https://opencode.ai/zen/go/v1', models: ['glm-5.3-flash', 'glm-5.3', 'glm-5.2',
+    'kimi-k3', 'kimi-k2.7-code', 'deepseek-v4.1-flash', 'deepseek-v4-pro', 'mimo-v2.6-pro', 'longcat-2.0'] },
 };
 
 export const LLM_PROVIDERS: LlmProvider[] = ['openai', 'glm', 'opencode'];
@@ -24,7 +27,8 @@ export const LLM_PROVIDERS: LlmProvider[] = ['openai', 'glm', 'opencode'];
 export const isLlmProvider = (value: unknown): value is LlmProvider =>
   typeof value === 'string' && (LLM_PROVIDERS as string[]).includes(value);
 
-export interface ResolvedLlmConfig { provider: LlmProvider; baseUrl: string; model: string; apiKey: string }
+export interface ResolvedLlmConfig { provider: LlmProvider; baseUrl: string; model: string; apiKey: string;
+  /** Stable session id for gateways that route per conversation (OpenCode Go). */ sessionID?: string }
 export interface PublicLlmConfig { provider: LlmProvider; baseUrl: string; model: string; keyHint: string;
   publishMode: 'review' | 'auto'; verifyMode: 'flag' | 'strict' | 'off'; variants: number }
 export interface GeneratedExamVariant { variant: number; items: unknown[]; passages: unknown[];
@@ -104,7 +108,10 @@ export async function chatCompletion(config: ResolvedLlmConfig, messages: ChatMe
     response = await fetchFn(url, {
       method: 'POST',
       signal,
-      headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}` },
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${config.apiKey}`,
+        // OpenCode Go routes per conversation and rejects session-less requests.
+        ...(config.provider === 'opencode' ? { 'x-opencode-session': config.sessionID ?? randomUUID(),
+          'user-agent': 'palique-api/1.0' } : {}) },
       body: JSON.stringify({ model: config.model, messages, temperature: 0.4, stream: false }),
       dispatcher: llmAgent,
     } as RequestInit & { dispatcher: Agent });

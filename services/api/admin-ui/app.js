@@ -317,26 +317,49 @@ async function renderLevelTestOperations(container, draftOffset = 0) {
       <div class="alert alert-info">Los valores proceden del servidor. La prueba usa solo la configuración guardada.</div>
       <div class="row g-3">
         <div class="col-md-6"><label class="form-label" for="lt-provider">Proveedor</label><select class="form-select" id="lt-provider">${providers}</select></div>
-        <div class="col-md-6"><label class="form-label" for="lt-model">Modelo</label><input class="form-control" id="lt-model" maxlength="200" value="${escapeHtml(config.model)}"></div>
+        <div class="col-md-6"><label class="form-label" for="lt-model">Modelo</label><span id="lt-model-wrap"></span></div>
         <div class="col-12"><label class="form-label" for="lt-base-url">URL base</label><input class="form-control" id="lt-base-url" maxlength="500" value="${escapeHtml(config.baseUrl)}"></div>
         <div class="col-12"><label class="form-label" for="lt-api-key">Clave API</label><input class="form-control" id="lt-api-key" type="password" autocomplete="new-password" placeholder="${keyPlaceholder}"></div>
         <div class="col-md-4"><label class="form-label" for="lt-publish">Publicación</label><select class="form-select" id="lt-publish"><option value="review" ${config.publishMode === 'review' ? 'selected' : ''}>Revisión</option><option value="auto" ${config.publishMode === 'auto' ? 'selected' : ''}>Automática</option></select></div>
         <div class="col-md-4"><label class="form-label" for="lt-verify">Verificación</label><select class="form-select" id="lt-verify"><option value="strict" ${config.verifyMode === 'strict' ? 'selected' : ''}>Estricta</option><option value="flag" ${config.verifyMode === 'flag' ? 'selected' : ''}>Marcar</option><option value="off" ${config.verifyMode === 'off' ? 'selected' : ''}>Desactivada</option></select></div>
         <div class="col-md-4"><label class="form-label" for="lt-variants">Variantes</label><input class="form-control" id="lt-variants" type="number" min="1" max="5" value="${escapeHtml(config.variants)}"></div>
       </div>
-      <div class="mt-3 d-flex flex-wrap gap-2"><button class="btn btn-primary" id="lt-save">Guardar y recargar</button><button class="btn btn-outline-primary" id="lt-test" ${config.keyHint ? '' : 'disabled'}>Probar conexión guardada</button><span class="text-secondary align-self-center" id="lt-dirty">La prueba solo utiliza la configuración guardada.</span></div>
+      <div class="mt-3 d-flex flex-wrap gap-2"><button class="btn btn-primary" id="lt-save">Guardar y recargar</button><button class="btn btn-outline-primary" id="lt-test" ${config.keyHint ? '' : 'disabled'}>Probar conexión guardada</button><span class="align-self-center fw-bold" id="lt-test-result"></span><span class="text-secondary align-self-center" id="lt-dirty">La prueba solo utiliza la configuración guardada.</span></div>
     </div></div></div>
     <div class="col-lg-5"><div class="card"><div class="card-header"><h3 class="card-title">Scheduler y última generación</h3></div><div class="card-body">
       <div class="d-flex justify-content-between"><span>Configurado</span><strong>${status.schedule.enabled ? 'Sí' : 'No'}</strong></div>
       <div class="d-flex justify-content-between"><span>Scheduler activo en este proceso</span><strong>${status.scheduler.activeInProcess ? 'Sí' : 'No'}</strong></div>
       <div class="text-secondary small mt-2">La actividad local no indica el estado de otras réplicas.</div>${jobHtml}
     </div></div></div>
-    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Borradores privados</h3></div><div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Creado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-footer d-flex justify-content-between align-items-center">
+    <div class="col-12"><div class="card" id="drafts-card"><div class="card-header"><h3 class="card-title">Borradores privados</h3></div><div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Creado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-footer d-flex justify-content-between align-items-center">
       <button class="btn btn-sm btn-outline-secondary" id="draft-prev" ${drafts.offset === 0 ? 'disabled' : ''}>Anterior</button>
       <span class="text-secondary small">Borradores ${drafts.offset + 1}–${drafts.offset + drafts.items.length}</span>
       <button class="btn btn-sm btn-outline-secondary" id="draft-next" ${drafts.items.length < drafts.limit ? 'disabled' : ''}>Siguiente</button>
     </div></div></div></div>`;
-  const fields = ['provider', 'model', 'base-url', 'api-key', 'publish', 'verify', 'variants'];
+  const catalogFor = name => config.providers.find(item => item.provider === name);
+  const modelOptions = (models, selected) => {
+    const list = models.includes(selected) || !selected ? models : [...models, selected];
+    return list.map(model => `<option value="${escapeHtml(model)}"${model === selected ? ' selected' : ''}>${escapeHtml(model)}</option>`).join('');
+  };
+  const renderProviderForm = (selectedModel, resetBaseUrl = false) => {
+    const entry = catalogFor($('#lt-provider').value);
+    if (resetBaseUrl) $('#lt-base-url').value = entry?.baseUrl ?? '';
+    $('#lt-base-url').readOnly = Boolean(entry?.baseUrl ?? '');
+    $('#lt-model-wrap').innerHTML = entry?.models?.length
+      ? `<select class="form-select" id="lt-model">${modelOptions(entry.models, selectedModel)}</select>`
+      : `<input class="form-control" id="lt-model" maxlength="200" value="${escapeHtml(selectedModel)}">`;
+    $('#lt-model')?.addEventListener('input', () => refreshDirty());
+    $('#lt-model')?.addEventListener('change', () => refreshDirty());
+  };
+  renderProviderForm(config.model);
+  $('#lt-provider').addEventListener('change', () => {
+    const entry = catalogFor($('#lt-provider').value);
+    const current = $('#lt-model').value;
+    const next = entry?.models?.includes(current) ? current : entry?.models?.[0] ?? '';
+    renderProviderForm(next, true);
+    refreshDirty();
+  });
+  const fields = ['provider', 'base-url', 'api-key', 'publish', 'verify', 'variants'];
   const formValue = () => ({ provider: $('#lt-provider').value, model: $('#lt-model').value, baseUrl: $('#lt-base-url').value,
     apiKey: $('#lt-api-key').value, publishMode: $('#lt-publish').value, verifyMode: $('#lt-verify').value, variants: Number($('#lt-variants').value) });
   const initial = { provider: config.provider, model: config.model, baseUrl: config.baseUrl,
@@ -344,8 +367,16 @@ async function renderLevelTestOperations(container, draftOffset = 0) {
   const isDirty = () => { const value = formValue(); return Boolean(value.apiKey) || Object.keys(initial).some(key => value[key] !== initial[key]); };
   const refreshDirty = () => {
     const dirty = isDirty();
-    $('#lt-test').disabled = dirty || !config.keyHint;
-    $('#lt-dirty').textContent = dirty ? 'Hay cambios sin guardar; no se probarán.' : 'La prueba solo utiliza la configuración guardada.';
+    $('#lt-test').disabled = !config.keyHint;
+    const note = $('#lt-dirty');
+    if (dirty) {
+      const pending = drafts.items.filter(item => item.status === 'draft').length;
+      note.innerHTML = `<a href="#" id="lt-dirty-link" class="text-warning">Hay cambios sin guardar · ${pending} exámenes por aprobar</a>`;
+      $('#lt-dirty-link').addEventListener('click', event => {
+        event.preventDefault();
+        $('#drafts-card').scrollIntoView({ behavior: 'smooth' });
+      });
+    } else { note.textContent = 'La prueba solo utiliza la configuración guardada y no genera exámenes.'; }
   };
   fields.forEach(field => { const input = $('#lt-' + field); input.addEventListener('input', refreshDirty); input.addEventListener('change', refreshDirty); });
   $('#lt-save').onclick = async () => {
@@ -357,13 +388,21 @@ async function renderLevelTestOperations(container, draftOffset = 0) {
       toast('Configuración guardada'); await renderLevelTestOperations(container); }
     catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   };
+  const showTestResult = (message, ok) => {
+    const result = $('#lt-test-result');
+    result.className = `align-self-center fw-bold ${ok ? 'text-success' : 'text-danger'}`;
+    result.textContent = message;
+    toast(message, ok ? 'success' : 'danger');
+  };
   $('#lt-test').onclick = async () => {
-    if (isDirty() || !config.keyHint) return refreshDirty();
+    if (!config.keyHint) return refreshDirty();
     const button = $('#lt-test'); button.disabled = true; button.textContent = 'Probando…';
+    $('#lt-test-result').textContent = '';
     try { const result = await api('/v1/admin/llm-config/test', { method: 'POST', body: '{}' });
-      toast(result.ok ? 'Conexión correcta (HTTP ' + result.status + ')' : 'El proveedor respondió HTTP ' + result.status, result.ok ? 'success' : 'warning');
-    } catch (error) { toast('Prueba no disponible: ' + (error.code || error.message), 'warning'); }
-    finally { button.textContent = 'Probar conexión guardada'; button.disabled = isDirty() || !config.keyHint; }
+      showTestResult(result.ok ? 'Conexión correcta (HTTP ' + result.status + ')' :
+        'El proveedor respondió HTTP ' + result.status + (result.detail ? ': ' + result.detail.slice(0, 300) : ''), Boolean(result.ok));
+    } catch (error) { showTestResult('Prueba no disponible: ' + (error.code || error.message), false); }
+    finally { button.textContent = 'Probar conexión guardada'; button.disabled = !config.keyHint; }
   };
   $('#draft-prev').onclick = () => { if (drafts.offset > 0) void renderLevelTestOperations(container, Math.max(0, drafts.offset - drafts.limit)); };
   $('#draft-next').onclick = () => { if (drafts.items.length === drafts.limit) void renderLevelTestOperations(container, drafts.offset + drafts.limit); };
