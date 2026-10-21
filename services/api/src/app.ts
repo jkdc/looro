@@ -38,7 +38,9 @@ import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from '.
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
 import { approveGeneratedWeek, rejectGeneratedWeek } from './level-tests-publication.js';
-import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery } from './level-tests-admin.js';
+import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery, validateRegenerateRequest } from './level-tests-admin.js';
+import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
+import { weekIndex } from './level-tests.js';
 import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
@@ -491,6 +493,25 @@ export function createApp(services: Services) {
     if (!week) throw new ServiceError('level_test_week_not_found', 404);
     return week;
   });
+  app.post('/v1/admin/level-tests/regenerate', { bodyLimit: 4096 }, async (request, reply) => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => !['languageID', 'level', 'weekIndex', 'reason'].includes(key)))
+      throw new ServiceError('invalid_request');
+    const languageID = stringField(body, 'languageID', 8), level = stringField(body, 'level', 4);
+    const reason = stringField(body, 'reason', 500);
+    if (reason.trim().length < 3) throw new ServiceError('invalid_request');
+    if (body.weekIndex !== undefined && (typeof body.weekIndex !== 'number' || !Number.isSafeInteger(body.weekIndex)))
+      throw new ServiceError('invalid_request');
+    const weekId = body.weekIndex === undefined ? weekIndex(new Date()) : body.weekIndex as number;
+    await validateRegenerateRequest(db, languageID, level, weekId);
+    await transaction(db, async sql => recordAdminAction(sql, admin.adminID, 'level_test.regenerate',
+      `${languageID}:${level}:${weekId}`, reason, { languageID, level, weekId }));
+    // Fire-and-forget: the job module owns serialization and failure recording.
+    void runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekId, force: true })
+      .catch(() => undefined);
+    return reply.code(202).send({ started: true });
+  });
   app.get('/v1/admin/level-tests/status', async (request, reply) => {
     assertAdminPageOrigin(request);
     await adminOnly(request);
@@ -499,16 +520,22 @@ export function createApp(services: Services) {
       "FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 1")).rows[0] as
       { language_id: string; level: string; week_index: number; state: string; attempts: number;
         error_code: string | null; started_at: Date | null; finished_at: Date | null; updated_at: Date } | undefined;
+    const jobs = (await db.query("SELECT language_id, level, week_index, state, attempts, error_code, started_at, finished_at, updated_at " +
+      "FROM level_test_generation_jobs ORDER BY updated_at DESC LIMIT 10")).rows as
+      { language_id: string; level: string; week_index: number; state: string; attempts: number;
+        error_code: string | null; started_at: Date | null; finished_at: Date | null; updated_at: Date }[];
     const iso = (value: Date | null | undefined) => value instanceof Date ? value.toISOString() : null;
+    const jobItem = (job: NonNullable<typeof latest>) => ({ languageID: job.language_id, level: job.level,
+      weekId: job.week_index, status: job.state, attempts: job.attempts, errorCode: job.error_code,
+      startedAt: iso(job.started_at), finishedAt: iso(job.finished_at), updatedAt: iso(job.updated_at) });
     reply.header('cache-control', 'no-store');
     return {
       schedule: config ? { enabled: config.enabled, day: config.day, hour: config.hour,
         languages: config.languages, levels: config.levels, timeoutMs: config.timeoutMs }
         : { enabled: false, day: null, hour: null, languages: [], levels: [], timeoutMs: null },
       scheduler: { activeInProcess: services.generationStatus?.isStarted() ?? false },
-      latestJob: latest ? { languageID: latest.language_id, level: latest.level, weekId: latest.week_index,
-        status: latest.state, attempts: latest.attempts, errorCode: latest.error_code,
-        startedAt: iso(latest.started_at), finishedAt: iso(latest.finished_at), updatedAt: iso(latest.updated_at) } : null
+      latestJob: latest ? jobItem(latest) : null,
+      jobs: jobs.map(jobItem)
     };
   });
   app.get('/v1/admin/level-tests/drafts', async (request, reply) => {

@@ -1,9 +1,23 @@
 import type { Database } from './db.js';
 import { ServiceError } from './errors.js';
+import { weekIndex } from './level-tests.js';
 
 /** Admin read surface over generated level-test weeks (admin-exam-management).
     Listings carry metadata only: pool, variants and review stay behind the
     detail endpoint so list payloads never grow with exam content. */
+
+const LANGUAGE_IDS = new Set(['en', 'es', 'fr', 'de', 'it', 'pt', 'nb', 'zh']);
+const CEFR_LEVELS = new Set(['A1', 'A2', 'B1', 'B2', 'C1']);
+
+/** Regeneration guard: current week only, and never over an approved key. */
+export async function validateRegenerateRequest(db: Database, languageID: string, level: string,
+  weekId: number): Promise<void> {
+  if (!LANGUAGE_IDS.has(languageID) || !CEFR_LEVELS.has(level)) throw new ServiceError('invalid_request');
+  if (weekId !== weekIndex(new Date())) throw new ServiceError('invalid_request');
+  const approved = await db.query(`SELECT 1 FROM level_test_weeks WHERE language_id=$1 AND level=$2
+    AND week_index=$3 AND status='approved'`, [languageID, level, weekId]);
+  if (approved.rowCount) throw new ServiceError('level_test_week_not_regenerable', 409);
+}
 
 export interface WeekListQuery {
   status?: string[]; language?: string[]; level?: string[];
