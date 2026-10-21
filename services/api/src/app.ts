@@ -38,6 +38,7 @@ import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from '.
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
 import { approveGeneratedWeek, rejectGeneratedWeek } from './level-tests-publication.js';
+import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery } from './level-tests-admin.js';
 import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
@@ -475,6 +476,21 @@ export function createApp(services: Services) {
     return reply.send(outcome);
   });
   // LLM provider configuration for weekly level-test generation (level-tests-llm).
+  app.get('/v1/admin/level-tests/weeks', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const listing = await listLevelTestWeeks(db, parseWeekListQuery(request.query as Record<string, unknown>));
+    reply.header('cache-control', 'no-store');
+    return listing;
+  });
+  app.get('/v1/admin/level-tests/weeks/:id', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const week = await levelTestWeekDetail(db, uuid((request.params as { id: string }).id));
+    reply.header('cache-control', 'no-store');
+    if (!week) throw new ServiceError('level_test_week_not_found', 404);
+    return week;
+  });
   app.get('/v1/admin/level-tests/status', async (request, reply) => {
     assertAdminPageOrigin(request);
     await adminOnly(request);
