@@ -6,12 +6,15 @@ import { AuthAdmission } from '../src/auth-admission.js';
 import { adminAuthConfig, adminCookieHeader } from '../src/admin-auth.js';
 import { digest } from '../src/auth.js';
 import { encryptSecret, maskKey, LlmTransportError } from '../src/llm-config.js';
+import { weekIndex } from '../src/level-tests.js';
 import { readLlmConfigView, upsertLlmConfig } from '../src/llm-config-admin.js';
 import { generateWeeklyLevelTest } from '../src/level-tests-llm.js';
 import { parseLevelTestSchedulerConfig } from '../src/level-tests-scheduler.js';
 import { identifySnapshot, type ExamSnapshot } from '../src/level-test-snapshot.js';
 
 const NOW = new Date(), TOKEN = 'E'.repeat(43), ADMIN = '00000000-0000-4000-8000-000000000001';
+// Generation windows are defined relative to the clock, never to a frozen week.
+const THIS_WEEK = weekIndex(NOW);
 const ENV = { LEVELTEST_LLM_PROVIDER: 'openai', LEVELTEST_LLM_API_KEY: 'fake-key',
   LEVELTEST_PUBLISH_MODE: 'auto', LEVELTEST_VERIFY: 'strict', LEVELTEST_VARIANTS: '2', LEVELTEST_LLM_MASTER_KEY: 'a'.repeat(64) };
 const ADMIN_ENV = { ADMIN_HMAC_KEY: 'a'.repeat(64), ADMIN_PROXY_TOKEN: 'b'.repeat(64), ADMIN_PUBLIC_ORIGIN: 'https://admin.example' };
@@ -107,7 +110,7 @@ test('an unknown provider outcome is not retried by the section loop', async () 
 
 test('a scheduled generation preserves an existing draft unless force is explicit', async () => {
   const { db, state } = database();
-  const draft = { id: 'draft-id', language_id: 'en', level: 'A1', week_index: 202642,
+  const draft = { id: 'draft-id', language_id: 'en', level: 'A1', week_index: THIS_WEEK,
     status: 'draft', variants: [{ variant: 1, items: [], passages: [] }], pool: { recognition: [] } } as Row;
   state.weeks.push(draft);
   let calls = 0;
@@ -123,7 +126,7 @@ test('a scheduled generation preserves an existing draft unless force is explici
 
 test("rejected week blocks generation unless force retires the row", async () => {
   const { db, state } = database();
-  state.weeks.push({ id: "rejected-id", language_id: "en", level: "A1", week_index: 202642,
+  state.weeks.push({ id: "rejected-id", language_id: "en", level: "A1", week_index: THIS_WEEK,
     status: "rejected", variants: [{ variant: 1, items: [], passages: [] }], pool: { recognition: [] } } as Row);
   let calls = 0;
   const call = async (...args: Parameters<ReturnType<typeof transport>>) => { calls += 1; return transport()(...args); };
@@ -285,8 +288,8 @@ test('draft rejection is authenticated, retained, audited once, and replay-safe'
 test('admin draft list is bounded, private, paginated, and excludes account attempts', async () => {
   const { db, state } = database();
   state.weeks.push(
-    { id: '00000000-0000-4000-8000-000000000011', language_id: 'en', level: 'A1', week_index: 202642, status: 'draft', variants: [], pool: {}, created_at: NOW, attempts: [{ accountID: 'private' }] } as Row,
-    { id: '00000000-0000-4000-8000-000000000012', language_id: 'es', level: 'A1', week_index: 202642, status: 'rejected', variants: [], pool: {}, created_at: new Date(NOW.getTime()-1000) } as Row,
+    { id: '00000000-0000-4000-8000-000000000011', language_id: 'en', level: 'A1', week_index: THIS_WEEK, status: 'draft', variants: [], pool: {}, created_at: NOW, attempts: [{ accountID: 'private' }] } as Row,
+    { id: '00000000-0000-4000-8000-000000000012', language_id: 'es', level: 'A1', week_index: THIS_WEEK, status: 'rejected', variants: [], pool: {}, created_at: new Date(NOW.getTime()-1000) } as Row,
   );
   const app = adminApp(db);
   try {
@@ -310,7 +313,7 @@ test('admin draft list is bounded, private, paginated, and excludes account atte
 test('admin generation status separates configured schedule from this process and redacts job fields', async () => {
   const { db, state } = database();
   const config = parseLevelTestSchedulerConfig({ LEVELTEST_GENERATE_ENABLED: 'true' });
-  state.jobs = [{ language_id: 'en', level: 'A1', week_index: 202642, state: 'unknown', attempts: 1,
+  state.jobs = [{ language_id: 'en', level: 'A1', week_index: THIS_WEEK, state: 'unknown', attempts: 1,
     error_code: 'llm_outcome_unknown', started_at: NOW, finished_at: NOW, updated_at: NOW,
     prompt: 'secret prompt', api_key: 'secret key' }];
   const app = adminApp(db, { generationStatus: { config, isStarted: () => false } });
