@@ -41,6 +41,8 @@ import { approveGeneratedWeek, rejectGeneratedWeek } from './level-tests-publica
 import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery, validateRegenerateRequest } from './level-tests-admin.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
 import { weekIndex } from './level-tests.js';
+import { attemptCsv, levelTestAttemptDetail, levelTestAttemptSummary, listLevelTestAttempts,
+  parseAttemptListQuery } from './level-tests-attempts-admin.js';
 import { ConfigError, LLM_PROVIDER_CATALOG, readLlmConfigView, storedConfigForTest, upsertLlmConfig } from './llm-config-admin.js';
 import { PROGRESS_BODY_LIMIT, PROGRESS_PATH, mergeProgress, listProgress } from './progress.js';
 import type { SubscriptionBilling } from './subscription-billing.js';
@@ -511,6 +513,46 @@ export function createApp(services: Services) {
     void runLevelTestGenerationJob(db, process.env, { languageID, level, weekIndex: weekId, force: true })
       .catch(() => undefined);
     return reply.code(202).send({ started: true });
+  });
+  // Student exam results (admin-exam-results): reads are gated but un-audited,
+  // matching the browse surface; student answers never reach the logs.
+  app.get('/v1/admin/level-test-attempts', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const listing = await listLevelTestAttempts(db, parseAttemptListQuery(request.query as Record<string, unknown>));
+    reply.header('cache-control', 'no-store');
+    return listing;
+  });
+  app.get('/v1/admin/level-test-attempts/summary', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const query = request.query as Record<string, unknown>;
+    const group = query.group === undefined ? undefined : String(query.group);
+    if (group !== undefined && group !== 'week' && group !== 'level') throw new ServiceError('invalid_request');
+    reply.header('cache-control', 'no-store');
+    return levelTestAttemptSummary(db, {
+      language: query.language === undefined ? undefined : String(query.language),
+      level: query.level === undefined ? undefined : String(query.level),
+      group: group as 'week' | 'level' | undefined });
+  });
+  app.get('/v1/admin/level-test-attempts/export', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const csv = await attemptCsv(db, parseAttemptListQuery(request.query as Record<string, unknown>));
+    reply.header('cache-control', 'no-store');
+    if (csv === undefined) throw new ServiceError('export_too_large', 413);
+    reply.header('content-type', 'text/csv; charset=utf-8');
+    reply.header('content-disposition', 'attachment; filename=level-test-attempts.csv');
+    return csv;
+  });
+  app.get('/v1/admin/level-test-attempts/:accountId/:attemptId', async (request, reply) => {
+    assertAdminPageOrigin(request);
+    await adminOnly(request);
+    const attempt = await levelTestAttemptDetail(db,
+      uuid((request.params as { accountId: string }).accountId), (request.params as { attemptId: string }).attemptId);
+    reply.header('cache-control', 'no-store');
+    if (!attempt) throw new ServiceError('level_test_attempt_not_found', 404);
+    return attempt;
   });
   app.get('/v1/admin/level-tests/status', async (request, reply) => {
     assertAdminPageOrigin(request);
