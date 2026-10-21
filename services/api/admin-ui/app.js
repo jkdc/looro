@@ -291,10 +291,13 @@ async function renderBrowse(container, fixedTable) {
   await mountTable();
 }
 
-async function renderLevelTestOperations(container, draftOffset = 0) {
-  const [config, status, drafts] = await Promise.all([
+async function renderLevelTestOperations(container, view = {}) {
+  const filters = view.filters ?? {};
+  const params = new URLSearchParams({ limit: '50', offset: String(view.offset ?? 0) });
+  for (const [key, value] of Object.entries(filters)) if (value) params.set(key, String(value));
+  const [config, status, weeks] = await Promise.all([
     api('/v1/admin/llm-config'), api('/v1/admin/level-tests/status'),
-    api('/v1/admin/level-tests/drafts?limit=50&offset=' + draftOffset)
+    api('/v1/admin/level-tests/weeks?' + params)
   ]);
   const providers = config.providers.map(item =>
     '<option value="' + escapeHtml(item.provider) + '"' + (item.provider === config.provider ? ' selected' : '') + '>' + escapeHtml(item.provider) + '</option>').join('');
@@ -305,13 +308,33 @@ async function renderLevelTestOperations(container, draftOffset = 0) {
       ' · semana ' + escapeHtml(job.weekId) + '<div class="text-secondary small">Actualizado: ' + escapeHtml(job.updatedAt || '—') +
       ' · intentos: ' + escapeHtml(job.attempts) + ' · error: ' + escapeHtml(job.errorCode || '—') + '</div>'
     : '<hr><div class="text-secondary">Todavía no hay jobs registrados.</div>';
-  const rows = drafts.items.map(row =>
-    '<tr><td>' + escapeHtml(row.weekId) + '</td><td>' + escapeHtml(row.languageID) + '</td><td>' + escapeHtml(row.level) +
-    '</td><td>' + escapeHtml(row.status) + '</td><td>' + escapeHtml(row.variants.length) + '</td><td>' + escapeHtml(row.createdAt || '—') +
-    '</td><td class="text-end"><button class="btn btn-sm btn-outline-secondary me-1" data-draft-detail="' + escapeHtml(row.id) + '">Ver</button>' +
-    (row.status === 'draft' ? '<button class="btn btn-sm btn-success me-1" data-draft-approve="' + escapeHtml(row.id) +
-      '">Aprobar</button><button class="btn btn-sm btn-outline-danger" data-draft-reject="' + escapeHtml(row.id) + '">Rechazar</button>' : '') +
-    '</td></tr>').join('') || '<tr><td colspan="7" class="text-secondary">No hay borradores en esta página.</td></tr>';
+  const rowCells = item => '<tr><td>' + escapeHtml(item.weekId) + '</td><td>' + escapeHtml(item.languageID) +
+    '</td><td>' + escapeHtml(item.level) + '</td><td>' + badgeCell({ getValue: () => item.status }) +
+    '</td><td>' + escapeHtml(item.variantCount) + '</td><td>' + escapeHtml(item.model || '—') + '</td><td>' +
+    escapeHtml((item.createdAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td>' +
+    escapeHtml((item.approvedAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td class="text-end">' +
+    '<button class="btn btn-sm btn-outline-secondary me-1" data-week-detail="' + escapeHtml(item.id) + '">Ver</button>' +
+    (item.status === 'draft' ?
+      '<button class="btn btn-sm btn-success me-1" data-week-approve="' + escapeHtml(item.id) + '">Aprobar</button>' +
+      '<button class="btn btn-sm btn-outline-danger" data-week-reject="' + escapeHtml(item.id) + '">Rechazar</button>' : '') +
+    '</td></tr>';
+  const rows = weeks.items.map(rowCells).join('') ||
+    '<tr><td colspan="9" class="text-secondary">No hay exámenes para este filtro.</td></tr>';
+  const LANGS = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nb', 'zh'];
+  const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1'];
+  const STATES = ['draft', 'approved', 'rejected', 'retired'];
+  const option = (value, label, current) =>
+    '<option value="' + escapeHtml(value) + '"' + (value === current ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
+  const filterBar = `<div class="row g-2 mb-2">
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-status">${option('', 'Estado: todos', filters.status)}${STATES.map(state => option(state, state, filters.status)).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-language">${option('', 'Idioma: todos', filters.language)}${LANGS.map(lang => option(lang, lang, filters.language)).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-level">${option('', 'Nivel: todos', filters.level)}${LEVELS.map(level => option(level, level, filters.level)).join('')}</select></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-from" placeholder="Semana ≥" value="${escapeHtml(filters.week_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-to" placeholder="Semana ≤" value="${escapeHtml(filters.week_to ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-from" placeholder="Creado ≥ AAAA-MM-DD" value="${escapeHtml(filters.created_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-to" placeholder="Creado ≤ AAAA-MM-DD" value="${escapeHtml(filters.created_to ?? '')}"></div>
+    <div class="col-auto"><button class="btn btn-sm btn-primary" id="wf-apply">Filtrar</button></div>
+  </div>`;
   container.innerHTML = `<div class="row row-cards">
     <div class="col-lg-7"><div class="card"><div class="card-header"><h3 class="card-title">Configuración efectiva</h3></div><div class="card-body">
       <div class="alert alert-info">Los valores proceden del servidor. La prueba usa solo la configuración guardada.</div>
@@ -331,10 +354,11 @@ async function renderLevelTestOperations(container, draftOffset = 0) {
       <div class="d-flex justify-content-between"><span>Scheduler activo en este proceso</span><strong>${status.scheduler.activeInProcess ? 'Sí' : 'No'}</strong></div>
       <div class="text-secondary small mt-2">La actividad local no indica el estado de otras réplicas.</div>${jobHtml}
     </div></div></div>
-    <div class="col-12"><div class="card" id="drafts-card"><div class="card-header"><h3 class="card-title">Borradores privados</h3></div><div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Creado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div><div class="card-footer d-flex justify-content-between align-items-center">
-      <button class="btn btn-sm btn-outline-secondary" id="draft-prev" ${drafts.offset === 0 ? 'disabled' : ''}>Anterior</button>
-      <span class="text-secondary small">Borradores ${drafts.offset + 1}–${drafts.offset + drafts.items.length}</span>
-      <button class="btn btn-sm btn-outline-secondary" id="draft-next" ${drafts.items.length < drafts.limit ? 'disabled' : ''}>Siguiente</button>
+    <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body">${filterBar}
+    <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Modelo</th><th>Creado</th><th>Aprobado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
+      <button class="btn btn-sm btn-outline-secondary" id="weeks-prev" ${weeks.offset === 0 ? 'disabled' : ''}>Anterior</button>
+      <span class="text-secondary small">Exámenes ${weeks.total ? weeks.offset + 1 : 0}–${weeks.offset + weeks.items.length} de ${weeks.total}</span>
+      <button class="btn btn-sm btn-outline-secondary" id="weeks-next" ${weeks.items.length < weeks.limit ? 'disabled' : ''}>Siguiente</button>
     </div></div></div></div>`;
   const catalogFor = name => config.providers.find(item => item.provider === name);
   const modelOptions = (models, selected) => {
@@ -370,11 +394,11 @@ async function renderLevelTestOperations(container, draftOffset = 0) {
     $('#lt-test').disabled = !config.keyHint;
     const note = $('#lt-dirty');
     if (dirty) {
-      const pending = drafts.items.filter(item => item.status === 'draft').length;
+      const pending = weeks.items.filter(item => item.status === 'draft').length;
       note.innerHTML = `<a href="#" id="lt-dirty-link" class="text-warning">Hay cambios sin guardar · ${pending} exámenes por aprobar</a>`;
       $('#lt-dirty-link').addEventListener('click', event => {
         event.preventDefault();
-        $('#drafts-card').scrollIntoView({ behavior: 'smooth' });
+        $('#exam-weeks-card').scrollIntoView({ behavior: 'smooth' });
       });
     } else { note.textContent = 'La prueba solo utiliza la configuración guardada y no genera exámenes.'; }
   };
@@ -404,23 +428,31 @@ async function renderLevelTestOperations(container, draftOffset = 0) {
     } catch (error) { showTestResult('Prueba no disponible: ' + (error.code || error.message), false); }
     finally { button.textContent = 'Probar conexión guardada'; button.disabled = !config.keyHint; }
   };
-  $('#draft-prev').onclick = () => { if (drafts.offset > 0) void renderLevelTestOperations(container, Math.max(0, drafts.offset - drafts.limit)); };
-  $('#draft-next').onclick = () => { if (drafts.items.length === drafts.limit) void renderLevelTestOperations(container, drafts.offset + drafts.limit); };
-  container.querySelectorAll('[data-draft-detail]').forEach(button => button.onclick = () => {
-    const row = drafts.items.find(item => item.id === button.dataset.draftDetail);
-    if (row) detail('Borrador ' + row.languageID + ' ' + row.level + ' · ' + row.weekId,
-      { pool: row.pool, variants: row.variants, judgeMode: row.judgeMode, review: row.review });
+  $('#wf-apply').onclick = () => {
+    const value = name => $('#wf-' + name)?.value.trim() ?? '';
+    renderLevelTestOperations(container, {
+      filters: { status: value('status'), language: value('language'), level: value('level'),
+        week_from: value('week-from'), week_to: value('week-to'),
+        created_from: value('created-from'), created_to: value('created-to') }, offset: 0 });
+  };
+  $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderLevelTestOperations(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }); };
+  $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderLevelTestOperations(container, { filters, offset: weeks.offset + weeks.limit }); };
+  container.querySelectorAll('[data-week-detail]').forEach(button => button.onclick = async () => {
+    try { const week = await api('/v1/admin/level-tests/weeks/' + button.dataset.weekDetail);
+      detail('Examen ' + week.languageID + ' ' + week.level + ' · semana ' + week.weekId,
+        { status: week.status, pool: week.pool, variants: week.variants, judgeMode: week.judgeMode,
+          review: week.review, model: week.model, generator: week.generator });
+    } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); }
   });
-  for (const action of ['approve', 'reject']) container.querySelectorAll('[data-draft-' + action + ']').forEach(button => button.onclick = async () => {
-    const property = 'draft' + action[0].toUpperCase() + action.slice(1);
-    const row = drafts.items.find(item => item.id === button.dataset[property]);
+  for (const action of ['approve', 'reject']) container.querySelectorAll('[data-week-' + action + ']').forEach(button => button.onclick = async () => {
+    const row = weeks.items.find(item => item.id === button.dataset['week' + action[0].toUpperCase() + action.slice(1)]);
     if (!row) return;
     const decision = await ask(action === 'approve' ? 'Aprobar borrador' : 'Rechazar borrador', row.id);
     if (!decision.reason || decision.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
     button.disabled = true;
     try { await api('/v1/admin/level-tests/' + encodeURIComponent(row.id) + '/' + action,
       { method: 'POST', body: JSON.stringify({ reason: decision.reason }) });
-      toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado'); await renderLevelTestOperations(container); }
+      toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado'); await renderLevelTestOperations(container, view); }
     catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   });
 }
