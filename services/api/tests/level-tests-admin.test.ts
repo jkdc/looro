@@ -40,8 +40,10 @@ const session = () => cachedSession ??= (async () => {
 
 const CURRENT = weekIndex(new Date());
 const seed = async (rows: Partial<{ language: string; level: string; week: number; status: string; createdAt: Date; approved: boolean }>[]) => {
+  const ids: string[] = [];
   for (const row of rows) {
     const id = randomUUID();
+    ids.push(id);
     const pool = { recognition: [], writing: [], readingPassages: [], listeningPassages: [] };
     const variants = [{ variant: 1, items: [], passages: [] }];
     await db!.query(`INSERT INTO level_test_weeks(id, language_id, level, week_index, status, pool, variants,
@@ -51,6 +53,7 @@ const seed = async (rows: Partial<{ language: string; level: string; week: numbe
         JSON.stringify(pool), JSON.stringify(variants), row.createdAt ?? new Date()]);
     if (row.approved) await db!.query('UPDATE level_test_weeks SET approved_at=now(), approved_by=$2 WHERE id=$1', [id, id]);
   }
+  return ids;
 };
 
 integration('the listing returns metadata only, newest first, across all statuses', async () => {
@@ -126,4 +129,21 @@ integration('the listing is admin-only and page-origin gated', async () => {
   const foreignOrigin = await app().inject({ method: 'GET', url: '/v1/admin/level-tests/weeks',
     headers: { ...headers, cookie: (await session()).cookie, origin: 'https://evil.example' } });
   assert.equal(foreignOrigin.statusCode, 403);
+});
+
+integration('the week detail returns full content', async () => {
+  const [week] = await seed([{ language: 'en', status: 'approved', approved: true }]);
+  const response = await app().inject({ method: 'GET', url: `/v1/admin/level-tests/weeks/${week}`, headers: await session() });
+  assert.equal(response.statusCode, 200);
+  const body = response.json();
+  assert.equal(body.languageID, 'en');
+  assert.ok('pool' in body && Array.isArray(body.variants) && Array.isArray(body.review));
+});
+
+integration('the week detail answers 404 for unknown or malformed ids', async () => {
+  const unknown = await app().inject({ method: 'GET', url: `/v1/admin/level-tests/weeks/${randomUUID()}`, headers: await session() });
+  assert.equal(unknown.statusCode, 404);
+  assert.equal(unknown.json().error?.code, 'level_test_week_not_found');
+  const malformed = await app().inject({ method: 'GET', url: '/v1/admin/level-tests/weeks/not-a-uuid', headers: await session() });
+  assert.equal(malformed.statusCode, 400);
 });
