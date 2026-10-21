@@ -539,7 +539,7 @@ async function renderExamAttempts(container, params = {}, filters = {}) {
       <button class="btn btn-sm btn-outline-secondary" id="attempts-next" ${attempts.items.length < attempts.limit ? 'disabled' : ''}>Siguiente</button>
     </div></div></div></div>`;
   $('#wa-apply').onclick = () => {
-    const value = (id: string) => $('#' + id)?.value.trim() ?? '';
+    const value = id => $('#' + id)?.value.trim() ?? '';
     renderExamAttempts(container, { offset: 0 }, { email: value('wa-email'), language: value('wa-language'),
       state: value('wa-state'), passed: value('wa-passed'), week_from: value('wa-week-from'), week_to: value('wa-week-to'),
       account: filters.account, studentEmail: studentEmail });
@@ -553,7 +553,7 @@ async function renderExamAttempts(container, params = {}, filters = {}) {
       const link = document.createElement('a');
       link.href = url; link.download = 'level-test-attempts.csv'; link.click();
       URL.revokeObjectURL(url);
-    } catch (error) { toast('Error: ' + (error as Error).message, 'danger'); }
+    } catch (error) { toast('Error: ' + error.message, 'danger'); }
   };
   container.querySelectorAll('[data-attempt-detail]').forEach(button => button.onclick = async () => {
     const [accountId, attemptId] = button.dataset.attemptDetail.split(':');
