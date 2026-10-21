@@ -497,13 +497,19 @@ async function renderLevelTestOperations(container, view = {}) {
 }
 
 /* ---- exam attempts (per-student results) ---- */
-async function renderExamAttempts(container, params = {}, filters = {}) {
-  const query = new URLSearchParams({ limit: '50', offset: String(params.offset ?? 0) });
-  for (const [key, value] of Object.entries(filters)) if (value) query.set(key, String(value));
+async function renderExamAttempts(container, routeParams = {}, filters = {}) {
+  // Hash params (#exam-results?account=…) seed the filters on first entry;
+  // later re-renders pass pagination in the same slot without an account.
+  const merged = { ...filters };
+  if (routeParams.account && !merged.account) merged.account = routeParams.account;
+  if (routeParams.email && !merged.email) merged.email = routeParams.email;
+  const offset = routeParams.offset ?? 0;
+  const query = new URLSearchParams({ limit: '50', offset: String(offset) });
+  for (const [key, value] of Object.entries(merged)) if (value) query.set(key, String(value));
   const [attempts, summary] = await Promise.all([
     api('/v1/admin/level-test-attempts?' + query), api('/v1/admin/level-test-attempts/summary')
   ]);
-  const studentEmail = filters.studentEmail || (filters.account ? attempts.items[0]?.email : null);
+  const studentEmail = merged.studentEmail || (merged.account ? attempts.items[0]?.email : null);
   const rows = attempts.items.map(item =>
     '<tr><td class="cell-mono" title="' + escapeHtml(item.attemptId) + '">' + escapeHtml(item.attemptId.slice(0, 8)) + '…</td>' +
     '<td>' + escapeHtml(item.email || '—') + '</td><td>' + escapeHtml(item.languageID) + ' ' + escapeHtml(item.level) +
@@ -516,16 +522,16 @@ async function renderExamAttempts(container, params = {}, filters = {}) {
     escapeHtml(item.accountId) + ':' + escapeHtml(item.attemptId) + '">Ver</button></td></tr>').join('') ||
     '<tr><td colspan="9" class="text-secondary">Sin resultados para este filtro.</td></tr>';
   const filterBar = `<div class="row g-2 mb-2 align-items-end">
-    <div class="col"><input class="form-control form-control-sm" id="wa-email" placeholder="Email contiene" value="${escapeHtml(filters.email ?? '')}"></div>
-    <div class="col-auto"><select class="form-select form-select-sm" id="wa-language"><option value="">Idioma: todos</option>${['en','es','fr','de','it','pt','nb','zh'].map(lang => `<option${lang === filters.language ? ' selected' : ''}>${lang}</option>`).join('')}</select></div>
-    <div class="col-auto"><select class="form-select form-select-sm" id="wa-state"><option value="">Estado: todos</option><option${filters.state === 'completed' ? ' selected' : ''}>completed</option><option${filters.state === 'in_progress' ? ' selected' : ''}>in_progress</option></select></div>
-    <div class="col-auto"><select class="form-select form-select-sm" id="wa-passed"><option value="">Resultado: todos</option><option value="true"${filters.passed === 'true' ? ' selected' : ''}>aprobados</option><option value="false"${filters.passed === 'false' ? ' selected' : ''}>suspendidos</option></select></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wa-week-from" placeholder="Semana ≥" value="${escapeHtml(filters.week_from ?? '')}"></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wa-week-to" placeholder="Semana ≤" value="${escapeHtml(filters.week_to ?? '')}"></div>
+    <div class="col"><input class="form-control form-control-sm" id="wa-email" placeholder="Email contiene" value="${escapeHtml(merged.email ?? '')}"></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wa-language"><option value="">Idioma: todos</option>${['en','es','fr','de','it','pt','nb','zh'].map(lang => `<option${lang === merged.language ? ' selected' : ''}>${lang}</option>`).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wa-state"><option value="">Estado: todos</option><option${merged.state === 'completed' ? ' selected' : ''}>completed</option><option${merged.state === 'in_progress' ? ' selected' : ''}>in_progress</option></select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wa-passed"><option value="">Resultado: todos</option><option value="true"${merged.passed === 'true' ? ' selected' : ''}>aprobados</option><option value="false"${merged.passed === 'false' ? ' selected' : ''}>suspendidos</option></select></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wa-week-from" placeholder="Semana ≥" value="${escapeHtml(merged.week_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wa-week-to" placeholder="Semana ≤" value="${escapeHtml(merged.week_to ?? '')}"></div>
     <div class="col-auto"><button class="btn btn-sm btn-primary" id="wa-apply">Filtrar</button><button class="btn btn-sm btn-outline-primary" id="wa-export">Exportar CSV</button></div>
   </div>`;
   container.innerHTML = `<div class="row row-cards">
-    ${filters.account ? `<div class="col-12"><div class="card card-sm"><div class="card-body"><strong>Alumno:</strong> ${escapeHtml(studentEmail || filters.account)}</div></div></div>` : ''}
+    ${merged.account ? `<div class="col-12"><div class="card card-sm"><div class="card-body"><strong>Alumno:</strong> ${escapeHtml(studentEmail || merged.account)}</div></div></div>` : ''}
     <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resumen</h3></div><div class="card-body d-flex gap-4">
       <div><div class="subheader text-secondary">Intentos</div><strong>${summary.total}</strong></div>
       <div><div class="subheader text-secondary">Completados</div><strong>${summary.completed}</strong></div>
@@ -542,10 +548,10 @@ async function renderExamAttempts(container, params = {}, filters = {}) {
     const value = id => $('#' + id)?.value.trim() ?? '';
     renderExamAttempts(container, { offset: 0 }, { email: value('wa-email'), language: value('wa-language'),
       state: value('wa-state'), passed: value('wa-passed'), week_from: value('wa-week-from'), week_to: value('wa-week-to'),
-      account: filters.account, studentEmail: studentEmail });
+      account: merged.account, studentEmail: studentEmail });
   };
-  $('#attempts-prev').onclick = () => { if (attempts.offset > 0) void renderExamAttempts(container, { offset: attempts.offset - attempts.limit }, filters); };
-  $('#attempts-next').onclick = () => { if (attempts.items.length === attempts.limit) void renderExamAttempts(container, { offset: attempts.offset + attempts.limit }, filters); };
+  $('#attempts-prev').onclick = () => { if (attempts.offset > 0) void renderExamAttempts(container, { offset: attempts.offset - attempts.limit }, merged); };
+  $('#attempts-next').onclick = () => { if (attempts.items.length === attempts.limit) void renderExamAttempts(container, { offset: attempts.offset + attempts.limit }, merged); };
   $('#wa-export').onclick = async () => {
     try { const response = await fetch('/v1/admin/level-test-attempts/export?' + query, { credentials: 'same-origin' });
       if (!response.ok) return toast('Error: ' + (await response.json().catch(() => ({}))).error?.code ?? 'export_failed', 'danger');

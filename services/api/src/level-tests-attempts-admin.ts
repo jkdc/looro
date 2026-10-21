@@ -82,7 +82,7 @@ const attemptWhere = (q: AttemptListQuery): { clause: string; values: unknown[] 
   if (q.language) push(`s.content_json->>'languageID' = $`, q.language);
   if (q.level) push(`s.content_json->>'level' = $`, q.level);
   if (q.state) push('a.state = $', q.state);
-  if (q.passed !== undefined) push(`(a.result->>'passed')::boolean = $`, q.passed);
+  if (q.passed !== undefined) push(`a.result->>'passed' = ANY($)`, [q.passed ? 'true' : 'false']);
   if (q.weekFrom !== undefined) push(`(s.content_json->>'weekId')::int >= $`, q.weekFrom);
   if (q.weekTo !== undefined) push(`(s.content_json->>'weekId')::int <= $`, q.weekTo);
   if (q.from !== undefined) push('a.started_at >= $::date', q.from);
@@ -150,15 +150,17 @@ export async function levelTestAttemptSummary(db: Database,
   filters: { language?: string; level?: string; group?: 'week' | 'level' }): Promise<Record<string, unknown>> {
   const values: unknown[] = [], clause = filterClause(values, filters);
   const completed = ` WHERE a.state='completed'${clause}`;
+  const passedCount = `count(*) FILTER (WHERE a.result->>'passed' = 'true')::int`;
+  const safeAvg = `round(avg(NULLIF(regexp_replace(a.result->>'overall', '[^0-9.\\-]', '', 'g'), '')::numeric), 1) AS avg_overall`;
   const [total, aggregates] = await Promise.all([
     db.query(`SELECT count(*)::int AS total ${SUMMARY_JOIN} WHERE true${clause}`, values),
-    db.query(`SELECT count(*)::int AS completed, count(*) FILTER (WHERE (a.result->>'passed')::boolean)::int AS passed,
-      round(avg((a.result->>'overall')::numeric), 1) AS avg_overall ${SUMMARY_JOIN}${completed}`, values),
+    db.query(`SELECT count(*)::int AS completed, ${passedCount} AS passed,
+      ${safeAvg} ${SUMMARY_JOIN}${completed}`, values),
   ]);
   const groupColumn = filters.group === 'level' ? `s.content_json->>'level'` : `(s.content_json->>'weekId')::int`;
   const groups = (await db.query(`SELECT ${groupColumn} AS key, count(*)::int AS completed,
-    count(*) FILTER (WHERE (a.result->>'passed')::boolean)::int AS passed,
-    round(avg((a.result->>'overall')::numeric), 1) AS avg_overall ${SUMMARY_JOIN}${completed}
+    ${passedCount} AS passed,
+    ${safeAvg} ${SUMMARY_JOIN}${completed}
     GROUP BY ${groupColumn} ORDER BY key DESC`, values)).rows as Record<string, unknown>[];
   return {
     total: total.rows[0]?.total ?? 0, completed: Number(aggregates.rows[0]?.completed ?? 0),

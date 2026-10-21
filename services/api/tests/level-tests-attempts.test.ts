@@ -166,8 +166,23 @@ integration('the attempt detail answers 404 for unknown or cross-account pairs',
   assert.equal(unknown.statusCode, 404);
 });
 
-integration('the summary aggregates completed attempts and breaks down by week and level', async () => {
-  const account = await seedAccount('gina@example.test');
+integration('malformed result payloads from clients cannot break listing filters or the summary', async () => {
+  const account = await seedAccount('poison@example.test');
+  const exam = await seedExam(account);
+  // A client bug (or abuse) stores non-boolean passed and non-numeric overall.
+  await db!.query(`INSERT INTO level_test_attempts(account_id,attempt_id,exam_id,state,position,revision,
+    started_at,updated_at,completed_at,answers,result,attempt_json)
+    VALUES($1,gen_random_uuid(),$2,'completed',0,1,now(),now(),now(),'[]'::jsonb,
+      '{"overall":"abc","passed":1,"sections":[]}'::jsonb,'{}'::jsonb)`, [account, exam]);
+  const filtered = await app().inject({ method: 'GET', url: '/v1/admin/level-test-attempts?passed=true', headers: await session() });
+  assert.equal(filtered.statusCode, 200);
+  const summary = await app().inject({ method: 'GET', url: '/v1/admin/level-test-attempts/summary', headers: await session() });
+  assert.equal(summary.statusCode, 200);
+  assert.equal(summary.json().passed, 0);
+  assert.equal(summary.json().avgOverall, null);
+});
+
+integration('the summary aggregates completed attempts and breaks down by week and level', async () => {  const account = await seedAccount('gina@example.test');
   const oldExam = await seedExam(account, 'en', 'A1', CURRENT - 2);
   const lastExam = await seedExam(account, 'en', 'A1', CURRENT - 1);
   await seedAttempt(account, oldExam, { overall: 40, passed: false });
@@ -197,11 +212,12 @@ integration('the CSV export matches the header, escapes formulas and caps at 10k
   await seedAttempt(account, exam, { overall: 55, passed: true, daysAgo: 2 });
   const response = await app().inject({ method: 'GET', url: '/v1/admin/level-test-attempts/export', headers: await session() });
   assert.equal(response.statusCode, 200);
-  assert.match(response.headers['content-type'], /text\/csv/);
-  assert.match(response.headers['content-disposition'], /attachment/);
+  assert.match(response.headers['content-type']!, /text\/csv/);
+  assert.match(response.headers['content-disposition']!, /attachment/);
   const rows = response.body.trim().split('\n');
   assert.equal(rows[0], 'attempt_id,account_id,email,exam_id,source,language,level,week,state,started_at,completed_at,overall,passed');
-  const emailCell = rows[1].split(',').find(cell => cell.includes('hyde'));
+  assert.ok(rows.length > 1);
+  const emailCell = rows[1]!.split(',').find(cell => cell.includes('hyde'));
   assert.equal(emailCell, "'=hyde@example.test");
   // Cap: 10 001 completed attempts over the same seeded exam pair.
   await db!.query(`INSERT INTO level_test_attempts(account_id,attempt_id,exam_id,state,position,revision,

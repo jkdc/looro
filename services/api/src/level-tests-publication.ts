@@ -19,6 +19,11 @@ export async function approveGeneratedWeek(db: Database, id: string, adminID: st
     const row = (await sql.query(`SELECT id, language_id, level, week_index, status, pool, variants, judge_mode, review
       FROM level_test_weeks WHERE id=$1 FOR UPDATE`, [id])).rows[0] as Generation | undefined;
     if (!row) throw new ServiceError('level_test_not_found', 404);
+    // A running regeneration holds this advisory lock; approving mid-regeneration
+    // would let force persistWeek retire the freshly approved exam.
+    const gate = await sql.query('SELECT pg_try_advisory_xact_lock(hashtextextended($1, 0)) AS locked',
+      [`level-test-generation:${row.language_id}:${row.level}:${row.week_index}`]);
+    if (gate.rows[0]?.locked !== true) throw new ServiceError('level_test_regeneration_in_progress', 409);
     if (row.status === 'approved') return { generationId: id, approved: true, alreadyApproved: true };
     if (row.status !== 'draft' || !canPublish(row)) throw new ServiceError('level_test_not_approvable', 409);
     await sql.query(`UPDATE level_test_weeks SET status='approved', approved_at=now(), approved_by=$2

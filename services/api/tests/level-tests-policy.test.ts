@@ -54,6 +54,7 @@ function database() {
     if (sql === 'ROLLBACK') { Object.assign(state, saved); return result(); }
     if (sql === 'COMMIT') { saved = undefined; return result(); }
     if (sql.includes('pg_advisory_xact_lock')) return result();
+    if (sql.includes('pg_try_advisory_xact_lock')) return result([{ locked: true }]);
     if (sql === 'SELECT now()') return result([{ now: NOW }]);
     if (sql.startsWith('INSERT INTO auth_rate_limits')) return result([{ hits: 1 }]);
     if (sql.includes('FROM admin_sessions')) return result(v[0] === digest(TOKEN) ? [{ admin_id: ADMIN, email: 'operator@example.test' }] : []);

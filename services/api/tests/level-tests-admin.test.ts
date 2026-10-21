@@ -10,6 +10,7 @@ import { adminAuthConfig, adminCookieHeader, type AdminAuthServices } from '../s
 import { digest } from '../src/auth.js';
 import { weekIndex } from '../src/level-tests.js';
 import { runLevelTestGenerationJob } from '../src/level-tests-generation-jobs.js';
+import { approveGeneratedWeek } from '../src/level-tests-publication.js';
 
 const hmacKey = 'a'.repeat(64), proxyToken = 'b'.repeat(64);
 const url = process.env.TEST_DATABASE_URL;
@@ -195,6 +196,26 @@ integration('regenerate is csrf-gated and admin-only', async () => {
   const unauth = await app().inject({ method: 'POST', url: '/v1/admin/level-tests/regenerate',
     headers, payload: { languageID: 'en', level: 'A1', reason: 'no session' } });
   assert.equal(unauth.statusCode, 401);
+});
+
+integration('approval is refused while a regeneration holds the generation lock', async () => {
+  const [id] = await seed([{ language: 'en', level: 'A1', status: 'draft' }]);
+  const holder = connectDatabase(url!);
+  const key = `level-test-generation:en:A1:${CURRENT}`;
+  await holder.query('SELECT pg_advisory_lock(hashtextextended($1, 0))', [key]);
+  try {
+    await assert.rejects(
+      approveGeneratedWeek(db!, id!, '00000000-0000-4000-8000-000000000009', 'approve while regenerating'),
+      (error: { code?: string }) => error.code === 'level_test_regeneration_in_progress');
+  } finally {
+    await holder.query('SELECT pg_advisory_unlock(hashtextextended($1, 0))', [key]);
+    await holder.end();
+  }
+  // With the lock released the guard no longer interferes (the empty pool
+  // draft is simply not approvable).
+  await assert.rejects(
+    approveGeneratedWeek(db!, id!, '00000000-0000-4000-8000-000000000009', 'approve after lock released'),
+    (error: { code?: string }) => error.code === 'level_test_not_approvable');
 });
 
 integration('the status endpoint exposes the last generation jobs', async () => {
