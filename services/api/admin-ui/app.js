@@ -292,6 +292,13 @@ async function renderBrowse(container, fixedTable) {
 }
 
 async function renderLevelTestOperations(container, view = {}) {
+  // ISO week id mirroring the server's weekIndex(): year * 100 + ISO week.
+  const now = new Date();
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const dayNum = monday.getUTCDay() || 7;
+  monday.setUTCDate(monday.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
+  const currentWeekId = monday.getUTCFullYear() * 100 + Math.ceil(((monday.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
   const filters = view.filters ?? {};
   const params = new URLSearchParams({ limit: '50', offset: String(view.offset ?? 0) });
   for (const [key, value] of Object.entries(filters)) if (value) params.set(key, String(value));
@@ -317,6 +324,9 @@ async function renderLevelTestOperations(container, view = {}) {
     (item.status === 'draft' ?
       '<button class="btn btn-sm btn-success me-1" data-week-approve="' + escapeHtml(item.id) + '">Aprobar</button>' +
       '<button class="btn btn-sm btn-outline-danger" data-week-reject="' + escapeHtml(item.id) + '">Rechazar</button>' : '') +
+    (item.weekId === currentWeekId && ['draft', 'rejected'].includes(item.status) ?
+      '<button class="btn btn-sm btn-outline-warning ms-1" data-week-regenerate="' + escapeHtml(item.languageID) +
+      ':' + escapeHtml(item.level) + '">Regenerar</button>' : '') +
     '</td></tr>';
   const rows = weeks.items.map(rowCells).join('') ||
     '<tr><td colspan="9" class="text-secondary">No hay exámenes para este filtro.</td></tr>';
@@ -353,6 +363,7 @@ async function renderLevelTestOperations(container, view = {}) {
       <div class="d-flex justify-content-between"><span>Configurado</span><strong>${status.schedule.enabled ? 'Sí' : 'No'}</strong></div>
       <div class="d-flex justify-content-between"><span>Scheduler activo en este proceso</span><strong>${status.scheduler.activeInProcess ? 'Sí' : 'No'}</strong></div>
       <div class="text-secondary small mt-2">La actividad local no indica el estado de otras réplicas.</div>${jobHtml}
+      <div id="jobs-monitor" class="mt-2"></div>
     </div></div></div>
     <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body">${filterBar}
     <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Modelo</th><th>Creado</th><th>Aprobado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
@@ -454,6 +465,33 @@ async function renderLevelTestOperations(container, view = {}) {
       { method: 'POST', body: JSON.stringify({ reason: decision.reason }) });
       toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado'); await renderLevelTestOperations(container, view); }
     catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
+  });
+  const renderJobs = jobs => { const monitor = $('#jobs-monitor'); if (!monitor) return;
+    monitor.innerHTML = jobs.length ? `<div class="table-responsive"><table class="table table-sm table-vcenter"><thead>
+      <tr><th>Idioma</th><th>Nivel</th><th>Semana</th><th>Estado</th><th>Intentos</th><th>Error</th><th>Actualizado</th></tr></thead><tbody>${jobs.map(job =>
+      '<tr><td>' + escapeHtml(job.languageID) + '</td><td>' + escapeHtml(job.level) + '</td><td>' + escapeHtml(job.weekId) +
+      '</td><td>' + badgeCell({ getValue: () => job.status }) + '</td><td>' + escapeHtml(job.attempts) + '</td><td>' +
+      escapeHtml(job.errorCode || '—') + '</td><td>' + escapeHtml((job.updatedAt || '—').slice(0, 16).replace('T', ' ')) + '</td></tr>').join('')}
+      </tbody></table></div>` : '<div class="text-secondary small">Sin jobs registrados.</div>';
+  };
+  const pollJobs = async () => {
+    if (!$('#jobs-monitor')) return;
+    try { const fresh = await api('/v1/admin/level-tests/status');
+      if (!$('#jobs-monitor')) return;
+      renderJobs(fresh.jobs);
+      if (fresh.jobs.some(job => job.status === 'running')) setTimeout(pollJobs, 5000);
+    } catch { /* polling is best effort */ }
+  };
+  void pollJobs();
+  container.querySelectorAll('[data-week-regenerate]').forEach(button => button.onclick = async () => {
+    const [languageID, level] = button.dataset.weekRegenerate.split(':');
+    const decision = await ask('Regenerar examen', languageID + ':' + level);
+    if (!decision.reason || decision.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
+    button.disabled = true;
+    try { await api('/v1/admin/level-tests/regenerate', { method: 'POST',
+        body: JSON.stringify({ languageID, level, reason: decision.reason }) });
+      toast('Regeneración iniciada'); void pollJobs();
+    } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   });
 }
 
