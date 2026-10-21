@@ -165,3 +165,50 @@ integration('the attempt detail answers 404 for unknown or cross-account pairs',
     url: `/v1/admin/level-test-attempts/${account}/${randomUUID()}`, headers: await session() });
   assert.equal(unknown.statusCode, 404);
 });
+
+integration('the summary aggregates completed attempts and breaks down by week and level', async () => {
+  const account = await seedAccount('gina@example.test');
+  const oldExam = await seedExam(account, 'en', 'A1', CURRENT - 2);
+  const lastExam = await seedExam(account, 'en', 'A1', CURRENT - 1);
+  await seedAttempt(account, oldExam, { overall: 40, passed: false });
+  await seedAttempt(account, oldExam, { overall: 60, passed: true });
+  await seedAttempt(account, lastExam, { overall: 80, passed: true });
+  await seedAttempt(account, lastExam, { state: 'in_progress' });
+  const get = async (query: string) => (await app().inject({ method: 'GET',
+    url: `/v1/admin/level-test-attempts/summary?${query}`, headers: await session() })).json();
+  const all = await get('group=week');
+  assert.equal(all.total, 4);
+  assert.equal(all.completed, 3);
+  assert.equal(all.passed, 2);
+  assert.equal(all.avgOverall, 60);
+  assert.equal(all.groups.length, 2);
+  assert.equal(all.groups[0].key, String(CURRENT - 1));
+  assert.equal(all.groups[0].avgOverall, 80);
+  const byLevel = await get('group=level');
+  assert.equal(byLevel.groups.length, 1);
+  assert.equal(byLevel.groups[0].key, 'A1');
+  const bad = await app().inject({ method: 'GET', url: '/v1/admin/level-test-attempts/summary?group=day', headers: await session() });
+  assert.equal(bad.statusCode, 400);
+});
+
+integration('the CSV export matches the header, escapes formulas and caps at 10k rows', async () => {
+  const account = await seedAccount('=hyde@example.test');
+  const exam = await seedExam(account);
+  await seedAttempt(account, exam, { overall: 55, passed: true, daysAgo: 2 });
+  const response = await app().inject({ method: 'GET', url: '/v1/admin/level-test-attempts/export', headers: await session() });
+  assert.equal(response.statusCode, 200);
+  assert.match(response.headers['content-type'], /text\/csv/);
+  assert.match(response.headers['content-disposition'], /attachment/);
+  const rows = response.body.trim().split('\n');
+  assert.equal(rows[0], 'attempt_id,account_id,email,exam_id,source,language,level,week,state,started_at,completed_at,overall,passed');
+  const emailCell = rows[1].split(',').find(cell => cell.includes('hyde'));
+  assert.equal(emailCell, "'=hyde@example.test");
+  // Cap: 10 001 completed attempts over the same seeded exam pair.
+  await db!.query(`INSERT INTO level_test_attempts(account_id,attempt_id,exam_id,state,position,revision,
+    started_at,updated_at,completed_at,answers,result,attempt_json)
+    SELECT $1, gen_random_uuid(), $2, 'completed', 0, 1, now(), now(), now(), '[]'::jsonb,
+      '{"overall":50,"passed":false,"sections":[]}'::jsonb, '{}'::jsonb FROM generate_series(1,10001)`, [account, exam]);
+  const capped = await app().inject({ method: 'GET', url: '/v1/admin/level-test-attempts/export', headers: await session() });
+  assert.equal(capped.statusCode, 413);
+  assert.equal(capped.json().error?.code, 'export_too_large');
+});

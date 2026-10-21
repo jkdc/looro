@@ -152,12 +152,12 @@ export async function levelTestAttemptSummary(db: Database,
   const completed = ` WHERE a.state='completed'${clause}`;
   const [total, aggregates] = await Promise.all([
     db.query(`SELECT count(*)::int AS total ${SUMMARY_JOIN} WHERE true${clause}`, values),
-    db.query(`SELECT count(*)::int AS completed, COALESCE(SUM((a.result->>'passed')::boolean)::int, 0) AS passed,
+    db.query(`SELECT count(*)::int AS completed, count(*) FILTER (WHERE (a.result->>'passed')::boolean)::int AS passed,
       round(avg((a.result->>'overall')::numeric), 1) AS avg_overall ${SUMMARY_JOIN}${completed}`, values),
   ]);
   const groupColumn = filters.group === 'level' ? `s.content_json->>'level'` : `(s.content_json->>'weekId')::int`;
   const groups = (await db.query(`SELECT ${groupColumn} AS key, count(*)::int AS completed,
-    COALESCE(SUM((a.result->>'passed')::boolean)::int, 0) AS passed,
+    count(*) FILTER (WHERE (a.result->>'passed')::boolean)::int AS passed,
     round(avg((a.result->>'overall')::numeric), 1) AS avg_overall ${SUMMARY_JOIN}${completed}
     GROUP BY ${groupColumn} ORDER BY key DESC`, values)).rows as Record<string, unknown>[];
   return {
@@ -166,12 +166,13 @@ export async function levelTestAttemptSummary(db: Database,
     avgOverall: aggregates.rows[0]?.avg_overall === null || aggregates.rows[0]?.avg_overall === undefined
       ? null : Number(aggregates.rows[0].avg_overall),
     group: filters.group ?? 'week',
-    groups: groups.map(row => ({ key: row.key, total: Number(row.completed), completed: Number(row.completed),
+    groups: groups.map(row => ({ key: String(row.key), total: Number(row.completed), completed: Number(row.completed),
       passed: Number(row.passed), avgOverall: row.avg_overall === null ? null : Number(row.avg_overall) })),
   };
 }
 
 const CSV_COLUMNS = ['attempt_id', 'account_id', 'email', 'exam_id', 'source', 'language_id', 'level', 'week_id', 'state', 'started_at', 'completed_at', 'overall', 'passed'] as const;
+const CSV_HEADER = 'attempt_id,account_id,email,exam_id,source,language,level,week,state,started_at,completed_at,overall,passed';
 
 const csvCell = (value: unknown): string => {
   const text = value === null || value === undefined ? '' : String(value);
@@ -189,7 +190,7 @@ export async function attemptCsv(db: Database, q: AttemptListQuery): Promise<str
     a.state, a.started_at, a.completed_at, a.result->>'overall' AS overall, a.result->>'passed' AS passed
     ${ATTEMPT_JOIN}${clause} ORDER BY a.started_at DESC LIMIT ${total}`, values)).rows as Record<string, unknown>[];
   const escape = (text: string) => /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
-  const lines = [CSV_COLUMNS.join(',')];
+  const lines = [CSV_HEADER];
   for (const row of rows) lines.push(CSV_COLUMNS.map(column => escape(csvCell(row[column]))).join(','));
   return lines.join('\n') + '\n';
 }
