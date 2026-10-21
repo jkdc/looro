@@ -11,6 +11,7 @@ const NAV = [
   { id: 'browse', label: 'Tablas', icon: 'ti-table' },
   { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings' },
   { id: 'level-tests', label: 'Generación de exámenes', icon: 'ti-book' },
+  { id: 'exam-results', label: 'Resultados de exámenes', icon: 'ti-clipboard-check' },
   { id: 'plans', label: 'Planes', icon: 'ti-crown' },
   { id: 'campaigns', label: 'Campañas', icon: 'ti-gift' },
   { id: 'audit', label: 'Auditoría', icon: 'ti-shield-check' }
@@ -495,6 +496,74 @@ async function renderLevelTestOperations(container, view = {}) {
   });
 }
 
+/* ---- exam attempts (per-student results) ---- */
+async function renderExamAttempts(container, params = {}, filters = {}) {
+  const query = new URLSearchParams({ limit: '50', offset: String(params.offset ?? 0) });
+  for (const [key, value] of Object.entries(filters)) if (value) query.set(key, String(value));
+  const [attempts, summary] = await Promise.all([
+    api('/v1/admin/level-test-attempts?' + query), api('/v1/admin/level-test-attempts/summary')
+  ]);
+  const studentEmail = filters.studentEmail || (filters.account ? attempts.items[0]?.email : null);
+  const rows = attempts.items.map(item =>
+    '<tr><td class="cell-mono" title="' + escapeHtml(item.attemptId) + '">' + escapeHtml(item.attemptId.slice(0, 8)) + '…</td>' +
+    '<td>' + escapeHtml(item.email || '—') + '</td><td>' + escapeHtml(item.languageID) + ' ' + escapeHtml(item.level) +
+    '</td><td>' + escapeHtml(item.weekId) + '</td><td>' + escapeHtml(item.source) + '</td><td>' +
+    (item.state === 'completed' ? badgeCell({ getValue: () => 'settled' }) + ' ' : '<span class="badge badge-info">in_progress</span> ') +
+    (item.passed === null ? '—' : item.passed ? '<span class="badge badge-success">passed</span>' : '<span class="badge badge-danger">failed</span>') +
+    '</td><td>' + (item.overall === null ? '—' : item.overall + ' %') + '</td><td>' +
+    escapeHtml((item.startedAt || '—').slice(0, 16).replace('T', ' ')) + '</td>' +
+    '<td class="text-end"><button class="btn btn-sm btn-outline-secondary" data-attempt-detail="' +
+    escapeHtml(item.accountId) + ':' + escapeHtml(item.attemptId) + '">Ver</button></td></tr>').join('') ||
+    '<tr><td colspan="9" class="text-secondary">Sin resultados para este filtro.</td></tr>';
+  const filterBar = `<div class="row g-2 mb-2 align-items-end">
+    <div class="col"><input class="form-control form-control-sm" id="wa-email" placeholder="Email contiene" value="${escapeHtml(filters.email ?? '')}"></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wa-language"><option value="">Idioma: todos</option>${['en','es','fr','de','it','pt','nb','zh'].map(lang => `<option${lang === filters.language ? ' selected' : ''}>${lang}</option>`).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wa-state"><option value="">Estado: todos</option><option${filters.state === 'completed' ? ' selected' : ''}>completed</option><option${filters.state === 'in_progress' ? ' selected' : ''}>in_progress</option></select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wa-passed"><option value="">Resultado: todos</option><option value="true"${filters.passed === 'true' ? ' selected' : ''}>aprobados</option><option value="false"${filters.passed === 'false' ? ' selected' : ''}>suspendidos</option></select></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wa-week-from" placeholder="Semana ≥" value="${escapeHtml(filters.week_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wa-week-to" placeholder="Semana ≤" value="${escapeHtml(filters.week_to ?? '')}"></div>
+    <div class="col-auto"><button class="btn btn-sm btn-primary" id="wa-apply">Filtrar</button><button class="btn btn-sm btn-outline-primary" id="wa-export">Exportar CSV</button></div>
+  </div>`;
+  container.innerHTML = `<div class="row row-cards">
+    ${filters.account ? `<div class="col-12"><div class="card card-sm"><div class="card-body"><strong>Alumno:</strong> ${escapeHtml(studentEmail || filters.account)}</div></div></div>` : ''}
+    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resumen</h3></div><div class="card-body d-flex gap-4">
+      <div><div class="subheader text-secondary">Intentos</div><strong>${summary.total}</strong></div>
+      <div><div class="subheader text-secondary">Completados</div><strong>${summary.completed}</strong></div>
+      <div><div class="subheader text-secondary">Aprobados</div><strong>${summary.passed}</strong></div>
+      <div><div class="subheader text-secondary">Nota media</div><strong>${summary.avgOverall === null ? '—' : summary.avgOverall + ' %'}</strong></div>
+    </div></div></div>
+    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Resultados de exámenes</h3></div><div class="card-body">${filterBar}
+    <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Intento</th><th>Alumno</th><th>Examen</th><th>Semana</th><th>Origen</th><th>Estado</th><th>Nota</th><th>Inicio</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
+      <button class="btn btn-sm btn-outline-secondary" id="attempts-prev" ${attempts.offset === 0 ? 'disabled' : ''}>Anterior</button>
+      <span class="text-secondary small">Resultados ${attempts.total ? attempts.offset + 1 : 0}–${attempts.offset + attempts.items.length} de ${attempts.total}</span>
+      <button class="btn btn-sm btn-outline-secondary" id="attempts-next" ${attempts.items.length < attempts.limit ? 'disabled' : ''}>Siguiente</button>
+    </div></div></div></div>`;
+  $('#wa-apply').onclick = () => {
+    const value = (id: string) => $('#' + id)?.value.trim() ?? '';
+    renderExamAttempts(container, { offset: 0 }, { email: value('wa-email'), language: value('wa-language'),
+      state: value('wa-state'), passed: value('wa-passed'), week_from: value('wa-week-from'), week_to: value('wa-week-to'),
+      account: filters.account, studentEmail: studentEmail });
+  };
+  $('#attempts-prev').onclick = () => { if (attempts.offset > 0) void renderExamAttempts(container, { offset: attempts.offset - attempts.limit }, filters); };
+  $('#attempts-next').onclick = () => { if (attempts.items.length === attempts.limit) void renderExamAttempts(container, { offset: attempts.offset + attempts.limit }, filters); };
+  $('#wa-export').onclick = async () => {
+    try { const response = await fetch('/v1/admin/level-test-attempts/export?' + query, { credentials: 'same-origin' });
+      if (!response.ok) return toast('Error: ' + (await response.json().catch(() => ({}))).error?.code ?? 'export_failed', 'danger');
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement('a');
+      link.href = url; link.download = 'level-test-attempts.csv'; link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) { toast('Error: ' + (error as Error).message, 'danger'); }
+  };
+  container.querySelectorAll('[data-attempt-detail]').forEach(button => button.onclick = async () => {
+    const [accountId, attemptId] = button.dataset.attemptDetail.split(':');
+    try { const attempt = await api(`/v1/admin/level-test-attempts/${accountId}/${attemptId}`);
+      detail('Intento de ' + (attempt.email || accountId) + ' · ' + attempt.languageID + ' ' + attempt.level + ' · semana ' + attempt.weekId,
+        { result: attempt.result, answers: attempt.answers });
+    } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); }
+  });
+}
+
 /* ---- forms ---- */
 async function renderPolicy(container) {
   const policy = await api('/v1/admin/policy/welcome');
@@ -664,6 +733,8 @@ function contextMenu(tableName) {
   if (tableName === 'accounts') return [
     { label: '<i class="ti ti-id-badge me-2"></i>Detalle de cuenta', action: (event, row) => api(`/v1/admin/accounts/${row.getData().id}`)
         .then(report => detail(`Cuenta ${row.getData().email ?? row.getData().id}`, report)).catch(error => toast(`Error: ${error.code}`, 'danger')) },
+    { label: '<i class="ti ti-clipboard-check me-2"></i>Ver exámenes', action: (_event, row) => {
+        location.hash = `#exam-results?account=${row.getData().id}`; } },
     { separator: true },
     { label: '<i class="ti ti-gift me-2"></i>Regalar minutos…', action: async (event, row) => {
         const asked = await ask('Campaña de minutos', row.getData().email ?? row.getData().id);
@@ -707,23 +778,25 @@ const VIEWS = {
   browse: { title: 'Explorador de tablas', render: container => renderBrowse(container, null) },
   policy: { title: 'Política de bienvenida', render: renderPolicy },
   'level-tests': { title: 'Generación de exámenes', render: renderLevelTestOperations },
+  'exam-results': { title: 'Resultados de exámenes', render: renderExamAttempts },
   plans: { title: 'Planes y suscripciones', render: renderPlans },
   campaigns: { title: 'Campañas', render: renderCampaigns },
   audit: { title: 'Auditoría de acciones', render: container => renderBrowse(container, 'admin_actions') }
 };
 async function route() {
-  const viewName = (location.hash.slice(1) || 'overview').split('?')[0];
-  const view = VIEWS[viewName] ?? VIEWS.overview;
+  const [routePath, routeQuery] = (location.hash.slice(1) || 'overview').split('?');
+  const view = VIEWS[routePath] ?? VIEWS.overview;
+  const params = Object.fromEntries(new URLSearchParams(routeQuery ?? ''));
   $('#page-title').textContent = view.title;
   document.title = `${view.title} · Palique Admin`;
-  for (const link of document.querySelectorAll('#nav .nav-link')) link.classList.toggle('active', link.hash === `#${viewName}`);
+  for (const link of document.querySelectorAll('#nav .nav-link')) link.classList.toggle('active', link.hash === `#${routePath}`);
   for (const chart of charts) chart.destroy();
   charts.length = 0;
   for (const table of tables) table.destroy();
   tables = [];
   const container = $('#view');
   container.innerHTML = '<div class="mt-3 progress progress-sm"><div class="progress-bar progress-bar-indeterminate"></div></div>';
-  try { await view.render(container); }
+  try { await view.render(container, params); }
   catch (error) { if (error.message !== 'unauthenticated') container.innerHTML = `<div class="alert alert-danger mt-3"><i class="ti ti-alert-triangle me-2"></i>${error.code ?? error.message}</div>`; }
 }
 (function boot() {
