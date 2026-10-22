@@ -317,3 +317,53 @@ integration('the status endpoint exposes the last generation jobs', async () => 
   assert.ok(Array.isArray(failed.errors) && failed.errors.length === 1);
   assert.match(failed.errors[0], /^[a-z0-9_.,()%:\- ]+$/);
 });
+
+integration('retiring an approved week stores the operator reason and audits once', async () => {
+  const [id] = await seed([{ language: 'en', level: 'B2', status: 'approved', approved: true }]);
+  const response = await post(`/v1/admin/level-tests/${id}/retire`, { reason: 'Contenido invalidado tras revisión' });
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(response.json(), { generationId: id, retired: true, alreadyRetired: false });
+  const admin = (await db!.query('SELECT id FROM admins')).rows[0].id as string;
+  const row = (await db!.query(`SELECT status, retired_at, retired_by, retired_reason
+    FROM level_test_weeks WHERE id=$1`, [id])).rows[0];
+  assert.equal(row.status, 'retired');
+  assert.ok(row.retired_at instanceof Date);
+  assert.equal(row.retired_by, admin);
+  assert.equal(row.retired_reason, 'Contenido invalidado tras revisión');
+  const audit = (await db!.query("SELECT reason FROM admin_actions WHERE action='level_test.retire'")).rows;
+  assert.equal(audit.length, 1);
+  assert.equal(audit[0].reason, 'Contenido invalidado tras revisión');
+  // The review page reads the motive from the week itself, not only from audit.
+  const detail = (await app().inject({ method: 'GET', url: `/v1/admin/level-tests/weeks/${id}`,
+    headers: await session() })).json();
+  assert.equal(detail.retiredReason, 'Contenido invalidado tras revisión');
+  assert.equal(detail.retiredBy, admin);
+  // Replay is safe and never audits a second retirement.
+  const replay = await post(`/v1/admin/level-tests/${id}/retire`, { reason: 'Retirar otra vez' });
+  assert.equal(replay.statusCode, 200);
+  assert.equal(replay.json().alreadyRetired, true);
+  assert.equal((await db!.query("SELECT count(*)::int AS n FROM admin_actions WHERE action='level_test.retire'")).rows[0].n, 1);
+});
+
+integration('retire refuses drafts, unknown ids and short reasons', async () => {
+  const [draft] = await seed([{ language: 'en', level: 'A1', status: 'draft' }]);
+  const conflict = await post(`/v1/admin/level-tests/${draft}/retire`, { reason: 'not approved yet' });
+  assert.equal(conflict.statusCode, 409);
+  assert.equal(conflict.json().error?.code, 'level_test_not_retirable');
+  const unknown = await post(`/v1/admin/level-tests/${randomUUID()}/retire`, { reason: 'unknown week' });
+  assert.equal(unknown.statusCode, 404);
+  assert.equal(unknown.json().error?.code, 'level_test_not_found');
+  const short = await post(`/v1/admin/level-tests/${draft}/retire`, { reason: 'ab' });
+  assert.equal(short.statusCode, 400);
+  assert.equal(short.json().error?.code, 'admin_reason_required');
+  assert.equal((await db!.query("SELECT count(*)::int AS n FROM admin_actions WHERE action='level_test.retire'")).rows[0].n, 0);
+});
+
+integration('retire is csrf-gated and admin-only', async () => {
+  const [id] = await seed([{ language: 'es', level: 'A2', status: 'approved', approved: true }]);
+  const url = `/v1/admin/level-tests/${id}/retire`;
+  const foreign = await post(url, { reason: 'origin check' }, { origin: 'https://evil.example' });
+  assert.equal(foreign.statusCode, 403);
+  const unauth = await app().inject({ method: 'POST', url, headers, payload: { reason: 'no session here' } });
+  assert.equal(unauth.statusCode, 401);
+});

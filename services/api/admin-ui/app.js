@@ -494,15 +494,22 @@ function startGenerationWatch(keys, weekId) {
 const LANGUAGE_CODES = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nb', 'zh'];
 const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1'];
 
-/** Shared moderation step: the listing and the review page approve and reject
-    through the same reason dialog and endpoints. Returns false when cancelled. */
+const MODERATION_COPY = {
+  approve: { title: 'Aprobar borrador', done: 'Borrador aprobado' },
+  reject: { title: 'Rechazar borrador', done: 'Borrador rechazado' },
+  retire: { title: 'Retirar examen', done: 'Examen retirado: deja de servirse a los alumnos' },
+};
+
+/** Shared moderation step: the listing and the review page approve, reject and
+    retire through the same reason dialog and endpoints. Returns false when
+    cancelled. */
 async function moderateWeek(week, action) {
-  const decision = await ask(action === 'approve' ? 'Aprobar borrador' : 'Rechazar borrador',
-    `${week.languageID} ${week.level} · semana ${week.weekId}`);
+  const copy = MODERATION_COPY[action];
+  const decision = await ask(copy.title, `${week.languageID} ${week.level} · semana ${week.weekId}`);
   if (!decision.reason || decision.reason.trim().length < 3) return false;
   await api(`/v1/admin/level-tests/${encodeURIComponent(week.id)}/${action}`,
     { method: 'POST', body: JSON.stringify({ reason: decision.reason }) });
-  toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado');
+  toast(copy.done);
   return true;
 }
 
@@ -646,7 +653,9 @@ async function renderExamWeeksView(container, view = {}) {
     (item.status === 'draft' ?
       '<button class="btn btn-sm btn-success me-1" data-week-approve="' + escapeHtml(item.id) + '">Aprobar</button>' +
       '<button class="btn btn-sm btn-outline-danger" data-week-reject="' + escapeHtml(item.id) + '">Rechazar</button>' : '') +
-    (item.weekId === currentWeekId && ['draft', 'rejected'].includes(item.status) ?
+    (item.status === 'approved' ?
+      '<button class="btn btn-sm btn-outline-danger" data-week-retire="' + escapeHtml(item.id) + '">Retirar</button>' : '') +
+    (item.weekId === currentWeekId && ['draft', 'rejected', 'retired'].includes(item.status) ?
       '<button class="btn btn-sm btn-outline-warning ms-1" data-week-regenerate="' + escapeHtml(item.languageID) +
       ':' + escapeHtml(item.level) + '">Regenerar</button>' : '') +
     '</td></tr>';
@@ -696,7 +705,7 @@ async function renderExamWeeksView(container, view = {}) {
   };
   $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderExamWeeksView(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }); };
   $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderExamWeeksView(container, { filters, offset: weeks.offset + weeks.limit }); };
-  for (const action of ['approve', 'reject']) container.querySelectorAll('[data-week-' + action + ']').forEach(button => button.onclick = async () => {
+  for (const action of ['approve', 'reject', 'retire']) container.querySelectorAll('[data-week-' + action + ']').forEach(button => button.onclick = async () => {
     const row = weeks.items.find(item => item.id === button.dataset['week' + action[0].toUpperCase() + action.slice(1)]);
     if (!row) return;
     button.disabled = true;
@@ -878,6 +887,15 @@ async function renderExamReview(container, params = {}, rawId) {
       '<div><strong>' + flagged.length + ' ítem' + (flagged.length === 1 ? '' : 's') + ' marcado' + (flagged.length === 1 ? '' : 's') +
       ' por el juez</strong><div class="small">Revisa el motivo en cada tarjeta antes de aprobar.</div></div></div></div></div>'
     : '';
+  // A retired week explains itself: a manual retirement carries the operator
+  // motive, while a superseded row only carries the regeneration that replaced it.
+  const retirement = status === 'retired'
+    ? '<div class="col-12"><div class="alert alert-warning"><strong>Semana retirada.</strong> ' +
+      (week.retiredReason
+        ? escapeHtml(week.retiredReason) + ' <span class="text-secondary">(' + escapeHtml(examStamp(week.retiredAt)) + ')</span>'
+        : 'Reemplazada por una regeneración.') +
+      '</div></div>'
+    : '';
 
   container.innerHTML = '<div class="row row-cards">' +
     '<div class="col-12"><div class="card"><div class="card-body">' +
@@ -896,7 +914,7 @@ async function renderExamReview(container, params = {}, rawId) {
     '<div>Creado: ' + escapeHtml(examStamp(week.createdAt)) + '</div>' +
     (week.approvedAt ? '<div>Aprobado: ' + escapeHtml(examStamp(week.approvedAt)) + '</div>' : '') +
     '<div>Prompt v' + escapeHtml(week.promptVersion ?? '—') + ' · juez v' + escapeHtml(week.judgeVersion ?? '—') + '</div>' +
-    '<div class="mt-2">' + backLink + '</div></div></div></div></div></div>' + banner +
+    '<div class="mt-2">' + backLink + '</div></div></div></div></div></div>' + banner + retirement +
     '<div class="col-12"><div class="card"><div class="card-header">' +
     '<ul class="nav nav-tabs card-header-tabs">' + tabs.map(tab =>
       '<li class="nav-item"><button class="nav-link" type="button" data-exam-tab="' + tab.id + '">' +
@@ -907,6 +925,10 @@ async function renderExamReview(container, params = {}, rawId) {
         '<span class="text-secondary small">Aprobar publica esta semana y la sirve a los alumnos. Cada acción queda auditada con su motivo.</span>' +
         '<span class="d-flex gap-2"><button class="btn btn-outline-danger" id="exam-reject">Rechazar</button>' +
         '<button class="btn btn-success" id="exam-approve">Aprobar</button></span></div></div></div>' : '') +
+    (status === 'approved'
+      ? '<div class="col-12"><div class="card exam-actions"><div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">' +
+        '<span class="text-secondary small">Retirar deja de servir esta semana a los alumnos y conserva el contenido y la evaluación. Para rehacerla, usa «Regenerar».</span>' +
+        '<button class="btn btn-outline-danger" id="exam-retire">Retirar</button></div></div></div>' : '') +
     '</div>';
 
   const paint = tab => {
@@ -929,7 +951,7 @@ async function renderExamReview(container, params = {}, rawId) {
   });
   paint(tabs[0].id);
 
-  for (const action of ['approve', 'reject']) {
+  for (const action of ['approve', 'reject', 'retire']) {
     const button = $('#exam-' + action);
     if (!button) continue;
     button.onclick = async () => {

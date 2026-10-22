@@ -37,7 +37,7 @@ import { subscriptionCatalog, subscriptionConfig, subscriptionTiers, runDripForA
 import { USAGE_EVENTS_BODY_LIMIT, USAGE_EVENTS_PATH, ingestUsageEvents } from './usage.js';
 import { composeWeekly, levelTestLevels } from './level-tests.js';
 import { approvedWeeklyLevelTest } from './level-tests-llm.js';
-import { approveGeneratedWeek, rejectGeneratedWeek } from './level-tests-publication.js';
+import { approveGeneratedWeek, rejectGeneratedWeek, retireGeneratedWeek } from './level-tests-publication.js';
 import { levelTestWeekDetail, listLevelTestWeeks, parseWeekListQuery, planGenerationLaunch,
   runGenerationLaunch, validateRegenerateRequest } from './level-tests-admin.js';
 import { runLevelTestGenerationJob } from './level-tests-generation-jobs.js';
@@ -641,6 +641,13 @@ export function createApp(services: Services) {
     if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
     const id = uuid((request.params as { generationId: string }).generationId);
     return approveGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
+  });
+  app.post('/v1/admin/level-tests/:generationId/retire', { bodyLimit: 1024 }, async request => {
+    assertAdminCsrf(request);
+    const admin = await adminOnly(request), body = objectBody(request);
+    if (Object.keys(body).some(key => key !== 'reason')) throw new ServiceError('invalid_request');
+    const id = uuid((request.params as { generationId: string }).generationId);
+    return retireGeneratedWeek(db, id, admin.adminID, stringField(body, 'reason', 500));
   });
   app.get('/v1/admin/llm-config', async request => {
     const admin = await adminOnly(request);

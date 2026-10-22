@@ -99,6 +99,28 @@ function canPublish(row: Generation): boolean {
   } catch { return false; }
 }
 
+/** Withdraws an approved week from the serving set. Content and judge verdicts
+    stay untouched for audit; the operator motive is stored on the row so the
+    review page can explain the retirement without reading the audit ledger. */
+export async function retireGeneratedWeek(db: Database, id: string, adminID: string, reason: string) {
+  if (reason.trim().length < 3 || reason.length > 500 || /[\x00-\x1f]/.test(reason))
+    throw new ServiceError('admin_reason_required');
+  return transaction(db, async sql => {
+    const row = (await sql.query(`SELECT id, status, approved_by, origin FROM level_test_weeks
+      WHERE id=$1 FOR UPDATE`, [id])).rows[0] as
+      { id: string; status: string; approved_by: string | null; origin: string } | undefined;
+    if (!row) throw new ServiceError('level_test_not_found', 404);
+    if (row.status === 'retired') return { generationId: id, retired: true, alreadyRetired: true };
+    if (row.status !== 'approved') throw new ServiceError('level_test_not_retirable', 409);
+    await sql.query(`UPDATE level_test_weeks
+      SET status='retired', retired_at=now(), retired_by=$2, retired_reason=$3
+      WHERE id=$1 AND status='approved'`, [id, adminID, reason]);
+    await recordAdminAction(sql, adminID, 'level_test.retire', id, reason,
+      { approvedBy: row.approved_by, origin: row.origin });
+    return { generationId: id, retired: true, alreadyRetired: false };
+  });
+}
+
 export async function rejectGeneratedWeek(db: Database, id: string, adminID: string, reason: string) {
   if (reason.trim().length < 3 || reason.length > 500 || /[\x00-\x1f]/.test(reason))
     throw new ServiceError('admin_reason_required');

@@ -63,6 +63,14 @@ so every state looks the same.
     predate migration `048` stay `unknown`. Approval provenance is separate:
     `approved_by` holds `system:auto` when auto-publish approved a week or the
     operator id when a human did.
+    An approved week can be retired («Retirar» in the listing or the review
+    page), which is how an operator invalidates an approval made by the
+    pipeline. Retiring stops serving the week immediately, keeps the content and
+    the judge verdicts intact, and stores the operator motive on the row
+    (`retired_at`, `retired_by`, `retired_reason`; migration `050`) plus the
+    `level_test.retire` audit entry. A retired week is not reissued
+    automatically: the scheduler and the launcher skip it, and replacing it is
+    an explicit «Regenerar».
     Weeks and jobs are colour-coded by severity (green = usable, red = needs an
     operator, yellow = waiting or unknown). While a run started from the panel
     (or already `running` when the view mounts) is live, the monitor polls

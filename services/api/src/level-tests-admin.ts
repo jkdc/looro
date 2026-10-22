@@ -76,6 +76,7 @@ export interface WeekMeta {
 export type WeekDetail = WeekMeta & {
   pool: unknown; variants: unknown[]; review: unknown;
   promptVersion: number | null; judgeVersion: number | null;
+  retiredAt: string | null; retiredBy: string | null; retiredReason: string | null;
 };
 
 const WEEK_STATUS = new Set(['draft', 'approved', 'rejected', 'retired']);
@@ -161,10 +162,13 @@ export async function listLevelTestWeeks(db: Database, q: WeekListQuery):
 export async function levelTestWeekDetail(db: Database, id: string): Promise<WeekDetail | undefined> {
   const row = (await db.query(`SELECT id, language_id, level, week_index, status, judge_mode, generator, model,
     pool, variants, review, tokens_in, tokens_out, created_at, approved_at, approved_by, origin,
+    retired_at, retired_by, retired_reason,
     prompt_version, judge_version
     FROM level_test_weeks WHERE id=$1`, [id])).rows[0] as Record<string, unknown> | undefined;
   if (!row) return undefined;
   return { ...weekRow(row), pool: row.pool, variants: row.variants as unknown[], review: row.review,
     promptVersion: (row.prompt_version as number | null) ?? null,
-    judgeVersion: (row.judge_version as number | null) ?? null };
+    judgeVersion: (row.judge_version as number | null) ?? null,
+    retiredAt: iso(row.retired_at), retiredBy: (row.retired_by as string | null) ?? null,
+    retiredReason: (row.retired_reason as string | null) ?? null };
 }

@@ -654,6 +654,33 @@ try {
   } else {
     failures.push('per-student deep link skipped: no attempt handle found');
   }
+  // 11. Retiring an approved week: an explicit operator decision whose motive
+  // stays on the week and whose effect is the week leaving the serving set.
+  await page.goto(`${PANEL}/#exam-weeks`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+  const retireRow = page.locator('#exam-weeks-card tbody tr', { hasText: 'B1' })
+    .filter({ has: page.locator('[data-week-retire]') });
+  const retireLanguage = (await retireRow.locator('td').nth(1).textContent())?.trim() ?? '';
+  const retireHref = await retireRow.locator('a[href^="#exam/"]').getAttribute('href');
+  await retireRow.locator('[data-week-retire]').click();
+  await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+  await page.fill('#reason-text', 'Retirado en E2E: el evaluador rechazó el contenido');
+  await page.click('#reason-ok');
+  await page.waitForFunction(() => [...document.querySelectorAll('#exam-weeks-card tbody tr')]
+    .some(tr => tr.textContent?.includes('B1') && tr.textContent?.includes('retired')),
+    undefined, { timeout: 10_000 });
+  await check('retiring an approved week stores the motive and stops serving it', async () => {
+    const response = await fetch(`${API}/v1/level-tests/generated?language=${retireLanguage}&level=B1&variant=1`);
+    if (response.status !== 404) throw new Error(`public status=${response.status}`);
+    if (!retireHref) throw new Error('review link missing before retirement');
+    await page.goto(`${PANEL}/${retireHref}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => (document.querySelector('#view')?.textContent ?? '').includes('Semana retirada.'),
+      undefined, { timeout: 10_000 });
+    const text = (await page.textContent('#view')) ?? '';
+    if (!text.includes('Retirado en E2E: el evaluador rechazó el contenido'))
+      throw new Error('retirement motive missing from the review page');
+  });
+  await shot('14-week-retired');
 } catch (error) {
   failures.push(`scenario aborted: ${error.message}`);
   await shot('99-aborted').catch(() => {});
