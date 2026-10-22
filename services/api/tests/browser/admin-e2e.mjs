@@ -90,9 +90,29 @@ try {
   });
   await shot('02-dashboard');
 
-  // 2. Effective configuration view (T11 "Generación de exámenes").
-  await page.click('a[href="#level-tests"]');
+  // 2. Configuration lives on its own view: the exam surfaces are grouped and
+  // the generation view carries no provider form.
+  await check('sidebar groups the exam surfaces with three entries', async () => {
+    const nav = await page.textContent('#nav');
+    if (!nav.includes('Exámenes')) throw new Error('exam group heading missing');
+    for (const href of ['#exam-weeks', '#exam-results', '#ia-config']) {
+      if (!(await page.isVisible(`a[href="${href}"]`))) throw new Error(`${href} link missing`);
+    }
+    if (await page.isVisible('a[href="#level-tests"]')) throw new Error('legacy link still in the nav');
+  });
+  await page.goto(`${PANEL}/#level-tests`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+  await check('legacy route redirects to the generation view', async () => {
+    if (!page.url().endsWith('#exam-weeks')) throw new Error(`url=${page.url()}`);
+    if (await page.isVisible('#lt-provider')) throw new Error('provider form leaked into the generation view');
+    await expectText('body', 'Lanzar generación');
+  });
+  await page.click('a[href="#ia-config"]');
   await page.waitForSelector('#lt-provider', { timeout: 10_000 });
+  await check('configuration view is self-contained', async () => {
+    if (await page.isVisible('#gen-launch')) throw new Error('launcher leaked into the configuration view');
+    await expectText('body', 'Dónde se genera');
+  });
   await check('effective config renders server values', async () => {
     const provider = await page.inputValue('#lt-provider');
     const baseUrl = await page.inputValue('#lt-base-url');
@@ -145,12 +165,15 @@ try {
   await drainToasts();
   await shot('06-connection-test');
 
-  // 5. Scheduler status: configured OFF must be visible and distinct from
-  // in-process activity.
-  await check('scheduler configured=false and process activity=false', async () => {
-    const body = await page.textContent('body');
-    if (!/Configurado\s*\n?\s*No/.test(body)) throw new Error('configured badge not showing "No"');
-    if (!/Scheduler activo en este proceso\s*\n?\s*No/.test(body)) throw new Error('in-process badge not showing "No"');
+  // 5. Generation view: launcher, jobs monitor and listing. Scheduler status:
+  // configured OFF must be visible and distinct from in-process activity.
+  await page.click('a[href="#exam-weeks"]');
+  await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+  await check('generation view exposes the launcher and no provider fields', async () => {
+    if (!(await page.isVisible('#gen-launch'))) throw new Error('launch button missing');
+    if (await page.isVisible('#lt-provider')) throw new Error('provider form present in the generation view');
+    await expectText('#scheduler-note', 'no configurado');
+    await expectText('#scheduler-note', 'activo en este proceso: no');
   });
 
   // 6. Generated-exams listing: seeded drafts visible with the regenerate
@@ -248,7 +271,7 @@ try {
     const monitor = await page.textContent('#jobs-monitor');
     if (!monitor.includes('A2')) throw new Error('A2 job row missing from the monitor');
   });
-  await page.waitForSelector('#lt-provider', { timeout: 10_000 });
+  await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
   await check('regenerated week replaces the rejected row with a fresh draft', async () => {
     const card = await page.textContent('#exam-weeks-card');
     if (!card.includes('A2')) throw new Error('A2 rows missing after regeneration');
@@ -280,10 +303,73 @@ try {
       return card && /B1/.test(card.textContent ?? '') && /draft/.test(card.textContent ?? '');
     }, undefined, { timeout: 20_000 });
   });
-  await page.waitForSelector('#lt-provider', { timeout: 10_000 });
+  await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
   await shot('10b-generation-launch');
 
-  // 9. Results section: seeded student attempt, filters, detail modal and the
+  // 9. Exam review page: the exam a student will take, not raw JSON.
+  await page.click(weekRow('B1') + ' a[href^="#exam/"]');
+  await page.waitForSelector('#exam-body', { timeout: 10_000 });
+  await page.waitForSelector('.exam-section', { timeout: 10_000 });
+  await check('review page groups items into sections in exam order', async () => {
+    const sections = await page.$$eval('.exam-section-title', nodes => nodes.map(node => node.textContent.trim()));
+    if (!sections.length) throw new Error('no sections rendered');
+    if (!sections[0].startsWith('Reconocimiento')) throw new Error(`first section=${sections[0]}`);
+    const text = await page.textContent('#exam-body');
+    if (/\{\s*"/.test(text)) throw new Error('raw JSON leaked into the review page');
+    await expectText('#page-title', 'Revisión de examen');
+  });
+  await check('review page marks accepted answers and judge verdicts', async () => {
+    if (!(await page.isVisible('.exam-option-ok'))) throw new Error('no accepted option marked');
+    const marks = await page.$$eval('.exam-option-ok .exam-mark', nodes => nodes.map(node => node.textContent.trim()));
+    if (!marks.includes('✓')) throw new Error('accepted option not ticked');
+    const text = await page.textContent('#exam-body');
+    if (!text.includes('Juez:')) throw new Error('judge verdict missing from item cards');
+    if (!text.includes('Aceptadas')) throw new Error('accepted answers missing from written items');
+  });
+  await shot('10c-review-page');
+  await check('review page switches variants and shows the pool', async () => {
+    const tabs = await page.$$('[data-exam-tab]');
+    if (tabs.length < 3) throw new Error(`tabs=${tabs.length} (variants + pool expected)`);
+    const first = (await page.textContent('#exam-body')).slice(0, 400);
+    await page.click('[data-exam-tab="variant-1"]');
+    await page.waitForFunction(() => document.querySelector('[data-exam-tab="variant-1"]')?.classList.contains('active'),
+      undefined, { timeout: 5_000 });
+    const second = (await page.textContent('#exam-body')).slice(0, 400);
+    if (first === second) throw new Error('variant body did not change');
+    await page.click('[data-exam-tab="pool"]');
+    await page.waitForFunction(() => document.querySelector('[data-exam-tab="pool"]')?.classList.contains('active'),
+      undefined, { timeout: 5_000 });
+    await expectText('#exam-body', 'Reconocimiento');
+  });
+  await drainToasts();
+  await page.click('#exam-approve');
+  await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+  await page.fill('#reason-text', 'Aprobado desde la página de revisión E2E');
+  await page.click('#reason-ok');
+  await page.waitForSelector('.alert-success', { timeout: 10_000 });
+  await check('review page approves a draft and reflects the new status', async () => {
+    await page.waitForFunction(() => {
+      const view = document.querySelector('#view');
+      return view && /approved/.test(view.textContent ?? '') && !document.querySelector('#exam-approve');
+    }, undefined, { timeout: 10_000 });
+  });
+  await shot('10d-review-approved');
+  await page.click('a[href="#exam-weeks"]');
+  await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+  await check('approval from the review page reaches the listing', async () => {
+    await page.waitForFunction(() => [...document.querySelectorAll('#exam-weeks-card tbody tr')]
+      .some(tr => tr.textContent?.includes('B1') && tr.textContent?.includes('approved')),
+      undefined, { timeout: 10_000 });
+  });
+  await page.goto(`${PANEL}/#exam/not-a-real-exam`, { waitUntil: 'domcontentloaded' });
+  await check('unknown exam id renders a not-found state', async () => {
+    await page.waitForFunction(() => (document.querySelector('#view')?.textContent ?? '').includes('Examen no encontrado'),
+      undefined, { timeout: 10_000 });
+    await page.click('#view a[href="#exam-weeks"]');
+    await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+  });
+
+  // 10. Results section: seeded student attempt, filters, detail modal and the
   // per-student deep link.
   await page.click('a[href="#exam-results"]');
   await page.waitForSelector('#wa-apply', { timeout: 10_000 });
@@ -294,8 +380,26 @@ try {
     if (!body.includes('passed')) throw new Error('passed badge missing');
   });
   await shot('11-results-section');
-  await page.fill('#wa-email', 'student');
-  await page.click('#wa-apply');
+  // Applying a filter re-renders the whole view, filter bar included: a naive
+  // fill+click can lose the typed value between hit-testing and typing. Type and
+  // click in a loop until the request actually carries the typed value.
+  const applyFilter = async value => {
+    const trace = [];
+    for (let attempt = 0; attempt < 5; attempt++) {
+      await page.fill('#wa-email', value);
+      const issued = page.waitForResponse(response => {
+        if (!response.url().includes('/level-test-attempts?')) return false;
+        return new URL(response.url()).searchParams.get('email') === (value || null);
+      }, { timeout: 3_000 }).then(() => true).catch(() => false);
+      await page.click('#wa-apply');
+      const requested = await issued;
+      trace.push(`try ${attempt + 1}: request=${requested}`);
+      if (requested) return;
+    }
+    const seen = observedAttemptRequests.slice(-4).map(url => url.split('?')[1] ?? url);
+    throw new Error(`filter ${JSON.stringify(value)} never reached the API (${trace.join('; ')}; seen: ${seen.join(' | ')})`);
+  };
+  await applyFilter('student');
   await page.waitForFunction(() => document.body.textContent?.includes('student@example.test'),
     undefined, { timeout: 10_000 });
   await check('email filter keeps the matching attempt', async () => {
@@ -303,31 +407,13 @@ try {
     if (!body.includes('student@example.test')) throw new Error('filtered row missing');
   });
   const attemptHandle = await page.getAttribute('[data-attempt-detail]', 'data-attempt-detail');
-  await page.fill('#wa-email', 'nobody@nowhere.test');
-  const clickApplyFor = async needle => {
-    const trace = [];
-    // A concurrent re-render can detach the button between hit-testing and the
-    // click landing: retry until the filtered request is actually issued.
-    for (let attempt = 0; attempt < 3; attempt++) {
-      const value = await page.inputValue('#wa-email').catch(() => 'missing');
-      const requested = page.waitForResponse(response => response.url().includes(needle) && response.url().includes('email='),
-        { timeout: 5_000 }).then(() => true).catch(() => false);
-      await page.click('#wa-apply');
-      const issued = await requested;
-      trace.push(`try ${attempt + 1}: input=${JSON.stringify(value)} request=${issued}`);
-      if (issued) return;
-    }
-    const seen = observedAttemptRequests.slice(-4).map(url => url.split('?')[1] ?? url);
-    throw new Error(`apply click never triggered the listing request (${trace.join('; ')}; seen: ${seen.join(' | ')})`);
-  };
-  await clickApplyFor('nobody');
+  await applyFilter('nobody@nowhere.test');
   await check('non-matching filter shows the empty state', async () => {
     await page.waitForFunction(() => document.body.textContent?.includes('Sin resultados para este filtro'),
       undefined, { timeout: 10_000 });
   });
   await drainToasts();
-  await page.fill('#wa-email', '');
-  await page.click('#wa-apply');
+  await applyFilter('');
   await page.waitForFunction(() => document.body.textContent?.includes('student@example.test'),
     undefined, { timeout: 10_000 });
   await page.click('[data-attempt-detail]');

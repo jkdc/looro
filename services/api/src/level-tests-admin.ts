@@ -62,7 +62,10 @@ export interface WeekMeta {
   tokensIn: number; tokensOut: number; createdAt: string; approvedAt: string | null; approvedBy: string | null;
 }
 
-export type WeekDetail = WeekMeta & { pool: unknown; variants: unknown[]; review: unknown };
+export type WeekDetail = WeekMeta & {
+  pool: unknown; variants: unknown[]; review: unknown;
+  promptVersion: number | null; judgeVersion: number | null;
+};
 
 const WEEK_STATUS = new Set(['draft', 'approved', 'rejected', 'retired']);
 const WEEK_SORT = new Set(['created_at', 'week_index', 'language_id', 'level', 'status', 'approved_at']);
@@ -112,7 +115,7 @@ const weekRow = (row: Record<string, unknown>): WeekMeta => ({
   weekId: row.week_index as number, status: row.status as string, judgeMode: row.judge_mode as string,
   generator: row.generator as string, model: row.model as string,
   variantCount: Array.isArray(row.variants) ? row.variants.length : 0,
-  tokensIn: row.tokens_in as number, tokensOut: row.tokens_out as number,
+  tokensIn: Number(row.tokens_in ?? 0), tokensOut: Number(row.tokens_out ?? 0),
   createdAt: iso(row.created_at) as string, approvedAt: iso(row.approved_at) as string | null,
   approvedBy: (row.approved_by as string | null) ?? null,
 });
@@ -146,8 +149,11 @@ export async function listLevelTestWeeks(db: Database, q: WeekListQuery):
 /** Full week content: metadata plus the heavy exam payload. */
 export async function levelTestWeekDetail(db: Database, id: string): Promise<WeekDetail | undefined> {
   const row = (await db.query(`SELECT id, language_id, level, week_index, status, judge_mode, generator, model,
-    pool, variants, review, tokens_in, tokens_out, created_at, approved_at, approved_by
+    pool, variants, review, tokens_in, tokens_out, created_at, approved_at, approved_by,
+    prompt_version, judge_version
     FROM level_test_weeks WHERE id=$1`, [id])).rows[0] as Record<string, unknown> | undefined;
   if (!row) return undefined;
-  return { ...weekRow(row), pool: row.pool, variants: row.variants as unknown[], review: row.review };
+  return { ...weekRow(row), pool: row.pool, variants: row.variants as unknown[], review: row.review,
+    promptVersion: (row.prompt_version as number | null) ?? null,
+    judgeVersion: (row.judge_version as number | null) ?? null };
 }

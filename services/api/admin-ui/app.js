@@ -10,8 +10,9 @@ const NAV = [
   { id: 'usage', label: 'Uso', icon: 'ti-activity' },
   { id: 'browse', label: 'Tablas', icon: 'ti-table' },
   { id: 'policy', label: 'Política bienvenida', icon: 'ti-settings' },
-  { id: 'level-tests', label: 'Generación de exámenes', icon: 'ti-book' },
-  { id: 'exam-results', label: 'Resultados de exámenes', icon: 'ti-clipboard-check' },
+  { id: 'exam-weeks', label: 'Generar y revisar', icon: 'ti-book', group: 'Exámenes' },
+  { id: 'exam-results', label: 'Resultados', icon: 'ti-clipboard-check', group: 'Exámenes' },
+  { id: 'ia-config', label: 'Configuración de IA', icon: 'ti-cpu', group: 'Exámenes' },
   { id: 'plans', label: 'Planes', icon: 'ti-crown' },
   { id: 'campaigns', label: 'Campañas', icon: 'ti-gift' },
   { id: 'audit', label: 'Auditoría', icon: 'ti-shield-check' }
@@ -380,7 +381,7 @@ async function watchGenerationTick() {
         // ready for review / approve without a manual reload. Never repaint if
         // the operator moved to another view (they share the same container).
         if (levelTestsRender && $('#exam-weeks-card'))
-          void renderLevelTestOperations(levelTestsRender.container, levelTestsRender.view);
+          void renderExamWeeksView(levelTestsRender.container, levelTestsRender.view);
         return;
       }
       paint('text-primary');
@@ -398,71 +399,33 @@ function startGenerationWatch(keys, weekId) {
   scheduleGenerationWatch();
 }
 
-async function renderLevelTestOperations(container, view = {}) {
-  // ISO week id mirroring the server's weekIndex(): year * 100 + ISO week.
-  const now = new Date();
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  const dayNum = monday.getUTCDay() || 7;
-  monday.setUTCDate(monday.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
-  const currentWeekId = monday.getUTCFullYear() * 100 + Math.ceil(((monday.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
-  levelTestsRender = { container, view };
-  const filters = view.filters ?? {};
-  const params = new URLSearchParams({ limit: '50', offset: String(view.offset ?? 0) });
-  for (const [key, value] of Object.entries(filters)) if (value) params.set(key, String(value));
-  const [config, status, weeks] = await Promise.all([
-    api('/v1/admin/llm-config'), api('/v1/admin/level-tests/status'),
-    api('/v1/admin/level-tests/weeks?' + params)
+const LANGUAGE_CODES = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nb', 'zh'];
+const CEFR_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1'];
+
+/** Shared moderation step: the listing and the review page approve and reject
+    through the same reason dialog and endpoints. Returns false when cancelled. */
+async function moderateWeek(week, action) {
+  const decision = await ask(action === 'approve' ? 'Aprobar borrador' : 'Rechazar borrador',
+    `${week.languageID} ${week.level} · semana ${week.weekId}`);
+  if (!decision.reason || decision.reason.trim().length < 3) return false;
+  await api(`/v1/admin/level-tests/${encodeURIComponent(week.id)}/${action}`,
+    { method: 'POST', body: JSON.stringify({ reason: decision.reason }) });
+  toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado');
+  return true;
+}
+
+/* ---- provider configuration (rare, sensitive: its own view) ---- */
+async function renderAiConfig(container) {
+  const [config, drafts] = await Promise.all([
+    api('/v1/admin/llm-config'), api('/v1/admin/level-tests/weeks?status=draft&limit=1')
   ]);
-  // Paint the freshest jobs immediately; the watcher keeps them current while
-  // a generation launched from this session is still in flight.
-  lastJobsSnapshot = status.jobs;
-  // Also pick up runs started elsewhere (scheduler, CLI, another operator) so a
-  // reload never leaves the operator blind about an in-flight generation.
-  const runningJobs = status.jobs.filter(job => job.status === 'running' && job.weekId === currentWeekId);
-  if (runningJobs.length) startGenerationWatch(runningJobs.map(job => `${job.languageID}:${job.level}`), currentWeekId);
+  const pending = Number(drafts.total ?? 0);
   const providers = config.providers.map(item =>
     '<option value="' + escapeHtml(item.provider) + '"' + (item.provider === config.provider ? ' selected' : '') + '>' + escapeHtml(item.provider) + '</option>').join('');
   const keyPlaceholder = config.keyHint ? 'Guardada: ' + escapeHtml(config.keyHint) + ' · vacío conserva la clave' : 'Sin clave persistida';
-  const job = status.latestJob;
-  const jobHtml = job
-    ? '<hr><strong>Último job:</strong> ' + escapeHtml(job.status) + ' · ' + escapeHtml(job.languageID) + ' ' + escapeHtml(job.level) +
-      ' · semana ' + escapeHtml(job.weekId) + '<div class="text-secondary small">Actualizado: ' + escapeHtml(job.updatedAt || '—') +
-      ' · intentos: ' + escapeHtml(job.attempts) + ' · error: ' + escapeHtml(job.errorCode || '—') + '</div>'
-    : '<hr><div class="text-secondary">Todavía no hay jobs registrados.</div>';
-  const rowCells = item => '<tr><td>' + escapeHtml(item.weekId) + '</td><td>' + escapeHtml(item.languageID) +
-    '</td><td>' + escapeHtml(item.level) + '</td><td>' + badgeCell({ getValue: () => item.status }) +
-    '</td><td>' + escapeHtml(item.variantCount) + '</td><td>' + escapeHtml(item.model || '—') + '</td><td>' +
-    escapeHtml((item.createdAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td>' +
-    escapeHtml((item.approvedAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td class="text-end">' +
-    '<button class="btn btn-sm btn-outline-secondary me-1" data-week-detail="' + escapeHtml(item.id) + '">Ver</button>' +
-    (item.status === 'draft' ?
-      '<button class="btn btn-sm btn-success me-1" data-week-approve="' + escapeHtml(item.id) + '">Aprobar</button>' +
-      '<button class="btn btn-sm btn-outline-danger" data-week-reject="' + escapeHtml(item.id) + '">Rechazar</button>' : '') +
-    (item.weekId === currentWeekId && ['draft', 'rejected'].includes(item.status) ?
-      '<button class="btn btn-sm btn-outline-warning ms-1" data-week-regenerate="' + escapeHtml(item.languageID) +
-      ':' + escapeHtml(item.level) + '">Regenerar</button>' : '') +
-    '</td></tr>';
-  const rows = weeks.items.map(rowCells).join('') ||
-    '<tr><td colspan="9" class="text-secondary">No hay exámenes para este filtro.</td></tr>';
-  const LANGS = ['en', 'es', 'fr', 'de', 'it', 'pt', 'nb', 'zh'];
-  const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1'];
-  const STATES = ['draft', 'approved', 'rejected', 'retired'];
-  const option = (value, label, current) =>
-    '<option value="' + escapeHtml(value) + '"' + (value === current ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
-  const filterBar = `<div class="row g-2 mb-2">
-    <div class="col-auto"><select class="form-select form-select-sm" id="wf-status">${option('', 'Estado: todos', filters.status)}${STATES.map(state => option(state, state, filters.status)).join('')}</select></div>
-    <div class="col-auto"><select class="form-select form-select-sm" id="wf-language">${option('', 'Idioma: todos', filters.language)}${LANGS.map(lang => option(lang, lang, filters.language)).join('')}</select></div>
-    <div class="col-auto"><select class="form-select form-select-sm" id="wf-level">${option('', 'Nivel: todos', filters.level)}${LEVELS.map(level => option(level, level, filters.level)).join('')}</select></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-from" placeholder="Semana ≥" value="${escapeHtml(filters.week_from ?? '')}"></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-to" placeholder="Semana ≤" value="${escapeHtml(filters.week_to ?? '')}"></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-from" placeholder="Creado ≥ AAAA-MM-DD" value="${escapeHtml(filters.created_from ?? '')}"></div>
-    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-to" placeholder="Creado ≤ AAAA-MM-DD" value="${escapeHtml(filters.created_to ?? '')}"></div>
-    <div class="col-auto"><button class="btn btn-sm btn-primary" id="wf-apply">Filtrar</button></div>
-  </div>`;
   container.innerHTML = `<div class="row row-cards">
-    <div class="col-lg-7"><div class="card"><div class="card-header"><h3 class="card-title">Configuración efectiva</h3></div><div class="card-body">
-      <div class="alert alert-info">Los valores proceden del servidor. La prueba usa solo la configuración guardada.</div>
+    <div class="col-lg-8"><div class="card" id="ia-config-card"><div class="card-header"><h3 class="card-title">Proveedor de generación</h3></div><div class="card-body">
+      <div class="alert alert-info">Los valores proceden del servidor. La prueba usa solo la configuración guardada y no genera exámenes.</div>
       <div class="row g-3">
         <div class="col-md-6"><label class="form-label" for="lt-provider">Proveedor</label><select class="form-select" id="lt-provider">${providers}</select></div>
         <div class="col-md-6"><label class="form-label" for="lt-model">Modelo</label><span id="lt-model-wrap"></span></div>
@@ -474,29 +437,12 @@ async function renderLevelTestOperations(container, view = {}) {
       </div>
       <div class="mt-3 d-flex flex-wrap gap-2"><button class="btn btn-primary" id="lt-save">Guardar y recargar</button><button class="btn btn-outline-primary" id="lt-test" ${config.keyHint ? '' : 'disabled'}>Probar conexión guardada</button><span class="align-self-center fw-bold" id="lt-test-result"></span><span class="text-secondary align-self-center" id="lt-dirty">La prueba solo utiliza la configuración guardada.</span></div>
     </div></div></div>
-    <div class="col-lg-5"><div class="card"><div class="card-header"><h3 class="card-title">Scheduler y última generación</h3></div><div class="card-body">
-      <div class="d-flex justify-content-between"><span>Configurado</span><strong>${status.schedule.enabled ? 'Sí' : 'No'}</strong></div>
-      <div class="d-flex justify-content-between"><span>Scheduler activo en este proceso</span><strong>${status.scheduler.activeInProcess ? 'Sí' : 'No'}</strong></div>
-      <div class="text-secondary small mt-2">La actividad local no indica el estado de otras réplicas.</div>${jobHtml}
-      <div class="mt-3" id="launch-generation">
-        <div class="row g-2 align-items-end">
-          <div class="col-auto"><label class="form-label" for="gen-language">Idioma</label>
-            <select class="form-select form-select-sm" id="gen-language">${['en', 'es', 'fr', 'de', 'it', 'pt', 'nb', 'zh'].map(lang => `<option>${lang}</option>`).join('')}</select></div>
-          <div class="col-auto"><label class="form-label" for="gen-levels">Niveles</label>
-            <select class="form-select form-select-sm" id="gen-levels"><option value="all">Todos los niveles</option>${['A1', 'A2', 'B1', 'B2', 'C1'].map(level => `<option>${level}</option>`).join('')}</select></div>
-          <div class="col-auto"><button class="btn btn-sm btn-primary" id="gen-launch">Lanzar generación</button></div>
-        </div>
-        <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen; los aprobados se omiten. Para rehacer uno existente usa «Regenerar» en la tabla.</div>
-        <div class="small mt-1 fw-bold ${lastWatchTone}" id="launch-status">${escapeHtml(lastWatchStatus)}</div>
-      </div>
-      <div id="jobs-monitor" class="mt-2"></div>
+    <div class="col-lg-4"><div class="card"><div class="card-header"><h3 class="card-title">Dónde se genera</h3></div><div class="card-body">
+      <p class="text-secondary">Esta pantalla solo guarda credenciales, modelo y modos. Lanzar, seguir y aprobar exámenes vive en <a href="#exam-weeks">Generar y revisar</a>; los resultados de alumnos, en <a href="#exam-results">Resultados</a>.</p>
+      <div class="d-flex justify-content-between"><span>Exámenes por aprobar</span><strong>${pending}</strong></div>
+      <div class="text-secondary small mt-2">Cambiar el modelo afecta a la próxima generación, nunca a los exámenes ya creados.</div>
     </div></div></div>
-    <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body">${filterBar}
-    <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Modelo</th><th>Creado</th><th>Aprobado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
-      <button class="btn btn-sm btn-outline-secondary" id="weeks-prev" ${weeks.offset === 0 ? 'disabled' : ''}>Anterior</button>
-      <span class="text-secondary small">Exámenes ${weeks.total ? weeks.offset + 1 : 0}–${weeks.offset + weeks.items.length} de ${weeks.total}</span>
-      <button class="btn btn-sm btn-outline-secondary" id="weeks-next" ${weeks.items.length < weeks.limit ? 'disabled' : ''}>Siguiente</button>
-    </div></div></div></div>`;
+  </div>`;
   const catalogFor = name => config.providers.find(item => item.provider === name);
   const modelOptions = (models, selected) => {
     const list = models.includes(selected) || !selected ? models : [...models, selected];
@@ -513,14 +459,6 @@ async function renderLevelTestOperations(container, view = {}) {
     $('#lt-model')?.addEventListener('input', () => refreshDirty());
     $('#lt-model')?.addEventListener('change', () => refreshDirty());
   };
-  renderProviderForm(config.model);
-  $('#lt-provider').addEventListener('change', () => {
-    const entry = catalogFor($('#lt-provider').value);
-    const current = $('#lt-model').value;
-    const next = entry?.models?.includes(current) ? current : entry?.models?.[0] ?? '';
-    renderProviderForm(next, true);
-    refreshDirty();
-  });
   const fields = ['provider', 'base-url', 'api-key', 'publish', 'verify', 'variants'];
   const formValue = () => ({ provider: $('#lt-provider').value, model: $('#lt-model').value, baseUrl: $('#lt-base-url').value,
     apiKey: $('#lt-api-key').value, publishMode: $('#lt-publish').value, verifyMode: $('#lt-verify').value, variants: Number($('#lt-variants').value) });
@@ -532,14 +470,17 @@ async function renderLevelTestOperations(container, view = {}) {
     $('#lt-test').disabled = !config.keyHint;
     const note = $('#lt-dirty');
     if (dirty) {
-      const pending = weeks.items.filter(item => item.status === 'draft').length;
-      note.innerHTML = `<a href="#" id="lt-dirty-link" class="text-warning">Hay cambios sin guardar · ${pending} exámenes por aprobar</a>`;
-      $('#lt-dirty-link').addEventListener('click', event => {
-        event.preventDefault();
-        $('#exam-weeks-card').scrollIntoView({ behavior: 'smooth' });
-      });
+      note.innerHTML = `<a href="#exam-weeks" class="text-warning">Hay cambios sin guardar · ${pending} exámenes por aprobar</a>`;
     } else { note.textContent = 'La prueba solo utiliza la configuración guardada y no genera exámenes.'; }
   };
+  renderProviderForm(config.model);
+  $('#lt-provider').addEventListener('change', () => {
+    const entry = catalogFor($('#lt-provider').value);
+    const current = $('#lt-model').value;
+    const next = entry?.models?.includes(current) ? current : entry?.models?.[0] ?? '';
+    renderProviderForm(next, true);
+    refreshDirty();
+  });
   fields.forEach(field => { const input = $('#lt-' + field); input.addEventListener('input', refreshDirty); input.addEventListener('change', refreshDirty); });
   $('#lt-save').onclick = async () => {
     const value = formValue(), payload = { provider: value.provider, model: value.model, baseUrl: value.baseUrl,
@@ -547,7 +488,7 @@ async function renderLevelTestOperations(container, view = {}) {
     if (value.apiKey) payload.apiKey = value.apiKey;
     const button = $('#lt-save'); button.disabled = true;
     try { await api('/v1/admin/llm-config', { method: 'PUT', body: JSON.stringify(payload) });
-      toast('Configuración guardada'); await renderLevelTestOperations(container); }
+      toast('Configuración guardada'); await renderAiConfig(container); }
     catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   };
   const showTestResult = (message, ok) => {
@@ -566,31 +507,102 @@ async function renderLevelTestOperations(container, view = {}) {
     } catch (error) { showTestResult('Prueba no disponible: ' + (error.code || error.message), false); }
     finally { button.textContent = 'Probar conexión guardada'; button.disabled = !config.keyHint; }
   };
+  refreshDirty();
+}
+
+/* ---- generation: launch, monitor, listing and moderation (daily surface) ---- */
+async function renderExamWeeksView(container, view = {}) {
+  // ISO week id mirroring the server's weekIndex(): year * 100 + ISO week.
+  const now = new Date();
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const dayNum = monday.getUTCDay() || 7;
+  monday.setUTCDate(monday.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
+  const currentWeekId = monday.getUTCFullYear() * 100 + Math.ceil(((monday.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  levelTestsRender = { container, view };
+  const filters = view.filters ?? {};
+  const params = new URLSearchParams({ limit: '50', offset: String(view.offset ?? 0) });
+  for (const [key, value] of Object.entries(filters)) if (value) params.set(key, String(value));
+  const [status, weeks] = await Promise.all([
+    api('/v1/admin/level-tests/status'), api('/v1/admin/level-tests/weeks?' + params)
+  ]);
+  // Paint the freshest jobs immediately; the watcher keeps them current while
+  // a generation launched from this session is still in flight.
+  lastJobsSnapshot = status.jobs;
+  // Also pick up runs started elsewhere (scheduler, CLI, another operator) so a
+  // reload never leaves the operator blind about an in-flight generation.
+  const runningJobs = status.jobs.filter(job => job.status === 'running' && job.weekId === currentWeekId);
+  if (runningJobs.length) startGenerationWatch(runningJobs.map(job => `${job.languageID}:${job.level}`), currentWeekId);
+  const job = status.latestJob;
+  const jobHtml = job
+    ? '<hr><strong>Último job:</strong> ' + escapeHtml(job.status) + ' · ' + escapeHtml(job.languageID) + ' ' + escapeHtml(job.level) +
+      ' · semana ' + escapeHtml(job.weekId) + '<div class="text-secondary small">Actualizado: ' + escapeHtml(job.updatedAt || '—') +
+      ' · intentos: ' + escapeHtml(job.attempts) + ' · error: ' + escapeHtml(job.errorCode || '—') + '</div>'
+    : '<hr><div class="text-secondary">Todavía no hay jobs registrados.</div>';
+  const rowCells = item => '<tr><td>' + escapeHtml(item.weekId) + '</td><td>' + escapeHtml(item.languageID) +
+    '</td><td>' + escapeHtml(item.level) + '</td><td>' + badgeCell({ getValue: () => item.status }) +
+    '</td><td>' + escapeHtml(item.variantCount) + '</td><td>' + escapeHtml(item.model || '—') + '</td><td>' +
+    escapeHtml((item.createdAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td>' +
+    escapeHtml((item.approvedAt || '—').slice(0, 16).replace('T', ' ')) + '</td><td class="text-end text-nowrap">' +
+    '<a class="btn btn-sm btn-outline-secondary me-1" href="#exam/' + escapeHtml(item.id) + '">Revisar</a>' +
+    (item.status === 'draft' ?
+      '<button class="btn btn-sm btn-success me-1" data-week-approve="' + escapeHtml(item.id) + '">Aprobar</button>' +
+      '<button class="btn btn-sm btn-outline-danger" data-week-reject="' + escapeHtml(item.id) + '">Rechazar</button>' : '') +
+    (item.weekId === currentWeekId && ['draft', 'rejected'].includes(item.status) ?
+      '<button class="btn btn-sm btn-outline-warning ms-1" data-week-regenerate="' + escapeHtml(item.languageID) +
+      ':' + escapeHtml(item.level) + '">Regenerar</button>' : '') +
+    '</td></tr>';
+  const rows = weeks.items.map(rowCells).join('') ||
+    '<tr><td colspan="9" class="text-secondary">No hay exámenes para este filtro.</td></tr>';
+  const STATES = ['draft', 'approved', 'rejected', 'retired'];
+  const option = (value, label, current) =>
+    '<option value="' + escapeHtml(value) + '"' + (value === current ? ' selected' : '') + '>' + escapeHtml(label) + '</option>';
+  const filterBar = `<div class="row g-2 mb-2">
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-status">${option('', 'Estado: todos', filters.status)}${STATES.map(state => option(state, state, filters.status)).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-language">${option('', 'Idioma: todos', filters.language)}${LANGUAGE_CODES.map(lang => option(lang, lang, filters.language)).join('')}</select></div>
+    <div class="col-auto"><select class="form-select form-select-sm" id="wf-level">${option('', 'Nivel: todos', filters.level)}${CEFR_LEVELS.map(level => option(level, level, filters.level)).join('')}</select></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-from" placeholder="Semana ≥" value="${escapeHtml(filters.week_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-week-to" placeholder="Semana ≤" value="${escapeHtml(filters.week_to ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-from" placeholder="Creado ≥ AAAA-MM-DD" value="${escapeHtml(filters.created_from ?? '')}"></div>
+    <div class="col-auto"><input class="form-control form-control-sm" id="wf-created-to" placeholder="Creado ≤ AAAA-MM-DD" value="${escapeHtml(filters.created_to ?? '')}"></div>
+    <div class="col-auto"><button class="btn btn-sm btn-primary" id="wf-apply">Filtrar</button></div>
+  </div>`;
+  container.innerHTML = `<div class="row row-cards">
+    <div class="col-12"><div class="card"><div class="card-header"><h3 class="card-title">Lanzar generación</h3>
+      <div class="card-actions text-secondary small">Configuración del proveedor en <a href="#ia-config">Configuración de IA</a></div></div><div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-auto"><label class="form-label" for="gen-language">Idioma</label>
+          <select class="form-select" id="gen-language">${LANGUAGE_CODES.map(lang => `<option>${lang}</option>`).join('')}</select></div>
+        <div class="col-auto"><label class="form-label" for="gen-levels">Niveles</label>
+          <select class="form-select" id="gen-levels"><option value="all">Todos los niveles</option>${CEFR_LEVELS.map(level => `<option>${level}</option>`).join('')}</select></div>
+        <div class="col-auto"><button class="btn btn-primary" id="gen-launch">Lanzar generación</button></div>
+        <div class="col-auto"><span class="text-secondary small" id="scheduler-note">Scheduler: ${status.schedule.enabled ? 'configurado' : 'no configurado'} · activo en este proceso: ${status.scheduler.activeInProcess ? 'sí' : 'no'}</span></div>
+      </div>
+      <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen; los aprobados se omiten. Para rehacer uno existente usa «Regenerar» en la tabla.</div>
+      <div class="small mt-1 fw-bold ${lastWatchTone}" id="launch-status">${escapeHtml(lastWatchStatus)}</div>
+      ${jobHtml}
+      <div id="jobs-monitor" class="mt-2"></div>
+    </div></div></div>
+    <div class="col-12"><div class="card" id="exam-weeks-card"><div class="card-header"><h3 class="card-title">Exámenes generados</h3></div><div class="card-body">${filterBar}
+    <div class="table-responsive"><table class="table table-vcenter card-table"><thead><tr><th>Semana</th><th>Idioma</th><th>Nivel</th><th>Estado</th><th>Variantes</th><th>Modelo</th><th>Creado</th><th>Aprobado</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div><div class="card-footer d-flex justify-content-between align-items-center">
+      <button class="btn btn-sm btn-outline-secondary" id="weeks-prev" ${weeks.offset === 0 ? 'disabled' : ''}>Anterior</button>
+      <span class="text-secondary small">Exámenes ${weeks.total ? weeks.offset + 1 : 0}–${weeks.offset + weeks.items.length} de ${weeks.total}</span>
+      <button class="btn btn-sm btn-outline-secondary" id="weeks-next" ${weeks.items.length < weeks.limit ? 'disabled' : ''}>Siguiente</button>
+    </div></div></div></div>`;
   $('#wf-apply').onclick = () => {
     const value = name => $('#wf-' + name)?.value.trim() ?? '';
-    renderLevelTestOperations(container, {
+    void renderExamWeeksView(container, {
       filters: { status: value('status'), language: value('language'), level: value('level'),
         week_from: value('week-from'), week_to: value('week-to'),
         created_from: value('created-from'), created_to: value('created-to') }, offset: 0 });
   };
-  $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderLevelTestOperations(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }); };
-  $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderLevelTestOperations(container, { filters, offset: weeks.offset + weeks.limit }); };
-  container.querySelectorAll('[data-week-detail]').forEach(button => button.onclick = async () => {
-    try { const week = await api('/v1/admin/level-tests/weeks/' + button.dataset.weekDetail);
-      detail('Examen ' + week.languageID + ' ' + week.level + ' · semana ' + week.weekId,
-        { status: week.status, pool: week.pool, variants: week.variants, judgeMode: week.judgeMode,
-          review: week.review, model: week.model, generator: week.generator });
-    } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); }
-  });
+  $('#weeks-prev').onclick = () => { if (weeks.offset > 0) void renderExamWeeksView(container, { filters, offset: Math.max(0, weeks.offset - weeks.limit) }); };
+  $('#weeks-next').onclick = () => { if (weeks.items.length === weeks.limit) void renderExamWeeksView(container, { filters, offset: weeks.offset + weeks.limit }); };
   for (const action of ['approve', 'reject']) container.querySelectorAll('[data-week-' + action + ']').forEach(button => button.onclick = async () => {
     const row = weeks.items.find(item => item.id === button.dataset['week' + action[0].toUpperCase() + action.slice(1)]);
     if (!row) return;
-    const decision = await ask(action === 'approve' ? 'Aprobar borrador' : 'Rechazar borrador', row.id);
-    if (!decision.reason || decision.reason.trim().length < 3) return toast('Motivo obligatorio', 'warning');
     button.disabled = true;
-    try { await api('/v1/admin/level-tests/' + encodeURIComponent(row.id) + '/' + action,
-      { method: 'POST', body: JSON.stringify({ reason: decision.reason }) });
-      toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado'); await renderLevelTestOperations(container, view); }
+    try { if (await moderateWeek(row, action)) await renderExamWeeksView(container, view); else button.disabled = false; }
     catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   });
   // Repaint the watch state on re-render and keep ticking while mounted.
@@ -623,6 +635,210 @@ async function renderLevelTestOperations(container, view = {}) {
     } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   });
 }
+
+
+/* ---- exam review page: the exam as the student takes it, never raw JSON ---- */
+const EXAM_SECTION_LABELS = { recognition: 'Reconocimiento', writing: 'Escritura', reading: 'Lectura', listening: 'Escucha' };
+const EXAM_STATUS_TONES = { draft: 'warning', approved: 'success', rejected: 'danger', retired: 'secondary' };
+const examSectionLabel = section => EXAM_SECTION_LABELS[section] ?? section;
+const examStamp = value => value ? String(value).slice(0, 16).replace('T', ' ') : '—';
+const examAccepted = item => new Set((Array.isArray(item.answers) ? item.answers : [])
+  .map(answer => String(answer).trim().toLowerCase()));
+
+const examOptionList = item => {
+  const options = Array.isArray(item.options) ? item.options : [];
+  if (!options.length) return '';
+  const accepted = examAccepted(item);
+  return '<ul class="exam-options">' + options.map(option => {
+    const correct = accepted.has(String(option).trim().toLowerCase());
+    return '<li class="exam-option' + (correct ? ' exam-option-ok' : '') + '">' +
+      '<span class="exam-mark">' + (correct ? '✓' : '') + '</span><span>' + escapeHtml(option) + '</span></li>';
+  }).join('') + '</ul>';
+};
+
+const examAnswerChips = item => {
+  const answers = Array.isArray(item.answers) ? item.answers : [];
+  if (!answers.length) return '<div class="text-secondary small">Sin respuestas aceptadas.</div>';
+  return '<div class="exam-answers"><span class="text-secondary small me-1">Aceptadas:</span>' +
+    answers.map(answer => '<span class="badge badge-success">' + escapeHtml(answer) + '</span>').join(' ') + '</div>';
+};
+
+const examItemCard = (item, verdict, index) => {
+  const flagged = verdict?.verdict === 'flagged';
+  const judge = verdict
+    ? '<span class="badge badge-' + (flagged ? 'warning' : 'success') + '">Juez: ' +
+      (flagged ? 'marcado' : 'ok') + '</span>'
+    : '<span class="badge badge-secondary">Juez: sin revisar</span>';
+  const reason = verdict?.reason
+    ? '<div class="exam-verdict-reason"><i class="ti ti-info-circle me-1"></i>' + escapeHtml(verdict.reason) + '</div>' : '';
+  return '<article class="exam-item' + (flagged ? ' exam-item-flagged' : '') + '">' +
+    '<div class="exam-item-head"><span class="exam-index">' + index + '</span>' +
+    '<span class="badge badge-outline">' + escapeHtml(item.kind ?? 'item') + '</span>' +
+    '<span class="cell-mono text-secondary">' + escapeHtml(item.id ?? '') + '</span>' +
+    '<span class="ms-auto">' + judge + '</span></div>' +
+    '<div class="exam-prompt">' + escapeHtml(item.prompt ?? '(sin enunciado)') + '</div>' +
+    examOptionList(item) + examAnswerChips(item) +
+    (item.explain ? '<div class="exam-explain"><i class="ti ti-bulb me-1"></i>' + escapeHtml(item.explain) + '</div>' : '') +
+    reason + '</article>';
+};
+
+const examPassageCard = (passage, items, verdicts, start) =>
+  '<div class="exam-passage"><div class="exam-passage-head"><i class="ti ti-file-text me-1"></i>' +
+  escapeHtml(passage.title ?? passage.id ?? 'Texto') + '</div>' +
+  '<div class="exam-passage-text">' + escapeHtml(passage.text ?? '') + '</div></div>' +
+  items.map((item, offset) => examItemCard(item, verdicts.get(item.id), start + offset)).join('');
+
+const examItemCount = groups => groups.reduce((total, group) => total + group.items.length, 0);
+
+const examSectionsHtml = (sections, verdicts) => sections.map(({ section, groups }) => {
+  let counter = 0;
+  const body = groups.map(group => {
+    if (group.passage) {
+      const html = examPassageCard(group.passage, group.items, verdicts, counter + 1);
+      counter += group.items.length;
+      return html;
+    }
+    // An item whose passage is missing renders standalone instead of vanishing.
+    return group.items.map(item => examItemCard(item, verdicts.get(item.id), ++counter)).join('');
+  }).join('');
+  return '<section class="exam-section"><h3 class="exam-section-title">' + escapeHtml(examSectionLabel(section)) +
+    '<span class="text-secondary small ms-2">' + examItemCount(groups) + ' ítems</span></h3>' + body + '</section>';
+}).join('');
+
+/** Variant items arrive flat, with `section` and an optional `passageId`: group
+    them in first-appearance order and render each passage once, before its questions. */
+const examVariantSections = variant => {
+  const items = Array.isArray(variant?.items) ? variant.items : [];
+  const passages = new Map((Array.isArray(variant?.passages) ? variant.passages : [])
+    .filter(passage => passage && passage.id).map(passage => [passage.id, passage]));
+  const order = [];
+  const bySection = new Map();
+  for (const item of items) {
+    const section = item.section ?? 'recognition';
+    if (!bySection.has(section)) { bySection.set(section, []); order.push(section); }
+    const bucket = bySection.get(section);
+    const passage = item.passageId ? passages.get(item.passageId) : undefined;
+    if (!passage) { bucket.push({ items: [item] }); continue; }
+    const group = bucket.find(entry => entry.passage?.id === passage.id);
+    if (group) group.items.push(item); else bucket.push({ passage, items: [item] });
+  }
+  return order.map(section => ({ section, groups: bySection.get(section) }));
+};
+
+/** The pool keeps passages nested; normalise it to the same shape as a variant. */
+const examPoolSections = pool => [['recognition', 'recognition'], ['writing', 'writing'],
+  ['reading', 'readingPassages'], ['listening', 'listeningPassages']].flatMap(([section, key]) => {
+  const entries = Array.isArray(pool?.[key]) ? pool[key] : [];
+  if (!entries.length) return [];
+  return [{ section, groups: entries.map(entry => entry && Array.isArray(entry.items)
+    ? { passage: entry, items: entry.items }
+    : { items: entry ? [entry] : [] }) }];
+});
+
+const examVariantMeta = variant => {
+  const thresholds = variant?.thresholds && typeof variant.thresholds === 'object'
+    ? Object.entries(variant.thresholds) : [];
+  return '<div class="exam-variant-meta">' +
+    '<span>' + (Array.isArray(variant?.items) ? variant.items.length : 0) + ' ítems</span>' +
+    (variant?.contentHash ? '<span class="cell-mono">#' + escapeHtml(String(variant.contentHash).slice(0, 12)) + '</span>' : '') +
+    thresholds.map(([key, value]) => '<span>' + escapeHtml(key) + ': ' + escapeHtml(value) + '%</span>').join('') +
+    '</div>';
+};
+
+async function renderExamReview(container, params = {}, rawId) {
+  const weekId = String(rawId ?? '').trim();
+  const backLink = '<a class="btn btn-sm btn-outline-secondary" href="#exam-weeks">Volver a Generar y revisar</a>';
+  if (!weekId) {
+    container.innerHTML = '<div class="alert alert-warning mt-3"><h3 class="mb-2">Falta el identificador</h3>' + backLink + '</div>';
+    return;
+  }
+  let week;
+  try { week = await api('/v1/admin/level-tests/weeks/' + encodeURIComponent(weekId)); }
+  catch (error) {
+    if (error.message === 'unauthenticated') throw error;
+    // A deleted or mistyped id is a state, not a stack trace.
+    container.innerHTML = '<div class="alert alert-warning mt-3"><h3 class="mb-2">Examen no encontrado</h3>' +
+      '<p class="text-secondary">No existe un examen con el identificador <span class="cell-mono">' +
+      escapeHtml(weekId) + '</span>.</p>' + backLink + '</div>';
+    return;
+  }
+  const variants = Array.isArray(week.variants) ? week.variants : [];
+  const verdicts = new Map((Array.isArray(week.review) ? week.review : [])
+    .filter(entry => entry && entry.id).map(entry => [entry.id, entry]));
+  const flagged = [...verdicts.values()].filter(entry => entry.verdict === 'flagged');
+  const status = String(week.status ?? '');
+  const tone = EXAM_STATUS_TONES[status] ?? 'secondary';
+  const tabs = variants.map((_, index) => ({ id: 'variant-' + index, label: 'Variante ' + (index + 1) }))
+    .concat([{ id: 'pool', label: 'Pool completo' }]);
+
+  const banner = flagged.length
+    ? '<div class="col-12"><div class="alert alert-warning"><div class="d-flex"><i class="ti ti-alert-triangle me-2"></i>' +
+      '<div><strong>' + flagged.length + ' ítem' + (flagged.length === 1 ? '' : 's') + ' marcado' + (flagged.length === 1 ? '' : 's') +
+      ' por el juez</strong><div class="small">Revisa el motivo en cada tarjeta antes de aprobar.</div></div></div></div></div>'
+    : '';
+
+  container.innerHTML = '<div class="row row-cards">' +
+    '<div class="col-12"><div class="card"><div class="card-body">' +
+    '<div class="d-flex flex-wrap justify-content-between align-items-start gap-3">' +
+    '<div><div class="text-secondary small">Idioma ' + escapeHtml(week.languageID) + ' · nivel ' + escapeHtml(week.level) +
+    ' · semana ' + escapeHtml(week.weekId) + '</div>' +
+    '<h2 class="mb-2">' + escapeHtml(week.languageID) + ' ' + escapeHtml(week.level) + ' · semana ' + escapeHtml(week.weekId) + '</h2>' +
+    '<div class="d-flex align-items-center gap-2"><span class="badge badge-' + tone + '">' + escapeHtml(status) + '</span>' +
+    '<span class="text-secondary small">' + variants.length + ' variante' + (variants.length === 1 ? '' : 's') + '</span>' +
+    '<span class="text-secondary small">' + escapeHtml(week.generator || '—') + '</span></div></div>' +
+    '<div class="text-end text-secondary small">' +
+    '<div>Modelo: <strong>' + escapeHtml(week.model || '—') + '</strong></div>' +
+    '<div>Juez: ' + escapeHtml(week.judgeMode || '—') + '</div>' +
+    '<div>Tokens: ' + number(week.tokensIn ?? 0) + ' entrada · ' + number(week.tokensOut ?? 0) + ' salida</div>' +
+    '<div>Creado: ' + escapeHtml(examStamp(week.createdAt)) + '</div>' +
+    (week.approvedAt ? '<div>Aprobado: ' + escapeHtml(examStamp(week.approvedAt)) + '</div>' : '') +
+    '<div>Prompt v' + escapeHtml(week.promptVersion ?? '—') + ' · juez v' + escapeHtml(week.judgeVersion ?? '—') + '</div>' +
+    '<div class="mt-2">' + backLink + '</div></div></div></div></div></div>' + banner +
+    '<div class="col-12"><div class="card"><div class="card-header">' +
+    '<ul class="nav nav-tabs card-header-tabs">' + tabs.map(tab =>
+      '<li class="nav-item"><button class="nav-link" type="button" data-exam-tab="' + tab.id + '">' +
+      escapeHtml(tab.label) + '</button></li>').join('') + '</ul></div>' +
+    '<div class="card-body" id="exam-body"></div></div></div>' +
+    (status === 'draft'
+      ? '<div class="col-12"><div class="card exam-actions"><div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">' +
+        '<span class="text-secondary small">Aprobar publica esta semana y la sirve a los alumnos. Cada acción queda auditada con su motivo.</span>' +
+        '<span class="d-flex gap-2"><button class="btn btn-outline-danger" id="exam-reject">Rechazar</button>' +
+        '<button class="btn btn-success" id="exam-approve">Aprobar</button></span></div></div></div>' : '') +
+    '</div>';
+
+  const paint = tab => {
+    const body = $('#exam-body');
+    if (!body) return;
+    if (tab === 'pool') {
+      body.innerHTML = examSectionsHtml(examPoolSections(week.pool), verdicts) ||
+        '<div class="text-secondary">El pool está vacío.</div>';
+    } else {
+      const variant = variants[Number(String(tab).replace('variant-', ''))] ?? {};
+      body.innerHTML = examVariantMeta(variant) +
+        (examSectionsHtml(examVariantSections(variant), verdicts) || '<div class="text-secondary">La variante no tiene ítems.</div>');
+    }
+    for (const button of container.querySelectorAll('[data-exam-tab]')) {
+      button.classList.toggle('active', button.dataset.examTab === tab);
+    }
+  };
+  container.querySelectorAll('[data-exam-tab]').forEach(button => {
+    button.onclick = () => paint(button.dataset.examTab);
+  });
+  paint(tabs[0].id);
+
+  for (const action of ['approve', 'reject']) {
+    const button = $('#exam-' + action);
+    if (!button) continue;
+    button.onclick = async () => {
+      button.disabled = true;
+      try {
+        if (await moderateWeek(week, action)) await renderExamReview(container, params, weekId);
+        else button.disabled = false;
+      } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
+    };
+  }
+}
+
 
 /* ---- exam attempts (per-student results) ---- */
 // Renders may resolve out of order (fast filter after slow one): a stale
@@ -918,31 +1134,45 @@ const VIEWS = {
   usage: { title: 'Uso de la app', render: renderUsage },
   browse: { title: 'Explorador de tablas', render: container => renderBrowse(container, null) },
   policy: { title: 'Política de bienvenida', render: renderPolicy },
-  'level-tests': { title: 'Generación de exámenes', render: renderLevelTestOperations },
+  'exam-weeks': { title: 'Generar y revisar exámenes', render: renderExamWeeksView },
   'exam-results': { title: 'Resultados de exámenes', render: renderExamAttempts },
+  'ia-config': { title: 'Configuración de IA', render: renderAiConfig },
+  exam: { title: 'Revisión de examen', render: renderExamReview },
   plans: { title: 'Planes y suscripciones', render: renderPlans },
   campaigns: { title: 'Campañas', render: renderCampaigns },
   audit: { title: 'Auditoría de acciones', render: container => renderBrowse(container, 'admin_actions') }
 };
+// Routes that moved when configuration and generation were split apart.
+const LEGACY_ROUTES = { 'level-tests': 'exam-weeks' };
 async function route() {
-  const [routePath, routeQuery] = (location.hash.slice(1) || 'overview').split('?');
+  const [rawPath, routeQuery] = (location.hash.slice(1) || 'overview').split('?');
+  const [routePath, detailId] = rawPath.split('/');
+  if (LEGACY_ROUTES[routePath]) { location.replace(`#${LEGACY_ROUTES[routePath]}`); return; }
   const view = VIEWS[routePath] ?? VIEWS.overview;
   const params = Object.fromEntries(new URLSearchParams(routeQuery ?? ''));
   $('#page-title').textContent = view.title;
   document.title = `${view.title} · Palique Admin`;
-  for (const link of document.querySelectorAll('#nav .nav-link')) link.classList.toggle('active', link.hash === `#${routePath}`);
+  // The review page belongs to the generation surface: keep it highlighted.
+  const navPath = routePath === 'exam' ? 'exam-weeks' : routePath;
+  for (const link of document.querySelectorAll('#nav .nav-link')) link.classList.toggle('active', link.hash === `#${navPath}`);
   for (const chart of charts) chart.destroy();
   charts.length = 0;
   for (const table of tables) table.destroy();
   tables = [];
   const container = $('#view');
   container.innerHTML = '<div class="mt-3 progress progress-sm"><div class="progress-bar progress-bar-indeterminate"></div></div>';
-  try { await view.render(container, params); }
+  try { await view.render(container, params, detailId); }
   catch (error) { if (error.message !== 'unauthenticated') container.innerHTML = `<div class="alert alert-danger mt-3"><i class="ti ti-alert-triangle me-2"></i>${error.code ?? error.message}</div>`; }
 }
 (function boot() {
-  $('#nav').innerHTML = NAV.map(item => `<li class="nav-item"><a class="nav-link" href="#${item.id}">
-    <span class="nav-link-icon"><i class="ti ${item.icon}"></i></span><span class="nav-link-title">${item.label}</span></a></li>`).join('');
+  // Grouping is data: a heading appears whenever an entry opens a new group.
+  $('#nav').innerHTML = NAV.map((item, index) => {
+    const heading = item.group && NAV[index - 1]?.group !== item.group
+      ? `<li class="nav-item"><span class="nav-link text-secondary text-uppercase fw-bold pt-3" style="font-size:.7rem">${item.group}</span></li>`
+      : '';
+    return heading + `<li class="nav-item"><a class="nav-link" href="#${item.id}">
+    <span class="nav-link-icon"><i class="ti ${item.icon}"></i></span><span class="nav-link-title">${item.label}</span></a></li>`;
+  }).join('');
   api('/v1/admin/me').then(me => {
     const name = me.email ?? me.adminID;
     $('#whoami').textContent = name;

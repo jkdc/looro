@@ -140,6 +140,13 @@ integration('the week detail returns full content', async () => {
   const body = response.json();
   assert.equal(body.languageID, 'en');
   assert.ok('pool' in body && Array.isArray(body.variants) && Array.isArray(body.review));
+  // The review page header is one request: tokens, dates and versions travel
+  // with the detail instead of a second round trip.
+  assert.equal(typeof body.tokensIn, 'number');
+  assert.equal(typeof body.tokensOut, 'number');
+  assert.equal(typeof body.createdAt, 'string');
+  assert.ok('promptVersion' in body && 'judgeVersion' in body);
+  assert.ok('approvedAt' in body && 'approvedBy' in body);
 });
 
 integration('the week detail answers 404 for unknown or malformed ids', async () => {

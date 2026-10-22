@@ -22,12 +22,20 @@ so the panel's attack surface never depends on an external IdP.
   minute campaigns, waitlist deletion, forced close of an active hosted
   session. Every mutation requires a reason and writes both the domain audit
   (e.g. `minute_policy_audit`) and `admin_actions`.
-- **Weekly exam operations** (`#level-tests`): effective saved LLM settings,
-  save-first connection checks, paginated private draft moderation (approval and
-  rejection are audited), and safe latest-job/scheduler status. Rejected rows
-  remain retained and block ordinary same-week regeneration; replacement requires
-  the existing explicit force operation. Connection checks never display or read
-  provider response bodies and are time-bounded.
+- **Exam operations** (sidebar group `Exámenes`):
+  - `#exam-weeks` — generation launcher, live job monitor, paginated weeks
+    listing and audited draft moderation (approval and rejection). Rejected rows
+    remain retained and block ordinary same-week regeneration; replacement
+    requires the existing explicit force operation. Safe latest-job/scheduler
+    status lives here.
+  - `#exam/<uuid>` — full-page exam review: sections in exam order, accepted
+    answers marked, judge verdicts with reasons, passages once per text, variant
+    and pool tabs, and approve/reject with a mandatory reason. No raw JSON.
+  - `#ia-config` — provider, model, base URL, API key, publish/verify modes and
+    variants, plus save-first connection checks. Connection checks never display
+    or read provider response bodies and are time-bounded.
+  - `#exam-results` — per-student attempts, filters and detail.
+  - `#level-tests` redirects to `#exam-weeks` for old bookmarks.
 - **Welcome policy** (`#política`): the same audited policy change the CLI
   performs, with version conflict detection.
 
