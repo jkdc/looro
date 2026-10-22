@@ -292,6 +292,86 @@ async function renderBrowse(container, fixedTable) {
   await mountTable();
 }
 
+/* ---- level-tests view: generation watch state (module scope survives re-renders) ---- */
+let generationWatch = null;      // { keys: Set<'lang:level'>, weekId, timer }
+let lastJobsSnapshot = [];
+let lastWatchStatus = '';
+let levelTestsRender = null;     // { container, view } — refreshed when a watched run ends
+const TERMINAL_JOB_STATES = new Set(['finished', 'failed', 'unknown']);
+
+function renderJobs(jobs = lastJobsSnapshot) {
+  const monitor = $('#jobs-monitor'); if (!monitor) return;
+  monitor.innerHTML = jobs.length ? `<div class="table-responsive"><table class="table table-sm table-vcenter"><thead>
+      <tr><th>Idioma</th><th>Nivel</th><th>Semana</th><th>Estado</th><th>Intentos</th><th>Error</th><th>Actualizado</th></tr></thead><tbody>${jobs.map(job =>
+      '<tr><td>' + escapeHtml(job.languageID) + '</td><td>' + escapeHtml(job.level) + '</td><td>' + escapeHtml(job.weekId) +
+      '</td><td>' + badgeCell({ getValue: () => job.status }) + '</td><td>' + escapeHtml(job.attempts) + '</td><td>' +
+      escapeHtml(job.errorCode || '—') + '</td><td>' + escapeHtml((job.updatedAt || '—').slice(0, 16).replace('T', ' ')) + '</td></tr>').join('')}
+      </tbody></table></div>` : '<div class="text-secondary small">Sin jobs registrados.</div>';
+}
+
+function scheduleGenerationWatch() {
+  if (!generationWatch || generationWatch.timer) return;
+  generationWatch.timer = setTimeout(() => {
+    if (generationWatch) generationWatch.timer = null;
+    void watchGenerationTick();
+  }, 2_000);
+}
+
+async function watchGenerationTick() {
+  const watch = generationWatch;
+  if (!watch) return;
+  const mounted = Boolean($('#jobs-monitor'));
+  if (mounted) {
+    try {
+      const status = await api('/v1/admin/level-tests/status');
+      if (generationWatch !== watch) return;
+      lastJobsSnapshot = status.jobs;
+      renderJobs(lastJobsSnapshot);
+      const byKey = new Map(status.jobs
+        .filter(job => watch.keys.has(`${job.languageID}:${job.level}`) && job.weekId === watch.weekId)
+        .map(job => [`${job.languageID}:${job.level}`, job]));
+      const done = [...watch.keys].filter(key => byKey.get(key) && TERMINAL_JOB_STATES.has(byKey.get(key).status));
+      for (const key of done) {
+        const job = byKey.get(key);
+        watch.results.push(`${key} → ${job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`);
+        toast(`${key}: generación ${job.status === 'finished' ? 'completada' : job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`,
+          job.status === 'finished' ? 'success' : 'danger');
+        watch.keys.delete(key);
+      }
+      const running = [...watch.keys].filter(key => byKey.get(key)?.status === 'running');
+      const queued = [...watch.keys].filter(key => !byKey.get(key));
+      lastWatchStatus = [
+        running.length ? `En marcha: ${running.join(', ')}` : '',
+        queued.length ? `En cola: ${queued.join(', ')}` : '',
+        watch.results.join(' · '),
+      ].filter(Boolean).join(' — ') || 'Esperando al runner de generación…';
+      const line = $('#launch-status');
+      if (!watch.keys.size) {
+        generationWatch = null;
+        lastWatchStatus = `Completado: ${watch.results.join(' · ')}`;
+        if (line) line.textContent = lastWatchStatus;
+        // The runner is done: refresh the weeks table so the new exams show up
+        // ready for review / approve without a manual reload. Never repaint if
+        // the operator moved to another view (they share the same container).
+        if (levelTestsRender && $('#exam-weeks-card'))
+          void renderLevelTestOperations(levelTestsRender.container, levelTestsRender.view);
+        return;
+      }
+      if (line) line.textContent = lastWatchStatus;
+    } catch { /* polling is best effort; retry on the next tick */ }
+  }
+  scheduleGenerationWatch();
+}
+
+function startGenerationWatch(keys, weekId) {
+  if (!keys.length) return;
+  generationWatch = generationWatch && generationWatch.weekId === weekId
+    ? { ...generationWatch, keys: new Set([...generationWatch.keys, ...keys]) }
+    : { keys: new Set(keys), results: [], weekId, timer: null };
+  lastWatchStatus = '';
+  scheduleGenerationWatch();
+}
+
 async function renderLevelTestOperations(container, view = {}) {
   // ISO week id mirroring the server's weekIndex(): year * 100 + ISO week.
   const now = new Date();
@@ -300,6 +380,7 @@ async function renderLevelTestOperations(container, view = {}) {
   monday.setUTCDate(monday.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
   const currentWeekId = monday.getUTCFullYear() * 100 + Math.ceil(((monday.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+  levelTestsRender = { container, view };
   const filters = view.filters ?? {};
   const params = new URLSearchParams({ limit: '50', offset: String(view.offset ?? 0) });
   for (const [key, value] of Object.entries(filters)) if (value) params.set(key, String(value));
@@ -307,6 +388,13 @@ async function renderLevelTestOperations(container, view = {}) {
     api('/v1/admin/llm-config'), api('/v1/admin/level-tests/status'),
     api('/v1/admin/level-tests/weeks?' + params)
   ]);
+  // Paint the freshest jobs immediately; the watcher keeps them current while
+  // a generation launched from this session is still in flight.
+  lastJobsSnapshot = status.jobs;
+  // Also pick up runs started elsewhere (scheduler, CLI, another operator) so a
+  // reload never leaves the operator blind about an in-flight generation.
+  const runningJobs = status.jobs.filter(job => job.status === 'running' && job.weekId === currentWeekId);
+  if (runningJobs.length) startGenerationWatch(runningJobs.map(job => `${job.languageID}:${job.level}`), currentWeekId);
   const providers = config.providers.map(item =>
     '<option value="' + escapeHtml(item.provider) + '"' + (item.provider === config.provider ? ' selected' : '') + '>' + escapeHtml(item.provider) + '</option>').join('');
   const keyPlaceholder = config.keyHint ? 'Guardada: ' + escapeHtml(config.keyHint) + ' · vacío conserva la clave' : 'Sin clave persistida';
@@ -373,6 +461,7 @@ async function renderLevelTestOperations(container, view = {}) {
           <div class="col-auto"><button class="btn btn-sm btn-primary" id="gen-launch">Lanzar generación</button></div>
         </div>
         <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen; los aprobados se omiten. Para rehacer uno existente usa «Regenerar» en la tabla.</div>
+        <div class="small mt-1 fw-bold" id="launch-status">${escapeHtml(lastWatchStatus)}</div>
       </div>
       <div id="jobs-monitor" class="mt-2"></div>
     </div></div></div>
@@ -478,23 +567,9 @@ async function renderLevelTestOperations(container, view = {}) {
       toast(action === 'approve' ? 'Borrador aprobado' : 'Borrador rechazado'); await renderLevelTestOperations(container, view); }
     catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   });
-  const renderJobs = jobs => { const monitor = $('#jobs-monitor'); if (!monitor) return;
-    monitor.innerHTML = jobs.length ? `<div class="table-responsive"><table class="table table-sm table-vcenter"><thead>
-      <tr><th>Idioma</th><th>Nivel</th><th>Semana</th><th>Estado</th><th>Intentos</th><th>Error</th><th>Actualizado</th></tr></thead><tbody>${jobs.map(job =>
-      '<tr><td>' + escapeHtml(job.languageID) + '</td><td>' + escapeHtml(job.level) + '</td><td>' + escapeHtml(job.weekId) +
-      '</td><td>' + badgeCell({ getValue: () => job.status }) + '</td><td>' + escapeHtml(job.attempts) + '</td><td>' +
-      escapeHtml(job.errorCode || '—') + '</td><td>' + escapeHtml((job.updatedAt || '—').slice(0, 16).replace('T', ' ')) + '</td></tr>').join('')}
-      </tbody></table></div>` : '<div class="text-secondary small">Sin jobs registrados.</div>';
-  };
-  const pollJobs = async () => {
-    if (!$('#jobs-monitor')) return;
-    try { const fresh = await api('/v1/admin/level-tests/status');
-      if (!$('#jobs-monitor')) return;
-      renderJobs(fresh.jobs);
-      if (fresh.jobs.some(job => job.status === 'running')) setTimeout(pollJobs, 5000);
-    } catch { /* polling is best effort */ }
-  };
-  void pollJobs();
+  // Repaint the watch state on re-render and keep ticking while mounted.
+  renderJobs();
+  scheduleGenerationWatch();
   $('#gen-launch').onclick = async () => {
     const languageID = $('#gen-language').value, levels = $('#gen-levels').value;
     const target = `${languageID} · ${levels === 'all' ? 'todos los niveles' : levels}`;
@@ -503,10 +578,11 @@ async function renderLevelTestOperations(container, view = {}) {
     try {
       const outcome = await api('/v1/admin/level-tests/generate', { method: 'POST',
         body: JSON.stringify({ languageID, levels, reason: decision.reason }) });
-      const launched = outcome.keys.filter(key => key.status === 'started').length;
-      const skipped = outcome.keys.length - launched;
-      toast(`Lanzados ${launched} examen(es)${skipped ? ` · ${skipped} aprobados omitidos` : ''}`);
-      void pollJobs();
+      const launched = outcome.keys.filter(key => key.status === 'started');
+      const skipped = outcome.keys.length - launched.length;
+      toast(`Lanzados ${launched.length} examen(es)${skipped ? ` · ${skipped} aprobados omitidos` : ''}`);
+      startGenerationWatch(launched.map(key => `${key.languageID}:${key.level}`), currentWeekId);
+      void watchGenerationTick();
     } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); }
   };
   container.querySelectorAll('[data-week-regenerate]').forEach(button => button.onclick = async () => {
@@ -516,7 +592,8 @@ async function renderLevelTestOperations(container, view = {}) {
     button.disabled = true;
     try { await api('/v1/admin/level-tests/regenerate', { method: 'POST',
         body: JSON.stringify({ languageID, level, reason: decision.reason }) });
-      toast('Regeneración iniciada'); void pollJobs();
+      toast('Regeneración iniciada'); startGenerationWatch([`${languageID}:${level}`], currentWeekId);
+      void watchGenerationTick();
     } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); button.disabled = false; }
   });
 }

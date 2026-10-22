@@ -43,6 +43,8 @@ if (!builds.length) { console.error('no cached chromium in ~/.cache/ms-playwrigh
 const executablePath = join(cacheDir, builds[0], 'chrome-linux64', 'chrome');
 
 const failures = [];
+// Diagnostics only: the last results-listing requests help explain a missed click.
+const observedAttemptRequests = [];
 const check = async (name, assertion) => {
   try { await assertion(); console.log(`PASS  ${name}`); }
   catch (error) { failures.push(name); console.error(`FAIL  ${name}: ${error.message}`); }
@@ -52,6 +54,9 @@ await mkdir(EVIDENCE, { recursive: true });
 const browser = await chromium.launch({ executablePath, headless: true,
   args: ['--disable-gpu', '--disable-dev-shm-usage'] });
 const page = await browser.newPage();
+page.on('request', request => {
+  if (request.url().includes('/v1/admin/level-test-attempts?')) observedAttemptRequests.push(request.url());
+});
 // Screenshots are evidence, not assertions: a capture failure must never
 // abort the scenario (headless Chromium occasionally refuses fullPage shots).
 const shot = async name => {
@@ -227,13 +232,14 @@ try {
   await page.fill('#reason-text', 'Regenerado en E2E contra el stub');
   await page.click('#reason-ok');
   await page.waitForSelector('.alert-success', { timeout: 10_000 });
-  await check('regeneration accepted and jobs monitor renders the run', async () => {
+  await check('regeneration accepted and the live status line reports the run', async () => {
     await expectText('.alert-success', 'Regeneración iniciada');
-    // The stub provider answers instantly; wait out any running state.
-    await page.waitForFunction(() => {
-      const monitor = document.querySelector('#jobs-monitor');
-      return monitor && monitor.textContent?.includes('finished');
-    }, undefined, { timeout: 120_000 });
+    // The watcher paints progress immediately (queued/running) and finishes with
+    // the terminal state of each key — no manual reload needed.
+    await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').trim().length > 0,
+      undefined, { timeout: 10_000 });
+    await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('A2 → finished'),
+      undefined, { timeout: 120_000 });
     const monitor = await page.textContent('#jobs-monitor');
     if (!monitor.includes('A2')) throw new Error('A2 job row missing from the monitor');
   });
@@ -255,10 +261,16 @@ try {
   await page.waitForSelector('.alert-success', { timeout: 10_000 });
   await check('generation launch runs the missing level and reports it', async () => {
     await expectText('.alert-success', 'Lanzados 1');
+    await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').trim().length > 0,
+      undefined, { timeout: 10_000 });
+    await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('B1 → finished'),
+      undefined, { timeout: 120_000 });
+  });
+  await check('finished launch refreshes the weeks table with the new draft', async () => {
     await page.waitForFunction(() => {
-      const monitor = document.querySelector('#jobs-monitor');
-      return monitor && /B1/.test(monitor.textContent ?? '') && /finished/.test(monitor.textContent ?? '');
-    }, undefined, { timeout: 120_000 });
+      const card = document.querySelector('#exam-weeks-card');
+      return card && /B1/.test(card.textContent ?? '') && /draft/.test(card.textContent ?? '');
+    }, undefined, { timeout: 20_000 });
   });
   await page.waitForSelector('#lt-provider', { timeout: 10_000 });
   await shot('10b-generation-launch');
@@ -284,16 +296,21 @@ try {
   });
   const attemptHandle = await page.getAttribute('[data-attempt-detail]', 'data-attempt-detail');
   await page.fill('#wa-email', 'nobody@nowhere.test');
-  // A concurrent re-render can detach the button between hit-testing and the
-  // click landing: retry until the filtered request is actually issued.
   const clickApplyFor = async needle => {
+    const trace = [];
+    // A concurrent re-render can detach the button between hit-testing and the
+    // click landing: retry until the filtered request is actually issued.
     for (let attempt = 0; attempt < 3; attempt++) {
+      const value = await page.inputValue('#wa-email').catch(() => 'missing');
       const requested = page.waitForResponse(response => response.url().includes(needle) && response.url().includes('email='),
         { timeout: 5_000 }).then(() => true).catch(() => false);
       await page.click('#wa-apply');
-      if (await requested) return;
+      const issued = await requested;
+      trace.push(`try ${attempt + 1}: input=${JSON.stringify(value)} request=${issued}`);
+      if (issued) return;
     }
-    throw new Error('apply click never triggered the listing request');
+    const seen = observedAttemptRequests.slice(-4).map(url => url.split('?')[1] ?? url);
+    throw new Error(`apply click never triggered the listing request (${trace.join('; ')}; seen: ${seen.join(' | ')})`);
   };
   await clickApplyFor('nobody');
   await check('non-matching filter shows the empty state', async () => {

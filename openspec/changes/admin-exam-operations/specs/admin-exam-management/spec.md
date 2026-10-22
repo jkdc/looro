@@ -92,6 +92,22 @@ The system SHALL extend `GET /v1/admin/level-tests/status` with `jobs[]`, the la
 - **WHEN** several generation jobs have been recorded
 - **THEN** `jobs[]` contains the last 10 rows newest-first and `latestJob` still names the most recent one.
 
+### Requirement: Generation progress watcher
+
+The panel SHALL keep an explicit live status line for every generation run it starts (launch or regeneration) showing `En cola`, `En marcha` and the terminal state of each key (`Completado: en:B1 → finished`), poll `GET /v1/admin/level-tests/status` until every watched key reaches a terminal state, toast each key's outcome, and then re-render the weeks listing so the new exams appear ready for review and approval without a manual reload. A run in progress discovered on render (scheduler, CLI or another operator) SHALL be adopted by the watcher, and a completion landing while another view is mounted SHALL NOT repaint that view.
+
+#### Scenario: Launch is visible from click to outcome
+- **WHEN** an operator launches generation for a level
+- **THEN** the status line reports the run immediately, ends with the key's terminal state, and the weeks table shows the resulting draft row without a reload.
+
+#### Scenario: Foreign run is adopted on reload
+- **WHEN** the panel renders while a job for the current week is `running`
+- **THEN** the watcher starts for that key and reports its outcome when it ends.
+
+#### Scenario: Completion never hijacks another view
+- **WHEN** a watched run ends while the operator is on a different section
+- **THEN** that section stays mounted and the weeks table refreshes only when the operator returns to it.
+
 ### Requirement: Drafts endpoint compatibility
 
 The system SHALL keep `GET /v1/admin/level-tests/drafts` unchanged in behavior.
