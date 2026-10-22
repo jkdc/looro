@@ -380,7 +380,8 @@ async function renderLevelTestOperations(container, view = {}) {
   const renderProviderForm = (selectedModel, resetBaseUrl = false) => {
     const entry = catalogFor($('#lt-provider').value);
     if (resetBaseUrl) $('#lt-base-url').value = entry?.baseUrl ?? '';
-    $('#lt-base-url').readOnly = Boolean(entry?.baseUrl ?? '');
+    // Auto-filled but editable: operators may point a provider at a proxy or
+    // a plan-specific gateway without editing presets in code.
     $('#lt-model-wrap').innerHTML = entry?.models?.length
       ? `<select class="form-select" id="lt-model">${modelOptions(entry.models, selectedModel)}</select>`
       : `<input class="form-control" id="lt-model" maxlength="200" value="${escapeHtml(selectedModel)}">`;

@@ -1,7 +1,9 @@
 // Bootstrap for the browser-E2E stack: one local operator with a known
-// password. The draft weeks are NOT inserted here — the seed-generate service
-// creates them through the real generation pipeline against the stub provider.
+// password, plus one seeded student exam attempt for the results section.
+// The draft weeks are NOT inserted here — the seed-generate service creates
+// them through the real generation pipeline against the stub provider.
 import pg from 'pg';
+import { randomUUID, createHash } from 'node:crypto';
 
 const databaseURL = process.env.DATABASE_URL;
 if (!databaseURL) { console.error('DATABASE_URL required'); process.exit(1); }
@@ -19,6 +21,46 @@ try {
   if (!adminID) throw new Error('operator bootstrap failed');
   await admins.setAdminPassword(db, adminID, 'e2e-browser-password');
   console.log(`operator ready (${adminID})`);
+
+  // One completed student attempt (idempotent by email) so the results
+  // section has real data: snapshot identity follows migration 042 exactly.
+  const existing = await db.query(`SELECT a.account_id, a.attempt_id FROM accounts a
+    WHERE a.email = 'student@example.test' LIMIT 1`);
+  if (existing.rowCount) {
+    console.log('student attempt already seeded');
+  } else {
+  const accountID = randomUUID();
+  await db.query('INSERT INTO accounts(id,email,is_guest) VALUES($1,$2,false)', [accountID, 'student@example.test']);
+  const weekId = Number(process.env.SEED_WEEK_ID) || (() => {
+    const now = new Date();
+    const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const day = monday.getUTCDay() || 7;
+    monday.setUTCDate(monday.getUTCDate() + 4 - day);
+    const start = new Date(Date.UTC(monday.getUTCFullYear(), 0, 1));
+    return monday.getUTCFullYear() * 100 + Math.ceil(((monday.getTime() - start.getTime()) / 86_400_000 + 1) / 7);
+  })();
+  const content = { languageID: 'en', level: 'A1', weekId, version: 1, thresholds: { overall: 60 },
+    source: 'llm', passages: [], readingPassageIds: [], listeningPassageIds: [],
+    items: [{ id: 'i1', section: 'recognition', kind: 'choice', prompt: 'She ___ a doctor.',
+      options: ['is', 'are', 'am'], answers: ['is'], explain: 'With she, the verb is is.' }] };
+  const hash = createHash('sha256').update(JSON.stringify(content)).digest('hex');
+  const examID = randomUUID();
+  const metadata = JSON.stringify({ examId: examID, contentId: `sha256:${hash}`, contentHash: hash,
+    contentRevision: 1, gradingVersion: 1, source: 'llm' });
+  await db.query(`INSERT INTO level_test_attempt_snapshots(account_id,content_id,content_hash,content_json)
+    VALUES($1,$2,$3,$4)`, [accountID, `sha256:${hash}`, hash,
+    JSON.stringify({ ...content, examId: examID, contentId: `sha256:${hash}`, contentHash: hash })]);
+  await db.query(`INSERT INTO level_test_attempt_snapshot_ids(account_id,exam_id,content_id,metadata_json)
+    VALUES($1,$2,$3,$4)`, [accountID, examID, `sha256:${hash}`, metadata]);
+  const result = { overall: 84, passed: true, nextBand: 'A2', weakSections: ['listening'],
+    sections: [{ section: 'recognition', score: 90 }, { section: 'writing', score: 75 }],
+    questionReviews: [{ questionId: 'i1', section: 'recognition', response: 'is', correct: true }] };
+  await db.query(`INSERT INTO level_test_attempts(account_id,attempt_id,exam_id,state,position,revision,
+    started_at,updated_at,completed_at,answers,result,attempt_json)
+    VALUES($1,$2,$3,'completed',0,1,now(),now(),now(),'[]'::jsonb,$4::jsonb,'{}'::jsonb)`,
+    [accountID, randomUUID(), examID, JSON.stringify(result)]);
+  console.log(`student attempt seeded (account ${accountID}, week ${weekId})`);
+  }
 } finally {
   await db.end();
 }

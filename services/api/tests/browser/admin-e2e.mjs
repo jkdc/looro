@@ -93,7 +93,7 @@ try {
   await shot('03-effective-config');
 
   // 3. Save persisted configuration against the stub provider.
-  await page.fill('#lt-model', 'stub-model');
+  await page.selectOption('#lt-model', 'gpt-5.6-luna');
   await page.fill('#lt-base-url', 'http://stub-llm:9999/v1');
   await page.fill('#lt-api-key', 'sk-e2e-stub-key-1234567890');
   await page.selectOption('#lt-verify', 'flag');
@@ -102,7 +102,7 @@ try {
   await page.waitForSelector('.alert-success', { timeout: 10_000 });
   await page.waitForSelector('#lt-provider', { timeout: 10_000 });
   await check('save persists and reload shows stored values with masked key', async () => {
-    if ((await page.inputValue('#lt-model')) !== 'stub-model') throw new Error('model not reloaded');
+    if ((await page.inputValue('#lt-model')) !== 'gpt-5.6-luna') throw new Error('model not reloaded');
     const variantValue = await page.inputValue('#lt-variants');
     if (variantValue !== '2') throw new Error(`variants=${variantValue}`);
     const placeholder = await page.getAttribute('#lt-api-key', 'placeholder');
@@ -112,14 +112,15 @@ try {
 
   await drainToasts();
 
-  // 4. Save-first test semantics: a dirty form disables the connection test.
-  await page.fill('#lt-model', 'stub-model-dirty');
-  await check('dirty form disables connection test with explicit warning', async () => {
-    if (await page.isEnabled('#lt-test')) throw new Error('test enabled while dirty');
+  // 4. Dirty state shows the pending-exams link; the connection test stays
+  // available because it only ever exercises the SAVED configuration.
+  await page.selectOption('#lt-model', 'gpt-5.5');
+  await check('dirty form links to pending exams and keeps the test available', async () => {
     await expectText('#lt-dirty', 'Hay cambios sin guardar');
+    if (!(await page.isEnabled('#lt-test'))) throw new Error('test disabled while dirty');
   });
   await shot('05-dirty-warning');
-  await page.fill('#lt-model', 'stub-model');
+  await page.selectOption('#lt-model', 'gpt-5.6-luna');
   await check('connection test uses the SAVED configuration', async () => {
     if (!(await page.isEnabled('#lt-test'))) throw new Error('test still disabled after reverting the edit');
   });
@@ -140,13 +141,20 @@ try {
     if (!/Scheduler activo en este proceso\s*\n?\s*No/.test(body)) throw new Error('in-process badge not showing "No"');
   });
 
-  // 6. Private draft moderation with mandatory audited reason.
-  await check('draft listing shows the two seeded drafts', async () => {
-    const body = await page.textContent('body');
+  // 6. Generated-exams listing: seeded drafts visible with the regenerate
+  // affordance on current-week unpublished rows, audited moderation.
+  await check('weeks listing shows the two seeded drafts with filters', async () => {
+    await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+    const body = await page.textContent('#exam-weeks-card');
     if (!body.includes('draft') || !body.includes('A1') || !body.includes('A2'))
       throw new Error('seeded draft rows not visible');
+    if (!body.includes('Exámenes generados')) throw new Error('listing card title missing');
   });
-  await page.click('tr:has-text("A1") [data-draft-approve]');
+  await check('current-week draft offers regeneration', async () => {
+    if (!(await page.isVisible('tr:has-text("A1") [data-week-regenerate]')))
+      throw new Error('Regenerar button missing on current-week draft');
+  });
+  await page.click('tr:has-text("A1") [data-week-approve]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'ap');
   await page.click('#reason-ok');
@@ -155,25 +163,23 @@ try {
     await expectText('.alert-warning', 'Motivo obligatorio');
   });
   await drainToasts();
-  await page.click('tr:has-text("A1") [data-draft-approve]');
+  await page.click('tr:has-text("A1") [data-week-approve]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Aprobado tras revisión E2E de navegador');
   await page.click('#reason-ok');
   await page.waitForSelector('.alert-success', { timeout: 10_000 });
   await page.waitForSelector('#lt-provider', { timeout: 10_000 });
-  await check('approved draft leaves the private moderation list', async () => {
-    // The private list carries draft/rejected rows only: an approved week is
-    // published, not pending moderation.
+  await check('approved row shows the approved badge in the full listing', async () => {
     await page.waitForFunction(
-      () => ![...document.querySelectorAll('tr')].some(tr => tr.textContent?.includes('A1')),
+      () => [...document.querySelectorAll('tr')].some(tr => tr.textContent?.includes('A1') && tr.textContent?.includes('approved')),
       undefined, { timeout: 10_000 });
-    const body = await page.textContent('body');
-    if (!body.includes('A2')) throw new Error('the pending A2 draft disappeared from the list');
+    if (!(await page.isVisible('tr:has-text("A1") [data-week-approve]')))
+      throw new Error('approve still offered for an approved row');
   });
   await shot('07-draft-approved');
   await drainToasts();
 
-  await page.click('tr:has-text("A2") [data-draft-reject]');
+  await page.click('tr:has-text("A2") [data-week-reject]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Rechazado en E2E: contenido insuficiente');
   await page.click('#reason-ok');
@@ -204,6 +210,81 @@ try {
     if (rejected.status !== 404) throw new Error(`HTTP ${rejected.status} for rejected week`);
   });
   await shot('09-public-catalog-checked');
+
+  // 8. Regeneration of the current unpublished week with the jobs monitor.
+  await drainToasts();
+  await page.click('tr:has-text("A2") [data-week-regenerate]');
+  await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+  await page.fill('#reason-text', 'Regenerado en E2E contra el stub');
+  await page.click('#reason-ok');
+  await page.waitForSelector('.alert-success', { timeout: 10_000 });
+  await check('regeneration accepted and jobs monitor renders the run', async () => {
+    await expectText('.alert-success', 'Regeneración iniciada');
+    // The stub provider answers instantly; wait out any running state.
+    await page.waitForFunction(() => {
+      const monitor = document.querySelector('#jobs-monitor');
+      return monitor && monitor.textContent?.includes('finished');
+    }, undefined, { timeout: 120_000 });
+    const monitor = await page.textContent('#jobs-monitor');
+    if (!monitor.includes('A2')) throw new Error('A2 job row missing from the monitor');
+  });
+  await page.waitForSelector('#lt-provider', { timeout: 10_000 });
+  await check('regenerated week replaces the rejected row with a fresh draft', async () => {
+    const card = await page.textContent('#exam-weeks-card');
+    if (!card.includes('A2')) throw new Error('A2 rows missing after regeneration');
+  });
+  await shot('10-regeneration-monitor');
+
+  // 9. Results section: seeded student attempt, filters, detail modal and the
+  // per-student deep link.
+  await page.click('a[href="#exam-results"]');
+  await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+  await check('results summary renders the seeded attempt', async () => {
+    const body = await page.textContent('body');
+    if (!body.includes('student@example.test')) throw new Error('student row missing');
+    if (!body.includes('84 %')) throw new Error('overall score missing');
+    if (!body.includes('passed')) throw new Error('passed badge missing');
+  });
+  await shot('11-results-section');
+  await page.fill('#wa-email', 'student');
+  await page.click('#wa-apply');
+  await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+  await check('email filter keeps the matching attempt', async () => {
+    const body = await page.textContent('body');
+    if (!body.includes('student@example.test')) throw new Error('filtered row missing');
+  });
+  const attemptHandle = await page.getAttribute('[data-attempt-detail]', 'data-attempt-detail');
+  await page.fill('#wa-email', 'nobody@nowhere.test');
+  await page.click('#wa-apply');
+  await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+  await check('non-matching filter shows the empty state', async () => {
+    await expectText('body', 'Sin resultados para este filtro');
+  });
+  await drainToasts();
+  await page.fill('#wa-email', '');
+  await page.click('#wa-apply');
+  await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+  await page.click('[data-attempt-detail]');
+  await page.waitForSelector('#detail-modal.show', { timeout: 5_000 });
+  await check('attempt detail modal shows the per-question review', async () => {
+    await expectText('#detail-body', 'questionReviews');
+    await expectText('#detail-body', 'overall');
+  });
+  await shot('12-attempt-detail');
+  await page.click('#detail-close');
+  const accountId = attemptHandle?.split(':')[0];
+  if (accountId) {
+    await page.goto(`${PANEL}/#exam-results?account=${accountId}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+    await check('per-student deep link filters by account', async () => {
+      const body = await page.textContent('body');
+      if (!body.includes('Alumno:') || !body.includes('student@example.test'))
+        throw new Error('per-student header or filtered rows missing');
+    });
+    await shot('13-per-student-view');
+  } else {
+    failures.push('per-student deep link skipped: no attempt handle found');
+  }
 } catch (error) {
   failures.push(`scenario aborted: ${error.message}`);
   await shot('99-aborted').catch(() => {});
