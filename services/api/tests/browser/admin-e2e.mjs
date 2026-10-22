@@ -57,6 +57,10 @@ const page = await browser.newPage();
 page.on('request', request => {
   if (request.url().includes('/v1/admin/level-test-attempts?')) observedAttemptRequests.push(request.url());
 });
+// Unhandled errors explain a half-painted view; surface them instead of only
+// timing out on the missing selector.
+const observedPageErrors = [];
+page.on('pageerror', error => observedPageErrors.push(error.message));
 // Screenshots are evidence, not assertions: a capture failure must never
 // abort the scenario (headless Chromium occasionally refuses fullPage shots).
 const shot = async name => {
@@ -361,6 +365,128 @@ try {
   });
   await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
   await shot('10b-generation-launch');
+
+  // 8c. Watch cadence, resilience and shutdown. The status endpoint is mocked
+  // because the stub finishes in milliseconds: with a real run there is no 5 s
+  // gap to observe. The mock still fetches the real response, so the job keeps
+  // the real week id the panel filters on.
+  const statusMock = (behaviour) => async route => {
+    const call = behaviour.calls.push(Date.now());
+    if (behaviour.failCalls.includes(call))
+      return route.fulfill({ status: 500, contentType: 'application/json', body: '{"error":"poll_failed"}' });
+    const response = await route.fetch();
+    const real = await response.json();
+    const base = Array.isArray(real.jobs) && real.jobs[0]
+      ? real.jobs[0] : { languageID: 'en', level: 'A1', weekId: 0, attempts: 1 };
+    const terminal = behaviour.terminal(call);
+    const stamp = new Date().toISOString();
+    const job = { ...base, status: terminal ? 'finished' : 'running', attempts: 1, errorCode: null,
+      errors: [], startedAt: stamp, finishedAt: terminal ? stamp : null, updatedAt: stamp };
+    await route.fulfill({ response, json: { ...real, jobs: [job], latestJob: job } });
+  };
+  await check('generation watch polls every 5 s and survives a failed poll', async () => {
+    // call 1 is the mount fetch; 2 fails (the watch must retry); 3-4 running;
+    // 5 terminal. Every gap must be the configured cadence.
+    const behaviour = { calls: [], failCalls: [2], terminal: call => call >= 5 };
+    const handler = statusMock(behaviour);
+    await page.route('**/v1/admin/level-tests/status', handler);
+    try {
+      await page.goto(`${PANEL}/#overview`);
+      await page.goto(`${PANEL}/#exam-weeks`);
+      const deadline = Date.now() + 45_000;
+      while (behaviour.calls.length < 5 && Date.now() < deadline) await page.waitForTimeout(250);
+      if (behaviour.calls.length < 5) throw new Error(`only ${behaviour.calls.length} status calls in 45 s`);
+      // Calls 1-5 are mount + four ticks; the post-terminal table refresh lands
+      // milliseconds later and is asserted separately, not as a cadence gap.
+      const gaps = behaviour.calls.slice(1, 5).map((at, index) => at - behaviour.calls[index]);
+      for (const gap of gaps) {
+        if (gap < 4_000 || gap > 9_000)
+          throw new Error(`poll gap ${gap} ms outside 4-9 s (${gaps.join(', ')}); page errors: ${observedPageErrors.join(' | ') || 'none'}`);
+      }
+      await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('→ finished'),
+        undefined, { timeout: 15_000 });
+      const settled = behaviour.calls.length;
+      await page.waitForTimeout(12_000);
+      // One extra fetch is the post-terminal table refresh; a timer would add 2+.
+      if (behaviour.calls.length > settled + 1)
+        throw new Error(`${behaviour.calls.length - settled} polls after the terminal state`);
+    } finally {
+      await page.unroute('**/v1/admin/level-tests/status', handler);
+    }
+  });
+  await check('a finished run does not leak its timer into the next watch', async () => {
+    // Regression: the direct tick after a launch used to leave the scheduled
+    // timer alive; when it fired it cleared the NEW watch's timer handle and
+    // two 5 s loops ran in parallel. Force it: the direct tick sees a terminal
+    // job, the immediate refresh mounts a fresh running watch.
+    const calls = [];
+    const handler = async route => {
+      const call = calls.push(Date.now());
+      const response = await route.fetch();
+      const real = await response.json();
+      const base = Array.isArray(real.jobs) && real.jobs[0]
+        ? real.jobs[0] : { languageID: 'en', level: 'A1', weekId: 0, attempts: 1 };
+      const terminal = call === 1;
+      const stamp = new Date().toISOString();
+      const job = { ...base, status: terminal ? 'finished' : 'running', attempts: 1, errorCode: null,
+        errors: [], startedAt: stamp, finishedAt: terminal ? stamp : null, updatedAt: stamp };
+      await route.fulfill({ response, json: { ...real, jobs: [job], latestJob: job } });
+    };
+    await page.route('**/v1/admin/level-tests/status', handler);
+    try {
+      await drainToasts();
+      await page.click(weekRow('A2') + ' [data-week-regenerate]');
+      await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+      await page.fill('#reason-text', 'Regenerado en E2E para probar el temporizador');
+      await page.click('#reason-ok');
+      const deadline = Date.now() + 45_000;
+      while (calls.length < 4 && Date.now() < deadline) await page.waitForTimeout(250);
+      if (calls.length < 4) throw new Error(`only ${calls.length} status calls in 45 s`);
+      // Calls 1 (direct tick) and 2 (refresh mount) are adjacent; 2-4 are ticks.
+      const gaps = calls.slice(2, 4).map((at, index) => at - calls[index + 1]);
+      for (const gap of gaps) {
+        if (gap < 4_000 || gap > 9_000)
+          throw new Error(`poll gap ${gap} ms outside 4-9 s (leaked timer); page errors: ${observedPageErrors.join(' | ') || 'none'}`);
+      }
+    } finally {
+      await page.unroute('**/v1/admin/level-tests/status', handler);
+      // The live watch resolves against the real status on its next tick.
+      await page.waitForFunction(() => !(document.querySelector('#launch-status')?.textContent ?? '').includes('En marcha'),
+        undefined, { timeout: 20_000 }).catch(() => {});
+      await drainToasts();
+    }
+  });
+  await check('leaving the generation view parks the watch instead of polling on', async () => {
+    const behaviour = { calls: [], failCalls: [], terminal: () => false };
+    const handler = statusMock(behaviour);
+    await page.route('**/v1/admin/level-tests/status', handler);
+    try {
+      await page.goto(`${PANEL}/#overview`);
+      await page.goto(`${PANEL}/#exam-weeks`);
+      const deadline = Date.now() + 20_000;
+      while (behaviour.calls.length < 2 && Date.now() < deadline) await page.waitForTimeout(250);
+      if (behaviour.calls.length < 2) throw new Error('the watch never started');
+      await page.goto(`${PANEL}/#overview`);
+      const parked = behaviour.calls.length;
+      await page.waitForTimeout(12_000);
+      // At most the tick already in flight when the view was left.
+      if (behaviour.calls.length > parked + 1)
+        throw new Error(`${behaviour.calls.length - parked} status calls after leaving the view; page errors: ${observedPageErrors.join(' | ') || 'none'}`);
+    } finally {
+      await page.unroute('**/v1/admin/level-tests/status', handler);
+      await page.goto(`${PANEL}/#exam-weeks`);
+      await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
+    }
+  });
+  await check('returning to the view resumes the parked watch and closes the key', async () => {
+    // The parked watch kept its keys: one real tick must resolve them and stop.
+    await page.waitForFunction(() => (document.querySelector('#launch-status')?.textContent ?? '').includes('→ finished'),
+      undefined, { timeout: 20_000 });
+    await page.waitForTimeout(7_000);
+    await drainToasts();
+  });
+  await shot('10f-watch-parked');
+
 
   // 9. Exam review page: the exam a student will take, not raw JSON.
   await page.click(weekRow('B1') + ' a[href^="#exam/"]');

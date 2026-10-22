@@ -55,3 +55,34 @@ non-interactive separator. The sections SHALL be `Operación`, `Exámenes`
 #### Scenario: Headings are not links
 - **WHEN** the operator clicks a section heading
 - **THEN** nothing navigates and no entry becomes active.
+
+### Requirement: Live generation progress without polling in the dark
+
+While a generation started from the panel, or one already `running` when the
+view mounts, is in flight, the panel SHALL poll
+`GET /v1/admin/level-tests/status` every 5 seconds. A failed poll SHALL be
+retried on the next tick, never aborting the watch. The watch SHALL stop on the
+first terminal state of every watched key (`finished`, `failed`, `unknown`),
+refresh the weeks listing once, and issue no further polls. Leaving the
+generation view SHALL park the watch (no timer, no requests); returning SHALL
+resume it and resolve the pending keys.
+
+#### Scenario: Cadence is one poll every 5 seconds
+- **WHEN** a watched run is in flight
+- **THEN** consecutive status requests are ~5 seconds apart, not the 2 seconds of the previous fixed timer.
+
+#### Scenario: One failed poll does not end the watch
+- **WHEN** a status request fails with a server error
+- **THEN** the next request still happens one cadence later and the run keeps being tracked.
+
+#### Scenario: Polling stops at the terminal state
+- **WHEN** the last watched key reports `finished`
+- **THEN** the operator sees the completion line and no further status requests are made.
+
+#### Scenario: Leaving the view stops background requests
+- **WHEN** the operator navigates away while a run is in flight
+- **THEN** at most the already-scheduled tick runs, and no timer keeps polling afterwards.
+
+#### Scenario: Returning resumes the watch
+- **WHEN** the operator comes back to the generation view with a parked watch
+- **THEN** polling resumes, the pending keys resolve, and the watch stops again.

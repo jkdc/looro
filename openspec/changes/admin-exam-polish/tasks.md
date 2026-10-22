@@ -18,6 +18,15 @@
 - [x] 3.2 Status-endpoint test asserts `errorCode` + sanitized `errors`
 - [x] 3.3 Browser E2E: failed-job fixture in bootstrap, red/green checks on the computed style, dialog contents, nav DOM membership, approved/rejected tones
 
+## 3b. Generation watch
+- [x] 3b.1 Cadence fixed at `GENERATION_POLL_MS = 5_000` (was an inline 2 s literal)
+- [x] 3b.2 Leaving the view parks the watch (no ghost timer); returning resumes it
+- [x] 3b.3 `status.jobs` shape guarded before painting
+- [x] 3b.4 E2E: cadence within 4-9 s, retry after a 500, stop after terminal, park on leave, resume on return
+- [x] 3b.5 Fix router re-entrancy (concurrent renders wiped the new view and armed two watches)
+- [x] 3b.6 Fix leaked timer (stale timer nulled the next watch's handle, duplicating the loop) + single in-flight tick
+- [x] 3b.7 Fix CSP-blocked `white-space` on `#detail-body` (move inline style to `app.css`); 41/41 E2E twice
+
 ## 4. Verification
 - [x] 4.1 `npx tsc --noEmit` clean; focused suites `# pass 20`, `# fail 0`
 - [x] 4.2 Full API suite green (`make test-api`)

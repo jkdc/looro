@@ -51,9 +51,11 @@ Fecha: 2026-10-22 · Rama `feature/learning-platform`
 
 ### E2E de navegador (stack Docker aislado + LLM stub + Chromium local)
 
-`services/api/tests/browser/admin-e2e.mjs`: **37/37 checks**, dos tandas
+`services/api/tests/browser/admin-e2e.mjs`: **41/41 checks**, dos tandas
 consecutivas desde pila limpia con el código final (el escenario muta estado,
-así que cada tanda exige `down -v`). Nuevos checks:
+así que cada tanda exige `down -v`). Los 37 primeros cubren el pulido visual y
+el diálogo; los cuatro últimos, la vigilancia de generación (abajo). Nuevos
+checks:
 
 1. El menú declara las cuatro secciones y cada enlace pertenece a la suya
    (comparación de orden en el DOM: `#exam-weeks`/`#exam-results`/`#ia-config`
@@ -80,3 +82,38 @@ falle. Evidencias: `e2e-evidence/t11-browser-e2e/10-regeneration-monitor.png`
 - Contraste en tema claro del panel (el sidebar es oscuro por `data-bs-theme`):
   revisado en captura, no con una auditoría de contraste formal.
 - Revisión visual del operador sobre datos reales: pendiente de su visto bueno.
+
+
+## Vigilancia de generación (5 s)
+
+La cadencia pasó del literal inline de 2 s a `GENERATION_POLL_MS = 5_000`, con
+arranque también para generaciones ya en `running` al montar la vista. Cuatro
+checks E2E (el endpoint de estado se enmascara con `page.route` porque el stub
+termina en milisegundos y no habría hueco de 5 s que medir; el mock reenvía la
+respuesta real para conservar el `weekId`):
+
+1. **Cadencia y resiliencia**: con un 500 en el primer tick, los huecos entre
+   sondeo y sondeo quedan en 4-9 s (medidos 5,0 s) y la vigilancia continúa.
+2. **Sin fuga de temporizador**: un tick directo que ve el job terminado no
+   deja vivo el temporizador programado; el watch nuevo mantiene un único bucle.
+3. **Aparcamiento**: al salir de la vista como mucho corre el tick ya lanzado y
+   no queda ningún temporizador en segundo plano.
+4. **Reanudación**: al volver, la vigilancia retoma, resuelve las claves
+   pendientes y vuelve a parar.
+
+### Defectos que encontraron los tests (y se corrigieron)
+
+- **Router no reentrante**: dos `hashchange` seguidos lanzaban dos renders
+  concurrentes; el más lento borraba la vista nueva y armaba el watcher dos
+  veces. Ahora los renders se serializan y se coalescen (`route()` → un render
+  en vuelo, gana el hash final) y los enlaces profundos siguen intactos.
+- **Fuga del temporizador entre ejecuciones**: el handle vivía en el objeto del
+  watch; al terminar, el tick directo dejaba armado el temporizador antiguo y,
+  al dispararse, ponía a `null` el handle del watch **nuevo**, con lo que dos
+  bucles de 5 s corrían en paralelo (huecos de 5 s + 300 ms). El handle es ahora
+  módulo-global, `cancelGenerationTimer()` se llama al reemplazar y al cerrar, y
+  un solo tick puede estar en vuelo (`generationTicking`).
+- **CSP bloqueaba `white-space: pre-wrap`**: el `style` inline de `#detail-body`
+  lo rechazaba `style-src 'self'`, así que el JSON de `detail()` perdía la
+  indentación. La regla vive en `app.css`; verificado por estilo calculado
+  (`pre-wrap`) y cero violaciones de consola al abrir el diálogo de error.

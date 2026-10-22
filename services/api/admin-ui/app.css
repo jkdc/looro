@@ -129,6 +129,8 @@
 #nav .nav-group:first-child .nav-link { border-top: none; padding-top: .25rem; }
 #nav .nav-item .nav-link { border-radius: 4px; }
 
-/* ---- generation job error dialog ---- */
+/* ---- detail and generation job error dialog ---- */
+/* JSON payloads keep their indentation; CSP forbids inline style attributes. */
+#detail-body { white-space: pre-wrap; }
 #detail-body table th { width: 9rem; }
 #detail-body ul { padding-left: 1.1rem; }

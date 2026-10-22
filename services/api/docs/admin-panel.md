@@ -49,7 +49,12 @@ so every state looks the same.
     requires the existing explicit force operation. Safe latest-job/scheduler
     status lives here.
     Weeks and jobs are colour-coded by severity (green = usable, red = needs an
-    operator, yellow = waiting or unknown). A job's error code is a button that
+    operator, yellow = waiting or unknown). While a run started from the panel
+    (or already `running` when the view mounts) is live, the monitor polls
+    `/v1/admin/level-tests/status` every 5 seconds, ignores a failed poll and
+    retries on the next tick, and stops on the first terminal state (then
+    refreshes the weeks table). Leaving the view parks the watch — no timer, no
+    requests — and coming back resumes it. A job's error code is a button that
     opens a dialog with the coarse code, the sanitized per-section reasons from
     the last attempt, timestamps, attempts and the next step. Only messages the
     pipeline writes itself are stored (`error_details`, migration `047`);

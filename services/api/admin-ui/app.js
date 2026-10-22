@@ -391,71 +391,97 @@ function renderJobs(jobs = lastJobsSnapshot) {
   }
 }
 
+// One fixed cadence for the whole watch: fast enough to feel live, slow enough
+// to stay far from the panel's 600/hour admission limit during a long run.
+const GENERATION_POLL_MS = 5_000;
+
+// One timer and one in-flight poll for the whole watch, owned here instead of
+// on the watch object: a timer left over from a finished run must never clear
+// the timer of the next one (that leaked a second 5 s loop per completion).
+let generationTimer = null;
+let generationTicking = false;
+
+function cancelGenerationTimer() {
+  if (generationTimer) { clearTimeout(generationTimer); generationTimer = null; }
+}
+
 function scheduleGenerationWatch() {
-  if (!generationWatch || generationWatch.timer) return;
-  generationWatch.timer = setTimeout(() => {
-    if (generationWatch) generationWatch.timer = null;
+  if (!generationWatch || generationTimer) return;
+  generationTimer = setTimeout(() => {
+    generationTimer = null;
     void watchGenerationTick();
-  }, 2_000);
+  }, GENERATION_POLL_MS);
 }
 
 async function watchGenerationTick() {
+  // Overlapping ticks would each arm a timer and multiply the cadence.
+  if (generationTicking) return;
   const watch = generationWatch;
   if (!watch) return;
-  const mounted = Boolean($('#jobs-monitor'));
-  if (mounted) {
-    try {
-      const status = await api('/v1/admin/level-tests/status');
-      if (generationWatch !== watch) return;
-      lastJobsSnapshot = status.jobs;
-      renderJobs(lastJobsSnapshot);
-      const byKey = new Map(status.jobs
-        .filter(job => watch.keys.has(`${job.languageID}:${job.level}`) && job.weekId === watch.weekId)
-        .map(job => [`${job.languageID}:${job.level}`, job]));
-      const done = [...watch.keys].filter(key => byKey.get(key) && TERMINAL_JOB_STATES.has(byKey.get(key).status));
-      for (const key of done) {
-        const job = byKey.get(key);
-        watch.results.push(`${key} → ${job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`);
-        toast(`${key}: generación ${job.status === 'finished' ? 'completada' : job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`,
-          job.status === 'finished' ? 'success' : 'danger');
-        watch.keys.delete(key);
-      }
-      const running = [...watch.keys].filter(key => byKey.get(key)?.status === 'running');
-      const queued = [...watch.keys].filter(key => !byKey.get(key));
-      lastWatchStatus = [
-        running.length ? `En marcha: ${running.join(', ')}` : '',
-        queued.length ? `En cola: ${queued.join(', ')}` : '',
-        watch.results.join(' · '),
-      ].filter(Boolean).join(' — ') || 'Esperando al runner de generación…';
-      const line = $('#launch-status');
-      const paint = tone => {
-        lastWatchTone = tone;
-        if (!line) return;
-        line.textContent = lastWatchStatus;
-        line.className = `small mt-1 fw-bold ${tone}`;
-      };
-      if (!watch.keys.size) {
-        generationWatch = null;
-        lastWatchStatus = `Completado: ${watch.results.join(' · ')}`;
-        paint(watch.results.every(result => result.includes('→ finished')) ? 'text-success' : 'text-danger');
-        // The runner is done: refresh the weeks table so the new exams show up
-        // ready for review / approve without a manual reload. Never repaint if
-        // the operator moved to another view (they share the same container).
-        if (levelTestsRender && $('#exam-weeks-card'))
-          void renderExamWeeksView(levelTestsRender.container, levelTestsRender.view);
-        return;
-      }
-      paint('text-primary');
-    } catch { /* polling is best effort; retry on the next tick */ }
-  }
+  // The monitor is the only place progress is visible. Leaving the view parks
+  // the watch: no timer and no requests. renderExamWeeksView re-arms it when
+  // the operator comes back, instead of a ghost timer polling in the dark.
+  if (!$('#jobs-monitor')) return;
+  generationTicking = true;
+  try {
+    const status = await api('/v1/admin/level-tests/status');
+    if (generationWatch !== watch) return;
+    const jobs = Array.isArray(status.jobs) ? status.jobs : [];
+    lastJobsSnapshot = jobs;
+    renderJobs(jobs);
+    const byKey = new Map(jobs
+      .filter(job => watch.keys.has(`${job.languageID}:${job.level}`) && job.weekId === watch.weekId)
+      .map(job => [`${job.languageID}:${job.level}`, job]));
+    const done = [...watch.keys].filter(key => byKey.get(key) && TERMINAL_JOB_STATES.has(byKey.get(key).status));
+    for (const key of done) {
+      const job = byKey.get(key);
+      watch.results.push(`${key} → ${job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`);
+      toast(`${key}: generación ${job.status === 'finished' ? 'completada' : job.status}${job.errorCode ? ` (${job.errorCode})` : ''}`,
+        job.status === 'finished' ? 'success' : 'danger');
+      watch.keys.delete(key);
+    }
+    const running = [...watch.keys].filter(key => byKey.get(key)?.status === 'running');
+    const queued = [...watch.keys].filter(key => !byKey.get(key));
+    lastWatchStatus = [
+      running.length ? `En marcha: ${running.join(', ')}` : '',
+      queued.length ? `En cola: ${queued.join(', ')}` : '',
+      watch.results.join(' · '),
+    ].filter(Boolean).join(' — ') || 'Esperando al runner de generación…';
+    const line = $('#launch-status');
+    const paint = tone => {
+      lastWatchTone = tone;
+      if (!line) return;
+      line.textContent = lastWatchStatus;
+      line.className = `small mt-1 fw-bold ${tone}`;
+    };
+    if (!watch.keys.size) {
+      generationWatch = null;
+      cancelGenerationTimer();
+      lastWatchStatus = `Completado: ${watch.results.join(' · ')}`;
+      paint(watch.results.every(result => result.includes('→ finished')) ? 'text-success' : 'text-danger');
+      // The runner is done: refresh the weeks table so the new exams show up
+      // ready for review / approve without a manual reload. Never repaint if
+      // the operator moved to another view (they share the same container).
+      if (levelTestsRender && $('#exam-weeks-card'))
+        void renderExamWeeksView(levelTestsRender.container, levelTestsRender.view);
+      return;
+    }
+    paint('text-primary');
+  } catch { /* polling is best effort; retry on the next tick */ }
+  finally { generationTicking = false; }
   scheduleGenerationWatch();
 }
 
 function startGenerationWatch(keys, weekId) {
   if (!keys.length) return;
-  generationWatch = generationWatch && generationWatch.weekId === weekId
-    ? { ...generationWatch, keys: new Set([...generationWatch.keys, ...keys]) }
-    : { keys: new Set(keys), results: [], weekId, timer: null };
+  if (generationWatch && generationWatch.weekId === weekId) {
+    // Same week: merge keys and keep the pending tick, so a re-render never
+    // leaves two timers polling the same status endpoint.
+    generationWatch = { ...generationWatch, keys: new Set([...generationWatch.keys, ...keys]) };
+  } else {
+    cancelGenerationTimer();
+    generationWatch = { keys: new Set(keys), results: [], weekId };
+  }
   lastWatchStatus = ''; lastWatchTone = '';
   scheduleGenerationWatch();
 }
@@ -589,7 +615,7 @@ async function renderExamWeeksView(container, view = {}) {
   ]);
   // Paint the freshest jobs immediately; the watcher keeps them current while
   // a generation launched from this session is still in flight.
-  lastJobsSnapshot = status.jobs;
+  lastJobsSnapshot = Array.isArray(status.jobs) ? status.jobs : [];
   // Also pick up runs started elsewhere (scheduler, CLI, another operator) so a
   // reload never leaves the operator blind about an in-flight generation.
   const runningJobs = status.jobs.filter(job => job.status === 'running' && job.weekId === currentWeekId);
@@ -1210,7 +1236,24 @@ const VIEWS = {
 };
 // Routes that moved when configuration and generation were split apart.
 const LEGACY_ROUTES = { 'level-tests': 'exam-weeks' };
+// Hash changes can arrive while the previous view is still fetching (e.g. a
+// link to a view immediately followed by another). Rendering both interleaves
+// their writes into #view — the slower one wipes the newer view and arms the
+// same watcher twice — so renders are serialized and coalesced: at most one in
+// flight, and the latest hash always wins.
+let routing = false;
+let reroute = false;
 async function route() {
+  if (routing) { reroute = true; return; }
+  routing = true;
+  try {
+    do {
+      reroute = false;
+      await renderRoute();
+    } while (reroute);
+  } finally { routing = false; }
+}
+async function renderRoute() {
   const [rawPath, routeQuery] = (location.hash.slice(1) || 'overview').split('?');
   const [routePath, detailId] = rawPath.split('/');
   if (LEGACY_ROUTES[routePath]) { location.replace(`#${LEGACY_ROUTES[routePath]}`); return; }
