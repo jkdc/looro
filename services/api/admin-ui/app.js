@@ -498,7 +498,11 @@ async function renderLevelTestOperations(container, view = {}) {
 }
 
 /* ---- exam attempts (per-student results) ---- */
+// Renders may resolve out of order (fast filter after slow one): a stale
+// response must never overwrite the view painted by a newer one.
+let attemptsRenderEpoch = 0;
 async function renderExamAttempts(container, routeParams = {}, filters = {}) {
+  const epoch = ++attemptsRenderEpoch;
   // Hash params (#exam-results?account=…) seed the filters on first entry;
   // later re-renders pass pagination in the same slot without an account.
   const merged = { ...filters };
@@ -510,6 +514,7 @@ async function renderExamAttempts(container, routeParams = {}, filters = {}) {
   const [attempts, summary] = await Promise.all([
     api('/v1/admin/level-test-attempts?' + query), api('/v1/admin/level-test-attempts/summary')
   ]);
+  if (epoch !== attemptsRenderEpoch) return;
   const studentEmail = merged.studentEmail || (merged.account ? attempts.items[0]?.email : null);
   const rows = attempts.items.map(item =>
     '<tr><td class="cell-mono" title="' + escapeHtml(item.attemptId) + '">' + escapeHtml(item.attemptId.slice(0, 8)) + '…</td>' +

@@ -13,8 +13,14 @@ Fecha: 2026-10-22 · Rama `feature/learning-platform`
 
 ## No verificado (requiere humano)
 
-- Flujos manuales del panel en navegador: tarjetas "Exámenes generados" y "Resultados de exámenes", modal de detalle, botón Regenerar con polling de jobs, descarga CSV y acción "Ver exámenes" en la tabla accounts. La lógica server de todos esos endpoints está cubierta por tests; la interacción DOM no tiene harness en este repo.
-- Regeneración concurrente real (advisory lock contra CLI/scheduler a la vez): cubierta indirectamente por los tests del módulo de jobs (`runLevelTestGenerationJob`), no reproducida en paralelo real aquí.
+- Nada de lo relativo a este change: los flujos de panel que antes quedaban
+  fuera (listado con filtros, moderación con motivo, regeneración con monitor
+  de jobs, resultados con filtros, detalle, vista por alumno) están cubiertos
+  ahora por el E2E de navegador real (`services/api/tests/browser/admin-e2e.mjs`,
+  23/23 checks con stack Docker aislado + LLM stub + Chromium local).
+- Regeneración concurrente real (advisory lock contra CLI/scheduler a la vez):
+  cubierta indirectamente por los tests del módulo de jobs, no reproducida en
+  paralelo real aquí.
 
 ## Notas
 

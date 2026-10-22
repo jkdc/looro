@@ -24,8 +24,7 @@ try {
 
   // One completed student attempt (idempotent by email) so the results
   // section has real data: snapshot identity follows migration 042 exactly.
-  const existing = await db.query(`SELECT a.account_id, a.attempt_id FROM accounts a
-    WHERE a.email = 'student@example.test' LIMIT 1`);
+  const existing = await db.query(`SELECT id FROM accounts WHERE email = 'student@example.test' LIMIT 1`);
   if (existing.rowCount) {
     console.log('student attempt already seeded');
   } else {

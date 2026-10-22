@@ -49,9 +49,16 @@ const check = async (name, assertion) => {
 };
 
 await mkdir(EVIDENCE, { recursive: true });
-const browser = await chromium.launch({ executablePath, headless: true });
+const browser = await chromium.launch({ executablePath, headless: true,
+  args: ['--disable-gpu', '--disable-dev-shm-usage'] });
 const page = await browser.newPage();
-const shot = name => page.screenshot({ path: join(EVIDENCE, `${name}.png`), fullPage: true });
+// Screenshots are evidence, not assertions: a capture failure must never
+// abort the scenario (headless Chromium occasionally refuses fullPage shots).
+const shot = async name => {
+  try { await page.screenshot({ path: join(EVIDENCE, `${name}.png`), fullPage: true }); }
+  catch { try { await page.screenshot({ path: join(EVIDENCE, `${name}.png`) }); }
+    catch (error) { console.error(`shot ${name}: ${error.message}`); } }
+};
 // Toasts self-remove after ~4s; drain them so a stale toast can never
 // satisfy the next assertion.
 const drainToasts = async () => {
@@ -143,6 +150,9 @@ try {
 
   // 6. Generated-exams listing: seeded drafts visible with the regenerate
   // affordance on current-week unpublished rows, audited moderation.
+  // Table selectors are scoped to the weeks card: the jobs monitor renders
+  // its own rows (language/level/state) that would otherwise match.
+  const weekRow = level => `#exam-weeks-card tbody tr:has-text("${level}")`;
   await check('weeks listing shows the two seeded drafts with filters', async () => {
     await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
     const body = await page.textContent('#exam-weeks-card');
@@ -151,10 +161,10 @@ try {
     if (!body.includes('Exámenes generados')) throw new Error('listing card title missing');
   });
   await check('current-week draft offers regeneration', async () => {
-    if (!(await page.isVisible('tr:has-text("A1") [data-week-regenerate]')))
+    if (!(await page.isVisible(weekRow('A1') + ' [data-week-regenerate]')))
       throw new Error('Regenerar button missing on current-week draft');
   });
-  await page.click('tr:has-text("A1") [data-week-approve]');
+  await page.click(weekRow('A1') + ' [data-week-approve]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'ap');
   await page.click('#reason-ok');
@@ -163,23 +173,22 @@ try {
     await expectText('.alert-warning', 'Motivo obligatorio');
   });
   await drainToasts();
-  await page.click('tr:has-text("A1") [data-week-approve]');
+  await page.click(weekRow('A1') + ' [data-week-approve]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Aprobado tras revisión E2E de navegador');
   await page.click('#reason-ok');
   await page.waitForSelector('.alert-success', { timeout: 10_000 });
-  await page.waitForSelector('#lt-provider', { timeout: 10_000 });
   await check('approved row shows the approved badge in the full listing', async () => {
-    await page.waitForFunction(
-      () => [...document.querySelectorAll('tr')].some(tr => tr.textContent?.includes('A1') && tr.textContent?.includes('approved')),
+    await page.waitForFunction(() => [...document.querySelectorAll('#exam-weeks-card tbody tr')]
+      .some(tr => tr.textContent?.includes('A1') && tr.textContent?.includes('approved')),
       undefined, { timeout: 10_000 });
-    if (!(await page.isVisible('tr:has-text("A1") [data-week-approve]')))
+    if (await page.isVisible(weekRow('A1') + ' [data-week-approve]'))
       throw new Error('approve still offered for an approved row');
   });
   await shot('07-draft-approved');
   await drainToasts();
 
-  await page.click('tr:has-text("A2") [data-week-reject]');
+  await page.click(weekRow('A2') + ' [data-week-reject]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Rechazado en E2E: contenido insuficiente');
   await page.click('#reason-ok');
@@ -187,10 +196,10 @@ try {
   await check('rejection toast confirms', async () => {
     await expectText('.alert-success', 'Borrador rechazado');
   });
-  await page.waitForSelector('#lt-provider', { timeout: 10_000 });
   await check('draft rejected and rejection retained', async () => {
-    const row = await page.textContent('tr:has-text("A2")');
-    if (!row.includes('rejected')) throw new Error(`A2 row state: ${row.slice(0, 120)}`);
+    await page.waitForFunction(() => [...document.querySelectorAll('#exam-weeks-card tbody tr')]
+      .some(tr => tr.textContent?.includes('A2') && tr.textContent?.includes('rejected')),
+      undefined, { timeout: 10_000 });
   });
   await shot('08-draft-rejected');
 
@@ -213,7 +222,7 @@ try {
 
   // 8. Regeneration of the current unpublished week with the jobs monitor.
   await drainToasts();
-  await page.click('tr:has-text("A2") [data-week-regenerate]');
+  await page.click(weekRow('A2') + ' [data-week-regenerate]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Regenerado en E2E contra el stub');
   await page.click('#reason-ok');
@@ -248,22 +257,35 @@ try {
   await shot('11-results-section');
   await page.fill('#wa-email', 'student');
   await page.click('#wa-apply');
-  await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+  await page.waitForFunction(() => document.body.textContent?.includes('student@example.test'),
+    undefined, { timeout: 10_000 });
   await check('email filter keeps the matching attempt', async () => {
     const body = await page.textContent('body');
     if (!body.includes('student@example.test')) throw new Error('filtered row missing');
   });
   const attemptHandle = await page.getAttribute('[data-attempt-detail]', 'data-attempt-detail');
   await page.fill('#wa-email', 'nobody@nowhere.test');
-  await page.click('#wa-apply');
-  await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+  // A concurrent re-render can detach the button between hit-testing and the
+  // click landing: retry until the filtered request is actually issued.
+  const clickApplyFor = async needle => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const requested = page.waitForResponse(response => response.url().includes(needle) && response.url().includes('email='),
+        { timeout: 5_000 }).then(() => true).catch(() => false);
+      await page.click('#wa-apply');
+      if (await requested) return;
+    }
+    throw new Error('apply click never triggered the listing request');
+  };
+  await clickApplyFor('nobody');
   await check('non-matching filter shows the empty state', async () => {
-    await expectText('body', 'Sin resultados para este filtro');
+    await page.waitForFunction(() => document.body.textContent?.includes('Sin resultados para este filtro'),
+      undefined, { timeout: 10_000 });
   });
   await drainToasts();
   await page.fill('#wa-email', '');
   await page.click('#wa-apply');
-  await page.waitForSelector('#wa-apply', { timeout: 10_000 });
+  await page.waitForFunction(() => document.body.textContent?.includes('student@example.test'),
+    undefined, { timeout: 10_000 });
   await page.click('[data-attempt-detail]');
   await page.waitForSelector('#detail-modal.show', { timeout: 5_000 });
   await check('attempt detail modal shows the per-question review', async () => {
