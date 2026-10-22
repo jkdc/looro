@@ -225,6 +225,29 @@ integration('generation launch starts missing keys and skips approved ones', asy
   assert.equal(audit, 1);
 });
 
+integration('generation launch skips weeks that already exist instead of reporting them as generated', async () => {
+  await seed([
+    { language: 'en', level: 'A1', status: 'draft' },
+    { language: 'en', level: 'A2', status: 'rejected' },
+  ]);
+  const response = await post('/v1/admin/level-tests/generate',
+    { languageID: 'en', levels: ['A1', 'A2', 'B1'], reason: 'lanzamiento con exámenes ya existentes' });
+  assert.equal(response.statusCode, 202);
+  const body = response.json();
+  assert.equal(body.keys.find((key: { level: string }) => key.level === 'A1')?.status, 'skipped_existing');
+  assert.equal(body.keys.find((key: { level: string }) => key.level === 'A2')?.status, 'skipped_existing');
+  assert.equal(body.keys.find((key: { level: string }) => key.level === 'B1')?.status, 'started');
+  for (let i = 0; i < 20; i++) {
+    const rows = (await db!.query("SELECT level FROM level_test_generation_jobs WHERE language_id='en'")).rows;
+    if (rows.some(row => row.level === 'B1')) break;
+    await new Promise(resolve => setTimeout(resolve, 150));
+  }
+  // No fake "finished" job may appear for the skipped weeks: the operator would
+  // read it as a completed generation that never happened.
+  const jobs = (await db!.query("SELECT level FROM level_test_generation_jobs WHERE language_id='en' ORDER BY level")).rows;
+  assert.deepEqual(jobs.map(row => row.level), ['B1']);
+});
+
 integration('generation launch accepts a single level', async () => {
   const response = await post('/v1/admin/level-tests/generate',
     { languageID: 'es', levels: ['B1'], reason: 'single level launch' });

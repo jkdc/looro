@@ -86,3 +86,32 @@ resume it and resolve the pending keys.
 #### Scenario: Returning resumes the watch
 - **WHEN** the operator comes back to the generation view with a parked watch
 - **THEN** polling resumes, the pending keys resolve, and the watch stops again.
+
+## MODIFIED Requirements
+
+### Requirement: On-demand generation launcher
+
+The system SHALL expose `POST /v1/admin/level-tests/generate` accepting
+`{languageID, levels?, weekIndex?, reason}` (levels defaulting to all CEFR
+levels; reason 3-500 chars), validating language, levels and week against
+whitelists, answering `202 {started: true, keys[]}`, auditing accepted requests
+as `level_test.generate`, and running the started keys sequentially in the
+background through the job runner. Each key SHALL be `started`,
+`skipped_approved` (an approved week is never regenerated here) or
+`skipped_existing` (any other week already exists for that language, level and
+week: draft, rejected or retired). Skipped keys SHALL NOT create a generation
+job, so the operator never sees a finished job for content that was not
+generated; replacing a draft or a rejected week goes through the explicit
+regeneration operation, which is force and refuses approved keys.
+
+#### Scenario: An approved week is skipped
+- **WHEN** the launcher is called with `levels: 'all'` for a language with one approved level
+- **THEN** the response marks that key `skipped_approved`, the other four keys `started`, and exactly the started keys get a generation job.
+
+#### Scenario: An existing draft is skipped instead of "finishing" without content
+- **WHEN** the launcher is called for a level whose week already exists as `draft` or `rejected`
+- **THEN** the response marks it `skipped_existing`, no job row is created for it, no provider call is made, and the panel reports it as already existing with a pointer to «Regenerar».
+
+#### Scenario: A missing week still launches
+- **WHEN** the launcher is called for a level with no week for the current week
+- **THEN** the key is `started` and its generation job runs through the runner as before.

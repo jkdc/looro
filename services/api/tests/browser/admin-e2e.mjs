@@ -366,6 +366,30 @@ try {
   await page.waitForSelector('#exam-weeks-card', { timeout: 10_000 });
   await shot('10b-generation-launch');
 
+  // 8b2. Launching a level whose week already exists must not enqueue a job
+  // that finishes without generating (the operator would read a green
+  // "completed" for content that never changed).
+  await check('a launch over an existing week is skipped and claims no run', async () => {
+    await drainToasts();
+    const before = (await page.textContent('#launch-status')) ?? '';
+    await page.selectOption('#gen-language', 'en');
+    await page.selectOption('#gen-levels', 'B1');
+    await page.click('#gen-launch');
+    await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+    await page.fill('#reason-text', 'Relanzado en E2E con la semana ya existente');
+    await page.click('#reason-ok');
+    await page.waitForSelector('.alert-warning', { timeout: 10_000 });
+    const text = (await page.textContent('.alert-warning')) ?? '';
+    if (!text.includes('Lanzados 0 examen(es)')) throw new Error(`toast=${text}`);
+    if (!text.includes('1 ya existentes')) throw new Error(`toast=${text}`);
+    if (text.includes('aprobados omitidos')) throw new Error(`toast=${text}`);
+    await page.waitForTimeout(1_500);
+    if (((await page.textContent('#launch-status')) ?? '') !== before)
+      throw new Error('the progress line changed for a skipped launch');
+  });
+  await shot('10g-launch-skipped-existing');
+  await drainToasts();
+
   // 8c. Watch cadence, resilience and shutdown. The status endpoint is mocked
   // because the stub finishes in milliseconds: with a real run there is no 5 s
   // gap to observe. The mock still fetches the real response, so the job keeps

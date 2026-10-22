@@ -670,7 +670,7 @@ async function renderExamWeeksView(container, view = {}) {
         <div class="col-auto"><button class="btn btn-primary" id="gen-launch">Lanzar generación</button></div>
         <div class="col-auto"><span class="text-secondary small" id="scheduler-note">Scheduler: ${status.schedule.enabled ? 'configurado' : 'no configurado'} · activo en este proceso: ${status.scheduler.activeInProcess ? 'sí' : 'no'}</span></div>
       </div>
-      <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen; los aprobados se omiten. Para rehacer uno existente usa «Regenerar» en la tabla.</div>
+      <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen: los aprobados y las semanas ya existentes se omiten. Para rehacer un borrador o una semana rechazada usa «Regenerar» en la tabla.</div>
       <div class="small mt-1 fw-bold ${lastWatchTone}" id="launch-status">${escapeHtml(lastWatchStatus)}</div>
       ${jobHtml}
       <div id="jobs-monitor" class="mt-2"></div>
@@ -710,8 +710,12 @@ async function renderExamWeeksView(container, view = {}) {
       const outcome = await api('/v1/admin/level-tests/generate', { method: 'POST',
         body: JSON.stringify({ languageID, levels, reason: decision.reason }) });
       const launched = outcome.keys.filter(key => key.status === 'started');
-      const skipped = outcome.keys.length - launched.length;
-      toast(`Lanzados ${launched.length} examen(es)${skipped ? ` · ${skipped} aprobados omitidos` : ''}`);
+      const approved = outcome.keys.filter(key => key.status === 'skipped_approved').length;
+      const existing = outcome.keys.filter(key => key.status === 'skipped_existing').length;
+      toast(`Lanzados ${launched.length} examen(es)` +
+        (approved ? ` · ${approved} aprobados omitidos` : '') +
+        (existing ? ` · ${existing} ya existentes (usa Regenerar)` : ''),
+        launched.length ? 'success' : 'warning');
       startGenerationWatch(launched.map(key => `${key.languageID}:${key.level}`), currentWeekId);
       void watchGenerationTick();
     } catch (error) { toast('Error: ' + (error.code || error.message), 'danger'); }

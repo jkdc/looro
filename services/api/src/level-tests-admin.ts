@@ -20,20 +20,28 @@ export async function validateRegenerateRequest(db: Database, languageID: string
   if (approved.rowCount) throw new ServiceError('level_test_week_not_regenerable', 409);
 }
 
-export interface GenerationLaunchKey { languageID: string; level: string; status: 'started' | 'skipped_approved' }
+export interface GenerationLaunchKey { languageID: string; level: string;
+  status: 'started' | 'skipped_approved' | 'skipped_existing' }
 
-/** Plans an on-demand launch: current week only; approved keys are protected. */
+/** Plans an on-demand launch: current week only. Approved keys are protected,
+    and any other existing week is left to the explicit regenerate path: the
+    runner would answer `exists` without generating, which the panel would
+    report as a completed run that never happened. */
 export async function planGenerationLaunch(db: Database, languageID: string, levels: string[],
   weekId: number): Promise<GenerationLaunchKey[]> {
   if (!LANGUAGE_IDS.has(languageID) || weekId !== weekIndex(new Date())) throw new ServiceError('invalid_request');
   if (!levels.length || levels.some(level => !CEFR_LEVELS.has(level))) throw new ServiceError('invalid_request');
-  const approved = await db.query(`SELECT level FROM level_test_weeks WHERE language_id=$1 AND week_index=$2
-    AND status='approved' AND level = ANY($3)`, [languageID, weekId, levels]);
-  const approvedLevels = new Set(approved.rows.map(row => row.level as string));
-  return levels.map(level => ({
-    languageID, level,
-    status: approvedLevels.has(level) ? 'skipped_approved' as const : 'started' as const,
-  }));
+  const existing = await db.query(`SELECT level, status FROM level_test_weeks WHERE language_id=$1
+    AND week_index=$2 AND level = ANY($3)`, [languageID, weekId, levels]);
+  const byLevel = new Map(existing.rows.map(row => [row.level as string, row.status as string]));
+  return levels.map(level => {
+    const current = byLevel.get(level);
+    return {
+      languageID, level,
+      status: current === 'approved' ? 'skipped_approved' as const
+        : current ? 'skipped_existing' as const : 'started' as const,
+    };
+  });
 }
 
 /** Runs the planned keys sequentially in the background. Each job records its

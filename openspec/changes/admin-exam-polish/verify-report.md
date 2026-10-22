@@ -117,3 +117,21 @@ respuesta real para conservar el `weekId`):
   lo rechazaba `style-src 'self'`, así que el JSON de `detail()` perdía la
   indentación. La regla vive en `app.css`; verificado por estilo calculado
   (`pre-wrap`) y cero violaciones de consola al abrir el diálogo de error.
+
+## Lanzar sobre una semana existente
+
+Antes: `draft` y `rejected` se encolaban y el runner salía con `exists`, dejando
+el job en `finished`; el panel pintaba la fila en verde y decía «generación
+completada» sin haber generado nada. El planificador ahora marca
+`skipped_existing` (los aprobados siguen como `skipped_approved`), no crea job y
+el panel separa ambos casos, avisa en tono `warning` y apunta a «Regenerar».
+
+- Test de integración nuevo: con A1 en `draft`, A2 en `rejected` y B1 ausente, la
+  respuesta marca dos `skipped_existing` y un `started`, y la tabla de jobs solo
+  contiene B1. Se escribió **antes** del cambio y se vio fallar
+  (`'started' !== 'skipped_existing'`).
+- Suite API completa: **561/561** (0 fallos, 0 saltados) contra PostgreSQL 17
+  efímero; `npx tsc --noEmit` limpio.
+- E2E: el chequeo nuevo falló primero con el panel antiguo (toast de éxito
+  «aprobados omitidos», sin aviso) y pasa tras el arreglo. **42/42** desde pila
+  limpia. Evidencia: `e2e-evidence/t11-browser-e2e/10g-launch-skipped-existing.png`.

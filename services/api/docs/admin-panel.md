@@ -47,7 +47,12 @@ so every state looks the same.
     listing and audited draft moderation (approval and rejection). Rejected rows
     remain retained and block ordinary same-week regeneration; replacement
     requires the existing explicit force operation. Safe latest-job/scheduler
-    status lives here.
+    status lives here. Launching never overwrites a week: approved keys report
+    `skipped_approved` and any other existing row (draft, rejected, retired)
+    reports `skipped_existing`, so no job is created and the panel cannot claim
+    a green completion for content that did not change. Redoing a draft or a
+    rejected week goes through «Regenerar», which is force and refuses approved
+    keys.
     Weeks and jobs are colour-coded by severity (green = usable, red = needs an
     operator, yellow = waiting or unknown). While a run started from the panel
     (or already `running` when the view mounts) is live, the monitor polls

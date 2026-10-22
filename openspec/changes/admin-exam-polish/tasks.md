@@ -18,6 +18,12 @@
 - [x] 3.2 Status-endpoint test asserts `errorCode` + sanitized `errors`
 - [x] 3.3 Browser E2E: failed-job fixture in bootstrap, red/green checks on the computed style, dialog contents, nav DOM membership, approved/rejected tones
 
+## 3c. Launcher never reports a skip as a run
+- [x] 3c.1 `planGenerationLaunch` marks any existing week `skipped_existing` (approved stays `skipped_approved`)
+- [x] 3c.2 Skipped keys create no job and make no provider call (integration test)
+- [x] 3c.3 Panel toast separates approved vs already existing and points to «Regenerar»; launcher copy matches
+- [x] 3c.4 E2E reproduces the misleading green "completed" before the fix and passes after
+
 ## 3b. Generation watch
 - [x] 3b.1 Cadence fixed at `GENERATION_POLL_MS = 5_000` (was an inline 2 s literal)
 - [x] 3b.2 Leaving the view parks the watch (no ghost timer); returning resumes it
