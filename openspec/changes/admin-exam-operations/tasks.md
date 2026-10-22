@@ -12,7 +12,7 @@
 - [x] 3.1 `POST /v1/admin/level-tests/regenerate`: current-week guard, 409 on approved, async job, audit
 - [x] 3.2 `jobs[]` in `/v1/admin/level-tests/status` (last 10, keeps `latestJob`)
 - [x] 3.3 Panel: Regenerar button (current week, draft/rejected only), reason modal, jobs table with 5 s polling
-- [ ] 3.4 On-demand launcher: `POST /v1/admin/level-tests/generate` (one level or all, skips approved, sequential runner) + panel launch form
+- [x] 3.4 On-demand launcher: `POST /v1/admin/level-tests/generate` (one level or all, skips approved, sequential runner) + panel launch form
 
 ## 4. Results (admin-exam-results)
 - [x] 4.1 `GET /v1/admin/level-test-attempts` listing with joins, filters, sort, pagination
