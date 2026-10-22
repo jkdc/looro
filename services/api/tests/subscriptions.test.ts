@@ -188,3 +188,192 @@ integration('the subscription checkout endpoint requires configuration and a tie
     assert.equal(missing.statusCode, 503);
   } finally { await service.close(); }
 });
+
+const accountAndToken = async (): Promise<{ account: string; token: string }> => {
+  const account = await newAccount();
+  const token = randomBytes(32).toString('base64url').slice(0, 43);
+  await db!.query(`INSERT INTO auth_sessions(id,account_id,token_hash,expires_at) VALUES($1,$2,$3,now()+interval '1 hour')`,
+    [randomUUID(), account, createHash('sha256').update(token).digest('hex')]);
+  return { account, token };
+};
+const appAccountServices = () => createApp({ db: db!, auth: { googleClientID: 'test.apps.googleusercontent.com' },
+  accounts: { admission: new AuthAdmission(db!, { hmacKey: 'c'.repeat(64), proxyToken: 'd'.repeat(64), allowLocalLoopback: false }) } });
+const proxyHeaders = { 'x-app-client-ip': '203.0.113.9', 'x-app-proxy-token': 'd'.repeat(64) };
+
+integration('public plan catalog hides price ids and per-user subscription reads are owner-scoped', async () => {
+  const service = appAccountServices();
+  try {
+    const plans = await service.inject({ url: '/v1/subscriptions/plans', headers: proxyHeaders });
+    assert.equal(plans.statusCode, 200);
+    const catalog = plans.json();
+    assert.equal(catalog.config.freeDripMinutes, 5);
+    assert.equal(catalog.config.trialDays, 7);
+    assert.deepEqual(catalog.tiers.map((tier: { tier: string }) => tier.tier), ['standard', 'pro']);
+    for (const tier of catalog.tiers) assert.equal('stripePriceID' in tier, false);
+
+    const anonymous = await service.inject({ url: '/v1/subscriptions/mine', headers: proxyHeaders });
+    assert.equal(anonymous.statusCode, 401);
+
+    const { account, token } = await accountAndToken();
+    const empty = await service.inject({ url: '/v1/subscriptions/mine',
+      headers: { authorization: `Bearer ${token}`, ...proxyHeaders } });
+    assert.equal(empty.statusCode, 200);
+    assert.deepEqual(empty.json(), { subscription: null });
+
+    const { upsertSubscriptionFromStore } = await import('../src/subscriptions.js');
+    await upsertSubscriptionFromStore(db!, { accountID: account, tier: 'pro', status: 'active', store: 'stripe',
+      storeReference: 'sub_mine_123', periodStart: new Date('2026-10-01T00:00:00Z'),
+      periodEnd: new Date('2026-11-01T00:00:00Z'), cancelAtPeriodEnd: true });
+    const mine = await service.inject({ url: '/v1/subscriptions/mine',
+      headers: { authorization: `Bearer ${token}`, ...proxyHeaders } });
+    assert.equal(mine.statusCode, 200);
+    assert.deepEqual(mine.json().subscription, { tier: 'pro', status: 'active', store: 'stripe',
+      periodStart: '2026-10-01T00:00:00.000Z', periodEnd: '2026-11-01T00:00:00.000Z', cancelAtPeriodEnd: true });
+  } finally { await service.close(); }
+});
+
+integration('subscription checkout validates tier, key and transport before exposing a URL', async () => {
+  const { SubscriptionBilling } = await import('../src/subscription-billing.js');
+  const calls: Array<{ params: Record<string, unknown>; key: string }> = [];
+  const billing = new SubscriptionBilling(db!, {
+    async create(params, key) { calls.push({ params, key }); return { id: 'cs_route_1', url: 'https://checkout.stripe.test/route' }; },
+    verifyEvent() { throw new Error('not used'); }
+  }, { origin: 'https://api.example' });
+  const service = createApp({ db: db!, auth: { googleClientID: 'test.apps.googleusercontent.com' },
+    accounts: { admission: new AuthAdmission(db!, { hmacKey: 'c'.repeat(64), proxyToken: 'd'.repeat(64), allowLocalLoopback: false }) },
+    subscriptions: billing });
+  try {
+    const { account, token } = await accountAndToken();
+    const headers = { authorization: `Bearer ${token}`, 'content-type': 'application/json', ...proxyHeaders };
+    const missingKey = await service.inject({ method: 'POST', url: '/v1/subscriptions/checkout', headers, payload: { tier: 'pro' } });
+    assert.equal(missingKey.statusCode, 400);
+    assert.equal(missingKey.json().error?.code, 'idempotency_key_required');
+    const shortKey = await service.inject({ method: 'POST', url: '/v1/subscriptions/checkout',
+      headers: { ...headers, 'idempotency-key': 'short' }, payload: { tier: 'pro' } });
+    assert.equal(shortKey.statusCode, 400);
+    assert.equal(shortKey.json().error?.code, 'idempotency_key_required');
+
+    await db!.query(`UPDATE subscription_plans SET stripe_price_id='price_pro_test' WHERE tier='pro'`);
+    const unknownTier = await service.inject({ method: 'POST', url: '/v1/subscriptions/checkout',
+      headers: { ...headers, 'idempotency-key': 'k'.repeat(12) }, payload: { tier: 'gold' } });
+    assert.equal(unknownTier.statusCode, 400);
+    assert.equal(unknownTier.json().error?.code, 'invalid_subscription_tier');
+
+    const ok = await service.inject({ method: 'POST', url: '/v1/subscriptions/checkout',
+      headers: { ...headers, 'idempotency-key': 'k'.repeat(12) }, payload: { tier: 'pro' } });
+    assert.equal(ok.statusCode, 200);
+    assert.deepEqual(ok.json(), { checkoutURL: 'https://checkout.stripe.test/route' });
+    assert.equal(ok.headers['cache-control'], 'no-store');
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0]!.key, `subscription-checkout:${account}:${'k'.repeat(12)}`);
+    assert.equal(calls[0]!.params.mode, 'subscription');
+    assert.equal(calls[0]!.params.client_reference_id, account);
+    assert.deepEqual(calls[0]!.params.line_items, [{ price: 'price_pro_test', quantity: 1 }]);
+    assert.equal(calls[0]!.params.success_url, 'https://api.example/payment-return?subscription=1');
+    assert.equal(calls[0]!.params.cancel_url, 'https://api.example/payment-return?subscription=0');
+
+    await db!.query(`UPDATE subscription_plans SET stripe_price_id=NULL WHERE tier='pro'`);
+    const unconfigured = await service.inject({ method: 'POST', url: '/v1/subscriptions/checkout',
+      headers: { ...headers, 'idempotency-key': 'k'.repeat(12) }, payload: { tier: 'pro' } });
+    assert.equal(unconfigured.statusCode, 503);
+    assert.equal(unconfigured.json().error?.code, 'subscription_unavailable');
+  } finally {
+    await db!.query(`UPDATE subscription_plans SET stripe_price_id=NULL WHERE tier='pro'`);
+    await service.close();
+  }
+});
+
+integration('subscription checkout rejects an insecure transport URL', async () => {
+  const { SubscriptionBilling } = await import('../src/subscription-billing.js');
+  await db!.query(`UPDATE subscription_plans SET stripe_price_id='price_pro_test' WHERE tier='pro'`);
+  const billing = new SubscriptionBilling(db!, {
+    async create() { return { id: 'cs_insecure', url: 'http://checkout.stripe.test/insecure' }; },
+    verifyEvent() { throw new Error('not used'); }
+  }, { origin: 'https://api.example' });
+  try {
+    await assert.rejects(billing.checkout(randomUUID(), 'pro', 'k'.repeat(12)),
+      (error: { code?: string }) => error.code === 'stripe_checkout_invalid');
+  } finally {
+    await db!.query(`UPDATE subscription_plans SET stripe_price_id=NULL WHERE tier='pro'`);
+  }
+});
+
+integration('Play subscription sync maps store state, grants once and never grants a cancellation', async () => {
+  const { SubscriptionBilling } = await import('../src/subscription-billing.js');
+  const billing = new SubscriptionBilling(db!, {
+    async create() { return { id: 'unused' }; }, verifyEvent() { throw new Error('not used'); }
+  }, { origin: 'https://api.example' });
+  const { account } = await accountAndToken();
+  assert.equal(await billing.syncPlay(account, 'play-token-null', async () => null), null);
+  await assert.rejects(billing.syncPlay(account, 'play-token-unknown', async () => ({
+    lineItems: [{ productId: 'palique-gold' }], subscriptionState: 2 })), /invalid_subscription/);
+
+  const expiry = Date.now() + 30 * 86_400_000;
+  const state = { lineItems: [{ productId: 'palique-pro' }], subscriptionState: 2,
+    expiryTimeMillis: expiry, autoRenewing: false };
+  const active = await billing.syncPlay(account, 'play-token-active', async () => state);
+  assert.equal(active?.tier, 'pro');
+  assert.equal(active?.status, 'active');
+  assert.equal(active?.cancelAtPeriodEnd, true);
+  assert.equal(await walletMinutes(account), 250);
+  // Same period and expiry: a re-sync is not a second grant.
+  await billing.syncPlay(account, 'play-token-active', async () => state);
+  assert.equal(await walletMinutes(account), 250);
+
+  const canceled = await billing.syncPlay(account, 'play-token-cancel', async () => ({
+    lineItems: [{ productId: 'palique-standard' }], subscriptionState: 2,
+    cancelledUntilMillis: Date.now() + 60_000, expiryTimeMillis: expiry }));
+  assert.equal(canceled?.status, 'canceled');
+  assert.equal(await walletMinutes(account), 250);
+
+  const pastDue = await billing.syncPlay(account, 'play-token-past-due', async () => ({
+    lineItems: [{ productId: 'palique-standard' }], subscriptionState: 4, expiryTimeMillis: expiry }));
+  assert.equal(pastDue?.status, 'past_due');
+  assert.equal(await walletMinutes(account), 250);
+});
+
+integration('subscription lifecycle events cancel, grant once and ignore unknown references', async () => {
+  const { SubscriptionBilling } = await import('../src/subscription-billing.js');
+  const billing = new SubscriptionBilling(db!, {
+    async create() { return { id: 'unused' }; }, verifyEvent() { throw new Error('not used'); }
+  }, { origin: 'https://api.example' });
+  const { account } = await accountAndToken();
+  const reference = 'sub_lifecycle_1';
+  assert.equal(await billing.handleEvent({ type: 'checkout.session.completed', data: { object: { mode: 'payment' } } }), false);
+  assert.equal(await billing.handleEvent({ type: 'checkout.session.completed', data: { object: {
+    mode: 'subscription', subscription: reference, metadata: { account_id: account, tier: 'unknown' } } } }), false);
+  assert.equal(await billing.handleEvent({ type: 'checkout.session.completed', data: { object: {
+    mode: 'subscription', subscription: reference, metadata: { account_id: account, tier: 'pro' } } } }), true);
+  assert.equal(await billing.handleEvent({ type: 'checkout.session.completed', data: { object: {
+    mode: 'subscription', subscription: reference, metadata: { account_id: account, tier: 'pro' } } } }), true);
+
+  assert.equal(await billing.handleEvent({ type: 'invoice.paid', data: { object: { subscription: 'sub_unknown' } } }), false);
+  assert.equal(await billing.handleEvent({ type: 'invoice.payment_failed', data: { object: {} } }), false);
+  assert.equal(await billing.handleEvent({ type: 'customer.subscription.updated', data: { object: { id: 'sub_unknown' } } }), false);
+  assert.equal(await billing.handleEvent({ type: 'customer.subscription.deleted', data: { object: { id: 'sub_unknown' } } }), false);
+
+  assert.equal(await billing.handleEvent({ type: 'customer.subscription.updated', data: { object: {
+    id: reference, status: 'active', current_period_start: 1_783_000_000, current_period_end: 1_785_600_000,
+    cancel_at_period_end: true } } }), true);
+  const updated = (await db!.query('SELECT status,cancel_at_period_end FROM subscriptions WHERE store_reference=$1', [reference])).rows[0]!;
+  assert.equal(updated.status, 'active');
+  assert.equal(updated.cancel_at_period_end, true);
+  assert.equal(await walletMinutes(account), 250);
+  // Replaying the same period does not grant again.
+  await billing.handleEvent({ type: 'customer.subscription.updated', data: { object: {
+    id: reference, status: 'active', current_period_start: 1_783_000_000, current_period_end: 1_785_600_000 } } });
+  assert.equal(await walletMinutes(account), 250);
+
+  assert.equal(await billing.handleEvent({ type: 'customer.subscription.deleted', data: { object: { id: reference } } }), true);
+  assert.equal((await db!.query('SELECT status FROM subscriptions WHERE store_reference=$1', [reference])).rows[0]!.status, 'canceled');
+  assert.equal(await walletMinutes(account), 250);
+});
+
+integration('the lifetime drip budget stops new accounts without touching prior grants', async () => {
+  const { runDripForAccount } = await import('../src/subscriptions.js');
+  await db!.query('UPDATE subscription_config SET lifetime_drip_budget_minutes=5');
+  const first = await newAccount(), second = await newAccount();
+  assert.equal(await runDripForAccount(db!, first), 5);
+  assert.equal(await runDripForAccount(db!, second), 0);
+  assert.equal(await walletMinutes(second), 0);
+});

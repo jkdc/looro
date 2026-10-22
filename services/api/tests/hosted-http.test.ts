@@ -90,3 +90,54 @@ test('hosted HTTP authenticates guest ownership, recovers uncertain sessions and
     assert.equal((await app.inject({ url: '/v1/live/sessions/current', headers })).statusCode, 401);
   } finally { await app.close(); await db.query(`DROP SCHEMA ${schema} CASCADE`); await db.end(); }
 });
+
+test('hosted session status and close routes delegate to the provider for the authenticated owner', {
+  skip: !databaseURL && 'Set TEST_DATABASE_URL.',
+}, async () => {
+  const schema = `hosted_routes_${randomUUID().replaceAll('-', '')}`, url = new URL(databaseURL!);
+  url.searchParams.set('options', `-c search_path=${schema}`);
+  const db = connectDatabase(url.toString()); await db.query(`CREATE SCHEMA ${schema}`); await migrate(db);
+  const account = randomUUID(), token = randomBytes(32).toString('base64url');
+  await db.query('INSERT INTO accounts(id,email) VALUES($1,$2)', [account, 'voice@example.test']);
+  await db.query("INSERT INTO auth_sessions(id,account_id,token_hash,expires_at) VALUES($1,$2,$3,now()+interval '1 hour')",
+    [randomUUID(), account, digest(token)]);
+  const calls: string[] = [];
+  const hosted = { available: true, minuteFunded: true, allows: () => true,
+    status: async (id: string, sessionID: string) => { calls.push(`status:${id}:${sessionID}`); return { sessionID, state: 'active' }; },
+    close: async (id: string, sessionID: string) => { calls.push(`close:${id}:${sessionID}`); return { sessionID, state: 'closed' }; }
+  } as unknown as Services['hosted'];
+  const app = createApp({ db, auth: {}, hosted });
+  const off = createApp({ db, auth: {} });
+  const headers = { authorization: `Bearer ${token}` };
+  const sessionID = randomUUID();
+  try {
+    assert.equal((await off.inject({ url: `/v1/live/sessions/${sessionID}` })).statusCode, 503);
+    assert.equal((await off.inject({ method: 'POST', url: `/v1/live/sessions/${sessionID}/close`, payload: {} })).statusCode, 503);
+
+    assert.equal((await app.inject({ url: `/v1/live/sessions/${sessionID}` })).statusCode, 401);
+    assert.equal((await app.inject({ method: 'POST', url: `/v1/live/sessions/${sessionID}/close`,
+      payload: {} })).statusCode, 401);
+
+    const status = await app.inject({ url: `/v1/live/sessions/${sessionID}`, headers });
+    assert.equal(status.statusCode, 200);
+    assert.deepEqual(status.json(), { sessionID, state: 'active' });
+    assert.deepEqual(calls, [`status:${account}:${sessionID}`]);
+
+    const malformed = await app.inject({ url: '/v1/live/sessions/not-a-uuid', headers });
+    assert.equal(malformed.statusCode, 400);
+    assert.equal(malformed.json().error?.code, 'invalid_request');
+
+    const rejected = await app.inject({ method: 'POST', url: `/v1/live/sessions/${sessionID}/close`,
+      headers, payload: { reason: 'unexpected' } });
+    assert.equal(rejected.statusCode, 400);
+    assert.equal(rejected.json().error?.code, 'invalid_request');
+    assert.equal((await app.inject({ method: 'POST', url: `/v1/live/sessions/${sessionID}/close`,
+      headers })).statusCode, 400);
+
+    const closed = await app.inject({ method: 'POST', url: `/v1/live/sessions/${sessionID}/close`,
+      headers, payload: {} });
+    assert.equal(closed.statusCode, 200);
+    assert.deepEqual(closed.json(), { sessionID, state: 'closed' });
+    assert.deepEqual(calls, [`status:${account}:${sessionID}`, `close:${account}:${sessionID}`]);
+  } finally { await app.close(); await off.close(); await db.end(); }
+});
