@@ -90,9 +90,28 @@ $('#detail-dismiss').addEventListener('click', () => closeModal('#detail-modal')
 const ask = (title, target) => new Promise(resolve => {
   $('#reason-title').textContent = title;
   $('#reason-input').value = target;
-  $('#reason-text').value = '';
+  const text = $('#reason-text'), ok = $('#reason-ok'), hint = $('#reason-hint');
+  // Confirmar stays disabled until the reason is real: an empty reason used to
+  // abandon the request silently, with only a toast that vanished.
+  const validate = () => {
+    const value = text.value.trim();
+    const valid = value.length >= 3;
+    ok.disabled = !valid;
+    hint.textContent = valid ? `${value.length} caracteres · se guarda en la auditoría`
+      : `Escribe el motivo (mínimo 3 caracteres)${value.length ? ` · faltan ${3 - value.length}` : ''}. Se guarda en la auditoría.`;
+    hint.classList.toggle('text-danger', !valid);
+    return valid;
+  };
+  text.value = '';
+  text.oninput = validate;
+  validate();
   openModal('#reason-modal');
-  $('#reason-ok').onclick = () => { closeModal('#reason-modal'); resolve({ reason: $('#reason-text').value }); };
+  setTimeout(() => text.focus(), 200);
+  ok.onclick = () => {
+    if (!validate()) { text.focus(); return; }
+    closeModal('#reason-modal');
+    resolve({ reason: text.value.trim() });
+  };
   $('#reason-cancel').onclick = () => { closeModal('#reason-modal'); resolve({ reason: '' }); };
 });
 
@@ -296,6 +315,7 @@ async function renderBrowse(container, fixedTable) {
 let generationWatch = null;      // { keys: Set<'lang:level'>, weekId, timer }
 let lastJobsSnapshot = [];
 let lastWatchStatus = '';
+let lastWatchTone = '';
 let levelTestsRender = null;     // { container, view } — refreshed when a watched run ends
 const TERMINAL_JOB_STATES = new Set(['finished', 'failed', 'unknown']);
 
@@ -346,10 +366,16 @@ async function watchGenerationTick() {
         watch.results.join(' · '),
       ].filter(Boolean).join(' — ') || 'Esperando al runner de generación…';
       const line = $('#launch-status');
+      const paint = tone => {
+        lastWatchTone = tone;
+        if (!line) return;
+        line.textContent = lastWatchStatus;
+        line.className = `small mt-1 fw-bold ${tone}`;
+      };
       if (!watch.keys.size) {
         generationWatch = null;
         lastWatchStatus = `Completado: ${watch.results.join(' · ')}`;
-        if (line) line.textContent = lastWatchStatus;
+        paint(watch.results.every(result => result.includes('→ finished')) ? 'text-success' : 'text-danger');
         // The runner is done: refresh the weeks table so the new exams show up
         // ready for review / approve without a manual reload. Never repaint if
         // the operator moved to another view (they share the same container).
@@ -357,7 +383,7 @@ async function watchGenerationTick() {
           void renderLevelTestOperations(levelTestsRender.container, levelTestsRender.view);
         return;
       }
-      if (line) line.textContent = lastWatchStatus;
+      paint('text-primary');
     } catch { /* polling is best effort; retry on the next tick */ }
   }
   scheduleGenerationWatch();
@@ -368,7 +394,7 @@ function startGenerationWatch(keys, weekId) {
   generationWatch = generationWatch && generationWatch.weekId === weekId
     ? { ...generationWatch, keys: new Set([...generationWatch.keys, ...keys]) }
     : { keys: new Set(keys), results: [], weekId, timer: null };
-  lastWatchStatus = '';
+  lastWatchStatus = ''; lastWatchTone = '';
   scheduleGenerationWatch();
 }
 
@@ -461,7 +487,7 @@ async function renderLevelTestOperations(container, view = {}) {
           <div class="col-auto"><button class="btn btn-sm btn-primary" id="gen-launch">Lanzar generación</button></div>
         </div>
         <div class="text-secondary small mt-1">Genera la semana actual donde aún no haya examen; los aprobados se omiten. Para rehacer uno existente usa «Regenerar» en la tabla.</div>
-        <div class="small mt-1 fw-bold" id="launch-status">${escapeHtml(lastWatchStatus)}</div>
+        <div class="small mt-1 fw-bold ${lastWatchTone}" id="launch-status">${escapeHtml(lastWatchStatus)}</div>
       </div>
       <div id="jobs-monitor" class="mt-2"></div>
     </div></div></div>

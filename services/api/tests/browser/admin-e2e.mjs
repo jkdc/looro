@@ -172,12 +172,17 @@ try {
   await page.click(weekRow('A1') + ' [data-week-approve]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'ap');
-  await page.click('#reason-ok');
-  await check('approval requires a real reason', async () => {
-    await page.waitForSelector('.alert-warning', { timeout: 5_000 });
-    await expectText('.alert-warning', 'Motivo obligatorio');
+  await check('confirm stays disabled until the reason is real', async () => {
+    // Regression: an empty/short reason used to abandon the request silently.
+    if (await page.isEnabled('#reason-ok')) throw new Error('confirm enabled with a 2-character reason');
+    await expectText('#reason-hint', 'faltan 1');
+    await page.fill('#reason-text', '');
+    if (await page.isEnabled('#reason-ok')) throw new Error('confirm enabled with an empty reason');
+    await expectText('#reason-hint', 'mínimo 3');
   });
-  await drainToasts();
+  await page.click('#reason-cancel');
+  await page.waitForFunction(() => !document.querySelector('#reason-modal')?.classList.contains('show'),
+    undefined, { timeout: 5_000 });
   await page.click(weekRow('A1') + ' [data-week-approve]');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
   await page.fill('#reason-text', 'Aprobado tras revisión E2E de navegador');
@@ -256,6 +261,9 @@ try {
   await page.selectOption('#gen-levels', 'B1');
   await page.click('#gen-launch');
   await page.waitForSelector('#reason-modal.show', { timeout: 5_000 });
+  await check('launch confirm is disabled until a reason is typed', async () => {
+    if (await page.isEnabled('#reason-ok')) throw new Error('confirm enabled with an empty reason');
+  });
   await page.fill('#reason-text', 'Lanzado en E2E para B1');
   await page.click('#reason-ok');
   await page.waitForSelector('.alert-success', { timeout: 10_000 });

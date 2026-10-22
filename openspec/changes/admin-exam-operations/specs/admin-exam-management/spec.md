@@ -92,6 +92,26 @@ The system SHALL extend `GET /v1/admin/level-tests/status` with `jobs[]`, the la
 - **WHEN** several generation jobs have been recorded
 - **THEN** `jobs[]` contains the last 10 rows newest-first and `latestJob` still names the most recent one.
 
+### Requirement: Reason entry validation
+
+The admin panel SHALL keep the confirmation button of the reason dialog disabled until the reason holds at least 3 non-blank characters, SHALL describe the target as read-only, SHALL show a live hint with the remaining characters, and SHALL focus the reason field on open. An empty or short reason must never silently abandon the action.
+
+#### Scenario: Confirmation is impossible without a reason
+- **WHEN** an operator opens a reason dialog and confirms without typing
+- **THEN** the button is disabled, the hint states the 3-character minimum, and no request is sent.
+
+#### Scenario: Short reason is reported inline
+- **WHEN** the operator types 2 characters
+- **THEN** the hint reports how many characters are missing and the button stays disabled; from 3 characters on it enables.
+
+### Requirement: Admin asset freshness
+
+The admin panel SHALL serve its static assets with `Cache-Control: no-cache` (ETag revalidation) and SHALL bump the version query when the entry document changes, so a stale script can never run against a newer API.
+
+#### Scenario: Updated panel script is always the one that runs
+- **WHEN** the operator reloads the panel after a deploy
+- **THEN** the browser revalidates `app.js` instead of reusing a cached copy.
+
 ### Requirement: Generation progress watcher
 
 The panel SHALL keep an explicit live status line for every generation run it starts (launch or regeneration) showing `En cola`, `En marcha` and the terminal state of each key (`Completado: en:B1 → finished`), poll `GET /v1/admin/level-tests/status` until every watched key reaches a terminal state, toast each key's outcome, and then re-render the weeks listing so the new exams appear ready for review and approval without a manual reload. A run in progress discovered on render (scheduler, CLI or another operator) SHALL be adopted by the watcher, and a completion landing while another view is mounted SHALL NOT repaint that view.

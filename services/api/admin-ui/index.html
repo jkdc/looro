@@ -66,19 +66,21 @@
     <div class="modal-content">
       <div class="modal-header"><h5 class="modal-title" id="reason-title">Motivo</h5></div>
       <div class="modal-body">
-        <div class="mb-3"><label class="form-label">Objetivo</label><input class="form-control" id="reason-input" readonly></div>
-        <label class="form-label">Motivo (obligatorio, auditado)</label>
-        <textarea class="form-control" id="reason-text" rows="3" maxlength="500"></textarea>
+        <div class="mb-3"><label class="form-label">Objetivo (solo lectura)</label>
+          <input class="form-control-plaintext fw-bold" id="reason-input" readonly tabindex="-1"></div>
+        <label class="form-label" for="reason-text">Motivo (obligatorio, auditado)</label>
+        <textarea class="form-control" id="reason-text" rows="3" maxlength="500" aria-describedby="reason-hint"></textarea>
+        <div class="form-text" id="reason-hint"></div>
       </div>
       <div class="modal-footer">
         <button class="btn" id="reason-cancel">Cancelar</button>
-        <button class="btn btn-primary" id="reason-ok"><i class="ti ti-check me-1"></i>Confirmar</button>
+        <button class="btn btn-primary" id="reason-ok" disabled><i class="ti ti-check me-1"></i>Confirmar</button>
       </div>
     </div>
   </div>
 </div>
 <script src="/vendor/tabulator.min.js?v=4"></script>
 <script src="/vendor/chart.umd.min.js?v=4"></script>
-<script src="/app.js?v=5"></script>
+<script src="/app.js?v=6"></script>
 </body>
 </html>

@@ -14,6 +14,8 @@
 - [x] 3.3 Panel: Regenerar button (current week, draft/rejected only), reason modal, jobs table with 5 s polling
 - [x] 3.4 On-demand launcher: `POST /v1/admin/level-tests/generate` (one level or all, skips approved, sequential runner) + panel launch form
 - [x] 3.5 Generation watcher: live status line (cola / marcha / estado final por clave), outcome toasts, automatic weeks-table refresh, adoption of foreign runs and container guard
+- [x] 3.6 Reason dialog hardening: confirmation disabled until a real reason, inline hint with remaining characters, read-only target and autofocus (an empty reason used to abandon the request silently)
+- [x] 3.7 Asset freshness: `Cache-Control: no-cache` for panel assets in Caddy + `app.js?v=6` bump
 
 ## 4. Results (admin-exam-results)
 - [x] 4.1 `GET /v1/admin/level-test-attempts` listing with joins, filters, sort, pagination

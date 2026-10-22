@@ -32,6 +32,10 @@
 		# Never cache HTML: the entry documents carry the asset versions.
 		@html path *.html
 		header @html Cache-Control "no-cache"
+		# Assets always revalidate (ETag/304): a stale app.js must never run
+		# against a newer API, and the ?v= stamp alone is not enough.
+		@assets path *.js *.css
+		header @assets Cache-Control "no-cache"
 		try_files {path} /index.html
 		file_server
 	}
